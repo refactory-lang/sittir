@@ -63,7 +63,7 @@ run the CLI, and both resolve it through `treeSitterCliPath`.
 
 Writes a grammar package's `.sittir/` scaffolding for the tree-sitter CLI and returns the path of its `grammar.js`. Throws when the package has no `grammar.sittir.ts`.
 
-- `grammar.js` is the one-line re-export of the entry (`reExportOf`), so tree-sitter's loader imports `grammar.sittir.ts` itself and Node strips its types. The file never holds a copy of the grammar, so it cannot go stale; nothing needs to run between an edit to the entry and `tree-sitter generate`.
+- `grammar.js` is the one-line re-export of the entry, `export { default } from '../grammar.sittir.ts';`. The specifier is `posix.join('..', GRAMMAR_ENTRY)`: `.sittir/` always sits beside the entry, and an ES module specifier uses `/` on every platform. tree-sitter's loader reads `default?.grammar ?? grammar` from the module it imports and accepts only a `.js` or `.json` path, which is why the re-export exists. Because of it, tree-sitter's loader imports `grammar.sittir.ts` itself and Node strips its types. The file never holds a copy of the grammar, so it cannot go stale; nothing needs to run between an edit to the entry and `tree-sitter generate`.
 - `package.json` sets `"type": "module"`, so Node loads the re-export as an ES module, and carries the `name` tree-sitter reads to identify the grammar.
 - `tree-sitter.json` is required for ABI 15; without it `generate` falls back to ABI 14.
 - The external scanner sources are copied in (`copyExternalScannerSources`), and an empty `resolutions.json` is written when the package has none (`ensureConflictResolutions`), since the entry imports it.
@@ -82,10 +82,6 @@ When the upstream has no scanner at all, a stub (`stubScannerSource`) is written
 // Narrow to MODULE_NOT_FOUND — the upstream package being absent is
 // expected; permission errors or a malformed package.json surface.
 ```
-
-### `packages/codegen/src/transpile/transpile-overrides.ts::reExportOf`
-
-The source of `.sittir/grammar.js`: `export { default } from '<entry>';`, with the entry given relative to `.sittir/`. The relative path's Windows separators become `/`, since an ES module specifier is a URL path on every platform. tree-sitter's loader reads `default?.grammar ?? grammar` from the module it imports and accepts only a `.js` or `.json` path, which is why the re-export exists rather than pointing tree-sitter at the `.ts` entry.
 
 ### `packages/codegen/src/transpile/transpile-overrides.ts::outputPath`
 
