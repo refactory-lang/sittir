@@ -85,7 +85,7 @@ When the upstream has no scanner at all, a stub (`stubScannerSource`) is written
 
 ### `packages/codegen/src/transpile/transpile-overrides.ts::reExportOf`
 
-The source of `.sittir/grammar.js`: `export { default } from '<entry>';`, with the entry given relative to `.sittir/`. tree-sitter's loader reads `default?.grammar ?? grammar` from the module it imports and accepts only a `.js` or `.json` path, which is why the re-export exists rather than pointing tree-sitter at the `.ts` entry.
+The source of `.sittir/grammar.js`: `export { default } from '<entry>';`, with the entry given relative to `.sittir/`. The relative path's Windows separators become `/`, since an ES module specifier is a URL path on every platform. tree-sitter's loader reads `default?.grammar ?? grammar` from the module it imports and accepts only a `.js` or `.json` path, which is why the re-export exists rather than pointing tree-sitter at the `.ts` entry.
 
 ### `packages/codegen/src/transpile/transpile-overrides.ts::outputPath`
 

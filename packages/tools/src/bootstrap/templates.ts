@@ -93,12 +93,11 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 		},
 		{
 			path: GRAMMAR_TYPECHECK_CEILING,
-			contents: json({ [GRAMMAR_ENTRY]: 0 })
+			contents: json({ [GRAMMAR_ENTRY]: 1 })
 		},
 		{
 			path: 'grammar.sittir.ts',
-			contents: `// @ts-nocheck — grammar.js is untyped
-import base from '${v.upstreamDependency}/grammar.js';
+			contents: `import base from '${v.upstreamDependency}/grammar.js';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import { sittirGrammar } from '../codegen/src/dsl/index.ts';
 

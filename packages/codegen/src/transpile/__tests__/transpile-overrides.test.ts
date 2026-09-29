@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { transpileOverrides } from '../transpile-overrides.ts';
+import { join, win32 } from 'node:path';
+import { reExportOf, transpileOverrides } from '../transpile-overrides.ts';
 import { runTreeSitterCliCapturing } from '../tree-sitter-cli.ts';
 import { grammarPackage, sittirDirOf } from '../../grammars.ts';
 import { packageEntryPath } from '../../compiler/resolve-grammar.ts';
@@ -70,4 +70,16 @@ describe('tree-sitter generate runs the grammar entry itself', () => {
 			rmSync(dir, { recursive: true, force: true });
 		}
 	}, 60_000);
+});
+
+describe('reExportOf', () => {
+	it('writes a posix specifier for a Windows relative path', () => {
+		const relativeEntry = win32.relative('C:\\repo\\packages\\python\\.sittir', 'C:\\repo\\packages\\python\\grammar.sittir.ts');
+		expect(relativeEntry).toBe('..\\grammar.sittir.ts');
+		expect(reExportOf(relativeEntry)).toBe("export { default } from '../grammar.sittir.ts';\n");
+	});
+
+	it('anchors a same-directory entry with ./', () => {
+		expect(reExportOf('grammar.sittir.ts')).toBe("export { default } from './grammar.sittir.ts';\n");
+	});
 });

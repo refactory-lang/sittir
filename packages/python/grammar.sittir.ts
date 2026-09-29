@@ -7,7 +7,6 @@
  * @generated from overrides.json — review before committing
  */
 
-// @ts-nocheck — grammar.js is untyped
 import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {

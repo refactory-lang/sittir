@@ -1,3 +1,6 @@
 {
-	"grammar.sittir.ts": 0
+	"grammar.sittir.ts": {
+		"max": 34,
+		"issue": "https://github.com/refactory-lang/sittir/issues/398"
+	}
 }

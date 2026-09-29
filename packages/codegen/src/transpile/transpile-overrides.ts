@@ -1,5 +1,5 @@
 import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { dirname, join, relative } from 'node:path';
+import { dirname, join, posix, relative, win32 } from 'node:path';
 import { packageRequire, sittirDirOf, upstreamPackage, type GrammarPackage } from '../grammars.ts';
 import { packageEntryPath } from '../compiler/resolve-grammar.ts';
 import { ensureConflictResolutions } from './conflict-resolutions-file.ts';
@@ -87,8 +87,9 @@ export function transpileOverrides(opts: TranspileOptions): TranspileResult {
 	return { outputPath };
 }
 
-function reExportOf(entrySpecifier: string): string {
-	return `export { default } from '${entrySpecifier.startsWith('.') ? entrySpecifier : `./${entrySpecifier}`}';\n`;
+export function reExportOf(relativeEntry: string): string {
+	const specifier = relativeEntry.split(win32.sep).join(posix.sep);
+	return `export { default } from '${specifier.startsWith('.') ? specifier : `./${specifier}`}';\n`;
 }
 
 const SCANNER_SOURCES = ['scanner.c', 'scanner.cc'];
