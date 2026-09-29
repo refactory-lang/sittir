@@ -15,12 +15,13 @@ describe('dogfood rebuild render bytes', () => {
 		it(`${grammar}: ${exportName} renders the committed fixture byte-for-byte`, async () => {
 			const mod = (await import(pathToFileURL(ROOT + file).href)) as Record<string, () => unknown>;
 			const node = mod[exportName]!();
+			const anyGrammar: string = grammar;
 			const rendered =
 				target.grammar === 'typescript' && target.renderOptions !== undefined
 					? (await createEngine(await languageByName('typescript'), { render: target.renderOptions }))
 							.render(node as TypescriptAPI['node'])
 							.toString()
-					: (await createEngine(await languageByName(grammar))).render(node as AnyNodeData).toString();
+					: (await createEngine(await languageByName(anyGrammar))).render(node as AnyNodeData).toString();
 			await expect(rendered).toMatchFileSnapshot(ROOT + 'packages/tools/tests/emit/__fixtures__/' + fixture);
 		});
 	}

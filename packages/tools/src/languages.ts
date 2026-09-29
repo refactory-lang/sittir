@@ -13,13 +13,10 @@ export interface LanguageApis {
 	readonly typescript: TypescriptAPI;
 }
 
-type ApiOf<G extends string> = { readonly [K in keyof LanguageApis]: [G] extends [K] ? LanguageApis[K] : never }[keyof LanguageApis];
-
-export type LanguageOf<G extends string> = [ApiOf<G>] extends [never] ? Language<LanguageAPI> : Language<ApiOf<G>>;
-
-export async function languageByName<G extends string>(name: G): Promise<LanguageOf<G>> {
-	const mod = (await import(`@sittir/${name}`)) as { readonly default?: LanguageOf<G> };
+export function languageByName<G extends keyof LanguageApis>(name: G): Promise<Language<LanguageApis[G]>>;
+export function languageByName(name: string): Promise<Language<LanguageAPI>>;
+export async function languageByName(name: string): Promise<Language<LanguageAPI>> {
+	const mod = (await import(`@sittir/${name}`)) as { readonly default?: Language<LanguageAPI> };
 	if (mod.default === undefined) throw new Error(`@sittir/${name} exports no language descriptor`);
 	return mod.default;
 }
-
