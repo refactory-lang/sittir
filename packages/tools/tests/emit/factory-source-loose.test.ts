@@ -6,6 +6,7 @@ import {
 	type LooseFacts,
 	type PrintContext
 } from '../../src/emit/factory-source.ts';
+import { expectPrinted } from './expect-printed.ts';
 
 const ids: Record<string, number> = {
 	function_item: 2,
@@ -122,47 +123,47 @@ const mapFor = (context: PrintContext) => printingFactoryMap(shapes, (k) => ids[
 describe('loose surface printing', () => {
 	const map = mapFor(ctx);
 	it('spells the bundle call, a text leaf bare at a one-pattern slot, and an empty config as a bare call', () => {
-		expect(map.function_item!({ name: map.identifier!('main') }).source).toBe('ir.functionItem({\n\tname: "main",\n})');
-		expect(map.call_expression!({ function: map.identifier!('foo') }).source).toBe(
+		expect(expectPrinted(map.function_item!({ name: map.identifier!('main') })).source).toBe('ir.functionItem({\n\tname: "main",\n})');
+		expect(expectPrinted(map.call_expression!({ function: map.identifier!('foo') })).source).toBe(
 			'ir.callExpression({\n\tfunction: "foo",\n})'
 		);
-		expect(map.block!({}).source).toBe('ir.block()');
+		expect(expectPrinted(map.block!({})).source).toBe('ir.block()');
 	});
 	it('spells a list envelope as its bare element or array when its options are the declared default, each element loosened at the element slot', () => {
-		expect(map.function_item!({ params: map.arguments!(map.identifier!('x')) }).source).toBe(
+		expect(expectPrinted(map.function_item!({ params: map.arguments!(map.identifier!('x')) })).source).toBe(
 			'ir.functionItem({\n\tparams: "x",\n})'
 		);
-		expect(map.function_item!({ params: map.arguments!({ delimiter: 7 }, map.identifier!('x')) }).source).toBe(
+		expect(expectPrinted(map.function_item!({ params: map.arguments!({ delimiter: 7 }, map.identifier!('x')) })).source).toBe(
 			'ir.functionItem({\n\tparams: "x",\n})'
 		);
-		expect(map.function_item!({ params: map.arguments!(map.identifier!('x'), map.identifier!('y')) }).source).toBe(
+		expect(expectPrinted(map.function_item!({ params: map.arguments!(map.identifier!('x'), map.identifier!('y')) })).source).toBe(
 			'ir.functionItem({\n\tparams: ["x", "y"],\n})'
 		);
-		expect(map.function_item!({ params: map.arguments!({ delimiter: 8 }, map.identifier!('x')) }).source).toBe(
+		expect(expectPrinted(map.function_item!({ params: map.arguments!({ delimiter: 8 }, map.identifier!('x')) })).source).toBe(
 			'ir.functionItem({\n\tparams: ir.arguments({ delimiter: Delimiter.Trailing }, "x"),\n})'
 		);
 	});
 	it('spells the declared default list bare at a two-list slot and names the other', () => {
-		expect(map.choice!({ value: map.arguments!(map.identifier!('x')) }).source).toBe('ir.choice({\n\tvalue: "x",\n})');
-		expect(map.choice!({ value: map.elements!(map.identifier!('x')) }).source).toBe(
+		expect(expectPrinted(map.choice!({ value: map.arguments!(map.identifier!('x')) })).source).toBe('ir.choice({\n\tvalue: "x",\n})');
+		expect(expectPrinted(map.choice!({ value: map.elements!(map.identifier!('x')) })).source).toBe(
 			'ir.choice({\n\tvalue: ir.elements("x"),\n})'
 		);
 	});
 	it('drops a single-slot wrapper the slot alone admits, down to the bare text it holds', () => {
-		expect(map.holder!({ item: map.wrapper!(map.identifier!('x')) }).source).toBe('ir.holder({\n\titem: "x",\n})');
-		expect(map.block!({ statements: [map.wrapper!(map.identifier!('x'))] }).source).toBe(
+		expect(expectPrinted(map.holder!({ item: map.wrapper!(map.identifier!('x')) })).source).toBe('ir.holder({\n\titem: "x",\n})');
+		expect(expectPrinted(map.block!({ statements: [map.wrapper!(map.identifier!('x'))] })).source).toBe(
 			'ir.block({\n\tstatements: [ir.identifier("x")],\n})'
 		);
 	});
 	it('keeps a wrapper two arms would claim, loosening only its interior', () => {
-		expect(map.pair!({ item: map.wrapper!(map.identifier!('x')) }).source).toBe(
+		expect(expectPrinted(map.pair!({ item: map.wrapper!(map.identifier!('x')) })).source).toBe(
 			'ir.pair({\n\titem: ir.wrapper("x"),\n})'
 		);
 	});
 	it('keeps the call of a node that carries trivia', () => {
 		const leaf = map.identifier!('main') as Printed;
 		leaf.$_trivia = { leading: [new Printed(3, 'ir.lineComment(" a")', 'line_comment')] } as never;
-		expect(map.function_item!({ name: leaf }).source).toBe(
+		expect(expectPrinted(map.function_item!({ name: leaf })).source).toBe(
 			'ir.functionItem({\n\tname: ir.identifier("main").$trivia.leading(ir.lineComment(" a")),\n})'
 		);
 	});
@@ -176,33 +177,35 @@ describe('loose surface printing', () => {
 				kindIdOfName: (k) => (k === 'alias' ? 3 : ids[k])
 			}
 		});
-		expect(aliased.holder!({ item: map.wrapper!(map.identifier!('x')) }).source).toBe(
+		expect(expectPrinted(aliased.holder!({ item: map.wrapper!(map.identifier!('x')) })).source).toBe(
 			'ir.holder({\n\titem: ir.wrapper("x"),\n})'
 		);
 	});
 	it('drops a wrapper around a kind-id leaf when the wrapper alone takes it, and keeps it beside an enum the slot admits', () => {
-		expect(map.holder!({ item: map.wrapper!(4) }).source).toBe('ir.holder({\n\titem: engine.kinds.Comma,\n})');
-		expect(map.sized!({ item: map.wrapper!(4) }).source).toBe('ir.sized({\n\titem: ir.wrapper(engine.kinds.Comma),\n})');
+		expect(expectPrinted(map.holder!({ item: map.wrapper!(4) })).source).toBe('ir.holder({\n\titem: engine.kinds.Comma,\n})');
+		expect(expectPrinted(map.sized!({ item: map.wrapper!(4) })).source).toBe('ir.sized({\n\titem: ir.wrapper(engine.kinds.Comma),\n})');
 	});
 	it("loosens the elements of a bare array against the list's element slot", () => {
-		expect(map.holder2!({ args: map.args!({ expression: map.identifier!('x') }) }).source).toBe(
+		expect(expectPrinted(map.holder2!({ args: map.args!({ expression: map.identifier!('x') }) })).source).toBe(
 			'ir.holder2({\n\targs: "x",\n})'
 		);
 		expect(
-			map.holder2!({
-				args: map.args!({ expression: map.identifier!('x') }, { expression: map.identifier!('y') })
-			}).source
+			expectPrinted(
+				map.holder2!({
+					args: map.args!({ expression: map.identifier!('x') }, { expression: map.identifier!('y') })
+				})
+			).source
 		).toBe('ir.holder2({\n\targs: ["x", "y"],\n})');
 	});
 	it("loosens the slots of a seat config that sets more than its required slot", () => {
 		expect(
-			map.holder2!({ args: map.args!({ attrs: map.identifier!('a'), expression: map.identifier!('x') }) }).source
+			expectPrinted(map.holder2!({ args: map.args!({ attrs: map.identifier!('a'), expression: map.identifier!('x') }) })).source
 		).toBe('ir.holder2({\n\targs: [{\n\t\tattrs: "a",\n\t\texpression: "x",\n\t}],\n})');
 	});
 	it("tests a text under a transparent wrapper against the wrapper's content slot before the transitive set", () => {
 		// `field_identifier` collides with `identifier` transitively, but the
 		// content slot admits `identifier` alone, which is where the runtime resolves.
-		expect(map.holder2!({ args: map.args!({ delimiter: 8 }, { expression: map.identifier!('x') }) }).source).toBe(
+		expect(expectPrinted(map.holder2!({ args: map.args!({ delimiter: 8 }, { expression: map.identifier!('x') }) })).source).toBe(
 			'ir.holder2({\n\targs: ir.args({ delimiter: Delimiter.Trailing }, "x"),\n})'
 		);
 	});
@@ -211,10 +214,10 @@ describe('loose surface printing', () => {
 			...ctx,
 			seats: { function_item: { params: { arguments: { kind: 'arguments', shape: 'tuple' } } } }
 		});
-		expect(seated.function_item!({ params: [{ delimiter: 7 }, map.identifier!('x')] }).source).toBe(
+		expect(expectPrinted(seated.function_item!({ params: [{ delimiter: 7 }, map.identifier!('x')] })).source).toBe(
 			'ir.functionItem({\n\tparams: [ir.identifier("x")],\n})'
 		);
-		expect(seated.function_item!({ params: [{ delimiter: 8 }, map.identifier!('x')] }).source).toBe(
+		expect(expectPrinted(seated.function_item!({ params: [{ delimiter: 8 }, map.identifier!('x')] })).source).toBe(
 			'ir.functionItem({\n\tparams: [{ delimiter: Delimiter.Trailing }, ir.identifier("x")],\n})'
 		);
 	});
@@ -224,14 +227,14 @@ describe('loose surface printing', () => {
 			seats: { arguments: { '*': { holder: { kind: 'holder', shape: 'elements' } } } },
 			loose: { ...loose, slotRequired: { holder: { item: true } } }
 		});
-		expect(seated.arguments!({ item: map.identifier!('x') }).source).toBe('ir.arguments(ir.identifier("x"))');
-		expect(seated.arguments!({ item: map.identifier!('x'), other: true }).source).toBe(
+		expect(expectPrinted(seated.arguments!({ item: map.identifier!('x') })).source).toBe('ir.arguments(ir.identifier("x"))');
+		expect(expectPrinted(seated.arguments!({ item: map.identifier!('x'), other: true })).source).toBe(
 			'ir.arguments({\n\titem: ir.identifier("x"),\n\tother: true,\n})'
 		);
 	});
 	it("spells an absorbed spread child as the loose wrapper's array argument", () => {
 		const absorbing = mapFor({ ...ctx, absorbedKinds: new Set(['elements']) });
-		expect(absorbing.wrapper!(absorbing.elements!(map.identifier!('x'), map.identifier!('y'))).source).toBe(
+		expect(expectPrinted(absorbing.wrapper!(absorbing.elements!(map.identifier!('x'), map.identifier!('y')))).source).toBe(
 			'ir.wrapper(["x", "y"])'
 		);
 	});
@@ -245,16 +248,16 @@ describe('loose surface printing', () => {
 describe('loose surface printing with nested configs', () => {
 	const map = mapFor({ ...ctx, loose: { ...loose, nested: 'configs' } });
 	it('prints a nested compound as a keyless config at a one-kind slot and a keyed one elsewhere', () => {
-		expect(map.function_item!({ body: map.block!({ statements: [map.identifier!('x')] }) }).source).toBe(
+		expect(expectPrinted(map.function_item!({ body: map.block!({ statements: [map.identifier!('x')] }) })).source).toBe(
 			'ir.functionItem({\n\tbody: {\n\t\tstatements: [ir.identifier("x")],\n\t},\n})'
 		);
 		// One branch kind beside a leaf kind still names the config's kind on its own.
-		expect(map.call_expression!({ function: map.call_expression!({ function: map.identifier!('f') }) }).source).toBe(
+		expect(expectPrinted(map.call_expression!({ function: map.call_expression!({ function: map.identifier!('f') }) })).source).toBe(
 			'ir.callExpression({\n\tfunction: {\n\t\tfunction: "f",\n\t},\n})'
 		);
-		expect(map.block!({ statements: [map.call_expression!({ function: map.identifier!('f') })] }).source).toBe(
+		expect(expectPrinted(map.block!({ statements: [map.call_expression!({ function: map.identifier!('f') })] })).source).toBe(
 			'ir.block({\n\tstatements: [{\n\t\tkind: engine.kinds.CallExpression,\n\t\tfunction: "f",\n\t}],\n})'
 		);
-		expect(map.function_item!({ body: map.block!({}) }).source).toBe('ir.functionItem({\n\tbody: {},\n})');
+		expect(expectPrinted(map.function_item!({ body: map.block!({}) })).source).toBe('ir.functionItem({\n\tbody: {},\n})');
 	});
 });

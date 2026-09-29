@@ -4,6 +4,7 @@ import {
 	type FactoryDispatchOpts,
 	type IrEntry,
 	type IrSurface,
+	type ReadNodeLike,
 	type Seat,
 	type SeatTable
 } from '../validate/common.ts';
@@ -74,13 +75,6 @@ export class Printed {
 	) {}
 }
 
-export interface ReadNodeLike {
-	readonly $type?: string | number;
-	readonly $text?: string;
-	readonly $span?: { readonly start: number; readonly end: number };
-	readonly $nodeHandle?: number;
-	readonly $_trivia?: ReadTrivia;
-}
 
 const INDENT = '\t';
 

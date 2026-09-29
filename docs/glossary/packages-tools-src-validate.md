@@ -1168,6 +1168,10 @@ and is read with `readFileSync` on the path.
 	 * hoisted child is projected by its seat instead of built on its own. */
 ```
 
+### `packages/tools/src/validate/common.ts::ReadNodeLike`
+
+The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$text`, `$span`, `$nodeHandle`, `$childIndex`, `$named`), its unnamed children under `$other`, and its `$_trivia`. It is the one read-node type in tools; the exercise roundtrip and the factory-source printer import it rather than declaring narrower copies.
+
 ### `packages/tools/src/validate/common.ts::ReadNodeLike.$type`
 
 ```text

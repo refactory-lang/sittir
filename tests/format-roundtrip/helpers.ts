@@ -2,12 +2,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readTreeNode as readPythonTreeNode } from '../../packages/python/src/wrap.ts';
-import { readTreeNode as readRustTreeNode } from '../../packages/rust/src/wrap.ts';
-import { readTreeNode as readTypeScriptTreeNode } from '../../packages/typescript/src/wrap.ts';
 import type { FormatRecord } from '@sittir/types';
-
-import { loadLanguageForGrammar, loadKindIdFromName, treeHandle } from '../../packages/tools/src/validate/common.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, '../..');
@@ -15,12 +10,6 @@ const FIXTURES_DIR = resolve(repoRoot, 'tests/format-roundtrip/fixtures');
 const CORPUS_PATH = resolve(repoRoot, 'tests/format-roundtrip/format-corpus.json');
 
 type Grammar = 'python' | 'rust' | 'typescript';
-
-const READ_TREE_NODE = {
-	python: readPythonTreeNode,
-	rust: readRustTreeNode,
-	typescript: readTypeScriptTreeNode
-} as const;
 
 const NATIVE_ENGINE_PATH_BY_GRAMMAR = {
 	python: 'rust/crates/sittir-python',
@@ -30,11 +19,7 @@ const NATIVE_ENGINE_PATH_BY_GRAMMAR = {
 
 export type NativeEngine = {
 	parseAndRead(src: string): string;
-	/** ADR-0017: readNode takes (handle, childIndex) instead of single nodeId. */
 	readNode(handle: number, childIndex: number): string;
-	// Phase B: render accepts a JS object directly (napi-native AnyTransport
-	// decoded from the object). The old string-JSON path has been removed.
-	render(transport: object): string;
 	dispose(): void;
 };
 
@@ -43,13 +28,6 @@ export type FormatCorpusEntry = {
 	fixture: string;
 	formatCategory: string;
 	expectedBackendCoverage: string;
-};
-
-export type RenderFixture = {
-	grammar: Grammar;
-	input: object;
-	expectedOutput: string;
-	kind: 'render';
 };
 
 export function loadFormatCorpusEntries(grammar: Grammar): FormatCorpusEntry[] {
@@ -64,29 +42,17 @@ export function loadFixtureSource(fixture: string): string {
 	return readFileSync(resolve(FIXTURES_DIR, fixture), 'utf-8');
 }
 
-export function tryLoadNativeEngine(grammar: Grammar, format?: FormatRecord): NativeEngine | null {
+export function tryLoadNativeEngine(grammar: Grammar): NativeEngine | null {
 	try {
 		const req = createRequire(import.meta.url);
 		const mod = req(resolve(repoRoot, NATIVE_ENGINE_PATH_BY_GRAMMAR[grammar])) as {
-			SittirEngine: new (options?: { format?: string }) => NativeEngine;
+			SittirEngine: new () => NativeEngine;
 		};
 
-		return new mod.SittirEngine(format ? { format: JSON.stringify(format) } : undefined);
+		return new mod.SittirEngine();
 	} catch {
 		return null;
 	}
-}
-
-export async function parseTsFixture(grammar: Grammar, source: string): Promise<object> {
-	const { Parser, lang } = await loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
-	const tree = parser.parse(source);
-	if (!tree) {
-		throw new Error(`failed to parse ${grammar} fixture source`);
-	}
-	const kindIdFromName = await loadKindIdFromName(grammar);
-	return READ_TREE_NODE[grammar](treeHandle(tree, source, kindIdFromName ?? undefined));
 }
 
 export function parseNativeFixture(engine: NativeEngine, source: string): { nodeData: object; format?: FormatRecord } {
@@ -96,102 +62,15 @@ export function parseNativeFixture(engine: NativeEngine, source: string): { node
 	};
 }
 
-type BoundaryNodeValue =
-	| null
-	| boolean
-	| number
-	| string
-	| BoundaryNodeValue[]
-	| {
-			[key: string]: BoundaryNodeValue;
-	  };
-
-function cloneJsonValue<T extends BoundaryNodeValue>(value: T): T {
-	return JSON.parse(JSON.stringify(value)) as T;
-}
-
-function normalizeBoundaryValue(value: unknown): BoundaryNodeValue {
-	if (value === null) return null;
-	if (typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {
-		return value;
+export function diffPositions(a: string, b: string): { start: number; end: number } | null {
+	let start = 0;
+	while (start < Math.min(a.length, b.length) && a[start] === b[start]) start++;
+	if (start === Math.min(a.length, b.length) && a.length === b.length) return null;
+	let endA = a.length - 1,
+		endB = b.length - 1;
+	while (endA > start && endB > start && a[endA] === b[endB]) {
+		endA--;
+		endB--;
 	}
-	if (Array.isArray(value)) {
-		return value.map((item) => normalizeBoundaryValue(item)) as BoundaryNodeValue;
-	}
-	if (typeof value !== 'object') {
-		throw new TypeError(`Unsupported boundary value: ${typeof value}`);
-	}
-	return toBoundaryNodeData(value) as BoundaryNodeValue;
-}
-
-export function toBoundaryNodeData(nodeData: unknown): object {
-	if (!nodeData || typeof nodeData !== 'object') {
-		throw new TypeError('toBoundaryNodeData expects a NodeData object');
-	}
-
-	const node = nodeData as Record<string, unknown>;
-	const SOURCE_MAP: Record<string, number> = { ts: 0, sg: 1, factory: 2 };
-	const boundary: Record<string, BoundaryNodeValue> = {};
-	for (const [key, value] of Object.entries(node)) {
-		if (typeof value === 'function') continue;
-		if (key === '$source') {
-			boundary.$source = typeof value === 'string' ? (SOURCE_MAP[value] ?? 0) : ((value ?? 0) as number);
-			continue;
-		}
-		if (key === '$span' && value && typeof value === 'object') {
-			boundary.$span = cloneJsonValue(value as BoundaryNodeValue);
-			continue;
-		}
-		if (key === '$type') {
-			boundary.$type = typeof value === 'number' ? value : String(value);
-			continue;
-		}
-		boundary[key] = normalizeBoundaryValue(value);
-	}
-	return boundary;
-}
-
-/**
- * Make a NodeData safe to hand to the napi `#[napi(object)]` structs.
- *
- * The reader's shape is already the transport's — named slots under
- * `_<slot>`, unnamed children under `$other` — so nothing is restructured
- * here. What this does is settle representation:
- *
- * - `$source` becomes numeric (0/1/2) for the napi `Source` enum, since a
- *   fixture may spell it `'ts'` / `'sg'` / `'factory'`.
- * - `$type` stays a number where it is one, and a string otherwise.
- * - Functions are dropped and the rest is deep-cloned, so what crosses is
- *   plain JSON-shaped data.
- */
-function toNativeTransport(obj: unknown): unknown {
-	return normalizeBoundaryValue(obj);
-}
-
-export function renderNativeNodeData(engine: NativeEngine, nodeData: object): string {
-	// Native render accepts the generator-owned shape directly; normalize only
-	// JSON-compatible values and numeric $source for test fixtures.
-	return engine.render(toNativeTransport(nodeData) as object);
-}
-
-export function loadRenderFixtures(grammar: Grammar): RenderFixture[] {
-	const fixturesPath = resolve(repoRoot, 'rust', 'crates', `sittir-${grammar}`, 'test-fixtures.json');
-	const fixtures = JSON.parse(readFileSync(fixturesPath, 'utf-8')) as Array<RenderFixture | { kind: 'roundtrip' }>;
-
-	return fixtures.filter((fixture): fixture is RenderFixture => fixture.kind === 'render');
-}
-
-export function pickRenderFixture(grammar: Grammar, preferredKinds: string[]): RenderFixture {
-	const fixtures = loadRenderFixtures(grammar);
-
-	for (const kind of preferredKinds) {
-		const match = fixtures.find((fixture) => {
-			const input = fixture.input as { $type?: string };
-			return input.$type === kind;
-		});
-
-		if (match) return match;
-	}
-
-	return fixtures[0];
+	return { start, end: Math.max(endA, endB) };
 }

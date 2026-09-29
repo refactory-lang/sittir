@@ -1,5 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import { languageApiName } from './engine.ts';
+import { languageApiName } from '../grammars.ts';
 
 export interface EmitIndexConfig {
 	grammar: string;

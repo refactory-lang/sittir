@@ -48,6 +48,8 @@
 		{ "path": "./packages/rust/tsconfig.build.json" },
 		{ "path": "./packages/typescript/tsconfig.build.json" },
 		{ "path": "./packages/python/tsconfig.build.json" },
+		{ "path": "./packages/regex/tsconfig.build.json" },
+		{ "path": "./packages/scm/tsconfig.build.json" },
 		{ "path": "./packages/tools/tsconfig.build.json" },
 		{ "path": "./packages/cli/tsconfig.build.json" }
 	]

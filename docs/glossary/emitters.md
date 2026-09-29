@@ -133,13 +133,9 @@ read the third pass's rules.
 
 The grammar's `render-engine.ts`: `createRenderEngine`, generic in the indent unit `I` it is given (`const I extends string`), so a literal `indent` in its options is checked whole against the grammar's `IndentChar` (`IndentOption`). The engine it returns is a `SittirEngine<Root, Options, IndentChar>`, whose `render` checks a per-call unit the same way.
 
-### `packages/codegen/src/emitters/engine.ts::languageApiName`
-
-The name of a grammar's language API type, `<Prefix>API` (`RustAPI`, `TypescriptAPI`), from the same type prefix as the grammar's node union (`RustNode`).
-
 ### `packages/codegen/src/emitters/engine.ts::grammarTypeMapName`
 
-The name of a grammar's type map, `<Prefix>TypeMap` (`RustTypeMap`), from the same type prefix as `languageApiName`. `types.ts` declares it and `utils.ts` binds the runtime to it.
+The name of a grammar's type map, `<Prefix>TypeMap` (`RustTypeMap`), from the same type prefix as `grammars.ts::languageApiName`. `types.ts` declares it and `utils.ts` binds the runtime to it.
 
 ### `packages/codegen/src/emitters/engine.ts::emitApi`
 

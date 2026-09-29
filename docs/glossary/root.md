@@ -792,6 +792,10 @@ Vite/vitest aliases mapping each workspace package's `exports` entries (`@sittir
 
 The prefix generated TypeScript type names take from a grammar's name: its first letter capitalized (`rust` → `Rust`, `typescript` → `Typescript`), as in `RustNode`, `RustAPI` and the upstream tree-sitter config's `camelcase`. Unlike `grammarDisplayName` it reads no manifest, so every type name stays stable whatever display name a package declares.
 
+### `packages/codegen/src/grammars.ts::languageApiName`
+
+The name of a grammar's language API type, `<Prefix>API` (`RustAPI`, `TypescriptAPI`), from the same type prefix as the grammar's node union (`RustNode`). The engine and index emitters declare and export it under this name; bootstrap's `LanguageApis` entry imports it by the same name.
+
 ### `packages/codegen/src/grammars.ts::grammarDisplayName`
 
 The grammar's display name, used where a generated artifact names the grammar in a type or prose (the native crate's `<Name>Grammar`): the package's declared `sittir.displayName` (`typescript` → `TypeScript`), else PascalCase derived from the name (`scm` → `Scm`, `my_lang` → `MyLang`). A package that does not exist yet, as during bootstrap, takes the derived form.

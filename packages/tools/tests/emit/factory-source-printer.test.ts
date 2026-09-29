@@ -7,6 +7,7 @@ import {
 	printFactorySource,
 	type PrintContext
 } from '../../src/emit/factory-source.ts';
+import { expectPrinted } from './expect-printed.ts';
 
 const ctx: PrintContext = {
 	grammar: 'test',
@@ -39,7 +40,7 @@ describe('printValue', () => {
 			ctx
 		);
 		const printed = map.function_item!({ name: map.identifier!('main'), body: undefined });
-		expect(printed.source).toBe('ir.functionItem.strict({\n\tname: ir.identifier("main"),\n})');
+		expect(expectPrinted(printed).source).toBe('ir.functionItem.strict({\n\tname: ir.identifier("main"),\n})');
 	});
 	it('prints direct, spread and elements shapes', () => {
 		const map = printingFactoryMap(
@@ -47,14 +48,14 @@ describe('printValue', () => {
 			(k) => ({ wrapper: 9, bag: 10, arguments: 5, identifier: 3 })[k],
 			ctx
 		);
-		expect(map.wrapper!(map.identifier!('x')).source).toBe('ir.wrapper.strict(ir.identifier("x"))');
-		expect(map.bag!(map.identifier!('x'), map.identifier!('y')).source).toBe(
+		expect(expectPrinted(map.wrapper!(map.identifier!('x'))).source).toBe('ir.wrapper.strict(ir.identifier("x"))');
+		expect(expectPrinted(map.bag!(map.identifier!('x'), map.identifier!('y'))).source).toBe(
 			'ir.bag.strict(ir.identifier("x"), ir.identifier("y"))'
 		);
-		expect(map.arguments!({ delimiter: 8 }, map.identifier!('x')).source).toBe(
+		expect(expectPrinted(map.arguments!({ delimiter: 8 }, map.identifier!('x'))).source).toBe(
 			'ir.arguments.strict({ delimiter: Delimiter.Trailing }, ir.identifier("x"))'
 		);
-		expect(map.arguments!(map.identifier!('x')).source).toBe('ir.arguments.strict(ir.identifier("x"))');
+		expect(expectPrinted(map.arguments!(map.identifier!('x'))).source).toBe('ir.arguments.strict(ir.identifier("x"))');
 	});
 	it('prints a mounted form with its given arguments and no trailing undefined', () => {
 		const map = printingFactoryMap(

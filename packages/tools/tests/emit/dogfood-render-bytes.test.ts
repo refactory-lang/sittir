@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { AnyNodeData } from '@sittir/types';
+import type { TypescriptAPI } from '@sittir/typescript';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine } from '@sittir/common';
@@ -9,11 +10,18 @@ import { languageByName } from '../../src/languages.ts';
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 
 describe('dogfood rebuild render bytes', () => {
-	for (const { grammar, file, exportName, rendered: fixture, renderOptions } of DOGFOOD_REBUILDS) {
+	for (const target of DOGFOOD_REBUILDS) {
+		const { grammar, file, exportName, rendered: fixture } = target;
 		it(`${grammar}: ${exportName} renders the committed fixture byte-for-byte`, async () => {
 			const mod = (await import(pathToFileURL(ROOT + file).href)) as Record<string, () => unknown>;
-			const engine = await createEngine(await languageByName(grammar), { render: renderOptions });
-			const rendered = engine.render(mod[exportName]!() as AnyNodeData).toString();
+			const node = mod[exportName]!();
+			const anyGrammar: string = grammar;
+			const rendered =
+				target.grammar === 'typescript' && target.renderOptions !== undefined
+					? (await createEngine(await languageByName('typescript'), { render: target.renderOptions }))
+							.render(node as TypescriptAPI['node'])
+							.toString()
+					: (await createEngine(await languageByName(anyGrammar))).render(node as AnyNodeData).toString();
 			await expect(rendered).toMatchFileSnapshot(ROOT + 'packages/tools/tests/emit/__fixtures__/' + fixture);
 		});
 	}

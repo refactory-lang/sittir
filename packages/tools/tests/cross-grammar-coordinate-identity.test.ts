@@ -14,6 +14,7 @@ describe('a coordinate names its tree across grammars', () => {
 		typescript.parse('let decoy = 1;\n');
 		const rust = await createEngine(await languageByName('rust'));
 		const item = (rust.parse('fn real() {}\n') as unknown as { statements(): AnyNodeData[] }).statements()[0]!;
+		// @ts-expect-error a rust node is not a typescript node; the engine refuses it at runtime as well
 		expect(() => typescript.render(item).toString()).toThrow(/names tree \d+, which this engine does not hold/);
 	});
 

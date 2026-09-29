@@ -1,27 +1,24 @@
-import type { GrammarName } from '@sittir/codegen/grammars';
-import type { Options as TypescriptOptions } from '@sittir/typescript';
+import type { LanguageApis } from '../languages.ts';
 
 export type DogfoodSurface = 'strict' | 'loose';
 
-interface GrammarRenderOptions {
-	readonly typescript: TypescriptOptions;
-}
-
-export interface DogfoodTarget {
-	readonly grammar: GrammarName;
+interface DogfoodTargetOf<G extends keyof LanguageApis> {
+	readonly grammar: G;
 	readonly source: string;
 	readonly stem: string;
 	readonly name: string;
 	readonly surfaces: readonly DogfoodSurface[];
 	readonly rendered: string;
-	readonly renderOptions?: GrammarRenderOptions[keyof GrammarRenderOptions];
+	readonly renderOptions?: LanguageApis[G]['options'];
 }
 
-export interface DogfoodRebuild extends Omit<DogfoodTarget, 'surfaces'> {
-	readonly surface: DogfoodSurface;
-	readonly exportName: string;
-	readonly file: string;
-}
+export type DogfoodTarget = { readonly [G in keyof LanguageApis]: DogfoodTargetOf<G> }[keyof LanguageApis];
+
+export type DogfoodRebuild = DogfoodTarget extends infer T
+	? T extends DogfoodTarget
+		? Omit<T, 'surfaces'> & { readonly surface: DogfoodSurface; readonly exportName: string; readonly file: string }
+		: never
+	: never;
 
 export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 	{

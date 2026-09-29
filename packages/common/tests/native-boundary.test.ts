@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type { AnyNodeData } from '@sittir/types';
 import { assertRenderableNodeData } from '../src/native-boundary.ts';
 
 describe('native boundary', () => {
@@ -10,7 +11,7 @@ describe('native boundary', () => {
 				$named: true,
 				_kind: 16,
 				$text: 'const'
-			})
+			} as AnyNodeData)
 		).not.toThrow();
 	});
 
@@ -21,7 +22,7 @@ describe('native boundary', () => {
 				$source: 0,
 				$named: true,
 				_optional_marker: true
-			})
+			} as AnyNodeData)
 		).not.toThrow();
 	});
 });

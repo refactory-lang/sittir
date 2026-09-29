@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { allGrammars } from '@sittir/codegen/grammars';
-import { languageByName } from '../src/languages.ts';
+import { languageByName, type LanguageApis } from '../src/languages.ts';
 
 describe('languageByName', () => {
 	for (const grammar of allGrammars()) {
@@ -11,6 +11,11 @@ describe('languageByName', () => {
 			expect(hooks.name).toBe(grammar);
 		});
 	}
+
+	it('types exactly the grammars on disk', () => {
+		const typed: Record<keyof LanguageApis, true> = { python: true, regex: true, rust: true, scm: true, typescript: true };
+		expect(Object.keys(typed).sort()).toEqual([...allGrammars()].sort());
+	});
 
 	it('refuses a name with no grammar package', async () => {
 		await expect(languageByName('not-a-grammar')).rejects.toThrow();

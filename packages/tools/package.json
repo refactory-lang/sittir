@@ -28,6 +28,10 @@
 		"@ast-grep/wasm": "^0.42.1",
 		"@sittir/codegen": "workspace:*",
 		"@sittir/common": "workspace:*",
+		"@sittir/python": "workspace:*",
+		"@sittir/regex": "workspace:*",
+		"@sittir/rust": "workspace:*",
+		"@sittir/scm": "workspace:*",
 		"@sittir/types": "workspace:*",
 		"@sittir/typescript": "workspace:*"
 	},

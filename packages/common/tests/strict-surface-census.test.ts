@@ -25,9 +25,9 @@ function strictLessCallablesWithStrictMembers(table: object): string[] {
 		seen.add(value);
 		const members = Object.getOwnPropertyNames(value).filter((key) => !(typeof value === 'function' && FUNCTION_OWN.has(key)) && !FLAVOURS.has(key));
 		if (typeof value === 'function' && !hasStrict(value)) {
-			for (const key of members) if (hasStrict((value as Record<string, unknown>)[key])) found.push(`${path}.${key}`);
+			for (const key of members) if (hasStrict((value as unknown as Record<string, unknown>)[key])) found.push(`${path}.${key}`);
 		}
-		for (const key of members) walk((value as Record<string, unknown>)[key], `${path}.${key}`);
+		for (const key of members) walk((value as unknown as Record<string, unknown>)[key], `${path}.${key}`);
 	};
 	walk(table, 'ir');
 	return found;

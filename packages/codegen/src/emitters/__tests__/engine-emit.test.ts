@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { emitApi, emitRenderEngine, languageApiName } from '../engine.ts';
+import { emitApi, emitRenderEngine } from '../engine.ts';
+import { languageApiName } from '../../grammars.ts';
 import { emitIndex } from '../index-file.ts';
 
 describe('emitRenderEngine', () => {

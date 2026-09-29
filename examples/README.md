@@ -11,17 +11,11 @@ The directory currently serves **two roles**:
    available today and are included by `pnpm run type-check:examples`.
 2. **Pending target-surface examples** — these describe APIs the guide still
    wants to land, but which are not yet wired or shipped. Today that includes
-   `template(...)`, `snippets.*`, and `engine.findAndRead(...)`.
+   `template(...)`, `snippets.*`, and `engine.findAndRead(...)`. Examples that
+   depend on pattern search or templates alone are not kept here.
 
-Current compile-checked examples:
-
-- `01-construct-nodes.ts`
-- `02-render-round-trip.ts`
-- `07-read-source.ts`
-- `09-type-guards.ts`
-- `17-dogfood-rust-strict.ts`
-- `18-dogfood-typescript-strict.ts`
-- `19-dogfood-python-strict.ts`
+The compile-checked examples are the files `tsconfig.json` includes; the
+generated rebuilds are the files `tsconfig.generated.json` includes.
 
 | File | Guide section |
 | ---- | ------------- |
@@ -30,19 +24,15 @@ Current compile-checked examples:
 | `03-trivia.ts` | Attach comments with `.$trivia()` *(pending wrapper ergonomics refresh)* |
 | `04-precompiled-templates.ts` | Construction templates — pre-compiled *(pending `snippets.*`)* |
 | `05-inline-templates.ts` | Construction templates — inline *(pending `template(...)`)* |
-| `06-composition.ts` | Composition *(pending template/snippet-free rewrite)* |
 | `07-read-source.ts` | Read source into NodeData |
-| `08-find-patterns.ts` | Find nodes by pattern *(pending `engine.findAndRead(...)`)* |
 | `09-type-guards.ts` | Type guards |
-| `10-codemod-unwrap-to-try.ts` | Complete codemod: find → transform → apply *(pending `engine.findAndRead(...)`)* |
-| `11-codemod-template-wrapper.ts` | Codemod with construction templates *(pending `snippets.*` and `engine.findAndRead(...)`)* |
-| `12-cross-language-migration.ts` | Cross-language migration *(pending Python construction surface refresh)* |
-| `13-bulk-file-processing.ts` | Bulk file processing *(pending `engine.findAndRead(...)`)* |
-| `14-format-preserving-transform.ts` | Format-preserving transforms *(pending `engine.findAndRead(...)`)* |
+| `12-cross-language-migration.ts` | Cross-language migration |
+| `14-format-preserving-transform.ts` | Format-preserving transforms *(parked, not type-checked: the parse → `$with` → `$render` rewrite is blocked by #419, #420, #421, #422)* |
 | `15-generate-file.ts` | Generate a file from scratch *(pending richer Rust generation examples)* |
 | `16-dogfooding.ts` | Dogfooding *(pending template/snippet-free rewrite)* |
 | `17-dogfood-rust-strict.ts` | Dogfooding — rebuild `sittir-core/src/splice.rs` through `.strict` alone |
 | `18-dogfood-typescript-strict.ts` | Dogfooding — rebuild `common/src/format.ts` through `.strict` alone |
 | `19-dogfood-python-strict.ts` | Dogfooding — rebuild `tools/scripts/probe-sweep.py` through `.strict` alone |
 | `<n>-dogfood-<g>.generated.ts`, `<n>-dogfood-<g>-loose.generated.ts` | Dogfooding — the strict and loose rebuilds `pnpm run gen:examples` prints from each target; never hand-edited |
+| `20-keyword-openers-<g>.generated.ts`, `21-list-seat-configs-rust*.generated.ts`, `22-trivia-<g>.generated.ts` | Emitter fixtures (`packages/tools/tests/emit/__fixtures__`) rebuilt by `pnpm run gen:examples`; never hand-edited |
 | `index.ts` | Convenience barrel for all use-case modules |
