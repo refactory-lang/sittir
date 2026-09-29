@@ -1,21 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { existsSync } from 'node:fs';
 import { emitKindIdRust } from '../kind-id-rust.ts';
 import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
-import { evaluate } from '../../compiler/evaluate.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
-import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resolve-grammar.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import type { GrammarName } from '../../grammars.ts';
-import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
+import { evaluatePackage } from '../../compiler/evaluate-package.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 
 async function emittedKindIds(grammar: GrammarName) {
-	const overridesPath = resolveOverridesPath(grammar);
-	const entryPath = existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
-	const raw = await evaluate(entryPath, NO_FILE_TYPES);
+	const raw = await evaluatePackage(grammarPackage(grammar));
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
 	const linked = link(raw, { generatedIdTables });

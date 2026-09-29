@@ -3,8 +3,9 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { evaluate } from '../evaluate.ts';
 import { diagnoseEvaluationStage } from '../stage.ts';
-import { resolveOverridesPath } from '../resolve-grammar.ts';
 import { NO_FILE_TYPES } from '../upstream-file-types.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const fixture = (name: string) => resolve(__dirname, '../../__tests__/fixtures', name);
@@ -21,14 +22,14 @@ describe('evaluation stages', () => {
 	});
 
 	it('the raw stage is the base before enrich, the enriched stage the base after it', async () => {
-		const raw = await evaluate(resolveOverridesPath('typescript'), NO_FILE_TYPES);
+		const raw = await evaluatePackage(grammarPackage('typescript'));
 		const { raw: before, enriched: after } = raw.stages!;
 		expect(before.ruleNames).not.toContain('export_statement_arm5');
 		expect(after.ruleNames).toContain('export_statement_arm5');
 	}, 60_000);
 
 	it('the rule names are every name the base declares, including ones the catalog prunes as unreachable', async () => {
-		const raw = await evaluate(resolveOverridesPath('typescript'), NO_FILE_TYPES);
+		const raw = await evaluatePackage(grammarPackage('typescript'));
 		const evaluation = raw.stages!.enriched;
 		expect(Object.keys(evaluation.grammar.rules)).not.toContain('_reserved_identifier');
 		expect(diagnoseEvaluationStage(evaluation).ruleNames.has('_reserved_identifier')).toBe(true);

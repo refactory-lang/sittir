@@ -1,18 +1,16 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
-import { resolveGrammarJsPath } from '../resolve-grammar.ts';
 import { soleSlotFacts } from '../../emitters/shared.ts';
 import type { NodeMap } from '../types.ts';
-import { NO_FILE_TYPES } from '../upstream-file-types.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 let nodeMap: NodeMap;
 
 beforeAll(async () => {
-	const grammar = resolveGrammarJsPath('rust');
-	const raw = await evaluate(grammar, NO_FILE_TYPES);
+	const raw = await evaluatePackage(grammarPackage('rust'), { base: true });
 	const linked = link(raw);
 	const normalized = normalizeGrammar(linked);
 	nodeMap = assemble(AssembleCtx.from(normalized));

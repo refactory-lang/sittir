@@ -19,7 +19,7 @@
  *   2  --stage and no stages were evaluated
  */
 
-import { invoke, resolveEntryPath, type GeneratedIdTables, type GrammarDiagnostic } from '../codegen-surface.ts';
+import { evaluateGrammar, invoke, type GeneratedIdTables, type GrammarDiagnostic, type RawGrammar } from '../codegen-surface.ts';
 
 export type DiagnosedStage = 'raw' | 'enriched';
 
@@ -30,11 +30,10 @@ export interface GrammarDiagnosticsOptions {
 
 export async function run(opts: GrammarDiagnosticsOptions): Promise<number> {
 	const { grammar, stage } = opts;
-	const entryPath = await resolveEntryPath(grammar);
+	const rawGrammar = await evaluateGrammar(grammar);
 	if (stage === undefined) {
-		return diagnoseEntry(grammar, entryPath, await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
+		return diagnoseEvaluated(grammar, rawGrammar, await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
 	}
-	const rawGrammar = await invoke('evaluate', 'evaluate', entryPath, []);
 	if (rawGrammar.stages === undefined) {
 		process.stderr.write(`${grammar}: no stages were evaluated (the grammar declares no rules: or patches:)\n`);
 		return 2;
@@ -42,8 +41,7 @@ export async function run(opts: GrammarDiagnosticsOptions): Promise<number> {
 	return report(await invoke('stage', 'diagnoseEvaluationStage', rawGrammar.stages[stage]));
 }
 
-export async function diagnoseEntry(grammar: string, entryPath: string, generatedIdTables?: GeneratedIdTables): Promise<number> {
-	const evaluated = await invoke('evaluate', 'evaluate', entryPath, []);
+export async function diagnoseEvaluated(grammar: string, evaluated: RawGrammar, generatedIdTables?: GeneratedIdTables): Promise<number> {
 	const diagnosis = await invoke('compile', 'diagnoseGrammar', { grammar, evaluated, generatedIdTables });
 	process.stdout.write((await invoke('grammarDiagnostics', 'formatGrammarDiagnostics', diagnosis.grammarDiagnostics)) + '\n');
 	if (diagnosis.passed) return 0;

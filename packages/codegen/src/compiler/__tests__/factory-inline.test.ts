@@ -14,7 +14,7 @@ import { emptyBase } from '../../__tests__/helpers/empty-base.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 
-// evaluate(, NO_FILE_TYPES) reads a module from disk, so an inline grammar has to become a
+// evaluate() reads a module from disk, so an inline grammar has to become a
 // real file. The chain below mirrors generate()'s own phase order.
 async function compileGrammarSource(source: string): Promise<AssembledNodeMap> {
 	const dir = mkdtempSync(resolve(tmpdir(), 'sittir-factory-inline-'));

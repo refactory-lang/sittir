@@ -1703,7 +1703,7 @@ vocabularies stay separate: a grammar diagnostic blocks through `canProceed: fal
 
 ### `packages/codegen/src/compiler/compile.ts::compileGrammar`
 
-Evaluates the grammar package's entry (its `grammar.sittir.ts`, or the upstream `grammar.js` when there is none)
+Evaluates the grammar package through `evaluatePackage`
 and gates it through `diagnoseGrammar`, throwing `GrammarDiagnosticError` with the blocked
 records and every record the gate saw when it does not pass. The config names the package, not the grammar, so the
 caller resolves it once. Hydrate then runs on the collected grammar with
@@ -2446,7 +2446,7 @@ The grammar's `rules:` entries with a bare body, sorted.
  */
 ```
 
-It takes the grammar's file types and stamps them on the raw grammar it builds, and on the stages inside it; a caller that builds a grammar outside a package passes none by default.
+It takes the grammar's file types and stamps them on the raw grammar it builds, and on the stages inside it; the argument is required. A grammar that is not a package (a synthetic one) passes `NO_FILE_TYPES`; a package goes through `evaluatePackage`.
 
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateRulesAndInjectSynthetics`
 
@@ -4651,11 +4651,11 @@ Why one group lift cannot apply, or `undefined` when it can. A path the resolver
 
 ### `packages/codegen/src/compiler/upstream-file-types.ts::NO_FILE_TYPES`
 
-The file types of a grammar built outside a grammar package (a test's synthetic grammar, a script that only analyses): none. A grammar package always declares its own through `upstreamFileTypes`.
+The file types of a grammar built outside a grammar package (a test's synthetic grammar or fixture): none. A grammar package always declares its own, through `evaluatePackage`; an analysis of a real package that passed none would build a model that disagrees with the generator's about the language.
 
 ### `packages/codegen/src/compiler/upstream-file-types.ts::upstreamFileTypes`
 
-The file types a grammar declares: the `file-types` of its upstream package's `tree-sitter.json`. The entry is the only one the file has, or, when it has several, the one named as our grammar (typescript's upstream lists typescript, tsx and flow; the union or the first entry would be wrong), and several entries with none named so is refused. An entry that declares no file types, or a null list, gives none (regex), and a list that is not strings, or a package with no `tree-sitter.json`, is refused with the path. It is the one source: the grammar compile passes the result to `evaluate`, which stamps it on the raw grammar it builds (a grammar built outside a package, as a test's is, declares none through `NO_FILE_TYPES`); it is required on every later phase and on the node map, so a pass that fails to carry it is a type error. And the generated `tree-sitter.json` files read the same function, so extensions are never restated in a grammar file. The generated `tree-sitter.json` is written before the compile runs, so it cannot read the model; both call this function and therefore agree by construction, and a grammar package with no upstream package installed is refused by both.
+The file types a grammar declares: the `file-types` of its upstream package's `tree-sitter.json`. The entry is the only one the file has, or, when it has several, the one named as our grammar (typescript's upstream lists typescript, tsx and flow; the union or the first entry would be wrong), and several entries with none named so is refused. An entry that declares no file types, or a null list, gives none (regex), and a list that is not strings, or a package with no `tree-sitter.json`, is refused with the path. It is the one source: `evaluatePackage` passes the result to `evaluate`, which stamps it on the raw grammar it builds (a grammar built outside a package, as a test's is, declares none through `NO_FILE_TYPES`); it is required on every later phase and on the node map, so a pass that fails to carry it is a type error. And the generated `tree-sitter.json` files read the same function, so extensions are never restated in a grammar file. The generated `tree-sitter.json` is written before the compile runs, so it cannot read the model; both call this function and therefore agree by construction, and a grammar package with no upstream package installed is refused by both.
 
 ### `packages/codegen/src/compiler/resolve-grammar.ts::packageGrammarJsPath`
 
@@ -4664,6 +4664,14 @@ The absolute path of a grammar package's upstream `grammar.js`, resolving the up
 ### `packages/codegen/src/compiler/resolve-grammar.ts::packageEntryPath`
 
 A grammar package's `grammar.sittir.ts` entry: `GRAMMAR_ENTRY` inside the package directory.
+
+### `packages/codegen/src/compiler/resolve-grammar.ts::packageSourceEntry`
+
+The file a grammar package evaluates: its `grammar.sittir.ts` when it exists, else the upstream `grammar.js`; `base` selects the upstream `grammar.js` outright, which is how a tool shows what the upstream grammar says before overrides. Every package evaluation resolves its entry here, so the compile and the analysis tools cannot disagree about which file a package means.
+
+### `packages/codegen/src/compiler/evaluate-package.ts::evaluatePackage`
+
+The single way to evaluate a real grammar package: `evaluate` of `packageSourceEntry` with the package's `upstreamFileTypes` stamped. The compile, every probe and diagnostic tool, and every test that evaluates a package go through it, so a model built for analysis carries the same file types the generator's model does. `evaluate` itself takes the file types as an argument and is called directly only for a grammar that is not a package (a synthetic grammar, which passes `NO_FILE_TYPES`).
 
 ### `packages/codegen/src/compiler/resolve-grammar.ts::resolveGrammarJsPath`
 
@@ -4823,6 +4831,8 @@ A grammar package's `grammar.sittir.ts` entry: `GRAMMAR_ENTRY` inside the packag
  * `computeSimplifiedRules`, so every other field defaults away safely.
  */
 ```
+
+The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for a rules map only, never for a package, so nothing downstream of it reads the language's file types from it.
 
 ### `packages/codegen/src/compiler/simplify.ts::isLeaf`
 

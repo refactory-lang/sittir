@@ -2,11 +2,9 @@ import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 import { FIELD, REPEAT, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { grammarPackage } from '../../grammars.ts';
-import { packageEntryPath } from '../resolve-grammar.ts';
-import { evaluate } from '../evaluate.ts';
 import { evaluateSittirGrammar } from './_sittir-grammar.ts';
 import type { RawGrammar } from '../types.ts';
-import { NO_FILE_TYPES } from '../upstream-file-types.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
 
 const require = createRequire(import.meta.url);
 
@@ -51,7 +49,7 @@ describe('enrich fields a separated list head together with its tail', () => {
 
 	for (const grammar of ['rust', 'typescript', 'python', 'regex', 'scm']) {
 		it(`${grammar}: no list head is fielded apart from its tail`, async () => {
-			const raw = await evaluate(packageEntryPath(grammarPackage(grammar)), NO_FILE_TYPES);
+			const raw = await evaluatePackage(grammarPackage(grammar));
 			expect(headOnlyListFields(raw.rules)).toEqual([]);
 		}, 120_000);
 	}

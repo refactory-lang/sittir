@@ -11,21 +11,19 @@
  */
 
 import { beforeAll, describe, expect, it } from 'vitest';
-import { existsSync } from 'node:fs';
 import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
 import { emitRenderModule } from '../render-module.ts';
 import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
 import { seamRenderRules, spaceRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import type { AssembledNonterminal } from '../../compiler/model/node-map.ts';
-import { evaluate } from '../../compiler/evaluate.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
-import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resolve-grammar.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
-import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
+import { evaluatePackage } from '../../compiler/evaluate-package.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 
 // ---------------------------------------------------------------------------
@@ -127,11 +125,7 @@ let _rustKindEntries: ReturnType<typeof collectKindEntries> | undefined;
 let _rustOptionsRs: string | undefined;
 
 async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise<string> {
-	const grammarJsPath = resolveGrammarJsPath(grammar);
-	const overridesPath = resolveOverridesPath(grammar);
-	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
-
-	const raw = await evaluate(entryPath, NO_FILE_TYPES);
+	const raw = await evaluatePackage(grammarPackage(grammar));
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
 	const linked = link(raw, { generatedIdTables });

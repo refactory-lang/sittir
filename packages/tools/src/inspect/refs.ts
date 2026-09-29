@@ -18,12 +18,10 @@
  *   --limit        max entries per section in suggestions mode (default: 10)
  */
 
-import { existsSync } from 'node:fs';
-
 // Codegen phases/loaders + their real types come from the shared
 // codegen-surface (typed invoke + import()-type aliases); no local stub
 // types or dynamic-import loader are needed here.
-import { invoke } from '../codegen-surface.ts';
+import { evaluateGrammar, invoke } from '../codegen-surface.ts';
 
 // ---------------------------------------------------------------------------
 // Options
@@ -38,27 +36,11 @@ export interface InspectRefsOptions {
 }
 
 // ---------------------------------------------------------------------------
-// Entry resolution
-// ---------------------------------------------------------------------------
-
-function resolveEntryPath(overridesPath: string, grammarJsPath: string, useBase: boolean): string {
-	if (!useBase && existsSync(overridesPath)) return overridesPath;
-	return grammarJsPath;
-}
-
-// ---------------------------------------------------------------------------
 // Mode: refs
 // ---------------------------------------------------------------------------
 
 async function runRefs(args: InspectRefsOptions): Promise<number> {
-	const entryPath = resolveEntryPath(
-		await invoke('resolveGrammar', 'resolveOverridesPath', args.grammar),
-		await invoke('resolveGrammar', 'resolveGrammarJsPath', args.grammar),
-		args.useBase
-	);
-	process.stdout.write(`entry: ${entryPath}\n`);
-
-	const raw = await invoke('evaluate', 'evaluate', entryPath, []);
+	const raw = await evaluateGrammar(args.grammar, { base: args.useBase });
 	const refs = raw.references.filter((r) => r.to === args.symbol);
 
 	process.stdout.write(`\n${refs.length} references to ${args.symbol}:\n`);
@@ -88,14 +70,7 @@ async function runRefs(args: InspectRefsOptions): Promise<number> {
 // ---------------------------------------------------------------------------
 
 async function runSuggestions(args: InspectRefsOptions): Promise<number> {
-	const entryPath = resolveEntryPath(
-		await invoke('resolveGrammar', 'resolveOverridesPath', args.grammar),
-		await invoke('resolveGrammar', 'resolveGrammarJsPath', args.grammar),
-		args.useBase
-	);
-	process.stdout.write(`entry: ${entryPath}\n`);
-
-	const raw = await invoke('evaluate', 'evaluate', entryPath, []);
+	const raw = await evaluateGrammar(args.grammar, { base: args.useBase });
 	process.stdout.write(`raw.references: ${raw.references.length}\n`);
 
 	const namedRefs = raw.references.filter((r) => r.fieldName !== undefined);

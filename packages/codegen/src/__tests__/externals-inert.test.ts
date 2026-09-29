@@ -1,12 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { evaluate } from '../compiler/evaluate.ts';
-import { resolveOverridesPath } from '../compiler/resolve-grammar.ts';
 import { enrichWhitespace } from '../dsl/whitespace.ts';
 import type { RuleListEntry } from '../dsl/rule-patterns.ts';
 import type { Rule } from '../types/rule.ts';
-import { NO_FILE_TYPES } from '../compiler/upstream-file-types.ts';
+import { evaluatePackage } from '../compiler/evaluate-package.ts';
+import { grammarPackage } from '../grammars.ts';
 
 const SCANNED_CONTROL: Record<string, string> = {
 	rust: 'identifier',
@@ -17,7 +16,7 @@ const SCANNED_CONTROL: Record<string, string> = {
 };
 
 async function mintedExternals(grammar: string): Promise<readonly string[]> {
-	const raw = await evaluate(resolveOverridesPath(grammar), NO_FILE_TYPES);
+	const raw = await evaluatePackage(grammarPackage(grammar));
 	const upstream = raw.stages!.raw.grammar as {
 		externals?: readonly RuleListEntry[];
 		extras?: readonly RuleListEntry[];

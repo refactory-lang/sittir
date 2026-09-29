@@ -283,7 +283,7 @@ describe('Evaluate — edge cases', () => {
 		});
 	});
 
-	describe('coerceToRule — invalid input (private helper, exercised through evaluate(, NO_FILE_TYPES))', () => {
+	describe('coerceToRule — invalid input (private helper, exercised through evaluate())', () => {
 		it('rejects a grammar body that resolves to an undefined rule', async () => {
 			const dir = mkdtempSync(resolve(tmpdir(), 'sittir-evaluate-'));
 			const entry = resolve(dir, 'grammar.js');
@@ -306,7 +306,7 @@ describe('Evaluate — edge cases', () => {
 		});
 	});
 
-	describe('createProxy — hidden-symbol and optional-ref stamping (private helper, exercised through evaluate(, NO_FILE_TYPES))', () => {
+	describe('createProxy — hidden-symbol and optional-ref stamping (private helper, exercised through evaluate())', () => {
 		it('marks underscore-prefixed symbol references inline via the proxy (hidden is a rule-level fact link stamps)', async () => {
 			const raw = await evaluate(fixture('test-grammar.js'), NO_FILE_TYPES);
 			const expressionStatement = raw.rules['expression_statement'] as {
@@ -344,7 +344,7 @@ describe('Evaluate — edge cases', () => {
 	});
 });
 
-describe('Evaluate — evaluate(, NO_FILE_TYPES)', () => {
+describe('Evaluate — evaluate()', () => {
 	it('evaluates a grammar.js file and returns a RawGrammar', async () => {
 		const raw = await evaluate(fixture('test-grammar.js'), NO_FILE_TYPES);
 		expect(raw.name).toBe('test');

@@ -3,6 +3,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import { grammarPackage, grammarPackages, sittirDirOf } from '../../grammars.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
+import { packageEntryPath, packageGrammarJsPath, packageSourceEntry } from '../resolve-grammar.ts';
 import { upstreamFileTypes } from '../upstream-file-types.ts';
 
 const CENSUS: Readonly<Record<string, readonly string[]>> = {
@@ -27,6 +29,23 @@ describe('the file types every grammar package declares', () => {
 
 	it('the census covers every grammar package', () => {
 		expect(grammarPackages().map((pkg) => pkg.name).sort()).toEqual(Object.keys(CENSUS).sort());
+	});
+});
+
+describe('evaluating a grammar package', () => {
+	it('stamps the package file types on the raw grammar and its stages, whichever entry it evaluates', async () => {
+		const pkg = grammarPackage('rust');
+		for (const options of [undefined, { base: true }]) {
+			const raw = await evaluatePackage(pkg, options);
+			expect(raw.fileTypes).toEqual(['rs']);
+			for (const stage of Object.values(raw.stages ?? {})) expect(stage.grammar.fileTypes).toEqual(['rs']);
+		}
+	}, 120_000);
+
+	it('takes the overrides entry unless the base is asked for', () => {
+		const pkg = grammarPackage('rust');
+		expect(packageSourceEntry(pkg)).toBe(packageEntryPath(pkg));
+		expect(packageSourceEntry(pkg, { base: true })).toBe(packageGrammarJsPath(pkg));
 	});
 });
 

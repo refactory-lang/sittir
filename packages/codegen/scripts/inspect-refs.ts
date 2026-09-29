@@ -4,17 +4,13 @@
  *
  * Usage: tsx inspect-refs.ts <grammar> <symbolName>
  */
-import { evaluate } from '../src/compiler/evaluate.ts';
-import { resolveGrammarJsPath, resolveOverridesPath } from '../src/compiler/resolve-grammar.ts';
-import { existsSync } from 'node:fs';
-import { NO_FILE_TYPES } from '../src/compiler/upstream-file-types.ts';
+import { evaluatePackage } from '../src/compiler/evaluate-package.ts';
+import { grammarPackage } from '../src/grammars.ts';
 
 const grammar = process.argv[2] ?? 'rust';
 const symbol = process.argv[3] ?? '_type_identifier';
 
-const overridesPath = resolveOverridesPath(grammar);
-const entryPath = existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
-const raw = await evaluate(entryPath, NO_FILE_TYPES);
+const raw = await evaluatePackage(grammarPackage(grammar));
 
 const refs = raw.references.filter((r) => r.to === symbol);
 console.log(`${refs.length} references to ${symbol}:`);
