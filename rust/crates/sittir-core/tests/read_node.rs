@@ -580,3 +580,52 @@ fn a_same_line_trailing_entry_counts_the_tokens_before_it() {
     let json = serde_json::to_value(&trailing[0]).expect("serialize");
     assert_eq!(json["$tokensBetween"], 1);
 }
+
+/// Every node in a read payload stamped with `kind`, trivia entries included.
+fn nodes_of_kind<'v>(value: &'v Value, kind: KindId, found: &mut Vec<&'v Value>) {
+    match value {
+        Value::Object(map) => {
+            if map.get("$type") == Some(&Value::from(kind.0)) {
+                found.push(value);
+            }
+            for child in map.values() {
+                nodes_of_kind(child, kind, found);
+            }
+        }
+        Value::Array(items) => {
+            for item in items {
+                nodes_of_kind(item, kind, found);
+            }
+        }
+        _ => {}
+    }
+}
+
+fn read_python_errors(source: &str) -> Vec<Value> {
+    let tree = parse_tree(tree_sitter_python::LANGUAGE.into(), source);
+    let root = read_node(&tree, source, None, Some(0), ReadDepth::Deep, &TextKinds(vec![]));
+    let json = serde_json::to_value(&root).expect("serialize");
+    let mut found = Vec::new();
+    nodes_of_kind(&json, KindId::ERROR, &mut found);
+    found.into_iter().cloned().collect()
+}
+
+#[test]
+fn an_error_is_a_trivia_leaf_holding_its_whole_span() {
+    let errors = read_python_errors("x = 1 $ 2\n");
+    assert_eq!(errors.len(), 1, "the nested ERROR inside it is not read");
+    let error = errors[0].as_object().expect("error object");
+    assert_eq!(error["$text"], "1 $");
+    assert!(
+        error.keys().all(|key| !key.starts_with('_') && key != "$other" && key != "$_trivia"),
+        "an ERROR carries no slots, children or trivia: {error:?}"
+    );
+}
+
+#[test]
+fn an_error_filling_a_statement_gap_is_trivia_with_its_source_text() {
+    let source = "from a import (  # c\n    *)\n";
+    let errors = read_python_errors(source);
+    assert_eq!(errors.len(), 1);
+    assert_eq!(errors[0]["$text"], "from a import (  # c\n    *)");
+}

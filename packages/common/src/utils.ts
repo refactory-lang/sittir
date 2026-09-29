@@ -2,9 +2,11 @@ import type { AnyNodeData, ByteRange, Edit, GrammarFacts, NodeTrivia, TriviaEntr
 import { mapTriviaEntries, type TriviaSides } from './trivia.ts';
 import { detachCoordinate } from './transport-data.ts';
 import { Source } from './source.ts';
+import { ERROR_KIND_ID } from './error-kind.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { Source };
+export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
 
 /**
  * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
@@ -180,6 +182,21 @@ export function isParsedNode(v: unknown): v is AnyNodeData {
 
 export function isFactoryNode(v: unknown): v is AnyNodeData {
 	return isNode(v) && !isParsedNode(v);
+}
+
+/**
+ * A parsed ERROR node: the source it wraps, as text over its span. Only a
+ * reader produces one; there is no factory for it.
+ */
+export interface ErrorNode extends AnyNodeData {
+	readonly $type: typeof ERROR_KIND_ID;
+	readonly $source: typeof Source.Ts | typeof Source.Sg;
+	readonly $text: string;
+	readonly $span: { start: number; end: number };
+}
+
+export function isErrorNode(v: unknown): v is ErrorNode {
+	return isParsedNode(v) && v.$type === ERROR_KIND_ID;
 }
 
 export function hasKind(v: object): v is { kind: string } & Record<string, unknown> {

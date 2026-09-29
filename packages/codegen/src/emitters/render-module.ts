@@ -1442,6 +1442,13 @@ function emitTransportEnumFromNapiValueBody(
 	lines.push(`                )?;`);
 	if (textArms.length > 0) lines.push(`                let text: Option<String> = obj.get("$text")?;`);
 	lines.push(`                match kind_id {`);
+	if (admitsVerbatim) {
+		lines.push(`                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {`);
+		lines.push(
+			`                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`ERROR node without $text in ${enumName}`)}))?,`
+		);
+		lines.push(`                    })),`);
+	}
 	for (const arm of textArms) lines.push(`    ${arm}`);
 	for (const arm of kindIdArms) lines.push(`    ${arm}`);
 	lines.push(`                }`);

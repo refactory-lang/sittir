@@ -7,6 +7,7 @@
 			"@sittir/types": ["./packages/types/src/index.ts"],
 			"@sittir/common": ["./packages/common/src/index.ts"],
 			"@sittir/common/engine": ["./packages/common/src/engine-boundary.ts"],
+			"@sittir/common/error-kind": ["./packages/common/src/error-kind.ts"],
 			"@sittir/common/utils": ["./packages/common/src/utils.ts"],
 			"@sittir/codegen": ["./packages/codegen/src/index.ts"],
 			"@sittir/codegen/run-codegen": ["./packages/codegen/src/run-codegen.ts"],

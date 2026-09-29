@@ -73,6 +73,8 @@ pub const PARAMETERS_REPEAT1: KindId = KindId(62);
 pub const LIST_REPEAT1: KindId = KindId(63);
 pub const GROUPING_REPEAT1: KindId = KindId(64);
 pub const NAMED_NODE_GROUP_CHILDREN_REPEAT1: KindId = KindId(65);
+pub const ERROR: KindId = KindId(65535);
+const _: () = assert!(ERROR.0 == KindId::ERROR.0);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -143,6 +145,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         63 => "list_repeat1", // "list_repeat1"
         64 => "grouping_repeat1", // "grouping_repeat1"
         65 => "named_node_group_children_repeat1", // "named_node_group_children_repeat1"
+        65535 => "ERROR", // "ERROR"
         _ => "<unknown>",
     }
 }

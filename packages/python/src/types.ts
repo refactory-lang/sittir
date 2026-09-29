@@ -21,6 +21,7 @@ import type {
 } from '@sittir/types';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types.js';
+import type { ERROR_KIND_ID } from '@sittir/common/error-kind';
 
 export type LeafScalarMap = {
 	[TSKindId.True]: boolean;
@@ -443,8 +444,11 @@ export enum TSKindId {
 	MatchBlockBlockRepeat1 = 334,
 	AsPatternTarget = 335,
 	FormatExpression = 336,
-	Names = 337
+	Names = 337,
+	ERROR = 65535
 }
+
+void (TSKindId.ERROR satisfies typeof ERROR_KIND_ID);
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'identifier'],
@@ -785,7 +789,8 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[334, 'match_block_block_repeat1'],
 	[335, 'as_pattern_target'],
 	[336, 'format_expression'],
-	[337, 'names']
+	[337, 'names'],
+	[65535, 'ERROR']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1128,7 +1133,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[334, 'match_block_block_repeat1'],
 	[335, 'as_pattern_target'],
 	[336, 'format_expression'],
-	[337, 'names']
+	[337, 'names'],
+	[65535, 'ERROR']
 ]);
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
@@ -1810,6 +1816,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.FormatExpression;
 		case 'names':
 			return TSKindId.Names;
+		case 'ERROR':
+			return TSKindId.ERROR;
 		case 'import':
 			return TSKindId.ImportKeyword;
 		case '.':

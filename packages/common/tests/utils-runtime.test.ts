@@ -8,7 +8,9 @@ import {
 	Source,
 	hasKind,
 	coerceBooleanKeywordStorage,
-	coerceBitflagStorage
+	coerceBitflagStorage,
+	isErrorNode,
+	ERROR_KIND_ID
 } from '../src/utils.ts';
 
 describe('@sittir/common/utils runtime surface', () => {
@@ -77,5 +79,15 @@ describe('@sittir/common/utils runtime surface', () => {
 		expect(coerceBitflagStorage('a', ['a', 'b'])).toBe(1);
 		expect(coerceBitflagStorage(['a', 'b'], ['a', 'b'])).toBe(3);
 		expect(coerceBitflagStorage(false, ['a'])).toBeUndefined();
+	});
+});
+
+describe('isErrorNode', () => {
+	it('accepts a read ERROR node and nothing else', () => {
+		const error = { $type: ERROR_KIND_ID, $source: Source.Ts, $named: true, $text: '1 $', $span: { start: 4, end: 7 } };
+		expect(isErrorNode(error)).toBe(true);
+		expect(isErrorNode({ ...error, $source: Source.Factory })).toBe(false);
+		expect(isErrorNode({ $type: 1, $source: Source.Ts, $text: 'x' })).toBe(false);
+		expect(isErrorNode(ERROR_KIND_ID)).toBe(false);
 	});
 });

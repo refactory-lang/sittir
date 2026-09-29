@@ -2889,6 +2889,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TriviaTransport {
                 )?;
                 let text: Option<String> = obj.get("$text")?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TriviaTransport"))?,
+                    })),
                     337 if text.is_some() => Ok(Self::Text(::sittir_core::trivia::TriviaText { kind: ::sittir_core::types::KindId(337), text: text.unwrap_or_default() })),
                     340 if text.is_some() => Ok(Self::Text(::sittir_core::trivia::TriviaText { kind: ::sittir_core::types::KindId(340), text: text.unwrap_or_default() })),
                     337 => Ok(Self::LineComment(LineCommentTransport::from_napi_value(env, napi_val)?)),
@@ -5627,6 +5630,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     ::napi::Error::from_reason("$type property missing in ExpressionTransport")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in ExpressionTransport"))?,
+                    })),
                     258 => {
                         if let Ok(value) = UnaryExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::UnaryExpression(value));
@@ -7478,6 +7484,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     ::napi::Error::from_reason("$type property missing in PatternTransport")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in PatternTransport"))?,
+                    })),
                     314 => {
                         if let Ok(value) = U8KeywordTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::U8Keyword(value));
@@ -8256,6 +8265,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for LiteralPatternTransport {
                     ::napi::Error::from_reason("$type property missing in LiteralPatternTransport")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in LiteralPatternTransport"))?,
+                    })),
                     329 => {
                         if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StringLiteral(value));
@@ -8646,6 +8658,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharLiteralTransport {
                     ::napi::Error::from_reason("$type property missing in CharLiteralTransport")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in CharLiteralTransport"))?,
+                    })),
                     334 => {
                         if let Ok(value) = CharLiteralPlainTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::CharLiteralPlain(value));
@@ -10790,6 +10805,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonSpecialTokenContentTransportS
                     ::napi::Error::from_reason("$type property missing in NonSpecialTokenContentTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in NonSpecialTokenContentTransportSlot"))?,
+                    })),
                     58 => Ok(Self::Literal18_6d_75_74_61_62_6c_65_5f_73_70_65_63_69_66_69_65_72),
                     126 => Ok(Self::Literal19_73_65_6c_66),
                     127 => Ok(Self::Literal20_73_75_70_65_72),
@@ -11797,6 +11815,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributePathTransportSlot {
                     ::napi::Error::from_reason("$type property missing in AttributePathTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in AttributePathTransportSlot"))?,
+                    })),
                     126 => Ok(Self::Literal19_73_65_6c_66),
                     59 => Ok(Self::Literal22_75_38_5f_6b_65_79_77_6f_72_64),
                     60 => Ok(Self::Literal23_69_38_5f_6b_65_79_77_6f_72_64),
@@ -12361,6 +12382,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionItemNameTransportSlot {
                     ::napi::Error::from_reason("$type property missing in FunctionItemNameTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in FunctionItemNameTransportSlot"))?,
+                    })),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -12599,6 +12623,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureItemNameTranspo
                     ::napi::Error::from_reason("$type property missing in FunctionSignatureItemNameTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in FunctionSignatureItemNameTransportSlot"))?,
+                    })),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -13890,6 +13917,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstParameterValueTransportSlot
                     ::napi::Error::from_reason("$type property missing in ConstParameterValueTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in ConstParameterValueTransportSlot"))?,
+                    })),
                     336 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
@@ -14374,6 +14404,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseDeclarationArgumentTransportS
                     ::napi::Error::from_reason("$type property missing in UseDeclarationArgumentTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in UseDeclarationArgumentTransportSlot"))?,
+                    })),
                     126 => Ok(Self::Literal19_73_65_6c_66),
                     59 => Ok(Self::Literal22_75_38_5f_6b_65_79_77_6f_72_64),
                     60 => Ok(Self::Literal23_69_38_5f_6b_65_79_77_6f_72_64),
@@ -14684,6 +14717,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ScopedUseListPathTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ScopedUseListPathTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in ScopedUseListPathTransportSlot"))?,
+                    })),
                     126 => Ok(Self::Literal19_73_65_6c_66),
                     59 => Ok(Self::Literal22_75_38_5f_6b_65_79_77_6f_72_64),
                     60 => Ok(Self::Literal23_69_38_5f_6b_65_79_77_6f_72_64),
@@ -14974,6 +15010,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseAsClausePathTransportSlot {
                     ::napi::Error::from_reason("$type property missing in UseAsClausePathTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in UseAsClausePathTransportSlot"))?,
+                    })),
                     126 => Ok(Self::Literal19_73_65_6c_66),
                     59 => Ok(Self::Literal22_75_38_5f_6b_65_79_77_6f_72_64),
                     60 => Ok(Self::Literal23_69_38_5f_6b_65_79_77_6f_72_64),
@@ -15892,6 +15931,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterNameTransportSlot {
                     ::napi::Error::from_reason("$type property missing in ParameterNameTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in ParameterNameTransportSlot"))?,
+                    })),
                     126 => Ok(Self::Literal19_73_65_6c_66),
                     336 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
@@ -16966,6 +17008,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericFunctionFunctionTransport
                     ::napi::Error::from_reason("$type property missing in GenericFunctionFunctionTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in GenericFunctionFunctionTransportSlot"))?,
+                    })),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -18707,6 +18752,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for MacroInvocationMacroTransportSlo
                     ::napi::Error::from_reason("$type property missing in MacroInvocationMacroTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in MacroInvocationMacroTransportSlot"))?,
+                    })),
                     52 => Ok(Self::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64),
                     33 => Ok(Self::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64),
                     53 => Ok(Self::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64),
@@ -18995,6 +19043,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ScopedIdentifierPathTransportSlo
                     ::napi::Error::from_reason("$type property missing in ScopedIdentifierPathTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in ScopedIdentifierPathTransportSlot"))?,
+                    })),
                     126 => Ok(Self::Literal19_73_65_6c_66),
                     59 => Ok(Self::Literal22_75_38_5f_6b_65_79_77_6f_72_64),
                     60 => Ok(Self::Literal23_69_38_5f_6b_65_79_77_6f_72_64),
@@ -19255,6 +19306,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ScopedIdentifierNameTransportSlo
                     ::napi::Error::from_reason("$type property missing in ScopedIdentifierNameTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in ScopedIdentifierNameTransportSlot"))?,
+                    })),
                     127 => Ok(Self::Literal20_73_75_70_65_72),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
@@ -19535,6 +19589,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ScopedTypeIdentifierInExpression
                     ::napi::Error::from_reason("$type property missing in ScopedTypeIdentifierInExpressionPositionPathTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in ScopedTypeIdentifierInExpressionPositionPathTransportSlot"))?,
+                    })),
                     126 => Ok(Self::Literal19_73_65_6c_66),
                     59 => Ok(Self::Literal22_75_38_5f_6b_65_79_77_6f_72_64),
                     60 => Ok(Self::Literal23_69_38_5f_6b_65_79_77_6f_72_64),
@@ -19848,6 +19905,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ScopedTypeIdentifierPathTranspor
                     ::napi::Error::from_reason("$type property missing in ScopedTypeIdentifierPathTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in ScopedTypeIdentifierPathTransportSlot"))?,
+                    })),
                     126 => Ok(Self::Literal19_73_65_6c_66),
                     59 => Ok(Self::Literal22_75_38_5f_6b_65_79_77_6f_72_64),
                     60 => Ok(Self::Literal23_69_38_5f_6b_65_79_77_6f_72_64),
@@ -21084,6 +21144,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionFunctionTransportS
                     ::napi::Error::from_reason("$type property missing in CallExpressionFunctionTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in CallExpressionFunctionTransportSlot"))?,
+                    })),
                     59 => Ok(Self::Literal22_75_38_5f_6b_65_79_77_6f_72_64),
                     60 => Ok(Self::Literal23_69_38_5f_6b_65_79_77_6f_72_64),
                     61 => Ok(Self::Literal24_75_31_36_5f_6b_65_79_77_6f_72_64),
@@ -22284,6 +22347,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfExpressionConditionTransportSl
                     ::napi::Error::from_reason("$type property missing in IfExpressionConditionTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in IfExpressionConditionTransportSlot"))?,
+                    })),
                     336 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
@@ -23275,6 +23341,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for LetChainLeftTransportSlot {
                     ::napi::Error::from_reason("$type property missing in LetChainLeftTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in LetChainLeftTransportSlot"))?,
+                    })),
                     336 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
@@ -24257,6 +24326,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for LetChainRightTransportSlot {
                     ::napi::Error::from_reason("$type property missing in LetChainRightTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in LetChainRightTransportSlot"))?,
+                    })),
                     336 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
@@ -25569,6 +25641,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchPatternConditionTransportSl
                     ::napi::Error::from_reason("$type property missing in MatchPatternConditionTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in MatchPatternConditionTransportSlot"))?,
+                    })),
                     336 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
@@ -26563,6 +26638,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileExpressionConditionTranspor
                     ::napi::Error::from_reason("$type property missing in WhileExpressionConditionTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in WhileExpressionConditionTransportSlot"))?,
+                    })),
                     336 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
@@ -27404,6 +27482,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureParametersParametersTrans
                     ::napi::Error::from_reason("$type property missing in ClosureParametersParametersTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in ClosureParametersParametersTransportSlot"))?,
+                    })),
                     336 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
@@ -28601,6 +28682,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericPatternNameTransportSlot 
                     ::napi::Error::from_reason("$type property missing in GenericPatternNameTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in GenericPatternNameTransportSlot"))?,
+                    })),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -28845,6 +28929,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleStructPatternTypeTransportS
                     ::napi::Error::from_reason("$type property missing in TupleStructPatternTypeTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TupleStructPatternTypeTransportSlot"))?,
+                    })),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -29261,6 +29348,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for NegativeLiteralValueTransportSlo
                     ::napi::Error::from_reason("$type property missing in NegativeLiteralValueTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in NegativeLiteralValueTransportSlot"))?,
+                    })),
                     138 => Ok(Self::IntegerLiteralDecimal(
                         IntegerLiteralDecimalTransport::from_napi_value(env, napi_val)?
                     )),
@@ -29412,6 +29502,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringLiteralElementsTransportSl
                     ::napi::Error::from_reason("$type property missing in StringLiteralElementsTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in StringLiteralElementsTransportSlot"))?,
+                    })),
                     148 => Ok(Self::EscapeSequenceSimple(
                         EscapeSequenceSimpleTransport::from_napi_value(env, napi_val)?
                     )),
@@ -29557,6 +29650,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentContentTransportSlot 
                     ::napi::Error::from_reason("$type property missing in LineCommentContentTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in LineCommentContentTransportSlot"))?,
+                    })),
                     407 => Ok(Self::LineCommentExtraSlashes(
                         LineCommentExtraSlashesTransport::from_napi_value(env, napi_val)?
                     )),
@@ -29691,6 +29787,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for BlockCommentContentTransportSlot
                     ::napi::Error::from_reason("$type property missing in BlockCommentContentTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in BlockCommentContentTransportSlot"))?,
+                    })),
                     410 => Ok(Self::BlockCommentDocOuter(
                         BlockCommentDocOuterTransport::from_napi_value(env, napi_val)?
                     )),
@@ -29936,6 +30035,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseClausesUseClauseTransportSlot
                     ::napi::Error::from_reason("$type property missing in UseClausesUseClauseTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in UseClausesUseClauseTransportSlot"))?,
+                    })),
                     126 => Ok(Self::Literal19_73_65_6c_66),
                     59 => Ok(Self::Literal22_75_38_5f_6b_65_79_77_6f_72_64),
                     60 => Ok(Self::Literal23_69_38_5f_6b_65_79_77_6f_72_64),
@@ -30713,6 +30815,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternElementsElementTrans
                     ::napi::Error::from_reason("$type property missing in TuplePatternElementsElementTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TuplePatternElementsElementTransportSlot"))?,
+                    })),
                     336 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
@@ -31324,6 +31429,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseWildcardGroupPathTransportSlo
                     ::napi::Error::from_reason("$type property missing in UseWildcardGroupPathTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in UseWildcardGroupPathTransportSlot"))?,
+                    })),
                     126 => Ok(Self::Literal19_73_65_6c_66),
                     59 => Ok(Self::Literal22_75_38_5f_6b_65_79_77_6f_72_64),
                     60 => Ok(Self::Literal23_69_38_5f_6b_65_79_77_6f_72_64),
@@ -33679,6 +33787,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureExpressionExprBodyTranspo
                     ::napi::Error::from_reason("$type property missing in ClosureExpressionExprBodyTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in ClosureExpressionExprBodyTransportSlot"))?,
+                    })),
                     133 => Ok(Self::Literal68_75_6e_64_65_72_73_63_6f_72_65),
                     336 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
@@ -34953,6 +35064,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierPubScopeInPath
                     ::napi::Error::from_reason("$type property missing in VisibilityModifierPubScopeInPathPathTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in VisibilityModifierPubScopeInPathPathTransportSlot"))?,
+                    })),
                     126 => Ok(Self::Literal19_73_65_6c_66),
                     59 => Ok(Self::Literal22_75_38_5f_6b_65_79_77_6f_72_64),
                     60 => Ok(Self::Literal23_69_38_5f_6b_65_79_77_6f_72_64),
@@ -37774,6 +37888,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for MacroDefinitionParenNameTranspor
                     ::napi::Error::from_reason("$type property missing in MacroDefinitionParenNameTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in MacroDefinitionParenNameTransportSlot"))?,
+                    })),
                     52 => Ok(Self::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64),
                     33 => Ok(Self::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64),
                     53 => Ok(Self::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64),
@@ -38004,6 +38121,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for MacroDefinitionBracketNameTransp
                     ::napi::Error::from_reason("$type property missing in MacroDefinitionBracketNameTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in MacroDefinitionBracketNameTransportSlot"))?,
+                    })),
                     52 => Ok(Self::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64),
                     33 => Ok(Self::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64),
                     53 => Ok(Self::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64),
@@ -38234,6 +38354,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for MacroDefinitionBraceNameTranspor
                     ::napi::Error::from_reason("$type property missing in MacroDefinitionBraceNameTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in MacroDefinitionBraceNameTransportSlot"))?,
+                    })),
                     52 => Ok(Self::Literal87_64_65_66_61_75_6c_74_5f_6b_65_79_77_6f_72_64),
                     33 => Ok(Self::Literal104_75_6e_69_6f_6e_5f_6b_65_79_77_6f_72_64),
                     53 => Ok(Self::Literal91_67_65_6e_5f_6b_65_79_77_6f_72_64),
@@ -38601,6 +38724,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternPrefixRightTransport
                     ::napi::Error::from_reason("$type property missing in RangePatternPrefixRightTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in RangePatternPrefixRightTransportSlot"))?,
+                    })),
                     126 => Ok(Self::Literal19_73_65_6c_66),
                     59 => Ok(Self::Literal22_75_38_5f_6b_65_79_77_6f_72_64),
                     60 => Ok(Self::Literal23_69_38_5f_6b_65_79_77_6f_72_64),
@@ -39182,6 +39308,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternWithLeftWithRightRig
                     ::napi::Error::from_reason("$type property missing in RangePatternWithLeftWithRightRightTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in RangePatternWithLeftWithRightRightTransportSlot"))?,
+                    })),
                     126 => Ok(Self::Literal19_73_65_6c_66),
                     59 => Ok(Self::Literal22_75_38_5f_6b_65_79_77_6f_72_64),
                     60 => Ok(Self::Literal23_69_38_5f_6b_65_79_77_6f_72_64),
@@ -39775,6 +39904,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternWithLeftLeftTranspor
                     ::napi::Error::from_reason("$type property missing in RangePatternWithLeftLeftTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in RangePatternWithLeftLeftTransportSlot"))?,
+                    })),
                     126 => Ok(Self::Literal19_73_65_6c_66),
                     59 => Ok(Self::Literal22_75_38_5f_6b_65_79_77_6f_72_64),
                     60 => Ok(Self::Literal23_69_38_5f_6b_65_79_77_6f_72_64),
@@ -40985,6 +41117,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentContentTransportSlot
                     ::napi::Error::from_reason("$type property missing in TypeArgumentContentTransportSlot")
                 )?;
                 match kind_id {
+                    id if id == ::sittir_core::types::KindId::ERROR.0 => Ok(Self::Verbatim(VerbatimTransport {
+                        text: obj.get("$text")?.ok_or_else(|| ::napi::Error::from_reason("ERROR node without $text in TypeArgumentContentTransportSlot"))?,
+                    })),
                     244 => Ok(Self::UnitType(
                         UnitTypeTransport::from_napi_value(env, napi_val)?
                     )),

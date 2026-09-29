@@ -12,6 +12,8 @@
  */
 
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { ERROR_KIND_NAME } from '@sittir/common/error-kind';
+import { ERROR_KIND_ROW } from '../../dsl/symbol-table.ts';
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { LinkedGrammar, RawGrammar, RefineForm } from '../../compiler/types.ts';
@@ -345,6 +347,7 @@ function runPipelineRaw(raw: RawGrammar) {
 function makeGeneratedIdTables(): GeneratedIdTables {
 	return {
 		kindIds: {
+			[ERROR_KIND_NAME]: ERROR_KIND_ROW,
 			iface_body: {
 				id: 11,
 				parser: {

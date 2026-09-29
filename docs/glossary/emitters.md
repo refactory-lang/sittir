@@ -2854,7 +2854,10 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
 /**
  * Emit the Rust source for `kind_ids.rs` — one `pub const` per kind that
  * has a parser symbol (TSInternals presence), sorted by numeric id, plus a
- * `kind_name_from_id(KindId) -> &'static str` diagnostic helper.
+ * `kind_name_from_id(KindId) -> &'static str` diagnostic helper. The ERROR
+ * row's const is followed by a const assert that it equals
+ * `sittir_core::types::KindId::ERROR`, so the id the TS side emits from
+ * `ERROR_KIND_ID` and the one the Rust core names cannot drift apart.
  *
  * @returns The complete Rust source as a single string, ready to write to
  *   `rust/crates/sittir-{grammar}/src/render/kind_ids.rs` (or equivalent).
@@ -3641,6 +3644,13 @@ catch-all `other =>` arm so the match is exhaustive over u16.
 `admitsVerbatim` is true only when the enum has a `Verbatim` variant —
 i.e. a member of the slot is pattern-modeled — so a bare string in any
 other slot is refused rather than guessed at.
+
+An enum that admits verbatim text also decodes an ERROR object
+(`$type` = `KindId::ERROR`) as `Verbatim` over its `$text`. The reader
+seats every ERROR as trivia and gives it its whole span as text, so the
+trivia and `AnyTransport` enums (which always admit verbatim) render it
+back as the source it wraps. The arm comes before the text and kind-id
+arms because no grammar kind shares its id.
 
 `textArms` are matched first in the object branch, after `$text` is read into `text`. `renderTriviaTransportSupport` passes the kinded-text arms there.
 
@@ -6713,7 +6723,10 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
  * The generator stays name-first: the lookup helpers are still emitted
  * from kind names, but the runtime discriminant surface is numeric so
  * data/transport interfaces can carry `TSKindId.*` instead of string
- * literals.
+ * literals. The ERROR member is followed by a `satisfies typeof
+ * ERROR_KIND_ID` check, so a grammar whose `TSKindId` holds another
+ * value fails its own type-check; `kind_ids.rs`'s const assert is the
+ * Rust side of the same check.
  */
 ```
 
@@ -15666,6 +15679,14 @@ real site index must stay below (`siteOrNone`).
 
 The value `NO_SITE` spells, `0xffff`; a real site index must stay below it
 to fit a `u16` table cell.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::UNCATALOGUED_KIND_ID`
+
+A kind id no grammar's catalog holds, one below `ERROR_KIND_ID`. The emitted resolve test feeds it to a site to show that a value the site does not admit is refused with its path.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::denseWidth`
+
+The cell count of a dense table: one past its highest key. It fails at codegen when a key reaches `ERROR_KIND_ID`, since one ERROR row would make a 65536-cell static. ERROR carries no flag, edge or seat, so no table ever needs its row.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::siteOrNone`
 

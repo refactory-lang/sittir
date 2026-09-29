@@ -235,8 +235,11 @@ fn read_ts_node(
         end: byte_range.end as u32,
     };
 
-    let (fields, children, slot_order) =
-        read_children(node, source, node_handle, tree_handle, depth, model);
+    let (fields, children, slot_order) = if node.is_error() {
+        (None, None, None)
+    } else {
+        read_children(node, source, node_handle, tree_handle, depth, model)
+    };
 
     // Leaf heuristic: no named fields AND no (named) children. The
     // tree-sitter convention is that purely-anonymous terminals are
@@ -320,7 +323,7 @@ fn node_trivia(
     tree_handle: Option<u64>,
     model: &dyn ReadModel,
 ) -> Option<NodeTrivia> {
-    if node.is_extra() {
+    if is_trivia(&node) {
         return None;
     }
     let entry = |extra: tree_sitter::Node<'_>, same_line: bool, tokens_between: u16| {
@@ -379,7 +382,7 @@ fn node_trivia(
         let mut preceding_tokens: u16 = 0;
         let mut named_before = false;
         for child in children {
-            if !child.is_extra() {
+            if !is_trivia(&child) {
                 preceding_tokens += 1;
                 named_before |= child.is_named();
             } else if let Some(key) = model.inner_gap_key(stamped_kind(&node), preceding_tokens) {
@@ -409,6 +412,15 @@ fn node_trivia(
     })
 }
 
+/// Whether a node is seated as trivia rather than read as a child: an extra,
+/// or an ERROR wherever the parser left it. Error recovery builds most ERRORs
+/// as extras, but the one that wraps unparsable input at the end of a file is
+/// not; seating every ERROR the same way keeps its bytes in the tree's
+/// trivia, so no slot has to admit a kind the grammar never declares.
+fn is_trivia(node: &tree_sitter::Node<'_>) -> bool {
+    node.is_extra() || node.is_error()
+}
+
 /// The row a node ends on: the row of its last byte, so a span that ends
 /// with its line break (a doc comment includes its newline) ends on the row
 /// that break closes, not at column 0 of the next row.
@@ -427,7 +439,7 @@ fn end_row(node: &tree_sitter::Node<'_>) -> usize {
 /// its slot stores as a scalar (a flag or a kind id) keeps no trivia, so an
 /// entry either owned would have nowhere to render.
 fn is_owner(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
-    node.is_named() && !node.is_extra() && node.end_byte() > node.start_byte() && !stored_as_scalar(node, model)
+    node.is_named() && !is_trivia(node) && node.end_byte() > node.start_byte() && !stored_as_scalar(node, model)
 }
 
 fn stored_as_scalar(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
@@ -471,7 +483,7 @@ fn extras_run<'t>(
         if is_owner(&sibling, model) {
             return (extras, Some(sibling));
         }
-        if sibling.is_extra() {
+        if is_trivia(&sibling) {
             extras.push((sibling, tokens));
         } else {
             tokens += 1;
@@ -522,7 +534,7 @@ fn read_children(
             Some(c) => c,
             None => continue,
         };
-        if child.is_extra() {
+        if is_trivia(&child) {
             continue;
         }
         let field_name = node.field_name_for_child(i).map(|s| s.to_string());
@@ -633,6 +645,7 @@ fn keeps_anonymous_children(node: &tree_sitter::Node<'_>, model: &dyn ReadModel)
 
 fn carries_text(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
     !node.is_named()
+        || node.is_error()
         || model.is_text_kind(stamped_kind(node))
         || model.is_text_kind(KindId(node.kind_id()))
 }

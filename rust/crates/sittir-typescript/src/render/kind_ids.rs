@@ -478,6 +478,8 @@ pub const _SHORTHAND_PROPERTY_IDENTIFIER_PATTERN: KindId = KindId(468);
 pub const _STATEMENT_IDENTIFIER: KindId = KindId(469);
 pub const _THIS_TYPE: KindId = KindId(470);
 pub const _TYPE_IDENTIFIER: KindId = KindId(471);
+pub const ERROR: KindId = KindId(65535);
+const _: () = assert!(ERROR.0 == KindId::ERROR.0);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -954,6 +956,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         469 => "statement_identifier", // "_statement_identifier"
         470 => "this_type", // "_this_type"
         471 => "type_identifier", // "_type_identifier"
+        65535 => "ERROR", // "ERROR"
         _ => "<unknown>",
     }
 }

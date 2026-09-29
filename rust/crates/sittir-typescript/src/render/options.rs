@@ -8819,7 +8819,7 @@ mod resolve_tests {
 
     #[test]
     fn a_value_the_site_does_not_admit_is_refused_with_its_path() {
-        assert_eq!(resolve("{\"abstractClassDeclaration\":{\"abstractKeyword\":{\"after\":65535}}}"), Err("options: (abstract_class_declaration)/\"abstract\"/after does not admit kind id 65535 (allowed: [180, 181, 182, 183, 184, 185, 186, 187])".to_string()));
+        assert_eq!(resolve("{\"abstractClassDeclaration\":{\"abstractKeyword\":{\"after\":65534}}}"), Err("options: (abstract_class_declaration)/\"abstract\"/after does not admit kind id 65534 (allowed: [180, 181, 182, 183, 184, 185, 186, 187])".to_string()));
     }
 
     #[test]

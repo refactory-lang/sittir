@@ -97,6 +97,8 @@ pub const TERM_REPEAT1: KindId = KindId(86);
 pub const CHARACTER_CLASS_REPEAT1: KindId = KindId(87);
 pub const _LAZY: KindId = KindId(88);
 pub const _UNICODE_PROPERTY_NAME: KindId = KindId(89);
+pub const ERROR: KindId = KindId(65535);
+const _: () = assert!(ERROR.0 == KindId::ERROR.0);
 
 /// Map a `KindId` back to its grammar kind string for diagnostics.
 /// Returns `"<unknown>"` for ids not in this grammar's symbol table.
@@ -191,6 +193,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         87 => "character_class_repeat1", // "character_class_repeat1"
         88 => "lazy", // "_lazy"
         89 => "unicode_property_name", // "_unicode_property_name"
+        65535 => "ERROR", // "ERROR"
         _ => "<unknown>",
     }
 }
