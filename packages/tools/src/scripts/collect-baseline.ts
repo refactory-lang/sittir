@@ -31,12 +31,13 @@ import { execSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import type { AnyNodeData } from '@sittir/types';
 
 import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 import { validateFrom } from '../validate/from.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
-import { boundaryModulePath } from '../validate/common.ts';
+import { loadNativeRender } from '../validate/common.ts';
 import { load } from '../codegen-surface.ts';
 import { REPO_ROOT, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 
@@ -163,63 +164,16 @@ function loadRenderFixtures(grammar: GrammarName): RenderFixture[] {
 	return all.filter((f): f is RenderFixture => f.kind === 'render' && typeof f.input?.$type === 'number');
 }
 
-interface ParityRenderer {
-	render: (node: unknown) => string;
-}
-
-/**
- * Type of the dynamic-import function injected by tests. Kept narrow on
- * purpose — tests pass in a stub that resolves or rejects to exercise
- * the error branch deterministically.
- */
-export type BoundaryImporter = (path: string) => Promise<unknown>;
-
-/**
- * Load the per-grammar `boundary.ts` and return its `render` function.
- * Throws `Error` (with grammar name + the import path it tried) when
- * the import fails or the module doesn't expose a `render` function.
- *
- * Caller decides whether to recover (TS mode = optional, swallow the
- * error and use the createRenderer fallback) or escalate (native mode =
- * the failure means our "native" baseline would lie about which engine
- * produced its numbers — surface it).
- *
- * Exported for tests so the failure mode can be exercised without
- * patching the filesystem. `importFn` defaults to a real dynamic
- * import; tests inject a stub.
- */
-export async function loadBoundaryRender(
-	grammar: GrammarName,
-	importFn: BoundaryImporter = (p) => import(p)
-): Promise<(node: unknown) => string> {
-	const boundaryPath = boundaryModulePath(grammar);
-	let mod: unknown;
-	try {
-		mod = await importFn(boundaryPath);
-	} catch (e) {
-		const msg = e instanceof Error ? e.message : String(e);
-		throw new Error(`failed to import native boundary for grammar '${grammar}' from ${boundaryPath}: ${msg}`);
-	}
-	const render = (mod as { render?: unknown }).render;
-	if (typeof render !== 'function') {
-		throw new Error(`native boundary for grammar '${grammar}' at ${boundaryPath} does not export a 'render' function`);
-	}
-	return render as (node: unknown) => string;
-}
-
-/** The render half of the parity harness: the grammar's boundary render, which dispatches to the native engine. */
-async function buildParityRenderer(grammar: GrammarName, importFn?: BoundaryImporter): Promise<ParityRenderer> {
-	const render = await loadBoundaryRender(grammar, importFn);
-	return { render };
-}
+/** Resolves the render function a parity collection scores fixtures with; tests inject a stub. */
+export type NativeRenderLoader = (grammar: GrammarName) => Promise<(node: AnyNodeData) => string>;
 
 export async function collectParityFixtures(
 	grammar: GrammarName,
 	backend: Backend,
-	importFn?: BoundaryImporter
+	loadRender: NativeRenderLoader = loadNativeRender
 ): Promise<ParityFixtures> {
 	const fixtures = loadRenderFixtures(grammar);
-	const renderer = await buildParityRenderer(grammar, importFn);
+	const render = await loadRender(grammar);
 
 	let pass = 0;
 	// Map insertion order matches fixture-file declaration order — keep
@@ -230,7 +184,7 @@ export async function collectParityFixtures(
 	fixtures.forEach((fx, idx) => {
 		let actual: string;
 		try {
-			actual = renderer.render(fx.input);
+			actual = render(fx.input as AnyNodeData);
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
 			// The deprecated JS/Nunjucks backend (createRenderer) resolves a
@@ -248,8 +202,7 @@ export async function collectParityFixtures(
 			// here rather than hard-crashing the whole collection. Native
 			// rendering dispatches by numeric id, not name, and is
 			// unaffected either way; any other exception (e.g. a genuine
-			// native regression, or an infra failure like a bad boundary
-			// import) still throws.
+			// native regression, or an infra failure like an engine that will not load) still throws.
 			throw new Error(`[${grammar}][${backend}][render #${idx}] ${fx.input.$type}: ${message}`);
 		}
 		if (actual === fx.expectedOutput) {
@@ -489,21 +442,6 @@ export async function run(_argv: string[]): Promise<number> {
 	return 0;
 }
 
-// NOT `process.exit(await run(...))` — that creates a genuine ESM cycle on
-// the native backend, not a watchdog false-positive. This module's static
-// import of validateReadRenderParse (above) is resolved before this file's
-// own top-level code runs; but `run()` → collectValidatorsForGrammar() →
-// validateReadRenderParse(..., { backend: 'native' }) dynamically
-// `import()`s THIS file back (read-render-parse.ts, to reach
-// loadBoundaryRender). If this file's top-level evaluation is itself
-// suspended on a top-level `await run(...)`, that dynamic import can't
-// resolve until this module finishes evaluating — which can't happen until
-// the dynamic import resolves. A real deadlock; Node's exit code 13
-// ("Unsettled Top-Level Await") is diagnosing it correctly, not
-// misfiring. Moving `run()` off the top-level await lets this module's
-// own evaluation complete synchronously, so by the time the dynamic
-// import fires, the module is already in the cache and it resolves
-// immediately — no cycle.
 if (isCli) {
 	run(process.argv.slice(2)).then(
 		(code) => process.exit(code),

@@ -1,5 +1,5 @@
 import { assertGrammar, stableGrammars } from '@sittir/codegen/grammars';
-import { loadCorpusEntries, loadKindNameFromId, loadLanguageForGrammar, loadNativeEngine, type TSNode, type TSTree } from './common.ts';
+import { loadCorpusEntries, loadKindNameFromId, loadLanguageForGrammar, loadNativeEngine, readNativeTree, type TSNode, type TSTree } from './common.ts';
 
 export type TriviaPosition = 'leading' | 'trailing' | `inner:${string}` | 'lost';
 
@@ -88,7 +88,7 @@ async function placementReader(grammar: string): Promise<PlacementReader> {
 	return {
 		parse: (source) => parser.parse(source) as TSTree,
 		place: (entry, source, parsed) => {
-			const placements = readPlacements(engine.diagnostics.parseAndRead(source, { deep: true }).root);
+			const placements = readPlacements(readNativeTree(engine, source, { deep: true }).root);
 			return parsedExtras(parsed.rootNode).map((extra) => {
 				const placement = placements.get(`${extra.startIndex}:${extra.endIndex}`);
 				return {

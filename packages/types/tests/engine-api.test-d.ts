@@ -3,6 +3,12 @@ import type { ApiOf, Engine, Language, LanguageAPI, LanguageHooks, StrictSurface
 interface FakeNode {
 	readonly $type: 1;
 }
+interface EmptyFake extends FakeNode {
+	readonly empty: true;
+}
+interface NoEmptyForm {
+	readonly $type: 2;
+}
 interface StrictNode extends FakeNode {
 	readonly strict: true;
 }
@@ -18,6 +24,7 @@ interface FakeAPI extends LanguageAPI {
 	readonly root: FakeNode;
 	readonly node: FakeNode;
 	readonly options: { readonly indent?: string };
+	readonly empty: { readonly node: FakeNode; readonly empty: EmptyFake };
 }
 
 type API = ApiOf<Language<FakeAPI>>;
@@ -68,3 +75,17 @@ declare const other: Engine<OtherAPI>;
 engine.render(other.build.leaf('a'));
 // @ts-expect-error a build callback returning another language's node
 engine.render(() => other.build.leaf('a'));
+
+declare const guardEngine: Engine<API>;
+declare const unknownValue: unknown;
+if (guardEngine.isNode(unknownValue)) unknownValue satisfies FakeNode;
+if (guardEngine.isParsedNode(unknownValue)) unknownValue satisfies FakeNode;
+if (guardEngine.isFactoryNode(unknownValue)) unknownValue satisfies FakeNode;
+if (guardEngine.isErrorNode(unknownValue)) unknownValue satisfies FakeNode;
+
+declare const fakeNode: FakeNode;
+if (guardEngine.isEmptyNode(fakeNode)) fakeNode satisfies EmptyFake;
+
+declare const noEmptyForm: NoEmptyForm;
+// @ts-expect-error a kind the language's empty map does not name has no empty form
+guardEngine.isEmptyNode(noEmptyForm);

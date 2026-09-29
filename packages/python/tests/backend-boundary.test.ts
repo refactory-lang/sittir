@@ -9,7 +9,7 @@ const identifier = {
 	$text: 'x'
 } as const;
 
-describe('boundary', () => {
+describe('engine render boundary', () => {
 	afterEach(() => {
 		vi.doUnmock('../src/backend.js');
 		vi.doUnmock('node:module');
@@ -48,15 +48,23 @@ describe('boundary', () => {
 		);
 	}
 
+	async function mockedEngine() {
+		const { createEngine } = await import('@sittir/common');
+		const descriptor = (await import('../src/index.ts')).default;
+		return createEngine(descriptor);
+	}
+
 	it('surfaces native render failures instead of silently retrying on TS', async () => {
 		mockNativeFailureBackend();
-		const { render } = await import('../src/boundary.ts');
+		const engine = await mockedEngine();
+		const render = (node: unknown): string => engine.render(node as never).toString();
 		expect(() => render(identifier)).toThrow(/native render boom/);
 	});
 
 	it('surfaces native applyEdits failures instead of silently retrying on TS', async () => {
 		mockNativeFailureBackend();
-		const { applyEdits } = await import('../src/boundary.ts');
+		const engine = await mockedEngine();
+		const applyEdits = engine.applyEdits.bind(engine);
 		expect(() => applyEdits('abc', [])).toThrow(/native apply boom/);
 	});
 
@@ -73,7 +81,8 @@ describe('boundary', () => {
 			}
 		);
 
-		const { render } = await import('../src/boundary.ts');
+		const engine = await mockedEngine();
+		const render = (node: unknown): string => engine.render(node as never).toString();
 		expect(render(identifier)).toBe('ok:1'); // $type is now numeric (TSKindId.Identifier = 1)
 		// $source is numeric: 2 = factory
 		expect(renderSpy).toHaveBeenCalledWith(
@@ -99,7 +108,8 @@ describe('boundary', () => {
 				}
 			}
 		);
-		const { render } = await import('../src/boundary.ts');
+		const engine = await mockedEngine();
+		const render = (node: unknown): string => engine.render(node as never).toString();
 		const invalidNode = {
 			$type: 157, // TSKindId.ArgumentList
 			$source: 2,
@@ -123,7 +133,8 @@ describe('boundary', () => {
 			}
 		);
 
-		const { render } = await import('../src/boundary.ts');
+		const engine = await mockedEngine();
+		const render = (node: unknown): string => engine.render(node as never).toString();
 		const invalidNode = {
 			...identifier,
 			$format: { boundary: { leading: '\t' } }
@@ -149,9 +160,7 @@ describe('boundary', () => {
 				const { createEngine } = await import('@sittir/common');
 		const engine = await createEngine((await import('../src/index.ts')).default, { format: { boundary: { leading: '\t' } } });
 		// engine.render() returns a RenderHandle ({ save, print, toString }),
-		// not a raw string — boundary.ts's own render() calls .toString() on
-		// this same return value. This test calls the lower-level engine API
-		// directly, so it must do the same unwrap.
+		// not a raw string, so the text is its toString().
 		expect(engine.render(engine.build.identifier('x')).toString()).toBe('\tx');
 		expect(renderSpy).toHaveBeenCalledTimes(1);
 	});

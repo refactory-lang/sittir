@@ -3,11 +3,9 @@
  * Render-only engine for @sittir/python.
  *
  * Renders and edits node DATA. It imports no
- * wrapper, which is what keeps the module graph acyclic: constructed nodes
- * carry `$render()`, so `factories -> utils -> boundary` reaches this
- * module, and a `parse()` surface here would pull `wrap.js` and close the
- * loop back onto `factories.js`. Parsing lives in `api.ts` (the `wrap` hook) because
- * parsing is the half that needs the wrapper.
+ * wrapper: a `parse()` surface here would pull `wrap.js` into every render.
+ * Parsing lives in `api.ts` (the `wrap` hook) because parsing is the half that
+ * needs the wrapper.
  *
  * Native-only — there is no JS-engine fallback.
  */

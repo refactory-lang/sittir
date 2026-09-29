@@ -11,6 +11,12 @@ const TS_IR = '../../../../typescript/src/ir.ts';
 const TS_TYPES = '../../../../typescript/src/types.ts';
 const PY_IR = '../../../../python/src/ir.ts';
 const PY_TYPES = '../../../../python/src/types.ts';
+const COMMON = '../../../../common/src/index.ts';
+const LANGUAGES = {
+	rust: '../../../../rust/src/index.ts',
+	typescript: '../../../../typescript/src/index.ts',
+	python: '../../../../python/src/index.ts'
+} as const;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function loadModule(path: string): Promise<any> {
@@ -19,6 +25,16 @@ async function loadModule(path: string): Promise<any> {
 	// to an absolute file:// URL ourselves instead.
 	const absolute = fileURLToPath(new URL(path, import.meta.url));
 	return import(pathToFileURL(absolute).href);
+}
+
+async function renderThrough(grammar: keyof typeof LANGUAGES, node: unknown): Promise<string> {
+	const { createEngine } = await loadModule(COMMON);
+	const engine = await createEngine((await loadModule(LANGUAGES[grammar])).default);
+	try {
+		return engine.render(node).toString();
+	} finally {
+		engine.dispose();
+	}
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -203,7 +219,7 @@ describe('ir.synonym.* canonical factories — Rust', () => {
 	it('synonym.number(42) produces integer_literal', async () => {
 		const { synonym } = await loadSynonyms(RUST_IR);
 		const node = synonym.number(42);
-		expect(node.$render()).toBe('42');
+		expect(await renderThrough('rust', node)).toBe('42');
 	});
 
 	it('synonym.number(3.14) produces float_literal', async () => {
@@ -258,7 +274,7 @@ describe('ir.synonym.* canonical factories — TypeScript', () => {
 	it('synonym.comment(" hello") produces a line comment', async () => {
 		const { synonym } = await loadSynonyms(TS_IR);
 		const node = synonym.comment(' hello');
-		expect(node.$render()).toBe('// hello\n');
+		expect(await renderThrough('typescript', node)).toBe('// hello\n');
 	});
 
 	it('synonym.type("String") produces type_identifier', async () => {
@@ -296,13 +312,13 @@ describe('ir.synonym.* canonical factories — Python', () => {
 	it('synonym.number(3.14) produces float', async () => {
 		const { synonym } = await loadSynonyms(PY_IR);
 		const node = synonym.number(3.14);
-		expect(node.$render()).toBe('3.14');
+		expect(await renderThrough('python', node)).toBe('3.14');
 	});
 
 	it('synonym.comment("# hello") produces comment', async () => {
 		const { synonym } = await loadSynonyms(PY_IR);
 		const node = synonym.comment(' hello');
-		expect(node.$render()).toBe('# hello\n');
+		expect(await renderThrough('python', node)).toBe('# hello\n');
 	});
 
 	it('synonym.type("str") produces identifier', async () => {

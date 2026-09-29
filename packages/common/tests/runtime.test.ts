@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { AnyNodeData, GrammarFacts, GrammarTypeMap } from '@sittir/types';
+import type { GrammarTypeMap } from '@sittir/types';
+import { inEngine } from '../src/engine-scope.ts';
+import { liveHandle } from './support/fake-engine.ts';
 import {
 	admitAliasContent,
 	bindRuntime,
@@ -12,23 +14,8 @@ import {
 	rejectKeywordText
 } from '../src/utils.ts';
 
-function facts(innerGaps: GrammarFacts['trivia']['innerGaps']): GrammarFacts {
-	return {
-		render: vi.fn(() => 'rendered'),
-		toEdit: vi.fn(() => ({ startPos: 0, endPos: 0, insertedText: 'rendered' })),
-		trivia: { kindName: (type) => (type === 1 ? 'list' : type === 2 ? 'leaf' : undefined), kinds: new Set(), innerGaps }
-	};
-}
-
 describe('bindRuntime', () => {
-	const runtime = bindRuntime<GrammarTypeMap>(facts({ list: ['inner'] }));
-
-	it('isEmpty holds only for a kind with an inner gap and no content', () => {
-		expect(runtime.isEmpty({ $type: 1, $source: 2 } as AnyNodeData)).toBe(true);
-		expect(runtime.isEmpty({ $type: 1, $source: 2, _items: [{ $type: 2, $source: 2 }] } as AnyNodeData)).toBe(false);
-		expect(runtime.isEmpty({ $type: 2, $source: 2 } as AnyNodeData)).toBe(false);
-		expect(runtime.isEmpty({ $type: 3, $source: 2 } as AnyNodeData)).toBe(false);
-	});
+	const runtime = bindRuntime<GrammarTypeMap>();
 
 	it('isNode recognises node data only', () => {
 		expect(runtime.isNode({ $type: 2, $source: 2 })).toBe(true);
@@ -36,11 +23,16 @@ describe('bindRuntime', () => {
 		expect(runtime.isNode({ kind: 'leaf' })).toBe(false);
 	});
 
-	it('withMethods renders through the engine it is handed', () => {
-		const engine = facts({});
-		const node = runtime.withMethods({ $type: 2, $source: 2 }, engine);
+	it('withMethods renders through the engine in scope', () => {
+		const render = vi.fn(() => 'rendered');
+		const node = inEngine(liveHandle({ render }), () => runtime.withMethods({ $type: 2, $source: 2 }));
 		expect(node.$render()).toBe('rendered');
-		expect(engine.render).toHaveBeenCalledWith(node);
+		expect(render).toHaveBeenCalledWith(node);
+	});
+
+	it('withMethods on a node built outside any engine cannot render', () => {
+		const node = runtime.withMethods({ $type: 2, $source: 2 });
+		expect(() => node.$render()).toThrow(/no engine.*engine\.render\(node\)/);
 	});
 });
 

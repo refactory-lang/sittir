@@ -68,7 +68,7 @@ export const ir: {
 	readonly groupName: typeof F.buildGroupName;
 	readonly decimalDigits: typeof F.buildDecimalDigits;
 	readonly whitespace: typeof whitespace;
-} = {
+} = Object.freeze({
 	// Node factories
 	pattern: F.pattern,
 	alternation: F.alternation,
@@ -116,4 +116,4 @@ export const ir: {
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	whitespace
-};
+});

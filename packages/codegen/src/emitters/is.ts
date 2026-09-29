@@ -234,7 +234,7 @@ export function emitIs(config: EmitIsConfig): string {
 	}
 	if (supertypes.length > 0) lines.push('');
 
-	lines.push('export const is = {');
+	lines.push('export const is = Object.freeze({');
 	for (const s of structuralKinds) {
 		if (kindEntries && s.numericId !== undefined) {
 			const expr = kindDiscriminantExpr(s.kind, nodeMap, kindEntries);
@@ -257,7 +257,7 @@ export function emitIs(config: EmitIsConfig): string {
 			lines.push(`    ${s.guardKey}: _sg(_supertype_${s.guardKey}),`);
 		}
 	}
-	lines.push('} as unknown as IsGuards;');
+	lines.push('}) as unknown as IsGuards;');
 	lines.push('');
 
 	return lines.join('\n');

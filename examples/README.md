@@ -15,7 +15,11 @@ The directory currently serves **two roles**:
    depend on pattern search or templates alone are not kept here.
 
 The compile-checked examples are the files `tsconfig.json` includes; the
-generated rebuilds are the files `tsconfig.generated.json` includes.
+generated rebuilds are the files `tsconfig.generated.json` includes. The
+compile-checked examples also run: `tests/acceptance/examples-run.test.ts`
+calls every function they export and renders every node it returns, so an
+example that renders a node made outside an engine fails there. A function
+that takes an argument needs a sample input in that test.
 
 | File | Guide section |
 | ---- | ------------- |

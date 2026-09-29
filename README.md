@@ -384,7 +384,7 @@ lives in `packages/<lang>/grammar.sittir.ts`.
 | `consts.ts`                                   | Discoverable arrays/maps: kind names, keywords, operators                                      |
 | `utils.ts`                                    | Per-grammar resolution helpers and transport coercion                                          |
 | `engine.ts`                                   | `createEngine()` — native-only, throws if the native binding is unavailable                    |
-| `backend.ts` / `boundary.ts` / `hash.ts`      | Backend selection, dispatching shims, baked render-module hash                                 |
+| `backend.ts` / `hash.ts`                      | Backend selection, baked render-module hash                                                    |
 | `grammar.ts`, `node-model.json5`              | Grammar literal type and a debug snapshot of the assembled model                               |
 | `.sittir/render-bodies.json`                  | One render body per renderable kind, the validators' catalog                                   |
 
@@ -397,18 +397,23 @@ target surfaces in flight.
 
 ### Construct and render
 
+A node belongs to the engine that built or read it, and renders, edits and takes trivia through that engine. Build through `engine.build`; a node made anywhere else has no engine, and `$render()` says so.
+
 ```ts
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const engine = await createEngine(rust);
 
 // Strict construction — every slot explicit.
-const fn = ir.functionItem.strict({
-  visibilityModifier: ir.visibilityModifier.pub(),
-  name: ir.identifier('main'),
-  parameters: ir.parameters.strict(),
-  body: ir.block.strict()
+const fn = engine.build.statement.function.strict({
+  visibilityModifier: engine.build.visibilityModifier.pub(),
+  name: engine.build.identifier('main'),
+  parameters: engine.build.parameters.strict(),
+  body: engine.build.block.strict()
 });
 
-fn.$render();      // "pub fn main () {}"
+fn.$render();      // "pub fn main() {}"
 fn.name();         // typed value — leaf-hoisted to its $text
 fn.body();         // returns the Block NodeData
 ```
@@ -416,45 +421,32 @@ fn.body();         // returns the Block NodeData
 ```ts
 // Coercion — strings, arrays, and plain objects resolve to their
 // expected slot kind.
-import { ir } from '@sittir/rust';
-
-const fn = ir.functionItem({
+const fn = engine.build.statement.function({
   visibilityModifier: 'pub',                                       // string → VisibilityModifier
   name: 'greet',                                                   // string → Identifier
-  parameters: ir.parameters.strict(
-    ir.parameter({ pattern: 'name', type: 'String' })         // nested coercion
+  parameters: engine.build.parameters(
+    engine.build.parameter({ name: 'name', type: 'String' })       // nested coercion
   ),
-  body: ir.block.strict()
+  body: engine.build.block.strict()
 });
 ```
 
 ### Read source into NodeData
 
 ```ts
-import { createEngine, ir, is, wrapNode } from '@sittir/rust';
+const file = engine.parse(source);
 
-const engine = createEngine();
-const { root, tree } = engine.reader!.parseAndRead(source);
-
-for (const stmt of root.$children ?? []) {
-  if (is.functionItem(stmt)) {
-    const fn = wrapNode(stmt, tree) as ReturnType<typeof ir.functionItem>;
-    console.log(fn.name(), fn.body());
+for (const stmt of file.statements()) {
+  if (engine.is.functionItem(stmt)) {
+    console.log(stmt.name(), stmt.body());
   }
 }
 ```
 
-`engine.reader` is `undefined` for render-only backends; guard before
-calling `parseAndRead`.
-
 ### Round-trip
 
 ```ts
-import { createEngine, wrapNode } from '@sittir/rust';
-
-const engine = createEngine();
-const { root, tree } = engine.reader!.parseAndRead(source);
-(wrapNode(root, tree) as { $render(): string }).$render() === source;
+engine.parse(source).$render() === source;
 // true for well-formed input
 ```
 

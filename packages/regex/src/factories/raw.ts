@@ -10,7 +10,7 @@ import {
 	numberText,
 	rejectBareText
 } from '@sittir/common/utils';
-import { withMethods, methodsEngine } from '../utils.js';
+import { withMethods } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
 	if (arr.length === 0) {
@@ -50,8 +50,7 @@ export function buildPattern(value: T.Alternation | T.Term): T.Pattern.Built {
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -70,8 +69,7 @@ export function buildAlternation(...children: T.Term[]): T.Alternation.Built {
 			{
 				terms: () => _term
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -90,8 +88,7 @@ export function buildTerm(...children: T.TermGroup[]): T.Term.Built {
 			{
 				termGroups: () => _term_group
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -137,8 +134,7 @@ export function buildLookaroundAssertion(
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -166,8 +162,7 @@ export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.
 				content: () => _content,
 				pattern: () => _pattern
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -195,8 +190,7 @@ export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): 
 				content: () => _content,
 				pattern: () => _pattern
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -204,15 +198,12 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Built {
 	if (text.length === 0) throw new Error(`pattern_character: text must be non-empty`);
 	if (!_leafRe_buildPatternCharacter.test(text))
 		throw new Error(`pattern_character: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.PatternCharacter as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.PatternCharacter as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildCharacterClass(): T.EmptyCharacterClass;
@@ -270,8 +261,7 @@ export function buildCharacterClass(
 			{
 				classAtoms: () => _class_atoms
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -306,8 +296,7 @@ function _buildPosixCharacterClass(value: T.PosixClassName): T.PosixCharacterCla
 			{
 				posixClassName: () => _posix_class_name
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -315,15 +304,12 @@ export function buildPosixClassName(text: string): T.PosixClassName.Built {
 	if (text.length === 0) throw new Error(`posix_class_name: text must be non-empty`);
 	if (!_leafRe_buildPosixClassName.test(text))
 		throw new Error(`posix_class_name: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.PosixClassName as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.PosixClassName as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Built {
@@ -354,23 +340,19 @@ export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Built
 				start: () => _start,
 				end: () => _end
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
 export function buildClassCharacter(text: string): T.ClassCharacter.Built {
 	if (text.length === 0) throw new Error(`class_character: text must be non-empty`);
 	if (!_leafRe_buildClassCharacter.test(text)) throw new Error(`class_character: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.ClassCharacter as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.ClassCharacter as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildAnonymousCapturingGroup(value: T.Pattern): ReturnType<typeof _buildAnonymousCapturingGroup>;
@@ -406,8 +388,7 @@ function _buildAnonymousCapturingGroup(value: T.Pattern): T.AnonymousCapturingGr
 			{
 				pattern: () => _pattern
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -439,8 +420,7 @@ export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): 
 				groupName: () => _group_name,
 				pattern: () => _pattern
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -475,65 +455,52 @@ function _buildNonCapturingGroup(value: T.Pattern): T.NonCapturingGroup.Built {
 			{
 				pattern: () => _pattern
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
 export function buildFlags(text: string): T.Flags.Built {
 	if (text.length === 0) throw new Error(`flags: text must be non-empty`);
 	if (!_leafRe_buildFlags.test(text)) throw new Error(`flags: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.Flags as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.Flags as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildZeroOrMore(text: string): T.ZeroOrMore.Built {
 	if (text.length === 0) throw new Error(`zero_or_more: text must be non-empty`);
 	if (!_leafRe_buildZeroOrMore.test(text)) throw new Error(`zero_or_more: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.ZeroOrMore as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.ZeroOrMore as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildOneOrMore(text: string): T.OneOrMore.Built {
 	if (text.length === 0) throw new Error(`one_or_more: text must be non-empty`);
 	if (!_leafRe_buildOneOrMore.test(text)) throw new Error(`one_or_more: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.OneOrMore as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.OneOrMore as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildOptional(text: string): T.Optional.Built {
 	if (text.length === 0) throw new Error(`optional: text must be non-empty`);
 	if (!_leafRe_buildOptional.test(text)) throw new Error(`optional: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.Optional as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.Optional as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildCountQuantifier(value: T.CountQuantifierArm | T.DecimalDigits): T.CountQuantifier.Built {
@@ -552,8 +519,7 @@ export function buildCountQuantifier(value: T.CountQuantifierArm | T.DecimalDigi
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -588,8 +554,7 @@ function _buildBackreferenceEscape(value: T.GroupName): T.BackreferenceEscape.Bu
 			{
 				groupName: () => _group_name
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -624,23 +589,19 @@ function _buildNamedGroupBackreference(value: T.GroupName): T.NamedGroupBackrefe
 			{
 				groupName: () => _group_name
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
 export function buildDecimalEscape(text: string): T.DecimalEscape.Built {
 	if (text.length === 0) throw new Error(`decimal_escape: text must be non-empty`);
 	if (!_leafRe_buildDecimalEscape.test(text)) throw new Error(`decimal_escape: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.DecimalEscape as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.DecimalEscape as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildCharacterClassEscape(
@@ -662,8 +623,7 @@ export function buildCharacterClassEscape(
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -671,15 +631,12 @@ export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEsc
 	if (text.length === 0) throw new Error(`unicode_character_escape: text must be non-empty`);
 	if (!_leafRe_buildUnicodeCharacterEscape.test(text))
 		throw new Error(`unicode_character_escape: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.UnicodeCharacterEscape as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.UnicodeCharacterEscape as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildUnicodePropertyValueExpression(
@@ -714,8 +671,7 @@ export function buildUnicodePropertyValueExpression(
 				unicodePropertyValueExpressionGroup: () => _unicode_property_value_expression_group,
 				unicodePropertyValue: () => _unicode_property_value
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -723,44 +679,35 @@ export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.
 	if (text.length === 0) throw new Error(`unicode_property_value: text must be non-empty`);
 	if (!_leafRe_buildUnicodePropertyValue.test(text))
 		throw new Error(`unicode_property_value: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.UnicodePropertyValue as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.UnicodePropertyValue as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildControlEscape(text: string): T.ControlEscape.Built {
 	if (text.length === 0) throw new Error(`control_escape: text must be non-empty`);
 	if (!_leafRe_buildControlEscape.test(text)) throw new Error(`control_escape: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.ControlEscape as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.ControlEscape as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Built {
 	if (text.length === 0) throw new Error(`control_letter_escape: text must be non-empty`);
 	if (!_leafRe_buildControlLetterEscape.test(text))
 		throw new Error(`control_letter_escape: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.ControlLetterEscape as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.ControlLetterEscape as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildIdentityEscape(value: string): T.IdentityEscape.Built {
@@ -781,38 +728,31 @@ export function buildIdentityEscape(value: string): T.IdentityEscape.Built {
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
 export function buildGroupName(text: string): T.GroupName.Built {
 	if (text.length === 0) throw new Error(`group_name: text must be non-empty`);
 	if (!_leafRe_buildGroupName.test(text)) throw new Error(`group_name: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.GroupName as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.GroupName as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildDecimalDigits(text: string | number | bigint): T.DecimalDigits.Built {
 	text = numberText(10, '', text);
 	if (text.length === 0) throw new Error(`decimal_digits: text must be non-empty`);
 	if (!_leafRe_buildDecimalDigits.test(text)) throw new Error(`decimal_digits: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.DecimalDigits as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.DecimalDigits as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Built {
@@ -850,8 +790,7 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Built {
 				content: () => _content,
 				quantifier: () => _quantifier
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -888,8 +827,7 @@ function _buildCountQuantifierGroup(value?: T.DecimalDigits): T.CountQuantifierG
 			{
 				decimalDigits: () => _decimal_digits
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -922,8 +860,7 @@ export function buildCountQuantifierArm(config: T.CountQuantifierArm.Config): T.
 				decimalDigits: () => _decimal_digits,
 				countQuantifierGroup: () => _count_quantifier_group
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -954,8 +891,7 @@ export function buildCharacterClassEscapeArm(
 				content: () => _content,
 				unicodePropertyValueExpression: () => _unicode_property_value_expression
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1005,8 +941,7 @@ function _buildUnicodePropertyValueExpressionGroup(
 			{
 				unicodePropertyName: () => _unicode_property_name
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1030,8 +965,7 @@ export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Con
 				enabled: () => _enabled,
 				pattern: () => _pattern
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1059,8 +993,7 @@ export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Con
 				disabled: () => _disabled,
 				pattern: () => _pattern
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1086,8 +1019,7 @@ export function buildInlineFlagsGroupDisable(
 				disabled: () => _disabled,
 				pattern: () => _pattern
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1123,8 +1055,7 @@ export function buildLazy(value: TSKindId.Qmark): T.Lazy.Built {
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -1144,8 +1075,7 @@ export function buildUnicodePropertyName(value: T.UnicodePropertyValue): T.Unico
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 

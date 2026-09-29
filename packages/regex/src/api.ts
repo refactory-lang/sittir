@@ -4,9 +4,17 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
 import { is } from './is.js';
-import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type RegexNode } from './types.js';
+import {
+	TSKindId,
+	type FixedTextKindId,
+	type IrKeyOf,
+	type NamespaceMap,
+	type RegexNode,
+	type RegexTypeMap
+} from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { methodsEngine } from './utils.js';
+import { triviaFacts } from './utils.js';
+import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type PatternRoot } from './render-engine.js';
 import { wrapNode, type PatternTree } from './wrap.js';
 
@@ -21,14 +29,16 @@ export interface RegexAPI extends LanguageAPI {
 	readonly fixedTextKindId: FixedTextKindId;
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
+	readonly empty: RegexTypeMap['empty'];
 }
 
-export const hooks: LanguageHooks<RegexAPI> = {
+export const hooks: LanguageHooks<RegexAPI> = Object.freeze<LanguageHooks<RegexAPI>>({
 	name: 'regex',
+	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
 	is,
 	kinds: TSKindId,
-	trivia: methodsEngine.trivia,
+	trivia: triviaFacts,
 	createNative: (options) => nativeLanguageEngine<RegexAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as PatternRoot & ParsedRoot, tree as TreeHandle)
-};
+});

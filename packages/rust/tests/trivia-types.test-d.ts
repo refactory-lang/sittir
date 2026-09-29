@@ -1,11 +1,11 @@
 /**
  * Type-level pins for inner trivia: only a node that realizes empty takes
- * inner entries, and `isEmpty` narrows a node to that form.
+ * inner entries, and the engine's `isEmptyNode` narrows a node to that form.
  *
  * Compile-time only: `pnpm --filter @sittir/rust type-check`.
  */
 
-import { isEmpty, type Block, type EmptyBlock, type EmptyMatchBlock } from '@sittir/rust';
+import { type Block, type EmptyBlock, type EmptyMatchBlock } from '@sittir/rust';
 import rust from '@sittir/rust';
 import { createEngine } from '@sittir/common';
 
@@ -24,7 +24,7 @@ rs.build.block({ trailingExpression: rs.build.integerLiteral('1') }).$trivia.inn
 declare const parsed: Block;
 // @ts-expect-error a block read from source is not known to be empty
 parsed.$trivia.inner(rs.build.lineComment(' TODO'));
-if (isEmpty(parsed)) parsed.$trivia.inner(rs.build.lineComment(' TODO')) satisfies EmptyBlock;
+if (rs.isEmptyNode(parsed)) parsed.$trivia.inner(rs.build.lineComment(' TODO')) satisfies EmptyBlock;
 
-// @ts-expect-error a kind that never realizes empty has no isEmpty overload
-isEmpty(rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: rs.build.block() }));
+// @ts-expect-error a kind that never realizes empty has no isEmptyNode overload
+rs.isEmptyNode(rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: rs.build.block() }));

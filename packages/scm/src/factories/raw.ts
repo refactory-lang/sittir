@@ -4,7 +4,7 @@ import type * as T from '../types.js';
 import { TSKindId } from '../types.js';
 import type { NonEmptyArray } from '@sittir/types';
 import { withAccessors, coerceKindEnumStorage, coerceMixedEnumStorage, rejectBareText } from '@sittir/common/utils';
-import { withMethods, methodsEngine } from '../utils.js';
+import { withMethods } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
 	if (arr.length === 0) {
@@ -33,8 +33,7 @@ export function buildProgram(...children: T.Definition[]): T.Program.Built {
 			{
 				definitions: () => _definitions
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -56,38 +55,31 @@ export function buildEscapeSequence(value: string): T.EscapeSequence.Built {
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
 export function buildIdentifier(text: string): T.Identifier.Built {
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
 	if (!_leafRe_buildIdentifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.Identifier as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.Identifier as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Built {
 	if (text.length === 0) throw new Error(`_immediate_identifier: text must be non-empty`);
 	if (!_leafRe_buildImmediateIdentifier.test(text))
 		throw new Error(`_immediate_identifier: text does not match pattern: ${text}`);
-	return withMethods(
-		{
-			$type: TSKindId.ImmediateIdentifier as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
+	return withMethods({
+		$type: TSKindId.ImmediateIdentifier as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildCapture(value: T.ImmediateIdentifier): ReturnType<typeof _buildCapture>;
@@ -121,8 +113,7 @@ function _buildCapture(value: T.ImmediateIdentifier): T.Capture.Built {
 			{
 				name: () => _name
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -157,8 +148,7 @@ function _buildString(value?: T.StringContent): T.String.Built {
 			{
 				stringContent: () => _string_content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -195,8 +185,7 @@ function _buildImmediateString(value?: T.StringContent): T.ImmediateString.Built
 			{
 				stringContent: () => _string_content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -214,8 +203,7 @@ export function buildStringContent(...children: ('[^"\\\\\\n]+' | T.EscapeSequen
 			{
 				contents: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -234,8 +222,7 @@ export function buildParameters(...children: (T.Capture | T.String | T.Identifie
 			{
 				elements: () => _elements
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -257,8 +244,7 @@ export function buildComment(value: string): T.Comment.Built {
 			{
 				content: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -290,8 +276,7 @@ export function buildList(config: T.List.Config): T.List.Built {
 				definitions: () => _definitions,
 				contents: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -324,8 +309,7 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Built {
 				groupingGroups: () => _grouping_group,
 				contents: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -360,8 +344,7 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 				name: () => _name,
 				contents: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -400,8 +383,7 @@ export function buildAnonymousNode(config: Partial<T.AnonymousNode.Config> = {})
 				name: () => _name,
 				contents: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -425,8 +407,7 @@ export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldD
 				name: () => _name,
 				definition: () => _definition
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -461,8 +442,7 @@ function _buildNegatedField(value: T.Identifier): T.NegatedField.Built {
 			{
 				identifier: () => _identifier
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -500,8 +480,7 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Built {
 				type: () => _type,
 				parameters: () => _parameters
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -525,8 +504,7 @@ export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.
 				left: () => _left,
 				right: () => _right
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -560,8 +538,7 @@ export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Con
 				left: () => _left,
 				right: () => _right
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -585,8 +562,7 @@ export function buildGroupingGroup(value: T.Definition | T.GroupExpressionArm): 
 			{
 				groupExpression: () => _group_expression
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -632,8 +608,7 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 				namedNodeGroup: () => _named_node_group,
 				contents: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -679,8 +654,7 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 				namedNodeGroup: () => _named_node_group,
 				contents: () => _content
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -708,8 +682,7 @@ export function buildNamedNodeGroupChildren(
 			{
 				namedNodeExpressions: () => _named_node_expressions
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 
@@ -745,8 +718,7 @@ export function buildNamedNodeGroupAnchoredLast(
 				namedNodeExpressions: () => _named_node_expressions,
 				last: () => _last
 			}
-		),
-		methodsEngine
+		)
 	);
 }
 

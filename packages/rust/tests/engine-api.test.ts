@@ -39,14 +39,4 @@ describe('rust through createEngine', () => {
 		expect(built.$type).toBe(rs.kinds.FunctionItem);
 	});
 
-	it('the engine owns the trees it parsed', async () => {
-		const hooks = await rust.load();
-		const a = hooks.createNative();
-		const b = hooks.createNative();
-		const { tree } = a.parseAndRead('fn f() {}\n');
-		expect(a.holdsTree(tree)).toBe(true);
-		expect(b.holdsTree(tree)).toBe(false);
-		a.dispose();
-		b.dispose();
-	});
 });

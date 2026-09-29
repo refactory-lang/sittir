@@ -89,17 +89,17 @@ export const TOKEN_INTERIORS = {
 } as const satisfies { readonly [kind: string]: TokenInterior };
 
 /** The gaps an empty node of each kind holds inner trivia in, in render order. */
-export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = {
-	argument_list: ['arguments'],
-	case_list_pattern: ['list_pattern_case_patterns'],
-	case_tuple_pattern: ['list_pattern_case_patterns'],
-	dict_pattern: ['dict_pattern_elements'],
-	dictionary: ['entries'],
-	list: ['collection_elements'],
-	list_pattern: ['patterns'],
-	match_block_block: ['alternative'],
-	module: ['statements'],
-	parameters: ['elements'],
-	tuple: ['collection_elements'],
-	tuple_pattern: ['patterns']
-};
+export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = Object.freeze({
+	argument_list: Object.freeze(['arguments']),
+	case_list_pattern: Object.freeze(['list_pattern_case_patterns']),
+	case_tuple_pattern: Object.freeze(['list_pattern_case_patterns']),
+	dict_pattern: Object.freeze(['dict_pattern_elements']),
+	dictionary: Object.freeze(['entries']),
+	list: Object.freeze(['collection_elements']),
+	list_pattern: Object.freeze(['patterns']),
+	match_block_block: Object.freeze(['alternative']),
+	module: Object.freeze(['statements']),
+	parameters: Object.freeze(['elements']),
+	tuple: Object.freeze(['collection_elements']),
+	tuple_pattern: Object.freeze(['patterns'])
+});

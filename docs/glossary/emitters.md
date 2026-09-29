@@ -139,7 +139,7 @@ The name of a grammar's type map, `<Prefix>TypeMap` (`RustTypeMap`), from the sa
 
 ### `packages/codegen/src/emitters/engine.ts::emitApi`
 
-The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`) and exports `hooks`, which wire the builder table, guards, kind ids and trivia facts, a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree.
+The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`, and `empty`, the grammar's type-map member naming each kind's empty form) and exports `hooks`, which wire the package's render module hash, the builder table, guards, kind ids and trivia facts (joined by the grammar's comment coercer, `commentCoercer`, when it has a default trivia form, so a loose trivia string builds a comment), a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree.
 
 
 ```text
@@ -153,6 +153,8 @@ The grammar's `api.ts`: the implementation a language descriptor loads. It decla
  * @returns The full content of the emitted `engine.ts` file.
  */
 ```
+
+`hooks` is frozen, and so is the trivia hook it carries (the grammar's facts, joined by the comment coercer when there is one), so every engine of the language shares facts that none can change.
 
 ### `packages/codegen/src/emitters/factories.ts::collectUsesNonEmptyArray`
 
@@ -6821,6 +6823,8 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
 // `"as_pattern"` shadowing the real `as_pattern` entry.
 ```
 
+`TSKindId` is frozen right after its declaration.
+
 ### `packages/codegen/src/emitters/types.ts::makeInliningLookupUnion`
 
 ```text
@@ -9209,6 +9213,8 @@ Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sour
  */
 ```
 
+`is` is frozen, and stays a check on the kind id alone: the language of a node is a fact of the engine's node guards, not of the package-level table.
+
 ### `packages/codegen/src/emitters/shared.ts::module`
 
 ```text
@@ -10984,18 +10990,19 @@ The union of the grammar's trivia kind types, `AnyNodeData` when it has none: wh
 
 ### `packages/codegen/src/emitters/client-utils.ts::module`
 
-Emits the grammar's `utils.ts`: its facts (`methodsEngine`) and the runtime bound to its type map (`bindRuntime`), destructured as `isNode`, `isEmpty` and `withMethods`. Every other runtime helper is grammar-free and generated code imports it from `@sittir/common/utils`. The binding stays in its own module rather than `api.ts`: the factories index calls `hoist` while it loads, and `api.ts` reads `ir` while it loads, so a factory importing the runtime from `api.ts` would reach `ir` before it is initialised.
+Emits the grammar's `utils.ts`: its trivia facts (`triviaFacts`) and the runtime bound to its type map (`bindRuntime`), destructured as `isNode` and `withMethods`. Every other runtime helper is grammar-free and generated code imports it from `@sittir/common/utils`. The binding stays in its own module rather than `api.ts`: the factories index calls `hoist` while it loads, and `api.ts` reads `ir` while it loads, so a factory importing the runtime from `api.ts` would reach `ir` before it is initialised.
 
-### `packages/codegen/src/emitters/client-utils.ts::emitMethodsEngine`
+### `packages/codegen/src/emitters/client-utils.ts::emitTriviaFacts`
 
-Emits `methodsEngine`, the grammar's `GrammarFacts`, which `withMethods` and `isEmpty` read at runtime: `render` and `toEdit` from the native engine, and `trivia`:
+Emits `triviaFacts`, the grammar's `TriviaFacts`, which the language hooks carry to the engine, and which a node's `$trivia` reads through its engine:
 - `kindName`, from `KIND_NAMES`;
 - `kinds`, the trivia kind names (`triviaKinds`); the runtime refuses a node or kind id of any other kind, saying it is not an extra;
 - `innerGaps` (`INNER_GAPS`);
-- `whitespace` (`whitespaceTrivia`), when the grammar has lexical extras: loose text the extras run accepts becomes the kind id of the whitespace kind spelled exactly so, and any other such text is refused;
-- `comment`, declared unbound. A grammar with no default trivia form (`defaultTriviaForm`) has no `comment` key, and a loose trivia string there is refused.
+- `whitespace` (`whitespaceTrivia`), when the grammar has lexical extras: loose text the extras run accepts becomes the kind id of the whitespace kind spelled exactly so, and any other such text is refused.
 
-`trivia.comment` is bound when the factories module loads (`emitFactoriesIndex`); the static import graph forbids binding it earlier. The raw builders read the engine and every comment builder is built from raw builders, so an import from `utils.ts` to any factory module is a cycle.
+The facts carry no `comment` builder and no render or edit: a node renders and edits through the engine it belongs to. A grammar with a default trivia form passes its comment builder in the language hooks' `trivia` (`emitApi`), where `api.ts` imports the coercer.
+
+`triviaFacts` is frozen, with its whitespace run table.
 
 ### `packages/codegen/src/emitters/emit.ts::module`
 
@@ -11194,7 +11201,7 @@ omits the key.
 
 ### `packages/codegen/src/emitters/index-file.ts::emitIndex`
 
-The grammar's `index.ts`: the language descriptor as the default export (its name, and a `load` that imports `./api.js` on demand, so importing the package's descriptor loads no factories and no native binding), the language API type, and the grammar's types, re-exported type-only. Builders, guards and kind ids are values reached through an engine (`engine.build`, `engine.is`, `engine.kinds`), never through the package index; `isEmpty` is its one value export besides the descriptor. It depends on the grammar's name only, not on its node list.
+The grammar's `index.ts`: the language descriptor as the default export (its name, and a `load` that imports `./api.js` on demand, so importing the package's descriptor loads no factories and no native binding), the language API type, and the grammar's types, re-exported type-only. Builders, guards and kind ids are values reached through an engine (`engine.build`, `engine.is`, `engine.kinds`), never through the package index; the descriptor is its only value export. It depends on the grammar's name only, not on its node list.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::TransportLiteral.immediate`
 
@@ -12418,6 +12425,8 @@ through `ir`. If that export's key collides with a flat leaf/keyword
 factory's own `ir` key, the parent's route object is attached onto that
 leaf's factory instead of shadowing it (`attachProps(<leaf>, F.<key>)`).
 
+`ir` and `synonym` are frozen tables: the emitted module is the one place each is built, and nothing writes to either afterwards.
+
 ### `packages/codegen/src/emitters/ir.ts::emitSynonymBoolean`
 
 #### body
@@ -13369,6 +13378,8 @@ normalization; a node that already carries slot storage (built or edited) is lef
 ```
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`
+
+Assembles the wrap module. `wrapNode`, the one function every wrapped node passes through (the parsed root, each child expanded on demand, trivia entries), runs its per-kind wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached.
 
 #### body
 
@@ -14439,8 +14450,6 @@ Emits `factories/index.ts`, the dynamic final chain step: re-exports the top ove
 
 Every flattened parent is exported the same way through `hoistRoutes(O.<key>)`, so `ir.<parent>.<variant>(…)` is the coerce flavor and `.strict` stays reachable, just as for a bundled kind.
 
-A grammar with a default trivia form ends the module by binding `methodsEngine.trivia.comment` to the form's coercer (`TriviaForm.coercer`), the function `ir.comment`'s coerce flavor calls. That field is the only channel, written once, at load. Until then a loose trivia string is refused with a request to import the factories.
-
 ### `packages/codegen/src/emitters/overlays/module.ts::overlayFrame`
 
 Shared header for a static overlay module: imports the previous layer as `B`, any extra imports, and re-exports the previous layer; a layer shadows only the bundles it decorates.
@@ -14733,6 +14742,8 @@ Renders one sub-factory's transformation method and its two applications. Method
 ### `packages/codegen/src/emitters/overlays/refines.ts::emitRefinesOverlay`
 
 Static wiring for refine forms over bundles: for each kind with refine forms, spreads the bundle (`...B.<key>`) and wires each form as `{ strict: F.<refineFormFactory> }` under its camelCase key (plus the raw form name when it differs). Refine forms have no emitted coercers, so the pair carries only `strict`.
+
+The overlay table and each form's pair are frozen.
 
 ### `packages/codegen/src/emitters/overlays/sub-factories.ts::ValueArm`
 
@@ -15216,6 +15227,8 @@ ride in the erased-helper block for the flatten methods.
 Flattened parents emit last as plain route objects (`export const <parent> = { <variant>: … }`). A `leaf` route (`FlattenedVariantRoute.leaf`, a child with no factory of its own) skips `variantRouteOf` entirely and is emitted as the child's own kind-id expression (`empty: TSKindId.Newline`), never seated in `defaultRoutes` and never itself a nested-parent target. Every other route (`variantRouteOf`, shared by flattened routes and alias wires) is, in order of preference: a nested flattened parent's route object; a bundle entry (`B.<key>`) when the kind is bundled and has no overlay entry; the kind's overlay entry itself when that entry already carries `strict`/`coerce` (a seated entry, or a non-hoisted one spread from its bundle); otherwise `{ strict, coerce, ...entry }`, the raw pair merged with the hoisted kind's own sub-factory object. `variantRouteOf` also returns the bare `strict`/`coerce` refs it used to build `.value`, not just the rendered strings, because a route declared `arm.default` (`FlattenedVariantRoute.default`) hoists those refs onto the PARENT's own object (`{ strict: <default's strict>, coerce: <default's coerce>, <variant>: … }`) — so `hoistRoutes` sees a flavor pair at the top of the route object and makes the parent itself callable (`ir.arrayExpression(...)` builds the `list` variant, the default, while `.semi` and `.list` stay reachable). A default nested through another flattened parent only carries through when that inner parent resolved a default of its own.
 
 It imports the grammar types as `T` when any emitted block names `T.`.
+
+Every table the overlay emits (a wired parent, a private set, a flattened variant parent) is frozen where it is built, and so is a route pair it builds for a variant child; the pairs a sub-factory method emits are consumed by hoisting, which builds a frozen callable from them.
 
 ### `packages/codegen/src/emitters/options.ts::kindIdArmType`
 
@@ -16164,6 +16177,8 @@ Emits `TOKEN_INTERIORS`, the runtime table (`regex`, `slots`) of every lexed kin
 
 Emits `INNER_GAPS`: for every compound with inner gaps, the gap keys in render order, from the node map's `innerGaps` rows (the same rows the Rust crate's `inner_gap_key` reads). `$trivia.inner` writes to the first key, and `$trivia.innerAt(key)` to a named one; a kind with no row has no inner position.
 
+The table and each row's key list are frozen.
+
 ### `packages/codegen/src/emitters/shared.ts::lexedContentSlot`
 
 ```text
@@ -16298,10 +16313,6 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 ### `packages/codegen/src/emitters/grammar-runtime.ts::emitBackend`
 
 `backend.ts`: loads the grammar-local native build (`rust/crates/sittir-<name>/index.js`) once per process and checks its render-module hash and transport ABI against the package's generated `RENDER_MODULE_HASH` / `NATIVE_RENDER_TRANSPORT_ABI`. The outcome is `native` or `js`; `js` means "native unavailable" — there is no JS engine behind it, and `createRenderEngine` throws on it. `SITTIR_BACKEND` forces a choice; a forced `native` that fails to load throws.
-
-### `packages/codegen/src/emitters/grammar-runtime.ts::emitBoundary`
-
-`boundary.ts`: the default-engine `render` / `toEdit` / `applyEdits` entry points the factories reach through `utils`, each timed with `recordFfi('<name>', …)` so FFI cost is attributed per grammar.
 
 ### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
 

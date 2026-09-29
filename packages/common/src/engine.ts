@@ -2,11 +2,13 @@ import { writeFileSync } from 'node:fs';
 import type {
 	AnyNodeData,
 	Edit,
+	EngineDiagnostics,
 	FormatRecord,
 	IndentOption,
 	LanguageAPI,
 	NativeEngineOptions,
 	NativeLanguageEngine,
+	ParsedRead,
 	ParseOptions,
 	RenderCallOptions,
 	Rendered
@@ -116,10 +118,8 @@ export type { ParseOptions };
  * `ParseEngine.parse`, which wraps what these produce. Reach for these only
  * from inside the wrap layer or from validator/diagnostic tooling.
  */
-export interface EngineDiagnostics<TRoot extends AnyNodeData = AnyNodeData> {
-	/** The native binary's compile profile, for tooling that refuses a debug build. */
-	readonly buildProfile: string | undefined;
-	parseAndRead(source: string, options?: ParseOptions): ParseAndReadResult<TRoot>;
+export interface NativeEngineDiagnostics<TRoot extends AnyNodeData = AnyNodeData>
+	extends EngineDiagnostics<TRoot & ParsedRoot, TreeHandle> {
 	readNode(handle: number, childIndex?: number, options?: ParseOptions): AnyNodeData;
 }
 
@@ -157,7 +157,7 @@ export interface SittirEngine<
 	O extends object = RenderOptionValues,
 	IndentChar extends string = never
 > extends RenderEngine<O, IndentChar> {
-	readonly diagnostics: EngineDiagnostics<TRoot>;
+	readonly diagnostics: NativeEngineDiagnostics<TRoot>;
 }
 
 /**
@@ -169,10 +169,7 @@ export interface ParsedRoot {
 	readonly $span: { start: number; end: number };
 }
 
-export interface ParseAndReadResult<TRoot extends AnyNodeData = AnyNodeData> {
-	root: TRoot & ParsedRoot;
-	tree: TreeHandle;
-}
+export type ParseAndReadResult<TRoot extends AnyNodeData = AnyNodeData> = ParsedRead<TRoot & ParsedRoot, TreeHandle>;
 
 interface NativeParseResultShape {
 	readonly nodeData: AnyNodeData;
@@ -306,7 +303,6 @@ export function createNativeEngine<
 									throw new Error('rootNode unavailable on native engine handle; use tree.read()');
 								},
 								source,
-								render: (node) => renderNativeNode(node).toString(),
 								read: (handle, childIndex, deep) => {
 									if (handle === undefined) return root;
 									// Handles name their own tree, so this needs no tree
@@ -337,7 +333,6 @@ export function createNativeEngine<
 export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends string = never>(
 	engine: SittirEngine<AnyNodeData, API['options'], IndentChar>
 ): NativeLanguageEngine<API> {
-	const trees = new WeakSet<object>();
 	return {
 		render(node, options) {
 			if (options === undefined) return engine.render(node);
@@ -351,13 +346,9 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 			return engine.applyEdits(source, edits);
 		},
 		parseAndRead(source, options) {
-			const read = engine.diagnostics.parseAndRead(source, options);
-			trees.add(read.tree);
-			return read;
+			return engine.diagnostics.parseAndRead(source, options);
 		},
-		holdsTree(tree) {
-			return typeof tree === 'object' && tree !== null && trees.has(tree);
-		},
+		buildProfile: engine.diagnostics.buildProfile,
 		dispose() {
 			engine.dispose();
 		}

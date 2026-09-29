@@ -61,7 +61,7 @@ export const ir: {
 	readonly immediateIdentifier: typeof F.buildImmediateIdentifier;
 	readonly whitespace: typeof whitespace;
 	readonly definition: typeof definition;
-} = {
+} = Object.freeze({
 	// Node factories
 	program: F.program,
 	escapeSequence: F.escapeSequence,
@@ -92,4 +92,4 @@ export const ir: {
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	whitespace,
 	definition
-};
+});

@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { AnyNodeData } from '@sittir/types';
+import { inEngine } from '../src/engine-scope.ts';
+import { liveHandle } from './support/fake-engine.ts';
 import {
 	withMethods,
 	isNode,
@@ -22,15 +24,10 @@ describe('@sittir/common/utils runtime surface', () => {
 		expect(typeof coerceBitflagStorage).toBe('function');
 	});
 
-	it('attaches render/edit helpers from the explicit engine surface', () => {
+	it('attaches render/edit helpers from the engine in scope', () => {
 		const render = vi.fn(() => 'rendered');
-		const toEdit = vi.fn((_node, startOrRange, endPos) => ({
-			startPos: typeof startOrRange === 'number' ? startOrRange : startOrRange.start.index,
-			endPos: typeof startOrRange === 'number' ? (endPos ?? startOrRange) : startOrRange.end.index,
-			insertedText: 'rendered'
-		}));
 		const trivia = { kindName: (type: AnyNodeData['$type']) => `k${type}`, kinds: new Set(['k1', 'k2', 'k3']), innerGaps: {} };
-		const node = withMethods({ $type: 1, $source: 2, _name: 'x' }, { render, toEdit, trivia });
+		const node = inEngine(liveHandle({ render, trivia }), () => withMethods({ $type: 1, $source: 2, _name: 'x' }));
 
 		expect(node.$render()).toBe('rendered');
 		expect(node.$toEdit({ start: { index: 0 }, end: { index: 3 } })).toEqual({
@@ -53,11 +50,8 @@ describe('@sittir/common/utils runtime surface', () => {
 		const triviaNodeB: AnyNodeData = { $type: 3, $source: 2, $text: 'b' };
 		expect(node.$trivia(triviaNodeA, triviaNodeB)).toBe(node);
 		expect((node as unknown as Record<string, unknown>).$_trivia).toEqual({ leading: [triviaNodeA, triviaNodeB] });
-		expect(render).toHaveBeenCalledTimes(1);
+		expect(render).toHaveBeenCalledTimes(3);
 		expect(render).toHaveBeenCalledWith(node);
-		expect(toEdit).toHaveBeenCalledTimes(2);
-		expect(toEdit).toHaveBeenNthCalledWith(1, node, { start: { index: 0 }, end: { index: 3 } }, undefined);
-		expect(toEdit).toHaveBeenNthCalledWith(2, node, { start: { index: 4 }, end: { index: 7 } });
 	});
 
 	it('guards and coercers behave consistently', () => {

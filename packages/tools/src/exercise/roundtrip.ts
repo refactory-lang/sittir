@@ -1,6 +1,5 @@
 import type { AnyNodeData } from '@sittir/types';
 import type { ReadNodeLike } from '../validate/common.ts';
-import { loadBoundaryRender } from '../scripts/collect-baseline.ts';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
 type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements' | 'forwarded';
@@ -39,6 +38,7 @@ interface CommonModule {
 		};
 		lang: unknown;
 	}>;
+	loadNativeRender(grammar: string): Promise<(node: AnyNodeData) => string>;
 	loadCorpusEntries(grammar: string): readonly { name: string; source: string }[];
 	loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined>;
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
@@ -311,10 +311,10 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 					}
 				};
 	const kindNameFromId = await common.loadKindNameFromId(grammar);
-	// Native boundary render — same dispatch path the validators use; the
+	// Native engine render — same engine the validators use; the
 	// removed legacy-core renderer had no SpacingWriter, so its output was
 	// seam-less garbage for any grammar with word-word seams.
-	const render = await loadBoundaryRender(grammar);
+	const render = await common.loadNativeRender(grammar);
 	const { Parser, lang } = await common.loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);

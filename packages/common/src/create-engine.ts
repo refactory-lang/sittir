@@ -1,14 +1,27 @@
 import type {
+	AnyNodeData,
 	ApiSurface,
 	Engine,
+	EngineIdentity,
 	EngineOptions,
 	Language,
 	LanguageAPI,
 	LanguageHooks,
 	NativeEngineOptions,
+	ParseOptions,
 	Pending,
+	Rendered,
 	RenderOptionsCheck
 } from '@sittir/types';
+import { bindTree, engineOf, inEngine, isLive, sameLanguage, type EngineHandle } from './engine-scope.ts';
+import { metricsEnabled, recordFfi } from './metrics.ts';
+import {
+	isEmptyNode as isEmptyNodeData,
+	isErrorNode,
+	isFactoryNode,
+	isNode,
+	isParsedNode
+} from './utils.ts';
 
 const loaded = new WeakMap<Language<LanguageAPI>, Promise<LanguageHooks<LanguageAPI>>>();
 
@@ -42,26 +55,147 @@ function unimplementedVerb(verb: 'read' | 'create' | 'edit' | 'write'): Error {
 	return new Error(`file verb "${verb}" is not implemented`);
 }
 
+function refuseWrite(): never {
+	throw new Error('the build table of an engine is read-only');
+}
+
+function scopedBuild<B>(build: B, handle: EngineHandle): B {
+	const proxies = new WeakMap<object, unknown>();
+	const scope = (value: unknown): unknown => {
+		if (value === null || (typeof value !== 'function' && typeof value !== 'object')) return value;
+		const known = proxies.get(value);
+		if (known !== undefined) return known;
+		const shell = typeof value === 'function' ? () => undefined : {};
+		const proxy = new Proxy(shell, {
+			get: (_, key, receiver) => {
+				const member: unknown = Reflect.get(value, key, receiver);
+				return Object.hasOwn(value, key) ? scope(member) : member;
+			},
+			has: (_, key) => Reflect.has(value, key),
+			ownKeys: () => Reflect.ownKeys(value),
+			getOwnPropertyDescriptor: (_, key) => {
+				const descriptor = Reflect.getOwnPropertyDescriptor(value, key);
+				if (descriptor === undefined) return undefined;
+				return 'value' in descriptor
+					? { ...descriptor, value: scope(descriptor.value), configurable: true }
+					: { ...descriptor, configurable: true };
+			},
+			getPrototypeOf: () => Reflect.getPrototypeOf(value),
+			apply: (_, self, args) => inEngine(handle, () => Reflect.apply(value as () => unknown, self, args)),
+			set: refuseWrite,
+			defineProperty: refuseWrite,
+			deleteProperty: refuseWrite,
+			setPrototypeOf: refuseWrite,
+			preventExtensions: refuseWrite
+		});
+		proxies.set(value, proxy);
+		return proxy;
+	};
+	return scope(build) as B;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null;
+}
+
+function collectReaders(value: unknown, readers: Set<EngineHandle['current']>): void {
+	if (Array.isArray(value)) {
+		for (const item of value) collectReaders(item, readers);
+	} else if (isRecord(value) && !isNode(value)) {
+		for (const item of Object.values(value)) collectReaders(item, readers);
+	} else if (isRecord(value)) {
+		if (isParsedNode(value)) {
+			const reader = engineOf(value);
+			if (reader !== undefined) readers.add(reader);
+			return;
+		}
+		for (const [key, item] of Object.entries(value)) {
+			if (key.startsWith('_') || key === '$other' || key === '$_trivia') collectReaders(item, readers);
+		}
+	}
+}
+
+let engineCount = 0;
+const serials = new WeakMap<object, number>();
+const labelOf = (engine: EngineHandle['current']): string => `${engine.language.name}#${serials.get(engine) ?? '?'}`;
+
 function assembleEngine<API extends LanguageAPI>(
+	language: Language<API>,
 	hooks: LanguageHooks<API>,
 	options: EngineOptions<API> | undefined
 ): Engine<API> {
 	const native = hooks.createNative(nativeEngineOptions(options));
-	return {
-		language: hooks.name,
-		build: hooks.build,
+	const identity: EngineIdentity<API> = Object.freeze({
+		language,
+		renderModuleHash: hooks.renderModuleHash,
+		options: options?.render,
+		trivia: hooks.trivia
+	});
+	const handle: EngineHandle = { current: identity };
+	const build = scopedBuild(hooks.build, handle);
+	const renderNative = (target: Parameters<typeof native.render>[0], renderOptions: object | undefined): Rendered => {
+		const rendered = native.render(target, renderOptions);
+		if (!metricsEnabled) return rendered;
+		const kind =
+			typeof target === 'number' ? String(target) : (hooks.trivia.kindName(target.$type) ?? String(target.$type));
+		const before = performance.now();
+		const text = rendered.toString();
+		recordFfi(language.name, kind, JSON.stringify(target).length, performance.now() - before, text.length);
+		return rendered;
+	};
+	const readAndBind = (source: string, parseOptions?: ParseOptions) => {
+		const read = native.parseAndRead(source, parseOptions);
+		bindTree(read.tree, handle);
+		return read;
+	};
+	const inLanguage = (value: unknown): boolean => {
+		const stamp = engineOf(value);
+		return stamp !== undefined && sameLanguage(stamp, identity);
+	};
+	const engine: Engine<API> = {
+		...identity,
+		build,
 		is: hooks.is,
 		kinds: hooks.kinds,
 		types: undefined as unknown as API['types'],
+		diagnostics: { buildProfile: native.buildProfile, parseAndRead: readAndBind },
+		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),
+		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),
+		isFactoryNode: (value): value is API['node'] => isFactoryNode(value) && inLanguage(value),
+		isErrorNode: (value): value is API['node'] => isErrorNode(value) && inLanguage(value),
+		isEmptyNode: ((node: AnyNodeData): boolean => {
+			const kind = hooks.trivia.kindName(node.$type);
+			return (
+				engine.isNode(node) &&
+				kind !== undefined &&
+				hooks.trivia.innerGaps[kind] !== undefined &&
+				isEmptyNodeData(node)
+			);
+		}) as Engine<API>['isEmptyNode'],
 		parse(source, parseOptions) {
-			const { root, tree } = native.parseAndRead(source, parseOptions);
+			const { root, tree } = readAndBind(source, parseOptions);
 			return hooks.wrap(root, tree);
 		},
 		read() {
 			return Promise.reject(unimplementedVerb('read'));
 		},
 		render(node, renderOptions) {
-			return native.render(typeof node === 'function' ? node(hooks.build) : node, renderOptions);
+			const target = typeof node === 'function' ? node(build) : node;
+			const stamp = engineOf(target);
+			if (stamp !== undefined && !sameLanguage(stamp, identity)) {
+				throw new Error(`cannot render a ${stamp.language.name} node through a ${language.name} engine`);
+			}
+			const readers = new Set<EngineHandle['current']>();
+			collectReaders(target, readers);
+			if (readers.size > 1) {
+				throw new Error(
+					`the node holds parsed children of several engines (${[...readers].map(labelOf).join(', ')}); render each part through the engine that parsed it`
+				);
+			}
+			const [reader] = readers;
+			if (reader === undefined || reader === engine) return renderNative(target, renderOptions);
+			if (!isLive(reader)) throw new Error('engine disposed; render it with engine.render(node)');
+			return reader.render(target, { ...options?.render, ...renderOptions });
 		},
 		create(): Pending {
 			throw unimplementedVerb('create');
@@ -76,9 +210,15 @@ function assembleEngine<API extends LanguageAPI>(
 			return native.applyEdits(source, edits);
 		},
 		dispose() {
+			handle.current = identity;
 			native.dispose();
 		}
 	};
+	handle.current = engine;
+	const serial = ++engineCount;
+	serials.set(engine, serial);
+	serials.set(identity, serial);
+	return Object.freeze(engine);
 }
 
 export async function createEngine<API extends LanguageAPI, const R extends API['options'] = API['options']>(
@@ -86,5 +226,5 @@ export async function createEngine<API extends LanguageAPI, const R extends API[
 	options?: EngineOptions<API> & { readonly render?: R & RenderOptionsCheck<API, R> }
 ): Promise<Engine<API>> {
 	refuseUnimplemented(options);
-	return assembleEngine(await loadLanguage(language), options);
+	return assembleEngine(language, await loadLanguage(language), options);
 }

@@ -3,7 +3,6 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import * as F from '../src/factories/index.js';
 import type { LineComment } from '../src/types.js';
 import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
@@ -12,16 +11,16 @@ const rs = await createEngine(rust);
 const rsNative = (await rust.load()).createNative();
 
 function makeFn(name: string) {
-	return F.buildFunctionItem({
-		name: F.buildIdentifier(name),
-		parameters: F.buildParameters(),
-		body: F.buildBlock()
+	return rs.build.functionItem({
+		name: rs.build.identifier(name),
+		parameters: rs.build.parameters(),
+		body: rs.build.block()
 	});
 }
 
 /** Build a `LineComment` trivia node from raw text. */
 function makeComment(text: string): LineComment {
-	return F.buildLineComment(F.buildLineCommentRegular(text));
+	return rs.build.lineComment(rs.build.lineCommentRegular(text));
 }
 
 /** The runtime's trivia storage key — `$trivia()` mutates the node and
@@ -66,7 +65,7 @@ describe('$trivia() integration', () => {
 		const fn = makeFn('main');
 		fn.$trivia(comment);
 		expect(triviaDataOf(fn)).toBeDefined();
-		const rebuilt = fn.$with.name(F.buildIdentifier('other'));
+		const rebuilt = fn.$with.name(rs.build.identifier('other'));
 		expect(rebuilt).not.toBe(fn);
 		expect(triviaDataOf(rebuilt)).toBe(triviaDataOf(fn));
 	});
@@ -85,7 +84,7 @@ describe('$trivia() integration', () => {
 	// AFTER the `//` marker, unlike `makeComment`'s raw-`//`-prefixed text
 	// above (whose callers never render, only assert `$_trivia` shape).
 	function buildLineComment(afterSlashes: string): LineComment {
-		return F.buildLineComment(F.buildLineCommentRegular(afterSlashes));
+		return rs.build.lineComment(rs.build.lineCommentRegular(afterSlashes));
 	}
 
 	// `$trivia()` mutates and returns the SAME node (asserted above), but its
@@ -117,7 +116,7 @@ describe('$trivia() integration', () => {
 	it('a rebuilt node renders the trivia it inherited', () => {
 		const fn = makeFn('main');
 		fn.$trivia('// kept');
-		const rebuilt = fn.$with.name(F.buildIdentifier('other'));
+		const rebuilt = fn.$with.name(rs.build.identifier('other'));
 		expect(rebuilt.$render().startsWith('// kept\n')).toBe(true);
 		expect(rebuilt.$render()).toContain('fn other');
 	});

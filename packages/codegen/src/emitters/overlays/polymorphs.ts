@@ -979,10 +979,10 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 			const lines = [
 				...methods,
 				...(isPrivate
-					? [`const ${wireSet.parentKey}: {`, ...wireTypes, `} = {`]
-					: [`export const ${wireSet.parentKey}: typeof B.${wireSet.parentKey} & {`, ...wireTypes, `} = {`, `	...B.${wireSet.parentKey},`]),
+					? [`const ${wireSet.parentKey}: {`, ...wireTypes, `} = Object.freeze({`]
+					: [`export const ${wireSet.parentKey}: typeof B.${wireSet.parentKey} & {`, ...wireTypes, `} = Object.freeze({`, `	...B.${wireSet.parentKey},`]),
 				...wireLines,
-				'};',
+				'});',
 				''
 			];
 			chunks.push({ kind, isPrivate, lines, uses, hasMethods: methods.length > 0 });
@@ -1011,8 +1011,8 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		const pairType = coerceRef === undefined ? `strict: typeof ${strictRef}` : `strict: typeof ${strictRef}; coerce: typeof ${coerceRef}`;
 		const refs = { strict: strictRef, ...(coerceRef === undefined ? {} : { coerce: coerceRef }) };
 		return subFactories === undefined
-			? { value: `{ ${pairValue} }`, type: `{ ${pairType} }`, ...refs }
-			: { set: child.kind, value: `{ ${pairValue}, ...${subFactories} }`, type: `{ ${pairType} } & typeof ${subFactories}`, ...refs };
+			? { value: `Object.freeze({ ${pairValue} })`, type: `{ ${pairType} }`, ...refs }
+			: { set: child.kind, value: `Object.freeze({ ${pairValue}, ...${subFactories} })`, type: `{ ${pairType} } & typeof ${subFactories}`, ...refs };
 	}
 
 	const defaultRoutes = new Map<string, Pick<VariantRoute, 'strict' | 'coerce' | 'set'>>();
@@ -1046,7 +1046,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 			lines.push(`	${name}: ${own.value},`);
 			types.push(`	readonly ${name}: ${own.type};`);
 		}
-		chunks.push({ kind: parent.node.kind, isPrivate: false, lines: [`export const ${parent.key}: {`, ...types, '} = {', ...lines, '};', ''], uses, hasMethods: false });
+		chunks.push({ kind: parent.node.kind, isPrivate: false, lines: [`export const ${parent.key}: {`, ...types, '} = Object.freeze({', ...lines, '});', ''], uses, hasMethods: false });
 	}
 
 	const kept = inDependencyOrder(withoutUnusedPrivateSets(chunks));

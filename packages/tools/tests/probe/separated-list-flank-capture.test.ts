@@ -25,6 +25,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { probeTrace } from '../../src/probe/kind.ts';
+import { loadNativeEngine } from '../../src/validate/common.ts';
 import { coerceToObjectTypeContent } from '../../../typescript/src/factories/coerce.ts';
 
 describe('separatedList wrap capture — real typescript grammar integration', () => {
@@ -101,7 +102,8 @@ describe('separatedList from() reconstruction — preserves original separator f
 		const reconstructed = coerceToObjectTypeContent(wrapped as never);
 		expect((((reconstructed as unknown as { _delimiter?: number })._delimiter ?? 0) & 2) !== 0).toBe(true);
 		expect((reconstructed as unknown as { _separator: number })._separator).toBe(wrapped._separator);
-		expect(reconstructed.$render!()).toContain(';');
-		expect(reconstructed.$render!()).not.toContain(',');
+		const rendered = (await loadNativeEngine('typescript')).render(reconstructed as never).toString();
+		expect(rendered).toContain(';');
+		expect(rendered).not.toContain(',');
 	});
 });

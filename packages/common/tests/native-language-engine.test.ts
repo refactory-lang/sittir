@@ -47,16 +47,6 @@ describe('nativeLanguageEngine', () => {
 		]);
 	});
 
-	it('holds exactly the trees it parsed', () => {
-		const a = nativeLanguageEngine(fakeSittirEngine().engine);
-		const b = nativeLanguageEngine(fakeSittirEngine().engine);
-		const { tree } = a.parseAndRead('src');
-		expect(a.holdsTree(tree)).toBe(true);
-		expect(b.holdsTree(tree)).toBe(false);
-		expect(a.holdsTree({ source: 'src' })).toBe(false);
-		expect(a.holdsTree(undefined)).toBe(false);
-	});
-
 	it('applies edits and disposes through the native engine', () => {
 		const { engine, calls } = fakeSittirEngine();
 		const native = nativeLanguageEngine(engine);

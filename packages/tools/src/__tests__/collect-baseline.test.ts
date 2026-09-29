@@ -14,8 +14,8 @@
  * - `totals.pass + totals.fail === totals.total`.
  * - `commit` is a 7-char hex.
  * - No embedded timestamps anywhere in the serialised JSON.
- * - Native-mode boundary-import failure surfaces as a thrown error,
- *   never as a silent TS-fallback masquerading under `"backend": "native"`.
+ * - A native engine that fails to load surfaces as a thrown error,
+ *   never as numbers from another engine labelled `"backend": "native"`.
  *
  * Performance note: most tests share a single `collectBaseline('native')`
  * result hoisted in `beforeAll`. The determinism test keeps its own pair of
@@ -197,47 +197,27 @@ describe('collect-baseline', () => {
 		expect(text).not.toMatch(/\b\d{13,}\b/);
 	});
 
-	it('native-mode boundary-import failure throws with grammar + path in message', async () => {
-		// Tests the per-grammar boundary-load helper through its
-		// injectable importFn, so we can deterministically force a
-		// failure without patching the filesystem. The integration
-		// with `collectBaseline()` (which calls this helper in native
-		// mode) is correct by construction: any caller that uses the
-		// default importer and gets a rejection here surfaces it.
-		const badImport = () => Promise.reject(new Error('module not found'));
-		await expect(baseline.loadBoundaryRender('rust', badImport)).rejects.toThrow(
-			/failed to import native boundary for grammar 'rust'.*packages\/rust\/src\/boundary\.ts.*module not found/
-		);
-	});
-
-	it('native parity fixtures load the grammar-owned boundary path', async () => {
+	it('native parity fixtures render through the engine loader for their grammar', async () => {
 		const seen: string[] = [];
-		await baseline.collectParityFixtures('rust', 'native', async (path) => {
-			seen.push(path);
-			return { render: () => '' };
+		await baseline.collectParityFixtures('rust', 'native', async (grammar) => {
+			seen.push(grammar);
+			return () => '';
 		});
-		expect(seen).toEqual([expect.stringMatching(/packages\/rust\/src\/boundary\.ts$/)]);
+		expect(seen).toEqual(['rust']);
 	});
 
 	it('parity render exceptions surface with fixture context', async () => {
-		// Inject a boundary importer that returns a render function which always
-		// throws. The importFn injection path bypasses the file:// URL that
-		// vi.doMock cannot intercept, making this a pure unit test of the
-		// exception-wrapping logic in collectParityFixtures.
-		const throwingImportFn: baseline.BoundaryImporter = async () => ({
-			render() {
-				throw new Error('boom');
-			}
-		});
-		await expect(baseline.collectParityFixtures('python', 'native', throwingImportFn)).rejects.toThrow(
+		const throwingLoader: baseline.NativeRenderLoader = async () => () => {
+			throw new Error('boom');
+		};
+		await expect(baseline.collectParityFixtures('python', 'native', throwingLoader)).rejects.toThrow(
 			/\[python\]\[native\]\[render #0\].*boom/
 		);
 	});
 
 	it('native baseline failures point at bundle drift instead of looking like parity noise', async () => {
-		// Simulate the Task 3 scenario directly on the native parity-render path:
-		// boundary import fails, so native collection must throw rather than
-		// quietly slipping to TS-backed numbers labelled "native".
+		// The engine fails to load, so native collection must throw rather than
+		// quietly slipping to other numbers labelled "native".
 		await expect(
 			baseline.collectParityFixtures('python', 'native', async () => {
 				throw new Error("SITTIR_BACKEND=native but no native engine is available for grammar 'python'");
