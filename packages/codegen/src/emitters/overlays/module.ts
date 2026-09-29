@@ -204,7 +204,8 @@ export function flattenedVariantParents(nodeMap: NodeMap, generatedIdTables?: Ge
 			pending.splice(i--, 1);
 			progressed = true;
 			if (routes === null) continue;
-			const key = node.irKey ?? lowerCamelCase(kind.replace(/^_+/, ''));
+			const key = node.irKey;
+			if (key === undefined) throw new Error(`ir: the supertype '${kind}' has no ir key`);
 			if (!isValidIdent(key) || taken.has(key)) continue;
 			const leafKind = leafKinds.get(key);
 			if (leafKind !== undefined) throw new Error(`ir: '${kind}' and the leaf '${leafKind}' both take the key '${key}'`);
