@@ -3,7 +3,11 @@ export type CodeRange = readonly [number, number];
 const MAX_CODE_POINT = 0x10ffff;
 
 export class CharSet {
-	private constructor(readonly ranges: readonly CodeRange[]) {}
+	readonly ranges: readonly CodeRange[];
+
+	private constructor(ranges: readonly CodeRange[]) {
+		this.ranges = ranges;
+	}
 
 	static readonly EMPTY = new CharSet([]);
 	static readonly ALL = new CharSet([[0, MAX_CODE_POINT]]);
@@ -103,7 +107,11 @@ class UnsupportedPattern extends Error {}
 class PatternParser {
 	private at = 0;
 
-	constructor(private readonly source: string) {}
+	private readonly source: string;
+
+	constructor(source: string) {
+		this.source = source;
+	}
 
 	parse(): Node {
 		const node = this.alternation();
