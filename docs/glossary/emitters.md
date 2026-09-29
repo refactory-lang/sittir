@@ -9975,6 +9975,12 @@ After the namespaces, one `Empty<TypeName>` interface per empty form. It extends
 // Multiple accessor returns the array type (same as storage type).
 ```
 
+A kind with setters, or that owns a list, stamps `__slotHints__` (`emitSlotHints`) after its input hints; the accessors are unchanged.
+
+### `packages/codegen/src/emitters/types.ts::emitSlotHints`
+
+Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` per setter of the kind's built surface, keyed by the setter name that its accessor and `$with` share, and `$listOwner` when `listOwnerHint` is defined. The node surface types read these hints and never re-derive a slot's input or a kind's list-ownership from storage keys.
+
 ### `packages/codegen/src/emitters/types.ts::enumStorageDiscriminantExpr`
 
 #### body
@@ -11834,6 +11840,8 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
  */
 ```
 
+`setters` is the surface's slot setters as parts (`SlotSetter`): the one derivation of what each `$with` setter takes. The interface's `$with` record prints them, and the types emitter stamps the same parts as `__slotHints__`, so the two cannot disagree. A leaf has none.
+
 ### `packages/codegen/src/emitters/factories.ts::elementsTuple`
 
 ```text
@@ -11866,11 +11874,15 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
 
 ### `packages/codegen/src/emitters/factories.ts::setterTypeMember`
 
-```text
-/** One `$with` setter's type member: a rest signature for a verbatim
- *  multi-valued slot, else a single `value` whose type indexes the kind's
- *  config type by the slot's config key. */
-```
+Prints one `SlotSetter` as its `$with` type member: a rest signature when the setter takes rest arguments, else a single `value` (optional when the slot is). It only prints; `slotSetter` decides what the setter takes.
+
+### `packages/codegen/src/emitters/factories.ts::slotSetter`
+
+What one slot's `$with` setter takes, as parts: a verbatim multi-valued slot takes rest arguments typed as the array (`NonEmptyArray` when the slot is non-empty); any other slot takes one value whose type indexes the kind's config type by the slot's config key when the slot's storage is not verbatim. The single derivation of a slot's setter input, used by the built surface and, through it, by `__slotHints__`.
+
+### `packages/codegen/src/emitters/factories.ts::SlotSetter`
+
+A slot's setter as parts: the accessor `name`, the `input` type text, whether the slot is `optional`, and whether the setter takes the input as `rest` arguments.
 
 ### `packages/codegen/src/emitters/factories.ts::valueKindIdExpr`
 
@@ -11996,6 +12008,20 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
 The `separator` option is typed by the kind ids of the choice's literal
 tokens (`TSKindId.Comma | TSKindId.Semi`), the same tier as every other
 preference; the literal texts are not part of the surface.
+
+`storageElemType` is the element type the list stores and its `elements()` accessor returns, before the factory's wrapper alternative is added to `elemType`, so a read loses no content. The option keys come from `listOptionParts`.
+
+### `packages/codegen/src/emitters/factories.ts::listOptionParts`
+
+A separated list's option facts: whether it takes a `separator` and `delimiter` option, the separator kinds it allows, whether the separator is required, and the options type the factory's `options` argument takes (`undefined` when the list has none). One derivation shared by the list surface, the list factory and `listOwnerHint`.
+
+### `packages/codegen/src/emitters/factories.ts::listOptionsType`
+
+The options type a list's factory takes as its leading argument, or `undefined` when it has none. Takes the kind entries because the separator's allowed kinds are catalog kinds.
+
+### `packages/codegen/src/emitters/factories.ts::listOwnerHint`
+
+Whether a kind's sole content is a separated list, as the facts a list owner's node surface needs: the stored element of the list and the options its factory takes (`{}` when it takes none). Defined exactly when `forwardedTargetKind` names an `AssembledList`, the fact that gives the owner's strict factory its `(options?, ...items)` overloads, so read and build cannot disagree about which kinds are list owners.
 
 ### `packages/codegen/src/emitters/factories.ts::TextFactoryNode`
 

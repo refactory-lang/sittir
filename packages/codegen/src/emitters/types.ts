@@ -86,6 +86,7 @@ import {
 import {
 	constructorTargetKind,
 	builtTypeSurfaceOf,
+	listOwnerHint,
 	omitRegistered,
 	spellingTypeOf,
 	refineFormBuiltTypeSurfaceOf,
@@ -409,7 +410,9 @@ const VOCABULARY_IMPORTS = [
 	'NodeMethods',
 	'TriviaSetter',
 	'GrammarInnerTrivia',
-	'GrammarInnerTriviaAt'
+	'GrammarInnerTriviaAt',
+	'SlotHint',
+	'ListOwnerHint'
 ];
 
 function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: readonly string[], keyed: boolean): string[] {
@@ -847,6 +850,7 @@ function emitInterface(
 			}
 		}
 		emitFieldInputHints(lines, slots, node.kind, nodeMap, kindEntries, lookupUnion);
+		emitSlotHints(lines, node, nodeMap, kindEntries);
 		if (aliasContentTypeExpr(node, nodeMap, kindEntries) !== undefined) {
 			lines.push(`  readonly __aliasContent__?: ${node.typeName}.Types;`);
 		}
@@ -868,6 +872,24 @@ function emitInterface(
 
 	lines.push('}');
 	lines.push('');
+}
+
+function emitSlotHints(
+	lines: string[],
+	node: StructuralNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): void {
+	const setters = builtTypeSurfaceOf(node, nodeMap, kindEntries)?.setters ?? [];
+	const owner = listOwnerHint(node, nodeMap, kindEntries);
+	if (setters.length === 0 && owner === undefined) return;
+	lines.push('  readonly __slotHints__?: {');
+	for (const setter of setters) {
+		const flags = setter.rest ? `, ${setter.optional}, true` : setter.optional ? ', true' : '';
+		lines.push(`    readonly ${setter.name}: SlotHint<${setter.input}${flags}>;`);
+	}
+	if (owner !== undefined) lines.push(`    readonly $listOwner: ListOwnerHint<${owner.element}, ${owner.options}>;`);
+	lines.push('  };');
 }
 
 function emitFieldArrayDeclaration(

@@ -14,7 +14,8 @@ import type {
 	GrammarTypeMap,
 	NodeMethods,
 	TriviaSetter,
-	GrammarInnerTrivia
+	GrammarInnerTrivia,
+	SlotHint
 } from '@sittir/types';
 import type * as T from './types.js';
 import type { ERROR_KIND_ID } from '@sittir/common/error-kind';
@@ -488,18 +489,27 @@ export enum WhitespaceKind {
 export interface Program {
 	readonly $type: TSKindId.Program;
 	readonly _definitions?: readonly Definition[];
+	readonly __slotHints__?: {
+		readonly definitions: SlotHint<T.Definition[], false, true>;
+	};
 	definitions(): readonly Definition[];
 }
 
 export interface EscapeSequence {
 	readonly $type: TSKindId.EscapeSequence;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+	};
 	content(): string;
 }
 
 export interface Capture {
 	readonly $type: TSKindId.Capture;
 	readonly _name: ImmediateIdentifier;
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.ImmediateIdentifier>;
+	};
 	name(): ImmediateIdentifier;
 }
 
@@ -508,6 +518,9 @@ export interface String {
 	readonly _string_content?: StringContent;
 	readonly __looseHints__?: {
 		readonly string_content?: readonly ('[^"\\\\\\n]+' | EscapeSequence)[];
+	};
+	readonly __slotHints__?: {
+		readonly stringContent: SlotHint<T.StringContent, true>;
 	};
 	stringContent(): StringContent | undefined;
 }
@@ -518,24 +531,36 @@ export interface ImmediateString {
 	readonly __looseHints__?: {
 		readonly string_content?: readonly ('[^"\\\\\\n]+' | EscapeSequence)[];
 	};
+	readonly __slotHints__?: {
+		readonly stringContent: SlotHint<T.StringContent, true>;
+	};
 	stringContent(): StringContent | undefined;
 }
 
 export interface StringContent {
 	readonly $type: TSKindId.StringContent;
 	readonly _content?: readonly ('[^"\\\\\\n]+' | EscapeSequence)[];
+	readonly __slotHints__?: {
+		readonly contents: SlotHint<('[^"\\\\\\n]+' | T.EscapeSequence)[], false, true>;
+	};
 	contents(): readonly ('[^"\\\\\\n]+' | EscapeSequence)[];
 }
 
 export interface Parameters {
 	readonly $type: TSKindId.Parameters;
 	readonly _elements: NonEmptyArray<Capture | String | Identifier>;
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<(T.Capture | T.String | T.Identifier)[], false, true>;
+	};
 	elements(): NonEmptyArray<Capture | String | Identifier>;
 }
 
 export interface Comment {
 	readonly $type: TSKindId.Comment;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+	};
 	content(): string;
 }
 
@@ -545,6 +570,10 @@ export interface List {
 	readonly _content?: readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
 	readonly __inputHints__?: {
 		readonly content?: readonly (KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark> | Capture)[];
+	};
+	readonly __slotHints__?: {
+		readonly definitions: SlotHint<NonEmptyArray<T.Definition>, false, true>;
+		readonly contents: SlotHint<NonNullable<T.List.Config>['content'], true>;
 	};
 	definitions(): NonEmptyArray<Definition>;
 	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
@@ -557,6 +586,10 @@ export interface Grouping {
 	readonly __inputHints__?: {
 		readonly content?: readonly (KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark> | Capture)[];
 	};
+	readonly __slotHints__?: {
+		readonly groupingGroups: SlotHint<NonEmptyArray<T.GroupingGroup>, false, true>;
+		readonly contents: SlotHint<NonNullable<T.Grouping.Config>['content'], true>;
+	};
 	groupingGroups(): NonEmptyArray<GroupingGroup>;
 	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
 }
@@ -567,6 +600,10 @@ export interface MissingNode {
 	readonly _content?: readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
 	readonly __inputHints__?: {
 		readonly content?: readonly (KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark> | Capture)[];
+	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier | T.String, true>;
+		readonly contents: SlotHint<NonNullable<T.MissingNode.Config>['content'], true>;
 	};
 	name(): Identifier | String | undefined;
 	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
@@ -583,6 +620,10 @@ export interface AnonymousNode {
 	readonly __looseHints__?: {
 		readonly name: readonly ('[^"\\\\\\n]+' | EscapeSequence)[];
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<NonNullable<T.AnonymousNode.Config>['name']>;
+		readonly contents: SlotHint<NonNullable<T.AnonymousNode.Config>['content'], true>;
+	};
 	name(): String | TSKindId.Underscore;
 	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
 }
@@ -591,6 +632,10 @@ export interface FieldDefinition {
 	readonly $type: TSKindId.FieldDefinition;
 	readonly _name: Identifier;
 	readonly _definition: Definition;
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier>;
+		readonly definition: SlotHint<T.Definition>;
+	};
 	name(): Identifier;
 	definition(): Definition;
 }
@@ -598,6 +643,9 @@ export interface FieldDefinition {
 export interface NegatedField {
 	readonly $type: TSKindId.NegatedField;
 	readonly _identifier: Identifier;
+	readonly __slotHints__?: {
+		readonly identifier: SlotHint<T.Identifier>;
+	};
 	identifier(): Identifier;
 }
 
@@ -614,6 +662,12 @@ export interface Predicate {
 	readonly __looseHints__?: {
 		readonly parameters?: readonly (Capture | String | Identifier)[];
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<T.Predicate.Config>['content']>;
+		readonly name: SlotHint<T.ImmediateIdentifier>;
+		readonly type: SlotHint<NonNullable<T.Predicate.Config>['type']>;
+		readonly parameters: SlotHint<T.Parameters, true>;
+	};
 	content(): number;
 	name(): ImmediateIdentifier;
 	type(): number;
@@ -624,6 +678,10 @@ export interface GroupExpressionArm {
 	readonly $type: TSKindId.GroupExpressionArm;
 	readonly _left: Definition | GroupExpressionArm;
 	readonly _right: Definition | GroupExpressionArm;
+	readonly __slotHints__?: {
+		readonly left: SlotHint<T.Definition | T.GroupExpressionArm>;
+		readonly right: SlotHint<T.Definition | T.GroupExpressionArm>;
+	};
 	left(): Definition | GroupExpressionArm;
 	right(): Definition | GroupExpressionArm;
 }
@@ -632,6 +690,10 @@ export interface NamedNodeExpressionArm {
 	readonly $type: TSKindId.NamedNodeExpressionArm;
 	readonly _left: Definition | NegatedField | NamedNodeExpressionArm;
 	readonly _right: Definition | NegatedField | NamedNodeExpressionArm;
+	readonly __slotHints__?: {
+		readonly left: SlotHint<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>;
+		readonly right: SlotHint<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>;
+	};
 	left(): Definition | NegatedField | NamedNodeExpressionArm;
 	right(): Definition | NegatedField | NamedNodeExpressionArm;
 }
@@ -639,6 +701,9 @@ export interface NamedNodeExpressionArm {
 export interface GroupingGroup {
 	readonly $type: TSKindId.GroupingGroup;
 	readonly _group_expression: Definition | GroupExpressionArm;
+	readonly __slotHints__?: {
+		readonly groupExpression: SlotHint<T.Definition | T.GroupExpressionArm>;
+	};
 	groupExpression(): Definition | GroupExpressionArm;
 }
 
@@ -650,6 +715,11 @@ export interface NamedNodePlain {
 	readonly __inputHints__?: {
 		readonly name: KindEnum<'_', TSKindId.Underscore> | Identifier;
 		readonly content?: readonly (KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark> | Capture)[];
+	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<NonNullable<T.NamedNodePlain.Config>['name']>;
+		readonly namedNodeGroup: SlotHint<T.NamedNodeGroup, true>;
+		readonly contents: SlotHint<NonNullable<T.NamedNodePlain.Config>['content'], true>;
 	};
 	name(): Identifier | TSKindId.Underscore;
 	namedNodeGroup(): NamedNodeGroup | undefined;
@@ -665,6 +735,12 @@ export interface NamedNodeSupertyped {
 	readonly __inputHints__?: {
 		readonly content?: readonly (KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark> | Capture)[];
 	};
+	readonly __slotHints__?: {
+		readonly supertype: SlotHint<T.Identifier>;
+		readonly name: SlotHint<T.ImmediateIdentifier | T.ImmediateString>;
+		readonly namedNodeGroup: SlotHint<T.NamedNodeGroup, true>;
+		readonly contents: SlotHint<NonNullable<T.NamedNodeSupertyped.Config>['content'], true>;
+	};
 	supertype(): Identifier;
 	name(): ImmediateIdentifier | ImmediateString;
 	namedNodeGroup(): NamedNodeGroup | undefined;
@@ -674,6 +750,9 @@ export interface NamedNodeSupertyped {
 export interface NamedNodeGroupChildren {
 	readonly $type: TSKindId.NamedNodeGroupChildren;
 	readonly _named_node_expressions: NonEmptyArray<Definition | NegatedField | NamedNodeExpressionArm>;
+	readonly __slotHints__?: {
+		readonly namedNodeExpressions: SlotHint<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[], false, true>;
+	};
 	namedNodeExpressions(): NonEmptyArray<Definition | NegatedField | NamedNodeExpressionArm>;
 }
 
@@ -681,6 +760,10 @@ export interface NamedNodeGroupAnchoredLast {
 	readonly $type: TSKindId.NamedNodeGroupAnchoredLast;
 	readonly _named_node_expressions?: readonly (Definition | NegatedField | NamedNodeExpressionArm)[];
 	readonly _last: Definition | NegatedField | NamedNodeExpressionArm;
+	readonly __slotHints__?: {
+		readonly namedNodeExpressions: SlotHint<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[], true, true>;
+		readonly last: SlotHint<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>;
+	};
 	namedNodeExpressions(): readonly (Definition | NegatedField | NamedNodeExpressionArm)[];
 	last(): Definition | NegatedField | NamedNodeExpressionArm;
 }
@@ -1428,7 +1511,7 @@ export namespace Program {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			definitions(...vs: T.Definition[]): T.Program.Built;
+			definitions(...values: T.Definition[]): T.Program.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Program>;
@@ -1503,7 +1586,7 @@ export namespace StringContent {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			contents(...vs: ('[^"\\\\\\n]+' | T.EscapeSequence)[]): T.StringContent.Built;
+			contents(...values: ('[^"\\\\\\n]+' | T.EscapeSequence)[]): T.StringContent.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.StringContent>;
@@ -1520,7 +1603,7 @@ export namespace Parameters {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			elements(...vs: (T.Capture | T.String | T.Identifier)[]): T.Parameters.Built;
+			elements(...values: (T.Capture | T.String | T.Identifier)[]): T.Parameters.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Parameters>;
@@ -1776,7 +1859,7 @@ export namespace NamedNodeGroupChildren {
 		readonly $named: true;
 		readonly $with: {
 			namedNodeExpressions(
-				...vs: (T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]
+				...values: (T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]
 			): T.NamedNodeGroupChildren.Built;
 		};
 	}

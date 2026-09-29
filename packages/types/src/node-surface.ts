@@ -1,6 +1,7 @@
-export interface SlotHint<Input, Optional extends boolean = false> {
+export interface SlotHint<Input, Optional extends boolean = false, Rest extends boolean = false> {
 	readonly input: Input;
 	readonly optional: Optional;
+	readonly rest: Rest;
 }
 export interface ListOwnerHint<Element, Options extends object> {
 	readonly element: Element;
@@ -12,9 +13,11 @@ type HintsOf<Self> = Self extends { readonly __slotHints__?: infer H } ? NonNull
 export type SlotHintsOf<Self> = Remap<HintsOf<Self>, '$listOwner'>;
 export type ListOwnerOf<Self> = HintsOf<Self> extends { readonly $listOwner: infer L } ? L : never;
 type SlotInput<Self, K extends keyof SlotHintsOf<Self>> =
-	SlotHintsOf<Self>[K] extends SlotHint<infer I, boolean> ? I : never;
+	SlotHintsOf<Self>[K] extends SlotHint<infer I, boolean, boolean> ? I : never;
 type SlotOptional<Self, K extends keyof SlotHintsOf<Self>> =
-	SlotHintsOf<Self>[K] extends SlotHint<unknown, infer O> ? O : false;
+	SlotHintsOf<Self>[K] extends SlotHint<unknown, infer O, boolean> ? O : false;
+type SlotRest<Self, K extends keyof SlotHintsOf<Self>> =
+	SlotHintsOf<Self>[K] extends SlotHint<unknown, boolean, infer R> ? R : false;
 
 type Resolve<R, ByKindId> = R extends number
 	? R
@@ -39,10 +42,14 @@ type Accessors<N, ByKindId> = {
 type Storage<N> = Remap<N, keyof Accessors<N, {}> | '__slotHints__'>;
 
 export type Setters<Self> = {
-	[K in keyof SlotHintsOf<Self>]: SlotOptional<Self, K> extends true
-		? ((value: SlotInput<Self, K>) => WithSlot<Self, K, SlotInput<Self, K>>) &
-				(() => WithSlot<Self, K, undefined>)
-		: (value: SlotInput<Self, K>) => WithSlot<Self, K, SlotInput<Self, K>>;
+	[K in keyof SlotHintsOf<Self>]: SlotRest<Self, K> extends true
+		? SlotInput<Self, K> extends infer Rest extends readonly unknown[]
+			? (...values: Rest) => WithSlot<Self, K, Rest>
+			: never
+		: SlotOptional<Self, K> extends true
+			? ((value: SlotInput<Self, K>) => WithSlot<Self, K, SlotInput<Self, K>>) &
+					(() => WithSlot<Self, K, undefined>)
+			: (value: SlotInput<Self, K>) => WithSlot<Self, K, SlotInput<Self, K>>;
 };
 export type WithOf<Self> = Setters<Self>;
 export type WithSlot<Self, K extends PropertyKey, V> = Remap<Self, K | '$with'> & { [P in K]: () => V } & {

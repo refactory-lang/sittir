@@ -14,7 +14,8 @@ import type {
 	GrammarTypeMap,
 	NodeMethods,
 	TriviaSetter,
-	GrammarInnerTrivia
+	GrammarInnerTrivia,
+	SlotHint
 } from '@sittir/types';
 import type * as T from './types.js';
 import type { ERROR_KIND_ID } from '@sittir/common/error-kind';
@@ -597,24 +598,36 @@ export enum WhitespaceKind {
 export interface Pattern {
 	readonly $type: TSKindId.Pattern;
 	readonly _content: Alternation | Term;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.Alternation | T.Term>;
+	};
 	content(): Alternation | Term;
 }
 
 export interface Alternation {
 	readonly $type: TSKindId.Alternation;
 	readonly _term: NonEmptyArray<Term | undefined>;
+	readonly __slotHints__?: {
+		readonly terms: SlotHint<T.Term[], false, true>;
+	};
 	terms(): NonEmptyArray<Term | undefined>;
 }
 
 export interface Term {
 	readonly $type: TSKindId.Term;
 	readonly _term_group: NonEmptyArray<TermGroup>;
+	readonly __slotHints__?: {
+		readonly termGroups: SlotHint<T.TermGroup[], false, true>;
+	};
 	termGroups(): NonEmptyArray<TermGroup>;
 }
 
 export interface LookaroundAssertion {
 	readonly $type: TSKindId.LookaroundAssertion;
 	readonly _content: LookaheadAssertion | LookbehindAssertion;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.LookaheadAssertion | T.LookbehindAssertion>;
+	};
 	content(): LookaheadAssertion | LookbehindAssertion;
 }
 
@@ -627,6 +640,10 @@ export interface LookaheadAssertion {
 	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<T.LookaheadAssertion.Config>['content']>;
+		readonly pattern: SlotHint<T.Pattern>;
 	};
 	content(): number;
 	pattern(): Pattern;
@@ -641,6 +658,10 @@ export interface LookbehindAssertion {
 	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<T.LookbehindAssertion.Config>['content']>;
+		readonly pattern: SlotHint<T.Pattern>;
 	};
 	content(): number;
 	pattern(): Pattern;
@@ -670,6 +691,22 @@ export interface CharacterClass {
 			| ClassRange
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly classAtoms: SlotHint<
+			(
+				| T.ClassCharacter
+				| TSKindId.BslashDash
+				| T.CharacterClassEscape
+				| T.ControlEscape
+				| T.ControlLetterEscape
+				| T.IdentityEscape
+				| T.PosixCharacterClass
+				| T.ClassRange
+			)[],
+			false,
+			true
+		>;
+	};
 	classAtoms(): readonly (
 		| ClassCharacter
 		| TSKindId.BslashDash
@@ -685,6 +722,9 @@ export interface CharacterClass {
 export interface PosixCharacterClass {
 	readonly $type: TSKindId.PosixCharacterClass;
 	readonly _posix_class_name: PosixClassName;
+	readonly __slotHints__?: {
+		readonly posixClassName: SlotHint<T.PosixClassName>;
+	};
 	posixClassName(): PosixClassName;
 }
 
@@ -696,6 +736,10 @@ export interface ClassRange {
 		readonly start: KindEnum<'-', TSKindId.Dash> | ClassCharacter | CharacterClassEscape | ControlEscape;
 		readonly end: KindEnum<'-', TSKindId.Dash> | ClassCharacter | CharacterClassEscape | ControlEscape;
 	};
+	readonly __slotHints__?: {
+		readonly start: SlotHint<NonNullable<T.ClassRange.Config>['start']>;
+		readonly end: SlotHint<NonNullable<T.ClassRange.Config>['end']>;
+	};
 	start(): ClassCharacter | CharacterClassEscape | ControlEscape | TSKindId.Dash;
 	end(): ClassCharacter | CharacterClassEscape | ControlEscape | TSKindId.Dash;
 }
@@ -705,6 +749,9 @@ export interface AnonymousCapturingGroup {
 	readonly _pattern: Pattern;
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
+	};
+	readonly __slotHints__?: {
+		readonly pattern: SlotHint<T.Pattern>;
 	};
 	pattern(): Pattern;
 }
@@ -720,6 +767,11 @@ export interface NamedCapturingGroup {
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<T.NamedCapturingGroup.Config>['content']>;
+		readonly groupName: SlotHint<T.GroupName>;
+		readonly pattern: SlotHint<T.Pattern>;
+	};
 	content(): number;
 	groupName(): GroupName;
 	pattern(): Pattern;
@@ -731,30 +783,45 @@ export interface NonCapturingGroup {
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
 	};
+	readonly __slotHints__?: {
+		readonly pattern: SlotHint<T.Pattern>;
+	};
 	pattern(): Pattern;
 }
 
 export interface CountQuantifier {
 	readonly $type: TSKindId.CountQuantifier;
 	readonly _content: CountQuantifierArm | DecimalDigits;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.CountQuantifierArm | T.DecimalDigits>;
+	};
 	content(): CountQuantifierArm | DecimalDigits;
 }
 
 export interface BackreferenceEscape {
 	readonly $type: TSKindId.BackreferenceEscape;
 	readonly _group_name: GroupName;
+	readonly __slotHints__?: {
+		readonly groupName: SlotHint<T.GroupName>;
+	};
 	groupName(): GroupName;
 }
 
 export interface NamedGroupBackreference {
 	readonly $type: TSKindId.NamedGroupBackreference;
 	readonly _group_name: GroupName;
+	readonly __slotHints__?: {
+		readonly groupName: SlotHint<T.GroupName>;
+	};
 	groupName(): GroupName;
 }
 
 export interface CharacterClassEscape {
 	readonly $type: TSKindId.CharacterClassEscape;
 	readonly _content: '\\\\[dDsSwW]' | CharacterClassEscapeArm | UnicodeCharacterEscape;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<'\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>;
+	};
 	content(): '\\\\[dDsSwW]' | CharacterClassEscapeArm | UnicodeCharacterEscape;
 }
 
@@ -765,6 +832,10 @@ export interface UnicodePropertyValueExpression {
 	readonly __looseHints__?: {
 		readonly unicode_property_value_expression_group?: readonly UnicodePropertyValue[];
 	};
+	readonly __slotHints__?: {
+		readonly unicodePropertyValueExpressionGroup: SlotHint<T.UnicodePropertyValueExpressionGroup, true>;
+		readonly unicodePropertyValue: SlotHint<T.UnicodePropertyValue>;
+	};
 	unicodePropertyValueExpressionGroup(): UnicodePropertyValueExpressionGroup | undefined;
 	unicodePropertyValue(): UnicodePropertyValue;
 }
@@ -772,6 +843,9 @@ export interface UnicodePropertyValueExpression {
 export interface IdentityEscape {
 	readonly $type: TSKindId.IdentityEscape;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+	};
 	content(): string;
 }
 
@@ -826,6 +900,10 @@ export interface TermGroup {
 			| NonCapturingGroup
 			| InlineFlagsGroup;
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<T.TermGroup.Config>['content']>;
+		readonly quantifier: SlotHint<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier, true>;
+	};
 	content():
 		| TSKindId.StartAssertion
 		| TSKindId.EndAssertion
@@ -853,6 +931,9 @@ export interface TermGroup {
 export interface CountQuantifierGroup {
 	readonly $type: TSKindId.CountQuantifierGroup;
 	readonly _decimal_digits?: DecimalDigits;
+	readonly __slotHints__?: {
+		readonly decimalDigits: SlotHint<T.DecimalDigits, true>;
+	};
 	decimalDigits(): DecimalDigits | undefined;
 }
 
@@ -860,6 +941,10 @@ export interface CountQuantifierArm {
 	readonly $type: TSKindId.CountQuantifierArm;
 	readonly _decimal_digits: DecimalDigits;
 	readonly _count_quantifier_group?: CountQuantifierGroup;
+	readonly __slotHints__?: {
+		readonly decimalDigits: SlotHint<T.DecimalDigits>;
+		readonly countQuantifierGroup: SlotHint<T.CountQuantifierGroup, true>;
+	};
 	decimalDigits(): DecimalDigits;
 	countQuantifierGroup(): CountQuantifierGroup | undefined;
 }
@@ -868,6 +953,10 @@ export interface CharacterClassEscapeArm {
 	readonly $type: TSKindId.CharacterClassEscapeArm;
 	readonly _content: '\\\\[pP]';
 	readonly _unicode_property_value_expression: UnicodePropertyValueExpression;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<'\\\\[pP]'>;
+		readonly unicodePropertyValueExpression: SlotHint<T.UnicodePropertyValueExpression>;
+	};
 	content(): '\\\\[pP]';
 	unicodePropertyValueExpression(): UnicodePropertyValueExpression;
 }
@@ -878,6 +967,9 @@ export interface UnicodePropertyValueExpressionGroup {
 	readonly __looseHints__?: {
 		readonly unicode_property_name: readonly UnicodePropertyValue[];
 	};
+	readonly __slotHints__?: {
+		readonly unicodePropertyName: SlotHint<T.UnicodePropertyName | T.UnicodePropertyName.Types>;
+	};
 	unicodePropertyName(): UnicodePropertyName;
 }
 
@@ -887,6 +979,10 @@ export interface InlineFlagsGroupEnable {
 	readonly _pattern?: Pattern;
 	readonly __looseHints__?: {
 		readonly pattern?: readonly (Alternation | Term)[];
+	};
+	readonly __slotHints__?: {
+		readonly enabled: SlotHint<T.Flags>;
+		readonly pattern: SlotHint<T.Pattern, true>;
 	};
 	enabled(): Flags;
 	pattern(): Pattern | undefined;
@@ -900,6 +996,11 @@ export interface InlineFlagsGroupToggle {
 	readonly __looseHints__?: {
 		readonly pattern?: readonly (Alternation | Term)[];
 	};
+	readonly __slotHints__?: {
+		readonly enabled: SlotHint<T.Flags>;
+		readonly disabled: SlotHint<T.Flags>;
+		readonly pattern: SlotHint<T.Pattern, true>;
+	};
 	enabled(): Flags;
 	disabled(): Flags;
 	pattern(): Pattern | undefined;
@@ -912,6 +1013,10 @@ export interface InlineFlagsGroupDisable {
 	readonly __looseHints__?: {
 		readonly pattern?: readonly (Alternation | Term)[];
 	};
+	readonly __slotHints__?: {
+		readonly disabled: SlotHint<T.Flags>;
+		readonly pattern: SlotHint<T.Pattern, true>;
+	};
 	disabled(): Flags;
 	pattern(): Pattern | undefined;
 }
@@ -922,6 +1027,9 @@ export interface Lazy {
 	readonly __inputHints__?: {
 		readonly content: KindEnum<'?', TSKindId.Qmark>;
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<TSKindId.Qmark>>;
+	};
 	readonly __aliasContent__?: Lazy.Types;
 	content(): number;
 }
@@ -929,6 +1037,9 @@ export interface Lazy {
 export interface UnicodePropertyName {
 	readonly $type: TSKindId.UnicodePropertyName;
 	readonly _content: UnicodePropertyValue;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.UnicodePropertyValue>;
+	};
 	readonly __aliasContent__?: UnicodePropertyName.Types;
 	content(): UnicodePropertyValue;
 }
@@ -1819,7 +1930,7 @@ export namespace Alternation {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			terms(...vs: T.Term[]): T.Alternation.Built;
+			terms(...values: T.Term[]): T.Alternation.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Alternation>;
@@ -1834,7 +1945,7 @@ export namespace Term {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			termGroups(...vs: T.TermGroup[]): T.Term.Built;
+			termGroups(...values: T.TermGroup[]): T.Term.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Term>;
@@ -1907,7 +2018,7 @@ export namespace CharacterClass {
 		readonly $named: true;
 		readonly $with: {
 			classAtoms(
-				...vs: (
+				...values: (
 					| T.ClassCharacter
 					| TSKindId.BslashDash
 					| T.CharacterClassEscape

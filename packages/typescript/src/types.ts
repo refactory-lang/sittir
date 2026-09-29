@@ -17,7 +17,9 @@ import type {
 	GrammarTypeMap,
 	NodeMethods,
 	TriviaSetter,
-	GrammarInnerTrivia
+	GrammarInnerTrivia,
+	SlotHint,
+	ListOwnerHint
 } from '@sittir/types';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types.js';
@@ -3148,6 +3150,10 @@ export interface Program {
 	readonly __inputHints__?: {
 		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
+	readonly __slotHints__?: {
+		readonly hashBangLine: SlotHint<T.HashBangLine, true>;
+		readonly statements: SlotHint<NonNullable<T.Program.Config>['statements'], true>;
+	};
 	hashBangLine(): HashBangLine | undefined;
 	statements(): readonly Statement[];
 }
@@ -3155,12 +3161,18 @@ export interface Program {
 export interface HashBangLine {
 	readonly $type: TSKindId.HashBangLine;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+	};
 	content(): string;
 }
 
 export interface NamespaceExport {
 	readonly $type: TSKindId.NamespaceExport;
 	readonly _module_export_name: Identifier | String;
+	readonly __slotHints__?: {
+		readonly moduleExportName: SlotHint<T.Identifier | T.String>;
+	};
 	moduleExportName(): Identifier | String;
 }
 
@@ -3169,6 +3181,10 @@ export interface ExportClause {
 	readonly _export_specifiers?: ExportSpecifiers;
 	readonly __looseHints__?: {
 		readonly export_specifiers?: readonly ExportSpecifier[];
+	};
+	readonly __slotHints__?: {
+		readonly exportSpecifiers: SlotHint<T.ExportSpecifiers, true>;
+		readonly $listOwner: ListOwnerHint<T.ExportSpecifier, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	exportSpecifiers(): ExportSpecifiers | undefined;
 }
@@ -3180,6 +3196,11 @@ export interface ExportSpecifier {
 	readonly _alias?: Identifier | String;
 	readonly __inputHints__?: {
 		readonly export_kind?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
+	};
+	readonly __slotHints__?: {
+		readonly exportKind: SlotHint<NonNullable<T.ExportSpecifier.Config>['exportKind'], true>;
+		readonly name: SlotHint<T.Identifier | T.String>;
+		readonly alias: SlotHint<T.Identifier | T.String, true>;
 	};
 	exportKind(): number | undefined;
 	name(): Identifier | String;
@@ -3196,6 +3217,12 @@ export interface ImportStatement {
 		readonly import_clause?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly importClause: SlotHint<NonNullable<T.ImportStatement.Config>['importClause'], true>;
+		readonly fromClause: SlotHint<T.ImportStatementClauseFrom | T.ImportRequireClause | T.String>;
+		readonly importAttribute: SlotHint<T.ImportAttribute, true>;
+		readonly terminator: SlotHint<NonNullable<T.ImportStatement.Options>['terminator']>;
+	};
 	importClause(): number | undefined;
 	fromClause(): ImportStatementClauseFrom | ImportRequireClause | String;
 	importAttribute(): ImportAttribute | undefined;
@@ -3205,12 +3232,18 @@ export interface ImportStatement {
 export interface ImportClause {
 	readonly $type: TSKindId.ImportClause;
 	readonly _content: NamespaceImport | NamedImports | ImportClauseDefaultImport;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>;
+	};
 	content(): NamespaceImport | NamedImports | ImportClauseDefaultImport;
 }
 
 export interface NamespaceImport {
 	readonly $type: TSKindId.NamespaceImport;
 	readonly _name: Identifier;
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier>;
+	};
 	name(): Identifier;
 }
 
@@ -3219,6 +3252,10 @@ export interface NamedImports {
 	readonly _import_specifiers?: ImportSpecifiers;
 	readonly __looseHints__?: {
 		readonly import_specifiers?: readonly ImportSpecifier[];
+	};
+	readonly __slotHints__?: {
+		readonly importSpecifiers: SlotHint<T.ImportSpecifiers, true>;
+		readonly $listOwner: ListOwnerHint<T.ImportSpecifier, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	importSpecifiers(): ImportSpecifiers | undefined;
 }
@@ -3260,6 +3297,10 @@ export interface ImportAttribute {
 			| 'let'
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly attributeKind: SlotHint<NonNullable<T.ImportAttribute.Config>['attributeKind']>;
+		readonly object: SlotHint<T.Object>;
+	};
 	attributeKind(): number;
 	object(): Object;
 }
@@ -3278,6 +3319,10 @@ export interface ExpressionStatement {
 			| SequenceExpression;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression | T.SequenceExpression>>;
+		readonly terminator: SlotHint<NonNullable<T.ExpressionStatement.Options>['terminator']>;
+	};
 	expression(): Expression | SequenceExpression;
 	terminator(): number;
 }
@@ -3288,6 +3333,10 @@ export interface VariableDeclaration {
 	readonly _terminator: number;
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __slotHints__?: {
+		readonly declarators: SlotHint<NonEmptyArray<T.VariableDeclarator>, false, true>;
+		readonly terminator: SlotHint<NonNullable<T.VariableDeclaration.Options>['terminator']>;
 	};
 	declarators(): NonEmptyArray<VariableDeclarator>;
 	terminator(): number;
@@ -3302,6 +3351,11 @@ export interface LexicalDeclaration {
 		readonly kind: KindEnum<'let' | 'const', TSKindId.LetKeyword | TSKindId.ConstKeyword>;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly kind: SlotHint<NonNullable<T.LexicalDeclaration.Config>['kind']>;
+		readonly declarators: SlotHint<NonEmptyArray<T.VariableDeclarator>, false, true>;
+		readonly terminator: SlotHint<NonNullable<T.LexicalDeclaration.Options>['terminator']>;
+	};
 	kind(): number;
 	declarators(): NonEmptyArray<VariableDeclarator>;
 	terminator(): number;
@@ -3315,6 +3369,10 @@ export interface StatementBlock {
 		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 		readonly automatic_semicolon?: BaseBooleanKeyword<'\n'>;
 	};
+	readonly __slotHints__?: {
+		readonly statements: SlotHint<NonNullable<T.StatementBlock.Config>['statements'], true>;
+		readonly automaticSemicolon: SlotHint<NonNullable<T.StatementBlock.Config>['automaticSemicolon'], true>;
+	};
 	statements(): readonly Statement[];
 	automaticSemicolon(): boolean | undefined;
 }
@@ -3324,6 +3382,9 @@ export interface ElseClause {
 	readonly _body: Statement;
 	readonly __inputHints__?: {
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
+	};
+	readonly __slotHints__?: {
+		readonly body: SlotHint<NonNullable<T.Statement>>;
 	};
 	body(): Statement;
 }
@@ -3339,6 +3400,11 @@ export interface IfStatement {
 	readonly __looseHints__?: {
 		readonly alternative?: readonly Statement[];
 	};
+	readonly __slotHints__?: {
+		readonly condition: SlotHint<T.ParenthesizedExpression>;
+		readonly consequence: SlotHint<NonNullable<T.IfStatement.Config>['consequence']>;
+		readonly alternative: SlotHint<T.ElseClause, true>;
+	};
 	condition(): ParenthesizedExpression;
 	consequence(): Statement;
 	alternative(): ElseClause | undefined;
@@ -3350,6 +3416,10 @@ export interface SwitchStatement {
 	readonly _body: SwitchBody;
 	readonly __looseHints__?: {
 		readonly body: readonly (SwitchCase | SwitchDefault)[];
+	};
+	readonly __slotHints__?: {
+		readonly value: SlotHint<T.ParenthesizedExpression>;
+		readonly body: SlotHint<T.SwitchBody>;
 	};
 	value(): ParenthesizedExpression;
 	body(): SwitchBody;
@@ -3406,6 +3476,12 @@ export interface ForStatement {
 			| SequenceExpression;
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
 	};
+	readonly __slotHints__?: {
+		readonly initializer: SlotHint<NonNullable<T.ForStatement.Config>['initializer']>;
+		readonly condition: SlotHint<NonNullable<T.ForStatement.Config>['condition']>;
+		readonly increment: SlotHint<NonNullable<T.ForStatement.Config>['increment'], true>;
+		readonly body: SlotHint<NonNullable<T.ForStatement.Config>['body']>;
+	};
 	initializer(): LexicalDeclaration | VariableDeclaration | Expression | SequenceExpression | TSKindId.EmptyStatement;
 	condition(): Expression | SequenceExpression | TSKindId.EmptyStatement;
 	increment(): Expression | SequenceExpression | undefined;
@@ -3424,6 +3500,11 @@ export interface ForInStatement {
 	readonly __looseHints__?: {
 		readonly await_marker?: 'await' | 'await';
 	};
+	readonly __slotHints__?: {
+		readonly awaitMarker: SlotHint<NonNullable<T.ForInStatement.Config>['awaitMarker'], true>;
+		readonly forHeader: SlotHint<T.ForHeader>;
+		readonly body: SlotHint<NonNullable<T.ForInStatement.Config>['body']>;
+	};
 	awaitMarker(): boolean | undefined;
 	forHeader(): ForHeader;
 	body(): Statement;
@@ -3435,6 +3516,10 @@ export interface WhileStatement {
 	readonly _body: Statement;
 	readonly __inputHints__?: {
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
+	};
+	readonly __slotHints__?: {
+		readonly condition: SlotHint<T.ParenthesizedExpression>;
+		readonly body: SlotHint<NonNullable<T.WhileStatement.Config>['body']>;
 	};
 	condition(): ParenthesizedExpression;
 	body(): Statement;
@@ -3449,6 +3534,11 @@ export interface DoStatement {
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
 		readonly terminator?: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly body: SlotHint<NonNullable<T.DoStatement.Config>['body']>;
+		readonly condition: SlotHint<T.ParenthesizedExpression>;
+		readonly terminator: SlotHint<NonNullable<T.DoStatement.Options>['terminator'], true>;
+	};
 	body(): Statement;
 	condition(): ParenthesizedExpression;
 	terminator(): number | undefined;
@@ -3462,6 +3552,11 @@ export interface TryStatement {
 	readonly __looseHints__?: {
 		readonly finalizer?: readonly Statement[];
 	};
+	readonly __slotHints__?: {
+		readonly body: SlotHint<T.StatementBlock>;
+		readonly handler: SlotHint<T.CatchClause, true>;
+		readonly finalizer: SlotHint<T.FinallyClause, true>;
+	};
 	body(): StatementBlock;
 	handler(): CatchClause | undefined;
 	finalizer(): FinallyClause | undefined;
@@ -3473,6 +3568,10 @@ export interface WithStatement {
 	readonly _body: Statement;
 	readonly __inputHints__?: {
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
+	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<T.ParenthesizedExpression>;
+		readonly body: SlotHint<NonNullable<T.WithStatement.Config>['body']>;
 	};
 	object(): ParenthesizedExpression;
 	body(): Statement;
@@ -3512,6 +3611,10 @@ export interface BreakStatement {
 			| 'let'
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly label: SlotHint<T.StatementIdentifier | T.StatementIdentifier.Types, true>;
+		readonly terminator: SlotHint<NonNullable<T.BreakStatement.Options>['terminator']>;
+	};
 	label(): StatementIdentifier | undefined;
 	terminator(): number;
 }
@@ -3550,6 +3653,10 @@ export interface ContinueStatement {
 			| 'let'
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly label: SlotHint<T.StatementIdentifier | T.StatementIdentifier.Types, true>;
+		readonly terminator: SlotHint<NonNullable<T.ContinueStatement.Options>['terminator']>;
+	};
 	label(): StatementIdentifier | undefined;
 	terminator(): number;
 }
@@ -3559,6 +3666,9 @@ export interface DebuggerStatement {
 	readonly _terminator: number;
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __slotHints__?: {
+		readonly terminator: SlotHint<NonNullable<TSKindId.AutomaticSemicolon | TSKindId.Semi>>;
 	};
 	terminator(): number;
 }
@@ -3577,6 +3687,10 @@ export interface ReturnStatement {
 			| SequenceExpression;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression | T.SequenceExpression>, true>;
+		readonly terminator: SlotHint<NonNullable<T.ReturnStatement.Options>['terminator']>;
+	};
 	expression(): Expression | SequenceExpression | undefined;
 	terminator(): number;
 }
@@ -3594,6 +3708,10 @@ export interface ThrowStatement {
 			| Expression
 			| SequenceExpression;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression | T.SequenceExpression>>;
+		readonly terminator: SlotHint<NonNullable<T.ThrowStatement.Options>['terminator']>;
 	};
 	expression(): Expression | SequenceExpression;
 	terminator(): number;
@@ -3704,6 +3822,10 @@ export interface LabeledStatement {
 			| 'let'
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly label: SlotHint<NonNullable<T.LabeledStatement.Config>['label']>;
+		readonly body: SlotHint<NonNullable<T.LabeledStatement.Config>['body']>;
+	};
 	label():
 		| StatementIdentifier
 		| TSKindId.DeclareKeyword
@@ -3734,6 +3856,9 @@ export interface LabeledStatement {
 export interface SwitchBody {
 	readonly $type: TSKindId.SwitchBody;
 	readonly _cases?: readonly (SwitchCase | SwitchDefault)[];
+	readonly __slotHints__?: {
+		readonly cases: SlotHint<(T.SwitchCase | T.SwitchDefault)[], false, true>;
+	};
 	cases(): readonly (SwitchCase | SwitchDefault)[];
 }
 
@@ -3751,6 +3876,10 @@ export interface SwitchCase {
 			| SequenceExpression;
 		readonly body?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
+	readonly __slotHints__?: {
+		readonly value: SlotHint<NonNullable<T.SwitchCase.Config>['value']>;
+		readonly bodies: SlotHint<NonNullable<T.SwitchCase.Config>['body'], true>;
+	};
 	value(): Expression | SequenceExpression;
 	bodies(): readonly Statement[];
 }
@@ -3761,6 +3890,9 @@ export interface SwitchDefault {
 	readonly __inputHints__?: {
 		readonly body?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
+	readonly __slotHints__?: {
+		readonly bodies: SlotHint<T.Statement[], false, true>;
+	};
 	bodies(): readonly Statement[];
 }
 
@@ -3768,6 +3900,10 @@ export interface CatchClause {
 	readonly $type: TSKindId.CatchClause;
 	readonly _catch_clause_group?: CatchClauseGroup;
 	readonly _body: StatementBlock;
+	readonly __slotHints__?: {
+		readonly catchClauseGroup: SlotHint<T.CatchClauseGroup, true>;
+		readonly body: SlotHint<T.StatementBlock>;
+	};
 	catchClauseGroup(): CatchClauseGroup | undefined;
 	body(): StatementBlock;
 }
@@ -3775,6 +3911,9 @@ export interface CatchClause {
 export interface FinallyClause {
 	readonly $type: TSKindId.FinallyClause;
 	readonly _body: StatementBlock;
+	readonly __slotHints__?: {
+		readonly body: SlotHint<T.StatementBlock>;
+	};
 	body(): StatementBlock;
 }
 
@@ -3788,6 +3927,9 @@ export interface YieldExpression {
 					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
 			  >
 			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression>, true>;
 	};
 	expression(): Expression | undefined;
 }
@@ -3876,6 +4018,43 @@ export interface Object {
 			| MethodDefinition
 			| ShorthandPropertyIdentifier
 		)[];
+	};
+	readonly __slotHints__?: {
+		readonly properties: SlotHint<
+			(
+				| (
+						| T.Pair
+						| T.SpreadElement
+						| T.MethodDefinition
+						| T.ShorthandPropertyIdentifier
+						| TSKindId.DeclareKeyword
+						| TSKindId.NamespaceKeyword
+						| TSKindId.TypeKeyword
+						| TSKindId.PublicKeyword
+						| TSKindId.PrivateKeyword
+						| TSKindId.ProtectedKeyword
+						| TSKindId.OverrideKeyword
+						| TSKindId.ReadonlyKeyword
+						| TSKindId.ModuleKeyword
+						| TSKindId.AnyKeyword
+						| TSKindId.NumberKeyword
+						| TSKindId.BooleanKeyword
+						| TSKindId.StringKeyword
+						| TSKindId.SymbolKeyword
+						| TSKindId.ExportKeyword
+						| TSKindId.ObjectKeyword
+						| TSKindId.NewKeyword
+						| TSKindId.GetKeyword
+						| TSKindId.SetKeyword
+						| TSKindId.AsyncKeyword
+						| TSKindId.StaticKeyword
+						| TSKindId.LetKeyword
+				  )
+				| T.ShorthandPropertyIdentifier.Types
+			)[],
+			false,
+			true
+		>;
 	};
 	properties(): readonly (
 		| Pair
@@ -3993,6 +4172,43 @@ export interface ObjectPattern {
 			| ShorthandPropertyIdentifierPattern
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly properties: SlotHint<
+			(
+				| (
+						| T.PairPattern
+						| T.RestPattern
+						| T.ObjectAssignmentPattern
+						| T.ShorthandPropertyIdentifierPattern
+						| TSKindId.DeclareKeyword
+						| TSKindId.NamespaceKeyword
+						| TSKindId.TypeKeyword
+						| TSKindId.PublicKeyword
+						| TSKindId.PrivateKeyword
+						| TSKindId.ProtectedKeyword
+						| TSKindId.OverrideKeyword
+						| TSKindId.ReadonlyKeyword
+						| TSKindId.ModuleKeyword
+						| TSKindId.AnyKeyword
+						| TSKindId.NumberKeyword
+						| TSKindId.BooleanKeyword
+						| TSKindId.StringKeyword
+						| TSKindId.SymbolKeyword
+						| TSKindId.ExportKeyword
+						| TSKindId.ObjectKeyword
+						| TSKindId.NewKeyword
+						| TSKindId.GetKeyword
+						| TSKindId.SetKeyword
+						| TSKindId.AsyncKeyword
+						| TSKindId.StaticKeyword
+						| TSKindId.LetKeyword
+				  )
+				| T.ShorthandPropertyIdentifierPattern.Types
+			)[],
+			false,
+			true
+		>;
+	};
 	properties(): readonly (
 		| PairPattern
 		| RestPattern
@@ -4035,6 +4251,10 @@ export interface AssignmentPattern {
 					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
 			  >
 			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<T.Pattern>;
+		readonly right: SlotHint<NonNullable<T.AssignmentPattern.Config>['right']>;
 	};
 	left(): Pattern;
 	right(): Expression;
@@ -4127,6 +4347,10 @@ export interface ObjectAssignmentPattern {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<NonNullable<T.ObjectAssignmentPattern.Config>['left']>;
+		readonly right: SlotHint<NonNullable<T.ObjectAssignmentPattern.Config>['right']>;
+	};
 	left():
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
@@ -4169,12 +4393,18 @@ export interface Array {
 			| SpreadElement
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<(T.Expression | T.SpreadElement)[], false, true>;
+	};
 	elements(): readonly (Expression | SpreadElement | undefined)[];
 }
 
 export interface ArrayPattern {
 	readonly $type: TSKindId.ArrayPattern;
 	readonly _elements?: readonly (Pattern | AssignmentPattern | undefined)[];
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<(T.Pattern | T.AssignmentPattern)[], false, true>;
+	};
 	elements(): readonly (Pattern | AssignmentPattern | undefined)[];
 }
 
@@ -4209,6 +4439,10 @@ export interface NestedIdentifier {
 			| 'let'
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<T.Identifier | T.NestedIdentifier>;
+		readonly property: SlotHint<T.PropertyIdentifier | T.PropertyIdentifier.Types>;
+	};
 	object(): Identifier | NestedIdentifier;
 	property(): PropertyIdentifier;
 }
@@ -4225,6 +4459,13 @@ export interface Class {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
 		readonly body: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
+	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types, true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly heritage: SlotHint<T.ClassHeritage, true>;
+		readonly body: SlotHint<T.ClassBody>;
 	};
 	decorators(): readonly Decorator[];
 	name(): TypeIdentifier | undefined;
@@ -4250,6 +4491,14 @@ export interface ClassDeclaration {
 		readonly heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
 		readonly body: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
 	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly heritage: SlotHint<T.ClassHeritage, true>;
+		readonly body: SlotHint<T.ClassBody>;
+		readonly automaticSemicolon: SlotHint<NonNullable<T.ClassDeclaration.Config>['automaticSemicolon'], true>;
+	};
 	decorators(): readonly Decorator[];
 	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
@@ -4261,6 +4510,9 @@ export interface ClassDeclaration {
 export interface ClassHeritage {
 	readonly $type: TSKindId.ClassHeritage;
 	readonly _content: ClassHeritageExtendsClause | ImplementsClause;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.ClassHeritageExtendsClause | T.ImplementsClause>;
+	};
 	content(): ClassHeritageExtendsClause | ImplementsClause;
 }
 
@@ -4279,6 +4531,14 @@ export interface FunctionExpression {
 		readonly async_marker?: 'async' | 'async';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+	};
+	readonly __slotHints__?: {
+		readonly asyncMarker: SlotHint<NonNullable<T.FunctionExpression.Config>['asyncMarker'], true>;
+		readonly name: SlotHint<T.Identifier, true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
+		readonly body: SlotHint<T.StatementBlock>;
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier | undefined;
@@ -4306,6 +4566,15 @@ export interface FunctionDeclaration {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
+	readonly __slotHints__?: {
+		readonly asyncMarker: SlotHint<NonNullable<T.FunctionDeclaration.Config>['asyncMarker'], true>;
+		readonly name: SlotHint<T.Identifier>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
+		readonly body: SlotHint<T.StatementBlock>;
+		readonly automaticSemicolon: SlotHint<NonNullable<T.FunctionDeclaration.Config>['automaticSemicolon'], true>;
+	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
@@ -4330,6 +4599,14 @@ export interface GeneratorFunction {
 		readonly async_marker?: 'async' | 'async';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+	};
+	readonly __slotHints__?: {
+		readonly asyncMarker: SlotHint<NonNullable<T.GeneratorFunction.Config>['asyncMarker'], true>;
+		readonly name: SlotHint<T.Identifier, true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
+		readonly body: SlotHint<T.StatementBlock>;
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier | undefined;
@@ -4356,6 +4633,18 @@ export interface GeneratorFunctionDeclaration {
 		readonly async_marker?: 'async' | 'async';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+	};
+	readonly __slotHints__?: {
+		readonly asyncMarker: SlotHint<NonNullable<T.GeneratorFunctionDeclaration.Config>['asyncMarker'], true>;
+		readonly name: SlotHint<T.Identifier>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
+		readonly body: SlotHint<T.StatementBlock>;
+		readonly automaticSemicolon: SlotHint<
+			NonNullable<T.GeneratorFunctionDeclaration.Config>['automaticSemicolon'],
+			true
+		>;
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
@@ -4384,6 +4673,11 @@ export interface ArrowFunction {
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
 	};
+	readonly __slotHints__?: {
+		readonly asyncMarker: SlotHint<NonNullable<T.ArrowFunction.Config>['asyncMarker'], true>;
+		readonly content: SlotHint<T.ArrowFunctionParameter | T.CallSignature>;
+		readonly body: SlotHint<NonNullable<T.ArrowFunction.Config>['body']>;
+	};
 	asyncMarker(): boolean | undefined;
 	content(): ArrowFunctionParameter | CallSignature;
 	body(): Expression | StatementBlock;
@@ -4406,6 +4700,11 @@ export interface NewExpression {
 		readonly type_arguments?: readonly Type[];
 		readonly arguments?: readonly (Expression | SpreadElement)[];
 	};
+	readonly __slotHints__?: {
+		readonly constructor_: SlotHint<NonNullable<T.NewExpression.Config>['constructor_']>;
+		readonly typeArguments: SlotHint<T.TypeArguments, true>;
+		readonly arguments: SlotHint<T.Arguments, true>;
+	};
 	constructor_(): PrimaryExpression;
 	typeArguments(): TypeArguments | undefined;
 	arguments(): Arguments | undefined;
@@ -4421,6 +4720,9 @@ export interface AwaitExpression {
 					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
 			  >
 			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression>>;
 	};
 	expression(): Expression;
 }
@@ -4446,6 +4748,11 @@ export interface MemberExpression {
 			| Expression
 			| PrimaryExpression;
 		readonly separator: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.OptionalChain | TSKindId.QmarkDot>;
+	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<NonNullable<T.MemberExpression.Config>['object']>;
+		readonly separator: SlotHint<NonNullable<T.MemberExpression.Config>['separator']>;
+		readonly property: SlotHint<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>;
 	};
 	object(): Expression | PrimaryExpression | TSKindId.Import;
 	separator(): number;
@@ -4473,6 +4780,11 @@ export interface SubscriptExpression {
 			  >
 			| Expression
 			| SequenceExpression;
+	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<NonNullable<T.SubscriptExpression.Config>['object']>;
+		readonly optionalChain: SlotHint<NonNullable<T.SubscriptExpression.Config>['optionalChain'], true>;
+		readonly index: SlotHint<NonNullable<T.SubscriptExpression.Config>['index']>;
 	};
 	object(): Expression | PrimaryExpression;
 	optionalChain(): boolean | undefined;
@@ -4568,6 +4880,41 @@ export interface LhsExpression {
 			| ArrayPattern
 			| NonNullExpression;
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<
+			NonNullable<
+				| T.MemberExpression
+				| T.SubscriptExpression
+				| TSKindId.Undefined
+				| T.Identifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+				| T.ObjectPattern
+				| T.ArrayPattern
+				| T.NonNullExpression
+			>
+		>;
+	};
 	content():
 		| MemberExpression
 		| SubscriptExpression
@@ -4616,6 +4963,11 @@ export interface AssignmentExpression {
 	};
 	readonly __looseHints__?: {
 		readonly using_marker?: 'using' | 'using';
+	};
+	readonly __slotHints__?: {
+		readonly usingMarker: SlotHint<NonNullable<T.AssignmentExpression.Config>['usingMarker'], true>;
+		readonly left: SlotHint<T.ParenthesizedExpression | T.LhsExpression>;
+		readonly right: SlotHint<NonNullable<T.AssignmentExpression.Config>['right']>;
 	};
 	usingMarker(): boolean | undefined;
 	left(): ParenthesizedExpression | LhsExpression;
@@ -4732,6 +5084,11 @@ export interface AugmentedAssignmentExpression {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<NonNullable<T.AugmentedAssignmentExpression.Config>['left']>;
+		readonly operator: SlotHint<NonNullable<T.AugmentedAssignmentExpression.Config>['operator']>;
+		readonly right: SlotHint<NonNullable<T.AugmentedAssignmentExpression.Config>['right']>;
+	};
 	left():
 		| MemberExpression
 		| SubscriptExpression
@@ -4775,6 +5132,9 @@ export interface SpreadElement {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression>>;
+	};
 	expression(): Expression;
 }
 
@@ -4802,6 +5162,11 @@ export interface TernaryExpression {
 					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
 			  >
 			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly condition: SlotHint<NonNullable<T.TernaryExpression.Config>['condition']>;
+		readonly consequence: SlotHint<NonNullable<T.TernaryExpression.Config>['consequence']>;
+		readonly alternative: SlotHint<NonNullable<T.TernaryExpression.Config>['alternative']>;
 	};
 	condition(): Expression;
 	consequence(): Expression;
@@ -4878,6 +5243,12 @@ export interface BinaryExpression {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<NonNullable<T.BinaryExpression.Config>['left'], true>;
+		readonly operator: SlotHint<NonNullable<T.BinaryExpression.Config>['operator'], true>;
+		readonly right: SlotHint<NonNullable<T.BinaryExpression.Config>['right'], true>;
+		readonly binaryExpressionIn: SlotHint<T.BinaryExpressionIn, true>;
+	};
 	left(): Expression | undefined;
 	operator(): number | undefined;
 	right(): Expression | undefined;
@@ -4906,6 +5277,10 @@ export interface UnaryExpression {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly operator: SlotHint<NonNullable<T.UnaryExpression.Config>['operator']>;
+		readonly argument: SlotHint<NonNullable<T.UnaryExpression.Config>['argument']>;
+	};
 	operator(): number;
 	argument(): Expression;
 }
@@ -4922,18 +5297,27 @@ export interface SequenceExpression {
 			| Expression
 		>;
 	};
+	readonly __slotHints__?: {
+		readonly expressions: SlotHint<T.Expression[], false, true>;
+	};
 	expressions(): NonEmptyArray<Expression>;
 }
 
 export interface EscapeSequence {
 	readonly $type: TSKindId.EscapeSequence;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+	};
 	content(): string;
 }
 
 export interface TemplateString {
 	readonly $type: TSKindId.TemplateString;
 	readonly _elements?: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<(T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[], false, true>;
+	};
 	elements(): readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
 }
 
@@ -4949,6 +5333,9 @@ export interface TemplateSubstitution {
 			| Expression
 			| SequenceExpression;
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression | T.SequenceExpression>>;
+	};
 	expression(): Expression | SequenceExpression;
 }
 
@@ -4956,6 +5343,10 @@ export interface Regex {
 	readonly $type: TSKindId.Regex;
 	readonly _pattern: RegexPattern;
 	readonly _flags?: RegexFlags;
+	readonly __slotHints__?: {
+		readonly pattern: SlotHint<T.RegexPattern>;
+		readonly flags: SlotHint<T.RegexFlags, true>;
+	};
 	pattern(): RegexPattern;
 	flags(): RegexFlags | undefined;
 }
@@ -4963,6 +5354,9 @@ export interface Regex {
 export interface PrivatePropertyIdentifier {
 	readonly $type: TSKindId.PrivatePropertyIdentifier;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+	};
 	content(): string;
 }
 
@@ -4979,6 +5373,9 @@ export interface Arguments {
 			| SpreadElement
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<(T.Expression | T.SpreadElement)[], false, true>;
+	};
 	elements(): readonly (Expression | SpreadElement | undefined)[];
 }
 
@@ -4989,6 +5386,11 @@ export interface Decorator {
 		| DecoratorMemberExpression
 		| DecoratorCallExpression
 		| DecoratorParenthesizedExpression;
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<
+			T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+		>;
+	};
 	expression(): Identifier | DecoratorMemberExpression | DecoratorCallExpression | DecoratorParenthesizedExpression;
 }
 
@@ -5023,6 +5425,10 @@ export interface DecoratorMemberExpression {
 			| 'let'
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<T.Identifier | T.DecoratorMemberExpression>;
+		readonly property: SlotHint<T.PropertyIdentifier | T.PropertyIdentifier.Types>;
+	};
 	object(): Identifier | DecoratorMemberExpression;
 	property(): PropertyIdentifier;
 }
@@ -5035,6 +5441,11 @@ export interface DecoratorCallExpression {
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly Type[];
 		readonly arguments: readonly (Expression | SpreadElement)[];
+	};
+	readonly __slotHints__?: {
+		readonly function: SlotHint<T.Identifier | T.DecoratorMemberExpression>;
+		readonly typeArguments: SlotHint<T.TypeArguments, true>;
+		readonly arguments: SlotHint<T.Arguments>;
 	};
 	function(): Identifier | DecoratorMemberExpression;
 	typeArguments(): TypeArguments | undefined;
@@ -5059,6 +5470,13 @@ export interface ClassBody {
 			| ClassBodyMember
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly contents: SlotHint<
+			(T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.EmptyMember)[],
+			false,
+			true
+		>;
+	};
 	contents(): readonly (
 		| ClassBodyMethod
 		| ClassBodyMethodSig
@@ -5074,6 +5492,13 @@ export interface FormalParameters {
 	readonly __looseHints__?: {
 		readonly formal_parameters_elements?: readonly (RequiredParameter | OptionalParameter)[];
 	};
+	readonly __slotHints__?: {
+		readonly formalParametersElements: SlotHint<T.FormalParametersElements, true>;
+		readonly $listOwner: ListOwnerHint<
+			T.RequiredParameter | T.OptionalParameter,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
+	};
 	formalParametersElements(): FormalParametersElements | undefined;
 }
 
@@ -5083,6 +5508,10 @@ export interface ClassStaticBlock {
 	readonly _body: StatementBlock;
 	readonly __inputHints__?: {
 		readonly automatic_semicolon?: BaseBooleanKeyword<'\n'>;
+	};
+	readonly __slotHints__?: {
+		readonly automaticSemicolon: SlotHint<NonNullable<T.ClassStaticBlock.Config>['automaticSemicolon'], true>;
+		readonly body: SlotHint<T.StatementBlock>;
 	};
 	automaticSemicolon(): boolean | undefined;
 	body(): StatementBlock;
@@ -5176,6 +5605,41 @@ export interface RestPattern {
 			| ObjectPattern
 			| ArrayPattern
 			| NonNullExpression;
+	};
+	readonly __slotHints__?: {
+		readonly lhsExpression: SlotHint<
+			NonNullable<
+				| T.MemberExpression
+				| T.SubscriptExpression
+				| TSKindId.Undefined
+				| T.Identifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+				| T.ObjectPattern
+				| T.ArrayPattern
+				| T.NonNullExpression
+			>
+		>;
 	};
 	lhsExpression():
 		| MemberExpression
@@ -5321,6 +5785,20 @@ export interface MethodDefinition {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
+	readonly __slotHints__?: {
+		readonly accessibilityModifier: SlotHint<NonNullable<T.MethodDefinition.Config>['accessibilityModifier'], true>;
+		readonly staticMarker: SlotHint<NonNullable<T.MethodDefinition.Config>['staticMarker'], true>;
+		readonly overrideModifier: SlotHint<NonNullable<T.MethodDefinition.Config>['overrideModifier'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.MethodDefinition.Config>['readonlyMarker'], true>;
+		readonly asyncMarker: SlotHint<NonNullable<T.MethodDefinition.Config>['asyncMarker'], true>;
+		readonly accessorKind: SlotHint<NonNullable<T.MethodDefinition.Config>['accessorKind'], true>;
+		readonly name: SlotHint<NonNullable<T.MethodDefinition.Config>['name']>;
+		readonly optionalMarker: SlotHint<NonNullable<T.MethodDefinition.Config>['optionalMarker'], true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
+		readonly body: SlotHint<T.StatementBlock>;
+	};
 	accessibilityModifier(): number | undefined;
 	staticMarker(): boolean | undefined;
 	overrideModifier(): boolean | undefined;
@@ -5453,6 +5931,10 @@ export interface Pair {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly key: SlotHint<NonNullable<T.Pair.Config>['key']>;
+		readonly value: SlotHint<NonNullable<T.Pair.Config>['value']>;
+	};
 	key():
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -5569,6 +6051,10 @@ export interface PairPattern {
 			| Number
 			| ComputedPropertyName;
 	};
+	readonly __slotHints__?: {
+		readonly key: SlotHint<NonNullable<T.PairPattern.Config>['key']>;
+		readonly value: SlotHint<T.Pattern | T.AssignmentPattern>;
+	};
 	key():
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -5610,6 +6096,9 @@ export interface ComputedPropertyName {
 					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
 			  >
 			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression>>;
 	};
 	expression(): Expression;
 }
@@ -5734,6 +6223,23 @@ export interface PublicFieldDefinition {
 		readonly override_modifier?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly declareMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['declareMarker'], true>;
+		readonly accessibilityModifier: SlotHint<
+			NonNullable<T.PublicFieldDefinition.Config>['accessibilityModifier'],
+			true
+		>;
+		readonly staticMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['staticMarker'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['readonlyMarker'], true>;
+		readonly abstractMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['abstractMarker'], true>;
+		readonly accessorMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['accessorMarker'], true>;
+		readonly overrideModifier: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['overrideModifier'], true>;
+		readonly name: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['name']>;
+		readonly optionalityMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['optionalityMarker'], true>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
+		readonly value: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['value'], true>;
+	};
 	decorators(): readonly Decorator[];
 	declareMarker(): boolean | undefined;
 	accessibilityModifier(): number | undefined;
@@ -5785,6 +6291,9 @@ export interface NonNullExpression {
 					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
 			  >
 			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression>>;
 	};
 	expression(): Expression;
 }
@@ -5899,6 +6408,19 @@ export interface MethodSignature {
 		readonly async_marker?: 'async' | 'async';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+	};
+	readonly __slotHints__?: {
+		readonly accessibilityModifier: SlotHint<NonNullable<T.MethodSignature.Config>['accessibilityModifier'], true>;
+		readonly staticMarker: SlotHint<NonNullable<T.MethodSignature.Config>['staticMarker'], true>;
+		readonly overrideModifier: SlotHint<NonNullable<T.MethodSignature.Config>['overrideModifier'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.MethodSignature.Config>['readonlyMarker'], true>;
+		readonly asyncMarker: SlotHint<NonNullable<T.MethodSignature.Config>['asyncMarker'], true>;
+		readonly accessorKind: SlotHint<NonNullable<T.MethodSignature.Config>['accessorKind'], true>;
+		readonly name: SlotHint<NonNullable<T.MethodSignature.Config>['name']>;
+		readonly optionalMarker: SlotHint<NonNullable<T.MethodSignature.Config>['optionalMarker'], true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
 	};
 	accessibilityModifier(): number | undefined;
 	staticMarker(): boolean | undefined;
@@ -6043,6 +6565,19 @@ export interface AbstractMethodSignature {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
+	readonly __slotHints__?: {
+		readonly accessibilityModifier: SlotHint<
+			NonNullable<T.AbstractMethodSignature.Config>['accessibilityModifier'],
+			true
+		>;
+		readonly overrideModifier: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['overrideModifier'], true>;
+		readonly accessorKind: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['accessorKind'], true>;
+		readonly name: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['name']>;
+		readonly optionalMarker: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['optionalMarker'], true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
+	};
 	accessibilityModifier(): number | undefined;
 	overrideModifier(): boolean | undefined;
 	accessorKind(): number | undefined;
@@ -6100,6 +6635,14 @@ export interface FunctionSignature {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
+	readonly __slotHints__?: {
+		readonly asyncMarker: SlotHint<NonNullable<T.FunctionSignature.Config>['asyncMarker'], true>;
+		readonly name: SlotHint<T.Identifier>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
+		readonly terminator: SlotHint<NonNullable<T.FunctionSignature.Options>['terminator']>;
+	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
@@ -6111,6 +6654,9 @@ export interface FunctionSignature {
 export interface DecoratorParenthesizedExpression {
 	readonly $type: TSKindId.DecoratorParenthesizedExpression;
 	readonly _expression: Identifier | DecoratorMemberExpression | DecoratorCallExpression;
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>;
+	};
 	expression(): Identifier | DecoratorMemberExpression | DecoratorCallExpression;
 }
 
@@ -6128,6 +6674,10 @@ export interface TypeAssertion {
 	};
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly typeArguments: SlotHint<T.TypeArguments>;
+		readonly expression: SlotHint<NonNullable<T.TypeAssertion.Config>['expression']>;
 	};
 	typeArguments(): TypeArguments;
 	expression(): Expression;
@@ -6173,6 +6723,10 @@ export interface AsExpression {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.AsExpression.Config>['expression']>;
+		readonly typeAnnotation: SlotHint<NonNullable<T.AsExpression.Config>['typeAnnotation']>;
+	};
 	expression(): Expression;
 	typeAnnotation(): TSKindId.ConstKeyword | Type;
 }
@@ -6215,6 +6769,10 @@ export interface SatisfiesExpression {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.SatisfiesExpression.Config>['expression']>;
+		readonly typeAnnotation: SlotHint<NonNullable<T.SatisfiesExpression.Config>['typeAnnotation']>;
+	};
 	expression(): Expression;
 	typeAnnotation(): Type;
 }
@@ -6234,6 +6792,10 @@ export interface InstantiationExpression {
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.InstantiationExpression.Config>['expression']>;
+		readonly typeArguments: SlotHint<T.TypeArguments>;
+	};
 	expression(): Expression;
 	typeArguments(): TypeArguments;
 }
@@ -6242,6 +6804,10 @@ export interface ImportRequireClause {
 	readonly $type: TSKindId.ImportRequireClause;
 	readonly _name: Identifier;
 	readonly _source: String;
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier>;
+		readonly source: SlotHint<T.String>;
+	};
 	name(): Identifier;
 	source(): String;
 }
@@ -6249,6 +6815,9 @@ export interface ImportRequireClause {
 export interface ExtendsClause {
 	readonly $type: TSKindId.ExtendsClause;
 	readonly _extends_clause_single: NonEmptyArray<ExtendsClauseSingle>;
+	readonly __slotHints__?: {
+		readonly extendsClauseSingles: SlotHint<T.ExtendsClauseSingle[], false, true>;
+	};
 	extendsClauseSingles(): NonEmptyArray<ExtendsClauseSingle>;
 }
 
@@ -6266,6 +6835,10 @@ export interface ExtendsClauseSingle {
 	};
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly value: SlotHint<NonNullable<T.ExtendsClauseSingle.Config>['value']>;
+		readonly typeArguments: SlotHint<T.TypeArguments, true>;
 	};
 	value(): Expression;
 	typeArguments(): TypeArguments | undefined;
@@ -6303,12 +6876,18 @@ export interface ImplementsClause {
 			| Type
 		>;
 	};
+	readonly __slotHints__?: {
+		readonly types: SlotHint<(T.Type | T.TypeIdentifier.Types)[], false, true>;
+	};
 	types(): NonEmptyArray<Type>;
 }
 
 export interface AmbientDeclaration {
 	readonly $type: TSKindId.AmbientDeclaration;
 	readonly _content: Declaration | AmbientDeclarationGlobal | AmbientDeclarationModule;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>;
+	};
 	content(): Declaration | AmbientDeclarationGlobal | AmbientDeclarationModule;
 }
 
@@ -6325,6 +6904,13 @@ export interface AbstractClassDeclaration {
 		readonly heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
 		readonly body: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
 	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly heritage: SlotHint<T.ClassHeritage, true>;
+		readonly body: SlotHint<T.ClassBody>;
+	};
 	decorators(): readonly Decorator[];
 	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
@@ -6336,6 +6922,10 @@ export interface Module {
 	readonly $type: TSKindId.Module;
 	readonly _name: String | Identifier | NestedIdentifier;
 	readonly _body?: StatementBlock;
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.String | T.Identifier | T.NestedIdentifier>;
+		readonly body: SlotHint<T.StatementBlock, true>;
+	};
 	name(): String | Identifier | NestedIdentifier;
 	body(): StatementBlock | undefined;
 }
@@ -6344,6 +6934,10 @@ export interface InternalModule {
 	readonly $type: TSKindId.InternalModule;
 	readonly _name: String | Identifier | NestedIdentifier;
 	readonly _body?: StatementBlock;
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.String | T.Identifier | T.NestedIdentifier>;
+		readonly body: SlotHint<T.StatementBlock, true>;
+	};
 	name(): String | Identifier | NestedIdentifier;
 	body(): StatementBlock | undefined;
 }
@@ -6356,6 +6950,11 @@ export interface ImportAlias {
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier>;
+		readonly value: SlotHint<T.Identifier | T.NestedIdentifier>;
+		readonly terminator: SlotHint<NonNullable<T.ImportAlias.Options>['terminator']>;
+	};
 	name(): Identifier;
 	value(): Identifier | NestedIdentifier;
 	terminator(): number;
@@ -6367,6 +6966,10 @@ export interface NestedTypeIdentifier {
 	readonly _name: TypeIdentifier;
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
+	};
+	readonly __slotHints__?: {
+		readonly module: SlotHint<T.Identifier | T.NestedIdentifier>;
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
 	};
 	module(): Identifier | NestedIdentifier;
 	name(): TypeIdentifier;
@@ -6384,6 +6987,12 @@ export interface InterfaceDeclaration {
 		readonly extends_type_clause?: readonly (TypeIdentifier | NestedTypeIdentifier | GenericType)[];
 		readonly body: readonly ObjectType[];
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly extendsTypeClause: SlotHint<T.ExtendsTypeClause, true>;
+		readonly body: SlotHint<T.InterfaceBody | T.InterfaceBody.Types>;
+	};
 	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
 	extendsTypeClause(): ExtendsTypeClause | undefined;
@@ -6393,6 +7002,13 @@ export interface InterfaceDeclaration {
 export interface ExtendsTypeClause {
 	readonly $type: TSKindId.ExtendsTypeClause;
 	readonly _type: NonEmptyArray<TypeIdentifier | NestedTypeIdentifier | GenericType>;
+	readonly __slotHints__?: {
+		readonly types: SlotHint<
+			((T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types)[],
+			false,
+			true
+		>;
+	};
 	types(): NonEmptyArray<TypeIdentifier | NestedTypeIdentifier | GenericType>;
 }
 
@@ -6437,6 +7053,11 @@ export interface EnumDeclaration {
 			| ComputedPropertyName
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly constMarker: SlotHint<NonNullable<T.EnumDeclaration.Config>['constMarker'], true>;
+		readonly name: SlotHint<T.Identifier>;
+		readonly body: SlotHint<T.EnumBody>;
+	};
 	constMarker(): boolean | undefined;
 	name(): Identifier;
 	body(): EnumBody;
@@ -6476,6 +7097,40 @@ export interface EnumBody {
 			| Number
 			| ComputedPropertyName
 		)[];
+	};
+	readonly __slotHints__?: {
+		readonly enumBodyElements: SlotHint<T.EnumBodyElements, true>;
+		readonly $listOwner: ListOwnerHint<
+			| T.PropertyIdentifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
+			| T.PrivatePropertyIdentifier
+			| T.String
+			| T.Number
+			| T.ComputedPropertyName
+			| T.EnumAssignment,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	enumBodyElements(): EnumBodyElements | undefined;
 }
@@ -6571,6 +7226,10 @@ export interface EnumAssignment {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<NonNullable<T.EnumAssignment.Config>['name']>;
+		readonly value: SlotHint<NonNullable<T.EnumAssignment.Config>['value']>;
+	};
 	name():
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -6641,6 +7300,12 @@ export interface TypeAliasDeclaration {
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly TypeParameter[];
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly value: SlotHint<NonNullable<T.TypeAliasDeclaration.Config>['value']>;
+		readonly terminator: SlotHint<NonNullable<T.TypeAliasDeclaration.Options>['terminator']>;
+	};
 	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
 	value(): Type;
@@ -6674,6 +7339,15 @@ export interface RequiredParameter {
 	readonly __looseHints__?: {
 		readonly override_modifier?: 'override' | 'override';
 		readonly type?: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly accessibilityModifier: SlotHint<NonNullable<T.RequiredParameter.Config>['accessibilityModifier'], true>;
+		readonly overrideModifier: SlotHint<NonNullable<T.RequiredParameter.Config>['overrideModifier'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.RequiredParameter.Config>['readonlyMarker'], true>;
+		readonly pattern: SlotHint<NonNullable<T.RequiredParameter.Config>['pattern']>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
+		readonly value: SlotHint<NonNullable<T.RequiredParameter.Config>['value'], true>;
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
@@ -6711,6 +7385,15 @@ export interface OptionalParameter {
 	readonly __looseHints__?: {
 		readonly override_modifier?: 'override' | 'override';
 		readonly type?: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly accessibilityModifier: SlotHint<NonNullable<T.OptionalParameter.Config>['accessibilityModifier'], true>;
+		readonly overrideModifier: SlotHint<NonNullable<T.OptionalParameter.Config>['overrideModifier'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.OptionalParameter.Config>['readonlyMarker'], true>;
+		readonly pattern: SlotHint<NonNullable<T.OptionalParameter.Config>['pattern']>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
+		readonly value: SlotHint<NonNullable<T.OptionalParameter.Config>['value'], true>;
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
@@ -6752,6 +7435,9 @@ export interface OmittingTypeAnnotation {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+	};
 	type(): Type;
 }
 
@@ -6785,6 +7471,9 @@ export interface AddingTypeAnnotation {
 					| TSKindId.Star
 			  >
 			| Type;
+	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
 	};
 	type(): Type;
 }
@@ -6820,6 +7509,9 @@ export interface OptingTypeAnnotation {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+	};
 	type(): Type;
 }
 
@@ -6854,6 +7546,9 @@ export interface TypeAnnotation {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+	};
 	type(): Type;
 }
 
@@ -6869,6 +7564,10 @@ export interface TypeQueryMemberExpressionInTypeAnnotation {
 			| KindEnum<'import', TSKindId.Import | TSKindId.ImportKeyword>
 			| TypeQueryMemberExpressionInTypeAnnotation
 			| TypeQueryCallExpressionInTypeAnnotation;
+	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<NonNullable<T.TypeQueryMemberExpressionInTypeAnnotation.Config>['object']>;
+		readonly property: SlotHint<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>;
 	};
 	object(): TSKindId.Import | TypeQueryMemberExpressionInTypeAnnotation | TypeQueryCallExpressionInTypeAnnotation;
 	property(): PrivatePropertyIdentifier | PropertyIdentifier;
@@ -6886,6 +7585,10 @@ export interface TypeQueryCallExpressionInTypeAnnotation {
 	readonly __looseHints__?: {
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
+	readonly __slotHints__?: {
+		readonly function: SlotHint<NonNullable<T.TypeQueryCallExpressionInTypeAnnotation.Config>['function']>;
+		readonly arguments: SlotHint<T.Arguments>;
+	};
 	function(): TSKindId.Import | TypeQueryMemberExpressionInTypeAnnotation;
 	arguments(): Arguments;
 }
@@ -6896,6 +7599,9 @@ export interface Asserts {
 	readonly __inputHints__?: {
 		readonly value: KindEnum<'this', TSKindId.This> | TypePredicate | Identifier;
 	};
+	readonly __slotHints__?: {
+		readonly value: SlotHint<NonNullable<T.TypePredicate | T.Identifier | TSKindId.This>>;
+	};
 	value(): TypePredicate | Identifier | TSKindId.This;
 }
 
@@ -6904,6 +7610,9 @@ export interface AssertsAnnotation {
 	readonly _asserts: Asserts;
 	readonly __looseHints__?: {
 		readonly asserts: Asserts | 'this' | readonly (TypePredicate | Identifier | 'this')[];
+	};
+	readonly __slotHints__?: {
+		readonly asserts: SlotHint<T.Asserts>;
 	};
 	asserts(): Asserts;
 }
@@ -6915,6 +7624,10 @@ export interface TupleParameter {
 	readonly __looseHints__?: {
 		readonly type: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier | T.RestPattern>;
+		readonly type: SlotHint<T.TypeAnnotation>;
+	};
 	name(): Identifier | RestPattern;
 	type(): TypeAnnotation;
 }
@@ -6925,6 +7638,10 @@ export interface OptionalTupleParameter {
 	readonly _type: TypeAnnotation;
 	readonly __looseHints__?: {
 		readonly type: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier>;
+		readonly type: SlotHint<T.TypeAnnotation>;
 	};
 	name(): Identifier;
 	type(): TypeAnnotation;
@@ -6961,6 +7678,9 @@ export interface OptionalType {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+	};
 	type(): Type;
 }
 
@@ -6994,6 +7714,9 @@ export interface RestType {
 					| TSKindId.Star
 			  >
 			| Type;
+	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
 	};
 	type(): Type;
 }
@@ -7038,6 +7761,12 @@ export interface ConstructorType {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
+	readonly __slotHints__?: {
+		readonly abstractMarker: SlotHint<NonNullable<T.ConstructorType.Config>['abstractMarker'], true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly type: SlotHint<NonNullable<T.ConstructorType.Config>['type']>;
+	};
 	abstractMarker(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
@@ -7076,12 +7805,18 @@ export interface TemplateType {
 			| PrimaryType
 			| InferType;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>>;
+	};
 	type(): PrimaryType | InferType;
 }
 
 export interface TemplateLiteralType {
 	readonly $type: TSKindId.TemplateLiteralType;
 	readonly _elements?: readonly (TemplateChars | TemplateType)[];
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<(T.TemplateChars | T.TemplateType)[], false, true>;
+	};
 	elements(): readonly (TemplateChars | TemplateType)[];
 }
 
@@ -7119,6 +7854,10 @@ export interface InferType {
 	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
+	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
+		readonly type: SlotHint<NonNullable<T.InferType.Config>['type'], true>;
 	};
 	name(): TypeIdentifier;
 	type(): Type | undefined;
@@ -7236,6 +7975,12 @@ export interface ConditionalType {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<NonNullable<T.ConditionalType.Config>['left']>;
+		readonly right: SlotHint<NonNullable<T.ConditionalType.Config>['right']>;
+		readonly consequence: SlotHint<NonNullable<T.ConditionalType.Config>['consequence']>;
+		readonly alternative: SlotHint<NonNullable<T.ConditionalType.Config>['alternative']>;
+	};
 	left(): Type;
 	right(): Type;
 	consequence(): Type;
@@ -7248,6 +7993,10 @@ export interface GenericType {
 	readonly _type_arguments: TypeArguments;
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.TypeIdentifier | T.NestedTypeIdentifier | T.TypeIdentifier.Types>;
+		readonly typeArguments: SlotHint<T.TypeArguments>;
 	};
 	name(): TypeIdentifier | NestedTypeIdentifier;
 	typeArguments(): TypeArguments;
@@ -7323,6 +8072,10 @@ export interface TypePredicate {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<NonNullable<T.TypePredicate.Config>['name']>;
+		readonly type: SlotHint<NonNullable<T.TypePredicate.Config>['type']>;
+	};
 	name():
 		| Identifier
 		| TSKindId.This
@@ -7342,6 +8095,9 @@ export interface TypePredicate {
 export interface TypePredicateAnnotation {
 	readonly $type: TSKindId.TypePredicateAnnotation;
 	readonly _type_predicate: TypePredicate;
+	readonly __slotHints__?: {
+		readonly typePredicate: SlotHint<T.TypePredicate>;
+	};
 	typePredicate(): TypePredicate;
 }
 
@@ -7363,6 +8119,11 @@ export interface TypeQueryMemberExpression {
 			| TypeQueryMemberExpression
 			| TypeQueryCallExpression;
 		readonly content: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.QmarkDot>;
+	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<NonNullable<T.TypeQueryMemberExpression.Config>['object']>;
+		readonly content: SlotHint<NonNullable<T.TypeQueryMemberExpression.Config>['content']>;
+		readonly property: SlotHint<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>;
 	};
 	object():
 		| Identifier
@@ -7428,6 +8189,10 @@ export interface TypeQuerySubscriptExpression {
 			| String
 			| Number;
 	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<NonNullable<T.TypeQuerySubscriptExpression.Config>['object']>;
+		readonly index: SlotHint<NonNullable<T.TypeQuerySubscriptExpression.Config>['index']>;
+	};
 	object():
 		| Identifier
 		| TSKindId.This
@@ -7463,6 +8228,10 @@ export interface TypeQueryCallExpression {
 	readonly __looseHints__?: {
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
+	readonly __slotHints__?: {
+		readonly function: SlotHint<NonNullable<T.TypeQueryCallExpression.Config>['function']>;
+		readonly arguments: SlotHint<T.Arguments>;
+	};
 	function(): TSKindId.Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	arguments(): Arguments;
 }
@@ -7480,6 +8249,10 @@ export interface TypeQueryInstantiationExpression {
 	};
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly function: SlotHint<NonNullable<T.TypeQueryInstantiationExpression.Config>['function']>;
+		readonly typeArguments: SlotHint<T.TypeArguments>;
 	};
 	function(): TSKindId.Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	typeArguments(): TypeArguments;
@@ -7502,6 +8275,18 @@ export interface TypeQuery {
 			| TypeQueryCallExpression
 			| TypeQueryInstantiationExpression
 			| Identifier;
+	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<
+			NonNullable<
+				| T.TypeQuerySubscriptExpression
+				| T.TypeQueryMemberExpression
+				| T.TypeQueryCallExpression
+				| T.TypeQueryInstantiationExpression
+				| T.Identifier
+				| TSKindId.This
+			>
+		>;
 	};
 	expression():
 		| TypeQuerySubscriptExpression
@@ -7542,6 +8327,9 @@ export interface IndexTypeQuery {
 					| TSKindId.Star
 			  >
 			| PrimaryType;
+	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>;
 	};
 	type(): PrimaryType;
 }
@@ -7603,6 +8391,10 @@ export interface LookupType {
 					| TSKindId.Star
 			  >
 			| Type;
+	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.LookupType.Config>['type']>;
+		readonly indexType: SlotHint<NonNullable<T.LookupType.Config>['indexType']>;
 	};
 	type(): PrimaryType;
 	indexType(): Type;
@@ -7670,6 +8462,11 @@ export interface MappedTypeClause {
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
+		readonly type: SlotHint<NonNullable<T.MappedTypeClause.Config>['type']>;
+		readonly alias: SlotHint<NonNullable<T.MappedTypeClause.Config>['alias'], true>;
+	};
 	name(): TypeIdentifier;
 	type(): Type;
 	alias(): Type | undefined;
@@ -7694,6 +8491,19 @@ export interface LiteralType {
 			| LiteralTypeNegativeNumber
 			| Number
 			| String;
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<
+			NonNullable<
+				| T.LiteralTypeNegativeNumber
+				| T.Number
+				| T.String
+				| TSKindId.True
+				| TSKindId.False
+				| TSKindId.Null
+				| TSKindId.Undefined
+			>
+		>;
 	};
 	content():
 		| LiteralTypeNegativeNumber
@@ -7736,6 +8546,9 @@ export interface FlowMaybeType {
 			  >
 			| PrimaryType;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>;
+	};
 	type(): PrimaryType;
 }
 
@@ -7770,6 +8583,9 @@ export interface ParenthesizedType {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+	};
 	type(): Type;
 }
 
@@ -7778,6 +8594,10 @@ export interface TypeArguments {
 	readonly _types: Types;
 	readonly __looseHints__?: {
 		readonly types: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly types: SlotHint<T.Types>;
+		readonly $listOwner: ListOwnerHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	types(): Types;
 }
@@ -7801,6 +8621,11 @@ export interface ObjectType {
 			| MethodSignature
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly opening: SlotHint<NonNullable<ConfigOf<T.ObjectType>>['opening']>;
+		readonly members: SlotHint<T.ObjectTypeContent, true>;
+		readonly closing: SlotHint<NonNullable<ConfigOf<T.ObjectType>>['closing']>;
+	};
 	opening(): number;
 	members(): ObjectTypeContent | undefined;
 	closing(): number;
@@ -7814,6 +8639,11 @@ export interface CallSignature {
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+	};
+	readonly __slotHints__?: {
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
 	};
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
@@ -7923,6 +8753,15 @@ export interface PropertySignature {
 		readonly override_modifier?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly accessibilityModifier: SlotHint<NonNullable<T.PropertySignature.Config>['accessibilityModifier'], true>;
+		readonly staticMarker: SlotHint<NonNullable<T.PropertySignature.Config>['staticMarker'], true>;
+		readonly overrideModifier: SlotHint<NonNullable<T.PropertySignature.Config>['overrideModifier'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.PropertySignature.Config>['readonlyMarker'], true>;
+		readonly name: SlotHint<NonNullable<T.PropertySignature.Config>['name']>;
+		readonly optionalMarker: SlotHint<NonNullable<T.PropertySignature.Config>['optionalMarker'], true>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
+	};
 	accessibilityModifier(): number | undefined;
 	staticMarker(): boolean | undefined;
 	overrideModifier(): boolean | undefined;
@@ -7965,6 +8804,10 @@ export interface TypeParameters {
 	readonly __looseHints__?: {
 		readonly type_parameters_elements: readonly TypeParameter[];
 	};
+	readonly __slotHints__?: {
+		readonly typeParametersElements: SlotHint<T.TypeParametersElements>;
+		readonly $listOwner: ListOwnerHint<T.TypeParameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+	};
 	typeParametersElements(): TypeParametersElements;
 }
 
@@ -7981,6 +8824,12 @@ export interface TypeParameter {
 		readonly const_marker?: 'const' | 'const';
 		readonly name: readonly Identifier[];
 		readonly value?: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly constMarker: SlotHint<NonNullable<T.TypeParameter.Config>['constMarker'], true>;
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
+		readonly constraint: SlotHint<T.Constraint, true>;
+		readonly value: SlotHint<T.DefaultType, true>;
 	};
 	constMarker(): boolean | undefined;
 	name(): TypeIdentifier;
@@ -8019,6 +8868,9 @@ export interface DefaultType {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+	};
 	type(): Type;
 }
 
@@ -8055,6 +8907,10 @@ export interface Constraint {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<T.Constraint.Config>['content']>;
+		readonly type: SlotHint<NonNullable<T.Constraint.Config>['type']>;
+	};
 	content(): number;
 	type(): Type;
 }
@@ -8073,6 +8929,12 @@ export interface ConstructSignature {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 		readonly type?: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly abstractMarker: SlotHint<NonNullable<T.ConstructSignature.Config>['abstractMarker'], true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
 	};
 	abstractMarker(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
@@ -8111,6 +8973,9 @@ export interface ArrayType {
 			  >
 			| PrimaryType;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>;
+	};
 	type(): PrimaryType;
 }
 
@@ -8119,6 +8984,13 @@ export interface TupleType {
 	readonly _tuple_type_members?: TupleTypeMembers;
 	readonly __looseHints__?: {
 		readonly tuple_type_members?: readonly (TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type)[];
+	};
+	readonly __slotHints__?: {
+		readonly tupleTypeMembers: SlotHint<T.TupleTypeMembers, true>;
+		readonly $listOwner: ListOwnerHint<
+			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	tupleTypeMembers(): TupleTypeMembers | undefined;
 }
@@ -8153,6 +9025,9 @@ export interface ReadonlyType {
 					| TSKindId.Star
 			  >
 			| Type;
+	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
 	};
 	type(): Type;
 }
@@ -8214,6 +9089,10 @@ export interface UnionType {
 					| TSKindId.Star
 			  >
 			| Type;
+	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<NonNullable<T.UnionType.Config>['left'], true>;
+		readonly right: SlotHint<NonNullable<T.UnionType.Config>['right']>;
 	};
 	left(): Type | undefined;
 	right(): Type;
@@ -8277,6 +9156,10 @@ export interface IntersectionType {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<NonNullable<T.IntersectionType.Config>['left'], true>;
+		readonly right: SlotHint<NonNullable<T.IntersectionType.Config>['right']>;
+	};
 	left(): Type | undefined;
 	right(): Type;
 }
@@ -8320,6 +9203,11 @@ export interface FunctionType {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
+	readonly __slotHints__?: {
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<NonNullable<T.FunctionType.Config>['returnType']>;
+	};
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): Type | Asserts | TypePredicate;
@@ -8331,18 +9219,30 @@ export interface ExportSpecifiers {
 	readonly __inputHints__?: {
 		readonly export_specifier: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>;
 	};
+	readonly __slotHints__?: {
+		readonly exportSpecifiers: SlotHint<NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>, false, true>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+	};
 	exportSpecifiers(): NonEmptyArray<ExportSpecifier>;
 }
 
 export interface ImportSpecifiers {
 	readonly $type: TSKindId.ImportSpecifiers;
 	readonly _import_specifier: NonEmptyArray<ImportSpecifier>;
+	readonly __slotHints__?: {
+		readonly importSpecifiers: SlotHint<NonEmptyArray<T.ImportSpecifier>, false, true>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+	};
 	importSpecifiers(): NonEmptyArray<ImportSpecifier>;
 }
 
 export interface FormalParametersElements {
 	readonly $type: TSKindId.FormalParametersElements;
 	readonly _formal_parameter: NonEmptyArray<RequiredParameter | OptionalParameter>;
+	readonly __slotHints__?: {
+		readonly formalParameters: SlotHint<NonEmptyArray<T.RequiredParameter | T.OptionalParameter>, false, true>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+	};
 	formalParameters(): NonEmptyArray<RequiredParameter | OptionalParameter>;
 }
 
@@ -8378,6 +9278,44 @@ export interface EnumBodyElements {
 		| Number
 		| ComputedPropertyName
 	)[];
+	readonly __slotHints__?: {
+		readonly contents: SlotHint<
+			NonEmptyArray<
+				| T.PropertyIdentifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+				| T.PrivatePropertyIdentifier
+				| T.String
+				| T.Number
+				| T.ComputedPropertyName
+				| T.EnumAssignment
+				| T.PropertyIdentifier.Types
+			>,
+			false,
+			true
+		>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+	};
 	contents(): readonly (
 		| EnumAssignment
 		| PropertyIdentifier
@@ -8413,6 +9351,10 @@ export interface EnumBodyElements {
 export interface Types {
 	readonly $type: TSKindId.Types;
 	readonly _type: NonEmptyArray<Type>;
+	readonly __slotHints__?: {
+		readonly types: SlotHint<NonEmptyArray<T.Type | T.TypeIdentifier.Types>, false, true>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+	};
 	types(): NonEmptyArray<Type>;
 }
 
@@ -8422,18 +9364,39 @@ export interface TypeParametersElements {
 	readonly __inputHints__?: {
 		readonly type_parameter: NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>;
 	};
+	readonly __slotHints__?: {
+		readonly typeParameters: SlotHint<
+			NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>,
+			false,
+			true
+		>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+	};
 	typeParameters(): NonEmptyArray<TypeParameter>;
 }
 
 export interface TupleTypeMembers {
 	readonly $type: TSKindId.TupleTypeMembers;
 	readonly _tuple_type_member: NonEmptyArray<TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type>;
+	readonly __slotHints__?: {
+		readonly tupleTypeMembers: SlotHint<
+			NonEmptyArray<
+				T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
+			>,
+			false,
+			true
+		>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+	};
 	tupleTypeMembers(): NonEmptyArray<TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type>;
 }
 
 export interface ImportClauseGroup {
 	readonly $type: TSKindId.ImportClauseGroup;
 	readonly _content: NamespaceImport | NamedImports;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.NamespaceImport | T.NamedImports>;
+	};
 	content(): NamespaceImport | NamedImports;
 }
 
@@ -8444,6 +9407,10 @@ export interface CatchClauseGroup {
 	readonly __looseHints__?: {
 		readonly type?: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly parameter: SlotHint<T.Identifier | T.ObjectPattern | T.ArrayPattern>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
+	};
 	parameter(): Identifier | ObjectPattern | ArrayPattern;
 	type(): TypeAnnotation | undefined;
 }
@@ -8451,6 +9418,9 @@ export interface CatchClauseGroup {
 export interface AmbientDeclarationGlobal {
 	readonly $type: TSKindId.AmbientDeclarationGlobal;
 	readonly _body: StatementBlock;
+	readonly __slotHints__?: {
+		readonly body: SlotHint<T.StatementBlock>;
+	};
 	body(): StatementBlock;
 }
 
@@ -8515,6 +9485,11 @@ export interface AmbientDeclarationModule {
 			| 'let'
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.PropertyIdentifier | T.PropertyIdentifier.Types>;
+		readonly type: SlotHint<NonNullable<T.AmbientDeclarationModule.Config>['type']>;
+		readonly terminator: SlotHint<NonNullable<T.AmbientDeclarationModule.Options>['terminator'], true>;
+	};
 	name(): PropertyIdentifier;
 	type(): Type;
 	terminator(): number | undefined;
@@ -8525,6 +9500,22 @@ export interface ObjectTypeContent {
 	readonly _members: NonEmptyArray<
 		ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature
 	>;
+	readonly __slotHints__?: {
+		readonly members: SlotHint<
+			NonEmptyArray<
+				| T.ExportStatement
+				| T.PropertySignature
+				| T.CallSignature
+				| T.ConstructSignature
+				| T.IndexSignature
+				| T.MethodSignature
+			>,
+			false,
+			true
+		>;
+		readonly separator: SlotHint<TSKindId.Comma | TSKindId.Semi>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both, true>;
+	};
 	members(): NonEmptyArray<
 		ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature
 	>;
@@ -8536,6 +9527,10 @@ export interface ExportStatementNamespaceExport {
 	readonly _terminator: number;
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier>;
+		readonly terminator: SlotHint<NonNullable<T.ExportStatementNamespaceExport.Options>['terminator']>;
 	};
 	name(): Identifier;
 	terminator(): number;
@@ -8551,6 +9546,11 @@ export interface ExportStatementTypeExport {
 	};
 	readonly __looseHints__?: {
 		readonly export_clause: readonly ExportSpecifier[];
+	};
+	readonly __slotHints__?: {
+		readonly exportClause: SlotHint<T.ExportClause>;
+		readonly source: SlotHint<T.String, true>;
+		readonly terminator: SlotHint<NonNullable<T.ExportStatementTypeExport.Options>['terminator']>;
 	};
 	exportClause(): ExportClause;
 	source(): String | undefined;
@@ -8570,6 +9570,10 @@ export interface ExportStatementEqualsExport {
 			| Expression;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression>>;
+		readonly terminator: SlotHint<NonNullable<T.ExportStatementEqualsExport.Options>['terminator']>;
+	};
 	expression(): Expression;
 	terminator(): number;
 }
@@ -8577,12 +9581,18 @@ export interface ExportStatementEqualsExport {
 export interface CommentLine {
 	readonly $type: TSKindId.CommentLine;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+	};
 	content(): string;
 }
 
 export interface CommentBlock {
 	readonly $type: TSKindId.CommentBlock;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+	};
 	content(): string;
 }
 
@@ -8593,6 +9603,10 @@ export interface LiteralTypeNegativeNumber {
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'-' | '+', TSKindId.Dash | TSKindId.Plus>;
 	};
+	readonly __slotHints__?: {
+		readonly operator: SlotHint<NonNullable<T.LiteralTypeNegativeNumber.Config>['operator']>;
+		readonly argument: SlotHint<T.Number>;
+	};
 	operator(): number;
 	argument(): Number;
 }
@@ -8601,6 +9615,10 @@ export interface NumberHex {
 	readonly $type: TSKindId.NumberHex;
 	readonly _prefix: '0x' | '0X';
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+		readonly prefix: SlotHint<'0x' | '0X'>;
+	};
 	prefix(): '0x' | '0X';
 	content(): string;
 }
@@ -8612,6 +9630,13 @@ export interface NumberFloatPoint {
 	readonly _marker?: 'e' | 'E';
 	readonly _sign?: '-' | '+';
 	readonly _exponent?: string;
+	readonly __slotHints__?: {
+		readonly integer: SlotHint<string | number | bigint>;
+		readonly fraction: SlotHint<string | number | bigint, true>;
+		readonly sign: SlotHint<'-' | '+', true>;
+		readonly exponent: SlotHint<string | number | bigint, true>;
+		readonly marker: SlotHint<'e' | 'E', true>;
+	};
 	integer(): string;
 	fraction(): string | undefined;
 	marker(): 'e' | 'E' | undefined;
@@ -8625,6 +9650,12 @@ export interface NumberFloatLeadingPoint {
 	readonly _marker?: 'e' | 'E';
 	readonly _sign?: '-' | '+';
 	readonly _exponent?: string;
+	readonly __slotHints__?: {
+		readonly fraction: SlotHint<string | number | bigint>;
+		readonly sign: SlotHint<'-' | '+', true>;
+		readonly exponent: SlotHint<string | number | bigint, true>;
+		readonly marker: SlotHint<'e' | 'E', true>;
+	};
 	fraction(): string;
 	marker(): 'e' | 'E' | undefined;
 	sign(): '-' | '+' | undefined;
@@ -8637,6 +9668,12 @@ export interface NumberFloatScientific {
 	readonly _marker: 'e' | 'E';
 	readonly _sign?: '-' | '+';
 	readonly _exponent: string;
+	readonly __slotHints__?: {
+		readonly integer: SlotHint<string | number | bigint>;
+		readonly sign: SlotHint<'-' | '+', true>;
+		readonly exponent: SlotHint<string | number | bigint>;
+		readonly marker: SlotHint<'e' | 'E'>;
+	};
 	integer(): string;
 	marker(): 'e' | 'E';
 	sign(): '-' | '+' | undefined;
@@ -8647,6 +9684,10 @@ export interface NumberBinary {
 	readonly $type: TSKindId.NumberBinary;
 	readonly _prefix: '0b' | '0B';
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+		readonly prefix: SlotHint<'0b' | '0B'>;
+	};
 	prefix(): '0b' | '0B';
 	content(): string;
 }
@@ -8655,6 +9696,10 @@ export interface NumberOctal {
 	readonly $type: TSKindId.NumberOctal;
 	readonly _prefix: '0o' | '0O';
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+		readonly prefix: SlotHint<'0o' | '0O'>;
+	};
 	prefix(): '0o' | '0O';
 	content(): string;
 }
@@ -8662,24 +9707,36 @@ export interface NumberOctal {
 export interface NumberBigintHex {
 	readonly $type: TSKindId.NumberBigintHex;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+	};
 	content(): string;
 }
 
 export interface NumberBigintBinary {
 	readonly $type: TSKindId.NumberBigintBinary;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+	};
 	content(): string;
 }
 
 export interface NumberBigintOctal {
 	readonly $type: TSKindId.NumberBigintOctal;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+	};
 	content(): string;
 }
 
 export interface NumberBigintDecimal {
 	readonly $type: TSKindId.NumberBigintDecimal;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+	};
 	content(): string;
 }
 
@@ -8702,6 +9759,10 @@ export interface BinaryExpressionIn {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<NonNullable<T.BinaryExpressionIn.Config>['left']>;
+		readonly right: SlotHint<NonNullable<T.BinaryExpressionIn.Config>['right']>;
+	};
 	left(): Expression | PrivatePropertyIdentifier;
 	right(): Expression;
 }
@@ -8713,6 +9774,11 @@ export interface ClassBodyMethod {
 	readonly _terminator?: number;
 	readonly __inputHints__?: {
 		readonly terminator?: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly methodDefinition: SlotHint<T.MethodDefinition>;
+		readonly terminator: SlotHint<NonNullable<T.ClassBodyMethod.Options>['terminator'], true>;
 	};
 	decorators(): readonly Decorator[];
 	methodDefinition(): MethodDefinition;
@@ -8726,6 +9792,10 @@ export interface ClassBodyMethodSig {
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ',', TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma>;
 	};
+	readonly __slotHints__?: {
+		readonly methodSignature: SlotHint<T.MethodSignature>;
+		readonly terminator: SlotHint<NonNullable<T.ClassBodyMethodSig.Config>['terminator']>;
+	};
 	methodSignature(): MethodSignature;
 	terminator(): number;
 }
@@ -8736,6 +9806,12 @@ export interface ClassBodyMember {
 	readonly _terminator: number;
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';' | ',', TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma>;
+	};
+	readonly __slotHints__?: {
+		readonly member: SlotHint<
+			T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition
+		>;
+		readonly terminator: SlotHint<NonNullable<T.ClassBodyMember.Options>['terminator']>;
 	};
 	member(): AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
 	terminator(): number;
@@ -8849,6 +9925,15 @@ export interface IndexSignatureColon {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly sign: SlotHint<NonNullable<T.IndexSignatureColon.Config>['sign'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.IndexSignatureColon.Config>['readonlyMarker'], true>;
+		readonly name: SlotHint<NonNullable<T.IndexSignatureColon.Config>['name']>;
+		readonly indexType: SlotHint<NonNullable<T.IndexSignatureColon.Config>['indexType']>;
+		readonly type: SlotHint<
+			T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation
+		>;
+	};
 	sign(): number | undefined;
 	readonlyMarker(): boolean | undefined;
 	name():
@@ -8889,6 +9974,14 @@ export interface IndexSignatureMappedTypeClause {
 		readonly sign?: KindEnum<'-' | '+', TSKindId.Dash | TSKindId.Plus>;
 		readonly readonly_marker?: BaseBooleanKeyword<'readonly'>;
 	};
+	readonly __slotHints__?: {
+		readonly sign: SlotHint<NonNullable<T.IndexSignatureMappedTypeClause.Config>['sign'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.IndexSignatureMappedTypeClause.Config>['readonlyMarker'], true>;
+		readonly mappedTypeClause: SlotHint<T.MappedTypeClause>;
+		readonly type: SlotHint<
+			T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation
+		>;
+	};
 	sign(): number | undefined;
 	readonlyMarker(): boolean | undefined;
 	mappedTypeClause(): MappedTypeClause;
@@ -8902,6 +9995,10 @@ export interface ImportStatementClauseFrom {
 	readonly __looseHints__?: {
 		readonly import_clause: readonly (NamespaceImport | NamedImports | ImportClauseDefaultImport)[];
 	};
+	readonly __slotHints__?: {
+		readonly importClause: SlotHint<T.ImportClause>;
+		readonly source: SlotHint<T.String>;
+	};
 	importClause(): ImportClause;
 	source(): String;
 }
@@ -8913,6 +10010,10 @@ export interface ImportSpecifierName {
 	readonly __inputHints__?: {
 		readonly import_kind?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
 		readonly name: KindEnum<'type', TSKindId.TypeKeyword> | Identifier;
+	};
+	readonly __slotHints__?: {
+		readonly importKind: SlotHint<NonNullable<T.ImportSpecifierName.Config>['importKind'], true>;
+		readonly name: SlotHint<NonNullable<T.ImportSpecifierName.Config>['name']>;
 	};
 	importKind(): number | undefined;
 	name(): Identifier | TSKindId.TypeKeyword;
@@ -8927,6 +10028,11 @@ export interface ImportSpecifierAs {
 		readonly import_kind?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
 		readonly name: KindEnum<'type', TSKindId.TypeKeyword> | Identifier | String;
 		readonly alias: KindEnum<'type', TSKindId.TypeKeyword> | Identifier;
+	};
+	readonly __slotHints__?: {
+		readonly importKind: SlotHint<NonNullable<T.ImportSpecifierAs.Config>['importKind'], true>;
+		readonly name: SlotHint<NonNullable<T.ImportSpecifierAs.Config>['name']>;
+		readonly alias: SlotHint<NonNullable<T.ImportSpecifierAs.Config>['alias']>;
 	};
 	importKind(): number | undefined;
 	name(): Identifier | String | TSKindId.TypeKeyword;
@@ -8948,6 +10054,10 @@ export interface ParenthesizedExpressionTyped {
 	readonly __looseHints__?: {
 		readonly type?: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.ParenthesizedExpressionTyped.Config>['expression']>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
+	};
 	expression(): Expression;
 	type(): TypeAnnotation | undefined;
 }
@@ -8957,6 +10067,9 @@ export interface ParenthesizedExpressionSequence {
 	readonly _sequence_expression: SequenceExpression;
 	readonly __looseHints__?: {
 		readonly sequence_expression: readonly Expression[];
+	};
+	readonly __slotHints__?: {
+		readonly sequenceExpression: SlotHint<T.SequenceExpression>;
 	};
 	sequenceExpression(): SequenceExpression;
 }
@@ -8985,6 +10098,11 @@ export interface CallExpressionCall {
 		readonly type_arguments?: readonly Type[];
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
+	readonly __slotHints__?: {
+		readonly function: SlotHint<NonNullable<T.CallExpressionCall.Config>['function']>;
+		readonly typeArguments: SlotHint<T.TypeArguments, true>;
+		readonly arguments: SlotHint<T.Arguments>;
+	};
 	function(): Expression | TSKindId.Import;
 	typeArguments(): TypeArguments | undefined;
 	arguments(): Arguments;
@@ -9005,6 +10123,10 @@ export interface CallExpressionTemplateCall {
 	};
 	readonly __looseHints__?: {
 		readonly arguments: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
+	};
+	readonly __slotHints__?: {
+		readonly function: SlotHint<NonNullable<T.CallExpressionTemplateCall.Config>['function']>;
+		readonly arguments: SlotHint<T.TemplateString>;
 	};
 	function(): PrimaryExpression | NewExpression;
 	arguments(): TemplateString;
@@ -9027,6 +10149,11 @@ export interface CallExpressionMember {
 		readonly type_arguments?: readonly Type[];
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
+	readonly __slotHints__?: {
+		readonly function: SlotHint<NonNullable<T.CallExpressionMember.Config>['function']>;
+		readonly typeArguments: SlotHint<T.TypeArguments, true>;
+		readonly arguments: SlotHint<T.Arguments>;
+	};
 	function(): PrimaryExpression;
 	typeArguments(): TypeArguments | undefined;
 	arguments(): Arguments;
@@ -9035,12 +10162,18 @@ export interface CallExpressionMember {
 export interface StringDouble {
 	readonly $type: TSKindId.StringDouble;
 	readonly _elements?: readonly (UnescapedDoubleStringFragment | EscapeSequence)[];
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<(T.UnescapedDoubleStringFragment | T.EscapeSequence)[], false, true>;
+	};
 	elements(): readonly (UnescapedDoubleStringFragment | EscapeSequence)[];
 }
 
 export interface StringSingle {
 	readonly $type: TSKindId.StringSingle;
 	readonly _elements?: readonly (UnescapedSingleStringFragment | EscapeSequence)[];
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<(T.UnescapedSingleStringFragment | T.EscapeSequence)[], false, true>;
+	};
 	elements(): readonly (UnescapedSingleStringFragment | EscapeSequence)[];
 }
 
@@ -9056,6 +10189,10 @@ export interface UpdateExpressionPostfix {
 			  >
 			| Expression;
 		readonly operator: KindEnum<'++' | '--', TSKindId.PlusPlus | TSKindId.DashDash>;
+	};
+	readonly __slotHints__?: {
+		readonly argument: SlotHint<NonNullable<T.UpdateExpressionPostfix.Config>['argument']>;
+		readonly operator: SlotHint<NonNullable<T.UpdateExpressionPostfix.Config>['operator']>;
 	};
 	argument(): Expression;
 	operator(): number;
@@ -9073,6 +10210,10 @@ export interface UpdateExpressionPrefix {
 					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
 			  >
 			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly operator: SlotHint<NonNullable<T.UpdateExpressionPrefix.Config>['operator']>;
+		readonly argument: SlotHint<NonNullable<T.UpdateExpressionPrefix.Config>['argument']>;
 	};
 	operator(): number;
 	argument(): Expression;
@@ -9154,6 +10295,35 @@ export interface ArrowFunctionParameter {
 			  >
 			| Identifier;
 	};
+	readonly __slotHints__?: {
+		readonly parameter: SlotHint<
+			NonNullable<
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+				| T.Identifier
+			>
+		>;
+	};
 	parameter():
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
@@ -9188,6 +10358,10 @@ export interface ClassHeritageExtendsClause {
 		readonly extends_clause: readonly ExtendsClauseSingle[];
 		readonly implements_clause?: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly extendsClause: SlotHint<T.ExtendsClause>;
+		readonly implementsClause: SlotHint<T.ImplementsClause, true>;
+	};
 	extendsClause(): ExtendsClause;
 	implementsClause(): ImplementsClause | undefined;
 }
@@ -9201,6 +10375,10 @@ export interface ImportClauseDefaultImport {
 	};
 	readonly __looseHints__?: {
 		readonly import_clause_group?: readonly (NamespaceImport | NamedImports)[];
+	};
+	readonly __slotHints__?: {
+		readonly identifier: SlotHint<NonNullable<T.ImportClauseDefaultImport.Config>['identifier']>;
+		readonly importClauseGroup: SlotHint<T.ImportClauseGroup, true>;
 	};
 	identifier(): Identifier | TSKindId.TypeKeyword;
 	importClauseGroup(): ImportClauseGroup | undefined;
@@ -9217,6 +10395,15 @@ export interface ExportStatementDefaultFrom {
 	readonly __inputHints__?: {
 		readonly automatic_semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<
+			| T.ExportStatementDefaultFromStarFrom
+			| T.ExportStatementDefaultFromNsFrom
+			| T.ExportStatementDefaultFromClauseFrom
+			| T.ExportClause
+		>;
+		readonly automaticSemicolon: SlotHint<NonNullable<T.ExportStatementDefaultFrom.Options>['automaticSemicolon']>;
+	};
 	content():
 		| ExportStatementDefaultFromStarFrom
 		| ExportStatementDefaultFromNsFrom
@@ -9229,6 +10416,10 @@ export interface ExportStatementDefaultDeclaration {
 	readonly $type: TSKindId.ExportStatementDefaultDeclaration;
 	readonly _decorator?: readonly Decorator[];
 	readonly _content: ExportStatementDefaultDeclarationDefaultKw | Declaration;
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly content: SlotHint<T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration>;
+	};
 	decorators(): readonly Decorator[];
 	content(): ExportStatementDefaultDeclarationDefaultKw | Declaration;
 }
@@ -9236,6 +10427,9 @@ export interface ExportStatementDefaultDeclaration {
 export interface ExportStatementDefaultFromStarFrom {
 	readonly $type: TSKindId.ExportStatementDefaultFromStarFrom;
 	readonly _source: String;
+	readonly __slotHints__?: {
+		readonly source: SlotHint<T.String>;
+	};
 	source(): String;
 }
 
@@ -9245,6 +10439,10 @@ export interface ExportStatementDefaultFromNsFrom {
 	readonly _source: String;
 	readonly __looseHints__?: {
 		readonly namespace_export: readonly (Identifier | String)[];
+	};
+	readonly __slotHints__?: {
+		readonly namespaceExport: SlotHint<T.NamespaceExport>;
+		readonly source: SlotHint<T.String>;
 	};
 	namespaceExport(): NamespaceExport;
 	source(): String;
@@ -9257,6 +10455,10 @@ export interface ExportStatementDefaultFromClauseFrom {
 	readonly __looseHints__?: {
 		readonly export_clause: readonly ExportSpecifier[];
 	};
+	readonly __slotHints__?: {
+		readonly exportClause: SlotHint<T.ExportClause>;
+		readonly source: SlotHint<T.String>;
+	};
 	exportClause(): ExportClause;
 	source(): String;
 }
@@ -9264,6 +10466,9 @@ export interface ExportStatementDefaultFromClauseFrom {
 export interface ExportStatementDefaultDeclarationDefaultKw {
 	readonly $type: TSKindId.ExportStatementDefaultDeclarationDefaultKw;
 	readonly _content: ExportStatementDefaultDeclarationDefaultKwValue | Declaration;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>;
+	};
 	content(): ExportStatementDefaultDeclarationDefaultKwValue | Declaration;
 }
 
@@ -9279,6 +10484,12 @@ export interface ExportStatementDefaultDeclarationDefaultKwValue {
 			  >
 			| Expression;
 		readonly automatic_semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __slotHints__?: {
+		readonly value: SlotHint<NonNullable<T.Expression>>;
+		readonly automaticSemicolon: SlotHint<
+			NonNullable<T.ExportStatementDefaultDeclarationDefaultKwValue.Options>['automaticSemicolon']
+		>;
 	};
 	value(): Expression;
 	automaticSemicolon(): number;
@@ -9300,6 +10511,11 @@ export interface VariableDeclaratorPlain {
 	readonly __looseHints__?: {
 		readonly type?: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier | T.ObjectPattern | T.ArrayPattern>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
+		readonly value: SlotHint<NonNullable<T.VariableDeclaratorPlain.Config>['value'], true>;
+	};
 	name(): Identifier | ObjectPattern | ArrayPattern;
 	type(): TypeAnnotation | undefined;
 	value(): Expression | undefined;
@@ -9311,6 +10527,10 @@ export interface VariableDeclaratorDefinite {
 	readonly _type: TypeAnnotation;
 	readonly __looseHints__?: {
 		readonly type: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier>;
+		readonly type: SlotHint<T.TypeAnnotation>;
 	};
 	name(): Identifier;
 	type(): TypeAnnotation;
@@ -9330,6 +10550,11 @@ export interface ForHeaderLhs {
 			  >
 			| Expression
 			| SequenceExpression;
+	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<T.LhsExpression | T.ParenthesizedExpression>;
+		readonly operator: SlotHint<NonNullable<T.ForHeaderLhs.Config>['operator']>;
+		readonly right: SlotHint<NonNullable<T.ForHeaderLhs.Config>['right']>;
 	};
 	left(): LhsExpression | ParenthesizedExpression;
 	operator(): number;
@@ -9358,6 +10583,12 @@ export interface ForHeaderVarKind {
 			| Expression
 			| SequenceExpression;
 	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<T.Identifier | T.ObjectPattern | T.ArrayPattern>;
+		readonly value: SlotHint<NonNullable<T.ForHeaderVarKind.Config>['value'], true>;
+		readonly operator: SlotHint<NonNullable<T.ForHeaderVarKind.Config>['operator']>;
+		readonly right: SlotHint<NonNullable<T.ForHeaderVarKind.Config>['right']>;
+	};
 	left(): Identifier | ObjectPattern | ArrayPattern;
 	value(): Expression | undefined;
 	operator(): number;
@@ -9382,6 +10613,13 @@ export interface ForHeaderLetConstKind {
 			  >
 			| Expression
 			| SequenceExpression;
+	};
+	readonly __slotHints__?: {
+		readonly kind: SlotHint<NonNullable<T.ForHeaderLetConstKind.Config>['kind']>;
+		readonly left: SlotHint<T.Identifier | T.ObjectPattern | T.ArrayPattern>;
+		readonly automaticSemicolon: SlotHint<NonNullable<T.ForHeaderLetConstKind.Config>['automaticSemicolon'], true>;
+		readonly operator: SlotHint<NonNullable<T.ForHeaderLetConstKind.Config>['operator']>;
+		readonly right: SlotHint<NonNullable<T.ForHeaderLetConstKind.Config>['right']>;
 	};
 	kind(): number;
 	left(): Identifier | ObjectPattern | ArrayPattern;
@@ -9465,6 +10703,35 @@ export interface StatementIdentifier {
 					| TSKindId.LetKeyword
 			  >
 			| Identifier;
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<
+			NonNullable<
+				| T.Identifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+			>
+		>;
 	};
 	readonly __aliasContent__?: StatementIdentifier.Types;
 	content():
@@ -9569,6 +10836,35 @@ export interface ShorthandPropertyIdentifier {
 			  >
 			| Identifier;
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<
+			NonNullable<
+				| T.Identifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+			>
+		>;
+	};
 	readonly __aliasContent__?: ShorthandPropertyIdentifier.Types;
 	content():
 		| Identifier
@@ -9671,6 +10967,35 @@ export interface ShorthandPropertyIdentifierPattern {
 					| TSKindId.LetKeyword
 			  >
 			| Identifier;
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<
+			NonNullable<
+				| T.Identifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+			>
+		>;
 	};
 	readonly __aliasContent__?: ShorthandPropertyIdentifierPattern.Types;
 	content():
@@ -9775,6 +11100,35 @@ export interface PropertyIdentifier {
 			  >
 			| Identifier;
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<
+			NonNullable<
+				| T.Identifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+			>
+		>;
+	};
 	readonly __aliasContent__?: PropertyIdentifier.Types;
 	content():
 		| Identifier
@@ -9805,6 +11159,9 @@ export interface PropertyIdentifier {
 export interface TypeIdentifier {
 	readonly $type: TSKindId.TypeIdentifier;
 	readonly _content: Identifier;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.Identifier>;
+	};
 	readonly __aliasContent__?: TypeIdentifier.Types;
 	content(): Identifier;
 }
@@ -9812,6 +11169,9 @@ export interface TypeIdentifier {
 export interface InterfaceBody {
 	readonly $type: TSKindId.InterfaceBody;
 	readonly _content: ObjectType;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.ObjectType>;
+	};
 	readonly __aliasContent__?: InterfaceBody.Types;
 	content(): ObjectType;
 }
@@ -16907,7 +18267,7 @@ export namespace SwitchBody {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			cases(...vs: (T.SwitchCase | T.SwitchDefault)[]): T.SwitchBody.Built;
+			cases(...values: (T.SwitchCase | T.SwitchDefault)[]): T.SwitchBody.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.SwitchBody>;
@@ -16942,7 +18302,7 @@ export namespace SwitchDefault {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			bodies(...vs: T.Statement[]): T.SwitchDefault.Built;
+			bodies(...values: T.Statement[]): T.SwitchDefault.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.SwitchDefault>;
@@ -17006,7 +18366,7 @@ export namespace Object {
 		readonly $named: true;
 		readonly $with: {
 			properties(
-				...vs: (
+				...values: (
 					| (
 							| T.Pair
 							| T.SpreadElement
@@ -17120,7 +18480,7 @@ export namespace ObjectPattern {
 		readonly $named: true;
 		readonly $with: {
 			properties(
-				...vs: (
+				...values: (
 					| (
 							| T.PairPattern
 							| T.RestPattern
@@ -17273,7 +18633,7 @@ export namespace Array {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			elements(...vs: (T.Expression | T.SpreadElement)[]): T.Array.Built;
+			elements(...values: (T.Expression | T.SpreadElement)[]): T.Array.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Array>;
@@ -17290,7 +18650,7 @@ export namespace ArrayPattern {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			elements(...vs: (T.Pattern | T.AssignmentPattern)[]): T.ArrayPattern.Built;
+			elements(...values: (T.Pattern | T.AssignmentPattern)[]): T.ArrayPattern.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ArrayPattern>;
@@ -17830,7 +19190,7 @@ export namespace SequenceExpression {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			expressions(...vs: T.Expression[]): T.SequenceExpression.Built;
+			expressions(...values: T.Expression[]): T.SequenceExpression.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.SequenceExpression>;
@@ -17860,7 +19220,7 @@ export namespace TemplateString {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			elements(...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]): T.TemplateString.Built;
+			elements(...values: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]): T.TemplateString.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TemplateString>;
@@ -17932,7 +19292,7 @@ export namespace Arguments {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			elements(...vs: (T.Expression | T.SpreadElement)[]): T.Arguments.Built;
+			elements(...values: (T.Expression | T.SpreadElement)[]): T.Arguments.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Arguments>;
@@ -18021,7 +19381,7 @@ export namespace ClassBody {
 		readonly $named: true;
 		readonly $with: {
 			contents(
-				...vs: (
+				...values: (
 					| T.ClassBodyMethod
 					| T.ClassBodyMethodSig
 					| T.ClassStaticBlock
@@ -18566,7 +19926,7 @@ export namespace ExtendsClause {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			extendsClauseSingles(...vs: T.ExtendsClauseSingle[]): T.ExtendsClause.Built;
+			extendsClauseSingles(...values: T.ExtendsClauseSingle[]): T.ExtendsClause.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ExtendsClause>;
@@ -18603,7 +19963,7 @@ export namespace ImplementsClause {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			types(...vs: (T.Type | T.TypeIdentifier.Types)[]): T.ImplementsClause.Built;
+			types(...values: (T.Type | T.TypeIdentifier.Types)[]): T.ImplementsClause.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ImplementsClause>;
@@ -18769,7 +20129,7 @@ export namespace ExtendsTypeClause {
 		readonly $named: true;
 		readonly $with: {
 			types(
-				...vs: ((T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types)[]
+				...values: ((T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types)[]
 			): T.ExtendsTypeClause.Built;
 		};
 	}
@@ -19190,7 +20550,7 @@ export namespace TemplateLiteralType {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			elements(...vs: (T.TemplateChars | T.TemplateType)[]): T.TemplateLiteralType.Built;
+			elements(...values: (T.TemplateChars | T.TemplateType)[]): T.TemplateLiteralType.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TemplateLiteralType>;
@@ -19864,8 +21224,8 @@ export namespace ExportSpecifiers {
 		readonly $named: true;
 		readonly _delimiter: Delimiter;
 		readonly $with: {
-			exportSpecifiers(...vs: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>): T.ExportSpecifiers.Built;
-			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ExportSpecifiers.Built;
+			exportSpecifiers(...values: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>): T.ExportSpecifiers.Built;
+			delimiter(value?: Delimiter.None | Delimiter.Trailing): T.ExportSpecifiers.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ExportSpecifiers>;
@@ -19892,8 +21252,8 @@ export namespace ImportSpecifiers {
 		readonly $named: true;
 		readonly _delimiter: Delimiter;
 		readonly $with: {
-			importSpecifiers(...vs: NonEmptyArray<T.ImportSpecifier>): T.ImportSpecifiers.Built;
-			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ImportSpecifiers.Built;
+			importSpecifiers(...values: NonEmptyArray<T.ImportSpecifier>): T.ImportSpecifiers.Built;
+			delimiter(value?: Delimiter.None | Delimiter.Trailing): T.ImportSpecifiers.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.ImportSpecifiers>;
@@ -19913,9 +21273,9 @@ export namespace FormalParametersElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			formalParameters(
-				...vs: NonEmptyArray<T.RequiredParameter | T.OptionalParameter>
+				...values: NonEmptyArray<T.RequiredParameter | T.OptionalParameter>
 			): T.FormalParametersElements.Built;
-			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.FormalParametersElements.Built;
+			delimiter(value?: Delimiter.None | Delimiter.Trailing): T.FormalParametersElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.FormalParametersElements>;
@@ -19943,7 +21303,7 @@ export namespace EnumBodyElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			contents(
-				...vs: NonEmptyArray<
+				...values: NonEmptyArray<
 					| T.PropertyIdentifier
 					| TSKindId.DeclareKeyword
 					| TSKindId.NamespaceKeyword
@@ -19975,7 +21335,7 @@ export namespace EnumBodyElements {
 					| T.PropertyIdentifier.Types
 				>
 			): T.EnumBodyElements.Built;
-			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.EnumBodyElements.Built;
+			delimiter(value?: Delimiter.None | Delimiter.Trailing): T.EnumBodyElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.EnumBodyElements>;
@@ -20122,8 +21482,8 @@ export namespace Types {
 		readonly $named: true;
 		readonly _delimiter: Delimiter;
 		readonly $with: {
-			types(...vs: NonEmptyArray<T.Type | T.TypeIdentifier.Types>): T.Types.Built;
-			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.Types.Built;
+			types(...values: NonEmptyArray<T.Type | T.TypeIdentifier.Types>): T.Types.Built;
+			delimiter(value?: Delimiter.None | Delimiter.Trailing): T.Types.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.Types>;
@@ -20143,9 +21503,9 @@ export namespace TypeParametersElements {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			typeParameters(
-				...vs: NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>
+				...values: NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>
 			): T.TypeParametersElements.Built;
-			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TypeParametersElements.Built;
+			delimiter(value?: Delimiter.None | Delimiter.Trailing): T.TypeParametersElements.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TypeParametersElements>;
@@ -20178,11 +21538,11 @@ export namespace TupleTypeMembers {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			tupleTypeMembers(
-				...vs: NonEmptyArray<
+				...values: NonEmptyArray<
 					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
 				>
 			): T.TupleTypeMembers.Built;
-			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TupleTypeMembers.Built;
+			delimiter(value?: Delimiter.None | Delimiter.Trailing): T.TupleTypeMembers.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.TupleTypeMembers>;
@@ -20310,7 +21670,7 @@ export namespace ObjectTypeContent {
 		readonly _delimiter: Delimiter;
 		readonly $with: {
 			members(
-				...vs: NonEmptyArray<
+				...values: NonEmptyArray<
 					| T.ExportStatement
 					| T.PropertySignature
 					| T.CallSignature
@@ -20319,9 +21679,9 @@ export namespace ObjectTypeContent {
 					| T.MethodSignature
 				>
 			): T.ObjectTypeContent.Built;
-			separator(v: TSKindId.Comma | TSKindId.Semi): T.ObjectTypeContent.Built;
+			separator(value: TSKindId.Comma | TSKindId.Semi): T.ObjectTypeContent.Built;
 			delimiter(
-				v?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both
+				value?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both
 			): T.ObjectTypeContent.Built;
 		};
 	}
@@ -21116,7 +22476,7 @@ export namespace StringDouble {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			elements(...vs: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]): T.StringDouble.Built;
+			elements(...values: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]): T.StringDouble.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.StringDouble>;
@@ -21138,7 +22498,7 @@ export namespace StringSingle {
 		readonly $source: 2;
 		readonly $named: true;
 		readonly $with: {
-			elements(...vs: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]): T.StringSingle.Built;
+			elements(...values: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]): T.StringSingle.Built;
 		};
 	}
 	export type Loose = LooseFor<TSKindId.StringSingle>;

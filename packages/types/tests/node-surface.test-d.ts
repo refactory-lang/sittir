@@ -18,7 +18,7 @@ interface Params {
 	readonly _elements?: readonly Param[];
 	elements(): readonly Param[] | undefined;
 	readonly __slotHints__?: {
-		elements: SlotHint<readonly Param[], true>;
+		elements: SlotHint<readonly Param[], true, true>;
 		$listOwner: ListOwnerHint<Param, { delimiter?: 0 | 2 }>;
 	};
 }
@@ -56,6 +56,8 @@ interface ByP {
 declare const fn: Fn.Parsed;
 declare const built: Params.Bound;
 declare const bound: Fn.Bound;
+declare const param: Param;
+declare const owner: Params.Parsed;
 
 describe('BoundOf / ParsedOf', () => {
 	it('children resolve to their own Parsed', () => {
@@ -85,6 +87,11 @@ describe('BoundOf / ParsedOf', () => {
 	it('a wrong input is rejected', () => {
 		// @ts-expect-error Params.Bound expected
 		fn.$with.params('x');
+	});
+	it('a multiple slot is set with rest arguments and reads back its input', () => {
+		const d = owner.$with.elements(param, param);
+		expectTypeOf(d.elements()).toEqualTypeOf<readonly Param[]>();
+		expectTypeOf(owner.$with.elements()).toHaveProperty('elements');
 	});
 	it('Bound $with returns Bound', () => {
 		expectTypeOf(bound.$with.params(built).params()).toEqualTypeOf<Params.Bound>();

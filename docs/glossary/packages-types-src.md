@@ -186,7 +186,7 @@ The union of a function's argument tuples over every declared overload, up to fo
 
 ### `packages/types/src/node-surface.ts::SlotHint`
 
-What one slot of a kind interface contributes to its node surfaces: the type its `$with` setter and factory take (`input`) and whether the slot is optional. The emitter stamps one per slot on the interface's `__slotHints__`; every node surface reads the hints and never infers a slot's input from its storage key.
+What one slot of a kind interface contributes to its node surfaces: the type its `$with` setter and factory take (`input`), whether the slot is optional, and whether the setter takes the input as rest arguments (`rest`, where the input is the rest type) rather than as one value. The emitter stamps one per slot on the interface's `__slotHints__`; every node surface reads the hints and never infers a slot's input from its storage key.
 
 ### `packages/types/src/node-surface.ts::ListOwnerHint`
 
@@ -210,7 +210,7 @@ The members a list owner adds on top of its own accessors: it iterates its store
 
 ### `packages/types/src/node-surface.ts::Setters`
 
-One setter per stamped slot, reading only `__slotHints__`. A required slot takes its input and returns the node with that slot's accessor retyped to the input. An optional slot also has a no-argument form that clears it, and reads back `undefined`. The retyped accessor comes from the declared input, never from the argument's own type: inferring the argument per call is what made type-checking unbounded.
+One setter per stamped slot, reading only `__slotHints__`. A required slot takes its input and returns the node with that slot's accessor retyped to the input. An optional slot also has a no-argument form that clears it, and reads back `undefined`. A slot stamped `rest` is set with rest arguments, its input being the rest type, exactly as the factory takes it; a slot whose input is an array but is not stamped `rest` takes the array as one value. The retyped accessor comes from the declared input, never from the argument's own type: inferring the argument per call is what made type-checking unbounded.
 
 ### `packages/types/src/node-surface.ts::WithOf`
 
