@@ -1,6 +1,12 @@
 {
 	"extends": "../../tsconfig.json",
 	"compilerOptions": {},
-	"include": ["src", "tests/vocabulary-consumers.test-d.ts", "tests/engine-api.test-d.ts"],
+	"include": [
+		"src",
+		"tests/vocabulary-consumers.test-d.ts",
+		"tests/engine-api.test-d.ts",
+		"tests/function-utils.test-d.ts",
+		"tests/type-projections.test-d.ts"
+	],
 	"exclude": ["node_modules", "dist"]
 }

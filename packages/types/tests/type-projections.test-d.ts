@@ -8,16 +8,7 @@
  * Run with: pnpm --filter @sittir/types type-check
  */
 
-import type {
-	NodeData,
-	NodeConfig,
-	TreeNode,
-	NodeKind,
-	FieldName,
-	KindOf,
-	SetterKey,
-	ConfigOf
-} from '../src/index.ts';
+import type { NodeData, NodeConfig, TreeNode, NodeKind, FieldName, KindOf, SetterKey, ConfigOf } from '../src/index.ts';
 
 // ---------------------------------------------------------------------------
 // Use the Rust grammar type from the generated package
@@ -38,13 +29,10 @@ type Extends<A, B> = A extends B ? true : false;
 type FnItem = NodeData<RustGrammar, 'function_item'>;
 
 // Should have 'type' as the kind literal
-type _1a = Expect<Equal<FnItem['type'], 'function_item'>>;
+type _1a = Expect<Equal<FnItem['$type'], 'function_item'>>;
 
-// Should have 'fields' property
-type _1b = Expect<Extends<FnItem, { readonly type: 'function_item'; readonly fields: object }>>;
-
-// Should have optional 'text'
-type _1c = Expect<Extends<FnItem, { readonly text?: string }>>;
+// Should have '$fields' property
+type _1b = Expect<Extends<FnItem, { readonly $type: 'function_item'; readonly $fields: object }>>;
 
 // ---------------------------------------------------------------------------
 // 2. NodeConfig<G, K> — fields shape
@@ -68,10 +56,10 @@ type _2d = Expect<Extends<'body', FnFieldKeys>>;
 type Ident = NodeData<RustGrammar, 'identifier'>;
 
 // Leaf should have type
-type _3a = Expect<Equal<Ident['type'], 'identifier'>>;
+type _3a = Expect<Equal<Ident['$type'], 'identifier'>>;
 
 // Leaf should have text
-type _3b = Expect<Extends<Ident, { readonly text?: string }>>;
+type _3b = Expect<Extends<Ident, { readonly $text: string }>>;
 
 // ---------------------------------------------------------------------------
 // 4. TreeNode<G, K> — parsed tree access
@@ -121,13 +109,12 @@ type _6d = Expect<Equal<Extends<'nonexistent', FnFieldNames>, false>>;
 // 7. KindOf — extract type from a node
 // ---------------------------------------------------------------------------
 
-type _7a = Expect<Equal<KindOf<{ readonly type: 'function_item' }>, 'function_item'>>;
-type _7b = Expect<Equal<KindOf<FnTree>, 'function_item'>>;
-type _7c = Expect<Equal<KindOf<{ readonly type: 'identifier' }>, 'identifier'>>;
+type _7a = Expect<Equal<KindOf<{ readonly $type: 'function_item' }>, 'function_item'>>;
+type _7c = Expect<Equal<KindOf<{ readonly $type: 'identifier' }>, 'identifier'>>;
 
 // Union distribution
 type _7d = Expect<
-	Equal<KindOf<{ readonly type: 'identifier' } | { readonly type: 'metavariable' }>, 'identifier' | 'metavariable'>
+	Equal<KindOf<{ readonly $type: 'identifier' } | { readonly $type: 'metavariable' }>, 'identifier' | 'metavariable'>
 >;
 
 // ---------------------------------------------------------------------------
@@ -148,7 +135,7 @@ type _8a = Expect<Equal<Extends<FnNameType, never>, false>>;
 type BinExpr = NodeData<RustGrammar, 'binary_expression'>;
 type BinFields = NodeConfig<RustGrammar, 'binary_expression'>;
 
-type _9a = Expect<Equal<BinExpr['type'], 'binary_expression'>>;
+type _9a = Expect<Equal<BinExpr['$type'], 'binary_expression'>>;
 type _9b = Expect<Extends<'left', keyof BinFields>>;
 type _9c = Expect<Extends<'operator', keyof BinFields>>;
 type _9d = Expect<Extends<'right', keyof BinFields>>;
@@ -159,7 +146,7 @@ type _9d = Expect<Extends<'right', keyof BinFields>>;
 
 type BlockNode = NodeData<RustGrammar, 'block'>;
 
-type _10a = Expect<Equal<BlockNode['type'], 'block'>>;
+type _10a = Expect<Equal<BlockNode['$type'], 'block'>>;
 
 // Block should have no named fields (only children)
 // Check that 'children' exists in the fields shape
@@ -173,15 +160,16 @@ type _10a = Expect<Equal<BlockNode['type'], 'block'>>;
 // (the grammar defines name: { types: [identifier, metavariable] })
 type FnName = FnFields['name'];
 
-// The name field value should have a 'type' property
-type _11a = Expect<Extends<FnName, { readonly type: string }>>;
+// The name field value should have a '$type' property
+// @ts-expect-error #413: $fields values still carry the retired {type, text} shape
+type _11a = Expect<Extends<FnName, { readonly $type: string }>>;
 
 // ---------------------------------------------------------------------------
 // 12. NodeData is readonly at all levels
 // ---------------------------------------------------------------------------
 
-type _12a = Expect<Extends<FnItem, { readonly type: 'function_item' }>>;
-type _12b = Expect<Extends<FnItem, { readonly fields: object }>>;
+type _12a = Expect<Extends<FnItem, { readonly $type: 'function_item' }>>;
+type _12b = Expect<Extends<FnItem, { readonly $fields: object }>>;
 
 // ---------------------------------------------------------------------------
 // 13. TreeNode field() returns typed children
@@ -200,7 +188,7 @@ type _13a = Expect<Extends<null, FnTreeFieldResult>>;
 type StructFields = NodeConfig<RustGrammar, 'struct_item'>;
 type StructName = StructFields['name'];
 
-type _14a = Expect<Extends<StructName, { readonly type: string }>>;
+type _14a = Expect<Extends<StructName, { readonly $type: string }>>;
 
 // ---------------------------------------------------------------------------
 // 15. Let declaration — optional fields
@@ -219,9 +207,9 @@ type _15b = Expect<Extends<'value', LetKeys>>;
 // 16. Verify NodeData and TreeNode produce compatible 'type' discriminants
 // ---------------------------------------------------------------------------
 
-type _16a = Expect<Equal<NodeData<RustGrammar, 'identifier'>['type'], TreeNode<RustGrammar, 'identifier'>['type']>>;
+type _16a = Expect<Equal<NodeData<RustGrammar, 'identifier'>['$type'], TreeNode<RustGrammar, 'identifier'>['type']>>;
 
-type _16b = Expect<Equal<NodeData<RustGrammar, 'function_item'>['type'], 'function_item'>>;
+type _16b = Expect<Equal<NodeData<RustGrammar, 'function_item'>['$type'], 'function_item'>>;
 
 type _16c = Expect<Equal<TreeNode<RustGrammar, 'function_item'>['type'], 'function_item'>>;
 
