@@ -1690,7 +1690,7 @@ function emitSeparatedListFactory(
 	const w = surface.wrapper;
 	if (w !== undefined) {
 		lines.push(
-			`  const _mapped = elements.map((e): T.${w.typeName} => (isNodeData(e) && e.$type === TSKindId.${w.member} ? (e as T.${w.typeName}) : ${w.factory}({ ${w.contentKey}: e } as Parameters<typeof ${w.factory}>[0])));`
+			`  const _mapped = elements.map((e): T.${w.typeName} => (isNode(e) && e.$type === TSKindId.${w.member} ? (e as T.${w.typeName}) : ${w.factory}({ ${w.contentKey}: e } as Parameters<typeof ${w.factory}>[0])));`
 		);
 		if (node.nonEmpty) lines.push(`  _assertNonEmpty(_mapped, '${node.kind}.elements');`);
 		lines.push(`  const ${contentStorageKey} = _mapped;`);
@@ -1824,7 +1824,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		lines.push(`import { ${['withAccessors', ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`);
-		lines.push(`import { ${['withMethods', 'methodsEngine', ...(usesElementWrap ? ['isNodeData'] : [])].join(', ')} } from '../utils.js';`);
+		lines.push(`import { ${['withMethods', 'methodsEngine', ...(usesElementWrap ? ['isNode'] : [])].join(', ')} } from '../utils.js';`);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
 		lines.push(...emitNonEmptyAssertHelper());

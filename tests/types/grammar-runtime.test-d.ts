@@ -36,7 +36,7 @@ declare const leaf: Leaf;
 runtime.isEmpty(leaf);
 
 declare const value: unknown;
-if (runtime.isNodeData(value)) value satisfies AnyNodeData;
+if (runtime.isNode(value)) value satisfies AnyNodeData;
 
 const built = runtime.withMethods(leaf, facts);
 // @ts-expect-error methods attach to a node, and an object without a $type is not one

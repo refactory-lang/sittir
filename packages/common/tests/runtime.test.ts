@@ -30,10 +30,10 @@ describe('bindRuntime', () => {
 		expect(runtime.isEmpty({ $type: 3, $source: 2 } as AnyNodeData)).toBe(false);
 	});
 
-	it('isNodeData recognises node data only', () => {
-		expect(runtime.isNodeData({ $type: 2, $source: 2 })).toBe(true);
-		expect(runtime.isNodeData('text')).toBe(false);
-		expect(runtime.isNodeData({ kind: 'leaf' })).toBe(false);
+	it('isNode recognises node data only', () => {
+		expect(runtime.isNode({ $type: 2, $source: 2 })).toBe(true);
+		expect(runtime.isNode('text')).toBe(false);
+		expect(runtime.isNode({ kind: 'leaf' })).toBe(false);
 	});
 
 	it('withMethods renders through the engine it is handed', () => {

@@ -37,6 +37,22 @@ Adapts one grammar's native engine to the language hooks' native engine shape, t
 
 The bitflag encoding of a separated list's optional flanks: the wire's `_delimiter` key and a list factory's `delimiter` option. `Leading` and `Trailing` are one bit each, `Both` is their union and `None` is zero. Mandatory flanks are template text and never encoded, so a list slot admits exactly the members for the flanks its grammar makes optional. The values are the same for every grammar, so this is the only declaration: generated code, the codegen render-options emitter and tools all import it from `@sittir/common/utils`. It is written as a `const` object with a type and a type-only namespace of the same name, so `Delimiter.None` works as a value and as a type without a TypeScript `enum`.
 
+### `packages/common/src/source.ts::Source`
+
+Where a node came from, the value of its `$source` stamp: `Ts` for a node read from a tree-sitter parse, `Sg` for the ast-grep read path, `Factory` for a node a builder made. The reader and the factories stamp it once, and an edit keeps it (`$with` and `detachCoordinate` drop only coordinates), so it records the node's origin, not whether it still holds a live tree handle. Rust's `enum Source` in sittir-core is the mirror the native renderer branches on: any non-`Factory` node renders with its tree's format. The object `satisfies` `AnyNodeData['$source']`, so the type-level `0 | 1 | 2` union stays the one declaration of the values.
+
+### `packages/common/src/utils.ts::isNode`
+
+Whether a value is a sittir node, built or read: an object with a numeric `$type` that carries storage (`_` keys), text (`$text`), a whitespace-kind `$other`, or a `$source` stamp. A bare `{ $type }` is a factory config, not a node.
+
+### `packages/common/src/utils.ts::isParsedNode`
+
+A node that originated from a parse: `$source` is `Source.Ts` or `Source.Sg`. It holds before the read root is wrapped and after the node is edited, since both keep the stamp.
+
+### `packages/common/src/utils.ts::isFactoryNode`
+
+A node that did not originate from a parse. It is defined as the complement of `isParsedNode` among nodes, so the two never disagree; every generated builder stamps `Source.Factory`.
+
 ### `packages/common/src/runtime.ts::module`
 
 The runtime helpers generated code calls, exported through `@sittir/common/utils`. `bindRuntime` is the one piece that depends on a grammar; every other helper here is grammar-free and generated code imports it directly.
@@ -48,13 +64,13 @@ One member (`Node`, `Loose` or `Tree`) of kind `K`'s namespace in a grammar type
 ### `packages/common/src/runtime.ts::GrammarRuntime`
 
 The runtime a grammar binds, one generic signature per guard over its type map:
-- `isNodeData`'s kind-parameterised overload narrows to `Extract<Node, AnyNodeData>`, not `Node`: the namespaces carry keyword kinds whose `Node` is the bare id, and an id is never node data, so with the plain `Node` the predicate would contain numbers and stop narrowing ids away in every `coerceTo*` `isNodeData(input)` check.
+- `isNode`'s kind-parameterised overload narrows to `Extract<Node, AnyNodeData>`, not `Node`: the namespaces carry keyword kinds whose `Node` is the bare id, and an id is never node data, so with the plain `Node` the predicate would contain numbers and stop narrowing ids away in every `coerceTo*` `isNode(input)` check.
 - `isEmpty` takes only a kind the map's `empty` pairs name, and narrows it to that kind's `Empty<TypeName>` form.
 - `withMethods` attaches the node methods, typed by the map's trivia union, rendering through the engine it is handed: factories pass the grammar's facts, and a wrapped tree passes its tree-scoped engine.
 
 ### `packages/common/src/runtime.ts::bindRuntime`
 
-Binds the runtime to a grammar's facts. At runtime a node is empty when its kind has inner gaps (`trivia.innerGaps`, looked up through `trivia.kindName`) and it holds no children (`isEmptyNode`). `isNodeData` and `withMethods` are the shared implementations, retyped by the map.
+Binds the runtime to a grammar's facts. At runtime a node is empty when its kind has inner gaps (`trivia.innerGaps`, looked up through `trivia.kindName`) and it holds no children (`isEmptyNode`). `isNode` and `withMethods` are the shared implementations, retyped by the map.
 
 ### `packages/common/src/runtime.ts::rejectBareText`
 

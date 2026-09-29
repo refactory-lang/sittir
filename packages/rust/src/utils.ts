@@ -34,4 +34,4 @@ export const methodsEngine = {
 	}
 } satisfies GrammarFacts;
 
-export const { isNodeData, isEmpty, withMethods } = bindRuntime<RustTypeMap>(methodsEngine);
+export const { isNode, isEmpty, withMethods } = bindRuntime<RustTypeMap>(methodsEngine);

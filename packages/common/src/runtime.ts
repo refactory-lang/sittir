@@ -6,7 +6,7 @@ import type {
 	GrammarTypeMap,
 	Hoisted
 } from '@sittir/types';
-import { isEmptyNode, isNodeData as isAnyNodeData, withMethods as withAnyMethods } from './utils.ts';
+import { isEmptyNode, isNode as isAnyNode, withMethods as withAnyMethods } from './utils.ts';
 
 type NamespacePart<M extends GrammarTypeMap, K, P extends 'Node' | 'Loose' | 'Tree'> = K extends keyof M['namespaces']
 	? M['namespaces'][K] extends { readonly [Q in P]: infer X }
@@ -15,17 +15,17 @@ type NamespacePart<M extends GrammarTypeMap, K, P extends 'Node' | 'Loose' | 'Tr
 	: never;
 
 export interface GrammarRuntime<M extends GrammarTypeMap> {
-	isNodeData<K extends keyof M['namespaces']>(
+	isNode<K extends keyof M['namespaces']>(
 		v: NamespacePart<M, K, 'Node'> | NamespacePart<M, K, 'Loose'> | NamespacePart<M, K, 'Tree'>
 	): v is Extract<NamespacePart<M, K, 'Node'>, AnyNodeData>;
-	isNodeData(v: unknown): v is AnyNodeData;
+	isNode(v: unknown): v is AnyNodeData;
 	isEmpty<N extends M['empty']['node']>(node: N): node is N & Extract<M['empty'], { readonly node: N }>['empty'];
 	withMethods<T extends AnyNodeData>(node: T, facts: GrammarFacts): T & GrammarNodeMethods<M['trivia']>;
 }
 
 export function bindRuntime<M extends GrammarTypeMap>(facts: GrammarFacts): GrammarRuntime<M> {
 	return {
-		isNodeData: isAnyNodeData,
+		isNode: isAnyNode,
 		isEmpty(node: AnyNodeData): boolean {
 			const kind = facts.trivia.kindName(node.$type);
 			return kind !== undefined && facts.trivia.innerGaps[kind] !== undefined && isEmptyNode(node);
@@ -121,7 +121,7 @@ export function coerceKindEnumStorage<T = unknown>(
 
 function extractNodeText(value: unknown): string | undefined {
 	if (typeof value === 'string') return value;
-	if (isAnyNodeData(value)) return typeof value.$text === 'string' ? value.$text : undefined;
+	if (isAnyNode(value)) return typeof value.$text === 'string' ? value.$text : undefined;
 	if (isRecord(value) && typeof value.$text === 'string') return value.$text;
 	return undefined;
 }

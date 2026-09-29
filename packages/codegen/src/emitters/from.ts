@@ -147,7 +147,7 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
 	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage } from '@sittir/common/utils';");
-	lines.push("import { isNodeData } from '../utils.js';");
+	lines.push("import { isNode } from '../utils.js';");
 	lines.push('');
 }
 
@@ -418,7 +418,7 @@ function emitBranchFrom(
 	if (slots.length > 0) {
 		if (canDirectFactoryCall) {
 			lines.push(
-				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeData(input) && (input.$type as string | number) === ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)}) return input as unknown as ${spelledType ?? returnType};`
+				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNode(input) && (input.$type as string | number) === ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)}) return input as unknown as ${spelledType ?? returnType};`
 			);
 		} else {
 			const bareKind =
@@ -469,7 +469,7 @@ function emitBranchFrom(
 				spelled.length === 0
 					? optionsArg
 					: `, _spelled === undefined ? options : { ${spelled.map(([side, slot]) => `${slot.configKey}: _spelled.${side}`).join(', ')}, ...options }`;
-			const inputExpr = `(input !== null && typeof input === 'object' && !isNodeData(input) && ${JSON.stringify(soleField.configKey)} in input ? input.${soleField.configKey} : ${bare})`;
+			const inputExpr = `(input !== null && typeof input === 'object' && !isNode(input) && ${JSON.stringify(soleField.configKey)} in input ? input.${soleField.configKey} : ${bare})`;
 			const soleShape = numericSlotShape(soleField);
 			const numeric = soleShape !== undefined;
 			if (numeric) lines.push(`  const _value = ${inputExpr};`);
@@ -564,7 +564,7 @@ function emitRestParamFromResolver(
 					`  const _elems: readonly unknown[] = (() => {`,
 					`    if (input.length !== 1) return input;`,
 					`    const head: unknown = input[0];`,
-					`    if (typeof head !== 'object' || head === null || isNodeData(head) || !(${JSON.stringify(unwrapConfigKey)} in head)) return input;`,
+					`    if (typeof head !== 'object' || head === null || isNode(head) || !(${JSON.stringify(unwrapConfigKey)} in head)) return input;`,
 					`    const v = (head as Record<string, unknown>)[${JSON.stringify(unwrapConfigKey)}];`,
 					`    return Array.isArray(v) ? v : [v];`,
 					`  })();`
@@ -588,7 +588,7 @@ function emitRestParamFromResolver(
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
 		...head,
-		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
+		`  if (input.length === 1 && isNode(input[0]) && input[0].$type === ${typeCheck}) {`,
 		`    const data = input[0];`,
 		`    const stored = ${storageAccess};`,
 		`    const children${childrenTypeAnnotation} = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];`,
@@ -673,7 +673,7 @@ function emitSingularChildrenFrom(
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
 		`export function ${fn}(input?: ${resolvesLooseInput(slot, nodeMap) ? looseElementType(elementType, slot, nodeMap) : elementType}${inputWiden !== undefined ? ` | ${inputWiden}` : ''} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
-		`  if (isNodeData(input) && input.$type === ${typeCheck}) {`,
+		`  if (isNode(input) && input.$type === ${typeCheck}) {`,
 		`    const data = input;`,
 		`    const child = ${storageAccess};`,
 		`    return ${factory}(child as Parameters<typeof ${factory}>[0]);`,
@@ -1186,7 +1186,7 @@ function emitResolveByKindHelper(lines: string[], nodeMap: NodeMap): void {
 	lines.push('  rest: _LooseFieldInput,');
 	lines.push('): ReturnType<_FromMap[K]> {');
 	lines.push('  const fn = _fromMap[kind] as (rest: _LooseFieldInput) => ReturnType<_FromMap[K]>;');
-	lines.push('  if (!(kind in _leafRegistry) || typeof rest !== "object" || rest === null || Array.isArray(rest) || isNodeData(rest)) return fn(rest);');
+	lines.push('  if (!(kind in _leafRegistry) || typeof rest !== "object" || rest === null || Array.isArray(rest) || isNode(rest)) return fn(rest);');
 	lines.push('  const text = (rest as { text?: unknown }).text;');
 	lines.push('  if (typeof text !== "string") throw new Error(`the ${kind} tag takes its text: { kind: ${JSON.stringify(kind)}, text: "…" }`);');
 	lines.push('  return fn(text);');
@@ -1304,7 +1304,7 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('): T {');
 	lines.push('  if (v === undefined || v === null) return v as T;');
 	lines.push(
-		'  const kindId = isNodeData(v) ? v.$type : typeof v === "number" && _KIND_ID_STORED.has(v) ? v : undefined;'
+		'  const kindId = isNode(v) ? v.$type : typeof v === "number" && _KIND_ID_STORED.has(v) ? v : undefined;'
 	);
 	// A value that already names its own kind (NodeData, or a stored kind-id)
 	// is never re-targeted by a declared default — there is nothing ambiguous
@@ -1319,7 +1319,7 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('    const arms = branchKinds.filter((b) => _BARE_ACCEPTS[b]?.has(kindId) === true);');
 	lines.push('    const arm = arms.length <= 1 ? arms[0] : undefined;');
 	lines.push('    if (arm !== undefined && _isFromKind(arm)) return _resolveByKind(arm, v) as T;');
-	lines.push('    if (isNodeData(v)) return v as T;');
+	lines.push('    if (isNode(v)) return v as T;');
 	lines.push('    if (arms.length > 1) {');
 	lines.push(
 		'      throw new Error(`_resolveOne: a bare ${kindName ?? kindId} fits more than one arm: [${arms.join(", ")}]; name the arm explicitly`);'
@@ -1358,7 +1358,7 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('    if (kindName !== undefined && _isFromKind(kindName)) {');
 	lines.push('      const built = _resolveByKind(kindName, rest) as _LooseFieldInput;');
 	lines.push(
-		'      return (isNodeData(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;'
+		'      return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;'
 	);
 	lines.push('    }');
 	lines.push('  }');
@@ -1409,11 +1409,11 @@ function emitAssertNonEmptyHelper(lines: string[]): void {
 }
 
 function emitLooseConfigGuard(lines: string[]): void {
-	lines.push('/** Narrows a coercer input to its config arm. A bare `isNodeData` check');
+	lines.push('/** Narrows a coercer input to its config arm. A bare `isNode` check');
 	lines.push(' *  cannot: the NodeData arm is not a strict subtype of the config arm, so');
 	lines.push(' *  negative narrowing leaves it in place. */');
 	lines.push('function _isLooseConfig<C>(v: C | AnyNodeData): v is C {');
-	lines.push('  return !isNodeData(v);');
+	lines.push('  return !isNode(v);');
 	lines.push('}');
 }
 
@@ -1718,17 +1718,17 @@ function emitResolverHelpers(
 	lines.push('): readonly unknown[] {');
 	lines.push('  const head = input[0];');
 	lines.push(
-		'  const optionsFirst = optionKeys.length > 0 && typeof head === "object" && head !== null && !Array.isArray(head) && !isNodeData(head) && Object.keys(head).every((k) => optionKeys.includes(k));'
+		'  const optionsFirst = optionKeys.length > 0 && typeof head === "object" && head !== null && !Array.isArray(head) && !isNode(head) && Object.keys(head).every((k) => optionKeys.includes(k));'
 	);
 	lines.push('  const elements = (optionsFirst ? input.slice(1) : input).map((e) =>');
 	lines.push(
-		'    wrapperKind !== undefined && _isFromKind(wrapperKind) && typeof e === "object" && e !== null && !Array.isArray(e) && !isNodeData(e) && !("kind" in e)'
+		'    wrapperKind !== undefined && _isFromKind(wrapperKind) && typeof e === "object" && e !== null && !Array.isArray(e) && !isNode(e) && !("kind" in e)'
 	);
 	lines.push('      ? _resolveByKind(wrapperKind, e)');
 	lines.push('      : e');
 	lines.push('  );');
 	lines.push(
-		'  const resolved = elements.map((e) => (wrapperKind !== undefined && isNodeData(e) && typeof e.$type === "number" && KIND_NAMES.get(e.$type) === wrapperKind ? e : resolve([e])[0]));'
+		'  const resolved = elements.map((e) => (wrapperKind !== undefined && isNode(e) && typeof e.$type === "number" && KIND_NAMES.get(e.$type) === wrapperKind ? e : resolve([e])[0]));'
 	);
 	lines.push('  return optionsFirst ? [head, ...resolved] : resolved;');
 	lines.push('}');
@@ -1736,7 +1736,7 @@ function emitResolverHelpers(
 
 	lines.push('function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {');
 	lines.push('  if (v === undefined || v === null) return v as T;');
-	lines.push('  if (isNodeData(v)) return v as T;');
+	lines.push('  if (isNode(v)) return v as T;');
 	lines.push('  if (typeof v === "boolean" || typeof v === "number" || typeof v === "bigint") {');
 	lines.push('    const scalar = _resolveScalar(v);');
 	lines.push('    if (scalar !== undefined) return scalar as T;');
@@ -1769,14 +1769,14 @@ function emitResolverHelpers(
 	// check below, rather than duplicating that check against a reassigned
 	// `v` (reassignment would widen every later narrowing of `v` in this
 	// function back to its declared type).
-	lines.push('  if (typeof v === "object" && !Array.isArray(v) && !isNodeData(v) && "kind" in v) {');
+	lines.push('  if (typeof v === "object" && !Array.isArray(v) && !isNode(v) && "kind" in v) {');
 	lines.push('    const { kind: k, ...rest } = v;');
 	lines.push('    const kn = _kindNameOf(k);');
 	lines.push('    if (kn !== undefined && kn !== kind && kind in _wrapKindIds && _isFromKind(kn)) {');
 	lines.push('      return _resolveOneBranch<T>(_resolveByKind(kn, rest), kind, altKinds);');
 	lines.push('    }');
 	lines.push('  }');
-	lines.push('  if (isNodeData(v)) {');
+	lines.push('  if (isNode(v)) {');
 	lines.push('    const wrapId = _wrapKindIds[kind];');
 	lines.push('    if (wrapId !== undefined && v.$type !== wrapId) {');
 	lines.push('      if (altKinds !== undefined && altKinds.some(k => k === v.$type)) return v as T;');
@@ -1828,7 +1828,7 @@ function emitResolverHelpers(
 	lines.push('function _resolveBooleanKeyword<T>(v: _LooseFieldInput): T {');
 	lines.push('  if (v === undefined || v === null) return v as T;');
 	lines.push('  if (v === true || v === false) return v as T;');
-	lines.push('  if (isNodeData(v)) return v as T;');
+	lines.push('  if (isNode(v)) return v as T;');
 	lines.push('  if (Array.isArray(v)) return v as T;');
 	lines.push('  return v as T;');
 	lines.push('}');
@@ -1838,7 +1838,7 @@ function emitResolverHelpers(
 	lines.push('  if (typeof v === "number") return v as T;');
 	lines.push('  if (typeof v === "string") return v as T;');
 	lines.push('  if (Array.isArray(v)) return v as T;');
-	lines.push('  if (isNodeData(v)) return v as T;');
+	lines.push('  if (isNode(v)) return v as T;');
 	lines.push('  return v as T;');
 	lines.push('}');
 	lines.push('');

@@ -258,7 +258,7 @@ falling back.
   shared `SittirEngineLike`/tree-handle interfaces.
 - **Generated `@sittir/<grammar>` packages** — per-grammar surface. Each
   one exposes `createEngine()` (native-only), an `ir.*` namespace of coercing
-  constructors, `wrapNode`, `readTreeNode`, the `is.*` / `assert.*` guards, kind
+  constructors, `wrapNode`, `readTreeNode`, the `is.*` guards, kind
   constants, and the native template-bundle hash.
 
 #### NodeData shape
@@ -380,7 +380,7 @@ lives in `packages/<lang>/grammar.sittir.ts`.
 | `from.ts`                                     | Closed-form coercion resolver — no runtime inference                                          |
 | `wrap.ts`                                     | `wrapNode(node, tree)` / `readTreeNode(node)` — typed accessors with lazy drill-in             |
 | `ir.ts`                                       | `ir.*` namespace + grouped supertype namespaces (`expression`, `statement`, ...)               |
-| `is.ts`                                       | Type guards (`is.*`, `isNode`, `isTree`, `assert.*`)                                           |
+| `is.ts`                                       | Kind guards (`is.*`)                                                                           |
 | `consts.ts`                                   | Discoverable arrays/maps: kind names, keywords, operators                                      |
 | `utils.ts`                                    | Per-grammar resolution helpers and transport coercion                                          |
 | `engine.ts`                                   | `createEngine()` — native-only, throws if the native binding is unavailable                    |

@@ -1249,7 +1249,7 @@ so no kind-to-text table is needed here.
  *
  * `_FromFieldInput` is intentionally `unknown`. Generated field resolver
  * helpers immediately narrow with runtime guards (`typeof`, `Array.isArray`,
- * `isNodeData`, `'kind' in value`), and keeping the alias closed causes
+ * `isNode`, `'kind' in value`), and keeping the alias closed causes
  * recursive assignability failures once strict Config surfaces expose large
  * concrete node unions.
  *
@@ -1650,7 +1650,7 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
 #### body
 
 ```text
-// TSGrammar-only kinds (string $type) can't satisfy isNodeData() (which
+// TSGrammar-only kinds (string $type) can't satisfy isNode() (which
 // requires numeric $type). Skip the node-data pass-through guard entirely
 // — the check would always be false at runtime anyway.
 ```
@@ -1752,7 +1752,7 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
 #### body
 
 ```text
-// TSGrammar-only kinds (string $type) can't satisfy isNodeData() (which
+// TSGrammar-only kinds (string $type) can't satisfy isNode() (which
 // requires numeric $type). Skip the node-data pass-through guard entirely
 // — the check would always be false at runtime anyway.
 ```
@@ -2298,7 +2298,7 @@ A `kind:` config builds its named kind and then goes back through the same routi
 `_listElements(input, optionKeys, wrapperKind, resolve)`: the loose list
 call's argument split. When `optionKeys` is non-empty and the first argument
 is a plain object whose keys are all option keys (the strict factory's own
-test, minus the `$type` check, which `isNodeData` covers), it is the options
+test, minus the `$type` check, which `isNode` covers), it is the options
 object and is returned first, untouched, ahead of the resolved elements;
 otherwise every argument is an element. When the list's content is one
 transparent wrapper (`wrapperKind`), a kind-less plain object among the
@@ -8662,7 +8662,7 @@ seat the child into a config or tuple take the value arguments only.
 ```text
 /**
 	 * Single-access camelCase read on the bag
-	 * branch. After the isNodeData identity quick-return at resolver entry,
+	 * branch. After the isNode identity quick-return at resolver entry,
 	 * the resolver body runs only for loose-bag input, which carries the
 	 * camelCase property directly. No cast — if the typed input union
 	 * doesn't expose the camelCase property at this position that is a
@@ -8685,7 +8685,7 @@ seat the child into a config or tuple take the value arguments only.
 ### `packages/codegen/src/emitters/is.ts::RESERVED_GUARD_NAMES`
 
 ```text
-/** Methods on the `is` / `assert` namespaces beyond per-kind entries. */
+/** Methods on the `is` namespace beyond per-kind entries. */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::RESERVED_SUPERTYPE_ENUM_NAMES`
@@ -9021,8 +9021,9 @@ pipeline — which falls back to string equality.
 
 ```text
 // Per-kind guards exist only for structural kinds (branch /
-// polymorph). Leaves / keywords / enums use shape guards
-// (isNode / isTree) instead; tokens, groups, multi, and
+// polymorph). Leaves, keywords and enums have none; the
+// common node guards (`isNode`, `isParsedNode`, `isFactoryNode`)
+// cover them. Tokens, groups, multi, and
 // supertypes have no per-kind guard surface. Supertypes
 // get their own guards in a separate pass below.
 ```
@@ -9113,29 +9114,6 @@ pipeline — which falls back to string equality.
 
 ```text
 // All member kinds are TSGrammar-only; emit with empty id set.
-```
-
-#### body
-
-```text
-// Kind-named asserts (e.g. `assert.functionItem`) use the method name
-// as the expected-type label. The generic `assert.kind(v, k)` uses the
-// second argument `k` as the expected-type label instead — otherwise
-// the error message would say `expected 'kind'`, which is useless.
-```
-
-#### body
-
-```text
-// Build assert entries by wrapping each is entry. Keys must match
-// is's exactly.
-```
-
-#### body
-
-```text
-// isNode accepts string | number $type: hidden/synthetic kinds (e.g. "_suite")
-// have no parser.c entry and emit string $type; AnyNodeData.$type: string | number.
 ```
 
 #### body
@@ -9291,7 +9269,7 @@ Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sour
 /**
  * Emits is.ts — per-grammar type guards.
  *
- * Three surfaces per grammar:
+ * One surface per grammar:
  *   - `is`     — per-kind guards keyed by camelCase kind name, a generic
  *                inverse `is.kind(v, k)`, and supertype guards
  *                (narrow the `type` discriminant). A slot or supertype
@@ -9299,23 +9277,11 @@ Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sour
  *                ids, so every guard accepts `{ $type } | number`: a
  *                per-kind guard is false for a bare id (a keyword kind is
  *                never a node) and narrows the object arms only, `_sg`
- *                tests the id directly, and `isNode` is false for a bare
- *                id.
- *   - `isTree` / `isNode` — shape guards with overloaded signatures that
- *                narrow through NamespaceMap when the kind is known or
- *                fall back to AnyTreeNode / AnyNodeData when it isn't. A
- *                node is storage (`_` keys), text content (`$text`), or a
- *                coordinate into the tree it was read from (`$nodeHandle`).
- *   - `assert` — mirror of `is` with `asserts v is T` signatures, throws
- *                TypeError on mismatch. Runtime wraps `is` — no
- *                duplicated kind-check logic.
+ *                tests the id directly.
  *
- * Composition: `is.kind × shape = concrete type`. Inside
- * `if (is.functionItem(v) && isTree(v))`, `v` narrows to
- * `NamespaceMap['function_item']['Tree']` = `FunctionItem.Tree`.
- *
- * See `specs/008-factory-ergonomic-cleanup/contracts/is-guards.md`
- * for the full contract.
+ * Whether a value is a node, and where it came from, is the common
+ * guards' question (`isNode`, `isParsedNode`, `isFactoryNode` in
+ * `@sittir/common/utils`), not a per-grammar one.
  */
 ```
 
@@ -11111,7 +11077,7 @@ The union of the grammar's trivia kind types, `AnyNodeData` when it has none: wh
 
 ### `packages/codegen/src/emitters/client-utils.ts::module`
 
-Emits the grammar's `utils.ts`: its facts (`methodsEngine`) and the runtime bound to its type map (`bindRuntime`), destructured as `isNodeData`, `isEmpty` and `withMethods`. Every other runtime helper is grammar-free and generated code imports it from `@sittir/common/utils`. The binding stays in its own module rather than `api.ts`: the factories index calls `hoist` while it loads, and `api.ts` reads `ir` while it loads, so a factory importing the runtime from `api.ts` would reach `ir` before it is initialised.
+Emits the grammar's `utils.ts`: its facts (`methodsEngine`) and the runtime bound to its type map (`bindRuntime`), destructured as `isNode`, `isEmpty` and `withMethods`. Every other runtime helper is grammar-free and generated code imports it from `@sittir/common/utils`. The binding stays in its own module rather than `api.ts`: the factories index calls `hoist` while it loads, and `api.ts` reads `ir` while it loads, so a factory importing the runtime from `api.ts` would reach `ir` before it is initialised.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitMethodsEngine`
 
@@ -12750,9 +12716,9 @@ leaf's factory instead of shadowing it (`attachProps(<leaf>, F.<key>)`).
 #### body
 
 ```text
-// Phrased as a negated type predicate rather than `if (isNodeData(input))`
+// Phrased as a negated type predicate rather than `if (isNode(input))`
 // so the checker narrows the REMAINDER of the body to the config arm.
-// A plain `isNodeData` early-return does not: negative narrowing drops a
+// A plain `isNode` early-return does not: negative narrowing drops a
 // union constituent only when it is a strict subtype of the guard type,
 // and `AnyNodeData`'s optional members defeat that for every generated
 // kind interface — leaving the interface's accessor signatures in the
@@ -12839,7 +12805,7 @@ admits). A slot of literals only passes its input through; the raw factory's lit
 #### body
 
 ```text
-// `isNodeData` does not negative-narrow `Terminal<K, V>` out of the
+// `isNode` does not negative-narrow `Terminal<K, V>` out of the
 // input union (TS structural-Exclude limitation), so the
 // `typeof === 'string'` test is what funnels the post-guard branch
 // to the factory's `string` parameter.

@@ -22,7 +22,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		'',
 		...emitMethodsEngine(defaultTriviaForm(config.nodeMap), whitespaceTrivia(config.nodeMap), config.triviaKinds ?? []),
 		'',
-		`export const { isNodeData, isEmpty, withMethods } = bindRuntime<${map}>(methodsEngine);`,
+		`export const { isNode, isEmpty, withMethods } = bindRuntime<${map}>(methodsEngine);`,
 		''
 	].join('\n');
 }

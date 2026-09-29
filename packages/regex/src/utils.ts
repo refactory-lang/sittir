@@ -21,4 +21,4 @@ export const methodsEngine = {
 	}
 } satisfies GrammarFacts;
 
-export const { isNodeData, isEmpty, withMethods } = bindRuntime<RegexTypeMap>(methodsEngine);
+export const { isNode, isEmpty, withMethods } = bindRuntime<RegexTypeMap>(methodsEngine);

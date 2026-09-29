@@ -29,9 +29,9 @@ export * from './consts.js';
 // Render options catalog (per-slot defaults and formatting choices)
 export * from './options.js';
 
-// Type guards (is × shape composition, assert + throw)
-export { is, isTree, isNode, assert } from './is.js';
-export type { IsGuards, AssertGuards } from './is.js';
+// Type guards
+export { is } from './is.js';
+export type { IsGuards } from './is.js';
 
 // Core re-exports
 export type { NodeData, TreeNode } from './types.js';

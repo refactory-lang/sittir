@@ -22,4 +22,4 @@ export const methodsEngine = {
 	}
 } satisfies GrammarFacts;
 
-export const { isNodeData, isEmpty, withMethods } = bindRuntime<ScmTypeMap>(methodsEngine);
+export const { isNode, isEmpty, withMethods } = bindRuntime<ScmTypeMap>(methodsEngine);
