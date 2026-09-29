@@ -66,7 +66,7 @@ pub fn majority(classes: impl IntoIterator<Item = u16>) -> Option<u16> {
 }
 
 /// The source between two coordinates of one live tree, in source order.
-fn gap_between<'s>(
+pub fn gap_between<'s>(
     a: &NodeCoordinate,
     b: &NodeCoordinate,
     sources: &'s dyn SourceTable,

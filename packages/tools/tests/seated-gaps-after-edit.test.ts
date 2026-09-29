@@ -1,0 +1,93 @@
+import { describe, expect, it } from 'vitest';
+import { createEngine } from '@sittir/common';
+import { languageByName } from '../src/languages.ts';
+
+const rust = await createEngine(await languageByName('rust'));
+const typescript = await createEngine(await languageByName('typescript'));
+const python = await createEngine(await languageByName('python'));
+
+interface Case {
+	readonly grammar: string;
+	readonly edit: (order: 'reversed' | 'parsed-built' | 'built-parsed') => string;
+	readonly expected: Readonly<Record<'reversed' | 'parsed-built' | 'built-parsed', string>>;
+}
+
+const cases: readonly Case[] = [
+	{
+		grammar: 'rust',
+		edit: (order) => {
+			const root = rust.parse('use x;\n\nfn f() {}\n');
+			const [use, fn] = root.statements();
+			const built = rust.build.functionItem({ name: 'g', parameters: rust.build.parameters(), body: rust.build.block() });
+			const items = order === 'reversed' ? [fn!, use!] : order === 'parsed-built' ? [use!, built] : [built, use!];
+			return root.$with.statements(...items).$render();
+		},
+		expected: { reversed: 'fn f() {}\n\nuse x;', 'parsed-built': 'use x;\n\nfn g() {}', 'built-parsed': 'fn g() {}\n\nuse x;' }
+	},
+	{
+		grammar: 'typescript',
+		edit: (order) => {
+			const root = typescript.parse('import x from "x";\n\nfunction f() {}\n');
+			const [imp, fn] = root.statements();
+			const built = typescript.build.functionDeclaration({
+				name: 'g',
+				parameters: typescript.build.formalParameters(),
+				body: typescript.build.statementBlock()
+			});
+			const items = order === 'reversed' ? [fn!, imp!] : order === 'parsed-built' ? [imp!, built] : [built, imp!];
+			return root.$with.statements(...items).$render();
+		},
+		expected: {
+			reversed: 'function f() {}\n\nimport x from "x";',
+			'parsed-built': 'import x from "x";\n\nfunction g() {}',
+			'built-parsed': 'function g() {}\n\nimport x from "x";'
+		}
+	},
+	{
+		grammar: 'python',
+		edit: (order) => {
+			const root = python.parse('import x\n\n\ndef f():\n    pass\n');
+			const [imp, fn] = root.statements();
+			const built = python.build.functionDefinition({
+				name: 'g',
+				parameters: python.build.parameters(),
+				body: python.build.block(python.build.passStatement())
+			});
+			const items = order === 'reversed' ? [fn!, imp!] : order === 'parsed-built' ? [imp!, built] : [built, imp!];
+			return root.$with.statements(...items).$render();
+		},
+		expected: {
+			reversed: 'def f():\n    pass\n\n\nimport x',
+			'parsed-built': 'import x\n\n\ndef g():\n    pass\n',
+			'built-parsed': 'def g():\n    pass\n\n\nimport x'
+		}
+	}
+];
+
+const PYTHON_SLICE_NEWLINE = "a parsed simple_statements' span excludes its trailing _newline, so its slice never ends its line";
+
+describe('a rebuilt list gives each parsed item the gap its seat declares', () => {
+	for (const { grammar, edit, expected } of cases) {
+		it(`${grammar}: reversed items`, () => {
+			expect(edit('reversed')).toBe(expected.reversed);
+		});
+		it(`${grammar}: a built item after a parsed one`, () => {
+			expect(edit('built-parsed')).toBe(expected['built-parsed']);
+		});
+		const pending = grammar === 'python';
+		(pending ? it.fails : it)(`${grammar}: a parsed item before a built one${pending ? ` (${PYTHON_SLICE_NEWLINE})` : ''}`, () => {
+			expect(edit('parsed-built')).toBe(expected['parsed-built']);
+		});
+	}
+
+	it.fails(`python: reversed simple statements (${PYTHON_SLICE_NEWLINE})`, () => {
+		const root = python.parse('a = 1\nb = 2\n');
+		const [a, b] = root.statements();
+		expect(root.$with.statements(b!, a!).$render()).toBe('b = 2\na = 1');
+	});
+
+	it('keeps the source gap when the items keep their source order', () => {
+		const root = rust.parse('use x;\nuse y;\n');
+		expect(root.$with.statements(...root.statements()).$render()).toBe('use x;\nuse y;');
+	});
+});
