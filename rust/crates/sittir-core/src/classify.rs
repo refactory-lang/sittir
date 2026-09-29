@@ -66,7 +66,7 @@ pub fn majority(classes: impl IntoIterator<Item = u16>) -> Option<u16> {
 }
 
 /// The source between two coordinates of one live tree, in source order.
-fn gap_between<'s>(
+pub fn gap_between<'s>(
     a: &NodeCoordinate,
     b: &NodeCoordinate,
     sources: &'s dyn SourceTable,
@@ -78,11 +78,20 @@ fn gap_between<'s>(
     source.get(a.span.end as usize..b.span.start as usize)
 }
 
-/// One class per side over every classifiable gap of a list, by majority.
-/// Items with no coordinate — the ones an edit rebuilt — are skipped, so a
-/// gap spans from the nearest surviving coordinate on the left to the
-/// nearest on the right. A gap without the token, or a pair that is not two
-/// ordered coordinates of one tree, contributes nothing.
+/// A list's source gaps: one class per side over every classifiable gap, by
+/// majority, and for each item whether the gap from it to the next
+/// coordinate is a source separator: it splits on the token and each side
+/// with a site classifies. Items with no coordinate — the ones an edit
+/// rebuilt — are skipped, so a gap spans from the nearest surviving
+/// coordinate on the left to the nearest on the right. A gap without the
+/// token, or a pair that is not two ordered coordinates of one tree,
+/// contributes nothing and leaves its item unseparated.
+pub struct ListGaps {
+    pub before: Option<u16>,
+    pub after: Option<u16>,
+    pub separated: Vec<bool>,
+}
+
 pub fn classify_list_gaps(
     items: &[Option<&NodeCoordinate>],
     sources: &dyn SourceTable,
@@ -90,24 +99,24 @@ pub fn classify_list_gaps(
     allowed_before: &[u16],
     allowed_after: &[u16],
     table: &WhitespaceTable,
-) -> (Option<u16>, Option<u16>) {
+) -> ListGaps {
     let mut before = Vec::new();
     let mut after = Vec::new();
-    let mut previous: Option<&NodeCoordinate> = None;
-    for item in items.iter().flatten() {
-        if let Some(a) = previous {
-            if let Some(gap) = gap_between(a, item, sources) {
-                if let Some((lead, trail)) = split_gap(gap, token) {
-                    if let Some(class) = classify_whitespace(lead, allowed_before, table) {
-                        before.push(class);
-                    }
-                    if let Some(class) = classify_whitespace(trail, allowed_after, table) {
-                        after.push(class);
-                    }
-                }
+    let mut separated = vec![false; items.len()];
+    let mut previous: Option<(usize, &NodeCoordinate)> = None;
+    for (index, item) in items.iter().enumerate() {
+        let Some(item) = item else { continue };
+        if let Some((at, a)) = previous {
+            if let Some((lead, trail)) = gap_between(a, item, sources).and_then(|gap| split_gap(gap, token)) {
+                let lead_class = classify_whitespace(lead, allowed_before, table);
+                let trail_class = classify_whitespace(trail, allowed_after, table);
+                before.extend(lead_class);
+                after.extend(trail_class);
+                separated[at] = (allowed_before.is_empty() || lead_class.is_some())
+                    && (allowed_after.is_empty() || trail_class.is_some());
             }
         }
-        previous = Some(item);
+        previous = Some((index, item));
     }
-    (majority(before), majority(after))
+    ListGaps { before: majority(before), after: majority(after), separated }
 }

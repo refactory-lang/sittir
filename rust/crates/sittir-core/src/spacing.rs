@@ -160,7 +160,7 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     options: Option<&'a crate::options::ResolvedOptions>,
     deferring: Option<String>,
     deferred: Vec<DeferredRun>,
-    line_end_held: bool,
+    line_end_held: Option<crate::render::LineHold>,
 }
 
 /// A trailing run rendered ahead of where it is written: its text, and the
@@ -169,7 +169,7 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
 struct DeferredRun {
     text: String,
     end: Option<(u8, String)>,
-    line_end: bool,
+    line_end: Option<crate::render::LineHold>,
 }
 
 /// The writer's spacing state, set aside while a deferred run renders on its
@@ -184,7 +184,7 @@ struct HeldContext {
     seam_text: String,
     seam_is_token: bool,
     seam_is_flank: bool,
-    line_end_held: bool,
+    line_end_held: Option<crate::render::LineHold>,
 }
 
 impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
@@ -208,7 +208,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             options: None,
             deferring: None,
             deferred: Vec::new(),
-            line_end_held: false,
+            line_end_held: None,
         }
     }
 
@@ -292,7 +292,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             seam_text: std::mem::take(&mut self.seam_text),
             seam_is_token: std::mem::replace(&mut self.seam_is_token, false),
             seam_is_flank: std::mem::replace(&mut self.seam_is_flank, false),
-            line_end_held: std::mem::replace(&mut self.line_end_held, false),
+            line_end_held: self.line_end_held.take(),
         }
     }
 
@@ -332,8 +332,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             let text = if self.at_line_start() { text.strip_prefix('\n').unwrap_or(&text) } else { &text };
             if !next.starts_with('\n') && !text.is_empty() {
                 self.merge_seam_with(text, strength);
-                if line_end {
-                    crate::render::RenderSink::hold_line_end(self);
+                if let Some(hold) = line_end {
+                    crate::render::RenderSink::hold_line_end(self, hold);
                 }
             }
         }
@@ -377,7 +377,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// held rank. The payload's own buffer is kept (not dropped) so a
     /// following seam has a ready allocation to merge into.
     fn flush_seam(&mut self) -> std::fmt::Result {
-        self.line_end_held = false;
+        self.line_end_held = None;
         let Some(rank) = self.seam.take() else {
             return Ok(());
         };
@@ -404,7 +404,10 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// weaker one whatever their widths; between marks of one strength a list
     /// flank beats any other mark, since it is written only inside a list
     /// that has members; otherwise the wider wins and a tie keeps the one
-    /// already held.
+    /// already held. A held line end is a floor, not an override: a mark
+    /// carrying a wider line break still widens it, whatever its strength,
+    /// and the held strength stays; a mark without a line break never
+    /// replaces it.
     fn merge_seam(&mut self, text: &str) {
         self.merge_seam_with(text, SEAM_DECLARED);
     }
@@ -457,12 +460,13 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
                 std::cmp::Ordering::Equal if flank != self.seam_is_flank => self.seam_is_flank,
                 std::cmp::Ordering::Equal => current >= rank,
             };
-            if keeps {
+            let widens_held_break = self.line_end_held.is_some() && text.contains('\n') && rank > current;
+            if keeps && !widens_held_break {
                 return;
             }
         }
         self.seam = Some(rank);
-        self.seam_strength = strength;
+        self.seam_strength = if self.line_end_held.is_some() { strength.max(self.seam_strength) } else { strength };
         self.seam_is_flank = flank;
         self.seam_text.clear();
         self.seam_text.push_str(text);
@@ -495,7 +499,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// once, after the last `write_str`.
     pub fn finish(&mut self) -> std::fmt::Result {
         self.write_deferred("")?;
-        if self.seam_is_token || (self.line_end_held && self.seam.is_some() && self.seam_text.contains('\n')) {
+        if self.seam_is_token
+            || (self.line_end_held == Some(crate::render::LineHold::Terminated) && self.seam.is_some() && self.seam_text.contains('\n'))
+        {
             self.flush_seam()?;
         }
         self.seam = None;
@@ -615,7 +621,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.options.is_some_and(|options| options.kind_has(kind, flag))
     }
 
-    fn hold_line_end(&mut self) {
+    fn hold_line_end(&mut self, hold: crate::render::LineHold) {
         if self.at_line_start() {
             if self.seam.is_some() && self.seam_text.starts_with('\n') {
                 self.seam_text.remove(0);
@@ -632,7 +638,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         } else {
             self.merge_seam_with("\n", SEAM_TRIVIA);
         }
-        self.line_end_held = true;
+        self.line_end_held = self.line_end_held.max(Some(hold));
     }
 
     fn take_seam(&mut self) -> Option<crate::render::HeldSeam> {
@@ -681,7 +687,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let result = render(self);
         let run = self.deferring.take().unwrap_or_default();
         let end = self.seam.map(|_| (self.seam_strength, self.seam_text.clone()));
-        let line_end = self.line_end_held && end.is_some();
+        let line_end = self.line_end_held.filter(|_| end.is_some());
         self.restore_context(held);
         result?;
         if !run.is_empty() {
@@ -1183,6 +1189,7 @@ mod strength_tests {
             1 => "",
             2 => " ",
             3 => "\n",
+            4 => "\n\n",
             _ => "",
         }
     }
@@ -1195,6 +1202,44 @@ mod strength_tests {
         f(&mut w);
         w.finish().unwrap();
         out
+    }
+
+    #[test]
+    fn a_held_line_end_is_widened_by_a_wider_break() {
+        // A statement whose line end is held meets the blank line declared
+        // after it: the blank line satisfies the break and is kept.
+        let out = render(|w| {
+            w.text("a").unwrap();
+            w.hold_line_end(crate::render::LineHold::Break);
+            w.site_with(4, SEAM_DECLARED);
+            w.text("b").unwrap();
+        });
+        assert_eq!(out, "a\n\nb");
+    }
+
+    #[test]
+    fn a_held_line_end_is_never_replaced_by_a_mark_without_a_break() {
+        let out = render(|w| {
+            w.text("a").unwrap();
+            w.hold_line_end(crate::render::LineHold::Break);
+            w.site_with(2, SEAM_DECLARED);
+            w.text("b").unwrap();
+        });
+        assert_eq!(out, "a\nb");
+    }
+
+    #[test]
+    fn only_a_terminated_line_end_outlasts_the_render() {
+        let terminated = render(|w| {
+            w.text("// c").unwrap();
+            w.hold_line_end(crate::render::LineHold::Terminated);
+        });
+        assert_eq!(terminated, "// c\n");
+        let excluded = render(|w| {
+            w.text("a").unwrap();
+            w.hold_line_end(crate::render::LineHold::Break);
+        });
+        assert_eq!(excluded, "a");
     }
 
     #[test]

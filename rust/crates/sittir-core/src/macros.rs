@@ -89,7 +89,7 @@ mod trivia_macro_tests {
                 w.seam(" ");
             } else {
                 w.seam("\n");
-                w.hold_line_end();
+                w.hold_line_end(crate::render::LineHold::Terminated);
             }
             Ok(())
         }
