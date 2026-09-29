@@ -83,6 +83,10 @@ export function grammarTypePrefix(name: string): string {
 	return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
+export function languageApiName(grammar: string): string {
+	return `${grammarTypePrefix(grammar)}API`;
+}
+
 export function upstreamPackage(name: GrammarName): string {
 	return `tree-sitter-${name}`;
 }

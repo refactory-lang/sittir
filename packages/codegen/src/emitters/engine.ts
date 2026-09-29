@@ -1,4 +1,4 @@
-import { grammarTypePrefix } from '../grammars.ts';
+import { grammarTypePrefix, languageApiName } from '../grammars.ts';
 
 export interface EmitEngineConfig {
 	grammar: string;
@@ -58,10 +58,6 @@ export function createRenderEngine<const I extends string = string>(
 	return result.engine;
 }
 `;
-}
-
-export function languageApiName(grammar: string): string {
-	return `${grammarTypePrefix(grammar)}API`;
 }
 
 export function grammarTypeMapName(grammar: string): string {
