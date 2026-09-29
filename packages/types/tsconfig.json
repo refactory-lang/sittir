@@ -7,7 +7,8 @@
 		"tests/engine-api.test-d.ts",
 		"tests/function-utils.test-d.ts",
 		"tests/type-projections.test-d.ts",
-		"tests/polymorph-config.test-d.ts"
+		"tests/polymorph-config.test-d.ts",
+		"tests/render-options-check.test-d.ts"
 	],
 	"exclude": ["node_modules", "dist"]
 }
