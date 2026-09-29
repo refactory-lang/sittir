@@ -19,8 +19,8 @@ describe('source_file', () => {
 });
 
 describe('empty_statement', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.emptyStatement()).toBe(TSKindId.EmptyStatement);
+	it('is the kind id', () => {
+		expect(ir.emptyStatement).toBe(TSKindId.EmptyStatement);
 	});
 });
 
@@ -1367,8 +1367,8 @@ describe('tuple_type', () => {
 });
 
 describe('unit_type', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.unitType()).toBe(TSKindId.UnitType);
+	it('is the kind id', () => {
+		expect(ir.unitType).toBe(TSKindId.UnitType);
 	});
 });
 
@@ -1691,8 +1691,8 @@ describe('reference_type', () => {
 });
 
 describe('never_type', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.neverType()).toBe(TSKindId.NeverType);
+	it('is the kind id', () => {
+		expect(ir.neverType).toBe(TSKindId.NeverType);
 	});
 });
 
@@ -1794,8 +1794,8 @@ describe('dynamic_type', () => {
 });
 
 describe('mutable_specifier', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.mutableSpecifier()).toBe(TSKindId.MutableSpecifier);
+	it('is the kind id', () => {
+		expect(ir.mutableSpecifier).toBe(TSKindId.MutableSpecifier);
 	});
 });
 
@@ -2181,8 +2181,8 @@ describe('tuple_expression', () => {
 });
 
 describe('unit_expression', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.unitExpression()).toBe(TSKindId.UnitExpression);
+	it('is the kind id', () => {
+		expect(ir.unitExpression).toBe(TSKindId.UnitExpression);
 	});
 });
 
@@ -2913,8 +2913,8 @@ describe('struct_pattern', () => {
 });
 
 describe('remaining_field_pattern', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.remainingFieldPattern()).toBe(TSKindId.RemainingFieldPattern);
+	it('is the kind id', () => {
+		expect(ir.remainingFieldPattern).toBe(TSKindId.RemainingFieldPattern);
 	});
 });
 
@@ -3096,14 +3096,14 @@ describe('line_comment sub-factories', () => {
 });
 
 describe('inner_line_doc_comment_marker', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.innerLineDocCommentMarker()).toBe(TSKindId.InnerLineDocCommentMarker);
+	it('is the kind id', () => {
+		expect(ir.innerLineDocCommentMarker).toBe(TSKindId.InnerLineDocCommentMarker);
 	});
 });
 
 describe('outer_line_doc_comment_marker', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.outerLineDocCommentMarker()).toBe(TSKindId.OuterLineDocCommentMarker);
+	it('is the kind id', () => {
+		expect(ir.outerLineDocCommentMarker).toBe(TSKindId.OuterLineDocCommentMarker);
 	});
 });
 
@@ -3173,20 +3173,20 @@ describe('shebang', () => {
 });
 
 describe('self', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.self()).toBe(TSKindId.Self);
+	it('is the kind id', () => {
+		expect(ir.self).toBe(TSKindId.Self);
 	});
 });
 
 describe('super', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.super()).toBe(TSKindId.Super);
+	it('is the kind id', () => {
+		expect(ir.super).toBe(TSKindId.Super);
 	});
 });
 
 describe('crate', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.crate()).toBe(TSKindId.Crate);
+	it('is the kind id', () => {
+		expect(ir.crate).toBe(TSKindId.Crate);
 	});
 });
 
@@ -3752,8 +3752,8 @@ describe('tuple_expression_elements', () => {
 });
 
 describe('range_expression_bare', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.rangeExpressionBare()).toBe(TSKindId.RangeExpressionBare);
+	it('is the kind id', () => {
+		expect(ir.rangeExpressionBare).toBe(TSKindId.RangeExpressionBare);
 	});
 });
 
@@ -3874,8 +3874,8 @@ describe('range_pattern_prefix sub-factories', () => {
 });
 
 describe('range_pattern_with_left_bare', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.rangePatternWithLeftBare()).toBe(TSKindId.RangePatternWithLeftBare);
+	it('is the kind id', () => {
+		expect(ir.rangePatternWithLeftBare).toBe(TSKindId.RangePatternWithLeftBare);
 	});
 });
 
@@ -3929,8 +3929,8 @@ describe('range_pattern_with_left sub-factories', () => {
 });
 
 describe('wildcard_pattern', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.wildcardPattern()).toBe(TSKindId.WildcardPattern);
+	it('is the kind id', () => {
+		expect(ir.wildcardPattern).toBe(TSKindId.WildcardPattern);
 	});
 });
 
@@ -3962,14 +3962,14 @@ describe('raw_string_literal_content', () => {
 });
 
 describe('outer_doc_comment_marker', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.outerDocCommentMarker()).toBe(TSKindId.OuterDocCommentMarker);
+	it('is the kind id', () => {
+		expect(ir.outerDocCommentMarker).toBe(TSKindId.OuterDocCommentMarker);
 	});
 });
 
 describe('inner_doc_comment_marker', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.innerDocCommentMarker()).toBe(TSKindId.InnerDocCommentMarker);
+	it('is the kind id', () => {
+		expect(ir.innerDocCommentMarker).toBe(TSKindId.InnerDocCommentMarker);
 	});
 });
 

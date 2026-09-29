@@ -834,8 +834,8 @@ function emitKeywordFrom(node: LeafFromNode): string {
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	return [
-		`export function ${fn}(_input?: T.${node.typeName}.Loose): ${factoryReturnTypeExpr(factory)} {`,
-		`  return ${factory}();`,
+		`export function ${fn}(_input?: T.${node.typeName}.Loose): typeof ${factory} {`,
+		`  return ${factory};`,
 		'}'
 	].join('\n');
 }
@@ -1098,7 +1098,7 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 		if (isBuilderTextLeaf(node)) {
 			textChecks.push({ kind, values: [node.text] });
 			registryEntries.push(
-				`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`
+				`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory} },`
 			);
 		} else if (isAffixedLeaf(node)) {
 			registryEntries.push(

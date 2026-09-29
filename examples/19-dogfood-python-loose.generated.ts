@@ -2,85 +2,85 @@
 import { createEngine } from '@sittir/common';
 import python from '@sittir/python';
 
-const engine = await createEngine(python);
+const { build, kinds } = await createEngine(python);
 
 export function rebuildPython4spaceLoose() {
-	return engine.build.module(engine.build.simpleStatementsElements(engine.build.expressionStatement(engine.build.string({
+	return build.module(build.simpleStatementsElements(build.expressionStatement(build.string({
 		stringStart: "\"\"\"",
-		content: [engine.build.stringContent("Simple user management module.")],
+		content: [build.stringContent("Simple user management module.")],
 		stringEnd: "\"\"\"",
-	}))), engine.build.simpleStatementsElements(engine.build.importFromStatement({
-		moduleName: engine.build.dottedName("typing"),
-		content: engine.build.importList(engine.build.dottedName("Optional")),
-	})), engine.build.classDefinition({
+	}))), build.simpleStatementsElements(build.importFromStatement({
+		moduleName: build.dottedName("typing"),
+		content: build.importList(build.dottedName("Optional")),
+	})), build.classDefinition({
 		name: "User",
-		body: engine.build.block(engine.build.functionDefinition({
+		body: build.block(build.functionDefinition({
 			name: "__init__",
-			parameters: ["self", engine.build.typedParameter({
+			parameters: ["self", build.typedParameter({
 				name: "user_id",
 				type: "int",
-			}), engine.build.typedParameter({
+			}), build.typedParameter({
 				name: "name",
 				type: "str",
 			})],
-			returnType: engine.kinds.None,
-			body: engine.build.block(engine.build.simpleStatementsElements(engine.build.assignment.eq({
-				left: engine.build.attribute({
+			returnType: kinds.None,
+			body: build.block(build.simpleStatementsElements(build.assignment.eq({
+				left: build.attribute({
 					object: "self",
 					attribute: "user_id",
 				}),
 				right: "user_id",
-			})), engine.build.simpleStatementsElements(engine.build.assignment.eq({
-				left: engine.build.attribute({
+			})), build.simpleStatementsElements(build.assignment.eq({
+				left: build.attribute({
 					object: "self",
 					attribute: "name",
 				}),
 				right: "name",
 			}))),
-		}), engine.build.functionDefinition({
+		}), build.functionDefinition({
 			name: "greet",
 			parameters: "self",
 			returnType: "str",
-			body: engine.build.block(engine.build.simpleStatementsElements(engine.build.returnStatement(engine.build.string({
+			body: build.block(build.simpleStatementsElements(build.returnStatement(build.string({
 				stringStart: "f\"",
-				content: [engine.build.stringContent("Hello, "), engine.build.interpolation({
-					expression: engine.build.attribute({
+				content: [build.stringContent("Hello, "), build.interpolation({
+					expression: build.attribute({
 						object: "self",
 						attribute: "name",
 					}),
-				}), engine.build.stringContent("!")],
+				}), build.stringContent("!")],
 				stringEnd: "\"",
 			})))),
 		})),
-	}), engine.build.functionDefinition({
+	}), build.functionDefinition({
 		name: "find_user",
-		parameters: [engine.build.typedParameter({
+		parameters: [build.typedParameter({
 			name: "users",
 			type: "list",
-		}), engine.build.typedParameter({
+		}), build.typedParameter({
 			name: "user_id",
 			type: "int",
 		})],
-		returnType: engine.build.genericType({
+		returnType: build.genericType({
 			name: "Optional",
 			typeParameter: "User",
 		}),
-		body: engine.build.block(engine.build.forStatement({
+		body: build.block(build.forStatement({
 			left: "user",
 			right: "users",
-			body: engine.build.block(engine.build.ifStatement({
-				condition: engine.build.comparisonOperator({
-					left: engine.build.attribute({
+			body: build.block(build.ifStatement({
+				condition: build.comparisonOperator({
+					left: build.attribute({
 						object: "user",
 						attribute: "user_id",
 					}),
 					comparators: [{
-						operators: engine.kinds.EqEq,
+						operators: kinds.EqEq,
 						primaryExpression: "user_id",
 					}],
 				}),
-				consequence: engine.build.block(engine.build.simpleStatementsElements(engine.build.returnStatement("user"))),
+				consequence: build.block(build.simpleStatementsElements(build.returnStatement("user"))),
 			})),
-		}), engine.build.simpleStatementsElements(engine.build.returnStatement(engine.kinds.None))),
+		}), build.simpleStatementsElements(build.returnStatement(kinds.None))),
 	}));
 }

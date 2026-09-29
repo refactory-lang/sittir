@@ -3,101 +3,101 @@ import { createEngine } from '@sittir/common';
 import python from '@sittir/python';
 import { Delimiter } from '@sittir/common/utils';
 
-const engine = await createEngine(python);
+const { build, kinds } = await createEngine(python);
 
 export function rebuildKeywordOpenersPythonGenerated() {
-	return engine.build.module.strict(engine.build.functionDefinition.strict({
-		name: engine.build.identifier("f"),
-		parameters: engine.build.parameters.strict(engine.build.parametersElements.strict({ delimiter: Delimiter.None }, engine.build.identifier("a"), engine.build.defaultParameter.strict({
-			name: engine.build.identifier("b"),
-			value: engine.build.tuple.strict(engine.build.collectionElements.strict({ delimiter: Delimiter.None }, engine.build.integer.decimal.plain("1"), engine.build.integer.decimal.plain("2"))),
+	return build.module.strict(build.functionDefinition.strict({
+		name: build.identifier("f"),
+		parameters: build.parameters.strict(build.parametersElements.strict({ delimiter: Delimiter.None }, build.identifier("a"), build.defaultParameter.strict({
+			name: build.identifier("b"),
+			value: build.tuple.strict(build.collectionElements.strict({ delimiter: Delimiter.None }, build.integer.decimal.plain("1"), build.integer.decimal.plain("2"))),
 		}))),
-		body: engine.build.suite.block.strict(engine.build.block.strict(engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.expressionStatement.strict(engine.build.assignment.eq.strict({
-			left: engine.build.identifier("x"),
-			right: engine.build.binaryOperator.strict({
-				left: engine.build.parenthesizedExpression.strict(engine.build.binaryOperator.strict({
-					left: engine.build.integer.decimal.plain("1"),
-					operator: engine.kinds.Plus,
-					right: engine.build.integer.decimal.plain("2"),
+		body: build.suite.block.strict(build.block.strict(build.simpleStatements.strict({ delimiter: Delimiter.None }, build.expressionStatement.strict(build.assignment.eq.strict({
+			left: build.identifier("x"),
+			right: build.binaryOperator.strict({
+				left: build.parenthesizedExpression.strict(build.binaryOperator.strict({
+					left: build.integer.decimal.plain("1"),
+					operator: kinds.Plus,
+					right: build.integer.decimal.plain("2"),
 				})),
-				operator: engine.kinds.Star,
-				right: engine.build.integer.decimal.plain("3"),
+				operator: kinds.Star,
+				right: build.integer.decimal.plain("3"),
 			}),
-		}))), engine.build.ifStatement.strict({
-			condition: engine.build.parenthesizedExpression.strict(engine.build.identifier("x")),
-			consequence: engine.build.suite.block.strict(engine.build.block.strict(engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.returnStatement.strict(engine.build.parenthesizedExpression.strict(engine.build.identifier("x")))))),
-		}), engine.build.whileStatement.strict({
-			condition: engine.build.parenthesizedExpression.strict(engine.build.identifier("x")),
-			body: engine.build.suite.block.strict(engine.build.block.strict(engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.expressionStatement.strict(engine.build.assignment.eq.strict({
-				left: engine.build.identifier("x"),
-				right: engine.build.list.strict(engine.build.collectionElements.strict({ delimiter: Delimiter.None }, engine.build.integer.decimal.plain("1"))),
+		}))), build.ifStatement.strict({
+			condition: build.parenthesizedExpression.strict(build.identifier("x")),
+			consequence: build.suite.block.strict(build.block.strict(build.simpleStatements.strict({ delimiter: Delimiter.None }, build.returnStatement.strict(build.parenthesizedExpression.strict(build.identifier("x")))))),
+		}), build.whileStatement.strict({
+			condition: build.parenthesizedExpression.strict(build.identifier("x")),
+			body: build.suite.block.strict(build.block.strict(build.simpleStatements.strict({ delimiter: Delimiter.None }, build.expressionStatement.strict(build.assignment.eq.strict({
+				left: build.identifier("x"),
+				right: build.list.strict(build.collectionElements.strict({ delimiter: Delimiter.None }, build.integer.decimal.plain("1"))),
 			}))))),
-		}), engine.build.forStatement.strict({
-			left: engine.build.identifier("i"),
-			right: engine.build.parenthesizedExpression.strict(engine.build.identifier("a")),
-			body: engine.build.suite.block.strict(engine.build.block.strict(engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.kinds.PassStatement))),
-		}), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.assertStatement.strict(engine.build.parenthesizedExpression.strict(engine.build.identifier("x")))), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.deleteStatement.strict(engine.build.parenthesizedExpression.strict(engine.build.identifier("x")))), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.expressionStatement.strict(engine.build.assignment.eq.strict({
-			left: engine.build.identifier("g"),
-			right: engine.build.lambda.strict({
-				body: engine.build.parenthesizedExpression.strict(engine.build.identifier("x")),
+		}), build.forStatement.strict({
+			left: build.identifier("i"),
+			right: build.parenthesizedExpression.strict(build.identifier("a")),
+			body: build.suite.block.strict(build.block.strict(build.simpleStatements.strict({ delimiter: Delimiter.None }, build.passStatement))),
+		}), build.simpleStatements.strict({ delimiter: Delimiter.None }, build.assertStatement.strict(build.parenthesizedExpression.strict(build.identifier("x")))), build.simpleStatements.strict({ delimiter: Delimiter.None }, build.deleteStatement.strict(build.parenthesizedExpression.strict(build.identifier("x")))), build.simpleStatements.strict({ delimiter: Delimiter.None }, build.expressionStatement.strict(build.assignment.eq.strict({
+			left: build.identifier("g"),
+			right: build.lambda.strict({
+				body: build.parenthesizedExpression.strict(build.identifier("x")),
 			}),
-		}))), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.expressionStatement.strict(engine.build.assignment.eq.strict({
-			left: engine.build.identifier("y"),
-			right: engine.build.notOperator.strict(engine.build.parenthesizedExpression.strict(engine.build.identifier("x"))),
-		}))), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.expressionStatement.strict(engine.build.assignment.eq.strict({
-			left: engine.build.identifier("z"),
-			right: engine.build.booleanOperator.strict({
-				left: engine.build.booleanOperator.strict({
-					left: engine.build.identifier("x"),
-					operator: engine.kinds.AndKeyword,
-					right: engine.build.parenthesizedExpression.strict(engine.build.identifier("y")),
+		}))), build.simpleStatements.strict({ delimiter: Delimiter.None }, build.expressionStatement.strict(build.assignment.eq.strict({
+			left: build.identifier("y"),
+			right: build.notOperator.strict(build.parenthesizedExpression.strict(build.identifier("x"))),
+		}))), build.simpleStatements.strict({ delimiter: Delimiter.None }, build.expressionStatement.strict(build.assignment.eq.strict({
+			left: build.identifier("z"),
+			right: build.booleanOperator.strict({
+				left: build.booleanOperator.strict({
+					left: build.identifier("x"),
+					operator: kinds.AndKeyword,
+					right: build.parenthesizedExpression.strict(build.identifier("y")),
 				}),
-				operator: engine.kinds.OrKeyword,
-				right: engine.build.list.strict(engine.build.collectionElements.strict({ delimiter: Delimiter.None }, engine.build.integer.decimal.plain("1"))),
+				operator: kinds.OrKeyword,
+				right: build.list.strict(build.collectionElements.strict({ delimiter: Delimiter.None }, build.integer.decimal.plain("1"))),
 			}),
-		}))), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.expressionStatement.strict(engine.build.yield.strict(engine.build.parenthesizedExpression.strict(engine.build.identifier("x"))))), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.raiseStatement.strict({
-			expressions: engine.build.parenthesizedExpression.strict(engine.build.identifier("E")),
-		})), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.expressionStatement.strict(engine.build.assignment.eq.strict({
-			left: engine.build.identifier("w"),
-			right: engine.build.listComprehension.strict({
-				body: engine.build.identifier("i"),
-				comprehensionClauses: engine.build.comprehensionClauses.strict(engine.build.forInClause.strict({
-					left: engine.build.identifier("i"),
-					right: [engine.build.parenthesizedExpression.strict(engine.build.identifier("a"))],
-				}), engine.build.ifClause.strict(engine.build.parenthesizedExpression.strict(engine.build.identifier("i")))),
+		}))), build.simpleStatements.strict({ delimiter: Delimiter.None }, build.expressionStatement.strict(build.yield.strict(build.parenthesizedExpression.strict(build.identifier("x"))))), build.simpleStatements.strict({ delimiter: Delimiter.None }, build.raiseStatement.strict({
+			expressions: build.parenthesizedExpression.strict(build.identifier("E")),
+		})), build.simpleStatements.strict({ delimiter: Delimiter.None }, build.expressionStatement.strict(build.assignment.eq.strict({
+			left: build.identifier("w"),
+			right: build.listComprehension.strict({
+				body: build.identifier("i"),
+				comprehensionClauses: build.comprehensionClauses.strict(build.forInClause.strict({
+					left: build.identifier("i"),
+					right: [build.parenthesizedExpression.strict(build.identifier("a"))],
+				}), build.ifClause.strict(build.parenthesizedExpression.strict(build.identifier("i")))),
 			}),
-		}))), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.expressionStatement.strict(engine.build.assignment.eq.strict({
-			left: engine.build.identifier("v"),
-			right: engine.build.subscript.strict({
-				value: engine.build.identifier("a"),
-				subscripts: [{ delimiter: Delimiter.None }, engine.build.parenthesizedExpression.strict(engine.build.integer.decimal.plain("1"))],
+		}))), build.simpleStatements.strict({ delimiter: Delimiter.None }, build.expressionStatement.strict(build.assignment.eq.strict({
+			left: build.identifier("v"),
+			right: build.subscript.strict({
+				value: build.identifier("a"),
+				subscripts: [{ delimiter: Delimiter.None }, build.parenthesizedExpression.strict(build.integer.decimal.plain("1"))],
 			}),
-		}))), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.expressionStatement.strict(engine.build.assignment.eq.strict({
-			left: engine.build.identifier("u"),
-			right: engine.build.dictionary.strict({ delimiter: Delimiter.None }, engine.build.pair.strict({
-				key: engine.build.string.strict({
-					stringStart: engine.build.stringStart("\""),
-					content: [engine.build.stringContent.strict(engine.build.stringFragment("k"))],
-					stringEnd: engine.build.stringEnd("\""),
+		}))), build.simpleStatements.strict({ delimiter: Delimiter.None }, build.expressionStatement.strict(build.assignment.eq.strict({
+			left: build.identifier("u"),
+			right: build.dictionary.strict({ delimiter: Delimiter.None }, build.pair.strict({
+				key: build.string.strict({
+					stringStart: build.stringStart("\""),
+					content: [build.stringContent.strict(build.stringFragment("k"))],
+					stringEnd: build.stringEnd("\""),
 				}),
-				value: engine.build.parenthesizedExpression.strict(engine.build.integer.decimal.plain("1")),
-			}), engine.build.pair.strict({
-				key: engine.build.string.strict({
-					stringStart: engine.build.stringStart("\""),
-					content: [engine.build.stringContent.strict(engine.build.stringFragment("j"))],
-					stringEnd: engine.build.stringEnd("\""),
+				value: build.parenthesizedExpression.strict(build.integer.decimal.plain("1")),
+			}), build.pair.strict({
+				key: build.string.strict({
+					stringStart: build.stringStart("\""),
+					content: [build.stringContent.strict(build.stringFragment("j"))],
+					stringEnd: build.stringEnd("\""),
 				}),
-				value: engine.build.list.strict(engine.build.collectionElements.strict({ delimiter: Delimiter.None }, engine.build.integer.decimal.plain("2"))),
+				value: build.list.strict(build.collectionElements.strict({ delimiter: Delimiter.None }, build.integer.decimal.plain("2"))),
 			})),
-		}))), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.expressionStatement.strict(engine.build.assignment.eq.strict({
-			left: engine.build.identifier("s"),
-			right: engine.build.string.strict({
-				stringStart: engine.build.stringStart("f\""),
-				content: [engine.build.stringContent.strict(engine.build.stringFragment("a")), engine.build.interpolation.strict({
-					expression: engine.build.parenthesizedExpression.strict(engine.build.identifier("x")),
+		}))), build.simpleStatements.strict({ delimiter: Delimiter.None }, build.expressionStatement.strict(build.assignment.eq.strict({
+			left: build.identifier("s"),
+			right: build.string.strict({
+				stringStart: build.stringStart("f\""),
+				content: [build.stringContent.strict(build.stringFragment("a")), build.interpolation.strict({
+					expression: build.parenthesizedExpression.strict(build.identifier("x")),
 				})],
-				stringEnd: engine.build.stringEnd("\""),
+				stringEnd: build.stringEnd("\""),
 			}),
-		}))), engine.build.simpleStatements.strict({ delimiter: Delimiter.None }, engine.build.returnStatement.strict(engine.build.tuple.strict(engine.build.collectionElements.strict({ delimiter: Delimiter.None }, engine.build.identifier("a"), engine.build.identifier("b"))))))),
+		}))), build.simpleStatements.strict({ delimiter: Delimiter.None }, build.returnStatement.strict(build.tuple.strict(build.collectionElements.strict({ delimiter: Delimiter.None }, build.identifier("a"), build.identifier("b"))))))),
 	}));
 }

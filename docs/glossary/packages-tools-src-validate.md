@@ -1472,6 +1472,14 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 // delimiters can't be reconstructed from children.
 ```
 
+### `packages/tools/src/validate/from.ts::kindIdDiffs`
+
+The comparison of a from() result against a factory result when either is a kind id: a kind stored as its id has no node, so equality of the ids is the whole check. It answers `undefined` when neither side is an id (the structural diff applies), an empty list when the ids match, and one message when they differ. Both the scalarized leaf route and the read-driven route call it, so a from() that returns the wrong constant fails on either.
+
+### `packages/tools/src/validate/common.ts::FactoryEntry`
+
+One entry of a factory map: the factory function of a kind, or, for a `constant`-shaped kind (a keyword or punctuation kind with a build entry), the value itself. The dispatch returns a constant entry as it is and calls every other.
+
 ### `packages/tools/src/validate/common.ts::carryTrivia`
 
 ```text

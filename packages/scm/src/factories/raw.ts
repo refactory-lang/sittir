@@ -722,37 +722,21 @@ export function buildNamedNodeGroupAnchoredLast(
 	);
 }
 
-export function buildTight(): TSKindId.Tight {
-	return TSKindId.Tight;
-}
+export const buildTight: TSKindId.Tight = TSKindId.Tight;
 
-export function buildSpace(): TSKindId.Space {
-	return TSKindId.Space;
-}
+export const buildSpace: TSKindId.Space = TSKindId.Space;
 
-export function buildTab(): TSKindId.Tab {
-	return TSKindId.Tab;
-}
+export const buildTab: TSKindId.Tab = TSKindId.Tab;
 
-export function buildNewline(): TSKindId.Newline {
-	return TSKindId.Newline;
-}
+export const buildNewline: TSKindId.Newline = TSKindId.Newline;
 
-export function buildBlankline(): TSKindId.Blankline {
-	return TSKindId.Blankline;
-}
+export const buildBlankline: TSKindId.Blankline = TSKindId.Blankline;
 
-export function buildDoubleBlankline(): TSKindId.DoubleBlankline {
-	return TSKindId.DoubleBlankline;
-}
+export const buildDoubleBlankline: TSKindId.DoubleBlankline = TSKindId.DoubleBlankline;
 
-export function buildIndent(): TSKindId.Indent {
-	return TSKindId.Indent;
-}
+export const buildIndent: TSKindId.Indent = TSKindId.Indent;
 
-export function buildDedent(): TSKindId.Dedent {
-	return TSKindId.Dedent;
-}
+export const buildDedent: TSKindId.Dedent = TSKindId.Dedent;
 
 export type FluentKindMap = {
 	program: T.Program.Built;
