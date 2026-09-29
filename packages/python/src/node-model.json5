@@ -2491,7 +2491,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
       "text": "\n\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_compound_statement",
@@ -2530,7 +2530,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
       "text": "\n\n\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_expression_within_for_in_clause",
@@ -2598,7 +2598,7 @@
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
       "text": "async",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_left_hand_side",
@@ -2639,7 +2639,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
       "text": "\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_not_in",
@@ -2991,7 +2991,7 @@
       "isParameterless": true,
       "stampExpression": "\" \" as const",
       "text": " ",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_statement",
@@ -3037,7 +3037,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\t\" as const",
       "text": "\t",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_tight",
@@ -3049,7 +3049,7 @@
       "isParameterless": true,
       "stampExpression": "\"\" as const",
       "text": "",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_whitespace",
@@ -4429,7 +4429,7 @@
       "isParameterless": true,
       "stampExpression": "\"break\" as const",
       "text": "break",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "bslash",
@@ -5848,7 +5848,7 @@
       "isParameterless": true,
       "stampExpression": "\"continue\" as const",
       "text": "continue",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "dash",
@@ -6806,7 +6806,7 @@
       "isParameterless": true,
       "stampExpression": "\"...\" as const",
       "text": "...",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "else_clause",
@@ -8133,7 +8133,7 @@
       "isParameterless": true,
       "stampExpression": "\"False\" as const",
       "text": "False",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "finally_clause",
@@ -10747,7 +10747,7 @@
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
       "text": "*",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "lambda",
@@ -10994,7 +10994,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\\\\\u0000\" as const",
       "text": "\\\u0000",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "list",
@@ -11866,7 +11866,7 @@
       "isParameterless": true,
       "stampExpression": "\"None\" as const",
       "text": "None",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "nonlocal_keyword",
@@ -11923,7 +11923,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\\\\" as const",
       "text": "\\",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "not_keyword",
@@ -12464,7 +12464,7 @@
       "isParameterless": true,
       "stampExpression": "\"pass\" as const",
       "text": "pass",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "pattern",
@@ -12692,7 +12692,7 @@
       "isParameterless": true,
       "stampExpression": "\"/\" as const",
       "text": "/",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "primary_expression",
@@ -14732,7 +14732,7 @@
       "isParameterless": true,
       "stampExpression": "\"True\" as const",
       "text": "True",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "try_keyword",
@@ -15882,7 +15882,7 @@
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
       "text": "*",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "wildcard_pattern",
@@ -15894,7 +15894,7 @@
       "isParameterless": true,
       "stampExpression": "\"_\" as const",
       "text": "_",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "with_clause",

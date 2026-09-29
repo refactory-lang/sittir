@@ -180,32 +180,32 @@ describe('term sub-factories', () => {
 });
 
 describe('any_character', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.anyCharacter()).toBe(TSKindId.AnyCharacter);
+	it('is the kind id', () => {
+		expect(ir.anyCharacter).toBe(TSKindId.AnyCharacter);
 	});
 });
 
 describe('start_assertion', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.startAssertion()).toBe(TSKindId.StartAssertion);
+	it('is the kind id', () => {
+		expect(ir.startAssertion).toBe(TSKindId.StartAssertion);
 	});
 });
 
 describe('end_assertion', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.endAssertion()).toBe(TSKindId.EndAssertion);
+	it('is the kind id', () => {
+		expect(ir.endAssertion).toBe(TSKindId.EndAssertion);
 	});
 });
 
 describe('boundary_assertion', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.boundaryAssertion()).toBe(TSKindId.BoundaryAssertion);
+	it('is the kind id', () => {
+		expect(ir.boundaryAssertion).toBe(TSKindId.BoundaryAssertion);
 	});
 });
 
 describe('non_boundary_assertion', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.nonBoundaryAssertion()).toBe(TSKindId.NonBoundaryAssertion);
+	it('is the kind id', () => {
+		expect(ir.nonBoundaryAssertion).toBe(TSKindId.NonBoundaryAssertion);
 	});
 });
 

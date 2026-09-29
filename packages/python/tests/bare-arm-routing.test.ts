@@ -6,7 +6,7 @@ const py = await createEngine(python);
 
 describe('bare values on a multi-kind slot route to the one arm that admits them', () => {
 	it('a bare pass statement becomes a simple-statements line of a module', () => {
-		const module = py.build.module({ statements: [py.build.passStatement()] });
+		const module = py.build.module({ statements: [py.build.passStatement] });
 		expect(module.$render()).toBe('pass\n');
 	});
 

@@ -3,24 +3,24 @@ import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 import { Delimiter } from '@sittir/common/utils';
 
-const engine = await createEngine(rust);
+const { build } = await createEngine(rust);
 
 export function rebuildListSeatConfigsRustGenerated() {
-	return engine.build.sourceFile.strict({
-		statements: [engine.build.functionItem.strict({
-			name: engine.build.identifier("main"),
-			parameters: engine.build.parameters.strict(),
-			body: engine.build.block.strict({
-				statements: [engine.build.expressionStatement.withSemi.strict(engine.build.callExpression.strict({
-					function: engine.build.identifier("call"),
-					arguments: engine.build.arguments.strict(engine.build.argumentsElements.strict({ delimiter: Delimiter.None }, {
-						attributeItem: [engine.build.attributeItem.strict(engine.build.attribute.input.strict({
-							path: engine.build.identifier("cfg"),
-							arguments: engine.build.delimTokenTree.paren.strict(engine.build.nonSpecialToken.strict(engine.build.identifier("a"))),
+	return build.sourceFile.strict({
+		statements: [build.functionItem.strict({
+			name: build.identifier("main"),
+			parameters: build.parameters.strict(),
+			body: build.block.strict({
+				statements: [build.expressionStatement.withSemi.strict(build.callExpression.strict({
+					function: build.identifier("call"),
+					arguments: build.arguments.strict(build.argumentsElements.strict({ delimiter: Delimiter.None }, {
+						attributeItem: [build.attributeItem.strict(build.attribute.input.strict({
+							path: build.identifier("cfg"),
+							arguments: build.delimTokenTree.paren.strict(build.nonSpecialToken.strict(build.identifier("a"))),
 						}))],
-						expression: engine.build.identifier("x"),
+						expression: build.identifier("x"),
 					}, {
-						expression: engine.build.identifier("y"),
+						expression: build.identifier("y"),
 					})),
 				}))],
 			}),
