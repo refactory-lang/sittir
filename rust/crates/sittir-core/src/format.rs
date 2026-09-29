@@ -36,37 +36,40 @@ pub fn extract_format(
     })
 }
 
-/// Scan `source` for a dominant indentation pattern.
+/// Infer `source`'s indentation unit from its indent steps and compare it
+/// with `canonical_indent`, the grammar's declared unit.
 ///
-/// Returns `None` when the dominant indentation is `canonical_indent` (the
-/// grammar's declared unit) or when there is no indentation at all —
-/// callers treat that as "already canonical". Otherwise returns the
-/// dominant unit: a tab, four spaces, or two spaces.
+/// A step is the leading whitespace a non-blank line adds on top of the
+/// previous non-blank line's (when it extends it). The most frequent step is
+/// the unit, so nesting depth never votes: a two-space file nested four deep
+/// still steps by two spaces. Returns `None` when the unit is the declared
+/// one, when the source never indents, or when two steps tie; otherwise the
+/// inferred unit, whatever whitespace it is made of.
 fn detect_indent(source: &str, canonical_indent: &str) -> Option<String> {
-    let mut tab_count = 0usize;
-    let mut four_space_count = 0usize;
-    let mut two_space_count = 0usize;
-
+    let mut steps: Vec<(&str, usize)> = Vec::new();
+    let mut previous = "";
     for line in source.lines() {
-        if line.starts_with('\t') {
-            tab_count += 1;
-        } else if line.starts_with("    ") {
-            four_space_count += 1;
-        } else if line.starts_with("  ") {
-            two_space_count += 1;
+        let body = line.trim_start_matches([' ', '\t']);
+        if body.is_empty() {
+            continue;
         }
+        let leading = &line[..line.len() - body.len()];
+        if leading.len() > previous.len() && leading.starts_with(previous) {
+            let step = &leading[previous.len()..];
+            match steps.iter_mut().find(|(s, _)| *s == step) {
+                Some((_, count)) => *count += 1,
+                None => steps.push((step, 1)),
+            }
+        }
+        previous = leading;
     }
-
-    let dominant = if tab_count > four_space_count && tab_count > two_space_count {
-        "\t"
-    } else if four_space_count > two_space_count && four_space_count > tab_count {
-        "    "
-    } else if two_space_count > four_space_count && two_space_count > tab_count {
-        "  "
-    } else {
+    let top = steps.iter().map(|(_, count)| *count).max()?;
+    let mut leaders = steps.iter().filter(|(_, count)| *count == top);
+    let (unit, _) = leaders.next()?;
+    if leaders.next().is_some() {
         return None;
-    };
-    (dominant != canonical_indent).then(|| dominant.to_string())
+    }
+    (*unit != canonical_indent).then(|| unit.to_string())
 }
 
 /// Apply a [`FormatRecord`] to a canonical render string.
@@ -175,6 +178,42 @@ mod tests {
         let tree = parse_rust(source);
 
         assert!(extract_format(source, &tree, "    ").is_none());
+    }
+
+    #[test]
+    fn nesting_depth_never_votes_for_a_wider_unit() {
+        let source = "fn a() {\n  if x {\n    b();\n    c();\n    d();\n  }\n}\n";
+        let tree = parse_rust(source);
+
+        assert!(extract_format(source, &tree, "  ").is_none());
+        let record = extract_format(source, &tree, "    ").expect("a two-space source under a four-space unit");
+        assert_eq!(record.boundary.unwrap().leading, Some("  ".to_string()));
+    }
+
+    #[test]
+    fn a_nested_four_space_source_is_canonical_under_a_four_space_unit() {
+        let source = "fn a() {\n    if x {\n        b();\n        c();\n    }\n}\n";
+        let tree = parse_rust(source);
+
+        assert!(extract_format(source, &tree, "    ").is_none());
+    }
+
+    #[test]
+    fn any_declared_unit_is_recognised() {
+        let source = "fn a() {\n   b();\n   c();\n}\n";
+        let tree = parse_rust(source);
+
+        assert!(extract_format(source, &tree, "   ").is_none());
+        let record = extract_format(source, &tree, "  ").expect("a three-space source under a two-space unit");
+        assert_eq!(record.boundary.unwrap().leading, Some("   ".to_string()));
+    }
+
+    #[test]
+    fn an_unindented_source_is_canonical() {
+        let source = "fn a() {}\nfn b() {}\n";
+        let tree = parse_rust(source);
+
+        assert!(extract_format(source, &tree, "  ").is_none());
     }
 
     // --- apply_format tests ---
