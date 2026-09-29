@@ -336,6 +336,8 @@ export function stamp(node: object, engine: StampEngine): void {
 
 Builders are synchronous, so a module-level ambient engine is safe. `runWithEngine` never wraps an `await`.
 
+The engine's `build` gains its binding in this task: in PR 1 it is `hooks.build` directly, so here it becomes a lazy per-path proxy whose every call (including nested variants) runs inside `runWithEngine(thisEngine, …)`. The stamp is a strong reference, never a `WeakRef`. When Task 6 removes the `methodsEngine` fallback, a node with no stamp throws from `$render`/`$toEdit` with a message naming `engine.render(node)`, and a node whose engine is disposed throws "engine disposed". Pin both, and pin that a coerced child (a string passed where a node is expected) is stamped with the calling engine.
+
 - [ ] **Step 4: Change `withMethods`** in `packages/common/src/utils.ts`: stamp `currentEngine() ?? engine`, and make every method read `engineOf(this) ?? engine`. Wrap the `$with` namespace's calls and the lazy child helper as described above.
 - [ ] **Step 5: Run the new tests and the whole common suite.** `pnpm exec vitest run packages/common`. Expected: all pass.
 - [ ] **Step 6: Regenerate all grammars and run the full gates.** `pnpm run validate:native`, then `pnpm exec vitest run` in its own call. Expected: rows identical and the suite identical to Task 0. Nothing else changes yet, because every node falls back to `methodsEngine`.

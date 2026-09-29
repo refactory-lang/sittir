@@ -213,9 +213,21 @@ interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> {
   coordinates already name that engine's tree.
 - A node's methods read the field: `$render()` is `engine.render(node)`, `$with.*`
   rebuilds through the same engine, and `$trivia` works as today.
+- The engine is found through scope, not through the parent: a child is built before
+  its parent exists. `build.*` calls run inside the engine's scope (a module-level
+  current engine, set for the synchronous call and restored in `finally`), and the
+  generated `build*` functions, which all go through `withMethods`, stamp whatever
+  engine is current. Coerced children therefore get the calling engine with no change to
+  the generated builders. A node built by one engine and passed into another's call
+  keeps its own stamp.
+- The stamp is a strong reference. A `WeakRef` would make `$render` fail whenever the
+  collector happened to reclaim the engine; an engine's lifetime is explicit instead.
+  After `engine.dispose()`, a stamped node's `$render()` and `$toEdit()` throw
+  "engine disposed".
 - The process-wide default engine is retired, along with the free `render`, `toEdit`
-  and `applyEdits` exports and every path that renders without an engine. A node with
-  no engine cannot exist.
+  and `applyEdits` exports and every path that renders without an engine. Through the
+  public surface every node has an engine. A node built by calling internal builders
+  outside any engine has no stamp; its `$render()` throws and names `engine.render(node)`.
 
 ### Projects: many engines, one staged file set
 
