@@ -11,47 +11,50 @@
 
 import { describe, it, expect } from 'vitest';
 import { is, isTree, isNode, assert } from '../src/index.ts';
-import { TSKindId } from '../src/types.ts';
 import type { FunctionItem } from '../src/index.ts';
+import rust from '../src/index.ts';
+import { createEngine } from '@sittir/common';
+
+const rs = await createEngine(rust);
 
 describe('is / isTree / isNode guard composition', () => {
 	it('is.functionItem narrows the $type discriminant to numeric TSKindId', () => {
 		// ADR-0018 Phase 2: no $fields on the interface; use minimal typed object.
-		const v = { $type: TSKindId.FunctionItem } as unknown as FunctionItem;
+		const v = { $type: rs.kinds.FunctionItem } as unknown as FunctionItem;
 		if (!is.functionItem(v)) {
 			throw new Error('is.functionItem should have returned true');
 		}
 		// v.$type is now narrowed to TSKindId.FunctionItem (numeric)
-		expect(v.$type).toBe(TSKindId.FunctionItem);
+		expect(v.$type).toBe(rs.kinds.FunctionItem);
 	});
 
 	it('is.functionItem returns false for non-matching kinds', () => {
-		expect(is.functionItem({ $type: TSKindId.Block })).toBe(false);
-		expect(is.functionItem({ $type: TSKindId.Identifier })).toBe(false);
+		expect(is.functionItem({ $type: rs.kinds.Block })).toBe(false);
+		expect(is.functionItem({ $type: rs.kinds.Identifier })).toBe(false);
 	});
 
 	it('is.kind generic form accepts kind name strings', () => {
 		// is.kind() narrows to { $type: number } broadly (not to a specific literal).
-		expect(is.kind({ $type: TSKindId.FunctionItem }, TSKindId.FunctionItem)).toBe(true);
-		expect(is.kind({ $type: TSKindId.Block }, TSKindId.FunctionItem)).toBe(false);
+		expect(is.kind({ $type: rs.kinds.FunctionItem }, rs.kinds.FunctionItem)).toBe(true);
+		expect(is.kind({ $type: rs.kinds.Block }, rs.kinds.FunctionItem)).toBe(false);
 	});
 
 	it('isNode returns true for NodeData shapes, false for loose bags', () => {
-		expect(isNode({ $type: TSKindId.Identifier, $text: 'foo' } as { readonly $type: number })).toBe(true);
+		expect(isNode({ $type: rs.kinds.Identifier, $text: 'foo' } as { readonly $type: number })).toBe(true);
 		// ADR-0018 Phase 2: isNode checks _<name> keys (de-hoisted storage) OR $text.
 		// Use a _<name> key to signal a branch node shape.
-		expect(isNode({ $type: TSKindId.Block, _name: 'x' } as { readonly $type: number })).toBe(true);
+		expect(isNode({ $type: rs.kinds.Block, _name: 'x' } as { readonly $type: number })).toBe(true);
 		// Loose bag without _<name> keys or $text — looks like a config object.
-		expect(isNode({ $type: TSKindId.FunctionItem })).toBe(false);
+		expect(isNode({ $type: rs.kinds.FunctionItem })).toBe(false);
 	});
 
 	it('isTree returns true only when a range() method is present', () => {
 		const withRange = {
-			$type: TSKindId.FunctionItem,
+			$type: rs.kinds.FunctionItem,
 			range: () => ({ start: { index: 0 }, end: { index: 1 } })
 		};
 		// ADR-0018 Phase 2: $fields removed from interface; any object without range() passes false.
-		const withoutRange = { $type: TSKindId.FunctionItem };
+		const withoutRange = { $type: rs.kinds.FunctionItem };
 		expect(isTree(withRange)).toBe(true);
 		expect(isTree(withoutRange)).toBe(false);
 	});
@@ -59,7 +62,7 @@ describe('is / isTree / isNode guard composition', () => {
 	it('kind × shape composition narrows to NamespaceMap projection', () => {
 		// ADR-0018 Phase 2: no $fields on the interface; use _name key for isNode shape.
 		const v: FunctionItem = {
-			$type: TSKindId.FunctionItem
+			$type: rs.kinds.FunctionItem
 		} as unknown as FunctionItem;
 		if (is.functionItem(v) && isNode(v)) {
 			// Runtime path executes — structural narrowing via isNode verified.
@@ -70,18 +73,18 @@ describe('is / isTree / isNode guard composition', () => {
 
 describe('assert throw behavior', () => {
 	it('assert.functionItem throws TypeError with expected+actual on mismatch', () => {
-		expect(() => assert.functionItem({ $type: TSKindId.Block })).toThrow(TypeError);
-		expect(() => assert.functionItem({ $type: TSKindId.Block })).toThrow(
+		expect(() => assert.functionItem({ $type: rs.kinds.Block })).toThrow(TypeError);
+		expect(() => assert.functionItem({ $type: rs.kinds.Block })).toThrow(
 			/assert\.functionItem: expected type 'functionItem', got/
 		);
 	});
 
 	it('assert.functionItem passes silently on matching kind', () => {
-		expect(() => assert.functionItem({ $type: TSKindId.FunctionItem })).not.toThrow();
+		expect(() => assert.functionItem({ $type: rs.kinds.FunctionItem })).not.toThrow();
 	});
 
 	it('assert.kind throws with kind name in message', () => {
-		expect(() => assert.kind({ $type: TSKindId.Block }, TSKindId.FunctionItem)).toThrow(TypeError);
+		expect(() => assert.kind({ $type: rs.kinds.Block }, rs.kinds.FunctionItem)).toThrow(TypeError);
 	});
 });
 
@@ -92,7 +95,7 @@ describe('assert throw behavior', () => {
 describe('Phase D: numeric-only $type guards', () => {
 	it('per-kind guard accepts numeric $type from factory output', () => {
 		const node = {
-			$type: TSKindId.FunctionItem,
+			$type: rs.kinds.FunctionItem,
 			$source: 2,
 			$named: true,
 			$fields: {}
@@ -112,7 +115,7 @@ describe('Phase D: numeric-only $type guards', () => {
 
 	it('per-kind guard rejects mismatched numeric $type', () => {
 		const node = {
-			$type: TSKindId.Block,
+			$type: rs.kinds.Block,
 			$source: 2,
 			$named: true,
 			$fields: {}
@@ -122,12 +125,12 @@ describe('Phase D: numeric-only $type guards', () => {
 
 	it('is.kind() accepts numeric $type from factory output', () => {
 		const node = {
-			$type: TSKindId.FunctionItem,
+			$type: rs.kinds.FunctionItem,
 			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;
-		expect(is.kind(node, TSKindId.FunctionItem)).toBe(true);
+		expect(is.kind(node, rs.kinds.FunctionItem)).toBe(true);
 	});
 
 	it('is.kind() rejects string $type (Phase D — string arm removed)', () => {
@@ -137,23 +140,23 @@ describe('Phase D: numeric-only $type guards', () => {
 			$named: true,
 			$fields: {}
 		} as unknown as { readonly $type: string | number };
-		expect(is.kind(node as { readonly $type: number }, TSKindId.FunctionItem)).toBe(false);
+		expect(is.kind(node as { readonly $type: number }, rs.kinds.FunctionItem)).toBe(false);
 	});
 
 	it('is.kind() rejects mismatched numeric $type', () => {
 		const node = {
-			$type: TSKindId.Block,
+			$type: rs.kinds.Block,
 			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;
-		expect(is.kind(node, TSKindId.FunctionItem)).toBe(false);
+		expect(is.kind(node, rs.kinds.FunctionItem)).toBe(false);
 	});
 
 	it('supertype guard accepts numeric $type member from factory', () => {
 		// `expression` is a supertype; `binary_expression` is a member kind.
 		const node = {
-			$type: TSKindId.BinaryExpression,
+			$type: rs.kinds.BinaryExpression,
 			$source: 2,
 			$named: true,
 			$fields: {}
@@ -175,7 +178,7 @@ describe('Phase D: numeric-only $type guards', () => {
 
 	it('assert.functionItem passes on numeric $type from factory', () => {
 		const node = {
-			$type: TSKindId.FunctionItem,
+			$type: rs.kinds.FunctionItem,
 			$source: 2,
 			$named: true,
 			$fields: {}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { projectInterior } from '@sittir/common';
+import { projectInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from '../src/consts.ts';
 
 describe('token interior projection: slots match left to right, each greedy', () => {

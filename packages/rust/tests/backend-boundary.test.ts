@@ -1,10 +1,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RENDER_MODULE_HASH } from '../src/hash.ts';
-import { TSKindId } from '../src/types.ts';
+import rust from '../src/index.ts';
+import { createEngine } from '@sittir/common';
+
+const rs = await createEngine(rust);
 
 // Phase B: $type is a numeric TSKindId (not a string) on the native wire.
 const identifier = {
-	$type: TSKindId.Identifier,
+	$type: rs.kinds.Identifier,
 	$source: 2,
 	$named: true,
 	$text: 'x'
@@ -77,10 +80,10 @@ describe('boundary', () => {
 		const { render } = await import('../src/boundary.ts');
 		// Phase B: $type is numeric on the wire; TSKindId.Identifier = 1
 		// $source is numeric: 2 = factory
-		expect(render(identifier)).toBe(`ok:${TSKindId.Identifier}`);
+		expect(render(identifier)).toBe(`ok:${rs.kinds.Identifier}`);
 		expect(renderSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
-				$type: TSKindId.Identifier,
+				$type: rs.kinds.Identifier,
 				$source: 2,
 				$named: true,
 				$text: 'x'
@@ -114,20 +117,20 @@ describe('boundary', () => {
 		const { render } = await import('../src/boundary.ts');
 		// Phase D: $type must be numeric (TSKindId). String coexistence removed.
 		const rawSourceFile = {
-			$type: TSKindId.SourceFile,
+			$type: rs.kinds.SourceFile,
 			$source: 0,
 			$named: true,
-			_statements: [{ $type: TSKindId.EmptyStatement, $source: 0, $named: true, $text: ';' }]
+			_statements: [{ $type: rs.kinds.EmptyStatement, $source: 0, $named: true, $text: ';' }]
 		} as const;
 
 		// $type is TSKindId.SourceFile (157). Children carry TSKindId.EmptyStatement.
-		expect(render(rawSourceFile)).toBe(`ok:${TSKindId.SourceFile}`);
+		expect(render(rawSourceFile)).toBe(`ok:${rs.kinds.SourceFile}`);
 		expect(renderSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
-				$type: TSKindId.SourceFile,
+				$type: rs.kinds.SourceFile,
 				_statements: [
 					expect.objectContaining({
-						$type: TSKindId.EmptyStatement,
+						$type: rs.kinds.EmptyStatement,
 						$text: ';'
 					})
 				]
@@ -164,19 +167,19 @@ describe('boundary', () => {
 		const { render } = await import('../src/boundary.ts');
 		// Phase D: $type must be numeric (TSKindId). String coexistence removed.
 		const rawArrayExpression = {
-			$type: TSKindId.ArrayExpression,
+			$type: rs.kinds.ArrayExpression,
 			$source: 0,
 			$named: true,
 			_content: {
 				// array_expression_list aliases to _array_expression_list → TSKindId.ArrayExpressionList
-				$type: TSKindId.ArrayExpressionList,
+				$type: rs.kinds.ArrayExpressionList,
 				$source: 0,
 				$named: true,
 				_elements: [identifier]
 			}
 		} as const;
 
-		expect(render(rawArrayExpression)).toBe(`ok:${TSKindId.ArrayExpression}`);
+		expect(render(rawArrayExpression)).toBe(`ok:${rs.kinds.ArrayExpression}`);
 		// Passed straight through — no $variant tag, no restructuring.
 		expect(renderSpy).toHaveBeenCalledWith(rawArrayExpression);
 	});
@@ -196,7 +199,7 @@ describe('boundary', () => {
 		);
 		const { render } = await import('../src/boundary.ts');
 		const invalidNode = {
-			$type: TSKindId.Arguments,
+			$type: rs.kinds.Arguments,
 			$source: 2,
 			$named: true,
 			$children: [identifier, 'oops']
@@ -248,20 +251,16 @@ describe('boundary', () => {
 			}
 		);
 
-		// Engine created with read support
-		const { createEngine } = await import('../src/engine.ts');
-		const engine = createEngine({ format: { boundary: { leading: '\t' } } });
+		const { createEngine } = await import('@sittir/common');
+		const descriptor = (await import('../src/index.ts')).default;
+		const engine = await createEngine(descriptor, { format: { boundary: { leading: '\t' } } });
 		// engine.render() returns a RenderHandle ({ save, print, toString }),
-		// not a raw string — boundary.ts's own render() calls .toString() on
-		// this same return value (packages/rust/src/boundary.ts:29). This
-		// test calls the lower-level engine API directly, so it must do the
-		// same unwrap.
-		expect(engine.render(identifier).toString()).toBe('\tx');
+		// not a raw string, so the text is its toString().
+		expect(engine.render(engine.build.identifier('x')).toString()).toBe('\tx');
 		expect(renderSpy).toHaveBeenCalledTimes(1);
 
-		// Diagnostics reads are always available on a native engine
-		expect(engine.diagnostics).toBeDefined();
-		const { root } = engine.diagnostics.parseAndRead('x');
+		// The native engine behind the descriptor reads raw node data
+		const { root } = (await descriptor.load()).createNative().parseAndRead('x');
 		expect(root).toEqual(identifier);
 	});
 

@@ -2,31 +2,34 @@
 // block's arms take their required last arm, an absent group is the
 // no-argument call, and a list seat takes an array.
 import { describe, expect, it } from 'vitest';
-import { ir } from '../src/index.ts';
+import rust from '../src/index.ts';
+import { createEngine } from '@sittir/common';
+
+const rs = await createEngine(rust);
 
 const arm = () =>
-	ir.matchArm.blockEnding.strict({
-		pattern: ir.matchPattern.strict({ pattern: ir.identifier('x') }),
-		value: ir.block.strict({})
+	rs.build.matchArm.blockEnding.strict({
+		pattern: rs.build.matchPattern.strict({ pattern: rs.build.identifier('x') }),
+		value: rs.build.block.strict({})
 	});
 const last = () =>
-	ir.lastMatchArm.strict({
-		pattern: ir.matchPattern.strict({ pattern: ir.identifier('y') }),
-		value: ir.identifier('z')
+	rs.build.lastMatchArm.strict({
+		pattern: rs.build.matchPattern.strict({ pattern: rs.build.identifier('y') }),
+		value: rs.build.identifier('z')
 	});
 
 describe('a group flattened into the parent config', () => {
 	it('renders with its arms and renders empty without the group', () => {
-		expect(ir.matchBlock.strict({ matchArm: [arm()], lastArm: last() }).$render()).toBe(
+		expect(rs.build.matchBlock.strict({ matchArm: [arm()], lastArm: last() }).$render()).toBe(
 			'{\n    x => {}\n    y => z\n}'
 		);
-		expect(ir.matchBlock.strict().$render()).toBe('{}');
+		expect(rs.build.matchBlock.strict().$render()).toBe('{}');
 	});
 	it('refuses a partial group and a lone node where the seat takes an array', () => {
 		// @ts-expect-error the group's last arm is required once the group is given
-		const partial = () => ir.matchBlock.strict({ matchArm: [arm()] });
+		const partial = () => rs.build.matchBlock.strict({ matchArm: [arm()] });
 		const lone = () =>
-			ir.matchBlock.strict({
+			rs.build.matchBlock.strict({
 				// @ts-expect-error a list seat takes an array
 				matchArm: arm(),
 				lastArm: last()

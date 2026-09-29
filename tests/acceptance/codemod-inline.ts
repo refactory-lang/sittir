@@ -5,9 +5,8 @@
  * (≤5-line) `function_item` whose attribute list does not already
  * contain `#[inline]`, and inserts `#[inline]\n` before the function.
  *
- * Goes through `@sittir/rust`'s public surface — specifically the
- * `applyEdits` boundary shim from `boundary.ts` — so the active
- * backend chosen by `getActiveBackend()` is exercised on every run.
+ * Applies its edits through the rust language engine's `applyEdits`
+ * (`createEngine(rust)`), so the native backend is exercised on every run.
  *
  * Tree traversal uses web-tree-sitter (the same parser the codegen
  * validators run on), so the codemod is portable across native /
@@ -18,8 +17,11 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadLanguageForGrammar } from '../../packages/tools/src/validate/common.ts';
-import { applyEdits } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
 import type { Edit } from '@sittir/types';
+
+const rs = await createEngine(rust);
 
 /** A function_item match marked for inlining. */
 interface InlineMatch {
@@ -63,7 +65,7 @@ export async function runCodemodOnSource(source: string): Promise<{ output: stri
 		endPos: m.startByte,
 		insertedText: `#[inline]\n${m.indent}`
 	}));
-	return { output: applyEdits(source, edits), insertions: edits.length };
+	return { output: rs.applyEdits(source, edits), insertions: edits.length };
 }
 
 /**

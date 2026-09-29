@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { createEngine } from '../src/index.ts';
-import { TSKindId } from '../src/types.ts';
+import python from '../src/index.ts';
+import { createEngine } from '@sittir/common';
+
+const py = await createEngine(python);
 
 type Leaf = { $text: string };
 type ComplexPattern = {
@@ -13,7 +15,7 @@ type ComplexPattern = {
 };
 
 function readComplexPattern(pattern: string): ComplexPattern {
-	const module = createEngine().parse(`match x:\n    case ${pattern}:\n        pass\n`) as unknown as {
+	const module = py.parse(`match x:\n    case ${pattern}:\n        pass\n`) as unknown as {
 		statements(): readonly {
 			body(): {
 				content(): {
@@ -30,10 +32,10 @@ function readComplexPattern(pattern: string): ComplexPattern {
 describe('complex_pattern names its parts', () => {
 	it('reads 1+2j as real 1, imaginary 2j, no sign', () => {
 		const node = readComplexPattern('1+2j');
-		expect(node.$type).toBe(TSKindId.ComplexPattern);
+		expect(node.$type).toBe(py.kinds.ComplexPattern);
 		expect(node.sign()).toBeUndefined();
 		expect(node.real().$text).toBe('1');
-		expect(node.operator()).toBe(TSKindId.Plus);
+		expect(node.operator()).toBe(py.kinds.Plus);
 		expect(node.imaginary().$text).toBe('2j');
 		expect(node.$render()).toBe('1+2j');
 	});
@@ -42,7 +44,7 @@ describe('complex_pattern names its parts', () => {
 		const node = readComplexPattern('-1-2j');
 		expect(node.sign()).toBe(true);
 		expect(node.real().$text).toBe('1');
-		expect(node.operator()).toBe(TSKindId.Dash);
+		expect(node.operator()).toBe(py.kinds.Dash);
 		expect(node.imaginary().$text).toBe('2j');
 		expect(node.$render()).toBe('-1-2j');
 	});

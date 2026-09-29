@@ -30,10 +30,13 @@ const generatedRebuild = (file: string, exportName: string) => async (): Promise
 };
 const rebuildSpliceGenerated = generatedRebuild('17-dogfood-rust.generated.ts', 'rebuildSpliceGenerated');
 const rebuildSpliceLoose = generatedRebuild('17-dogfood-rust-loose.generated.ts', 'rebuildSpliceLoose');
-import { createEngine, ir } from '@sittir/rust';
 import { writeFileSync, mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import rust from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+
+const rs = await createEngine(rust);
 
 describe('examples/01 construct nodes', () => {
 	it('explicit strict construction renders a pub main', () => {
@@ -123,17 +126,17 @@ describe('dogfoodContract helper', () => {
 		const dir = mkdtempSync(join(tmpdir(), 'sittir-dogfood-'));
 		const target = join(dir, 'main.rs');
 		writeFileSync(target, 'pub fn main() { }\n');
-		const rebuilt = ir.sourceFile({
+		const rebuilt = rs.build.sourceFile({
 			statements: [
-				ir.functionItem({
+				rs.build.functionItem({
 					visibilityModifier: 'pub',
 					name: 'main',
-					parameters: ir.parameters.strict(),
-					body: ir.block.strict()
+					parameters: rs.build.parameters.strict(),
+					body: rs.build.block.strict()
 				})
 			]
 		});
-		const result = dogfoodContract(createEngine(), rebuilt, target);
+		const result = dogfoodContract(rs, rebuilt, target);
 		expect(result.reparsesEqual).toBe(true);
 		expect(result.sameModuloWhitespace).toBe(true);
 		expect(result.firstDifference).toBeUndefined();
@@ -142,13 +145,13 @@ describe('dogfoodContract helper', () => {
 		const dir = mkdtempSync(join(tmpdir(), 'sittir-dogfood-'));
 		const target = join(dir, 'main.rs');
 		writeFileSync(target, 'pub fn other() { }\n');
-		const rebuilt = ir.functionItem({
+		const rebuilt = rs.build.functionItem({
 			visibilityModifier: 'pub',
 			name: 'main',
-			parameters: ir.parameters.strict(),
-			body: ir.block.strict()
+			parameters: rs.build.parameters.strict(),
+			body: rs.build.block.strict()
 		});
-		const result = dogfoodContract(createEngine(), rebuilt, target);
+		const result = dogfoodContract(rs, rebuilt, target);
 		expect(result.sameModuloWhitespace).toBe(false);
 		expect(result.firstDifference).toContain('other');
 	});
@@ -156,19 +159,19 @@ describe('dogfoodContract helper', () => {
 
 describe('structuralShape trivia handling', () => {
 	it("keeps a bare leaf's $text alongside its $_trivia", () => {
-		const leaf = ir.synonym.identifier('main').$trivia(ir.lineComment.regular('c'));
+		const leaf = rs.build.synonym.identifier('main').$trivia(rs.build.lineComment.regular('c'));
 		const shape = structuralShape(leaf) as Record<string, unknown>;
 		expect(shape.$text).toBe('main');
 		expect(shape.$_trivia).toBeDefined();
 	});
 	it('differs when only the comment text differs', () => {
-		const alpha = ir.synonym.identifier('main').$trivia(ir.lineComment.regular('alpha'));
-		const beta = ir.synonym.identifier('main').$trivia(ir.lineComment.regular('beta'));
+		const alpha = rs.build.synonym.identifier('main').$trivia(rs.build.lineComment.regular('alpha'));
+		const beta = rs.build.synonym.identifier('main').$trivia(rs.build.lineComment.regular('beta'));
 		expect(JSON.stringify(structuralShape(alpha))).not.toBe(JSON.stringify(structuralShape(beta)));
 	});
 	it('differs when the same comment is leading vs. trailing', () => {
-		const leading = ir.synonym.identifier('main').$trivia({ leading: [ir.lineComment.regular('c')] });
-		const trailing = ir.synonym.identifier('main').$trivia({ trailing: [ir.lineComment.regular('c')] });
+		const leading = rs.build.synonym.identifier('main').$trivia({ leading: [rs.build.lineComment.regular('c')] });
+		const trailing = rs.build.synonym.identifier('main').$trivia({ trailing: [rs.build.lineComment.regular('c')] });
 		expect(JSON.stringify(structuralShape(leading))).not.toBe(JSON.stringify(structuralShape(trailing)));
 	});
 });
@@ -177,16 +180,16 @@ describe('structuralShape trivia handling', () => {
 // parent names the form, the arm keeps no top-level builder of its own.
 describe('namespaced constructors reach the arm kinds', () => {
 	it('builds both doc-comment forms through line_comment', () => {
-		expect(ir.lineComment.docOuter(' hi').$render()).toBe('/// hi\n');
-		expect(ir.lineComment.docInner(' hi').$render()).toBe('//! hi\n');
+		expect(rs.build.lineComment.docOuter(' hi').$render()).toBe('/// hi\n');
+		expect(rs.build.lineComment.docInner(' hi').$render()).toBe('//! hi\n');
 	});
 	// `///` and `//!` are alternatives, so each is its own arm kind carrying
 	// only the doc text. Were they one kind with the markers as two optional
 	// fields, a caller could set both — `///!` — or neither, which renders a
 	// doc-comment kind as a plain `//` comment.
 	it('carries the marker as the arm identity, not as a settable field', () => {
-		const outer = ir.lineComment.docOuter(' hi').content();
-		const inner = ir.lineComment.docInner(' hi').content();
+		const outer = rs.build.lineComment.docOuter(' hi').content();
+		const inner = rs.build.lineComment.docInner(' hi').content();
 
 		expect(outer.$type).not.toBe(inner.$type);
 		for (const arm of [outer, inner]) {
@@ -195,24 +198,24 @@ describe('namespaced constructors reach the arm kinds', () => {
 		}
 	});
 	it('builds a plain line comment through the same parent', () => {
-		expect(ir.lineComment.regular(' hi').$render()).toBe('// hi\n');
+		expect(rs.build.lineComment.regular(' hi').$render()).toBe('// hi\n');
 	});
 	it('builds a semicolon-terminated expression statement', () => {
-		expect(ir.expressionStatement.withSemi(ir.identifier('x')).$render()).toBe('x;');
+		expect(rs.build.expressionStatement.withSemi(rs.build.identifier('x')).$render()).toBe('x;');
 	});
 	// A variant minted inside another variant's rule is spelled inside it: the
 	// caller types each authored form name, under the arm that reaches it.
 	it('reaches an in-path visibility modifier under the arm it nests in', () => {
-		const path = ir.scopedIdentifier({ path: ir.crate(), name: ir.identifier('x') });
-		expect(ir.visibilityModifier.pub.scope.inPath.strict(path).$render()).toBe('pub(in crate::x)');
-		expect(ir.visibilityModifier.pub.scope.self.strict().$render()).toBe('pub(self)');
+		const path = rs.build.scopedIdentifier({ path: rs.build.crate(), name: rs.build.identifier('x') });
+		expect(rs.build.visibilityModifier.pub.scope.inPath.strict(path).$render()).toBe('pub(in crate::x)');
+		expect(rs.build.visibilityModifier.pub.scope.self.strict().$render()).toBe('pub(self)');
 	});
 	// `crate` names both `visibility_modifier`'s own arm and the arm under
 	// `pub.scope`; each sits under the arm that reaches it, so neither claims
 	// the other's name.
 	it('keeps a direct arm and a nested arm of the same name apart', () => {
-		expect(ir.visibilityModifier.crate().$render()).toBe('crate');
-		expect(ir.visibilityModifier.pub.scope.crate().$render()).toBe('pub(crate)');
+		expect(rs.build.visibilityModifier.crate().$render()).toBe('crate');
+		expect(rs.build.visibilityModifier.pub.scope.crate().$render()).toBe('pub(crate)');
 	});
 });
 
@@ -227,7 +230,7 @@ describe('ir entry ratchet', () => {
 		// aliased pattern leaves — stringOpen, rawStringLiteralStart /
 		// End, the comment-content patterns — are on the surface; the
 		// enum-of-literals leaves are not, their values being kind ids.)
-		const builders = Object.keys(ir).filter((k) => typeof (ir as Record<string, unknown>)[k] === 'function');
+		const builders = Object.keys(rs.build).filter((k) => typeof (rs.build as Record<string, unknown>)[k] === 'function');
 		expect(builders.length).toBeLessThanOrEqual(179);
 	});
 });
@@ -249,7 +252,7 @@ describe('examples/17 generated rebuild (splice.rs)', () => {
 		expect((await rebuildSpliceGenerated()).$render()).toContain('pub enum SpliceError');
 	});
 	it('re-parses to the same tree as the real file and matches it modulo whitespace', async () => {
-		const result = dogfoodContract(createEngine(), await rebuildSpliceGenerated(), target);
+		const result = dogfoodContract(rs, await rebuildSpliceGenerated(), target);
 		expect(result.reparsesEqual).toBe(true);
 		expect(result.sameModuloWhitespace).toBe(true);
 	});
@@ -264,7 +267,7 @@ describe('examples/17 loose rebuild (splice.rs)', () => {
 		expect((await rebuildSpliceLoose()).$render()).toContain('pub enum SpliceError');
 	});
 	it('re-parses to the same tree as the real file and matches it modulo whitespace', async () => {
-		const result = dogfoodContract(createEngine(), await rebuildSpliceLoose(), target);
+		const result = dogfoodContract(rs, await rebuildSpliceLoose(), target);
 		expect(result.reparsesEqual).toBe(true);
 		expect(result.sameModuloWhitespace).toBe(true);
 	});

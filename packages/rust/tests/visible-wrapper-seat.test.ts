@@ -1,35 +1,38 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { ir } from '../src/index.ts';
+import rust from '../src/index.ts';
+import { createEngine } from '@sittir/common';
+
+const rs = await createEngine(rust);
 
 const structPattern = { kind: 'struct_pattern', type: 'T' } as const;
 
 describe('a visible wrapper seated on its parent', () => {
 	it('takes the wrapped pattern where the arm takes the wrapper', () => {
-		expect(ir.matchArm.withComma({ pattern: structPattern, value: ir.block({}) }).$render()).toBe('T {} => {},');
-		expect(ir.matchArm.blockEnding({ pattern: structPattern, value: ir.block({}) }).$render()).toBe('T {} => {}');
-		expect(ir.lastMatchArm({ pattern: structPattern, value: ir.block({}) }).$render()).toBe('T {} => {}');
+		expect(rs.build.matchArm.withComma({ pattern: structPattern, value: rs.build.block({}) }).$render()).toBe('T {} => {},');
+		expect(rs.build.matchArm.blockEnding({ pattern: structPattern, value: rs.build.block({}) }).$render()).toBe('T {} => {}');
+		expect(rs.build.lastMatchArm({ pattern: structPattern, value: rs.build.block({}) }).$render()).toBe('T {} => {}');
 	});
 
 	it('takes the wrapper own condition beside the pattern', () => {
-		expect(ir.matchArm.withComma({ pattern: 'x', condition: ir.identifier('c'), value: ir.block({}) }).$render()).toBe(
+		expect(rs.build.matchArm.withComma({ pattern: 'x', condition: rs.build.identifier('c'), value: rs.build.block({}) }).$render()).toBe(
 			'x if c => {},'
 		);
 	});
 
 	it('builds the strict spelling', () => {
-		const arm = ir.matchArm.withComma.strict({
-			pattern: ir.structPattern.strict({ type: ir.identifier('T') }),
-			value: ir.block.strict({})
+		const arm = rs.build.matchArm.withComma.strict({
+			pattern: rs.build.structPattern.strict({ type: rs.build.identifier('T') }),
+			value: rs.build.block.strict({})
 		});
 		expect(arm.$render()).toBe('T {} => {},');
 	});
 
 	it('still builds the hand-spelled wrapper, as a config and as a built node', () => {
-		const config = ir.matchArm.withComma({ pattern: { pattern: structPattern }, value: ir.block({}) });
-		const built = ir.matchArm.withComma.strict({
-			pattern: ir.matchPattern.strict({ pattern: ir.structPattern.strict({ type: ir.identifier('T') }) }),
-			value: ir.block.strict({})
+		const config = rs.build.matchArm.withComma({ pattern: { pattern: structPattern }, value: rs.build.block({}) });
+		const built = rs.build.matchArm.withComma.strict({
+			pattern: rs.build.matchPattern.strict({ pattern: rs.build.structPattern.strict({ type: rs.build.identifier('T') }) }),
+			value: rs.build.block.strict({})
 		});
 		expect(config.$render()).toBe('T {} => {},');
 		expect(built.$render()).toBe('T {} => {},');

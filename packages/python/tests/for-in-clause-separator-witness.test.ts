@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { createEngine } from '@sittir/python';
+import python from '@sittir/python';
+
+const pyNative = (await python.load()).createNative();
 
 function stripText(node: unknown): unknown {
 	if (Array.isArray(node)) return node.map(stripText);
@@ -17,8 +19,7 @@ const SOURCE = '[a for a in lambda: True, lambda: False if a()]';
 
 describe('for_in_clause right side — a $text-stripped rebuild of a bare-tuple iterable', () => {
 	it('reads the five-level chain to the list comprehension', () => {
-		const engine = createEngine();
-		const { root } = engine.diagnostics.parseAndRead(SOURCE, { deep: true });
+		const { root } = pyNative.parseAndRead(SOURCE, { deep: true });
 		const statements = (root as unknown as { _statements: unknown })._statements;
 		expect(statements).toBeDefined();
 		const elements = (statements as { _simple_statements_elements: unknown })._simple_statements_elements;
@@ -30,14 +31,13 @@ describe('for_in_clause right side — a $text-stripped rebuild of a bare-tuple 
 	});
 
 	it('renders a deep $text-stripped rebuild of a bare-tuple iterable back to its source', () => {
-			const engine = createEngine();
-			const { root } = engine.diagnostics.parseAndRead(SOURCE, { deep: true });
+			const { root } = pyNative.parseAndRead(SOURCE, { deep: true });
 			const listComprehension = (
 				root as unknown as {
 					_statements: { _simple_statements_elements: { _simple_statement: { _content: unknown } } };
 				}
 			)._statements._simple_statements_elements._simple_statement._content;
-			const rendered = engine.render(stripText(listComprehension) as never).toString();
+			const rendered = pyNative.render(stripText(listComprehension) as never).toString();
 			expect(rendered).toBe(SOURCE);
 	});
 });

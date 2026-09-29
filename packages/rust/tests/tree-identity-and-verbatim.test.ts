@@ -16,7 +16,8 @@
 import { createNativeEngine } from '@sittir/common/engine';
 import { describe, expect, it } from 'vitest';
 import { getActiveBackend } from '../src/backend.js';
-import { createEngine } from '../src/engine.js';
+import { createEngine } from '@sittir/common';
+import rust from '../src/index.ts';
 
 /** A statement's rendered text — undefined for a keyword statement stored as
  *  its kind id, which has nothing to drill into. */
@@ -26,8 +27,8 @@ const render = (statement: unknown): string | undefined =>
 		: undefined;
 
 describe('tree identity across parses', () => {
-	it('keeps an earlier root bound to its own source after a later parse', () => {
-		const engine = createEngine();
+	it('keeps an earlier root bound to its own source after a later parse', async () => {
+		const engine = await createEngine(rust);
 		const first = engine.parse('fn alpha_one() { let x = 1; }');
 		const second = engine.parse('mod beta_two { struct S; }');
 
@@ -41,8 +42,8 @@ describe('tree identity across parses', () => {
 		expect(render(secondStatements?.[0])).toContain('beta_two');
 	});
 
-	it('keeps a root usable when it is first touched only after later parses', () => {
-		const engine = createEngine();
+	it('keeps a root usable when it is first touched only after later parses', async () => {
+		const engine = await createEngine(rust);
 		const held = engine.parse('fn gamma_three() { let y = 2; }');
 		engine.parse('fn delta_four() {}');
 		engine.parse('fn epsilon_five() {}');
@@ -50,8 +51,8 @@ describe('tree identity across parses', () => {
 		expect(render(held.statements()?.[0])).toContain('gamma_three');
 	});
 
-	it('interleaves reads across two live trees', () => {
-		const engine = createEngine();
+	it('interleaves reads across two live trees', async () => {
+		const engine = await createEngine(rust);
 		const a = engine.parse('fn a_one() {}');
 		const b = engine.parse('fn b_two() {}');
 
@@ -79,16 +80,16 @@ describe('untouched parses render verbatim', () => {
 	];
 
 	for (const source of VERBATIM) {
-		it(`round-trips ${JSON.stringify(source)} byte for byte`, () => {
-			const engine = createEngine();
+		it(`round-trips ${JSON.stringify(source)} byte for byte`, async () => {
+			const engine = await createEngine(rust);
 			expect(engine.parse(source).$render()).toBe(source);
 		});
 	}
 
-	it('spans the whole file on the root, including leading trivia', () => {
-		const engine = createEngine();
+	it('spans the whole file on the root, including leading trivia', async () => {
+		const native = (await rust.load()).createNative();
 		const source = '\n\n  fn a() {}\n';
-		const { root, tree } = engine.diagnostics.parseAndRead(source);
+		const { root, tree } = native.parseAndRead(source) as { root: { $span: unknown }; tree: { source: string } };
 
 		expect(root.$span).toEqual({ start: 0, end: source.length });
 		expect(tree.source).toBe(source);
@@ -105,7 +106,7 @@ describe('parsed trees are released', () => {
 		return status.name === 'native' ? new status.native.SittirEngine() : null;
 	}
 
-	it('holds one tree per parse and drops them on request', () => {
+	it('holds one tree per parse and drops them on request', async () => {
 		const native = nativeEngine();
 		if (!native) return;
 
@@ -125,7 +126,7 @@ describe('parsed trees are released', () => {
 		expect(native.liveTreeCount).toBe(0);
 	});
 
-	it('ignores a nonsense tree id rather than dropping the first tree', () => {
+	it('ignores a nonsense tree id rather than dropping the first tree', async () => {
 		const native = nativeEngine();
 		if (!native) return;
 

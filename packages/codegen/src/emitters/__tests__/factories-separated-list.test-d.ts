@@ -11,19 +11,22 @@
  */
 import { describe, it, expectTypeOf } from 'vitest';
 import { Delimiter } from '@sittir/common/utils';
-import { ir } from '../../../../rust/src/index.ts';
+import rust from '../../../../rust/src/index.ts';
+import { createEngine } from '@sittir/common';
+
+const rs = await createEngine(rust);
 
 describe('an envelope forwarding to a repeat1 separated list rejects options-only', () => {
 	it('accepts (options, ...elements) and bare elements-only calls', () => {
-		const a = ir.identifier('a');
-		const b = ir.identifier('b');
-		expectTypeOf(ir.arguments.strict({ delimiter: Delimiter.Trailing }, a, b)).not.toBeNever();
-		expectTypeOf(ir.arguments.strict(a, b)).not.toBeNever();
+		const a = rs.build.identifier('a');
+		const b = rs.build.identifier('b');
+		expectTypeOf(rs.build.arguments.strict({ delimiter: Delimiter.Trailing }, a, b)).not.toBeNever();
+		expectTypeOf(rs.build.arguments.strict(a, b)).not.toBeNever();
 	});
 
 	it('rejects an options-only call — no elements to satisfy the NonEmptyArray tail', () => {
 		// @ts-expect-error — options-only has no elements; every overload of
 		// the envelope's forwarded repeat1 constructor requires at least one
-		ir.arguments.strict({ delimiter: Delimiter.Trailing });
+		rs.build.arguments.strict({ delimiter: Delimiter.Trailing });
 	});
 });

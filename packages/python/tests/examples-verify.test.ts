@@ -1,10 +1,13 @@
 // Runtime verification of the Python use-case examples against the native
 // engine: every export executes and produces what the guide promises.
 import { describe, expect, it } from 'vitest';
-import { createEngine, ir } from '@sittir/python';
 import { dogfoodContract } from '../../../examples/helpers.ts';
 import { rebuildProbeSweepStrict, callStatementStrict } from '../../../examples/19-dogfood-python-strict.ts';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import python from '@sittir/python';
+import { createEngine } from '@sittir/common';
+
+const py = await createEngine(python);
 
 // The generated rebuild is loaded by a computed path so tsc does not follow
 // it: its type errors are counted under examples/generated-typecheck-ceiling.json,
@@ -32,7 +35,7 @@ describe('ir entry ratchet', () => {
 	it('exposes no more top-level builders than the recorded ceiling', () => {
 		// Grouped namespaces and `synonym` are objects, not builders — the
 		// ratchet tracks builder exposure, so only callable entries count.
-		const builders = Object.keys(ir).filter((k) => typeof (ir as Record<string, unknown>)[k] === 'function');
+		const builders = Object.keys(py.build).filter((k) => typeof (py.build as Record<string, unknown>)[k] === 'function');
 		expect(builders.length).toBeLessThanOrEqual(157);
 	});
 });
@@ -46,7 +49,7 @@ describe('examples/19 generated rebuild (python-4space.py)', () => {
 		expect((await rebuildPython4spaceGenerated()).$render()).toContain('def ');
 	});
 	it('re-parses to the same tree as the real file', async () => {
-		expect(dogfoodContract(createEngine(), await rebuildPython4spaceGenerated(), target).reparsesEqual).toBe(true);
+		expect(dogfoodContract(py, await rebuildPython4spaceGenerated(), target).reparsesEqual).toBe(true);
 	});
 });
 
@@ -58,6 +61,6 @@ describe('examples/19 loose rebuild (python-4space.py)', () => {
 		expect((await rebuildPython4spaceLoose()).$render()).toContain('def ');
 	});
 	it('re-parses to the same tree as the real file', async () => {
-		expect(dogfoodContract(createEngine(), await rebuildPython4spaceLoose(), target).reparsesEqual).toBe(true);
+		expect(dogfoodContract(py, await rebuildPython4spaceLoose(), target).reparsesEqual).toBe(true);
 	});
 });

@@ -9,25 +9,28 @@
 
 import { describe, it, expect } from 'vitest';
 import { is, isNode, isTree, assert } from '../src/index.ts';
-import { TSKindId } from '../src/types.ts';
+import python from '../src/index.ts';
+import { createEngine } from '@sittir/common';
+
+const py = await createEngine(python);
 
 describe('python is / isTree / isNode composition', () => {
 	it('is.functionDefinition narrows on matching numeric kind', () => {
-		const v = { $type: TSKindId.FunctionDefinition };
+		const v = { $type: py.kinds.FunctionDefinition };
 		expect(is.functionDefinition(v)).toBe(true);
-		expect(is.functionDefinition({ $type: TSKindId.ClassDefinition })).toBe(false);
+		expect(is.functionDefinition({ $type: py.kinds.ClassDefinition })).toBe(false);
 	});
 
 	it('is.kind generic form accepts numeric kinds', () => {
-		expect(is.kind({ $type: TSKindId.IfStatement }, TSKindId.IfStatement)).toBe(true);
-		expect(is.kind({ $type: TSKindId.IfStatement }, TSKindId.ForStatement)).toBe(false);
+		expect(is.kind({ $type: py.kinds.IfStatement }, py.kinds.IfStatement)).toBe(true);
+		expect(is.kind({ $type: py.kinds.IfStatement }, py.kinds.ForStatement)).toBe(false);
 	});
 
 	it('isNode returns true for NodeData shapes', () => {
 		expect(isNode({ $type: 1, $text: 'foo' } as { readonly $type: number })).toBe(true);
 		// ADR-0018 Phase 2: isNode checks _<name> keys (de-hoisted storage) OR $text.
-		expect(isNode({ $type: TSKindId.IfStatement, _body: {} } as { readonly $type: number })).toBe(true);
-		expect(isNode({ $type: TSKindId.FunctionDefinition })).toBe(false);
+		expect(isNode({ $type: py.kinds.IfStatement, _body: {} } as { readonly $type: number })).toBe(true);
+		expect(isNode({ $type: py.kinds.FunctionDefinition })).toBe(false);
 	});
 
 	it('isTree returns true only when a range() method is present', () => {
@@ -36,13 +39,13 @@ describe('python is / isTree / isNode composition', () => {
 			range: () => ({ start: { index: 0 }, end: { index: 1 } })
 		};
 		// ADR-0018 Phase 2: $fields removed from interface; use simple object without range().
-		const withoutRange = { $type: TSKindId.IfStatement };
+		const withoutRange = { $type: py.kinds.IfStatement };
 		expect(isTree(withRange)).toBe(true);
 		expect(isTree(withoutRange)).toBe(false);
 	});
 
 	it('assert.kind throws with kind name in message on mismatch', () => {
-		expect(() => assert.classDefinition({ $type: TSKindId.IfStatement })).toThrow(TypeError);
+		expect(() => assert.classDefinition({ $type: py.kinds.IfStatement })).toThrow(TypeError);
 	});
 });
 
@@ -53,7 +56,7 @@ describe('python is / isTree / isNode composition', () => {
 describe('python Phase D: numeric-only $type guards', () => {
 	it('per-kind guard accepts numeric $type from factory output', () => {
 		const node = {
-			$type: TSKindId.FunctionDefinition,
+			$type: py.kinds.FunctionDefinition,
 			$source: 2,
 			$named: true,
 			$fields: {}
@@ -73,7 +76,7 @@ describe('python Phase D: numeric-only $type guards', () => {
 
 	it('per-kind guard rejects mismatched numeric $type', () => {
 		const node = {
-			$type: TSKindId.ClassDefinition,
+			$type: py.kinds.ClassDefinition,
 			$source: 2,
 			$named: true,
 			$fields: {}
@@ -83,12 +86,12 @@ describe('python Phase D: numeric-only $type guards', () => {
 
 	it('is.kind() accepts numeric $type from factory output', () => {
 		const node = {
-			$type: TSKindId.FunctionDefinition,
+			$type: py.kinds.FunctionDefinition,
 			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;
-		expect(is.kind(node, TSKindId.FunctionDefinition)).toBe(true);
+		expect(is.kind(node, py.kinds.FunctionDefinition)).toBe(true);
 	});
 
 	it('is.kind() rejects string $type (Phase D — string arm removed)', () => {
@@ -98,23 +101,23 @@ describe('python Phase D: numeric-only $type guards', () => {
 			$named: true,
 			$fields: {}
 		} as unknown as { readonly $type: string | number };
-		expect(is.kind(node as { readonly $type: number }, TSKindId.FunctionDefinition)).toBe(false);
+		expect(is.kind(node as { readonly $type: number }, py.kinds.FunctionDefinition)).toBe(false);
 	});
 
 	it('is.kind() rejects mismatched numeric $type', () => {
 		const node = {
-			$type: TSKindId.ClassDefinition,
+			$type: py.kinds.ClassDefinition,
 			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;
-		expect(is.kind(node, TSKindId.FunctionDefinition)).toBe(false);
+		expect(is.kind(node, py.kinds.FunctionDefinition)).toBe(false);
 	});
 
 	it('supertype guard accepts numeric $type member from factory', () => {
 		// `compoundStatement` is a supertype; `function_definition` is a member.
 		const node = {
-			$type: TSKindId.FunctionDefinition,
+			$type: py.kinds.FunctionDefinition,
 			$source: 2,
 			$named: true,
 			$fields: {}
@@ -136,7 +139,7 @@ describe('python Phase D: numeric-only $type guards', () => {
 
 	it('assert.functionDefinition passes on numeric $type from factory', () => {
 		const node = {
-			$type: TSKindId.FunctionDefinition,
+			$type: py.kinds.FunctionDefinition,
 			$source: 2,
 			$named: true,
 			$fields: {}
