@@ -346,8 +346,8 @@ function listOptionsAreDefault(
 	);
 }
 
-function seatHoistedSlot(seatKind: string, ctx: PrintContext): string | undefined {
-	const required = Object.entries(ctx.loose!.slotRequired[seatKind] ?? {}).flatMap(([p, r]) => (r ? [p] : []));
+function seatHoistedSlot(seatKind: string, loose: LooseFacts): string | undefined {
+	const required = Object.entries(loose.slotRequired[seatKind] ?? {}).flatMap(([p, r]) => (r ? [p] : []));
 	return required.length === 1 ? required[0] : undefined;
 }
 
@@ -360,7 +360,7 @@ function hoistSeatElement(listKind: string, item: unknown, ctx: PrintContext): u
 	if (keys.length !== 1) return item;
 	for (const seat of Object.values(ctx.seats?.[listKind]?.['*'] ?? {})) {
 		if (seat.shape !== 'elements') continue;
-		if (seatHoistedSlot(seat.kind, ctx) === keys[0]) return item[keys[0]!];
+		if (seatHoistedSlot(seat.kind, loose) === keys[0]) return item[keys[0]!];
 	}
 	return item;
 }
@@ -379,7 +379,7 @@ function wrapSeatElement(listKind: string, item: unknown, ctx: PrintContext): un
 	if (seats.length !== 1) return item;
 	const seat = seats[0]!;
 	const wrapped = wrapTextLeaves(seat.kind, item, ctx);
-	const sharesElementSlot = ctx.loose !== undefined && seatHoistedSlot(seat.kind, ctx) !== undefined;
+	const sharesElementSlot = ctx.loose !== undefined && seatHoistedSlot(seat.kind, ctx.loose) !== undefined;
 	return sharesElementSlot && isPlainObject(wrapped) ? { kind: seat.kind, ...wrapped } : wrapped;
 }
 
