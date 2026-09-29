@@ -50,8 +50,9 @@ factory overloads and the wrap accessors. It stamps those decisions on the
 main interface as a type-only member. `BoundOf` and `ParsedOf` read the
 marker and never re-derive anything from storage keys:
 
-- **Accessor to storage:** which accessor reads which storage key. The
-  accessor names stay the main interface's own.
+- **Per slot, a `SlotHint`:** which accessor reads which storage key (the
+  accessor names stay the main interface's own) and the slot's input
+  type (what `$with.<slot>` and the factory take).
 - **List owner:** when the owner's sole content is a separated list. This
   is the same fact that gives the strict factory its
   `(options?, ...items)` overloads. The marker records the element type
@@ -93,16 +94,19 @@ node, or a `$with` draft of one, which keeps `$nodeHandle`.
 - **Children:** each accessor returns the child's `.Parsed`.
 - **`$with`:** a draft stays tree-bound, so `$with.<slot>(v)` returns the
   node's own type with that one slot's accessor retyped to the slot's
-  input type. `$with` is declared over the node's polymorphic `this` and
-  the slot inputs from `__slotHints__` (`H`):
+  input type. `$with` is declared over the node's polymorphic `this`,
+  and reads the slot inputs off that type's own `__slotHints__` (each
+  entry a `SlotHint`), so the hints are the only source:
 
   ```ts
-  type Setters<Self, H> = { [K in keyof H]: (v: H[K]) => WithSlot<Self, K, H[K], H> };
-  type WithSlot<Self, K, V, H> =
-  	Remap<Self, K | '$with'> & { [P in K]: () => V } & { $with: Setters<WithSlot<Self, K, V, H>, H> };
+  type SlotHintsOf<Self> = Self extends { readonly __slotHints__?: infer H } ? NonNullable<H> : never;
+  type SlotInput<Self, K> = SlotHintsOf<Self>[K] extends SlotHint<infer I> ? I : never;
+
+  type Setters<Self> = { [K in keyof SlotHintsOf<Self>]: (v: SlotInput<Self, K>) => WithSlot<Self, K, SlotInput<Self, K>> };
+  type WithSlot<Self, K, V> = Remap<Self, K | '$with'> & { [P in K]: () => V } & { $with: Setters<WithSlot<Self, K, V>> };
 
   // in FunctionItem.Parsed
-  $with: Setters<this, SlotInputsOf<FunctionItem>>;
+  $with: Setters<this>;
   ```
 
   - **Replaced vs untouched slots:** the replaced slot reads as `.Bound`,
