@@ -91,6 +91,7 @@ export interface RenderOptionsPlan {
 const KIND_ANON = 1;
 const KIND_LINE_TERMINATED = 2;
 const KIND_LINE_BREAK_TERMINATED = 4;
+const KIND_ROOT = 8;
 
 const DELIMITER_BITS: Readonly<Record<string, number>> = Object.fromEntries(
 	Object.entries(Delimiter).map(([member, bits]) => [`Delimiter.${member}`, bits])
@@ -123,7 +124,8 @@ function kindFlagsOf(kindEntries: readonly IdEntry[], nodeMap: NodeMap): { reado
 		const bits =
 			(entry.anon === true ? KIND_ANON : 0) |
 			(lineTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_TERMINATED : 0) |
-			(lineBreakTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_BREAK_TERMINATED : 0);
+			(lineBreakTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_BREAK_TERMINATED : 0) |
+			(nodeMap.nodes.get(entry.kind)?.grammarRoot === true ? KIND_ROOT : 0);
 		if (bits !== 0) flags.set(entry.id, (flags.get(entry.id) ?? 0) | bits);
 	}
 	return [...flags].map(([id, bits]) => ({ id, flags: bits })).sort((a, b) => a.id - b.id);
@@ -525,7 +527,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('];', '');
 	L.push('/// Per kind id, its row in EDGE_SITES.');
 	L.push(...denseTable('EDGE_ROWS', new Map(edgeRows.map((e, row) => [e.kind, row]))));
-	L.push('/// Per kind id, its flags: KIND_ANON (the parser\'s anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED.');
+	L.push('/// Per kind id, its flags: KIND_ANON (the parser\'s anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED, KIND_ROOT.');
 	L.push(...denseFlags('KIND_FLAGS', plan.kindFlags));
 	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.');
 	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[');

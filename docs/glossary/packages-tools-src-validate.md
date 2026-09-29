@@ -1722,3 +1722,7 @@ Each kind's `fullForm` from the node model: the literal delimiters around its on
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel.innerGapsKeyed`
 
 Whether the grammar's emitted `InnerTrivia` takes a gap key, as the node model stamps it.
+
+### `packages/tools/src/validate/read-render-parse.ts::validateReadRenderParse`
+
+Reads each corpus candidate, renders it, reparses the render inside its supertype wrapper and compares the reparsed node's AST with the source's. The reparsed node is found at the wrapper's splice offset (`findReparsedNodeAtOffset`), past the candidate's own leading trivia. A candidate that is the tree's root (its kind is the first parse's root node type) is compared against the reparsed tree's root node directly: the root's render carries its source flanks, and a leading whitespace flank is padding tree-sitter starts no node at, so no offset names it. Every other candidate keeps the offset lookup, so a non-root render that starts with whitespace still fails it as `kind not found at rendered offset`.

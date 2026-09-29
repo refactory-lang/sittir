@@ -4825,6 +4825,8 @@ export interface OptionsHintMap {
 export namespace Module {
 	export interface Hints {
 		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
 			readonly statements?: {
 				readonly classDefinition?: { readonly after?: SpacingArm };
 				readonly decoratedDefinition?: { readonly after?: SpacingArm };

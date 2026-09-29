@@ -22,7 +22,7 @@ type Program = {
 describe('hash_bang_line', () => {
 	it('breaks the line after a built hash-bang, and the text reparses to the same program', () => {
 		const text = ts.build.program.strict({ hashBangLine: ts.build.hashBangLine('/usr/bin/env node'), statements: [letX('1')] }).$render();
-		expect(text).toBe('#!/usr/bin/env node\nlet x = 1;');
+		expect(text).toBe('#!/usr/bin/env node\nlet x = 1;\n');
 		const reparsed = ts.parse(text) as unknown as Program;
 		expect(reparsed.hashBangLine()?.$render()).toBe('#!/usr/bin/env node\n');
 		expect(reparsed.statements()).toHaveLength(1);
@@ -32,6 +32,6 @@ describe('hash_bang_line', () => {
 		const engine = ts;
 		const program = engine.parse('#!/usr/bin/env node\nlet x = 1;\n') as unknown as Program;
 		const rebuilt = program.$with.statements(letX('2'));
-		expect(engine.render(rebuilt as never).toString()).toBe('#!/usr/bin/env node\nlet x = 2;');
+		expect(engine.render(rebuilt as never).toString()).toBe('#!/usr/bin/env node\nlet x = 2;\n');
 	});
 });

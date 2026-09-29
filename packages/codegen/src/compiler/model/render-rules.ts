@@ -12,7 +12,7 @@ import { lineTerminatedKinds, triviaKinds } from './trivia.ts';
 import { addressSites, resolveBindings, type PreferenceOrigin } from './site-addresses.ts';
 import type { PreferenceSegment } from '../../dsl/primitives/preference-path.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
-import { defaultWhitespaceArmOf, lineBreakingArms, spacingArmsOf, whitespaceArmsOf, whitespaceSymbolsOf } from './whitespace-arms.ts';
+import { defaultWhitespaceArmOf, lineBreakingArms, rootEdgeArms, spacingArmsOf, whitespaceArmsOf, whitespaceSymbolsOf } from './whitespace-arms.ts';
 import { displayNameOf, displayNameOfEntry, displayedKinds } from './display-name.ts';
 import {
 	EMPTY_SEPARATOR_TOKEN,
@@ -771,23 +771,29 @@ function withKindEdges(
 	seams: SeamArms
 ): RenderRule {
 	const r = bag(rule);
-	if (r.type !== SEQ || r.members === undefined) return rule;
+	const root = config.nodeMap.nodes.get(kind)?.grammarRoot === true ? rootEdgeArms(config.nodeMap) : undefined;
+	if (root === undefined && (r.type !== SEQ || r.members === undefined)) return rule;
 	const breaking = lineTerminatedKinds(config.nodeMap).has(kind) ? lineBreakingArms(config.nodeMap) : undefined;
 	const breakingSeams: SeamArms | undefined = breaking && {
 		...seams,
 		arms: seams.arms.filter((arm) => breaking.arms.includes(arm)),
 		defaultArm: breaking.defaultArm
 	};
+	const seamsOf = (side: SeparatorSide): SeamArms => {
+		if (root !== undefined) return { ...seams, defaultArm: root[side] };
+		return side === 'after' && breakingSeams !== undefined ? breakingSeams : seams;
+	};
 	const part = (side: SeparatorSide): RenderRule =>
 		seamChoice(
 			kind,
 			seamLabel(displayNameOf(kind, config.nodeMap), side),
 			resolver,
-			side === 'after' && breakingSeams !== undefined ? breakingSeams : seams,
+			seamsOf(side),
 			edgeLiteralsOf(rule, side === 'before' ? 'first' : 'last', config)
 		);
 	const before = isImmediateRight(rule, config) ? [] : [part('before')];
-	if (flanksOf(rule) !== undefined) return { type: SEQ, nonterminal: true, members: [...before, rule, part('after')] } as unknown as RenderRule;
+	if (flanksOf(rule) !== undefined || r.type !== SEQ || r.members === undefined)
+		return { type: SEQ, nonterminal: true, members: [...before, rule, part('after')] } as unknown as RenderRule;
 	return {
 		...(rule as object),
 		members: [...before, ...r.members, part('after')]
@@ -823,7 +829,8 @@ export function seamRenderRules(
 			const visit = (r: RenderRule): RenderRule => withTokenSeams(r, kind, kindConfig, resolver, seams);
 			const seamed = isLexedKind(kind, config.nodeMap) || tokenInterior(kind) ? rule : visit(walker.map(rule, visit));
 			const insideTrivia = tokenInterior(kind) && !triviaKinds(config.nodeMap).has(kind);
-			out[kind] = ownsKindEdges(kind, config.nodeMap) && !insideTrivia ? withKindEdges(seamed, kind, immediateConfig, resolver, seams) : seamed;
+			const grammarRoot = config.nodeMap.nodes.get(kind)?.grammarRoot === true;
+			out[kind] = (ownsKindEdges(kind, config.nodeMap) || grammarRoot) && !insideTrivia ? withKindEdges(seamed, kind, immediateConfig, resolver, seams) : seamed;
 		}
 		return { rules: out };
 	};

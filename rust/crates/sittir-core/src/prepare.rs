@@ -27,6 +27,77 @@ pub fn prepare_edges<T: Edged + ?Sized>(t: &mut T, ctx: &RenderContext<'_>) {
     }
 }
 
+/// A child position of a root transport, read for the item at either end of
+/// the render: `None` when the position holds nothing, otherwise the item's
+/// coordinate, itself `None` when the item was rebuilt.
+pub trait EdgeItems {
+    fn first_item(&self) -> Option<Option<&crate::NodeCoordinate>>;
+    fn last_item(&self) -> Option<Option<&crate::NodeCoordinate>>;
+}
+
+impl<T, const ADJACENT: bool> EdgeItems for SlotValue<T, ADJACENT> {
+    fn first_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
+        Some(self.coord())
+    }
+    fn last_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
+        Some(self.coord())
+    }
+}
+
+impl<X: EdgeItems> EdgeItems for Option<X> {
+    fn first_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
+        self.as_ref().and_then(X::first_item)
+    }
+    fn last_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
+        self.as_ref().and_then(X::last_item)
+    }
+}
+
+impl<X: EdgeItems> EdgeItems for Vec<X> {
+    fn first_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
+        self.iter().find_map(X::first_item)
+    }
+    fn last_item(&self) -> Option<Option<&crate::NodeCoordinate>> {
+        self.iter().rev().find_map(X::last_item)
+    }
+}
+
+/// A root transport's edges read from its tree's own flanks: the bytes
+/// before its first item and after its last, when that item is still a
+/// coordinate, classified into the arm the edge site admits exactly as a
+/// list gap is. An edge item that was rebuilt, or bytes that are not
+/// whitespace, leave that side unset for the options and the grammar default.
+pub fn root_flanks(
+    first: Option<Option<&crate::NodeCoordinate>>,
+    last: Option<Option<&crate::NodeCoordinate>>,
+    allowed_before: &[u16],
+    allowed_after: &[u16],
+    table: &crate::render::WhitespaceTable,
+    ctx: &RenderContext<'_>,
+) -> Edges {
+    let flank = |coord: Option<&crate::NodeCoordinate>, side: Side, allowed: &[u16]| {
+        let coord = coord?;
+        let source = ctx.sources.source_of(coord.tree_id())?;
+        let bytes = match side {
+            Side::Before => source.get(..coord.span.start as usize)?,
+            Side::After => source.get(coord.span.end as usize..)?,
+        };
+        crate::classify::classify_whitespace(bytes, allowed, table).map(|arm| EdgeArm { arm, strength: None })
+    };
+    Edges {
+        before: flank(first.flatten(), Side::Before, allowed_before),
+        after: flank(last.flatten(), Side::After, allowed_after),
+    }
+}
+
+/// Fill a transport's unset base edges from `edges`; a side the wire already
+/// set keeps its arm.
+pub fn fill_edges<T: Edged + ?Sized>(t: &mut T, edges: Edges) {
+    let own = t.edges_mut();
+    own.before = own.before.or(edges.before);
+    own.after = own.after.or(edges.after);
+}
+
 /// The element a seated sibling gap belongs to: the node itself when its kind
 /// has a seat in `table`, or, for a wrapper that is not itself seated, the
 /// seated node it holds. Answers the base edges to fill and the site to read.

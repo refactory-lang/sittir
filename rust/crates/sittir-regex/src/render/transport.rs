@@ -2712,6 +2712,11 @@ impl ::sittir_core::render::Render for PatternTransport {
 impl ::sittir_core::prepare::Prepare for PatternTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
+        let first = [::sittir_core::prepare::EdgeItems::first_item(&self.content)].into_iter().flatten().next();
+        let last = [::sittir_core::prepare::EdgeItems::last_item(&self.content)].into_iter().flatten().next();
+        let flanks = ::sittir_core::prepare::root_flanks(first, last, options::allowed(options::SITE_PATTERN_PATTERN_BEFORE), options::allowed(options::SITE_PATTERN_PATTERN_AFTER), &options::WHITESPACE, ctx);
+        ::sittir_core::prepare::fill_edges(self, flanks);
+        ::sittir_core::prepare::prepare_edges(self, ctx);
         self.content.prepare(ctx)?;
         Ok(())
     }
@@ -9581,7 +9586,9 @@ impl ::sittir_core::prepare::SeatTarget for AnyTransport {
 
 fn render_pattern(node: &PatternTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
+    w.edge(::sittir_core::types::KindId(51), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     content.render(w)?;
+    w.edge(::sittir_core::types::KindId(51), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));
     Ok(())
 }
 

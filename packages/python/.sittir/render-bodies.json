@@ -3017,8 +3017,16 @@
 	],
 	"module": [
 		{
+			"kind": "seam",
+			"field": "module_before"
+		},
+		{
 			"kind": "slot",
 			"name": "statements"
+		},
+		{
+			"kind": "seam",
+			"field": "module_after"
 		}
 	],
 	"named_expression": [

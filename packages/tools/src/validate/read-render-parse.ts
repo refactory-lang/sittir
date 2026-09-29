@@ -705,6 +705,7 @@ export async function validateReadRenderParse(
 					// send) as distinct from the deep run's full materialization.
 					// Falls back to deep materialization when the wrapped node carries
 					// no native coords.
+					const treeRoot = cand.displayKind === tree1.rootNode.type;
 					let data: AnyNodeData;
 					try {
 						// `$childIndex` is undefined for a candidate that IS the tree
@@ -817,11 +818,12 @@ export async function validateReadRenderParse(
 						// object_type inside `type _X = …;`). Accept either
 						// at the rendered offset.
 						const triviaOffsetAdjust = leadingTriviaRenderedWidth(data, render);
-						const node2 =
-							findReparsedNodeAtOffset(tree2, targetKind, wrapped, triviaOffsetAdjust) ??
-							(renderedKind !== targetKind
-								? findReparsedNodeAtOffset(tree2, renderedKind, wrapped, triviaOffsetAdjust)
-								: null);
+						const node2 = treeRoot
+							? tree2.rootNode
+							: (findReparsedNodeAtOffset(tree2, targetKind, wrapped, triviaOffsetAdjust) ??
+								(renderedKind !== targetKind
+									? findReparsedNodeAtOffset(tree2, renderedKind, wrapped, triviaOffsetAdjust)
+									: null));
 						if (!node2) {
 							const failure = {
 								name: `${entry.name} [${renderedKind}]`,
