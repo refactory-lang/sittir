@@ -95,8 +95,8 @@ emitter and the wrap emitter call it.
   - `ListOwnerHint<Element, Options extends object>`:
     `{ readonly element: Element; readonly options: Options }`.
   - `SlotHintsOf<Self>`:
-    `Self extends { readonly __slotHints__?: infer H } ? Omit__listOwner<NonNullable<H>> : never`.
-    This is the slots only; `$listOwner` is removed with key-remapping.
+    the hints object with `$listOwner` removed by key-remapping (slots
+    only).
   - `ListOwnerOf<Self>`: `NonNullable<Self['__slotHints__']>['$listOwner']`,
     or `never` when absent.
   - `Remap<T, K extends PropertyKey>`.
@@ -137,6 +137,9 @@ interface ByP { [K.Fn]: Fn.Parsed; [K.Params]: Params.Parsed; [K.Param]: Param.P
 
 declare const fn: Fn.Parsed;
 declare const built: Params.Bound;
+declare const bound: Fn.Bound;
+declare const listOwner: Params.Parsed;
+declare const oneParam: Param.Bound;
 
 describe('BoundOf / ParsedOf', () => {
 	it('children resolve to their own Parsed', () => {
@@ -168,8 +171,7 @@ describe('BoundOf / ParsedOf', () => {
 		fn.$with.params('x');
 	});
 	it('Bound $with returns Bound', () => {
-		declare const b: Fn.Bound;
-		expectTypeOf(b.$with.params(built)).toMatchTypeOf<Fn.Bound>();
+		expectTypeOf(bound.$with.params(built).params()).toEqualTypeOf<Params.Bound>();
 	});
 });
 ```
@@ -403,10 +405,8 @@ git commit -m "feat(codegen): every kind interface stamps its slot inputs and li
 - Modify: every hand-written reference to `.Built`, `Built<`, `BuiltFor`
   or `['Built']`. Enumerate them first:
 
-```bash
-pnpm exec tsx -e "" # no-op; use Infigraph:
-# mcp__infigraph__search query='\.Built\b|BuiltFor|\[.Built.\]|Built<' regex=true
-```
+  `mcp__infigraph__search` with `query='\.Built\b|BuiltFor|\[.Built.\]|Built<'` and
+  `regex=true`, excluding the generated `packages/<lang>/src/*` files.
 
   Rename them with the LSP rename, never sed. The hand-written sites
   are in `packages/{common,tools,validator,cli}/src`, `packages/*/tests`,
@@ -447,24 +447,24 @@ import { createEngine } from '@sittir/common';
 import rust from '../src/index.ts';
 
 const { build } = await createEngine(rust);
+declare const fb: FunctionItem.Bound;
+declare const fp: FunctionItem.Parsed;
+declare const ps: Parameters.Parsed;
 
 describe('rust node surfaces', () => {
 	it('a factory returns Bound', () => {
 		expectTypeOf(build.parameters()).toMatchTypeOf<Parameters.Bound>();
 	});
 	it('Bound accessors return Bound children', () => {
-		declare const f: FunctionItem.Bound;
-		expectTypeOf(f.parameters()).toEqualTypeOf<Parameters.Bound>();
+		expectTypeOf(fb.parameters()).toEqualTypeOf<Parameters.Bound>();
 	});
 	it('Parsed accessors return Parsed children, and $with retypes only its slot', () => {
-		declare const f: FunctionItem.Parsed;
-		expectTypeOf(f.parameters()).toEqualTypeOf<Parameters.Parsed>();
-		const d = f.$with.parameters(build.parameters());
+		expectTypeOf(fp.parameters()).toEqualTypeOf<Parameters.Parsed>();
+		const d = fp.$with.parameters(build.parameters());
 		expectTypeOf(d.parameters()).toMatchTypeOf<Parameters.Bound>();
 		expectTypeOf(d.body()).toMatchTypeOf<import('../src/types.ts').Block.Parsed>();
 	});
 	it('a list owner iterates its stored elements', () => {
-		declare const ps: Parameters.Parsed;
 		expectTypeOf([...ps]).toEqualTypeOf<AttributedParameter.Parsed[]>();
 	});
 });
@@ -577,7 +577,7 @@ describe('a list owner', () => {
 		expect(ps.delimiter).toBe(Delimiter.None);
 	});
 	it('a built owner iterates what it was built from', () => {
-		const p = rs.build.parameter({ pattern: rs.build.identifier('a'), type: rs.kinds.U8 });
+		const p = rs.build.parameter({ pattern: rs.build.identifier('a'), type: rs.kinds.U8Keyword });
 		const ps = rs.build.parameters({ delimiter: Delimiter.Trailing }, p);
 		expect([...ps]).toHaveLength(1);
 		expect(ps.delimiter).toBe(Delimiter.Trailing);
@@ -705,7 +705,7 @@ git commit -m "feat(codegen): every wrap returns its kind's declared Parsed surf
 ```ts
 it('$with on a list owner takes the list factory arguments', () => {
 	const ps = fnOf('fn f(a: u8) {}\n').parameters();
-	const q = rs.build.parameter({ pattern: rs.build.identifier('q'), type: rs.kinds.U8 });
+	const q = rs.build.parameter({ pattern: rs.build.identifier('q'), type: rs.kinds.U8Keyword });
 	expect(ps.$with({ delimiter: Delimiter.Trailing }, q).$render()).toBe('(q: u8,)');
 	expect(ps.$with(q).$render()).toBe('(q: u8)');
 });
@@ -713,15 +713,17 @@ it('$with on a list owner takes the list factory arguments', () => {
 
 ```ts
 it('a list owner $with is callable with the factory arguments', () => {
-	declare const ps: Params.Parsed;
-	declare const p: Param.Bound;
-	expectTypeOf(ps.$with({ delimiter: 2 }, p)).toHaveProperty('elements');
-	expectTypeOf(ps.$with(p)).toHaveProperty('elements');
+	expectTypeOf(listOwner.$with({ delimiter: 2 }, oneParam)).toHaveProperty('elements');
+	expectTypeOf(listOwner.$with(oneParam)).toHaveProperty('elements');
 });
 ```
 
-- [ ] **Step 2: Confirm they fail. Step 3: Implement. Step 4: Regenerate
-  and run the gates. Step 5: Glossary and commit.**
+- [ ] **Step 2: Confirm they fail.** Run the two test files; both fail
+  (`ps.$with is not a function` / no call signature).
+- [ ] **Step 3: Implement the call signature and the callable `$with`**
+  as described under Files.
+- [ ] **Step 4: Regenerate and run the gates.** Validate rows identical.
+- [ ] **Step 5: Glossary and commit.**
 
 ```bash
 git commit -m "feat(runtime): a list owner's \$with takes its list factory's arguments" -- packages/types packages/common packages/codegen/src/emitters packages/*/src packages/*/.sittir packages/*/tests docs/glossary
