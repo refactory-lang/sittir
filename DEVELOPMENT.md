@@ -24,6 +24,15 @@ pnpm format:check             # oxfmt
 pnpm build                    # full workspace build
 ```
 
+## Documentation gates
+
+Two acceptance tests keep the documentation honest, and both run under `pnpm test`:
+
+- `tests/acceptance/examples-run.test.ts` calls every function the compile-checked `examples/` export and renders every node they return. A function that takes an argument needs a sample input in that test.
+- `tests/acceptance/readme-snippets.test.ts` runs and type-checks every `ts` snippet in the root README and the four package READMEs. A statement `expr; // "text"` (or `// true`, `// false`) is asserted to equal that value. A snippet that shows a shape rather than a program is marked with `<!-- snippet: illustrative -->` on the line above its fence and is skipped; nothing else is.
+
+The snippet type-check resolves `@sittir/*` through `node_modules`, so a git worktree needs its own `pnpm install`. A `node_modules` symlinked to another checkout resolves the packages to that checkout's sources and reports unrelated type errors.
+
 ## Regenerating grammar packages
 
 Generated packages (`packages/{rust,typescript,python}/src`, `templates/`,
