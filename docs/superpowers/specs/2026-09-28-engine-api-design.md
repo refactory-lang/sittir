@@ -161,6 +161,14 @@ interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> {
 
   applyEdits(source: string, edits: readonly Edit[]): string;
   dispose(): void;
+
+  isNode(value: unknown): value is API['node'];
+  isParsedNode(value: unknown): value is API['node'];
+  isFactoryNode(value: unknown): value is API['node'];
+  isErrorNode(value: unknown): value is API['node'];
+  isEmptyNode<N extends API['empty']['node']>(
+    node: N,
+  ): node is N & Extract<API['empty'], { readonly node: N }>['empty'];
 }
 ```
 
@@ -202,6 +210,24 @@ interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> {
     exit; atomic multi-file work belongs in a project.
   - Committing a `Pending` re-checks its precondition against disk (see the project's
     commit) and writes through the same temporary-file-and-rename path.
+- **Node guards** narrow to this engine's language. Each one is its grammar-agnostic
+  counterpart in `@sittir/common/utils` plus a same-language check on the node's
+  engine stamp, `stampOf(x)?.language === this.language`:
+  - `isNode`: any sittir node of this language.
+  - `isParsedNode` / `isFactoryNode`: read from source, or built.
+  - `isErrorNode`: a node of this language that `isErrorNode` in `@sittir/common/utils`
+    accepts, a parsed node whose `$type` is `ERROR_KIND_ID` (`@sittir/common/error-kind`),
+    tree-sitter's builtin error symbol, which every grammar's kind table carries.
+  - `isEmptyNode(x)` is `isNode(x) && isEmptyNode(x)`, and narrows a list kind to
+    its empty form through the grammar's `empty` map, which `LanguageAPI` carries
+    as `empty`.
+
+  The check is at language level, not engine identity: a node of the same language
+  from another engine passes, as it renders through this one. A value with no stamp
+  (a plain object, a node built outside any engine, the reader's raw data) returns
+  false from every engine guard. The free guards stay in `@sittir/common/utils` for
+  grammar-agnostic tools. `$type` alone cannot stand in for the check, because kind
+  ids collide across grammars.
 - `diagnostics` stays on the engine for tools, outside the documented surface.
 
 ### Nodes are bound to their engine
@@ -224,6 +250,23 @@ interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'> {
   collector happened to reclaim the engine; an engine's lifetime is explicit instead.
   After `engine.dispose()`, a stamped node's `$render()` and `$toEdit()` throw
   "engine disposed".
+- **Every node origin on the public surface gets the engine stamp**, so the engine's
+  language is the one language identity a node needs:
+
+  | Node origin | Engine stamped |
+  |---|---|
+  | `build.*` | the calling engine |
+  | coerced children (strings, plain objects, numbers passed to a builder), and `.from()` | the calling engine: coercion builds only through the `build*` functions, inside the same call |
+  | `parse` / `read`, and every node reached from a parsed root, expanded lazily | the reading engine: wrapping binds each node to the engine holding its tree |
+  | `$with.*` rebuilds | the node's own engine: the setter runs in that engine's scope |
+  | trivia entries built from text (`$trivia.inner('// x')` makes a comment node) | the node's own engine: the `$trivia` setter runs in that engine's scope. A whitespace entry is a kind id, not a node |
+
+  `$with` and `$trivia` are called from user code after the build returns, outside any
+  `build.*` call, so they enter their node's engine scope themselves; without that,
+  the nodes they build would be unstamped. No origin needs a language stamp apart from
+  the engine. Only internal paths produce unstamped data: internal builders called
+  outside any engine, and the reader's raw data before it is wrapped (reached only
+  through the tools' `diagnostics`). Tools use the free guards for that data.
 - The process-wide default engine is retired, along with the free `render`, `toEdit`
   and `applyEdits` exports and every path that renders without an engine. Through the
   public surface every node has an engine. A node built by calling internal builders
@@ -350,6 +393,13 @@ engine surface.
   another language is rejected by `render`; the options (including the indent unit)
   are typed from the descriptor.
 - Two languages in one program share no state.
+- Node guards: each engine guard accepts a node of its language, including one from
+  another engine of that language, and rejects a node of another language whose
+  `$type` is a valid kind id in both; unstamped values are rejected; `isEmptyNode`
+  narrows only the kinds the `empty` map names (a type test).
+- Stamp census: a node from each origin in the table (build, coercion, `.from()`,
+  parse, a lazily expanded child, a `$with` rebuild, a comment entry built from
+  `$trivia` text outside any build call) carries its engine's stamp.
 - `api`: `'strict'` exposes the strict flavour as `build.x` and rejects loose input
   (type and runtime); `'portable'` rejects at creation.
 - Interceptors: the order is first-outermost; a `build` interceptor sees nested variant
