@@ -260,6 +260,12 @@ A seated element that stayed a plain config after `hoistSeatElement`: its keys a
 already treated. The seat is the one element seat whose slots hold every key the config sets; with none or several
 matching the config is left as it is.
 
+On the loose surface the config also names the seat's kind (`kind: '<seat kind>'`) when the seat has a slot to hoist (`seatHoistedSlot`). Such a list's element slot takes the hoisted value bare beside the seat, so it has several candidate kinds, and a config there is dispatched by its name; untagged, a bare element beside it does not type-check. A seat with nothing to hoist is the element slot's only candidate, and its config stays untagged.
+
+### `packages/tools/src/emit/factory-source.ts::seatHoistedSlot`
+
+The one required slot of a seat kind, or nothing when it has none or several. It is the slot whose value a list takes bare (`hoistSeatElement`) and the fact that makes the seat share its element slot with that slot's kinds (`wrapSeatElement`), so both read it here.
+
 ### `packages/tools/src/emit/factory-source.ts::PrintContext.source`
 
 ```text
