@@ -586,7 +586,7 @@ const _supertype_path_ids = new Set<number>([
 const _supertype_whitespace_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
 const _supertype_charLiteralEscaped_ids = new Set<number>([144, 145, 146, 147]);
 
-export const is = {
+export const is = Object.freeze({
 	sourceFile: _g(TSKindId.SourceFile),
 	expressionStatement: _g(TSKindId.ExpressionStatement),
 	macroRule: _g(TSKindId.MacroRule),
@@ -769,4 +769,4 @@ export const is = {
 	path: _sg(_supertype_path_ids),
 	whitespace: _sg(_supertype_whitespace_ids),
 	charLiteralEscaped: _sg(_supertype_charLiteralEscaped_ids)
-} as unknown as IsGuards;
+}) as unknown as IsGuards;

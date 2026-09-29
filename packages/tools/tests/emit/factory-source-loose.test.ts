@@ -197,9 +197,25 @@ describe('loose surface printing', () => {
 			).source
 		).toBe('ir.holder2({\n\targs: ["x", "y"],\n})');
 	});
-	it("loosens the slots of a seat config that sets more than its required slot", () => {
+	it("loosens the slots of a seat config that sets more than its required slot, and names its kind where the element slot also takes the hoisted value bare", () => {
 		expect(
 			expectPrinted(map.holder2!({ args: map.args!({ attrs: map.identifier!('a'), expression: map.identifier!('x') }) })).source
+		).toBe('ir.holder2({\n\targs: [{\n\t\tkind: "attributed",\n\t\tattrs: "a",\n\t\texpression: "x",\n\t}],\n})');
+	});
+	it("names the seat's kind on a config that sits beside a hoisted bare element", () => {
+		expect(
+			expectPrinted(
+				map.holder2!({
+					args: map.args!({ attrs: map.identifier!('a'), expression: map.identifier!('x') }, { expression: map.identifier!('y') })
+				})
+			).source
+		).toBe('ir.holder2({\n\targs: [{\n\t\tkind: "attributed",\n\t\tattrs: "a",\n\t\texpression: "x",\n\t}, "y"],\n})');
+	});
+	it("leaves a seat config untagged where its seat has no required slot to hoist", () => {
+		const unhoisted = mapFor({ ...ctx, loose: { ...loose, slotRequired: { attributed: { attrs: false, expression: false } } } });
+		expect(
+			expectPrinted(unhoisted.holder2!({ args: unhoisted.args!({ attrs: unhoisted.identifier!('a'), expression: unhoisted.identifier!('x') }) }))
+				.source
 		).toBe('ir.holder2({\n\targs: [{\n\t\tattrs: "a",\n\t\texpression: "x",\n\t}],\n})');
 	});
 	it("tests a text under a transparent wrapper against the wrapper's content slot before the transitive set", () => {

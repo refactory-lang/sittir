@@ -2,8 +2,6 @@
 import * as O from './overlays/supertypes.js';
 import type { Hoisted } from '@sittir/types';
 import { hoist, hoistRoutes } from '@sittir/common/utils';
-import { methodsEngine } from '../utils.js';
-import { coerceToLineComment } from './coerce.js';
 export * from './overlays/supertypes.js';
 
 export const sourceFile: Hoisted<typeof O.sourceFile> = hoist(O.sourceFile);
@@ -185,5 +183,3 @@ export const comment: Hoisted<typeof O.comment> = hoistRoutes(O.comment);
 export const charLiteralEscaped: Hoisted<typeof O.charLiteralEscaped> = hoistRoutes(O.charLiteralEscaped);
 export const declarationStatement: Hoisted<typeof O.declarationStatement> = hoistRoutes(O.declarationStatement);
 export const charLiteral: Hoisted<typeof O.charLiteral> = hoistRoutes(O.charLiteral);
-
-methodsEngine.trivia.comment = coerceToLineComment;

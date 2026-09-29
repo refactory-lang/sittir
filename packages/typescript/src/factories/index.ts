@@ -2,8 +2,6 @@
 import * as O from './overlays/supertypes.js';
 import type { Hoisted } from '@sittir/types';
 import { hoist, hoistRoutes } from '@sittir/common/utils';
-import { methodsEngine } from '../utils.js';
-import { coerceToCommentLine } from './coerce.js';
 export * from './overlays/supertypes.js';
 
 export const program: Hoisted<typeof O.program> = hoist(O.program);
@@ -216,5 +214,3 @@ export const numberBigint: Hoisted<typeof O.numberBigint> = hoistRoutes(O.number
 export const exportStatement: Hoisted<typeof O.exportStatement> = hoistRoutes(O.exportStatement);
 export const statement: Hoisted<typeof O.statement> = hoistRoutes(O.statement);
 export const number: Hoisted<typeof O.number> = hoistRoutes(O.number);
-
-methodsEngine.trivia.comment = coerceToCommentLine;

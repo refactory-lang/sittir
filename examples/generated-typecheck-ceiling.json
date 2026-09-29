@@ -9,10 +9,7 @@
 	"20-keyword-openers-rust.generated.ts": 0,
 	"20-keyword-openers-typescript.generated.ts": 0,
 	"21-list-seat-configs-rust.generated.ts": 0,
-	"21-list-seat-configs-rust-loose.generated.ts": {
-		"max": 1,
-		"issue": "#418"
-	},
+	"21-list-seat-configs-rust-loose.generated.ts": 0,
 	"22-trivia-rust.generated.ts": 0,
 	"22-trivia-typescript.generated.ts": 0
 }

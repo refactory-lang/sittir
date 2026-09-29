@@ -3,6 +3,5 @@
 exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level exports 1`] = `
 {
   "default": "object",
-  "isEmpty": "function",
 }
 `;

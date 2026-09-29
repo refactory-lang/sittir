@@ -40,6 +40,8 @@ The `indent` key a render's options carry: `I & OnlyOf<I, IndentChar>`, the unit
 
 The grammar facts `$trivia` checks against: each kind's name, the gaps an empty node of each kind holds inner trivia in, and `ir.comment`, which builds a loose string into its default arm (taking either the full spelling or the interior). It lives here so a language's hooks can carry it without importing `@sittir/common`, which re-exports it.
 
+Every member is `readonly`, `comment` included: the facts belong to the language and are frozen where the language module builds them, so an engine cannot change them for the others. The comment coercer is a per-language fact fixed when `hooks` is built; nothing per engine sets it.
+
 ### `packages/types/src/core-types.ts::RenderCallOptions`
 
 The options a single render takes beside the language's render options: `ignoreFormat`. It is the one declaration of that key; the engine's per-call render options, the native engine's render and a parsed tree's render all name it.
@@ -48,9 +50,17 @@ The options a single render takes beside the language's render options: `ignoreF
 
 How far one read expands. The default is lazy: a read returns one level, and a child with substructure comes back as a stub the accessors expand on demand. `deep` expands the whole subtree in one pass instead: one crossing instead of one per level, at the cost of reading what you may not touch.
 
-### `packages/types/src/engine-api.ts::GrammarFacts`
+### `packages/types/src/engine-api.ts::EngineIdentity`
 
-The facts a grammar's runtime reads: `render` and `toEdit` from its native engine, and its `TriviaFacts`. Generated `utils.ts` declares them once as `methodsEngine`.
+What a node needs to know about its engine without holding it: the language's descriptor (which carries the grammar's name), the render module hash that identifies the generated surface, the engine's render options, and the language's trivia facts. Everything in it is plain data, so a node keeps it after its engine is disposed: the node guards read only the language, and `$trivia` reads its entries through the facts, while rendering and editing need the live engine.
+
+### `packages/types/src/engine-api.ts::ParsedRead`
+
+What a parse produces before wrapping: the raw root data and the tree it was read from. Both types are parameters, opaque by default; the native engine fixes them to its root data and its tree handle.
+
+### `packages/types/src/engine-api.ts::EngineDiagnostics`
+
+What an engine exposes for tooling rather than for consumers: the native build's compile profile (`buildProfile`, undefined for a binary that predates it) and `parseAndRead`, the read a parse makes before wrapping. The tree it returns is bound to the engine, so a node wrapped over it stamps that engine, exactly as `parse` does; `parse` is `parseAndRead` plus the wrapper. The single declaration of these members: the native engine's diagnostics extend it with the reads only it has, and the native language engine's members are picked from it.
 
 ### `packages/types/src/engine-api.ts::GrammarTypeMap`
 
@@ -78,7 +88,7 @@ The inner trivia of a node that realizes empty: `inner()` reads its inner entrie
 
 ### `packages/types/src/engine-api.ts::LanguageAPI`
 
-The type-level shape of one language: its name, builder table, guards, kind ids, the kind-to-node-type map (`types`, type-only), its root and any-node types, the kind ids that render standalone (`fixedTextKindId`: those whose kind alone determines their text), its render options, and `indentChar`, the characters an indent unit may be made of (`never` for a grammar with none). `indentChar` names the grammar's own `IndentChar` alias, because the options type cannot carry it: its `indent` key is typed at a plain `string` unit, which `OnlyOf` passes through unchanged. Every engine type is derived from it.
+The type-level shape of one language: its name, builder table, guards, kind ids, the kind-to-node-type map (`types`, type-only), its root and any-node types, the kind ids that render standalone (`fixedTextKindId`: those whose kind alone determines their text), its render options, `empty` (the grammar's map from each kind that can be empty to its empty form), and `indentChar`, the characters an indent unit may be made of (`never` for a grammar with none). `indentChar` names the grammar's own `IndentChar` alias, because the options type cannot carry it: its `indent` key is typed at a plain `string` unit, which `OnlyOf` passes through unchanged. Every engine type is derived from it.
 
 ### `packages/types/src/engine-api.ts::Language`
 
@@ -90,7 +100,7 @@ The options a language's native engine is created with: the format record and th
 
 ### `packages/types/src/engine-api.ts::LanguageHooks`
 
-What a language's `load()` resolves to: the builder table, guards, kind ids and trivia facts as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node.
+What a language's `load()` resolves to: the builder table, guards, kind ids, trivia facts and the render module hash as data, plus `createNative` to create a native engine and `wrap` to turn a read root and its tree into the language's root node.
 
 ### `packages/types/src/engine-api.ts::NativeLanguageEngine`
 
@@ -126,7 +136,7 @@ The type of an engine's `build` for a surface: the builder table, its strict sur
 
 ### `packages/types/src/engine-api.ts::Engine`
 
-A language engine: the only value surface of a language. It builds, guards, parses, reads, renders, and creates, edits and writes files. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
+A language engine: the only value surface of a language. It carries its `EngineIdentity` (descriptor, render module hash, options, trivia facts), and builds, guards (the node guards narrow to this engine's language, by the language a node's engine carries), parses, reads, renders, and creates, edits and writes files. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
 
 ### `packages/types/src/engine-api.ts::RenderInput`
 

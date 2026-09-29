@@ -27,7 +27,7 @@ Each generated package (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) 
 - `utils.ts` — per-grammar client helpers
 - `ir.ts` — developer-facing short-name namespace
 - `consts.ts` — discoverable arrays/maps of kinds, keywords, operators
-- `engine.ts` / `backend.ts` / `boundary.ts` / `hash.ts` — native-only `createEngine()`, backend selection, baked render-module hash
+- `engine.ts` / `backend.ts` / `hash.ts` — native-only `createEngine()`, backend selection, baked render-module hash
 - `node-model.json5` — debug snapshot of the assembled model
 - `index.ts` — barrel exports
 - `../.sittir/render-bodies.json` — one render body per renderable kind (the validators' catalog; the same bodies are compiled into the native crate)

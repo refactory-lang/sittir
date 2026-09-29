@@ -4,9 +4,18 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
 import { is } from './is.js';
-import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type RustNode } from './types.js';
+import {
+	TSKindId,
+	type FixedTextKindId,
+	type IrKeyOf,
+	type NamespaceMap,
+	type RustNode,
+	type RustTypeMap
+} from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { methodsEngine } from './utils.js';
+import { triviaFacts } from './utils.js';
+import { coerceToLineComment } from './factories/coerce.js';
+import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type SourceFileRoot } from './render-engine.js';
 import { wrapNode, type SourceFileTree } from './wrap.js';
 
@@ -21,14 +30,16 @@ export interface RustAPI extends LanguageAPI {
 	readonly fixedTextKindId: FixedTextKindId;
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
+	readonly empty: RustTypeMap['empty'];
 }
 
-export const hooks: LanguageHooks<RustAPI> = {
+export const hooks: LanguageHooks<RustAPI> = Object.freeze<LanguageHooks<RustAPI>>({
 	name: 'rust',
+	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
 	is,
 	kinds: TSKindId,
-	trivia: methodsEngine.trivia,
+	trivia: Object.freeze({ ...triviaFacts, comment: coerceToLineComment }),
 	createNative: (options) => nativeLanguageEngine<RustAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as SourceFileRoot & ParsedRoot, tree as TreeHandle)
-};
+});

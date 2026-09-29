@@ -517,8 +517,8 @@ describe('refines overlay — attaches per-form factories on the parent builder'
 		const text = emitRefinesOverlay({ nodeMap });
 		expect(text).toContain("import * as B from '../bundle.js';");
 		expect(text).toContain("import * as F from '../raw.js';");
-		expect(text).toContain('export const ifaceBody = {');
+		expect(text).toContain('export const ifaceBody = Object.freeze({');
 		expect(text).toContain('	...B.ifaceBody,');
-		expect(text).toContain('	curly: { strict: F.buildIfaceBodyCurly },');
+		expect(text).toContain('	curly: Object.freeze({ strict: F.buildIfaceBodyCurly }),');
 	});
 });

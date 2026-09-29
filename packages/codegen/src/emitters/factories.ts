@@ -1234,7 +1234,7 @@ function emitFieldCarryingFactory(
 		const propName = f.propertyName;
 		lines.push(`    ${propName}: () => ${f.storageKey},`);
 	}
-	lines.push('  }), methodsEngine);');
+	lines.push('  }));');
 	lines.push('}');
 
 	const { directParamType, directParamOptional } = surface;
@@ -1444,7 +1444,7 @@ function emitRefineFormFactory(
 		const propName = f.propertyName;
 		lines.push(`    ${propName}: () => ${f.storageKey},`);
 	}
-	lines.push('  }), methodsEngine);');
+	lines.push('  }));');
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
 }
@@ -1728,7 +1728,7 @@ function emitSeparatedListFactory(
 	lines.push('    },');
 	lines.push('  }, {');
 	lines.push(`    ${contentAccessorName}: () => ${contentStorageKey},`);
-	lines.push('  }), methodsEngine);');
+	lines.push('  }));');
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -1776,7 +1776,7 @@ function emitTextFactory(
 		`    $source: 2 as const,`,
 		'    $named: true as const,',
 		`    $text: ${textExpr},`,
-		'  }, methodsEngine);',
+		'  });',
 		'}'
 	);
 	return body.join('\n');
@@ -1823,7 +1823,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		lines.push(`import { ${['withAccessors', ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`);
-		lines.push(`import { ${['withMethods', 'methodsEngine', ...(usesElementWrap ? ['isNode'] : [])].join(', ')} } from '../utils.js';`);
+		lines.push(`import { ${['withMethods', ...(usesElementWrap ? ['isNode'] : [])].join(', ')} } from '../utils.js';`);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
 		lines.push(...emitNonEmptyAssertHelper());

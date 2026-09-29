@@ -4,9 +4,18 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
 import { is } from './is.js';
-import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type ScmNode } from './types.js';
+import {
+	TSKindId,
+	type FixedTextKindId,
+	type IrKeyOf,
+	type NamespaceMap,
+	type ScmNode,
+	type ScmTypeMap
+} from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { methodsEngine } from './utils.js';
+import { triviaFacts } from './utils.js';
+import { coerceToComment } from './factories/coerce.js';
+import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
 import { wrapNode, type ProgramTree } from './wrap.js';
 
@@ -21,14 +30,16 @@ export interface ScmAPI extends LanguageAPI {
 	readonly fixedTextKindId: FixedTextKindId;
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
+	readonly empty: ScmTypeMap['empty'];
 }
 
-export const hooks: LanguageHooks<ScmAPI> = {
+export const hooks: LanguageHooks<ScmAPI> = Object.freeze<LanguageHooks<ScmAPI>>({
 	name: 'scm',
+	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
 	is,
 	kinds: TSKindId,
-	trivia: methodsEngine.trivia,
+	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
 	createNative: (options) => nativeLanguageEngine<ScmAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ProgramRoot & ParsedRoot, tree as TreeHandle)
-};
+});

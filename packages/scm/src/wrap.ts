@@ -3,11 +3,10 @@
 
 import {
 	readNode as readNodeJs,
-	toTransportData,
-	toEditAt,
 	markEdited as $edited,
 	mapTriviaEntries,
-	projectInterior
+	projectInterior,
+	inTreeEngine
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
@@ -17,7 +16,7 @@ import type { ParsedRoot } from '@sittir/common/engine';
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { TSKindId, KIND_NAMES } from './types.js';
 import type * as T from './types.js';
-import { withMethods, methodsEngine } from './utils.js';
+import { withMethods } from './utils.js';
 
 // A hydrated read-layer TEXT LEAF: the reader modeled no addressable
 // structure (no `_<slot>` storage keys, no `$other`) and captured the
@@ -194,30 +193,6 @@ function normalizeRepeatedWrapSlot<T>(
 	if (nonEmpty && items.length === 0)
 		return handleWrapViolation(`repeated slot ${JSON.stringify(slotName)} requires at least one value`, items, context);
 	return items;
-}
-// The wrap layer's method engine. A wrapped node carries accessor
-// methods over storage the reader spelled its own way, so
-// `$render`/`$toEdit` project it to plain data first — routing every
-// level that carries storage back through `wrapNode`, which reconciles
-// slot names and arity. An unexpanded stub carries no storage, so it
-// passes through as the coordinate the engine that read it slices —
-// which is why a tree that knows its engine renders through it.
-// One engine per tree — the closure is the only per-tree state.
-const _treeEngines = new WeakMap<TreeHandle, typeof methodsEngine>();
-function _treeEngine(tree: TreeHandle): typeof methodsEngine {
-	let engine = _treeEngines.get(tree);
-	if (engine === undefined) {
-		const project = (node: AnyNodeData) => toTransportData(node, (level) => wrapNode(level, tree) as AnyNodeData);
-		const render = (node: AnyNodeData) =>
-			tree.render === undefined ? methodsEngine.render(project(node)) : tree.render(project(node));
-		engine = {
-			...methodsEngine,
-			render,
-			toEdit: (node, startOrRange, endPos) => toEditAt(render(node), startOrRange, endPos)
-		};
-		_treeEngines.set(tree, engine);
-	}
-	return engine;
 }
 // Drill-in helpers — call back through `readTreeNode` so the same
 // per-handle dispatch + wrap pipeline runs at every level. Layering:
@@ -468,27 +443,24 @@ function _filterWrapChildrenByKind<T>(
 
 export function wrapProgram(data: T.Program, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_definitions']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.Program as const,
-			_definitions: normalizeRepeatedWrapSlot(data._definitions, false, 'definitions', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'definitions',
-				span: (data as _NodeData).$span
-			}),
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.Program as const,
+		_definitions: normalizeRepeatedWrapSlot(data._definitions, false, 'definitions', {
+			tree,
+			nodeType: data.$type,
+			slotName: 'definitions',
+			span: (data as _NodeData).$span
+		}),
 
-			definitions() {
-				return drillInAll<T.Definition>(this._definitions as readonly T.Definition[] | undefined, tree);
-			},
-			$with: {
-				definitions: (...v: NonNullable<T.Program['_definitions']>[number][]) =>
-					wrapProgram({ ...$edited(data), _definitions: v }, tree)
-			}
+		definitions() {
+			return drillInAll<T.Definition>(this._definitions as readonly T.Definition[] | undefined, tree);
 		},
-		_treeEngine(tree)
-	);
+		$with: {
+			definitions: (...v: NonNullable<T.Program['_definitions']>[number][]) =>
+				wrapProgram({ ...$edited(data), _definitions: v }, tree)
+		}
+	});
 	return _node;
 }
 
@@ -675,27 +647,24 @@ export function wrapNamedNodeExpression(
 export function wrapEscapeSequence(data: T.EscapeSequence, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_content']);
 	data = _projectLexed(data, TOKEN_INTERIORS['escape_sequence'], 'escape_sequence');
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.EscapeSequence as const,
-			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'content',
-				span: (data as _NodeData).$span
-			}),
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.EscapeSequence as const,
+		_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'content',
+			span: (data as _NodeData).$span
+		}),
 
-			content() {
-				return drillIn<string>(this._content, tree);
-			},
-			$with: {
-				content: (v: NonNullable<T.EscapeSequence['_content']>) =>
-					wrapEscapeSequence({ ...$edited(data), _content: v }, tree)
-			}
+		content() {
+			return drillIn<string>(this._content, tree);
 		},
-		_treeEngine(tree)
-	);
+		$with: {
+			content: (v: NonNullable<T.EscapeSequence['_content']>) =>
+				wrapEscapeSequence({ ...$edited(data), _content: v }, tree)
+		}
+	});
 	return _node;
 }
 
@@ -729,367 +698,337 @@ export function wrapNodeIdentifier(
 
 export function wrapCapture(data: T.Capture, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_name']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.Capture as const,
-			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'name',
-				span: (data as _NodeData).$span
-			}),
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.Capture as const,
+		_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'name',
+			span: (data as _NodeData).$span
+		}),
 
-			name() {
-				return drillIn<T.ImmediateIdentifier>(this._name, tree);
-			},
-			$with: {
-				name: (v: NonNullable<T.Capture['_name']>) => wrapCapture({ ...$edited(data), _name: v }, tree)
-			}
+		name() {
+			return drillIn<T.ImmediateIdentifier>(this._name, tree);
 		},
-		_treeEngine(tree)
-	);
+		$with: {
+			name: (v: NonNullable<T.Capture['_name']>) => wrapCapture({ ...$edited(data), _name: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapString(data: T.String, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_string_content']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.String as const,
-			_string_content: normalizeSingularWrapSlot(data._string_content, 'string_content', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'string_content',
-				span: (data as _NodeData).$span
-			}),
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.String as const,
+		_string_content: normalizeSingularWrapSlot(data._string_content, 'string_content', false, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'string_content',
+			span: (data as _NodeData).$span
+		}),
 
-			stringContent() {
-				return drillIn<T.StringContent | undefined>(this._string_content, tree);
-			},
-			$with: {
-				stringContent: (v: NonNullable<T.String['_string_content']>) =>
-					wrapString({ ...$edited(data), _string_content: v }, tree)
-			}
+		stringContent() {
+			return drillIn<T.StringContent | undefined>(this._string_content, tree);
 		},
-		_treeEngine(tree)
-	);
+		$with: {
+			stringContent: (v: NonNullable<T.String['_string_content']>) =>
+				wrapString({ ...$edited(data), _string_content: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapImmediateString(data: T.ImmediateString, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_string_content']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.ImmediateString as const,
-			_string_content: normalizeSingularWrapSlot(data._string_content, 'string_content', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'string_content',
-				span: (data as _NodeData).$span
-			}),
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.ImmediateString as const,
+		_string_content: normalizeSingularWrapSlot(data._string_content, 'string_content', false, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'string_content',
+			span: (data as _NodeData).$span
+		}),
 
-			stringContent() {
-				return drillIn<T.StringContent | undefined>(this._string_content, tree);
-			},
-			$with: {
-				stringContent: (v: NonNullable<T.ImmediateString['_string_content']>) =>
-					wrapImmediateString({ ...$edited(data), _string_content: v }, tree)
-			}
+		stringContent() {
+			return drillIn<T.StringContent | undefined>(this._string_content, tree);
 		},
-		_treeEngine(tree)
-	);
+		$with: {
+			stringContent: (v: NonNullable<T.ImmediateString['_string_content']>) =>
+				wrapImmediateString({ ...$edited(data), _string_content: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapStringContent(data: T.StringContent, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_content']);
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.StringContent as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.StringContent as const,
-			_content: normalizeRepeatedWrapSlot(data._content, false, 'content', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'content',
-				span: (data as _NodeData).$span
-			}),
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.StringContent as const });
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.StringContent as const,
+		_content: normalizeRepeatedWrapSlot(data._content, false, 'content', {
+			tree,
+			nodeType: data.$type,
+			slotName: 'content',
+			span: (data as _NodeData).$span
+		}),
 
-			contents() {
-				return drillInAll<'[^"\\\\\\n]+' | T.EscapeSequence>(
-					this._content as readonly ('[^"\\\\\\n]+' | T.EscapeSequence)[] | undefined,
-					tree
-				);
-			},
-			$with: {
-				contents: (...v: NonNullable<T.StringContent['_content']>[number][]) =>
-					wrapStringContent({ ...$edited(data), _content: v }, tree)
-			}
+		contents() {
+			return drillInAll<'[^"\\\\\\n]+' | T.EscapeSequence>(
+				this._content as readonly ('[^"\\\\\\n]+' | T.EscapeSequence)[] | undefined,
+				tree
+			);
 		},
-		_treeEngine(tree)
-	);
+		$with: {
+			contents: (...v: NonNullable<T.StringContent['_content']>[number][]) =>
+				wrapStringContent({ ...$edited(data), _content: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapParameters(data: T.Parameters, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_elements']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.Parameters as const,
-			_elements: normalizeRepeatedWrapSlot(data._elements, true, 'elements', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'elements',
-				span: (data as _NodeData).$span
-			}),
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.Parameters as const,
+		_elements: normalizeRepeatedWrapSlot(data._elements, true, 'elements', {
+			tree,
+			nodeType: data.$type,
+			slotName: 'elements',
+			span: (data as _NodeData).$span
+		}),
 
-			elements() {
-				return drillInAll<T.Capture | T.String | T.Identifier>(
-					this._elements as readonly (T.Capture | T.String | T.Identifier)[] | undefined,
-					tree
-				);
-			},
-			$with: {
-				elements: (...v: NonEmptyArray<NonNullable<T.Parameters['_elements']>[number]>) =>
-					wrapParameters({ ...$edited(data), _elements: v }, tree)
-			}
+		elements() {
+			return drillInAll<T.Capture | T.String | T.Identifier>(
+				this._elements as readonly (T.Capture | T.String | T.Identifier)[] | undefined,
+				tree
+			);
 		},
-		_treeEngine(tree)
-	);
+		$with: {
+			elements: (...v: NonEmptyArray<NonNullable<T.Parameters['_elements']>[number]>) =>
+				wrapParameters({ ...$edited(data), _elements: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapComment(data: T.Comment, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_content']);
 	data = _projectLexed(data, TOKEN_INTERIORS['comment'], 'comment');
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.Comment as const,
-			_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'content',
-				span: (data as _NodeData).$span
-			}),
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.Comment as const,
+		_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'content',
+			span: (data as _NodeData).$span
+		}),
 
-			content() {
-				return drillIn<string>(this._content, tree);
-			},
-			$with: {
-				content: (v: NonNullable<T.Comment['_content']>) => wrapComment({ ...$edited(data), _content: v }, tree)
-			}
+		content() {
+			return drillIn<string>(this._content, tree);
 		},
-		_treeEngine(tree)
-	);
+		$with: {
+			content: (v: NonNullable<T.Comment['_content']>) => wrapComment({ ...$edited(data), _content: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapList(data: T.List, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_definitions', '_content']);
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.List as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.List as const,
-			_definitions: normalizeRepeatedWrapSlot(data._definitions, true, 'definitions', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'definitions',
-				span: (data as _NodeData).$span
-			}),
-			_content: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(
-					data._content ??
-						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
-							TSKindId.Star,
-							TSKindId.Plus,
-							TSKindId.Qmark
-						]),
-					false,
-					'content',
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
-				{ '*': 2, '+': 3, '?': 4 },
-				undefined,
-				[36]
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.List as const });
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.List as const,
+		_definitions: normalizeRepeatedWrapSlot(data._definitions, true, 'definitions', {
+			tree,
+			nodeType: data.$type,
+			slotName: 'definitions',
+			span: (data as _NodeData).$span
+		}),
+		_content: projectMixedEnumStorage(
+			normalizeRepeatedWrapSlot(
+				data._content ??
+					readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
+						TSKindId.Star,
+						TSKindId.Plus,
+						TSKindId.Qmark
+					]),
+				false,
+				'content',
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
+			{ '*': 2, '+': 3, '?': 4 },
+			undefined,
+			[36]
+		),
 
-			definitions() {
-				return drillInAll<T.Definition>(this._definitions as readonly T.Definition[] | undefined, tree);
-			},
-			contents() {
-				return drillInAll<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
-					this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
-					tree
-				);
-			},
-			$with: {
-				definitions: (...v: NonEmptyArray<NonNullable<T.List['_definitions']>[number]>) =>
-					wrapList({ ...$edited(data), _definitions: v }, tree),
-				contents: (...v: NonNullable<T.List['_content']>[number][]) => wrapList({ ...$edited(data), _content: v }, tree)
-			}
+		definitions() {
+			return drillInAll<T.Definition>(this._definitions as readonly T.Definition[] | undefined, tree);
 		},
-		_treeEngine(tree)
-	);
+		contents() {
+			return drillInAll<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
+				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
+				tree
+			);
+		},
+		$with: {
+			definitions: (...v: NonEmptyArray<NonNullable<T.List['_definitions']>[number]>) =>
+				wrapList({ ...$edited(data), _definitions: v }, tree),
+			contents: (...v: NonNullable<T.List['_content']>[number][]) => wrapList({ ...$edited(data), _content: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapGrouping(data: T.Grouping, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_grouping_group', '_content']);
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Grouping as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.Grouping as const,
-			_grouping_group: normalizeRepeatedWrapSlot(data._grouping_group, true, 'grouping_group', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'grouping_group',
-				span: (data as _NodeData).$span
-			}),
-			_content: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(
-					data._content ??
-						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
-							TSKindId.Star,
-							TSKindId.Plus,
-							TSKindId.Qmark
-						]),
-					false,
-					'content',
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
-				{ '*': 2, '+': 3, '?': 4 },
-				undefined,
-				[36]
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Grouping as const });
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.Grouping as const,
+		_grouping_group: normalizeRepeatedWrapSlot(data._grouping_group, true, 'grouping_group', {
+			tree,
+			nodeType: data.$type,
+			slotName: 'grouping_group',
+			span: (data as _NodeData).$span
+		}),
+		_content: projectMixedEnumStorage(
+			normalizeRepeatedWrapSlot(
+				data._content ??
+					readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
+						TSKindId.Star,
+						TSKindId.Plus,
+						TSKindId.Qmark
+					]),
+				false,
+				'content',
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
+			{ '*': 2, '+': 3, '?': 4 },
+			undefined,
+			[36]
+		),
 
-			groupingGroups() {
-				return drillInAll<T.GroupingGroup>(this._grouping_group as readonly T.GroupingGroup[] | undefined, tree);
-			},
-			contents() {
-				return drillInAll<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
-					this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
-					tree
-				);
-			},
-			$with: {
-				groupingGroups: (...v: NonEmptyArray<NonNullable<T.Grouping['_grouping_group']>[number]>) =>
-					wrapGrouping({ ...$edited(data), _grouping_group: v }, tree),
-				contents: (...v: NonNullable<T.Grouping['_content']>[number][]) =>
-					wrapGrouping({ ...$edited(data), _content: v }, tree)
-			}
+		groupingGroups() {
+			return drillInAll<T.GroupingGroup>(this._grouping_group as readonly T.GroupingGroup[] | undefined, tree);
 		},
-		_treeEngine(tree)
-	);
+		contents() {
+			return drillInAll<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
+				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
+				tree
+			);
+		},
+		$with: {
+			groupingGroups: (...v: NonEmptyArray<NonNullable<T.Grouping['_grouping_group']>[number]>) =>
+				wrapGrouping({ ...$edited(data), _grouping_group: v }, tree),
+			contents: (...v: NonNullable<T.Grouping['_content']>[number][]) =>
+				wrapGrouping({ ...$edited(data), _content: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapMissingNode(data: T.MissingNode, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_name', '_content']);
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.MissingNode as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.MissingNode as const,
-			_name: normalizeSingularWrapSlot(data._name, 'name', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'name',
-				span: (data as _NodeData).$span
-			}),
-			_content: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(
-					data._content ??
-						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
-							TSKindId.Star,
-							TSKindId.Plus,
-							TSKindId.Qmark
-						]),
-					false,
-					'content',
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
-				{ '*': 2, '+': 3, '?': 4 },
-				undefined,
-				[36]
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.MissingNode as const });
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.MissingNode as const,
+		_name: normalizeSingularWrapSlot(data._name, 'name', false, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'name',
+			span: (data as _NodeData).$span
+		}),
+		_content: projectMixedEnumStorage(
+			normalizeRepeatedWrapSlot(
+				data._content ??
+					readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
+						TSKindId.Star,
+						TSKindId.Plus,
+						TSKindId.Qmark
+					]),
+				false,
+				'content',
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
+			{ '*': 2, '+': 3, '?': 4 },
+			undefined,
+			[36]
+		),
 
-			name() {
-				return drillIn<T.Identifier | T.String | undefined>(this._name, tree);
-			},
-			contents() {
-				return drillInAll<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
-					this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
-					tree
-				);
-			},
-			$with: {
-				name: (v: NonNullable<T.MissingNode['_name']>) => wrapMissingNode({ ...$edited(data), _name: v }, tree),
-				contents: (...v: NonNullable<T.MissingNode['_content']>[number][]) =>
-					wrapMissingNode({ ...$edited(data), _content: v }, tree)
-			}
+		name() {
+			return drillIn<T.Identifier | T.String | undefined>(this._name, tree);
 		},
-		_treeEngine(tree)
-	);
+		contents() {
+			return drillInAll<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
+				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
+				tree
+			);
+		},
+		$with: {
+			name: (v: NonNullable<T.MissingNode['_name']>) => wrapMissingNode({ ...$edited(data), _name: v }, tree),
+			contents: (...v: NonNullable<T.MissingNode['_content']>[number][]) =>
+				wrapMissingNode({ ...$edited(data), _content: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapAnonymousNode(data: T.AnonymousNode, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_name', '_content']);
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.AnonymousNode as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.AnonymousNode as const,
-			_name: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'name',
-					span: (data as _NodeData).$span
-				}),
-				{ _: 7 }
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.AnonymousNode as const });
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.AnonymousNode as const,
+		_name: projectMixedEnumStorage(
+			normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'name',
+				span: (data as _NodeData).$span
+			}),
+			{ _: 7 }
+		),
+		_content: projectMixedEnumStorage(
+			normalizeRepeatedWrapSlot(
+				data._content ??
+					readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
+						TSKindId.Star,
+						TSKindId.Plus,
+						TSKindId.Qmark
+					]),
+				false,
+				'content',
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
-			_content: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(
-					data._content ??
-						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
-							TSKindId.Star,
-							TSKindId.Plus,
-							TSKindId.Qmark
-						]),
-					false,
-					'content',
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
-				{ '*': 2, '+': 3, '?': 4 },
-				undefined,
-				[36]
-			),
+			{ '*': 2, '+': 3, '?': 4 },
+			undefined,
+			[36]
+		),
 
-			name() {
-				return drillIn<T.String | TSKindId.Underscore>(this._name, tree);
-			},
-			contents() {
-				return drillInAll<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
-					this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
-					tree
-				);
-			},
-			$with: {
-				name: (v: NonNullable<T.AnonymousNode['_name']>) => wrapAnonymousNode({ ...$edited(data), _name: v }, tree),
-				contents: (...v: NonNullable<T.AnonymousNode['_content']>[number][]) =>
-					wrapAnonymousNode({ ...$edited(data), _content: v }, tree)
-			}
+		name() {
+			return drillIn<T.String | TSKindId.Underscore>(this._name, tree);
 		},
-		_treeEngine(tree)
-	);
+		contents() {
+			return drillInAll<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
+				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
+				tree
+			);
+		},
+		$with: {
+			name: (v: NonNullable<T.AnonymousNode['_name']>) => wrapAnonymousNode({ ...$edited(data), _name: v }, tree),
+			contents: (...v: NonNullable<T.AnonymousNode['_content']>[number][]) =>
+				wrapAnonymousNode({ ...$edited(data), _content: v }, tree)
+		}
+	});
 	return _node;
 }
 
@@ -1123,227 +1062,209 @@ export function wrapNamedNode(
 
 export function wrapFieldDefinition(data: T.FieldDefinition, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_name', '_definition']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.FieldDefinition as const,
-			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'name',
-				span: (data as _NodeData).$span
-			}),
-			_definition: normalizeSingularWrapSlot(data._definition, 'definition', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'definition',
-				span: (data as _NodeData).$span
-			}),
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.FieldDefinition as const,
+		_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'name',
+			span: (data as _NodeData).$span
+		}),
+		_definition: normalizeSingularWrapSlot(data._definition, 'definition', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'definition',
+			span: (data as _NodeData).$span
+		}),
 
-			name() {
-				return drillIn<T.Identifier>(this._name, tree);
-			},
-			definition() {
-				return drillIn<T.Definition>(this._definition, tree);
-			},
-			$with: {
-				name: (v: NonNullable<T.FieldDefinition['_name']>) => wrapFieldDefinition({ ...$edited(data), _name: v }, tree),
-				definition: (v: NonNullable<T.FieldDefinition['_definition']>) =>
-					wrapFieldDefinition({ ...$edited(data), _definition: v }, tree)
-			}
+		name() {
+			return drillIn<T.Identifier>(this._name, tree);
 		},
-		_treeEngine(tree)
-	);
+		definition() {
+			return drillIn<T.Definition>(this._definition, tree);
+		},
+		$with: {
+			name: (v: NonNullable<T.FieldDefinition['_name']>) => wrapFieldDefinition({ ...$edited(data), _name: v }, tree),
+			definition: (v: NonNullable<T.FieldDefinition['_definition']>) =>
+				wrapFieldDefinition({ ...$edited(data), _definition: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapNegatedField(data: T.NegatedField, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_identifier']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.NegatedField as const,
-			_identifier: normalizeSingularWrapSlot(data._identifier, 'identifier', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'identifier',
-				span: (data as _NodeData).$span
-			}),
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.NegatedField as const,
+		_identifier: normalizeSingularWrapSlot(data._identifier, 'identifier', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'identifier',
+			span: (data as _NodeData).$span
+		}),
 
-			identifier() {
-				return drillIn<T.Identifier>(this._identifier, tree);
-			},
-			$with: {
-				identifier: (v: NonNullable<T.NegatedField['_identifier']>) =>
-					wrapNegatedField({ ...$edited(data), _identifier: v }, tree)
-			}
+		identifier() {
+			return drillIn<T.Identifier>(this._identifier, tree);
 		},
-		_treeEngine(tree)
-	);
+		$with: {
+			identifier: (v: NonNullable<T.NegatedField['_identifier']>) =>
+				wrapNegatedField({ ...$edited(data), _identifier: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapPredicate(data: T.Predicate, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_content', '_name', '_type', '_parameters']);
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Predicate as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.Predicate as const,
-			_content: projectKindEnumStorage(
-				normalizeSingularWrapSlot(
-					data._content ?? readTerminalFromOther<'#' | '.'>(data, [TSKindId.Pound, TSKindId.Dot]),
-					'content',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
-				{ '#': 20, '.': 21 }
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.Predicate as const });
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.Predicate as const,
+		_content: projectKindEnumStorage(
+			normalizeSingularWrapSlot(
+				data._content ?? readTerminalFromOther<'#' | '.'>(data, [TSKindId.Pound, TSKindId.Dot]),
+				'content',
+				true,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
-			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+			{ '#': 20, '.': 21 }
+		),
+		_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'name',
+			span: (data as _NodeData).$span
+		}),
+		_type: projectKindEnumStorage(
+			normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'name',
+				slotName: 'type',
 				span: (data as _NodeData).$span
 			}),
-			_type: projectKindEnumStorage(
-				normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'type',
-					span: (data as _NodeData).$span
-				}),
-				{ '?': 4, '!': 19 }
-			),
-			_parameters: normalizeSingularWrapSlot(data._parameters, 'parameters', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'parameters',
-				span: (data as _NodeData).$span
-			}),
+			{ '?': 4, '!': 19 }
+		),
+		_parameters: normalizeSingularWrapSlot(data._parameters, 'parameters', false, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'parameters',
+			span: (data as _NodeData).$span
+		}),
 
-			content() {
-				return this._content;
-			},
-			name() {
-				return drillIn<T.ImmediateIdentifier>(this._name, tree);
-			},
-			type() {
-				return this._type;
-			},
-			parameters() {
-				return drillIn<T.Parameters | undefined>(this._parameters, tree);
-			},
-			$with: {
-				content: (v: NonNullable<T.Predicate['_content']>) => wrapPredicate({ ...$edited(data), _content: v }, tree),
-				name: (v: NonNullable<T.Predicate['_name']>) => wrapPredicate({ ...$edited(data), _name: v }, tree),
-				type: (v: NonNullable<T.Predicate['_type']>) => wrapPredicate({ ...$edited(data), _type: v }, tree),
-				parameters: (v: NonNullable<T.Predicate['_parameters']>) =>
-					wrapPredicate({ ...$edited(data), _parameters: v }, tree)
-			}
+		content() {
+			return this._content;
 		},
-		_treeEngine(tree)
-	);
+		name() {
+			return drillIn<T.ImmediateIdentifier>(this._name, tree);
+		},
+		type() {
+			return this._type;
+		},
+		parameters() {
+			return drillIn<T.Parameters | undefined>(this._parameters, tree);
+		},
+		$with: {
+			content: (v: NonNullable<T.Predicate['_content']>) => wrapPredicate({ ...$edited(data), _content: v }, tree),
+			name: (v: NonNullable<T.Predicate['_name']>) => wrapPredicate({ ...$edited(data), _name: v }, tree),
+			type: (v: NonNullable<T.Predicate['_type']>) => wrapPredicate({ ...$edited(data), _type: v }, tree),
+			parameters: (v: NonNullable<T.Predicate['_parameters']>) =>
+				wrapPredicate({ ...$edited(data), _parameters: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapGroupExpressionArm(data: T.GroupExpressionArm, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_left', '_right']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.GroupExpressionArm as const,
-			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'left',
-				span: (data as _NodeData).$span
-			}),
-			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'right',
-				span: (data as _NodeData).$span
-			}),
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.GroupExpressionArm as const,
+		_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'left',
+			span: (data as _NodeData).$span
+		}),
+		_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'right',
+			span: (data as _NodeData).$span
+		}),
 
-			left() {
-				return drillIn<T.Definition | T.GroupExpressionArm>(this._left, tree);
-			},
-			right() {
-				return drillIn<T.Definition | T.GroupExpressionArm>(this._right, tree);
-			},
-			$with: {
-				left: (v: NonNullable<T.GroupExpressionArm['_left']>) =>
-					wrapGroupExpressionArm({ ...$edited(data), _left: v }, tree),
-				right: (v: NonNullable<T.GroupExpressionArm['_right']>) =>
-					wrapGroupExpressionArm({ ...$edited(data), _right: v }, tree)
-			}
+		left() {
+			return drillIn<T.Definition | T.GroupExpressionArm>(this._left, tree);
 		},
-		_treeEngine(tree)
-	);
+		right() {
+			return drillIn<T.Definition | T.GroupExpressionArm>(this._right, tree);
+		},
+		$with: {
+			left: (v: NonNullable<T.GroupExpressionArm['_left']>) =>
+				wrapGroupExpressionArm({ ...$edited(data), _left: v }, tree),
+			right: (v: NonNullable<T.GroupExpressionArm['_right']>) =>
+				wrapGroupExpressionArm({ ...$edited(data), _right: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapNamedNodeExpressionArm(data: T.NamedNodeExpressionArm, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_left', '_right']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.NamedNodeExpressionArm as const,
-			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'left',
-				span: (data as _NodeData).$span
-			}),
-			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'right',
-				span: (data as _NodeData).$span
-			}),
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.NamedNodeExpressionArm as const,
+		_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'left',
+			span: (data as _NodeData).$span
+		}),
+		_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'right',
+			span: (data as _NodeData).$span
+		}),
 
-			left() {
-				return drillIn<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._left, tree);
-			},
-			right() {
-				return drillIn<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._right, tree);
-			},
-			$with: {
-				left: (v: NonNullable<T.NamedNodeExpressionArm['_left']>) =>
-					wrapNamedNodeExpressionArm({ ...$edited(data), _left: v }, tree),
-				right: (v: NonNullable<T.NamedNodeExpressionArm['_right']>) =>
-					wrapNamedNodeExpressionArm({ ...$edited(data), _right: v }, tree)
-			}
+		left() {
+			return drillIn<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._left, tree);
 		},
-		_treeEngine(tree)
-	);
+		right() {
+			return drillIn<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._right, tree);
+		},
+		$with: {
+			left: (v: NonNullable<T.NamedNodeExpressionArm['_left']>) =>
+				wrapNamedNodeExpressionArm({ ...$edited(data), _left: v }, tree),
+			right: (v: NonNullable<T.NamedNodeExpressionArm['_right']>) =>
+				wrapNamedNodeExpressionArm({ ...$edited(data), _right: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapGroupingGroup(data: T.GroupingGroup, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_group_expression']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.GroupingGroup as const,
-			_group_expression: normalizeSingularWrapSlot(data._group_expression, 'group_expression', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'group_expression',
-				span: (data as _NodeData).$span
-			}),
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.GroupingGroup as const,
+		_group_expression: normalizeSingularWrapSlot(data._group_expression, 'group_expression', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'group_expression',
+			span: (data as _NodeData).$span
+		}),
 
-			groupExpression() {
-				return drillIn<T.Definition | T.GroupExpressionArm>(this._group_expression, tree);
-			},
-			$with: {
-				groupExpression: (v: NonNullable<T.GroupingGroup['_group_expression']>) =>
-					wrapGroupingGroup({ ...$edited(data), _group_expression: v }, tree)
-			}
+		groupExpression() {
+			return drillIn<T.Definition | T.GroupExpressionArm>(this._group_expression, tree);
 		},
-		_treeEngine(tree)
-	);
+		$with: {
+			groupExpression: (v: NonNullable<T.GroupingGroup['_group_expression']>) =>
+				wrapGroupingGroup({ ...$edited(data), _group_expression: v }, tree)
+		}
+	});
 	return _node;
 }
 
@@ -1379,214 +1300,200 @@ export function wrapNamedNodeGroup(
 
 export function wrapNamedNodePlain(data: T.NamedNodePlain, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_name', '_named_node_group', '_content']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.NamedNodePlain as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.NamedNodePlain as const,
-			_name: projectMixedEnumStorage(
-				normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'name',
-					span: (data as _NodeData).$span
-				}),
-				{ _: 7 }
-			),
-			_named_node_group: normalizeSingularWrapSlot(data._named_node_group, 'named_node_group', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'named_node_group',
-				span: (data as _NodeData).$span
-			}),
-			_content: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(
-					data._content ??
-						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
-							TSKindId.Star,
-							TSKindId.Plus,
-							TSKindId.Qmark
-						]),
-					false,
-					'content',
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
-				{ '*': 2, '+': 3, '?': 4 },
-				undefined,
-				[36]
-			),
-
-			name() {
-				return drillIn<T.Identifier | TSKindId.Underscore>(this._name, tree);
-			},
-			namedNodeGroup() {
-				return drillIn<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
-			},
-			contents() {
-				return drillInAll<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
-					this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
-					tree
-				);
-			},
-			$with: {
-				name: (v: NonNullable<T.NamedNodePlain['_name']>) => wrapNamedNodePlain({ ...$edited(data), _name: v }, tree),
-				namedNodeGroup: (v: NonNullable<T.NamedNodePlain['_named_node_group']>) =>
-					wrapNamedNodePlain({ ...$edited(data), _named_node_group: v }, tree),
-				contents: (...v: NonNullable<T.NamedNodePlain['_content']>[number][]) =>
-					wrapNamedNodePlain({ ...$edited(data), _content: v }, tree)
-			}
-		},
-		_treeEngine(tree)
-	);
-	return _node;
-}
-
-export function wrapNamedNodeSupertyped(data: T.NamedNodeSupertyped, tree: TreeHandle) {
-	data = _keepModelledSlots(data, ['_supertype', '_name', '_named_node_group', '_content']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.NamedNodeSupertyped as const }, _treeEngine(tree));
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.NamedNodeSupertyped as const,
-			_supertype: normalizeSingularWrapSlot(data._supertype, 'supertype', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'supertype',
-				span: (data as _NodeData).$span
-			}),
-			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.NamedNodePlain as const });
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.NamedNodePlain as const,
+		_name: projectMixedEnumStorage(
+			normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'name',
 				span: (data as _NodeData).$span
 			}),
-			_named_node_group: normalizeSingularWrapSlot(data._named_node_group, 'named_node_group', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'named_node_group',
-				span: (data as _NodeData).$span
-			}),
-			_content: projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(
-					data._content ??
-						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
-							TSKindId.Star,
-							TSKindId.Plus,
-							TSKindId.Qmark
-						]),
-					false,
-					'content',
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-				),
-				{ '*': 2, '+': 3, '?': 4 },
-				undefined,
-				[36]
+			{ _: 7 }
+		),
+		_named_node_group: normalizeSingularWrapSlot(data._named_node_group, 'named_node_group', false, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'named_node_group',
+			span: (data as _NodeData).$span
+		}),
+		_content: projectMixedEnumStorage(
+			normalizeRepeatedWrapSlot(
+				data._content ??
+					readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
+						TSKindId.Star,
+						TSKindId.Plus,
+						TSKindId.Qmark
+					]),
+				false,
+				'content',
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
+			{ '*': 2, '+': 3, '?': 4 },
+			undefined,
+			[36]
+		),
 
-			supertype() {
-				return drillIn<T.Identifier>(this._supertype, tree);
-			},
-			name() {
-				return drillIn<T.ImmediateIdentifier | T.ImmediateString>(this._name, tree);
-			},
-			namedNodeGroup() {
-				return drillIn<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
-			},
-			contents() {
-				return drillInAll<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
-					this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
-					tree
-				);
-			},
-			$with: {
-				supertype: (v: NonNullable<T.NamedNodeSupertyped['_supertype']>) =>
-					wrapNamedNodeSupertyped({ ...$edited(data), _supertype: v }, tree),
-				name: (v: NonNullable<T.NamedNodeSupertyped['_name']>) =>
-					wrapNamedNodeSupertyped({ ...$edited(data), _name: v }, tree),
-				namedNodeGroup: (v: NonNullable<T.NamedNodeSupertyped['_named_node_group']>) =>
-					wrapNamedNodeSupertyped({ ...$edited(data), _named_node_group: v }, tree),
-				contents: (...v: NonNullable<T.NamedNodeSupertyped['_content']>[number][]) =>
-					wrapNamedNodeSupertyped({ ...$edited(data), _content: v }, tree)
-			}
+		name() {
+			return drillIn<T.Identifier | TSKindId.Underscore>(this._name, tree);
 		},
-		_treeEngine(tree)
-	);
+		namedNodeGroup() {
+			return drillIn<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
+		},
+		contents() {
+			return drillInAll<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
+				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
+				tree
+			);
+		},
+		$with: {
+			name: (v: NonNullable<T.NamedNodePlain['_name']>) => wrapNamedNodePlain({ ...$edited(data), _name: v }, tree),
+			namedNodeGroup: (v: NonNullable<T.NamedNodePlain['_named_node_group']>) =>
+				wrapNamedNodePlain({ ...$edited(data), _named_node_group: v }, tree),
+			contents: (...v: NonNullable<T.NamedNodePlain['_content']>[number][]) =>
+				wrapNamedNodePlain({ ...$edited(data), _content: v }, tree)
+		}
+	});
+	return _node;
+}
+
+export function wrapNamedNodeSupertyped(data: T.NamedNodeSupertyped, tree: TreeHandle) {
+	data = _keepModelledSlots(data, ['_supertype', '_name', '_named_node_group', '_content']);
+	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.NamedNodeSupertyped as const });
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.NamedNodeSupertyped as const,
+		_supertype: normalizeSingularWrapSlot(data._supertype, 'supertype', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'supertype',
+			span: (data as _NodeData).$span
+		}),
+		_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'name',
+			span: (data as _NodeData).$span
+		}),
+		_named_node_group: normalizeSingularWrapSlot(data._named_node_group, 'named_node_group', false, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'named_node_group',
+			span: (data as _NodeData).$span
+		}),
+		_content: projectMixedEnumStorage(
+			normalizeRepeatedWrapSlot(
+				data._content ??
+					readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
+						TSKindId.Star,
+						TSKindId.Plus,
+						TSKindId.Qmark
+					]),
+				false,
+				'content',
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			),
+			{ '*': 2, '+': 3, '?': 4 },
+			undefined,
+			[36]
+		),
+
+		supertype() {
+			return drillIn<T.Identifier>(this._supertype, tree);
+		},
+		name() {
+			return drillIn<T.ImmediateIdentifier | T.ImmediateString>(this._name, tree);
+		},
+		namedNodeGroup() {
+			return drillIn<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
+		},
+		contents() {
+			return drillInAll<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
+				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
+				tree
+			);
+		},
+		$with: {
+			supertype: (v: NonNullable<T.NamedNodeSupertyped['_supertype']>) =>
+				wrapNamedNodeSupertyped({ ...$edited(data), _supertype: v }, tree),
+			name: (v: NonNullable<T.NamedNodeSupertyped['_name']>) =>
+				wrapNamedNodeSupertyped({ ...$edited(data), _name: v }, tree),
+			namedNodeGroup: (v: NonNullable<T.NamedNodeSupertyped['_named_node_group']>) =>
+				wrapNamedNodeSupertyped({ ...$edited(data), _named_node_group: v }, tree),
+			contents: (...v: NonNullable<T.NamedNodeSupertyped['_content']>[number][]) =>
+				wrapNamedNodeSupertyped({ ...$edited(data), _content: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapNamedNodeGroupChildren(data: T.NamedNodeGroupChildren, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_named_node_expressions']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.NamedNodeGroupChildren as const,
-			_named_node_expressions: normalizeRepeatedWrapSlot(data._named_node_expressions, true, 'named_node_expressions', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'named_node_expressions',
-				span: (data as _NodeData).$span
-			}),
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.NamedNodeGroupChildren as const,
+		_named_node_expressions: normalizeRepeatedWrapSlot(data._named_node_expressions, true, 'named_node_expressions', {
+			tree,
+			nodeType: data.$type,
+			slotName: 'named_node_expressions',
+			span: (data as _NodeData).$span
+		}),
 
-			namedNodeExpressions() {
-				return drillInAll<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
-					this._named_node_expressions as
-						| readonly (T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]
-						| undefined,
-					tree
-				);
-			},
-			$with: {
-				namedNodeExpressions: (
-					...v: NonEmptyArray<NonNullable<T.NamedNodeGroupChildren['_named_node_expressions']>[number]>
-				) => wrapNamedNodeGroupChildren({ ...$edited(data), _named_node_expressions: v }, tree)
-			}
+		namedNodeExpressions() {
+			return drillInAll<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
+				this._named_node_expressions as
+					| readonly (T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]
+					| undefined,
+				tree
+			);
 		},
-		_treeEngine(tree)
-	);
+		$with: {
+			namedNodeExpressions: (
+				...v: NonEmptyArray<NonNullable<T.NamedNodeGroupChildren['_named_node_expressions']>[number]>
+			) => wrapNamedNodeGroupChildren({ ...$edited(data), _named_node_expressions: v }, tree)
+		}
+	});
 	return _node;
 }
 
 export function wrapNamedNodeGroupAnchoredLast(data: T.NamedNodeGroupAnchoredLast, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_named_node_expressions', '_last']);
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId.NamedNodeGroupAnchoredLast as const,
-			_named_node_expressions: normalizeRepeatedWrapSlot(
-				data._named_node_expressions,
-				false,
-				'named_node_expressions',
-				{ tree, nodeType: data.$type, slotName: 'named_node_expressions', span: (data as _NodeData).$span }
-			),
-			_last: normalizeSingularWrapSlot(data._last, 'last', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'last',
-				span: (data as _NodeData).$span
-			}),
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.NamedNodeGroupAnchoredLast as const,
+		_named_node_expressions: normalizeRepeatedWrapSlot(data._named_node_expressions, false, 'named_node_expressions', {
+			tree,
+			nodeType: data.$type,
+			slotName: 'named_node_expressions',
+			span: (data as _NodeData).$span
+		}),
+		_last: normalizeSingularWrapSlot(data._last, 'last', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'last',
+			span: (data as _NodeData).$span
+		}),
 
-			namedNodeExpressions() {
-				return drillInAll<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
-					this._named_node_expressions as
-						| readonly (T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]
-						| undefined,
-					tree
-				);
-			},
-			last() {
-				return drillIn<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._last, tree);
-			},
-			$with: {
-				namedNodeExpressions: (...v: NonNullable<T.NamedNodeGroupAnchoredLast['_named_node_expressions']>[number][]) =>
-					wrapNamedNodeGroupAnchoredLast({ ...$edited(data), _named_node_expressions: v }, tree),
-				last: (v: NonNullable<T.NamedNodeGroupAnchoredLast['_last']>) =>
-					wrapNamedNodeGroupAnchoredLast({ ...$edited(data), _last: v }, tree)
-			}
+		namedNodeExpressions() {
+			return drillInAll<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
+				this._named_node_expressions as
+					| readonly (T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]
+					| undefined,
+				tree
+			);
 		},
-		_treeEngine(tree)
-	);
+		last() {
+			return drillIn<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._last, tree);
+		},
+		$with: {
+			namedNodeExpressions: (...v: NonNullable<T.NamedNodeGroupAnchoredLast['_named_node_expressions']>[number][]) =>
+				wrapNamedNodeGroupAnchoredLast({ ...$edited(data), _named_node_expressions: v }, tree),
+			last: (v: NonNullable<T.NamedNodeGroupAnchoredLast['_last']>) =>
+				wrapNamedNodeGroupAnchoredLast({ ...$edited(data), _last: v }, tree)
+		}
+	});
 	return _node;
 }
 
@@ -1711,8 +1618,7 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// as strings), which never had a table entry to reach.
 	const fn = typeof data.$type === 'number' ? _wrapTable[data.$type] : undefined;
 	const shown = data.$_trivia == null ? data : { ...data, $_trivia: _wrapTrivia(data.$_trivia, tree) };
-	if (!fn) return _drillUnknownKindChildren(shown, tree);
-	return fn(shown, tree);
+	return inTreeEngine(tree, () => (fn ? fn(shown, tree) : _drillUnknownKindChildren(shown, tree)));
 }
 
 /**

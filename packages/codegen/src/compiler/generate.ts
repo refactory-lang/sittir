@@ -8,7 +8,7 @@ import { grammarPackage, isStableGrammar, type GrammarPackage } from '../grammar
 import { emitIndex } from '../emitters/index-file.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitApi, emitRenderEngine } from '../emitters/engine.ts';
-import { emitBackend, emitBoundary } from '../emitters/grammar-runtime.ts';
+import { emitBackend } from '../emitters/grammar-runtime.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
 import { loadPackageIdTables } from './generated-metadata.ts';
@@ -23,14 +23,13 @@ import type { EmittedTemplates } from '../emitters/templates.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import type { OverlayName } from '../emitters/overlays/module.ts';
-import { triviaKinds } from './model/trivia.ts';
+import { defaultTriviaForm, triviaKinds } from './model/trivia.ts';
 
 export interface GeneratedFiles {
 	types: string;
 	renderEngine: string;
 	api: string;
 	backend: string;
-	boundary: string;
 	templates: EmittedTemplates;
 	factories: string;
 	overlays: Record<OverlayName, string>;
@@ -144,9 +143,13 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 		const result: GeneratedFiles = {
 			renderEngine: emitRenderEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
-			api: emitApi({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
+			api: emitApi({
+				grammar: cfg.grammar,
+				rootTypeName,
+				rootTreeTypeName,
+				commentCoercer: defaultTriviaForm(nodeMap)?.coercer
+			}),
 			backend: emitBackend({ grammar: cfg.grammar }),
-			boundary: emitBoundary({ grammar: cfg.grammar }),
 			types: emitted.types,
 			templates: emitted.templates,
 			factories: emitted.factories,

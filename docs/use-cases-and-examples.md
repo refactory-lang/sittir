@@ -24,17 +24,22 @@
 >
 > **Executable companions:** Source-form TypeScript versions of these examples
 > live under [`examples/`](../examples/). Stable examples graduate into the
-> compile gate; pending target-surface examples stay documented here until the
+> compile gate, which also runs them (`tests/acceptance/examples-run.test.ts`); pending target-surface examples stay documented here until the
 > implementation catches up.
 
 ## 1. Construct nodes with factories
+
+A node belongs to the engine that built or read it, and renders, edits and takes trivia through that engine. Every snippet below builds through an engine — `ir` is that engine's `build` — because a node made anywhere else has no engine and `$render()` says so.
 
 ### Factory API — explicit construction
 
 Every node is constructed with its factory. No-arg calls produce empty nodes: no children and optional fields absent.
 
 ```ts
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const { build: ir } = await createEngine(rust);
 
 // pub fn main() {}
 const fn = ir.functionItem({
@@ -53,7 +58,10 @@ fn.$render(); // "pub fn main() {}"
 ### Factory API — nested
 
 ```ts
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const { build: ir } = await createEngine(rust);
 
 // pub fn greet(name: &str) -> String {
 //     format!("Hello, {}!", name)
@@ -94,7 +102,10 @@ Coercion resolves at every level:
 - Omitted optional fields produce no output.
 
 ```ts
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const { build: ir } = await createEngine(rust);
 
 const fn = ir.functionItem({
 	visibilityModifier: 'pub',
@@ -116,7 +127,10 @@ const fn = ir.functionItem({
 ### Coercion — minimal
 
 ```ts
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const { build: ir } = await createEngine(rust);
 
 // fn main() {}
 const fn = ir.functionItem({ name: 'main' });
@@ -125,7 +139,10 @@ const fn = ir.functionItem({ name: 'main' });
 ### Immutable updates with `$with`
 
 ```ts
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const { build: ir } = await createEngine(rust);
 
 const fn = ir.functionItem({ name: 'main' });
 const stmt = ir.expressionStatement({ expression: 'todo!()' });
@@ -144,7 +161,10 @@ const updated = fn
 ### Side-by-side: struct
 
 ```ts
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const { build: ir } = await createEngine(rust);
 
 // pub struct Config { pub host: String, port: u16 }
 
@@ -179,7 +199,10 @@ const sFrom = ir.structItem({
 ## 2. Render NodeData to source
 
 ```ts
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const { build: ir } = await createEngine(rust);
 
 const fn = ir.functionItem({ visibilityModifier: 'pub', name: 'main' });
 fn.$render();
@@ -189,9 +212,10 @@ fn.$render();
 ### Round-trip: read → render
 
 ```ts
-import { createEngine } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
 
-const engine = createEngine();
+const engine = await createEngine(rust);
 const tree = engine.parse(source);
 tree.$render() === source; // nothing was rebuilt, so nothing is re-spelled
 ```
@@ -203,7 +227,10 @@ comments and blank lines and indentation included.
 ## 3. Attach comments with `.$trivia()`
 
 ```ts
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const { build: ir } = await createEngine(rust);
 
 const fn = ir
 	.functionItem({ visibilityModifier: 'pub', name: 'main' })
@@ -216,7 +243,10 @@ fn.$render();
 ### Leading and trailing trivia
 
 ```ts
-import { ir } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
+
+const { build: ir } = await createEngine(rust);
 
 const fn = ir
 	.functionItem({ visibilityModifier: 'pub', name: 'main' })
@@ -237,7 +267,7 @@ const todo = ir.functionItem({
 todo.$render(); // fn todo() {\n    // TODO\n}
 ```
 
-Only an empty node has `inner`: a factory call with no arguments returns the empty form (`EmptyBlock`), and `isEmpty(node)` narrows a read node to it.
+Only an empty node has `inner`: a factory call with no arguments returns the empty form (`EmptyBlock`), and `engine.isEmptyNode(node)` narrows a read node to it.
 
 ## 4. Construction templates — pre-compiled
 
@@ -353,9 +383,10 @@ whole tree up front instead — one crossing rather than one per level, at the
 cost of reading what you may never touch.
 
 ```ts
-import { createEngine } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
 
-const engine = createEngine();
+const engine = await createEngine(rust);
 const lazy = engine.parse(source);
 const eager = engine.parse(source, { deep: true });
 ```
@@ -365,16 +396,17 @@ level that was expanded can be rebuilt. `lazy.$render()` returns the source
 byte for byte; `eager.$render()` re-spells every level canonically. Both
 re-parse to the same tree.
 
-`engine.diagnostics` exposes the same reads un-wrapped:
-`parseAndRead(source, { deep })` returns `{ root, tree }`, and
-`readNode(handle, childIndex)` expands one stub by its coordinates.
+`engine.diagnostics.parseAndRead(source, { deep })` returns the same read
+un-wrapped, as `{ root, tree }`, for tooling; the tree is bound to the engine,
+so what is wrapped over it renders through it.
 
 ### Wrapped access
 
 ```ts
-import { createEngine } from '@sittir/rust';
+import { createEngine } from '@sittir/common';
+import rust from '@sittir/rust';
 
-const engine = createEngine();
+const engine = await createEngine(rust);
 const fn = engine.parse(source).statements()[0];
 fn.name(); // drillIn: lazy expand if needed
 fn.body(); // drillIn: returns Block

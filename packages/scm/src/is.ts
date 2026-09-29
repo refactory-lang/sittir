@@ -90,7 +90,7 @@ const _supertype_namedNode_ids = new Set<number>([56, 57]);
 const _supertype_namedNodeGroup_ids = new Set<number>([58, 59]);
 const _supertype_whitespace_ids = new Set<number>([24, 25, 26, 27, 28, 29, 30, 31]);
 
-export const is = {
+export const is = Object.freeze({
 	program: _g(TSKindId.Program),
 	escapeSequence: _g(TSKindId.EscapeSequence),
 	capture: _g(TSKindId.Capture),
@@ -115,4 +115,4 @@ export const is = {
 	namedNode: _sg(_supertype_namedNode_ids),
 	namedNodeGroup: _sg(_supertype_namedNodeGroup_ids),
 	whitespace: _sg(_supertype_whitespace_ids)
-} as unknown as IsGuards;
+}) as unknown as IsGuards;

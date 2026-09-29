@@ -4,9 +4,18 @@ import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
 import { ir } from './ir.js';
 import { is } from './is.js';
-import { TSKindId, type FixedTextKindId, type IrKeyOf, type NamespaceMap, type TypescriptNode } from './types.js';
+import {
+	TSKindId,
+	type FixedTextKindId,
+	type IrKeyOf,
+	type NamespaceMap,
+	type TypescriptNode,
+	type TypescriptTypeMap
+} from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { methodsEngine } from './utils.js';
+import { triviaFacts } from './utils.js';
+import { coerceToCommentLine } from './factories/coerce.js';
+import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ProgramRoot } from './render-engine.js';
 import { wrapNode, type ProgramTree } from './wrap.js';
 
@@ -21,14 +30,16 @@ export interface TypescriptAPI extends LanguageAPI {
 	readonly fixedTextKindId: FixedTextKindId;
 	readonly options: Options & IndentOption<string, IndentChar>;
 	readonly indentChar: IndentChar;
+	readonly empty: TypescriptTypeMap['empty'];
 }
 
-export const hooks: LanguageHooks<TypescriptAPI> = {
+export const hooks: LanguageHooks<TypescriptAPI> = Object.freeze<LanguageHooks<TypescriptAPI>>({
 	name: 'typescript',
+	renderModuleHash: RENDER_MODULE_HASH,
 	build: ir,
 	is,
 	kinds: TSKindId,
-	trivia: methodsEngine.trivia,
+	trivia: Object.freeze({ ...triviaFacts, comment: coerceToCommentLine }),
 	createNative: (options) => nativeLanguageEngine<TypescriptAPI, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ProgramRoot & ParsedRoot, tree as TreeHandle)
-};
+});

@@ -49,15 +49,37 @@ describe('emitApi', () => {
 		expect(output).toContain('readonly root: ModuleTree;');
 	});
 
+	it("types the API's empty forms from the grammar's type map", () => {
+		expect(output).toContain("readonly empty: PythonTypeMap['empty'];");
+		expect(output).toMatch(/import \{[^}]*type PythonTypeMap[^}]*\} from '\.\/types\.js';/);
+	});
+
 	it('keys the kind-to-type map on the stamped ir keys', () => {
 		expect(output).toContain('readonly types: KindTypes<IrKeyOf, NamespaceMap>;');
 	});
 
 	it('wires the hooks through the shared native adapter and the wrapper', () => {
-		expect(output).toContain('export const hooks: LanguageHooks<PythonAPI> = {');
+		expect(output).toContain('export const hooks: LanguageHooks<PythonAPI> = Object.freeze<LanguageHooks<PythonAPI>>({');
 		expect(output).toContain('createNative: (options) => nativeLanguageEngine<PythonAPI, IndentChar>(createRenderEngine(options)),');
 		expect(output).toContain('wrap: (root, tree) => wrapNode(root as ModuleRoot & ParsedRoot, tree as TreeHandle)');
-		expect(output).toContain('trivia: methodsEngine.trivia,');
+		expect(output).toContain('trivia: triviaFacts,');
+		expect(output).not.toContain('coerce.js');
+	});
+
+	it('carries the comment builder in the trivia hook when the grammar has a comment coercer', () => {
+		const withComment = emitApi({
+			grammar: 'python',
+			rootTypeName: 'Module',
+			rootTreeTypeName: 'ModuleTree',
+			commentCoercer: 'coerceToComment'
+		});
+		expect(withComment).toContain('trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),');
+		expect(withComment).toContain("import { coerceToComment } from './factories/coerce.js';");
+	});
+
+	it("hands the engine the package's render module hash", () => {
+		expect(output).toContain("import { RENDER_MODULE_HASH } from './hash.js';");
+		expect(output).toContain('renderModuleHash: RENDER_MODULE_HASH,');
 	});
 });
 
@@ -77,10 +99,10 @@ describe('emitIndex', () => {
 		expect(output).not.toMatch(/^import \{[^}]*\} from '\.\/api\.js'/m);
 	});
 
-	it('re-exports types only, besides the descriptor and isEmpty', () => {
+	it('re-exports types only, besides the descriptor', () => {
 		const valueExports = output
 			.split('\n')
 			.filter((line) => line.startsWith('export ') && !line.startsWith('export type '));
-		expect(valueExports).toEqual(['export default rust;', "export { isEmpty } from './utils.js';"]);
+		expect(valueExports).toEqual(['export default rust;']);
 	});
 });

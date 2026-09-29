@@ -77,7 +77,6 @@ describe('engine', () => {
 		expect(typeof engine.dispose).toBe('function');
 		const native = (await (await descriptor()).load()).createNative();
 		expect(typeof native.parseAndRead).toBe('function');
-		expect(typeof native.holdsTree).toBe('function');
 	});
 
 	it('native engine rejects the ignoreFormat option', async () => {

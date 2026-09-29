@@ -1,12 +1,11 @@
 import type {
 	AnyNodeData,
 	FlavorPair,
-	GrammarFacts,
 	NodeMethods,
 	GrammarTypeMap,
 	Hoisted
 } from '@sittir/types';
-import { isEmptyNode, isNode as isAnyNode, withMethods as withAnyMethods } from './utils.ts';
+import { isNode as isAnyNode, withMethods as withAnyMethods } from './utils.ts';
 
 type NamespacePart<M extends GrammarTypeMap, K, P extends 'Node' | 'Loose'> = K extends keyof M['namespaces']
 	? M['namespaces'][K] extends { readonly [Q in P]: infer X }
@@ -19,19 +18,14 @@ export interface GrammarRuntime<M extends GrammarTypeMap> {
 		v: NamespacePart<M, K, 'Node'> | NamespacePart<M, K, 'Loose'>
 	): v is Extract<NamespacePart<M, K, 'Node'>, AnyNodeData>;
 	isNode(v: unknown): v is AnyNodeData;
-	isEmpty<N extends M['empty']['node']>(node: N): node is N & Extract<M['empty'], { readonly node: N }>['empty'];
-	withMethods<T extends AnyNodeData>(node: T, facts: GrammarFacts): T & NodeMethods<M['trivia']>;
+	withMethods<T extends AnyNodeData>(node: T): T & NodeMethods<M['trivia']>;
 }
 
-export function bindRuntime<M extends GrammarTypeMap>(facts: GrammarFacts): GrammarRuntime<M> {
+export function bindRuntime<M extends GrammarTypeMap>(): GrammarRuntime<M> {
 	return {
 		isNode: isAnyNode,
-		isEmpty(node: AnyNodeData): boolean {
-			const kind = facts.trivia.kindName(node.$type);
-			return kind !== undefined && facts.trivia.innerGaps[kind] !== undefined && isEmptyNode(node);
-		},
-		withMethods<T extends AnyNodeData>(node: T, engine: GrammarFacts) {
-			return withAnyMethods(node, engine) as unknown as T & NodeMethods<M['trivia']>;
+		withMethods<T extends AnyNodeData>(node: T) {
+			return withAnyMethods(node) as unknown as T & NodeMethods<M['trivia']>;
 		}
 	} as GrammarRuntime<M>;
 }
@@ -127,7 +121,7 @@ function extractNodeText(value: unknown): string | undefined {
 }
 
 export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {
-	return { strict, coerce };
+	return Object.freeze({ strict, coerce });
 }
 
 type AnyFlavorFn = (...args: never[]) => unknown;
@@ -144,12 +138,12 @@ export function hoist<B extends { strict: unknown; coerce?: unknown }>(b: B): Ho
 	for (const [key, value] of Object.entries(b)) {
 		Object.defineProperty(callable, key, {
 			value: hoistRoutes(value),
-			writable: true,
-			configurable: true,
+			writable: false,
+			configurable: false,
 			enumerable: true
 		});
 	}
-	return callable as Hoisted<B>;
+	return Object.freeze(callable) as Hoisted<B>;
 }
 
 export function hoistRoutes<B>(b: B): Hoisted<B> {
@@ -157,5 +151,5 @@ export function hoistRoutes<B>(b: B): Hoisted<B> {
 	if (typeof b !== 'object' || b === null || Array.isArray(b)) return b as Hoisted<B>;
 	const out: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(b)) out[key] = hoistRoutes(value);
-	return out as Hoisted<B>;
+	return Object.freeze(out) as Hoisted<B>;
 }
