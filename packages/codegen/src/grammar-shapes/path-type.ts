@@ -4,6 +4,8 @@ import type { VariantPlaceholder } from '../dsl/primitives/variant.ts';
 import type { AliasPlaceholder } from '../dsl/primitives/alias.ts';
 import type { RulePlaceholder } from '../dsl/primitives/rule.ts';
 import type { ArmDefaultPlaceholder } from '../dsl/primitives/arm.ts';
+import type { FlattenPlaceholder } from '../dsl/primitives/flatten.ts';
+import type { RegexPlaceholder } from '../dsl/primitives/regex.ts';
 import type { FieldLike } from '../types/runtime-shapes.ts';
 
 type PeelPrec<N> = N extends PrecRuleUnion ? PeelPrec<N['content']> : N;
@@ -65,6 +67,14 @@ type Step<P, S extends string> = P extends Opaque
 			: S extends Literal<P['content']>
 				? Leaf
 				: never
+		: P extends { readonly type: 'TOKEN' | 'IMMEDIATE_TOKEN'; readonly content: unknown }
+			? S extends `${number}`
+				? P['content'] | Opaque
+				: S extends '-1' | '_'
+					? P['content']
+					: S extends Literal<P['content']>
+						? Leaf
+						: never
 		: P extends Wrapper
 			? S extends '0' | '-1' | '_'
 				? P['content']
@@ -97,7 +107,7 @@ type Walk<N, Segs extends readonly string[]> = Segs extends readonly [infer S ex
 		: never
 	: true;
 
-export type IsPath<N, P extends string> = true extends Walk<N, Segments<P>> ? true : false;
+export type IsPath<N, P extends string> = P extends '.' ? true : true extends Walk<N, Segments<P>> ? true : false;
 
 export type TransformPatchValue =
 	| RuleOrLiteral
@@ -106,6 +116,8 @@ export type TransformPatchValue =
 	| VariantPlaceholder
 	| AliasPlaceholder
 	| RulePlaceholder
-	| ArmDefaultPlaceholder;
+	| ArmDefaultPlaceholder
+	| FlattenPlaceholder
+	| RegexPlaceholder;
 
 export type TransformPatchMap = Partial<Record<string, TransformPatchValue>>;

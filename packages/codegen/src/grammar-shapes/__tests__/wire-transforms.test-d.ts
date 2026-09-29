@@ -52,6 +52,17 @@ describe('IsPath accepts what applyPath walks and rejects what it throws on', ()
 		expectTypeOf<IsPath<R<'await_expression'>, '(_expression)'>>().toEqualTypeOf<false>();
 	});
 
+	it('a token distributes into arms, so a numeric segment below one resolves', () => {
+		expectTypeOf<IsPath<R<'integer_literal'>, '0'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'integer_literal'>, '3'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'escape_sequence'>, '2'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'integer_literal'>, '"x"'>>().toEqualTypeOf<false>();
+	});
+
+	it('the root path is always a path', () => {
+		expectTypeOf<IsPath<R<'metavariable'>, '.'>>().toEqualTypeOf<true>();
+	});
+
 	it('a deep authored path resolves', () => {
 		expectTypeOf<IsPath<R<'visibility_modifier'>, '1/1/0/1/3/0'>>().toEqualTypeOf<true>();
 	});
