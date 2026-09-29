@@ -1912,7 +1912,7 @@ The fresh-input path never spreads the caller's elements raw into the strict
 factory. Each element goes through the same slot resolver a repeated-children
 coercer uses (`resolveFieldCall` over the element slot, many), so a bare
 string is the leaf its pattern names, a bare number or boolean is the numeric
-or boolean leaf (`_resolveScalar`), and a `kind:` object is that kind's
+or boolean leaf (`_resolveScalar`), and a `$type:` object is that kind's
 config; at the strict layer a number is a kind id, which is how a bare `1`
 used to vanish from an argument list in silence. The element slot is the
 list's content slot, or, when the content is one transparent wrapper
@@ -1922,6 +1922,8 @@ literals is not resolvable and spreads as before. `_listElements` splits a
 leading options object off first, keyed on `listOptionKeys(surface)`, the
 same key list the strict factory accepts, so the options object passes
 through untouched and only the elements resolve.
+
+`_listElements` dispatches a tagged bag on its tag first, whether or not the element slot is resolvable: the tag names the kind, so it needs no slot knowledge. It reads the tag against `tagKinds` (the wrapper and the element slot's leaf and branch kinds). A list that seats a wrapper also passes `bagKinds`, the wrapper and the element slot's branch kinds: an untagged bag with several of them throws naming them, and an untagged bag with one is that kind's.
 
 ### `packages/codegen/src/emitters/from.ts::resolveFieldFromTypedInput`
 
@@ -2217,10 +2219,7 @@ Whether a bare string reaches a leaf through a chain of single-kind bare slots. 
  */
 ```
 
-`_SUPERTYPE_KIND_TAGS` lists declared supertypes only, so a loose
-`{ kind: '<supertype>' }` tag resolves through a declared supertype's
-default arm and an undeclared hidden choice's kind names no factory. The
-wrap module's `SUPERTYPE_MEMBERS` still lists every model supertype.
+A bag's `$type` tag is a kind id, never a name and never a supertype: the tag always names the kind that is built, and the key is the node's own discriminant, so a grammar slot named `kind` is always plain data.
 
 #### body
 
@@ -2229,14 +2228,12 @@ wrap module's `SUPERTYPE_MEMBERS` still lists every model supertype.
 // narrow the string parameter without an unchecked cast.
 ```
 
-It also emits `_SUPERTYPE_KIND_TAGS`, which maps each supertype to its
-default concrete kind (`defaultConcreteKindOf`) or, without a default, to its
-subtypes. It emits `_kindNameOf`, the one reading of a `kind:` discriminant:
-a supertype tag that is not itself a from kind resolves to its default arm,
-and one without a default throws naming the arms.
+It emits `_fromOfTag(tag, candidates)`, the one reading of a `$type` tag: a numeric tag that is the id of a kind with a from() coercer, and that the slot admits, names that kind. The slot admits a tag exactly when it would admit the node the tag builds: the tag is a candidate itself, or its id is in `_BARE_ACCEPTS[candidate]`, the table `bareAcceptClosure` derives for bare routing (a candidate's bare-input slot kinds, expanded through enum members and followed down every admitted kind). Any other tag throws `the $type tag <tag> is not a kind id of [<candidates>]`, at every resolver site: `_resolveOne`, `_resolveOneBranch`, `_resolveOneLeaf` and `_listElements` (which passes the wrapper and the element slot's leaf and branch kinds as `tagKinds`). `_splitTag` is the one test for a tagged bag: a plain object that is not a node (`isNode`) and has a `$type` key, split into the tag and the rest.
 
-`_resolveByKind` takes a leaf kind's tag as `{ kind, text }`: for a kind in
-the leaf registry, a plain tag object hands its `text` to the leaf's
+Bare-accept closure per grammar (kinds with a closure row, largest closure, and resolver call sites `_resolveOne` / `_resolveMany` / `_resolveOneBranch` / `_resolveOneLeaf` / `_listElements`): rust 88 rows, largest 114, sites 215/45/183/39/18; typescript 73 rows, largest 122, sites 281/37/142/50/8; python 71 rows, largest 89, sites 171/31/93/22/20; regex 12 rows, largest 3, sites 22/2/17/19/0; scm 5 rows, largest 9, sites 19/14/8/11/0.
+
+`_resolveByKind` takes a leaf kind's bag as `{ $type, text }`: `_splitTag` has already removed the `$type` tag, so for a kind in
+the leaf registry the remaining payload hands its `text` to the leaf's
 resolver, and one without a string `text` throws naming the shape. Bare
 strings, numbers and built nodes pass through unchanged.
 
@@ -2312,11 +2309,11 @@ lifted into that arm.
 
 #### kind-tagged config
 
-A `kind:` config builds its named kind and then goes back through the same routing as any built node, so a config naming a kind the slot admits only through a wrapper or list (a `field_declaration` at an enum variant's body) is seated by the bare-accept tables instead of being stored unwrapped.
+A `$type` config builds its named kind and then goes back through the same routing as any built node, so a config naming a kind the slot admits only through a wrapper or list (a `field_declaration` at an enum variant's body) is seated by the bare-accept tables instead of being stored unwrapped.
 
 #### `_listElements`
 
-`_listElements(input, optionKeys, wrapperKind, resolve)`: the loose list
+`_listElements(input, optionKeys, wrapperKind, resolve, tagKinds, bagKinds?)`: the loose list
 call's argument split. When `optionKeys` is non-empty and the first argument
 is a plain object whose keys are all option keys (the strict factory's own
 test, minus the `$type` check, which `isNode` covers), it is the options

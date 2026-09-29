@@ -41,6 +41,10 @@ function stampedDiscriminant(
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
 
+function kindIdOrNever(kind: string, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string {
+	return hasKindId(kind, kindEntries) ? kindDiscriminantExpr(kind, nodeMap, kindEntries) : 'never';
+}
+
 function kindDiscriminantOrLiteral(
 	kind: string,
 	nodeMap: NodeMap,
@@ -268,7 +272,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	for (const kind of keywordNamespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
 		lines.push(
-			`export interface ${node.typeName}Ns extends KeywordNs<${kindDiscriminantExpr(kind, nodeMap, kindEntries)}, ${JSON.stringify(fixedTextOfKind(node))}, '${kind}'> {}`
+			`export interface ${node.typeName}Ns extends KeywordNs<${kindDiscriminantExpr(kind, nodeMap, kindEntries)}, ${JSON.stringify(fixedTextOfKind(node))}, ${kindDiscriminantExpr(kind, nodeMap, kindEntries)}> {}`
 		);
 	}
 	const leafNamespaceKinds = leafKinds.filter((kind) => {
@@ -282,7 +286,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	for (const kind of leafNamespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
 		lines.push(
-			`export interface ${node.typeName}Ns extends LeafNs<${node.typeName}, ${leafConstructionTextType(node)}, ${node.typeName}.Built, '${kind}'> {}`
+			`export interface ${node.typeName}Ns extends LeafNs<${node.typeName}, ${leafConstructionTextType(node)}, ${node.typeName}.Built, ${kindIdOrNever(kind, nodeMap, kindEntries)}> {}`
 		);
 	}
 	lines.push('');
@@ -350,7 +354,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 			if (member === 'Built' && surface !== undefined) emitBuiltInterface(lines, surface, '  ');
 			else lines.push(`  export type ${member} = ${ns}['${member}'];`);
 		}
-		lines.push(`  export type Kind = '${kind}';`);
+		lines.push(`  export type Kind = ${kindIdOrNever(kind, nodeMap, kindEntries)};`);
 		lines.push('}');
 	}
 	lines.push('');
@@ -772,7 +776,7 @@ function coercerRowArgs(
 				return undefined;
 		}
 	})();
-	return { bare, kind: JSON.stringify(kind) };
+	return { bare, kind: kindIdOrNever(kind, nodeMap, kindEntries) };
 }
 
 function emitNamespaceInterfaceLine(
@@ -1163,7 +1167,7 @@ function emitNamespaceSugarBlock(
 		lines.push(`  export type BuildArgs = BuildArgsFor<${nsKey}>;`);
 		lines.push(`  export type LooseArgs = LooseArgsFor<${nsKey}>;`);
 	}
-	lines.push(`  export type Kind = '${kind}';`);
+	lines.push(`  export type Kind = ${kindIdOrNever(kind, nodeMap, kindEntries)};`);
 	lines.push('}');
 }
 

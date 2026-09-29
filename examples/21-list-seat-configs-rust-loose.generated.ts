@@ -2,7 +2,7 @@
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const { build } = await createEngine(rust);
+const { build, kinds } = await createEngine(rust);
 
 export function rebuildListSeatConfigsRustLoose() {
 	return build.sourceFile({
@@ -13,7 +13,7 @@ export function rebuildListSeatConfigsRustLoose() {
 				statements: [build.expressionStatement.withSemi(build.callExpression({
 					function: "call",
 					arguments: [{
-						kind: "attributed_argument",
+						$type: kinds.AttributedArgument,
 						attributeItem: [build.attribute.input({
 							path: "cfg",
 							arguments: build.delimTokenTree.paren(build.identifier("a")),

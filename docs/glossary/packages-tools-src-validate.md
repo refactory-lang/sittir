@@ -1367,6 +1367,8 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 /** Each element of an elements seat: the group's config object for a group element, a built node otherwise. */
 ```
 
+The config of a group element carries its seat kind as a mark that is not a key (`withSeatKind`, read back by `seatKindOf`), because a `kind` key would be an unknown slot for the strict factory. The printer reads the mark to tag the element on the loose surface; it never infers the seat from the config's keys.
+
 ### `packages/tools/src/validate/common.ts::carryElementTrivia`
 
 ```text

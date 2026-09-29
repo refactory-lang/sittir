@@ -495,170 +495,21 @@ function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
 
-const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefined> = {
-	export_statement: [
-		'export_statement_default',
-		'export_statement_type_export',
-		'export_statement_equals_export',
-		'export_statement_namespace_export'
-	],
-	declaration: [
-		'function_declaration',
-		'generator_function_declaration',
-		'class_declaration',
-		'lexical_declaration',
-		'variable_declaration',
-		'function_signature',
-		'abstract_class_declaration',
-		'module',
-		'internal_module',
-		'type_alias_declaration',
-		'enum_declaration',
-		'interface_declaration',
-		'import_alias',
-		'ambient_declaration'
-	],
-	import_specifier: ['import_specifier_name', 'import_specifier_as'],
-	statement: [
-		'export_statement',
-		'import_statement',
-		'debugger_statement',
-		'expression_statement',
-		'declaration',
-		'statement_block',
-		'if_statement',
-		'switch_statement',
-		'for_statement',
-		'for_in_statement',
-		'while_statement',
-		'do_statement',
-		'try_statement',
-		'with_statement',
-		'break_statement',
-		'continue_statement',
-		'return_statement',
-		'throw_statement',
-		'empty_statement',
-		'labeled_statement'
-	],
-	variable_declarator: ['variable_declarator_plain', 'variable_declarator_definite'],
-	_for_header: ['for_header_lhs', 'for_header_var_kind', 'for_header_let_const_kind'],
-	parenthesized_expression: ['parenthesized_expression_typed', 'parenthesized_expression_sequence'],
-	expression: [
-		'as_expression',
-		'satisfies_expression',
-		'instantiation_expression',
-		'internal_module',
-		'type_assertion',
-		'primary_expression',
-		'assignment_expression',
-		'augmented_assignment_expression',
-		'await_expression',
-		'unary_expression',
-		'binary_expression',
-		'ternary_expression',
-		'update_expression',
-		'new_expression',
-		'yield_expression'
-	],
-	primary_expression: [
-		'subscript_expression',
-		'member_expression',
-		'parenthesized_expression',
-		'undefined',
-		'identifier',
-		'declare_keyword',
-		'namespace_keyword',
-		'type_keyword',
-		'public_keyword',
-		'private_keyword',
-		'protected_keyword',
-		'override_keyword',
-		'readonly_keyword',
-		'module_keyword',
-		'any_keyword',
-		'number_keyword',
-		'boolean_keyword',
-		'string_keyword',
-		'symbol_keyword',
-		'export_keyword',
-		'object_keyword',
-		'new_keyword',
-		'get_keyword',
-		'set_keyword',
-		'async_keyword',
-		'static_keyword',
-		'let_keyword',
-		'this',
-		'super',
-		'number',
-		'string',
-		'template_string',
-		'regex',
-		'true',
-		'false',
-		'null',
-		'object',
-		'array',
-		'function_expression',
-		'arrow_function',
-		'generator_function',
-		'class',
-		'meta_property',
-		'call_expression',
-		'non_null_expression'
-	],
-	call_expression: ['call_expression_call', 'call_expression_template_call', 'call_expression_member'],
-	update_expression: 'update_expression_postfix',
-	string: ['string_double', 'string_single'],
-	comment: 'comment_line',
-	number: 'number_decimal',
-	meta_property: ['meta_property_new_target', 'meta_property_import_meta'],
-	pattern: ['_lhs_expression', 'rest_pattern'],
-	type: [
-		'primary_type',
-		'function_type',
-		'readonly_type',
-		'constructor_type',
-		'infer_type',
-		'type_query_member_expression_in_type_annotation',
-		'type_query_call_expression_in_type_annotation'
-	],
-	primary_type: [
-		'parenthesized_type',
-		'predefined_type',
-		'type_identifier',
-		'nested_type_identifier',
-		'generic_type',
-		'object_type',
-		'array_type',
-		'tuple_type',
-		'flow_maybe_type',
-		'type_query',
-		'index_type_query',
-		'this',
-		'existential_type',
-		'literal_type',
-		'lookup_type',
-		'conditional_type',
-		'template_literal_type',
-		'intersection_type',
-		'union_type'
-	],
-	index_signature: ['index_signature_colon', 'index_signature_mapped_type_clause'],
-	_whitespace: ['_tight', '_space', '_tab', '_newline', '_blankline', '_double_blankline', '_indent', '_dedent'],
-	export_statement_default: ['export_statement_default_from', 'export_statement_default_declaration'],
-	number_bigint: 'number_bigint_decimal'
-};
+function _fromOfTag(tag: unknown, candidates: readonly string[]): keyof _FromMap {
+	const name = typeof tag === 'number' ? KIND_NAMES.get(tag) : undefined;
+	if (
+		name !== undefined &&
+		_isFromKind(name) &&
+		candidates.some((c) => c === name || _BARE_ACCEPTS[c]?.has(tag as number))
+	)
+		return name;
+	throw new Error(`the $type tag ${JSON.stringify(tag)} is not a kind id of [${candidates.join(', ')}]`);
+}
 
-/** A `kind:` discriminant names its kind by the grammar string or the
- *  stamped `TSKindId` enum value — both spellings resolve to the same name.
- *  A supertype tag names its default arm; one without a default names no kind. */
-function _kindNameOf(kind: unknown): string | undefined {
-	const name = typeof kind === 'number' ? KIND_NAMES.get(kind) : typeof kind === 'string' ? kind : undefined;
-	const tag = name === undefined || _isFromKind(name) ? undefined : _SUPERTYPE_KIND_TAGS[name];
-	if (tag === undefined || typeof tag === 'string') return tag ?? name;
-	throw new Error(`kind ${JSON.stringify(name)} has no default arm; name one of [${tag.join(', ')}]`);
+function _splitTag(v: unknown): { readonly tag: unknown; readonly rest: _LooseFieldInput } | undefined {
+	if (typeof v !== 'object' || v === null || Array.isArray(v) || isNode(v) || !('$type' in v)) return undefined;
+	const { $type, ...rest } = v as Record<string, unknown>;
+	return { tag: $type, rest };
 }
 
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
@@ -666,8 +517,7 @@ function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInpu
 	if (!(kind in _leafRegistry) || typeof rest !== 'object' || rest === null || Array.isArray(rest) || isNode(rest))
 		return fn(rest);
 	const text = (rest as { text?: unknown }).text;
-	if (typeof text !== 'string')
-		throw new Error(`the ${kind} tag takes its text: { kind: ${JSON.stringify(kind)}, text: "…" }`);
+	if (typeof text !== 'string') throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);
 	return fn(text);
 }
 
@@ -1042,13 +892,13 @@ function _resolveOne<T>(
 			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;
 		}
 	}
-	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
-		const { kind, ...rest } = v;
-		const kindName = _kindNameOf(kind);
-		if (kindName !== undefined && _isFromKind(kindName)) {
-			const built = _resolveByKind(kindName, rest) as _LooseFieldInput;
-			return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;
-		}
+	const tagged = _splitTag(v);
+	if (tagged !== undefined) {
+		const built = _resolveByKind(
+			_fromOfTag(tagged.tag, [...leafKinds, ...branchKinds]),
+			tagged.rest
+		) as _LooseFieldInput;
+		return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;
 	}
 	if (branchKinds.length === 1 && typeof v === 'object' && !Array.isArray(v)) {
 		const bk = branchKinds[0]!;
@@ -1099,7 +949,9 @@ function _listElements(
 	input: readonly unknown[],
 	optionKeys: readonly string[],
 	wrapperKind: string | undefined,
-	resolve: (elements: readonly unknown[]) => readonly unknown[]
+	resolve: (elements: readonly unknown[]) => readonly unknown[],
+	tagKinds: readonly string[],
+	bagKinds?: readonly string[]
 ): readonly unknown[] {
 	const head = input[0];
 	const optionsFirst =
@@ -1109,17 +961,17 @@ function _listElements(
 		!Array.isArray(head) &&
 		!isNode(head) &&
 		Object.keys(head).every((k) => optionKeys.includes(k));
-	const elements = (optionsFirst ? input.slice(1) : input).map((e) =>
-		wrapperKind !== undefined &&
-		_isFromKind(wrapperKind) &&
-		typeof e === 'object' &&
-		e !== null &&
-		!Array.isArray(e) &&
-		!isNode(e) &&
-		!('kind' in e)
-			? _resolveByKind(wrapperKind, e)
-			: e
-	);
+	const elements = (optionsFirst ? input.slice(1) : input).map((e) => {
+		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNode(e)) return e;
+		const tagged = _splitTag(e);
+		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);
+		if (bagKinds === undefined || bagKinds.length === 0) return e;
+		if (bagKinds.length > 1)
+			throw new Error(
+				`a bag in this list needs a $type tag naming one of [${bagKinds.join(', ')}]: ${JSON.stringify(e)}`
+			);
+		return _isFromKind(bagKinds[0]!) ? _resolveByKind(bagKinds[0]!, e) : e;
+	});
 	const resolved = elements.map((e) =>
 		wrapperKind !== undefined && isNode(e) && typeof e.$type === 'number' && KIND_NAMES.get(e.$type) === wrapperKind
 			? e
@@ -1136,11 +988,8 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 		if (scalar !== undefined) return scalar as T;
 	}
 	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as T;
-	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
-		const { kind: k, ...rest } = v;
-		const kn = _kindNameOf(k);
-		if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;
-	}
+	const tagged = _splitTag(v);
+	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;
 	if (typeof v === 'object') {
 		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);
 	}
@@ -1594,12 +1443,11 @@ function _resolveOneBranch<T>(
 ): T {
 	if (v === undefined || v === null) return v as T;
 	if (optionalSlot === true && Array.isArray(v) && v.length === 0) return undefined as T;
-	if (typeof v === 'object' && !Array.isArray(v) && !isNode(v) && 'kind' in v) {
-		const { kind: k, ...rest } = v;
-		const kn = _kindNameOf(k);
-		if (kn !== undefined && kn !== kind && kind in _wrapKindIds && _isFromKind(kn)) {
-			return _resolveOneBranch<T>(_resolveByKind(kn, rest), kind, altKinds);
-		}
+	const tagged = _splitTag(v);
+	if (tagged !== undefined) {
+		const kn = _fromOfTag(tagged.tag, [kind]);
+		if (kn !== kind && kind in _wrapKindIds)
+			return _resolveOneBranch<T>(_resolveByKind(kn, tagged.rest), kind, altKinds);
 	}
 	if (isNode(v)) {
 		const wrapId = _wrapKindIds[kind];
@@ -1616,11 +1464,8 @@ function _resolveOneBranch<T>(
 		return _resolveByKind(kind, v) as T;
 	}
 	if (typeof v === 'object' && !Array.isArray(v)) {
-		if ('kind' in v) {
-			const { kind: k, ...rest } = v;
-			const kn = _kindNameOf(k);
-			if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;
-		}
+		const tagged = _splitTag(v);
+		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;
 		if (_isFromKind(kind)) return _resolveByKind(kind, v) as T;
 	}
 	if (typeof v === 'object') {
@@ -9812,8 +9657,13 @@ export function coerceToExportSpecifiers(
 		);
 	}
 	return F.buildExportSpecifiers(
-		...(_listElements(input, ['delimiter'], 'export_specifier', (els) =>
-			_resolveMany<T.ExportSpecifier | T.Identifier | T.String>(els, _K3, _super_string, 'string_double')
+		...(_listElements(
+			input,
+			['delimiter'],
+			'export_specifier',
+			(els) => _resolveMany<T.ExportSpecifier | T.Identifier | T.String>(els, _K3, _super_string, 'string_double'),
+			['export_specifier', 'identifier', 'string_double', 'string_single'],
+			['export_specifier', 'string_double', 'string_single']
 		) as unknown as NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>)
 	);
 }
@@ -9855,8 +9705,12 @@ export function coerceToImportSpecifiers(
 		);
 	}
 	return F.buildImportSpecifiers(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveMany<T.ImportSpecifier>(els, _K2, _super_import_specifier)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) => _resolveMany<T.ImportSpecifier>(els, _K2, _super_import_specifier),
+			['import_specifier_name', 'import_specifier_as']
 		) as unknown as NonEmptyArray<T.ImportSpecifier>)
 	);
 }
@@ -9898,8 +9752,12 @@ export function coerceToFormalParametersElements(
 		);
 	}
 	return F.buildFormalParametersElements(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveMany<T.RequiredParameter | T.OptionalParameter>(els, _K2, _super_formal_parameter)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) => _resolveMany<T.RequiredParameter | T.OptionalParameter>(els, _K2, _super_formal_parameter),
+			['required_parameter', 'optional_parameter']
 		) as unknown as NonEmptyArray<T.RequiredParameter | T.OptionalParameter>)
 	);
 }
@@ -10103,7 +9961,25 @@ export function coerceToEnumBodyElements(
 		);
 	}
 	return F.buildEnumBodyElements(
-		...(_listElements(input, ['delimiter'], undefined, (els) => els) as unknown as NonEmptyArray<
+		...(_listElements(input, ['delimiter'], undefined, (els) => els, [
+			'number_decimal',
+			'property_identifier',
+			'private_property_identifier',
+			'string_double',
+			'string_single',
+			'number_hex',
+			'number_float_point',
+			'number_float_leading_point',
+			'number_float_scientific',
+			'number_binary',
+			'number_octal',
+			'number_bigint_hex',
+			'number_bigint_binary',
+			'number_bigint_octal',
+			'number_bigint_decimal',
+			'computed_property_name',
+			'enum_assignment'
+		]) as unknown as NonEmptyArray<
 			| T.PropertyIdentifier
 			| TSKindId.DeclareKeyword
 			| TSKindId.NamespaceKeyword
@@ -10174,11 +10050,42 @@ export function coerceToTypes(
 		);
 	}
 	return F.buildTypes(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () => _resolveMany<T.Type | T.TypeIdentifier.Types>(els, _K37, _K38)),
-				[]
-			)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				coerceMixedEnumStorage(
+					_resolveKindEnum(els, () => _resolveMany<T.Type | T.TypeIdentifier.Types>(els, _K37, _K38)),
+					[]
+				),
+			[
+				'predefined_type',
+				'this',
+				'existential_type',
+				'parenthesized_type',
+				'type_identifier',
+				'nested_type_identifier',
+				'generic_type',
+				'object_type',
+				'array_type',
+				'tuple_type',
+				'flow_maybe_type',
+				'type_query',
+				'index_type_query',
+				'literal_type',
+				'lookup_type',
+				'conditional_type',
+				'template_literal_type',
+				'intersection_type',
+				'union_type',
+				'function_type',
+				'readonly_type',
+				'constructor_type',
+				'infer_type',
+				'type_query_member_expression_in_type_annotation',
+				'type_query_call_expression_in_type_annotation'
+			]
 		) as unknown as NonEmptyArray<T.Type | T.TypeIdentifier.Types>)
 	);
 }
@@ -10240,8 +10147,13 @@ export function coerceToTypeParametersElements(
 		);
 	}
 	return F.buildTypeParametersElements(
-		...(_listElements(input, ['delimiter'], 'type_parameter', (els) =>
-			_resolveManyBranch<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>(els, 'type_identifier')
+		...(_listElements(
+			input,
+			['delimiter'],
+			'type_parameter',
+			(els) => _resolveManyBranch<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>(els, 'type_identifier'),
+			['type_parameter', 'type_identifier'],
+			['type_parameter', 'type_identifier']
 		) as unknown as NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>)
 	);
 }
@@ -10325,15 +10237,55 @@ export function coerceToTupleTypeMembers(
 		);
 	}
 	return F.buildTupleTypeMembers(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () =>
-					_resolveMany<
-						T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
-					>(els, _K37, _K63)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				coerceMixedEnumStorage(
+					_resolveKindEnum(els, () =>
+						_resolveMany<
+							| T.TupleParameter
+							| T.OptionalTupleParameter
+							| T.OptionalType
+							| T.RestType
+							| T.Type
+							| T.TypeIdentifier.Types
+						>(els, _K37, _K63)
+					),
+					[]
 				),
-				[]
-			)
+			[
+				'predefined_type',
+				'this',
+				'existential_type',
+				'tuple_parameter',
+				'optional_tuple_parameter',
+				'optional_type',
+				'rest_type',
+				'parenthesized_type',
+				'type_identifier',
+				'nested_type_identifier',
+				'generic_type',
+				'object_type',
+				'array_type',
+				'tuple_type',
+				'flow_maybe_type',
+				'type_query',
+				'index_type_query',
+				'literal_type',
+				'lookup_type',
+				'conditional_type',
+				'template_literal_type',
+				'intersection_type',
+				'union_type',
+				'function_type',
+				'readonly_type',
+				'constructor_type',
+				'infer_type',
+				'type_query_member_expression_in_type_annotation',
+				'type_query_call_expression_in_type_annotation'
+			]
 		) as unknown as NonEmptyArray<
 			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
 		>)
@@ -10524,15 +10476,32 @@ export function coerceToObjectTypeContent(
 		);
 	}
 	return F.buildObjectTypeContent(
-		...(_listElements(input, ['separator', 'delimiter'], undefined, (els) =>
-			_resolveMany<
-				| T.ExportStatement
-				| T.PropertySignature
-				| T.CallSignature
-				| T.ConstructSignature
-				| T.IndexSignature
-				| T.MethodSignature
-			>(els, _K2, _K65)
+		...(_listElements(
+			input,
+			['separator', 'delimiter'],
+			undefined,
+			(els) =>
+				_resolveMany<
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+				>(els, _K2, _K65),
+			[
+				'export_statement_default_from',
+				'export_statement_default_declaration',
+				'export_statement_type_export',
+				'export_statement_equals_export',
+				'export_statement_namespace_export',
+				'property_signature',
+				'call_signature',
+				'construct_signature',
+				'index_signature_colon',
+				'index_signature_mapped_type_clause',
+				'method_signature'
+			]
 		) as unknown as NonEmptyArray<
 			| T.ExportStatement
 			| T.PropertySignature

@@ -44,7 +44,7 @@ describe('rust NamespaceMap access-path convergence', () => {
 	it('Fluent / Loose / Kind each converge', () => {
 		expectTrue<Equals<FunctionItem.Built, BuiltFor<TSKindId.FunctionItem>>>();
 		expectTrue<Equals<FunctionItem.Loose, LooseFor<TSKindId.FunctionItem>>>();
-		expectTrue<Equals<FunctionItem.Kind, 'function_item'>>();
+		expectTrue<Equals<FunctionItem.Kind, TSKindId.FunctionItem>>();
 	});
 
 	it('Fluent is the factory-emitted Built alias for factory-backed kinds', () => {
