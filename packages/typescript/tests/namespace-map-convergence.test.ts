@@ -5,7 +5,7 @@
 
 import { describe, it } from 'vitest';
 import { buildProgram } from '../src/factories/raw.ts';
-import { TSKindId } from '../src/index.ts';
+import type { TSKindId } from '../src/index.ts';
 import type {
 	ClassDeclaration,
 	Program,

@@ -8,41 +8,8 @@ export type { RustAPI } from './api.js';
 const rust: Language<RustAPI> = { name: 'rust', load: () => import('./api.js').then((m) => m.hooks) };
 export default rust;
 
-// Types (grammar + construction types + navigation types + enums)
-export * from './types.js';
-
-// Factories (ir namespace with .from(), plus tree-shakeable supertype groups)
-export * from './ir.js';
-
-// Shared resolution utilities
-export * from './utils.js';
-
-// Tree node hydration
-export { readTreeNode, wrapNode } from './wrap.js';
-
-// .from() resolution (tree-shakeable, separate from factories)
-export * from './factories/coerce.js';
-
-// Constants (node kinds, keywords, operators)
-export * from './consts.js';
-
-// Render options catalog (per-slot defaults and formatting choices)
-export * from './options.js';
-
-// Type guards
-export { is } from './is.js';
+export type * from './types.js';
+export type * from './options.js';
 export type { IsGuards } from './is.js';
-
-// Core re-exports
-export type { NodeData, TreeNode } from './types.js';
 export type { Edit, CSTNode } from '@sittir/types';
-
-// Boundary shim — render/toEdit/applyEdits route through
-// `getActiveBackend()`; the engine is native-only (`createEngine()`
-// throws when the napi `.node` is not loadable).
-export { render, toEdit, applyEdits } from './boundary.js';
-export { createEngine } from './engine.js';
-
-// Backend selection — native vs. typescript fallback shim.
-export { getActiveBackend } from './backend.js';
-export type { BackendName, BackendStatus } from './backend.js';
+export { isEmpty } from './utils.js';

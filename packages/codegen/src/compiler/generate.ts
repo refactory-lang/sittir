@@ -8,7 +8,7 @@ import { emitConfig } from '../emitters/config.ts';
 import { grammarPackage, isStableGrammar, type GrammarPackage } from '../grammars.ts';
 import { emitIndex } from '../emitters/index-file.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
-import { emitApi, emitEngine, emitRenderEngine } from '../emitters/engine.ts';
+import { emitApi, emitRenderEngine } from '../emitters/engine.ts';
 import { emitBackend, emitBoundary } from '../emitters/grammar-runtime.ts';
 import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
@@ -30,7 +30,6 @@ import { triviaKinds } from './model/trivia.ts';
 export interface GeneratedFiles {
 	grammar: string;
 	types: string;
-	engine: string;
 	renderEngine: string;
 	api: string;
 	backend: string;
@@ -150,7 +149,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 		const result: GeneratedFiles = {
 			grammar: emitGrammar({ grammar: cfg.grammar, nodeTypes }),
-			engine: emitEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 			renderEngine: emitRenderEngine({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 			api: emitApi({ grammar: cfg.grammar, rootTypeName, rootTreeTypeName }),
 			backend: emitBackend({ grammar: cfg.grammar }),

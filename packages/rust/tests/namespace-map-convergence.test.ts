@@ -14,7 +14,7 @@
 
 import { describe, it } from 'vitest';
 import { buildFunctionItem } from '../src/factories/raw.ts';
-import { TSKindId } from '../src/index.ts';
+import type { TSKindId } from '../src/index.ts';
 import type {
 	FunctionItem,
 	ParametersElements,

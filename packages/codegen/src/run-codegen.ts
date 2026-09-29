@@ -231,7 +231,6 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	const outDir = outputDir;
 
 	await writeFile(join(outDir, 'grammar.ts'), result.grammar);
-	await writeFile(join(outDir, 'engine.ts'), result.engine);
 	await writeFile(join(outDir, 'render-engine.ts'), result.renderEngine);
 	await writeFile(join(outDir, 'api.ts'), result.api);
 	await writeFile(join(outDir, 'backend.ts'), result.backend);

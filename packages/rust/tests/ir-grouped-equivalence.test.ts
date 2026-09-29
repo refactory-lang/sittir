@@ -7,7 +7,6 @@
  * surface mirrors those under `ir.<supertype>.<member>`.)
  */
 import { describe, expect, it } from 'vitest';
-import { expression, pattern } from '@sittir/rust';
 import rust from '@sittir/rust';
 import { createEngine } from '@sittir/common';
 
@@ -15,20 +14,15 @@ const rs = await createEngine(rust);
 
 describe('ir grouped sub-namespaces (SC-012)', () => {
 	it('flat and grouped access resolve to the same factory bundle', () => {
-		const irExpression = rs.build.expression as typeof expression;
+		const irExpression = rs.build.expression;
 		// `ir.binaryExpression` (flat) and `ir.expression.binary` (grouped) point
 		// at the same _attach bundle.
 		expect(irExpression.binary).toBe(rs.build.binaryExpression);
 		expect(irExpression.binary.strict).toBe(rs.build.binaryExpression.strict);
 	});
 
-	it('grouped namespace attached to ir is the same object as standalone export', () => {
-		expect(rs.build.expression).toBe(expression);
-		expect(rs.build.pattern).toBe(pattern);
-	});
-
 	it('produces structurally identical output via flat vs grouped', () => {
-		const irExpression = rs.build.expression as typeof expression;
+		const irExpression = rs.build.expression;
 		// ADR-0018 Phase 2: $type must be numeric TSKindId (string $type removed in Phase D).
 		// binary_expression.operator now carries the merged operator union, so grouped
 		// and flat IR entry points must agree when the same explicit operator is passed.

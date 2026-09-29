@@ -133,10 +133,6 @@ read the third pass's rules.
 
 The grammar's `render-engine.ts`: `createRenderEngine`, generic in the indent unit `I` it is given (`const I extends string`), so a literal `indent` in its options is checked whole against the grammar's `IndentChar` (`IndentOption`). The engine it returns is a `SittirEngine<Root, Options, IndentChar>`, whose `render` checks a per-call unit the same way.
 
-### `packages/codegen/src/emitters/engine.ts::emitEngine`
-
-The grammar's `engine.ts`: `createEngine`, generic in the indent unit like `createRenderEngine`, to which it passes `I` explicitly (inferring it again from an already-checked type does not resolve).
-
 ### `packages/codegen/src/emitters/engine.ts::languageApiName`
 
 The name of a grammar's language API type, `<Prefix>API` (`RustAPI`, `TypescriptAPI`), from the same type prefix as the grammar's node union (`RustNode`).
@@ -11296,7 +11292,7 @@ omits the key.
 
 ### `packages/codegen/src/emitters/index-file.ts::emitIndex`
 
-The grammar's `index.ts`: the language descriptor as the default export (its name, and a `load` that imports `./api.js` on demand, so importing the package's descriptor loads no factories and no native binding), the language API type, and the package's re-exports. It depends on the grammar's name only, not on its node list.
+The grammar's `index.ts`: the language descriptor as the default export (its name, and a `load` that imports `./api.js` on demand, so importing the package's descriptor loads no factories and no native binding), the language API type, and the grammar's types, re-exported type-only. Builders, guards and kind ids are values reached through an engine (`engine.build`, `engine.is`, `engine.kinds`), never through the package index; `isEmpty` is its one value export besides the descriptor. It depends on the grammar's name only, not on its node list.
 
 ### `packages/codegen/src/emitters/transport-projection.ts::TransportLiteral.immediate`
 

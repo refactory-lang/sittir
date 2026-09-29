@@ -4,7 +4,7 @@
 
 import { describe, it } from 'vitest';
 import { buildFunctionDefinition } from '../src/factories/raw.ts';
-import { TSKindId } from '../src/index.ts';
+import type { TSKindId } from '../src/index.ts';
 import type {
 	FunctionDefinition,
 	Module,
