@@ -1,4 +1,5 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
+import { kindTypeName } from '../compiler/model/casing.ts';
 import { SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
 import {
@@ -217,7 +218,7 @@ export function classifyValueStorage(value: NodeOrTerminal, nodeMap: NodeMap): V
 		return {
 			via: 'node',
 			kind,
-			typeName: kind.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase()),
+			typeName: kindTypeName(kind),
 			missing: true
 		};
 	}
