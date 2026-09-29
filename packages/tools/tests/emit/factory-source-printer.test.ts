@@ -57,6 +57,19 @@ describe('printValue', () => {
 		);
 		expect(expectPrinted(map.arguments!(map.identifier!('x'))).source).toBe('ir.arguments.strict(ir.identifier("x"))');
 	});
+	it('prints a keyword kind as its kind id, and a text kind with its text', () => {
+		const map = printingFactoryMap(
+			{ pass_statement: 'text', identifier: 'text' },
+			(k) => ({ pass_statement: 11, identifier: 3 })[k],
+			{
+				...ctx,
+				memberNameOfId: (id) => (id === 11 ? 'PassStatement' : ctx.memberNameOfId(id)),
+				keywordKinds: new Set(['pass_statement'])
+			}
+		);
+		expect(expectPrinted(map.pass_statement!('pass')).source).toBe('engine.kinds.PassStatement');
+		expect(expectPrinted(map.identifier!('x')).source).toBe('ir.identifier("x")');
+	});
 	it('prints a mounted form with its given arguments and no trailing undefined', () => {
 		const map = printingFactoryMap(
 			{ visibility_modifier: 'config', visibility_modifier_pub: 'direct', identifier: 'text' },
