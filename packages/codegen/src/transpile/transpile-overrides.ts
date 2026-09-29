@@ -34,7 +34,7 @@ export function transpileOverrides(opts: TranspileOptions): TranspileResult {
 		throw new Error(`transpileOverrides: no grammar.sittir.ts at ${inputPath}`);
 	}
 
-	const fileTypes = declaredFileTypes(opts.package);
+	const fileTypes = upstreamFileTypes(opts.package);
 	mkdirSync(outputDir, { recursive: true });
 	ensureConflictResolutions(opts.package);
 
@@ -103,15 +103,6 @@ function stubScannerSource(grammar: string): string {
 		`bool ${fn}_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) { (void)payload; (void)lexer; (void)valid_symbols; return false; }`,
 		''
 	].join('\n');
-}
-
-function declaredFileTypes(pkg: GrammarPackage): readonly string[] {
-	try {
-		return upstreamFileTypes(pkg);
-	} catch (e) {
-		if ((e as NodeJS.ErrnoException).code === 'MODULE_NOT_FOUND') return [];
-		throw e;
-	}
 }
 
 function copyExternalScannerSources(pkg: GrammarPackage, outputDir: string): void {

@@ -132,6 +132,8 @@ describe('post-evaluate invariant', () => {
 				'precedences',
 				'word',
 				'reserved',
+				// The grammar package's file types, passed to evaluate and stamped on the raw grammar.
+				'fileTypes',
 				'references',
 				'ruleCatalog',
 				// Documented sidecar — populated by role() accumulator.

@@ -106,16 +106,19 @@ function canonicalRuleBodies(bodies: Readonly<Record<string, EvalRule>>): Record
 	return Object.fromEntries(Object.entries(bodies).map(([name, body]) => [name, canonicalRuleTree(body)]));
 }
 
-function canonicalStage(stage: StageEvaluation<EvaluatedGrammar>): StageEvaluation {
-	return { ...stage, grammar: canonicalGrammar(stage.grammar) };
+function canonicalStage(stage: StageEvaluation<EvaluatedGrammar>, fileTypes: readonly string[]): StageEvaluation {
+	return { ...stage, grammar: canonicalGrammar(stage.grammar, fileTypes) };
 }
 
-function canonicalStages(stages: EvaluationStages<EvaluatedGrammar> | undefined): EvaluationStages | undefined {
+function canonicalStages(
+	stages: EvaluationStages<EvaluatedGrammar> | undefined,
+	fileTypes: readonly string[]
+): EvaluationStages | undefined {
 	if (stages === undefined) return stages;
-	return { raw: canonicalStage(stages.raw), enriched: canonicalStage(stages.enriched) };
+	return { raw: canonicalStage(stages.raw, fileTypes), enriched: canonicalStage(stages.enriched, fileTypes) };
 }
 
-export function canonicalGrammar(evaluated: EvaluatedGrammar): RawGrammar {
+export function canonicalGrammar(evaluated: EvaluatedGrammar, fileTypes: readonly string[]): RawGrammar {
 	const { provenanceByKind, protectedRuleNames, stages, renderAs, visibleExternals, ...rest } = evaluated;
 	const canonical = { rules: canonicalRuleBodies(evaluated.rules), inline: rest.inline, conflicts: rest.conflicts };
 	const roots = [...grammarRootNames(evaluated), ...evaluated.supertypes, ...(protectedRuleNames ?? [])];
@@ -130,7 +133,8 @@ export function canonicalGrammar(evaluated: EvaluatedGrammar): RawGrammar {
 		references: collectReferences(identified.rules, { ruleCatalog: identified.ruleCatalog }),
 		renderAs: renderAs && canonicalRuleBodies(renderAs),
 		visibleExternals: visibleExternals && canonicalRuleBodies(visibleExternals),
-		stages: canonicalStages(stages),
+		fileTypes,
+		stages: canonicalStages(stages, fileTypes),
 		predictedKinds: predictKinds(evaluated)
 	};
 }

@@ -19,6 +19,7 @@ function buildRawGrammar(rules: Record<string, unknown>, inline: string[] = [], 
 	const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules as never);
 	return {
 		name: 'synth',
+		fileTypes: [],
 		rules: catalogRules,
 		ruleCatalog,
 		extras: [],

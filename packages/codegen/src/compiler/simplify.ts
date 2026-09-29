@@ -1,3 +1,4 @@
+import { NO_FILE_TYPES } from './upstream-file-types.ts';
 import { CHOICE, DEDENT, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule } from '../types/rule.ts';
 import { isSpliceableBareSeq, collectFixedLiteral } from '../dsl/rule-patterns.ts';
@@ -37,6 +38,7 @@ export class SimplifyCtx extends BaseCtx<'normalize'> {
 export function makeNormalizedGrammar(rules: Record<string, RenderRule>): NormalizedGrammar {
 	return {
 		name: '',
+		fileTypes: NO_FILE_TYPES,
 		rules,
 		supertypes: new Set(),
 		word: null,

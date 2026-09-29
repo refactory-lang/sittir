@@ -29,6 +29,7 @@ import type {
 import { structuralBuilder } from '../dsl/builders.ts';
 import type { RawGrammar, DesugarDivergenceEvent, EvaluatedGrammar, EvaluationStages, RuleProvenance, StageEvaluation } from './types.ts';
 import { canonicalGrammar } from './canonical-rules.ts';
+import { NO_FILE_TYPES } from './upstream-file-types.ts';
 import { isComplexBody, optionalContentOf, ruleListEntryOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { baseRulesOf } from '../dsl/shared.ts';
@@ -906,8 +907,8 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 
 let evaluateMutex: Promise<void> = Promise.resolve();
 
-export async function evaluate(entryPath: string): Promise<RawGrammar> {
-	return canonicalGrammar(await evaluateDsl(entryPath));
+export async function evaluate(entryPath: string, fileTypes: readonly string[] = NO_FILE_TYPES): Promise<RawGrammar> {
+	return canonicalGrammar(await evaluateDsl(entryPath), fileTypes);
 }
 
 export async function evaluateDsl(entryPath: string): Promise<EvaluatedGrammar> {

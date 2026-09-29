@@ -15,6 +15,7 @@ import {
 function makeNodeMap(nodes: [string, AssembledNode][]): NodeMap {
 	return {
 		name: 'test',
+		fileTypes: [],
 		nodes: new Map(nodes),
 		nodeByRuleId: new Map(),
 		nodeByKindId: new Map(),

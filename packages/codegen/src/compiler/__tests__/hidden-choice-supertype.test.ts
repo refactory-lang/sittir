@@ -11,6 +11,7 @@ import { slotKindNames } from '../../emitters/shared.ts';
 function buildNodeMap(rules: Record<string, Rule<'evaluate'>>) {
 	const raw: RawGrammar = {
 		name: 'synth',
+		fileTypes: [],
 		rules,
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],

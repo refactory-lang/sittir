@@ -2,6 +2,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { packageRequire, upstreamPackage, type GrammarPackage } from '../grammars.ts';
 
+export const NO_FILE_TYPES: readonly string[] = Object.freeze([]);
+
 interface UpstreamGrammarEntry {
 	readonly name?: unknown;
 	readonly 'file-types'?: unknown;

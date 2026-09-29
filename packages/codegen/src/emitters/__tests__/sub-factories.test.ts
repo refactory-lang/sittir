@@ -184,6 +184,7 @@ function buildNodeMap(
 ): NodeMap {
 	const raw: RawGrammar = {
 		name: 'synth',
+		fileTypes: [],
 		rules,
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],

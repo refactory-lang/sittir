@@ -1,7 +1,7 @@
-import { upstreamFileTypes } from './upstream-file-types.ts';
 import { existsSync } from 'node:fs';
 
 import { evaluate } from './evaluate.ts';
+import { upstreamFileTypes } from './upstream-file-types.ts';
 import { packageEntryPath, packageGrammarJsPath } from './resolve-grammar.ts';
 import type { GrammarPackage } from '../grammars.ts';
 import { hydrateSlotRefs, type AssembledNodeMap } from './assemble.ts';
@@ -44,7 +44,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 	const overridesPath = packageEntryPath(cfg.package);
 	const entryPath = existsSync(overridesPath) ? overridesPath : packageGrammarJsPath(cfg.package);
 
-	const evaluated = { ...(await evaluate(entryPath)), fileTypes: upstreamFileTypes(cfg.package) };
+	const evaluated = await evaluate(entryPath, upstreamFileTypes(cfg.package));
 	const diagnosis = diagnoseGrammar({
 		grammar,
 		evaluated,
