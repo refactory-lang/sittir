@@ -1,68 +1,103 @@
 # @sittir/python
 
-97 Python IR node kinds with self-contained builders — all generated from the tree-sitter-python grammar by `@sittir/codegen`.
+Typed factories, guards, kind ids, a reader and a native renderer for Python, generated from the tree-sitter-python grammar by `@sittir/codegen`. The package exports the language descriptor and its types; everything you call is reached through an engine.
 
 ## Installation
 
 ```bash
-pnpm add @sittir/python
+pnpm add @sittir/common @sittir/python
 ```
 
-## Quick Start
-
-### Fluent API
+## Quick start
 
 ```ts
-import { ir } from '@sittir/python';
+import { createEngine } from '@sittir/common';
+import python from '@sittir/python';
 
-const node = ir
-	.functionDefinition(ir.identifier('greet'))
-	.parameters(ir.parameters())
-	.body(ir.block(ir.return_(ir.identifier('hello'))));
+const engine = await createEngine(python);
 
-node.renderImpl(); // "def greet ( ) : return hello"
-```
-
-### Declarative API (`.from()`)
-
-```ts
-// Strings auto-resolve to LeafBuilder for leaf-typed fields
-const fn = ir.functionDefinition.from({
-	name: 'greet', // string → LeafBuilder('identifier', 'greet')
-	parameters: ir.parameters(),
-	body: ir.block()
+const fn = engine.build.functionDefinition({
+	name: 'greet',
+	parameters: engine.build.parameters(),
+	body: engine.build.block()
 });
+
+fn.$render(); // "def greet():"
+engine.render(fn).toString(); // the same text
 ```
 
-### Leaf Builders
+A node belongs to the engine that built or read it, and renders, edits and takes trivia through that engine. `engine.build` is the only way to make nodes; a node made anywhere else has no engine, and `$render()` says so.
+
+## Reading
+
+`parse` returns a lazily expanded tree: a child is read the first time an accessor reaches it. Nothing you leave alone is re-spelled, so an untouched tree renders back to its own source, byte for byte.
 
 ```ts
-ir.identifier('x'); // LeafBuilder<'identifier'>
-ir.integer('42'); // LeafBuilder<'integer'>
-ir.string_('hello'); // LeafBuilder<'string'>
+import { createEngine } from '@sittir/common';
+import python from '@sittir/python';
+
+const engine = await createEngine(python);
+const source = 'def greet(name):\n    # say hello\n    print( name )\n';
+
+const module = engine.parse(source);
+module.$render() === source; // true
 ```
 
-### CST Round-Trip
+## Comments
+
+`$trivia` attaches comments to a node. A loose string is built into the grammar's default comment.
 
 ```ts
-import { fromCST, edit } from '@sittir/python';
+import { createEngine } from '@sittir/common';
+import python from '@sittir/python';
 
-const builder = fromCST(treeSitterNode);
-const patch = edit(treeSitterNode, (b) => b.body(ir.block()));
+const engine = await createEngine(python);
+
+const fn = engine.build.functionDefinition({
+	name: 'greet',
+	parameters: engine.build.parameters(),
+	body: engine.build.block()
+});
+
+fn.$trivia('# entry point').$render(); // "# entry point\ndef greet():"
+```
+
+## Guards
+
+The guards narrow to this engine's language: a node of another engine of the language passes, a node of another language does not, and a value with no engine never does.
+
+```ts
+import { createEngine } from '@sittir/common';
+import python from '@sittir/python';
+
+const engine = await createEngine(python);
+const built = engine.build.functionDefinition({
+	name: 'greet',
+	parameters: engine.build.parameters(),
+	body: engine.build.block()
+});
+
+engine.isNode(built); // true
+engine.isFactoryNode(built); // true
+engine.isParsedNode(built); // false
 ```
 
 ## Types
 
-```ts
-import type {
-	FunctionDefinition,
-	ClassDefinition,
-	Identifier, // leaf type
-	Expression, // supertype union
-	Statement // supertype union
-} from '@sittir/python';
+The package index exports types only, besides the descriptor.
 
-import type { FunctionDefinitionBuilder } from '@sittir/python';
+```ts
+import type { PythonAPI, FunctionDefinition, ClassDefinition } from '@sittir/python';
+```
+
+`PythonAPI` is the language's type-level shape, from which every engine type is derived (`Engine<PythonAPI>`).
+
+## Regenerating
+
+Everything under `src/` is generated. Change the grammar or the codegen, never the output:
+
+```bash
+pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
 ```
 
 ## License

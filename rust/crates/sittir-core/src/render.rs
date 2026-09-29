@@ -92,6 +92,18 @@ impl fmt::Display for CoordinateError {
 
 impl std::error::Error for CoordinateError {}
 
+/// Why the node just written ends its line, ordered by how much the break
+/// binds: a [`LineHold::Terminated`] break outlasts the end of the render.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum LineHold {
+    /// The kind's rule ends in the grammar's declared newline token, which
+    /// its span leaves out (`options::KIND_LINE_BREAK_TERMINATED`).
+    Break,
+    /// The kind's text ends only at a line break
+    /// (`options::KIND_LINE_TERMINATED`).
+    Terminated,
+}
+
 pub trait RenderSink {
     fn text(&mut self, s: &str) -> RenderResult;
     fn adjacent(&mut self);
@@ -159,14 +171,18 @@ pub trait RenderSink {
     fn at_body_start(&self) -> bool {
         false
     }
-    /// The node just written is of a line-terminated kind, so a line break
-    /// follows it: at least the one its lexical fact requires, or the wider
-    /// one its after edge left pending. No later seam takes it away (a rank
-    /// above it still widens it), and it is written even at the end of the
-    /// render, where any other held seam is dropped. An entry whose own text
-    /// ends its line (a grammar may include the terminator in the span)
-    /// already wrote that break, so one break comes off what its edge left.
-    fn hold_line_end(&mut self) {}
+    /// The node just written ends its line, so a line break follows it: at
+    /// least the one its lexical fact requires, or the wider one its after
+    /// edge left pending. No later seam takes it away (a rank above it still
+    /// widens it). A [`LineHold::Terminated`] break is written even at the
+    /// end of the render, where any other held seam is dropped; a
+    /// [`LineHold::Break`] lies outside the node's span and is not. An entry
+    /// whose own text ends its line (a grammar may include the terminator in
+    /// the span) already wrote that break, so one break comes off what its
+    /// edge left.
+    fn hold_line_end(&mut self, hold: LineHold) {
+        let _ = hold;
+    }
     /// Set aside the seam held for the next write, leaving none held: an
     /// owner's after edge while its own-line trailing entries render, since
     /// that seam belongs after them.
@@ -189,12 +205,15 @@ pub trait RenderSink {
         false
     }
     /// A node of `kind` has just been written: hold the line end when the
-    /// kind is line-terminated (`options::KIND_LINE_TERMINATED`). Every node
-    /// render reaches this once, whether a transport, a coordinate or
-    /// detached trivia text.
+    /// kind is line-terminated (`options::KIND_LINE_TERMINATED`) or ends in
+    /// the declared newline token (`options::KIND_LINE_BREAK_TERMINATED`).
+    /// Every node render reaches this once, whether a transport, a
+    /// coordinate or detached trivia text.
     fn end_line_after(&mut self, kind: KindId) {
         if self.kind_has(kind, crate::options::KIND_LINE_TERMINATED) {
-            self.hold_line_end();
+            self.hold_line_end(LineHold::Terminated);
+        } else if self.kind_has(kind, crate::options::KIND_LINE_BREAK_TERMINATED) {
+            self.hold_line_end(LineHold::Break);
         }
     }
     /// Render trailing trivia that shares its owner's row, held until the

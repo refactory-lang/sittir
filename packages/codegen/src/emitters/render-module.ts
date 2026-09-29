@@ -2791,7 +2791,12 @@ function listGapTokenOf(field: AssembledNonterminal): string | undefined {
 	return texts.length === 1 ? texts[0] : undefined;
 }
 
-function listGapClassification(plan: RenderPlan, node: AssembledNode): string[] {
+function listGapClassification(
+	plan: RenderPlan,
+	node: AssembledNode,
+	seated: ReadonlySet<string>,
+	classified: Set<string>
+): string[] {
 	const body: string[] = [];
 	const slotModel = renderSlotModelOf(node);
 	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
@@ -2808,26 +2813,24 @@ function listGapClassification(plan: RenderPlan, node: AssembledNode): string[] 
 		const each = hasOptionalElements(field) ? 'item.as_ref().and_then(|i| i.coord())' : 'item.coord()';
 		const allowedOf = (site: SpacingSite | undefined) =>
 			site === undefined ? '&[]' : `options::allowed(options::${site.constName})`;
+		const binds = field.name !== undefined && seated.has(field.name);
+		if (binds) classified.add(field.name!);
 		body.push(
-			`        {`,
+			binds ? `        let ${separatedLocal(field.name!)} = {` : `        {`,
 			`            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = ${items}.map(|item| ${each}).collect();`,
-			`            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ${JSON.stringify(token)}, ${allowedOf(first)}, ${allowedOf(sites.after)}, &options::WHITESPACE);`
+			`            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ${JSON.stringify(token)}, ${allowedOf(first)}, ${allowedOf(sites.after)}, &options::WHITESPACE);`
 		);
 		if (first !== undefined) {
 			const f = rustFieldIdent(first.fieldIdent);
-			body.push(`            if self.${f}.is_none() { self.${f} = before; }`);
-		} else {
-			body.push(`            let _ = before;`);
+			body.push(`            if self.${f}.is_none() { self.${f} = gaps.before; }`);
 		}
 		if (sites.after !== undefined) {
 			const a = rustFieldIdent(sites.after.fieldIdent);
-			body.push(`            if self.${a}.is_none() { self.${a} = after; }`);
-		} else {
-			body.push(`            let _ = after;`);
+			body.push(`            if self.${a}.is_none() { self.${a} = gaps.after; }`);
 		}
-		body.push(`        }`);
+		body.push(binds ? `            gaps.separated` : '', binds ? `        };` : `        }`);
 	}
-	return body;
+	return body.filter((line) => line !== '');
 }
 
 function spacingFieldExprs(
@@ -2996,22 +2999,38 @@ function renderSeatTargets(
 	return lines;
 }
 
-function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): string[] {
-	const lines: string[] = [];
+function seatedListFields(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): ReadonlySet<string> {
 	const reaches = seatReachOf(plan, nodeMap);
 	const slotModel = renderSlotModelOf(node);
 	const seated = seatedTableNames(plan);
+	const fields = new Set<string>();
 	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
 		if (field.name === undefined || !isMultiple(field)) continue;
 		if (!seated.has(seatTableName(node.display.name, field.name))) continue;
 		if (!slotElementsReach(field, nodeMap, reaches)) continue;
+		fields.add(field.name);
+	}
+	return fields;
+}
+
+function separatedLocal(fieldName: string): string {
+	return `separated_${rustFieldIdent(fieldName)}`;
+}
+
+function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap, classified: ReadonlySet<string>): string[] {
+	const lines: string[] = [];
+	const seated = seatedListFields(plan, node, nodeMap);
+	const slotModel = renderSlotModelOf(node);
+	for (const field of [...slotModel.named, ...slotModel.unnamed]) {
+		if (field.name === undefined || !seated.has(field.name)) continue;
 		const ident = rustFieldIdent(field.name);
 		const table = `options::${seatTableName(node.display.name, field.name)}`;
 		const items = hasOptionalElements(field) ? 'iter_mut().map(Option::as_mut)' : 'iter_mut().map(Some)';
+		const separated = classified.has(field.name) ? `&${separatedLocal(field.name)}` : '&[]';
 		lines.push(
 			isTransportRequired(field)
-				? `        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ctx);`
-				: `        if let Some(seated_items) = self.${ident}.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.${items}, ${table}, ctx); }`
+				? `        ::sittir_core::prepare::fill_seated_gaps(self.${ident}.${items}, ${table}, ${separated}, ctx);`
+				: `        if let Some(seated_items) = self.${ident}.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.${items}, ${table}, ${separated}, ctx); }`
 		);
 	}
 	return lines;
@@ -3050,14 +3069,15 @@ function prepareStructImpl(
 	const body: string[] = ['        self.transport_trivia_data.prepare(ctx)?;'];
 	if (isCompound) {
 		if (kindEdgeSidesOf(plan, node).size > 0) body.push('        ::sittir_core::prepare::prepare_edges(self, ctx);');
-		body.push(...listGapClassification(plan, node));
+		const classified = new Set<string>();
+		body.push(...listGapClassification(plan, node, seatedListFields(plan, node, nodeMap), classified));
 		for (const site of synthesizedSpacingSites(plan, node)) {
 			if (!carriesPerNodeValue(site)) continue;
 			body.push(
 				`        self.${rustFieldIdent(site.fieldIdent)}.get_or_insert(ctx.options.spacing[options::${site.constName}].arm);`
 			);
 		}
-		body.push(...seatLoops(plan, node, nodeMap));
+		body.push(...seatLoops(plan, node, nodeMap, classified));
 		const delim = node instanceof AssembledList ? delimiterSiteOf(plan, node) : undefined;
 		if (delim !== undefined) {
 			body.push(`        self.delimiter.get_or_insert(ctx.options.delimiter[options::${delim.constName}]);`);

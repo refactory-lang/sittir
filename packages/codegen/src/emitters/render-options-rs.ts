@@ -13,7 +13,7 @@ import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } 
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { rustStringLiteral } from './render-body.ts';
 import { childIndexOf, optionKey, type AddressLeafEntry, type AddressTables, type ChildIndex } from './options.ts';
-import { lineTerminatedKinds } from '../compiler/model/trivia.ts';
+import { lineBreakTerminatedKinds, lineTerminatedKinds } from '../compiler/model/trivia.ts';
 import { indentChars } from '../compiler/model/whitespace-arms.ts';
 
 export type SeamStrength = 0 | 1 | 2;
@@ -90,6 +90,7 @@ export interface RenderOptionsPlan {
 
 const KIND_ANON = 1;
 const KIND_LINE_TERMINATED = 2;
+const KIND_LINE_BREAK_TERMINATED = 4;
 
 const DELIMITER_BITS: Readonly<Record<string, number>> = Object.fromEntries(
 	Object.entries(Delimiter).map(([member, bits]) => [`Delimiter.${member}`, bits])
@@ -119,7 +120,10 @@ function kindFlagsOf(kindEntries: readonly IdEntry[], nodeMap: NodeMap): { reado
 	const flags = new Map<number, number>();
 	for (const entry of kindEntries) {
 		if (entry.id === undefined) continue;
-		const bits = (entry.anon === true ? KIND_ANON : 0) | (lineTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_TERMINATED : 0);
+		const bits =
+			(entry.anon === true ? KIND_ANON : 0) |
+			(lineTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_TERMINATED : 0) |
+			(lineBreakTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_BREAK_TERMINATED : 0);
 		if (bits !== 0) flags.set(entry.id, (flags.get(entry.id) ?? 0) | bits);
 	}
 	return [...flags].map(([id, bits]) => ({ id, flags: bits })).sort((a, b) => a.id - b.id);
@@ -521,7 +525,7 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 	L.push('];', '');
 	L.push('/// Per kind id, its row in EDGE_SITES.');
 	L.push(...denseTable('EDGE_ROWS', new Map(edgeRows.map((e, row) => [e.kind, row]))));
-	L.push('/// Per kind id, its flags: KIND_ANON (the parser\'s anonymous token), KIND_LINE_TERMINATED.');
+	L.push('/// Per kind id, its flags: KIND_ANON (the parser\'s anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED.');
 	L.push(...denseFlags('KIND_FLAGS', plan.kindFlags));
 	L.push('/// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.');
 	L.push('pub static DELIMITER_SITES: &[(&str, &str, u8, u8)] = &[');

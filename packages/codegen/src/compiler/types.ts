@@ -263,6 +263,7 @@ export interface NormalizedGrammar {
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	readonly variantChildren?: ReadonlyMap<string, readonly VariantChild[]>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
+	readonly externalRoles?: ReadonlyMap<string, ExternalRole>;
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 }
 
@@ -276,6 +277,7 @@ export interface SimplifiedGrammar {
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
 	readonly variantChildren?: ReadonlyMap<string, readonly VariantChild[]>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
+	readonly externalRoles?: ReadonlyMap<string, ExternalRole>;
 	readonly rules: Record<string, SimplifiedRule>;
 	readonly normalizedRules: Record<string, RenderRule>;
 	readonly supertypes: Set<string>;

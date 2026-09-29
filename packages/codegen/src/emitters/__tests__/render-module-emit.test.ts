@@ -468,11 +468,15 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		// the classification precedes every `get_or_insert` fill of the same site.
 		expect(body.indexOf('classify_list_gaps')).toBeLessThan(body.indexOf('.get_or_insert(ctx.options.spacing['));
 		expect(body).toContain(
-			'if self.element_separator_space_before.is_none() { self.element_separator_space_before = before; }'
+			'if self.element_separator_space_before.is_none() { self.element_separator_space_before = gaps.before; }'
 		);
 		expect(body).toContain(
-			'if self.element_separator_space_after.is_none() { self.element_separator_space_after = after; }'
+			'if self.element_separator_space_after.is_none() { self.element_separator_space_after = gaps.after; }'
 		);
+		// The seat loop reads the same per-pair classification: a pair is left
+		// to the source only when its gap classified.
+		expect(body).toContain('let separated_element = {');
+		expect(body).toContain('options::SEATS_ARGUMENTS_ELEMENTS_ELEMENT, &separated_element, ctx);');
 	});
 	it('renders through the typed sink and writes no mark character', async () => {
 		const transportRs = await getRustTemplatesRs();
@@ -556,7 +560,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(cells.filter((c) => c !== 'NO_SITE').length).toBeGreaterThan(0);
 		expect(cells.every((c) => c === 'NO_SITE' || /^\d+$/.test(c))).toBe(true);
 		expect(transportRs).toContain(
-			'if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, ctx); }'
+			'if let Some(seated_items) = self.statements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Some), options::SEATS_SOURCE_FILE_STATEMENTS, &separated_statements, ctx); }'
 		);
 		expect(transportRs).not.toContain('let seated_last');
 		expect(transportRs).not.toContain('edges_mut().after.get_or_insert');

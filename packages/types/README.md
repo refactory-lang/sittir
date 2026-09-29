@@ -1,6 +1,6 @@
 # @sittir/types
 
-Language-agnostic type projection from tree-sitter grammars to typed IR builders.
+The types of sittir's engine API, shared by `@sittir/common` and every grammar package. It exports types only.
 
 ## Installation
 
@@ -8,59 +8,42 @@ Language-agnostic type projection from tree-sitter grammars to typed IR builders
 pnpm add @sittir/types
 ```
 
-## What It Does
+## What it holds
 
-Provides the runtime base classes and type-level machinery for sittir's builder system:
+| Type                                   | What it is                                                                                                   |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `Language<API>`                        | A grammar package's default export: its name and a `load()` that imports the implementation on demand        |
+| `LanguageAPI`                          | The type-level shape of one language: builder table, guards, kind ids, node types, options, empty forms      |
+| `Engine<API>`                          | What `createEngine(language)` returns: `build`, `is`, `kinds`, `parse`, `render`, `applyEdits`, the node guards |
+| `EngineOptions<API>`                   | The options `createEngine` takes: `render` (the language's render options) and `format`                      |
+| `Rendered`                             | The lazily rendered text `engine.render` returns: `toString()`, `print()`, `save(path)`                      |
+| `Edit`                                 | A text edit, `{ startPos, endPos, insertedText }`, which `$toEdit` produces and `applyEdits` consumes         |
+| `Types<Engine>`                        | The kind-to-node-type map of an engine, for generic code                                                     |
+| `EngineDiagnostics`, `ParsedRead`      | The raw read a parse makes, for tooling                                                                      |
 
-1. **`Builder<N>`** — abstract base class that all generated builders extend
-2. **`LeafBuilder<K>`** — concrete builder for terminal nodes (identifiers, literals, keywords)
-3. **`RenderContext`** — context threaded through render/build calls (parser, indent)
-4. **`Edit`** — codemod-compatible text edit interface (`{ startPos, endPos, insertedText }`)
+## Using them
 
-## Runtime Classes
-
-### `Builder<N>`
-
-Abstract base for all IR builders. Generated per-node builders extend this with their own `renderImpl()` and `build()`.
-
-```ts
-import { Builder } from '@sittir/types';
-
-// Builder instances support multiple render modes:
-builder.render('skip'); // sync, no validation
-builder.render('fast'); // sync, brace/paren matching
-builder.render('full', { parser }); // async, tree-sitter validation
-
-// Direct access:
-builder.renderImpl(ctx); // source string (no validation)
-builder.build(ctx); // plain-object IR node
-builder.toCST(offset, ctx); // lightweight CST with positions
-```
-
-### `LeafBuilder<K>`
-
-The only way to introduce raw text into the IR. Wraps a string with a node kind:
+A function can take an engine typed by its language, and builds and edits through that engine's own surface:
 
 ```ts
-import { LeafBuilder } from '@sittir/types';
+import { createEngine } from '@sittir/common';
+import type { Edit, Engine } from '@sittir/types';
+import rust, { type RustAPI } from '@sittir/rust';
 
-const id = new LeafBuilder('identifier', 'main');
-id.renderImpl(); // "main"
-id.build(); // { kind: 'identifier' }
+function renameEdit(engine: Engine<RustAPI>, start: number, end: number, name: string): Edit {
+	return engine.build.identifier(name).$toEdit(start, end);
+}
+
+const engine = await createEngine(rust);
+renameEdit(engine, 4, 5, 'b').insertedText; // "b"
 ```
 
-### `Edit`
-
-Codemod-compatible text edit — replace bytes `[startPos, endPos)` with `insertedText`:
+`Edit` is the shape codemod tools already use: replace bytes `[startPos, endPos)` with `insertedText`.
 
 ```ts
 import type { Edit } from '@sittir/types';
 
-const edit: Edit = {
-	startPos: 0,
-	endPos: 10,
-	insertedText: 'fn main() {}'
-};
+const edit: Edit = { startPos: 0, endPos: 10, insertedText: 'fn main() {}' };
 ```
 
 ## License

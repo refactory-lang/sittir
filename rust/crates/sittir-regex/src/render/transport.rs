@@ -2775,9 +2775,9 @@ impl ::sittir_core::prepare::Prepare for AlternationTransport {
         self.transport_trivia_data.prepare(ctx)?;
         {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.term.iter().map(|item| item.as_ref().and_then(|i| i.coord())).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "|", options::allowed(options::SITE_ALTERNATION_TERM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ALTERNATION_TERM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.term_separator_space_before.is_none() { self.term_separator_space_before = before; }
-            if self.term_separator_space_after.is_none() { self.term_separator_space_after = after; }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "|", options::allowed(options::SITE_ALTERNATION_TERM_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_ALTERNATION_TERM_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.term_separator_space_before.is_none() { self.term_separator_space_before = gaps.before; }
+            if self.term_separator_space_after.is_none() { self.term_separator_space_after = gaps.after; }
         }
         self.term_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_ALTERNATION_TERM_SEPARATOR_SPACE_BEFORE].arm);
         self.term_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_ALTERNATION_TERM_SEPARATOR_SPACE_AFTER].arm);
@@ -2840,14 +2840,14 @@ impl ::sittir_core::render::Render for TermTransport {
 impl ::sittir_core::prepare::Prepare for TermTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
-        {
+        let separated_term_group = {
             let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.term_group.iter().map(|item| item.coord()).collect();
-            let (before, after) = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TERM_TERM_GROUP_SEPARATOR_SPACE), &[], &options::WHITESPACE);
-            if self.term_group_separator_space.is_none() { self.term_group_separator_space = before; }
-            let _ = after;
-        }
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, "", options::allowed(options::SITE_TERM_TERM_GROUP_SEPARATOR_SPACE), &[], &options::WHITESPACE);
+            if self.term_group_separator_space.is_none() { self.term_group_separator_space = gaps.before; }
+            gaps.separated
+        };
         self.term_group_separator_space.get_or_insert(ctx.options.spacing[options::SITE_TERM_TERM_GROUP_SEPARATOR_SPACE].arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.term_group.iter_mut().map(Some), options::SEATS_TERM_TERM_GROUP, ctx);
+        ::sittir_core::prepare::fill_seated_gaps(self.term_group.iter_mut().map(Some), options::SEATS_TERM_TERM_GROUP, &separated_term_group, ctx);
         self.term_group.prepare(ctx)?;
         Ok(())
     }

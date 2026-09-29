@@ -83,6 +83,10 @@ parents.
 	 */
 ```
 
+### `packages/codegen/src/compiler/assemble.ts::stampExternalRoles`
+
+Stamps each external's declared structural-whitespace role (`externalRoles`) on its kind's node as `AssembledNodeBase.externalRole`, at the end of assemble. The role is the grammar's declaration, never inferred from the token's render text: typescript's automatic semicolons render as `"\n"` but declare no role, because they are zero-width before `}` and at the end of input. A declared role whose kind has no node is a compile error.
+
 ### `packages/codegen/src/compiler/assemble.ts::assemble`
 
 ```text
@@ -6400,6 +6404,8 @@ The symbol's position in the grammar's lexical precedence order (`collectLexical
 	 * match on external names.
 	 */
 ```
+
+The normalized and simplified grammars carry the same map through unchanged, as they carry `leafTextPatterns`, so assemble can stamp each declared role on its kind (`stampExternalRoles`). A role reference link inlines becomes an `indent`/`dedent`/`newline` rule; a reference that stays a symbol, such as python's aliased `_newline` after a simple statement, keeps the role only on the kind's node.
 
 ### `packages/codegen/src/compiler/types.ts::refineForms`
 
