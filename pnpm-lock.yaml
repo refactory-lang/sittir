@@ -238,6 +238,18 @@ importers:
       '@sittir/common':
         specifier: workspace:*
         version: link:../common
+      '@sittir/python':
+        specifier: workspace:*
+        version: link:../python
+      '@sittir/regex':
+        specifier: workspace:*
+        version: link:../regex
+      '@sittir/rust':
+        specifier: workspace:*
+        version: link:../rust
+      '@sittir/scm':
+        specifier: workspace:*
+        version: link:../scm
       '@sittir/types':
         specifier: workspace:*
         version: link:../types
