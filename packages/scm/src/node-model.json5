@@ -439,7 +439,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
       "text": "\n\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_dedent",
@@ -451,7 +451,7 @@
       "isParameterless": true,
       "stampExpression": "\"﷑\\n\" as const",
       "text": "﷑\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_double_blankline",
@@ -463,7 +463,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
       "text": "\n\n\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_group_expression",
@@ -498,7 +498,7 @@
       "isParameterless": true,
       "stampExpression": "\"﷐\\n\" as const",
       "text": "﷐\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_named_node_expression",
@@ -523,7 +523,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
       "text": "\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_node_identifier",
@@ -546,7 +546,7 @@
       "isParameterless": true,
       "stampExpression": "\" \" as const",
       "text": " ",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_tab",
@@ -558,7 +558,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\t\" as const",
       "text": "\t",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_tight",
@@ -570,7 +570,7 @@
       "isParameterless": true,
       "stampExpression": "\"\" as const",
       "text": "",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_whitespace",

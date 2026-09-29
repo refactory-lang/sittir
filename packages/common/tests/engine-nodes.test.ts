@@ -33,7 +33,11 @@ function fakeLanguage(name: string) {
 			group: (...items: unknown[]) => node({ $type: 3, _items: items, $source: Source.Factory }),
 			number: { bigint: (v: bigint) => node({ $type: 2, $text: String(v), $source: Source.Factory }) }
 		},
-		is: {},
+		is: {
+			leaf: (v: AnyNodeData) => v.$type === 1,
+			kind: (v: AnyNodeData, k: number) => v.$type === k,
+			expression: (v: AnyNodeData) => new Set([1, 3]).has(v.$type as number)
+		},
 		kinds: {},
 		trivia,
 		createNative: (opts?: { options?: Options }) => {
@@ -285,5 +289,52 @@ describe('the node guards of an engine', () => {
 		expect(engine.isEmptyNode(engine.build.group(engine.build.leaf('a')))).toBe(false);
 		expect(engine.isEmptyNode(engine.build.leaf('a'))).toBe(false);
 		expect(engine.isEmptyNode({ $type: 3, $source: Source.Factory } as never)).toBe(false);
+	});
+});
+
+describe('the kind guards of an engine', () => {
+	it('accept a node of the language by its kind, and pass the extra arguments through', async () => {
+		const fake = fakeLanguage('fake');
+		const a = await engineOf(fake);
+		const b = await engineOf(fake);
+		expect(a.is.leaf(b.build.leaf('x'))).toBe(true);
+		expect(a.is.leaf(b.build.group())).toBe(false);
+		expect(a.is.kind(a.build.group(), 3)).toBe(true);
+		expect(a.is.kind(a.build.group(), 1)).toBe(false);
+	});
+
+	it('reject a node of another language whose kind id matches', async () => {
+		const a = await engineOf(fakeLanguage('fake'));
+		const other = await engineOf(fakeLanguage('other'));
+		const foreign = other.build.leaf('x');
+		expect(foreign.$type).toBe(1);
+		expect(other.is.leaf(foreign)).toBe(true);
+		expect(a.is.leaf(foreign)).toBe(false);
+		expect(a.is.kind(other.build.group(), 3)).toBe(false);
+		expect(other.is.expression(foreign)).toBe(true);
+		expect(a.is.expression(foreign)).toBe(false);
+		expect(a.is.expression(a.build.leaf('y'))).toBe(true);
+	});
+
+	it('reject every value that carries no engine', async () => {
+		const engine = await engineOf(fakeLanguage('fake'));
+		const unstamped = withMethods({ $type: 1, $text: 'x', $source: Source.Factory } as unknown as AnyNodeData);
+		for (const value of [unstamped, { $type: 1 }, 'x', 1, null, undefined]) {
+			expect(engine.is.leaf(value)).toBe(false);
+		}
+	});
+
+	it('still accept the nodes of a disposed engine', async () => {
+		const engine = await engineOf(fakeLanguage('fake'));
+		const built = engine.build.leaf('x');
+		engine.dispose();
+		expect(engine.is.leaf(built)).toBe(true);
+	});
+
+	it('are frozen', async () => {
+		const engine = await engineOf(fakeLanguage('fake'));
+		expect(() => {
+			engine.is.leaf = () => true;
+		}).toThrow(TypeError);
 	});
 });

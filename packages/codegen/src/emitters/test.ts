@@ -654,8 +654,8 @@ function emitKeywordTest(
 ): void {
 	if (!isBuilderTextLeaf(node)) return;
 	lines.push(`describe(${JSON.stringify(kind)}, () => {`);
-	lines.push(`  it('factory produces the kind id', () => {`);
-	lines.push(`    expect(ir.${key}()).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
+	lines.push(`  it('is the kind id', () => {`);
+	lines.push(`    expect(ir.${key}).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push('  });');
 	lines.push('});');
 	lines.push('');

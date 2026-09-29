@@ -2578,7 +2578,8 @@ A lexed kind with a bare content slot is a leaf factory for the role synonyms; i
 ```text
 /**
  * Build the ReturnType expression for a factory. Uses `ReturnType<typeof F.xxx>`
- * so the type tracks the fluent methods attached by withMethods.
+ * so the type tracks the fluent methods attached by withMethods. A build
+ * constant (`isBuilderTextLeaf`) is not called, so its type is `typeof F.xxx`.
  */
 ```
 
@@ -5685,7 +5686,9 @@ The slots of a node that take their value from the trailing options argument ins
 
 ```text
 /**
- * The factory surface, read from the model's class: leaves are `text`, a
+ * The factory surface, read from the model's class: a fixed-text leaf with a
+ * builder is `constant` (its build entry is its kind id, not a call), other
+ * leaves are `text`, a
  * list is `elements`, a compound with a sole repeated slot is `spread`,
  * with a sole singular slot `direct` (or `forwarded` when that slot names
  * one kind with its own factory), anything else — two-plus slots, zero
@@ -9235,7 +9238,7 @@ Per-package `vitest.config.ts`: test include/env plus `resolve.alias` from `sour
  */
 ```
 
-`is` is frozen, and stays a check on the kind id alone: the language of a node is a fact of the engine's node guards, not of the package-level table.
+`is` is frozen and is a check on the kind id alone, with no language check: the package-level table has no engine. `engine.is` is the same table composed with the engine's language check.
 
 ### `packages/codegen/src/emitters/shared.ts::module`
 
@@ -12007,13 +12010,14 @@ preference; the literal texts are not part of the surface.
 ### `packages/codegen/src/emitters/factories.ts::emitKindIdFactory`
 
 ```text
-/** The factory of a kind stored as its id (a keyword): a zero-arg function
- *  returning the id — there is no node to build, the identity is the value.
- *  The name stays `build<Kind>` so call sites and the `BuildArgs` /
- *  `LooseArgs` (both `[]`) surface are unchanged from the node-returning
- *  form it replaces. The return type is written out as the member itself:
- *  an inferred return of an enum member widens to the whole enum, which
- *  would drop the id out of every slot union it belongs to. */
+/** The build entry of a kind stored as its id and given a builder
+ *  (`isBuilderTextLeaf`): a constant equal to the kind id — there is no node
+ *  to build, the identity is the value, so `build.passStatement` is
+ *  `kinds.PassStatement` and is not callable. The name stays `build<Kind>`,
+ *  so the irs, the factory map and the bundles that name it as a value read
+ *  the constant. The type is written out as the member itself: an inferred
+ *  type of an enum member widens to the whole enum, which would drop the id
+ *  out of every slot union it belongs to. */
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::kindDiscriminantType`
@@ -12276,8 +12280,8 @@ The placeholder seats the optional single-valued slots of the top-level stub as 
 ### `packages/codegen/src/emitters/test.ts::emitKeywordTest`
 
 ```text
-/** A keyword kind's factory returns its kind id — there is no node, so the
- *  only fact to pin is the id itself. */
+/** A keyword kind's build entry is its kind id — there is no node, so the
+ *  only fact to pin is that the entry is the id itself. */
 ```
 
 ### `packages/codegen/src/emitters/test.ts::emitLeafTest`
@@ -12765,7 +12769,7 @@ admits). A slot of literals only passes its input through; the raw factory's lit
 // ---------------------------------------------------------------------------
 // Keyword from() — a keyword has exactly one value, its id: whatever
 // `<Kind>.Loose` form arrives (the id or the fixed text), the answer is the
-// zero-arg factory's id. The parameter exists only to type the surface.
+// build constant, the id. The parameter exists only to type the surface.
 // ---------------------------------------------------------------------------
 ```
 

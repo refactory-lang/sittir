@@ -2,25 +2,25 @@
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const engine = await createEngine(rust);
+const { build } = await createEngine(rust);
 
 export function rebuildTriviaRustGenerated() {
-	return engine.build.sourceFile.strict({
-		statements: [engine.build.functionItem.strict({
-			name: engine.build.identifier("f"),
-			parameters: engine.build.parameters.strict(),
-			body: engine.build.block.strict().$trivia.inner(engine.build.lineComment.strict(engine.build.lineCommentRegular(" TODO"))),
-		}).$trivia.leading(engine.build.blockComment.strict(engine.build.blockCommentContent(" a "))), engine.build.functionItem.strict({
-			name: engine.build.identifier("g"),
-			parameters: engine.build.parameters.strict(),
-			body: engine.build.block.strict({}),
-		}).$trivia.trailing(engine.build.blockComment.strict(engine.build.blockCommentContent(" t "))), engine.build.functionItem.strict({
-			name: engine.build.identifier("h"),
-			parameters: engine.build.parameters.strict(),
-			body: engine.build.block.strict({
-				statements: [engine.build.expressionStatement.withSemi.strict(engine.build.callExpression.strict({
-					function: engine.build.identifier("f"),
-					arguments: engine.build.arguments.strict().$trivia.inner(engine.build.blockComment.strict(engine.build.blockCommentContent(" a "))),
+	return build.sourceFile.strict({
+		statements: [build.functionItem.strict({
+			name: build.identifier("f"),
+			parameters: build.parameters.strict(),
+			body: build.block.strict().$trivia.inner(build.lineComment.strict(build.lineCommentRegular(" TODO"))),
+		}).$trivia.leading(build.blockComment.strict(build.blockCommentContent(" a "))), build.functionItem.strict({
+			name: build.identifier("g"),
+			parameters: build.parameters.strict(),
+			body: build.block.strict({}),
+		}).$trivia.trailing(build.blockComment.strict(build.blockCommentContent(" t "))), build.functionItem.strict({
+			name: build.identifier("h"),
+			parameters: build.parameters.strict(),
+			body: build.block.strict({
+				statements: [build.expressionStatement.withSemi.strict(build.callExpression.strict({
+					function: build.identifier("f"),
+					arguments: build.arguments.strict().$trivia.inner(build.blockComment.strict(build.blockCommentContent(" a "))),
 				}))],
 			}),
 		})],

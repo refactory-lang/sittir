@@ -30,6 +30,7 @@ import {
 	importGrammarModule,
 	nodeToConfig,
 	loadNodeModel,
+	type FactoryEntry,
 	type TSNode,
 	type TSTree,
 	type ValidatorSkip
@@ -184,6 +185,11 @@ function insideExtra(node: TSNode | null): boolean {
 	return node !== null && (node.isExtra || insideExtra(node.parent));
 }
 
+export function kindIdDiffs(fromResult: unknown, factoryResult: unknown): string[] | undefined {
+	if (typeof fromResult !== 'number' && typeof factoryResult !== 'number') return undefined;
+	return fromResult === factoryResult ? [] : [`kind id ${String(fromResult)} vs ${String(factoryResult)}`];
+}
+
 export async function validateFrom(grammar: string, backend?: 'native' | 'js'): Promise<FromValidationResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
@@ -214,7 +220,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	// supported input. readTreeNode wraps readNode output via the per-kind
 	// wrap function, producing a fluent NodeData that `.from()` accepts.
 	let fromMap: Record<string, (input: object) => unknown> = {};
-	let factoryMap: Record<string, (config?: any) => unknown> = {};
+	let factoryMap: Record<string, FactoryEntry> = {};
 	let factoryShapes: Record<string, FactoryShape> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
@@ -337,12 +343,15 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					// through both from() (the real leaf-coercion route, pattern
 					// guards included) and the factory, and compare the results.
 					const leafShape = factoryShapes[kind] ?? 'config';
-					if (leafShape === 'text') {
+					if (leafShape === 'text' || leafShape === 'constant') {
 						try {
 							const text = node1.text;
 							const fromResult = fromMap[kind]!(text as never) as AnyNodeData;
-							const factoryResult = (factoryMap[kind]! as (t: string) => AnyNodeData)(text);
-							const diffs = structuralDiff(fromResult, factoryResult, kindNameFromId);
+							const factoryResult =
+								leafShape === 'constant'
+									? (factoryMap[kind] as AnyNodeData)
+									: (factoryMap[kind]! as (t: string) => AnyNodeData)(text);
+							const diffs = kindIdDiffs(fromResult, factoryResult) ?? structuralDiff(fromResult, factoryResult, kindNameFromId);
 							if (diffs.length > 0) {
 								divergentCount++;
 								errors.push({
@@ -444,7 +453,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						// `$fields`. Use `nodeToConfig` which handles both shapes
 						// and recursively resolves children through factories.
 						const config = nodeToConfig(readData, {
-							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,
+							factoryMap,
 							factoryShapes,
 							factoryFields,
 							factorySlots,
@@ -468,6 +477,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 								separatedListFactoryOptions(readData)
 							);
 						}
+					} else if (shape === 'constant') {
+						factoryResult = factory as AnyNodeData;
 					} else if (shape === 'text') {
 						// A text-shaped factory takes the node's bytes, which its span
 						// addresses whether or not the reader captured them as `$text`.
@@ -480,7 +491,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						// convention from 'spread's plain rest-param factories (see
 						// classifyFactoryShape's separatedList case).
 						const config = nodeToConfig(readData, {
-							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,
+							factoryMap,
 							factoryShapes,
 							factoryFields,
 							factorySlots,
@@ -493,7 +504,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						factoryResult = options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
 					} else {
 						const config = nodeToConfig(readData, {
-							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,
+							factoryMap,
 							factoryShapes,
 							factoryFields,
 							factorySlots,
@@ -515,13 +526,14 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 
 				// A kind stored as its id (a keyword) has no node: both sides are
 				// the id, and equality is the whole round-trip.
-				if (typeof (fromResult as unknown) === 'number' || typeof (factoryResult as unknown) === 'number') {
-					if ((fromResult as unknown) !== (factoryResult as unknown)) {
+				const idDiffs = kindIdDiffs(fromResult, factoryResult);
+				if (idDiffs !== undefined) {
+					if (idDiffs.length > 0) {
 						divergentCount++;
 						errors.push({
 							kind,
 							severity: 'warning',
-							message: `from() diverges (face=${kind}, storage=${readKind}): kind id ${String(fromResult)} vs ${String(factoryResult)}`
+							message: `from() diverges (face=${kind}, storage=${readKind}): ${idDiffs.join('; ')}`
 						});
 						continue;
 					}

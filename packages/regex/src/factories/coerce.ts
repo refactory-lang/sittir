@@ -73,11 +73,11 @@ interface _LeafEntry {
 	readonly factory: (text: string) => AnyNodeData | number;
 }
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
-	any_character: { values: ['.'], factory: () => F.buildAnyCharacter() },
-	start_assertion: { values: ['^'], factory: () => F.buildStartAssertion() },
-	end_assertion: { values: ['$'], factory: () => F.buildEndAssertion() },
-	boundary_assertion: { values: ['\\b'], factory: () => F.buildBoundaryAssertion() },
-	non_boundary_assertion: { values: ['\\B'], factory: () => F.buildNonBoundaryAssertion() },
+	any_character: { values: ['.'], factory: () => F.buildAnyCharacter },
+	start_assertion: { values: ['^'], factory: () => F.buildStartAssertion },
+	end_assertion: { values: ['$'], factory: () => F.buildEndAssertion },
+	boundary_assertion: { values: ['\\b'], factory: () => F.buildBoundaryAssertion },
+	non_boundary_assertion: { values: ['\\B'], factory: () => F.buildNonBoundaryAssertion },
 	pattern_character: { pattern: /^(?:(?:[^^$\\.*+?()[\]|\r?\n]))$/u, factory: F.buildPatternCharacter },
 	posix_class_name: { pattern: /^(?:(?:[a-zA-Z]+))$/u, factory: F.buildPosixClassName },
 	class_character: { pattern: /^(?:(?:[^\\\]-]))$/u, factory: F.buildClassCharacter },
@@ -96,10 +96,10 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	identity_escape: { factory: (content: string) => _resolveByKind('identity_escape', content) },
 	group_name: { pattern: /^(?:(?:[A-Za-z_][A-Za-z0-9_]*))$/u, factory: F.buildGroupName },
 	decimal_digits: { pattern: /^(?:(?:\d+))$/u, factory: F.buildDecimalDigits },
-	_tight: { values: [''], factory: () => F.buildTight() },
-	_newline: { values: ['\n'], factory: () => F.buildNewline() },
-	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline() },
-	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline() },
+	_tight: { values: [''], factory: () => F.buildTight },
+	_newline: { values: ['\n'], factory: () => F.buildNewline },
+	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline },
+	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline },
 	unicode_property_name: {
 		pattern: /^(?:(?:[a-zA-Z_0-9]+))$/u,
 		factory: (text: string) => F.buildUnicodePropertyName(F.buildUnicodePropertyValue(text) as never)
@@ -698,28 +698,26 @@ export function coerceToTerm(
 	);
 }
 
-export function coerceToAnyCharacter(_input?: T.AnyCharacter.Loose): ReturnType<typeof F.buildAnyCharacter> {
-	return F.buildAnyCharacter();
+export function coerceToAnyCharacter(_input?: T.AnyCharacter.Loose): typeof F.buildAnyCharacter {
+	return F.buildAnyCharacter;
 }
 
-export function coerceToStartAssertion(_input?: T.StartAssertion.Loose): ReturnType<typeof F.buildStartAssertion> {
-	return F.buildStartAssertion();
+export function coerceToStartAssertion(_input?: T.StartAssertion.Loose): typeof F.buildStartAssertion {
+	return F.buildStartAssertion;
 }
 
-export function coerceToEndAssertion(_input?: T.EndAssertion.Loose): ReturnType<typeof F.buildEndAssertion> {
-	return F.buildEndAssertion();
+export function coerceToEndAssertion(_input?: T.EndAssertion.Loose): typeof F.buildEndAssertion {
+	return F.buildEndAssertion;
 }
 
-export function coerceToBoundaryAssertion(
-	_input?: T.BoundaryAssertion.Loose
-): ReturnType<typeof F.buildBoundaryAssertion> {
-	return F.buildBoundaryAssertion();
+export function coerceToBoundaryAssertion(_input?: T.BoundaryAssertion.Loose): typeof F.buildBoundaryAssertion {
+	return F.buildBoundaryAssertion;
 }
 
 export function coerceToNonBoundaryAssertion(
 	_input?: T.NonBoundaryAssertion.Loose
-): ReturnType<typeof F.buildNonBoundaryAssertion> {
-	return F.buildNonBoundaryAssertion();
+): typeof F.buildNonBoundaryAssertion {
+	return F.buildNonBoundaryAssertion;
 }
 
 export function resolveLookaroundAssertion_content(
@@ -1504,20 +1502,20 @@ export function coerceToInlineFlagsGroupDisable(
 	});
 }
 
-export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.buildTight> {
-	return F.buildTight();
+export function coerceToTight(_input?: T.Tight.Loose): typeof F.buildTight {
+	return F.buildTight;
 }
 
-export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {
-	return F.buildNewline();
+export function coerceToNewline(_input?: T.Newline.Loose): typeof F.buildNewline {
+	return F.buildNewline;
 }
 
-export function coerceToBlankline(_input?: T.Blankline.Loose): ReturnType<typeof F.buildBlankline> {
-	return F.buildBlankline();
+export function coerceToBlankline(_input?: T.Blankline.Loose): typeof F.buildBlankline {
+	return F.buildBlankline;
 }
 
-export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): ReturnType<typeof F.buildDoubleBlankline> {
-	return F.buildDoubleBlankline();
+export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeof F.buildDoubleBlankline {
+	return F.buildDoubleBlankline;
 }
 
 export function resolveLazy_content(value: T.Lazy.LooseConfig['content']): T.Lazy['_content'] {

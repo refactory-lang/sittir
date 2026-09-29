@@ -31,7 +31,7 @@ describe('built trivia layout', () => {
 	});
 
 	it('gives a blankline leading entry exactly one blank line', () => {
-		const block = rs.build.block({ statements: [statement('a'), statement('b').$trivia.leading(rs.build.whitespace.blankline())] });
+		const block = rs.build.block({ statements: [statement('a'), statement('b').$trivia.leading(rs.build.whitespace.blankline)] });
 		expect(block.$render()).toBe('{\n    a;\n\n    b;\n}');
 	});
 });

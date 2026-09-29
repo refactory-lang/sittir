@@ -92,25 +92,15 @@ export function buildTerm(...children: T.TermGroup[]): T.Term.Built {
 	);
 }
 
-export function buildAnyCharacter(): TSKindId.AnyCharacter {
-	return TSKindId.AnyCharacter;
-}
+export const buildAnyCharacter: TSKindId.AnyCharacter = TSKindId.AnyCharacter;
 
-export function buildStartAssertion(): TSKindId.StartAssertion {
-	return TSKindId.StartAssertion;
-}
+export const buildStartAssertion: TSKindId.StartAssertion = TSKindId.StartAssertion;
 
-export function buildEndAssertion(): TSKindId.EndAssertion {
-	return TSKindId.EndAssertion;
-}
+export const buildEndAssertion: TSKindId.EndAssertion = TSKindId.EndAssertion;
 
-export function buildBoundaryAssertion(): TSKindId.BoundaryAssertion {
-	return TSKindId.BoundaryAssertion;
-}
+export const buildBoundaryAssertion: TSKindId.BoundaryAssertion = TSKindId.BoundaryAssertion;
 
-export function buildNonBoundaryAssertion(): TSKindId.NonBoundaryAssertion {
-	return TSKindId.NonBoundaryAssertion;
-}
+export const buildNonBoundaryAssertion: TSKindId.NonBoundaryAssertion = TSKindId.NonBoundaryAssertion;
 
 export function buildLookaroundAssertion(
 	value: T.LookaheadAssertion | T.LookbehindAssertion
@@ -1023,21 +1013,13 @@ export function buildInlineFlagsGroupDisable(
 	);
 }
 
-export function buildTight(): TSKindId.Tight {
-	return TSKindId.Tight;
-}
+export const buildTight: TSKindId.Tight = TSKindId.Tight;
 
-export function buildNewline(): TSKindId.Newline {
-	return TSKindId.Newline;
-}
+export const buildNewline: TSKindId.Newline = TSKindId.Newline;
 
-export function buildBlankline(): TSKindId.Blankline {
-	return TSKindId.Blankline;
-}
+export const buildBlankline: TSKindId.Blankline = TSKindId.Blankline;
 
-export function buildDoubleBlankline(): TSKindId.DoubleBlankline {
-	return TSKindId.DoubleBlankline;
-}
+export const buildDoubleBlankline: TSKindId.DoubleBlankline = TSKindId.DoubleBlankline;
 
 export function buildLazy(value: TSKindId.Qmark): T.Lazy.Built {
 	const _content = coerceKindEnumStorage<NonNullable<T.Lazy['_content']>>(value, [['?', TSKindId.Qmark] as const]);

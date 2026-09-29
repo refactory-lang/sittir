@@ -3,545 +3,545 @@ import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 import { Delimiter } from '@sittir/common/utils';
 
-const engine = await createEngine(typescript);
+const { build, kinds } = await createEngine(typescript);
 
 export function rebuildFormatGenerated() {
-	return engine.build.program.strict({
-		statements: [engine.build.importStatement.clauseFrom.strict({
-			importClause: engine.kinds.TypeKeyword,
+	return build.program.strict({
+		statements: [build.importStatement.clauseFrom.strict({
+			importClause: kinds.TypeKeyword,
 			fromClause: {
-				importClause: engine.build.importClause.strict(engine.build.namedImports.strict({ delimiter: Delimiter.None }, engine.build.importSpecifier.name.strict({
-					name: engine.build.identifier("FormatRecord"),
-				}), engine.build.importSpecifier.name.strict({
-					name: engine.build.identifier("FormatTrivia"),
+				importClause: build.importClause.strict(build.namedImports.strict({ delimiter: Delimiter.None }, build.importSpecifier.name.strict({
+					name: build.identifier("FormatRecord"),
+				}), build.importSpecifier.name.strict({
+					name: build.identifier("FormatTrivia"),
 				}))),
-				source: engine.build.string.single.strict(engine.build.unescapedSingleStringFragment("@sittir/types")),
+				source: build.string.single.strict(build.unescapedSingleStringFragment("@sittir/types")),
 			},
 		}, {
-			terminator: engine.kinds.Semi,
-		}), engine.build.exportStatement.default.declaration.strict({
-			content: engine.build.functionDeclaration.strict({
-				name: engine.build.identifier("applyFormat"),
-				parameters: engine.build.formalParameters.strict({ delimiter: Delimiter.None }, engine.build.requiredParameter.strict({
-					pattern: engine.build.lhsExpression.strict(engine.build.identifier("canonicalRender")),
-					type: engine.build.typeAnnotation.strict(engine.kinds.StringKeyword),
-				}), engine.build.requiredParameter.strict({
-					pattern: engine.build.lhsExpression.strict(engine.build.identifier("format")),
-					type: engine.build.typeAnnotation.strict(engine.build.identifier("FormatRecord")),
+			terminator: kinds.Semi,
+		}), build.exportStatement.default.declaration.strict({
+			content: build.functionDeclaration.strict({
+				name: build.identifier("applyFormat"),
+				parameters: build.formalParameters.strict({ delimiter: Delimiter.None }, build.requiredParameter.strict({
+					pattern: build.lhsExpression.strict(build.identifier("canonicalRender")),
+					type: build.typeAnnotation.strict(kinds.StringKeyword),
+				}), build.requiredParameter.strict({
+					pattern: build.lhsExpression.strict(build.identifier("format")),
+					type: build.typeAnnotation.strict(build.identifier("FormatRecord")),
 				})),
-				returnType: engine.build.typeAnnotation.strict(engine.kinds.StringKeyword),
-				body: engine.build.statementBlock.strict({
-					statements: [engine.build.lexicalDeclaration.strict({
-						kind: engine.kinds.LetKeyword,
-						declarators: [engine.build.variableDeclarator.plain.strict({
-							name: engine.build.identifier("result"),
-							value: engine.build.identifier("canonicalRender"),
+				returnType: build.typeAnnotation.strict(kinds.StringKeyword),
+				body: build.statementBlock.strict({
+					statements: [build.lexicalDeclaration.strict({
+						kind: kinds.LetKeyword,
+						declarators: [build.variableDeclarator.plain.strict({
+							name: build.identifier("result"),
+							value: build.identifier("canonicalRender"),
 						})],
 					}, {
-						terminator: engine.kinds.Semi,
-					}), engine.build.expressionStatement.strict(engine.build.assignmentExpression.strict({
-						left: engine.build.lhsExpression.strict(engine.build.identifier("result")),
-						right: engine.build.callExpression.call.strict({
-							function: engine.build.identifier("applyTrivia"),
-							arguments: engine.build.arguments.strict(engine.build.identifier("result"), engine.build.identifier("format")),
+						terminator: kinds.Semi,
+					}), build.expressionStatement.strict(build.assignmentExpression.strict({
+						left: build.lhsExpression.strict(build.identifier("result")),
+						right: build.callExpression.call.strict({
+							function: build.identifier("applyTrivia"),
+							arguments: build.arguments.strict(build.identifier("result"), build.identifier("format")),
 						}),
 					}), {
-						terminator: engine.kinds.Semi,
-					}), engine.build.expressionStatement.strict(engine.build.assignmentExpression.strict({
-						left: engine.build.lhsExpression.strict(engine.build.identifier("result")),
-						right: engine.build.callExpression.call.strict({
-							function: engine.build.identifier("applyBoundary"),
-							arguments: engine.build.arguments.strict(engine.build.identifier("result"), engine.build.identifier("format")),
+						terminator: kinds.Semi,
+					}), build.expressionStatement.strict(build.assignmentExpression.strict({
+						left: build.lhsExpression.strict(build.identifier("result")),
+						right: build.callExpression.call.strict({
+							function: build.identifier("applyBoundary"),
+							arguments: build.arguments.strict(build.identifier("result"), build.identifier("format")),
 						}),
 					}), {
-						terminator: engine.kinds.Semi,
-					}), engine.build.returnStatement.strict(engine.build.identifier("result"), {
-						terminator: engine.kinds.Semi,
+						terminator: kinds.Semi,
+					}), build.returnStatement.strict(build.identifier("result"), {
+						terminator: kinds.Semi,
 					})],
 					automaticSemicolon: true,
 				}),
 				automaticSemicolon: true,
 			}),
-		}).$trivia.leading(engine.build.comment.block.strict("*\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n *\n * @remarks\n * Steps:\n * 1. Insert `trivia` items at their recorded byte offsets (applied\n *    right-to-left to preserve earlier offsets). Offsets are\n *    canonical-relative, so trivia must be applied before boundary.\n * 2. Prepend `boundary.leading` and append `boundary.trailing`.\n * 3. `slots` and `literals` adjustments are reserved for future phases;\n *    if present they are noted but do not alter the output in Phase 1.\n ")), engine.build.functionDeclaration.strict({
-			name: engine.build.identifier("applyBoundary"),
-			parameters: engine.build.formalParameters.strict({ delimiter: Delimiter.None }, engine.build.requiredParameter.strict({
-				pattern: engine.build.lhsExpression.strict(engine.build.identifier("s")),
-				type: engine.build.typeAnnotation.strict(engine.kinds.StringKeyword),
-			}), engine.build.requiredParameter.strict({
-				pattern: engine.build.lhsExpression.strict(engine.build.identifier("format")),
-				type: engine.build.typeAnnotation.strict(engine.build.identifier("FormatRecord")),
+		}).$trivia.leading(build.comment.block.strict("*\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n *\n * @remarks\n * Steps:\n * 1. Insert `trivia` items at their recorded byte offsets (applied\n *    right-to-left to preserve earlier offsets). Offsets are\n *    canonical-relative, so trivia must be applied before boundary.\n * 2. Prepend `boundary.leading` and append `boundary.trailing`.\n * 3. `slots` and `literals` adjustments are reserved for future phases;\n *    if present they are noted but do not alter the output in Phase 1.\n ")), build.functionDeclaration.strict({
+			name: build.identifier("applyBoundary"),
+			parameters: build.formalParameters.strict({ delimiter: Delimiter.None }, build.requiredParameter.strict({
+				pattern: build.lhsExpression.strict(build.identifier("s")),
+				type: build.typeAnnotation.strict(kinds.StringKeyword),
+			}), build.requiredParameter.strict({
+				pattern: build.lhsExpression.strict(build.identifier("format")),
+				type: build.typeAnnotation.strict(build.identifier("FormatRecord")),
 			})),
-			returnType: engine.build.typeAnnotation.strict(engine.kinds.StringKeyword),
-			body: engine.build.statementBlock.strict({
-				statements: [engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.objectPattern.strict(engine.build.identifier("boundary")),
-						value: engine.build.identifier("format"),
+			returnType: build.typeAnnotation.strict(kinds.StringKeyword),
+			body: build.statementBlock.strict({
+				statements: [build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.objectPattern.strict(build.identifier("boundary")),
+						value: build.identifier("format"),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.ifStatement.strict({
-					condition: engine.build.parenthesizedExpression.typed.strict({
-						expression: engine.build.unaryExpression.strict({
-							operator: engine.kinds.Bang,
-							argument: engine.build.identifier("boundary"),
+					terminator: kinds.Semi,
+				}), build.ifStatement.strict({
+					condition: build.parenthesizedExpression.typed.strict({
+						expression: build.unaryExpression.strict({
+							operator: kinds.Bang,
+							argument: build.identifier("boundary"),
 						}),
 					}),
-					consequence: engine.build.returnStatement.strict(engine.build.identifier("s"), {
-						terminator: engine.kinds.Semi,
+					consequence: build.returnStatement.strict(build.identifier("s"), {
+						terminator: kinds.Semi,
 					}),
-				}), engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.identifier("leading"),
-						value: engine.build.binaryExpression.strict({
-							left: engine.build.memberExpression.strict({
-								object: engine.build.identifier("boundary"),
-								separator: engine.kinds.Dot,
-								property: engine.build.identifier("leading"),
+				}), build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.identifier("leading"),
+						value: build.binaryExpression.strict({
+							left: build.memberExpression.strict({
+								object: build.identifier("boundary"),
+								separator: kinds.Dot,
+								property: build.identifier("leading"),
 							}),
-							operator: engine.kinds.QmarkQmark,
-							right: engine.build.string.single.strict(),
+							operator: kinds.QmarkQmark,
+							right: build.string.single.strict(),
 						}),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.identifier("trailing"),
-						value: engine.build.binaryExpression.strict({
-							left: engine.build.memberExpression.strict({
-								object: engine.build.identifier("boundary"),
-								separator: engine.kinds.Dot,
-								property: engine.build.identifier("trailing"),
+					terminator: kinds.Semi,
+				}), build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.identifier("trailing"),
+						value: build.binaryExpression.strict({
+							left: build.memberExpression.strict({
+								object: build.identifier("boundary"),
+								separator: kinds.Dot,
+								property: build.identifier("trailing"),
 							}),
-							operator: engine.kinds.QmarkQmark,
-							right: engine.build.string.single.strict(),
+							operator: kinds.QmarkQmark,
+							right: build.string.single.strict(),
 						}),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.returnStatement.strict(engine.build.templateString.strict(engine.build.templateSubstitution.strict(engine.build.identifier("leading")), engine.build.templateSubstitution.strict(engine.build.identifier("s")), engine.build.templateSubstitution.strict(engine.build.identifier("trailing"))), {
-					terminator: engine.kinds.Semi,
+					terminator: kinds.Semi,
+				}), build.returnStatement.strict(build.templateString.strict(build.templateSubstitution.strict(build.identifier("leading")), build.templateSubstitution.strict(build.identifier("s")), build.templateSubstitution.strict(build.identifier("trailing"))), {
+					terminator: kinds.Semi,
 				})],
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(engine.build.comment.block.strict("* Prepend/append boundary whitespace. ")), engine.build.functionDeclaration.strict({
-			name: engine.build.identifier("applyTrivia"),
-			parameters: engine.build.formalParameters.strict({ delimiter: Delimiter.None }, engine.build.requiredParameter.strict({
-				pattern: engine.build.lhsExpression.strict(engine.build.identifier("s")),
-				type: engine.build.typeAnnotation.strict(engine.kinds.StringKeyword),
-			}), engine.build.requiredParameter.strict({
-				pattern: engine.build.lhsExpression.strict(engine.build.identifier("format")),
-				type: engine.build.typeAnnotation.strict(engine.build.identifier("FormatRecord")),
+		}).$trivia.leading(build.comment.block.strict("* Prepend/append boundary whitespace. ")), build.functionDeclaration.strict({
+			name: build.identifier("applyTrivia"),
+			parameters: build.formalParameters.strict({ delimiter: Delimiter.None }, build.requiredParameter.strict({
+				pattern: build.lhsExpression.strict(build.identifier("s")),
+				type: build.typeAnnotation.strict(kinds.StringKeyword),
+			}), build.requiredParameter.strict({
+				pattern: build.lhsExpression.strict(build.identifier("format")),
+				type: build.typeAnnotation.strict(build.identifier("FormatRecord")),
 			})),
-			returnType: engine.build.typeAnnotation.strict(engine.kinds.StringKeyword),
-			body: engine.build.statementBlock.strict({
-				statements: [engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.objectPattern.strict(engine.build.identifier("trivia")),
-						value: engine.build.identifier("format"),
+			returnType: build.typeAnnotation.strict(kinds.StringKeyword),
+			body: build.statementBlock.strict({
+				statements: [build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.objectPattern.strict(build.identifier("trivia")),
+						value: build.identifier("format"),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.ifStatement.strict({
-					condition: engine.build.parenthesizedExpression.typed.strict({
-						expression: engine.build.binaryExpression.strict({
-							left: engine.build.unaryExpression.strict({
-								operator: engine.kinds.Bang,
-								argument: engine.build.identifier("trivia"),
+					terminator: kinds.Semi,
+				}), build.ifStatement.strict({
+					condition: build.parenthesizedExpression.typed.strict({
+						expression: build.binaryExpression.strict({
+							left: build.unaryExpression.strict({
+								operator: kinds.Bang,
+								argument: build.identifier("trivia"),
 							}),
-							operator: engine.kinds.PipePipe,
-							right: engine.build.binaryExpression.strict({
-								left: engine.build.memberExpression.strict({
-									object: engine.build.identifier("trivia"),
-									separator: engine.kinds.Dot,
-									property: engine.build.identifier("length"),
+							operator: kinds.PipePipe,
+							right: build.binaryExpression.strict({
+								left: build.memberExpression.strict({
+									object: build.identifier("trivia"),
+									separator: kinds.Dot,
+									property: build.identifier("length"),
 								}),
-								operator: engine.kinds.EqEqEq,
-								right: engine.build.number.decimal("0"),
+								operator: kinds.EqEqEq,
+								right: build.number.decimal("0"),
 							}),
 						}),
 					}),
-					consequence: engine.build.returnStatement.strict(engine.build.identifier("s"), {
-						terminator: engine.kinds.Semi,
+					consequence: build.returnStatement.strict(build.identifier("s"), {
+						terminator: kinds.Semi,
 					}),
-				}), engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.identifier("sorted"),
-						value: engine.build.callExpression.call.strict({
-							function: engine.build.memberExpression.strict({
-								object: engine.build.array.strict(engine.build.spreadElement.strict(engine.build.identifier("trivia"))),
-								separator: engine.kinds.Dot,
-								property: engine.build.identifier("sort"),
+				}), build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.identifier("sorted"),
+						value: build.callExpression.call.strict({
+							function: build.memberExpression.strict({
+								object: build.array.strict(build.spreadElement.strict(build.identifier("trivia"))),
+								separator: kinds.Dot,
+								property: build.identifier("sort"),
 							}),
-							arguments: engine.build.arguments.strict(engine.build.arrowFunction.strict({
-								content: engine.build.callSignature.strict({
-									parameters: engine.build.formalParameters.strict({ delimiter: Delimiter.None }, engine.build.requiredParameter.strict({
-										pattern: engine.build.lhsExpression.strict(engine.build.identifier("a")),
-									}), engine.build.requiredParameter.strict({
-										pattern: engine.build.lhsExpression.strict(engine.build.identifier("b")),
+							arguments: build.arguments.strict(build.arrowFunction.strict({
+								content: build.callSignature.strict({
+									parameters: build.formalParameters.strict({ delimiter: Delimiter.None }, build.requiredParameter.strict({
+										pattern: build.lhsExpression.strict(build.identifier("a")),
+									}), build.requiredParameter.strict({
+										pattern: build.lhsExpression.strict(build.identifier("b")),
 									})),
 								}),
-								body: engine.build.binaryExpression.strict({
-									left: engine.build.memberExpression.strict({
-										object: engine.build.identifier("b"),
-										separator: engine.kinds.Dot,
-										property: engine.build.identifier("offset"),
+								body: build.binaryExpression.strict({
+									left: build.memberExpression.strict({
+										object: build.identifier("b"),
+										separator: kinds.Dot,
+										property: build.identifier("offset"),
 									}),
-									operator: engine.kinds.Dash,
-									right: engine.build.memberExpression.strict({
-										object: engine.build.identifier("a"),
-										separator: engine.kinds.Dot,
-										property: engine.build.identifier("offset"),
+									operator: kinds.Dash,
+									right: build.memberExpression.strict({
+										object: build.identifier("a"),
+										separator: kinds.Dot,
+										property: build.identifier("offset"),
 									}),
 								}),
 							})),
 						}),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.LetKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.identifier("result"),
-						value: engine.build.identifier("s"),
+					terminator: kinds.Semi,
+				}), build.lexicalDeclaration.strict({
+					kind: kinds.LetKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.identifier("result"),
+						value: build.identifier("s"),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.forInStatement.strict({
-					forHeader: engine.build.forHeader.letConstKind.strict({
-						kind: engine.kinds.ConstKeyword,
-						left: engine.build.identifier("item"),
-						operator: engine.kinds.OfKeyword,
-						right: engine.build.identifier("sorted"),
+					terminator: kinds.Semi,
+				}), build.forInStatement.strict({
+					forHeader: build.forHeader.letConstKind.strict({
+						kind: kinds.ConstKeyword,
+						left: build.identifier("item"),
+						operator: kinds.OfKeyword,
+						right: build.identifier("sorted"),
 					}),
-					body: engine.build.statementBlock.strict({
-						statements: [engine.build.lexicalDeclaration.strict({
-							kind: engine.kinds.ConstKeyword,
-							declarators: [engine.build.variableDeclarator.plain.strict({
-								name: engine.build.identifier("offset"),
-								value: engine.build.callExpression.call.strict({
-									function: engine.build.memberExpression.strict({
-										object: engine.build.identifier("Math"),
-										separator: engine.kinds.Dot,
-										property: engine.build.identifier("max"),
+					body: build.statementBlock.strict({
+						statements: [build.lexicalDeclaration.strict({
+							kind: kinds.ConstKeyword,
+							declarators: [build.variableDeclarator.plain.strict({
+								name: build.identifier("offset"),
+								value: build.callExpression.call.strict({
+									function: build.memberExpression.strict({
+										object: build.identifier("Math"),
+										separator: kinds.Dot,
+										property: build.identifier("max"),
 									}),
-									arguments: engine.build.arguments.strict(engine.build.number.decimal("0"), engine.build.callExpression.call.strict({
-										function: engine.build.memberExpression.strict({
-											object: engine.build.identifier("Math"),
-											separator: engine.kinds.Dot,
-											property: engine.build.identifier("min"),
+									arguments: build.arguments.strict(build.number.decimal("0"), build.callExpression.call.strict({
+										function: build.memberExpression.strict({
+											object: build.identifier("Math"),
+											separator: kinds.Dot,
+											property: build.identifier("min"),
 										}),
-										arguments: engine.build.arguments.strict(engine.build.memberExpression.strict({
-											object: engine.build.identifier("item"),
-											separator: engine.kinds.Dot,
-											property: engine.build.identifier("offset"),
-										}), engine.build.memberExpression.strict({
-											object: engine.build.identifier("result"),
-											separator: engine.kinds.Dot,
-											property: engine.build.identifier("length"),
+										arguments: build.arguments.strict(build.memberExpression.strict({
+											object: build.identifier("item"),
+											separator: kinds.Dot,
+											property: build.identifier("offset"),
+										}), build.memberExpression.strict({
+											object: build.identifier("result"),
+											separator: kinds.Dot,
+											property: build.identifier("length"),
 										})),
 									})),
 								}),
 							})],
 						}, {
-							terminator: engine.kinds.Semi,
-						}), engine.build.expressionStatement.strict(engine.build.assignmentExpression.strict({
-							left: engine.build.lhsExpression.strict(engine.build.identifier("result")),
-							right: engine.build.binaryExpression.strict({
-								left: engine.build.binaryExpression.strict({
-									left: engine.build.callExpression.call.strict({
-										function: engine.build.memberExpression.strict({
-											object: engine.build.identifier("result"),
-											separator: engine.kinds.Dot,
-											property: engine.build.identifier("slice"),
+							terminator: kinds.Semi,
+						}), build.expressionStatement.strict(build.assignmentExpression.strict({
+							left: build.lhsExpression.strict(build.identifier("result")),
+							right: build.binaryExpression.strict({
+								left: build.binaryExpression.strict({
+									left: build.callExpression.call.strict({
+										function: build.memberExpression.strict({
+											object: build.identifier("result"),
+											separator: kinds.Dot,
+											property: build.identifier("slice"),
 										}),
-										arguments: engine.build.arguments.strict(engine.build.number.decimal("0"), engine.build.identifier("offset")),
+										arguments: build.arguments.strict(build.number.decimal("0"), build.identifier("offset")),
 									}),
-									operator: engine.kinds.Plus,
-									right: engine.build.memberExpression.strict({
-										object: engine.build.identifier("item"),
-										separator: engine.kinds.Dot,
-										property: engine.build.identifier("text"),
+									operator: kinds.Plus,
+									right: build.memberExpression.strict({
+										object: build.identifier("item"),
+										separator: kinds.Dot,
+										property: build.identifier("text"),
 									}),
 								}),
-								operator: engine.kinds.Plus,
-								right: engine.build.callExpression.call.strict({
-									function: engine.build.memberExpression.strict({
-										object: engine.build.identifier("result"),
-										separator: engine.kinds.Dot,
-										property: engine.build.identifier("slice"),
+								operator: kinds.Plus,
+								right: build.callExpression.call.strict({
+									function: build.memberExpression.strict({
+										object: build.identifier("result"),
+										separator: kinds.Dot,
+										property: build.identifier("slice"),
 									}),
-									arguments: engine.build.arguments.strict(engine.build.identifier("offset")),
+									arguments: build.arguments.strict(build.identifier("offset")),
 								}),
 							}),
 						}), {
-							terminator: engine.kinds.Semi,
+							terminator: kinds.Semi,
 						})],
 						automaticSemicolon: true,
 					}),
-				}), engine.build.returnStatement.strict(engine.build.identifier("result"), {
-					terminator: engine.kinds.Semi,
+				}), build.returnStatement.strict(build.identifier("result"), {
+					terminator: kinds.Semi,
 				})],
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(engine.build.comment.block.strict("*\n * Insert trivia items at their recorded byte offsets.\n * Items are applied in descending offset order so earlier offsets\n * are not invalidated.\n ")), engine.build.exportStatement.default.declaration.strict({
-			content: engine.build.functionDeclaration.strict({
-				name: engine.build.identifier("rebaseTrivia"),
-				parameters: engine.build.formalParameters.strict({ delimiter: Delimiter.None }, engine.build.requiredParameter.strict({
-					pattern: engine.build.lhsExpression.strict(engine.build.identifier("format")),
-					type: engine.build.typeAnnotation.strict(engine.build.identifier("FormatRecord")),
-				}), engine.build.requiredParameter.strict({
-					pattern: engine.build.lhsExpression.strict(engine.build.identifier("editStart")),
-					type: engine.build.typeAnnotation.strict(engine.kinds.NumberKeyword),
-				}), engine.build.requiredParameter.strict({
-					pattern: engine.build.lhsExpression.strict(engine.build.identifier("delta")),
-					type: engine.build.typeAnnotation.strict(engine.kinds.NumberKeyword),
+		}).$trivia.leading(build.comment.block.strict("*\n * Insert trivia items at their recorded byte offsets.\n * Items are applied in descending offset order so earlier offsets\n * are not invalidated.\n ")), build.exportStatement.default.declaration.strict({
+			content: build.functionDeclaration.strict({
+				name: build.identifier("rebaseTrivia"),
+				parameters: build.formalParameters.strict({ delimiter: Delimiter.None }, build.requiredParameter.strict({
+					pattern: build.lhsExpression.strict(build.identifier("format")),
+					type: build.typeAnnotation.strict(build.identifier("FormatRecord")),
+				}), build.requiredParameter.strict({
+					pattern: build.lhsExpression.strict(build.identifier("editStart")),
+					type: build.typeAnnotation.strict(kinds.NumberKeyword),
+				}), build.requiredParameter.strict({
+					pattern: build.lhsExpression.strict(build.identifier("delta")),
+					type: build.typeAnnotation.strict(kinds.NumberKeyword),
 				})),
-				returnType: engine.build.typeAnnotation.strict(engine.build.identifier("FormatRecord")),
-				body: engine.build.statementBlock.strict({
-					statements: [engine.build.lexicalDeclaration.strict({
-						kind: engine.kinds.ConstKeyword,
-						declarators: [engine.build.variableDeclarator.plain.strict({
-							name: engine.build.identifier("trivia"),
-							value: engine.build.callExpression.call.strict({
-								function: engine.build.identifier("rebaseTriviaItems"),
-								arguments: engine.build.arguments.strict(engine.build.memberExpression.strict({
-									object: engine.build.identifier("format"),
-									separator: engine.kinds.Dot,
-									property: engine.build.identifier("trivia"),
-								}), engine.build.identifier("editStart"), engine.build.identifier("delta")),
+				returnType: build.typeAnnotation.strict(build.identifier("FormatRecord")),
+				body: build.statementBlock.strict({
+					statements: [build.lexicalDeclaration.strict({
+						kind: kinds.ConstKeyword,
+						declarators: [build.variableDeclarator.plain.strict({
+							name: build.identifier("trivia"),
+							value: build.callExpression.call.strict({
+								function: build.identifier("rebaseTriviaItems"),
+								arguments: build.arguments.strict(build.memberExpression.strict({
+									object: build.identifier("format"),
+									separator: kinds.Dot,
+									property: build.identifier("trivia"),
+								}), build.identifier("editStart"), build.identifier("delta")),
 							}),
 						})],
 					}, {
-						terminator: engine.kinds.Semi,
-					}), engine.build.lexicalDeclaration.strict({
-						kind: engine.kinds.ConstKeyword,
-						declarators: [engine.build.variableDeclarator.plain.strict({
-							name: engine.build.identifier("kinds"),
-							value: engine.build.callExpression.call.strict({
-								function: engine.build.identifier("rebaseKinds"),
-								arguments: engine.build.arguments.strict(engine.build.memberExpression.strict({
-									object: engine.build.identifier("format"),
-									separator: engine.kinds.Dot,
-									property: engine.build.identifier("kinds"),
-								}), engine.build.identifier("editStart"), engine.build.identifier("delta")),
+						terminator: kinds.Semi,
+					}), build.lexicalDeclaration.strict({
+						kind: kinds.ConstKeyword,
+						declarators: [build.variableDeclarator.plain.strict({
+							name: build.identifier("kinds"),
+							value: build.callExpression.call.strict({
+								function: build.identifier("rebaseKinds"),
+								arguments: build.arguments.strict(build.memberExpression.strict({
+									object: build.identifier("format"),
+									separator: kinds.Dot,
+									property: build.identifier("kinds"),
+								}), build.identifier("editStart"), build.identifier("delta")),
 							}),
 						})],
 					}, {
-						terminator: engine.kinds.Semi,
-					}), engine.build.returnStatement.strict(engine.build.object.strict(engine.build.spreadElement.strict(engine.build.identifier("format")), engine.build.spreadElement.strict(engine.build.parenthesizedExpression.typed.strict({
-						expression: engine.build.binaryExpression.strict({
-							left: engine.build.binaryExpression.strict({
-								left: engine.build.identifier("trivia"),
-								operator: engine.kinds.BangEqEq,
-								right: engine.kinds.Undefined,
+						terminator: kinds.Semi,
+					}), build.returnStatement.strict(build.object.strict(build.spreadElement.strict(build.identifier("format")), build.spreadElement.strict(build.parenthesizedExpression.typed.strict({
+						expression: build.binaryExpression.strict({
+							left: build.binaryExpression.strict({
+								left: build.identifier("trivia"),
+								operator: kinds.BangEqEq,
+								right: kinds.Undefined,
 							}),
-							operator: engine.kinds.AmpAmp,
-							right: engine.build.object.strict(engine.build.identifier("trivia")),
+							operator: kinds.AmpAmp,
+							right: build.object.strict(build.identifier("trivia")),
 						}),
-					})), engine.build.spreadElement.strict(engine.build.parenthesizedExpression.typed.strict({
-						expression: engine.build.binaryExpression.strict({
-							left: engine.build.binaryExpression.strict({
-								left: engine.build.identifier("kinds"),
-								operator: engine.kinds.BangEqEq,
-								right: engine.kinds.Undefined,
+					})), build.spreadElement.strict(build.parenthesizedExpression.typed.strict({
+						expression: build.binaryExpression.strict({
+							left: build.binaryExpression.strict({
+								left: build.identifier("kinds"),
+								operator: kinds.BangEqEq,
+								right: kinds.Undefined,
 							}),
-							operator: engine.kinds.AmpAmp,
-							right: engine.build.object.strict(engine.build.identifier("kinds")),
+							operator: kinds.AmpAmp,
+							right: build.object.strict(build.identifier("kinds")),
 						}),
 					}))), {
-						terminator: engine.kinds.Semi,
+						terminator: kinds.Semi,
 					})],
 					automaticSemicolon: true,
 				}),
 				automaticSemicolon: true,
 			}),
-		}).$trivia.leading(engine.build.comment.block.strict("*\n * Shift all {@link FormatTrivia} offsets that fall at or above `editStart`\n * by `delta` bytes, returning a shallow-cloned {@link FormatRecord}.\n *\n * Offsets below `editStart` are left unchanged. Sub-records in\n * `kinds` are rebased recursively with the same parameters.\n *\n * @param format - The source format record to rebase.\n * @param editStart - Absolute byte position of the edit boundary.\n * @param delta - Signed byte delta to apply (positive = insertion, negative = deletion).\n * @returns A new `FormatRecord` with adjusted trivia offsets.\n *\n * @remarks\n * RebaseTrivia is the single derivation for trivia offset adjustment\n * after any edit. Callers must not adjust offsets manually.\n ")), engine.build.functionDeclaration.strict({
-			name: engine.build.identifier("rebaseTriviaItems"),
-			parameters: engine.build.formalParameters.strict({ delimiter: Delimiter.None }, engine.build.requiredParameter.strict({
-				pattern: engine.build.lhsExpression.strict(engine.build.identifier("trivia")),
-				type: engine.build.typeAnnotation.strict(engine.build.readonlyType.strict(engine.build.unionType.strict({
-					left: engine.build.arrayType.strict(engine.build.identifier("FormatTrivia")),
-					right: engine.build.literalType.strict(engine.kinds.Undefined),
+		}).$trivia.leading(build.comment.block.strict("*\n * Shift all {@link FormatTrivia} offsets that fall at or above `editStart`\n * by `delta` bytes, returning a shallow-cloned {@link FormatRecord}.\n *\n * Offsets below `editStart` are left unchanged. Sub-records in\n * `kinds` are rebased recursively with the same parameters.\n *\n * @param format - The source format record to rebase.\n * @param editStart - Absolute byte position of the edit boundary.\n * @param delta - Signed byte delta to apply (positive = insertion, negative = deletion).\n * @returns A new `FormatRecord` with adjusted trivia offsets.\n *\n * @remarks\n * RebaseTrivia is the single derivation for trivia offset adjustment\n * after any edit. Callers must not adjust offsets manually.\n ")), build.functionDeclaration.strict({
+			name: build.identifier("rebaseTriviaItems"),
+			parameters: build.formalParameters.strict({ delimiter: Delimiter.None }, build.requiredParameter.strict({
+				pattern: build.lhsExpression.strict(build.identifier("trivia")),
+				type: build.typeAnnotation.strict(build.readonlyType.strict(build.unionType.strict({
+					left: build.arrayType.strict(build.identifier("FormatTrivia")),
+					right: build.literalType.strict(kinds.Undefined),
 				}))),
-			}), engine.build.requiredParameter.strict({
-				pattern: engine.build.lhsExpression.strict(engine.build.identifier("editStart")),
-				type: engine.build.typeAnnotation.strict(engine.kinds.NumberKeyword),
-			}), engine.build.requiredParameter.strict({
-				pattern: engine.build.lhsExpression.strict(engine.build.identifier("delta")),
-				type: engine.build.typeAnnotation.strict(engine.kinds.NumberKeyword),
+			}), build.requiredParameter.strict({
+				pattern: build.lhsExpression.strict(build.identifier("editStart")),
+				type: build.typeAnnotation.strict(kinds.NumberKeyword),
+			}), build.requiredParameter.strict({
+				pattern: build.lhsExpression.strict(build.identifier("delta")),
+				type: build.typeAnnotation.strict(kinds.NumberKeyword),
 			})),
-			returnType: engine.build.typeAnnotation.strict(engine.build.unionType.strict({
-				left: engine.build.arrayType.strict(engine.build.identifier("FormatTrivia")),
-				right: engine.build.literalType.strict(engine.kinds.Undefined),
+			returnType: build.typeAnnotation.strict(build.unionType.strict({
+				left: build.arrayType.strict(build.identifier("FormatTrivia")),
+				right: build.literalType.strict(kinds.Undefined),
 			})),
-			body: engine.build.statementBlock.strict({
-				statements: [engine.build.ifStatement.strict({
-					condition: engine.build.parenthesizedExpression.typed.strict({
-						expression: engine.build.unaryExpression.strict({
-							operator: engine.kinds.Bang,
-							argument: engine.build.identifier("trivia"),
+			body: build.statementBlock.strict({
+				statements: [build.ifStatement.strict({
+					condition: build.parenthesizedExpression.typed.strict({
+						expression: build.unaryExpression.strict({
+							operator: kinds.Bang,
+							argument: build.identifier("trivia"),
 						}),
 					}),
-					consequence: engine.build.returnStatement.strict(engine.kinds.Undefined, {
-						terminator: engine.kinds.Semi,
+					consequence: build.returnStatement.strict(kinds.Undefined, {
+						terminator: kinds.Semi,
 					}),
-				}), engine.build.returnStatement.strict(engine.build.callExpression.call.strict({
-					function: engine.build.memberExpression.strict({
-						object: engine.build.identifier("trivia"),
-						separator: engine.kinds.Dot,
-						property: engine.build.identifier("map"),
+				}), build.returnStatement.strict(build.callExpression.call.strict({
+					function: build.memberExpression.strict({
+						object: build.identifier("trivia"),
+						separator: kinds.Dot,
+						property: build.identifier("map"),
 					}),
-					arguments: engine.build.arguments.strict(engine.build.arrowFunction.strict({
-						content: engine.build.callSignature.strict({
-							parameters: engine.build.formalParameters.strict({ delimiter: Delimiter.None }, engine.build.requiredParameter.strict({
-								pattern: engine.build.lhsExpression.strict(engine.build.identifier("item")),
+					arguments: build.arguments.strict(build.arrowFunction.strict({
+						content: build.callSignature.strict({
+							parameters: build.formalParameters.strict({ delimiter: Delimiter.None }, build.requiredParameter.strict({
+								pattern: build.lhsExpression.strict(build.identifier("item")),
 							})),
 						}),
-						body: engine.build.statementBlock.strict({
-							statements: [engine.build.ifStatement.strict({
-								condition: engine.build.parenthesizedExpression.typed.strict({
-									expression: engine.build.binaryExpression.strict({
-										left: engine.build.memberExpression.strict({
-											object: engine.build.identifier("item"),
-											separator: engine.kinds.Dot,
-											property: engine.build.identifier("offset"),
+						body: build.statementBlock.strict({
+							statements: [build.ifStatement.strict({
+								condition: build.parenthesizedExpression.typed.strict({
+									expression: build.binaryExpression.strict({
+										left: build.memberExpression.strict({
+											object: build.identifier("item"),
+											separator: kinds.Dot,
+											property: build.identifier("offset"),
 										}),
-										operator: engine.kinds.Lt,
-										right: engine.build.identifier("editStart"),
+										operator: kinds.Lt,
+										right: build.identifier("editStart"),
 									}),
 								}),
-								consequence: engine.build.returnStatement.strict(engine.build.identifier("item"), {
-									terminator: engine.kinds.Semi,
+								consequence: build.returnStatement.strict(build.identifier("item"), {
+									terminator: kinds.Semi,
 								}),
-							}), engine.build.lexicalDeclaration.strict({
-								kind: engine.kinds.ConstKeyword,
-								declarators: [engine.build.variableDeclarator.plain.strict({
-									name: engine.build.identifier("newOffset"),
-									value: engine.build.binaryExpression.strict({
-										left: engine.build.memberExpression.strict({
-											object: engine.build.identifier("item"),
-											separator: engine.kinds.Dot,
-											property: engine.build.identifier("offset"),
+							}), build.lexicalDeclaration.strict({
+								kind: kinds.ConstKeyword,
+								declarators: [build.variableDeclarator.plain.strict({
+									name: build.identifier("newOffset"),
+									value: build.binaryExpression.strict({
+										left: build.memberExpression.strict({
+											object: build.identifier("item"),
+											separator: kinds.Dot,
+											property: build.identifier("offset"),
 										}),
-										operator: engine.kinds.Plus,
-										right: engine.build.identifier("delta"),
+										operator: kinds.Plus,
+										right: build.identifier("delta"),
 									}),
 								})],
 							}, {
-								terminator: engine.kinds.Semi,
-							}), engine.build.returnStatement.strict(engine.build.object.strict(engine.build.spreadElement.strict(engine.build.identifier("item")), engine.build.pair.strict({
-								key: engine.build.identifier("offset"),
-								value: engine.build.callExpression.call.strict({
-									function: engine.build.memberExpression.strict({
-										object: engine.build.identifier("Math"),
-										separator: engine.kinds.Dot,
-										property: engine.build.identifier("max"),
+								terminator: kinds.Semi,
+							}), build.returnStatement.strict(build.object.strict(build.spreadElement.strict(build.identifier("item")), build.pair.strict({
+								key: build.identifier("offset"),
+								value: build.callExpression.call.strict({
+									function: build.memberExpression.strict({
+										object: build.identifier("Math"),
+										separator: kinds.Dot,
+										property: build.identifier("max"),
 									}),
-									arguments: engine.build.arguments.strict(engine.build.number.decimal("0"), engine.build.identifier("newOffset")),
+									arguments: build.arguments.strict(build.number.decimal("0"), build.identifier("newOffset")),
 								}),
 							})), {
-								terminator: engine.kinds.Semi,
-							}).$trivia.leading(engine.build.comment.line.strict(" Clamp to zero: a large negative delta must not produce a negative"), engine.build.comment.line.strict(" offset (negative indices into slice() silently corrupt output)."))],
+								terminator: kinds.Semi,
+							}).$trivia.leading(build.comment.line.strict(" Clamp to zero: a large negative delta must not produce a negative"), build.comment.line.strict(" offset (negative indices into slice() silently corrupt output)."))],
 						}),
 					})),
 				}), {
-					terminator: engine.kinds.Semi,
+					terminator: kinds.Semi,
 				})],
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(engine.build.comment.block.strict("* Rebase a trivia array, returning the adjusted array or undefined if absent. ")), engine.build.functionDeclaration.strict({
-			name: engine.build.identifier("rebaseKinds"),
-			parameters: engine.build.formalParameters.strict({ delimiter: Delimiter.None }, engine.build.requiredParameter.strict({
-				pattern: engine.build.lhsExpression.strict(engine.build.identifier("kinds")),
-				type: engine.build.typeAnnotation.strict(engine.build.unionType.strict({
-					left: engine.build.genericType.strict({
-						name: engine.build.identifier("Record"),
-						typeArguments: engine.build.typeArguments.strict({ delimiter: Delimiter.None }, engine.kinds.StringKeyword, engine.build.identifier("FormatRecord")),
+		}).$trivia.leading(build.comment.block.strict("* Rebase a trivia array, returning the adjusted array or undefined if absent. ")), build.functionDeclaration.strict({
+			name: build.identifier("rebaseKinds"),
+			parameters: build.formalParameters.strict({ delimiter: Delimiter.None }, build.requiredParameter.strict({
+				pattern: build.lhsExpression.strict(build.identifier("kinds")),
+				type: build.typeAnnotation.strict(build.unionType.strict({
+					left: build.genericType.strict({
+						name: build.identifier("Record"),
+						typeArguments: build.typeArguments.strict({ delimiter: Delimiter.None }, kinds.StringKeyword, build.identifier("FormatRecord")),
 					}),
-					right: engine.build.literalType.strict(engine.kinds.Undefined),
+					right: build.literalType.strict(kinds.Undefined),
 				})),
-			}), engine.build.requiredParameter.strict({
-				pattern: engine.build.lhsExpression.strict(engine.build.identifier("editStart")),
-				type: engine.build.typeAnnotation.strict(engine.kinds.NumberKeyword),
-			}), engine.build.requiredParameter.strict({
-				pattern: engine.build.lhsExpression.strict(engine.build.identifier("delta")),
-				type: engine.build.typeAnnotation.strict(engine.kinds.NumberKeyword),
+			}), build.requiredParameter.strict({
+				pattern: build.lhsExpression.strict(build.identifier("editStart")),
+				type: build.typeAnnotation.strict(kinds.NumberKeyword),
+			}), build.requiredParameter.strict({
+				pattern: build.lhsExpression.strict(build.identifier("delta")),
+				type: build.typeAnnotation.strict(kinds.NumberKeyword),
 			})),
-			returnType: engine.build.typeAnnotation.strict(engine.build.unionType.strict({
-				left: engine.build.genericType.strict({
-					name: engine.build.identifier("Record"),
-					typeArguments: engine.build.typeArguments.strict({ delimiter: Delimiter.None }, engine.kinds.StringKeyword, engine.build.identifier("FormatRecord")),
+			returnType: build.typeAnnotation.strict(build.unionType.strict({
+				left: build.genericType.strict({
+					name: build.identifier("Record"),
+					typeArguments: build.typeArguments.strict({ delimiter: Delimiter.None }, kinds.StringKeyword, build.identifier("FormatRecord")),
 				}),
-				right: engine.build.literalType.strict(engine.kinds.Undefined),
+				right: build.literalType.strict(kinds.Undefined),
 			})),
-			body: engine.build.statementBlock.strict({
-				statements: [engine.build.ifStatement.strict({
-					condition: engine.build.parenthesizedExpression.typed.strict({
-						expression: engine.build.unaryExpression.strict({
-							operator: engine.kinds.Bang,
-							argument: engine.build.identifier("kinds"),
+			body: build.statementBlock.strict({
+				statements: [build.ifStatement.strict({
+					condition: build.parenthesizedExpression.typed.strict({
+						expression: build.unaryExpression.strict({
+							operator: kinds.Bang,
+							argument: build.identifier("kinds"),
 						}),
 					}),
-					consequence: engine.build.returnStatement.strict(engine.kinds.Undefined, {
-						terminator: engine.kinds.Semi,
+					consequence: build.returnStatement.strict(kinds.Undefined, {
+						terminator: kinds.Semi,
 					}),
-				}), engine.build.lexicalDeclaration.strict({
-					kind: engine.kinds.ConstKeyword,
-					declarators: [engine.build.variableDeclarator.plain.strict({
-						name: engine.build.identifier("result"),
-						type: engine.build.typeAnnotation.strict(engine.build.genericType.strict({
-							name: engine.build.identifier("Record"),
-							typeArguments: engine.build.typeArguments.strict({ delimiter: Delimiter.None }, engine.kinds.StringKeyword, engine.build.identifier("FormatRecord")),
+				}), build.lexicalDeclaration.strict({
+					kind: kinds.ConstKeyword,
+					declarators: [build.variableDeclarator.plain.strict({
+						name: build.identifier("result"),
+						type: build.typeAnnotation.strict(build.genericType.strict({
+							name: build.identifier("Record"),
+							typeArguments: build.typeArguments.strict({ delimiter: Delimiter.None }, kinds.StringKeyword, build.identifier("FormatRecord")),
 						})),
-						value: engine.build.object.strict(),
+						value: build.object.strict(),
 					})],
 				}, {
-					terminator: engine.kinds.Semi,
-				}), engine.build.forInStatement.strict({
-					forHeader: engine.build.forHeader.letConstKind.strict({
-						kind: engine.kinds.ConstKeyword,
-						left: engine.build.arrayPattern.strict(engine.build.lhsExpression.strict(engine.build.identifier("key")), engine.build.lhsExpression.strict(engine.build.identifier("sub"))),
-						operator: engine.kinds.OfKeyword,
-						right: engine.build.callExpression.call.strict({
-							function: engine.build.memberExpression.strict({
-								object: engine.build.identifier("Object"),
-								separator: engine.kinds.Dot,
-								property: engine.build.identifier("entries"),
+					terminator: kinds.Semi,
+				}), build.forInStatement.strict({
+					forHeader: build.forHeader.letConstKind.strict({
+						kind: kinds.ConstKeyword,
+						left: build.arrayPattern.strict(build.lhsExpression.strict(build.identifier("key")), build.lhsExpression.strict(build.identifier("sub"))),
+						operator: kinds.OfKeyword,
+						right: build.callExpression.call.strict({
+							function: build.memberExpression.strict({
+								object: build.identifier("Object"),
+								separator: kinds.Dot,
+								property: build.identifier("entries"),
 							}),
-							arguments: engine.build.arguments.strict(engine.build.identifier("kinds")),
+							arguments: build.arguments.strict(build.identifier("kinds")),
 						}),
 					}),
-					body: engine.build.statementBlock.strict({
-						statements: [engine.build.expressionStatement.strict(engine.build.assignmentExpression.strict({
-							left: engine.build.lhsExpression.strict(engine.build.subscriptExpression.strict({
-								object: engine.build.identifier("result"),
-								index: engine.build.identifier("key"),
+					body: build.statementBlock.strict({
+						statements: [build.expressionStatement.strict(build.assignmentExpression.strict({
+							left: build.lhsExpression.strict(build.subscriptExpression.strict({
+								object: build.identifier("result"),
+								index: build.identifier("key"),
 							})),
-							right: engine.build.callExpression.call.strict({
-								function: engine.build.identifier("rebaseTrivia"),
-								arguments: engine.build.arguments.strict(engine.build.identifier("sub"), engine.build.identifier("editStart"), engine.build.identifier("delta")),
+							right: build.callExpression.call.strict({
+								function: build.identifier("rebaseTrivia"),
+								arguments: build.arguments.strict(build.identifier("sub"), build.identifier("editStart"), build.identifier("delta")),
 							}),
 						}), {
-							terminator: engine.kinds.Semi,
+							terminator: kinds.Semi,
 						})],
 						automaticSemicolon: true,
 					}),
-				}), engine.build.returnStatement.strict(engine.build.identifier("result"), {
-					terminator: engine.kinds.Semi,
+				}), build.returnStatement.strict(build.identifier("result"), {
+					terminator: kinds.Semi,
 				})],
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(engine.build.comment.block.strict("* Recursively rebase all sub-records in `kinds`. "))],
+		}).$trivia.leading(build.comment.block.strict("* Recursively rebase all sub-records in `kinds`. "))],
 	});
 }
