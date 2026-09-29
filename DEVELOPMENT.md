@@ -14,11 +14,14 @@ pnpm run bootstrap
 
 `bootstrap` installs dependencies, installs the tracked git hooks from
 `.githooks/` (the manifest pre-commit gate, and a post-checkout hook), and
-builds every grammar's native binding. Once the hooks are installed, every new
-worktree or clone bootstraps itself on checkout, so it can run the suite and
-commit straight away. Set `SITTIR_NO_BOOTSTRAP=1` to skip that for a throwaway
-checkout, and re-run `pnpm run bootstrap` by hand after pulling a lockfile or
-native crate change.
+builds every grammar's native binding. Git never copies hooks into a clone, so
+a fresh clone runs it once by hand; after that, every new worktree bootstraps
+itself on checkout when its commit is already on a local or origin branch. A
+worktree of anything else, such as a fork's pull request, skips it until you
+have reviewed the code and run `pnpm run bootstrap` yourself. Set
+`SITTIR_NO_BOOTSTRAP=1` to skip it for a throwaway checkout, and re-run
+`pnpm run bootstrap` by hand after pulling a lockfile or native crate change.
+An existing hook sittir does not manage is kept as `<name>.pre-sittir`.
 
 ## Everyday commands
 

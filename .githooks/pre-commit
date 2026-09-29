@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# sittir-managed-hook
 # sittir pre-commit guard: block commits whose generated artifacts don't match
 # their committed manifest (e.g. a staged manifest without its regenerated
 # test-fixtures.json — the 49299942 inconsistency class). Fast hash compare, no
@@ -9,7 +10,7 @@ repo="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 [ -n "$repo" ] || exit 0
 cd "$repo" || exit 0
 
-# Principle #14 ratchet (R0): block commits that INCREASE any pipeline module's
+# Principle #14 ratchet: block commits that INCREASE any pipeline module's
 # non-conforming signature count over packages/codegen/.principle14-baseline.json.
 if [ -f packages/codegen/.principle14-baseline.json ] && ! pnpm exec tsx packages/cli/src/cli.ts tool propose-14; then
   echo "" >&2

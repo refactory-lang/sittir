@@ -22,7 +22,7 @@
 		"format:check": "oxfmt --check .",
 		"fresh": "pnpm clean:all && pnpm install",
 		"bootstrap": "pnpm install --frozen-lockfile --prefer-offline && pnpm run hooks:install && pnpm -r --filter './rust/crates/sittir-*' run build",
-		"hooks:install": "cp .githooks/* \"$(git rev-parse --git-path hooks)/\"",
+		"hooks:install": ".githooks/install",
 		"lint": "oxlint -c oxlint.config.ts .",
 		"lint:fix": "oxlint -c oxlint.config.ts --fix .",
 		"test": "tsx packages/tools/src/scripts/test-and-record.ts",
