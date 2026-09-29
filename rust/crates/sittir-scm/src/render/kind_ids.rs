@@ -160,8 +160,8 @@ pub fn is_text_kind(kind: KindId) -> bool {
 /// Whether this parse kind id is an alias envelope: the reader stamps the
 /// grammar symbol beside it when the node is the storage node shown under
 /// the alias, so the wrap layer can seat it as the envelope's content.
-pub fn is_alias_envelope(kind: KindId) -> bool {
-    matches!(kind.0, u16::MAX if false)
+pub fn is_alias_envelope(_kind: KindId) -> bool {
+    false
 }
 
 /// Whether a node of this kind keeps its anonymous children as `$other`

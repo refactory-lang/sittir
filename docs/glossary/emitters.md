@@ -1120,7 +1120,7 @@ as it always carries its delimiter.
 
 ### `packages/codegen/src/emitters/shared.ts::pruneUnusedImports`
 
-The one mechanism for "import only what the body uses" in every generated TypeScript module. An emitter writes its preamble naming every candidate import, then passes its finished lines and the candidate local names here. The body is every line that is not an `import`; a named import specifier (`X`, or `X as Y` tested by its local name `Y`) whose name has no `\b` use in the body is removed, and an import line left with no specifiers is dropped whole. Keying on the imported name, not on the import's path or line text, keeps it correct wherever the import sits: the `Delimiter` import in the raw factories, the coerce module and wrap; the `@sittir/types` names in the factories, the coerce module and the types module. A grammar that never uses a name (scm and regex have no separated lists and no keyword-presence slots) gets no import of it, so its generated package lints clean.
+The one mechanism for "import only what the body uses" in every generated TypeScript module. An emitter writes its preamble naming every candidate import, then passes its finished lines and the candidate local names here. The body is every line that is not an `import`; a named import specifier (`X`, or `X as Y` tested by its local name `Y`) whose name has no `\b` use in the body is removed, and an import line left with no specifiers is dropped whole. A namespace import (`import * as X`) is dropped whole when `X` is unused. Keying on the imported name, not on the import's path or line text, keeps it correct wherever the import sits: the `Delimiter` import in the raw factories, the coerce module and wrap; the `@sittir/types` names in the factories, the coerce module and the types module; wrap's `projectInterior` / `TokenInterior` / `TOKEN_INTERIORS`, keyword-storage coercers and `FR` namespace. An emitter keeps a usage flag only where the flag gates a helper it writes, never to choose imports. A grammar that never uses a name (scm and regex have no separated lists and no keyword-presence slots) gets no import of it, so its generated package lints clean.
 
 ### `packages/codegen/src/emitters/shared.ts::DELIMITER_IMPORT`
 
@@ -2920,6 +2920,10 @@ parser symbol (rust `_outer_block_doc_comment_marker` reaches the tree as
 share one symbol and a repeated `matches!` arm is an error. A `token` kind
 is absent on purpose: its literal is on the model and the transport already
 defaults a missing `$text` to it.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::kindIdSetFn`
+
+The generated Rust predicate `pub fn <name>(kind: KindId) -> bool` over a set of kind ids: `matches!` over the ids, or, for an empty set, a body of `false` with the parameter named `_kind` so it compiles without an unused-variable warning. `is_text_kind`, `is_alias_envelope` and `keeps_anonymous_children` are emitted through it.
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::is_slot_separator`
 

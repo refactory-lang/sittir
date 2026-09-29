@@ -299,15 +299,15 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 	slotGroupingDiagnostics: readonly SlotGroupingDiagnostic[];
 	diagnostics: readonly GrammarDiagnostic[];
 } {
-	const kindEntries = kindCatalogOf(input.generatedIdTables, input.rawGrammar);
-	const rawGrammar = collapseRenamedRules(input.rawGrammar, { kindEntries });
 	const compilerDiagnostics = new DiagnosticSink();
 	const slotGroupingCollector = makeSlotGroupingCollector();
-	const linked = link(rawGrammar, {
+	const linked = link(input.rawGrammar, {
 		include: input.include,
 		generatedIdTables: input.generatedIdTables,
 		diagnostics: compilerDiagnostics
 	});
+	const kindEntries = kindCatalogOf(linked.generatedIdTables, input.rawGrammar);
+	const rawGrammar = collapseRenamedRules(input.rawGrammar, { kindEntries });
 	const inlineKinds = buildInlinableKinds(new Set(rawGrammar.inline), linked);
 	for (const rec of diagnoseRepeatedSeqGrouping(linked.rules, inlineKinds)) slotGroupingCollector.record(rec);
 	const normalized = normalizeGrammar(
@@ -322,7 +322,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 	const nodeMap = assemble(
 		AssembleCtx.from(
 			normalized,
-			input.generatedIdTables,
+			linked.generatedIdTables,
 			compilerDiagnostics,
 			kindEntries
 		)

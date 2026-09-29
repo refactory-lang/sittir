@@ -1140,6 +1140,7 @@ export function slotSeparatorTexts(f: AssembledNonterminal, elidedOnly: boolean)
 export const DELIMITER_IMPORT = "import { Delimiter } from '@sittir/common/utils';";
 
 const NAMED_IMPORT = /^(import (?:type )?)\{ (.*) \}( from .*)$/;
+const NAMESPACE_IMPORT = /^import \* as (\w+) from /;
 
 export function importLocalName(specifier: string): string {
 	return specifier.split(' as ').at(-1)!;
@@ -1150,6 +1151,8 @@ export function pruneUnusedImports(lines: readonly string[], names: readonly str
 	const unused = new Set(names.filter((name) => !new RegExp(`\\b${name}\\b`).test(body)));
 	if (unused.size === 0) return [...lines];
 	return lines.flatMap((l) => {
+		const namespace = NAMESPACE_IMPORT.exec(l);
+		if (namespace) return unused.has(namespace[1]!) ? [] : [l];
 		const m = NAMED_IMPORT.exec(l);
 		if (!m) return [l];
 		const specifiers = m[2]!.split(', ');
