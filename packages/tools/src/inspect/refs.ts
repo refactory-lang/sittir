@@ -58,7 +58,7 @@ async function runRefs(args: InspectRefsOptions): Promise<number> {
 	);
 	process.stdout.write(`entry: ${entryPath}\n`);
 
-	const raw = await invoke('evaluate', 'evaluate', entryPath);
+	const raw = await invoke('evaluate', 'evaluate', entryPath, []);
 	const refs = raw.references.filter((r) => r.to === args.symbol);
 
 	process.stdout.write(`\n${refs.length} references to ${args.symbol}:\n`);
@@ -95,7 +95,7 @@ async function runSuggestions(args: InspectRefsOptions): Promise<number> {
 	);
 	process.stdout.write(`entry: ${entryPath}\n`);
 
-	const raw = await invoke('evaluate', 'evaluate', entryPath);
+	const raw = await invoke('evaluate', 'evaluate', entryPath, []);
 	process.stdout.write(`raw.references: ${raw.references.length}\n`);
 
 	const namedRefs = raw.references.filter((r) => r.fieldName !== undefined);

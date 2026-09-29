@@ -9,12 +9,13 @@ import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resolve-grammar.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import type { GrammarName } from '../../grammars.ts';
+import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
 
 
 async function emittedKindIds(grammar: GrammarName) {
 	const overridesPath = resolveOverridesPath(grammar);
 	const entryPath = existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
-	const raw = await evaluate(entryPath);
+	const raw = await evaluate(entryPath, NO_FILE_TYPES);
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
 	const linked = link(raw, { generatedIdTables });

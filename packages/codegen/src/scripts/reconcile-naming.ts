@@ -10,6 +10,7 @@ import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { projectSlotNaming, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { assertGrammar, stableGrammars, type GrammarName } from '../grammars.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../compiler/resolve-grammar.ts';
+import { NO_FILE_TYPES } from '../compiler/upstream-file-types.ts';
 
 
 export interface Divergence {
@@ -93,7 +94,7 @@ function resolveEntryPath(grammar: GrammarName): string {
 }
 
 async function probeGrammar(grammar: GrammarName): Promise<Divergence[]> {
-	const raw = await evaluate(resolveEntryPath(grammar));
+	const raw = await evaluate(resolveEntryPath(grammar), NO_FILE_TYPES);
 	const normalized = normalizeGrammar(link(raw, undefined));
 	const nodeMap = assemble(AssembleCtx.from(normalized, await loadGeneratedIdTables(grammar)));
 	const divergences: Divergence[] = [];

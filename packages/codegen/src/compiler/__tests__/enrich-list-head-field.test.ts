@@ -6,6 +6,7 @@ import { packageEntryPath } from '../resolve-grammar.ts';
 import { evaluate } from '../evaluate.ts';
 import { evaluateSittirGrammar } from './_sittir-grammar.ts';
 import type { RawGrammar } from '../types.ts';
+import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 
 const require = createRequire(import.meta.url);
 
@@ -50,7 +51,7 @@ describe('enrich fields a separated list head together with its tail', () => {
 
 	for (const grammar of ['rust', 'typescript', 'python', 'regex', 'scm']) {
 		it(`${grammar}: no list head is fielded apart from its tail`, async () => {
-			const raw = await evaluate(packageEntryPath(grammarPackage(grammar)));
+			const raw = await evaluate(packageEntryPath(grammarPackage(grammar)), NO_FILE_TYPES);
 			expect(headOnlyListFields(raw.rules)).toEqual([]);
 		}, 120_000);
 	}

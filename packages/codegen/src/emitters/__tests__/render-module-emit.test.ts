@@ -25,6 +25,7 @@ import { resolveGrammarJsPath, resolveOverridesPath } from '../../compiler/resol
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
+import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
 
 
 // ---------------------------------------------------------------------------
@@ -130,7 +131,7 @@ async function getTransportRsForGrammar(grammar: 'rust' | 'typescript'): Promise
 	const overridesPath = resolveOverridesPath(grammar);
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 
-	const raw = await evaluate(entryPath);
+	const raw = await evaluate(entryPath, NO_FILE_TYPES);
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 	if (generatedIdTables === undefined) throw new Error(`no generated id tables for ${grammar}`);
 	const linked = link(raw, { generatedIdTables });

@@ -59,7 +59,7 @@ describe('a bootstrapped grammar hand-writes no rule', () => {
 		writeFileSync(entry, source, 'utf8');
 		ensureConflictResolutions({ dir });
 		try {
-			const raw = await evaluate(entry);
+			const raw = await evaluate(entry, []);
 			expect(raw.stages).toBeUndefined();
 			expect(raw.ruleCauses ?? {}).toEqual({});
 			expect(raw.undeclaredRules ?? []).toEqual([]);

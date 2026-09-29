@@ -34,7 +34,7 @@ export async function run(opts: GrammarDiagnosticsOptions): Promise<number> {
 	if (stage === undefined) {
 		return diagnoseEntry(grammar, entryPath, await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
 	}
-	const rawGrammar = await invoke('evaluate', 'evaluate', entryPath);
+	const rawGrammar = await invoke('evaluate', 'evaluate', entryPath, []);
 	if (rawGrammar.stages === undefined) {
 		process.stderr.write(`${grammar}: no stages were evaluated (the grammar declares no rules: or patches:)\n`);
 		return 2;
@@ -43,7 +43,7 @@ export async function run(opts: GrammarDiagnosticsOptions): Promise<number> {
 }
 
 export async function diagnoseEntry(grammar: string, entryPath: string, generatedIdTables?: GeneratedIdTables): Promise<number> {
-	const evaluated = await invoke('evaluate', 'evaluate', entryPath);
+	const evaluated = await invoke('evaluate', 'evaluate', entryPath, []);
 	const diagnosis = await invoke('compile', 'diagnoseGrammar', { grammar, evaluated, generatedIdTables });
 	process.stdout.write((await invoke('grammarDiagnostics', 'formatGrammarDiagnostics', diagnosis.grammarDiagnostics)) + '\n');
 	if (diagnosis.passed) return 0;

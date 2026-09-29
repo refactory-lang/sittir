@@ -181,7 +181,7 @@ export async function resolveEntryPath(grammar: string): Promise<string> {
 /** Run evaluate → link → normalize for one grammar, returning its SimplifiedGrammar. */
 export async function buildSimplifiedGrammar(grammar: string): Promise<SimplifiedGrammar> {
 	const entryPath = await resolveEntryPath(grammar);
-	const raw = await invoke('evaluate', 'evaluate', entryPath);
+	const raw = await invoke('evaluate', 'evaluate', entryPath, []);
 	const linked = await invoke('link', 'link', raw);
 	return invoke('normalize', 'normalizeGrammar', linked);
 }

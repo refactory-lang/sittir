@@ -6,6 +6,7 @@ import { unexpectableExpectEntries } from '../diagnostics/grammar-diagnostics.ts
 import { evaluate } from '../evaluate.ts';
 import { packageEntryPath } from '../resolve-grammar.ts';
 import type { RawGrammar } from '../types.ts';
+import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 
 type Fixture = Pick<RawGrammar, 'name' | 'derivationRecords' | 'ruleCauses' | 'undeclaredRules'>;
 
@@ -68,7 +69,7 @@ describe('dynamicPrecedenceRecords', () => {
 describe('python dynamic precedence', () => {
 	let python: RawGrammar;
 	beforeAll(async () => {
-		python = await evaluate(packageEntryPath(grammarPackage('python')));
+		python = await evaluate(packageEntryPath(grammarPackage('python')), NO_FILE_TYPES);
 	});
 
 	it('loses nothing upstream declared, and records the authored primary_expression addition', () => {

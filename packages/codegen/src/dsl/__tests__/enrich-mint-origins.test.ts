@@ -6,6 +6,7 @@ import { evaluate } from '../../compiler/evaluate.ts';
 import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
 import { baseRulesOf } from '../shared.ts';
 import { getEnrichMints } from '../enrich.ts';
+import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
 
 const enrichCalls = vi.hoisted(() => [] as { readonly base: unknown; readonly enriched: unknown }[]);
 
@@ -41,7 +42,7 @@ async function expectEveryAddedRuleRecorded(load: () => Promise<unknown>): Promi
 
 describe('the enrich mint list is exactly the rules enrich adds', () => {
 	for (const grammar of ['python', 'rust', 'typescript', 'scm', 'regex']) {
-		it(`${grammar}`, () => expectEveryAddedRuleRecorded(() => evaluate(packageEntryPath(grammarPackage(grammar)))), 120_000);
+		it(`${grammar}`, () => expectEveryAddedRuleRecorded(() => evaluate(packageEntryPath(grammarPackage(grammar)), NO_FILE_TYPES)), 120_000);
 	}
 	for (const grammar of ['c', 'go']) {
 		it(`tree-sitter-${grammar}`, () =>

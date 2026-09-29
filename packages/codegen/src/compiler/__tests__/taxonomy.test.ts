@@ -6,12 +6,13 @@ import { assemble, AssembleCtx } from '../assemble.ts';
 import { resolveGrammarJsPath } from '../resolve-grammar.ts';
 import { soleSlotFacts } from '../../emitters/shared.ts';
 import type { NodeMap } from '../types.ts';
+import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 
 let nodeMap: NodeMap;
 
 beforeAll(async () => {
 	const grammar = resolveGrammarJsPath('rust');
-	const raw = await evaluate(grammar);
+	const raw = await evaluate(grammar, NO_FILE_TYPES);
 	const linked = link(raw);
 	const normalized = normalizeGrammar(linked);
 	nodeMap = assemble(AssembleCtx.from(normalized));

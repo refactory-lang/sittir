@@ -7,6 +7,7 @@ import { kindCatalogOf, stampVisibleExternals } from '../../dsl/symbol-table.ts'
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
 import { rebaseRuleIds } from '../../dsl/rule-attrs.ts';
 import type { Rule } from '../../types/rule.ts';
+import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 
 describe('rule ids', () => {
 	it('ruleIdPath reads back the path createRuleId wrote, whatever the owner name holds', () => {
@@ -32,7 +33,7 @@ describe('rule ids', () => {
 	});
 
 	it('a kind the catalog renames keeps its source rule id', async () => {
-		const raw = await evaluate(resolveOverridesPath('python'));
+		const raw = await evaluate(resolveOverridesPath('python'), NO_FILE_TYPES);
 		const collapsed = collapseRenamedRules(raw, {
 			kindEntries: kindCatalogOf(stampVisibleExternals(await loadGeneratedIdTables('python'), raw), raw)
 		});

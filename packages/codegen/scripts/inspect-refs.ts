@@ -7,13 +7,14 @@
 import { evaluate } from '../src/compiler/evaluate.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../src/compiler/resolve-grammar.ts';
 import { existsSync } from 'node:fs';
+import { NO_FILE_TYPES } from '../src/compiler/upstream-file-types.ts';
 
 const grammar = process.argv[2] ?? 'rust';
 const symbol = process.argv[3] ?? '_type_identifier';
 
 const overridesPath = resolveOverridesPath(grammar);
 const entryPath = existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
-const raw = await evaluate(entryPath);
+const raw = await evaluate(entryPath, NO_FILE_TYPES);
 
 const refs = raw.references.filter((r) => r.to === symbol);
 console.log(`${refs.length} references to ${symbol}:`);

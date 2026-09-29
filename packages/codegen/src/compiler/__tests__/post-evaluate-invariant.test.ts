@@ -1,7 +1,7 @@
 /**
  * post-evaluate-invariant.test.ts — structural guard for spec 006 Phase 8.
  *
- * After `evaluate()` runs on each grammar's grammar.sittir.ts, the resulting
+ * After `evaluate(, NO_FILE_TYPES)` runs on each grammar's grammar.sittir.ts, the resulting
  * RawGrammar must contain ONLY tree-sitter-native rule constructs (in
  * sittir's UPPERCASE discriminant spelling — see debt PR-U — since
  * evaluate runs the sittir-injected grammarFn). Sittir-only metadata
@@ -26,6 +26,7 @@ import { evaluate } from '../evaluate.ts';
 import { resolveOverridesPath } from '../resolve-grammar.ts';
 import { stableGrammars } from '../../grammars.ts';
 import { expectCompleteCatalog, serializeCatalog } from '../../__tests__/helpers/rule-catalog.ts';
+import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 
 const KNOWN_RULE_TYPES = new Set([
 	// Structural grouping
@@ -59,7 +60,7 @@ describe('post-evaluate invariant', () => {
 	for (const grammar of GRAMMARS) {
 		it(`${grammar}: rule tree contains only known rule types`, async () => {
 			const overridesPath = resolveOverridesPath(grammar);
-			const raw = await evaluate(overridesPath);
+			const raw = await evaluate(overridesPath, NO_FILE_TYPES);
 
 			const violations: string[] = [];
 			for (const [ruleName, rule] of Object.entries(raw.rules)) {
@@ -80,7 +81,7 @@ describe('post-evaluate invariant', () => {
 
 		it(`${grammar}: rule tree contains no sittir placeholders`, async () => {
 			const overridesPath = resolveOverridesPath(grammar);
-			const raw = await evaluate(overridesPath);
+			const raw = await evaluate(overridesPath, NO_FILE_TYPES);
 
 			const violations: string[] = [];
 			for (const [ruleName, rule] of Object.entries(raw.rules)) {
@@ -100,7 +101,7 @@ describe('post-evaluate invariant', () => {
 		});
 
 		it(`${grammar}: no desugar divergences`, async () => {
-			// enrich() runs on the base grammar BEFORE this evaluate() call
+			// enrich() runs on the base grammar BEFORE this evaluate(, NO_FILE_TYPES) call
 			// (grammar.sittir.ts: `enrich(base)`), so it already pre-generate
 			// hoists shapes like upstream tree-sitter-rust's
 			// `alias(choice(...), $.primitive_type)` into a real named rule —
@@ -108,13 +109,13 @@ describe('post-evaluate invariant', () => {
 			// SAME check against the raw, un-enriched base grammar (see
 			// real-grammar.test.ts) is not representative of it.
 			const overridesPath = resolveOverridesPath(grammar);
-			const raw = await evaluate(overridesPath);
+			const raw = await evaluate(overridesPath, NO_FILE_TYPES);
 			expect(raw.desugarDivergences ?? []).toEqual([]);
 		});
 
 		it(`${grammar}: top-level RawGrammar shape is the documented sidecar set`, async () => {
 			const overridesPath = resolveOverridesPath(grammar);
-			const raw = await evaluate(overridesPath);
+			const raw = await evaluate(overridesPath, NO_FILE_TYPES);
 
 			// Allowed top-level fields. Anything else is a leaked
 			// sittir-only payload that the pipeline doesn't expect.
@@ -194,15 +195,15 @@ describe('post-evaluate invariant', () => {
 
 		it(`${grammar}: rule catalog covers every evaluated rule occurrence`, async () => {
 			const overridesPath = resolveOverridesPath(grammar);
-			const raw = await evaluate(overridesPath);
+			const raw = await evaluate(overridesPath, NO_FILE_TYPES);
 
 			expectCompleteCatalog(raw.rules, raw.ruleCatalog);
 		});
 
 		it(`${grammar}: unchanged evaluation has deterministic catalog identity`, async () => {
 			const overridesPath = resolveOverridesPath(grammar);
-			const first = await evaluate(overridesPath);
-			const second = await evaluate(overridesPath);
+			const first = await evaluate(overridesPath, NO_FILE_TYPES);
+			const second = await evaluate(overridesPath, NO_FILE_TYPES);
 
 			expect(serializeCatalog(second.ruleCatalog)).toEqual(serializeCatalog(first.ruleCatalog));
 		});

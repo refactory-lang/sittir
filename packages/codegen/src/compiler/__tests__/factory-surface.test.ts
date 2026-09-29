@@ -16,6 +16,7 @@ import {
 	soleSlotFacts
 } from '../../emitters/shared.ts';
 import { buildFactoryMap } from '../../emitters/factory-map.ts';
+import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 
 let nodeMap: NodeMap;
 let typescriptNodeMap: NodeMap;
@@ -30,7 +31,7 @@ let pythonNodeMap: NodeMap;
 async function assembleGrammar(grammar: string): Promise<NodeMap> {
 	const overridesPath = resolveOverridesPath(grammar);
 	const entryPath = existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
-	const raw = await evaluate(entryPath);
+	const raw = await evaluate(entryPath, NO_FILE_TYPES);
 	const normalized = normalizeGrammar(link(raw));
 	const nodeMap = assemble(AssembleCtx.from(normalized));
 	// Mirror the generate() pipeline: determined slots leave the record

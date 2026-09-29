@@ -78,7 +78,7 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 	console.warn = (...a: unknown[]) => void process.stderr.write(a.map(String).join(' ') + '\n');
 
 	const { evaluate } = await load('evaluate');
-	const raw = await evaluate(entryPath);
+	const raw = await evaluate(entryPath, []);
 	stages.evaluate = raw.rules[kind] ?? null;
 
 	const { link } = await load('link');

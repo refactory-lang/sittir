@@ -4,6 +4,7 @@ import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { deriveVariantChildren } from '../variant-structural.ts';
 import { polymorphVisibleName } from '../../dsl/arm-names.ts';
+import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 const resolveOverrides = (grammar: string) => resolve(__dirname, `../../../../${grammar}/grammar.sittir.ts`);
@@ -19,7 +20,7 @@ const resolveOverrides = (grammar: string) => resolve(__dirname, `../../../../${
  */
 describe('polymorph metadata — structural e2e', () => {
 	it('python: assignment polymorph variants are derived structurally', async () => {
-		const raw = await evaluate(resolveOverrides('python'));
+		const raw = await evaluate(resolveOverrides('python'), NO_FILE_TYPES);
 		const linked = link(raw);
 		const structural = deriveVariantChildren(linked.rules, raw.automaticVariants);
 		const assignmentVariants = structural.get('assignment');
@@ -31,7 +32,7 @@ describe('polymorph metadata — structural e2e', () => {
 	});
 
 	it('rust: polymorph variants derived structurally for converted rules', async () => {
-		const raw = await evaluate(resolveOverrides('rust'));
+		const raw = await evaluate(resolveOverrides('rust'), NO_FILE_TYPES);
 		const linked = link(raw);
 		const structural = deriveVariantChildren(linked.rules, raw.automaticVariants);
 
