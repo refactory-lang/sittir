@@ -9,8 +9,16 @@ Prerequisites: Node 20+, [pnpm](https://pnpm.io), and a Rust toolchain
 (the native render engines are N-API crates built with `napi`).
 
 ```bash
-pnpm install
+pnpm run bootstrap
 ```
+
+`bootstrap` installs dependencies, installs the tracked git hooks from
+`.githooks/` (the manifest pre-commit gate, and a post-checkout hook), and
+builds every grammar's native binding. Once the hooks are installed, every new
+worktree or clone bootstraps itself on checkout, so it can run the suite and
+commit straight away. Set `SITTIR_NO_BOOTSTRAP=1` to skip that for a throwaway
+checkout, and re-run `pnpm run bootstrap` by hand after pulling a lockfile or
+native crate change.
 
 ## Everyday commands
 

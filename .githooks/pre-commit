@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# sittir pre-commit guard: block commits whose generated artifacts don't match
+# their committed manifest (e.g. a staged manifest without its regenerated
+# test-fixtures.json — the 49299942 inconsistency class). Fast hash compare, no
+# cargo. Override with `git commit --no-verify` for an intentional partial state.
+set -euo pipefail
+
+repo="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+[ -n "$repo" ] || exit 0
+cd "$repo" || exit 0
+
+# Principle #14 ratchet (R0): block commits that INCREASE any pipeline module's
+# non-conforming signature count over packages/codegen/.principle14-baseline.json.
+if [ -f packages/codegen/.principle14-baseline.json ] && ! pnpm exec tsx packages/cli/src/cli.ts tool propose-14; then
+  echo "" >&2
+  echo "🚫 pre-commit: Principle #14 ratchet regression (see above)." >&2
+  echo "   New pipeline fns must use (target, ctx: *Ctx); sweep rows lower the baseline in-PR. Override with --no-verify only for intentional states." >&2
+  exit 1
+fi
+
+if ! pnpm exec tsx packages/codegen/src/scripts/verify-manifests-cli.ts; then
+  echo "" >&2
+  echo "🚫 pre-commit: generated artifacts are inconsistent with the manifest (see above)." >&2
+  echo "   Regenerate the affected grammar(s) and stage ALL their outputs, or use --no-verify." >&2
+  exit 1
+fi
+exit 0
