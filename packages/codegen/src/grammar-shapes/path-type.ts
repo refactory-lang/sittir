@@ -1,4 +1,4 @@
-import type { PrecRuleUnion } from './grammar-json.ts';
+import type { GrammarRule, PrecRuleUnion } from './grammar-json.ts';
 import type { FieldPlaceholder } from '../dsl/primitives/field.ts';
 import type { VariantPlaceholder } from '../dsl/primitives/variant.ts';
 import type { AliasPlaceholder } from '../dsl/primitives/alias.ts';
@@ -99,18 +99,29 @@ export type Segments<P extends string> = P extends `"${infer Lit}"/${infer Rest}
 			? [Seg, ...Segments<Rest>]
 			: [P];
 
-type Walk<N, Segs extends readonly string[]> = Segs extends readonly [infer S extends string, ...infer Rest extends string[]]
+type Walk<N, Segs extends readonly string[], Minted extends boolean> = Segs extends readonly [infer S extends string, ...infer Rest extends string[]]
 	? Step<PeelPrec<N>, S> extends infer C
 		? [C] extends [never]
-			? false
-			: Walk<C, Rest>
+			? Minted extends true
+				? S extends `${string}:`
+					? PeelPrec<N> extends Field
+						? false
+						: Walk<N, Rest, Minted>
+					: false
+				: false
+			: Walk<C, Rest, Minted>
 		: never
 	: true;
 
-export type IsPath<N, P extends string> = P extends '.' ? true : true extends Walk<N, Segments<P>> ? true : false;
+export type IsPath<N, P extends string, Minted extends boolean = false> = P extends '.'
+	? true
+	: true extends Walk<N, Segments<P>, Minted>
+		? true
+		: false;
 
 export type TransformPatchValue =
 	| RuleOrLiteral
+	| GrammarRule
 	| FieldPlaceholder
 	| FieldLike
 	| VariantPlaceholder

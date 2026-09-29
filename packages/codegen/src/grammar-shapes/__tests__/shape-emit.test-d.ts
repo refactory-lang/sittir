@@ -7,6 +7,14 @@ import { describe, it, expectTypeOf } from 'vitest';
 import type { RustGrammarShape } from '../grammar-shape.rust.ts';
 import type { GrammarJson, MutableDeep, SymbolRule as AuthoringSymbolRule } from '../grammar-json.ts';
 
+type NumericPrec<T> = T extends readonly (infer U)[]
+	? NumericPrec<U>[]
+	: T extends { readonly type: 'PREC' | 'PREC_LEFT' | 'PREC_RIGHT' }
+		? { [K in keyof T]: K extends 'value' ? number : NumericPrec<T[K]> }
+		: T extends object
+			? { [K in keyof T]: NumericPrec<T[K]> }
+			: T;
+
 describe('grammar-shape emit literal/tuple preservation', () => {
 	type Rules = RustGrammarShape['rules'];
 	type BinExpr = Rules['binary_expression'];
@@ -42,8 +50,8 @@ describe('grammar-shape emit literal/tuple preservation', () => {
 		// recursively, proving structural compatibility modulo readonly — the
 		// "single vocabulary, refined" claim. `RustGrammarShape` itself also
 		// flows up through this bridge.
-		expectTypeOf<MutableDeep<GrammarJson>>().toExtend<GrammarSchema<string>>();
-		expectTypeOf<MutableDeep<RustGrammarShape>>().toExtend<GrammarSchema<string>>();
+		expectTypeOf<NumericPrec<MutableDeep<GrammarJson>>>().toExtend<GrammarSchema<string>>();
+		expectTypeOf<NumericPrec<MutableDeep<RustGrammarShape>>>().toExtend<GrammarSchema<string>>();
 	});
 
 	it('SYMBOL leaf mirrors tree-sitter SymbolRule structurally (single vocabulary)', () => {

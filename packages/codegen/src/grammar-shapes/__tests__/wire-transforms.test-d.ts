@@ -41,6 +41,12 @@ describe('IsPath accepts what applyPath walks and rejects what it throws on', ()
 		expectTypeOf<IsPath<R<'await_expression'>, 'expression:'>>().toEqualTypeOf<false>();
 	});
 
+	it('a label segment on a bare node passes only where an earlier patch could have minted it', () => {
+		expectTypeOf<IsPath<R<'await_expression'>, 'expression:/0', true>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'await_expression'>, 'expression:/9', true>>().toEqualTypeOf<false>();
+		expectTypeOf<IsPath<R<'await_expression'>, '0/nope:', true>>().toEqualTypeOf<false>();
+	});
+
 	it('a literal segment names a string member', () => {
 		expectTypeOf<IsPath<R<'await_expression'>, '"."'>>().toEqualTypeOf<true>();
 		expectTypeOf<IsPath<R<'await_expression'>, '"!"'>>().toEqualTypeOf<false>();
