@@ -5,9 +5,7 @@ import { Delimiter } from '../types.js';
 import { TSKindId } from '../types.js';
 import type { NonEmptyArray, WidenNumeric } from '@sittir/types';
 import {
-	withMethods,
 	withAccessors,
-	methodsEngine,
 	admitAliasContent,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
@@ -15,7 +13,8 @@ import {
 	numberText,
 	rejectBareText,
 	rejectKeywordText
-} from '../utils.js';
+} from '@sittir/common/utils';
+import { withMethods, methodsEngine } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
 	if (arr.length === 0) {

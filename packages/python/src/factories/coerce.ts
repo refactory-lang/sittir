@@ -6,7 +6,8 @@ import { lexedConfig, numberText, spelledForm, spelledInterior } from '@sittir/c
 import type * as T from '../types.js';
 import { TSKindId, KIND_NAMES, Delimiter } from '../types.js';
 import type { AnyNodeData, LooseValue, NonEmptyArray, SpelledAffix, WithSpelling } from '@sittir/types';
-import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';
+import { coerceKindEnumStorage, coerceMixedEnumStorage } from '@sittir/common/utils';
+import { isNodeData } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _LooseFieldInput = unknown;

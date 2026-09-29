@@ -1,4 +1,4 @@
-import type { AnyNodeData, Edit, FormatRecord, RenderCallOptions } from './core-types.ts';
+import type { AnyNodeData, ByteRange, Edit, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 
 export interface TriviaFacts {
@@ -11,6 +11,35 @@ export interface TriviaFacts {
 
 export interface ParseOptions {
 	readonly deep?: boolean;
+}
+
+export interface GrammarFacts {
+	render(node: AnyNodeData): string;
+	toEdit(node: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit;
+	readonly trivia: TriviaFacts;
+}
+
+export interface GrammarTypeMap {
+	readonly namespaces: object;
+	readonly empty: { readonly node: unknown; readonly empty: unknown };
+	readonly trivia: unknown;
+}
+
+export interface GrammarNodeMethods<Trivia> {
+	$render(): string;
+	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
+	$replace(target: { range(): ByteRange }): Edit;
+	$trivia: TriviaSetter<this, Trivia>;
+}
+
+export interface GrammarInnerTrivia<N, Trivia> {
+	inner(): readonly Trivia[];
+	inner(...items: GrammarTriviaEntry<Trivia>[]): N;
+}
+
+export interface GrammarInnerTriviaAt<N, Trivia, Gap extends string> extends GrammarInnerTrivia<N, Trivia> {
+	innerAt(gap: Gap): readonly Trivia[];
+	innerAt(gap: Gap, ...items: GrammarTriviaEntry<Trivia>[]): N;
 }
 
 export interface LanguageAPI {

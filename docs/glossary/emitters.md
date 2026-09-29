@@ -141,6 +141,10 @@ The grammar's `engine.ts`: `createEngine`, generic in the indent unit like `crea
 
 The name of a grammar's language API type, `<Prefix>API` (`RustAPI`, `TypescriptAPI`), from the same type prefix as the grammar's node union (`RustNode`).
 
+### `packages/codegen/src/emitters/engine.ts::grammarTypeMapName`
+
+The name of a grammar's type map, `<Prefix>TypeMap` (`RustTypeMap`), from the same type prefix as `languageApiName`. `types.ts` declares it and `utils.ts` binds the runtime to it.
+
 ### `packages/codegen/src/emitters/engine.ts::emitApi`
 
 The grammar's `api.ts`: the implementation a language descriptor loads. It declares the grammar's `LanguageAPI` (the builder table, guards, kind ids, the kind-to-node-type map keyed by each kind's ir key, the parsed root, the node union, the render options, and `indentChar`, which names the grammar's `IndentChar` alias from `options.ts`) and exports `hooks`, which wire the builder table, guards, kind ids and trivia facts, a native engine per engine through the shared `nativeLanguageEngine` adapter over `createRenderEngine`, and `wrapNode` for a parsed root and its tree.
@@ -1129,6 +1133,10 @@ The name an import specifier binds in the module: `Y` for `X as Y`, otherwise `X
 ### `packages/codegen/src/emitters/types.ts::VOCABULARY_IMPORTS`
 
 The `@sittir/types` vocabulary a generated types module may import, in the order the import line lists them. The line names all of them and `pruneUnusedImports` keeps only those the module's body uses, so there is no per-name usage flag to keep in step with the list.
+
+### `packages/codegen/src/emitters/types.ts::emitGrammarTypeMap`
+
+The grammar's `GrammarTypeMap`: `namespaces` is its `NamespaceMap`, `empty` pairs each kind that realizes empty (`emptyForms`) with its `Empty<TypeName>` form (`never` when none does), and `trivia` is the union of its trivia kind types (`buildTriviaNodeType`). The three per-grammar aliases the node types use read the map's `trivia` member, so it is their one source: `NodeMethodsOf`, `TriviaSetterOf<Self>`, and `InnerTrivia<N>`, which takes a `Gap` parameter and becomes `GrammarInnerTriviaAt` when some kind has more than one gap (`innerGapsKeyed`).
 
 ### `packages/codegen/src/emitters/from.ts::buildSupertypeByKey`
 
@@ -11095,32 +11103,17 @@ that kind was left alone.
 // present slot).
 ```
 
-### `packages/codegen/src/emitters/client-utils.ts::buildTriviaParamType`
-
-The parameter type of a grammar's `$trivia`: one of the grammar's trivia kinds (`triviaKinds`, e.g. `Comment`), or a string, or the `{ leading, trailing }` object of the same. A string is loose input: the runtime builds it into a node through the grammar's `ir.comment` (its full spelling loses the default arm's delimiters; any other text is that arm's interior), so a stored entry is always a node.
-
 ### `packages/codegen/src/emitters/client-utils.ts::buildTriviaNodeType`
 
-The union of the grammar's trivia kind types, `AnyNodeData` when it has none: what a stored trivia entry is, and so what the `$trivia` getters return. `buildTriviaEntryType` adds `string` for input.
+The union of the grammar's trivia kind types, `AnyNodeData` when it has none: what a stored trivia entry is, and so what the `$trivia` getters return. It is the `trivia` member of the grammar's type map (`emitGrammarTypeMap`).
 
 ### `packages/codegen/src/emitters/client-utils.ts::module`
 
-```text
-/**
- * Emits utils.ts — typed facade over `@sittir/common/utils` with grammar-local narrowing.
- * Runtime behavior lives in `@sittir/common/utils`; this module only projects local types.
- */
-```
-
-### `packages/codegen/src/emitters/client-utils.ts::emitBundleHelpers`
-
-Emits `ArgsOf<F>` (the union of a function's argument tuples over every declared overload, up to four, then the readonly-rest signature `Parameters` degrades to `never` on — a forwarding wrapper declares its own surface first and its target's overloads after, and `infer P` against a plain call signature would keep only the last of them, so a seat typed through the wrapper would refuse the prebuilt node and the optional own-surface the wrapper accepts at runtime; the overlay wire types and any future consumer use this, never bare `Parameters`, for factory references), the `FlavorPair`/`bundle` pair constructor, and `hoist` (wraps a pair as a callable — coerce flavor when present, strict otherwise — copying every prop and recursively hoisting nested pairs; `Hoisted<B>` carries the exact surface). Bundling and hoisting are dynamic because they are uniform across all kinds; everything per-kind is emitted statically.
-
-`hoistRoutes` handles a route object that need not be a pair at its top — a flattened parent (`{ eq: {strict, coerce}, … }`, or `{ strict, coerce, eq: …, type: … }` when a variant declared `arm.default`): a pair at the top hoists (recursing into its own properties through `hoistRoutes`, not `hoist`, so a pair nested under a pair — a default route whose own variant is itself a route object — stays fully walked); anything else recurses member-by-member. A flattened parent therefore reads as `ir.<parent>(...)` when it has a default and always keeps its named variants reachable, exactly like a bundle entry's sub-factories.
+Emits the grammar's `utils.ts`: its facts (`methodsEngine`) and the runtime bound to its type map (`bindRuntime`), destructured as `isNodeData`, `isEmpty` and `withMethods`. Every other runtime helper is grammar-free and generated code imports it from `@sittir/common/utils`. The binding stays in its own module rather than `api.ts`: the factories index calls `hoist` while it loads, and `api.ts` reads `ir` while it loads, so a factory importing the runtime from `api.ts` would reach `ir` before it is initialised.
 
 ### `packages/codegen/src/emitters/client-utils.ts::emitMethodsEngine`
 
-Emits `methodsEngine`, the grammar facts `withMethods` reads at runtime: `render` and `toEdit` from the native engine, and `trivia`:
+Emits `methodsEngine`, the grammar's `GrammarFacts`, which `withMethods` and `isEmpty` read at runtime: `render` and `toEdit` from the native engine, and `trivia`:
 - `kindName`, from `KIND_NAMES`;
 - `kinds`, the trivia kind names (`triviaKinds`); the runtime refuses a node or kind id of any other kind, saying it is not an extra;
 - `innerGaps` (`INNER_GAPS`);
@@ -11128,31 +11121,6 @@ Emits `methodsEngine`, the grammar facts `withMethods` reads at runtime: `render
 - `comment`, declared unbound. A grammar with no default trivia form (`defaultTriviaForm`) has no `comment` key, and a loose trivia string there is refused.
 
 `trivia.comment` is bound when the factories module loads (`emitFactoriesIndex`); the static import graph forbids binding it earlier. The raw builders read the engine and every comment builder is built from raw builders, so an import from `utils.ts` to any factory module is a cycle.
-
-### `packages/codegen/src/emitters/client-utils.ts::emitIsNodeData`
-
-```text
-/** The kind-parameterised overload's predicate is `Extract<Node,
- *  AnyNodeData>`, not `Node`: `NamespaceMap` carries keyword kinds whose
- *  `Node` is the bare id, and an id is never NodeData — with the plain
- *  `Node` the overload's predicate union contained numbers and stopped
- *  narrowing ids away in every `coerceTo*` `isNodeData(input)` check. */
-```
-
-### `packages/codegen/src/emitters/client-utils.ts::emitNodeGuards`
-
-#### body
-
-```text
-// `NamespaceMap` is keyed by the kind id, so `kind` IS the discriminant —
-// no runtime name lookup stands between the argument and the comparison.
-// The predicate intersects with AnyNodeData for the same reason as
-// `isNodeData`'s kinded overload: a keyword kind's `Node` is its id.
-```
-
-### `packages/codegen/src/emitters/client-utils.ts::emitEmptyGuards`
-
-The grammar's `InnerTrivia<N>` interface and its `isEmpty` guard; nothing when no kind has an empty form. `inner()` reads a node's inner entries and `inner(...items)` rebuilds the node with them, typed by the same trivia unions as `TriviaSetterOf`. When some kind has more than one gap (`innerGapsKeyed`), the interface also takes a `Gap` parameter and gets `innerAt(gap, ...)`. `isEmpty` has one overload per empty form, narrowing that kind to `Empty<TypeName>`. At runtime a node is empty when its kind has inner gaps (`INNER_GAPS`) and it holds no children (`isEmptyNode`).
 
 ### `packages/codegen/src/emitters/emit.ts::module`
 
@@ -16275,18 +16243,6 @@ A slot input's admissions in order: the bare-text rejection, the keyword-text re
 ### `packages/codegen/src/emitters/factories.ts::constructionFieldElementType`
 
 `fieldElementType` for a construction parameter or setter: the read-side element union, widened by the slot's alias content types (`withAliasContentTypes`) and by `number` on a numeric slot (`numericSlotShape`).
-
-### `packages/codegen/src/emitters/client-utils.ts::emitTransportHelpers`
-
-Also emits `admitAliasContent`, the runtime half of `aliasContentAdmission`: it maps arrays element-wise, reads a value's id from its `$type` (or the value itself when it is a stored kind id), and builds the alias for the first row whose ids contain it.
-
-#### rejectBareText
-
-`rejectBareText(value, where, expected)` is the strict surface's bare-text guard: a string throws `<where>: a strict factory takes a built node, not a string; expected <expected>, or use .coerce`. Arrays are checked element-wise and every other value passes through unchanged. The loose surface (`.coerce`) is where text becomes a node. A slot that stores only kind ids (a kind enum with no node value) takes no guard: its strict input is one of its declared fixed values, not a leaf's text, so `coerceKindEnumStorage` maps a matching string to its id and passes any other through.
-
-#### rejectKeywordText
-
-`rejectKeywordText(value, where, word, keywords)` throws `<where>: '<text>' is this slot's keyword` when the value is a word-kind node (`$type === word`) whose `$text` is one of `keywords`. Arrays are checked element-wise and every other value, including another leaf kind with the same text, passes through unchanged. The loose surface never reaches it with a keyword spelling, because its keyword extraction stores the arm's kind id first.
 
 ### `packages/codegen/src/emitters/shared.ts::transparentContentKindNames`
 

@@ -46,7 +46,9 @@ export type {
 	TriviaEntry,
 	NativeParseResult,
 	ReplaceTarget,
-	Renderable
+	Renderable,
+	GrammarTriviaEntry,
+	TriviaSetter
 } from './core-types.ts';
 
 // ---------------------------------------------------------------------------
@@ -1512,6 +1514,11 @@ export type {
 	Engine,
 	EngineOptions,
 	FileChange,
+	GrammarFacts,
+	GrammarInnerTrivia,
+	GrammarInnerTriviaAt,
+	GrammarNodeMethods,
+	GrammarTypeMap,
 	Interceptor,
 	KindTypes,
 	Language,

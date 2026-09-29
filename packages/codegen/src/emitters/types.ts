@@ -17,6 +17,8 @@ import {
 } from './kind-discriminant.ts';
 import { pascalCase } from '../compiler/model/casing.ts';
 import { grammarTypePrefix } from '../grammars.ts';
+import { grammarTypeMapName } from './engine.ts';
+import { buildTriviaNodeType, resolveTriviaTypeNames } from './client-utils.ts';
 export {
 	collectKindEntries,
 	collectCatalogKinds,
@@ -106,6 +108,7 @@ export interface EmitTypesConfig {
 	generatedIdTables?: GeneratedIdTables;
 	sites?: readonly SitePreference[];
 	addresses?: AddressTables;
+	triviaKinds?: readonly string[];
 }
 
 const missingKindTypes = new Map<string, string>();
@@ -369,6 +372,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('');
 
 	const keyed = innerGapsKeyed(nodeMap);
+	lines.push(...emitGrammarTypeMap(grammar, nodeMap, config.triviaKinds ?? [], keyed));
 	for (const [kind, empty] of emptyForms(nodeMap)) {
 		const node = nodeMap.nodes.get(kind)!;
 		const gaps = keyed ? `, ${empty.gaps.map((gap) => JSON.stringify(gap)).join(' | ')}` : '';
@@ -389,10 +393,6 @@ export function emitTypes(config: EmitTypesConfig): string {
 	const body = lines.slice(sittirImportIndex + 1).join('\n');
 	if (/\bF\$\./.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type * as F$ from './factories/raw.js';`);
-	}
-	const utilsTypes = ['NodeMethodsOf', 'TriviaSetterOf', 'InnerTrivia'].filter((name) => new RegExp(`\\b${name}\\b`).test(body));
-	if (utilsTypes.length > 0) {
-		lines.splice(sittirImportIndex + 1, 0, `import type { ${utilsTypes.join(', ')} } from './utils.js';`);
 	}
 	if (/\bT\.[A-Za-z_]/.test(body)) {
 		lines.splice(sittirImportIndex + 1, 0, `import type * as T from './types.js';`);
@@ -420,8 +420,35 @@ const VOCABULARY_IMPORTS = [
 	'BooleanKeyword as BaseBooleanKeyword',
 	'Bitflag',
 	'KindEnum',
-	'OmitEach'
+	'OmitEach',
+	'GrammarTypeMap',
+	'GrammarNodeMethods',
+	'TriviaSetter',
+	'GrammarInnerTrivia',
+	'GrammarInnerTriviaAt'
 ];
+
+function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: readonly string[], keyed: boolean): string[] {
+	const map = grammarTypeMapName(grammar);
+	const trivia = `${map}['trivia']`;
+	const empties = [...emptyForms(nodeMap)].map(
+		([kind, empty]) => `{ readonly node: ${nodeMap.nodes.get(kind)!.typeName}; readonly empty: ${empty.typeName} }`
+	);
+	return [
+		`export interface ${map} extends GrammarTypeMap {`,
+		'  readonly namespaces: NamespaceMap;',
+		`  readonly empty: ${empties.length > 0 ? empties.join(' | ') : 'never'};`,
+		`  readonly trivia: ${buildTriviaNodeType(resolveTriviaTypeNames(triviaKinds, nodeMap))};`,
+		'}',
+		'',
+		`export type NodeMethodsOf = GrammarNodeMethods<${trivia}>;`,
+		`export type TriviaSetterOf<Self> = TriviaSetter<Self, ${trivia}>;`,
+		keyed
+			? `export type InnerTrivia<N, Gap extends string> = GrammarInnerTriviaAt<N, ${trivia}, Gap>;`
+			: `export type InnerTrivia<N> = GrammarInnerTrivia<N, ${trivia}>;`,
+		''
+	];
+}
 
 function grammarKeySetOf(nodeTypes: readonly RawNodeEntry[]): Set<string> {
 	return new Set(nodeTypes.map((entry) => (entry.named ? entry.type : `_anonymous_${entry.type}`)));

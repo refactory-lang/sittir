@@ -17,10 +17,13 @@ import type {
 	Terminal,
 	NonEmptyArray,
 	BooleanKeyword as BaseBooleanKeyword,
-	KindEnum
+	KindEnum,
+	GrammarTypeMap,
+	GrammarNodeMethods,
+	TriviaSetter,
+	GrammarInnerTrivia
 } from '@sittir/types';
 import type * as T from './types.js';
-import type { NodeMethodsOf, TriviaSetterOf, InnerTrivia } from './utils.js';
 
 export type { RustGrammar };
 
@@ -24388,6 +24391,41 @@ export namespace ErrorSentinel {
 	export type Tree = ErrorSentinelNs['Tree'];
 	export type Kind = '_error_sentinel';
 }
+
+export interface RustTypeMap extends GrammarTypeMap {
+	readonly namespaces: NamespaceMap;
+	readonly empty:
+		| { readonly node: SourceFile; readonly empty: EmptySourceFile }
+		| { readonly node: DeclarationList; readonly empty: EmptyDeclarationList }
+		| { readonly node: EnumVariantList; readonly empty: EmptyEnumVariantList }
+		| { readonly node: FieldDeclarationList; readonly empty: EmptyFieldDeclarationList }
+		| { readonly node: OrderedFieldDeclarationList; readonly empty: EmptyOrderedFieldDeclarationList }
+		| { readonly node: UseList; readonly empty: EmptyUseList }
+		| { readonly node: Parameters; readonly empty: EmptyParameters }
+		| { readonly node: UseBounds; readonly empty: EmptyUseBounds }
+		| { readonly node: Arguments; readonly empty: EmptyArguments }
+		| { readonly node: FieldInitializerList; readonly empty: EmptyFieldInitializerList }
+		| { readonly node: MatchBlock; readonly empty: EmptyMatchBlock }
+		| { readonly node: ClosureParameters; readonly empty: EmptyClosureParameters }
+		| { readonly node: Block; readonly empty: EmptyBlock }
+		| { readonly node: TuplePattern; readonly empty: EmptyTuplePattern }
+		| { readonly node: SlicePattern; readonly empty: EmptySlicePattern }
+		| { readonly node: ArrayExpressionList; readonly empty: EmptyArrayExpressionList }
+		| { readonly node: TokenTreePatternParen; readonly empty: EmptyTokenTreePatternParen }
+		| { readonly node: TokenTreePatternBracket; readonly empty: EmptyTokenTreePatternBracket }
+		| { readonly node: TokenTreePatternBrace; readonly empty: EmptyTokenTreePatternBrace }
+		| { readonly node: TokenTreeParen; readonly empty: EmptyTokenTreeParen }
+		| { readonly node: TokenTreeBracket; readonly empty: EmptyTokenTreeBracket }
+		| { readonly node: TokenTreeBrace; readonly empty: EmptyTokenTreeBrace }
+		| { readonly node: DelimTokenTreeParen; readonly empty: EmptyDelimTokenTreeParen }
+		| { readonly node: DelimTokenTreeBracket; readonly empty: EmptyDelimTokenTreeBracket }
+		| { readonly node: DelimTokenTreeBrace; readonly empty: EmptyDelimTokenTreeBrace };
+	readonly trivia: Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab;
+}
+
+export type NodeMethodsOf = GrammarNodeMethods<RustTypeMap['trivia']>;
+export type TriviaSetterOf<Self> = TriviaSetter<Self, RustTypeMap['trivia']>;
+export type InnerTrivia<N> = GrammarInnerTrivia<N, RustTypeMap['trivia']>;
 
 export interface EmptySourceFile extends SourceFile.Built {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;

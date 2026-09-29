@@ -7,7 +7,8 @@ import {
 	toEditAt,
 	markEdited as $edited,
 	mapTriviaEntries,
-	projectInterior
+	projectInterior,
+	coerceBooleanKeywordStorage
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
@@ -18,7 +19,7 @@ import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sitt
 import { TSKindId, KIND_NAMES } from './types.js';
 import { Delimiter } from './types.js';
 import type * as T from './types.js';
-import { withMethods, methodsEngine, coerceBooleanKeywordStorage } from './utils.js';
+import { withMethods, methodsEngine } from './utils.js';
 
 // A hydrated read-layer TEXT LEAF: the reader modeled no addressable
 // structure (no `_<slot>` storage keys, no `$other`) and captured the

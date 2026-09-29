@@ -138,11 +138,19 @@ export interface AnyNodeData {
 	$trivia?: TriviaSetter;
 }
 
-/** `$trivia`: a callable (rest args are leading, or one `{ leading, trailing }` object) that also has `leading(...items)` and `trailing(...items)`, each setting one side from a spread. */
-export interface TriviaSetter {
-	(...args: any[]): AnyNodeData;
-	leading(...items: any[]): AnyNodeData;
-	trailing(...items: any[]): AnyNodeData;
+export type GrammarTriviaEntry<Trivia> = Trivia | string;
+
+export interface TriviaSetter<Self = AnyNodeData, Trivia = any> {
+	(
+		...args: (
+			| GrammarTriviaEntry<Trivia>
+			| { leading?: GrammarTriviaEntry<Trivia>[]; trailing?: GrammarTriviaEntry<Trivia>[] }
+		)[]
+	): Self;
+	leading(): readonly Trivia[];
+	leading(...items: GrammarTriviaEntry<Trivia>[]): Self;
+	trailing(): readonly Trivia[];
+	trailing(...items: GrammarTriviaEntry<Trivia>[]): Self;
 }
 
 // ---------------------------------------------------------------------------

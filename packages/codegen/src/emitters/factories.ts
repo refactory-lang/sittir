@@ -1822,9 +1822,8 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		);
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
-		lines.push(
-			`import { ${['withMethods', 'withAccessors', 'methodsEngine', ...storageCoercionImports, ...(usesElementWrap ? ['isNodeData'] : [])].join(', ')} } from '../utils.js';`
-		);
+		lines.push(`import { ${['withAccessors', ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`);
+		lines.push(`import { ${['withMethods', 'methodsEngine', ...(usesElementWrap ? ['isNodeData'] : [])].join(', ')} } from '../utils.js';`);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
 		lines.push(...emitNonEmptyAssertHelper());

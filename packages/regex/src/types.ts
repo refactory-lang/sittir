@@ -15,10 +15,13 @@ import type {
 	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
 	NonEmptyArray,
-	KindEnum
+	KindEnum,
+	GrammarTypeMap,
+	GrammarNodeMethods,
+	TriviaSetter,
+	GrammarInnerTrivia
 } from '@sittir/types';
 import type * as T from './types.js';
-import type { NodeMethodsOf, TriviaSetterOf, InnerTrivia } from './utils.js';
 
 export type { RegexGrammar };
 
@@ -2803,6 +2806,16 @@ export namespace DecimalDigits {
 	export type Tree = DecimalDigitsNs['Tree'];
 	export type Kind = 'decimal_digits';
 }
+
+export interface RegexTypeMap extends GrammarTypeMap {
+	readonly namespaces: NamespaceMap;
+	readonly empty: { readonly node: CharacterClass; readonly empty: EmptyCharacterClass };
+	readonly trivia: Blankline | DoubleBlankline | Newline;
+}
+
+export type NodeMethodsOf = GrammarNodeMethods<RegexTypeMap['trivia']>;
+export type TriviaSetterOf<Self> = TriviaSetter<Self, RegexTypeMap['trivia']>;
+export type InnerTrivia<N> = GrammarInnerTrivia<N, RegexTypeMap['trivia']>;
 
 export interface EmptyCharacterClass extends CharacterClass.Built {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;

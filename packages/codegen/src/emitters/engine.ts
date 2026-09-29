@@ -118,6 +118,10 @@ export function languageApiName(grammar: string): string {
 	return `${grammarTypePrefix(grammar)}API`;
 }
 
+export function grammarTypeMapName(grammar: string): string {
+	return `${grammarTypePrefix(grammar)}TypeMap`;
+}
+
 export function emitApi(config: EmitEngineConfig): string {
 	const { grammar, rootTypeName, rootTreeTypeName } = config;
 	const api = languageApiName(grammar);

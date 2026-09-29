@@ -1,4 +1,4 @@
-import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit, GrammarFacts, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries, type TriviaSides } from './trivia.ts';
 import { detachCoordinate } from './transport-data.ts';
 
@@ -26,13 +26,7 @@ interface TriviaSetterRuntime<Self> {
 	innerAt(gap: string, ...items: unknown[]): Self;
 }
 
-export interface WithMethodsEngine {
-	render(node: AnyNodeData): string;
-	toEdit(node: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit;
-	readonly trivia: TriviaFacts;
-}
-
-export function withMethods<T extends AnyNodeData>(node: T, engine: WithMethodsEngine): T & WithMethodsRuntime<T> {
+export function withMethods<T extends AnyNodeData>(node: T, engine: GrammarFacts): T & WithMethodsRuntime<T> {
 	carryTriviaThroughWith(node, engine.trivia);
 	Object.assign(node, {
 		$render(this: AnyNodeData): string {
@@ -277,3 +271,4 @@ export {
 	type ProjectedInterior
 } from './interior.ts';
 export { mapTriviaEntries };
+export * from './runtime.ts';

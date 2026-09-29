@@ -146,7 +146,8 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
 		lines.push(`import { Delimiter } from '../types.js';`);
 	}
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
-	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, isNodeData } from '../utils.js';");
+	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage } from '@sittir/common/utils';");
+	lines.push("import { isNodeData } from '../utils.js';");
 	lines.push('');
 }
 

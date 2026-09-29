@@ -18,10 +18,13 @@ import type {
 	NonEmptyArray,
 	BooleanKeyword as BaseBooleanKeyword,
 	KindEnum,
-	OmitEach
+	OmitEach,
+	GrammarTypeMap,
+	GrammarNodeMethods,
+	TriviaSetter,
+	GrammarInnerTrivia
 } from '@sittir/types';
 import type * as T from './types.js';
-import type { NodeMethodsOf, TriviaSetterOf, InnerTrivia } from './utils.js';
 
 export type { PythonGrammar };
 
@@ -13625,6 +13628,37 @@ export namespace Dedent {
 	export type Tree = DedentNs['Tree'];
 	export type Kind = '_dedent';
 }
+
+export interface PythonTypeMap extends GrammarTypeMap {
+	readonly namespaces: NamespaceMap;
+	readonly empty:
+		| { readonly node: Module; readonly empty: EmptyModule }
+		| { readonly node: Parameters; readonly empty: EmptyParameters }
+		| { readonly node: ArgumentList; readonly empty: EmptyArgumentList }
+		| { readonly node: DictPattern; readonly empty: EmptyDictPattern }
+		| { readonly node: TuplePattern; readonly empty: EmptyTuplePattern }
+		| { readonly node: ListPattern; readonly empty: EmptyListPattern }
+		| { readonly node: List; readonly empty: EmptyList }
+		| { readonly node: Tuple; readonly empty: EmptyTuple }
+		| { readonly node: Dictionary; readonly empty: EmptyDictionary }
+		| { readonly node: CaseTuplePattern; readonly empty: EmptyCaseTuplePattern }
+		| { readonly node: CaseListPattern; readonly empty: EmptyCaseListPattern }
+		| { readonly node: MatchBlockBlock; readonly empty: EmptyMatchBlockBlock };
+	readonly trivia:
+		| Blankline
+		| Comment
+		| DoubleBlankline
+		| LineContinuation
+		| LineContinuationNewline
+		| LineContinuationNul
+		| Newline
+		| Space
+		| Tab;
+}
+
+export type NodeMethodsOf = GrammarNodeMethods<PythonTypeMap['trivia']>;
+export type TriviaSetterOf<Self> = TriviaSetter<Self, PythonTypeMap['trivia']>;
+export type InnerTrivia<N> = GrammarInnerTrivia<N, PythonTypeMap['trivia']>;
 
 export interface EmptyModule extends Module.Built {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;

@@ -18,10 +18,13 @@ import type {
 	NonEmptyArray,
 	BooleanKeyword as BaseBooleanKeyword,
 	KindEnum,
-	OmitEach
+	OmitEach,
+	GrammarTypeMap,
+	GrammarNodeMethods,
+	TriviaSetter,
+	GrammarInnerTrivia
 } from '@sittir/types';
 import type * as T from './types.js';
-import type { NodeMethodsOf, TriviaSetterOf, InnerTrivia } from './utils.js';
 
 export type { TypescriptGrammar };
 
@@ -24103,6 +24106,39 @@ export namespace ErrorRecovery {
 	export type Tree = ErrorRecoveryNs['Tree'];
 	export type Kind = '__error_recovery';
 }
+
+export interface TypescriptTypeMap extends GrammarTypeMap {
+	readonly namespaces: NamespaceMap;
+	readonly empty:
+		| { readonly node: Program; readonly empty: EmptyProgram }
+		| { readonly node: ExportClause; readonly empty: EmptyExportClause }
+		| { readonly node: NamedImports; readonly empty: EmptyNamedImports }
+		| { readonly node: StatementBlock; readonly empty: EmptyStatementBlock }
+		| { readonly node: SwitchBody; readonly empty: EmptySwitchBody }
+		| { readonly node: Object; readonly empty: EmptyObject }
+		| { readonly node: ObjectPattern; readonly empty: EmptyObjectPattern }
+		| { readonly node: Array; readonly empty: EmptyArray }
+		| { readonly node: ArrayPattern; readonly empty: EmptyArrayPattern }
+		| { readonly node: Arguments; readonly empty: EmptyArguments }
+		| { readonly node: ClassBody; readonly empty: EmptyClassBody }
+		| { readonly node: FormalParameters; readonly empty: EmptyFormalParameters }
+		| { readonly node: EnumBody; readonly empty: EmptyEnumBody }
+		| { readonly node: TupleType; readonly empty: EmptyTupleType };
+	readonly trivia:
+		| Blankline
+		| Comment
+		| CommentBlock
+		| CommentLine
+		| DoubleBlankline
+		| HtmlComment
+		| Newline
+		| Space
+		| Tab;
+}
+
+export type NodeMethodsOf = GrammarNodeMethods<TypescriptTypeMap['trivia']>;
+export type TriviaSetterOf<Self> = TriviaSetter<Self, TypescriptTypeMap['trivia']>;
+export type InnerTrivia<N> = GrammarInnerTrivia<N, TypescriptTypeMap['trivia']>;
 
 export interface EmptyProgram extends Program.Built {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;

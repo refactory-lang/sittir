@@ -181,13 +181,13 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const templates = templateEmitter.finalize();
 	const renderModule = renderModuleEmitterInst?.finalize(templates);
 
-	const types = emitTypes({ grammar, nodeMap, generatedIdTables, nodeTypes: config.nodeTypes, sites: sitePreferences, addresses: addressTables });
+	const types = emitTypes({ grammar, nodeMap, generatedIdTables, nodeTypes: config.nodeTypes, sites: sitePreferences, addresses: addressTables, triviaKinds });
 	const consts = emitConsts({ grammar, nodeMap });
 	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule({ indentChars: indentChars(nodeMap) });
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });
-	const utils = emitClientUtils({ nodeMap, generatedIdTables, triviaKinds });
+	const utils = emitClientUtils({ grammar, nodeMap, triviaKinds });
 
 	const overlays: Record<OverlayName, string> = {
 		refines: emitRefinesOverlay({ nodeMap }),

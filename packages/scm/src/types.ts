@@ -15,10 +15,13 @@ import type {
 	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
 	NonEmptyArray,
-	KindEnum
+	KindEnum,
+	GrammarTypeMap,
+	GrammarNodeMethods,
+	TriviaSetter,
+	GrammarInnerTrivia
 } from '@sittir/types';
 import type * as T from './types.js';
-import type { NodeMethodsOf, TriviaSetterOf, InnerTrivia } from './utils.js';
 
 export type { ScmGrammar };
 
@@ -2056,6 +2059,18 @@ export namespace ImmediateIdentifier {
 	export type Tree = ImmediateIdentifierNs['Tree'];
 	export type Kind = '_immediate_identifier';
 }
+
+export interface ScmTypeMap extends GrammarTypeMap {
+	readonly namespaces: NamespaceMap;
+	readonly empty:
+		| { readonly node: Program; readonly empty: EmptyProgram }
+		| { readonly node: MissingNode; readonly empty: EmptyMissingNode };
+	readonly trivia: Blankline | Comment | DoubleBlankline | Newline | Space | Tab;
+}
+
+export type NodeMethodsOf = GrammarNodeMethods<ScmTypeMap['trivia']>;
+export type TriviaSetterOf<Self> = TriviaSetter<Self, ScmTypeMap['trivia']>;
+export type InnerTrivia<N> = GrammarInnerTrivia<N, ScmTypeMap['trivia']>;
 
 export interface EmptyProgram extends Program.Built {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
