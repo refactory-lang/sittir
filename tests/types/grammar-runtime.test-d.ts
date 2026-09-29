@@ -39,6 +39,8 @@ declare const value: unknown;
 if (runtime.isNodeData(value)) value satisfies AnyNodeData;
 
 const built = runtime.withMethods(leaf, facts);
+// @ts-expect-error methods attach to a node, and an object without a $type is not one
+runtime.withMethods({}, facts);
 built satisfies Leaf & GrammarNodeMethods<Comment>;
 built.$trivia.leading() satisfies readonly Comment[];
 built.$trivia.leading('// note') satisfies typeof built;
