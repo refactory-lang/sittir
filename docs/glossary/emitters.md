@@ -458,7 +458,7 @@ Whether a kind gets a top-level factory, and the skip reason when it does not. A
  * @param mapEntries - Factory map entry descriptors produced by `buildFactoryMapEntries`.
  * @returns Array of source lines for the type declaration.
  * @remarks
- *   Only branches / containers / polymorphs get a `FluentNode` entry; leaves /
+ *   Only branches / containers / polymorphs get a `<TypeName>.Built` entry; leaves /
  *   keywords / enums produce raw `NodeData` instead and are keyed to their own
  *   interface.
  */
@@ -10005,10 +10005,10 @@ After the namespaces, one `Empty<TypeName>` interface per empty form. It extends
 #### body
 
 ```text
-// Phase 2: emit `_<name>: T` storage + `<name>(): T` accessor function
+// Emit `_<name>: T` storage + `<name>(): T` accessor function
 // types at the top level instead of the old `$fields: { name: T }` nested
 // wrapper. FieldsOf<T> in @sittir/types now extracts _-prefixed keys and
-// strips the underscore prefix for ConfigOf/RuntimeNodeOf derivations.
+// strips the underscore prefix for the ConfigOf derivation.
 ```
 
 #### body

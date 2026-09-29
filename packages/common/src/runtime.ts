@@ -2,7 +2,7 @@ import type {
 	AnyNodeData,
 	FlavorPair,
 	GrammarFacts,
-	GrammarNodeMethods,
+	NodeMethods,
 	GrammarTypeMap,
 	Hoisted
 } from '@sittir/types';
@@ -20,7 +20,7 @@ export interface GrammarRuntime<M extends GrammarTypeMap> {
 	): v is Extract<NamespacePart<M, K, 'Node'>, AnyNodeData>;
 	isNode(v: unknown): v is AnyNodeData;
 	isEmpty<N extends M['empty']['node']>(node: N): node is N & Extract<M['empty'], { readonly node: N }>['empty'];
-	withMethods<T extends AnyNodeData>(node: T, facts: GrammarFacts): T & GrammarNodeMethods<M['trivia']>;
+	withMethods<T extends AnyNodeData>(node: T, facts: GrammarFacts): T & NodeMethods<M['trivia']>;
 }
 
 export function bindRuntime<M extends GrammarTypeMap>(facts: GrammarFacts): GrammarRuntime<M> {
@@ -31,7 +31,7 @@ export function bindRuntime<M extends GrammarTypeMap>(facts: GrammarFacts): Gram
 			return kind !== undefined && facts.trivia.innerGaps[kind] !== undefined && isEmptyNode(node);
 		},
 		withMethods<T extends AnyNodeData>(node: T, engine: GrammarFacts) {
-			return withAnyMethods(node, engine) as unknown as T & GrammarNodeMethods<M['trivia']>;
+			return withAnyMethods(node, engine) as unknown as T & NodeMethods<M['trivia']>;
 		}
 	} as GrammarRuntime<M>;
 }

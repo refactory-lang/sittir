@@ -18,7 +18,7 @@ import type {
 	KindEnum,
 	NodeOfNamespaces,
 	GrammarTypeMap,
-	GrammarNodeMethods,
+	NodeMethods,
 	TriviaSetter,
 	GrammarInnerTrivia
 } from '@sittir/types';
@@ -2061,7 +2061,7 @@ export interface ScmTypeMap extends GrammarTypeMap {
 	readonly trivia: Blankline | Comment | DoubleBlankline | Newline | Space | Tab;
 }
 
-export type NodeMethodsOf = GrammarNodeMethods<ScmTypeMap['trivia']>;
+export type NodeMethodsOf = NodeMethods<ScmTypeMap['trivia']>;
 export type TriviaSetterOf<Self> = TriviaSetter<Self, ScmTypeMap['trivia']>;
 export type InnerTrivia<N> = GrammarInnerTrivia<N, ScmTypeMap['trivia']>;
 

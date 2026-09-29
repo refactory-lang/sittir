@@ -20,7 +20,7 @@ import type {
 	KindEnum,
 	NodeOfNamespaces,
 	GrammarTypeMap,
-	GrammarNodeMethods,
+	NodeMethods,
 	TriviaSetter,
 	GrammarInnerTrivia
 } from '@sittir/types';
@@ -24351,7 +24351,7 @@ export interface RustTypeMap extends GrammarTypeMap {
 	readonly trivia: Blankline | BlockComment | Comment | DoubleBlankline | LineComment | Newline | Space | Tab;
 }
 
-export type NodeMethodsOf = GrammarNodeMethods<RustTypeMap['trivia']>;
+export type NodeMethodsOf = NodeMethods<RustTypeMap['trivia']>;
 export type TriviaSetterOf<Self> = TriviaSetter<Self, RustTypeMap['trivia']>;
 export type InnerTrivia<N> = GrammarInnerTrivia<N, RustTypeMap['trivia']>;
 

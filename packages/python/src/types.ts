@@ -21,7 +21,7 @@ import type {
 	NodeOfNamespaces,
 	OmitEach,
 	GrammarTypeMap,
-	GrammarNodeMethods,
+	NodeMethods,
 	TriviaSetter,
 	GrammarInnerTrivia
 } from '@sittir/types';
@@ -13596,7 +13596,7 @@ export interface PythonTypeMap extends GrammarTypeMap {
 		| Tab;
 }
 
-export type NodeMethodsOf = GrammarNodeMethods<PythonTypeMap['trivia']>;
+export type NodeMethodsOf = NodeMethods<PythonTypeMap['trivia']>;
 export type TriviaSetterOf<Self> = TriviaSetter<Self, PythonTypeMap['trivia']>;
 export type InnerTrivia<N> = GrammarInnerTrivia<N, PythonTypeMap['trivia']>;
 

@@ -25,7 +25,7 @@ export interface GrammarTypeMap {
 	readonly trivia: unknown;
 }
 
-export interface GrammarNodeMethods<Trivia> {
+export interface NodeMethods<Trivia = any> {
 	$render(): string;
 	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
 	$replace(target: { range(): ByteRange }): Edit;

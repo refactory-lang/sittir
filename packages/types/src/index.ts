@@ -17,6 +17,7 @@
  */
 
 import type { CamelCase } from 'type-fest';
+import type { NodeMethods } from './engine-api.ts';
 
 // ---------------------------------------------------------------------------
 // Runtime types — re-exported from core-types (zero runtime in this package)
@@ -488,10 +489,8 @@ export type KindOf<T> = T extends { readonly $type: infer K extends string }
 		: never;
 
 // ---------------------------------------------------------------------------
-// FluentNode<G, K> — generic fluent builder type for factory outputs
+// Field keys — a grammar field's camelCase key, as the runtime spells it
 // ---------------------------------------------------------------------------
-
-import type { Edit, ReplaceTarget } from './core-types.ts';
 
 /**
  * Mirrors `RESERVED_ACCESSOR_NAMES` in the codegen's `node-map.ts` — the
@@ -543,116 +542,6 @@ type Pluralize<S extends string> = S extends `${string}s`
 type FieldKey<K extends string, V> =
 	NonNullable<V> extends readonly any[] ? Pluralize<CamelCase<K>> : EscapeReservedAccessor<CamelCase<K>>;
 
-/** Common render/edit methods attached to every fluent node. */
-export type NodeMethods<K extends string> = {
-	render(): string;
-	toEdit(start: number, end: number): Edit;
-	toEdit(range: { start: { index: number }; end: { index: number } }): Edit;
-	replace(target: ReplaceTarget<K>): Edit;
-};
-
-/**
- * Compute fluent setters from a pre-resolved fields shape.
- *
- * Takes Fields directly (not G+K) to avoid deep recursive expansion
- * at the definition site. Generated code instantiates with concrete fields.
- *
- * @example
- * ```ts
- * type FnSetters = FluentSetters<FunctionItemFields, 'name', FunctionItemNode>;
- * ```
- */
-export type FluentSetters<Fields, Excluded extends string = never, Self = unknown> = {
-	[P in keyof Omit<Fields, Excluded> & string as FieldKey<P, Omit<Fields, Excluded>[P]>]: NonNullable<
-		Omit<Fields, Excluded>[P]
-	> extends readonly (infer E)[]
-		? (...value: E[] | [E[]]) => Self
-		: (value?: NonNullable<Omit<Fields, Excluded>[P]>) => Omit<Fields, Excluded>[P] | Self;
-};
-
-/**
- * Full fluent node type — the factory output shape keyed by the
- * kind string `K` (a literal like `'function_item'`) and the
- * matching Config type `C`. Produces the `{type, named, fields?,
- * children?, render, toEdit, replace}` surface plus fluent setters
- * derived from C's camelCase field keys.
- *
- * Used by the generated `_factoryMap` as the return type of each
- * entry so callers like `_factoryMap[kind](config)` get a typed
- * result without per-entry casts.
- *
- * @deprecated Generated `FluentKindMap` entries now reference the emitted
- * per-kind `<TypeName>Built` aliases — the factories' exact return types
- * (bare setter methods and the combined getter/setter model here never
- * matched the runtime `$with` record). No generated code consumes this.
- */
-export type FluentNode<K extends string, C = unknown> = {
-	readonly $type: K;
-	readonly $source: 2;
-	readonly $named: true;
-} & (C extends { children: infer Ch } ? { readonly $other: NonNullable<Ch> } : {}) &
-	FluentSetters<C, 'children'> &
-	NodeMethods<K>;
-
-// ---------------------------------------------------------------------------
-// RuntimeNodeOf<T> — concrete interface to runtime node transformation
-// ---------------------------------------------------------------------------
-
-/**
- * RuntimeNodeOf<T> — the runtime shape produced by factory/from functions.
- *
- * Transforms the concrete interface to match what factories actually emit:
- * - `$type` discriminant (lifted from T's `$type`)
- * - `$source: 2`
- * - `$named: true`
- * - `$fields` retained with its original shape (raw snake_case keys inside)
- * - `$other` retained when T has it (spec 008 US7 — no singular-to-array
- *   conversion; the concrete interface already encodes the grammar-declared
- *   child shape)
- * - render / toEdit / replace methods
- *
- * @example
- * ```ts
- * type FnNode = RuntimeNodeOf<FunctionItem>;
- * // = { $type: 'function_item', $source: 2, $named: true,
- * //     $fields: { name: ..., body: ... },
- * //     render(): string, toEdit(...): Edit, replace(target): Edit }
- * ```
- */
-export type RuntimeNodeOf<T> = T extends {
-	readonly $type: infer _K extends number;
-}
-	? Simplify<
-			{
-				readonly $type: T['$type'];
-				readonly $source: 2;
-				readonly $named: true;
-			} & (FieldsOf<T> extends Record<string, never> ? {} : { readonly $fields: FieldsOf<T> }) &
-				RuntimeChildSlots<T> &
-				// Phase A KindID migration: $type is now numeric for structural types.
-				// NodeMethods<K> uses K as a string kind for replace(target); fall back
-				// to `string` when $type is numeric (structural node). Leaf types
-				// (Terminal<K extends string>) still resolve to the specific K.
-				NodeMethods<T['$type'] extends string ? T['$type'] : string>
-		>
-	: never;
-
-/**
- * FluentNodeOf<T> — RuntimeNodeOf + fluent setters (camelCase setter names
- * derived from snake_case field names via SetterKey/CamelCase).
- *
- * @deprecated Superseded by the emitted `<TypeName>Built` aliases (NodeNs'
- * `Built` parameter): a generic projection over `T` cannot reproduce the
- * factory surface (slot-named child setters, `NonEmptyArray` rests,
- * enum-coercion input unions, forwarded shapes are model-derived facts
- * absent from `T`), and this shape's bare combined getter/setter methods
- * predate the runtime `$with` record. Survives only as NodeNs' default
- * `Built` for factory-less kinds.
- */
-export type FluentNodeOf<T> = T extends { readonly $type: number }
-	? RuntimeNodeOf<T> & FluentSetters<FieldsOf<T>, never, RuntimeNodeOf<T>>
-	: never;
-
 // ---------------------------------------------------------------------------
 // Concrete interface transformations
 // ---------------------------------------------------------------------------
@@ -663,7 +552,7 @@ export type FluentNodeOf<T> = T extends { readonly $type: number }
  * Supports both the old `$fields: { name: T }` shape and
  * the new de-hoisted `_name: T` storage shape. When the interface uses
  * `_`-prefixed keys, FieldsOf extracts them and strips the underscore prefix
- * so that `ConfigOf<T>` / `RuntimeNodeOf<T>` / `FluentNodeOf<T>` see the
+ * so that `ConfigOf<T>` sees the
  * camelCase (config-friendly) key names.
  */
 type FieldsOf<T> = T extends { readonly $fields: infer F }
@@ -721,14 +610,6 @@ type WidenLooseFieldValue<
  * `$`-prefixed metadata shape is internal NodeData.
  */
 type ChildSlotsOf<T> = T extends { readonly $other?: infer C } ? { readonly children: AdmitSlotInput<C> } : {};
-
-/**
- * RuntimeChildSlots<T> — runtime (factory output) child-slot shape.
- * Keeps the `$other` metadata key (matches what factories emit) and
- * never converts singular to array — the concrete interface's `$other`
- * is already the grammar-declared shape.
- */
-type RuntimeChildSlots<T> = T extends { readonly $other?: infer C } ? { readonly $other: C } : {};
 
 /**
  * WrappedNode<T> — the read-only lazy view produced by the generated
@@ -1351,9 +1232,8 @@ type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends
  * @param Strings - Leaf-kind → narrowed string projection (e.g. `{ boolean_literal: 'true' | 'false' }`).
  * @param Built - The kind's emitted `<TypeName>Built` factory return alias —
  *   the exact runtime fluent surface ($with setter record, $-prefixed
- *   methods). Generated packages pass it for every kind with a factory;
- *   the deprecated `FluentNodeOf<T>` default covers only factory-less
- *   kinds, where no runtime surface exists to mirror.
+ *   methods). Generated packages pass it for every kind; the default is
+ *   the node with the methods the runtime attaches to any node.
  * @param Bare - The `FieldsOf<T>` key of the one slot the kind's coercer
  *   accepts BARE — a thin wrapper's sole slot, a separated list's element
  *   slot — or `never` for a config-bag builder. A slot's resolver hands the
@@ -1376,7 +1256,7 @@ export interface NodeNs<
 	Scalars = {},
 	Strings = {},
 	NsMap = {},
-	Built = FluentNodeOf<T>,
+	Built = T & NodeMethods,
 	Args extends readonly unknown[] = [ConfigOf<T>],
 	LooseArgs extends readonly unknown[] = [LooseConfigOf<T, Scalars, Strings, [], NsMap> | T],
 	Bare extends string = never,
@@ -1517,7 +1397,7 @@ export type {
 	GrammarFacts,
 	GrammarInnerTrivia,
 	GrammarInnerTriviaAt,
-	GrammarNodeMethods,
+	NodeMethods,
 	GrammarTypeMap,
 	Interceptor,
 	KindTypes,

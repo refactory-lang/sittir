@@ -16,7 +16,7 @@ import type {
 	FieldName,
 	KindOf,
 	SetterKey,
-	FluentNode
+	ConfigOf
 } from '../src/index.ts';
 
 // ---------------------------------------------------------------------------
@@ -226,17 +226,22 @@ type _16b = Expect<Equal<NodeData<RustGrammar, 'function_item'>['type'], 'functi
 type _16c = Expect<Equal<TreeNode<RustGrammar, 'function_item'>['type'], 'function_item'>>;
 
 // ---------------------------------------------------------------------------
-// 17. SetterKey / FluentNode — Object.prototype-colliding field names escape
+// 17. SetterKey / ConfigOf — Object.prototype-colliding field names escape
 //     to a trailing underscore, matching the runtime's snakeToCamel(). A
 //     grammar field named `constructor` (e.g. TypeScript's new_expression)
-//     must project to a `constructor_` setter key, not `constructor` — the
+//     must project to a `constructor_` key, not `constructor` — the
 //     latter would shadow Object.prototype.constructor.
 // ---------------------------------------------------------------------------
 
 type _17a = Expect<Equal<SetterKey<'constructor'>, 'constructor_'>>;
 type _17b = Expect<Equal<SetterKey<'name'>, 'name'>>;
 
-type NewExpressionFluent = FluentNode<'new_expression', { constructor: string; type_arguments?: string }>;
+interface NewExpression {
+	readonly $type: 1;
+	readonly _constructor: { readonly $type: 2; readonly $text: string };
+	readonly _typeArguments?: { readonly $type: 3; readonly $text: string };
+}
+type NewExpressionConfig = ConfigOf<NewExpression>;
 
-type _17c = Expect<Extends<'constructor_', keyof NewExpressionFluent>>;
-type _17d = Expect<Equal<Extends<'constructor', keyof NewExpressionFluent>, false>>;
+type _17c = Expect<Extends<'constructor_', keyof NewExpressionConfig>>;
+type _17d = Expect<Equal<Extends<'constructor', keyof NewExpressionConfig>, false>>;

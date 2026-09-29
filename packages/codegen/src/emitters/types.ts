@@ -426,7 +426,7 @@ const VOCABULARY_IMPORTS = [
 	'NodeOfNamespaces',
 	'OmitEach',
 	'GrammarTypeMap',
-	'GrammarNodeMethods',
+	'NodeMethods',
 	'TriviaSetter',
 	'GrammarInnerTrivia',
 	'GrammarInnerTriviaAt'
@@ -445,7 +445,7 @@ function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: read
 		`  readonly trivia: ${buildTriviaNodeType(resolveTriviaTypeNames(triviaKinds, nodeMap))};`,
 		'}',
 		'',
-		`export type NodeMethodsOf = GrammarNodeMethods<${trivia}>;`,
+		`export type NodeMethodsOf = NodeMethods<${trivia}>;`,
 		`export type TriviaSetterOf<Self> = TriviaSetter<Self, ${trivia}>;`,
 		keyed
 			? `export type InnerTrivia<N, Gap extends string> = GrammarInnerTriviaAt<N, ${trivia}, Gap>;`

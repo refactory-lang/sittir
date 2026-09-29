@@ -18,7 +18,7 @@ import type {
 	KindEnum,
 	NodeOfNamespaces,
 	GrammarTypeMap,
-	GrammarNodeMethods,
+	NodeMethods,
 	TriviaSetter,
 	GrammarInnerTrivia
 } from '@sittir/types';
@@ -2813,7 +2813,7 @@ export interface RegexTypeMap extends GrammarTypeMap {
 	readonly trivia: Blankline | DoubleBlankline | Newline;
 }
 
-export type NodeMethodsOf = GrammarNodeMethods<RegexTypeMap['trivia']>;
+export type NodeMethodsOf = NodeMethods<RegexTypeMap['trivia']>;
 export type TriviaSetterOf<Self> = TriviaSetter<Self, RegexTypeMap['trivia']>;
 export type InnerTrivia<N> = GrammarInnerTrivia<N, RegexTypeMap['trivia']>;
 
