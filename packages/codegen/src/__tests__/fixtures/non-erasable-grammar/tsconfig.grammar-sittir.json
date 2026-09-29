@@ -1,0 +1,4 @@
+{
+	"extends": "../../../../../../tsconfig.grammar-sittir.json",
+	"include": ["grammar.sittir.ts"]
+}

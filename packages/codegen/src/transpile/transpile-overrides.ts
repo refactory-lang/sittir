@@ -1,7 +1,6 @@
-import * as esbuild from 'esbuild';
 import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { packageRequire, sittirDirOf, upstreamPackage, type GrammarPackage } from '../grammars.ts';
+import { dirname, join, posix } from 'node:path';
+import { GRAMMAR_ENTRY, packageRequire, sittirDirOf, upstreamPackage, type GrammarPackage } from '../grammars.ts';
 import { packageEntryPath } from '../compiler/resolve-grammar.ts';
 import { ensureConflictResolutions } from './conflict-resolutions-file.ts';
 
@@ -16,18 +15,15 @@ function writeFileIfChanged(path: string, content: string | Uint8Array): void {
 	writeFileSync(path, content);
 }
 
-
 export interface TranspileOptions {
 	package: GrammarPackage;
 }
 
 export interface TranspileResult {
 	outputPath: string;
-	sourceBytes: number;
-	outputBytes: number;
 }
 
-export async function transpileOverrides(opts: TranspileOptions): Promise<TranspileResult> {
+export function transpileOverrides(opts: TranspileOptions): TranspileResult {
 	const grammar = opts.package.name;
 	const inputPath = packageEntryPath(opts.package);
 	const outputDir = sittirDirOf(opts.package);
@@ -47,7 +43,7 @@ export async function transpileOverrides(opts: TranspileOptions): Promise<Transp
 		JSON.stringify(
 			{
 				name: `tree-sitter-${grammar}`,
-				type: 'commonjs',
+				type: 'module',
 				'tree-sitter': [
 					{
 						scope: `source.${grammar}`,
@@ -86,42 +82,9 @@ export async function transpileOverrides(opts: TranspileOptions): Promise<Transp
 		) + '\n'
 	);
 
-	const result = await esbuild.build({
-		entryPoints: [inputPath],
-		outfile: outputPath,
-		bundle: true,
-		format: 'cjs',
-		platform: 'node',
-		target: 'node18',
-		plugins: [externalizeTreeSitterBases()],
-		footer: {
-			js: 'if (module.exports && module.exports.default) module.exports = module.exports.default;'
-		},
-		write: false,
-		metafile: true,
-		logLevel: 'silent'
-	});
+	writeFileIfChanged(outputPath, `export { default } from '${posix.join('..', GRAMMAR_ENTRY)}';\n`);
 
-	if (result.errors.length > 0) {
-		const messages = result.errors.map((e) => e.text).join('\n');
-		throw new Error(`transpileOverrides(${grammar}): esbuild errors:\n${messages}`);
-	}
-
-	for (const file of result.outputFiles ?? []) {
-		writeFileIfChanged(file.path, file.contents);
-	}
-
-	const meta = result.metafile!;
-	const inputKey = Object.keys(meta.inputs).find((k) => k.endsWith('grammar.sittir.ts'));
-	const outputKey = Object.keys(meta.outputs).find((k) => k.endsWith('grammar.js'));
-	const inputMeta = inputKey ? meta.inputs[inputKey] : undefined;
-	const outputMeta = outputKey ? meta.outputs[outputKey] : undefined;
-
-	return {
-		outputPath,
-		sourceBytes: inputMeta?.bytes ?? 0,
-		outputBytes: outputMeta?.bytes ?? 0
-	};
+	return { outputPath };
 }
 
 const SCANNER_SOURCES = ['scanner.c', 'scanner.cc'];
@@ -170,23 +133,4 @@ function copyExternalScannerSources(pkg: GrammarPackage, outputDir: string): voi
 			}
 		}
 	}
-}
-
-function externalizeTreeSitterBases(): esbuild.Plugin {
-	return {
-		name: 'externalize-tree-sitter-bases',
-		setup(build) {
-			const pkgPattern = /tree-sitter-[a-z][a-z0-9-]*(\/|$)/;
-			build.onResolve({ filter: pkgPattern }, (args) => {
-				const match = args.path.match(/(?:^|\/)(tree-sitter-[a-z][a-z0-9-]*)(\/.+)?$/);
-				if (!match) return null;
-				const pkg = match[1]!;
-				const sub = match[2] ?? '/grammar.js';
-				return {
-					path: `${pkg}${sub}`,
-					external: true
-				};
-			});
-		}
-	};
 }

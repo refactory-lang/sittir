@@ -15,20 +15,15 @@ function reportFor(a: string, b: string): ConflictReport {
 
 function memoryStore(
 	initial: ConflictResolutionsFile
-): ConflictResolutionsStore & { readonly writes: ConflictResolutionsFile[]; readonly bundles: { count: number } } {
+): ConflictResolutionsStore & { readonly writes: ConflictResolutionsFile[] } {
 	const writes: ConflictResolutionsFile[] = [];
-	const bundles = { count: 0 };
 	let current = initial;
 	return {
 		writes,
-		bundles,
 		read: () => current,
-		write: async (file) => {
+		write: (file) => {
 			writes.push(file);
 			current = file;
-		},
-		bundle: async () => {
-			bundles.count++;
 		}
 	};
 }
@@ -66,13 +61,12 @@ describe('settleConflictResolutions', () => {
 		expect(store.read().grammarHash).toBe('h1');
 	});
 
-	it('leaves a reused set untouched: no write, only a bundle for its one generate', async () => {
+	it('leaves a reused set untouched: no write for its one generate', async () => {
 		const saved: ConflictResolutionsFile = { grammarHash: 'h1', resolutions: [] };
 		const store = memoryStore(saved);
 		const result = await settleConflictResolutions({ store, inputs, runGenerate: async () => ({ kind: 'clean' }) });
 		expect(result).toMatchObject({ kind: 'reused' });
 		expect(store.writes).toEqual([]);
-		expect(store.bundles.count).toBe(1);
 		expect(store.read()).toBe(saved);
 	});
 
