@@ -166,18 +166,7 @@ function _isFromKind(k: string): k is keyof _FromMap {
 }
 
 const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefined> = {
-	_class_atom: [
-		'class_character',
-		'bslash_dash',
-		'character_class_escape',
-		'control_escape',
-		'control_letter_escape',
-		'identity_escape',
-		'posix_character_class',
-		'class_range'
-	],
 	inline_flags_group: ['inline_flags_group_enable', 'inline_flags_group_toggle', 'inline_flags_group_disable'],
-	_character_escape: ['control_escape', 'control_letter_escape', 'identity_escape'],
 	_whitespace: ['_tight', '_newline', '_blankline', '_double_blankline']
 };
 

@@ -27,6 +27,7 @@ const comprehensionClauses = rule('comprehension_clauses', ($) =>
 export default sittirGrammar(base, {
 	resolutions,
 	name: 'python',
+	supertypes: ($, previous) => [...(previous ?? []), $._statement!],
 	externals: ($, prev) => {
 		role($._indent, 'indent');
 		role($._dedent, 'dedent');

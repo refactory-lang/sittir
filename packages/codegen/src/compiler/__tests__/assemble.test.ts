@@ -898,6 +898,14 @@ describe('Assemble — naming', () => {
 		const result = nameNode('function_item');
 		expect(result.factoryName).toBe('functionItem');
 	});
+
+	it('nameNode cases the type name and the ir key by one rule', () => {
+		expect(nameNode('MISSING_keyword')).toMatchObject({ typeName: 'MissingKeyword', irKey: 'missingKeyword' });
+		for (const kind of ['MISSING_keyword', 'function_item', '_expression', 'a_b', 'self_URL_param', '123']) {
+			const { typeName, irKey } = nameNode(kind);
+			expect(irKey, kind).toBe(typeName.charAt(0).toLowerCase() + typeName.slice(1));
+		}
+	});
 });
 
 describe('Assemble — assemble()', () => {

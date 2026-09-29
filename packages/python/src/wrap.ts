@@ -935,10 +935,7 @@ export function wrapModule(data: T.Module, tree: TreeHandle) {
 		}),
 
 		statements() {
-			return drillInAll<T.SimpleStatements | T.CompoundStatement>(
-				this._statements as readonly (T.SimpleStatements | T.CompoundStatement)[] | undefined,
-				tree
-			);
+			return drillInAll<T.Statement>(this._statements as readonly T.Statement[] | undefined, tree);
 		},
 		$with: {
 			statements: (...v: NonNullable<T.Module['_statements']>[number][]) =>
@@ -2592,10 +2589,7 @@ export function wrapBlock(data: T.Block, tree: TreeHandle) {
 		}),
 
 		statements() {
-			return drillInAll<T.SimpleStatements | T.CompoundStatement>(
-				this._statements as readonly (T.SimpleStatements | T.CompoundStatement)[] | undefined,
-				tree
-			);
+			return drillInAll<T.Statement>(this._statements as readonly T.Statement[] | undefined, tree);
 		},
 		$with: {
 			statements: (...v: NonNullable<T.Block['_statements']>[number][]) =>

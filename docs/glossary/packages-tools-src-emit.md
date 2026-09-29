@@ -434,6 +434,8 @@ A slot's kinds as the loose surface sees them: supertypes expand to their subtyp
 
 An alias kind's entry returns its argument unchanged: the printed source is the content, which the parent's builder wraps.
 
+A text-shaped keyword or punctuation kind (`PrintContext.keywordKinds`) prints as its kind id (`engine.kinds.PassStatement`), the same spelling every other keyword leaf gets: the leaf is its kind id and has no factory call to spell. Every other text kind prints its text as the one argument.
+
 #### body
 
 ```text

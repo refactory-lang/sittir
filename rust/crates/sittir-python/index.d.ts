@@ -204,7 +204,7 @@ export interface BinaryOperatorTransport {
 export interface BlockTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _statements?: Array<SlotValue<BlockStatementsTransportSlot>>
+  _statements?: Array<SlotValue<StatementTransport>>
   _statements_separator_space?: number
 }
 
@@ -859,7 +859,7 @@ export interface MemberTypeTransport {
 export interface ModuleTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _statements?: Array<SlotValue<ModuleStatementsTransportSlot>>
+  _statements?: Array<SlotValue<StatementTransport>>
   _statements_separator_space?: number
 }
 

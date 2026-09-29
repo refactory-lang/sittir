@@ -202,20 +202,15 @@ export const forHeader: Hoisted<typeof O.forHeader> = hoistRoutes(O.forHeader);
 export const parenthesizedExpression: Hoisted<typeof O.parenthesizedExpression> = hoistRoutes(
 	O.parenthesizedExpression
 );
-export const formalParameter: Hoisted<typeof O.formalParameter> = hoistRoutes(O.formalParameter);
 export const callExpression: Hoisted<typeof O.callExpression> = hoistRoutes(O.callExpression);
-export const destructuringPattern: Hoisted<typeof O.destructuringPattern> = hoistRoutes(O.destructuringPattern);
 export const updateExpression: Hoisted<typeof O.updateExpression> = hoistRoutes(O.updateExpression);
 export const string: Hoisted<typeof O.string> = hoistRoutes(O.string);
 export const comment: Hoisted<typeof O.comment> = hoistRoutes(O.comment);
-export const identifier: Hoisted<typeof O.identifier> = hoistRoutes(O.identifier);
 export const metaProperty: Hoisted<typeof O.metaProperty> = hoistRoutes(O.metaProperty);
 export const pattern: Hoisted<typeof O.pattern> = hoistRoutes(O.pattern);
 export const indexSignature: Hoisted<typeof O.indexSignature> = hoistRoutes(O.indexSignature);
 export const exportStatementDefault: Hoisted<typeof O.exportStatementDefault> = hoistRoutes(O.exportStatementDefault);
 export const numberBigint: Hoisted<typeof O.numberBigint> = hoistRoutes(O.numberBigint);
 export const exportStatement: Hoisted<typeof O.exportStatement> = hoistRoutes(O.exportStatement);
-export const moduleExportName: Hoisted<typeof O.moduleExportName> = hoistRoutes(O.moduleExportName);
 export const statement: Hoisted<typeof O.statement> = hoistRoutes(O.statement);
 export const number: Hoisted<typeof O.number> = hoistRoutes(O.number);
-export const propertyName: Hoisted<typeof O.propertyName> = hoistRoutes(O.propertyName);

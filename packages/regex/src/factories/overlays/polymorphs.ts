@@ -1067,16 +1067,3 @@ export const inlineFlagsGroup: {
 	toggle: Object.freeze({ strict: F.buildInlineFlagsGroupToggle, coerce: C.coerceToInlineFlagsGroupToggle }),
 	disable: Object.freeze({ strict: F.buildInlineFlagsGroupDisable, coerce: C.coerceToInlineFlagsGroupDisable })
 });
-
-export const characterEscape: {
-	readonly controlEscape: { strict: typeof F.buildControlEscape; coerce: typeof C.coerceToControlEscape };
-	readonly controlLetterEscape: {
-		strict: typeof F.buildControlLetterEscape;
-		coerce: typeof C.coerceToControlLetterEscape;
-	};
-	readonly identityEscape: typeof B.identityEscape;
-} = Object.freeze({
-	controlEscape: Object.freeze({ strict: F.buildControlEscape, coerce: C.coerceToControlEscape }),
-	controlLetterEscape: Object.freeze({ strict: F.buildControlLetterEscape, coerce: C.coerceToControlLetterEscape }),
-	identityEscape: B.identityEscape
-});

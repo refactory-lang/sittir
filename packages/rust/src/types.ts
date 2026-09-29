@@ -722,11 +722,11 @@ export enum TSKindId {
 	FieldIdentifier = 472,
 	ShorthandFieldIdentifier = 474,
 	TypeIdentifier = 475,
-	ERROR = 65535
+	Error = 65535
 }
 Object.freeze(TSKindId);
 
-void (TSKindId.ERROR satisfies typeof ERROR_KIND_ID);
+void (TSKindId.Error satisfies typeof ERROR_KIND_ID);
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'identifier'],
@@ -2641,7 +2641,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'type_identifier':
 			return TSKindId.TypeIdentifier;
 		case 'ERROR':
-			return TSKindId.ERROR;
+			return TSKindId.Error;
 		case ';':
 			return TSKindId.Semi;
 		case '=>':
@@ -3416,12 +3416,12 @@ export enum CharLiteralEscapedKind {
 export interface SourceFile {
 	readonly $type: TSKindId.SourceFile;
 	readonly _shebang?: Shebang;
-	readonly _statements?: readonly (ExpressionStatement | DeclarationStatement)[];
+	readonly _statements?: readonly Statement[];
 	readonly __inputHints__?: {
-		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | ExpressionStatement | DeclarationStatement)[];
+		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
 	shebang(): Shebang | undefined;
-	statements(): readonly (ExpressionStatement | DeclarationStatement)[];
+	statements(): readonly Statement[];
 }
 
 export interface ExpressionStatement {
@@ -7478,16 +7478,16 @@ export interface TryBlock {
 export interface Block {
 	readonly $type: TSKindId.Block;
 	readonly _label?: Label;
-	readonly _statements?: readonly (ExpressionStatement | DeclarationStatement)[];
+	readonly _statements?: readonly Statement[];
 	readonly _trailing_expression?: Expression;
 	readonly __inputHints__?: {
-		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | ExpressionStatement | DeclarationStatement)[];
+		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 		readonly trailing_expression?:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	label(): Label | undefined;
-	statements(): readonly (ExpressionStatement | DeclarationStatement)[];
+	statements(): readonly Statement[];
 	trailingExpression(): Expression | undefined;
 }
 

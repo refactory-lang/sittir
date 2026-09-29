@@ -3965,14 +3965,6 @@ export const forHeader: {
 	letConstKind: Object.freeze({ strict: F.buildForHeaderLetConstKind, coerce: C.coerceToForHeaderLetConstKind })
 });
 
-export const formalParameter: {
-	readonly required: typeof B.requiredParameter;
-	readonly optional: typeof B.optionalParameter;
-} = Object.freeze({
-	required: B.requiredParameter,
-	optional: B.optionalParameter
-});
-
 export const callExpression: {
 	readonly call: { strict: typeof F.buildCallExpressionCall; coerce: typeof C.coerceToCallExpressionCall };
 	readonly templateCall: {
@@ -3987,14 +3979,6 @@ export const callExpression: {
 		coerce: C.coerceToCallExpressionTemplateCall
 	}),
 	member: Object.freeze({ strict: F.buildCallExpressionMember, coerce: C.coerceToCallExpressionMember })
-});
-
-export const destructuringPattern: {
-	readonly object: typeof B.objectPattern;
-	readonly array: typeof B.arrayPattern;
-} = Object.freeze({
-	object: B.objectPattern,
-	array: B.arrayPattern
 });
 
 export const updateExpression: {
@@ -4547,18 +4531,6 @@ export const comment: {
 	block: Object.freeze({ strict: F.buildCommentBlock, coerce: C.coerceToCommentBlock })
 });
 
-export const identifier: {
-	readonly strict: typeof F.buildIdentifier;
-	readonly coerce: typeof C.coerceToIdentifier;
-	readonly undefined: { strict: typeof F.buildUndefined; coerce: typeof C.coerceToUndefined };
-	readonly identifier: { strict: typeof F.buildIdentifier; coerce: typeof C.coerceToIdentifier };
-} = Object.freeze({
-	strict: F.buildIdentifier,
-	coerce: C.coerceToIdentifier,
-	undefined: Object.freeze({ strict: F.buildUndefined, coerce: C.coerceToUndefined }),
-	identifier: Object.freeze({ strict: F.buildIdentifier, coerce: C.coerceToIdentifier })
-});
-
 export const metaProperty: {
 	readonly newTarget: { strict: typeof F.buildMetaPropertyNewTarget; coerce: typeof C.coerceToMetaPropertyNewTarget };
 	readonly importMeta: {
@@ -4876,14 +4848,6 @@ export const exportStatement: {
 	namespaceExport: B.exportStatementNamespaceExport
 });
 
-export const moduleExportName: {
-	readonly identifier: { strict: typeof F.buildIdentifier; coerce: typeof C.coerceToIdentifier };
-	readonly string: typeof string;
-} = Object.freeze({
-	identifier: Object.freeze({ strict: F.buildIdentifier, coerce: C.coerceToIdentifier }),
-	string: string
-});
-
 export const statement: {
 	readonly export: typeof exportStatement;
 	readonly import: typeof importStatement;
@@ -4959,18 +4923,4 @@ export const number: {
 	binary: Object.freeze({ strict: F.buildNumberBinary, coerce: C.coerceToNumberBinary }),
 	octal: Object.freeze({ strict: F.buildNumberOctal, coerce: C.coerceToNumberOctal }),
 	bigint: numberBigint
-});
-
-export const propertyName: {
-	readonly identifier: { strict: typeof F.buildPropertyIdentifier; coerce: typeof C.coerceToPropertyIdentifier };
-	readonly privateIdentifier: typeof B.privatePropertyIdentifier;
-	readonly string: typeof string;
-	readonly number: typeof number;
-	readonly computed: typeof B.computedPropertyName;
-} = Object.freeze({
-	identifier: Object.freeze({ strict: F.buildPropertyIdentifier, coerce: C.coerceToPropertyIdentifier }),
-	privateIdentifier: B.privatePropertyIdentifier,
-	string: string,
-	number: number,
-	computed: B.computedPropertyName
 });

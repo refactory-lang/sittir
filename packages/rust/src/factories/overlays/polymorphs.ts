@@ -1980,32 +1980,6 @@ export const pointerType: {
 	mut: Object.freeze({ strict: F.buildPointerTypeMut, coerce: C.coerceToPointerTypeMut })
 });
 
-export const expressionEndingWithBlock: {
-	readonly unsafeBlock: typeof B.unsafeBlock;
-	readonly asyncBlock: typeof B.asyncBlock;
-	readonly genBlock: typeof B.genBlock;
-	readonly tryBlock: typeof B.tryBlock;
-	readonly block: typeof B.block;
-	readonly ifExpression: typeof B.ifExpression;
-	readonly matchExpression: typeof B.matchExpression;
-	readonly whileExpression: typeof B.whileExpression;
-	readonly loopExpression: typeof B.loopExpression;
-	readonly forExpression: typeof B.forExpression;
-	readonly constBlock: typeof B.constBlock;
-} = Object.freeze({
-	unsafeBlock: B.unsafeBlock,
-	asyncBlock: B.asyncBlock,
-	genBlock: B.genBlock,
-	tryBlock: B.tryBlock,
-	block: B.block,
-	ifExpression: B.ifExpression,
-	matchExpression: B.matchExpression,
-	whileExpression: B.whileExpression,
-	loopExpression: B.loopExpression,
-	forExpression: B.forExpression,
-	constBlock: B.constBlock
-});
-
 export const delimTokenTree: {
 	readonly paren: { strict: typeof F.buildDelimTokenTreeParen; coerce: typeof C.coerceToDelimTokenTreeParen };
 	readonly bracket: { strict: typeof F.buildDelimTokenTreeBracket; coerce: typeof C.coerceToDelimTokenTreeBracket };
@@ -2457,30 +2431,4 @@ export const nonSpecialToken: typeof B.nonSpecialToken & {
 		strict: nonSpecialToken$crate(F.buildNonSpecialToken, TSKindId.Crate),
 		coerce: nonSpecialToken$crate(C.coerceToNonSpecialToken, TSKindId.Crate)
 	}
-});
-
-export const tokenPattern: {
-	readonly tree: typeof tokenTreePattern;
-	readonly repetition: typeof B.tokenRepetitionPattern;
-	readonly binding: typeof B.tokenBindingPattern;
-	readonly metavariable: typeof B.metavariable;
-	readonly nonSpecial: typeof nonSpecialToken;
-} = Object.freeze({
-	tree: tokenTreePattern,
-	repetition: B.tokenRepetitionPattern,
-	binding: B.tokenBindingPattern,
-	metavariable: B.metavariable,
-	nonSpecial: nonSpecialToken
-});
-
-export const tokens: {
-	readonly tokenTree: typeof tokenTree;
-	readonly tokenRepetition: typeof B.tokenRepetition;
-	readonly metavariable: typeof B.metavariable;
-	readonly nonSpecialToken: typeof nonSpecialToken;
-} = Object.freeze({
-	tokenTree: tokenTree,
-	tokenRepetition: B.tokenRepetition,
-	metavariable: B.metavariable,
-	nonSpecialToken: nonSpecialToken
 });

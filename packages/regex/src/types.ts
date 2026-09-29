@@ -124,11 +124,11 @@ export enum TSKindId {
 	CharacterClassRepeat1 = 87,
 	Lazy = 88,
 	UnicodePropertyName = 89,
-	ERROR = 65535
+	Error = 65535
 }
 Object.freeze(TSKindId);
 
-void (TSKindId.ERROR satisfies typeof ERROR_KIND_ID);
+void (TSKindId.Error satisfies typeof ERROR_KIND_ID);
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'pipe'],
@@ -501,7 +501,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'unicode_property_name':
 			return TSKindId.UnicodePropertyName;
 		case 'ERROR':
-			return TSKindId.ERROR;
+			return TSKindId.Error;
 		case '|':
 			return TSKindId.Pipe;
 		case '^':

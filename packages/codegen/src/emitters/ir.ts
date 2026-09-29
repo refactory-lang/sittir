@@ -78,7 +78,7 @@ export function emitIr(config: EmitIrConfig): string {
 	const flattenedKeyByKind = new Map(flattenedParents.map((parent) => [parent.node.kind, parent.key] as const));
 
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledSupertype) || flattenedKinds.has(kind)) continue;
+		if (!(node instanceof AssembledSupertype) || !node.declared || flattenedKinds.has(kind)) continue;
 		const sup = node;
 		const groupName = groupNameFor(kind);
 		if (!isValidIdent(groupName) || usedGroupNames.has(groupName)) continue;

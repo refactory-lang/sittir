@@ -31,7 +31,7 @@ export type LeafStringMap = {
 	[TSKindId.DoubleBlankline]: '\n\n\n';
 	[TSKindId.Indent]: '﷐\n';
 	[TSKindId.Dedent]: '﷑\n';
-	[TSKindId.MISSINGKeyword]: 'MISSING';
+	[TSKindId.MissingKeyword]: 'MISSING';
 	[TSKindId.Underscore]: '_';
 };
 
@@ -52,7 +52,7 @@ export enum TSKindId {
 	Rbrack = 14,
 	Lparen = 15,
 	Rparen = 16,
-	MISSINGKeyword = 17,
+	MissingKeyword = 17,
 	Colon = 18,
 	Bang = 19,
 	Pound = 20,
@@ -101,11 +101,11 @@ export enum TSKindId {
 	ListRepeat1 = 63,
 	GroupingRepeat1 = 64,
 	NamedNodeGroupChildrenRepeat1 = 65,
-	ERROR = 65535
+	Error = 65535
 }
 Object.freeze(TSKindId);
 
-void (TSKindId.ERROR satisfies typeof ERROR_KIND_ID);
+void (TSKindId.Error satisfies typeof ERROR_KIND_ID);
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'escape_sequence'],
@@ -284,7 +284,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'rparen':
 			return TSKindId.Rparen;
 		case 'MISSING_keyword':
-			return TSKindId.MISSINGKeyword;
+			return TSKindId.MissingKeyword;
 		case 'colon':
 			return TSKindId.Colon;
 		case 'bang':
@@ -382,7 +382,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'named_node_group_children_repeat1':
 			return TSKindId.NamedNodeGroupChildrenRepeat1;
 		case 'ERROR':
-			return TSKindId.ERROR;
+			return TSKindId.Error;
 		case '*':
 			return TSKindId.Star;
 		case '+':
@@ -404,7 +404,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case ')':
 			return TSKindId.Rparen;
 		case 'MISSING':
-			return TSKindId.MISSINGKeyword;
+			return TSKindId.MissingKeyword;
 		case ':':
 			return TSKindId.Colon;
 		case '!':
@@ -1370,7 +1370,7 @@ export type FixedTextKindId =
 	| TSKindId.Rbrack
 	| TSKindId.Lparen
 	| TSKindId.Rparen
-	| TSKindId.MISSINGKeyword
+	| TSKindId.MissingKeyword
 	| TSKindId.Underscore
 	| TSKindId.Colon
 	| TSKindId.Bang

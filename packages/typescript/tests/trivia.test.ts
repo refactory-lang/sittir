@@ -41,7 +41,7 @@ describe('$trivia() on the typescript surface', () => {
 
 	it('$with carries trivia to the rebuilt node', () => {
 		const fn = makeFn('f').$trivia('// kept');
-		const renamed = fn.$with.name(ts.build.identifier.identifier('g'));
+		const renamed = fn.$with.name(ts.build.identifier('g'));
 		expect(renamed.$render()).toBe('// kept\nfunction g() {}');
 	});
 });
