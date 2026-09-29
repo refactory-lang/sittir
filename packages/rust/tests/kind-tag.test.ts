@@ -32,9 +32,23 @@ describe('a config bag names its kind with a kind id', () => {
 	});
 });
 
-describe('a kind tag must name one of the slot candidates', () => {
-	it('rejects a valid kind id that is not a candidate of the list, naming the candidates', () => {
-		expect(() => rs.build.parameters([{ $type: rs.kinds.Identifier, name: 'b', type: 'i32' } as never])).toThrow(
+describe('a kind tag must name a kind the slot admits, directly or through a wrapper', () => {
+	const variant = (body: unknown) => rs.build.enumVariant({ name: 'V', body: body as never });
+
+	it('builds a kind the slot seats through a wrapper', () => {
+		expect(variant({ $type: rs.kinds.FieldDeclaration, name: 'a', type: 'i32' }).$render()).toBe('V {\n    a: i32,\n}');
+	});
+
+	it('rejects a leaf kind the slot does not admit, naming the candidates', () => {
+		expect(() => variant({ $type: rs.kinds.Identifier, text: 'a' })).toThrow(/the \$type tag \d+ is not a kind id of \[/);
+	});
+
+	it('rejects a branch kind the slot does not admit, naming the candidates', () => {
+		expect(() => variant({ $type: rs.kinds.Block })).toThrow(/the \$type tag \d+ is not a kind id of \[/);
+	});
+
+	it('rejects a kind a list does not admit, naming the candidates', () => {
+		expect(() => rs.build.parameters([{ $type: rs.kinds.Block } as never])).toThrow(
 			/the \$type tag \d+ is not a kind id of \[attributed_parameter, .*\bparameter\b/
 		);
 	});

@@ -1923,7 +1923,7 @@ leading options object off first, keyed on `listOptionKeys(surface)`, the
 same key list the strict factory accepts, so the options object passes
 through untouched and only the elements resolve.
 
-`_listElements` dispatches a tagged bag on its tag first, whether or not the element slot is resolvable: the tag names the kind, so it needs no slot knowledge. A list that seats a wrapper passes `bagKinds`, the wrapper and the element slot's branch kinds: a tag outside them throws naming them, an untagged bag with several of them throws naming them, and an untagged bag with one is that kind's.
+`_listElements` dispatches a tagged bag on its tag first, whether or not the element slot is resolvable: the tag names the kind, so it needs no slot knowledge. It reads the tag against `tagKinds` (the wrapper and the element slot's leaf and branch kinds). A list that seats a wrapper also passes `bagKinds`, the wrapper and the element slot's branch kinds: an untagged bag with several of them throws naming them, and an untagged bag with one is that kind's.
 
 ### `packages/codegen/src/emitters/from.ts::resolveFieldFromTypedInput`
 
@@ -2228,7 +2228,9 @@ A bag's `$type` tag is a kind id, never a name and never a supertype: the tag al
 // narrow the string parameter without an unchecked cast.
 ```
 
-It emits `_fromOfTag(tag, candidates, closed)`, the one reading of a `$type` tag: a numeric tag that is the id of a kind with a from() coercer names that kind. Any other tag throws `the $type tag <tag> is not a kind id` naming the candidates. A `closed` reading also throws for a kind outside the candidates; only a list's bags read closed, because a wrapper or list seat admits kinds a slot's own candidates do not name (a `field_declaration` at an enum variant's body). `_splitTag` is the one test for a tagged bag: a plain object that is not a node (`isNode`) and has a `$type` key, split into the tag and the rest.
+It emits `_fromOfTag(tag, candidates)`, the one reading of a `$type` tag: a numeric tag that is the id of a kind with a from() coercer, and that the slot admits, names that kind. A slot admits the kinds it lists (`candidates`) and the kinds `_seatedKinds` says each one seats: a candidate that is a wrap-children envelope or a list's own wrapper contributes its sole slot's kinds, followed down a chain only while each step has exactly one kind (`field_declaration_list` seats `field_declaration_list_elements`, `attributed_field_declaration` and `field_declaration`). Any other tag throws `the $type tag <tag> is not a kind id of [<candidates>]`, at every resolver site: `_resolveOne`, `_resolveOneBranch`, `_resolveOneLeaf` and `_listElements` (which passes the element slot's leaf and branch kinds and its wrapper as `tagKinds`). `_splitTag` is the one test for a tagged bag: a plain object that is not a node (`isNode`) and has a `$type` key, split into the tag and the rest.
+
+Emitted `_seatedKinds` rows per grammar (kinds that seat others), largest row, and resolver call sites (`_resolveOne` / `_resolveMany` / `_resolveOneBranch` / `_resolveOneLeaf` / `_listElements`): rust 108 rows, largest 80, sites 215/45/183/39/18; typescript 91, 76, 281/37/142/50/8; python 84, 52, 171/31/93/22/20; regex 15, 7, 22/2/17/19/0; scm 9, 10, 19/14/8/11/0.
 
 `_resolveByKind` takes a leaf kind's tag as `{ kind, text }`: for a kind in
 the leaf registry, a plain tag object hands its `text` to the leaf's
@@ -2311,7 +2313,7 @@ A `$type` config builds its named kind and then goes back through the same routi
 
 #### `_listElements`
 
-`_listElements(input, optionKeys, wrapperKind, resolve, bagKinds?)`: the loose list
+`_listElements(input, optionKeys, wrapperKind, resolve, tagKinds, bagKinds?)`: the loose list
 call's argument split. When `optionKeys` is non-empty and the first argument
 is a plain object whose keys are all option keys (the strict factory's own
 test, minus the `$type` check, which `isNode` covers), it is the options
