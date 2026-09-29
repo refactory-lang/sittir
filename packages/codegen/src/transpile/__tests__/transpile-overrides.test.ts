@@ -54,10 +54,14 @@ describe('tree-sitter generate runs the grammar entry itself', () => {
 	it('reflects an edit to the entry with no step between the edit and generate', () => {
 		const dir = mkdtempSync(join(tmpdir(), 'sittir-native-esm-'));
 		try {
-			mkdirSync(dir, { recursive: true });
+			const upstream = join(dir, 'node_modules', 'tree-sitter-probe');
+			mkdirSync(upstream, { recursive: true });
+			writeFileSync(join(upstream, 'package.json'), '{"name":"tree-sitter-probe","version":"0.0.0"}');
+			writeFileSync(join(upstream, 'tree-sitter.json'), '{"grammars":[{"name":"probe","file-types":["probe"]}]}');
 			const pkg = grammarPackage('probe', dir);
 			writeFileSync(packageEntryPath(pkg), entryOf('first'));
 			transpileOverrides({ package: pkg });
+			expect(JSON.parse(readFileSync(join(sittirDirOf(pkg), 'tree-sitter.json'), 'utf8')).grammars[0]['file-types']).toEqual(['probe']);
 			const generatedRule = (): unknown => {
 				const run = runTreeSitterCliCapturing(['generate', '--no-parser'], sittirDirOf(pkg));
 				expect(run.status, run.stderr).toBe(0);

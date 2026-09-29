@@ -1,11 +1,10 @@
 import { createRequire } from 'node:module';
 import { describe, expect, it, vi } from 'vitest';
 import { grammarPackage } from '../../grammars.ts';
-import { packageEntryPath } from '../../compiler/resolve-grammar.ts';
-import { evaluate } from '../../compiler/evaluate.ts';
 import { evaluateSittirGrammar } from '../../compiler/__tests__/_sittir-grammar.ts';
 import { baseRulesOf } from '../shared.ts';
 import { getEnrichMints } from '../enrich.ts';
+import { evaluatePackage } from '../../compiler/evaluate-package.ts';
 
 const enrichCalls = vi.hoisted(() => [] as { readonly base: unknown; readonly enriched: unknown }[]);
 
@@ -41,7 +40,7 @@ async function expectEveryAddedRuleRecorded(load: () => Promise<unknown>): Promi
 
 describe('the enrich mint list is exactly the rules enrich adds', () => {
 	for (const grammar of ['python', 'rust', 'typescript', 'scm', 'regex']) {
-		it(`${grammar}`, () => expectEveryAddedRuleRecorded(() => evaluate(packageEntryPath(grammarPackage(grammar)))), 120_000);
+		it(`${grammar}`, () => expectEveryAddedRuleRecorded(() => evaluatePackage(grammarPackage(grammar))), 120_000);
 	}
 	for (const grammar of ['c', 'go']) {
 		it(`tree-sitter-${grammar}`, () =>

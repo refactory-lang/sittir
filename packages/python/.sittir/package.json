@@ -4,7 +4,9 @@
   "tree-sitter": [
     {
       "scope": "source.python",
-      "file-types": []
+      "file-types": [
+        "py"
+      ]
     }
   ]
 }

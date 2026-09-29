@@ -34,6 +34,7 @@ describe('NodeMap back-pointer maps', () => {
 		});
 		const raw: RawGrammar = {
 			name: 'synth',
+			fileTypes: [],
 			rules,
 			ruleCatalog,
 			extras: [],
@@ -62,6 +63,7 @@ describe('NodeMap back-pointer maps', () => {
 		const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules);
 		const raw: RawGrammar = {
 			name: 'synth',
+			fileTypes: [],
 			rules: catalogRules,
 			ruleCatalog,
 			extras: [],

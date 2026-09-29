@@ -26,8 +26,6 @@
  * duplicated `loadCodegenModules` helpers in `inspect/`.
  */
 
-import { existsSync } from 'node:fs';
-
 // ---------------------------------------------------------------------------
 // Runtime module map — the ONLY place tools spells out codegen file paths.
 // Relative paths (not `@sittir/codegen/...` subpaths) so no package export is
@@ -35,6 +33,8 @@ import { existsSync } from 'node:fs';
 // ---------------------------------------------------------------------------
 const MODULES = {
 	evaluate: '../../codegen/src/compiler/evaluate.ts',
+	evaluatePackage: '../../codegen/src/compiler/evaluate-package.ts',
+	grammars: '../../codegen/src/grammars.ts',
 	link: '../../codegen/src/compiler/link.ts',
 	normalize: '../../codegen/src/compiler/normalize.ts',
 	assemble: '../../codegen/src/compiler/assemble.ts',
@@ -69,6 +69,8 @@ const MODULES = {
 // ---------------------------------------------------------------------------
 export interface CodegenSurface {
 	evaluate: typeof import('../../codegen/src/compiler/evaluate.ts');
+	evaluatePackage: typeof import('../../codegen/src/compiler/evaluate-package.ts');
+	grammars: typeof import('../../codegen/src/grammars.ts');
 	link: typeof import('../../codegen/src/compiler/link.ts');
 	normalize: typeof import('../../codegen/src/compiler/normalize.ts');
 	assemble: typeof import('../../codegen/src/compiler/assemble.ts');
@@ -171,17 +173,14 @@ export type OpaqueFacts = import('../../codegen/src/compiler/opaque-facts.ts').O
 // (Generalizes the former `discover/pipeline.ts` `buildNodeMap`.)
 // ---------------------------------------------------------------------------
 
-/** Resolve a grammar's entry path, preferring `grammar.sittir.ts` over `grammar.js`. */
-export async function resolveEntryPath(grammar: string): Promise<string> {
-	const overrides = await invoke('resolveGrammar', 'resolveOverridesPath', grammar);
-	const grammarJs = await invoke('resolveGrammar', 'resolveGrammarJsPath', grammar);
-	return existsSync(overrides) ? overrides : grammarJs;
+/** Evaluate a grammar package by name, stamped with the package's upstream file types. */
+export async function evaluateGrammar(grammar: string, options?: { readonly base?: boolean }): Promise<RawGrammar> {
+	return invoke('evaluatePackage', 'evaluatePackage', await invoke('grammars', 'grammarPackage', grammar), options);
 }
 
 /** Run evaluate → link → normalize for one grammar, returning its SimplifiedGrammar. */
 export async function buildSimplifiedGrammar(grammar: string): Promise<SimplifiedGrammar> {
-	const entryPath = await resolveEntryPath(grammar);
-	const raw = await invoke('evaluate', 'evaluate', entryPath);
+	const raw = await evaluateGrammar(grammar);
 	const linked = await invoke('link', 'link', raw);
 	return invoke('normalize', 'normalizeGrammar', linked);
 }

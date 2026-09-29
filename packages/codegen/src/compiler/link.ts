@@ -314,6 +314,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		word: raw.word,
 		wordMatcher: wordMatcherRegex,
 		reserved: raw.reserved,
+		fileTypes: raw.fileTypes,
 		references,
 		derivations,
 		displayUnions,
