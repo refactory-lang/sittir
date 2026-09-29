@@ -92,4 +92,16 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 		const root = rust.parse('use x;\nuse y;\n');
 		expect(root.$with.statements(...root.statements()).$render()).toBe('use x;\nuse y;');
 	});
+
+	it('takes the seat when a removed item sat between two kept ones', () => {
+		const root = rust.parse('use x;\nfn f() {}\nuse y;\n');
+		const [x, , y] = root.statements();
+		expect(root.$with.statements(x!, y!).$render()).toBe('use x;\n\nuse y;');
+	});
+
+	it('python: takes the seat when a removed statement sat between two kept ones', () => {
+		const root = python.parse('a = 1\nb = 2\nc = 3\n');
+		const [a, , c] = root.statements();
+		expect(root.$with.statements(a!, c!).$render()).toBe('a = 1\nc = 3');
+	});
 });

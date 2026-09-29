@@ -52,24 +52,23 @@ pub fn seat_site(table: &[u16], kind: KindId) -> Option<usize> {
 /// the slot's seat table: a seated element's base `after` edge takes its
 /// seat's resolved arm and strength unless the wire already set it. A
 /// coordinate takes its seat the same way, except when the element after it
-/// is the next coordinate of its tree in source order: that gap is the
-/// source's, classified into the slot's own site. An absent element renders
-/// nothing, so it neither takes a gap nor counts as the sibling that makes the
-/// gap before it.
+/// is a coordinate and `separated` marks the pair's source gap as classified
+/// into the slot's own site: that gap is the source's. An absent element
+/// renders nothing, so it neither takes a gap nor counts as the sibling that
+/// makes the gap before it.
 pub fn fill_seated_gaps<'i, T: SeatTarget + 'i, const ADJACENT: bool>(
     items: impl Iterator<Item = Option<&'i mut SlotValue<T, ADJACENT>>>,
     table: &[u16],
+    separated: &[bool],
     ctx: &RenderContext<'_>,
 ) {
-    let present: Vec<&'i mut SlotValue<T, ADJACENT>> = items.flatten().collect();
+    let present: Vec<(usize, &'i mut SlotValue<T, ADJACENT>)> =
+        items.enumerate().filter_map(|(index, item)| item.map(|value| (index, value))).collect();
     let source_follows: Vec<bool> = present
         .windows(2)
-        .map(|pair| match (pair[0].coord(), pair[1].coord()) {
-            (Some(a), Some(b)) => crate::classify::gap_between(a, b, ctx.sources).is_some(),
-            _ => false,
-        })
+        .map(|pair| pair[1].1.coord().is_some() && separated.get(pair[0].0).copied().unwrap_or(false))
         .collect();
-    for (item, source_follows) in present.into_iter().zip(source_follows) {
+    for ((_, item), source_follows) in present.into_iter().zip(source_follows) {
         match item {
             SlotValue::Transport(t) => {
                 if let Some((edges, site)) = t.seat_target(table) {
