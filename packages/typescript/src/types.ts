@@ -9904,8 +9904,6 @@ export type ExportStatement =
 	| ExportStatementEqualsExport
 	| ExportStatementNamespaceExport;
 
-export type ModuleExportName = Identifier | String;
-
 export type Declaration =
 	| FunctionDeclaration
 	| GeneratorFunctionDeclaration
@@ -9951,8 +9949,6 @@ export type VariableDeclarator = VariableDeclaratorPlain | VariableDeclaratorDef
 export type ForHeader = ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
 
 export type ParenthesizedExpression = ParenthesizedExpressionTyped | ParenthesizedExpressionSequence;
-
-export type Expressions = Expression | SequenceExpression;
 
 export type Expression =
 	| AsExpression
@@ -10018,40 +10014,7 @@ export type PrimaryExpression =
 	| CallExpression
 	| NonNullExpression;
 
-export type FormalParameter = RequiredParameter | OptionalParameter;
-
 export type CallExpression = CallExpressionCall | CallExpressionTemplateCall | CallExpressionMember;
-
-export type AugmentedAssignmentLhs =
-	| MemberExpression
-	| SubscriptExpression
-	| DeclareKeyword
-	| NamespaceKeyword
-	| TypeKeyword
-	| PublicKeyword
-	| PrivateKeyword
-	| ProtectedKeyword
-	| OverrideKeyword
-	| ReadonlyKeyword
-	| ModuleKeyword
-	| AnyKeyword
-	| NumberKeyword
-	| BooleanKeyword
-	| StringKeyword
-	| SymbolKeyword
-	| ExportKeyword
-	| ObjectKeyword
-	| NewKeyword
-	| GetKeyword
-	| SetKeyword
-	| AsyncKeyword
-	| StaticKeyword
-	| LetKeyword
-	| Identifier
-	| ParenthesizedExpression
-	| NonNullExpression;
-
-export type DestructuringPattern = ObjectPattern | ArrayPattern;
 
 export type UpdateExpression = UpdateExpressionPostfix | UpdateExpressionPrefix;
 
@@ -10069,15 +10032,9 @@ export type Number =
 	| NumberOctal
 	| NumberBigint;
 
-export type _Identifier = Undefined | Identifier;
-
 export type MetaProperty = MetaPropertyNewTarget | MetaPropertyImportMeta;
 
 export type Pattern = LhsExpression | RestPattern;
-
-export type PropertyName = PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
-
-export type ImportIdentifier = Identifier | TypeKeyword;
 
 export type Type =
 	| PrimaryType
@@ -10087,8 +10044,6 @@ export type Type =
 	| InferType
 	| TypeQueryMemberExpressionInTypeAnnotation
 	| TypeQueryCallExpressionInTypeAnnotation;
-
-export type TupleTypeMember = TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type;
 
 export type PrimaryType =
 	| ParenthesizedType
@@ -10123,10 +10078,6 @@ export namespace ExportStatement {
 	export type Kind = 'export_statement';
 }
 
-export namespace ModuleExportName {
-	export type Kind = '_module_export_name';
-}
-
 export namespace Declaration {
 	export type Kind = 'declaration';
 }
@@ -10151,10 +10102,6 @@ export namespace ParenthesizedExpression {
 	export type Kind = 'parenthesized_expression';
 }
 
-export namespace Expressions {
-	export type Kind = '_expressions';
-}
-
 export namespace Expression {
 	export type Kind = 'expression';
 }
@@ -10163,20 +10110,8 @@ export namespace PrimaryExpression {
 	export type Kind = 'primary_expression';
 }
 
-export namespace FormalParameter {
-	export type Kind = '_formal_parameter';
-}
-
 export namespace CallExpression {
 	export type Kind = 'call_expression';
-}
-
-export namespace AugmentedAssignmentLhs {
-	export type Kind = '_augmented_assignment_lhs';
-}
-
-export namespace DestructuringPattern {
-	export type Kind = '_destructuring_pattern';
 }
 
 export namespace UpdateExpression {
@@ -10195,10 +10130,6 @@ export namespace Number {
 	export type Kind = 'number';
 }
 
-export namespace _Identifier {
-	export type Kind = '_identifier';
-}
-
 export namespace MetaProperty {
 	export type Kind = 'meta_property';
 }
@@ -10207,20 +10138,8 @@ export namespace Pattern {
 	export type Kind = 'pattern';
 }
 
-export namespace PropertyName {
-	export type Kind = '_property_name';
-}
-
-export namespace ImportIdentifier {
-	export type Kind = '_import_identifier';
-}
-
 export namespace Type {
 	export type Kind = 'type';
-}
-
-export namespace TupleTypeMember {
-	export type Kind = '_tuple_type_member';
 }
 
 export namespace PrimaryType {

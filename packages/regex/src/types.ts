@@ -959,32 +959,12 @@ export type Blankline = TSKindId.Blankline;
 export type DoubleBlankline = TSKindId.DoubleBlankline;
 
 // Supertype unions
-export type ClassAtom =
-	| ClassCharacter
-	| BslashDash
-	| CharacterClassEscape
-	| ControlEscape
-	| ControlLetterEscape
-	| IdentityEscape
-	| PosixCharacterClass
-	| ClassRange;
-
 export type InlineFlagsGroup = InlineFlagsGroupEnable | InlineFlagsGroupToggle | InlineFlagsGroupDisable;
-
-export type CharacterEscape = ControlEscape | ControlLetterEscape | IdentityEscape;
 
 export type Whitespace = Tight | Newline | Blankline | DoubleBlankline;
 
-export namespace ClassAtom {
-	export type Kind = '_class_atom';
-}
-
 export namespace InlineFlagsGroup {
 	export type Kind = 'inline_flags_group';
-}
-
-export namespace CharacterEscape {
-	export type Kind = '_character_escape';
 }
 
 export namespace Whitespace {

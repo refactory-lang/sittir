@@ -702,12 +702,6 @@ export type Dedent = TSKindId.Dedent;
 // Supertype unions
 export type Definition = NamedNode | AnonymousNode | MissingNode | Grouping | Predicate | List | FieldDefinition;
 
-export type GroupExpression = Definition | GroupExpressionArm;
-
-export type NamedNodeExpression = Definition | NegatedField | NamedNodeExpressionArm;
-
-export type NodeIdentifier = Identifier;
-
 export type NamedNode = NamedNodePlain | NamedNodeSupertyped;
 
 export type NamedNodeGroup = NamedNodeGroupChildren | NamedNodeGroupAnchoredLast;
@@ -716,18 +710,6 @@ export type Whitespace = Tight | Space | Tab | Newline | Blankline | DoubleBlank
 
 export namespace Definition {
 	export type Kind = 'definition';
-}
-
-export namespace GroupExpression {
-	export type Kind = '_group_expression';
-}
-
-export namespace NamedNodeExpression {
-	export type Kind = '_named_node_expression';
-}
-
-export namespace NodeIdentifier {
-	export type Kind = '_node_identifier';
 }
 
 export namespace NamedNode {

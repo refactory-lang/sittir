@@ -10,14 +10,10 @@ import type {
 	CharLiteralEscaped,
 	ClosureExpression,
 	Comment,
-	Condition,
 	DeclarationStatement,
 	DelimTokenTree,
-	DelimTokens,
 	EscapeSequence,
 	Expression,
-	ExpressionEndingWithBlock,
-	ExpressionExceptRange,
 	FieldPattern,
 	ForeignModItem,
 	ImplItem,
@@ -27,21 +23,16 @@ import type {
 	MacroDefinition,
 	MatchArm,
 	ModItem,
-	NonDelimToken,
 	OrPattern,
-	Path,
 	Pattern,
 	PointerType,
 	RangePattern,
 	ReferenceExpression,
 	Statement,
 	StructItem,
-	TokenPattern,
 	TokenTree,
 	TokenTreePattern,
-	Tokens,
 	Type,
-	UseClause,
 	Whitespace
 } from './types.js';
 
@@ -482,26 +473,18 @@ export interface IsGuards {
 	statement(v: { readonly $type: string | number } | number): v is Statement;
 	declarationStatement(v: { readonly $type: string | number } | number): v is DeclarationStatement;
 	macroDefinition(v: { readonly $type: string | number } | number): v is MacroDefinition;
-	tokenPattern(v: { readonly $type: string | number } | number): v is TokenPattern;
 	tokenTreePattern(v: { readonly $type: string | number } | number): v is TokenTreePattern;
-	tokens(v: { readonly $type: string | number } | number): v is Tokens;
 	tokenTree(v: { readonly $type: string | number } | number): v is TokenTree;
 	modItem(v: { readonly $type: string | number } | number): v is ModItem;
 	foreignModItem(v: { readonly $type: string | number } | number): v is ForeignModItem;
 	structItem(v: { readonly $type: string | number } | number): v is StructItem;
 	implItem(v: { readonly $type: string | number } | number): v is ImplItem;
-	useClause(v: { readonly $type: string | number } | number): v is UseClause;
 	type(v: { readonly $type: string | number } | number): v is Type;
 	pointerType(v: { readonly $type: string | number } | number): v is PointerType;
-	expressionExceptRange(v: { readonly $type: string | number } | number): v is ExpressionExceptRange;
 	expression(v: { readonly $type: string | number } | number): v is Expression;
-	expressionEndingWithBlock(v: { readonly $type: string | number } | number): v is ExpressionEndingWithBlock;
 	delimTokenTree(v: { readonly $type: string | number } | number): v is DelimTokenTree;
-	delimTokens(v: { readonly $type: string | number } | number): v is DelimTokens;
-	nonDelimToken(v: { readonly $type: string | number } | number): v is NonDelimToken;
 	referenceExpression(v: { readonly $type: string | number } | number): v is ReferenceExpression;
 	arrayExpression(v: { readonly $type: string | number } | number): v is ArrayExpression;
-	condition(v: { readonly $type: string | number } | number): v is Condition;
 	matchArm(v: { readonly $type: string | number } | number): v is MatchArm;
 	closureExpression(v: { readonly $type: string | number } | number): v is ClosureExpression;
 	pattern(v: { readonly $type: string | number } | number): v is Pattern;
@@ -514,7 +497,6 @@ export interface IsGuards {
 	charLiteral(v: { readonly $type: string | number } | number): v is CharLiteral;
 	escapeSequence(v: { readonly $type: string | number } | number): v is EscapeSequence;
 	comment(v: { readonly $type: string | number } | number): v is Comment;
-	path(v: { readonly $type: string | number } | number): v is Path;
 	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
 	charLiteralEscaped(v: { readonly $type: string | number } | number): v is CharLiteralEscaped;
 }
@@ -534,37 +516,22 @@ const _supertype_declarationStatement_ids = new Set<number>([
 	205, 259, 178, 190, 191, 197, 198, 207, 208, 209, 214, 215, 223, 224, 204, 206
 ]);
 const _supertype_macroDefinition_ids = new Set<number>([423, 424, 425]);
-const _supertype_tokenPattern_ids = new Set<number>([185, 184, 129]);
 const _supertype_tokenTreePattern_ids = new Set<number>([412, 413, 414]);
-const _supertype_tokens_ids = new Set<number>([188, 129]);
 const _supertype_tokenTree_ids = new Set<number>([415, 416, 417]);
 const _supertype_modItem_ids = new Set<number>([393, 394]);
 const _supertype_foreignModItem_ids = new Set<number>([403, 404]);
 const _supertype_structItem_ids = new Set<number>([430, 431, 432]);
 const _supertype_implItem_ids = new Set<number>([386, 387]);
-const _supertype_useClause_ids = new Set<number>([
-	126, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 127, 128, 1, 263, 52, 33, 53, 228, 227,
-	226, 229
-]);
 const _supertype_type_ids = new Set<number>([255, 252, 129, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218]);
 const _supertype_pointerType_ids = new Set<number>([397, 398]);
-const _supertype_expressionExceptRange_ids = new Set<number>([
-	267, 268, 270, 271, 272, 273, 276, 274, 275, 1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
-	52, 33, 53, 126, 263, 245, 307, 308, 280, 259, 281, 304, 305, 306, 129, 279, 282, 309, 310, 311, 312, 313, 287, 292,
-	297, 298, 299, 300
-]);
 const _supertype_expression_ids = new Set<number>([
 	267, 268, 270, 271, 272, 273, 276, 274, 275, 1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
 	52, 33, 53, 126, 263, 245, 307, 308, 280, 259, 281, 304, 305, 306, 129, 279, 282, 309, 310, 311, 312, 313, 287, 292,
 	297, 298, 299, 300, 266
 ]);
-const _supertype_expressionEndingWithBlock_ids = new Set<number>([
-	309, 310, 311, 312, 313, 287, 292, 297, 298, 299, 300
-]);
 const _supertype_delimTokenTree_ids = new Set<number>([418, 419, 420]);
 const _supertype_referenceExpression_ids = new Set<number>([380, 381, 382, 383]);
 const _supertype_arrayExpression_ids = new Set<number>([375, 376]);
-const _supertype_condition_ids = new Set<number>([288, 289]);
 const _supertype_matchArm_ids = new Set<number>([405, 406]);
 const _supertype_closureExpression_ids = new Set<number>([378, 379]);
 const _supertype_pattern_ids = new Set<number>([
@@ -580,9 +547,6 @@ const _supertype_integerLiteral_ids = new Set<number>([138, 139, 140, 141]);
 const _supertype_charLiteral_ids = new Set<number>([142, 143]);
 const _supertype_escapeSequence_ids = new Set<number>([148, 149, 150, 151]);
 const _supertype_comment_ids = new Set<number>([337, 340]);
-const _supertype_path_ids = new Set<number>([
-	126, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 129, 127, 128, 1, 263, 52, 33, 53
-]);
 const _supertype_whitespace_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
 const _supertype_charLiteralEscaped_ids = new Set<number>([144, 145, 146, 147]);
 
@@ -734,26 +698,18 @@ export const is = Object.freeze({
 	statement: _sg(_supertype_statement_ids),
 	declarationStatement: _sg(_supertype_declarationStatement_ids),
 	macroDefinition: _sg(_supertype_macroDefinition_ids),
-	tokenPattern: _sg(_supertype_tokenPattern_ids),
 	tokenTreePattern: _sg(_supertype_tokenTreePattern_ids),
-	tokens: _sg(_supertype_tokens_ids),
 	tokenTree: _sg(_supertype_tokenTree_ids),
 	modItem: _sg(_supertype_modItem_ids),
 	foreignModItem: _sg(_supertype_foreignModItem_ids),
 	structItem: _sg(_supertype_structItem_ids),
 	implItem: _sg(_supertype_implItem_ids),
-	useClause: _sg(_supertype_useClause_ids),
 	type: _sg(_supertype_type_ids),
 	pointerType: _sg(_supertype_pointerType_ids),
-	expressionExceptRange: _sg(_supertype_expressionExceptRange_ids),
 	expression: _sg(_supertype_expression_ids),
-	expressionEndingWithBlock: _sg(_supertype_expressionEndingWithBlock_ids),
 	delimTokenTree: _sg(_supertype_delimTokenTree_ids),
-	delimTokens: _sg(new Set<number>()),
-	nonDelimToken: _sg(new Set<number>()),
 	referenceExpression: _sg(_supertype_referenceExpression_ids),
 	arrayExpression: _sg(_supertype_arrayExpression_ids),
-	condition: _sg(_supertype_condition_ids),
 	matchArm: _sg(_supertype_matchArm_ids),
 	closureExpression: _sg(_supertype_closureExpression_ids),
 	pattern: _sg(_supertype_pattern_ids),
@@ -766,7 +722,6 @@ export const is = Object.freeze({
 	charLiteral: _sg(_supertype_charLiteral_ids),
 	escapeSequence: _sg(_supertype_escapeSequence_ids),
 	comment: _sg(_supertype_comment_ids),
-	path: _sg(_supertype_path_ids),
 	whitespace: _sg(_supertype_whitespace_ids),
 	charLiteralEscaped: _sg(_supertype_charLiteralEscaped_ids)
 }) as unknown as IsGuards;

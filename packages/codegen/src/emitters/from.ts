@@ -140,7 +140,7 @@ function buildKindInterner(
 
 function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEntry[] | undefined): void {
 	lines.push(`import * as F from './raw.js';`);
-	lines.push(`import type * as T from '../types.js';`);
+	lines.push(`import type * as T from '../types-internal.js';`);
 	if (kindEntries) {
 		lines.push(`import { TSKindId, KIND_NAMES } from '../types.js';`);
 	}

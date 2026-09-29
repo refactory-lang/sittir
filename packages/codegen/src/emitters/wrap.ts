@@ -717,7 +717,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		this.#rootKind = rootKind;
 		this.#typeImportLine =
 			typeImports.size > 0
-				? ['import type {', ...[...typeImports].sort().map((name) => `  ${name},`), "} from './types.js';"].join('\n')
+				? ['import type {', ...[...typeImports].sort().map((name) => `  ${name},`), "} from './types-internal.js';"].join('\n')
 				: undefined;
 	}
 
@@ -812,7 +812,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			"import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';",
 			...(this.#kindEntries ? ["import { TSKindId, KIND_NAMES } from './types.js';"] : []),
 			DELIMITER_IMPORT,
-			"import type * as T from './types.js';",
+			"import type * as T from './types-internal.js';",
 			...(this.#typeImportLine ? [this.#typeImportLine] : []),
 			"import { withMethods } from './utils.js';",
 			"import * as FR from './factories/coerce.js';",

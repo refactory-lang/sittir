@@ -1142,6 +1142,10 @@ as it always carries its delimiter.
 
 The one mechanism for "import only what the body uses" in every generated TypeScript module. An emitter writes its preamble naming every candidate import, then passes its finished lines and the candidate local names here. The body is every line that is not an `import`; a named import specifier (`X`, or `X as Y` tested by its local name `Y`) whose name has no `\b` use in the body is removed, and an import line left with no specifiers is dropped whole. A namespace import (`import * as X`) is dropped whole when `X` is unused. Keying on the imported name, not on the import's path or line text, keeps it correct wherever the import sits: the `Delimiter` import in the raw factories, the coerce module and wrap; the `@sittir/types` names in the factories, the coerce module and the types module; wrap's `projectInterior` / `TokenInterior` / `TOKEN_INTERIORS`, keyword-storage coercers and `FR` namespace. An emitter keeps a usage flag only where the flag gates a helper it writes, never to choose imports. A grammar that never uses a name (scm and regex have no separated lists and no keyword-presence slots) gets no import of it, so its generated package lints clean.
 
+### `packages/codegen/src/emitters/shared.ts::isDeclaredSupertype`
+
+Whether a node is a supertype the grammar declares (`AssembledSupertype.declared`, stamped at link from the grammar's `supertypes`). Every public surface that exists for supertypes only (the `ir` namespace groups, the `is` guards, the exported union alias and its namespace) reads this one predicate; an undeclared hidden choice keeps its alias in the internal types module and gets no guard. A grammar that wants a public guard for a hidden choice declares it a supertype.
+
 ### `packages/codegen/src/emitters/shared.ts::DELIMITER_IMPORT`
 
 The import line every generated module that names `Delimiter` carries. `Delimiter` is one fact shared by every grammar, declared once in `@sittir/common/utils`; no grammar declares its own. Each emitter writes this line into its preamble and lets `pruneUnusedImports` drop it when the body never names `Delimiter`.
@@ -9694,7 +9698,21 @@ The inventory is the set of literals a parser token spells: a literal counts onl
 // comment (shared.ts).
 ```
 
+### `packages/codegen/src/emitters/types.ts::TypesModules`
+
+The two modules `emitTypesModules` produces: `types`, the public type surface the package index re-exports, and `internal`, the module wrap, the coercers and the raw factories import as `T`.
+
+### `packages/codegen/src/emitters/types.ts::emitTypesModules`
+
+Emits the types module and its internal sibling in one pass. A declared supertype's union alias and namespace go to `types`; an undeclared one goes to `internal`, and `types` imports it back for the interfaces and hints that name it (a type-only import cycle). Which module a supertype lands in is `isDeclaredSupertype`, with no second predicate.
+
+### `packages/codegen/src/emitters/types.ts::internalModule`
+
+The internal types module: everything `types` exports (`export type *`) plus the undeclared supertypes' aliases and namespaces, importing only the public names its aliases use. Consumers that resolve `T.<Name>` for any supertype alias import this module; the package index never re-exports it, so the public type surface has no alias for an undeclared hidden choice.
+
 ### `packages/codegen/src/emitters/types.ts::emitTypes`
+
+The types module of `emitTypesModules`, for callers that need only the public surface.
 
 `FixedTextKindId` is the union of the kind ids `kindIdText` gives a text, so it holds exactly the kinds whose leaf transport renders a bare kind id. `engine.render` accepts it beside the language's nodes.
 
