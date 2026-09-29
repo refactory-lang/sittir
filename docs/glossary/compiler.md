@@ -1691,7 +1691,7 @@ diagnostics (`grammarDiagnostics`: the evaluate-time records, then the front hal
 vocabularies stay separate: a grammar diagnostic blocks through `canProceed: false` at the gate, never through
 `severity: 'fail'`.
 
-`generatedIdTables` is the id tables after `stampVisibleExternals`; generation reads them from the compilation instead of loading and stamping a second copy.
+`generatedIdTables` is the id tables link stamped (`LinkedGrammar.generatedIdTables`); generation reads them from the compilation instead of loading and stamping a second copy.
 
 `package` is the grammar package the compile resolved (`grammarPackage`): generation reads the package's grammar.json, node types and query roles through it, so every step after the compile reads the same package the compile evaluated.
 
@@ -1706,7 +1706,7 @@ caller resolves it once. Hydrate then runs on the collected grammar with
 ### `packages/codegen/src/compiler/compile.ts::diagnoseGrammar`
 
 The one gate over a grammar's final diagnostics, shared by `compileGrammar` and the `grammar-diagnostics` tool so
-the tool reports exactly what generation rejects. It stamps the id tables (`stampVisibleExternals`), then gates
+the tool reports exactly what generation rejects. It gates
 twice, each time with the floors its records are named against. Before link it checks the evaluate-time records
 (`evaluateRecords`, the conflict records `diagnostics/conflicts.ts::conflictRecords` and
 `diagnostics/dynamic-precedence.ts::dynamicPrecedenceRecords`, and when the grammar departs

@@ -88,7 +88,7 @@ import {
 	ruleListParts,
 	type RuleListEntry,
 } from '../dsl/rule-patterns.ts';
-import { assertPredictedKindEntries, catalogRenames, catalogSymbolSource, kindCatalogOf, predictedEntriesOf } from '../dsl/symbol-table.ts';
+import { assertPredictedKindEntries, catalogRenames, catalogSymbolSource, kindCatalogOf, predictedEntriesOf, stampVisibleExternals } from '../dsl/symbol-table.ts';
 import { parsePath, type PathSegment } from '../dsl/transform/transform-path.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
@@ -151,7 +151,8 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 
 export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const include = ctx?.include;
-	const kindEntries = kindCatalogOf(ctx?.generatedIdTables, evaluated);
+	const generatedIdTables = stampVisibleExternals(ctx?.generatedIdTables, evaluated);
+	const kindEntries = kindCatalogOf(generatedIdTables, evaluated);
 	const catalogCtx: KindCatalogCtx = { kindEntries };
 	const raw = stampParserVisibility(collapseRenamedRules(evaluated, catalogCtx), catalogCtx);
 	const supertypes = new Set(raw.supertypes);
@@ -322,7 +323,8 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		refineForms: refineForms.size > 0 ? refineForms : undefined,
 		parentAliasedKinds,
 		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined,
-		variantChildren: variantChildren.size > 0 ? variantChildren : undefined
+		variantChildren: variantChildren.size > 0 ? variantChildren : undefined,
+		generatedIdTables
 	};
 }
 

@@ -1,7 +1,7 @@
 import type { AutomaticVariants } from '../dsl/automatic-variants.ts';
 import type { WhitespaceCollision } from '../dsl/whitespace.ts';
 import type { RuleListEntry } from '../dsl/rule-patterns.ts';
-import type { PredictedKinds } from '../dsl/symbol-table.ts';
+import type { GeneratedIdTables, PredictedKinds } from '../dsl/symbol-table.ts';
 import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, SymbolRef } from '../types/rule.ts';
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
@@ -231,6 +231,7 @@ export interface LinkedGrammar {
 	readonly contentAliasedTo?: ReadonlyMap<string, readonly string[]>;
 	readonly terminalAliasWireIds?: ReadonlyMap<string, readonly number[]>;
 	readonly wordMatcher?: RegExp;
+	readonly generatedIdTables?: GeneratedIdTables;
 }
 
 type DerivedFieldSource = 'enriched' | 'inferred';

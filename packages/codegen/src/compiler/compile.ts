@@ -10,7 +10,7 @@ import { blockedRecords, collectGrammarDiagnosticsForGrammar, evaluateRecords, G
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import { DiagnosticSink, EmitHaltedError, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter } from './types.ts';
-import { stampVisibleExternals, type GeneratedIdTables } from '../dsl/symbol-table.ts';
+import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { diagnoseEvaluationStages, type StageDiagnoses } from './stage.ts';
 import { authoredRuleNames, diagnoseRuleCauses } from './diagnostics/rule-causes.ts';
 import { diagnosePatchSites, labelPatchSites } from './diagnostics/patch-sites.ts';
@@ -52,7 +52,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 		allowDiagnostics: cfg.allowDiagnostics
 	});
 	if (!diagnosis.passed) throw new GrammarDiagnosticError(diagnosis.blocked, diagnosis.grammarDiagnostics);
-	const { stages, grammarDiagnostics, diagnosticRecords, generatedIdTables } = diagnosis;
+	const { stages, grammarDiagnostics, diagnosticRecords } = diagnosis;
 	const { raw, linked, normalized, nodeMap, compilerDiagnostics, slotGroupingDiagnostics } = diagnosis.collected;
 
 	hydrateSlotRefs(nodeMap, {
@@ -64,7 +64,7 @@ export async function compileGrammar(cfg: CompileGrammarConfig): Promise<Compila
 	return {
 		grammar,
 		package: cfg.package,
-		generatedIdTables,
+		generatedIdTables: linked.generatedIdTables,
 		raw,
 		linked,
 		normalized,
@@ -86,7 +86,6 @@ export interface DiagnoseGrammarConfig {
 }
 
 interface GrammarDiagnosisFacts {
-	readonly generatedIdTables?: GeneratedIdTables;
 	readonly stages?: StageDiagnoses;
 	readonly grammarDiagnostics: readonly GrammarDiagnostic[];
 	readonly blocked: readonly GrammarDiagnostic[];
@@ -102,7 +101,6 @@ export type GrammarDiagnosis =
 
 export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 	const { grammar, evaluated, allowDiagnostics } = cfg;
-	const generatedIdTables = stampVisibleExternals(cfg.generatedIdTables, evaluated);
 	const stages = evaluated.stages === undefined ? undefined : diagnoseEvaluationStages(evaluated.stages);
 	const evaluatedRecords = evaluateRecords(evaluated);
 	const evaluateDiagnostics = [
@@ -112,12 +110,12 @@ export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 		...dynamicPrecedenceRecords(evaluated)
 	];
 	const evaluateBlocked = blockedRecords(evaluateDiagnostics, evaluated.expectDiagnostics, allowDiagnostics);
-	if (evaluateBlocked.length > 0) return { passed: false, generatedIdTables, stages, grammarDiagnostics: evaluateDiagnostics, blocked: evaluateBlocked };
+	if (evaluateBlocked.length > 0) return { passed: false, stages, grammarDiagnostics: evaluateDiagnostics, blocked: evaluateBlocked };
 
 	const collected = collectGrammarDiagnosticsForGrammar({
 		rawGrammar: evaluated,
 		include: cfg.include,
-		generatedIdTables
+		generatedIdTables: cfg.generatedIdTables
 	});
 	const diagnosticRecords =
 		stages === undefined
@@ -132,8 +130,8 @@ export function diagnoseGrammar(cfg: DiagnoseGrammarConfig): GrammarDiagnosis {
 		stages === undefined ? [] : diagnosePatchSites({ grammar, sites: labelPatchSites(evaluated.patchSites ?? [], diagnosticRecords) });
 	const grammarDiagnostics = [...evaluateDiagnostics, ...patchSiteDiagnostics, ...collected.diagnostics];
 	const blocked = blockedRecords(grammarDiagnostics, collected.raw.expectDiagnostics, allowDiagnostics);
-	if (blocked.length > 0) return { passed: false, generatedIdTables, stages, grammarDiagnostics, blocked };
-	return { passed: true, generatedIdTables, stages, grammarDiagnostics, blocked, collected, diagnosticRecords };
+	if (blocked.length > 0) return { passed: false, stages, grammarDiagnostics, blocked };
+	return { passed: true, stages, grammarDiagnostics, blocked, collected, diagnosticRecords };
 }
 
 export function assertCompilation(compilation: Compilation): void {

@@ -6597,7 +6597,7 @@ The first catalog row whose `modelKindOfEntry` is `kind`, from an index built on
 
 ### `packages/codegen/src/dsl/symbol-table.ts::stampVisibleExternals`
 
-Marks the rows named in the grammar's `visibleExternals` with `parser.visibleExternal`, returning new tables (idempotent; tables without such rows pass through). `compileGrammar` stamps once and hands the stamped tables to generation on `Compilation.generatedIdTables`; link stamps again at entry so a caller that passes raw tables sees the same fact. Consumers read the stamp, never the grammar's list: `isRenamedEntry` excludes the rows, so `collapseRenamedRules` keeps their kinds, and the slot-preservation check accepts a declared token written as a seam (`rendersAsDeclaredTokenSeam`).
+Marks the rows named in the grammar's `visibleExternals` with `parser.visibleExternal`, returning new tables (idempotent; tables without such rows pass through). Link is its only caller on the compile path: it stamps the tables it is given, reads its catalog from them, and returns them on `LinkedGrammar.generatedIdTables`, which the grammar diagnostics, assemble and `Compilation.generatedIdTables` take, so a caller that passes raw tables to link sees the same fact. Consumers read the stamp, never the grammar's list: `isRenamedEntry` excludes the rows, so `collapseRenamedRules` keeps their kinds, and the slot-preservation check accepts a declared token written as a seam (`rendersAsDeclaredTokenSeam`).
 
 ### `packages/codegen/src/dsl/symbol-table.ts::GeneratedKindEntry`
 
@@ -6774,7 +6774,7 @@ A `catalogSymbolSource` for a grammar whose rules still carry the names the cata
 The `SymbolSource` of a grammar before any parser.c exists: its predicted kind catalog (`predictKindCatalog`), asked through `renameAwareSymbolSource`. A name the grammar leaves undefined has no row, so `hasSymbol` and `isTerminal` are false for it; the failure itself is reported from `RawGrammar.predictedKinds`, never here. Enrich builds one per rule set it classifies (`enrich-ctx.ts::enrichSymbolSource`).
 ### `packages/codegen/src/dsl/symbol-table.ts::kindCatalogOf`
 
-The one route to the kind catalog the front half reads: the parser's rows (with the declared visible externals stamped) when id tables are passed, else the rows evaluate predicted (`RawGrammar.predictedKinds`), ids included. Link, the grammar diagnostics, the diagnostics tool and the upstream compile all read it.
+The one route to the kind catalog the front half reads: the parser's rows, as stamped by the tables' owner (link stamps the declared visible externals before it reads them), when id tables are passed, else the rows evaluate predicted (`RawGrammar.predictedKinds`), ids included. Link, the grammar diagnostics, the diagnostics tool and the upstream compile all read it.
 
 ### `packages/codegen/src/dsl/conflict-resolutions.ts::PolicyStep`
 

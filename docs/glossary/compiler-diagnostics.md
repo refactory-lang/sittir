@@ -406,11 +406,12 @@ One blocking `trivia-line-end-undetermined` error per trivia kind whose `lineTer
 
 The front half of a compile over one evaluated stage: link, normalize and assemble, and the grammar diagnostics
 they report. It needs no parser tables and reads no generate output: the inline list comes from the evaluated
-grammar itself (`RawGrammar.inline`). Collapses renamed rules first
-(`collapseRenamedRules`) and uses that grammar throughout, returning it as `raw`, so the diagnostics, link and the
-caller read one grammar. Link and assemble read one kind catalog (`dsl/symbol-table.ts::kindCatalogOf`): the
-parser's rows when id tables are passed, else the predicted rows, which match the parser's on every field
-including the ids. Builds one `SymbolSource` from the predicted catalog, asked through
+grammar itself (`RawGrammar.inline`). Links the evaluated grammar first; link collapses renamed rules itself and
+returns the id tables it stamped (`LinkedGrammar.generatedIdTables`). The pass then collapses the evaluated grammar
+the same way (`collapseRenamedRules`) and uses that grammar for the rest, returning it as `raw`, so the diagnostics,
+link and the caller read one grammar. Link and assemble read one kind catalog
+(`dsl/symbol-table.ts::kindCatalogOf`) over link's stamped tables: the parser's rows when id tables are passed,
+else the predicted rows, which match the parser's on every field including the ids. Builds one `SymbolSource` from the predicted catalog, asked through
 `dsl/symbol-table.ts::renameAwareSymbolSource` since the rules may still carry pre-rename names, for both alias
 diagnostics. The caller guarantees the prediction built (the gate, or `diagnoseStage`); link asserts it
 (`link.ts::assertPredictedKinds`). Records owned by a kind the grammar's own override orphaned are dropped

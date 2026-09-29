@@ -1375,14 +1375,11 @@ export function predictedKindsOf(
 
 export function kindCatalogOf(
 	tables: GeneratedIdTables | undefined,
-	grammar: {
-		readonly predictedKinds?: PredictedKinds;
-		readonly visibleExternals?: Readonly<Record<string, unknown>>;
-	}
+	grammar: { readonly predictedKinds?: PredictedKinds }
 ): readonly GeneratedKindEntry[] {
 	return tables === undefined
 		? predictedEntriesOf(grammar.predictedKinds)
-		: collectGeneratedKindEntries(stampVisibleExternals(tables, grammar));
+		: collectGeneratedKindEntries(tables);
 }
 
 export function catalogRenames(names: Iterable<string>, entries: readonly KindEntryLike[]): ReadonlyMap<string, string> {
