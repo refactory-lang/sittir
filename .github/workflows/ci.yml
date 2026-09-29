@@ -247,14 +247,11 @@ jobs:
           path: metrics-native.json
           if-no-files-found: warn
 
-  # Rust workspace compile check (spec 012 Phase 1 T007).
-  # A single cargo-check job — clippy, platform matrix, and release
-  # artifacts come in Phase 4 (T053-T057, T064). The parity harness
-  # is gated in its own `rust-parity` job below (T049).
+  # Rust workspace compile check. It needs no other job's output, so it
+  # starts immediately; `napi-build` and `scope-boundaries` wait on it.
   rust:
     name: cargo check --workspace
     runs-on: ubuntu-22.04
-    needs: CI
     steps:
       - uses: actions/checkout@v6
       - name: Install Rust toolchain (stable)
@@ -264,27 +261,13 @@ jobs:
       - name: cargo check --workspace
         run: cargo check --workspace
 
-  # Cross-engine parity harness (spec 012 T049 / FR-012 / SC-001a +
-  # SC-001b). Runs the integration-test crate that loads each
-  # grammar's `test-fixtures.json` and asserts the Rust engine
-  # reproduces the TS engine's captured render + roundtrip outputs.
-  #
-  # **Important: continue-on-error scope** — the JOB-level
-  # `continue-on-error: true` was removed during 016 (Cluster A
-  # post-review) because it was masking fixture data-rot: the python
-  # comprehensions cluster failed for 6 fixtures NOT because of any
-  # template bug but because `test-fixtures.json` was captured at
-  # commit 5c89aeda (pre-spec-012) and never refreshed when readNode +
-  # templates moved on. The "Fixture check" step below is now
-  # ENFORCING (no per-step continue-on-error → step inherits job
-  # default which is fail-on-error). The `cargo test parity` step
-  # below it KEEPS its advisory shape via per-step
-  # `continue-on-error: true` while the `#[ignore]`'d test cases
-  # await the flank-metadata plumbing
-  # (`rust/crates/sittir-parity-tests/tests/parity.rs`). Flip the
-  # parity-test step to enforcing once those tests pass un-ignored.
+  # Fixture drift: regenerating every grammar must reproduce the committed
+  # `test-fixtures.json` files, so a codegen change that shifts the capture
+  # fails here unless its regen output is committed with it. It needs no
+  # other job's output, so it runs alongside them. The parity test itself
+  # runs in `napi-build` on each native target.
   rust-parity:
-    name: cargo test parity (advisory)
+    name: parity fixture drift
     # ubuntu-latest (not ubuntu-22.04, unlike the other rust-* jobs — this
     # one doesn't produce a distributable artifact so there's no glibc-
     # compat target to pin to): the "Regenerate fixtures" step's `npx tsx
@@ -293,7 +276,6 @@ jobs:
     # ubuntu-22.04's 2.35 doesn't have. `CI (24.x)` already runs the same
     # codegen path successfully on ubuntu-latest.
     runs-on: ubuntu-latest
-    needs: rust
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm
@@ -309,45 +291,15 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
-      # Fixture extraction (below) requires a NATIVE engine loaded via
-      # backend: 'native' — without a freshly built release .node, it
-      # silently sees 0 candidates. This job never built one before, so
-      # "Regenerate fixtures" was either producing an empty extraction
-      # (masked by the "Fixture check" glob bug below, now fixed) or —
-      # after emitParityFixtures's clobber guard was added — would fail
-      # outright instead. Build once, host-platform-only (no --target /
-      # cross-compile matrix needed here, unlike napi-build/napi-publish).
-      - name: Build native release bindings (for fixture extraction)
-        run: |
-          for crate in rust typescript python; do
-            pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release
-          done
       - name: Regenerate fixtures
-        # The test-fixtures.json files are checked in, but regenerating
-        # here catches drift between committed fixtures and current
-        # render behavior — the pipeline fails LOUDLY if a codegen
-        # change silently shifts the capture without a matching commit.
+        # `gen --all` rebuilds each grammar's release binding before it
+        # extracts fixtures. The workspace cargo check is the `rust` job's.
         run: |
-          npx tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
-          npx tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
-          npx tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
+          for grammar in rust typescript python; do
+            npx tsx packages/cli/src/cli.ts gen --grammar "$grammar" --all --no-workspace-check --output "packages/$grammar/src"
+          done
       - name: Fixture check — no drift from committed
-        # ENFORCING (no per-step continue-on-error). 016 Cluster A
-        # established that fixture drift → silent data-rot → 6
-        # parity tests failing for the wrong reason. Failing CI
-        # forces the next maintainer to commit the regen output
-        # alongside whatever codegen change caused the drift.
-        #
-        # Path fixed to match the real output location (no `render/`
-        # segment — see packages/codegen/src/emitters/render-module-paths.ts).
-        # The old glob matched zero files, so this check was a permanent
-        # no-op regardless of what "Regenerate fixtures" actually did.
         run: git diff --exit-code rust/crates/sittir-*/test-fixtures.json
-      - name: cargo test parity (--ignored for diagnostic)
-        # Advisory until #[ignore]'d tests pass un-ignored — see job
-        # docstring above.
-        continue-on-error: true
-        run: cargo test -p sittir-parity-tests --test parity -- --ignored --nocapture
 
   # Spec 012 Phase 4 — platform matrix for napi `.node` artifact builds
   # (T053 macOS arm64/x64, T054 Linux x64 glibc/musl, T055 Linux arm64

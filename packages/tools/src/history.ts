@@ -114,7 +114,11 @@ export function commitHistory(message: string): void {
 	}
 }
 
-/** Read all past validation runs from the history file, skipping non-run lines (e.g. schema headers). */
+/**
+ * Read all past validation runs from the history file, oldest first, skipping
+ * non-run lines (e.g. schema headers). Runs are ordered by `ts`, not file
+ * position: a union merge of two branches' appends interleaves their rows.
+ */
 export function readHistory(): ValidationRun[] {
 	const path = getHistoryPath();
 	if (!existsSync(path)) return [];
@@ -122,7 +126,8 @@ export function readHistory(): ValidationRun[] {
 		.split('\n')
 		.filter((line) => line.trim() && !line.startsWith('//'))
 		.map((line) => JSON.parse(line) as unknown)
-		.filter(isValidationRun);
+		.filter(isValidationRun)
+		.sort((a, b) => (a.ts < b.ts ? -1 : a.ts > b.ts ? 1 : 0));
 }
 
 /** Resolve the absolute path to the history file (useful for tooling). */
