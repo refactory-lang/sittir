@@ -12341,10 +12341,9 @@ A supertype gets an ir namespace if and only if the grammar declares it (`Assemb
 
 No emitted code attaches properties to a factory: a factory is shared under
 every key that reaches it, so a mutation made for one key shows under all
-of them. Only a declared supertype gets a group. A flattened parent whose key is also a flat leaf's key reaches that
-leaf as its default arm (`flattenedVariantParents`), so `ir.<key>` is the
-parent's own route object, not the leaf's builder. A supertype group whose
-name is a flat key throws.
+of them. Only a declared supertype gets a group. A flattened parent whose key is also
+a flat leaf's key throws (`flattenedVariantParents`), as does a supertype
+group whose name is a flat key: two surfaces never share one `ir` key.
 
 A group lists a surface-hidden member only when it is a punctuation leaf
 with a builder (`isBuilderTextLeaf`), which gives `ir.whitespace` its

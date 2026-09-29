@@ -350,8 +350,11 @@ sees no literal there; the slot types as `string` and its guard is the pattern.
 Derives `typeName` (`kindTypeName`), `irKey` (`irKeyOfTypeName` of the type
 name) and `factoryName` (the ir key, suffixed `_` when it is a reserved word)
 from a kind key, so the `AssembledNodeBase` constructor names every node the
-same way and a kind's type name and ir key differ only in the case of their
-first letter. A key whose Pascal form starts with a digit is prefixed
+same way: the ir key is always read off the type name, never cased from the
+kind separately. `irKeyOfTypeName` strips the type name's leading underscores
+and lower-cases its first letter, so a collision-renamed hidden kind keeps its
+underscore in the type name but not in the key (`_identifier` has type name
+`_Identifier` and ir key `identifier`). A key whose Pascal form starts with a digit is prefixed
 `Tok_`/`tok_`. The derivations are not injective (C's
 `_alignof_keyword` and `_Alignof_keyword` both give `AlignofKeyword`); assemble's
 type-name renames resolve that as a naming event.
