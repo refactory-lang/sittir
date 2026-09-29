@@ -89,7 +89,7 @@ describe('loose trivia strings build ir.comment', () => {
 	});
 
 	it('takes an eligible whitespace kind, built or spelled exactly, as its kind id', () => {
-		const built = rs.build.identifier('a').$trivia.leading(rs.build.whitespace.blankline());
+		const built = rs.build.identifier('a').$trivia.leading(rs.build.whitespace.blankline);
 		const spelled = rs.build.identifier('a').$trivia.leading('\n\n');
 		expect(built.$trivia.leading()).toEqual([rs.kinds.Blankline]);
 		expect(spelled.$trivia.leading()).toEqual([rs.kinds.Blankline]);
@@ -98,25 +98,25 @@ describe('loose trivia strings build ir.comment', () => {
 	it('refuses whitespace kinds the extras do not match, for the one reason that they are not extras', () => {
 		const a = (): ReturnType<typeof ir.identifier> => rs.build.identifier('a');
 		// @ts-expect-error tight is not an extra, so it is no trivia entry
-		expect(() => a().$trivia.leading(rs.build.whitespace.tight())).toThrow(/_tight is not an extra/);
+		expect(() => a().$trivia.leading(rs.build.whitespace.tight)).toThrow(/_tight is not an extra/);
 		// @ts-expect-error indent is not an extra, so it is no trivia entry
-		expect(() => a().$trivia.leading(rs.build.whitespace.indent())).toThrow(/_indent is not an extra/);
+		expect(() => a().$trivia.leading(rs.build.whitespace.indent)).toThrow(/_indent is not an extra/);
 		// @ts-expect-error dedent is not an extra, so it is no trivia entry
-		expect(() => a().$trivia.leading(rs.build.whitespace.dedent())).toThrow(/_dedent is not an extra/);
+		expect(() => a().$trivia.leading(rs.build.whitespace.dedent)).toThrow(/_dedent is not an extra/);
 	});
 
 	it('renders a whitespace entry in place of the spacing of the gap it sits in', () => {
 		const stmt = (name: string): ReturnType<typeof ir.expressionStatement> =>
 			rs.build.expressionStatement(rs.build.identifier(name));
 		expect(rs.build.block({ statements: [stmt('a'), stmt('b')] }).$render()).toBe('{\n    a;\n    b;\n}');
-		const spaced = rs.build.block({ statements: [stmt('a'), stmt('b').$trivia.leading(rs.build.whitespace.blankline())] });
+		const spaced = rs.build.block({ statements: [stmt('a'), stmt('b').$trivia.leading(rs.build.whitespace.blankline)] });
 		expect(spaced.$render()).toBe('{\n    a;\n\n    b;\n}');
-		const joined = rs.build.block({ statements: [stmt('a'), stmt('b').$trivia.leading(rs.build.whitespace.space())] });
+		const joined = rs.build.block({ statements: [stmt('a'), stmt('b').$trivia.leading(rs.build.whitespace.space)] });
 		expect(joined.$render()).toBe('{\n    a; b;\n}');
-		const afterComment = rs.build.block({ statements: [stmt('a'), stmt('b').$trivia.leading('// c', rs.build.whitespace.blankline())] });
+		const afterComment = rs.build.block({ statements: [stmt('a'), stmt('b').$trivia.leading('// c', rs.build.whitespace.blankline)] });
 		expect(afterComment.$render()).toBe('{\n    a;\n    // c\n\n    b;\n}');
-		const keepsBreak = rs.build.block({ statements: [stmt('a'), stmt('b').$trivia.leading('// c', rs.build.whitespace.space())] });
+		const keepsBreak = rs.build.block({ statements: [stmt('a'), stmt('b').$trivia.leading('// c', rs.build.whitespace.space)] });
 		expect(keepsBreak.$render()).toBe('{\n    a;\n    // c\n    b;\n}');
-		expect(innerOf(rs.build.block()).inner(rs.build.whitespace.blankline()).$render()).toBe('{\n\n}');
+		expect(innerOf(rs.build.block()).inner(rs.build.whitespace.blankline).$render()).toBe('{\n\n}');
 	});
 });

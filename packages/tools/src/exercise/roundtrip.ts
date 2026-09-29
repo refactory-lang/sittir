@@ -1,9 +1,8 @@
 import type { AnyNodeData } from '@sittir/types';
-import type { ReadNodeLike } from '../validate/common.ts';
+import type { FactoryEntry, ReadNodeLike } from '../validate/common.ts';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
-type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements' | 'forwarded';
-type FactoryFn = (...args: readonly unknown[]) => unknown;
+import type { FactoryShape } from '../codegen-surface.ts';
 type FactorySlotMeta = {
 	readonly unnamed: boolean;
 	readonly required: boolean;
@@ -62,7 +61,7 @@ interface CommonModule {
 		data: ReadNodeLike,
 		opts?: {
 			tree?: ReadHandle;
-			factoryMap?: Record<string, FactoryFn>;
+			factoryMap?: Record<string, FactoryEntry>;
 			factoryShapes?: Record<string, FactoryShape>;
 			fieldAliasMap?: Record<string, Record<string, string>>;
 			factoryFields?: Record<string, readonly string[]>;
@@ -103,7 +102,7 @@ interface TreeSitterNode {
 }
 
 interface FactoryArtifacts {
-	readonly factoryMap: Record<string, FactoryFn>;
+	readonly factoryMap: Record<string, FactoryEntry>;
 	readonly factoryShapes: Record<string, FactoryShape>;
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
 	readonly factoryFields: Record<string, readonly string[]>;
@@ -159,7 +158,7 @@ async function loadCommon(): Promise<CommonModule> {
 }
 
 export async function loadFactoryArtifacts(grammar: GrammarName): Promise<FactoryArtifacts> {
-	const factoryModule: { _factoryMap?: Record<string, FactoryFn> } = await import(
+	const factoryModule: { _factoryMap?: Record<string, FactoryEntry> } = await import(
 		new URL(factoryModulePath(grammar), import.meta.url).pathname
 	);
 	// PR-K: validator factory metadata now lives in node-model.json5, read via
@@ -216,10 +215,10 @@ function toRenderableNode(value: unknown, seen = new WeakMap<object, unknown>())
 }
 
 function resolveFactory(
-	factoryMap: Record<string, FactoryFn>,
+	factoryMap: Record<string, FactoryEntry>,
 	kind: string
 ): {
-	readonly factory: FactoryFn | undefined;
+	readonly factory: FactoryEntry | undefined;
 	readonly resolvedKind: string;
 } {
 	const direct = factoryMap[kind];

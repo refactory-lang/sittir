@@ -452,7 +452,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
       "text": "\n\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_character_escape",
@@ -495,7 +495,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
       "text": "\n\n\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_newline",
@@ -507,7 +507,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
       "text": "\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_tight",
@@ -519,7 +519,7 @@
       "isParameterless": true,
       "stampExpression": "\"\" as const",
       "text": "",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_whitespace",
@@ -619,7 +619,7 @@
       "isParameterless": true,
       "stampExpression": "\".\" as const",
       "text": ".",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "backreference_escape",
@@ -691,7 +691,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\\\b\" as const",
       "text": "\\b",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "bslash_dash",
@@ -1278,7 +1278,7 @@
       "isParameterless": true,
       "stampExpression": "\"$\" as const",
       "text": "$",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "eq",
@@ -2028,7 +2028,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\\\B\" as const",
       "text": "\\B",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "non_capturing_group",
@@ -2277,7 +2277,7 @@
       "isParameterless": true,
       "stampExpression": "\"^\" as const",
       "text": "^",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "term",

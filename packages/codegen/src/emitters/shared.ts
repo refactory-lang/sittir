@@ -606,7 +606,7 @@ export function resolveFieldStorageInfo(
 	return field.storageInfo;
 }
 
-export type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements' | 'forwarded';
+export type FactoryShape = 'config' | 'spread' | 'text' | 'constant' | 'direct' | 'elements' | 'forwarded';
 export type ChildFactorySurface = 'direct' | 'spread';
 
 export function stringConstructibleTexts(kind: string, nodeMap: NodeMap): string[] {
@@ -866,6 +866,7 @@ export function classifyFactoryShape(
 	nodeMap: NodeMap,
 	options?: { includeTokenText?: boolean }
 ): FactoryShape | null {
+	if (isBuilderTextLeaf(node)) return 'constant';
 	if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrBuilderTextLeaf(node)) return 'text';
 	if (isBuilderlessPunctuationLeaf(node)) return options?.includeTokenText ? 'text' : null;
 	if (node instanceof AssembledList) return 'elements';

@@ -1472,6 +1472,10 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 // delimiters can't be reconstructed from children.
 ```
 
+### `packages/tools/src/validate/common.ts::FactoryEntry`
+
+One entry of a factory map: the factory function of a kind, or, for a `constant`-shaped kind (a keyword or punctuation kind with a build entry), the value itself. The dispatch returns a constant entry as it is and calls every other.
+
 ### `packages/tools/src/validate/common.ts::carryTrivia`
 
 ```text

@@ -74,8 +74,8 @@ describe('export_specifier', () => {
 });
 
 describe('import', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.import()).toBe(TSKindId.Import);
+	it('is the kind id', () => {
+		expect(ir.import).toBe(TSKindId.Import);
 	});
 });
 
@@ -822,8 +822,8 @@ describe('throw_statement', () => {
 });
 
 describe('empty_statement', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.emptyStatement()).toBe(TSKindId.EmptyStatement);
+	it('is the kind id', () => {
+		expect(ir.emptyStatement).toBe(TSKindId.EmptyStatement);
 	});
 });
 
@@ -1367,8 +1367,8 @@ describe('arrow_function sub-factories', () => {
 });
 
 describe('optional_chain', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.optionalChain()).toBe(TSKindId.OptionalChain);
+	it('is the kind id', () => {
+		expect(ir.optionalChain).toBe(TSKindId.OptionalChain);
 	});
 });
 
@@ -1736,38 +1736,38 @@ describe('private_property_identifier', () => {
 });
 
 describe('this', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.this()).toBe(TSKindId.This);
+	it('is the kind id', () => {
+		expect(ir.this).toBe(TSKindId.This);
 	});
 });
 
 describe('super', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.super()).toBe(TSKindId.Super);
+	it('is the kind id', () => {
+		expect(ir.super).toBe(TSKindId.Super);
 	});
 });
 
 describe('true', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.true()).toBe(TSKindId.True);
+	it('is the kind id', () => {
+		expect(ir.true).toBe(TSKindId.True);
 	});
 });
 
 describe('false', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.false()).toBe(TSKindId.False);
+	it('is the kind id', () => {
+		expect(ir.false).toBe(TSKindId.False);
 	});
 });
 
 describe('null', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.null()).toBe(TSKindId.Null);
+	it('is the kind id', () => {
+		expect(ir.null).toBe(TSKindId.Null);
 	});
 });
 
 describe('undefined', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.undefined()).toBe(TSKindId.Undefined);
+	it('is the kind id', () => {
+		expect(ir.undefined).toBe(TSKindId.Undefined);
 	});
 });
 
@@ -2996,8 +2996,8 @@ describe('type_alias_declaration', () => {
 });
 
 describe('override_modifier', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.overrideModifier()).toBe(TSKindId.OverrideModifier);
+	it('is the kind id', () => {
+		expect(ir.overrideModifier).toBe(TSKindId.OverrideModifier);
 	});
 });
 
@@ -3817,8 +3817,8 @@ describe('literal_type sub-factories', () => {
 });
 
 describe('existential_type', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.existentialType()).toBe(TSKindId.ExistentialType);
+	it('is the kind id', () => {
+		expect(ir.existentialType).toBe(TSKindId.ExistentialType);
 	});
 });
 
@@ -4495,8 +4495,8 @@ describe('export_statement_equals_export', () => {
 });
 
 describe('empty_member', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.emptyMember()).toBe(TSKindId.EmptyMember);
+	it('is the kind id', () => {
+		expect(ir.emptyMember).toBe(TSKindId.EmptyMember);
 	});
 });
 
@@ -5720,14 +5720,14 @@ describe('export_statement_default_declaration sub-factories', () => {
 });
 
 describe('meta_property_new_target', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.metaPropertyNewTarget()).toBe(TSKindId.MetaPropertyNewTarget);
+	it('is the kind id', () => {
+		expect(ir.metaPropertyNewTarget).toBe(TSKindId.MetaPropertyNewTarget);
 	});
 });
 
 describe('meta_property_import_meta', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.metaPropertyImportMeta()).toBe(TSKindId.MetaPropertyImportMeta);
+	it('is the kind id', () => {
+		expect(ir.metaPropertyImportMeta).toBe(TSKindId.MetaPropertyImportMeta);
 	});
 });
 
@@ -5759,13 +5759,13 @@ describe('_template_chars', () => {
 });
 
 describe('_automatic_semicolon', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.automaticSemicolon()).toBe(TSKindId.AutomaticSemicolon);
+	it('is the kind id', () => {
+		expect(ir.automaticSemicolon).toBe(TSKindId.AutomaticSemicolon);
 	});
 });
 
 describe('_function_signature_automatic_semicolon', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.functionSignatureAutomaticSemicolon()).toBe(TSKindId.FunctionSignatureAutomaticSemicolon);
+	it('is the kind id', () => {
+		expect(ir.functionSignatureAutomaticSemicolon).toBe(TSKindId.FunctionSignatureAutomaticSemicolon);
 	});
 });

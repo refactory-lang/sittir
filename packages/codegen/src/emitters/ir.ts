@@ -273,7 +273,7 @@ function factoryRef(node: AssembledNode): string {
 }
 
 function returnTypeExpr(node: AssembledNode): string {
-	return `ReturnType<typeof ${factoryRef(node)}>`;
+	return isBuilderTextLeaf(node) ? `typeof ${factoryRef(node)}` : `ReturnType<typeof ${factoryRef(node)}>`;
 }
 
 function emitSynonymNamespace(grammarRoles: GrammarRoles, nodeMap: NodeMap): string[] {
@@ -315,7 +315,7 @@ function emitSynonymBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 	if (trueNode && falseNode) {
 		const retType = `${returnTypeExpr(trueNode)} | ${returnTypeExpr(falseNode)}`;
 		fns.push(`  boolean(value: boolean): ${retType} {`);
-		fns.push(`    return value ? ${factoryRef(trueNode)}() : ${factoryRef(falseNode)}();`);
+		fns.push(`    return value ? ${factoryRef(trueNode)} : ${factoryRef(falseNode)};`);
 		fns.push('  },');
 		return;
 	}

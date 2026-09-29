@@ -440,7 +440,7 @@ A slot's kinds as the loose surface sees them: supertypes expand to their subtyp
 
 An alias kind's entry returns its argument unchanged: the printed source is the content, which the parent's builder wraps.
 
-A text-shaped keyword or punctuation kind (`PrintContext.keywordKinds`) prints as its kind id (`kinds.PassStatement`), the same spelling every other keyword leaf gets: the leaf is its kind id and has no factory call to spell. Every other text kind prints its text as the one argument.
+A `constant`-shaped kind, a keyword or punctuation kind with a build entry, prints as that entry (`build.passStatement`): the entry is the kind id, so there is no call to spell. A text-shaped keyword or punctuation kind (`PrintContext.keywordKinds`), one with no build entry, prints as its kind id (`kinds.Semi`). Every other text kind prints its text as the one argument.
 
 #### body
 
@@ -591,6 +591,8 @@ The no-argument call of a config-shaped node whose config printed empty.
 ### `packages/tools/src/emit/factory-source.ts::emitFactorySourceText`
 
 The generated file destructures the engine once, `const { build, kinds } = await createEngine(<grammar>);`, naming only the members the printed body uses (`ENGINE_MEMBERS`; a body that uses neither awaits `createEngine` unbound). Every printed factory path is `build.<path>` and every kind id `kinds.<Member>`; the two prefixes are the one pair of constants `BUILD` and `KINDS`, read by the kind-id printer, the loose kind tag and the mounted-path printer.
+
+The factory map handed to the dispatch holds, for a `constant`-shaped kind, the printed value of its build entry (`constantsAsValues`), the same shape a runtime factory map holds; every other kind keeps its printing function.
 
 #### body
 

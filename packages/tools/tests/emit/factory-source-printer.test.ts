@@ -70,6 +70,10 @@ describe('printValue', () => {
 		expect(expectPrinted(map.pass_statement!('pass')).source).toBe('kinds.PassStatement');
 		expect(expectPrinted(map.identifier!('x')).source).toBe('ir.identifier("x")');
 	});
+	it('prints a constant-shaped kind as its build entry, with no call', () => {
+		const map = printingFactoryMap({ pass_statement: 'constant' }, (k) => ({ pass_statement: 11 })[k], ctx);
+		expect(expectPrinted(map.pass_statement!()).source).toBe('ir.pass_statement');
+	});
 	it('prints a mounted form with its given arguments and no trailing undefined', () => {
 		const map = printingFactoryMap(
 			{ visibility_modifier: 'config', visibility_modifier_pub: 'direct', identifier: 'text' },

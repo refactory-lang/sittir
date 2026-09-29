@@ -278,9 +278,9 @@ interface _LeafEntry {
 }
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	hash_bang_line: { factory: (content: string) => _resolveByKind('hash_bang_line', content) },
-	import: { values: ['import'], factory: () => F.buildImport() },
-	empty_statement: { values: [';'], factory: () => F.buildEmptyStatement() },
-	optional_chain: { values: ['?.'], factory: () => F.buildOptionalChain() },
+	import: { values: ['import'], factory: () => F.buildImport },
+	empty_statement: { values: [';'], factory: () => F.buildEmptyStatement },
+	optional_chain: { values: ['?.'], factory: () => F.buildOptionalChain },
 	unescaped_double_string_fragment: {
 		pattern: /^(?:(?:[^"\\\r\n]+))$/u,
 		factory: F.buildUnescapedDoubleStringFragment
@@ -301,14 +301,14 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		factory: F.buildIdentifier
 	},
 	private_property_identifier: { factory: (content: string) => _resolveByKind('private_property_identifier', content) },
-	this: { values: ['this'], factory: () => F.buildThis() },
-	super: { values: ['super'], factory: () => F.buildSuper() },
-	true: { values: ['true'], factory: () => F.buildTrue() },
-	false: { values: ['false'], factory: () => F.buildFalse() },
-	null: { values: ['null'], factory: () => F.buildNull() },
-	undefined: { values: ['undefined'], factory: () => F.buildUndefined() },
-	override_modifier: { values: ['override'], factory: () => F.buildOverrideModifier() },
-	existential_type: { values: ['*'], factory: () => F.buildExistentialType() },
+	this: { values: ['this'], factory: () => F.buildThis },
+	super: { values: ['super'], factory: () => F.buildSuper },
+	true: { values: ['true'], factory: () => F.buildTrue },
+	false: { values: ['false'], factory: () => F.buildFalse },
+	null: { values: ['null'], factory: () => F.buildNull },
+	undefined: { values: ['undefined'], factory: () => F.buildUndefined },
+	override_modifier: { values: ['override'], factory: () => F.buildOverrideModifier },
+	existential_type: { values: ['*'], factory: () => F.buildExistentialType },
 	comment_line: { factory: (content: string) => _resolveByKind('comment_line', content) },
 	comment_block: { factory: (content: string) => _resolveByKind('comment_block', content) },
 	number_hex: {
@@ -358,25 +358,25 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	number_bigint_binary: { factory: (content: string) => _resolveByKind('number_bigint_binary', content) },
 	number_bigint_octal: { factory: (content: string) => _resolveByKind('number_bigint_octal', content) },
 	number_bigint_decimal: { factory: (content: string) => _resolveByKind('number_bigint_decimal', content) },
-	empty_member: { values: [';'], factory: () => F.buildEmptyMember() },
-	meta_property_new_target: { values: ['new.target'], factory: () => F.buildMetaPropertyNewTarget() },
-	meta_property_import_meta: { values: ['import.meta'], factory: () => F.buildMetaPropertyImportMeta() },
+	empty_member: { values: [';'], factory: () => F.buildEmptyMember },
+	meta_property_new_target: { values: ['new.target'], factory: () => F.buildMetaPropertyNewTarget },
+	meta_property_import_meta: { values: ['import.meta'], factory: () => F.buildMetaPropertyImportMeta },
 	html_comment: { pattern: /^(?:(?:<!--[\s\S]*?-->))$/u, factory: F.buildHtmlComment },
 	jsx_text: { pattern: /^(?:(?:[^{}<>]+))$/u, factory: F.buildJsxText },
 	_template_chars: { pattern: /^(?:(?:[^`\\$]+))$/u, factory: F.buildTemplateChars },
-	_automatic_semicolon: { values: ['\n'], factory: () => F.buildAutomaticSemicolon() },
+	_automatic_semicolon: { values: ['\n'], factory: () => F.buildAutomaticSemicolon },
 	_function_signature_automatic_semicolon: {
 		values: ['\n'],
-		factory: () => F.buildFunctionSignatureAutomaticSemicolon()
+		factory: () => F.buildFunctionSignatureAutomaticSemicolon
 	},
-	_tight: { values: [''], factory: () => F.buildTight() },
-	_space: { values: [' '], factory: () => F.buildSpace() },
-	_tab: { values: ['\t'], factory: () => F.buildTab() },
-	_newline: { values: ['\n'], factory: () => F.buildNewline() },
-	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline() },
-	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline() },
-	_indent: { values: ['﷐\n'], factory: () => F.buildIndent() },
-	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent() },
+	_tight: { values: [''], factory: () => F.buildTight },
+	_space: { values: [' '], factory: () => F.buildSpace },
+	_tab: { values: ['\t'], factory: () => F.buildTab },
+	_newline: { values: ['\n'], factory: () => F.buildNewline },
+	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline },
+	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline },
+	_indent: { values: ['﷐\n'], factory: () => F.buildIndent },
+	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent },
 	statement_identifier: {
 		pattern:
 			/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u,
@@ -2768,8 +2768,8 @@ export function coerceToExportSpecifier(input: T.ExportSpecifier.Loose): ReturnT
 	});
 }
 
-export function coerceToImport(_input?: T.Import.Loose): ReturnType<typeof F.buildImport> {
-	return F.buildImport();
+export function coerceToImport(_input?: T.Import.Loose): typeof F.buildImport {
+	return F.buildImport;
 }
 
 export function resolveImportStatement_importClause(
@@ -3448,8 +3448,8 @@ export function coerceToThrowStatement(
 	);
 }
 
-export function coerceToEmptyStatement(_input?: T.EmptyStatement.Loose): ReturnType<typeof F.buildEmptyStatement> {
-	return F.buildEmptyStatement();
+export function coerceToEmptyStatement(_input?: T.EmptyStatement.Loose): typeof F.buildEmptyStatement {
+	return F.buildEmptyStatement;
 }
 
 export function resolveLabeledStatement_label(
@@ -4814,8 +4814,8 @@ export function coerceToArrowFunction(input: T.ArrowFunction.Loose): ReturnType<
 	});
 }
 
-export function coerceToOptionalChain(_input?: T.OptionalChain.Loose): ReturnType<typeof F.buildOptionalChain> {
-	return F.buildOptionalChain();
+export function coerceToOptionalChain(_input?: T.OptionalChain.Loose): typeof F.buildOptionalChain {
+	return F.buildOptionalChain;
 }
 
 export function resolveNewExpression_constructor_(
@@ -5768,28 +5768,28 @@ export function coerceToPrivatePropertyIdentifier(
 	);
 }
 
-export function coerceToThis(_input?: T.This.Loose): ReturnType<typeof F.buildThis> {
-	return F.buildThis();
+export function coerceToThis(_input?: T.This.Loose): typeof F.buildThis {
+	return F.buildThis;
 }
 
-export function coerceToSuper(_input?: T.Super.Loose): ReturnType<typeof F.buildSuper> {
-	return F.buildSuper();
+export function coerceToSuper(_input?: T.Super.Loose): typeof F.buildSuper {
+	return F.buildSuper;
 }
 
-export function coerceToTrue(_input?: T.True.Loose): ReturnType<typeof F.buildTrue> {
-	return F.buildTrue();
+export function coerceToTrue(_input?: T.True.Loose): typeof F.buildTrue {
+	return F.buildTrue;
 }
 
-export function coerceToFalse(_input?: T.False.Loose): ReturnType<typeof F.buildFalse> {
-	return F.buildFalse();
+export function coerceToFalse(_input?: T.False.Loose): typeof F.buildFalse {
+	return F.buildFalse;
 }
 
-export function coerceToNull(_input?: T.Null.Loose): ReturnType<typeof F.buildNull> {
-	return F.buildNull();
+export function coerceToNull(_input?: T.Null.Loose): typeof F.buildNull {
+	return F.buildNull;
 }
 
-export function coerceToUndefined(_input?: T.Undefined.Loose): ReturnType<typeof F.buildUndefined> {
-	return F.buildUndefined();
+export function coerceToUndefined(_input?: T.Undefined.Loose): typeof F.buildUndefined {
+	return F.buildUndefined;
 }
 
 export function coerceToArguments(): T.EmptyArguments;
@@ -7940,10 +7940,8 @@ export function coerceToTypeAliasDeclaration(
 	);
 }
 
-export function coerceToOverrideModifier(
-	_input?: T.OverrideModifier.Loose
-): ReturnType<typeof F.buildOverrideModifier> {
-	return F.buildOverrideModifier();
+export function coerceToOverrideModifier(_input?: T.OverrideModifier.Loose): typeof F.buildOverrideModifier {
+	return F.buildOverrideModifier;
 }
 
 export function resolveRequiredParameter_decorators(
@@ -9180,8 +9178,8 @@ export function coerceToLiteralType(input: T.LiteralType.Loose): ReturnType<type
 	);
 }
 
-export function coerceToExistentialType(_input?: T.ExistentialType.Loose): ReturnType<typeof F.buildExistentialType> {
-	return F.buildExistentialType();
+export function coerceToExistentialType(_input?: T.ExistentialType.Loose): typeof F.buildExistentialType {
+	return F.buildExistentialType;
 }
 
 export function resolveFlowMaybeType_type(value: T.FlowMaybeType.LooseConfig['type']): T.FlowMaybeType['_type'] {
@@ -11142,8 +11140,8 @@ export function coerceToBinaryExpressionIn(
 	});
 }
 
-export function coerceToEmptyMember(_input?: T.EmptyMember.Loose): ReturnType<typeof F.buildEmptyMember> {
-	return F.buildEmptyMember();
+export function coerceToEmptyMember(_input?: T.EmptyMember.Loose): typeof F.buildEmptyMember {
+	return F.buildEmptyMember;
 }
 
 export function resolveClassBodyMethod_decorators(
@@ -12333,14 +12331,14 @@ export function coerceToVariableDeclaratorDefinite(
 
 export function coerceToMetaPropertyNewTarget(
 	_input?: T.MetaPropertyNewTarget.Loose
-): ReturnType<typeof F.buildMetaPropertyNewTarget> {
-	return F.buildMetaPropertyNewTarget();
+): typeof F.buildMetaPropertyNewTarget {
+	return F.buildMetaPropertyNewTarget;
 }
 
 export function coerceToMetaPropertyImportMeta(
 	_input?: T.MetaPropertyImportMeta.Loose
-): ReturnType<typeof F.buildMetaPropertyImportMeta> {
-	return F.buildMetaPropertyImportMeta();
+): typeof F.buildMetaPropertyImportMeta {
+	return F.buildMetaPropertyImportMeta;
 }
 
 export function resolveForHeaderLhs_left(value: T.ForHeaderLhs.LooseConfig['left']): T.ForHeaderLhs['_left'] {
@@ -12489,48 +12487,46 @@ export function coerceToTemplateChars(input: T.TemplateChars.Loose): ReturnType<
 	return F.buildTemplateChars(input as Parameters<typeof F.buildTemplateChars>[0]);
 }
 
-export function coerceToAutomaticSemicolon(
-	_input?: T.AutomaticSemicolon.Loose
-): ReturnType<typeof F.buildAutomaticSemicolon> {
-	return F.buildAutomaticSemicolon();
+export function coerceToAutomaticSemicolon(_input?: T.AutomaticSemicolon.Loose): typeof F.buildAutomaticSemicolon {
+	return F.buildAutomaticSemicolon;
 }
 
 export function coerceToFunctionSignatureAutomaticSemicolon(
 	_input?: T.FunctionSignatureAutomaticSemicolon.Loose
-): ReturnType<typeof F.buildFunctionSignatureAutomaticSemicolon> {
-	return F.buildFunctionSignatureAutomaticSemicolon();
+): typeof F.buildFunctionSignatureAutomaticSemicolon {
+	return F.buildFunctionSignatureAutomaticSemicolon;
 }
 
-export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.buildTight> {
-	return F.buildTight();
+export function coerceToTight(_input?: T.Tight.Loose): typeof F.buildTight {
+	return F.buildTight;
 }
 
-export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
-	return F.buildSpace();
+export function coerceToSpace(_input?: T.Space.Loose): typeof F.buildSpace {
+	return F.buildSpace;
 }
 
-export function coerceToTab(_input?: T.Tab.Loose): ReturnType<typeof F.buildTab> {
-	return F.buildTab();
+export function coerceToTab(_input?: T.Tab.Loose): typeof F.buildTab {
+	return F.buildTab;
 }
 
-export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {
-	return F.buildNewline();
+export function coerceToNewline(_input?: T.Newline.Loose): typeof F.buildNewline {
+	return F.buildNewline;
 }
 
-export function coerceToBlankline(_input?: T.Blankline.Loose): ReturnType<typeof F.buildBlankline> {
-	return F.buildBlankline();
+export function coerceToBlankline(_input?: T.Blankline.Loose): typeof F.buildBlankline {
+	return F.buildBlankline;
 }
 
-export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): ReturnType<typeof F.buildDoubleBlankline> {
-	return F.buildDoubleBlankline();
+export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeof F.buildDoubleBlankline {
+	return F.buildDoubleBlankline;
 }
 
-export function coerceToIndent(_input?: T.Indent.Loose): ReturnType<typeof F.buildIndent> {
-	return F.buildIndent();
+export function coerceToIndent(_input?: T.Indent.Loose): typeof F.buildIndent {
+	return F.buildIndent;
 }
 
-export function coerceToDedent(_input?: T.Dedent.Loose): ReturnType<typeof F.buildDedent> {
-	return F.buildDedent();
+export function coerceToDedent(_input?: T.Dedent.Loose): typeof F.buildDedent {
+	return F.buildDedent;
 }
 
 export function resolveStatementIdentifier_content(

@@ -58,14 +58,14 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	identifier: { pattern: /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u, factory: F.buildIdentifier },
 	_immediate_identifier: { pattern: /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u, factory: F.buildImmediateIdentifier },
 	comment: { factory: (content: string) => _resolveByKind('comment', content) },
-	_tight: { values: [''], factory: () => F.buildTight() },
-	_space: { values: [' '], factory: () => F.buildSpace() },
-	_tab: { values: ['\t'], factory: () => F.buildTab() },
-	_newline: { values: ['\n'], factory: () => F.buildNewline() },
-	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline() },
-	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline() },
-	_indent: { values: ['﷐\n'], factory: () => F.buildIndent() },
-	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent() }
+	_tight: { values: [''], factory: () => F.buildTight },
+	_space: { values: [' '], factory: () => F.buildSpace },
+	_tab: { values: ['\t'], factory: () => F.buildTab },
+	_newline: { values: ['\n'], factory: () => F.buildNewline },
+	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline },
+	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline },
+	_indent: { values: ['﷐\n'], factory: () => F.buildIndent },
+	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent }
 };
 const _AFFIXED_KINDS: ReadonlySet<string> = new Set(['escape_sequence', 'comment']);
 
@@ -1137,34 +1137,34 @@ export function coerceToNamedNodeGroupAnchoredLast(
 	});
 }
 
-export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.buildTight> {
-	return F.buildTight();
+export function coerceToTight(_input?: T.Tight.Loose): typeof F.buildTight {
+	return F.buildTight;
 }
 
-export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
-	return F.buildSpace();
+export function coerceToSpace(_input?: T.Space.Loose): typeof F.buildSpace {
+	return F.buildSpace;
 }
 
-export function coerceToTab(_input?: T.Tab.Loose): ReturnType<typeof F.buildTab> {
-	return F.buildTab();
+export function coerceToTab(_input?: T.Tab.Loose): typeof F.buildTab {
+	return F.buildTab;
 }
 
-export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {
-	return F.buildNewline();
+export function coerceToNewline(_input?: T.Newline.Loose): typeof F.buildNewline {
+	return F.buildNewline;
 }
 
-export function coerceToBlankline(_input?: T.Blankline.Loose): ReturnType<typeof F.buildBlankline> {
-	return F.buildBlankline();
+export function coerceToBlankline(_input?: T.Blankline.Loose): typeof F.buildBlankline {
+	return F.buildBlankline;
 }
 
-export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): ReturnType<typeof F.buildDoubleBlankline> {
-	return F.buildDoubleBlankline();
+export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeof F.buildDoubleBlankline {
+	return F.buildDoubleBlankline;
 }
 
-export function coerceToIndent(_input?: T.Indent.Loose): ReturnType<typeof F.buildIndent> {
-	return F.buildIndent();
+export function coerceToIndent(_input?: T.Indent.Loose): typeof F.buildIndent {
+	return F.buildIndent;
 }
 
-export function coerceToDedent(_input?: T.Dedent.Loose): ReturnType<typeof F.buildDedent> {
-	return F.buildDedent();
+export function coerceToDedent(_input?: T.Dedent.Loose): typeof F.buildDedent {
+	return F.buildDedent;
 }

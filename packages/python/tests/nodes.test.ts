@@ -324,8 +324,8 @@ describe('aliased_import', () => {
 });
 
 describe('wildcard_import', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.wildcardImport()).toBe(TSKindId.WildcardImport);
+	it('is the kind id', () => {
+		expect(ir.wildcardImport).toBe(TSKindId.WildcardImport);
 	});
 });
 
@@ -729,20 +729,20 @@ describe('raise_statement', () => {
 });
 
 describe('pass_statement', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.passStatement()).toBe(TSKindId.PassStatement);
+	it('is the kind id', () => {
+		expect(ir.passStatement).toBe(TSKindId.PassStatement);
 	});
 });
 
 describe('break_statement', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.breakStatement()).toBe(TSKindId.BreakStatement);
+	it('is the kind id', () => {
+		expect(ir.breakStatement).toBe(TSKindId.BreakStatement);
 	});
 });
 
 describe('continue_statement', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.continueStatement()).toBe(TSKindId.ContinueStatement);
+	it('is the kind id', () => {
+		expect(ir.continueStatement).toBe(TSKindId.ContinueStatement);
 	});
 });
 
@@ -2918,8 +2918,8 @@ describe('slice', () => {
 });
 
 describe('ellipsis', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.ellipsis()).toBe(TSKindId.Ellipsis);
+	it('is the kind id', () => {
+		expect(ir.ellipsis).toBe(TSKindId.Ellipsis);
 	});
 });
 
@@ -3731,8 +3731,8 @@ describe('interpolation', () => {
 });
 
 describe('not_escape_sequence', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.notEscapeSequence()).toBe(TSKindId.NotEscapeSequence);
+	it('is the kind id', () => {
+		expect(ir.notEscapeSequence).toBe(TSKindId.NotEscapeSequence);
 	});
 });
 
@@ -3767,20 +3767,20 @@ describe('identifier', () => {
 });
 
 describe('true', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.true()).toBe(TSKindId.True);
+	it('is the kind id', () => {
+		expect(ir.true).toBe(TSKindId.True);
 	});
 });
 
 describe('false', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.false()).toBe(TSKindId.False);
+	it('is the kind id', () => {
+		expect(ir.false).toBe(TSKindId.False);
 	});
 });
 
 describe('none', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.none()).toBe(TSKindId.None);
+	it('is the kind id', () => {
+		expect(ir.none).toBe(TSKindId.None);
 	});
 });
 
@@ -3812,14 +3812,14 @@ describe('comment', () => {
 });
 
 describe('positional_separator', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.positionalSeparator()).toBe(TSKindId.PositionalSeparator);
+	it('is the kind id', () => {
+		expect(ir.positionalSeparator).toBe(TSKindId.PositionalSeparator);
 	});
 });
 
 describe('keyword_separator', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.keywordSeparator()).toBe(TSKindId.KeywordSeparator);
+	it('is the kind id', () => {
+		expect(ir.keywordSeparator).toBe(TSKindId.KeywordSeparator);
 	});
 });
 
@@ -4286,8 +4286,8 @@ describe('print_statement_plain', () => {
 });
 
 describe('wildcard_pattern', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.wildcardPattern()).toBe(TSKindId.WildcardPattern);
+	it('is the kind id', () => {
+		expect(ir.wildcardPattern).toBe(TSKindId.WildcardPattern);
 	});
 });
 
@@ -4430,7 +4430,7 @@ describe('string_end', () => {
 });
 
 describe('_newline', () => {
-	it('factory produces the kind id', () => {
-		expect(ir.newline()).toBe(TSKindId.Newline);
+	it('is the kind id', () => {
+		expect(ir.newline).toBe(TSKindId.Newline);
 	});
 });

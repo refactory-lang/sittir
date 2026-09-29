@@ -1,6 +1,7 @@
 import {
 	buildFactoryNodeFromReference,
 	type FactoryDispatchArtifacts,
+	type FactoryEntry,
 	type FactoryDispatchOpts,
 	type IrEntry,
 	type IrSurface,
@@ -589,6 +590,8 @@ export function printingFactoryMap(
 		const entry = (...args: unknown[]): Printed | string => {
 			if (ctx.aliasKinds?.has(kind)) return args[0] instanceof Printed ? args[0] : printValue(args[0], ctx, 0);
 			switch (shape) {
+				case 'constant':
+					return new Printed(id, path, kind);
 				case 'text': {
 					const text = String(args[0] ?? '');
 					if (ctx.enumKinds?.has(kind)) {
@@ -659,6 +662,15 @@ export function printingFactoryMap(
 		if (!(publicName in map) && !kinds.includes(publicName)) map[publicName] = entry;
 	}
 	return map;
+}
+
+function constantsAsValues(
+	map: Record<string, (...args: unknown[]) => Printed | string>,
+	shapes: Record<string, FactoryShape>
+): Record<string, FactoryEntry> {
+	const values: Record<string, FactoryEntry> = {};
+	for (const [kind, entry] of Object.entries(map)) values[kind] = shapes[kind] === 'constant' ? (entry() as Printed) : entry;
+	return values;
 }
 
 export function printingIrSurface(
@@ -1041,7 +1053,7 @@ export async function emitFactorySourceText(
 	const factoryShapes: Record<string, FactoryShape> = withPublicNames(model.factoryShapes);
 	const factoryMap = printingFactoryMap(model.factoryShapes, (kind) => idOfName.get(kind), ctx);
 	const artifacts: FactoryDispatchArtifacts = {
-		factoryMap,
+		factoryMap: constantsAsValues(factoryMap, model.factoryShapes),
 		surface: printingIrSurface(factoryMap, (kind) => idOfName.get(kind), model.modelTypes, ctx),
 		factoryShapes,
 		fieldAliasMap: withPublicNames(model.fieldAliasMap),

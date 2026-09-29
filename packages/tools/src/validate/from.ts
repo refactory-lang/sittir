@@ -30,6 +30,7 @@ import {
 	importGrammarModule,
 	nodeToConfig,
 	loadNodeModel,
+	type FactoryEntry,
 	type TSNode,
 	type TSTree,
 	type ValidatorSkip
@@ -214,7 +215,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	// supported input. readTreeNode wraps readNode output via the per-kind
 	// wrap function, producing a fluent NodeData that `.from()` accepts.
 	let fromMap: Record<string, (input: object) => unknown> = {};
-	let factoryMap: Record<string, (config?: any) => unknown> = {};
+	let factoryMap: Record<string, FactoryEntry> = {};
 	let factoryShapes: Record<string, FactoryShape> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
@@ -337,11 +338,14 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					// through both from() (the real leaf-coercion route, pattern
 					// guards included) and the factory, and compare the results.
 					const leafShape = factoryShapes[kind] ?? 'config';
-					if (leafShape === 'text') {
+					if (leafShape === 'text' || leafShape === 'constant') {
 						try {
 							const text = node1.text;
 							const fromResult = fromMap[kind]!(text as never) as AnyNodeData;
-							const factoryResult = (factoryMap[kind]! as (t: string) => AnyNodeData)(text);
+							const factoryResult =
+								leafShape === 'constant'
+									? (factoryMap[kind] as AnyNodeData)
+									: (factoryMap[kind]! as (t: string) => AnyNodeData)(text);
 							const diffs = structuralDiff(fromResult, factoryResult, kindNameFromId);
 							if (diffs.length > 0) {
 								divergentCount++;
@@ -444,7 +448,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						// `$fields`. Use `nodeToConfig` which handles both shapes
 						// and recursively resolves children through factories.
 						const config = nodeToConfig(readData, {
-							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,
+							factoryMap,
 							factoryShapes,
 							factoryFields,
 							factorySlots,
@@ -468,6 +472,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 								separatedListFactoryOptions(readData)
 							);
 						}
+					} else if (shape === 'constant') {
+						factoryResult = factory as AnyNodeData;
 					} else if (shape === 'text') {
 						// A text-shaped factory takes the node's bytes, which its span
 						// addresses whether or not the reader captured them as `$text`.

@@ -21,7 +21,7 @@ rust.render(rust.kinds.Indent);
 python.render(python.build.identifier('x'));
 python.render(python.build.returnStatement());
 python.render(python.parse('pass\n'));
-python.render(python.build.passStatement());
+python.render(python.build.passStatement);
 python.render(python.kinds.Comma);
 // @ts-expect-error an identifier's text is not its kind's
 python.render(python.kinds.Identifier);

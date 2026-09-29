@@ -217,21 +217,21 @@ interface _LeafEntry {
 }
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	import_prefix: { pattern: /^(?:(?:\.)+)$/u, factory: F.buildImportPrefix },
-	wildcard_import: { values: ['*'], factory: () => F.buildWildcardImport() },
-	pass_statement: { values: ['pass'], factory: () => F.buildPassStatement() },
-	break_statement: { values: ['break'], factory: () => F.buildBreakStatement() },
-	continue_statement: { values: ['continue'], factory: () => F.buildContinueStatement() },
-	ellipsis: { values: ['...'], factory: () => F.buildEllipsis() },
-	not_escape_sequence: { values: ['\\'], factory: () => F.buildNotEscapeSequence() },
+	wildcard_import: { values: ['*'], factory: () => F.buildWildcardImport },
+	pass_statement: { values: ['pass'], factory: () => F.buildPassStatement },
+	break_statement: { values: ['break'], factory: () => F.buildBreakStatement },
+	continue_statement: { values: ['continue'], factory: () => F.buildContinueStatement },
+	ellipsis: { values: ['...'], factory: () => F.buildEllipsis },
+	not_escape_sequence: { values: ['\\'], factory: () => F.buildNotEscapeSequence },
 	type_conversion: { pattern: /^(?:(?:![a-z]))$/u, factory: F.buildTypeConversion },
 	identifier: { pattern: /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u, factory: F.buildIdentifier },
-	true: { values: ['True'], factory: () => F.buildTrue() },
-	false: { values: ['False'], factory: () => F.buildFalse() },
-	none: { values: ['None'], factory: () => F.buildNone() },
+	true: { values: ['True'], factory: () => F.buildTrue },
+	false: { values: ['False'], factory: () => F.buildFalse },
+	none: { values: ['None'], factory: () => F.buildNone },
 	comment: { factory: (content: string) => _resolveByKind('comment', content) },
-	positional_separator: { values: ['/'], factory: () => F.buildPositionalSeparator() },
-	keyword_separator: { values: ['*'], factory: () => F.buildKeywordSeparator() },
-	wildcard_pattern: { values: ['_'], factory: () => F.buildWildcardPattern() },
+	positional_separator: { values: ['/'], factory: () => F.buildPositionalSeparator },
+	keyword_separator: { values: ['*'], factory: () => F.buildKeywordSeparator },
+	wildcard_pattern: { values: ['_'], factory: () => F.buildWildcardPattern },
 	integer_hex: {
 		pattern: new RegExp(TOKEN_INTERIORS['integer_hex'].regex, 'su'),
 		factory: (text: string) => {
@@ -289,17 +289,17 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	escape_sequence_simple: { factory: (content: string) => _resolveByKind('escape_sequence_simple', content) },
 	escape_sequence_named: { factory: (content: string) => _resolveByKind('escape_sequence_named', content) },
 	line_continuation_newline: { pattern: /^(?:\\(?:\r)?\n)$/u, factory: F.buildLineContinuationNewline },
-	line_continuation_nul: { values: ['\\\u0000'], factory: () => F.buildLineContinuationNul() },
+	line_continuation_nul: { values: ['\\\u0000'], factory: () => F.buildLineContinuationNul },
 	string_start: { pattern: /^(?:(?:[a-zA-Z]*["']+))$/u, factory: F.buildStringStart },
 	string_fragment: { pattern: /^(?:(?:[^"'\\{}\n]+))$/u, factory: F.buildStringFragment },
 	escape_interpolation: { pattern: /^(?:(?:\{\{|\}\}))$/u, factory: F.buildEscapeInterpolation },
 	string_end: { pattern: /^(?:(?:["']+))$/u, factory: F.buildStringEnd },
-	_tight: { values: [''], factory: () => F.buildTight() },
-	_space: { values: [' '], factory: () => F.buildSpace() },
-	_tab: { values: ['\t'], factory: () => F.buildTab() },
-	_newline: { values: ['\n'], factory: () => F.buildNewline() },
-	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline() },
-	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline() }
+	_tight: { values: [''], factory: () => F.buildTight },
+	_space: { values: [' '], factory: () => F.buildSpace },
+	_tab: { values: ['\t'], factory: () => F.buildTab },
+	_newline: { values: ['\n'], factory: () => F.buildNewline },
+	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline },
+	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline }
 };
 const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'comment',
@@ -2391,8 +2391,8 @@ export function coerceToAliasedImport(input: T.AliasedImport.Loose): ReturnType<
 	});
 }
 
-export function coerceToWildcardImport(_input?: T.WildcardImport.Loose): ReturnType<typeof F.buildWildcardImport> {
-	return F.buildWildcardImport();
+export function coerceToWildcardImport(_input?: T.WildcardImport.Loose): typeof F.buildWildcardImport {
+	return F.buildWildcardImport;
 }
 
 export function resolvePrintStatement_content(
@@ -2662,18 +2662,16 @@ export function coerceToRaiseStatement(input?: T.RaiseStatement.Loose): ReturnTy
 	});
 }
 
-export function coerceToPassStatement(_input?: T.PassStatement.Loose): ReturnType<typeof F.buildPassStatement> {
-	return F.buildPassStatement();
+export function coerceToPassStatement(_input?: T.PassStatement.Loose): typeof F.buildPassStatement {
+	return F.buildPassStatement;
 }
 
-export function coerceToBreakStatement(_input?: T.BreakStatement.Loose): ReturnType<typeof F.buildBreakStatement> {
-	return F.buildBreakStatement();
+export function coerceToBreakStatement(_input?: T.BreakStatement.Loose): typeof F.buildBreakStatement {
+	return F.buildBreakStatement;
 }
 
-export function coerceToContinueStatement(
-	_input?: T.ContinueStatement.Loose
-): ReturnType<typeof F.buildContinueStatement> {
-	return F.buildContinueStatement();
+export function coerceToContinueStatement(_input?: T.ContinueStatement.Loose): typeof F.buildContinueStatement {
+	return F.buildContinueStatement;
 }
 
 export function resolveIfStatement_condition(
@@ -4735,8 +4733,8 @@ export function coerceToSlice(input?: T.Slice.Loose): ReturnType<typeof F.buildS
 	});
 }
 
-export function coerceToEllipsis(_input?: T.Ellipsis.Loose): ReturnType<typeof F.buildEllipsis> {
-	return F.buildEllipsis();
+export function coerceToEllipsis(_input?: T.Ellipsis.Loose): typeof F.buildEllipsis {
+	return F.buildEllipsis;
 }
 
 export function resolveCall_function(value: T.Call.LooseConfig['function']): T.Call['_function'] {
@@ -5524,10 +5522,8 @@ export function coerceToInterpolation(input: T.Interpolation.Loose): ReturnType<
 	});
 }
 
-export function coerceToNotEscapeSequence(
-	_input?: T.NotEscapeSequence.Loose
-): ReturnType<typeof F.buildNotEscapeSequence> {
-	return F.buildNotEscapeSequence();
+export function coerceToNotEscapeSequence(_input?: T.NotEscapeSequence.Loose): typeof F.buildNotEscapeSequence {
+	return F.buildNotEscapeSequence;
 }
 
 export function coerceToFormatSpecifier(
@@ -5570,16 +5566,16 @@ export function coerceToIdentifier(input: T.Identifier.Loose): ReturnType<typeof
 	return F.buildIdentifier(input as Parameters<typeof F.buildIdentifier>[0]);
 }
 
-export function coerceToTrue(_input?: T.True.Loose): ReturnType<typeof F.buildTrue> {
-	return F.buildTrue();
+export function coerceToTrue(_input?: T.True.Loose): typeof F.buildTrue {
+	return F.buildTrue;
 }
 
-export function coerceToFalse(_input?: T.False.Loose): ReturnType<typeof F.buildFalse> {
-	return F.buildFalse();
+export function coerceToFalse(_input?: T.False.Loose): typeof F.buildFalse {
+	return F.buildFalse;
 }
 
-export function coerceToNone(_input?: T.None.Loose): ReturnType<typeof F.buildNone> {
-	return F.buildNone();
+export function coerceToNone(_input?: T.None.Loose): typeof F.buildNone {
+	return F.buildNone;
 }
 
 export function resolveAwait_expression(value: T.Await.LooseConfig['expression']): T.Await['_expression'] {
@@ -5640,16 +5636,12 @@ export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.bui
 	);
 }
 
-export function coerceToPositionalSeparator(
-	_input?: T.PositionalSeparator.Loose
-): ReturnType<typeof F.buildPositionalSeparator> {
-	return F.buildPositionalSeparator();
+export function coerceToPositionalSeparator(_input?: T.PositionalSeparator.Loose): typeof F.buildPositionalSeparator {
+	return F.buildPositionalSeparator;
 }
 
-export function coerceToKeywordSeparator(
-	_input?: T.KeywordSeparator.Loose
-): ReturnType<typeof F.buildKeywordSeparator> {
-	return F.buildKeywordSeparator();
+export function coerceToKeywordSeparator(_input?: T.KeywordSeparator.Loose): typeof F.buildKeywordSeparator {
+	return F.buildKeywordSeparator;
 }
 
 export function coerceToSimpleStatementsElements(
@@ -6417,8 +6409,8 @@ export function coerceToPrintStatementPlain(
 	);
 }
 
-export function coerceToWildcardPattern(_input?: T.WildcardPattern.Loose): ReturnType<typeof F.buildWildcardPattern> {
-	return F.buildWildcardPattern();
+export function coerceToWildcardPattern(_input?: T.WildcardPattern.Loose): typeof F.buildWildcardPattern {
+	return F.buildWildcardPattern;
 }
 
 export function resolveParenthesizedImportList_importList(
@@ -6971,10 +6963,8 @@ export function coerceToLineContinuationNewline(
 	return F.buildLineContinuationNewline(input as Parameters<typeof F.buildLineContinuationNewline>[0]);
 }
 
-export function coerceToLineContinuationNul(
-	_input?: T.LineContinuationNul.Loose
-): ReturnType<typeof F.buildLineContinuationNul> {
-	return F.buildLineContinuationNul();
+export function coerceToLineContinuationNul(_input?: T.LineContinuationNul.Loose): typeof F.buildLineContinuationNul {
+	return F.buildLineContinuationNul;
 }
 
 export function resolveSimplePatternNegative_sign(
@@ -7449,28 +7439,28 @@ export function coerceToStringEnd(input: T.StringEnd.Loose): ReturnType<typeof F
 	return F.buildStringEnd(input as Parameters<typeof F.buildStringEnd>[0]);
 }
 
-export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.buildTight> {
-	return F.buildTight();
+export function coerceToTight(_input?: T.Tight.Loose): typeof F.buildTight {
+	return F.buildTight;
 }
 
-export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
-	return F.buildSpace();
+export function coerceToSpace(_input?: T.Space.Loose): typeof F.buildSpace {
+	return F.buildSpace;
 }
 
-export function coerceToTab(_input?: T.Tab.Loose): ReturnType<typeof F.buildTab> {
-	return F.buildTab();
+export function coerceToTab(_input?: T.Tab.Loose): typeof F.buildTab {
+	return F.buildTab;
 }
 
-export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {
-	return F.buildNewline();
+export function coerceToNewline(_input?: T.Newline.Loose): typeof F.buildNewline {
+	return F.buildNewline;
 }
 
-export function coerceToBlankline(_input?: T.Blankline.Loose): ReturnType<typeof F.buildBlankline> {
-	return F.buildBlankline();
+export function coerceToBlankline(_input?: T.Blankline.Loose): typeof F.buildBlankline {
+	return F.buildBlankline;
 }
 
-export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): ReturnType<typeof F.buildDoubleBlankline> {
-	return F.buildDoubleBlankline();
+export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeof F.buildDoubleBlankline {
+	return F.buildDoubleBlankline;
 }
 
 export function resolveNames_content(value: T.Names.LooseConfig['content']): T.Names['_content'] {
