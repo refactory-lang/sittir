@@ -5458,6 +5458,7 @@ pub fn defaults() -> ResolvedOptions {
         edge_rows: EDGE_ROWS,
         kind_flags: KIND_FLAGS,
         sites: SITE_SPECS,
+        indent: "  ".to_string(),
         ..ResolvedOptions::default()
     }
 }

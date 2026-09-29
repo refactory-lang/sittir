@@ -1893,6 +1893,8 @@ A label naming a real kind as its root is rejected where the binding names it.
 Real kinds are derived from the grammar and virtual ones are written, so the
 collision is always the author's to resolve.
 
+`indent` is the other reserved top-level key, and is not a kind: `indent: preference('<unit>')` declares the grammar's render indent unit and comes back as `OptionsDeclarations.indent` (undefined when absent). It mirrors the runtime options object's top-level `indent` key. The reader only checks the value is a `preference`; whether the unit suits the grammar is `indentUnitOf`'s check, made where the grammar's indent characters are in hand. `OptionsCheck` types the key as a bare `PreferencePlaceholder` and `DeclaredLabels` leaves it out, so it is never a label root.
+
 `_bindings` maps an address to a label and carries nothing else. Membership and
 default live in the two halves: the binding says which label an address belongs
 to, the declaration under its kind says what its arm is. Welded together, as

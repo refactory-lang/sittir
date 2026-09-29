@@ -18,7 +18,14 @@
 		{
 			"grammar": "python",
 			"fixture": "python-4space.py",
-			"formatCategory": "4space-indent",
+			"formatCategory": "canonical",
+			"seedSource": "017-measured",
+			"expectedBackendCoverage": "both"
+		},
+		{
+			"grammar": "python",
+			"fixture": "python-tab-indent.py",
+			"formatCategory": "tab-indent",
 			"seedSource": "017-measured",
 			"expectedBackendCoverage": "both"
 		}

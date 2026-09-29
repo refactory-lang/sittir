@@ -15,7 +15,7 @@ export const PROBES: Record<string, readonly Probe[]> = {
 	typescript: [
 		{
 			source: 'function f() { /* empty */ }\n',
-			detached: 'function f() {\n    /* empty */\n}\n',
+			detached: 'function f() {\n  /* empty */\n}\n',
 			owner: 'inner of the block: its zero-width automatic_semicolon owns nothing'
 		}
 	],
@@ -39,7 +39,7 @@ export const ORPHANS: Record<string, readonly (readonly [string, string])[]> = {
 		['x = (/* c */ undefined);', 'x = /* c */ (undefined);'],
 		['x = (/* c */ true);', 'x = /* c */ (true);'],
 		['x = (/* c */ null);', 'x = /* c */ (null);'],
-		['class A extends B { m() { (/* c */ super).m(); } }', 'class A extends B {\n    m() {\n        /* c */ (super).m();\n    }\n}\n'],
+		['class A extends B { m() { (/* c */ super).m(); } }', 'class A extends B {\n  m() {\n    /* c */ (super).m();\n  }\n}\n'],
 		['for (/* c */;;) {}', 'for (;;) /* c */ {}\n'],
 		['x = (// c\n this);', 'x = // c\n(this);'],
 		['x = (this /* c */);', 'x = (this) /* c */;']

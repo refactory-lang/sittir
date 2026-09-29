@@ -43,7 +43,7 @@ const whitespaceText = new Map([
 
 describe('planRenderOptions', () => {
 	it('numbers spacing and flank sites densely, in canonical path order', () => {
-		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText);
+		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText, undefined, 'rust');
 		expect(plan.spacingSites.map((s) => [s.constName, s.defaultId, s.fieldIdent, s.wireKey])).toEqual([
 			['SITE_CALL_EXPRESSION_LPAREN_BEFORE', 167, 'lparen_before', '_lparen_before'],
 			['SITE_FORMAL_PARAMETERS_ELEMENTS_SEPARATOR_SPACE_BEFORE', 167, 'elements_separator_space_before', '_elements_separator_space_before'],
@@ -55,7 +55,7 @@ describe('planRenderOptions', () => {
 	});
 
 	it('carries a path table over every site, spacing and delimiter together, in canonical order', () => {
-		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText);
+		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText, undefined, 'rust');
 		expect(plan.sitePaths.map((p) => p.path)).toEqual([
 			'(call_expression)/"("/before',
 			'(formal_parameters)/elements:/delimiter',
@@ -71,19 +71,19 @@ describe('planRenderOptions', () => {
 
 	it("orders a kind's own sides after everything nested beneath them", () => {
 		const edge: SitePreference = { kind: 'call_expression', slot: 'call_expression', address: 'call_expression_after', label: 'call_expression_after', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'seam' };
-		const plan = planRenderOptions([edge, ...sites], kindEntries, makeSiteKindsNodeMap([edge, ...sites]), whitespaceText);
+		const plan = planRenderOptions([edge, ...sites], kindEntries, makeSiteKindsNodeMap([edge, ...sites]), whitespaceText, undefined, 'rust');
 		expect(plan.sitePaths.slice(0, 2).map((p) => p.path)).toEqual(['(call_expression)/"("/before', '(call_expression)/after']);
 	});
 
 	it('a declared preference site is a spacing-table site too, typed by its arms', () => {
-		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText);
+		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText, undefined, 'rust');
 		const term = plan.spacingSites.find((s) => s.label === 'statement_terminator')!;
 		expect(term.allowedIds).toEqual([160, 20]);
 		expect(term.defaultId).toBe(20);
 	});
 
 	it('a token seam site is numbered under its kind by its label', () => {
-		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText);
+		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText, undefined, 'rust');
 		const seam = plan.spacingSites.find((s) => s.label === 'lparen_before')!;
 		expect([seam.constName, seam.fieldIdent, seam.wireKey, seam.defaultId, seam.side]).toEqual(['SITE_CALL_EXPRESSION_LPAREN_BEFORE', 'lparen_before', '_lparen_before', 167, 'seam']);
 	});
@@ -102,7 +102,7 @@ describe('planRenderOptions', () => {
 			defaultArm: 'semi',
 			source: 'separator'
 		};
-		const plan = planRenderOptions([...sites, site], entries, makeSiteKindsNodeMap([...sites, site]), whitespaceText);
+		const plan = planRenderOptions([...sites, site], entries, makeSiteKindsNodeMap([...sites, site]), whitespaceText, undefined, 'rust');
 		const row = plan.spacingSites.find((s) => s.role === 'separator')!;
 		expect([row.constName, row.fieldIdent, row.wireKey, row.defaultId, row.allowedIds, row.side, row.defaultText]).toEqual([
 			'SITE_OBJECT_TYPE_CONTENT_CONTENT_SEPARATOR',
@@ -119,14 +119,14 @@ describe('planRenderOptions', () => {
 
 	it('an arm without a kind id fails loudly', () => {
 		const bad: SitePreference = { ...sites[4]!, arms: [{ value: 'nope', kind: 'nope' }], defaultArm: 'nope' };
-		expect(() => planRenderOptions([bad], kindEntries, makeSiteKindsNodeMap([bad]), whitespaceText)).toThrow(/has no kind id/);
+		expect(() => planRenderOptions([bad], kindEntries, makeSiteKindsNodeMap([bad]), whitespaceText, undefined, 'rust')).toThrow(/has no kind id/);
 	});
 });
 
 describe('renderOptionsRs', () => {
 	it('emits a static address trie over the site constants and no per-address structs', () => {
 		const kindEntries = [...BASE_KIND_ENTRIES, { kind: 'comma', member: 'Comma', id: 14, symbolName: ',', literalText: ',', anon: true }];
-		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText);
+		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText, undefined, 'rust');
 		const addresses = deriveAddressTables(sites, kindEntries, makeSiteKindsNodeMap(sites), kindIdArmType(kindEntries as never), (() => []) as never);
 		const source = renderOptionsRs(plan, addresses, kindEntries);
 		expect(source).toContain('pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[');
@@ -142,7 +142,7 @@ describe('renderOptionsRs', () => {
 	});
 
 	it('emits smoke tests for the admitted, unknown-key and refused-value shapes', () => {
-		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText);
+		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText, undefined, 'rust');
 		const addresses = deriveAddressTables(sites, kindEntries, makeSiteKindsNodeMap(sites), kindIdArmType(kindEntries as never), (() => []) as never);
 		const source = renderOptionsRs(plan, addresses, kindEntries);
 		expect(source).toContain('fn an_unknown_key_is_refused()');
@@ -152,7 +152,7 @@ describe('renderOptionsRs', () => {
 	});
 
 	it('emits the constants, the defaults, the resolver tables and spacing_text', () => {
-		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText);
+		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText, undefined, 'rust');
 		const addresses = deriveAddressTables(sites, kindEntries, makeSiteKindsNodeMap(sites), kindIdArmType(kindEntries as never), (() => []) as never);
 		const src = renderOptionsRs(plan, addresses, kindEntries);
 		expect(src).toContain('pub const SPACING_SITE_COUNT: usize = 5;');
@@ -169,7 +169,7 @@ describe('renderOptionsRs', () => {
 	});
 
 	it('emits a SiteSpec per spacing site in vector order and wires it into the resolved options', () => {
-		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText);
+		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText, undefined, 'rust');
 		const addresses = deriveAddressTables(sites, kindEntries, makeSiteKindsNodeMap(sites), kindIdArmType(kindEntries as never), (() => []) as never);
 		const src = renderOptionsRs(plan, addresses, kindEntries);
 		expect(src).toContain('pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[');
@@ -183,7 +183,7 @@ describe('renderOptionsRs', () => {
 	it("gives a list flank its origin's strength: declared only when a preference declares it", () => {
 		const flank = (origin?: SitePreference['origin']): SitePreference => ({ kind: 'arguments', slot: 'elements', address: 'elements_start', label: 'start', arms: SPACING, defaultArm: 'tight', source: 'spacing', side: 'start', ...(origin === undefined ? {} : { origin }) });
 		const strengthOf = (site: SitePreference) =>
-			planRenderOptions([...sites, site], kindEntries, makeSiteKindsNodeMap([...sites, site]), whitespaceText).spacingSites.find((s) => s.kind === 'arguments' && s.side === 'start')?.strength;
+			planRenderOptions([...sites, site], kindEntries, makeSiteKindsNodeMap([...sites, site]), whitespaceText, undefined, 'rust').spacingSites.find((s) => s.kind === 'arguments' && s.side === 'start')?.strength;
 		expect(strengthOf(flank('preference'))).toBe(SEAM_DECLARED);
 		expect(strengthOf(flank())).toBe(0);
 	});
@@ -200,7 +200,7 @@ describe('renderOptionsRs', () => {
 			seat: { kind: child, field: `${child}_after` }
 		});
 		const entries = [...kindEntries, { kind: 'zeta', member: 'Zeta', id: 300 }, { kind: 'alpha', member: 'Alpha', id: 200 }];
-		const plan = planRenderOptions([...sites, seat('zeta'), seat('alpha')], entries, makeSiteKindsNodeMap([...sites, seat('zeta'), seat('alpha')]), whitespaceText);
+		const plan = planRenderOptions([...sites, seat('zeta'), seat('alpha')], entries, makeSiteKindsNodeMap([...sites, seat('zeta'), seat('alpha')]), whitespaceText, undefined, 'rust');
 		const tables = seatTablesOf(plan, entries);
 		expect(tables).toHaveLength(1);
 		expect(tables[0]!.name).toBe(seatTableName('arguments', 'elements'));
@@ -212,19 +212,27 @@ describe('renderOptionsRs', () => {
 		expect(cells[200]).toBe(String(tables[0]!.rows[0]!.site));
 		expect(cells[300]).toBe(String(tables[0]!.rows[1]!.site));
 		expect(cells[250]).toBe('NO_SITE');
-		const missing = planRenderOptions([...sites, seat('nokind')], entries, makeSiteKindsNodeMap([...sites, seat('nokind')]), whitespaceText);
+		const missing = planRenderOptions([...sites, seat('nokind')], entries, makeSiteKindsNodeMap([...sites, seat('nokind')]), whitespaceText, undefined, 'rust');
 		expect(() => seatTablesOf(missing, entries)).toThrow(/nokind/);
 	});
 
 	it("exposes each site's admitted arms to the prepare walk", () => {
-		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText);
+		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText, undefined, 'rust');
 		const addresses = deriveAddressTables(sites, kindEntries, makeSiteKindsNodeMap(sites), kindIdArmType(kindEntries as never), (() => []) as never);
 		const source = renderOptionsRs(plan, addresses, kindEntries);
 		expect(source).toContain("pub fn allowed(site: usize) -> &'static [u16] {\n    SPACING_SITES[site].3\n}");
 	});
 
+	it("emits the grammar's declared indent unit into defaults(), and none when it declares none", () => {
+		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText, undefined, 'rust');
+		const addresses = deriveAddressTables(sites, kindEntries, makeSiteKindsNodeMap(sites), kindIdArmType(kindEntries as never), (() => []) as never);
+		expect(renderOptionsRs({ ...plan, indent: '  ' }, addresses, kindEntries)).toContain('        indent: "  ".to_string(),\n');
+		expect(renderOptionsRs({ ...plan, indent: '\t' }, addresses, kindEntries)).toContain('        indent: "\\t".to_string(),\n');
+		expect(renderOptionsRs(plan, addresses, kindEntries)).not.toContain('indent: "');
+	});
+
 	it('emits the whitespace table with plain text and the depth ids', () => {
-		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText);
+		const plan = planRenderOptions(sites, kindEntries, makeSiteKindsNodeMap(sites), whitespaceText, undefined, 'rust');
 		const addresses = deriveAddressTables(sites, kindEntries, makeSiteKindsNodeMap(sites), kindIdArmType(kindEntries as never), (() => []) as never);
 		const source = renderOptionsRs(plan, addresses, kindEntries);
 		expect(source).toContain('        169 => "\\n",');
@@ -238,7 +246,7 @@ describe('renderOptionsRs', () => {
 		const WHITESPACE = ['tight', 'space', 'newline', 'indent', 'dedent'].map((k) => ({ value: k, kind: k }));
 		const entries = [...kindEntries, { kind: 'indent', member: 'Indent', id: 170 }, { kind: 'dedent', member: 'Dedent', id: 171 }];
 		const depth = (slot: string, address: string): SitePreference => ({ kind: 'call_expression', slot, address, label: address, arms: WHITESPACE, defaultArm: 'tight', source: 'spacing', side: 'seam' });
-		const plan = planRenderOptions([...sites, depth('rparen', 'rparen_before'), depth('lparen', 'lparen_after')], entries, makeSiteKindsNodeMap([...sites, depth('rparen', 'rparen_before'), depth('lparen', 'lparen_after')]), whitespaceText);
+		const plan = planRenderOptions([...sites, depth('rparen', 'rparen_before'), depth('lparen', 'lparen_after')], entries, makeSiteKindsNodeMap([...sites, depth('rparen', 'rparen_before'), depth('lparen', 'lparen_after')]), whitespaceText, undefined, 'rust');
 		expect(plan.spacingSites.slice(0, 3).map((s) => s.fieldIdent)).toEqual(['lparen_before', 'lparen_after', 'rparen_before']);
 		expect(plan.depthSites).toEqual([{ kind: 'call_expression', sites: [2, 1] }]);
 		const addresses = deriveAddressTables([...sites, depth('rparen', 'rparen_before'), depth('lparen', 'lparen_after')], entries, makeSiteKindsNodeMap([...sites, depth('rparen', 'rparen_before'), depth('lparen', 'lparen_after')]), kindIdArmType(entries as never), (() => []) as never);

@@ -14,18 +14,20 @@ export interface AddressBinding {
 export interface OptionsDeclarations {
 	readonly declarations: readonly PathDeclaration[];
 	readonly bindings: readonly AddressBinding[];
+	readonly indent: string | undefined;
 }
 
 export type OptionsConfig = Record<string, unknown>;
 
 export const BINDINGS_KEY = '_bindings';
+export const INDENT_KEY = 'indent';
 
 export function readOptionsBlock(options: OptionsConfig, kinds: ReadonlySet<string>): OptionsDeclarations {
 	const declarations: PathDeclaration[] = [];
 	const declared = new Set<string>();
 
 	for (const [kind, relatives] of Object.entries(options)) {
-		if (kind === BINDINGS_KEY) continue;
+		if (kind === BINDINGS_KEY || kind === INDENT_KEY) continue;
 		if (!relatives || typeof relatives !== 'object') {
 			throw new Error(`options: '${kind}' takes a map of paths relative to it`);
 		}
@@ -53,5 +55,10 @@ export function readOptionsBlock(options: OptionsConfig, kinds: ReadonlySet<stri
 		bindings.push({ address, label });
 	}
 
-	return { declarations, bindings };
+	const declaredIndent = options[INDENT_KEY];
+	if (declaredIndent !== undefined && !isPreference(declaredIndent)) {
+		throw new Error(`options: '${INDENT_KEY}' takes preference(unit)`);
+	}
+
+	return { declarations, bindings, indent: isPreference(declaredIndent) ? declaredIndent.default : undefined };
 }

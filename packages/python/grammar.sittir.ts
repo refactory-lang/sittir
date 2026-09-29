@@ -67,6 +67,7 @@ export default sittirGrammar(base, {
 		yield_from_clause: ($) => seq('from', $.expression)
 	},
 	options: {
+		indent: preference('    '),
 		gap: { separator: preference('tight') },
 		integer_hex: { 'prefix:': preference('0x') },
 		integer_octal: { 'prefix:': preference('0o') },

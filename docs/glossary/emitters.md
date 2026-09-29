@@ -15541,6 +15541,8 @@ grouping whether a slot has seats.
 
 `indentChars` is the grammar's indent characters (`indentChars`), written as `OptionTables.indent_chars`: the runtime refuses an `indent` unit that is empty or holds any other character, and treats `indent` as an unknown key when there are none.
 
+`indent` is the grammar's declared indent unit (`indentUnitOf`), empty for a grammar whose whitespace admits no indent characters. `renderOptionsRs` writes it into the generated `defaults()` as `indent: "<unit>".to_string()`, so the unit is the grammar's and core has no default of its own; an empty unit emits no line and `defaults()` keeps core's empty unit.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::DepthSites`
 
 A kind and the indices of its sites that admit `indent` or `dedent`, in
@@ -15975,6 +15977,8 @@ label. That is what makes every descendant of a prefix a contiguous index range,
 so a scoped declaration resolves by binary search rather than a scan. The sort is
 in place, because the depth walk identifies its sites by object and reads their
 indices afterwards.
+
+The plan takes the grammar's declared `indent` (read by `planRenderOptionsFor` through `readOptionsBlock`) and its name, and `indentUnitOf` validates it: a grammar with indent characters must declare a unit made only of them, and one without must declare none. A violation throws naming the grammar at generation time, so the runtime never meets an unusable unit.
 
 `SITE_PATHS` holds every site — spacing and delimiter — by its formatted
 address in canonical order, each entry a `SiteRef` naming the row it stands

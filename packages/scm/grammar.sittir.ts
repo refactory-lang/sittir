@@ -2,6 +2,7 @@ import base from 'tree-sitter-scm/grammar.js';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {
 	field,
+	preference,
 	variant,
 	sittirGrammar
 } from '../codegen/src/dsl/index.ts';
@@ -19,6 +20,7 @@ export default sittirGrammar(base, {
 			'1/1/1/0': field('last')
 		}
 	},
+	options: { indent: preference('    ') },
 	expectDiagnostics: {
 		'unclassifiable-shape': ['predicate']
 	}

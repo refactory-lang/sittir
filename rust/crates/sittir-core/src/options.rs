@@ -172,7 +172,7 @@ impl Default for ResolvedOptions {
         Self {
             spacing: Vec::new(),
             delimiter: Vec::new(),
-            indent: crate::spacing::DEFAULT_INDENT.to_string(),
+            indent: String::new(),
             edges: &[],
             edge_rows: &[],
             sites: &[],
