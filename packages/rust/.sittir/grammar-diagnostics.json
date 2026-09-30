@@ -76,42 +76,6 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "rust",
-    "message": "conflict between async_block, _kw_async_marker on 'move' resolved by AddConflict (default)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "async_block",
-          "_kw_async_marker"
-        ]
-      },
-      "step": "default",
-      "sourceChains": [
-        [
-          "async_block"
-        ],
-        [
-          "_kw_async_marker"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'async'"
-        ],
-        "lookahead": "'move'",
-        "interpretations": [
-          "async_block",
-          "_kw_async_marker"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "rust",
     "message": "conflict between _attributed_argument on ']' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
