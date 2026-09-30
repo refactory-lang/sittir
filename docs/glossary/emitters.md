@@ -11391,7 +11391,7 @@ repeated here: `KIND_NAMES` and `TSKindId` in `types.ts` are their one source.
 
 ### `packages/codegen/src/emitters/factories.ts::kindEnumMemberDiscriminants`
 
-The kind discriminant of each member of a kind-enum or mixed-enum slot: the kinds its keyword literals are stored as. The single-branch fast path in `from.ts` passes them as the alternate kinds of `_resolveOneBranch`, so a stored keyword node (`{ $type: AsyncKeyword }`) in a slot that also admits one node branch (rust `function_modifiers`: keywords beside `extern_modifier`) is kept as itself instead of being wrapped into the branch. The keyword members are not among the slot's leaf or branch kinds, so without them the slot reads as a single branch.
+The kind discriminant of each literal member of a kind-enum or mixed-enum slot: every literal the slot stores by kind id, keyword or punctuation (scm's punctuation-backed mixed enum passes `TSKindId.Underscore`). The single-branch fast path in `from.ts` passes them as the alternate kinds of `_resolveOneBranch`, so a stored literal node (`{ $type: AsyncKeyword }`) in a slot that also admits one node branch (rust `function_modifiers`: keywords beside `extern_modifier`) is kept as itself instead of being wrapped into the branch. The literal members are not among the slot's leaf or branch kinds, so without them the slot reads as a single branch.
 
 ### `packages/codegen/src/emitters/factories.ts::kindEnumTextMapExpr`
 
