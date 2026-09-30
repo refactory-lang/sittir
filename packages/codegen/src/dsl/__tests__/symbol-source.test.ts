@@ -110,6 +110,21 @@ describe('predictKindCatalog over a grammar tree-sitter rejects', () => {
 	});
 });
 
+describe('predictKindCatalog supertype rows', () => {
+	it('flags a declared supertype only while no default alias displays it', () => {
+		const rules = {
+			source: seq(alias(sym('_shown'), 'shown'), sym('_bare')),
+			_shown: choice(sym('a'), sym('b')),
+			_bare: choice(sym('a'), sym('b')),
+			a: seq(str('a'), str('a')),
+			b: seq(str('b'), str('b'))
+		};
+		const catalog = predictKindCatalog({ ...grammarOf(rules), supertypes: ['_shown', '_bare'] });
+		expect(catalog.entries.find((entry) => entry.kind === '_bare')?.supertype).toBe(true);
+		expect(catalog.entries.find((entry) => entry.kind === '_shown')?.supertype).toBeUndefined();
+	});
+});
+
 describe('kindCatalogOf', () => {
 	const rules = { source: seq(sym('item'), str(';')), item: seq(str('i'), sym('word')), word: str('w') };
 	const predictedKinds = predictedKindsOf(grammarOf(rules));

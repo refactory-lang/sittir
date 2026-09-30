@@ -15,6 +15,22 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 The rule-origin map `enrich()` attaches to its result under `ENRICH_RULE_ORIGINS_KEY`: every rule name enrich adds, keyed to its `EnrichMintKind`, plus each upstream hidden rule it exposes through an alias (`promoted-group`, carrying the visible name it is exposed as). Empty when the grammar was not enriched. Every other enrich-rule getter is a filtered view of this one map.
 
+### `packages/codegen/src/dsl/enrich.ts::getEnrichTextTokens`
+
+The text tokens enrich minted, each with the rules that reference it (the `text` origins).
+
+### `packages/codegen/src/dsl/enrich.ts::TEXT_TOKENS_KEY`
+
+The non-enumerable key under which `sittirGrammar` attaches the live text-token names to `result.grammar` (`attachTextTokens`), so they never reach grammar.json.
+
+### `packages/codegen/src/dsl/enrich.ts::attachTextTokens`
+
+Attaches the text-token names to a grammar under `TEXT_TOKENS_KEY`. `sittirGrammar` attaches the minted names that `blankDeadEnrichMints` did not blank.
+
+### `packages/codegen/src/dsl/enrich.ts::getTextTokens`
+
+The text-token names attached to a grammar; empty when none were attached. Evaluate reads them into `RawGrammar.textTokens`.
+
 ### `packages/codegen/src/dsl/enrich.ts::getEnrichMints`
 
 The rules enrich adds: the names in the origin map whose origin is an `EnrichMintKind`, which leaves out `promoted-group`. The set equals the enriched grammar's rule names minus the base grammar's. An upstream rule is never a mint: not one exposed through an alias (`promoted-group`), and not one enrich rewrites in place (a `liftAliasedHiddenRuleBodies` rewrite, a field-wrap pass).
@@ -4477,7 +4493,7 @@ with the config's authored group patterns and `extras:` callback, then `wire(con
 base as the raw stage,
 then the ambient `grammar()` (tree-sitter's in the bundled `.sittir/grammar.js`,
 sittir's `grammarFn` under evaluate) over the enriched base and wired options,
-then `blankDeadEnrichMints` on that result, which blanks the rules enrich
+then `blankDeadEnrichMints`, which blanks the rules enrich
 added that the wired grammar never reaches, `attachDerivationRecords`,
 which records the upstream conflicts and each reshaped rule's upstream source
 for the conflict loop, and the imported resolutions and whether the config
@@ -6095,6 +6111,52 @@ the new reduction point needs is authored as an override on the minted
 rule, which the grammar sees as `original`.
 ```
 
+### `packages/codegen/src/dsl/rule-transforms.ts::InlineTextTokens`
+
+The result of `mintInlineTextTokens`: the rewritten rules and the text-token rule names it minted.
+
+### `packages/codegen/src/dsl/rule-transforms.ts::peelPrec`
+
+The rule under any chain of PREC wrappers.
+
+### `packages/codegen/src/dsl/rule-transforms.ts::isTerminalRootRule`
+
+Whether a rule, under its PREC wrappers, is a PATTERN, a STRING or a token: a rule tree-sitter compiles to one lexical token of its own.
+
+### `packages/codegen/src/dsl/rule-transforms.ts::isLiteralOnlyRule`
+
+Whether a rule, under PREC and token wrappers, is only literal text: a STRING, or a CHOICE or SEQ of literal-only members. A hidden rule of this shape has fixed text, so its content is never lost when the parser hides it.
+
+### `packages/codegen/src/dsl/rule-transforms.ts::tokenBodyKey`
+
+The identity of a token body, compared the way tree-sitter compares tokens: the rule's JSON without the sittir-side `annotations`, `metadata`, `id` and `hidden` stamps. `mintInlineTextTokens` shares a minted rule among sites with one key, and `auxTokenKinds` finds the named rules tree-sitter folds onto one token.
+
+### `packages/codegen/src/dsl/rule-transforms.ts::mintInlineTextTokens`
+
+Names every inline text token of a non-terminal rule. A text token is an unnamed PATTERN, or a TOKEN / IMMEDIATE_TOKEN whose content (after peeling PREC) is not a STRING: the shapes tree-sitter otherwise extracts as an anonymous auxiliary token (`<rule>_token<n>`), which the reader cannot tell apart from the text around it. Sites with the same body (`tokenBodyKey`) share one minted rule, as tree-sitter shares one auxiliary token among them.
+
+Names come from `ctx.namingRules`, which defaults to `rules` itself. Enrich passes the upstream rules, so a site named after the rule that held it upstream keeps that name after enrich lifts it into a hoisted arm (rust `line_comment_text1`, not the lifted arm's name). A body is named after the first rule in naming order that holds it, with any leading underscores dropped: `<owner>_text`, or `<owner>_text1..n` in site order when that owner holds more than one body. A body enrich produced that has no upstream site is named after its owner in `rules`. Only the names still referenced are minted.
+
+The minted rule is the body without its site annotations. Each site becomes a reference to it that keeps the site's annotations (`variantOf` and the like belong to the arm, not to the token), and `owners` lists the rules that reference each minted name. The walk does not descend into a named ALIAS (the alias already names its content) or into a token (a token is one site). A rule whose root is a terminal is skipped, since it is already a named token. `ctx.symbol` builds the reference in the calling runtime's own shape. A minted name the grammar already uses is an error.
+
+Enrich runs it after its hoists and automatic-variant stamping, so it does not change any shape enrich decides. Wire then addresses a patch that lands on a minted reference through the mint (`transform/transform.ts::resolvePatch`).
+
+### `packages/codegen/src/dsl/rule-transforms.ts::TextTokenMintCtx`
+
+What `mintInlineTextTokens` needs beyond the rules it rewrites: `symbol`, the reference builder in the calling runtime's shape, and `namingRules`, the rules whose sites name each body.
+
+### `packages/codegen/src/dsl/rule-transforms.ts::TextSiteCtx`
+
+The per-site rewrite `mapTextTokenSites` applies: `visit` returns what replaces a text-token site.
+
+### `packages/codegen/src/dsl/rule-transforms.ts::isTextTokenSite`
+
+True for an unnamed PATTERN, or a TOKEN / IMMEDIATE_TOKEN whose content after peeling PREC is not a STRING: the shapes tree-sitter would extract as an anonymous auxiliary token.
+
+### `packages/codegen/src/dsl/rule-transforms.ts::mapTextTokenSites`
+
+Rewrites every text-token site of a rule through `ctx.visit`, stopping at a site (a token is one site) and at a named ALIAS (the alias already names its content).
+
 ### `packages/codegen/src/dsl/rule-transforms.ts::liftAliasedHiddenRuleBodies`
 
 ```text
@@ -6153,7 +6215,7 @@ A mint is a rule enrich adds, so a name the base grammar already has is never on
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichRuleOrigin`
 
-Why enrich records a rule name: either a mint (`kind` is an `EnrichMintKind`), or `promoted-group`, an upstream hidden rule enrich exposes through an alias; the rule itself is unchanged. A `promoted-group` entry carries `visibleName`, the name the parent's arm aliases the rule to, so no reader re-derives the pairing from the underscore convention. It is the only origin that is not a mint.
+Why enrich records a rule name: either a mint (`kind` is an `EnrichMintKind`), or `promoted-group`, an upstream hidden rule enrich exposes through an alias; the rule itself is unchanged. A `promoted-group` entry carries `visibleName`, the name the parent's arm aliases the rule to, so no reader re-derives the pairing from the underscore convention. It is the only origin that is not a mint. A `text` entry is a text token `mintInlineTextTokens` minted, and it carries `owners`, the rules that reference it.
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx`
 
@@ -6594,6 +6656,10 @@ Whether a kind is hidden on the generated surface, from the two parser symbol fl
 
 Whether a kind is hidden storage the parser shows under an alias: its own row (`findOwnKindEntry`) is an `aliasedNonTerminal` and `surfaceHiddenOf` holds. Supertypes fail the second test, so an aliased supertype (python `expression` under `as_pattern_target`) stays a supertype. Link and assemble ask it to make such a kind an envelope rather than a supertype or polymorph.
 
+### `packages/codegen/src/dsl/symbol-table.ts::isShownConcreteKind`
+
+Whether the parser shows a kind as a concrete node: its own row (`findOwnKindEntry`) exists, carries no supertype flag, and `surfaceHiddenOf` does not hold. A declared supertype the parser displays under a default alias (python `match_block`) is one. Link's `classifyHiddenChoiceRule` keeps such a kind concrete.
+
 ### `packages/codegen/src/dsl/symbol-table.ts::isSurfaceHiddenKind`
 
 `surfaceHiddenOf` for a kind name, looked up by its own row (`findOwnKindEntry`).
@@ -6615,6 +6681,7 @@ Marks the rows named in the grammar's `visibleExternals` with `parser.visibleExt
 One catalog row. Beyond the id tables, it carries:
 
 - `parseName`: set only on an alias fold (`joinIdNames`), the display name tree-sitter issues under `parseId`. The row keeps its own `symbolName`, so the storage id still names the row's own symbol and the parse id names the display;
+- `aux`: parser.c declares the symbol as `aux_sym_…`, an auxiliary symbol the grammar never named (a repeat helper or, when `terminal`, an anonymous auxiliary token), read by `compiler/diagnostics/catalog-coverage.ts::auxTokenKinds`;
 - `supertype`: the symbol is a tree-sitter supertype (`collectSymbolFlags`), read by `surfaceHiddenOf` and `parserSupertypeOf`;
 - `terminal`: the symbol's id is below parser.c's `TOKEN_COUNT` (`collectTokenCount`), so the parser issues it as a token;
 - `visibleExternal`: the row is declared in the grammar's `visibleExternals` (`stampVisibleExternals`).
@@ -6734,7 +6801,7 @@ Removes a default alias from each step that carries it, unless another productio
 
 ### `packages/codegen/src/dsl/symbol-table.ts::predictSymbolTable`
 
-Predicts the parser's symbol table from the evaluated grammar by porting tree-sitter's preparation: live rules (`liveRuleNames`), interning, token extraction (the `word` rule first), single-use whole-rule token replacement, externals (a literal external is an anonymous token), extras, repeat expansion, flattening, reachability from the start rule and the extras (every external is reachable), default aliases and their clearing. Symbols are ordered terminals, externals, then non-inlined nonterminals, then the aliases no symbol displays as, sorted by name and namedness; ids follow that order from 1 and C names come from `sanitizeCIdentifier` with numeric suffixes on collision. Each symbol's name is its display name — its default alias when it has one — and its visible, named, supertype and aliased-non-terminal flags follow tree-sitter's metadata. A reference that names no rule and no external is what tree-sitter rejects the grammar for; the prediction does not stop there. Such a reference stays an opaque nonterminal step (so the rule holding it keeps its class) that is never issued a symbol, and every such name is returned in `undefinedNames` beside the table of the names that are defined. `kindTableOfSymbolTable` turns the table into rows exactly as it turns parser.c's.
+Predicts the parser's symbol table from the evaluated grammar by porting tree-sitter's preparation: live rules (`liveRuleNames`), interning, token extraction (the `word` rule first), single-use whole-rule token replacement, externals (a literal external is an anonymous token), extras, repeat expansion, flattening, reachability from the start rule and the extras (every external is reachable), default aliases and their clearing. Symbols are ordered terminals, externals, then non-inlined nonterminals, then the aliases no symbol displays as, sorted by name and namedness; ids follow that order from 1 and C names come from `sanitizeCIdentifier` with numeric suffixes on collision. Each symbol's name is its display name — its default alias when it has one — and its visible, named, supertype and aliased-non-terminal flags follow tree-sitter's metadata. A default alias replaces the symbol's metadata, so a declared supertype a default alias displays carries no supertype flag, as in parser.c's `ts_symbol_metadata` (python `_match_block`, shown as `match_block`). A reference that names no rule and no external is what tree-sitter rejects the grammar for; the prediction does not stop there. Such a reference stays an opaque nonterminal step (so the rule holding it keeps its class) that is never issued a symbol, and every such name is returned in `undefinedNames` beside the table of the names that are defined. `kindTableOfSymbolTable` turns the table into rows exactly as it turns parser.c's.
 
 ### `packages/codegen/src/dsl/symbol-table.ts::PredictedSymbolTable`
 
