@@ -4,12 +4,11 @@ import { loadPackageIdTables } from '../compiler/generated-metadata.ts';
 import { auxTokenKinds, catalogCoverage, type CatalogCoverageSite } from '../compiler/diagnostics/catalog-coverage.ts';
 import { collectGeneratedKindEntries } from '../dsl/symbol-table.ts';
 import { allGrammars, grammarPackage } from '../grammars.ts';
+import { FULL_PIPELINE_TIMEOUT } from './helpers/timeouts.ts';
 
 const UNRESOLVED_ARM_CEILINGS: Readonly<Record<string, number>> = {
 	rust: 2
 };
-
-const FULL_PIPELINE_TIMEOUT = 180_000;
 
 function sites(found: readonly CatalogCoverageSite[]): string {
 	return found.map((site) => `${site.ownerKind}.${site.slot} -> ${site.arm}`).join('\n');

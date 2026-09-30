@@ -3,8 +3,7 @@ import { compileGrammar } from '../compile.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
 import { AssembledSupertype, concreteKindsOf } from '../model/node-map.ts';
 import { grammarPackage } from '../../grammars.ts';
-
-const FULL_PIPELINE_TIMEOUT = 180_000;
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 describe('a token-form supertype nested under another supertype arm', () => {
 	it.each([

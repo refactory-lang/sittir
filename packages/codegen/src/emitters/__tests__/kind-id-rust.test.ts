@@ -8,6 +8,7 @@ import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import type { GrammarName } from '../../grammars.ts';
 import { evaluatePackage } from '../../compiler/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 
 
 async function emittedKindIds(grammar: GrammarName) {
@@ -34,17 +35,17 @@ describe('wire_slot', () => {
 			"pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'static str> {"
 		);
 		expect(source).toContain(`(${idOf('for_in_statement')}, None, "for_header_lhs") => Some("for_header"),`);
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 	it('routes a field-tagged child by its field when the model slot has another name', async () => {
 		const { source, idOf } = await emittedKindIds('typescript');
 		expect(source).toContain(`(${idOf('enum_body_elements')}, Some("name"), _) => Some("content"),`);
 		expect(source).toContain(`(${idOf('enum_body_elements')}, None, "enum_assignment") => Some("content"),`);
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 	it('leaves a child whose key already names its slot to the parser', async () => {
 		const { source } = await emittedKindIds('typescript');
 		const table = source.slice(source.indexOf('pub fn wire_slot'), source.indexOf('static SLOT_SEPARATORS'));
 		expect(table).not.toMatch(/, None, "([a-z_]+)"\) => Some\("\1"\)/);
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 });
 
 describe('facts the wrap layer owns', () => {
@@ -55,5 +56,5 @@ describe('facts the wrap layer owns', () => {
 			expect(source).not.toContain('is_slot_separator');
 			expect(source).not.toContain('keeps_anonymous_children');
 		}
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 });
