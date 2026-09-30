@@ -10094,16 +10094,7 @@ export type DeclarationStatement =
 
 export type MacroDefinition = MacroDefinitionParen | MacroDefinitionBracket | MacroDefinitionBrace;
 
-export type TokenPattern =
-	| TokenTreePattern
-	| TokenRepetitionPattern
-	| TokenBindingPattern
-	| Metavariable
-	| NonSpecialToken;
-
 export type TokenTreePattern = TokenTreePatternParen | TokenTreePatternBracket | TokenTreePatternBrace;
-
-export type Tokens = TokenTree | TokenRepetition | Metavariable | NonSpecialToken;
 
 export type TokenTree = TokenTreeParen | TokenTreeBracket | TokenTreeBrace;
 
@@ -10114,38 +10105,6 @@ export type ForeignModItem = ForeignModItemSemi | ForeignModItemBody;
 export type StructItem = StructItemBrace | StructItemTuple | StructItemUnit;
 
 export type ImplItem = ImplItemBody | ImplItemSemi;
-
-export type UseClause =
-	| Self
-	| U8Keyword
-	| I8Keyword
-	| U16Keyword
-	| I16Keyword
-	| U32Keyword
-	| I32Keyword
-	| U64Keyword
-	| I64Keyword
-	| U128Keyword
-	| I128Keyword
-	| IsizeKeyword
-	| UsizeKeyword
-	| F32Keyword
-	| F64Keyword
-	| BoolKeyword
-	| StrKeyword
-	| CharKeyword
-	| Metavariable
-	| Super
-	| Crate
-	| Identifier
-	| ScopedIdentifier
-	| DefaultKeyword
-	| UnionKeyword
-	| GenKeyword
-	| UseAsClause
-	| UseList
-	| ScopedUseList
-	| UseWildcard;
 
 export type Type =
 	| AbstractType
@@ -10167,67 +10126,6 @@ export type Type =
 	| PrimitiveType;
 
 export type PointerType = PointerTypeConst | PointerTypeMut;
-
-export type ExpressionExceptRange =
-	| UnaryExpression
-	| ReferenceExpression
-	| TryExpression
-	| BinaryExpression
-	| AssignmentExpression
-	| CompoundAssignmentExpr
-	| TypeCastExpression
-	| CallExpression
-	| ReturnExpression
-	| YieldExpression
-	| Literal
-	| Identifier
-	| U8Keyword
-	| I8Keyword
-	| U16Keyword
-	| I16Keyword
-	| U32Keyword
-	| I32Keyword
-	| U64Keyword
-	| I64Keyword
-	| U128Keyword
-	| I128Keyword
-	| IsizeKeyword
-	| UsizeKeyword
-	| F32Keyword
-	| F64Keyword
-	| BoolKeyword
-	| StrKeyword
-	| CharKeyword
-	| DefaultKeyword
-	| UnionKeyword
-	| GenKeyword
-	| Self
-	| ScopedIdentifier
-	| GenericFunction
-	| AwaitExpression
-	| FieldExpression
-	| ArrayExpression
-	| TupleExpression
-	| MacroInvocation
-	| UnitExpression
-	| BreakExpression
-	| ContinueExpression
-	| IndexExpression
-	| Metavariable
-	| ClosureExpression
-	| ParenthesizedExpression
-	| StructExpression
-	| UnsafeBlock
-	| AsyncBlock
-	| GenBlock
-	| TryBlock
-	| Block
-	| IfExpression
-	| MatchExpression
-	| WhileExpression
-	| LoopExpression
-	| ForExpression
-	| ConstBlock;
 
 export type Expression =
 	| UnaryExpression
@@ -10291,24 +10189,7 @@ export type Expression =
 	| ConstBlock
 	| RangeExpression;
 
-export type ExpressionEndingWithBlock =
-	| UnsafeBlock
-	| AsyncBlock
-	| GenBlock
-	| TryBlock
-	| Block
-	| IfExpression
-	| MatchExpression
-	| WhileExpression
-	| LoopExpression
-	| ForExpression
-	| ConstBlock;
-
 export type DelimTokenTree = DelimTokenTreeParen | DelimTokenTreeBracket | DelimTokenTreeBrace;
-
-export type DelimTokens = NonSpecialToken | Dollar | DelimTokenTree;
-
-export type NonDelimToken = NonSpecialToken | Dollar;
 
 export type ReferenceExpression =
 	| ReferenceExpressionRawConst
@@ -10317,8 +10198,6 @@ export type ReferenceExpression =
 	| ReferenceExpressionBare;
 
 export type ArrayExpression = ArrayExpressionSemi | ArrayExpressionList;
-
-export type Condition = Expression | LetCondition | LetChain;
 
 export type MatchArm = MatchArmWithComma | MatchArmBlockEnding;
 
@@ -10393,34 +10272,6 @@ export type EscapeSequence =
 
 export type Comment = LineComment | BlockComment;
 
-export type Path =
-	| Self
-	| U8Keyword
-	| I8Keyword
-	| U16Keyword
-	| I16Keyword
-	| U32Keyword
-	| I32Keyword
-	| U64Keyword
-	| I64Keyword
-	| U128Keyword
-	| I128Keyword
-	| IsizeKeyword
-	| UsizeKeyword
-	| F32Keyword
-	| F64Keyword
-	| BoolKeyword
-	| StrKeyword
-	| CharKeyword
-	| Metavariable
-	| Super
-	| Crate
-	| Identifier
-	| ScopedIdentifier
-	| DefaultKeyword
-	| UnionKeyword
-	| GenKeyword;
-
 export type Whitespace = Tight | Space | Tab | Newline | Blankline | DoubleBlankline | Indent | Dedent;
 
 export type CharLiteralEscaped =
@@ -10441,16 +10292,8 @@ export namespace MacroDefinition {
 	export type Kind = 'macro_definition';
 }
 
-export namespace TokenPattern {
-	export type Kind = '_token_pattern';
-}
-
 export namespace TokenTreePattern {
 	export type Kind = 'token_tree_pattern';
-}
-
-export namespace Tokens {
-	export type Kind = '_tokens';
 }
 
 export namespace TokenTree {
@@ -10473,10 +10316,6 @@ export namespace ImplItem {
 	export type Kind = 'impl_item';
 }
 
-export namespace UseClause {
-	export type Kind = '_use_clause';
-}
-
 export namespace Type {
 	export type Kind = '_type';
 }
@@ -10485,28 +10324,12 @@ export namespace PointerType {
 	export type Kind = 'pointer_type';
 }
 
-export namespace ExpressionExceptRange {
-	export type Kind = '_expression_except_range';
-}
-
 export namespace Expression {
 	export type Kind = '_expression';
 }
 
-export namespace ExpressionEndingWithBlock {
-	export type Kind = '_expression_ending_with_block';
-}
-
 export namespace DelimTokenTree {
 	export type Kind = 'delim_token_tree';
-}
-
-export namespace DelimTokens {
-	export type Kind = '_delim_tokens';
-}
-
-export namespace NonDelimToken {
-	export type Kind = '_non_delim_token';
 }
 
 export namespace ReferenceExpression {
@@ -10515,10 +10338,6 @@ export namespace ReferenceExpression {
 
 export namespace ArrayExpression {
 	export type Kind = 'array_expression';
-}
-
-export namespace Condition {
-	export type Kind = '_condition';
 }
 
 export namespace MatchArm {
@@ -10567,10 +10386,6 @@ export namespace EscapeSequence {
 
 export namespace Comment {
 	export type Kind = 'comment';
-}
-
-export namespace Path {
-	export type Kind = '_path';
 }
 
 export namespace Whitespace {

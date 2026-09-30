@@ -27,6 +27,7 @@ import { defaultTriviaForm, triviaKinds } from './model/trivia.ts';
 
 export interface GeneratedFiles {
 	types: string;
+	typesInternal: string;
 	renderEngine: string;
 	api: string;
 	backend: string;
@@ -151,6 +152,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			}),
 			backend: emitBackend({ grammar: cfg.grammar }),
 			types: emitted.types,
+			typesInternal: emitted.typesInternal,
 			templates: emitted.templates,
 			factories: emitted.factories,
 			overlays: emitted.overlays,

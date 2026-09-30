@@ -4463,17 +4463,6 @@ export type SimpleStatement =
 	| ExecStatement
 	| TypeAliasStatement;
 
-export type NamedExpressionLhs =
-	| Identifier
-	| PrintKeyword
-	| ExecKeyword
-	| AsyncKeyword
-	| AwaitKeyword
-	| TypeKeyword
-	| MatchKeyword;
-
-export type Expressions = Expression | ExpressionList;
-
 export type CompoundStatement =
 	| IfStatement
 	| ForStatement
@@ -4513,8 +4502,6 @@ export type Pattern =
 	| ListSplatPattern
 	| TuplePattern
 	| ListPattern;
-
-export type ExpressionWithinForInClause = Expression | LambdaWithinForInClause;
 
 export type Expression =
 	| ComparisonOperator
@@ -4561,12 +4548,6 @@ export type PrimaryExpression =
 
 export type Assignment = AssignmentEq | AssignmentType | AssignmentTyped;
 
-export type LeftHandSide = Pattern | PatternList;
-
-export type RightHandSide = Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
-
-export type FExpression = Expression | ExpressionList | PatternList | Yield;
-
 export type EscapeSequence =
 	| EscapeSequenceUnicodeFixed
 	| EscapeSequenceUnicodeWide
@@ -4580,8 +4561,6 @@ export type Integer = IntegerHex | IntegerOctal | IntegerBinary | IntegerDecimal
 
 export type Float = FloatPoint | FloatLeadingPoint | FloatScientific;
 
-export type KeywordIdentifier = PrintKeyword | ExecKeyword | AsyncKeyword | AwaitKeyword | TypeKeyword | MatchKeyword;
-
 export type LineContinuation = LineContinuationNewline | LineContinuationNul;
 
 export type Whitespace = Tight | Space | Tab | Newline | Blankline | DoubleBlankline;
@@ -4594,14 +4573,6 @@ export namespace Statement {
 
 export namespace SimpleStatement {
 	export type Kind = '_simple_statement';
-}
-
-export namespace NamedExpressionLhs {
-	export type Kind = '_named_expression_lhs';
-}
-
-export namespace Expressions {
-	export type Kind = '_expressions';
 }
 
 export namespace CompoundStatement {
@@ -4624,10 +4595,6 @@ export namespace Pattern {
 	export type Kind = 'pattern';
 }
 
-export namespace ExpressionWithinForInClause {
-	export type Kind = '_expression_within_for_in_clause';
-}
-
 export namespace Expression {
 	export type Kind = 'expression';
 }
@@ -4640,18 +4607,6 @@ export namespace Assignment {
 	export type Kind = 'assignment';
 }
 
-export namespace LeftHandSide {
-	export type Kind = '_left_hand_side';
-}
-
-export namespace RightHandSide {
-	export type Kind = '_right_hand_side';
-}
-
-export namespace FExpression {
-	export type Kind = '_f_expression';
-}
-
 export namespace EscapeSequence {
 	export type Kind = 'escape_sequence';
 }
@@ -4662,10 +4617,6 @@ export namespace Integer {
 
 export namespace Float {
 	export type Kind = 'float';
-}
-
-export namespace KeywordIdentifier {
-	export type Kind = 'keyword_identifier';
 }
 
 export namespace LineContinuation {
