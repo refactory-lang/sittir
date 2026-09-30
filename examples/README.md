@@ -31,7 +31,7 @@ that takes an argument needs a sample input in that test.
 | `07-read-source.ts` | Read source into NodeData |
 | `09-type-guards.ts` | Type guards |
 | `12-cross-language-migration.ts` | Cross-language migration |
-| `14-format-preserving-transform.ts` | Format-preserving transforms *(parked, not type-checked: the parse → `$with` → `$render` rewrite is blocked by #419, #420, #421, #422)* |
+| `14-format-preserving-transform.ts` | Format-preserving transforms *(parked, not type-checked: the parse → `$with` → `$render` rewrite is blocked by #419, #420, #421)* |
 | `15-generate-file.ts` | Generate a file from scratch *(pending richer Rust generation examples)* |
 | `16-dogfooding.ts` | Dogfooding *(pending template/snippet-free rewrite)* |
 | `17-dogfood-rust-strict.ts` | Dogfooding — rebuild `sittir-core/src/splice.rs` through `.strict` alone |

@@ -25,3 +25,11 @@ export function parsedSurface(): string {
 	expectTrue<Equals<ReturnType<typeof edited.body>, T.StatementBlock.Parsed>>();
 	return edited.$render();
 }
+
+export function renderTakesEveryNodeAUserCanHold(): string {
+	const root = engine.parse('function f() {}\n');
+	const item = root.statements()[0]!;
+	if (!engine.is.functionDeclaration(item)) return '';
+	const draft = item.$with.parameters(engine.build.formalParameters());
+	return [engine.render(root), engine.render(item), engine.render(draft)].map(String).join('');
+}
