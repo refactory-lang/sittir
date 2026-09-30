@@ -18,8 +18,8 @@ only mean something while that tree is at hand.
 
 ## Design
 
-A node's coordinates are its offset from its parent. Only the root is placed
-in a buffer: its coordinates start at (0, 0) in the bytes it was read from.
+A node's coordinates are its offset from its parent. The root starts at
+(0, 0).
 
 This is tree-sitter's own `Length` algebra (a subtree stores its padding and
 size, never its position), measured from the parent's start instead of
@@ -62,8 +62,9 @@ coordinates, and **detached** once they cannot.
   - a line break: the two neighbours' rows differ;
   - blank lines: the row difference beyond one;
   - indentation: the next neighbour's start column, when its row differs.
-  What geometry cannot give (comment text, the spelling of whitespace) falls
-  to options and defaults.
+  Comments keep their text, since trivia are nodes and their leaf text is
+  data. What geometry cannot give, the spelling of whitespace (tabs, trailing
+  spaces, line endings), falls to options and defaults.
 
 ### No stamped coordinate facts
 
@@ -90,12 +91,14 @@ Every fact coordinates can give is derived, never stamped:
   it, so it remains their base. A gap next to an edited sibling is left to
   the options and defaults, as today.
 
-### Serialized source-backed data
+### Serialized data
 
-Data that travels with its source (a parity fixture) is not detached. It
-carries its buffer, and its root carries a buffer-backed id in place of a
-tree handle, so it renders exactly as the parsed tree does, root edges
-included.
+Serialized data (a parity fixture) is detached: it carries its coordinates
+and leaf text, never a source buffer. The root's edges come from geometry
+like any other gap: its first child's start row gives the leading line
+breaks, and its last child's end against the root's end gives the trailing
+ones. A consumer that needs exact bytes keeps the source text and re-parses
+it, so byte fidelity has one mechanism: the tree handle.
 
 ### Absolute positions
 
@@ -108,7 +111,7 @@ positions, so a tree-bound node exposes them from tree-sitter directly:
   row and column, and text. The tree lives on the native side, so these are
   fetched through the node's handle when asked, not held as a live
   tree-sitter object.
-- A detached or serialized node has no `$cst()`.
+- A detached node, serialized data included, has no `$cst()`.
 - sittir's own diagnostics read a location the same way when a node is
   tree-bound.
 
@@ -129,11 +132,10 @@ positions, so a tree-bound node exposes them from tree-sitter directly:
   instead of indexing a whole source by stored bytes.
 - **Anchors start a chain.** A node whose position cannot come from its
   parent's resolves on its own:
-  - the render root: (0, 0) in its tree's source or its buffer;
+  - the render root: (0, 0) in its tree's source;
   - a subtree seated from another tree (its handle names a different tree
     than its parent's): tree-sitter's start point through the handle, in its
-    own tree's source;
-  - a serialized root: (0, 0) in the buffer named by its buffer-backed id.
+    own tree's source.
 - **Detached gaps** are classified from geometry by the same classifier
   entry, with the gap's two points in place of its bytes.
 
@@ -156,22 +158,17 @@ position.
   start is (0, 0)" and "the element's end is the container's end".
 - **Tools:** the validators (`read-render-parse`, `factory-render-parse`,
   `from`, `common`), trivia placement, `probe kind`'s span search, and
-  `exercise/roundtrip`. `selfContainedRenderInput` becomes the serialized
-  source-backed form: it keeps coordinates and the buffer and copies nothing.
+  `exercise/roundtrip`. `selfContainedRenderInput` becomes a detach: it keeps
+  coordinates and leaf text and copies nothing else.
 - **Stamps removed:** `$sameLine` and `$tokensBetween` on trivia entries, and
   the self-contained `$text` copies.
 
-## Open decisions
-
-1. **The key** for a serialized node's buffer and its buffer-backed id.
-   `$source` is taken (it is the node's provenance).
-
 ## Verification
 
-- **Parity fixtures** carry relative coordinates and the buffer, and render
-  the same as the parsed tree. rust's left-out fixtures return to their
+- **Parity fixtures** are detached data and render with the parsed tree's
+  layout, root edges included. rust's left-out fixtures return to their
   pre-root-edge count: the two sources starting with a line break render
-  again.
+  again. A check that needs exact bytes re-parses the fixture's source.
 - **Detached layout:** for every corpus file, detaching the root and
   rendering keeps each untouched gap's adjacency, line breaks, blank lines
   and indentation.
