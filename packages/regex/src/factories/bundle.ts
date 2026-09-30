@@ -5,25 +5,62 @@ import { bundle } from '@sittir/common/utils';
 export * from './raw.js';
 export * from './coerce.js';
 
-export const pattern = bundle(F.buildPattern, C.coerceToPattern);
+export const pattern = bundle(F.buildPattern, C.coerceToPattern, { key: 'pattern', max: 1 });
 export const alternation = bundle(F.buildAlternation, C.coerceToAlternation);
 export const term = bundle(F.buildTerm, C.coerceToTerm);
-export const lookaroundAssertion = bundle(F.buildLookaroundAssertion, C.coerceToLookaroundAssertion);
-export const lookaheadAssertion = bundle(F.buildLookaheadAssertion, C.coerceToLookaheadAssertion);
-export const lookbehindAssertion = bundle(F.buildLookbehindAssertion, C.coerceToLookbehindAssertion);
+export const lookaroundAssertion = bundle(F.buildLookaroundAssertion, C.coerceToLookaroundAssertion, {
+	key: 'lookaroundAssertion',
+	max: 1
+});
+export const lookaheadAssertion = bundle(F.buildLookaheadAssertion, C.coerceToLookaheadAssertion, {
+	key: 'lookaheadAssertion',
+	max: 1
+});
+export const lookbehindAssertion = bundle(F.buildLookbehindAssertion, C.coerceToLookbehindAssertion, {
+	key: 'lookbehindAssertion',
+	max: 1
+});
 export const characterClass = bundle(F.buildCharacterClass, C.coerceToCharacterClass);
-export const posixCharacterClass = bundle(F.buildPosixCharacterClass, C.coerceToPosixCharacterClass);
-export const classRange = bundle(F.buildClassRange, C.coerceToClassRange);
-export const anonymousCapturingGroup = bundle(F.buildAnonymousCapturingGroup, C.coerceToAnonymousCapturingGroup);
-export const namedCapturingGroup = bundle(F.buildNamedCapturingGroup, C.coerceToNamedCapturingGroup);
-export const nonCapturingGroup = bundle(F.buildNonCapturingGroup, C.coerceToNonCapturingGroup);
-export const countQuantifier = bundle(F.buildCountQuantifier, C.coerceToCountQuantifier);
-export const backreferenceEscape = bundle(F.buildBackreferenceEscape, C.coerceToBackreferenceEscape);
-export const namedGroupBackreference = bundle(F.buildNamedGroupBackreference, C.coerceToNamedGroupBackreference);
-export const characterClassEscape = bundle(F.buildCharacterClassEscape, C.coerceToCharacterClassEscape);
+export const posixCharacterClass = bundle(F.buildPosixCharacterClass, C.coerceToPosixCharacterClass, {
+	key: 'posixCharacterClass',
+	max: 1
+});
+export const classRange = bundle(F.buildClassRange, C.coerceToClassRange, { key: 'classRange', max: 1 });
+export const anonymousCapturingGroup = bundle(F.buildAnonymousCapturingGroup, C.coerceToAnonymousCapturingGroup, {
+	key: 'anonymousCapturingGroup',
+	max: 1
+});
+export const namedCapturingGroup = bundle(F.buildNamedCapturingGroup, C.coerceToNamedCapturingGroup, {
+	key: 'namedCapturingGroup',
+	max: 1
+});
+export const nonCapturingGroup = bundle(F.buildNonCapturingGroup, C.coerceToNonCapturingGroup, {
+	key: 'nonCapturingGroup',
+	max: 1
+});
+export const countQuantifier = bundle(F.buildCountQuantifier, C.coerceToCountQuantifier, {
+	key: 'countQuantifier',
+	max: 1
+});
+export const backreferenceEscape = bundle(F.buildBackreferenceEscape, C.coerceToBackreferenceEscape, {
+	key: 'backreferenceEscape',
+	max: 1
+});
+export const namedGroupBackreference = bundle(F.buildNamedGroupBackreference, C.coerceToNamedGroupBackreference, {
+	key: 'namedGroupBackreference',
+	max: 1
+});
+export const characterClassEscape = bundle(F.buildCharacterClassEscape, C.coerceToCharacterClassEscape, {
+	key: 'characterClassEscape',
+	max: 1
+});
 export const unicodePropertyValueExpression = bundle(
 	F.buildUnicodePropertyValueExpression,
-	C.coerceToUnicodePropertyValueExpression
+	C.coerceToUnicodePropertyValueExpression,
+	{ key: 'unicodePropertyValueExpression', max: 1 }
 );
-export const identityEscape = bundle(F.buildIdentityEscape, C.coerceToIdentityEscape);
-export const termGroup = bundle(F.buildTermGroup, C.coerceToTermGroup);
+export const identityEscape = bundle(F.buildIdentityEscape, C.coerceToIdentityEscape, {
+	key: 'identityEscape',
+	max: 1
+});
+export const termGroup = bundle(F.buildTermGroup, C.coerceToTermGroup, { key: 'termGroup', max: 1 });

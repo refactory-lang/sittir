@@ -185,3 +185,19 @@ The `LanguageAPI` a descriptor carries.
 ### `packages/types/src/index.ts::ArgsOf`
 
 The union of a function's argument tuples over every declared overload, up to four, a rest signature as much as a fixed one; a bare rest array reads as its element type's mutable array. Each `infer` is bounded by `readonly unknown[]`, because an unbounded rest `infer` carries a mutable `unknown[]` bound that a generated coercer's `readonly` rest parameter fails, and one failed signature fails the whole match. A forwarding wrapper declares its own surface first and its target's overloads after, and `infer P` against a plain call signature would keep only the last of them, so a seat typed through the wrapper would refuse the prebuilt node and the optional own-surface the wrapper accepts at runtime. The overlay wire types and any future consumer use this, never bare `Parameters`, for factory references.
+
+### `packages/types/src/index.ts::MaxArity`
+
+The most arguments any declared overload of a function accepts, read off `ArgsOf`: the largest tuple length across the overloads, or `number` when one of them takes a rest parameter. `bundle` types each pair's arity stamp with it.
+
+### `packages/types/src/index.ts::HoistArity`
+
+A flavor pair's arity stamp: the route key, for the refusal message, and `max`, the most arguments the hoisted call takes, typed by `bundle` as the flavor's `MaxArity`.
+
+### `packages/types/src/index.ts::StrictFlavor`
+
+A strict builder with no coercer beside it, as one pair (a refine form); `bundle(strict, undefined, stamp)` builds it and hoisting calls `strict`.
+
+### `packages/types/src/index.ts::HoistedRoutes`
+
+The hoisted members of a pair: every key but `arity`, each through `Hoisted`. The stamp is read by `hoist` and is not a route.

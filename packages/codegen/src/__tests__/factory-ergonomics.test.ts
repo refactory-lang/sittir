@@ -109,8 +109,12 @@ describe('factory ergonomics', () => {
 			);
 			const indexContent = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/index.ts'), 'utf-8');
 
-			expect(bundleContent).toContain('bundle(F.buildSourceFile, C.coerceToSourceFile)');
-			expect(indexContent).toContain('export const sourceFile: Hoisted<typeof O.sourceFile> = hoist(O.sourceFile);');
+			expect(bundleContent).toContain(
+				"bundle(F.buildSourceFile, C.coerceToSourceFile, { key: 'sourceFile', max: 1 })"
+			);
+			expect(indexContent).toContain(
+				'export const sourceFile: Hoisted<typeof O.sourceFile> = hoist(O.sourceFile);'
+			);
 			expect(irContent).toContain('sourceFile: F.sourceFile,');
 			// The hoisted call position IS the coercer, so a `from` prop would
 			// be the same function under a second name.
