@@ -941,27 +941,6 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
     }
 }
 
-/// Whether the reader captures a named node of this kind as text: its
-/// template renders from that text, so the text is the node's content —
-/// free text for a pattern kind, the literal it holds for an enum kind.
-pub fn is_text_kind(kind: KindId) -> bool {
-    matches!(kind.0, 1 | 2 | 109 | 110 | 111 | 116 | 117 | 118 | 152 | 153 | 154 | 155 | 156 | 157 | 158 | 159 | 160 | 161 | 162 | 163 | 164 | 174 | 175 | 176 | 177 | 179 | 318 | 359)
-}
-
-/// Whether this parse kind id is an alias envelope: the reader stamps the
-/// grammar symbol beside it when the node is the storage node shown under
-/// the alias, so the wrap layer can seat it as the envelope's content.
-pub fn is_alias_envelope(kind: KindId) -> bool {
-    matches!(kind.0, 454 | 456 | 457 | 458 | 459 | 461)
-}
-
-/// Whether a node of this kind keeps its anonymous children as `$other`
-/// when it has no named child: an unnamed slot of the kind stores terminal
-/// kinds, and the wrap layer reclaims that slot's value from `$other`.
-pub fn keeps_anonymous_children(kind: KindId) -> bool {
-    matches!(kind.0, 258 | 284 | 320 | 321 | 346 | 354 | 367 | 379 | 404 | 415 | 416 | 422)
-}
-
 /// The model slot a child is stored under where its name differs from the
 /// parser's key: a field-tagged child by (parent kind id, field), a named
 /// child without a field by (parent kind id, the child's kind name).
@@ -1209,35 +1188,6 @@ pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str
         _ => None,
     }
 }
-
-/// (parent kind id, tree-sitter field name, punctuation kind ids) for every
-/// slot the parser field-tags a literal into: the separator of a repeated
-/// slot, or a literal a rule puts beside a singular slot under the same
-/// field. The template prints such a token itself, so the reader drops the
-/// child instead of seating it, and a native read and a wrapped read hand
-/// back the same slot contents.
-static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
-    (205, "declarators", &[14]),
-    (206, "declarators", &[14]),
-    (212, "condition", &[20]),
-    (234, "expression", &[3]),
-    (269, "expression", &[14]),
-    (304, "type", &[14]),
-    (313, "type", &[14]),
-    (376, "export_specifier", &[14]),
-    (377, "import_specifier", &[14]),
-    (378, "formal_parameter", &[14]),
-    (380, "type", &[14]),
-    (381, "type_parameter", &[14]),
-    (382, "tuple_type_member", &[14]),
-];
-
-pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {
-    SLOT_SEPARATORS
-        .iter()
-        .any(|(p, f, seps)| *p == parent.0 && *f == field && seps.contains(&child.0))
-}
-
 /// Whether the model stores a `child` of a `parent` node, reached under the
 /// parser field `field` (`None` for an untagged child), as a scalar: a
 /// presence flag or a kind id rather than a node. Such a child keeps no

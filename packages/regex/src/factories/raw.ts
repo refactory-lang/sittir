@@ -9,6 +9,7 @@ import {
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
 	numberText,
+	orDefault,
 	rejectBareText
 } from '@sittir/common/utils';
 import { withMethods } from '../utils.js';
@@ -33,6 +34,8 @@ const _leafRe_buildControlEscape = /^(?:(?:(?:\\[bfnrtv0])|(?:\\x[0-9a-fA-F]{2})
 const _leafRe_buildControlLetterEscape = /^(?:(?:\\c[a-zA-Z]))$/u;
 const _leafRe_buildGroupName = /^(?:(?:[A-Za-z_][A-Za-z0-9_]*))$/u;
 const _leafRe_buildDecimalDigits = /^(?:(?:\d+))$/u;
+const _leafRe_buildCharacterClassEscapeText1 = /^(?:(?:\\[dDsSwW]))$/u;
+const _leafRe_buildCharacterClassEscapeText2 = /^(?:(?:\\[pP]))$/u;
 export const _slotRe_buildIdentityEscape_content = /^(?:(?:[^kdDsSpPwWbfnrtv0-9]))$/u;
 
 export function buildPattern(value: AdmitBound<T.Alternation | T.Term, T.AdmittedNodes>): T.Pattern.Bound {
@@ -618,9 +621,13 @@ export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
 }
 
 export function buildCharacterClassEscape(
-	value: AdmitBound<'\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape, T.AdmittedNodes>
+	value: AdmitBound<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape, T.AdmittedNodes>
 ): T.CharacterClassEscape.Bound {
-	const _content = rejectBareText(value, 'CharacterClassEscape.content', 'buildUnicodeCharacterEscape(…)');
+	const _content = rejectBareText(
+		value,
+		'CharacterClassEscape.content',
+		'buildCharacterClassEscapeText1(…) / buildUnicodeCharacterEscape(…)'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -629,7 +636,7 @@ export function buildCharacterClassEscape(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: '\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape) =>
+					content: (value: T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape) =>
 						buildCharacterClassEscape(value)
 				}
 			},
@@ -884,7 +891,11 @@ export function buildCountQuantifierArm(config: T.CountQuantifierArm.Config): T.
 export function buildCharacterClassEscapeArm(
 	config: T.CharacterClassEscapeArm.Config
 ): T.CharacterClassEscapeArm.Bound {
-	const _content = config.content;
+	const _character_class_escape_text2 = rejectBareText(
+		config.characterClassEscapeText2,
+		'CharacterClassEscapeArm.characterClassEscapeText2',
+		'buildCharacterClassEscapeText2(…)'
+	);
 	const _unicode_property_value_expression = rejectBareText(
 		config.unicodePropertyValueExpression,
 		'CharacterClassEscapeArm.unicodePropertyValueExpression',
@@ -896,16 +907,17 @@ export function buildCharacterClassEscapeArm(
 				$type: TSKindId.CharacterClassEscapeArm as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_character_class_escape_text2,
 				_unicode_property_value_expression,
 				$with: {
-					content: (value: '\\\\[pP]') => buildCharacterClassEscapeArm({ ...config, content: value }),
+					characterClassEscapeText2: (value: T.CharacterClassEscapeText2) =>
+						buildCharacterClassEscapeArm({ ...config, characterClassEscapeText2: value }),
 					unicodePropertyValueExpression: (value: T.UnicodePropertyValueExpression) =>
 						buildCharacterClassEscapeArm({ ...config, unicodePropertyValueExpression: value })
 				}
 			},
 			{
-				content: () => _content,
+				characterClassEscapeText2: () => _character_class_escape_text2,
 				unicodePropertyValueExpression: () => _unicode_property_value_expression
 			}
 		)
@@ -941,7 +953,7 @@ function _buildUnicodePropertyValueExpressionGroup(
 	const _unicode_property_name = admitAliasContent<
 		NonNullable<T.UnicodePropertyValueExpressionGroup['_unicode_property_name']>
 	>(rejectBareText(value, 'UnicodePropertyValueExpressionGroup.unicodePropertyName', 'a built UnicodePropertyName'), [
-		[[38], (v: unknown) => buildUnicodePropertyName(v as never)]
+		[[35], (v: unknown) => buildUnicodePropertyName(v as never)]
 	]);
 	return withMethods(
 		withAccessors(
@@ -960,6 +972,30 @@ function _buildUnicodePropertyValueExpressionGroup(
 			}
 		)
 	) as unknown as T.UnicodePropertyValueExpressionGroup.Bound;
+}
+
+export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEscapeText1.Bound {
+	if (text.length === 0) throw new Error(`character_class_escape_text1: text must be non-empty`);
+	if (!_leafRe_buildCharacterClassEscapeText1.test(text))
+		throw new Error(`character_class_escape_text1: text does not match pattern: ${text}`);
+	return withMethods({
+		$type: TSKindId.CharacterClassEscapeText1 as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
+}
+
+export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEscapeText2.Bound {
+	if (text.length === 0) throw new Error(`character_class_escape_text2: text must be non-empty`);
+	if (!_leafRe_buildCharacterClassEscapeText2.test(text))
+		throw new Error(`character_class_escape_text2: text does not match pattern: ${text}`);
+	return withMethods({
+		$type: TSKindId.CharacterClassEscapeText2 as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Config): T.InlineFlagsGroupEnable.Bound {
@@ -1048,8 +1084,11 @@ export const buildBlankline: TSKindId.Blankline = TSKindId.Blankline;
 
 export const buildDoubleBlankline: TSKindId.DoubleBlankline = TSKindId.DoubleBlankline;
 
-export function buildLazy(value: AdmitBound<TSKindId.Qmark, T.AdmittedNodes>): T.Lazy.Bound {
-	const _content = coerceKindEnumStorage<NonNullable<T.Lazy['_content']>>(value, [['?', TSKindId.Qmark] as const]);
+export function buildLazy(value?: AdmitBound<TSKindId.Qmark, T.AdmittedNodes>): T.Lazy.Bound {
+	const _content = coerceKindEnumStorage<NonNullable<T.Lazy['_content']>>(
+		orDefault(value, () => TSKindId.Qmark as const),
+		[['?', TSKindId.Qmark] as const]
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1133,6 +1172,8 @@ export type FluentKindMap = {
 	count_quantifier_arm: T.CountQuantifierArm.Bound;
 	character_class_escape_arm: T.CharacterClassEscapeArm.Bound;
 	unicode_property_value_expression_group: T.UnicodePropertyValueExpressionGroup.Bound;
+	character_class_escape_text1: T.CharacterClassEscapeText1;
+	character_class_escape_text2: T.CharacterClassEscapeText2;
 	inline_flags_group_enable: T.InlineFlagsGroupEnable.Bound;
 	inline_flags_group_toggle: T.InlineFlagsGroupToggle.Bound;
 	inline_flags_group_disable: T.InlineFlagsGroupDisable.Bound;
@@ -1187,6 +1228,8 @@ export const _factoryMap = {
 	count_quantifier_arm: buildCountQuantifierArm,
 	character_class_escape_arm: buildCharacterClassEscapeArm,
 	unicode_property_value_expression_group: buildUnicodePropertyValueExpressionGroup,
+	character_class_escape_text1: buildCharacterClassEscapeText1,
+	character_class_escape_text2: buildCharacterClassEscapeText2,
 	inline_flags_group_enable: buildInlineFlagsGroupEnable,
 	inline_flags_group_toggle: buildInlineFlagsGroupToggle,
 	inline_flags_group_disable: buildInlineFlagsGroupDisable,

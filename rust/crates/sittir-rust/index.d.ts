@@ -1410,7 +1410,7 @@ export interface TokenRepetitionPatternTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _token_patterns?: Array<SlotValue<TokenRepetitionPatternTokenPatternsTransportSlot>>
-  _separator?: string
+  _separator?: SlotValue<TokenRepetitionPatternTextTransport>
   _operator: SlotValue<Box<AnyTransport>>
   _token_patterns_separator_space?: number
 }
@@ -1419,7 +1419,7 @@ export interface TokenRepetitionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _tokens?: Array<SlotValue<TokenRepetitionTokensTransportSlot>>
-  _separator?: string
+  _separator?: SlotValue<TokenRepetitionPatternTextTransport>
   _operator: SlotValue<Box<AnyTransport>>
   _tokens_separator_space?: number
 }

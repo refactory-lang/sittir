@@ -1,6 +1,7 @@
 {
   "name": "regex",
-  "nodeCount": 81,
+  "root": "pattern",
+  "nodeCount": 83,
   "word": null,
   "supertypes": [
     "_character_escape",
@@ -342,7 +343,7 @@
       }
     },
     "character_class_escape_arm": {
-      "content": {
+      "character_class_escape_text2": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -822,14 +823,16 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
+            "character_class_escape_text1",
             "character_class_escape_arm",
             "unicode_character_escape"
           ],
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "\\\\[dDsSwW]"
+              "name": "character_class_escape_text1",
+              "parseKind": "character_class_escape_text1"
             },
             {
               "kind": "node-ref",
@@ -857,6 +860,7 @@
       ],
       "bareAccepts": [
         "character_class_escape_arm",
+        "character_class_escape_text1",
         "unicode_character_escape"
       ]
     },
@@ -872,19 +876,22 @@
       },
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "character_class_escape_text2",
+          "propertyName": "characterClassEscapeText2",
+          "paramName": "characterClassEscapeText2",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [],
+          "kinds": [
+            "character_class_escape_text2"
+          ],
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "\\\\[pP]"
+              "name": "character_class_escape_text2",
+              "parseKind": "character_class_escape_text2"
             }
           ]
         },
@@ -912,9 +919,31 @@
       "name": "character_class_escape_arm",
       "factoryShape": "config",
       "factoryFields": [
-        "content",
+        "character_class_escape_text2",
         "unicode_property_value_expression"
       ]
+    },
+    {
+      "kind": "character_class_escape_text1",
+      "modelType": "pattern",
+      "typeName": "CharacterClassEscapeText1",
+      "factoryName": "characterClassEscapeText1",
+      "irKey": "characterClassEscapeText1",
+      "hidden": false,
+      "pattern": "\\\\[dDsSwW]",
+      "leafPattern": "/^(?:(?:\\\\[dDsSwW]))$/u",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "character_class_escape_text2",
+      "modelType": "pattern",
+      "typeName": "CharacterClassEscapeText2",
+      "factoryName": "characterClassEscapeText2",
+      "irKey": "characterClassEscapeText2",
+      "hidden": false,
+      "pattern": "\\\\[pP]",
+      "leafPattern": "/^(?:(?:\\\\[pP]))$/u",
+      "factoryShape": "text"
     },
     {
       "kind": "class_character",
@@ -1600,6 +1629,7 @@
       "factoryName": "lazy",
       "irKey": "lazy",
       "hidden": false,
+      "isParameterless": true,
       "slots": [
         {
           "name": "content",

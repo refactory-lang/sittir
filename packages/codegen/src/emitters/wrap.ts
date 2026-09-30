@@ -1,7 +1,9 @@
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { AssembledAlias, isBuilderTextLeaf, storageKindOfRef } from '../compiler/model/node-map.ts';
-import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
+import { AbstractAssembledCompound, AssembledAlias, isBuilderTextLeaf, storageKindOfRef } from '../compiler/model/node-map.ts';
+import { CHOICE, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
+import type { RenderRule } from '../types/rule.ts';
+import { findOwnKindEntry, type GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import {
 	AssembledSupertype,
@@ -180,13 +182,13 @@ function resolveSlotDrillExprs(
 		const allowedArg =
 			config.allowedKinds && config.allowedKinds.length > 0 ? JSON.stringify(config.allowedKinds) : 'undefined';
 		return {
-			storeExpr: `splitElidedWrapSlot(${rawStoreExpr}, ${config.separatorIdsExpr}, ${allowedArg})`,
+			storeExpr: `splitElidedWrapSlot(${rawStoreExpr}, ${config.separatorIdsExpr}, ${allowedArg}, _order, ${JSON.stringify(slotOrderName(slot))})`,
 			accessorBody: resolveSlotAccessorBody(slot, `${config.elemType} | undefined`)
 		};
 	}
 	const slotStoreExpr =
-		config.separatorIdsExpr !== undefined && slot.arity === 'many'
-			? `dropWireDelimiters(${rawStoreExpr}, ${config.separatorIdsExpr})`
+		config.separatorIdsExpr !== undefined
+			? `dropWireDelimiters(${rawStoreExpr}, ${config.separatorIdsExpr}, _order, ${JSON.stringify(slotOrderName(slot))})`
 			: rawStoreExpr;
 	const filteredStoreExpr =
 		config.allowedKinds && config.allowedKinds.length > 0
@@ -403,6 +405,7 @@ function emitSeparatedListWrap(
 		forceUnknownElement: node.slots.length > 1
 	});
 	lines.push(`  const _content = ${storeExpr};`);
+	if (node.slots.length > 1) emitSlotOrderDraftLine(node.slots, node.kind, lines, kindEntries, nodeMap);
 	lines.push('  return withMethods({');
 	lines.push('    ...data,');
 	if (kindEntries) {
@@ -443,7 +446,7 @@ function emitSeparatedListWrap(
 	}
 	lines.push('');
 	if (node.slots.length > 1) {
-		emitFieldAccessorLines(node.slots, 'data', lines, kindEntries, nodeMap);
+		emitFieldAccessorLines(node.slots, node.kind, 'data', lines, kindEntries, nodeMap);
 	} else {
 		lines.push(`    ${canonical.propertyName}() { ${accessorBody}; },`);
 	}
@@ -523,26 +526,79 @@ function emitFieldStorageLines(
 					? kindEnumAltIdPairs(f, nodeMap)
 					: undefined,
 			kindEnumOwnSymbolIds: storageInfo.kind === 'mixedEnum' ? kindEnumOwnSymbolIds(f, nodeMap) : undefined,
-			separatorIdsExpr: separatorIdsExprOf(f, kindEntries, elided),
+			separatorIdsExpr: separatorIdsExprOf(f, nodeMap.nodes.get(ownerKind), kindEntries, elided),
 			elided
 		});
 		lines.push(`    ${f.storageKey}: ${storeExpr},`);
 	}
+	if (dropsDelimiters(slots, ownerKind, kindEntries, nodeMap)) lines.push('    ...(_order && { $slotOrder: _order }),');
+}
+
+function slotOrderName(slot: SlotModel): string {
+	return slot.storageKey.slice(1);
+}
+
+function dropsDelimiters(
+	slots: readonly AssembledNonterminal[],
+	ownerKind: string,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): boolean {
+	const owner = nodeMap.nodes.get(ownerKind);
+	return slots.some((f) => separatorIdsExprOf(f, owner, kindEntries, hasOptionalElements(f)) !== undefined);
+}
+
+function emitSlotOrderDraftLine(
+	slots: readonly AssembledNonterminal[],
+	ownerKind: string,
+	lines: string[],
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): void {
+	if (dropsDelimiters(slots, ownerKind, kindEntries, nodeMap)) lines.push('  const _order = (data as _NodeData).$slotOrder?.slice();');
 }
 
 function separatorIdsExprOf(
 	f: AssembledNonterminal,
+	owner: AssembledNode | undefined,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	elided: boolean
 ): string | undefined {
 	if (!kindEntries) return undefined;
-	const sepTexts = slotSeparatorTexts(f, elided);
+	const tagged = owner !== undefined && f.fieldName !== undefined ? (fieldTaggedLiteralTexts(owner).get(f.fieldName) ?? []) : [];
+	const sepTexts = [...new Set([...slotSeparatorTexts(f, elided), ...tagged])];
 	if (sepTexts.length === 0) return undefined;
 	return `[${sepTexts.map((text) => kindDiscriminantExprForLiteral(text, kindEntries)).join(', ')}]`;
 }
 
+function fieldTaggedLiteralTexts(node: AssembledNode): ReadonlyMap<string, readonly string[]> {
+	const out = new Map<string, string[]>();
+	const walk = (rule: RenderRule, field: string | undefined): void => {
+		const own = (rule as { fieldName?: string }).fieldName ?? field;
+		switch (rule.type) {
+			case STRING:
+				if (own !== undefined && own !== (rule as { fieldName?: string }).fieldName) {
+					const list = out.get(own) ?? [];
+					if (!list.includes(rule.value)) list.push(rule.value);
+					out.set(own, list);
+				}
+				return;
+			case SEQ:
+			case CHOICE:
+				for (const member of rule.members) walk(member, own);
+				return;
+			default:
+				return;
+		}
+	};
+	if (node instanceof AbstractAssembledCompound && !node.lexedInterior) walk(node.renderRule, undefined);
+	return out;
+}
+
+
 function emitFieldAccessorLines(
 	slots: readonly AssembledNonterminal[],
+	ownerKind: string,
 	dataExpr: string,
 	lines: string[],
 	kindEntries: readonly KindEnumEntry[] | undefined,
@@ -558,7 +614,7 @@ function emitFieldAccessorLines(
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
 			storageInfo,
-			separatorIdsExpr: separatorIdsExprOf(f, kindEntries, elided),
+			separatorIdsExpr: separatorIdsExprOf(f, nodeMap.nodes.get(ownerKind), kindEntries, elided),
 			elided
 		});
 		lines.push(`    ${propName}() { ${accessorBody}; },`);
@@ -607,6 +663,7 @@ function emitFieldCarryingWrap(
 
 	const ownerSpec = listOwnerRuntimeSpec(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries, 'RAW.');
 	const ownerOpen = ownerSpec === undefined ? '' : 'withListOwner(';
+	emitSlotOrderDraftLine(slots, node.kind, lines, kindEntries, nodeMap);
 	lines.push(hasWithSetters ? `  const _node = withMethods(${ownerOpen}{` : `  return withMethods(${ownerOpen}{`);
 	lines.push('    ...data,');
 	if (kindEntries) {
@@ -629,7 +686,7 @@ function emitFieldCarryingWrap(
 	}
 	lines.push('');
 
-	emitFieldAccessorLines(slots, 'data', lines, kindEntries, nodeMap);
+	emitFieldAccessorLines(slots, node.kind, 'data', lines, kindEntries, nodeMap);
 	if (children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, kindEntries);
 		const { accessorBody } = resolveSlotDrillExprs(childrenConfig.slot, {
@@ -823,6 +880,119 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		}
 	}
 
+	#aliasIdentityLines(): string[] {
+		const displayOf = [
+			"function _displayOf(entry: _NodeData): _NodeData['$type'] {",
+			"  return (entry as { readonly $displayType?: _NodeData['$type'] }).$displayType ?? entry.$type;",
+			'}'
+		];
+		if (!this.#kindEntries) {
+			return [...displayOf, "function _kindOf(entry: _NodeData): _NodeData['$type'] {", '  return entry.$type;', '}', ''];
+		}
+		const envelopes = [...this.#nodeMap.nodes.values()].filter((node) => node instanceof AssembledAlias);
+		const envelopeIds = [...new Set(envelopes.map((node) => node.aliasTypeId))].sort((a, b) => a - b);
+		const hiddenIds =
+			envelopes.length === 0
+				? []
+				: [...new Set(this.#kindEntries.filter((entry) => entry.hidden).map((entry) => entry.id))].sort((a, b) => a - b);
+		return [
+			`const _ALIAS_ENVELOPES: ReadonlySet<_NodeData["$type"]> = new Set([${envelopeIds.join(', ')}]);`,
+			...(envelopes.length === 0 ? [] : [`const _HIDDEN_KINDS: ReadonlySet<_NodeData["$type"]> = new Set([${hiddenIds.join(', ')}]);`]),
+			...displayOf,
+			"function _kindOf(entry: _NodeData): _NodeData['$type'] {",
+			'  const display = _displayOf(entry);',
+			'  return _ALIAS_ENVELOPES.has(display) ? display : entry.$type;',
+			'}',
+			'function _withoutDisplay(data: _NodeData): _NodeData {',
+			'  const { $displayType: _display, ...node } = data as _NodeData & { readonly $displayType?: number };',
+			'  return node as _NodeData;',
+			'}',
+			''
+		];
+	}
+
+	#dropSpellingLines(): string[] {
+		const reclaiming = [...this.#nodeMap.nodes.values()].filter((node) =>
+			node.slots.some((slot) => reclaimsAnonymousChild(slot, this.#nodeMap))
+		);
+		const keys = this.#kindEntries
+			? [
+					...new Set(
+						reclaiming
+							.map((node) => findOwnKindEntry(this.#kindEntries!, node.kind)?.id)
+							.filter((id): id is number => id !== undefined)
+					)
+				]
+					.sort((a, b) => a - b)
+					.map(String)
+			: [...new Set(reclaiming.map((node) => JSON.stringify(node.kind)))].sort();
+		return [
+			`const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData["$type"]> = new Set([${keys.join(', ')}]);`,
+			'function _spellingTokens(data: _NodeData): readonly _NodeData[] | undefined {',
+			'  const { $other, ...node } = data;',
+			'  if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return undefined;',
+			'  if (Object.keys(node).some((key) => key.charCodeAt(0) === 95)) return undefined;',
+			'  const tokens = (Array.isArray($other) ? $other : [$other]) as readonly unknown[];',
+			'  if (tokens.some((token) => typeof token !== "object" || token === null || (token as _NodeData).$named !== false)) return undefined;',
+			'  return tokens as readonly _NodeData[];',
+			'}',
+			'function _spelledText(data: _NodeData): string | undefined {',
+			'  if (data.$text !== undefined) return data.$text;',
+			'  const tokens = _spellingTokens(data);',
+			'  return tokens === undefined ? undefined : _tiledSpelling(data.$span, tokens);',
+			'}',
+			'function _dropSpelling(data: _NodeData): _NodeData {',
+			'  if (_spellingTokens(data) === undefined) return data;',
+			'  const { $other: _tokens, ...node } = data;',
+			'  const $text = _spelledText(data);',
+			'  return ($text === undefined ? node : { ...node, $text }) as _NodeData;',
+			'}',
+			'function _spellingOf(entry: _NodeData): string | undefined {',
+			'  const text = _spelledText(entry);',
+			'  if (text !== undefined || entry.$named !== false) return text;',
+			'  const shown = _displayOf(entry);',
+			`  return ${this.#kindEntries ? 'typeof shown === "number" ? KIND_DISPLAY_NAMES.get(shown) : shown' : 'String(shown)'};`,
+			'}',
+			'function _tiledSpelling(span: _NodeData["$span"], children: readonly _NodeData[]): string | undefined {',
+			'  if (span === undefined) return undefined;',
+			'  let at = span.start;',
+			'  let text = "";',
+			'  for (const child of children) {',
+			'    const spelling = _spellingOf(child);',
+			'    if (child.$span?.start !== at || spelling === undefined) return undefined;',
+			'    text += spelling;',
+			'    at = child.$span.end;',
+			'  }',
+			'  return at === span.end ? text : undefined;',
+			'}',
+			'function _readChildren(data: _NodeData): readonly _NodeData[] | undefined {',
+			'  const children: _NodeData[] = [];',
+			'  for (const [key, value] of Object.entries(data)) {',
+			'    if (key.charCodeAt(0) !== 95 && key !== "$other") continue;',
+			'    for (const child of (Array.isArray(value) ? value : [value]) as readonly unknown[]) {',
+			'      if (child === undefined) continue;',
+			'      if (typeof child !== "object" || child === null) return undefined;',
+			'      children.push(child as _NodeData);',
+			'    }',
+			'  }',
+			'  return children.sort((a, b) => (a.$span?.start ?? 0) - (b.$span?.start ?? 0));',
+			'}',
+			'function _spelledLeaf(data: _NodeData): _NodeData {',
+			'  if (data.$text !== undefined) return data;',
+			'  const children = _readChildren(data);',
+			'  if (children === undefined || children.length === 0) return data;',
+			'  const $text = _tiledSpelling(data.$span, children);',
+			'  if ($text === undefined) return data;',
+			'  const leaf: Record<string, unknown> = {};',
+			'  for (const [key, value] of Object.entries(data)) {',
+			'    if (key.charCodeAt(0) !== 95 && key !== "$other" && key !== "$slotOrder") leaf[key] = value;',
+			'  }',
+			'  return { ...leaf, $text } as _NodeData;',
+			'}',
+			''
+		];
+	}
+
 	finalize(): string {
 		const bodyLines: string[] = [];
 		for (const source of this.#output) {
@@ -857,7 +1027,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'// Import _NodeData (== AnyNodeData) from @sittir/types',
 			'// instead of re-declaring locally. Single source of truth.',
 			"import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray, SupertypeSurface } from '@sittir/types';",
-			...(this.#kindEntries ? ["import { TSKindId, KIND_NAMES } from './types.js';"] : []),
+			...(this.#kindEntries ? ["import { TSKindId, KIND_NAMES, KIND_DISPLAY_NAMES } from './types.js';"] : []),
 			DELIMITER_IMPORT,
 			"import type * as T from './types-internal.js';",
 			...(this.#typeImportLine ? [this.#typeImportLine] : []),
@@ -1074,13 +1244,15 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    return typeof mappedId === "number" ? (mappedId as unknown as T) : value;',
 						'  }',
 						'  if (typeof value === "number") return (altIds?.[value] ?? value) as unknown as T;',
-						'  if (typeof entry.$type === "number" && altIds?.[entry.$type] !== undefined) return altIds[entry.$type] as unknown as T;',
-						'  if (typeof entry.$text === "string") {',
-						'    const mappedId = textIds?.[entry.$text];',
+						'  const kind = _kindOf(entry);',
+						'  if (typeof kind === "number" && altIds?.[kind] !== undefined) return altIds[kind] as unknown as T;',
+						'  const text = _spelledText(entry);',
+						'  if (text !== undefined) {',
+						'    const mappedId = textIds?.[text];',
 						'    if (typeof mappedId === "number") return mappedId as unknown as T;',
-						'    return entry.$text as unknown as T;',
+						'    return text as unknown as T;',
 						'  }',
-						'  return typeof entry.$type === "number" ? (entry.$type as T) : value;',
+						'  return typeof kind === "number" ? (kind as T) : value;',
 						'}'
 					]
 				: []),
@@ -1095,12 +1267,14 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    return typeof mappedId === "number" ? (mappedId as unknown as T) : value;',
 						'  }',
 						'  if (typeof value === "number") return (altIds?.[value] ?? value) as unknown as T;',
-						'  if (typeof entry.$type === "number") {',
-						'    const folded = altIds?.[entry.$type];',
+						'  const kind = _kindOf(entry);',
+						'  if (typeof kind === "number") {',
+						'    const folded = altIds?.[kind];',
 						'    if (folded !== undefined) return folded as unknown as T;',
-						'    if (textIds && Object.values(textIds).includes(entry.$type)) return entry.$type as unknown as T;',
-						'    if (ownSymbols?.includes(entry.$type) && typeof entry.$text === "string") {',
-						'      const memberId = textIds?.[entry.$text];',
+						'    if (textIds && Object.values(textIds).includes(kind)) return kind as unknown as T;',
+						'    const text = ownSymbols?.includes(kind) ? _spelledText(entry) : undefined;',
+						'    if (text !== undefined) {',
+						'      const memberId = textIds?.[text];',
 						'      if (typeof memberId === "number") return memberId as unknown as T;',
 						'    }',
 						'  }',
@@ -1204,7 +1378,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 							: []),
 						'function _wrapKindNameOf(entry: unknown): string | undefined {',
 						'  if (!entry || typeof entry !== "object") return undefined;',
-						'  const raw = (entry as { $type?: unknown }).$type;',
+						'  const raw: unknown = _kindOf(entry as _NodeData);',
 						'  if (raw === undefined) return undefined;',
 						...(this.#kindEntries
 							? ['  if (typeof raw === "number") return KIND_NAMES.get(raw as never) ?? String(raw);']
@@ -1306,25 +1480,42 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    return stub.$named === false && typeof stub.$type === "number" && separatorKindIds.includes(stub.$type);',
 						'  }',
 						'  return false;',
+						'}',
+						'',
+						'function _dropOrderEntry(order: string[] | undefined, slot: string, occurrence: number): void {',
+						'  if (order === undefined) return;',
+						'  let seen = 0;',
+						'  const at = order.findIndex((name) => name === slot && seen++ === occurrence);',
+						'  if (at >= 0) order.splice(at, 1);',
 						'}'
 					]
 				: []),
 			...(usesDropWireDelimiters
 				? [
 						'',
-						'// A `many` slot with a separator fact whose separator the parser',
-						'// field-tagged into the slot: the render body re-joins the slot',
-						'// with its own separator, so the wire delimiter is dropped rather',
-						'// than stored.',
+						'// A delimiter the parser field-tagged into a slot is punctuation the',
+						'// render body writes itself, so it is dropped rather than stored, and',
+						'// its entry leaves the node\'s `$slotOrder` draft with it.',
 						'// Assumes T itself is never an array type — slot elements are node unions.',
 						'function dropWireDelimiters<T>(',
 						'  value: T | readonly (T | _WireDelimiter)[] | undefined,',
-						'  separatorKindIds: readonly number[]',
+						'  separatorKindIds: readonly number[],',
+						'  order: string[] | undefined,',
+						'  slot: string',
 						'): T | readonly T[] | undefined {',
 						'  const isSlotList = (v: T | readonly (T | _WireDelimiter)[]): v is readonly (T | _WireDelimiter)[] => Array.isArray(v);',
 						'  if (value == null) return undefined;',
-						'  if (!isSlotList(value)) return _isWireDelimiter(value, separatorKindIds) ? undefined : value;',
-						'  return value.filter((e): e is T => !_isWireDelimiter(e, separatorKindIds));',
+						'  if (!isSlotList(value)) {',
+						'    if (!_isWireDelimiter(value, separatorKindIds)) return value;',
+						'    _dropOrderEntry(order, slot, 0);',
+						'    return undefined;',
+						'  }',
+						'  let kept = 0;',
+						'  return value.filter((e): e is T => {',
+						'    if (!_isWireDelimiter(e, separatorKindIds)) return (kept++, true);',
+						'    _dropOrderEntry(order, slot, kept);',
+						'    return false;',
+						'  });',
 						'}'
 					]
 				: []),
@@ -1341,7 +1532,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'function splitElidedWrapSlot<T>(',
 						'  value: T | readonly (T | _WireDelimiter | undefined)[] | undefined,',
 						'  separatorKindIds: readonly number[],',
-						'  allowedKinds: readonly string[] | undefined',
+						'  allowedKinds: readonly string[] | undefined,',
+						'  order: string[] | undefined,',
+						'  slot: string',
 						'): readonly (T | undefined)[] {',
 						'  // Assumes T itself is never an array type — slot elements are node unions.',
 						'  const isSlotList = (v: T | readonly (T | _WireDelimiter | undefined)[]): v is readonly (T | _WireDelimiter | undefined)[] => Array.isArray(v);',
@@ -1358,11 +1551,14 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  }',
 						'  const positions: (T | undefined)[] = [];',
 						'  let segment: (T | undefined)[] = [];',
+						'  let kept = 0;',
 						'  for (const entry of items) {',
 						'    if (isDelimiter(entry)) {',
+						'      _dropOrderEntry(order, slot, kept);',
 						'      positions.push(keepFirst(segment));',
 						'      segment = [];',
 						'    } else {',
+						'      kept++;',
 						'      segment.push(entry);',
 						'    }',
 						'  }',
@@ -1422,11 +1618,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 					if (entry === undefined) continue;
 					claimRow(
 						entry.member,
-						`  [TSKindId.${entry.member}]: (d) => ({ ...d, $type: TSKindId.${entry.member} as const }),`,
+						`  [TSKindId.${entry.member}]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.${entry.member} as const }),`,
 						entry.kind === kind
 					);
 				} else {
-					claimRow(kind, `  '${kind}': (d) => d,`, true);
+					claimRow(kind, `  '${kind}': (d) => _spelledLeaf(d),`, true);
 				}
 			}
 		}
@@ -1437,31 +1633,33 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			lines.push(
 				'function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {',
 				'  type Wire = _NodeData & {',
-				'    readonly $storageType?: number;',
+				'    readonly $displayType?: number;',
 				'    readonly $nodeHandle?: number;',
 				'    readonly $childIndex?: number;',
 				'    readonly $span?: unknown;',
 				'  };',
-				'  const shown = data as Wire;',
-				'  if (shown.$storageType === undefined) {',
+				'  const { $displayType, ...shown } = data as Wire;',
+				'  if ($displayType === undefined) return data;',
+				"  const envelope = $displayType as _NodeData['$type'];",
+				'  if (_HIDDEN_KINDS.has(shown.$type)) {',
 				'    const slots = Object.keys(shown).filter((key) => key.charCodeAt(0) === 95);',
-				"    if (slots.length !== 1 || slots[0] === '_content') return data;",
+				"    if (slots.length !== 1 || slots[0] === '_content') return { ...shown, $type: envelope } as _NodeData;",
 				'    const { [slots[0]!]: child, ...container } = shown as unknown as Record<string, unknown>;',
-				'    return { ...container, _content: child } as unknown as _NodeData;',
+				'    return { ...container, $type: envelope, _content: child } as unknown as _NodeData;',
 				'  }',
 				'  const full = (',
 				'    shown.$nodeHandle != null && shown.$childIndex != null ? readNode(tree, shown.$nodeHandle, shown.$childIndex) : shown',
 				'  ) as Wire;',
-				'  const { $storageType, $_trivia, $childIndex: _childIndex, ...storage } = full;',
+				'  const { $displayType: _display, $_trivia, $childIndex: _childIndex, ...storage } = full;',
 				'  return {',
-				'    $type: shown.$type,',
+				'    $type: envelope,',
 				'    $source: shown.$source,',
 				'    $named: shown.$named,',
 				'    $span: shown.$span,',
 				'    $nodeHandle: shown.$nodeHandle,',
 				'    $childIndex: shown.$childIndex,',
 				'    $_trivia: shown.$_trivia ?? _wrapTrivia($_trivia, tree),',
-				'    _content: { ...storage, $type: $storageType }',
+				'    _content: storage',
 				'  } as unknown as _NodeData;',
 				'}',
 				''
@@ -1506,6 +1704,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('}');
 		lines.push('');
 
+		lines.push(...this.#aliasIdentityLines());
+		lines.push(...this.#dropSpellingLines());
 		lines.push('/** Wrap a NodeData into its lazy read-only view. */');
 		if (this.#kindEntries) {
 			lines.push('export function wrapNode<D extends _NodeData & { readonly $type: keyof T.ParsedByKindId }>(');
@@ -1522,13 +1722,16 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			lines.push('  // is a direct id-keyed lookup. A non-numeric `$type` can only be a');
 			lines.push('  // catalog-less kind (the deprecated JS diagnostic lane stamps those');
 			lines.push('  // as strings), which never had a table entry to reach.');
-			lines.push('  const fn = typeof data.$type === "number" ? _wrapTable[data.$type] : undefined;');
+			lines.push('  const type = _kindOf(data);');
+			lines.push('  const fn = typeof type === "number" ? _wrapTable[type] : undefined;');
+			lines.push('  const own = _dropSpelling(type === data.$type ? _withoutDisplay(data) : data);');
 		} else {
 			lines.push('  const rawType = data.$type as unknown as string;');
 			lines.push('  const fn = _wrapTable[rawType];');
+			lines.push('  const own = _dropSpelling(data);');
 		}
 		lines.push(
-			'  const shown = data.$_trivia == null ? data : { ...data, $_trivia: _wrapTrivia(data.$_trivia, tree) };'
+			'  const shown = own.$_trivia == null ? own : { ...own, $_trivia: _wrapTrivia(own.$_trivia, tree) };'
 		);
 		lines.push('  return inTreeEngine(tree, () => (fn ? fn(shown, tree) : _drillUnknownKindChildren(shown, tree)));');
 		lines.push('}');

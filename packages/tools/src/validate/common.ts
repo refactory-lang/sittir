@@ -1,3 +1,4 @@
+import { nativeShownKindId } from './shown-kind.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -340,6 +341,16 @@ function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
 	return false;
 }
 
+function nativeNodeIsKind(
+	d: AnyNodeData,
+	kind: string,
+	kindNameFromId: ((id: number) => string | undefined) | undefined
+): boolean {
+	const nameOf = (type: AnyNodeData['$type']): string =>
+		typeof type === 'number' ? (kindNameFromId?.(type) ?? String(type)) : type;
+	return nameOf(d.$type) === kind || nameOf(nativeShownKindId(d)) === kind;
+}
+
 export function findNativeNodeId(
 	handle: TreeHandle,
 	kind: string,
@@ -350,11 +361,9 @@ export function findNativeNodeId(
 	const read = handle.read;
 	const root = handle.read();
 
-	function kindOf(d: AnyNodeData): string {
-		return typeof d.$type === 'number' ? (kindNameFromId?.(d.$type) ?? String(d.$type)) : d.$type;
-	}
+	const isKind = (d: AnyNodeData): boolean => nativeNodeIsKind(d, kind, kindNameFromId);
 
-	if (kindOf(root) === kind) {
+	if (isKind(root)) {
 		return {};
 	}
 
@@ -363,7 +372,7 @@ export function findNativeNodeId(
 	}
 
 	function findEmbedded(d: AnyNodeData): NativeNodeCoords | null {
-		if (kindOf(d) === kind && spanMatches(d)) return { embeddedData: d };
+		if (isKind(d) && spanMatches(d)) return { embeddedData: d };
 		for (const child of collectNativeChildNodes(d)) {
 			const found = findEmbedded(child);
 			if (found !== null) return found;
@@ -378,7 +387,7 @@ export function findNativeNodeId(
 		}
 		for (const child of collectNativeChildNodes(d)) {
 			const handleForChild = child.$nodeHandle ?? d.$nodeHandle;
-			if (kindOf(child) === kind && handleForChild !== undefined && child.$childIndex !== undefined) {
+			if (isKind(child) && handleForChild !== undefined && child.$childIndex !== undefined) {
 				return { handle: handleForChild, childIndex: child.$childIndex };
 			}
 			let drilled = child;
@@ -409,22 +418,20 @@ export function walkNativeForKind(
 	const root = read();
 	const results: NativeCandidateCoords[] = [];
 
-	function kindOf(d: AnyNodeData): string {
-		return typeof d.$type === 'number' ? (kindNameFromId?.(d.$type) ?? String(d.$type)) : d.$type;
-	}
+	const isKind = (d: AnyNodeData): boolean => nativeNodeIsKind(d, kind, kindNameFromId);
 
 	function spanOf(d: AnyNodeData): { start: number; end: number } | undefined {
 		return (d as unknown as Record<string, unknown>).$span as { start: number; end: number } | undefined;
 	}
 
-	if (kindOf(root) === kind) {
+	if (isKind(root)) {
 		results.push({ coords: {}, span: spanOf(root) });
 	}
 
 	function walk(d: AnyNodeData): void {
 		for (const child of collectNativeChildNodes(d)) {
 			const handleForChild = child.$nodeHandle ?? d.$nodeHandle;
-			if (kindOf(child) === kind && handleForChild !== undefined && child.$childIndex !== undefined) {
+			if (isKind(child) && handleForChild !== undefined && child.$childIndex !== undefined) {
 				results.push({
 					coords: { handle: handleForChild, childIndex: child.$childIndex },
 					span: spanOf(child)
@@ -479,7 +486,6 @@ export function buildKindToSupertypes(
 
 const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = {
 	rust: {
-		source_file: (r) => r,
 		_expression: (r) => `fn _f() { let _ = ${r}; }`,
 		_type: (r) => `type _X = ${r};`,
 		_pattern: (r) => `fn _f() { let ${r} = (); }`,
@@ -499,7 +505,6 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		visibility_modifier: (r) => `${r} fn _f() {}`
 	},
 	typescript: {
-		program: (r) => r,
 		expression: (r) => `let _ = ${r};`,
 		type: (r) => `type _X = ${r};`,
 		pattern: (r) => `let ${r} = null;`,
@@ -522,7 +527,6 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		lhs_expression: (r) => `(${r} = null);`
 	},
 	python: {
-		module: (r) => r,
 		expression: (r) => `_ = ${r}`,
 		type: (r) => `_: ${r} = None`,
 		pattern: (r) => `for ${r} in _: pass`,
@@ -601,15 +605,18 @@ export const VARIANT_ADOPTION_GATED_WRAPPERS: Record<string, readonly string[]> 
 	rust: ['visibility_modifier']
 };
 
+function reparseWrappersOf(grammar: string, root: string | undefined): Record<string, (r: string) => string> {
+	return { ...(root === undefined ? {} : { [root]: (r: string) => r }), ...REPARSE_WRAPPERS[grammar] };
+}
+
 export function wrapForReparse(
 	rendered: string,
 	kind: string,
 	grammar: string,
 	kindToSupertypes: Map<string, string[]>,
-	opts?: { adoptedVariantKinds?: ReadonlySet<string>; targetKind?: string }
+	opts?: { adoptedVariantKinds?: ReadonlySet<string>; targetKind?: string; root?: string }
 ): WrapForReparseResult | null {
-	const wrappers = REPARSE_WRAPPERS[grammar];
-	if (!wrappers) return null;
+	const wrappers = reparseWrappersOf(grammar, opts?.root);
 	const visibleKind = wrappers[kind] !== undefined ? kind : (opts?.targetKind ?? kind);
 	const direct = wrappers[kind] ?? wrappers[visibleKind];
 	if (direct) {
@@ -675,6 +682,7 @@ export interface Seat {
 export type SeatTable = Record<string, Record<string, Record<string, Seat>>>;
 
 export interface LoadedNodeModel {
+	readonly root: string | undefined;
 	readonly irKeys: Record<string, string>;
 	readonly modelTypes: Record<string, string>;
 	readonly leafPatterns: Record<string, RegExp>;
@@ -707,6 +715,7 @@ export interface ModelFullForm {
 }
 
 interface ParsedNodeModel {
+	root?: string | null;
 	nodes?: ReadonlyArray<{
 		kind: string;
 		irKey?: string;
@@ -741,6 +750,7 @@ interface ParsedNodeModel {
 }
 
 const EMPTY_NODE_MODEL: LoadedNodeModel = {
+	root: undefined,
 	irKeys: {},
 	modelTypes: {},
 	leafPatterns: {},
@@ -845,6 +855,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		if (node.fullForm !== undefined) fullForms[node.kind] = node.fullForm;
 	}
 	return {
+		root: model.root ?? undefined,
 		irKeys,
 		modelTypes,
 		leafPatterns,

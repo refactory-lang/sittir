@@ -67,6 +67,8 @@ export const ir: {
 	readonly controlLetterEscape: typeof F.buildControlLetterEscape;
 	readonly groupName: typeof F.buildGroupName;
 	readonly decimalDigits: typeof F.buildDecimalDigits;
+	readonly characterClassEscapeText1: typeof F.buildCharacterClassEscapeText1;
+	readonly characterClassEscapeText2: typeof F.buildCharacterClassEscapeText2;
 	readonly whitespace: typeof whitespace;
 } = Object.freeze({
 	// Node factories
@@ -113,6 +115,8 @@ export const ir: {
 	controlLetterEscape: F.buildControlLetterEscape,
 	groupName: F.buildGroupName,
 	decimalDigits: F.buildDecimalDigits,
+	characterClassEscapeText1: F.buildCharacterClassEscapeText1,
+	characterClassEscapeText2: F.buildCharacterClassEscapeText2,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	whitespace

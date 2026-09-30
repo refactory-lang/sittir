@@ -26,10 +26,12 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 }
 
 const _leafRe_buildIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
-const _leafRe_buildCharLiteralEmpty = /^(?:(?:b)?'')$/u;
+const _leafRe_buildTokenRepetitionPatternText = /^(?:(?:[^+*?]+))$/u;
 const _leafRe_buildStringOpen = /^(?:(?:[bc]?"))$/u;
+const _leafRe_buildCharLiteralEmpty = /^(?:(?:b)?'')$/u;
 const _leafRe_buildLineCommentExtraSlashes = /^(?:(?:\/\/)(?:.*))$/u;
 const _leafRe_buildLineCommentRegular = /^(?:(?:.*))$/u;
+const _leafRe_buildBlockCommentRegular = /^(?:(?:[^]*))$/u;
 const _leafRe_buildFloatLiteral =
 	/^(?:(?:[0-9][0-9_]*(?:\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|[eE][+-]?[0-9_]+)(?:[uif][0-9]+)?))$/u;
 const _leafRe_buildStringContent = /^(?:(?:[^"\\]+))$/u;
@@ -220,7 +222,11 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 		'TokenRepetitionPattern.tokenPatterns',
 		'a built TokenTreePattern / TokenRepetitionPattern / TokenBindingPattern / Metavariable / NonSpecialToken'
 	);
-	const _separator = config.separator;
+	const _separator = rejectBareText(
+		config.separator,
+		'TokenRepetitionPattern.separator',
+		'buildTokenRepetitionPatternText(…)'
+	);
 	const _operator = coerceKindEnumStorage<NonNullable<T.TokenRepetitionPattern['_operator']>>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['*', TSKindId.Star] as const,
@@ -245,7 +251,8 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 							| T.NonSpecialToken
 						)[]
 					) => buildTokenRepetitionPattern({ ...config, tokenPatterns: values }),
-					separator: (value?: string) => buildTokenRepetitionPattern({ ...config, separator: value }),
+					separator: (value?: T.TokenRepetitionPatternText) =>
+						buildTokenRepetitionPattern({ ...config, separator: value }),
 					operator: (value: NonNullable<T.TokenRepetitionPattern.Config>['operator']) =>
 						buildTokenRepetitionPattern({ ...config, operator: value })
 				}
@@ -265,7 +272,11 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenR
 		'TokenRepetition.tokens',
 		'a built TokenTree / TokenRepetition / Metavariable / NonSpecialToken'
 	);
-	const _separator = config.separator;
+	const _separator = rejectBareText(
+		config.separator,
+		'TokenRepetition.separator',
+		'buildTokenRepetitionPatternText(…)'
+	);
 	const _operator = coerceKindEnumStorage<NonNullable<T.TokenRepetition['_operator']>>(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['*', TSKindId.Star] as const,
@@ -283,7 +294,7 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenR
 				$with: {
 					tokens: (...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
 						buildTokenRepetition({ ...config, tokens: values }),
-					separator: (value?: string) => buildTokenRepetition({ ...config, separator: value }),
+					separator: (value?: T.TokenRepetitionPatternText) => buildTokenRepetition({ ...config, separator: value }),
 					operator: (value: NonNullable<T.TokenRepetition.Config>['operator']) =>
 						buildTokenRepetition({ ...config, operator: value })
 				}
@@ -5755,9 +5766,9 @@ export const buildInnerLineDocCommentMarker: TSKindId.InnerLineDocCommentMarker 
 export const buildOuterLineDocCommentMarker: TSKindId.OuterLineDocCommentMarker = TSKindId.OuterLineDocCommentMarker;
 
 export function buildBlockComment(
-	value?: AdmitBound<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent, T.AdmittedNodes>
+	value?: AdmitBound<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentRegular, T.AdmittedNodes>
 ): T.BlockComment.Bound {
-	const _content = rejectBareText(value, 'BlockComment.content', 'buildBlockCommentContent(…)');
+	const _content = rejectBareText(value, 'BlockComment.content', 'buildBlockCommentRegular(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -5766,7 +5777,7 @@ export function buildBlockComment(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent) =>
+					content: (value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentRegular) =>
 						buildBlockComment(value)
 				}
 			},
@@ -7218,6 +7229,29 @@ export function buildUseWildcardGroup(
 			}
 		)
 	) as unknown as T.UseWildcardGroup.Bound;
+}
+
+export function buildTokenRepetitionPatternText(text: string): T.TokenRepetitionPatternText.Bound {
+	if (text.length === 0) throw new Error(`token_repetition_pattern_text: text must be non-empty`);
+	if (!_leafRe_buildTokenRepetitionPatternText.test(text))
+		throw new Error(`token_repetition_pattern_text: text does not match pattern: ${text}`);
+	return withMethods({
+		$type: TSKindId.TokenRepetitionPatternText as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
+}
+
+export function buildStringOpen(text: string): T.StringOpen.Bound {
+	if (text.length === 0) throw new Error(`string_open: text must be non-empty`);
+	if (!_leafRe_buildStringOpen.test(text)) throw new Error(`string_open: text does not match pattern: ${text}`);
+	return withMethods({
+		$type: TSKindId.StringOpen as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildTupleTypeElements(
@@ -8746,17 +8780,6 @@ export function buildPointerTypeMut(
 	) as unknown as T.PointerTypeMut.Bound;
 }
 
-export function buildStringOpen(text: string): T.StringOpen.Bound {
-	if (text.length === 0) throw new Error(`string_open: text must be non-empty`);
-	if (!_leafRe_buildStringOpen.test(text)) throw new Error(`string_open: text does not match pattern: ${text}`);
-	return withMethods({
-		$type: TSKindId.StringOpen as const,
-		$source: 2 as const,
-		$named: true as const,
-		$text: text
-	});
-}
-
 export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Config): T.RangeExpressionBinary.Bound {
 	const _start = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.RangeExpressionBinary['_start']>>(config.start, []),
@@ -9217,6 +9240,17 @@ function _buildBlockCommentDocInner(
 			}
 		)
 	) as unknown as T.BlockCommentDocInner.Bound;
+}
+
+export function buildBlockCommentRegular(text: string): T.BlockCommentRegular.Bound {
+	if (!_leafRe_buildBlockCommentRegular.test(text))
+		throw new Error(`block_comment_regular: text does not match pattern: ${text}`);
+	return withMethods({
+		$type: TSKindId.BlockCommentRegular as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildTokenTreePatternParen(): T.EmptyTokenTreePatternParen;
@@ -10743,6 +10777,8 @@ export type FluentKindMap = {
 	patterns: T.Patterns.Bound;
 	struct_pattern_elements: T.StructPatternElements.Bound;
 	use_wildcard_group: T.UseWildcardGroup.Bound;
+	token_repetition_pattern_text: T.TokenRepetitionPatternText;
+	string_open: T.StringOpen;
 	tuple_type_elements: T.TupleTypeElements.Bound;
 	tuple_expression_elements: T.TupleExpressionElements.Bound;
 	range_expression_bare: T.RangeExpressionBare;
@@ -10784,7 +10820,6 @@ export type FluentKindMap = {
 	or_pattern_prefix: T.OrPatternPrefix.Bound;
 	pointer_type_const: T.PointerTypeConst.Bound;
 	pointer_type_mut: T.PointerTypeMut.Bound;
-	string_open: T.StringOpen;
 	range_expression_binary: T.RangeExpressionBinary.Bound;
 	range_expression_postfix: T.RangeExpressionPostfix.Bound;
 	range_expression_prefix: T.RangeExpressionPrefix.Bound;
@@ -10799,6 +10834,7 @@ export type FluentKindMap = {
 	line_comment_regular: T.LineCommentRegular;
 	block_comment_doc_outer: T.BlockCommentDocOuter.Bound;
 	block_comment_doc_inner: T.BlockCommentDocInner.Bound;
+	block_comment_regular: T.BlockCommentRegular;
 	token_tree_pattern_paren: T.TokenTreePatternParen.Bound;
 	token_tree_pattern_bracket: T.TokenTreePatternBracket.Bound;
 	token_tree_pattern_brace: T.TokenTreePatternBrace.Bound;
@@ -11009,6 +11045,8 @@ export const _factoryMap = {
 	patterns: buildPatterns,
 	struct_pattern_elements: buildStructPatternElements,
 	use_wildcard_group: buildUseWildcardGroup,
+	token_repetition_pattern_text: buildTokenRepetitionPatternText,
+	string_open: buildStringOpen,
 	tuple_type_elements: buildTupleTypeElements,
 	tuple_expression_elements: buildTupleExpressionElements,
 	range_expression_bare: buildRangeExpressionBare,
@@ -11050,7 +11088,6 @@ export const _factoryMap = {
 	or_pattern_prefix: buildOrPatternPrefix,
 	pointer_type_const: buildPointerTypeConst,
 	pointer_type_mut: buildPointerTypeMut,
-	string_open: buildStringOpen,
 	range_expression_binary: buildRangeExpressionBinary,
 	range_expression_postfix: buildRangeExpressionPostfix,
 	range_expression_prefix: buildRangeExpressionPrefix,
@@ -11065,6 +11102,7 @@ export const _factoryMap = {
 	line_comment_regular: buildLineCommentRegular,
 	block_comment_doc_outer: buildBlockCommentDocOuter,
 	block_comment_doc_inner: buildBlockCommentDocInner,
+	block_comment_regular: buildBlockCommentRegular,
 	token_tree_pattern_paren: buildTokenTreePatternParen,
 	token_tree_pattern_bracket: buildTokenTreePatternBracket,
 	token_tree_pattern_brace: buildTokenTreePatternBrace,

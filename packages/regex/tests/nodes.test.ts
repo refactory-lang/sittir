@@ -1307,7 +1307,7 @@ describe('decimal_escape', () => {
 describe('character_class_escape', () => {
 	it('factory produces correct type', () => {
 		const node = ir.characterClassEscape({
-			$type: TSKindId.UnicodeCharacterEscape,
+			$type: TSKindId.CharacterClassEscapeText1,
 			$text: 'test',
 			$source: 2,
 			$named: true
@@ -1317,7 +1317,7 @@ describe('character_class_escape', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.characterClassEscape({
-			$type: TSKindId.UnicodeCharacterEscape,
+			$type: TSKindId.CharacterClassEscapeText1,
 			$text: 'test',
 			$source: 2,
 			$named: true
@@ -1331,7 +1331,12 @@ describe('character_class_escape', () => {
 describe('character_class_escape sub-factories', () => {
 	it('arm builds the parent', () => {
 		const node = ir.characterClassEscape.arm({
-			content: 'test' as any,
+			characterClassEscapeText2: {
+				$type: TSKindId.CharacterClassEscapeText2,
+				$text: 'test',
+				$source: 2,
+				$named: true
+			} as any,
 			unicodePropertyValueExpression: {
 				$type: TSKindId.UnicodePropertyValueExpression,
 				$text: 'test',
@@ -1567,7 +1572,7 @@ describe('term_group sub-factories', () => {
 	});
 	it('characterClassEscape builds the parent', () => {
 		const node = ir.termGroup.characterClassEscape({
-			content: { $type: TSKindId.UnicodeCharacterEscape, $text: 'test', $source: 2, $named: true } as any
+			content: { $type: TSKindId.CharacterClassEscapeText1, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.TermGroup);
 		expect((node as any).content()).toBeDefined();
@@ -1970,7 +1975,12 @@ describe('term_group sub-factories', () => {
 		const node = ir.termGroup.characterClassEscape.arm({
 			content: [
 				{
-					content: 'test' as any,
+					characterClassEscapeText2: {
+						$type: TSKindId.CharacterClassEscapeText2,
+						$text: 'test',
+						$source: 2,
+						$named: true
+					} as any,
 					unicodePropertyValueExpression: {
 						$type: TSKindId.UnicodePropertyValueExpression,
 						$text: 'test',
@@ -2077,5 +2087,23 @@ describe('term_group sub-factories', () => {
 		expect(node.$type).toBe(TSKindId.TermGroup);
 		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('character_class_escape_text1', () => {
+	it('factory produces correct type', () => {
+		const node = ir.characterClassEscapeText1('\\d');
+		expect(node.$type).toBe(TSKindId.CharacterClassEscapeText1);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('\\d');
+	});
+});
+
+describe('character_class_escape_text2', () => {
+	it('factory produces correct type', () => {
+		const node = ir.characterClassEscapeText2('\\p');
+		expect(node.$type).toBe(TSKindId.CharacterClassEscapeText2);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('\\p');
 	});
 });

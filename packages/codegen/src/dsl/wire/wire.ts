@@ -24,8 +24,9 @@ import {
 } from '../primitives/variant.ts';
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
-import { rulesEqual } from '../rule-patterns.ts';
-import { getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
+import { rulesEqual, type SymbolSource } from '../rule-patterns.ts';
+import { predictedSymbolSourceOf } from '../symbol-table.ts';
+import { getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
@@ -84,6 +85,8 @@ export interface WireContext {
 	readonly aliasTargets: Set<string>;
 	readonly automaticVariants: AutomaticVariants;
 	readonly baseRuleBodies: Readonly<Record<string, RuntimeRule>>;
+	readonly textTokens: ReadonlyMap<string, readonly string[]>;
+	readonly symbols: () => SymbolSource | undefined;
 	readonly baseSupertypeNames: ReadonlySet<string>;
 	readonly liftBodies: Map<string, RuntimeRule>;
 	readonly liftClaims: Map<string, Set<string>>;
@@ -116,6 +119,25 @@ export function wireDeclareRuleBody(name: string, text: string, site: string): s
 		return undefined;
 	}
 	return prior.text === text ? undefined : prior.site;
+}
+
+export function wireTextTokenOf(member: unknown): string | undefined {
+	const { type, name } = (member ?? {}) as { type?: unknown; name?: unknown };
+	return type === 'SYMBOL' && typeof name === 'string' && currentContext?.textTokens.has(name) ? name : undefined;
+}
+
+export function wireTextTokenBody(name: string): RuntimeRule {
+	if (!currentContext) throw new Error(`patches: '${name}': no active wire() context`);
+	return currentContext.deposits.get(name) ?? currentContext.baseRuleBodies[name]!;
+}
+
+export function wireDepositTextToken(name: string, rewrite: (body: RuntimeRule) => RuntimeRule): void {
+	if (!currentContext) throw new Error(`patches: '${name}': no active wire() context`);
+	const owners = currentContext.textTokens.get(name) ?? [];
+	if (owners.length > 1) {
+		throw new Error(`patches: a patch through '${name}' would rewrite the text token ${owners.join(', ')} share; patch each owner's site into a token of its own instead`);
+	}
+	currentContext.deposits.set(name, rewrite(currentContext.deposits.get(name) ?? currentContext.baseRuleBodies[name]!));
 }
 
 export function wireHasDeposit(name: string): boolean {
@@ -222,6 +244,25 @@ function baseSupertypeNamesOf(base: BaseArg | undefined): ReadonlySet<string> {
 	return symbolNamesOf(overriddenList(base?.grammar?.supertypes ?? base?.supertypes, undefined));
 }
 
+function baseSymbolSourceOf(base: BaseArg | undefined): () => SymbolSource | undefined {
+	const rules = baseRulesOf<AnyRule>(base) ?? {};
+	if (Object.keys(rules).length === 0) return () => undefined;
+	let symbols: SymbolSource | undefined;
+	return () =>
+		(symbols ??= predictedSymbolSourceOf({
+			rules,
+			externals: [...baseExternalNames(base)].map((name) => ({ type: 'SYMBOL' as const, name })),
+			extras: [],
+			supertypes: [...baseSupertypeNamesOf(base)],
+			inline: [...symbolNamesOf(overriddenList(base?.grammar?.inline ?? base?.inline, undefined))],
+			word: null
+		}));
+}
+
+export function wireSymbols(): SymbolSource | undefined {
+	return currentContext?.symbols();
+}
+
 export function wireIsBaseSupertype(name: string): boolean {
 	return currentContext?.baseSupertypeNames.has(name) ?? false;
 }
@@ -252,6 +293,8 @@ export function withWireContext<T>(
 		aliasTargets: new Set(),
 		automaticVariants: seedAutomaticVariants(base),
 		baseRuleBodies: baseRuleBodiesOf(base as BaseArg | undefined),
+		textTokens: getEnrichTextTokens(base),
+		symbols: baseSymbolSourceOf(base as BaseArg | undefined),
 		baseSupertypeNames: baseSupertypeNamesOf(base as BaseArg | undefined),
 		liftBodies: new Map(),
 		liftClaims: new Map(),
@@ -463,6 +506,8 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		aliasTargets: new Set(),
 		automaticVariants: seedAutomaticVariants(base),
 		baseRuleBodies: baseRuleBodiesOf(baseArg),
+		textTokens: getEnrichTextTokens(base),
+		symbols: baseSymbolSourceOf(baseArg),
 		baseSupertypeNames: baseSupertypeNamesOf(baseArg),
 		liftBodies: new Map(),
 		liftClaims: new Map(),
@@ -475,6 +520,7 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 
 	composeOrSynthesizePatchedParents(outRules, patches, context);
 	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg), knownRuleNames(cfg, baseArg));
+	for (const name of context.textTokens.keys()) outRules[name] ??= makeDeferredContentFn(context, name);
 	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.injects || visibleExternals)) {
 		const baseRules = baseRulesOf<RuleFn>(baseArg) ?? {};
 		for (const baseName of Object.keys(baseRules)) {
@@ -721,6 +767,7 @@ interface BaseArg {
 		extras?: unknown;
 		precedences?: unknown;
 		supertypes?: unknown;
+		inline?: unknown;
 		conflicts?: unknown;
 	};
 	rules?: Record<string, RuleFn>;
@@ -728,6 +775,7 @@ interface BaseArg {
 	extras?: unknown;
 	precedences?: unknown;
 	supertypes?: unknown;
+	inline?: unknown;
 	conflicts?: unknown;
 }
 

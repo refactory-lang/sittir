@@ -31,6 +31,7 @@ import {
 	wireWithPatchSites,
 	wireHasAuthoredRule,
 	wireIsBaseSupertype,
+	wireSymbols,
 	wireRegisterSyntheticRule,
 	wireGetCurrentRuleKind,
 	wireIsExtraRule,
@@ -38,6 +39,9 @@ import {
 	wireRegisterFlattenedParent,
 	wireHasDeposit,
 	wireDeclareRuleBody,
+	wireDepositTextToken,
+	wireTextTokenBody,
+	wireTextTokenOf,
 	wireAutomaticVariants,
 	wireRecordPatchSite,
 	wireGetLiftBody,
@@ -55,7 +59,8 @@ import {
 	isSeqType,
 	isChoiceType,
 	isPlainRepeatType,
-	isSymbolType
+	isSymbolType,
+	isSymbolLike
 } from '../../types/runtime-shapes.ts';
 import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
@@ -461,10 +466,15 @@ function buildHoistedVariants(
 const membersOf = (r: RuntimeRule): RuntimeRule[] => (r as unknown as { members: RuntimeRule[] }).members;
 const contentOf = (r: RuntimeRule): RuntimeRule => (r as unknown as { content: RuntimeRule }).content;
 
+function isHiddenTerminal(name: string): boolean {
+	const symbols = wireSymbols();
+	return symbols !== undefined && symbols.isTerminal(name) && symbols.isHidden(name);
+}
+
 function countBodyAnchors(rule: RuntimeRule): { tokens: number; named: number } {
 	const t = rule.type;
 	if (t === 'STRING' || t === 'PATTERN' || t === 'TOKEN') return { tokens: 1, named: 0 };
-	if (t === 'SYMBOL') return { tokens: 0, named: 1 };
+	if (t === 'SYMBOL') return isSymbolLike(rule) && isHiddenTerminal(rule.name) ? { tokens: 1, named: 0 } : { tokens: 0, named: 1 };
 	if (isBlank(rule)) return { tokens: 0, named: 0 };
 	if (isSeqType(rule.type) || isChoiceType(rule.type)) {
 		return membersOf(rule).reduce(
@@ -621,7 +631,26 @@ function wrapVariantBodyInParentPrec(hoistedSeq: RuntimeRule, precStack: Readonl
 	return wrapInPrec(hoistedSeq, precStack);
 }
 
+function rewritesText(patch: PatchValue): boolean {
+	if (isRegexPlaceholder(patch)) return true;
+	return !(
+		isRulePlaceholder(patch) ||
+		isFieldPlaceholder(patch) ||
+		isFieldLike(patch) ||
+		isArmDefault(patch) ||
+		isGroupPlaceholder(patch) ||
+		isFlattenPlaceholder(patch) ||
+		isVariantPlaceholder(patch) ||
+		isAliasPlaceholder(patch)
+	);
+}
+
 function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: string, precStack?: readonly RuntimeRule[]): RuntimeRule {
+	const textToken = wireTextTokenOf(originalMember);
+	if (textToken !== undefined && rewritesText(patch)) {
+		wireDepositTextToken(textToken, (body) => resolvePatch(patch, body, key));
+		return originalMember;
+	}
 	if (isRulePlaceholder(patch)) {
 		return resolveRulePlaceholder(patch, key);
 	}
@@ -647,6 +676,11 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 		return { ...originalMember, value: patch.source } as RuntimeRule;
 	}
 	if (isVariantPlaceholder(patch)) {
+		if (textToken !== undefined) {
+			const { annotations } = originalMember as RuntimeRule & { annotations?: RuleAnnotations };
+			const body = wireTextTokenBody(textToken);
+			return resolvePatch(patch, (annotations === undefined ? body : { ...(body as object), annotations }) as RuntimeRule, key, precStack);
+		}
 		const parentKind = wireGetCurrentRuleKind();
 		if (!parentKind) {
 			throw new Error(`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`);

@@ -2952,6 +2952,12 @@
 			"field": "match_block_block_after"
 		}
 	],
+	"match_block_empty": [
+		{
+			"kind": "tokenSeam",
+			"text": "\n"
+		}
+	],
 	"match_statement": [
 		{
 			"kind": "seam",

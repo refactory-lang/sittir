@@ -491,9 +491,11 @@ export const ir: {
 	readonly outerDocCommentMarker: typeof F.buildOuterDocCommentMarker;
 	readonly innerDocCommentMarker: typeof F.buildInnerDocCommentMarker;
 	readonly identifier: typeof F.buildIdentifier;
+	readonly tokenRepetitionPatternText: typeof F.buildTokenRepetitionPatternText;
 	readonly stringOpen: typeof F.buildStringOpen;
 	readonly lineCommentExtraSlashes: typeof F.buildLineCommentExtraSlashes;
 	readonly lineCommentRegular: typeof F.buildLineCommentRegular;
+	readonly blockCommentRegular: typeof F.buildBlockCommentRegular;
 	readonly floatLiteral: typeof F.buildFloatLiteral;
 	readonly stringContent: typeof F.buildStringContent;
 	readonly rawStringLiteralContent: typeof F.buildRawStringLiteralContent;
@@ -700,9 +702,11 @@ export const ir: {
 
 	// Leaf node factories
 	identifier: F.buildIdentifier,
+	tokenRepetitionPatternText: F.buildTokenRepetitionPatternText,
 	stringOpen: F.buildStringOpen,
 	lineCommentExtraSlashes: F.buildLineCommentExtraSlashes,
 	lineCommentRegular: F.buildLineCommentRegular,
+	blockCommentRegular: F.buildBlockCommentRegular,
 	floatLiteral: F.buildFloatLiteral,
 	stringContent: F.buildStringContent,
 	rawStringLiteralContent: F.buildRawStringLiteralContent,
