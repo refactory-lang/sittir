@@ -10,8 +10,7 @@ import type * as V from './index.ts';
 export interface Attribute<G extends GrammarContext> {
 	// claimed by r
 	readonly kind: 'attribute';
-	readonly content?: G['identifier'] | V.Attribute.Content.Any<G>;
-	// rt only
+	readonly content?: V.Attribute.Content<G>;
 }
 
 export namespace Attribute {
@@ -60,7 +59,7 @@ export namespace Attribute {
 		export interface Parenthesized<G extends GrammarContext> extends Simplify<SubKindOf<V.Attribute.Content<G>>> {
 			// claimed by t
 			readonly kind: 'attribute.content.parenthesized';
-			readonly content: G['identifier'] | V.Attribute.Content.Any<G>;
+			readonly expression: G['identifier'] | V.Attribute.Content.Any<G>;
 		}
 		export type Any<G extends GrammarContext> =
 			| V.Attribute.Content<G>
@@ -71,10 +70,7 @@ export namespace Attribute {
 	export interface Decorator<G extends GrammarContext> extends Simplify<SubKindOf<V.Attribute<G>>> {
 		// claimed by pt
 		readonly kind: 'attribute.decorator';
-		readonly content?: G['identifier'] | V.Attribute.Content.Any<G>;
-		// t only
-		readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
-		// p only
+		readonly expression: G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | V.Attribute.Content.Any<G>;
 	}
 	export interface Inner<G extends GrammarContext> extends Simplify<SubKindOf<V.Attribute<G>>> {
 		// claimed by r

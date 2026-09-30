@@ -36,17 +36,21 @@ export namespace Pattern {
 		// claimed by r
 		readonly kind: 'pattern.captured';
 		readonly name: G['identifier'];
-		readonly pattern: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly pattern: V.Unmapped<'rust:pattern'>;
+		// unmapped: <rust:pattern>
 	}
 	export interface Case<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by p
 		readonly kind: 'pattern.case';
-		readonly content?: V.Identifier.Dotted<G> | G['literal'] | G['pattern'];
+		readonly content?: V.Unmapped<'python:simple_pattern'> | V.Pattern.Case.Any<G>;
+		// unmapped: <python:simple_pattern>
 	}
 	export namespace Case {
 		export interface As<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {
 			// claimed by p
 			readonly kind: 'pattern.case.as';
+			readonly casePattern: V.Pattern.Case<G>;
+			readonly identifier: G['identifier'];
 		}
 		export interface Class<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {
 			// claimed by p
@@ -58,10 +62,10 @@ export namespace Pattern {
 		export interface Complex<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {
 			// claimed by p
 			readonly kind: 'pattern.case.complex';
-			readonly content: V.Literal.Number.Any<G>;
 			readonly imaginary: V.Literal.Number.Any<G>;
 			readonly operator: '+' | '-';
-			readonly real?: boolean;
+			readonly real: V.Literal.Number.Any<G>;
+			readonly sign?: boolean;
 		}
 		export interface Dictionary<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {
 			// claimed by p
@@ -78,7 +82,7 @@ export namespace Pattern {
 				| V.Identifier.Dotted<G>
 				| G['literal']
 				| V.Pattern.Case.Any<G>;
-			// unmapped: <python:simple_pattern_negative> literal:_wildcard_pattern
+			// unmapped: <python:simple_pattern_negative> literal:wildcard_pattern
 		}
 		export interface List<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {
 			// claimed by p
@@ -95,7 +99,7 @@ export namespace Pattern {
 				| G['literal']
 				| V.Pattern.Case.Any<G>
 			)[];
-			// unmapped: <python:simple_pattern_negative> literal:_wildcard_pattern
+			// unmapped: <python:simple_pattern_negative> literal:wildcard_pattern
 		}
 		export interface Splat<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Case<G>>> {
 			// claimed by p
@@ -124,7 +128,7 @@ export namespace Pattern {
 	export interface Generic<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by r
 		readonly kind: 'pattern.generic';
-		readonly content: G['identifier'];
+		readonly name: G['identifier'];
 		readonly typeArguments: G['type'][];
 	}
 	export interface List<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
@@ -137,12 +141,14 @@ export namespace Pattern {
 		// claimed by r
 		readonly kind: 'pattern.match';
 		readonly condition?: G['expression'] | G['identifier'] | G['literal'] | V.Clause.Let.Any<G> | G['statement'];
-		readonly pattern: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly pattern: V.Unmapped<'rust:pattern'>;
+		// unmapped: <rust:pattern>
 	}
 	export interface Mutable<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by r
 		readonly kind: 'pattern.mutable';
-		readonly pattern: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly pattern: V.Unmapped<'rust:pattern'>;
+		// unmapped: <rust:pattern>
 	}
 	export interface Object<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by t
@@ -254,14 +260,16 @@ export namespace Pattern {
 	export interface Reference<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by r
 		readonly kind: 'pattern.reference';
-		readonly pattern: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly pattern: V.Unmapped<'rust:pattern'>;
+		// unmapped: <rust:pattern>
 	}
 	export namespace Reference {
 		export interface Value<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Reference<G>>> {
 			// claimed by r
 			readonly kind: 'pattern.reference.value';
 			readonly mutableSpecifier?: boolean;
-			readonly pattern: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+			readonly pattern: V.Unmapped<'rust:pattern'>;
+			// unmapped: <rust:pattern>
 		}
 		export type Any<G extends GrammarContext> = V.Pattern.Reference<G> | V.Pattern.Reference.Value<G>;
 	}
@@ -305,13 +313,13 @@ export namespace Pattern {
 	export interface Splat<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern<G>>> {
 		// claimed by p
 		readonly kind: 'pattern.splat';
-		readonly content: G['expression'] | G['identifier'] | 'async' | 'await' | 'exec' | 'match' | 'print' | 'type';
+		readonly target: G['expression'] | G['identifier'] | 'async' | 'await' | 'exec' | 'match' | 'print' | 'type';
 	}
 	export namespace Splat {
 		export interface Dictionary<G extends GrammarContext> extends Simplify<SubKindOf<V.Pattern.Splat<G>>> {
 			// claimed by p
 			readonly kind: 'pattern.splat.dictionary';
-			readonly content: G['expression'] | G['identifier'] | 'async' | 'await' | 'exec' | 'match' | 'print' | 'type';
+			readonly target: G['expression'] | G['identifier'] | 'async' | 'await' | 'exec' | 'match' | 'print' | 'type';
 		}
 		export type Any<G extends GrammarContext> = V.Pattern.Splat<G> | V.Pattern.Splat.Dictionary<G>;
 	}

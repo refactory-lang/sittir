@@ -12,16 +12,6 @@ export interface Element<G extends GrammarContext> {
 }
 
 export namespace Element {
-	export interface Jsx<G extends GrammarContext> extends Simplify<SubKindOf<V.Element<G>>> {
-		readonly kind: 'element.jsx';
-	}
-	export namespace Jsx {
-		export interface Attribute<G extends GrammarContext> extends Simplify<SubKindOf<V.Element.Jsx<G>>> {
-			// claimed by t
-			readonly kind: 'element.jsx.attribute';
-		}
-		export type Any<G extends GrammarContext> = V.Element.Jsx.Attribute<G>;
-	}
 	export interface Macro<G extends GrammarContext> extends Simplify<SubKindOf<V.Element<G>>> {
 		readonly kind: 'element.macro';
 	}
@@ -40,7 +30,12 @@ export namespace Element {
 			// claimed by r
 			readonly kind: 'element.macro.token_repetition';
 			readonly operator: '*' | '+' | '?';
-			readonly tokens?: (G['identifier'] | G['literal'] | V.Element.Macro.Any<G>)[];
+			readonly tokens?: (
+				| V.Unmapped<'rust:non_special_token'>
+				| V.Identifier.Metavariable<G>
+				| V.Element.Macro.Any<G>
+			)[];
+			// unmapped: <rust:non_special_token>
 		}
 		export namespace TokenRepetition {
 			export interface Pattern<G extends GrammarContext> extends Simplify<
@@ -49,7 +44,12 @@ export namespace Element {
 				// claimed by r
 				readonly kind: 'element.macro.token_repetition.pattern';
 				readonly operator: '*' | '+' | '?';
-				readonly tokenPatterns?: (G['identifier'] | G['literal'] | V.Element.Macro.Any<G>)[];
+				readonly tokenPatterns?: (
+					| V.Unmapped<'rust:non_special_token'>
+					| V.Identifier.Metavariable<G>
+					| V.Element.Macro.Any<G>
+				)[];
+				// unmapped: <rust:non_special_token>
 			}
 			export type Any<G extends GrammarContext> =
 				| V.Element.Macro.TokenRepetition<G>
@@ -167,14 +167,14 @@ export namespace Element {
 	}
 	export interface Template<G extends GrammarContext> extends Simplify<SubKindOf<V.Element<G>>> {
 		readonly kind: 'element.template';
-		readonly content: G['identifier'] | G['type'];
+		readonly type: G['identifier'] | G['type'];
 		// t only
 	}
 	export namespace Template {
 		export interface Substitution<G extends GrammarContext> extends Simplify<SubKindOf<V.Element.Template<G>>> {
 			// claimed by t
 			readonly kind: 'element.template.substitution';
-			readonly content: G['identifier'] | G['type'];
+			readonly type: G['identifier'] | G['type'];
 		}
 		export type Any<G extends GrammarContext> = V.Element.Template.Substitution<G>;
 	}
@@ -211,7 +211,6 @@ export namespace Element {
 		readonly typeArguments?: G['type'][];
 	}
 	export type Any<G extends GrammarContext> =
-		| V.Element.Jsx.Attribute<G>
 		| V.Element.Macro.Fragment<G>
 		| V.Element.Macro.TokenBinding<G>
 		| V.Element.Macro.TokenRepetition<G>
