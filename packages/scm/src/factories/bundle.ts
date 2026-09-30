@@ -6,19 +6,34 @@ export * from './raw.js';
 export * from './coerce.js';
 
 export const program = bundle(F.buildProgram, C.coerceToProgram);
-export const escapeSequence = bundle(F.buildEscapeSequence, C.coerceToEscapeSequence);
-export const capture = bundle(F.buildCapture, C.coerceToCapture);
-export const string = bundle(F.buildString, C.coerceToString);
-export const immediateString = bundle(F.buildImmediateString, C.coerceToImmediateString);
+export const escapeSequence = bundle(F.buildEscapeSequence, C.coerceToEscapeSequence, {
+	key: 'escapeSequence',
+	max: 1
+});
+export const capture = bundle(F.buildCapture, C.coerceToCapture, { key: 'capture', max: 1 });
+export const string = bundle(F.buildString, C.coerceToString, { key: 'string', max: 1 });
+export const immediateString = bundle(F.buildImmediateString, C.coerceToImmediateString, {
+	key: 'immediateString',
+	max: 1
+});
 export const stringContent = bundle(F.buildStringContent, C.coerceToStringContent);
 export const parameters = bundle(F.buildParameters, C.coerceToParameters);
-export const comment = bundle(F.buildComment, C.coerceToComment);
-export const list = bundle(F.buildList, C.coerceToList);
-export const grouping = bundle(F.buildGrouping, C.coerceToGrouping);
-export const missingNode = bundle(F.buildMissingNode, C.coerceToMissingNode);
-export const anonymousNode = bundle(F.buildAnonymousNode, C.coerceToAnonymousNode);
-export const fieldDefinition = bundle(F.buildFieldDefinition, C.coerceToFieldDefinition);
-export const negatedField = bundle(F.buildNegatedField, C.coerceToNegatedField);
-export const predicate = bundle(F.buildPredicate, C.coerceToPredicate);
-export const groupExpressionArm = bundle(F.buildGroupExpressionArm, C.coerceToGroupExpressionArm);
-export const namedNodeExpressionArm = bundle(F.buildNamedNodeExpressionArm, C.coerceToNamedNodeExpressionArm);
+export const comment = bundle(F.buildComment, C.coerceToComment, { key: 'comment', max: 1 });
+export const list = bundle(F.buildList, C.coerceToList, { key: 'list', max: 1 });
+export const grouping = bundle(F.buildGrouping, C.coerceToGrouping, { key: 'grouping', max: 1 });
+export const missingNode = bundle(F.buildMissingNode, C.coerceToMissingNode, { key: 'missingNode', max: 1 });
+export const anonymousNode = bundle(F.buildAnonymousNode, C.coerceToAnonymousNode, { key: 'anonymousNode', max: 1 });
+export const fieldDefinition = bundle(F.buildFieldDefinition, C.coerceToFieldDefinition, {
+	key: 'fieldDefinition',
+	max: 1
+});
+export const negatedField = bundle(F.buildNegatedField, C.coerceToNegatedField, { key: 'negatedField', max: 1 });
+export const predicate = bundle(F.buildPredicate, C.coerceToPredicate, { key: 'predicate', max: 1 });
+export const groupExpressionArm = bundle(F.buildGroupExpressionArm, C.coerceToGroupExpressionArm, {
+	key: 'groupExpressionArm',
+	max: 1
+});
+export const namedNodeExpressionArm = bundle(F.buildNamedNodeExpressionArm, C.coerceToNamedNodeExpressionArm, {
+	key: 'namedNodeExpressionArm',
+	max: 1
+});
