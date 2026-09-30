@@ -1,7 +1,7 @@
 import { findOwnKindEntry, reservedWordset } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired } from '../compiler/model/node-map.ts';
+import { holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired } from '../compiler/model/node-map.ts';
 import {
 	interiorSlotGuards,
 	numberInputType,
@@ -14,8 +14,6 @@ import {
 } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
-	kindDiscriminantExprForId,
-	kindDiscriminantExprForLiteral,
 	collectKindEntries,
 	collectCatalogKinds,
 	kindDiscriminantExpr,
@@ -39,9 +37,7 @@ import {
 	type FieldStorageInfo
 } from '../compiler/model/node-map.ts';
 import {
-	isNodeRef,
 	isTerminalValue,
-	storageKindOfRef,
 	isFixedTextLeaf,
 	textStoragesOf,
 	delimiterMembersFor
@@ -61,13 +57,14 @@ import {
 	classifyFactoryShape,
 	factoryTakesSpreadChildren,
 	isSlotBearingCompound,
-	keywordRefWireIdentity,
 	classifyFactoryEmission,
 	forwardedTargetKind,
 	resolveDirectFactorySlot,
 	warnSkippedParserSymbol,
 	soleSlotFacts,
-	canDefaultToEmpty,
+	emptyDefaultOf,
+	kindEnumTextEntries,
+	type KindEnumTextEntry,
 	canonicalSeparatedListField,
 	escForSource,
 	emitsPlainBuiltAlias,
@@ -121,7 +118,7 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 				case 'verbatim':
 					break;
 			}
-			if (!isMultiple(slot) && canDefaultToEmpty(slot, nodeMap)) imports.add('orDefault');
+			if (!isMultiple(slot) && emptyDefaultOf(slot, nodeMap, kindEntries)) imports.add('orDefault');
 			if (strictNodeExpectation(slot, nodeMap) !== undefined) imports.add('rejectBareText');
 			if (seatedKeywordTexts(slot, nodeMap, kindEntries).length > 0) imports.add('rejectKeywordText');
 			if (kindEntries !== undefined && slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
@@ -499,67 +496,6 @@ function textMapExpr(entries: readonly KindEnumTextEntry[]): string {
 	return `[${entries.map(({ text, discriminant }) => `[${JSON.stringify(text)}, ${discriminant}] as const`).join(', ')}]`;
 }
 
-interface KindEnumTextEntry {
-	readonly text: string;
-	readonly discriminant: string;
-	readonly keyword: boolean;
-}
-
-function kindEnumTextEntries(
-	f: AssembledNonterminal,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): KindEnumTextEntry[] {
-	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-	if ((storageInfo.kind !== 'kindEnum' && storageInfo.kind !== 'mixedEnum') || !kindEntries) return [];
-	const isKeywordKind = (kind: string | undefined): boolean =>
-		kind !== undefined && nodeMap.nodes.get(kind)?.modelType === 'keyword';
-	const literalIsKeyword = (text: string): boolean => isKeywordKind(findKindEntryForLiteral(kindEntries, text)?.kind);
-	const byText: KindEnumTextEntry[] = [];
-	for (const value of f.values) {
-		if (isNodeRef(value)) {
-			const kind = storageKindOfRef(value.node);
-			const resolved = nodeMap.nodes.get(kind);
-			if (resolved !== undefined && isFixedTextLeaf(resolved)) {
-				const text = resolved.text;
-				const { kindName, kindId } = keywordRefWireIdentity(value, resolved);
-				const discriminant =
-					(kindId !== undefined ? kindDiscriminantExprForId(kindId, kindEntries) : undefined) ??
-					(kindName !== undefined && hasCatalogEntry(kindEntries, kindName)
-						? kindDiscriminantExpr(kindName, nodeMap, kindEntries)
-						: findKindEntryForLiteral(kindEntries, text) !== undefined
-							? kindDiscriminantExprForLiteral(text, kindEntries)
-							: undefined);
-				if (discriminant === undefined) continue;
-				byText.push({ text, discriminant, keyword: resolved.modelType === 'keyword' });
-				continue;
-			}
-			if (!resolved || resolved.modelType !== 'enum') continue;
-			for (const text of resolved.values) {
-				const rec = resolved.resolvedByText.get(text);
-				const discriminant =
-					rec !== undefined
-						? (kindDiscriminantExprForId(rec.id, kindEntries) ?? kindDiscriminantExpr(rec.kind, nodeMap, kindEntries))
-						: findKindEntryForLiteral(kindEntries, text) !== undefined
-							? kindDiscriminantExprForLiteral(text, kindEntries)
-							: hasCatalogEntry(kindEntries, resolved.kind)
-								? kindDiscriminantExpr(resolved.kind, nodeMap, kindEntries)
-								: `kindIdFromName(${JSON.stringify(resolved.kind)})`;
-				byText.push({ text, discriminant, keyword: rec !== undefined ? isKeywordKind(rec.kind) : literalIsKeyword(text) });
-			}
-			continue;
-		}
-		if (!isTerminalValue(value)) continue;
-		const discriminant =
-			(value.resolvedKindId !== undefined ? kindDiscriminantExprForId(value.resolvedKindId, kindEntries) : undefined) ??
-			(findKindEntryForLiteral(kindEntries, value.value) !== undefined
-				? kindDiscriminantExprForLiteral(value.value, kindEntries)
-				: undefined);
-		if (discriminant === undefined) continue;
-		byText.push({ text: value.value, discriminant, keyword: literalIsKeyword(value.value) });
-	}
-	return byText;
-}
 
 function slotStorageFromValueExpr(
 	f: AssembledNonterminal,
@@ -666,14 +602,18 @@ function slotStorageExpr(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	typeName: string
 ): string {
-	const valueExpr = `${configAccess}.${f.configKey}`;
-	const defaultFactory = isMultiple(f) ? undefined : canDefaultToEmpty(f, nodeMap);
-	const withDefault = isMultiple(f)
-		? `(${valueExpr} ?? [])`
-		: defaultFactory
-			? `orDefault(${valueExpr}, () => ${defaultFactory}())`
-			: valueExpr;
-	return slotStorageFromValueExpr(f, withDefault, nodeMap, kindEntries, typeName);
+	return slotStorageFromValueExpr(f, defaultedValueExpr(f, `${configAccess}.${f.configKey}`, nodeMap, kindEntries), nodeMap, kindEntries, typeName);
+}
+
+function defaultedValueExpr(
+	f: AssembledNonterminal,
+	valueExpr: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	if (isMultiple(f)) return `(${valueExpr} ?? [])`;
+	const emptyDefault = emptyDefaultOf(f, nodeMap, kindEntries);
+	return emptyDefault ? `orDefault(${valueExpr}, () => ${emptyDefault})` : valueExpr;
 }
 
 function setterValueSignature(f: AssembledNonterminal, elemType: string): string {
@@ -1030,9 +970,10 @@ function resolveConfigFactorySurface(
 		const baseType = constructionChildElementType({ children: [singleField] }, nodeMap, kindEntries);
 		const singleShape = numericSlotShape(singleField);
 		const elemType = singleShape === undefined ? baseType : `${baseType} | ${numberInputType(singleShape)}`;
+		const optional = !isRequired(singleField) || holdsFixedText(singleField);
 		const param: FactoryParam = {
 			label: 'value',
-			optional: !isRequired(singleField),
+			optional,
 			rest: false,
 			strictType: elemType,
 			looseType: looseValueOf(elemType),
@@ -1045,8 +986,8 @@ function resolveConfigFactorySurface(
 			...renderSurfaceParams(param),
 			args: 'value',
 			directParamType: elemType,
-			directParamOptional: !isRequired(singleField),
-			opt: isRequired(singleField) ? '' : '?'
+			directParamOptional: optional,
+			opt: optional ? '?' : ''
 		};
 	}
 	const slots = node.slots;
@@ -1186,7 +1127,8 @@ function emitFieldCarryingFactory(
 		withLines = [`    $with: { ${setter}: (...vs: ${elementType}[]) => ${fn}(...vs) },`];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
-		valueSourceFor = (f) => slotStorageFromValueExpr(f, 'value', nodeMap, kindEntries, node.typeName);
+		valueSourceFor = (f) =>
+			slotStorageFromValueExpr(f, holdsFixedText(f) ? defaultedValueExpr(f, 'value', nodeMap, kindEntries) : 'value', nodeMap, kindEntries, node.typeName);
 		const setterType = setterElemType(singleField, elemType, elemType, nodeMap, true);
 		const setterSig = setterValueSignature(singleField, setterType);
 		const rebuildDirect = (options: string): string => `${fn}(value, ${options})`;

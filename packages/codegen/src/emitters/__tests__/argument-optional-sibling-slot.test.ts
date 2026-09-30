@@ -5,11 +5,12 @@ import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import {
 	AssembledBranch,
 	AssembledNonterminal,
+	AssembledPunctuation,
 	type AssembledNode,
 	type NodeOrTerminal
 } from '../../compiler/model/node-map.ts';
 import { flatten } from '../../compiler/flatten.ts';
-import { canDefaultToEmpty } from '../shared.ts';
+import { emptyDefaultOf } from '../shared.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 
 /**
@@ -82,7 +83,78 @@ describe('a required field targeting a node with an optional sibling slot defaul
 		fieldName: 'outer'
 	});
 
-	it('canDefaultToEmpty answers with the target factory', () => {
-		expect(canDefaultToEmpty(field, nodeMap)).toBe('buildAsyncBlock');
+	it('emptyDefaultOf answers with a call of the target factory', () => {
+		expect(emptyDefaultOf(field, nodeMap, undefined, 'F.')).toBe('F.buildAsyncBlock()');
+	});
+});
+
+describe('a required field whose sole kind is a fixed-text leaf defaults to that leaf', () => {
+	const newline = new AssembledPunctuation('newline', { type: STRING, value: '\n' } as never, { hidden: false });
+	const nodeMap = { ...makeNodeMapWith(new Map<string, AssembledNode>([['newline', newline]])), nodeByKindId: new Map([[3, newline]]) };
+	const kindEntries = [
+		{ kind: 'newline', member: 'Newline', id: 3, literalText: '\n' },
+		{ kind: '?', member: 'Qmark', id: 4, literalText: '?', anon: true }
+	];
+	const field = new AssembledNonterminal({
+		values: [{ node: newline, storageKindId: 3, multiplicity: 'single' }],
+		hasTrailingDelimiter: false,
+		hasLeadingDelimiter: false,
+		sourceRuleIds: [],
+		fieldName: 'newline'
+	});
+
+	it('emptyDefaultOf answers with the kind id of the fixed text', () => {
+		expect(emptyDefaultOf(field, nodeMap, kindEntries)).toBe('TSKindId.Newline as const');
+	});
+
+	it('emptyDefaultOf answers with the kind id of a required literal', () => {
+		const literal = new AssembledNonterminal({
+			values: [{ value: '?', resolvedKindId: 4, multiplicity: 'single' }],
+			hasTrailingDelimiter: false,
+			hasLeadingDelimiter: false,
+			sourceRuleIds: [],
+			fieldName: 'content'
+		});
+		expect(emptyDefaultOf(literal, nodeMap, kindEntries)).toBe('TSKindId.Qmark as const');
+	});
+
+	it('emptyDefaultOf has no default when a literal arm shares the slot, since the choice is free', () => {
+		const mixed = new AssembledNonterminal({
+			values: [{ value: ';', multiplicity: 'single' }, ...field.values],
+			hasTrailingDelimiter: false,
+			hasLeadingDelimiter: false,
+			sourceRuleIds: [],
+			fieldName: 'terminator'
+		});
+		expect(emptyDefaultOf(mixed, nodeMap, kindEntries)).toBeNull();
+	});
+});
+
+describe('a kind whose only slot is a required literal builds with no argument', () => {
+	const rule = flatten({ type: STRING, value: '?' });
+	const content = new AssembledNonterminal({
+		values: [{ value: '?', resolvedKindId: 4, multiplicity: 'single' }],
+		hasTrailingDelimiter: false,
+		hasLeadingDelimiter: false,
+		sourceRuleIds: [],
+		fieldName: 'content'
+	});
+	const lazy = new AssembledBranch('lazy', rule, rule, { slots: [content] });
+	const nodeMap = makeNodeMapWith(new Map<string, AssembledNode>([['lazy', lazy]]));
+	const kindEntries = [
+		{ kind: 'lazy', member: 'Lazy', id: 5 },
+		{ kind: '?', member: 'Qmark', id: 4, literalText: '?', anon: true }
+	];
+
+	it('factories.ts: the strict raw factory takes an optional value and fills the literal', () => {
+		const emitted = emitFactories({ grammar: 'synth', nodeMap, kindEntries });
+		expect(emitted).toContain('export function buildLazy(value?:');
+		expect(emitted).toContain('orDefault(value, () => TSKindId.Qmark as const)');
+	});
+
+	it('from.ts: the loose coercer takes no argument and fills the literal', () => {
+		const emitted = emitFrom({ grammar: 'synth', nodeMap, kindEntries });
+		expect(emitted).toContain('export function coerceToLazy(input?:');
+		expect(emitted).toContain('?? TSKindId.Qmark as const');
 	});
 });

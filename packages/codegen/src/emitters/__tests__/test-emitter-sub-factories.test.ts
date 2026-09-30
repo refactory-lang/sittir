@@ -8,6 +8,7 @@ import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { stampAutomaticVariants } from '../../dsl/automatic-variants.ts';
 import { emitTests } from '../test.ts';
+import { slot, text, tokenSeam } from '../render-body.ts';
 
 // ---------------------------------------------------------------------------
 // Same synthetic grammar shape as overlays/polymorphs.ts's own test fixture:
@@ -91,5 +92,15 @@ describe('emitTests sub-factories', () => {
 
 		expect(text).toContain('// known-failing: render omits doc marker');
 		expect(text).toContain("it.skip('doc builds the parent'");
+	});
+
+	it('asserts a non-empty render only for a kind whose render writes text', () => {
+		const nodeMap = commentNodeMap();
+		const sections = (bodies: Parameters<typeof emitTests>[0]['renderBodies']) =>
+			emitTests({ grammar: 'synth', nodeMap, renderBodies: bodies }).split("describe('").filter((section) => section.startsWith('comment'));
+		const layoutOnly = new Map([['comment', [...tokenSeam('\n'), ...slot('content')]], ['comment_doc', tokenSeam('\n')], ['comment_plain', tokenSeam('\n')]]);
+		for (const section of sections(layoutOnly)) expect(section).not.toContain('toBeGreaterThan(0)');
+		const written = new Map([['comment', [...text('//'), ...slot('content')]]]);
+		expect(sections(written).join('')).toContain('expect(node.$render!().length).toBeGreaterThan(0);');
 	});
 });

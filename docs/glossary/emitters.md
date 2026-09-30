@@ -1357,52 +1357,15 @@ so no kind-to-text table is needed here.
  */
 ```
 
-### `packages/codegen/src/emitters/from.ts::canDefaultToEmpty`
+### `packages/codegen/src/emitters/shared.ts::emptyDefaultOf`
 
-```text
-/**
- * Returns the target factory name when a required field can default to an
- * empty factory call, or `null` when it cannot.
- *
- * A field qualifies for default-empty when:
- * 1. `isRequired(field)` is true.
- * 2. Its `values` resolve to exactly ONE kind (not a union).
- * 3. That kind's factory can be called with zero arguments:
- *    - Container shape with rest-params (multiple children) — always callable.
- *    - Container shape with optional singular child — callable.
- *    - Config-based factory where every non-auto-stamp field is optional and
- *      every non-auto-stamp child is either auto-stamp-eligible or repeat-0+.
- *
- * @param field - The field slot to check.
- * @param nodeMap - The assembled node map.
- * @returns The target factory's `rawFactoryName` if it qualifies, or `null`.
- */
-```
+The expression a required single-value slot defaults to when its value is omitted, or `null` when the slot must be supplied. Both surfaces read it: the strict raw factory (`slotStorageExpr`, `defaultedValueExpr`) and the loose coercer (`emitBranchFrom`). The slot must have exactly one value; a slot that pairs a literal arm with a kind reference (`'.'` beside `optional_chain`) offers a choice and has no default.
 
-#### body
+- Fixed text (a literal, or a reference to a fixed-text leaf) defaults to its kind id, `TSKindId.X as const`, taken from `fixedTextEntryOf`. The `as const` keeps the member's literal type through an `orDefault` arrow, which would otherwise widen it to `TSKindId`.
+- A list defaults to a call of its factory when the list is argument-optional.
+- A compound whose loose `from()` forwards to a child factory defaults when that child's sole slot is multiple or optional; any other compound defaults when it is argument-optional.
 
-```text
-// 'list' is EXCLUDED here (unlike 'branch') — its Task-6 factory
-// signature always requires an `elements` argument (never a zero-arg
-// `F.x()` call, even for a plain `repeat` whose elements COULD be an
-// empty array — the array itself is still a mandatory argument, not a
-// default). `instanceof AssembledBranch` can't recognize
-// AssembledList, so narrow on modelType instead.
-```
-
-#### body
-
-```text
-// Rest params (`...children`) always accept zero args. A singular
-// positional `child` is safe only when it's itself optional.
-```
-
-#### body
-
-```text
-// Branch / hoisted compound with fields: check if the factory config is
-// all-optional. 'list' excluded — see this function's doc comment above.
-```
+`factoryNs` prefixes the factory call (`'F.'` in the coercer module); a kind id needs no prefix.
 
 ### `packages/codegen/src/emitters/from.ts::emitBranchFrom`
 
@@ -2921,32 +2884,6 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
 // (the reader stays grammar-agnostic; wrap is the model-driven boundary —
 // see `wrap.ts::_keepModelledSlots`.)
 ```
-
-#### token interior
-
-```text
-`is_text_kind` also lists lexed compounds: the reader captures their text and the wrap layer projects the slots.
-```
-
-### `packages/codegen/src/emitters/kind-id-rust.ts::is_text_kind`
-
-The generated predicate behind the reader's text gate: `true` for exactly
-the kind ids whose model class is `pattern` (free text) or `enum` (a named
-node holding one of its literals — its transport decodes which one from the
-text, since the node carries no storage). The model class is the fact,
-not tree-sitter's rule type — a `token(seq(…))`, an `alias(pattern)` or an
-external-scanner symbol renders from free text while its rule is not
-`PATTERN`. The table is keyed by the id `collectKindEntries` resolved, never
-by the model kind name, because an alias puts a model kind on a different
-parser symbol (rust `_outer_block_doc_comment_marker` reaches the tree as
-`outer_doc_comment_marker`); the ids are deduped because two model kinds can
-share one symbol and a repeated `matches!` arm is an error. A `token` kind
-is absent on purpose: its literal is on the model and the transport already
-defaults a missing `$text` to it.
-
-### `packages/codegen/src/emitters/kind-id-rust.ts::kindIdSetFn`
-
-The generated Rust predicate `pub fn <name>(kind: KindId) -> bool` over a set of kind ids: `matches!` over the ids, or, for an empty set, a body of `false` with the parameter named `_kind` so it compiles without an unused-variable warning. `is_text_kind` is emitted through it.
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::wire_slot`
 
@@ -5406,6 +5343,10 @@ for it.
 Whether a fixed text is nothing but whitespace: the one predicate behind
 every site that decides a text is structural whitespace rather than
 token text.
+
+### `packages/codegen/src/emitters/render-body.ts::writesText`
+
+True when a body writes a non-whitespace text node on some path, looking into both arms of a conditional and its fallback.
 
 ### `packages/codegen/src/emitters/render-body.ts::tokenSeam`
 
@@ -8410,6 +8351,10 @@ The grammar's word-class test for a single char (`wordCharPredicate`), used for 
 	 * When absent (legacy callers), falls back to string literal checks.
 	 */
 ```
+
+### `packages/codegen/src/emitters/test.ts::renderBodies`
+
+The compiled render bodies by kind. `rendersText` reads them to decide whether a sampled kind writes text; without them every kind is taken to write text.
 
 ### `packages/codegen/src/emitters/test.ts::expectTestFailures`
 
@@ -11436,9 +11381,17 @@ The kind discriminant of each literal member of a kind-enum or mixed-enum slot: 
 // (fixtures); genuinely kindless literals skip.
 ```
 
-### `packages/codegen/src/emitters/factories.ts::kindEnumTextEntries`
+### `packages/codegen/src/emitters/shared.ts::kindEnumTextEntries`
 
-The text → discriminant rows behind `kindEnumTextMapExpr`, each flagged `keyword` when its text is a keyword: a fixed-text leaf whose model type is `keyword`, an enum member whose kind (or literal's catalog kind) is a keyword kind, or a terminal whose literal's catalog kind is one.
+The text → discriminant rows behind `kindEnumTextMapExpr`, each flagged `keyword` when its text is a keyword: a fixed-text leaf whose model type is `keyword`, an enum member whose kind (or literal's catalog kind) is a keyword kind, or a terminal whose literal's catalog kind is one. Fixed-text values resolve through `fixedTextEntryOf`, the same derivation `emptyDefaultOf` uses for a default.
+
+### `packages/codegen/src/emitters/shared.ts::fixedTextEntryOf`
+
+The text → discriminant row for one fixed-text value — a reference to a fixed-text leaf, or a literal terminal — or `undefined` for any other value or one with no catalog kind. A leaf reference resolves its wire identity through `keywordRefWireIdentity`; a literal resolves through its stamped `resolvedKindId`, falling back to the catalog row for its text.
+
+### `packages/codegen/src/emitters/shared.ts::isKeywordKindIn`
+
+True when a kind name is a keyword kind in the node map; the test behind every text row's `keyword` flag.
 
 ### `packages/codegen/src/emitters/factories.ts::keywordArmTextMapExpr`
 
@@ -11488,9 +11441,13 @@ A slot that can default to its empty form stores `orDefault(<config value>, () =
 // body next to moveMarker) is what makes `config` itself defaultable to
 // `{}` (argumentOptional, above) — reading it bare would then silently
 // store `undefined` instead of the empty construction that field's own
-// omission means. `canDefaultToEmpty` is the same fact `emitBranchFrom`
+// omission means. `emptyDefaultOf` is the same fact `emitBranchFrom`
 // (from.ts) already applies on the loose surface.
 ```
+
+### `packages/codegen/src/emitters/factories.ts::defaultedValueExpr`
+
+A slot's value expression with its omission filled: `(<value> ?? [])` for a multiple slot, `orDefault(<value>, () => <default>)` when `emptyDefaultOf` gives the slot a default, and the bare value otherwise. `slotStorageExpr` applies it to a config key; the direct-value surface applies it to `value` when that slot holds fixed text.
 
 ### `packages/codegen/src/emitters/factories.ts::fieldElementType`
 
@@ -11659,6 +11616,9 @@ A parameter that holds a node (`admitsNodes`) is typed through `AdmitBound` over
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::resolveFactorySurface`
+
+
+The direct-value parameter is optional when its slot is optional or holds fixed text (`holdsFixedText`). A fixed-text slot then stores `defaultedValueExpr(value)`, so `buildLazy()` fills `?` itself.
 
 #### body
 
@@ -12167,6 +12127,10 @@ An alias kind gets no test of its own: it is not on `ir`, and every parent test 
 // per-`it`) keeps the override surface to one kind→reason entry.
 ```
 
+### `packages/codegen/src/emitters/test.ts::rendersText`
+
+True when a kind's render writes non-whitespace text for the arguments the dummy machinery samples. A kind with no body is a leaf and writes its text; a body that `writesText` writes it directly; a supertype writes text when every subtype does; any other kind writes text when some required slot referenced in its body holds only values that write text. A cycle reads as `false`.
+
 ### `packages/codegen/src/emitters/test.ts::factoryCallArgs`
 
 ```text
@@ -12291,7 +12255,7 @@ The owner's own kind is the path handed to `resolveConcreteKind`, so a slot that
 
 ### `packages/codegen/src/emitters/test.ts::pushRenderTest`
 
-The render test shared by the config-shaped and children-constructed blocks. An argument that carries content (`emitBranchTest`'s render config with required slots, or a children placeholder) asserts a non-empty render. An empty argument, or `{}` for a kind whose slots are all optional, legitimately renders empty, so that case asserts only that render does not throw.
+The render test shared by the config-shaped and children-constructed blocks. An argument that carries content (`emitBranchTest`'s render config with required slots, or a children placeholder) asserts a non-empty render, but only for a kind whose render writes text (`rendersText`). A kind whose only content is layout — a lone newline, a token seam — can render empty at a root, as can an empty argument or `{}` for a kind whose slots are all optional; those cases assert only that render does not throw.
 
 ### `packages/codegen/src/emitters/test.ts::emitChildrenTest`
 
@@ -13486,16 +13450,27 @@ The literal texts a compound's render rule places directly under each field, key
 
 Emits the wrap layer's alias identity. The reader ships every node's `$type` as the grammar symbol that parsed it, plus `$displayType` (the kind the parser shows) when the two differ. Whether a display kind is an alias envelope is a model fact, so it is decided here from `AssembledAlias.aliasTypeId`:
 
+- `_displayOf(entry)`: the kind the parser shows a read node as, which is its `$displayType` when the reader sent one and its `$type` otherwise.
 - `_ALIAS_ENVELOPES`: the envelope display ids.
 - `_HIDDEN_KINDS`: the catalog's hidden kind ids (the parser's own visibility), emitted when the grammar has an envelope. `_aliasEnvelope` uses it to tell an envelope's own container (a hidden grammar symbol, whose one slot becomes `_content`) from a visible storage node shown under the alias (which becomes `_content` whole).
 - `_kindOf(entry)`: the kind a read node has in the model, which is the envelope id when its `$displayType` is an envelope and its `$type` otherwise. `wrapNode` dispatches on it, and every projection that reads a raw child's kind (`projectKindEnumStorage`, `projectMixedEnumStorage`, `_wrapKindNameOf`) goes through it. So a raw child still sitting in its parent's storage is judged by the same identity it will wrap to: a keyword spelled as a property name stays a `property_identifier` node rather than folding into the keyword's enum id.
 - `_withoutDisplay(data)`: removes `$displayType` from a node that is not an envelope, so only envelope seating ever sees it.
 
-A grammar without a kind catalog gets a `_kindOf` that returns `$type`.
+A grammar without a kind catalog gets `_displayOf` and a `_kindOf` that returns `$type`.
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.dropSpellingLines`
 
-Emits `_RECLAIMS_ANONYMOUS` and `_dropSpelling`, which `wrapNode` applies to every node before its per-kind wrap, trivia entries included. The reader ships anonymous children as `$other`. A node whose only unfielded content is anonymous tokens (no `_`-prefixed slot keys, every `$other` entry `$named: false`) is spelled by those tokens, not structured by them, so `_dropSpelling` removes that `$other` and keeps the node's own `$text` when the reader sent one. It never takes a token's text as the node's: a token can be part of a node whose remaining content is a hidden token (`format_specifier`'s `:` before `#06x`, `block_comment`'s delimiters around its body). Kinds with a `reclaimsAnonymousChild` slot keep `$other`, because their wrap reads the token into that slot. Without the drop, a node that keeps `$other` counts as storage-bearing in the transport projection and loses its `$text` (a `primitive_type`, an `import_prefix`).
+Emits `_RECLAIMS_ANONYMOUS`, `_spellingTokens`, `_spelledText`, `_dropSpelling`, `_spellingOf`, `_tiledSpelling`, `_readChildren` and `_spelledLeaf`. `wrapNode` applies `_dropSpelling` to every node before its per-kind wrap, trivia entries included.
+
+The reader ships anonymous children as `$other`, and sends `$text` only for a node with no children. A node whose only unfielded content is anonymous tokens (no `_`-prefixed slot keys, every `$other` entry `$named: false`) is spelled by those tokens, not structured by them. `_spellingTokens` returns those tokens, and nothing for any other node.
+
+`_spelledText` is a node's text: its `$text`, or else `_tiledSpelling` of its spelling tokens. `_tiledSpelling` joins children's spellings, provided they tile the node's `$span` with no gap (`python` `import_prefix` `..`, `typescript` `predefined_type`). A child's spelling (`_spellingOf`) is its `_spelledText`, or for an anonymous token without text, `KIND_DISPLAY_NAMES` of its `_displayOf` id. `_dropSpelling` removes a spelled node's `$other` and keeps `_spelledText` as its `$text`. The raw-child enum projections (`projectKindEnumStorage`, `projectMixedEnumStorage`) read `_spelledText` too, so a child still sitting in its parent's storage is decoded from the same text it will wrap with.
+
+The reader omits a token's text exactly when it equals the parser's name for the token, so the display name is that text.
+
+`_spelledLeaf` is the wrap-table row of every model leaf kind (`pattern`, `enum`, or a builder text leaf). A leaf renders from its text, but the read may carry structure the model doesn't have: regex `zero_or_more` over `*?` reads as a `*` token plus a named `lazy` child. When such a node has no `$text`, `_readChildren` gathers every read child (`_`-slot values and `$other`, ordered by span). If they all tile the span, their joined spelling becomes the leaf's `$text` and the read structure (`_` slots, `$other`, `$slotOrder`) is dropped. If they don't tile, the node is left as read, unspelled, rather than guessed. Tokens that leave a gap mean some content belongs to no token (`format_specifier`'s `:` before `#06x`, `block_comment`'s delimiters around its body), so their joined spelling is not the node's text and none is taken.
+
+Kinds with a `reclaimsAnonymousChild` slot keep `$other`, because their wrap reads the token into that slot. Without the drop, a node that keeps `$other` counts as storage-bearing in the transport projection and loses its `$text`.
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`
 
@@ -14696,15 +14671,19 @@ Renders an arm entry and its nested children as one object literal and its type.
 The method text and parameter type of one sub-factory arm, chosen by what the
 arm supplies. A value arm stamps its literal into the slot. A node arm with no
 residual keys forwards the child's own arguments. A node arm whose child merges
-its keys into the parent's config, or whose child takes a single config
-argument, reads that argument. A node arm whose child is `parameterless` has
-no argument to receive: it takes only the parent's remaining keys and stamps
-`child()` into the slot the way a value arm stamps its literal, so a keyword
-or punctuation arm (`attribute.self`, `rangePattern.withLeft.bare`) is called
-with the parent's config alone. Every other node arm takes the slot's key as
-the child's argument tuple and spreads it. The arity is the model's
-`parameterless` stamp, the fact the factories emitter reads for a zero-argument
-factory; the overlay never re-derives it.
+its keys into the parent's config reads that config. A node arm whose child is
+`parameterless` has no argument to receive: it takes only the parent's
+remaining keys and stamps `child()` into the slot the way a value arm stamps
+its literal, so a keyword arm or an arm holding only fixed text
+(`attribute.self`, `exceptClause.empty`) takes the parent's config alone. That
+check comes before the seated-config one, because a parameterless child whose
+factory is config-shaped still has nothing to seat. The config parameter is
+optional when no remaining slot is required, so `ir.exceptClause.empty()`
+takes no argument at all. A node arm whose child takes a single config
+argument seats it under the slot key. Every other node arm takes the slot's
+key as the child's argument tuple and spreads it. The arity is the model's
+`parameterless` stamp, the fact the factories emitter reads for a
+zero-argument factory; the overlay never re-derives it.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::flattenShape`
 
@@ -16373,6 +16352,8 @@ Wraps a config type in `WidenNumeric` for the numeric text slots of a node, each
 ```
 
 ### `packages/codegen/src/emitters/test.ts::subFactoryCallArgs`
+
+The call arguments for one sub-factory case, following the arm shapes `shape` emits in the same order: a merged config, then a parameterless child (the residual keys alone), then a seated config, then a seated tuple.
 
 #### body
 

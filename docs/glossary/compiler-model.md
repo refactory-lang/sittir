@@ -392,26 +392,7 @@ type-name renames resolve that as a naming event.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::parameterless`
 
-```text
-/**
-	 * True when this kind requires NO user-supplied arguments to construct.
-	 *
-	 * Structural getter — replaces the former `markParameterlessKinds`
-	 * fixpoint pass. Two classes of parameterless kinds:
-	 *
-	 * - **Single-literal terminals** (`AssembledKeyword`, `AssembledPunctuation`):
-	 *   overridden to return `true` unconditionally (or conditionally for
-	 *   tokens — only `string`-rule tokens are parameterless).
-	 * - **Parameterless compounds** (any `AbstractAssembledCompound` subclass —
-	 *   `AssembledBranch`, `AssembledEnvelope`, `AssembledPolymorph`;
-	 *   `AssembledList` overrides this getter to always return `false`):
-	 *   a compound is parameterless when it declares no slots at all.
-	 *
-	 * A kind that HAS slots but requires none of them is not parameterless —
-	 * that is `argumentOptional`, which is the fact to consult when asking
-	 * whether a factory can be called with no argument.
-	 */
-```
+True when this kind requires no user-supplied argument to construct. Keywords and single-literal tokens return `true`; pattern tokens and lists return `false`. A compound is parameterless when every slot fills itself (`fillsItself`): each is required, single, and holds one value that is either a literal or a reference to a parameterless kind. A compound with no slots qualifies vacuously. A kind that has a slot it merely does not require is not parameterless — an optional fixed-text slot is a presence choice — which is what `argumentOptional` answers instead.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::argumentOptional`
 
@@ -449,6 +430,19 @@ type-name renames resolve that as a naming event.
  * (`x?: T` against `x: T = {}` against `NonEmptyArray<`) rather than
  * multiplicities, and the two disagree.
  */
+```
+
+A required slot that holds fixed text (`holdsFixedText`) needs no argument: its builder fills the text, so it is left out of the required count before the rules above apply. A slot referencing a parameterless compound is not excluded this way; it still forwards through the ctx lookup, since that target's own answer decides it.
+
+#### body
+
+```text
+// Optional sibling slots (e.g. a keyword-presence flag alongside a
+// required body) never block a zero-argument call on their own — only
+// the ONE required slot's own forwarding decides it. `soleSlot`
+// (exactly one slot total) undercounts this: a node can have several
+// slots and still take no argument as long as all but one are
+// optional and that one forwards to an argument-optional target.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::ArgumentOptionalCtx`
@@ -1036,11 +1030,19 @@ can't be unified.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.parameterless`
 
-```text
-/** A compound with a factory and no slots takes no arguments — every
- *  reference in its render rule is fixed text (`_reference_expression_raw_mut`
- *  → `raw mut`). Guarded against re-entrancy: a cycle reads as false. */
-```
+A compound with a factory whose every slot fills itself takes no arguments: python's `match_block_empty` holds only the `_newline` layout token, regex's `lazy` only the literal `?`. The getter is guarded against re-entrancy, so a reference cycle reads as `false`.
+
+### `packages/codegen/src/compiler/model/node-map.ts::soleRequiredValue`
+
+The one value of a slot that is required, single, and has exactly one value; `undefined` for any other slot. A slot with several values offers a choice, so it never has a sole value even when only one of them is a node reference.
+
+### `packages/codegen/src/compiler/model/node-map.ts::holdsFixedText`
+
+True when a slot's sole required value is fixed text: a literal terminal, or a reference to a fixed-text leaf (`isFixedTextLeaf`). Such a slot takes no argument — its builder fills the text — so `argumentOptional` leaves it out of the required count, and the factories emitter makes a direct parameter for it optional. A slot that pairs a literal arm with a kind reference (`'.'` beside `optional_chain`) has several values, so it offers a choice and does not hold fixed text; it gets no default.
+
+### `packages/codegen/src/compiler/model/node-map.ts::fillsItself`
+
+True when a slot's sole required value needs no input: a literal terminal, or a reference to a parameterless kind. Every slot of a parameterless compound fills itself. It reads the hydrated `value.node` rather than resolving through a ctx, because `parameterless` is a getter with no ctx to pass.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AbstractAssembledCompound.stampExpression`
 
