@@ -980,9 +980,9 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 				...methods,
 				...(isPrivate
 					? [`const ${wireSet.parentKey}: {`, ...wireTypes, `} = Object.freeze({`]
-					: [`export const ${wireSet.parentKey}: typeof B.${wireSet.parentKey} & {`, ...wireTypes, `} = Object.freeze({`, `	...B.${wireSet.parentKey},`]),
+					: [`export const ${wireSet.parentKey} = Object.freeze({`, `	...B.${wireSet.parentKey},`]),
 				...wireLines,
-				'});',
+				...(isPrivate ? ['});'] : [`}) as unknown as typeof B.${wireSet.parentKey} & {`, ...wireTypes, '};']),
 				''
 			];
 			chunks.push({ kind, isPrivate, lines, uses, hasMethods: methods.length > 0 });

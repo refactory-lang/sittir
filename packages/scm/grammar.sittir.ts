@@ -1,10 +1,12 @@
-import base from 'tree-sitter-scm/grammar.js';
+/// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
+import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {
 	field,
+	preference,
 	variant,
 	sittirGrammar
-} from '../codegen/src/dsl/index.ts';
+} from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default sittirGrammar(base, {
 	resolutions,
@@ -19,6 +21,7 @@ export default sittirGrammar(base, {
 			'1/1/1/0': field('last')
 		}
 	},
+	options: { indent: preference('    ') },
 	expectDiagnostics: {
 		'unclassifiable-shape': ['predicate']
 	}

@@ -15,18 +15,18 @@ describe('gaps between coordinates', () => {
 		const source = 'function f() {\n  a();\n\n  b();\n\n  c();\n}\n';
 		const fn = engine.parse(source).statements()[0] as unknown as {
 			body(): {
-				$with: { statements(...v: readonly unknown[]): unknown };
+				$with: { statements(v: readonly unknown[]): unknown };
 				statements(): readonly unknown[];
 			};
 		};
 		const body = fn.body();
-		const rebuilt = body.$with.statements(
+		const rebuilt = body.$with.statements([
 			...body.statements(),
 			ts.build.expressionStatement.strict(
 				ts.build.callExpression.call.strict({ function: ts.build.identifier('d'), arguments: ts.build.arguments.strict() }),
 				{ terminator: ts.kinds.Semi }
 			)
-		);
+		]);
 		// The blank lines are the claim; the indent width is the format's.
 		const text = engine.render(rebuilt as never).toString().replace(/\n[ \t]+/g, '\n');
 		expect(text).toContain('a();\n\nb();\n\nc();\n\nd();');

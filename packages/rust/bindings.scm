@@ -22,10 +22,11 @@
 (function_item (function_modifiers (extern_modifier) @extern))
 (function_signature_item) @declaration.function.signature
 (trait_item (declaration_list (function_signature_item) @declaration.method.signature))
-(impl_item (declaration_list (function_item (parameters . (self_parameter) @receiver)) @declaration.method))
-(impl_item (declaration_list (function_item (parameters . (_) @_first)) @declaration.method.static))
-(impl_item) @declaration.extension
-(impl_item trait: (_) @implements) @declaration.extension.conformance
+(impl_item_body (declaration_list (function_item (parameters (parameters_elements . (attributed_parameter (self_parameter) @receiver)))) @declaration.method))
+(impl_item_body (declaration_list (function_item (parameters (parameters_elements . (_) @_first))) @declaration.method.static))
+(impl_item_body) @declaration.extension
+(impl_item_semi) @declaration.extension
+(impl_item_body trait_clause: (_ trait: (_) @implements)) @declaration.extension.conformance
 (trait_item bounds: (_)? @extends (declaration_list (function_item) @declaration.method)) @declaration.interface.trait
 (struct_item) @declaration.struct
 (enum_item) @declaration.enum
@@ -43,7 +44,7 @@
 (let_declaration pattern: (_) @name) @declaration.variable
 (field_declaration) @declaration.field
 (macro_definition) @declaration.macro
-(parameter pattern: (_) @name) @declaration.parameter
+(parameter name: (_) @name) @declaration.parameter
 (parameter (mutable_specifier) @mutable)
 (self_parameter) @declaration.parameter.self
 (self_parameter (mutable_specifier) @mutable)
@@ -106,7 +107,7 @@
 (call_expression) @expression.call
 (call_expression function: (field_expression) @function) @expression.call.member
 (call_expression function: (scoped_identifier) @function) @expression.call.path
-(macro_invocation macro: (_) @function (token_tree) @arguments) @expression.call.macro
+(macro_invocation macro: (_) @function arguments: (delim_token_tree) @arguments) @expression.call.macro
 (binary_expression) @expression.binary
 (binary_expression operator: "+") @expression.binary.arithmetic.add
 (binary_expression operator: "-") @expression.binary.arithmetic.subtract
@@ -202,7 +203,7 @@
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string_literal (string_content)* @content) @literal.string
-(raw_string_literal (raw_string_literal_content)? @content) @literal.string.raw
+(raw_string_literal string_content: (string_content) @content) @literal.string.raw
 (char_literal) @literal.char
 (escape_sequence) @literal.string.escape
 (integer_literal) @literal.number.integer
@@ -246,12 +247,14 @@
 
 ; ── keyword / punctuation ──────────────────────────────────────────────────────
 ["fn" "let" "impl" "trait" "struct" "enum" "mod" "type"] @keyword.declaration
-["use" "extern" "crate"] @keyword.import
+["use" "extern"] @keyword.import
+(crate) @keyword.import
 ["if" "else" "match"] @keyword.conditional
 ["for" "while" "loop"] @keyword.repeat
 ["return" "break" "continue"] @keyword.return
 ["pub"] @keyword.visibility
-["mut" "async" "unsafe" "const" "static" "move" "dyn"] @keyword.modifier
+["async" "unsafe" "const" "static" "move" "dyn"] @keyword.modifier
+(mutable_specifier) @keyword.modifier
 ["as" "in" "where"] @keyword.operator
 ["(" ")" "[" "]" "{" "}"] @punctuation.bracket
 ["," ";" ":" "::" "->" "=>"] @punctuation.delimiter

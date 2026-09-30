@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 307,
+  "nodeCount": 305,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -2458,30 +2458,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "_augmented_assignment_operator",
-      "modelType": "enum",
-      "typeName": "AugmentedAssignmentOperator",
-      "factoryName": "augmentedAssignmentOperator",
-      "irKey": "augmentedAssignmentOperator",
-      "hidden": false,
-      "values": [
-        "+=",
-        "-=",
-        "*=",
-        "/=",
-        "@=",
-        "//=",
-        "%=",
-        "**=",
-        ">>=",
-        "<<=",
-        "&=",
-        "^=",
-        "|="
-      ],
-      "factoryShape": "text"
-    },
-    {
       "kind": "_blankline",
       "modelType": "punctuation",
       "typeName": "Blankline",
@@ -2587,18 +2563,6 @@
       "isParameterless": true,
       "stampExpression": "\"is not\" as const",
       "text": "is not"
-    },
-    {
-      "kind": "_kw_async_marker",
-      "modelType": "keyword",
-      "typeName": "KwAsyncMarker",
-      "factoryName": "kwAsyncMarker",
-      "irKey": "kwAsyncMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"async\" as const",
-      "text": "async",
-      "factoryShape": "constant"
     },
     {
       "kind": "_left_hand_side",
@@ -3962,15 +3926,85 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_augmented_assignment_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_augmented_assignment_operator",
-              "parseKind": "_augmented_assignment_operator"
+              "value": "+=",
+              "parseKind": "plus_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-=",
+              "parseKind": "dash_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "*=",
+              "parseKind": "star_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "/=",
+              "parseKind": "slash_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "@=",
+              "parseKind": "at_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "//=",
+              "parseKind": "slash_slash_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "%=",
+              "parseKind": "percent_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "**=",
+              "parseKind": "star_star_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ">>=",
+              "parseKind": "gt_gt_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "<<=",
+              "parseKind": "lt_lt_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "&=",
+              "parseKind": "amp_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "^=",
+              "parseKind": "caret_eq"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "|=",
+              "parseKind": "pipe_eq"
             }
           ]
         },
@@ -8740,15 +8774,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },
@@ -8860,15 +8892,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },
@@ -9079,15 +9109,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },
@@ -16282,15 +16310,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },

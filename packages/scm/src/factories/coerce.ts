@@ -2,10 +2,10 @@
 
 import * as F from './raw.js';
 import { spelledInterior } from '@sittir/common/utils';
-import type * as T from '../types.js';
+import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import type { AnyNodeData, LooseValue } from '@sittir/types';
-import { coerceKindEnumStorage, coerceMixedEnumStorage } from '@sittir/common/utils';
+import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind } from '@sittir/common/utils';
 import { isNode } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -113,21 +113,21 @@ function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
 
-const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefined> = {
-	definition: ['named_node', 'anonymous_node', 'missing_node', 'grouping', 'predicate', 'list', 'field_definition'],
-	named_node: ['named_node_plain', 'named_node_supertyped'],
-	named_node_group: ['named_node_group_children', 'named_node_group_anchored_last'],
-	_whitespace: ['_tight', '_space', '_tab', '_newline', '_blankline', '_double_blankline', '_indent', '_dedent']
-};
+function _fromOfTag(tag: unknown, candidates: readonly string[]): keyof _FromMap {
+	const name = typeof tag === 'number' ? KIND_NAMES.get(tag) : undefined;
+	if (
+		name !== undefined &&
+		_isFromKind(name) &&
+		candidates.some((c) => c === name || _BARE_ACCEPTS[c]?.has(tag as number))
+	)
+		return name;
+	throw new Error(`the $type tag ${JSON.stringify(tag)} is not a kind id of [${candidates.join(', ')}]`);
+}
 
-/** A `kind:` discriminant names its kind by the grammar string or the
- *  stamped `TSKindId` enum value — both spellings resolve to the same name.
- *  A supertype tag names its default arm; one without a default names no kind. */
-function _kindNameOf(kind: unknown): string | undefined {
-	const name = typeof kind === 'number' ? KIND_NAMES.get(kind) : typeof kind === 'string' ? kind : undefined;
-	const tag = name === undefined || _isFromKind(name) ? undefined : _SUPERTYPE_KIND_TAGS[name];
-	if (tag === undefined || typeof tag === 'string') return tag ?? name;
-	throw new Error(`kind ${JSON.stringify(name)} has no default arm; name one of [${tag.join(', ')}]`);
+function _splitTag(v: unknown): { readonly tag: unknown; readonly rest: _LooseFieldInput } | undefined {
+	if (typeof v !== 'object' || v === null || Array.isArray(v) || isNode(v) || !('$type' in v)) return undefined;
+	const { $type, ...rest } = v as Record<string, unknown>;
+	return { tag: $type, rest };
 }
 
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
@@ -135,13 +135,20 @@ function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInpu
 	if (!(kind in _leafRegistry) || typeof rest !== 'object' || rest === null || Array.isArray(rest) || isNode(rest))
 		return fn(rest);
 	const text = (rest as { text?: unknown }).text;
-	if (typeof text !== 'string')
-		throw new Error(`the ${kind} tag takes its text: { kind: ${JSON.stringify(kind)}, text: "…" }`);
+	if (typeof text !== 'string') throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);
 	return fn(text);
 }
 
 function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {
 	return typeof v === 'string' ? keywords.find(([text]) => text === v)?.[1] : undefined;
+}
+
+function _keywordOr<R>(
+	v: _LooseFieldInput,
+	keywords: readonly (readonly [string, number])[],
+	orElse: () => R
+): number | R {
+	return _keywordOf(v, keywords) ?? orElse();
 }
 
 /** A kind-enum slot's loose input. A stored kind id is already the slot's
@@ -228,13 +235,13 @@ function _resolveOne<T>(
 			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;
 		}
 	}
-	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
-		const { kind, ...rest } = v;
-		const kindName = _kindNameOf(kind);
-		if (kindName !== undefined && _isFromKind(kindName)) {
-			const built = _resolveByKind(kindName, rest) as _LooseFieldInput;
-			return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;
-		}
+	const tagged = _splitTag(v);
+	if (tagged !== undefined) {
+		const built = _resolveByKind(
+			_fromOfTag(tagged.tag, [...leafKinds, ...branchKinds]),
+			tagged.rest
+		) as _LooseFieldInput;
+		return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;
 	}
 	if (branchKinds.length === 1 && typeof v === 'object' && !Array.isArray(v)) {
 		const bk = branchKinds[0]!;
@@ -285,7 +292,9 @@ function _listElements(
 	input: readonly unknown[],
 	optionKeys: readonly string[],
 	wrapperKind: string | undefined,
-	resolve: (elements: readonly unknown[]) => readonly unknown[]
+	resolve: (elements: readonly unknown[]) => readonly unknown[],
+	tagKinds: readonly string[],
+	bagKinds?: readonly string[]
 ): readonly unknown[] {
 	const head = input[0];
 	const optionsFirst =
@@ -295,17 +304,17 @@ function _listElements(
 		!Array.isArray(head) &&
 		!isNode(head) &&
 		Object.keys(head).every((k) => optionKeys.includes(k));
-	const elements = (optionsFirst ? input.slice(1) : input).map((e) =>
-		wrapperKind !== undefined &&
-		_isFromKind(wrapperKind) &&
-		typeof e === 'object' &&
-		e !== null &&
-		!Array.isArray(e) &&
-		!isNode(e) &&
-		!('kind' in e)
-			? _resolveByKind(wrapperKind, e)
-			: e
-	);
+	const elements = (optionsFirst ? input.slice(1) : input).map((e) => {
+		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNode(e)) return e;
+		const tagged = _splitTag(e);
+		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);
+		if (bagKinds === undefined || bagKinds.length === 0) return e;
+		if (bagKinds.length > 1)
+			throw new Error(
+				`a bag in this list needs a $type tag naming one of [${bagKinds.join(', ')}]: ${JSON.stringify(e)}`
+			);
+		return _isFromKind(bagKinds[0]!) ? _resolveByKind(bagKinds[0]!, e) : e;
+	});
 	const resolved = elements.map((e) =>
 		wrapperKind !== undefined && isNode(e) && typeof e.$type === 'number' && KIND_NAMES.get(e.$type) === wrapperKind
 			? e
@@ -322,11 +331,8 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 		if (scalar !== undefined) return scalar as T;
 	}
 	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as T;
-	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
-		const { kind: k, ...rest } = v;
-		const kn = _kindNameOf(k);
-		if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;
-	}
+	const tagged = _splitTag(v);
+	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;
 	if (typeof v === 'object') {
 		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);
 	}
@@ -406,12 +412,11 @@ function _resolveOneBranch<T>(
 ): T {
 	if (v === undefined || v === null) return v as T;
 	if (optionalSlot === true && Array.isArray(v) && v.length === 0) return undefined as T;
-	if (typeof v === 'object' && !Array.isArray(v) && !isNode(v) && 'kind' in v) {
-		const { kind: k, ...rest } = v;
-		const kn = _kindNameOf(k);
-		if (kn !== undefined && kn !== kind && kind in _wrapKindIds && _isFromKind(kn)) {
-			return _resolveOneBranch<T>(_resolveByKind(kn, rest), kind, altKinds);
-		}
+	const tagged = _splitTag(v);
+	if (tagged !== undefined) {
+		const kn = _fromOfTag(tagged.tag, [kind]);
+		if (kn !== kind && kind in _wrapKindIds)
+			return _resolveOneBranch<T>(_resolveByKind(kn, tagged.rest), kind, altKinds);
 	}
 	if (isNode(v)) {
 		const wrapId = _wrapKindIds[kind];
@@ -428,11 +433,8 @@ function _resolveOneBranch<T>(
 		return _resolveByKind(kind, v) as T;
 	}
 	if (typeof v === 'object' && !Array.isArray(v)) {
-		if ('kind' in v) {
-			const { kind: k, ...rest } = v;
-			const kn = _kindNameOf(k);
-			if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;
-		}
+		const tagged = _splitTag(v);
+		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;
 		if (_isFromKind(kind)) return _resolveByKind(kind, v) as T;
 	}
 	if (typeof v === 'object') {
@@ -544,7 +546,7 @@ export function coerceToProgram(
 export function coerceToProgram(
 	...input: readonly (T.Program.Loose | LooseValue<T.Definition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 ): ReturnType<typeof F.buildProgram> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.Program) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Program)) {
 		const data = input[0];
 		const stored = (data as unknown as { _definitions?: unknown })._definitions;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -571,18 +573,15 @@ export function resolveEscapeSequence_content(
 }
 
 export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnType<typeof F.buildEscapeSequence> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.EscapeSequence)
-		return input as unknown as ReturnType<typeof F.buildEscapeSequence>;
+	if (isNodeOfKind(input, TSKindId.EscapeSequence)) return input as unknown as ReturnType<typeof F.buildEscapeSequence>;
 	return F.buildEscapeSequence(
 		_requireField(
 			'escape_sequence',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-					? input.content
-					: typeof input === 'string'
-						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequence_content)
-						: input,
+				configFieldOr(input, 'content', () =>
+					typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequence_content) : input
+				),
 				_K0,
 				_K0
 			)
@@ -607,18 +606,13 @@ export function resolveCapture_name(value: T.Capture.LooseConfig['name']): T.Cap
 }
 
 export function coerceToCapture(input: T.Capture.Loose): ReturnType<typeof F.buildCapture> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.Capture)
-		return input as unknown as ReturnType<typeof F.buildCapture>;
+	if (isNodeOfKind(input, TSKindId.Capture)) return input as unknown as ReturnType<typeof F.buildCapture>;
 	return F.buildCapture(
 		_requireField(
 			'capture',
 			'name',
 			_resolveOneLeaf<T.ImmediateIdentifier>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'name' in input
-					? input.name
-					: typeof input === 'string'
-						? spelledInterior(input, '@', '')
-						: input,
+				configFieldOr(input, 'name', () => (typeof input === 'string' ? spelledInterior(input, '@', '') : input)),
 				'_immediate_identifier'
 			)
 		)
@@ -630,13 +624,11 @@ export function resolveString_stringContent(value: T.String.LooseConfig['stringC
 }
 
 export function coerceToString(input?: T.String.Loose): ReturnType<typeof F.buildString> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.String)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.String))
 		return input as unknown as ReturnType<typeof F.buildString>;
 	return F.buildString(
 		_resolveOneBranch<T.StringContent>(
-			input !== null && typeof input === 'object' && !isNode(input) && 'stringContent' in input
-				? input.stringContent
-				: input,
+			configFieldOr(input, 'stringContent', () => input),
 			'string_content',
 			undefined,
 			true
@@ -651,13 +643,11 @@ export function resolveImmediateString_stringContent(
 }
 
 export function coerceToImmediateString(input?: T.ImmediateString.Loose): ReturnType<typeof F.buildImmediateString> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.ImmediateString)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.ImmediateString))
 		return input as unknown as ReturnType<typeof F.buildImmediateString>;
 	return F.buildImmediateString(
 		_resolveOneBranch<T.StringContent>(
-			input !== null && typeof input === 'object' && !isNode(input) && 'stringContent' in input
-				? input.stringContent
-				: input,
+			configFieldOr(input, 'stringContent', () => input),
 			'string_content',
 			undefined,
 			true
@@ -671,7 +661,7 @@ export function coerceToStringContent(
 		| LooseValue<'[^"\\\\\\n]+' | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildStringContent> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.StringContent) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringContent)) {
 		const data = input[0];
 		const stored = (data as unknown as { _content?: unknown })._content;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -701,7 +691,7 @@ export function coerceToParameters(
 		| LooseValue<T.Capture | T.String | T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildParameters> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.Parameters) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Parameters)) {
 		const data = input[0];
 		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -732,18 +722,15 @@ export function resolveComment_content(value: T.Comment.LooseConfig['content']):
 }
 
 export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.buildComment> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.Comment)
-		return input as unknown as ReturnType<typeof F.buildComment>;
+	if (isNodeOfKind(input, TSKindId.Comment)) return input as unknown as ReturnType<typeof F.buildComment>;
 	return F.buildComment(
 		_requireField(
 			'comment',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-					? input.content
-					: typeof input === 'string'
-						? spelledInterior(input, ';', '', F._slotRe_buildComment_content)
-						: input,
+				configFieldOr(input, 'content', () =>
+					typeof input === 'string' ? spelledInterior(input, ';', '', F._slotRe_buildComment_content) : input
+				),
 				_K0,
 				_K0
 			)
@@ -823,10 +810,9 @@ export function coerceToMissingNode(input?: T.MissingNode.Loose): ReturnType<typ
 export function resolveAnonymousNode_name(
 	value: T.AnonymousNode.LooseConfig['name'] | undefined
 ): T.AnonymousNode['_name'] {
-	return (
-		_keywordOf(value, [['_', TSKindId.Underscore] as const]) ??
+	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
-			_resolveKindEnum(value, () => _resolveOneBranch<T.String | '_'>(value, 'string')),
+			_resolveKindEnum(value, () => _resolveOneBranch<T.String | '_'>(value, 'string', [TSKindId.Underscore])),
 			[['_', TSKindId.Underscore] as const]
 		)
 	);
@@ -876,18 +862,13 @@ export function resolveNegatedField_identifier(
 }
 
 export function coerceToNegatedField(input: T.NegatedField.Loose): ReturnType<typeof F.buildNegatedField> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.NegatedField)
-		return input as unknown as ReturnType<typeof F.buildNegatedField>;
+	if (isNodeOfKind(input, TSKindId.NegatedField)) return input as unknown as ReturnType<typeof F.buildNegatedField>;
 	return F.buildNegatedField(
 		_requireField(
 			'negated_field',
 			'identifier',
 			_resolveOneLeaf<T.Identifier>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'identifier' in input
-					? input.identifier
-					: typeof input === 'string'
-						? spelledInterior(input, '!', '')
-						: input,
+				configFieldOr(input, 'identifier', () => (typeof input === 'string' ? spelledInterior(input, '!', '') : input)),
 				'identifier'
 			)
 		)
@@ -979,16 +960,13 @@ export function resolveGroupingGroup_groupExpression(
 }
 
 export function coerceToGroupingGroup(input: T.GroupingGroup.Loose): ReturnType<typeof F.buildGroupingGroup> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.GroupingGroup)
-		return input as unknown as ReturnType<typeof F.buildGroupingGroup>;
+	if (isNodeOfKind(input, TSKindId.GroupingGroup)) return input as unknown as ReturnType<typeof F.buildGroupingGroup>;
 	return F.buildGroupingGroup(
 		_requireField(
 			'grouping_group',
 			'groupExpression',
 			_resolveOne<T.Definition | T.GroupExpressionArm>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'groupExpression' in input
-					? input.groupExpression
-					: input,
+				configFieldOr(input, 'groupExpression', () => input),
 				_K0,
 				_K6
 			)
@@ -997,8 +975,7 @@ export function coerceToGroupingGroup(input: T.GroupingGroup.Loose): ReturnType<
 }
 
 export function resolveNamedNodePlain_name(value: T.NamedNodePlain.LooseConfig['name']): T.NamedNodePlain['_name'] {
-	return (
-		_keywordOf(value, [['_', TSKindId.Underscore] as const]) ??
+	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | '_'>(value, 'identifier')),
 			[['_', TSKindId.Underscore] as const]
@@ -1086,7 +1063,7 @@ export function coerceToNamedNodeGroupChildren(
 		  >
 	)[]
 ): ReturnType<typeof F.buildNamedNodeGroupChildren> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.NamedNodeGroupChildren) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.NamedNodeGroupChildren)) {
 		const data = input[0];
 		const stored = (data as unknown as { _named_node_expressions?: unknown })._named_node_expressions;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];

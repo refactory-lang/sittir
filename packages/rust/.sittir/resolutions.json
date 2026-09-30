@@ -1,34 +1,6 @@
 {
-	"grammarHash": "54992aaaaf15a27614bfb6613478c7fe302f1abe799665d09bf3dcdd97f6b54a",
+	"grammarHash": "737a104b915cff70e23202b0cacebf172e94bd43b58ccd7a850311d0fb56b695",
 	"resolutions": [
-		{
-			"resolution": {
-				"kind": "AddConflict",
-				"symbols": [
-					"async_block",
-					"_kw_async_marker"
-				]
-			},
-			"step": "default",
-			"sourceChains": [
-				[
-					"async_block"
-				],
-				[
-					"_kw_async_marker"
-				]
-			],
-			"conflict": {
-				"symbolSequence": [
-					"'async'"
-				],
-				"lookahead": "'move'",
-				"interpretations": [
-					"async_block",
-					"_kw_async_marker"
-				]
-			}
-		},
 		{
 			"resolution": {
 				"kind": "AddConflict",

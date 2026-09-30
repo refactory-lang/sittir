@@ -14,7 +14,15 @@ import type {
 	GrammarTypeMap,
 	NodeMethods,
 	TriviaSetter,
-	GrammarInnerTrivia
+	GrammarInnerTrivia,
+	SlotHint,
+	BoundOf,
+	ParsedOf,
+	AdmitBound,
+	AdmitLookup,
+	SupertypeSurface,
+	WithNode,
+	BoundWithNode
 } from '@sittir/types';
 import type * as T from './types.js';
 import type { ERROR_KIND_ID } from '@sittir/common/error-kind';
@@ -597,24 +605,36 @@ export enum WhitespaceKind {
 export interface Pattern {
 	readonly $type: TSKindId.Pattern;
 	readonly _content: Alternation | Term;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.Alternation | T.Term>;
+	};
 	content(): Alternation | Term;
 }
 
 export interface Alternation {
 	readonly $type: TSKindId.Alternation;
 	readonly _term: NonEmptyArray<Term | undefined>;
+	readonly __slotHints__?: {
+		readonly terms: SlotHint<T.Term[], false, true>;
+	};
 	terms(): NonEmptyArray<Term | undefined>;
 }
 
 export interface Term {
 	readonly $type: TSKindId.Term;
 	readonly _term_group: NonEmptyArray<TermGroup>;
+	readonly __slotHints__?: {
+		readonly termGroups: SlotHint<T.TermGroup[], false, true>;
+	};
 	termGroups(): NonEmptyArray<TermGroup>;
 }
 
 export interface LookaroundAssertion {
 	readonly $type: TSKindId.LookaroundAssertion;
 	readonly _content: LookaheadAssertion | LookbehindAssertion;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.LookaheadAssertion | T.LookbehindAssertion>;
+	};
 	content(): LookaheadAssertion | LookbehindAssertion;
 }
 
@@ -627,6 +647,10 @@ export interface LookaheadAssertion {
 	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<T.LookaheadAssertion.Config>['content']>;
+		readonly pattern: SlotHint<T.Pattern>;
 	};
 	content(): number;
 	pattern(): Pattern;
@@ -641,6 +665,10 @@ export interface LookbehindAssertion {
 	};
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<T.LookbehindAssertion.Config>['content']>;
+		readonly pattern: SlotHint<T.Pattern>;
 	};
 	content(): number;
 	pattern(): Pattern;
@@ -670,6 +698,22 @@ export interface CharacterClass {
 			| ClassRange
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly classAtoms: SlotHint<
+			(
+				| T.ClassCharacter
+				| TSKindId.BslashDash
+				| T.CharacterClassEscape
+				| T.ControlEscape
+				| T.ControlLetterEscape
+				| T.IdentityEscape
+				| T.PosixCharacterClass
+				| T.ClassRange
+			)[],
+			false,
+			true
+		>;
+	};
 	classAtoms(): readonly (
 		| ClassCharacter
 		| TSKindId.BslashDash
@@ -685,6 +729,9 @@ export interface CharacterClass {
 export interface PosixCharacterClass {
 	readonly $type: TSKindId.PosixCharacterClass;
 	readonly _posix_class_name: PosixClassName;
+	readonly __slotHints__?: {
+		readonly posixClassName: SlotHint<T.PosixClassName>;
+	};
 	posixClassName(): PosixClassName;
 }
 
@@ -696,6 +743,10 @@ export interface ClassRange {
 		readonly start: KindEnum<'-', TSKindId.Dash> | ClassCharacter | CharacterClassEscape | ControlEscape;
 		readonly end: KindEnum<'-', TSKindId.Dash> | ClassCharacter | CharacterClassEscape | ControlEscape;
 	};
+	readonly __slotHints__?: {
+		readonly start: SlotHint<NonNullable<T.ClassRange.Config>['start']>;
+		readonly end: SlotHint<NonNullable<T.ClassRange.Config>['end']>;
+	};
 	start(): ClassCharacter | CharacterClassEscape | ControlEscape | TSKindId.Dash;
 	end(): ClassCharacter | CharacterClassEscape | ControlEscape | TSKindId.Dash;
 }
@@ -705,6 +756,9 @@ export interface AnonymousCapturingGroup {
 	readonly _pattern: Pattern;
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
+	};
+	readonly __slotHints__?: {
+		readonly pattern: SlotHint<T.Pattern>;
 	};
 	pattern(): Pattern;
 }
@@ -720,6 +774,11 @@ export interface NamedCapturingGroup {
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<T.NamedCapturingGroup.Config>['content']>;
+		readonly groupName: SlotHint<T.GroupName>;
+		readonly pattern: SlotHint<T.Pattern>;
+	};
 	content(): number;
 	groupName(): GroupName;
 	pattern(): Pattern;
@@ -731,30 +790,45 @@ export interface NonCapturingGroup {
 	readonly __looseHints__?: {
 		readonly pattern: readonly (Alternation | Term)[];
 	};
+	readonly __slotHints__?: {
+		readonly pattern: SlotHint<T.Pattern>;
+	};
 	pattern(): Pattern;
 }
 
 export interface CountQuantifier {
 	readonly $type: TSKindId.CountQuantifier;
 	readonly _content: CountQuantifierArm | DecimalDigits;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.CountQuantifierArm | T.DecimalDigits>;
+	};
 	content(): CountQuantifierArm | DecimalDigits;
 }
 
 export interface BackreferenceEscape {
 	readonly $type: TSKindId.BackreferenceEscape;
 	readonly _group_name: GroupName;
+	readonly __slotHints__?: {
+		readonly groupName: SlotHint<T.GroupName>;
+	};
 	groupName(): GroupName;
 }
 
 export interface NamedGroupBackreference {
 	readonly $type: TSKindId.NamedGroupBackreference;
 	readonly _group_name: GroupName;
+	readonly __slotHints__?: {
+		readonly groupName: SlotHint<T.GroupName>;
+	};
 	groupName(): GroupName;
 }
 
 export interface CharacterClassEscape {
 	readonly $type: TSKindId.CharacterClassEscape;
 	readonly _content: '\\\\[dDsSwW]' | CharacterClassEscapeArm | UnicodeCharacterEscape;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<'\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>;
+	};
 	content(): '\\\\[dDsSwW]' | CharacterClassEscapeArm | UnicodeCharacterEscape;
 }
 
@@ -765,6 +839,10 @@ export interface UnicodePropertyValueExpression {
 	readonly __looseHints__?: {
 		readonly unicode_property_value_expression_group?: readonly UnicodePropertyValue[];
 	};
+	readonly __slotHints__?: {
+		readonly unicodePropertyValueExpressionGroup: SlotHint<T.UnicodePropertyValueExpressionGroup, true>;
+		readonly unicodePropertyValue: SlotHint<T.UnicodePropertyValue>;
+	};
 	unicodePropertyValueExpressionGroup(): UnicodePropertyValueExpressionGroup | undefined;
 	unicodePropertyValue(): UnicodePropertyValue;
 }
@@ -772,6 +850,9 @@ export interface UnicodePropertyValueExpression {
 export interface IdentityEscape {
 	readonly $type: TSKindId.IdentityEscape;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+	};
 	content(): string;
 }
 
@@ -826,6 +907,10 @@ export interface TermGroup {
 			| NonCapturingGroup
 			| InlineFlagsGroup;
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<T.TermGroup.Config>['content']>;
+		readonly quantifier: SlotHint<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier, true>;
+	};
 	content():
 		| TSKindId.StartAssertion
 		| TSKindId.EndAssertion
@@ -853,6 +938,9 @@ export interface TermGroup {
 export interface CountQuantifierGroup {
 	readonly $type: TSKindId.CountQuantifierGroup;
 	readonly _decimal_digits?: DecimalDigits;
+	readonly __slotHints__?: {
+		readonly decimalDigits: SlotHint<T.DecimalDigits, true>;
+	};
 	decimalDigits(): DecimalDigits | undefined;
 }
 
@@ -860,6 +948,10 @@ export interface CountQuantifierArm {
 	readonly $type: TSKindId.CountQuantifierArm;
 	readonly _decimal_digits: DecimalDigits;
 	readonly _count_quantifier_group?: CountQuantifierGroup;
+	readonly __slotHints__?: {
+		readonly decimalDigits: SlotHint<T.DecimalDigits>;
+		readonly countQuantifierGroup: SlotHint<T.CountQuantifierGroup, true>;
+	};
 	decimalDigits(): DecimalDigits;
 	countQuantifierGroup(): CountQuantifierGroup | undefined;
 }
@@ -868,6 +960,10 @@ export interface CharacterClassEscapeArm {
 	readonly $type: TSKindId.CharacterClassEscapeArm;
 	readonly _content: '\\\\[pP]';
 	readonly _unicode_property_value_expression: UnicodePropertyValueExpression;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<'\\\\[pP]'>;
+		readonly unicodePropertyValueExpression: SlotHint<T.UnicodePropertyValueExpression>;
+	};
 	content(): '\\\\[pP]';
 	unicodePropertyValueExpression(): UnicodePropertyValueExpression;
 }
@@ -878,6 +974,9 @@ export interface UnicodePropertyValueExpressionGroup {
 	readonly __looseHints__?: {
 		readonly unicode_property_name: readonly UnicodePropertyValue[];
 	};
+	readonly __slotHints__?: {
+		readonly unicodePropertyName: SlotHint<T.UnicodePropertyName | T.UnicodePropertyName.Types>;
+	};
 	unicodePropertyName(): UnicodePropertyName;
 }
 
@@ -887,6 +986,10 @@ export interface InlineFlagsGroupEnable {
 	readonly _pattern?: Pattern;
 	readonly __looseHints__?: {
 		readonly pattern?: readonly (Alternation | Term)[];
+	};
+	readonly __slotHints__?: {
+		readonly enabled: SlotHint<T.Flags>;
+		readonly pattern: SlotHint<T.Pattern, true>;
 	};
 	enabled(): Flags;
 	pattern(): Pattern | undefined;
@@ -900,6 +1003,11 @@ export interface InlineFlagsGroupToggle {
 	readonly __looseHints__?: {
 		readonly pattern?: readonly (Alternation | Term)[];
 	};
+	readonly __slotHints__?: {
+		readonly enabled: SlotHint<T.Flags>;
+		readonly disabled: SlotHint<T.Flags>;
+		readonly pattern: SlotHint<T.Pattern, true>;
+	};
 	enabled(): Flags;
 	disabled(): Flags;
 	pattern(): Pattern | undefined;
@@ -912,6 +1020,10 @@ export interface InlineFlagsGroupDisable {
 	readonly __looseHints__?: {
 		readonly pattern?: readonly (Alternation | Term)[];
 	};
+	readonly __slotHints__?: {
+		readonly disabled: SlotHint<T.Flags>;
+		readonly pattern: SlotHint<T.Pattern, true>;
+	};
 	disabled(): Flags;
 	pattern(): Pattern | undefined;
 }
@@ -922,6 +1034,9 @@ export interface Lazy {
 	readonly __inputHints__?: {
 		readonly content: KindEnum<'?', TSKindId.Qmark>;
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<TSKindId.Qmark>>;
+	};
 	readonly __aliasContent__?: Lazy.Types;
 	content(): number;
 }
@@ -929,6 +1044,9 @@ export interface Lazy {
 export interface UnicodePropertyName {
 	readonly $type: TSKindId.UnicodePropertyName;
 	readonly _content: UnicodePropertyValue;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.UnicodePropertyValue>;
+	};
 	readonly __aliasContent__?: UnicodePropertyName.Types;
 	content(): UnicodePropertyValue;
 }
@@ -959,36 +1077,20 @@ export type Blankline = TSKindId.Blankline;
 export type DoubleBlankline = TSKindId.DoubleBlankline;
 
 // Supertype unions
-export type ClassAtom =
-	| ClassCharacter
-	| BslashDash
-	| CharacterClassEscape
-	| ControlEscape
-	| ControlLetterEscape
-	| IdentityEscape
-	| PosixCharacterClass
-	| ClassRange;
-
 export type InlineFlagsGroup = InlineFlagsGroupEnable | InlineFlagsGroupToggle | InlineFlagsGroupDisable;
-
-export type CharacterEscape = ControlEscape | ControlLetterEscape | IdentityEscape;
 
 export type Whitespace = Tight | Newline | Blankline | DoubleBlankline;
 
-export namespace ClassAtom {
-	export type Kind = '_class_atom';
-}
-
 export namespace InlineFlagsGroup {
 	export type Kind = 'inline_flags_group';
-}
-
-export namespace CharacterEscape {
-	export type Kind = '_character_escape';
+	export type Bound = SupertypeSurface<InlineFlagsGroup, BoundByKindId>;
+	export type Parsed = SupertypeSurface<InlineFlagsGroup, ParsedByKindId>;
 }
 
 export namespace Whitespace {
 	export type Kind = '_whitespace';
+	export type Bound = SupertypeSurface<Whitespace, BoundByKindId>;
+	export type Parsed = SupertypeSurface<Whitespace, ParsedByKindId>;
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
@@ -1296,360 +1398,426 @@ export interface PatternNs extends NodeNs<
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Pattern.Built,
+	Pattern.Bound,
 	Pattern.BuildArgs,
 	Pattern.LooseArgs,
 	'content',
-	'pattern'
+	TSKindId.Pattern,
+	Pattern.Parsed,
+	never
 > {}
 export interface AlternationNs extends NodeNs<
 	Alternation,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Alternation.Built,
+	Alternation.Bound,
 	Alternation.BuildArgs,
 	Alternation.LooseArgs,
 	never,
-	'alternation'
+	TSKindId.Alternation,
+	Alternation.Parsed,
+	never
 > {}
 export interface TermNs extends NodeNs<
 	Term,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Term.Built,
+	Term.Bound,
 	Term.BuildArgs,
 	Term.LooseArgs,
 	never,
-	'term'
+	TSKindId.Term,
+	Term.Parsed,
+	never
 > {}
 export interface LookaroundAssertionNs extends NodeNs<
 	LookaroundAssertion,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	LookaroundAssertion.Built,
+	LookaroundAssertion.Bound,
 	LookaroundAssertion.BuildArgs,
 	LookaroundAssertion.LooseArgs,
 	'content',
-	'lookaround_assertion'
+	TSKindId.LookaroundAssertion,
+	LookaroundAssertion.Parsed,
+	never
 > {}
 export interface LookaheadAssertionNs extends NodeNs<
 	LookaheadAssertion,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	LookaheadAssertion.Built,
+	LookaheadAssertion.Bound,
 	LookaheadAssertion.BuildArgs,
 	LookaheadAssertion.LooseArgs,
 	never,
-	'lookahead_assertion'
+	TSKindId.LookaheadAssertion,
+	LookaheadAssertion.Parsed,
+	never
 > {}
 export interface LookbehindAssertionNs extends NodeNs<
 	LookbehindAssertion,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	LookbehindAssertion.Built,
+	LookbehindAssertion.Bound,
 	LookbehindAssertion.BuildArgs,
 	LookbehindAssertion.LooseArgs,
 	never,
-	'lookbehind_assertion'
+	TSKindId.LookbehindAssertion,
+	LookbehindAssertion.Parsed,
+	never
 > {}
 export interface CharacterClassNs extends NodeNs<
 	CharacterClass,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	CharacterClass.Built,
+	CharacterClass.Bound,
 	CharacterClass.BuildArgs,
 	CharacterClass.LooseArgs,
 	never,
-	'character_class'
+	TSKindId.CharacterClass,
+	CharacterClass.Parsed,
+	EmptyCharacterClass
 > {}
 export interface PosixCharacterClassNs extends NodeNs<
 	PosixCharacterClass,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	PosixCharacterClass.Built,
+	PosixCharacterClass.Bound,
 	PosixCharacterClass.BuildArgs,
 	PosixCharacterClass.LooseArgs,
 	'posix_class_name',
-	'posix_character_class'
+	TSKindId.PosixCharacterClass,
+	PosixCharacterClass.Parsed,
+	never
 > {}
 export interface ClassRangeNs extends NodeNs<
 	ClassRange,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ClassRange.Built,
+	ClassRange.Bound,
 	ClassRange.BuildArgs,
 	ClassRange.LooseArgs,
 	never,
-	'class_range'
+	TSKindId.ClassRange,
+	ClassRange.Parsed,
+	never
 > {}
 export interface AnonymousCapturingGroupNs extends NodeNs<
 	AnonymousCapturingGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	AnonymousCapturingGroup.Built,
+	AnonymousCapturingGroup.Bound,
 	AnonymousCapturingGroup.BuildArgs,
 	AnonymousCapturingGroup.LooseArgs,
 	'pattern',
-	'anonymous_capturing_group'
+	TSKindId.AnonymousCapturingGroup,
+	AnonymousCapturingGroup.Parsed,
+	never
 > {}
 export interface NamedCapturingGroupNs extends NodeNs<
 	NamedCapturingGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NamedCapturingGroup.Built,
+	NamedCapturingGroup.Bound,
 	NamedCapturingGroup.BuildArgs,
 	NamedCapturingGroup.LooseArgs,
 	never,
-	'named_capturing_group'
+	TSKindId.NamedCapturingGroup,
+	NamedCapturingGroup.Parsed,
+	never
 > {}
 export interface NonCapturingGroupNs extends NodeNs<
 	NonCapturingGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NonCapturingGroup.Built,
+	NonCapturingGroup.Bound,
 	NonCapturingGroup.BuildArgs,
 	NonCapturingGroup.LooseArgs,
 	'pattern',
-	'non_capturing_group'
+	TSKindId.NonCapturingGroup,
+	NonCapturingGroup.Parsed,
+	never
 > {}
 export interface CountQuantifierNs extends NodeNs<
 	CountQuantifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	CountQuantifier.Built,
+	CountQuantifier.Bound,
 	CountQuantifier.BuildArgs,
 	CountQuantifier.LooseArgs,
 	'content',
-	'count_quantifier'
+	TSKindId.CountQuantifier,
+	CountQuantifier.Parsed,
+	never
 > {}
 export interface BackreferenceEscapeNs extends NodeNs<
 	BackreferenceEscape,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	BackreferenceEscape.Built,
+	BackreferenceEscape.Bound,
 	BackreferenceEscape.BuildArgs,
 	BackreferenceEscape.LooseArgs,
 	'group_name',
-	'backreference_escape'
+	TSKindId.BackreferenceEscape,
+	BackreferenceEscape.Parsed,
+	never
 > {}
 export interface NamedGroupBackreferenceNs extends NodeNs<
 	NamedGroupBackreference,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NamedGroupBackreference.Built,
+	NamedGroupBackreference.Bound,
 	NamedGroupBackreference.BuildArgs,
 	NamedGroupBackreference.LooseArgs,
 	'group_name',
-	'named_group_backreference'
+	TSKindId.NamedGroupBackreference,
+	NamedGroupBackreference.Parsed,
+	never
 > {}
 export interface CharacterClassEscapeNs extends NodeNs<
 	CharacterClassEscape,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	CharacterClassEscape.Built,
+	CharacterClassEscape.Bound,
 	CharacterClassEscape.BuildArgs,
 	CharacterClassEscape.LooseArgs,
 	'content',
-	'character_class_escape'
+	TSKindId.CharacterClassEscape,
+	CharacterClassEscape.Parsed,
+	never
 > {}
 export interface UnicodePropertyValueExpressionNs extends NodeNs<
 	UnicodePropertyValueExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	UnicodePropertyValueExpression.Built,
+	UnicodePropertyValueExpression.Bound,
 	UnicodePropertyValueExpression.BuildArgs,
 	UnicodePropertyValueExpression.LooseArgs,
 	never,
-	'unicode_property_value_expression'
+	TSKindId.UnicodePropertyValueExpression,
+	UnicodePropertyValueExpression.Parsed,
+	never
 > {}
 export interface IdentityEscapeNs extends NodeNs<
 	IdentityEscape,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	IdentityEscape.Built,
+	IdentityEscape.Bound,
 	IdentityEscape.BuildArgs,
 	IdentityEscape.LooseArgs,
 	'content',
-	'identity_escape'
+	TSKindId.IdentityEscape,
+	IdentityEscape.Parsed,
+	never
 > {}
 export interface TermGroupNs extends NodeNs<
 	TermGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TermGroup.Built,
+	TermGroup.Bound,
 	TermGroup.BuildArgs,
 	TermGroup.LooseArgs,
 	never,
-	'term_group'
+	TSKindId.TermGroup,
+	TermGroup.Parsed,
+	never
 > {}
 export interface CountQuantifierGroupNs extends NodeNs<
 	CountQuantifierGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	CountQuantifierGroup.Built,
+	CountQuantifierGroup.Bound,
 	CountQuantifierGroup.BuildArgs,
 	CountQuantifierGroup.LooseArgs,
 	'decimal_digits',
-	'count_quantifier_group'
+	TSKindId.CountQuantifierGroup,
+	CountQuantifierGroup.Parsed,
+	never
 > {}
 export interface CountQuantifierArmNs extends NodeNs<
 	CountQuantifierArm,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	CountQuantifierArm.Built,
+	CountQuantifierArm.Bound,
 	CountQuantifierArm.BuildArgs,
 	CountQuantifierArm.LooseArgs,
 	never,
-	'count_quantifier_arm'
+	TSKindId.CountQuantifierArm,
+	CountQuantifierArm.Parsed,
+	never
 > {}
 export interface CharacterClassEscapeArmNs extends NodeNs<
 	CharacterClassEscapeArm,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	CharacterClassEscapeArm.Built,
+	CharacterClassEscapeArm.Bound,
 	CharacterClassEscapeArm.BuildArgs,
 	CharacterClassEscapeArm.LooseArgs,
 	never,
-	'character_class_escape_arm'
+	TSKindId.CharacterClassEscapeArm,
+	CharacterClassEscapeArm.Parsed,
+	never
 > {}
 export interface UnicodePropertyValueExpressionGroupNs extends NodeNs<
 	UnicodePropertyValueExpressionGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	UnicodePropertyValueExpressionGroup.Built,
+	UnicodePropertyValueExpressionGroup.Bound,
 	UnicodePropertyValueExpressionGroup.BuildArgs,
 	UnicodePropertyValueExpressionGroup.LooseArgs,
 	'unicode_property_name',
-	'unicode_property_value_expression_group'
+	TSKindId.UnicodePropertyValueExpressionGroup,
+	UnicodePropertyValueExpressionGroup.Parsed,
+	never
 > {}
 export interface InlineFlagsGroupEnableNs extends NodeNs<
 	InlineFlagsGroupEnable,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	InlineFlagsGroupEnable.Built,
+	InlineFlagsGroupEnable.Bound,
 	InlineFlagsGroupEnable.BuildArgs,
 	InlineFlagsGroupEnable.LooseArgs,
 	never,
-	'inline_flags_group_enable'
+	TSKindId.InlineFlagsGroupEnable,
+	InlineFlagsGroupEnable.Parsed,
+	never
 > {}
 export interface InlineFlagsGroupToggleNs extends NodeNs<
 	InlineFlagsGroupToggle,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	InlineFlagsGroupToggle.Built,
+	InlineFlagsGroupToggle.Bound,
 	InlineFlagsGroupToggle.BuildArgs,
 	InlineFlagsGroupToggle.LooseArgs,
 	never,
-	'inline_flags_group_toggle'
+	TSKindId.InlineFlagsGroupToggle,
+	InlineFlagsGroupToggle.Parsed,
+	never
 > {}
 export interface InlineFlagsGroupDisableNs extends NodeNs<
 	InlineFlagsGroupDisable,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	InlineFlagsGroupDisable.Built,
+	InlineFlagsGroupDisable.Bound,
 	InlineFlagsGroupDisable.BuildArgs,
 	InlineFlagsGroupDisable.LooseArgs,
 	never,
-	'inline_flags_group_disable'
+	TSKindId.InlineFlagsGroupDisable,
+	InlineFlagsGroupDisable.Parsed,
+	never
 > {}
 export interface LazyNs extends NodeNs<
 	Lazy,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Lazy.Built,
+	Lazy.Bound,
 	Lazy.BuildArgs,
 	Lazy.LooseArgs,
 	'content',
-	'lazy'
+	TSKindId.Lazy,
+	Lazy.Parsed,
+	never
 > {}
 export interface UnicodePropertyNameNs extends NodeNs<
 	UnicodePropertyName,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	UnicodePropertyName.Built,
+	UnicodePropertyName.Bound,
 	UnicodePropertyName.BuildArgs,
 	UnicodePropertyName.LooseArgs,
 	'content',
-	'unicode_property_name'
+	TSKindId.UnicodePropertyName,
+	UnicodePropertyName.Parsed,
+	never
 > {}
-export interface AnyCharacterNs extends KeywordNs<TSKindId.AnyCharacter, '.', 'any_character'> {}
-export interface StartAssertionNs extends KeywordNs<TSKindId.StartAssertion, '^', 'start_assertion'> {}
-export interface EndAssertionNs extends KeywordNs<TSKindId.EndAssertion, '$', 'end_assertion'> {}
-export interface BoundaryAssertionNs extends KeywordNs<TSKindId.BoundaryAssertion, '\\b', 'boundary_assertion'> {}
+export interface AnyCharacterNs extends KeywordNs<TSKindId.AnyCharacter, '.', TSKindId.AnyCharacter> {}
+export interface StartAssertionNs extends KeywordNs<TSKindId.StartAssertion, '^', TSKindId.StartAssertion> {}
+export interface EndAssertionNs extends KeywordNs<TSKindId.EndAssertion, '$', TSKindId.EndAssertion> {}
+export interface BoundaryAssertionNs extends KeywordNs<TSKindId.BoundaryAssertion, '\\b', TSKindId.BoundaryAssertion> {}
 export interface NonBoundaryAssertionNs extends KeywordNs<
 	TSKindId.NonBoundaryAssertion,
 	'\\B',
-	'non_boundary_assertion'
+	TSKindId.NonBoundaryAssertion
 > {}
-export interface TightNs extends KeywordNs<TSKindId.Tight, '', '_tight'> {}
-export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', '_newline'> {}
-export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', '_blankline'> {}
-export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', '_double_blankline'> {}
+export interface TightNs extends KeywordNs<TSKindId.Tight, '', TSKindId.Tight> {}
+export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', TSKindId.Newline> {}
+export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', TSKindId.Blankline> {}
+export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', TSKindId.DoubleBlankline> {}
 export interface PatternCharacterNs extends LeafNs<
 	PatternCharacter,
 	string,
-	PatternCharacter.Built,
-	'pattern_character'
+	PatternCharacter.Bound,
+	TSKindId.PatternCharacter
 > {}
-export interface PosixClassNameNs extends LeafNs<PosixClassName, string, PosixClassName.Built, 'posix_class_name'> {}
-export interface ClassCharacterNs extends LeafNs<ClassCharacter, string, ClassCharacter.Built, 'class_character'> {}
-export interface FlagsNs extends LeafNs<Flags, string, Flags.Built, 'flags'> {}
-export interface ZeroOrMoreNs extends LeafNs<ZeroOrMore, string, ZeroOrMore.Built, 'zero_or_more'> {}
-export interface OneOrMoreNs extends LeafNs<OneOrMore, string, OneOrMore.Built, 'one_or_more'> {}
-export interface OptionalNs extends LeafNs<Optional, string, Optional.Built, 'optional'> {}
-export interface DecimalEscapeNs extends LeafNs<DecimalEscape, string, DecimalEscape.Built, 'decimal_escape'> {}
+export interface PosixClassNameNs extends LeafNs<
+	PosixClassName,
+	string,
+	PosixClassName.Bound,
+	TSKindId.PosixClassName
+> {}
+export interface ClassCharacterNs extends LeafNs<
+	ClassCharacter,
+	string,
+	ClassCharacter.Bound,
+	TSKindId.ClassCharacter
+> {}
+export interface FlagsNs extends LeafNs<Flags, string, Flags.Bound, TSKindId.Flags> {}
+export interface ZeroOrMoreNs extends LeafNs<ZeroOrMore, string, ZeroOrMore.Bound, TSKindId.ZeroOrMore> {}
+export interface OneOrMoreNs extends LeafNs<OneOrMore, string, OneOrMore.Bound, TSKindId.OneOrMore> {}
+export interface OptionalNs extends LeafNs<Optional, string, Optional.Bound, TSKindId.Optional> {}
+export interface DecimalEscapeNs extends LeafNs<DecimalEscape, string, DecimalEscape.Bound, TSKindId.DecimalEscape> {}
 export interface UnicodeCharacterEscapeNs extends LeafNs<
 	UnicodeCharacterEscape,
 	string,
-	UnicodeCharacterEscape.Built,
-	'unicode_character_escape'
+	UnicodeCharacterEscape.Bound,
+	TSKindId.UnicodeCharacterEscape
 > {}
 export interface UnicodePropertyValueNs extends LeafNs<
 	UnicodePropertyValue,
 	string,
-	UnicodePropertyValue.Built,
-	'unicode_property_value'
+	UnicodePropertyValue.Bound,
+	TSKindId.UnicodePropertyValue
 > {}
-export interface ControlEscapeNs extends LeafNs<ControlEscape, string, ControlEscape.Built, 'control_escape'> {}
+export interface ControlEscapeNs extends LeafNs<ControlEscape, string, ControlEscape.Bound, TSKindId.ControlEscape> {}
 export interface ControlLetterEscapeNs extends LeafNs<
 	ControlLetterEscape,
 	string,
-	ControlLetterEscape.Built,
-	'control_letter_escape'
+	ControlLetterEscape.Bound,
+	TSKindId.ControlLetterEscape
 > {}
-export interface GroupNameNs extends LeafNs<GroupName, string, GroupName.Built, 'group_name'> {}
+export interface GroupNameNs extends LeafNs<GroupName, string, GroupName.Bound, TSKindId.GroupName> {}
 export interface DecimalDigitsNs extends LeafNs<
 	DecimalDigits,
 	string | number | bigint,
-	DecimalDigits.Built,
-	'decimal_digits'
+	DecimalDigits.Bound,
+	TSKindId.DecimalDigits
 > {}
 
 export interface NamespaceMap {
@@ -1705,6 +1873,102 @@ export interface NamespaceMap {
 	[TSKindId.GroupName]: GroupNameNs;
 	[TSKindId.DecimalDigits]: DecimalDigitsNs;
 }
+
+export interface BoundByKindId {
+	[TSKindId.Pattern]: Pattern.Bound;
+	[TSKindId.Alternation]: Alternation.Bound;
+	[TSKindId.Term]: Term.Bound;
+	[TSKindId.LookaroundAssertion]: LookaroundAssertion.Bound;
+	[TSKindId.LookaheadAssertion]: LookaheadAssertion.Bound;
+	[TSKindId.LookbehindAssertion]: LookbehindAssertion.Bound;
+	[TSKindId.CharacterClass]: CharacterClass.Bound;
+	[TSKindId.PosixCharacterClass]: PosixCharacterClass.Bound;
+	[TSKindId.ClassRange]: ClassRange.Bound;
+	[TSKindId.AnonymousCapturingGroup]: AnonymousCapturingGroup.Bound;
+	[TSKindId.NamedCapturingGroup]: NamedCapturingGroup.Bound;
+	[TSKindId.NonCapturingGroup]: NonCapturingGroup.Bound;
+	[TSKindId.CountQuantifier]: CountQuantifier.Bound;
+	[TSKindId.BackreferenceEscape]: BackreferenceEscape.Bound;
+	[TSKindId.NamedGroupBackreference]: NamedGroupBackreference.Bound;
+	[TSKindId.CharacterClassEscape]: CharacterClassEscape.Bound;
+	[TSKindId.UnicodePropertyValueExpression]: UnicodePropertyValueExpression.Bound;
+	[TSKindId.IdentityEscape]: IdentityEscape.Bound;
+	[TSKindId.TermGroup]: TermGroup.Bound;
+	[TSKindId.CountQuantifierGroup]: CountQuantifierGroup.Bound;
+	[TSKindId.CountQuantifierArm]: CountQuantifierArm.Bound;
+	[TSKindId.CharacterClassEscapeArm]: CharacterClassEscapeArm.Bound;
+	[TSKindId.UnicodePropertyValueExpressionGroup]: UnicodePropertyValueExpressionGroup.Bound;
+	[TSKindId.InlineFlagsGroupEnable]: InlineFlagsGroupEnable.Bound;
+	[TSKindId.InlineFlagsGroupToggle]: InlineFlagsGroupToggle.Bound;
+	[TSKindId.InlineFlagsGroupDisable]: InlineFlagsGroupDisable.Bound;
+	[TSKindId.Lazy]: Lazy.Bound;
+	[TSKindId.UnicodePropertyName]: UnicodePropertyName.Bound;
+	[TSKindId.PatternCharacter]: PatternCharacter.Bound;
+	[TSKindId.PosixClassName]: PosixClassName.Bound;
+	[TSKindId.ClassCharacter]: ClassCharacter.Bound;
+	[TSKindId.Flags]: Flags.Bound;
+	[TSKindId.ZeroOrMore]: ZeroOrMore.Bound;
+	[TSKindId.OneOrMore]: OneOrMore.Bound;
+	[TSKindId.Optional]: Optional.Bound;
+	[TSKindId.DecimalEscape]: DecimalEscape.Bound;
+	[TSKindId.UnicodeCharacterEscape]: UnicodeCharacterEscape.Bound;
+	[TSKindId.UnicodePropertyValue]: UnicodePropertyValue.Bound;
+	[TSKindId.ControlEscape]: ControlEscape.Bound;
+	[TSKindId.ControlLetterEscape]: ControlLetterEscape.Bound;
+	[TSKindId.GroupName]: GroupName.Bound;
+	[TSKindId.DecimalDigits]: DecimalDigits.Bound;
+}
+
+export interface ParsedByKindId {
+	[TSKindId.Pattern]: Pattern.Parsed;
+	[TSKindId.Alternation]: Alternation.Parsed;
+	[TSKindId.Term]: Term.Parsed;
+	[TSKindId.LookaroundAssertion]: LookaroundAssertion.Parsed;
+	[TSKindId.LookaheadAssertion]: LookaheadAssertion.Parsed;
+	[TSKindId.LookbehindAssertion]: LookbehindAssertion.Parsed;
+	[TSKindId.CharacterClass]: CharacterClass.Parsed;
+	[TSKindId.PosixCharacterClass]: PosixCharacterClass.Parsed;
+	[TSKindId.ClassRange]: ClassRange.Parsed;
+	[TSKindId.AnonymousCapturingGroup]: AnonymousCapturingGroup.Parsed;
+	[TSKindId.NamedCapturingGroup]: NamedCapturingGroup.Parsed;
+	[TSKindId.NonCapturingGroup]: NonCapturingGroup.Parsed;
+	[TSKindId.CountQuantifier]: CountQuantifier.Parsed;
+	[TSKindId.BackreferenceEscape]: BackreferenceEscape.Parsed;
+	[TSKindId.NamedGroupBackreference]: NamedGroupBackreference.Parsed;
+	[TSKindId.CharacterClassEscape]: CharacterClassEscape.Parsed;
+	[TSKindId.UnicodePropertyValueExpression]: UnicodePropertyValueExpression.Parsed;
+	[TSKindId.IdentityEscape]: IdentityEscape.Parsed;
+	[TSKindId.TermGroup]: TermGroup.Parsed;
+	[TSKindId.CountQuantifierGroup]: CountQuantifierGroup.Parsed;
+	[TSKindId.CountQuantifierArm]: CountQuantifierArm.Parsed;
+	[TSKindId.CharacterClassEscapeArm]: CharacterClassEscapeArm.Parsed;
+	[TSKindId.UnicodePropertyValueExpressionGroup]: UnicodePropertyValueExpressionGroup.Parsed;
+	[TSKindId.InlineFlagsGroupEnable]: InlineFlagsGroupEnable.Parsed;
+	[TSKindId.InlineFlagsGroupToggle]: InlineFlagsGroupToggle.Parsed;
+	[TSKindId.InlineFlagsGroupDisable]: InlineFlagsGroupDisable.Parsed;
+	[TSKindId.Lazy]: Lazy.Parsed;
+	[TSKindId.UnicodePropertyName]: UnicodePropertyName.Parsed;
+	[TSKindId.PatternCharacter]: PatternCharacter.Parsed;
+	[TSKindId.PosixClassName]: PosixClassName.Parsed;
+	[TSKindId.ClassCharacter]: ClassCharacter.Parsed;
+	[TSKindId.Flags]: Flags.Parsed;
+	[TSKindId.ZeroOrMore]: ZeroOrMore.Parsed;
+	[TSKindId.OneOrMore]: OneOrMore.Parsed;
+	[TSKindId.Optional]: Optional.Parsed;
+	[TSKindId.DecimalEscape]: DecimalEscape.Parsed;
+	[TSKindId.UnicodeCharacterEscape]: UnicodeCharacterEscape.Parsed;
+	[TSKindId.UnicodePropertyValue]: UnicodePropertyValue.Parsed;
+	[TSKindId.ControlEscape]: ControlEscape.Parsed;
+	[TSKindId.ControlLetterEscape]: ControlLetterEscape.Parsed;
+	[TSKindId.GroupName]: GroupName.Parsed;
+	[TSKindId.DecimalDigits]: DecimalDigits.Parsed;
+}
+
+export interface EmptyByKindId {
+	[TSKindId.CharacterClass]: EmptyCharacterClass;
+}
+
+export type AdmittedNodes = AdmitLookup<BoundByKindId, ParsedByKindId, EmptyByKindId>;
 
 export type FixedTextKindId =
 	| TSKindId.AnyCharacter
@@ -1797,149 +2061,146 @@ export interface IrKeyOf {
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
-export type BuiltFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Built'];
+export type BoundFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Bound'];
 export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];
 export type LooseConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseConfig'];
 export type BuildArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['BuildArgs'];
 export type LooseArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseArgs'];
 
 // Namespace sugar — merges with each data interface so consumers can write
-// <TypeName>.Config / .Built / .Loose alongside using <TypeName> as a type.
+// <TypeName>.Config / .Bound / .Parsed / .Loose alongside using <TypeName> as a type.
 export namespace Pattern {
 	export type Config = ConfigFor<TSKindId.Pattern>;
-	export interface Built extends T.Pattern, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: T.Alternation | T.Term): T.Pattern.Built;
-		};
+	export interface Bound extends BoundOf<T.Pattern, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Pattern['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Pattern, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Pattern['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Pattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Pattern>;
-	export type BuildArgs = [value: T.Alternation | T.Term];
+	export type BuildArgs = [value: AdmitBound<T.Alternation | T.Term, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.Alternation | T.Term, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'pattern';
+	export type Kind = TSKindId.Pattern;
 }
 export namespace Alternation {
 	export type Config = ConfigFor<TSKindId.Alternation>;
-	export interface Built extends T.Alternation, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			terms(...vs: T.Term[]): T.Alternation.Built;
-		};
+	export interface Bound extends BoundOf<T.Alternation, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Alternation['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Alternation, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Alternation['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Alternation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Alternation>;
-	export type BuildArgs = [...children: T.Term[]];
+	export type BuildArgs = [...children: AdmitBound<T.Term[], T.AdmittedNodes>];
 	export type LooseArgs = [...children: LooseValue<T.Term, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
-	export type Kind = 'alternation';
+	export type Kind = TSKindId.Alternation;
 }
 export namespace Term {
 	export type Config = ConfigFor<TSKindId.Term>;
-	export interface Built extends T.Term, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			termGroups(...vs: T.TermGroup[]): T.Term.Built;
-		};
+	export interface Bound extends BoundOf<T.Term, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Term['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Term, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Term['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Term>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Term>;
-	export type BuildArgs = [...children: T.TermGroup[]];
+	export type BuildArgs = [...children: AdmitBound<T.TermGroup[], T.AdmittedNodes>];
 	export type LooseArgs = [...children: LooseValue<T.TermGroup, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
-	export type Kind = 'term';
+	export type Kind = TSKindId.Term;
 }
 export namespace LookaroundAssertion {
 	export type Config = ConfigFor<TSKindId.LookaroundAssertion>;
-	export interface Built extends T.LookaroundAssertion, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: T.LookaheadAssertion | T.LookbehindAssertion): T.LookaroundAssertion.Built;
-		};
+	export interface Bound extends BoundOf<T.LookaroundAssertion, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.LookaroundAssertion['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.LookaroundAssertion, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.LookaroundAssertion['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.LookaroundAssertion>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LookaroundAssertion>;
-	export type BuildArgs = [value: T.LookaheadAssertion | T.LookbehindAssertion];
+	export type BuildArgs = [value: AdmitBound<T.LookaheadAssertion | T.LookbehindAssertion, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.LookaheadAssertion | T.LookbehindAssertion, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'lookaround_assertion';
+	export type Kind = TSKindId.LookaroundAssertion;
 }
 export namespace LookaheadAssertion {
 	export type Config = ConfigFor<TSKindId.LookaheadAssertion>;
-	export interface Built extends T.LookaheadAssertion, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: NonNullable<T.LookaheadAssertion.Config>['content']): T.LookaheadAssertion.Built;
-			pattern(value: T.Pattern): T.LookaheadAssertion.Built;
-		};
+	export interface Bound extends BoundOf<T.LookaheadAssertion, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.LookaheadAssertion['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.LookaheadAssertion, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.LookaheadAssertion['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.LookaheadAssertion>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LookaheadAssertion>;
-	export type BuildArgs = [config: ConfigOf<T.LookaheadAssertion>];
+	export type BuildArgs = [config: ConfigOf<T.LookaheadAssertion, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.LookaheadAssertion, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.LookaheadAssertion
+			| AdmitBound<T.LookaheadAssertion, T.AdmittedNodes>
 	];
-	export type Kind = 'lookahead_assertion';
+	export type Kind = TSKindId.LookaheadAssertion;
 }
 export namespace LookbehindAssertion {
 	export type Config = ConfigFor<TSKindId.LookbehindAssertion>;
-	export interface Built extends T.LookbehindAssertion, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: NonNullable<T.LookbehindAssertion.Config>['content']): T.LookbehindAssertion.Built;
-			pattern(value: T.Pattern): T.LookbehindAssertion.Built;
-		};
+	export interface Bound extends BoundOf<T.LookbehindAssertion, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.LookbehindAssertion['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.LookbehindAssertion, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.LookbehindAssertion['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.LookbehindAssertion>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LookbehindAssertion>;
-	export type BuildArgs = [config: ConfigOf<T.LookbehindAssertion>];
+	export type BuildArgs = [config: ConfigOf<T.LookbehindAssertion, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.LookbehindAssertion, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.LookbehindAssertion
+			| AdmitBound<T.LookbehindAssertion, T.AdmittedNodes>
 	];
-	export type Kind = 'lookbehind_assertion';
+	export type Kind = TSKindId.LookbehindAssertion;
 }
 export namespace CharacterClass {
 	export type Config = ConfigFor<TSKindId.CharacterClass>;
-	export interface Built extends T.CharacterClass, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			classAtoms(
-				...vs: (
-					| T.ClassCharacter
-					| TSKindId.BslashDash
-					| T.CharacterClassEscape
-					| T.ControlEscape
-					| T.ControlLetterEscape
-					| T.IdentityEscape
-					| T.PosixCharacterClass
-					| T.ClassRange
-				)[]
-			): T.CharacterClass.Built;
-		};
+	export interface Bound extends BoundOf<T.CharacterClass, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.CharacterClass['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.CharacterClass, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.CharacterClass['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CharacterClass>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CharacterClass>;
 	export type BuildArgs = [
-		...children: (
-			| T.ClassCharacter
-			| TSKindId.BslashDash
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.PosixCharacterClass
-			| T.ClassRange
-		)[]
+		...children: AdmitBound<
+			(
+				| T.ClassCharacter
+				| TSKindId.BslashDash
+				| T.CharacterClassEscape
+				| T.ControlEscape
+				| T.ControlLetterEscape
+				| T.IdentityEscape
+				| T.PosixCharacterClass
+				| T.ClassRange
+			)[],
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
@@ -1956,153 +2217,161 @@ export namespace CharacterClass {
 			T.NamespaceMap
 		>[]
 	];
-	export type Kind = 'character_class';
+	export type Kind = TSKindId.CharacterClass;
 }
 export namespace PosixCharacterClass {
 	export type Config = ConfigFor<TSKindId.PosixCharacterClass>;
-	export interface Built extends T.PosixCharacterClass, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			posixClassName(value: T.PosixClassName): T.PosixCharacterClass.Built;
-		};
+	export interface Bound extends BoundOf<T.PosixCharacterClass, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.PosixCharacterClass['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.PosixCharacterClass, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.PosixCharacterClass['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.PosixCharacterClass>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PosixCharacterClass>;
-	export type BuildArgs = [value: T.PosixClassName];
+	export type BuildArgs = [value: AdmitBound<T.PosixClassName, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.PosixClassName, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'posix_character_class';
+	export type Kind = TSKindId.PosixCharacterClass;
 }
 export namespace ClassRange {
 	export type Config = ConfigFor<TSKindId.ClassRange>;
-	export interface Built extends T.ClassRange, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			start(value: NonNullable<T.ClassRange.Config>['start']): T.ClassRange.Built;
-			end(value: NonNullable<T.ClassRange.Config>['end']): T.ClassRange.Built;
-		};
+	export interface Bound extends BoundOf<T.ClassRange, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassRange['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ClassRange, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassRange['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ClassRange>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassRange>;
-	export type BuildArgs = [config: ConfigOf<T.ClassRange>];
+	export type BuildArgs = [config: ConfigOf<T.ClassRange, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ClassRange, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ClassRange
+		config:
+			| LooseConfigOf<T.ClassRange, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.ClassRange, T.AdmittedNodes>
 	];
-	export type Kind = 'class_range';
+	export type Kind = TSKindId.ClassRange;
 }
 export namespace AnonymousCapturingGroup {
 	export type Config = ConfigFor<TSKindId.AnonymousCapturingGroup>;
-	export interface Built extends T.AnonymousCapturingGroup, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			pattern(value: T.Pattern): T.AnonymousCapturingGroup.Built;
-		};
+	export interface Bound extends BoundOf<T.AnonymousCapturingGroup, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.AnonymousCapturingGroup['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.AnonymousCapturingGroup, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.AnonymousCapturingGroup['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.AnonymousCapturingGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AnonymousCapturingGroup>;
-	export type BuildArgs = [value: T.Pattern];
+	export type BuildArgs = [value: AdmitBound<T.Pattern, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'anonymous_capturing_group';
+	export type Kind = TSKindId.AnonymousCapturingGroup;
 }
 export namespace NamedCapturingGroup {
 	export type Config = ConfigFor<TSKindId.NamedCapturingGroup>;
-	export interface Built extends T.NamedCapturingGroup, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: NonNullable<T.NamedCapturingGroup.Config>['content']): T.NamedCapturingGroup.Built;
-			groupName(value: T.GroupName): T.NamedCapturingGroup.Built;
-			pattern(value: T.Pattern): T.NamedCapturingGroup.Built;
-		};
+	export interface Bound extends BoundOf<T.NamedCapturingGroup, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NamedCapturingGroup['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NamedCapturingGroup, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NamedCapturingGroup['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.NamedCapturingGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedCapturingGroup>;
-	export type BuildArgs = [config: ConfigOf<T.NamedCapturingGroup>];
+	export type BuildArgs = [config: ConfigOf<T.NamedCapturingGroup, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.NamedCapturingGroup, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.NamedCapturingGroup
+			| AdmitBound<T.NamedCapturingGroup, T.AdmittedNodes>
 	];
-	export type Kind = 'named_capturing_group';
+	export type Kind = TSKindId.NamedCapturingGroup;
 }
 export namespace NonCapturingGroup {
 	export type Config = ConfigFor<TSKindId.NonCapturingGroup>;
-	export interface Built extends T.NonCapturingGroup, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			pattern(value: T.Pattern): T.NonCapturingGroup.Built;
-		};
+	export interface Bound extends BoundOf<T.NonCapturingGroup, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NonCapturingGroup['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NonCapturingGroup, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NonCapturingGroup['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.NonCapturingGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NonCapturingGroup>;
-	export type BuildArgs = [value: T.Pattern];
+	export type BuildArgs = [value: AdmitBound<T.Pattern, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'non_capturing_group';
+	export type Kind = TSKindId.NonCapturingGroup;
 }
 export namespace CountQuantifier {
 	export type Config = ConfigFor<TSKindId.CountQuantifier>;
-	export interface Built extends T.CountQuantifier, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: T.CountQuantifierArm | T.DecimalDigits): T.CountQuantifier.Built;
-		};
+	export interface Bound extends BoundOf<T.CountQuantifier, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.CountQuantifier['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.CountQuantifier, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.CountQuantifier['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CountQuantifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CountQuantifier>;
-	export type BuildArgs = [value: T.CountQuantifierArm | T.DecimalDigits];
+	export type BuildArgs = [value: AdmitBound<T.CountQuantifierArm | T.DecimalDigits, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.CountQuantifierArm | T.DecimalDigits, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'count_quantifier';
+	export type Kind = TSKindId.CountQuantifier;
 }
 export namespace BackreferenceEscape {
 	export type Config = ConfigFor<TSKindId.BackreferenceEscape>;
-	export interface Built extends T.BackreferenceEscape, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			groupName(value: T.GroupName): T.BackreferenceEscape.Built;
-		};
+	export interface Bound extends BoundOf<T.BackreferenceEscape, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.BackreferenceEscape['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.BackreferenceEscape, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.BackreferenceEscape['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.BackreferenceEscape>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BackreferenceEscape>;
-	export type BuildArgs = [value: T.GroupName];
+	export type BuildArgs = [value: AdmitBound<T.GroupName, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.GroupName, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'backreference_escape';
+	export type Kind = TSKindId.BackreferenceEscape;
 }
 export namespace NamedGroupBackreference {
 	export type Config = ConfigFor<TSKindId.NamedGroupBackreference>;
-	export interface Built extends T.NamedGroupBackreference, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			groupName(value: T.GroupName): T.NamedGroupBackreference.Built;
-		};
+	export interface Bound extends BoundOf<T.NamedGroupBackreference, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NamedGroupBackreference['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NamedGroupBackreference, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NamedGroupBackreference['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.NamedGroupBackreference>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedGroupBackreference>;
-	export type BuildArgs = [value: T.GroupName];
+	export type BuildArgs = [value: AdmitBound<T.GroupName, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.GroupName, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'named_group_backreference';
+	export type Kind = TSKindId.NamedGroupBackreference;
 }
 export namespace CharacterClassEscape {
 	export type Config = ConfigFor<TSKindId.CharacterClassEscape>;
-	export interface Built extends T.CharacterClassEscape, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(
-				value: '\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape
-			): T.CharacterClassEscape.Built;
-		};
+	export interface Bound extends BoundOf<T.CharacterClassEscape, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.CharacterClassEscape['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.CharacterClassEscape, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.CharacterClassEscape['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CharacterClassEscape>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CharacterClassEscape>;
-	export type BuildArgs = [value: '\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape];
+	export type BuildArgs = [
+		value: AdmitBound<'\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape, T.AdmittedNodes>
+	];
 	export type LooseArgs = [
 		value: LooseValue<
 			'\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape,
@@ -2111,132 +2380,133 @@ export namespace CharacterClassEscape {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'character_class_escape';
+	export type Kind = TSKindId.CharacterClassEscape;
 }
 export namespace UnicodePropertyValueExpression {
 	export type Config = ConfigFor<TSKindId.UnicodePropertyValueExpression>;
-	export interface Built extends T.UnicodePropertyValueExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			unicodePropertyValueExpressionGroup(
-				value?: T.UnicodePropertyValueExpressionGroup
-			): T.UnicodePropertyValueExpression.Built;
-			unicodePropertyValue(value: T.UnicodePropertyValue): T.UnicodePropertyValueExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.UnicodePropertyValueExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.UnicodePropertyValueExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.UnicodePropertyValueExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.UnicodePropertyValueExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.UnicodePropertyValueExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnicodePropertyValueExpression>;
-	export type BuildArgs = [config: ConfigOf<T.UnicodePropertyValueExpression>];
+	export type BuildArgs = [config: ConfigOf<T.UnicodePropertyValueExpression, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.UnicodePropertyValueExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.UnicodePropertyValueExpression
+			| AdmitBound<T.UnicodePropertyValueExpression, T.AdmittedNodes>
 	];
-	export type Kind = 'unicode_property_value_expression';
+	export type Kind = TSKindId.UnicodePropertyValueExpression;
 }
 export namespace IdentityEscape {
 	export type Config = ConfigFor<TSKindId.IdentityEscape>;
-	export interface Built extends T.IdentityEscape, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string): T.IdentityEscape.Built;
-		};
+	export interface Bound extends BoundOf<T.IdentityEscape, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.IdentityEscape['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.IdentityEscape, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.IdentityEscape['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.IdentityEscape>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IdentityEscape>;
-	export type BuildArgs = [value: string];
+	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'identity_escape';
+	export type Kind = TSKindId.IdentityEscape;
 }
 export namespace TermGroup {
 	export type Config = ConfigFor<TSKindId.TermGroup>;
-	export interface Built extends T.TermGroup, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: NonNullable<T.TermGroup.Config>['content']): T.TermGroup.Built;
-			quantifier(value?: T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier): T.TermGroup.Built;
-		};
+	export interface Bound extends BoundOf<T.TermGroup, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TermGroup['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TermGroup, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TermGroup['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TermGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TermGroup>;
-	export type BuildArgs = [config: ConfigOf<T.TermGroup>];
+	export type BuildArgs = [config: ConfigOf<T.TermGroup, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.TermGroup, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TermGroup
+		config:
+			| LooseConfigOf<T.TermGroup, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.TermGroup, T.AdmittedNodes>
 	];
-	export type Kind = 'term_group';
+	export type Kind = TSKindId.TermGroup;
 }
 export namespace CountQuantifierGroup {
 	export type Config = ConfigFor<TSKindId.CountQuantifierGroup>;
-	export interface Built extends T.CountQuantifierGroup, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			decimalDigits(value?: T.DecimalDigits): T.CountQuantifierGroup.Built;
-		};
+	export interface Bound extends BoundOf<T.CountQuantifierGroup, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.CountQuantifierGroup['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.CountQuantifierGroup, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.CountQuantifierGroup['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CountQuantifierGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CountQuantifierGroup>;
-	export type BuildArgs = [value?: T.DecimalDigits];
+	export type BuildArgs = [value?: AdmitBound<T.DecimalDigits, T.AdmittedNodes>];
 	export type LooseArgs = [value?: LooseValue<T.DecimalDigits, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'count_quantifier_group';
+	export type Kind = TSKindId.CountQuantifierGroup;
 }
 export namespace CountQuantifierArm {
 	export type Config = ConfigFor<TSKindId.CountQuantifierArm>;
-	export interface Built extends T.CountQuantifierArm, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			decimalDigits(value: T.DecimalDigits): T.CountQuantifierArm.Built;
-			countQuantifierGroup(value?: T.CountQuantifierGroup): T.CountQuantifierArm.Built;
-		};
+	export interface Bound extends BoundOf<T.CountQuantifierArm, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.CountQuantifierArm['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.CountQuantifierArm, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.CountQuantifierArm['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CountQuantifierArm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CountQuantifierArm>;
-	export type BuildArgs = [config: ConfigOf<T.CountQuantifierArm>];
+	export type BuildArgs = [config: ConfigOf<T.CountQuantifierArm, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.CountQuantifierArm, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.CountQuantifierArm
+			| AdmitBound<T.CountQuantifierArm, T.AdmittedNodes>
 	];
-	export type Kind = 'count_quantifier_arm';
+	export type Kind = TSKindId.CountQuantifierArm;
 }
 export namespace CharacterClassEscapeArm {
 	export type Config = ConfigFor<TSKindId.CharacterClassEscapeArm>;
-	export interface Built extends T.CharacterClassEscapeArm, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: '\\\\[pP]'): T.CharacterClassEscapeArm.Built;
-			unicodePropertyValueExpression(value: T.UnicodePropertyValueExpression): T.CharacterClassEscapeArm.Built;
-		};
+	export interface Bound extends BoundOf<T.CharacterClassEscapeArm, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.CharacterClassEscapeArm['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.CharacterClassEscapeArm, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.CharacterClassEscapeArm['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CharacterClassEscapeArm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CharacterClassEscapeArm>;
-	export type BuildArgs = [config: ConfigOf<T.CharacterClassEscapeArm>];
+	export type BuildArgs = [config: ConfigOf<T.CharacterClassEscapeArm, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.CharacterClassEscapeArm, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.CharacterClassEscapeArm
+			| AdmitBound<T.CharacterClassEscapeArm, T.AdmittedNodes>
 	];
-	export type Kind = 'character_class_escape_arm';
+	export type Kind = TSKindId.CharacterClassEscapeArm;
 }
 export namespace UnicodePropertyValueExpressionGroup {
 	export type Config = ConfigFor<TSKindId.UnicodePropertyValueExpressionGroup>;
-	export interface Built extends T.UnicodePropertyValueExpressionGroup, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			unicodePropertyName(
-				value: T.UnicodePropertyName | T.UnicodePropertyName.Types
-			): T.UnicodePropertyValueExpressionGroup.Built;
-		};
+	export interface Bound extends BoundOf<T.UnicodePropertyValueExpressionGroup, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.UnicodePropertyValueExpressionGroup['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.UnicodePropertyValueExpressionGroup, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.UnicodePropertyValueExpressionGroup['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.UnicodePropertyValueExpressionGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnicodePropertyValueExpressionGroup>;
-	export type BuildArgs = [value: T.UnicodePropertyName | T.UnicodePropertyName.Types];
+	export type BuildArgs = [value: AdmitBound<T.UnicodePropertyName | T.UnicodePropertyName.Types, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<
 			T.UnicodePropertyName | T.UnicodePropertyName.Types,
@@ -2245,377 +2515,401 @@ export namespace UnicodePropertyValueExpressionGroup {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'unicode_property_value_expression_group';
+	export type Kind = TSKindId.UnicodePropertyValueExpressionGroup;
 }
 export namespace InlineFlagsGroupEnable {
 	export type Config = ConfigFor<TSKindId.InlineFlagsGroupEnable>;
-	export interface Built extends T.InlineFlagsGroupEnable, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			enabled(value: T.Flags): T.InlineFlagsGroupEnable.Built;
-			pattern(value?: T.Pattern): T.InlineFlagsGroupEnable.Built;
-		};
+	export interface Bound extends BoundOf<T.InlineFlagsGroupEnable, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.InlineFlagsGroupEnable['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.InlineFlagsGroupEnable, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.InlineFlagsGroupEnable['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.InlineFlagsGroupEnable>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InlineFlagsGroupEnable>;
-	export type BuildArgs = [config: ConfigOf<T.InlineFlagsGroupEnable>];
+	export type BuildArgs = [config: ConfigOf<T.InlineFlagsGroupEnable, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.InlineFlagsGroupEnable, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.InlineFlagsGroupEnable
+			| AdmitBound<T.InlineFlagsGroupEnable, T.AdmittedNodes>
 	];
-	export type Kind = 'inline_flags_group_enable';
+	export type Kind = TSKindId.InlineFlagsGroupEnable;
 }
 export namespace InlineFlagsGroupToggle {
 	export type Config = ConfigFor<TSKindId.InlineFlagsGroupToggle>;
-	export interface Built extends T.InlineFlagsGroupToggle, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			enabled(value: T.Flags): T.InlineFlagsGroupToggle.Built;
-			disabled(value: T.Flags): T.InlineFlagsGroupToggle.Built;
-			pattern(value?: T.Pattern): T.InlineFlagsGroupToggle.Built;
-		};
+	export interface Bound extends BoundOf<T.InlineFlagsGroupToggle, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.InlineFlagsGroupToggle['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.InlineFlagsGroupToggle, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.InlineFlagsGroupToggle['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.InlineFlagsGroupToggle>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InlineFlagsGroupToggle>;
-	export type BuildArgs = [config: ConfigOf<T.InlineFlagsGroupToggle>];
+	export type BuildArgs = [config: ConfigOf<T.InlineFlagsGroupToggle, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.InlineFlagsGroupToggle, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.InlineFlagsGroupToggle
+			| AdmitBound<T.InlineFlagsGroupToggle, T.AdmittedNodes>
 	];
-	export type Kind = 'inline_flags_group_toggle';
+	export type Kind = TSKindId.InlineFlagsGroupToggle;
 }
 export namespace InlineFlagsGroupDisable {
 	export type Config = ConfigFor<TSKindId.InlineFlagsGroupDisable>;
-	export interface Built extends T.InlineFlagsGroupDisable, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			disabled(value: T.Flags): T.InlineFlagsGroupDisable.Built;
-			pattern(value?: T.Pattern): T.InlineFlagsGroupDisable.Built;
-		};
+	export interface Bound extends BoundOf<T.InlineFlagsGroupDisable, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.InlineFlagsGroupDisable['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.InlineFlagsGroupDisable, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.InlineFlagsGroupDisable['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.InlineFlagsGroupDisable>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InlineFlagsGroupDisable>;
-	export type BuildArgs = [config: ConfigOf<T.InlineFlagsGroupDisable>];
+	export type BuildArgs = [config: ConfigOf<T.InlineFlagsGroupDisable, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.InlineFlagsGroupDisable, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.InlineFlagsGroupDisable
+			| AdmitBound<T.InlineFlagsGroupDisable, T.AdmittedNodes>
 	];
-	export type Kind = 'inline_flags_group_disable';
+	export type Kind = TSKindId.InlineFlagsGroupDisable;
 }
 export namespace Lazy {
 	export type Config = ConfigFor<TSKindId.Lazy>;
 	export type Types = TSKindId.Qmark;
-	export interface Built extends T.Lazy, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: NonNullable<TSKindId.Qmark>): T.Lazy.Built;
-		};
+	export interface Bound extends BoundOf<T.Lazy, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Lazy['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Lazy, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Lazy['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Lazy>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Lazy>;
-	export type BuildArgs = [value: TSKindId.Qmark];
+	export type BuildArgs = [value: AdmitBound<TSKindId.Qmark, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<TSKindId.Qmark, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'lazy';
+	export type Kind = TSKindId.Lazy;
 }
 export namespace UnicodePropertyName {
 	export type Config = ConfigFor<TSKindId.UnicodePropertyName>;
 	export type Types = UnicodePropertyValue;
-	export interface Built extends T.UnicodePropertyName, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: T.UnicodePropertyValue): T.UnicodePropertyName.Built;
-		};
+	export interface Bound extends BoundOf<T.UnicodePropertyName, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.UnicodePropertyName['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.UnicodePropertyName, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.UnicodePropertyName['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.UnicodePropertyName>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnicodePropertyName>;
-	export type BuildArgs = [value: T.UnicodePropertyValue];
+	export type BuildArgs = [value: AdmitBound<T.UnicodePropertyValue, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.UnicodePropertyValue, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'unicode_property_name';
+	export type Kind = TSKindId.UnicodePropertyName;
 }
 export namespace AnyCharacter {
 	export type Config = AnyCharacterNs['Config'];
-	export type Built = AnyCharacterNs['Built'];
+	export type Bound = AnyCharacterNs['Bound'];
+	export type Parsed = AnyCharacterNs['Bound'];
 	export type Loose = AnyCharacterNs['Loose'];
 	export type LooseConfig = AnyCharacterNs['LooseConfig'];
 	export type BuildArgs = AnyCharacterNs['BuildArgs'];
 	export type LooseArgs = AnyCharacterNs['LooseArgs'];
-	export type Kind = 'any_character';
+	export type Kind = TSKindId.AnyCharacter;
 }
 export namespace StartAssertion {
 	export type Config = StartAssertionNs['Config'];
-	export type Built = StartAssertionNs['Built'];
+	export type Bound = StartAssertionNs['Bound'];
+	export type Parsed = StartAssertionNs['Bound'];
 	export type Loose = StartAssertionNs['Loose'];
 	export type LooseConfig = StartAssertionNs['LooseConfig'];
 	export type BuildArgs = StartAssertionNs['BuildArgs'];
 	export type LooseArgs = StartAssertionNs['LooseArgs'];
-	export type Kind = 'start_assertion';
+	export type Kind = TSKindId.StartAssertion;
 }
 export namespace EndAssertion {
 	export type Config = EndAssertionNs['Config'];
-	export type Built = EndAssertionNs['Built'];
+	export type Bound = EndAssertionNs['Bound'];
+	export type Parsed = EndAssertionNs['Bound'];
 	export type Loose = EndAssertionNs['Loose'];
 	export type LooseConfig = EndAssertionNs['LooseConfig'];
 	export type BuildArgs = EndAssertionNs['BuildArgs'];
 	export type LooseArgs = EndAssertionNs['LooseArgs'];
-	export type Kind = 'end_assertion';
+	export type Kind = TSKindId.EndAssertion;
 }
 export namespace BoundaryAssertion {
 	export type Config = BoundaryAssertionNs['Config'];
-	export type Built = BoundaryAssertionNs['Built'];
+	export type Bound = BoundaryAssertionNs['Bound'];
+	export type Parsed = BoundaryAssertionNs['Bound'];
 	export type Loose = BoundaryAssertionNs['Loose'];
 	export type LooseConfig = BoundaryAssertionNs['LooseConfig'];
 	export type BuildArgs = BoundaryAssertionNs['BuildArgs'];
 	export type LooseArgs = BoundaryAssertionNs['LooseArgs'];
-	export type Kind = 'boundary_assertion';
+	export type Kind = TSKindId.BoundaryAssertion;
 }
 export namespace NonBoundaryAssertion {
 	export type Config = NonBoundaryAssertionNs['Config'];
-	export type Built = NonBoundaryAssertionNs['Built'];
+	export type Bound = NonBoundaryAssertionNs['Bound'];
+	export type Parsed = NonBoundaryAssertionNs['Bound'];
 	export type Loose = NonBoundaryAssertionNs['Loose'];
 	export type LooseConfig = NonBoundaryAssertionNs['LooseConfig'];
 	export type BuildArgs = NonBoundaryAssertionNs['BuildArgs'];
 	export type LooseArgs = NonBoundaryAssertionNs['LooseArgs'];
-	export type Kind = 'non_boundary_assertion';
+	export type Kind = TSKindId.NonBoundaryAssertion;
 }
 export namespace Tight {
 	export type Config = TightNs['Config'];
-	export type Built = TightNs['Built'];
+	export type Bound = TightNs['Bound'];
+	export type Parsed = TightNs['Bound'];
 	export type Loose = TightNs['Loose'];
 	export type LooseConfig = TightNs['LooseConfig'];
 	export type BuildArgs = TightNs['BuildArgs'];
 	export type LooseArgs = TightNs['LooseArgs'];
-	export type Kind = '_tight';
+	export type Kind = TSKindId.Tight;
 }
 export namespace Newline {
 	export type Config = NewlineNs['Config'];
-	export type Built = NewlineNs['Built'];
+	export type Bound = NewlineNs['Bound'];
+	export type Parsed = NewlineNs['Bound'];
 	export type Loose = NewlineNs['Loose'];
 	export type LooseConfig = NewlineNs['LooseConfig'];
 	export type BuildArgs = NewlineNs['BuildArgs'];
 	export type LooseArgs = NewlineNs['LooseArgs'];
-	export type Kind = '_newline';
+	export type Kind = TSKindId.Newline;
 }
 export namespace Blankline {
 	export type Config = BlanklineNs['Config'];
-	export type Built = BlanklineNs['Built'];
+	export type Bound = BlanklineNs['Bound'];
+	export type Parsed = BlanklineNs['Bound'];
 	export type Loose = BlanklineNs['Loose'];
 	export type LooseConfig = BlanklineNs['LooseConfig'];
 	export type BuildArgs = BlanklineNs['BuildArgs'];
 	export type LooseArgs = BlanklineNs['LooseArgs'];
-	export type Kind = '_blankline';
+	export type Kind = TSKindId.Blankline;
 }
 export namespace DoubleBlankline {
 	export type Config = DoubleBlanklineNs['Config'];
-	export type Built = DoubleBlanklineNs['Built'];
+	export type Bound = DoubleBlanklineNs['Bound'];
+	export type Parsed = DoubleBlanklineNs['Bound'];
 	export type Loose = DoubleBlanklineNs['Loose'];
 	export type LooseConfig = DoubleBlanklineNs['LooseConfig'];
 	export type BuildArgs = DoubleBlanklineNs['BuildArgs'];
 	export type LooseArgs = DoubleBlanklineNs['LooseArgs'];
-	export type Kind = '_double_blankline';
+	export type Kind = TSKindId.DoubleBlankline;
 }
 export namespace PatternCharacter {
 	export type Config = PatternCharacterNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.PatternCharacter;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = PatternCharacterNs['Loose'];
 	export type LooseConfig = PatternCharacterNs['LooseConfig'];
 	export type BuildArgs = PatternCharacterNs['BuildArgs'];
 	export type LooseArgs = PatternCharacterNs['LooseArgs'];
-	export type Kind = 'pattern_character';
+	export type Kind = TSKindId.PatternCharacter;
 }
 export namespace PosixClassName {
 	export type Config = PosixClassNameNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.PosixClassName;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = PosixClassNameNs['Loose'];
 	export type LooseConfig = PosixClassNameNs['LooseConfig'];
 	export type BuildArgs = PosixClassNameNs['BuildArgs'];
 	export type LooseArgs = PosixClassNameNs['LooseArgs'];
-	export type Kind = 'posix_class_name';
+	export type Kind = TSKindId.PosixClassName;
 }
 export namespace ClassCharacter {
 	export type Config = ClassCharacterNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.ClassCharacter;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = ClassCharacterNs['Loose'];
 	export type LooseConfig = ClassCharacterNs['LooseConfig'];
 	export type BuildArgs = ClassCharacterNs['BuildArgs'];
 	export type LooseArgs = ClassCharacterNs['LooseArgs'];
-	export type Kind = 'class_character';
+	export type Kind = TSKindId.ClassCharacter;
 }
 export namespace Flags {
 	export type Config = FlagsNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.Flags;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = FlagsNs['Loose'];
 	export type LooseConfig = FlagsNs['LooseConfig'];
 	export type BuildArgs = FlagsNs['BuildArgs'];
 	export type LooseArgs = FlagsNs['LooseArgs'];
-	export type Kind = 'flags';
+	export type Kind = TSKindId.Flags;
 }
 export namespace ZeroOrMore {
 	export type Config = ZeroOrMoreNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.ZeroOrMore;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = ZeroOrMoreNs['Loose'];
 	export type LooseConfig = ZeroOrMoreNs['LooseConfig'];
 	export type BuildArgs = ZeroOrMoreNs['BuildArgs'];
 	export type LooseArgs = ZeroOrMoreNs['LooseArgs'];
-	export type Kind = 'zero_or_more';
+	export type Kind = TSKindId.ZeroOrMore;
 }
 export namespace OneOrMore {
 	export type Config = OneOrMoreNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.OneOrMore;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = OneOrMoreNs['Loose'];
 	export type LooseConfig = OneOrMoreNs['LooseConfig'];
 	export type BuildArgs = OneOrMoreNs['BuildArgs'];
 	export type LooseArgs = OneOrMoreNs['LooseArgs'];
-	export type Kind = 'one_or_more';
+	export type Kind = TSKindId.OneOrMore;
 }
 export namespace Optional {
 	export type Config = OptionalNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.Optional;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = OptionalNs['Loose'];
 	export type LooseConfig = OptionalNs['LooseConfig'];
 	export type BuildArgs = OptionalNs['BuildArgs'];
 	export type LooseArgs = OptionalNs['LooseArgs'];
-	export type Kind = 'optional';
+	export type Kind = TSKindId.Optional;
 }
 export namespace DecimalEscape {
 	export type Config = DecimalEscapeNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.DecimalEscape;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = DecimalEscapeNs['Loose'];
 	export type LooseConfig = DecimalEscapeNs['LooseConfig'];
 	export type BuildArgs = DecimalEscapeNs['BuildArgs'];
 	export type LooseArgs = DecimalEscapeNs['LooseArgs'];
-	export type Kind = 'decimal_escape';
+	export type Kind = TSKindId.DecimalEscape;
 }
 export namespace UnicodeCharacterEscape {
 	export type Config = UnicodeCharacterEscapeNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.UnicodeCharacterEscape;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = UnicodeCharacterEscapeNs['Loose'];
 	export type LooseConfig = UnicodeCharacterEscapeNs['LooseConfig'];
 	export type BuildArgs = UnicodeCharacterEscapeNs['BuildArgs'];
 	export type LooseArgs = UnicodeCharacterEscapeNs['LooseArgs'];
-	export type Kind = 'unicode_character_escape';
+	export type Kind = TSKindId.UnicodeCharacterEscape;
 }
 export namespace UnicodePropertyValue {
 	export type Config = UnicodePropertyValueNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.UnicodePropertyValue;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = UnicodePropertyValueNs['Loose'];
 	export type LooseConfig = UnicodePropertyValueNs['LooseConfig'];
 	export type BuildArgs = UnicodePropertyValueNs['BuildArgs'];
 	export type LooseArgs = UnicodePropertyValueNs['LooseArgs'];
-	export type Kind = 'unicode_property_value';
+	export type Kind = TSKindId.UnicodePropertyValue;
 }
 export namespace ControlEscape {
 	export type Config = ControlEscapeNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.ControlEscape;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = ControlEscapeNs['Loose'];
 	export type LooseConfig = ControlEscapeNs['LooseConfig'];
 	export type BuildArgs = ControlEscapeNs['BuildArgs'];
 	export type LooseArgs = ControlEscapeNs['LooseArgs'];
-	export type Kind = 'control_escape';
+	export type Kind = TSKindId.ControlEscape;
 }
 export namespace ControlLetterEscape {
 	export type Config = ControlLetterEscapeNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.ControlLetterEscape;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = ControlLetterEscapeNs['Loose'];
 	export type LooseConfig = ControlLetterEscapeNs['LooseConfig'];
 	export type BuildArgs = ControlLetterEscapeNs['BuildArgs'];
 	export type LooseArgs = ControlLetterEscapeNs['LooseArgs'];
-	export type Kind = 'control_letter_escape';
+	export type Kind = TSKindId.ControlLetterEscape;
 }
 export namespace GroupName {
 	export type Config = GroupNameNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.GroupName;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = GroupNameNs['Loose'];
 	export type LooseConfig = GroupNameNs['LooseConfig'];
 	export type BuildArgs = GroupNameNs['BuildArgs'];
 	export type LooseArgs = GroupNameNs['LooseArgs'];
-	export type Kind = 'group_name';
+	export type Kind = TSKindId.GroupName;
 }
 export namespace DecimalDigits {
 	export type Config = DecimalDigitsNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.DecimalDigits;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = DecimalDigitsNs['Loose'];
 	export type LooseConfig = DecimalDigitsNs['LooseConfig'];
 	export type BuildArgs = DecimalDigitsNs['BuildArgs'];
 	export type LooseArgs = DecimalDigitsNs['LooseArgs'];
-	export type Kind = 'decimal_digits';
+	export type Kind = TSKindId.DecimalDigits;
 }
 
 export interface RegexTypeMap extends GrammarTypeMap {
@@ -2628,6 +2922,6 @@ export type NodeMethodsOf = NodeMethods<RegexTypeMap['trivia']>;
 export type TriviaSetterOf<Self> = TriviaSetter<Self, RegexTypeMap['trivia']>;
 export type InnerTrivia<N> = GrammarInnerTrivia<N, RegexTypeMap['trivia']>;
 
-export interface EmptyCharacterClass extends CharacterClass.Built {
+export interface EmptyCharacterClass extends CharacterClass.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }

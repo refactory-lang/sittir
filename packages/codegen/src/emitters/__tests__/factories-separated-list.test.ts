@@ -118,7 +118,7 @@ describe('factories emitter — separatedList', () => {
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }), { separator: 'semi' });
 
-		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): ');
+		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<AdmitBound<T.Member, T.AdmittedNodes>>): ');
 		expect(emitted).toContain('export function buildMemberList(options: ');
 		expect(emitted).toContain('separator?: TSKindId.Comma | TSKindId.Semi');
 		expect(emitted).toContain('delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both');
@@ -146,7 +146,7 @@ describe('factories emitter — separatedList', () => {
 			separator: { value: sepChoice, trailing: 'optional' }
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }));
-		expect(emitted).not.toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): ');
+		expect(emitted).not.toContain('export function buildMemberList(...elements: NonEmptyArray<AdmitBound<T.Member, T.AdmittedNodes>>): ');
 		expect(emitted).toContain('export function buildMemberList(options: ');
 		expect(emitted).toContain('separator: TSKindId.Comma | TSKindId.Semi');
 		expect(emitted).not.toContain('separator?:');
@@ -163,7 +163,7 @@ describe('factories emitter — separatedList', () => {
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
-		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<T.Member>): ');
+		expect(emitted).toContain('export function buildMemberList(...elements: NonEmptyArray<AdmitBound<T.Member, T.AdmittedNodes>>): ');
 		expect(emitted).toContain('export function buildMemberList(options: ');
 		expect(emitted).not.toContain('separator?:');
 		expect(emitted).toContain('delimiter?: Delimiter.None | Delimiter.Trailing');
@@ -198,7 +198,7 @@ describe('factories emitter — separatedList', () => {
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
 		expect(emitted).toContain(
-			'export function buildMemberList(...elements: NonEmptyArray<T.Member>): T.MemberList.Built {'
+			'export function buildMemberList(...elements: NonEmptyArray<AdmitBound<T.Member, T.AdmittedNodes>>): T.MemberList.Bound {'
 		);
 		expect(emitted).not.toContain('options');
 		expect(emitted).not.toContain('_separator');
@@ -209,14 +209,14 @@ describe('factories emitter — separatedList', () => {
 		const emitted = emit(makeMultiKindMemberNodeMap());
 
 		// Correct: the union is parenthesized before the array suffix.
-		expect(emitted).toContain('export function buildMemberList(...elements: (T.MemberA | T.MemberB)[]): ');
+		expect(emitted).toContain('export function buildMemberList(...elements: AdmitBound<T.MemberA | T.MemberB, T.AdmittedNodes>[]): ');
 		// The precedence bug this guards against: `[]` binding to the LAST
 		// union member alone instead of the whole union.
 		expect(emitted).not.toContain('T.MemberA | T.MemberB[]');
 		// Same guard applies to the element setter's rest-param type. The
 		// setter is named after the canonical element slot — `content` when
 		// the grammar left it unnamed — not a sigil.
-		expect(emitted).toContain('content: (...vs: (T.MemberA | T.MemberB)[])');
+		expect(emitted).toContain('content: (...vs: AdmitBound<T.MemberA | T.MemberB, T.AdmittedNodes>[])');
 	});
 
 	it('an envelope forwarding to a repeat1 separated list gets the options-first overload, then the NonEmptyArray elements-only overload declared last', () => {
@@ -249,8 +249,8 @@ describe('factories emitter — separatedList', () => {
 		const wrapperOverloads = [...emitted.matchAll(/^export function buildWrapper\(([^\n]*)\): ReturnType<typeof _buildWrapper>;$/gm)].map(
 			(m) => m[1]
 		);
-		const optionsFirstIndex = wrapperOverloads.findIndex((p) => p!.startsWith('options: ') && p!.includes('...elements: NonEmptyArray<T.Member>'));
-		const elementsOnlyIndex = wrapperOverloads.findIndex((p) => p === '...elements: NonEmptyArray<T.Member>');
+		const optionsFirstIndex = wrapperOverloads.findIndex((p) => p!.startsWith('options: ') && p!.includes('...elements: NonEmptyArray<AdmitBound<T.Member, T.AdmittedNodes>>'));
+		const elementsOnlyIndex = wrapperOverloads.findIndex((p) => p === '...elements: NonEmptyArray<AdmitBound<T.Member, T.AdmittedNodes>>');
 		expect(optionsFirstIndex).toBeGreaterThanOrEqual(0);
 		expect(elementsOnlyIndex).toBeGreaterThanOrEqual(0);
 		expect(elementsOnlyIndex).toBe(wrapperOverloads.length - 1);

@@ -5,6 +5,7 @@ import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { toEditAt } from './edit.ts';
+import { Delimiter } from './delimiter.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { Source };
@@ -193,6 +194,68 @@ export function withAccessors<T extends object, A extends Record<string, unknown
 	return node as T & A;
 }
 
+interface ListOwnerOption {
+	readonly key: string;
+	readonly default: unknown;
+}
+
+interface ListOwnerSpec {
+	readonly list: string;
+	readonly elements: string;
+	readonly options: readonly ListOwnerOption[];
+	readonly make: (...args: never[]) => unknown;
+}
+
+export function withListOwner<T extends object>(node: T, spec: ListOwnerSpec): T {
+	const listOf = (self: object): Record<string, unknown> | undefined =>
+		(self as Record<string, () => Record<string, unknown> | undefined>)[spec.list]?.call(self);
+	const elementsOf = (self: object): readonly unknown[] => {
+		const list = listOf(self);
+		return list === undefined ? [] : ((list[spec.elements] as () => readonly unknown[]).call(list) ?? []);
+	};
+	const define = (key: PropertyKey, descriptor: PropertyDescriptor): void => {
+		Object.defineProperty(node, key, { ...descriptor, enumerable: false, configurable: true });
+	};
+	define(Symbol.iterator, {
+		value: function (this: object): IterableIterator<unknown> {
+			return elementsOf(this)[Symbol.iterator]();
+		}
+	});
+	define('length', {
+		get(this: object) {
+			return elementsOf(this).length;
+		}
+	});
+	define('at', {
+		value: function (this: object, index: number): unknown {
+			return elementsOf(this).at(index);
+		}
+	});
+	for (const option of spec.options) {
+		define(option.key, {
+			get(this: object) {
+				return listOf(this)?.[`_${option.key}`] ?? option.default;
+			}
+		});
+	}
+	makeWithCallable(node, spec);
+	return node;
+}
+
+function makeWithCallable(node: object, spec: ListOwnerSpec): void {
+	const own = Object.getOwnPropertyDescriptor(node, '$with');
+	const setters = own?.value as Record<string, unknown> | undefined;
+	if (own === undefined || setters === undefined) return;
+	const call = (...args: unknown[]): unknown =>
+		(call as unknown as Record<string, (list: unknown) => unknown>)[spec.list]!(
+			(spec.make as (...a: unknown[]) => unknown)(...args)
+		);
+	for (const key of Object.keys(setters)) {
+		Object.defineProperty(call, key, { value: setters[key], enumerable: true, writable: true, configurable: true });
+	}
+	Object.defineProperty(node, '$with', { ...own, value: call });
+}
+
 export function isNode(v: unknown): v is AnyNodeData {
 	if (v === null || typeof v !== 'object') return false;
 	const o = v as Record<string, unknown>;
@@ -206,6 +269,20 @@ export function isNode(v: unknown): v is AnyNodeData {
 		o.$source === Source.Sg ||
 		o.$source === Source.Factory
 	);
+}
+
+export function isNodeOfKind(v: unknown, kind: number): boolean {
+	return isNode(v) && v.$type === kind;
+}
+
+export function orDefault<V>(value: V | undefined, make: () => NoInfer<V>): V {
+	return value ?? make();
+}
+
+export function configFieldOr(input: unknown, key: string, orElse: () => unknown): unknown {
+	return input !== null && typeof input === 'object' && !isNode(input) && key in input
+		? (input as Record<string, unknown>)[key]
+		: orElse();
 }
 
 export function isParsedNode(v: unknown): v is AnyNodeData {

@@ -14486,10 +14486,6 @@
   ],
   "conflicts": [
     [
-      "async_block",
-      "_kw_async_marker"
-    ],
-    [
       "_attributed_argument"
     ],
     [
@@ -14613,6 +14609,15 @@
     "_match_pattern_optional1",
     "_while_expression_optional1",
     "_closure_parameters_optional1",
+    "_kw_ref_marker",
+    "_kw_unsafe_marker",
+    "_kw_static_marker",
+    "_kw_async_marker",
+    "_kw_move_marker",
+    "_kw_async",
+    "_kw_default",
+    "_kw_const",
+    "_kw_unsafe",
     "_kw_comma",
     "_kw_in",
     "_kw_operator",

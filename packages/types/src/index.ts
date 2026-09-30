@@ -5,6 +5,7 @@
 
 import type { CamelCase } from 'type-fest';
 import type { NodeMethods } from './engine-api.ts';
+import type { AdmitBound } from './node-surface.ts';
 
 // ---------------------------------------------------------------------------
 // Runtime types — re-exported from core-types (zero runtime in this package)
@@ -217,13 +218,16 @@ type AnyFlavorFn = (...args: never[]) => unknown;
  * the coerce flavor preferred over strict when both are present, with every
  * sibling key still reachable on it.
  */
-export type Hoisted<B> = B extends { coerce: infer C }
-	? (C extends AnyFlavorFn ? C : () => never) & { [K in keyof B]: Hoisted<B[K]> }
-	: B extends { strict: infer S }
-		? (S extends AnyFlavorFn ? S : () => never) & { [K in keyof B]: Hoisted<B[K]> }
+export type Hoisted<B> = 'coerce' extends keyof B
+	? HoistedFlavor<B['coerce'], B>
+	: 'strict' extends keyof B
+		? HoistedFlavor<B['strict'], B>
 		: B extends Record<string, unknown>
 			? { [K in keyof B]: Hoisted<B[K]> }
 			: B;
+
+/** @internal — the callable a pair collapses to, read by key so a pair whose flavors are intersections is never compared member against member. */
+type HoistedFlavor<F, B> = (F extends AnyFlavorFn ? F : () => never) & { [K in keyof B]: Hoisted<B[K]> };
 
 // ---------------------------------------------------------------------------
 // Cycle-detected recursion (visited-set pattern)
@@ -356,7 +360,7 @@ type FieldInputType<T, K extends keyof FieldsOf<T>> = K extends keyof InputHints
 
 /** @internal — from()/loose-only widening hints (`__looseHints__`).
  *  Consumed by LooseConfigBody alone: the strict Config surface stores
- *  config values directly into Built storage, so these widenings must
+ *  config values directly into Bound storage, so these widenings must
  *  never reach it. */
 type LooseHintsOf<T> = T extends { readonly __looseHints__?: infer H } ? H : {};
 
@@ -379,18 +383,23 @@ type WidenLooseFieldValue<
 	Depth extends number[],
 	NsMap,
 	Visited extends (string | number)[]
-> = K extends keyof LooseHintsOf<T>
-	?
-			| WidenSlotValue<LooseHintsOf<T>[K], Scalars, Strings, Depth, NsMap, Visited>
-			| WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>
-	: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>;
+> = AdmitBound<
+	K extends keyof LooseHintsOf<T>
+		?
+				| WidenSlotValue<LooseHintsOf<T>[K], Scalars, Strings, Depth, NsMap, Visited>
+				| WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>
+		: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, Depth, NsMap, Visited>,
+	NodeLookup<NsMap>
+>;
 
 /**
  * Extract the child-slot shape for the Config/Loose bag surface —
  * consumer code writes `config.children`, not `config.$other`. The
  * `$`-prefixed metadata shape is internal NodeData.
  */
-type ChildSlotsOf<T> = T extends { readonly $other?: infer C } ? { readonly children: AdmitSlotInput<C> } : {};
+type ChildSlotsOf<T, NsMap = {}> = T extends { readonly $other?: infer C }
+	? { readonly children: AdmitBound<AdmitSlotInput<C>, NodeLookup<NsMap>> }
+	: {};
 
 /**
  * WrappedNode<T> — the read-only lazy view produced by the generated
@@ -441,7 +450,10 @@ export type ChildOf<T> = T extends { readonly $other?: infer C }
  * here: its loose counterpart is that kind's `Loose`, which is the only
  * projection that reads the from-only (`__looseHints__`) widenings.
  */
-export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = WidenChildSlot<V, Scalars, Strings, [], NsMap>;
+export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = AdmitBound<
+	WidenChildSlot<V, Scalars, Strings, [], NsMap>,
+	NodeLookup<NsMap>
+>;
 
 /**
  * ConfigOf<T> — factory input shape. CamelCase keys at top level for ergonomics,
@@ -462,7 +474,7 @@ export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = WidenChildSl
  *    at the top of the Config surface.
  *
  */
-export type ConfigOf<T> = T extends unknown
+export type ConfigOf<T, NsMap = {}> = T extends unknown
 	? Simplify<
 			{
 				[K in keyof FieldsOf<T> as EscapeReservedAccessor<CamelCase<K & string>>]: IsBooleanKeywordSlot<
@@ -472,8 +484,8 @@ export type ConfigOf<T> = T extends unknown
 					: IsBitflagSlot<FieldInputType<T, K>> extends true
 						? BitflagSlotEnum<FieldInputType<T, K>> | undefined
 						: IsKindEnumSlot<FieldInputType<T, K>> extends true
-							? KindEnumSlotInput<FieldInputType<T, K>> | undefined
-							: AdmitSlotInput<FieldInputType<T, K>>;
+							? AdmitBound<KindEnumSlotInput<FieldInputType<T, K>>, NodeLookup<NsMap>> | undefined
+							: AdmitBound<AdmitSlotInput<FieldInputType<T, K>>, NodeLookup<NsMap>>;
 			} &
 				// Child surface: polymorph variants with a single-child slot hoist
 				// the inner child's Config up when the inner has meaningful Config
@@ -486,7 +498,7 @@ export type ConfigOf<T> = T extends unknown
 				//   for any variant whose content isn't pre-stamped.
 				//
 				// - Inner carries its OWN `$variant` (inner is itself a UForm or
-				//   polymorph union): `Omit<ConfigOf<C>, '$variant'>` first —
+				//   polymorph union): `Omit<ConfigOf<C, NsMap>, '$variant'>` first —
 				//   the outer form's `$variant` is authoritative, and intersecting
 				//   both collapses to `never` when they don't match. This keeps
 				//   a single discriminator at the outer level while preserving
@@ -500,7 +512,7 @@ export type ConfigOf<T> = T extends unknown
 				//   VisibilityModifierPubInPath`) instead of stopping at the
 				//   polymorph boundary. `IsSingleType<C>` gates the hoist to
 				//   single concrete kinds only — polymorph unions fall through to
-				//   `Partial<ChildSlotsOf<T>>`, surfacing the union as a
+				//   `Partial<ChildSlotsOf<T, NsMap>>`, surfacing the union as a
 				//   `children: readonly [VisibilityModifier]` passthrough.
 				//
 				// Everything else (non-polymorph or multi-child) exposes
@@ -510,22 +522,22 @@ export type ConfigOf<T> = T extends unknown
 					readonly $other?: readonly [infer C];
 				}
 					? IsSingleType<C> extends true
-						? keyof ConfigOf<C> extends never
-							? Partial<ChildSlotsOf<T>>
-							: Omit<ConfigOf<C>, '$variant'>
-						: Partial<ChildSlotsOf<T>>
+						? keyof ConfigOf<C, NsMap> extends never
+							? Partial<ChildSlotsOf<T, NsMap>>
+							: Omit<ConfigOf<C, NsMap>, '$variant'>
+						: Partial<ChildSlotsOf<T, NsMap>>
 					: T extends {
 								readonly $variant: string;
 								readonly $other?: infer C;
 						  }
 						? NonNullable<C> extends readonly unknown[]
-							? Partial<ChildSlotsOf<T>>
+							? Partial<ChildSlotsOf<T, NsMap>>
 							: IsSingleType<NonNullable<C>> extends true
-								? keyof ConfigOf<NonNullable<C>> extends never
-									? Partial<ChildSlotsOf<T>>
-									: Omit<ConfigOf<NonNullable<C>>, '$variant'>
-								: Partial<ChildSlotsOf<T>>
-						: Partial<ChildSlotsOf<T>>) &
+								? keyof ConfigOf<NonNullable<C>, NsMap> extends never
+									? Partial<ChildSlotsOf<T, NsMap>>
+									: Omit<ConfigOf<NonNullable<C>, NsMap>, '$variant'>
+								: Partial<ChildSlotsOf<T, NsMap>>
+						: Partial<ChildSlotsOf<T, NsMap>>) &
 				// $variant discriminator: carried verbatim on the Config surface
 				// whenever the interface declares one (independent of whether the
 				// child-hoist fires). Forms without their own $other still need
@@ -533,6 +545,11 @@ export type ConfigOf<T> = T extends unknown
 				(T extends { readonly $variant: infer V extends string } ? { readonly $variant: V } : {})
 		>
 	: never;
+
+/** @internal — the nodes a namespace map admits where a kind's storage type is asked for: each kind's `Bound` and `Parsed`. */
+export type NodeLookup<NsMap> = {
+	[Id in keyof NsMap]: NsMap[Id][Extract<keyof NsMap[Id], 'Bound' | 'Parsed' | 'Empty'>];
+};
 
 /** @internal — detect BooleanKeyword brand at the slot level, including
  * through array wrappers (degenerate `repeat(single-literal)` slots are
@@ -686,15 +703,15 @@ type IsSingleType<T> = [T] extends [{ readonly $type: number }] ? (IsUnion<T> ex
 
 /**
  * TagEachArm<T, ...> — distributive per-arm form for a multi-kind slot.
- * Produces `U | ({ kind: Name } & <U's config bag>)` for each member of T.
+ * Produces `U | ({ $type: Name } & <U's config bag>)` for each member of T.
  *
- * The tag is the kind's NAME (`NsMap[K]['Kind']`), because that is what the
- * runtime resolver reads: a bag with several candidate kinds is dispatched
- * through `'kind' in v` to that kind's from() coercer, and an untagged bag
- * with more than one candidate is rejected. A row whose `Kind` is `never`
- * has no coercer, so a bag could never be built from it — that arm stays
- * the node alone. Without a namespace map the discriminant itself is the
- * tag.
+ * The tag is the kind's id (`NsMap[K]['Kind']`, a `TSKindId` member), because
+ * that is what the runtime resolver reads: a bag with several candidate
+ * kinds is dispatched on its `$type` to that kind's from() coercer, and an
+ * untagged bag with more than one candidate is rejected. A row whose `Kind`
+ * is `never` has no coercer, so a bag could never be built from it — that
+ * arm stays the node alone. Without a namespace map the discriminant itself
+ * is the tag.
  */
 type TagEachArm<
 	T,
@@ -705,17 +722,17 @@ type TagEachArm<
 	Visited extends (string | number)[] = []
 > = T extends infer U
 	? U extends { readonly $type: infer K extends keyof NsMap }
-		? NsMap[K] extends { readonly Kind: infer Name extends string }
+		? NsMap[K] extends { readonly Kind: infer Name extends number }
 			? [Name] extends [never]
 				? U
 				:
-						| ({ kind: Name } & ([LooseProjection<U, NsMap>] extends [never]
+						| ({ $type: Name } & ([LooseProjection<U, NsMap>] extends [never]
 								? LooseConfigOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>
 								: LooseProjection<U, NsMap>))
 						| U
 			: U
 		: U extends { readonly $type: infer K extends string | number }
-			? ({ kind: K } & LooseConfigOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>) | U
+			? ({ $type: K } & LooseConfigOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>) | U
 			: never
 	: never;
 
@@ -982,7 +999,7 @@ type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends
  * Generated grammar packages emit a one-line `<Kind>Ns extends NodeNs<Kind,
  * <Grammar>Scalars, <Grammar>Strings> {}` per kind, plus one `NamespaceMap`
  * that indexes those namespace interfaces by kind string. All the member
- * projections (`Node`, `Config`, `Built`, `Loose`, `Kind`, …) become
+ * projections (`Node`, `Config`, `Bound`, `Loose`, `Kind`, …) become
  * available as `NamespaceMap[K][...]`, `ConfigFor<K>`-style generic accessors,
  * and `<Kind>.Config`-style declaration-merged namespace sugar simultaneously —
  * all three paths resolve to the same concrete type.
@@ -994,7 +1011,7 @@ type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends
  * @param T - A concrete node interface with a literal `type` discriminant.
  * @param Scalars - Leaf-kind → scalar projection (e.g. `{ integer_literal: number }`).
  * @param Strings - Leaf-kind → narrowed string projection (e.g. `{ boolean_literal: 'true' | 'false' }`).
- * @param Built - The kind's emitted `<TypeName>Built` factory return alias —
+ * @param Bound - The kind's emitted `<TypeName>.Bound` node surface —
  *   the exact runtime fluent surface ($with setter record, $-prefixed
  *   methods). Generated packages pass it for every kind; the default is
  *   the node with the methods the runtime attaches to any node.
@@ -1008,27 +1025,30 @@ type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends
  *   reading `Bare` off the row. Only the key crosses into the row — the
  *   widening itself runs inside the depth-guarded recursion, never at row
  *   creation.
- * @param Kind - The kind's grammar name, stamped when the kind has a from()
- *   coercer; `never` otherwise. It is the `kind` tag a multi-kind slot's
+ * @param Kind - The kind's id, stamped when the kind has a from()
+ *   coercer; `never` otherwise. It is the `$type` tag a multi-kind slot's
  *   config bag carries (`TagEachArm`), because the runtime dispatches such a
- *   bag through the from map, which is keyed by grammar name — a kind with
- *   no coercer cannot be built from a bag, so its row carries no name and
- *   its arm offers no bag.
+ *   bag through the from map by kind id — a kind with no coercer cannot be
+ *   built from a bag, so its row carries no id and its arm offers no bag.
  */
 export interface NodeNs<
 	T extends { readonly $type: string | number },
 	Scalars = {},
 	Strings = {},
 	NsMap = {},
-	Built = T & NodeMethods,
-	Args extends readonly unknown[] = [ConfigOf<T>],
-	LooseArgs extends readonly unknown[] = [LooseConfigOf<T, Scalars, Strings, [], NsMap> | T],
+	Bound = T & NodeMethods,
+	Args extends readonly unknown[] = [ConfigOf<T, NsMap>],
+	LooseArgs extends readonly unknown[] = [LooseConfigOf<T, Scalars, Strings, [], NsMap> | AdmitBound<T, NodeLookup<NsMap>>],
 	Bare extends string = never,
-	Kind extends string = never
+	Kind extends number = never,
+	Parsed = Bound,
+	Empty = never
 > {
 	readonly Node: T;
-	readonly Config: ConfigOf<T>;
-	readonly Built: Built;
+	readonly Config: ConfigOf<T, NsMap>;
+	readonly Bound: Bound;
+	readonly Parsed: Parsed;
+	readonly Empty: Empty;
 	// CONTENT (`Config` / `Loose`) is interface-rooted; ARITY is derived
 	// from the factory SHAPE, once, by the types emitter (never from the
 	// emitted function). `BuildArgs` is the builder's parameter list as a
@@ -1036,7 +1056,7 @@ export interface NodeNs<
 	// element slots that REFERENCE `Config`. The dependency runs one way:
 	// `BuildArgs` depends on `Config`, never the reverse, which is what
 	// keeps the two derivations acyclic; and the builder itself only
-	// annotates its return with `<Kind>.Built`, so factories depend on
+	// annotates its return with `<Kind>.Bound`, so factories depend on
 	// types, never the reverse.
 	//
 	// `Parameters<typeof build<Kind>>` is never the source: it resolves to
@@ -1070,7 +1090,7 @@ export interface NodeNs<
 	// cannot be the member the walk short-circuits through.
 	readonly Loose:
 		| LooseConfigOf<T, Scalars, Strings, [], NsMap>
-		| T
+		| AdmitBound<T, NodeLookup<NsMap>>
 		| BareLoose<T, Bare, Scalars, Strings, [], NsMap, [T['$type']]>;
 	/** The `FieldsOf<T>` key of the slot the coercer accepts bare, or
 	 *  `never` — see the `Bare` type parameter. */
@@ -1084,8 +1104,8 @@ export interface NodeNs<
 	 *  every kind interface. Indexing `LooseConfig` avoids the arm entirely
 	 *  while keeping each field's `__looseHints__`. */
 	readonly LooseConfig: LooseConfigOf<T, Scalars, Strings, [], NsMap>;
-	/** The kind's grammar name when it has a from() coercer — the tag a
-	 *  multi-kind slot's bag carries (`{ kind: 'x', … }`) — else `never`;
+	/** The kind's numeric id when it has a from() coercer — the `$type` tag a
+	 *  multi-kind slot's bag carries (`{ $type: kinds.X, … }`) — else `never`;
 	 *  see the `Kind` type parameter. */
 	readonly Kind: Kind;
 }
@@ -1093,16 +1113,16 @@ export interface NodeNs<
 /**
  * KeywordNs<Id, Text, Kind> — the namespace family for a kind whose
  * storage is its id: a keyword or fixed-text token. There is no node to
- * build and no config bag, so `Node` / `Built` are the id itself, the
+ * build and no config bag, so `Node` / `Bound` are the id itself, the
  * builder takes no arguments, and `Loose` is the id or the keyword's one
  * fixed text (`TSKindId.EmptyStatement | ';'`). Same member set as
  * {@link NodeNs} so `ConfigFor` / `LooseFor` and the
  * `WidenValue` namespace lookup index it uniformly.
  */
-export interface KeywordNs<Id extends number, Text extends string, Kind extends string = string> {
+export interface KeywordNs<Id extends number, Text extends string, Kind extends number = number> {
 	readonly Node: Id;
 	readonly Config: never;
-	readonly Built: Id;
+	readonly Bound: Id;
 	readonly BuildArgs: [];
 	readonly LooseArgs: [];
 	readonly Loose: Id | Text;
@@ -1111,7 +1131,7 @@ export interface KeywordNs<Id extends number, Text extends string, Kind extends 
 }
 
 /**
- * LeafNs<Node, Text, Built, Kind> — the namespace family for a
+ * LeafNs<Node, Text, Bound, Kind> — the namespace family for a
  * text-constructible leaf kind: a pattern (any string) or an enum (one of
  * its literals). The factory takes the text and returns the built node, so
  * `Config` / `LooseConfig` are the text, `BuildArgs` / `LooseArgs` are the
@@ -1123,12 +1143,12 @@ export interface KeywordNs<Id extends number, Text extends string, Kind extends 
 export interface LeafNs<
 	Node extends { readonly $type: string | number; readonly $text: string },
 	Text extends string | number | bigint,
-	Built = Node,
-	Kind extends string = string
+	Bound = Node,
+	Kind extends number = number
 > {
 	readonly Node: Node;
 	readonly Config: Text;
-	readonly Built: Built;
+	readonly Bound: Bound;
 	readonly BuildArgs: [text: Text];
 	readonly LooseArgs: [text: Text];
 	readonly Loose: Node | Text;
@@ -1137,6 +1157,7 @@ export interface LeafNs<
 }
 
 export type { DerivedOptions, IndentOption, OptionsHintOf } from './options.ts';
+export type * from './node-surface.ts';
 export type {
 	Interior,
 	LeadCheck,

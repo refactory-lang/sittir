@@ -568,38 +568,24 @@ describe('function_signature_item', () => {
 describe('function_modifiers', () => {
 	it('factory produces correct type', () => {
 		const node = ir.functionModifiers({
-			$type: TSKindId.ExternModifier,
-			$text: 'test',
+			$type: TSKindId.AsyncKeyword,
+			$text: 'async',
 			$source: 2,
-			$named: true,
-			_abi: {
-				$type: TSKindId.StringLiteral,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_string_open: { $type: TSKindId.StringOpen, $text: 'test', $source: 2, $named: true } as any
-			} as any
+			$named: true
 		} as any);
 		expect(node.$type).toBe(TSKindId.FunctionModifiers);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.functionModifiers({
-			$type: TSKindId.ExternModifier,
-			$text: 'test',
+			$type: TSKindId.AsyncKeyword,
+			$text: 'async',
 			$source: 2,
-			$named: true,
-			_abi: {
-				$type: TSKindId.StringLiteral,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_string_open: { $type: TSKindId.StringOpen, $text: 'test', $source: 2, $named: true } as any
-			} as any
+			$named: true
 		} as any);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-		expect(rendered).toContain('test');
+		expect(rendered).toContain('async');
 	});
 });
 

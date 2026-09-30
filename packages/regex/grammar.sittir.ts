@@ -1,10 +1,11 @@
-import base from 'tree-sitter-regex/grammar.js';
+/// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
+import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {
 	field,
 	variant,
 	sittirGrammar
-} from '../codegen/src/dsl/index.ts';
+} from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default sittirGrammar(base, {
 	resolutions,

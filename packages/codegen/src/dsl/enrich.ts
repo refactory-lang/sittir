@@ -246,6 +246,10 @@ export function getEnrichHiddenSubsequences(grammar: unknown): ReadonlySet<strin
 	return enrichRuleNamesOf(grammar, (origin) => origin.kind === 'hidden-subsequence');
 }
 
+export function getEnrichFieldBackings(grammar: unknown): ReadonlySet<string> {
+	return enrichRuleNamesOf(grammar, (origin) => origin.kind === 'keyword' || origin.kind === 'field-enum');
+}
+
 export function getEnrichVisibleSubsequenceSources(grammar: unknown): ReadonlySet<string> {
 	return enrichRuleNamesOf(grammar, (origin) => origin.kind === 'visible-subsequence' || origin.kind === 'promoted-group');
 }
@@ -2376,11 +2380,7 @@ function tryExtractFieldEnum(
 	const enumKindName = memberKeyToCanonicalName.get(memberKey);
 	if (enumKindName === undefined) return null;
 
-	const synthesizedRule = {
-		type: 'PREC',
-		content: normalizeEnumMembers(members),
-		value: -1
-	} as unknown as Rule;
+	const synthesizedRule = normalizeEnumMembers(members) as unknown as Rule;
 
 	if (innerContent.type === 'SYMBOL' && (innerContent as unknown as { name: string }).name === enumKindName) {
 		return null;

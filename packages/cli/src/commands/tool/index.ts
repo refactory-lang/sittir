@@ -15,6 +15,7 @@ import { defectHistogram } from './defect-histogram.ts';
 import { diffFailures } from './diff-failures.ts';
 import { dumpAstMismatches } from './dump-ast-mismatches.ts';
 import { bindingsInventory } from './bindings-inventory.ts';
+import { syncBase } from './sync-base.ts';
 import { emitFactorySource } from './emit-factory-source.ts';
 import { exercise } from './exercise.ts';
 import { fieldProvenance } from './field-provenance.ts';
@@ -54,6 +55,7 @@ export const toolModules: readonly CommandModule[] = [
 	diffFailures,
 	dumpAstMismatches,
 	bindingsInventory,
+	syncBase,
 	emitFactorySource,
 	exercise,
 	fieldProvenance,

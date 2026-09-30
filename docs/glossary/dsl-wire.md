@@ -1541,6 +1541,20 @@ Wire never applies authored conflict sets: it hands `grammar()` no `conflicts`, 
 // assignable here (bivariant), so known keys retain their precise shape.
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::WireConfig.extras`
+
+`WireConfig` replaces tree-sitter's one-parameter `extras` callback with
+`($, previous?)`: the runtime hands the base grammar's extras as `previous`, and
+`overriddenList` builds the result from it, so a grammar that spreads the base
+extras types cleanly.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireConfig.rules.previous`
+
+`previous` reaches a `rules` callback typed `any`, not as the base rule: the
+index-signature arm for new rule names is intersected with the per-base-rule
+arm, and the callback's contextual signature collapses to the `any` one. A
+callback that walks `previous` annotates the parameters it uses.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::WireConfig.factoryInline`
 
 ```text
@@ -1892,6 +1906,8 @@ top-level key is a kind, some real and some virtual.
 A label naming a real kind as its root is rejected where the binding names it.
 Real kinds are derived from the grammar and virtual ones are written, so the
 collision is always the author's to resolve.
+
+`indent` is the other reserved top-level key, and is not a kind: `indent: preference('<unit>')` declares the grammar's render indent unit and comes back as `OptionsDeclarations.indent` (undefined when absent). It mirrors the runtime options object's top-level `indent` key. The reader only checks the value is a `preference`; whether the unit suits the grammar is `indentUnitOf`'s check, made where the grammar's indent characters are in hand. `OptionsCheck` types the key as a bare `PreferencePlaceholder` and `DeclaredLabels` leaves it out, so it is never a label root.
 
 `_bindings` maps an address to a label and carries nothing else. Membership and
 default live in the two halves: the binding says which label an address belongs

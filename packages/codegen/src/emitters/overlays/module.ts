@@ -242,15 +242,15 @@ export function emitFactoriesIndex(
 		HEADER,
 		`import * as O from '${source}';`,
 		"import type { Hoisted } from '@sittir/types';",
-		"import { hoist, hoistRoutes } from '@sittir/common/utils';",
+		"import { hoistAs } from '@sittir/common/utils';",
 		`export * from '${source}';`,
 		''
 	];
 	for (const { exportName } of bundleEntries(config.nodeMap, config.generatedIdTables)) {
-		lines.push(`export const ${exportName}: Hoisted<typeof O.${exportName}> = hoist(O.${exportName});`);
+		lines.push(`export const ${exportName}: Hoisted<typeof O.${exportName}> = hoistAs<typeof O.${exportName}>(O.${exportName});`);
 	}
 	for (const { key } of flattenedVariantParents(config.nodeMap, config.generatedIdTables)) {
-		lines.push(`export const ${key}: Hoisted<typeof O.${key}> = hoistRoutes(O.${key});`);
+		lines.push(`export const ${key}: Hoisted<typeof O.${key}> = hoistAs<typeof O.${key}>(O.${key});`);
 	}
 	lines.push('');
 	return lines.join('\n');

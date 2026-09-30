@@ -84,9 +84,9 @@ import {
 	type SpacingSite,
 	type DelimiterSite
 } from './render-options-rs.ts';
-import { displayNameOf } from '../compiler/model/display-name.ts';
+import { displayNameOf, displayedKinds } from '../compiler/model/display-name.ts';
 import { collectSitePreferences, type SitePreference, type SpacingSide } from '../compiler/model/site-preferences.ts';
-import type { OptionsConfig } from '../dsl/wire/options-block.ts';
+import { readOptionsBlock, type OptionsConfig } from '../dsl/wire/options-block.ts';
 import { addressTablesFor, EMPTY_ADDRESSES, type AddressTables } from './options.ts';
 import {
 	anonTokenNameOfText,
@@ -1054,11 +1054,13 @@ const EMPTY_PLAN: RenderPlan = {
 	dedentId: 0,
 	whitespaceText: [],
 	kindFlags: [],
-	indentChars: []
+	indentChars: [],
+	indent: ''
 };
 const EMPTY_PLANNED_OPTIONS: PlannedRenderOptions = { plan: EMPTY_PLAN, addresses: EMPTY_ADDRESSES, kindEntries: [] };
 
 function planRenderOptionsFor(
+	lang: GrammarName,
 	nodeMap: NodeMap,
 	generatedIdTables: GeneratedIdTables | undefined,
 	inputs: RenderOptionsInputs
@@ -1069,7 +1071,9 @@ function planRenderOptionsFor(
 	const sites =
 		inputs.sites ??
 		collectSitePreferences({ nodeMap, kindEntries, renderRules: inputs.renderRules, options: inputs.options });
-	const plan = planRenderOptions(sites, kindEntries, nodeMap, whitespaceTextOf(inputs.visibleExternals, nodeMap));
+	const declaredIndent =
+		inputs.options === undefined ? undefined : readOptionsBlock(inputs.options, displayedKinds(nodeMap)).indent;
+	const plan = planRenderOptions(sites, kindEntries, nodeMap, whitespaceTextOf(inputs.visibleExternals, nodeMap), declaredIndent, lang);
 	const addresses = inputs.addresses ?? addressTablesFor(nodeMap, kindEntries, sites, inputs.options);
 	return { plan, addresses, kindEntries };
 }
@@ -1081,7 +1085,7 @@ export function emitRenderModule(
 	generatedIdTables?: GeneratedIdTables,
 	inputs: RenderOptionsInputs = {}
 ): RustRenderModuleEmit {
-	const { plan, addresses, kindEntries: optionsKindEntries } = planRenderOptionsFor(nodeMap, generatedIdTables, inputs);
+	const { plan, addresses, kindEntries: optionsKindEntries } = planRenderOptionsFor(lang, nodeMap, generatedIdTables, inputs);
 	const structs: EmittedStruct[] = [];
 	for (const kind of [...templates.bodies.keys()].sort((a, b) => compareOrdinal(a, b))) {
 		structs.push(emitStruct(kind, nodeMap.nodes.get(kind), templates.bodies.get(kind)!, nodeMap));

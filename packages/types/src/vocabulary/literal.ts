@@ -38,10 +38,6 @@ export namespace Literal {
 		// claimed by p
 		readonly kind: 'literal.ellipsis';
 	}
-	export interface HtmlEntity<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal<G>>> {
-		// claimed by t
-		readonly kind: 'literal.html_entity';
-	}
 	export interface Null<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal<G>>> {
 		// claimed by pt
 		readonly kind: 'literal.null';
@@ -166,15 +162,15 @@ export namespace Literal {
 		export interface Raw<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.String<G>>> {
 			// claimed by pr
 			readonly kind: 'literal.string.raw';
+			readonly content: V.Unmapped<'rust:raw_string_literal_content'>;
+			// r only
+			// unmapped: <rust:raw_string_literal_content>
 			readonly rawStringLiteralEnd: V.Unmapped<'rust:raw_string_literal_end'>;
 			// r only
 			// unmapped: <rust:raw_string_literal_end>
 			readonly rawStringLiteralStart: V.Unmapped<'rust:raw_string_literal_start'>;
 			// r only
 			// unmapped: <rust:raw_string_literal_start>
-			readonly stringContent: V.Unmapped<'rust:raw_string_literal_content'>;
-			// r only
-			// unmapped: <rust:raw_string_literal_content>
 		}
 		export interface Triple<G extends GrammarContext> extends Simplify<SubKindOf<V.Literal.String<G>>> {
 			// claimed by p
@@ -206,7 +202,6 @@ export namespace Literal {
 		| V.Literal.Boolean.True<G>
 		| V.Literal.Char<G>
 		| V.Literal.Ellipsis<G>
-		| V.Literal.HtmlEntity<G>
 		| V.Literal.Null<G>
 		| V.Literal.Null.Undefined<G>
 		| V.Literal.Number<G>

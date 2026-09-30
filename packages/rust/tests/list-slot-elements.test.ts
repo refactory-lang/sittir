@@ -25,7 +25,7 @@ describe('a list slot takes its elements bare, one or many', () => {
 		const expected = 'V {\n    a: i32,\n}';
 		expect(rs.build.enumVariant({ name: 'V', body: field() }).$render()).toBe(expected);
 		expect(rs.build.enumVariant({ name: 'V', body: [field()] }).$render()).toBe(expected);
-		expect(rs.build.enumVariant({ name: 'V', body: { kind: 'field_declaration', name: 'a', type: 'i32' } }).$render()).toBe(
+		expect(rs.build.enumVariant({ name: 'V', body: { $type: rs.kinds.FieldDeclaration, name: 'a', type: 'i32' } }).$render()).toBe(
 			expected
 		);
 	});
@@ -47,9 +47,9 @@ describe('a list slot takes its elements bare, one or many', () => {
 	});
 
 	it('types the slot as the element, the elements, or the envelope', () => {
-		const one: TypeArgumentsSlot = 'Edit';
-		const many: TypeArgumentsSlot = ['Edit'];
-		const built: TypeArgumentsSlot = rs.build.typeArguments.strict(rs.build.identifier('Edit'));
+		const one = 'Edit' satisfies TypeArgumentsSlot;
+		const many = ['Edit'] satisfies TypeArgumentsSlot;
+		const built = rs.build.typeArguments.strict(rs.build.identifier('Edit')) satisfies TypeArgumentsSlot;
 		expect([one, many, built]).toHaveLength(3);
 	});
 

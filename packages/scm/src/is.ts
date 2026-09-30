@@ -3,16 +3,8 @@
 // Composition: kind × shape = concrete type via NamespaceMap.
 
 import { TSKindId } from './types.js';
-import type {
-	NamespaceMap,
-	Definition,
-	GroupExpression,
-	NamedNode,
-	NamedNodeExpression,
-	NamedNodeGroup,
-	NodeIdentifier,
-	Whitespace
-} from './types.js';
+import type { NamespaceMap } from './types.js';
+import type { NarrowTo } from '@sittir/types';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
@@ -65,13 +57,36 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeExpressionArm };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	definition(v: { readonly $type: string | number } | number): v is Definition;
-	groupExpression(v: { readonly $type: string | number } | number): v is GroupExpression;
-	namedNodeExpression(v: { readonly $type: string | number } | number): v is NamedNodeExpression;
-	nodeIdentifier(v: { readonly $type: string | number } | number): v is NodeIdentifier;
-	namedNode(v: { readonly $type: string | number } | number): v is NamedNode;
-	namedNodeGroup(v: { readonly $type: string | number } | number): v is NamedNodeGroup;
-	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
+	definition<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.AnonymousNode
+		| TSKindId.MissingNode
+		| TSKindId.Grouping
+		| TSKindId.Predicate
+		| TSKindId.List
+		| TSKindId.FieldDefinition
+	>;
+	namedNode<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.NamedNodePlain | TSKindId.NamedNodeSupertyped>;
+	namedNodeGroup<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.NamedNodeGroupChildren | TSKindId.NamedNodeGroupAnchoredLast>;
+	whitespace<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.Tight
+		| TSKindId.Space
+		| TSKindId.Tab
+		| TSKindId.Newline
+		| TSKindId.Blankline
+		| TSKindId.DoubleBlankline
+		| TSKindId.Indent
+		| TSKindId.Dedent
+	>;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.
@@ -83,9 +98,6 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 }
 
 const _supertype_definition_ids = new Set<number>([46, 45, 44, 51, 43, 49]);
-const _supertype_groupExpression_ids = new Set<number>([52]);
-const _supertype_namedNodeExpression_ids = new Set<number>([50, 53]);
-const _supertype_nodeIdentifier_ids = new Set<number>([5]);
 const _supertype_namedNode_ids = new Set<number>([56, 57]);
 const _supertype_namedNodeGroup_ids = new Set<number>([58, 59]);
 const _supertype_whitespace_ids = new Set<number>([24, 25, 26, 27, 28, 29, 30, 31]);
@@ -109,9 +121,6 @@ export const is = Object.freeze({
 	namedNodeExpressionArm: _g(TSKindId.NamedNodeExpressionArm),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	definition: _sg(_supertype_definition_ids),
-	groupExpression: _sg(_supertype_groupExpression_ids),
-	namedNodeExpression: _sg(_supertype_namedNodeExpression_ids),
-	nodeIdentifier: _sg(_supertype_nodeIdentifier_ids),
 	namedNode: _sg(_supertype_namedNode_ids),
 	namedNodeGroup: _sg(_supertype_namedNodeGroup_ids),
 	whitespace: _sg(_supertype_whitespace_ids)

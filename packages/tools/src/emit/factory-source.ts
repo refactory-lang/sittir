@@ -6,6 +6,7 @@ import {
 	type IrEntry,
 	type IrSurface,
 	type ReadNodeLike,
+	seatKindOf,
 	type Seat,
 	type SeatTable
 } from '../validate/common.ts';
@@ -139,6 +140,10 @@ function printRawNode(node: Record<string, unknown>, ctx: PrintContext, depth: n
 	return undefined;
 }
 
+function isTagEntry(key: string, value: unknown): boolean {
+	return key === '$type' && value instanceof Printed;
+}
+
 export function printValue(value: unknown, ctx: PrintContext, depth: number): string {
 	if (value instanceof Printed) {
 		return reindent(printedSource(value), depth) + triviaSuffix(value.$_trivia, ctx);
@@ -163,7 +168,7 @@ export function printValue(value: unknown, ctx: PrintContext, depth: number): st
 			if (raw !== undefined) return raw;
 		}
 		const entries = Object.entries(value).filter(
-			([k, v]) => v !== undefined && !k.startsWith('$') && !(Array.isArray(v) && v.length === 0)
+			([k, v]) => v !== undefined && (!k.startsWith('$') || isTagEntry(k, v)) && !(Array.isArray(v) && v.length === 0)
 		);
 		if (entries.length === 0) return '{}';
 		const body = entries.map(([k, v]) => `${pad(depth + 1)}${k}: ${printValue(v, ctx, depth + 1)},`).join('\n');
@@ -351,36 +356,27 @@ function seatHoistedSlot(seatKind: string, loose: LooseFacts): string | undefine
 	return required.length === 1 ? required[0] : undefined;
 }
 
-function hoistSeatElement(listKind: string, item: unknown, ctx: PrintContext): unknown {
+function hoistSeatElement(item: unknown, ctx: PrintContext): unknown {
 	const loose = ctx.loose;
-	if (loose === undefined || !isPlainObject(item) || '$type' in item) return item;
+	const seatKind = seatKindOf(item);
+	if (loose === undefined || seatKind === undefined || !isPlainObject(item) || '$type' in item) return item;
 	const keys = Object.keys(item).filter(
 		(k) => item[k] !== undefined && !(Array.isArray(item[k]) && item[k].length === 0)
 	);
-	if (keys.length !== 1) return item;
-	for (const seat of Object.values(ctx.seats?.[listKind]?.['*'] ?? {})) {
-		if (seat.shape !== 'elements') continue;
-		if (seatHoistedSlot(seat.kind, loose) === keys[0]) return item[keys[0]!];
-	}
-	return item;
+	return keys.length === 1 && seatHoistedSlot(seatKind, loose) === keys[0] ? item[keys[0]!] : item;
 }
 
-/**
- * A seated element that stayed a plain config after hoisting: its keys are
- * the seat's slots, so the seat's rules decide their spelling. The seat is
- * the one element seat whose slots hold every key the config sets.
- */
-function wrapSeatElement(listKind: string, item: unknown, ctx: PrintContext): unknown {
-	if (!isPlainObject(item) || '$type' in item) return item;
-	const keys = Object.keys(item).filter((k) => item[k] !== undefined);
-	const seats = Object.values(ctx.seats?.[listKind]?.['*'] ?? {}).filter(
-		(seat) => seat.shape === 'elements' && keys.every((k) => k in (ctx.slotKinds?.[seat.kind] ?? {}))
-	);
-	if (seats.length !== 1) return item;
-	const seat = seats[0]!;
-	const wrapped = wrapTextLeaves(seat.kind, item, ctx);
-	const sharesElementSlot = ctx.loose !== undefined && seatHoistedSlot(seat.kind, ctx.loose) !== undefined;
-	return sharesElementSlot && isPlainObject(wrapped) ? { kind: seat.kind, ...wrapped } : wrapped;
+function kindTagSource(id: number, ctx: PrintContext): string {
+	return printValue(id, ctx, 0);
+}
+
+function wrapSeatElement(item: unknown, ctx: PrintContext): unknown {
+	const seatKind = seatKindOf(item);
+	if (seatKind === undefined || !isPlainObject(item) || '$type' in item) return item;
+	const wrapped = wrapTextLeaves(seatKind, item, ctx);
+	const id = ctx.loose?.kindIdOfName(seatKind);
+	const tagged = id !== undefined && ctx.loose !== undefined && seatHoistedSlot(seatKind, ctx.loose) !== undefined;
+	return tagged && isPlainObject(wrapped) ? { $type: new Printed(id, kindTagSource(id, ctx), seatKind), ...wrapped } : wrapped;
 }
 
 function soleSlotKind(kind: string, ctx: PrintContext): string | undefined {
@@ -457,7 +453,7 @@ function loosenValue(
 	if (array !== undefined && target === value.kind) {
 		const { listKind, items } = array;
 		const printed = items.map((item) =>
-			printValue(looseListElement(listKind, hoistSeatElement(listKind, item, ctx), ctx), ctx, 0)
+			printValue(looseListElement(listKind, hoistSeatElement(item, ctx), ctx), ctx, 0)
 		);
 		const bare = printed.length === 1 && !/^[{[]/.test(printed[0]!) ? printed[0]! : undefined;
 		return new Printed(value.$type, bare ?? `[${printed.join(', ')}]`, value.kind);
@@ -498,12 +494,9 @@ function loosenValue(
 	const config = value.facts?.config;
 	if (config !== undefined && loose.nested === 'configs' && isFlatKind(value.kind, ctx)) {
 		if (branch.length === 1 && branch[0] === value.kind) return new Printed(value.$type, config, value.kind);
-		const member = typeof value.$type === 'number' ? ctx.memberNameOfId(value.$type) : undefined;
-		if (member !== undefined) {
-			const keyed =
-				config === '{}'
-					? `{ kind: ${KINDS}.${member} }`
-					: config.replace(/^\{\n/, `{\n\tkind: ${KINDS}.${member},\n`);
+		if (typeof value.$type === 'number' && ctx.memberNameOfId(value.$type) !== undefined) {
+			const tag = kindTagSource(value.$type, ctx);
+			const keyed = config === '{}' ? `{ $type: ${tag} }` : config.replace(/^\{\n/, `{\n\t$type: ${tag},\n`);
 			return new Printed(value.$type, keyed, value.kind);
 		}
 	}
@@ -634,7 +627,7 @@ export function printingFactoryMap(
 					const [first, ...rest] = args;
 					const hasOptions = isListOptions(first);
 					const items = (hasOptions ? rest : args).map((a) =>
-						wrapSeatElement(kind, hoistSeatElement(kind, wrapDirectArg(kind, a, ctx), ctx), ctx)
+						wrapSeatElement(hoistSeatElement(wrapDirectArg(kind, a, ctx), ctx), ctx)
 					);
 					const elements = items.map((a) => printValue(looseListElement(kind, a, ctx), ctx, 0));
 					const options = hasOptions ? first : undefined;

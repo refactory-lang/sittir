@@ -3,40 +3,8 @@
 // Composition: kind × shape = concrete type via NamespaceMap.
 
 import { TSKindId } from './types.js';
-import type {
-	NamespaceMap,
-	AugmentedAssignmentLhs,
-	CallExpression,
-	Comment,
-	Declaration,
-	DestructuringPattern,
-	ExportStatement,
-	ExportStatementDefault,
-	Expression,
-	Expressions,
-	ForHeader,
-	FormalParameter,
-	ImportIdentifier,
-	ImportSpecifier,
-	IndexSignature,
-	MetaProperty,
-	ModuleExportName,
-	Number,
-	NumberBigint,
-	ParenthesizedExpression,
-	Pattern,
-	PrimaryExpression,
-	PrimaryType,
-	PropertyName,
-	Statement,
-	String,
-	TupleTypeMember,
-	Type,
-	UpdateExpression,
-	VariableDeclarator,
-	Whitespace,
-	_Identifier
-} from './types.js';
+import type { NamespaceMap } from './types.js';
+import type { NarrowTo } from '@sittir/types';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
@@ -518,37 +486,213 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementEqualsExport };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	exportStatement(v: { readonly $type: string | number } | number): v is ExportStatement;
-	moduleExportName(v: { readonly $type: string | number } | number): v is ModuleExportName;
-	declaration(v: { readonly $type: string | number } | number): v is Declaration;
-	importSpecifier(v: { readonly $type: string | number } | number): v is ImportSpecifier;
-	statement(v: { readonly $type: string | number } | number): v is Statement;
-	variableDeclarator(v: { readonly $type: string | number } | number): v is VariableDeclarator;
-	forHeader(v: { readonly $type: string | number } | number): v is ForHeader;
-	parenthesizedExpression(v: { readonly $type: string | number } | number): v is ParenthesizedExpression;
-	expressions(v: { readonly $type: string | number } | number): v is Expressions;
-	expression(v: { readonly $type: string | number } | number): v is Expression;
-	primaryExpression(v: { readonly $type: string | number } | number): v is PrimaryExpression;
-	formalParameter(v: { readonly $type: string | number } | number): v is FormalParameter;
-	callExpression(v: { readonly $type: string | number } | number): v is CallExpression;
-	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): v is AugmentedAssignmentLhs;
-	destructuringPattern(v: { readonly $type: string | number } | number): v is DestructuringPattern;
-	updateExpression(v: { readonly $type: string | number } | number): v is UpdateExpression;
-	string(v: { readonly $type: string | number } | number): v is String;
-	comment(v: { readonly $type: string | number } | number): v is Comment;
-	number(v: { readonly $type: string | number } | number): v is Number;
-	identifier(v: { readonly $type: string | number } | number): v is _Identifier;
-	metaProperty(v: { readonly $type: string | number } | number): v is MetaProperty;
-	pattern(v: { readonly $type: string | number } | number): v is Pattern;
-	propertyName(v: { readonly $type: string | number } | number): v is PropertyName;
-	importIdentifier(v: { readonly $type: string | number } | number): v is ImportIdentifier;
-	type(v: { readonly $type: string | number } | number): v is Type;
-	tupleTypeMember(v: { readonly $type: string | number } | number): v is TupleTypeMember;
-	primaryType(v: { readonly $type: string | number } | number): v is PrimaryType;
-	indexSignature(v: { readonly $type: string | number } | number): v is IndexSignature;
-	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
-	exportStatementDefault(v: { readonly $type: string | number } | number): v is ExportStatementDefault;
-	numberBigint(v: { readonly $type: string | number } | number): v is NumberBigint;
+	exportStatement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		TSKindId.ExportStatementTypeExport | TSKindId.ExportStatementEqualsExport | TSKindId.ExportStatementNamespaceExport
+	>;
+	declaration<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.FunctionDeclaration
+		| TSKindId.GeneratorFunctionDeclaration
+		| TSKindId.ClassDeclaration
+		| TSKindId.LexicalDeclaration
+		| TSKindId.VariableDeclaration
+		| TSKindId.FunctionSignature
+		| TSKindId.AbstractClassDeclaration
+		| TSKindId.Module
+		| TSKindId.InternalModule
+		| TSKindId.TypeAliasDeclaration
+		| TSKindId.EnumDeclaration
+		| TSKindId.InterfaceDeclaration
+		| TSKindId.ImportAlias
+		| TSKindId.AmbientDeclaration
+	>;
+	importSpecifier<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.ImportSpecifierName | TSKindId.ImportSpecifierAs>;
+	statement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.ImportStatement
+		| TSKindId.DebuggerStatement
+		| TSKindId.ExpressionStatement
+		| TSKindId.StatementBlock
+		| TSKindId.IfStatement
+		| TSKindId.SwitchStatement
+		| TSKindId.ForStatement
+		| TSKindId.ForInStatement
+		| TSKindId.WhileStatement
+		| TSKindId.DoStatement
+		| TSKindId.TryStatement
+		| TSKindId.WithStatement
+		| TSKindId.BreakStatement
+		| TSKindId.ContinueStatement
+		| TSKindId.ReturnStatement
+		| TSKindId.ThrowStatement
+		| TSKindId.EmptyStatement
+		| TSKindId.LabeledStatement
+	>;
+	variableDeclarator<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.VariableDeclaratorPlain | TSKindId.VariableDeclaratorDefinite>;
+	forHeader<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.ForHeaderLhs | TSKindId.ForHeaderVarKind | TSKindId.ForHeaderLetConstKind>;
+	parenthesizedExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.ParenthesizedExpressionTyped | TSKindId.ParenthesizedExpressionSequence>;
+	expression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.AsExpression
+		| TSKindId.SatisfiesExpression
+		| TSKindId.InstantiationExpression
+		| TSKindId.InternalModule
+		| TSKindId.TypeAssertion
+		| TSKindId.AssignmentExpression
+		| TSKindId.AugmentedAssignmentExpression
+		| TSKindId.AwaitExpression
+		| TSKindId.UnaryExpression
+		| TSKindId.BinaryExpression
+		| TSKindId.TernaryExpression
+		| TSKindId.NewExpression
+		| TSKindId.YieldExpression
+	>;
+	primaryExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.SubscriptExpression
+		| TSKindId.MemberExpression
+		| TSKindId.Undefined
+		| TSKindId.Identifier
+		| TSKindId.DeclareKeyword
+		| TSKindId.NamespaceKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| TSKindId.OverrideKeyword
+		| TSKindId.ReadonlyKeyword
+		| TSKindId.ModuleKeyword
+		| TSKindId.AnyKeyword
+		| TSKindId.NumberKeyword
+		| TSKindId.BooleanKeyword
+		| TSKindId.StringKeyword
+		| TSKindId.SymbolKeyword
+		| TSKindId.ExportKeyword
+		| TSKindId.ObjectKeyword
+		| TSKindId.NewKeyword
+		| TSKindId.GetKeyword
+		| TSKindId.SetKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.StaticKeyword
+		| TSKindId.LetKeyword
+		| TSKindId.This
+		| TSKindId.Super
+		| TSKindId.TemplateString
+		| TSKindId.Regex
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.Null
+		| TSKindId.Object
+		| TSKindId.Array
+		| TSKindId.FunctionExpression
+		| TSKindId.ArrowFunction
+		| TSKindId.GeneratorFunction
+		| TSKindId.Class
+		| TSKindId.NonNullExpression
+	>;
+	callExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		TSKindId.CallExpressionCall | TSKindId.CallExpressionTemplateCall | TSKindId.CallExpressionMember
+	>;
+	updateExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix>;
+	string<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.StringDouble | TSKindId.StringSingle>;
+	comment<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.CommentLine | TSKindId.CommentBlock>;
+	number<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.NumberHex
+		| TSKindId.NumberFloatPoint
+		| TSKindId.NumberFloatLeadingPoint
+		| TSKindId.NumberFloatScientific
+		| TSKindId.NumberDecimal
+		| TSKindId.NumberBinary
+		| TSKindId.NumberOctal
+	>;
+	metaProperty<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta>;
+	pattern<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.LhsExpression | TSKindId.RestPattern>;
+	type<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.FunctionType | TSKindId.ReadonlyType | TSKindId.ConstructorType | TSKindId.InferType>;
+	primaryType<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.ParenthesizedType
+		| TSKindId.PredefinedType
+		| TSKindId.NestedTypeIdentifier
+		| TSKindId.GenericType
+		| TSKindId.ObjectType
+		| TSKindId.ArrayType
+		| TSKindId.TupleType
+		| TSKindId.FlowMaybeType
+		| TSKindId.TypeQuery
+		| TSKindId.IndexTypeQuery
+		| TSKindId.This
+		| TSKindId.ExistentialType
+		| TSKindId.LiteralType
+		| TSKindId.LookupType
+		| TSKindId.ConditionalType
+		| TSKindId.TemplateLiteralType
+		| TSKindId.IntersectionType
+		| TSKindId.UnionType
+	>;
+	indexSignature<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.IndexSignatureColon | TSKindId.IndexSignatureMappedTypeClause>;
+	whitespace<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.Tight
+		| TSKindId.Space
+		| TSKindId.Tab
+		| TSKindId.Newline
+		| TSKindId.Blankline
+		| TSKindId.DoubleBlankline
+		| TSKindId.Indent
+		| TSKindId.Dedent
+	>;
+	exportStatementDefault<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.ExportStatementDefaultFrom | TSKindId.ExportStatementDefaultDeclaration>;
+	numberBigint<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		TSKindId.NumberBigintHex | TSKindId.NumberBigintBinary | TSKindId.NumberBigintOctal | TSKindId.NumberBigintDecimal
+	>;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.
@@ -559,47 +703,36 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_exportStatement_ids = new Set<number>([400, 401, 399]);
-const _supertype_moduleExportName_ids = new Set<number>([1]);
+const _supertype_exportStatement_ids = new Set<number>([390, 391, 389]);
 const _supertype_declaration_ids = new Set<number>([
 	246, 248, 243, 206, 205, 295, 306, 307, 308, 317, 314, 312, 310, 305
 ]);
-const _supertype_importSpecifier_ids = new Set<number>([412, 413]);
+const _supertype_importSpecifier_ids = new Set<number>([402, 403]);
 const _supertype_statement_ids = new Set<number>([
 	196, 221, 204, 208, 210, 211, 212, 213, 215, 216, 217, 218, 219, 220, 222, 223, 224, 225
 ]);
-const _supertype_variableDeclarator_ids = new Set<number>([433, 434]);
-const _supertype_forHeader_ids = new Set<number>([437, 438, 439]);
-const _supertype_parenthesizedExpression_ids = new Set<number>([414, 415]);
-const _supertype_expressions_ids = new Set<number>([269]);
+const _supertype_variableDeclarator_ids = new Set<number>([423, 424]);
+const _supertype_forHeader_ids = new Set<number>([427, 428, 429]);
+const _supertype_parenthesizedExpression_ids = new Set<number>([404, 405]);
 const _supertype_expression_ids = new Set<number>([298, 299, 300, 308, 297, 259, 261, 255, 267, 266, 265, 254, 234]);
 const _supertype_primaryExpression_ids = new Set<number>([
 	257, 256, 124, 1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120,
 	271, 273, 121, 122, 123, 235, 239, 245, 249, 247, 242, 292
 ]);
-const _supertype_formalParameter_ids = new Set<number>([320, 321]);
-const _supertype_callExpression_ids = new Set<number>([416, 417, 418]);
-const _supertype_augmentedAssignmentLhs_ids = new Set<number>([
-	256, 257, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 292
-]);
-const _supertype_destructuringPattern_ids = new Set<number>([236, 240]);
-const _supertype_updateExpression_ids = new Set<number>([421, 422]);
-const _supertype_string_ids = new Set<number>([419, 420]);
+const _supertype_callExpression_ids = new Set<number>([406, 407, 408]);
+const _supertype_updateExpression_ids = new Set<number>([411, 412]);
+const _supertype_string_ids = new Set<number>([409, 410]);
 const _supertype_comment_ids = new Set<number>([152, 153]);
 const _supertype_number_ids = new Set<number>([154, 155, 156, 157, 158, 159, 160]);
-const _supertype_identifier_ids = new Set<number>([124, 1]);
-const _supertype_metaProperty_ids = new Set<number>([435, 436]);
+const _supertype_metaProperty_ids = new Set<number>([425, 426]);
 const _supertype_pattern_ids = new Set<number>([258, 284]);
-const _supertype_propertyName_ids = new Set<number>([118, 289]);
-const _supertype_importIdentifier_ids = new Set<number>([1, 7]);
 const _supertype_type_ids = new Set<number>([375, 372, 337, 341]);
-const _supertype_tupleTypeMember_ids = new Set<number>([332, 333, 334, 335]);
 const _supertype_primaryType_ids = new Set<number>([
 	358, 359, 311, 343, 361, 370, 371, 357, 350, 351, 119, 356, 354, 352, 342, 340, 374, 373
 ]);
-const _supertype_indexSignature_ids = new Set<number>([409, 410]);
+const _supertype_indexSignature_ids = new Set<number>([399, 400]);
 const _supertype_whitespace_ids = new Set<number>([180, 181, 182, 183, 184, 185, 186, 187]);
-const _supertype_exportStatementDefault_ids = new Set<number>([426, 427]);
+const _supertype_exportStatementDefault_ids = new Set<number>([416, 417]);
 const _supertype_numberBigint_ids = new Set<number>([161, 162, 163, 164]);
 
 export const is = Object.freeze({
@@ -764,31 +897,22 @@ export const is = Object.freeze({
 	exportStatementEqualsExport: _g(TSKindId.ExportStatementEqualsExport),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	exportStatement: _sg(_supertype_exportStatement_ids),
-	moduleExportName: _sg(_supertype_moduleExportName_ids),
 	declaration: _sg(_supertype_declaration_ids),
 	importSpecifier: _sg(_supertype_importSpecifier_ids),
 	statement: _sg(_supertype_statement_ids),
 	variableDeclarator: _sg(_supertype_variableDeclarator_ids),
 	forHeader: _sg(_supertype_forHeader_ids),
 	parenthesizedExpression: _sg(_supertype_parenthesizedExpression_ids),
-	expressions: _sg(_supertype_expressions_ids),
 	expression: _sg(_supertype_expression_ids),
 	primaryExpression: _sg(_supertype_primaryExpression_ids),
-	formalParameter: _sg(_supertype_formalParameter_ids),
 	callExpression: _sg(_supertype_callExpression_ids),
-	augmentedAssignmentLhs: _sg(_supertype_augmentedAssignmentLhs_ids),
-	destructuringPattern: _sg(_supertype_destructuringPattern_ids),
 	updateExpression: _sg(_supertype_updateExpression_ids),
 	string: _sg(_supertype_string_ids),
 	comment: _sg(_supertype_comment_ids),
 	number: _sg(_supertype_number_ids),
-	identifier: _sg(_supertype_identifier_ids),
 	metaProperty: _sg(_supertype_metaProperty_ids),
 	pattern: _sg(_supertype_pattern_ids),
-	propertyName: _sg(_supertype_propertyName_ids),
-	importIdentifier: _sg(_supertype_importIdentifier_ids),
 	type: _sg(_supertype_type_ids),
-	tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
 	primaryType: _sg(_supertype_primaryType_ids),
 	indexSignature: _sg(_supertype_indexSignature_ids),
 	whitespace: _sg(_supertype_whitespace_ids),

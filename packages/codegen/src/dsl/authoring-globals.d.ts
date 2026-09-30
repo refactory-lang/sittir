@@ -34,7 +34,9 @@ declare global {
 
 	declare const prec: {
 		<R extends AuthoringRule>(value: number | string, rule: R): PrecRule<ToGrammarRule<R>>;
+		left<R extends AuthoringRule>(rule: R): PrecLeftRule<ToGrammarRule<R>>;
 		left<R extends AuthoringRule>(value: number | string, rule: R): PrecLeftRule<ToGrammarRule<R>>;
+		right<R extends AuthoringRule>(rule: R): PrecRightRule<ToGrammarRule<R>>;
 		right<R extends AuthoringRule>(value: number | string, rule: R): PrecRightRule<ToGrammarRule<R>>;
 		dynamic<R extends AuthoringRule>(value: number, rule: R): PrecDynamicRule<ToGrammarRule<R>>;
 	};

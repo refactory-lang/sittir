@@ -325,6 +325,20 @@ Compile the bindings, derive the vocabulary they imply, and emit the base interf
 pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory [options]
 ```
 
+### `tool sync-base`
+
+Merge the base branch into this one, taking the base side of generated files and regenerating them
+
+**Options**
+
+- `--base <ref>` — The ref to merge (fetched first when it names a remote) (default: `origin/master`)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool sync-base [options]
+```
+
 ### `tool emit-factory-source`
 
 Print the strict factory source that rebuilds a source file

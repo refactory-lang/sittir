@@ -1,5 +1,8 @@
 import { field as fieldImpl, type FieldPlaceholder } from './primitives/field.ts';
 import { alias as aliasImpl, type AliasPlaceholder } from './primitives/alias.ts';
+import { rule as ruleImpl, type RulePlaceholder } from './primitives/rule.ts';
+import { role as roleImpl } from './primitives/role.ts';
+import { refine as refineImpl, type FormMap } from './primitives/refine.ts';
 import type { GrammarResult, EnrichedGrammar } from './enrich.ts';
 import type { WiredOpts } from './wire/wire.ts';
 import type {
@@ -8,6 +11,7 @@ import type {
 	GrammarRule,
 	GrammarJson,
 	AuthoringRule,
+	SymbolRule,
 	ToGrammarRule,
 	PrecRule,
 	PrecLeftRule,
@@ -32,7 +36,7 @@ export type { RuleCause, RuleCauseDeclaration } from './primitives/rule-cause.ts
 export type { WireConfig, WiredOpts } from './wire/wire.ts';
 
 interface AuthoringField {
-	(name: string): FieldPlaceholder;
+	<const N extends string>(name: N): FieldPlaceholder<N>;
 	<const N extends string>(name: N, content: AuthoringRule): FieldRule<N, GrammarRule>;
 }
 export const field = fieldImpl as unknown as AuthoringField;
@@ -43,9 +47,26 @@ interface AuthoringAlias {
 }
 export const alias = aliasImpl as unknown as AuthoringAlias;
 
+interface AuthoringNewRule {
+	(name: string, body: ($: Readonly<Record<string, SymbolRule<string>>>) => AuthoringRule): RulePlaceholder;
+}
+export const rule = ruleImpl as unknown as AuthoringNewRule;
+
+interface AuthoringRole {
+	(symbol: SymbolRule<string>, roleName: 'indent' | 'dedent' | 'newline'): SymbolRule<string>;
+}
+export const role = roleImpl as unknown as AuthoringRole;
+
+interface AuthoringRefine {
+	<R extends AuthoringRule>(original: R, forms: FormMap): R;
+}
+export const refine = refineImpl as unknown as AuthoringRefine;
+
 interface AuthoringPrec {
 	<R extends AuthoringRule>(value: number | string, rule: R): PrecRule<ToGrammarRule<R>>;
+	left<R extends AuthoringRule>(rule: R): PrecLeftRule<ToGrammarRule<R>>;
 	left<R extends AuthoringRule>(value: number | string, rule: R): PrecLeftRule<ToGrammarRule<R>>;
+	right<R extends AuthoringRule>(rule: R): PrecRightRule<ToGrammarRule<R>>;
 	right<R extends AuthoringRule>(value: number | string, rule: R): PrecRightRule<ToGrammarRule<R>>;
 	dynamic<R extends AuthoringRule>(value: number, rule: R): PrecDynamicRule<ToGrammarRule<R>>;
 }

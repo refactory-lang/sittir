@@ -1,5 +1,5 @@
 {
-	"grammarHash": "b00ecc0c2c7f45681e091c644cfbd343174c92863513062c45205b0108e762d0",
+	"grammarHash": "a6cb9319d2782b85912ae964829a7fcaebd30ebe7613481d5e71c094dbdd7bb4",
 	"resolutions": [
 		{
 			"resolution": {
@@ -153,16 +153,16 @@
 				"kind": "AddConflict",
 				"symbols": [
 					"primary_expression",
-					"_kw_async_marker"
+					"arrow_function"
 				]
 			},
-			"step": "default",
+			"step": "upstream-declared",
 			"sourceChains": [
 				[
 					"primary_expression"
 				],
 				[
-					"_kw_async_marker"
+					"arrow_function"
 				]
 			],
 			"conflict": {
@@ -172,7 +172,8 @@
 				"lookahead": "'('",
 				"interpretations": [
 					"primary_expression",
-					"_kw_async_marker"
+					"arrow_function",
+					"arrow_function"
 				]
 			}
 		},
@@ -362,20 +363,20 @@
 				"kind": "AddConflict",
 				"symbols": [
 					"primary_expression",
-					"_property_name",
-					"_kw_async_marker"
+					"arrow_function",
+					"_property_name"
 				]
 			},
-			"step": "default",
+			"step": "upstream-declared",
 			"sourceChains": [
 				[
 					"primary_expression"
 				],
 				[
-					"_property_name"
+					"arrow_function"
 				],
 				[
-					"_kw_async_marker"
+					"_property_name"
 				]
 			],
 			"conflict": {
@@ -386,37 +387,9 @@
 				"lookahead": "'('",
 				"interpretations": [
 					"primary_expression",
-					"_property_name",
-					"_kw_async_marker"
-				]
-			}
-		},
-		{
-			"resolution": {
-				"kind": "AddConflict",
-				"symbols": [
-					"primary_expression",
-					"_kw_static_marker"
-				]
-			},
-			"step": "default",
-			"sourceChains": [
-				[
-					"primary_expression"
-				],
-				[
-					"_kw_static_marker"
-				]
-			],
-			"conflict": {
-				"symbolSequence": [
-					"'{'",
-					"'static'"
-				],
-				"lookahead": "'*'",
-				"interpretations": [
-					"primary_expression",
-					"_kw_static_marker"
+					"arrow_function",
+					"arrow_function",
+					"_property_name"
 				]
 			}
 		},
@@ -766,37 +739,6 @@
 				"interpretations": [
 					"class_static_block",
 					"_property_name"
-				]
-			}
-		},
-		{
-			"resolution": {
-				"kind": "AddConflict",
-				"symbols": [
-					"abstract_method_signature",
-					"_kw_abstract_marker"
-				]
-			},
-			"step": "default",
-			"sourceChains": [
-				[
-					"abstract_method_signature"
-				],
-				[
-					"_kw_abstract_marker"
-				]
-			],
-			"conflict": {
-				"symbolSequence": [
-					"'class'",
-					"'{'",
-					"'abstract'"
-				],
-				"lookahead": "'type'",
-				"interpretations": [
-					"abstract_method_signature",
-					"abstract_method_signature",
-					"_kw_abstract_marker"
 				]
 			}
 		},
@@ -1316,12 +1258,45 @@
 				"symbolSequence": [
 					"'for'",
 					"'('",
-					"_kind",
+					"'let'",
 					"identifier"
 				],
 				"lookahead": "_automatic_semicolon",
 				"interpretations": [
 					"variable_declarator_plain",
+					"for_header_let_const_kind"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"primary_expression",
+					"for_header_let_const_kind"
+				]
+			},
+			"step": "upstream-declared",
+			"sourceChains": [
+				[
+					"primary_expression"
+				],
+				[
+					"for_header_let_const_kind",
+					"_for_header"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'for'",
+					"'await'",
+					"'('",
+					"'let'"
+				],
+				"lookahead": "'['",
+				"interpretations": [
+					"primary_expression",
+					"for_header_let_const_kind",
 					"for_header_let_const_kind"
 				]
 			}

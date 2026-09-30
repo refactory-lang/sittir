@@ -856,19 +856,16 @@ describe('enrich()', () => {
 					hidden: true
 				})
 			);
-			// The synthesized enum rule exists in the enriched rules bag, low
-			// precedence so it defers to whatever else the same literal starts.
+			// The synthesized enum rule exists in the enriched rules bag as the plain
+			// choice: wire inlines it, so no precedence ranks it against other uses
+			// of the same literal.
 			expect(out.grammar.rules._binary_expression_operator).toEqual({
-				type: 'PREC',
-				content: {
-					type: 'CHOICE',
-					members: ['+', '-', '*', '/'].map((value) => ({
-						type: 'STRING',
-						value,
-						annotations: { variantOf: '_binary_expression_operator' }
-					}))
-				},
-				value: -1
+				type: 'CHOICE',
+				members: ['+', '-', '*', '/'].map((value) => ({
+					type: 'STRING',
+					value,
+					annotations: { variantOf: '_binary_expression_operator' }
+				}))
 			});
 		});
 

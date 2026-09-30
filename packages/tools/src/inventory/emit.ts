@@ -33,7 +33,7 @@ export interface Member {
 	readonly name: string;
 	readonly optional: boolean;
 	readonly type: TypeExpr;
-	readonly trailing: readonly string[];
+	readonly trailing: readonly Comment[];
 }
 
 export interface Interface {
@@ -41,11 +41,11 @@ export interface Interface {
 	readonly name: string;
 	readonly extendsType: TypeExpr | null;
 	readonly members: readonly Member[];
-	readonly bodyLeading: readonly string[];
-	readonly trailing: readonly string[];
+	readonly bodyLeading: readonly Comment[];
+	readonly trailing: readonly Comment[];
 	readonly generic: boolean;
 	readonly keyParam: boolean;
-	readonly leading: readonly string[];
+	readonly leading: readonly Comment[];
 }
 
 export interface TypeAlias {
@@ -62,9 +62,17 @@ export interface Namespace {
 
 export type Statement = Interface | TypeAlias | Namespace;
 
+export interface Comment {
+	readonly block: boolean;
+	readonly text: string;
+}
+
+const lineComment = (text: string): Comment => ({ block: false, text });
+const blockComment = (text: string): Comment => ({ block: true, text });
+
 export interface VocabularyFile {
 	readonly name: string;
-	readonly leading: readonly string[];
+	readonly leading: readonly Comment[];
 	readonly imports: readonly {
 		readonly names: readonly string[] | null;
 		readonly namespace: string | null;
@@ -242,11 +250,11 @@ function memberDecl(d: Derivation, v: string, name: string, f: MemberFacts): Mem
 		const arr: TypeExpr = { k: 'array', of: t };
 		t = f.scalar ? { k: 'union', of: [t, arr] } : arr;
 	}
-	const trailing: string[] = [];
+	const trailing: Comment[] = [];
 	const claimers = d.claimers.get(v);
 	if (claimers === undefined || [...f.grammars].sort().join() !== [...claimers].sort().join())
-		trailing.push(`// ${grammarTag(f.grammars)} only`);
-	if (dropped.length > 0) trailing.push(`// unmapped: ${dropped.join(' ')}`);
+		trailing.push(lineComment(`// ${grammarTag(f.grammars)} only`));
+	if (dropped.length > 0) trailing.push(lineComment(`// unmapped: ${dropped.join(' ')}`));
 	return { name, optional: f.optional, type: t, trailing };
 }
 
@@ -276,7 +284,7 @@ function emitLevel(d: Derivation, v: string): Statement[] {
 					trailing: []
 				})),
 			bodyLeading: [],
-			trailing: [`// claimed by ${claimedBy} content-derived`],
+			trailing: [lineComment(`// claimed by ${claimedBy} content-derived`)],
 			generic: true,
 			keyParam: false,
 			leading: []
@@ -319,8 +327,8 @@ function emitLevel(d: Derivation, v: string): Statement[] {
 			name,
 			extendsType: ext,
 			members,
-			bodyLeading: claimedBy !== '' && members.length > 0 ? [`// claimed by ${claimedBy}`] : [],
-			trailing: claimedBy !== '' && members.length === 0 ? [`// claimed by ${claimedBy}`] : [],
+			bodyLeading: claimedBy !== '' && members.length > 0 ? [lineComment(`// claimed by ${claimedBy}`)] : [],
+			trailing: claimedBy !== '' && members.length === 0 ? [lineComment(`// claimed by ${claimedBy}`)] : [],
 			generic: true,
 			keyParam: false,
 			leading: []
@@ -363,7 +371,7 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 		}
 		files.push({
 			name: top,
-			leading: ["// Generated from the grammars' bindings.scm and slot models. Do not edit."],
+			leading: [lineComment("// Generated from the grammars' bindings.scm and slot models. Do not edit.")],
 			imports: [
 				{ names: ['GrammarContext'], namespace: null, from: './context.ts' },
 				...(statements.some(extendsSubKind)
@@ -381,7 +389,7 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 		tops.map((t) => ({ name: t, optional: false, type: value(t), trailing: [] }));
 	files.push({
 		name: 'context',
-		leading: ["// Generated from the grammars' bindings.scm. Do not edit."],
+		leading: [lineComment("// Generated from the grammars' bindings.scm. Do not edit.")],
 		imports: [{ names: null, namespace: 'V', from: './index.ts' }],
 		statements: [
 			{
@@ -394,7 +402,9 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 				generic: false,
 				keyParam: false,
 				leading: [
-					"/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar. */"
+					blockComment(
+						"/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar. */"
+					)
 				]
 			},
 			{
@@ -406,7 +416,7 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 				trailing: [],
 				generic: false,
 				keyParam: true,
-				leading: ['/** A grammar kind a member admits that no binding claims yet; the name says which. */']
+				leading: [blockComment('/** A grammar kind a member admits that no binding claims yet; the name says which. */')]
 			},
 			{
 				k: 'interface',
@@ -417,7 +427,7 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 				trailing: [],
 				generic: false,
 				keyParam: false,
-				leading: ["/** The permissive closure: every namespace's full kind-set. */"]
+				leading: [blockComment("/** The permissive closure: every namespace's full kind-set. */")]
 			}
 		]
 	});
@@ -435,9 +445,9 @@ const str = (text: string) =>
 			)
 	);
 
-function nestedName(path: readonly string[]): Identifier | ReturnType<typeof ir.nestedIdentifier.strict> {
+function nestedName(path: readonly string[]): Identifier.Bound | ReturnType<typeof ir.nestedIdentifier.strict> {
 	const [head, ...rest] = path;
-	let acc: Identifier | ReturnType<typeof ir.nestedIdentifier.strict> = ir.identifier(head ?? '');
+	let acc: Identifier.Bound | ReturnType<typeof ir.nestedIdentifier.strict> = ir.identifier(head ?? '');
 	for (const seg of rest) acc = ir.nestedIdentifier.strict({ object: acc, property: ir.identifier(seg) });
 	return acc;
 }
@@ -445,7 +455,7 @@ function nestedName(path: readonly string[]): Identifier | ReturnType<typeof ir.
 function extendsIr(
 	t: TypeExpr,
 	base: boolean
-): Identifier | NestedTypeIdentifier | ReturnType<typeof ir.genericType.strict> {
+): Identifier.Bound | NestedTypeIdentifier.Bound | ReturnType<typeof ir.genericType.strict> {
 	if (t.k === 'ident') return ir.identifier(t.name);
 	if (t.k === 'subkind') {
 		const applied = (name: string, arg: ReturnType<typeof extendsIr>) =>
@@ -470,7 +480,7 @@ function extendsIr(
 	throw new Error(`bindings-inventory: an interface extends a name, not a ${t.k}`);
 }
 
-function typeName(path: readonly string[]): Identifier | NestedTypeIdentifier {
+function typeName(path: readonly string[]): Identifier.Bound | NestedTypeIdentifier.Bound {
 	const last = path.at(-1) ?? '';
 	const module = path.slice(0, -1);
 	return module.length === 0
@@ -486,7 +496,7 @@ const KEYWORDS = {
 	never: TSKindId.NeverKeyword
 } as const;
 
-function toPrimary(t: TypeExpr, base: boolean): PrimaryType | TypeIdentifier.Types {
+function toPrimary(t: TypeExpr, base: boolean): PrimaryType.Bound | TypeIdentifier.Types {
 	switch (t.k) {
 		case 'ident':
 			return ir.identifier(t.name);
@@ -519,7 +529,7 @@ function toPrimary(t: TypeExpr, base: boolean): PrimaryType | TypeIdentifier.Typ
 			return ir.parenthesizedType.strict(toIr(t, base));
 		case 'template': {
 			const chunks = t.text.split('${string}');
-			const parts: (TemplateChars | TemplateType)[] = [];
+			const parts: (TemplateChars.Bound | TemplateType.Bound)[] = [];
 			chunks.forEach((c, i) => {
 				if (c !== '') parts.push(ir.templateChars(c));
 				if (i < chunks.length - 1) parts.push(ir.templateType.strict(TSKindId.StringKeyword));
@@ -529,11 +539,11 @@ function toPrimary(t: TypeExpr, base: boolean): PrimaryType | TypeIdentifier.Typ
 	}
 }
 
-function toIr(t: TypeExpr, base: boolean): Type | TypeIdentifier.Types {
+function toIr(t: TypeExpr, base: boolean): Type.Bound | TypeIdentifier.Types {
 	if (t.k === 'kw') return KEYWORDS[t.name];
 	if (t.k !== 'union') return toPrimary(t, base);
 	const parts = t.of.map((p) => toIr(p, base));
-	let acc: Type | TypeIdentifier.Types = parts[0] ?? KEYWORDS.never;
+	let acc: Type.Bound | TypeIdentifier.Types = parts[0] ?? KEYWORDS.never;
 	for (const p of parts.slice(1)) acc = ir.unionType.strict({ left: acc, right: p });
 	return acc;
 }
@@ -555,26 +565,30 @@ const keyParams = () =>
 		})
 	);
 
+type CommentNode = ReturnType<typeof ir.comment.line> | ReturnType<typeof ir.comment.block>;
+
 type Triviable<N> = {
-	readonly $trivia: { leading(...items: string[]): N; trailing(...items: string[]): N };
+	readonly $trivia: { leading(...items: CommentNode[]): N; trailing(...items: CommentNode[]): N };
 };
 
-function withTrivia<N extends Triviable<N>>(node: N, leading: readonly string[], trailing: readonly string[]): N {
-	const led = leading.length > 0 ? node.$trivia.leading(...leading) : node;
-	return trailing.length > 0 ? led.$trivia.trailing(...trailing) : led;
+const commentIr = (c: Comment): CommentNode => (c.block ? ir.comment.block(c.text) : ir.comment.line(c.text));
+
+function withTrivia<N extends Triviable<N>>(node: N, leading: readonly Comment[], trailing: readonly Comment[]): N {
+	const led = leading.length > 0 ? node.$trivia.leading(...leading.map(commentIr)) : node;
+	return trailing.length > 0 ? led.$trivia.trailing(...trailing.map(commentIr)) : led;
 }
 
-function memberIr(m: Member, base: boolean, leading: readonly string[]): PropertySignature {
-	const built = ir.propertySignature.strict({
+function memberIr(m: Member, base: boolean, leading: readonly Comment[]): PropertySignature.Bound {
+	const built = ir.propertySignature({
 		readonlyMarker: true,
-		name: ir.identifier(m.name),
+		name: m.name,
 		...(m.optional ? { optionalMarker: true } : {}),
 		type: ir.typeAnnotation.strict(toIr(m.type, base))
 	});
 	return withTrivia(built, leading, m.trailing);
 }
 
-function interfaceIr(s: Interface, base: boolean): TsStatement {
+function interfaceIr(s: Interface, base: boolean): TsStatement.Bound {
 	const [first, ...rest] = s.members;
 	const members = first
 		? ir.objectTypeContent.strict(
@@ -593,7 +607,7 @@ function interfaceIr(s: Interface, base: boolean): TsStatement {
 	return withTrivia(built, s.leading, s.trailing);
 }
 
-function statementIr(s: Statement, base: boolean): TsStatement {
+function statementIr(s: Statement, base: boolean): TsStatement.Bound {
 	switch (s.k) {
 		case 'interface':
 			return interfaceIr(s, base);
@@ -618,7 +632,7 @@ function statementIr(s: Statement, base: boolean): TsStatement {
 	}
 }
 
-function importIr(imp: VocabularyFile['imports'][number], leading: readonly string[]): TsStatement {
+function importIr(imp: VocabularyFile['imports'][number], leading: readonly Comment[]): TsStatement.Bound {
 	const [first, ...rest] = (imp.names ?? []).map((n) => ir.importSpecifier.name.strict({ name: ir.identifier(n) }));
 	const clause =
 		imp.namespace !== null
@@ -637,7 +651,7 @@ function importIr(imp: VocabularyFile['imports'][number], leading: readonly stri
 
 export async function renderVocabularyFile(file: VocabularyFile): Promise<string> {
 	const base = file.name === 'context';
-	const statements: TsStatement[] = [
+	const statements: TsStatement.Bound[] = [
 		...file.imports.map((imp, i) => importIr(imp, i === 0 ? file.leading : [])),
 		...file.statements.map((s) => statementIr(s, base))
 	];

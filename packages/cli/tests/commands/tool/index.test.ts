@@ -34,6 +34,7 @@ const EXPECTED = [
 	'profile-factory',
 	'propose-14',
 	'separated-lists',
+	'sync-base',
 	'test-history',
 	'text-kind-overlap',
 	'trivia-placement',
@@ -42,7 +43,7 @@ const EXPECTED = [
 ];
 
 describe('tool namespace', () => {
-	it('registers exactly the 35 converted tools', () => {
+	it('registers exactly the 36 converted tools', () => {
 		expect(toolModules.map((m) => m.name).sort()).toEqual([...EXPECTED].sort());
 	});
 

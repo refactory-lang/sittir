@@ -19,7 +19,7 @@ import type {
 	FunctionItem,
 	ParametersElements,
 	ConfigFor,
-	BuiltFor,
+	BoundFor,
 	LooseFor,
 	LooseConfigFor,
 	NamespaceMap,
@@ -42,17 +42,17 @@ describe('rust NamespaceMap access-path convergence', () => {
 	});
 
 	it('Fluent / Loose / Kind each converge', () => {
-		expectTrue<Equals<FunctionItem.Built, BuiltFor<TSKindId.FunctionItem>>>();
+		expectTrue<Equals<FunctionItem.Bound, BoundFor<TSKindId.FunctionItem>>>();
 		expectTrue<Equals<FunctionItem.Loose, LooseFor<TSKindId.FunctionItem>>>();
-		expectTrue<Equals<FunctionItem.Kind, 'function_item'>>();
+		expectTrue<Equals<FunctionItem.Kind, TSKindId.FunctionItem>>();
 	});
 
-	it('Fluent is the factory-emitted Built alias for factory-backed kinds', () => {
+	it('Fluent is the factory-emitted Bound alias for factory-backed kinds', () => {
 		// Every Fluent access path resolves to the factory's EXACT return
 		// type — not a re-derived generic projection.
-		expectTrue<Equals<FunctionItem.Built, ReturnType<typeof buildFunctionItem>>>();
-		expectTrue<Equals<BuiltFor<TSKindId.FunctionItem>, ReturnType<typeof buildFunctionItem>>>();
-		expectTrue<Equals<NamespaceMap[TSKindId.FunctionItem]['Built'], ReturnType<typeof buildFunctionItem>>>();
+		expectTrue<Equals<FunctionItem.Bound, ReturnType<typeof buildFunctionItem>>>();
+		expectTrue<Equals<BoundFor<TSKindId.FunctionItem>, ReturnType<typeof buildFunctionItem>>>();
+		expectTrue<Equals<NamespaceMap[TSKindId.FunctionItem]['Bound'], ReturnType<typeof buildFunctionItem>>>();
 	});
 
 
@@ -110,7 +110,7 @@ describe('rust NamespaceMap access-path convergence', () => {
 		// recovered downstream as `Exclude<Loose, T>`. This pin is what makes
 		// the split provably semantics-free: `Loose` still admits exactly what
 		// it admitted before, so the passthrough arm is untouched.
-		expectTrue<Equals<FunctionItem.Loose, FunctionItem.LooseConfig | FunctionItem>>();
+		expectTrue<Equals<FunctionItem.Loose, FunctionItem.LooseConfig | FunctionItem | FunctionItem.Bound | FunctionItem.Parsed>>();
 		expectTrue<Equals<FunctionItem.LooseConfig, LooseConfigFor<TSKindId.FunctionItem>>>();
 	});
 });
