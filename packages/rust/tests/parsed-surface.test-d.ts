@@ -55,3 +55,11 @@ export function supertypeGuardNarrowsBroadNodes(node: { readonly $type: number }
 	>();
 	return true;
 }
+
+export function renderTakesEveryNodeAUserCanHold(): string {
+	const root = rs.parse('fn f() {}\n');
+	const item = root.statements()[0]!;
+	if (!rs.is.functionItem(item)) return '';
+	const draft = item.$with.parameters(rs.build.parameters());
+	return [rs.render(root), rs.render(item), rs.render(draft)].map(String).join('');
+}

@@ -23,6 +23,7 @@ describe('gaps between coordinates', () => {
 		// The blank lines are the claim; the indent width is the format's.
 		const text = rebuilt.$render().replace(/\n[ \t]+/g, '\n');
 		expect(text).toContain('a();\n\nb();\n\nc();\n\nd();');
+		expect(ts.render(rebuilt).toString()).toBe(rebuilt.$render());
 	});
 
 	it('keeps a tight comma list tight when an argument is replaced', () => {
@@ -35,5 +36,6 @@ describe('gaps between coordinates', () => {
 		const [a, , c] = args.elements();
 		const rebuilt = args.$with.elements(a!, ts.build.identifier('x'), c!);
 		expect(rebuilt.$render()).toBe('(a,x,c)');
+		expect(ts.render(rebuilt).toString()).toBe('(a,x,c)');
 	});
 });
