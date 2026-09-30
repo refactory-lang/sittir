@@ -56,9 +56,14 @@ export function createRenderHandle(renderText: () => string, saveImpl?: (path: s
 	};
 }
 
+/** The level count a read takes: one by default, the whole tree under `deep`. */
+function readDepthOf(options: ParseOptions | undefined): number | undefined {
+	return options?.deep === true ? Infinity : undefined;
+}
+
 export interface NativeEngineLike<TTransport = unknown> {
-	parseAndRead(source: string, deep?: boolean): string;
-	readNode(handle: number, childIndex: number, deep?: boolean): string;
+	parseAndRead(source: string, depth?: number): string;
+	readNode(handle: number, childIndex: number, depth?: number): string;
 	render(node: TTransport, treeId?: number, options?: object): string;
 	renderToFile?(node: TTransport, path: string, treeId?: number, options?: object): void;
 	applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
@@ -282,7 +287,7 @@ export function createNativeEngine<
 				diagnostics: {
 					buildProfile: engine.buildProfile,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
-						const json = engine.parseAndRead(source, parseOptions?.deep);
+						const json = engine.parseAndRead(source, readDepthOf(parseOptions));
 						const parsed = JSON.parse(json) as NativeParseResultShape;
 						// Boundary assertion: the native reader returns the grammar's
 						// root kind for a whole-source parse, stamped with its span and
@@ -303,14 +308,14 @@ export function createNativeEngine<
 									throw new Error('rootNode unavailable on native engine handle; use tree.read()');
 								},
 								source,
-								read: (handle, childIndex, deep) => {
+								read: (handle, childIndex, depth) => {
 									if (handle === undefined) return root;
 									// Handles name their own tree, so this needs no tree
 									// argument — but it must keep `liveToken` reachable,
 									// or the tree behind those handles can be collected
 									// while they are still in use.
 									void liveToken;
-									const nodeJson = engine.readNode(handle, childIndex ?? 0, deep);
+									const nodeJson = engine.readNode(handle, childIndex ?? 0, depth);
 									return JSON.parse(nodeJson) as AnyNodeData;
 								},
 								format: parsed.format
@@ -319,7 +324,7 @@ export function createNativeEngine<
 					},
 
 					readNode(handle: number, childIndex = 0, parseOptions?: ParseOptions) {
-						const json = engine.readNode(handle, childIndex, parseOptions?.deep);
+						const json = engine.readNode(handle, childIndex, readDepthOf(parseOptions));
 						return JSON.parse(json) as AnyNodeData;
 					}
 				}

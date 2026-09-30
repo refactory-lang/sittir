@@ -8935,7 +8935,7 @@
                           "$type": 235,
                           "$source": 0,
                           "$named": true,
-                          "_entries": {
+                          "_elements": {
                             "$type": 270,
                             "$source": 0,
                             "$named": true,
@@ -9236,7 +9236,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "exec(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\": None}, safe_dict)\nexec(\"\"\"exec _code_ in _globs_, _locs_\"\"\")\n",
-    "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment) (escape_sequence_simple) (string_fragment) (escape_sequence_simple) (string_fragment)) string_end: (string_end)) element: (dictionary entries: (dictionary_elements element: (pair key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (none)))) element: (identifier)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))) (newline)))",
+    "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment) (escape_sequence_simple) (string_fragment) (escape_sequence_simple) (string_fragment)) string_end: (string_end)) element: (dictionary elements: (dictionary_elements element: (pair key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (none)))) element: (identifier)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end))))))) (newline)))",
     "wrappedText": "exec(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\": None}, safe_dict)\nexec(\"\"\"exec _code_ in _globs_, _locs_\"\"\")\n",
     "wrappedOffset": 0
   },
@@ -9366,7 +9366,7 @@
                 "$type": 235,
                 "$source": 0,
                 "$named": true,
-                "_entries": {
+                "_elements": {
                   "$type": 270,
                   "$source": 0,
                   "$named": true,
@@ -9534,7 +9534,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "exec(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\": None}, safe_dict)",
-    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment) (escape_sequence_simple) (string_fragment) (escape_sequence_simple) (string_fragment)) string_end: (string_end)) element: (dictionary entries: (dictionary_elements element: (pair key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (none)))) element: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment) (escape_sequence_simple) (string_fragment) (escape_sequence_simple) (string_fragment)) string_end: (string_end)) element: (dictionary elements: (dictionary_elements element: (pair key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (none)))) element: (identifier)))))",
     "wrappedText": "exec(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\": None}, safe_dict)",
     "wrappedOffset": 0
   },
@@ -9783,7 +9783,7 @@
               "$type": 235,
               "$source": 0,
               "$named": true,
-              "_entries": {
+              "_elements": {
                 "$type": 270,
                 "$source": 0,
                 "$named": true,
@@ -9950,7 +9950,7 @@
     "pattern": "call",
     "edits": [],
     "expectedSourceOut": "exec(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\": None}, safe_dict)",
-    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment) (escape_sequence_simple) (string_fragment) (escape_sequence_simple) (string_fragment)) string_end: (string_end)) element: (dictionary entries: (dictionary_elements element: (pair key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (none)))) element: (identifier))))",
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment) (escape_sequence_simple) (string_fragment) (escape_sequence_simple) (string_fragment)) string_end: (string_end)) element: (dictionary elements: (dictionary_elements element: (pair key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (none)))) element: (identifier))))",
     "wrappedText": "_ = exec(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\": None}, safe_dict)",
     "wrappedOffset": 4
   },
@@ -10180,7 +10180,7 @@
             "$type": 235,
             "$source": 0,
             "$named": true,
-            "_entries": {
+            "_elements": {
               "$type": 270,
               "$source": 0,
               "$named": true,
@@ -10342,7 +10342,7 @@
     "pattern": "argument_list",
     "edits": [],
     "expectedSourceOut": "(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\": None}, safe_dict)",
-    "expectedReparseTree": "(argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment) (escape_sequence_simple) (string_fragment) (escape_sequence_simple) (string_fragment)) string_end: (string_end)) element: (dictionary entries: (dictionary_elements element: (pair key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (none)))) element: (identifier)))",
+    "expectedReparseTree": "(argument_list arguments: (argument_list_elements element: (string string_start: (string_start) content: (string_content (string_fragment) (escape_sequence_simple) (string_fragment) (escape_sequence_simple) (string_fragment)) string_end: (string_end)) element: (dictionary elements: (dictionary_elements element: (pair key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (none)))) element: (identifier)))",
     "wrappedText": "_f(\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\", {\"__builtins__\": None}, safe_dict)",
     "wrappedOffset": 2
   },
@@ -10693,7 +10693,7 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_entries": {
+      "_elements": {
         "$type": 270,
         "$source": 0,
         "$named": true,
@@ -10801,7 +10801,7 @@
     "pattern": "dictionary",
     "edits": [],
     "expectedSourceOut": "{\"__builtins__\": None}",
-    "expectedReparseTree": "(dictionary entries: (dictionary_elements element: (pair key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (none))))",
+    "expectedReparseTree": "(dictionary elements: (dictionary_elements element: (pair key: (string string_start: (string_start) content: (string_content (string_fragment)) string_end: (string_end)) value: (none))))",
     "wrappedText": "_ = {\"__builtins__\": None}",
     "wrappedOffset": 4
   },
@@ -79155,7 +79155,7 @@
                   "$type": 235,
                   "$source": 0,
                   "$named": true,
-                  "_entries": {
+                  "_elements": {
                     "$type": 270,
                     "$source": 0,
                     "$named": true,
@@ -79333,7 +79333,7 @@
                   "$type": 235,
                   "$source": 0,
                   "$named": true,
-                  "_entries": {
+                  "_elements": {
                     "$type": 270,
                     "$source": 0,
                     "$named": true,
@@ -79414,7 +79414,7 @@
                   "$type": 235,
                   "$source": 0,
                   "$named": true,
-                  "_entries": {
+                  "_elements": {
                     "$type": 270,
                     "$source": 0,
                     "$named": true,
@@ -79495,7 +79495,7 @@
                   "$type": 235,
                   "$source": 0,
                   "$named": true,
-                  "_entries": {
+                  "_elements": {
                     "$type": 270,
                     "$source": 0,
                     "$named": true,
@@ -79606,7 +79606,7 @@
                   "$type": 235,
                   "$source": 0,
                   "$named": true,
-                  "_entries": {
+                  "_elements": {
                     "$type": 270,
                     "$source": 0,
                     "$named": true,
@@ -79764,7 +79764,7 @@
                   "$type": 235,
                   "$source": 0,
                   "$named": true,
-                  "_entries": {
+                  "_elements": {
                     "$type": 270,
                     "$source": 0,
                     "$named": true,
@@ -79858,7 +79858,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "{a: 1, b: 2}\n{}\n{** {}}\n{** a}\n{** a.b}\n{** a[b].c}\n{** a()}\n",
-    "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary entries: (dictionary_elements element: (pair key: (identifier) value: (integer_decimal_plain)) element: (pair key: (identifier) value: (integer_decimal_plain)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary entries: (dictionary_elements element: (dictionary_splat expression: (dictionary)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary entries: (dictionary_elements element: (dictionary_splat expression: (identifier)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary entries: (dictionary_elements element: (dictionary_splat expression: (attribute object: (identifier) attribute: (identifier))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary entries: (dictionary_elements element: (dictionary_splat expression: (attribute object: (subscript value: (identifier) (subscripts subscript: (identifier))) attribute: (identifier))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary entries: (dictionary_elements element: (dictionary_splat expression: (call function: (identifier) arguments: (argument_list))))))) (newline)))",
+    "expectedReparseTree": "(module statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary elements: (dictionary_elements element: (pair key: (identifier) value: (integer_decimal_plain)) element: (pair key: (identifier) value: (integer_decimal_plain)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary elements: (dictionary_elements element: (dictionary_splat expression: (dictionary)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary elements: (dictionary_elements element: (dictionary_splat expression: (identifier)))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary elements: (dictionary_elements element: (dictionary_splat expression: (attribute object: (identifier) attribute: (identifier))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary elements: (dictionary_elements element: (dictionary_splat expression: (attribute object: (subscript value: (identifier) (subscripts subscript: (identifier))) attribute: (identifier))))))) (newline)) statements: (simple_statements (simple_statements_elements simple_statement: (expression_statement (dictionary elements: (dictionary_elements element: (dictionary_splat expression: (call function: (identifier) arguments: (argument_list))))))) (newline)))",
     "wrappedText": "{a: 1, b: 2}\n{}\n{** {}}\n{** a}\n{** a.b}\n{** a[b].c}\n{** a()}\n",
     "wrappedOffset": 0
   },
@@ -79874,7 +79874,7 @@
         "$type": 235,
         "$source": 0,
         "$named": true,
-        "_entries": {
+        "_elements": {
           "$type": 270,
           "$source": 0,
           "$named": true,
@@ -80004,7 +80004,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{a: 1, b: 2}",
-    "expectedReparseTree": "(expression_statement (dictionary entries: (dictionary_elements element: (pair key: (identifier) value: (integer_decimal_plain)) element: (pair key: (identifier) value: (integer_decimal_plain)))))",
+    "expectedReparseTree": "(expression_statement (dictionary elements: (dictionary_elements element: (pair key: (identifier) value: (integer_decimal_plain)) element: (pair key: (identifier) value: (integer_decimal_plain)))))",
     "wrappedText": "{a: 1, b: 2}",
     "wrappedOffset": 0
   },
@@ -80052,7 +80052,7 @@
         "$type": 235,
         "$source": 0,
         "$named": true,
-        "_entries": {
+        "_elements": {
           "$type": 270,
           "$source": 0,
           "$named": true,
@@ -80117,7 +80117,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{** {}}",
-    "expectedReparseTree": "(expression_statement (dictionary entries: (dictionary_elements element: (dictionary_splat expression: (dictionary)))))",
+    "expectedReparseTree": "(expression_statement (dictionary elements: (dictionary_elements element: (dictionary_splat expression: (dictionary)))))",
     "wrappedText": "{** {}}",
     "wrappedOffset": 0
   },
@@ -80133,7 +80133,7 @@
         "$type": 235,
         "$source": 0,
         "$named": true,
-        "_entries": {
+        "_elements": {
           "$type": 270,
           "$source": 0,
           "$named": true,
@@ -80198,7 +80198,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{** a}",
-    "expectedReparseTree": "(expression_statement (dictionary entries: (dictionary_elements element: (dictionary_splat expression: (identifier)))))",
+    "expectedReparseTree": "(expression_statement (dictionary elements: (dictionary_elements element: (dictionary_splat expression: (identifier)))))",
     "wrappedText": "{** a}",
     "wrappedOffset": 0
   },
@@ -80214,7 +80214,7 @@
         "$type": 235,
         "$source": 0,
         "$named": true,
-        "_entries": {
+        "_elements": {
           "$type": 270,
           "$source": 0,
           "$named": true,
@@ -80309,7 +80309,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{** a.b}",
-    "expectedReparseTree": "(expression_statement (dictionary entries: (dictionary_elements element: (dictionary_splat expression: (attribute object: (identifier) attribute: (identifier))))))",
+    "expectedReparseTree": "(expression_statement (dictionary elements: (dictionary_elements element: (dictionary_splat expression: (attribute object: (identifier) attribute: (identifier))))))",
     "wrappedText": "{** a.b}",
     "wrappedOffset": 0
   },
@@ -80325,7 +80325,7 @@
         "$type": 235,
         "$source": 0,
         "$named": true,
-        "_entries": {
+        "_elements": {
           "$type": 270,
           "$source": 0,
           "$named": true,
@@ -80467,7 +80467,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{** a[b].c}",
-    "expectedReparseTree": "(expression_statement (dictionary entries: (dictionary_elements element: (dictionary_splat expression: (attribute object: (subscript value: (identifier) (subscripts subscript: (identifier))) attribute: (identifier))))))",
+    "expectedReparseTree": "(expression_statement (dictionary elements: (dictionary_elements element: (dictionary_splat expression: (attribute object: (subscript value: (identifier) (subscripts subscript: (identifier))) attribute: (identifier))))))",
     "wrappedText": "{** a[b].c}",
     "wrappedOffset": 0
   },
@@ -80483,7 +80483,7 @@
         "$type": 235,
         "$source": 0,
         "$named": true,
-        "_entries": {
+        "_elements": {
           "$type": 270,
           "$source": 0,
           "$named": true,
@@ -80567,7 +80567,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{** a()}",
-    "expectedReparseTree": "(expression_statement (dictionary entries: (dictionary_elements element: (dictionary_splat expression: (call function: (identifier) arguments: (argument_list))))))",
+    "expectedReparseTree": "(expression_statement (dictionary elements: (dictionary_elements element: (dictionary_splat expression: (call function: (identifier) arguments: (argument_list))))))",
     "wrappedText": "{** a()}",
     "wrappedOffset": 0
   },
@@ -80579,7 +80579,7 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_entries": {
+      "_elements": {
         "$type": 270,
         "$source": 0,
         "$named": true,
@@ -80708,7 +80708,7 @@
     "pattern": "dictionary",
     "edits": [],
     "expectedSourceOut": "{a: 1, b: 2}",
-    "expectedReparseTree": "(dictionary entries: (dictionary_elements element: (pair key: (identifier) value: (integer_decimal_plain)) element: (pair key: (identifier) value: (integer_decimal_plain))))",
+    "expectedReparseTree": "(dictionary elements: (dictionary_elements element: (pair key: (identifier) value: (integer_decimal_plain)) element: (pair key: (identifier) value: (integer_decimal_plain))))",
     "wrappedText": "_ = {a: 1, b: 2}",
     "wrappedOffset": 4
   },
@@ -80747,7 +80747,7 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_entries": {
+      "_elements": {
         "$type": 270,
         "$source": 0,
         "$named": true,
@@ -80811,7 +80811,7 @@
     "pattern": "dictionary",
     "edits": [],
     "expectedSourceOut": "{** {}}",
-    "expectedReparseTree": "(dictionary entries: (dictionary_elements element: (dictionary_splat expression: (dictionary))))",
+    "expectedReparseTree": "(dictionary elements: (dictionary_elements element: (dictionary_splat expression: (dictionary))))",
     "wrappedText": "_ = {** {}}",
     "wrappedOffset": 4
   },
@@ -80850,7 +80850,7 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_entries": {
+      "_elements": {
         "$type": 270,
         "$source": 0,
         "$named": true,
@@ -80914,7 +80914,7 @@
     "pattern": "dictionary",
     "edits": [],
     "expectedSourceOut": "{** a}",
-    "expectedReparseTree": "(dictionary entries: (dictionary_elements element: (dictionary_splat expression: (identifier))))",
+    "expectedReparseTree": "(dictionary elements: (dictionary_elements element: (dictionary_splat expression: (identifier))))",
     "wrappedText": "_ = {** a}",
     "wrappedOffset": 4
   },
@@ -80926,7 +80926,7 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_entries": {
+      "_elements": {
         "$type": 270,
         "$source": 0,
         "$named": true,
@@ -81020,7 +81020,7 @@
     "pattern": "dictionary",
     "edits": [],
     "expectedSourceOut": "{** a.b}",
-    "expectedReparseTree": "(dictionary entries: (dictionary_elements element: (dictionary_splat expression: (attribute object: (identifier) attribute: (identifier)))))",
+    "expectedReparseTree": "(dictionary elements: (dictionary_elements element: (dictionary_splat expression: (attribute object: (identifier) attribute: (identifier)))))",
     "wrappedText": "_ = {** a.b}",
     "wrappedOffset": 4
   },
@@ -81032,7 +81032,7 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_entries": {
+      "_elements": {
         "$type": 270,
         "$source": 0,
         "$named": true,
@@ -81173,7 +81173,7 @@
     "pattern": "dictionary",
     "edits": [],
     "expectedSourceOut": "{** a[b].c}",
-    "expectedReparseTree": "(dictionary entries: (dictionary_elements element: (dictionary_splat expression: (attribute object: (subscript value: (identifier) (subscripts subscript: (identifier))) attribute: (identifier)))))",
+    "expectedReparseTree": "(dictionary elements: (dictionary_elements element: (dictionary_splat expression: (attribute object: (subscript value: (identifier) (subscripts subscript: (identifier))) attribute: (identifier)))))",
     "wrappedText": "_ = {** a[b].c}",
     "wrappedOffset": 4
   },
@@ -81185,7 +81185,7 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_entries": {
+      "_elements": {
         "$type": 270,
         "$source": 0,
         "$named": true,
@@ -81268,7 +81268,7 @@
     "pattern": "dictionary",
     "edits": [],
     "expectedSourceOut": "{** a()}",
-    "expectedReparseTree": "(dictionary entries: (dictionary_elements element: (dictionary_splat expression: (call function: (identifier) arguments: (argument_list)))))",
+    "expectedReparseTree": "(dictionary elements: (dictionary_elements element: (dictionary_splat expression: (call function: (identifier) arguments: (argument_list)))))",
     "wrappedText": "_ = {** a()}",
     "wrappedOffset": 4
   },

@@ -2567,8 +2567,8 @@ export function resolveExportClause_exportSpecifiers(
 }
 
 export function coerceToExportClause(): T.EmptyExportClause;
-export function coerceToExportClause(input?: T.ExportClause.Loose): ReturnType<typeof F.buildExportClause>;
 export function coerceToExportClause(...input: T.ExportSpecifiers.LooseArgs): ReturnType<typeof F.buildExportClause>;
+export function coerceToExportClause(input?: T.ExportClause.Loose): ReturnType<typeof F.buildExportClause>;
 export function coerceToExportClause(...args: unknown[]): ReturnType<typeof F.buildExportClause> {
 	if (args.length > 1)
 		return F.buildExportClause(coerceToExportSpecifiers(...(args as Parameters<typeof coerceToExportSpecifiers>)));
@@ -2700,8 +2700,8 @@ export function resolveNamedImports_importSpecifiers(
 }
 
 export function coerceToNamedImports(): T.EmptyNamedImports;
-export function coerceToNamedImports(input?: T.NamedImports.Loose): ReturnType<typeof F.buildNamedImports>;
 export function coerceToNamedImports(...input: T.ImportSpecifiers.LooseArgs): ReturnType<typeof F.buildNamedImports>;
+export function coerceToNamedImports(input?: T.NamedImports.Loose): ReturnType<typeof F.buildNamedImports>;
 export function coerceToNamedImports(...args: unknown[]): ReturnType<typeof F.buildNamedImports> {
 	if (args.length > 1)
 		return F.buildNamedImports(coerceToImportSpecifiers(...(args as Parameters<typeof coerceToImportSpecifiers>)));
@@ -5823,10 +5823,10 @@ export function resolveFormalParameters_formalParametersElements(
 }
 
 export function coerceToFormalParameters(): T.EmptyFormalParameters;
-export function coerceToFormalParameters(input?: T.FormalParameters.Loose): ReturnType<typeof F.buildFormalParameters>;
 export function coerceToFormalParameters(
 	...input: T.FormalParametersElements.LooseArgs
 ): ReturnType<typeof F.buildFormalParameters>;
+export function coerceToFormalParameters(input?: T.FormalParameters.Loose): ReturnType<typeof F.buildFormalParameters>;
 export function coerceToFormalParameters(...args: unknown[]): ReturnType<typeof F.buildFormalParameters> {
 	if (args.length > 1)
 		return F.buildFormalParameters(
@@ -7621,8 +7621,8 @@ export function resolveEnumBody_enumBodyElements(
 }
 
 export function coerceToEnumBody(): T.EmptyEnumBody;
-export function coerceToEnumBody(input?: T.EnumBody.Loose): ReturnType<typeof F.buildEnumBody>;
 export function coerceToEnumBody(...input: T.EnumBodyElements.LooseArgs): ReturnType<typeof F.buildEnumBody>;
+export function coerceToEnumBody(input?: T.EnumBody.Loose): ReturnType<typeof F.buildEnumBody>;
 export function coerceToEnumBody(...args: unknown[]): ReturnType<typeof F.buildEnumBody> {
 	if (args.length > 1)
 		return F.buildEnumBody(coerceToEnumBodyElements(...(args as Parameters<typeof coerceToEnumBodyElements>)));
@@ -9072,8 +9072,8 @@ export function resolveTypeArguments_types(value: T.TypeArguments.LooseConfig['t
 	return _resolveOneBranch<T.Types>(value, 'types');
 }
 
-export function coerceToTypeArguments(input: T.TypeArguments.Loose): ReturnType<typeof F.buildTypeArguments>;
 export function coerceToTypeArguments(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTypeArguments>;
+export function coerceToTypeArguments(input: T.TypeArguments.Loose): ReturnType<typeof F.buildTypeArguments>;
 export function coerceToTypeArguments(...args: unknown[]): ReturnType<typeof F.buildTypeArguments> {
 	if (args.length > 1) return F.buildTypeArguments(coerceToTypes(...(args as Parameters<typeof coerceToTypes>)));
 	const input = args[0] as T.TypeArguments.Loose;
@@ -9302,10 +9302,10 @@ export function resolveTypeParameters_typeParametersElements(
 	return _resolveOneBranch<T.TypeParametersElements>(value, 'type_parameters_elements');
 }
 
-export function coerceToTypeParameters(input: T.TypeParameters.Loose): ReturnType<typeof F.buildTypeParameters>;
 export function coerceToTypeParameters(
 	...input: T.TypeParametersElements.LooseArgs
 ): ReturnType<typeof F.buildTypeParameters>;
+export function coerceToTypeParameters(input: T.TypeParameters.Loose): ReturnType<typeof F.buildTypeParameters>;
 export function coerceToTypeParameters(...args: unknown[]): ReturnType<typeof F.buildTypeParameters> {
 	if (args.length > 1)
 		return F.buildTypeParameters(
@@ -9480,8 +9480,8 @@ export function resolveTupleType_tupleTypeMembers(
 }
 
 export function coerceToTupleType(): T.EmptyTupleType;
-export function coerceToTupleType(input?: T.TupleType.Loose): ReturnType<typeof F.buildTupleType>;
 export function coerceToTupleType(...input: T.TupleTypeMembers.LooseArgs): ReturnType<typeof F.buildTupleType>;
+export function coerceToTupleType(input?: T.TupleType.Loose): ReturnType<typeof F.buildTupleType>;
 export function coerceToTupleType(...args: unknown[]): ReturnType<typeof F.buildTupleType> {
 	if (args.length > 1)
 		return F.buildTupleType(coerceToTupleTypeMembers(...(args as Parameters<typeof coerceToTupleTypeMembers>)));

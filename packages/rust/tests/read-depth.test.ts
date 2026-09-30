@@ -5,6 +5,7 @@
 // coordinate and render the source byte for byte.
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import type { TreeHandle } from '@sittir/common/utils';
 import rust from '../src/index.ts';
 
 const SOURCE = 'pub fn main() { let x = 1; }\nstruct S { a: u8 }\n';
@@ -28,6 +29,19 @@ function countStubs(value: unknown): number {
 	return total;
 }
 
+type Stub = Record<string, unknown> & { readonly $type: number; readonly $nodeHandle: number; readonly $childIndex: number };
+
+/** The unexpanded read stubs directly under `value`'s slots, in slot order. */
+function stubsOf(value: Record<string, unknown>): Stub[] {
+	const children = Object.entries(value)
+		.filter(([key]) => key.startsWith('_'))
+		.flatMap(([, child]) => (Array.isArray(child) ? child : [child]));
+	return children.filter(
+		(child): child is Stub =>
+			typeof child === 'object' && child !== null && (child as Stub).$nodeHandle != null && countStubs(child) === 1
+	);
+}
+
 describe('read depth', () => {
 	it('leaves children unexpanded by default', async () => {
 		const native = (await rust.load()).createNative();
@@ -39,6 +53,34 @@ describe('read depth', () => {
 		const native = (await rust.load()).createNative();
 		const { root } = native.parseAndRead(SOURCE, { deep: true });
 		expect(countStubs(root)).toBe(0);
+	});
+
+	it('reads a counted number of levels, each expanded child keeping its own stubs re-readable', async () => {
+		const native = (await rust.load()).createNative();
+		const { root, tree } = native.parseAndRead(SOURCE);
+		const read = (tree as TreeHandle).read!;
+		const [item] = stubsOf(root as unknown as Record<string, unknown>);
+		const two = read(item!.$nodeHandle, item!.$childIndex, 2) as unknown as Record<string, unknown>;
+		const expanded = Object.entries(two)
+			.filter(([key]) => key.startsWith('_'))
+			.map(([, child]) => child as Record<string, unknown>)
+			.filter((child) => Object.keys(child).some((key) => key.startsWith('_')));
+		expect(expanded.length).toBeGreaterThan(0);
+		for (const child of expanded) expect(child.$nodeHandle).toBeUndefined();
+		const grandchildren = expanded.flatMap(stubsOf);
+		expect(grandchildren.length).toBeGreaterThan(0);
+		for (const stub of grandchildren) {
+			const reread = read(stub.$nodeHandle, stub.$childIndex);
+			expect([reread.$type, reread.$span]).toEqual([stub.$type, stub.$span]);
+		}
+	});
+
+	it('refuses a depth that is not a whole number of levels', async () => {
+		const native = (await rust.load()).createNative();
+		const { root, tree } = native.parseAndRead(SOURCE);
+		const read = (tree as TreeHandle).read!;
+		const [item] = stubsOf(root as unknown as Record<string, unknown>);
+		expect(() => read(item!.$nodeHandle, item!.$childIndex, 0)).toThrow(/whole number of levels/);
 	});
 
 	it('gives a deep-parsed root the same accessor surface as a shallow one', async () => {

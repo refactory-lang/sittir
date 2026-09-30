@@ -2098,10 +2098,10 @@ export function resolveSimpleStatements_simpleStatementsElements(
 	return _resolveOneBranch<T.SimpleStatementsElements>(value, 'simple_statements_elements');
 }
 
-export function coerceToSimpleStatements(input: T.SimpleStatements.Loose): ReturnType<typeof F.buildSimpleStatements>;
 export function coerceToSimpleStatements(
 	...input: T.SimpleStatementsElements.LooseArgs
 ): ReturnType<typeof F.buildSimpleStatements>;
+export function coerceToSimpleStatements(input: T.SimpleStatements.Loose): ReturnType<typeof F.buildSimpleStatements>;
 export function coerceToSimpleStatements(...args: unknown[]): ReturnType<typeof F.buildSimpleStatements> {
 	if (args.length > 1)
 		return F.buildSimpleStatements(
@@ -2946,8 +2946,8 @@ export function resolveParameters_elements(value: T.Parameters.LooseConfig['elem
 }
 
 export function coerceToParameters(): T.EmptyParameters;
-export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeof F.buildParameters>;
 export function coerceToParameters(...input: T.ParametersElements.LooseArgs): ReturnType<typeof F.buildParameters>;
+export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeof F.buildParameters>;
 export function coerceToParameters(...args: unknown[]): ReturnType<typeof F.buildParameters> {
 	if (args.length > 1)
 		return F.buildParameters(coerceToParametersElements(...(args as Parameters<typeof coerceToParametersElements>)));
@@ -2970,10 +2970,10 @@ export function resolveLambdaParameters_parametersElements(
 	return _resolveOneBranch<T.ParametersElements>(value, 'parameters_elements');
 }
 
-export function coerceToLambdaParameters(input: T.LambdaParameters.Loose): ReturnType<typeof F.buildLambdaParameters>;
 export function coerceToLambdaParameters(
 	...input: T.ParametersElements.LooseArgs
 ): ReturnType<typeof F.buildLambdaParameters>;
+export function coerceToLambdaParameters(input: T.LambdaParameters.Loose): ReturnType<typeof F.buildLambdaParameters>;
 export function coerceToLambdaParameters(...args: unknown[]): ReturnType<typeof F.buildLambdaParameters> {
 	if (args.length > 1)
 		return F.buildLambdaParameters(
@@ -3191,8 +3191,8 @@ export function resolveTypeParameter_types(value: T.TypeParameter.LooseConfig['t
 	return _resolveOneBranch<T.Types>(value, 'types');
 }
 
-export function coerceToTypeParameter(input: T.TypeParameter.Loose): ReturnType<typeof F.buildTypeParameter>;
 export function coerceToTypeParameter(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTypeParameter>;
+export function coerceToTypeParameter(input: T.TypeParameter.Loose): ReturnType<typeof F.buildTypeParameter>;
 export function coerceToTypeParameter(...args: unknown[]): ReturnType<typeof F.buildTypeParameter> {
 	if (args.length > 1) return F.buildTypeParameter(coerceToTypes(...(args as Parameters<typeof coerceToTypes>)));
 	const input = args[0] as T.TypeParameter.Loose;
@@ -3240,10 +3240,10 @@ export function resolveArgumentList_arguments(
 }
 
 export function coerceToArgumentList(): T.EmptyArgumentList;
-export function coerceToArgumentList(input?: T.ArgumentList.Loose): ReturnType<typeof F.buildArgumentList>;
 export function coerceToArgumentList(
 	...input: T.ArgumentListElements.LooseArgs
 ): ReturnType<typeof F.buildArgumentList>;
+export function coerceToArgumentList(input?: T.ArgumentList.Loose): ReturnType<typeof F.buildArgumentList>;
 export function coerceToArgumentList(...args: unknown[]): ReturnType<typeof F.buildArgumentList> {
 	if (args.length > 1)
 		return F.buildArgumentList(
@@ -3662,8 +3662,8 @@ export function resolveDictPattern_dictPatternElements(
 }
 
 export function coerceToDictPattern(): T.EmptyDictPattern;
-export function coerceToDictPattern(input?: T.DictPattern.Loose): ReturnType<typeof F.buildDictPattern>;
 export function coerceToDictPattern(...input: T.DictPatternElements.LooseArgs): ReturnType<typeof F.buildDictPattern>;
+export function coerceToDictPattern(input?: T.DictPattern.Loose): ReturnType<typeof F.buildDictPattern>;
 export function coerceToDictPattern(...args: unknown[]): ReturnType<typeof F.buildDictPattern> {
 	if (args.length > 1)
 		return F.buildDictPattern(coerceToDictPatternElements(...(args as Parameters<typeof coerceToDictPatternElements>)));
@@ -3976,8 +3976,8 @@ export function resolveTuplePattern_patterns(
 }
 
 export function coerceToTuplePattern(): T.EmptyTuplePattern;
-export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<typeof F.buildTuplePattern>;
 export function coerceToTuplePattern(...input: T.Patterns.LooseArgs): ReturnType<typeof F.buildTuplePattern>;
+export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<typeof F.buildTuplePattern>;
 export function coerceToTuplePattern(...args: unknown[]): ReturnType<typeof F.buildTuplePattern> {
 	if (args.length > 1) return F.buildTuplePattern(coerceToPatterns(...(args as Parameters<typeof coerceToPatterns>)));
 	const input = args[0] as T.TuplePattern.Loose | undefined;
@@ -3998,8 +3998,8 @@ export function resolveListPattern_patterns(value: T.ListPattern.LooseConfig['pa
 }
 
 export function coerceToListPattern(): T.EmptyListPattern;
-export function coerceToListPattern(input?: T.ListPattern.Loose): ReturnType<typeof F.buildListPattern>;
 export function coerceToListPattern(...input: T.Patterns.LooseArgs): ReturnType<typeof F.buildListPattern>;
+export function coerceToListPattern(input?: T.ListPattern.Loose): ReturnType<typeof F.buildListPattern>;
 export function coerceToListPattern(...args: unknown[]): ReturnType<typeof F.buildListPattern> {
 	if (args.length > 1) return F.buildListPattern(coerceToPatterns(...(args as Parameters<typeof coerceToPatterns>)));
 	const input = args[0] as T.ListPattern.Loose | undefined;
@@ -4863,8 +4863,8 @@ export function resolveList_collectionElements(
 }
 
 export function coerceToList(): T.EmptyList;
-export function coerceToList(input?: T.List.Loose): ReturnType<typeof F.buildList>;
 export function coerceToList(...input: T.CollectionElements.LooseArgs): ReturnType<typeof F.buildList>;
+export function coerceToList(input?: T.List.Loose): ReturnType<typeof F.buildList>;
 export function coerceToList(...args: unknown[]): ReturnType<typeof F.buildList> {
 	if (args.length > 1)
 		return F.buildList(coerceToCollectionElements(...(args as Parameters<typeof coerceToCollectionElements>)));
@@ -4887,8 +4887,8 @@ export function resolveSet_collectionElements(
 	return _resolveOneBranch<T.CollectionElements>(value, 'collection_elements');
 }
 
-export function coerceToSet(input: T.Set.Loose): ReturnType<typeof F.buildSet>;
 export function coerceToSet(...input: T.CollectionElements.LooseArgs): ReturnType<typeof F.buildSet>;
+export function coerceToSet(input: T.Set.Loose): ReturnType<typeof F.buildSet>;
 export function coerceToSet(...args: unknown[]): ReturnType<typeof F.buildSet> {
 	if (args.length > 1)
 		return F.buildSet(coerceToCollectionElements(...(args as Parameters<typeof coerceToCollectionElements>)));
@@ -4913,8 +4913,8 @@ export function resolveTuple_collectionElements(
 }
 
 export function coerceToTuple(): T.EmptyTuple;
-export function coerceToTuple(input?: T.Tuple.Loose): ReturnType<typeof F.buildTuple>;
 export function coerceToTuple(...input: T.CollectionElements.LooseArgs): ReturnType<typeof F.buildTuple>;
+export function coerceToTuple(input?: T.Tuple.Loose): ReturnType<typeof F.buildTuple>;
 export function coerceToTuple(...args: unknown[]): ReturnType<typeof F.buildTuple> {
 	if (args.length > 1)
 		return F.buildTuple(coerceToCollectionElements(...(args as Parameters<typeof coerceToCollectionElements>)));
@@ -4931,13 +4931,13 @@ export function coerceToTuple(...args: unknown[]): ReturnType<typeof F.buildTupl
 	);
 }
 
-export function resolveDictionary_entries(value: T.Dictionary.LooseConfig['entries']): T.Dictionary['_entries'] {
+export function resolveDictionary_elements(value: T.Dictionary.LooseConfig['elements']): T.Dictionary['_elements'] {
 	return _resolveOneBranch<T.DictionaryElements>(value, 'dictionary_elements', undefined, true);
 }
 
 export function coerceToDictionary(): T.EmptyDictionary;
-export function coerceToDictionary(input?: T.Dictionary.Loose): ReturnType<typeof F.buildDictionary>;
 export function coerceToDictionary(...input: T.DictionaryElements.LooseArgs): ReturnType<typeof F.buildDictionary>;
+export function coerceToDictionary(input?: T.Dictionary.Loose): ReturnType<typeof F.buildDictionary>;
 export function coerceToDictionary(...args: unknown[]): ReturnType<typeof F.buildDictionary> {
 	if (args.length > 1)
 		return F.buildDictionary(coerceToDictionaryElements(...(args as Parameters<typeof coerceToDictionaryElements>)));
@@ -4946,7 +4946,7 @@ export function coerceToDictionary(...args: unknown[]): ReturnType<typeof F.buil
 		return input as unknown as ReturnType<typeof F.buildDictionary>;
 	return F.buildDictionary(
 		_resolveOneBranch<T.DictionaryElements>(
-			configFieldOr(input, 'entries', () => input),
+			configFieldOr(input, 'elements', () => input),
 			'dictionary_elements',
 			undefined,
 			true
@@ -6447,10 +6447,10 @@ export function resolveCaseTuplePattern_listPatternCasePatterns(
 }
 
 export function coerceToCaseTuplePattern(): T.EmptyCaseTuplePattern;
-export function coerceToCaseTuplePattern(input?: T.CaseTuplePattern.Loose): ReturnType<typeof F.buildCaseTuplePattern>;
 export function coerceToCaseTuplePattern(
 	...input: T.ListPatternCasePatterns.LooseArgs
 ): ReturnType<typeof F.buildCaseTuplePattern>;
+export function coerceToCaseTuplePattern(input?: T.CaseTuplePattern.Loose): ReturnType<typeof F.buildCaseTuplePattern>;
 export function coerceToCaseTuplePattern(...args: unknown[]): ReturnType<typeof F.buildCaseTuplePattern> {
 	if (args.length > 1)
 		return F.buildCaseTuplePattern(
@@ -6476,10 +6476,10 @@ export function resolveCaseListPattern_listPatternCasePatterns(
 }
 
 export function coerceToCaseListPattern(): T.EmptyCaseListPattern;
-export function coerceToCaseListPattern(input?: T.CaseListPattern.Loose): ReturnType<typeof F.buildCaseListPattern>;
 export function coerceToCaseListPattern(
 	...input: T.ListPatternCasePatterns.LooseArgs
 ): ReturnType<typeof F.buildCaseListPattern>;
+export function coerceToCaseListPattern(input?: T.CaseListPattern.Loose): ReturnType<typeof F.buildCaseListPattern>;
 export function coerceToCaseListPattern(...args: unknown[]): ReturnType<typeof F.buildCaseListPattern> {
 	if (args.length > 1)
 		return F.buildCaseListPattern(
@@ -6717,10 +6717,10 @@ export function resolvePrintStatementPlain_printArguments(
 }
 
 export function coerceToPrintStatementPlain(
-	input: T.PrintStatementPlain.Loose
+	...input: T.PrintArguments.LooseArgs
 ): ReturnType<typeof F.buildPrintStatementPlain>;
 export function coerceToPrintStatementPlain(
-	...input: T.PrintArguments.LooseArgs
+	input: T.PrintStatementPlain.Loose
 ): ReturnType<typeof F.buildPrintStatementPlain>;
 export function coerceToPrintStatementPlain(...args: unknown[]): ReturnType<typeof F.buildPrintStatementPlain> {
 	if (args.length > 1)
@@ -6751,10 +6751,10 @@ export function resolveParenthesizedImportList_importList(
 }
 
 export function coerceToParenthesizedImportList(
-	input: T.ParenthesizedImportList.Loose
+	...input: T.ImportList.LooseArgs
 ): ReturnType<typeof F.buildParenthesizedImportList>;
 export function coerceToParenthesizedImportList(
-	...input: T.ImportList.LooseArgs
+	input: T.ParenthesizedImportList.Loose
 ): ReturnType<typeof F.buildParenthesizedImportList>;
 export function coerceToParenthesizedImportList(...args: unknown[]): ReturnType<typeof F.buildParenthesizedImportList> {
 	if (args.length > 1)
@@ -7574,10 +7574,10 @@ export function resolveWithClauseParen_withClauseWithItems(
 	return _resolveOneBranch<T.WithClauseWithItems>(value, 'with_clause_with_items');
 }
 
-export function coerceToWithClauseParen(input: T.WithClauseParen.Loose): ReturnType<typeof F.buildWithClauseParen>;
 export function coerceToWithClauseParen(
 	...input: T.WithClauseWithItems.LooseArgs
 ): ReturnType<typeof F.buildWithClauseParen>;
+export function coerceToWithClauseParen(input: T.WithClauseParen.Loose): ReturnType<typeof F.buildWithClauseParen>;
 export function coerceToWithClauseParen(...args: unknown[]): ReturnType<typeof F.buildWithClauseParen> {
 	if (args.length > 1)
 		return F.buildWithClauseParen(
@@ -7666,10 +7666,10 @@ export function resolveSuiteInline_simpleStatementsElements(
 	return _resolveOneBranch<T.SimpleStatementsElements>(value, 'simple_statements_elements');
 }
 
-export function coerceToSuiteInline(input: T.SuiteInline.Loose): ReturnType<typeof F.buildSuiteInline>;
 export function coerceToSuiteInline(
 	...input: T.SimpleStatementsElements.LooseArgs
 ): ReturnType<typeof F.buildSuiteInline>;
+export function coerceToSuiteInline(input: T.SuiteInline.Loose): ReturnType<typeof F.buildSuiteInline>;
 export function coerceToSuiteInline(...args: unknown[]): ReturnType<typeof F.buildSuiteInline> {
 	if (args.length > 1)
 		return F.buildSuiteInline(

@@ -419,8 +419,8 @@ function emitBranchFrom(
 		const spreadNode = nodeMap.nodes.get(spreadTarget)!;
 		lines.push(
 			...withEmptyOverload(nodeMap, node.kind, `export function ${fn}`, [
-				signature.replace(/ \{$/, ';'),
 				`export function ${fn}(...input: T.${spreadNode.typeName}.LooseArgs): ${returnType};`,
+				signature.replace(/ \{$/, ';'),
 				`export function ${fn}(...args: unknown[]): ${returnType} {`,
 				`  if (args.length > 1) return ${factory}(${spreadNode.fromFunctionName!}(...(args as Parameters<typeof ${spreadNode.fromFunctionName!}>)));`,
 				`  const input = args[0] as ${inputType}${inputOptional ? ' | undefined' : ''};`

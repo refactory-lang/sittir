@@ -7,10 +7,10 @@ const rs = await createEngine(rust);
 const fnOf = (src: string) => rs.parse(src).statements()[0] as any;
 
 describe('a list owner', () => {
-	it('iterates the stored elements of a parsed list', () => {
+	it('iterates the items of a parsed list: a decorated element stays its wrapper, a bare one reads as its content', () => {
 		const ps = fnOf('fn f(#[cfg(test)] a: u8, b: u16) {}\n').parameters();
 		const items = [...ps];
-		expect(items.map((p: any) => p.$type)).toEqual([rs.kinds.AttributedParameter, rs.kinds.AttributedParameter]);
+		expect(items.map((p: any) => p.$type)).toEqual([rs.kinds.AttributedParameter, rs.kinds.Parameter]);
 		expect(items[0].attributeItem()).toBeDefined();
 		expect(ps.length).toBe(2);
 		expect(ps.at(1).$render()).toBe('b: u16');
@@ -37,19 +37,20 @@ describe('a list owner', () => {
 		expect('delimiter' in ps).toBe(true);
 		expect('separator' in ps).toBe(false);
 	});
-	it('$with on a parsed owner takes the list factory arguments', () => {
+	it('the list slot setter on a parsed owner takes the list factory arguments', () => {
 		const ps = fnOf('fn f(a: u8) {}\n').parameters();
 		const q = rs.build.parameter({ name: 'q', type: 'u8' });
-		expect(ps.$with({ delimiter: Delimiter.Trailing }, q).$render()).toBe('(q: u8,)');
-		expect(ps.$with(q).$render()).toBe('(q: u8)');
+		expect(ps.$with.parametersElements({ delimiter: Delimiter.Trailing }, q).$render()).toBe('(q: u8,)');
+		expect(ps.$with.parametersElements(q).$render()).toBe('(q: u8)');
 	});
-	it('$with on a built owner takes the list factory arguments', () => {
+	it('the list slot setter on a built owner takes the list factory arguments', () => {
 		const q = rs.build.parameter({ name: 'q', type: 'u8' });
 		const ps = rs.build.parameters.strict(q);
-		expect(ps.$with({ delimiter: Delimiter.Trailing }, q).$render()).toBe('(q: u8,)');
+		expect(ps.$with.parametersElements({ delimiter: Delimiter.Trailing }, q).$render()).toBe('(q: u8,)');
 	});
-	it('$with on an owner keeps its slot setters', () => {
+	it('$with on an owner is not callable: the list is set through its slot', () => {
 		const ps = fnOf('fn f(a: u8) {}\n').parameters();
+		expect(typeof ps.$with).toBe('object');
 		expect(typeof ps.$with.parametersElements).toBe('function');
 	});
 	it('spreads and serialises as before: the list-owner members are not enumerable', () => {

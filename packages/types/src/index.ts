@@ -1216,6 +1216,8 @@ export type {
 	ParseOptions,
 	Pending,
 	Project,
+	RenderArgument,
+	RenderCall,
 	RenderOptionsCheck,
 	Rendered,
 	StrictMembers,

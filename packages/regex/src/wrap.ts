@@ -1704,13 +1704,13 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
  * --engine js`) leave it absent and fall back to `readNodeJs`
  * (the in-process walker).
  */
-function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNodeData {
+function readNode(tree: TreeHandle, handle?: number, childIndex?: number, depth?: number): AnyNodeData {
 	// Per-handle dispatch: native-engine handles carry a `read`
 	// closure that routes through napi (engine owns the tree;
 	// navigation via handle + childIndex replaces nodeId).
 	// Wasm/JS handles (retained diagnostic tooling) leave `read`
 	// absent and fall back to the in-process JS walker.
-	return tree.read ? tree.read(handle, childIndex) : readNodeJs(tree, handle, childIndex);
+	return tree.read ? tree.read(handle, childIndex, depth) : readNodeJs(tree, handle, childIndex);
 }
 
 /**
@@ -1720,6 +1720,6 @@ function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNo
  * the grammar symbol (stamped by the read), so no per-site alias
  * rewriting exists between the read and the wrap.
  */
-export function readTreeNode(tree: TreeHandle, handle?: number, childIndex?: number): unknown {
-	return wrapNode(readNode(tree, handle, childIndex), tree);
+export function readTreeNode(tree: TreeHandle, handle?: number, childIndex?: number, depth?: number): unknown {
+	return wrapNode(readNode(tree, handle, childIndex, depth), tree);
 }

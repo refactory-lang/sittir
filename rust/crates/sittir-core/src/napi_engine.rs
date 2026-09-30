@@ -119,9 +119,9 @@ macro_rules! napi_engine {
 
             /// Parse `source` and read its root.
             ///
-            /// `deep` expands the whole tree in one pass instead of leaving
-            /// each child with substructure as a stub. Default (absent /
-            /// `false`) is the lazy one-level read.
+            /// `depth` is the number of levels the read expands (see
+            /// [`read_depth`]): absent is the lazy one-level read, `Infinity`
+            /// expands the whole tree in one pass.
             ///
             /// The tree is retained under a fresh id so the handles this read
             /// hands out stay answerable; the id rides in those handles and is
@@ -131,10 +131,10 @@ macro_rules! napi_engine {
                 &mut self,
                 env: ::napi::Env,
                 source: String,
-                deep: Option<bool>,
+                depth: Option<f64>,
             ) -> ::napi::Result<String> {
                 let tree_id = self.claim_tree_id(&env)?;
-                let depth = $crate::napi_engine::read_depth(deep);
+                let depth = $crate::napi_engine::read_depth(depth)?;
                 let mut parsed = self
                     .engine
                     .parse(source, tree_id)
@@ -169,12 +169,13 @@ macro_rules! napi_engine {
             /// The handle names its own tree, so a handle from a tree that has
             /// been disposed — or one never minted here — is refused rather
             /// than answered out of whichever tree happens to be present.
+            /// `depth` counts the levels read, as for `parse_and_read`.
             #[::napi_derive::napi]
             pub fn read_node(
                 &mut self,
                 handle: f64,
                 child_index: f64,
-                deep: Option<bool>,
+                depth: Option<f64>,
             ) -> ::napi::Result<String> {
                 let handle = $crate::napi_engine::checked_index(handle, "handle")?;
                 let child_index = $crate::napi_engine::checked_index(child_index, "childIndex")?;
@@ -191,7 +192,7 @@ macro_rules! napi_engine {
                     ))
                 })?;
                 parsed
-                    .read_child(handle, child_index, $crate::napi_engine::read_depth(deep))
+                    .read_child(handle, child_index, $crate::napi_engine::read_depth(depth)?)
                     .map_err(::napi::Error::from_reason)
             }
 
@@ -367,11 +368,22 @@ pub fn checked_index(value: f64, label: &str) -> napi::Result<u64> {
     Ok(value as u64)
 }
 
-/// Map the boundary's optional `deep` flag onto a [`ReadDepth`](crate::ReadDepth).
-pub fn read_depth(deep: Option<bool>) -> crate::ReadDepth {
-    if deep == Some(true) {
-        crate::ReadDepth::Deep
-    } else {
-        crate::ReadDepth::Shallow
+/// Map the boundary's optional level count onto a [`ReadDepth`](crate::ReadDepth):
+/// absent is one level, `Infinity` is the whole tree, and anything else must
+/// be a whole number of levels, at least one.
+pub fn read_depth(depth: Option<f64>) -> napi::Result<crate::ReadDepth> {
+    let Some(levels) = depth else {
+        return Ok(crate::ReadDepth::SHALLOW);
+    };
+    if levels == f64::INFINITY {
+        return Ok(crate::ReadDepth::Deep);
     }
+    if levels.fract() != 0.0 || levels < 1.0 || levels > f64::from(u32::MAX) {
+        return Err(napi::Error::from_reason(format!(
+            "depth {levels} is not a whole number of levels (at least 1) or Infinity"
+        )));
+    }
+    Ok(crate::ReadDepth::Levels(
+        std::num::NonZeroU32::new(levels as u32).expect("levels >= 1"),
+    ))
 }

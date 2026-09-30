@@ -19,9 +19,9 @@ describe('a list owner', () => {
 		expect(ps.length).toBe(0);
 		expect(ps.delimiter).toBe(Delimiter.None);
 	});
-	it('$with takes the list factory arguments and keeps the elements it is given', () => {
+	it('the list slot setter takes the list factory arguments and keeps the elements it is given', () => {
 		const ps = fnOf('def f(a, b):\n    pass\n').parameters();
-		expect(ps.$with(ps.at(0)).$render()).toBe('(a)');
-		expect(ps.$with({ delimiter: Delimiter.Trailing }, ps.at(0)).$render()).toBe('(a,)');
+		expect(ps.$with.elements(ps.at(0)).$render()).toBe('(a)');
+		expect(ps.$with.elements({ delimiter: Delimiter.Trailing }, ps.at(0)).$render()).toBe('(a,)');
 	});
 });

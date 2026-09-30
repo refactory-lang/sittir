@@ -19,7 +19,8 @@ import type {
 	TriviaSetter,
 	GrammarInnerTrivia,
 	SlotHint,
-	ListOwnerHint,
+	ListViewHint,
+	ListSlotHint,
 	BoundOf,
 	ParsedOf,
 	AdmitBound,
@@ -2250,11 +2251,13 @@ export interface SimpleStatements {
 	};
 	readonly __slotHints__?: {
 		readonly simpleStatementsElements: SlotHint<T.SimpleStatementsElements>;
-		readonly $listOwner: ListOwnerHint<
-			T.SimpleStatement,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.SimpleStatement
-		>;
+		readonly $listView: ListViewHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly simpleStatementsElements: ListSlotHint<
+				T.SimpleStatement,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	simpleStatementsElements(): SimpleStatementsElements;
 }
@@ -2316,6 +2319,10 @@ export interface ImportList {
 	readonly __slotHints__?: {
 		readonly names: SlotHint<NonEmptyArray<T.DottedName | T.AliasedImport>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.DottedName | T.AliasedImport,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	names(): NonEmptyArray<DottedName | AliasedImport>;
 }
@@ -2543,6 +2550,9 @@ export interface MatchStatement {
 	readonly __slotHints__?: {
 		readonly subjects: SlotHint<T.Subjects>;
 		readonly body: SlotHint<T.MatchBlock>;
+		readonly $listSlots: {
+			readonly subjects: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	subjects(): Subjects;
 	body(): MatchBlock;
@@ -2570,6 +2580,9 @@ export interface CaseClause {
 		readonly casePatterns: SlotHint<T.CasePatterns>;
 		readonly guard: SlotHint<T.IfClause, true>;
 		readonly consequence: SlotHint<T.Suite>;
+		readonly $listSlots: {
+			readonly casePatterns: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	casePatterns(): CasePatterns;
 	guard(): IfClause | undefined;
@@ -2737,6 +2750,10 @@ export interface FunctionDefinition {
 		readonly parameters: SlotHint<T.Parameters>;
 		readonly returnType: SlotHint<T.Type, true>;
 		readonly body: SlotHint<T.Suite>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
@@ -2754,7 +2771,10 @@ export interface Parameters {
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<T.ParametersElements, true>;
-		readonly $listOwner: ListOwnerHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.Parameter>;
+		readonly $listView: ListViewHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly elements: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	elements(): ParametersElements | undefined;
 }
@@ -2767,7 +2787,10 @@ export interface LambdaParameters {
 	};
 	readonly __slotHints__?: {
 		readonly parametersElements: SlotHint<T.ParametersElements>;
-		readonly $listOwner: ListOwnerHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.Parameter>;
+		readonly $listView: ListViewHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly parametersElements: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	parametersElements(): ParametersElements;
 }
@@ -2873,6 +2896,13 @@ export interface ClassDefinition {
 		readonly typeParameters: SlotHint<T.TypeParameter, true>;
 		readonly superclasses: SlotHint<T.ArgumentList, true>;
 		readonly body: SlotHint<T.Suite>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly superclasses: ListSlotHint<
+				T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	name(): Identifier;
 	typeParameters(): TypeParameter | undefined;
@@ -2888,7 +2918,10 @@ export interface TypeParameter {
 	};
 	readonly __slotHints__?: {
 		readonly types: SlotHint<T.Types>;
-		readonly $listOwner: ListOwnerHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.Type>;
+		readonly $listView: ListViewHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly types: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	types(): Types;
 }
@@ -2916,11 +2949,16 @@ export interface ArgumentList {
 	};
 	readonly __slotHints__?: {
 		readonly arguments: SlotHint<T.ArgumentListElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly arguments: ListSlotHint<
+				T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	arguments(): ArgumentListElements | undefined;
 }
@@ -2976,6 +3014,9 @@ export interface ExpressionList {
 	readonly __slotHints__?: {
 		readonly expression: SlotHint<NonNullable<T.ExpressionList.Config>['expression']>;
 		readonly tail: SlotHint<NonNullable<T.ExpressionList.Config>['tail']>;
+		readonly $listSlots: {
+			readonly tail: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	expression(): Expression;
 	tail(): TSKindId.Comma | ExpressionListExpressions;
@@ -3177,11 +3218,16 @@ export interface DictPattern {
 	};
 	readonly __slotHints__?: {
 		readonly dictPatternElements: SlotHint<T.DictPatternElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.KeyValuePattern | T.SplatPattern,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.KeyValuePattern | T.SplatPattern
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly dictPatternElements: ListSlotHint<
+				T.KeyValuePattern | T.SplatPattern,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	dictPatternElements(): DictPatternElements | undefined;
 }
@@ -3336,6 +3382,9 @@ export interface ClassPattern {
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.DottedName>;
 		readonly arguments: SlotHint<T.ListPatternCasePatterns, true>;
+		readonly $listSlots: {
+			readonly arguments: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	name(): DottedName;
 	arguments(): ListPatternCasePatterns | undefined;
@@ -3369,6 +3418,7 @@ export interface ParametersElements {
 	readonly __slotHints__?: {
 		readonly parameters: SlotHint<NonEmptyArray<T.Parameter>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	parameters(): NonEmptyArray<Parameter>;
 }
@@ -3379,6 +3429,7 @@ export interface Patterns {
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<NonEmptyArray<T.Pattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	patterns(): NonEmptyArray<Pattern>;
 }
@@ -3391,7 +3442,10 @@ export interface TuplePattern {
 	};
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<T.Patterns, true>;
-		readonly $listOwner: ListOwnerHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.Pattern>;
+		readonly $listView: ListViewHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly patterns: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	patterns(): Patterns | undefined;
 }
@@ -3404,7 +3458,10 @@ export interface ListPattern {
 	};
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<T.Patterns, true>;
-		readonly $listOwner: ListOwnerHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.Pattern>;
+		readonly $listView: ListViewHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly patterns: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	patterns(): Patterns | undefined;
 }
@@ -3704,6 +3761,9 @@ export interface Lambda {
 	readonly __slotHints__?: {
 		readonly parameters: SlotHint<T.LambdaParameters, true>;
 		readonly body: SlotHint<NonNullable<T.Lambda.Config>['body']>;
+		readonly $listSlots: {
+			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	parameters(): LambdaParameters | undefined;
 	body(): Expression;
@@ -3725,6 +3785,9 @@ export interface LambdaWithinForInClause {
 	readonly __slotHints__?: {
 		readonly parameters: SlotHint<T.LambdaParameters, true>;
 		readonly body: SlotHint<NonNullable<T.LambdaWithinForInClause.Config>['body']>;
+		readonly $listSlots: {
+			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	parameters(): LambdaParameters | undefined;
 	body(): Expression | LambdaWithinForInClause;
@@ -3784,6 +3847,9 @@ export interface PatternList {
 	readonly __slotHints__?: {
 		readonly pattern: SlotHint<T.Pattern>;
 		readonly tail: SlotHint<NonNullable<T.PatternList.Config>['tail']>;
+		readonly $listSlots: {
+			readonly tail: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	pattern(): Pattern;
 	tail(): TSKindId.Comma | PatternListPatterns;
@@ -3837,6 +3903,9 @@ export interface Subscript {
 	readonly __slotHints__?: {
 		readonly value: SlotHint<NonNullable<T.Subscript.Config>['value']>;
 		readonly subscripts: SlotHint<T.Subscripts>;
+		readonly $listSlots: {
+			readonly subscripts: ListSlotHint<T.Expression | T.Slice, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	value(): PrimaryExpression;
 	subscripts(): Subscripts;
@@ -3949,6 +4018,9 @@ export interface GenericType {
 	readonly __slotHints__?: {
 		readonly name: SlotHint<NonNullable<T.GenericType.Config>['name']>;
 		readonly typeParameter: SlotHint<T.TypeParameter>;
+		readonly $listSlots: {
+			readonly typeParameter: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	name(): Identifier | TSKindId.TypeKeyword;
 	typeParameter(): TypeParameter;
@@ -4051,11 +4123,16 @@ export interface List {
 	};
 	readonly __slotHints__?: {
 		readonly collectionElements: SlotHint<T.CollectionElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly collectionElements: ListSlotHint<
+				T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	collectionElements(): CollectionElements | undefined;
 }
@@ -4068,11 +4145,16 @@ export interface Set {
 	};
 	readonly __slotHints__?: {
 		readonly collectionElements: SlotHint<T.CollectionElements>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly collectionElements: ListSlotHint<
+				T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	collectionElements(): CollectionElements;
 }
@@ -4085,30 +4167,34 @@ export interface Tuple {
 	};
 	readonly __slotHints__?: {
 		readonly collectionElements: SlotHint<T.CollectionElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly collectionElements: ListSlotHint<
+				T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	collectionElements(): CollectionElements | undefined;
 }
 
 export interface Dictionary {
 	readonly $type: TSKindId.Dictionary;
-	readonly _entries?: DictionaryElements;
+	readonly _elements?: DictionaryElements;
 	readonly __looseHints__?: {
-		readonly entries?: readonly (Pair | DictionarySplat)[];
+		readonly elements?: readonly (Pair | DictionarySplat)[];
 	};
 	readonly __slotHints__?: {
-		readonly entries: SlotHint<T.DictionaryElements, true>;
-		readonly $listOwner: ListOwnerHint<
-			T.Pair | T.DictionarySplat,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.Pair | T.DictionarySplat
-		>;
+		readonly elements: SlotHint<T.DictionaryElements, true>;
+		readonly $listView: ListViewHint<T.Pair | T.DictionarySplat, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly elements: ListSlotHint<T.Pair | T.DictionarySplat, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
-	entries(): DictionaryElements | undefined;
+	elements(): DictionaryElements | undefined;
 }
 
 export interface Pair {
@@ -4231,6 +4317,10 @@ export interface CollectionElements {
 			true
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
 }
@@ -4419,6 +4509,7 @@ export interface SimpleStatementsElements {
 	readonly __slotHints__?: {
 		readonly simpleStatements: SlotHint<NonEmptyArray<T.SimpleStatement>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	simpleStatements(): NonEmptyArray<SimpleStatement>;
 }
@@ -4429,6 +4520,7 @@ export interface Subjects {
 	readonly __slotHints__?: {
 		readonly subjects: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	subjects(): NonEmptyArray<Expression>;
 }
@@ -4439,6 +4531,7 @@ export interface CasePatterns {
 	readonly __slotHints__?: {
 		readonly casePatterns: SlotHint<NonEmptyArray<T.CasePattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	casePatterns(): NonEmptyArray<CasePattern>;
 }
@@ -4449,6 +4542,7 @@ export interface WithClauseWithItems {
 	readonly __slotHints__?: {
 		readonly withItems: SlotHint<NonEmptyArray<T.WithItem>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	withItems(): NonEmptyArray<WithItem>;
 }
@@ -4459,6 +4553,7 @@ export interface Types {
 	readonly __slotHints__?: {
 		readonly types: SlotHint<NonEmptyArray<T.Type>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	types(): NonEmptyArray<Type>;
 }
@@ -4473,6 +4568,10 @@ export interface ArgumentListElements {
 			true
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument>;
 }
@@ -4483,6 +4582,7 @@ export interface ExpressionListExpressions {
 	readonly __slotHints__?: {
 		readonly expressions: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	expressions(): NonEmptyArray<Expression>;
 }
@@ -4493,6 +4593,7 @@ export interface ListPatternCasePatterns {
 	readonly __slotHints__?: {
 		readonly casePatterns: SlotHint<NonEmptyArray<T.CasePattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	casePatterns(): NonEmptyArray<CasePattern>;
 }
@@ -4503,6 +4604,10 @@ export interface DictPatternElements {
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonEmptyArray<T.KeyValuePattern | T.SplatPattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.KeyValuePattern | T.SplatPattern,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<KeyValuePattern | SplatPattern>;
 }
@@ -4513,6 +4618,7 @@ export interface PatternListPatterns {
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<NonEmptyArray<T.Pattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	patterns(): NonEmptyArray<Pattern>;
 }
@@ -4523,6 +4629,7 @@ export interface Subscripts {
 	readonly __slotHints__?: {
 		readonly subscripts: SlotHint<NonEmptyArray<T.Expression | T.Slice>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Expression | T.Slice, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	subscripts(): NonEmptyArray<Expression | Slice>;
 }
@@ -4533,6 +4640,7 @@ export interface DictionaryElements {
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonEmptyArray<T.Pair | T.DictionarySplat>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Pair | T.DictionarySplat, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	elements(): NonEmptyArray<Pair | DictionarySplat>;
 }
@@ -4579,11 +4687,13 @@ export interface CaseTuplePattern {
 	};
 	readonly __slotHints__?: {
 		readonly listPatternCasePatterns: SlotHint<T.ListPatternCasePatterns, true>;
-		readonly $listOwner: ListOwnerHint<
-			T.CasePattern,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.CasePattern
-		>;
+		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly listPatternCasePatterns: ListSlotHint<
+				T.CasePattern,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	listPatternCasePatterns(): ListPatternCasePatterns | undefined;
 }
@@ -4596,11 +4706,13 @@ export interface CaseListPattern {
 	};
 	readonly __slotHints__?: {
 		readonly listPatternCasePatterns: SlotHint<T.ListPatternCasePatterns, true>;
-		readonly $listOwner: ListOwnerHint<
-			T.CasePattern,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.CasePattern
-		>;
+		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly listPatternCasePatterns: ListSlotHint<
+				T.CasePattern,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	listPatternCasePatterns(): ListPatternCasePatterns | undefined;
 }
@@ -4611,6 +4723,7 @@ export interface PrintArguments {
 	readonly __slotHints__?: {
 		readonly arguments: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	arguments(): NonEmptyArray<Expression>;
 }
@@ -4621,6 +4734,7 @@ export interface PrintChevronArguments {
 	readonly __slotHints__?: {
 		readonly arguments: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	arguments(): NonEmptyArray<Expression>;
 }
@@ -4642,6 +4756,9 @@ export interface PrintStatementChevron {
 			NonNullable<T.PrintStatementChevron.Config>['printChevronArguments'],
 			true
 		>;
+		readonly $listSlots: {
+			readonly printChevronArguments: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	chevron(): Chevron;
 	printChevronArguments(): PrintChevronArguments | TSKindId.Comma | undefined;
@@ -4655,7 +4772,10 @@ export interface PrintStatementPlain {
 	};
 	readonly __slotHints__?: {
 		readonly printArguments: SlotHint<T.PrintArguments>;
-		readonly $listOwner: ListOwnerHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.Expression>;
+		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly printArguments: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	printArguments(): PrintArguments;
 }
@@ -4668,11 +4788,16 @@ export interface ParenthesizedImportList {
 	};
 	readonly __slotHints__?: {
 		readonly importList: SlotHint<T.ImportList>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.DottedName | T.AliasedImport,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.DottedName | T.AliasedImport
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly importList: ListSlotHint<
+				T.DottedName | T.AliasedImport,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	importList(): ImportList;
 }
@@ -4955,6 +5080,7 @@ export interface ExpressionStatementTuple {
 	readonly __slotHints__?: {
 		readonly expressions: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	expressions(): NonEmptyArray<Expression>;
 }
@@ -4965,6 +5091,7 @@ export interface WithClauseBare {
 	readonly __slotHints__?: {
 		readonly withItems: SlotHint<NonEmptyArray<T.WithItem>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	withItems(): NonEmptyArray<WithItem>;
 }
@@ -4977,7 +5104,10 @@ export interface WithClauseParen {
 	};
 	readonly __slotHints__?: {
 		readonly withClauseWithItems: SlotHint<T.WithClauseWithItems>;
-		readonly $listOwner: ListOwnerHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.WithItem>;
+		readonly $listView: ListViewHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly withClauseWithItems: ListSlotHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	withClauseWithItems(): WithClauseWithItems;
 }
@@ -5011,11 +5141,13 @@ export interface SuiteInline {
 	};
 	readonly __slotHints__?: {
 		readonly simpleStatementsElements: SlotHint<T.SimpleStatementsElements>;
-		readonly $listOwner: ListOwnerHint<
-			T.SimpleStatement,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.SimpleStatement
-		>;
+		readonly $listView: ListViewHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly simpleStatementsElements: ListSlotHint<
+				T.SimpleStatement,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	simpleStatementsElements(): SimpleStatementsElements;
 }
@@ -5097,6 +5229,12 @@ export interface Names {
 	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.ImportList>;
+		readonly $listSlots: {
+			readonly content: ListSlotHint<
+				T.DottedName | T.AliasedImport,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	readonly __aliasContent__?: Names.Types;
 	content(): ImportList;
@@ -8595,7 +8733,7 @@ export interface DictionaryNs extends NodeNs<
 	Dictionary.Bound,
 	Dictionary.BuildArgs,
 	Dictionary.LooseArgs,
-	'entries',
+	'elements',
 	TSKindId.Dictionary,
 	Dictionary.Parsed,
 	EmptyDictionary
