@@ -1382,10 +1382,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				? 'const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown> = {'
 				: 'const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {'
 		);
-		const rows = new Map<string, { row: string; exact: boolean; typeExpr: string }>();
-		const claimRow = (tableKey: string, row: string, exact: boolean, typeExpr: string): void => {
+		const rows = new Map<string, { row: string; exact: boolean }>();
+		const claimRow = (tableKey: string, row: string, exact: boolean): void => {
 			const existing = rows.get(tableKey);
-			if (existing === undefined || (exact && !existing.exact)) rows.set(tableKey, { row, exact, typeExpr });
+			if (existing === undefined || (exact && !existing.exact)) rows.set(tableKey, { row, exact });
 		};
 		for (const [kind, node] of this.#nodeMap.nodes) {
 			if (isSlotBearingCompound(node) || node instanceof AssembledSupertype) {
@@ -1406,16 +1406,14 @@ export class WrapEmitter implements CodegenEmitter<string> {
 					}
 					rows.set(memberName, {
 						row: `  ${wrapTableKey(kind, memberName)}: (d, t) => wrap${node.typeName}(_aliasEnvelope(d, t) as unknown as T.${node.typeName}, t),`,
-						exact: true,
-						typeExpr: `ReturnType<typeof wrap${node.typeName}>`
+						exact: true
 					});
 					continue;
 				}
 				claimRow(
 					this.#kindEntries ? memberName : kind,
 					`  ${wrapTableKey(kind, memberName)}: (d, t) => wrap${node.typeName}(d as unknown as T.${node.typeName}, t),`,
-					entry !== undefined && entry.kind === kind,
-					`ReturnType<typeof wrap${node.typeName}>`
+					entry !== undefined && entry.kind === kind
 				);
 			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || isBuilderTextLeaf(node)) {
 				if (!node.factoryName) continue;
@@ -1425,11 +1423,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 					claimRow(
 						entry.member,
 						`  [TSKindId.${entry.member}]: (d) => ({ ...d, $type: TSKindId.${entry.member} as const }),`,
-						entry.kind === kind,
-						`_NodeData & { readonly $type: TSKindId.${entry.member} }`
+						entry.kind === kind
 					);
 				} else {
-					claimRow(kind, `  '${kind}': (d) => d,`, true, `_NodeData`);
+					claimRow(kind, `  '${kind}': (d) => d,`, true);
 				}
 			}
 		}
@@ -1471,12 +1468,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			);
 		}
 		if (this.#kindEntries) {
-			lines.push('interface _WrapReturnByKindId {');
-			for (const [tableKey, { typeExpr }] of rows) {
-				lines.push(`  [TSKindId.${tableKey}]: ${typeExpr};`);
-			}
-			lines.push('}');
-			lines.push('');
 			if (this.#rootKind !== undefined) {
 				const rootEntry = findKindEntry(this.#kindEntries, this.#rootKind);
 				if (rootEntry === undefined || !rows.has(rootEntry.member)) {
@@ -1487,7 +1478,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				this.#rootTreeTypeName = `${rootEntry.member}Tree`;
 				lines.push('/** The wrapped root of a whole-source parse — what `engine.parse()` returns. */');
 				lines.push(
-					`export type ${this.#rootTreeTypeName} = _WrapReturnByKindId[TSKindId.${rootEntry.member}] & ParsedRoot;`
+					`export type ${this.#rootTreeTypeName} = T.ParsedByKindId[TSKindId.${rootEntry.member}] & ParsedRoot;`
 				);
 				lines.push('');
 			}
@@ -1517,11 +1508,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 
 		lines.push('/** Wrap a NodeData into its lazy read-only view. */');
 		if (this.#kindEntries) {
-			lines.push('export function wrapNode<T extends _NodeData & { readonly $type: keyof _WrapReturnByKindId }>(');
-			lines.push('  data: T,');
+			lines.push('export function wrapNode<D extends _NodeData & { readonly $type: keyof T.ParsedByKindId }>(');
+			lines.push('  data: D,');
 			lines.push('  tree: TreeHandle');
 			lines.push(
-				"): _WrapReturnByKindId[T['$type'] & keyof _WrapReturnByKindId] & Pick<T, Extract<keyof T, keyof ParsedRoot>>;"
+				"): T.ParsedByKindId[D['$type'] & keyof T.ParsedByKindId] & Pick<D, Extract<keyof D, keyof ParsedRoot>>;"
 			);
 			lines.push('export function wrapNode(data: _NodeData, tree: TreeHandle): unknown;');
 		}
