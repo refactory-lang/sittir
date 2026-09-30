@@ -45,20 +45,6 @@ export type LeafStringMap = {
 	[TSKindId.PositionalSeparator]: '/';
 	[TSKindId.KeywordSeparator]: '*';
 	[TSKindId.KwAsyncMarker]: 'async';
-	[TSKindId.AugmentedAssignmentOperator]:
-		| '+='
-		| '-='
-		| '*='
-		| '/='
-		| '@='
-		| '//='
-		| '%='
-		| '**='
-		| '>>='
-		| '<<='
-		| '&='
-		| '^='
-		| '|=';
 	[TSKindId.WildcardPattern]: '_';
 	[TSKindId.LineContinuationNul]: '\\\u0000';
 	[TSKindId.Space]: ' ';
@@ -380,71 +366,70 @@ export enum TSKindId {
 	Subscripts = 270,
 	DictionaryElements = 271,
 	SliceGroup = 272,
-	AugmentedAssignmentOperator = 273,
-	ExceptClauseExceptionAs = 274,
-	CaseTuplePattern = 275,
-	CaseListPattern = 276,
-	PrintArguments = 277,
-	PrintChevronArguments = 278,
-	PrintStatementChevron = 279,
-	PrintStatementPlain = 280,
-	WildcardPattern = 281,
-	ParenthesizedImportList = 282,
-	ComprehensionClauses = 283,
-	IntegerDecimal = 284,
-	SimplePatternNegative = 285,
-	ExceptClauseExceptionList = 286,
-	ExceptClauseException = 287,
-	AssignmentEq = 288,
-	AssignmentType = 289,
-	AssignmentTyped = 290,
-	ExpressionStatementTuple = 291,
-	WithClauseBare = 292,
-	WithClauseParen = 293,
-	MatchBlockBlock = 294,
-	SuiteInline = 295,
-	SuiteBlock = 296,
-	SuiteEmpty = 297,
-	ComparisonOperatorComparator = 298,
-	YieldFromClause = 299,
-	ModuleRepeat1 = 300,
-	ImportPrefixRepeat1 = 301,
-	_ImportListRepeat1 = 302,
-	AssertStatementRepeat1 = 303,
-	IfStatementRepeat1 = 304,
-	TryStatementRepeat1 = 305,
-	GlobalStatementRepeat1 = 306,
-	DecoratedDefinitionRepeat1 = 307,
-	DottedNameRepeat1 = 308,
-	UnionPatternRepeat1 = 309,
-	_ParametersRepeat1 = 310,
-	_PatternsRepeat1 = 311,
-	ComparisonOperatorRepeat1 = 312,
-	_CollectionElementsRepeat1 = 313,
-	ForInClauseRepeat1 = 314,
-	ConcatenatedStringRepeat1 = 315,
-	StringRepeat1 = 316,
-	StringContentRepeat1 = 317,
-	FormatSpecifierRepeat1 = 318,
-	SimpleStatementsElementsRepeat1 = 319,
-	SubjectsRepeat1 = 320,
-	CasePatternsRepeat1 = 321,
-	WithClauseWithItemsRepeat1 = 322,
-	_ExecStatementOptional1Repeat1 = 323,
-	TypesRepeat1 = 324,
-	ArgumentListElementsRepeat1 = 325,
-	ExpressionListExpressionsRepeat1 = 326,
-	DictPatternElementsRepeat1 = 327,
-	PatternListPatternsRepeat1 = 328,
-	SubscriptsRepeat1 = 329,
-	DictionaryElementsRepeat1 = 330,
-	_PrintArgumentsRepeat1 = 331,
-	ComprehensionClausesRepeat1 = 332,
-	ExceptClauseExceptionListRepeat1 = 333,
-	MatchBlockBlockRepeat1 = 334,
-	AsPatternTarget = 335,
-	FormatExpression = 336,
-	Names = 337,
+	ExceptClauseExceptionAs = 273,
+	CaseTuplePattern = 274,
+	CaseListPattern = 275,
+	PrintArguments = 276,
+	PrintChevronArguments = 277,
+	PrintStatementChevron = 278,
+	PrintStatementPlain = 279,
+	WildcardPattern = 280,
+	ParenthesizedImportList = 281,
+	ComprehensionClauses = 282,
+	IntegerDecimal = 283,
+	SimplePatternNegative = 284,
+	ExceptClauseExceptionList = 285,
+	ExceptClauseException = 286,
+	AssignmentEq = 287,
+	AssignmentType = 288,
+	AssignmentTyped = 289,
+	ExpressionStatementTuple = 290,
+	WithClauseBare = 291,
+	WithClauseParen = 292,
+	MatchBlockBlock = 293,
+	SuiteInline = 294,
+	SuiteBlock = 295,
+	SuiteEmpty = 296,
+	ComparisonOperatorComparator = 297,
+	YieldFromClause = 298,
+	ModuleRepeat1 = 299,
+	ImportPrefixRepeat1 = 300,
+	_ImportListRepeat1 = 301,
+	AssertStatementRepeat1 = 302,
+	IfStatementRepeat1 = 303,
+	TryStatementRepeat1 = 304,
+	GlobalStatementRepeat1 = 305,
+	DecoratedDefinitionRepeat1 = 306,
+	DottedNameRepeat1 = 307,
+	UnionPatternRepeat1 = 308,
+	_ParametersRepeat1 = 309,
+	_PatternsRepeat1 = 310,
+	ComparisonOperatorRepeat1 = 311,
+	_CollectionElementsRepeat1 = 312,
+	ForInClauseRepeat1 = 313,
+	ConcatenatedStringRepeat1 = 314,
+	StringRepeat1 = 315,
+	StringContentRepeat1 = 316,
+	FormatSpecifierRepeat1 = 317,
+	SimpleStatementsElementsRepeat1 = 318,
+	SubjectsRepeat1 = 319,
+	CasePatternsRepeat1 = 320,
+	WithClauseWithItemsRepeat1 = 321,
+	_ExecStatementOptional1Repeat1 = 322,
+	TypesRepeat1 = 323,
+	ArgumentListElementsRepeat1 = 324,
+	ExpressionListExpressionsRepeat1 = 325,
+	DictPatternElementsRepeat1 = 326,
+	PatternListPatternsRepeat1 = 327,
+	SubscriptsRepeat1 = 328,
+	DictionaryElementsRepeat1 = 329,
+	_PrintArgumentsRepeat1 = 330,
+	ComprehensionClausesRepeat1 = 331,
+	ExceptClauseExceptionListRepeat1 = 332,
+	MatchBlockBlockRepeat1 = 333,
+	AsPatternTarget = 334,
+	FormatExpression = 335,
+	Names = 336,
 	Error = 65535
 }
 Object.freeze(TSKindId);
@@ -581,7 +566,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[127, 'module'],
 	[128, '_statement'],
 	[129, '_simple_statements'],
-	[339, '_simple_statements'],
+	[338, '_simple_statements'],
 	[130, 'import_statement'],
 	[131, 'import_prefix'],
 	[132, 'relative_import'],
@@ -636,7 +621,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[181, 'dotted_name'],
 	[182, 'case_pattern'],
 	[183, '_simple_pattern'],
-	[338, '_simple_pattern'],
+	[337, '_simple_pattern'],
 	[184, 'case_as_pattern'],
 	[185, 'union_pattern'],
 	[186, 'dict_pattern'],
@@ -726,71 +711,70 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[270, 'subscripts'],
 	[271, 'dictionary_elements'],
 	[272, 'slice_group'],
-	[273, '_augmented_assignment_operator'],
-	[274, 'except_clause_exception_as'],
-	[275, 'case_tuple_pattern'],
-	[276, 'case_list_pattern'],
-	[277, 'print_arguments'],
-	[278, 'print_chevron_arguments'],
-	[279, 'print_statement_chevron'],
-	[280, 'print_statement_plain'],
-	[281, 'wildcard_pattern'],
-	[282, 'parenthesized_import_list'],
-	[283, 'comprehension_clauses'],
-	[284, 'integer_decimal'],
-	[285, 'simple_pattern_negative'],
-	[286, 'except_clause_exception_list'],
-	[287, 'except_clause_exception'],
-	[288, 'assignment_eq'],
-	[289, 'assignment_type'],
-	[290, 'assignment_typed'],
-	[291, 'expression_statement_tuple'],
-	[292, 'with_clause_bare'],
-	[293, 'with_clause_paren'],
-	[294, 'match_block_block'],
-	[295, 'suite_inline'],
-	[296, 'suite_block'],
-	[297, 'suite_empty'],
-	[298, 'comparison_operator_comparator'],
-	[299, 'yield_from_clause'],
-	[300, 'module_repeat1'],
-	[301, 'import_prefix_repeat1'],
-	[302, '_import_list_repeat1'],
-	[303, 'assert_statement_repeat1'],
-	[304, 'if_statement_repeat1'],
-	[305, 'try_statement_repeat1'],
-	[306, 'global_statement_repeat1'],
-	[307, 'decorated_definition_repeat1'],
-	[308, 'dotted_name_repeat1'],
-	[309, 'union_pattern_repeat1'],
-	[310, '_parameters_repeat1'],
-	[311, '_patterns_repeat1'],
-	[312, 'comparison_operator_repeat1'],
-	[313, '_collection_elements_repeat1'],
-	[314, 'for_in_clause_repeat1'],
-	[315, 'concatenated_string_repeat1'],
-	[316, 'string_repeat1'],
-	[317, 'string_content_repeat1'],
-	[318, 'format_specifier_repeat1'],
-	[319, 'simple_statements_elements_repeat1'],
-	[320, 'subjects_repeat1'],
-	[321, 'case_patterns_repeat1'],
-	[322, 'with_clause_with_items_repeat1'],
-	[323, '_exec_statement_optional1_repeat1'],
-	[324, 'types_repeat1'],
-	[325, 'argument_list_elements_repeat1'],
-	[326, 'expression_list_expressions_repeat1'],
-	[327, 'dict_pattern_elements_repeat1'],
-	[328, 'pattern_list_patterns_repeat1'],
-	[329, 'subscripts_repeat1'],
-	[330, 'dictionary_elements_repeat1'],
-	[331, '_print_arguments_repeat1'],
-	[332, 'comprehension_clauses_repeat1'],
-	[333, 'except_clause_exception_list_repeat1'],
-	[334, 'match_block_block_repeat1'],
-	[335, 'as_pattern_target'],
-	[336, 'format_expression'],
-	[337, 'names'],
+	[273, 'except_clause_exception_as'],
+	[274, 'case_tuple_pattern'],
+	[275, 'case_list_pattern'],
+	[276, 'print_arguments'],
+	[277, 'print_chevron_arguments'],
+	[278, 'print_statement_chevron'],
+	[279, 'print_statement_plain'],
+	[280, 'wildcard_pattern'],
+	[281, 'parenthesized_import_list'],
+	[282, 'comprehension_clauses'],
+	[283, 'integer_decimal'],
+	[284, 'simple_pattern_negative'],
+	[285, 'except_clause_exception_list'],
+	[286, 'except_clause_exception'],
+	[287, 'assignment_eq'],
+	[288, 'assignment_type'],
+	[289, 'assignment_typed'],
+	[290, 'expression_statement_tuple'],
+	[291, 'with_clause_bare'],
+	[292, 'with_clause_paren'],
+	[293, 'match_block_block'],
+	[294, 'suite_inline'],
+	[295, 'suite_block'],
+	[296, 'suite_empty'],
+	[297, 'comparison_operator_comparator'],
+	[298, 'yield_from_clause'],
+	[299, 'module_repeat1'],
+	[300, 'import_prefix_repeat1'],
+	[301, '_import_list_repeat1'],
+	[302, 'assert_statement_repeat1'],
+	[303, 'if_statement_repeat1'],
+	[304, 'try_statement_repeat1'],
+	[305, 'global_statement_repeat1'],
+	[306, 'decorated_definition_repeat1'],
+	[307, 'dotted_name_repeat1'],
+	[308, 'union_pattern_repeat1'],
+	[309, '_parameters_repeat1'],
+	[310, '_patterns_repeat1'],
+	[311, 'comparison_operator_repeat1'],
+	[312, '_collection_elements_repeat1'],
+	[313, 'for_in_clause_repeat1'],
+	[314, 'concatenated_string_repeat1'],
+	[315, 'string_repeat1'],
+	[316, 'string_content_repeat1'],
+	[317, 'format_specifier_repeat1'],
+	[318, 'simple_statements_elements_repeat1'],
+	[319, 'subjects_repeat1'],
+	[320, 'case_patterns_repeat1'],
+	[321, 'with_clause_with_items_repeat1'],
+	[322, '_exec_statement_optional1_repeat1'],
+	[323, 'types_repeat1'],
+	[324, 'argument_list_elements_repeat1'],
+	[325, 'expression_list_expressions_repeat1'],
+	[326, 'dict_pattern_elements_repeat1'],
+	[327, 'pattern_list_patterns_repeat1'],
+	[328, 'subscripts_repeat1'],
+	[329, 'dictionary_elements_repeat1'],
+	[330, '_print_arguments_repeat1'],
+	[331, 'comprehension_clauses_repeat1'],
+	[332, 'except_clause_exception_list_repeat1'],
+	[333, 'match_block_block_repeat1'],
+	[334, 'as_pattern_target'],
+	[335, 'format_expression'],
+	[336, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -925,7 +909,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[127, 'module'],
 	[128, '_statement'],
 	[129, '_simple_statements'],
-	[339, 'simple_statements'],
+	[338, 'simple_statements'],
 	[130, 'import_statement'],
 	[131, 'import_prefix'],
 	[132, 'relative_import'],
@@ -980,7 +964,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[181, 'dotted_name'],
 	[182, 'case_pattern'],
 	[183, '_simple_pattern'],
-	[338, 'simple_pattern'],
+	[337, 'simple_pattern'],
 	[184, 'case_as_pattern'],
 	[185, 'union_pattern'],
 	[186, 'dict_pattern'],
@@ -1070,71 +1054,70 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[270, 'subscripts'],
 	[271, 'dictionary_elements'],
 	[272, 'slice_group'],
-	[273, '_augmented_assignment_operator'],
-	[274, 'except_clause_exception_as'],
-	[275, 'case_tuple_pattern'],
-	[276, 'case_list_pattern'],
-	[277, 'print_arguments'],
-	[278, 'print_chevron_arguments'],
-	[279, 'print_statement_chevron'],
-	[280, 'print_statement_plain'],
-	[281, 'wildcard_pattern'],
-	[282, 'parenthesized_import_list'],
-	[283, 'comprehension_clauses'],
-	[284, 'integer_decimal'],
-	[285, 'simple_pattern_negative'],
-	[286, 'except_clause_exception_list'],
-	[287, 'except_clause_exception'],
-	[288, 'assignment_eq'],
-	[289, 'assignment_type'],
-	[290, 'assignment_typed'],
-	[291, 'expression_statement_tuple'],
-	[292, 'with_clause_bare'],
-	[293, 'with_clause_paren'],
-	[294, 'match_block_block'],
-	[295, 'suite_inline'],
-	[296, 'suite_block'],
-	[297, 'suite_empty'],
-	[298, 'comparison_operator_comparator'],
-	[299, 'yield_from_clause'],
-	[300, 'module_repeat1'],
-	[301, 'import_prefix_repeat1'],
-	[302, '_import_list_repeat1'],
-	[303, 'assert_statement_repeat1'],
-	[304, 'if_statement_repeat1'],
-	[305, 'try_statement_repeat1'],
-	[306, 'global_statement_repeat1'],
-	[307, 'decorated_definition_repeat1'],
-	[308, 'dotted_name_repeat1'],
-	[309, 'union_pattern_repeat1'],
-	[310, '_parameters_repeat1'],
-	[311, '_patterns_repeat1'],
-	[312, 'comparison_operator_repeat1'],
-	[313, '_collection_elements_repeat1'],
-	[314, 'for_in_clause_repeat1'],
-	[315, 'concatenated_string_repeat1'],
-	[316, 'string_repeat1'],
-	[317, 'string_content_repeat1'],
-	[318, 'format_specifier_repeat1'],
-	[319, 'simple_statements_elements_repeat1'],
-	[320, 'subjects_repeat1'],
-	[321, 'case_patterns_repeat1'],
-	[322, 'with_clause_with_items_repeat1'],
-	[323, '_exec_statement_optional1_repeat1'],
-	[324, 'types_repeat1'],
-	[325, 'argument_list_elements_repeat1'],
-	[326, 'expression_list_expressions_repeat1'],
-	[327, 'dict_pattern_elements_repeat1'],
-	[328, 'pattern_list_patterns_repeat1'],
-	[329, 'subscripts_repeat1'],
-	[330, 'dictionary_elements_repeat1'],
-	[331, '_print_arguments_repeat1'],
-	[332, 'comprehension_clauses_repeat1'],
-	[333, 'except_clause_exception_list_repeat1'],
-	[334, 'match_block_block_repeat1'],
-	[335, 'as_pattern_target'],
-	[336, 'format_expression'],
-	[337, 'names'],
+	[273, 'except_clause_exception_as'],
+	[274, 'case_tuple_pattern'],
+	[275, 'case_list_pattern'],
+	[276, 'print_arguments'],
+	[277, 'print_chevron_arguments'],
+	[278, 'print_statement_chevron'],
+	[279, 'print_statement_plain'],
+	[280, 'wildcard_pattern'],
+	[281, 'parenthesized_import_list'],
+	[282, 'comprehension_clauses'],
+	[283, 'integer_decimal'],
+	[284, 'simple_pattern_negative'],
+	[285, 'except_clause_exception_list'],
+	[286, 'except_clause_exception'],
+	[287, 'assignment_eq'],
+	[288, 'assignment_type'],
+	[289, 'assignment_typed'],
+	[290, 'expression_statement_tuple'],
+	[291, 'with_clause_bare'],
+	[292, 'with_clause_paren'],
+	[293, 'match_block_block'],
+	[294, 'suite_inline'],
+	[295, 'suite_block'],
+	[296, 'suite_empty'],
+	[297, 'comparison_operator_comparator'],
+	[298, 'yield_from_clause'],
+	[299, 'module_repeat1'],
+	[300, 'import_prefix_repeat1'],
+	[301, '_import_list_repeat1'],
+	[302, 'assert_statement_repeat1'],
+	[303, 'if_statement_repeat1'],
+	[304, 'try_statement_repeat1'],
+	[305, 'global_statement_repeat1'],
+	[306, 'decorated_definition_repeat1'],
+	[307, 'dotted_name_repeat1'],
+	[308, 'union_pattern_repeat1'],
+	[309, '_parameters_repeat1'],
+	[310, '_patterns_repeat1'],
+	[311, 'comparison_operator_repeat1'],
+	[312, '_collection_elements_repeat1'],
+	[313, 'for_in_clause_repeat1'],
+	[314, 'concatenated_string_repeat1'],
+	[315, 'string_repeat1'],
+	[316, 'string_content_repeat1'],
+	[317, 'format_specifier_repeat1'],
+	[318, 'simple_statements_elements_repeat1'],
+	[319, 'subjects_repeat1'],
+	[320, 'case_patterns_repeat1'],
+	[321, 'with_clause_with_items_repeat1'],
+	[322, '_exec_statement_optional1_repeat1'],
+	[323, 'types_repeat1'],
+	[324, 'argument_list_elements_repeat1'],
+	[325, 'expression_list_expressions_repeat1'],
+	[326, 'dict_pattern_elements_repeat1'],
+	[327, 'pattern_list_patterns_repeat1'],
+	[328, 'subscripts_repeat1'],
+	[329, 'dictionary_elements_repeat1'],
+	[330, '_print_arguments_repeat1'],
+	[331, 'comprehension_clauses_repeat1'],
+	[332, 'except_clause_exception_list_repeat1'],
+	[333, 'match_block_block_repeat1'],
+	[334, 'as_pattern_target'],
+	[335, 'format_expression'],
+	[336, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -1687,8 +1670,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DictionaryElements;
 		case 'slice_group':
 			return TSKindId.SliceGroup;
-		case '_augmented_assignment_operator':
-			return TSKindId.AugmentedAssignmentOperator;
 		case 'except_clause_exception_as':
 			return TSKindId.ExceptClauseExceptionAs;
 		case 'case_tuple_pattern':
@@ -4392,20 +4373,6 @@ export type None = TSKindId.None;
 export type PositionalSeparator = TSKindId.PositionalSeparator;
 export type KeywordSeparator = TSKindId.KeywordSeparator;
 export type KwAsyncMarker = TSKindId.KwAsyncMarker;
-export type AugmentedAssignmentOperator =
-	| TSKindId.PlusEq
-	| TSKindId.DashEq
-	| TSKindId.StarEq
-	| TSKindId.SlashEq
-	| TSKindId.AtEq
-	| TSKindId.SlashSlashEq
-	| TSKindId.PercentEq
-	| TSKindId.StarStarEq
-	| TSKindId.GtGtEq
-	| TSKindId.LtLtEq
-	| TSKindId.AmpEq
-	| TSKindId.CaretEq
-	| TSKindId.PipeEq;
 export type WildcardPattern = TSKindId.WildcardPattern;
 export type IntegerDecimalLong = Terminal<TSKindId.IntegerDecimalLong, string>;
 export type IntegerDecimalImaginary = Terminal<TSKindId.IntegerDecimalImaginary, string>;
@@ -4770,7 +4737,6 @@ export interface OptionsHintMap {
 	suiteBlock: SuiteBlock.Hints;
 	comparisonOperatorComparator: ComparisonOperatorComparator.Hints;
 	yieldFromClause: YieldFromClause.Hints;
-	augmentedAssignmentOperator: AugmentedAssignmentOperator.Hints;
 }
 
 export namespace Module {
@@ -5586,7 +5552,11 @@ export namespace LambdaWithinForInClause {
 
 export namespace AugmentedAssignment {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		readonly __optionsHint__?: {
+			readonly after?: SpacingArm;
+			readonly before?: SpacingArm;
+			readonly operator?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+		};
 	}
 }
 
@@ -6625,26 +6595,6 @@ export namespace YieldFromClause {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
 			readonly fromKeyword?: { readonly after?: SpacingArm };
-		};
-	}
-}
-
-export namespace AugmentedAssignmentOperator {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly ampEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly atEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly caretEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly dashEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly gtGtEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly ltLtEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly percentEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly pipeEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly plusEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly slashEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly slashSlashEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly starEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
-			readonly starStarEq?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 		};
 	}
 }
@@ -8806,8 +8756,6 @@ export type FixedTextKindId =
 	| TSKindId.LtLt
 	| TSKindId.Tilde
 	| TSKindId.LambdaKeyword
-	| TSKindId.YieldKeyword
-	| TSKindId.Bslash
 	| TSKindId.PlusEq
 	| TSKindId.DashEq
 	| TSKindId.StarEq
@@ -8821,6 +8769,8 @@ export type FixedTextKindId =
 	| TSKindId.AmpEq
 	| TSKindId.CaretEq
 	| TSKindId.PipeEq
+	| TSKindId.YieldKeyword
+	| TSKindId.Bslash
 	| TSKindId.Lt
 	| TSKindId.LtEq
 	| TSKindId.EqEq
