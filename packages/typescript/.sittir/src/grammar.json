@@ -16819,7 +16819,7 @@
     ],
     [
       "primary_expression",
-      "_kw_async_marker"
+      "arrow_function"
     ],
     [
       "primary_expression",
@@ -16848,12 +16848,8 @@
     ],
     [
       "primary_expression",
-      "_property_name",
-      "_kw_async_marker"
-    ],
-    [
-      "primary_expression",
-      "_kw_static_marker"
+      "arrow_function",
+      "_property_name"
     ],
     [
       "binary_expression",
@@ -16901,10 +16897,6 @@
     [
       "class_static_block",
       "_property_name"
-    ],
-    [
-      "abstract_method_signature",
-      "_kw_abstract_marker"
     ],
     [
       "class_body_method"
@@ -17746,10 +17738,18 @@
     "_infer_type_optional1",
     "_mapped_type_clause_optional1",
     "_index_signature_optional1",
+    "_kw_await_marker",
+    "_kw_async_marker",
+    "_kw_using_marker",
+    "_kw_static_marker",
+    "_kw_readonly_marker",
+    "_kw_declare_marker",
+    "_kw_abstract_marker",
+    "_kw_accessor_marker",
+    "_kw_const_marker",
     "_kind",
     "__for_header_operator",
-    "_kw_optional_marker",
-    "_kw_readonly_marker"
+    "_kw_optional_marker"
   ],
   "supertypes": [
     "statement",

@@ -820,7 +820,7 @@ export function resolveAnonymousNode_name(
 	return (
 		_keywordOf(value, [['_', TSKindId.Underscore] as const]) ??
 		coerceMixedEnumStorage(
-			_resolveKindEnum(value, () => _resolveOneBranch<T.String | '_'>(value, 'string')),
+			_resolveKindEnum(value, () => _resolveOneBranch<T.String | '_'>(value, 'string', [TSKindId.Underscore])),
 			[['_', TSKindId.Underscore] as const]
 		)
 	);

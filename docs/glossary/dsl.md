@@ -33,7 +33,7 @@ The inline-safe clause-hoist groups (`_<parent>_optional<N>`): the names whose o
 
 ### `packages/codegen/src/dsl/enrich.ts::getEnrichFieldBackings`
 
-The hidden rules enrich mints only to back a field: ``field-enum` mints (a field's choice of literals, e.g. typescript's `_kind`). They hold no structure of their own, so wire adds them to the grammar's `inline:` list: tree-sitter folds each body into its uses when it builds the tables, the LR shape stays the one upstream has (a separate nonterminal turns upstream's shift on `let` into a reduce/reduce choice), and the field wrapper still shows in the parse tree. `keyword` mints (`_kw_<name>`) are not included yet: inlining rust's breaks the render of `function_modifiers` (the sample lands on `extern_modifier` and its `_abi` misses `_string_open`), so they stay separate nonterminals. `literal-alias-storage` mints are not included: they are the storage an alias points at.
+The hidden rules enrich mints only to back a field: `keyword` mints (`_kw_<name>`) and `field-enum` mints (a field's choice of literals, e.g. typescript's `_kind`). They hold no structure of their own, so wire adds them to the grammar's `inline:` list: tree-sitter folds each body into its uses when it builds the tables, the LR shape stays the one upstream has (a separate nonterminal turns upstream's shift on `let` into a reduce/reduce choice), and the field wrapper still shows in the parse tree. `literal-alias-storage` mints are not included: they are the storage an alias points at.
 
 ### `packages/codegen/src/dsl/enrich.ts::getEnrichVisibleSubsequenceSources`
 
@@ -6142,7 +6142,7 @@ The content under a chain of named aliases.
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichMintKind`
 
 What kind of rule enrich added:
-- `keyword`: a `_kw_<name>` rule from `registerKwRule`;
+- `keyword`: a `_kw_<name>` rule from `registerKwRule` (inlined by wire);
 - `hidden-subsequence`: an inline-safe clause hoist;
 - `visible-subsequence`: a visible group, list, structured-arm or token-form lift;
 - `literal-alias-storage`: `mintInlineLiteralAliasStorage`;
