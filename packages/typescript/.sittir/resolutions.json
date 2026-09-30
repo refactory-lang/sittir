@@ -1,5 +1,5 @@
 {
-	"grammarHash": "7def8d5b71ea12373d2d8b6b865276a77109ce88244c6c081f1d02a5bebd472e",
+	"grammarHash": "a6cb9319d2782b85912ae964829a7fcaebd30ebe7613481d5e71c094dbdd7bb4",
 	"resolutions": [
 		{
 			"resolution": {
@@ -153,16 +153,16 @@
 				"kind": "AddConflict",
 				"symbols": [
 					"primary_expression",
-					"_kw_async_marker"
+					"arrow_function"
 				]
 			},
-			"step": "default",
+			"step": "upstream-declared",
 			"sourceChains": [
 				[
 					"primary_expression"
 				],
 				[
-					"_kw_async_marker"
+					"arrow_function"
 				]
 			],
 			"conflict": {
@@ -172,7 +172,8 @@
 				"lookahead": "'('",
 				"interpretations": [
 					"primary_expression",
-					"_kw_async_marker"
+					"arrow_function",
+					"arrow_function"
 				]
 			}
 		},
@@ -362,20 +363,20 @@
 				"kind": "AddConflict",
 				"symbols": [
 					"primary_expression",
-					"_property_name",
-					"_kw_async_marker"
+					"arrow_function",
+					"_property_name"
 				]
 			},
-			"step": "default",
+			"step": "upstream-declared",
 			"sourceChains": [
 				[
 					"primary_expression"
 				],
 				[
-					"_property_name"
+					"arrow_function"
 				],
 				[
-					"_kw_async_marker"
+					"_property_name"
 				]
 			],
 			"conflict": {
@@ -386,37 +387,9 @@
 				"lookahead": "'('",
 				"interpretations": [
 					"primary_expression",
-					"_property_name",
-					"_kw_async_marker"
-				]
-			}
-		},
-		{
-			"resolution": {
-				"kind": "AddConflict",
-				"symbols": [
-					"primary_expression",
-					"_kw_static_marker"
-				]
-			},
-			"step": "default",
-			"sourceChains": [
-				[
-					"primary_expression"
-				],
-				[
-					"_kw_static_marker"
-				]
-			],
-			"conflict": {
-				"symbolSequence": [
-					"'{'",
-					"'static'"
-				],
-				"lookahead": "'*'",
-				"interpretations": [
-					"primary_expression",
-					"_kw_static_marker"
+					"arrow_function",
+					"arrow_function",
+					"_property_name"
 				]
 			}
 		},
@@ -766,37 +739,6 @@
 				"interpretations": [
 					"class_static_block",
 					"_property_name"
-				]
-			}
-		},
-		{
-			"resolution": {
-				"kind": "AddConflict",
-				"symbols": [
-					"abstract_method_signature",
-					"_kw_abstract_marker"
-				]
-			},
-			"step": "default",
-			"sourceChains": [
-				[
-					"abstract_method_signature"
-				],
-				[
-					"_kw_abstract_marker"
-				]
-			],
-			"conflict": {
-				"symbolSequence": [
-					"'class'",
-					"'{'",
-					"'abstract'"
-				],
-				"lookahead": "'type'",
-				"interpretations": [
-					"abstract_method_signature",
-					"abstract_method_signature",
-					"_kw_abstract_marker"
 				]
 			}
 		},
@@ -1347,7 +1289,7 @@
 			"conflict": {
 				"symbolSequence": [
 					"'for'",
-					"_kw_await_marker",
+					"'await'",
 					"'('",
 					"'let'"
 				],

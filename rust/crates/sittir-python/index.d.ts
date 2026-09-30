@@ -612,7 +612,7 @@ export interface FloatScientificTransport {
 export interface ForInClauseTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: SlotValue<KwAsyncMarkerTransport>
+  _async_marker?: boolean
   _left: SlotValue<ForInClauseLeftTransportSlot>
   _right: Array<SlotValue<ForInClauseRightTransportSlot>>
   _comma?: boolean
@@ -635,7 +635,7 @@ export interface FormatSpecifierTransport {
 export interface ForStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: SlotValue<KwAsyncMarkerTransport>
+  _async_marker?: boolean
   _left: SlotValue<ForStatementLeftTransportSlot>
   _right: SlotValue<ForStatementRightTransportSlot>
   _body: SlotValue<SuiteTransport>
@@ -645,7 +645,7 @@ export interface ForStatementTransport {
 export interface FunctionDefinitionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: SlotValue<KwAsyncMarkerTransport>
+  _async_marker?: boolean
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParameterTransport>
   _parameters: SlotValue<ParametersTransport>
@@ -1266,7 +1266,7 @@ export interface WithItemTransport {
 export interface WithStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: SlotValue<KwAsyncMarkerTransport>
+  _async_marker?: boolean
   _with_clause: SlotValue<WithClauseTransport>
   _body: SlotValue<SuiteTransport>
 }

@@ -724,44 +724,6 @@
     "scope": "grammar",
     "code": "conflict-resolution",
     "severity": "info",
-    "message": "conflict between async_block, _kw_async_marker on 'move' resolved by AddConflict (default)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "async_block",
-          "_kw_async_marker"
-        ]
-      },
-      "step": "default",
-      "sourceChains": [
-        [
-          "async_block"
-        ],
-        [
-          "_kw_async_marker"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'async'"
-        ],
-        "lookahead": "'move'",
-        "interpretations": [
-          "async_block",
-          "_kw_async_marker"
-        ]
-      }
-    }
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
     "message": "conflict between _attributed_argument on ']' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
@@ -1326,23 +1288,23 @@
     "scope": "grammar",
     "code": "conflict-resolution",
     "severity": "info",
-    "message": "conflict between primary_expression, _kw_async_marker on '(' resolved by AddConflict (default)",
+    "message": "conflict between primary_expression, arrow_function on '(' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
           "primary_expression",
-          "_kw_async_marker"
+          "arrow_function"
         ]
       },
-      "step": "default",
+      "step": "upstream-declared",
       "sourceChains": [
         [
           "primary_expression"
         ],
         [
-          "_kw_async_marker"
+          "arrow_function"
         ]
       ],
       "conflict": {
@@ -1352,7 +1314,8 @@
         "lookahead": "'('",
         "interpretations": [
           "primary_expression",
-          "_kw_async_marker"
+          "arrow_function",
+          "arrow_function"
         ]
       }
     }
@@ -1605,27 +1568,27 @@
     "scope": "grammar",
     "code": "conflict-resolution",
     "severity": "info",
-    "message": "conflict between primary_expression, _property_name, _kw_async_marker on '(' resolved by AddConflict (default)",
+    "message": "conflict between primary_expression, arrow_function, _property_name on '(' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
           "primary_expression",
-          "_property_name",
-          "_kw_async_marker"
+          "arrow_function",
+          "_property_name"
         ]
       },
-      "step": "default",
+      "step": "upstream-declared",
       "sourceChains": [
         [
           "primary_expression"
         ],
         [
-          "_property_name"
+          "arrow_function"
         ],
         [
-          "_kw_async_marker"
+          "_property_name"
         ]
       ],
       "conflict": {
@@ -1636,47 +1599,9 @@
         "lookahead": "'('",
         "interpretations": [
           "primary_expression",
-          "_property_name",
-          "_kw_async_marker"
-        ]
-      }
-    }
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "message": "conflict between primary_expression, _kw_static_marker on '*' resolved by AddConflict (default)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "primary_expression",
-          "_kw_static_marker"
-        ]
-      },
-      "step": "default",
-      "sourceChains": [
-        [
-          "primary_expression"
-        ],
-        [
-          "_kw_static_marker"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'{'",
-          "'static'"
-        ],
-        "lookahead": "'*'",
-        "interpretations": [
-          "primary_expression",
-          "_kw_static_marker"
+          "arrow_function",
+          "arrow_function",
+          "_property_name"
         ]
       }
     }
@@ -2136,47 +2061,6 @@
         "interpretations": [
           "class_static_block",
           "_property_name"
-        ]
-      }
-    }
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "message": "conflict between abstract_method_signature, _kw_abstract_marker on 'type' resolved by AddConflict (default)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "abstract_method_signature",
-          "_kw_abstract_marker"
-        ]
-      },
-      "step": "default",
-      "sourceChains": [
-        [
-          "abstract_method_signature"
-        ],
-        [
-          "_kw_abstract_marker"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'class'",
-          "'{'",
-          "'abstract'"
-        ],
-        "lookahead": "'type'",
-        "interpretations": [
-          "abstract_method_signature",
-          "abstract_method_signature",
-          "_kw_abstract_marker"
         ]
       }
     }
@@ -2907,7 +2791,7 @@
       "conflict": {
         "symbolSequence": [
           "'for'",
-          "_kw_await_marker",
+          "'await'",
           "'('",
           "'let'"
         ],
@@ -3702,39 +3586,6 @@
           "_initializer"
         ]
       }
-    }
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "conflict-unnecessary-upstream",
-    "severity": "info",
-    "message": "upstream declares the conflict primary_expression, _property_name, arrow_function, which the reshaped grammar never reports",
-    "canProceed": true,
-    "details": {
-      "symbols": [
-        "primary_expression",
-        "_property_name",
-        "arrow_function"
-      ]
-    }
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "conflict-unnecessary-upstream",
-    "severity": "info",
-    "message": "upstream declares the conflict primary_expression, arrow_function, which the reshaped grammar never reports",
-    "canProceed": true,
-    "details": {
-      "symbols": [
-        "primary_expression",
-        "arrow_function"
-      ]
     }
   },
   {

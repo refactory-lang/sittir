@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 306,
+  "nodeCount": 305,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -2563,18 +2563,6 @@
       "isParameterless": true,
       "stampExpression": "\"is not\" as const",
       "text": "is not"
-    },
-    {
-      "kind": "_kw_async_marker",
-      "modelType": "keyword",
-      "typeName": "KwAsyncMarker",
-      "factoryName": "kwAsyncMarker",
-      "irKey": "kwAsyncMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"async\" as const",
-      "text": "async",
-      "factoryShape": "constant"
     },
     {
       "kind": "_left_hand_side",
@@ -8786,15 +8774,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },
@@ -8906,15 +8892,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },
@@ -9125,15 +9109,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },
@@ -16328,15 +16310,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },

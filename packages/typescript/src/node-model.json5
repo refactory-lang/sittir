@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 437,
+  "nodeCount": 429,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -4479,102 +4479,6 @@
       "factoryShape": "constant"
     },
     {
-      "kind": "_kw_abstract_marker",
-      "modelType": "keyword",
-      "typeName": "KwAbstractMarker",
-      "factoryName": "kwAbstractMarker",
-      "irKey": "kwAbstractMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"abstract\" as const",
-      "text": "abstract",
-      "factoryShape": "constant"
-    },
-    {
-      "kind": "_kw_accessor_marker",
-      "modelType": "keyword",
-      "typeName": "KwAccessorMarker",
-      "factoryName": "kwAccessorMarker",
-      "irKey": "kwAccessorMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"accessor\" as const",
-      "text": "accessor",
-      "factoryShape": "constant"
-    },
-    {
-      "kind": "_kw_async_marker",
-      "modelType": "keyword",
-      "typeName": "KwAsyncMarker",
-      "factoryName": "kwAsyncMarker",
-      "irKey": "kwAsyncMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"async\" as const",
-      "text": "async",
-      "factoryShape": "constant"
-    },
-    {
-      "kind": "_kw_await_marker",
-      "modelType": "keyword",
-      "typeName": "KwAwaitMarker",
-      "factoryName": "kwAwaitMarker",
-      "irKey": "kwAwaitMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"await\" as const",
-      "text": "await",
-      "factoryShape": "constant"
-    },
-    {
-      "kind": "_kw_const_marker",
-      "modelType": "keyword",
-      "typeName": "KwConstMarker",
-      "factoryName": "kwConstMarker",
-      "irKey": "kwConstMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"const\" as const",
-      "text": "const",
-      "factoryShape": "constant"
-    },
-    {
-      "kind": "_kw_declare_marker",
-      "modelType": "keyword",
-      "typeName": "KwDeclareMarker",
-      "factoryName": "kwDeclareMarker",
-      "irKey": "kwDeclareMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"declare\" as const",
-      "text": "declare",
-      "factoryShape": "constant"
-    },
-    {
-      "kind": "_kw_static_marker",
-      "modelType": "keyword",
-      "typeName": "KwStaticMarker",
-      "factoryName": "kwStaticMarker",
-      "irKey": "kwStaticMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"static\" as const",
-      "text": "static",
-      "factoryShape": "constant"
-    },
-    {
-      "kind": "_kw_using_marker",
-      "modelType": "keyword",
-      "typeName": "KwUsingMarker",
-      "factoryName": "kwUsingMarker",
-      "irKey": "kwUsingMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"using\" as const",
-      "text": "using",
-      "factoryShape": "constant"
-    },
-    {
       "kind": "_lhs_expression",
       "modelType": "envelope",
       "typeName": "LhsExpression",
@@ -6084,15 +5988,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },
@@ -6541,15 +6443,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_using_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_using_marker",
-              "parseKind": "_kw_using_marker"
+              "value": "using",
+              "parseKind": "using_keyword"
             }
           ]
         },
@@ -9269,15 +9169,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_abstract_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_abstract_marker",
-              "parseKind": "_kw_abstract_marker"
+              "value": "abstract",
+              "parseKind": "abstract_keyword"
             }
           ]
         },
@@ -9366,15 +9264,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_abstract_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_abstract_marker",
-              "parseKind": "_kw_abstract_marker"
+              "value": "abstract",
+              "parseKind": "abstract_keyword"
             }
           ]
         },
@@ -10821,15 +10717,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_const_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_const_marker",
-              "parseKind": "_kw_const_marker"
+              "value": "const",
+              "parseKind": "const_keyword"
             }
           ]
         },
@@ -12990,15 +12884,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_await_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_await_marker",
-              "parseKind": "_kw_await_marker"
+              "value": "await",
+              "parseKind": "await_keyword"
             }
           ]
         },
@@ -13302,15 +13194,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },
@@ -13476,15 +13366,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },
@@ -13640,15 +13528,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },
@@ -13895,15 +13781,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },
@@ -14048,15 +13932,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },
@@ -17177,15 +17059,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_static_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_static_marker",
-              "parseKind": "_kw_static_marker"
+              "value": "static",
+              "parseKind": "static_keyword"
             }
           ]
         },
@@ -17235,15 +17115,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },
@@ -17622,15 +17500,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_static_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_static_marker",
-              "parseKind": "_kw_static_marker"
+              "value": "static",
+              "parseKind": "static_keyword"
             }
           ]
         },
@@ -17680,15 +17556,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_async_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_async_marker",
-              "parseKind": "_kw_async_marker"
+              "value": "async",
+              "parseKind": "async_keyword"
             }
           ]
         },
@@ -22212,15 +22086,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_static_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_static_marker",
-              "parseKind": "_kw_static_marker"
+              "value": "static",
+              "parseKind": "static_keyword"
             }
           ]
         },
@@ -22539,15 +22411,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_declare_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_declare_marker",
-              "parseKind": "_kw_declare_marker"
+              "value": "declare",
+              "parseKind": "declare_keyword"
             }
           ]
         },
@@ -22579,15 +22449,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_static_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_static_marker",
-              "parseKind": "_kw_static_marker"
+              "value": "static",
+              "parseKind": "static_keyword"
             }
           ]
         },
@@ -22617,15 +22485,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_abstract_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_abstract_marker",
-              "parseKind": "_kw_abstract_marker"
+              "value": "abstract",
+              "parseKind": "abstract_keyword"
             }
           ]
         },
@@ -22637,15 +22503,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_accessor_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_accessor_marker",
-              "parseKind": "_kw_accessor_marker"
+              "value": "accessor",
+              "parseKind": "accessor_keyword"
             }
           ]
         },
@@ -26631,15 +26495,13 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
-          "kinds": [
-            "_kw_const_marker"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_kw_const_marker",
-              "parseKind": "_kw_const_marker"
+              "value": "const",
+              "parseKind": "const_keyword"
             }
           ]
         },

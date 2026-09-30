@@ -1,8 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { type PatternNode, bindingIssues, parseQuery, topLevelPatterns, walk } from '../../src/inventory/query.ts';
-import { compileBindings, deriveVocabulary, inventoryGrammars } from '../../src/inventory/index.ts';
+import {
+	VOCABULARY_DIR,
+	compileBindings,
+	deriveVocabulary,
+	emitVocabulary,
+	inventoryGrammars
+} from '../../src/inventory/index.ts';
 import { levelMembers } from '../../src/inventory/derive.ts';
 import { renderVocabularyFile, vocabularyFiles } from '../../src/inventory/emit.ts';
 
@@ -110,6 +118,31 @@ describe('deriveVocabulary', () => {
 		expect(cls.has('extends')).toBe(true);
 		expect(cls.has('implements')).toBe(true);
 		expect(cls.has('heritage')).toBe(false);
+	});
+});
+
+describe('the committed vocabulary', () => {
+	it('is what the bindings emit', async () => {
+		const out = mkdtempSync(join(tmpdir(), 'vocabulary-'));
+		try {
+			await emitVocabulary(deriveVocabulary(), out);
+			const emitted = readdirSync(out);
+			expect(readdirSync(VOCABULARY_DIR).filter((file) => !emitted.includes(file))).toEqual(['utils.ts']);
+			for (const file of emitted) {
+				expect(readFileSync(join(VOCABULARY_DIR, file), 'utf8'), file).toBe(readFileSync(join(out, file), 'utf8'));
+			}
+		} finally {
+			rmSync(out, { recursive: true, force: true });
+		}
+	}, 120_000);
+
+	it('renders its doc comments as block comments and its notes as line comments', () => {
+		const context = readFileSync(join(VOCABULARY_DIR, 'context.ts'), 'utf8');
+		expect(context).toContain("\n/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar. */\n");
+		expect(context).toMatch(/^\/\/ Generated from the grammars' bindings\.scm\. Do not edit\.$/m);
+		for (const file of readdirSync(VOCABULARY_DIR)) {
+			expect(readFileSync(join(VOCABULARY_DIR, file), 'utf8'), file).not.toContain('///');
+		}
 	});
 });
 

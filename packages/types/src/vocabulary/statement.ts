@@ -46,7 +46,6 @@ export namespace Statement {
 			| 'type';
 		// rt only
 		readonly statements?: (
-			| V.Statement.Block<G>
 			| G['attribute']
 			| V.Clause.Import.Alias<G>
 			| G['declaration']
@@ -346,9 +345,6 @@ export namespace Statement {
 		// t only
 		readonly importClause?: 'type' | 'typeof';
 		// t only
-		readonly importList?: V.Unmapped<'python:import_list'>;
-		// p only
-		// unmapped: <python:import_list>
 		readonly label?:
 			| V.Identifier.Label<G>
 			| 'any'
@@ -374,6 +370,9 @@ export namespace Statement {
 			| 'symbol'
 			| 'type';
 		// t only
+		readonly names?: V.Unmapped<'python:names'>;
+		// p only
+		// unmapped: <python:names>
 		readonly visibility?: V.Modifier.Visibility<G>;
 		// r only
 	}
@@ -546,8 +545,9 @@ export namespace Statement {
 				| 'symbol'
 				| 'type';
 			// rt only
-			readonly left?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+			readonly left?: V.Unmapped<'rust:pattern'> | G['expression'] | G['identifier'] | G['pattern'];
 			// pr only
+			// unmapped: <rust:pattern>
 			readonly right?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement'];
 			// pr only
 		}
@@ -603,11 +603,12 @@ export namespace Statement {
 		readonly kind: 'statement.match';
 		readonly body: V.Unmapped<'python:match_block'> | V.Unmapped<'rust:match_block'>;
 		// unmapped: <python:match_block> <rust:match_block>
-		readonly subject?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
-		// r only
-		readonly subjects?: V.Unmapped<'python:subjects'>;
-		// p only
-		// unmapped: <python:subjects>
+		readonly subject?:
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| G['statement']
+			| (G['expression'] | G['identifier'] | G['literal'] | G['statement'])[];
 	}
 	export interface Nonlocal<G extends GrammarContext> extends Simplify<SubKindOf<V.Statement<G>>> {
 		// claimed by p

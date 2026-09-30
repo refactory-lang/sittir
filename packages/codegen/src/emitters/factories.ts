@@ -469,6 +469,14 @@ export function kindEnumTextMapExpr(
 	return textMapExpr(kindEnumTextEntries(f, nodeMap, kindEntries));
 }
 
+export function kindEnumMemberDiscriminants(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string[] {
+	return kindEnumTextEntries(f, nodeMap, kindEntries).map(({ discriminant }) => discriminant);
+}
+
 export function keywordArmTextMapExpr(
 	f: AssembledNonterminal,
 	nodeMap: NodeMap,
