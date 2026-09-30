@@ -135,6 +135,15 @@ describe('the committed vocabulary', () => {
 			rmSync(out, { recursive: true, force: true });
 		}
 	}, 120_000);
+
+	it('renders its doc comments as block comments and its notes as line comments', () => {
+		const context = readFileSync(join(VOCABULARY_DIR, 'context.ts'), 'utf8');
+		expect(context).toContain("\n/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar. */\n");
+		expect(context).toMatch(/^\/\/ Generated from the grammars' bindings\.scm\. Do not edit\.$/m);
+		for (const file of readdirSync(VOCABULARY_DIR)) {
+			expect(readFileSync(join(VOCABULARY_DIR, file), 'utf8'), file).not.toContain('///');
+		}
+	});
 });
 
 describe('vocabularyFiles', () => {
