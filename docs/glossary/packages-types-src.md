@@ -194,6 +194,10 @@ What one slot of a kind interface contributes to its node surfaces: the type its
 
 Marks a kind whose sole content is a separated list: the element type its stored list yields (the stored element, not the spread's arms, so no content is lost on read) the options type its factory takes, and the element input its factory accepts (the stored element plus the bare arms a transparent wrapper takes; the element itself when there is none). Stamped under the reserved `$listOwner` key of `__slotHints__`, from the same fact that gives the strict factory its `(options?, ...items)` overloads.
 
+### `packages/types/src/node-surface.ts::NarrowTo`
+
+What a supertype guard narrows its input to, given the supertype's member kind ids `D`. A numeric input keeps the ids in `D`. A node whose `$type` is a union of ids keeps the whole node when they all lie in `D`, and is intersected with `{ $type: D }` on the ids that do. A node broadly typed `$type: number` is intersected with `{ $type: D }`; it is detected by identity with `number`, because a numeric enum member accepts any `number` in assignability and would otherwise be taken for a member. It reads the `$type` property only, so a `.Parsed` union is never related to a storage interface.
+
 ### `packages/types/src/node-surface.ts::Remap`
 
 Key-remapping removal of the keys `K` from `T`. It is the only form used to drop members: `Omit` does not distribute over a union and collapses it to its common keys, and a declared type built on it lost its keys and cascaded into thousands of errors. Remapping keeps each member's keys.
@@ -224,11 +228,11 @@ The node after `$with.<slot>(v)` (the accessor reads the slot's input resolved t
 
 ### `packages/types/src/node-surface.ts::BoundOf`
 
-The surface of every engine-bound node, computed from a kind's main interface and the id-keyed map of `.Bound` interfaces. Accessors are the main interface's own, each returning the child's `.Bound` (a stored kind id passes through unchanged; a supertype distributes member by member); the storage members stay; list owners gain `ListOwnerMembers`; `$with` returns `.Bound`. Children resolve through named interfaces in the map, so type-checking resolves lazily and never infers through the tree's recursion.
+The surface of every engine-bound node, computed from a kind's main interface and the id-keyed map of `.Bound` interfaces. Accessors are the main interface's own, each returning the child's `.Bound` (a stored kind id passes through unchanged; a supertype distributes member by member); the storage members stay; list owners gain `ListOwnerMembers`; `$source` is carried. It does not add `$with` or the node methods: the emitted `X.Bound` interface composes those on top (`$with` through `BoundWithNode`, which returns the node, and the methods through `NodeMethodsOf`). Children resolve through named interfaces in the map, so type-checking resolves lazily and never infers through the tree's recursion.
 
 ### `packages/types/src/node-surface.ts::ParsedOf`
 
-The surface of a tree-bound node: `BoundOf` with children resolved through the id-keyed map of `.Parsed` interfaces, so a parsed node's children are parsed nodes. It also takes the `.Bound` map, because a slot replaced through `$with` holds a factory node until it is committed and reads as its `.Bound` surface.
+The surface of a tree-bound node: the same computation as `BoundOf` with children resolved through the id-keyed map of `.Parsed` interfaces, so a parsed node's children are parsed nodes. It receives only the parsed map. The emitted `X.Parsed` interface adds the node methods and `$with` through `WithNode`, which takes both maps, because a slot replaced through `$with` holds a factory node until it is committed and reads as its `.Bound` surface.
 
 ### `packages/types/src/node-surface.ts::AdmitLookup`
 
@@ -244,7 +248,7 @@ Widens an input type so it also takes the nodes an engine produces: each member 
 
 ### `packages/types/src/index.ts::NodeLookup`
 
-The `AdmitLookup` a namespace map yields, for the config and loose surfaces that receive a namespace map instead of the id-keyed maps: each id's `Bound`, `Parsed` and `Empty` members read by indexed access. It is an indexed access and never a conditional, because a conditional over a namespace row resolves the row's base types and cycles through the argument lists of the kinds that name it.
+The `AdmitLookup` a namespace map yields, for the config and loose surfaces that receive a namespace map instead of the id-keyed maps: each id's `Bound`, `Parsed` and `Empty` members read by indexed access, whichever of the three the id's row has (a leaf or keyword row has only `Bound`). It is an indexed access and never a conditional, because a conditional over a namespace row resolves the row's base types and cycles through the argument lists of the kinds that name it.
 
 ### `packages/types/src/index.ts::Hoisted`
 

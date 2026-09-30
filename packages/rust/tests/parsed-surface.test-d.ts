@@ -41,3 +41,17 @@ export function supertypeGuardKeepsStorage(stmt: T.Statement): boolean {
 	expectTrue<Equals<typeof stmt, T.StructItem>>();
 	return true;
 }
+
+export function supertypeGuardNarrowsNumericIds(id: T.TSKindId.StructItemBrace | T.TSKindId.FunctionItem): boolean {
+	if (!rs.is.structItem(id)) return false;
+	expectTrue<Equals<typeof id, T.TSKindId.StructItemBrace>>();
+	return true;
+}
+
+export function supertypeGuardNarrowsBroadNodes(node: { readonly $type: number }): boolean {
+	if (!rs.is.structItem(node)) return false;
+	expectTrue<
+		Equals<(typeof node)['$type'], T.TSKindId.StructItemBrace | T.TSKindId.StructItemTuple | T.TSKindId.StructItemUnit>
+	>();
+	return true;
+}

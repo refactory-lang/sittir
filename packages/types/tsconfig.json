@@ -9,7 +9,8 @@
 		"tests/type-projections.test-d.ts",
 		"tests/polymorph-config.test-d.ts",
 		"tests/render-options-check.test-d.ts",
-		"tests/node-surface.test-d.ts"
+		"tests/node-surface.test-d.ts",
+		"tests/narrow-to.test-d.ts"
 	],
 	"exclude": ["node_modules", "dist"]
 }

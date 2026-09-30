@@ -8935,7 +8935,7 @@ All producers emit a numeric `$type`, so the emitted guards compare numeric
 `generatedIdTables` is absent — unit-test callers that bypass the full codegen
 pipeline — which falls back to string equality.
 
-A supertype guard is generic over its input and narrows by the discriminant only: `Extract<T, { $type: <member kind ids> }>`. Storage data stays storage, and a `.Bound` or `.Parsed` node stays `.Bound` or `.Parsed`, so a guard never claims node methods its input lacks. The check reads one property, where relating a `.Parsed` union to a storage member walks both interfaces past the checker's relation depth.
+A supertype guard is generic over its input and narrows through the shared `NarrowTo<T, <member kind ids>>`: storage data stays storage, and a `.Bound` or `.Parsed` node stays `.Bound` or `.Parsed`, so a guard never claims node methods its input lacks. A numeric input narrows to its member ids, and a node broadly typed `{ $type: number }` narrows to the intersection with them, so the declared narrowing matches the runtime guard, which accepts raw kind ids. The check reads one property, where relating a `.Parsed` union to a storage member walks both interfaces past the checker's relation depth.
 
 #### body
 

@@ -10,6 +10,18 @@ export interface ListOwnerHint<Element, Options extends object, Input = Element>
 	readonly options: Options;
 	readonly input: Input;
 }
+type IsBroadNumber<X> = (<Y>() => Y extends number ? 1 : 2) extends <Y>() => Y extends X ? 1 : 2 ? true : false;
+export type NarrowTo<T, D extends number> = T extends number
+	? Extract<T, D>
+	: T extends { readonly $type: infer Id }
+		? IsBroadNumber<Id> extends true
+			? T & { readonly $type: D }
+			: [Id] extends [D]
+				? T
+				: D extends Id
+					? T & { readonly $type: D }
+					: never
+		: never;
 export type Remap<T, K extends PropertyKey> = { [P in keyof T as P extends K ? never : P]: T[P] };
 
 type HintsOf<Self> = Self extends { readonly __slotHints__?: infer H } ? NonNullable<H> : never;

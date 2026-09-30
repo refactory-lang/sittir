@@ -176,6 +176,7 @@ export function emitIs(config: EmitIsConfig): string {
 		lines.push("import { TSKindId } from './types.js';");
 	}
 	lines.push("import type { NamespaceMap } from './types.js';");
+	if (supertypes.length > 0) lines.push("import type { NarrowTo } from '@sittir/types';");
 	lines.push('');
 
 	lines.push('// IsGuards — per-kind + supertype type-narrowing guards.');
@@ -190,9 +191,9 @@ export function emitIs(config: EmitIsConfig): string {
 		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };`
 	);
 	for (const s of supertypes) {
-		const discriminant = s.memberKindIds.length > 0 ? s.memberKindIds.join(' | ') : 'string | number';
+		const discriminant = s.memberKindIds.length > 0 ? s.memberKindIds.join(' | ') : 'number';
 		lines.push(
-			`    ${s.guardKey}<T extends { readonly $type: string | number } | number>(v: T): v is Extract<T, { readonly $type: ${discriminant} }>;`
+			`    ${s.guardKey}<T extends { readonly $type: string | number } | number>(v: T): v is NarrowTo<T, ${discriminant}>;`
 		);
 	}
 	lines.push('}');

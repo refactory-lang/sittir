@@ -4,6 +4,7 @@
 
 import { TSKindId } from './types.js';
 import type { NamespaceMap } from './types.js';
+import type { NarrowTo } from '@sittir/types';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
@@ -487,256 +488,210 @@ export interface IsGuards {
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	exportStatement<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
+	): v is NarrowTo<
 		T,
-		{
-			readonly $type:
-				| TSKindId.ExportStatementTypeExport
-				| TSKindId.ExportStatementEqualsExport
-				| TSKindId.ExportStatementNamespaceExport;
-		}
+		TSKindId.ExportStatementTypeExport | TSKindId.ExportStatementEqualsExport | TSKindId.ExportStatementNamespaceExport
 	>;
 	declaration<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
+	): v is NarrowTo<
 		T,
-		{
-			readonly $type:
-				| TSKindId.FunctionDeclaration
-				| TSKindId.GeneratorFunctionDeclaration
-				| TSKindId.ClassDeclaration
-				| TSKindId.LexicalDeclaration
-				| TSKindId.VariableDeclaration
-				| TSKindId.FunctionSignature
-				| TSKindId.AbstractClassDeclaration
-				| TSKindId.Module
-				| TSKindId.InternalModule
-				| TSKindId.TypeAliasDeclaration
-				| TSKindId.EnumDeclaration
-				| TSKindId.InterfaceDeclaration
-				| TSKindId.ImportAlias
-				| TSKindId.AmbientDeclaration;
-		}
+		| TSKindId.FunctionDeclaration
+		| TSKindId.GeneratorFunctionDeclaration
+		| TSKindId.ClassDeclaration
+		| TSKindId.LexicalDeclaration
+		| TSKindId.VariableDeclaration
+		| TSKindId.FunctionSignature
+		| TSKindId.AbstractClassDeclaration
+		| TSKindId.Module
+		| TSKindId.InternalModule
+		| TSKindId.TypeAliasDeclaration
+		| TSKindId.EnumDeclaration
+		| TSKindId.InterfaceDeclaration
+		| TSKindId.ImportAlias
+		| TSKindId.AmbientDeclaration
 	>;
 	importSpecifier<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: TSKindId.ImportSpecifierName | TSKindId.ImportSpecifierAs }>;
+	): v is NarrowTo<T, TSKindId.ImportSpecifierName | TSKindId.ImportSpecifierAs>;
 	statement<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
+	): v is NarrowTo<
 		T,
-		{
-			readonly $type:
-				| TSKindId.ImportStatement
-				| TSKindId.DebuggerStatement
-				| TSKindId.ExpressionStatement
-				| TSKindId.StatementBlock
-				| TSKindId.IfStatement
-				| TSKindId.SwitchStatement
-				| TSKindId.ForStatement
-				| TSKindId.ForInStatement
-				| TSKindId.WhileStatement
-				| TSKindId.DoStatement
-				| TSKindId.TryStatement
-				| TSKindId.WithStatement
-				| TSKindId.BreakStatement
-				| TSKindId.ContinueStatement
-				| TSKindId.ReturnStatement
-				| TSKindId.ThrowStatement
-				| TSKindId.EmptyStatement
-				| TSKindId.LabeledStatement;
-		}
+		| TSKindId.ImportStatement
+		| TSKindId.DebuggerStatement
+		| TSKindId.ExpressionStatement
+		| TSKindId.StatementBlock
+		| TSKindId.IfStatement
+		| TSKindId.SwitchStatement
+		| TSKindId.ForStatement
+		| TSKindId.ForInStatement
+		| TSKindId.WhileStatement
+		| TSKindId.DoStatement
+		| TSKindId.TryStatement
+		| TSKindId.WithStatement
+		| TSKindId.BreakStatement
+		| TSKindId.ContinueStatement
+		| TSKindId.ReturnStatement
+		| TSKindId.ThrowStatement
+		| TSKindId.EmptyStatement
+		| TSKindId.LabeledStatement
 	>;
 	variableDeclarator<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: TSKindId.VariableDeclaratorPlain | TSKindId.VariableDeclaratorDefinite }>;
+	): v is NarrowTo<T, TSKindId.VariableDeclaratorPlain | TSKindId.VariableDeclaratorDefinite>;
 	forHeader<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
-		T,
-		{ readonly $type: TSKindId.ForHeaderLhs | TSKindId.ForHeaderVarKind | TSKindId.ForHeaderLetConstKind }
-	>;
+	): v is NarrowTo<T, TSKindId.ForHeaderLhs | TSKindId.ForHeaderVarKind | TSKindId.ForHeaderLetConstKind>;
 	parenthesizedExpression<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
-		T,
-		{ readonly $type: TSKindId.ParenthesizedExpressionTyped | TSKindId.ParenthesizedExpressionSequence }
-	>;
+	): v is NarrowTo<T, TSKindId.ParenthesizedExpressionTyped | TSKindId.ParenthesizedExpressionSequence>;
 	expression<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
+	): v is NarrowTo<
 		T,
-		{
-			readonly $type:
-				| TSKindId.AsExpression
-				| TSKindId.SatisfiesExpression
-				| TSKindId.InstantiationExpression
-				| TSKindId.InternalModule
-				| TSKindId.TypeAssertion
-				| TSKindId.AssignmentExpression
-				| TSKindId.AugmentedAssignmentExpression
-				| TSKindId.AwaitExpression
-				| TSKindId.UnaryExpression
-				| TSKindId.BinaryExpression
-				| TSKindId.TernaryExpression
-				| TSKindId.NewExpression
-				| TSKindId.YieldExpression;
-		}
+		| TSKindId.AsExpression
+		| TSKindId.SatisfiesExpression
+		| TSKindId.InstantiationExpression
+		| TSKindId.InternalModule
+		| TSKindId.TypeAssertion
+		| TSKindId.AssignmentExpression
+		| TSKindId.AugmentedAssignmentExpression
+		| TSKindId.AwaitExpression
+		| TSKindId.UnaryExpression
+		| TSKindId.BinaryExpression
+		| TSKindId.TernaryExpression
+		| TSKindId.NewExpression
+		| TSKindId.YieldExpression
 	>;
 	primaryExpression<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
+	): v is NarrowTo<
 		T,
-		{
-			readonly $type:
-				| TSKindId.SubscriptExpression
-				| TSKindId.MemberExpression
-				| TSKindId.Undefined
-				| TSKindId.Identifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| TSKindId.This
-				| TSKindId.Super
-				| TSKindId.TemplateString
-				| TSKindId.Regex
-				| TSKindId.True
-				| TSKindId.False
-				| TSKindId.Null
-				| TSKindId.Object
-				| TSKindId.Array
-				| TSKindId.FunctionExpression
-				| TSKindId.ArrowFunction
-				| TSKindId.GeneratorFunction
-				| TSKindId.Class
-				| TSKindId.NonNullExpression;
-		}
+		| TSKindId.SubscriptExpression
+		| TSKindId.MemberExpression
+		| TSKindId.Undefined
+		| TSKindId.Identifier
+		| TSKindId.DeclareKeyword
+		| TSKindId.NamespaceKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.PublicKeyword
+		| TSKindId.PrivateKeyword
+		| TSKindId.ProtectedKeyword
+		| TSKindId.OverrideKeyword
+		| TSKindId.ReadonlyKeyword
+		| TSKindId.ModuleKeyword
+		| TSKindId.AnyKeyword
+		| TSKindId.NumberKeyword
+		| TSKindId.BooleanKeyword
+		| TSKindId.StringKeyword
+		| TSKindId.SymbolKeyword
+		| TSKindId.ExportKeyword
+		| TSKindId.ObjectKeyword
+		| TSKindId.NewKeyword
+		| TSKindId.GetKeyword
+		| TSKindId.SetKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.StaticKeyword
+		| TSKindId.LetKeyword
+		| TSKindId.This
+		| TSKindId.Super
+		| TSKindId.TemplateString
+		| TSKindId.Regex
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.Null
+		| TSKindId.Object
+		| TSKindId.Array
+		| TSKindId.FunctionExpression
+		| TSKindId.ArrowFunction
+		| TSKindId.GeneratorFunction
+		| TSKindId.Class
+		| TSKindId.NonNullExpression
 	>;
 	callExpression<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
+	): v is NarrowTo<
 		T,
-		{
-			readonly $type: TSKindId.CallExpressionCall | TSKindId.CallExpressionTemplateCall | TSKindId.CallExpressionMember;
-		}
+		TSKindId.CallExpressionCall | TSKindId.CallExpressionTemplateCall | TSKindId.CallExpressionMember
 	>;
 	updateExpression<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix }>;
+	): v is NarrowTo<T, TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix>;
 	string<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: TSKindId.StringDouble | TSKindId.StringSingle }>;
+	): v is NarrowTo<T, TSKindId.StringDouble | TSKindId.StringSingle>;
 	comment<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: TSKindId.CommentLine | TSKindId.CommentBlock }>;
+	): v is NarrowTo<T, TSKindId.CommentLine | TSKindId.CommentBlock>;
 	number<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
+	): v is NarrowTo<
 		T,
-		{
-			readonly $type:
-				| TSKindId.NumberHex
-				| TSKindId.NumberFloatPoint
-				| TSKindId.NumberFloatLeadingPoint
-				| TSKindId.NumberFloatScientific
-				| TSKindId.NumberDecimal
-				| TSKindId.NumberBinary
-				| TSKindId.NumberOctal;
-		}
+		| TSKindId.NumberHex
+		| TSKindId.NumberFloatPoint
+		| TSKindId.NumberFloatLeadingPoint
+		| TSKindId.NumberFloatScientific
+		| TSKindId.NumberDecimal
+		| TSKindId.NumberBinary
+		| TSKindId.NumberOctal
 	>;
 	metaProperty<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta }>;
+	): v is NarrowTo<T, TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta>;
 	pattern<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: TSKindId.LhsExpression | TSKindId.RestPattern }>;
+	): v is NarrowTo<T, TSKindId.LhsExpression | TSKindId.RestPattern>;
 	type<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
-		T,
-		{ readonly $type: TSKindId.FunctionType | TSKindId.ReadonlyType | TSKindId.ConstructorType | TSKindId.InferType }
-	>;
+	): v is NarrowTo<T, TSKindId.FunctionType | TSKindId.ReadonlyType | TSKindId.ConstructorType | TSKindId.InferType>;
 	primaryType<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
+	): v is NarrowTo<
 		T,
-		{
-			readonly $type:
-				| TSKindId.ParenthesizedType
-				| TSKindId.PredefinedType
-				| TSKindId.NestedTypeIdentifier
-				| TSKindId.GenericType
-				| TSKindId.ObjectType
-				| TSKindId.ArrayType
-				| TSKindId.TupleType
-				| TSKindId.FlowMaybeType
-				| TSKindId.TypeQuery
-				| TSKindId.IndexTypeQuery
-				| TSKindId.This
-				| TSKindId.ExistentialType
-				| TSKindId.LiteralType
-				| TSKindId.LookupType
-				| TSKindId.ConditionalType
-				| TSKindId.TemplateLiteralType
-				| TSKindId.IntersectionType
-				| TSKindId.UnionType;
-		}
+		| TSKindId.ParenthesizedType
+		| TSKindId.PredefinedType
+		| TSKindId.NestedTypeIdentifier
+		| TSKindId.GenericType
+		| TSKindId.ObjectType
+		| TSKindId.ArrayType
+		| TSKindId.TupleType
+		| TSKindId.FlowMaybeType
+		| TSKindId.TypeQuery
+		| TSKindId.IndexTypeQuery
+		| TSKindId.This
+		| TSKindId.ExistentialType
+		| TSKindId.LiteralType
+		| TSKindId.LookupType
+		| TSKindId.ConditionalType
+		| TSKindId.TemplateLiteralType
+		| TSKindId.IntersectionType
+		| TSKindId.UnionType
 	>;
 	indexSignature<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: TSKindId.IndexSignatureColon | TSKindId.IndexSignatureMappedTypeClause }>;
+	): v is NarrowTo<T, TSKindId.IndexSignatureColon | TSKindId.IndexSignatureMappedTypeClause>;
 	whitespace<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
+	): v is NarrowTo<
 		T,
-		{
-			readonly $type:
-				| TSKindId.Tight
-				| TSKindId.Space
-				| TSKindId.Tab
-				| TSKindId.Newline
-				| TSKindId.Blankline
-				| TSKindId.DoubleBlankline
-				| TSKindId.Indent
-				| TSKindId.Dedent;
-		}
+		| TSKindId.Tight
+		| TSKindId.Space
+		| TSKindId.Tab
+		| TSKindId.Newline
+		| TSKindId.Blankline
+		| TSKindId.DoubleBlankline
+		| TSKindId.Indent
+		| TSKindId.Dedent
 	>;
 	exportStatementDefault<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
-		T,
-		{ readonly $type: TSKindId.ExportStatementDefaultFrom | TSKindId.ExportStatementDefaultDeclaration }
-	>;
+	): v is NarrowTo<T, TSKindId.ExportStatementDefaultFrom | TSKindId.ExportStatementDefaultDeclaration>;
 	numberBigint<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
+	): v is NarrowTo<
 		T,
-		{
-			readonly $type:
-				| TSKindId.NumberBigintHex
-				| TSKindId.NumberBigintBinary
-				| TSKindId.NumberBigintOctal
-				| TSKindId.NumberBigintDecimal;
-		}
+		TSKindId.NumberBigintHex | TSKindId.NumberBigintBinary | TSKindId.NumberBigintOctal | TSKindId.NumberBigintDecimal
 	>;
 }
 

@@ -4,6 +4,7 @@
 
 import { TSKindId } from './types.js';
 import type { NamespaceMap } from './types.js';
+import type { NarrowTo } from '@sittir/types';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
@@ -58,39 +59,33 @@ export interface IsGuards {
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	definition<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
+	): v is NarrowTo<
 		T,
-		{
-			readonly $type:
-				| TSKindId.AnonymousNode
-				| TSKindId.MissingNode
-				| TSKindId.Grouping
-				| TSKindId.Predicate
-				| TSKindId.List
-				| TSKindId.FieldDefinition;
-		}
+		| TSKindId.AnonymousNode
+		| TSKindId.MissingNode
+		| TSKindId.Grouping
+		| TSKindId.Predicate
+		| TSKindId.List
+		| TSKindId.FieldDefinition
 	>;
 	namedNode<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: TSKindId.NamedNodePlain | TSKindId.NamedNodeSupertyped }>;
+	): v is NarrowTo<T, TSKindId.NamedNodePlain | TSKindId.NamedNodeSupertyped>;
 	namedNodeGroup<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: TSKindId.NamedNodeGroupChildren | TSKindId.NamedNodeGroupAnchoredLast }>;
+	): v is NarrowTo<T, TSKindId.NamedNodeGroupChildren | TSKindId.NamedNodeGroupAnchoredLast>;
 	whitespace<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
+	): v is NarrowTo<
 		T,
-		{
-			readonly $type:
-				| TSKindId.Tight
-				| TSKindId.Space
-				| TSKindId.Tab
-				| TSKindId.Newline
-				| TSKindId.Blankline
-				| TSKindId.DoubleBlankline
-				| TSKindId.Indent
-				| TSKindId.Dedent;
-		}
+		| TSKindId.Tight
+		| TSKindId.Space
+		| TSKindId.Tab
+		| TSKindId.Newline
+		| TSKindId.Blankline
+		| TSKindId.DoubleBlankline
+		| TSKindId.Indent
+		| TSKindId.Dedent
 	>;
 }
 

@@ -4,6 +4,7 @@
 
 import { TSKindId } from './types.js';
 import type { NamespaceMap } from './types.js';
+import type { NarrowTo } from '@sittir/types';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
@@ -61,21 +62,13 @@ export interface IsGuards {
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	inlineFlagsGroup<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
+	): v is NarrowTo<
 		T,
-		{
-			readonly $type:
-				| TSKindId.InlineFlagsGroupEnable
-				| TSKindId.InlineFlagsGroupToggle
-				| TSKindId.InlineFlagsGroupDisable;
-		}
+		TSKindId.InlineFlagsGroupEnable | TSKindId.InlineFlagsGroupToggle | TSKindId.InlineFlagsGroupDisable
 	>;
 	whitespace<T extends { readonly $type: string | number } | number>(
 		v: T
-	): v is Extract<
-		T,
-		{ readonly $type: TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline }
-	>;
+	): v is NarrowTo<T, TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline>;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.
