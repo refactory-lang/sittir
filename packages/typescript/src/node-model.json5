@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 439,
+  "nodeCount": 437,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -4297,19 +4297,6 @@
       "hidden": false
     },
     {
-      "kind": "__for_header_operator",
-      "modelType": "enum",
-      "typeName": "ForHeaderOperator",
-      "factoryName": "forHeaderOperator",
-      "irKey": "forHeaderOperator",
-      "hidden": false,
-      "values": [
-        "in",
-        "of"
-      ],
-      "factoryShape": "text"
-    },
-    {
       "kind": "_augmented_assignment_lhs",
       "modelType": "supertype",
       "typeName": "AugmentedAssignmentLhs",
@@ -4490,19 +4477,6 @@
       "stampExpression": "\"﷐\\n\" as const",
       "text": "﷐\n",
       "factoryShape": "constant"
-    },
-    {
-      "kind": "_kind",
-      "modelType": "enum",
-      "typeName": "Kind",
-      "factoryName": "kind",
-      "irKey": "kind",
-      "hidden": false,
-      "values": [
-        "let",
-        "const"
-      ],
-      "factoryShape": "text"
     },
     {
       "kind": "_kw_abstract_marker",
@@ -12644,15 +12618,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_kind"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_kind",
-              "parseKind": "_kind"
+              "value": "let",
+              "parseKind": "let_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "const",
+              "parseKind": "const_keyword"
             }
           ]
         },
@@ -12718,15 +12696,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "__for_header_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "__for_header_operator",
-              "parseKind": "__for_header_operator"
+              "value": "in",
+              "parseKind": "in_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "of",
+              "parseKind": "of_keyword"
             }
           ]
         },
@@ -12814,15 +12796,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "__for_header_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "__for_header_operator",
-              "parseKind": "__for_header_operator"
+              "value": "in",
+              "parseKind": "in_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "of",
+              "parseKind": "of_keyword"
             }
           ]
         },
@@ -12935,15 +12921,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "__for_header_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "__for_header_operator",
-              "parseKind": "__for_header_operator"
+              "value": "in",
+              "parseKind": "in_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "of",
+              "parseKind": "of_keyword"
             }
           ]
         },
@@ -16581,15 +16571,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_kind"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_kind",
-              "parseKind": "_kind"
+              "value": "let",
+              "parseKind": "let_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "const",
+              "parseKind": "const_keyword"
             }
           ]
         },

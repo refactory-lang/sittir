@@ -5723,8 +5723,8 @@ export function wrapClassBody(data: T.ClassBody, tree: TreeHandle): T.ClassBody.
 				slotName: 'content',
 				span: (data as _NodeData).$span
 			}),
-			{ ';': 405 },
-			{ 20: 405 }
+			{ ';': 403 },
+			{ 20: 403 }
 		),
 
 		contents() {
@@ -14600,8 +14600,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.TupleTypeMembers]: (d, t) => wrapTupleTypeMembers(d as unknown as T.TupleTypeMembers, t),
 	[TSKindId.ImportClauseGroup]: (d, t) => wrapImportClauseGroup(d as unknown as T.ImportClauseGroup, t),
 	[TSKindId.CatchClauseGroup]: (d, t) => wrapCatchClauseGroup(d as unknown as T.CatchClauseGroup, t),
-	[TSKindId.Kind]: (d) => ({ ...d, $type: TSKindId.Kind as const }),
-	[TSKindId.ForHeaderOperator]: (d) => ({ ...d, $type: TSKindId.ForHeaderOperator as const }),
 	[TSKindId.AmbientDeclarationGlobal]: (d, t) =>
 		wrapAmbientDeclarationGlobal(d as unknown as T.AmbientDeclarationGlobal, t),
 	[TSKindId.AmbientDeclarationModule]: (d, t) =>
@@ -14965,8 +14963,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.TupleTypeMembers]: ReturnType<typeof wrapTupleTypeMembers>;
 	[TSKindId.ImportClauseGroup]: ReturnType<typeof wrapImportClauseGroup>;
 	[TSKindId.CatchClauseGroup]: ReturnType<typeof wrapCatchClauseGroup>;
-	[TSKindId.Kind]: _NodeData & { readonly $type: TSKindId.Kind };
-	[TSKindId.ForHeaderOperator]: _NodeData & { readonly $type: TSKindId.ForHeaderOperator };
 	[TSKindId.AmbientDeclarationGlobal]: ReturnType<typeof wrapAmbientDeclarationGlobal>;
 	[TSKindId.AmbientDeclarationModule]: ReturnType<typeof wrapAmbientDeclarationModule>;
 	[TSKindId.ObjectTypeContent]: ReturnType<typeof wrapObjectTypeContent>;

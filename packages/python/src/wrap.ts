@@ -2799,8 +2799,8 @@ export function wrapSimplePattern(data: T.SimplePattern, tree: TreeHandle): T.Si
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
-			{ True: 71, False: 72, None: 73, _: 281 },
-			{ 48: 281 }
+			{ True: 71, False: 72, None: 73, _: 280 },
+			{ 48: 280 }
 		),
 
 		content() {
@@ -2878,8 +2878,8 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.Unio
 				slotName: 'patterns',
 				span: (data as _NodeData).$span
 			}),
-			{ True: 71, False: 72, None: 73, _: 281 },
-			{ 48: 281 }
+			{ True: 71, False: 72, None: 73, _: 280 },
+			{ 48: 280 }
 		),
 
 		patterns() {
@@ -2978,8 +2978,8 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle): 
 				slotName: 'key',
 				span: (data as _NodeData).$span
 			}),
-			{ True: 71, False: 72, None: 73, _: 281 },
-			{ 48: 281 }
+			{ True: 71, False: 72, None: 73, _: 280 },
+			{ 48: 280 }
 		),
 		_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 			tree,
@@ -3038,8 +3038,8 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 				slotName: 'value',
 				span: (data as _NodeData).$span
 			}),
-			{ True: 71, False: 72, None: 73, _: 281 },
-			{ 48: 281 }
+			{ True: 71, False: 72, None: 73, _: 280 },
+			{ 48: 280 }
 		),
 
 		name() {
@@ -8279,7 +8279,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.Subscripts]: (d, t) => wrapSubscripts(d as unknown as T.Subscripts, t),
 	[TSKindId.DictionaryElements]: (d, t) => wrapDictionaryElements(d as unknown as T.DictionaryElements, t),
 	[TSKindId.SliceGroup]: (d, t) => wrapSliceGroup(d as unknown as T.SliceGroup, t),
-	[TSKindId.AugmentedAssignmentOperator]: (d) => ({ ...d, $type: TSKindId.AugmentedAssignmentOperator as const }),
 	[TSKindId.ExceptClauseExceptionAs]: (d, t) =>
 		wrapExceptClauseExceptionAs(d as unknown as T.ExceptClauseExceptionAs, t),
 	[TSKindId.CaseTuplePattern]: (d, t) => wrapCaseTuplePattern(d as unknown as T.CaseTuplePattern, t),
@@ -8533,7 +8532,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.Subscripts]: ReturnType<typeof wrapSubscripts>;
 	[TSKindId.DictionaryElements]: ReturnType<typeof wrapDictionaryElements>;
 	[TSKindId.SliceGroup]: ReturnType<typeof wrapSliceGroup>;
-	[TSKindId.AugmentedAssignmentOperator]: _NodeData & { readonly $type: TSKindId.AugmentedAssignmentOperator };
 	[TSKindId.ExceptClauseExceptionAs]: ReturnType<typeof wrapExceptClauseExceptionAs>;
 	[TSKindId.CaseTuplePattern]: ReturnType<typeof wrapCaseTuplePattern>;
 	[TSKindId.CaseListPattern]: ReturnType<typeof wrapCaseListPattern>;

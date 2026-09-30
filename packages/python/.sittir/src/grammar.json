@@ -6819,104 +6819,100 @@
       }
     },
     "_augmented_assignment_operator": {
-      "type": "PREC",
-      "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "+=",
-            "annotations": {
-              "variantOf": "_augmented_assignment_operator"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "-=",
-            "annotations": {
-              "variantOf": "_augmented_assignment_operator"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "*=",
-            "annotations": {
-              "variantOf": "_augmented_assignment_operator"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "/=",
-            "annotations": {
-              "variantOf": "_augmented_assignment_operator"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "@=",
-            "annotations": {
-              "variantOf": "_augmented_assignment_operator"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "//=",
-            "annotations": {
-              "variantOf": "_augmented_assignment_operator"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "%=",
-            "annotations": {
-              "variantOf": "_augmented_assignment_operator"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "**=",
-            "annotations": {
-              "variantOf": "_augmented_assignment_operator"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": ">>=",
-            "annotations": {
-              "variantOf": "_augmented_assignment_operator"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "<<=",
-            "annotations": {
-              "variantOf": "_augmented_assignment_operator"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "&=",
-            "annotations": {
-              "variantOf": "_augmented_assignment_operator"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "^=",
-            "annotations": {
-              "variantOf": "_augmented_assignment_operator"
-            }
-          },
-          {
-            "type": "STRING",
-            "value": "|=",
-            "annotations": {
-              "variantOf": "_augmented_assignment_operator"
-            }
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "+=",
+          "annotations": {
+            "variantOf": "_augmented_assignment_operator"
           }
-        ]
-      },
-      "value": -1
+        },
+        {
+          "type": "STRING",
+          "value": "-=",
+          "annotations": {
+            "variantOf": "_augmented_assignment_operator"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "*=",
+          "annotations": {
+            "variantOf": "_augmented_assignment_operator"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "/=",
+          "annotations": {
+            "variantOf": "_augmented_assignment_operator"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "@=",
+          "annotations": {
+            "variantOf": "_augmented_assignment_operator"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "//=",
+          "annotations": {
+            "variantOf": "_augmented_assignment_operator"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "%=",
+          "annotations": {
+            "variantOf": "_augmented_assignment_operator"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "**=",
+          "annotations": {
+            "variantOf": "_augmented_assignment_operator"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ">>=",
+          "annotations": {
+            "variantOf": "_augmented_assignment_operator"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "<<=",
+          "annotations": {
+            "variantOf": "_augmented_assignment_operator"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "&=",
+          "annotations": {
+            "variantOf": "_augmented_assignment_operator"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "^=",
+          "annotations": {
+            "variantOf": "_augmented_assignment_operator"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "|=",
+          "annotations": {
+            "variantOf": "_augmented_assignment_operator"
+          }
+        }
+      ]
     },
     "_whitespace": {
       "type": "CHOICE",
@@ -8734,6 +8730,7 @@
     "_raise_statement_optional1",
     "_function_definition_optional1",
     "_exec_statement_optional1",
+    "_augmented_assignment_operator",
     "_kw_comma",
     "_kw_eq_marker"
   ],

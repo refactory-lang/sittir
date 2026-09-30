@@ -1,5 +1,5 @@
 {
-	"grammarHash": "e1e5f0091eac547963f7c4234874105457d5987f30b56b79e8bd2bddd52e478a",
+	"grammarHash": "7def8d5b71ea12373d2d8b6b865276a77109ce88244c6c081f1d02a5bebd472e",
 	"resolutions": [
 		{
 			"resolution": {
@@ -1316,12 +1316,45 @@
 				"symbolSequence": [
 					"'for'",
 					"'('",
-					"_kind",
+					"'let'",
 					"identifier"
 				],
 				"lookahead": "_automatic_semicolon",
 				"interpretations": [
 					"variable_declarator_plain",
+					"for_header_let_const_kind"
+				]
+			}
+		},
+		{
+			"resolution": {
+				"kind": "AddConflict",
+				"symbols": [
+					"primary_expression",
+					"for_header_let_const_kind"
+				]
+			},
+			"step": "upstream-declared",
+			"sourceChains": [
+				[
+					"primary_expression"
+				],
+				[
+					"for_header_let_const_kind",
+					"_for_header"
+				]
+			],
+			"conflict": {
+				"symbolSequence": [
+					"'for'",
+					"_kw_await_marker",
+					"'('",
+					"'let'"
+				],
+				"lookahead": "'['",
+				"interpretations": [
+					"primary_expression",
+					"for_header_let_const_kind",
 					"for_header_let_const_kind"
 				]
 			}
