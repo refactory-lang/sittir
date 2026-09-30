@@ -291,19 +291,36 @@ export type PatchMap = Record<string, unknown>;
 
 type RulesOf<B> = B extends { readonly rules: infer R } ? R : never;
 
-type PatchKeyCheck<Rule, M> = {
+type PatchKeyCheck<Rule, M, Minted extends string> = {
 	readonly [Path in keyof M]: Path extends string | number
 		? string extends Path
 			? M[Path]
-			: IsPath<Rule, `${Path}`> extends true
+			: IsPath<Rule, `${Path}`, Minted> extends true
 				? M[Path]
 				: { readonly 'patches: no such path in this rule': `${Path}` }
 		: M[Path];
 };
 
+type MintedLabels<M> = {
+	readonly [K in keyof M]: M[K] extends { readonly name: infer N extends string }
+		? M[K] extends { readonly __sittirPlaceholder: 'field' } | { readonly type: 'FIELD' }
+			? N
+			: never
+		: never;
+}[keyof M];
+
+type CheckMaps<Rule, E extends readonly unknown[], Minted extends string> = E extends readonly [
+	infer Head,
+	...infer Tail
+]
+	? readonly [PatchKeyCheck<Rule, Head, Minted>, ...CheckMaps<Rule, Tail, Minted | MintedLabels<Head>>]
+	: readonly [];
+
 type PatchEntryCheck<Rule, E> = E extends readonly unknown[]
-	? { readonly [I in keyof E]: PatchKeyCheck<Rule, E[I]> }
-	: PatchKeyCheck<Rule, E>;
+	? number extends E['length']
+		? { readonly [I in keyof E]: PatchKeyCheck<Rule, E[I], never> }
+		: CheckMaps<Rule, E, never>
+	: PatchKeyCheck<Rule, E, never>;
 
 type IsShaped<B> = 0 extends 1 & B ? false : [GrammarRule] extends [RulesOf<B>[keyof RulesOf<B>]] ? false : true;
 
@@ -359,8 +376,9 @@ export type ShapedSymbols<B extends GrammarJson> = {
 
 export type WireConfig<B extends GrammarJson, NewRules extends string = string> = Omit<
 	Grammar<NewRules, keyof B['rules'] & string>,
-	'rules' | 'conflicts'
+	'rules' | 'conflicts' | 'extras'
 > & {
+	readonly extras?: ($: ShapedSymbols<B>, previous?: readonly GrammarRule[]) => readonly AuthoringRule[];
 	readonly conflicts?: (
 		$: ShapedSymbols<B>,
 		previous: readonly (readonly AuthoringRule[])[]

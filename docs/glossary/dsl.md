@@ -2841,7 +2841,14 @@ declared in `authoring-globals.d.ts`, via ordinary lexical scoping. That
 sidesteps the fact that `const`-declared ambient globals don't merge as
 overloads across files the way `declare function` does. `seq` / `choice` /
 `field` / `alias` / `optional` / `repeat` / `repeat1` / `sym` / `string` /
-`blank` merge fine and need no such treatment.
+`blank` merge fine and need no such treatment. A grammar that calls `prec` or
+`token` must import them: without the import the ambient tree-sitter
+declaration wins and rejects the grammar-json rules the other builders return.
+`prec.left` and `prec.right` also take the one-argument form (`prec.right(rule)`,
+precedence 0) that tree-sitter's own DSL accepts; `authoring-globals.d.ts`
+declares the same overloads. `field(name)` returns a `FieldPlaceholder` that
+keeps its name as a type, which is how a patch list knows which labels an earlier
+map minted; `role()` takes a symbol reference, matching the runtime check.
 
 ### `packages/codegen/src/dsl/dsl-authoring.ts::grammar`
 
