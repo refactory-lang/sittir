@@ -2,7 +2,7 @@
 
 import * as F from './raw.js';
 import { spelledInterior } from '@sittir/common/utils';
-import type * as T from '../types.js';
+import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import type { AnyNodeData, LooseValue } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage } from '@sittir/common/utils';

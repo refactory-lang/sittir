@@ -26,6 +26,26 @@ fails here with tree-sitter's own message. Returns the pattern and capture
 counts and frees the query.
 ```
 
+### `packages/tools/src/inventory/query.ts::topLevelPatterns`
+
+Splits a bindings file into its top-level patterns, each with the line it
+starts on, skipping comments and quoted strings and keeping a pattern's
+trailing captures with it. The unit `bindingIssues` compiles on its own.
+
+### `packages/tools/src/inventory/query.ts::BindingIssue`
+
+One problem in a bindings file: the line of the pattern and a message.
+
+### `packages/tools/src/inventory/query.ts::bindingIssues`
+
+Every problem in a bindings file, not just the first. Each top-level pattern
+is checked on its own: every node kind, anonymous token and field it names is
+looked up in the grammar's parser, and a pattern whose names all exist is then
+compiled, so a structurally impossible pattern (a field or child the parent
+never has) is reported with tree-sitter's own message. `compileQuery` stops at
+the first failure of the whole file; this is what turns a failing compile into
+a list that can be worked through.
+
 ### `packages/tools/src/inventory/model.ts::loadSlotModel`
 
 ```text
@@ -114,7 +134,8 @@ about the typescript package, never something the emitter works around.
 ### `packages/tools/src/inventory/index.ts::run`
 
 ```text
-`--check` compiles every bindings file and reports each grammar; the
+`--check` compiles every bindings file and reports each grammar, listing every
+problem per file (`bindingIssues`) rather than the first; the
 derivation summary always prints (kinds, prefixes, members, refinements,
 unmapped references, cycles); `--members` prints member names and kinds per
 shared kind; `--emit [dir]` emits the tree into the directory (default

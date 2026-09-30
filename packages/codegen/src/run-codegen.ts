@@ -235,6 +235,7 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	await writeFile(join(outDir, 'backend.ts'), result.backend);
 	rmSync(join(outDir, 'boundary.ts'), { force: true });
 	await writeFile(join(outDir, 'types.ts'), result.types);
+	await writeFile(join(outDir, 'types-internal.ts'), result.typesInternal);
 	const factoriesDir = join(outDir, 'factories');
 	mkdirSync(join(factoriesDir, 'overlays'), { recursive: true });
 	rmSync(join(outDir, 'factories.ts'), { force: true });

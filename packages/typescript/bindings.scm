@@ -51,8 +51,9 @@
 (public_field_definition "!" @definite)
 (lexical_declaration kind: _ @keyword) @declaration.variable.lexical
 (variable_declaration) @declaration.variable.var
-(variable_declarator_arm2) @declaration.variable
-(variable_declarator_arm1) @declaration.variable.pattern
+(variable_declarator_plain) @declaration.variable
+(variable_declarator_definite) @declaration.variable
+(variable_declarator_plain name: [(array_pattern) (object_pattern)]) @declaration.variable.pattern
 (required_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter
 (required_parameter (accessibility_modifier) @visibility)
 (optional_parameter pattern: (_) @name value: (_)? @default) @declaration.parameter.optional
@@ -62,7 +63,6 @@
 (ambient_declaration "declare" @declare (_) @element)
 (internal_module) @declaration.module
 (module) @declaration.module.external
-(field_definition) @declaration.field
 (class_static_block) @statement.block.static
 (function_signature) @declaration.function.signature
 (call_signature) @declaration.signature.call
@@ -119,7 +119,6 @@
 ; ── element (pieces of a composite expression that are not expressions) ────────
 (spread_element) @element.splat
 (pair) @element.pair
-(jsx_attribute) @element.jsx.attribute
 (tuple_parameter) @element.tuple.member
 (optional_tuple_parameter) @element.tuple.member.optional
 (template_type) @element.template.substitution
@@ -163,9 +162,12 @@
 (unary_expression operator: "typeof") @expression.unary.typeof
 (unary_expression operator: "void") @expression.unary.void
 (unary_expression operator: "delete") @expression.unary.delete
-(update_expression) @expression.update
-(update_expression operator: "++") @expression.update.increment
-(update_expression operator: "--") @expression.update.decrement
+(update_expression_prefix) @expression.update
+(update_expression_postfix) @expression.update
+(update_expression_prefix operator: "++") @expression.update.increment
+(update_expression_postfix operator: "++") @expression.update.increment
+(update_expression_prefix operator: "--") @expression.update.decrement
+(update_expression_postfix operator: "--") @expression.update.decrement
 (augmented_assignment_expression) @expression.assignment.compound
 (augmented_assignment_expression operator: "+=") @expression.assignment.compound.add
 (augmented_assignment_expression operator: "-=") @expression.assignment.compound.subtract
@@ -187,9 +189,9 @@
 (member_expression) @expression.member
 (member_expression (optional_chain) @optional_chain)
 (subscript_expression (optional_chain) @optional_chain)
-(call_expression_call (optional_chain) @optional_chain)
 (subscript_expression) @expression.subscript
-(arrow_function parameter: (_)? @parameters) @expression.lambda
+(arrow_function (arrow_function_parameter parameter: (_) @parameters)) @expression.lambda
+(arrow_function (call_signature parameters: (_) @parameters)) @expression.lambda
 (function_expression) @expression.function
 (generator_function) @expression.function.generator
 (generator_function "*" @generator)
@@ -205,11 +207,6 @@
 (non_null_expression) @expression.cast.non_null
 (type_assertion) @expression.cast.assertion
 (instantiation_expression) @expression.instantiation
-(jsx_element) @expression.jsx.element
-(jsx_self_closing_element) @expression.jsx.element.self_closing
-(jsx_opening_element) @expression.jsx.element.opening
-(jsx_closing_element) @expression.jsx.element.closing
-(jsx_expression) @expression.jsx.expression
 (import) @expression.call.import
 (meta_property) @expression.meta
 (class) @expression.class
@@ -274,7 +271,6 @@
 (undefined) @literal.null.undefined
 (regex_pattern) @literal.regex.pattern
 (regex_flags) @literal.regex.flags
-(html_character_reference) @literal.html_entity
 
 ; ── identifier ─────────────────────────────────────────────────────────────────
 (identifier) @identifier
@@ -291,8 +287,6 @@
 ; every TypeScript modifier is a keyword: `visibility` is a member whose value is the keyword text,
 ; the markers are boolean members; no modifier is a kind
 (computed_property_name) @identifier.property.computed
-(jsx_identifier) @identifier.jsx
-(jsx_namespace_name) @identifier.jsx.namespace
 
 ; ── modifier ───────────────────────────────────────────────────────────────────
 
@@ -300,10 +294,12 @@
 (decorator (_)? @content) @attribute.decorator
 
 ; ── comment ────────────────────────────────────────────────────────────────────
-(comment) @comment
-((comment) @comment.block.doc (#match? @comment.block.doc "^/\\*\\*"))
-((comment) @comment.line (#match? @comment.line "^//"))
-((comment) @comment.block (#match? @comment.block "^/\\*"))
+(comment_block) @comment
+(comment_line) @comment
+(html_comment) @comment
+((comment_block) @comment.block.doc (#match? @comment.block.doc "^/\\*\\*"))
+((comment_line) @comment.line (#match? @comment.line "^//"))
+((comment_block) @comment.block (#match? @comment.block "^/\\*"))
 
 ; ── keyword / punctuation ──────────────────────────────────────────────────────
 ["function" "class" "interface" "type" "enum" "namespace" "let" "const" "var"] @keyword.declaration

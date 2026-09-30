@@ -51,17 +51,17 @@ export interface ImmediateTokenRule<C extends GrammarRule = GrammarRule> {
 }
 export interface PrecRule<C extends GrammarRule = GrammarRule> {
 	readonly type: 'PREC';
-	readonly value: number;
+	readonly value: number | string;
 	readonly content: C;
 }
 export interface PrecLeftRule<C extends GrammarRule = GrammarRule> {
 	readonly type: 'PREC_LEFT';
-	readonly value: number;
+	readonly value: number | string;
 	readonly content: C;
 }
 export interface PrecRightRule<C extends GrammarRule = GrammarRule> {
 	readonly type: 'PREC_RIGHT';
-	readonly value: number;
+	readonly value: number | string;
 	readonly content: C;
 }
 export interface PrecDynamicRule<C extends GrammarRule = GrammarRule> {

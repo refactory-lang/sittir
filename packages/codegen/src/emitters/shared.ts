@@ -1148,6 +1148,10 @@ export function importLocalName(specifier: string): string {
 	return specifier.split(' as ').at(-1)!;
 }
 
+export function isDeclaredSupertype(node: AssembledNode | undefined): node is AssembledSupertype {
+	return node instanceof AssembledSupertype && node.declared;
+}
+
 export function pruneUnusedImports(lines: readonly string[], names: readonly string[]): string[] {
 	const body = lines.filter((l) => !l.startsWith('import ')).join('\n');
 	const unused = new Set(names.filter((name) => !new RegExp(`\\b${name}\\b`).test(body)));

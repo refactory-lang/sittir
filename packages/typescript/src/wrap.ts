@@ -17,7 +17,7 @@ import type { ParsedRoot } from '@sittir/common/engine';
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { TSKindId, KIND_NAMES } from './types.js';
 import { Delimiter } from '@sittir/common/utils';
-import type * as T from './types.js';
+import type * as T from './types-internal.js';
 import { withMethods } from './utils.js';
 
 // A hydrated read-layer TEXT LEAF: the reader modeled no addressable

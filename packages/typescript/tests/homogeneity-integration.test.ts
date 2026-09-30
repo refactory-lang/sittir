@@ -16,9 +16,10 @@
  */
 
 import { describe, it } from 'vitest';
-import type { FormalParameter } from '../src/index.ts';
-import type { NamespaceMap } from '../src/index.ts';
+import type { NamespaceMap, OptionalParameter, RequiredParameter } from '../src/index.ts';
 import type { LooseConfigOf } from '@sittir/types';
+
+type FormalParameter = RequiredParameter | OptionalParameter;
 
 function expectTrue<_T extends true>(): void {}
 

@@ -15,7 +15,7 @@ import type { ParsedRoot } from '@sittir/common/engine';
 // instead of re-declaring locally. Single source of truth.
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { TSKindId, KIND_NAMES } from './types.js';
-import type * as T from './types.js';
+import type * as T from './types-internal.js';
 import { withMethods } from './utils.js';
 
 // A hydrated read-layer TEXT LEAF: the reader modeled no addressable

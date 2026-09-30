@@ -7,6 +7,8 @@
 		"noEmit": true,
 		"rootDir": ".",
 		"erasableSyntaxOnly": true,
+		// `$` is a proxy that answers every rule name, so `$.name` is never undefined; the index-signature fallback of the DSL symbol types would otherwise type it `| undefined`
+		"noUncheckedIndexedAccess": false,
 		"types": ["node", "tree-sitter-cli/dsl.d.ts"]
 	},
 	"files": ["./packages/codegen/src/dsl/authoring-globals.d.ts"]

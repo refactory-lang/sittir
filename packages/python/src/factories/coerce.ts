@@ -3,7 +3,7 @@
 import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
 import { lexedConfig, numberText, spelledForm, spelledInterior } from '@sittir/common/utils';
-import type * as T from '../types.js';
+import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import { Delimiter } from '@sittir/common/utils';
 import type { AnyNodeData, LooseValue, NonEmptyArray, SpelledAffix, WithSpelling } from '@sittir/types';

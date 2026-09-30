@@ -7,7 +7,8 @@
  * @generated from overrides.json — review before committing
  */
 
-import base from '../../node_modules/.pnpm/tree-sitter-python@0.25.0/node_modules/tree-sitter-python/grammar.js';
+/// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
+import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {
 	role,
@@ -16,10 +17,12 @@ import {
 	variant,
 	preference,
 	rule,
+	prec,
+	token,
 	reauthored,
 	vocabulary,
 	sittirGrammar
-} from '../codegen/src/dsl/index.ts';
+} from '../codegen/src/dsl/dsl-authoring.ts';
 
 const comprehensionClauses = rule('comprehension_clauses', ($) =>
 	field('content', repeat1(choice($.for_in_clause, $.if_clause)))
@@ -370,7 +373,7 @@ export default sittirGrammar(base, {
 	},
 	rules: {
 		// See docs/python-grammar-sittir-glossary.md::primary_expression
-		primary_expression: reauthored('ambiguity', ($: any, original: ChoiceRule) => {
+		primary_expression: reauthored('ambiguity', ($, original) => {
 			let base = original.members;
 
 			return choice(...base.slice(0, -1), prec.dynamic(-1, $.list_splat_pattern));
