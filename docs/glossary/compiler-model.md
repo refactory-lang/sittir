@@ -2323,6 +2323,10 @@ a kind ask it; they read the grammar, so a builder never changes them.
 
 A surface-hidden keyword: the `_kw_*` presence markers, whose builders exist but are stored as a flag on their parent, so no top-level factory is emitted for them.
 
+### `packages/codegen/src/compiler/model/node-map.ts::isTerminalNode`
+
+Whether a kind is a terminal of the model: a pattern leaf, or a kind stored as its kind id (a keyword, a punctuation or an enum). A terminal has text but no children; every other model type (branch, envelope, polymorph, alias, supertype, list) holds child items. The render module's leaf transports and the grammar-root check read it.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::isFixedTextLeaf`
 
 ```text

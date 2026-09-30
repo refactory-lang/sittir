@@ -1,6 +1,6 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
-import { isFixedTextLeaf, kindIdText } from '../compiler/model/node-map.ts';
+import { isFixedTextLeaf, isTerminalNode, kindIdText } from '../compiler/model/node-map.ts';
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import { isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -1397,14 +1397,14 @@ function isTransportRequired(slot: AssembledNonterminal): boolean {
 }
 
 function nodeTransportHasRequiredField(node: AssembledNode): boolean {
-	if (node.modelType === 'pattern' || isFixedTextLeaf(node) || node.modelType === 'enum') {
+	if (isTerminalNode(node)) {
 		return true;
 	}
 	return node.slots.some((slot) => isTransportRequired(slot));
 }
 
 function isLeafLikeNode(n: AssembledNode): boolean {
-	return n.modelType === 'pattern' || isFixedTextLeaf(n) || n.modelType === 'enum';
+	return isTerminalNode(n);
 }
 
 function boxedInEnum(
@@ -3258,7 +3258,7 @@ function renderTransportDataStruct(
 				);
 			}
 		}
-	} else if (node.modelType === 'pattern' || isFixedTextLeaf(node) || node.modelType === 'enum') {
+	} else if (isTerminalNode(node)) {
 		lines.push(...renderLeafTransportPlainFields());
 	}
 	lines.push('}');
