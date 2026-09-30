@@ -19,22 +19,32 @@ only mean something while that tree is at hand.
 ## Design
 
 A node's coordinates are its offset from its parent. Only the root is placed
-in a buffer: its coordinates start at 0 in the bytes it was read from.
+in a buffer: its coordinates start at (0, 0) in the bytes it was read from.
+
+This is tree-sitter's own `Length` algebra (a subtree stores its padding and
+size, never its position), measured from the parent's start instead of
+chained from the previous sibling, so any child is placed from its parent
+alone.
 
 ### What a coordinate holds
 
-- **Bytes:** `$span` `{ start, end }`, both relative to the parent's start
-  byte.
-- **Lines:** the start and end row, relative to the parent's start row, and
-  the column of each. A column is only read next to a row change: it is where
-  a line starts.
+- **`$span` is two points:** `{ start: { row, column }, end: { row, column } }`,
+  both relative to the parent's start point. A column counts bytes within its
+  line, as tree-sitter's does.
+- **The column rule:** a point with row offset 0 is on the parent's start row,
+  and its column is added to the parent's column. A point with a row offset
+  above 0 is on a later line, and its column is measured from that line's
+  start. This is tree-sitter's `length_add`.
+- **No byte offsets are stored.** Bytes are derived where a source exists (see
+  [the native side](#the-native-side)); a detached node needs only rows and
+  columns.
 - **Parent** means the node whose bytes contain the child: the storage
   parent for a slot or `$other` child (a hoisted or inlined slot's children
   are stored on an ancestor, whose bytes contain them), and the owner's parent
   for trivia. Tree-sitter makes extras siblings of their owner, so trivia is
   measured from the same base as the node it is attached to.
 - **Offsets are never negative.** Every child lies inside its parent's bytes
-  and the root starts at 0, so `Span` stays two `u32`s.
+  and the root starts at (0, 0), so each field is a `u32`.
 
 ### Source-backed and detached nodes
 
@@ -48,10 +58,10 @@ coordinates, and **detached** once they cannot.
 - **Detached:** its coordinates remain, but nothing resolves them to bytes.
   It renders from its data, like an edited node, with one difference: the
   seams between its untouched children come from their gap geometry.
-  - adjacency: a gap of width 0 is tight;
+  - adjacency: the two points are equal;
   - a line break: the two neighbours' rows differ;
   - blank lines: the row difference beyond one;
-  - indentation: the column where the next line starts.
+  - indentation: the next neighbour's start column, when its row differs.
   What geometry cannot give (comment text, the spelling of whitespace) falls
   to options and defaults.
 
@@ -75,9 +85,10 @@ Every fact coordinates can give is derived, never stamped:
 - **What changes:** the handle is dropped, and each leaf's text becomes data,
   since text is content and can no longer come from bytes. Coordinates are
   kept unchanged; being relative, they need no rebasing.
-- **Edits are unchanged:** an edited node drops its coordinates and renders
-  from its data. A gap next to an edited sibling is left to the options and
-  defaults, as today.
+- **Edits:** an edited node renders from its data and never as a slice, but
+  keeps its original start point: its untouched children are measured from
+  it, so it remains their base. A gap next to an edited sibling is left to
+  the options and defaults, as today.
 
 ### Serialized source-backed data
 
@@ -103,27 +114,33 @@ positions, so a tree-bound node exposes them from tree-sitter directly:
 
 ### The native side
 
-- **The wire and `NodeData` carry relative coordinates.** `read_node` emits
-  each stored child's byte and row offsets from its parent, and its columns,
-  with the root at 0 after `widen_to_whole_source`.
-- **The renderer slices relatively.** The prepare walk is top-down, so it
-  holds each parent's bytes when it reaches a child. A child's bytes are
-  `parent_bytes[start..end]`, and the gap between two siblings is
-  `parent_bytes[a.end..b.start]`. `NodeCoordinate` carries a relative span,
-  and resolution composes down the walk instead of indexing a whole source.
-- **Anchors find their own bytes.** Only the node that starts a slicing chain
-  resolves on its own:
-  - the render root, from its tree's source or its buffer;
-  - a subtree seated into another tree, through its handle: tree-sitter's
-    node gives the byte range to slice from its tree's source;
-  - a serialized root, through its buffer-backed id.
+- **The wire and `NodeData` carry relative points.** `read_node` emits each
+  stored child's start and end point relative to its parent's start point,
+  with the root at (0, 0) after `widen_to_whole_source`.
+- **The prepare walk threads positions from the render root.** It is
+  top-down, so it holds each parent's position in the anchor's source when it
+  reaches a child. A child's position is the parent's plus its offset, by the
+  column rule; nothing stores it.
+- **Bytes come from the anchor's line-start table.** An anchor's source gets
+  one table of line-start byte offsets, built once and shared for the render.
+  A position `(row, column)` is byte `line_start[row] + column`, so a child's
+  bytes and the gap between two siblings are slices of the anchor's source.
+  `NodeCoordinate` carries a relative span; resolution composes down the walk
+  instead of indexing a whole source by stored bytes.
+- **Anchors start a chain.** A node whose position cannot come from its
+  parent's resolves on its own:
+  - the render root: (0, 0) in its tree's source or its buffer;
+  - a subtree seated from another tree (its handle names a different tree
+    than its parent's): tree-sitter's start point through the handle, in its
+    own tree's source;
+  - a serialized root: (0, 0) in the buffer named by its buffer-backed id.
 - **Detached gaps** are classified from geometry by the same classifier
-  entry, with the gap's width, row difference and column in place of its
-  bytes.
+  entry, with the gap's two points in place of its bytes.
 
 ## Census of coordinate consumers
 
-Each moves to relative coordinates or to the derived absolute position.
+Each moves to relative points, or to `$cst()` where it needs a tree-sitter
+position.
 
 - **Rust:** `read_node` (`read_ts_node`, `read_child_stub`,
   `read_materialized_leaf`, `node_trivia`, `extras_run`,
@@ -136,7 +153,7 @@ Each moves to relative coordinates or to the derived absolute position.
   data.
 - **Generated wrap:** `_hasSeparatorFlank` compares a container's span with
   its first and last element's. Relative spans make that "the element's
-  start is 0" and "the element's end is the container's length".
+  start is (0, 0)" and "the element's end is the container's end".
 - **Tools:** the validators (`read-render-parse`, `factory-render-parse`,
   `from`, `common`), trivia placement, `probe kind`'s span search, and
   `exercise/roundtrip`. `selfContainedRenderInput` becomes the serialized
@@ -148,8 +165,6 @@ Each moves to relative coordinates or to the derived absolute position.
 
 1. **The key** for a serialized node's buffer and its buffer-backed id.
    `$source` is taken (it is the node's provenance).
-2. **The key** for the line part of a coordinate: extend `$span` with rows
-   and columns, or a sibling key.
 
 ## Verification
 
@@ -163,6 +178,11 @@ Each moves to relative coordinates or to the derived absolute position.
 - **Seating across trees:** an untouched node seated into another tree
   renders its original bytes while its source tree lives; once that tree is
   freed, it renders as detached.
+- **Edited parents:** editing a node that has untouched multi-line children
+  keeps those children's bytes and indentation.
+- **Line-start resolution:** for every corpus file, each node's position
+  threaded from the root equals tree-sitter's start point and byte through
+  `$cst()`.
 - **Validate rows** are identical across the three grammars.
 - **No coordinate stamp remains:** `$sameLine` and `$tokensBetween` are gone
   from the wire.
