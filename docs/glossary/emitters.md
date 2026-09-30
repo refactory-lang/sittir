@@ -6298,6 +6298,8 @@ mark instead of referencing the slot.
 
 One generated test per wired sub-factory, driven by `collectPolymorphWires` — the same derivation the overlay emits from, so tests exist exactly for wires that exist. Call arguments come from the dummy machinery, following the wire shapes (positional seat, residual config, merged config, seated tuple; list children lead with an options object when their surface takes one). `expectTestFailures["<kind>.<name>"]` skips a case and loosens its call target so a pinned, unwired name never type-errors. Alias wires get a form case each — the hoisted call with the child's bare-call arguments, asserting the child's discriminant (the form is its own node kind, not the parent's) — skipped when the dummy machinery cannot produce arguments for the child. A keyword or punctuation child is built as its kind-id value, not a node (as `emitKeywordTest` asserts for the kind itself), so its form case asserts the returned value is that kind id.
 
+A case whose seated slot is a list owner's list slot asserts the slot reads back non-empty items, not a node: the accessor of that slot hoists the list away, so there is no child node whose discriminant could be checked.
+
 A kind's tests are addressed through its public spelling (`subFactoryBase`): its flat `ir` key when it is bundled (sub-factories are callable), or its flattened-parent route (`variantRoutePaths`) called through `.coerce`, the loose flavor that accepts the prebuilt nodes the dummy machinery passes. A kind with neither has no public path, and no sub-factory tests are emitted for it.
 
 #### body

@@ -37,7 +37,7 @@ import {
 	escForSource
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
-import { valueStorageExpr, kindEnumTextExpr } from './factories.ts';
+import { valueStorageExpr, kindEnumTextExpr, listOwnerHint } from './factories.ts';
 import { classifyFactoryEmission, registeredSlots } from './shared.ts';
 import { seatsConfigChild, subFactoriesOf, type SubFactory } from './overlays/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
@@ -474,6 +474,8 @@ function emitSubFactoryTests(
 			const val = valueStorageExpr(sub.arm.storage, slotStorageInfo, kindEntries);
 			cases.push(`    const seated = (node as any).${slotProp}();`);
 			cases.push(`    expect(seated?.$text ?? seated).toBe(${val});`);
+		} else if (listOwnerHint(node, nodeMap, kindEntries)?.slot === slotProp) {
+			cases.push(`    expect((node as any).${slotProp}()?.length).toBeGreaterThan(0);`);
 		} else if (!slotIsKindEnum) {
 			cases.push(
 				`    expect((node as any).${slotProp}()?.$type).toBe(${testTypeDiscriminant(sub.arm.child.kind, kindEntries, nodeMap)});`
