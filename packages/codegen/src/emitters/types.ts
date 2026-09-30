@@ -91,8 +91,10 @@ import {
 import {
 	constructorTargetKind,
 	builtTypeSurfaceOf,
+	elementConfigsOf,
 	listOwnerHint,
 	listSlotHints,
+	groupSeatHint,
 	omitRegistered,
 	spellingTypeOf,
 	refineFormBuiltTypeSurfaceOf,
@@ -474,6 +476,7 @@ const VOCABULARY_IMPORTS = [
 	'SlotHint',
 	'ListOwnerHint',
 	'ListSlotHint',
+	'FlatHint',
 	'BoundOf',
 	'ParsedOf',
 	'AdmitBound',
@@ -992,17 +995,33 @@ function emitSlotHints(
 	const setters = builtTypeSurfaceOf(node, nodeMap, kindEntries)?.setters ?? [];
 	const owner = listOwnerHint(node, nodeMap, kindEntries);
 	const listSlots = listSlotHints(node, nodeMap, kindEntries);
+	const groupSeat = groupSeatHint(node, nodeMap, kindEntries);
 	if (setters.length === 0 && owner === undefined) return;
 	lines.push('  readonly __slotHints__?: {');
+	const elementConfigs = new Map(elementConfigsOf(node, nodeMap).map((fact) => [fact.slot, fact.config]));
 	for (const setter of setters) {
-		const flags = setter.rest ? `, ${setter.optional}, true` : setter.optional ? ', true' : '';
+		const config = elementConfigs.get(setter.name);
+		const flags =
+			config !== undefined
+				? `, ${setter.optional}, ${setter.rest}, ${config}`
+				: setter.rest
+					? `, ${setter.optional}, true`
+					: setter.optional
+						? ', true'
+						: '';
 		lines.push(`    readonly ${setter.name}: SlotHint<${setter.input}${flags}>;`);
 	}
 	if (owner !== undefined)
-		lines.push(`    readonly $listOwner: ListOwnerHint<${owner.element}, ${owner.options}, ${JSON.stringify(owner.slot)}>;`);
+		lines.push(`    readonly $listOwner: ListOwnerHint<${owner.element}, ${owner.options}, ${JSON.stringify(owner.slot)}, ${owner.config}>;`);
+	if (groupSeat !== undefined) {
+		const keys = groupSeat.keys.map((key) => JSON.stringify(key.name)).join(' | ');
+		lines.push(
+			`    readonly $flat: FlatHint<${JSON.stringify(groupSeat.slot)}, T.${groupSeat.group}, ${keys}, ${groupSeat.optional}>;`
+		);
+	}
 	if (listSlots.length > 0) {
 		lines.push('    readonly $listSlots: {');
-		for (const hint of listSlots) lines.push(`      readonly ${hint.slot}: ListSlotHint<${hint.element}, ${hint.options}>;`);
+		for (const hint of listSlots) lines.push(`      readonly ${hint.slot}: ListSlotHint<${hint.element}, ${hint.options}, ${hint.config}>;`);
 		lines.push('    };');
 	}
 	lines.push('  };');

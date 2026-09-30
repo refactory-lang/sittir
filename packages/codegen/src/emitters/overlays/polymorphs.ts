@@ -701,8 +701,7 @@ function flattenShape(
 const PFS = 'PF extends (...args: never[]) => unknown';
 
 function configTest(keys: readonly string[]): string {
-	const keyTests = keys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ') || 'false';
-	return `(e: unknown): boolean => typeof e === 'object' && e !== null && !('$type' in e) && Object.keys(e).every((key) => ${keyTests})`;
+	return `(e: unknown): boolean => isGroupConfig(e, ${JSON.stringify(keys)})`;
 }
 
 function elementsShape(
@@ -1058,6 +1057,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		"import * as C from '../coerce.js';",
 		`import type { ArgsOf, ${blocks.some((b) => b.includes('ElementsOf<')) ? 'ElementsOf, ' : ''}OmitEach${blocks.some((b) => b.includes('OptionsArg<')) ? ', OptionsArg' : ''} } from '@sittir/types';`,
 		...(usesKindId ? ["import { TSKindId } from '../../types.js';"] : []),
+		...(blocks.some((b) => b.includes('isGroupConfig(')) ? ["import { isGroupConfig } from '@sittir/common/utils';"] : []),
 		...(blocks.some((b) => /(?<![\w$.])T\./.test(b)) ? ["import type * as T from '../../types.js';"] : [])
 	];
 	const start = blocks.indexOf(ERASED_HELPERS[0]!);

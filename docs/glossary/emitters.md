@@ -16465,6 +16465,30 @@ The object literal a list owner's builder and wrap pass to `withListOwner`: the 
 
 `listSlotsRuntimeSpec` gives the array of specs a multi-slot parent passes to `withListSlots`: the same `list`, `elements`, `kind`, `make` and `wrapper` fields, without the options, which only an owner reads. `listSeatRuntime` names the helper and its spec for a node (`withListOwner` for an owner, `withListSlots` for a parent with hoisted list slots, nothing otherwise), so the builder and the wrap module emit one call from one decision.
 
+### `packages/codegen/src/emitters/factories.ts::seatRuntimes`
+
+The runtime members a node's builder and wrap add through helper calls, in the order they nest: `withListOwner` for a list owner, `withListSlots` for its hoisted list slots, `withGroupSeat` for a flattened group and one `withElementsSeat` per elements seat. Each entry pairs the helper's name with its spec literal, built by the same function that derives the type-level hint for that seat, so a member exists at runtime exactly when its type says so. `factoryScope` prefixes the raw factory names the specs carry where the caller reaches them through a namespace import. The builder, the separated-list builder and the wrap all call it, and the import list of the raw module is the set of helpers it returns.
+
+### `packages/codegen/src/emitters/factories.ts::seatOpening`
+
+The helper calls, opened, that wrap an object literal in the seat runtimes: `withA(withB(`. Paired with `seatClosing`, which closes them in reverse with each spec as the trailing argument.
+
+### `packages/codegen/src/emitters/factories.ts::seatClosing`
+
+The closing half of `seatOpening`: the specs of the seat runtimes, in reverse nesting order, each as the trailing argument of its helper call.
+
+### `packages/codegen/src/emitters/factories.ts::groupSeatHint`
+
+The facts a node's flattened group needs for its node surface: the slot that seats the group, the group's type and kind, its raw factory, whether the seat is optional, and the group's config keys (each marked when its setter takes rest arguments). Defined exactly when `flattenSeatOf` names a seat, the fact that gives the strict factory its flattened config keys, so the config surface and the node surface cannot disagree about which kinds flatten a group or which keys it flattens. A key that spells the seat's own slot is not a collision: it reads the group's inner value, and its setter takes the inner value or the whole group. A key that spells a different slot of the parent is unreachable, because `flattenSeatOf` declines such a seat; the emitter throws if one is ever seated.
+
+### `packages/codegen/src/emitters/factories.ts::groupSeatRuntimeSpec`
+
+The object literal a node's builder and wrap pass to `withGroupSeat`: the seat's accessor (`slot`), the group's kind id (`kind`), the group's raw factory (`make`) and its config keys with their rest marks (`keys`). It shares `groupSeatHint` with the type-level `$flat` stamp, so the flattened members exist at runtime exactly when the interface declares them.
+
+### `packages/codegen/src/emitters/factories.ts::elementConfigsOf`
+
+The elements seats of a node: each multiple slot whose elements include exactly one hoisted config-shaped group, as the slot's accessor name, the group's type and raw factory, its config keys and the type of its config object. A separated list's element slot is one when its element is such a group. The config surface takes the group's config objects in these slots and builds each through the group's factory; the node surface takes them the same way in every `$with` setter for the slot, including the setter a list owner or a hoisted list slot forwards to the list. The type stamp (`config` of a slot, owner or list-slot hint) and the runtime spec (`element` of a list spec, or a `withElementsSeat` call) come from this one function.
+
 ### `packages/codegen/src/emitters/factories.ts::listOwnerTarget`
 
 The owner's sole slot and the separated list it forwards to, or `undefined` when the node does not forward to a list.

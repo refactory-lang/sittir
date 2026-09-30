@@ -14,6 +14,8 @@ import {
 	orDefault,
 	rejectBareText,
 	rejectKeywordText,
+	withElementsSeat,
+	withGroupSeat,
 	withListOwner,
 	withListSlots
 } from '@sittir/common/utils';
@@ -1799,37 +1801,40 @@ export function buildUnionPattern(
 		'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / SimplePatternNegative / ComplexPattern / DottedName'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.UnionPattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_patterns,
-				$with: {
-					patterns: (
-						...vs: (
-							| T.ClassPattern
-							| T.SplatPattern
-							| T.UnionPattern
-							| T.CaseListPattern
-							| T.CaseTuplePattern
-							| T.DictPattern
-							| T.String
-							| T.ConcatenatedString
-							| TSKindId.True
-							| TSKindId.False
-							| TSKindId.None
-							| T.SimplePatternNegative
-							| T.ComplexPattern
-							| T.DottedName
-							| TSKindId.WildcardPattern
-						)[]
-					) => buildUnionPattern(...vs)
+		withElementsSeat(
+			withAccessors(
+				{
+					$type: TSKindId.UnionPattern as const,
+					$source: 2 as const,
+					$named: true as const,
+					_patterns,
+					$with: {
+						patterns: (
+							...vs: (
+								| T.ClassPattern
+								| T.SplatPattern
+								| T.UnionPattern
+								| T.CaseListPattern
+								| T.CaseTuplePattern
+								| T.DictPattern
+								| T.String
+								| T.ConcatenatedString
+								| TSKindId.True
+								| TSKindId.False
+								| TSKindId.None
+								| T.SimplePatternNegative
+								| T.ComplexPattern
+								| T.DottedName
+								| TSKindId.WildcardPattern
+							)[]
+						) => buildUnionPattern(...vs)
+					}
+				},
+				{
+					patterns: () => _patterns
 				}
-			},
-			{
-				patterns: () => _patterns
-			}
+			),
+			{ slot: 'patterns', keys: ['sign', 'value'], make: buildSimplePatternNegative }
 		)
 	) as unknown as T.UnionPattern.Bound;
 }
@@ -2664,24 +2669,27 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 		'a built ComparisonOperatorComparator'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ComparisonOperator as const,
-				$source: 2 as const,
-				$named: true as const,
-				_left,
-				_comparators,
-				$with: {
-					left: (value: NonNullable<T.ComparisonOperator.Config>['left']) =>
-						buildComparisonOperator({ ...config, left: value }),
-					comparators: (...values: NonEmptyArray<T.ComparisonOperatorComparator>) =>
-						buildComparisonOperator({ ...config, comparators: values })
+		withElementsSeat(
+			withAccessors(
+				{
+					$type: TSKindId.ComparisonOperator as const,
+					$source: 2 as const,
+					$named: true as const,
+					_left,
+					_comparators,
+					$with: {
+						left: (value: NonNullable<T.ComparisonOperator.Config>['left']) =>
+							buildComparisonOperator({ ...config, left: value }),
+						comparators: (...values: NonEmptyArray<T.ComparisonOperatorComparator>) =>
+							buildComparisonOperator({ ...config, comparators: values })
+					}
+				},
+				{
+					left: () => _left,
+					comparators: () => _comparators
 				}
-			},
-			{
-				left: () => _left,
-				comparators: () => _comparators
-			}
+			),
+			{ slot: 'comparators', keys: ['operators', 'primaryExpression'], make: buildComparisonOperatorComparator }
 		)
 	) as unknown as T.ComparisonOperator.Bound;
 }
@@ -2933,24 +2941,32 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 	);
 	const _step = rejectBareText(config.step, 'Slice.step', 'a built SliceGroup');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.Slice as const,
-				$source: 2 as const,
-				$named: true as const,
-				_start,
-				_stop,
-				_step,
-				$with: {
-					start: (value?: NonNullable<T.Slice.Config>['start']) => buildSlice({ ...config, start: value }),
-					stop: (value?: NonNullable<T.Slice.Config>['stop']) => buildSlice({ ...config, stop: value }),
-					step: (value?: T.SliceGroup) => buildSlice({ ...config, step: value })
+		withGroupSeat(
+			withAccessors(
+				{
+					$type: TSKindId.Slice as const,
+					$source: 2 as const,
+					$named: true as const,
+					_start,
+					_stop,
+					_step,
+					$with: {
+						start: (value?: NonNullable<T.Slice.Config>['start']) => buildSlice({ ...config, start: value }),
+						stop: (value?: NonNullable<T.Slice.Config>['stop']) => buildSlice({ ...config, stop: value }),
+						step: (value?: T.SliceGroup) => buildSlice({ ...config, step: value })
+					}
+				},
+				{
+					start: () => _start,
+					stop: () => _stop,
+					step: () => _step
 				}
-			},
+			),
 			{
-				start: () => _start,
-				stop: () => _stop,
-				step: () => _step
+				slot: 'step',
+				kind: TSKindId.SliceGroup as const,
+				make: buildSliceGroup,
+				keys: [{ name: 'expression', rest: false }]
 			}
 		)
 	) as unknown as T.Slice.Bound;

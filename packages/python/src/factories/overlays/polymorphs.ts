@@ -4,6 +4,7 @@ import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import type { ArgsOf, ElementsOf, OmitEach, OptionsArg } from '@sittir/types';
 import { TSKindId } from '../../types.js';
+import { isGroupConfig } from '@sittir/common/utils';
 export * from './refines.js';
 
 // Erased applications, centralized: TS cannot infer a Cfg type parameter
@@ -128,11 +129,7 @@ const comparisonOperator$comparators = <
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'operators' || key === 'primaryExpression');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['operators', 'primaryExpression']);
 	return (
 		config:
 			| ArgsOf<PF>[0]
@@ -1560,11 +1557,7 @@ const unionPattern$patterns = <PF extends (...args: never[]) => unknown, CF exte
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'sign' || key === 'value');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['sign', 'value']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };

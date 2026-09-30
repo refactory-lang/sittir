@@ -20,6 +20,7 @@ import type {
 	GrammarInnerTrivia,
 	SlotHint,
 	ListOwnerHint,
+	FlatHint,
 	BoundOf,
 	ParsedOf,
 	AdmitBound,
@@ -3134,7 +3135,8 @@ export interface ExportClause {
 		readonly $listOwner: ListOwnerHint<
 			T.ExportSpecifier | T.Identifier | T.String,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'exportSpecifiers'
+			'exportSpecifiers',
+			never
 		>;
 	};
 	exportSpecifiers(): NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String> | undefined;
@@ -3209,7 +3211,8 @@ export interface NamedImports {
 		readonly $listOwner: ListOwnerHint<
 			T.ImportSpecifier,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'importSpecifiers'
+			'importSpecifiers',
+			never
 		>;
 	};
 	importSpecifiers(): NonEmptyArray<T.ImportSpecifier> | undefined;
@@ -3855,6 +3858,7 @@ export interface CatchClause {
 	readonly __slotHints__?: {
 		readonly catchClauseGroup: SlotHint<T.CatchClauseGroup, true>;
 		readonly body: SlotHint<T.StatementBlock>;
+		readonly $flat: FlatHint<'catchClauseGroup', T.CatchClauseGroup, 'parameter' | 'type', true>;
 	};
 	catchClauseGroup(): CatchClauseGroup | undefined;
 	body(): StatementBlock;
@@ -5439,7 +5443,8 @@ export interface FormalParameters {
 		readonly $listOwner: ListOwnerHint<
 			T.RequiredParameter | T.OptionalParameter,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'formalParametersElements'
+			'formalParametersElements',
+			never
 		>;
 	};
 	formalParametersElements(): NonEmptyArray<T.RequiredParameter | T.OptionalParameter> | undefined;
@@ -7064,7 +7069,8 @@ export interface EnumBody {
 			| T.EnumAssignment
 			| T.PropertyIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'enumBodyElements'
+			'enumBodyElements',
+			never
 		>;
 	};
 	enumBodyElements():
@@ -8566,7 +8572,8 @@ export interface TypeArguments {
 		readonly $listOwner: ListOwnerHint<
 			T.Type | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'types'
+			'types',
+			never
 		>;
 	};
 	types(): NonEmptyArray<T.Type | T.TypeIdentifier.Types>;
@@ -8778,7 +8785,8 @@ export interface TypeParameters {
 		readonly $listOwner: ListOwnerHint<
 			T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'typeParametersElements'
+			'typeParametersElements',
+			never
 		>;
 	};
 	typeParametersElements(): NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>;
@@ -8961,7 +8969,8 @@ export interface TupleType {
 		readonly $listOwner: ListOwnerHint<
 			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'tupleTypeMembers'
+			'tupleTypeMembers',
+			never
 		>;
 	};
 	tupleTypeMembers():

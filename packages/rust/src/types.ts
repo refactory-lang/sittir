@@ -20,6 +20,7 @@ import type {
 	SlotHint,
 	ListOwnerHint,
 	ListSlotHint,
+	FlatHint,
 	BoundOf,
 	ParsedOf,
 	AdmitBound,
@@ -4254,7 +4255,8 @@ export interface EnumVariantList {
 		readonly $listOwner: ListOwnerHint<
 			T.AttributedEnumVariant | T.EnumVariant,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'enumVariantListElements'
+			'enumVariantListElements',
+			T.AttributedEnumVariant.Config
 		>;
 	};
 	enumVariantListElements(): NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant> | undefined;
@@ -4297,7 +4299,8 @@ export interface FieldDeclarationList {
 		readonly $listOwner: ListOwnerHint<
 			T.AttributedFieldDeclaration | T.FieldDeclaration,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'fieldDeclarationListElements'
+			'fieldDeclarationListElements',
+			T.AttributedFieldDeclaration.Config
 		>;
 	};
 	fieldDeclarationListElements(): NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration> | undefined;
@@ -4375,7 +4378,8 @@ export interface OrderedFieldDeclarationList {
 		readonly $listOwner: ListOwnerHint<
 			T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'attributes'
+			'attributes',
+			T.AttributedOrderedField.Config
 		>;
 	};
 	attributes(): NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types> | undefined;
@@ -4811,7 +4815,8 @@ export interface WhereClause {
 		readonly $listOwner: ListOwnerHint<
 			T.WherePredicate,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'wherePredicates'
+			'wherePredicates',
+			never
 		>;
 	};
 	wherePredicates(): NonEmptyArray<T.WherePredicate> | undefined;
@@ -5171,7 +5176,8 @@ export interface TypeParameters {
 		readonly $listOwner: ListOwnerHint<
 			T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'typeParametersElements'
+			'typeParametersElements',
+			T.AttributedTypeParameter.Config
 		>;
 	};
 	typeParametersElements(): NonEmptyArray<
@@ -5751,7 +5757,8 @@ export interface UseList {
 			| T.ScopedUseList
 			| T.UseWildcard,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'useClauses'
+			'useClauses',
+			never
 		>;
 	};
 	useClauses():
@@ -5969,7 +5976,8 @@ export interface Parameters {
 			| T.Type
 			| T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'parametersElements'
+			'parametersElements',
+			T.AttributedParameter.Config
 		>;
 	};
 	parametersElements():
@@ -6339,7 +6347,12 @@ export interface ForLifetimes {
 	};
 	readonly __slotHints__?: {
 		readonly lifetimes: SlotHint<T.Lifetimes>;
-		readonly $listOwner: ListOwnerHint<T.Lifetime, { delimiter?: Delimiter.None | Delimiter.Trailing }, 'lifetimes'>;
+		readonly $listOwner: ListOwnerHint<
+			T.Lifetime,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			'lifetimes',
+			never
+		>;
 	};
 	lifetimes(): NonEmptyArray<T.Lifetime>;
 }
@@ -6419,7 +6432,8 @@ export interface TupleType {
 		readonly $listOwner: ListOwnerHint<
 			T.Type | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'tupleTypeElements'
+			'tupleTypeElements',
+			never
 		>;
 	};
 	tupleTypeElements(): NonEmptyArray<T.Type | T.TypeIdentifier.Types>;
@@ -6590,7 +6604,8 @@ export interface UseBounds {
 		readonly $listOwner: ListOwnerHint<
 			T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'bounds'
+			'bounds',
+			never
 		>;
 	};
 	bounds(): NonEmptyArray<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types> | undefined;
@@ -6607,7 +6622,8 @@ export interface TypeArguments {
 		readonly $listOwner: ListOwnerHint<
 			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'typeArgumentsElements'
+			'typeArgumentsElements',
+			T.TypeArgument.Config
 		>;
 	};
 	typeArgumentsElements(): NonEmptyArray<
@@ -7680,7 +7696,8 @@ export interface Arguments {
 		readonly $listOwner: ListOwnerHint<
 			T.AttributedArgument | T.Expression,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'argumentsElements'
+			'argumentsElements',
+			T.AttributedArgument.Config
 		>;
 	};
 	argumentsElements(): NonEmptyArray<T.AttributedArgument | T.Expression> | undefined;
@@ -7746,7 +7763,8 @@ export interface FieldInitializerList {
 		readonly $listOwner: ListOwnerHint<
 			T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'initializers'
+			'initializers',
+			never
 		>;
 	};
 	initializers(): NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer> | undefined;
@@ -7904,6 +7922,7 @@ export interface MatchBlock {
 	readonly _match_block_arms?: MatchBlockArms;
 	readonly __slotHints__?: {
 		readonly matchBlockArms: SlotHint<T.MatchBlockArms, true>;
+		readonly $flat: FlatHint<'matchBlockArms', T.MatchBlockArms, 'matchArms' | 'lastArm', true>;
 	};
 	matchBlockArms(): MatchBlockArms | undefined;
 }
@@ -7925,6 +7944,7 @@ export interface LastMatchArm {
 		readonly pattern: SlotHint<T.MatchPattern>;
 		readonly value: SlotHint<NonNullable<T.LastMatchArm.Config>['value']>;
 		readonly comma: SlotHint<NonNullable<T.LastMatchArm.Config>['comma'], true>;
+		readonly $flat: FlatHint<'pattern', T.MatchPattern, 'pattern' | 'condition', false>;
 	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
 	pattern(): MatchPattern;
@@ -8229,7 +8249,8 @@ export interface TuplePattern {
 		readonly $listOwner: ListOwnerHint<
 			T.Pattern | T.ClosureExpression,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'elements'
+			'elements',
+			never
 		>;
 	};
 	elements(): NonEmptyArray<T.Pattern | T.ClosureExpression> | undefined;
@@ -8243,7 +8264,12 @@ export interface SlicePattern {
 	};
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<T.Patterns, true>;
-		readonly $listOwner: ListOwnerHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }, 'patterns'>;
+		readonly $listOwner: ListOwnerHint<
+			T.Pattern,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			'patterns',
+			never
+		>;
 	};
 	patterns(): NonEmptyArray<T.Pattern> | undefined;
 }
@@ -8259,7 +8285,7 @@ export interface TupleStructPattern {
 		readonly type: SlotHint<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>;
 		readonly patterns: SlotHint<T.Patterns, true>;
 		readonly $listSlots: {
-			readonly patterns: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly patterns: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }, never>;
 		};
 	};
 	type(): Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
@@ -8279,7 +8305,8 @@ export interface StructPattern {
 		readonly $listSlots: {
 			readonly fields: ListSlotHint<
 				T.FieldPattern | TSKindId.RemainingFieldPattern,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				never
 			>;
 		};
 	};
@@ -8456,7 +8483,12 @@ export interface EnumVariantListElements {
 		readonly element: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>, false, true>;
+		readonly elements: SlotHint<
+			NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>,
+			false,
+			true,
+			T.AttributedEnumVariant.Config
+		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 	};
 	elements(): NonEmptyArray<AttributedEnumVariant>;
@@ -8469,7 +8501,12 @@ export interface FieldDeclarationListElements {
 		readonly element: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>, false, true>;
+		readonly elements: SlotHint<
+			NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>,
+			false,
+			true,
+			T.AttributedFieldDeclaration.Config
+		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 	};
 	elements(): NonEmptyArray<AttributedFieldDeclaration>;
@@ -8482,7 +8519,12 @@ export interface OrderedFieldDeclarationListElements {
 		readonly element: NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>, false, true>;
+		readonly elements: SlotHint<
+			NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>,
+			false,
+			true,
+			T.AttributedOrderedField.Config
+		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 	};
 	elements(): NonEmptyArray<AttributedOrderedField>;
@@ -8512,7 +8554,8 @@ export interface TypeParametersElements {
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
 			>,
 			false,
-			true
+			true,
+			T.AttributedTypeParameter.Config
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 	};
@@ -8652,7 +8695,8 @@ export interface ParametersElements {
 				| T.TypeIdentifier.Types
 			>,
 			false,
-			true
+			true,
+			T.AttributedParameter.Config
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 	};
@@ -8693,7 +8737,8 @@ export interface TypeArgumentsElements {
 				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
 			>,
 			false,
-			true
+			true,
+			T.TypeArgument.Config
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 	};
@@ -8707,7 +8752,12 @@ export interface ArgumentsElements {
 		readonly element: NonEmptyArray<T.AttributedArgument | T.Expression>;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<NonEmptyArray<T.AttributedArgument | T.Expression>, false, true>;
+		readonly elements: SlotHint<
+			NonEmptyArray<T.AttributedArgument | T.Expression>,
+			false,
+			true,
+			T.AttributedArgument.Config
+		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 	};
 	elements(): NonEmptyArray<AttributedArgument>;
@@ -9246,7 +9296,8 @@ export interface ArrayExpressionList {
 		readonly $listSlots: {
 			readonly argumentsElements: ListSlotHint<
 				T.AttributedArgument | T.Expression,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedArgument.Config
 			>;
 		};
 	};
@@ -10087,6 +10138,7 @@ export interface MatchArmWithComma {
 		readonly attributes: SlotHint<(T.AttributeItem | T.InnerAttributeItem)[], true, true>;
 		readonly pattern: SlotHint<T.MatchPattern>;
 		readonly value: SlotHint<NonNullable<T.MatchArmWithComma.Config>['value']>;
+		readonly $flat: FlatHint<'pattern', T.MatchPattern, 'pattern' | 'condition', false>;
 	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
 	pattern(): MatchPattern;
@@ -10125,6 +10177,7 @@ export interface MatchArmBlockEnding {
 			| T.ForExpression
 			| T.ConstBlock
 		>;
+		readonly $flat: FlatHint<'pattern', T.MatchPattern, 'pattern' | 'condition', false>;
 	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
 	pattern(): MatchPattern;
@@ -10387,7 +10440,7 @@ export interface MacroDefinitionParen {
 		readonly name: SlotHint<NonNullable<T.MacroDefinitionParen.Config>['name']>;
 		readonly macroRules: SlotHint<T.MacroRules, true>;
 		readonly $listSlots: {
-			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }, never>;
 		};
 	};
 	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
@@ -10410,7 +10463,7 @@ export interface MacroDefinitionBracket {
 		readonly name: SlotHint<NonNullable<T.MacroDefinitionBracket.Config>['name']>;
 		readonly macroRules: SlotHint<T.MacroRules, true>;
 		readonly $listSlots: {
-			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }, never>;
 		};
 	};
 	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
@@ -10433,7 +10486,7 @@ export interface MacroDefinitionBrace {
 		readonly name: SlotHint<NonNullable<T.MacroDefinitionBrace.Config>['name']>;
 		readonly macroRules: SlotHint<T.MacroRules, true>;
 		readonly $listSlots: {
-			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }, never>;
 		};
 	};
 	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;

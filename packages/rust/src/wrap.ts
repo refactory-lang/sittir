@@ -9,7 +9,8 @@ import {
 	coerceBooleanKeywordStorage,
 	inTreeEngine,
 	withListOwner,
-	withListSlots
+	withListSlots,
+	withGroupSeat
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
@@ -2552,6 +2553,7 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle): 
 				kind: TSKindId.EnumVariantListElements as const,
 				make: RAW.buildEnumVariantListElements,
 				wrapper: { kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['_attribute_item'] },
+				element: { keys: ['attributeItem', 'enumVariant'], make: RAW.buildAttributedEnumVariant },
 				options: [{ key: 'delimiter', default: Delimiter.Trailing }]
 			}
 		)
@@ -2654,6 +2656,7 @@ export function wrapFieldDeclarationList(
 					content: 'fieldDeclaration',
 					decorations: ['_attribute_item']
 				},
+				element: { keys: ['attributeItem', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration },
 				options: [{ key: 'delimiter', default: Delimiter.Trailing }]
 			}
 		)
@@ -2764,6 +2767,7 @@ export function wrapOrderedFieldDeclarationList(
 					content: 'type',
 					decorations: ['_attribute_item', '_visibility_modifier']
 				},
+				element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: RAW.buildAttributedOrderedField },
 				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
@@ -3923,6 +3927,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 				kind: TSKindId.TypeParametersElements as const,
 				make: RAW.buildTypeParametersElements,
 				wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['_attribute_item'] },
+				element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter },
 				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
@@ -4686,6 +4691,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 				kind: TSKindId.ParametersElements as const,
 				make: RAW.buildParametersElements,
 				wrapper: { kind: TSKindId.AttributedParameter, content: 'content', decorations: ['_attribute_item'] },
+				element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter },
 				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
@@ -5625,6 +5631,7 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 				kind: TSKindId.TypeArgumentsElements as const,
 				make: RAW.buildTypeArgumentsElements,
 				wrapper: { kind: TSKindId.TypeArgument, content: 'content', decorations: ['_trait_bounds'] },
+				element: { keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument },
 				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
@@ -7497,6 +7504,7 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 				kind: TSKindId.ArgumentsElements as const,
 				make: RAW.buildArgumentsElements,
 				wrapper: { kind: TSKindId.AttributedArgument, content: 'expression', decorations: ['_attribute_item'] },
+				element: { keys: ['attributeItem', 'expression'], make: RAW.buildAttributedArgument },
 				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
@@ -8268,24 +8276,37 @@ export function wrapMatchExpression(data: T.MatchExpression, tree: TreeHandle): 
 
 export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlock.Parsed {
 	data = _keepModelledSlots(data, ['_match_block_arms']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.MatchBlock as const,
-		_match_block_arms: normalizeSingularWrapSlot(data._match_block_arms, 'match_block_arms', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'match_block_arms',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withGroupSeat(
+			{
+				...data,
+				$type: TSKindId.MatchBlock as const,
+				_match_block_arms: normalizeSingularWrapSlot(data._match_block_arms, 'match_block_arms', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'match_block_arms',
+					span: (data as _NodeData).$span
+				}),
 
-		matchBlockArms() {
-			return drillIn<T.MatchBlockArms | undefined>(this._match_block_arms, tree);
-		},
-		$with: {
-			matchBlockArms: (v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
-				wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree)
-		}
-	});
+				matchBlockArms() {
+					return drillIn<T.MatchBlockArms | undefined>(this._match_block_arms, tree);
+				},
+				$with: {
+					matchBlockArms: (v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
+						wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree)
+				}
+			},
+			{
+				slot: 'matchBlockArms',
+				kind: TSKindId.MatchBlockArms as const,
+				make: RAW.buildMatchBlockArms,
+				keys: [
+					{ name: 'matchArms', rest: true },
+					{ name: 'lastArm', rest: false }
+				]
+			}
+		)
+	);
 	return _node as unknown as T.MatchBlock.Parsed;
 }
 
@@ -8322,65 +8343,78 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 	data = _keepModelledSlots(data, ['_attributes', '_pattern', '_value', '_comma']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.LastMatchArm as const }) as unknown as T.LastMatchArm.Parsed;
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.LastMatchArm as const,
-		_attributes: normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'attributes',
-			span: (data as _NodeData).$span
-		}),
-		_pattern: normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'pattern',
-			span: (data as _NodeData).$span
-		}),
-		_value: projectMixedEnumStorage(
-			normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'value',
-				span: (data as _NodeData).$span
-			}),
-			{ true: 118, false: 119, self: 126 },
-			undefined,
-			[336]
-		),
-		_comma: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._comma, 'comma', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'comma',
-				span: (data as _NodeData).$span
-			})
-		),
+	const _node = withMethods(
+		withGroupSeat(
+			{
+				...data,
+				$type: TSKindId.LastMatchArm as const,
+				_attributes: normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
+					tree,
+					nodeType: data.$type,
+					slotName: 'attributes',
+					span: (data as _NodeData).$span
+				}),
+				_pattern: normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'pattern',
+					span: (data as _NodeData).$span
+				}),
+				_value: projectMixedEnumStorage(
+					normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
+						tree,
+						nodeType: data.$type,
+						slotName: 'value',
+						span: (data as _NodeData).$span
+					}),
+					{ true: 118, false: 119, self: 126 },
+					undefined,
+					[336]
+				),
+				_comma: coerceBooleanKeywordStorage(
+					normalizeSingularWrapSlot(data._comma, 'comma', false, data.$type, {
+						tree,
+						nodeType: data.$type,
+						slotName: 'comma',
+						span: (data as _NodeData).$span
+					})
+				),
 
-		attributes() {
-			return drillInAll<T.AttributeItem | T.InnerAttributeItem>(
-				this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
-				tree
-			);
-		},
-		pattern() {
-			return drillIn<T.MatchPattern>(this._pattern, tree);
-		},
-		value() {
-			return drillIn<T.Expression>(this._value, tree);
-		},
-		comma() {
-			return this._comma;
-		},
-		$with: {
-			attributes: (...v: NonNullable<T.LastMatchArm['_attributes']>[number][]) =>
-				wrapLastMatchArm({ ...$edited(data), _attributes: v }, tree),
-			pattern: (v: NonNullable<T.LastMatchArm['_pattern']>) =>
-				wrapLastMatchArm({ ...$edited(data), _pattern: v }, tree),
-			value: (v: NonNullable<T.LastMatchArm['_value']>) => wrapLastMatchArm({ ...$edited(data), _value: v }, tree),
-			comma: (v: NonNullable<T.LastMatchArm['_comma']>) => wrapLastMatchArm({ ...$edited(data), _comma: v }, tree)
-		}
-	});
+				attributes() {
+					return drillInAll<T.AttributeItem | T.InnerAttributeItem>(
+						this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
+						tree
+					);
+				},
+				pattern() {
+					return drillIn<T.MatchPattern>(this._pattern, tree);
+				},
+				value() {
+					return drillIn<T.Expression>(this._value, tree);
+				},
+				comma() {
+					return this._comma;
+				},
+				$with: {
+					attributes: (...v: NonNullable<T.LastMatchArm['_attributes']>[number][]) =>
+						wrapLastMatchArm({ ...$edited(data), _attributes: v }, tree),
+					pattern: (v: NonNullable<T.LastMatchArm['_pattern']>) =>
+						wrapLastMatchArm({ ...$edited(data), _pattern: v }, tree),
+					value: (v: NonNullable<T.LastMatchArm['_value']>) => wrapLastMatchArm({ ...$edited(data), _value: v }, tree),
+					comma: (v: NonNullable<T.LastMatchArm['_comma']>) => wrapLastMatchArm({ ...$edited(data), _comma: v }, tree)
+				}
+			},
+			{
+				slot: 'pattern',
+				kind: TSKindId.MatchPattern as const,
+				make: RAW.buildMatchPattern,
+				keys: [
+					{ name: 'pattern', rest: false },
+					{ name: 'condition', rest: false }
+				]
+			}
+		)
+	);
 	return _node as unknown as T.LastMatchArm.Parsed;
 }
 
@@ -11508,7 +11542,8 @@ export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeH
 					elements: 'elements',
 					kind: TSKindId.ArgumentsElements as const,
 					make: RAW.buildArgumentsElements,
-					wrapper: { kind: TSKindId.AttributedArgument, content: 'expression', decorations: ['_attribute_item'] }
+					wrapper: { kind: TSKindId.AttributedArgument, content: 'expression', decorations: ['_attribute_item'] },
+					element: { keys: ['attributeItem', 'expression'], make: RAW.buildAttributedArgument }
 				}
 			]
 		)
@@ -12882,114 +12917,140 @@ export function wrapForeignModItemBody(data: T.ForeignModItemBody, tree: TreeHan
 
 export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandle): T.MatchArmWithComma.Parsed {
 	data = _keepModelledSlots(data, ['_attributes', '_pattern', '_value']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.MatchArmWithComma as const,
-		_attributes: normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'attributes',
-			span: (data as _NodeData).$span
-		}),
-		_pattern: normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'pattern',
-			span: (data as _NodeData).$span
-		}),
-		_value: projectMixedEnumStorage(
-			normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'value',
-				span: (data as _NodeData).$span
-			}),
-			{ true: 118, false: 119, self: 126 },
-			undefined,
-			[336]
-		),
+	const _node = withMethods(
+		withGroupSeat(
+			{
+				...data,
+				$type: TSKindId.MatchArmWithComma as const,
+				_attributes: normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
+					tree,
+					nodeType: data.$type,
+					slotName: 'attributes',
+					span: (data as _NodeData).$span
+				}),
+				_pattern: normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'pattern',
+					span: (data as _NodeData).$span
+				}),
+				_value: projectMixedEnumStorage(
+					normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
+						tree,
+						nodeType: data.$type,
+						slotName: 'value',
+						span: (data as _NodeData).$span
+					}),
+					{ true: 118, false: 119, self: 126 },
+					undefined,
+					[336]
+				),
 
-		attributes() {
-			return drillInAll<T.AttributeItem | T.InnerAttributeItem>(
-				this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
-				tree
-			);
-		},
-		pattern() {
-			return drillIn<T.MatchPattern>(this._pattern, tree);
-		},
-		value() {
-			return drillIn<T.Expression>(this._value, tree);
-		},
-		$with: {
-			attributes: (...v: NonNullable<T.MatchArmWithComma['_attributes']>[number][]) =>
-				wrapMatchArmWithComma({ ...$edited(data), _attributes: v }, tree),
-			pattern: (v: NonNullable<T.MatchArmWithComma['_pattern']>) =>
-				wrapMatchArmWithComma({ ...$edited(data), _pattern: v }, tree),
-			value: (v: NonNullable<T.MatchArmWithComma['_value']>) =>
-				wrapMatchArmWithComma({ ...$edited(data), _value: v }, tree)
-		}
-	});
+				attributes() {
+					return drillInAll<T.AttributeItem | T.InnerAttributeItem>(
+						this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
+						tree
+					);
+				},
+				pattern() {
+					return drillIn<T.MatchPattern>(this._pattern, tree);
+				},
+				value() {
+					return drillIn<T.Expression>(this._value, tree);
+				},
+				$with: {
+					attributes: (...v: NonNullable<T.MatchArmWithComma['_attributes']>[number][]) =>
+						wrapMatchArmWithComma({ ...$edited(data), _attributes: v }, tree),
+					pattern: (v: NonNullable<T.MatchArmWithComma['_pattern']>) =>
+						wrapMatchArmWithComma({ ...$edited(data), _pattern: v }, tree),
+					value: (v: NonNullable<T.MatchArmWithComma['_value']>) =>
+						wrapMatchArmWithComma({ ...$edited(data), _value: v }, tree)
+				}
+			},
+			{
+				slot: 'pattern',
+				kind: TSKindId.MatchPattern as const,
+				make: RAW.buildMatchPattern,
+				keys: [
+					{ name: 'pattern', rest: false },
+					{ name: 'condition', rest: false }
+				]
+			}
+		)
+	);
 	return _node as unknown as T.MatchArmWithComma.Parsed;
 }
 
 export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeHandle): T.MatchArmBlockEnding.Parsed {
 	data = _keepModelledSlots(data, ['_attributes', '_pattern', '_value']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.MatchArmBlockEnding as const,
-		_attributes: normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'attributes',
-			span: (data as _NodeData).$span
-		}),
-		_pattern: normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'pattern',
-			span: (data as _NodeData).$span
-		}),
-		_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'value',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withGroupSeat(
+			{
+				...data,
+				$type: TSKindId.MatchArmBlockEnding as const,
+				_attributes: normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
+					tree,
+					nodeType: data.$type,
+					slotName: 'attributes',
+					span: (data as _NodeData).$span
+				}),
+				_pattern: normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'pattern',
+					span: (data as _NodeData).$span
+				}),
+				_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'value',
+					span: (data as _NodeData).$span
+				}),
 
-		attributes() {
-			return drillInAll<T.AttributeItem | T.InnerAttributeItem>(
-				this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
-				tree
-			);
-		},
-		pattern() {
-			return drillIn<T.MatchPattern>(this._pattern, tree);
-		},
-		value() {
-			return drillIn<
-				| T.UnsafeBlock
-				| T.AsyncBlock
-				| T.GenBlock
-				| T.TryBlock
-				| T.Block
-				| T.IfExpression
-				| T.MatchExpression
-				| T.WhileExpression
-				| T.LoopExpression
-				| T.ForExpression
-				| T.ConstBlock
-			>(this._value, tree);
-		},
-		$with: {
-			attributes: (...v: NonNullable<T.MatchArmBlockEnding['_attributes']>[number][]) =>
-				wrapMatchArmBlockEnding({ ...$edited(data), _attributes: v }, tree),
-			pattern: (v: NonNullable<T.MatchArmBlockEnding['_pattern']>) =>
-				wrapMatchArmBlockEnding({ ...$edited(data), _pattern: v }, tree),
-			value: (v: NonNullable<T.MatchArmBlockEnding['_value']>) =>
-				wrapMatchArmBlockEnding({ ...$edited(data), _value: v }, tree)
-		}
-	});
+				attributes() {
+					return drillInAll<T.AttributeItem | T.InnerAttributeItem>(
+						this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
+						tree
+					);
+				},
+				pattern() {
+					return drillIn<T.MatchPattern>(this._pattern, tree);
+				},
+				value() {
+					return drillIn<
+						| T.UnsafeBlock
+						| T.AsyncBlock
+						| T.GenBlock
+						| T.TryBlock
+						| T.Block
+						| T.IfExpression
+						| T.MatchExpression
+						| T.WhileExpression
+						| T.LoopExpression
+						| T.ForExpression
+						| T.ConstBlock
+					>(this._value, tree);
+				},
+				$with: {
+					attributes: (...v: NonNullable<T.MatchArmBlockEnding['_attributes']>[number][]) =>
+						wrapMatchArmBlockEnding({ ...$edited(data), _attributes: v }, tree),
+					pattern: (v: NonNullable<T.MatchArmBlockEnding['_pattern']>) =>
+						wrapMatchArmBlockEnding({ ...$edited(data), _pattern: v }, tree),
+					value: (v: NonNullable<T.MatchArmBlockEnding['_value']>) =>
+						wrapMatchArmBlockEnding({ ...$edited(data), _value: v }, tree)
+				}
+			},
+			{
+				slot: 'pattern',
+				kind: TSKindId.MatchPattern as const,
+				make: RAW.buildMatchPattern,
+				keys: [
+					{ name: 'pattern', rest: false },
+					{ name: 'condition', rest: false }
+				]
+			}
+		)
+	);
 	return _node as unknown as T.MatchArmBlockEnding.Parsed;
 }
 

@@ -87,6 +87,7 @@ import {
 	type RefineFormInfo
 } from './refine-emit.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
+import { configKeysOf, elementsSeatOf, flattenSeatOf } from './overlays/sub-factories.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
 export interface EmitFactoriesConfig {
@@ -126,8 +127,7 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 			if (seatedKeywordTexts(slot, nodeMap, kindEntries).length > 0) imports.add('rejectKeywordText');
 			if (kindEntries !== undefined && slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
 		}
-		const listSeat = listSeatRuntime(node, nodeMap, kindEntries);
-		if (listSeat !== undefined) imports.add(listSeat.helper);
+		for (const seat of seatRuntimes(node, nodeMap, kindEntries)) imports.add(seat.helper);
 		if (kindEntries !== undefined && node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)
 			imports.add('admitAliasContent');
 	}
@@ -1242,8 +1242,8 @@ function emitFieldCarryingFactory(
 			);
 		}
 	}
-	const listSeat = listSeatRuntime(node, nodeMap, kindEntries);
-	lines.push(`  return withMethods(${listSeat === undefined ? '' : `${listSeat.helper}(`}withAccessors({`);
+	const seats = seatRuntimes(node, nodeMap, kindEntries);
+	lines.push(`  return withMethods(${seatOpening(seats)}withAccessors({`);
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
@@ -1256,7 +1256,7 @@ function emitFieldCarryingFactory(
 		const propName = f.propertyName;
 		lines.push(`    ${propName}: () => ${f.storageKey},`);
 	}
-	lines.push(listSeat === undefined ? `  })) as unknown as ${builtName};` : `  }), ${listSeat.spec})) as unknown as ${builtName};`);
+	lines.push(`  })${seatClosing(seats)}) as unknown as ${builtName};`);
 	lines.push('}');
 
 	const { directParamType, directParamOptional } = surface;
@@ -1623,6 +1623,55 @@ function listOwnerTarget(
 	return list instanceof AssembledList && owner !== undefined ? { owner, list } : undefined;
 }
 
+export function groupSeatHint(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+):
+	| {
+			readonly slot: string;
+			readonly group: string;
+			readonly groupKind: string;
+			readonly factory: string;
+			readonly optional: boolean;
+			readonly keys: readonly { readonly name: string; readonly rest: boolean }[];
+	  }
+	| undefined {
+	const seat = flattenSeatOf(node, nodeMap);
+	if (seat === undefined || !isSlotBearingCompound(node) || !isSlotBearingCompound(seat.group)) return undefined;
+	const restKeys = new Set(
+		(builtTypeSurfaceOf(seat.group, nodeMap, kindEntries)?.setters ?? []).filter((setter) => setter.rest).map((setter) => setter.name)
+	);
+	const seated = seat.directKey === undefined ? seat.group.slots : seat.group.slots.filter((slot) => slot.configKey === seat.directKey);
+	const own = new Set(node.slots.filter((slot) => slot !== seat.slot).map((slot) => slot.propertyName));
+	const keys = seated.map((slot) => ({ name: slot.propertyName, rest: restKeys.has(slot.propertyName) }));
+	const clash = keys.find((key) => own.has(key.name));
+	if (clash !== undefined) {
+		throw new Error(
+			`groupSeatHint: '${node.kind}' seats '${seat.group.kind}' in '${seat.slot.propertyName}', and the group's '${clash.name}' collides with another slot of the parent`
+		);
+	}
+	return {
+		slot: seat.slot.propertyName,
+		group: seat.group.typeName,
+		groupKind: seat.group.kind,
+		factory: seat.group.rawFactoryName!,
+		optional: !isRequired(seat.slot),
+		keys
+	};
+}
+
+export function groupSeatRuntimeSpec(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	factoryScope = ''
+): string | undefined {
+	const hint = groupSeatHint(node, nodeMap, kindEntries);
+	if (hint === undefined) return undefined;
+	return `{ slot: ${JSON.stringify(hint.slot)}, kind: ${factoryTypeDiscriminant(hint.groupKind, nodeMap, kindEntries)}, make: ${factoryScope}${hint.factory}, keys: ${JSON.stringify(hint.keys)} }`;
+}
+
 function hoistedListSlotTargets(
 	node: AssembledNode,
 	nodeMap: NodeMap
@@ -1635,11 +1684,35 @@ function hoistedListSlotTargets(
 	});
 }
 
+export interface ElementConfigFact {
+	readonly slot: string;
+	readonly group: string;
+	readonly factory: string;
+	readonly keys: readonly string[];
+	readonly config: string;
+}
+
+export function elementConfigsOf(node: AssembledNode, nodeMap: NodeMap): readonly ElementConfigFact[] {
+	return elementsSeatOf(node, nodeMap).map((seat) => ({
+		slot: seat.slot.propertyName,
+		group: seat.group.typeName,
+		factory: seat.group.rawFactoryName!,
+		keys: configKeysOf(seat.group),
+		config: `T.${seat.group.typeName}.Config`
+	}));
+}
+
+function listElementConfig(list: AssembledList, nodeMap: NodeMap): ElementConfigFact | undefined {
+	const elements = canonicalSeparatedListField(list).propertyName;
+	return elementConfigsOf(list, nodeMap).find((fact) => fact.slot === elements);
+}
+
 function listSlotFacts(list: AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined) {
 	const surface = separatedListSurface(list, nodeMap, kindEntries);
 	return {
 		element: surface.elemType,
 		options: surface.optionsType ?? '{}',
+		config: listElementConfig(list, nodeMap)?.config ?? 'never',
 		factory: list.rawFactoryName!,
 		items: list.nonEmpty ? `NonEmptyArray<${surface.elemType}>` : `readonly ${parenthesizeUnion(surface.elemType)}[]`
 	};
@@ -1654,6 +1727,7 @@ export function listSlotHints(
 	readonly options: string;
 	readonly slot: string;
 	readonly items: string;
+	readonly config: string;
 	readonly factory: string;
 }[] {
 	return hoistedListSlotTargets(node, nodeMap).map(({ slot, list }) => ({
@@ -1671,11 +1745,16 @@ export function listOwnerHint(
 	readonly options: string;
 	readonly slot: string;
 	readonly items: string;
+	readonly config: string;
 	readonly factory: string;
 } | undefined {
 	const target = listOwnerTarget(node, nodeMap);
 	if (target === undefined) return undefined;
 	return { slot: target.owner.propertyName, ...listSlotFacts(target.list, nodeMap, kindEntries) };
+}
+
+function elementConfigFields(fact: ElementConfigFact, factoryScope: string): string {
+	return `keys: ${JSON.stringify(fact.keys)}, make: ${factoryScope}${fact.factory}`;
 }
 
 function listSlotRuntimeFields(
@@ -1690,7 +1769,9 @@ function listSlotRuntimeFields(
 		wrapper === undefined
 			? ''
 			: `, wrapper: { kind: TSKindId.${wrapper.member}, content: ${JSON.stringify(wrapper.contentProperty)}, decorations: ${JSON.stringify(wrapper.decorationKeys)} }`;
-	return `list: ${JSON.stringify(slot.propertyName)}, elements: ${JSON.stringify(canonicalSeparatedListField(list).propertyName)}, kind: ${factoryTypeDiscriminant(list.kind, nodeMap, kindEntries)}, make: ${factoryScope}${list.rawFactoryName}${wrapperSpec}`;
+	const element = listElementConfig(list, nodeMap);
+	const elementSpec = element === undefined ? '' : `, element: { ${elementConfigFields(element, factoryScope)} }`;
+	return `list: ${JSON.stringify(slot.propertyName)}, elements: ${JSON.stringify(canonicalSeparatedListField(list).propertyName)}, kind: ${factoryTypeDiscriminant(list.kind, nodeMap, kindEntries)}, make: ${factoryScope}${list.rawFactoryName}${wrapperSpec}${elementSpec}`;
 }
 
 export function listOwnerRuntimeSpec(
@@ -1707,16 +1788,37 @@ export function listOwnerRuntimeSpec(
 	return `{ ${listSlotRuntimeFields(target.owner, target.list, nodeMap, kindEntries, factoryScope)}, options: [${options}] }`;
 }
 
-export function listSeatRuntime(
+export interface SeatRuntime {
+	readonly helper: 'withListOwner' | 'withListSlots' | 'withGroupSeat' | 'withElementsSeat';
+	readonly spec: string;
+}
+
+export function seatRuntimes(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	factoryScope = ''
-): { readonly helper: 'withListOwner' | 'withListSlots'; readonly spec: string } | undefined {
+): readonly SeatRuntime[] {
 	const owner = listOwnerRuntimeSpec(node, nodeMap, kindEntries, factoryScope);
-	if (owner !== undefined) return { helper: 'withListOwner', spec: owner };
 	const slots = listSlotsRuntimeSpec(node, nodeMap, kindEntries, factoryScope);
-	return slots === undefined ? undefined : { helper: 'withListSlots', spec: slots };
+	const group = groupSeatRuntimeSpec(node, nodeMap, kindEntries, factoryScope);
+	return [
+		...(owner === undefined ? [] : [{ helper: 'withListOwner' as const, spec: owner }]),
+		...(slots === undefined ? [] : [{ helper: 'withListSlots' as const, spec: slots }]),
+		...(group === undefined ? [] : [{ helper: 'withGroupSeat' as const, spec: group }]),
+		...elementConfigsOf(node, nodeMap).map((fact) => ({
+			helper: 'withElementsSeat' as const,
+			spec: `{ slot: ${JSON.stringify(fact.slot)}, ${elementConfigFields(fact, factoryScope)} }`
+		}))
+	];
+}
+
+export function seatOpening(seats: readonly SeatRuntime[]): string {
+	return seats.map((seat) => `${seat.helper}(`).join('');
+}
+
+export function seatClosing(seats: readonly SeatRuntime[]): string {
+	return [...seats].reverse().map((seat) => `, ${seat.spec})`).join('');
 }
 
 function listSlotsRuntimeSpec(
@@ -1912,7 +2014,8 @@ function emitSeparatedListFactory(
 		lines.push(`  const _delimiter = options.delimiter ?? ${delimiterDefault};`);
 	}
 
-	lines.push('  return withMethods(withAccessors({');
+	const seats = seatRuntimes(node, nodeMap, kindEntries);
+	lines.push(`  return withMethods(${seatOpening(seats)}withAccessors({`);
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push('    $source: 2 as const,');
 	lines.push('    $named: true as const,');
@@ -1931,7 +2034,7 @@ function emitSeparatedListFactory(
 	lines.push('    },');
 	lines.push('  }, {');
 	lines.push(`    ${contentAccessorName}: () => ${contentStorageKey},`);
-	lines.push(`  })) as unknown as ${listBuiltName};`);
+	lines.push(`  })${seatClosing(seats)}) as unknown as ${listBuiltName};`);
 	lines.push('}');
 	return lines.join('\n');
 }

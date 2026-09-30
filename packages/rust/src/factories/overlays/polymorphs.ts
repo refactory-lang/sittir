@@ -4,6 +4,7 @@ import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import type { ArgsOf, ElementsOf, OmitEach, OptionsArg } from '@sittir/types';
 import { TSKindId } from '../../types.js';
+import { isGroupConfig } from '@sittir/common/utils';
 import type * as T from '../../types.js';
 export * from './refines.js';
 
@@ -746,11 +747,7 @@ const enumVariantListElements$element = <
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'attributeItem' || key === 'enumVariant');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'enumVariant']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -820,11 +817,7 @@ const fieldDeclarationListElements$element = <
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'attributeItem' || key === 'fieldDeclaration');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'fieldDeclaration']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -894,11 +887,7 @@ const orderedFieldDeclarationListElements$element = <
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'attributeItem' || key === 'visibilityModifier' || key === 'type');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'visibilityModifier', 'type']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -968,11 +957,7 @@ const typeParametersElements$element = <
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'attributeItem' || key === 'content');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'content']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -1039,11 +1024,7 @@ const parametersElements$element = <PF extends (...args: never[]) => unknown, CF
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'attributeItem' || key === 'content');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'content']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -1109,11 +1090,7 @@ const typeArgumentsElements$element = <
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'content' || key === 'traitBounds');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['content', 'traitBounds']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -1176,11 +1153,7 @@ const argumentsElements$element = <PF extends (...args: never[]) => unknown, CF 
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'attributeItem' || key === 'expression');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'expression']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };

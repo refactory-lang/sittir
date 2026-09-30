@@ -200,3 +200,15 @@ It also makes the node's `$with` take the factory's shapes. The list slot's sett
 ### `packages/common/src/utils.ts::withListSlots`
 
 Gives a parent with several slots the list-slot half of `withListOwner` for each hoisted list slot it has: the slot's accessor returns the list's items (a transparent wrapper carrying only its content reads as that content), and the slot's `$with` setter takes the shapes its config key takes: the whole list node, an array of items or an array led by the options (built into a list by the list's factory), or nothing. It adds no iteration, `length`, `at` or options members and does not make `$with` callable, since the parent holds more than the list. The list node the accessor replaced stays reachable through `storedSlotReader`.
+### `packages/common/src/utils.ts::withGroupSeat`
+
+Flattens a group onto the parent that seats it. The group stays stored in its slot and the slot's own accessor stays, but the group's fields are readable on the parent by the names of the config keys that flatten it, and each key's `$with` setter rebuilds the group with that one field replaced and re-seats it (absent groups are built from the key alone). A key that spells the seat's slot reads the group's inner value; its setter takes that value, or the whole group when the argument's kind is the group's. The group's own accessor stays reachable through `storedSlotReader`.
+
+### `packages/common/src/utils.ts::withElementsSeat`
+
+Makes the `$with` setter of an elements-seat slot take the group config objects its config surface takes: an argument that is a plain object naming only the group's config keys is built through the group's factory, and every other argument is passed as it was. The setter's form (rest arguments, or one array) is kept.
+
+### `packages/common/src/utils.ts::isGroupConfig`
+
+Whether a value is a group's config object rather than a node: a non-empty plain object without a `$type` whose keys are all among the group's config keys. The overlay factories and the setters built by `withElementsSeat` and the list setters share it, so a config object means the same thing on every surface.
+

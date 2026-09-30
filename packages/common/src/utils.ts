@@ -205,12 +205,18 @@ interface ListOwnerWrapper {
 	readonly decorations: readonly string[];
 }
 
+interface ElementConfig {
+	readonly keys: readonly string[];
+	readonly make: (config: never) => unknown;
+}
+
 interface ListSlotSpec {
 	readonly list: string;
 	readonly elements: string;
 	readonly kind: number;
 	readonly make: (...args: never[]) => unknown;
 	readonly wrapper?: ListOwnerWrapper;
+	readonly element?: ElementConfig;
 }
 
 interface ListOwnerSpec extends ListSlotSpec {
@@ -218,6 +224,20 @@ interface ListOwnerSpec extends ListSlotSpec {
 }
 
 type Members = Record<string, (...args: unknown[]) => unknown>;
+
+export const isGroupConfig = (value: unknown, keys: readonly string[]): boolean =>
+	typeof value === 'object' &&
+	value !== null &&
+	!('$type' in value) &&
+	Object.keys(value).length > 0 &&
+	Object.keys(value).every((key) => keys.includes(key));
+
+const convertElements = (args: readonly unknown[], element: ElementConfig | undefined): readonly unknown[] => {
+	if (element === undefined) return args;
+	const make = element.make as (config: unknown) => unknown;
+	const convert = (item: unknown): unknown => (isGroupConfig(item, element.keys) ? make(item) : item);
+	return args.length === 1 && Array.isArray(args[0]) ? [args[0].map(convert)] : args.map(convert);
+};
 
 const isWholeList = (args: readonly unknown[], kind: number): boolean =>
 	args.length === 0 ||
@@ -278,14 +298,69 @@ function adaptListSetter(node: object, spec: ListSlotSpec, arrayForm: boolean): 
 	const make = spec.make as (...args: unknown[]) => unknown;
 	setters[spec.list] = (...args) => {
 		if (isWholeList(args, spec.kind)) return setList(args[0]);
-		return setList(arrayForm && args.length === 1 && Array.isArray(args[0]) ? make(...args[0]) : make(...args));
+		const items = convertElements(args, spec.element);
+		return setList(arrayForm && items.length === 1 && Array.isArray(items[0]) ? make(...items[0]) : make(...items));
 	};
+}
+
+interface ElementsSeatSpec extends ElementConfig {
+	readonly slot: string;
+}
+
+export function withElementsSeat<T extends object>(node: T, spec: ElementsSeatSpec): T {
+	const setters = Object.getOwnPropertyDescriptor(node, '$with')?.value as Members | undefined;
+	const set = setters?.[spec.slot];
+	if (setters === undefined || set === undefined) return node;
+	setters[spec.slot] = (...args) => set(...convertElements(args, spec));
+	return node;
 }
 
 export function withListSlots<T extends object>(node: T, specs: readonly ListSlotSpec[]): T {
 	for (const spec of specs) {
 		hoistListSlot(node, spec);
 		adaptListSetter(node, spec, true);
+	}
+	return node;
+}
+
+interface GroupSeatSpec {
+	readonly slot: string;
+	readonly kind: number;
+	readonly make: (config: never) => unknown;
+	readonly keys: readonly { readonly name: string; readonly rest: boolean }[];
+}
+
+export function withGroupSeat<T extends object>(node: T, spec: GroupSeatSpec): T {
+	const own = Object.getOwnPropertyDescriptor(node, spec.slot);
+	const readGroup = (own?.value ?? (node as unknown as Members)[spec.slot]) as (this: object) => Members | undefined;
+	const known = (node as { readonly [STORED_SLOT_READERS]?: StoredSlotReaders })[STORED_SLOT_READERS];
+	defineHidden(node, STORED_SLOT_READERS, { value: { ...known, [spec.slot]: readGroup } });
+	for (const key of spec.keys) {
+		defineHidden(node, key.name, {
+			enumerable: key.name === spec.slot ? (own?.enumerable ?? false) : false,
+			value: function (this: object): unknown {
+				const group = readGroup.call(this);
+				return group?.[key.name]?.call(group);
+			}
+		});
+	}
+	const setters = Object.getOwnPropertyDescriptor(node, '$with')?.value as Members | undefined;
+	const seat = setters?.[spec.slot];
+	if (setters === undefined || seat === undefined) return node;
+	const make = spec.make as (config: unknown) => unknown;
+	for (const key of spec.keys) {
+		setters[key.name] = (...args: unknown[]): unknown => {
+			if (key.name === spec.slot && args.length === 1 && (args[0] as { $type?: unknown } | null)?.$type === spec.kind) {
+				return seat(args[0]);
+			}
+			const group = readGroup.call(node);
+			const value = key.rest ? args : args[0];
+			const next =
+				group === undefined
+					? make({ [key.name]: value })
+					: ((group.$with as unknown as Members)[key.name] as (...values: unknown[]) => unknown)(...args);
+			return seat(next);
+		};
 	}
 	return node;
 }
