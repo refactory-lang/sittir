@@ -48,10 +48,6 @@ impl EngineGrammar for RustGrammar {
 }
 
 impl sittir_core::read_node::ReadModel for RustGrammar {
-    fn is_text_kind(&self, kind: sittir_core::types::KindId) -> bool {
-        render::kind_ids::is_text_kind(kind)
-    }
-
     fn wire_slot(
         &self,
         parent: sittir_core::types::KindId,

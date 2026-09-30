@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 305,
+  "nodeCount": 307,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -2361,6 +2361,15 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "match_block_empty": {
+      "newline": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -9060,13 +9069,15 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
+            "format_specifier_text",
             "format_expression"
           ],
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "array",
-              "value": "[^{}\\n]+"
+              "name": "format_specifier_text",
+              "parseKind": "format_specifier_text"
             },
             {
               "kind": "node-ref",
@@ -9081,6 +9092,17 @@
       "factoryFields": [
         "elements"
       ]
+    },
+    {
+      "kind": "format_specifier_text",
+      "modelType": "pattern",
+      "typeName": "FormatSpecifierText",
+      "factoryName": "formatSpecifierText",
+      "irKey": "formatSpecifierText",
+      "hidden": false,
+      "pattern": "[^{}\\n]+",
+      "leafPattern": "/^(?:(?:[^{}\\n]+))$/u",
+      "factoryShape": "text"
     },
     {
       "kind": "from_keyword",
@@ -11521,10 +11543,10 @@
           "required": true,
           "multiple": false,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "match_block_block",
-            "_newline"
+            "match_block_empty"
           ],
           "values": [
             {
@@ -11542,8 +11564,14 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_newline",
-              "parseKind": "newline"
+              "name": "match_block_empty",
+              "parseKind": "match_block_empty",
+              "seat": {
+                "kind": "match_block_empty",
+                "shape": "arm",
+                "mount": "empty",
+                "seated": true
+              }
             }
           ]
         }
@@ -11554,7 +11582,8 @@
       ],
       "bareAccepts": [
         "_newline",
-        "match_block_block"
+        "match_block_block",
+        "match_block_empty"
       ]
     },
     {
@@ -11593,6 +11622,49 @@
       "factoryShape": "spread",
       "factoryFields": [
         "alternative"
+      ]
+    },
+    {
+      "kind": "match_block_empty",
+      "modelType": "envelope",
+      "typeName": "MatchBlockEmpty",
+      "factoryName": "matchBlockEmpty",
+      "irKey": "matchBlockEmpty",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "isParameterless": true,
+      "slots": [
+        {
+          "name": "newline",
+          "propertyName": "newline",
+          "paramName": "newline",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [
+            "_newline"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_newline",
+              "parseKind": "newline"
+            }
+          ]
+        }
+      ],
+      "name": "match_block_empty",
+      "factoryShape": "forwarded",
+      "forwardsTo": "_newline",
+      "factoryFields": [
+        "newline"
+      ],
+      "bareAccepts": [
+        "_newline"
       ]
     },
     {
@@ -14583,6 +14655,7 @@
       "annotations": {
         "hoisted": true
       },
+      "isParameterless": true,
       "slots": [
         {
           "name": "newline",

@@ -269,7 +269,7 @@ export interface ProgramTransport {
 export interface StringContentTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content?: Array<SlotValue<StringContentContentTransportSlot>>
+  _content?: Array<SlotValue<StringContentContentTransportSlot, true>>
 }
 
 export interface StringTransport {

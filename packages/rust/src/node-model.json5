@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 435,
+  "nodeCount": 437,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -180,7 +180,7 @@
       "childKind": {
         "block_comment_doc_outer": "doc_outer",
         "block_comment_doc_inner": "doc_inner",
-        "_block_comment_content": "regular"
+        "block_comment_regular": "regular"
       }
     },
     "visibility_modifier_pub_scope": {
@@ -6730,7 +6730,7 @@
           "kinds": [
             "block_comment_doc_outer",
             "block_comment_doc_inner",
-            "_block_comment_content"
+            "block_comment_regular"
           ],
           "values": [
             {
@@ -6760,8 +6760,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_block_comment_content",
-              "parseKind": "_block_comment_content",
+              "name": "block_comment_regular",
+              "parseKind": "block_comment_regular",
               "default": true
             }
           ]
@@ -6786,7 +6786,8 @@
       "bareAccepts": [
         "_block_comment_content",
         "block_comment_doc_inner",
-        "block_comment_doc_outer"
+        "block_comment_doc_outer",
+        "block_comment_regular"
       ]
     },
     {
@@ -6896,6 +6897,17 @@
       "bareAccepts": [
         "_block_comment_content"
       ]
+    },
+    {
+      "kind": "block_comment_regular",
+      "modelType": "pattern",
+      "typeName": "BlockCommentRegular",
+      "factoryName": "blockCommentRegular",
+      "irKey": "blockCommentRegular",
+      "hidden": false,
+      "pattern": "[^]*",
+      "leafPattern": "/^(?:(?:[^]*))$/u",
+      "factoryShape": "text"
     },
     {
       "kind": "block_keyword",
@@ -22315,11 +22327,15 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [],
+          "kinds": [
+            "token_repetition_pattern_text"
+          ],
           "values": [
             {
-              "kind": "terminal",
-              "multiplicity": "optional"
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "token_repetition_pattern_text",
+              "parseKind": "token_repetition_pattern_text"
             }
           ]
         },
@@ -22425,11 +22441,15 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "verbatim",
-          "kinds": [],
+          "kinds": [
+            "token_repetition_pattern_text"
+          ],
           "values": [
             {
-              "kind": "terminal",
-              "multiplicity": "optional"
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "token_repetition_pattern_text",
+              "parseKind": "token_repetition_pattern_text"
             }
           ]
         },
@@ -22470,6 +22490,17 @@
         "separator",
         "operator"
       ]
+    },
+    {
+      "kind": "token_repetition_pattern_text",
+      "modelType": "pattern",
+      "typeName": "TokenRepetitionPatternText",
+      "factoryName": "tokenRepetitionPatternText",
+      "irKey": "tokenRepetitionPatternText",
+      "hidden": false,
+      "pattern": "[^+*?]+",
+      "leafPattern": "/^(?:(?:[^+*?]+))$/u",
+      "factoryShape": "text"
     },
     {
       "kind": "token_tree",

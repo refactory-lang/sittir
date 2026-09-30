@@ -941,13 +941,6 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
     }
 }
 
-/// Whether the reader captures a named node of this kind as text: its
-/// template renders from that text, so the text is the node's content —
-/// free text for a pattern kind, the literal it holds for an enum kind.
-pub fn is_text_kind(kind: KindId) -> bool {
-    matches!(kind.0, 1 | 2 | 109 | 110 | 111 | 116 | 117 | 118 | 152 | 153 | 154 | 155 | 156 | 157 | 158 | 159 | 160 | 161 | 162 | 163 | 164 | 174 | 175 | 176 | 177 | 179 | 318 | 359)
-}
-
 /// The model slot a child is stored under where its name differs from the
 /// parser's key: a field-tagged child by (parent kind id, field), a named
 /// child without a field by (parent kind id, the child's kind name).

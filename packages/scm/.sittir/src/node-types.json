@@ -655,10 +655,14 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "string_content_text",
           "named": true
         }
       ]
@@ -743,6 +747,10 @@
   },
   {
     "type": "predicate_type",
+    "named": true
+  },
+  {
+    "type": "string_content_text",
     "named": true
   }
 ]

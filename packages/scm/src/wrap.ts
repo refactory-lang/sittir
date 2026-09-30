@@ -14,7 +14,7 @@ import type { ParsedRoot } from '@sittir/common/engine';
 // Import _NodeData (== AnyNodeData) from @sittir/types
 // instead of re-declaring locally. Single source of truth.
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray, SupertypeSurface } from '@sittir/types';
-import { TSKindId, KIND_NAMES } from './types.js';
+import { TSKindId, KIND_NAMES, KIND_DISPLAY_NAMES } from './types.js';
 import type * as T from './types-internal.js';
 import { withMethods } from './utils.js';
 
@@ -248,10 +248,11 @@ function projectKindEnumStorage<T>(
 	if (typeof value === 'number') return (altIds?.[value] ?? value) as unknown as T;
 	const kind = _kindOf(entry);
 	if (typeof kind === 'number' && altIds?.[kind] !== undefined) return altIds[kind] as unknown as T;
-	if (typeof entry.$text === 'string') {
-		const mappedId = textIds?.[entry.$text];
+	const text = _spelledText(entry);
+	if (text !== undefined) {
+		const mappedId = textIds?.[text];
 		if (typeof mappedId === 'number') return mappedId as unknown as T;
-		return entry.$text as unknown as T;
+		return text as unknown as T;
 	}
 	return typeof kind === 'number' ? (kind as T) : value;
 }
@@ -275,8 +276,9 @@ function projectMixedEnumStorage<T>(
 		const folded = altIds?.[kind];
 		if (folded !== undefined) return folded as unknown as T;
 		if (textIds && Object.values(textIds).includes(kind)) return kind as unknown as T;
-		if (ownSymbols?.includes(kind) && typeof entry.$text === 'string') {
-			const memberId = textIds?.[entry.$text];
+		const text = ownSymbols?.includes(kind) ? _spelledText(entry) : undefined;
+		if (text !== undefined) {
+			const memberId = textIds?.[text];
 			if (typeof memberId === 'number') return memberId as unknown as T;
 		}
 	}
@@ -826,8 +828,6 @@ export function wrapImmediateString(data: T.ImmediateString, tree: TreeHandle): 
 
 export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.StringContent.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.StringContent as const }) as unknown as T.StringContent.Parsed;
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.StringContent as const,
@@ -839,8 +839,8 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 		}),
 
 		contents() {
-			return drillInAll<'[^"\\\\\\n]+' | T.EscapeSequence>(
-				this._content as readonly ('[^"\\\\\\n]+' | T.EscapeSequence)[] | undefined,
+			return drillInAll<T.StringContentText | T.EscapeSequence>(
+				this._content as readonly (T.StringContentText | T.EscapeSequence)[] | undefined,
 				tree
 			);
 		},
@@ -1197,7 +1197,7 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
-			{ '#': 20, '.': 21 }
+			{ '#': 19, '.': 20 }
 		),
 		_name: normalizeSingularWrapSlot(
 			dropWireDelimiters(data._name, [TSKindId.Pound, TSKindId.Dot], _order, 'name'),
@@ -1213,7 +1213,7 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 				slotName: 'type',
 				span: (data as _NodeData).$span
 			}),
-			{ '?': 4, '!': 19 }
+			{ '?': 4, '!': 18 }
 		),
 		_parameters: normalizeSingularWrapSlot(data._parameters, 'parameters', false, data.$type, {
 			tree,
@@ -1586,9 +1586,9 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.GroupExpression]: (d, t) => wrapGroupExpression(d as unknown as T.GroupExpression, t),
 	[TSKindId.NamedNodeExpression]: (d, t) => wrapNamedNodeExpression(d as unknown as T.NamedNodeExpression, t),
 	[TSKindId.EscapeSequence]: (d, t) => wrapEscapeSequence(d as unknown as T.EscapeSequence, t),
-	[TSKindId.Quantifier]: (d) => ({ ...d, $type: TSKindId.Quantifier as const }),
-	[TSKindId.Identifier]: (d) => ({ ...d, $type: TSKindId.Identifier as const }),
-	[TSKindId.ImmediateIdentifier]: (d) => ({ ...d, $type: TSKindId.ImmediateIdentifier as const }),
+	[TSKindId.Quantifier]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Quantifier as const }),
+	[TSKindId.Identifier]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Identifier as const }),
+	[TSKindId.ImmediateIdentifier]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.ImmediateIdentifier as const }),
 	[TSKindId.NodeIdentifier]: (d, t) => wrapNodeIdentifier(d as unknown as T.NodeIdentifier, t),
 	[TSKindId.Capture]: (d, t) => wrapCapture(d as unknown as T.Capture, t),
 	[TSKindId.String]: (d, t) => wrapString(d as unknown as T.String, t),
@@ -1604,24 +1604,25 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.FieldDefinition]: (d, t) => wrapFieldDefinition(d as unknown as T.FieldDefinition, t),
 	[TSKindId.NegatedField]: (d, t) => wrapNegatedField(d as unknown as T.NegatedField, t),
 	[TSKindId.Predicate]: (d, t) => wrapPredicate(d as unknown as T.Predicate, t),
-	[TSKindId.PredicateType]: (d) => ({ ...d, $type: TSKindId.PredicateType as const }),
+	[TSKindId.PredicateType]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.PredicateType as const }),
 	[TSKindId.GroupExpressionArm]: (d, t) => wrapGroupExpressionArm(d as unknown as T.GroupExpressionArm, t),
 	[TSKindId.NamedNodeExpressionArm]: (d, t) => wrapNamedNodeExpressionArm(d as unknown as T.NamedNodeExpressionArm, t),
 	[TSKindId.GroupingGroup]: (d, t) => wrapGroupingGroup(d as unknown as T.GroupingGroup, t),
 	[TSKindId.NamedNodeGroup]: (d, t) => wrapNamedNodeGroup(d as unknown as T.NamedNodeGroup, t),
+	[TSKindId.StringContentText]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.StringContentText as const }),
 	[TSKindId.NamedNodePlain]: (d, t) => wrapNamedNodePlain(d as unknown as T.NamedNodePlain, t),
 	[TSKindId.NamedNodeSupertyped]: (d, t) => wrapNamedNodeSupertyped(d as unknown as T.NamedNodeSupertyped, t),
 	[TSKindId.NamedNodeGroupChildren]: (d, t) => wrapNamedNodeGroupChildren(d as unknown as T.NamedNodeGroupChildren, t),
 	[TSKindId.NamedNodeGroupAnchoredLast]: (d, t) =>
 		wrapNamedNodeGroupAnchoredLast(d as unknown as T.NamedNodeGroupAnchoredLast, t),
-	[TSKindId.Tight]: (d) => ({ ...d, $type: TSKindId.Tight as const }),
-	[TSKindId.Space]: (d) => ({ ...d, $type: TSKindId.Space as const }),
-	[TSKindId.Tab]: (d) => ({ ...d, $type: TSKindId.Tab as const }),
-	[TSKindId.Newline]: (d) => ({ ...d, $type: TSKindId.Newline as const }),
-	[TSKindId.Blankline]: (d) => ({ ...d, $type: TSKindId.Blankline as const }),
-	[TSKindId.DoubleBlankline]: (d) => ({ ...d, $type: TSKindId.DoubleBlankline as const }),
-	[TSKindId.Indent]: (d) => ({ ...d, $type: TSKindId.Indent as const }),
-	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const })
+	[TSKindId.Tight]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Tight as const }),
+	[TSKindId.Space]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Space as const }),
+	[TSKindId.Tab]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Tab as const }),
+	[TSKindId.Newline]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Newline as const }),
+	[TSKindId.Blankline]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Blankline as const }),
+	[TSKindId.DoubleBlankline]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.DoubleBlankline as const }),
+	[TSKindId.Indent]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Indent as const }),
+	[TSKindId.Dedent]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Dedent as const })
 };
 
 interface _WrapReturnByKindId {
@@ -1653,6 +1654,7 @@ interface _WrapReturnByKindId {
 	[TSKindId.NamedNodeExpressionArm]: ReturnType<typeof wrapNamedNodeExpressionArm>;
 	[TSKindId.GroupingGroup]: ReturnType<typeof wrapGroupingGroup>;
 	[TSKindId.NamedNodeGroup]: ReturnType<typeof wrapNamedNodeGroup>;
+	[TSKindId.StringContentText]: _NodeData & { readonly $type: TSKindId.StringContentText };
 	[TSKindId.NamedNodePlain]: ReturnType<typeof wrapNamedNodePlain>;
 	[TSKindId.NamedNodeSupertyped]: ReturnType<typeof wrapNamedNodeSupertyped>;
 	[TSKindId.NamedNodeGroupChildren]: ReturnType<typeof wrapNamedNodeGroupChildren>;
@@ -1688,10 +1690,13 @@ function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData
 	return trivia && mapTriviaEntries(trivia, (entries) => drillInAll(entries, tree) as unknown as typeof entries);
 }
 
-const _ALIAS_ENVELOPES: ReadonlySet<number> = new Set([]);
+const _ALIAS_ENVELOPES: ReadonlySet<_NodeData['$type']> = new Set([]);
+function _displayOf(entry: _NodeData): _NodeData['$type'] {
+	return (entry as { readonly $displayType?: _NodeData['$type'] }).$displayType ?? entry.$type;
+}
 function _kindOf(entry: _NodeData): _NodeData['$type'] {
-	const display = (entry as { readonly $displayType?: number }).$displayType;
-	return display !== undefined && _ALIAS_ENVELOPES.has(display) ? display : entry.$type;
+	const display = _displayOf(entry);
+	return _ALIAS_ENVELOPES.has(display) ? display : entry.$type;
 }
 function _withoutDisplay(data: _NodeData): _NodeData {
 	const { $displayType: _display, ...node } = data as _NodeData & { readonly $displayType?: number };
@@ -1699,14 +1704,67 @@ function _withoutDisplay(data: _NodeData): _NodeData {
 }
 
 const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData['$type']> = new Set([43, 44, 45, 46, 51, 56, 57]);
-function _dropSpelling(data: _NodeData): _NodeData {
+function _spellingTokens(data: _NodeData): readonly _NodeData[] | undefined {
 	const { $other, ...node } = data;
-	if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return data;
-	if (Object.keys(node).some((key) => key.charCodeAt(0) === 95)) return data;
+	if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return undefined;
+	if (Object.keys(node).some((key) => key.charCodeAt(0) === 95)) return undefined;
 	const tokens = (Array.isArray($other) ? $other : [$other]) as readonly unknown[];
 	if (tokens.some((token) => typeof token !== 'object' || token === null || (token as _NodeData).$named !== false))
-		return data;
-	return node as _NodeData;
+		return undefined;
+	return tokens as readonly _NodeData[];
+}
+function _spelledText(data: _NodeData): string | undefined {
+	if (data.$text !== undefined) return data.$text;
+	const tokens = _spellingTokens(data);
+	return tokens === undefined ? undefined : _tiledSpelling(data.$span, tokens);
+}
+function _dropSpelling(data: _NodeData): _NodeData {
+	if (_spellingTokens(data) === undefined) return data;
+	const { $other: _tokens, ...node } = data;
+	const $text = _spelledText(data);
+	return ($text === undefined ? node : { ...node, $text }) as _NodeData;
+}
+function _spellingOf(entry: _NodeData): string | undefined {
+	const text = _spelledText(entry);
+	if (text !== undefined || entry.$named !== false) return text;
+	const shown = _displayOf(entry);
+	return typeof shown === 'number' ? KIND_DISPLAY_NAMES.get(shown) : shown;
+}
+function _tiledSpelling(span: _NodeData['$span'], children: readonly _NodeData[]): string | undefined {
+	if (span === undefined) return undefined;
+	let at = span.start;
+	let text = '';
+	for (const child of children) {
+		const spelling = _spellingOf(child);
+		if (child.$span?.start !== at || spelling === undefined) return undefined;
+		text += spelling;
+		at = child.$span.end;
+	}
+	return at === span.end ? text : undefined;
+}
+function _readChildren(data: _NodeData): readonly _NodeData[] | undefined {
+	const children: _NodeData[] = [];
+	for (const [key, value] of Object.entries(data)) {
+		if (key.charCodeAt(0) !== 95 && key !== '$other') continue;
+		for (const child of (Array.isArray(value) ? value : [value]) as readonly unknown[]) {
+			if (child === undefined) continue;
+			if (typeof child !== 'object' || child === null) return undefined;
+			children.push(child as _NodeData);
+		}
+	}
+	return children.sort((a, b) => (a.$span?.start ?? 0) - (b.$span?.start ?? 0));
+}
+function _spelledLeaf(data: _NodeData): _NodeData {
+	if (data.$text !== undefined) return data;
+	const children = _readChildren(data);
+	if (children === undefined || children.length === 0) return data;
+	const $text = _tiledSpelling(data.$span, children);
+	if ($text === undefined) return data;
+	const leaf: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(data)) {
+		if (key.charCodeAt(0) !== 95 && key !== '$other' && key !== '$slotOrder') leaf[key] = value;
+	}
+	return { ...leaf, $text } as _NodeData;
 }
 
 /** Wrap a NodeData into its lazy read-only view. */

@@ -16,7 +16,7 @@ import type { ParsedRoot } from '@sittir/common/engine';
 // Import _NodeData (== AnyNodeData) from @sittir/types
 // instead of re-declaring locally. Single source of truth.
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray, SupertypeSurface } from '@sittir/types';
-import { TSKindId, KIND_NAMES } from './types.js';
+import { TSKindId, KIND_NAMES, KIND_DISPLAY_NAMES } from './types.js';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types-internal.js';
 import { withMethods } from './utils.js';
@@ -252,10 +252,11 @@ function projectKindEnumStorage<T>(
 	if (typeof value === 'number') return (altIds?.[value] ?? value) as unknown as T;
 	const kind = _kindOf(entry);
 	if (typeof kind === 'number' && altIds?.[kind] !== undefined) return altIds[kind] as unknown as T;
-	if (typeof entry.$text === 'string') {
-		const mappedId = textIds?.[entry.$text];
+	const text = _spelledText(entry);
+	if (text !== undefined) {
+		const mappedId = textIds?.[text];
 		if (typeof mappedId === 'number') return mappedId as unknown as T;
-		return entry.$text as unknown as T;
+		return text as unknown as T;
 	}
 	return typeof kind === 'number' ? (kind as T) : value;
 }
@@ -279,8 +280,9 @@ function projectMixedEnumStorage<T>(
 		const folded = altIds?.[kind];
 		if (folded !== undefined) return folded as unknown as T;
 		if (textIds && Object.values(textIds).includes(kind)) return kind as unknown as T;
-		if (ownSymbols?.includes(kind) && typeof entry.$text === 'string') {
-			const memberId = textIds?.[entry.$text];
+		const text = ownSymbols?.includes(kind) ? _spelledText(entry) : undefined;
+		if (text !== undefined) {
+			const memberId = textIds?.[text];
 			if (typeof memberId === 'number') return memberId as unknown as T;
 		}
 	}
@@ -14427,7 +14429,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.ExportSpecifier]: (d, t) => wrapExportSpecifier(d as unknown as T.ExportSpecifier, t),
 	[TSKindId.ModuleExportName]: (d, t) => wrapModuleExportName(d as unknown as T.ModuleExportName, t),
 	[TSKindId.Declaration]: (d, t) => wrapDeclaration(d as unknown as T.Declaration, t),
-	[TSKindId.Import]: (d) => ({ ...d, $type: TSKindId.Import as const }),
+	[TSKindId.Import]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Import as const }),
 	[TSKindId.ImportStatement]: (d, t) => wrapImportStatement(d as unknown as T.ImportStatement, t),
 	[TSKindId.ImportClause]: (d, t) => wrapImportClause(d as unknown as T.ImportClause, t),
 	[TSKindId.NamespaceImport]: (d, t) => wrapNamespaceImport(d as unknown as T.NamespaceImport, t),
@@ -14455,7 +14457,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.DebuggerStatement]: (d, t) => wrapDebuggerStatement(d as unknown as T.DebuggerStatement, t),
 	[TSKindId.ReturnStatement]: (d, t) => wrapReturnStatement(d as unknown as T.ReturnStatement, t),
 	[TSKindId.ThrowStatement]: (d, t) => wrapThrowStatement(d as unknown as T.ThrowStatement, t),
-	[TSKindId.EmptyStatement]: (d) => ({ ...d, $type: TSKindId.EmptyStatement as const }),
+	[TSKindId.EmptyStatement]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.EmptyStatement as const }),
 	[TSKindId.LabeledStatement]: (d, t) => wrapLabeledStatement(d as unknown as T.LabeledStatement, t),
 	[TSKindId.SwitchBody]: (d, t) => wrapSwitchBody(d as unknown as T.SwitchBody, t),
 	[TSKindId.SwitchCase]: (d, t) => wrapSwitchCase(d as unknown as T.SwitchCase, t),
@@ -14485,7 +14487,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 		wrapGeneratorFunctionDeclaration(d as unknown as T.GeneratorFunctionDeclaration, t),
 	[TSKindId.ArrowFunction]: (d, t) => wrapArrowFunction(d as unknown as T.ArrowFunction, t),
 	[TSKindId.FormalParameter]: (d, t) => wrapFormalParameter(d as unknown as T.FormalParameter, t),
-	[TSKindId.OptionalChain]: (d) => ({ ...d, $type: TSKindId.OptionalChain as const }),
+	[TSKindId.OptionalChain]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.OptionalChain as const }),
 	[TSKindId.CallExpression]: (d, t) => wrapCallExpression(d as unknown as T.CallExpression, t),
 	[TSKindId.NewExpression]: (d, t) => wrapNewExpression(d as unknown as T.NewExpression, t),
 	[TSKindId.AwaitExpression]: (d, t) => wrapAwaitExpression(d as unknown as T.AwaitExpression, t),
@@ -14504,25 +14506,31 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.UpdateExpression]: (d, t) => wrapUpdateExpression(d as unknown as T.UpdateExpression, t),
 	[TSKindId.SequenceExpression]: (d, t) => wrapSequenceExpression(d as unknown as T.SequenceExpression, t),
 	[TSKindId.String]: (d, t) => wrapString(d as unknown as T.String, t),
-	[TSKindId.UnescapedDoubleStringFragment]: (d) => ({ ...d, $type: TSKindId.UnescapedDoubleStringFragment as const }),
-	[TSKindId.UnescapedSingleStringFragment]: (d) => ({ ...d, $type: TSKindId.UnescapedSingleStringFragment as const }),
+	[TSKindId.UnescapedDoubleStringFragment]: (d) => ({
+		..._spelledLeaf(d),
+		$type: TSKindId.UnescapedDoubleStringFragment as const
+	}),
+	[TSKindId.UnescapedSingleStringFragment]: (d) => ({
+		..._spelledLeaf(d),
+		$type: TSKindId.UnescapedSingleStringFragment as const
+	}),
 	[TSKindId.EscapeSequence]: (d, t) => wrapEscapeSequence(d as unknown as T.EscapeSequence, t),
 	[TSKindId.TemplateString]: (d, t) => wrapTemplateString(d as unknown as T.TemplateString, t),
 	[TSKindId.TemplateSubstitution]: (d, t) => wrapTemplateSubstitution(d as unknown as T.TemplateSubstitution, t),
 	[TSKindId.Regex]: (d, t) => wrapRegex(d as unknown as T.Regex, t),
-	[TSKindId.RegexPattern]: (d) => ({ ...d, $type: TSKindId.RegexPattern as const }),
-	[TSKindId.RegexFlags]: (d) => ({ ...d, $type: TSKindId.RegexFlags as const }),
+	[TSKindId.RegexPattern]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.RegexPattern as const }),
+	[TSKindId.RegexFlags]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.RegexFlags as const }),
 	[TSKindId.Number]: (d, t) => wrapNumber(d as unknown as T.Number, t),
-	[TSKindId.Identifier]: (d) => ({ ...d, $type: TSKindId.Identifier as const }),
+	[TSKindId.Identifier]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Identifier as const }),
 	[TSKindId.PrivatePropertyIdentifier]: (d, t) =>
 		wrapPrivatePropertyIdentifier(d as unknown as T.PrivatePropertyIdentifier, t),
 	[TSKindId.MetaProperty]: (d, t) => wrapMetaProperty(d as unknown as T.MetaProperty, t),
-	[TSKindId.This]: (d) => ({ ...d, $type: TSKindId.This as const }),
-	[TSKindId.Super]: (d) => ({ ...d, $type: TSKindId.Super as const }),
-	[TSKindId.True]: (d) => ({ ...d, $type: TSKindId.True as const }),
-	[TSKindId.False]: (d) => ({ ...d, $type: TSKindId.False as const }),
-	[TSKindId.Null]: (d) => ({ ...d, $type: TSKindId.Null as const }),
-	[TSKindId.Undefined]: (d) => ({ ...d, $type: TSKindId.Undefined as const }),
+	[TSKindId.This]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.This as const }),
+	[TSKindId.Super]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Super as const }),
+	[TSKindId.True]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.True as const }),
+	[TSKindId.False]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.False as const }),
+	[TSKindId.Null]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Null as const }),
+	[TSKindId.Undefined]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Undefined as const }),
 	[TSKindId.Arguments]: (d, t) => wrapArguments(d as unknown as T.Arguments, t),
 	[TSKindId.Decorator]: (d, t) => wrapDecorator(d as unknown as T.Decorator, t),
 	[TSKindId.DecoratorMemberExpression]: (d, t) =>
@@ -14570,8 +14578,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.EnumBody]: (d, t) => wrapEnumBody(d as unknown as T.EnumBody, t),
 	[TSKindId.EnumAssignment]: (d, t) => wrapEnumAssignment(d as unknown as T.EnumAssignment, t),
 	[TSKindId.TypeAliasDeclaration]: (d, t) => wrapTypeAliasDeclaration(d as unknown as T.TypeAliasDeclaration, t),
-	[TSKindId.AccessibilityModifier]: (d) => ({ ...d, $type: TSKindId.AccessibilityModifier as const }),
-	[TSKindId.OverrideModifier]: (d) => ({ ...d, $type: TSKindId.OverrideModifier as const }),
+	[TSKindId.AccessibilityModifier]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.AccessibilityModifier as const }),
+	[TSKindId.OverrideModifier]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.OverrideModifier as const }),
 	[TSKindId.RequiredParameter]: (d, t) => wrapRequiredParameter(d as unknown as T.RequiredParameter, t),
 	[TSKindId.OptionalParameter]: (d, t) => wrapOptionalParameter(d as unknown as T.OptionalParameter, t),
 	[TSKindId.OmittingTypeAnnotation]: (d, t) => wrapOmittingTypeAnnotation(d as unknown as T.OmittingTypeAnnotation, t),
@@ -14613,10 +14621,10 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.LookupType]: (d, t) => wrapLookupType(d as unknown as T.LookupType, t),
 	[TSKindId.MappedTypeClause]: (d, t) => wrapMappedTypeClause(d as unknown as T.MappedTypeClause, t),
 	[TSKindId.LiteralType]: (d, t) => wrapLiteralType(d as unknown as T.LiteralType, t),
-	[TSKindId.ExistentialType]: (d) => ({ ...d, $type: TSKindId.ExistentialType as const }),
+	[TSKindId.ExistentialType]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.ExistentialType as const }),
 	[TSKindId.FlowMaybeType]: (d, t) => wrapFlowMaybeType(d as unknown as T.FlowMaybeType, t),
 	[TSKindId.ParenthesizedType]: (d, t) => wrapParenthesizedType(d as unknown as T.ParenthesizedType, t),
-	[TSKindId.PredefinedType]: (d) => ({ ...d, $type: TSKindId.PredefinedType as const }),
+	[TSKindId.PredefinedType]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.PredefinedType as const }),
 	[TSKindId.TypeArguments]: (d, t) => wrapTypeArguments(d as unknown as T.TypeArguments, t),
 	[TSKindId.ObjectType]: (d, t) => wrapObjectType(d as unknown as T.ObjectType, t),
 	[TSKindId.CallSignature]: (d, t) => wrapCallSignature(d as unknown as T.CallSignature, t),
@@ -14664,7 +14672,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.NumberFloatLeadingPoint]: (d, t) =>
 		wrapNumberFloatLeadingPoint(d as unknown as T.NumberFloatLeadingPoint, t),
 	[TSKindId.NumberFloatScientific]: (d, t) => wrapNumberFloatScientific(d as unknown as T.NumberFloatScientific, t),
-	[TSKindId.NumberDecimal]: (d) => ({ ...d, $type: TSKindId.NumberDecimal as const }),
+	[TSKindId.NumberDecimal]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.NumberDecimal as const }),
 	[TSKindId.NumberBinary]: (d, t) => wrapNumberBinary(d as unknown as T.NumberBinary, t),
 	[TSKindId.NumberOctal]: (d, t) => wrapNumberOctal(d as unknown as T.NumberOctal, t),
 	[TSKindId.NumberBigint]: (d, t) => wrapNumberBigint(d as unknown as T.NumberBigint, t),
@@ -14673,7 +14681,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.NumberBigintOctal]: (d, t) => wrapNumberBigintOctal(d as unknown as T.NumberBigintOctal, t),
 	[TSKindId.NumberBigintDecimal]: (d, t) => wrapNumberBigintDecimal(d as unknown as T.NumberBigintDecimal, t),
 	[TSKindId.BinaryExpressionIn]: (d, t) => wrapBinaryExpressionIn(d as unknown as T.BinaryExpressionIn, t),
-	[TSKindId.EmptyMember]: (d) => ({ ...d, $type: TSKindId.EmptyMember as const }),
+	[TSKindId.EmptyMember]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.EmptyMember as const }),
 	[TSKindId.ClassBodyMethod]: (d, t) => wrapClassBodyMethod(d as unknown as T.ClassBodyMethod, t),
 	[TSKindId.ClassBodyMethodSig]: (d, t) => wrapClassBodyMethodSig(d as unknown as T.ClassBodyMethodSig, t),
 	[TSKindId.ClassBodyMember]: (d, t) => wrapClassBodyMember(d as unknown as T.ClassBodyMember, t),
@@ -14723,29 +14731,29 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 		wrapVariableDeclaratorPlain(d as unknown as T.VariableDeclaratorPlain, t),
 	[TSKindId.VariableDeclaratorDefinite]: (d, t) =>
 		wrapVariableDeclaratorDefinite(d as unknown as T.VariableDeclaratorDefinite, t),
-	[TSKindId.MetaPropertyNewTarget]: (d) => ({ ...d, $type: TSKindId.MetaPropertyNewTarget as const }),
-	[TSKindId.MetaPropertyImportMeta]: (d) => ({ ...d, $type: TSKindId.MetaPropertyImportMeta as const }),
+	[TSKindId.MetaPropertyNewTarget]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.MetaPropertyNewTarget as const }),
+	[TSKindId.MetaPropertyImportMeta]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.MetaPropertyImportMeta as const }),
 	[TSKindId.ForHeaderLhs]: (d, t) => wrapForHeaderLhs(d as unknown as T.ForHeaderLhs, t),
 	[TSKindId.ForHeaderVarKind]: (d, t) => wrapForHeaderVarKind(d as unknown as T.ForHeaderVarKind, t),
 	[TSKindId.ForHeaderLetConstKind]: (d, t) => wrapForHeaderLetConstKind(d as unknown as T.ForHeaderLetConstKind, t),
-	[TSKindId.HtmlComment]: (d) => ({ ...d, $type: TSKindId.HtmlComment as const }),
-	[TSKindId.JsxText]: (d) => ({ ...d, $type: TSKindId.JsxText as const }),
-	[TSKindId.TemplateChars]: (d) => ({ ...d, $type: TSKindId.TemplateChars as const }),
-	[TSKindId.AutomaticSemicolon]: (d) => ({ ...d, $type: TSKindId.AutomaticSemicolon as const }),
+	[TSKindId.HtmlComment]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.HtmlComment as const }),
+	[TSKindId.JsxText]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.JsxText as const }),
+	[TSKindId.TemplateChars]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.TemplateChars as const }),
+	[TSKindId.AutomaticSemicolon]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.AutomaticSemicolon as const }),
 	[TSKindId.FunctionSignatureAutomaticSemicolon]: (d) => ({
-		...d,
+		..._spelledLeaf(d),
 		$type: TSKindId.FunctionSignatureAutomaticSemicolon as const
 	}),
-	[TSKindId.Tight]: (d) => ({ ...d, $type: TSKindId.Tight as const }),
-	[TSKindId.Space]: (d) => ({ ...d, $type: TSKindId.Space as const }),
-	[TSKindId.Tab]: (d) => ({ ...d, $type: TSKindId.Tab as const }),
-	[TSKindId.Newline]: (d) => ({ ...d, $type: TSKindId.Newline as const }),
-	[TSKindId.Blankline]: (d) => ({ ...d, $type: TSKindId.Blankline as const }),
-	[TSKindId.DoubleBlankline]: (d) => ({ ...d, $type: TSKindId.DoubleBlankline as const }),
-	[TSKindId.Indent]: (d) => ({ ...d, $type: TSKindId.Indent as const }),
-	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const }),
-	[TSKindId.TernaryQmark]: (d) => ({ ...d, $type: TSKindId.TernaryQmark as const }),
-	[TSKindId.ErrorRecovery]: (d) => ({ ...d, $type: TSKindId.ErrorRecovery as const }),
+	[TSKindId.Tight]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Tight as const }),
+	[TSKindId.Space]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Space as const }),
+	[TSKindId.Tab]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Tab as const }),
+	[TSKindId.Newline]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Newline as const }),
+	[TSKindId.Blankline]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Blankline as const }),
+	[TSKindId.DoubleBlankline]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.DoubleBlankline as const }),
+	[TSKindId.Indent]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Indent as const }),
+	[TSKindId.Dedent]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Dedent as const }),
+	[TSKindId.TernaryQmark]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.TernaryQmark as const }),
+	[TSKindId.ErrorRecovery]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.ErrorRecovery as const }),
 	[TSKindId.StatementIdentifier]: (d, t) =>
 		wrapStatementIdentifier(_aliasEnvelope(d, t) as unknown as T.StatementIdentifier, t),
 	[TSKindId.ShorthandPropertyIdentifier]: (d, t) =>
@@ -15108,15 +15116,18 @@ function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData
 	return trivia && mapTriviaEntries(trivia, (entries) => drillInAll(entries, tree) as unknown as typeof entries);
 }
 
-const _ALIAS_ENVELOPES: ReadonlySet<number> = new Set([454, 456, 457, 458, 459, 461]);
+const _ALIAS_ENVELOPES: ReadonlySet<_NodeData['$type']> = new Set([454, 456, 457, 458, 459, 461]);
 const _HIDDEN_KINDS: ReadonlySet<_NodeData['$type']> = new Set([
 	179, 180, 181, 182, 183, 184, 185, 186, 187, 189, 193, 194, 198, 201, 203, 207, 214, 231, 232, 233, 250, 251, 253,
 	258, 260, 262, 263, 268, 270, 274, 275, 283, 288, 291, 309, 322, 331, 336, 338, 355, 369, 388, 393, 430, 431, 432,
 	433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453
 ]);
+function _displayOf(entry: _NodeData): _NodeData['$type'] {
+	return (entry as { readonly $displayType?: _NodeData['$type'] }).$displayType ?? entry.$type;
+}
 function _kindOf(entry: _NodeData): _NodeData['$type'] {
-	const display = (entry as { readonly $displayType?: number }).$displayType;
-	return display !== undefined && _ALIAS_ENVELOPES.has(display) ? display : entry.$type;
+	const display = _displayOf(entry);
+	return _ALIAS_ENVELOPES.has(display) ? display : entry.$type;
 }
 function _withoutDisplay(data: _NodeData): _NodeData {
 	const { $displayType: _display, ...node } = data as _NodeData & { readonly $displayType?: number };
@@ -15126,14 +15137,67 @@ function _withoutDisplay(data: _NodeData): _NodeData {
 const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData['$type']> = new Set([
 	258, 284, 320, 321, 346, 354, 367, 379, 404, 415, 416, 422
 ]);
-function _dropSpelling(data: _NodeData): _NodeData {
+function _spellingTokens(data: _NodeData): readonly _NodeData[] | undefined {
 	const { $other, ...node } = data;
-	if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return data;
-	if (Object.keys(node).some((key) => key.charCodeAt(0) === 95)) return data;
+	if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return undefined;
+	if (Object.keys(node).some((key) => key.charCodeAt(0) === 95)) return undefined;
 	const tokens = (Array.isArray($other) ? $other : [$other]) as readonly unknown[];
 	if (tokens.some((token) => typeof token !== 'object' || token === null || (token as _NodeData).$named !== false))
-		return data;
-	return node as _NodeData;
+		return undefined;
+	return tokens as readonly _NodeData[];
+}
+function _spelledText(data: _NodeData): string | undefined {
+	if (data.$text !== undefined) return data.$text;
+	const tokens = _spellingTokens(data);
+	return tokens === undefined ? undefined : _tiledSpelling(data.$span, tokens);
+}
+function _dropSpelling(data: _NodeData): _NodeData {
+	if (_spellingTokens(data) === undefined) return data;
+	const { $other: _tokens, ...node } = data;
+	const $text = _spelledText(data);
+	return ($text === undefined ? node : { ...node, $text }) as _NodeData;
+}
+function _spellingOf(entry: _NodeData): string | undefined {
+	const text = _spelledText(entry);
+	if (text !== undefined || entry.$named !== false) return text;
+	const shown = _displayOf(entry);
+	return typeof shown === 'number' ? KIND_DISPLAY_NAMES.get(shown) : shown;
+}
+function _tiledSpelling(span: _NodeData['$span'], children: readonly _NodeData[]): string | undefined {
+	if (span === undefined) return undefined;
+	let at = span.start;
+	let text = '';
+	for (const child of children) {
+		const spelling = _spellingOf(child);
+		if (child.$span?.start !== at || spelling === undefined) return undefined;
+		text += spelling;
+		at = child.$span.end;
+	}
+	return at === span.end ? text : undefined;
+}
+function _readChildren(data: _NodeData): readonly _NodeData[] | undefined {
+	const children: _NodeData[] = [];
+	for (const [key, value] of Object.entries(data)) {
+		if (key.charCodeAt(0) !== 95 && key !== '$other') continue;
+		for (const child of (Array.isArray(value) ? value : [value]) as readonly unknown[]) {
+			if (child === undefined) continue;
+			if (typeof child !== 'object' || child === null) return undefined;
+			children.push(child as _NodeData);
+		}
+	}
+	return children.sort((a, b) => (a.$span?.start ?? 0) - (b.$span?.start ?? 0));
+}
+function _spelledLeaf(data: _NodeData): _NodeData {
+	if (data.$text !== undefined) return data;
+	const children = _readChildren(data);
+	if (children === undefined || children.length === 0) return data;
+	const $text = _tiledSpelling(data.$span, children);
+	if ($text === undefined) return data;
+	const leaf: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(data)) {
+		if (key.charCodeAt(0) !== 95 && key !== '$other' && key !== '$slotOrder') leaf[key] = value;
+	}
+	return { ...leaf, $text } as _NodeData;
 }
 
 /** Wrap a NodeData into its lazy read-only view. */

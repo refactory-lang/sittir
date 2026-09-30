@@ -54,18 +54,18 @@ export enum TSKindId {
 	At = 8,
 	Dquote = 9,
 	Dquote2 = 10,
-	StringContentToken1 = 11,
-	Comment = 12,
-	Lbrack = 13,
-	Rbrack = 14,
-	Lparen = 15,
-	Rparen = 16,
-	MissingKeyword = 17,
-	Colon = 18,
-	Bang = 19,
-	Pound = 20,
-	Dot = 21,
-	PredicateType = 22,
+	Comment = 11,
+	Lbrack = 12,
+	Rbrack = 13,
+	Lparen = 14,
+	Rparen = 15,
+	MissingKeyword = 16,
+	Colon = 17,
+	Bang = 18,
+	Pound = 19,
+	Dot = 20,
+	PredicateType = 21,
+	StringContentText = 22,
 	Slash = 23,
 	Tight = 24,
 	Space = 25,
@@ -126,18 +126,18 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[8, 'at'],
 	[9, 'dquote'],
 	[10, 'dquote2'],
-	[11, 'string_content_token1'],
-	[12, 'comment'],
-	[13, 'lbrack'],
-	[14, 'rbrack'],
-	[15, 'lparen'],
-	[16, 'rparen'],
-	[17, 'MISSING_keyword'],
-	[18, 'colon'],
-	[19, 'bang'],
-	[20, 'pound'],
-	[21, 'dot'],
-	[22, 'predicate_type'],
+	[11, 'comment'],
+	[12, 'lbrack'],
+	[13, 'rbrack'],
+	[14, 'lparen'],
+	[15, 'rparen'],
+	[16, 'MISSING_keyword'],
+	[17, 'colon'],
+	[18, 'bang'],
+	[19, 'pound'],
+	[20, 'dot'],
+	[21, 'predicate_type'],
+	[22, 'string_content_text'],
 	[23, 'slash'],
 	[24, '_tight'],
 	[25, '_space'],
@@ -184,7 +184,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[65535, 'ERROR']
 ]);
 
-/** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
+/** Parser display label of each kind id — the spelling of an anonymous token the reader sends without text, and the label validator bridging matches. Never use for wrapNode dispatch. */
 export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'escape_sequence'],
 	[2, '*'],
@@ -196,18 +196,18 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[8, '@'],
 	[9, '"'],
 	[10, '"'],
-	[11, 'string_content_token1'],
-	[12, 'comment'],
-	[13, '['],
-	[14, ']'],
-	[15, '('],
-	[16, ')'],
-	[17, 'MISSING'],
-	[18, ':'],
-	[19, '!'],
-	[20, '#'],
-	[21, '.'],
-	[22, 'predicate_type'],
+	[11, 'comment'],
+	[12, '['],
+	[13, ']'],
+	[14, '('],
+	[15, ')'],
+	[16, 'MISSING'],
+	[17, ':'],
+	[18, '!'],
+	[19, '#'],
+	[20, '.'],
+	[21, 'predicate_type'],
+	[22, 'string_content_text'],
 	[23, '/'],
 	[24, '_tight'],
 	[25, '_space'],
@@ -279,8 +279,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Dquote;
 		case 'dquote2':
 			return TSKindId.Dquote2;
-		case 'string_content_token1':
-			return TSKindId.StringContentToken1;
 		case 'comment':
 			return TSKindId.Comment;
 		case 'lbrack':
@@ -303,6 +301,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Dot;
 		case 'predicate_type':
 			return TSKindId.PredicateType;
+		case 'string_content_text':
+			return TSKindId.StringContentText;
 		case 'slash':
 			return TSKindId.Slash;
 		case '_tight':
@@ -524,7 +524,7 @@ export interface String {
 	readonly $type: TSKindId.String;
 	readonly _string_content?: StringContent;
 	readonly __looseHints__?: {
-		readonly string_content?: readonly ('[^"\\\\\\n]+' | EscapeSequence)[];
+		readonly string_content?: readonly (StringContentText | EscapeSequence)[];
 	};
 	readonly __slotHints__?: {
 		readonly stringContent: SlotHint<T.StringContent, true>;
@@ -536,7 +536,7 @@ export interface ImmediateString {
 	readonly $type: TSKindId.ImmediateString;
 	readonly _string_content?: StringContent;
 	readonly __looseHints__?: {
-		readonly string_content?: readonly ('[^"\\\\\\n]+' | EscapeSequence)[];
+		readonly string_content?: readonly (StringContentText | EscapeSequence)[];
 	};
 	readonly __slotHints__?: {
 		readonly stringContent: SlotHint<T.StringContent, true>;
@@ -546,11 +546,11 @@ export interface ImmediateString {
 
 export interface StringContent {
 	readonly $type: TSKindId.StringContent;
-	readonly _content?: readonly ('[^"\\\\\\n]+' | EscapeSequence)[];
+	readonly _content?: readonly (StringContentText | EscapeSequence)[];
 	readonly __slotHints__?: {
-		readonly contents: SlotHint<('[^"\\\\\\n]+' | T.EscapeSequence)[], false, true>;
+		readonly contents: SlotHint<(T.StringContentText | T.EscapeSequence)[], false, true>;
 	};
-	contents(): readonly ('[^"\\\\\\n]+' | EscapeSequence)[];
+	contents(): readonly (StringContentText | EscapeSequence)[];
 }
 
 export interface Parameters {
@@ -625,7 +625,7 @@ export interface AnonymousNode {
 		readonly content?: readonly (KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark> | Capture)[];
 	};
 	readonly __looseHints__?: {
-		readonly name: readonly ('[^"\\\\\\n]+' | EscapeSequence)[];
+		readonly name: readonly (StringContentText | EscapeSequence)[];
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<NonNullable<T.AnonymousNode.Config>['name']>;
@@ -780,6 +780,7 @@ export type Quantifier = TSKindId.Star | TSKindId.Plus | TSKindId.Qmark;
 export type Identifier = Terminal<TSKindId.Identifier, string>;
 export type ImmediateIdentifier = Terminal<TSKindId.ImmediateIdentifier, string>;
 export type PredicateType = TSKindId.Qmark | TSKindId.Bang;
+export type StringContentText = Terminal<TSKindId.StringContentText, string>;
 export type Tight = TSKindId.Tight;
 export type Space = TSKindId.Space;
 export type Tab = TSKindId.Tab;
@@ -1443,6 +1444,12 @@ export interface ImmediateIdentifierNs extends LeafNs<
 	ImmediateIdentifier.Bound,
 	TSKindId.ImmediateIdentifier
 > {}
+export interface StringContentTextNs extends LeafNs<
+	StringContentText,
+	string,
+	StringContentText.Bound,
+	TSKindId.StringContentText
+> {}
 
 export interface NamespaceMap {
 	[TSKindId.Program]: ProgramNs;
@@ -1477,6 +1484,7 @@ export interface NamespaceMap {
 	[TSKindId.Dedent]: DedentNs;
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.ImmediateIdentifier]: ImmediateIdentifierNs;
+	[TSKindId.StringContentText]: StringContentTextNs;
 }
 
 export interface BoundByKindId {
@@ -1504,6 +1512,7 @@ export interface BoundByKindId {
 	[TSKindId.NamedNodeGroupAnchoredLast]: NamedNodeGroupAnchoredLast.Bound;
 	[TSKindId.Identifier]: Identifier.Bound;
 	[TSKindId.ImmediateIdentifier]: ImmediateIdentifier.Bound;
+	[TSKindId.StringContentText]: StringContentText.Bound;
 }
 
 export interface ParsedByKindId {
@@ -1531,6 +1540,7 @@ export interface ParsedByKindId {
 	[TSKindId.NamedNodeGroupAnchoredLast]: NamedNodeGroupAnchoredLast.Parsed;
 	[TSKindId.Identifier]: Identifier.Parsed;
 	[TSKindId.ImmediateIdentifier]: ImmediateIdentifier.Parsed;
+	[TSKindId.StringContentText]: StringContentText.Parsed;
 }
 
 export interface EmptyByKindId {
@@ -1596,6 +1606,7 @@ export interface IrKeyOf {
 	[TSKindId.Dedent]: 'dedent';
 	[TSKindId.Identifier]: 'identifier';
 	[TSKindId.ImmediateIdentifier]: 'immediateIdentifier';
+	[TSKindId.StringContentText]: 'stringContentText';
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -1699,9 +1710,9 @@ export namespace StringContent {
 	}
 	export type Loose = LooseFor<TSKindId.StringContent>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StringContent>;
-	export type BuildArgs = [...children: AdmitBound<('[^"\\\\\\n]+' | T.EscapeSequence)[], T.AdmittedNodes>];
+	export type BuildArgs = [...children: AdmitBound<(T.StringContentText | T.EscapeSequence)[], T.AdmittedNodes>];
 	export type LooseArgs = [
-		...children: LooseValue<'[^"\\\\\\n]+' | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		...children: LooseValue<T.StringContentText | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
 	export type Kind = TSKindId.StringContent;
 }
@@ -2127,6 +2138,21 @@ export namespace ImmediateIdentifier {
 	export type BuildArgs = ImmediateIdentifierNs['BuildArgs'];
 	export type LooseArgs = ImmediateIdentifierNs['LooseArgs'];
 	export type Kind = TSKindId.ImmediateIdentifier;
+}
+export namespace StringContentText {
+	export type Config = StringContentTextNs['Config'];
+	export interface Bound extends NodeMethodsOf {
+		readonly $type: TSKindId.StringContentText;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export interface Parsed extends Bound {}
+	export type Loose = StringContentTextNs['Loose'];
+	export type LooseConfig = StringContentTextNs['LooseConfig'];
+	export type BuildArgs = StringContentTextNs['BuildArgs'];
+	export type LooseArgs = StringContentTextNs['LooseArgs'];
+	export type Kind = TSKindId.StringContentText;
 }
 
 export interface ScmTypeMap extends GrammarTypeMap {

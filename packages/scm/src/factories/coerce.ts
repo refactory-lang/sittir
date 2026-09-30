@@ -32,6 +32,7 @@ export const _fromMap = {
 	group_expression_arm: coerceToGroupExpressionArm,
 	named_node_expression_arm: coerceToNamedNodeExpressionArm,
 	grouping_group: coerceToGroupingGroup,
+	string_content_text: coerceToStringContentText,
 	named_node_plain: coerceToNamedNodePlain,
 	named_node_supertyped: coerceToNamedNodeSupertyped,
 	named_node_group_children: coerceToNamedNodeGroupChildren,
@@ -58,6 +59,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	identifier: { pattern: /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u, factory: F.buildIdentifier },
 	_immediate_identifier: { pattern: /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u, factory: F.buildImmediateIdentifier },
 	comment: { factory: (content: string) => _resolveByKind('comment', content) },
+	string_content_text: { pattern: /^(?:(?:[^"\\\n]+))$/u, factory: F.buildStringContentText },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_space: { values: [' '], factory: () => F.buildSpace },
 	_tab: { values: ['\t'], factory: () => F.buildTab },
@@ -89,6 +91,7 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'_double_blankline',
 	'_indent',
 	'_dedent',
+	'string_content_text',
 	'identifier',
 	'_immediate_identifier'
 ];
@@ -170,7 +173,7 @@ const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {};
 const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undefined> = {};
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['capture', 'negated_field']);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
-	2, 3, 4, 7, 8, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36
+	2, 3, 4, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	capture: new Set([6]),
@@ -183,7 +186,7 @@ const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	2: ['quantifier'],
 	3: ['quantifier'],
 	4: ['quantifier', 'predicate_type'],
-	19: ['predicate_type']
+	18: ['predicate_type']
 };
 
 function _resolveOne<T>(
@@ -356,7 +359,6 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	capture: '_immediate_identifier',
 	string: 'string_content',
 	immediate_string: 'string_content',
-	string_content: 'escape_sequence',
 	negated_field: 'identifier'
 };
 
@@ -509,11 +511,13 @@ const _K1: readonly string[] = [
 	'list',
 	'field_definition'
 ];
-const _K2: readonly string[] = ['capture', 'string'];
-const _K3: readonly string[] = ['quantifier'];
-const _K4: readonly string[] = ['capture'];
-const _K5: readonly string[] = ['string'];
-const _K6: readonly string[] = [
+const _K2: readonly string[] = ['string_content_text'];
+const _K3: readonly string[] = ['escape_sequence'];
+const _K4: readonly string[] = ['capture', 'string'];
+const _K5: readonly string[] = ['quantifier'];
+const _K6: readonly string[] = ['capture'];
+const _K7: readonly string[] = ['string'];
+const _K8: readonly string[] = [
 	'named_node_plain',
 	'named_node_supertyped',
 	'anonymous_node',
@@ -524,7 +528,7 @@ const _K6: readonly string[] = [
 	'field_definition',
 	'group_expression_arm'
 ];
-const _K7: readonly string[] = [
+const _K9: readonly string[] = [
 	'named_node_plain',
 	'named_node_supertyped',
 	'anonymous_node',
@@ -536,8 +540,8 @@ const _K7: readonly string[] = [
 	'negated_field',
 	'named_node_expression_arm'
 ];
-const _K8: readonly string[] = ['_immediate_identifier'];
-const _K9: readonly string[] = ['immediate_string'];
+const _K10: readonly string[] = ['_immediate_identifier'];
+const _K11: readonly string[] = ['immediate_string'];
 
 export function coerceToProgram(): T.EmptyProgram;
 export function coerceToProgram(
@@ -658,7 +662,7 @@ export function coerceToImmediateString(input?: T.ImmediateString.Loose): Return
 export function coerceToStringContent(
 	...input: readonly (
 		| T.StringContent.Loose
-		| LooseValue<'[^"\\\\\\n]+' | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		| LooseValue<T.StringContentText | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildStringContent> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringContent)) {
@@ -666,7 +670,7 @@ export function coerceToStringContent(
 		const stored = (data as unknown as { _content?: unknown })._content;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildStringContent(
-			...(_resolveManyBranch<'[^"\\\\\\n]+' | T.EscapeSequence>(children, 'escape_sequence') as unknown as Parameters<
+			...(_resolveMany<T.StringContentText | T.EscapeSequence>(children, _K2, _K3) as unknown as Parameters<
 				typeof F.buildStringContent
 			>)
 		);
@@ -679,7 +683,7 @@ export function coerceToStringContent(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildStringContent(
-		...(_resolveManyBranch<'[^"\\\\\\n]+' | T.EscapeSequence>(_elems, 'escape_sequence') as unknown as Parameters<
+		...(_resolveMany<T.StringContentText | T.EscapeSequence>(_elems, _K2, _K3) as unknown as Parameters<
 			typeof F.buildStringContent
 		>)
 	);
@@ -699,7 +703,7 @@ export function coerceToParameters(
 			...(_resolveMany<T.Capture | T.String | T.Identifier>(
 				children,
 				_super_node_identifier,
-				_K2
+				_K4
 			) as unknown as Parameters<typeof F.buildParameters>)
 		);
 	}
@@ -711,7 +715,7 @@ export function coerceToParameters(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildParameters(
-		...(_resolveMany<T.Capture | T.String | T.Identifier>(_elems, _super_node_identifier, _K2) as unknown as Parameters<
+		...(_resolveMany<T.Capture | T.String | T.Identifier>(_elems, _super_node_identifier, _K4) as unknown as Parameters<
 			typeof F.buildParameters
 		>)
 	);
@@ -746,7 +750,7 @@ export function resolveList_definitions(value: T.List.LooseConfig['definitions']
 
 export function resolveList_contents(value: T.List.LooseConfig['content']): T.List['_content'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveMany<T.Capture | '*' | '+' | '?'>(value, _K3, _K4)),
+		_resolveKindEnum(value, () => _resolveMany<T.Capture | '*' | '+' | '?'>(value, _K5, _K6)),
 		[['*', TSKindId.Star] as const, ['+', TSKindId.Plus] as const, ['?', TSKindId.Qmark] as const]
 	);
 }
@@ -772,7 +776,7 @@ export function resolveGrouping_groupingGroups(
 
 export function resolveGrouping_contents(value: T.Grouping.LooseConfig['content']): T.Grouping['_content'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveMany<T.Capture | '*' | '+' | '?'>(value, _K3, _K4)),
+		_resolveKindEnum(value, () => _resolveMany<T.Capture | '*' | '+' | '?'>(value, _K5, _K6)),
 		[['*', TSKindId.Star] as const, ['+', TSKindId.Plus] as const, ['?', TSKindId.Qmark] as const]
 	);
 }
@@ -786,12 +790,12 @@ export function coerceToGrouping(input: T.Grouping.Loose): ReturnType<typeof F.b
 }
 
 export function resolveMissingNode_name(value: T.MissingNode.LooseConfig['name']): T.MissingNode['_name'] {
-	return _resolveOne<T.Identifier | T.String>(value, _super_node_identifier, _K5);
+	return _resolveOne<T.Identifier | T.String>(value, _super_node_identifier, _K7);
 }
 
 export function resolveMissingNode_contents(value: T.MissingNode.LooseConfig['content']): T.MissingNode['_content'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveMany<T.Capture | '*' | '+' | '?'>(value, _K3, _K4)),
+		_resolveKindEnum(value, () => _resolveMany<T.Capture | '*' | '+' | '?'>(value, _K5, _K6)),
 		[['*', TSKindId.Star] as const, ['+', TSKindId.Plus] as const, ['?', TSKindId.Qmark] as const]
 	);
 }
@@ -822,7 +826,7 @@ export function resolveAnonymousNode_contents(
 	value: T.AnonymousNode.LooseConfig['content']
 ): T.AnonymousNode['_content'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveMany<T.Capture | '*' | '+' | '?'>(value, _K3, _K4)),
+		_resolveKindEnum(value, () => _resolveMany<T.Capture | '*' | '+' | '?'>(value, _K5, _K6)),
 		[['*', TSKindId.Star] as const, ['+', TSKindId.Plus] as const, ['?', TSKindId.Qmark] as const]
 	);
 }
@@ -831,7 +835,7 @@ export function coerceToAnonymousNode(input?: T.AnonymousNode.Loose): ReturnType
 	if (!_isLooseConfig<T.AnonymousNode.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildAnonymousNode>;
 	return F.buildAnonymousNode({
-		name: resolveAnonymousNode_name(input?.name) ?? F.buildString(),
+		name: _requireField('anonymous_node', 'name', resolveAnonymousNode_name(input?.name)),
 		content: resolveAnonymousNode_contents(input?.content)
 	});
 }
@@ -910,13 +914,13 @@ export function coerceToPredicate(input: T.Predicate.Loose): ReturnType<typeof F
 export function resolveGroupExpressionArm_left(
 	value: T.GroupExpressionArm.LooseConfig['left']
 ): T.GroupExpressionArm['_left'] {
-	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K6);
+	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K8);
 }
 
 export function resolveGroupExpressionArm_right(
 	value: T.GroupExpressionArm.LooseConfig['right']
 ): T.GroupExpressionArm['_right'] {
-	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K6);
+	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K8);
 }
 
 export function coerceToGroupExpressionArm(
@@ -933,13 +937,13 @@ export function coerceToGroupExpressionArm(
 export function resolveNamedNodeExpressionArm_left(
 	value: T.NamedNodeExpressionArm.LooseConfig['left']
 ): T.NamedNodeExpressionArm['_left'] {
-	return _resolveOne<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K7);
+	return _resolveOne<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K9);
 }
 
 export function resolveNamedNodeExpressionArm_right(
 	value: T.NamedNodeExpressionArm.LooseConfig['right']
 ): T.NamedNodeExpressionArm['_right'] {
-	return _resolveOne<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K7);
+	return _resolveOne<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K9);
 }
 
 export function coerceToNamedNodeExpressionArm(
@@ -956,7 +960,7 @@ export function coerceToNamedNodeExpressionArm(
 export function resolveGroupingGroup_groupExpression(
 	value: T.GroupingGroup.LooseConfig['groupExpression']
 ): T.GroupingGroup['_group_expression'] {
-	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K6);
+	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K8);
 }
 
 export function coerceToGroupingGroup(input: T.GroupingGroup.Loose): ReturnType<typeof F.buildGroupingGroup> {
@@ -968,10 +972,17 @@ export function coerceToGroupingGroup(input: T.GroupingGroup.Loose): ReturnType<
 			_resolveOne<T.Definition | T.GroupExpressionArm>(
 				configFieldOr(input, 'groupExpression', () => input),
 				_K0,
-				_K6
+				_K8
 			)
 		)
 	);
+}
+
+export function coerceToStringContentText(
+	input: T.StringContentText.Loose
+): ReturnType<typeof F.buildStringContentText> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringContentText>;
+	return F.buildStringContentText(input as Parameters<typeof F.buildStringContentText>[0]);
 }
 
 export function resolveNamedNodePlain_name(value: T.NamedNodePlain.LooseConfig['name']): T.NamedNodePlain['_name'] {
@@ -993,7 +1004,7 @@ export function resolveNamedNodePlain_contents(
 	value: T.NamedNodePlain.LooseConfig['content']
 ): T.NamedNodePlain['_content'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveMany<T.Capture | '*' | '+' | '?'>(value, _K3, _K4)),
+		_resolveKindEnum(value, () => _resolveMany<T.Capture | '*' | '+' | '?'>(value, _K5, _K6)),
 		[['*', TSKindId.Star] as const, ['+', TSKindId.Plus] as const, ['?', TSKindId.Qmark] as const]
 	);
 }
@@ -1017,7 +1028,7 @@ export function resolveNamedNodeSupertyped_supertype(
 export function resolveNamedNodeSupertyped_name(
 	value: T.NamedNodeSupertyped.LooseConfig['name']
 ): T.NamedNodeSupertyped['_name'] {
-	return _resolveOne<T.ImmediateIdentifier | T.ImmediateString>(value, _K8, _K9);
+	return _resolveOne<T.ImmediateIdentifier | T.ImmediateString>(value, _K10, _K11);
 }
 
 export function resolveNamedNodeSupertyped_namedNodeGroup(
@@ -1030,7 +1041,7 @@ export function resolveNamedNodeSupertyped_contents(
 	value: T.NamedNodeSupertyped.LooseConfig['content']
 ): T.NamedNodeSupertyped['_content'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveMany<T.Capture | '*' | '+' | '?'>(value, _K3, _K4)),
+		_resolveKindEnum(value, () => _resolveMany<T.Capture | '*' | '+' | '?'>(value, _K5, _K6)),
 		[['*', TSKindId.Star] as const, ['+', TSKindId.Plus] as const, ['?', TSKindId.Qmark] as const]
 	);
 }
@@ -1071,7 +1082,7 @@ export function coerceToNamedNodeGroupChildren(
 			...(_resolveMany<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
 				children,
 				_K0,
-				_K7
+				_K9
 			) as unknown as Parameters<typeof F.buildNamedNodeGroupChildren>)
 		);
 	}
@@ -1086,7 +1097,7 @@ export function coerceToNamedNodeGroupChildren(
 		...(_resolveMany<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
 			_elems,
 			_K0,
-			_K7
+			_K9
 		) as unknown as Parameters<typeof F.buildNamedNodeGroupChildren>)
 	);
 }
@@ -1094,13 +1105,13 @@ export function coerceToNamedNodeGroupChildren(
 export function resolveNamedNodeGroupAnchoredLast_namedNodeExpressions(
 	value: T.NamedNodeGroupAnchoredLast.LooseConfig['namedNodeExpressions']
 ): T.NamedNodeGroupAnchoredLast['_named_node_expressions'] {
-	return _resolveMany<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K7);
+	return _resolveMany<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K9);
 }
 
 export function resolveNamedNodeGroupAnchoredLast_last(
 	value: T.NamedNodeGroupAnchoredLast.LooseConfig['last']
 ): T.NamedNodeGroupAnchoredLast['_last'] {
-	return _resolveOne<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K7);
+	return _resolveOne<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K9);
 }
 
 export function coerceToNamedNodeGroupAnchoredLast(

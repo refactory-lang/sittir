@@ -518,6 +518,15 @@ describe('named_node_expression_arm', () => {
 	});
 });
 
+describe('string_content_text', () => {
+	it('factory produces correct type', () => {
+		const node = ir.stringContentText('test');
+		expect(node.$type).toBe(TSKindId.StringContentText);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('test');
+	});
+});
+
 describe('named_node_plain sub-factories', () => {
 	it('underscore builds the parent', () => {
 		const node = ir.namedNode.plain.underscore.coerce({});

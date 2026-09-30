@@ -3,13 +3,7 @@
 import type * as T from '../types-internal.js';
 import { TSKindId } from '../types.js';
 import type { AdmitBound, NonEmptyArray } from '@sittir/types';
-import {
-	withAccessors,
-	coerceKindEnumStorage,
-	coerceMixedEnumStorage,
-	orDefault,
-	rejectBareText
-} from '@sittir/common/utils';
+import { withAccessors, coerceKindEnumStorage, coerceMixedEnumStorage, rejectBareText } from '@sittir/common/utils';
 import { withMethods } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
@@ -20,6 +14,7 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 
 const _leafRe_buildIdentifier = /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u;
 const _leafRe_buildImmediateIdentifier = /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u;
+const _leafRe_buildStringContentText = /^(?:(?:[^"\\\n]+))$/u;
 export const _slotRe_buildEscapeSequence_content = /^(?:(?:.))$/u;
 export const _slotRe_buildComment_content = /^(?:(?:.*))$/u;
 
@@ -127,7 +122,7 @@ function _buildCapture(value: AdmitBound<T.ImmediateIdentifier, T.AdmittedNodes>
 
 export function buildString(value?: AdmitBound<T.StringContent, T.AdmittedNodes>): ReturnType<typeof _buildString>;
 export function buildString(
-	...children: AdmitBound<('[^"\\\\\\n]+' | T.EscapeSequence)[], T.AdmittedNodes>
+	...children: AdmitBound<(T.StringContentText | T.EscapeSequence)[], T.AdmittedNodes>
 ): ReturnType<typeof _buildString>;
 export function buildString(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -166,7 +161,7 @@ export function buildImmediateString(
 	value?: AdmitBound<T.StringContent, T.AdmittedNodes>
 ): ReturnType<typeof _buildImmediateString>;
 export function buildImmediateString(
-	...children: AdmitBound<('[^"\\\\\\n]+' | T.EscapeSequence)[], T.AdmittedNodes>
+	...children: AdmitBound<(T.StringContentText | T.EscapeSequence)[], T.AdmittedNodes>
 ): ReturnType<typeof _buildImmediateString>;
 export function buildImmediateString(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -202,9 +197,9 @@ function _buildImmediateString(value?: AdmitBound<T.StringContent, T.AdmittedNod
 }
 
 export function buildStringContent(
-	...children: AdmitBound<('[^"\\\\\\n]+' | T.EscapeSequence)[], T.AdmittedNodes>
+	...children: AdmitBound<(T.StringContentText | T.EscapeSequence)[], T.AdmittedNodes>
 ): T.StringContent.Bound {
-	const _content = children;
+	const _content = rejectBareText(children, 'StringContent.content', 'buildStringContentText(…)');
 	return withMethods(
 		withAccessors(
 			{
@@ -212,7 +207,7 @@ export function buildStringContent(
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { contents: (...vs: ('[^"\\\\\\n]+' | T.EscapeSequence)[]) => buildStringContent(...vs) }
+				$with: { contents: (...vs: (T.StringContentText | T.EscapeSequence)[]) => buildStringContent(...vs) }
 			},
 			{
 				contents: () => _content
@@ -366,10 +361,7 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 
 export function buildAnonymousNode(config: Partial<T.AnonymousNode.Config> = {}): T.AnonymousNode.Bound {
 	const _name = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.AnonymousNode['_name']>>(
-			orDefault(config.name, () => buildString()),
-			[['_', TSKindId.Underscore] as const]
-		),
+		coerceMixedEnumStorage<NonNullable<T.AnonymousNode['_name']>>(config.name, [['_', TSKindId.Underscore] as const]),
 		'AnonymousNode.name',
 		'a built String'
 	);
@@ -587,6 +579,18 @@ export function buildGroupingGroup(
 	) as unknown as T.GroupingGroup.Bound;
 }
 
+export function buildStringContentText(text: string): T.StringContentText.Bound {
+	if (text.length === 0) throw new Error(`string_content_text: text must be non-empty`);
+	if (!_leafRe_buildStringContentText.test(text))
+		throw new Error(`string_content_text: text does not match pattern: ${text}`);
+	return withMethods({
+		$type: TSKindId.StringContentText as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
+}
+
 export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNodePlain.Bound {
 	const _name = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.NamedNodePlain['_name']>>(config.name, [['_', TSKindId.Underscore] as const]),
@@ -780,6 +784,7 @@ export type FluentKindMap = {
 	group_expression_arm: T.GroupExpressionArm.Bound;
 	named_node_expression_arm: T.NamedNodeExpressionArm.Bound;
 	grouping_group: T.GroupingGroup.Bound;
+	string_content_text: T.StringContentText;
 	named_node_plain: T.NamedNodePlain.Bound;
 	named_node_supertyped: T.NamedNodeSupertyped.Bound;
 	named_node_group_children: T.NamedNodeGroupChildren.Bound;
@@ -815,6 +820,7 @@ export const _factoryMap = {
 	group_expression_arm: buildGroupExpressionArm,
 	named_node_expression_arm: buildNamedNodeExpressionArm,
 	grouping_group: buildGroupingGroup,
+	string_content_text: buildStringContentText,
 	named_node_plain: buildNamedNodePlain,
 	named_node_supertyped: buildNamedNodeSupertyped,
 	named_node_group_children: buildNamedNodeGroupChildren,

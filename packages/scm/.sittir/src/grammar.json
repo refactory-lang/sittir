@@ -313,15 +313,8 @@
         "type": "CHOICE",
         "members": [
           {
-            "type": "IMMEDIATE_TOKEN",
-            "content": {
-              "type": "PREC",
-              "value": 2,
-              "content": {
-                "type": "PATTERN",
-                "value": "[^\"\\\\\\n]+"
-              }
-            },
+            "type": "SYMBOL",
+            "name": "string_content_text",
             "annotations": {
               "variantOf": "string_content"
             }
@@ -882,6 +875,17 @@
           }
         }
       ]
+    },
+    "string_content_text": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 2,
+        "content": {
+          "type": "PATTERN",
+          "value": "[^\"\\\\\\n]+"
+        }
+      }
     },
     "_whitespace": {
       "type": "CHOICE",
