@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { compileGrammar } from '../../compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
-import { grammarPackage } from '../../grammars.ts';
+import { allGrammars, grammarPackage } from '../../grammars.ts';
 import { listOptionKeys, listViewHint, listViewRuntimeSpec } from '../factories.ts';
 
 const keysOf = (text: string): string[] => [...text.matchAll(/\b(separator|delimiter)\??:/g)].map((m) => m[1]!).sort();
@@ -13,7 +13,7 @@ describe('the list-view runtime spec', () => {
 		expect(listOptionKeys({ hasSeparatorKindOption: false, hasDelimiterOption: false })).toEqual([]);
 	});
 
-	for (const grammar of ['rust', 'python', 'typescript'] as const) {
+	for (const grammar of allGrammars()) {
 		it(`${grammar}: every list view's spec keys are the keys of its marker's options`, async () => {
 			const generatedIdTables = await loadGeneratedIdTables(grammar);
 			const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar), generatedIdTables });
@@ -31,7 +31,7 @@ describe('the list-view runtime spec', () => {
 				}
 				expect(spec).toMatch(/count: "_\w+"/);
 			}
-			expect(views).toBeGreaterThan(0);
+			if (['rust', 'python', 'typescript'].includes(grammar)) expect(views).toBeGreaterThan(0);
 		});
 	}
 });

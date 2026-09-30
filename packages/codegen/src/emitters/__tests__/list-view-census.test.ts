@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { compileGrammar } from '../../compiler/compile.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
-import { grammarPackage } from '../../grammars.ts';
+import { allGrammars, grammarPackage } from '../../grammars.ts';
 import { listSlotHints, listViewHint } from '../factories.ts';
 
 const compact = (text: string): string => text.replace(/\s+/g, '').replace(/<\|/g, '<');
@@ -27,14 +27,14 @@ const factoryElement = (raw: string, factory: string): string | undefined => {
 };
 
 describe('every kind that reads as a list is stamped, wired and typed from one fact', () => {
-	for (const grammar of ['rust', 'python', 'typescript'] as const) {
+	for (const grammar of allGrammars()) {
 		it(`${grammar}: the list views the model finds are the interfaces stamped $listView and the nodes that install one`, async () => {
 			const generatedIdTables = await loadGeneratedIdTables(grammar);
 			const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar), generatedIdTables });
 			const types = typeSources(grammar);
 			const raw = read(grammar, 'factories/raw.ts');
 			const views = [...nodeMap.nodes.values()].filter((node) => listViewHint(node, nodeMap, undefined) !== undefined);
-			expect(views.length).toBeGreaterThan(0);
+			if (['rust', 'python', 'typescript'].includes(grammar)) expect(views.length).toBeGreaterThan(0);
 			const stamped = [...types.matchAll(/export interface (\w+) \{(?:(?!\n\}\n)[\s\S])*?\$listView: ListViewHint</g)].map((m) => m[1]!);
 			expect(stamped.sort()).toEqual(views.map((node) => node.typeName).sort());
 			for (const node of views) {
@@ -53,7 +53,7 @@ describe('every kind that reads as a list is stamped, wired and typed from one f
 			const { nodeMap } = await compileGrammar({ package: grammarPackage(grammar), generatedIdTables });
 			const types = typeSources(grammar);
 			const parents = [...nodeMap.nodes.values()].filter((node) => listSlotHints(node, nodeMap, undefined).length > 0);
-			expect(parents.length).toBeGreaterThan(0);
+			if (['rust', 'python', 'typescript'].includes(grammar)) expect(parents.length).toBeGreaterThan(0);
 			for (const node of parents) {
 				const block = compact(interfaceBlock(types, node.typeName));
 				for (const hint of listSlotHints(node, nodeMap, undefined)) {
