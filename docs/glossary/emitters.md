@@ -12062,6 +12062,8 @@ Whether a kind's sole content is a separated list, as the facts a list owner's n
 
 The accessor of a list owner's list slot reads the slot as the elements the factory takes. The stored value stays the list node, so storage, the render transport and `$with` inputs are unchanged; the accessor is the one member that hoists the list away, the way the factory does. It is value-dependent where the factory's input is: a transparent wrapper element that carries only its content (none of the wrapper's other slots is populated) reads as its content arm, and a decorated one stays the wrapper, which is what the factory accepts for each. Both forms are in the element type, so a read item can be passed straight back to the setter.
 
+`listSlotHints` gives the same facts, plus the list's raw factory, for the slots of a parent that has other slots and whose list is hoisted (`hoistedListSlotTargets`): a list that is not hoisted is not hoisted by the config either, which takes the list node alone, so it keeps reading as the list node. The two functions share `listSlotFacts`, so an owner's slot and a multi-slot parent's slot read the same element type from the same derivation.
+
 ### `packages/codegen/src/emitters/factories.ts::TextFactoryNode`
 
 ```text
@@ -16460,6 +16462,8 @@ The options a separated list's factory takes, each with the expression the facto
 ### `packages/codegen/src/emitters/factories.ts::listOwnerRuntimeSpec`
 
 The object literal a list owner's builder and wrap pass to `withListOwner`: the owner's accessor for its list (`list`), the list's accessor for its elements (`elements`), the list's kind id (`kind`), each option its factory takes as `{ key, default }`, the list's own raw factory (`make`), and, when the list's element is a transparent wrapper, the wrapper's kind id, the accessor that names its content and the storage keys of its other slots (`wrapper`). `factoryScope` prefixes the raw factory's name where the caller reaches it through a namespace import (the wrap module). It shares `listOwnerTarget` with `listOwnerHint`, so the type-level marker and the runtime members come from one test of list-ownership; `undefined` means the node is not a list owner and neither emitter adds the call. The wrapper facts come from `separatedListSurface`, which derives the factory's element union from the same wrapper, so the read collapse and the factory's wrap of bare content cannot disagree.
+
+`listSlotsRuntimeSpec` gives the array of specs a multi-slot parent passes to `withListSlots`: the same `list`, `elements`, `kind`, `make` and `wrapper` fields, without the options, which only an owner reads. `listSeatRuntime` names the helper and its spec for a node (`withListOwner` for an owner, `withListSlots` for a parent with hoisted list slots, nothing otherwise), so the builder and the wrap module emit one call from one decision.
 
 ### `packages/codegen/src/emitters/factories.ts::listOwnerTarget`
 

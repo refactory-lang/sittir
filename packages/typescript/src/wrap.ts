@@ -1198,9 +1198,9 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle): T.Expo
 				list: 'exportSpecifiers',
 				elements: 'exportSpecifiers',
 				kind: TSKindId.ExportSpecifiers as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildExportSpecifiers,
-				wrapper: { kind: TSKindId.ExportSpecifier, content: 'name', decorations: ['_export_kind', '_alias'] }
+				wrapper: { kind: TSKindId.ExportSpecifier, content: 'name', decorations: ['_export_kind', '_alias'] },
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	);
@@ -1493,8 +1493,8 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle): T.Name
 				list: 'importSpecifiers',
 				elements: 'importSpecifiers',
 				kind: TSKindId.ImportSpecifiers as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: RAW.buildImportSpecifiers
+				make: RAW.buildImportSpecifiers,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	);
@@ -5781,8 +5781,8 @@ export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle)
 				list: 'formalParametersElements',
 				elements: 'formalParameters',
 				kind: TSKindId.FormalParametersElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: RAW.buildFormalParametersElements
+				make: RAW.buildFormalParametersElements,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	);
@@ -8071,8 +8071,8 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle): T.EnumBody.Par
 				list: 'enumBodyElements',
 				elements: 'contents',
 				kind: TSKindId.EnumBodyElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
-				make: RAW.buildEnumBodyElements
+				make: RAW.buildEnumBodyElements,
+				options: [{ key: 'delimiter', default: Delimiter.Trailing }]
 			}
 		)
 	);
@@ -10340,8 +10340,8 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 				list: 'types',
 				elements: 'types',
 				kind: TSKindId.Types as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: RAW.buildTypes
+				make: RAW.buildTypes,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	);
@@ -10640,13 +10640,13 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 				list: 'typeParametersElements',
 				elements: 'typeParameters',
 				kind: TSKindId.TypeParametersElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildTypeParametersElements,
 				wrapper: {
 					kind: TSKindId.TypeParameter,
 					content: 'name',
 					decorations: ['_const_marker', '_constraint', '_value']
-				}
+				},
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	);
@@ -10964,8 +10964,8 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 				list: 'tupleTypeMembers',
 				elements: 'tupleTypeMembers',
 				kind: TSKindId.TupleTypeMembers as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: RAW.buildTupleTypeMembers
+				make: RAW.buildTupleTypeMembers,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	);

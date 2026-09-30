@@ -15,7 +15,8 @@ import {
 	orDefault,
 	rejectBareText,
 	rejectKeywordText,
-	withListOwner
+	withListOwner,
+	withListSlots
 } from '@sittir/common/utils';
 import { withMethods } from '../utils.js';
 
@@ -999,9 +1000,9 @@ function _buildEnumVariantList(
 				list: 'enumVariantListElements',
 				elements: 'elements',
 				kind: TSKindId.EnumVariantListElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
 				make: buildEnumVariantListElements,
-				wrapper: { kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['_attribute_item'] }
+				wrapper: { kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['_attribute_item'] },
+				options: [{ key: 'delimiter', default: Delimiter.Trailing }]
 			}
 		)
 	) as unknown as T.EnumVariantList.Bound;
@@ -1107,13 +1108,13 @@ function _buildFieldDeclarationList(
 				list: 'fieldDeclarationListElements',
 				elements: 'elements',
 				kind: TSKindId.FieldDeclarationListElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
 				make: buildFieldDeclarationListElements,
 				wrapper: {
 					kind: TSKindId.AttributedFieldDeclaration,
 					content: 'fieldDeclaration',
 					decorations: ['_attribute_item']
-				}
+				},
+				options: [{ key: 'delimiter', default: Delimiter.Trailing }]
 			}
 		)
 	) as unknown as T.FieldDeclarationList.Bound;
@@ -1220,13 +1221,13 @@ function _buildOrderedFieldDeclarationList(
 				list: 'attributes',
 				elements: 'elements',
 				kind: TSKindId.OrderedFieldDeclarationListElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: buildOrderedFieldDeclarationListElements,
 				wrapper: {
 					kind: TSKindId.AttributedOrderedField,
 					content: 'type',
 					decorations: ['_attribute_item', '_visibility_modifier']
-				}
+				},
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.OrderedFieldDeclarationList.Bound;
@@ -1663,8 +1664,8 @@ function _buildWhereClause(value?: AdmitBound<T.WherePredicates, T.AdmittedNodes
 				list: 'wherePredicates',
 				elements: 'wherePredicates',
 				kind: TSKindId.WherePredicates as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: buildWherePredicates
+				make: buildWherePredicates,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.WhereClause.Bound;
@@ -1977,9 +1978,9 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 				list: 'typeParametersElements',
 				elements: 'elements',
 				kind: TSKindId.TypeParametersElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: buildTypeParametersElements,
-				wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['_attribute_item'] }
+				wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['_attribute_item'] },
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.TypeParameters.Bound;
@@ -2428,8 +2429,8 @@ function _buildUseList(value?: AdmitBound<T.UseClauses, T.AdmittedNodes>): T.Use
 				list: 'useClauses',
 				elements: 'useClauses',
 				kind: TSKindId.UseClauses as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: buildUseClauses
+				make: buildUseClauses,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.UseList.Bound;
@@ -2651,9 +2652,9 @@ function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNod
 				list: 'parametersElements',
 				elements: 'elements',
 				kind: TSKindId.ParametersElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: buildParametersElements,
-				wrapper: { kind: TSKindId.AttributedParameter, content: 'content', decorations: ['_attribute_item'] }
+				wrapper: { kind: TSKindId.AttributedParameter, content: 'content', decorations: ['_attribute_item'] },
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.Parameters.Bound;
@@ -3005,8 +3006,8 @@ function _buildForLifetimes(value: AdmitBound<T.Lifetimes, T.AdmittedNodes>): T.
 				list: 'lifetimes',
 				elements: 'lifetimes',
 				kind: TSKindId.Lifetimes as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: buildLifetimes
+				make: buildLifetimes,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.ForLifetimes.Bound;
@@ -3106,8 +3107,8 @@ function _buildTupleType(value: AdmitBound<T.TupleTypeElements, T.AdmittedNodes>
 				list: 'tupleTypeElements',
 				elements: 'types',
 				kind: TSKindId.TupleTypeElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: buildTupleTypeElements
+				make: buildTupleTypeElements,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.TupleType.Bound;
@@ -3297,8 +3298,8 @@ function _buildUseBounds(value?: AdmitBound<T.UseBoundsElements, T.AdmittedNodes
 				list: 'bounds',
 				elements: 'elements',
 				kind: TSKindId.UseBoundsElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: buildUseBoundsElements
+				make: buildUseBoundsElements,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.UseBounds.Bound;
@@ -3365,9 +3366,9 @@ function _buildTypeArguments(value: AdmitBound<T.TypeArgumentsElements, T.Admitt
 				list: 'typeArgumentsElements',
 				elements: 'elements',
 				kind: TSKindId.TypeArgumentsElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: buildTypeArgumentsElements,
-				wrapper: { kind: TSKindId.TypeArgument, content: 'content', decorations: ['_trait_bounds'] }
+				wrapper: { kind: TSKindId.TypeArgument, content: 'content', decorations: ['_trait_bounds'] },
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.TypeArguments.Bound;
@@ -4305,9 +4306,9 @@ function _buildArguments(value?: AdmitBound<T.ArgumentsElements, T.AdmittedNodes
 				list: 'argumentsElements',
 				elements: 'elements',
 				kind: TSKindId.ArgumentsElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: buildArgumentsElements,
-				wrapper: { kind: TSKindId.AttributedArgument, content: 'expression', decorations: ['_attribute_item'] }
+				wrapper: { kind: TSKindId.AttributedArgument, content: 'expression', decorations: ['_attribute_item'] },
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.Arguments.Bound;
@@ -4469,8 +4470,8 @@ function _buildFieldInitializerList(
 				list: 'initializers',
 				elements: 'elements',
 				kind: TSKindId.FieldInitializerListElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: buildFieldInitializerListElements
+				make: buildFieldInitializerListElements,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.FieldInitializerList.Bound;
@@ -5437,8 +5438,8 @@ function _buildTuplePattern(value?: AdmitBound<T.TuplePatternElements, T.Admitte
 				list: 'elements',
 				elements: 'elements',
 				kind: TSKindId.TuplePatternElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: buildTuplePatternElements
+				make: buildTuplePatternElements,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.TuplePattern.Bound;
@@ -5490,8 +5491,8 @@ function _buildSlicePattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.
 				list: 'patterns',
 				elements: 'patterns',
 				kind: TSKindId.Patterns as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: buildPatterns
+				make: buildPatterns,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.SlicePattern.Bound;
@@ -5501,23 +5502,26 @@ export function buildTupleStructPattern(config: T.TupleStructPattern.Config): T.
 	const _type = rejectBareText(config.type, 'TupleStructPattern.type', 'buildIdentifier(…)');
 	const _patterns = rejectBareText(config.patterns, 'TupleStructPattern.patterns', 'a built Patterns');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TupleStructPattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type,
-				_patterns,
-				$with: {
-					type: (value: T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish) =>
-						buildTupleStructPattern({ ...config, type: value }),
-					patterns: (value?: T.Patterns) => buildTupleStructPattern({ ...config, patterns: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.TupleStructPattern as const,
+					$source: 2 as const,
+					$named: true as const,
+					_type,
+					_patterns,
+					$with: {
+						type: (value: T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish) =>
+							buildTupleStructPattern({ ...config, type: value }),
+						patterns: (value?: T.Patterns) => buildTupleStructPattern({ ...config, patterns: value })
+					}
+				},
+				{
+					type: () => _type,
+					patterns: () => _patterns
 				}
-			},
-			{
-				type: () => _type,
-				patterns: () => _patterns
-			}
+			),
+			[{ list: 'patterns', elements: 'patterns', kind: TSKindId.Patterns as const, make: buildPatterns }]
 		)
 	) as unknown as T.TupleStructPattern.Bound;
 }
@@ -5529,23 +5533,33 @@ export function buildStructPattern(config: T.StructPattern.Config): T.StructPatt
 	);
 	const _fields = rejectBareText(config.fields, 'StructPattern.fields', 'a built StructPatternElements');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.StructPattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type,
-				_fields,
-				$with: {
-					type: (value: T.TypeIdentifier | T.ScopedTypeIdentifier | T.TypeIdentifier.Types) =>
-						buildStructPattern({ ...config, type: value }),
-					fields: (value?: T.StructPatternElements) => buildStructPattern({ ...config, fields: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.StructPattern as const,
+					$source: 2 as const,
+					$named: true as const,
+					_type,
+					_fields,
+					$with: {
+						type: (value: T.TypeIdentifier | T.ScopedTypeIdentifier | T.TypeIdentifier.Types) =>
+							buildStructPattern({ ...config, type: value }),
+						fields: (value?: T.StructPatternElements) => buildStructPattern({ ...config, fields: value })
+					}
+				},
+				{
+					type: () => _type,
+					fields: () => _fields
 				}
-			},
-			{
-				type: () => _type,
-				fields: () => _fields
-			}
+			),
+			[
+				{
+					list: 'fields',
+					elements: 'elements',
+					kind: TSKindId.StructPatternElements as const,
+					make: buildStructPatternElements
+				}
+			]
 		)
 	) as unknown as T.StructPattern.Bound;
 }
@@ -7848,23 +7862,34 @@ export function buildArrayExpressionList(
 		'a built ArgumentsElements'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ArrayExpressionList as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attributes,
-				_arguments_elements,
-				$with: {
-					attributes: (...values: T.AttributeItem[]) => buildArrayExpressionList({ ...config, attributes: values }),
-					argumentsElements: (value?: T.ArgumentsElements) =>
-						buildArrayExpressionList({ ...config, argumentsElements: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.ArrayExpressionList as const,
+					$source: 2 as const,
+					$named: true as const,
+					_attributes,
+					_arguments_elements,
+					$with: {
+						attributes: (...values: T.AttributeItem[]) => buildArrayExpressionList({ ...config, attributes: values }),
+						argumentsElements: (value?: T.ArgumentsElements) =>
+							buildArrayExpressionList({ ...config, argumentsElements: value })
+					}
+				},
+				{
+					attributes: () => _attributes,
+					argumentsElements: () => _arguments_elements
 				}
-			},
-			{
-				attributes: () => _attributes,
-				argumentsElements: () => _arguments_elements
-			}
+			),
+			[
+				{
+					list: 'argumentsElements',
+					elements: 'elements',
+					kind: TSKindId.ArgumentsElements as const,
+					make: buildArgumentsElements,
+					wrapper: { kind: TSKindId.AttributedArgument, content: 'expression', decorations: ['_attribute_item'] }
+				}
+			]
 		)
 	) as unknown as T.ArrayExpressionList.Bound;
 }
@@ -9661,23 +9686,26 @@ export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config)
 	);
 	const _macro_rules = rejectBareText(config.macroRules, 'MacroDefinitionParen.macroRules', 'a built MacroRules');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MacroDefinitionParen as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_macro_rules,
-				$with: {
-					name: (value: NonNullable<T.MacroDefinitionParen.Config>['name']) =>
-						buildMacroDefinitionParen({ ...config, name: value }),
-					macroRules: (value?: T.MacroRules) => buildMacroDefinitionParen({ ...config, macroRules: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.MacroDefinitionParen as const,
+					$source: 2 as const,
+					$named: true as const,
+					_name,
+					_macro_rules,
+					$with: {
+						name: (value: NonNullable<T.MacroDefinitionParen.Config>['name']) =>
+							buildMacroDefinitionParen({ ...config, name: value }),
+						macroRules: (value?: T.MacroRules) => buildMacroDefinitionParen({ ...config, macroRules: value })
+					}
+				},
+				{
+					name: () => _name,
+					macroRules: () => _macro_rules
 				}
-			},
-			{
-				name: () => _name,
-				macroRules: () => _macro_rules
-			}
+			),
+			[{ list: 'macroRules', elements: 'macroRules', kind: TSKindId.MacroRules as const, make: buildMacroRules }]
 		)
 	) as unknown as T.MacroDefinitionParen.Bound;
 }
@@ -9699,23 +9727,26 @@ export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Con
 	);
 	const _macro_rules = rejectBareText(config.macroRules, 'MacroDefinitionBracket.macroRules', 'a built MacroRules');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MacroDefinitionBracket as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_macro_rules,
-				$with: {
-					name: (value: NonNullable<T.MacroDefinitionBracket.Config>['name']) =>
-						buildMacroDefinitionBracket({ ...config, name: value }),
-					macroRules: (value?: T.MacroRules) => buildMacroDefinitionBracket({ ...config, macroRules: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.MacroDefinitionBracket as const,
+					$source: 2 as const,
+					$named: true as const,
+					_name,
+					_macro_rules,
+					$with: {
+						name: (value: NonNullable<T.MacroDefinitionBracket.Config>['name']) =>
+							buildMacroDefinitionBracket({ ...config, name: value }),
+						macroRules: (value?: T.MacroRules) => buildMacroDefinitionBracket({ ...config, macroRules: value })
+					}
+				},
+				{
+					name: () => _name,
+					macroRules: () => _macro_rules
 				}
-			},
-			{
-				name: () => _name,
-				macroRules: () => _macro_rules
-			}
+			),
+			[{ list: 'macroRules', elements: 'macroRules', kind: TSKindId.MacroRules as const, make: buildMacroRules }]
 		)
 	) as unknown as T.MacroDefinitionBracket.Bound;
 }
@@ -9737,23 +9768,26 @@ export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config)
 	);
 	const _macro_rules = rejectBareText(config.macroRules, 'MacroDefinitionBrace.macroRules', 'a built MacroRules');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MacroDefinitionBrace as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_macro_rules,
-				$with: {
-					name: (value: NonNullable<T.MacroDefinitionBrace.Config>['name']) =>
-						buildMacroDefinitionBrace({ ...config, name: value }),
-					macroRules: (value?: T.MacroRules) => buildMacroDefinitionBrace({ ...config, macroRules: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.MacroDefinitionBrace as const,
+					$source: 2 as const,
+					$named: true as const,
+					_name,
+					_macro_rules,
+					$with: {
+						name: (value: NonNullable<T.MacroDefinitionBrace.Config>['name']) =>
+							buildMacroDefinitionBrace({ ...config, name: value }),
+						macroRules: (value?: T.MacroRules) => buildMacroDefinitionBrace({ ...config, macroRules: value })
+					}
+				},
+				{
+					name: () => _name,
+					macroRules: () => _macro_rules
 				}
-			},
-			{
-				name: () => _name,
-				macroRules: () => _macro_rules
-			}
+			),
+			[{ list: 'macroRules', elements: 'macroRules', kind: TSKindId.MacroRules as const, make: buildMacroRules }]
 		)
 	) as unknown as T.MacroDefinitionBrace.Bound;
 }

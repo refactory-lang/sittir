@@ -92,6 +92,7 @@ import {
 	constructorTargetKind,
 	builtTypeSurfaceOf,
 	listOwnerHint,
+	listSlotHints,
 	omitRegistered,
 	spellingTypeOf,
 	refineFormBuiltTypeSurfaceOf,
@@ -472,6 +473,7 @@ const VOCABULARY_IMPORTS = [
 	'GrammarInnerTriviaAt',
 	'SlotHint',
 	'ListOwnerHint',
+	'ListSlotHint',
 	'BoundOf',
 	'ParsedOf',
 	'AdmitBound',
@@ -953,15 +955,20 @@ function emitInterface(
 		if (aliasContentTypeExpr(node, nodeMap, kindEntries) !== undefined) {
 			lines.push(`  readonly __aliasContent__?: ${node.typeName}.Types;`);
 		}
-		const owner = listOwnerHint(node, nodeMap, kindEntries);
+		const listSlots = new Map(
+			[listOwnerHint(node, nodeMap, kindEntries), ...listSlotHints(node, nodeMap, kindEntries)].flatMap((hint) =>
+				hint === undefined ? [] : [[hint.slot, hint.items] as const]
+			)
+		);
 		for (const f of slots) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 			const propName = f.propertyName;
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			const opt = isRequired(f) ? '' : '?';
-			if (owner?.slot === propName) {
-				lines.push(`  ${propName}(): ${owner.items}${opt ? ' | undefined' : ''};`);
+			const items = listSlots.get(propName);
+			if (items !== undefined) {
+				lines.push(`  ${propName}(): ${items}${opt ? ' | undefined' : ''};`);
 			} else if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;
 				const arrType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `readonly (${elemType})[]`;
@@ -984,6 +991,7 @@ function emitSlotHints(
 ): void {
 	const setters = builtTypeSurfaceOf(node, nodeMap, kindEntries)?.setters ?? [];
 	const owner = listOwnerHint(node, nodeMap, kindEntries);
+	const listSlots = listSlotHints(node, nodeMap, kindEntries);
 	if (setters.length === 0 && owner === undefined) return;
 	lines.push('  readonly __slotHints__?: {');
 	for (const setter of setters) {
@@ -992,6 +1000,11 @@ function emitSlotHints(
 	}
 	if (owner !== undefined)
 		lines.push(`    readonly $listOwner: ListOwnerHint<${owner.element}, ${owner.options}, ${JSON.stringify(owner.slot)}>;`);
+	if (listSlots.length > 0) {
+		lines.push('    readonly $listSlots: {');
+		for (const hint of listSlots) lines.push(`      readonly ${hint.slot}: ListSlotHint<${hint.element}, ${hint.options}>;`);
+		lines.push('    };');
+	}
 	lines.push('  };');
 }
 

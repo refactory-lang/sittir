@@ -126,7 +126,8 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 			if (seatedKeywordTexts(slot, nodeMap, kindEntries).length > 0) imports.add('rejectKeywordText');
 			if (kindEntries !== undefined && slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
 		}
-		if (listOwnerRuntimeSpec(node, nodeMap, kindEntries) !== undefined) imports.add('withListOwner');
+		const listSeat = listSeatRuntime(node, nodeMap, kindEntries);
+		if (listSeat !== undefined) imports.add(listSeat.helper);
 		if (kindEntries !== undefined && node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)
 			imports.add('admitAliasContent');
 	}
@@ -1241,8 +1242,8 @@ function emitFieldCarryingFactory(
 			);
 		}
 	}
-	const ownerSpec = listOwnerRuntimeSpec(node, nodeMap, kindEntries);
-	lines.push(`  return withMethods(${ownerSpec === undefined ? '' : 'withListOwner('}withAccessors({`);
+	const listSeat = listSeatRuntime(node, nodeMap, kindEntries);
+	lines.push(`  return withMethods(${listSeat === undefined ? '' : `${listSeat.helper}(`}withAccessors({`);
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
@@ -1255,7 +1256,7 @@ function emitFieldCarryingFactory(
 		const propName = f.propertyName;
 		lines.push(`    ${propName}: () => ${f.storageKey},`);
 	}
-	lines.push(ownerSpec === undefined ? `  })) as unknown as ${builtName};` : `  }), ${ownerSpec})) as unknown as ${builtName};`);
+	lines.push(listSeat === undefined ? `  })) as unknown as ${builtName};` : `  }), ${listSeat.spec})) as unknown as ${builtName};`);
 	lines.push('}');
 
 	const { directParamType, directParamOptional } = surface;
@@ -1622,6 +1623,45 @@ function listOwnerTarget(
 	return list instanceof AssembledList && owner !== undefined ? { owner, list } : undefined;
 }
 
+function hoistedListSlotTargets(
+	node: AssembledNode,
+	nodeMap: NodeMap
+): readonly { readonly slot: AssembledNonterminal; readonly list: AssembledList }[] {
+	if (!isSlotBearingCompound(node) || listOwnerTarget(node, nodeMap) !== undefined) return [];
+	return node.slots.flatMap((slot) => {
+		const kinds = slotKindNames(slot);
+		const list = kinds.length === 1 ? nodeMap.nodes.get(kinds[0]!) : undefined;
+		return list instanceof AssembledList && list.annotations?.hoisted === true && !isMultiple(slot) ? [{ slot, list }] : [];
+	});
+}
+
+function listSlotFacts(list: AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined) {
+	const surface = separatedListSurface(list, nodeMap, kindEntries);
+	return {
+		element: surface.elemType,
+		options: surface.optionsType ?? '{}',
+		factory: list.rawFactoryName!,
+		items: list.nonEmpty ? `NonEmptyArray<${surface.elemType}>` : `readonly ${parenthesizeUnion(surface.elemType)}[]`
+	};
+}
+
+export function listSlotHints(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): readonly {
+	readonly element: string;
+	readonly options: string;
+	readonly slot: string;
+	readonly items: string;
+	readonly factory: string;
+}[] {
+	return hoistedListSlotTargets(node, nodeMap).map(({ slot, list }) => ({
+		slot: slot.propertyName,
+		...listSlotFacts(list, nodeMap, kindEntries)
+	}));
+}
+
 export function listOwnerHint(
 	node: AssembledNode,
 	nodeMap: NodeMap,
@@ -1631,16 +1671,26 @@ export function listOwnerHint(
 	readonly options: string;
 	readonly slot: string;
 	readonly items: string;
+	readonly factory: string;
 } | undefined {
 	const target = listOwnerTarget(node, nodeMap);
 	if (target === undefined) return undefined;
-	const surface = separatedListSurface(target.list, nodeMap, kindEntries);
-	return {
-		element: surface.elemType,
-		options: surface.optionsType ?? '{}',
-		slot: target.owner.propertyName,
-		items: target.list.nonEmpty ? `NonEmptyArray<${surface.elemType}>` : `readonly ${parenthesizeUnion(surface.elemType)}[]`
-	};
+	return { slot: target.owner.propertyName, ...listSlotFacts(target.list, nodeMap, kindEntries) };
+}
+
+function listSlotRuntimeFields(
+	slot: AssembledNonterminal,
+	list: AssembledList,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	factoryScope: string
+): string {
+	const wrapper = separatedListSurface(list, nodeMap, kindEntries).wrapper;
+	const wrapperSpec =
+		wrapper === undefined
+			? ''
+			: `, wrapper: { kind: TSKindId.${wrapper.member}, content: ${JSON.stringify(wrapper.contentProperty)}, decorations: ${JSON.stringify(wrapper.decorationKeys)} }`;
+	return `list: ${JSON.stringify(slot.propertyName)}, elements: ${JSON.stringify(canonicalSeparatedListField(list).propertyName)}, kind: ${factoryTypeDiscriminant(list.kind, nodeMap, kindEntries)}, make: ${factoryScope}${list.rawFactoryName}${wrapperSpec}`;
 }
 
 export function listOwnerRuntimeSpec(
@@ -1654,12 +1704,30 @@ export function listOwnerRuntimeSpec(
 	const options = listOptionDefaults(target.list, nodeMap, kindEntries)
 		.map((option) => `{ key: ${JSON.stringify(option.key)}, default: ${option.default} }`)
 		.join(', ');
-	const wrapper = separatedListSurface(target.list, nodeMap, kindEntries).wrapper;
-	const wrapperSpec =
-		wrapper === undefined
-			? ''
-			: `, wrapper: { kind: TSKindId.${wrapper.member}, content: ${JSON.stringify(wrapper.contentProperty)}, decorations: ${JSON.stringify(wrapper.decorationKeys)} }`;
-	return `{ list: ${JSON.stringify(target.owner.propertyName)}, elements: ${JSON.stringify(canonicalSeparatedListField(target.list).propertyName)}, kind: ${factoryTypeDiscriminant(target.list.kind, nodeMap, kindEntries)}, options: [${options}], make: ${factoryScope}${target.list.rawFactoryName}${wrapperSpec} }`;
+	return `{ ${listSlotRuntimeFields(target.owner, target.list, nodeMap, kindEntries, factoryScope)}, options: [${options}] }`;
+}
+
+export function listSeatRuntime(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	factoryScope = ''
+): { readonly helper: 'withListOwner' | 'withListSlots'; readonly spec: string } | undefined {
+	const owner = listOwnerRuntimeSpec(node, nodeMap, kindEntries, factoryScope);
+	if (owner !== undefined) return { helper: 'withListOwner', spec: owner };
+	const slots = listSlotsRuntimeSpec(node, nodeMap, kindEntries, factoryScope);
+	return slots === undefined ? undefined : { helper: 'withListSlots', spec: slots };
+}
+
+function listSlotsRuntimeSpec(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	factoryScope = ''
+): string | undefined {
+	const targets = hoistedListSlotTargets(node, nodeMap);
+	if (targets.length === 0) return undefined;
+	return `[${targets.map(({ slot, list }) => `{ ${listSlotRuntimeFields(slot, list, nodeMap, kindEntries, factoryScope)} }`).join(', ')}]`;
 }
 
 export function separatedListSurface(

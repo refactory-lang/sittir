@@ -202,6 +202,10 @@ What one slot of a kind interface contributes to its node surfaces: the type its
 
 Marks a kind whose sole content is a separated list: the element type its factory accepts (`Element`), the options its factory takes, and the name of the slot that holds the list (`Slot`). Stamped under the reserved `$listOwner` key of `__slotHints__`, from the same fact that gives the strict factory its `(options?, ...items)` overloads. One element type serves every surface: the accessor reads it, iteration yields it, the `$with` setter admits it, so a read item is always accepted back by the setter that rebuilds the owner.
 
+### `packages/types/src/node-surface.ts::ListSlotHint`
+
+Marks one hoisted list slot of a parent that has other slots: the element type its list factory accepts and the options that factory takes. Stamped per slot under the reserved `$listSlots` key of `__slotHints__`. Such a parent is not a list owner (it does not iterate, and its `$with` is not callable), but its config takes the list's items in the slot, so its accessor reads the slot as those items and its setter for the slot takes the shapes the config key takes: the whole list node, `[first, ...rest]` or `[options, first, ...rest]`, each element admitted like the factory's element input, or no argument on an optional slot to clear it.
+
 ### `packages/types/src/node-surface.ts::NarrowTo`
 
 What a supertype guard narrows its input to, given the supertype's member kind ids `D`. A numeric input keeps the ids in `D`. A node whose `$type` is a union of ids keeps the whole node when they all lie in `D`, and is intersected with `{ $type: D }` on the ids that do. A node broadly typed `$type: number` is intersected with `{ $type: D }`; it is detected by identity with `number`, because a numeric enum member accepts any `number` in assignability and would otherwise be taken for a member. It reads the `$type` property only, so a `.Parsed` union is never related to a storage interface.
@@ -227,6 +231,8 @@ The members a list owner adds on top of its own accessors (its `$with` is callab
 One setter per stamped slot, reading only `__slotHints__`. A required slot takes its input and returns the node with that slot's accessor retyped to the input. An optional slot also has a no-argument form that clears it, and reads back `undefined`. A slot stamped `rest` is set with rest arguments, its input being the rest type, exactly as the factory takes it; a slot whose input is an array but is not stamped `rest` takes the array as one value. The retyped accessor comes from the declared input, never from the argument's own type: inferring the argument per call is what made type-checking unbounded.
 
 A list owner's list slot takes the shapes its factory takes: the whole list node, `(options, ...items)` or `(...items)`, each item admitted like the factory's element input. The owner's `$with` is callable with the same signature, so `owner.$with(...)` and `owner.$with.<list>(...)` are one setter. The call replaces the list slot, so it returns what that slot's setter returns.
+
+A hoisted list slot of a parent with other slots takes one value, as its config key does: an array of items, an array led by the options, or the whole list node.
 
 ### `packages/types/src/node-surface.ts::WithOf`
 

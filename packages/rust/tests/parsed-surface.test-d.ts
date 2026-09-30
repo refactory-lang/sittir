@@ -73,3 +73,15 @@ export function listOwnerReadsItems(): string {
 	expectTrue<Equals<NonNullable<typeof items>[number], ItemOf<typeof params>>>();
 	return params.$with.parametersElements(...items!).$render();
 }
+
+export function hoistedListSlotReadsItems(): string {
+	const item = rs.parse('fn f() { let Some(a) = x; }\n').statements()[0]!;
+	if (!rs.is.functionItem(item)) return '';
+	const statement = item.body().statements()[0]!;
+	if (!rs.is.letDeclaration(statement)) return '';
+	const pattern = statement.pattern();
+	if (!rs.is.tupleStructPattern(pattern)) return '';
+	const items = pattern.patterns();
+	const rebuilt = pattern.$with.patterns(items!);
+	return rebuilt.$render();
+}

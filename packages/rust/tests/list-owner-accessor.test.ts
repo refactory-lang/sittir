@@ -55,3 +55,44 @@ describe('a list owner reads its hoisted list slot as the list items', () => {
 		expect(rebuilt.parametersElements()).toHaveLength(1);
 	});
 });
+
+describe('a hoisted list slot of a multi-slot parent reads as the items the config takes', () => {
+	const patternOf = (source: string) => {
+		const item = rs.parse(source).statements()[0]!;
+		if (!rs.is.functionItem(item)) throw new Error('not a function');
+		const statement = item.body().statements()[0]!;
+		if (!rs.is.letDeclaration(statement)) throw new Error('not a let');
+		const pattern = statement.pattern();
+		if (!rs.is.tupleStructPattern(pattern)) throw new Error('not a tuple struct pattern');
+		return pattern;
+	};
+
+	it('returns the items of a parsed list slot', () => {
+		const items = patternOf('fn f() { let Some(a, b) = x; }\n').patterns();
+		expect(Array.isArray(items)).toBe(true);
+		expect(items).toHaveLength(2);
+	});
+
+	it('returns the items of a built one', () => {
+		const built = rs.build.tupleStructPattern.strict({
+			type: rs.build.identifier('Some'),
+			patterns: [rs.build.identifier('p')]
+		});
+		expect(built.patterns()).toHaveLength(1);
+	});
+
+	it('takes an array of items through $with, as its config key does, and reads the items back', () => {
+		const pattern = patternOf('fn f() { let Some(a, b) = x; }\n');
+		const [first, second] = pattern.patterns()!;
+		const rebuilt = pattern.$with.patterns([second!, first!]);
+		expect(rebuilt.patterns()).toHaveLength(2);
+		expect(rebuilt.$render()).toBe('Some(b, a)');
+	});
+
+	it('takes the whole list node through $with, and clears the slot with no argument', () => {
+		const pattern = patternOf('fn f() { let Some(a) = x; }\n');
+		const whole = rs.build.patterns(rs.build.identifier('q'), rs.build.identifier('r'));
+		expect(pattern.$with.patterns(whole).patterns()).toHaveLength(2);
+		expect(pattern.$with.patterns().patterns()).toBeUndefined();
+	});
+});

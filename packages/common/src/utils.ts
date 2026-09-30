@@ -205,13 +205,16 @@ interface ListOwnerWrapper {
 	readonly decorations: readonly string[];
 }
 
-interface ListOwnerSpec {
+interface ListSlotSpec {
 	readonly list: string;
 	readonly elements: string;
 	readonly kind: number;
-	readonly options: readonly ListOwnerOption[];
 	readonly make: (...args: never[]) => unknown;
 	readonly wrapper?: ListOwnerWrapper;
+}
+
+interface ListOwnerSpec extends ListSlotSpec {
+	readonly options: readonly ListOwnerOption[];
 }
 
 type Members = Record<string, (...args: unknown[]) => unknown>;
@@ -238,61 +241,88 @@ export function storedSlotReader(node: object, accessor: string): unknown {
 	return readers?.[accessor] ?? (node as Record<string, unknown>)[accessor];
 }
 
-export function withListOwner<T extends object>(node: T, spec: ListOwnerSpec): T {
+const defineHidden = (node: object, key: PropertyKey, descriptor: PropertyDescriptor): void => {
+	Object.defineProperty(node, key, { enumerable: false, configurable: true, ...descriptor });
+};
+
+type ListOf = (self: object) => Record<string, unknown> | undefined;
+
+function hoistListSlot<T extends object>(node: T, spec: ListSlotSpec): { listOf: ListOf; itemsOf: (self: object) => readonly unknown[] | undefined } {
 	const own = Object.getOwnPropertyDescriptor(node, spec.list);
 	const readList = (own?.value ?? (node as unknown as Members)[spec.list]) as (
 		this: object
 	) => Record<string, unknown> | undefined;
-	const listOf = (self: object): Record<string, unknown> | undefined => readList.call(self);
+	const listOf: ListOf = (self) => readList.call(self);
 	const itemsOf = (self: object): readonly unknown[] | undefined => {
 		const list = listOf(self);
 		if (list === undefined) return undefined;
 		const elements = ((list[spec.elements] as () => readonly unknown[]).call(list) ?? []) as readonly unknown[];
 		return elements.map((element) => collapseWrapper(element, spec.wrapper));
 	};
-	const define = (key: PropertyKey, descriptor: PropertyDescriptor): void => {
-		Object.defineProperty(node, key, { enumerable: false, configurable: true, ...descriptor });
-	};
-	define(STORED_SLOT_READERS, { value: { [spec.list]: readList } });
-	define(spec.list, {
+	const known = (node as { readonly [STORED_SLOT_READERS]?: StoredSlotReaders })[STORED_SLOT_READERS];
+	defineHidden(node, STORED_SLOT_READERS, { value: { ...known, [spec.list]: readList } });
+	defineHidden(node, spec.list, {
 		enumerable: own?.enumerable ?? false,
 		value: function (this: object): readonly unknown[] | undefined {
 			return itemsOf(this);
 		}
 	});
-	define(Symbol.iterator, {
-		value: function (this: object): IterableIterator<unknown> {
-			return (itemsOf(this) ?? [])[Symbol.iterator]();
-		}
-	});
-	define('length', {
-		get(this: object) {
-			return itemsOf(this)?.length ?? 0;
-		}
-	});
-	define('at', {
-		value: function (this: object, index: number): unknown {
-			return itemsOf(this)?.at(index);
-		}
-	});
-	for (const option of spec.options) {
-		define(option.key, {
-			get(this: object) {
-				return listOf(this)?.[`_${option.key}`] ?? option.default;
-			}
-		});
-	}
-	makeWithCallable(node, spec);
-	return node;
+	return { listOf, itemsOf };
 }
 
-function makeWithCallable(node: object, spec: ListOwnerSpec): void {
+function adaptListSetter(node: object, spec: ListSlotSpec, arrayForm: boolean): void {
 	const own = Object.getOwnPropertyDescriptor(node, '$with');
 	const setters = own?.value as Members | undefined;
 	const setList = setters?.[spec.list];
 	if (own === undefined || setters === undefined || setList === undefined) return;
 	const make = spec.make as (...args: unknown[]) => unknown;
-	setters[spec.list] = (...args) => setList(isWholeList(args, spec.kind) ? args[0] : make(...args));
+	setters[spec.list] = (...args) => {
+		if (isWholeList(args, spec.kind)) return setList(args[0]);
+		return setList(arrayForm && args.length === 1 && Array.isArray(args[0]) ? make(...args[0]) : make(...args));
+	};
+}
+
+export function withListSlots<T extends object>(node: T, specs: readonly ListSlotSpec[]): T {
+	for (const spec of specs) {
+		hoistListSlot(node, spec);
+		adaptListSetter(node, spec, true);
+	}
+	return node;
+}
+
+export function withListOwner<T extends object>(node: T, spec: ListOwnerSpec): T {
+	const { listOf, itemsOf } = hoistListSlot(node, spec);
+	defineHidden(node, Symbol.iterator, {
+		value: function (this: object): IterableIterator<unknown> {
+			return (itemsOf(this) ?? [])[Symbol.iterator]();
+		}
+	});
+	defineHidden(node, 'length', {
+		get(this: object) {
+			return itemsOf(this)?.length ?? 0;
+		}
+	});
+	defineHidden(node, 'at', {
+		value: function (this: object, index: number): unknown {
+			return itemsOf(this)?.at(index);
+		}
+	});
+	for (const option of spec.options) {
+		defineHidden(node, option.key, {
+			get(this: object) {
+				return listOf(this)?.[`_${option.key}`] ?? option.default;
+			}
+		});
+	}
+	adaptListSetter(node, spec, false);
+	makeWithCallable(node, spec);
+	return node;
+}
+
+function makeWithCallable(node: object, spec: ListSlotSpec): void {
+	const own = Object.getOwnPropertyDescriptor(node, '$with');
+	const setters = own?.value as Members | undefined;
+	if (own === undefined || setters === undefined || setters[spec.list] === undefined) return;
 	const call = (...args: unknown[]): unknown => (call as unknown as Members)[spec.list]!(...args);
 	for (const key of Object.keys(setters)) {
 		Object.defineProperty(call, key, { value: setters[key], enumerable: true, writable: true, configurable: true });

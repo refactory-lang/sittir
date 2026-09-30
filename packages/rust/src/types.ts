@@ -19,6 +19,7 @@ import type {
 	GrammarInnerTrivia,
 	SlotHint,
 	ListOwnerHint,
+	ListSlotHint,
 	BoundOf,
 	ParsedOf,
 	AdmitBound,
@@ -8257,9 +8258,12 @@ export interface TupleStructPattern {
 	readonly __slotHints__?: {
 		readonly type: SlotHint<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>;
 		readonly patterns: SlotHint<T.Patterns, true>;
+		readonly $listSlots: {
+			readonly patterns: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	type(): Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
-	patterns(): Patterns | undefined;
+	patterns(): NonEmptyArray<T.Pattern> | undefined;
 }
 
 export interface StructPattern {
@@ -8272,9 +8276,15 @@ export interface StructPattern {
 	readonly __slotHints__?: {
 		readonly type: SlotHint<T.TypeIdentifier | T.ScopedTypeIdentifier | T.TypeIdentifier.Types>;
 		readonly fields: SlotHint<T.StructPatternElements, true>;
+		readonly $listSlots: {
+			readonly fields: ListSlotHint<
+				T.FieldPattern | TSKindId.RemainingFieldPattern,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	type(): TypeIdentifier | ScopedTypeIdentifier;
-	fields(): StructPatternElements | undefined;
+	fields(): NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern> | undefined;
 }
 
 export interface MutPattern {
@@ -9233,9 +9243,15 @@ export interface ArrayExpressionList {
 	readonly __slotHints__?: {
 		readonly attributes: SlotHint<T.AttributeItem[], true, true>;
 		readonly argumentsElements: SlotHint<T.ArgumentsElements, true>;
+		readonly $listSlots: {
+			readonly argumentsElements: ListSlotHint<
+				T.AttributedArgument | T.Expression,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	attributes(): readonly AttributeItem[];
-	argumentsElements(): ArgumentsElements | undefined;
+	argumentsElements(): NonEmptyArray<T.AttributedArgument | T.Expression> | undefined;
 }
 
 export interface AttributeInput {
@@ -10370,9 +10386,12 @@ export interface MacroDefinitionParen {
 	readonly __slotHints__?: {
 		readonly name: SlotHint<NonNullable<T.MacroDefinitionParen.Config>['name']>;
 		readonly macroRules: SlotHint<T.MacroRules, true>;
+		readonly $listSlots: {
+			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
-	macroRules(): MacroRules | undefined;
+	macroRules(): NonEmptyArray<T.MacroRule> | undefined;
 }
 
 export interface MacroDefinitionBracket {
@@ -10390,9 +10409,12 @@ export interface MacroDefinitionBracket {
 	readonly __slotHints__?: {
 		readonly name: SlotHint<NonNullable<T.MacroDefinitionBracket.Config>['name']>;
 		readonly macroRules: SlotHint<T.MacroRules, true>;
+		readonly $listSlots: {
+			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
-	macroRules(): MacroRules | undefined;
+	macroRules(): NonEmptyArray<T.MacroRule> | undefined;
 }
 
 export interface MacroDefinitionBrace {
@@ -10410,9 +10432,12 @@ export interface MacroDefinitionBrace {
 	readonly __slotHints__?: {
 		readonly name: SlotHint<NonNullable<T.MacroDefinitionBrace.Config>['name']>;
 		readonly macroRules: SlotHint<T.MacroRules, true>;
+		readonly $listSlots: {
+			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
-	macroRules(): MacroRules | undefined;
+	macroRules(): NonEmptyArray<T.MacroRule> | undefined;
 }
 
 export interface RangePatternPrefix {

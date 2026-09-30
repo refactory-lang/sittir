@@ -24,13 +24,13 @@ describe('the list-owner runtime spec', () => {
 				expect(spec === undefined).toBe(hint === undefined);
 				if (spec === undefined || hint === undefined) continue;
 				owners++;
-				const options = /options: \[([^\]]*)\]/.exec(spec)![1]!;
+				const options = /options: \[([^\]]*)\] \}$/.exec(spec)![1]!;
 				expect([...options.matchAll(/"(\w+)"/g)].map((m) => m[1]!).sort()).toEqual(keysOf(hint.options));
 				for (const key of keysOf(hint.options)) {
 					expect(spec).toMatch(new RegExp(`\\{ key: "${key}", default: [^}]+ \\}`));
 				}
-				expect(/make: (\w+) }$/.exec(spec)![1]).toMatch(/^build\w+$/);
-				expect(listOwnerRuntimeSpec(node, nodeMap, undefined, 'RAW.')).toMatch(/make: RAW\.build\w+ }$/);
+				expect(/make: (\w+)[,\s]/.exec(spec)![1]).toMatch(/^build\w+$/);
+				expect(listOwnerRuntimeSpec(node, nodeMap, undefined, 'RAW.')).toMatch(/make: RAW\.build\w+[,\s]/);
 			}
 			expect(owners).toBeGreaterThan(0);
 		});

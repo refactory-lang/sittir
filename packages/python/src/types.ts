@@ -20,6 +20,7 @@ import type {
 	GrammarInnerTrivia,
 	SlotHint,
 	ListOwnerHint,
+	ListSlotHint,
 	BoundOf,
 	ParsedOf,
 	AdmitBound,
@@ -2538,8 +2539,11 @@ export interface MatchStatement {
 	readonly __slotHints__?: {
 		readonly subjects: SlotHint<T.Subjects>;
 		readonly body: SlotHint<T.MatchBlock>;
+		readonly $listSlots: {
+			readonly subjects: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
-	subjects(): Subjects;
+	subjects(): NonEmptyArray<T.Expression>;
 	body(): MatchBlock;
 }
 
@@ -2568,8 +2572,11 @@ export interface CaseClause {
 		readonly casePatterns: SlotHint<T.CasePatterns>;
 		readonly guard: SlotHint<T.IfClause, true>;
 		readonly consequence: SlotHint<T.Suite>;
+		readonly $listSlots: {
+			readonly casePatterns: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
-	casePatterns(): CasePatterns;
+	casePatterns(): NonEmptyArray<T.CasePattern>;
 	guard(): IfClause | undefined;
 	consequence(): Suite;
 }
@@ -2980,9 +2987,12 @@ export interface ExpressionList {
 	readonly __slotHints__?: {
 		readonly expression: SlotHint<NonNullable<T.ExpressionList.Config>['expression']>;
 		readonly tail: SlotHint<NonNullable<T.ExpressionList.Config>['tail']>;
+		readonly $listSlots: {
+			readonly tail: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	expression(): Expression;
-	tail(): TSKindId.Comma | ExpressionListExpressions;
+	tail(): NonEmptyArray<T.Expression>;
 }
 
 export interface DottedName {
@@ -3340,9 +3350,12 @@ export interface ClassPattern {
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.DottedName>;
 		readonly arguments: SlotHint<T.ListPatternCasePatterns, true>;
+		readonly $listSlots: {
+			readonly arguments: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	name(): DottedName;
-	arguments(): ListPatternCasePatterns | undefined;
+	arguments(): NonEmptyArray<T.CasePattern> | undefined;
 }
 
 export interface ComplexPattern {
@@ -3788,9 +3801,12 @@ export interface PatternList {
 	readonly __slotHints__?: {
 		readonly pattern: SlotHint<T.Pattern>;
 		readonly tail: SlotHint<NonNullable<T.PatternList.Config>['tail']>;
+		readonly $listSlots: {
+			readonly tail: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	pattern(): Pattern;
-	tail(): TSKindId.Comma | PatternListPatterns;
+	tail(): NonEmptyArray<T.Pattern>;
 }
 
 export interface Yield {
@@ -3841,9 +3857,12 @@ export interface Subscript {
 	readonly __slotHints__?: {
 		readonly value: SlotHint<NonNullable<T.Subscript.Config>['value']>;
 		readonly subscripts: SlotHint<T.Subscripts>;
+		readonly $listSlots: {
+			readonly subscripts: ListSlotHint<T.Expression | T.Slice, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	value(): PrimaryExpression;
-	subscripts(): Subscripts;
+	subscripts(): NonEmptyArray<T.Expression | T.Slice>;
 }
 
 export interface Slice {

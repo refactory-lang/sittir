@@ -187,9 +187,9 @@ function _buildExportClause(value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNod
 				list: 'exportSpecifiers',
 				elements: 'exportSpecifiers',
 				kind: TSKindId.ExportSpecifiers as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: buildExportSpecifiers,
-				wrapper: { kind: TSKindId.ExportSpecifier, content: 'name', decorations: ['_export_kind', '_alias'] }
+				wrapper: { kind: TSKindId.ExportSpecifier, content: 'name', decorations: ['_export_kind', '_alias'] },
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.ExportClause.Bound;
@@ -391,8 +391,8 @@ function _buildNamedImports(value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNod
 				list: 'importSpecifiers',
 				elements: 'importSpecifiers',
 				kind: TSKindId.ImportSpecifiers as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: buildImportSpecifiers
+				make: buildImportSpecifiers,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.NamedImports.Bound;
@@ -3284,8 +3284,8 @@ function _buildFormalParameters(
 				list: 'formalParametersElements',
 				elements: 'formalParameters',
 				kind: TSKindId.FormalParametersElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: buildFormalParametersElements
+				make: buildFormalParametersElements,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.FormalParameters.Bound;
@@ -4845,8 +4845,8 @@ function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>)
 				list: 'enumBodyElements',
 				elements: 'contents',
 				kind: TSKindId.EnumBodyElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
-				make: buildEnumBodyElements
+				make: buildEnumBodyElements,
+				options: [{ key: 'delimiter', default: Delimiter.Trailing }]
 			}
 		)
 	) as unknown as T.EnumBody.Bound;
@@ -6307,8 +6307,8 @@ function _buildTypeArguments(value: AdmitBound<T.Types, T.AdmittedNodes>): T.Typ
 				list: 'types',
 				elements: 'types',
 				kind: TSKindId.Types as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: buildTypes
+				make: buildTypes,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.TypeArguments.Bound;
@@ -6593,13 +6593,13 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 				list: 'typeParametersElements',
 				elements: 'typeParameters',
 				kind: TSKindId.TypeParametersElements as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: buildTypeParametersElements,
 				wrapper: {
 					kind: TSKindId.TypeParameter,
 					content: 'name',
 					decorations: ['_const_marker', '_constraint', '_value']
-				}
+				},
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.TypeParameters.Bound;
@@ -6831,8 +6831,8 @@ function _buildTupleType(value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>
 				list: 'tupleTypeMembers',
 				elements: 'tupleTypeMembers',
 				kind: TSKindId.TupleTypeMembers as const,
-				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: buildTupleTypeMembers
+				make: buildTupleTypeMembers,
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.TupleType.Bound;
