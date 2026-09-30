@@ -36,11 +36,10 @@ export interface TreeHandle {
 	 * directly. Native-engine handles set this to a closure that
 	 * calls `engine.diagnostics.parseAndRead(source)` (root) /
 	 * `engine.diagnostics.readNode(handle, childIndex)` (drill-in) so reads
-	 * stay inside the engine that owns the tree.
-	 *
-	 * Signature changed from `(nodeId?)` to `(handle?, childIndex?)`.
+	 * stay inside the engine that owns the tree. `depth` counts the levels
+	 * the read expands: absent is one, `Infinity` is the whole subtree.
 	 */
-	read?(handle?: number, childIndex?: number, deep?: boolean): AnyNodeData;
+	read?(handle?: number, childIndex?: number, depth?: number): AnyNodeData;
 	/**
 	 * Format record inferred from the source file by the native Rust reader.
 	 * Absent on trees produced by the JS reader (readNode never sets this).

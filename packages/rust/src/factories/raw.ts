@@ -1022,7 +1022,7 @@ function _buildEnumVariantList(
 				]
 			),
 			{
-				list: 'enumVariantListElements',
+				list: { accessor: 'enumVariantListElements', storage: '_enum_variant_list_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
@@ -1139,7 +1139,7 @@ function _buildFieldDeclarationList(
 				]
 			),
 			{
-				list: 'fieldDeclarationListElements',
+				list: { accessor: 'fieldDeclarationListElements', storage: '_field_declaration_list_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
@@ -1261,7 +1261,7 @@ function _buildOrderedFieldDeclarationList(
 				]
 			),
 			{
-				list: 'attributes',
+				list: { accessor: 'attributes', storage: '_attributes' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
@@ -1735,7 +1735,7 @@ function _buildWhereClause(value?: AdmitBound<T.WherePredicates, T.AdmittedNodes
 				]
 			),
 			{
-				list: 'wherePredicates',
+				list: { accessor: 'wherePredicates', storage: '_where_predicates' },
 				elements: 'wherePredicates',
 				count: '_where_predicate',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -2073,7 +2073,7 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 				]
 			),
 			{
-				list: 'typeParametersElements',
+				list: { accessor: 'typeParametersElements', storage: '_type_parameters_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
@@ -2530,7 +2530,7 @@ function _buildUseList(value?: AdmitBound<T.UseClauses, T.AdmittedNodes>): T.Use
 				[{ slot: 'useClauses', kind: TSKindId.UseClauses as const, optional: true, make: buildUseClauses }]
 			),
 			{
-				list: 'useClauses',
+				list: { accessor: 'useClauses', storage: '_use_clauses' },
 				elements: 'useClauses',
 				count: '_use_clause',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -2762,7 +2762,7 @@ function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNod
 				]
 			),
 			{
-				list: 'parametersElements',
+				list: { accessor: 'parametersElements', storage: '_parameters_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
@@ -3118,7 +3118,7 @@ function _buildForLifetimes(value: AdmitBound<T.Lifetimes, T.AdmittedNodes>): T.
 				[{ slot: 'lifetimes', kind: TSKindId.Lifetimes as const, optional: false, make: buildLifetimes }]
 			),
 			{
-				list: 'lifetimes',
+				list: { accessor: 'lifetimes', storage: '_lifetimes' },
 				elements: 'lifetimes',
 				count: '_lifetime',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -3234,7 +3234,7 @@ function _buildTupleType(value: AdmitBound<T.TupleTypeElements, T.AdmittedNodes>
 				]
 			),
 			{
-				list: 'tupleTypeElements',
+				list: { accessor: 'tupleTypeElements', storage: '_tuple_type_elements' },
 				elements: 'types',
 				count: '_type',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -3437,7 +3437,7 @@ function _buildUseBounds(value?: AdmitBound<T.UseBoundsElements, T.AdmittedNodes
 				[{ slot: 'bounds', kind: TSKindId.UseBoundsElements as const, optional: true, make: buildUseBoundsElements }]
 			),
 			{
-				list: 'bounds',
+				list: { accessor: 'bounds', storage: '_bounds' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -3514,7 +3514,7 @@ function _buildTypeArguments(value: AdmitBound<T.TypeArgumentsElements, T.Admitt
 				]
 			),
 			{
-				list: 'typeArgumentsElements',
+				list: { accessor: 'typeArgumentsElements', storage: '_type_arguments_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
@@ -4472,7 +4472,7 @@ function _buildArguments(value?: AdmitBound<T.ArgumentsElements, T.AdmittedNodes
 				]
 			),
 			{
-				list: 'argumentsElements',
+				list: { accessor: 'argumentsElements', storage: '_arguments_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
@@ -4658,7 +4658,7 @@ function _buildFieldInitializerList(
 				]
 			),
 			{
-				list: 'initializers',
+				list: { accessor: 'initializers', storage: '_initializers' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -5638,7 +5638,7 @@ function _buildTuplePattern(value?: AdmitBound<T.TuplePatternElements, T.Admitte
 				]
 			),
 			{
-				list: 'elements',
+				list: { accessor: 'elements', storage: '_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -5693,7 +5693,7 @@ function _buildSlicePattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.
 				[{ slot: 'patterns', kind: TSKindId.Patterns as const, optional: true, make: buildPatterns }]
 			),
 			{
-				list: 'patterns',
+				list: { accessor: 'patterns', storage: '_patterns' },
 				elements: 'patterns',
 				count: '_pattern',
 				options: [{ key: 'delimiter', default: Delimiter.None }]

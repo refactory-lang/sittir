@@ -13488,6 +13488,8 @@ normalization; a node that already carries slot storage (built or edited) is lef
 
 Assembles the wrap module. `wrapNode`, the one function every wrapped node passes through (the parsed root, each child expanded on demand, trivia entries), runs its per-kind wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached.
 
+`readNode` and `readTreeNode` take an optional level count, which reaches the native read. `drillInSelf` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
+
 #### body
 
 ```text
@@ -16435,7 +16437,7 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 ### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
 
-The version of the JS → native render transport shape — the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into the scaffolded crate's `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. Bump it when the transport shape changes; crates are scaffolded once, so a test pins every existing crate's `lib.rs` to it and names the crates to update.
+The version of the JS ↔ native boundary — the render transport shape and the read calls' arguments (a read takes a level count) — and the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into the scaffolded crate's `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. Bump it when the transport shape or a read call's signature changes; crates are scaffolded once, so a test pins every existing crate's `lib.rs` to it and names the crates to update.
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 
@@ -16459,7 +16461,7 @@ The options a separated list's factory takes, each with the expression the facto
 
 ### `packages/codegen/src/emitters/factories.ts::listViewRuntimeSpec`
 
-The object literal a list's or list owner's builder and wrap pass to `withListView`: for an owner, its accessor for the list (`list`); the list's accessor for its elements (`elements`) and the storage key that holds them (`count`, read once to size the index); each option its factory takes as `{ key, default }`; and, when the list's element is a transparent wrapper, the wrapper's kind id, the accessor that names its content and the storage keys of its other slots (`wrapper`). It shares `listViewTarget` with `listViewHint`, so the type-level stamp and the runtime members come from one test; `undefined` means the node does not read as a list. The wrapper facts come from `separatedListSurface`, which derives the factory's element union from the same wrapper, so the read collapse and the factory's wrap of bare content cannot disagree.
+The object literal a list's or list owner's builder and wrap pass to `withListView`: for an owner, its accessor for the list and the storage key that holds it (`list: { accessor, storage }`); the list's accessor for its elements (`elements`) and the storage key that holds them (`count`, read once to size the index); each option its factory takes as `{ key, default }`; and, when the list's element is a transparent wrapper, the wrapper's kind id, the accessor that names its content and the storage keys of its other slots (`wrapper`). It shares `listViewTarget` with `listViewHint`, so the type-level stamp and the runtime members come from one test; `undefined` means the node does not read as a list. The wrapper facts come from `separatedListSurface`, which derives the factory's element union from the same wrapper, so the read collapse and the factory's wrap of bare content cannot disagree.
 
 ### `packages/codegen/src/emitters/factories.ts::listSlotTargets`
 
@@ -16483,7 +16485,7 @@ One runtime helper call a node's builder and wrap add: the helper's name and its
 
 ### `packages/codegen/src/emitters/factories.ts::seatRuntimes`
 
-The helper calls a node's builder and wrap wrap their object literal in, in the order they nest: `withListView` when the node reads as a list, then `withListSlots` when it has slots that hold lists. Each spec comes from the function that also derives the type-level stamp, so a member exists at runtime exactly when its type says so. The config builder, the separated-list builder and the wrap all call it, and the raw module imports exactly the helpers it returns.
+The helper calls a node's builder and wrap wrap their object literal in, in the order they nest: `withListView` when the node reads as a list, then `withListSlots` when it has slots that hold lists. The wrap passes the name of its tree (`tree`), which `withListView` takes as its third argument to read an owner's list that arrived as a stub; a builder has no tree and stores its list whole. Each spec comes from the function that also derives the type-level stamp, so a member exists at runtime exactly when its type says so. The config builder, the separated-list builder and the wrap all call it, and the raw module imports exactly the helpers it returns.
 
 ### `packages/codegen/src/emitters/factories.ts::seatOpening`
 
@@ -16492,6 +16494,10 @@ The helper calls of `seatRuntimes`, opened: `withA(withB(`. Paired with `seatClo
 ### `packages/codegen/src/emitters/factories.ts::seatClosing`
 
 The closing half of `seatOpening`: the specs in reverse nesting order, each as the trailing argument of its helper call.
+
+### `packages/codegen/src/emitters/factories.ts::listViewOwners`
+
+The nodes that own a list: those `listViewTarget` finds an owner slot for. The wrap reads each of these kinds two levels at once, so the owner's list node arrives with its elements as stubs and its view is sized with no read of its own.
 
 ### `packages/codegen/src/emitters/factories.ts::listViewTarget`
 

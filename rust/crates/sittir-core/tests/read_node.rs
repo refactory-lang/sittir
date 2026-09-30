@@ -12,8 +12,9 @@
 //! recursive `$fields` payloads no longer appear on native reads.
 
 use serde_json::Value;
-use sittir_core::read_node::{read_node, ReadDepth, ReadModel};
-use sittir_core::types::{KindId, NodeData, Source};
+use sittir_core::read_node::{read_node, HandleMint, NoHandles, ReadDepth, ReadModel};
+use sittir_core::types::{FieldValue, KindId, NodeData, Source};
+use std::num::NonZeroU32;
 
 /// Every kind is a text kind: the pre-gate behaviour, for the cases that
 /// assert on it.
@@ -91,7 +92,7 @@ fn parse_and_read(language: tree_sitter::Language, source: &str) -> NodeData {
     let mut parser = tree_sitter::Parser::new();
     parser.set_language(&language).expect("set language");
     let tree = parser.parse(source, None).expect("parse succeeds");
-    read_node(&tree, source, None, Some(0), ReadDepth::Shallow, &AllText)
+    read_node(&tree, source, None, Some(0), ReadDepth::SHALLOW, &AllText, &mut NoHandles)
 }
 
 fn parse_tree(language: tree_sitter::Language, source: &str) -> tree_sitter::Tree {
@@ -178,6 +179,54 @@ fn child_index_set_on_non_root_nodes() {
     assert_eq!(node.node_handle, Some(0));
 }
 
+/// Records every handle a read asks for and mints them from 100 up.
+struct RecordingMint(Vec<(u64, u16)>);
+impl HandleMint for RecordingMint {
+    fn mint(&mut self, parent: u64, child_index: u16) -> Option<u64> {
+        self.0.push((parent, child_index));
+        Some(99 + self.0.len() as u64)
+    }
+}
+
+fn sole_slot(node: &NodeData) -> &NodeData {
+    let fields = node.fields.as_ref().expect("node has a slot");
+    match fields.values().next().expect("one slot") {
+        FieldValue::Single(child) => child,
+        other => panic!("expected a single child, got {other:?}"),
+    }
+}
+
+#[test]
+fn a_two_level_read_expands_each_child_and_leaves_its_children_as_stubs_under_a_minted_handle() {
+    let lang: tree_sitter::Language = tree_sitter_python::LANGUAGE.into();
+    let source = "x = 1\n";
+    let tree = parse_tree(lang, source);
+    let mut mint = RecordingMint(Vec::new());
+    let two = ReadDepth::Levels(NonZeroU32::new(2).expect("two"));
+    let root = read_node(&tree, source, None, Some(0), two, &AllText, &mut mint);
+
+    assert_eq!(mint.0, vec![(0, 0)]);
+    let statement = sole_slot(&root);
+    assert!(statement.fields.is_some(), "the child is expanded");
+    assert_eq!(statement.node_handle, None, "an expanded child names no coordinate of its own");
+    assert_eq!(statement.child_index, Some(0));
+    let assignment = sole_slot(statement);
+    assert!(assignment.fields.is_none(), "the grandchild is a stub");
+    assert_eq!(assignment.node_handle, Some(100));
+    assert_eq!(assignment.child_index, Some(0));
+}
+
+#[test]
+fn a_one_level_read_mints_nothing() {
+    let lang: tree_sitter::Language = tree_sitter_python::LANGUAGE.into();
+    let source = "x = 1\n";
+    let tree = parse_tree(lang, source);
+    let mut mint = RecordingMint(Vec::new());
+    let root = read_node(&tree, source, None, Some(0), ReadDepth::SHALLOW, &AllText, &mut mint);
+    assert!(mint.0.is_empty());
+    assert_eq!(sole_slot(&root).node_handle, Some(0));
+}
+
 #[test]
 fn anonymous_leaf_children_do_not_invent_fields() {
     let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
@@ -190,8 +239,9 @@ fn anonymous_leaf_children_do_not_invent_fields() {
         source,
         Some(params),
         Some(0),
-        ReadDepth::Shallow,
+        ReadDepth::SHALLOW,
         &TextKinds(vec![]),
+        &mut NoHandles,
     );
     let json = serde_json::to_value(&node).expect("serialize");
     let params = json.as_object().expect("closure_parameters object");
@@ -224,7 +274,7 @@ fn structural_nodes_carry_a_span_and_no_text_while_text_kinds_keep_theirs() {
     let tree = parse_tree(lang, source);
     let identifier = tree.language().id_for_node_kind("identifier", true);
     let model = TextKinds(vec![identifier]);
-    let root = read_node(&tree, source, None, Some(0), ReadDepth::Deep, &model);
+    let root = read_node(&tree, source, None, Some(0), ReadDepth::Deep, &model, &mut NoHandles);
     let json = serde_json::to_value(&root).expect("serialize");
 
     fn walk(v: &Value, seen: &mut Vec<(u16, bool, bool)>) {
@@ -288,7 +338,7 @@ fn an_aliased_node_keeps_its_text_when_either_identity_is_a_text_kind() {
     let identifier = tree.language().id_for_node_kind("identifier", true);
     let type_identifier = tree.language().id_for_node_kind("type_identifier", true);
     let text_under = |model: &dyn ReadModel| {
-        read_node(&tree, source, Some(name), Some(0), ReadDepth::Shallow, model).text
+        read_node(&tree, source, Some(name), Some(0), ReadDepth::SHALLOW, model, &mut NoHandles).text
     };
     assert_eq!(text_under(&TextKinds(vec![identifier])).as_deref(), Some("Foo"));
     assert_eq!(
@@ -308,8 +358,9 @@ fn the_root_covers_the_whole_file_by_span_and_carries_no_text() {
         source,
         None,
         Some(0),
-        ReadDepth::Shallow,
+        ReadDepth::SHALLOW,
         &TextKinds(vec![]),
+        &mut NoHandles,
     );
     assert_eq!(
         root.span.map(|s| (s.start, s.end)),
@@ -324,7 +375,7 @@ fn raw_native_children_payload_stays_array_shaped() {
     let source = "fn f() { g(x); }";
     let tree = parse_tree(lang, source);
     let args = find_first_ts_node_by_kind(tree.root_node(), "arguments").expect("arguments node");
-    let node = read_node(&tree, source, Some(args), Some(0), ReadDepth::Shallow, &AllText);
+    let node = read_node(&tree, source, Some(args), Some(0), ReadDepth::SHALLOW, &AllText, &mut NoHandles);
     let json = serde_json::to_value(&node).expect("serialize");
 
     assert!(
@@ -416,8 +467,9 @@ fn a_kind_that_keeps_anonymous_children_reads_its_only_anonymous_child_as_other(
         source,
         Some(params),
         Some(0),
-        ReadDepth::Shallow,
+        ReadDepth::SHALLOW,
         &KeepsAnonymous(vec![closure_parameters]),
+        &mut NoHandles,
     );
     let json = serde_json::to_value(&node).expect("serialize");
     assert_shape(&json, "closure_parameters");
@@ -466,8 +518,9 @@ fn read_rust_kind(source: &str, kind: &str) -> Vec<NodeData> {
                 source,
                 Some(node),
                 Some(0),
-                ReadDepth::Shallow,
+                ReadDepth::SHALLOW,
                 &BlockGap(block),
+                &mut NoHandles,
             )
         })
         .collect()
@@ -603,7 +656,7 @@ fn nodes_of_kind<'v>(value: &'v Value, kind: KindId, found: &mut Vec<&'v Value>)
 
 fn read_python_errors(source: &str) -> Vec<Value> {
     let tree = parse_tree(tree_sitter_python::LANGUAGE.into(), source);
-    let root = read_node(&tree, source, None, Some(0), ReadDepth::Deep, &TextKinds(vec![]));
+    let root = read_node(&tree, source, None, Some(0), ReadDepth::Deep, &TextKinds(vec![]), &mut NoHandles);
     let json = serde_json::to_value(&root).expect("serialize");
     let mut found = Vec::new();
     nodes_of_kind(&json, KindId::ERROR, &mut found);

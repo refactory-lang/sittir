@@ -195,7 +195,7 @@ function _buildExportClause(value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNod
 				]
 			),
 			{
-				list: 'exportSpecifiers',
+				list: { accessor: 'exportSpecifiers', storage: '_export_specifiers' },
 				elements: 'exportSpecifiers',
 				count: '_export_specifier',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
@@ -408,7 +408,7 @@ function _buildNamedImports(value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNod
 				]
 			),
 			{
-				list: 'importSpecifiers',
+				list: { accessor: 'importSpecifiers', storage: '_import_specifiers' },
 				elements: 'importSpecifiers',
 				count: '_import_specifier',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -3349,7 +3349,7 @@ function _buildFormalParameters(
 				]
 			),
 			{
-				list: 'formalParametersElements',
+				list: { accessor: 'formalParametersElements', storage: '_formal_parameters_elements' },
 				elements: 'formalParameters',
 				count: '_formal_parameter',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -4963,7 +4963,7 @@ function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>)
 				]
 			),
 			{
-				list: 'enumBodyElements',
+				list: { accessor: 'enumBodyElements', storage: '_enum_body_elements' },
 				elements: 'contents',
 				count: '_content',
 				options: [{ key: 'delimiter', default: Delimiter.Trailing }]
@@ -6441,7 +6441,12 @@ function _buildTypeArguments(value: AdmitBound<T.Types, T.AdmittedNodes>): T.Typ
 				),
 				[{ slot: 'types', kind: TSKindId.Types as const, optional: false, make: buildTypes }]
 			),
-			{ list: 'types', elements: 'types', count: '_type', options: [{ key: 'delimiter', default: Delimiter.None }] }
+			{
+				list: { accessor: 'types', storage: '_types' },
+				elements: 'types',
+				count: '_type',
+				options: [{ key: 'delimiter', default: Delimiter.None }]
+			}
 		)
 	) as unknown as T.TypeArguments.Bound;
 }
@@ -6741,7 +6746,7 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 				]
 			),
 			{
-				list: 'typeParametersElements',
+				list: { accessor: 'typeParametersElements', storage: '_type_parameters_elements' },
 				elements: 'typeParameters',
 				count: '_type_parameter',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
@@ -6994,7 +6999,7 @@ function _buildTupleType(value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>
 				]
 			),
 			{
-				list: 'tupleTypeMembers',
+				list: { accessor: 'tupleTypeMembers', storage: '_tuple_type_members' },
 				elements: 'tupleTypeMembers',
 				count: '_tuple_type_member',
 				options: [{ key: 'delimiter', default: Delimiter.None }]

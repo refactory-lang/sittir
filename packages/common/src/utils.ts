@@ -6,6 +6,7 @@ import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { toEditAt } from './edit.ts';
 import { Delimiter } from './delimiter.ts';
+import { readNode, type TreeHandle } from './readNode.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { Source };
@@ -206,7 +207,7 @@ interface ListViewWrapper {
 }
 
 interface ListViewSpec {
-	readonly list?: string;
+	readonly list?: { readonly accessor: string; readonly storage: string };
 	readonly elements: string;
 	readonly count: string;
 	readonly options?: readonly ListViewOption[];
@@ -247,12 +248,14 @@ const READONLY_ARRAY_METHODS = [
 	'some',
 	'toReversed',
 	'toSorted',
+	'toLocaleString',
 	'toSpliced',
+	'toString',
 	'values',
 	'with'
 ] as const satisfies readonly (keyof ReadonlyArray<unknown>)[];
 
-type ObjectMembers = 'toString' | 'toLocaleString' | 'length' | number | typeof Symbol.iterator | typeof Symbol.unscopables;
+type ObjectMembers = 'length' | number | typeof Symbol.iterator | typeof Symbol.unscopables;
 const readonlyArrayCovered: [Exclude<keyof ReadonlyArray<unknown>, (typeof READONLY_ARRAY_METHODS)[number] | ObjectMembers>] extends [never]
 	? true
 	: false = true;
@@ -274,11 +277,24 @@ const defineHidden = (node: object, key: PropertyKey, descriptor: PropertyDescri
 
 const LIST_ITEMS = Symbol('sittir.listItems');
 
-export function withListView<T extends object>(node: T, spec: ListViewSpec): T {
+const storedElementsOf = (node: object, spec: ListViewSpec, tree: TreeHandle | undefined): readonly unknown[] | undefined => {
+	const list = (spec.list === undefined ? node : (node as Record<string, unknown>)[spec.list.storage]) as
+		| (object & Partial<AnyNodeData>)
+		| undefined;
+	if (list == null) return [];
+	const elementsIn = (source: object): readonly unknown[] => {
+		const elements = (source as Record<string, unknown>)[spec.count];
+		return Array.isArray(elements) ? elements : elements == null ? [] : [elements];
+	};
+	if (spec.count in list || list.$nodeHandle == null || list.$childIndex == null) return elementsIn(list);
+	return tree === undefined ? undefined : elementsIn(readNode(tree, list.$nodeHandle, list.$childIndex));
+};
+
+export function withListView<T extends object>(node: T, spec: ListViewSpec, tree?: TreeHandle): T {
 	const listOf = (self: object): Record<string, unknown> | undefined =>
 		spec.list === undefined
 			? (self as Record<string, unknown>)
-			: ((self as Members)[spec.list]!.call(self) as Record<string, unknown> | undefined);
+			: ((self as Members)[spec.list.accessor]!.call(self) as Record<string, unknown> | undefined);
 	const itemsOf = (self: object): readonly unknown[] => {
 		const cached = (self as { [LIST_ITEMS]?: readonly unknown[] })[LIST_ITEMS];
 		if (cached !== undefined) return cached;
@@ -288,16 +304,26 @@ export function withListView<T extends object>(node: T, spec: ListViewSpec): T {
 		defineHidden(self, LIST_ITEMS, { value: items });
 		return items;
 	};
-	const stored = listOf(node)?.[spec.count];
-	const count = Array.isArray(stored) ? stored.length : 0;
-	for (let index = 0; index < count; index++) {
+	const stored = storedElementsOf(node, spec, tree);
+	for (let index = 0; index < (stored?.length ?? 0); index++) {
 		defineHidden(node, index, {
 			get(this: object) {
 				return itemsOf(this)[index];
 			}
 		});
 	}
-	defineHidden(node, 'length', { value: count });
+	defineHidden(
+		node,
+		'length',
+		stored === undefined
+			? {
+					get(): never {
+						throw new Error(`withListView: ${spec.list!.storage} is a read stub, which a node built without its tree cannot count`);
+					}
+				}
+			: { value: stored.length }
+	);
+	defineHidden(node, Symbol.isConcatSpreadable, { value: true });
 	defineHidden(node, Symbol.iterator, {
 		value: function (this: object): IterableIterator<unknown> {
 			return itemsOf(this)[Symbol.iterator]();

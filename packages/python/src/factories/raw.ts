@@ -184,7 +184,7 @@ function _buildSimpleStatements(
 				]
 			),
 			{
-				list: 'simpleStatementsElements',
+				list: { accessor: 'simpleStatementsElements', storage: '_simple_statements_elements' },
 				elements: 'simpleStatements',
 				count: '_simple_statement',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -1152,7 +1152,7 @@ function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNod
 				]
 			),
 			{
-				list: 'elements',
+				list: { accessor: 'elements', storage: '_elements' },
 				elements: 'parameters',
 				count: '_parameter',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -1219,7 +1219,7 @@ function _buildLambdaParameters(value: AdmitBound<T.ParametersElements, T.Admitt
 				]
 			),
 			{
-				list: 'parametersElements',
+				list: { accessor: 'parametersElements', storage: '_parameters_elements' },
 				elements: 'parameters',
 				count: '_parameter',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -1455,7 +1455,12 @@ function _buildTypeParameter(value: AdmitBound<T.Types, T.AdmittedNodes>): T.Typ
 				),
 				[{ slot: 'types', kind: TSKindId.Types as const, optional: false, make: buildTypes }]
 			),
-			{ list: 'types', elements: 'types', count: '_type', options: [{ key: 'delimiter', default: Delimiter.None }] }
+			{
+				list: { accessor: 'types', storage: '_types' },
+				elements: 'types',
+				count: '_type',
+				options: [{ key: 'delimiter', default: Delimiter.None }]
+			}
 		)
 	) as unknown as T.TypeParameter.Bound;
 }
@@ -1551,7 +1556,7 @@ function _buildArgumentList(value?: AdmitBound<T.ArgumentListElements, T.Admitte
 				]
 			),
 			{
-				list: 'arguments',
+				list: { accessor: 'arguments', storage: '_arguments' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -1932,7 +1937,7 @@ function _buildDictPattern(value?: AdmitBound<T.DictPatternElements, T.AdmittedN
 				]
 			),
 			{
-				list: 'dictPatternElements',
+				list: { accessor: 'dictPatternElements', storage: '_dict_pattern_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -2273,7 +2278,7 @@ function _buildTuplePattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.
 				[{ slot: 'patterns', kind: TSKindId.Patterns as const, optional: true, make: buildPatterns }]
 			),
 			{
-				list: 'patterns',
+				list: { accessor: 'patterns', storage: '_patterns' },
 				elements: 'patterns',
 				count: '_pattern',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -2326,7 +2331,7 @@ function _buildListPattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.L
 				[{ slot: 'patterns', kind: TSKindId.Patterns as const, optional: true, make: buildPatterns }]
 			),
 			{
-				list: 'patterns',
+				list: { accessor: 'patterns', storage: '_patterns' },
 				elements: 'patterns',
 				count: '_pattern',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -3342,7 +3347,7 @@ function _buildList(value?: AdmitBound<T.CollectionElements, T.AdmittedNodes>): 
 				]
 			),
 			{
-				list: 'collectionElements',
+				list: { accessor: 'collectionElements', storage: '_collection_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -3405,7 +3410,7 @@ function _buildSet(value: AdmitBound<T.CollectionElements, T.AdmittedNodes>): T.
 				]
 			),
 			{
-				list: 'collectionElements',
+				list: { accessor: 'collectionElements', storage: '_collection_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -3469,7 +3474,7 @@ function _buildTuple(value?: AdmitBound<T.CollectionElements, T.AdmittedNodes>):
 				]
 			),
 			{
-				list: 'collectionElements',
+				list: { accessor: 'collectionElements', storage: '_collection_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -3531,7 +3536,7 @@ function _buildDictionary(value?: AdmitBound<T.DictionaryElements, T.AdmittedNod
 				]
 			),
 			{
-				list: 'elements',
+				list: { accessor: 'elements', storage: '_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -4939,7 +4944,7 @@ function _buildCaseTuplePattern(
 				]
 			),
 			{
-				list: 'listPatternCasePatterns',
+				list: { accessor: 'listPatternCasePatterns', storage: '_list_pattern_case_patterns' },
 				elements: 'casePatterns',
 				count: '_case_pattern',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -5009,7 +5014,7 @@ function _buildCaseListPattern(
 				]
 			),
 			{
-				list: 'listPatternCasePatterns',
+				list: { accessor: 'listPatternCasePatterns', storage: '_list_pattern_case_patterns' },
 				elements: 'casePatterns',
 				count: '_case_pattern',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -5213,7 +5218,7 @@ function _buildPrintStatementPlain(value: AdmitBound<T.PrintArguments, T.Admitte
 				[{ slot: 'printArguments', kind: TSKindId.PrintArguments as const, optional: false, make: buildPrintArguments }]
 			),
 			{
-				list: 'printArguments',
+				list: { accessor: 'printArguments', storage: '_print_arguments' },
 				elements: 'arguments',
 				count: '_argument',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -5271,7 +5276,7 @@ function _buildParenthesizedImportList(
 				[{ slot: 'importList', kind: TSKindId.ImportList as const, optional: false, make: buildImportList }]
 			),
 			{
-				list: 'importList',
+				list: { accessor: 'importList', storage: '_import_list' },
 				elements: 'names',
 				count: '_name',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -6073,7 +6078,7 @@ function _buildWithClauseParen(value: AdmitBound<T.WithClauseWithItems, T.Admitt
 				]
 			),
 			{
-				list: 'withClauseWithItems',
+				list: { accessor: 'withClauseWithItems', storage: '_with_clause_with_items' },
 				elements: 'withItems',
 				count: '_with_item',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
@@ -6162,7 +6167,7 @@ function _buildSuiteInline(value: AdmitBound<T.SimpleStatementsElements, T.Admit
 				]
 			),
 			{
-				list: 'simpleStatementsElements',
+				list: { accessor: 'simpleStatementsElements', storage: '_simple_statements_elements' },
 				elements: 'simpleStatements',
 				count: '_simple_statement',
 				options: [{ key: 'delimiter', default: Delimiter.None }]

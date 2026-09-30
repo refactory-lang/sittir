@@ -1658,6 +1658,10 @@ export function listViewHint(
 	};
 }
 
+export function listViewOwners(nodeMap: NodeMap): readonly AssembledNode[] {
+	return [...nodeMap.nodes.values()].filter((node) => listViewTarget(node, nodeMap)?.owner !== undefined);
+}
+
 export function listViewRuntimeSpec(
 	node: AssembledNode,
 	nodeMap: NodeMap,
@@ -1674,7 +1678,10 @@ export function listViewRuntimeSpec(
 			? ''
 			: `, wrapper: { kind: TSKindId.${wrapper.member}, content: ${JSON.stringify(wrapper.contentProperty)}, decorations: ${JSON.stringify(wrapper.decorationKeys)} }`;
 	const elements = canonicalSeparatedListField(target.list);
-	const list = target.owner === undefined ? '' : `list: ${JSON.stringify(target.owner.propertyName)}, `;
+	const list =
+		target.owner === undefined
+			? ''
+			: `list: { accessor: ${JSON.stringify(target.owner.propertyName)}, storage: ${JSON.stringify(target.owner.storageKey)} }, `;
 	const optionsSpec = options === '' ? '' : `, options: [${options}]`;
 	return `{ ${list}elements: ${JSON.stringify(elements.propertyName)}, count: ${JSON.stringify(elements.storageKey)}${optionsSpec}${wrapperSpec} }`;
 }
@@ -1730,12 +1737,13 @@ export function seatRuntimes(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined,
-	factoryScope = ''
+	factoryScope = '',
+	tree?: string
 ): readonly SeatRuntime[] {
 	const view = listViewRuntimeSpec(node, nodeMap, kindEntries);
 	const slots = listSlotsRuntimeSpec(node, nodeMap, kindEntries, factoryScope);
 	return [
-		...(view === undefined ? [] : [{ helper: 'withListView' as const, spec: view }]),
+		...(view === undefined ? [] : [{ helper: 'withListView' as const, spec: tree === undefined ? view : `${view}, ${tree}` }]),
 		...(slots === undefined ? [] : [{ helper: 'withListSlots' as const, spec: slots }])
 	];
 }

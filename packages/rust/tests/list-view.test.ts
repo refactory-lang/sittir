@@ -50,6 +50,13 @@ describe('a list owner and its list node read as a ReadonlyArray of the items', 
 		expect(list.delimiter).toBe(Delimiter.Trailing);
 	});
 
+	it('arrives with its list node already read, so sizing the view reads nothing more', () => {
+		const params = functionOf('fn f(a: i32, b: i32) {}\n').parameters() as unknown as Record<string, unknown>;
+		const list = params._parameters_elements as Record<string, unknown>;
+		expect(list.$nodeHandle).toBeUndefined();
+		expect(list._element).toHaveLength(2);
+	});
+
 	it('reads an absent list as empty', () => {
 		const params = functionOf('fn f() {}\n').parameters();
 		expect(params.length).toBe(0);

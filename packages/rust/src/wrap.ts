@@ -211,11 +211,35 @@ function normalizeRepeatedWrapSlot<T>(
 // else passes through untouched. It must NOT re-wrap: wrapping
 // would dispatch straight back into the wrap function that called
 // this, with the same data.
+// A list owner is read two levels at once: its list node arrives with
+// its items as stubs, so the owner sizes its list view with no second read.
+const _LIST_OWNER_KINDS: ReadonlySet<number> = new Set([
+	TSKindId.Arguments,
+	TSKindId.EnumVariantList,
+	TSKindId.FieldDeclarationList,
+	TSKindId.FieldInitializerList,
+	TSKindId.ForLifetimes,
+	TSKindId.OrderedFieldDeclarationList,
+	TSKindId.Parameters,
+	TSKindId.SlicePattern,
+	TSKindId.TuplePattern,
+	TSKindId.TupleType,
+	TSKindId.TypeArguments,
+	TSKindId.TypeParameters,
+	TSKindId.UseBounds,
+	TSKindId.UseList,
+	TSKindId.WhereClause
+]);
 function drillInSelf<T>(entry: T, tree: TreeHandle): T {
 	if (entry == null) return undefined as unknown as T;
 	const e = entry as unknown as _NodeData;
 	if (e.$nodeHandle != null && e.$childIndex != null)
-		return readTreeNode(tree, e.$nodeHandle, e.$childIndex) as unknown as T;
+		return readTreeNode(
+			tree,
+			e.$nodeHandle,
+			e.$childIndex,
+			_LIST_OWNER_KINDS.has(e.$type as number) ? 2 : undefined
+		) as unknown as T;
 	return entry;
 }
 // Resolve a CHILD position. Beyond the stub read, node data a deep
@@ -2590,12 +2614,13 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle): 
 				]
 			),
 			{
-				list: 'enumVariantListElements',
+				list: { accessor: 'enumVariantListElements', storage: '_enum_variant_list_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
 				wrapper: { kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['_attribute_item'] }
-			}
+			},
+			tree
 		)
 	);
 	return _node as unknown as T.EnumVariantList.Parsed;
@@ -2698,7 +2723,7 @@ export function wrapFieldDeclarationList(
 				]
 			),
 			{
-				list: 'fieldDeclarationListElements',
+				list: { accessor: 'fieldDeclarationListElements', storage: '_field_declaration_list_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
@@ -2707,7 +2732,8 @@ export function wrapFieldDeclarationList(
 					content: 'fieldDeclaration',
 					decorations: ['_attribute_item']
 				}
-			}
+			},
+			tree
 		)
 	);
 	return _node as unknown as T.FieldDeclarationList.Parsed;
@@ -2817,7 +2843,7 @@ export function wrapOrderedFieldDeclarationList(
 				]
 			),
 			{
-				list: 'attributes',
+				list: { accessor: 'attributes', storage: '_attributes' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
@@ -2826,7 +2852,8 @@ export function wrapOrderedFieldDeclarationList(
 					content: 'type',
 					decorations: ['_attribute_item', '_visibility_modifier']
 				}
-			}
+			},
+			tree
 		)
 	);
 	return _node as unknown as T.OrderedFieldDeclarationList.Parsed;
@@ -3573,11 +3600,12 @@ export function wrapWhereClause(data: T.WhereClause, tree: TreeHandle): T.WhereC
 				]
 			),
 			{
-				list: 'wherePredicates',
+				list: { accessor: 'wherePredicates', storage: '_where_predicates' },
 				elements: 'wherePredicates',
 				count: '_where_predicate',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
+			},
+			tree
 		)
 	);
 	return _node as unknown as T.WhereClause.Parsed;
@@ -4080,12 +4108,13 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 				]
 			),
 			{
-				list: 'typeParametersElements',
+				list: { accessor: 'typeParametersElements', storage: '_type_parameters_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['_attribute_item'] }
-			}
+			},
+			tree
 		)
 	);
 	return _node as unknown as T.TypeParameters.Parsed;
@@ -4704,11 +4733,12 @@ export function wrapUseList(data: T.UseList, tree: TreeHandle): T.UseList.Parsed
 				[{ slot: 'useClauses', kind: TSKindId.UseClauses as const, optional: true, make: RAW.buildUseClauses }]
 			),
 			{
-				list: 'useClauses',
+				list: { accessor: 'useClauses', storage: '_use_clauses' },
 				elements: 'useClauses',
 				count: '_use_clause',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
+			},
+			tree
 		)
 	);
 	return _node as unknown as T.UseList.Parsed;
@@ -4859,12 +4889,13 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 				]
 			),
 			{
-				list: 'parametersElements',
+				list: { accessor: 'parametersElements', storage: '_parameters_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				wrapper: { kind: TSKindId.AttributedParameter, content: 'content', decorations: ['_attribute_item'] }
-			}
+			},
+			tree
 		)
 	);
 	return _node as unknown as T.Parameters.Parsed;
@@ -5422,11 +5453,12 @@ export function wrapForLifetimes(data: T.ForLifetimes, tree: TreeHandle): T.ForL
 				[{ slot: 'lifetimes', kind: TSKindId.Lifetimes as const, optional: false, make: RAW.buildLifetimes }]
 			),
 			{
-				list: 'lifetimes',
+				list: { accessor: 'lifetimes', storage: '_lifetimes' },
 				elements: 'lifetimes',
 				count: '_lifetime',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
+			},
+			tree
 		)
 	);
 	return _node as unknown as T.ForLifetimes.Parsed;
@@ -5554,11 +5586,12 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 				]
 			),
 			{
-				list: 'tupleTypeElements',
+				list: { accessor: 'tupleTypeElements', storage: '_tuple_type_elements' },
 				elements: 'types',
 				count: '_type',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
+			},
+			tree
 		)
 	);
 	return _node as unknown as T.TupleType.Parsed;
@@ -5806,11 +5839,12 @@ export function wrapUseBounds(data: T.UseBounds, tree: TreeHandle): T.UseBounds.
 				]
 			),
 			{
-				list: 'bounds',
+				list: { accessor: 'bounds', storage: '_bounds' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
+			},
+			tree
 		)
 	);
 	return _node as unknown as T.UseBounds.Parsed;
@@ -5850,12 +5884,13 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 				]
 			),
 			{
-				list: 'typeArgumentsElements',
+				list: { accessor: 'typeArgumentsElements', storage: '_type_arguments_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				wrapper: { kind: TSKindId.TypeArgument, content: 'content', decorations: ['_trait_bounds'] }
-			}
+			},
+			tree
 		)
 	);
 	return _node as unknown as T.TypeArguments.Parsed;
@@ -7753,12 +7788,13 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 				]
 			),
 			{
-				list: 'argumentsElements',
+				list: { accessor: 'argumentsElements', storage: '_arguments_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				wrapper: { kind: TSKindId.AttributedArgument, content: 'expression', decorations: ['_attribute_item'] }
-			}
+			},
+			tree
 		)
 	);
 	return _node as unknown as T.Arguments.Parsed;
@@ -7956,11 +7992,12 @@ export function wrapFieldInitializerList(
 				]
 			),
 			{
-				list: 'initializers',
+				list: { accessor: 'initializers', storage: '_initializers' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
+			},
+			tree
 		)
 	);
 	return _node as unknown as T.FieldInitializerList.Parsed;
@@ -9588,11 +9625,12 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 				]
 			),
 			{
-				list: 'elements',
+				list: { accessor: 'elements', storage: '_elements' },
 				elements: 'elements',
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
+			},
+			tree
 		)
 	);
 	return _node as unknown as T.TuplePattern.Parsed;
@@ -9624,11 +9662,12 @@ export function wrapSlicePattern(data: T.SlicePattern, tree: TreeHandle): T.Slic
 				[{ slot: 'patterns', kind: TSKindId.Patterns as const, optional: true, make: RAW.buildPatterns }]
 			),
 			{
-				list: 'patterns',
+				list: { accessor: 'patterns', storage: '_patterns' },
 				elements: 'patterns',
 				count: '_pattern',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
+			},
+			tree
 		)
 	);
 	return _node as unknown as T.SlicePattern.Parsed;
@@ -10461,7 +10500,8 @@ export function wrapMacroRules(
 				},
 				$with: {}
 			},
-			{ elements: 'macroRules', count: '_macro_rule', options: [{ key: 'delimiter', default: Delimiter.None }] }
+			{ elements: 'macroRules', count: '_macro_rule', options: [{ key: 'delimiter', default: Delimiter.None }] },
+			tree
 		)
 	) as unknown as T.MacroRules.Parsed;
 }
@@ -10503,7 +10543,8 @@ export function wrapEnumVariantListElements(
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
 				wrapper: { kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['_attribute_item'] }
-			}
+			},
+			tree
 		)
 	) as unknown as T.EnumVariantListElements.Parsed;
 }
@@ -10549,7 +10590,8 @@ export function wrapFieldDeclarationListElements(
 					content: 'fieldDeclaration',
 					decorations: ['_attribute_item']
 				}
-			}
+			},
+			tree
 		)
 	) as unknown as T.FieldDeclarationListElements.Parsed;
 }
@@ -10595,7 +10637,8 @@ export function wrapOrderedFieldDeclarationListElements(
 					content: 'type',
 					decorations: ['_attribute_item', '_visibility_modifier']
 				}
-			}
+			},
+			tree
 		)
 	) as unknown as T.OrderedFieldDeclarationListElements.Parsed;
 }
@@ -10630,7 +10673,8 @@ export function wrapWherePredicates(
 				elements: 'wherePredicates',
 				count: '_where_predicate',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
-			}
+			},
+			tree
 		)
 	) as unknown as T.WherePredicates.Parsed;
 }
@@ -10672,7 +10716,8 @@ export function wrapTypeParametersElements(
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['_attribute_item'] }
-			}
+			},
+			tree
 		)
 	) as unknown as T.TypeParametersElements.Parsed;
 }
@@ -10772,7 +10817,8 @@ export function wrapUseClauses(
 				},
 				$with: {}
 			},
-			{ elements: 'useClauses', count: '_use_clause', options: [{ key: 'delimiter', default: Delimiter.None }] }
+			{ elements: 'useClauses', count: '_use_clause', options: [{ key: 'delimiter', default: Delimiter.None }] },
+			tree
 		)
 	) as unknown as T.UseClauses.Parsed;
 }
@@ -10811,7 +10857,8 @@ export function wrapParametersElements(
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				wrapper: { kind: TSKindId.AttributedParameter, content: 'content', decorations: ['_attribute_item'] }
-			}
+			},
+			tree
 		)
 	) as unknown as T.ParametersElements.Parsed;
 }
@@ -10842,7 +10889,8 @@ export function wrapLifetimes(
 				},
 				$with: {}
 			},
-			{ elements: 'lifetimes', count: '_lifetime', options: [{ key: 'delimiter', default: Delimiter.None }] }
+			{ elements: 'lifetimes', count: '_lifetime', options: [{ key: 'delimiter', default: Delimiter.None }] },
+			tree
 		)
 	) as unknown as T.Lifetimes.Parsed;
 }
@@ -10879,7 +10927,8 @@ export function wrapUseBoundsElements(
 				},
 				$with: {}
 			},
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] }
+			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] },
+			tree
 		)
 	) as unknown as T.UseBoundsElements.Parsed;
 }
@@ -10918,7 +10967,8 @@ export function wrapTypeArgumentsElements(
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				wrapper: { kind: TSKindId.TypeArgument, content: 'content', decorations: ['_trait_bounds'] }
-			}
+			},
+			tree
 		)
 	) as unknown as T.TypeArgumentsElements.Parsed;
 }
@@ -10957,7 +11007,8 @@ export function wrapArgumentsElements(
 				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				wrapper: { kind: TSKindId.AttributedArgument, content: 'expression', decorations: ['_attribute_item'] }
-			}
+			},
+			tree
 		)
 	) as unknown as T.ArgumentsElements.Parsed;
 }
@@ -10996,7 +11047,8 @@ export function wrapFieldInitializerListElements(
 				},
 				$with: {}
 			},
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] }
+			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] },
+			tree
 		)
 	) as unknown as T.FieldInitializerListElements.Parsed;
 }
@@ -11033,7 +11085,8 @@ export function wrapTuplePatternElements(
 				},
 				$with: {}
 			},
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] }
+			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] },
+			tree
 		)
 	) as unknown as T.TuplePatternElements.Parsed;
 }
@@ -11064,7 +11117,8 @@ export function wrapPatterns(
 				},
 				$with: {}
 			},
-			{ elements: 'patterns', count: '_pattern', options: [{ key: 'delimiter', default: Delimiter.None }] }
+			{ elements: 'patterns', count: '_pattern', options: [{ key: 'delimiter', default: Delimiter.None }] },
+			tree
 		)
 	) as unknown as T.Patterns.Parsed;
 }
@@ -11106,7 +11160,8 @@ export function wrapStructPatternElements(
 				},
 				$with: {}
 			},
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] }
+			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] },
+			tree
 		)
 	) as unknown as T.StructPatternElements.Parsed;
 }
@@ -11219,7 +11274,8 @@ export function wrapTupleTypeElements(
 				},
 				$with: {}
 			},
-			{ elements: 'types', count: '_type', options: [{ key: 'delimiter', default: Delimiter.None }] }
+			{ elements: 'types', count: '_type', options: [{ key: 'delimiter', default: Delimiter.None }] },
+			tree
 		)
 	) as unknown as T.TupleTypeElements.Parsed;
 }
@@ -11253,7 +11309,8 @@ export function wrapTupleExpressionElements(
 				},
 				$with: {}
 			},
-			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] }
+			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.None }] },
+			tree
 		)
 	) as unknown as T.TupleExpressionElements.Parsed;
 }
@@ -15620,13 +15677,13 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
  * --engine js`) leave it absent and fall back to `readNodeJs`
  * (the in-process walker).
  */
-function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNodeData {
+function readNode(tree: TreeHandle, handle?: number, childIndex?: number, depth?: number): AnyNodeData {
 	// Per-handle dispatch: native-engine handles carry a `read`
 	// closure that routes through napi (engine owns the tree;
 	// navigation via handle + childIndex replaces nodeId).
 	// Wasm/JS handles (retained diagnostic tooling) leave `read`
 	// absent and fall back to the in-process JS walker.
-	return tree.read ? tree.read(handle, childIndex) : readNodeJs(tree, handle, childIndex);
+	return tree.read ? tree.read(handle, childIndex, depth) : readNodeJs(tree, handle, childIndex);
 }
 
 /**
@@ -15636,6 +15693,6 @@ function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNo
  * the grammar symbol (stamped by the read), so no per-site alias
  * rewriting exists between the read and the wrap.
  */
-export function readTreeNode(tree: TreeHandle, handle?: number, childIndex?: number): unknown {
-	return wrapNode(readNode(tree, handle, childIndex), tree);
+export function readTreeNode(tree: TreeHandle, handle?: number, childIndex?: number, depth?: number): unknown {
+	return wrapNode(readNode(tree, handle, childIndex, depth), tree);
 }

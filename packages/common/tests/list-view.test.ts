@@ -12,12 +12,11 @@ const listNode = (elements: readonly unknown[], stored: Record<string, unknown> 
 	...stored
 });
 
+const ownerSpec = { list: { accessor: 'items', storage: '_items' }, elements: 'elements', count: '_element', options };
+
 const owner = (list: object | undefined, wrapper?: { kind: number; content: string; decorations: string[] }) =>
-	withListView({ $type: 1, items: () => list } as Record<string, unknown>, {
-		list: 'items',
-		elements: 'elements',
-		count: '_element',
-		options,
+	withListView({ $type: 1, _items: list, items: () => list } as Record<string, unknown>, {
+		...ownerSpec,
 		...(wrapper === undefined ? {} : { wrapper })
 	}) as any;
 
@@ -70,16 +69,71 @@ describe('withListView', () => {
 		expect(node[0]).toBe('arm');
 	});
 
+	it('sizes an owner over a read stub from its list node read one level, without reading the items', () => {
+		const reads: [number | undefined, number | undefined][] = [];
+		const tree = {
+			read: (handle?: number, childIndex?: number) => (reads.push([handle, childIndex]), { $type: 9, _element: [{ $type: 2 }, { $type: 2 }] })
+		};
+		let itemReads = 0;
+		const node = withListView(
+			{
+				$type: 1,
+				_items: { $type: 9, $nodeHandle: 4, $childIndex: 1 },
+				items: () => (itemReads++, listNode(['a', 'b']))
+			} as Record<string, unknown>,
+			ownerSpec,
+			tree as never
+		) as any;
+		expect(node.length).toBe(2);
+		expect(reads).toEqual([[4, 1]]);
+		expect(itemReads).toBe(0);
+		expect(node[1]).toBe('b');
+	});
+
+	it('builds an owner over a read stub no tree can read, and refuses to count it', () => {
+		const node = withListView(
+			{ $type: 1, _items: { $type: 9, $nodeHandle: 4, $childIndex: 1 }, items: () => undefined },
+			ownerSpec
+		) as any;
+		expect(() => node.length).toThrow(/read stub/);
+		expect(node[0]).toBeUndefined();
+	});
+
+	it('reads an empty list node that carries its own handle as empty, not as a stub', () => {
+		const node = withListView({ $type: 9, $nodeHandle: 3, elements: () => [] } as Record<string, unknown>, {
+			elements: 'elements',
+			count: '_element'
+		}) as any;
+		expect(node.length).toBe(0);
+	});
+
+	it('counts a lone element the reader stores as a single node', () => {
+		const node = withListView(
+			{ $type: 1, _items: { $type: 9, _element: { $type: 2 } }, items: () => listNode(['a']) } as Record<string, unknown>,
+			ownerSpec
+		) as any;
+		expect(node.length).toBe(1);
+		expect(node[0]).toBe('a');
+	});
+
+	it('prints and concatenates as its items', () => {
+		const node = owner(listNode(['a', 'b']));
+		expect(String(node)).toBe('a,b');
+		expect(node.toLocaleString()).toBe('a,b');
+		expect(node.concat(owner(listNode(['c'])))).toEqual(['a', 'b', 'c']);
+		expect(['z'].concat(node)).toEqual(['z', 'a', 'b']);
+	});
+
 	it('keeps every view member off the enumerable keys', () => {
 		const node = owner(listNode(['a']));
-		expect(Object.keys(node)).toEqual(['$type', 'items']);
+		expect(Object.keys(node)).toEqual(['$type', '_items', 'items']);
 		expect(Object.getOwnPropertySymbols({ ...node })).toEqual([]);
 	});
 
 	it('names the members a list accessor must not collide with', () => {
 		expect(LIST_VIEW_MEMBERS).toContain('entries');
 		expect(LIST_VIEW_MEMBERS).toContain('length');
-		expect(LIST_VIEW_MEMBERS).not.toContain('toString');
+		expect(LIST_VIEW_MEMBERS).toContain('toString');
 	});
 });
 
