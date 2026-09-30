@@ -7,7 +7,8 @@ import {
 	mapTriviaEntries,
 	projectInterior,
 	coerceBooleanKeywordStorage,
-	inTreeEngine
+	inTreeEngine,
+	withListOwner
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
@@ -2500,25 +2501,30 @@ export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle) {
 
 export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_enum_variant_list_elements']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.EnumVariantList as const,
-		_enum_variant_list_elements: normalizeSingularWrapSlot(
-			data._enum_variant_list_elements,
-			'enum_variant_list_elements',
-			false,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'enum_variant_list_elements', span: (data as _NodeData).$span }
-		),
+	const _node = withMethods(
+		withListOwner(
+			{
+				...data,
+				$type: TSKindId.EnumVariantList as const,
+				_enum_variant_list_elements: normalizeSingularWrapSlot(
+					data._enum_variant_list_elements,
+					'enum_variant_list_elements',
+					false,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'enum_variant_list_elements', span: (data as _NodeData).$span }
+				),
 
-		enumVariantListElements() {
-			return drillIn<T.EnumVariantListElements | undefined>(this._enum_variant_list_elements, tree);
-		},
-		$with: {
-			enumVariantListElements: (v: NonNullable<T.EnumVariantList['_enum_variant_list_elements']>) =>
-				wrapEnumVariantList({ ...$edited(data), _enum_variant_list_elements: v }, tree)
-		}
-	});
+				enumVariantListElements() {
+					return drillIn<T.EnumVariantListElements | undefined>(this._enum_variant_list_elements, tree);
+				},
+				$with: {
+					enumVariantListElements: (v: NonNullable<T.EnumVariantList['_enum_variant_list_elements']>) =>
+						wrapEnumVariantList({ ...$edited(data), _enum_variant_list_elements: v }, tree)
+				}
+			},
+			{ list: 'enumVariantListElements', elements: 'elements', options: ['delimiter'] }
+		)
+	);
 	return _node;
 }
 
@@ -2583,25 +2589,30 @@ export function wrapEnumVariant(data: T.EnumVariant, tree: TreeHandle) {
 
 export function wrapFieldDeclarationList(data: T.FieldDeclarationList, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_field_declaration_list_elements']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.FieldDeclarationList as const,
-		_field_declaration_list_elements: normalizeSingularWrapSlot(
-			data._field_declaration_list_elements,
-			'field_declaration_list_elements',
-			false,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'field_declaration_list_elements', span: (data as _NodeData).$span }
-		),
+	const _node = withMethods(
+		withListOwner(
+			{
+				...data,
+				$type: TSKindId.FieldDeclarationList as const,
+				_field_declaration_list_elements: normalizeSingularWrapSlot(
+					data._field_declaration_list_elements,
+					'field_declaration_list_elements',
+					false,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'field_declaration_list_elements', span: (data as _NodeData).$span }
+				),
 
-		fieldDeclarationListElements() {
-			return drillIn<T.FieldDeclarationListElements | undefined>(this._field_declaration_list_elements, tree);
-		},
-		$with: {
-			fieldDeclarationListElements: (v: NonNullable<T.FieldDeclarationList['_field_declaration_list_elements']>) =>
-				wrapFieldDeclarationList({ ...$edited(data), _field_declaration_list_elements: v }, tree)
-		}
-	});
+				fieldDeclarationListElements() {
+					return drillIn<T.FieldDeclarationListElements | undefined>(this._field_declaration_list_elements, tree);
+				},
+				$with: {
+					fieldDeclarationListElements: (v: NonNullable<T.FieldDeclarationList['_field_declaration_list_elements']>) =>
+						wrapFieldDeclarationList({ ...$edited(data), _field_declaration_list_elements: v }, tree)
+				}
+			},
+			{ list: 'fieldDeclarationListElements', elements: 'elements', options: ['delimiter'] }
+		)
+	);
 	return _node;
 }
 
@@ -2675,24 +2686,29 @@ export function wrapFieldDeclaration(data: T.FieldDeclaration, tree: TreeHandle)
 
 export function wrapOrderedFieldDeclarationList(data: T.OrderedFieldDeclarationList, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_attributes']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.OrderedFieldDeclarationList as const,
-		_attributes: normalizeSingularWrapSlot(data._attributes, 'attributes', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'attributes',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withListOwner(
+			{
+				...data,
+				$type: TSKindId.OrderedFieldDeclarationList as const,
+				_attributes: normalizeSingularWrapSlot(data._attributes, 'attributes', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'attributes',
+					span: (data as _NodeData).$span
+				}),
 
-		attributes() {
-			return drillIn<T.OrderedFieldDeclarationListElements | undefined>(this._attributes, tree);
-		},
-		$with: {
-			attributes: (v: NonNullable<T.OrderedFieldDeclarationList['_attributes']>) =>
-				wrapOrderedFieldDeclarationList({ ...$edited(data), _attributes: v }, tree)
-		}
-	});
+				attributes() {
+					return drillIn<T.OrderedFieldDeclarationListElements | undefined>(this._attributes, tree);
+				},
+				$with: {
+					attributes: (v: NonNullable<T.OrderedFieldDeclarationList['_attributes']>) =>
+						wrapOrderedFieldDeclarationList({ ...$edited(data), _attributes: v }, tree)
+				}
+			},
+			{ list: 'attributes', elements: 'elements', options: ['delimiter'] }
+		)
+	);
 	return _node;
 }
 
@@ -3352,24 +3368,29 @@ export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandl
 
 export function wrapWhereClause(data: T.WhereClause, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_where_predicates']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.WhereClause as const,
-		_where_predicates: normalizeSingularWrapSlot(data._where_predicates, 'where_predicates', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'where_predicates',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withListOwner(
+			{
+				...data,
+				$type: TSKindId.WhereClause as const,
+				_where_predicates: normalizeSingularWrapSlot(data._where_predicates, 'where_predicates', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'where_predicates',
+					span: (data as _NodeData).$span
+				}),
 
-		wherePredicates() {
-			return drillIn<T.WherePredicates | undefined>(this._where_predicates, tree);
-		},
-		$with: {
-			wherePredicates: (v: NonNullable<T.WhereClause['_where_predicates']>) =>
-				wrapWhereClause({ ...$edited(data), _where_predicates: v }, tree)
-		}
-	});
+				wherePredicates() {
+					return drillIn<T.WherePredicates | undefined>(this._where_predicates, tree);
+				},
+				$with: {
+					wherePredicates: (v: NonNullable<T.WhereClause['_where_predicates']>) =>
+						wrapWhereClause({ ...$edited(data), _where_predicates: v }, tree)
+				}
+			},
+			{ list: 'wherePredicates', elements: 'wherePredicates', options: ['delimiter'] }
+		)
+	);
 	return _node;
 }
 
@@ -3795,25 +3816,30 @@ export function wrapRemovedTraitBound(data: T.RemovedTraitBound, tree: TreeHandl
 
 export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_type_parameters_elements']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.TypeParameters as const,
-		_type_parameters_elements: normalizeSingularWrapSlot(
-			data._type_parameters_elements,
-			'type_parameters_elements',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'type_parameters_elements', span: (data as _NodeData).$span }
-		),
+	const _node = withMethods(
+		withListOwner(
+			{
+				...data,
+				$type: TSKindId.TypeParameters as const,
+				_type_parameters_elements: normalizeSingularWrapSlot(
+					data._type_parameters_elements,
+					'type_parameters_elements',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'type_parameters_elements', span: (data as _NodeData).$span }
+				),
 
-		typeParametersElements() {
-			return drillIn<T.TypeParametersElements>(this._type_parameters_elements, tree);
-		},
-		$with: {
-			typeParametersElements: (v: NonNullable<T.TypeParameters['_type_parameters_elements']>) =>
-				wrapTypeParameters({ ...$edited(data), _type_parameters_elements: v }, tree)
-		}
-	});
+				typeParametersElements() {
+					return drillIn<T.TypeParametersElements>(this._type_parameters_elements, tree);
+				},
+				$with: {
+					typeParametersElements: (v: NonNullable<T.TypeParameters['_type_parameters_elements']>) =>
+						wrapTypeParameters({ ...$edited(data), _type_parameters_elements: v }, tree)
+				}
+			},
+			{ list: 'typeParametersElements', elements: 'elements', options: ['delimiter'] }
+		)
+	);
 	return _node;
 }
 
@@ -4395,24 +4421,29 @@ export function wrapScopedUseList(data: T.ScopedUseList, tree: TreeHandle) {
 
 export function wrapUseList(data: T.UseList, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_use_clauses']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.UseList as const,
-		_use_clauses: normalizeSingularWrapSlot(data._use_clauses, 'use_clauses', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'use_clauses',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withListOwner(
+			{
+				...data,
+				$type: TSKindId.UseList as const,
+				_use_clauses: normalizeSingularWrapSlot(data._use_clauses, 'use_clauses', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'use_clauses',
+					span: (data as _NodeData).$span
+				}),
 
-		useClauses() {
-			return drillIn<T.UseClauses | undefined>(this._use_clauses, tree);
-		},
-		$with: {
-			useClauses: (v: NonNullable<T.UseList['_use_clauses']>) =>
-				wrapUseList({ ...$edited(data), _use_clauses: v }, tree)
-		}
-	});
+				useClauses() {
+					return drillIn<T.UseClauses | undefined>(this._use_clauses, tree);
+				},
+				$with: {
+					useClauses: (v: NonNullable<T.UseList['_use_clauses']>) =>
+						wrapUseList({ ...$edited(data), _use_clauses: v }, tree)
+				}
+			},
+			{ list: 'useClauses', elements: 'useClauses', options: ['delimiter'] }
+		)
+	);
 	return _node;
 }
 
@@ -4528,25 +4559,30 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle) {
 
 export function wrapParameters(data: T.Parameters, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_parameters_elements']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.Parameters as const,
-		_parameters_elements: normalizeSingularWrapSlot(
-			data._parameters_elements,
-			'parameters_elements',
-			false,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'parameters_elements', span: (data as _NodeData).$span }
-		),
+	const _node = withMethods(
+		withListOwner(
+			{
+				...data,
+				$type: TSKindId.Parameters as const,
+				_parameters_elements: normalizeSingularWrapSlot(
+					data._parameters_elements,
+					'parameters_elements',
+					false,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'parameters_elements', span: (data as _NodeData).$span }
+				),
 
-		parametersElements() {
-			return drillIn<T.ParametersElements | undefined>(this._parameters_elements, tree);
-		},
-		$with: {
-			parametersElements: (v: NonNullable<T.Parameters['_parameters_elements']>) =>
-				wrapParameters({ ...$edited(data), _parameters_elements: v }, tree)
-		}
-	});
+				parametersElements() {
+					return drillIn<T.ParametersElements | undefined>(this._parameters_elements, tree);
+				},
+				$with: {
+					parametersElements: (v: NonNullable<T.Parameters['_parameters_elements']>) =>
+						wrapParameters({ ...$edited(data), _parameters_elements: v }, tree)
+				}
+			},
+			{ list: 'parametersElements', elements: 'elements', options: ['delimiter'] }
+		)
+	);
 	return _node;
 }
 
@@ -5065,24 +5101,29 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle) {
 
 export function wrapForLifetimes(data: T.ForLifetimes, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_lifetimes']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.ForLifetimes as const,
-		_lifetimes: normalizeSingularWrapSlot(data._lifetimes, 'lifetimes', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'lifetimes',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withListOwner(
+			{
+				...data,
+				$type: TSKindId.ForLifetimes as const,
+				_lifetimes: normalizeSingularWrapSlot(data._lifetimes, 'lifetimes', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'lifetimes',
+					span: (data as _NodeData).$span
+				}),
 
-		lifetimes() {
-			return drillIn<T.Lifetimes>(this._lifetimes, tree);
-		},
-		$with: {
-			lifetimes: (v: NonNullable<T.ForLifetimes['_lifetimes']>) =>
-				wrapForLifetimes({ ...$edited(data), _lifetimes: v }, tree)
-		}
-	});
+				lifetimes() {
+					return drillIn<T.Lifetimes>(this._lifetimes, tree);
+				},
+				$with: {
+					lifetimes: (v: NonNullable<T.ForLifetimes['_lifetimes']>) =>
+						wrapForLifetimes({ ...$edited(data), _lifetimes: v }, tree)
+				}
+			},
+			{ list: 'lifetimes', elements: 'lifetimes', options: ['delimiter'] }
+		)
+	);
 	return _node;
 }
 
@@ -5168,25 +5209,30 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle) {
 
 export function wrapTupleType(data: T.TupleType, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_tuple_type_elements']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.TupleType as const,
-		_tuple_type_elements: normalizeSingularWrapSlot(
-			data._tuple_type_elements,
-			'tuple_type_elements',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'tuple_type_elements', span: (data as _NodeData).$span }
-		),
+	const _node = withMethods(
+		withListOwner(
+			{
+				...data,
+				$type: TSKindId.TupleType as const,
+				_tuple_type_elements: normalizeSingularWrapSlot(
+					data._tuple_type_elements,
+					'tuple_type_elements',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'tuple_type_elements', span: (data as _NodeData).$span }
+				),
 
-		tupleTypeElements() {
-			return drillIn<T.TupleTypeElements>(this._tuple_type_elements, tree);
-		},
-		$with: {
-			tupleTypeElements: (v: NonNullable<T.TupleType['_tuple_type_elements']>) =>
-				wrapTupleType({ ...$edited(data), _tuple_type_elements: v }, tree)
-		}
-	});
+				tupleTypeElements() {
+					return drillIn<T.TupleTypeElements>(this._tuple_type_elements, tree);
+				},
+				$with: {
+					tupleTypeElements: (v: NonNullable<T.TupleType['_tuple_type_elements']>) =>
+						wrapTupleType({ ...$edited(data), _tuple_type_elements: v }, tree)
+				}
+			},
+			{ list: 'tupleTypeElements', elements: 'types', options: ['delimiter'] }
+		)
+	);
 	return _node;
 }
 
@@ -5383,47 +5429,57 @@ export function wrapBoundedType(data: T.BoundedType, tree: TreeHandle) {
 
 export function wrapUseBounds(data: T.UseBounds, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_bounds']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.UseBounds as const,
-		_bounds: normalizeSingularWrapSlot(data._bounds, 'bounds', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'bounds',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withListOwner(
+			{
+				...data,
+				$type: TSKindId.UseBounds as const,
+				_bounds: normalizeSingularWrapSlot(data._bounds, 'bounds', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'bounds',
+					span: (data as _NodeData).$span
+				}),
 
-		bounds() {
-			return drillIn<T.UseBoundsElements | undefined>(this._bounds, tree);
-		},
-		$with: {
-			bounds: (v: NonNullable<T.UseBounds['_bounds']>) => wrapUseBounds({ ...$edited(data), _bounds: v }, tree)
-		}
-	});
+				bounds() {
+					return drillIn<T.UseBoundsElements | undefined>(this._bounds, tree);
+				},
+				$with: {
+					bounds: (v: NonNullable<T.UseBounds['_bounds']>) => wrapUseBounds({ ...$edited(data), _bounds: v }, tree)
+				}
+			},
+			{ list: 'bounds', elements: 'elements', options: ['delimiter'] }
+		)
+	);
 	return _node;
 }
 
 export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_type_arguments_elements']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.TypeArguments as const,
-		_type_arguments_elements: normalizeSingularWrapSlot(
-			data._type_arguments_elements,
-			'type_arguments_elements',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'type_arguments_elements', span: (data as _NodeData).$span }
-		),
+	const _node = withMethods(
+		withListOwner(
+			{
+				...data,
+				$type: TSKindId.TypeArguments as const,
+				_type_arguments_elements: normalizeSingularWrapSlot(
+					data._type_arguments_elements,
+					'type_arguments_elements',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'type_arguments_elements', span: (data as _NodeData).$span }
+				),
 
-		typeArgumentsElements() {
-			return drillIn<T.TypeArgumentsElements>(this._type_arguments_elements, tree);
-		},
-		$with: {
-			typeArgumentsElements: (v: NonNullable<T.TypeArguments['_type_arguments_elements']>) =>
-				wrapTypeArguments({ ...$edited(data), _type_arguments_elements: v }, tree)
-		}
-	});
+				typeArgumentsElements() {
+					return drillIn<T.TypeArgumentsElements>(this._type_arguments_elements, tree);
+				},
+				$with: {
+					typeArgumentsElements: (v: NonNullable<T.TypeArguments['_type_arguments_elements']>) =>
+						wrapTypeArguments({ ...$edited(data), _type_arguments_elements: v }, tree)
+				}
+			},
+			{ list: 'typeArgumentsElements', elements: 'elements', options: ['delimiter'] }
+		)
+	);
 	return _node;
 }
 
@@ -7226,24 +7282,30 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle) {
 
 export function wrapArguments(data: T.Arguments, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_arguments_elements']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.Arguments as const,
-		_arguments_elements: normalizeSingularWrapSlot(data._arguments_elements, 'arguments_elements', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'arguments_elements',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withListOwner(
+			{
+				...data,
+				$type: TSKindId.Arguments as const,
+				_arguments_elements: normalizeSingularWrapSlot(
+					data._arguments_elements,
+					'arguments_elements',
+					false,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'arguments_elements', span: (data as _NodeData).$span }
+				),
 
-		argumentsElements() {
-			return drillIn<T.ArgumentsElements | undefined>(this._arguments_elements, tree);
-		},
-		$with: {
-			argumentsElements: (v: NonNullable<T.Arguments['_arguments_elements']>) =>
-				wrapArguments({ ...$edited(data), _arguments_elements: v }, tree)
-		}
-	});
+				argumentsElements() {
+					return drillIn<T.ArgumentsElements | undefined>(this._arguments_elements, tree);
+				},
+				$with: {
+					argumentsElements: (v: NonNullable<T.Arguments['_arguments_elements']>) =>
+						wrapArguments({ ...$edited(data), _arguments_elements: v }, tree)
+				}
+			},
+			{ list: 'argumentsElements', elements: 'elements', options: ['delimiter'] }
+		)
+	);
 	return _node;
 }
 
@@ -7376,24 +7438,29 @@ export function wrapStructExpression(data: T.StructExpression, tree: TreeHandle)
 
 export function wrapFieldInitializerList(data: T.FieldInitializerList, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_initializers']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.FieldInitializerList as const,
-		_initializers: normalizeSingularWrapSlot(data._initializers, 'initializers', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'initializers',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withListOwner(
+			{
+				...data,
+				$type: TSKindId.FieldInitializerList as const,
+				_initializers: normalizeSingularWrapSlot(data._initializers, 'initializers', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'initializers',
+					span: (data as _NodeData).$span
+				}),
 
-		initializers() {
-			return drillIn<T.FieldInitializerListElements | undefined>(this._initializers, tree);
-		},
-		$with: {
-			initializers: (v: NonNullable<T.FieldInitializerList['_initializers']>) =>
-				wrapFieldInitializerList({ ...$edited(data), _initializers: v }, tree)
-		}
-	});
+				initializers() {
+					return drillIn<T.FieldInitializerListElements | undefined>(this._initializers, tree);
+				},
+				$with: {
+					initializers: (v: NonNullable<T.FieldInitializerList['_initializers']>) =>
+						wrapFieldInitializerList({ ...$edited(data), _initializers: v }, tree)
+				}
+			},
+			{ list: 'initializers', elements: 'elements', options: ['delimiter'] }
+		)
+	);
 	return _node;
 }
 
@@ -8972,47 +9039,57 @@ export function wrapGenericPattern(data: T.GenericPattern, tree: TreeHandle) {
 
 export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_elements']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.TuplePattern as const,
-		_elements: normalizeSingularWrapSlot(data._elements, 'elements', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'elements',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withListOwner(
+			{
+				...data,
+				$type: TSKindId.TuplePattern as const,
+				_elements: normalizeSingularWrapSlot(data._elements, 'elements', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'elements',
+					span: (data as _NodeData).$span
+				}),
 
-		elements() {
-			return drillIn<T.TuplePatternElements | undefined>(this._elements, tree);
-		},
-		$with: {
-			elements: (v: NonNullable<T.TuplePattern['_elements']>) =>
-				wrapTuplePattern({ ...$edited(data), _elements: v }, tree)
-		}
-	});
+				elements() {
+					return drillIn<T.TuplePatternElements | undefined>(this._elements, tree);
+				},
+				$with: {
+					elements: (v: NonNullable<T.TuplePattern['_elements']>) =>
+						wrapTuplePattern({ ...$edited(data), _elements: v }, tree)
+				}
+			},
+			{ list: 'elements', elements: 'elements', options: ['delimiter'] }
+		)
+	);
 	return _node;
 }
 
 export function wrapSlicePattern(data: T.SlicePattern, tree: TreeHandle) {
 	data = _keepModelledSlots(data, ['_patterns']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.SlicePattern as const,
-		_patterns: normalizeSingularWrapSlot(data._patterns, 'patterns', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'patterns',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withListOwner(
+			{
+				...data,
+				$type: TSKindId.SlicePattern as const,
+				_patterns: normalizeSingularWrapSlot(data._patterns, 'patterns', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'patterns',
+					span: (data as _NodeData).$span
+				}),
 
-		patterns() {
-			return drillIn<T.Patterns | undefined>(this._patterns, tree);
-		},
-		$with: {
-			patterns: (v: NonNullable<T.SlicePattern['_patterns']>) =>
-				wrapSlicePattern({ ...$edited(data), _patterns: v }, tree)
-		}
-	});
+				patterns() {
+					return drillIn<T.Patterns | undefined>(this._patterns, tree);
+				},
+				$with: {
+					patterns: (v: NonNullable<T.SlicePattern['_patterns']>) =>
+						wrapSlicePattern({ ...$edited(data), _patterns: v }, tree)
+				}
+			},
+			{ list: 'patterns', elements: 'patterns', options: ['delimiter'] }
+		)
+	);
 	return _node;
 }
 

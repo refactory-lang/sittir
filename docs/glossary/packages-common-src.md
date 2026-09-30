@@ -190,3 +190,7 @@ The value, or the default's when it is absent. The default's type is not an infe
 ### `packages/common/src/runtime.ts::hoistAs`
 
 `hoistRoutes` with the result type given and the argument taken as `unknown`, so a bundle entry is hoisted without relating the overlay's declared type to the pair type the hoister would infer. The generated `factories/index.ts` uses it for every entry.
+
+### `packages/common/src/utils.ts::withListOwner`
+
+Gives a list owner (a node whose sole content is a separated list) the members its type declares: it iterates the list's elements, reports `length`, answers `at(index)`, and carries one getter per option the list's factory takes (`delimiter`, `separator`), read from the list's stored `_<option>` (a list that is absent reads `Delimiter.None` for the delimiter and nothing for the rest). Everything is read through the owner's own accessors, so a parsed owner drills lazily and a built owner reads what it stores. Every member is defined non-enumerable, so a spread, `Object.keys` and serialisation see the node exactly as before, and rendering never reads them. The spec names the owner's list accessor, the list's element accessor and the option keys, all emitted from the model.

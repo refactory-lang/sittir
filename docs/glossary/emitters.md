@@ -16403,3 +16403,11 @@ Whether a type text has ` | ` outside every bracket pair, the test `parenthesize
 ### `packages/codegen/src/emitters/from.ts::keywordOr`
 
 The emitted `_keywordOr(input, keywords, () => resolved)` that replaces `_keywordOf(input, keywords) ?? resolved` for a single slot. Its declared result is `number | R`, so the checker forms the union without reducing it, which a `??` expression does and which exceeds the depth on a union that holds a node's `.Bound`.
+
+### `packages/codegen/src/emitters/factories.ts::listOwnerRuntimeSpec`
+
+The object literal `{ list, elements, options }` a list owner's builder and wrap pass to `withListOwner`: the owner's accessor for its list, the list's accessor for its elements, and the option keys its factory takes. It shares `listOwnerTarget` with `listOwnerHint`, so the type-level marker and the runtime members come from one test of list-ownership; `undefined` means the node is not a list owner and neither emitter adds the call.
+
+### `packages/codegen/src/emitters/factories.ts::listOwnerTarget`
+
+The owner's sole slot and the separated list it forwards to, or `undefined` when the node does not forward to a list.

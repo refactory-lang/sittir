@@ -5,6 +5,7 @@ import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { toEditAt } from './edit.ts';
+import { Delimiter } from './delimiter.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { Source };
@@ -191,6 +192,48 @@ export function withAccessors<T extends object, A extends Record<string, unknown
 		Object.defineProperty(node, key, { value: accessors[key], enumerable: false, writable: true, configurable: true });
 	}
 	return node as T & A;
+}
+
+interface ListOwnerSpec {
+	readonly list: string;
+	readonly elements: string;
+	readonly options: readonly string[];
+}
+
+export function withListOwner<T extends object>(node: T, spec: ListOwnerSpec): T {
+	const listOf = (self: object): Record<string, unknown> | undefined =>
+		(self as Record<string, () => Record<string, unknown> | undefined>)[spec.list]?.call(self);
+	const elementsOf = (self: object): readonly unknown[] => {
+		const list = listOf(self);
+		return list === undefined ? [] : ((list[spec.elements] as () => readonly unknown[]).call(list) ?? []);
+	};
+	const define = (key: PropertyKey, descriptor: PropertyDescriptor): void => {
+		Object.defineProperty(node, key, { ...descriptor, enumerable: false, configurable: true });
+	};
+	define(Symbol.iterator, {
+		value: function (this: object): IterableIterator<unknown> {
+			return elementsOf(this)[Symbol.iterator]();
+		}
+	});
+	define('length', {
+		get(this: object) {
+			return elementsOf(this).length;
+		}
+	});
+	define('at', {
+		value: function (this: object, index: number): unknown {
+			return elementsOf(this).at(index);
+		}
+	});
+	for (const key of spec.options) {
+		define(key, {
+			get(this: object) {
+				const stored = listOf(this)?.[`_${key}`];
+				return stored ?? (key === 'delimiter' ? Delimiter.None : undefined);
+			}
+		});
+	}
+	return node;
 }
 
 export function isNode(v: unknown): v is AnyNodeData {

@@ -14,7 +14,8 @@ import {
 	numberText,
 	orDefault,
 	rejectBareText,
-	rejectKeywordText
+	rejectKeywordText,
+	withListOwner
 } from '@sittir/common/utils';
 import { withMethods } from '../utils.js';
 
@@ -167,19 +168,22 @@ export function buildExportClause(...args: unknown[]) {
 function _buildExportClause(value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNodes>): T.ExportClause.Bound {
 	const _export_specifiers = rejectBareText(value, 'ExportClause.exportSpecifiers', 'a built ExportSpecifiers');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportClause as const,
-				$source: 2 as const,
-				$named: true as const,
-				_export_specifiers,
-				$with: {
-					exportSpecifiers: (value?: T.ExportSpecifiers) => buildExportClause(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.ExportClause as const,
+					$source: 2 as const,
+					$named: true as const,
+					_export_specifiers,
+					$with: {
+						exportSpecifiers: (value?: T.ExportSpecifiers) => buildExportClause(value)
+					}
+				},
+				{
+					exportSpecifiers: () => _export_specifiers
 				}
-			},
-			{
-				exportSpecifiers: () => _export_specifiers
-			}
+			),
+			{ list: 'exportSpecifiers', elements: 'exportSpecifiers', options: ['delimiter'] }
 		)
 	) as unknown as T.ExportClause.Bound;
 }
@@ -361,19 +365,22 @@ export function buildNamedImports(...args: unknown[]) {
 function _buildNamedImports(value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNodes>): T.NamedImports.Bound {
 	const _import_specifiers = rejectBareText(value, 'NamedImports.importSpecifiers', 'a built ImportSpecifiers');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.NamedImports as const,
-				$source: 2 as const,
-				$named: true as const,
-				_import_specifiers,
-				$with: {
-					importSpecifiers: (value?: T.ImportSpecifiers) => buildNamedImports(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.NamedImports as const,
+					$source: 2 as const,
+					$named: true as const,
+					_import_specifiers,
+					$with: {
+						importSpecifiers: (value?: T.ImportSpecifiers) => buildNamedImports(value)
+					}
+				},
+				{
+					importSpecifiers: () => _import_specifiers
 				}
-			},
-			{
-				importSpecifiers: () => _import_specifiers
-			}
+			),
+			{ list: 'importSpecifiers', elements: 'importSpecifiers', options: ['delimiter'] }
 		)
 	) as unknown as T.NamedImports.Bound;
 }
@@ -3245,19 +3252,22 @@ function _buildFormalParameters(
 		'a built FormalParametersElements'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FormalParameters as const,
-				$source: 2 as const,
-				$named: true as const,
-				_formal_parameters_elements,
-				$with: {
-					formalParametersElements: (value?: T.FormalParametersElements) => buildFormalParameters(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.FormalParameters as const,
+					$source: 2 as const,
+					$named: true as const,
+					_formal_parameters_elements,
+					$with: {
+						formalParametersElements: (value?: T.FormalParametersElements) => buildFormalParameters(value)
+					}
+				},
+				{
+					formalParametersElements: () => _formal_parameters_elements
 				}
-			},
-			{
-				formalParametersElements: () => _formal_parameters_elements
-			}
+			),
+			{ list: 'formalParametersElements', elements: 'formalParameters', options: ['delimiter'] }
 		)
 	) as unknown as T.FormalParameters.Bound;
 }
@@ -4797,19 +4807,22 @@ export function buildEnumBody(...args: unknown[]) {
 function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>): T.EnumBody.Bound {
 	const _enum_body_elements = rejectBareText(value, 'EnumBody.enumBodyElements', 'a built EnumBodyElements');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.EnumBody as const,
-				$source: 2 as const,
-				$named: true as const,
-				_enum_body_elements,
-				$with: {
-					enumBodyElements: (value?: T.EnumBodyElements) => buildEnumBody(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.EnumBody as const,
+					$source: 2 as const,
+					$named: true as const,
+					_enum_body_elements,
+					$with: {
+						enumBodyElements: (value?: T.EnumBodyElements) => buildEnumBody(value)
+					}
+				},
+				{
+					enumBodyElements: () => _enum_body_elements
 				}
-			},
-			{
-				enumBodyElements: () => _enum_body_elements
-			}
+			),
+			{ list: 'enumBodyElements', elements: 'contents', options: ['delimiter'] }
 		)
 	) as unknown as T.EnumBody.Bound;
 }
@@ -6250,19 +6263,22 @@ export function buildTypeArguments(...args: unknown[]) {
 function _buildTypeArguments(value: AdmitBound<T.Types, T.AdmittedNodes>): T.TypeArguments.Bound {
 	const _types = rejectBareText(value, 'TypeArguments.types', 'a built Types');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TypeArguments as const,
-				$source: 2 as const,
-				$named: true as const,
-				_types,
-				$with: {
-					types: (value: T.Types) => buildTypeArguments(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.TypeArguments as const,
+					$source: 2 as const,
+					$named: true as const,
+					_types,
+					$with: {
+						types: (value: T.Types) => buildTypeArguments(value)
+					}
+				},
+				{
+					types: () => _types
 				}
-			},
-			{
-				types: () => _types
-			}
+			),
+			{ list: 'types', elements: 'types', options: ['delimiter'] }
 		)
 	) as unknown as T.TypeArguments.Bound;
 }
@@ -6527,19 +6543,22 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 		'a built TypeParametersElements'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TypeParameters as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type_parameters_elements,
-				$with: {
-					typeParametersElements: (value: T.TypeParametersElements) => buildTypeParameters(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.TypeParameters as const,
+					$source: 2 as const,
+					$named: true as const,
+					_type_parameters_elements,
+					$with: {
+						typeParametersElements: (value: T.TypeParametersElements) => buildTypeParameters(value)
+					}
+				},
+				{
+					typeParametersElements: () => _type_parameters_elements
 				}
-			},
-			{
-				typeParametersElements: () => _type_parameters_elements
-			}
+			),
+			{ list: 'typeParametersElements', elements: 'typeParameters', options: ['delimiter'] }
 		)
 	) as unknown as T.TypeParameters.Bound;
 }
@@ -6751,19 +6770,22 @@ export function buildTupleType(...args: unknown[]) {
 function _buildTupleType(value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>): T.TupleType.Bound {
 	const _tuple_type_members = rejectBareText(value, 'TupleType.tupleTypeMembers', 'a built TupleTypeMembers');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TupleType as const,
-				$source: 2 as const,
-				$named: true as const,
-				_tuple_type_members,
-				$with: {
-					tupleTypeMembers: (value?: T.TupleTypeMembers) => buildTupleType(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.TupleType as const,
+					$source: 2 as const,
+					$named: true as const,
+					_tuple_type_members,
+					$with: {
+						tupleTypeMembers: (value?: T.TupleTypeMembers) => buildTupleType(value)
+					}
+				},
+				{
+					tupleTypeMembers: () => _tuple_type_members
 				}
-			},
-			{
-				tupleTypeMembers: () => _tuple_type_members
-			}
+			),
+			{ list: 'tupleTypeMembers', elements: 'tupleTypeMembers', options: ['delimiter'] }
 		)
 	) as unknown as T.TupleType.Bound;
 }

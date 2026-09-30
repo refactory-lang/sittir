@@ -14,7 +14,8 @@ import {
 	numberText,
 	orDefault,
 	rejectBareText,
-	rejectKeywordText
+	rejectKeywordText,
+	withListOwner
 } from '@sittir/common/utils';
 import { withMethods } from '../utils.js';
 
@@ -979,19 +980,22 @@ function _buildEnumVariantList(
 		'a built EnumVariantListElements'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.EnumVariantList as const,
-				$source: 2 as const,
-				$named: true as const,
-				_enum_variant_list_elements,
-				$with: {
-					enumVariantListElements: (value?: T.EnumVariantListElements) => buildEnumVariantList(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.EnumVariantList as const,
+					$source: 2 as const,
+					$named: true as const,
+					_enum_variant_list_elements,
+					$with: {
+						enumVariantListElements: (value?: T.EnumVariantListElements) => buildEnumVariantList(value)
+					}
+				},
+				{
+					enumVariantListElements: () => _enum_variant_list_elements
 				}
-			},
-			{
-				enumVariantListElements: () => _enum_variant_list_elements
-			}
+			),
+			{ list: 'enumVariantListElements', elements: 'elements', options: ['delimiter'] }
 		)
 	) as unknown as T.EnumVariantList.Bound;
 }
@@ -1077,19 +1081,22 @@ function _buildFieldDeclarationList(
 		'a built FieldDeclarationListElements'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FieldDeclarationList as const,
-				$source: 2 as const,
-				$named: true as const,
-				_field_declaration_list_elements,
-				$with: {
-					fieldDeclarationListElements: (value?: T.FieldDeclarationListElements) => buildFieldDeclarationList(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.FieldDeclarationList as const,
+					$source: 2 as const,
+					$named: true as const,
+					_field_declaration_list_elements,
+					$with: {
+						fieldDeclarationListElements: (value?: T.FieldDeclarationListElements) => buildFieldDeclarationList(value)
+					}
+				},
+				{
+					fieldDeclarationListElements: () => _field_declaration_list_elements
 				}
-			},
-			{
-				fieldDeclarationListElements: () => _field_declaration_list_elements
-			}
+			),
+			{ list: 'fieldDeclarationListElements', elements: 'elements', options: ['delimiter'] }
 		)
 	) as unknown as T.FieldDeclarationList.Bound;
 }
@@ -1176,19 +1183,22 @@ function _buildOrderedFieldDeclarationList(
 		'a built OrderedFieldDeclarationListElements'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.OrderedFieldDeclarationList as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attributes,
-				$with: {
-					attributes: (value?: T.OrderedFieldDeclarationListElements) => buildOrderedFieldDeclarationList(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.OrderedFieldDeclarationList as const,
+					$source: 2 as const,
+					$named: true as const,
+					_attributes,
+					$with: {
+						attributes: (value?: T.OrderedFieldDeclarationListElements) => buildOrderedFieldDeclarationList(value)
+					}
+				},
+				{
+					attributes: () => _attributes
 				}
-			},
-			{
-				attributes: () => _attributes
-			}
+			),
+			{ list: 'attributes', elements: 'elements', options: ['delimiter'] }
 		)
 	) as unknown as T.OrderedFieldDeclarationList.Bound;
 }
@@ -1605,19 +1615,22 @@ export function buildWhereClause(...args: unknown[]) {
 function _buildWhereClause(value?: AdmitBound<T.WherePredicates, T.AdmittedNodes>): T.WhereClause.Bound {
 	const _where_predicates = rejectBareText(value, 'WhereClause.wherePredicates', 'a built WherePredicates');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.WhereClause as const,
-				$source: 2 as const,
-				$named: true as const,
-				_where_predicates,
-				$with: {
-					wherePredicates: (value?: T.WherePredicates) => buildWhereClause(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.WhereClause as const,
+					$source: 2 as const,
+					$named: true as const,
+					_where_predicates,
+					$with: {
+						wherePredicates: (value?: T.WherePredicates) => buildWhereClause(value)
+					}
+				},
+				{
+					wherePredicates: () => _where_predicates
 				}
-			},
-			{
-				wherePredicates: () => _where_predicates
-			}
+			),
+			{ list: 'wherePredicates', elements: 'wherePredicates', options: ['delimiter'] }
 		)
 	) as unknown as T.WhereClause.Bound;
 }
@@ -1910,19 +1923,22 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 		'a built TypeParametersElements'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TypeParameters as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type_parameters_elements,
-				$with: {
-					typeParametersElements: (value: T.TypeParametersElements) => buildTypeParameters(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.TypeParameters as const,
+					$source: 2 as const,
+					$named: true as const,
+					_type_parameters_elements,
+					$with: {
+						typeParametersElements: (value: T.TypeParametersElements) => buildTypeParameters(value)
+					}
+				},
+				{
+					typeParametersElements: () => _type_parameters_elements
 				}
-			},
-			{
-				typeParametersElements: () => _type_parameters_elements
-			}
+			),
+			{ list: 'typeParametersElements', elements: 'elements', options: ['delimiter'] }
 		)
 	) as unknown as T.TypeParameters.Bound;
 }
@@ -2351,19 +2367,22 @@ export function buildUseList(...args: unknown[]) {
 function _buildUseList(value?: AdmitBound<T.UseClauses, T.AdmittedNodes>): T.UseList.Bound {
 	const _use_clauses = rejectBareText(value, 'UseList.useClauses', 'a built UseClauses');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.UseList as const,
-				$source: 2 as const,
-				$named: true as const,
-				_use_clauses,
-				$with: {
-					useClauses: (value?: T.UseClauses) => buildUseList(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.UseList as const,
+					$source: 2 as const,
+					$named: true as const,
+					_use_clauses,
+					$with: {
+						useClauses: (value?: T.UseClauses) => buildUseList(value)
+					}
+				},
+				{
+					useClauses: () => _use_clauses
 				}
-			},
-			{
-				useClauses: () => _use_clauses
-			}
+			),
+			{ list: 'useClauses', elements: 'useClauses', options: ['delimiter'] }
 		)
 	) as unknown as T.UseList.Bound;
 }
@@ -2565,19 +2584,22 @@ export function buildParameters(...args: unknown[]) {
 function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNodes>): T.Parameters.Bound {
 	const _parameters_elements = rejectBareText(value, 'Parameters.parametersElements', 'a built ParametersElements');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.Parameters as const,
-				$source: 2 as const,
-				$named: true as const,
-				_parameters_elements,
-				$with: {
-					parametersElements: (value?: T.ParametersElements) => buildParameters(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.Parameters as const,
+					$source: 2 as const,
+					$named: true as const,
+					_parameters_elements,
+					$with: {
+						parametersElements: (value?: T.ParametersElements) => buildParameters(value)
+					}
+				},
+				{
+					parametersElements: () => _parameters_elements
 				}
-			},
-			{
-				parametersElements: () => _parameters_elements
-			}
+			),
+			{ list: 'parametersElements', elements: 'elements', options: ['delimiter'] }
 		)
 	) as unknown as T.Parameters.Bound;
 }
@@ -2909,19 +2931,22 @@ export function buildForLifetimes(...args: unknown[]) {
 function _buildForLifetimes(value: AdmitBound<T.Lifetimes, T.AdmittedNodes>): T.ForLifetimes.Bound {
 	const _lifetimes = rejectBareText(value, 'ForLifetimes.lifetimes', 'a built Lifetimes');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ForLifetimes as const,
-				$source: 2 as const,
-				$named: true as const,
-				_lifetimes,
-				$with: {
-					lifetimes: (value: T.Lifetimes) => buildForLifetimes(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.ForLifetimes as const,
+					$source: 2 as const,
+					$named: true as const,
+					_lifetimes,
+					$with: {
+						lifetimes: (value: T.Lifetimes) => buildForLifetimes(value)
+					}
+				},
+				{
+					lifetimes: () => _lifetimes
 				}
-			},
-			{
-				lifetimes: () => _lifetimes
-			}
+			),
+			{ list: 'lifetimes', elements: 'lifetimes', options: ['delimiter'] }
 		)
 	) as unknown as T.ForLifetimes.Bound;
 }
@@ -3001,19 +3026,22 @@ export function buildTupleType(...args: unknown[]) {
 function _buildTupleType(value: AdmitBound<T.TupleTypeElements, T.AdmittedNodes>): T.TupleType.Bound {
 	const _tuple_type_elements = rejectBareText(value, 'TupleType.tupleTypeElements', 'a built TupleTypeElements');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TupleType as const,
-				$source: 2 as const,
-				$named: true as const,
-				_tuple_type_elements,
-				$with: {
-					tupleTypeElements: (value: T.TupleTypeElements) => buildTupleType(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.TupleType as const,
+					$source: 2 as const,
+					$named: true as const,
+					_tuple_type_elements,
+					$with: {
+						tupleTypeElements: (value: T.TupleTypeElements) => buildTupleType(value)
+					}
+				},
+				{
+					tupleTypeElements: () => _tuple_type_elements
 				}
-			},
-			{
-				tupleTypeElements: () => _tuple_type_elements
-			}
+			),
+			{ list: 'tupleTypeElements', elements: 'types', options: ['delimiter'] }
 		)
 	) as unknown as T.TupleType.Bound;
 }
@@ -3183,19 +3211,22 @@ export function buildUseBounds(...args: unknown[]) {
 function _buildUseBounds(value?: AdmitBound<T.UseBoundsElements, T.AdmittedNodes>): T.UseBounds.Bound {
 	const _bounds = rejectBareText(value, 'UseBounds.bounds', 'a built UseBoundsElements');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.UseBounds as const,
-				$source: 2 as const,
-				$named: true as const,
-				_bounds,
-				$with: {
-					bounds: (value?: T.UseBoundsElements) => buildUseBounds(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.UseBounds as const,
+					$source: 2 as const,
+					$named: true as const,
+					_bounds,
+					$with: {
+						bounds: (value?: T.UseBoundsElements) => buildUseBounds(value)
+					}
+				},
+				{
+					bounds: () => _bounds
 				}
-			},
-			{
-				bounds: () => _bounds
-			}
+			),
+			{ list: 'bounds', elements: 'elements', options: ['delimiter'] }
 		)
 	) as unknown as T.UseBounds.Bound;
 }
@@ -3242,19 +3273,22 @@ function _buildTypeArguments(value: AdmitBound<T.TypeArgumentsElements, T.Admitt
 		'a built TypeArgumentsElements'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TypeArguments as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type_arguments_elements,
-				$with: {
-					typeArgumentsElements: (value: T.TypeArgumentsElements) => buildTypeArguments(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.TypeArguments as const,
+					$source: 2 as const,
+					$named: true as const,
+					_type_arguments_elements,
+					$with: {
+						typeArgumentsElements: (value: T.TypeArgumentsElements) => buildTypeArguments(value)
+					}
+				},
+				{
+					typeArgumentsElements: () => _type_arguments_elements
 				}
-			},
-			{
-				typeArgumentsElements: () => _type_arguments_elements
-			}
+			),
+			{ list: 'typeArgumentsElements', elements: 'elements', options: ['delimiter'] }
 		)
 	) as unknown as T.TypeArguments.Bound;
 }
@@ -4172,19 +4206,22 @@ export function buildArguments(...args: unknown[]) {
 function _buildArguments(value?: AdmitBound<T.ArgumentsElements, T.AdmittedNodes>): T.Arguments.Bound {
 	const _arguments_elements = rejectBareText(value, 'Arguments.argumentsElements', 'a built ArgumentsElements');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.Arguments as const,
-				$source: 2 as const,
-				$named: true as const,
-				_arguments_elements,
-				$with: {
-					argumentsElements: (value?: T.ArgumentsElements) => buildArguments(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.Arguments as const,
+					$source: 2 as const,
+					$named: true as const,
+					_arguments_elements,
+					$with: {
+						argumentsElements: (value?: T.ArgumentsElements) => buildArguments(value)
+					}
+				},
+				{
+					argumentsElements: () => _arguments_elements
 				}
-			},
-			{
-				argumentsElements: () => _arguments_elements
-			}
+			),
+			{ list: 'argumentsElements', elements: 'elements', options: ['delimiter'] }
 		)
 	) as unknown as T.Arguments.Bound;
 }
@@ -4326,19 +4363,22 @@ function _buildFieldInitializerList(
 		'a built FieldInitializerListElements'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FieldInitializerList as const,
-				$source: 2 as const,
-				$named: true as const,
-				_initializers,
-				$with: {
-					initializers: (value?: T.FieldInitializerListElements) => buildFieldInitializerList(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.FieldInitializerList as const,
+					$source: 2 as const,
+					$named: true as const,
+					_initializers,
+					$with: {
+						initializers: (value?: T.FieldInitializerListElements) => buildFieldInitializerList(value)
+					}
+				},
+				{
+					initializers: () => _initializers
 				}
-			},
-			{
-				initializers: () => _initializers
-			}
+			),
+			{ list: 'initializers', elements: 'elements', options: ['delimiter'] }
 		)
 	) as unknown as T.FieldInitializerList.Bound;
 }
@@ -5285,19 +5325,22 @@ export function buildTuplePattern(...args: unknown[]) {
 function _buildTuplePattern(value?: AdmitBound<T.TuplePatternElements, T.AdmittedNodes>): T.TuplePattern.Bound {
 	const _elements = rejectBareText(value, 'TuplePattern.elements', 'a built TuplePatternElements');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TuplePattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_elements,
-				$with: {
-					elements: (value?: T.TuplePatternElements) => buildTuplePattern(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.TuplePattern as const,
+					$source: 2 as const,
+					$named: true as const,
+					_elements,
+					$with: {
+						elements: (value?: T.TuplePatternElements) => buildTuplePattern(value)
+					}
+				},
+				{
+					elements: () => _elements
 				}
-			},
-			{
-				elements: () => _elements
-			}
+			),
+			{ list: 'elements', elements: 'elements', options: ['delimiter'] }
 		)
 	) as unknown as T.TuplePattern.Bound;
 }
@@ -5329,19 +5372,22 @@ export function buildSlicePattern(...args: unknown[]) {
 function _buildSlicePattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.SlicePattern.Bound {
 	const _patterns = rejectBareText(value, 'SlicePattern.patterns', 'a built Patterns');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.SlicePattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_patterns,
-				$with: {
-					patterns: (value?: T.Patterns) => buildSlicePattern(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.SlicePattern as const,
+					$source: 2 as const,
+					$named: true as const,
+					_patterns,
+					$with: {
+						patterns: (value?: T.Patterns) => buildSlicePattern(value)
+					}
+				},
+				{
+					patterns: () => _patterns
 				}
-			},
-			{
-				patterns: () => _patterns
-			}
+			),
+			{ list: 'patterns', elements: 'patterns', options: ['delimiter'] }
 		)
 	) as unknown as T.SlicePattern.Bound;
 }
