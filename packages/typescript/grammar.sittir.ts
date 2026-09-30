@@ -7,7 +7,8 @@
  * @generated from overrides.json — review before committing
  */
 
-import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
+/// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
+import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {
 	field,
@@ -16,10 +17,12 @@ import {
 	variant,
 	preference,
 	regex,
+	prec,
+	token,
 	reauthored,
 	vocabulary,
 	sittirGrammar
-} from '../codegen/src/dsl/index.ts';
+} from '../codegen/src/dsl/dsl-authoring.ts';
 
 
 export default sittirGrammar(base, {
@@ -596,7 +599,7 @@ export default sittirGrammar(base, {
 		// `parameter` polymorph path above stays valid.
 		arrow_function: reauthored('alias-shape', ($, original) => ({
 			...original,
-			members: original.members.map((m, i) =>
+			members: original.members.map((m: object, i: number) =>
 				i === 1
 					? {
 							...m,

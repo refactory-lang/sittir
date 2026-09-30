@@ -729,7 +729,7 @@ The grammar registry. The set of grammars is discovered from disk — every `pac
 
 ### `packages/codegen/src/grammars.ts::GRAMMAR_TSCONFIG`
 
-Each grammar package's type-check config for its entry. It extends the root config of the same name, which turns on `erasableSyntaxOnly`, and includes only the entry, so the check covers exactly the files tree-sitter loads through Node's type stripping.
+Each grammar package's type-check config for its entry. It extends the root config of the same name, which turns on `erasableSyntaxOnly`, and includes only the entry, so the check covers exactly the files tree-sitter loads through Node's type stripping. The root config also turns `noUncheckedIndexedAccess` off: `$` is a proxy that answers every rule name, and some names exist only through `$` itself (alias targets and supertypes the config mints), so the DSL symbol types carry a string index fallback that the flag would type `| undefined`.
 
 ### `packages/codegen/src/grammars.ts::GRAMMAR_TYPECHECK_SCRIPT`
 
