@@ -6,6 +6,7 @@ import {
 	markEdited as $edited,
 	mapTriviaEntries,
 	projectInterior,
+	coerceBooleanKeywordStorage,
 	inTreeEngine
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
@@ -653,12 +654,20 @@ export function wrapLookbehindAssertion(data: T.LookbehindAssertion, tree: TreeH
 }
 
 export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.CharacterClass.Parsed {
-	data = _keepModelledSlots(data, ['_class_atoms']);
+	data = _keepModelledSlots(data, ['_leading', '_class_atoms', '_trailing']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.CharacterClass as const }) as unknown as T.CharacterClass.Parsed;
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.CharacterClass as const,
+		_leading: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._leading, 'leading', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'leading',
+				span: (data as _NodeData).$span
+			})
+		),
 		_class_atoms: projectMixedEnumStorage(
 			normalizeRepeatedWrapSlot(data._class_atoms, false, 'class_atoms', {
 				tree,
@@ -668,7 +677,18 @@ export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.
 			}),
 			{ '\\-': 19 }
 		),
+		_trailing: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._trailing, 'trailing', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'trailing',
+				span: (data as _NodeData).$span
+			})
+		),
 
+		leading() {
+			return this._leading;
+		},
 		classAtoms() {
 			return drillInAll<
 				| T.ClassCharacter
@@ -695,9 +715,16 @@ export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.
 				tree
 			);
 		},
+		trailing() {
+			return this._trailing;
+		},
 		$with: {
-			classAtoms: (...v: NonNullable<T.CharacterClass['_class_atoms']>[number][]) =>
-				wrapCharacterClass({ ...$edited(data), _class_atoms: v }, tree)
+			leading: (v: NonNullable<T.CharacterClass['_leading']>) =>
+				wrapCharacterClass({ ...$edited(data), _leading: v }, tree),
+			classAtoms: (v: NonNullable<T.CharacterClass['_class_atoms']>) =>
+				wrapCharacterClass({ ...$edited(data), _class_atoms: v }, tree),
+			trailing: (v: NonNullable<T.CharacterClass['_trailing']>) =>
+				wrapCharacterClass({ ...$edited(data), _trailing: v }, tree)
 		}
 	});
 	return _node as unknown as T.CharacterClass.Parsed;
@@ -909,7 +936,9 @@ export function wrapInlineFlagsGroup(
 }
 
 export function wrapCountQuantifier(data: T.CountQuantifier, tree: TreeHandle): T.CountQuantifier.Parsed {
-	data = _keepModelledSlots(data, ['_content']);
+	data = _keepModelledSlots(data, ['_content', '_lazy']);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.CountQuantifier as const }) as unknown as T.CountQuantifier.Parsed;
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.CountQuantifier as const,
@@ -919,13 +948,25 @@ export function wrapCountQuantifier(data: T.CountQuantifier, tree: TreeHandle): 
 			slotName: 'content',
 			span: (data as _NodeData).$span
 		}),
+		_lazy: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._lazy, 'lazy', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'lazy',
+				span: (data as _NodeData).$span
+			})
+		),
 
 		content() {
 			return drillIn<T.CountQuantifierArm | T.DecimalDigits>(this._content, tree);
 		},
+		lazy() {
+			return this._lazy;
+		},
 		$with: {
 			content: (v: NonNullable<T.CountQuantifier['_content']>) =>
-				wrapCountQuantifier({ ...$edited(data), _content: v }, tree)
+				wrapCountQuantifier({ ...$edited(data), _content: v }, tree),
+			lazy: (v: NonNullable<T.CountQuantifier['_lazy']>) => wrapCountQuantifier({ ...$edited(data), _lazy: v }, tree)
 		}
 	});
 	return _node as unknown as T.CountQuantifier.Parsed;

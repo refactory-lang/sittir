@@ -143,7 +143,9 @@ export interface CharacterClassEscapeTransport {
 export interface CharacterClassTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  _leading?: boolean
   _class_atoms?: Array<SlotValue<CharacterClassClassAtomsTransportSlot>>
+  _trailing?: boolean
 }
 
 export interface ClassRangeTransport {
@@ -170,6 +172,7 @@ export interface CountQuantifierTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _content: SlotValue<CountQuantifierContentTransportSlot>
+  _lazy?: boolean
 }
 
 export interface EngineOptions {

@@ -6,6 +6,7 @@ import type { AdmitBound } from '@sittir/types';
 import {
 	withAccessors,
 	admitAliasContent,
+	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
 	numberText,
@@ -201,65 +202,39 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
 }
 
 export function buildCharacterClass(): T.EmptyCharacterClass;
-export function buildCharacterClass(
-	...children: AdmitBound<
-		(
-			| T.ClassCharacter
-			| TSKindId.BslashDash
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.PosixCharacterClass
-			| T.ClassRange
-		)[],
-		T.AdmittedNodes
-	>
-): T.CharacterClass.Bound;
-export function buildCharacterClass(
-	...children: AdmitBound<
-		(
-			| T.ClassCharacter
-			| TSKindId.BslashDash
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.PosixCharacterClass
-			| T.ClassRange
-		)[],
-		T.AdmittedNodes
-	>
-): T.CharacterClass.Bound {
+export function buildCharacterClass(config?: Partial<T.CharacterClass.Config>): T.CharacterClass.Bound;
+export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {}): T.CharacterClass.Bound {
+	const _leading = coerceBooleanKeywordStorage(config.leading);
 	const _class_atoms = rejectBareText(
-		children,
+		coerceMixedEnumStorage<NonNullable<T.CharacterClass['_class_atoms']>>(config.classAtoms ?? [], [
+			['\\-', TSKindId.BslashDash] as const
+		]),
 		'CharacterClass.classAtoms',
 		'buildClassCharacter(…) / buildControlEscape(…) / buildControlLetterEscape(…)'
 	);
+	const _trailing = coerceBooleanKeywordStorage(config.trailing);
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.CharacterClass as const,
 				$source: 2 as const,
 				$named: true as const,
+				_leading,
 				_class_atoms,
+				_trailing,
 				$with: {
-					classAtoms: (
-						...vs: (
-							| T.ClassCharacter
-							| TSKindId.BslashDash
-							| T.CharacterClassEscape
-							| T.ControlEscape
-							| T.ControlLetterEscape
-							| T.IdentityEscape
-							| T.PosixCharacterClass
-							| T.ClassRange
-						)[]
-					) => buildCharacterClass(...vs)
+					leading: (value?: NonNullable<T.CharacterClass.Config>['leading']) =>
+						buildCharacterClass({ ...config, leading: value }),
+					classAtoms: (value?: NonNullable<T.CharacterClass.Config>['classAtoms']) =>
+						buildCharacterClass({ ...config, classAtoms: value }),
+					trailing: (value?: NonNullable<T.CharacterClass.Config>['trailing']) =>
+						buildCharacterClass({ ...config, trailing: value })
 				}
 			},
 			{
-				classAtoms: () => _class_atoms
+				leading: () => _leading,
+				classAtoms: () => _class_atoms,
+				trailing: () => _trailing
 			}
 		)
 	) as unknown as T.CharacterClass.Bound;
@@ -511,10 +486,9 @@ export function buildOptional(text: string): T.Optional.Bound {
 	});
 }
 
-export function buildCountQuantifier(
-	value: AdmitBound<T.CountQuantifierArm | T.DecimalDigits, T.AdmittedNodes>
-): T.CountQuantifier.Bound {
-	const _content = rejectBareText(value, 'CountQuantifier.content', 'buildDecimalDigits(…)');
+export function buildCountQuantifier(config: T.CountQuantifier.Config): T.CountQuantifier.Bound {
+	const _content = rejectBareText(config.content, 'CountQuantifier.content', 'buildDecimalDigits(…)');
+	const _lazy = coerceBooleanKeywordStorage(config.lazy);
 	return withMethods(
 		withAccessors(
 			{
@@ -522,12 +496,17 @@ export function buildCountQuantifier(
 				$source: 2 as const,
 				$named: true as const,
 				_content,
+				_lazy,
 				$with: {
-					content: (value: T.CountQuantifierArm | T.DecimalDigits) => buildCountQuantifier(value)
+					content: (value: T.CountQuantifierArm | T.DecimalDigits) =>
+						buildCountQuantifier({ ...config, content: value }),
+					lazy: (value?: NonNullable<T.CountQuantifier.Config>['lazy']) =>
+						buildCountQuantifier({ ...config, lazy: value })
 				}
 			},
 			{
-				content: () => _content
+				content: () => _content,
+				lazy: () => _lazy
 			}
 		)
 	) as unknown as T.CountQuantifier.Bound;

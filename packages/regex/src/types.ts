@@ -9,6 +9,7 @@ import type {
 	LeafNs,
 	Terminal,
 	NonEmptyArray,
+	BooleanKeyword as BaseBooleanKeyword,
 	KindEnum,
 	NodeOfNamespaces,
 	GrammarTypeMap,
@@ -676,6 +677,7 @@ export interface LookbehindAssertion {
 
 export interface CharacterClass {
 	readonly $type: TSKindId.CharacterClass;
+	readonly _leading?: boolean;
 	readonly _class_atoms?: readonly (
 		| ClassCharacter
 		| TSKindId.BslashDash
@@ -686,7 +688,9 @@ export interface CharacterClass {
 		| PosixCharacterClass
 		| ClassRange
 	)[];
+	readonly _trailing?: boolean;
 	readonly __inputHints__?: {
+		readonly leading?: BaseBooleanKeyword<'-'>;
 		readonly class_atoms?: readonly (
 			| KindEnum<'\\-', TSKindId.BslashDash>
 			| ClassCharacter
@@ -697,23 +701,14 @@ export interface CharacterClass {
 			| PosixCharacterClass
 			| ClassRange
 		)[];
+		readonly trailing?: BaseBooleanKeyword<'-'>;
 	};
 	readonly __slotHints__?: {
-		readonly classAtoms: SlotHint<
-			(
-				| T.ClassCharacter
-				| TSKindId.BslashDash
-				| T.CharacterClassEscape
-				| T.ControlEscape
-				| T.ControlLetterEscape
-				| T.IdentityEscape
-				| T.PosixCharacterClass
-				| T.ClassRange
-			)[],
-			false,
-			true
-		>;
+		readonly leading: SlotHint<NonNullable<T.CharacterClass.Config>['leading'], true>;
+		readonly classAtoms: SlotHint<NonNullable<T.CharacterClass.Config>['classAtoms'], true>;
+		readonly trailing: SlotHint<NonNullable<T.CharacterClass.Config>['trailing'], true>;
 	};
+	leading(): boolean | undefined;
 	classAtoms(): readonly (
 		| ClassCharacter
 		| TSKindId.BslashDash
@@ -724,6 +719,7 @@ export interface CharacterClass {
 		| PosixCharacterClass
 		| ClassRange
 	)[];
+	trailing(): boolean | undefined;
 }
 
 export interface PosixCharacterClass {
@@ -799,10 +795,16 @@ export interface NonCapturingGroup {
 export interface CountQuantifier {
 	readonly $type: TSKindId.CountQuantifier;
 	readonly _content: CountQuantifierArm | DecimalDigits;
+	readonly _lazy?: boolean;
+	readonly __inputHints__?: {
+		readonly lazy?: BaseBooleanKeyword<'?'>;
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.CountQuantifierArm | T.DecimalDigits>;
+		readonly lazy: SlotHint<NonNullable<T.CountQuantifier.Config>['lazy'], true>;
 	};
 	content(): CountQuantifierArm | DecimalDigits;
+	lazy(): boolean | undefined;
 }
 
 export interface BackreferenceEscape {
@@ -1178,7 +1180,9 @@ export namespace CharacterClass {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
 			readonly lbrack?: { readonly after?: SpacingArm };
+			readonly leading?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly rbrack?: { readonly before?: SpacingArm };
+			readonly trailing?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 		};
 	}
 }
@@ -1244,7 +1248,6 @@ export namespace CountQuantifier {
 		readonly __optionsHint__?: {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
-			readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly lbrace?: { readonly after?: SpacingArm };
 			readonly rbrace?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 		};
@@ -1552,7 +1555,7 @@ export interface CountQuantifierNs extends NodeNs<
 	CountQuantifier.Bound,
 	CountQuantifier.BuildArgs,
 	CountQuantifier.LooseArgs,
-	'content',
+	never,
 	TSKindId.CountQuantifier,
 	CountQuantifier.Parsed,
 	never
@@ -2013,10 +2016,10 @@ export type FixedTextKindId =
 	| TSKindId.Plus
 	| TSKindId.Lbrace
 	| TSKindId.Rbrace
-	| TSKindId.Comma
 	| TSKindId.Bslashk
 	| TSKindId.Lt
 	| TSKindId.LparenQmarkPEq
+	| TSKindId.Comma
 	| TSKindId.Colon;
 
 export interface IrKeyOf {
@@ -2202,35 +2205,11 @@ export namespace CharacterClass {
 	}
 	export type Loose = LooseFor<TSKindId.CharacterClass>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CharacterClass>;
-	export type BuildArgs = [
-		...children: AdmitBound<
-			(
-				| T.ClassCharacter
-				| TSKindId.BslashDash
-				| T.CharacterClassEscape
-				| T.ControlEscape
-				| T.ControlLetterEscape
-				| T.IdentityEscape
-				| T.PosixCharacterClass
-				| T.ClassRange
-			)[],
-			T.AdmittedNodes
-		>
-	];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.CharacterClass, T.NamespaceMap>>];
 	export type LooseArgs = [
-		...children: LooseValue<
-			| T.ClassCharacter
-			| TSKindId.BslashDash
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.PosixCharacterClass
-			| T.ClassRange,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
+		config?:
+			| LooseConfigOf<T.CharacterClass, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.CharacterClass, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.CharacterClass;
 }
@@ -2334,9 +2313,11 @@ export namespace CountQuantifier {
 	}
 	export type Loose = LooseFor<TSKindId.CountQuantifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CountQuantifier>;
-	export type BuildArgs = [value: AdmitBound<T.CountQuantifierArm | T.DecimalDigits, T.AdmittedNodes>];
+	export type BuildArgs = [config: ConfigOf<T.CountQuantifier, T.NamespaceMap>];
 	export type LooseArgs = [
-		value: LooseValue<T.CountQuantifierArm | T.DecimalDigits, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		config:
+			| LooseConfigOf<T.CountQuantifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.CountQuantifier, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.CountQuantifier;
 }

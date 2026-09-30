@@ -166,11 +166,25 @@
       }
     },
     "character_class": {
+      "leading": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "class_atoms": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
+        "nonEmpty": false
+      },
+      "trailing": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -245,6 +259,13 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "lazy": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -726,12 +747,30 @@
     },
     {
       "kind": "character_class",
-      "modelType": "envelope",
+      "modelType": "branch",
       "typeName": "CharacterClass",
       "factoryName": "characterClass",
       "irKey": "characterClass",
       "hidden": false,
       "slots": [
+        {
+          "name": "leading",
+          "propertyName": "leading",
+          "paramName": "leading",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-",
+              "parseKind": "class_character"
+            }
+          ]
+        },
         {
           "name": "class_atoms",
           "propertyName": "classAtoms",
@@ -799,11 +838,31 @@
               "parseKind": "class_range"
             }
           ]
+        },
+        {
+          "name": "trailing",
+          "propertyName": "trailing",
+          "paramName": "trailing",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "-",
+              "parseKind": "class_character"
+            }
+          ]
         }
       ],
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
-        "class_atoms"
+        "leading",
+        "class_atoms",
+        "trailing"
       ]
     },
     {
@@ -1104,7 +1163,7 @@
     },
     {
       "kind": "count_quantifier",
-      "modelType": "polymorph",
+      "modelType": "branch",
       "typeName": "CountQuantifier",
       "factoryName": "countQuantifier",
       "irKey": "countQuantifier",
@@ -1141,15 +1200,30 @@
               "parseKind": "decimal_digits"
             }
           ]
+        },
+        {
+          "name": "lazy",
+          "propertyName": "lazy",
+          "paramName": "lazy",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [],
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "?",
+              "parseKind": "lazy"
+            }
+          ]
         }
       ],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
-        "content"
-      ],
-      "bareAccepts": [
-        "count_quantifier_arm",
-        "decimal_digits"
+        "content",
+        "lazy"
       ]
     },
     {

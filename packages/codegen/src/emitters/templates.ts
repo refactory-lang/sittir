@@ -404,6 +404,10 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			if (rule.nonterminal === true && stringFieldName !== undefined) {
 				return emitScalarSlot(stringFieldName);
 			}
+			if (rule.nonterminal === true && rule.aliasedTo !== undefined) {
+				const slot = lookupSlot(rule, ctx);
+				if (slot !== undefined) return emitSlotReference(rule, slot, ctx);
+			}
 			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional') {
 				return EMPTY;
 			}

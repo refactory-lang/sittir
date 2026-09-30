@@ -101,17 +101,27 @@
             "named": true
           }
         ]
+      },
+      "leading": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "class_character",
+            "named": true
+          }
+        ]
+      },
+      "trailing": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "class_character",
+            "named": true
+          }
+        ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "class_character",
-          "named": true
-        }
-      ]
     }
   },
   {

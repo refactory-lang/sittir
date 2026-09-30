@@ -346,6 +346,356 @@
               "$type": 12,
               "$source": 0,
               "$named": true,
+              "$text": "h",
+              "$span": {
+                "start": 0,
+                "end": 1
+              }
+            },
+            "_quantifier": {
+              "$type": 70,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 79,
+                "$source": 0,
+                "$named": true,
+                "_decimal_digits": {
+                  "$type": 39,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "1",
+                  "$span": {
+                    "start": 2,
+                    "end": 3
+                  }
+                },
+                "_count_quantifier_group": {
+                  "$type": 78,
+                  "$source": 0,
+                  "$named": true,
+                  "_decimal_digits": {
+                    "$type": 39,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "2",
+                    "$span": {
+                      "start": 4,
+                      "end": 5
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 29,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 3,
+                        "end": 4
+                      }
+                    }
+                  ]
+                },
+                "$slotOrder": [
+                  "decimal_digits",
+                  "count_quantifier_group"
+                ]
+              },
+              "_lazy": true,
+              "$other": [
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 1,
+                    "end": 2
+                  }
+                },
+                {
+                  "$type": 30,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 5,
+                    "end": 6
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "content",
+                "lazy"
+              ]
+            },
+            "$slotOrder": [
+              "content",
+              "quantifier"
+            ]
+          },
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 12,
+              "$source": 0,
+              "$named": true,
+              "$text": "e",
+              "$span": {
+                "start": 7,
+                "end": 8
+              }
+            }
+          },
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 12,
+              "$source": 0,
+              "$named": true,
+              "$text": "l",
+              "$span": {
+                "start": 8,
+                "end": 9
+              }
+            },
+            "_quantifier": {
+              "$type": 70,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 79,
+                "$source": 0,
+                "$named": true,
+                "_decimal_digits": {
+                  "$type": 39,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "1",
+                  "$span": {
+                    "start": 10,
+                    "end": 11
+                  }
+                },
+                "_count_quantifier_group": {
+                  "$type": 78,
+                  "$source": 0,
+                  "$named": true,
+                  "_decimal_digits": {
+                    "$type": 39,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "2",
+                    "$span": {
+                      "start": 12,
+                      "end": 13
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 29,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 11,
+                        "end": 12
+                      }
+                    }
+                  ]
+                },
+                "$slotOrder": [
+                  "decimal_digits",
+                  "count_quantifier_group"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 9,
+                    "end": 10
+                  }
+                },
+                {
+                  "$type": 30,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 13,
+                    "end": 14
+                  }
+                }
+              ]
+            },
+            "$slotOrder": [
+              "content",
+              "quantifier"
+            ]
+          },
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": 2,
+            "_quantifier": {
+              "$type": 70,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 79,
+                "$source": 0,
+                "$named": true,
+                "_decimal_digits": {
+                  "$type": 39,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "3",
+                  "$span": {
+                    "start": 16,
+                    "end": 17
+                  }
+                }
+              },
+              "$other": [
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 15,
+                    "end": 16
+                  }
+                },
+                {
+                  "$type": 30,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 17,
+                    "end": 18
+                  }
+                }
+              ]
+            },
+            "$slotOrder": [
+              "content",
+              "quantifier"
+            ]
+          },
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 12,
+              "$source": 0,
+              "$named": true,
+              "$text": "t",
+              "$span": {
+                "start": 18,
+                "end": 19
+              }
+            },
+            "_quantifier": {
+              "$type": 70,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 79,
+                "$source": 0,
+                "$named": true,
+                "_decimal_digits": {
+                  "$type": 39,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "4",
+                  "$span": {
+                    "start": 20,
+                    "end": 21
+                  }
+                },
+                "_count_quantifier_group": {
+                  "$type": 78,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 21,
+                    "end": 22
+                  },
+                  "$text": ","
+                },
+                "$slotOrder": [
+                  "decimal_digits",
+                  "count_quantifier_group"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 19,
+                    "end": 20
+                  }
+                },
+                {
+                  "$type": 30,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 22,
+                    "end": 23
+                  }
+                }
+              ]
+            },
+            "$slotOrder": [
+              "content",
+              "quantifier"
+            ]
+          }
+        ]
+      }
+    },
+    "expectedOutput": "h{1,2}?el{1,2}.{3}t{4,}"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "h{1,2}?el{1,2}.{3}t{4,}",
+    "pattern": "pattern",
+    "edits": [],
+    "expectedSourceOut": "h{1,2}?el{1,2}.{3}t{4,}",
+    "expectedReparseTree": "(pattern (term (term_group (pattern_character) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits) (count_quantifier_group (decimal_digits))) (lazy))) (term_group (pattern_character)) (term_group (pattern_character) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits) (count_quantifier_group (decimal_digits))))) (term_group (any_character) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits)))) (term_group (pattern_character) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits) (count_quantifier_group))))))",
+    "wrappedText": "h{1,2}?el{1,2}.{3}t{4,}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "pattern",
+    "input": {
+      "$type": 51,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 53,
+        "$source": 0,
+        "$named": true,
+        "_term_group": [
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 12,
+              "$source": 0,
+              "$named": true,
               "$text": "{",
               "$span": {
                 "start": 0,
@@ -2025,6 +2375,143 @@
     "expectedSourceOut": "Jack",
     "expectedReparseTree": "(pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character))))",
     "wrappedText": "Jack",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "pattern",
+    "input": {
+      "$type": 51,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 53,
+        "$source": 0,
+        "$named": true,
+        "_term_group": [
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 58,
+              "$source": 0,
+              "$named": true,
+              "_leading": true,
+              "$other": [
+                {
+                  "$type": 13,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 0,
+                    "end": 1
+                  }
+                },
+                {
+                  "$type": 15,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 2,
+                    "end": 3
+                  }
+                }
+              ],
+              "_class_atoms": []
+            }
+          }
+        ]
+      }
+    },
+    "expectedOutput": "[-]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "[-]",
+    "pattern": "pattern",
+    "edits": [],
+    "expectedSourceOut": "[-]",
+    "expectedReparseTree": "(pattern (term (term_group (character_class leading: (class_character)))))",
+    "wrappedText": "[-]",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "pattern",
+    "input": {
+      "$type": 51,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 53,
+        "$source": 0,
+        "$named": true,
+        "_term_group": [
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 58,
+              "$source": 0,
+              "$named": true,
+              "_class_atoms": [
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "a",
+                  "$span": {
+                    "start": 1,
+                    "end": 2
+                  }
+                }
+              ],
+              "_trailing": true,
+              "$other": [
+                {
+                  "$type": 13,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 0,
+                    "end": 1
+                  }
+                },
+                {
+                  "$type": 15,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 3,
+                    "end": 4
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "class_atoms",
+                "trailing"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "expectedOutput": "[a-]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "[a-]",
+    "pattern": "pattern",
+    "edits": [],
+    "expectedSourceOut": "[a-]",
+    "expectedReparseTree": "(pattern (term (term_group (character_class class_atoms: (class_character) trailing: (class_character)))))",
+    "wrappedText": "[a-]",
     "wrappedOffset": 0
   },
   {
@@ -4075,6 +4562,2281 @@
     "expectedSourceOut": ".*",
     "expectedReparseTree": "(pattern (term (term_group (any_character) quantifier: (zero_or_more))))",
     "wrappedText": ".*",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "pattern",
+    "input": {
+      "$type": 51,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 53,
+        "$source": 0,
+        "$named": true,
+        "_term_group": [
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 63,
+              "$source": 0,
+              "$named": true,
+              "_group_name": {
+                "$type": 38,
+                "$source": 0,
+                "$named": true,
+                "$text": "year",
+                "$span": {
+                  "start": 3,
+                  "end": 7
+                }
+              },
+              "_pattern": {
+                "$type": 51,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 53,
+                  "$source": 0,
+                  "$named": true,
+                  "_term_group": [
+                    {
+                      "$type": 77,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": {
+                        "$type": 58,
+                        "$source": 0,
+                        "$named": true,
+                        "_class_atoms": [
+                          {
+                            "$type": 61,
+                            "$source": 0,
+                            "$named": true,
+                            "_start": {
+                              "$type": 20,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "0",
+                              "$span": {
+                                "start": 9,
+                                "end": 10
+                              }
+                            },
+                            "_end": {
+                              "$type": 20,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "9",
+                              "$span": {
+                                "start": 11,
+                                "end": 12
+                              }
+                            },
+                            "$other": [
+                              {
+                                "$type": 14,
+                                "$source": 0,
+                                "$named": false,
+                                "$span": {
+                                  "start": 10,
+                                  "end": 11
+                                }
+                              }
+                            ],
+                            "$slotOrder": [
+                              "start",
+                              "end"
+                            ]
+                          }
+                        ],
+                        "$other": [
+                          {
+                            "$type": 13,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 8,
+                              "end": 9
+                            }
+                          },
+                          {
+                            "$type": 15,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 12,
+                              "end": 13
+                            }
+                          }
+                        ]
+                      },
+                      "_quantifier": {
+                        "$type": 70,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 79,
+                          "$source": 0,
+                          "$named": true,
+                          "_decimal_digits": {
+                            "$type": 39,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "4",
+                            "$span": {
+                              "start": 14,
+                              "end": 15
+                            }
+                          }
+                        },
+                        "$other": [
+                          {
+                            "$type": 28,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 13,
+                              "end": 14
+                            }
+                          },
+                          {
+                            "$type": 30,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 15,
+                              "end": 16
+                            }
+                          }
+                        ]
+                      },
+                      "$slotOrder": [
+                        "content",
+                        "quantifier"
+                      ]
+                    }
+                  ]
+                }
+              },
+              "$other": [
+                {
+                  "$type": 11,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 0,
+                    "end": 3
+                  }
+                },
+                {
+                  "$type": 23,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 7,
+                    "end": 8
+                  }
+                },
+                {
+                  "$type": 10,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 16,
+                    "end": 17
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "group_name",
+                "pattern"
+              ],
+              "_content": 11
+            }
+          },
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 12,
+              "$source": 0,
+              "$named": true,
+              "$text": "-",
+              "$span": {
+                "start": 17,
+                "end": 18
+              }
+            }
+          },
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 63,
+              "$source": 0,
+              "$named": true,
+              "_group_name": {
+                "$type": 38,
+                "$source": 0,
+                "$named": true,
+                "$text": "month",
+                "$span": {
+                  "start": 21,
+                  "end": 26
+                }
+              },
+              "_pattern": {
+                "$type": 51,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 53,
+                  "$source": 0,
+                  "$named": true,
+                  "_term_group": [
+                    {
+                      "$type": 77,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": {
+                        "$type": 58,
+                        "$source": 0,
+                        "$named": true,
+                        "_class_atoms": [
+                          {
+                            "$type": 61,
+                            "$source": 0,
+                            "$named": true,
+                            "_start": {
+                              "$type": 20,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "0",
+                              "$span": {
+                                "start": 28,
+                                "end": 29
+                              }
+                            },
+                            "_end": {
+                              "$type": 20,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "9",
+                              "$span": {
+                                "start": 30,
+                                "end": 31
+                              }
+                            },
+                            "$other": [
+                              {
+                                "$type": 14,
+                                "$source": 0,
+                                "$named": false,
+                                "$span": {
+                                  "start": 29,
+                                  "end": 30
+                                }
+                              }
+                            ],
+                            "$slotOrder": [
+                              "start",
+                              "end"
+                            ]
+                          }
+                        ],
+                        "$other": [
+                          {
+                            "$type": 13,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 27,
+                              "end": 28
+                            }
+                          },
+                          {
+                            "$type": 15,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 31,
+                              "end": 32
+                            }
+                          }
+                        ]
+                      },
+                      "_quantifier": {
+                        "$type": 70,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 79,
+                          "$source": 0,
+                          "$named": true,
+                          "_decimal_digits": {
+                            "$type": 39,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "2",
+                            "$span": {
+                              "start": 33,
+                              "end": 34
+                            }
+                          }
+                        },
+                        "$other": [
+                          {
+                            "$type": 28,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 32,
+                              "end": 33
+                            }
+                          },
+                          {
+                            "$type": 30,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 34,
+                              "end": 35
+                            }
+                          }
+                        ]
+                      },
+                      "$slotOrder": [
+                        "content",
+                        "quantifier"
+                      ]
+                    }
+                  ]
+                }
+              },
+              "$other": [
+                {
+                  "$type": 11,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 18,
+                    "end": 21
+                  }
+                },
+                {
+                  "$type": 23,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 26,
+                    "end": 27
+                  }
+                },
+                {
+                  "$type": 10,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 35,
+                    "end": 36
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "group_name",
+                "pattern"
+              ],
+              "_content": 11
+            }
+          },
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 12,
+              "$source": 0,
+              "$named": true,
+              "$text": "-",
+              "$span": {
+                "start": 36,
+                "end": 37
+              }
+            }
+          },
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 63,
+              "$source": 0,
+              "$named": true,
+              "_group_name": {
+                "$type": 38,
+                "$source": 0,
+                "$named": true,
+                "$text": "day",
+                "$span": {
+                  "start": 40,
+                  "end": 43
+                }
+              },
+              "_pattern": {
+                "$type": 51,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 53,
+                  "$source": 0,
+                  "$named": true,
+                  "_term_group": [
+                    {
+                      "$type": 77,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": {
+                        "$type": 58,
+                        "$source": 0,
+                        "$named": true,
+                        "_class_atoms": [
+                          {
+                            "$type": 61,
+                            "$source": 0,
+                            "$named": true,
+                            "_start": {
+                              "$type": 20,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "0",
+                              "$span": {
+                                "start": 45,
+                                "end": 46
+                              }
+                            },
+                            "_end": {
+                              "$type": 20,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "9",
+                              "$span": {
+                                "start": 47,
+                                "end": 48
+                              }
+                            },
+                            "$other": [
+                              {
+                                "$type": 14,
+                                "$source": 0,
+                                "$named": false,
+                                "$span": {
+                                  "start": 46,
+                                  "end": 47
+                                }
+                              }
+                            ],
+                            "$slotOrder": [
+                              "start",
+                              "end"
+                            ]
+                          }
+                        ],
+                        "$other": [
+                          {
+                            "$type": 13,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 44,
+                              "end": 45
+                            }
+                          },
+                          {
+                            "$type": 15,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 48,
+                              "end": 49
+                            }
+                          }
+                        ]
+                      },
+                      "_quantifier": {
+                        "$type": 70,
+                        "$source": 0,
+                        "$named": true,
+                        "_content": {
+                          "$type": 79,
+                          "$source": 0,
+                          "$named": true,
+                          "_decimal_digits": {
+                            "$type": 39,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "2",
+                            "$span": {
+                              "start": 50,
+                              "end": 51
+                            }
+                          }
+                        },
+                        "$other": [
+                          {
+                            "$type": 28,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 49,
+                              "end": 50
+                            }
+                          },
+                          {
+                            "$type": 30,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 51,
+                              "end": 52
+                            }
+                          }
+                        ]
+                      },
+                      "$slotOrder": [
+                        "content",
+                        "quantifier"
+                      ]
+                    }
+                  ]
+                }
+              },
+              "$other": [
+                {
+                  "$type": 11,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 37,
+                    "end": 40
+                  }
+                },
+                {
+                  "$type": 23,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 43,
+                    "end": 44
+                  }
+                },
+                {
+                  "$type": 10,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 52,
+                    "end": 53
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "group_name",
+                "pattern"
+              ],
+              "_content": 11
+            }
+          }
+        ]
+      }
+    },
+    "expectedOutput": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})",
+    "pattern": "pattern",
+    "edits": [],
+    "expectedSourceOut": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})",
+    "expectedReparseTree": "(pattern (term (term_group (named_capturing_group group_name: (group_name) pattern: (pattern (term (term_group (character_class class_atoms: (class_range start: (class_character) end: (class_character))) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits)))))))) (term_group (pattern_character)) (term_group (named_capturing_group group_name: (group_name) pattern: (pattern (term (term_group (character_class class_atoms: (class_range start: (class_character) end: (class_character))) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits)))))))) (term_group (pattern_character)) (term_group (named_capturing_group group_name: (group_name) pattern: (pattern (term (term_group (character_class class_atoms: (class_range start: (class_character) end: (class_character))) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits))))))))))",
+    "wrappedText": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "pattern",
+    "input": {
+      "$type": 51,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 53,
+        "$source": 0,
+        "$named": true,
+        "_term_group": [
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 58,
+              "$source": 0,
+              "$named": true,
+              "_class_atoms": [
+                {
+                  "$type": 61,
+                  "$source": 0,
+                  "$named": true,
+                  "_start": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "0",
+                    "$span": {
+                      "start": 9,
+                      "end": 10
+                    }
+                  },
+                  "_end": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "9",
+                    "$span": {
+                      "start": 11,
+                      "end": 12
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 14,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 10,
+                        "end": 11
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "start",
+                    "end"
+                  ]
+                }
+              ],
+              "$other": [
+                {
+                  "$type": 13,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 8,
+                    "end": 9
+                  }
+                },
+                {
+                  "$type": 15,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 12,
+                    "end": 13
+                  }
+                }
+              ]
+            },
+            "_quantifier": {
+              "$type": 70,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 79,
+                "$source": 0,
+                "$named": true,
+                "_decimal_digits": {
+                  "$type": 39,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "4",
+                  "$span": {
+                    "start": 14,
+                    "end": 15
+                  }
+                }
+              },
+              "$other": [
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 13,
+                    "end": 14
+                  }
+                },
+                {
+                  "$type": 30,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 15,
+                    "end": 16
+                  }
+                }
+              ]
+            },
+            "$slotOrder": [
+              "content",
+              "quantifier"
+            ]
+          }
+        ]
+      }
+    },
+    "expectedOutput": "[0-9]{4}"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "[0-9]{4}",
+    "pattern": "pattern",
+    "edits": [],
+    "expectedSourceOut": "[0-9]{4}",
+    "expectedReparseTree": "(pattern (term (term_group (character_class class_atoms: (class_range start: (class_character) end: (class_character))) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits))))))",
+    "wrappedText": "[0-9]{4}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "pattern",
+    "input": {
+      "$type": 51,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 53,
+        "$source": 0,
+        "$named": true,
+        "_term_group": [
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 58,
+              "$source": 0,
+              "$named": true,
+              "_class_atoms": [
+                {
+                  "$type": 61,
+                  "$source": 0,
+                  "$named": true,
+                  "_start": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "0",
+                    "$span": {
+                      "start": 28,
+                      "end": 29
+                    }
+                  },
+                  "_end": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "9",
+                    "$span": {
+                      "start": 30,
+                      "end": 31
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 14,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 29,
+                        "end": 30
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "start",
+                    "end"
+                  ]
+                }
+              ],
+              "$other": [
+                {
+                  "$type": 13,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 27,
+                    "end": 28
+                  }
+                },
+                {
+                  "$type": 15,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 31,
+                    "end": 32
+                  }
+                }
+              ]
+            },
+            "_quantifier": {
+              "$type": 70,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 79,
+                "$source": 0,
+                "$named": true,
+                "_decimal_digits": {
+                  "$type": 39,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "2",
+                  "$span": {
+                    "start": 33,
+                    "end": 34
+                  }
+                }
+              },
+              "$other": [
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 32,
+                    "end": 33
+                  }
+                },
+                {
+                  "$type": 30,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 34,
+                    "end": 35
+                  }
+                }
+              ]
+            },
+            "$slotOrder": [
+              "content",
+              "quantifier"
+            ]
+          }
+        ]
+      }
+    },
+    "expectedOutput": "[0-9]{2}"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "[0-9]{2}",
+    "pattern": "pattern",
+    "edits": [],
+    "expectedSourceOut": "[0-9]{2}",
+    "expectedReparseTree": "(pattern (term (term_group (character_class class_atoms: (class_range start: (class_character) end: (class_character))) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits))))))",
+    "wrappedText": "[0-9]{2}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "pattern",
+    "input": {
+      "$type": 51,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 53,
+        "$source": 0,
+        "$named": true,
+        "_term_group": [
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 58,
+              "$source": 0,
+              "$named": true,
+              "_class_atoms": [
+                {
+                  "$type": 61,
+                  "$source": 0,
+                  "$named": true,
+                  "_start": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "0",
+                    "$span": {
+                      "start": 45,
+                      "end": 46
+                    }
+                  },
+                  "_end": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "9",
+                    "$span": {
+                      "start": 47,
+                      "end": 48
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 14,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 46,
+                        "end": 47
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "start",
+                    "end"
+                  ]
+                }
+              ],
+              "$other": [
+                {
+                  "$type": 13,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 44,
+                    "end": 45
+                  }
+                },
+                {
+                  "$type": 15,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 48,
+                    "end": 49
+                  }
+                }
+              ]
+            },
+            "_quantifier": {
+              "$type": 70,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 79,
+                "$source": 0,
+                "$named": true,
+                "_decimal_digits": {
+                  "$type": 39,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "2",
+                  "$span": {
+                    "start": 50,
+                    "end": 51
+                  }
+                }
+              },
+              "$other": [
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 49,
+                    "end": 50
+                  }
+                },
+                {
+                  "$type": 30,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 51,
+                    "end": 52
+                  }
+                }
+              ]
+            },
+            "$slotOrder": [
+              "content",
+              "quantifier"
+            ]
+          }
+        ]
+      }
+    },
+    "expectedOutput": "[0-9]{2}"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "[0-9]{2}",
+    "pattern": "pattern",
+    "edits": [],
+    "expectedSourceOut": "[0-9]{2}",
+    "expectedReparseTree": "(pattern (term (term_group (character_class class_atoms: (class_range start: (class_character) end: (class_character))) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits))))))",
+    "wrappedText": "[0-9]{2}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "pattern",
+    "input": {
+      "$type": 51,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 53,
+        "$source": 0,
+        "$named": true,
+        "_term_group": [
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 58,
+              "$source": 0,
+              "$named": true,
+              "_leading": true,
+              "_class_atoms": [
+                {
+                  "$type": 61,
+                  "$source": 0,
+                  "$named": true,
+                  "_start": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "a",
+                    "$span": {
+                      "start": 2,
+                      "end": 3
+                    }
+                  },
+                  "_end": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "z",
+                    "$span": {
+                      "start": 4,
+                      "end": 5
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 14,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 3,
+                        "end": 4
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "start",
+                    "end"
+                  ]
+                },
+                {
+                  "$type": 61,
+                  "$source": 0,
+                  "$named": true,
+                  "_start": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "A",
+                    "$span": {
+                      "start": 5,
+                      "end": 6
+                    }
+                  },
+                  "_end": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "Z",
+                    "$span": {
+                      "start": 7,
+                      "end": 8
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 14,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 6,
+                        "end": 7
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "start",
+                    "end"
+                  ]
+                },
+                {
+                  "$type": 61,
+                  "$source": 0,
+                  "$named": true,
+                  "_start": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "0",
+                    "$span": {
+                      "start": 8,
+                      "end": 9
+                    }
+                  },
+                  "_end": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "9",
+                    "$span": {
+                      "start": 10,
+                      "end": 11
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 14,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 9,
+                        "end": 10
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "start",
+                    "end"
+                  ]
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "@",
+                  "$span": {
+                    "start": 11,
+                    "end": 12
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ":",
+                  "$span": {
+                    "start": 12,
+                    "end": 13
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "%",
+                  "$span": {
+                    "start": 13,
+                    "end": 14
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ".",
+                  "$span": {
+                    "start": 14,
+                    "end": 15
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "_",
+                  "$span": {
+                    "start": 15,
+                    "end": 16
+                  }
+                },
+                {
+                  "$type": 37,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "\\+",
+                  "$span": {
+                    "start": 16,
+                    "end": 18
+                  },
+                  "_content": "+"
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "~",
+                  "$span": {
+                    "start": 18,
+                    "end": 19
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "#",
+                  "$span": {
+                    "start": 19,
+                    "end": 20
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "=",
+                  "$span": {
+                    "start": 20,
+                    "end": 21
+                  }
+                }
+              ],
+              "$other": [
+                {
+                  "$type": 13,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 0,
+                    "end": 1
+                  }
+                },
+                {
+                  "$type": 15,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 21,
+                    "end": 22
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "leading",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms"
+              ]
+            },
+            "_quantifier": {
+              "$type": 70,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 79,
+                "$source": 0,
+                "$named": true,
+                "_decimal_digits": {
+                  "$type": 39,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "2",
+                  "$span": {
+                    "start": 23,
+                    "end": 24
+                  }
+                },
+                "_count_quantifier_group": {
+                  "$type": 78,
+                  "$source": 0,
+                  "$named": true,
+                  "_decimal_digits": {
+                    "$type": 39,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "256",
+                    "$span": {
+                      "start": 25,
+                      "end": 28
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 29,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 24,
+                        "end": 25
+                      }
+                    }
+                  ]
+                },
+                "$slotOrder": [
+                  "decimal_digits",
+                  "count_quantifier_group"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 22,
+                    "end": 23
+                  }
+                },
+                {
+                  "$type": 30,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 28,
+                    "end": 29
+                  }
+                }
+              ]
+            },
+            "$slotOrder": [
+              "content",
+              "quantifier"
+            ]
+          },
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 37,
+              "$source": 0,
+              "$named": true,
+              "$text": "\\.",
+              "$span": {
+                "start": 30,
+                "end": 32
+              },
+              "_content": "."
+            }
+          },
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 58,
+              "$source": 0,
+              "$named": true,
+              "_class_atoms": [
+                {
+                  "$type": 61,
+                  "$source": 0,
+                  "$named": true,
+                  "_start": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "a",
+                    "$span": {
+                      "start": 33,
+                      "end": 34
+                    }
+                  },
+                  "_end": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "z",
+                    "$span": {
+                      "start": 35,
+                      "end": 36
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 14,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 34,
+                        "end": 35
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "start",
+                    "end"
+                  ]
+                }
+              ],
+              "$other": [
+                {
+                  "$type": 13,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 32,
+                    "end": 33
+                  }
+                },
+                {
+                  "$type": 15,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 36,
+                    "end": 37
+                  }
+                }
+              ]
+            },
+            "_quantifier": {
+              "$type": 70,
+              "$source": 0,
+              "$named": true,
+              "_content": {
+                "$type": 79,
+                "$source": 0,
+                "$named": true,
+                "_decimal_digits": {
+                  "$type": 39,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "2",
+                  "$span": {
+                    "start": 38,
+                    "end": 39
+                  }
+                },
+                "_count_quantifier_group": {
+                  "$type": 78,
+                  "$source": 0,
+                  "$named": true,
+                  "_decimal_digits": {
+                    "$type": 39,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "6",
+                    "$span": {
+                      "start": 40,
+                      "end": 41
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 29,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 39,
+                        "end": 40
+                      }
+                    }
+                  ]
+                },
+                "$slotOrder": [
+                  "decimal_digits",
+                  "count_quantifier_group"
+                ]
+              },
+              "$other": [
+                {
+                  "$type": 28,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 37,
+                    "end": 38
+                  }
+                },
+                {
+                  "$type": 30,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 41,
+                    "end": 42
+                  }
+                }
+              ]
+            },
+            "$slotOrder": [
+              "content",
+              "quantifier"
+            ]
+          },
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": 5
+          },
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 62,
+              "$source": 0,
+              "$named": true,
+              "_pattern": {
+                "$type": 51,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 53,
+                  "$source": 0,
+                  "$named": true,
+                  "_term_group": [
+                    {
+                      "$type": 77,
+                      "$source": 0,
+                      "$named": true,
+                      "_content": {
+                        "$type": 58,
+                        "$source": 0,
+                        "$named": true,
+                        "_leading": true,
+                        "_class_atoms": [
+                          {
+                            "$type": 61,
+                            "$source": 0,
+                            "$named": true,
+                            "_start": {
+                              "$type": 20,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "a",
+                              "$span": {
+                                "start": 48,
+                                "end": 49
+                              }
+                            },
+                            "_end": {
+                              "$type": 20,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "z",
+                              "$span": {
+                                "start": 50,
+                                "end": 51
+                              }
+                            },
+                            "$other": [
+                              {
+                                "$type": 14,
+                                "$source": 0,
+                                "$named": false,
+                                "$span": {
+                                  "start": 49,
+                                  "end": 50
+                                }
+                              }
+                            ],
+                            "$slotOrder": [
+                              "start",
+                              "end"
+                            ]
+                          },
+                          {
+                            "$type": 61,
+                            "$source": 0,
+                            "$named": true,
+                            "_start": {
+                              "$type": 20,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "A",
+                              "$span": {
+                                "start": 51,
+                                "end": 52
+                              }
+                            },
+                            "_end": {
+                              "$type": 20,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "Z",
+                              "$span": {
+                                "start": 53,
+                                "end": 54
+                              }
+                            },
+                            "$other": [
+                              {
+                                "$type": 14,
+                                "$source": 0,
+                                "$named": false,
+                                "$span": {
+                                  "start": 52,
+                                  "end": 53
+                                }
+                              }
+                            ],
+                            "$slotOrder": [
+                              "start",
+                              "end"
+                            ]
+                          },
+                          {
+                            "$type": 61,
+                            "$source": 0,
+                            "$named": true,
+                            "_start": {
+                              "$type": 20,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "0",
+                              "$span": {
+                                "start": 54,
+                                "end": 55
+                              }
+                            },
+                            "_end": {
+                              "$type": 20,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "9",
+                              "$span": {
+                                "start": 56,
+                                "end": 57
+                              }
+                            },
+                            "$other": [
+                              {
+                                "$type": 14,
+                                "$source": 0,
+                                "$named": false,
+                                "$span": {
+                                  "start": 55,
+                                  "end": 56
+                                }
+                              }
+                            ],
+                            "$slotOrder": [
+                              "start",
+                              "end"
+                            ]
+                          },
+                          {
+                            "$type": 20,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "@",
+                            "$span": {
+                              "start": 57,
+                              "end": 58
+                            }
+                          },
+                          {
+                            "$type": 20,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": ":",
+                            "$span": {
+                              "start": 58,
+                              "end": 59
+                            }
+                          },
+                          {
+                            "$type": 20,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "%",
+                            "$span": {
+                              "start": 59,
+                              "end": 60
+                            }
+                          },
+                          {
+                            "$type": 20,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "_",
+                            "$span": {
+                              "start": 60,
+                              "end": 61
+                            }
+                          },
+                          {
+                            "$type": 37,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "\\+",
+                            "$span": {
+                              "start": 61,
+                              "end": 63
+                            },
+                            "_content": "+"
+                          },
+                          {
+                            "$type": 20,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": ".",
+                            "$span": {
+                              "start": 63,
+                              "end": 64
+                            }
+                          },
+                          {
+                            "$type": 20,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "~",
+                            "$span": {
+                              "start": 64,
+                              "end": 65
+                            }
+                          },
+                          {
+                            "$type": 20,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "#",
+                            "$span": {
+                              "start": 65,
+                              "end": 66
+                            }
+                          },
+                          {
+                            "$type": 20,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "?",
+                            "$span": {
+                              "start": 66,
+                              "end": 67
+                            }
+                          },
+                          {
+                            "$type": 20,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "&",
+                            "$span": {
+                              "start": 67,
+                              "end": 68
+                            }
+                          },
+                          {
+                            "$type": 20,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "/",
+                            "$span": {
+                              "start": 68,
+                              "end": 69
+                            }
+                          },
+                          {
+                            "$type": 20,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "/",
+                            "$span": {
+                              "start": 69,
+                              "end": 70
+                            }
+                          },
+                          {
+                            "$type": 20,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "=",
+                            "$span": {
+                              "start": 70,
+                              "end": 71
+                            }
+                          }
+                        ],
+                        "$other": [
+                          {
+                            "$type": 13,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 46,
+                              "end": 47
+                            }
+                          },
+                          {
+                            "$type": 15,
+                            "$source": 0,
+                            "$named": false,
+                            "$span": {
+                              "start": 71,
+                              "end": 72
+                            }
+                          }
+                        ],
+                        "$slotOrder": [
+                          "leading",
+                          "class_atoms",
+                          "class_atoms",
+                          "class_atoms",
+                          "class_atoms",
+                          "class_atoms",
+                          "class_atoms",
+                          "class_atoms",
+                          "class_atoms",
+                          "class_atoms",
+                          "class_atoms",
+                          "class_atoms",
+                          "class_atoms",
+                          "class_atoms",
+                          "class_atoms",
+                          "class_atoms",
+                          "class_atoms"
+                        ]
+                      },
+                      "_quantifier": {
+                        "$type": 67,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 72,
+                          "end": 73
+                        },
+                        "$text": "*"
+                      },
+                      "$slotOrder": [
+                        "content",
+                        "quantifier"
+                      ]
+                    }
+                  ]
+                }
+              },
+              "$other": [
+                {
+                  "$type": 21,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 44,
+                    "end": 45
+                  }
+                },
+                {
+                  "$type": 10,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 74,
+                    "end": 75
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "expectedOutput": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+    "pattern": "pattern",
+    "edits": [],
+    "expectedSourceOut": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)",
+    "expectedReparseTree": "(pattern (term (term_group (character_class leading: (class_character) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (identity_escape) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character)) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits) (count_quantifier_group (decimal_digits))))) (term_group (identity_escape)) (term_group (character_class class_atoms: (class_range start: (class_character) end: (class_character))) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits) (count_quantifier_group (decimal_digits))))) (term_group (boundary_assertion)) (term_group (anonymous_capturing_group pattern: (pattern (term (term_group (character_class leading: (class_character) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (identity_escape) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character)) quantifier: (zero_or_more))))))))",
+    "wrappedText": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "pattern",
+    "input": {
+      "$type": 51,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 53,
+        "$source": 0,
+        "$named": true,
+        "_term_group": [
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 58,
+              "$source": 0,
+              "$named": true,
+              "_leading": true,
+              "_class_atoms": [
+                {
+                  "$type": 61,
+                  "$source": 0,
+                  "$named": true,
+                  "_start": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "a",
+                    "$span": {
+                      "start": 48,
+                      "end": 49
+                    }
+                  },
+                  "_end": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "z",
+                    "$span": {
+                      "start": 50,
+                      "end": 51
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 14,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 49,
+                        "end": 50
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "start",
+                    "end"
+                  ]
+                },
+                {
+                  "$type": 61,
+                  "$source": 0,
+                  "$named": true,
+                  "_start": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "A",
+                    "$span": {
+                      "start": 51,
+                      "end": 52
+                    }
+                  },
+                  "_end": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "Z",
+                    "$span": {
+                      "start": 53,
+                      "end": 54
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 14,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 52,
+                        "end": 53
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "start",
+                    "end"
+                  ]
+                },
+                {
+                  "$type": 61,
+                  "$source": 0,
+                  "$named": true,
+                  "_start": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "0",
+                    "$span": {
+                      "start": 54,
+                      "end": 55
+                    }
+                  },
+                  "_end": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "9",
+                    "$span": {
+                      "start": 56,
+                      "end": 57
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 14,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 55,
+                        "end": 56
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "start",
+                    "end"
+                  ]
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "@",
+                  "$span": {
+                    "start": 57,
+                    "end": 58
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ":",
+                  "$span": {
+                    "start": 58,
+                    "end": 59
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "%",
+                  "$span": {
+                    "start": 59,
+                    "end": 60
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "_",
+                  "$span": {
+                    "start": 60,
+                    "end": 61
+                  }
+                },
+                {
+                  "$type": 37,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "\\+",
+                  "$span": {
+                    "start": 61,
+                    "end": 63
+                  },
+                  "_content": "+"
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": ".",
+                  "$span": {
+                    "start": 63,
+                    "end": 64
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "~",
+                  "$span": {
+                    "start": 64,
+                    "end": 65
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "#",
+                  "$span": {
+                    "start": 65,
+                    "end": 66
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "?",
+                  "$span": {
+                    "start": 66,
+                    "end": 67
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "&",
+                  "$span": {
+                    "start": 67,
+                    "end": 68
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "/",
+                  "$span": {
+                    "start": 68,
+                    "end": 69
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "/",
+                  "$span": {
+                    "start": 69,
+                    "end": 70
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "=",
+                  "$span": {
+                    "start": 70,
+                    "end": 71
+                  }
+                }
+              ],
+              "$other": [
+                {
+                  "$type": 13,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 46,
+                    "end": 47
+                  }
+                },
+                {
+                  "$type": 15,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 71,
+                    "end": 72
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "leading",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms",
+                "class_atoms"
+              ]
+            },
+            "_quantifier": {
+              "$type": 67,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 72,
+                "end": 73
+              },
+              "$text": "*"
+            },
+            "$slotOrder": [
+              "content",
+              "quantifier"
+            ]
+          }
+        ]
+      }
+    },
+    "expectedOutput": "[-a-zA-Z0-9@:%_\\+.~#?&//=]*"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "[-a-zA-Z0-9@:%_\\+.~#?&//=]*",
+    "pattern": "pattern",
+    "edits": [],
+    "expectedSourceOut": "[-a-zA-Z0-9@:%_\\+.~#?&//=]*",
+    "expectedReparseTree": "(pattern (term (term_group (character_class leading: (class_character) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (identity_escape) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character)) quantifier: (zero_or_more))))",
+    "wrappedText": "[-a-zA-Z0-9@:%_\\+.~#?&//=]*",
     "wrappedOffset": 0
   },
   {

@@ -250,7 +250,7 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
 /// position the gap holds. `None` when the model has no slot there.
 pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str> {
     match (kind.0, preceding_tokens) {
-        (58, 3) => Some("class_atoms"),
+        (58, 2) => Some("leading"),
         _ => None,
     }
 }
