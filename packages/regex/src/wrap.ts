@@ -1552,63 +1552,8 @@ function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
 	} as unknown as _NodeData;
 }
 
-interface _WrapReturnByKindId {
-	[TSKindId.Pattern]: ReturnType<typeof wrapPattern>;
-	[TSKindId.Alternation]: ReturnType<typeof wrapAlternation>;
-	[TSKindId.Term]: ReturnType<typeof wrapTerm>;
-	[TSKindId.AnyCharacter]: _NodeData & { readonly $type: TSKindId.AnyCharacter };
-	[TSKindId.StartAssertion]: _NodeData & { readonly $type: TSKindId.StartAssertion };
-	[TSKindId.EndAssertion]: _NodeData & { readonly $type: TSKindId.EndAssertion };
-	[TSKindId.BoundaryAssertion]: _NodeData & { readonly $type: TSKindId.BoundaryAssertion };
-	[TSKindId.NonBoundaryAssertion]: _NodeData & { readonly $type: TSKindId.NonBoundaryAssertion };
-	[TSKindId.LookaroundAssertion]: ReturnType<typeof wrapLookaroundAssertion>;
-	[TSKindId.LookaheadAssertion]: ReturnType<typeof wrapLookaheadAssertion>;
-	[TSKindId.LookbehindAssertion]: ReturnType<typeof wrapLookbehindAssertion>;
-	[TSKindId.PatternCharacter]: _NodeData & { readonly $type: TSKindId.PatternCharacter };
-	[TSKindId.CharacterClass]: ReturnType<typeof wrapCharacterClass>;
-	[TSKindId.PosixCharacterClass]: ReturnType<typeof wrapPosixCharacterClass>;
-	[TSKindId.PosixClassName]: _NodeData & { readonly $type: TSKindId.PosixClassName };
-	[TSKindId.ClassRange]: ReturnType<typeof wrapClassRange>;
-	[TSKindId.ClassCharacter]: _NodeData & { readonly $type: TSKindId.ClassCharacter };
-	[TSKindId.AnonymousCapturingGroup]: ReturnType<typeof wrapAnonymousCapturingGroup>;
-	[TSKindId.NamedCapturingGroup]: ReturnType<typeof wrapNamedCapturingGroup>;
-	[TSKindId.NonCapturingGroup]: ReturnType<typeof wrapNonCapturingGroup>;
-	[TSKindId.InlineFlagsGroup]: ReturnType<typeof wrapInlineFlagsGroup>;
-	[TSKindId.Flags]: _NodeData & { readonly $type: TSKindId.Flags };
-	[TSKindId.ZeroOrMore]: _NodeData & { readonly $type: TSKindId.ZeroOrMore };
-	[TSKindId.OneOrMore]: _NodeData & { readonly $type: TSKindId.OneOrMore };
-	[TSKindId.Optional]: _NodeData & { readonly $type: TSKindId.Optional };
-	[TSKindId.CountQuantifier]: ReturnType<typeof wrapCountQuantifier>;
-	[TSKindId.BackreferenceEscape]: ReturnType<typeof wrapBackreferenceEscape>;
-	[TSKindId.NamedGroupBackreference]: ReturnType<typeof wrapNamedGroupBackreference>;
-	[TSKindId.DecimalEscape]: _NodeData & { readonly $type: TSKindId.DecimalEscape };
-	[TSKindId.CharacterClassEscape]: ReturnType<typeof wrapCharacterClassEscape>;
-	[TSKindId.UnicodeCharacterEscape]: _NodeData & { readonly $type: TSKindId.UnicodeCharacterEscape };
-	[TSKindId.UnicodePropertyValueExpression]: ReturnType<typeof wrapUnicodePropertyValueExpression>;
-	[TSKindId.UnicodePropertyValue]: _NodeData & { readonly $type: TSKindId.UnicodePropertyValue };
-	[TSKindId.ControlEscape]: _NodeData & { readonly $type: TSKindId.ControlEscape };
-	[TSKindId.ControlLetterEscape]: _NodeData & { readonly $type: TSKindId.ControlLetterEscape };
-	[TSKindId.IdentityEscape]: ReturnType<typeof wrapIdentityEscape>;
-	[TSKindId.GroupName]: _NodeData & { readonly $type: TSKindId.GroupName };
-	[TSKindId.DecimalDigits]: _NodeData & { readonly $type: TSKindId.DecimalDigits };
-	[TSKindId.TermGroup]: ReturnType<typeof wrapTermGroup>;
-	[TSKindId.CountQuantifierGroup]: ReturnType<typeof wrapCountQuantifierGroup>;
-	[TSKindId.CountQuantifierArm]: ReturnType<typeof wrapCountQuantifierArm>;
-	[TSKindId.CharacterClassEscapeArm]: ReturnType<typeof wrapCharacterClassEscapeArm>;
-	[TSKindId.UnicodePropertyValueExpressionGroup]: ReturnType<typeof wrapUnicodePropertyValueExpressionGroup>;
-	[TSKindId.InlineFlagsGroupEnable]: ReturnType<typeof wrapInlineFlagsGroupEnable>;
-	[TSKindId.InlineFlagsGroupToggle]: ReturnType<typeof wrapInlineFlagsGroupToggle>;
-	[TSKindId.InlineFlagsGroupDisable]: ReturnType<typeof wrapInlineFlagsGroupDisable>;
-	[TSKindId.Tight]: _NodeData & { readonly $type: TSKindId.Tight };
-	[TSKindId.Newline]: _NodeData & { readonly $type: TSKindId.Newline };
-	[TSKindId.Blankline]: _NodeData & { readonly $type: TSKindId.Blankline };
-	[TSKindId.DoubleBlankline]: _NodeData & { readonly $type: TSKindId.DoubleBlankline };
-	[TSKindId.Lazy]: ReturnType<typeof wrapLazy>;
-	[TSKindId.UnicodePropertyName]: ReturnType<typeof wrapUnicodePropertyName>;
-}
-
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
-export type PatternTree = _WrapReturnByKindId[TSKindId.Pattern] & ParsedRoot;
+export type PatternTree = T.ParsedByKindId[TSKindId.Pattern] & ParsedRoot;
 
 function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {
 	const out: Record<string, unknown> = { ...(data as unknown as Record<string, unknown>) };
@@ -1629,10 +1574,10 @@ function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData
 }
 
 /** Wrap a NodeData into its lazy read-only view. */
-export function wrapNode<T extends _NodeData & { readonly $type: keyof _WrapReturnByKindId }>(
-	data: T,
+export function wrapNode<D extends _NodeData & { readonly $type: keyof T.ParsedByKindId }>(
+	data: D,
 	tree: TreeHandle
-): _WrapReturnByKindId[T['$type'] & keyof _WrapReturnByKindId] & Pick<T, Extract<keyof T, keyof ParsedRoot>>;
+): T.ParsedByKindId[D['$type'] & keyof T.ParsedByKindId] & Pick<D, Extract<keyof D, keyof ParsedRoot>>;
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown;
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// The wire `$type` is the numeric grammar-symbol KindId — dispatch
