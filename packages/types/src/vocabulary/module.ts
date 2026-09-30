@@ -7,7 +7,6 @@ export interface Module<G extends GrammarContext> {
 	// claimed by prt
 	readonly kind: 'module';
 	readonly statements?: (
-		| V.Statement.Block<G>
 		| G['attribute']
 		| V.Clause.Import.Alias<G>
 		| G['declaration']

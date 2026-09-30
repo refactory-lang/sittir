@@ -33,7 +33,7 @@ export interface Member {
 	readonly name: string;
 	readonly optional: boolean;
 	readonly type: TypeExpr;
-	readonly trailing: readonly string[];
+	readonly trailing: readonly Comment[];
 }
 
 export interface Interface {
@@ -41,11 +41,11 @@ export interface Interface {
 	readonly name: string;
 	readonly extendsType: TypeExpr | null;
 	readonly members: readonly Member[];
-	readonly bodyLeading: readonly string[];
-	readonly trailing: readonly string[];
+	readonly bodyLeading: readonly Comment[];
+	readonly trailing: readonly Comment[];
 	readonly generic: boolean;
 	readonly keyParam: boolean;
-	readonly leading: readonly string[];
+	readonly leading: readonly Comment[];
 }
 
 export interface TypeAlias {
@@ -62,9 +62,17 @@ export interface Namespace {
 
 export type Statement = Interface | TypeAlias | Namespace;
 
+export interface Comment {
+	readonly block: boolean;
+	readonly text: string;
+}
+
+const lineComment = (text: string): Comment => ({ block: false, text });
+const blockComment = (text: string): Comment => ({ block: true, text });
+
 export interface VocabularyFile {
 	readonly name: string;
-	readonly leading: readonly string[];
+	readonly leading: readonly Comment[];
 	readonly imports: readonly {
 		readonly names: readonly string[] | null;
 		readonly namespace: string | null;
@@ -242,11 +250,11 @@ function memberDecl(d: Derivation, v: string, name: string, f: MemberFacts): Mem
 		const arr: TypeExpr = { k: 'array', of: t };
 		t = f.scalar ? { k: 'union', of: [t, arr] } : arr;
 	}
-	const trailing: string[] = [];
+	const trailing: Comment[] = [];
 	const claimers = d.claimers.get(v);
 	if (claimers === undefined || [...f.grammars].sort().join() !== [...claimers].sort().join())
-		trailing.push(`// ${grammarTag(f.grammars)} only`);
-	if (dropped.length > 0) trailing.push(`// unmapped: ${dropped.join(' ')}`);
+		trailing.push(lineComment(`// ${grammarTag(f.grammars)} only`));
+	if (dropped.length > 0) trailing.push(lineComment(`// unmapped: ${dropped.join(' ')}`));
 	return { name, optional: f.optional, type: t, trailing };
 }
 
@@ -276,7 +284,7 @@ function emitLevel(d: Derivation, v: string): Statement[] {
 					trailing: []
 				})),
 			bodyLeading: [],
-			trailing: [`// claimed by ${claimedBy} content-derived`],
+			trailing: [lineComment(`// claimed by ${claimedBy} content-derived`)],
 			generic: true,
 			keyParam: false,
 			leading: []
@@ -319,8 +327,8 @@ function emitLevel(d: Derivation, v: string): Statement[] {
 			name,
 			extendsType: ext,
 			members,
-			bodyLeading: claimedBy !== '' && members.length > 0 ? [`// claimed by ${claimedBy}`] : [],
-			trailing: claimedBy !== '' && members.length === 0 ? [`// claimed by ${claimedBy}`] : [],
+			bodyLeading: claimedBy !== '' && members.length > 0 ? [lineComment(`// claimed by ${claimedBy}`)] : [],
+			trailing: claimedBy !== '' && members.length === 0 ? [lineComment(`// claimed by ${claimedBy}`)] : [],
 			generic: true,
 			keyParam: false,
 			leading: []
@@ -363,7 +371,7 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 		}
 		files.push({
 			name: top,
-			leading: ["// Generated from the grammars' bindings.scm and slot models. Do not edit."],
+			leading: [lineComment("// Generated from the grammars' bindings.scm and slot models. Do not edit.")],
 			imports: [
 				{ names: ['GrammarContext'], namespace: null, from: './context.ts' },
 				...(statements.some(extendsSubKind)
@@ -381,7 +389,7 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 		tops.map((t) => ({ name: t, optional: false, type: value(t), trailing: [] }));
 	files.push({
 		name: 'context',
-		leading: ["// Generated from the grammars' bindings.scm. Do not edit."],
+		leading: [lineComment("// Generated from the grammars' bindings.scm. Do not edit.")],
 		imports: [{ names: null, namespace: 'V', from: './index.ts' }],
 		statements: [
 			{
@@ -394,7 +402,9 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 				generic: false,
 				keyParam: false,
 				leading: [
-					"/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar. */"
+					blockComment(
+						"/** The typemap: one key per top-level namespace, projecting to that namespace's kind-set for a grammar. */"
+					)
 				]
 			},
 			{
@@ -406,7 +416,7 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 				trailing: [],
 				generic: false,
 				keyParam: true,
-				leading: ['/** A grammar kind a member admits that no binding claims yet; the name says which. */']
+				leading: [blockComment('/** A grammar kind a member admits that no binding claims yet; the name says which. */')]
 			},
 			{
 				k: 'interface',
@@ -417,7 +427,7 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 				trailing: [],
 				generic: false,
 				keyParam: false,
-				leading: ["/** The permissive closure: every namespace's full kind-set. */"]
+				leading: [blockComment("/** The permissive closure: every namespace's full kind-set. */")]
 			}
 		]
 	});
@@ -555,19 +565,23 @@ const keyParams = () =>
 		})
 	);
 
+type CommentNode = ReturnType<typeof ir.comment.line> | ReturnType<typeof ir.comment.block>;
+
 type Triviable<N> = {
-	readonly $trivia: { leading(...items: string[]): N; trailing(...items: string[]): N };
+	readonly $trivia: { leading(...items: CommentNode[]): N; trailing(...items: CommentNode[]): N };
 };
 
-function withTrivia<N extends Triviable<N>>(node: N, leading: readonly string[], trailing: readonly string[]): N {
-	const led = leading.length > 0 ? node.$trivia.leading(...leading) : node;
-	return trailing.length > 0 ? led.$trivia.trailing(...trailing) : led;
+const commentIr = (c: Comment): CommentNode => (c.block ? ir.comment.block(c.text) : ir.comment.line(c.text));
+
+function withTrivia<N extends Triviable<N>>(node: N, leading: readonly Comment[], trailing: readonly Comment[]): N {
+	const led = leading.length > 0 ? node.$trivia.leading(...leading.map(commentIr)) : node;
+	return trailing.length > 0 ? led.$trivia.trailing(...trailing.map(commentIr)) : led;
 }
 
-function memberIr(m: Member, base: boolean, leading: readonly string[]): PropertySignature {
-	const built = ir.propertySignature.strict({
+function memberIr(m: Member, base: boolean, leading: readonly Comment[]): PropertySignature {
+	const built = ir.propertySignature({
 		readonlyMarker: true,
-		name: ir.identifier(m.name),
+		name: m.name,
 		...(m.optional ? { optionalMarker: true } : {}),
 		type: ir.typeAnnotation.strict(toIr(m.type, base))
 	});
@@ -618,7 +632,7 @@ function statementIr(s: Statement, base: boolean): TsStatement {
 	}
 }
 
-function importIr(imp: VocabularyFile['imports'][number], leading: readonly string[]): TsStatement {
+function importIr(imp: VocabularyFile['imports'][number], leading: readonly Comment[]): TsStatement {
 	const [first, ...rest] = (imp.names ?? []).map((n) => ir.importSpecifier.name.strict({ name: ir.identifier(n) }));
 	const clause =
 		imp.namespace !== null

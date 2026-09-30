@@ -14,18 +14,13 @@ export interface Type<G extends GrammarContext> {
 		| V.Unmapped<'rust:function_type_fn_form'>
 		| V.Unmapped<'rust:function_type_trait_form'>
 		| V.Unmapped<'typescript:literal_type_negative_number'>
-		| V.Unmapped<'typescript:type_query_call_expression'>
-		| V.Unmapped<'typescript:type_query_instantiation_expression'>
-		| V.Unmapped<'typescript:type_query_member_expression'>
-		| V.Unmapped<'typescript:type_query_subscript_expression'>
-		| V.Clause.Bounds.Removed<G>
 		| G['expression']
 		| G['identifier']
 		| G['literal']
 		| G['pattern']
 		| G['type'];
 	// prt only
-	// unmapped: <rust:function_type_fn_form> <rust:function_type_trait_form> <typescript:literal_type_negative_number> <typescript:type_query_call_expression> <typescript:type_query_instantiation_expression> <typescript:type_query_member_expression> <typescript:type_query_subscript_expression>
+	// unmapped: <rust:function_type_fn_form> <rust:function_type_trait_form> <typescript:literal_type_negative_number>
 }
 
 export namespace Type {
@@ -54,7 +49,7 @@ export namespace Type {
 	export interface Bracketed<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
 		// claimed by r
 		readonly kind: 'type.bracketed';
-		readonly content: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
+		readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
 	}
 	export interface Conditional<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
 		// claimed by t
@@ -264,7 +259,7 @@ export namespace Type {
 		export interface Asserts<G extends GrammarContext> extends Simplify<SubKindOf<V.Type.Predicate<G>>> {
 			// claimed by t
 			readonly kind: 'type.predicate.asserts';
-			readonly content: G['identifier'] | V.Type.Predicate<G>;
+			readonly value: G['identifier'] | V.Type.Predicate<G>;
 		}
 		export type Any<G extends GrammarContext> = V.Type.Predicate<G> | V.Type.Predicate.Asserts<G>;
 	}
@@ -288,7 +283,7 @@ export namespace Type {
 	export interface Query<G extends GrammarContext> extends Simplify<SubKindOf<V.Type<G>>> {
 		// claimed by t
 		readonly kind: 'type.query';
-		readonly content:
+		readonly expression:
 			| V.Unmapped<'typescript:type_query_call_expression'>
 			| V.Unmapped<'typescript:type_query_instantiation_expression'>
 			| V.Unmapped<'typescript:type_query_member_expression'>

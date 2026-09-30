@@ -264,8 +264,6 @@ export namespace Expression {
 		readonly kind: 'expression.binary';
 		readonly binaryExpressionIn?: V.Unmapped<'typescript:binary_expression_in'>;
 		// unmapped: <typescript:binary_expression_in>
-		readonly comparators?: V.Unmapped<'python:comparison_operator_comparator'>[];
-		// unmapped: <python:comparison_operator_comparator>
 		readonly left?:
 			| V.Declaration.Module<G>
 			| G['expression']
@@ -300,9 +298,6 @@ export namespace Expression {
 			| 'and'
 			| 'in'
 			| 'instanceof'
-			| 'is'
-			| 'is not'
-			| 'not in'
 			| 'or'
 			| '|'
 			| '||';
@@ -425,15 +420,19 @@ export namespace Expression {
 		}
 		export interface Identity<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
 			readonly kind: 'expression.binary.identity';
+			readonly left: G['expression'] | G['identifier'] | G['literal'] | V.Pattern.Splat<G>;
+			// p only
 		}
 		export namespace Identity {
-			export interface Is<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
+			export interface Is<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary.Identity<G>>> {
+				// claimed by p
 				readonly kind: 'expression.binary.identity.is';
-				readonly operator: 'is';
+				readonly left: G['expression'] | G['identifier'] | G['literal'] | V.Pattern.Splat<G>;
 			}
-			export interface IsNot<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
+			export interface IsNot<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary.Identity<G>>> {
+				// claimed by p
 				readonly kind: 'expression.binary.identity.is_not';
-				readonly operator: 'is not';
+				readonly left: G['expression'] | G['identifier'] | G['literal'] | V.Pattern.Splat<G>;
 			}
 			export type Any<G extends GrammarContext> =
 				| V.Expression.Binary.Identity.Is<G>
@@ -469,6 +468,8 @@ export namespace Expression {
 		}
 		export interface Membership<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
 			readonly kind: 'expression.binary.membership';
+			readonly left: G['expression'] | G['identifier'] | G['literal'] | V.Pattern.Splat<G>;
+			// p only
 		}
 		export namespace Membership {
 			export interface In<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
@@ -479,9 +480,10 @@ export namespace Expression {
 				readonly kind: 'expression.binary.membership.instanceof';
 				readonly operator: 'instanceof';
 			}
-			export interface NotIn<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary<G>>> {
+			export interface NotIn<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Binary.Membership<G>>> {
+				// claimed by p
 				readonly kind: 'expression.binary.membership.not_in';
-				readonly operator: 'not in';
+				readonly left: G['expression'] | G['identifier'] | G['literal'] | V.Pattern.Splat<G>;
 			}
 			export type Any<G extends GrammarContext> =
 				| V.Expression.Binary.Membership.In<G>
@@ -975,51 +977,13 @@ export namespace Expression {
 		export interface Format<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Interpolation<G>>> {
 			// claimed by p
 			readonly kind: 'expression.interpolation.format';
-			readonly contents?: (V.Unmapped<'python:format_expression'> | '[^{}\\n]+')[];
+			readonly elements?: (V.Unmapped<'python:format_expression'> | '[^{}\\n]+')[];
 			// unmapped: <python:format_expression>
 		}
 		export type Any<G extends GrammarContext> =
 			| V.Expression.Interpolation<G>
 			| V.Expression.Interpolation.Conversion<G>
 			| V.Expression.Interpolation.Format<G>;
-	}
-	export interface Jsx<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
-		readonly kind: 'expression.jsx';
-	}
-	export namespace Jsx {
-		export interface Element<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Jsx<G>>> {
-			// claimed by t
-			readonly kind: 'expression.jsx.element';
-		}
-		export namespace Element {
-			export interface Closing<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Jsx.Element<G>>> {
-				// claimed by t
-				readonly kind: 'expression.jsx.element.closing';
-			}
-			export interface Opening<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Jsx.Element<G>>> {
-				// claimed by t
-				readonly kind: 'expression.jsx.element.opening';
-			}
-			export interface SelfClosing<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Jsx.Element<G>>> {
-				// claimed by t
-				readonly kind: 'expression.jsx.element.self_closing';
-			}
-			export type Any<G extends GrammarContext> =
-				| V.Expression.Jsx.Element<G>
-				| V.Expression.Jsx.Element.Closing<G>
-				| V.Expression.Jsx.Element.Opening<G>
-				| V.Expression.Jsx.Element.SelfClosing<G>;
-		}
-		export interface Expression<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Jsx<G>>> {
-			// claimed by t
-			readonly kind: 'expression.jsx.expression';
-		}
-		export type Any<G extends GrammarContext> =
-			| V.Expression.Jsx.Element<G>
-			| V.Expression.Jsx.Element.Closing<G>
-			| V.Expression.Jsx.Element.Opening<G>
-			| V.Expression.Jsx.Element.SelfClosing<G>
-			| V.Expression.Jsx.Expression<G>;
 	}
 	export interface Lambda<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by prt
@@ -1034,11 +998,8 @@ export namespace Expression {
 			| G['pattern']
 			| V.Statement.Block<G>;
 		// pt only
-		readonly content?: V.Unmapped<'typescript:arrow_function_parameter'> | V.Declaration.Signature.Call<G>;
-		// t only
-		// unmapped: <typescript:arrow_function_parameter>
-		readonly parameters?: V.Declaration.Parameter<G>[];
-		// p only
+		readonly parameters?: V.Declaration.Parameter<G>[] | G['identifier'];
+		// pt only
 	}
 	export interface Member<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by prt
@@ -1059,10 +1020,8 @@ export namespace Expression {
 	export interface Parenthesized<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by prt
 		readonly kind: 'expression.parenthesized';
-		readonly content?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
-		// p only
-		readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
-		// r only
+		readonly expression?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'] | G['statement'];
+		// pr only
 	}
 	export interface Range<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by r
@@ -1071,7 +1030,7 @@ export namespace Expression {
 			| V.Unmapped<'rust:range_expression_binary'>
 			| V.Unmapped<'rust:range_expression_postfix'>
 			| V.Unmapped<'rust:range_expression_prefix'>;
-		// unmapped: <rust:range_expression_binary> <rust:range_expression_postfix> <rust:range_expression_prefix> literal:_range_expression_bare
+		// unmapped: <rust:range_expression_binary> <rust:range_expression_postfix> <rust:range_expression_prefix> literal:range_expression_bare
 	}
 	export interface Reference<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by r
@@ -1093,8 +1052,13 @@ export namespace Expression {
 	export interface Subscript<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by prt
 		readonly kind: 'expression.subscript';
-		readonly index?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement'];
-		// rt only
+		readonly index?:
+			| V.Declaration.Module<G>
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| G['statement']
+			| (V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement'])[];
 		readonly object:
 			| V.Declaration.Module<G>
 			| G['expression']
@@ -1104,9 +1068,6 @@ export namespace Expression {
 			| G['statement'];
 		readonly optionalChain?: boolean;
 		// t only
-		readonly subscripts?: V.Unmapped<'python:subscripts'>;
-		// p only
-		// unmapped: <python:subscripts>
 	}
 	export interface Try<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by r
@@ -1171,6 +1132,8 @@ export namespace Expression {
 	export interface Update<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by t
 		readonly kind: 'expression.update';
+		readonly argument: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
+		readonly operator: '++' | '--';
 	}
 	export namespace Update {
 		export interface Decrement<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Update<G>>> {
@@ -1288,11 +1251,6 @@ export namespace Expression {
 		| V.Expression.Interpolation<G>
 		| V.Expression.Interpolation.Conversion<G>
 		| V.Expression.Interpolation.Format<G>
-		| V.Expression.Jsx.Element<G>
-		| V.Expression.Jsx.Element.Closing<G>
-		| V.Expression.Jsx.Element.Opening<G>
-		| V.Expression.Jsx.Element.SelfClosing<G>
-		| V.Expression.Jsx.Expression<G>
 		| V.Expression.Lambda<G>
 		| V.Expression.Member<G>
 		| V.Expression.Meta<G>

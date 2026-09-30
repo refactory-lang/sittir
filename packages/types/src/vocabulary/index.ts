@@ -7,6 +7,7 @@ export * from './declaration.ts';
 export * from './element.ts';
 export * from './expression.ts';
 export * from './identifier.ts';
+export * from './keyword.ts';
 export * from './literal.ts';
 export * from './modifier.ts';
 export * from './module.ts';
