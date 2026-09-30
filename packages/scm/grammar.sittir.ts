@@ -19,7 +19,8 @@ export default sittirGrammar(base, {
 			'1/0': variant('children'),
 			'1/1': variant('anchored_last'),
 			'1/1/1/0': field('last')
-		}
+		},
+		predicate: { '1/0/0': field('prefix') }
 	},
 	options: { indent: preference('    ') },
 	expectDiagnostics: {

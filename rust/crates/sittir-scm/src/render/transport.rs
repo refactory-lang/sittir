@@ -2048,6 +2048,110 @@ impl ::sittir_core::render::Render for AnonymousNodeContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum PredicatePrefixTransportSlot {
+    Literal4_70_6f_75_6e_64,
+    Literal5_64_6f_74,
+}
+
+impl ::sittir_core::prepare::Prepare for PredicatePrefixTransportSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            PredicatePrefixTransportSlot::Literal4_70_6f_75_6e_64 => Ok(()),
+            PredicatePrefixTransportSlot::Literal5_64_6f_74 => Ok(()),
+        }
+    }
+}
+
+impl ::sittir_core::view::KindOf for PredicatePrefixTransportSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Literal4_70_6f_75_6e_64 => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
+            Self::Literal5_64_6f_74 => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PredicatePrefixTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    19 => Ok(Self::Literal4_70_6f_75_6e_64),
+                    20 => Ok(Self::Literal5_64_6f_74),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PredicatePrefixTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in PredicatePrefixTransportSlot")
+                )?;
+                match kind_id {
+                    19 => Ok(Self::Literal4_70_6f_75_6e_64),
+                    20 => Ok(Self::Literal5_64_6f_74),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PredicatePrefixTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("PredicatePrefixTransportSlot: expected u16 kind_id or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PredicatePrefixTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PredicatePrefixTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PredicatePrefixTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PredicatePrefixTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PredicatePrefixTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PredicatePrefixTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn predicate_prefix_transport_slot_to_any(t: PredicatePrefixTransportSlot) -> AnyTransport {
+    match t {
+        PredicatePrefixTransportSlot::Literal4_70_6f_75_6e_64 => AnyTransport::Literal4_70_6f_75_6e_64,
+        PredicatePrefixTransportSlot::Literal5_64_6f_74 => AnyTransport::Literal5_64_6f_74,
+    }
+}
+
+impl ::sittir_core::render::Render for PredicatePrefixTransportSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            PredicatePrefixTransportSlot::Literal4_70_6f_75_6e_64 => w.text("#"),
+            PredicatePrefixTransportSlot::Literal5_64_6f_74 => w.text("."),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum PredicateTypeTransportSlot {
     Literal2_71_6d_61_72_6b,
     Literal6_62_61_6e_67,
@@ -2146,131 +2250,15 @@ impl ::sittir_core::render::Render for PredicateTypeTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             PredicateTypeTransportSlot::Literal2_71_6d_61_72_6b => {
-                w.site_at(options::SITE_PREDICATE_TYPE_QMARK_BEFORE);
                 let written = w.text("?");
                 written?;
                 w.site_at(options::SITE_PREDICATE_TYPE_QMARK_AFTER);
                 Ok(())
             }
             PredicateTypeTransportSlot::Literal6_62_61_6e_67 => {
-                w.site_at(options::SITE_PREDICATE_TYPE_BANG_BEFORE);
                 let written = w.text("!");
                 written?;
                 w.site_at(options::SITE_PREDICATE_TYPE_BANG_AFTER);
-                Ok(())
-            }
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum PredicateContentTransportSlot {
-    Literal4_70_6f_75_6e_64,
-    Literal5_64_6f_74,
-}
-
-impl ::sittir_core::prepare::Prepare for PredicateContentTransportSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            PredicateContentTransportSlot::Literal4_70_6f_75_6e_64 => Ok(()),
-            PredicateContentTransportSlot::Literal5_64_6f_74 => Ok(()),
-        }
-    }
-}
-
-impl ::sittir_core::view::KindOf for PredicateContentTransportSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Literal4_70_6f_75_6e_64 => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
-            Self::Literal5_64_6f_74 => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PredicateContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match ::sittir_core::slot::transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    19 => Ok(Self::Literal4_70_6f_75_6e_64),
-                    20 => Ok(Self::Literal5_64_6f_74),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in PredicateContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in PredicateContentTransportSlot")
-                )?;
-                match kind_id {
-                    19 => Ok(Self::Literal4_70_6f_75_6e_64),
-                    20 => Ok(Self::Literal5_64_6f_74),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in PredicateContentTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("PredicateContentTransportSlot: expected u16 kind_id or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PredicateContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PredicateContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PredicateContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        PredicateContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PredicateContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        PredicateContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn predicate_content_transport_slot_to_any(t: PredicateContentTransportSlot) -> AnyTransport {
-    match t {
-        PredicateContentTransportSlot::Literal4_70_6f_75_6e_64 => AnyTransport::Literal4_70_6f_75_6e_64,
-        PredicateContentTransportSlot::Literal5_64_6f_74 => AnyTransport::Literal5_64_6f_74,
-    }
-}
-
-impl ::sittir_core::render::Render for PredicateContentTransportSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            PredicateContentTransportSlot::Literal4_70_6f_75_6e_64 => {
-                let written = w.text("#");
-                written?;
-                w.site_at(options::SITE_PREDICATE_POUND_AFTER);
-                Ok(())
-            }
-            PredicateContentTransportSlot::Literal5_64_6f_74 => {
-                let written = w.text(".");
-                written?;
-                w.site_at(options::SITE_PREDICATE_DOT_AFTER);
                 Ok(())
             }
         }
@@ -5604,14 +5592,14 @@ pub struct PredicateTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_prefix"))]
+    pub prefix: ::sittir_core::SlotValue<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<ImmediateIdentifierTransport, true>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: ::sittir_core::SlotValue<PredicateTypeEnum, true>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
     pub parameters: Option<::sittir_core::SlotValue<ParametersTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: ::sittir_core::SlotValue<Box<AnyTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for PredicateTransport {
@@ -5636,10 +5624,10 @@ impl ::sittir_core::prepare::Prepare for PredicateTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.prefix.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.type_.prepare(ctx)?;
         self.parameters.prepare(ctx)?;
-        self.content.prepare(ctx)?;
         Ok(())
     }
 }
@@ -5745,10 +5733,10 @@ impl ::sittir_core::view::KindOf for PredicateTypeEnum {
 
 impl ::sittir_core::render::Render for PredicateTypeEnum {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            Self::Question => { w.site_at(options::SITE_PREDICATE_TYPE_QMARK_BEFORE); w.text("?")?; w.site_at(options::SITE_PREDICATE_TYPE_QMARK_AFTER); Ok(()) }
-            Self::Bang => { w.site_at(options::SITE_PREDICATE_TYPE_BANG_BEFORE); w.text("!")?; w.site_at(options::SITE_PREDICATE_TYPE_BANG_AFTER); Ok(()) }
-        }
+        w.text(match self {
+            Self::Question => "?",
+            Self::Bang => "!",
+        })
     }
 }
 
@@ -9513,16 +9501,15 @@ fn render_negated_field(node: &NegatedFieldTransport, w: &mut dyn ::sittir_core:
 }
 
 fn render_predicate(node: &PredicateTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
     let name = &node.name;
     let parameters = View::new(&node.parameters, "{}");
+    let prefix = &node.prefix;
     let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(51), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("(")?;
-    w.adjacent();
     w.site_at(options::SITE_PREDICATE_LPAREN_AFTER);
-    content.render(w)?;
-    w.adjacent();
+    w.site_at(options::SITE_PREDICATE_PREFIX_BEFORE);
+    prefix.render(w)?;
     name.render(w)?;
     w.adjacent();
     type_.render(w)?;

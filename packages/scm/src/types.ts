@@ -658,24 +658,24 @@ export interface NegatedField {
 
 export interface Predicate {
 	readonly $type: TSKindId.Predicate;
-	readonly _content: number;
+	readonly _prefix: number;
 	readonly _name: ImmediateIdentifier;
 	readonly _type: number;
 	readonly _parameters?: Parameters;
 	readonly __inputHints__?: {
-		readonly content: KindEnum<'#' | '.', TSKindId.Pound | TSKindId.Dot>;
+		readonly prefix: KindEnum<'#' | '.', TSKindId.Pound | TSKindId.Dot>;
 		readonly type: KindEnum<'?' | '!', TSKindId.Qmark | TSKindId.Bang>;
 	};
 	readonly __looseHints__?: {
 		readonly parameters?: readonly (Capture | String | Identifier)[];
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<NonNullable<T.Predicate.Config>['content']>;
+		readonly prefix: SlotHint<NonNullable<T.Predicate.Config>['prefix']>;
 		readonly name: SlotHint<T.ImmediateIdentifier>;
 		readonly type: SlotHint<NonNullable<T.Predicate.Config>['type']>;
 		readonly parameters: SlotHint<T.Parameters, true>;
 	};
-	content(): number;
+	prefix(): number;
 	name(): ImmediateIdentifier;
 	type(): number;
 	parameters(): Parameters | undefined;
@@ -1005,9 +1005,8 @@ export namespace Predicate {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly dot?: { readonly after?: WhitespaceArm };
 			readonly lparen?: { readonly after?: WhitespaceArm };
-			readonly pound?: { readonly after?: WhitespaceArm };
+			readonly prefix?: { readonly before?: WhitespaceArm };
 			readonly rparen?: { readonly before?: WhitespaceArm };
 		};
 	}
@@ -1136,8 +1135,8 @@ export namespace Quantifier {
 export namespace PredicateType {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly bang?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
-			readonly qmark?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly bang?: { readonly after?: WhitespaceArm };
+			readonly qmark?: { readonly after?: WhitespaceArm };
 		};
 	}
 }

@@ -362,7 +362,7 @@ describe('negated_field', () => {
 describe('predicate', () => {
 	it('factory produces correct type', () => {
 		const node = ir.predicate({
-			content: '#',
+			prefix: '#',
 			name: { $type: TSKindId.ImmediateIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			type: '?'
 		});
@@ -371,7 +371,7 @@ describe('predicate', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.predicate({
-			content: '#',
+			prefix: '#',
 			name: { $type: TSKindId.ImmediateIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			type: '?'
 		});

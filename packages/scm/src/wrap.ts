@@ -1182,30 +1182,27 @@ export function wrapNegatedField(data: T.NegatedField, tree: TreeHandle): T.Nega
 }
 
 export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.Parsed {
-	data = _keepModelledSlots(data, ['_content', '_name', '_type', '_parameters']);
+	data = _keepModelledSlots(data, ['_prefix', '_name', '_type', '_parameters']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.Predicate as const }) as unknown as T.Predicate.Parsed;
-	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.Predicate as const,
-		_content: projectKindEnumStorage(
-			normalizeSingularWrapSlot(
-				data._content ?? readTerminalFromOther<'#' | '.'>(data, [TSKindId.Pound, TSKindId.Dot]),
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+		_prefix: projectKindEnumStorage(
+			normalizeSingularWrapSlot(data._prefix, 'prefix', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'prefix',
+				span: (data as _NodeData).$span
+			}),
 			{ '#': 19, '.': 20 }
 		),
-		_name: normalizeSingularWrapSlot(
-			dropWireDelimiters(data._name, [TSKindId.Pound, TSKindId.Dot], _order, 'name'),
-			'name',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'name', span: (data as _NodeData).$span }
-		),
+		_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'name',
+			span: (data as _NodeData).$span
+		}),
 		_type: projectKindEnumStorage(
 			normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 				tree,
@@ -1221,10 +1218,9 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 			slotName: 'parameters',
 			span: (data as _NodeData).$span
 		}),
-		...(_order && { $slotOrder: _order }),
 
-		content() {
-			return this._content;
+		prefix() {
+			return this._prefix;
 		},
 		name() {
 			return drillIn<T.ImmediateIdentifier>(this._name, tree);
@@ -1236,7 +1232,7 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 			return drillIn<T.Parameters | undefined>(this._parameters, tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.Predicate['_content']>) => wrapPredicate({ ...$edited(data), _content: v }, tree),
+			prefix: (v: NonNullable<T.Predicate['_prefix']>) => wrapPredicate({ ...$edited(data), _prefix: v }, tree),
 			name: (v: NonNullable<T.Predicate['_name']>) => wrapPredicate({ ...$edited(data), _name: v }, tree),
 			type: (v: NonNullable<T.Predicate['_type']>) => wrapPredicate({ ...$edited(data), _type: v }, tree),
 			parameters: (v: NonNullable<T.Predicate['_parameters']>) =>
@@ -1659,7 +1655,7 @@ function _withoutDisplay(data: _NodeData): _NodeData {
 	return node as _NodeData;
 }
 
-const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData['$type']> = new Set([43, 44, 45, 46, 51, 56, 57]);
+const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData['$type']> = new Set([43, 44, 45, 46, 56, 57]);
 function _spellingTokens(data: _NodeData): readonly _NodeData[] | undefined {
 	const { $other, ...node } = data;
 	if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return undefined;

@@ -879,7 +879,7 @@ export function coerceToNegatedField(input: T.NegatedField.Loose): ReturnType<ty
 	);
 }
 
-export function resolvePredicate_content(value: T.Predicate.LooseConfig['content']): T.Predicate['_content'] {
+export function resolvePredicate_prefix(value: T.Predicate.LooseConfig['prefix']): T.Predicate['_prefix'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'#' | '.'>(value, _K0, _K0)),
 		[['#', TSKindId.Pound] as const, ['.', TSKindId.Dot] as const]
@@ -904,7 +904,7 @@ export function resolvePredicate_parameters(value: T.Predicate.LooseConfig['para
 export function coerceToPredicate(input: T.Predicate.Loose): ReturnType<typeof F.buildPredicate> {
 	if (!_isLooseConfig<T.Predicate.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildPredicate>;
 	return F.buildPredicate({
-		content: _requireField('predicate', 'content', resolvePredicate_content(input.content)),
+		prefix: _requireField('predicate', 'prefix', resolvePredicate_prefix(input.prefix)),
 		name: _requireField('predicate', 'name', resolvePredicate_name(input.name)),
 		type: _requireField('predicate', 'type', resolvePredicate_type(input.type)),
 		parameters: resolvePredicate_parameters(input.parameters)

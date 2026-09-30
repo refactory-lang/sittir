@@ -4668,6 +4668,10 @@ The structural-whitespace role (`indent`, `dedent` or `newline`) the grammar dec
 
 Whether the kind is a trivia kind or reachable only through one (`stampTriviaInterior`): lexically one unit, with no interior seam and no inner gap.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::isImmediateArm`
+
+Whether a choice arm starts immediate: the choice does (a `token.immediate(choice(…))` puts the stamp on the choice, not on its arms), or the arm itself does. `withArmSeams` and `withArmEdgeSeams` write no before seam on such an arm. A before seam defaults to a space, and the writer flushes a held seam past an adjacency mark, so a before site on an immediate token would put back the whitespace the grammar forbids there.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::isImmediateWhenPresent`
 
 Whether the boundary before a seq member is immediate: the member, when it is

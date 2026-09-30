@@ -458,7 +458,7 @@ function _buildNegatedField(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T
 }
 
 export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
-	const _content = coerceKindEnumStorage<NonNullable<T.Predicate['_content']>>(config.content, [
+	const _prefix = coerceKindEnumStorage<NonNullable<T.Predicate['_prefix']>>(config.prefix, [
 		['#', TSKindId.Pound] as const,
 		['.', TSKindId.Dot] as const
 	]);
@@ -474,19 +474,19 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 				$type: TSKindId.Predicate as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_prefix,
 				_name,
 				_type,
 				_parameters,
 				$with: {
-					content: (value: NonNullable<T.Predicate.Config>['content']) => buildPredicate({ ...config, content: value }),
+					prefix: (value: NonNullable<T.Predicate.Config>['prefix']) => buildPredicate({ ...config, prefix: value }),
 					name: (value: T.ImmediateIdentifier) => buildPredicate({ ...config, name: value }),
 					type: (value: NonNullable<T.Predicate.Config>['type']) => buildPredicate({ ...config, type: value }),
 					parameters: (value?: T.Parameters) => buildPredicate({ ...config, parameters: value })
 				}
 			},
 			{
-				content: () => _content,
+				prefix: () => _prefix,
 				name: () => _name,
 				type: () => _type,
 				parameters: () => _parameters

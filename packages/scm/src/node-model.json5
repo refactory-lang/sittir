@@ -268,7 +268,7 @@
       }
     },
     "predicate": {
-      "content": {
+      "prefix": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1919,9 +1919,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -2005,7 +2005,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "content",
+        "prefix",
         "name",
         "type",
         "parameters"

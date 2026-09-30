@@ -572,17 +572,9 @@
     "named": true,
     "fields": {
       "name": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "#",
-            "named": false
-          },
-          {
-            "type": ".",
-            "named": false
-          },
           {
             "type": "identifier",
             "named": true
@@ -596,6 +588,20 @@
           {
             "type": "parameters",
             "named": true
+          }
+        ]
+      },
+      "prefix": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "#",
+            "named": false
+          },
+          {
+            "type": ".",
+            "named": false
           }
         ]
       },

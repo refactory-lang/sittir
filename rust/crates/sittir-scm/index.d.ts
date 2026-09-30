@@ -253,10 +253,10 @@ export interface ParametersTransport {
 export interface PredicateTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  _prefix: SlotValue<Box<AnyTransport>>
   _name: SlotValue<ImmediateIdentifierTransport, true>
   _type: SlotValue<PredicateTypeEnum, true>
   _parameters?: SlotValue<ParametersTransport>
-  _content: SlotValue<Box<AnyTransport>>
 }
 
 export interface ProgramTransport {
