@@ -1728,3 +1728,21 @@ Each kind's `fullForm` from the node model: the literal delimiters around its on
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel.innerGapsKeyed`
 
 Whether the grammar's emitted `InnerTrivia` takes a gap key, as the node model stamps it.
+
+### `packages/tools/src/validate/uncovered-content.ts::computeUncoveredContentCensus`
+
+The census of corpus nodes that hold text no child of theirs covers, read the way the native reader reads them (a deep `readNativeTree` over every validate corpus entry). A node counts when some descendant span intersects its own, and any non-whitespace bytes of its span lie outside every descendant span. Trivia attached anywhere inside counts as covering. Rows group by the kind the node reads as (`$displayType` when present, else `$type`), with the node and entry counts, every distinct uncovered text, and the grammar producers `hiddenProducers` names for the grammar symbol that parsed it.
+
+Such text is carried by a token tree-sitter hides from the node API: an unnamed pattern, a hidden terminal rule, or a hidden external. A reader that captures text only on anonymous, error, or childless nodes loses it, so the target is zero rows.
+
+### `packages/tools/src/validate/uncovered-content.ts::hiddenProducers`
+
+For a grammar symbol, the hidden token producers its rule reaches without crossing a visible node boundary, read from `.sittir/src/grammar.json`. It follows symbols into hidden (`_`-prefixed) and inline rules, and stops at visible symbols and at alias contents. It reports each unnamed `PATTERN` or non-literal `TOKEN`/`IMMEDIATE_TOKEN`, each hidden rule whose definition is a terminal, and each hidden external. Results are cached per symbol.
+
+### `packages/tools/src/validate/uncovered-content.ts::uncoveredRuns`
+
+The trimmed, non-empty text runs of a node's span that no descendant span covers. Descendant spans are clipped to the node's span, so trivia just outside it covers nothing.
+
+### `packages/tools/src/validate/uncovered-content.ts::run`
+
+`sittir tool uncovered-content`: prints the census per grammar (one line per kind, then each distinct uncovered text with its count), or the census as JSON with `--json`. Exits 1 when any grammar has an uncovered node.
