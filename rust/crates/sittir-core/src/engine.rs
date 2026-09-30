@@ -14,7 +14,7 @@
 
 use crate::format::{apply_format, extract_format};
 use crate::options::ResolvedOptions;
-use crate::read_node::{read_node, ReadDepth, ReadModel};
+use crate::read_node::{read_node, HandleMint, ReadDepth, ReadModel};
 use crate::render::SourceTable;
 use crate::splice::apply_edits as splice_apply_edits;
 use crate::slot::NodeCoordinate;
@@ -61,6 +61,28 @@ impl NodeCoord {
             parent: None,
             child_index: 0,
         }
+    }
+}
+
+/// Mints into a tree's node table the handle a bounded read gives a child it
+/// expands. A parent from another tree mints nothing.
+struct TableMint<'a> {
+    nodes: &'a mut Vec<NodeCoord>,
+    tree_id: u32,
+}
+
+impl HandleMint for TableMint<'_> {
+    fn mint(&mut self, parent: u64, child_index: u16) -> Option<u64> {
+        let (tree_id, index) = decode_handle(parent);
+        if tree_id != self.tree_id {
+            return None;
+        }
+        let new_index = self.nodes.len() as u32;
+        self.nodes.push(NodeCoord {
+            parent: Some(index),
+            child_index: child_index as u32,
+        });
+        Some(encode_handle(self.tree_id, new_index))
     }
 }
 
@@ -226,6 +248,10 @@ impl<G: EngineGrammar> ParsedTree<G> {
             Some(handle),
             depth,
             &self.grammar,
+            &mut TableMint {
+                nodes: &mut self.nodes,
+                tree_id: self.tree_id,
+            },
         )
     }
 
@@ -281,6 +307,10 @@ impl<G: EngineGrammar> ParsedTree<G> {
             Some(encode_handle(self.tree_id, new_index)),
             depth,
             &self.grammar,
+            &mut TableMint {
+                nodes: &mut self.nodes,
+                tree_id: self.tree_id,
+            },
         );
         serde_json::to_string(&data).map_err(|e| format!("serialize NodeData failed: {e}"))
     }
@@ -526,6 +556,7 @@ mod tests {
             slot_order: None,
             same_line: false,
             tokens_between: 0,
+            text_only: false,
         }
     }
 

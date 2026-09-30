@@ -252,7 +252,7 @@ export default sittirGrammar(base, {
 		},
 
 		dictionary: {
-			1: field('entries')
+			1: field('elements')
 		},
 
 		except_clause: [

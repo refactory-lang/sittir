@@ -1,7 +1,6 @@
 {
-  "if_expression": 1,
-  "source_file": 4,
+  "source_file": 3,
   "struct_expression": 1,
   "struct_item_tuple": 1,
-  "use_declaration": 2
+  "use_declaration": 1
 }

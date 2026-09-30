@@ -11,6 +11,7 @@ import type {
 	ParseOptions,
 	Pending,
 	Rendered,
+	RenderArgument,
 	RenderCallOptions,
 	RenderOptionsCheck
 } from '@sittir/types';
@@ -188,7 +189,7 @@ function assembleEngine<API extends LanguageAPI>(
 		read() {
 			return Promise.reject(unimplementedVerb('read'));
 		},
-		render(node: AnyNodeData | number | ((build: API['build']) => API['node']), renderOptions?: API['options'] & RenderCallOptions) {
+		render(node: RenderArgument<API>, renderOptions?: API['options'] & RenderCallOptions) {
 			const target = typeof node === 'function' ? node(build) : node;
 			const stamp = engineOf(target);
 			if (stamp !== undefined && !sameLanguage(stamp, identity)) {

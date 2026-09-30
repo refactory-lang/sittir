@@ -785,7 +785,7 @@ export namespace Expression {
 		export interface Dictionary<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Collection<G>>> {
 			// claimed by p
 			readonly kind: 'expression.collection.dictionary';
-			readonly entries?: V.Unmapped<'python:dictionary_elements'>;
+			readonly elements?: V.Unmapped<'python:dictionary_elements'>;
 			// unmapped: <python:dictionary_elements>
 		}
 		export interface List<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Collection<G>>> {

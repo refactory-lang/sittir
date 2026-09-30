@@ -6,7 +6,7 @@ import { normalizeGrammar, NormalizeCtx } from '../normalize.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { buildInlinableKinds } from '../inline-sets.ts';
 import type { ParseKindCollisionDiagnostic } from '../../types/parsekind-collisions.ts';
-import { optionalFlankSlots, type AssembleWarning, type NamingEvent } from '../model/node-map.ts';
+import { isTerminalNode, optionalFlankSlots, type AssembleWarning, type NamingEvent } from '../model/node-map.ts';
 import { undeclaredSeparatorSites, type SitePreferencesConfig } from '../model/site-preferences.ts';
 import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
@@ -283,6 +283,21 @@ export function triviaLineEndDiagnostics(grammar: string, nodeMap: NodeMap): Gra
 		}));
 }
 
+export function terminalRootDiagnostics(grammar: string, nodeMap: NodeMap): GrammarDiagnostic[] {
+	return [...nodeMap.nodes.values()]
+		.filter((node) => node.grammarRoot === true && isTerminalNode(node))
+		.map((node) => ({
+			scope: 'grammar' as const,
+			code: 'grammar-root-terminal',
+			severity: 'error' as const,
+			grammar,
+			ownerKind: node.kind,
+			message: `the grammar root '${node.kind}' is a terminal (${node.modelType}); the root owns the edges around its items, so it must be a non-terminal with children.`,
+			proposal: `Make the first rule a non-terminal whose body references '${node.kind}''s content as a child rule.`,
+			canProceed: false
+		}));
+}
+
 export function collectGrammarDiagnostics(input: {
 	grammar: string;
 	parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
@@ -409,6 +424,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			...diagnoseMixedDisplayUnions({ grammar: rawGrammar.name, displayUnions: linked.displayUnions, symbols }),
 			...reservedMemberDiagnostics(rawGrammar.name, nodeMap.reserved, kindEntries),
 			...triviaLineEndDiagnostics(rawGrammar.name, nodeMap),
+			...terminalRootDiagnostics(rawGrammar.name, nodeMap),
 			...optionalFlankFieldDiagnostics(rawGrammar.name, nodeMap),
 			...hiddenTerminalNonliteralDiagnostics(rawGrammar),
 			...undeclaredSeparatorDiagnostics(rawGrammar.name, { nodeMap, kindEntries, options: rawGrammar.options }),

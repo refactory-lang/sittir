@@ -422,3 +422,89 @@ static EDGE_SPECS_3: &[SiteSpec] = &[
     SiteSpec { default_arm: 70, strength: 1 },
     SiteSpec { default_arm: 6, strength: 1 },
 ];
+
+use sittir_core::prepare::{fill_edges, root_flanks, EdgeItems};
+
+fn flank_text(kind: u16) -> &'static str {
+    match kind {
+        1 => "",
+        3 => "\n",
+        4 => "\n\n",
+        _ => "",
+    }
+}
+const FLANKS: WhitespaceTable = WhitespaceTable { text_of: flank_text, indent: 0, dedent: 0 };
+
+#[test]
+fn a_root_reads_its_flanks_from_the_bytes_around_its_first_and_last_coordinate() {
+    let opts = ResolvedOptions::default();
+    let sources = source_tree();
+    let items = vec![parsed(1, 0, 6).unwrap(), parsed(2, 8, 17).unwrap()];
+    let flanks = root_flanks(items.first_item(), items.last_item(), &[1, 3, 4], &[1, 3, 4], &FLANKS, &ctx(&opts, &sources));
+    assert_eq!(flanks, Edges { before: Some(wire(1)), after: Some(wire(3)) });
+}
+
+#[test]
+fn a_rebuilt_edge_item_or_a_flank_that_is_not_whitespace_leaves_the_edge_unset() {
+    let opts = ResolvedOptions::default();
+    let sources = source_tree();
+    let rebuilt_first = vec![SlotValue::Transport(Seatable { kind: 2, edges: Edges::default() }), parsed(1, 0, 6).unwrap()];
+    let flanks = root_flanks(rebuilt_first.first_item(), rebuilt_first.last_item(), &[1, 3, 4], &[1, 3, 4], &FLANKS, &ctx(&opts, &sources));
+    assert_eq!(flanks.before, None);
+    assert_eq!(flanks.after, None, "the bytes after `use x;` hold `fn f() {{}}`, which is not a flank");
+}
+
+#[test]
+fn filling_root_edges_keeps_a_side_the_wire_set() {
+    let mut root = Edged3 { edges: Edges { before: Some(wire(4)), after: None } };
+    fill_edges(&mut root, Edges { before: Some(wire(1)), after: Some(wire(3)) });
+    assert_eq!(root.edges, Edges { before: Some(wire(4)), after: Some(wire(3)) });
+}
+
+static ROOT_FLAGS: &[u8] = &[0, 0, 0, sittir_core::options::KIND_ROOT];
+static ROOT_SPECS: &[SiteSpec] = &[SiteSpec { default_arm: 1, strength: 1 }, SiteSpec { default_arm: 3, strength: 1 }];
+
+fn root_render(kind_flags: &'static [u8], write: impl FnOnce(&mut SpacingWriter<'_, String>)) -> String {
+    let opts = ResolvedOptions { edges: EDGE_ROWS, edge_rows: EDGE_ROW_OF, kind_flags, ..at_defaults(ROOT_SPECS) };
+    let mut out = String::new();
+    let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident()).with_table(&FLANKS).with_options(&opts);
+    write(&mut w);
+    w.finish().unwrap();
+    out
+}
+
+#[test]
+fn the_roots_edges_are_written_at_both_ends_of_its_render() {
+    let root = |before: Option<EdgeArm>| {
+        root_render(ROOT_FLAGS, |w| {
+            w.edge(KindId(3), Side::Before, before);
+            w.text("a").unwrap();
+            w.edge(KindId(3), Side::After, None);
+        })
+    };
+    assert_eq!(root(None), "a\n");
+    assert_eq!(root(Some(wire(4))), "\n\na\n");
+    let not_root = root_render(&[], |w| {
+        w.edge(KindId(3), Side::Before, Some(wire(4)));
+        w.text("a").unwrap();
+        w.edge(KindId(3), Side::After, None);
+    });
+    assert_eq!(not_root, "a", "a node rendered on its own carries no edge whitespace");
+}
+
+#[test]
+fn a_root_edge_decides_its_gap_and_only_a_terminated_break_floors_it() {
+    let replaced = root_render(ROOT_FLAGS, |w| {
+        w.text("a").unwrap();
+        w.hold_line_end(sittir_core::render::LineHold::Break);
+        w.edge(KindId(3), Side::After, Some(wire(1)));
+        w.site_with(4, sittir_core::spacing::SEAM_TRIVIA);
+    });
+    assert_eq!(replaced, "a");
+    let floored = root_render(ROOT_FLAGS, |w| {
+        w.text("// c").unwrap();
+        w.hold_line_end(sittir_core::render::LineHold::Terminated);
+        w.edge(KindId(3), Side::After, Some(wire(1)));
+    });
+    assert_eq!(floored, "// c\n");
+}

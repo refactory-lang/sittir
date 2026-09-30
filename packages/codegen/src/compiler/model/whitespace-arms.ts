@@ -44,6 +44,23 @@ export function lineBreakingArms(nodeMap: NodeMap): LineBreakingArms {
 	return { arms, defaultArm };
 }
 
+export interface RootEdgeArms {
+	readonly before: WhitespaceArm;
+	readonly after: WhitespaceArm;
+}
+
+export function rootEdgeArms(nodeMap: NodeMap): RootEdgeArms {
+	const armOf = new Map([...whitespaceSymbolsOf(nodeMap)].map(([arm, symbol]) => [symbol, arm]));
+	const tight = armOf.get(TIGHT_MEMBER);
+	if (tight === undefined) throw new Error(`grammar: the root's edges default to '${TIGHT_MEMBER}', which '${WHITESPACE_SUPERTYPE}' does not list`);
+	if (nodeMap.fileTypes.length === 0) return { before: tight, after: tight };
+	const newline = armOf.get(NEWLINE_MEMBER);
+	if (newline === undefined) {
+		throw new Error(`grammar: it declares file types, so its root ends in '${NEWLINE_MEMBER}', which '${WHITESPACE_SUPERTYPE}' does not list`);
+	}
+	return { before: tight, after: newline };
+}
+
 export function defaultWhitespaceArmOf(nodeMap: NodeMap): WhitespaceArm {
 	const armOf = new Map([...whitespaceSymbolsOf(nodeMap)].map(([arm, symbol]) => [symbol, arm]));
 	const arm = armOf.get(SPACE_MEMBER) ?? armOf.get(TIGHT_MEMBER);

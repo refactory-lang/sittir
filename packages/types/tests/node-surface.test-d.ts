@@ -1,11 +1,12 @@
 import { describe, expectTypeOf, it } from 'vitest';
-import type { BoundOf, ParsedOf, SlotHint, ListOwnerHint, WithNode } from '../src/index.ts';
+import type { BoundOf, ParsedOf, SlotHint, ListSlotHint, ListViewHint, WithNode } from '../src/index.ts';
 
 const enum K {
 	Fn = 1,
 	Params = 2,
 	Param = 3,
-	Kw = 4
+	Kw = 4,
+	Items = 5
 }
 interface Param {
 	readonly $type: K.Param;
@@ -13,13 +14,23 @@ interface Param {
 	name(): string;
 	readonly __slotHints__?: { name: SlotHint<string> };
 }
+interface Items {
+	readonly $type: K.Items;
+	readonly _element: readonly Param[];
+	element(): readonly Param[];
+	readonly __slotHints__?: {
+		element: SlotHint<readonly Param[], false, true>;
+		$listView: ListViewHint<Param, { delimiter?: 0 | 2 }>;
+	};
+}
 interface Params {
 	readonly $type: K.Params;
-	readonly _elements?: readonly Param[];
-	elements(): readonly Param[] | undefined;
+	readonly _items?: Items;
+	items(): Items | undefined;
 	readonly __slotHints__?: {
-		elements: SlotHint<readonly Param[], true, true>;
-		$listOwner: ListOwnerHint<Param, { delimiter?: 0 | 2 }>;
+		items: SlotHint<Items, true>;
+		$listView: ListViewHint<Param, { delimiter?: 0 | 2 }>;
+		$listSlots: { items: ListSlotHint<Param, { delimiter?: 0 | 2 }> };
 	};
 }
 interface Fn {
@@ -28,13 +39,25 @@ interface Fn {
 	readonly _kw?: K.Kw;
 	params(): Params;
 	kw(): K.Kw | undefined;
-	readonly __slotHints__?: { params: SlotHint<Params>; kw: SlotHint<K.Kw, true> };
+	readonly __slotHints__?: {
+		params: SlotHint<Params>;
+		kw: SlotHint<K.Kw, true>;
+		$listSlots: { params: ListSlotHint<Param, { delimiter?: 0 | 2 }> };
+	};
 }
 declare namespace Param {
 	interface Bound extends BoundOf<Param, ByB> {
 		readonly $with: WithNode<this, ByB, ByP>;
 	}
 	interface Parsed extends ParsedOf<Param, ByP> {
+		readonly $with: WithNode<this, ByB, ByP>;
+	}
+}
+declare namespace Items {
+	interface Bound extends BoundOf<Items, ByB> {
+		readonly $with: WithNode<this, ByB, ByP>;
+	}
+	interface Parsed extends ParsedOf<Items, ByP> {
 		readonly $with: WithNode<this, ByB, ByP>;
 	}
 }
@@ -58,15 +81,18 @@ interface ByB {
 	[K.Fn]: Fn.Bound;
 	[K.Params]: Params.Bound;
 	[K.Param]: Param.Bound;
+	[K.Items]: Items.Bound;
 }
 interface ByP {
 	[K.Fn]: Fn.Parsed;
 	[K.Params]: Params.Parsed;
 	[K.Param]: Param.Parsed;
+	[K.Items]: Items.Parsed;
 }
 
 declare const fn: Fn.Parsed;
 declare const built: Params.Bound;
+declare const items: Items.Bound;
 declare const storageParams: Params;
 declare const bound: Fn.Bound;
 declare const param: Param;
@@ -79,11 +105,13 @@ describe('BoundOf / ParsedOf', () => {
 	it('a kind-id-stored child stays its id', () => {
 		expectTypeOf(fn.kw()).toEqualTypeOf<K.Kw | undefined>();
 	});
-	it('a list owner iterates its stored elements and carries its options', () => {
+	it('a list owner and its list node read as a ReadonlyArray of the items and carry the options', () => {
 		const ps = fn.params();
-		expectTypeOf([...ps]).toEqualTypeOf<Param.Parsed[]>();
-		expectTypeOf(ps.length).toEqualTypeOf<number>();
-		expectTypeOf(ps.at(0)).toEqualTypeOf<Param.Parsed | undefined>();
+		expectTypeOf(ps).toExtend<ReadonlyArray<Param.Parsed>>();
+		expectTypeOf(ps[0]).toEqualTypeOf<Param.Parsed | undefined>();
+		expectTypeOf(ps.map((p) => p.name())).toEqualTypeOf<string[]>();
+		expectTypeOf(ps.items()).toEqualTypeOf<Items.Parsed | undefined>();
+		expectTypeOf(ps.items()!).toExtend<ReadonlyArray<Param.Parsed>>();
 		expectTypeOf(ps.delimiter).toEqualTypeOf<0 | 2 | undefined>();
 	});
 	it('$with retypes only the replaced slot, and chains accumulate', () => {
@@ -104,22 +132,19 @@ describe('BoundOf / ParsedOf', () => {
 		// @ts-expect-error Params.Bound expected
 		fn.$with.params('x');
 	});
-	it('a multiple slot is set with rest arguments and reads back its input', () => {
-		const d = owner.$with.elements(param, param);
-		expectTypeOf(d.elements()).toEqualTypeOf<readonly Param.Bound[]>();
-		expectTypeOf(owner.$with.elements()).toHaveProperty('elements');
+	it('a slot that holds a list takes its builder arguments', () => {
+		expectTypeOf(owner.$with.items(param, param).items()).toEqualTypeOf<Items.Bound>();
+		expectTypeOf(owner.$with.items({ delimiter: 2 }, param)).toHaveProperty('items');
+		expectTypeOf(owner.$with.items(items)).toHaveProperty('items');
+		expectTypeOf(owner.$with.items()).toHaveProperty('items');
+		expectTypeOf(fn.$with.params(param, param).params()).toEqualTypeOf<Params.Bound>();
+		expectTypeOf(fn.$with.params(...fn.params())).toHaveProperty('params');
 	});
-	it('a list owner $with is callable with the factory arguments', () => {
-		expectTypeOf(owner.$with({ delimiter: 2 }, param)).toHaveProperty('elements');
-		expectTypeOf(owner.$with(param)).toHaveProperty('elements');
-		expectTypeOf(owner.$with(param).elements()).toEqualTypeOf<readonly Param.Bound[]>();
-		expectTypeOf(built.$with(param)).toHaveProperty('elements');
-		// @ts-expect-error at least one element
-		owner.$with({ delimiter: 2 });
-	});
-	it('a node that is not a list owner has no call signature on $with', () => {
+	it('$with has no call signature, a list owner included', () => {
 		// @ts-expect-error not callable
 		fn.$with(built);
+		// @ts-expect-error not callable
+		owner.$with(param);
 	});
 	it('Bound $with returns Bound', () => {
 		expectTypeOf(bound.$with.params(built).params()).toEqualTypeOf<Params.Bound>();

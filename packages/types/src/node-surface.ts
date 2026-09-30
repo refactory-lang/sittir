@@ -5,10 +5,13 @@ export interface SlotHint<Input, Optional extends boolean = false, Rest extends 
 	readonly optional: Optional;
 	readonly rest: Rest;
 }
-export interface ListOwnerHint<Element, Options extends object, Input = Element> {
+export interface ListViewHint<Element, Options extends object> {
 	readonly element: Element;
 	readonly options: Options;
-	readonly input: Input;
+}
+export interface ListSlotHint<Element, Options extends object> {
+	readonly element: Element;
+	readonly options: Options;
 }
 type IsBroadNumber<X> = (<Y>() => Y extends number ? 1 : 2) extends <Y>() => Y extends X ? 1 : 2 ? true : false;
 export type NarrowTo<T, D extends number> = T extends number
@@ -25,8 +28,9 @@ export type NarrowTo<T, D extends number> = T extends number
 export type Remap<T, K extends PropertyKey> = { [P in keyof T as P extends K ? never : P]: T[P] };
 
 type HintsOf<Self> = Self extends { readonly __slotHints__?: infer H } ? NonNullable<H> : never;
-export type SlotHintsOf<Self> = Remap<HintsOf<Self>, '$listOwner'>;
-export type ListOwnerOf<Self> = HintsOf<Self> extends { readonly $listOwner: infer L } ? L : never;
+export type SlotHintsOf<Self> = Remap<HintsOf<Self>, '$listView' | '$listSlots'>;
+export type ListViewOf<Self> = HintsOf<Self> extends { readonly $listView: infer L } ? L : never;
+type ListSlotsOf<Self> = HintsOf<Self> extends { readonly $listSlots: infer L } ? L : {};
 type SlotInput<Self, K extends keyof SlotHintsOf<Self>> =
 	SlotHintsOf<Self>[K] extends SlotHint<infer I, boolean, boolean> ? I : never;
 type SlotOptional<Self, K extends keyof SlotHintsOf<Self>> =
@@ -46,10 +50,7 @@ type Resolve<R, ByKindId> = R extends number
 
 export type SupertypeSurface<S, ByKindId> = Resolve<S, ByKindId>;
 
-export type ListOwnerMembers<E, O> = Iterable<E> & {
-	readonly length: number;
-	at(index: number): E | undefined;
-} & Readonly<O>;
+export type ListView<E, O> = ReadonlyArray<E> & Readonly<O>;
 
 type Accessors<N, ByKindId> = {
 	[P in keyof N as N[P] extends () => unknown ? P : never]: N[P] extends () => infer R
@@ -78,24 +79,8 @@ type SetResult<Self, K extends PropertyKey, V, ByBound, Lookup, Reflect extends 
 	? Self
 	: WithSlot<Self, K, V, ByBound, Lookup>;
 
-type ListCall<Self, ByBound, Lookup, Reflect extends boolean> = [ListOwnerOf<Self>] extends [never]
-	? {}
-	: ListOwnerOf<Self> extends ListOwnerHint<unknown, infer O, infer I>
-		? keyof SlotHintsOf<Self> extends infer K extends keyof SlotHintsOf<Self>
-			? {
-					(
-						options: O,
-						...items: readonly [AdmitBound<I, Lookup>, ...(readonly AdmitBound<I, Lookup>[])]
-					): SetResult<Self, K, SlotInput<Self, K>, ByBound, Lookup, Reflect>;
-					(
-						...items: readonly [AdmitBound<I, Lookup>, ...(readonly AdmitBound<I, Lookup>[])]
-					): SetResult<Self, K, SlotInput<Self, K>, ByBound, Lookup, Reflect>;
-				}
-			: {}
-		: {};
-
-export type Setters<Self, ByBound, Lookup, Reflect extends boolean = false> = {
-	[K in keyof SlotHintsOf<Self>]: SlotRest<Self, K> extends true
+type SlotSetter<Self, K extends keyof SlotHintsOf<Self>, ByBound, Lookup, Reflect extends boolean> =
+	SlotRest<Self, K> extends true
 		? SlotInput<Self, K> extends infer Rest extends readonly unknown[]
 			? AdmitBound<Rest, Lookup> extends infer Admitted extends readonly unknown[]
 				? (...values: Admitted) => SetResult<Self, K, Rest, ByBound, Lookup, Reflect>
@@ -109,20 +94,41 @@ export type Setters<Self, ByBound, Lookup, Reflect extends boolean = false> = {
 			: (
 					value: AdmitBound<SlotInput<Self, K>, Lookup>
 				) => SetResult<Self, K, SlotInput<Self, K>, ByBound, Lookup, Reflect>;
-} & ListCall<Self, ByBound, Lookup, Reflect>;
+
+type ListItems<Self, K extends keyof SlotHintsOf<Self>, E, O, ByBound, Lookup, Reflect extends boolean> = {
+	(options: O, ...items: readonly AdmitBound<E, Lookup>[]): SetResult<Self, K, SlotInput<Self, K>, ByBound, Lookup, Reflect>;
+	(...items: readonly AdmitBound<E, Lookup>[]): SetResult<Self, K, SlotInput<Self, K>, ByBound, Lookup, Reflect>;
+};
+
+type SlotSetterOf<Self, K extends keyof SlotHintsOf<Self>, ByBound, Lookup, Reflect extends boolean> =
+	K extends keyof ListSlotsOf<Self>
+		? ListSlotsOf<Self>[K] extends ListSlotHint<infer E, infer O>
+			? SlotSetter<Self, K, ByBound, Lookup, Reflect> & ListItems<Self, K, E, O, ByBound, Lookup, Reflect>
+			: SlotSetter<Self, K, ByBound, Lookup, Reflect>
+		: SlotSetter<Self, K, ByBound, Lookup, Reflect>;
+
+export type Setters<Self, ByBound, Lookup, Reflect extends boolean = false> = {
+	[K in keyof SlotHintsOf<Self>]: SlotSetterOf<Self, K, ByBound, Lookup, Reflect>;
+};
 export type WithOf<Self, ByBound, Lookup> = Setters<Self, ByBound, Lookup>;
 type ResolveInput<V, ByBound> =
-	Resolve<V, ByBound> extends infer R ? (R extends readonly unknown[] ? Readonly<R> : R) : never;
+	Resolve<V, ByBound> extends infer R
+		? R extends { readonly $type: unknown }
+			? R
+			: R extends readonly unknown[]
+				? Readonly<R>
+				: R
+		: never;
 export type WithSlot<Self, K extends PropertyKey, V, ByBound, Lookup> = Remap<Self, K | '$with'> & {
 	[P in K]: () => ResolveInput<V, ByBound>;
 } & {
 	readonly $with: WithOf<WithSlot<Self, K, V, ByBound, Lookup>, ByBound, Lookup>;
 };
 
-type ListPart<N, ByKindId> = [ListOwnerOf<N>] extends [never]
+type ListPart<N, ByKindId> = [ListViewOf<N>] extends [never]
 	? {}
-	: ListOwnerOf<N> extends ListOwnerHint<infer E, infer O, unknown>
-		? ListOwnerMembers<Resolve<E, ByKindId>, O>
+	: ListViewOf<N> extends ListViewHint<infer E, infer O>
+		? ListView<Resolve<E, ByKindId>, O>
 		: {};
 
 type SurfaceOf<N, ByChild> = Storage<N> &

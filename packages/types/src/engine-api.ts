@@ -149,7 +149,7 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	) => node is N & Extract<API['empty'], { readonly node: N }>['empty'];
 	readonly parse: (source: string, options?: ParseOptions) => API['root'];
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
-	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, RenderInput<API> | ((build: API['build']) => API['node'])>;
+	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API>>;
 	readonly create: (path: string, fn: (build: API['build']) => API['root']) => Pending;
 	readonly edit: (path: string, fn: (root: API['root']) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
@@ -168,7 +168,13 @@ export interface Renderable<Kind extends number> extends Pick<NodeMethods, '$ren
 
 type Draft<API extends LanguageAPI> = Renderable<Extract<API['node']['$type'], number>>;
 
-type RenderInput<API extends LanguageAPI> = API['node'] | API['fixedTextKindId'] | Draft<API>;
+type StoredInput<API extends LanguageAPI> = API['node'] | API['fixedTextKindId'];
+
+type RenderBuilder<API extends LanguageAPI> = (build: API['build']) => API['node'];
+
+type RenderInput<API extends LanguageAPI> = StoredInput<API> | Draft<API>;
+
+export type RenderArgument<API extends LanguageAPI> = RenderInput<API> | RenderBuilder<API>;
 
 export type RenderOptionsCheck<API extends LanguageAPI, R, Extra extends PropertyKey = never> =
 	IsExactly<R, API['options']> extends true

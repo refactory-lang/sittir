@@ -793,8 +793,16 @@
 	],
 	"pattern": [
 		{
+			"kind": "seam",
+			"field": "pattern_before"
+		},
+		{
 			"kind": "slot",
 			"name": "content"
+		},
+		{
+			"kind": "seam",
+			"field": "pattern_after"
 		}
 	],
 	"posix_character_class": [

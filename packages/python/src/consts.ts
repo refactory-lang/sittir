@@ -94,7 +94,7 @@ export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = Object
 	case_list_pattern: Object.freeze(['list_pattern_case_patterns']),
 	case_tuple_pattern: Object.freeze(['list_pattern_case_patterns']),
 	dict_pattern: Object.freeze(['dict_pattern_elements']),
-	dictionary: Object.freeze(['entries']),
+	dictionary: Object.freeze(['elements']),
 	list: Object.freeze(['collection_elements']),
 	list_pattern: Object.freeze(['patterns']),
 	match_block_block: Object.freeze(['alternative']),

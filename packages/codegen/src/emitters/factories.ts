@@ -1,3 +1,4 @@
+import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { findOwnKindEntry, reservedWordset } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -123,7 +124,7 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 			if (seatedKeywordTexts(slot, nodeMap, kindEntries).length > 0) imports.add('rejectKeywordText');
 			if (kindEntries !== undefined && slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
 		}
-		if (listOwnerRuntimeSpec(node, nodeMap, kindEntries) !== undefined) imports.add('withListOwner');
+		for (const seat of seatRuntimes(node, nodeMap, kindEntries)) imports.add(seat.helper);
 		if (kindEntries !== undefined && node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)
 			imports.add('admitAliasContent');
 	}
@@ -647,6 +648,7 @@ export interface BuiltTypeSurface {
 	readonly setters: readonly SlotSetter[];
 	readonly buildArgs: string;
 	readonly looseArgs: string;
+	readonly maxArgs: number | undefined;
 }
 
 export function slotSetter(
@@ -678,6 +680,9 @@ function fieldCarryingBuiltTypeSurface(
 ): BuiltTypeSurface {
 	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
 	const { spreadFacts, singleField } = surface;
+	const spreadTarget = listSpreadTarget(node, nodeMap, kindEntries);
+	const spreadArgs = (member: 'BuildArgs' | 'LooseArgs'): string =>
+		spreadTarget === null ? '' : ` | T.${nodeMap.nodes.get(spreadTarget)!.typeName}.${member}`;
 	let setters: SlotSetter[];
 	if (spreadFacts) {
 		setters = [{ name: spreadFacts.slot.propertyName, input: `${surface.elementType!}[]`, optional: false, rest: true }];
@@ -699,8 +704,9 @@ function fieldCarryingBuiltTypeSurface(
 		mainType: `T.${node.typeName}`,
 		members: [],
 		setters,
-		buildArgs: paramsToTuple(surface.rowParams),
-		looseArgs: paramsToTuple(surface.rowLooseParams)
+		buildArgs: `${paramsToTuple(surface.rowParams)}${spreadArgs('BuildArgs')}`,
+		looseArgs: `${paramsToTuple(surface.rowLooseParams)}${spreadArgs('LooseArgs')}`,
+		maxArgs: spreadTarget === null ? surface.arity : undefined
 	};
 }
 
@@ -721,7 +727,8 @@ function leafBuiltTypeSurface(
 		],
 		setters: [],
 		buildArgs: paramsToTuple(params),
-		looseArgs: paramsToTuple(params)
+		looseArgs: paramsToTuple(params),
+		maxArgs: 1
 	};
 }
 
@@ -819,6 +826,7 @@ interface FactorySurface {
 	readonly looseParams: string;
 	readonly rowParams: string;
 	readonly rowLooseParams: string;
+	readonly arity: number | undefined;
 	readonly args: string;
 	readonly elementType?: string;
 	readonly directParamType?: string;
@@ -829,7 +837,7 @@ interface FactorySurface {
 }
 
 export function declarationParams(params: string): string {
-	return params.replace(/(\w+)\??: (.+?) = .+$/, '$1?: $2');
+	return params.replace(/(\w+)\??: (.+?) = [^,]+/, '$1?: $2');
 }
 
 function paramText(param: FactoryParam, type: string): string {
@@ -844,9 +852,11 @@ function renderSurfaceParams(param: FactoryParam): {
 	looseParams: string;
 	rowParams: string;
 	rowLooseParams: string;
+	arity: number | undefined;
 } {
 	const strict = (type: string): string => (param.admitsNodes ? admitNodes(type) : type);
 	return {
+		arity: param.rest ? undefined : 1,
 		params: paramText(param, strict(param.strictType)),
 		looseParams: paramText(param, param.looseType),
 		rowParams: paramText(param, strict(param.rowStrictType ?? param.strictType)),
@@ -911,6 +921,7 @@ function resolveFactorySurface(
 		looseParams: `${surface.looseParams}, ${trailing}`,
 		rowParams: `${surface.rowParams}, ${trailing}`,
 		rowLooseParams: `${surface.rowLooseParams}, ${trailing}`,
+		arity: surface.arity === undefined ? undefined : surface.arity + 1,
 		args: `${surface.args}, options`,
 		spellingType
 	};
@@ -1016,6 +1027,34 @@ function resolveConfigFactorySurface(
 		directParamOptional: false,
 		opt
 	};
+}
+
+export function forwardedConstructorTarget(
+	node: FieldCarryingNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | null {
+	if (resolveFactorySurface(node, nodeMap, kindEntries).directParamType === undefined) return null;
+	const target = forwardedTargetKind(node, nodeMap);
+	if (target === null) return null;
+	if (kindEntries !== undefined && !hasCatalogEntry(kindEntries, target)) return null;
+	const targetNode = nodeMap.nodes.get(target);
+	const seatedGroup =
+		targetNode instanceof AbstractAssembledCompound &&
+		targetNode.annotations?.hoisted === true &&
+		classifyFactoryShape(targetNode, nodeMap) === 'config';
+	return seatedGroup ? null : target;
+}
+
+export function listSpreadTarget(
+	node: FieldCarryingNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | null {
+	if (registeredSlots(node).length > 0) return null;
+	const target = forwardedConstructorTarget(node, nodeMap, kindEntries);
+	if (target === null) return null;
+	return nodeMap.nodes.get(constructorTargetKind(target, nodeMap, kindEntries))?.modelType === 'list' ? target : null;
 }
 
 export function constructorTargetKind(kind: string, nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): string {
@@ -1183,8 +1222,8 @@ function emitFieldCarryingFactory(
 			);
 		}
 	}
-	const ownerSpec = listOwnerRuntimeSpec(node, nodeMap, kindEntries);
-	lines.push(`  return withMethods(${ownerSpec === undefined ? '' : 'withListOwner('}withAccessors({`);
+	const seats = seatRuntimes(node, nodeMap, kindEntries);
+	lines.push(`  return withMethods(${seatOpening(seats)}withAccessors({`);
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
@@ -1197,21 +1236,12 @@ function emitFieldCarryingFactory(
 		const propName = f.propertyName;
 		lines.push(`    ${propName}: () => ${f.storageKey},`);
 	}
-	lines.push(ownerSpec === undefined ? `  })) as unknown as ${builtName};` : `  }), ${ownerSpec})) as unknown as ${builtName};`);
+	lines.push(`  })${seatClosing(seats)}) as unknown as ${builtName};`);
 	lines.push('}');
 
 	const { directParamType, directParamOptional } = surface;
-	const resolvedForwardTarget = directParamType !== undefined ? forwardedTargetKind(node, nodeMap) : null;
-	const forwardTarget =
-		resolvedForwardTarget !== null && kindEntries !== undefined && !hasCatalogEntry(kindEntries, resolvedForwardTarget)
-			? null
-			: resolvedForwardTarget;
-	const forwardTargetNode = forwardTarget === null ? undefined : nodeMap.nodes.get(forwardTarget);
-	const forwardsToSeatedGroup =
-		forwardTargetNode instanceof AbstractAssembledCompound &&
-		forwardTargetNode.annotations?.hoisted === true &&
-		classifyFactoryShape(forwardTargetNode, nodeMap) === 'config';
-	if (forwardTarget !== null && !forwardsToSeatedGroup) {
+	const forwardTarget = forwardedConstructorTarget(node, nodeMap, kindEntries);
+	if (forwardTarget !== null) {
 		const targetFn = nodeMap.nodes.get(forwardTarget)!.rawFactoryName!;
 		lines[0] = lines[0]!.replace(`${exportKw}function ${fn}(`, `function _${fn}(`);
 		const targetSurface = constructorSurface(forwardTarget, nodeMap, kindEntries);
@@ -1445,7 +1475,8 @@ export function refineFormBuiltTypeSurfaceOf(
 		members: [],
 		setters,
 		buildArgs: paramsToTuple(params),
-		looseArgs: paramsToTuple(params)
+		looseArgs: paramsToTuple(params),
+		maxArgs: registered.length === 0 ? 1 : 2
 	};
 }
 
@@ -1554,39 +1585,147 @@ export function listOptionsType(
 	return listOptionParts(node, nodeMap, kindEntries).optionsType;
 }
 
-function listOwnerTarget(
+function listViewTarget(
 	node: AssembledNode,
 	nodeMap: NodeMap
-): { readonly owner: AssembledNonterminal; readonly list: AssembledList } | undefined {
+): { readonly owner?: AssembledNonterminal; readonly list: AssembledList } | undefined {
+	if (node instanceof AssembledList) return { list: node };
 	const target = forwardedTargetKind(node, nodeMap);
 	const list = target === null ? undefined : nodeMap.nodes.get(target);
 	const owner = 'soleSlot' in node ? (node as { soleSlot?: AssembledNonterminal }).soleSlot : undefined;
 	return list instanceof AssembledList && owner !== undefined ? { owner, list } : undefined;
 }
 
-export function listOwnerHint(
+export interface ListViewFacts {
+	readonly element: string;
+	readonly options: string;
+	readonly factory: string;
+	readonly accessors: readonly string[];
+}
+
+export function listViewHint(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
-): { readonly element: string; readonly options: string; readonly input: string } | undefined {
-	const target = listOwnerTarget(node, nodeMap);
+): ListViewFacts | undefined {
+	const target = listViewTarget(node, nodeMap);
 	if (target === undefined) return undefined;
 	const surface = separatedListSurface(target.list, nodeMap, kindEntries);
-	return { element: surface.storageElemType, options: surface.optionsType ?? '{}', input: surface.elemType };
+	const options = listOptionDefaults(target.list, nodeMap, kindEntries).map((option) => option.key);
+	const accessors = [
+		...(isSlotBearingCompound(node) ? node.slots.map((slot) => slot.propertyName) : []),
+		...options
+	];
+	const clash = accessors.find((name) => LIST_VIEW_MEMBERS.includes(name));
+	if (clash !== undefined) {
+		throw new Error(
+			`listViewHint: '${node.kind}' reads as a list, and its '${clash}' collides with the ReadonlyArray member of that name; rename the slot in the grammar`
+		);
+	}
+	return {
+		element: surface.elemType,
+		options: surface.optionsType ?? '{}',
+		factory: target.list.rawFactoryName!,
+		accessors
+	};
 }
 
-export function listOwnerRuntimeSpec(
+export function listViewOwners(nodeMap: NodeMap): readonly AssembledNode[] {
+	return [...nodeMap.nodes.values()].filter((node) => listViewTarget(node, nodeMap)?.owner !== undefined);
+}
+
+export function listViewRuntimeSpec(
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	factoryScope = ''
+	kindEntries: readonly KindEnumEntry[] | undefined
 ): string | undefined {
-	const target = listOwnerTarget(node, nodeMap);
+	const target = listViewTarget(node, nodeMap);
 	if (target === undefined) return undefined;
 	const options = listOptionDefaults(target.list, nodeMap, kindEntries)
 		.map((option) => `{ key: ${JSON.stringify(option.key)}, default: ${option.default} }`)
 		.join(', ');
-	return `{ list: ${JSON.stringify(target.owner.propertyName)}, elements: ${JSON.stringify(canonicalSeparatedListField(target.list).propertyName)}, options: [${options}], make: ${factoryScope}${target.list.rawFactoryName} }`;
+	const wrapper = separatedListSurface(target.list, nodeMap, kindEntries).wrapper;
+	const wrapperSpec =
+		wrapper === undefined
+			? ''
+			: `, wrapper: { kind: TSKindId.${wrapper.member}, content: ${JSON.stringify(wrapper.contentProperty)}, decorations: ${JSON.stringify(wrapper.decorationKeys)} }`;
+	const elements = canonicalSeparatedListField(target.list);
+	const list =
+		target.owner === undefined
+			? ''
+			: `list: { accessor: ${JSON.stringify(target.owner.propertyName)}, storage: ${JSON.stringify(target.owner.storageKey)} }, `;
+	const optionsSpec = options === '' ? '' : `, options: [${options}]`;
+	return `{ ${list}elements: ${JSON.stringify(elements.propertyName)}, count: ${JSON.stringify(elements.storageKey)}${optionsSpec}${wrapperSpec} }`;
+}
+
+function listSlotTargets(
+	node: AssembledNode,
+	nodeMap: NodeMap
+): readonly { readonly slot: AssembledNonterminal; readonly kind: AssembledNode }[] {
+	if (!isSlotBearingCompound(node)) return [];
+	return node.slots.flatMap((slot) => {
+		if (isMultiple(slot)) return [];
+		const kinds = slotKindNames(slot);
+		const kind = kinds.length === 1 ? nodeMap.nodes.get(kinds[0]!) : undefined;
+		return kind !== undefined && kind.rawFactoryName !== undefined && listViewTarget(kind, nodeMap) !== undefined
+			? [{ slot, kind }]
+			: [];
+	});
+}
+
+export function listSlotHints(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): readonly (ListViewFacts & { readonly slot: string; readonly kind: string })[] {
+	return listSlotTargets(node, nodeMap).map(({ slot, kind }) => ({
+		...listViewHint(kind, nodeMap, kindEntries)!,
+		slot: slot.propertyName,
+		kind: kind.typeName
+	}));
+}
+
+function listSlotsRuntimeSpec(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	factoryScope: string
+): string | undefined {
+	const targets = listSlotTargets(node, nodeMap);
+	if (targets.length === 0) return undefined;
+	const specs = targets.map(
+		({ slot, kind }) =>
+			`{ slot: ${JSON.stringify(slot.propertyName)}, kind: ${factoryTypeDiscriminant(kind.kind, nodeMap, kindEntries)}, optional: ${!isRequired(slot)}, make: ${factoryScope}${kind.rawFactoryName} }`
+	);
+	return `[${specs.join(', ')}]`;
+}
+
+export interface SeatRuntime {
+	readonly helper: 'withListView' | 'withListSlots';
+	readonly spec: string;
+}
+
+export function seatRuntimes(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	factoryScope = '',
+	tree?: string
+): readonly SeatRuntime[] {
+	const view = listViewRuntimeSpec(node, nodeMap, kindEntries);
+	const slots = listSlotsRuntimeSpec(node, nodeMap, kindEntries, factoryScope);
+	return [
+		...(view === undefined ? [] : [{ helper: 'withListView' as const, spec: tree === undefined ? view : `${view}, ${tree}` }]),
+		...(slots === undefined ? [] : [{ helper: 'withListSlots' as const, spec: slots }])
+	];
+}
+
+export function seatOpening(seats: readonly SeatRuntime[]): string {
+	return seats.map((seat) => `${seat.helper}(`).join('');
+}
+
+export function seatClosing(seats: readonly SeatRuntime[]): string {
+	return [...seats].reverse().map((seat) => `, ${seat.spec})`).join('');
 }
 
 export function separatedListSurface(
@@ -1611,6 +1750,8 @@ export function separatedListSurface(
 		readonly member: string;
 		readonly factory: string;
 		readonly contentKey: string;
+		readonly contentProperty: string;
+		readonly decorationKeys: readonly string[];
 		readonly typeName: string;
 	};
 	readonly storageElementsType: string;
@@ -1618,18 +1759,22 @@ export function separatedListSurface(
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const baseElemType = fieldElementType(contentSlot, nodeMap, kindEntries);
 	let elemType = withAliasContentTypes(baseElemType, contentSlot, nodeMap);
-	let wrapper: { member: string; factory: string; contentKey: string; typeName: string } | undefined;
+	let wrapper: ReturnType<typeof separatedListSurface>['wrapper'];
 	const contentKinds = slotKindNames(contentSlot);
 	if (contentKinds.length === 1 && kindEntries) {
 		const wKind = contentKinds[0]!;
 		const entry = findKindEntry(kindEntries, wKind);
 		const content = transparentWrapperContentSlot(wKind, nodeMap);
 		const factoryName = nodeMap.nodes.get(wKind)?.rawFactoryName;
+		const wrapperNode = nodeMap.nodes.get(wKind);
+		const wrapperSlots = wrapperNode !== undefined && isSlotBearingCompound(wrapperNode) ? wrapperNode.slots : [];
 		if (entry !== undefined && content !== undefined && factoryName !== undefined) {
 			wrapper = {
 				member: entry.member,
 				factory: factoryName,
 				contentKey: content.configKey,
+				contentProperty: content.propertyName,
+				decorationKeys: wrapperSlots.filter((slot) => slot !== content).map((slot) => slot.storageKey),
 				typeName: nodeMap.nodes.get(wKind)!.typeName
 			};
 			elemType = `${elemType} | ${withAliasContentTypes(fieldElementType(content, nodeMap, kindEntries), content, nodeMap)}`;
@@ -1676,7 +1821,8 @@ function listBuiltTypeSurface(
 		members: extraMembers,
 		setters,
 		buildArgs: elementsTuple(node.nonEmpty, surface.strictElemType),
-		looseArgs: elementsTuple(node.nonEmpty, looseValueOf(surface.looseElemTypeForArray))
+		looseArgs: elementsTuple(node.nonEmpty, looseValueOf(surface.looseElemTypeForArray)),
+		maxArgs: undefined
 	};
 }
 
@@ -1765,7 +1911,8 @@ function emitSeparatedListFactory(
 		lines.push(`  const _delimiter = options.delimiter ?? ${delimiterDefault};`);
 	}
 
-	lines.push('  return withMethods(withAccessors({');
+	const seats = seatRuntimes(node, nodeMap, kindEntries);
+	lines.push(`  return withMethods(${seatOpening(seats)}withAccessors({`);
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push('    $source: 2 as const,');
 	lines.push('    $named: true as const,');
@@ -1784,7 +1931,7 @@ function emitSeparatedListFactory(
 	lines.push('    },');
 	lines.push('  }, {');
 	lines.push(`    ${contentAccessorName}: () => ${contentStorageKey},`);
-	lines.push(`  })) as unknown as ${listBuiltName};`);
+	lines.push(`  })${seatClosing(seats)}) as unknown as ${listBuiltName};`);
 	lines.push('}');
 	return lines.join('\n');
 }

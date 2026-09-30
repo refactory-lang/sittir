@@ -24,33 +24,76 @@
 //!   and childless nodes; a node with children is addressed by its span.
 //! - `$span`       — `{start, end}` from `node.byte_range()`.
 //! - `$nodeHandle` — current node handle on the returned node; parent
-//!   handle on every child of a shallow read (stubs and leaves alike), so
-//!   an untouched child is a coordinate into its tree; on a deep read only
+//!   handle on every child at the read's last level (stubs and leaves
+//!   alike), so an untouched child is a coordinate into its tree; a child
+//!   expanded above that level carries none of its own; on a deep read only
 //!   the leaves carry one, the tree's tag, since nothing is re-read.
-//! - `$childIndex` — position within parent's children array on a shallow
-//!   read's children and a deep read's expanded children. `None` on the
-//!   returned node itself and on a deep read's leaves.
+//! - `$childIndex` — position within parent's children array on every
+//!   child a bounded read returns and a deep read's expanded children.
+//!   `None` on the returned node itself and on a deep read's leaves.
 
 use crate::types::{FieldValue, KindId, NodeData, NodeTrivia, Source, Span};
 use indexmap::IndexMap;
 use std::collections::BTreeMap;
+use std::num::NonZeroU32;
 
 /// How far one read expands.
 ///
-/// `Shallow` is the default and the lazy path: a child with substructure
-/// comes back as a stub carrying its parent handle and child index, and a
-/// later `read_child` expands it on demand. `Deep` expands everything in
-/// one pass instead.
+/// `Levels(n)` expands the children within `n - 1` levels below the node
+/// read and leaves every child with substructure at level `n` as a stub
+/// carrying its parent handle and child index, which a later `read_child`
+/// expands on demand. [`ReadDepth::SHALLOW`] (one level) is the default and
+/// the lazy path. `Deep` expands everything in one pass instead.
+///
+/// A child expanded above the last level gets a handle minted for it, so the
+/// stubs under it can be re-read, but carries no `$nodeHandle` of its own: a
+/// stub is the only node that names a coordinate to re-read, and one on an
+/// expanded node would make the wrap layer's drill-in read it again.
 ///
 /// A deep descendant keeps its `$childIndex` but gets NO `$nodeHandle`:
 /// nothing needs to re-read it, and a handle would invite exactly that —
 /// the wrap layer's drill-in would go back to the tree and replace the
 /// expansion it already has with a fresh shallow read.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ReadDepth {
-    #[default]
-    Shallow,
+    Levels(NonZeroU32),
     Deep,
+}
+
+impl ReadDepth {
+    /// One level: every child with substructure comes back as a stub.
+    pub const SHALLOW: ReadDepth = ReadDepth::Levels(NonZeroU32::MIN);
+
+    /// The depth a child of a node read at `self` is read at, or `None` when
+    /// the child is at the last level and comes back as a stub.
+    fn below(self) -> Option<ReadDepth> {
+        match self {
+            ReadDepth::Deep => Some(ReadDepth::Deep),
+            ReadDepth::Levels(levels) => NonZeroU32::new(levels.get() - 1).map(ReadDepth::Levels),
+        }
+    }
+}
+
+impl Default for ReadDepth {
+    fn default() -> Self {
+        ReadDepth::SHALLOW
+    }
+}
+
+/// Mints the handle a bounded read gives a child it expands, so the stubs
+/// under that child name a coordinate that can be re-read.
+pub trait HandleMint {
+    fn mint(&mut self, parent: u64, child_index: u16) -> Option<u64>;
+}
+
+/// A read with no node table to mint into. The stubs under a child it
+/// expands carry no handle.
+pub struct NoHandles;
+
+impl HandleMint for NoHandles {
+    fn mint(&mut self, _parent: u64, _child_index: u16) -> Option<u64> {
+        None
+    }
 }
 
 /// What the reader needs to know about the grammar it is reading. The
@@ -109,9 +152,10 @@ pub fn read_node(
     node_handle: Option<u64>,
     depth: ReadDepth,
     model: &dyn ReadModel,
+    mint: &mut dyn HandleMint,
 ) -> NodeData {
     match target {
-        Some(node) => read_ts_node(node, source, node_handle, node_handle, depth, model),
+        Some(node) => read_ts_node(node, source, node_handle, node_handle, depth, model, mint),
         None => {
             let mut root = read_ts_node(
                 tree.root_node(),
@@ -120,6 +164,7 @@ pub fn read_node(
                 node_handle,
                 depth,
                 model,
+                mint,
             );
             widen_to_whole_source(&mut root, source);
             root
@@ -177,6 +222,7 @@ fn read_ts_node(
     tree_handle: Option<u64>,
     depth: ReadDepth,
     model: &dyn ReadModel,
+    mint: &mut dyn HandleMint,
 ) -> NodeData {
     // Phase B-inverse: numeric ids directly instead of the string kind()
     // so NodeData.type_: KindId flows end-to-end without a heap-allocated
@@ -194,7 +240,7 @@ fn read_ts_node(
     let (fields, children, slot_order) = if node.is_error() {
         (None, None, None)
     } else {
-        read_children(node, source, node_handle, tree_handle, depth, model)
+        read_children(node, source, node_handle, tree_handle, depth, model, mint)
     };
 
     let text = node_text(node, source);
@@ -214,6 +260,7 @@ fn read_ts_node(
         slot_order,
         same_line: false,
         tokens_between: 0,
+        text_only: false,
     }
 }
 
@@ -271,6 +318,7 @@ fn node_trivia(
             tree_handle,
             ReadDepth::Deep,
             model,
+            &mut NoHandles,
         );
         let childless = data.fields.is_none()
             && data
@@ -459,6 +507,7 @@ fn read_children(
     tree_handle: Option<u64>,
     depth: ReadDepth,
     model: &dyn ReadModel,
+    mint: &mut dyn HandleMint,
 ) -> (
     Option<IndexMap<String, FieldValue>>,
     Option<Vec<NodeData>>,
@@ -488,7 +537,7 @@ fn read_children(
             // same holds for its trivia: a shallow leaf's is read when the
             // wrap layer re-reads it, a deep leaf's is read here.
             let (handle, child_index, trivia_data) = match depth {
-                ReadDepth::Shallow => (node_handle, Some(i as u16), None),
+                ReadDepth::Levels(_) => (node_handle, Some(i as u16), None),
                 ReadDepth::Deep => (
                     tree_handle,
                     None,
@@ -497,17 +546,24 @@ fn read_children(
             };
             NodeData {
                 trivia_data,
+                text_only: depth == ReadDepth::Deep,
                 ..read_materialized_leaf(child, source, model, handle, child_index, tree_handle)
             }
         } else {
-            match depth {
-                ReadDepth::Shallow => {
-                    read_child_stub(child, source, node_handle, i as u16)
-                }
-                ReadDepth::Deep => NodeData {
+            match depth.below() {
+                None => read_child_stub(child, source, node_handle, i as u16),
+                Some(ReadDepth::Deep) => NodeData {
                     child_index: Some(i as u16),
-                    ..read_ts_node(child, source, None, tree_handle, ReadDepth::Deep, model)
+                    ..read_ts_node(child, source, None, tree_handle, ReadDepth::Deep, model, mint)
                 },
+                Some(below) => {
+                    let handle = node_handle.and_then(|parent| mint.mint(parent, i as u16));
+                    NodeData {
+                        node_handle: None,
+                        child_index: Some(i as u16),
+                        ..read_ts_node(child, source, handle, tree_handle, below, model, mint)
+                    }
+                }
             }
         };
         match field_name.as_deref() {
@@ -611,6 +667,7 @@ fn read_child_stub(
         slot_order: None,
         same_line: false,
         tokens_between: 0,
+        text_only: false,
     }
 }
 
@@ -634,7 +691,7 @@ fn read_materialized_leaf(
     let (fields, children, slot_order) = if child.is_error() || child.child_count() == 0 {
         (None, None, None)
     } else {
-        read_children(child, source, None, tree_handle, ReadDepth::Deep, model)
+        read_children(child, source, None, tree_handle, ReadDepth::Deep, model, &mut NoHandles)
     };
     NodeData {
         type_,
@@ -654,6 +711,7 @@ fn read_materialized_leaf(
         slot_order,
         same_line: false,
         tokens_between: 0,
+        text_only: false,
     }
 }
 

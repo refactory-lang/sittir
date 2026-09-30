@@ -7,113 +7,233 @@ export * from './coerce.js';
 
 export const module = bundle(F.buildModule, C.coerceToModule);
 export const simpleStatements = bundle(F.buildSimpleStatements, C.coerceToSimpleStatements);
-export const importStatement = bundle(F.buildImportStatement, C.coerceToImportStatement);
-export const relativeImport = bundle(F.buildRelativeImport, C.coerceToRelativeImport);
-export const futureImportStatement = bundle(F.buildFutureImportStatement, C.coerceToFutureImportStatement);
-export const importFromStatement = bundle(F.buildImportFromStatement, C.coerceToImportFromStatement);
+export const importStatement = bundle(F.buildImportStatement, C.coerceToImportStatement, {
+	key: 'importStatement',
+	max: 1
+});
+export const relativeImport = bundle(F.buildRelativeImport, C.coerceToRelativeImport, {
+	key: 'relativeImport',
+	max: 1
+});
+export const futureImportStatement = bundle(F.buildFutureImportStatement, C.coerceToFutureImportStatement, {
+	key: 'futureImportStatement',
+	max: 1
+});
+export const importFromStatement = bundle(F.buildImportFromStatement, C.coerceToImportFromStatement, {
+	key: 'importFromStatement',
+	max: 1
+});
 export const importList = bundle(F.buildImportList, C.coerceToImportList);
-export const aliasedImport = bundle(F.buildAliasedImport, C.coerceToAliasedImport);
-export const printStatement = bundle(F.buildPrintStatement, C.coerceToPrintStatement);
-export const chevron = bundle(F.buildChevron, C.coerceToChevron);
+export const aliasedImport = bundle(F.buildAliasedImport, C.coerceToAliasedImport, { key: 'aliasedImport', max: 1 });
+export const printStatement = bundle(F.buildPrintStatement, C.coerceToPrintStatement, {
+	key: 'printStatement',
+	max: 1
+});
+export const chevron = bundle(F.buildChevron, C.coerceToChevron, { key: 'chevron', max: 1 });
 export const assertStatement = bundle(F.buildAssertStatement, C.coerceToAssertStatement);
-export const expressionStatement = bundle(F.buildExpressionStatement, C.coerceToExpressionStatement);
-export const namedExpression = bundle(F.buildNamedExpression, C.coerceToNamedExpression);
-export const returnStatement = bundle(F.buildReturnStatement, C.coerceToReturnStatement);
-export const deleteStatement = bundle(F.buildDeleteStatement, C.coerceToDeleteStatement);
-export const raiseStatement = bundle(F.buildRaiseStatement, C.coerceToRaiseStatement);
-export const ifStatement = bundle(F.buildIfStatement, C.coerceToIfStatement);
-export const elifClause = bundle(F.buildElifClause, C.coerceToElifClause);
-export const elseClause = bundle(F.buildElseClause, C.coerceToElseClause);
-export const matchStatement = bundle(F.buildMatchStatement, C.coerceToMatchStatement);
-export const matchBlock = bundle(F.buildMatchBlock, C.coerceToMatchBlock);
-export const caseClause = bundle(F.buildCaseClause, C.coerceToCaseClause);
-export const forStatement = bundle(F.buildForStatement, C.coerceToForStatement);
-export const whileStatement = bundle(F.buildWhileStatement, C.coerceToWhileStatement);
-export const tryStatement = bundle(F.buildTryStatement, C.coerceToTryStatement);
-export const exceptClause = bundle(F.buildExceptClause, C.coerceToExceptClause);
-export const finallyClause = bundle(F.buildFinallyClause, C.coerceToFinallyClause);
-export const withStatement = bundle(F.buildWithStatement, C.coerceToWithStatement);
-export const withItem = bundle(F.buildWithItem, C.coerceToWithItem);
-export const functionDefinition = bundle(F.buildFunctionDefinition, C.coerceToFunctionDefinition);
+export const expressionStatement = bundle(F.buildExpressionStatement, C.coerceToExpressionStatement, {
+	key: 'expressionStatement',
+	max: 1
+});
+export const namedExpression = bundle(F.buildNamedExpression, C.coerceToNamedExpression, {
+	key: 'namedExpression',
+	max: 1
+});
+export const returnStatement = bundle(F.buildReturnStatement, C.coerceToReturnStatement, {
+	key: 'returnStatement',
+	max: 1
+});
+export const deleteStatement = bundle(F.buildDeleteStatement, C.coerceToDeleteStatement, {
+	key: 'deleteStatement',
+	max: 1
+});
+export const raiseStatement = bundle(F.buildRaiseStatement, C.coerceToRaiseStatement, {
+	key: 'raiseStatement',
+	max: 1
+});
+export const ifStatement = bundle(F.buildIfStatement, C.coerceToIfStatement, { key: 'ifStatement', max: 1 });
+export const elifClause = bundle(F.buildElifClause, C.coerceToElifClause, { key: 'elifClause', max: 1 });
+export const elseClause = bundle(F.buildElseClause, C.coerceToElseClause, { key: 'elseClause', max: 1 });
+export const matchStatement = bundle(F.buildMatchStatement, C.coerceToMatchStatement, {
+	key: 'matchStatement',
+	max: 1
+});
+export const matchBlock = bundle(F.buildMatchBlock, C.coerceToMatchBlock, { key: 'matchBlock', max: 1 });
+export const caseClause = bundle(F.buildCaseClause, C.coerceToCaseClause, { key: 'caseClause', max: 1 });
+export const forStatement = bundle(F.buildForStatement, C.coerceToForStatement, { key: 'forStatement', max: 1 });
+export const whileStatement = bundle(F.buildWhileStatement, C.coerceToWhileStatement, {
+	key: 'whileStatement',
+	max: 1
+});
+export const tryStatement = bundle(F.buildTryStatement, C.coerceToTryStatement, { key: 'tryStatement', max: 1 });
+export const exceptClause = bundle(F.buildExceptClause, C.coerceToExceptClause, { key: 'exceptClause', max: 1 });
+export const finallyClause = bundle(F.buildFinallyClause, C.coerceToFinallyClause, { key: 'finallyClause', max: 1 });
+export const withStatement = bundle(F.buildWithStatement, C.coerceToWithStatement, { key: 'withStatement', max: 1 });
+export const withItem = bundle(F.buildWithItem, C.coerceToWithItem, { key: 'withItem', max: 1 });
+export const functionDefinition = bundle(F.buildFunctionDefinition, C.coerceToFunctionDefinition, {
+	key: 'functionDefinition',
+	max: 1
+});
 export const parameters = bundle(F.buildParameters, C.coerceToParameters);
 export const lambdaParameters = bundle(F.buildLambdaParameters, C.coerceToLambdaParameters);
-export const listSplat = bundle(F.buildListSplat, C.coerceToListSplat);
-export const dictionarySplat = bundle(F.buildDictionarySplat, C.coerceToDictionarySplat);
+export const listSplat = bundle(F.buildListSplat, C.coerceToListSplat, { key: 'listSplat', max: 1 });
+export const dictionarySplat = bundle(F.buildDictionarySplat, C.coerceToDictionarySplat, {
+	key: 'dictionarySplat',
+	max: 1
+});
 export const globalStatement = bundle(F.buildGlobalStatement, C.coerceToGlobalStatement);
 export const nonlocalStatement = bundle(F.buildNonlocalStatement, C.coerceToNonlocalStatement);
-export const execStatement = bundle(F.buildExecStatement, C.coerceToExecStatement);
-export const typeAliasStatement = bundle(F.buildTypeAliasStatement, C.coerceToTypeAliasStatement);
-export const classDefinition = bundle(F.buildClassDefinition, C.coerceToClassDefinition);
+export const execStatement = bundle(F.buildExecStatement, C.coerceToExecStatement, { key: 'execStatement', max: 1 });
+export const typeAliasStatement = bundle(F.buildTypeAliasStatement, C.coerceToTypeAliasStatement, {
+	key: 'typeAliasStatement',
+	max: 1
+});
+export const classDefinition = bundle(F.buildClassDefinition, C.coerceToClassDefinition, {
+	key: 'classDefinition',
+	max: 1
+});
 export const typeParameter = bundle(F.buildTypeParameter, C.coerceToTypeParameter);
-export const parenthesizedListSplat = bundle(F.buildParenthesizedListSplat, C.coerceToParenthesizedListSplat);
+export const parenthesizedListSplat = bundle(F.buildParenthesizedListSplat, C.coerceToParenthesizedListSplat, {
+	key: 'parenthesizedListSplat',
+	max: 1
+});
 export const argumentList = bundle(F.buildArgumentList, C.coerceToArgumentList);
-export const decoratedDefinition = bundle(F.buildDecoratedDefinition, C.coerceToDecoratedDefinition);
-export const decorator = bundle(F.buildDecorator, C.coerceToDecorator);
+export const decoratedDefinition = bundle(F.buildDecoratedDefinition, C.coerceToDecoratedDefinition, {
+	key: 'decoratedDefinition',
+	max: 1
+});
+export const decorator = bundle(F.buildDecorator, C.coerceToDecorator, { key: 'decorator', max: 1 });
 export const block = bundle(F.buildBlock, C.coerceToBlock);
-export const expressionList = bundle(F.buildExpressionList, C.coerceToExpressionList);
+export const expressionList = bundle(F.buildExpressionList, C.coerceToExpressionList, {
+	key: 'expressionList',
+	max: 1
+});
 export const dottedName = bundle(F.buildDottedName, C.coerceToDottedName);
-export const casePattern = bundle(F.buildCasePattern, C.coerceToCasePattern);
-export const simplePattern = bundle(F.buildSimplePattern, C.coerceToSimplePattern);
-export const caseAsPattern = bundle(F.buildCaseAsPattern, C.coerceToCaseAsPattern);
+export const casePattern = bundle(F.buildCasePattern, C.coerceToCasePattern, { key: 'casePattern', max: 1 });
+export const simplePattern = bundle(F.buildSimplePattern, C.coerceToSimplePattern, { key: 'simplePattern', max: 1 });
+export const caseAsPattern = bundle(F.buildCaseAsPattern, C.coerceToCaseAsPattern, { key: 'caseAsPattern', max: 1 });
 export const unionPattern = bundle(F.buildUnionPattern, C.coerceToUnionPattern);
 export const dictPattern = bundle(F.buildDictPattern, C.coerceToDictPattern);
-export const keyValuePattern = bundle(F.buildKeyValuePattern, C.coerceToKeyValuePattern);
-export const keywordPattern = bundle(F.buildKeywordPattern, C.coerceToKeywordPattern);
-export const splatPattern = bundle(F.buildSplatPattern, C.coerceToSplatPattern);
-export const classPattern = bundle(F.buildClassPattern, C.coerceToClassPattern);
-export const complexPattern = bundle(F.buildComplexPattern, C.coerceToComplexPattern);
+export const keyValuePattern = bundle(F.buildKeyValuePattern, C.coerceToKeyValuePattern, {
+	key: 'keyValuePattern',
+	max: 1
+});
+export const keywordPattern = bundle(F.buildKeywordPattern, C.coerceToKeywordPattern, {
+	key: 'keywordPattern',
+	max: 1
+});
+export const splatPattern = bundle(F.buildSplatPattern, C.coerceToSplatPattern, { key: 'splatPattern', max: 1 });
+export const classPattern = bundle(F.buildClassPattern, C.coerceToClassPattern, { key: 'classPattern', max: 1 });
+export const complexPattern = bundle(F.buildComplexPattern, C.coerceToComplexPattern, {
+	key: 'complexPattern',
+	max: 1
+});
 export const parametersElements = bundle(F.buildParametersElements, C.coerceToParametersElements);
 export const patterns = bundle(F.buildPatterns, C.coerceToPatterns);
 export const tuplePattern = bundle(F.buildTuplePattern, C.coerceToTuplePattern);
 export const listPattern = bundle(F.buildListPattern, C.coerceToListPattern);
-export const defaultParameter = bundle(F.buildDefaultParameter, C.coerceToDefaultParameter);
-export const typedDefaultParameter = bundle(F.buildTypedDefaultParameter, C.coerceToTypedDefaultParameter);
-export const listSplatPattern = bundle(F.buildListSplatPattern, C.coerceToListSplatPattern);
-export const dictionarySplatPattern = bundle(F.buildDictionarySplatPattern, C.coerceToDictionarySplatPattern);
-export const asPattern = bundle(F.buildAsPattern, C.coerceToAsPattern);
-export const notOperator = bundle(F.buildNotOperator, C.coerceToNotOperator);
-export const booleanOperator = bundle(F.buildBooleanOperator, C.coerceToBooleanOperator);
-export const binaryOperator = bundle(F.buildBinaryOperator, C.coerceToBinaryOperator);
-export const unaryOperator = bundle(F.buildUnaryOperator, C.coerceToUnaryOperator);
-export const comparisonOperator = bundle(F.buildComparisonOperator, C.coerceToComparisonOperator);
-export const lambda = bundle(F.buildLambda, C.coerceToLambda);
-export const lambdaWithinForInClause = bundle(F.buildLambdaWithinForInClause, C.coerceToLambdaWithinForInClause);
-export const augmentedAssignment = bundle(F.buildAugmentedAssignment, C.coerceToAugmentedAssignment);
-export const patternList = bundle(F.buildPatternList, C.coerceToPatternList);
-export const yield_ = bundle(F.buildYield, C.coerceToYield);
-export const attribute = bundle(F.buildAttribute, C.coerceToAttribute);
-export const subscript = bundle(F.buildSubscript, C.coerceToSubscript);
-export const slice = bundle(F.buildSlice, C.coerceToSlice);
-export const call = bundle(F.buildCall, C.coerceToCall);
-export const typedParameter = bundle(F.buildTypedParameter, C.coerceToTypedParameter);
-export const type = bundle(F.buildType, C.coerceToType);
-export const splatType = bundle(F.buildSplatType, C.coerceToSplatType);
-export const genericType = bundle(F.buildGenericType, C.coerceToGenericType);
-export const unionType = bundle(F.buildUnionType, C.coerceToUnionType);
-export const constrainedType = bundle(F.buildConstrainedType, C.coerceToConstrainedType);
-export const memberType = bundle(F.buildMemberType, C.coerceToMemberType);
-export const keywordArgument = bundle(F.buildKeywordArgument, C.coerceToKeywordArgument);
+export const defaultParameter = bundle(F.buildDefaultParameter, C.coerceToDefaultParameter, {
+	key: 'defaultParameter',
+	max: 1
+});
+export const typedDefaultParameter = bundle(F.buildTypedDefaultParameter, C.coerceToTypedDefaultParameter, {
+	key: 'typedDefaultParameter',
+	max: 1
+});
+export const listSplatPattern = bundle(F.buildListSplatPattern, C.coerceToListSplatPattern, {
+	key: 'listSplatPattern',
+	max: 1
+});
+export const dictionarySplatPattern = bundle(F.buildDictionarySplatPattern, C.coerceToDictionarySplatPattern, {
+	key: 'dictionarySplatPattern',
+	max: 1
+});
+export const asPattern = bundle(F.buildAsPattern, C.coerceToAsPattern, { key: 'asPattern', max: 1 });
+export const notOperator = bundle(F.buildNotOperator, C.coerceToNotOperator, { key: 'notOperator', max: 1 });
+export const booleanOperator = bundle(F.buildBooleanOperator, C.coerceToBooleanOperator, {
+	key: 'booleanOperator',
+	max: 1
+});
+export const binaryOperator = bundle(F.buildBinaryOperator, C.coerceToBinaryOperator, {
+	key: 'binaryOperator',
+	max: 1
+});
+export const unaryOperator = bundle(F.buildUnaryOperator, C.coerceToUnaryOperator, { key: 'unaryOperator', max: 1 });
+export const comparisonOperator = bundle(F.buildComparisonOperator, C.coerceToComparisonOperator, {
+	key: 'comparisonOperator',
+	max: 1
+});
+export const lambda = bundle(F.buildLambda, C.coerceToLambda, { key: 'lambda', max: 1 });
+export const lambdaWithinForInClause = bundle(F.buildLambdaWithinForInClause, C.coerceToLambdaWithinForInClause, {
+	key: 'lambdaWithinForInClause',
+	max: 1
+});
+export const augmentedAssignment = bundle(F.buildAugmentedAssignment, C.coerceToAugmentedAssignment, {
+	key: 'augmentedAssignment',
+	max: 1
+});
+export const patternList = bundle(F.buildPatternList, C.coerceToPatternList, { key: 'patternList', max: 1 });
+export const yield_ = bundle(F.buildYield, C.coerceToYield, { key: 'yield_', max: 1 });
+export const attribute = bundle(F.buildAttribute, C.coerceToAttribute, { key: 'attribute', max: 1 });
+export const subscript = bundle(F.buildSubscript, C.coerceToSubscript, { key: 'subscript', max: 1 });
+export const slice = bundle(F.buildSlice, C.coerceToSlice, { key: 'slice', max: 1 });
+export const call = bundle(F.buildCall, C.coerceToCall, { key: 'call', max: 1 });
+export const typedParameter = bundle(F.buildTypedParameter, C.coerceToTypedParameter, {
+	key: 'typedParameter',
+	max: 1
+});
+export const type = bundle(F.buildType, C.coerceToType, { key: 'type', max: 1 });
+export const splatType = bundle(F.buildSplatType, C.coerceToSplatType, { key: 'splatType', max: 1 });
+export const genericType = bundle(F.buildGenericType, C.coerceToGenericType, { key: 'genericType', max: 1 });
+export const unionType = bundle(F.buildUnionType, C.coerceToUnionType, { key: 'unionType', max: 1 });
+export const constrainedType = bundle(F.buildConstrainedType, C.coerceToConstrainedType, {
+	key: 'constrainedType',
+	max: 1
+});
+export const memberType = bundle(F.buildMemberType, C.coerceToMemberType, { key: 'memberType', max: 1 });
+export const keywordArgument = bundle(F.buildKeywordArgument, C.coerceToKeywordArgument, {
+	key: 'keywordArgument',
+	max: 1
+});
 export const list = bundle(F.buildList, C.coerceToList);
 export const set = bundle(F.buildSet, C.coerceToSet);
 export const tuple = bundle(F.buildTuple, C.coerceToTuple);
 export const dictionary = bundle(F.buildDictionary, C.coerceToDictionary);
-export const pair = bundle(F.buildPair, C.coerceToPair);
-export const listComprehension = bundle(F.buildListComprehension, C.coerceToListComprehension);
-export const dictionaryComprehension = bundle(F.buildDictionaryComprehension, C.coerceToDictionaryComprehension);
-export const setComprehension = bundle(F.buildSetComprehension, C.coerceToSetComprehension);
-export const generatorExpression = bundle(F.buildGeneratorExpression, C.coerceToGeneratorExpression);
-export const parenthesizedExpression = bundle(F.buildParenthesizedExpression, C.coerceToParenthesizedExpression);
+export const pair = bundle(F.buildPair, C.coerceToPair, { key: 'pair', max: 1 });
+export const listComprehension = bundle(F.buildListComprehension, C.coerceToListComprehension, {
+	key: 'listComprehension',
+	max: 1
+});
+export const dictionaryComprehension = bundle(F.buildDictionaryComprehension, C.coerceToDictionaryComprehension, {
+	key: 'dictionaryComprehension',
+	max: 1
+});
+export const setComprehension = bundle(F.buildSetComprehension, C.coerceToSetComprehension, {
+	key: 'setComprehension',
+	max: 1
+});
+export const generatorExpression = bundle(F.buildGeneratorExpression, C.coerceToGeneratorExpression, {
+	key: 'generatorExpression',
+	max: 1
+});
+export const parenthesizedExpression = bundle(F.buildParenthesizedExpression, C.coerceToParenthesizedExpression, {
+	key: 'parenthesizedExpression',
+	max: 1
+});
 export const collectionElements = bundle(F.buildCollectionElements, C.coerceToCollectionElements);
-export const forInClause = bundle(F.buildForInClause, C.coerceToForInClause);
-export const ifClause = bundle(F.buildIfClause, C.coerceToIfClause);
-export const conditionalExpression = bundle(F.buildConditionalExpression, C.coerceToConditionalExpression);
+export const forInClause = bundle(F.buildForInClause, C.coerceToForInClause, { key: 'forInClause', max: 1 });
+export const ifClause = bundle(F.buildIfClause, C.coerceToIfClause, { key: 'ifClause', max: 1 });
+export const conditionalExpression = bundle(F.buildConditionalExpression, C.coerceToConditionalExpression, {
+	key: 'conditionalExpression',
+	max: 1
+});
 export const concatenatedString = bundle(F.buildConcatenatedString, C.coerceToConcatenatedString);
-export const string = bundle(F.buildString, C.coerceToString);
+export const string = bundle(F.buildString, C.coerceToString, { key: 'string', max: 1 });
 export const stringContent = bundle(F.buildStringContent, C.coerceToStringContent);
-export const interpolation = bundle(F.buildInterpolation, C.coerceToInterpolation);
+export const interpolation = bundle(F.buildInterpolation, C.coerceToInterpolation, { key: 'interpolation', max: 1 });
 export const formatSpecifier = bundle(F.buildFormatSpecifier, C.coerceToFormatSpecifier);
-export const await_ = bundle(F.buildAwait, C.coerceToAwait);
-export const comment = bundle(F.buildComment, C.coerceToComment);
+export const await_ = bundle(F.buildAwait, C.coerceToAwait, { key: 'await_', max: 1 });
+export const comment = bundle(F.buildComment, C.coerceToComment, { key: 'comment', max: 1 });
 export const simpleStatementsElements = bundle(F.buildSimpleStatementsElements, C.coerceToSimpleStatementsElements);
 export const subjects = bundle(F.buildSubjects, C.coerceToSubjects);
 export const casePatterns = bundle(F.buildCasePatterns, C.coerceToCasePatterns);
@@ -126,12 +246,18 @@ export const dictPatternElements = bundle(F.buildDictPatternElements, C.coerceTo
 export const patternListPatterns = bundle(F.buildPatternListPatterns, C.coerceToPatternListPatterns);
 export const subscripts = bundle(F.buildSubscripts, C.coerceToSubscripts);
 export const dictionaryElements = bundle(F.buildDictionaryElements, C.coerceToDictionaryElements);
-export const exceptClauseExceptionAs = bundle(F.buildExceptClauseExceptionAs, C.coerceToExceptClauseExceptionAs);
+export const exceptClauseExceptionAs = bundle(F.buildExceptClauseExceptionAs, C.coerceToExceptClauseExceptionAs, {
+	key: 'exceptClauseExceptionAs',
+	max: 1
+});
 export const caseTuplePattern = bundle(F.buildCaseTuplePattern, C.coerceToCaseTuplePattern);
 export const caseListPattern = bundle(F.buildCaseListPattern, C.coerceToCaseListPattern);
 export const printArguments = bundle(F.buildPrintArguments, C.coerceToPrintArguments);
 export const printChevronArguments = bundle(F.buildPrintChevronArguments, C.coerceToPrintChevronArguments);
-export const printStatementChevron = bundle(F.buildPrintStatementChevron, C.coerceToPrintStatementChevron);
+export const printStatementChevron = bundle(F.buildPrintStatementChevron, C.coerceToPrintStatementChevron, {
+	key: 'printStatementChevron',
+	max: 1
+});
 export const printStatementPlain = bundle(F.buildPrintStatementPlain, C.coerceToPrintStatementPlain);
 export const parenthesizedImportList = bundle(F.buildParenthesizedImportList, C.coerceToParenthesizedImportList);
 export const comprehensionClauses = bundle(F.buildComprehensionClauses, C.coerceToComprehensionClauses);

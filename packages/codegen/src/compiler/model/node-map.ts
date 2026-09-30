@@ -1516,6 +1516,10 @@ export function isKindIdStored(node: AssembledNode): node is AssembledKeyword | 
 	return node.storage === 'kindId';
 }
 
+export function isTerminalNode(node: AssembledNode): node is AssembledPattern | AssembledKeyword | AssembledPunctuation | AssembledEnum {
+	return node.modelType === 'pattern' || isKindIdStored(node);
+}
+
 export function isFixedTextLeaf(node: AssembledNode): node is AssembledKeyword | AssembledPunctuation {
 	return isKindIdStored(node) && !(node instanceof AssembledEnum);
 }
