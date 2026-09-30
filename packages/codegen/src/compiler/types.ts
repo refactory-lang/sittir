@@ -130,6 +130,7 @@ export interface RawGrammar {
 	readonly patchSites?: readonly PatchSite[];
 	readonly stages?: EvaluationStages;
 	readonly orphanedSyntheticGroups?: readonly string[];
+	readonly textTokens?: readonly string[];
 	readonly predictedKinds?: PredictedKinds;
 	readonly automaticVariants?: AutomaticVariants;
 

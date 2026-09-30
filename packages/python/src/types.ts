@@ -168,30 +168,30 @@ export enum TSKindId {
 	YieldKeyword = 63,
 	Ellipsis = 64,
 	Bslash = 65,
-	FormatSpecifierToken1 = 66,
-	TypeConversion = 67,
-	PrintKeyword = 68,
-	AsyncKeyword = 69,
-	AwaitKeyword = 70,
-	True = 71,
-	False = 72,
-	None = 73,
-	Comment = 74,
-	Semi = 75,
-	DashGt = 76,
-	PlusEq = 77,
-	DashEq = 78,
-	StarEq = 79,
-	SlashEq = 80,
-	AtEq = 81,
-	SlashSlashEq = 82,
-	PercentEq = 83,
-	StarStarEq = 84,
-	GtGtEq = 85,
-	LtLtEq = 86,
-	AmpEq = 87,
-	CaretEq = 88,
-	PipeEq = 89,
+	TypeConversion = 66,
+	PrintKeyword = 67,
+	AsyncKeyword = 68,
+	AwaitKeyword = 69,
+	True = 70,
+	False = 71,
+	None = 72,
+	Comment = 73,
+	Semi = 74,
+	DashGt = 75,
+	PlusEq = 76,
+	DashEq = 77,
+	StarEq = 78,
+	SlashEq = 79,
+	AtEq = 80,
+	SlashSlashEq = 81,
+	PercentEq = 82,
+	StarStarEq = 83,
+	GtGtEq = 84,
+	LtLtEq = 85,
+	AmpEq = 86,
+	CaretEq = 87,
+	PipeEq = 88,
+	FormatSpecifierText = 89,
 	IntegerHex = 90,
 	IntegerOctal = 91,
 	IntegerBinary = 92,
@@ -395,49 +395,50 @@ export enum TSKindId {
 	WithClauseBare = 290,
 	WithClauseParen = 291,
 	MatchBlockBlock = 292,
-	SuiteInline = 293,
-	SuiteBlock = 294,
-	SuiteEmpty = 295,
-	ComparisonOperatorComparator = 296,
-	YieldFromClause = 297,
-	ModuleRepeat1 = 298,
-	ImportPrefixRepeat1 = 299,
-	_ImportListRepeat1 = 300,
-	AssertStatementRepeat1 = 301,
-	IfStatementRepeat1 = 302,
-	TryStatementRepeat1 = 303,
-	GlobalStatementRepeat1 = 304,
-	DecoratedDefinitionRepeat1 = 305,
-	DottedNameRepeat1 = 306,
-	UnionPatternRepeat1 = 307,
-	_ParametersRepeat1 = 308,
-	_PatternsRepeat1 = 309,
-	ComparisonOperatorRepeat1 = 310,
-	_CollectionElementsRepeat1 = 311,
-	ForInClauseRepeat1 = 312,
-	ConcatenatedStringRepeat1 = 313,
-	StringRepeat1 = 314,
-	StringContentRepeat1 = 315,
-	FormatSpecifierRepeat1 = 316,
-	SimpleStatementsElementsRepeat1 = 317,
-	SubjectsRepeat1 = 318,
-	CasePatternsRepeat1 = 319,
-	WithClauseWithItemsRepeat1 = 320,
-	_ExecStatementOptional1Repeat1 = 321,
-	TypesRepeat1 = 322,
-	ArgumentListElementsRepeat1 = 323,
-	ExpressionListExpressionsRepeat1 = 324,
-	DictPatternElementsRepeat1 = 325,
-	PatternListPatternsRepeat1 = 326,
-	SubscriptsRepeat1 = 327,
-	DictionaryElementsRepeat1 = 328,
-	_PrintArgumentsRepeat1 = 329,
-	ComprehensionClausesRepeat1 = 330,
-	ExceptClauseExceptionListRepeat1 = 331,
-	MatchBlockBlockRepeat1 = 332,
-	AsPatternTarget = 333,
-	FormatExpression = 334,
-	Names = 335,
+	MatchBlockEmpty = 293,
+	SuiteInline = 294,
+	SuiteBlock = 295,
+	SuiteEmpty = 296,
+	ComparisonOperatorComparator = 297,
+	YieldFromClause = 298,
+	ModuleRepeat1 = 299,
+	ImportPrefixRepeat1 = 300,
+	_ImportListRepeat1 = 301,
+	AssertStatementRepeat1 = 302,
+	IfStatementRepeat1 = 303,
+	TryStatementRepeat1 = 304,
+	GlobalStatementRepeat1 = 305,
+	DecoratedDefinitionRepeat1 = 306,
+	DottedNameRepeat1 = 307,
+	UnionPatternRepeat1 = 308,
+	_ParametersRepeat1 = 309,
+	_PatternsRepeat1 = 310,
+	ComparisonOperatorRepeat1 = 311,
+	_CollectionElementsRepeat1 = 312,
+	ForInClauseRepeat1 = 313,
+	ConcatenatedStringRepeat1 = 314,
+	StringRepeat1 = 315,
+	StringContentRepeat1 = 316,
+	FormatSpecifierRepeat1 = 317,
+	SimpleStatementsElementsRepeat1 = 318,
+	SubjectsRepeat1 = 319,
+	CasePatternsRepeat1 = 320,
+	WithClauseWithItemsRepeat1 = 321,
+	_ExecStatementOptional1Repeat1 = 322,
+	TypesRepeat1 = 323,
+	ArgumentListElementsRepeat1 = 324,
+	ExpressionListExpressionsRepeat1 = 325,
+	DictPatternElementsRepeat1 = 326,
+	PatternListPatternsRepeat1 = 327,
+	SubscriptsRepeat1 = 328,
+	DictionaryElementsRepeat1 = 329,
+	_PrintArgumentsRepeat1 = 330,
+	ComprehensionClausesRepeat1 = 331,
+	ExceptClauseExceptionListRepeat1 = 332,
+	MatchBlockBlockRepeat1 = 333,
+	AsPatternTarget = 334,
+	FormatExpression = 335,
+	Names = 336,
 	Error = 65535
 }
 Object.freeze(TSKindId);
@@ -510,30 +511,30 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[63, 'yield_keyword'],
 	[64, 'ellipsis'],
 	[65, 'bslash'],
-	[66, 'format_specifier_token1'],
-	[67, 'type_conversion'],
-	[68, 'print_keyword'],
-	[69, 'async_keyword'],
-	[70, 'await_keyword'],
-	[71, 'true'],
-	[72, 'false'],
-	[73, 'none'],
-	[74, 'comment'],
-	[75, 'semi'],
-	[76, 'dash_gt'],
-	[77, 'plus_eq'],
-	[78, 'dash_eq'],
-	[79, 'star_eq'],
-	[80, 'slash_eq'],
-	[81, 'at_eq'],
-	[82, 'slash_slash_eq'],
-	[83, 'percent_eq'],
-	[84, 'star_star_eq'],
-	[85, 'gt_gt_eq'],
-	[86, 'lt_lt_eq'],
-	[87, 'amp_eq'],
-	[88, 'caret_eq'],
-	[89, 'pipe_eq'],
+	[66, 'type_conversion'],
+	[67, 'print_keyword'],
+	[68, 'async_keyword'],
+	[69, 'await_keyword'],
+	[70, 'true'],
+	[71, 'false'],
+	[72, 'none'],
+	[73, 'comment'],
+	[74, 'semi'],
+	[75, 'dash_gt'],
+	[76, 'plus_eq'],
+	[77, 'dash_eq'],
+	[78, 'star_eq'],
+	[79, 'slash_eq'],
+	[80, 'at_eq'],
+	[81, 'slash_slash_eq'],
+	[82, 'percent_eq'],
+	[83, 'star_star_eq'],
+	[84, 'gt_gt_eq'],
+	[85, 'lt_lt_eq'],
+	[86, 'amp_eq'],
+	[87, 'caret_eq'],
+	[88, 'pipe_eq'],
+	[89, 'format_specifier_text'],
 	[90, 'integer_hex'],
 	[91, 'integer_octal'],
 	[92, 'integer_binary'],
@@ -574,7 +575,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[127, 'module'],
 	[128, '_statement'],
 	[129, '_simple_statements'],
-	[337, '_simple_statements'],
+	[338, '_simple_statements'],
 	[130, 'import_statement'],
 	[131, 'import_prefix'],
 	[132, 'relative_import'],
@@ -629,7 +630,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[181, 'dotted_name'],
 	[182, 'case_pattern'],
 	[183, '_simple_pattern'],
-	[336, '_simple_pattern'],
+	[337, '_simple_pattern'],
 	[184, 'case_as_pattern'],
 	[185, 'union_pattern'],
 	[186, 'dict_pattern'],
@@ -739,53 +740,54 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[290, 'with_clause_bare'],
 	[291, 'with_clause_paren'],
 	[292, 'match_block_block'],
-	[293, 'suite_inline'],
-	[294, 'suite_block'],
-	[295, 'suite_empty'],
-	[296, 'comparison_operator_comparator'],
-	[297, 'yield_from_clause'],
-	[298, 'module_repeat1'],
-	[299, 'import_prefix_repeat1'],
-	[300, '_import_list_repeat1'],
-	[301, 'assert_statement_repeat1'],
-	[302, 'if_statement_repeat1'],
-	[303, 'try_statement_repeat1'],
-	[304, 'global_statement_repeat1'],
-	[305, 'decorated_definition_repeat1'],
-	[306, 'dotted_name_repeat1'],
-	[307, 'union_pattern_repeat1'],
-	[308, '_parameters_repeat1'],
-	[309, '_patterns_repeat1'],
-	[310, 'comparison_operator_repeat1'],
-	[311, '_collection_elements_repeat1'],
-	[312, 'for_in_clause_repeat1'],
-	[313, 'concatenated_string_repeat1'],
-	[314, 'string_repeat1'],
-	[315, 'string_content_repeat1'],
-	[316, 'format_specifier_repeat1'],
-	[317, 'simple_statements_elements_repeat1'],
-	[318, 'subjects_repeat1'],
-	[319, 'case_patterns_repeat1'],
-	[320, 'with_clause_with_items_repeat1'],
-	[321, '_exec_statement_optional1_repeat1'],
-	[322, 'types_repeat1'],
-	[323, 'argument_list_elements_repeat1'],
-	[324, 'expression_list_expressions_repeat1'],
-	[325, 'dict_pattern_elements_repeat1'],
-	[326, 'pattern_list_patterns_repeat1'],
-	[327, 'subscripts_repeat1'],
-	[328, 'dictionary_elements_repeat1'],
-	[329, '_print_arguments_repeat1'],
-	[330, 'comprehension_clauses_repeat1'],
-	[331, 'except_clause_exception_list_repeat1'],
-	[332, 'match_block_block_repeat1'],
-	[333, 'as_pattern_target'],
-	[334, 'format_expression'],
-	[335, 'names'],
+	[293, 'match_block_empty'],
+	[294, 'suite_inline'],
+	[295, 'suite_block'],
+	[296, 'suite_empty'],
+	[297, 'comparison_operator_comparator'],
+	[298, 'yield_from_clause'],
+	[299, 'module_repeat1'],
+	[300, 'import_prefix_repeat1'],
+	[301, '_import_list_repeat1'],
+	[302, 'assert_statement_repeat1'],
+	[303, 'if_statement_repeat1'],
+	[304, 'try_statement_repeat1'],
+	[305, 'global_statement_repeat1'],
+	[306, 'decorated_definition_repeat1'],
+	[307, 'dotted_name_repeat1'],
+	[308, 'union_pattern_repeat1'],
+	[309, '_parameters_repeat1'],
+	[310, '_patterns_repeat1'],
+	[311, 'comparison_operator_repeat1'],
+	[312, '_collection_elements_repeat1'],
+	[313, 'for_in_clause_repeat1'],
+	[314, 'concatenated_string_repeat1'],
+	[315, 'string_repeat1'],
+	[316, 'string_content_repeat1'],
+	[317, 'format_specifier_repeat1'],
+	[318, 'simple_statements_elements_repeat1'],
+	[319, 'subjects_repeat1'],
+	[320, 'case_patterns_repeat1'],
+	[321, 'with_clause_with_items_repeat1'],
+	[322, '_exec_statement_optional1_repeat1'],
+	[323, 'types_repeat1'],
+	[324, 'argument_list_elements_repeat1'],
+	[325, 'expression_list_expressions_repeat1'],
+	[326, 'dict_pattern_elements_repeat1'],
+	[327, 'pattern_list_patterns_repeat1'],
+	[328, 'subscripts_repeat1'],
+	[329, 'dictionary_elements_repeat1'],
+	[330, '_print_arguments_repeat1'],
+	[331, 'comprehension_clauses_repeat1'],
+	[332, 'except_clause_exception_list_repeat1'],
+	[333, 'match_block_block_repeat1'],
+	[334, 'as_pattern_target'],
+	[335, 'format_expression'],
+	[336, 'names'],
 	[65535, 'ERROR']
 ]);
 
-/** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
+/** Parser display label of each kind id — the spelling of an anonymous token the reader sends without text, and the label validator bridging matches. Never use for wrapNode dispatch. */
 export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'identifier'],
 	[2, 'import'],
@@ -852,30 +854,30 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[63, 'yield'],
 	[64, 'ellipsis'],
 	[65, '\\'],
-	[66, 'format_specifier_token1'],
-	[67, 'type_conversion'],
-	[68, 'print'],
-	[69, 'async'],
-	[70, 'await'],
-	[71, 'true'],
-	[72, 'false'],
-	[73, 'none'],
-	[74, 'comment'],
-	[75, ';'],
-	[76, '->'],
-	[77, '+='],
-	[78, '-='],
-	[79, '*='],
-	[80, '/='],
-	[81, '@='],
-	[82, '//='],
-	[83, '%='],
-	[84, '**='],
-	[85, '>>='],
-	[86, '<<='],
-	[87, '&='],
-	[88, '^='],
-	[89, '|='],
+	[66, 'type_conversion'],
+	[67, 'print'],
+	[68, 'async'],
+	[69, 'await'],
+	[70, 'true'],
+	[71, 'false'],
+	[72, 'none'],
+	[73, 'comment'],
+	[74, ';'],
+	[75, '->'],
+	[76, '+='],
+	[77, '-='],
+	[78, '*='],
+	[79, '/='],
+	[80, '@='],
+	[81, '//='],
+	[82, '%='],
+	[83, '**='],
+	[84, '>>='],
+	[85, '<<='],
+	[86, '&='],
+	[87, '^='],
+	[88, '|='],
+	[89, 'format_specifier_text'],
 	[90, 'integer_hex'],
 	[91, 'integer_octal'],
 	[92, 'integer_binary'],
@@ -916,7 +918,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[127, 'module'],
 	[128, '_statement'],
 	[129, '_simple_statements'],
-	[337, 'simple_statements'],
+	[338, 'simple_statements'],
 	[130, 'import_statement'],
 	[131, 'import_prefix'],
 	[132, 'relative_import'],
@@ -971,7 +973,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[181, 'dotted_name'],
 	[182, 'case_pattern'],
 	[183, '_simple_pattern'],
-	[336, 'simple_pattern'],
+	[337, 'simple_pattern'],
 	[184, 'case_as_pattern'],
 	[185, 'union_pattern'],
 	[186, 'dict_pattern'],
@@ -1081,49 +1083,50 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[290, 'with_clause_bare'],
 	[291, 'with_clause_paren'],
 	[292, 'match_block_block'],
-	[293, 'suite_inline'],
-	[294, 'suite_block'],
-	[295, 'suite_empty'],
-	[296, 'comparison_operator_comparator'],
-	[297, 'yield_from_clause'],
-	[298, 'module_repeat1'],
-	[299, 'import_prefix_repeat1'],
-	[300, '_import_list_repeat1'],
-	[301, 'assert_statement_repeat1'],
-	[302, 'if_statement_repeat1'],
-	[303, 'try_statement_repeat1'],
-	[304, 'global_statement_repeat1'],
-	[305, 'decorated_definition_repeat1'],
-	[306, 'dotted_name_repeat1'],
-	[307, 'union_pattern_repeat1'],
-	[308, '_parameters_repeat1'],
-	[309, '_patterns_repeat1'],
-	[310, 'comparison_operator_repeat1'],
-	[311, '_collection_elements_repeat1'],
-	[312, 'for_in_clause_repeat1'],
-	[313, 'concatenated_string_repeat1'],
-	[314, 'string_repeat1'],
-	[315, 'string_content_repeat1'],
-	[316, 'format_specifier_repeat1'],
-	[317, 'simple_statements_elements_repeat1'],
-	[318, 'subjects_repeat1'],
-	[319, 'case_patterns_repeat1'],
-	[320, 'with_clause_with_items_repeat1'],
-	[321, '_exec_statement_optional1_repeat1'],
-	[322, 'types_repeat1'],
-	[323, 'argument_list_elements_repeat1'],
-	[324, 'expression_list_expressions_repeat1'],
-	[325, 'dict_pattern_elements_repeat1'],
-	[326, 'pattern_list_patterns_repeat1'],
-	[327, 'subscripts_repeat1'],
-	[328, 'dictionary_elements_repeat1'],
-	[329, '_print_arguments_repeat1'],
-	[330, 'comprehension_clauses_repeat1'],
-	[331, 'except_clause_exception_list_repeat1'],
-	[332, 'match_block_block_repeat1'],
-	[333, 'as_pattern_target'],
-	[334, 'format_expression'],
-	[335, 'names'],
+	[293, 'match_block_empty'],
+	[294, 'suite_inline'],
+	[295, 'suite_block'],
+	[296, 'suite_empty'],
+	[297, 'comparison_operator_comparator'],
+	[298, 'yield_from_clause'],
+	[299, 'module_repeat1'],
+	[300, 'import_prefix_repeat1'],
+	[301, '_import_list_repeat1'],
+	[302, 'assert_statement_repeat1'],
+	[303, 'if_statement_repeat1'],
+	[304, 'try_statement_repeat1'],
+	[305, 'global_statement_repeat1'],
+	[306, 'decorated_definition_repeat1'],
+	[307, 'dotted_name_repeat1'],
+	[308, 'union_pattern_repeat1'],
+	[309, '_parameters_repeat1'],
+	[310, '_patterns_repeat1'],
+	[311, 'comparison_operator_repeat1'],
+	[312, '_collection_elements_repeat1'],
+	[313, 'for_in_clause_repeat1'],
+	[314, 'concatenated_string_repeat1'],
+	[315, 'string_repeat1'],
+	[316, 'string_content_repeat1'],
+	[317, 'format_specifier_repeat1'],
+	[318, 'simple_statements_elements_repeat1'],
+	[319, 'subjects_repeat1'],
+	[320, 'case_patterns_repeat1'],
+	[321, 'with_clause_with_items_repeat1'],
+	[322, '_exec_statement_optional1_repeat1'],
+	[323, 'types_repeat1'],
+	[324, 'argument_list_elements_repeat1'],
+	[325, 'expression_list_expressions_repeat1'],
+	[326, 'dict_pattern_elements_repeat1'],
+	[327, 'pattern_list_patterns_repeat1'],
+	[328, 'subscripts_repeat1'],
+	[329, 'dictionary_elements_repeat1'],
+	[330, '_print_arguments_repeat1'],
+	[331, 'comprehension_clauses_repeat1'],
+	[332, 'except_clause_exception_list_repeat1'],
+	[333, 'match_block_block_repeat1'],
+	[334, 'as_pattern_target'],
+	[335, 'format_expression'],
+	[336, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -1262,8 +1265,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Ellipsis;
 		case 'bslash':
 			return TSKindId.Bslash;
-		case 'format_specifier_token1':
-			return TSKindId.FormatSpecifierToken1;
 		case 'type_conversion':
 			return TSKindId.TypeConversion;
 		case 'print_keyword':
@@ -1310,6 +1311,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.CaretEq;
 		case 'pipe_eq':
 			return TSKindId.PipeEq;
+		case 'format_specifier_text':
+			return TSKindId.FormatSpecifierText;
 		case 'integer_hex':
 			return TSKindId.IntegerHex;
 		case 'integer_octal':
@@ -1716,6 +1719,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.WithClauseParen;
 		case 'match_block_block':
 			return TSKindId.MatchBlockBlock;
+		case 'match_block_empty':
+			return TSKindId.MatchBlockEmpty;
 		case 'suite_inline':
 			return TSKindId.SuiteInline;
 		case 'suite_block':
@@ -2540,7 +2545,7 @@ export interface MatchStatement {
 	readonly _body: MatchBlock;
 	readonly __looseHints__?: {
 		readonly subjects: readonly Expression[];
-		readonly body: readonly (MatchBlockBlock | '\n')[];
+		readonly body: readonly (MatchBlockBlock | MatchBlockEmpty)[];
 	};
 	readonly __slotHints__?: {
 		readonly subjects: SlotHint<T.Subjects>;
@@ -2555,14 +2560,11 @@ export interface MatchStatement {
 
 export interface MatchBlock {
 	readonly $type: TSKindId.MatchBlock;
-	readonly _content: MatchBlockBlock | TSKindId.Newline;
-	readonly __inputHints__?: {
-		readonly content: KindEnum<'\n', TSKindId.Newline> | MatchBlockBlock;
-	};
+	readonly _content: MatchBlockBlock | MatchBlockEmpty;
 	readonly __slotHints__?: {
-		readonly content: SlotHint<NonNullable<T.MatchBlockBlock | TSKindId.Newline>>;
+		readonly content: SlotHint<T.MatchBlockBlock | T.MatchBlockEmpty>;
 	};
-	content(): MatchBlockBlock | TSKindId.Newline;
+	content(): MatchBlockBlock | MatchBlockEmpty;
 }
 
 export interface CaseClause {
@@ -4451,7 +4453,7 @@ export interface Interpolation {
 		readonly eq_marker?: BaseBooleanKeyword<'='>;
 	};
 	readonly __looseHints__?: {
-		readonly format_specifier?: readonly ('[^{}\\n]+' | FormatExpression)[];
+		readonly format_specifier?: readonly (FormatSpecifierText | FormatExpression)[];
 	};
 	readonly __slotHints__?: {
 		readonly expression: SlotHint<NonNullable<T.Interpolation.Config>['expression']>;
@@ -4467,11 +4469,15 @@ export interface Interpolation {
 
 export interface FormatSpecifier {
 	readonly $type: TSKindId.FormatSpecifier;
-	readonly _elements?: readonly ('[^{}\\n]+' | FormatExpression)[];
+	readonly _elements?: readonly (FormatSpecifierText | FormatExpression)[];
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<(('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[], false, true>;
+		readonly elements: SlotHint<
+			((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[],
+			false,
+			true
+		>;
 	};
-	elements(): readonly ('[^{}\\n]+' | FormatExpression)[];
+	elements(): readonly (FormatSpecifierText | FormatExpression)[];
 }
 
 export interface Await {
@@ -5115,6 +5121,18 @@ export interface MatchBlockBlock {
 	alternatives(): readonly CaseClause[];
 }
 
+export interface MatchBlockEmpty {
+	readonly $type: TSKindId.MatchBlockEmpty;
+	readonly _newline: number;
+	readonly __inputHints__?: {
+		readonly newline: KindEnum<'\n', TSKindId.Newline>;
+	};
+	readonly __slotHints__?: {
+		readonly newline: SlotHint<NonNullable<TSKindId.Newline>>;
+	};
+	newline(): number;
+}
+
 export interface SuiteInline {
 	readonly $type: TSKindId.SuiteInline;
 	readonly _simple_statements_elements: SimpleStatementsElements;
@@ -5262,6 +5280,7 @@ export type False = TSKindId.False;
 export type None = TSKindId.None;
 export type PositionalSeparator = TSKindId.PositionalSeparator;
 export type KeywordSeparator = TSKindId.KeywordSeparator;
+export type FormatSpecifierText = Terminal<TSKindId.FormatSpecifierText, string>;
 export type WildcardPattern = TSKindId.WildcardPattern;
 export type IntegerDecimalLong = Terminal<TSKindId.IntegerDecimalLong, string>;
 export type IntegerDecimalImaginary = Terminal<TSKindId.IntegerDecimalImaginary, string>;
@@ -9523,6 +9542,19 @@ export interface MatchBlockBlockNs extends NodeNs<
 	MatchBlockBlock.Parsed,
 	EmptyMatchBlockBlock
 > {}
+export interface MatchBlockEmptyNs extends NodeNs<
+	MatchBlockEmpty,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	MatchBlockEmpty.Bound,
+	MatchBlockEmpty.BuildArgs,
+	MatchBlockEmpty.LooseArgs,
+	'newline',
+	TSKindId.MatchBlockEmpty,
+	MatchBlockEmpty.Parsed,
+	never
+> {}
 export interface SuiteInlineNs extends NodeNs<
 	SuiteInline,
 	LeafScalarMap,
@@ -9672,6 +9704,12 @@ export interface TypeConversionNs extends LeafNs<
 	TSKindId.TypeConversion
 > {}
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Bound, TSKindId.Identifier> {}
+export interface FormatSpecifierTextNs extends LeafNs<
+	FormatSpecifierText,
+	string,
+	FormatSpecifierText.Bound,
+	TSKindId.FormatSpecifierText
+> {}
 export interface IntegerDecimalLongNs extends LeafNs<
 	IntegerDecimalLong,
 	string,
@@ -9868,6 +9906,7 @@ export interface NamespaceMap {
 	[TSKindId.WithClauseBare]: WithClauseBareNs;
 	[TSKindId.WithClauseParen]: WithClauseParenNs;
 	[TSKindId.MatchBlockBlock]: MatchBlockBlockNs;
+	[TSKindId.MatchBlockEmpty]: MatchBlockEmptyNs;
 	[TSKindId.SuiteInline]: SuiteInlineNs;
 	[TSKindId.SuiteBlock]: SuiteBlockNs;
 	[TSKindId.SuiteEmpty]: SuiteEmptyNs;
@@ -9904,6 +9943,7 @@ export interface NamespaceMap {
 	[TSKindId.ImportPrefix]: ImportPrefixNs;
 	[TSKindId.TypeConversion]: TypeConversionNs;
 	[TSKindId.Identifier]: IdentifierNs;
+	[TSKindId.FormatSpecifierText]: FormatSpecifierTextNs;
 	[TSKindId.IntegerDecimalLong]: IntegerDecimalLongNs;
 	[TSKindId.IntegerDecimalImaginary]: IntegerDecimalImaginaryNs;
 	[TSKindId.IntegerDecimalPlain]: IntegerDecimalPlainNs;
@@ -10071,6 +10111,7 @@ export interface BoundByKindId {
 	[TSKindId.WithClauseBare]: WithClauseBare.Bound;
 	[TSKindId.WithClauseParen]: WithClauseParen.Bound;
 	[TSKindId.MatchBlockBlock]: MatchBlockBlock.Bound;
+	[TSKindId.MatchBlockEmpty]: MatchBlockEmpty.Bound;
 	[TSKindId.SuiteInline]: SuiteInline.Bound;
 	[TSKindId.SuiteBlock]: SuiteBlock.Bound;
 	[TSKindId.SuiteEmpty]: SuiteEmpty.Bound;
@@ -10082,6 +10123,7 @@ export interface BoundByKindId {
 	[TSKindId.ImportPrefix]: ImportPrefix.Bound;
 	[TSKindId.TypeConversion]: TypeConversion.Bound;
 	[TSKindId.Identifier]: Identifier.Bound;
+	[TSKindId.FormatSpecifierText]: FormatSpecifierText.Bound;
 	[TSKindId.IntegerDecimalLong]: IntegerDecimalLong.Bound;
 	[TSKindId.IntegerDecimalImaginary]: IntegerDecimalImaginary.Bound;
 	[TSKindId.IntegerDecimalPlain]: IntegerDecimalPlain.Bound;
@@ -10249,6 +10291,7 @@ export interface ParsedByKindId {
 	[TSKindId.WithClauseBare]: WithClauseBare.Parsed;
 	[TSKindId.WithClauseParen]: WithClauseParen.Parsed;
 	[TSKindId.MatchBlockBlock]: MatchBlockBlock.Parsed;
+	[TSKindId.MatchBlockEmpty]: MatchBlockEmpty.Parsed;
 	[TSKindId.SuiteInline]: SuiteInline.Parsed;
 	[TSKindId.SuiteBlock]: SuiteBlock.Parsed;
 	[TSKindId.SuiteEmpty]: SuiteEmpty.Parsed;
@@ -10260,6 +10303,7 @@ export interface ParsedByKindId {
 	[TSKindId.ImportPrefix]: ImportPrefix.Parsed;
 	[TSKindId.TypeConversion]: TypeConversion.Parsed;
 	[TSKindId.Identifier]: Identifier.Parsed;
+	[TSKindId.FormatSpecifierText]: FormatSpecifierText.Parsed;
 	[TSKindId.IntegerDecimalLong]: IntegerDecimalLong.Parsed;
 	[TSKindId.IntegerDecimalImaginary]: IntegerDecimalImaginary.Parsed;
 	[TSKindId.IntegerDecimalPlain]: IntegerDecimalPlain.Parsed;
@@ -10552,6 +10596,7 @@ export interface IrKeyOf {
 	[TSKindId.WithClauseBare]: 'withClauseBare';
 	[TSKindId.WithClauseParen]: 'withClauseParen';
 	[TSKindId.MatchBlockBlock]: 'matchBlockBlock';
+	[TSKindId.MatchBlockEmpty]: 'matchBlockEmpty';
 	[TSKindId.SuiteInline]: 'suiteInline';
 	[TSKindId.SuiteBlock]: 'suiteBlock';
 	[TSKindId.SuiteEmpty]: 'suiteEmpty';
@@ -10588,6 +10633,7 @@ export interface IrKeyOf {
 	[TSKindId.ImportPrefix]: 'importPrefix';
 	[TSKindId.TypeConversion]: 'typeConversion';
 	[TSKindId.Identifier]: 'identifier';
+	[TSKindId.FormatSpecifierText]: 'formatSpecifierText';
 	[TSKindId.IntegerDecimalLong]: 'integerDecimalLong';
 	[TSKindId.IntegerDecimalImaginary]: 'integerDecimalImaginary';
 	[TSKindId.IntegerDecimalPlain]: 'integerDecimalPlain';
@@ -11005,9 +11051,9 @@ export namespace MatchBlock {
 	}
 	export type Loose = LooseFor<TSKindId.MatchBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlock>;
-	export type BuildArgs = [value: AdmitBound<T.MatchBlockBlock | TSKindId.Newline, T.AdmittedNodes>];
+	export type BuildArgs = [value: AdmitBound<T.MatchBlockBlock | T.MatchBlockEmpty, T.AdmittedNodes>];
 	export type LooseArgs = [
-		value: LooseValue<T.MatchBlockBlock | TSKindId.Newline, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		value: LooseValue<T.MatchBlockBlock | T.MatchBlockEmpty, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
 	export type Kind = TSKindId.MatchBlock;
 }
@@ -12794,11 +12840,14 @@ export namespace FormatSpecifier {
 	export type Loose = LooseFor<TSKindId.FormatSpecifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormatSpecifier>;
 	export type BuildArgs = [
-		...children: AdmitBound<(('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[], T.AdmittedNodes>
+		...children: AdmitBound<
+			((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[],
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
-			('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types,
+			(T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -13862,6 +13911,22 @@ export namespace MatchBlockBlock {
 	export type LooseArgs = [...children: LooseValue<T.CaseClause, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
 	export type Kind = TSKindId.MatchBlockBlock;
 }
+export namespace MatchBlockEmpty {
+	export type Config = ConfigFor<TSKindId.MatchBlockEmpty>;
+	export interface Bound extends BoundOf<T.MatchBlockEmpty, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.MatchBlockEmpty['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.MatchBlockEmpty, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.MatchBlockEmpty['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export type Loose = LooseFor<TSKindId.MatchBlockEmpty>;
+	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlockEmpty>;
+	export type BuildArgs = [value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>];
+	export type LooseArgs = [value?: LooseValue<TSKindId.Newline, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Kind = TSKindId.MatchBlockEmpty;
+}
 export namespace SuiteInline {
 	export type Config = ConfigFor<TSKindId.SuiteInline>;
 	export interface Bound extends BoundOf<T.SuiteInline, BoundByKindId>, NodeMethodsOf {
@@ -13908,8 +13973,8 @@ export namespace SuiteEmpty {
 	}
 	export type Loose = LooseFor<TSKindId.SuiteEmpty>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SuiteEmpty>;
-	export type BuildArgs = [value: AdmitBound<TSKindId.Newline, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<TSKindId.Newline, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>];
+	export type LooseArgs = [value?: LooseValue<TSKindId.Newline, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.SuiteEmpty;
 }
 export namespace ComparisonOperatorComparator {
@@ -14293,6 +14358,21 @@ export namespace Identifier {
 	export type BuildArgs = IdentifierNs['BuildArgs'];
 	export type LooseArgs = IdentifierNs['LooseArgs'];
 	export type Kind = TSKindId.Identifier;
+}
+export namespace FormatSpecifierText {
+	export type Config = FormatSpecifierTextNs['Config'];
+	export interface Bound extends NodeMethodsOf {
+		readonly $type: TSKindId.FormatSpecifierText;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export interface Parsed extends Bound {}
+	export type Loose = FormatSpecifierTextNs['Loose'];
+	export type LooseConfig = FormatSpecifierTextNs['LooseConfig'];
+	export type BuildArgs = FormatSpecifierTextNs['BuildArgs'];
+	export type LooseArgs = FormatSpecifierTextNs['LooseArgs'];
+	export type Kind = TSKindId.FormatSpecifierText;
 }
 export namespace IntegerDecimalLong {
 	export type Config = IntegerDecimalLongNs['Config'];

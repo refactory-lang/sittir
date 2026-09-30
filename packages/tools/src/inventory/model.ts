@@ -17,6 +17,7 @@ export interface ModelNode {
 	readonly subtypes: readonly string[];
 	readonly enumValues: readonly string[];
 	readonly text: string | null;
+	readonly pattern: string | null;
 }
 
 export type SlotModel = ReadonlyMap<string, ModelNode>;
@@ -43,6 +44,7 @@ interface RawNode {
 	readonly subtypes?: readonly string[];
 	readonly values?: readonly string[];
 	readonly text?: string;
+	readonly pattern?: string;
 }
 
 interface RawModel {
@@ -70,7 +72,8 @@ export function loadSlotModel(grammar: string): SlotModel {
 			})),
 			subtypes: n.subtypes ?? [],
 			enumValues: n.values ?? [],
-			text: n.text ?? null
+			text: n.text ?? null,
+			pattern: n.pattern ?? null
 		});
 	}
 	return out;

@@ -1085,7 +1085,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[65535, 'ERROR']
 ]);
 
-/** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
+/** Parser display label of each kind id — the spelling of an anonymous token the reader sends without text, and the label validator bridging matches. Never use for wrapNode dispatch. */
 export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'identifier'],
 	[2, 'hash_bang_line'],

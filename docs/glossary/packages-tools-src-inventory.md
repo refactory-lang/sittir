@@ -55,6 +55,10 @@ admitted kinds, terminal texts), supertypes (`subtypes`), enum texts and token
 texts. The derivation reads nothing from the generated `types.ts`.
 ```
 
+### `packages/tools/src/inventory/index.ts::loadInputs`
+
+Each grammar's bindings patterns, slot model, and the text tokens its evaluation minted (`RawGrammar.textTokens`). A minted text kind is the same fact as the inline token it replaced, so `derive` reads it as that token's text (`text:<pattern>`), not as an unmapped kind.
+
 ### `packages/tools/src/inventory/derive.ts::derive`
 
 ```text

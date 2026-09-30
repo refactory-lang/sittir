@@ -1513,6 +1513,10 @@
         {
           "type": "block_comment_doc_outer",
           "named": true
+        },
+        {
+          "type": "block_comment_regular",
+          "named": true
         }
       ]
     }
@@ -1568,6 +1572,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "block_comment_regular",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "boolean_literal",
@@ -4083,7 +4092,21 @@
   {
     "type": "line_comment_extra_slashes",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "line_comment_text1",
+          "named": true
+        },
+        {
+          "type": "line_comment_text2",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "loop_expression",
@@ -6097,6 +6120,16 @@
           }
         ]
       },
+      "separator": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "token_repetition_pattern_text",
+            "named": true
+          }
+        ]
+      },
       "tokens": {
         "multiple": true,
         "required": false,
@@ -6140,6 +6173,16 @@
           {
             "type": "?",
             "named": false
+          }
+        ]
+      },
+      "separator": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "token_repetition_pattern_text",
+            "named": true
           }
         ]
       },
@@ -7990,6 +8033,14 @@
     "named": true
   },
   {
+    "type": "line_comment_text1",
+    "named": true
+  },
+  {
+    "type": "line_comment_text2",
+    "named": true
+  },
+  {
     "type": "literal",
     "named": false
   },
@@ -8103,6 +8154,10 @@
   },
   {
     "type": "super",
+    "named": true
+  },
+  {
+    "type": "token_repetition_pattern_text",
     "named": true
   },
   {

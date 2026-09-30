@@ -59,6 +59,7 @@ export const ir: {
 	readonly namedNodeGroup: typeof F.namedNodeGroup;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly immediateIdentifier: typeof F.buildImmediateIdentifier;
+	readonly stringContentText: typeof F.buildStringContentText;
 	readonly whitespace: typeof whitespace;
 	readonly definition: typeof definition;
 } = Object.freeze({
@@ -88,6 +89,7 @@ export const ir: {
 	// Leaf node factories
 	identifier: F.buildIdentifier,
 	immediateIdentifier: F.buildImmediateIdentifier,
+	stringContentText: F.buildStringContentText,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	whitespace,

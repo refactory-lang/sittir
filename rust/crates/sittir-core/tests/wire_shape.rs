@@ -31,7 +31,7 @@ fn complex_node() -> NodeData {
         "name".to_string(),
         FieldValue::Single(Box::new(NodeData {
             type_: K_IDENTIFIER,
-            storage_type: None,
+            display_type: None,
             source: Source::Ts,
             named: true,
             fields: None,
@@ -50,7 +50,7 @@ fn complex_node() -> NodeData {
         "values".to_string(),
         FieldValue::Multiple(vec![Some(NodeData {
             type_: K_INTEGER_LITERAL,
-            storage_type: None,
+            display_type: None,
             source: Source::Ts,
             named: true,
             fields: None,
@@ -68,13 +68,13 @@ fn complex_node() -> NodeData {
     fields.insert("op".to_string(), FieldValue::Text("+".to_string()));
     NodeData {
         type_: K_FUNCTION_ITEM,
-        storage_type: None,
+        display_type: None,
         source: Source::Ts,
         named: true,
         fields: Some(fields),
         children: Some(vec![NodeData {
             type_: K_BLOCK,
-            storage_type: None,
+            display_type: None,
             source: Source::Ts,
             named: true,
             fields: Some(IndexMap::new()),

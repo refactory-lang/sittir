@@ -18,18 +18,18 @@ pub const UNDERSCORE: KindId = KindId(7);
 pub const AT: KindId = KindId(8);
 pub const DQUOTE: KindId = KindId(9);
 pub const DQUOTE2: KindId = KindId(10);
-pub const STRING_CONTENT_TOKEN1: KindId = KindId(11);
-pub const COMMENT: KindId = KindId(12);
-pub const LBRACK: KindId = KindId(13);
-pub const RBRACK: KindId = KindId(14);
-pub const LPAREN: KindId = KindId(15);
-pub const RPAREN: KindId = KindId(16);
-pub const MISSING_KEYWORD: KindId = KindId(17);
-pub const COLON: KindId = KindId(18);
-pub const BANG: KindId = KindId(19);
-pub const POUND: KindId = KindId(20);
-pub const DOT: KindId = KindId(21);
-pub const PREDICATE_TYPE: KindId = KindId(22);
+pub const COMMENT: KindId = KindId(11);
+pub const LBRACK: KindId = KindId(12);
+pub const RBRACK: KindId = KindId(13);
+pub const LPAREN: KindId = KindId(14);
+pub const RPAREN: KindId = KindId(15);
+pub const MISSING_KEYWORD: KindId = KindId(16);
+pub const COLON: KindId = KindId(17);
+pub const BANG: KindId = KindId(18);
+pub const POUND: KindId = KindId(19);
+pub const DOT: KindId = KindId(20);
+pub const PREDICATE_TYPE: KindId = KindId(21);
+pub const STRING_CONTENT_TEXT: KindId = KindId(22);
 pub const SLASH: KindId = KindId(23);
 pub const _TIGHT: KindId = KindId(24);
 pub const _SPACE: KindId = KindId(25);
@@ -90,18 +90,18 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         8 => "@", // "at"
         9 => "\"", // "dquote"
         10 => "\"", // "dquote2"
-        11 => "string_content_token1", // "string_content_token1"
-        12 => "comment", // "comment"
-        13 => "[", // "lbrack"
-        14 => "]", // "rbrack"
-        15 => "(", // "lparen"
-        16 => ")", // "rparen"
-        17 => "MISSING", // "MISSING_keyword"
-        18 => ":", // "colon"
-        19 => "!", // "bang"
-        20 => "#", // "pound"
-        21 => ".", // "dot"
-        22 => "predicate_type", // "predicate_type"
+        11 => "comment", // "comment"
+        12 => "[", // "lbrack"
+        13 => "]", // "rbrack"
+        14 => "(", // "lparen"
+        15 => ")", // "rparen"
+        16 => "MISSING", // "MISSING_keyword"
+        17 => ":", // "colon"
+        18 => "!", // "bang"
+        19 => "#", // "pound"
+        20 => ".", // "dot"
+        21 => "predicate_type", // "predicate_type"
+        22 => "string_content_text", // "string_content_text"
         23 => "/", // "slash"
         24 => "_tight", // "_tight"
         25 => "_space", // "_space"
@@ -150,27 +150,6 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
     }
 }
 
-/// Whether the reader captures a named node of this kind as text: its
-/// template renders from that text, so the text is the node's content —
-/// free text for a pattern kind, the literal it holds for an enum kind.
-pub fn is_text_kind(kind: KindId) -> bool {
-    matches!(kind.0, 1 | 5 | 6 | 12 | 22 | 36)
-}
-
-/// Whether this parse kind id is an alias envelope: the reader stamps the
-/// grammar symbol beside it when the node is the storage node shown under
-/// the alias, so the wrap layer can seat it as the envelope's content.
-pub fn is_alias_envelope(_kind: KindId) -> bool {
-    false
-}
-
-/// Whether a node of this kind keeps its anonymous children as `$other`
-/// when it has no named child: an unnamed slot of the kind stores terminal
-/// kinds, and the wrap layer reclaims that slot's value from `$other`.
-pub fn keeps_anonymous_children(kind: KindId) -> bool {
-    matches!(kind.0, 43 | 44 | 45 | 46 | 51 | 56 | 57)
-}
-
 /// The model slot a child is stored under where its name differs from the
 /// parser's key: a field-tagged child by (parent kind id, field), a named
 /// child without a field by (parent kind id, the child's kind name).
@@ -178,6 +157,7 @@ pub fn keeps_anonymous_children(kind: KindId) -> bool {
 pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'static str> {
     match (parent.0, field, child) {
         (41, None, "escape_sequence") => Some("content"),
+        (41, None, "string_content_text") => Some("content"),
         (43, None, "capture") => Some("content"),
         (43, Some("quantifier"), _) => Some("content"),
         (44, None, "capture") => Some("content"),
@@ -186,8 +166,6 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
         (45, Some("quantifier"), _) => Some("content"),
         (46, None, "capture") => Some("content"),
         (46, Some("quantifier"), _) => Some("content"),
-        (51, None, "dot") => Some("content"),
-        (51, None, "pound") => Some("content"),
         (54, None, "anonymous_node") => Some("group_expression"),
         (54, None, "field_definition") => Some("group_expression"),
         (54, None, "group_expression_arm") => Some("group_expression"),
@@ -219,24 +197,6 @@ pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str
         _ => None,
     }
 }
-
-/// (parent kind id, tree-sitter field name, punctuation kind ids) for every
-/// slot the parser field-tags a literal into: the separator of a repeated
-/// slot, or a literal a rule puts beside a singular slot under the same
-/// field. The template prints such a token itself, so the reader drops the
-/// child instead of seating it, and a native read and a wrapped read hand
-/// back the same slot contents.
-static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
-    (49, "name", &[18]),
-    (51, "name", &[20, 21]),
-];
-
-pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {
-    SLOT_SEPARATORS
-        .iter()
-        .any(|(p, f, seps)| *p == parent.0 && *f == field && seps.contains(&child.0))
-}
-
 /// Whether the model stores a `child` of a `parent` node, reached under the
 /// parser field `field` (`None` for an untagged child), as a scalar: a
 /// presence flag or a kind id rather than a node. Such a child keeps no
@@ -248,8 +208,8 @@ pub fn stores_scalar(parent: KindId, field: Option<&str>, child: KindId) -> bool
         (45, None) => matches!(child.0, 2 | 3 | 4),
         (46, None) => matches!(child.0, 2 | 3 | 4),
         (46, Some("name")) => matches!(child.0, 7),
-        (51, None) => matches!(child.0, 20 | 21),
-        (51, Some("type")) => matches!(child.0, 4 | 19),
+        (51, Some("prefix")) => matches!(child.0, 19 | 20),
+        (51, Some("type")) => matches!(child.0, 4 | 18),
         (56, None) => matches!(child.0, 2 | 3 | 4),
         (56, Some("name")) => matches!(child.0, 7),
         (57, None) => matches!(child.0, 2 | 3 | 4),

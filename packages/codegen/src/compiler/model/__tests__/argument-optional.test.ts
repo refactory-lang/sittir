@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { RenderRule } from '../../../types/rule.ts';
-import { AssembledBranch, AssembledNonterminal, type AssembledNode, type ArgumentOptionalCtx, type NodeOrTerminal } from '../node-map.ts';
+import { AssembledBranch, AssembledNonterminal, AssembledPunctuation, type AssembledNode, type ArgumentOptionalCtx, type NodeOrTerminal } from '../node-map.ts';
 
 const rule = { type: 'SEQ', members: [] } as unknown as RenderRule;
 
@@ -31,7 +31,7 @@ describe('argumentOptional', () => {
 		const forwarder = branch('forwarder', [slot([ref])]);
 		expect(forwarder.argumentOptional(ctxWith(new Map([[5, target]])))).toBe(true);
 
-		const requiredValue: NodeOrTerminal = { value: 'x', multiplicity: 'single' };
+		const requiredValue: NodeOrTerminal = { pattern: '[a-z]+', multiplicity: 'single' };
 		const strictTarget = branch('strict-target', [slot([requiredValue])]);
 		const strictRef: NodeOrTerminal = { node: strictTarget, storageKindId: 6, multiplicity: 'single' };
 		const strictForwarder = branch('strict-forwarder', [slot([strictRef])]);
@@ -59,13 +59,13 @@ describe('argumentOptional', () => {
 	it('is false when more than one slot is required, even if one of them would forward', () => {
 		const target = branch('block', []);
 		const bodyRef: NodeOrTerminal = { node: target, storageKindId: 8, multiplicity: 'single' };
-		const otherRequired: NodeOrTerminal = { value: 'x', multiplicity: 'single' };
+		const otherRequired: NodeOrTerminal = { pattern: '[a-z]+', multiplicity: 'single' };
 		const node = branch('two_required', [slot([otherRequired]), slot([bodyRef])]);
 		expect(node.argumentOptional(ctxWith(new Map([[8, target]])))).toBe(false);
 	});
 
 	it('breaks a two-kind forwarding cycle via the seen set instead of recursing forever', () => {
-		const requiredValue: NodeOrTerminal = { value: 'x', multiplicity: 'single' };
+		const requiredValue: NodeOrTerminal = { pattern: '[a-z]+', multiplicity: 'single' };
 		const a = branch('a', [slot([requiredValue])]);
 		const b = branch('b', [slot([requiredValue])]);
 		const refToB: NodeOrTerminal = { node: b, storageKindId: 2, multiplicity: 'single' };
@@ -77,5 +77,30 @@ describe('argumentOptional', () => {
 			[2, bForward]
 		]);
 		expect(aForward.argumentOptional(ctxWith(nodes))).toBe(false);
+	});
+});
+
+describe('parameterless', () => {
+	const newline = new AssembledPunctuation('newline', { type: 'STRING', value: '\n' } as never);
+	const fixed: NodeOrTerminal = { node: newline, storageKindId: 3, multiplicity: 'single' };
+
+	it('is true for a compound whose only slot takes a fixed-text kind', () => {
+		expect(branch('empty', [slot([fixed])]).parameterless).toBe(true);
+	});
+
+	it('is true for a compound whose only slot is a required literal', () => {
+		const literal: NodeOrTerminal = { value: '?', resolvedKindId: 4, multiplicity: 'single' };
+		const lazy = branch('lazy', [slot([literal])]);
+		expect([lazy.parameterless, lazy.argumentOptional(ctxWith(new Map()))]).toEqual([true, true]);
+	});
+
+	it('is false when the fixed-text slot is optional, since its presence is a free choice', () => {
+		const optional: NodeOrTerminal = { ...fixed, multiplicity: 'optional' };
+		expect(branch('marker', [slot([optional])]).parameterless).toBe(false);
+	});
+
+	it('is false when a sibling slot takes a free value', () => {
+		const free: NodeOrTerminal = { pattern: '[a-z]+', multiplicity: 'single' };
+		expect(branch('mixed', [slot([fixed]), slot([free])]).parameterless).toBe(false);
 	});
 });

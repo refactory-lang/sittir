@@ -37,6 +37,7 @@ import { separatedLists } from './separated-lists.ts';
 import { testHistory } from './test-history.ts';
 import { textKindOverlap } from './text-kind-overlap.ts';
 import { triviaPlacement } from './trivia-placement.ts';
+import { uncoveredContent } from './uncovered-content.ts';
 import { variantDerivationProbe } from './variant-derivation-probe.ts';
 import { walk } from './walk.ts';
 
@@ -77,6 +78,7 @@ export const toolModules: readonly CommandModule[] = [
 	testHistory,
 	textKindOverlap,
 	triviaPlacement,
+	uncoveredContent,
 	variantDerivationProbe,
 	walk,
 ];

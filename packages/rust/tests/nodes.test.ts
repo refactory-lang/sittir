@@ -3131,7 +3131,7 @@ describe('block_comment sub-factories', () => {
 	it('regular builds the parent', () => {
 		const node = ir.blockComment.regular('test');
 		expect(node.$type).toBe(TSKindId.BlockComment);
-		expect((node as any).content()?.$type).toBe(TSKindId.BlockCommentContent);
+		expect((node as any).content()?.$type).toBe(TSKindId.BlockCommentRegular);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -3707,6 +3707,24 @@ describe('use_wildcard_group', () => {
 	});
 });
 
+describe('token_repetition_pattern_text', () => {
+	it('factory produces correct type', () => {
+		const node = ir.tokenRepetitionPatternText('test');
+		expect(node.$type).toBe(TSKindId.TokenRepetitionPatternText);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('test');
+	});
+});
+
+describe('string_open', () => {
+	it('factory produces correct type', () => {
+		const node = ir.stringOpen('"');
+		expect(node.$type).toBe(TSKindId.StringOpen);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('"');
+	});
+});
+
 describe('tuple_type_elements', () => {
 	it('factory produces correct type', () => {
 		const node = ir.tupleTypeElements(...[{ $type: TSKindId.UnitType, $text: '()', $source: 2, $named: true } as any]);
@@ -3811,15 +3829,6 @@ describe('impl_item_semi sub-factories', () => {
 	});
 });
 
-describe('string_open', () => {
-	it('factory produces correct type', () => {
-		const node = ir.stringOpen('"');
-		expect(node.$type).toBe(TSKindId.StringOpen);
-		expect(node.$source).toBe(2);
-		expect(node.$text).toBe('"');
-	});
-});
-
 describe('line_comment_extra_slashes', () => {
 	it('factory produces correct type', () => {
 		const node = ir.lineCommentExtraSlashes('// a');
@@ -3833,6 +3842,15 @@ describe('line_comment_regular', () => {
 	it('factory produces correct type', () => {
 		const node = ir.lineCommentRegular('test');
 		expect(node.$type).toBe(TSKindId.LineCommentRegular);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('test');
+	});
+});
+
+describe('block_comment_regular', () => {
+	it('factory produces correct type', () => {
+		const node = ir.blockCommentRegular('test');
+		expect(node.$type).toBe(TSKindId.BlockCommentRegular);
 		expect(node.$source).toBe(2);
 		expect(node.$text).toBe('test');
 	});

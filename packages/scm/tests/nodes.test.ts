@@ -362,7 +362,7 @@ describe('negated_field', () => {
 describe('predicate', () => {
 	it('factory produces correct type', () => {
 		const node = ir.predicate({
-			content: '#',
+			prefix: '#',
 			name: { $type: TSKindId.ImmediateIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			type: '?'
 		});
@@ -371,7 +371,7 @@ describe('predicate', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.predicate({
-			content: '#',
+			prefix: '#',
 			name: { $type: TSKindId.ImmediateIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			type: '?'
 		});
@@ -515,6 +515,15 @@ describe('named_node_expression_arm', () => {
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('string_content_text', () => {
+	it('factory produces correct type', () => {
+		const node = ir.stringContentText('test');
+		expect(node.$type).toBe(TSKindId.StringContentText);
+		expect(node.$source).toBe(2);
+		expect(node.$text).toBe('test');
 	});
 });
 

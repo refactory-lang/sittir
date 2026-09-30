@@ -28,7 +28,7 @@ use sittir_core::engine::EngineGrammar;
 use render::{render_transport_parts, RenderRoot, RENDER_MODULE_HASH};
 
 #[cfg(feature = "napi-bindings")]
-const NATIVE_RENDER_TRANSPORT_ABI: u32 = 3;
+const NATIVE_RENDER_TRANSPORT_ABI: u32 = 4;
 
 #[derive(Clone, Copy, Default)]
 pub struct PythonGrammar;
@@ -48,27 +48,6 @@ impl EngineGrammar for PythonGrammar {
 }
 
 impl sittir_core::read_node::ReadModel for PythonGrammar {
-    fn is_text_kind(&self, kind: sittir_core::types::KindId) -> bool {
-        render::kind_ids::is_text_kind(kind)
-    }
-
-    fn is_slot_separator(
-        &self,
-        parent: sittir_core::types::KindId,
-        field: &str,
-        child: sittir_core::types::KindId,
-    ) -> bool {
-        render::kind_ids::is_slot_separator(parent, field, child)
-    }
-
-    fn is_alias_envelope(&self, kind: sittir_core::types::KindId) -> bool {
-        render::kind_ids::is_alias_envelope(kind)
-    }
-
-    fn keeps_anonymous_children(&self, kind: sittir_core::types::KindId) -> bool {
-        render::kind_ids::keeps_anonymous_children(kind)
-    }
-
     fn wire_slot(
         &self,
         parent: sittir_core::types::KindId,

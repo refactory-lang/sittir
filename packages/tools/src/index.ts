@@ -40,6 +40,13 @@ export {
 	type TriviaPlacementSummary,
 	type TriviaPlacementCensus
 } from './validate/trivia-placement.ts';
+export {
+	run as uncoveredContent,
+	computeUncoveredContentCensus,
+	type UncoveredContentOptions,
+	type UncoveredContentRow,
+	type UncoveredContentCensus
+} from './validate/uncovered-content.ts';
 export { run as checkBaseline, type CheckBaselineOptions } from './validate/baseline.ts';
 export { run as propose14, type Propose14Options } from './validate/propose-14.ts';
 export { run as checkPerf, type CheckPerfOptions } from './validate/perf.ts';

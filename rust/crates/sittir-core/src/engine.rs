@@ -506,11 +506,7 @@ mod tests {
     #[derive(Clone, Copy)]
     struct TestGrammar;
 
-    impl ReadModel for TestGrammar {
-        fn is_text_kind(&self, _: crate::types::KindId) -> bool {
-            true
-        }
-    }
+    impl ReadModel for TestGrammar {}
 
     impl EngineGrammar for TestGrammar {
         fn configure_parser(
@@ -547,7 +543,7 @@ mod tests {
         // the numeric id — tests assert on the number, not the name.
         NodeData {
             type_: crate::types::KindId(1),
-            storage_type: None,
+            display_type: None,
             source,
             named: true,
             fields: None,

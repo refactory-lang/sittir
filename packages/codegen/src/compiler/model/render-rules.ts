@@ -82,6 +82,10 @@ function isImmediateRight(rule: RenderRule | undefined, config: RenderRulesConfi
 	return leftmostTerminalImmediate(rule, { rules: config.normalizedRules ?? {}, visiting: new Set() });
 }
 
+function isImmediateArm(choice: RenderRule, arm: RenderRule, config: RenderRulesConfig): boolean {
+	return isImmediateRight(choice, config) || isImmediateRight(arm, config);
+}
+
 function isImmediateWhenPresent(rule: RenderRule, config: RenderRulesConfig): boolean {
 	return startsImmediateWhenPresent(rule, { rules: config.normalizedRules ?? {}, visiting: new Set() });
 }
@@ -665,7 +669,7 @@ function withArmEdgeSeams(
 	const members = c.members.map((arm) => {
 		const edge = edgeMember(arm, side) ?? arm;
 		if (isAnyWhitespaceChoice(edge)) return arm;
-		if (side === 'first' && isImmediateRight(edge, config)) return arm;
+		if (side === 'first' && isImmediateArm(choice, edge, config)) return arm;
 		const token = literalTokenOf(edge, config) ?? punctuationReferenceTokenOf(edge, config);
 		if (token === undefined) return arm;
 		const seam = seamChoice(kind, seamLabel(token, side === 'last' ? 'after' : 'before'), resolver, seams, undefined, isKeywordSeam(edge, config));
@@ -746,7 +750,7 @@ function withArmSeams(rule: RenderRule, kind: string, config: RenderRulesConfig,
 		if (name === undefined) return member;
 		const wordShaped = isKeywordSeam(member, config);
 		const seam = (side: SeparatorSide): RenderRule => seamChoice(kind, seamLabel(name, side), resolver, seams, undefined, wordShaped);
-		const before = isImmediateRight(member, config) ? [] : [seam('before')];
+		const before = isImmediateArm(rule, member, config) ? [] : [seam('before')];
 		return { type: SEQ, nonterminal: true, members: [...before, member, seam('after')] } as unknown as RenderRule;
 	});
 	return { ...(rule as object), members } as unknown as RenderRule;

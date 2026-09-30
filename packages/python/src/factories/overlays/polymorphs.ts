@@ -3,7 +3,6 @@ import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import type { ArgsOf, ElementsOf, OmitEach, OptionsArg } from '@sittir/types';
-import { TSKindId } from '../../types.js';
 export * from './refines.js';
 
 // Erased applications, centralized: TS cannot infer a Cfg type parameter
@@ -735,9 +734,9 @@ const matchBlock$block =
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 const matchBlock$empty =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const matchBlock = Object.freeze({
 	...B.matchBlock,
 	block: {
@@ -745,8 +744,8 @@ export const matchBlock = Object.freeze({
 		coerce: matchBlock$block(F.buildMatchBlock, C.coerceToMatchBlockBlock)
 	},
 	empty: {
-		strict: matchBlock$empty(F.buildMatchBlock, TSKindId.Newline),
-		coerce: matchBlock$empty(C.coerceToMatchBlock, TSKindId.Newline)
+		strict: matchBlock$empty(F.buildMatchBlock, F.buildMatchBlockEmpty),
+		coerce: matchBlock$empty(F.buildMatchBlock, C.coerceToMatchBlockEmpty)
 	}
 }) as unknown as typeof B.matchBlock & {
 	block: {
@@ -754,8 +753,8 @@ export const matchBlock = Object.freeze({
 		coerce: (...args: ArgsOf<typeof C.coerceToMatchBlockBlock>) => ReturnType<typeof F.buildMatchBlock>;
 	};
 	empty: {
-		strict: (options?: OptionsArg<typeof F.buildMatchBlock>) => ReturnType<typeof F.buildMatchBlock>;
-		coerce: (options?: OptionsArg<typeof C.coerceToMatchBlock>) => ReturnType<typeof C.coerceToMatchBlock>;
+		strict: (...args: ArgsOf<typeof F.buildMatchBlockEmpty>) => ReturnType<typeof F.buildMatchBlock>;
+		coerce: (...args: ArgsOf<typeof C.coerceToMatchBlockEmpty>) => ReturnType<typeof F.buildMatchBlock>;
 	};
 };
 
@@ -853,10 +852,8 @@ const exceptClause$block =
 	};
 const exceptClause$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { suite: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(seated) } as never, options as never);
-	};
+	(config?: OmitEach<ArgsOf<PF>[0], 'suite'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, suite: _c(child)() } as never, options as never);
 const exceptClause$exception$as =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -904,10 +901,8 @@ const exceptClause$exception$block =
 	};
 const exceptClause$exception$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { suite: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(seated) } as never, options as never);
-	};
+	(config?: OmitEach<ArgsOf<PF>[0], 'suite'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, suite: _c(child)() } as never, options as never);
 const exceptClause$exception$as$applied: (
 	config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
 		exception: ArgsOf<typeof exceptClauseException.as.strict>;
@@ -940,10 +935,8 @@ const exceptClause$exception$as$block =
 	};
 const exceptClause$exception$as$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { suite: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(seated) } as never, options as never);
-	};
+	(config?: OmitEach<ArgsOf<PF>[0], 'suite'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, suite: _c(child)() } as never, options as never);
 const exceptClause$exception$list$applied: (
 	config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'exception'> & {
 		exception: ArgsOf<typeof exceptClauseException.list.strict>;
@@ -976,10 +969,8 @@ const exceptClause$exception$list$block =
 	};
 const exceptClause$exception$list$empty =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'suite'> & { suite: ArgsOf<CF>[0] }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { suite: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, suite: _c(child)(seated) } as never, options as never);
-	};
+	(config?: OmitEach<ArgsOf<PF>[0], 'suite'>, options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)({ ...config, suite: _c(child)() } as never, options as never);
 export const exceptClause = Object.freeze({
 	...B.exceptClause,
 	exception: {
@@ -1099,15 +1090,11 @@ export const exceptClause = Object.freeze({
 			};
 			empty: {
 				strict: (
-					config: OmitEach<ArgsOf<typeof exceptClause$exception$as$applied>[0], 'suite'> & {
-						suite: ArgsOf<typeof F.buildSuiteEmpty>[0];
-					},
+					config?: OmitEach<ArgsOf<typeof exceptClause$exception$as$applied>[0], 'suite'>,
 					options?: OptionsArg<typeof exceptClause$exception$as$applied>
 				) => ReturnType<typeof exceptClause$exception$as$applied>;
 				coerce: (
-					config: OmitEach<ArgsOf<typeof exceptClause$exception$as$appliedCoerce>[0], 'suite'> & {
-						suite: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
-					},
+					config?: OmitEach<ArgsOf<typeof exceptClause$exception$as$appliedCoerce>[0], 'suite'>,
 					options?: OptionsArg<typeof exceptClause$exception$as$appliedCoerce>
 				) => ReturnType<typeof exceptClause$exception$as$appliedCoerce>;
 			};
@@ -1155,15 +1142,11 @@ export const exceptClause = Object.freeze({
 			};
 			empty: {
 				strict: (
-					config: OmitEach<ArgsOf<typeof exceptClause$exception$list$applied>[0], 'suite'> & {
-						suite: ArgsOf<typeof F.buildSuiteEmpty>[0];
-					},
+					config?: OmitEach<ArgsOf<typeof exceptClause$exception$list$applied>[0], 'suite'>,
 					options?: OptionsArg<typeof exceptClause$exception$list$applied>
 				) => ReturnType<typeof exceptClause$exception$list$applied>;
 				coerce: (
-					config: OmitEach<ArgsOf<typeof exceptClause$exception$list$appliedCoerce>[0], 'suite'> & {
-						suite: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
-					},
+					config?: OmitEach<ArgsOf<typeof exceptClause$exception$list$appliedCoerce>[0], 'suite'>,
 					options?: OptionsArg<typeof exceptClause$exception$list$appliedCoerce>
 				) => ReturnType<typeof exceptClause$exception$list$appliedCoerce>;
 			};
@@ -1198,15 +1181,11 @@ export const exceptClause = Object.freeze({
 		};
 		empty: {
 			strict: (
-				config: OmitEach<ArgsOf<typeof exceptClause$exception$applied>[0], 'suite'> & {
-					suite: ArgsOf<typeof F.buildSuiteEmpty>[0];
-				},
+				config?: OmitEach<ArgsOf<typeof exceptClause$exception$applied>[0], 'suite'>,
 				options?: OptionsArg<typeof exceptClause$exception$applied>
 			) => ReturnType<typeof exceptClause$exception$applied>;
 			coerce: (
-				config: OmitEach<ArgsOf<typeof exceptClause$exception$appliedCoerce>[0], 'suite'> & {
-					suite: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
-				},
+				config?: OmitEach<ArgsOf<typeof exceptClause$exception$appliedCoerce>[0], 'suite'>,
 				options?: OptionsArg<typeof exceptClause$exception$appliedCoerce>
 			) => ReturnType<typeof exceptClause$exception$appliedCoerce>;
 		};
@@ -1239,13 +1218,11 @@ export const exceptClause = Object.freeze({
 	};
 	empty: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'> & { suite: ArgsOf<typeof F.buildSuiteEmpty>[0] },
+			config?: OmitEach<ArgsOf<typeof F.buildExceptClause>[0], 'suite'>,
 			options?: OptionsArg<typeof F.buildExceptClause>
 		) => ReturnType<typeof F.buildExceptClause>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'suite'> & {
-				suite: ArgsOf<typeof C.coerceToSuiteEmpty>[0];
-			},
+			config?: OmitEach<ArgsOf<typeof C.coerceToExceptClause>[0], 'suite'>,
 			options?: OptionsArg<typeof C.coerceToExceptClause>
 		) => ReturnType<typeof C.coerceToExceptClause>;
 	};

@@ -133,6 +133,7 @@ type SerializedNode =
 
 interface SerializedNodeModel {
 	name: string;
+	root: string | null;
 	nodeCount: number;
 	word: string | null;
 	supertypes: string[];
@@ -187,6 +188,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables?: GeneratedId
 
 	return {
 		name: nodeMap.name,
+		root: nodeMap.root ?? null,
 		nodeCount: nodeMap.nodes.size,
 		word: nodeMap.word ?? null,
 		supertypes,

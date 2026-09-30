@@ -2883,7 +2883,7 @@ boundary; a caller that wants the DSL's own shape calls it directly.
  */
 ```
 
-The dead enrich mints `sittirGrammar` blanked arrive as a non-enumerable sidecar on the grammar (`getDeadEnrichMints`); they become `orphanedSyntheticGroups` here, after the module's `grammar()` call has returned, since the dead set is computed from that call's result. The conflict-derivation records (`getDerivationRecords`) arrive the same way and become `derivationRecords`. The returned grammar is a spread copy, so a non-enumerable sidecar is read here or not at all.
+The dead enrich mints `sittirGrammar` blanked arrive as a non-enumerable sidecar on the grammar (`getDeadEnrichMints`); they become `orphanedSyntheticGroups` here, after the module's `grammar()` call has returned, since the dead set is computed from that call's result. The conflict-derivation records (`getDerivationRecords`) arrive the same way and become `derivationRecords`, and the text-token names `sittirGrammar` attached (`dsl/enrich.ts::getTextTokens`) become `textTokens`. The returned grammar is a spread copy, so a non-enumerable sidecar is read here or not at all.
 
 ### `packages/codegen/src/compiler/evaluate.ts::restoreSavedGlobals`
 
@@ -3688,6 +3688,11 @@ declared-supertype override:
 - Otherwise the rule unchanged; assemble classifies it by shape. A hidden
   choice of structural members (seqs, fields) is a real alternative, not an
   abstract kind union.
+
+Neither supertype case applies to a kind the parser shows as a concrete node
+(`isShownConcreteKind`): a declared supertype that a default alias displays
+(python `match_block`) keeps its choice rule, so the surface has the node the
+tree has.
 
 ### `packages/codegen/src/compiler/link.ts::collectSubtypeRefs`
 
@@ -6508,6 +6513,10 @@ The normalized and simplified grammars carry the same map through unchanged, as 
 
 The rules enrich added that the wired grammar never reaches: the dead set `blankDeadEnrichMints` computed and blanked (`getDeadEnrichMints`). The canonical prune removes the rules themselves; `withoutOrphanedGroups` drops any diagnostic owned by one, since the kind can never occur in a parse.
 
+### `packages/codegen/src/compiler/types.ts::textTokens`
+
+The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible rule holding one inline pattern or token that the parser would otherwise report as an anonymous auxiliary token. `spliceTextLeaves` reads it.
+
 ### `packages/codegen/src/compiler/types.ts::bodyPatternZeroMatches`
 
 ```text
@@ -7507,6 +7516,10 @@ A STRING that already carries `nonterminal: true` keeps it: a presence flag insi
 promoted literal, and simplify re-flattens rules that were already flattened, so the builder must not overwrite
 the stamp with the terminal default.
 ```
+
+### `packages/codegen/src/compiler/link.ts::reportAuxTokens`
+
+Warns `aux-token-in-catalog` on the link ctx's sink with the catalog's anonymous auxiliary tokens (`diagnostics/catalog-coverage.ts::auxTokenKinds` over the ctx's kind entries and the evaluated rules, before any rename), each a text token the mint left unnamed.
 
 ### `packages/codegen/src/compiler/link.ts::reportKindIdStampMisses`
 
@@ -10299,7 +10312,7 @@ re-derives a fact the pipeline already stamps.
 
 ### `packages/codegen/src/compiler/link.ts::collapseRenamedRules`
 
-A hidden rule the parser always shows under one tree name (`ts_symbol_names` gives the name; the catalog row is visible, not an alias or anonymous row, and is the only visible row carrying that name — `isRenamedEntry`) is one visible kind. This pass renames it to that tree name everywhere the grammar names it, before anything reads the grammar: rule keys, SYMBOL names, an identity alias wrapper around the renamed symbol (unwrapped), every name list (externals, extras, supertypes, inline, factoryInline, conflicts, precedences, word, orphanedSyntheticGroups, bodyPatternZeroMatches), the SYMBOL members of each `reserved` wordset (the wordset names are not rule names and keep theirs), the name-keyed side tables (externalRoles, refineForms, groups, renderAs, visibleExternals, options, expectDiagnostics, expectTestFailures), the NUL-joined automaticVariants keys and the desugar divergence events. It rebuilds the rule catalog (keeping each rule's provenance) and re-derives the references from the renamed rules (`collectReferences`), since rule ids embed the owner's name. A tree name that another rule or external already uses is an error.
+A hidden rule the parser always shows under one tree name (`ts_symbol_names` gives the name; the catalog row is visible, not an alias or anonymous row, and is the only visible row carrying that name — `isRenamedEntry`) is one visible kind. This pass renames it to that tree name everywhere the grammar names it, before anything reads the grammar: rule keys, SYMBOL names, an identity alias wrapper around the renamed symbol (unwrapped), every name list (externals, extras, supertypes, inline, factoryInline, conflicts, precedences, word, orphanedSyntheticGroups, textTokens, bodyPatternZeroMatches), the SYMBOL members of each `reserved` wordset (the wordset names are not rule names and keep theirs), the name-keyed side tables (externalRoles, refineForms, groups, renderAs, visibleExternals, options, expectDiagnostics, expectTestFailures), the NUL-joined automaticVariants keys and the desugar divergence events. It rebuilds the rule catalog (keeping each rule's provenance) and re-derives the references from the renamed rules (`collectReferences`), since rule ids embed the owner's name. A tree name that another rule or external already uses is an error.
 
 It runs where the evaluated grammar is first consumed: `collectGrammarDiagnosticsForGrammar` collapses its input and hands the result on as `raw`, and `link` collapses again for callers that link an evaluated grammar directly; a collapsed grammar has no renamed rule left, so the second call returns its input.
 
@@ -10312,6 +10325,10 @@ The renames the parser catalog records for the grammar's rules and externals (`d
 ### `packages/codegen/src/compiler/link.ts::renameRules`
 
 Rewrites a grammar under a rename map, as `collapseRenamedRules` describes; an empty map returns the grammar unchanged. The rebuilt catalog keeps each renamed kind's source rule ids (`BuildRuleCatalogCtx.sourceKindOf`).
+
+### `packages/codegen/src/compiler/link.ts::spliceTextLeaves`
+
+A rule whose body becomes all text (`isAllTextShape`) once each spliceable reference is replaced by its body gets that body back on sittir's side, so the kind keeps its text-leaf surface: one `$text`, no slot for the spliced token. A reference is spliceable when it names a rule with a body that is a text token (`RawGrammar.textTokens`) or a hidden terminal (the catalog's `isTerminal` and `isHidden`, the pair transform's `isHiddenTerminal` asks). For a text token the parser still reports the token as a named child, and the wrap's `_spelledLeaf` spells the leaf from the children that tile it. A hidden terminal has no node, so the kind's text is its own span (rust `block_comment_regular`). A text token referenced only from such a rule is then unreachable and pruned from the model. Every other reference stays a node-ref to the visible text kind. It runs on the raw grammar before visibility stamping.
 
 ### `packages/codegen/src/compiler/link.ts::stampParserVisibility`
 

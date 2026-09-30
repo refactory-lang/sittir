@@ -1,6 +1,7 @@
 import type { AnyNodeData } from '@sittir/types';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
+import { nativeShownKindId } from '../validate/shown-kind.ts';
 
 type ReadTreeNode = (handle: unknown, nodeHandle?: number, childIndex?: number) => unknown;
 
@@ -61,7 +62,8 @@ function isWalkNode(value: unknown): value is WalkNode {
 }
 
 function resolveKindName(node: WalkNode, kindNameFromId: ((id: number) => string | undefined) | undefined): string {
-	return typeof node.$type === 'number' ? (kindNameFromId?.(node.$type) ?? String(node.$type)) : node.$type;
+	const shown = nativeShownKindId(node);
+	return typeof shown === 'number' ? (kindNameFromId?.(shown) ?? String(shown)) : shown;
 }
 
 function collectChildren(node: WalkNode): unknown[] {

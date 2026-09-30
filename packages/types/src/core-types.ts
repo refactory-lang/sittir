@@ -80,13 +80,13 @@ export interface AnyNodeData {
 	$variant?: string;
 	$other?: NodeChildren;
 	/**
-	 * Source text for this node, present only where the text is the
-	 * node's content: anonymous tokens, and the named kinds the grammar
-	 * models as text (pattern and enum kinds). A named leaf the grammar
-	 * models as a token carries no text — its kind is its content — and a
-	 * branch (`_<name>` storage and/or `$other` present) rebuilds its text
-	 * from its slots through the render template. Every read node carries a
-	 * `$span`; an untouched node is addressed by it, never by text.
+	 * Source text for this node. The reader sends it for anonymous tokens
+	 * spelled otherwise than their kind name, errors, and nodes without
+	 * children; the wrap layer spells a named node whose only content is
+	 * tokens tiling its span from those tokens. A branch (`_<name>` storage
+	 * and/or `$other` present) rebuilds its text from its slots through the
+	 * render template. Every read node carries a `$span`; an untouched node
+	 * is addressed by it, never by text.
 	 *
 	 * Factory-built nodes never set `$text`; the `$TEXT` template
 	 * variable falls back to a best-effort field+children concatenation.

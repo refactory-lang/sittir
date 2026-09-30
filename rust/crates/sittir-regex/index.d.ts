@@ -132,7 +132,7 @@ export interface CharacterClassEscapeArmTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _unicode_property_value_expression: SlotValue<UnicodePropertyValueExpressionTransport>
-  _content: string
+  _character_class_escape_text2: SlotValue<CharacterClassEscapeText2Transport>
 }
 
 export interface CharacterClassEscapeTransport {
