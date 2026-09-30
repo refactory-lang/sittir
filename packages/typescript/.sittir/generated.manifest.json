@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "6750b607b153565aa5852c13edab3795177a09708c3e2547f66ad6e2a2277236",
+  "source_hash": "331373e0babe799213ad42d0979b72e4b48e1b1359467bf76a4eb9719314761e",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "76b19be2bad78562e89ae5ce416ed513db3343186481ec946d963443b11f6b0f",
     "packages/typescript/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -20,11 +20,11 @@
     "packages/typescript/src/api.ts": "8f31e70c4256cb73f5ae9f9e13921d1ed29ccfce13b6eede204d63a0546e8706",
     "packages/typescript/src/backend.ts": "06d30d9821658787e2fec800caf1d984ccda8d0862117e1792851c739de28c87",
     "packages/typescript/src/consts.ts": "a5db1947b1909261288e32debdadc8d19be0230967c66dd934e1e6e3fc9128d7",
-    "packages/typescript/src/factories/bundle.ts": "d20bf41f29b9a60b4c4d3eda40dcc9919d7bf7123854b941a9adaca418de1a99",
+    "packages/typescript/src/factories/bundle.ts": "a151349349326c2ffe8af27044eb1276728ce5f9c169ab48ab3495efdc006cbd",
     "packages/typescript/src/factories/coerce.ts": "cb1fb3949dbb956223c26f85adf7a2ac90bfb6a412a90d331a75e8d6b33181f1",
     "packages/typescript/src/factories/index.ts": "47f4bc1f94780a7f384efda64a932f4a1aa2a76300fbd442f580d31af569bbda",
-    "packages/typescript/src/factories/overlays/polymorphs.ts": "2c7e7b3232a23f121b986fcd4f39002a33ef3875c0a6b0c9793fa27a29066169",
-    "packages/typescript/src/factories/overlays/refines.ts": "6f3924f170c4b95c5bdd9214f6786344009891c30fe8e6f0b71aea3db7f06800",
+    "packages/typescript/src/factories/overlays/polymorphs.ts": "6fafad4ef5c02a7e3e87acd271a7ab56dea893f6e968807a47f10cdaae07d276",
+    "packages/typescript/src/factories/overlays/refines.ts": "121edf03c79b298f5538cf8ada0dab00301ba4ea7df771772441bd83ca2d84fa",
     "packages/typescript/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/typescript/src/factories/raw.ts": "54a11b834b9cd209f118391ccec2212fb9dfe322d61608172a9071b0b4b7c2b7",
     "packages/typescript/src/hash.ts": "fadcb9ab641bd2bba4d801167ef71a10f50666a84a40597d63256853c37a480e",

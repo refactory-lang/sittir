@@ -707,6 +707,7 @@ export interface BuiltTypeSurface {
 	readonly setters: readonly SlotSetter[];
 	readonly buildArgs: string;
 	readonly looseArgs: string;
+	readonly maxArgs: number | undefined;
 }
 
 export function slotSetter(
@@ -763,7 +764,8 @@ function fieldCarryingBuiltTypeSurface(
 		members: [],
 		setters,
 		buildArgs: `${paramsToTuple(surface.rowParams)}${spreadArgs('BuildArgs')}`,
-		looseArgs: `${paramsToTuple(surface.rowLooseParams)}${spreadArgs('LooseArgs')}`
+		looseArgs: `${paramsToTuple(surface.rowLooseParams)}${spreadArgs('LooseArgs')}`,
+		maxArgs: spreadTarget === null ? surface.arity : undefined
 	};
 }
 
@@ -784,7 +786,8 @@ function leafBuiltTypeSurface(
 		],
 		setters: [],
 		buildArgs: paramsToTuple(params),
-		looseArgs: paramsToTuple(params)
+		looseArgs: paramsToTuple(params),
+		maxArgs: 1
 	};
 }
 
@@ -882,6 +885,7 @@ interface FactorySurface {
 	readonly looseParams: string;
 	readonly rowParams: string;
 	readonly rowLooseParams: string;
+	readonly arity: number | undefined;
 	readonly args: string;
 	readonly elementType?: string;
 	readonly directParamType?: string;
@@ -907,9 +911,11 @@ function renderSurfaceParams(param: FactoryParam): {
 	looseParams: string;
 	rowParams: string;
 	rowLooseParams: string;
+	arity: number | undefined;
 } {
 	const strict = (type: string): string => (param.admitsNodes ? admitNodes(type) : type);
 	return {
+		arity: param.rest ? undefined : 1,
 		params: paramText(param, strict(param.strictType)),
 		looseParams: paramText(param, param.looseType),
 		rowParams: paramText(param, strict(param.rowStrictType ?? param.strictType)),
@@ -974,6 +980,7 @@ function resolveFactorySurface(
 		looseParams: `${surface.looseParams}, ${trailing}`,
 		rowParams: `${surface.rowParams}, ${trailing}`,
 		rowLooseParams: `${surface.rowLooseParams}, ${trailing}`,
+		arity: surface.arity === undefined ? undefined : surface.arity + 1,
 		args: `${surface.args}, options`,
 		spellingType
 	};
@@ -1525,7 +1532,8 @@ export function refineFormBuiltTypeSurfaceOf(
 		members: [],
 		setters,
 		buildArgs: paramsToTuple(params),
-		looseArgs: paramsToTuple(params)
+		looseArgs: paramsToTuple(params),
+		maxArgs: registered.length === 0 ? 1 : 2
 	};
 }
 
@@ -1756,7 +1764,8 @@ function listBuiltTypeSurface(
 		members: extraMembers,
 		setters,
 		buildArgs: elementsTuple(node.nonEmpty, surface.strictElemType),
-		looseArgs: elementsTuple(node.nonEmpty, looseValueOf(surface.looseElemTypeForArray))
+		looseArgs: elementsTuple(node.nonEmpty, looseValueOf(surface.looseElemTypeForArray)),
+		maxArgs: undefined
 	};
 }
 
