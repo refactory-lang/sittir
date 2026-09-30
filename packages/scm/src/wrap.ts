@@ -459,19 +459,36 @@ function _isWireDelimiter(e: unknown, separatorKindIds: readonly number[]): e is
 	return false;
 }
 
-// A `many` slot with a separator fact whose separator the parser
-// field-tagged into the slot: the render body re-joins the slot
-// with its own separator, so the wire delimiter is dropped rather
-// than stored.
+function _dropOrderEntry(order: string[] | undefined, slot: string, occurrence: number): void {
+	if (order === undefined) return;
+	let seen = 0;
+	const at = order.findIndex((name) => name === slot && seen++ === occurrence);
+	if (at >= 0) order.splice(at, 1);
+}
+
+// A delimiter the parser field-tagged into a slot is punctuation the
+// render body writes itself, so it is dropped rather than stored, and
+// its entry leaves the node's `$slotOrder` draft with it.
 // Assumes T itself is never an array type — slot elements are node unions.
 function dropWireDelimiters<T>(
 	value: T | readonly (T | _WireDelimiter)[] | undefined,
-	separatorKindIds: readonly number[]
+	separatorKindIds: readonly number[],
+	order: string[] | undefined,
+	slot: string
 ): T | readonly T[] | undefined {
 	const isSlotList = (v: T | readonly (T | _WireDelimiter)[]): v is readonly (T | _WireDelimiter)[] => Array.isArray(v);
 	if (value == null) return undefined;
-	if (!isSlotList(value)) return _isWireDelimiter(value, separatorKindIds) ? undefined : value;
-	return value.filter((e): e is T => !_isWireDelimiter(e, separatorKindIds));
+	if (!isSlotList(value)) {
+		if (!_isWireDelimiter(value, separatorKindIds)) return value;
+		_dropOrderEntry(order, slot, 0);
+		return undefined;
+	}
+	let kept = 0;
+	return value.filter((e): e is T => {
+		if (!_isWireDelimiter(e, separatorKindIds)) return (kept++, true);
+		_dropOrderEntry(order, slot, kept);
+		return false;
+	});
 }
 
 export function wrapProgram(data: T.Program, tree: TreeHandle): T.Program.Parsed {
@@ -1106,21 +1123,24 @@ export function wrapNamedNode(
 
 export function wrapFieldDefinition(data: T.FieldDefinition, tree: TreeHandle): T.FieldDefinition.Parsed {
 	data = _keepModelledSlots(data, ['_name', '_definition']);
+	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.FieldDefinition as const,
-		_name: normalizeSingularWrapSlot(dropWireDelimiters(data._name, [TSKindId.Colon]), 'name', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'name',
-			span: (data as _NodeData).$span
-		}),
+		_name: normalizeSingularWrapSlot(
+			dropWireDelimiters(data._name, [TSKindId.Colon], _order, 'name'),
+			'name',
+			true,
+			data.$type,
+			{ tree, nodeType: data.$type, slotName: 'name', span: (data as _NodeData).$span }
+		),
 		_definition: normalizeSingularWrapSlot(data._definition, 'definition', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'definition',
 			span: (data as _NodeData).$span
 		}),
+		...(_order && { $slotOrder: _order }),
 
 		name() {
 			return drillIn<T.Identifier>(this._name, tree);
@@ -1164,6 +1184,7 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 	data = _keepModelledSlots(data, ['_content', '_name', '_type', '_parameters']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.Predicate as const }) as unknown as T.Predicate.Parsed;
+	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.Predicate as const,
@@ -1178,7 +1199,7 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 			{ '#': 20, '.': 21 }
 		),
 		_name: normalizeSingularWrapSlot(
-			dropWireDelimiters(data._name, [TSKindId.Pound, TSKindId.Dot]),
+			dropWireDelimiters(data._name, [TSKindId.Pound, TSKindId.Dot], _order, 'name'),
 			'name',
 			true,
 			data.$type,
@@ -1199,6 +1220,7 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 			slotName: 'parameters',
 			span: (data as _NodeData).$span
 		}),
+		...(_order && { $slotOrder: _order }),
 
 		content() {
 			return this._content;

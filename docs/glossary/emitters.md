@@ -13462,9 +13462,25 @@ normalization; a node that already carries slot storage (built or edited) is lef
 	 *  `engine.parse()` reaches this alias without a cast. */
 ```
 
+### `packages/codegen/src/emitters/wrap.ts::dropsDelimiters`
+
+Whether any of a node's slots has a delimiter set (`separatorIdsExprOf` returns one), which means some wire delimiter may be dropped from its storage. It gates both halves of the `$slotOrder` draft, so a node that drops nothing keeps the reader's `$slotOrder` untouched.
+
+### `packages/codegen/src/emitters/wrap.ts::emitSlotOrderDraftLine`
+
+Emits `const _order = (data as _NodeData).$slotOrder?.slice();` ahead of a wrap function's object literal when `dropsDelimiters` holds. `dropWireDelimiters` and `splitElidedWrapSlot` remove a dropped delimiter's entry from this working copy as they drop it. `emitFieldStorageLines` then spreads `...(_order && { $slotOrder: _order })` after the slot lines, so `$slotOrder` names exactly the entries the slots store. The draft is declared before the literal because a literal's own properties cannot hold a variable the later properties share.
+
+### `packages/codegen/src/emitters/wrap.ts::slotOrderName`
+
+The name a slot has in `$slotOrder`: its storage key without the leading `_`. The reader writes each slot's children under `_<name>` and records `<name>` once per child in `$slotOrder`, so the two are the same fact.
+
+### `packages/codegen/src/emitters/wrap.ts::_dropOrderEntry` (emitted)
+
+Removes the `occurrence`-th entry named `slot` from a node's `$slotOrder` draft. The reader records one entry per child in child order, so a delimiter at a given position in the raw slot value is the entry whose index among that slot's remaining entries equals the number of values kept before it. A missing draft (`$slotOrder` is stamped only when a node has two or more slots) makes it a no-op.
+
 ### `packages/codegen/src/emitters/wrap.ts::fieldTaggedLiteralTexts`
 
-The literal texts a compound's render rule places directly under each field, keyed by field name: a `STRING` reached through `CHOICE`/`SEQ` inside `field(name, …)`. Tree-sitter tags such a token with the field (the `,` in python's `for_in_clause.right`, the `;` in typescript's `for_statement.condition`), so the reader puts it in the field's storage beside the field's real content. The token is punctuation the render template already emits, so `separatorIdsExprOf` adds these texts to the slot's drop set and `dropWireDelimiters` strips them, for singular slots as well as `many` ones. Lexed-interior compounds are skipped: their interior is one token, not fields.
+The literal texts a compound's render rule places directly under each field, keyed by field name: a `STRING` reached through `CHOICE`/`SEQ` inside `field(name, …)`. Tree-sitter tags such a token with the field (the `,` in python's `for_in_clause.right`, the `;` in typescript's `for_statement.condition`), so the reader puts it in the field's storage beside the field's real content. The token is punctuation the render template already emits, so `separatorIdsExprOf` adds these texts to the slot's drop set and `dropWireDelimiters` strips them, for singular slots as well as `many` ones, along with their `$slotOrder` entries (`_dropOrderEntry`). Lexed-interior compounds are skipped: their interior is one token, not fields.
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.dropSpellingLines`
 

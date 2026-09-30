@@ -422,6 +422,13 @@ function _isWireDelimiter(e: unknown, separatorKindIds: readonly number[]): e is
 	return false;
 }
 
+function _dropOrderEntry(order: string[] | undefined, slot: string, occurrence: number): void {
+	if (order === undefined) return;
+	let seen = 0;
+	const at = order.findIndex((name) => name === slot && seen++ === occurrence);
+	if (at >= 0) order.splice(at, 1);
+}
+
 // Elidable separated-list positions (array elision, `[a, , b]`): the
 // raw wire array interleaves element entries with the separator token.
 // Segment on those delimiters — each segment is one position holding
@@ -432,7 +439,9 @@ function _isWireDelimiter(e: unknown, separatorKindIds: readonly number[]): e is
 function splitElidedWrapSlot<T>(
 	value: T | readonly (T | _WireDelimiter | undefined)[] | undefined,
 	separatorKindIds: readonly number[],
-	allowedKinds: readonly string[] | undefined
+	allowedKinds: readonly string[] | undefined,
+	order: string[] | undefined,
+	slot: string
 ): readonly (T | undefined)[] {
 	// Assumes T itself is never an array type — slot elements are node unions.
 	const isSlotList = (
@@ -451,11 +460,14 @@ function splitElidedWrapSlot<T>(
 	}
 	const positions: (T | undefined)[] = [];
 	let segment: (T | undefined)[] = [];
+	let kept = 0;
 	for (const entry of items) {
 		if (isDelimiter(entry)) {
+			_dropOrderEntry(order, slot, kept);
 			positions.push(keepFirst(segment));
 			segment = [];
 		} else {
+			kept++;
 			segment.push(entry);
 		}
 	}
@@ -487,10 +499,12 @@ export function wrapPattern(data: T.Pattern, tree: TreeHandle): T.Pattern.Parsed
 
 export function wrapAlternation(data: T.Alternation, tree: TreeHandle): T.Alternation.Parsed {
 	data = _keepModelledSlots(data, ['_term']);
+	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.Alternation as const,
-		_term: splitElidedWrapSlot(data._term, [TSKindId.Pipe], undefined),
+		_term: splitElidedWrapSlot(data._term, [TSKindId.Pipe], undefined, _order, 'term'),
+		...(_order && { $slotOrder: _order }),
 
 		terms() {
 			return drillInAll<T.Term | undefined>(this._term as readonly (T.Term | undefined)[] | undefined, tree);

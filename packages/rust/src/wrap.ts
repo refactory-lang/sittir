@@ -1120,19 +1120,36 @@ function _isWireDelimiter(e: unknown, separatorKindIds: readonly number[]): e is
 	return false;
 }
 
-// A `many` slot with a separator fact whose separator the parser
-// field-tagged into the slot: the render body re-joins the slot
-// with its own separator, so the wire delimiter is dropped rather
-// than stored.
+function _dropOrderEntry(order: string[] | undefined, slot: string, occurrence: number): void {
+	if (order === undefined) return;
+	let seen = 0;
+	const at = order.findIndex((name) => name === slot && seen++ === occurrence);
+	if (at >= 0) order.splice(at, 1);
+}
+
+// A delimiter the parser field-tagged into a slot is punctuation the
+// render body writes itself, so it is dropped rather than stored, and
+// its entry leaves the node's `$slotOrder` draft with it.
 // Assumes T itself is never an array type — slot elements are node unions.
 function dropWireDelimiters<T>(
 	value: T | readonly (T | _WireDelimiter)[] | undefined,
-	separatorKindIds: readonly number[]
+	separatorKindIds: readonly number[],
+	order: string[] | undefined,
+	slot: string
 ): T | readonly T[] | undefined {
 	const isSlotList = (v: T | readonly (T | _WireDelimiter)[]): v is readonly (T | _WireDelimiter)[] => Array.isArray(v);
 	if (value == null) return undefined;
-	if (!isSlotList(value)) return _isWireDelimiter(value, separatorKindIds) ? undefined : value;
-	return value.filter((e): e is T => !_isWireDelimiter(e, separatorKindIds));
+	if (!isSlotList(value)) {
+		if (!_isWireDelimiter(value, separatorKindIds)) return value;
+		_dropOrderEntry(order, slot, 0);
+		return undefined;
+	}
+	let kept = 0;
+	return value.filter((e): e is T => {
+		if (!_isWireDelimiter(e, separatorKindIds)) return (kept++, true);
+		_dropOrderEntry(order, slot, kept);
+		return false;
+	});
 }
 
 export function wrapSourceFile(data: T.SourceFile, tree: TreeHandle): T.SourceFile.Parsed {
@@ -3722,11 +3739,12 @@ export function wrapAssociatedType(data: T.AssociatedType, tree: TreeHandle): T.
 
 export function wrapTraitBounds(data: T.TraitBounds, tree: TreeHandle): T.TraitBounds.Parsed {
 	data = _keepModelledSlots(data, ['_bounds']);
+	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.TraitBounds as const,
 		_bounds: projectMixedEnumStorage(
-			normalizeRepeatedWrapSlot(dropWireDelimiters(data._bounds, [TSKindId.Plus]), true, 'bounds', {
+			normalizeRepeatedWrapSlot(dropWireDelimiters(data._bounds, [TSKindId.Plus], _order, 'bounds'), true, 'bounds', {
 				tree,
 				nodeType: data.$type,
 				slotName: 'bounds',
@@ -3755,6 +3773,7 @@ export function wrapTraitBounds(data: T.TraitBounds, tree: TreeHandle): T.TraitB
 			undefined,
 			[341]
 		),
+		...(_order && { $slotOrder: _order }),
 
 		bounds() {
 			return drillInAll<T.Type | T.Lifetime | T.HigherRankedTraitBound>(
@@ -7855,6 +7874,7 @@ export function wrapLetCondition(data: T.LetCondition, tree: TreeHandle): T.LetC
 
 export function wrapLetChain(data: T.LetChain, tree: TreeHandle): T.LetChain.Parsed {
 	data = _keepModelledSlots(data, ['_left', '_right']);
+	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.LetChain as const,
@@ -7870,7 +7890,7 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle): T.LetChain.Par
 			[336]
 		),
 		_right: projectMixedEnumStorage(
-			normalizeRepeatedWrapSlot(dropWireDelimiters(data._right, [TSKindId.AmpAmp]), false, 'right', {
+			normalizeRepeatedWrapSlot(dropWireDelimiters(data._right, [TSKindId.AmpAmp], _order, 'right'), false, 'right', {
 				tree,
 				nodeType: data.$type,
 				slotName: 'right',
@@ -7880,6 +7900,7 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle): T.LetChain.Par
 			undefined,
 			[336]
 		),
+		...(_order && { $slotOrder: _order }),
 
 		left() {
 			return drillIn<T.LetChain | T.LetCondition | T.Expression>(this._left, tree);
@@ -8596,20 +8617,22 @@ export function wrapClosureExpression(
 
 export function wrapClosureParameters(data: T.ClosureParameters, tree: TreeHandle): T.ClosureParameters.Parsed {
 	data = _keepModelledSlots(data, ['_parameters']);
+	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.ClosureParameters as const,
 		_parameters: projectMixedEnumStorage(
-			normalizeRepeatedWrapSlot(dropWireDelimiters(data._parameters, [TSKindId.Comma]), false, 'parameters', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'parameters',
-				span: (data as _NodeData).$span
-			}),
+			normalizeRepeatedWrapSlot(
+				dropWireDelimiters(data._parameters, [TSKindId.Comma], _order, 'parameters'),
+				false,
+				'parameters',
+				{ tree, nodeType: data.$type, slotName: 'parameters', span: (data as _NodeData).$span }
+			),
 			{ true: 118, false: 119, '..': 321, _: 424 },
 			undefined,
 			[336]
 		),
+		...(_order && { $slotOrder: _order }),
 
 		parameters() {
 			return drillInAll<T.Pattern | T.Parameter>(

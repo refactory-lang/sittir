@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "bce598750d6326dd2990031f516e2894b37d0fe6851283363687c6d547b9e48f",
+  "source_hash": "8a9bf3cc4543183575e514c964f2177dc4cb6af05eb908703794a084cfd8b008",
   "files": {
     "packages/rust/.sittir/grammar-diagnostics.json": "4f2eae23a0cd0db71d1991ea88120a426881fdbb2609eeab9cad6033ae64ef26",
     "packages/rust/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -37,7 +37,7 @@
     "packages/rust/src/types-internal.ts": "9f7fc0eb046ab9d535e7316e6ce0bb0612d1b6ef80f08ce9f2d6a600c48b8e52",
     "packages/rust/src/types.ts": "807f1042af2c7cdae6511eabd85f3a4e5a789da9336e9cef06f4c916624bf2c1",
     "packages/rust/src/utils.ts": "0000d9e0bee6e440458a19894f7569d62eab1e58cf408c12f8fefa196a0cfa1b",
-    "packages/rust/src/wrap.ts": "19bc4540e3cf626bf10757beefc531894d74acae2a3f9c924bd6785eb9da1c28",
+    "packages/rust/src/wrap.ts": "9e7209867bb022411cdcc1a2632a55a482f5476b48db472128814c5667b8903d",
     "rust/crates/sittir-rust/index.d.ts": "7fc441cd853964292476bd52287fbd77a8ccf82f2c1090fbe06ce3dfab9ae5ff",
     "rust/crates/sittir-rust/index.js": "65870d2849ecee2c83c421e32039918e09f25dfe01828f8cea710a7e31e5a48d",
     "rust/crates/sittir-rust/src/lib.rs": "b600e788542bb04e8a08f851b600813d5d8250e3ab8a0694a25377f491095cc2",

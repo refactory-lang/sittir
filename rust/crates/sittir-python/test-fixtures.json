@@ -73196,7 +73196,6 @@
               "$slotOrder": [
                 "left",
                 "right",
-                "right",
                 "right"
               ]
             },
@@ -73763,7 +73762,6 @@
             ],
             "$slotOrder": [
               "left",
-              "right",
               "right",
               "right"
             ]

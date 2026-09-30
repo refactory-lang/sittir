@@ -914,19 +914,36 @@ function _isWireDelimiter(e: unknown, separatorKindIds: readonly number[]): e is
 	return false;
 }
 
-// A `many` slot with a separator fact whose separator the parser
-// field-tagged into the slot: the render body re-joins the slot
-// with its own separator, so the wire delimiter is dropped rather
-// than stored.
+function _dropOrderEntry(order: string[] | undefined, slot: string, occurrence: number): void {
+	if (order === undefined) return;
+	let seen = 0;
+	const at = order.findIndex((name) => name === slot && seen++ === occurrence);
+	if (at >= 0) order.splice(at, 1);
+}
+
+// A delimiter the parser field-tagged into a slot is punctuation the
+// render body writes itself, so it is dropped rather than stored, and
+// its entry leaves the node's `$slotOrder` draft with it.
 // Assumes T itself is never an array type — slot elements are node unions.
 function dropWireDelimiters<T>(
 	value: T | readonly (T | _WireDelimiter)[] | undefined,
-	separatorKindIds: readonly number[]
+	separatorKindIds: readonly number[],
+	order: string[] | undefined,
+	slot: string
 ): T | readonly T[] | undefined {
 	const isSlotList = (v: T | readonly (T | _WireDelimiter)[]): v is readonly (T | _WireDelimiter)[] => Array.isArray(v);
 	if (value == null) return undefined;
-	if (!isSlotList(value)) return _isWireDelimiter(value, separatorKindIds) ? undefined : value;
-	return value.filter((e): e is T => !_isWireDelimiter(e, separatorKindIds));
+	if (!isSlotList(value)) {
+		if (!_isWireDelimiter(value, separatorKindIds)) return value;
+		_dropOrderEntry(order, slot, 0);
+		return undefined;
+	}
+	let kept = 0;
+	return value.filter((e): e is T => {
+		if (!_isWireDelimiter(e, separatorKindIds)) return (kept++, true);
+		_dropOrderEntry(order, slot, kept);
+		return false;
+	});
 }
 
 export function wrapModule(data: T.Module, tree: TreeHandle): T.Module.Parsed {
@@ -1294,18 +1311,20 @@ export function wrapChevron(data: T.Chevron, tree: TreeHandle): T.Chevron.Parsed
 
 export function wrapAssertStatement(data: T.AssertStatement, tree: TreeHandle): T.AssertStatement.Parsed {
 	data = _keepModelledSlots(data, ['_expression']);
+	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.AssertStatement as const,
 		_expression: projectMixedEnumStorage(
-			normalizeRepeatedWrapSlot(dropWireDelimiters(data._expression, [TSKindId.Comma]), true, 'expression', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'expression',
-				span: (data as _NodeData).$span
-			}),
+			normalizeRepeatedWrapSlot(
+				dropWireDelimiters(data._expression, [TSKindId.Comma], _order, 'expression'),
+				true,
+				'expression',
+				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
+			),
 			{ True: 71, False: 72, None: 73, '...': 64 }
 		),
+		...(_order && { $slotOrder: _order }),
 
 		expressions() {
 			return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree);
@@ -2337,15 +2356,17 @@ export function wrapDictionarySplat(data: T.DictionarySplat, tree: TreeHandle): 
 
 export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle): T.GlobalStatement.Parsed {
 	data = _keepModelledSlots(data, ['_names']);
+	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.GlobalStatement as const,
-		_names: normalizeRepeatedWrapSlot(dropWireDelimiters(data._names, [TSKindId.Comma]), true, 'names', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'names',
-			span: (data as _NodeData).$span
-		}),
+		_names: normalizeRepeatedWrapSlot(
+			dropWireDelimiters(data._names, [TSKindId.Comma], _order, 'names'),
+			true,
+			'names',
+			{ tree, nodeType: data.$type, slotName: 'names', span: (data as _NodeData).$span }
+		),
+		...(_order && { $slotOrder: _order }),
 
 		names() {
 			return drillInAll<T.Identifier>(this._names as readonly T.Identifier[] | undefined, tree);
@@ -2360,15 +2381,17 @@ export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle): 
 
 export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandle): T.NonlocalStatement.Parsed {
 	data = _keepModelledSlots(data, ['_names']);
+	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.NonlocalStatement as const,
-		_names: normalizeRepeatedWrapSlot(dropWireDelimiters(data._names, [TSKindId.Comma]), true, 'names', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'names',
-			span: (data as _NodeData).$span
-		}),
+		_names: normalizeRepeatedWrapSlot(
+			dropWireDelimiters(data._names, [TSKindId.Comma], _order, 'names'),
+			true,
+			'names',
+			{ tree, nodeType: data.$type, slotName: 'names', span: (data as _NodeData).$span }
+		),
+		...(_order && { $slotOrder: _order }),
 
 		names() {
 			return drillInAll<T.Identifier>(this._names as readonly T.Identifier[] | undefined, tree);
@@ -2383,6 +2406,7 @@ export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandl
 
 export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle): T.ExecStatement.Parsed {
 	data = _keepModelledSlots(data, ['_code', '_in_clause']);
+	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.ExecStatement as const,
@@ -2393,14 +2417,15 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle): T.Ex
 			span: (data as _NodeData).$span
 		}),
 		_in_clause: projectMixedEnumStorage(
-			normalizeRepeatedWrapSlot(dropWireDelimiters(data._in_clause, [TSKindId.Comma]), false, 'in_clause', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'in_clause',
-				span: (data as _NodeData).$span
-			}),
+			normalizeRepeatedWrapSlot(
+				dropWireDelimiters(data._in_clause, [TSKindId.Comma], _order, 'in_clause'),
+				false,
+				'in_clause',
+				{ tree, nodeType: data.$type, slotName: 'in_clause', span: (data as _NodeData).$span }
+			),
 			{ True: 71, False: 72, None: 73, '...': 64 }
 		),
+		...(_order && { $slotOrder: _order }),
 
 		code() {
 			return drillIn<T.String | T.Identifier>(this._code, tree);
@@ -2724,15 +2749,17 @@ export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle): T.
 
 export function wrapDottedName(data: T.DottedName, tree: TreeHandle): T.DottedName.Parsed {
 	data = _keepModelledSlots(data, ['_names']);
+	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.DottedName as const,
-		_names: normalizeRepeatedWrapSlot(dropWireDelimiters(data._names, [TSKindId.Dot]), true, 'names', {
+		_names: normalizeRepeatedWrapSlot(dropWireDelimiters(data._names, [TSKindId.Dot], _order, 'names'), true, 'names', {
 			tree,
 			nodeType: data.$type,
 			slotName: 'names',
 			span: (data as _NodeData).$span
 		}),
+		...(_order && { $slotOrder: _order }),
 
 		names() {
 			return drillInAll<T.Identifier>(this._names as readonly T.Identifier[] | undefined, tree);
@@ -2868,19 +2895,21 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.Unio
 	data = _keepModelledSlots(data, ['_patterns']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.UnionPattern as const }) as unknown as T.UnionPattern.Parsed;
+	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.UnionPattern as const,
 		_patterns: projectMixedEnumStorage(
-			normalizeRepeatedWrapSlot(dropWireDelimiters(data._patterns, [TSKindId.Pipe]), true, 'patterns', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'patterns',
-				span: (data as _NodeData).$span
-			}),
+			normalizeRepeatedWrapSlot(
+				dropWireDelimiters(data._patterns, [TSKindId.Pipe], _order, 'patterns'),
+				true,
+				'patterns',
+				{ tree, nodeType: data.$type, slotName: 'patterns', span: (data as _NodeData).$span }
+			),
 			{ True: 71, False: 72, None: 73, _: 279 },
 			{ 48: 279 }
 		),
+		...(_order && { $slotOrder: _order }),
 
 		patterns() {
 			return drillInAll<
@@ -5641,6 +5670,7 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 	data = _keepModelledSlots(data, ['_async_marker', '_left', '_right', '_comma']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ForInClause as const }) as unknown as T.ForInClause.Parsed;
+	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.ForInClause as const,
@@ -5659,7 +5689,7 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 			span: (data as _NodeData).$span
 		}),
 		_right: projectMixedEnumStorage(
-			normalizeRepeatedWrapSlot(dropWireDelimiters(data._right, [TSKindId.Comma]), true, 'right', {
+			normalizeRepeatedWrapSlot(dropWireDelimiters(data._right, [TSKindId.Comma], _order, 'right'), true, 'right', {
 				tree,
 				nodeType: data.$type,
 				slotName: 'right',
@@ -5675,6 +5705,7 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 				span: (data as _NodeData).$span
 			})
 		),
+		...(_order && { $slotOrder: _order }),
 
 		asyncMarker() {
 			return this._async_marker;
@@ -7590,11 +7621,12 @@ export function wrapExceptClauseExceptionList(
 	tree: TreeHandle
 ): T.ExceptClauseExceptionList.Parsed {
 	data = _keepModelledSlots(data, ['_value']);
+	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.ExceptClauseExceptionList as const,
 		_value: projectMixedEnumStorage(
-			normalizeRepeatedWrapSlot(dropWireDelimiters(data._value, [TSKindId.Comma]), true, 'value', {
+			normalizeRepeatedWrapSlot(dropWireDelimiters(data._value, [TSKindId.Comma], _order, 'value'), true, 'value', {
 				tree,
 				nodeType: data.$type,
 				slotName: 'value',
@@ -7602,6 +7634,7 @@ export function wrapExceptClauseExceptionList(
 			}),
 			{ True: 71, False: 72, None: 73, '...': 64 }
 		),
+		...(_order && { $slotOrder: _order }),
 
 		values() {
 			return drillInAll<T.Expression>(this._value as readonly T.Expression[] | undefined, tree);

@@ -182,13 +182,13 @@ function resolveSlotDrillExprs(
 		const allowedArg =
 			config.allowedKinds && config.allowedKinds.length > 0 ? JSON.stringify(config.allowedKinds) : 'undefined';
 		return {
-			storeExpr: `splitElidedWrapSlot(${rawStoreExpr}, ${config.separatorIdsExpr}, ${allowedArg})`,
+			storeExpr: `splitElidedWrapSlot(${rawStoreExpr}, ${config.separatorIdsExpr}, ${allowedArg}, _order, ${JSON.stringify(slotOrderName(slot))})`,
 			accessorBody: resolveSlotAccessorBody(slot, `${config.elemType} | undefined`)
 		};
 	}
 	const slotStoreExpr =
 		config.separatorIdsExpr !== undefined
-			? `dropWireDelimiters(${rawStoreExpr}, ${config.separatorIdsExpr})`
+			? `dropWireDelimiters(${rawStoreExpr}, ${config.separatorIdsExpr}, _order, ${JSON.stringify(slotOrderName(slot))})`
 			: rawStoreExpr;
 	const filteredStoreExpr =
 		config.allowedKinds && config.allowedKinds.length > 0
@@ -405,6 +405,7 @@ function emitSeparatedListWrap(
 		forceUnknownElement: node.slots.length > 1
 	});
 	lines.push(`  const _content = ${storeExpr};`);
+	if (node.slots.length > 1) emitSlotOrderDraftLine(node.slots, node.kind, lines, kindEntries, nodeMap);
 	lines.push('  return withMethods({');
 	lines.push('    ...data,');
 	if (kindEntries) {
@@ -530,6 +531,31 @@ function emitFieldStorageLines(
 		});
 		lines.push(`    ${f.storageKey}: ${storeExpr},`);
 	}
+	if (dropsDelimiters(slots, ownerKind, kindEntries, nodeMap)) lines.push('    ...(_order && { $slotOrder: _order }),');
+}
+
+function slotOrderName(slot: SlotModel): string {
+	return slot.storageKey.slice(1);
+}
+
+function dropsDelimiters(
+	slots: readonly AssembledNonterminal[],
+	ownerKind: string,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): boolean {
+	const owner = nodeMap.nodes.get(ownerKind);
+	return slots.some((f) => separatorIdsExprOf(f, owner, kindEntries, hasOptionalElements(f)) !== undefined);
+}
+
+function emitSlotOrderDraftLine(
+	slots: readonly AssembledNonterminal[],
+	ownerKind: string,
+	lines: string[],
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	nodeMap: NodeMap
+): void {
+	if (dropsDelimiters(slots, ownerKind, kindEntries, nodeMap)) lines.push('  const _order = (data as _NodeData).$slotOrder?.slice();');
 }
 
 function separatorIdsExprOf(
@@ -637,6 +663,7 @@ function emitFieldCarryingWrap(
 
 	const ownerSpec = listOwnerRuntimeSpec(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries, 'RAW.');
 	const ownerOpen = ownerSpec === undefined ? '' : 'withListOwner(';
+	emitSlotOrderDraftLine(slots, node.kind, lines, kindEntries, nodeMap);
 	lines.push(hasWithSetters ? `  const _node = withMethods(${ownerOpen}{` : `  return withMethods(${ownerOpen}{`);
 	lines.push('    ...data,');
 	if (kindEntries) {
@@ -1365,25 +1392,42 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    return stub.$named === false && typeof stub.$type === "number" && separatorKindIds.includes(stub.$type);',
 						'  }',
 						'  return false;',
+						'}',
+						'',
+						'function _dropOrderEntry(order: string[] | undefined, slot: string, occurrence: number): void {',
+						'  if (order === undefined) return;',
+						'  let seen = 0;',
+						'  const at = order.findIndex((name) => name === slot && seen++ === occurrence);',
+						'  if (at >= 0) order.splice(at, 1);',
 						'}'
 					]
 				: []),
 			...(usesDropWireDelimiters
 				? [
 						'',
-						'// A `many` slot with a separator fact whose separator the parser',
-						'// field-tagged into the slot: the render body re-joins the slot',
-						'// with its own separator, so the wire delimiter is dropped rather',
-						'// than stored.',
+						'// A delimiter the parser field-tagged into a slot is punctuation the',
+						'// render body writes itself, so it is dropped rather than stored, and',
+						'// its entry leaves the node\'s `$slotOrder` draft with it.',
 						'// Assumes T itself is never an array type — slot elements are node unions.',
 						'function dropWireDelimiters<T>(',
 						'  value: T | readonly (T | _WireDelimiter)[] | undefined,',
-						'  separatorKindIds: readonly number[]',
+						'  separatorKindIds: readonly number[],',
+						'  order: string[] | undefined,',
+						'  slot: string',
 						'): T | readonly T[] | undefined {',
 						'  const isSlotList = (v: T | readonly (T | _WireDelimiter)[]): v is readonly (T | _WireDelimiter)[] => Array.isArray(v);',
 						'  if (value == null) return undefined;',
-						'  if (!isSlotList(value)) return _isWireDelimiter(value, separatorKindIds) ? undefined : value;',
-						'  return value.filter((e): e is T => !_isWireDelimiter(e, separatorKindIds));',
+						'  if (!isSlotList(value)) {',
+						'    if (!_isWireDelimiter(value, separatorKindIds)) return value;',
+						'    _dropOrderEntry(order, slot, 0);',
+						'    return undefined;',
+						'  }',
+						'  let kept = 0;',
+						'  return value.filter((e): e is T => {',
+						'    if (!_isWireDelimiter(e, separatorKindIds)) return (kept++, true);',
+						'    _dropOrderEntry(order, slot, kept);',
+						'    return false;',
+						'  });',
 						'}'
 					]
 				: []),
@@ -1400,7 +1444,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'function splitElidedWrapSlot<T>(',
 						'  value: T | readonly (T | _WireDelimiter | undefined)[] | undefined,',
 						'  separatorKindIds: readonly number[],',
-						'  allowedKinds: readonly string[] | undefined',
+						'  allowedKinds: readonly string[] | undefined,',
+						'  order: string[] | undefined,',
+						'  slot: string',
 						'): readonly (T | undefined)[] {',
 						'  // Assumes T itself is never an array type — slot elements are node unions.',
 						'  const isSlotList = (v: T | readonly (T | _WireDelimiter | undefined)[]): v is readonly (T | _WireDelimiter | undefined)[] => Array.isArray(v);',
@@ -1417,11 +1463,14 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  }',
 						'  const positions: (T | undefined)[] = [];',
 						'  let segment: (T | undefined)[] = [];',
+						'  let kept = 0;',
 						'  for (const entry of items) {',
 						'    if (isDelimiter(entry)) {',
+						'      _dropOrderEntry(order, slot, kept);',
 						'      positions.push(keepFirst(segment));',
 						'      segment = [];',
 						'    } else {',
+						'      kept++;',
 						'      segment.push(entry);',
 						'    }',
 						'  }',
