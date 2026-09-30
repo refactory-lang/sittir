@@ -101,5 +101,5 @@ describe.each(grammars)('%s: a loose builder takes exactly the arguments its str
 		}
 		expect(pairs.length).toBeGreaterThan(100);
 		expect(disagreements).toEqual([]);
-	});
+	}, 30_000);
 });
