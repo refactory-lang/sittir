@@ -20,9 +20,8 @@
 //! - `$other`   — child entries with NO field name. Materialized leaf
 //!   children are scalarized on the wire only for anonymous/token leaves;
 //!   named leaves and branch children remain objects.
-//! - `$text`       — source text for anonymous tokens and for the kinds the
-//!   grammar models as text (`ReadModel::is_text_kind`); every other node is
-//!   addressed by its span.
+//! - `$text`       — non-empty source text for anonymous tokens, error nodes
+//!   and childless nodes; a node with children is addressed by its span.
 //! - `$span`       — `{start, end}` from `node.byte_range()`.
 //! - `$nodeHandle` — current node handle on the returned node; parent
 //!   handle on every child of a shallow read (stubs and leaves alike), so
@@ -58,11 +57,6 @@ pub enum ReadDepth {
 /// reader is otherwise grammar-agnostic; every fact here is generated from
 /// the model and stamped, never re-derived from a node's shape.
 pub trait ReadModel {
-    /// Whether a named node of this kind is captured as text: its template
-    /// renders from that text, so the text is the node's content and not a
-    /// spelling the template could rebuild.
-    fn is_text_kind(&self, kind: KindId) -> bool;
-
     /// The model slot a child of a `parent` node is stored under, when its
     /// name differs from the key the parser gives the child: a field-tagged
     /// child by its field, a named child without a field by its kind name.
@@ -203,7 +197,7 @@ fn read_ts_node(
         read_children(node, source, node_handle, tree_handle, depth, model)
     };
 
-    let text = node_text(node, source, model);
+    let text = node_text(node, source);
 
     NodeData {
         type_: kind,
@@ -485,7 +479,7 @@ fn read_children(
             continue;
         }
         let field_name = node.field_name_for_child(i).map(|s| s.to_string());
-        let data = if child.child_count() == 0 {
+        let data = if is_leaf(&child) {
             // A leaf keeps a coordinate at either depth. Under a shallow read
             // it is a child like any stub — the parent's handle and its index,
             // which the wrap layer may re-read. Under a deep read nothing is
@@ -503,12 +497,12 @@ fn read_children(
             };
             NodeData {
                 trivia_data,
-                ..read_materialized_leaf(child, source, model, handle, child_index)
+                ..read_materialized_leaf(child, source, model, handle, child_index, tree_handle)
             }
         } else {
             match depth {
                 ReadDepth::Shallow => {
-                    read_child_stub(child, source, node_handle, i as u16, model)
+                    read_child_stub(child, source, node_handle, i as u16)
                 }
                 ReadDepth::Deep => NodeData {
                     child_index: Some(i as u16),
@@ -570,29 +564,22 @@ fn read_children(
     (fields, children, slot_order)
 }
 
-/// Whether a node's bytes are its content. Text is content for anonymous
-/// tokens and for the kinds whose template renders from it; every other
-/// node is addressed by its span. A node has two identities the model may
-/// know: the production that parsed it (`stamped_kind`) and the kind it is
-/// shown as (`kind_id`, the alias target) — `print` used as an identifier
-/// parses as its own symbol and is shown as `identifier`, and it is the
-/// identifier's transport that takes the text.
-fn carries_text(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
-    !node.is_named()
-        || node.is_error()
-        || model.is_text_kind(stamped_kind(node))
-        || model.is_text_kind(KindId(node.kind_id()))
+/// Whether a node's bytes are its content: an anonymous token, an error, or
+/// a node with no children to address them.
+fn carries_text(node: &tree_sitter::Node<'_>) -> bool {
+    !node.is_named() || node.is_error() || node.child_count() == 0
 }
 
 /// The text a node carries: its bytes when `carries_text`, nothing otherwise.
 /// An anonymous token spelled exactly as its kind name carries none: its kind
-/// id already names the text.
-fn node_text(node: tree_sitter::Node<'_>, source: &str, model: &dyn ReadModel) -> Option<String> {
-    if !carries_text(&node, model) {
+/// id already names the text. A zero-width node carries none: its span says
+/// it is empty.
+fn node_text(node: tree_sitter::Node<'_>, source: &str) -> Option<String> {
+    if !carries_text(&node) {
         return None;
     }
     let text = source.get(node.byte_range())?;
-    if !node.is_named() && !node.is_error() && text == node.kind() {
+    if text.is_empty() || (!node.is_named() && !node.is_error() && text == node.kind()) {
         return None;
     }
     Some(text.to_string())
@@ -603,7 +590,6 @@ fn read_child_stub(
     source: &str,
     parent_handle: Option<u64>,
     child_index: u16,
-    model: &dyn ReadModel,
 ) -> NodeData {
     let byte_range = child.byte_range();
     let (type_, display_type) = identity(&child);
@@ -614,7 +600,7 @@ fn read_child_stub(
         named: child.is_named(),
         fields: None,
         children: None,
-        text: node_text(child, source, model),
+        text: node_text(child, source),
         span: Some(Span {
             start: byte_range.start as u32,
             end: byte_range.end as u32,
@@ -628,23 +614,36 @@ fn read_child_stub(
     }
 }
 
+/// Whether a node is read whole wherever it is reached: it has no named
+/// child, so nothing in it is substructure a later read would expand. Its
+/// anonymous tokens, if any, come with it.
+fn is_leaf(node: &tree_sitter::Node<'_>) -> bool {
+    node.named_child_count() == 0
+}
+
 fn read_materialized_leaf(
     child: tree_sitter::Node<'_>,
     source: &str,
     model: &dyn ReadModel,
     handle: Option<u64>,
     child_index: Option<u16>,
+    tree_handle: Option<u64>,
 ) -> NodeData {
     let byte_range = child.byte_range();
     let (type_, display_type) = identity(&child);
+    let (fields, children, slot_order) = if child.is_error() || child.child_count() == 0 {
+        (None, None, None)
+    } else {
+        read_children(child, source, None, tree_handle, ReadDepth::Deep, model)
+    };
     NodeData {
         type_,
         display_type,
         source: Source::Ts,
         named: child.is_named(),
-        fields: None,
-        children: None,
-        text: node_text(child, source, model),
+        fields,
+        children,
+        text: node_text(child, source),
         span: Some(Span {
             start: byte_range.start as u32,
             end: byte_range.end as u32,
@@ -652,7 +651,7 @@ fn read_materialized_leaf(
         node_handle: handle,
         child_index,
         trivia_data: None,
-        slot_order: None,
+        slot_order,
         same_line: false,
         tokens_between: 0,
     }

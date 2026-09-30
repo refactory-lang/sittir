@@ -1,6 +1,6 @@
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { modelKindOfEntry, type GeneratedIdTables, type KindEntryLike } from '../dsl/symbol-table.ts';
+import type { GeneratedIdTables, KindEntryLike } from '../dsl/symbol-table.ts';
 import { AbstractAssembledCompound } from '../compiler/model/node-map.ts';
 import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
 import { wireRoutesOf } from './shared.ts';
@@ -54,26 +54,6 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push(`    }`);
 	lines.push(`}`);
 
-	const textKindIds = [
-		...new Set(
-			entries
-				.filter((entry) => {
-					const node = nodeMap.nodes.get(modelKindOfEntry(entry, entries));
-					return (
-						node?.modelType === 'pattern' ||
-						node?.modelType === 'enum' ||
-						(node instanceof AbstractAssembledCompound && node.lexedInterior)
-					);
-				})
-				.map((entry) => entry.id)
-		)
-	].sort((a, b) => a - b);
-	lines.push('');
-	lines.push('/// Whether the reader captures a named node of this kind as text: its');
-	lines.push("/// template renders from that text, so the text is the node's content —");
-	lines.push('/// free text for a pattern kind, the literal it holds for an enum kind.');
-	lines.push(...kindIdSetFn('is_text_kind', textKindIds));
-
 	lines.push('');
 	lines.push('/// The model slot a child is stored under where its name differs from the');
 	lines.push("/// parser's key: a field-tagged child by (parent kind id, field), a named");
@@ -120,12 +100,6 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('');
 
 	return lines.join('\n');
-}
-
-function kindIdSetFn(name: string, ids: readonly number[]): string[] {
-	return ids.length === 0
-		? [`pub fn ${name}(_kind: KindId) -> bool {`, '    false', '}']
-		: [`pub fn ${name}(kind: KindId) -> bool {`, `    matches!(kind.0, ${ids.join(' | ')})`, '}'];
 }
 
 interface InnerGapRow {

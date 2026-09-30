@@ -476,11 +476,7 @@ mod tests {
     #[derive(Clone, Copy)]
     struct TestGrammar;
 
-    impl ReadModel for TestGrammar {
-        fn is_text_kind(&self, _: crate::types::KindId) -> bool {
-            true
-        }
-    }
+    impl ReadModel for TestGrammar {}
 
     impl EngineGrammar for TestGrammar {
         fn configure_parser(

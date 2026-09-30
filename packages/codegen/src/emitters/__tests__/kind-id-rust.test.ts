@@ -27,25 +27,6 @@ async function emittedKindIds(grammar: GrammarName) {
 	return { source: emitKindIdRust({ grammar, nodeMap, generatedIdTables }), idOf };
 }
 
-describe('is_text_kind', () => {
-	it('names every pattern and enum kind and no token kind', async () => {
-		const { source, idOf } = await emittedKindIds('rust');
-		expect(source).toContain('pub fn is_text_kind(kind: KindId) -> bool {');
-		const arms = source.slice(source.indexOf('pub fn is_text_kind'));
-		const ids = new Set(
-			(arms.slice(arms.indexOf('matches!(kind.0,'), arms.indexOf(')\n}')).match(/\d+/g) ?? []).map(Number)
-		);
-		// identifier is `pattern`-modeled: free text with nothing else to render from.
-		expect(ids.has(idOf('identifier'))).toBe(true);
-		// fragment_specifier is `enum`-modeled: its content is which literal it holds.
-		expect(ids.has(idOf('fragment_specifier'))).toBe(true);
-		// mutable_specifier is `token`-modeled: it renders its declared literal.
-		expect(ids.has(idOf('mutable_specifier'))).toBe(false);
-		// function_item is a branch: it rebuilds from its slots.
-		expect(ids.has(idOf('function_item'))).toBe(false);
-	});
-});
-
 describe('wire_slot', () => {
 	it('routes an untagged child by its kind to the model slot that stores it', async () => {
 		const { source, idOf } = await emittedKindIds('typescript');

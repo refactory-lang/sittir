@@ -15,22 +15,9 @@ use serde_json::Value;
 use sittir_core::read_node::{read_node, ReadDepth, ReadModel};
 use sittir_core::types::{KindId, NodeData, Source};
 
-/// Every kind is a text kind: the pre-gate behaviour, for the cases that
-/// assert on it.
-struct AllText;
-impl ReadModel for AllText {
-    fn is_text_kind(&self, _kind: KindId) -> bool {
-        true
-    }
-}
-
-/// Only the kinds named here are text kinds.
-struct TextKinds(Vec<u16>);
-impl ReadModel for TextKinds {
-    fn is_text_kind(&self, kind: KindId) -> bool {
-        self.0.contains(&kind.0)
-    }
-}
+/// A model with no grammar facts: the reader's own rules only.
+struct Plain;
+impl ReadModel for Plain {}
 
 /// Recursively assert that every object-shaped JSON node in `value`
 /// (matching the NodeData wire shape) has only keys in
@@ -80,7 +67,7 @@ fn parse_and_read(language: tree_sitter::Language, source: &str) -> NodeData {
     let mut parser = tree_sitter::Parser::new();
     parser.set_language(&language).expect("set language");
     let tree = parser.parse(source, None).expect("parse succeeds");
-    read_node(&tree, source, None, Some(0), ReadDepth::Shallow, &AllText)
+    read_node(&tree, source, None, Some(0), ReadDepth::Shallow, &Plain)
 }
 
 fn parse_tree(language: tree_sitter::Language, source: &str) -> tree_sitter::Tree {
@@ -180,7 +167,7 @@ fn anonymous_leaf_children_do_not_invent_fields() {
         Some(params),
         Some(0),
         ReadDepth::Shallow,
-        &TextKinds(vec![]),
+        &Plain,
     );
     let json = serde_json::to_value(&node).expect("serialize");
     let params = json.as_object().expect("closure_parameters object");
@@ -203,23 +190,18 @@ fn anonymous_leaf_children_do_not_invent_fields() {
 }
 
 #[test]
-fn structural_nodes_carry_a_span_and_no_text_while_text_kinds_keep_theirs() {
+fn a_node_with_children_carries_no_text_while_a_childless_one_keeps_its_own() {
     let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
     let source = "fn main() { let x = 1; }";
     let tree = parse_tree(lang, source);
-    let identifier = tree.language().id_for_node_kind("identifier", true);
-    let model = TextKinds(vec![identifier]);
-    let root = read_node(&tree, source, None, Some(0), ReadDepth::Deep, &model);
+    let root = read_node(&tree, source, None, Some(0), ReadDepth::Deep, &Plain);
     let json = serde_json::to_value(&root).expect("serialize");
 
-    fn walk(v: &Value, seen: &mut Vec<(u16, bool, bool)>) {
+    fn walk(v: &Value, seen: &mut Vec<(u16, bool, bool, bool)>) {
         if let Some(map) = v.as_object() {
             if let Some(t) = map.get("$type").and_then(Value::as_u64) {
-                seen.push((
-                    t as u16,
-                    map.contains_key("$text"),
-                    map.contains_key("$span"),
-                ));
+                let has_children = map.keys().any(|k| k.starts_with('_') || k == "$other");
+                seen.push((t as u16, map.contains_key("$text"), map.contains_key("$span"), has_children));
             }
             for (k, child) in map {
                 if k.starts_with('_') || k == "$other" {
@@ -234,55 +216,45 @@ fn structural_nodes_carry_a_span_and_no_text_while_text_kinds_keep_theirs() {
     }
     let mut seen = Vec::new();
     walk(&json, &mut seen);
+    let named = |t: u16| tree.language().node_kind_is_named(t);
 
-    let named_structural: Vec<_> = seen
-        .iter()
-        .filter(|(t, _, _)| *t != identifier && tree.language().node_kind_is_named(*t))
-        .collect();
-    assert!(!named_structural.is_empty());
-    assert!(
-        named_structural
-            .iter()
-            .all(|(_, has_text, has_span)| !has_text && *has_span),
-        "{seen:?}"
-    );
-    assert!(seen
-        .iter()
-        .filter(|(t, _, _)| *t == identifier)
-        .all(|(_, has_text, _)| *has_text));
+    let with_children: Vec<_> = seen.iter().filter(|(t, _, _, kids)| named(*t) && *kids).collect();
+    assert!(!with_children.is_empty());
+    assert!(with_children.iter().all(|(_, has_text, has_span, _)| !has_text && *has_span), "{seen:?}");
+    let childless: Vec<_> = seen.iter().filter(|(t, _, _, kids)| named(*t) && !*kids).collect();
+    assert!(!childless.is_empty());
+    assert!(childless.iter().all(|(_, has_text, _, _)| *has_text), "{seen:?}");
     // Every anonymous token here is spelled as its kind name, so its kind id
     // alone names it.
-    let anonymous: Vec<_> = seen
-        .iter()
-        .filter(|(t, _, _)| !tree.language().node_kind_is_named(*t))
-        .collect();
+    let anonymous: Vec<_> = seen.iter().filter(|(t, _, _, _)| !named(*t)).collect();
     assert!(!anonymous.is_empty());
-    assert!(
-        anonymous.iter().all(|(_, has_text, _)| !*has_text),
-        "{seen:?}"
-    );
+    assert!(anonymous.iter().all(|(_, has_text, _, _)| !*has_text), "{seen:?}");
 }
 
 #[test]
-fn an_aliased_node_keeps_its_text_when_either_identity_is_a_text_kind() {
+fn a_named_node_spelled_by_a_token_carries_no_text_of_its_own() {
+    let lang: tree_sitter::Language = tree_sitter_typescript::LANGUAGE_TYPESCRIPT.into();
+    let source = "let x: number;";
+    let tree = parse_tree(lang, source);
+    let predefined = find_first_ts_node_by_kind(tree.root_node(), "predefined_type").expect("predefined_type");
+    assert_eq!(predefined.child_count(), 1, "the parser shows `number` as a token under it");
+    let node = read_node(&tree, source, Some(predefined), None, ReadDepth::Deep, &Plain);
+    let json = serde_json::to_value(&node).expect("serialize");
+    assert!(json.get("$text").is_none(), "{json}");
+    let token = json.get("$other").and_then(Value::as_array).and_then(|other| other.first()).expect("the token");
+    assert!(token.get("$text").is_none(), "its kind id spells it: {token}");
+}
+
+#[test]
+fn an_aliased_leaf_keeps_its_text() {
     // rust's `type_identifier` is `alias($.identifier, $.type_identifier)`:
     // the node parses as `identifier` and is shown as `type_identifier`.
     let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
     let source = "struct Foo;";
     let tree = parse_tree(lang, source);
-    let name = find_first_ts_node_by_kind(tree.root_node(), "type_identifier")
-        .expect("type_identifier node");
-    let identifier = tree.language().id_for_node_kind("identifier", true);
-    let type_identifier = tree.language().id_for_node_kind("type_identifier", true);
-    let text_under = |model: &dyn ReadModel| {
-        read_node(&tree, source, Some(name), Some(0), ReadDepth::Shallow, model).text
-    };
-    assert_eq!(text_under(&TextKinds(vec![identifier])).as_deref(), Some("Foo"));
-    assert_eq!(
-        text_under(&TextKinds(vec![type_identifier])).as_deref(),
-        Some("Foo")
-    );
-    assert_eq!(text_under(&TextKinds(vec![])), None);
+    let name = find_first_ts_node_by_kind(tree.root_node(), "type_identifier").expect("type_identifier node");
+    let node = read_node(&tree, source, Some(name), Some(0), ReadDepth::Shallow, &Plain);
+    assert_eq!(node.text.as_deref(), Some("Foo"));
 }
 
 #[test]
@@ -296,7 +268,7 @@ fn the_root_covers_the_whole_file_by_span_and_carries_no_text() {
         None,
         Some(0),
         ReadDepth::Shallow,
-        &TextKinds(vec![]),
+        &Plain,
     );
     assert_eq!(
         root.span.map(|s| (s.start, s.end)),
@@ -311,7 +283,7 @@ fn raw_native_children_payload_stays_array_shaped() {
     let source = "fn f() { g(x); }";
     let tree = parse_tree(lang, source);
     let args = find_first_ts_node_by_kind(tree.root_node(), "arguments").expect("arguments node");
-    let node = read_node(&tree, source, Some(args), Some(0), ReadDepth::Shallow, &AllText);
+    let node = read_node(&tree, source, Some(args), Some(0), ReadDepth::Shallow, &Plain);
     let json = serde_json::to_value(&node).expect("serialize");
 
     assert!(
@@ -403,7 +375,7 @@ fn a_node_whose_only_children_are_anonymous_keeps_them_as_other() {
         Some(params),
         Some(0),
         ReadDepth::Shallow,
-        &TextKinds(vec![]),
+        &Plain,
     );
     let json = serde_json::to_value(&node).expect("serialize");
     assert_shape(&json, "closure_parameters");
@@ -427,7 +399,7 @@ fn a_field_tagged_separator_is_read_into_its_field() {
     let tree = parse_tree(lang, source);
     let clause = find_first_ts_node_by_kind(tree.root_node(), "for_in_clause").expect("for_in_clause cst node");
     let comma = u64::from(tree.language().id_for_node_kind(",", false));
-    let node = read_node(&tree, source, Some(clause), Some(0), ReadDepth::Shallow, &TextKinds(vec![]));
+    let node = read_node(&tree, source, Some(clause), Some(0), ReadDepth::Shallow, &Plain);
     let json = serde_json::to_value(&node).expect("serialize");
     let right = json.get("_right").and_then(Value::as_array).expect("right holds its items and separator");
     assert!(right.iter().any(|item| item.get("$type").and_then(Value::as_u64) == Some(comma)));
@@ -440,7 +412,7 @@ fn an_anonymous_token_spelled_as_its_kind_name_ships_its_kind_id_alone() {
     let tree = parse_tree(lang, source);
     let params = find_first_ts_node_by_kind(tree.root_node(), "parameters").expect("parameters cst node");
     let comma = u64::from(tree.language().id_for_node_kind(",", false));
-    let node = read_node(&tree, source, Some(params), Some(0), ReadDepth::Shallow, &AllText);
+    let node = read_node(&tree, source, Some(params), Some(0), ReadDepth::Shallow, &Plain);
     let json = serde_json::to_value(&node).expect("serialize");
     let other = json.get("$other").and_then(Value::as_array).expect("the punctuation stays as $other");
     let token = other.iter().find(|child| child.get("$type").and_then(Value::as_u64) == Some(comma)).expect("the comma");
@@ -453,7 +425,7 @@ fn an_aliased_node_ships_its_grammar_symbol_and_its_display_id() {
     let tree = parse_tree(tree_sitter_rust::LANGUAGE.into(), source);
     let field = find_first_ts_node_by_kind(tree.root_node(), "field_identifier").expect("field_identifier");
     assert_ne!(field.kind_id(), field.grammar_id(), "the parser shows `a` under an alias");
-    let node = read_node(&tree, source, Some(field), None, ReadDepth::Deep, &AllText);
+    let node = read_node(&tree, source, Some(field), None, ReadDepth::Deep, &Plain);
     let json = serde_json::to_value(&node).expect("serialize");
     assert_eq!(json["$type"].as_u64(), Some(u64::from(field.grammar_id())));
     assert_eq!(json["$displayType"].as_u64(), Some(u64::from(field.kind_id())));
@@ -464,17 +436,14 @@ fn an_unaliased_node_ships_no_display_id() {
     let source = "struct S { a: u8 }";
     let tree = parse_tree(tree_sitter_rust::LANGUAGE.into(), source);
     let item = find_first_ts_node_by_kind(tree.root_node(), "struct_item").expect("struct_item");
-    let node = read_node(&tree, source, Some(item), None, ReadDepth::Deep, &AllText);
+    let node = read_node(&tree, source, Some(item), None, ReadDepth::Deep, &Plain);
     let json = serde_json::to_value(&node).expect("serialize");
     assert!(json.get("$displayType").is_none(), "{json}");
 }
 
-/// No text kinds; a `block` keys the gap after its `{` to `statements`.
+/// A `block` keys the gap after its `{` to `statements`.
 struct BlockGap(u16);
 impl ReadModel for BlockGap {
-    fn is_text_kind(&self, _kind: KindId) -> bool {
-        false
-    }
     fn inner_gap_key(&self, kind: KindId, preceding_tokens: u16) -> Option<&'static str> {
         (kind.0 == self.0 && preceding_tokens == 1).then_some("statements")
     }
@@ -650,7 +619,7 @@ fn nodes_of_kind<'v>(value: &'v Value, kind: KindId, found: &mut Vec<&'v Value>)
 
 fn read_python_errors(source: &str) -> Vec<Value> {
     let tree = parse_tree(tree_sitter_python::LANGUAGE.into(), source);
-    let root = read_node(&tree, source, None, Some(0), ReadDepth::Deep, &TextKinds(vec![]));
+    let root = read_node(&tree, source, None, Some(0), ReadDepth::Deep, &Plain);
     let json = serde_json::to_value(&root).expect("serialize");
     let mut found = Vec::new();
     nodes_of_kind(&json, KindId::ERROR, &mut found);
@@ -675,4 +644,32 @@ fn an_error_filling_a_statement_gap_is_trivia_with_its_source_text() {
     let errors = read_python_errors(source);
     assert_eq!(errors.len(), 1);
     assert_eq!(errors[0]["$text"], "from a import (  # c\n    *)");
+}
+
+#[test]
+fn a_zero_width_node_carries_no_text() {
+    let lang: tree_sitter::Language = tree_sitter_python::LANGUAGE.into();
+    let source = "if x:\n";
+    let tree = parse_tree(lang, source);
+    let block = find_first_ts_node_by_kind(tree.root_node(), "block").expect("block");
+    assert_eq!((block.start_byte(), block.child_count()), (block.end_byte(), 0), "an empty block at the end of input");
+    let node = read_node(&tree, source, Some(block), None, ReadDepth::Deep, &Plain);
+    assert_eq!(node.text, None, "its span says it is empty");
+}
+
+#[test]
+fn a_shallow_read_materializes_a_child_with_no_named_children() {
+    let lang: tree_sitter::Language = tree_sitter_typescript::LANGUAGE_TYPESCRIPT.into();
+    let modifier = lang.id_for_node_kind("accessibility_modifier", true);
+    let source = "class A { public a: string; }";
+    let tree = parse_tree(lang, source);
+    let field = find_first_ts_node_by_kind(tree.root_node(), "public_field_definition").expect("public_field_definition");
+    let node = read_node(&tree, source, Some(field), None, ReadDepth::Shallow, &Plain);
+    let json = serde_json::to_value(&node).expect("serialize");
+    let mut found = Vec::new();
+    nodes_of_kind(&json, KindId(modifier), &mut found);
+    let [child] = found.as_slice() else { panic!("one accessibility_modifier: {json}") };
+    let tokens = child.get("$other").and_then(Value::as_array).expect("its token comes with it");
+    assert_eq!(tokens.len(), 1, "{child}");
+    assert_eq!(child.get("$childIndex").and_then(Value::as_u64), Some(0), "it keeps its coordinate: {child}");
 }
