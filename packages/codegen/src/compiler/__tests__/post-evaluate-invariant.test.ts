@@ -172,6 +172,9 @@ describe('post-evaluate invariant', () => {
 				// redeclaring their recorded owner — read by
 				// collectGrammarDiagnosticsForGrammar to suppress phantom diagnostics.
 				'orphanedSyntheticGroups',
+				// The text-token rules mintInlineTextTokens named — read by link's
+				// spliceTextLeaves.
+				'textTokens',
 				// The kind catalog predicted from the evaluated grammar (or why it could
 				// not be) — link asserts it against the parser's catalog and reads it.
 				'predictedKinds',
