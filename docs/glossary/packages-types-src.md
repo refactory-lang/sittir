@@ -277,3 +277,7 @@ A flavor pair's arity stamp: the route key, for the refusal message, and `max`, 
 ### `packages/types/src/index.ts::StrictFlavor`
 
 A strict builder with no coercer beside it, as one pair (a refine form); `bundle(strict, undefined, stamp)` builds it and hoisting calls `strict`.
+
+### `packages/types/src/core-types.ts::AnyNodeData.$textOnly`
+
+Marks a node whose coordinate (`$nodeHandle` with `$span`) addresses its text only: the bytes it spans, not the layout around them. A native deep read stamps it on a leaf's coordinate, and `stripStructuralProvenance` stamps every coordinate it leaves in place. Edge and gap readers on the render side skip such a coordinate, so a root's leading and trailing flank and a list's source gaps are inferred only from a tree-addressed coordinate. It is dropped with the other coordinate keys when a node is edited or made self-contained.

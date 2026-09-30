@@ -277,6 +277,7 @@ fn read_ts_node(
         slot_order,
         same_line: false,
         tokens_between: 0,
+        text_only: false,
     }
 }
 
@@ -564,6 +565,7 @@ fn read_children(
             };
             NodeData {
                 trivia_data,
+                text_only: depth == ReadDepth::Deep,
                 ..read_materialized_leaf(child, source, model, handle, child_index)
             }
         } else {
@@ -686,6 +688,7 @@ fn read_child_stub(
         slot_order: None,
         same_line: false,
         tokens_between: 0,
+        text_only: false,
     }
 }
 
@@ -716,6 +719,7 @@ fn read_materialized_leaf(
         slot_order: None,
         same_line: false,
         tokens_between: 0,
+        text_only: false,
     }
 }
 

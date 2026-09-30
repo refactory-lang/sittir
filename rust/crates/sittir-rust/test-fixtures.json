@@ -26635,9 +26635,9 @@
     "sourceIn": "\nuse abc;\nuse phrases::japanese;\nuse sayings::english::greetings;\nuse sayings::english::greetings as en_greetings ;\nuse phrases::english::{greetings,farewells};\nuse sayings::japanese::farewells::*;\npub use self::greetings::hello;\nuse sayings::english::{self, greetings as en_greetings, farewells as en_farewells};\nuse three::{ dot::{one, four} };\nuse my::{ some::* };\nuse my::{*};\nuse ::*;\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "use abc;\n\nuse phrases::japanese;\n\nuse sayings::english::greetings;\n\nuse sayings::english::greetings as en_greetings;\n\nuse phrases::english::{greetings,farewells};\n\nuse sayings::japanese::farewells::*;\n\npub use self::greetings::hello;\n\nuse sayings::english::{self, greetings as en_greetings, farewells as en_farewells};\n\nuse three::{dot::{one, four}};\n\nuse my::{some::*};\n\nuse my::{*};\n\nuse ::*;\n",
+    "expectedSourceOut": "use abc;\n\nuse phrases::japanese;\n\nuse sayings::english::greetings;\n\nuse sayings::english::greetings as en_greetings;\n\nuse phrases::english::{greetings, farewells};\n\nuse sayings::japanese::farewells::*;\n\npub use self::greetings::hello;\n\nuse sayings::english::{self, greetings as en_greetings, farewells as en_farewells};\n\nuse three::{dot::{one, four}};\n\nuse my::{some::*};\n\nuse my::{*};\n\nuse ::*;\n",
     "expectedReparseTree": "(source_file statements: (use_declaration argument: (identifier)) statements: (use_declaration argument: (scoped_identifier path: (identifier) name: (identifier))) statements: (use_declaration argument: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier))) statements: (use_declaration argument: (use_as_clause path: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier)) alias: (identifier))) statements: (use_declaration argument: (scoped_use_list path: (scoped_identifier path: (identifier) name: (identifier)) list: (use_list (use_clauses use_clause: (identifier) use_clause: (identifier))))) statements: (use_declaration argument: (use_wildcard (use_wildcard_group path: (scoped_identifier path: (scoped_identifier path: (identifier) name: (identifier)) name: (identifier))))) statements: (use_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) argument: (scoped_identifier path: (scoped_identifier path: (self) name: (identifier)) name: (identifier))) statements: (use_declaration argument: (scoped_use_list path: (scoped_identifier path: (identifier) name: (identifier)) list: (use_list (use_clauses use_clause: (self) use_clause: (use_as_clause path: (identifier) alias: (identifier)) use_clause: (use_as_clause path: (identifier) alias: (identifier)))))) statements: (use_declaration argument: (scoped_use_list path: (identifier) list: (use_list (use_clauses use_clause: (scoped_use_list path: (identifier) list: (use_list (use_clauses use_clause: (identifier) use_clause: (identifier)))))))) statements: (use_declaration argument: (scoped_use_list path: (identifier) list: (use_list (use_clauses use_clause: (use_wildcard (use_wildcard_group path: (identifier))))))) statements: (use_declaration argument: (scoped_use_list path: (identifier) list: (use_list (use_clauses use_clause: (use_wildcard))))) statements: (use_declaration argument: (use_wildcard (use_wildcard_group))))",
-    "wrappedText": "use abc;\n\nuse phrases::japanese;\n\nuse sayings::english::greetings;\n\nuse sayings::english::greetings as en_greetings;\n\nuse phrases::english::{greetings,farewells};\n\nuse sayings::japanese::farewells::*;\n\npub use self::greetings::hello;\n\nuse sayings::english::{self, greetings as en_greetings, farewells as en_farewells};\n\nuse three::{dot::{one, four}};\n\nuse my::{some::*};\n\nuse my::{*};\n\nuse ::*;\n",
+    "wrappedText": "use abc;\n\nuse phrases::japanese;\n\nuse sayings::english::greetings;\n\nuse sayings::english::greetings as en_greetings;\n\nuse phrases::english::{greetings, farewells};\n\nuse sayings::japanese::farewells::*;\n\npub use self::greetings::hello;\n\nuse sayings::english::{self, greetings as en_greetings, farewells as en_farewells};\n\nuse three::{dot::{one, four}};\n\nuse my::{some::*};\n\nuse my::{*};\n\nuse ::*;\n",
     "wrappedOffset": 0
   },
   {
@@ -27043,14 +27043,176 @@
     "wrappedOffset": 0
   },
   {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "use_declaration",
+    "input": {
+      "$type": 224,
+      "$source": 0,
+      "$named": true,
+      "_argument": {
+        "$type": 226,
+        "$source": 0,
+        "$named": true,
+        "_path": {
+          "$type": 263,
+          "$source": 0,
+          "$named": true,
+          "_path": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "phrases",
+            "$span": {
+              "start": 120,
+              "end": 127
+            }
+          },
+          "_name": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "english",
+            "$span": {
+              "start": 129,
+              "end": 136
+            }
+          },
+          "$other": [
+            {
+              "$type": 48,
+              "$source": 0,
+              "$named": false,
+              "$text": "::",
+              "$span": {
+                "start": 127,
+                "end": 129
+              }
+            }
+          ],
+          "$slotOrder": [
+            "path",
+            "name"
+          ]
+        },
+        "_list": {
+          "$type": 227,
+          "$source": 0,
+          "$named": true,
+          "_use_clauses": {
+            "$type": 348,
+            "$source": 0,
+            "$named": true,
+            "_use_clause": [
+              {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "greetings",
+                "$span": {
+                  "start": 139,
+                  "end": 148
+                }
+              },
+              {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "farewells",
+                "$span": {
+                  "start": 149,
+                  "end": 158
+                }
+              }
+            ],
+            "$other": [
+              {
+                "$type": 131,
+                "$source": 0,
+                "$named": false,
+                "$text": ",",
+                "$span": {
+                  "start": 148,
+                  "end": 149
+                }
+              }
+            ],
+            "_delimiter": 0
+          },
+          "$other": [
+            {
+              "$type": 31,
+              "$source": 0,
+              "$named": false,
+              "$text": "{",
+              "$span": {
+                "start": 138,
+                "end": 139
+              }
+            },
+            {
+              "$type": 32,
+              "$source": 0,
+              "$named": false,
+              "$text": "}",
+              "$span": {
+                "start": 158,
+                "end": 159
+              }
+            }
+          ]
+        },
+        "$other": [
+          {
+            "$type": 48,
+            "$source": 0,
+            "$named": false,
+            "$text": "::",
+            "$span": {
+              "start": 136,
+              "end": 138
+            }
+          }
+        ],
+        "$slotOrder": [
+          "path",
+          "list"
+        ]
+      },
+      "$other": [
+        {
+          "$type": 47,
+          "$source": 0,
+          "$named": false,
+          "$text": "use",
+          "$span": {
+            "start": 116,
+            "end": 119
+          }
+        },
+        {
+          "$type": 2,
+          "$source": 0,
+          "$named": false,
+          "$text": ";",
+          "$span": {
+            "start": 159,
+            "end": 160
+          }
+        }
+      ]
+    },
+    "expectedOutput": "use phrases::english::{greetings, farewells};"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "rust",
     "sourceIn": "use phrases::english::{greetings,farewells};",
     "pattern": "use_declaration",
     "edits": [],
-    "expectedSourceOut": "use phrases::english::{greetings,farewells};",
+    "expectedSourceOut": "use phrases::english::{greetings, farewells};",
     "expectedReparseTree": "(use_declaration argument: (scoped_use_list path: (scoped_identifier path: (identifier) name: (identifier)) list: (use_list (use_clauses use_clause: (identifier) use_clause: (identifier)))))",
-    "wrappedText": "use phrases::english::{greetings,farewells};",
+    "wrappedText": "use phrases::english::{greetings, farewells};",
     "wrappedOffset": 0
   },
   {
@@ -145162,15 +145324,587 @@
     "wrappedOffset": 0
   },
   {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "source_file",
+    "input": {
+      "$type": 176,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 179,
+          "$source": 0,
+          "$named": true,
+          "_content": {
+            "$type": 287,
+            "$source": 0,
+            "$named": true,
+            "_condition": {
+              "$type": 289,
+              "$source": 0,
+              "$named": true,
+              "_left": {
+                "$type": 288,
+                "$source": 0,
+                "$named": true,
+                "_pattern": {
+                  "$type": 318,
+                  "$source": 0,
+                  "$named": true,
+                  "_type": {
+                    "$type": 1,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "Some",
+                    "$span": {
+                      "start": 8,
+                      "end": 12
+                    }
+                  },
+                  "_patterns": {
+                    "$type": 356,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": [
+                      {
+                        "$type": 1,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "a",
+                        "$span": {
+                          "start": 13,
+                          "end": 14
+                        }
+                      }
+                    ],
+                    "_delimiter": 0
+                  },
+                  "$other": [
+                    {
+                      "$type": 6,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": "(",
+                      "$span": {
+                        "start": 12,
+                        "end": 13
+                      }
+                    },
+                    {
+                      "$type": 7,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": ")",
+                      "$span": {
+                        "start": 14,
+                        "end": 15
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "type",
+                    "patterns"
+                  ]
+                },
+                "_value": {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "b",
+                  "$span": {
+                    "start": 18,
+                    "end": 19
+                  }
+                },
+                "$other": [
+                  {
+                    "$type": 46,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "let",
+                    "$span": {
+                      "start": 4,
+                      "end": 7
+                    }
+                  },
+                  {
+                    "$type": 39,
+                    "$source": 0,
+                    "$named": false,
+                    "$text": "=",
+                    "$span": {
+                      "start": 16,
+                      "end": 17
+                    }
+                  }
+                ],
+                "$slotOrder": [
+                  "pattern",
+                  "value"
+                ]
+              },
+              "_right": [
+                {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "c",
+                  "$span": {
+                    "start": 27,
+                    "end": 28
+                  }
+                },
+                {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "d",
+                  "$span": {
+                    "start": 36,
+                    "end": 37
+                  }
+                },
+                {
+                  "$type": 288,
+                  "$source": 0,
+                  "$named": true,
+                  "_pattern": {
+                    "$type": 318,
+                    "$source": 0,
+                    "$named": true,
+                    "_type": {
+                      "$type": 1,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "Some",
+                      "$span": {
+                        "start": 49,
+                        "end": 53
+                      }
+                    },
+                    "_patterns": {
+                      "$type": 356,
+                      "$source": 0,
+                      "$named": true,
+                      "_pattern": [
+                        {
+                          "$type": 1,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "e",
+                          "$span": {
+                            "start": 54,
+                            "end": 55
+                          }
+                        }
+                      ],
+                      "_delimiter": 0
+                    },
+                    "$other": [
+                      {
+                        "$type": 6,
+                        "$source": 0,
+                        "$named": false,
+                        "$text": "(",
+                        "$span": {
+                          "start": 53,
+                          "end": 54
+                        }
+                      },
+                      {
+                        "$type": 7,
+                        "$source": 0,
+                        "$named": false,
+                        "$text": ")",
+                        "$span": {
+                          "start": 55,
+                          "end": 56
+                        }
+                      }
+                    ],
+                    "$slotOrder": [
+                      "type",
+                      "patterns"
+                    ]
+                  },
+                  "_value": {
+                    "$type": 1,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "f",
+                    "$span": {
+                      "start": 59,
+                      "end": 60
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 46,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": "let",
+                      "$span": {
+                        "start": 45,
+                        "end": 48
+                      }
+                    },
+                    {
+                      "$type": 39,
+                      "$source": 0,
+                      "$named": false,
+                      "$text": "=",
+                      "$span": {
+                        "start": 57,
+                        "end": 58
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "pattern",
+                    "value"
+                  ]
+                }
+              ],
+              "$other": [
+                {
+                  "$type": 77,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "&&",
+                  "$span": {
+                    "start": 42,
+                    "end": 44
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "left",
+                "left",
+                "right",
+                "left",
+                "right",
+                "right"
+              ]
+            },
+            "_consequence": {
+              "$type": 313,
+              "$source": 0,
+              "$named": true,
+              "_statements": []
+            },
+            "$other": [
+              {
+                "$type": 102,
+                "$source": 0,
+                "$named": false,
+                "$text": "if",
+                "$span": {
+                  "start": 1,
+                  "end": 3
+                }
+              }
+            ],
+            "$slotOrder": [
+              "condition",
+              "consequence"
+            ]
+          }
+        }
+      ]
+    },
+    "expectedOutput": "if let Some(a) = b && c && d && let Some(e) = f {}\n"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "rust",
     "sourceIn": "\nif let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f\n{\n}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "if let Some(a) = b && c\n&& d\n&& let Some(e) = f {}\n",
+    "expectedSourceOut": "if let Some(a) = b && c && d && let Some(e) = f {}\n",
     "expectedReparseTree": "(source_file statements: (expression_statement (if_expression condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) value: (identifier)) right: (identifier) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) value: (identifier))) consequence: (block))))",
-    "wrappedText": "if let Some(a) = b && c\n&& d\n&& let Some(e) = f {}\n",
+    "wrappedText": "if let Some(a) = b && c && d && let Some(e) = f {}\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "if_expression",
+    "input": {
+      "$type": 287,
+      "$source": 0,
+      "$named": true,
+      "_condition": {
+        "$type": 289,
+        "$source": 0,
+        "$named": true,
+        "_left": {
+          "$type": 288,
+          "$source": 0,
+          "$named": true,
+          "_pattern": {
+            "$type": 318,
+            "$source": 0,
+            "$named": true,
+            "_type": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "Some",
+              "$span": {
+                "start": 8,
+                "end": 12
+              }
+            },
+            "_patterns": {
+              "$type": 356,
+              "$source": 0,
+              "$named": true,
+              "_pattern": [
+                {
+                  "$type": 1,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "a",
+                  "$span": {
+                    "start": 13,
+                    "end": 14
+                  }
+                }
+              ],
+              "_delimiter": 0
+            },
+            "$other": [
+              {
+                "$type": 6,
+                "$source": 0,
+                "$named": false,
+                "$text": "(",
+                "$span": {
+                  "start": 12,
+                  "end": 13
+                }
+              },
+              {
+                "$type": 7,
+                "$source": 0,
+                "$named": false,
+                "$text": ")",
+                "$span": {
+                  "start": 14,
+                  "end": 15
+                }
+              }
+            ],
+            "$slotOrder": [
+              "type",
+              "patterns"
+            ]
+          },
+          "_value": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "b",
+            "$span": {
+              "start": 18,
+              "end": 19
+            }
+          },
+          "$other": [
+            {
+              "$type": 46,
+              "$source": 0,
+              "$named": false,
+              "$text": "let",
+              "$span": {
+                "start": 4,
+                "end": 7
+              }
+            },
+            {
+              "$type": 39,
+              "$source": 0,
+              "$named": false,
+              "$text": "=",
+              "$span": {
+                "start": 16,
+                "end": 17
+              }
+            }
+          ],
+          "$slotOrder": [
+            "pattern",
+            "value"
+          ]
+        },
+        "_right": [
+          {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "c",
+            "$span": {
+              "start": 27,
+              "end": 28
+            }
+          },
+          {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "d",
+            "$span": {
+              "start": 36,
+              "end": 37
+            }
+          },
+          {
+            "$type": 288,
+            "$source": 0,
+            "$named": true,
+            "_pattern": {
+              "$type": 318,
+              "$source": 0,
+              "$named": true,
+              "_type": {
+                "$type": 1,
+                "$source": 0,
+                "$named": true,
+                "$text": "Some",
+                "$span": {
+                  "start": 49,
+                  "end": 53
+                }
+              },
+              "_patterns": {
+                "$type": 356,
+                "$source": 0,
+                "$named": true,
+                "_pattern": [
+                  {
+                    "$type": 1,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "e",
+                    "$span": {
+                      "start": 54,
+                      "end": 55
+                    }
+                  }
+                ],
+                "_delimiter": 0
+              },
+              "$other": [
+                {
+                  "$type": 6,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": "(",
+                  "$span": {
+                    "start": 53,
+                    "end": 54
+                  }
+                },
+                {
+                  "$type": 7,
+                  "$source": 0,
+                  "$named": false,
+                  "$text": ")",
+                  "$span": {
+                    "start": 55,
+                    "end": 56
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "type",
+                "patterns"
+              ]
+            },
+            "_value": {
+              "$type": 1,
+              "$source": 0,
+              "$named": true,
+              "$text": "f",
+              "$span": {
+                "start": 59,
+                "end": 60
+              }
+            },
+            "$other": [
+              {
+                "$type": 46,
+                "$source": 0,
+                "$named": false,
+                "$text": "let",
+                "$span": {
+                  "start": 45,
+                  "end": 48
+                }
+              },
+              {
+                "$type": 39,
+                "$source": 0,
+                "$named": false,
+                "$text": "=",
+                "$span": {
+                  "start": 57,
+                  "end": 58
+                }
+              }
+            ],
+            "$slotOrder": [
+              "pattern",
+              "value"
+            ]
+          }
+        ],
+        "$other": [
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": false,
+            "$text": "&&",
+            "$span": {
+              "start": 42,
+              "end": 44
+            }
+          }
+        ],
+        "$slotOrder": [
+          "left",
+          "left",
+          "right",
+          "left",
+          "right",
+          "right"
+        ]
+      },
+      "_consequence": {
+        "$type": 313,
+        "$source": 0,
+        "$named": true,
+        "_statements": []
+      },
+      "$other": [
+        {
+          "$type": 102,
+          "$source": 0,
+          "$named": false,
+          "$text": "if",
+          "$span": {
+            "start": 1,
+            "end": 3
+          }
+        }
+      ],
+      "$slotOrder": [
+        "condition",
+        "consequence"
+      ]
+    },
+    "expectedOutput": "if let Some(a) = b && c && d && let Some(e) = f {}"
   },
   {
     "kind": "roundtrip",
@@ -145178,9 +145912,9 @@
     "sourceIn": "if let Some(a) = b\n    && c\n    && d\n    && let Some(e) = f\n{\n}",
     "pattern": "if_expression",
     "edits": [],
-    "expectedSourceOut": "if let Some(a) = b && c\n&& d\n&& let Some(e) = f {}",
+    "expectedSourceOut": "if let Some(a) = b && c && d && let Some(e) = f {}",
     "expectedReparseTree": "(if_expression condition: (let_chain left: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) value: (identifier)) right: (identifier) right: (identifier) right: (let_condition pattern: (tuple_struct_pattern type: (identifier) (patterns pattern: (identifier))) value: (identifier))) consequence: (block))",
-    "wrappedText": "fn _f() { let _ = if let Some(a) = b && c\n&& d\n&& let Some(e) = f {}; }",
+    "wrappedText": "fn _f() { let _ = if let Some(a) = b && c && d && let Some(e) = f {}; }",
     "wrappedOffset": 18
   },
   {
@@ -227503,15 +228237,113 @@
     "wrappedOffset": 18
   },
   {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "source_file",
+    "input": {
+      "$type": 176,
+      "$source": 0,
+      "$named": true,
+      "_shebang": {
+        "$type": 125,
+        "$source": 0,
+        "$named": true,
+        "$text": "#!/usr/bin/env -S cargo +nightly -Zscript\n",
+        "$span": {
+          "start": 1,
+          "end": 43
+        },
+        "_content": "/usr/bin/env -S cargo +nightly -Zscript"
+      },
+      "_statements": []
+    },
+    "expectedOutput": "#!/usr/bin/env -S cargo +nightly -Zscript\n"
+  },
+  {
     "kind": "roundtrip",
     "grammar": "rust",
     "sourceIn": "\n#!/usr/bin/env -S cargo +nightly -Zscript\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "\n#!/usr/bin/env -S cargo +nightly -Zscript\n",
+    "expectedSourceOut": "#!/usr/bin/env -S cargo +nightly -Zscript\n",
     "expectedReparseTree": "(source_file shebang: (shebang))",
-    "wrappedText": "\n#!/usr/bin/env -S cargo +nightly -Zscript\n",
+    "wrappedText": "#!/usr/bin/env -S cargo +nightly -Zscript\n",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "pattern": "source_file",
+    "input": {
+      "$type": 176,
+      "$source": 0,
+      "$named": true,
+      "_shebang": {
+        "$type": 125,
+        "$source": 0,
+        "$named": true,
+        "$text": "#!\n",
+        "$span": {
+          "start": 1,
+          "end": 4
+        },
+        "_content": ""
+      },
+      "_statements": [
+        {
+          "$type": 208,
+          "$source": 0,
+          "$named": true,
+          "_name": {
+            "$type": 1,
+            "$source": 0,
+            "$named": true,
+            "$text": "main",
+            "$span": {
+              "start": 7,
+              "end": 11
+            }
+          },
+          "_parameters": {
+            "$type": 230,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 11,
+              "end": 13
+            }
+          },
+          "_body": {
+            "$type": 313,
+            "$source": 0,
+            "$named": true,
+            "_statements": []
+          },
+          "$other": [
+            {
+              "$type": 40,
+              "$source": 0,
+              "$named": false,
+              "$text": "fn",
+              "$span": {
+                "start": 4,
+                "end": 6
+              }
+            }
+          ],
+          "$slotOrder": [
+            "name",
+            "parameters",
+            "body"
+          ]
+        }
+      ],
+      "$slotOrder": [
+        "shebang",
+        "statements"
+      ]
+    },
+    "expectedOutput": "#!\nfn main() {}\n"
   },
   {
     "kind": "roundtrip",
@@ -227519,9 +228351,9 @@
     "sourceIn": "\n#!\nfn main() {}\n",
     "pattern": "source_file",
     "edits": [],
-    "expectedSourceOut": "\n#!\nfn main() {}\n",
+    "expectedSourceOut": "#!\nfn main() {}\n",
     "expectedReparseTree": "(source_file shebang: (shebang) statements: (function_item name: (identifier) parameters: (parameters) body: (block)))",
-    "wrappedText": "\n#!\nfn main() {}\n",
+    "wrappedText": "#!\nfn main() {}\n",
     "wrappedOffset": 0
   },
   {

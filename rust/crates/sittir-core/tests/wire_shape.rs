@@ -44,6 +44,7 @@ fn complex_node() -> NodeData {
             slot_order: None,
             same_line: false,
             tokens_between: 0,
+            text_only: false,
         })),
     );
     fields.insert(
@@ -63,6 +64,7 @@ fn complex_node() -> NodeData {
             slot_order: None,
             same_line: false,
             tokens_between: 0,
+            text_only: false,
         })]),
     );
     fields.insert("op".to_string(), FieldValue::Text("+".to_string()));
@@ -87,6 +89,7 @@ fn complex_node() -> NodeData {
             slot_order: None,
             same_line: false,
             tokens_between: 0,
+            text_only: false,
         }]),
         text: None,
         span: Some(Span { start: 0, end: 9 }),
@@ -96,6 +99,7 @@ fn complex_node() -> NodeData {
         slot_order: None,
         same_line: false,
         tokens_between: 0,
+        text_only: false,
     }
 }
 

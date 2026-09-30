@@ -65,8 +65,9 @@ impl<X: EdgeItems> EdgeItems for Vec<X> {
 /// A root transport's edges read from its tree's own flanks: the bytes
 /// before its first item and after its last, when that item is still a
 /// coordinate, classified into the arm the edge site admits exactly as a
-/// list gap is. An edge item that was rebuilt, or bytes that are not
-/// whitespace, leave that side unset for the options and the grammar default.
+/// list gap is. An edge item that was rebuilt, one whose coordinate addresses
+/// its text only, or bytes that are not whitespace, leave that side unset for
+/// the options and the grammar default.
 pub fn root_flanks(
     first: Option<Option<&crate::NodeCoordinate>>,
     last: Option<Option<&crate::NodeCoordinate>>,
@@ -76,7 +77,7 @@ pub fn root_flanks(
     ctx: &RenderContext<'_>,
 ) -> Edges {
     let flank = |coord: Option<&crate::NodeCoordinate>, side: Side, allowed: &[u16]| {
-        let coord = coord?;
+        let coord = coord.filter(|coord| coord.is_layout_evidence())?;
         let source = ctx.sources.source_of(coord.tree_id())?;
         let bytes = match side {
             Side::Before => source.get(..coord.span.start as usize)?,
@@ -210,3 +211,95 @@ macro_rules! inert {
     )*};
 }
 inert!(String, bool, u8, u16);
+
+#[cfg(test)]
+mod tests {
+    use super::root_flanks;
+    use crate::classify::classify_list_gaps;
+    use crate::engine::encode_handle;
+    use crate::options::ResolvedOptions;
+    use crate::render::{SourceTable, WhitespaceTable};
+    use crate::RenderContext;
+    use crate::slot::NodeCoordinate;
+    use crate::types::Span;
+    use std::collections::HashMap;
+    use std::sync::Arc;
+
+    struct Sources(HashMap<u32, Arc<str>>);
+    impl SourceTable for Sources {
+        fn source_of(&self, tree_id: u32) -> Option<&Arc<str>> {
+            self.0.get(&tree_id)
+        }
+    }
+
+    const TIGHT: u16 = 0;
+    const NEWLINE: u16 = 1;
+
+    fn text_of(arm: u16) -> &'static str {
+        if arm == NEWLINE {
+            "\n"
+        } else {
+            ""
+        }
+    }
+
+    const TABLE: WhitespaceTable = WhitespaceTable {
+        text_of,
+        indent: 7,
+        dedent: 8,
+    };
+
+    fn coordinate(start: u32, end: u32, text_only: bool) -> NodeCoordinate {
+        NodeCoordinate {
+            text_only,
+            ..NodeCoordinate::new(encode_handle(3, 0), Span { start, end })
+        }
+    }
+
+    fn before_flank(first: &NodeCoordinate, source: &str) -> Option<u16> {
+        let sources = Sources(HashMap::from([(3, Arc::from(source))]));
+        let options = ResolvedOptions::default();
+        let ctx = RenderContext {
+            options: &options,
+            sources: &sources,
+        };
+        root_flanks(Some(Some(first)), None, &[TIGHT, NEWLINE], &[TIGHT, NEWLINE], &TABLE, &ctx)
+            .before
+            .map(|edge| edge.arm)
+    }
+
+    #[test]
+    fn a_tree_addressed_edge_item_gives_the_root_its_source_flank() {
+        assert_eq!(before_flank(&coordinate(1, 4, false), "\n#!\n"), Some(NEWLINE));
+    }
+
+    #[test]
+    fn an_edge_item_that_addresses_its_text_only_gives_the_root_no_flank() {
+        assert_eq!(before_flank(&coordinate(1, 4, true), "\n#!\n"), None);
+    }
+
+    fn separated(second_text_only: bool) -> bool {
+        let sources = Sources(HashMap::from([(3, Arc::from("a,b"))]));
+        let first = coordinate(0, 1, false);
+        let second = coordinate(2, 3, second_text_only);
+        classify_list_gaps(
+            &[Some(&first), Some(&second)],
+            &sources,
+            ",",
+            &[TIGHT],
+            &[TIGHT],
+            &TABLE,
+        )
+        .separated[0]
+    }
+
+    #[test]
+    fn a_gap_between_tree_addressed_items_is_a_source_separator() {
+        assert!(separated(false));
+    }
+
+    #[test]
+    fn a_gap_beside_an_item_that_addresses_its_text_only_is_not() {
+        assert!(!separated(true));
+    }
+}
