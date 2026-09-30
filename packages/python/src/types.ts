@@ -2270,7 +2270,11 @@ export interface SimpleStatements {
 	};
 	readonly __slotHints__?: {
 		readonly simpleStatementsElements: SlotHint<T.SimpleStatementsElements>;
-		readonly $listOwner: ListOwnerHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<
+			T.SimpleStatement,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.SimpleStatement
+		>;
 	};
 	simpleStatementsElements(): SimpleStatementsElements;
 }
@@ -2778,7 +2782,7 @@ export interface Parameters {
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<T.ParametersElements, true>;
-		readonly $listOwner: ListOwnerHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.Parameter>;
 	};
 	elements(): ParametersElements | undefined;
 }
@@ -2791,7 +2795,7 @@ export interface LambdaParameters {
 	};
 	readonly __slotHints__?: {
 		readonly parametersElements: SlotHint<T.ParametersElements>;
-		readonly $listOwner: ListOwnerHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.Parameter>;
 	};
 	parametersElements(): ParametersElements;
 }
@@ -2912,7 +2916,7 @@ export interface TypeParameter {
 	};
 	readonly __slotHints__?: {
 		readonly types: SlotHint<T.Types>;
-		readonly $listOwner: ListOwnerHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.Type>;
 	};
 	types(): Types;
 }
@@ -2942,7 +2946,8 @@ export interface ArgumentList {
 		readonly arguments: SlotHint<T.ArgumentListElements, true>;
 		readonly $listOwner: ListOwnerHint<
 			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
 		>;
 	};
 	arguments(): ArgumentListElements | undefined;
@@ -3202,7 +3207,8 @@ export interface DictPattern {
 		readonly dictPatternElements: SlotHint<T.DictPatternElements, true>;
 		readonly $listOwner: ListOwnerHint<
 			T.KeyValuePattern | T.SplatPattern,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.KeyValuePattern | T.SplatPattern
 		>;
 	};
 	dictPatternElements(): DictPatternElements | undefined;
@@ -3413,7 +3419,7 @@ export interface TuplePattern {
 	};
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<T.Patterns, true>;
-		readonly $listOwner: ListOwnerHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.Pattern>;
 	};
 	patterns(): Patterns | undefined;
 }
@@ -3426,7 +3432,7 @@ export interface ListPattern {
 	};
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<T.Patterns, true>;
-		readonly $listOwner: ListOwnerHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.Pattern>;
 	};
 	patterns(): Patterns | undefined;
 }
@@ -4075,7 +4081,8 @@ export interface List {
 		readonly collectionElements: SlotHint<T.CollectionElements, true>;
 		readonly $listOwner: ListOwnerHint<
 			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat
 		>;
 	};
 	collectionElements(): CollectionElements | undefined;
@@ -4091,7 +4098,8 @@ export interface Set {
 		readonly collectionElements: SlotHint<T.CollectionElements>;
 		readonly $listOwner: ListOwnerHint<
 			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat
 		>;
 	};
 	collectionElements(): CollectionElements;
@@ -4107,7 +4115,8 @@ export interface Tuple {
 		readonly collectionElements: SlotHint<T.CollectionElements, true>;
 		readonly $listOwner: ListOwnerHint<
 			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat
 		>;
 	};
 	collectionElements(): CollectionElements | undefined;
@@ -4121,7 +4130,11 @@ export interface Dictionary {
 	};
 	readonly __slotHints__?: {
 		readonly entries: SlotHint<T.DictionaryElements, true>;
-		readonly $listOwner: ListOwnerHint<T.Pair | T.DictionarySplat, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<
+			T.Pair | T.DictionarySplat,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.Pair | T.DictionarySplat
+		>;
 	};
 	entries(): DictionaryElements | undefined;
 }
@@ -4593,7 +4606,11 @@ export interface CaseTuplePattern {
 	};
 	readonly __slotHints__?: {
 		readonly listPatternCasePatterns: SlotHint<T.ListPatternCasePatterns, true>;
-		readonly $listOwner: ListOwnerHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<
+			T.CasePattern,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.CasePattern
+		>;
 	};
 	listPatternCasePatterns(): ListPatternCasePatterns | undefined;
 }
@@ -4606,7 +4623,11 @@ export interface CaseListPattern {
 	};
 	readonly __slotHints__?: {
 		readonly listPatternCasePatterns: SlotHint<T.ListPatternCasePatterns, true>;
-		readonly $listOwner: ListOwnerHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<
+			T.CasePattern,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.CasePattern
+		>;
 	};
 	listPatternCasePatterns(): ListPatternCasePatterns | undefined;
 }
@@ -4661,7 +4682,7 @@ export interface PrintStatementPlain {
 	};
 	readonly __slotHints__?: {
 		readonly printArguments: SlotHint<T.PrintArguments>;
-		readonly $listOwner: ListOwnerHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.Expression>;
 	};
 	printArguments(): PrintArguments;
 }
@@ -4676,7 +4697,8 @@ export interface ParenthesizedImportList {
 		readonly importList: SlotHint<T.ImportList>;
 		readonly $listOwner: ListOwnerHint<
 			T.DottedName | T.AliasedImport,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.DottedName | T.AliasedImport
 		>;
 	};
 	importList(): ImportList;
@@ -4982,7 +5004,7 @@ export interface WithClauseParen {
 	};
 	readonly __slotHints__?: {
 		readonly withClauseWithItems: SlotHint<T.WithClauseWithItems>;
-		readonly $listOwner: ListOwnerHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.WithItem>;
 	};
 	withClauseWithItems(): WithClauseWithItems;
 }
@@ -5004,7 +5026,11 @@ export interface SuiteInline {
 	};
 	readonly __slotHints__?: {
 		readonly simpleStatementsElements: SlotHint<T.SimpleStatementsElements>;
-		readonly $listOwner: ListOwnerHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<
+			T.SimpleStatement,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.SimpleStatement
+		>;
 	};
 	simpleStatementsElements(): SimpleStatementsElements;
 }

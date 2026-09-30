@@ -26,6 +26,8 @@ describe('the list-owner runtime spec', () => {
 				owners++;
 				const options = /options: \[([^\]]*)\]/.exec(spec)![1]!;
 				expect([...options.matchAll(/"(\w+)"/g)].map((m) => m[1]!).sort()).toEqual(keysOf(hint.options));
+				expect(/make: (\w+) }$/.exec(spec)![1]).toMatch(/^build\w+$/);
+				expect(listOwnerRuntimeSpec(node, nodeMap, undefined, 'RAW.')).toMatch(/make: RAW\.build\w+ }$/);
 			}
 			expect(owners).toBeGreaterThan(0);
 		});

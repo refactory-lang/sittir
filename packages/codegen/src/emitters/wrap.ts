@@ -595,7 +595,7 @@ function emitFieldCarryingWrap(
 
 	const hasWithSetters = node.rawFactoryName && (slots.length > 0 || children.length > 0);
 
-	const ownerSpec = listOwnerRuntimeSpec(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries);
+	const ownerSpec = listOwnerRuntimeSpec(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries, 'RAW.');
 	const ownerOpen = ownerSpec === undefined ? '' : 'withListOwner(';
 	lines.push(hasWithSetters ? `  const _node = withMethods(${ownerOpen}{` : `  return withMethods(${ownerOpen}{`);
 	lines.push('    ...data,');
@@ -845,6 +845,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			...(this.#typeImportLine ? [this.#typeImportLine] : []),
 			"import { withMethods } from './utils.js';",
 			"import * as FR from './factories/coerce.js';",
+			"import * as RAW from './factories/raw.js';",
 			'',
 			...(usesIsReadTextLeaf
 				? [
@@ -1566,7 +1567,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'coerceBooleanKeywordStorage',
 			'coerceBitflagStorage',
 			'withListOwner',
-			'FR'
+			'FR',
+			'RAW'
 		]).join('\n');
 	}
 }

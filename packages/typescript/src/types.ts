@@ -3191,7 +3191,11 @@ export interface ExportClause {
 	};
 	readonly __slotHints__?: {
 		readonly exportSpecifiers: SlotHint<T.ExportSpecifiers, true>;
-		readonly $listOwner: ListOwnerHint<T.ExportSpecifier, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<
+			T.ExportSpecifier,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.ExportSpecifier | T.Identifier | T.String
+		>;
 	};
 	exportSpecifiers(): ExportSpecifiers | undefined;
 }
@@ -3262,7 +3266,11 @@ export interface NamedImports {
 	};
 	readonly __slotHints__?: {
 		readonly importSpecifiers: SlotHint<T.ImportSpecifiers, true>;
-		readonly $listOwner: ListOwnerHint<T.ImportSpecifier, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<
+			T.ImportSpecifier,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.ImportSpecifier
+		>;
 	};
 	importSpecifiers(): ImportSpecifiers | undefined;
 }
@@ -5503,7 +5511,8 @@ export interface FormalParameters {
 		readonly formalParametersElements: SlotHint<T.FormalParametersElements, true>;
 		readonly $listOwner: ListOwnerHint<
 			T.RequiredParameter | T.OptionalParameter,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.RequiredParameter | T.OptionalParameter
 		>;
 	};
 	formalParametersElements(): FormalParametersElements | undefined;
@@ -7136,7 +7145,36 @@ export interface EnumBody {
 			| T.Number
 			| T.ComputedPropertyName
 			| T.EnumAssignment,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			| T.PropertyIdentifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
+			| T.PrivatePropertyIdentifier
+			| T.String
+			| T.Number
+			| T.ComputedPropertyName
+			| T.EnumAssignment
+			| T.PropertyIdentifier.Types
 		>;
 	};
 	enumBodyElements(): EnumBodyElements | undefined;
@@ -8604,7 +8642,11 @@ export interface TypeArguments {
 	};
 	readonly __slotHints__?: {
 		readonly types: SlotHint<T.Types>;
-		readonly $listOwner: ListOwnerHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<
+			T.Type,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.Type | T.TypeIdentifier.Types
+		>;
 	};
 	types(): Types;
 }
@@ -8813,7 +8855,11 @@ export interface TypeParameters {
 	};
 	readonly __slotHints__?: {
 		readonly typeParametersElements: SlotHint<T.TypeParametersElements>;
-		readonly $listOwner: ListOwnerHint<T.TypeParameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listOwner: ListOwnerHint<
+			T.TypeParameter,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types
+		>;
 	};
 	typeParametersElements(): TypeParametersElements;
 }
@@ -8996,7 +9042,8 @@ export interface TupleType {
 		readonly tupleTypeMembers: SlotHint<T.TupleTypeMembers, true>;
 		readonly $listOwner: ListOwnerHint<
 			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
 		>;
 	};
 	tupleTypeMembers(): TupleTypeMembers | undefined;

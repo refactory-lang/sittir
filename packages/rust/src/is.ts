@@ -3,47 +3,7 @@
 // Composition: kind × shape = concrete type via NamespaceMap.
 
 import { TSKindId } from './types.js';
-import type {
-	NamespaceMap,
-	ArrayExpression,
-	CharLiteral,
-	CharLiteralEscaped,
-	ClosureExpression,
-	Comment,
-	Condition,
-	DeclarationStatement,
-	DelimTokenTree,
-	DelimTokens,
-	EscapeSequence,
-	Expression,
-	ExpressionEndingWithBlock,
-	ExpressionExceptRange,
-	FieldPattern,
-	ForeignModItem,
-	ImplItem,
-	IntegerLiteral,
-	Literal,
-	LiteralPattern,
-	MacroDefinition,
-	MatchArm,
-	ModItem,
-	NonDelimToken,
-	OrPattern,
-	Path,
-	Pattern,
-	PointerType,
-	RangePattern,
-	ReferenceExpression,
-	Statement,
-	StructItem,
-	TokenPattern,
-	TokenTree,
-	TokenTreePattern,
-	Tokens,
-	Type,
-	UseClause,
-	Whitespace
-} from './types.js';
+import type { NamespaceMap } from './types.js';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {

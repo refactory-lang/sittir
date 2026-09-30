@@ -3,7 +3,7 @@
 // Composition: kind × shape = concrete type via NamespaceMap.
 
 import { TSKindId } from './types.js';
-import type { NamespaceMap, CharacterEscape, ClassAtom, InlineFlagsGroup, Whitespace } from './types.js';
+import type { NamespaceMap } from './types.js';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {

@@ -31,16 +31,28 @@ interface Fn {
 	readonly __slotHints__?: { params: SlotHint<Params>; kw: SlotHint<K.Kw, true> };
 }
 declare namespace Param {
-	interface Bound extends BoundOf<Param, ByB> { readonly $with: WithNode<this, ByB, ByP> }
-	interface Parsed extends ParsedOf<Param, ByP> { readonly $with: WithNode<this, ByB, ByP> }
+	interface Bound extends BoundOf<Param, ByB> {
+		readonly $with: WithNode<this, ByB, ByP>;
+	}
+	interface Parsed extends ParsedOf<Param, ByP> {
+		readonly $with: WithNode<this, ByB, ByP>;
+	}
 }
 declare namespace Params {
-	interface Bound extends BoundOf<Params, ByB> { readonly $with: WithNode<this, ByB, ByP> }
-	interface Parsed extends ParsedOf<Params, ByP> { readonly $with: WithNode<this, ByB, ByP> }
+	interface Bound extends BoundOf<Params, ByB> {
+		readonly $with: WithNode<this, ByB, ByP>;
+	}
+	interface Parsed extends ParsedOf<Params, ByP> {
+		readonly $with: WithNode<this, ByB, ByP>;
+	}
 }
 declare namespace Fn {
-	interface Bound extends BoundOf<Fn, ByB> { readonly $with: WithNode<this, ByB, ByP> }
-	interface Parsed extends ParsedOf<Fn, ByP> { readonly $with: WithNode<this, ByB, ByP> }
+	interface Bound extends BoundOf<Fn, ByB> {
+		readonly $with: WithNode<this, ByB, ByP>;
+	}
+	interface Parsed extends ParsedOf<Fn, ByP> {
+		readonly $with: WithNode<this, ByB, ByP>;
+	}
 }
 interface ByB {
 	[K.Fn]: Fn.Bound;
@@ -96,6 +108,18 @@ describe('BoundOf / ParsedOf', () => {
 		const d = owner.$with.elements(param, param);
 		expectTypeOf(d.elements()).toEqualTypeOf<readonly Param.Bound[]>();
 		expectTypeOf(owner.$with.elements()).toHaveProperty('elements');
+	});
+	it('a list owner $with is callable with the factory arguments', () => {
+		expectTypeOf(owner.$with({ delimiter: 2 }, param)).toHaveProperty('elements');
+		expectTypeOf(owner.$with(param)).toHaveProperty('elements');
+		expectTypeOf(owner.$with(param).elements()).toEqualTypeOf<readonly Param.Bound[]>();
+		expectTypeOf(built.$with(param)).toHaveProperty('elements');
+		// @ts-expect-error at least one element
+		owner.$with({ delimiter: 2 });
+	});
+	it('a node that is not a list owner has no call signature on $with', () => {
+		// @ts-expect-error not callable
+		fn.$with(built);
 	});
 	it('Bound $with returns Bound', () => {
 		expectTypeOf(bound.$with.params(built).params()).toEqualTypeOf<Params.Bound>();

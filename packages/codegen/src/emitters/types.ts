@@ -935,7 +935,7 @@ function emitSlotHints(
 		const flags = setter.rest ? `, ${setter.optional}, true` : setter.optional ? ', true' : '';
 		lines.push(`    readonly ${setter.name}: SlotHint<${setter.input}${flags}>;`);
 	}
-	if (owner !== undefined) lines.push(`    readonly $listOwner: ListOwnerHint<${owner.element}, ${owner.options}>;`);
+	if (owner !== undefined) lines.push(`    readonly $listOwner: ListOwnerHint<${owner.element}, ${owner.options}, ${owner.input}>;`);
 	lines.push('  };');
 }
 

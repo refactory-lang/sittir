@@ -198,6 +198,7 @@ interface ListOwnerSpec {
 	readonly list: string;
 	readonly elements: string;
 	readonly options: readonly string[];
+	readonly make: (...args: never[]) => unknown;
 }
 
 export function withListOwner<T extends object>(node: T, spec: ListOwnerSpec): T {
@@ -233,7 +234,22 @@ export function withListOwner<T extends object>(node: T, spec: ListOwnerSpec): T
 			}
 		});
 	}
+	makeWithCallable(node, spec);
 	return node;
+}
+
+function makeWithCallable(node: object, spec: ListOwnerSpec): void {
+	const own = Object.getOwnPropertyDescriptor(node, '$with');
+	const setters = own?.value as Record<string, unknown> | undefined;
+	if (own === undefined || setters === undefined) return;
+	const call = (...args: unknown[]): unknown =>
+		(call as unknown as Record<string, (list: unknown) => unknown>)[spec.list]!(
+			(spec.make as (...a: unknown[]) => unknown)(...args)
+		);
+	for (const key of Object.keys(setters)) {
+		Object.defineProperty(call, key, { value: setters[key], enumerable: true, writable: true, configurable: true });
+	}
+	Object.defineProperty(node, '$with', { ...own, value: call });
 }
 
 export function isNode(v: unknown): v is AnyNodeData {

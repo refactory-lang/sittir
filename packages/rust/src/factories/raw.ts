@@ -995,7 +995,12 @@ function _buildEnumVariantList(
 					enumVariantListElements: () => _enum_variant_list_elements
 				}
 			),
-			{ list: 'enumVariantListElements', elements: 'elements', options: ['delimiter'] }
+			{
+				list: 'enumVariantListElements',
+				elements: 'elements',
+				options: ['delimiter'],
+				make: buildEnumVariantListElements
+			}
 		)
 	) as unknown as T.EnumVariantList.Bound;
 }
@@ -1096,7 +1101,12 @@ function _buildFieldDeclarationList(
 					fieldDeclarationListElements: () => _field_declaration_list_elements
 				}
 			),
-			{ list: 'fieldDeclarationListElements', elements: 'elements', options: ['delimiter'] }
+			{
+				list: 'fieldDeclarationListElements',
+				elements: 'elements',
+				options: ['delimiter'],
+				make: buildFieldDeclarationListElements
+			}
 		)
 	) as unknown as T.FieldDeclarationList.Bound;
 }
@@ -1198,7 +1208,12 @@ function _buildOrderedFieldDeclarationList(
 					attributes: () => _attributes
 				}
 			),
-			{ list: 'attributes', elements: 'elements', options: ['delimiter'] }
+			{
+				list: 'attributes',
+				elements: 'elements',
+				options: ['delimiter'],
+				make: buildOrderedFieldDeclarationListElements
+			}
 		)
 	) as unknown as T.OrderedFieldDeclarationList.Bound;
 }
@@ -1630,7 +1645,7 @@ function _buildWhereClause(value?: AdmitBound<T.WherePredicates, T.AdmittedNodes
 					wherePredicates: () => _where_predicates
 				}
 			),
-			{ list: 'wherePredicates', elements: 'wherePredicates', options: ['delimiter'] }
+			{ list: 'wherePredicates', elements: 'wherePredicates', options: ['delimiter'], make: buildWherePredicates }
 		)
 	) as unknown as T.WhereClause.Bound;
 }
@@ -1938,7 +1953,12 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 					typeParametersElements: () => _type_parameters_elements
 				}
 			),
-			{ list: 'typeParametersElements', elements: 'elements', options: ['delimiter'] }
+			{
+				list: 'typeParametersElements',
+				elements: 'elements',
+				options: ['delimiter'],
+				make: buildTypeParametersElements
+			}
 		)
 	) as unknown as T.TypeParameters.Bound;
 }
@@ -2382,7 +2402,7 @@ function _buildUseList(value?: AdmitBound<T.UseClauses, T.AdmittedNodes>): T.Use
 					useClauses: () => _use_clauses
 				}
 			),
-			{ list: 'useClauses', elements: 'useClauses', options: ['delimiter'] }
+			{ list: 'useClauses', elements: 'useClauses', options: ['delimiter'], make: buildUseClauses }
 		)
 	) as unknown as T.UseList.Bound;
 }
@@ -2599,7 +2619,7 @@ function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNod
 					parametersElements: () => _parameters_elements
 				}
 			),
-			{ list: 'parametersElements', elements: 'elements', options: ['delimiter'] }
+			{ list: 'parametersElements', elements: 'elements', options: ['delimiter'], make: buildParametersElements }
 		)
 	) as unknown as T.Parameters.Bound;
 }
@@ -2946,7 +2966,7 @@ function _buildForLifetimes(value: AdmitBound<T.Lifetimes, T.AdmittedNodes>): T.
 					lifetimes: () => _lifetimes
 				}
 			),
-			{ list: 'lifetimes', elements: 'lifetimes', options: ['delimiter'] }
+			{ list: 'lifetimes', elements: 'lifetimes', options: ['delimiter'], make: buildLifetimes }
 		)
 	) as unknown as T.ForLifetimes.Bound;
 }
@@ -3041,7 +3061,7 @@ function _buildTupleType(value: AdmitBound<T.TupleTypeElements, T.AdmittedNodes>
 					tupleTypeElements: () => _tuple_type_elements
 				}
 			),
-			{ list: 'tupleTypeElements', elements: 'types', options: ['delimiter'] }
+			{ list: 'tupleTypeElements', elements: 'types', options: ['delimiter'], make: buildTupleTypeElements }
 		)
 	) as unknown as T.TupleType.Bound;
 }
@@ -3226,7 +3246,7 @@ function _buildUseBounds(value?: AdmitBound<T.UseBoundsElements, T.AdmittedNodes
 					bounds: () => _bounds
 				}
 			),
-			{ list: 'bounds', elements: 'elements', options: ['delimiter'] }
+			{ list: 'bounds', elements: 'elements', options: ['delimiter'], make: buildUseBoundsElements }
 		)
 	) as unknown as T.UseBounds.Bound;
 }
@@ -3288,7 +3308,7 @@ function _buildTypeArguments(value: AdmitBound<T.TypeArgumentsElements, T.Admitt
 					typeArgumentsElements: () => _type_arguments_elements
 				}
 			),
-			{ list: 'typeArgumentsElements', elements: 'elements', options: ['delimiter'] }
+			{ list: 'typeArgumentsElements', elements: 'elements', options: ['delimiter'], make: buildTypeArgumentsElements }
 		)
 	) as unknown as T.TypeArguments.Bound;
 }
@@ -4221,7 +4241,7 @@ function _buildArguments(value?: AdmitBound<T.ArgumentsElements, T.AdmittedNodes
 					argumentsElements: () => _arguments_elements
 				}
 			),
-			{ list: 'argumentsElements', elements: 'elements', options: ['delimiter'] }
+			{ list: 'argumentsElements', elements: 'elements', options: ['delimiter'], make: buildArgumentsElements }
 		)
 	) as unknown as T.Arguments.Bound;
 }
@@ -4378,7 +4398,7 @@ function _buildFieldInitializerList(
 					initializers: () => _initializers
 				}
 			),
-			{ list: 'initializers', elements: 'elements', options: ['delimiter'] }
+			{ list: 'initializers', elements: 'elements', options: ['delimiter'], make: buildFieldInitializerListElements }
 		)
 	) as unknown as T.FieldInitializerList.Bound;
 }
@@ -5340,7 +5360,7 @@ function _buildTuplePattern(value?: AdmitBound<T.TuplePatternElements, T.Admitte
 					elements: () => _elements
 				}
 			),
-			{ list: 'elements', elements: 'elements', options: ['delimiter'] }
+			{ list: 'elements', elements: 'elements', options: ['delimiter'], make: buildTuplePatternElements }
 		)
 	) as unknown as T.TuplePattern.Bound;
 }
@@ -5387,7 +5407,7 @@ function _buildSlicePattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.
 					patterns: () => _patterns
 				}
 			),
-			{ list: 'patterns', elements: 'patterns', options: ['delimiter'] }
+			{ list: 'patterns', elements: 'patterns', options: ['delimiter'], make: buildPatterns }
 		)
 	) as unknown as T.SlicePattern.Bound;
 }

@@ -12035,7 +12035,7 @@ The options type a list's factory takes as its leading argument, or `undefined` 
 
 ### `packages/codegen/src/emitters/factories.ts::listOwnerHint`
 
-Whether a kind's sole content is a separated list, as the facts a list owner's node surface needs: the stored element of the list and the options its factory takes (`{}` when it takes none). Defined exactly when `forwardedTargetKind` names an `AssembledList`, the fact that gives the owner's strict factory its `(options?, ...items)` overloads, so read and build cannot disagree about which kinds are list owners.
+Whether a kind's sole content is a separated list, as the facts a list owner's node surface needs: the stored element of the list, the options its factory takes (`{}` when it takes none) and the element input its factory accepts. Defined exactly when `forwardedTargetKind` names an `AssembledList`, the fact that gives the owner's strict factory its `(options?, ...items)` overloads, so read and build cannot disagree about which kinds are list owners.
 
 ### `packages/codegen/src/emitters/factories.ts::TextFactoryNode`
 
@@ -16426,7 +16426,7 @@ The emitted `_keywordOr(input, keywords, () => resolved)` that replaces `_keywor
 
 ### `packages/codegen/src/emitters/factories.ts::listOwnerRuntimeSpec`
 
-The object literal `{ list, elements, options }` a list owner's builder and wrap pass to `withListOwner`: the owner's accessor for its list, the list's accessor for its elements, and the option keys its factory takes. It shares `listOwnerTarget` with `listOwnerHint`, so the type-level marker and the runtime members come from one test of list-ownership; `undefined` means the node is not a list owner and neither emitter adds the call.
+The object literal `{ list, elements, options, make }` a list owner's builder and wrap pass to `withListOwner`: the owner's accessor for its list, the list's accessor for its elements, the option keys its factory takes, and the list's own raw factory. `factoryScope` prefixes that factory's name where the caller reaches it through a namespace import (the wrap module). It shares `listOwnerTarget` with `listOwnerHint`, so the type-level marker and the runtime members come from one test of list-ownership; `undefined` means the node is not a list owner and neither emitter adds the call.
 
 ### `packages/codegen/src/emitters/factories.ts::listOwnerTarget`
 

@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { Delimiter, withListOwner } from '../src/utils.ts';
 
-const spec = { list: 'items', elements: 'elements', options: ['delimiter', 'separator'] } as const;
+const made: unknown[][] = [];
+const spec = {
+	list: 'items',
+	elements: 'elements',
+	options: ['delimiter', 'separator'],
+	make: (...args: unknown[]) => {
+		made.push(args);
+		return { list: args };
+	}
+} as const;
 
 const owner = (list: object | undefined) =>
 	withListOwner({ $type: 1, items: () => list } as Record<string, unknown>, spec) as any;
@@ -28,5 +37,26 @@ describe('withListOwner', () => {
 		expect(Object.keys(node)).toEqual(['$type', 'items']);
 		for (const key of ['length', 'at', 'delimiter', 'separator']) expect(Object.keys(node)).not.toContain(key);
 		expect(Object.getOwnPropertySymbols({ ...node })).toEqual([]);
+	});
+
+	it('makes $with callable: the arguments build the list, the list setter seats it, the setters stay', () => {
+		made.length = 0;
+		const seated: unknown[] = [];
+		const node = withListOwner(
+			{
+				$type: 1,
+				items: () => undefined,
+				$with: { items: (list: unknown) => (seated.push(list), 'rebuilt') }
+			} as Record<string, unknown>,
+			spec
+		) as any;
+		expect(node.$with({ delimiter: 2 }, 'a', 'b')).toBe('rebuilt');
+		expect(made).toEqual([[{ delimiter: 2 }, 'a', 'b']]);
+		expect(seated).toEqual([{ list: [{ delimiter: 2 }, 'a', 'b'] }]);
+		expect(node.$with.items({ list: [] })).toBe('rebuilt');
+		expect(Object.keys(node.$with)).toEqual(['items']);
+	});
+	it('leaves a node without $with alone', () => {
+		expect(() => owner({ elements: () => [] })).not.toThrow();
 	});
 });

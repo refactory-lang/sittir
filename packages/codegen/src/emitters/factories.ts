@@ -1604,23 +1604,24 @@ export function listOwnerHint(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
-): { readonly element: string; readonly options: string } | undefined {
+): { readonly element: string; readonly options: string; readonly input: string } | undefined {
 	const target = listOwnerTarget(node, nodeMap);
 	if (target === undefined) return undefined;
 	const surface = separatedListSurface(target.list, nodeMap, kindEntries);
-	return { element: surface.storageElemType, options: surface.optionsType ?? '{}' };
+	return { element: surface.storageElemType, options: surface.optionsType ?? '{}', input: surface.elemType };
 }
 
 export function listOwnerRuntimeSpec(
 	node: AssembledNode,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	factoryScope = ''
 ): string | undefined {
 	const target = listOwnerTarget(node, nodeMap);
 	if (target === undefined) return undefined;
 	const surface = separatedListSurface(target.list, nodeMap, kindEntries);
 	const options = listOptionKeys(surface).map((key) => JSON.stringify(key)).join(', ');
-	return `{ list: ${JSON.stringify(target.owner.propertyName)}, elements: ${JSON.stringify(canonicalSeparatedListField(target.list).propertyName)}, options: [${options}] }`;
+	return `{ list: ${JSON.stringify(target.owner.propertyName)}, elements: ${JSON.stringify(canonicalSeparatedListField(target.list).propertyName)}, options: [${options}], make: ${factoryScope}${target.list.rawFactoryName} }`;
 }
 
 export function separatedListSurface(

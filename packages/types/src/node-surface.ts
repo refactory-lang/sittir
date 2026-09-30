@@ -3,9 +3,10 @@ export interface SlotHint<Input, Optional extends boolean = false, Rest extends 
 	readonly optional: Optional;
 	readonly rest: Rest;
 }
-export interface ListOwnerHint<Element, Options extends object> {
+export interface ListOwnerHint<Element, Options extends object, Input = Element> {
 	readonly element: Element;
 	readonly options: Options;
+	readonly input: Input;
 }
 export type Remap<T, K extends PropertyKey> = { [P in keyof T as P extends K ? never : P]: T[P] };
 
@@ -63,6 +64,22 @@ type SetResult<Self, K extends PropertyKey, V, ByBound, Lookup, Reflect extends 
 	? Self
 	: WithSlot<Self, K, V, ByBound, Lookup>;
 
+type ListCall<Self, ByBound, Lookup, Reflect extends boolean> = [ListOwnerOf<Self>] extends [never]
+	? {}
+	: ListOwnerOf<Self> extends ListOwnerHint<unknown, infer O, infer I>
+		? keyof SlotHintsOf<Self> extends infer K extends keyof SlotHintsOf<Self>
+			? {
+					(
+						options: O,
+						...items: readonly [AdmitBound<I, Lookup>, ...(readonly AdmitBound<I, Lookup>[])]
+					): SetResult<Self, K, SlotInput<Self, K>, ByBound, Lookup, Reflect>;
+					(
+						...items: readonly [AdmitBound<I, Lookup>, ...(readonly AdmitBound<I, Lookup>[])]
+					): SetResult<Self, K, SlotInput<Self, K>, ByBound, Lookup, Reflect>;
+				}
+			: {}
+		: {};
+
 export type Setters<Self, ByBound, Lookup, Reflect extends boolean = false> = {
 	[K in keyof SlotHintsOf<Self>]: SlotRest<Self, K> extends true
 		? SlotInput<Self, K> extends infer Rest extends readonly unknown[]
@@ -71,12 +88,17 @@ export type Setters<Self, ByBound, Lookup, Reflect extends boolean = false> = {
 				: never
 			: never
 		: SlotOptional<Self, K> extends true
-			? ((value: AdmitBound<SlotInput<Self, K>, Lookup>) => SetResult<Self, K, SlotInput<Self, K>, ByBound, Lookup, Reflect>) &
+			? ((
+					value: AdmitBound<SlotInput<Self, K>, Lookup>
+				) => SetResult<Self, K, SlotInput<Self, K>, ByBound, Lookup, Reflect>) &
 					(() => SetResult<Self, K, undefined, ByBound, Lookup, Reflect>)
-			: (value: AdmitBound<SlotInput<Self, K>, Lookup>) => SetResult<Self, K, SlotInput<Self, K>, ByBound, Lookup, Reflect>;
-};
+			: (
+					value: AdmitBound<SlotInput<Self, K>, Lookup>
+				) => SetResult<Self, K, SlotInput<Self, K>, ByBound, Lookup, Reflect>;
+} & ListCall<Self, ByBound, Lookup, Reflect>;
 export type WithOf<Self, ByBound, Lookup> = Setters<Self, ByBound, Lookup>;
-type ResolveInput<V, ByBound> = Resolve<V, ByBound> extends infer R ? (R extends readonly unknown[] ? Readonly<R> : R) : never;
+type ResolveInput<V, ByBound> =
+	Resolve<V, ByBound> extends infer R ? (R extends readonly unknown[] ? Readonly<R> : R) : never;
 export type WithSlot<Self, K extends PropertyKey, V, ByBound, Lookup> = Remap<Self, K | '$with'> & {
 	[P in K]: () => ResolveInput<V, ByBound>;
 } & {
@@ -85,7 +107,7 @@ export type WithSlot<Self, K extends PropertyKey, V, ByBound, Lookup> = Remap<Se
 
 type ListPart<N, ByKindId> = [ListOwnerOf<N>] extends [never]
 	? {}
-	: ListOwnerOf<N> extends ListOwnerHint<infer E, infer O>
+	: ListOwnerOf<N> extends ListOwnerHint<infer E, infer O, unknown>
 		? ListOwnerMembers<Resolve<E, ByKindId>, O>
 		: {};
 

@@ -16,17 +16,19 @@ describe('__slotHints__', () => {
 		expect(fn).toContain('readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;');
 	});
 	it('a slot set with rest arguments stamps its rest type and says so', () => {
-		expect(interfaceBlock(rustTypes(), 'ParametersElements')).toMatch(/readonly elements: SlotHint<\s*NonEmptyArray<[^;]*>,\s*false,\s*true\s*>;/);
+		expect(interfaceBlock(rustTypes(), 'ParametersElements')).toMatch(
+			/readonly elements: SlotHint<\s*NonEmptyArray<[^;]*>,\s*false,\s*true\s*>;/
+		);
 	});
 	it('a multiple slot whose storage is not verbatim is set with one array value', () => {
 		expect(interfaceBlock(rustTypes(), 'Block')).toContain(
 			"readonly statements: SlotHint<NonNullable<T.Block.Config>['statements'], true>;"
 		);
 	});
-	it('a sole-list owner stamps its stored element and its factory options', () => {
+	it('a sole-list owner stamps its stored element, its factory options and the elements its factory takes', () => {
 		const ps = interfaceBlock(rustTypes(), 'Parameters');
-		expect(ps).toContain(
-			'readonly $listOwner: ListOwnerHint<T.AttributedParameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;'
+		expect(ps.replace(/\s+/g, ' ')).toContain(
+			'ListOwnerHint< T.AttributedParameter, { delimiter?: Delimiter.None | Delimiter.Trailing }, | T.AttributedParameter | T.Parameter | T.SelfParameter'
 		);
 	});
 	it('a kind that is not a list owner stamps no $listOwner', () => {

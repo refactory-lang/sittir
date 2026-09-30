@@ -190,7 +190,7 @@ What one slot of a kind interface contributes to its node surfaces: the type its
 
 ### `packages/types/src/node-surface.ts::ListOwnerHint`
 
-Marks a kind whose sole content is a separated list: the element type its stored list yields (the stored element, not the spread's arms, so no content is lost on read) and the options type its factory takes. Stamped under the reserved `$listOwner` key of `__slotHints__`, from the same fact that gives the strict factory its `(options?, ...items)` overloads.
+Marks a kind whose sole content is a separated list: the element type its stored list yields (the stored element, not the spread's arms, so no content is lost on read) the options type its factory takes, and the element input its factory accepts (the stored element plus the bare arms a transparent wrapper takes; the element itself when there is none). Stamped under the reserved `$listOwner` key of `__slotHints__`, from the same fact that gives the strict factory its `(options?, ...items)` overloads.
 
 ### `packages/types/src/node-surface.ts::Remap`
 
@@ -206,11 +206,11 @@ The `$listOwner` hint of a kind interface, or `never` when it is not a list owne
 
 ### `packages/types/src/node-surface.ts::ListOwnerMembers`
 
-The members a list owner adds on top of its own accessors: it iterates its stored elements, reports `length`, gives `at(index)` over the same stored array, and carries the factory's options flattened on as read-only properties.
+The members a list owner adds on top of its own accessors (its `$with` is callable, see `Setters`): it iterates its stored elements, reports `length`, gives `at(index)` over the same stored array, and carries the factory's options flattened on as read-only properties.
 
 ### `packages/types/src/node-surface.ts::Setters`
 
-One setter per stamped slot, reading only `__slotHints__`. A required slot takes its input and returns the node with that slot's accessor retyped to the input. An optional slot also has a no-argument form that clears it, and reads back `undefined`. A slot stamped `rest` is set with rest arguments, its input being the rest type, exactly as the factory takes it; a slot whose input is an array but is not stamped `rest` takes the array as one value. The retyped accessor comes from the declared input, never from the argument's own type: inferring the argument per call is what made type-checking unbounded.
+One setter per stamped slot, reading only `__slotHints__`. A required slot takes its input and returns the node with that slot's accessor retyped to the input. An optional slot also has a no-argument form that clears it, and reads back `undefined`. A slot stamped `rest` is set with rest arguments, its input being the rest type, exactly as the factory takes it; a slot whose input is an array but is not stamped `rest` takes the array as one value. The retyped accessor comes from the declared input, never from the argument's own type: inferring the argument per call is what made type-checking unbounded. A list owner's `$with` is also callable with its list factory's arguments, `(options, ...items)` or `(...items)`, each item admitted like the factory's element input; the call replaces the list slot, so it returns what that slot's setter returns.
 
 ### `packages/types/src/node-surface.ts::WithOf`
 

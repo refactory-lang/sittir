@@ -18,4 +18,9 @@ describe('a list owner', () => {
 		expect([...ps]).toEqual([]);
 		expect(ps.length).toBe(0);
 	});
+	it('$with takes the list factory arguments and keeps the elements it is given', () => {
+		const ps = fnOf('function f(a: number, b: string) {}\n').parameters();
+		expect(ps.$with(ps.at(0)).$render()).toBe('(a: number)');
+		expect(ps.$with({ delimiter: Delimiter.Trailing }, ps.at(0)).$render()).toBe('(a: number,)');
+	});
 });

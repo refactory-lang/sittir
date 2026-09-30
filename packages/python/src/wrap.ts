@@ -20,6 +20,7 @@ import { TSKindId, KIND_NAMES } from './types.js';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types.js';
 import { withMethods } from './utils.js';
+import * as RAW from './factories/raw.js';
 
 // A hydrated read-layer TEXT LEAF: the reader modeled no addressable
 // structure (no `_<slot>` storage keys, no `$other`) and captured the
@@ -1043,7 +1044,12 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 						wrapSimpleStatements({ ...$edited(data), _simple_statements_elements: v }, tree)
 				}
 			},
-			{ list: 'simpleStatementsElements', elements: 'simpleStatements', options: ['delimiter'] }
+			{
+				list: 'simpleStatementsElements',
+				elements: 'simpleStatements',
+				options: ['delimiter'],
+				make: RAW.buildSimpleStatementsElements
+			}
 		)
 	);
 	return _node as unknown as T.SimpleStatements.Parsed;
@@ -2232,7 +2238,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 						wrapParameters({ ...$edited(data), _elements: v }, tree)
 				}
 			},
-			{ list: 'elements', elements: 'parameters', options: ['delimiter'] }
+			{ list: 'elements', elements: 'parameters', options: ['delimiter'], make: RAW.buildParametersElements }
 		)
 	);
 	return _node as unknown as T.Parameters.Parsed;
@@ -2261,7 +2267,7 @@ export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle)
 						wrapLambdaParameters({ ...$edited(data), _parameters_elements: v }, tree)
 				}
 			},
-			{ list: 'parametersElements', elements: 'parameters', options: ['delimiter'] }
+			{ list: 'parametersElements', elements: 'parameters', options: ['delimiter'], make: RAW.buildParametersElements }
 		)
 	);
 	return _node as unknown as T.LambdaParameters.Parsed;
@@ -2510,7 +2516,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 					types: (v: NonNullable<T.TypeParameter['_types']>) => wrapTypeParameter({ ...$edited(data), _types: v }, tree)
 				}
 			},
-			{ list: 'types', elements: 'types', options: ['delimiter'] }
+			{ list: 'types', elements: 'types', options: ['delimiter'], make: RAW.buildTypes }
 		)
 	);
 	return _node as unknown as T.TypeParameter.Parsed;
@@ -2564,7 +2570,7 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle): T.Argu
 						wrapArgumentList({ ...$edited(data), _arguments: v }, tree)
 				}
 			},
-			{ list: 'arguments', elements: 'elements', options: ['delimiter'] }
+			{ list: 'arguments', elements: 'elements', options: ['delimiter'], make: RAW.buildArgumentListElements }
 		)
 	);
 	return _node as unknown as T.ArgumentList.Parsed;
@@ -2927,7 +2933,7 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle): T.DictPa
 						wrapDictPattern({ ...$edited(data), _dict_pattern_elements: v }, tree)
 				}
 			},
-			{ list: 'dictPatternElements', elements: 'elements', options: ['delimiter'] }
+			{ list: 'dictPatternElements', elements: 'elements', options: ['delimiter'], make: RAW.buildDictPatternElements }
 		)
 	);
 	return _node as unknown as T.DictPattern.Parsed;
@@ -3376,7 +3382,7 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 						wrapTuplePattern({ ...$edited(data), _patterns: v }, tree)
 				}
 			},
-			{ list: 'patterns', elements: 'patterns', options: ['delimiter'] }
+			{ list: 'patterns', elements: 'patterns', options: ['delimiter'], make: RAW.buildPatterns }
 		)
 	);
 	return _node as unknown as T.TuplePattern.Parsed;
@@ -3404,7 +3410,7 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle): T.ListPa
 						wrapListPattern({ ...$edited(data), _patterns: v }, tree)
 				}
 			},
-			{ list: 'patterns', elements: 'patterns', options: ['delimiter'] }
+			{ list: 'patterns', elements: 'patterns', options: ['delimiter'], make: RAW.buildPatterns }
 		)
 	);
 	return _node as unknown as T.ListPattern.Parsed;
@@ -5231,7 +5237,7 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 						wrapList({ ...$edited(data), _collection_elements: v }, tree)
 				}
 			},
-			{ list: 'collectionElements', elements: 'elements', options: ['delimiter'] }
+			{ list: 'collectionElements', elements: 'elements', options: ['delimiter'], make: RAW.buildCollectionElements }
 		)
 	);
 	return _node as unknown as T.List.Parsed;
@@ -5260,7 +5266,7 @@ export function wrapSet(data: T.Set, tree: TreeHandle): T.Set.Parsed {
 						wrapSet({ ...$edited(data), _collection_elements: v }, tree)
 				}
 			},
-			{ list: 'collectionElements', elements: 'elements', options: ['delimiter'] }
+			{ list: 'collectionElements', elements: 'elements', options: ['delimiter'], make: RAW.buildCollectionElements }
 		)
 	);
 	return _node as unknown as T.Set.Parsed;
@@ -5289,7 +5295,7 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle): T.Tuple.Parsed {
 						wrapTuple({ ...$edited(data), _collection_elements: v }, tree)
 				}
 			},
-			{ list: 'collectionElements', elements: 'elements', options: ['delimiter'] }
+			{ list: 'collectionElements', elements: 'elements', options: ['delimiter'], make: RAW.buildCollectionElements }
 		)
 	);
 	return _node as unknown as T.Tuple.Parsed;
@@ -5316,7 +5322,7 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle): T.Dictiona
 					entries: (v: NonNullable<T.Dictionary['_entries']>) => wrapDictionary({ ...$edited(data), _entries: v }, tree)
 				}
 			},
-			{ list: 'entries', elements: 'elements', options: ['delimiter'] }
+			{ list: 'entries', elements: 'elements', options: ['delimiter'], make: RAW.buildDictionaryElements }
 		)
 	);
 	return _node as unknown as T.Dictionary.Parsed;
@@ -6714,7 +6720,12 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 						wrapCaseTuplePattern({ ...$edited(data), _list_pattern_case_patterns: v }, tree)
 				}
 			},
-			{ list: 'listPatternCasePatterns', elements: 'casePatterns', options: ['delimiter'] }
+			{
+				list: 'listPatternCasePatterns',
+				elements: 'casePatterns',
+				options: ['delimiter'],
+				make: RAW.buildListPatternCasePatterns
+			}
 		)
 	);
 	return _node as unknown as T.CaseTuplePattern.Parsed;
@@ -6743,7 +6754,12 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): 
 						wrapCaseListPattern({ ...$edited(data), _list_pattern_case_patterns: v }, tree)
 				}
 			},
-			{ list: 'listPatternCasePatterns', elements: 'casePatterns', options: ['delimiter'] }
+			{
+				list: 'listPatternCasePatterns',
+				elements: 'casePatterns',
+				options: ['delimiter'],
+				make: RAW.buildListPatternCasePatterns
+			}
 		)
 	);
 	return _node as unknown as T.CaseListPattern.Parsed;
@@ -6873,7 +6889,7 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 						wrapPrintStatementPlain({ ...$edited(data), _print_arguments: v }, tree)
 				}
 			},
-			{ list: 'printArguments', elements: 'arguments', options: ['delimiter'] }
+			{ list: 'printArguments', elements: 'arguments', options: ['delimiter'], make: RAW.buildPrintArguments }
 		)
 	);
 	return _node as unknown as T.PrintStatementPlain.Parsed;
@@ -6904,7 +6920,7 @@ export function wrapParenthesizedImportList(
 						wrapParenthesizedImportList({ ...$edited(data), _import_list: v }, tree)
 				}
 			},
-			{ list: 'importList', elements: 'names', options: ['delimiter'] }
+			{ list: 'importList', elements: 'names', options: ['delimiter'], make: RAW.buildImportList }
 		)
 	);
 	return _node as unknown as T.ParenthesizedImportList.Parsed;
@@ -7748,7 +7764,7 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): 
 						wrapWithClauseParen({ ...$edited(data), _with_clause_with_items: v }, tree)
 				}
 			},
-			{ list: 'withClauseWithItems', elements: 'withItems', options: ['delimiter'] }
+			{ list: 'withClauseWithItems', elements: 'withItems', options: ['delimiter'], make: RAW.buildWithClauseWithItems }
 		)
 	);
 	return _node as unknown as T.WithClauseParen.Parsed;
@@ -7800,7 +7816,12 @@ export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteI
 						wrapSuiteInline({ ...$edited(data), _simple_statements_elements: v }, tree)
 				}
 			},
-			{ list: 'simpleStatementsElements', elements: 'simpleStatements', options: ['delimiter'] }
+			{
+				list: 'simpleStatementsElements',
+				elements: 'simpleStatements',
+				options: ['delimiter'],
+				make: RAW.buildSimpleStatementsElements
+			}
 		)
 	);
 	return _node as unknown as T.SuiteInline.Parsed;

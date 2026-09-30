@@ -20,6 +20,7 @@ import { TSKindId, KIND_NAMES } from './types.js';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types.js';
 import { withMethods } from './utils.js';
+import * as RAW from './factories/raw.js';
 
 // A hydrated read-layer TEXT LEAF: the reader modeled no addressable
 // structure (no `_<slot>` storage keys, no `$other`) and captured the
@@ -1193,7 +1194,12 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle): T.Expo
 						wrapExportClause({ ...$edited(data), _export_specifiers: v }, tree)
 				}
 			},
-			{ list: 'exportSpecifiers', elements: 'exportSpecifiers', options: ['delimiter'] }
+			{
+				list: 'exportSpecifiers',
+				elements: 'exportSpecifiers',
+				options: ['delimiter'],
+				make: RAW.buildExportSpecifiers
+			}
 		)
 	);
 	return _node as unknown as T.ExportClause.Parsed;
@@ -1478,7 +1484,12 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle): T.Name
 						wrapNamedImports({ ...$edited(data), _import_specifiers: v }, tree)
 				}
 			},
-			{ list: 'importSpecifiers', elements: 'importSpecifiers', options: ['delimiter'] }
+			{
+				list: 'importSpecifiers',
+				elements: 'importSpecifiers',
+				options: ['delimiter'],
+				make: RAW.buildImportSpecifiers
+			}
 		)
 	);
 	return _node as unknown as T.NamedImports.Parsed;
@@ -5757,7 +5768,12 @@ export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle)
 						wrapFormalParameters({ ...$edited(data), _formal_parameters_elements: v }, tree)
 				}
 			},
-			{ list: 'formalParametersElements', elements: 'formalParameters', options: ['delimiter'] }
+			{
+				list: 'formalParametersElements',
+				elements: 'formalParameters',
+				options: ['delimiter'],
+				make: RAW.buildFormalParametersElements
+			}
 		)
 	);
 	return _node as unknown as T.FormalParameters.Parsed;
@@ -8035,7 +8051,7 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle): T.EnumBody.Par
 						wrapEnumBody({ ...$edited(data), _enum_body_elements: v }, tree)
 				}
 			},
-			{ list: 'enumBodyElements', elements: 'contents', options: ['delimiter'] }
+			{ list: 'enumBodyElements', elements: 'contents', options: ['delimiter'], make: RAW.buildEnumBodyElements }
 		)
 	);
 	return _node as unknown as T.EnumBody.Parsed;
@@ -10295,7 +10311,7 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 					types: (v: NonNullable<T.TypeArguments['_types']>) => wrapTypeArguments({ ...$edited(data), _types: v }, tree)
 				}
 			},
-			{ list: 'types', elements: 'types', options: ['delimiter'] }
+			{ list: 'types', elements: 'types', options: ['delimiter'], make: RAW.buildTypes }
 		)
 	);
 	return _node as unknown as T.TypeArguments.Parsed;
@@ -10589,7 +10605,12 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 						wrapTypeParameters({ ...$edited(data), _type_parameters_elements: v }, tree)
 				}
 			},
-			{ list: 'typeParametersElements', elements: 'typeParameters', options: ['delimiter'] }
+			{
+				list: 'typeParametersElements',
+				elements: 'typeParameters',
+				options: ['delimiter'],
+				make: RAW.buildTypeParametersElements
+			}
 		)
 	);
 	return _node as unknown as T.TypeParameters.Parsed;
@@ -10902,7 +10923,12 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 						wrapTupleType({ ...$edited(data), _tuple_type_members: v }, tree)
 				}
 			},
-			{ list: 'tupleTypeMembers', elements: 'tupleTypeMembers', options: ['delimiter'] }
+			{
+				list: 'tupleTypeMembers',
+				elements: 'tupleTypeMembers',
+				options: ['delimiter'],
+				make: RAW.buildTupleTypeMembers
+			}
 		)
 	);
 	return _node as unknown as T.TupleType.Parsed;

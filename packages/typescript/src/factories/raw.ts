@@ -183,7 +183,7 @@ function _buildExportClause(value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNod
 					exportSpecifiers: () => _export_specifiers
 				}
 			),
-			{ list: 'exportSpecifiers', elements: 'exportSpecifiers', options: ['delimiter'] }
+			{ list: 'exportSpecifiers', elements: 'exportSpecifiers', options: ['delimiter'], make: buildExportSpecifiers }
 		)
 	) as unknown as T.ExportClause.Bound;
 }
@@ -380,7 +380,7 @@ function _buildNamedImports(value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNod
 					importSpecifiers: () => _import_specifiers
 				}
 			),
-			{ list: 'importSpecifiers', elements: 'importSpecifiers', options: ['delimiter'] }
+			{ list: 'importSpecifiers', elements: 'importSpecifiers', options: ['delimiter'], make: buildImportSpecifiers }
 		)
 	) as unknown as T.NamedImports.Bound;
 }
@@ -3267,7 +3267,12 @@ function _buildFormalParameters(
 					formalParametersElements: () => _formal_parameters_elements
 				}
 			),
-			{ list: 'formalParametersElements', elements: 'formalParameters', options: ['delimiter'] }
+			{
+				list: 'formalParametersElements',
+				elements: 'formalParameters',
+				options: ['delimiter'],
+				make: buildFormalParametersElements
+			}
 		)
 	) as unknown as T.FormalParameters.Bound;
 }
@@ -4822,7 +4827,7 @@ function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>)
 					enumBodyElements: () => _enum_body_elements
 				}
 			),
-			{ list: 'enumBodyElements', elements: 'contents', options: ['delimiter'] }
+			{ list: 'enumBodyElements', elements: 'contents', options: ['delimiter'], make: buildEnumBodyElements }
 		)
 	) as unknown as T.EnumBody.Bound;
 }
@@ -6278,7 +6283,7 @@ function _buildTypeArguments(value: AdmitBound<T.Types, T.AdmittedNodes>): T.Typ
 					types: () => _types
 				}
 			),
-			{ list: 'types', elements: 'types', options: ['delimiter'] }
+			{ list: 'types', elements: 'types', options: ['delimiter'], make: buildTypes }
 		)
 	) as unknown as T.TypeArguments.Bound;
 }
@@ -6558,7 +6563,12 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 					typeParametersElements: () => _type_parameters_elements
 				}
 			),
-			{ list: 'typeParametersElements', elements: 'typeParameters', options: ['delimiter'] }
+			{
+				list: 'typeParametersElements',
+				elements: 'typeParameters',
+				options: ['delimiter'],
+				make: buildTypeParametersElements
+			}
 		)
 	) as unknown as T.TypeParameters.Bound;
 }
@@ -6785,7 +6795,7 @@ function _buildTupleType(value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>
 					tupleTypeMembers: () => _tuple_type_members
 				}
 			),
-			{ list: 'tupleTypeMembers', elements: 'tupleTypeMembers', options: ['delimiter'] }
+			{ list: 'tupleTypeMembers', elements: 'tupleTypeMembers', options: ['delimiter'], make: buildTupleTypeMembers }
 		)
 	) as unknown as T.TupleType.Bound;
 }
