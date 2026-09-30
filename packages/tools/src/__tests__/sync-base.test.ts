@@ -37,6 +37,8 @@ function target(effect: () => void = () => undefined): SyncBaseTarget & { regene
 beforeEach(() => {
 	cwd = mkdtempSync(join(tmpdir(), 'sync-base-'));
 	git('init', '-q', '-b', 'main');
+	git('config', 'user.name', 'sync-base test');
+	git('config', 'user.email', 'sync-base@example.invalid');
 	write('src.txt', 'v1\n');
 	write(generatedOutput, 'regenerated from v1');
 	write('other/keep.txt', 'h');
@@ -117,6 +119,27 @@ describe('syncBase', () => {
 		expect(printed.join('\n')).toContain('src.txt');
 		expect(existsSync(join(cwd, '.git/MERGE_HEAD'))).toBe(true);
 		expect(git('log', '-1', '--format=%s').trim()).toBe('feature change');
+	});
+
+	it('removes a generated file the base deleted, and takes the base side of one it changed', () => {
+		write('gen/gone.txt', 'v1');
+		commit('add gone');
+		git('checkout', '-q', 'main');
+		git('merge', '-q', 'feature');
+		git('rm', '-q', 'gen/gone.txt');
+		write('src.txt', 'v2\n');
+		commit('main deletes');
+		git('checkout', '-q', 'feature');
+		write('gen/gone.txt', 'feature edit');
+		commit('feature edits');
+		const t = target();
+		expect(syncBase({ base: 'main', cwd }, t, () => undefined)).toBe(0);
+		expect(existsSync(join(cwd, 'gen/gone.txt'))).toBe(false);
+		expect(t.regenerated).toEqual(['g']);
+	});
+
+	it('propagates a merge that fails without a conflict, such as a missing base ref', () => {
+		expect(() => syncBase({ base: 'no-such-ref', cwd }, target(), () => undefined)).toThrow();
 	});
 
 	it('refuses a dirty working tree', () => {

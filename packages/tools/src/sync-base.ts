@@ -40,9 +40,13 @@ export function syncBase(opts: SyncBaseOptions, target: SyncBaseTarget, out: (li
 	const remote = opts.base.includes('/') ? opts.base.split('/')[0] : undefined;
 	if (remote !== undefined && lines(git(['remote'])).includes(remote)) git(['fetch', remote]);
 
-	git(['merge', '--no-commit', '--no-ff', opts.base], true);
-	const merging = git(['rev-parse', '-q', '--verify', 'MERGE_HEAD'], true).trim().length > 0;
-	if (!merging) {
+	const mergeHeadExists = (): boolean => git(['rev-parse', '-q', '--verify', 'MERGE_HEAD'], true).trim().length > 0;
+	try {
+		git(['merge', '--no-commit', '--no-ff', opts.base]);
+	} catch (error) {
+		if (!mergeHeadExists()) throw error;
+	}
+	if (!mergeHeadExists()) {
 		out(`sync-base: already up to date with ${opts.base}`);
 		return 0;
 	}
@@ -59,10 +63,11 @@ export function syncBase(opts: SyncBaseOptions, target: SyncBaseTarget, out: (li
 	const affected = new Set<string>();
 	for (const path of generated) {
 		affected.add(grammarOfGeneratedPath(path, target.roots)!);
-		try {
+		const baseHasIt = lines(git(['ls-files', '-u', '--', path])).some((entry) => /^\d+ [0-9a-f]+ 3\t/.test(entry));
+		if (baseHasIt) {
 			git(['checkout', '--theirs', '--', path]);
 			git(['add', '--', path]);
-		} catch {
+		} else {
 			git(['rm', '-q', '-f', '--', path]);
 		}
 	}
