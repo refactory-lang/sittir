@@ -378,6 +378,22 @@ and a literal member is a terminal by its own stamp
 A member that is neither a rule, an external nor a literal is reported
 rather than defaulted, since defaulting would make the guard guess.
 
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::HiddenTerminalSite`
+
+One bare reference `hiddenTerminalNonliteralSites` finds: the rule that holds it and the hidden terminal it names.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::hiddenTerminalNonliteralSites`
+
+The references that can lose text, judged on the grammar's own shape: an unaliased SYMBOL, in a non-terminal rule, to a hidden external or to a hidden rule that is one non-literal token (`isTerminalRootRule` and not `isLiteralOnlyRule`). An aliased reference is skipped, because the alias gives the text a node. So is a rule whose whole body is the reference, since that rule's own node carries the text. The one override-layer fact it reads is an external's layout role: an external declared `role(…, 'indent')` or `role(…, 'dedent')` (`RawGrammar.externalRoles`, `LAYOUT_ROLES`) is a zero-width sentinel with no text, so the declaration claims it. The stage grammars carry no roles, so their records name such externals, and the final grammar resolves them.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::LAYOUT_ROLES`
+
+The external roles that mark a zero-width layout sentinel (`indent`, `dedent`), which `hiddenTerminalNonliteralSites` never reports.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::hiddenTerminalNonliteralDiagnostics`
+
+One blocking `hidden-terminal-nonliteral` record per `hiddenTerminalNonliteralSites` site, naming the owner and the hidden terminal (`details.target`). It runs on every stage's grammar. The override layer claims each enriched-stage record: a `visibleExternals:` entry that gives the external a visible node (rust `_block_comment_content`, typescript `_automatic_semicolon`), a rewrite that removes the bare reference, or a layout role. The final grammar must have none.
+
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::optionalFlankFieldDiagnostics`
 
 One blocking `field-optional-delimiter` record per authored-compound slot
@@ -673,3 +689,22 @@ Checks that upstream's `prec.dynamic`, its own tie-breaker between the parses it
 
 - when the rule, or a rule its values landed on, is authored in `rules:` (`rule-causes.ts::authoredRuleNames`), any difference is an informational `conflict-dynamic-precedence-authored`: the author stated the rule, so the change is theirs, recorded with both values;
 - otherwise an upstream value missing from what landed is the blocking `conflict-dynamic-precedence-lost`, which cannot be expected away. Added values are never an error.
+
+### `packages/codegen/src/compiler/diagnostics/catalog-coverage.ts::catalogCoverage`
+
+Checks the model's slots against the parser's kind catalog, the ground truth `tree-sitter generate` issues. It walks every arm of every model slot and returns two lists of sites, `{ ownerKind, slot, arm }`:
+
+- `unresolvedArms`: arms with no catalog kind. A node arm has none when its `storageKindId` is missing from `nodeByKindId` or it points at an unresolved ref. A terminal arm has none when it carries no `resolvedKindId`. These are inline unnamed patterns and non-string `token(…)` bodies that tree-sitter compiles to aux tokens, which have no symbol of their own.
+- `hiddenPublicArms`: node arms whose parser symbol is hidden in `ts_symbol_metadata` (the catalog row's `hidden`) yet stays on the surface (`surfaceHidden` false). Visibility comes from the parser, never from a leading underscore: tree-sitter marks a hidden rule visible once every use is aliased, and such a kind is public under its own name.
+
+Supertype arms are skipped, since a supertype is a union declaration with no symbol. So is every slot of a `lexedInterior` compound, whose interior is one parser token by construction.
+
+`__tests__/catalog-coverage-ratchet.test.ts` holds `unresolvedArms` to shrink-only per-grammar ceilings, and holds `hiddenPublicArms` and `auxTokenKinds` to none.
+
+### `packages/codegen/src/compiler/diagnostics/catalog-coverage.ts::CatalogCoverageSite`
+
+One site `catalogCoverage` reports: the owner kind, the slot and a label for the arm.
+
+### `packages/codegen/src/compiler/diagnostics/catalog-coverage.ts::auxTokenKinds`
+
+The catalog's anonymous auxiliary tokens: rows that are both `aux` and `terminal`. After the text-token mint (`dsl/rule-transforms.ts::mintInlineTextTokens`, run by enrich) there should be none, because each inline pattern or non-literal token has a visible kind of its own. The one exemption is structural: when named rules share one identical token body (`isTerminalRootRule`, `tokenBodyKey`), tree-sitter compiles that body to one auxiliary token named `<first rule>_token1`, and each rule keeps a kind id of its own (regex `posix_class_name` and `flags`). Link reports what remains as `aux-token-in-catalog`.

@@ -46,7 +46,7 @@ import {
 } from '../types/rule.ts';
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import { runToFixpoint } from './fixpoint.ts';
-import { findEntryForKindName, findEntryForLiteralText, findEntryForPatternValue, isParserHiddenKind, isSurfaceHiddenKind, isAliasedHiddenStorage, modelKindOfEntry, type GeneratedIdTables, type GeneratedKindEntry } from '../dsl/symbol-table.ts';
+import { findEntryForKindName, findEntryForLiteralText, findEntryForPatternValue, isParserHiddenKind, isSurfaceHiddenKind, isAliasedHiddenStorage, isShownConcreteKind, modelKindOfEntry, type GeneratedIdTables, type GeneratedKindEntry } from '../dsl/symbol-table.ts';
 import type {
 	RawGrammar,
 	LinkedGrammar,
@@ -94,6 +94,8 @@ import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { withId, rebaseRuleIds, withKindFacts } from '../dsl/rule-attrs.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
+import { isAllTextShape } from './assemble.ts';
+import { auxTokenKinds } from './diagnostics/catalog-coverage.ts';
 import { createRuleId } from './rule-catalog.ts';
 
 export interface LinkOptions {
@@ -154,7 +156,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const generatedIdTables = stampVisibleExternals(ctx?.generatedIdTables, evaluated);
 	const kindEntries = kindCatalogOf(generatedIdTables, evaluated);
 	const catalogCtx: KindCatalogCtx = { kindEntries };
-	const raw = stampParserVisibility(collapseRenamedRules(evaluated, catalogCtx), catalogCtx);
+	const raw = stampParserVisibility(spliceTextLeaves(collapseRenamedRules(evaluated, catalogCtx), catalogCtx), catalogCtx);
 	const supertypes = new Set(raw.supertypes);
 	const factoryInline = new Set(raw.factoryInline);
 	const externalRoles = buildExternalRolesMap(raw.externalRoles);
@@ -272,6 +274,7 @@ export function link(evaluated: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const rootName = linkCtx.root;
 	const reachableFromRoot = rootName ? computeReachableFromRoot({ rules, rootName }) : new Set<string>();
 	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, new Set(raw.inline), reachableFromRoot);
+	reportAuxTokens(evaluated.rules, linkCtx);
 
 	stampLinkMintedVisibility(rules, linkCtx);
 	const variantChildren = deriveVariantChildren(rules, raw.automaticVariants);
@@ -527,6 +530,17 @@ export function canonicalizeRuleLiterals(
 		default:
 			return rule;
 	}
+}
+
+function reportAuxTokens(rules: Readonly<Record<string, Rule<'evaluate'>>>, ctx: LinkCtx): void {
+	const kinds = auxTokenKinds(ctx.kindEntries, rules);
+	if (kinds.length === 0) return;
+	ctx.diagnostics.warn({
+		code: 'aux-token-in-catalog',
+		message: `${kinds.length} anonymous auxiliary token(s) in the parser catalog; the text-token mint should have named each one`,
+		canProceed: true,
+		details: { kinds }
+	});
 }
 
 export function reportKindIdStampMisses(
@@ -850,6 +864,7 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 		expectDiagnostics: renameRecord(raw.expectDiagnostics),
 		expectTestFailures: renameRecord(raw.expectTestFailures),
 		orphanedSyntheticGroups: raw.orphanedSyntheticGroups?.map(rename),
+		textTokens: raw.textTokens?.map(rename),
 		bodyPatternZeroMatches: raw.bodyPatternZeroMatches?.map(rename),
 		desugarDivergences: raw.desugarDivergences?.map((event) => ({ ...event, name: rename(event.name) })),
 		automaticVariants:
@@ -863,6 +878,21 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 }
 
 const visibilityWalker = new RuleWalker<Rule<'evaluate'>>({});
+
+function spliceTextLeaves(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
+	const textTokens = new Set(raw.textTokens ?? []);
+	const symbols = catalogSymbolSource({ ...symbolFactsOf(raw), kindEntries: ctx.kindEntries });
+	const spliceable = (name: string): boolean =>
+		raw.rules[name] !== undefined && (textTokens.has(name) || (symbols.isTerminal(name) && symbols.isHidden(name)));
+	const splice = (rule: Rule<'evaluate'>): Rule<'evaluate'> => (rule.type === SYMBOL && spliceable(rule.name) ? raw.rules[rule.name]! : rule);
+	const rules = { ...raw.rules };
+	for (const [name, rule] of Object.entries(raw.rules)) {
+		if (spliceable(name)) continue;
+		const spliced = splice(visibilityWalker.map(rule, splice));
+		if (spliced !== rule && isAllTextShape(spliced)) rules[name] = spliced;
+	}
+	return { ...raw, rules };
+}
 
 function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar {
 	const inlineCtx: InlineAtReferenceCtx = {
@@ -1742,7 +1772,10 @@ function classifyHiddenChoiceRule(
 		};
 	}
 
-	if ((shape === 'supertype' && !isAliasedHiddenStorage(name, ctx.kindEntries)) || supertypes.has(name)) {
+	if (
+		!isShownConcreteKind(name, ctx.kindEntries) &&
+		((shape === 'supertype' && !isAliasedHiddenStorage(name, ctx.kindEntries)) || supertypes.has(name))
+	) {
 		const flatMembers = flattenNestedChoiceMembers(rule.members);
 		const subtypes = collectSubtypeRefs(rule, ctx);
 		if (subtypes.length > 0) {
