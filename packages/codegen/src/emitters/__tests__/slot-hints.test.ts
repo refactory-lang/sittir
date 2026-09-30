@@ -25,13 +25,26 @@ describe('__slotHints__', () => {
 			"readonly statements: SlotHint<NonNullable<T.Block.Config>['statements'], true>;"
 		);
 	});
-	it('a sole-list owner stamps its stored element, its factory options and the elements its factory takes', () => {
-		const ps = interfaceBlock(rustTypes(), 'Parameters');
-		expect(ps.replace(/\s+/g, ' ')).toContain(
-			'ListOwnerHint< T.AttributedParameter, { delimiter?: Delimiter.None | Delimiter.Trailing }, | T.AttributedParameter | T.Parameter | T.SelfParameter'
+	it('a list owner stamps the items its list factory takes and the options it takes', () => {
+		const ps = interfaceBlock(rustTypes(), 'Parameters').replace(/\s+/g, ' ');
+		expect(ps).toContain(
+			'$listView: ListViewHint< | T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type | T.TypeIdentifier.Types, { delimiter?: Delimiter.None | Delimiter.Trailing } >'
 		);
 	});
-	it('a kind that is not a list owner stamps no $listOwner', () => {
-		expect(interfaceBlock(rustTypes(), 'FunctionItem')).not.toContain('$listOwner');
+	it('a list node stamps the same view as its owner', () => {
+		const list = interfaceBlock(rustTypes(), 'ParametersElements').replace(/\s+/g, ' ');
+		expect(list).toContain('$listView: ListViewHint< | T.AttributedParameter');
+	});
+	it('a list slot reads as the stored list node', () => {
+		const ps = interfaceBlock(rustTypes(), 'Parameters').replace(/\s+/g, ' ');
+		expect(ps).toContain('parametersElements(): ParametersElements | undefined;');
+	});
+	it('a slot that holds a list stamps the builder arguments its setter takes', () => {
+		const fn = interfaceBlock(rustTypes(), 'FunctionItem').replace(/\s+/g, ' ');
+		expect(fn).toContain('readonly parameters: ListSlotHint< | T.AttributedParameter | T.Parameter');
+		expect(fn).toContain('readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;');
+	});
+	it('a kind that is not a list stamps no $listView', () => {
+		expect(interfaceBlock(rustTypes(), 'FunctionItem')).not.toContain('$listView');
 	});
 });

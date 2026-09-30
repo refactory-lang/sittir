@@ -4936,7 +4936,7 @@
         },
         {
           "type": "FIELD",
-          "name": "entries",
+          "name": "elements",
           "content": {
             "type": "CHOICE",
             "members": [

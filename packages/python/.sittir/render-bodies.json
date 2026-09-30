@@ -1140,11 +1140,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "entries",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "entries"
+							"name": "elements"
 						}
 					]
 				}

@@ -4874,7 +4874,7 @@ export function coerceToTuple(input?: T.Tuple.Loose): ReturnType<typeof F.buildT
 	);
 }
 
-export function resolveDictionary_entries(value: T.Dictionary.LooseConfig['entries']): T.Dictionary['_entries'] {
+export function resolveDictionary_elements(value: T.Dictionary.LooseConfig['elements']): T.Dictionary['_elements'] {
 	return _resolveOneBranch<T.DictionaryElements>(value, 'dictionary_elements', undefined, true);
 }
 
@@ -4885,7 +4885,7 @@ export function coerceToDictionary(input?: T.Dictionary.Loose): ReturnType<typeo
 		return input as unknown as ReturnType<typeof F.buildDictionary>;
 	return F.buildDictionary(
 		_resolveOneBranch<T.DictionaryElements>(
-			configFieldOr(input, 'entries', () => input),
+			configFieldOr(input, 'elements', () => input),
 			'dictionary_elements',
 			undefined,
 			true

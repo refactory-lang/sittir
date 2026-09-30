@@ -380,7 +380,10 @@ const tree = engine.parse(source);
 Reading is lazy: `parse` expands one level, and a child with substructure is
 a stub the accessors expand on first access. `{ deep: true }` expands the
 whole tree up front instead — one crossing rather than one per level, at the
-cost of reading what you may never touch.
+cost of reading what you may never touch. A list owner (a function's
+`parameters`) is the exception to one level: it is expanded together with its
+list, whose items stay stubs, so its `length` and indices need no crossing of
+their own.
 
 ```ts
 import { createEngine } from '@sittir/common';
