@@ -6,11 +6,11 @@ export interface Probe {
 
 export const PROBES: Record<string, readonly Probe[]> = {
 	rust: [
-		{ source: 'fn f() { // TODO\n}\n', detached: 'fn f() {\n    // TODO\n}' },
-		{ source: 'foo(/* none */);\n', detached: 'foo(/* none */);' },
-		{ source: 'struct S { /* empty */ }\n', detached: 'struct S {\n    /* empty */\n}' },
+		{ source: 'fn f() { // TODO\n}\n', detached: 'fn f() {\n    // TODO\n}\n' },
+		{ source: 'foo(/* none */);\n', detached: 'foo(/* none */);\n' },
+		{ source: 'struct S { /* empty */ }\n', detached: 'struct S {\n    /* empty */\n}\n' },
 		{ source: 'a; // note\n', detached: 'a; // note\n' },
-		{ source: '// one\n/* two */\n', detached: '// one\n/* two */' }
+		{ source: '// one\n/* two */\n', detached: '// one\n/* two */\n' }
 	],
 	typescript: [
 		{
@@ -35,19 +35,19 @@ export const PROBES: Record<string, readonly Probe[]> = {
 
 export const ORPHANS: Record<string, readonly (readonly [string, string])[]> = {
 	typescript: [
-		['x = (/* c */ this);', 'x = /* c */ (this);'],
-		['x = (/* c */ undefined);', 'x = /* c */ (undefined);'],
-		['x = (/* c */ true);', 'x = /* c */ (true);'],
-		['x = (/* c */ null);', 'x = /* c */ (null);'],
+		['x = (/* c */ this);', 'x = /* c */ (this);\n'],
+		['x = (/* c */ undefined);', 'x = /* c */ (undefined);\n'],
+		['x = (/* c */ true);', 'x = /* c */ (true);\n'],
+		['x = (/* c */ null);', 'x = /* c */ (null);\n'],
 		['class A extends B { m() { (/* c */ super).m(); } }', 'class A extends B {\n  m() {\n    /* c */ (super).m();\n  }\n}\n'],
 		['for (/* c */;;) {}', 'for (;;) /* c */ {}\n'],
-		['x = (// c\n this);', 'x = // c\n(this);'],
-		['x = (this /* c */);', 'x = (this) /* c */;']
+		['x = (// c\n this);', 'x = // c\n(this);\n'],
+		['x = (this /* c */);', 'x = (this) /* c */;\n']
 	],
 	rust: [
-		['fn f() { (/* c */ self); }', 'fn f() {\n    /* c */ (self);\n}'],
-		['fn f() { (self /* c */); }', 'fn f() {\n    (self) /* c */;\n}'],
-		['fn f() { (// c\n self); }', 'fn f() {\n    // c\n    (self);\n}']
+		['fn f() { (/* c */ self); }', 'fn f() {\n    /* c */ (self);\n}\n'],
+		['fn f() { (self /* c */); }', 'fn f() {\n    (self) /* c */;\n}\n'],
+		['fn f() { (// c\n self); }', 'fn f() {\n    // c\n    (self);\n}\n']
 	],
 	python: [
 		['x = (  # c\n    True)\n', 'x = # c\n(True)\n'],

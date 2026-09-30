@@ -85,7 +85,8 @@ pub fn gap_between<'s>(
 /// rebuilt — are skipped, so a gap spans from the nearest surviving
 /// coordinate on the left to the nearest on the right. A gap without the
 /// token, or a pair that is not two ordered coordinates of one tree,
-/// contributes nothing and leaves its item unseparated.
+/// contributes nothing and leaves its item unseparated, as does a pair with a
+/// coordinate that addresses its text only.
 pub struct ListGaps {
     pub before: Option<u16>,
     pub after: Option<u16>,
@@ -107,7 +108,12 @@ pub fn classify_list_gaps(
     for (index, item) in items.iter().enumerate() {
         let Some(item) = item else { continue };
         if let Some((at, a)) = previous {
-            if let Some((lead, trail)) = gap_between(a, item, sources).and_then(|gap| split_gap(gap, token)) {
+            let evidence = a.is_layout_evidence() && item.is_layout_evidence();
+            if let Some((lead, trail)) = evidence
+                .then(|| gap_between(a, item, sources))
+                .flatten()
+                .and_then(|gap| split_gap(gap, token))
+            {
                 let lead_class = classify_whitespace(lead, allowed_before, table);
                 let trail_class = classify_whitespace(trail, allowed_after, table);
                 before.extend(lead_class);

@@ -18942,8 +18942,10 @@ export namespace ExportClause {
 	}
 	export type Loose = LooseFor<TSKindId.ExportClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportClause>;
-	export type BuildArgs = [value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNodes>];
-	export type LooseArgs = [value?: LooseValue<T.ExportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNodes>] | T.ExportSpecifiers.BuildArgs;
+	export type LooseArgs =
+		| [value?: LooseValue<T.ExportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
+		| T.ExportSpecifiers.LooseArgs;
 	export type Kind = TSKindId.ExportClause;
 }
 export namespace ExportSpecifier {
@@ -19044,8 +19046,10 @@ export namespace NamedImports {
 	}
 	export type Loose = LooseFor<TSKindId.NamedImports>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedImports>;
-	export type BuildArgs = [value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNodes>];
-	export type LooseArgs = [value?: LooseValue<T.ImportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNodes>] | T.ImportSpecifiers.BuildArgs;
+	export type LooseArgs =
+		| [value?: LooseValue<T.ImportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
+		| T.ImportSpecifiers.LooseArgs;
 	export type Kind = TSKindId.NamedImports;
 }
 export namespace ImportAttribute {
@@ -20538,10 +20542,12 @@ export namespace FormalParameters {
 	}
 	export type Loose = LooseFor<TSKindId.FormalParameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormalParameters>;
-	export type BuildArgs = [value?: AdmitBound<T.FormalParametersElements, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value?: LooseValue<T.FormalParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs =
+		| [value?: AdmitBound<T.FormalParametersElements, T.AdmittedNodes>]
+		| T.FormalParametersElements.BuildArgs;
+	export type LooseArgs =
+		| [value?: LooseValue<T.FormalParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
+		| T.FormalParametersElements.LooseArgs;
 	export type Kind = TSKindId.FormalParameters;
 }
 export namespace ClassStaticBlock {
@@ -21218,8 +21224,10 @@ export namespace EnumBody {
 	}
 	export type Loose = LooseFor<TSKindId.EnumBody>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumBody>;
-	export type BuildArgs = [value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>];
-	export type LooseArgs = [value?: LooseValue<T.EnumBodyElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>] | T.EnumBodyElements.BuildArgs;
+	export type LooseArgs =
+		| [value?: LooseValue<T.EnumBodyElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
+		| T.EnumBodyElements.LooseArgs;
 	export type Kind = TSKindId.EnumBody;
 }
 export namespace EnumAssignment {
@@ -21953,8 +21961,10 @@ export namespace TypeArguments {
 	}
 	export type Loose = LooseFor<TSKindId.TypeArguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeArguments>;
-	export type BuildArgs = [value: AdmitBound<T.Types, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value: AdmitBound<T.Types, T.AdmittedNodes>] | T.Types.BuildArgs;
+	export type LooseArgs =
+		| [value: LooseValue<T.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
+		| T.Types.LooseArgs;
 	export type Kind = TSKindId.TypeArguments;
 }
 export namespace ObjectType {
@@ -22056,10 +22066,12 @@ export namespace TypeParameters {
 	}
 	export type Loose = LooseFor<TSKindId.TypeParameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeParameters>;
-	export type BuildArgs = [value: AdmitBound<T.TypeParametersElements, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.TypeParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs =
+		| [value: AdmitBound<T.TypeParametersElements, T.AdmittedNodes>]
+		| T.TypeParametersElements.BuildArgs;
+	export type LooseArgs =
+		| [value: LooseValue<T.TypeParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
+		| T.TypeParametersElements.LooseArgs;
 	export type Kind = TSKindId.TypeParameters;
 }
 export namespace TypeParameter {
@@ -22170,8 +22182,10 @@ export namespace TupleType {
 	}
 	export type Loose = LooseFor<TSKindId.TupleType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleType>;
-	export type BuildArgs = [value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>];
-	export type LooseArgs = [value?: LooseValue<T.TupleTypeMembers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>] | T.TupleTypeMembers.BuildArgs;
+	export type LooseArgs =
+		| [value?: LooseValue<T.TupleTypeMembers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
+		| T.TupleTypeMembers.LooseArgs;
 	export type Kind = TSKindId.TupleType;
 }
 export namespace ReadonlyType {
@@ -22765,7 +22779,8 @@ export namespace ExportStatementTypeExport {
 	export type Loose = OmitEach<LooseFor<TSKindId.ExportStatementTypeExport>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExportStatementTypeExport>, 'terminator'>;
 	export type BuildArgs = [
-		config?: Partial<OmitEach<ConfigOf<T.ExportStatementTypeExport, T.NamespaceMap>, 'terminator'>>
+		config?: Partial<OmitEach<ConfigOf<T.ExportStatementTypeExport, T.NamespaceMap>, 'terminator'>>,
+		options?: T.ExportStatementTypeExport.Options
 	];
 	export type LooseArgs = [
 		config?:
@@ -22773,7 +22788,8 @@ export namespace ExportStatementTypeExport {
 					LooseConfigOf<T.ExportStatementTypeExport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
 					'terminator'
 			  >
-			| AdmitBound<T.ExportStatementTypeExport, T.AdmittedNodes>
+			| AdmitBound<T.ExportStatementTypeExport, T.AdmittedNodes>,
+		options?: T.ExportStatementTypeExport.Options
 	];
 	export type Kind = TSKindId.ExportStatementTypeExport;
 }

@@ -1101,6 +1101,7 @@ export type BslashDash = TSKindId.BslashDash;
 export type RegexNode = NodeOfNamespaces<NamespaceMap>;
 
 export interface OptionsHintMap {
+	pattern: Pattern.Hints;
 	alternation: Alternation.Hints;
 	term: Term.Hints;
 	lookaheadAssertion: LookaheadAssertion.Hints;
@@ -1126,6 +1127,12 @@ export interface OptionsHintMap {
 	zeroOrMore: ZeroOrMore.Hints;
 	oneOrMore: OneOrMore.Hints;
 	optional: Optional.Hints;
+}
+
+export namespace Pattern {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+	}
 }
 
 export namespace Alternation {

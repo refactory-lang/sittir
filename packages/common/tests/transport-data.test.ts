@@ -178,6 +178,7 @@ describe('markEdited', () => {
 			$span: { start: 0, end: 1 },
 			$nodeHandle: 4,
 			$childIndex: 1,
+			$textOnly: true,
 			$text: 'x',
 			_a: 1
 		});
@@ -193,9 +194,17 @@ describe('stripStructuralProvenance', () => {
 			$text: "'a'",
 			$span: { start: 3, end: 6 },
 			$nodeHandle: 17,
+			$textOnly: true,
 			_content: 'a',
 			_b: true
 		});
+	});
+
+	it('stamps a surviving coordinate text-only, and a stripped node carries none to stamp', () => {
+		const leaf = { $type: 5, $text: 'x', $span: { start: 1, end: 2 }, $nodeHandle: 9 };
+		expect(stripStructuralProvenance({ ...leaf })).toEqual({ ...leaf, $textOnly: true });
+		const parent = { $type: 1, $span: { start: 0, end: 2 }, $nodeHandle: 2, _child: { ...leaf } };
+		expect(stripStructuralProvenance(parent)).toEqual({ $type: 1, _child: { ...leaf, $textOnly: true } });
 	});
 
 	it('strips a node that holds child nodes, and a node an edit detached from its span', () => {

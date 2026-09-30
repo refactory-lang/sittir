@@ -266,7 +266,7 @@ The `AdmitLookup` a namespace map yields, for the config and loose surfaces that
 
 ### `packages/types/src/index.ts::Hoisted`
 
-The type of a hoisted pair or route tree. The flavours are read by key (`B['coerce']`, then `B['strict']`), never by testing `B` against an object type with a `coerce` member: a pair whose flavours are intersections (an overlay's flavour over a base's) would otherwise be compared member against member, and that comparison exceeds the checker's depth.
+The type of a hoisted pair or route tree. The flavours are read by key (`B['coerce']`, then `B['strict']`), never by testing `B` against an object type with a `coerce` member: a pair whose flavours are intersections (an overlay's flavour over a base's) would otherwise be compared member against member, and that comparison exceeds the checker's depth. The pair's `arity` stamp is read by `hoist` and is not a route, so it is dropped from the hoisted members.
 
 ### `packages/types/src/index.ts::NodeNs`
 
@@ -279,3 +279,19 @@ The union over a declared supertype's members of the node each id-keyed map hold
 ### `packages/types/src/node-surface.ts::BoundWithNode`
 
 `$with` for an engine-bound node: the same admitted slot setters as `WithNode`, but each returns the node itself, since a bound node is not tied to a tree and needs no retyped accessor. A tree-bound node keeps `WithNode`, whose setters return the node with the replaced slot reading as `.Bound`.
+
+### `packages/types/src/index.ts::MaxArity`
+
+The most arguments any declared overload of a function accepts, read off `ArgsOf`: the largest tuple length across the overloads, or `number` when one of them takes a rest parameter. `bundle` types each pair's arity stamp with it.
+
+### `packages/types/src/index.ts::HoistArity`
+
+A flavor pair's arity stamp: the route key, for the refusal message, and `max`, the most arguments the hoisted call takes, typed by `bundle` as the flavor's `MaxArity`.
+
+### `packages/types/src/index.ts::StrictFlavor`
+
+A strict builder with no coercer beside it, as one pair (a refine form); `bundle(strict, undefined, stamp)` builds it and hoisting calls `strict`.
+
+### `packages/types/src/core-types.ts::AnyNodeData.$textOnly`
+
+Marks a node whose coordinate (`$nodeHandle` with `$span`) addresses its text only: the bytes it spans, not the layout around them. A native deep read stamps it on a leaf's coordinate, and `stripStructuralProvenance` stamps every coordinate it leaves in place. Edge and gap readers on the render side skip such a coordinate, so a root's leading and trailing flank and a list's source gaps are inferred only from a tree-addressed coordinate. It is dropped with the other coordinate keys when a node is edited or made self-contained.

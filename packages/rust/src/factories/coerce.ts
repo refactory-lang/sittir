@@ -3692,8 +3692,16 @@ export function resolveEnumVariantList_enumVariantListElements(
 }
 
 export function coerceToEnumVariantList(): T.EmptyEnumVariantList;
+export function coerceToEnumVariantList(
+	...input: T.EnumVariantListElements.LooseArgs
+): ReturnType<typeof F.buildEnumVariantList>;
 export function coerceToEnumVariantList(input?: T.EnumVariantList.Loose): ReturnType<typeof F.buildEnumVariantList>;
-export function coerceToEnumVariantList(input?: T.EnumVariantList.Loose): ReturnType<typeof F.buildEnumVariantList> {
+export function coerceToEnumVariantList(...args: unknown[]): ReturnType<typeof F.buildEnumVariantList> {
+	if (args.length > 1)
+		return F.buildEnumVariantList(
+			coerceToEnumVariantListElements(...(args as Parameters<typeof coerceToEnumVariantListElements>))
+		);
+	const input = args[0] as T.EnumVariantList.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.EnumVariantList))
 		return input as unknown as ReturnType<typeof F.buildEnumVariantList>;
 	return F.buildEnumVariantList(
@@ -3751,11 +3759,17 @@ export function resolveFieldDeclarationList_fieldDeclarationListElements(
 
 export function coerceToFieldDeclarationList(): T.EmptyFieldDeclarationList;
 export function coerceToFieldDeclarationList(
-	input?: T.FieldDeclarationList.Loose
+	...input: T.FieldDeclarationListElements.LooseArgs
 ): ReturnType<typeof F.buildFieldDeclarationList>;
 export function coerceToFieldDeclarationList(
 	input?: T.FieldDeclarationList.Loose
-): ReturnType<typeof F.buildFieldDeclarationList> {
+): ReturnType<typeof F.buildFieldDeclarationList>;
+export function coerceToFieldDeclarationList(...args: unknown[]): ReturnType<typeof F.buildFieldDeclarationList> {
+	if (args.length > 1)
+		return F.buildFieldDeclarationList(
+			coerceToFieldDeclarationListElements(...(args as Parameters<typeof coerceToFieldDeclarationListElements>))
+		);
+	const input = args[0] as T.FieldDeclarationList.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.FieldDeclarationList))
 		return input as unknown as ReturnType<typeof F.buildFieldDeclarationList>;
 	return F.buildFieldDeclarationList(
@@ -3812,11 +3826,21 @@ export function resolveOrderedFieldDeclarationList_attributes(
 
 export function coerceToOrderedFieldDeclarationList(): T.EmptyOrderedFieldDeclarationList;
 export function coerceToOrderedFieldDeclarationList(
-	input?: T.OrderedFieldDeclarationList.Loose
+	...input: T.OrderedFieldDeclarationListElements.LooseArgs
 ): ReturnType<typeof F.buildOrderedFieldDeclarationList>;
 export function coerceToOrderedFieldDeclarationList(
 	input?: T.OrderedFieldDeclarationList.Loose
+): ReturnType<typeof F.buildOrderedFieldDeclarationList>;
+export function coerceToOrderedFieldDeclarationList(
+	...args: unknown[]
 ): ReturnType<typeof F.buildOrderedFieldDeclarationList> {
+	if (args.length > 1)
+		return F.buildOrderedFieldDeclarationList(
+			coerceToOrderedFieldDeclarationListElements(
+				...(args as Parameters<typeof coerceToOrderedFieldDeclarationListElements>)
+			)
+		);
+	const input = args[0] as T.OrderedFieldDeclarationList.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.OrderedFieldDeclarationList))
 		return input as unknown as ReturnType<typeof F.buildOrderedFieldDeclarationList>;
 	return F.buildOrderedFieldDeclarationList(
@@ -4196,7 +4220,12 @@ export function resolveWhereClause_wherePredicates(
 	return _resolveOneBranch<T.WherePredicates>(value, 'where_predicates', undefined, true);
 }
 
-export function coerceToWhereClause(input?: T.WhereClause.Loose): ReturnType<typeof F.buildWhereClause> {
+export function coerceToWhereClause(...input: T.WherePredicates.LooseArgs): ReturnType<typeof F.buildWhereClause>;
+export function coerceToWhereClause(input?: T.WhereClause.Loose): ReturnType<typeof F.buildWhereClause>;
+export function coerceToWhereClause(...args: unknown[]): ReturnType<typeof F.buildWhereClause> {
+	if (args.length > 1)
+		return F.buildWhereClause(coerceToWherePredicates(...(args as Parameters<typeof coerceToWherePredicates>)));
+	const input = args[0] as T.WhereClause.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.WhereClause))
 		return input as unknown as ReturnType<typeof F.buildWhereClause>;
 	return F.buildWhereClause(
@@ -4487,7 +4516,16 @@ export function resolveTypeParameters_typeParametersElements(
 	return _resolveOneBranch<T.TypeParametersElements>(value, 'type_parameters_elements');
 }
 
-export function coerceToTypeParameters(input: T.TypeParameters.Loose): ReturnType<typeof F.buildTypeParameters> {
+export function coerceToTypeParameters(
+	...input: T.TypeParametersElements.LooseArgs
+): ReturnType<typeof F.buildTypeParameters>;
+export function coerceToTypeParameters(input: T.TypeParameters.Loose): ReturnType<typeof F.buildTypeParameters>;
+export function coerceToTypeParameters(...args: unknown[]): ReturnType<typeof F.buildTypeParameters> {
+	if (args.length > 1)
+		return F.buildTypeParameters(
+			coerceToTypeParametersElements(...(args as Parameters<typeof coerceToTypeParametersElements>))
+		);
+	const input = args[0] as T.TypeParameters.Loose;
 	if (isNodeOfKind(input, TSKindId.TypeParameters)) return input as unknown as ReturnType<typeof F.buildTypeParameters>;
 	return F.buildTypeParameters(
 		_requireField(
@@ -4847,8 +4885,11 @@ export function resolveUseList_useClauses(value: T.UseList.LooseConfig['useClaus
 }
 
 export function coerceToUseList(): T.EmptyUseList;
+export function coerceToUseList(...input: T.UseClauses.LooseArgs): ReturnType<typeof F.buildUseList>;
 export function coerceToUseList(input?: T.UseList.Loose): ReturnType<typeof F.buildUseList>;
-export function coerceToUseList(input?: T.UseList.Loose): ReturnType<typeof F.buildUseList> {
+export function coerceToUseList(...args: unknown[]): ReturnType<typeof F.buildUseList> {
+	if (args.length > 1) return F.buildUseList(coerceToUseClauses(...(args as Parameters<typeof coerceToUseClauses>)));
+	const input = args[0] as T.UseList.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.UseList))
 		return input as unknown as ReturnType<typeof F.buildUseList>;
 	return F.buildUseList(
@@ -4989,8 +5030,12 @@ export function resolveParameters_parametersElements(
 }
 
 export function coerceToParameters(): T.EmptyParameters;
+export function coerceToParameters(...input: T.ParametersElements.LooseArgs): ReturnType<typeof F.buildParameters>;
 export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeof F.buildParameters>;
-export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeof F.buildParameters> {
+export function coerceToParameters(...args: unknown[]): ReturnType<typeof F.buildParameters> {
+	if (args.length > 1)
+		return F.buildParameters(coerceToParametersElements(...(args as Parameters<typeof coerceToParametersElements>)));
+	const input = args[0] as T.Parameters.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.Parameters))
 		return input as unknown as ReturnType<typeof F.buildParameters>;
 	return F.buildParameters(
@@ -5244,7 +5289,11 @@ export function resolveForLifetimes_lifetimes(
 	return _resolveOneBranch<T.Lifetimes>(value, 'lifetimes');
 }
 
-export function coerceToForLifetimes(input: T.ForLifetimes.Loose): ReturnType<typeof F.buildForLifetimes> {
+export function coerceToForLifetimes(...input: T.Lifetimes.LooseArgs): ReturnType<typeof F.buildForLifetimes>;
+export function coerceToForLifetimes(input: T.ForLifetimes.Loose): ReturnType<typeof F.buildForLifetimes>;
+export function coerceToForLifetimes(...args: unknown[]): ReturnType<typeof F.buildForLifetimes> {
+	if (args.length > 1) return F.buildForLifetimes(coerceToLifetimes(...(args as Parameters<typeof coerceToLifetimes>)));
+	const input = args[0] as T.ForLifetimes.Loose;
 	if (isNodeOfKind(input, TSKindId.ForLifetimes)) return input as unknown as ReturnType<typeof F.buildForLifetimes>;
 	return F.buildForLifetimes(
 		_requireField(
@@ -5300,7 +5349,12 @@ export function resolveTupleType_tupleTypeElements(
 	return _resolveOneBranch<T.TupleTypeElements>(value, 'tuple_type_elements');
 }
 
-export function coerceToTupleType(input: T.TupleType.Loose): ReturnType<typeof F.buildTupleType> {
+export function coerceToTupleType(...input: T.TupleTypeElements.LooseArgs): ReturnType<typeof F.buildTupleType>;
+export function coerceToTupleType(input: T.TupleType.Loose): ReturnType<typeof F.buildTupleType>;
+export function coerceToTupleType(...args: unknown[]): ReturnType<typeof F.buildTupleType> {
+	if (args.length > 1)
+		return F.buildTupleType(coerceToTupleTypeElements(...(args as Parameters<typeof coerceToTupleTypeElements>)));
+	const input = args[0] as T.TupleType.Loose;
 	if (isNodeOfKind(input, TSKindId.TupleType)) return input as unknown as ReturnType<typeof F.buildTupleType>;
 	return F.buildTupleType(
 		_requireField(
@@ -5435,8 +5489,12 @@ export function resolveUseBounds_bounds(value: T.UseBounds.LooseConfig['bounds']
 }
 
 export function coerceToUseBounds(): T.EmptyUseBounds;
+export function coerceToUseBounds(...input: T.UseBoundsElements.LooseArgs): ReturnType<typeof F.buildUseBounds>;
 export function coerceToUseBounds(input?: T.UseBounds.Loose): ReturnType<typeof F.buildUseBounds>;
-export function coerceToUseBounds(input?: T.UseBounds.Loose): ReturnType<typeof F.buildUseBounds> {
+export function coerceToUseBounds(...args: unknown[]): ReturnType<typeof F.buildUseBounds> {
+	if (args.length > 1)
+		return F.buildUseBounds(coerceToUseBoundsElements(...(args as Parameters<typeof coerceToUseBoundsElements>)));
+	const input = args[0] as T.UseBounds.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.UseBounds))
 		return input as unknown as ReturnType<typeof F.buildUseBounds>;
 	return F.buildUseBounds(
@@ -5455,7 +5513,16 @@ export function resolveTypeArguments_typeArgumentsElements(
 	return _resolveOneBranch<T.TypeArgumentsElements>(value, 'type_arguments_elements');
 }
 
-export function coerceToTypeArguments(input: T.TypeArguments.Loose): ReturnType<typeof F.buildTypeArguments> {
+export function coerceToTypeArguments(
+	...input: T.TypeArgumentsElements.LooseArgs
+): ReturnType<typeof F.buildTypeArguments>;
+export function coerceToTypeArguments(input: T.TypeArguments.Loose): ReturnType<typeof F.buildTypeArguments>;
+export function coerceToTypeArguments(...args: unknown[]): ReturnType<typeof F.buildTypeArguments> {
+	if (args.length > 1)
+		return F.buildTypeArguments(
+			coerceToTypeArgumentsElements(...(args as Parameters<typeof coerceToTypeArgumentsElements>))
+		);
+	const input = args[0] as T.TypeArguments.Loose;
 	if (isNodeOfKind(input, TSKindId.TypeArguments)) return input as unknown as ReturnType<typeof F.buildTypeArguments>;
 	return F.buildTypeArguments(
 		_requireField(
@@ -6448,8 +6515,12 @@ export function resolveArguments_argumentsElements(
 }
 
 export function coerceToArguments(): T.EmptyArguments;
+export function coerceToArguments(...input: T.ArgumentsElements.LooseArgs): ReturnType<typeof F.buildArguments>;
 export function coerceToArguments(input?: T.Arguments.Loose): ReturnType<typeof F.buildArguments>;
-export function coerceToArguments(input?: T.Arguments.Loose): ReturnType<typeof F.buildArguments> {
+export function coerceToArguments(...args: unknown[]): ReturnType<typeof F.buildArguments> {
+	if (args.length > 1)
+		return F.buildArguments(coerceToArgumentsElements(...(args as Parameters<typeof coerceToArgumentsElements>)));
+	const input = args[0] as T.Arguments.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.Arguments))
 		return input as unknown as ReturnType<typeof F.buildArguments>;
 	return F.buildArguments(
@@ -6558,11 +6629,17 @@ export function resolveFieldInitializerList_initializers(
 
 export function coerceToFieldInitializerList(): T.EmptyFieldInitializerList;
 export function coerceToFieldInitializerList(
-	input?: T.FieldInitializerList.Loose
+	...input: T.FieldInitializerListElements.LooseArgs
 ): ReturnType<typeof F.buildFieldInitializerList>;
 export function coerceToFieldInitializerList(
 	input?: T.FieldInitializerList.Loose
-): ReturnType<typeof F.buildFieldInitializerList> {
+): ReturnType<typeof F.buildFieldInitializerList>;
+export function coerceToFieldInitializerList(...args: unknown[]): ReturnType<typeof F.buildFieldInitializerList> {
+	if (args.length > 1)
+		return F.buildFieldInitializerList(
+			coerceToFieldInitializerListElements(...(args as Parameters<typeof coerceToFieldInitializerListElements>))
+		);
+	const input = args[0] as T.FieldInitializerList.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.FieldInitializerList))
 		return input as unknown as ReturnType<typeof F.buildFieldInitializerList>;
 	return F.buildFieldInitializerList(
@@ -7269,8 +7346,16 @@ export function resolveTuplePattern_elements(
 }
 
 export function coerceToTuplePattern(): T.EmptyTuplePattern;
+export function coerceToTuplePattern(
+	...input: T.TuplePatternElements.LooseArgs
+): ReturnType<typeof F.buildTuplePattern>;
 export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<typeof F.buildTuplePattern>;
-export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<typeof F.buildTuplePattern> {
+export function coerceToTuplePattern(...args: unknown[]): ReturnType<typeof F.buildTuplePattern> {
+	if (args.length > 1)
+		return F.buildTuplePattern(
+			coerceToTuplePatternElements(...(args as Parameters<typeof coerceToTuplePatternElements>))
+		);
+	const input = args[0] as T.TuplePattern.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.TuplePattern))
 		return input as unknown as ReturnType<typeof F.buildTuplePattern>;
 	return F.buildTuplePattern(
@@ -7290,8 +7375,11 @@ export function resolveSlicePattern_patterns(
 }
 
 export function coerceToSlicePattern(): T.EmptySlicePattern;
+export function coerceToSlicePattern(...input: T.Patterns.LooseArgs): ReturnType<typeof F.buildSlicePattern>;
 export function coerceToSlicePattern(input?: T.SlicePattern.Loose): ReturnType<typeof F.buildSlicePattern>;
-export function coerceToSlicePattern(input?: T.SlicePattern.Loose): ReturnType<typeof F.buildSlicePattern> {
+export function coerceToSlicePattern(...args: unknown[]): ReturnType<typeof F.buildSlicePattern> {
+	if (args.length > 1) return F.buildSlicePattern(coerceToPatterns(...(args as Parameters<typeof coerceToPatterns>)));
+	const input = args[0] as T.SlicePattern.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.SlicePattern))
 		return input as unknown as ReturnType<typeof F.buildSlicePattern>;
 	return F.buildSlicePattern(

@@ -2567,8 +2567,12 @@ export function resolveExportClause_exportSpecifiers(
 }
 
 export function coerceToExportClause(): T.EmptyExportClause;
+export function coerceToExportClause(...input: T.ExportSpecifiers.LooseArgs): ReturnType<typeof F.buildExportClause>;
 export function coerceToExportClause(input?: T.ExportClause.Loose): ReturnType<typeof F.buildExportClause>;
-export function coerceToExportClause(input?: T.ExportClause.Loose): ReturnType<typeof F.buildExportClause> {
+export function coerceToExportClause(...args: unknown[]): ReturnType<typeof F.buildExportClause> {
+	if (args.length > 1)
+		return F.buildExportClause(coerceToExportSpecifiers(...(args as Parameters<typeof coerceToExportSpecifiers>)));
+	const input = args[0] as T.ExportClause.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.ExportClause))
 		return input as unknown as ReturnType<typeof F.buildExportClause>;
 	return F.buildExportClause(
@@ -2696,8 +2700,12 @@ export function resolveNamedImports_importSpecifiers(
 }
 
 export function coerceToNamedImports(): T.EmptyNamedImports;
+export function coerceToNamedImports(...input: T.ImportSpecifiers.LooseArgs): ReturnType<typeof F.buildNamedImports>;
 export function coerceToNamedImports(input?: T.NamedImports.Loose): ReturnType<typeof F.buildNamedImports>;
-export function coerceToNamedImports(input?: T.NamedImports.Loose): ReturnType<typeof F.buildNamedImports> {
+export function coerceToNamedImports(...args: unknown[]): ReturnType<typeof F.buildNamedImports> {
+	if (args.length > 1)
+		return F.buildNamedImports(coerceToImportSpecifiers(...(args as Parameters<typeof coerceToImportSpecifiers>)));
+	const input = args[0] as T.NamedImports.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.NamedImports))
 		return input as unknown as ReturnType<typeof F.buildNamedImports>;
 	return F.buildNamedImports(
@@ -5815,8 +5823,16 @@ export function resolveFormalParameters_formalParametersElements(
 }
 
 export function coerceToFormalParameters(): T.EmptyFormalParameters;
+export function coerceToFormalParameters(
+	...input: T.FormalParametersElements.LooseArgs
+): ReturnType<typeof F.buildFormalParameters>;
 export function coerceToFormalParameters(input?: T.FormalParameters.Loose): ReturnType<typeof F.buildFormalParameters>;
-export function coerceToFormalParameters(input?: T.FormalParameters.Loose): ReturnType<typeof F.buildFormalParameters> {
+export function coerceToFormalParameters(...args: unknown[]): ReturnType<typeof F.buildFormalParameters> {
+	if (args.length > 1)
+		return F.buildFormalParameters(
+			coerceToFormalParametersElements(...(args as Parameters<typeof coerceToFormalParametersElements>))
+		);
+	const input = args[0] as T.FormalParameters.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.FormalParameters))
 		return input as unknown as ReturnType<typeof F.buildFormalParameters>;
 	return F.buildFormalParameters(
@@ -7605,8 +7621,12 @@ export function resolveEnumBody_enumBodyElements(
 }
 
 export function coerceToEnumBody(): T.EmptyEnumBody;
+export function coerceToEnumBody(...input: T.EnumBodyElements.LooseArgs): ReturnType<typeof F.buildEnumBody>;
 export function coerceToEnumBody(input?: T.EnumBody.Loose): ReturnType<typeof F.buildEnumBody>;
-export function coerceToEnumBody(input?: T.EnumBody.Loose): ReturnType<typeof F.buildEnumBody> {
+export function coerceToEnumBody(...args: unknown[]): ReturnType<typeof F.buildEnumBody> {
+	if (args.length > 1)
+		return F.buildEnumBody(coerceToEnumBodyElements(...(args as Parameters<typeof coerceToEnumBodyElements>)));
+	const input = args[0] as T.EnumBody.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.EnumBody))
 		return input as unknown as ReturnType<typeof F.buildEnumBody>;
 	return F.buildEnumBody(
@@ -9052,7 +9072,11 @@ export function resolveTypeArguments_types(value: T.TypeArguments.LooseConfig['t
 	return _resolveOneBranch<T.Types>(value, 'types');
 }
 
-export function coerceToTypeArguments(input: T.TypeArguments.Loose): ReturnType<typeof F.buildTypeArguments> {
+export function coerceToTypeArguments(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTypeArguments>;
+export function coerceToTypeArguments(input: T.TypeArguments.Loose): ReturnType<typeof F.buildTypeArguments>;
+export function coerceToTypeArguments(...args: unknown[]): ReturnType<typeof F.buildTypeArguments> {
+	if (args.length > 1) return F.buildTypeArguments(coerceToTypes(...(args as Parameters<typeof coerceToTypes>)));
+	const input = args[0] as T.TypeArguments.Loose;
 	if (isNodeOfKind(input, TSKindId.TypeArguments)) return input as unknown as ReturnType<typeof F.buildTypeArguments>;
 	return F.buildTypeArguments(
 		_requireField(
@@ -9278,7 +9302,16 @@ export function resolveTypeParameters_typeParametersElements(
 	return _resolveOneBranch<T.TypeParametersElements>(value, 'type_parameters_elements');
 }
 
-export function coerceToTypeParameters(input: T.TypeParameters.Loose): ReturnType<typeof F.buildTypeParameters> {
+export function coerceToTypeParameters(
+	...input: T.TypeParametersElements.LooseArgs
+): ReturnType<typeof F.buildTypeParameters>;
+export function coerceToTypeParameters(input: T.TypeParameters.Loose): ReturnType<typeof F.buildTypeParameters>;
+export function coerceToTypeParameters(...args: unknown[]): ReturnType<typeof F.buildTypeParameters> {
+	if (args.length > 1)
+		return F.buildTypeParameters(
+			coerceToTypeParametersElements(...(args as Parameters<typeof coerceToTypeParametersElements>))
+		);
+	const input = args[0] as T.TypeParameters.Loose;
 	if (isNodeOfKind(input, TSKindId.TypeParameters)) return input as unknown as ReturnType<typeof F.buildTypeParameters>;
 	return F.buildTypeParameters(
 		_requireField(
@@ -9447,8 +9480,12 @@ export function resolveTupleType_tupleTypeMembers(
 }
 
 export function coerceToTupleType(): T.EmptyTupleType;
+export function coerceToTupleType(...input: T.TupleTypeMembers.LooseArgs): ReturnType<typeof F.buildTupleType>;
 export function coerceToTupleType(input?: T.TupleType.Loose): ReturnType<typeof F.buildTupleType>;
-export function coerceToTupleType(input?: T.TupleType.Loose): ReturnType<typeof F.buildTupleType> {
+export function coerceToTupleType(...args: unknown[]): ReturnType<typeof F.buildTupleType> {
+	if (args.length > 1)
+		return F.buildTupleType(coerceToTupleTypeMembers(...(args as Parameters<typeof coerceToTupleTypeMembers>)));
+	const input = args[0] as T.TupleType.Loose | undefined;
 	if (input !== undefined && isNodeOfKind(input, TSKindId.TupleType))
 		return input as unknown as ReturnType<typeof F.buildTupleType>;
 	return F.buildTupleType(

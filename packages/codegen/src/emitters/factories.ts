@@ -648,6 +648,7 @@ export interface BuiltTypeSurface {
 	readonly setters: readonly SlotSetter[];
 	readonly buildArgs: string;
 	readonly looseArgs: string;
+	readonly maxArgs: number | undefined;
 }
 
 export function slotSetter(
@@ -679,6 +680,9 @@ function fieldCarryingBuiltTypeSurface(
 ): BuiltTypeSurface {
 	const surface = resolveFactorySurface(node, nodeMap, kindEntries);
 	const { spreadFacts, singleField } = surface;
+	const spreadTarget = listSpreadTarget(node, nodeMap, kindEntries);
+	const spreadArgs = (member: 'BuildArgs' | 'LooseArgs'): string =>
+		spreadTarget === null ? '' : ` | T.${nodeMap.nodes.get(spreadTarget)!.typeName}.${member}`;
 	let setters: SlotSetter[];
 	if (spreadFacts) {
 		setters = [{ name: spreadFacts.slot.propertyName, input: `${surface.elementType!}[]`, optional: false, rest: true }];
@@ -700,8 +704,9 @@ function fieldCarryingBuiltTypeSurface(
 		mainType: `T.${node.typeName}`,
 		members: [],
 		setters,
-		buildArgs: paramsToTuple(surface.rowParams),
-		looseArgs: paramsToTuple(surface.rowLooseParams)
+		buildArgs: `${paramsToTuple(surface.rowParams)}${spreadArgs('BuildArgs')}`,
+		looseArgs: `${paramsToTuple(surface.rowLooseParams)}${spreadArgs('LooseArgs')}`,
+		maxArgs: spreadTarget === null ? surface.arity : undefined
 	};
 }
 
@@ -722,7 +727,8 @@ function leafBuiltTypeSurface(
 		],
 		setters: [],
 		buildArgs: paramsToTuple(params),
-		looseArgs: paramsToTuple(params)
+		looseArgs: paramsToTuple(params),
+		maxArgs: 1
 	};
 }
 
@@ -820,6 +826,7 @@ interface FactorySurface {
 	readonly looseParams: string;
 	readonly rowParams: string;
 	readonly rowLooseParams: string;
+	readonly arity: number | undefined;
 	readonly args: string;
 	readonly elementType?: string;
 	readonly directParamType?: string;
@@ -830,7 +837,7 @@ interface FactorySurface {
 }
 
 export function declarationParams(params: string): string {
-	return params.replace(/(\w+)\??: (.+?) = .+$/, '$1?: $2');
+	return params.replace(/(\w+)\??: (.+?) = [^,]+/, '$1?: $2');
 }
 
 function paramText(param: FactoryParam, type: string): string {
@@ -845,9 +852,11 @@ function renderSurfaceParams(param: FactoryParam): {
 	looseParams: string;
 	rowParams: string;
 	rowLooseParams: string;
+	arity: number | undefined;
 } {
 	const strict = (type: string): string => (param.admitsNodes ? admitNodes(type) : type);
 	return {
+		arity: param.rest ? undefined : 1,
 		params: paramText(param, strict(param.strictType)),
 		looseParams: paramText(param, param.looseType),
 		rowParams: paramText(param, strict(param.rowStrictType ?? param.strictType)),
@@ -912,6 +921,7 @@ function resolveFactorySurface(
 		looseParams: `${surface.looseParams}, ${trailing}`,
 		rowParams: `${surface.rowParams}, ${trailing}`,
 		rowLooseParams: `${surface.rowLooseParams}, ${trailing}`,
+		arity: surface.arity === undefined ? undefined : surface.arity + 1,
 		args: `${surface.args}, options`,
 		spellingType
 	};
@@ -1017,6 +1027,34 @@ function resolveConfigFactorySurface(
 		directParamOptional: false,
 		opt
 	};
+}
+
+export function forwardedConstructorTarget(
+	node: FieldCarryingNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | null {
+	if (resolveFactorySurface(node, nodeMap, kindEntries).directParamType === undefined) return null;
+	const target = forwardedTargetKind(node, nodeMap);
+	if (target === null) return null;
+	if (kindEntries !== undefined && !hasCatalogEntry(kindEntries, target)) return null;
+	const targetNode = nodeMap.nodes.get(target);
+	const seatedGroup =
+		targetNode instanceof AbstractAssembledCompound &&
+		targetNode.annotations?.hoisted === true &&
+		classifyFactoryShape(targetNode, nodeMap) === 'config';
+	return seatedGroup ? null : target;
+}
+
+export function listSpreadTarget(
+	node: FieldCarryingNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | null {
+	if (registeredSlots(node).length > 0) return null;
+	const target = forwardedConstructorTarget(node, nodeMap, kindEntries);
+	if (target === null) return null;
+	return nodeMap.nodes.get(constructorTargetKind(target, nodeMap, kindEntries))?.modelType === 'list' ? target : null;
 }
 
 export function constructorTargetKind(kind: string, nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): string {
@@ -1202,17 +1240,8 @@ function emitFieldCarryingFactory(
 	lines.push('}');
 
 	const { directParamType, directParamOptional } = surface;
-	const resolvedForwardTarget = directParamType !== undefined ? forwardedTargetKind(node, nodeMap) : null;
-	const forwardTarget =
-		resolvedForwardTarget !== null && kindEntries !== undefined && !hasCatalogEntry(kindEntries, resolvedForwardTarget)
-			? null
-			: resolvedForwardTarget;
-	const forwardTargetNode = forwardTarget === null ? undefined : nodeMap.nodes.get(forwardTarget);
-	const forwardsToSeatedGroup =
-		forwardTargetNode instanceof AbstractAssembledCompound &&
-		forwardTargetNode.annotations?.hoisted === true &&
-		classifyFactoryShape(forwardTargetNode, nodeMap) === 'config';
-	if (forwardTarget !== null && !forwardsToSeatedGroup) {
+	const forwardTarget = forwardedConstructorTarget(node, nodeMap, kindEntries);
+	if (forwardTarget !== null) {
 		const targetFn = nodeMap.nodes.get(forwardTarget)!.rawFactoryName!;
 		lines[0] = lines[0]!.replace(`${exportKw}function ${fn}(`, `function _${fn}(`);
 		const targetSurface = constructorSurface(forwardTarget, nodeMap, kindEntries);
@@ -1446,7 +1475,8 @@ export function refineFormBuiltTypeSurfaceOf(
 		members: [],
 		setters,
 		buildArgs: paramsToTuple(params),
-		looseArgs: paramsToTuple(params)
+		looseArgs: paramsToTuple(params),
+		maxArgs: registered.length === 0 ? 1 : 2
 	};
 }
 
@@ -1791,7 +1821,8 @@ function listBuiltTypeSurface(
 		members: extraMembers,
 		setters,
 		buildArgs: elementsTuple(node.nonEmpty, surface.strictElemType),
-		looseArgs: elementsTuple(node.nonEmpty, looseValueOf(surface.looseElemTypeForArray))
+		looseArgs: elementsTuple(node.nonEmpty, looseValueOf(surface.looseElemTypeForArray)),
+		maxArgs: undefined
 	};
 }
 

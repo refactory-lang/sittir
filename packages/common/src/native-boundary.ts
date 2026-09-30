@@ -134,6 +134,9 @@ function assertNativeNodeDataInternal(value: unknown, path: string): asserts val
 	if (value.$span !== undefined) assertNativeSpan(value.$span, `${path}.$span`);
 	if (value.$nodeHandle !== undefined) assertFiniteNumber(value.$nodeHandle, `${path}.$nodeHandle`);
 	if (value.$childIndex !== undefined) assertFiniteNumber(value.$childIndex, `${path}.$childIndex`);
+	if (value.$textOnly !== undefined && typeof value.$textOnly !== 'boolean') {
+		throw new TypeError(`${path}.$textOnly must be a boolean, got ${describe(value.$textOnly)}`);
+	}
 }
 
 /**

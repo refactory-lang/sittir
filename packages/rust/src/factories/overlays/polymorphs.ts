@@ -2,6 +2,7 @@
 import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
+import { bundle } from '@sittir/common/utils';
 import type { ArgsOf, ElementsOf, OmitEach, OptionsArg } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 import type * as T from '../../types.js';
@@ -36,12 +37,20 @@ const expressionStatement$withSemi =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const expressionStatement$withSemi$strict = expressionStatement$withSemi(
+	F.buildExpressionStatement,
+	F.buildExpressionStatementWithSemi
+);
+const expressionStatement$withSemi$coerce = expressionStatement$withSemi(
+	F.buildExpressionStatement,
+	C.coerceToExpressionStatementWithSemi
+);
 export const expressionStatement = Object.freeze({
 	...B.expressionStatement,
-	withSemi: {
-		strict: expressionStatement$withSemi(F.buildExpressionStatement, F.buildExpressionStatementWithSemi),
-		coerce: expressionStatement$withSemi(F.buildExpressionStatement, C.coerceToExpressionStatementWithSemi)
-	}
+	withSemi: bundle(expressionStatement$withSemi$strict, expressionStatement$withSemi$coerce, {
+		key: 'expressionStatement.withSemi',
+		max: 1
+	})
 }) as unknown as typeof B.expressionStatement & {
 	withSemi: {
 		strict: (
@@ -64,12 +73,11 @@ const attribute$input =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, input: _c(child)(inner) } as never, options as never);
 	};
+const attribute$input$strict = attribute$input(F.buildAttribute, F.buildAttributeInput);
+const attribute$input$coerce = attribute$input(C.coerceToAttribute, C.coerceToAttributeInput);
 export const attribute = Object.freeze({
 	...B.attribute,
-	input: {
-		strict: attribute$input(F.buildAttribute, F.buildAttributeInput),
-		coerce: attribute$input(C.coerceToAttribute, C.coerceToAttributeInput)
-	}
+	input: bundle(attribute$input$strict, attribute$input$coerce, { key: 'attribute.input', max: 2 })
 }) as unknown as typeof B.attribute & {
 	input: {
 		strict: (
@@ -87,18 +95,50 @@ const visibilityModifierPubScope$self =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubScope$self$strict = visibilityModifierPubScope$self(
+	F.buildVisibilityModifierPubScope,
+	TSKindId.Self
+);
+const visibilityModifierPubScope$self$coerce = visibilityModifierPubScope$self(
+	C.coerceToVisibilityModifierPubScope,
+	TSKindId.Self
+);
 const visibilityModifierPubScope$super =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubScope$super$strict = visibilityModifierPubScope$super(
+	F.buildVisibilityModifierPubScope,
+	TSKindId.Super
+);
+const visibilityModifierPubScope$super$coerce = visibilityModifierPubScope$super(
+	C.coerceToVisibilityModifierPubScope,
+	TSKindId.Super
+);
 const visibilityModifierPubScope$crate =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifierPubScope$crate$strict = visibilityModifierPubScope$crate(
+	F.buildVisibilityModifierPubScope,
+	TSKindId.Crate
+);
+const visibilityModifierPubScope$crate$coerce = visibilityModifierPubScope$crate(
+	C.coerceToVisibilityModifierPubScope,
+	TSKindId.Crate
+);
 const visibilityModifierPubScope$inPath =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierPubScope$inPath$strict = visibilityModifierPubScope$inPath(
+	F.buildVisibilityModifierPubScope,
+	F.buildVisibilityModifierPubScopeInPath
+);
+const visibilityModifierPubScope$inPath$coerce = visibilityModifierPubScope$inPath(
+	F.buildVisibilityModifierPubScope,
+	C.coerceToVisibilityModifierPubScopeInPath
+);
 const visibilityModifierPubScope: {
 	self: {
 		strict: (
@@ -133,50 +173,84 @@ const visibilityModifierPubScope: {
 		) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
 	};
 } = Object.freeze({
-	self: {
-		strict: visibilityModifierPubScope$self(F.buildVisibilityModifierPubScope, TSKindId.Self),
-		coerce: visibilityModifierPubScope$self(C.coerceToVisibilityModifierPubScope, TSKindId.Self)
-	},
-	super: {
-		strict: visibilityModifierPubScope$super(F.buildVisibilityModifierPubScope, TSKindId.Super),
-		coerce: visibilityModifierPubScope$super(C.coerceToVisibilityModifierPubScope, TSKindId.Super)
-	},
-	crate: {
-		strict: visibilityModifierPubScope$crate(F.buildVisibilityModifierPubScope, TSKindId.Crate),
-		coerce: visibilityModifierPubScope$crate(C.coerceToVisibilityModifierPubScope, TSKindId.Crate)
-	},
-	inPath: {
-		strict: visibilityModifierPubScope$inPath(
-			F.buildVisibilityModifierPubScope,
-			F.buildVisibilityModifierPubScopeInPath
-		),
-		coerce: visibilityModifierPubScope$inPath(
-			F.buildVisibilityModifierPubScope,
-			C.coerceToVisibilityModifierPubScopeInPath
-		)
-	}
+	self: bundle(visibilityModifierPubScope$self$strict, visibilityModifierPubScope$self$coerce, {
+		key: 'visibilityModifierPubScope.self',
+		max: 1
+	}),
+	super: bundle(visibilityModifierPubScope$super$strict, visibilityModifierPubScope$super$coerce, {
+		key: 'visibilityModifierPubScope.super',
+		max: 1
+	}),
+	crate: bundle(visibilityModifierPubScope$crate$strict, visibilityModifierPubScope$crate$coerce, {
+		key: 'visibilityModifierPubScope.crate',
+		max: 1
+	}),
+	inPath: bundle(visibilityModifierPubScope$inPath$strict, visibilityModifierPubScope$inPath$coerce, {
+		key: 'visibilityModifierPubScope.inPath',
+		max: 1
+	})
 });
 
 const visibilityModifierPub$scope =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierPub$scope$strict = visibilityModifierPub$scope(
+	F.buildVisibilityModifierPub,
+	F.buildVisibilityModifierPubScope
+);
+const visibilityModifierPub$scope$coerce = visibilityModifierPub$scope(
+	F.buildVisibilityModifierPub,
+	C.coerceToVisibilityModifierPubScope
+);
 const visibilityModifierPub$scope$self =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierPub$scope$self$strict = visibilityModifierPub$scope$self(
+	F.buildVisibilityModifierPub,
+	visibilityModifierPubScope.self.strict
+);
+const visibilityModifierPub$scope$self$coerce = visibilityModifierPub$scope$self(
+	F.buildVisibilityModifierPub,
+	visibilityModifierPubScope.self.coerce
+);
 const visibilityModifierPub$scope$super =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierPub$scope$super$strict = visibilityModifierPub$scope$super(
+	F.buildVisibilityModifierPub,
+	visibilityModifierPubScope.super.strict
+);
+const visibilityModifierPub$scope$super$coerce = visibilityModifierPub$scope$super(
+	F.buildVisibilityModifierPub,
+	visibilityModifierPubScope.super.coerce
+);
 const visibilityModifierPub$scope$crate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierPub$scope$crate$strict = visibilityModifierPub$scope$crate(
+	F.buildVisibilityModifierPub,
+	visibilityModifierPubScope.crate.strict
+);
+const visibilityModifierPub$scope$crate$coerce = visibilityModifierPub$scope$crate(
+	F.buildVisibilityModifierPub,
+	visibilityModifierPubScope.crate.coerce
+);
 const visibilityModifierPub$scope$inPath =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifierPub$scope$inPath$strict = visibilityModifierPub$scope$inPath(
+	F.buildVisibilityModifierPub,
+	visibilityModifierPubScope.inPath.strict
+);
+const visibilityModifierPub$scope$inPath$coerce = visibilityModifierPub$scope$inPath(
+	F.buildVisibilityModifierPub,
+	visibilityModifierPubScope.inPath.coerce
+);
 const visibilityModifierPub: {
 	scope: {
 		strict: (
@@ -220,27 +294,26 @@ const visibilityModifierPub: {
 	};
 } = Object.freeze({
 	scope: {
-		strict: visibilityModifierPub$scope(F.buildVisibilityModifierPub, F.buildVisibilityModifierPubScope),
-		coerce: visibilityModifierPub$scope(F.buildVisibilityModifierPub, C.coerceToVisibilityModifierPubScope),
-		self: {
-			strict: visibilityModifierPub$scope$self(F.buildVisibilityModifierPub, visibilityModifierPubScope.self.strict),
-			coerce: visibilityModifierPub$scope$self(F.buildVisibilityModifierPub, visibilityModifierPubScope.self.coerce)
-		},
-		super: {
-			strict: visibilityModifierPub$scope$super(F.buildVisibilityModifierPub, visibilityModifierPubScope.super.strict),
-			coerce: visibilityModifierPub$scope$super(F.buildVisibilityModifierPub, visibilityModifierPubScope.super.coerce)
-		},
-		crate: {
-			strict: visibilityModifierPub$scope$crate(F.buildVisibilityModifierPub, visibilityModifierPubScope.crate.strict),
-			coerce: visibilityModifierPub$scope$crate(F.buildVisibilityModifierPub, visibilityModifierPubScope.crate.coerce)
-		},
-		inPath: {
-			strict: visibilityModifierPub$scope$inPath(
-				F.buildVisibilityModifierPub,
-				visibilityModifierPubScope.inPath.strict
-			),
-			coerce: visibilityModifierPub$scope$inPath(F.buildVisibilityModifierPub, visibilityModifierPubScope.inPath.coerce)
-		}
+		...bundle(visibilityModifierPub$scope$strict, visibilityModifierPub$scope$coerce, {
+			key: 'visibilityModifierPub.scope',
+			max: 1
+		}),
+		self: bundle(visibilityModifierPub$scope$self$strict, visibilityModifierPub$scope$self$coerce, {
+			key: 'visibilityModifierPub.scope.self',
+			max: 1
+		}),
+		super: bundle(visibilityModifierPub$scope$super$strict, visibilityModifierPub$scope$super$coerce, {
+			key: 'visibilityModifierPub.scope.super',
+			max: 1
+		}),
+		crate: bundle(visibilityModifierPub$scope$crate$strict, visibilityModifierPub$scope$crate$coerce, {
+			key: 'visibilityModifierPub.scope.crate',
+			max: 1
+		}),
+		inPath: bundle(visibilityModifierPub$scope$inPath$strict, visibilityModifierPub$scope$inPath$coerce, {
+			key: 'visibilityModifierPub.scope.inPath',
+			max: 1
+		})
 	}
 });
 
@@ -248,64 +321,106 @@ const visibilityModifier$crate =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const visibilityModifier$crate$strict = visibilityModifier$crate(F.buildVisibilityModifier, TSKindId.Crate);
+const visibilityModifier$crate$coerce = visibilityModifier$crate(C.coerceToVisibilityModifier, TSKindId.Crate);
 const visibilityModifier$pub =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifier$pub$strict = visibilityModifier$pub(F.buildVisibilityModifier, F.buildVisibilityModifierPub);
+const visibilityModifier$pub$coerce = visibilityModifier$pub(
+	F.buildVisibilityModifier,
+	C.coerceToVisibilityModifierPub
+);
 const visibilityModifier$pub$scope =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifier$pub$scope$strict = visibilityModifier$pub$scope(
+	F.buildVisibilityModifier,
+	visibilityModifierPub.scope.strict
+);
+const visibilityModifier$pub$scope$coerce = visibilityModifier$pub$scope(
+	F.buildVisibilityModifier,
+	visibilityModifierPub.scope.coerce
+);
 const visibilityModifier$pub$scope$self =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifier$pub$scope$self$strict = visibilityModifier$pub$scope$self(
+	F.buildVisibilityModifier,
+	visibilityModifierPub.scope.self.strict
+);
+const visibilityModifier$pub$scope$self$coerce = visibilityModifier$pub$scope$self(
+	F.buildVisibilityModifier,
+	visibilityModifierPub.scope.self.coerce
+);
 const visibilityModifier$pub$scope$super =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifier$pub$scope$super$strict = visibilityModifier$pub$scope$super(
+	F.buildVisibilityModifier,
+	visibilityModifierPub.scope.super.strict
+);
+const visibilityModifier$pub$scope$super$coerce = visibilityModifier$pub$scope$super(
+	F.buildVisibilityModifier,
+	visibilityModifierPub.scope.super.coerce
+);
 const visibilityModifier$pub$scope$crate =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifier$pub$scope$crate$strict = visibilityModifier$pub$scope$crate(
+	F.buildVisibilityModifier,
+	visibilityModifierPub.scope.crate.strict
+);
+const visibilityModifier$pub$scope$crate$coerce = visibilityModifier$pub$scope$crate(
+	F.buildVisibilityModifier,
+	visibilityModifierPub.scope.crate.coerce
+);
 const visibilityModifier$pub$scope$inPath =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const visibilityModifier$pub$scope$inPath$strict = visibilityModifier$pub$scope$inPath(
+	F.buildVisibilityModifier,
+	visibilityModifierPub.scope.inPath.strict
+);
+const visibilityModifier$pub$scope$inPath$coerce = visibilityModifier$pub$scope$inPath(
+	F.buildVisibilityModifier,
+	visibilityModifierPub.scope.inPath.coerce
+);
 export const visibilityModifier = Object.freeze({
 	...B.visibilityModifier,
-	crate: {
-		strict: visibilityModifier$crate(F.buildVisibilityModifier, TSKindId.Crate),
-		coerce: visibilityModifier$crate(C.coerceToVisibilityModifier, TSKindId.Crate)
-	},
+	crate: bundle(visibilityModifier$crate$strict, visibilityModifier$crate$coerce, {
+		key: 'visibilityModifier.crate',
+		max: 1
+	}),
 	pub: {
-		strict: visibilityModifier$pub(F.buildVisibilityModifier, F.buildVisibilityModifierPub),
-		coerce: visibilityModifier$pub(F.buildVisibilityModifier, C.coerceToVisibilityModifierPub),
+		...bundle(visibilityModifier$pub$strict, visibilityModifier$pub$coerce, { key: 'visibilityModifier.pub', max: 1 }),
 		scope: {
-			strict: visibilityModifier$pub$scope(F.buildVisibilityModifier, visibilityModifierPub.scope.strict),
-			coerce: visibilityModifier$pub$scope(F.buildVisibilityModifier, visibilityModifierPub.scope.coerce),
-			self: {
-				strict: visibilityModifier$pub$scope$self(F.buildVisibilityModifier, visibilityModifierPub.scope.self.strict),
-				coerce: visibilityModifier$pub$scope$self(F.buildVisibilityModifier, visibilityModifierPub.scope.self.coerce)
-			},
-			super: {
-				strict: visibilityModifier$pub$scope$super(F.buildVisibilityModifier, visibilityModifierPub.scope.super.strict),
-				coerce: visibilityModifier$pub$scope$super(F.buildVisibilityModifier, visibilityModifierPub.scope.super.coerce)
-			},
-			crate: {
-				strict: visibilityModifier$pub$scope$crate(F.buildVisibilityModifier, visibilityModifierPub.scope.crate.strict),
-				coerce: visibilityModifier$pub$scope$crate(F.buildVisibilityModifier, visibilityModifierPub.scope.crate.coerce)
-			},
-			inPath: {
-				strict: visibilityModifier$pub$scope$inPath(
-					F.buildVisibilityModifier,
-					visibilityModifierPub.scope.inPath.strict
-				),
-				coerce: visibilityModifier$pub$scope$inPath(
-					F.buildVisibilityModifier,
-					visibilityModifierPub.scope.inPath.coerce
-				)
-			}
+			...bundle(visibilityModifier$pub$scope$strict, visibilityModifier$pub$scope$coerce, {
+				key: 'visibilityModifier.pub.scope',
+				max: 1
+			}),
+			self: bundle(visibilityModifier$pub$scope$self$strict, visibilityModifier$pub$scope$self$coerce, {
+				key: 'visibilityModifier.pub.scope.self',
+				max: 1
+			}),
+			super: bundle(visibilityModifier$pub$scope$super$strict, visibilityModifier$pub$scope$super$coerce, {
+				key: 'visibilityModifier.pub.scope.super',
+				max: 1
+			}),
+			crate: bundle(visibilityModifier$pub$scope$crate$strict, visibilityModifier$pub$scope$crate$coerce, {
+				key: 'visibilityModifier.pub.scope.crate',
+				max: 1
+			}),
+			inPath: bundle(visibilityModifier$pub$scope$inPath$strict, visibilityModifier$pub$scope$inPath$coerce, {
+				key: 'visibilityModifier.pub.scope.inPath',
+				max: 1
+			})
 		}
 	}
 }) as unknown as typeof B.visibilityModifier & {
@@ -370,22 +485,23 @@ const functionType$traitForm =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
+const functionType$traitForm$strict = functionType$traitForm(F.buildFunctionType, F.buildFunctionTypeTraitForm);
+const functionType$traitForm$coerce = functionType$traitForm(C.coerceToFunctionType, C.coerceToFunctionTypeTraitForm);
 const functionType$fnForm =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const functionType$fnForm$strict = functionType$fnForm(F.buildFunctionType, F.buildFunctionTypeFnForm);
+const functionType$fnForm$coerce = functionType$fnForm(C.coerceToFunctionType, C.coerceToFunctionTypeFnForm);
 export const functionType = Object.freeze({
 	...B.functionType,
-	traitForm: {
-		strict: functionType$traitForm(F.buildFunctionType, F.buildFunctionTypeTraitForm),
-		coerce: functionType$traitForm(C.coerceToFunctionType, C.coerceToFunctionTypeTraitForm)
-	},
-	fnForm: {
-		strict: functionType$fnForm(F.buildFunctionType, F.buildFunctionTypeFnForm),
-		coerce: functionType$fnForm(C.coerceToFunctionType, C.coerceToFunctionTypeFnForm)
-	}
+	traitForm: bundle(functionType$traitForm$strict, functionType$traitForm$coerce, {
+		key: 'functionType.traitForm',
+		max: 2
+	}),
+	fnForm: bundle(functionType$fnForm$strict, functionType$fnForm$coerce, { key: 'functionType.fnForm', max: 2 })
 }) as unknown as typeof B.functionType & {
 	traitForm: {
 		strict: (
@@ -421,36 +537,44 @@ const rangeExpression$binary =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const rangeExpression$binary$strict = rangeExpression$binary(F.buildRangeExpression, F.buildRangeExpressionBinary);
+const rangeExpression$binary$coerce = rangeExpression$binary(F.buildRangeExpression, C.coerceToRangeExpressionBinary);
 const rangeExpression$postfix =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const rangeExpression$postfix$strict = rangeExpression$postfix(F.buildRangeExpression, F.buildRangeExpressionPostfix);
+const rangeExpression$postfix$coerce = rangeExpression$postfix(
+	F.buildRangeExpression,
+	C.coerceToRangeExpressionPostfix
+);
 const rangeExpression$prefix =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const rangeExpression$prefix$strict = rangeExpression$prefix(F.buildRangeExpression, F.buildRangeExpressionPrefix);
+const rangeExpression$prefix$coerce = rangeExpression$prefix(F.buildRangeExpression, C.coerceToRangeExpressionPrefix);
 const rangeExpression$bare =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const rangeExpression$bare$strict = rangeExpression$bare(F.buildRangeExpression, TSKindId.RangeExpressionBare);
+const rangeExpression$bare$coerce = rangeExpression$bare(C.coerceToRangeExpression, TSKindId.RangeExpressionBare);
 export const rangeExpression = Object.freeze({
 	...B.rangeExpression,
-	binary: {
-		strict: rangeExpression$binary(F.buildRangeExpression, F.buildRangeExpressionBinary),
-		coerce: rangeExpression$binary(F.buildRangeExpression, C.coerceToRangeExpressionBinary)
-	},
-	postfix: {
-		strict: rangeExpression$postfix(F.buildRangeExpression, F.buildRangeExpressionPostfix),
-		coerce: rangeExpression$postfix(F.buildRangeExpression, C.coerceToRangeExpressionPostfix)
-	},
-	prefix: {
-		strict: rangeExpression$prefix(F.buildRangeExpression, F.buildRangeExpressionPrefix),
-		coerce: rangeExpression$prefix(F.buildRangeExpression, C.coerceToRangeExpressionPrefix)
-	},
-	bare: {
-		strict: rangeExpression$bare(F.buildRangeExpression, TSKindId.RangeExpressionBare),
-		coerce: rangeExpression$bare(C.coerceToRangeExpression, TSKindId.RangeExpressionBare)
-	}
+	binary: bundle(rangeExpression$binary$strict, rangeExpression$binary$coerce, {
+		key: 'rangeExpression.binary',
+		max: 1
+	}),
+	postfix: bundle(rangeExpression$postfix$strict, rangeExpression$postfix$coerce, {
+		key: 'rangeExpression.postfix',
+		max: 1
+	}),
+	prefix: bundle(rangeExpression$prefix$strict, rangeExpression$prefix$coerce, {
+		key: 'rangeExpression.prefix',
+		max: 1
+	}),
+	bare: bundle(rangeExpression$bare$strict, rangeExpression$bare$coerce, { key: 'rangeExpression.bare', max: 1 })
 }) as unknown as typeof B.rangeExpression & {
 	binary: {
 		strict: (...args: ArgsOf<typeof F.buildRangeExpressionBinary>) => ReturnType<typeof F.buildRangeExpression>;
@@ -496,8 +620,7 @@ function matchBlock$seatedCoerce(
 }
 export const matchBlock = Object.freeze({
 	...B.matchBlock,
-	strict: matchBlock$seated,
-	coerce: matchBlock$seatedCoerce
+	...bundle(matchBlock$seated, matchBlock$seatedCoerce, { key: 'matchBlock', max: 1 })
 }) as unknown as typeof B.matchBlock & {
 	strict: typeof matchBlock$seated;
 	coerce: typeof matchBlock$seatedCoerce;
@@ -555,8 +678,7 @@ const lastMatchArm$seatedCoerce: (
 );
 export const lastMatchArm = Object.freeze({
 	...B.lastMatchArm,
-	strict: lastMatchArm$seated,
-	coerce: lastMatchArm$seatedCoerce
+	...bundle(lastMatchArm$seated, lastMatchArm$seatedCoerce, { key: 'lastMatchArm', max: 1 })
 }) as unknown as typeof B.lastMatchArm & {
 	strict: typeof lastMatchArm$seated;
 	coerce: typeof lastMatchArm$seatedCoerce;
@@ -598,8 +720,7 @@ const tupleStructPattern$seatedCoerce: (
 );
 export const tupleStructPattern = Object.freeze({
 	...B.tupleStructPattern,
-	strict: tupleStructPattern$seated,
-	coerce: tupleStructPattern$seatedCoerce
+	...bundle(tupleStructPattern$seated, tupleStructPattern$seatedCoerce, { key: 'tupleStructPattern', max: 1 })
 }) as unknown as typeof B.tupleStructPattern & {
 	strict: typeof tupleStructPattern$seated;
 	coerce: typeof tupleStructPattern$seatedCoerce;
@@ -638,8 +759,7 @@ const structPattern$seatedCoerce: (
 );
 export const structPattern = Object.freeze({
 	...B.structPattern,
-	strict: structPattern$seated,
-	coerce: structPattern$seatedCoerce
+	...bundle(structPattern$seated, structPattern$seatedCoerce, { key: 'structPattern', max: 1 })
 }) as unknown as typeof B.structPattern & {
 	strict: typeof structPattern$seated;
 	coerce: typeof structPattern$seatedCoerce;
@@ -649,36 +769,35 @@ const lineComment$extraSlashes =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lineComment$extraSlashes$strict = lineComment$extraSlashes(F.buildLineComment, F.buildLineCommentExtraSlashes);
+const lineComment$extraSlashes$coerce = lineComment$extraSlashes(F.buildLineComment, C.coerceToLineCommentExtraSlashes);
 const lineComment$docOuter =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lineComment$docOuter$strict = lineComment$docOuter(F.buildLineComment, F.buildLineCommentDocOuter);
+const lineComment$docOuter$coerce = lineComment$docOuter(F.buildLineComment, C.coerceToLineCommentDocOuter);
 const lineComment$docInner =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lineComment$docInner$strict = lineComment$docInner(F.buildLineComment, F.buildLineCommentDocInner);
+const lineComment$docInner$coerce = lineComment$docInner(F.buildLineComment, C.coerceToLineCommentDocInner);
 const lineComment$regular =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lineComment$regular$strict = lineComment$regular(F.buildLineComment, F.buildLineCommentRegular);
+const lineComment$regular$coerce = lineComment$regular(F.buildLineComment, C.coerceToLineCommentRegular);
 export const lineComment = Object.freeze({
 	...B.lineComment,
-	extraSlashes: {
-		strict: lineComment$extraSlashes(F.buildLineComment, F.buildLineCommentExtraSlashes),
-		coerce: lineComment$extraSlashes(F.buildLineComment, C.coerceToLineCommentExtraSlashes)
-	},
-	docOuter: {
-		strict: lineComment$docOuter(F.buildLineComment, F.buildLineCommentDocOuter),
-		coerce: lineComment$docOuter(F.buildLineComment, C.coerceToLineCommentDocOuter)
-	},
-	docInner: {
-		strict: lineComment$docInner(F.buildLineComment, F.buildLineCommentDocInner),
-		coerce: lineComment$docInner(F.buildLineComment, C.coerceToLineCommentDocInner)
-	},
-	regular: {
-		strict: lineComment$regular(F.buildLineComment, F.buildLineCommentRegular),
-		coerce: lineComment$regular(F.buildLineComment, C.coerceToLineCommentRegular)
-	}
+	extraSlashes: bundle(lineComment$extraSlashes$strict, lineComment$extraSlashes$coerce, {
+		key: 'lineComment.extraSlashes',
+		max: 1
+	}),
+	docOuter: bundle(lineComment$docOuter$strict, lineComment$docOuter$coerce, { key: 'lineComment.docOuter', max: 1 }),
+	docInner: bundle(lineComment$docInner$strict, lineComment$docInner$coerce, { key: 'lineComment.docInner', max: 1 }),
+	regular: bundle(lineComment$regular$strict, lineComment$regular$coerce, { key: 'lineComment.regular', max: 1 })
 }) as unknown as typeof B.lineComment & {
 	extraSlashes: {
 		strict: (...args: ArgsOf<typeof F.buildLineCommentExtraSlashes>) => ReturnType<typeof F.buildLineComment>;
@@ -702,28 +821,31 @@ const blockComment$docOuter =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const blockComment$docOuter$strict = blockComment$docOuter(F.buildBlockComment, F.buildBlockCommentDocOuter);
+const blockComment$docOuter$coerce = blockComment$docOuter(F.buildBlockComment, C.coerceToBlockCommentDocOuter);
 const blockComment$docInner =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const blockComment$docInner$strict = blockComment$docInner(F.buildBlockComment, F.buildBlockCommentDocInner);
+const blockComment$docInner$coerce = blockComment$docInner(F.buildBlockComment, C.coerceToBlockCommentDocInner);
 const blockComment$regular =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const blockComment$regular$strict = blockComment$regular(F.buildBlockComment, F.buildBlockCommentRegular);
+const blockComment$regular$coerce = blockComment$regular(F.buildBlockComment, C.coerceToBlockCommentRegular);
 export const blockComment = Object.freeze({
 	...B.blockComment,
-	docOuter: {
-		strict: blockComment$docOuter(F.buildBlockComment, F.buildBlockCommentDocOuter),
-		coerce: blockComment$docOuter(F.buildBlockComment, C.coerceToBlockCommentDocOuter)
-	},
-	docInner: {
-		strict: blockComment$docInner(F.buildBlockComment, F.buildBlockCommentDocInner),
-		coerce: blockComment$docInner(F.buildBlockComment, C.coerceToBlockCommentDocInner)
-	},
-	regular: {
-		strict: blockComment$regular(F.buildBlockComment, F.buildBlockCommentRegular),
-		coerce: blockComment$regular(F.buildBlockComment, C.coerceToBlockCommentRegular)
-	}
+	docOuter: bundle(blockComment$docOuter$strict, blockComment$docOuter$coerce, {
+		key: 'blockComment.docOuter',
+		max: 1
+	}),
+	docInner: bundle(blockComment$docInner$strict, blockComment$docInner$coerce, {
+		key: 'blockComment.docInner',
+		max: 1
+	}),
+	regular: bundle(blockComment$regular$strict, blockComment$regular$coerce, { key: 'blockComment.regular', max: 1 })
 }) as unknown as typeof B.blockComment & {
 	docOuter: {
 		strict: (...args: ArgsOf<typeof F.buildBlockCommentDocOuter>) => ReturnType<typeof F.buildBlockComment>;
@@ -806,8 +928,7 @@ const enumVariantListElements$seatedCoerce: (
 );
 export const enumVariantListElements = Object.freeze({
 	...B.enumVariantListElements,
-	strict: enumVariantListElements$seated,
-	coerce: enumVariantListElements$seatedCoerce
+	...bundle(enumVariantListElements$seated, enumVariantListElements$seatedCoerce)
 }) as unknown as typeof B.enumVariantListElements & {
 	strict: typeof enumVariantListElements$seated;
 	coerce: typeof enumVariantListElements$seatedCoerce;
@@ -880,8 +1001,7 @@ const fieldDeclarationListElements$seatedCoerce: (
 );
 export const fieldDeclarationListElements = Object.freeze({
 	...B.fieldDeclarationListElements,
-	strict: fieldDeclarationListElements$seated,
-	coerce: fieldDeclarationListElements$seatedCoerce
+	...bundle(fieldDeclarationListElements$seated, fieldDeclarationListElements$seatedCoerce)
 }) as unknown as typeof B.fieldDeclarationListElements & {
 	strict: typeof fieldDeclarationListElements$seated;
 	coerce: typeof fieldDeclarationListElements$seatedCoerce;
@@ -954,8 +1074,7 @@ const orderedFieldDeclarationListElements$seatedCoerce: (
 );
 export const orderedFieldDeclarationListElements = Object.freeze({
 	...B.orderedFieldDeclarationListElements,
-	strict: orderedFieldDeclarationListElements$seated,
-	coerce: orderedFieldDeclarationListElements$seatedCoerce
+	...bundle(orderedFieldDeclarationListElements$seated, orderedFieldDeclarationListElements$seatedCoerce)
 }) as unknown as typeof B.orderedFieldDeclarationListElements & {
 	strict: typeof orderedFieldDeclarationListElements$seated;
 	coerce: typeof orderedFieldDeclarationListElements$seatedCoerce;
@@ -1028,8 +1147,7 @@ const typeParametersElements$seatedCoerce: (
 );
 export const typeParametersElements = Object.freeze({
 	...B.typeParametersElements,
-	strict: typeParametersElements$seated,
-	coerce: typeParametersElements$seatedCoerce
+	...bundle(typeParametersElements$seated, typeParametersElements$seatedCoerce)
 }) as unknown as typeof B.typeParametersElements & {
 	strict: typeof typeParametersElements$seated;
 	coerce: typeof typeParametersElements$seatedCoerce;
@@ -1095,8 +1213,7 @@ const parametersElements$seatedCoerce: (
 );
 export const parametersElements = Object.freeze({
 	...B.parametersElements,
-	strict: parametersElements$seated,
-	coerce: parametersElements$seatedCoerce
+	...bundle(parametersElements$seated, parametersElements$seatedCoerce)
 }) as unknown as typeof B.parametersElements & {
 	strict: typeof parametersElements$seated;
 	coerce: typeof parametersElements$seatedCoerce;
@@ -1165,8 +1282,7 @@ const typeArgumentsElements$seatedCoerce: (
 );
 export const typeArgumentsElements = Object.freeze({
 	...B.typeArgumentsElements,
-	strict: typeArgumentsElements$seated,
-	coerce: typeArgumentsElements$seatedCoerce
+	...bundle(typeArgumentsElements$seated, typeArgumentsElements$seatedCoerce)
 }) as unknown as typeof B.typeArgumentsElements & {
 	strict: typeof typeArgumentsElements$seated;
 	coerce: typeof typeArgumentsElements$seatedCoerce;
@@ -1232,8 +1348,7 @@ const argumentsElements$seatedCoerce: (
 );
 export const argumentsElements = Object.freeze({
 	...B.argumentsElements,
-	strict: argumentsElements$seated,
-	coerce: argumentsElements$seatedCoerce
+	...bundle(argumentsElements$seated, argumentsElements$seatedCoerce)
 }) as unknown as typeof B.argumentsElements & {
 	strict: typeof argumentsElements$seated;
 	coerce: typeof argumentsElements$seatedCoerce;
@@ -1300,8 +1415,7 @@ const arrayExpressionList: {
 	strict: typeof arrayExpressionList$seated;
 	coerce: typeof arrayExpressionList$seatedCoerce;
 } = Object.freeze({
-	strict: arrayExpressionList$seated,
-	coerce: arrayExpressionList$seatedCoerce
+	...bundle(arrayExpressionList$seated, arrayExpressionList$seatedCoerce, { key: 'arrayExpressionList', max: 1 })
 });
 
 const implItemBody$positiveClause =
@@ -1313,6 +1427,14 @@ const implItemBody$positiveClause =
 		const { traitClause: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(seated) } as never, options as never);
 	};
+const implItemBody$positiveClause$strict = implItemBody$positiveClause(
+	F.buildImplItemBody,
+	F.buildImplItemPositiveClause
+);
+const implItemBody$positiveClause$coerce = implItemBody$positiveClause(
+	C.coerceToImplItemBody,
+	C.coerceToImplItemPositiveClause
+);
 const implItemBody$negativeClause =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -1322,6 +1444,14 @@ const implItemBody$negativeClause =
 		const { traitClause: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(seated) } as never, options as never);
 	};
+const implItemBody$negativeClause$strict = implItemBody$negativeClause(
+	F.buildImplItemBody,
+	F.buildImplItemNegativeClause
+);
+const implItemBody$negativeClause$coerce = implItemBody$negativeClause(
+	C.coerceToImplItemBody,
+	C.coerceToImplItemNegativeClause
+);
 const implItemBody: {
 	positiveClause: {
 		strict: (
@@ -1352,14 +1482,14 @@ const implItemBody: {
 		) => ReturnType<typeof C.coerceToImplItemBody>;
 	};
 } = Object.freeze({
-	positiveClause: {
-		strict: implItemBody$positiveClause(F.buildImplItemBody, F.buildImplItemPositiveClause),
-		coerce: implItemBody$positiveClause(C.coerceToImplItemBody, C.coerceToImplItemPositiveClause)
-	},
-	negativeClause: {
-		strict: implItemBody$negativeClause(F.buildImplItemBody, F.buildImplItemNegativeClause),
-		coerce: implItemBody$negativeClause(C.coerceToImplItemBody, C.coerceToImplItemNegativeClause)
-	}
+	positiveClause: bundle(implItemBody$positiveClause$strict, implItemBody$positiveClause$coerce, {
+		key: 'implItemBody.positiveClause',
+		max: 2
+	}),
+	negativeClause: bundle(implItemBody$negativeClause$strict, implItemBody$negativeClause$coerce, {
+		key: 'implItemBody.negativeClause',
+		max: 2
+	})
 });
 
 const implItemSemi$positiveClause =
@@ -1371,6 +1501,14 @@ const implItemSemi$positiveClause =
 		const { traitClause: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(seated) } as never, options as never);
 	};
+const implItemSemi$positiveClause$strict = implItemSemi$positiveClause(
+	F.buildImplItemSemi,
+	F.buildImplItemPositiveClause
+);
+const implItemSemi$positiveClause$coerce = implItemSemi$positiveClause(
+	C.coerceToImplItemSemi,
+	C.coerceToImplItemPositiveClause
+);
 const implItemSemi$negativeClause =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -1380,6 +1518,14 @@ const implItemSemi$negativeClause =
 		const { traitClause: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, traitClause: _c(child)(seated) } as never, options as never);
 	};
+const implItemSemi$negativeClause$strict = implItemSemi$negativeClause(
+	F.buildImplItemSemi,
+	F.buildImplItemNegativeClause
+);
+const implItemSemi$negativeClause$coerce = implItemSemi$negativeClause(
+	C.coerceToImplItemSemi,
+	C.coerceToImplItemNegativeClause
+);
 const implItemSemi: {
 	positiveClause: {
 		strict: (
@@ -1410,14 +1556,14 @@ const implItemSemi: {
 		) => ReturnType<typeof C.coerceToImplItemSemi>;
 	};
 } = Object.freeze({
-	positiveClause: {
-		strict: implItemSemi$positiveClause(F.buildImplItemSemi, F.buildImplItemPositiveClause),
-		coerce: implItemSemi$positiveClause(C.coerceToImplItemSemi, C.coerceToImplItemPositiveClause)
-	},
-	negativeClause: {
-		strict: implItemSemi$negativeClause(F.buildImplItemSemi, F.buildImplItemNegativeClause),
-		coerce: implItemSemi$negativeClause(C.coerceToImplItemSemi, C.coerceToImplItemNegativeClause)
-	}
+	positiveClause: bundle(implItemSemi$positiveClause$strict, implItemSemi$positiveClause$coerce, {
+		key: 'implItemSemi.positiveClause',
+		max: 2
+	}),
+	negativeClause: bundle(implItemSemi$negativeClause$strict, implItemSemi$negativeClause$coerce, {
+		key: 'implItemSemi.negativeClause',
+		max: 2
+	})
 });
 
 const matchArmWithComma$flatten =
@@ -1474,8 +1620,7 @@ const matchArmWithComma: {
 	strict: typeof matchArmWithComma$seated;
 	coerce: typeof matchArmWithComma$seatedCoerce;
 } = Object.freeze({
-	strict: matchArmWithComma$seated,
-	coerce: matchArmWithComma$seatedCoerce
+	...bundle(matchArmWithComma$seated, matchArmWithComma$seatedCoerce, { key: 'matchArmWithComma', max: 1 })
 });
 
 const matchArmBlockEnding$flatten =
@@ -1532,8 +1677,7 @@ const matchArmBlockEnding: {
 	strict: typeof matchArmBlockEnding$seated;
 	coerce: typeof matchArmBlockEnding$seatedCoerce;
 } = Object.freeze({
-	strict: matchArmBlockEnding$seated,
-	coerce: matchArmBlockEnding$seatedCoerce
+	...bundle(matchArmBlockEnding$seated, matchArmBlockEnding$seatedCoerce, { key: 'matchArmBlockEnding', max: 1 })
 });
 
 const macroDefinitionParen$macroRules = <
@@ -1577,8 +1721,7 @@ const macroDefinitionParen: {
 	strict: typeof macroDefinitionParen$seated;
 	coerce: typeof macroDefinitionParen$seatedCoerce;
 } = Object.freeze({
-	strict: macroDefinitionParen$seated,
-	coerce: macroDefinitionParen$seatedCoerce
+	...bundle(macroDefinitionParen$seated, macroDefinitionParen$seatedCoerce, { key: 'macroDefinitionParen', max: 1 })
 });
 
 const macroDefinitionBracket$macroRules = <
@@ -1622,8 +1765,10 @@ const macroDefinitionBracket: {
 	strict: typeof macroDefinitionBracket$seated;
 	coerce: typeof macroDefinitionBracket$seatedCoerce;
 } = Object.freeze({
-	strict: macroDefinitionBracket$seated,
-	coerce: macroDefinitionBracket$seatedCoerce
+	...bundle(macroDefinitionBracket$seated, macroDefinitionBracket$seatedCoerce, {
+		key: 'macroDefinitionBracket',
+		max: 1
+	})
 });
 
 const macroDefinitionBrace$macroRules = <
@@ -1667,18 +1812,21 @@ const macroDefinitionBrace: {
 	strict: typeof macroDefinitionBrace$seated;
 	coerce: typeof macroDefinitionBrace$seatedCoerce;
 } = Object.freeze({
-	strict: macroDefinitionBrace$seated,
-	coerce: macroDefinitionBrace$seatedCoerce
+	...bundle(macroDefinitionBrace$seated, macroDefinitionBrace$seatedCoerce, { key: 'macroDefinitionBrace', max: 1 })
 });
 
 const rangePatternPrefix$dotDotEq =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const rangePatternPrefix$dotDotEq$strict = rangePatternPrefix$dotDotEq(F.buildRangePatternPrefix, TSKindId.DotDotEq);
+const rangePatternPrefix$dotDotEq$coerce = rangePatternPrefix$dotDotEq(C.coerceToRangePatternPrefix, TSKindId.DotDotEq);
 const rangePatternPrefix$dotDot =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const rangePatternPrefix$dotDot$strict = rangePatternPrefix$dotDot(F.buildRangePatternPrefix, TSKindId.DotDot);
+const rangePatternPrefix$dotDot$coerce = rangePatternPrefix$dotDot(C.coerceToRangePatternPrefix, TSKindId.DotDot);
 const rangePatternPrefix: {
 	dotDotEq: {
 		strict: (
@@ -1701,28 +1849,52 @@ const rangePatternPrefix: {
 		) => ReturnType<typeof C.coerceToRangePatternPrefix>;
 	};
 } = Object.freeze({
-	dotDotEq: {
-		strict: rangePatternPrefix$dotDotEq(F.buildRangePatternPrefix, TSKindId.DotDotEq),
-		coerce: rangePatternPrefix$dotDotEq(C.coerceToRangePatternPrefix, TSKindId.DotDotEq)
-	},
-	dotDot: {
-		strict: rangePatternPrefix$dotDot(F.buildRangePatternPrefix, TSKindId.DotDot),
-		coerce: rangePatternPrefix$dotDot(C.coerceToRangePatternPrefix, TSKindId.DotDot)
-	}
+	dotDotEq: bundle(rangePatternPrefix$dotDotEq$strict, rangePatternPrefix$dotDotEq$coerce, {
+		key: 'rangePatternPrefix.dotDotEq',
+		max: 2
+	}),
+	dotDot: bundle(rangePatternPrefix$dotDot$strict, rangePatternPrefix$dotDot$coerce, {
+		key: 'rangePatternPrefix.dotDot',
+		max: 2
+	})
 });
 
 const rangePatternWithLeftWithRight$dotDotDot =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const rangePatternWithLeftWithRight$dotDotDot$strict = rangePatternWithLeftWithRight$dotDotDot(
+	F.buildRangePatternWithLeftWithRight,
+	TSKindId.DotDotDot
+);
+const rangePatternWithLeftWithRight$dotDotDot$coerce = rangePatternWithLeftWithRight$dotDotDot(
+	C.coerceToRangePatternWithLeftWithRight,
+	TSKindId.DotDotDot
+);
 const rangePatternWithLeftWithRight$dotDotEq =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const rangePatternWithLeftWithRight$dotDotEq$strict = rangePatternWithLeftWithRight$dotDotEq(
+	F.buildRangePatternWithLeftWithRight,
+	TSKindId.DotDotEq
+);
+const rangePatternWithLeftWithRight$dotDotEq$coerce = rangePatternWithLeftWithRight$dotDotEq(
+	C.coerceToRangePatternWithLeftWithRight,
+	TSKindId.DotDotEq
+);
 const rangePatternWithLeftWithRight$dotDot =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const rangePatternWithLeftWithRight$dotDot$strict = rangePatternWithLeftWithRight$dotDot(
+	F.buildRangePatternWithLeftWithRight,
+	TSKindId.DotDot
+);
+const rangePatternWithLeftWithRight$dotDot$coerce = rangePatternWithLeftWithRight$dotDot(
+	C.coerceToRangePatternWithLeftWithRight,
+	TSKindId.DotDot
+);
 const rangePatternWithLeftWithRight: {
 	dotDotDot: {
 		strict: (
@@ -1755,18 +1927,18 @@ const rangePatternWithLeftWithRight: {
 		) => ReturnType<typeof C.coerceToRangePatternWithLeftWithRight>;
 	};
 } = Object.freeze({
-	dotDotDot: {
-		strict: rangePatternWithLeftWithRight$dotDotDot(F.buildRangePatternWithLeftWithRight, TSKindId.DotDotDot),
-		coerce: rangePatternWithLeftWithRight$dotDotDot(C.coerceToRangePatternWithLeftWithRight, TSKindId.DotDotDot)
-	},
-	dotDotEq: {
-		strict: rangePatternWithLeftWithRight$dotDotEq(F.buildRangePatternWithLeftWithRight, TSKindId.DotDotEq),
-		coerce: rangePatternWithLeftWithRight$dotDotEq(C.coerceToRangePatternWithLeftWithRight, TSKindId.DotDotEq)
-	},
-	dotDot: {
-		strict: rangePatternWithLeftWithRight$dotDot(F.buildRangePatternWithLeftWithRight, TSKindId.DotDot),
-		coerce: rangePatternWithLeftWithRight$dotDot(C.coerceToRangePatternWithLeftWithRight, TSKindId.DotDot)
-	}
+	dotDotDot: bundle(rangePatternWithLeftWithRight$dotDotDot$strict, rangePatternWithLeftWithRight$dotDotDot$coerce, {
+		key: 'rangePatternWithLeftWithRight.dotDotDot',
+		max: 2
+	}),
+	dotDotEq: bundle(rangePatternWithLeftWithRight$dotDotEq$strict, rangePatternWithLeftWithRight$dotDotEq$coerce, {
+		key: 'rangePatternWithLeftWithRight.dotDotEq',
+		max: 2
+	}),
+	dotDot: bundle(rangePatternWithLeftWithRight$dotDot$strict, rangePatternWithLeftWithRight$dotDot$coerce, {
+		key: 'rangePatternWithLeftWithRight.dotDot',
+		max: 2
+	})
 });
 
 const rangePatternWithLeft$withRight =
@@ -1780,28 +1952,68 @@ const rangePatternWithLeft$withRight =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const rangePatternWithLeft$withRight$strict = rangePatternWithLeft$withRight(
+	F.buildRangePatternWithLeft,
+	F.buildRangePatternWithLeftWithRight
+);
+const rangePatternWithLeft$withRight$coerce = rangePatternWithLeft$withRight(
+	C.coerceToRangePatternWithLeft,
+	C.coerceToRangePatternWithLeftWithRight
+);
 const rangePatternWithLeft$bare =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const rangePatternWithLeft$bare$strict = rangePatternWithLeft$bare(
+	F.buildRangePatternWithLeft,
+	TSKindId.RangePatternWithLeftBare
+);
+const rangePatternWithLeft$bare$coerce = rangePatternWithLeft$bare(
+	C.coerceToRangePatternWithLeft,
+	TSKindId.RangePatternWithLeftBare
+);
 const rangePatternWithLeft$withRight$dotDotDot =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const rangePatternWithLeft$withRight$dotDotDot$strict = rangePatternWithLeft$withRight$dotDotDot(
+	F.buildRangePatternWithLeft,
+	rangePatternWithLeftWithRight.dotDotDot.strict
+);
+const rangePatternWithLeft$withRight$dotDotDot$coerce = rangePatternWithLeft$withRight$dotDotDot(
+	C.coerceToRangePatternWithLeft,
+	rangePatternWithLeftWithRight.dotDotDot.coerce
+);
 const rangePatternWithLeft$withRight$dotDotEq =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const rangePatternWithLeft$withRight$dotDotEq$strict = rangePatternWithLeft$withRight$dotDotEq(
+	F.buildRangePatternWithLeft,
+	rangePatternWithLeftWithRight.dotDotEq.strict
+);
+const rangePatternWithLeft$withRight$dotDotEq$coerce = rangePatternWithLeft$withRight$dotDotEq(
+	C.coerceToRangePatternWithLeft,
+	rangePatternWithLeftWithRight.dotDotEq.coerce
+);
 const rangePatternWithLeft$withRight$dotDot =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const rangePatternWithLeft$withRight$dotDot$strict = rangePatternWithLeft$withRight$dotDot(
+	F.buildRangePatternWithLeft,
+	rangePatternWithLeftWithRight.dotDot.strict
+);
+const rangePatternWithLeft$withRight$dotDot$coerce = rangePatternWithLeft$withRight$dotDot(
+	C.coerceToRangePatternWithLeft,
+	rangePatternWithLeftWithRight.dotDot.coerce
+);
 const rangePatternWithLeft: {
 	withRight: {
 		strict: (
@@ -1869,43 +2081,28 @@ const rangePatternWithLeft: {
 	};
 } = Object.freeze({
 	withRight: {
-		strict: rangePatternWithLeft$withRight(F.buildRangePatternWithLeft, F.buildRangePatternWithLeftWithRight),
-		coerce: rangePatternWithLeft$withRight(C.coerceToRangePatternWithLeft, C.coerceToRangePatternWithLeftWithRight),
-		dotDotDot: {
-			strict: rangePatternWithLeft$withRight$dotDotDot(
-				F.buildRangePatternWithLeft,
-				rangePatternWithLeftWithRight.dotDotDot.strict
-			),
-			coerce: rangePatternWithLeft$withRight$dotDotDot(
-				C.coerceToRangePatternWithLeft,
-				rangePatternWithLeftWithRight.dotDotDot.coerce
-			)
-		},
-		dotDotEq: {
-			strict: rangePatternWithLeft$withRight$dotDotEq(
-				F.buildRangePatternWithLeft,
-				rangePatternWithLeftWithRight.dotDotEq.strict
-			),
-			coerce: rangePatternWithLeft$withRight$dotDotEq(
-				C.coerceToRangePatternWithLeft,
-				rangePatternWithLeftWithRight.dotDotEq.coerce
-			)
-		},
-		dotDot: {
-			strict: rangePatternWithLeft$withRight$dotDot(
-				F.buildRangePatternWithLeft,
-				rangePatternWithLeftWithRight.dotDot.strict
-			),
-			coerce: rangePatternWithLeft$withRight$dotDot(
-				C.coerceToRangePatternWithLeft,
-				rangePatternWithLeftWithRight.dotDot.coerce
-			)
-		}
+		...bundle(rangePatternWithLeft$withRight$strict, rangePatternWithLeft$withRight$coerce, {
+			key: 'rangePatternWithLeft.withRight',
+			max: 2
+		}),
+		dotDotDot: bundle(
+			rangePatternWithLeft$withRight$dotDotDot$strict,
+			rangePatternWithLeft$withRight$dotDotDot$coerce,
+			{ key: 'rangePatternWithLeft.withRight.dotDotDot', max: 2 }
+		),
+		dotDotEq: bundle(rangePatternWithLeft$withRight$dotDotEq$strict, rangePatternWithLeft$withRight$dotDotEq$coerce, {
+			key: 'rangePatternWithLeft.withRight.dotDotEq',
+			max: 2
+		}),
+		dotDot: bundle(rangePatternWithLeft$withRight$dotDot$strict, rangePatternWithLeft$withRight$dotDot$coerce, {
+			key: 'rangePatternWithLeft.withRight.dotDot',
+			max: 2
+		})
 	},
-	bare: {
-		strict: rangePatternWithLeft$bare(F.buildRangePatternWithLeft, TSKindId.RangePatternWithLeftBare),
-		coerce: rangePatternWithLeft$bare(C.coerceToRangePatternWithLeft, TSKindId.RangePatternWithLeftBare)
-	}
+	bare: bundle(rangePatternWithLeft$bare$strict, rangePatternWithLeft$bare$coerce, {
+		key: 'rangePatternWithLeft.bare',
+		max: 2
+	})
 });
 
 export const macroDefinition: {
@@ -1923,9 +2120,9 @@ export const tokenTreePattern: {
 	readonly bracket: { strict: typeof F.buildTokenTreePatternBracket; coerce: typeof C.coerceToTokenTreePatternBracket };
 	readonly brace: { strict: typeof F.buildTokenTreePatternBrace; coerce: typeof C.coerceToTokenTreePatternBrace };
 } = Object.freeze({
-	paren: Object.freeze({ strict: F.buildTokenTreePatternParen, coerce: C.coerceToTokenTreePatternParen }),
-	bracket: Object.freeze({ strict: F.buildTokenTreePatternBracket, coerce: C.coerceToTokenTreePatternBracket }),
-	brace: Object.freeze({ strict: F.buildTokenTreePatternBrace, coerce: C.coerceToTokenTreePatternBrace })
+	paren: bundle(F.buildTokenTreePatternParen, C.coerceToTokenTreePatternParen),
+	bracket: bundle(F.buildTokenTreePatternBracket, C.coerceToTokenTreePatternBracket),
+	brace: bundle(F.buildTokenTreePatternBrace, C.coerceToTokenTreePatternBrace)
 });
 
 export const tokenTree: {
@@ -1933,25 +2130,25 @@ export const tokenTree: {
 	readonly bracket: { strict: typeof F.buildTokenTreeBracket; coerce: typeof C.coerceToTokenTreeBracket };
 	readonly brace: { strict: typeof F.buildTokenTreeBrace; coerce: typeof C.coerceToTokenTreeBrace };
 } = Object.freeze({
-	paren: Object.freeze({ strict: F.buildTokenTreeParen, coerce: C.coerceToTokenTreeParen }),
-	bracket: Object.freeze({ strict: F.buildTokenTreeBracket, coerce: C.coerceToTokenTreeBracket }),
-	brace: Object.freeze({ strict: F.buildTokenTreeBrace, coerce: C.coerceToTokenTreeBrace })
+	paren: bundle(F.buildTokenTreeParen, C.coerceToTokenTreeParen),
+	bracket: bundle(F.buildTokenTreeBracket, C.coerceToTokenTreeBracket),
+	brace: bundle(F.buildTokenTreeBrace, C.coerceToTokenTreeBrace)
 });
 
 export const modItem: {
 	readonly external: { strict: typeof F.buildModItemExternal; coerce: typeof C.coerceToModItemExternal };
 	readonly inline: { strict: typeof F.buildModItemInline; coerce: typeof C.coerceToModItemInline };
 } = Object.freeze({
-	external: Object.freeze({ strict: F.buildModItemExternal, coerce: C.coerceToModItemExternal }),
-	inline: Object.freeze({ strict: F.buildModItemInline, coerce: C.coerceToModItemInline })
+	external: bundle(F.buildModItemExternal, C.coerceToModItemExternal, { key: 'modItem.external', max: 1 }),
+	inline: bundle(F.buildModItemInline, C.coerceToModItemInline, { key: 'modItem.inline', max: 1 })
 });
 
 export const foreignModItem: {
 	readonly semi: { strict: typeof F.buildForeignModItemSemi; coerce: typeof C.coerceToForeignModItemSemi };
 	readonly body: { strict: typeof F.buildForeignModItemBody; coerce: typeof C.coerceToForeignModItemBody };
 } = Object.freeze({
-	semi: Object.freeze({ strict: F.buildForeignModItemSemi, coerce: C.coerceToForeignModItemSemi }),
-	body: Object.freeze({ strict: F.buildForeignModItemBody, coerce: C.coerceToForeignModItemBody })
+	semi: bundle(F.buildForeignModItemSemi, C.coerceToForeignModItemSemi, { key: 'foreignModItem.semi', max: 1 }),
+	body: bundle(F.buildForeignModItemBody, C.coerceToForeignModItemBody, { key: 'foreignModItem.body', max: 1 })
 });
 
 export const structItem: {
@@ -1959,25 +2156,31 @@ export const structItem: {
 	readonly tuple: { strict: typeof F.buildStructItemTuple; coerce: typeof C.coerceToStructItemTuple };
 	readonly unit: { strict: typeof F.buildStructItemUnit; coerce: typeof C.coerceToStructItemUnit };
 } = Object.freeze({
-	brace: Object.freeze({ strict: F.buildStructItemBrace, coerce: C.coerceToStructItemBrace }),
-	tuple: Object.freeze({ strict: F.buildStructItemTuple, coerce: C.coerceToStructItemTuple }),
-	unit: Object.freeze({ strict: F.buildStructItemUnit, coerce: C.coerceToStructItemUnit })
+	brace: bundle(F.buildStructItemBrace, C.coerceToStructItemBrace, { key: 'structItem.brace', max: 1 }),
+	tuple: bundle(F.buildStructItemTuple, C.coerceToStructItemTuple, { key: 'structItem.tuple', max: 1 }),
+	unit: bundle(F.buildStructItemUnit, C.coerceToStructItemUnit, { key: 'structItem.unit', max: 1 })
 });
 
 export const implItem: {
 	readonly body: { strict: typeof F.buildImplItemBody; coerce: typeof C.coerceToImplItemBody } & typeof implItemBody;
 	readonly semi: { strict: typeof F.buildImplItemSemi; coerce: typeof C.coerceToImplItemSemi } & typeof implItemSemi;
 } = Object.freeze({
-	body: Object.freeze({ strict: F.buildImplItemBody, coerce: C.coerceToImplItemBody, ...implItemBody }),
-	semi: Object.freeze({ strict: F.buildImplItemSemi, coerce: C.coerceToImplItemSemi, ...implItemSemi })
+	body: Object.freeze({
+		...bundle(F.buildImplItemBody, C.coerceToImplItemBody, { key: 'implItem.body', max: 1 }),
+		...implItemBody
+	}),
+	semi: Object.freeze({
+		...bundle(F.buildImplItemSemi, C.coerceToImplItemSemi, { key: 'implItem.semi', max: 1 }),
+		...implItemSemi
+	})
 });
 
 export const pointerType: {
 	readonly const: { strict: typeof F.buildPointerTypeConst; coerce: typeof C.coerceToPointerTypeConst };
 	readonly mut: { strict: typeof F.buildPointerTypeMut; coerce: typeof C.coerceToPointerTypeMut };
 } = Object.freeze({
-	const: Object.freeze({ strict: F.buildPointerTypeConst, coerce: C.coerceToPointerTypeConst }),
-	mut: Object.freeze({ strict: F.buildPointerTypeMut, coerce: C.coerceToPointerTypeMut })
+	const: bundle(F.buildPointerTypeConst, C.coerceToPointerTypeConst, { key: 'pointerType.const', max: 1 }),
+	mut: bundle(F.buildPointerTypeMut, C.coerceToPointerTypeMut, { key: 'pointerType.mut', max: 1 })
 });
 
 export const delimTokenTree: {
@@ -1985,9 +2188,9 @@ export const delimTokenTree: {
 	readonly bracket: { strict: typeof F.buildDelimTokenTreeBracket; coerce: typeof C.coerceToDelimTokenTreeBracket };
 	readonly brace: { strict: typeof F.buildDelimTokenTreeBrace; coerce: typeof C.coerceToDelimTokenTreeBrace };
 } = Object.freeze({
-	paren: Object.freeze({ strict: F.buildDelimTokenTreeParen, coerce: C.coerceToDelimTokenTreeParen }),
-	bracket: Object.freeze({ strict: F.buildDelimTokenTreeBracket, coerce: C.coerceToDelimTokenTreeBracket }),
-	brace: Object.freeze({ strict: F.buildDelimTokenTreeBrace, coerce: C.coerceToDelimTokenTreeBrace })
+	paren: bundle(F.buildDelimTokenTreeParen, C.coerceToDelimTokenTreeParen),
+	bracket: bundle(F.buildDelimTokenTreeBracket, C.coerceToDelimTokenTreeBracket),
+	brace: bundle(F.buildDelimTokenTreeBrace, C.coerceToDelimTokenTreeBrace)
 });
 
 export const referenceExpression: {
@@ -2002,13 +2205,22 @@ export const referenceExpression: {
 	readonly mut: { strict: typeof F.buildReferenceExpressionMut; coerce: typeof C.coerceToReferenceExpressionMut };
 	readonly bare: { strict: typeof F.buildReferenceExpressionBare; coerce: typeof C.coerceToReferenceExpressionBare };
 } = Object.freeze({
-	rawConst: Object.freeze({
-		strict: F.buildReferenceExpressionRawConst,
-		coerce: C.coerceToReferenceExpressionRawConst
+	rawConst: bundle(F.buildReferenceExpressionRawConst, C.coerceToReferenceExpressionRawConst, {
+		key: 'referenceExpression.rawConst',
+		max: 1
 	}),
-	rawMut: Object.freeze({ strict: F.buildReferenceExpressionRawMut, coerce: C.coerceToReferenceExpressionRawMut }),
-	mut: Object.freeze({ strict: F.buildReferenceExpressionMut, coerce: C.coerceToReferenceExpressionMut }),
-	bare: Object.freeze({ strict: F.buildReferenceExpressionBare, coerce: C.coerceToReferenceExpressionBare })
+	rawMut: bundle(F.buildReferenceExpressionRawMut, C.coerceToReferenceExpressionRawMut, {
+		key: 'referenceExpression.rawMut',
+		max: 1
+	}),
+	mut: bundle(F.buildReferenceExpressionMut, C.coerceToReferenceExpressionMut, {
+		key: 'referenceExpression.mut',
+		max: 1
+	}),
+	bare: bundle(F.buildReferenceExpressionBare, C.coerceToReferenceExpressionBare, {
+		key: 'referenceExpression.bare',
+		max: 1
+	})
 });
 
 export const arrayExpression: {
@@ -2017,9 +2229,8 @@ export const arrayExpression: {
 	readonly semi: { strict: typeof F.buildArrayExpressionSemi; coerce: typeof C.coerceToArrayExpressionSemi };
 	readonly list: typeof arrayExpressionList;
 } = Object.freeze({
-	strict: arrayExpressionList.strict,
-	coerce: arrayExpressionList.coerce,
-	semi: Object.freeze({ strict: F.buildArrayExpressionSemi, coerce: C.coerceToArrayExpressionSemi }),
+	...bundle(arrayExpressionList.strict, arrayExpressionList.coerce, { key: 'arrayExpression', max: 1 }),
+	semi: bundle(F.buildArrayExpressionSemi, C.coerceToArrayExpressionSemi, { key: 'arrayExpression.semi', max: 1 }),
 	list: arrayExpressionList
 });
 
@@ -2035,16 +2246,22 @@ export const closureExpression: {
 	readonly block: { strict: typeof F.buildClosureExpressionBlock; coerce: typeof C.coerceToClosureExpressionBlock };
 	readonly expr: { strict: typeof F.buildClosureExpressionExpr; coerce: typeof C.coerceToClosureExpressionExpr };
 } = Object.freeze({
-	block: Object.freeze({ strict: F.buildClosureExpressionBlock, coerce: C.coerceToClosureExpressionBlock }),
-	expr: Object.freeze({ strict: F.buildClosureExpressionExpr, coerce: C.coerceToClosureExpressionExpr })
+	block: bundle(F.buildClosureExpressionBlock, C.coerceToClosureExpressionBlock, {
+		key: 'closureExpression.block',
+		max: 1
+	}),
+	expr: bundle(F.buildClosureExpressionExpr, C.coerceToClosureExpressionExpr, { key: 'closureExpression.expr', max: 1 })
 });
 
 export const fieldPattern: {
 	readonly shorthand: { strict: typeof F.buildFieldPatternShorthand; coerce: typeof C.coerceToFieldPatternShorthand };
 	readonly named: { strict: typeof F.buildFieldPatternNamed; coerce: typeof C.coerceToFieldPatternNamed };
 } = Object.freeze({
-	shorthand: Object.freeze({ strict: F.buildFieldPatternShorthand, coerce: C.coerceToFieldPatternShorthand }),
-	named: Object.freeze({ strict: F.buildFieldPatternNamed, coerce: C.coerceToFieldPatternNamed })
+	shorthand: bundle(F.buildFieldPatternShorthand, C.coerceToFieldPatternShorthand, {
+		key: 'fieldPattern.shorthand',
+		max: 1
+	}),
+	named: bundle(F.buildFieldPatternNamed, C.coerceToFieldPatternNamed, { key: 'fieldPattern.named', max: 1 })
 });
 
 export const rangePattern: {
@@ -2058,13 +2275,11 @@ export const rangePattern: {
 	} & typeof rangePatternPrefix;
 } = Object.freeze({
 	withLeft: Object.freeze({
-		strict: F.buildRangePatternWithLeft,
-		coerce: C.coerceToRangePatternWithLeft,
+		...bundle(F.buildRangePatternWithLeft, C.coerceToRangePatternWithLeft, { key: 'rangePattern.withLeft', max: 1 }),
 		...rangePatternWithLeft
 	}),
 	prefix: Object.freeze({
-		strict: F.buildRangePatternPrefix,
-		coerce: C.coerceToRangePatternPrefix,
+		...bundle(F.buildRangePatternPrefix, C.coerceToRangePatternPrefix, { key: 'rangePattern.prefix', max: 1 }),
 		...rangePatternPrefix
 	})
 });
@@ -2073,8 +2288,8 @@ export const orPattern: {
 	readonly binary: { strict: typeof F.buildOrPatternBinary; coerce: typeof C.coerceToOrPatternBinary };
 	readonly prefix: { strict: typeof F.buildOrPatternPrefix; coerce: typeof C.coerceToOrPatternPrefix };
 } = Object.freeze({
-	binary: Object.freeze({ strict: F.buildOrPatternBinary, coerce: C.coerceToOrPatternBinary }),
-	prefix: Object.freeze({ strict: F.buildOrPatternPrefix, coerce: C.coerceToOrPatternPrefix })
+	binary: bundle(F.buildOrPatternBinary, C.coerceToOrPatternBinary, { key: 'orPattern.binary', max: 1 }),
+	prefix: bundle(F.buildOrPatternPrefix, C.coerceToOrPatternPrefix, { key: 'orPattern.prefix', max: 1 })
 });
 
 export const integerLiteral: {
@@ -2085,12 +2300,14 @@ export const integerLiteral: {
 	readonly binary: { strict: typeof F.buildIntegerLiteralBinary; coerce: typeof C.coerceToIntegerLiteralBinary };
 	readonly octal: { strict: typeof F.buildIntegerLiteralOctal; coerce: typeof C.coerceToIntegerLiteralOctal };
 } = Object.freeze({
-	strict: F.buildIntegerLiteralDecimal,
-	coerce: C.coerceToIntegerLiteralDecimal,
-	decimal: Object.freeze({ strict: F.buildIntegerLiteralDecimal, coerce: C.coerceToIntegerLiteralDecimal }),
-	hex: Object.freeze({ strict: F.buildIntegerLiteralHex, coerce: C.coerceToIntegerLiteralHex }),
-	binary: Object.freeze({ strict: F.buildIntegerLiteralBinary, coerce: C.coerceToIntegerLiteralBinary }),
-	octal: Object.freeze({ strict: F.buildIntegerLiteralOctal, coerce: C.coerceToIntegerLiteralOctal })
+	...bundle(F.buildIntegerLiteralDecimal, C.coerceToIntegerLiteralDecimal, { key: 'integerLiteral', max: 1 }),
+	decimal: bundle(F.buildIntegerLiteralDecimal, C.coerceToIntegerLiteralDecimal, {
+		key: 'integerLiteral.decimal',
+		max: 1
+	}),
+	hex: bundle(F.buildIntegerLiteralHex, C.coerceToIntegerLiteralHex, { key: 'integerLiteral.hex', max: 1 }),
+	binary: bundle(F.buildIntegerLiteralBinary, C.coerceToIntegerLiteralBinary, { key: 'integerLiteral.binary', max: 1 }),
+	octal: bundle(F.buildIntegerLiteralOctal, C.coerceToIntegerLiteralOctal, { key: 'integerLiteral.octal', max: 1 })
 });
 
 export const escapeSequence: {
@@ -2107,18 +2324,17 @@ export const escapeSequence: {
 	};
 	readonly hex: { strict: typeof F.buildEscapeSequenceHex; coerce: typeof C.coerceToEscapeSequenceHex };
 } = Object.freeze({
-	strict: F.buildEscapeSequenceSimple,
-	coerce: C.coerceToEscapeSequenceSimple,
-	simple: Object.freeze({ strict: F.buildEscapeSequenceSimple, coerce: C.coerceToEscapeSequenceSimple }),
-	unicodeFixed: Object.freeze({
-		strict: F.buildEscapeSequenceUnicodeFixed,
-		coerce: C.coerceToEscapeSequenceUnicodeFixed
+	...bundle(F.buildEscapeSequenceSimple, C.coerceToEscapeSequenceSimple, { key: 'escapeSequence', max: 1 }),
+	simple: bundle(F.buildEscapeSequenceSimple, C.coerceToEscapeSequenceSimple, { key: 'escapeSequence.simple', max: 1 }),
+	unicodeFixed: bundle(F.buildEscapeSequenceUnicodeFixed, C.coerceToEscapeSequenceUnicodeFixed, {
+		key: 'escapeSequence.unicodeFixed',
+		max: 1
 	}),
-	unicodeBraced: Object.freeze({
-		strict: F.buildEscapeSequenceUnicodeBraced,
-		coerce: C.coerceToEscapeSequenceUnicodeBraced
+	unicodeBraced: bundle(F.buildEscapeSequenceUnicodeBraced, C.coerceToEscapeSequenceUnicodeBraced, {
+		key: 'escapeSequence.unicodeBraced',
+		max: 1
 	}),
-	hex: Object.freeze({ strict: F.buildEscapeSequenceHex, coerce: C.coerceToEscapeSequenceHex })
+	hex: bundle(F.buildEscapeSequenceHex, C.coerceToEscapeSequenceHex, { key: 'escapeSequence.hex', max: 1 })
 });
 
 export const comment: {
@@ -2127,8 +2343,7 @@ export const comment: {
 	readonly lineComment: typeof lineComment;
 	readonly blockComment: typeof blockComment;
 } = Object.freeze({
-	strict: lineComment.strict,
-	coerce: lineComment.coerce,
+	...bundle(lineComment.strict, lineComment.coerce, { key: 'comment', max: 1 }),
 	lineComment: lineComment,
 	blockComment: blockComment
 });
@@ -2150,18 +2365,20 @@ export const charLiteralEscaped: {
 	};
 	readonly hex: { strict: typeof F.buildCharLiteralEscapedHex; coerce: typeof C.coerceToCharLiteralEscapedHex };
 } = Object.freeze({
-	strict: F.buildCharLiteralEscapedSimple,
-	coerce: C.coerceToCharLiteralEscapedSimple,
-	simple: Object.freeze({ strict: F.buildCharLiteralEscapedSimple, coerce: C.coerceToCharLiteralEscapedSimple }),
-	unicodeFixed: Object.freeze({
-		strict: F.buildCharLiteralEscapedUnicodeFixed,
-		coerce: C.coerceToCharLiteralEscapedUnicodeFixed
+	...bundle(F.buildCharLiteralEscapedSimple, C.coerceToCharLiteralEscapedSimple, { key: 'charLiteralEscaped', max: 1 }),
+	simple: bundle(F.buildCharLiteralEscapedSimple, C.coerceToCharLiteralEscapedSimple, {
+		key: 'charLiteralEscaped.simple',
+		max: 1
 	}),
-	unicodeBraced: Object.freeze({
-		strict: F.buildCharLiteralEscapedUnicodeBraced,
-		coerce: C.coerceToCharLiteralEscapedUnicodeBraced
+	unicodeFixed: bundle(F.buildCharLiteralEscapedUnicodeFixed, C.coerceToCharLiteralEscapedUnicodeFixed, {
+		key: 'charLiteralEscaped.unicodeFixed',
+		max: 1
 	}),
-	hex: Object.freeze({ strict: F.buildCharLiteralEscapedHex, coerce: C.coerceToCharLiteralEscapedHex })
+	unicodeBraced: bundle(F.buildCharLiteralEscapedUnicodeBraced, C.coerceToCharLiteralEscapedUnicodeBraced, {
+		key: 'charLiteralEscaped.unicodeBraced',
+		max: 1
+	}),
+	hex: bundle(F.buildCharLiteralEscapedHex, C.coerceToCharLiteralEscapedHex, { key: 'charLiteralEscaped.hex', max: 1 })
 });
 
 export const declarationStatement: {
@@ -2190,7 +2407,7 @@ export const declarationStatement: {
 	const: B.constItem,
 	macroInvocation: B.macroInvocation,
 	macro: macroDefinition,
-	empty: Object.freeze({ strict: F.buildEmptyStatement, coerce: C.coerceToEmptyStatement }),
+	empty: bundle(F.buildEmptyStatement, C.coerceToEmptyStatement, { key: 'declarationStatement.empty', max: 1 }),
 	attribute: B.attributeItem,
 	innerAttribute: B.innerAttributeItem,
 	mod: modItem,
@@ -2217,151 +2434,209 @@ export const charLiteral: {
 	readonly plain: { strict: typeof F.buildCharLiteralPlain; coerce: typeof C.coerceToCharLiteralPlain };
 	readonly empty: { strict: typeof F.buildCharLiteralEmpty; coerce: typeof C.coerceToCharLiteralEmpty };
 } = Object.freeze({
-	strict: F.buildCharLiteralPlain,
-	coerce: C.coerceToCharLiteralPlain,
+	...bundle(F.buildCharLiteralPlain, C.coerceToCharLiteralPlain, { key: 'charLiteral', max: 1 }),
 	escaped: charLiteralEscaped,
-	plain: Object.freeze({ strict: F.buildCharLiteralPlain, coerce: C.coerceToCharLiteralPlain }),
-	empty: Object.freeze({ strict: F.buildCharLiteralEmpty, coerce: C.coerceToCharLiteralEmpty })
+	plain: bundle(F.buildCharLiteralPlain, C.coerceToCharLiteralPlain, { key: 'charLiteral.plain', max: 1 }),
+	empty: bundle(F.buildCharLiteralEmpty, C.coerceToCharLiteralEmpty, { key: 'charLiteral.empty', max: 1 })
 });
 
 const nonSpecialToken$string =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$string$strict = nonSpecialToken$string(F.buildNonSpecialToken, F.buildStringLiteral);
+const nonSpecialToken$string$coerce = nonSpecialToken$string(F.buildNonSpecialToken, C.coerceToStringLiteral);
 const nonSpecialToken$rawString =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$rawString$strict = nonSpecialToken$rawString(F.buildNonSpecialToken, F.buildRawStringLiteral);
+const nonSpecialToken$rawString$coerce = nonSpecialToken$rawString(F.buildNonSpecialToken, C.coerceToRawStringLiteral);
 const nonSpecialToken$char =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$char$strict = nonSpecialToken$char(F.buildNonSpecialToken, charLiteral.strict);
+const nonSpecialToken$char$coerce = nonSpecialToken$char(F.buildNonSpecialToken, charLiteral.coerce);
 const nonSpecialToken$integer =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$integer$strict = nonSpecialToken$integer(F.buildNonSpecialToken, integerLiteral.strict);
+const nonSpecialToken$integer$coerce = nonSpecialToken$integer(F.buildNonSpecialToken, integerLiteral.coerce);
 const nonSpecialToken$float =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$float$strict = nonSpecialToken$float(F.buildNonSpecialToken, F.buildFloatLiteral);
+const nonSpecialToken$float$coerce = nonSpecialToken$float(F.buildNonSpecialToken, C.coerceToFloatLiteral);
 const nonSpecialToken$identifier =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$identifier$strict = nonSpecialToken$identifier(F.buildNonSpecialToken, F.buildIdentifier);
+const nonSpecialToken$identifier$coerce = nonSpecialToken$identifier(F.buildNonSpecialToken, C.coerceToIdentifier);
 const nonSpecialToken$mutableSpecifier =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const nonSpecialToken$mutableSpecifier$strict = nonSpecialToken$mutableSpecifier(
+	F.buildNonSpecialToken,
+	TSKindId.MutableSpecifier
+);
+const nonSpecialToken$mutableSpecifier$coerce = nonSpecialToken$mutableSpecifier(
+	C.coerceToNonSpecialToken,
+	TSKindId.MutableSpecifier
+);
 const nonSpecialToken$self =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const nonSpecialToken$self$strict = nonSpecialToken$self(F.buildNonSpecialToken, TSKindId.Self);
+const nonSpecialToken$self$coerce = nonSpecialToken$self(C.coerceToNonSpecialToken, TSKindId.Self);
 const nonSpecialToken$super =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const nonSpecialToken$super$strict = nonSpecialToken$super(F.buildNonSpecialToken, TSKindId.Super);
+const nonSpecialToken$super$coerce = nonSpecialToken$super(C.coerceToNonSpecialToken, TSKindId.Super);
 const nonSpecialToken$crate =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const nonSpecialToken$crate$strict = nonSpecialToken$crate(F.buildNonSpecialToken, TSKindId.Crate);
+const nonSpecialToken$crate$coerce = nonSpecialToken$crate(C.coerceToNonSpecialToken, TSKindId.Crate);
 const nonSpecialToken$char$escaped =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$char$escaped$strict = nonSpecialToken$char$escaped(
+	F.buildNonSpecialToken,
+	charLiteral.escaped.strict
+);
+const nonSpecialToken$char$escaped$coerce = nonSpecialToken$char$escaped(
+	F.buildNonSpecialToken,
+	charLiteral.escaped.coerce
+);
 const nonSpecialToken$char$plain =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$char$plain$strict = nonSpecialToken$char$plain(F.buildNonSpecialToken, charLiteral.plain.strict);
+const nonSpecialToken$char$plain$coerce = nonSpecialToken$char$plain(F.buildNonSpecialToken, charLiteral.plain.coerce);
 const nonSpecialToken$char$empty =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$char$empty$strict = nonSpecialToken$char$empty(F.buildNonSpecialToken, charLiteral.empty.strict);
+const nonSpecialToken$char$empty$coerce = nonSpecialToken$char$empty(F.buildNonSpecialToken, charLiteral.empty.coerce);
 const nonSpecialToken$integer$decimal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$integer$decimal$strict = nonSpecialToken$integer$decimal(
+	F.buildNonSpecialToken,
+	integerLiteral.decimal.strict
+);
+const nonSpecialToken$integer$decimal$coerce = nonSpecialToken$integer$decimal(
+	F.buildNonSpecialToken,
+	integerLiteral.decimal.coerce
+);
 const nonSpecialToken$integer$hex =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$integer$hex$strict = nonSpecialToken$integer$hex(
+	F.buildNonSpecialToken,
+	integerLiteral.hex.strict
+);
+const nonSpecialToken$integer$hex$coerce = nonSpecialToken$integer$hex(
+	F.buildNonSpecialToken,
+	integerLiteral.hex.coerce
+);
 const nonSpecialToken$integer$binary =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$integer$binary$strict = nonSpecialToken$integer$binary(
+	F.buildNonSpecialToken,
+	integerLiteral.binary.strict
+);
+const nonSpecialToken$integer$binary$coerce = nonSpecialToken$integer$binary(
+	F.buildNonSpecialToken,
+	integerLiteral.binary.coerce
+);
 const nonSpecialToken$integer$octal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const nonSpecialToken$integer$octal$strict = nonSpecialToken$integer$octal(
+	F.buildNonSpecialToken,
+	integerLiteral.octal.strict
+);
+const nonSpecialToken$integer$octal$coerce = nonSpecialToken$integer$octal(
+	F.buildNonSpecialToken,
+	integerLiteral.octal.coerce
+);
 export const nonSpecialToken = Object.freeze({
 	...B.nonSpecialToken,
-	string: {
-		strict: nonSpecialToken$string(F.buildNonSpecialToken, F.buildStringLiteral),
-		coerce: nonSpecialToken$string(F.buildNonSpecialToken, C.coerceToStringLiteral)
-	},
-	rawString: {
-		strict: nonSpecialToken$rawString(F.buildNonSpecialToken, F.buildRawStringLiteral),
-		coerce: nonSpecialToken$rawString(F.buildNonSpecialToken, C.coerceToRawStringLiteral)
-	},
+	string: bundle(nonSpecialToken$string$strict, nonSpecialToken$string$coerce, {
+		key: 'nonSpecialToken.string',
+		max: 1
+	}),
+	rawString: bundle(nonSpecialToken$rawString$strict, nonSpecialToken$rawString$coerce, {
+		key: 'nonSpecialToken.rawString',
+		max: 1
+	}),
 	char: {
-		strict: nonSpecialToken$char(F.buildNonSpecialToken, charLiteral.strict),
-		coerce: nonSpecialToken$char(F.buildNonSpecialToken, charLiteral.coerce),
-		escaped: {
-			strict: nonSpecialToken$char$escaped(F.buildNonSpecialToken, charLiteral.escaped.strict),
-			coerce: nonSpecialToken$char$escaped(F.buildNonSpecialToken, charLiteral.escaped.coerce)
-		},
-		plain: {
-			strict: nonSpecialToken$char$plain(F.buildNonSpecialToken, charLiteral.plain.strict),
-			coerce: nonSpecialToken$char$plain(F.buildNonSpecialToken, charLiteral.plain.coerce)
-		},
-		empty: {
-			strict: nonSpecialToken$char$empty(F.buildNonSpecialToken, charLiteral.empty.strict),
-			coerce: nonSpecialToken$char$empty(F.buildNonSpecialToken, charLiteral.empty.coerce)
-		}
+		...bundle(nonSpecialToken$char$strict, nonSpecialToken$char$coerce, { key: 'nonSpecialToken.char', max: 1 }),
+		escaped: bundle(nonSpecialToken$char$escaped$strict, nonSpecialToken$char$escaped$coerce, {
+			key: 'nonSpecialToken.char.escaped',
+			max: 1
+		}),
+		plain: bundle(nonSpecialToken$char$plain$strict, nonSpecialToken$char$plain$coerce, {
+			key: 'nonSpecialToken.char.plain',
+			max: 1
+		}),
+		empty: bundle(nonSpecialToken$char$empty$strict, nonSpecialToken$char$empty$coerce, {
+			key: 'nonSpecialToken.char.empty',
+			max: 1
+		})
 	},
 	integer: {
-		strict: nonSpecialToken$integer(F.buildNonSpecialToken, integerLiteral.strict),
-		coerce: nonSpecialToken$integer(F.buildNonSpecialToken, integerLiteral.coerce),
-		decimal: {
-			strict: nonSpecialToken$integer$decimal(F.buildNonSpecialToken, integerLiteral.decimal.strict),
-			coerce: nonSpecialToken$integer$decimal(F.buildNonSpecialToken, integerLiteral.decimal.coerce)
-		},
-		hex: {
-			strict: nonSpecialToken$integer$hex(F.buildNonSpecialToken, integerLiteral.hex.strict),
-			coerce: nonSpecialToken$integer$hex(F.buildNonSpecialToken, integerLiteral.hex.coerce)
-		},
-		binary: {
-			strict: nonSpecialToken$integer$binary(F.buildNonSpecialToken, integerLiteral.binary.strict),
-			coerce: nonSpecialToken$integer$binary(F.buildNonSpecialToken, integerLiteral.binary.coerce)
-		},
-		octal: {
-			strict: nonSpecialToken$integer$octal(F.buildNonSpecialToken, integerLiteral.octal.strict),
-			coerce: nonSpecialToken$integer$octal(F.buildNonSpecialToken, integerLiteral.octal.coerce)
-		}
+		...bundle(nonSpecialToken$integer$strict, nonSpecialToken$integer$coerce, {
+			key: 'nonSpecialToken.integer',
+			max: 1
+		}),
+		decimal: bundle(nonSpecialToken$integer$decimal$strict, nonSpecialToken$integer$decimal$coerce, {
+			key: 'nonSpecialToken.integer.decimal',
+			max: 1
+		}),
+		hex: bundle(nonSpecialToken$integer$hex$strict, nonSpecialToken$integer$hex$coerce, {
+			key: 'nonSpecialToken.integer.hex',
+			max: 1
+		}),
+		binary: bundle(nonSpecialToken$integer$binary$strict, nonSpecialToken$integer$binary$coerce, {
+			key: 'nonSpecialToken.integer.binary',
+			max: 1
+		}),
+		octal: bundle(nonSpecialToken$integer$octal$strict, nonSpecialToken$integer$octal$coerce, {
+			key: 'nonSpecialToken.integer.octal',
+			max: 1
+		})
 	},
-	float: {
-		strict: nonSpecialToken$float(F.buildNonSpecialToken, F.buildFloatLiteral),
-		coerce: nonSpecialToken$float(F.buildNonSpecialToken, C.coerceToFloatLiteral)
-	},
-	identifier: {
-		strict: nonSpecialToken$identifier(F.buildNonSpecialToken, F.buildIdentifier),
-		coerce: nonSpecialToken$identifier(F.buildNonSpecialToken, C.coerceToIdentifier)
-	},
-	mutableSpecifier: {
-		strict: nonSpecialToken$mutableSpecifier(F.buildNonSpecialToken, TSKindId.MutableSpecifier),
-		coerce: nonSpecialToken$mutableSpecifier(C.coerceToNonSpecialToken, TSKindId.MutableSpecifier)
-	},
-	self: {
-		strict: nonSpecialToken$self(F.buildNonSpecialToken, TSKindId.Self),
-		coerce: nonSpecialToken$self(C.coerceToNonSpecialToken, TSKindId.Self)
-	},
-	super: {
-		strict: nonSpecialToken$super(F.buildNonSpecialToken, TSKindId.Super),
-		coerce: nonSpecialToken$super(C.coerceToNonSpecialToken, TSKindId.Super)
-	},
-	crate: {
-		strict: nonSpecialToken$crate(F.buildNonSpecialToken, TSKindId.Crate),
-		coerce: nonSpecialToken$crate(C.coerceToNonSpecialToken, TSKindId.Crate)
-	}
+	float: bundle(nonSpecialToken$float$strict, nonSpecialToken$float$coerce, { key: 'nonSpecialToken.float', max: 1 }),
+	identifier: bundle(nonSpecialToken$identifier$strict, nonSpecialToken$identifier$coerce, {
+		key: 'nonSpecialToken.identifier',
+		max: 1
+	}),
+	mutableSpecifier: bundle(nonSpecialToken$mutableSpecifier$strict, nonSpecialToken$mutableSpecifier$coerce, {
+		key: 'nonSpecialToken.mutableSpecifier',
+		max: 1
+	}),
+	self: bundle(nonSpecialToken$self$strict, nonSpecialToken$self$coerce, { key: 'nonSpecialToken.self', max: 1 }),
+	super: bundle(nonSpecialToken$super$strict, nonSpecialToken$super$coerce, { key: 'nonSpecialToken.super', max: 1 }),
+	crate: bundle(nonSpecialToken$crate$strict, nonSpecialToken$crate$coerce, { key: 'nonSpecialToken.crate', max: 1 })
 }) as unknown as typeof B.nonSpecialToken & {
 	string: {
 		strict: (...args: ArgsOf<typeof F.buildStringLiteral>) => ReturnType<typeof F.buildNonSpecialToken>;

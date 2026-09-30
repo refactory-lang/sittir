@@ -236,6 +236,7 @@ pub struct HeldSeam {
     pub strength: u8,
     pub token: bool,
     pub flank: bool,
+    pub root: bool,
 }
 
 pub trait Render {
