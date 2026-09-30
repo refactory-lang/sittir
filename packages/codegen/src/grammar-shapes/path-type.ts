@@ -99,11 +99,11 @@ export type Segments<P extends string> = P extends `"${infer Lit}"/${infer Rest}
 			? [Seg, ...Segments<Rest>]
 			: [P];
 
-type Walk<N, Segs extends readonly string[], Minted extends boolean> = Segs extends readonly [infer S extends string, ...infer Rest extends string[]]
+type Walk<N, Segs extends readonly string[], Minted extends string> = Segs extends readonly [infer S extends string, ...infer Rest extends string[]]
 	? Step<PeelPrec<N>, S> extends infer C
 		? [C] extends [never]
-			? Minted extends true
-				? S extends `${string}:`
+			? S extends `${infer L}:`
+				? [L] extends [Minted]
 					? PeelPrec<N> extends Field
 						? false
 						: Walk<N, Rest, Minted>
@@ -113,7 +113,7 @@ type Walk<N, Segs extends readonly string[], Minted extends boolean> = Segs exte
 		: never
 	: true;
 
-export type IsPath<N, P extends string, Minted extends boolean = false> = P extends '.'
+export type IsPath<N, P extends string, Minted extends string = never> = P extends '.'
 	? true
 	: true extends Walk<N, Segments<P>, Minted>
 		? true

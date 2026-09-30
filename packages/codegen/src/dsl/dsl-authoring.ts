@@ -36,7 +36,7 @@ export type { RuleCause, RuleCauseDeclaration } from './primitives/rule-cause.ts
 export type { WireConfig, WiredOpts } from './wire/wire.ts';
 
 interface AuthoringField {
-	(name: string): FieldPlaceholder;
+	<const N extends string>(name: N): FieldPlaceholder<N>;
 	<const N extends string>(name: N, content: AuthoringRule): FieldRule<N, GrammarRule>;
 }
 export const field = fieldImpl as unknown as AuthoringField;
@@ -53,7 +53,7 @@ interface AuthoringNewRule {
 export const rule = ruleImpl as unknown as AuthoringNewRule;
 
 interface AuthoringRole {
-	(symbol: AuthoringRule, roleName: 'indent' | 'dedent' | 'newline'): SymbolRule<string>;
+	(symbol: SymbolRule<string>, roleName: 'indent' | 'dedent' | 'newline'): SymbolRule<string>;
 }
 export const role = roleImpl as unknown as AuthoringRole;
 

@@ -291,7 +291,7 @@ export type PatchMap = Record<string, unknown>;
 
 type RulesOf<B> = B extends { readonly rules: infer R } ? R : never;
 
-type PatchKeyCheck<Rule, M, Minted extends boolean> = {
+type PatchKeyCheck<Rule, M, Minted extends string> = {
 	readonly [Path in keyof M]: Path extends string | number
 		? string extends Path
 			? M[Path]
@@ -301,9 +301,26 @@ type PatchKeyCheck<Rule, M, Minted extends boolean> = {
 		: M[Path];
 };
 
+type MintedLabels<M> = {
+	readonly [K in keyof M]: M[K] extends { readonly name: infer N extends string }
+		? M[K] extends { readonly __sittirPlaceholder: 'field' } | { readonly type: 'FIELD' }
+			? N
+			: never
+		: never;
+}[keyof M];
+
+type CheckMaps<Rule, E extends readonly unknown[], Minted extends string> = E extends readonly [
+	infer Head,
+	...infer Tail
+]
+	? readonly [PatchKeyCheck<Rule, Head, Minted>, ...CheckMaps<Rule, Tail, Minted | MintedLabels<Head>>]
+	: readonly [];
+
 type PatchEntryCheck<Rule, E> = E extends readonly unknown[]
-	? { readonly [I in keyof E]: PatchKeyCheck<Rule, E[I], I extends '0' ? false : true> }
-	: PatchKeyCheck<Rule, E, false>;
+	? number extends E['length']
+		? { readonly [I in keyof E]: PatchKeyCheck<Rule, E[I], never> }
+		: CheckMaps<Rule, E, never>
+	: PatchKeyCheck<Rule, E, never>;
 
 type IsShaped<B> = 0 extends 1 & B ? false : [GrammarRule] extends [RulesOf<B>[keyof RulesOf<B>]] ? false : true;
 

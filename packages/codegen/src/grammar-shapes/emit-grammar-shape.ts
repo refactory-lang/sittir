@@ -1,5 +1,5 @@
-import { existsSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { format as oxfmtFormat } from 'oxfmt';
 import { OXFMT_EFFECTIVE_CONFIG } from '../oxfmt-config.ts';
@@ -13,10 +13,31 @@ export function grammarShapeFile(name: string): string {
 	return join(SHAPES_DIR, `grammar-shape.${name}.ts`);
 }
 
-export function upstreamGrammarJson(pkg: GrammarPackage): string {
+const UPSTREAM_PREFIX = 'tree-sitter-';
+const UPSTREAM_TYPES_DIR = join(SHAPES_DIR, 'upstream');
+
+function upstreamSpecifier(pkg: GrammarPackage): string {
 	const basePath = join(pkg.dir, BASE_ENTRY);
 	const specifier = BASE_IMPORT.exec(readFileSync(basePath, 'utf8'))?.[1];
 	if (specifier === undefined) throw new Error(`${basePath}: no \`import raw from '<upstream grammar.js>';\` line`);
+	if (!specifier.startsWith(UPSTREAM_PREFIX) || !specifier.endsWith('.js')) {
+		throw new Error(`${basePath}: '${specifier}' must be a '${UPSTREAM_PREFIX}<name>/…/grammar.js' package specifier`);
+	}
+	return specifier;
+}
+
+export function upstreamDeclarationFile(pkg: GrammarPackage): string {
+	return join(UPSTREAM_TYPES_DIR, `${upstreamSpecifier(pkg).slice(UPSTREAM_PREFIX.length).replace(/\.js$/, '')}.d.ts`);
+}
+
+export function emitUpstreamDeclarationSource(pkg: GrammarPackage): string {
+	const typeName = `${pkg.name.charAt(0).toUpperCase()}${pkg.name.slice(1)}GrammarShape`;
+	const shape = relative(dirname(upstreamDeclarationFile(pkg)), grammarShapeFile(pkg.name));
+	return `import type { ${typeName} } from '${shape}';\n\ndeclare const base: ${typeName};\nexport default base;\n`;
+}
+
+export function upstreamGrammarJson(pkg: GrammarPackage): string {
+	const specifier = upstreamSpecifier(pkg);
 	const grammarJs = specifier.startsWith('.') ? resolve(pkg.dir, specifier) : packageRequire(pkg).resolve(specifier);
 	return realpathSync(join(dirname(grammarJs), 'src', 'grammar.json'));
 }
@@ -42,6 +63,8 @@ if (process.argv[1] !== undefined && resolve(process.argv[1]) === fileURLToPath(
 		if (!existsSync(join(pkg.dir, BASE_ENTRY))) continue;
 		const source = await emitGrammarShapeSource(pkg);
 		writeFileSync(grammarShapeFile(pkg.name), source);
+		mkdirSync(dirname(upstreamDeclarationFile(pkg)), { recursive: true });
+		writeFileSync(upstreamDeclarationFile(pkg), emitUpstreamDeclarationSource(pkg));
 		console.log(`wrote grammar-shape.${pkg.name}.ts (${source.length} bytes)`);
 	}
 }
