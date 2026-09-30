@@ -142,7 +142,15 @@ A language engine: the only value surface of a language. It carries its `EngineI
 
 ### `packages/types/src/engine-api.ts::RenderInput`
 
-What `render` accepts: any of the language's nodes, or the kind id of a kind whose text the kind determines, which renders as that text. A kind id with no fixed text (an identifier, a depth sentinel) is a type error, and throws at run time naming the kind.
+What `render` accepts: any of the language's nodes, a `Renderable` of the language, or the kind id of a kind whose text the kind determines, which renders as that text. A kind id with no fixed text (an identifier, a depth sentinel) is a type error, and throws at run time naming the kind.
+
+### `packages/types/src/engine-api.ts::Renderable`
+
+Anything that carries `$render`, keyed by one of the language's kind ids: every `.Parsed`, every `.Bound`, and a `$with` draft, whose replaced slot reads as `.Bound` while the rest keeps its parsed surface. `$render` is declared once, on `NodeMethods`, and a draft is exactly what a node method's own `this` type produces, so the parameter is the declaration's own type rather than a union that would have to enumerate each surface a node can take.
+
+### `packages/types/src/engine-api.ts::RenderCall`
+
+The one call signature `render` has for a given input type: the options generic `R`, its literal inference and its `RenderOptionsCheck`. `render` is two of them intersected, so a draft is matched by the `Renderable` signature before the language's node union is tried. Comparing a draft against that union relates each of its several hundred members and exhausts the checker's relation depth, which is why the draft signature comes first and is a separate signature rather than one more member of a shared input union.
 
 ### `packages/types/src/engine-api.ts::RenderOptionsCheck`
 

@@ -149,10 +149,7 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	) => node is N & Extract<API['empty'], { readonly node: N }>['empty'];
 	readonly parse: (source: string, options?: ParseOptions) => API['root'];
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
-	readonly render: <const R extends API['options'] = API['options']>(
-		node: RenderInput<API> | ((build: API['build']) => API['node']),
-		options?: R & RenderOptionsCheck<API, R, keyof RenderCallOptions> & RenderCallOptions
-	) => Rendered;
+	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, RenderInput<API> | ((build: API['build']) => API['node'])>;
 	readonly create: (path: string, fn: (build: API['build']) => API['root']) => Pending;
 	readonly edit: (path: string, fn: (root: API['root']) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
@@ -160,7 +157,18 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	readonly dispose: () => void;
 }
 
-type RenderInput<API extends LanguageAPI> = API['node'] | API['fixedTextKindId'];
+export type RenderCall<API extends LanguageAPI, Input> = <const R extends API['options'] = API['options']>(
+	node: Input,
+	options?: R & RenderOptionsCheck<API, R, keyof RenderCallOptions> & RenderCallOptions
+) => Rendered;
+
+export interface Renderable<Kind extends number> extends Pick<NodeMethods, '$render'> {
+	readonly $type: Kind;
+}
+
+type Draft<API extends LanguageAPI> = Renderable<Extract<API['node']['$type'], number>>;
+
+type RenderInput<API extends LanguageAPI> = API['node'] | API['fixedTextKindId'] | Draft<API>;
 
 export type RenderOptionsCheck<API extends LanguageAPI, R, Extra extends PropertyKey = never> =
 	IsExactly<R, API['options']> extends true

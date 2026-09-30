@@ -13217,7 +13217,7 @@ A mixed-enum slot resolves a bare string by keyword extraction first, then lexic
 
 ### `packages/codegen/src/emitters/wrap.ts::declaredParsedType`
 
-The declared return type of a kind's wrap: `T.<Kind>.Parsed` when the kind has a catalog entry (a kind id and a namespace), nothing when it has none. The wrap-return map keys on the same kind ids, so its rows are the declared returns and no wrap's type is inferred from its body.
+The declared return type of a kind's wrap: `T.<Kind>.Parsed` when the kind has a catalog entry (a kind id and a namespace), nothing when it has none. The parsed-by-kind-id map holds the same declared types, and it is the one map the wrapped root (`<Root>Tree`), `wrapNode`'s return and every accessor's child type read, so no wrap's type is inferred from its body and no second mapping exists.
 
 ### `packages/codegen/src/emitters/wrap.ts::castToParsed`
 

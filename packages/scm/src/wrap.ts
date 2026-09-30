@@ -1572,51 +1572,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const })
 };
 
-interface _WrapReturnByKindId {
-	[TSKindId.Program]: ReturnType<typeof wrapProgram>;
-	[TSKindId.Definition]: ReturnType<typeof wrapDefinition>;
-	[TSKindId.GroupExpression]: ReturnType<typeof wrapGroupExpression>;
-	[TSKindId.NamedNodeExpression]: ReturnType<typeof wrapNamedNodeExpression>;
-	[TSKindId.EscapeSequence]: ReturnType<typeof wrapEscapeSequence>;
-	[TSKindId.Quantifier]: _NodeData & { readonly $type: TSKindId.Quantifier };
-	[TSKindId.Identifier]: _NodeData & { readonly $type: TSKindId.Identifier };
-	[TSKindId.ImmediateIdentifier]: _NodeData & { readonly $type: TSKindId.ImmediateIdentifier };
-	[TSKindId.NodeIdentifier]: ReturnType<typeof wrapNodeIdentifier>;
-	[TSKindId.Capture]: ReturnType<typeof wrapCapture>;
-	[TSKindId.String]: ReturnType<typeof wrapString>;
-	[TSKindId.ImmediateString]: ReturnType<typeof wrapImmediateString>;
-	[TSKindId.StringContent]: ReturnType<typeof wrapStringContent>;
-	[TSKindId.Parameters]: ReturnType<typeof wrapParameters>;
-	[TSKindId.Comment]: ReturnType<typeof wrapComment>;
-	[TSKindId.List]: ReturnType<typeof wrapList>;
-	[TSKindId.Grouping]: ReturnType<typeof wrapGrouping>;
-	[TSKindId.MissingNode]: ReturnType<typeof wrapMissingNode>;
-	[TSKindId.AnonymousNode]: ReturnType<typeof wrapAnonymousNode>;
-	[TSKindId.NamedNode]: ReturnType<typeof wrapNamedNode>;
-	[TSKindId.FieldDefinition]: ReturnType<typeof wrapFieldDefinition>;
-	[TSKindId.NegatedField]: ReturnType<typeof wrapNegatedField>;
-	[TSKindId.Predicate]: ReturnType<typeof wrapPredicate>;
-	[TSKindId.PredicateType]: _NodeData & { readonly $type: TSKindId.PredicateType };
-	[TSKindId.GroupExpressionArm]: ReturnType<typeof wrapGroupExpressionArm>;
-	[TSKindId.NamedNodeExpressionArm]: ReturnType<typeof wrapNamedNodeExpressionArm>;
-	[TSKindId.GroupingGroup]: ReturnType<typeof wrapGroupingGroup>;
-	[TSKindId.NamedNodeGroup]: ReturnType<typeof wrapNamedNodeGroup>;
-	[TSKindId.NamedNodePlain]: ReturnType<typeof wrapNamedNodePlain>;
-	[TSKindId.NamedNodeSupertyped]: ReturnType<typeof wrapNamedNodeSupertyped>;
-	[TSKindId.NamedNodeGroupChildren]: ReturnType<typeof wrapNamedNodeGroupChildren>;
-	[TSKindId.NamedNodeGroupAnchoredLast]: ReturnType<typeof wrapNamedNodeGroupAnchoredLast>;
-	[TSKindId.Tight]: _NodeData & { readonly $type: TSKindId.Tight };
-	[TSKindId.Space]: _NodeData & { readonly $type: TSKindId.Space };
-	[TSKindId.Tab]: _NodeData & { readonly $type: TSKindId.Tab };
-	[TSKindId.Newline]: _NodeData & { readonly $type: TSKindId.Newline };
-	[TSKindId.Blankline]: _NodeData & { readonly $type: TSKindId.Blankline };
-	[TSKindId.DoubleBlankline]: _NodeData & { readonly $type: TSKindId.DoubleBlankline };
-	[TSKindId.Indent]: _NodeData & { readonly $type: TSKindId.Indent };
-	[TSKindId.Dedent]: _NodeData & { readonly $type: TSKindId.Dedent };
-}
-
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
-export type ProgramTree = _WrapReturnByKindId[TSKindId.Program] & ParsedRoot;
+export type ProgramTree = T.ParsedByKindId[TSKindId.Program] & ParsedRoot;
 
 function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {
 	const out: Record<string, unknown> = { ...(data as unknown as Record<string, unknown>) };
@@ -1637,10 +1594,10 @@ function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData
 }
 
 /** Wrap a NodeData into its lazy read-only view. */
-export function wrapNode<T extends _NodeData & { readonly $type: keyof _WrapReturnByKindId }>(
-	data: T,
+export function wrapNode<D extends _NodeData & { readonly $type: keyof T.ParsedByKindId }>(
+	data: D,
 	tree: TreeHandle
-): _WrapReturnByKindId[T['$type'] & keyof _WrapReturnByKindId] & Pick<T, Extract<keyof T, keyof ParsedRoot>>;
+): T.ParsedByKindId[D['$type'] & keyof T.ParsedByKindId] & Pick<D, Extract<keyof D, keyof ParsedRoot>>;
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown;
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// The wire `$type` is the numeric grammar-symbol KindId — dispatch
