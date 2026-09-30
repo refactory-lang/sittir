@@ -169,16 +169,6 @@ export type ArgsOf<F> = F extends {
 	? MutableRest<A> | MutableRest<B> | MutableRest<C> | MutableRest<D>
 	: never;
 
-/**
- * MaxArity<F> — the most arguments any declared overload of F accepts,
- * read off {@link ArgsOf}: `number` when an overload takes a rest parameter.
- */
-export type MaxArity<F> = number extends ArgsOf<F>['length'] ? number : MaxOf<ArgsOf<F>['length']>;
-
-type MaxOf<U, Seen extends unknown[] = []> = [Exclude<U, Seen['length']>] extends [never]
-	? Seen['length']
-	: MaxOf<Exclude<U, Seen['length']>, [...Seen, unknown]>;
-
 /** A bare `readonly E[]` rest array as `E[]`; a tuple, however it ends, as it is. */
 type MutableRest<A extends readonly unknown[]> = A extends readonly (infer E)[]
 	? readonly E[] extends A
@@ -212,23 +202,10 @@ export type ElementsOf<F> = F extends (...args: infer A extends readonly unknown
 
 export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
 
-/** The most arguments a flavor pair's hoisted call accepts, and the route key its refusal names. */
-export interface HoistArity<Max extends number = number> {
-	readonly key: string;
-	readonly max: Max;
-}
-
 /** Pairs a kind's strict builder with its loose coercer under one bundle entry. */
 export interface FlavorPair<S, C> {
 	readonly strict: S;
 	readonly coerce: C;
-	readonly arity?: HoistArity;
-}
-
-/** A strict builder with no coercer beside it, as one bundle entry. */
-export interface StrictFlavor<S> {
-	readonly strict: S;
-	readonly arity?: HoistArity;
 }
 
 /** @internal — any factory or coercer function, for Hoisted's own bounds. */
@@ -241,14 +218,12 @@ type AnyFlavorFn = (...args: never[]) => unknown;
  * sibling key still reachable on it.
  */
 export type Hoisted<B> = B extends { coerce: infer C }
-	? (C extends AnyFlavorFn ? C : () => never) & HoistedRoutes<B>
+	? (C extends AnyFlavorFn ? C : () => never) & { [K in keyof B]: Hoisted<B[K]> }
 	: B extends { strict: infer S }
-		? (S extends AnyFlavorFn ? S : () => never) & HoistedRoutes<B>
+		? (S extends AnyFlavorFn ? S : () => never) & { [K in keyof B]: Hoisted<B[K]> }
 		: B extends Record<string, unknown>
 			? { [K in keyof B]: Hoisted<B[K]> }
 			: B;
-
-type HoistedRoutes<B> = { [K in keyof B as K extends 'arity' ? never : K]: Hoisted<B[K]> };
 
 // ---------------------------------------------------------------------------
 // Cycle-detected recursion (visited-set pattern)

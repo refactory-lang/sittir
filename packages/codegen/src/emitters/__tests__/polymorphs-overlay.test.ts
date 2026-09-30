@@ -188,19 +188,22 @@ describe('emitPolymorphsOverlay', () => {
 		);
 		expect(text).toContain('export const comment: typeof B.comment & {');
 		expect(text).toContain('	...B.comment,');
-		expect(text).toContain('const comment$doc$strict = comment$doc(F.buildComment, F.buildCommentDoc);');
-		expect(text).toContain('const comment$doc$coerce = comment$doc(F.buildComment, C.coerceToCommentDoc);');
-		expect(text).toContain('	doc: bundle(comment$doc$strict, comment$doc$coerce, { key: "comment.doc", max: 1 }),');
-		expect(text).toContain('	plain: bundle(comment$plain$strict, comment$plain$coerce, { key: "comment.plain", max: 1 }),');
+		expect(text).toContain(
+			'	doc: { strict: comment$doc(F.buildComment, F.buildCommentDoc), coerce: comment$doc(F.buildComment, C.coerceToCommentDoc) },'
+		);
+		expect(text).toContain(
+			'	plain: { strict: comment$plain(F.buildComment, F.buildCommentPlain), coerce: comment$plain(F.buildComment, C.coerceToCommentPlain) },'
+		);
 
 		expect(text).toContain('const logic$and = <PF extends (config: never) => unknown>(parent: PF, value: unknown) =>');
-		expect(text).toContain("const logic$and$strict = logic$and(F.buildLogic, 'and');");
-		expect(text).toContain("const logic$and$coerce = logic$and(C.coerceToLogic, 'and');");
-		expect(text).toContain('	and: bundle(logic$and$strict, logic$and$coerce, { key: "logic.and", max: 2 }),');
-		expect(text).toContain('	or: bundle(logic$or$strict, logic$or$coerce, { key: "logic.or", max: 2 }),');
+		expect(text).toContain(
+			"	and: { strict: logic$and(F.buildLogic, 'and'), coerce: logic$and(C.coerceToLogic, 'and') },"
+		);
+		expect(text).toContain("	or: { strict: logic$or(F.buildLogic, 'or'), coerce: logic$or(C.coerceToLogic, 'or') },");
 
-		expect(text).toContain("const annotated$plus$strict = annotated$plus(F.buildAnnotated, 'plus');");
-		expect(text).toContain('	plus: bundle(annotated$plus$strict, annotated$plus$coerce, { key: "annotated.plus", max: 2 }),');
+		expect(text).toContain(
+			"	plus: { strict: annotated$plus(F.buildAnnotated, 'plus'), coerce: annotated$plus(C.coerceToAnnotated, 'plus') },"
+		);
 	});
 
 	it('seats a keyword arm\'s stored text instead of asking the caller for the keyword child', () => {
@@ -208,7 +211,7 @@ describe('emitPolymorphsOverlay', () => {
 
 		expect(text).toContain("\t(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>");
 		expect(text).toContain('{ ...config, content: value }');
-		expect(text).toContain("const pair$kwSelf$strict = pair$kwSelf(F.buildPair, 'self');");
+		expect(text).toContain("strict: pair$kwSelf(F.buildPair, 'self')");
 		expect(text).not.toContain('_c(child)');
 	});
 
@@ -255,9 +258,8 @@ describe('a single hoisted group flattens onto its parent', () => {
 		);
 		expect(out).toContain('export const clause: typeof B.clause & {');
 		expect(out).toContain('= clause$flatten(F.buildClause, F.buildClauseGroup);');
-		const seated = '...bundle(clause$seated, clause$seatedCoerce, { key: "clause", max: 1 }),';
-		expect(out).toContain(seated);
-		expect(out.indexOf('...B.clause,')).toBeLessThan(out.indexOf(seated));
+		expect(out).toContain('strict: clause$seated,');
+		expect(out.indexOf('...B.clause,')).toBeLessThan(out.indexOf('strict: clause$seated,'));
 	});
 });
 
@@ -293,7 +295,7 @@ describe('a repeated hoisted group seats as an array of its configs', () => {
 		expect(out).toContain('const comparison$comparators =');
 		expect(out).toContain("comparators: seat.map((e) => (isConfig(e) ? _c(child)(e) : e))");
 		expect(out).toContain('= comparison$comparators(F.buildComparison, F.buildComparisonComparator);');
-		expect(out).toContain('...bundle(comparison$seated, comparison$seatedCoerce, { key: "comparison", max: 1 }),');
+		expect(out).toContain('strict: comparison$seated,');
 		expect(out).toContain("{ comparators: ReadonlyArray<ArgsOf<typeof F.buildComparisonComparator>[0]");
 	});
 });
@@ -534,8 +536,8 @@ describe('a keyword literal arm named by its text', () => {
 			{ kindIds: { and_keyword: keyword(3, 'and_keyword', 'and'), or_keyword: keyword(4, 'or_keyword', 'or') }, sourceArtifact: 'test' }
 		);
 		const out = emitPolymorphsOverlay({ nodeMap });
-		expect(out).toContain("const junction$and$strict = junction$and(F.buildJunction, 'and');");
-		expect(out).toContain("const junction$or$strict = junction$or(F.buildJunction, 'or');");
+		expect(out).toContain("and: { strict: junction$and(F.buildJunction, 'and')");
+		expect(out).toContain("or: { strict: junction$or(F.buildJunction, 'or')");
 	});
 
 	it('reports a keyword arm whose text names a node arm of the same owner as ambiguous', () => {

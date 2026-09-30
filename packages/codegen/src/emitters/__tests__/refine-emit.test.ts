@@ -522,6 +522,6 @@ describe('refines overlay — attaches per-form factories on the parent builder'
 		expect(text).toContain("import * as F from '../raw.js';");
 		expect(text).toContain('export const ifaceBody = Object.freeze({');
 		expect(text).toContain('	...B.ifaceBody,');
-		expect(text).toContain('	curly: bundle(F.buildIfaceBodyCurly, undefined, { key: "ifaceBody.curly", max: 1 }),');
+		expect(text).toContain('	curly: Object.freeze({ strict: F.buildIfaceBodyCurly }),');
 	});
 });

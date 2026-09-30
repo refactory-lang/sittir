@@ -18,7 +18,6 @@ import { collectCatalogKinds, collectKindEntries, hasCatalogEntry } from '../kin
 import { lowerCamelCase } from '../../compiler/model/casing.ts';
 import { polymorphVisibleName } from '../../dsl/arm-names.ts';
 import { classifyFromEmission, isValidIdent } from '../shared.ts';
-import { builtTypeSurfaceOf } from '../factories.ts';
 
 export const OVERLAY_CHAIN = ['refines', 'polymorphs', 'supertypes'] as const;
 export type OverlayName = (typeof OVERLAY_CHAIN)[number];
@@ -57,16 +56,10 @@ export function overlayFrame(
 	return [HEADER, ...imports, `export * from '${importPath}';`, ''];
 }
 
-export function bundleExpr(strict: string, coerce: string | undefined, key: string, max: number | undefined): string {
-	const stamp = max === undefined ? '' : `, { key: ${JSON.stringify(key)}, max: ${max} }`;
-	return `bundle(${strict}, ${coerce ?? 'undefined'}${stamp})`;
-}
-
 export interface BundleEntry {
 	readonly key: string;
 	readonly exportName: string;
 	readonly node: AssembledNode;
-	readonly maxArgs: number | undefined;
 }
 
 export function bundleEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdTables): BundleEntry[] {
@@ -86,8 +79,7 @@ export function bundleEntries(nodeMap: NodeMap, generatedIdTables?: GeneratedIdT
 		const key = node.irKey ?? lowerCamelCase(kind);
 		if (!isValidIdent(key) || used.has(key)) continue;
 		used.add(key);
-		const maxArgs = builtTypeSurfaceOf(node, nodeMap, kindEntries)?.maxArgs;
-		out.push({ key, exportName: FACTORY_NAME_RESERVED.has(key) ? `${key}_` : key, node, maxArgs });
+		out.push({ key, exportName: FACTORY_NAME_RESERVED.has(key) ? `${key}_` : key, node });
 	}
 	return out;
 }
@@ -234,8 +226,8 @@ export function emitBundleModule(config: { nodeMap: NodeMap; generatedIdTables?:
 		"export * from './coerce.js';",
 		''
 	];
-	for (const { exportName, node, maxArgs } of bundleEntries(config.nodeMap, config.generatedIdTables)) {
-		lines.push(`export const ${exportName} = ${bundleExpr(`F.${node.rawFactoryName}`, `C.${node.fromFunctionName}`, exportName, maxArgs)};`);
+	for (const { exportName, node } of bundleEntries(config.nodeMap, config.generatedIdTables)) {
+		lines.push(`export const ${exportName} = bundle(F.${node.rawFactoryName}, C.${node.fromFunctionName});`);
 	}
 	lines.push('');
 	return lines.join('\n');

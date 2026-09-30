@@ -17578,10 +17578,10 @@ export namespace EnumVariantList {
 	}
 	export type Loose = LooseFor<TSKindId.EnumVariantList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumVariantList>;
-	export type BuildArgs = [value?: T.EnumVariantListElements] | T.EnumVariantListElements.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.EnumVariantListElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.EnumVariantListElements.LooseArgs;
+	export type BuildArgs = [value?: T.EnumVariantListElements];
+	export type LooseArgs = [
+		value?: LooseValue<T.EnumVariantListElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Kind = 'enum_variant_list';
 }
 export namespace EnumVariant {
@@ -17615,10 +17615,10 @@ export namespace FieldDeclarationList {
 	}
 	export type Loose = LooseFor<TSKindId.FieldDeclarationList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FieldDeclarationList>;
-	export type BuildArgs = [value?: T.FieldDeclarationListElements] | T.FieldDeclarationListElements.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.FieldDeclarationListElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.FieldDeclarationListElements.LooseArgs;
+	export type BuildArgs = [value?: T.FieldDeclarationListElements];
+	export type LooseArgs = [
+		value?: LooseValue<T.FieldDeclarationListElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Kind = 'field_declaration_list';
 }
 export namespace FieldDeclaration {
@@ -17651,12 +17651,10 @@ export namespace OrderedFieldDeclarationList {
 	}
 	export type Loose = LooseFor<TSKindId.OrderedFieldDeclarationList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OrderedFieldDeclarationList>;
-	export type BuildArgs =
-		| [value?: T.OrderedFieldDeclarationListElements]
-		| T.OrderedFieldDeclarationListElements.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.OrderedFieldDeclarationListElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.OrderedFieldDeclarationListElements.LooseArgs;
+	export type BuildArgs = [value?: T.OrderedFieldDeclarationListElements];
+	export type LooseArgs = [
+		value?: LooseValue<T.OrderedFieldDeclarationListElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Kind = 'ordered_field_declaration_list';
 }
 export namespace ExternCrateDeclaration {
@@ -17846,10 +17844,8 @@ export namespace WhereClause {
 	}
 	export type Loose = LooseFor<TSKindId.WhereClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WhereClause>;
-	export type BuildArgs = [value?: T.WherePredicates] | T.WherePredicates.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.WherePredicates, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.WherePredicates.LooseArgs;
+	export type BuildArgs = [value?: T.WherePredicates];
+	export type LooseArgs = [value?: LooseValue<T.WherePredicates, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = 'where_clause';
 }
 export namespace WherePredicate {
@@ -17983,10 +17979,10 @@ export namespace TypeParameters {
 	}
 	export type Loose = LooseFor<TSKindId.TypeParameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeParameters>;
-	export type BuildArgs = [value: T.TypeParametersElements] | T.TypeParametersElements.BuildArgs;
-	export type LooseArgs =
-		| [value: LooseValue<T.TypeParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.TypeParametersElements.LooseArgs;
+	export type BuildArgs = [value: T.TypeParametersElements];
+	export type LooseArgs = [
+		value: LooseValue<T.TypeParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Kind = 'type_parameters';
 }
 export namespace ConstParameter {
@@ -18115,10 +18111,8 @@ export namespace UseList {
 	}
 	export type Loose = LooseFor<TSKindId.UseList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UseList>;
-	export type BuildArgs = [value?: T.UseClauses] | T.UseClauses.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.UseClauses, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.UseClauses.LooseArgs;
+	export type BuildArgs = [value?: T.UseClauses];
+	export type LooseArgs = [value?: LooseValue<T.UseClauses, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = 'use_list';
 }
 export namespace UseAsClause {
@@ -18165,10 +18159,8 @@ export namespace Parameters {
 	}
 	export type Loose = LooseFor<TSKindId.Parameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Parameters>;
-	export type BuildArgs = [value?: T.ParametersElements] | T.ParametersElements.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.ParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.ParametersElements.LooseArgs;
+	export type BuildArgs = [value?: T.ParametersElements];
+	export type LooseArgs = [value?: LooseValue<T.ParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = 'parameters';
 }
 export namespace SelfParameter {
@@ -18345,10 +18337,8 @@ export namespace ForLifetimes {
 	}
 	export type Loose = LooseFor<TSKindId.ForLifetimes>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForLifetimes>;
-	export type BuildArgs = [value: T.Lifetimes] | T.Lifetimes.BuildArgs;
-	export type LooseArgs =
-		| [value: LooseValue<T.Lifetimes, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.Lifetimes.LooseArgs;
+	export type BuildArgs = [value: T.Lifetimes];
+	export type LooseArgs = [value: LooseValue<T.Lifetimes, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = 'for_lifetimes';
 }
 export namespace FunctionType {
@@ -18382,10 +18372,8 @@ export namespace TupleType {
 	}
 	export type Loose = LooseFor<TSKindId.TupleType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleType>;
-	export type BuildArgs = [value: T.TupleTypeElements] | T.TupleTypeElements.BuildArgs;
-	export type LooseArgs =
-		| [value: LooseValue<T.TupleTypeElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.TupleTypeElements.LooseArgs;
+	export type BuildArgs = [value: T.TupleTypeElements];
+	export type LooseArgs = [value: LooseValue<T.TupleTypeElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = 'tuple_type';
 }
 export namespace GenericFunction {
@@ -18473,10 +18461,8 @@ export namespace UseBounds {
 	}
 	export type Loose = LooseFor<TSKindId.UseBounds>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UseBounds>;
-	export type BuildArgs = [value?: T.UseBoundsElements] | T.UseBoundsElements.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.UseBoundsElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.UseBoundsElements.LooseArgs;
+	export type BuildArgs = [value?: T.UseBoundsElements];
+	export type LooseArgs = [value?: LooseValue<T.UseBoundsElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = 'use_bounds';
 }
 export namespace TypeArguments {
@@ -18490,10 +18476,10 @@ export namespace TypeArguments {
 	}
 	export type Loose = LooseFor<TSKindId.TypeArguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeArguments>;
-	export type BuildArgs = [value: T.TypeArgumentsElements] | T.TypeArgumentsElements.BuildArgs;
-	export type LooseArgs =
-		| [value: LooseValue<T.TypeArgumentsElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.TypeArgumentsElements.LooseArgs;
+	export type BuildArgs = [value: T.TypeArgumentsElements];
+	export type LooseArgs = [
+		value: LooseValue<T.TypeArgumentsElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Kind = 'type_arguments';
 }
 export namespace TypeBinding {
@@ -18892,10 +18878,8 @@ export namespace Arguments {
 	}
 	export type Loose = LooseFor<TSKindId.Arguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Arguments>;
-	export type BuildArgs = [value?: T.ArgumentsElements] | T.ArgumentsElements.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.ArgumentsElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.ArgumentsElements.LooseArgs;
+	export type BuildArgs = [value?: T.ArgumentsElements];
+	export type LooseArgs = [value?: LooseValue<T.ArgumentsElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = 'arguments';
 }
 export namespace ParenthesizedExpression {
@@ -18966,10 +18950,10 @@ export namespace FieldInitializerList {
 	}
 	export type Loose = LooseFor<TSKindId.FieldInitializerList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FieldInitializerList>;
-	export type BuildArgs = [value?: T.FieldInitializerListElements] | T.FieldInitializerListElements.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.FieldInitializerListElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.FieldInitializerListElements.LooseArgs;
+	export type BuildArgs = [value?: T.FieldInitializerListElements];
+	export type LooseArgs = [
+		value?: LooseValue<T.FieldInitializerListElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Kind = 'field_initializer_list';
 }
 export namespace ShorthandFieldInitializer {
@@ -19471,10 +19455,10 @@ export namespace TuplePattern {
 	}
 	export type Loose = LooseFor<TSKindId.TuplePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TuplePattern>;
-	export type BuildArgs = [value?: T.TuplePatternElements] | T.TuplePatternElements.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.TuplePatternElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.TuplePatternElements.LooseArgs;
+	export type BuildArgs = [value?: T.TuplePatternElements];
+	export type LooseArgs = [
+		value?: LooseValue<T.TuplePatternElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Kind = 'tuple_pattern';
 }
 export namespace SlicePattern {
@@ -19488,10 +19472,8 @@ export namespace SlicePattern {
 	}
 	export type Loose = LooseFor<TSKindId.SlicePattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SlicePattern>;
-	export type BuildArgs = [value?: T.Patterns] | T.Patterns.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.Patterns, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.Patterns.LooseArgs;
+	export type BuildArgs = [value?: T.Patterns];
+	export type LooseArgs = [value?: LooseValue<T.Patterns, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = 'slice_pattern';
 }
 export namespace TupleStructPattern {
