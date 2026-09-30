@@ -24,6 +24,8 @@ function target(effect: () => void = () => undefined): SyncBaseTarget & { regene
 	return {
 		roots,
 		regenerated,
+		verify: (grammar) =>
+			grammar !== 'g' || readFileSync(join(cwd, generatedOutput), 'utf8') === `regenerated from ${readFileSync(join(cwd, 'src.txt'), 'utf8').trim()}`,
 		regenerate(grammar) {
 			regenerated.push(grammar);
 			write(generatedOutput, `regenerated from ${readFileSync(join(cwd, 'src.txt'), 'utf8').trim()}`);
@@ -59,6 +61,32 @@ describe('syncBase', () => {
 		expect(readFileSync(join(cwd, generatedOutput), 'utf8')).toBe('regenerated from v2');
 		expect(git('log', '-1', '--format=%p').trim().split(' ')).toHaveLength(2);
 		expect(git('status', '--porcelain').trim()).toBe('');
+	});
+
+	it('regenerates a grammar whose generated files are stale after a clean merge, and only that one', () => {
+		git('checkout', '-q', 'main');
+		write('src.txt', 'v2\n');
+		commit('main change');
+		git('checkout', '-q', 'feature');
+		write('other/extra.txt', 'feature only');
+		commit('feature change');
+		const t = target();
+		expect(syncBase({ base: 'main', cwd }, t, () => undefined)).toBe(0);
+		expect(t.regenerated).toEqual(['g']);
+		expect(readFileSync(join(cwd, generatedOutput), 'utf8')).toBe('regenerated from v2');
+		expect(git('log', '-1', '--format=%p').trim().split(' ')).toHaveLength(2);
+	});
+
+	it('commits a clean merge whose grammars all verify without regenerating', () => {
+		git('checkout', '-q', 'main');
+		write('unrelated.txt', 'main\n');
+		commit('main change');
+		git('checkout', '-q', 'feature');
+		write('other/extra.txt', 'feature only');
+		commit('feature change');
+		const t = target();
+		expect(syncBase({ base: 'main', cwd }, t, () => undefined)).toBe(0);
+		expect(t.regenerated).toEqual([]);
 	});
 
 	it('stops on a conflict outside the generated roots and leaves the merge in progress', () => {

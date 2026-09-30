@@ -1,5 +1,7 @@
 import { execFileSync } from 'node:child_process';
-import { load } from './codegen-surface.ts';
+import { load, type CodegenSurface } from './codegen-surface.ts';
+
+type GrammarName = Parameters<CodegenSurface['generatedManifest']['generatedRootsFor']>[0];
 
 export interface SyncBaseOptions {
 	readonly base: string;
@@ -8,6 +10,7 @@ export interface SyncBaseOptions {
 
 export interface SyncBaseTarget {
 	readonly roots: Readonly<Record<string, readonly string[]>>;
+	verify(grammar: string): boolean;
 	regenerate(grammar: string): void;
 }
 
@@ -63,6 +66,12 @@ export function syncBase(opts: SyncBaseOptions, target: SyncBaseTarget, out: (li
 			git(['rm', '-q', '-f', '--', path]);
 		}
 	}
+	for (const grammar of Object.keys(target.roots)) {
+		if (!affected.has(grammar) && !target.verify(grammar)) {
+			out(`sync-base: ${grammar}'s generated files are stale after the merge`);
+			affected.add(grammar);
+		}
+	}
 	for (const grammar of [...affected].sort()) {
 		out(`sync-base: regenerating ${grammar}`);
 		target.regenerate(grammar);
@@ -93,6 +102,7 @@ export async function repoSyncTarget(): Promise<{ target: SyncBaseTarget; cwd: s
 		cwd,
 		target: {
 			roots,
+			verify: (grammar) => manifest.verifyManifestForGrammar(grammar as GrammarName).ok,
 			regenerate(grammar) {
 				execFileSync(
 					'pnpm',

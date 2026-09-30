@@ -23,7 +23,7 @@ have reviewed the code and run `pnpm run bootstrap` yourself. Set
 `pnpm run bootstrap` by hand after pulling a lockfile or native crate change.
 An existing hook sittir does not manage is kept as `<name>.pre-sittir`.
 
-`pnpm exec tsx packages/cli/src/cli.ts tool sync-base [--base origin/master]` brings a branch up to date with its base: it merges, and when the only conflicts are generated files (manifests included) it takes the base's side, regenerates exactly those grammars and commits the merge. Any other conflict, or a regeneration that changes a file outside the generated roots, stops it for review.
+`pnpm exec tsx packages/cli/src/cli.ts tool sync-base [--base origin/master]` brings a branch up to date with its base: it merges, and when the only conflicts are generated files (manifests included) it takes the base's side; after any merge it verifies every grammar's manifest and regenerates the grammars whose files conflicted or went stale, then commits the merge. Any other conflict, or a regeneration that changes a file outside the generated roots, stops it for review.
 
 ## Everyday commands
 
