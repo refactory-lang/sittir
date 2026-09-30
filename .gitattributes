@@ -11,3 +11,8 @@
 # Tracked binary artifacts — explicit, so `text=auto`'s heuristic is
 # never the only thing standing between these and EOL corruption.
 *.wasm binary
+
+# Validation runs only ever append rows, so two branches that each ran
+# validation both add lines at the end. `union` keeps both sides' rows
+# instead of conflicting; `readHistory` orders runs by their `ts`.
+packages/tools/validation-history.jsonl merge=union

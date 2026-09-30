@@ -1,7 +1,8 @@
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { AssembledSupertype, snakeToCamel } from '../compiler/model/node-map.ts';
+import { snakeToCamel } from '../compiler/model/node-map.ts';
+import { isDeclaredSupertype } from './shared.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { collectKindEntries, kindDiscriminantExpr, type KindEnumEntry } from './kind-discriminant.ts';
 import { collectAllKinds } from './types.ts';
@@ -142,7 +143,7 @@ export function emitIs(config: EmitIsConfig): string {
 		memberKindIds: string[];
 	}> = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledSupertype)) continue;
+		if (!isDeclaredSupertype(node)) continue;
 		const st = node;
 		const cleanName = kind.replace(/^_/, '');
 		const typeName = node.typeName;

@@ -15,10 +15,10 @@ import { TOKEN_INTERIORS } from './consts.js';
 import type { ParsedRoot } from '@sittir/common/engine';
 // Import _NodeData (== AnyNodeData) from @sittir/types
 // instead of re-declaring locally. Single source of truth.
-import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
+import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray, SupertypeSurface } from '@sittir/types';
 import { TSKindId, KIND_NAMES } from './types.js';
 import { Delimiter } from '@sittir/common/utils';
-import type * as T from './types.js';
+import type * as T from './types-internal.js';
 import { withMethods } from './utils.js';
 import * as RAW from './factories/raw.js';
 
@@ -1419,8 +1419,8 @@ export function wrapMacroRule(data: T.MacroRule, tree: TreeHandle): T.MacroRule.
 export function wrapTokenPattern(
 	data: T.TokenPattern & { readonly $other?: T.TokenPattern | readonly T.TokenPattern[] },
 	tree: TreeHandle
-): T.TokenPattern.Parsed {
-	if (typeof data === 'number') return data as unknown as T.TokenPattern.Parsed;
+): SupertypeSurface<T.TokenPattern, T.ParsedByKindId> {
+	if (typeof data === 'number') return data as unknown as SupertypeSurface<T.TokenPattern, T.ParsedByKindId>;
 	const node = _keepModelledSlots(data, [
 		'_token_tree_pattern',
 		'_token_repetition_pattern',
@@ -1457,7 +1457,10 @@ export function wrapTokenPattern(
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
 	) {
-		return drillInSelf<T.TokenPattern>(node as T.TokenPattern, tree) as unknown as T.TokenPattern.Parsed;
+		return drillInSelf<T.TokenPattern>(node as T.TokenPattern, tree) as unknown as SupertypeSurface<
+			T.TokenPattern,
+			T.ParsedByKindId
+		>;
 	}
 	return drillIn<T.TokenPattern>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
@@ -4278,8 +4281,8 @@ export function wrapUseDeclaration(data: T.UseDeclaration, tree: TreeHandle): T.
 export function wrapUseClause(
 	data: T.UseClause & { readonly $other?: T.UseClause | readonly T.UseClause[] },
 	tree: TreeHandle
-): T.UseClause.Parsed {
-	if (typeof data === 'number') return data as unknown as T.UseClause.Parsed;
+): SupertypeSurface<T.UseClause, T.ParsedByKindId> {
+	if (typeof data === 'number') return data as unknown as SupertypeSurface<T.UseClause, T.ParsedByKindId>;
 	const node = _keepModelledSlots(data, [
 		'_self',
 		'_u8_keyword',
@@ -4382,7 +4385,10 @@ export function wrapUseClause(
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
 	) {
-		return drillInSelf<T.UseClause>(node as T.UseClause, tree) as unknown as T.UseClause.Parsed;
+		return drillInSelf<T.UseClause>(node as T.UseClause, tree) as unknown as SupertypeSurface<
+			T.UseClause,
+			T.ParsedByKindId
+		>;
 	}
 	return drillIn<T.UseClause>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
@@ -5811,8 +5817,8 @@ export function wrapDynamicType(data: T.DynamicType, tree: TreeHandle): T.Dynami
 export function wrapExpressionExceptRange(
 	data: T.ExpressionExceptRange & { readonly $other?: T.ExpressionExceptRange | readonly T.ExpressionExceptRange[] },
 	tree: TreeHandle
-): T.ExpressionExceptRange.Parsed {
-	if (typeof data === 'number') return data as unknown as T.ExpressionExceptRange.Parsed;
+): SupertypeSurface<T.ExpressionExceptRange, T.ParsedByKindId> {
+	if (typeof data === 'number') return data as unknown as SupertypeSurface<T.ExpressionExceptRange, T.ParsedByKindId>;
 	const node = _keepModelledSlots(data, [
 		'_unary_expression',
 		'_reference_expression',
@@ -6071,10 +6077,10 @@ export function wrapExpressionExceptRange(
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
 	) {
-		return drillInSelf<T.ExpressionExceptRange>(
-			node as T.ExpressionExceptRange,
-			tree
-		) as unknown as T.ExpressionExceptRange.Parsed;
+		return drillInSelf<T.ExpressionExceptRange>(node as T.ExpressionExceptRange, tree) as unknown as SupertypeSurface<
+			T.ExpressionExceptRange,
+			T.ParsedByKindId
+		>;
 	}
 	return drillIn<T.ExpressionExceptRange>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
@@ -6449,8 +6455,8 @@ export function wrapDelimTokenTree(
 export function wrapDelimTokens(
 	data: T.DelimTokens & { readonly $other?: T.DelimTokens | readonly T.DelimTokens[] },
 	tree: TreeHandle
-): T.DelimTokens.Parsed {
-	if (typeof data === 'number') return data as unknown as T.DelimTokens.Parsed;
+): SupertypeSurface<T.DelimTokens, T.ParsedByKindId> {
+	if (typeof data === 'number') return data as unknown as SupertypeSurface<T.DelimTokens, T.ParsedByKindId>;
 	const node = _keepModelledSlots(data, [
 		'_non_special_token',
 		'_dollar',
@@ -6481,7 +6487,10 @@ export function wrapDelimTokens(
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
 	) {
-		return drillInSelf<T.DelimTokens>(node as T.DelimTokens, tree) as unknown as T.DelimTokens.Parsed;
+		return drillInSelf<T.DelimTokens>(node as T.DelimTokens, tree) as unknown as SupertypeSurface<
+			T.DelimTokens,
+			T.ParsedByKindId
+		>;
 	}
 	return drillIn<T.DelimTokens>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
@@ -6497,8 +6506,8 @@ export function wrapDelimTokens(
 export function wrapNonDelimToken(
 	data: T.NonDelimToken & { readonly $other?: T.NonDelimToken | readonly T.NonDelimToken[] },
 	tree: TreeHandle
-): T.NonDelimToken.Parsed {
-	if (typeof data === 'number') return data as unknown as T.NonDelimToken.Parsed;
+): SupertypeSurface<T.NonDelimToken, T.ParsedByKindId> {
+	if (typeof data === 'number') return data as unknown as SupertypeSurface<T.NonDelimToken, T.ParsedByKindId>;
 	const node = _keepModelledSlots(data, ['_non_special_token', '_dollar']);
 	const kindKeyed = _firstKindKeyedWrapChild(node, ['non_special_token', 'dollar']) as
 		| T.NonDelimToken
@@ -6509,7 +6518,10 @@ export function wrapNonDelimToken(
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
 	) {
-		return drillInSelf<T.NonDelimToken>(node as T.NonDelimToken, tree) as unknown as T.NonDelimToken.Parsed;
+		return drillInSelf<T.NonDelimToken>(node as T.NonDelimToken, tree) as unknown as SupertypeSurface<
+			T.NonDelimToken,
+			T.ParsedByKindId
+		>;
 	}
 	return drillIn<T.NonDelimToken>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
@@ -7855,8 +7867,8 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle): T.LetChain.Par
 export function wrapCondition(
 	data: T.Condition & { readonly $other?: T.Condition | readonly T.Condition[] },
 	tree: TreeHandle
-): T.Condition.Parsed {
-	if (typeof data === 'number') return data as unknown as T.Condition.Parsed;
+): SupertypeSurface<T.Condition, T.ParsedByKindId> {
+	if (typeof data === 'number') return data as unknown as SupertypeSurface<T.Condition, T.ParsedByKindId>;
 	const node = _keepModelledSlots(data, [
 		'__expression',
 		'_expression',
@@ -8115,7 +8127,10 @@ export function wrapCondition(
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
 	) {
-		return drillInSelf<T.Condition>(node as T.Condition, tree) as unknown as T.Condition.Parsed;
+		return drillInSelf<T.Condition>(node as T.Condition, tree) as unknown as SupertypeSurface<
+			T.Condition,
+			T.ParsedByKindId
+		>;
 	}
 	return drillIn<T.Condition>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {

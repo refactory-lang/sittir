@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { buildRuleCatalog, createRuleId, ruleIdPath } from '../rule-catalog.ts';
-import { evaluate } from '../evaluate.ts';
-import { resolveOverridesPath } from '../resolve-grammar.ts';
 import { collapseRenamedRules } from '../link.ts';
 import { kindCatalogOf, stampVisibleExternals } from '../../dsl/symbol-table.ts';
 import { loadGeneratedIdTables } from '../generated-metadata.ts';
 import { rebaseRuleIds } from '../../dsl/rule-attrs.ts';
 import type { Rule } from '../../types/rule.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 describe('rule ids', () => {
 	it('ruleIdPath reads back the path createRuleId wrote, whatever the owner name holds', () => {
@@ -32,7 +32,7 @@ describe('rule ids', () => {
 	});
 
 	it('a kind the catalog renames keeps its source rule id', async () => {
-		const raw = await evaluate(resolveOverridesPath('python'));
+		const raw = await evaluatePackage(grammarPackage('python'));
 		const collapsed = collapseRenamedRules(raw, {
 			kindEntries: kindCatalogOf(stampVisibleExternals(await loadGeneratedIdTables('python'), raw), raw)
 		});

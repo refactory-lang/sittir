@@ -25,7 +25,7 @@ describe('a list slot takes its elements bare, one or many', () => {
 		const expected = 'V {\n    a: i32,\n}';
 		expect(rs.build.enumVariant({ name: 'V', body: field() }).$render()).toBe(expected);
 		expect(rs.build.enumVariant({ name: 'V', body: [field()] }).$render()).toBe(expected);
-		expect(rs.build.enumVariant({ name: 'V', body: { kind: 'field_declaration', name: 'a', type: 'i32' } }).$render()).toBe(
+		expect(rs.build.enumVariant({ name: 'V', body: { $type: rs.kinds.FieldDeclaration, name: 'a', type: 'i32' } }).$render()).toBe(
 			expected
 		);
 	});

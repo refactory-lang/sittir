@@ -2,6 +2,7 @@ import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFi
 import { dirname, join, posix } from 'node:path';
 import { GRAMMAR_ENTRY, grammarTypePrefix, packageRequire, sittirDirOf, upstreamPackage, type GrammarPackage } from '../grammars.ts';
 import { packageEntryPath } from '../compiler/resolve-grammar.ts';
+import { upstreamFileTypes } from '../compiler/upstream-file-types.ts';
 import { ensureConflictResolutions } from './conflict-resolutions-file.ts';
 
 function writeFileIfChanged(path: string, content: string | Uint8Array): void {
@@ -33,6 +34,7 @@ export function transpileOverrides(opts: TranspileOptions): TranspileResult {
 		throw new Error(`transpileOverrides: no grammar.sittir.ts at ${inputPath}`);
 	}
 
+	const fileTypes = upstreamFileTypes(opts.package);
 	mkdirSync(outputDir, { recursive: true });
 	ensureConflictResolutions(opts.package);
 
@@ -47,7 +49,7 @@ export function transpileOverrides(opts: TranspileOptions): TranspileResult {
 				'tree-sitter': [
 					{
 						scope: `source.${grammar}`,
-						'file-types': []
+						'file-types': fileTypes
 					}
 				]
 			},
@@ -67,7 +69,7 @@ export function transpileOverrides(opts: TranspileOptions): TranspileResult {
 						camelcase: grammarTypePrefix(grammar),
 						scope: `source.${grammar}`,
 						path: '.',
-						'file-types': []
+						'file-types': fileTypes
 					}
 				],
 				metadata: {

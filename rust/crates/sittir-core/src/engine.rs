@@ -379,7 +379,7 @@ impl<G: EngineGrammar> Engine<G> {
             let snippet: String = source.chars().take(80).collect();
             format!("parse failed (source: {snippet:?})")
         })?;
-        let format = extract_format(&source, &tree);
+        let format = extract_format(&source, &tree, &self.options.indent);
         Ok(ParsedTree {
             grammar: self.grammar,
             tree,

@@ -13,9 +13,9 @@ import { TOKEN_INTERIORS } from './consts.js';
 import type { ParsedRoot } from '@sittir/common/engine';
 // Import _NodeData (== AnyNodeData) from @sittir/types
 // instead of re-declaring locally. Single source of truth.
-import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
+import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray, SupertypeSurface } from '@sittir/types';
 import { TSKindId, KIND_NAMES } from './types.js';
-import type * as T from './types.js';
+import type * as T from './types-internal.js';
 import { withMethods } from './utils.js';
 
 // A hydrated read-layer TEXT LEAF: the reader modeled no addressable
@@ -529,8 +529,8 @@ export function wrapDefinition(
 export function wrapGroupExpression(
 	data: T.GroupExpression & { readonly $other?: T.GroupExpression | readonly T.GroupExpression[] },
 	tree: TreeHandle
-): T.GroupExpression.Parsed {
-	if (typeof data === 'number') return data as unknown as T.GroupExpression.Parsed;
+): SupertypeSurface<T.GroupExpression, T.ParsedByKindId> {
+	if (typeof data === 'number') return data as unknown as SupertypeSurface<T.GroupExpression, T.ParsedByKindId>;
 	const node = _keepModelledSlots(data, [
 		'_definition',
 		'_group_expression_arm',
@@ -573,7 +573,10 @@ export function wrapGroupExpression(
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
 	) {
-		return drillInSelf<T.GroupExpression>(node as T.GroupExpression, tree) as unknown as T.GroupExpression.Parsed;
+		return drillInSelf<T.GroupExpression>(node as T.GroupExpression, tree) as unknown as SupertypeSurface<
+			T.GroupExpression,
+			T.ParsedByKindId
+		>;
 	}
 	return drillIn<T.GroupExpression>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
@@ -589,8 +592,8 @@ export function wrapGroupExpression(
 export function wrapNamedNodeExpression(
 	data: T.NamedNodeExpression & { readonly $other?: T.NamedNodeExpression | readonly T.NamedNodeExpression[] },
 	tree: TreeHandle
-): T.NamedNodeExpression.Parsed {
-	if (typeof data === 'number') return data as unknown as T.NamedNodeExpression.Parsed;
+): SupertypeSurface<T.NamedNodeExpression, T.ParsedByKindId> {
+	if (typeof data === 'number') return data as unknown as SupertypeSurface<T.NamedNodeExpression, T.ParsedByKindId>;
 	const node = _keepModelledSlots(data, [
 		'_definition',
 		'_negated_field',
@@ -636,10 +639,10 @@ export function wrapNamedNodeExpression(
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
 	) {
-		return drillInSelf<T.NamedNodeExpression>(
-			node as T.NamedNodeExpression,
-			tree
-		) as unknown as T.NamedNodeExpression.Parsed;
+		return drillInSelf<T.NamedNodeExpression>(node as T.NamedNodeExpression, tree) as unknown as SupertypeSurface<
+			T.NamedNodeExpression,
+			T.ParsedByKindId
+		>;
 	}
 	return drillIn<T.NamedNodeExpression>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
@@ -679,8 +682,8 @@ export function wrapEscapeSequence(data: T.EscapeSequence, tree: TreeHandle): T.
 export function wrapNodeIdentifier(
 	data: T.NodeIdentifier & { readonly $other?: T.NodeIdentifier | readonly T.NodeIdentifier[] },
 	tree: TreeHandle
-): T.NodeIdentifier.Parsed {
-	if (typeof data === 'number') return data as unknown as T.NodeIdentifier.Parsed;
+): SupertypeSurface<T.NodeIdentifier, T.ParsedByKindId> {
+	if (typeof data === 'number') return data as unknown as SupertypeSurface<T.NodeIdentifier, T.ParsedByKindId>;
 	const node = _keepModelledSlots(data, ['_identifier']);
 	const kindKeyed = _firstKindKeyedWrapChild(node, ['identifier']) as
 		| T.NodeIdentifier
@@ -691,7 +694,10 @@ export function wrapNodeIdentifier(
 		filtered === undefined &&
 		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
 	) {
-		return drillInSelf<T.NodeIdentifier>(node as T.NodeIdentifier, tree) as unknown as T.NodeIdentifier.Parsed;
+		return drillInSelf<T.NodeIdentifier>(node as T.NodeIdentifier, tree) as unknown as SupertypeSurface<
+			T.NodeIdentifier,
+			T.ParsedByKindId
+		>;
 	}
 	return drillIn<T.NodeIdentifier>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {

@@ -59,21 +59,6 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TermGroup };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	classAtom<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<
-		T,
-		{
-			readonly $type:
-				| TSKindId.ClassCharacter
-				| TSKindId.CharacterClassEscape
-				| TSKindId.ControlEscape
-				| TSKindId.ControlLetterEscape
-				| TSKindId.IdentityEscape
-				| TSKindId.PosixCharacterClass
-				| TSKindId.ClassRange;
-		}
-	>;
 	inlineFlagsGroup<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is Extract<
@@ -84,12 +69,6 @@ export interface IsGuards {
 				| TSKindId.InlineFlagsGroupToggle
 				| TSKindId.InlineFlagsGroupDisable;
 		}
-	>;
-	characterEscape<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<
-		T,
-		{ readonly $type: TSKindId.ControlEscape | TSKindId.ControlLetterEscape | TSKindId.IdentityEscape }
 	>;
 	whitespace<T extends { readonly $type: string | number } | number>(
 		v: T
@@ -107,9 +86,7 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_classAtom_ids = new Set<number>([20, 73, 76, 41, 42, 59, 61]);
 const _supertype_inlineFlagsGroup_ids = new Set<number>([82, 83, 84]);
-const _supertype_characterEscape_ids = new Set<number>([76, 41, 42]);
 const _supertype_whitespace_ids = new Set<number>([47, 48, 49, 50]);
 
 export const is = Object.freeze({
@@ -131,8 +108,6 @@ export const is = Object.freeze({
 	identityEscape: _g(TSKindId.IdentityEscape),
 	termGroup: _g(TSKindId.TermGroup),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
-	classAtom: _sg(_supertype_classAtom_ids),
 	inlineFlagsGroup: _sg(_supertype_inlineFlagsGroup_ids),
-	characterEscape: _sg(_supertype_characterEscape_ids),
 	whitespace: _sg(_supertype_whitespace_ids)
 }) as unknown as IsGuards;

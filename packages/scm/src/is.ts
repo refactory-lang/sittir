@@ -70,15 +70,6 @@ export interface IsGuards {
 				| TSKindId.FieldDefinition;
 		}
 	>;
-	groupExpression<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: TSKindId.GroupExpressionArm }>;
-	namedNodeExpression<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: TSKindId.NegatedField | TSKindId.NamedNodeExpressionArm }>;
-	nodeIdentifier<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: TSKindId.Identifier }>;
 	namedNode<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: TSKindId.NamedNodePlain | TSKindId.NamedNodeSupertyped }>;
@@ -112,9 +103,6 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 }
 
 const _supertype_definition_ids = new Set<number>([46, 45, 44, 51, 43, 49]);
-const _supertype_groupExpression_ids = new Set<number>([52]);
-const _supertype_namedNodeExpression_ids = new Set<number>([50, 53]);
-const _supertype_nodeIdentifier_ids = new Set<number>([5]);
 const _supertype_namedNode_ids = new Set<number>([56, 57]);
 const _supertype_namedNodeGroup_ids = new Set<number>([58, 59]);
 const _supertype_whitespace_ids = new Set<number>([24, 25, 26, 27, 28, 29, 30, 31]);
@@ -138,9 +126,6 @@ export const is = Object.freeze({
 	namedNodeExpressionArm: _g(TSKindId.NamedNodeExpressionArm),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	definition: _sg(_supertype_definition_ids),
-	groupExpression: _sg(_supertype_groupExpression_ids),
-	namedNodeExpression: _sg(_supertype_namedNodeExpression_ids),
-	nodeIdentifier: _sg(_supertype_nodeIdentifier_ids),
 	namedNode: _sg(_supertype_namedNode_ids),
 	namedNodeGroup: _sg(_supertype_namedNodeGroup_ids),
 	whitespace: _sg(_supertype_whitespace_ids)

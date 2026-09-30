@@ -5,7 +5,11 @@ import type { PythonAPI } from './api.js';
 
 export type { PythonAPI } from './api.js';
 
-const python: Language<PythonAPI> = { name: 'python', load: () => import('./api.js').then((m) => m.hooks) };
+const python: Language<PythonAPI> = {
+	name: 'python',
+	fileTypes: ['py'],
+	load: () => import('./api.js').then((m) => m.hooks)
+};
 export default python;
 
 export type * from './types.js';

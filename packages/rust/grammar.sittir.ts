@@ -55,6 +55,7 @@ export default sittirGrammar(base, {
 		match_block_arms: ($) => seq(repeat($.match_arm), field('last_arm', $.last_match_arm))
 	},
 	options: {
+		indent: preference('    '),
 		body: { before: preference('indent'), after: preference('dedent') },
 		gap: { separator: preference('newline') },
 		field_declaration_list_elements: {

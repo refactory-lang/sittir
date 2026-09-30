@@ -63,6 +63,7 @@ function makeRefineRaw(forms: RefineForm[]): RawGrammar {
 	};
 	return {
 		name: 'synth',
+		fileTypes: [],
 		rules: {
 			iface_body: ifaceBodyRule
 		},
@@ -139,6 +140,7 @@ function makeStringRefineRaw(forms: RefineForm[]): RawGrammar {
 	};
 	return {
 		name: 'synth',
+		fileTypes: [],
 		rules: {
 			string: stringRule,
 			string_fragment: { type: PATTERN, value: '[^"\'\\\\]+' },
@@ -163,6 +165,7 @@ function makeRefineSymbolRaw(forms: RefineForm[], wrapOptional = false): RawGram
 		wrapOptional ? { type: OPTIONAL, content: { type: SYMBOL, name } } : { type: SYMBOL, name };
 	return {
 		name: 'synth',
+		fileTypes: [],
 		rules: {
 			iface_body: {
 				type: SEQ,

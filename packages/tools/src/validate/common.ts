@@ -1246,6 +1246,7 @@ function drillReadNode(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {
 const ARM_ROUTE = Symbol('armRoute');
 const FLATTENED = Symbol('flattened');
 const POSITIONAL = Symbol('positional');
+const SEAT_KIND = Symbol('seatKind');
 
 interface ArmRoute {
 	readonly mount: string;
@@ -1300,6 +1301,15 @@ function elementsSeatOfKind(parentKind: string | undefined, opts: NodeToConfigOp
 	return undefined;
 }
 
+export function withSeatKind<C extends Record<string, unknown>>(config: C, seatKind: string): C {
+	Object.defineProperty(config, SEAT_KIND, { value: seatKind, enumerable: false });
+	return config;
+}
+
+export function seatKindOf(config: unknown): string | undefined {
+	return typeof config === 'object' && config !== null ? (config as { [SEAT_KIND]?: string })[SEAT_KIND] : undefined;
+}
+
 function childOpts(opts: NodeToConfigOpts): NodeToConfigOpts {
 	return { ...opts, _depth: (opts._depth ?? 0) + 1 };
 }
@@ -1316,7 +1326,8 @@ function projectElements(
 			return resolveChild(item, memberValueOpts(opts, parentKind, slotName));
 		}
 		const element = drillReadNode(item as ReadNodeLike, opts);
-		return carryElementTrivia(element, nodeToConfig(element, childOpts(opts)), opts);
+		const config = carryElementTrivia(element, nodeToConfig(element, childOpts(opts)), opts);
+		return withSeatKind(config, seat.kind);
 	});
 }
 

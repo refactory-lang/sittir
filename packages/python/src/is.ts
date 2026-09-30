@@ -416,24 +416,6 @@ export interface IsGuards {
 				| TSKindId.TypeAliasStatement;
 		}
 	>;
-	namedExpressionLhs<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<
-		T,
-		{
-			readonly $type:
-				| TSKindId.Identifier
-				| TSKindId.PrintKeyword
-				| TSKindId.ExecKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.AwaitKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.MatchKeyword;
-		}
-	>;
-	expressions<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: TSKindId.ExpressionList }>;
 	compoundStatement<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is Extract<
@@ -494,9 +476,6 @@ export interface IsGuards {
 				| TSKindId.ListPattern;
 		}
 	>;
-	expressionWithinForInClause<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: TSKindId.LambdaWithinForInClause }>;
 	expression<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is Extract<
@@ -552,18 +531,6 @@ export interface IsGuards {
 	assignment<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped }>;
-	leftHandSide<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: TSKindId.PatternList }>;
-	rightHandSide<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<
-		T,
-		{ readonly $type: TSKindId.ExpressionList | TSKindId.AugmentedAssignment | TSKindId.PatternList | TSKindId.Yield }
-	>;
-	fExpression<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: TSKindId.ExpressionList | TSKindId.PatternList | TSKindId.Yield }>;
 	escapeSequence<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is Extract<
@@ -585,20 +552,6 @@ export interface IsGuards {
 	float<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: TSKindId.FloatPoint | TSKindId.FloatLeadingPoint | TSKindId.FloatScientific }>;
-	keywordIdentifier<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<
-		T,
-		{
-			readonly $type:
-				| TSKindId.PrintKeyword
-				| TSKindId.ExecKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.AwaitKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.MatchKeyword;
-		}
-	>;
 	lineContinuation<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: TSKindId.LineContinuationNewline | TSKindId.LineContinuationNul }>;
@@ -636,27 +589,20 @@ const _supertype_statement_ids = new Set<number>([129, 150, 156, 157, 158, 161, 
 const _supertype_simpleStatement_ids = new Set<number>([
 	133, 130, 134, 138, 140, 141, 144, 145, 146, 147, 148, 149, 169, 170, 171, 172
 ]);
-const _supertype_namedExpressionLhs_ids = new Set<number>([1, 68, 38, 69, 70, 39, 22]);
-const _supertype_expressions_ids = new Set<number>([180]);
 const _supertype_compoundStatement_ids = new Set<number>([150, 156, 157, 158, 161, 164, 173, 177, 153]);
 const _supertype_withClause_ids = new Set<number>([292, 293]);
 const _supertype_suite_ids = new Set<number>([295, 296, 297]);
 const _supertype_parameter_ids = new Set<number>([1, 224, 198, 199, 200, 196, 258, 257, 201]);
 const _supertype_pattern_ids = new Set<number>([1, 68, 38, 69, 70, 39, 22, 221, 220, 200, 196, 197]);
-const _supertype_expressionWithinForInClause_ids = new Set<number>([214]);
 const _supertype_expression_ids = new Set<number>([212, 206, 207, 213, 245, 142, 202]);
 const _supertype_primaryExpression_ids = new Set<number>([
 	256, 208, 1, 68, 38, 69, 70, 39, 22, 247, 246, 71, 72, 73, 209, 220, 221, 223, 232, 237, 235, 238, 233, 239, 234, 241,
 	240, 64, 200
 ]);
 const _supertype_assignment_ids = new Set<number>([288, 289, 290]);
-const _supertype_leftHandSide_ids = new Set<number>([217]);
-const _supertype_rightHandSide_ids = new Set<number>([180, 216, 217, 219]);
-const _supertype_fExpression_ids = new Set<number>([180, 217, 219]);
 const _supertype_escapeSequence_ids = new Set<number>([99, 100, 101, 102, 103, 104, 105]);
 const _supertype_integer_ids = new Set<number>([90, 91, 92]);
 const _supertype_float_ids = new Set<number>([96, 97, 98]);
-const _supertype_keywordIdentifier_ids = new Set<number>([68, 38, 69, 70, 39, 22]);
 const _supertype_lineContinuation_ids = new Set<number>([106, 107]);
 const _supertype_whitespace_ids = new Set<number>([122, 123, 124, 115, 125, 126]);
 const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
@@ -787,24 +733,17 @@ export const is = Object.freeze({
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	statement: _sg(_supertype_statement_ids),
 	simpleStatement: _sg(_supertype_simpleStatement_ids),
-	namedExpressionLhs: _sg(_supertype_namedExpressionLhs_ids),
-	expressions: _sg(_supertype_expressions_ids),
 	compoundStatement: _sg(_supertype_compoundStatement_ids),
 	withClause: _sg(_supertype_withClause_ids),
 	suite: _sg(_supertype_suite_ids),
 	parameter: _sg(_supertype_parameter_ids),
 	pattern: _sg(_supertype_pattern_ids),
-	expressionWithinForInClause: _sg(_supertype_expressionWithinForInClause_ids),
 	expression: _sg(_supertype_expression_ids),
 	primaryExpression: _sg(_supertype_primaryExpression_ids),
 	assignment: _sg(_supertype_assignment_ids),
-	leftHandSide: _sg(_supertype_leftHandSide_ids),
-	rightHandSide: _sg(_supertype_rightHandSide_ids),
-	fExpression: _sg(_supertype_fExpression_ids),
 	escapeSequence: _sg(_supertype_escapeSequence_ids),
 	integer: _sg(_supertype_integer_ids),
 	float: _sg(_supertype_float_ids),
-	keywordIdentifier: _sg(_supertype_keywordIdentifier_ids),
 	lineContinuation: _sg(_supertype_lineContinuation_ids),
 	whitespace: _sg(_supertype_whitespace_ids),
 	integerDecimal: _sg(_supertype_integerDecimal_ids)

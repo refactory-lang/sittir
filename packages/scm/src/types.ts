@@ -792,12 +792,6 @@ export type Dedent = TSKindId.Dedent;
 // Supertype unions
 export type Definition = NamedNode | AnonymousNode | MissingNode | Grouping | Predicate | List | FieldDefinition;
 
-export type GroupExpression = Definition | GroupExpressionArm;
-
-export type NamedNodeExpression = Definition | NegatedField | NamedNodeExpressionArm;
-
-export type NodeIdentifier = Identifier;
-
 export type NamedNode = NamedNodePlain | NamedNodeSupertyped;
 
 export type NamedNodeGroup = NamedNodeGroupChildren | NamedNodeGroupAnchoredLast;
@@ -808,24 +802,6 @@ export namespace Definition {
 	export type Kind = 'definition';
 	export type Bound = SupertypeSurface<Definition, BoundByKindId>;
 	export type Parsed = SupertypeSurface<Definition, ParsedByKindId>;
-}
-
-export namespace GroupExpression {
-	export type Kind = '_group_expression';
-	export type Bound = SupertypeSurface<GroupExpression, BoundByKindId>;
-	export type Parsed = SupertypeSurface<GroupExpression, ParsedByKindId>;
-}
-
-export namespace NamedNodeExpression {
-	export type Kind = '_named_node_expression';
-	export type Bound = SupertypeSurface<NamedNodeExpression, BoundByKindId>;
-	export type Parsed = SupertypeSurface<NamedNodeExpression, ParsedByKindId>;
-}
-
-export namespace NodeIdentifier {
-	export type Kind = '_node_identifier';
-	export type Bound = SupertypeSurface<NodeIdentifier, BoundByKindId>;
-	export type Parsed = SupertypeSurface<NodeIdentifier, ParsedByKindId>;
 }
 
 export namespace NamedNode {
@@ -1175,7 +1151,7 @@ export interface ProgramNs extends NodeNs<
 	Program.BuildArgs,
 	Program.LooseArgs,
 	never,
-	'program',
+	TSKindId.Program,
 	Program.Parsed,
 	EmptyProgram
 > {}
@@ -1188,7 +1164,7 @@ export interface EscapeSequenceNs extends NodeNs<
 	EscapeSequence.BuildArgs,
 	EscapeSequence.LooseArgs,
 	'content',
-	'escape_sequence',
+	TSKindId.EscapeSequence,
 	EscapeSequence.Parsed,
 	never
 > {}
@@ -1201,7 +1177,7 @@ export interface CaptureNs extends NodeNs<
 	Capture.BuildArgs,
 	Capture.LooseArgs,
 	'name',
-	'capture',
+	TSKindId.Capture,
 	Capture.Parsed,
 	never
 > {}
@@ -1214,7 +1190,7 @@ export interface StringNs extends NodeNs<
 	String.BuildArgs,
 	String.LooseArgs,
 	'string_content',
-	'string',
+	TSKindId.String,
 	String.Parsed,
 	never
 > {}
@@ -1227,7 +1203,7 @@ export interface ImmediateStringNs extends NodeNs<
 	ImmediateString.BuildArgs,
 	ImmediateString.LooseArgs,
 	'string_content',
-	'immediate_string',
+	TSKindId.ImmediateString,
 	ImmediateString.Parsed,
 	never
 > {}
@@ -1240,7 +1216,7 @@ export interface StringContentNs extends NodeNs<
 	StringContent.BuildArgs,
 	StringContent.LooseArgs,
 	never,
-	'string_content',
+	TSKindId.StringContent,
 	StringContent.Parsed,
 	never
 > {}
@@ -1253,7 +1229,7 @@ export interface ParametersNs extends NodeNs<
 	Parameters.BuildArgs,
 	Parameters.LooseArgs,
 	never,
-	'parameters',
+	TSKindId.Parameters,
 	Parameters.Parsed,
 	never
 > {}
@@ -1266,7 +1242,7 @@ export interface CommentNs extends NodeNs<
 	Comment.BuildArgs,
 	Comment.LooseArgs,
 	'content',
-	'comment',
+	TSKindId.Comment,
 	Comment.Parsed,
 	never
 > {}
@@ -1279,7 +1255,7 @@ export interface ListNs extends NodeNs<
 	List.BuildArgs,
 	List.LooseArgs,
 	never,
-	'list',
+	TSKindId.List,
 	List.Parsed,
 	never
 > {}
@@ -1292,7 +1268,7 @@ export interface GroupingNs extends NodeNs<
 	Grouping.BuildArgs,
 	Grouping.LooseArgs,
 	never,
-	'grouping',
+	TSKindId.Grouping,
 	Grouping.Parsed,
 	never
 > {}
@@ -1305,7 +1281,7 @@ export interface MissingNodeNs extends NodeNs<
 	MissingNode.BuildArgs,
 	MissingNode.LooseArgs,
 	never,
-	'missing_node',
+	TSKindId.MissingNode,
 	MissingNode.Parsed,
 	EmptyMissingNode
 > {}
@@ -1318,7 +1294,7 @@ export interface AnonymousNodeNs extends NodeNs<
 	AnonymousNode.BuildArgs,
 	AnonymousNode.LooseArgs,
 	never,
-	'anonymous_node',
+	TSKindId.AnonymousNode,
 	AnonymousNode.Parsed,
 	never
 > {}
@@ -1331,7 +1307,7 @@ export interface FieldDefinitionNs extends NodeNs<
 	FieldDefinition.BuildArgs,
 	FieldDefinition.LooseArgs,
 	never,
-	'field_definition',
+	TSKindId.FieldDefinition,
 	FieldDefinition.Parsed,
 	never
 > {}
@@ -1344,7 +1320,7 @@ export interface NegatedFieldNs extends NodeNs<
 	NegatedField.BuildArgs,
 	NegatedField.LooseArgs,
 	'identifier',
-	'negated_field',
+	TSKindId.NegatedField,
 	NegatedField.Parsed,
 	never
 > {}
@@ -1357,7 +1333,7 @@ export interface PredicateNs extends NodeNs<
 	Predicate.BuildArgs,
 	Predicate.LooseArgs,
 	never,
-	'predicate',
+	TSKindId.Predicate,
 	Predicate.Parsed,
 	never
 > {}
@@ -1370,7 +1346,7 @@ export interface GroupExpressionArmNs extends NodeNs<
 	GroupExpressionArm.BuildArgs,
 	GroupExpressionArm.LooseArgs,
 	never,
-	'group_expression_arm',
+	TSKindId.GroupExpressionArm,
 	GroupExpressionArm.Parsed,
 	never
 > {}
@@ -1383,7 +1359,7 @@ export interface NamedNodeExpressionArmNs extends NodeNs<
 	NamedNodeExpressionArm.BuildArgs,
 	NamedNodeExpressionArm.LooseArgs,
 	never,
-	'named_node_expression_arm',
+	TSKindId.NamedNodeExpressionArm,
 	NamedNodeExpressionArm.Parsed,
 	never
 > {}
@@ -1396,7 +1372,7 @@ export interface GroupingGroupNs extends NodeNs<
 	GroupingGroup.BuildArgs,
 	GroupingGroup.LooseArgs,
 	'group_expression',
-	'grouping_group',
+	TSKindId.GroupingGroup,
 	GroupingGroup.Parsed,
 	never
 > {}
@@ -1409,7 +1385,7 @@ export interface NamedNodePlainNs extends NodeNs<
 	NamedNodePlain.BuildArgs,
 	NamedNodePlain.LooseArgs,
 	never,
-	'named_node_plain',
+	TSKindId.NamedNodePlain,
 	NamedNodePlain.Parsed,
 	never
 > {}
@@ -1422,7 +1398,7 @@ export interface NamedNodeSupertypedNs extends NodeNs<
 	NamedNodeSupertyped.BuildArgs,
 	NamedNodeSupertyped.LooseArgs,
 	never,
-	'named_node_supertyped',
+	TSKindId.NamedNodeSupertyped,
 	NamedNodeSupertyped.Parsed,
 	never
 > {}
@@ -1435,7 +1411,7 @@ export interface NamedNodeGroupChildrenNs extends NodeNs<
 	NamedNodeGroupChildren.BuildArgs,
 	NamedNodeGroupChildren.LooseArgs,
 	never,
-	'named_node_group_children',
+	TSKindId.NamedNodeGroupChildren,
 	NamedNodeGroupChildren.Parsed,
 	never
 > {}
@@ -1448,24 +1424,24 @@ export interface NamedNodeGroupAnchoredLastNs extends NodeNs<
 	NamedNodeGroupAnchoredLast.BuildArgs,
 	NamedNodeGroupAnchoredLast.LooseArgs,
 	never,
-	'named_node_group_anchored_last',
+	TSKindId.NamedNodeGroupAnchoredLast,
 	NamedNodeGroupAnchoredLast.Parsed,
 	never
 > {}
-export interface TightNs extends KeywordNs<TSKindId.Tight, '', '_tight'> {}
-export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', '_space'> {}
-export interface TabNs extends KeywordNs<TSKindId.Tab, '\t', '_tab'> {}
-export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', '_newline'> {}
-export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', '_blankline'> {}
-export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', '_double_blankline'> {}
-export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', '_indent'> {}
-export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', '_dedent'> {}
-export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Bound, 'identifier'> {}
+export interface TightNs extends KeywordNs<TSKindId.Tight, '', TSKindId.Tight> {}
+export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', TSKindId.Space> {}
+export interface TabNs extends KeywordNs<TSKindId.Tab, '\t', TSKindId.Tab> {}
+export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', TSKindId.Newline> {}
+export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', TSKindId.Blankline> {}
+export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', TSKindId.DoubleBlankline> {}
+export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', TSKindId.Indent> {}
+export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', TSKindId.Dedent> {}
+export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Bound, TSKindId.Identifier> {}
 export interface ImmediateIdentifierNs extends LeafNs<
 	ImmediateIdentifier,
 	string,
 	ImmediateIdentifier.Bound,
-	'_immediate_identifier'
+	TSKindId.ImmediateIdentifier
 > {}
 
 export interface NamespaceMap {
@@ -1645,7 +1621,7 @@ export namespace Program {
 	export type LooseConfig = LooseConfigFor<TSKindId.Program>;
 	export type BuildArgs = [...children: AdmitBound<T.Definition[], T.AdmittedNodes>];
 	export type LooseArgs = [...children: LooseValue<T.Definition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
-	export type Kind = 'program';
+	export type Kind = TSKindId.Program;
 }
 export namespace EscapeSequence {
 	export type Config = ConfigFor<TSKindId.EscapeSequence>;
@@ -1661,7 +1637,7 @@ export namespace EscapeSequence {
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequence>;
 	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'escape_sequence';
+	export type Kind = TSKindId.EscapeSequence;
 }
 export namespace Capture {
 	export type Config = ConfigFor<TSKindId.Capture>;
@@ -1677,7 +1653,7 @@ export namespace Capture {
 	export type LooseConfig = LooseConfigFor<TSKindId.Capture>;
 	export type BuildArgs = [value: AdmitBound<T.ImmediateIdentifier, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.ImmediateIdentifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'capture';
+	export type Kind = TSKindId.Capture;
 }
 export namespace String {
 	export type Config = ConfigFor<TSKindId.String>;
@@ -1693,7 +1669,7 @@ export namespace String {
 	export type LooseConfig = LooseConfigFor<TSKindId.String>;
 	export type BuildArgs = [value?: AdmitBound<T.StringContent, T.AdmittedNodes>];
 	export type LooseArgs = [value?: LooseValue<T.StringContent, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'string';
+	export type Kind = TSKindId.String;
 }
 export namespace ImmediateString {
 	export type Config = ConfigFor<TSKindId.ImmediateString>;
@@ -1709,7 +1685,7 @@ export namespace ImmediateString {
 	export type LooseConfig = LooseConfigFor<TSKindId.ImmediateString>;
 	export type BuildArgs = [value?: AdmitBound<T.StringContent, T.AdmittedNodes>];
 	export type LooseArgs = [value?: LooseValue<T.StringContent, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'immediate_string';
+	export type Kind = TSKindId.ImmediateString;
 }
 export namespace StringContent {
 	export type Config = ConfigFor<TSKindId.StringContent>;
@@ -1727,7 +1703,7 @@ export namespace StringContent {
 	export type LooseArgs = [
 		...children: LooseValue<'[^"\\\\\\n]+' | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Kind = 'string_content';
+	export type Kind = TSKindId.StringContent;
 }
 export namespace Parameters {
 	export type Config = ConfigFor<TSKindId.Parameters>;
@@ -1745,7 +1721,7 @@ export namespace Parameters {
 	export type LooseArgs = [
 		...children: LooseValue<T.Capture | T.String | T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Kind = 'parameters';
+	export type Kind = TSKindId.Parameters;
 }
 export namespace Comment {
 	export type Config = ConfigFor<TSKindId.Comment>;
@@ -1761,7 +1737,7 @@ export namespace Comment {
 	export type LooseConfig = LooseConfigFor<TSKindId.Comment>;
 	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'comment';
+	export type Kind = TSKindId.Comment;
 }
 export namespace List {
 	export type Config = ConfigFor<TSKindId.List>;
@@ -1781,7 +1757,7 @@ export namespace List {
 			| LooseConfigOf<T.List, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.List, T.AdmittedNodes>
 	];
-	export type Kind = 'list';
+	export type Kind = TSKindId.List;
 }
 export namespace Grouping {
 	export type Config = ConfigFor<TSKindId.Grouping>;
@@ -1801,7 +1777,7 @@ export namespace Grouping {
 			| LooseConfigOf<T.Grouping, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.Grouping, T.AdmittedNodes>
 	];
-	export type Kind = 'grouping';
+	export type Kind = TSKindId.Grouping;
 }
 export namespace MissingNode {
 	export type Config = ConfigFor<TSKindId.MissingNode>;
@@ -1821,7 +1797,7 @@ export namespace MissingNode {
 			| LooseConfigOf<T.MissingNode, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.MissingNode, T.AdmittedNodes>
 	];
-	export type Kind = 'missing_node';
+	export type Kind = TSKindId.MissingNode;
 }
 export namespace AnonymousNode {
 	export type Config = ConfigFor<TSKindId.AnonymousNode>;
@@ -1841,7 +1817,7 @@ export namespace AnonymousNode {
 			| LooseConfigOf<T.AnonymousNode, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.AnonymousNode, T.AdmittedNodes>
 	];
-	export type Kind = 'anonymous_node';
+	export type Kind = TSKindId.AnonymousNode;
 }
 export namespace FieldDefinition {
 	export type Config = ConfigFor<TSKindId.FieldDefinition>;
@@ -1861,7 +1837,7 @@ export namespace FieldDefinition {
 			| LooseConfigOf<T.FieldDefinition, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.FieldDefinition, T.AdmittedNodes>
 	];
-	export type Kind = 'field_definition';
+	export type Kind = TSKindId.FieldDefinition;
 }
 export namespace NegatedField {
 	export type Config = ConfigFor<TSKindId.NegatedField>;
@@ -1877,7 +1853,7 @@ export namespace NegatedField {
 	export type LooseConfig = LooseConfigFor<TSKindId.NegatedField>;
 	export type BuildArgs = [value: AdmitBound<T.Identifier, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'negated_field';
+	export type Kind = TSKindId.NegatedField;
 }
 export namespace Predicate {
 	export type Config = ConfigFor<TSKindId.Predicate>;
@@ -1897,7 +1873,7 @@ export namespace Predicate {
 			| LooseConfigOf<T.Predicate, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.Predicate, T.AdmittedNodes>
 	];
-	export type Kind = 'predicate';
+	export type Kind = TSKindId.Predicate;
 }
 export namespace GroupExpressionArm {
 	export type Config = ConfigFor<TSKindId.GroupExpressionArm>;
@@ -1917,7 +1893,7 @@ export namespace GroupExpressionArm {
 			| LooseConfigOf<T.GroupExpressionArm, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.GroupExpressionArm, T.AdmittedNodes>
 	];
-	export type Kind = 'group_expression_arm';
+	export type Kind = TSKindId.GroupExpressionArm;
 }
 export namespace NamedNodeExpressionArm {
 	export type Config = ConfigFor<TSKindId.NamedNodeExpressionArm>;
@@ -1937,7 +1913,7 @@ export namespace NamedNodeExpressionArm {
 			| LooseConfigOf<T.NamedNodeExpressionArm, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.NamedNodeExpressionArm, T.AdmittedNodes>
 	];
-	export type Kind = 'named_node_expression_arm';
+	export type Kind = TSKindId.NamedNodeExpressionArm;
 }
 export namespace GroupingGroup {
 	export type Config = ConfigFor<TSKindId.GroupingGroup>;
@@ -1955,7 +1931,7 @@ export namespace GroupingGroup {
 	export type LooseArgs = [
 		value: LooseValue<T.Definition | T.GroupExpressionArm, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'grouping_group';
+	export type Kind = TSKindId.GroupingGroup;
 }
 export namespace NamedNodePlain {
 	export type Config = ConfigFor<TSKindId.NamedNodePlain>;
@@ -1975,7 +1951,7 @@ export namespace NamedNodePlain {
 			| LooseConfigOf<T.NamedNodePlain, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.NamedNodePlain, T.AdmittedNodes>
 	];
-	export type Kind = 'named_node_plain';
+	export type Kind = TSKindId.NamedNodePlain;
 }
 export namespace NamedNodeSupertyped {
 	export type Config = ConfigFor<TSKindId.NamedNodeSupertyped>;
@@ -1995,7 +1971,7 @@ export namespace NamedNodeSupertyped {
 			| LooseConfigOf<T.NamedNodeSupertyped, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.NamedNodeSupertyped, T.AdmittedNodes>
 	];
-	export type Kind = 'named_node_supertyped';
+	export type Kind = TSKindId.NamedNodeSupertyped;
 }
 export namespace NamedNodeGroupChildren {
 	export type Config = ConfigFor<TSKindId.NamedNodeGroupChildren>;
@@ -2020,7 +1996,7 @@ export namespace NamedNodeGroupChildren {
 			T.NamespaceMap
 		>[]
 	];
-	export type Kind = 'named_node_group_children';
+	export type Kind = TSKindId.NamedNodeGroupChildren;
 }
 export namespace NamedNodeGroupAnchoredLast {
 	export type Config = ConfigFor<TSKindId.NamedNodeGroupAnchoredLast>;
@@ -2040,7 +2016,7 @@ export namespace NamedNodeGroupAnchoredLast {
 			| LooseConfigOf<T.NamedNodeGroupAnchoredLast, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.NamedNodeGroupAnchoredLast, T.AdmittedNodes>
 	];
-	export type Kind = 'named_node_group_anchored_last';
+	export type Kind = TSKindId.NamedNodeGroupAnchoredLast;
 }
 export namespace Tight {
 	export type Config = TightNs['Config'];
@@ -2050,7 +2026,7 @@ export namespace Tight {
 	export type LooseConfig = TightNs['LooseConfig'];
 	export type BuildArgs = TightNs['BuildArgs'];
 	export type LooseArgs = TightNs['LooseArgs'];
-	export type Kind = '_tight';
+	export type Kind = TSKindId.Tight;
 }
 export namespace Space {
 	export type Config = SpaceNs['Config'];
@@ -2060,7 +2036,7 @@ export namespace Space {
 	export type LooseConfig = SpaceNs['LooseConfig'];
 	export type BuildArgs = SpaceNs['BuildArgs'];
 	export type LooseArgs = SpaceNs['LooseArgs'];
-	export type Kind = '_space';
+	export type Kind = TSKindId.Space;
 }
 export namespace Tab {
 	export type Config = TabNs['Config'];
@@ -2070,7 +2046,7 @@ export namespace Tab {
 	export type LooseConfig = TabNs['LooseConfig'];
 	export type BuildArgs = TabNs['BuildArgs'];
 	export type LooseArgs = TabNs['LooseArgs'];
-	export type Kind = '_tab';
+	export type Kind = TSKindId.Tab;
 }
 export namespace Newline {
 	export type Config = NewlineNs['Config'];
@@ -2080,7 +2056,7 @@ export namespace Newline {
 	export type LooseConfig = NewlineNs['LooseConfig'];
 	export type BuildArgs = NewlineNs['BuildArgs'];
 	export type LooseArgs = NewlineNs['LooseArgs'];
-	export type Kind = '_newline';
+	export type Kind = TSKindId.Newline;
 }
 export namespace Blankline {
 	export type Config = BlanklineNs['Config'];
@@ -2090,7 +2066,7 @@ export namespace Blankline {
 	export type LooseConfig = BlanklineNs['LooseConfig'];
 	export type BuildArgs = BlanklineNs['BuildArgs'];
 	export type LooseArgs = BlanklineNs['LooseArgs'];
-	export type Kind = '_blankline';
+	export type Kind = TSKindId.Blankline;
 }
 export namespace DoubleBlankline {
 	export type Config = DoubleBlanklineNs['Config'];
@@ -2100,7 +2076,7 @@ export namespace DoubleBlankline {
 	export type LooseConfig = DoubleBlanklineNs['LooseConfig'];
 	export type BuildArgs = DoubleBlanklineNs['BuildArgs'];
 	export type LooseArgs = DoubleBlanklineNs['LooseArgs'];
-	export type Kind = '_double_blankline';
+	export type Kind = TSKindId.DoubleBlankline;
 }
 export namespace Indent {
 	export type Config = IndentNs['Config'];
@@ -2110,7 +2086,7 @@ export namespace Indent {
 	export type LooseConfig = IndentNs['LooseConfig'];
 	export type BuildArgs = IndentNs['BuildArgs'];
 	export type LooseArgs = IndentNs['LooseArgs'];
-	export type Kind = '_indent';
+	export type Kind = TSKindId.Indent;
 }
 export namespace Dedent {
 	export type Config = DedentNs['Config'];
@@ -2120,7 +2096,7 @@ export namespace Dedent {
 	export type LooseConfig = DedentNs['LooseConfig'];
 	export type BuildArgs = DedentNs['BuildArgs'];
 	export type LooseArgs = DedentNs['LooseArgs'];
-	export type Kind = '_dedent';
+	export type Kind = TSKindId.Dedent;
 }
 export namespace Identifier {
 	export type Config = IdentifierNs['Config'];
@@ -2135,7 +2111,7 @@ export namespace Identifier {
 	export type LooseConfig = IdentifierNs['LooseConfig'];
 	export type BuildArgs = IdentifierNs['BuildArgs'];
 	export type LooseArgs = IdentifierNs['LooseArgs'];
-	export type Kind = 'identifier';
+	export type Kind = TSKindId.Identifier;
 }
 export namespace ImmediateIdentifier {
 	export type Config = ImmediateIdentifierNs['Config'];
@@ -2150,7 +2126,7 @@ export namespace ImmediateIdentifier {
 	export type LooseConfig = ImmediateIdentifierNs['LooseConfig'];
 	export type BuildArgs = ImmediateIdentifierNs['BuildArgs'];
 	export type LooseArgs = ImmediateIdentifierNs['LooseArgs'];
-	export type Kind = '_immediate_identifier';
+	export type Kind = TSKindId.ImmediateIdentifier;
 }
 
 export interface ScmTypeMap extends GrammarTypeMap {

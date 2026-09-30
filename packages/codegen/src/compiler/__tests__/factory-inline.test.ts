@@ -12,6 +12,7 @@ import { wire } from '../../dsl/wire/wire.ts';
 import type { AssembledNodeMap } from '../assemble.ts';
 import { emptyBase } from '../../__tests__/helpers/empty-base.ts';
 import { grammarPackage } from '../../grammars.ts';
+import { NO_FILE_TYPES } from '../upstream-file-types.ts';
 
 // evaluate() reads a module from disk, so an inline grammar has to become a
 // real file. The chain below mirrors generate()'s own phase order.
@@ -21,7 +22,7 @@ async function compileGrammarSource(source: string): Promise<AssembledNodeMap> {
 	writeFileSync(entry, source, 'utf8');
 	try {
 		const diagnostics = new DiagnosticSink();
-		const raw = await evaluate(entry);
+		const raw = await evaluate(entry, NO_FILE_TYPES);
 		const linked = link(raw, { diagnostics });
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized, undefined, diagnostics));
@@ -66,7 +67,7 @@ describe('factoryInline', () => {
 		const entry = resolve(dir, 'grammar.js');
 		writeFileSync(entry, nestableGrammar(',\n  factoryInline: ($) => [$.in_path]'), 'utf8');
 		try {
-			const raw = await evaluate(entry);
+			const raw = await evaluate(entry, NO_FILE_TYPES);
 			expect(raw.factoryInline).toEqual(['in_path']);
 			expect(link(raw).factoryInline).toEqual(new Set(['in_path']));
 		} finally {

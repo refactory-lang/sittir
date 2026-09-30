@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { execFileSync } from 'node:child_process';
 import { existsSync, unlinkSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { appendHistory, readHistory, historyPath } from '../src/history.ts';
@@ -50,6 +51,14 @@ describe('@sittir/validator history surface', () => {
 	it('exports appendHistory as a function', () => {
 		expect(typeof appendHistory).toBe('function');
 	});
+
+	it('git merges the history file by union, so two branches\' appended runs never conflict', () => {
+		const attr = execFileSync('git', ['check-attr', 'merge', '--', REAL_HISTORY], {
+			cwd: dirname(REAL_HISTORY),
+			encoding: 'utf8'
+		});
+		expect(attr.trim().endsWith(': merge: union')).toBe(true);
+	});
 });
 
 describe('@sittir/validator history round-trip (scratch file)', () => {
@@ -80,6 +89,13 @@ describe('@sittir/validator history round-trip (scratch file)', () => {
 		const runs = readHistory();
 		expect(runs).toHaveLength(3);
 		expect(runs.map((r) => r.grammar)).toEqual(['rust', 'typescript', 'python']);
+	});
+
+	it('readHistory orders runs by ts, whatever their order in the file', () => {
+		appendHistory(makeEntry({ grammar: 'python', ts: '2026-01-02T00:00:00.000Z' }));
+		appendHistory(makeEntry({ grammar: 'rust', ts: '2026-01-01T00:00:00.000Z' }));
+		appendHistory(makeEntry({ grammar: 'typescript', ts: '2026-01-03T00:00:00.000Z' }));
+		expect(readHistory().map((r) => r.grammar)).toEqual(['rust', 'python', 'typescript']);
 	});
 
 	it('readHistory skips schema/header lines', () => {

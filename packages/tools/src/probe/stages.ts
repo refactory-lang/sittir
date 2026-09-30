@@ -43,7 +43,6 @@
  *   5. Assemble's field→slot mapping.
  */
 
-import { existsSync } from 'node:fs';
 import { load } from '../codegen-surface.ts';
 import { REPO_ROOT } from '@sittir/codegen/grammars';
 
@@ -60,11 +59,11 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 	const grammar = opts.grammar;
 	const kind = opts.kind;
 
-	const { resolveGrammarJsPath, resolveOverridesPath } = await load('resolveGrammar');
-	const overridesPath = resolveOverridesPath(grammar);
-	const grammarJsPath = resolveGrammarJsPath(grammar);
-	const useOverrides = !opts.noOverrides && existsSync(overridesPath);
-	const entryPath = useOverrides ? overridesPath : grammarJsPath;
+	const { grammarPackage } = await load('grammars');
+	const { packageSourceEntry } = await load('resolveGrammar');
+	const pkg = grammarPackage(grammar);
+	const source = { base: opts.noOverrides };
+	const entryPath = packageSourceEntry(pkg, source);
 
 	const stages: Record<string, unknown> = {
 		grammar,
@@ -77,8 +76,8 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 	console.log = (...a: unknown[]) => void process.stderr.write(a.map(String).join(' ') + '\n');
 	console.warn = (...a: unknown[]) => void process.stderr.write(a.map(String).join(' ') + '\n');
 
-	const { evaluate } = await load('evaluate');
-	const raw = await evaluate(entryPath);
+	const { evaluatePackage } = await load('evaluatePackage');
+	const raw = await evaluatePackage(pkg, source);
 	stages.evaluate = raw.rules[kind] ?? null;
 
 	const { link } = await load('link');

@@ -7,6 +7,7 @@ import { link } from '../link.ts';
 function raw(rules: Record<string, Rule<'evaluate'>>): RawGrammar {
 	return {
 		name: 'synth',
+		fileTypes: [],
 		rules,
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
 		extras: [],

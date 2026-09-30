@@ -13,7 +13,7 @@ import type { GrammarName } from '../grammars.ts';
 import { FactoryEmitter } from './factories.ts';
 import { FromEmitter } from './from.ts';
 import { WrapEmitter } from './wrap.ts';
-import { emitTypes } from './types.ts';
+import { emitTypesModules } from './types.ts';
 import { emitConsts } from './consts.ts';
 import { addressTablesFor, emitOptions, renderOptionsModule } from './options.ts';
 import { indentChars } from '../compiler/model/whitespace-arms.ts';
@@ -68,6 +68,7 @@ export interface EmitAllResult {
 	from: string;
 	wrap: string;
 	types: string;
+	typesInternal: string;
 	consts: string;
 	options: string;
 	irNamespace: string;
@@ -179,7 +180,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const templates = templateEmitter.finalize();
 	const renderModule = renderModuleEmitterInst?.finalize(templates);
 
-	const types = emitTypes({ grammar, nodeMap, generatedIdTables, sites: sitePreferences, addresses: addressTables, triviaKinds });
+	const { types, internal: typesInternal } = emitTypesModules({ grammar, nodeMap, generatedIdTables, sites: sitePreferences, addresses: addressTables, triviaKinds });
 	const consts = emitConsts({ grammar, nodeMap });
 	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule({ indentChars: indentChars(nodeMap) });
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
@@ -203,6 +204,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		from,
 		wrap,
 		types,
+		typesInternal,
 		consts,
 		options,
 		irNamespace,

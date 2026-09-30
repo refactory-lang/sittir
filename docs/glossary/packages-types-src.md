@@ -94,6 +94,8 @@ The type-level shape of one language: its name, builder table, guards, kind ids,
 
 A language descriptor: the light default export of a grammar package. `load()` imports the implementation and resolves its hooks. `__api` is a type-only brand carrying the `LanguageAPI` and is never set at run time.
 
+It carries `fileTypes`, the file types the grammar declares upstream (an empty list when it declares none), stamped by the generator from the model.
+
 ### `packages/types/src/engine-api.ts::NativeEngineOptions`
 
 The options a language's native engine is created with: the format record and the render options under `options`. It is the native boundary's shape only; `createEngine` maps its own `render` option onto `options`.

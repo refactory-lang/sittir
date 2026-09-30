@@ -12,3 +12,6 @@ A union of names matches the first overload and yields `Language` of a union of 
 
 Each grammar package's exported API type, keyed by the grammar's name. It is the one type-level list of grammars in tools; `languages.test.ts` pins its keys to the grammars found on disk (`allGrammars()`), and `bootstrap-grammar` adds the row for a new grammar.
 
+### `packages/tools/src/codegen-surface.ts::evaluateGrammar`
+
+Evaluates a grammar package by name through codegen's `evaluatePackage`, so every probe and diagnostic tool builds its model with the package's real file types and entry choice; `base` selects the upstream `grammar.js` where a tool offers to show it before overrides. `buildSimplifiedGrammar`, `buildNodeMap`, the refs, stages and grammar-diagnostics tools all start here, and none resolves an entry path or passes file types itself.

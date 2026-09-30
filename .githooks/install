@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Installs every tracked hook into the repository's hooks directory. A hook
+# already there that sittir does not manage is moved aside to
+# <name>.pre-sittir rather than overwritten.
+set -euo pipefail
+src="$(cd "$(dirname "$0")" && pwd)"
+dest="$(git rev-parse --path-format=absolute --git-path hooks)"
+mkdir -p "$dest"
+for hook in "$src"/*; do
+	name="$(basename "$hook")"
+	[ "$name" = install ] && continue
+	target="$dest/$name"
+	if [ -e "$target" ] && ! grep -q '^# sittir-managed-hook$' "$target"; then
+		mv "$target" "$target.pre-sittir"
+		echo "hooks: kept your existing $name as $name.pre-sittir" >&2
+	fi
+	cp "$hook" "$target"
+	chmod +x "$target"
+done

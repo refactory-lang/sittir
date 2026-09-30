@@ -8,7 +8,7 @@ import {
 	AssembledSupertype,
 	AssembledPattern
 } from '../compiler/model/node-map.ts';
-import { isValidIdent, irNamespacesChildFactory, lexedContentSlot } from './shared.ts';
+import { isValidIdent, irNamespacesChildFactory, lexedContentSlot, isDeclaredSupertype } from './shared.ts';
 import { supertypeMemberName } from '../dsl/arm-names.ts';
 import { lowerCamelCase } from '../compiler/model/casing.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
@@ -78,7 +78,7 @@ export function emitIr(config: EmitIrConfig): string {
 	const flattenedKeyByKind = new Map(flattenedParents.map((parent) => [parent.node.kind, parent.key] as const));
 
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledSupertype) || !node.declared || flattenedKinds.has(kind)) continue;
+		if (!isDeclaredSupertype(node) || flattenedKinds.has(kind)) continue;
 		const sup = node;
 		const groupName = groupNameFor(kind);
 		if (!isValidIdent(groupName) || usedGroupNames.has(groupName)) continue;

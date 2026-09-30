@@ -496,9 +496,6 @@ export interface IsGuards {
 				| TSKindId.ExportStatementNamespaceExport;
 		}
 	>;
-	moduleExportName<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: TSKindId.Identifier }>;
 	declaration<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is Extract<
@@ -565,9 +562,6 @@ export interface IsGuards {
 		T,
 		{ readonly $type: TSKindId.ParenthesizedExpressionTyped | TSKindId.ParenthesizedExpressionSequence }
 	>;
-	expressions<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: TSKindId.SequenceExpression }>;
 	expression<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is Extract<
@@ -637,9 +631,6 @@ export interface IsGuards {
 				| TSKindId.NonNullExpression;
 		}
 	>;
-	formalParameter<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: TSKindId.RequiredParameter | TSKindId.OptionalParameter }>;
 	callExpression<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is Extract<
@@ -648,43 +639,6 @@ export interface IsGuards {
 			readonly $type: TSKindId.CallExpressionCall | TSKindId.CallExpressionTemplateCall | TSKindId.CallExpressionMember;
 		}
 	>;
-	augmentedAssignmentLhs<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<
-		T,
-		{
-			readonly $type:
-				| TSKindId.MemberExpression
-				| TSKindId.SubscriptExpression
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| TSKindId.Identifier
-				| TSKindId.NonNullExpression;
-		}
-	>;
-	destructuringPattern<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: TSKindId.ObjectPattern | TSKindId.ArrayPattern }>;
 	updateExpression<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix }>;
@@ -709,38 +663,17 @@ export interface IsGuards {
 				| TSKindId.NumberOctal;
 		}
 	>;
-	identifier<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: TSKindId.Undefined | TSKindId.Identifier }>;
 	metaProperty<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta }>;
 	pattern<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: TSKindId.LhsExpression | TSKindId.RestPattern }>;
-	propertyName<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: TSKindId.PrivatePropertyIdentifier | TSKindId.ComputedPropertyName }>;
-	importIdentifier<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: TSKindId.Identifier | TSKindId.TypeKeyword }>;
 	type<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is Extract<
 		T,
 		{ readonly $type: TSKindId.FunctionType | TSKindId.ReadonlyType | TSKindId.ConstructorType | TSKindId.InferType }
-	>;
-	tupleTypeMember<T extends { readonly $type: string | number } | number>(
-		v: T
-	): v is Extract<
-		T,
-		{
-			readonly $type:
-				| TSKindId.TupleParameter
-				| TSKindId.OptionalTupleParameter
-				| TSKindId.OptionalType
-				| TSKindId.RestType;
-		}
 	>;
 	primaryType<T extends { readonly $type: string | number } | number>(
 		v: T
@@ -816,7 +749,6 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 }
 
 const _supertype_exportStatement_ids = new Set<number>([400, 401, 399]);
-const _supertype_moduleExportName_ids = new Set<number>([1]);
 const _supertype_declaration_ids = new Set<number>([
 	246, 248, 243, 206, 205, 295, 306, 307, 308, 317, 314, 312, 310, 305
 ]);
@@ -827,29 +759,19 @@ const _supertype_statement_ids = new Set<number>([
 const _supertype_variableDeclarator_ids = new Set<number>([433, 434]);
 const _supertype_forHeader_ids = new Set<number>([437, 438, 439]);
 const _supertype_parenthesizedExpression_ids = new Set<number>([414, 415]);
-const _supertype_expressions_ids = new Set<number>([269]);
 const _supertype_expression_ids = new Set<number>([298, 299, 300, 308, 297, 259, 261, 255, 267, 266, 265, 254, 234]);
 const _supertype_primaryExpression_ids = new Set<number>([
 	257, 256, 124, 1, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120,
 	271, 273, 121, 122, 123, 235, 239, 245, 249, 247, 242, 292
 ]);
-const _supertype_formalParameter_ids = new Set<number>([320, 321]);
 const _supertype_callExpression_ids = new Set<number>([416, 417, 418]);
-const _supertype_augmentedAssignmentLhs_ids = new Set<number>([
-	256, 257, 30, 31, 7, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 1, 292
-]);
-const _supertype_destructuringPattern_ids = new Set<number>([236, 240]);
 const _supertype_updateExpression_ids = new Set<number>([421, 422]);
 const _supertype_string_ids = new Set<number>([419, 420]);
 const _supertype_comment_ids = new Set<number>([152, 153]);
 const _supertype_number_ids = new Set<number>([154, 155, 156, 157, 158, 159, 160]);
-const _supertype_identifier_ids = new Set<number>([124, 1]);
 const _supertype_metaProperty_ids = new Set<number>([435, 436]);
 const _supertype_pattern_ids = new Set<number>([258, 284]);
-const _supertype_propertyName_ids = new Set<number>([118, 289]);
-const _supertype_importIdentifier_ids = new Set<number>([1, 7]);
 const _supertype_type_ids = new Set<number>([375, 372, 337, 341]);
-const _supertype_tupleTypeMember_ids = new Set<number>([332, 333, 334, 335]);
 const _supertype_primaryType_ids = new Set<number>([
 	358, 359, 311, 343, 361, 370, 371, 357, 350, 351, 119, 356, 354, 352, 342, 340, 374, 373
 ]);
@@ -1020,31 +942,22 @@ export const is = Object.freeze({
 	exportStatementEqualsExport: _g(TSKindId.ExportStatementEqualsExport),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	exportStatement: _sg(_supertype_exportStatement_ids),
-	moduleExportName: _sg(_supertype_moduleExportName_ids),
 	declaration: _sg(_supertype_declaration_ids),
 	importSpecifier: _sg(_supertype_importSpecifier_ids),
 	statement: _sg(_supertype_statement_ids),
 	variableDeclarator: _sg(_supertype_variableDeclarator_ids),
 	forHeader: _sg(_supertype_forHeader_ids),
 	parenthesizedExpression: _sg(_supertype_parenthesizedExpression_ids),
-	expressions: _sg(_supertype_expressions_ids),
 	expression: _sg(_supertype_expression_ids),
 	primaryExpression: _sg(_supertype_primaryExpression_ids),
-	formalParameter: _sg(_supertype_formalParameter_ids),
 	callExpression: _sg(_supertype_callExpression_ids),
-	augmentedAssignmentLhs: _sg(_supertype_augmentedAssignmentLhs_ids),
-	destructuringPattern: _sg(_supertype_destructuringPattern_ids),
 	updateExpression: _sg(_supertype_updateExpression_ids),
 	string: _sg(_supertype_string_ids),
 	comment: _sg(_supertype_comment_ids),
 	number: _sg(_supertype_number_ids),
-	identifier: _sg(_supertype_identifier_ids),
 	metaProperty: _sg(_supertype_metaProperty_ids),
 	pattern: _sg(_supertype_pattern_ids),
-	propertyName: _sg(_supertype_propertyName_ids),
-	importIdentifier: _sg(_supertype_importIdentifier_ids),
 	type: _sg(_supertype_type_ids),
-	tupleTypeMember: _sg(_supertype_tupleTypeMember_ids),
 	primaryType: _sg(_supertype_primaryType_ids),
 	indexSignature: _sg(_supertype_indexSignature_ids),
 	whitespace: _sg(_supertype_whitespace_ids),

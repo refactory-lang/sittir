@@ -4,7 +4,9 @@
   "tree-sitter": [
     {
       "scope": "source.rust",
-      "file-types": []
+      "file-types": [
+        "rs"
+      ]
     }
   ]
 }

@@ -1,12 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { resolve } from 'node:path';
-import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { deriveVariantChildren } from '../variant-structural.ts';
 import { polymorphVisibleName } from '../../dsl/arm-names.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 const __dirname = new URL('.', import.meta.url).pathname;
-const resolveOverrides = (grammar: string) => resolve(__dirname, `../../../../${grammar}/grammar.sittir.ts`);
 
 /**
  * R12/decision-7 V2 Task 2: this suite formerly asserted the WIRE metadata
@@ -19,7 +18,7 @@ const resolveOverrides = (grammar: string) => resolve(__dirname, `../../../../${
  */
 describe('polymorph metadata — structural e2e', () => {
 	it('python: assignment polymorph variants are derived structurally', async () => {
-		const raw = await evaluate(resolveOverrides('python'));
+		const raw = await evaluatePackage(grammarPackage('python'));
 		const linked = link(raw);
 		const structural = deriveVariantChildren(linked.rules, raw.automaticVariants);
 		const assignmentVariants = structural.get('assignment');
@@ -31,7 +30,7 @@ describe('polymorph metadata — structural e2e', () => {
 	});
 
 	it('rust: polymorph variants derived structurally for converted rules', async () => {
-		const raw = await evaluate(resolveOverrides('rust'));
+		const raw = await evaluatePackage(grammarPackage('rust'));
 		const linked = link(raw);
 		const structural = deriveVariantChildren(linked.rules, raw.automaticVariants);
 

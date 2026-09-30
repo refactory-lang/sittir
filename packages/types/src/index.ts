@@ -703,15 +703,15 @@ type IsSingleType<T> = [T] extends [{ readonly $type: number }] ? (IsUnion<T> ex
 
 /**
  * TagEachArm<T, ...> — distributive per-arm form for a multi-kind slot.
- * Produces `U | ({ kind: Name } & <U's config bag>)` for each member of T.
+ * Produces `U | ({ $type: Name } & <U's config bag>)` for each member of T.
  *
- * The tag is the kind's NAME (`NsMap[K]['Kind']`), because that is what the
- * runtime resolver reads: a bag with several candidate kinds is dispatched
- * through `'kind' in v` to that kind's from() coercer, and an untagged bag
- * with more than one candidate is rejected. A row whose `Kind` is `never`
- * has no coercer, so a bag could never be built from it — that arm stays
- * the node alone. Without a namespace map the discriminant itself is the
- * tag.
+ * The tag is the kind's id (`NsMap[K]['Kind']`, a `TSKindId` member), because
+ * that is what the runtime resolver reads: a bag with several candidate
+ * kinds is dispatched on its `$type` to that kind's from() coercer, and an
+ * untagged bag with more than one candidate is rejected. A row whose `Kind`
+ * is `never` has no coercer, so a bag could never be built from it — that
+ * arm stays the node alone. Without a namespace map the discriminant itself
+ * is the tag.
  */
 type TagEachArm<
 	T,
@@ -722,17 +722,17 @@ type TagEachArm<
 	Visited extends (string | number)[] = []
 > = T extends infer U
 	? U extends { readonly $type: infer K extends keyof NsMap }
-		? NsMap[K] extends { readonly Kind: infer Name extends string }
+		? NsMap[K] extends { readonly Kind: infer Name extends number }
 			? [Name] extends [never]
 				? U
 				:
-						| ({ kind: Name } & ([LooseProjection<U, NsMap>] extends [never]
+						| ({ $type: Name } & ([LooseProjection<U, NsMap>] extends [never]
 								? LooseConfigOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>
 								: LooseProjection<U, NsMap>))
 						| U
 			: U
 		: U extends { readonly $type: infer K extends string | number }
-			? ({ kind: K } & LooseConfigOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>) | U
+			? ({ $type: K } & LooseConfigOf<U, Scalars, Strings, [...Depth, 0], NsMap, Visited>) | U
 			: never
 	: never;
 
@@ -1025,12 +1025,11 @@ type BareArm<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends
  *   reading `Bare` off the row. Only the key crosses into the row — the
  *   widening itself runs inside the depth-guarded recursion, never at row
  *   creation.
- * @param Kind - The kind's grammar name, stamped when the kind has a from()
- *   coercer; `never` otherwise. It is the `kind` tag a multi-kind slot's
+ * @param Kind - The kind's id, stamped when the kind has a from()
+ *   coercer; `never` otherwise. It is the `$type` tag a multi-kind slot's
  *   config bag carries (`TagEachArm`), because the runtime dispatches such a
- *   bag through the from map, which is keyed by grammar name — a kind with
- *   no coercer cannot be built from a bag, so its row carries no name and
- *   its arm offers no bag.
+ *   bag through the from map by kind id — a kind with no coercer cannot be
+ *   built from a bag, so its row carries no id and its arm offers no bag.
  */
 export interface NodeNs<
 	T extends { readonly $type: string | number },
@@ -1041,7 +1040,7 @@ export interface NodeNs<
 	Args extends readonly unknown[] = [ConfigOf<T, NsMap>],
 	LooseArgs extends readonly unknown[] = [LooseConfigOf<T, Scalars, Strings, [], NsMap> | AdmitBound<T, NodeLookup<NsMap>>],
 	Bare extends string = never,
-	Kind extends string = never,
+	Kind extends number = never,
 	Parsed = Bound,
 	Empty = never
 > {
@@ -1105,8 +1104,8 @@ export interface NodeNs<
 	 *  every kind interface. Indexing `LooseConfig` avoids the arm entirely
 	 *  while keeping each field's `__looseHints__`. */
 	readonly LooseConfig: LooseConfigOf<T, Scalars, Strings, [], NsMap>;
-	/** The kind's grammar name when it has a from() coercer — the tag a
-	 *  multi-kind slot's bag carries (`{ kind: 'x', … }`) — else `never`;
+	/** The kind's numeric id when it has a from() coercer — the `$type` tag a
+	 *  multi-kind slot's bag carries (`{ $type: kinds.X, … }`) — else `never`;
 	 *  see the `Kind` type parameter. */
 	readonly Kind: Kind;
 }
@@ -1120,7 +1119,7 @@ export interface NodeNs<
  * {@link NodeNs} so `ConfigFor` / `LooseFor` and the
  * `WidenValue` namespace lookup index it uniformly.
  */
-export interface KeywordNs<Id extends number, Text extends string, Kind extends string = string> {
+export interface KeywordNs<Id extends number, Text extends string, Kind extends number = number> {
 	readonly Node: Id;
 	readonly Config: never;
 	readonly Bound: Id;
@@ -1145,7 +1144,7 @@ export interface LeafNs<
 	Node extends { readonly $type: string | number; readonly $text: string },
 	Text extends string | number | bigint,
 	Bound = Node,
-	Kind extends string = string
+	Kind extends number = number
 > {
 	readonly Node: Node;
 	readonly Config: Text;
