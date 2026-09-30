@@ -156,10 +156,15 @@ A direct-shaped single group — one slot the factory takes positionally
 (python `slice.step`) — is the one-key case of the same seat: the key is
 spliced and the group is built from its value.
 
-A group-lifted list (`_arguments_elements`, `_where_predicates`) carries the
-hoisted annotation as provenance but is never seated: a list is bundled and
-bound on `ir` like any list, and its parent's builder takes it whole. The
-census does not count lists.
+A group-lifted list (`_arguments_elements`, `_where_predicates`) is not seated
+as a group, since its keys are not spliced onto the parent's config, but its
+parent hoists it all the same. The parent's factory takes the list's items
+(or its options and items) directly, or the whole list node, and so does the
+`$with` setter of the slot that holds it. The slot's accessor returns the list
+node, which reads as a `ReadonlyArray` of those items and carries the list's
+options, so a list read back round-trips with its options intact. The census
+does not count lists as seated groups; it checks that every list view is
+stamped with the item type its factory takes.
 
 ### Shape 3 — a repeated group is an array of its configs
 

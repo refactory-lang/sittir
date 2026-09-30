@@ -413,7 +413,7 @@ export interface DictionarySplatTransport {
 export interface DictionaryTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _entries?: SlotValue<DictionaryElementsTransport>
+  _elements?: SlotValue<DictionaryElementsTransport>
 }
 
 export interface DictPatternElementsTransport {

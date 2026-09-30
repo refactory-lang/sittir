@@ -12,6 +12,7 @@ import { createEngine } from '@sittir/common';
 
 type Equals<A, B> = (<X>() => X extends A ? 1 : 2) extends <X>() => X extends B ? 1 : 2 ? true : false;
 function expectTrue<_T extends true>(): void {}
+type ItemOf<I> = I extends Iterable<infer E> ? E : never;
 
 const rs = await createEngine(rust);
 
@@ -62,4 +63,26 @@ export function renderTakesEveryNodeAUserCanHold(): string {
 	if (!rs.is.functionItem(item)) return '';
 	const draft = item.$with.parameters(rs.build.parameters());
 	return [rs.render(root), rs.render(item), rs.render(draft)].map(String).join('');
+}
+
+export function listsReadAsReadonlyArrays(): string {
+	const item = rs.parse('fn f(a: i32) {}\n').statements()[0]!;
+	if (!rs.is.functionItem(item)) return '';
+	const params = item.parameters();
+	type Item = ItemOf<typeof params>;
+	const owner: ReadonlyArray<Item> = params;
+	const list: ReadonlyArray<Item> | undefined = params.parametersElements();
+	const rendered = params.map((param) => (typeof param === 'number' ? '' : param.$render()));
+	const first: Item | undefined = params[0];
+	return [owner.length, list?.length, rendered.join(','), String(first)].join('');
+}
+
+export function aListSlotTakesItsBuilderArguments(): string {
+	const item = rs.parse('fn f(a: i32) {}\n').statements()[0]!;
+	if (!rs.is.functionItem(item)) return '';
+	const params = item.parameters();
+	const fromItems = item.$with.parameters(...params);
+	const fromNode = item.$with.parameters(params);
+	const inner = params.$with.parametersElements(...params);
+	return fromItems.$render() + fromNode.$render() + inner.$render();
 }

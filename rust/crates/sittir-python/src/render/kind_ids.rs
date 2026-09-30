@@ -1307,7 +1307,7 @@ pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str
         (197, 1) => Some("patterns"),
         (232, 1) => Some("collection_elements"),
         (234, 1) => Some("collection_elements"),
-        (235, 1) => Some("entries"),
+        (235, 1) => Some("elements"),
         (273, 1) => Some("list_pattern_case_patterns"),
         (274, 1) => Some("list_pattern_case_patterns"),
         (292, 1) => Some("alternative"),

@@ -191,6 +191,17 @@ The value, or the default's when it is absent. The default's type is not an infe
 
 `hoistRoutes` with the result type given and the argument taken as `unknown`, so a bundle entry is hoisted without relating the overlay's declared type to the pair type the hoister would infer. The generated `factories/index.ts` uses it for every entry.
 
-### `packages/common/src/utils.ts::withListOwner`
+### `packages/common/src/utils.ts::withListView`
 
-Gives a list owner (a node whose sole content is a separated list) the members its type declares: it iterates the list's elements, reports `length`, answers `at(index)`, and carries one getter per option the list's factory takes, read from the list's stored `_<option>` and falling back to the default the spec stamps for that option (a list that is absent reads every default). No default is named at runtime: each comes from the same derivation as the factory's own. Everything is read through the owner's own accessors, so a parsed owner drills lazily and a built owner reads what it stores. Every member is defined non-enumerable, so a spread, `Object.keys` and serialisation see the node exactly as before, and rendering never reads them. It also makes the node's `$with` callable: the arguments go to the list's own factory (`make`) and the resulting list goes to the owner's list setter, which is looked up at call time so a setter wrapped after this call (trivia carry) still applies. The setters stay on the function as enumerable properties. The spec names the owner's list accessor, the list's element accessor, each option's key and default, and the list factory, all emitted from the model.
+Makes a node that reads as a list (a separated list, or a list owner whose sole content is one) a `ReadonlyArray` of its items. The items are the list's elements, except that a transparent wrapper carrying only its content reads as that content (the spec names the wrapper kind, its content accessor and the storage keys of its other slots; a decorated wrapper stays as it is). For an owner the list is read through the owner's own list accessor (`list`), so a parsed owner drills the list and a built one reads what it stores; for a list node the node is the list.
+
+It defines a getter per index up to the stored element count, which is read once from the list's element storage (`count`) so the elements themselves are not materialized; `length`; the iterator; every non-mutating array method, delegating to the items; and one getter per option the list's factory takes, read from the list's stored `_<option>` and falling back to the default the spec stamps (an absent list reads every default and has no items). The items are computed on first use and kept on the node. Every member is non-enumerable, so a spread, `Object.keys` and serialisation see the node exactly as before, and rendering never reads them. The list accessor and `$with` are left as they are.
+
+### `packages/common/src/utils.ts::withListSlots`
+
+Makes the `$with` setter of each slot that holds a list take the builder arguments of the kind it holds: `(...items)` or `(options, ...items)`, built through that kind's raw factory, or the whole node of that kind, seated as it is. No arguments clear an optional slot and build an empty list for a required one. A whole node is recognised as a single argument whose kind is the slot's kind (or `undefined`); anything else is passed to the factory.
+
+### `packages/common/src/utils.ts::LIST_VIEW_MEMBERS`
+
+The names `withListView` defines on a node from `ReadonlyArray`: its non-mutating methods and `length`. `toString` and `toLocaleString` are not among them; every object already has them. A compile-time check keeps the method list equal to `ReadonlyArray`'s own, so the runtime cannot miss a method the type promises. The emitter refuses a list whose accessors or options take one of these names.
+

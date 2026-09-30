@@ -1,6 +1,6 @@
 {
   "grammar": "regex",
-  "source_hash": "aa9735eab4090f6fa7892bf5a29be8a9938810badc6eb275f617a5202f18ee17",
+  "source_hash": "9034a2a2fde3d7f6dcff6b2ead6ec29484fe9d7cc312b0e50f48477f06ed179c",
   "files": {
     "packages/regex/.sittir/grammar-diagnostics.json": "d3b245116457aeb378ce22778a877561b7a128b64a30e32e0e6431f64e307aa3",
     "packages/regex/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",

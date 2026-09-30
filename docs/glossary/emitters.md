@@ -6298,6 +6298,8 @@ mark instead of referencing the slot.
 
 One generated test per wired sub-factory, driven by `collectPolymorphWires` — the same derivation the overlay emits from, so tests exist exactly for wires that exist. Call arguments come from the dummy machinery, following the wire shapes (positional seat, residual config, merged config, seated tuple; list children lead with an options object when their surface takes one). `expectTestFailures["<kind>.<name>"]` skips a case and loosens its call target so a pinned, unwired name never type-errors. Alias wires get a form case each — the hoisted call with the child's bare-call arguments, asserting the child's discriminant (the form is its own node kind, not the parent's) — skipped when the dummy machinery cannot produce arguments for the child. A keyword or punctuation child is built as its kind-id value, not a node (as `emitKeywordTest` asserts for the kind itself), so its form case asserts the returned value is that kind id.
 
+A case whose seated slot is a list owner's list slot asserts the slot reads back non-empty items, not a node: the accessor of that slot hoists the list away, so there is no child node whose discriminant could be checked.
+
 A kind's tests are addressed through its public spelling (`subFactoryBase`): its flat `ir` key when it is bundled (sub-factories are callable), or its flattened-parent route (`variantRoutePaths`) called through `.coerce`, the loose flavor that accepts the prebuilt nodes the dummy machinery passes. A kind with neither has no public path, and no sub-factory tests are emitted for it.
 
 #### body
@@ -10002,7 +10004,7 @@ A kind with setters, or that owns a list, stamps `__slotHints__` (`emitSlotHints
 
 ### `packages/codegen/src/emitters/types.ts::emitSlotHints`
 
-Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` per setter of the kind's built surface, keyed by the setter name that its accessor and `$with` share, and `$listOwner` when `listOwnerHint` is defined. The node surface types read these hints and never re-derive a slot's input or a kind's list-ownership from storage keys.
+Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` per setter of the kind's built surface, keyed by the setter name that its accessor and `$with` share, `$listView` when `listViewHint` is defined, and `$listSlots` with one `ListSlotHint` per slot `listSlotHints` names. The node surface types read these hints and never re-derive a slot's input, or whether a kind or a slot holds a list, from storage keys.
 
 ### `packages/codegen/src/emitters/types.ts::enumStorageDiscriminantExpr`
 
@@ -12044,7 +12046,7 @@ The `separator` option is typed by the kind ids of the choice's literal
 tokens (`TSKindId.Comma | TSKindId.Semi`), the same tier as every other
 preference; the literal texts are not part of the surface.
 
-`storageElemType` is the element type the list stores and its `elements()` accessor returns, before the factory's wrapper alternative is added to `elemType`, so a read loses no content. The option keys come from `listOptionParts`.
+`storageElemType` is the element type the list stores and its `elements()` accessor returns, before the factory's wrapper alternative is added to `elemType`, so a read loses no content. The option keys come from `listOptionParts`. When the element is a transparent wrapper, `wrapper` also names the wrapper's content accessor (`contentProperty`) and the storage keys of every other slot it has (`decorationKeys`): an element is undecorated exactly when none of those keys holds a value, which is when a list owner's accessor reads it as its content.
 
 ### `packages/codegen/src/emitters/factories.ts::listOptionParts`
 
@@ -12054,9 +12056,11 @@ A separated list's option facts: whether it takes a `separator` and `delimiter` 
 
 The options type a list's factory takes as its leading argument, or `undefined` when it has none. Takes the kind entries because the separator's allowed kinds are catalog kinds.
 
-### `packages/codegen/src/emitters/factories.ts::listOwnerHint`
+### `packages/codegen/src/emitters/factories.ts::listViewHint`
 
-Whether a kind's sole content is a separated list, as the facts a list owner's node surface needs: the stored element of the list, the options its factory takes (`{}` when it takes none) and the element input its factory accepts. Defined exactly when `forwardedTargetKind` names an `AssembledList`, the fact that gives the owner's strict factory its `(options?, ...items)` overloads, so read and build cannot disagree about which kinds are list owners.
+Whether a kind reads as a list, as the facts its node surface needs: the item type the list's factory accepts, the options that factory takes (`{}` when it takes none), the list's raw factory, and the accessor and option names the view shares the node with. A kind reads as a list when it is a separated list itself, or when it is a list owner, whose sole content is a separated list (`forwardedTargetKind` names an `AssembledList`, the fact that gives the owner's strict factory its `(options?, ...items)` overloads). Both read as a `ReadonlyArray` of the same items, a transparent wrapper carrying only its content reading as that content, so both forms are in the item type and a read item can be passed straight back to the builder.
+
+Throws when one of the node's accessors or options has the name of a `ReadonlyArray` member (`LIST_VIEW_MEMBERS`): the two would be one property, and neither reading is safe to drop. The fix is to rename the slot in the grammar.
 
 ### `packages/codegen/src/emitters/factories.ts::TextFactoryNode`
 
@@ -16453,10 +16457,43 @@ The emitted `_keywordOr(input, keywords, () => resolved)` that replaces `_keywor
 
 The options a separated list's factory takes, each with the expression the factory falls back to when the option is not passed: the delimiter's resolved arm (`Delimiter.None` when the list declares none) and the separator's declared arm (`undefined` when there is none). It reads the same option flags as the options type and the same default derivations as the list factory, so a list owner's getters report exactly what the factory would build.
 
-### `packages/codegen/src/emitters/factories.ts::listOwnerRuntimeSpec`
+### `packages/codegen/src/emitters/factories.ts::listViewRuntimeSpec`
 
-The object literal `{ list, elements, options, make }` a list owner's builder and wrap pass to `withListOwner`: the owner's accessor for its list, the list's accessor for its elements, each option its factory takes as `{ key, default }`, and the list's own raw factory. `factoryScope` prefixes that factory's name where the caller reaches it through a namespace import (the wrap module). It shares `listOwnerTarget` with `listOwnerHint`, so the type-level marker and the runtime members come from one test of list-ownership; `undefined` means the node is not a list owner and neither emitter adds the call.
+The object literal a list's or list owner's builder and wrap pass to `withListView`: for an owner, its accessor for the list (`list`); the list's accessor for its elements (`elements`) and the storage key that holds them (`count`, read once to size the index); each option its factory takes as `{ key, default }`; and, when the list's element is a transparent wrapper, the wrapper's kind id, the accessor that names its content and the storage keys of its other slots (`wrapper`). It shares `listViewTarget` with `listViewHint`, so the type-level stamp and the runtime members come from one test; `undefined` means the node does not read as a list. The wrapper facts come from `separatedListSurface`, which derives the factory's element union from the same wrapper, so the read collapse and the factory's wrap of bare content cannot disagree.
 
-### `packages/codegen/src/emitters/factories.ts::listOwnerTarget`
+### `packages/codegen/src/emitters/factories.ts::listSlotTargets`
 
-The owner's sole slot and the separated list it forwards to, or `undefined` when the node does not forward to a list.
+The slots of a node that hold a list: each single-valued slot whose one kind reads as a list (`listViewTarget`) and has a raw factory, paired with that kind.
+
+### `packages/codegen/src/emitters/factories.ts::listSlotHints`
+
+The facts of each slot `listSlotTargets` names: the slot's accessor name, the kind it holds, and that kind's `listViewHint`. `emitSlotHints` stamps them as `$listSlots`, which gives the slot's setter the kind's builder arguments.
+
+### `packages/codegen/src/emitters/factories.ts::listSlotsRuntimeSpec`
+
+The array a node's builder and wrap pass to `withListSlots`: per slot `listSlotTargets` names, the setter's name, the held kind's id, whether the slot is optional, and the held kind's raw factory (`make`, prefixed by `factoryScope` where the caller reaches it through a namespace import).
+
+### `packages/codegen/src/emitters/factories.ts::ListViewFacts`
+
+The facts `listViewHint` returns: the item type, the options type, the list's raw factory and the names the view must not collide with.
+
+### `packages/codegen/src/emitters/factories.ts::SeatRuntime`
+
+One runtime helper call a node's builder and wrap add: the helper's name and its spec literal.
+
+### `packages/codegen/src/emitters/factories.ts::seatRuntimes`
+
+The helper calls a node's builder and wrap wrap their object literal in, in the order they nest: `withListView` when the node reads as a list, then `withListSlots` when it has slots that hold lists. Each spec comes from the function that also derives the type-level stamp, so a member exists at runtime exactly when its type says so. The config builder, the separated-list builder and the wrap all call it, and the raw module imports exactly the helpers it returns.
+
+### `packages/codegen/src/emitters/factories.ts::seatOpening`
+
+The helper calls of `seatRuntimes`, opened: `withA(withB(`. Paired with `seatClosing`.
+
+### `packages/codegen/src/emitters/factories.ts::seatClosing`
+
+The closing half of `seatOpening`: the specs in reverse nesting order, each as the trailing argument of its helper call.
+
+### `packages/codegen/src/emitters/factories.ts::listViewTarget`
+
+The separated list a node reads as: the node itself when it is an `AssembledList`, or, for a list owner, the list it forwards to together with its sole slot (`owner`). `undefined` when the node reads as neither.
+

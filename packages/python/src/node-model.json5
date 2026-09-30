@@ -1543,7 +1543,7 @@
       }
     },
     "dictionary": {
-      "entries": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -6324,9 +6324,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "entries",
-          "propertyName": "entries",
-          "paramName": "entries",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6347,7 +6347,7 @@
       "factoryShape": "forwarded",
       "forwardsTo": "dictionary_elements",
       "factoryFields": [
-        "entries"
+        "elements"
       ],
       "bareAccepts": [
         "as_pattern",

@@ -91,7 +91,8 @@ import {
 import {
 	constructorTargetKind,
 	builtTypeSurfaceOf,
-	listOwnerHint,
+	listViewHint,
+	listSlotHints,
 	omitRegistered,
 	spellingTypeOf,
 	refineFormBuiltTypeSurfaceOf,
@@ -471,7 +472,8 @@ const VOCABULARY_IMPORTS = [
 	'GrammarInnerTrivia',
 	'GrammarInnerTriviaAt',
 	'SlotHint',
-	'ListOwnerHint',
+	'ListViewHint',
+	'ListSlotHint',
 	'BoundOf',
 	'ParsedOf',
 	'AdmitBound',
@@ -980,14 +982,20 @@ function emitSlotHints(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): void {
 	const setters = builtTypeSurfaceOf(node, nodeMap, kindEntries)?.setters ?? [];
-	const owner = listOwnerHint(node, nodeMap, kindEntries);
-	if (setters.length === 0 && owner === undefined) return;
+	const view = listViewHint(node, nodeMap, kindEntries);
+	const listSlots = listSlotHints(node, nodeMap, kindEntries);
+	if (setters.length === 0 && view === undefined) return;
 	lines.push('  readonly __slotHints__?: {');
 	for (const setter of setters) {
 		const flags = setter.rest ? `, ${setter.optional}, true` : setter.optional ? ', true' : '';
 		lines.push(`    readonly ${setter.name}: SlotHint<${setter.input}${flags}>;`);
 	}
-	if (owner !== undefined) lines.push(`    readonly $listOwner: ListOwnerHint<${owner.element}, ${owner.options}, ${owner.input}>;`);
+	if (view !== undefined) lines.push(`    readonly $listView: ListViewHint<${view.element}, ${view.options}>;`);
+	if (listSlots.length > 0) {
+		lines.push('    readonly $listSlots: {');
+		for (const hint of listSlots) lines.push(`      readonly ${hint.slot}: ListSlotHint<${hint.element}, ${hint.options}>;`);
+		lines.push('    };');
+	}
 	lines.push('  };');
 }
 

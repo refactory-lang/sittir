@@ -1700,7 +1700,7 @@
     "type": "dictionary",
     "named": true,
     "fields": {
-      "entries": {
+      "elements": {
         "multiple": false,
         "required": false,
         "types": [
