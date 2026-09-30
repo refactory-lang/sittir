@@ -1,6 +1,2431 @@
 [
   {
     "source": "grammar",
+    "grammar": "scm",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "ownerKind": "list",
+    "message": "[collect-slots] kind 'list': choice rule:list:members.3 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "quantifier"
+      ]
+    },
+    "location": "list"
+  },
+  {
+    "source": "grammar",
+    "grammar": "scm",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "ownerKind": "grouping",
+    "message": "[collect-slots] kind 'grouping': choice rule:grouping:members.3 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "quantifier"
+      ]
+    },
+    "location": "grouping"
+  },
+  {
+    "source": "grammar",
+    "grammar": "scm",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "ownerKind": "missing_node",
+    "message": "[collect-slots] kind 'missing_node': choice rule:missing_node:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "quantifier"
+      ]
+    },
+    "location": "missing_node"
+  },
+  {
+    "source": "grammar",
+    "grammar": "scm",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "ownerKind": "anonymous_node",
+    "message": "[collect-slots] kind 'anonymous_node': choice rule:anonymous_node:members.1 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "quantifier"
+      ]
+    },
+    "location": "anonymous_node"
+  },
+  {
+    "source": "grammar",
+    "grammar": "scm",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "error",
+    "ownerKind": "predicate",
+    "message": "[collect-slots] kind 'predicate': member rule:predicate:members.1 is not a leaf or a choice of leaves (nested-seq: field(name):seq[3](choice _immediate_identifier predicate_type)). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
+    "canProceed": false,
+    "details": {
+      "bucket": "nested-seq",
+      "shape": "field(name):seq[3](choice _immediate_identifier predicate_type)",
+      "ruleId": "rule:predicate:members.1"
+    },
+    "location": "predicate"
+  },
+  {
+    "source": "grammar",
+    "grammar": "scm",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "ownerKind": "named_node_plain",
+    "message": "[collect-slots] kind 'named_node_plain': choice rule:named_node_plain:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "quantifier"
+      ]
+    },
+    "location": "named_node_plain"
+  },
+  {
+    "source": "grammar",
+    "grammar": "scm",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "ownerKind": "named_node_supertyped",
+    "message": "[collect-slots] kind 'named_node_supertyped': choice rule:named_node_supertyped:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "quantifier"
+      ]
+    },
+    "location": "named_node_supertyped"
+  },
+  {
+    "source": "grammar",
+    "grammar": "regex",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "message": "conflict between character_class, class_range on '-' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "character_class",
+          "class_range"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "character_class"
+        ],
+        [
+          "class_range"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'['",
+          "class_character"
+        ],
+        "lookahead": "'-'",
+        "interpretations": [
+          "class_range",
+          "class_range",
+          "class_range",
+          "class_range",
+          "character_class_repeat1"
+        ]
+      }
+    }
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "quantifier",
+    "count": 1,
+    "entries": [
+      "Quantifiers (+)"
+    ],
+    "stage": "from-excluded",
+    "code": "from-excluded",
+    "severity": "info",
+    "message": "no-from-function",
+    "label": "quantifier"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "predicate_type",
+    "count": 1,
+    "entries": [
+      "Predicates"
+    ],
+    "stage": "from-excluded",
+    "code": "from-excluded",
+    "severity": "info",
+    "message": "no-from-function",
+    "label": "predicate_type"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "named_node_plain",
+    "count": 120,
+    "entries": [
+      "Anchor Operator",
+      "Anonymous nodes",
+      "Captures",
+      "Comments",
+      "Field names",
+      "Groups",
+      "Lists",
+      "Missing keyword",
+      "Named nodes",
+      "Negated fields",
+      "Predicates",
+      "Quantifiers (*)",
+      "Quantifiers (+)",
+      "Quantifiers (?)",
+      "Quantifiers (complex)",
+      "Strings",
+      "Supertypes",
+      "Wildcard nodes"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "named_node_plain"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "anonymous_node",
+    "count": 29,
+    "entries": [
+      "Anchor Operator",
+      "Anonymous nodes",
+      "Anonymous nodes (series)",
+      "Groups",
+      "Lists",
+      "Wildcard nodes"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "anonymous_node"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "string",
+    "count": 33,
+    "entries": [
+      "Anchor Operator",
+      "Anonymous nodes",
+      "Anonymous nodes (series)",
+      "Comments",
+      "Groups",
+      "Lists",
+      "Predicates",
+      "Strings"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "string"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "string_content",
+    "count": 34,
+    "entries": [
+      "Anchor Operator",
+      "Anonymous nodes",
+      "Anonymous nodes (series)",
+      "Comments",
+      "Groups",
+      "Lists",
+      "Predicates",
+      "Strings",
+      "Supertypes"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "string_content"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "grouping",
+    "count": 18,
+    "entries": [
+      "Anchor Operator",
+      "Anonymous nodes (series)",
+      "Groups",
+      "Predicates",
+      "Strings"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "grouping"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "grouping_group",
+    "count": 31,
+    "entries": [
+      "Anchor Operator",
+      "Anonymous nodes (series)",
+      "Groups",
+      "Predicates",
+      "Strings"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "grouping_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "capture",
+    "count": 27,
+    "entries": [
+      "Captures",
+      "Comments",
+      "Lists",
+      "Missing keyword",
+      "Negated fields",
+      "Predicates",
+      "Quantifiers (complex)",
+      "Strings",
+      "Wildcard nodes"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "capture"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "named_node_group_children",
+    "count": 28,
+    "entries": [
+      "Anchor Operator",
+      "Captures",
+      "Comments",
+      "Field names",
+      "Lists",
+      "Missing keyword",
+      "Negated fields",
+      "Quantifiers (*)",
+      "Quantifiers (+)",
+      "Quantifiers (?)",
+      "Quantifiers (complex)",
+      "Supertypes",
+      "Wildcard nodes"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "named_node_group_children"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "field_definition",
+    "count": 27,
+    "entries": [
+      "Anchor Operator",
+      "Captures",
+      "Comments",
+      "Field names",
+      "Lists",
+      "Negated fields",
+      "Supertypes",
+      "Wildcard nodes"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "field_definition"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "list",
+    "count": 11,
+    "entries": [
+      "Anchor Operator",
+      "Field names",
+      "Groups",
+      "Lists"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "list"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "negated_field",
+    "count": 2,
+    "entries": [
+      "Negated fields"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "negated_field"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "predicate",
+    "count": 8,
+    "entries": [
+      "Comments",
+      "Predicates",
+      "Strings"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "predicate"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "parameters",
+    "count": 7,
+    "entries": [
+      "Comments",
+      "Predicates",
+      "Strings"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "parameters"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "group_expression_arm",
+    "count": 13,
+    "entries": [
+      "Anchor Operator"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "group_expression_arm"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "named_node_group_anchored_last",
+    "count": 12,
+    "entries": [
+      "Anchor Operator"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "named_node_group_anchored_last"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "named_node_expression_arm",
+    "count": 15,
+    "entries": [
+      "Anchor Operator"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "named_node_expression_arm"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "escape_sequence",
+    "count": 4,
+    "entries": [
+      "Strings"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "escape_sequence"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "named_node_supertyped",
+    "count": 2,
+    "entries": [
+      "Supertypes"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "named_node_supertyped"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "immediate_string",
+    "count": 1,
+    "entries": [
+      "Supertypes"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "immediate_string"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "missing_node",
+    "count": 3,
+    "entries": [
+      "Missing keyword"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "missing_node"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "named_node_plain",
+    "count": 120,
+    "entries": [
+      "Anchor Operator",
+      "Anonymous nodes",
+      "Captures",
+      "Comments",
+      "Field names",
+      "Groups",
+      "Lists",
+      "Missing keyword",
+      "Named nodes",
+      "Negated fields",
+      "Predicates",
+      "Quantifiers (*)",
+      "Quantifiers (+)",
+      "Quantifiers (?)",
+      "Quantifiers (complex)",
+      "Strings",
+      "Supertypes",
+      "Wildcard nodes"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "named_node_plain"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "anonymous_node",
+    "count": 29,
+    "entries": [
+      "Anchor Operator",
+      "Anonymous nodes",
+      "Anonymous nodes (series)",
+      "Groups",
+      "Lists",
+      "Wildcard nodes"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "anonymous_node"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "string",
+    "count": 33,
+    "entries": [
+      "Anchor Operator",
+      "Anonymous nodes",
+      "Anonymous nodes (series)",
+      "Comments",
+      "Groups",
+      "Lists",
+      "Predicates",
+      "Strings"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "string"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "string_content",
+    "count": 34,
+    "entries": [
+      "Anchor Operator",
+      "Anonymous nodes",
+      "Anonymous nodes (series)",
+      "Comments",
+      "Groups",
+      "Lists",
+      "Predicates",
+      "Strings",
+      "Supertypes"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "string_content"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "grouping",
+    "count": 18,
+    "entries": [
+      "Anchor Operator",
+      "Anonymous nodes (series)",
+      "Groups",
+      "Predicates",
+      "Strings"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "grouping"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "grouping_group",
+    "count": 31,
+    "entries": [
+      "Anchor Operator",
+      "Anonymous nodes (series)",
+      "Groups",
+      "Predicates",
+      "Strings"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "grouping_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "capture",
+    "count": 27,
+    "entries": [
+      "Captures",
+      "Comments",
+      "Lists",
+      "Missing keyword",
+      "Negated fields",
+      "Predicates",
+      "Quantifiers (complex)",
+      "Strings",
+      "Wildcard nodes"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "capture"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "named_node_group_children",
+    "count": 28,
+    "entries": [
+      "Anchor Operator",
+      "Captures",
+      "Comments",
+      "Field names",
+      "Lists",
+      "Missing keyword",
+      "Negated fields",
+      "Quantifiers (*)",
+      "Quantifiers (+)",
+      "Quantifiers (?)",
+      "Quantifiers (complex)",
+      "Supertypes",
+      "Wildcard nodes"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "named_node_group_children"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "field_definition",
+    "count": 27,
+    "entries": [
+      "Anchor Operator",
+      "Captures",
+      "Comments",
+      "Field names",
+      "Lists",
+      "Negated fields",
+      "Supertypes",
+      "Wildcard nodes"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "field_definition"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "list",
+    "count": 11,
+    "entries": [
+      "Anchor Operator",
+      "Field names",
+      "Groups",
+      "Lists"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "list"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "negated_field",
+    "count": 2,
+    "entries": [
+      "Negated fields"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "negated_field"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "predicate",
+    "count": 8,
+    "entries": [
+      "Comments",
+      "Predicates",
+      "Strings"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "predicate"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "parameters",
+    "count": 7,
+    "entries": [
+      "Comments",
+      "Predicates",
+      "Strings"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "parameters"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "group_expression_arm",
+    "count": 13,
+    "entries": [
+      "Anchor Operator"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "group_expression_arm"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "named_node_group_anchored_last",
+    "count": 12,
+    "entries": [
+      "Anchor Operator"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "named_node_group_anchored_last"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "named_node_expression_arm",
+    "count": 15,
+    "entries": [
+      "Anchor Operator"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "named_node_expression_arm"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "escape_sequence",
+    "count": 4,
+    "entries": [
+      "Strings"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "escape_sequence"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "named_node_supertyped",
+    "count": 2,
+    "entries": [
+      "Supertypes"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "named_node_supertyped"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "immediate_string",
+    "count": 1,
+    "entries": [
+      "Supertypes"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "immediate_string"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
+    "kind": "missing_node",
+    "count": 3,
+    "entries": [
+      "Missing keyword"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "missing_node"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "identity_escape",
+    "severity": "error",
+    "message": "from() throws: identity_escape.content: text does not match pattern: [object Object]",
+    "stage": "from",
+    "code": "from-error",
+    "label": "identity_escape"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "control_escape_text1",
+    "count": 1,
+    "entries": [
+      "atom escapes - control escapes"
+    ],
+    "stage": "from-excluded",
+    "code": "from-excluded",
+    "severity": "info",
+    "message": "no-from-function",
+    "label": "control_escape_text1"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "unicode_character_escape_text1",
+    "count": 1,
+    "entries": [
+      "Unicode escape"
+    ],
+    "stage": "from-excluded",
+    "code": "from-excluded",
+    "severity": "info",
+    "message": "no-from-function",
+    "label": "unicode_character_escape_text1"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "unicode_character_escape_text2",
+    "count": 1,
+    "entries": [
+      "Unicode escape"
+    ],
+    "stage": "from-excluded",
+    "code": "from-excluded",
+    "severity": "info",
+    "message": "no-from-function",
+    "label": "unicode_character_escape_text2"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "control_escape_text2",
+    "count": 1,
+    "entries": [
+      "Hexadecimal digits escape sequence"
+    ],
+    "stage": "from-excluded",
+    "code": "from-excluded",
+    "severity": "info",
+    "message": "no-from-function",
+    "label": "control_escape_text2"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "quantifiers - count",
+    "message": "pattern[0].term: childCount 5 ≠ 14 [term_group,term_group,term_group,term_group,term_group] vs [term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group]",
+    "input": "h{1,2}?el{1,2}.{3}t{4,}",
+    "rendered": "h1,2el1,2.3t4,",
+    "start": 0,
+    "end": 23,
+    "stage": "read-render-parse-ast-mismatch",
+    "code": "read-render-parse-ast-mismatch",
+    "severity": "error",
+    "label": "quantifiers - count (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "alternations with empty terms",
+    "message": "pattern[0].alternation: childCount 9 ≠ 3 [\"|\",\"|\",term,\"|\",\"|\",term,\"|\",\"|\",\"|\"] vs [term,\"|\",term]",
+    "input": "||he..o||wo.ld|||",
+    "rendered": "he..o|wo.ld",
+    "start": 0,
+    "end": 17,
+    "stage": "read-render-parse-ast-mismatch",
+    "code": "read-render-parse-ast-mismatch",
+    "severity": "error",
+    "label": "alternations with empty terms (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "alternation w empty terms & assertions",
+    "message": "pattern[0].alternation: childCount 4 ≠ 3 [term,\"|\",\"|\",term] vs [term,\"|\",term]",
+    "input": "^he..o$||w..ld$",
+    "rendered": "^he..o$|w..ld$",
+    "start": 0,
+    "end": 15,
+    "stage": "read-render-parse-ast-mismatch",
+    "code": "read-render-parse-ast-mismatch",
+    "severity": "error",
+    "label": "alternation w empty terms & assertions (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "character classes",
+    "message": "pattern[0].term[1].term_group[0].character_class: childCount 5 ≠ 4 [\"[\",\"^\",class_character,class_character,\"]\"] vs [\"[\",class_character,class_character,\"]\"]",
+    "input": "[A-Za-z][^Xx]",
+    "rendered": "[A-Za-z][Xx]",
+    "start": 0,
+    "end": 13,
+    "stage": "read-render-parse-ast-mismatch",
+    "code": "read-render-parse-ast-mismatch",
+    "severity": "error",
+    "label": "character classes (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "character classes - '-' is an atom",
+    "message": "pattern[0].term[0].term_group[0].character_class: childCount 3 ≠ 2 [\"[\",class_character,\"]\"] vs [\"[\",\"]\"]",
+    "input": "[-]",
+    "rendered": "[]",
+    "start": 0,
+    "end": 3,
+    "stage": "read-render-parse-ast-mismatch",
+    "code": "read-render-parse-ast-mismatch",
+    "severity": "error",
+    "label": "character classes - '-' is an atom (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "character classes - 'a-' is atoms",
+    "message": "pattern[0].term[0].term_group[0].character_class: childCount 4 ≠ 3 [\"[\",class_character,class_character,\"]\"] vs [\"[\",class_character,\"]\"]",
+    "input": "[a-]",
+    "rendered": "[a]",
+    "start": 0,
+    "end": 4,
+    "stage": "read-render-parse-ast-mismatch",
+    "code": "read-render-parse-ast-mismatch",
+    "severity": "error",
+    "label": "character classes - 'a-' is atoms (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "a date regex",
+    "message": "pattern[0].term: childCount 1 ≠ 2 [term_group] vs [term_group,term_group]",
+    "input": "[0-9]{4}",
+    "rendered": "[0-9]4",
+    "start": 8,
+    "end": 16,
+    "stage": "read-render-parse-ast-mismatch",
+    "code": "read-render-parse-ast-mismatch",
+    "severity": "error",
+    "label": "a date regex (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "a date regex",
+    "message": "pattern[0].term: childCount 1 ≠ 2 [term_group] vs [term_group,term_group]",
+    "input": "[0-9]{2}",
+    "rendered": "[0-9]2",
+    "start": 27,
+    "end": 35,
+    "stage": "read-render-parse-ast-mismatch",
+    "code": "read-render-parse-ast-mismatch",
+    "severity": "error",
+    "label": "a date regex (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "a date regex",
+    "message": "pattern[0].term: childCount 1 ≠ 2 [term_group] vs [term_group,term_group]",
+    "input": "[0-9]{2}",
+    "rendered": "[0-9]2",
+    "start": 44,
+    "end": 52,
+    "stage": "read-render-parse-ast-mismatch",
+    "code": "read-render-parse-ast-mismatch",
+    "severity": "error",
+    "label": "a date regex (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "a multiline url regex",
+    "message": "pattern[0].term[0].term_group[0].character_class: childCount 19 ≠ 18 [\"[\",class_character,class_range,class_range,class_range,class_character,class_character,class_character,class_character,identity_escape,class_character,class_character,class_character,class_character,class_character,class_character,class_character,class_character,\"]\"] vs [\"[\",class_range,class_range,class_range,class_character,class_character,class_character,class_character,identity_escape,class_character,class_character,class_character,class_character,class_character,class_character,class_character,class_character,\"]\"]",
+    "input": "[-a-zA-Z0-9@:%_\\+.~#?&//=]*",
+    "rendered": "[a-zA-Z0-9@:%_\\+.~#?&//=]*",
+    "start": 46,
+    "end": 73,
+    "stage": "read-render-parse-ast-mismatch",
+    "code": "read-render-parse-ast-mismatch",
+    "severity": "error",
+    "label": "a multiline url regex (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "term",
+    "count": 57,
+    "entries": [
+      "Hexadecimal digits escape sequence",
+      "Inline regex flags",
+      "POSIX Character Class",
+      "Unicode escape",
+      "Unicode escaped characters as atoms in character classes",
+      "\\u without hex codes treated as identity escape",
+      "a date regex",
+      "a multiline url regex",
+      "alternation w empty terms & assertions",
+      "alternations",
+      "alternations with empty terms",
+      "assertions - line start / end",
+      "assertions - word boundary",
+      "atom escapes - character class escapes",
+      "atom escapes - control escapes",
+      "atom escapes - decimal escapes",
+      "atom escapes - lone unicode property names",
+      "atom escapes - unicode property value expressions",
+      "capturing groups",
+      "character classes",
+      "character classes - '-' is an atom",
+      "character classes - 'a-' is atoms",
+      "character classes - /[---]/ is odd but valid",
+      "character classes - identity escapes",
+      "identity escapes",
+      "lookahead",
+      "lookbehind",
+      "named capturing groups",
+      "named capturing groups - backreferences",
+      "negative lookahead",
+      "negative lookbehind",
+      "non-capturing groups",
+      "open brace reads as a pattern character when not closed",
+      "quantifiers",
+      "quantifiers - count",
+      "sequence match",
+      "sequence match w/ '.' atom"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "term"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "term_group",
+    "count": 215,
+    "entries": [
+      "Hexadecimal digits escape sequence",
+      "Inline regex flags",
+      "POSIX Character Class",
+      "Unicode escape",
+      "Unicode escaped characters as atoms in character classes",
+      "\\u without hex codes treated as identity escape",
+      "a date regex",
+      "a multiline url regex",
+      "alternation w empty terms & assertions",
+      "alternations",
+      "alternations with empty terms",
+      "assertions - line start / end",
+      "assertions - word boundary",
+      "atom escapes - character class escapes",
+      "atom escapes - control escapes",
+      "atom escapes - decimal escapes",
+      "atom escapes - lone unicode property names",
+      "atom escapes - unicode property value expressions",
+      "capturing groups",
+      "character classes",
+      "character classes - '-' is an atom",
+      "character classes - 'a-' is atoms",
+      "character classes - /[---]/ is odd but valid",
+      "character classes - identity escapes",
+      "identity escapes",
+      "lookahead",
+      "lookbehind",
+      "named capturing groups",
+      "named capturing groups - backreferences",
+      "negative lookahead",
+      "negative lookbehind",
+      "non-capturing groups",
+      "open brace reads as a pattern character when not closed",
+      "quantifiers",
+      "quantifiers - count",
+      "sequence match",
+      "sequence match w/ '.' atom"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "term_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "count_quantifier",
+    "count": 9,
+    "entries": [
+      "a date regex",
+      "a multiline url regex",
+      "quantifiers - count"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "count_quantifier"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "count_quantifier_arm",
+    "count": 9,
+    "entries": [
+      "a date regex",
+      "a multiline url regex",
+      "quantifiers - count"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "count_quantifier_arm"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "count_quantifier_group",
+    "count": 5,
+    "entries": [
+      "a multiline url regex",
+      "quantifiers - count"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "count_quantifier_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "alternation",
+    "count": 3,
+    "entries": [
+      "alternation w empty terms & assertions",
+      "alternations",
+      "alternations with empty terms"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "alternation"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "lookaround_assertion",
+    "count": 4,
+    "entries": [
+      "lookahead",
+      "lookbehind",
+      "negative lookahead",
+      "negative lookbehind"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "lookaround_assertion"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "lookahead_assertion",
+    "count": 2,
+    "entries": [
+      "lookahead",
+      "negative lookahead"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "lookahead_assertion"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "lookbehind_assertion",
+    "count": 2,
+    "entries": [
+      "lookbehind",
+      "negative lookbehind"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "lookbehind_assertion"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "character_class",
+    "count": 16,
+    "entries": [
+      "Hexadecimal digits escape sequence",
+      "POSIX Character Class",
+      "Unicode escaped characters as atoms in character classes",
+      "a date regex",
+      "a multiline url regex",
+      "character classes",
+      "character classes - '-' is an atom",
+      "character classes - 'a-' is atoms",
+      "character classes - /[---]/ is odd but valid",
+      "character classes - identity escapes"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "character_class"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "class_range",
+    "count": 16,
+    "entries": [
+      "Hexadecimal digits escape sequence",
+      "Unicode escaped characters as atoms in character classes",
+      "a date regex",
+      "a multiline url regex",
+      "character classes",
+      "character classes - /[---]/ is odd but valid"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "class_range"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "identity_escape",
+    "count": 15,
+    "entries": [
+      "\\u without hex codes treated as identity escape",
+      "a multiline url regex",
+      "character classes - identity escapes",
+      "identity escapes"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "identity_escape"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "character_class_escape",
+    "count": 12,
+    "entries": [
+      "Unicode escape",
+      "Unicode escaped characters as atoms in character classes",
+      "\\u without hex codes treated as identity escape",
+      "atom escapes - character class escapes",
+      "atom escapes - lone unicode property names",
+      "atom escapes - unicode property value expressions",
+      "identity escapes"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "character_class_escape"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "non_capturing_group",
+    "count": 1,
+    "entries": [
+      "non-capturing groups"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "non_capturing_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "character_class_escape_arm",
+    "count": 2,
+    "entries": [
+      "atom escapes - lone unicode property names",
+      "atom escapes - unicode property value expressions"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "character_class_escape_arm"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "unicode_property_value_expression",
+    "count": 2,
+    "entries": [
+      "atom escapes - lone unicode property names",
+      "atom escapes - unicode property value expressions"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "unicode_property_value_expression"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "unicode_property_value_expression_group",
+    "count": 1,
+    "entries": [
+      "atom escapes - unicode property value expressions"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "unicode_property_value_expression_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "unicode_property_name",
+    "count": 1,
+    "entries": [
+      "atom escapes - unicode property value expressions"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "unicode_property_name"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "anonymous_capturing_group",
+    "count": 2,
+    "entries": [
+      "a multiline url regex",
+      "capturing groups"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "anonymous_capturing_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "named_capturing_group",
+    "count": 7,
+    "entries": [
+      "a date regex",
+      "named capturing groups",
+      "named capturing groups - backreferences"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "named_capturing_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "backreference_escape",
+    "count": 1,
+    "entries": [
+      "named capturing groups - backreferences"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "backreference_escape"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "named_group_backreference",
+    "count": 1,
+    "entries": [
+      "named capturing groups - backreferences"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "named_group_backreference"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "posix_character_class",
+    "count": 1,
+    "entries": [
+      "POSIX Character Class"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "posix_character_class"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "inline_flags_group_enable",
+    "count": 2,
+    "entries": [
+      "Inline regex flags"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "inline_flags_group_enable"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "inline_flags_group_toggle",
+    "count": 1,
+    "entries": [
+      "Inline regex flags"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "inline_flags_group_toggle"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "inline_flags_group_disable",
+    "count": 2,
+    "entries": [
+      "Inline regex flags"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "inline_flags_group_disable"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "quantifiers - count",
+    "message": "pattern[0].term: childCount 5 ≠ 14 [term_group,term_group,term_group,term_group,term_group] vs [term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group]",
+    "input": "h{1,2}?el{1,2}.{3}t{4,}",
+    "rendered": "h1,2el1,2.3t4,",
+    "start": 0,
+    "end": 23,
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "severity": "error",
+    "label": "quantifiers - count (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "alternations with empty terms",
+    "message": "pattern[0].alternation: childCount 9 ≠ 3 [\"|\",\"|\",term,\"|\",\"|\",term,\"|\",\"|\",\"|\"] vs [term,\"|\",term]",
+    "input": "||he..o||wo.ld|||",
+    "rendered": "he..o|wo.ld",
+    "start": 0,
+    "end": 17,
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "severity": "error",
+    "label": "alternations with empty terms (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "alternation w empty terms & assertions",
+    "message": "pattern[0].alternation: childCount 4 ≠ 3 [term,\"|\",\"|\",term] vs [term,\"|\",term]",
+    "input": "^he..o$||w..ld$",
+    "rendered": "^he..o$|w..ld$",
+    "start": 0,
+    "end": 15,
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "severity": "error",
+    "label": "alternation w empty terms & assertions (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "character classes",
+    "message": "pattern[0].term[1].term_group[0].character_class: childCount 5 ≠ 4 [\"[\",\"^\",class_character,class_character,\"]\"] vs [\"[\",class_character,class_character,\"]\"]",
+    "input": "[A-Za-z][^Xx]",
+    "rendered": "[A-Za-z][Xx]",
+    "start": 0,
+    "end": 13,
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "severity": "error",
+    "label": "character classes (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "character classes - '-' is an atom",
+    "message": "pattern[0].term[0].term_group[0].character_class: childCount 3 ≠ 2 [\"[\",class_character,\"]\"] vs [\"[\",\"]\"]",
+    "input": "[-]",
+    "rendered": "[]",
+    "start": 0,
+    "end": 3,
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "severity": "error",
+    "label": "character classes - '-' is an atom (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "character classes - 'a-' is atoms",
+    "message": "pattern[0].term[0].term_group[0].character_class: childCount 4 ≠ 3 [\"[\",class_character,class_character,\"]\"] vs [\"[\",class_character,\"]\"]",
+    "input": "[a-]",
+    "rendered": "[a]",
+    "start": 0,
+    "end": 4,
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "severity": "error",
+    "label": "character classes - 'a-' is atoms (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "a date regex",
+    "message": "pattern[0].term: childCount 1 ≠ 2 [term_group] vs [term_group,term_group]",
+    "input": "[0-9]{4}",
+    "rendered": "[0-9]4",
+    "start": 8,
+    "end": 16,
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "severity": "error",
+    "label": "a date regex (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "a date regex",
+    "message": "pattern[0].term: childCount 1 ≠ 2 [term_group] vs [term_group,term_group]",
+    "input": "[0-9]{2}",
+    "rendered": "[0-9]2",
+    "start": 27,
+    "end": 35,
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "severity": "error",
+    "label": "a date regex (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "a date regex",
+    "message": "pattern[0].term: childCount 1 ≠ 2 [term_group] vs [term_group,term_group]",
+    "input": "[0-9]{2}",
+    "rendered": "[0-9]2",
+    "start": 44,
+    "end": 52,
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "severity": "error",
+    "label": "a date regex (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "pattern",
+    "entry": "a multiline url regex",
+    "message": "pattern[0].term[0].term_group[0].character_class: childCount 19 ≠ 18 [\"[\",class_character,class_range,class_range,class_range,class_character,class_character,class_character,class_character,identity_escape,class_character,class_character,class_character,class_character,class_character,class_character,class_character,class_character,\"]\"] vs [\"[\",class_range,class_range,class_range,class_character,class_character,class_character,class_character,identity_escape,class_character,class_character,class_character,class_character,class_character,class_character,class_character,class_character,\"]\"]",
+    "input": "[-a-zA-Z0-9@:%_\\+.~#?&//=]*",
+    "rendered": "[a-zA-Z0-9@:%_\\+.~#?&//=]*",
+    "start": 46,
+    "end": 73,
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "severity": "error",
+    "label": "a multiline url regex (pattern)"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "term",
+    "count": 57,
+    "entries": [
+      "Hexadecimal digits escape sequence",
+      "Inline regex flags",
+      "POSIX Character Class",
+      "Unicode escape",
+      "Unicode escaped characters as atoms in character classes",
+      "\\u without hex codes treated as identity escape",
+      "a date regex",
+      "a multiline url regex",
+      "alternation w empty terms & assertions",
+      "alternations",
+      "alternations with empty terms",
+      "assertions - line start / end",
+      "assertions - word boundary",
+      "atom escapes - character class escapes",
+      "atom escapes - control escapes",
+      "atom escapes - decimal escapes",
+      "atom escapes - lone unicode property names",
+      "atom escapes - unicode property value expressions",
+      "capturing groups",
+      "character classes",
+      "character classes - '-' is an atom",
+      "character classes - 'a-' is atoms",
+      "character classes - /[---]/ is odd but valid",
+      "character classes - identity escapes",
+      "identity escapes",
+      "lookahead",
+      "lookbehind",
+      "named capturing groups",
+      "named capturing groups - backreferences",
+      "negative lookahead",
+      "negative lookbehind",
+      "non-capturing groups",
+      "open brace reads as a pattern character when not closed",
+      "quantifiers",
+      "quantifiers - count",
+      "sequence match",
+      "sequence match w/ '.' atom"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "term"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "term_group",
+    "count": 215,
+    "entries": [
+      "Hexadecimal digits escape sequence",
+      "Inline regex flags",
+      "POSIX Character Class",
+      "Unicode escape",
+      "Unicode escaped characters as atoms in character classes",
+      "\\u without hex codes treated as identity escape",
+      "a date regex",
+      "a multiline url regex",
+      "alternation w empty terms & assertions",
+      "alternations",
+      "alternations with empty terms",
+      "assertions - line start / end",
+      "assertions - word boundary",
+      "atom escapes - character class escapes",
+      "atom escapes - control escapes",
+      "atom escapes - decimal escapes",
+      "atom escapes - lone unicode property names",
+      "atom escapes - unicode property value expressions",
+      "capturing groups",
+      "character classes",
+      "character classes - '-' is an atom",
+      "character classes - 'a-' is atoms",
+      "character classes - /[---]/ is odd but valid",
+      "character classes - identity escapes",
+      "identity escapes",
+      "lookahead",
+      "lookbehind",
+      "named capturing groups",
+      "named capturing groups - backreferences",
+      "negative lookahead",
+      "negative lookbehind",
+      "non-capturing groups",
+      "open brace reads as a pattern character when not closed",
+      "quantifiers",
+      "quantifiers - count",
+      "sequence match",
+      "sequence match w/ '.' atom"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "term_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "count_quantifier",
+    "count": 9,
+    "entries": [
+      "a date regex",
+      "a multiline url regex",
+      "quantifiers - count"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "count_quantifier"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "count_quantifier_arm",
+    "count": 9,
+    "entries": [
+      "a date regex",
+      "a multiline url regex",
+      "quantifiers - count"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "count_quantifier_arm"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "count_quantifier_group",
+    "count": 5,
+    "entries": [
+      "a multiline url regex",
+      "quantifiers - count"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "count_quantifier_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "alternation",
+    "count": 3,
+    "entries": [
+      "alternation w empty terms & assertions",
+      "alternations",
+      "alternations with empty terms"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "alternation"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "lookaround_assertion",
+    "count": 4,
+    "entries": [
+      "lookahead",
+      "lookbehind",
+      "negative lookahead",
+      "negative lookbehind"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "lookaround_assertion"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "lookahead_assertion",
+    "count": 2,
+    "entries": [
+      "lookahead",
+      "negative lookahead"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "lookahead_assertion"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "lookbehind_assertion",
+    "count": 2,
+    "entries": [
+      "lookbehind",
+      "negative lookbehind"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "lookbehind_assertion"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "character_class",
+    "count": 16,
+    "entries": [
+      "Hexadecimal digits escape sequence",
+      "POSIX Character Class",
+      "Unicode escaped characters as atoms in character classes",
+      "a date regex",
+      "a multiline url regex",
+      "character classes",
+      "character classes - '-' is an atom",
+      "character classes - 'a-' is atoms",
+      "character classes - /[---]/ is odd but valid",
+      "character classes - identity escapes"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "character_class"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "class_range",
+    "count": 16,
+    "entries": [
+      "Hexadecimal digits escape sequence",
+      "Unicode escaped characters as atoms in character classes",
+      "a date regex",
+      "a multiline url regex",
+      "character classes",
+      "character classes - /[---]/ is odd but valid"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "class_range"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "identity_escape",
+    "count": 15,
+    "entries": [
+      "\\u without hex codes treated as identity escape",
+      "a multiline url regex",
+      "character classes - identity escapes",
+      "identity escapes"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "identity_escape"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "character_class_escape",
+    "count": 12,
+    "entries": [
+      "Unicode escape",
+      "Unicode escaped characters as atoms in character classes",
+      "\\u without hex codes treated as identity escape",
+      "atom escapes - character class escapes",
+      "atom escapes - lone unicode property names",
+      "atom escapes - unicode property value expressions",
+      "identity escapes"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "character_class_escape"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "non_capturing_group",
+    "count": 1,
+    "entries": [
+      "non-capturing groups"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "non_capturing_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "character_class_escape_arm",
+    "count": 2,
+    "entries": [
+      "atom escapes - lone unicode property names",
+      "atom escapes - unicode property value expressions"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "character_class_escape_arm"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "unicode_property_value_expression",
+    "count": 2,
+    "entries": [
+      "atom escapes - lone unicode property names",
+      "atom escapes - unicode property value expressions"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "unicode_property_value_expression"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "unicode_property_value_expression_group",
+    "count": 1,
+    "entries": [
+      "atom escapes - unicode property value expressions"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "unicode_property_value_expression_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "unicode_property_name",
+    "count": 1,
+    "entries": [
+      "atom escapes - unicode property value expressions"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "unicode_property_name"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "anonymous_capturing_group",
+    "count": 2,
+    "entries": [
+      "a multiline url regex",
+      "capturing groups"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "anonymous_capturing_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "named_capturing_group",
+    "count": 7,
+    "entries": [
+      "a date regex",
+      "named capturing groups",
+      "named capturing groups - backreferences"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "named_capturing_group"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "backreference_escape",
+    "count": 1,
+    "entries": [
+      "named capturing groups - backreferences"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "backreference_escape"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "named_group_backreference",
+    "count": 1,
+    "entries": [
+      "named capturing groups - backreferences"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "named_group_backreference"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "posix_character_class",
+    "count": 1,
+    "entries": [
+      "POSIX Character Class"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "posix_character_class"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "inline_flags_group_enable",
+    "count": 2,
+    "entries": [
+      "Inline regex flags"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "inline_flags_group_enable"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "inline_flags_group_toggle",
+    "count": 1,
+    "entries": [
+      "Inline regex flags"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "inline_flags_group_toggle"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "inline_flags_group_disable",
+    "count": 2,
+    "entries": [
+      "Inline regex flags"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "inline_flags_group_disable"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "_control_escape",
+    "count": 1,
+    "entries": [
+      "control_escape"
+    ],
+    "stage": "coverage-excluded",
+    "code": "coverage-excluded",
+    "severity": "info",
+    "message": "no-rule",
+    "label": "_control_escape"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "_one_or_more",
+    "count": 1,
+    "entries": [
+      "one_or_more"
+    ],
+    "stage": "coverage-excluded",
+    "code": "coverage-excluded",
+    "severity": "info",
+    "message": "no-rule",
+    "label": "_one_or_more"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "_optional",
+    "count": 1,
+    "entries": [
+      "optional"
+    ],
+    "stage": "coverage-excluded",
+    "code": "coverage-excluded",
+    "severity": "info",
+    "message": "no-rule",
+    "label": "_optional"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "_unicode_character_escape",
+    "count": 1,
+    "entries": [
+      "unicode_character_escape"
+    ],
+    "stage": "coverage-excluded",
+    "code": "coverage-excluded",
+    "severity": "info",
+    "message": "no-rule",
+    "label": "_unicode_character_escape"
+  },
+  {
+    "source": "validator",
+    "grammar": "regex",
+    "backend": "native",
+    "kind": "_zero_or_more",
+    "count": 1,
+    "entries": [
+      "zero_or_more"
+    ],
+    "stage": "coverage-excluded",
+    "code": "coverage-excluded",
+    "severity": "info",
+    "message": "no-rule",
+    "label": "_zero_or_more"
+  },
+  {
+    "source": "grammar",
     "grammar": "python",
     "backend": "native",
     "scope": "grammar",
@@ -16193,2430 +18618,5 @@
     "severity": "info",
     "message": "parse-error",
     "label": "parse-error"
-  },
-  {
-    "source": "grammar",
-    "grammar": "scm",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "list",
-    "message": "[collect-slots] kind 'list': choice rule:list:members.3 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    },
-    "location": "list"
-  },
-  {
-    "source": "grammar",
-    "grammar": "scm",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "grouping",
-    "message": "[collect-slots] kind 'grouping': choice rule:grouping:members.3 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    },
-    "location": "grouping"
-  },
-  {
-    "source": "grammar",
-    "grammar": "scm",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "missing_node",
-    "message": "[collect-slots] kind 'missing_node': choice rule:missing_node:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    },
-    "location": "missing_node"
-  },
-  {
-    "source": "grammar",
-    "grammar": "scm",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "anonymous_node",
-    "message": "[collect-slots] kind 'anonymous_node': choice rule:anonymous_node:members.1 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    },
-    "location": "anonymous_node"
-  },
-  {
-    "source": "grammar",
-    "grammar": "scm",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "unclassifiable-shape",
-    "severity": "error",
-    "ownerKind": "predicate",
-    "message": "[collect-slots] kind 'predicate': member rule:predicate:members.1 is not a leaf or a choice of leaves (nested-seq: field(name):seq[3](choice _immediate_identifier predicate_type)). Resolve with rule(name, body) in patches: naming the structured arm as its own rule",
-    "canProceed": false,
-    "details": {
-      "bucket": "nested-seq",
-      "shape": "field(name):seq[3](choice _immediate_identifier predicate_type)",
-      "ruleId": "rule:predicate:members.1"
-    },
-    "location": "predicate"
-  },
-  {
-    "source": "grammar",
-    "grammar": "scm",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "named_node_plain",
-    "message": "[collect-slots] kind 'named_node_plain': choice rule:named_node_plain:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    },
-    "location": "named_node_plain"
-  },
-  {
-    "source": "grammar",
-    "grammar": "scm",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "named_node_supertyped",
-    "message": "[collect-slots] kind 'named_node_supertyped': choice rule:named_node_supertyped:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    },
-    "location": "named_node_supertyped"
-  },
-  {
-    "source": "grammar",
-    "grammar": "regex",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "message": "conflict between character_class, class_range on '-' resolved by AddConflict (upstream-declared)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "character_class",
-          "class_range"
-        ]
-      },
-      "step": "upstream-declared",
-      "sourceChains": [
-        [
-          "character_class"
-        ],
-        [
-          "class_range"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'['",
-          "class_character"
-        ],
-        "lookahead": "'-'",
-        "interpretations": [
-          "class_range",
-          "class_range",
-          "class_range",
-          "class_range",
-          "character_class_repeat1"
-        ]
-      }
-    }
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "quantifier",
-    "count": 1,
-    "entries": [
-      "Quantifiers (+)"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "quantifier"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "predicate_type",
-    "count": 1,
-    "entries": [
-      "Predicates"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "predicate_type"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "named_node_plain",
-    "count": 120,
-    "entries": [
-      "Anchor Operator",
-      "Anonymous nodes",
-      "Captures",
-      "Comments",
-      "Field names",
-      "Groups",
-      "Lists",
-      "Missing keyword",
-      "Named nodes",
-      "Negated fields",
-      "Predicates",
-      "Quantifiers (*)",
-      "Quantifiers (+)",
-      "Quantifiers (?)",
-      "Quantifiers (complex)",
-      "Strings",
-      "Supertypes",
-      "Wildcard nodes"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "named_node_plain"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "anonymous_node",
-    "count": 29,
-    "entries": [
-      "Anchor Operator",
-      "Anonymous nodes",
-      "Anonymous nodes (series)",
-      "Groups",
-      "Lists",
-      "Wildcard nodes"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "anonymous_node"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "string",
-    "count": 33,
-    "entries": [
-      "Anchor Operator",
-      "Anonymous nodes",
-      "Anonymous nodes (series)",
-      "Comments",
-      "Groups",
-      "Lists",
-      "Predicates",
-      "Strings"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "string"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "string_content",
-    "count": 34,
-    "entries": [
-      "Anchor Operator",
-      "Anonymous nodes",
-      "Anonymous nodes (series)",
-      "Comments",
-      "Groups",
-      "Lists",
-      "Predicates",
-      "Strings",
-      "Supertypes"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "string_content"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "grouping",
-    "count": 18,
-    "entries": [
-      "Anchor Operator",
-      "Anonymous nodes (series)",
-      "Groups",
-      "Predicates",
-      "Strings"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "grouping"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "grouping_group",
-    "count": 31,
-    "entries": [
-      "Anchor Operator",
-      "Anonymous nodes (series)",
-      "Groups",
-      "Predicates",
-      "Strings"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "grouping_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "capture",
-    "count": 27,
-    "entries": [
-      "Captures",
-      "Comments",
-      "Lists",
-      "Missing keyword",
-      "Negated fields",
-      "Predicates",
-      "Quantifiers (complex)",
-      "Strings",
-      "Wildcard nodes"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "capture"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "named_node_group_children",
-    "count": 28,
-    "entries": [
-      "Anchor Operator",
-      "Captures",
-      "Comments",
-      "Field names",
-      "Lists",
-      "Missing keyword",
-      "Negated fields",
-      "Quantifiers (*)",
-      "Quantifiers (+)",
-      "Quantifiers (?)",
-      "Quantifiers (complex)",
-      "Supertypes",
-      "Wildcard nodes"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "named_node_group_children"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "field_definition",
-    "count": 27,
-    "entries": [
-      "Anchor Operator",
-      "Captures",
-      "Comments",
-      "Field names",
-      "Lists",
-      "Negated fields",
-      "Supertypes",
-      "Wildcard nodes"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "field_definition"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "list",
-    "count": 11,
-    "entries": [
-      "Anchor Operator",
-      "Field names",
-      "Groups",
-      "Lists"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "list"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "negated_field",
-    "count": 2,
-    "entries": [
-      "Negated fields"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "negated_field"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "predicate",
-    "count": 8,
-    "entries": [
-      "Comments",
-      "Predicates",
-      "Strings"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "predicate"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "parameters",
-    "count": 7,
-    "entries": [
-      "Comments",
-      "Predicates",
-      "Strings"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "parameters"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "group_expression_arm",
-    "count": 13,
-    "entries": [
-      "Anchor Operator"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "group_expression_arm"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "named_node_group_anchored_last",
-    "count": 12,
-    "entries": [
-      "Anchor Operator"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "named_node_group_anchored_last"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "named_node_expression_arm",
-    "count": 15,
-    "entries": [
-      "Anchor Operator"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "named_node_expression_arm"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "escape_sequence",
-    "count": 4,
-    "entries": [
-      "Strings"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "escape_sequence"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "named_node_supertyped",
-    "count": 2,
-    "entries": [
-      "Supertypes"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "named_node_supertyped"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "immediate_string",
-    "count": 1,
-    "entries": [
-      "Supertypes"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "immediate_string"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "missing_node",
-    "count": 3,
-    "entries": [
-      "Missing keyword"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "missing_node"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "named_node_plain",
-    "count": 120,
-    "entries": [
-      "Anchor Operator",
-      "Anonymous nodes",
-      "Captures",
-      "Comments",
-      "Field names",
-      "Groups",
-      "Lists",
-      "Missing keyword",
-      "Named nodes",
-      "Negated fields",
-      "Predicates",
-      "Quantifiers (*)",
-      "Quantifiers (+)",
-      "Quantifiers (?)",
-      "Quantifiers (complex)",
-      "Strings",
-      "Supertypes",
-      "Wildcard nodes"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "named_node_plain"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "anonymous_node",
-    "count": 29,
-    "entries": [
-      "Anchor Operator",
-      "Anonymous nodes",
-      "Anonymous nodes (series)",
-      "Groups",
-      "Lists",
-      "Wildcard nodes"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "anonymous_node"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "string",
-    "count": 33,
-    "entries": [
-      "Anchor Operator",
-      "Anonymous nodes",
-      "Anonymous nodes (series)",
-      "Comments",
-      "Groups",
-      "Lists",
-      "Predicates",
-      "Strings"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "string"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "string_content",
-    "count": 34,
-    "entries": [
-      "Anchor Operator",
-      "Anonymous nodes",
-      "Anonymous nodes (series)",
-      "Comments",
-      "Groups",
-      "Lists",
-      "Predicates",
-      "Strings",
-      "Supertypes"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "string_content"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "grouping",
-    "count": 18,
-    "entries": [
-      "Anchor Operator",
-      "Anonymous nodes (series)",
-      "Groups",
-      "Predicates",
-      "Strings"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "grouping"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "grouping_group",
-    "count": 31,
-    "entries": [
-      "Anchor Operator",
-      "Anonymous nodes (series)",
-      "Groups",
-      "Predicates",
-      "Strings"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "grouping_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "capture",
-    "count": 27,
-    "entries": [
-      "Captures",
-      "Comments",
-      "Lists",
-      "Missing keyword",
-      "Negated fields",
-      "Predicates",
-      "Quantifiers (complex)",
-      "Strings",
-      "Wildcard nodes"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "capture"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "named_node_group_children",
-    "count": 28,
-    "entries": [
-      "Anchor Operator",
-      "Captures",
-      "Comments",
-      "Field names",
-      "Lists",
-      "Missing keyword",
-      "Negated fields",
-      "Quantifiers (*)",
-      "Quantifiers (+)",
-      "Quantifiers (?)",
-      "Quantifiers (complex)",
-      "Supertypes",
-      "Wildcard nodes"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "named_node_group_children"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "field_definition",
-    "count": 27,
-    "entries": [
-      "Anchor Operator",
-      "Captures",
-      "Comments",
-      "Field names",
-      "Lists",
-      "Negated fields",
-      "Supertypes",
-      "Wildcard nodes"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "field_definition"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "list",
-    "count": 11,
-    "entries": [
-      "Anchor Operator",
-      "Field names",
-      "Groups",
-      "Lists"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "list"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "negated_field",
-    "count": 2,
-    "entries": [
-      "Negated fields"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "negated_field"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "predicate",
-    "count": 8,
-    "entries": [
-      "Comments",
-      "Predicates",
-      "Strings"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "predicate"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "parameters",
-    "count": 7,
-    "entries": [
-      "Comments",
-      "Predicates",
-      "Strings"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "parameters"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "group_expression_arm",
-    "count": 13,
-    "entries": [
-      "Anchor Operator"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "group_expression_arm"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "named_node_group_anchored_last",
-    "count": 12,
-    "entries": [
-      "Anchor Operator"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "named_node_group_anchored_last"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "named_node_expression_arm",
-    "count": 15,
-    "entries": [
-      "Anchor Operator"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "named_node_expression_arm"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "escape_sequence",
-    "count": 4,
-    "entries": [
-      "Strings"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "escape_sequence"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "named_node_supertyped",
-    "count": 2,
-    "entries": [
-      "Supertypes"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "named_node_supertyped"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "immediate_string",
-    "count": 1,
-    "entries": [
-      "Supertypes"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "immediate_string"
-  },
-  {
-    "source": "validator",
-    "grammar": "scm",
-    "backend": "native",
-    "kind": "missing_node",
-    "count": 3,
-    "entries": [
-      "Missing keyword"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "missing_node"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "identity_escape",
-    "severity": "error",
-    "message": "from() throws: identity_escape.content: text does not match pattern: [object Object]",
-    "stage": "from",
-    "code": "from-error",
-    "label": "identity_escape"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "control_escape_text1",
-    "count": 1,
-    "entries": [
-      "atom escapes - control escapes"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "control_escape_text1"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "unicode_character_escape_text1",
-    "count": 1,
-    "entries": [
-      "Unicode escape"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "unicode_character_escape_text1"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "unicode_character_escape_text2",
-    "count": 1,
-    "entries": [
-      "Unicode escape"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "unicode_character_escape_text2"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "control_escape_text2",
-    "count": 1,
-    "entries": [
-      "Hexadecimal digits escape sequence"
-    ],
-    "stage": "from-excluded",
-    "code": "from-excluded",
-    "severity": "info",
-    "message": "no-from-function",
-    "label": "control_escape_text2"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "quantifiers - count",
-    "message": "pattern[0].term: childCount 5 ≠ 14 [term_group,term_group,term_group,term_group,term_group] vs [term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group]",
-    "input": "h{1,2}?el{1,2}.{3}t{4,}",
-    "rendered": "h1,2el1,2.3t4,",
-    "start": 0,
-    "end": 23,
-    "stage": "read-render-parse-ast-mismatch",
-    "code": "read-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "quantifiers - count (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "alternations with empty terms",
-    "message": "pattern[0].alternation: childCount 9 ≠ 3 [\"|\",\"|\",term,\"|\",\"|\",term,\"|\",\"|\",\"|\"] vs [term,\"|\",term]",
-    "input": "||he..o||wo.ld|||",
-    "rendered": "he..o|wo.ld",
-    "start": 0,
-    "end": 17,
-    "stage": "read-render-parse-ast-mismatch",
-    "code": "read-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "alternations with empty terms (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "alternation w empty terms & assertions",
-    "message": "pattern[0].alternation: childCount 4 ≠ 3 [term,\"|\",\"|\",term] vs [term,\"|\",term]",
-    "input": "^he..o$||w..ld$",
-    "rendered": "^he..o$|w..ld$",
-    "start": 0,
-    "end": 15,
-    "stage": "read-render-parse-ast-mismatch",
-    "code": "read-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "alternation w empty terms & assertions (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "character classes",
-    "message": "pattern[0].term[1].term_group[0].character_class: childCount 5 ≠ 4 [\"[\",\"^\",class_character,class_character,\"]\"] vs [\"[\",class_character,class_character,\"]\"]",
-    "input": "[A-Za-z][^Xx]",
-    "rendered": "[A-Za-z][Xx]",
-    "start": 0,
-    "end": 13,
-    "stage": "read-render-parse-ast-mismatch",
-    "code": "read-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "character classes (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "character classes - '-' is an atom",
-    "message": "pattern[0].term[0].term_group[0].character_class: childCount 3 ≠ 2 [\"[\",class_character,\"]\"] vs [\"[\",\"]\"]",
-    "input": "[-]",
-    "rendered": "[]",
-    "start": 0,
-    "end": 3,
-    "stage": "read-render-parse-ast-mismatch",
-    "code": "read-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "character classes - '-' is an atom (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "character classes - 'a-' is atoms",
-    "message": "pattern[0].term[0].term_group[0].character_class: childCount 4 ≠ 3 [\"[\",class_character,class_character,\"]\"] vs [\"[\",class_character,\"]\"]",
-    "input": "[a-]",
-    "rendered": "[a]",
-    "start": 0,
-    "end": 4,
-    "stage": "read-render-parse-ast-mismatch",
-    "code": "read-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "character classes - 'a-' is atoms (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "a date regex",
-    "message": "pattern[0].term: childCount 1 ≠ 2 [term_group] vs [term_group,term_group]",
-    "input": "[0-9]{4}",
-    "rendered": "[0-9]4",
-    "start": 8,
-    "end": 16,
-    "stage": "read-render-parse-ast-mismatch",
-    "code": "read-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "a date regex (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "a date regex",
-    "message": "pattern[0].term: childCount 1 ≠ 2 [term_group] vs [term_group,term_group]",
-    "input": "[0-9]{2}",
-    "rendered": "[0-9]2",
-    "start": 27,
-    "end": 35,
-    "stage": "read-render-parse-ast-mismatch",
-    "code": "read-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "a date regex (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "a date regex",
-    "message": "pattern[0].term: childCount 1 ≠ 2 [term_group] vs [term_group,term_group]",
-    "input": "[0-9]{2}",
-    "rendered": "[0-9]2",
-    "start": 44,
-    "end": 52,
-    "stage": "read-render-parse-ast-mismatch",
-    "code": "read-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "a date regex (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "a multiline url regex",
-    "message": "pattern[0].term[0].term_group[0].character_class: childCount 19 ≠ 18 [\"[\",class_character,class_range,class_range,class_range,class_character,class_character,class_character,class_character,identity_escape,class_character,class_character,class_character,class_character,class_character,class_character,class_character,class_character,\"]\"] vs [\"[\",class_range,class_range,class_range,class_character,class_character,class_character,class_character,identity_escape,class_character,class_character,class_character,class_character,class_character,class_character,class_character,class_character,\"]\"]",
-    "input": "[-a-zA-Z0-9@:%_\\+.~#?&//=]*",
-    "rendered": "[a-zA-Z0-9@:%_\\+.~#?&//=]*",
-    "start": 46,
-    "end": 73,
-    "stage": "read-render-parse-ast-mismatch",
-    "code": "read-render-parse-ast-mismatch",
-    "severity": "error",
-    "label": "a multiline url regex (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "term",
-    "count": 57,
-    "entries": [
-      "Hexadecimal digits escape sequence",
-      "Inline regex flags",
-      "POSIX Character Class",
-      "Unicode escape",
-      "Unicode escaped characters as atoms in character classes",
-      "\\u without hex codes treated as identity escape",
-      "a date regex",
-      "a multiline url regex",
-      "alternation w empty terms & assertions",
-      "alternations",
-      "alternations with empty terms",
-      "assertions - line start / end",
-      "assertions - word boundary",
-      "atom escapes - character class escapes",
-      "atom escapes - control escapes",
-      "atom escapes - decimal escapes",
-      "atom escapes - lone unicode property names",
-      "atom escapes - unicode property value expressions",
-      "capturing groups",
-      "character classes",
-      "character classes - '-' is an atom",
-      "character classes - 'a-' is atoms",
-      "character classes - /[---]/ is odd but valid",
-      "character classes - identity escapes",
-      "identity escapes",
-      "lookahead",
-      "lookbehind",
-      "named capturing groups",
-      "named capturing groups - backreferences",
-      "negative lookahead",
-      "negative lookbehind",
-      "non-capturing groups",
-      "open brace reads as a pattern character when not closed",
-      "quantifiers",
-      "quantifiers - count",
-      "sequence match",
-      "sequence match w/ '.' atom"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "term"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "term_group",
-    "count": 215,
-    "entries": [
-      "Hexadecimal digits escape sequence",
-      "Inline regex flags",
-      "POSIX Character Class",
-      "Unicode escape",
-      "Unicode escaped characters as atoms in character classes",
-      "\\u without hex codes treated as identity escape",
-      "a date regex",
-      "a multiline url regex",
-      "alternation w empty terms & assertions",
-      "alternations",
-      "alternations with empty terms",
-      "assertions - line start / end",
-      "assertions - word boundary",
-      "atom escapes - character class escapes",
-      "atom escapes - control escapes",
-      "atom escapes - decimal escapes",
-      "atom escapes - lone unicode property names",
-      "atom escapes - unicode property value expressions",
-      "capturing groups",
-      "character classes",
-      "character classes - '-' is an atom",
-      "character classes - 'a-' is atoms",
-      "character classes - /[---]/ is odd but valid",
-      "character classes - identity escapes",
-      "identity escapes",
-      "lookahead",
-      "lookbehind",
-      "named capturing groups",
-      "named capturing groups - backreferences",
-      "negative lookahead",
-      "negative lookbehind",
-      "non-capturing groups",
-      "open brace reads as a pattern character when not closed",
-      "quantifiers",
-      "quantifiers - count",
-      "sequence match",
-      "sequence match w/ '.' atom"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "term_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "count_quantifier",
-    "count": 9,
-    "entries": [
-      "a date regex",
-      "a multiline url regex",
-      "quantifiers - count"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "count_quantifier"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "count_quantifier_arm",
-    "count": 9,
-    "entries": [
-      "a date regex",
-      "a multiline url regex",
-      "quantifiers - count"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "count_quantifier_arm"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "count_quantifier_group",
-    "count": 5,
-    "entries": [
-      "a multiline url regex",
-      "quantifiers - count"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "count_quantifier_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "alternation",
-    "count": 3,
-    "entries": [
-      "alternation w empty terms & assertions",
-      "alternations",
-      "alternations with empty terms"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "alternation"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "lookaround_assertion",
-    "count": 4,
-    "entries": [
-      "lookahead",
-      "lookbehind",
-      "negative lookahead",
-      "negative lookbehind"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "lookaround_assertion"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "lookahead_assertion",
-    "count": 2,
-    "entries": [
-      "lookahead",
-      "negative lookahead"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "lookahead_assertion"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "lookbehind_assertion",
-    "count": 2,
-    "entries": [
-      "lookbehind",
-      "negative lookbehind"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "lookbehind_assertion"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "character_class",
-    "count": 16,
-    "entries": [
-      "Hexadecimal digits escape sequence",
-      "POSIX Character Class",
-      "Unicode escaped characters as atoms in character classes",
-      "a date regex",
-      "a multiline url regex",
-      "character classes",
-      "character classes - '-' is an atom",
-      "character classes - 'a-' is atoms",
-      "character classes - /[---]/ is odd but valid",
-      "character classes - identity escapes"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "character_class"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "class_range",
-    "count": 16,
-    "entries": [
-      "Hexadecimal digits escape sequence",
-      "Unicode escaped characters as atoms in character classes",
-      "a date regex",
-      "a multiline url regex",
-      "character classes",
-      "character classes - /[---]/ is odd but valid"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "class_range"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "identity_escape",
-    "count": 15,
-    "entries": [
-      "\\u without hex codes treated as identity escape",
-      "a multiline url regex",
-      "character classes - identity escapes",
-      "identity escapes"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "identity_escape"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "character_class_escape",
-    "count": 12,
-    "entries": [
-      "Unicode escape",
-      "Unicode escaped characters as atoms in character classes",
-      "\\u without hex codes treated as identity escape",
-      "atom escapes - character class escapes",
-      "atom escapes - lone unicode property names",
-      "atom escapes - unicode property value expressions",
-      "identity escapes"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "character_class_escape"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "non_capturing_group",
-    "count": 1,
-    "entries": [
-      "non-capturing groups"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "non_capturing_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "character_class_escape_arm",
-    "count": 2,
-    "entries": [
-      "atom escapes - lone unicode property names",
-      "atom escapes - unicode property value expressions"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "character_class_escape_arm"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "unicode_property_value_expression",
-    "count": 2,
-    "entries": [
-      "atom escapes - lone unicode property names",
-      "atom escapes - unicode property value expressions"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "unicode_property_value_expression"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "unicode_property_value_expression_group",
-    "count": 1,
-    "entries": [
-      "atom escapes - unicode property value expressions"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "unicode_property_value_expression_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "unicode_property_name",
-    "count": 1,
-    "entries": [
-      "atom escapes - unicode property value expressions"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "unicode_property_name"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "anonymous_capturing_group",
-    "count": 2,
-    "entries": [
-      "a multiline url regex",
-      "capturing groups"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "anonymous_capturing_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "named_capturing_group",
-    "count": 7,
-    "entries": [
-      "a date regex",
-      "named capturing groups",
-      "named capturing groups - backreferences"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "named_capturing_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "backreference_escape",
-    "count": 1,
-    "entries": [
-      "named capturing groups - backreferences"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "backreference_escape"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "named_group_backreference",
-    "count": 1,
-    "entries": [
-      "named capturing groups - backreferences"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "named_group_backreference"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "posix_character_class",
-    "count": 1,
-    "entries": [
-      "POSIX Character Class"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "posix_character_class"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "inline_flags_group_enable",
-    "count": 2,
-    "entries": [
-      "Inline regex flags"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "inline_flags_group_enable"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "inline_flags_group_toggle",
-    "count": 1,
-    "entries": [
-      "Inline regex flags"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "inline_flags_group_toggle"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "inline_flags_group_disable",
-    "count": 2,
-    "entries": [
-      "Inline regex flags"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "inline_flags_group_disable"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "quantifiers - count",
-    "message": "pattern[0].term: childCount 5 ≠ 14 [term_group,term_group,term_group,term_group,term_group] vs [term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group,term_group]",
-    "input": "h{1,2}?el{1,2}.{3}t{4,}",
-    "rendered": "h1,2el1,2.3t4,",
-    "start": 0,
-    "end": 23,
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "severity": "error",
-    "label": "quantifiers - count (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "alternations with empty terms",
-    "message": "pattern[0].alternation: childCount 9 ≠ 3 [\"|\",\"|\",term,\"|\",\"|\",term,\"|\",\"|\",\"|\"] vs [term,\"|\",term]",
-    "input": "||he..o||wo.ld|||",
-    "rendered": "he..o|wo.ld",
-    "start": 0,
-    "end": 17,
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "severity": "error",
-    "label": "alternations with empty terms (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "alternation w empty terms & assertions",
-    "message": "pattern[0].alternation: childCount 4 ≠ 3 [term,\"|\",\"|\",term] vs [term,\"|\",term]",
-    "input": "^he..o$||w..ld$",
-    "rendered": "^he..o$|w..ld$",
-    "start": 0,
-    "end": 15,
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "severity": "error",
-    "label": "alternation w empty terms & assertions (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "character classes",
-    "message": "pattern[0].term[1].term_group[0].character_class: childCount 5 ≠ 4 [\"[\",\"^\",class_character,class_character,\"]\"] vs [\"[\",class_character,class_character,\"]\"]",
-    "input": "[A-Za-z][^Xx]",
-    "rendered": "[A-Za-z][Xx]",
-    "start": 0,
-    "end": 13,
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "severity": "error",
-    "label": "character classes (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "character classes - '-' is an atom",
-    "message": "pattern[0].term[0].term_group[0].character_class: childCount 3 ≠ 2 [\"[\",class_character,\"]\"] vs [\"[\",\"]\"]",
-    "input": "[-]",
-    "rendered": "[]",
-    "start": 0,
-    "end": 3,
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "severity": "error",
-    "label": "character classes - '-' is an atom (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "character classes - 'a-' is atoms",
-    "message": "pattern[0].term[0].term_group[0].character_class: childCount 4 ≠ 3 [\"[\",class_character,class_character,\"]\"] vs [\"[\",class_character,\"]\"]",
-    "input": "[a-]",
-    "rendered": "[a]",
-    "start": 0,
-    "end": 4,
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "severity": "error",
-    "label": "character classes - 'a-' is atoms (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "a date regex",
-    "message": "pattern[0].term: childCount 1 ≠ 2 [term_group] vs [term_group,term_group]",
-    "input": "[0-9]{4}",
-    "rendered": "[0-9]4",
-    "start": 8,
-    "end": 16,
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "severity": "error",
-    "label": "a date regex (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "a date regex",
-    "message": "pattern[0].term: childCount 1 ≠ 2 [term_group] vs [term_group,term_group]",
-    "input": "[0-9]{2}",
-    "rendered": "[0-9]2",
-    "start": 27,
-    "end": 35,
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "severity": "error",
-    "label": "a date regex (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "a date regex",
-    "message": "pattern[0].term: childCount 1 ≠ 2 [term_group] vs [term_group,term_group]",
-    "input": "[0-9]{2}",
-    "rendered": "[0-9]2",
-    "start": 44,
-    "end": 52,
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "severity": "error",
-    "label": "a date regex (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "pattern",
-    "entry": "a multiline url regex",
-    "message": "pattern[0].term[0].term_group[0].character_class: childCount 19 ≠ 18 [\"[\",class_character,class_range,class_range,class_range,class_character,class_character,class_character,class_character,identity_escape,class_character,class_character,class_character,class_character,class_character,class_character,class_character,class_character,\"]\"] vs [\"[\",class_range,class_range,class_range,class_character,class_character,class_character,class_character,identity_escape,class_character,class_character,class_character,class_character,class_character,class_character,class_character,class_character,\"]\"]",
-    "input": "[-a-zA-Z0-9@:%_\\+.~#?&//=]*",
-    "rendered": "[a-zA-Z0-9@:%_\\+.~#?&//=]*",
-    "start": 46,
-    "end": 73,
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "severity": "error",
-    "label": "a multiline url regex (pattern)"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "term",
-    "count": 57,
-    "entries": [
-      "Hexadecimal digits escape sequence",
-      "Inline regex flags",
-      "POSIX Character Class",
-      "Unicode escape",
-      "Unicode escaped characters as atoms in character classes",
-      "\\u without hex codes treated as identity escape",
-      "a date regex",
-      "a multiline url regex",
-      "alternation w empty terms & assertions",
-      "alternations",
-      "alternations with empty terms",
-      "assertions - line start / end",
-      "assertions - word boundary",
-      "atom escapes - character class escapes",
-      "atom escapes - control escapes",
-      "atom escapes - decimal escapes",
-      "atom escapes - lone unicode property names",
-      "atom escapes - unicode property value expressions",
-      "capturing groups",
-      "character classes",
-      "character classes - '-' is an atom",
-      "character classes - 'a-' is atoms",
-      "character classes - /[---]/ is odd but valid",
-      "character classes - identity escapes",
-      "identity escapes",
-      "lookahead",
-      "lookbehind",
-      "named capturing groups",
-      "named capturing groups - backreferences",
-      "negative lookahead",
-      "negative lookbehind",
-      "non-capturing groups",
-      "open brace reads as a pattern character when not closed",
-      "quantifiers",
-      "quantifiers - count",
-      "sequence match",
-      "sequence match w/ '.' atom"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "term"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "term_group",
-    "count": 215,
-    "entries": [
-      "Hexadecimal digits escape sequence",
-      "Inline regex flags",
-      "POSIX Character Class",
-      "Unicode escape",
-      "Unicode escaped characters as atoms in character classes",
-      "\\u without hex codes treated as identity escape",
-      "a date regex",
-      "a multiline url regex",
-      "alternation w empty terms & assertions",
-      "alternations",
-      "alternations with empty terms",
-      "assertions - line start / end",
-      "assertions - word boundary",
-      "atom escapes - character class escapes",
-      "atom escapes - control escapes",
-      "atom escapes - decimal escapes",
-      "atom escapes - lone unicode property names",
-      "atom escapes - unicode property value expressions",
-      "capturing groups",
-      "character classes",
-      "character classes - '-' is an atom",
-      "character classes - 'a-' is atoms",
-      "character classes - /[---]/ is odd but valid",
-      "character classes - identity escapes",
-      "identity escapes",
-      "lookahead",
-      "lookbehind",
-      "named capturing groups",
-      "named capturing groups - backreferences",
-      "negative lookahead",
-      "negative lookbehind",
-      "non-capturing groups",
-      "open brace reads as a pattern character when not closed",
-      "quantifiers",
-      "quantifiers - count",
-      "sequence match",
-      "sequence match w/ '.' atom"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "term_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "count_quantifier",
-    "count": 9,
-    "entries": [
-      "a date regex",
-      "a multiline url regex",
-      "quantifiers - count"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "count_quantifier"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "count_quantifier_arm",
-    "count": 9,
-    "entries": [
-      "a date regex",
-      "a multiline url regex",
-      "quantifiers - count"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "count_quantifier_arm"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "count_quantifier_group",
-    "count": 5,
-    "entries": [
-      "a multiline url regex",
-      "quantifiers - count"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "count_quantifier_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "alternation",
-    "count": 3,
-    "entries": [
-      "alternation w empty terms & assertions",
-      "alternations",
-      "alternations with empty terms"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "alternation"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "lookaround_assertion",
-    "count": 4,
-    "entries": [
-      "lookahead",
-      "lookbehind",
-      "negative lookahead",
-      "negative lookbehind"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "lookaround_assertion"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "lookahead_assertion",
-    "count": 2,
-    "entries": [
-      "lookahead",
-      "negative lookahead"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "lookahead_assertion"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "lookbehind_assertion",
-    "count": 2,
-    "entries": [
-      "lookbehind",
-      "negative lookbehind"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "lookbehind_assertion"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "character_class",
-    "count": 16,
-    "entries": [
-      "Hexadecimal digits escape sequence",
-      "POSIX Character Class",
-      "Unicode escaped characters as atoms in character classes",
-      "a date regex",
-      "a multiline url regex",
-      "character classes",
-      "character classes - '-' is an atom",
-      "character classes - 'a-' is atoms",
-      "character classes - /[---]/ is odd but valid",
-      "character classes - identity escapes"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "character_class"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "class_range",
-    "count": 16,
-    "entries": [
-      "Hexadecimal digits escape sequence",
-      "Unicode escaped characters as atoms in character classes",
-      "a date regex",
-      "a multiline url regex",
-      "character classes",
-      "character classes - /[---]/ is odd but valid"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "class_range"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "identity_escape",
-    "count": 15,
-    "entries": [
-      "\\u without hex codes treated as identity escape",
-      "a multiline url regex",
-      "character classes - identity escapes",
-      "identity escapes"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "identity_escape"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "character_class_escape",
-    "count": 12,
-    "entries": [
-      "Unicode escape",
-      "Unicode escaped characters as atoms in character classes",
-      "\\u without hex codes treated as identity escape",
-      "atom escapes - character class escapes",
-      "atom escapes - lone unicode property names",
-      "atom escapes - unicode property value expressions",
-      "identity escapes"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "character_class_escape"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "non_capturing_group",
-    "count": 1,
-    "entries": [
-      "non-capturing groups"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "non_capturing_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "character_class_escape_arm",
-    "count": 2,
-    "entries": [
-      "atom escapes - lone unicode property names",
-      "atom escapes - unicode property value expressions"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "character_class_escape_arm"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "unicode_property_value_expression",
-    "count": 2,
-    "entries": [
-      "atom escapes - lone unicode property names",
-      "atom escapes - unicode property value expressions"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "unicode_property_value_expression"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "unicode_property_value_expression_group",
-    "count": 1,
-    "entries": [
-      "atom escapes - unicode property value expressions"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "unicode_property_value_expression_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "unicode_property_name",
-    "count": 1,
-    "entries": [
-      "atom escapes - unicode property value expressions"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "unicode_property_name"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "anonymous_capturing_group",
-    "count": 2,
-    "entries": [
-      "a multiline url regex",
-      "capturing groups"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "anonymous_capturing_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "named_capturing_group",
-    "count": 7,
-    "entries": [
-      "a date regex",
-      "named capturing groups",
-      "named capturing groups - backreferences"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "named_capturing_group"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "backreference_escape",
-    "count": 1,
-    "entries": [
-      "named capturing groups - backreferences"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "backreference_escape"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "named_group_backreference",
-    "count": 1,
-    "entries": [
-      "named capturing groups - backreferences"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "named_group_backreference"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "posix_character_class",
-    "count": 1,
-    "entries": [
-      "POSIX Character Class"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "posix_character_class"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "inline_flags_group_enable",
-    "count": 2,
-    "entries": [
-      "Inline regex flags"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "inline_flags_group_enable"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "inline_flags_group_toggle",
-    "count": 1,
-    "entries": [
-      "Inline regex flags"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "inline_flags_group_toggle"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "inline_flags_group_disable",
-    "count": 2,
-    "entries": [
-      "Inline regex flags"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "inline_flags_group_disable"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "_control_escape",
-    "count": 1,
-    "entries": [
-      "control_escape"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_control_escape"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "_one_or_more",
-    "count": 1,
-    "entries": [
-      "one_or_more"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_one_or_more"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "_optional",
-    "count": 1,
-    "entries": [
-      "optional"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_optional"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "_unicode_character_escape",
-    "count": 1,
-    "entries": [
-      "unicode_character_escape"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_unicode_character_escape"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
-    "kind": "_zero_or_more",
-    "count": 1,
-    "entries": [
-      "zero_or_more"
-    ],
-    "stage": "coverage-excluded",
-    "code": "coverage-excluded",
-    "severity": "info",
-    "message": "no-rule",
-    "label": "_zero_or_more"
   }
 ]

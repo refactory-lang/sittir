@@ -706,7 +706,8 @@ function shape(
 				`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
 				`	(${config}: OmitEach<ArgsOf<PF>[0], '${k}'>, options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)({ ...config, ${k}: ${CALL_C}() } as never, options as never);`
 			],
-			paramFor: (p) => `(${config}: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'>, options?: OptionsArg<typeof ${p}>)`
+			paramFor: (p) => `(${config}: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'>, options?: OptionsArg<typeof ${p}>)`,
+			max: 2
 		};
 	}
 	if (seatsConfig) {

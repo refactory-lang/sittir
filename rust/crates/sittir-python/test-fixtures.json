@@ -40288,7 +40288,6 @@
                         "$type": 18,
                         "$source": 0,
                         "$named": false,
-                        "$text": "if",
                         "$span": {
                           "start": 7,
                           "end": 9
@@ -40298,7 +40297,6 @@
                         "$type": 21,
                         "$source": 0,
                         "$named": false,
-                        "$text": "else",
                         "$span": {
                           "start": 12,
                           "end": 16
@@ -40316,7 +40314,6 @@
                       "$type": 40,
                       "$source": 0,
                       "$named": false,
-                      "$text": "=",
                       "$span": {
                         "start": 3,
                         "end": 4
@@ -40375,7 +40372,8 @@
                       "$span": {
                         "start": 28,
                         "end": 30
-                      }
+                      },
+                      "$text": "()"
                     },
                     "$slotOrder": [
                       "function",
@@ -40407,7 +40405,6 @@
                       "$type": 18,
                       "$source": 0,
                       "$named": false,
-                      "$text": "if",
                       "$span": {
                         "start": 31,
                         "end": 33
@@ -40417,7 +40414,6 @@
                       "$type": 21,
                       "$source": 0,
                       "$named": false,
-                      "$text": "else",
                       "$span": {
                         "start": 36,
                         "end": 40
@@ -40515,7 +40511,6 @@
                             "$type": 6,
                             "$source": 0,
                             "$named": false,
-                            "$text": ",",
                             "$span": {
                               "start": 50,
                               "end": 51
@@ -40525,7 +40520,6 @@
                             "$type": 6,
                             "$source": 0,
                             "$named": false,
-                            "$text": ",",
                             "$span": {
                               "start": 52,
                               "end": 53
@@ -40539,7 +40533,6 @@
                           "$type": 33,
                           "$source": 0,
                           "$named": false,
-                          "$text": "(",
                           "$span": {
                             "start": 48,
                             "end": 49
@@ -40549,7 +40542,6 @@
                           "$type": 34,
                           "$source": 0,
                           "$named": false,
-                          "$text": ")",
                           "$span": {
                             "start": 54,
                             "end": 55
@@ -40587,7 +40579,6 @@
                       "$type": 18,
                       "$source": 0,
                       "$named": false,
-                      "$text": "if",
                       "$span": {
                         "start": 56,
                         "end": 58
@@ -40597,7 +40588,6 @@
                       "$type": 21,
                       "$source": 0,
                       "$named": false,
-                      "$text": "else",
                       "$span": {
                         "start": 61,
                         "end": 65
@@ -40918,7 +40908,6 @@
                   "$type": 6,
                   "$source": 0,
                   "$named": false,
-                  "$text": ",",
                   "$span": {
                     "start": 50,
                     "end": 51
@@ -40928,7 +40917,6 @@
                   "$type": 6,
                   "$source": 0,
                   "$named": false,
-                  "$text": ",",
                   "$span": {
                     "start": 52,
                     "end": 53
@@ -40942,7 +40930,6 @@
                 "$type": 33,
                 "$source": 0,
                 "$named": false,
-                "$text": "(",
                 "$span": {
                   "start": 48,
                   "end": 49
@@ -40952,7 +40939,6 @@
                 "$type": 34,
                 "$source": 0,
                 "$named": false,
-                "$text": ")",
                 "$span": {
                   "start": 54,
                   "end": 55
@@ -40990,7 +40976,6 @@
             "$type": 18,
             "$source": 0,
             "$named": false,
-            "$text": "if",
             "$span": {
               "start": 56,
               "end": 58
@@ -41000,7 +40985,6 @@
             "$type": 21,
             "$source": 0,
             "$named": false,
-            "$text": "else",
             "$span": {
               "start": 61,
               "end": 65
@@ -41374,7 +41358,6 @@
                 "$type": 6,
                 "$source": 0,
                 "$named": false,
-                "$text": ",",
                 "$span": {
                   "start": 50,
                   "end": 51
@@ -41384,7 +41367,6 @@
                 "$type": 6,
                 "$source": 0,
                 "$named": false,
-                "$text": ",",
                 "$span": {
                   "start": 52,
                   "end": 53
@@ -41398,7 +41380,6 @@
               "$type": 33,
               "$source": 0,
               "$named": false,
-              "$text": "(",
               "$span": {
                 "start": 48,
                 "end": 49
@@ -41408,7 +41389,6 @@
               "$type": 34,
               "$source": 0,
               "$named": false,
-              "$text": ")",
               "$span": {
                 "start": 54,
                 "end": 55
@@ -41446,7 +41426,6 @@
           "$type": 18,
           "$source": 0,
           "$named": false,
-          "$text": "if",
           "$span": {
             "start": 56,
             "end": 58
@@ -41456,7 +41435,6 @@
           "$type": 21,
           "$source": 0,
           "$named": false,
-          "$text": "else",
           "$span": {
             "start": 61,
             "end": 65
@@ -41591,7 +41569,6 @@
               "$type": 6,
               "$source": 0,
               "$named": false,
-              "$text": ",",
               "$span": {
                 "start": 50,
                 "end": 51
@@ -41601,7 +41578,6 @@
               "$type": 6,
               "$source": 0,
               "$named": false,
-              "$text": ",",
               "$span": {
                 "start": 52,
                 "end": 53
@@ -41615,7 +41591,6 @@
             "$type": 33,
             "$source": 0,
             "$named": false,
-            "$text": "(",
             "$span": {
               "start": 48,
               "end": 49
@@ -41625,7 +41600,6 @@
             "$type": 34,
             "$source": 0,
             "$named": false,
-            "$text": ")",
             "$span": {
               "start": 54,
               "end": 55
@@ -41727,7 +41701,6 @@
             "$type": 6,
             "$source": 0,
             "$named": false,
-            "$text": ",",
             "$span": {
               "start": 50,
               "end": 51
@@ -41737,7 +41710,6 @@
             "$type": 6,
             "$source": 0,
             "$named": false,
-            "$text": ",",
             "$span": {
               "start": 52,
               "end": 53
@@ -41751,7 +41723,6 @@
           "$type": 33,
           "$source": 0,
           "$named": false,
-          "$text": "(",
           "$span": {
             "start": 48,
             "end": 49
@@ -41761,7 +41732,6 @@
           "$type": 34,
           "$source": 0,
           "$named": false,
-          "$text": ")",
           "$span": {
             "start": 54,
             "end": 55
@@ -42430,10 +42400,11 @@
             "$span": {
               "start": 6,
               "end": 8
-            }
+            },
+            "$text": "()"
           },
           "_body": {
-            "$type": 294,
+            "$type": 295,
             "$source": 0,
             "$named": true,
             "_block": {
@@ -42503,7 +42474,6 @@
                                   "$type": 6,
                                   "$source": 0,
                                   "$named": false,
-                                  "$text": ",",
                                   "$span": {
                                     "start": 18,
                                     "end": 19
@@ -42517,7 +42487,6 @@
                                 "$type": 33,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": "(",
                                 "$span": {
                                   "start": 15,
                                   "end": 16
@@ -42527,7 +42496,6 @@
                                 "$type": 34,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": ")",
                                 "$span": {
                                   "start": 26,
                                   "end": 27
@@ -42603,7 +42571,6 @@
                                 "$type": 42,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": "[",
                                 "$span": {
                                   "start": 37,
                                   "end": 38
@@ -42613,7 +42580,6 @@
                                 "$type": 43,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": "]",
                                 "$span": {
                                   "start": 45,
                                   "end": 46
@@ -42626,7 +42592,6 @@
                               "$type": 40,
                               "$source": 0,
                               "$named": false,
-                              "$text": "=",
                               "$span": {
                                 "start": 35,
                                 "end": 36
@@ -42655,7 +42620,6 @@
               "$type": 32,
               "$source": 0,
               "$named": false,
-              "$text": "def",
               "$span": {
                 "start": 1,
                 "end": 4
@@ -42665,7 +42629,6 @@
               "$type": 19,
               "$source": 0,
               "$named": false,
-              "$text": ":",
               "$span": {
                 "start": 8,
                 "end": 9
@@ -42718,10 +42681,11 @@
         "$span": {
           "start": 6,
           "end": 8
-        }
+        },
+        "$text": "()"
       },
       "_body": {
-        "$type": 294,
+        "$type": 295,
         "$source": 0,
         "$named": true,
         "_block": {
@@ -42791,7 +42755,6 @@
                               "$type": 6,
                               "$source": 0,
                               "$named": false,
-                              "$text": ",",
                               "$span": {
                                 "start": 18,
                                 "end": 19
@@ -42805,7 +42768,6 @@
                             "$type": 33,
                             "$source": 0,
                             "$named": false,
-                            "$text": "(",
                             "$span": {
                               "start": 15,
                               "end": 16
@@ -42815,7 +42777,6 @@
                             "$type": 34,
                             "$source": 0,
                             "$named": false,
-                            "$text": ")",
                             "$span": {
                               "start": 26,
                               "end": 27
@@ -42891,7 +42852,6 @@
                             "$type": 42,
                             "$source": 0,
                             "$named": false,
-                            "$text": "[",
                             "$span": {
                               "start": 37,
                               "end": 38
@@ -42901,7 +42861,6 @@
                             "$type": 43,
                             "$source": 0,
                             "$named": false,
-                            "$text": "]",
                             "$span": {
                               "start": 45,
                               "end": 46
@@ -42914,7 +42873,6 @@
                           "$type": 40,
                           "$source": 0,
                           "$named": false,
-                          "$text": "=",
                           "$span": {
                             "start": 35,
                             "end": 36
@@ -42943,7 +42901,6 @@
           "$type": 32,
           "$source": 0,
           "$named": false,
-          "$text": "def",
           "$span": {
             "start": 1,
             "end": 4
@@ -42953,7 +42910,6 @@
           "$type": 19,
           "$source": 0,
           "$named": false,
-          "$text": ":",
           "$span": {
             "start": 8,
             "end": 9
@@ -43063,7 +43019,6 @@
                 "$type": 6,
                 "$source": 0,
                 "$named": false,
-                "$text": ",",
                 "$span": {
                   "start": 18,
                   "end": 19
@@ -43077,7 +43032,6 @@
               "$type": 33,
               "$source": 0,
               "$named": false,
-              "$text": "(",
               "$span": {
                 "start": 15,
                 "end": 16
@@ -43087,7 +43041,6 @@
               "$type": 34,
               "$source": 0,
               "$named": false,
-              "$text": ")",
               "$span": {
                 "start": 26,
                 "end": 27
@@ -43262,7 +43215,6 @@
               "$type": 6,
               "$source": 0,
               "$named": false,
-              "$text": ",",
               "$span": {
                 "start": 18,
                 "end": 19
@@ -43276,7 +43228,6 @@
             "$type": 33,
             "$source": 0,
             "$named": false,
-            "$text": "(",
             "$span": {
               "start": 15,
               "end": 16
@@ -43286,7 +43237,6 @@
             "$type": 34,
             "$source": 0,
             "$named": false,
-            "$text": ")",
             "$span": {
               "start": 26,
               "end": 27
@@ -43351,7 +43301,6 @@
             "$type": 6,
             "$source": 0,
             "$named": false,
-            "$text": ",",
             "$span": {
               "start": 18,
               "end": 19
@@ -43365,7 +43314,6 @@
           "$type": 33,
           "$source": 0,
           "$named": false,
-          "$text": "(",
           "$span": {
             "start": 15,
             "end": 16
@@ -43375,7 +43323,6 @@
           "$type": 34,
           "$source": 0,
           "$named": false,
-          "$text": ")",
           "$span": {
             "start": 26,
             "end": 27
@@ -43607,7 +43554,6 @@
                           "$type": 6,
                           "$source": 0,
                           "$named": false,
-                          "$text": ",",
                           "$span": {
                             "start": 2,
                             "end": 3
@@ -43660,7 +43606,6 @@
                             "$type": 6,
                             "$source": 0,
                             "$named": false,
-                            "$text": ",",
                             "$span": {
                               "start": 9,
                               "end": 10
@@ -43674,7 +43619,6 @@
                           "$type": 42,
                           "$source": 0,
                           "$named": false,
-                          "$text": "[",
                           "$span": {
                             "start": 7,
                             "end": 8
@@ -43684,7 +43628,6 @@
                           "$type": 43,
                           "$source": 0,
                           "$named": false,
-                          "$text": "]",
                           "$span": {
                             "start": 11,
                             "end": 12
@@ -43713,7 +43656,6 @@
                           "$type": 6,
                           "$source": 0,
                           "$named": false,
-                          "$text": ",",
                           "$span": {
                             "start": 12,
                             "end": 13
@@ -43732,7 +43674,6 @@
                       "$type": 40,
                       "$source": 0,
                       "$named": false,
-                      "$text": "=",
                       "$span": {
                         "start": 5,
                         "end": 6
@@ -43825,7 +43766,6 @@
                           "$type": 6,
                           "$source": 0,
                           "$named": false,
-                          "$text": ",",
                           "$span": {
                             "start": 16,
                             "end": 17
@@ -43835,7 +43775,6 @@
                           "$type": 6,
                           "$source": 0,
                           "$named": false,
-                          "$text": ",",
                           "$span": {
                             "start": 19,
                             "end": 20
@@ -43845,7 +43784,6 @@
                           "$type": 6,
                           "$source": 0,
                           "$named": false,
-                          "$text": ",",
                           "$span": {
                             "start": 22,
                             "end": 23
@@ -43897,7 +43835,6 @@
                               "$type": 8,
                               "$source": 0,
                               "$named": false,
-                              "$text": "*",
                               "$span": {
                                 "start": 31,
                                 "end": 32
@@ -43921,7 +43858,6 @@
                           "$type": 6,
                           "$source": 0,
                           "$named": false,
-                          "$text": ",",
                           "$span": {
                             "start": 29,
                             "end": 30
@@ -43931,7 +43867,6 @@
                           "$type": 6,
                           "$source": 0,
                           "$named": false,
-                          "$text": ",",
                           "$span": {
                             "start": 33,
                             "end": 34
@@ -43950,7 +43885,6 @@
                       "$type": 40,
                       "$source": 0,
                       "$named": false,
-                      "$text": "=",
                       "$span": {
                         "start": 26,
                         "end": 27
@@ -44033,7 +43967,6 @@
                 "$type": 6,
                 "$source": 0,
                 "$named": false,
-                "$text": ",",
                 "$span": {
                   "start": 2,
                   "end": 3
@@ -44086,7 +44019,6 @@
                   "$type": 6,
                   "$source": 0,
                   "$named": false,
-                  "$text": ",",
                   "$span": {
                     "start": 9,
                     "end": 10
@@ -44100,7 +44032,6 @@
                 "$type": 42,
                 "$source": 0,
                 "$named": false,
-                "$text": "[",
                 "$span": {
                   "start": 7,
                   "end": 8
@@ -44110,7 +44041,6 @@
                 "$type": 43,
                 "$source": 0,
                 "$named": false,
-                "$text": "]",
                 "$span": {
                   "start": 11,
                   "end": 12
@@ -44139,7 +44069,6 @@
                 "$type": 6,
                 "$source": 0,
                 "$named": false,
-                "$text": ",",
                 "$span": {
                   "start": 12,
                   "end": 13
@@ -44158,7 +44087,6 @@
             "$type": 40,
             "$source": 0,
             "$named": false,
-            "$text": "=",
             "$span": {
               "start": 5,
               "end": 6
@@ -44438,7 +44366,6 @@
               "$type": 6,
               "$source": 0,
               "$named": false,
-              "$text": ",",
               "$span": {
                 "start": 2,
                 "end": 3
@@ -44491,7 +44418,6 @@
                 "$type": 6,
                 "$source": 0,
                 "$named": false,
-                "$text": ",",
                 "$span": {
                   "start": 9,
                   "end": 10
@@ -44505,7 +44431,6 @@
               "$type": 42,
               "$source": 0,
               "$named": false,
-              "$text": "[",
               "$span": {
                 "start": 7,
                 "end": 8
@@ -44515,7 +44440,6 @@
               "$type": 43,
               "$source": 0,
               "$named": false,
-              "$text": "]",
               "$span": {
                 "start": 11,
                 "end": 12
@@ -44544,7 +44468,6 @@
               "$type": 6,
               "$source": 0,
               "$named": false,
-              "$text": ",",
               "$span": {
                 "start": 12,
                 "end": 13
@@ -44563,7 +44486,6 @@
           "$type": 40,
           "$source": 0,
           "$named": false,
-          "$text": "=",
           "$span": {
             "start": 5,
             "end": 6
@@ -44833,7 +44755,6 @@
             "$type": 6,
             "$source": 0,
             "$named": false,
-            "$text": ",",
             "$span": {
               "start": 9,
               "end": 10
@@ -44847,7 +44768,6 @@
           "$type": 42,
           "$source": 0,
           "$named": false,
-          "$text": "[",
           "$span": {
             "start": 7,
             "end": 8
@@ -44857,7 +44777,6 @@
           "$type": 43,
           "$source": 0,
           "$named": false,
-          "$text": "]",
           "$span": {
             "start": 11,
             "end": 12
@@ -75950,7 +75869,6 @@
                                 "$type": 6,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": ",",
                                 "$span": {
                                   "start": 14,
                                   "end": 15
@@ -75964,7 +75882,6 @@
                               "$type": 33,
                               "$source": 0,
                               "$named": false,
-                              "$text": "(",
                               "$span": {
                                 "start": 12,
                                 "end": 13
@@ -75974,7 +75891,6 @@
                               "$type": 34,
                               "$source": 0,
                               "$named": false,
-                              "$text": ")",
                               "$span": {
                                 "start": 17,
                                 "end": 18
@@ -75999,7 +75915,6 @@
                             "$type": 24,
                             "$source": 0,
                             "$named": false,
-                            "$text": "for",
                             "$span": {
                               "start": 8,
                               "end": 11
@@ -76009,7 +75924,6 @@
                             "$type": 25,
                             "$source": 0,
                             "$named": false,
-                            "$text": "in",
                             "$span": {
                               "start": 19,
                               "end": 21
@@ -76028,7 +75942,6 @@
                       "$type": 42,
                       "$source": 0,
                       "$named": false,
-                      "$text": "[",
                       "$span": {
                         "start": 1,
                         "end": 2
@@ -76038,7 +75951,6 @@
                       "$type": 43,
                       "$source": 0,
                       "$named": false,
-                      "$text": "]",
                       "$span": {
                         "start": 27,
                         "end": 28
@@ -76122,7 +76034,6 @@
                             "$type": 24,
                             "$source": 0,
                             "$named": false,
-                            "$text": "for",
                             "$span": {
                               "start": 32,
                               "end": 35
@@ -76132,7 +76043,6 @@
                             "$type": 25,
                             "$source": 0,
                             "$named": false,
-                            "$text": "in",
                             "$span": {
                               "start": 38,
                               "end": 40
@@ -76175,7 +76085,6 @@
                             "$type": 24,
                             "$source": 0,
                             "$named": false,
-                            "$text": "for",
                             "$span": {
                               "start": 43,
                               "end": 46
@@ -76185,7 +76094,6 @@
                             "$type": 25,
                             "$source": 0,
                             "$named": false,
-                            "$text": "in",
                             "$span": {
                               "start": 49,
                               "end": 51
@@ -76204,7 +76112,6 @@
                       "$type": 42,
                       "$source": 0,
                       "$named": false,
-                      "$text": "[",
                       "$span": {
                         "start": 29,
                         "end": 30
@@ -76214,7 +76121,6 @@
                       "$type": 43,
                       "$source": 0,
                       "$named": false,
-                      "$text": "]",
                       "$span": {
                         "start": 53,
                         "end": 54
@@ -76287,7 +76193,6 @@
                           "$type": 6,
                           "$source": 0,
                           "$named": false,
-                          "$text": ",",
                           "$span": {
                             "start": 58,
                             "end": 59
@@ -76301,7 +76206,6 @@
                         "$type": 33,
                         "$source": 0,
                         "$named": false,
-                        "$text": "(",
                         "$span": {
                           "start": 56,
                           "end": 57
@@ -76311,7 +76215,6 @@
                         "$type": 34,
                         "$source": 0,
                         "$named": false,
-                        "$text": ")",
                         "$span": {
                           "start": 60,
                           "end": 61
@@ -76384,7 +76287,6 @@
                                   "$type": 6,
                                   "$source": 0,
                                   "$named": false,
-                                  "$text": ",",
                                   "$span": {
                                     "start": 73,
                                     "end": 74
@@ -76394,7 +76296,6 @@
                                   "$type": 6,
                                   "$source": 0,
                                   "$named": false,
-                                  "$text": ",",
                                   "$span": {
                                     "start": 75,
                                     "end": 76
@@ -76408,7 +76309,6 @@
                                 "$type": 42,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": "[",
                                 "$span": {
                                   "start": 71,
                                   "end": 72
@@ -76418,7 +76318,6 @@
                                 "$type": 43,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": "]",
                                 "$span": {
                                   "start": 77,
                                   "end": 78
@@ -76432,7 +76331,6 @@
                             "$type": 24,
                             "$source": 0,
                             "$named": false,
-                            "$text": "for",
                             "$span": {
                               "start": 62,
                               "end": 65
@@ -76442,7 +76340,6 @@
                             "$type": 25,
                             "$source": 0,
                             "$named": false,
-                            "$text": "in",
                             "$span": {
                               "start": 68,
                               "end": 70
@@ -76514,7 +76411,6 @@
                                   "$type": 6,
                                   "$source": 0,
                                   "$named": false,
-                                  "$text": ",",
                                   "$span": {
                                     "start": 90,
                                     "end": 91
@@ -76524,7 +76420,6 @@
                                   "$type": 6,
                                   "$source": 0,
                                   "$named": false,
-                                  "$text": ",",
                                   "$span": {
                                     "start": 92,
                                     "end": 93
@@ -76538,7 +76433,6 @@
                                 "$type": 42,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": "[",
                                 "$span": {
                                   "start": 88,
                                   "end": 89
@@ -76548,7 +76442,6 @@
                                 "$type": 43,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": "]",
                                 "$span": {
                                   "start": 94,
                                   "end": 95
@@ -76562,7 +76455,6 @@
                             "$type": 24,
                             "$source": 0,
                             "$named": false,
-                            "$text": "for",
                             "$span": {
                               "start": 79,
                               "end": 82
@@ -76572,7 +76464,6 @@
                             "$type": 25,
                             "$source": 0,
                             "$named": false,
-                            "$text": "in",
                             "$span": {
                               "start": 85,
                               "end": 87
@@ -76588,13 +76479,12 @@
                         "$type": 244,
                         "$source": 0,
                         "$named": true,
-                        "_condition": 71,
+                        "_condition": 70,
                         "$other": [
                           {
                             "$type": 18,
                             "$source": 0,
                             "$named": false,
-                            "$text": "if",
                             "$span": {
                               "start": 96,
                               "end": 98
@@ -76609,7 +76499,6 @@
                       "$type": 42,
                       "$source": 0,
                       "$named": false,
-                      "$text": "[",
                       "$span": {
                         "start": 55,
                         "end": 56
@@ -76619,7 +76508,6 @@
                       "$type": 43,
                       "$source": 0,
                       "$named": false,
-                      "$text": "]",
                       "$span": {
                         "start": 103,
                         "end": 104
@@ -76691,13 +76579,12 @@
                             "$type": 214,
                             "$source": 0,
                             "$named": true,
-                            "_body": 71,
+                            "_body": 70,
                             "$other": [
                               {
                                 "$type": 62,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": "lambda",
                                 "$span": {
                                   "start": 117,
                                   "end": 123
@@ -76707,7 +76594,6 @@
                                 "$type": 19,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": ":",
                                 "$span": {
                                   "start": 123,
                                   "end": 124
@@ -76719,13 +76605,12 @@
                             "$type": 214,
                             "$source": 0,
                             "$named": true,
-                            "_body": 72,
+                            "_body": 71,
                             "$other": [
                               {
                                 "$type": 62,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": "lambda",
                                 "$span": {
                                   "start": 131,
                                   "end": 137
@@ -76735,7 +76620,6 @@
                                 "$type": 19,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": ":",
                                 "$span": {
                                   "start": 137,
                                   "end": 138
@@ -76749,7 +76633,6 @@
                             "$type": 24,
                             "$source": 0,
                             "$named": false,
-                            "$text": "for",
                             "$span": {
                               "start": 108,
                               "end": 111
@@ -76759,7 +76642,6 @@
                             "$type": 25,
                             "$source": 0,
                             "$named": false,
-                            "$text": "in",
                             "$span": {
                               "start": 114,
                               "end": 116
@@ -76797,7 +76679,8 @@
                             "$span": {
                               "start": 149,
                               "end": 151
-                            }
+                            },
+                            "$text": "()"
                           },
                           "$slotOrder": [
                             "function",
@@ -76809,7 +76692,6 @@
                             "$type": 18,
                             "$source": 0,
                             "$named": false,
-                            "$text": "if",
                             "$span": {
                               "start": 145,
                               "end": 147
@@ -76824,7 +76706,6 @@
                       "$type": 42,
                       "$source": 0,
                       "$named": false,
-                      "$text": "[",
                       "$span": {
                         "start": 105,
                         "end": 106
@@ -76834,7 +76715,6 @@
                       "$type": 43,
                       "$source": 0,
                       "$named": false,
-                      "$text": "]",
                       "$span": {
                         "start": 151,
                         "end": 152
@@ -77281,7 +77161,6 @@
                 "$type": 6,
                 "$source": 0,
                 "$named": false,
-                "$text": ",",
                 "$span": {
                   "start": 58,
                   "end": 59
@@ -77295,7 +77174,6 @@
               "$type": 33,
               "$source": 0,
               "$named": false,
-              "$text": "(",
               "$span": {
                 "start": 56,
                 "end": 57
@@ -77305,7 +77183,6 @@
               "$type": 34,
               "$source": 0,
               "$named": false,
-              "$text": ")",
               "$span": {
                 "start": 60,
                 "end": 61
@@ -77378,7 +77255,6 @@
                         "$type": 6,
                         "$source": 0,
                         "$named": false,
-                        "$text": ",",
                         "$span": {
                           "start": 73,
                           "end": 74
@@ -77388,7 +77264,6 @@
                         "$type": 6,
                         "$source": 0,
                         "$named": false,
-                        "$text": ",",
                         "$span": {
                           "start": 75,
                           "end": 76
@@ -77402,7 +77277,6 @@
                       "$type": 42,
                       "$source": 0,
                       "$named": false,
-                      "$text": "[",
                       "$span": {
                         "start": 71,
                         "end": 72
@@ -77412,7 +77286,6 @@
                       "$type": 43,
                       "$source": 0,
                       "$named": false,
-                      "$text": "]",
                       "$span": {
                         "start": 77,
                         "end": 78
@@ -77426,7 +77299,6 @@
                   "$type": 24,
                   "$source": 0,
                   "$named": false,
-                  "$text": "for",
                   "$span": {
                     "start": 62,
                     "end": 65
@@ -77436,7 +77308,6 @@
                   "$type": 25,
                   "$source": 0,
                   "$named": false,
-                  "$text": "in",
                   "$span": {
                     "start": 68,
                     "end": 70
@@ -77508,7 +77379,6 @@
                         "$type": 6,
                         "$source": 0,
                         "$named": false,
-                        "$text": ",",
                         "$span": {
                           "start": 90,
                           "end": 91
@@ -77518,7 +77388,6 @@
                         "$type": 6,
                         "$source": 0,
                         "$named": false,
-                        "$text": ",",
                         "$span": {
                           "start": 92,
                           "end": 93
@@ -77532,7 +77401,6 @@
                       "$type": 42,
                       "$source": 0,
                       "$named": false,
-                      "$text": "[",
                       "$span": {
                         "start": 88,
                         "end": 89
@@ -77542,7 +77410,6 @@
                       "$type": 43,
                       "$source": 0,
                       "$named": false,
-                      "$text": "]",
                       "$span": {
                         "start": 94,
                         "end": 95
@@ -77556,7 +77423,6 @@
                   "$type": 24,
                   "$source": 0,
                   "$named": false,
-                  "$text": "for",
                   "$span": {
                     "start": 79,
                     "end": 82
@@ -77566,7 +77432,6 @@
                   "$type": 25,
                   "$source": 0,
                   "$named": false,
-                  "$text": "in",
                   "$span": {
                     "start": 85,
                     "end": 87
@@ -77582,13 +77447,12 @@
               "$type": 244,
               "$source": 0,
               "$named": true,
-              "_condition": 71,
+              "_condition": 70,
               "$other": [
                 {
                   "$type": 18,
                   "$source": 0,
                   "$named": false,
-                  "$text": "if",
                   "$span": {
                     "start": 96,
                     "end": 98
@@ -77603,7 +77467,6 @@
             "$type": 42,
             "$source": 0,
             "$named": false,
-            "$text": "[",
             "$span": {
               "start": 55,
               "end": 56
@@ -77613,7 +77476,6 @@
             "$type": 43,
             "$source": 0,
             "$named": false,
-            "$text": "]",
             "$span": {
               "start": 103,
               "end": 104
@@ -78243,7 +78105,6 @@
               "$type": 6,
               "$source": 0,
               "$named": false,
-              "$text": ",",
               "$span": {
                 "start": 58,
                 "end": 59
@@ -78257,7 +78118,6 @@
             "$type": 33,
             "$source": 0,
             "$named": false,
-            "$text": "(",
             "$span": {
               "start": 56,
               "end": 57
@@ -78267,7 +78127,6 @@
             "$type": 34,
             "$source": 0,
             "$named": false,
-            "$text": ")",
             "$span": {
               "start": 60,
               "end": 61
@@ -78340,7 +78199,6 @@
                       "$type": 6,
                       "$source": 0,
                       "$named": false,
-                      "$text": ",",
                       "$span": {
                         "start": 73,
                         "end": 74
@@ -78350,7 +78208,6 @@
                       "$type": 6,
                       "$source": 0,
                       "$named": false,
-                      "$text": ",",
                       "$span": {
                         "start": 75,
                         "end": 76
@@ -78364,7 +78221,6 @@
                     "$type": 42,
                     "$source": 0,
                     "$named": false,
-                    "$text": "[",
                     "$span": {
                       "start": 71,
                       "end": 72
@@ -78374,7 +78230,6 @@
                     "$type": 43,
                     "$source": 0,
                     "$named": false,
-                    "$text": "]",
                     "$span": {
                       "start": 77,
                       "end": 78
@@ -78388,7 +78243,6 @@
                 "$type": 24,
                 "$source": 0,
                 "$named": false,
-                "$text": "for",
                 "$span": {
                   "start": 62,
                   "end": 65
@@ -78398,7 +78252,6 @@
                 "$type": 25,
                 "$source": 0,
                 "$named": false,
-                "$text": "in",
                 "$span": {
                   "start": 68,
                   "end": 70
@@ -78470,7 +78323,6 @@
                       "$type": 6,
                       "$source": 0,
                       "$named": false,
-                      "$text": ",",
                       "$span": {
                         "start": 90,
                         "end": 91
@@ -78480,7 +78332,6 @@
                       "$type": 6,
                       "$source": 0,
                       "$named": false,
-                      "$text": ",",
                       "$span": {
                         "start": 92,
                         "end": 93
@@ -78494,7 +78345,6 @@
                     "$type": 42,
                     "$source": 0,
                     "$named": false,
-                    "$text": "[",
                     "$span": {
                       "start": 88,
                       "end": 89
@@ -78504,7 +78354,6 @@
                     "$type": 43,
                     "$source": 0,
                     "$named": false,
-                    "$text": "]",
                     "$span": {
                       "start": 94,
                       "end": 95
@@ -78518,7 +78367,6 @@
                 "$type": 24,
                 "$source": 0,
                 "$named": false,
-                "$text": "for",
                 "$span": {
                   "start": 79,
                   "end": 82
@@ -78528,7 +78376,6 @@
                 "$type": 25,
                 "$source": 0,
                 "$named": false,
-                "$text": "in",
                 "$span": {
                   "start": 85,
                   "end": 87
@@ -78544,13 +78391,12 @@
             "$type": 244,
             "$source": 0,
             "$named": true,
-            "_condition": 71,
+            "_condition": 70,
             "$other": [
               {
                 "$type": 18,
                 "$source": 0,
                 "$named": false,
-                "$text": "if",
                 "$span": {
                   "start": 96,
                   "end": 98
@@ -78565,7 +78411,6 @@
           "$type": 42,
           "$source": 0,
           "$named": false,
-          "$text": "[",
           "$span": {
             "start": 55,
             "end": 56
@@ -78575,7 +78420,6 @@
           "$type": 43,
           "$source": 0,
           "$named": false,
-          "$text": "]",
           "$span": {
             "start": 103,
             "end": 104
@@ -78970,7 +78814,6 @@
             "$type": 6,
             "$source": 0,
             "$named": false,
-            "$text": ",",
             "$span": {
               "start": 58,
               "end": 59
@@ -78984,7 +78827,6 @@
           "$type": 33,
           "$source": 0,
           "$named": false,
-          "$text": "(",
           "$span": {
             "start": 56,
             "end": 57
@@ -78994,7 +78836,6 @@
           "$type": 34,
           "$source": 0,
           "$named": false,
-          "$text": ")",
           "$span": {
             "start": 60,
             "end": 61
@@ -79064,7 +78905,6 @@
             "$type": 6,
             "$source": 0,
             "$named": false,
-            "$text": ",",
             "$span": {
               "start": 73,
               "end": 74
@@ -79074,7 +78914,6 @@
             "$type": 6,
             "$source": 0,
             "$named": false,
-            "$text": ",",
             "$span": {
               "start": 75,
               "end": 76
@@ -79088,7 +78927,6 @@
           "$type": 42,
           "$source": 0,
           "$named": false,
-          "$text": "[",
           "$span": {
             "start": 71,
             "end": 72
@@ -79098,7 +78936,6 @@
           "$type": 43,
           "$source": 0,
           "$named": false,
-          "$text": "]",
           "$span": {
             "start": 77,
             "end": 78
@@ -79168,7 +79005,6 @@
             "$type": 6,
             "$source": 0,
             "$named": false,
-            "$text": ",",
             "$span": {
               "start": 90,
               "end": 91
@@ -79178,7 +79014,6 @@
             "$type": 6,
             "$source": 0,
             "$named": false,
-            "$text": ",",
             "$span": {
               "start": 92,
               "end": 93
@@ -79192,7 +79027,6 @@
           "$type": 42,
           "$source": 0,
           "$named": false,
-          "$text": "[",
           "$span": {
             "start": 88,
             "end": 89
@@ -79202,7 +79036,6 @@
           "$type": 43,
           "$source": 0,
           "$named": false,
-          "$text": "]",
           "$span": {
             "start": 94,
             "end": 95
@@ -149358,7 +149191,6 @@
                         "$type": 6,
                         "$source": 0,
                         "$named": false,
-                        "$text": ",",
                         "$span": {
                           "start": 9,
                           "end": 10
@@ -149372,7 +149204,6 @@
                       "$type": 33,
                       "$source": 0,
                       "$named": false,
-                      "$text": "(",
                       "$span": {
                         "start": 7,
                         "end": 8
@@ -149382,7 +149213,6 @@
                       "$type": 34,
                       "$source": 0,
                       "$named": false,
-                      "$text": ")",
                       "$span": {
                         "start": 11,
                         "end": 12
@@ -149398,7 +149228,6 @@
                 "$type": 33,
                 "$source": 0,
                 "$named": false,
-                "$text": "(",
                 "$span": {
                   "start": 6,
                   "end": 7
@@ -149408,7 +149237,6 @@
                 "$type": 34,
                 "$source": 0,
                 "$named": false,
-                "$text": ")",
                 "$span": {
                   "start": 12,
                   "end": 13
@@ -149417,7 +149245,7 @@
             ]
           },
           "_body": {
-            "$type": 294,
+            "$type": 295,
             "$source": 0,
             "$named": true,
             "_block": {
@@ -149473,7 +149301,6 @@
                                 "$type": 6,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": ",",
                                 "$span": {
                                   "start": 26,
                                   "end": 27
@@ -149487,7 +149314,6 @@
                               "$type": 33,
                               "$source": 0,
                               "$named": false,
-                              "$text": "(",
                               "$span": {
                                 "start": 24,
                                 "end": 25
@@ -149497,7 +149323,6 @@
                               "$type": 34,
                               "$source": 0,
                               "$named": false,
-                              "$text": ")",
                               "$span": {
                                 "start": 28,
                                 "end": 29
@@ -149510,7 +149335,6 @@
                             "$type": 12,
                             "$source": 0,
                             "$named": false,
-                            "$text": "return",
                             "$span": {
                               "start": 17,
                               "end": 23
@@ -149534,7 +149358,6 @@
               "$type": 32,
               "$source": 0,
               "$named": false,
-              "$text": "def",
               "$span": {
                 "start": 1,
                 "end": 4
@@ -149544,7 +149367,6 @@
               "$type": 19,
               "$source": 0,
               "$named": false,
-              "$text": ":",
               "$span": {
                 "start": 13,
                 "end": 14
@@ -149603,7 +149425,6 @@
                         "$type": 8,
                         "$source": 0,
                         "$named": false,
-                        "$text": "*",
                         "$span": {
                           "start": 37,
                           "end": 38
@@ -149631,7 +149452,6 @@
                       "$type": 19,
                       "$source": 0,
                       "$named": false,
-                      "$text": ":",
                       "$span": {
                         "start": 42,
                         "end": 43
@@ -149651,7 +149471,6 @@
                 "$type": 33,
                 "$source": 0,
                 "$named": false,
-                "$text": "(",
                 "$span": {
                   "start": 36,
                   "end": 37
@@ -149661,7 +149480,6 @@
                 "$type": 34,
                 "$source": 0,
                 "$named": false,
-                "$text": ")",
                 "$span": {
                   "start": 47,
                   "end": 48
@@ -149670,7 +149488,7 @@
             ]
           },
           "_body": {
-            "$type": 294,
+            "$type": 295,
             "$source": 0,
             "$named": true,
             "_block": {
@@ -149713,7 +149531,6 @@
               "$type": 32,
               "$source": 0,
               "$named": false,
-              "$text": "def",
               "$span": {
                 "start": 31,
                 "end": 34
@@ -149723,7 +149540,6 @@
               "$type": 19,
               "$source": 0,
               "$named": false,
-              "$text": ":",
               "$span": {
                 "start": 48,
                 "end": 49
@@ -149782,7 +149598,6 @@
                         "$type": 35,
                         "$source": 0,
                         "$named": false,
-                        "$text": "**",
                         "$span": {
                           "start": 64,
                           "end": 66
@@ -149810,7 +149625,6 @@
                       "$type": 19,
                       "$source": 0,
                       "$named": false,
-                      "$text": ":",
                       "$span": {
                         "start": 70,
                         "end": 71
@@ -149830,7 +149644,6 @@
                 "$type": 33,
                 "$source": 0,
                 "$named": false,
-                "$text": "(",
                 "$span": {
                   "start": 63,
                   "end": 64
@@ -149840,7 +149653,6 @@
                 "$type": 34,
                 "$source": 0,
                 "$named": false,
-                "$text": ")",
                 "$span": {
                   "start": 75,
                   "end": 76
@@ -149849,7 +149661,7 @@
             ]
           },
           "_body": {
-            "$type": 294,
+            "$type": 295,
             "$source": 0,
             "$named": true,
             "_block": {
@@ -149892,7 +149704,6 @@
               "$type": 32,
               "$source": 0,
               "$named": false,
-              "$text": "def",
               "$span": {
                 "start": 58,
                 "end": 61
@@ -149902,7 +149713,6 @@
               "$type": 19,
               "$source": 0,
               "$named": false,
-              "$text": ":",
               "$span": {
                 "start": 76,
                 "end": 77
@@ -149936,10 +149746,11 @@
             "$span": {
               "start": 91,
               "end": 93
-            }
+            },
+            "$text": "()"
           },
           "_body": {
-            "$type": 294,
+            "$type": 295,
             "$source": 0,
             "$named": true,
             "_block": {
@@ -149977,7 +149788,6 @@
                             "$type": 37,
                             "$source": 0,
                             "$named": false,
-                            "$text": "nonlocal",
                             "$span": {
                               "start": 97,
                               "end": 105
@@ -150001,7 +149811,6 @@
               "$type": 32,
               "$source": 0,
               "$named": false,
-              "$text": "def",
               "$span": {
                 "start": 86,
                 "end": 89
@@ -150011,7 +149820,6 @@
               "$type": 19,
               "$source": 0,
               "$named": false,
-              "$text": ":",
               "$span": {
                 "start": 93,
                 "end": 94
@@ -150126,7 +149934,6 @@
                       "$type": 40,
                       "$source": 0,
                       "$named": false,
-                      "$text": "=",
                       "$span": {
                         "start": 131,
                         "end": 132
@@ -150157,7 +149964,6 @@
                       "$type": 35,
                       "$source": 0,
                       "$named": false,
-                      "$text": "**",
                       "$span": {
                         "start": 137,
                         "end": 139
@@ -150171,7 +149977,6 @@
                   "$type": 6,
                   "$source": 0,
                   "$named": false,
-                  "$text": ",",
                   "$span": {
                     "start": 116,
                     "end": 117
@@ -150181,7 +149986,6 @@
                   "$type": 6,
                   "$source": 0,
                   "$named": false,
-                  "$text": ",",
                   "$span": {
                     "start": 119,
                     "end": 120
@@ -150191,7 +149995,6 @@
                   "$type": 6,
                   "$source": 0,
                   "$named": false,
-                  "$text": ",",
                   "$span": {
                     "start": 122,
                     "end": 123
@@ -150201,7 +150004,6 @@
                   "$type": 6,
                   "$source": 0,
                   "$named": false,
-                  "$text": ",",
                   "$span": {
                     "start": 125,
                     "end": 126
@@ -150211,7 +150013,6 @@
                   "$type": 6,
                   "$source": 0,
                   "$named": false,
-                  "$text": ",",
                   "$span": {
                     "start": 128,
                     "end": 129
@@ -150221,7 +150022,6 @@
                   "$type": 6,
                   "$source": 0,
                   "$named": false,
-                  "$text": ",",
                   "$span": {
                     "start": 135,
                     "end": 136
@@ -150235,7 +150035,6 @@
                 "$type": 33,
                 "$source": 0,
                 "$named": false,
-                "$text": "(",
                 "$span": {
                   "start": 114,
                   "end": 115
@@ -150245,7 +150044,6 @@
                 "$type": 34,
                 "$source": 0,
                 "$named": false,
-                "$text": ")",
                 "$span": {
                   "start": 144,
                   "end": 145
@@ -150254,7 +150052,7 @@
             ]
           },
           "_body": {
-            "$type": 294,
+            "$type": 295,
             "$source": 0,
             "$named": true,
             "_block": {
@@ -150340,7 +150138,6 @@
                                 "$type": 6,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": ",",
                                 "$span": {
                                   "start": 157,
                                   "end": 158
@@ -150350,7 +150147,6 @@
                                 "$type": 6,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": ",",
                                 "$span": {
                                   "start": 159,
                                   "end": 160
@@ -150360,7 +150156,6 @@
                                 "$type": 6,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": ",",
                                 "$span": {
                                   "start": 161,
                                   "end": 162
@@ -150370,7 +150165,6 @@
                                 "$type": 6,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": ",",
                                 "$span": {
                                   "start": 163,
                                   "end": 164
@@ -150389,7 +150183,6 @@
                             "$type": 12,
                             "$source": 0,
                             "$named": false,
-                            "$text": "return",
                             "$span": {
                               "start": 149,
                               "end": 155
@@ -150413,7 +150206,6 @@
               "$type": 32,
               "$source": 0,
               "$named": false,
-              "$text": "def",
               "$span": {
                 "start": 109,
                 "end": 112
@@ -150423,7 +150215,6 @@
               "$type": 19,
               "$source": 0,
               "$named": false,
-              "$text": ":",
               "$span": {
                 "start": 145,
                 "end": 146
@@ -150478,7 +150269,6 @@
                       "$type": 8,
                       "$source": 0,
                       "$named": false,
-                      "$text": "*",
                       "$span": {
                         "start": 177,
                         "end": 178
@@ -150494,7 +150284,6 @@
                 "$type": 33,
                 "$source": 0,
                 "$named": false,
-                "$text": "(",
                 "$span": {
                   "start": 176,
                   "end": 177
@@ -150504,7 +150293,6 @@
                 "$type": 34,
                 "$source": 0,
                 "$named": false,
-                "$text": ")",
                 "$span": {
                   "start": 179,
                   "end": 180
@@ -150513,7 +150301,7 @@
             ]
           },
           "_body": {
-            "$type": 294,
+            "$type": 295,
             "$source": 0,
             "$named": true,
             "_block": {
@@ -150580,7 +150368,6 @@
                                         "$type": 8,
                                         "$source": 0,
                                         "$named": false,
-                                        "$text": "*",
                                         "$span": {
                                           "start": 187,
                                           "end": 188
@@ -150593,7 +150380,6 @@
                                       "$type": 33,
                                       "$source": 0,
                                       "$named": false,
-                                      "$text": "(",
                                       "$span": {
                                         "start": 186,
                                         "end": 187
@@ -150603,7 +150389,6 @@
                                       "$type": 34,
                                       "$source": 0,
                                       "$named": false,
-                                      "$text": ")",
                                       "$span": {
                                         "start": 189,
                                         "end": 190
@@ -150619,7 +150404,6 @@
                                 "$type": 33,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": "(",
                                 "$span": {
                                   "start": 185,
                                   "end": 186
@@ -150629,7 +150413,6 @@
                                 "$type": 34,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": ")",
                                 "$span": {
                                   "start": 190,
                                   "end": 191
@@ -150714,7 +150497,6 @@
                                           "$type": 8,
                                           "$source": 0,
                                           "$named": false,
-                                          "$text": "*",
                                           "$span": {
                                             "start": 198,
                                             "end": 199
@@ -150727,7 +150509,6 @@
                                         "$type": 33,
                                         "$source": 0,
                                         "$named": false,
-                                        "$text": "(",
                                         "$span": {
                                           "start": 197,
                                           "end": 198
@@ -150737,7 +150518,6 @@
                                         "$type": 34,
                                         "$source": 0,
                                         "$named": false,
-                                        "$text": ")",
                                         "$span": {
                                           "start": 200,
                                           "end": 201
@@ -150750,7 +150530,6 @@
                                       "$type": 33,
                                       "$source": 0,
                                       "$named": false,
-                                      "$text": "(",
                                       "$span": {
                                         "start": 196,
                                         "end": 197
@@ -150760,7 +150539,6 @@
                                       "$type": 34,
                                       "$source": 0,
                                       "$named": false,
-                                      "$text": ")",
                                       "$span": {
                                         "start": 201,
                                         "end": 202
@@ -150776,7 +150554,6 @@
                                 "$type": 33,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": "(",
                                 "$span": {
                                   "start": 195,
                                   "end": 196
@@ -150786,7 +150563,6 @@
                                 "$type": 34,
                                 "$source": 0,
                                 "$named": false,
-                                "$text": ")",
                                 "$span": {
                                   "start": 202,
                                   "end": 203
@@ -150816,7 +150592,6 @@
               "$type": 32,
               "$source": 0,
               "$named": false,
-              "$text": "def",
               "$span": {
                 "start": 171,
                 "end": 174
@@ -150826,7 +150601,6 @@
               "$type": 19,
               "$source": 0,
               "$named": false,
-              "$text": ":",
               "$span": {
                 "start": 180,
                 "end": 181
@@ -150860,10 +150634,11 @@
             "$span": {
               "start": 212,
               "end": 214
-            }
+            },
+            "$text": "()"
           },
           "_body": {
-            "$type": 294,
+            "$type": 295,
             "$source": 0,
             "$named": true,
             "_block": {
@@ -150906,7 +150681,6 @@
               "$type": 32,
               "$source": 0,
               "$named": false,
-              "$text": "def",
               "$span": {
                 "start": 205,
                 "end": 208
@@ -150916,7 +150690,6 @@
               "$type": 19,
               "$source": 0,
               "$named": false,
-              "$text": ":",
               "$span": {
                 "start": 214,
                 "end": 215
@@ -151023,7 +150796,6 @@
                     "$type": 6,
                     "$source": 0,
                     "$named": false,
-                    "$text": ",",
                     "$span": {
                       "start": 9,
                       "end": 10
@@ -151037,7 +150809,6 @@
                   "$type": 33,
                   "$source": 0,
                   "$named": false,
-                  "$text": "(",
                   "$span": {
                     "start": 7,
                     "end": 8
@@ -151047,7 +150818,6 @@
                   "$type": 34,
                   "$source": 0,
                   "$named": false,
-                  "$text": ")",
                   "$span": {
                     "start": 11,
                     "end": 12
@@ -151063,7 +150833,6 @@
             "$type": 33,
             "$source": 0,
             "$named": false,
-            "$text": "(",
             "$span": {
               "start": 6,
               "end": 7
@@ -151073,7 +150842,6 @@
             "$type": 34,
             "$source": 0,
             "$named": false,
-            "$text": ")",
             "$span": {
               "start": 12,
               "end": 13
@@ -151082,7 +150850,7 @@
         ]
       },
       "_body": {
-        "$type": 294,
+        "$type": 295,
         "$source": 0,
         "$named": true,
         "_block": {
@@ -151138,7 +150906,6 @@
                             "$type": 6,
                             "$source": 0,
                             "$named": false,
-                            "$text": ",",
                             "$span": {
                               "start": 26,
                               "end": 27
@@ -151152,7 +150919,6 @@
                           "$type": 33,
                           "$source": 0,
                           "$named": false,
-                          "$text": "(",
                           "$span": {
                             "start": 24,
                             "end": 25
@@ -151162,7 +150928,6 @@
                           "$type": 34,
                           "$source": 0,
                           "$named": false,
-                          "$text": ")",
                           "$span": {
                             "start": 28,
                             "end": 29
@@ -151175,7 +150940,6 @@
                         "$type": 12,
                         "$source": 0,
                         "$named": false,
-                        "$text": "return",
                         "$span": {
                           "start": 17,
                           "end": 23
@@ -151199,7 +150963,6 @@
           "$type": 32,
           "$source": 0,
           "$named": false,
-          "$text": "def",
           "$span": {
             "start": 1,
             "end": 4
@@ -151209,7 +150972,6 @@
           "$type": 19,
           "$source": 0,
           "$named": false,
-          "$text": ":",
           "$span": {
             "start": 13,
             "end": 14
@@ -151845,7 +151607,6 @@
                   "$type": 40,
                   "$source": 0,
                   "$named": false,
-                  "$text": "=",
                   "$span": {
                     "start": 131,
                     "end": 132
@@ -151876,7 +151637,6 @@
                   "$type": 35,
                   "$source": 0,
                   "$named": false,
-                  "$text": "**",
                   "$span": {
                     "start": 137,
                     "end": 139
@@ -151890,7 +151650,6 @@
               "$type": 6,
               "$source": 0,
               "$named": false,
-              "$text": ",",
               "$span": {
                 "start": 116,
                 "end": 117
@@ -151900,7 +151659,6 @@
               "$type": 6,
               "$source": 0,
               "$named": false,
-              "$text": ",",
               "$span": {
                 "start": 119,
                 "end": 120
@@ -151910,7 +151668,6 @@
               "$type": 6,
               "$source": 0,
               "$named": false,
-              "$text": ",",
               "$span": {
                 "start": 122,
                 "end": 123
@@ -151920,7 +151677,6 @@
               "$type": 6,
               "$source": 0,
               "$named": false,
-              "$text": ",",
               "$span": {
                 "start": 125,
                 "end": 126
@@ -151930,7 +151686,6 @@
               "$type": 6,
               "$source": 0,
               "$named": false,
-              "$text": ",",
               "$span": {
                 "start": 128,
                 "end": 129
@@ -151940,7 +151695,6 @@
               "$type": 6,
               "$source": 0,
               "$named": false,
-              "$text": ",",
               "$span": {
                 "start": 135,
                 "end": 136
@@ -151954,7 +151708,6 @@
             "$type": 33,
             "$source": 0,
             "$named": false,
-            "$text": "(",
             "$span": {
               "start": 114,
               "end": 115
@@ -151964,7 +151717,6 @@
             "$type": 34,
             "$source": 0,
             "$named": false,
-            "$text": ")",
             "$span": {
               "start": 144,
               "end": 145
@@ -151973,7 +151725,7 @@
         ]
       },
       "_body": {
-        "$type": 294,
+        "$type": 295,
         "$source": 0,
         "$named": true,
         "_block": {
@@ -152059,7 +151811,6 @@
                             "$type": 6,
                             "$source": 0,
                             "$named": false,
-                            "$text": ",",
                             "$span": {
                               "start": 157,
                               "end": 158
@@ -152069,7 +151820,6 @@
                             "$type": 6,
                             "$source": 0,
                             "$named": false,
-                            "$text": ",",
                             "$span": {
                               "start": 159,
                               "end": 160
@@ -152079,7 +151829,6 @@
                             "$type": 6,
                             "$source": 0,
                             "$named": false,
-                            "$text": ",",
                             "$span": {
                               "start": 161,
                               "end": 162
@@ -152089,7 +151838,6 @@
                             "$type": 6,
                             "$source": 0,
                             "$named": false,
-                            "$text": ",",
                             "$span": {
                               "start": 163,
                               "end": 164
@@ -152108,7 +151856,6 @@
                         "$type": 12,
                         "$source": 0,
                         "$named": false,
-                        "$text": "return",
                         "$span": {
                           "start": 149,
                           "end": 155
@@ -152132,7 +151879,6 @@
           "$type": 32,
           "$source": 0,
           "$named": false,
-          "$text": "def",
           "$span": {
             "start": 109,
             "end": 112
@@ -152142,7 +151888,6 @@
           "$type": 19,
           "$source": 0,
           "$named": false,
-          "$text": ":",
           "$span": {
             "start": 145,
             "end": 146
@@ -152742,7 +152487,6 @@
                   "$type": 6,
                   "$source": 0,
                   "$named": false,
-                  "$text": ",",
                   "$span": {
                     "start": 9,
                     "end": 10
@@ -152756,7 +152500,6 @@
                 "$type": 33,
                 "$source": 0,
                 "$named": false,
-                "$text": "(",
                 "$span": {
                   "start": 7,
                   "end": 8
@@ -152766,7 +152509,6 @@
                 "$type": 34,
                 "$source": 0,
                 "$named": false,
-                "$text": ")",
                 "$span": {
                   "start": 11,
                   "end": 12
@@ -152782,7 +152524,6 @@
           "$type": 33,
           "$source": 0,
           "$named": false,
-          "$text": "(",
           "$span": {
             "start": 6,
             "end": 7
@@ -152792,7 +152533,6 @@
           "$type": 34,
           "$source": 0,
           "$named": false,
-          "$text": ")",
           "$span": {
             "start": 12,
             "end": 13
@@ -153431,7 +153171,6 @@
                 "$type": 6,
                 "$source": 0,
                 "$named": false,
-                "$text": ",",
                 "$span": {
                   "start": 9,
                   "end": 10
@@ -153445,7 +153184,6 @@
               "$type": 33,
               "$source": 0,
               "$named": false,
-              "$text": "(",
               "$span": {
                 "start": 7,
                 "end": 8
@@ -153455,7 +153193,6 @@
               "$type": 34,
               "$source": 0,
               "$named": false,
-              "$text": ")",
               "$span": {
                 "start": 11,
                 "end": 12
@@ -153938,7 +153675,6 @@
             "$type": 6,
             "$source": 0,
             "$named": false,
-            "$text": ",",
             "$span": {
               "start": 9,
               "end": 10
@@ -153952,7 +153688,6 @@
           "$type": 33,
           "$source": 0,
           "$named": false,
-          "$text": "(",
           "$span": {
             "start": 7,
             "end": 8
@@ -153962,7 +153697,6 @@
           "$type": 34,
           "$source": 0,
           "$named": false,
-          "$text": ")",
           "$span": {
             "start": 11,
             "end": 12
@@ -154022,7 +153756,6 @@
             "$type": 6,
             "$source": 0,
             "$named": false,
-            "$text": ",",
             "$span": {
               "start": 26,
               "end": 27
@@ -154036,7 +153769,6 @@
           "$type": 33,
           "$source": 0,
           "$named": false,
-          "$text": "(",
           "$span": {
             "start": 24,
             "end": 25
@@ -154046,7 +153778,6 @@
           "$type": 34,
           "$source": 0,
           "$named": false,
-          "$text": ")",
           "$span": {
             "start": 28,
             "end": 29
