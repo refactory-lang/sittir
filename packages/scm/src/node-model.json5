@@ -1,6 +1,7 @@
 {
   "name": "scm",
-  "nodeCount": 57,
+  "root": "program",
+  "nodeCount": 58,
   "word": null,
   "supertypes": [
     "_group_expression",
@@ -267,7 +268,7 @@
       }
     },
     "predicate": {
-      "content": {
+      "prefix": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1918,9 +1919,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "prefix",
+          "propertyName": "prefix",
+          "paramName": "prefix",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -2004,7 +2005,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
-        "content",
+        "prefix",
         "name",
         "type",
         "parameters"
@@ -2176,13 +2177,15 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
+            "string_content_text",
             "escape_sequence"
           ],
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "array",
-              "value": "[^\"\\\\\\n]+"
+              "name": "string_content_text",
+              "parseKind": "string_content_text"
             },
             {
               "kind": "node-ref",
@@ -2197,6 +2200,17 @@
       "factoryFields": [
         "content"
       ]
+    },
+    {
+      "kind": "string_content_text",
+      "modelType": "pattern",
+      "typeName": "StringContentText",
+      "factoryName": "stringContentText",
+      "irKey": "stringContentText",
+      "hidden": false,
+      "pattern": "[^\"\\\\\\n]+",
+      "leafPattern": "/^(?:(?:[^\"\\\\\\n]+))$/u",
+      "factoryShape": "text"
     },
     {
       "kind": "underscore",

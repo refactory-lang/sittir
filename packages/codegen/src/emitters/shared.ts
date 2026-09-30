@@ -69,7 +69,14 @@ export function canonicalSeparatedListField(node: AssembledList): AssembledNonte
 	return node.slots.find((f) => f.arity === 'many') ?? node.slots[0]!;
 }
 import type { KindEnumEntry } from './kind-discriminant.ts';
-import { findKindEntry, hasCatalogEntry } from './kind-discriminant.ts';
+import {
+	findKindEntry,
+	findKindEntryForLiteral,
+	hasCatalogEntry,
+	kindDiscriminantExpr,
+	kindDiscriminantExprForId,
+	kindDiscriminantExprForLiteral
+} from './kind-discriminant.ts';
 import { emptyForms } from '../compiler/model/trivia.ts';
 
 export { isRequired, isMultiple, isNonEmpty, hasOptionalElements, deriveSlotCardinality, deriveChildrenCardinality };
@@ -821,36 +828,106 @@ export function soleSlotFacts(node: AssembledNode, _nodeMap: NodeMap): SoleSlotF
 	return { slot, multiple: isMultiple(slot), required: isRequired(slot), nonEmpty: isNonEmpty(slot) };
 }
 
-/**
- * The target factory to call with no arguments when a required field is
- * omitted — shared by both surfaces: the strict raw factory (a required
- * config key with nothing to read) and the loose coercer (`canDirectFactoryCall`
- * and the config-object path alike). `null` when the field must be supplied.
- */
-export function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): string | null {
-	if (!isRequired(field)) return null;
+export interface KindEnumTextEntry {
+	readonly text: string;
+	readonly discriminant: string;
+	readonly keyword: boolean;
+}
+
+function isKeywordKindIn(nodeMap: NodeMap, kind: string | undefined): boolean {
+	return kind !== undefined && nodeMap.nodes.get(kind)?.modelType === 'keyword';
+}
+
+function fixedTextEntryOf(
+	value: NodeOrTerminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[]
+): KindEnumTextEntry | undefined {
+	if (isNodeRef(value)) {
+		const resolved = nodeMap.nodes.get(storageKindOfRef(value.node));
+		if (resolved === undefined || !isFixedTextLeaf(resolved)) return undefined;
+		const text = resolved.text;
+		const { kindName, kindId } = keywordRefWireIdentity(value, resolved);
+		const discriminant =
+			(kindId !== undefined ? kindDiscriminantExprForId(kindId, kindEntries) : undefined) ??
+			(kindName !== undefined && hasCatalogEntry(kindEntries, kindName)
+				? kindDiscriminantExpr(kindName, nodeMap, kindEntries)
+				: findKindEntryForLiteral(kindEntries, text) !== undefined
+					? kindDiscriminantExprForLiteral(text, kindEntries)
+					: undefined);
+		return discriminant === undefined ? undefined : { text, discriminant, keyword: resolved.modelType === 'keyword' };
+	}
+	if (!isTerminalValue(value)) return undefined;
+	const discriminant =
+		(value.resolvedKindId !== undefined ? kindDiscriminantExprForId(value.resolvedKindId, kindEntries) : undefined) ??
+		(findKindEntryForLiteral(kindEntries, value.value) !== undefined
+			? kindDiscriminantExprForLiteral(value.value, kindEntries)
+			: undefined);
+	return discriminant === undefined
+		? undefined
+		: { text: value.value, discriminant, keyword: isKeywordKindIn(nodeMap, findKindEntryForLiteral(kindEntries, value.value)?.kind) };
+}
+
+export function kindEnumTextEntries(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): KindEnumTextEntry[] {
+	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
+	if ((storageInfo.kind !== 'kindEnum' && storageInfo.kind !== 'mixedEnum') || !kindEntries) return [];
+	const byText: KindEnumTextEntry[] = [];
+	for (const value of f.values) {
+		const fixed = fixedTextEntryOf(value, nodeMap, kindEntries);
+		if (fixed !== undefined) {
+			byText.push(fixed);
+			continue;
+		}
+		if (!isNodeRef(value)) continue;
+		const resolved = nodeMap.nodes.get(storageKindOfRef(value.node));
+		if (!resolved || resolved.modelType !== 'enum') continue;
+		for (const text of resolved.values) {
+			const rec = resolved.resolvedByText.get(text);
+			const discriminant =
+				rec !== undefined
+					? (kindDiscriminantExprForId(rec.id, kindEntries) ?? kindDiscriminantExpr(rec.kind, nodeMap, kindEntries))
+					: findKindEntryForLiteral(kindEntries, text) !== undefined
+						? kindDiscriminantExprForLiteral(text, kindEntries)
+						: hasCatalogEntry(kindEntries, resolved.kind)
+							? kindDiscriminantExpr(resolved.kind, nodeMap, kindEntries)
+							: `kindIdFromName(${JSON.stringify(resolved.kind)})`;
+			const keywordKind = rec !== undefined ? rec.kind : findKindEntryForLiteral(kindEntries, text)?.kind;
+			byText.push({ text, discriminant, keyword: isKeywordKindIn(nodeMap, keywordKind) });
+		}
+	}
+	return byText;
+}
+
+export function emptyDefaultOf(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	factoryNs = ''
+): string | null {
+	if (!isRequired(field) || field.values.length !== 1) return null;
 	if (isHiddenInfraSlot(field, nodeMap)) return null;
-	const kinds = slotKindNames(field);
-	if (kinds.length !== 1) return null;
-	const targetKind = kinds[0]!;
-	const targetNode = nodeMap.nodes.get(targetKind);
-	if (!targetNode) return null;
-	if (!targetNode.rawFactoryName) return null;
+	const sole = field.values[0]!;
+	const fixed = kindEntries === undefined ? undefined : fixedTextEntryOf(sole, nodeMap, kindEntries);
+	if (fixed !== undefined) return `${fixed.discriminant} as const`;
+	if (!isNodeRef(sole)) return null;
+	const targetNode = nodeMap.nodes.get(storageKindOfRef(sole.node));
+	if (!targetNode?.rawFactoryName || isFixedTextLeaf(targetNode)) return null;
+	const call = `${factoryNs}${targetNode.rawFactoryName}()`;
 
 	if (targetNode instanceof AssembledList) {
-		return targetNode.argumentOptional(nodeMap) ? targetNode.rawFactoryName : null;
-	}
-
-	const branchTarget = targetNode instanceof AbstractAssembledCompound ? targetNode : null;
-	if (branchTarget !== null && fromForwardsToChildFactory(branchTarget, nodeMap)) {
-		const facts = soleSlotFacts(branchTarget, nodeMap);
-		if (!facts) return null;
-		if (facts.multiple || !facts.required) return targetNode.rawFactoryName;
-		return null;
+		return targetNode.argumentOptional(nodeMap) ? call : null;
 	}
 
 	if (!(targetNode instanceof AbstractAssembledCompound)) return null;
-	return targetNode.argumentOptional(nodeMap) ? targetNode.rawFactoryName : null;
+	if (fromForwardsToChildFactory(targetNode, nodeMap)) {
+		const facts = soleSlotFacts(targetNode, nodeMap);
+		return facts !== null && (facts.multiple || !facts.required) ? call : null;
+	}
+	return targetNode.argumentOptional(nodeMap) ? call : null;
 }
 
 export function registeredSlots(node: {

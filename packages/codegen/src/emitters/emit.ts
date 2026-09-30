@@ -185,7 +185,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const options = kindEntries && renderRules ? emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables }) : renderOptionsModule({ indentChars: indentChars(nodeMap) });
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
-	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });
+	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures, renderBodies: templates.bodies });
 	const utils = emitClientUtils({ grammar, nodeMap, triviaKinds });
 
 	const overlays: Record<OverlayName, string> = {

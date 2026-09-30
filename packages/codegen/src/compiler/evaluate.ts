@@ -35,6 +35,7 @@ import { baseRulesOf } from '../dsl/shared.ts';
 import { protectedWireRuleNames, wireWithoutConfig, type PatchSite, type WireContext, type RefineForm, type WiredOpts } from '../dsl/wire/wire.ts';
 import { getDeadEnrichMints } from '../dsl/wire/dead-mints.ts';
 import { getDerivationRecords } from '../dsl/wire/derivation-records.ts';
+import { getTextTokens } from '../dsl/enrich.ts';
 import type { GrammarResult } from '../dsl/enrich.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
@@ -965,10 +966,12 @@ async function importAndExtractGrammar(entryPath: string): Promise<EvaluatedGram
 	const grammarObj = (result.grammar ?? result) as EvaluatedGrammar;
 	const deadMints = getDeadEnrichMints(grammarObj);
 	const derivationRecords = getDerivationRecords(grammarObj);
+	const textTokens = getTextTokens(grammarObj);
 	return {
 		...grammarObj,
 		...(deadMints.size === 0 ? {} : { orphanedSyntheticGroups: [...deadMints] }),
-		...(derivationRecords === undefined ? {} : { derivationRecords })
+		...(derivationRecords === undefined ? {} : { derivationRecords }),
+		...(textTokens.length === 0 ? {} : { textTokens })
 	};
 }
 

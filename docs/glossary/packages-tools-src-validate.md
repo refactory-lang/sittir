@@ -285,6 +285,14 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
  */
 ```
 
+### `packages/tools/src/validate/common.ts::nativeNodeIsKind`
+
+Whether a node from the native read is of a given kind name, under either identity it carries: the grammar symbol that parsed it (`$type`), or the kind the parser shows it as (`$displayType`, present only at an alias). The corpus names an alias envelope by the shown kind (`property_identifier`, `field_identifier`), so a lookup by `$type` alone would never find one. `findNativeNodeId` and `walkNativeForKind` both locate nodes through it.
+
+### `packages/tools/src/validate/shown-kind.ts::nativeShownKindId`
+
+The kind a node from the native read is shown as: its `$displayType` when the reader sent one, and its `$type` otherwise. An in-place leaf alias reads as the token it aliases, for example regex `lazy` over `?`, which arrives as `$type` `?` with `$displayType` `lazy`. The model kind of such a node is the shown one. Every site that classifies a read node as a model kind reads it here: the factory-render-parse candidate walk and storage comparison, the read-render-parse leaf check, the exercise walk, the factory-source printer, and `nativeNodeIsKind`. Sites that compare two reads, or that name the grammar symbol that parsed a node, keep `$type`.
+
 ### `packages/tools/src/validate/common.ts::findNativeNodeId`
 
 ```text
@@ -736,6 +744,12 @@ An assignment target reparses as the left side of a parenthesized assignment, `(
 
 The wrapper is chosen by the kind being rendered when it is visible, else by the parse kind the fixture targets —
 never by stripping underscores, which can land on an unrelated kind (`_number` is not `number`).
+
+The grammar's root kind reparses as written, with no wrapper: `opts.root` names it, and `reparseWrappersOf` adds its identity entry. A kind with no wrapper of its own and no supertype wrapper returns `null`.
+
+### `packages/tools/src/validate/common.ts::reparseWrappersOf`
+
+A grammar's reparse wrappers: an identity wrapper for the node model's root kind, then the grammar's own `REPARSE_WRAPPERS` entries. The root entry comes from the model for every grammar, so `REPARSE_WRAPPERS` holds only the context wrappers a grammar needs beyond its root, and a new grammar reparses its root kind with no table of its own.
 
 ### `packages/tools/src/validate/common.ts::WASM_PATHS`
 
@@ -1721,6 +1735,10 @@ The rows and summary for one grammar's whole corpus. Entries that parse with err
 
 Each kind's `fullForm` from the node model: the literal delimiters around its one text content.
 
+### `packages/tools/src/validate/common.ts::LoadedNodeModel.root`
+
+The grammar's root kind as the node model records it; `undefined` when no model is loaded.
+
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel.innerGapsKeyed`
 
 Whether the grammar's emitted `InnerTrivia` takes a gap key, as the node model stamps it.
@@ -1728,3 +1746,21 @@ Whether the grammar's emitted `InnerTrivia` takes a gap key, as the node model s
 ### `packages/tools/src/validate/read-render-parse.ts::validateReadRenderParse`
 
 Reads each corpus candidate, renders it, reparses the render inside its supertype wrapper and compares the reparsed node's AST with the source's. The reparsed node is found at the wrapper's splice offset (`findReparsedNodeAtOffset`), past the candidate's own leading trivia. A candidate that is the tree's root (its kind is the first parse's root node type) is compared against the reparsed tree's root node directly: the root's render carries its source flanks, and a leading whitespace flank is padding tree-sitter starts no node at, so no offset names it. Every other candidate keeps the offset lookup, so a non-root render that starts with whitespace still fails it as `kind not found at rendered offset`.
+
+### `packages/tools/src/validate/uncovered-content.ts::computeUncoveredContentCensus`
+
+The census of corpus nodes that hold text no child of theirs covers, read the way the native reader reads them (a deep `readNativeTree` over every validate corpus entry). A node counts when some descendant span intersects its own, and any non-whitespace bytes of its span lie outside every descendant span. Trivia attached anywhere inside counts as covering. Rows group by the kind the node reads as (`$displayType` when present, else `$type`), with the node and entry counts, every distinct uncovered text, and the grammar producers `hiddenProducers` names for the grammar symbol that parsed it.
+
+Such text is carried by a token tree-sitter hides from the node API: an unnamed pattern, a hidden terminal rule, or a hidden external. A reader that captures text only on anonymous, error, or childless nodes loses it, so the target is zero rows.
+
+### `packages/tools/src/validate/uncovered-content.ts::hiddenProducers`
+
+For a grammar symbol, the hidden token producers its rule reaches without crossing a visible node boundary, read from `.sittir/src/grammar.json`. It follows symbols into hidden (`_`-prefixed) and inline rules, and stops at visible symbols and at alias contents. It reports each unnamed `PATTERN` or non-literal `TOKEN`/`IMMEDIATE_TOKEN`, each hidden rule whose definition is a terminal, and each hidden external. Results are cached per symbol.
+
+### `packages/tools/src/validate/uncovered-content.ts::uncoveredRuns`
+
+The trimmed, non-empty text runs of a node's span that no descendant span covers. Descendant spans are clipped to the node's span, so trivia just outside it covers nothing.
+
+### `packages/tools/src/validate/uncovered-content.ts::run`
+
+`sittir tool uncovered-content`: prints the census per grammar (one line per kind, then each distinct uncovered text with its count), or the census as JSON with `--json`. Exits 1 when any grammar has an uncovered node.

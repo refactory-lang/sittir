@@ -10,6 +10,7 @@ import {
 	type Seat,
 	type SeatTable
 } from '../validate/common.ts';
+import { nativeShownKindId } from '../validate/shown-kind.ts';
 import type { FactoryShape, PolymorphVariantMap } from '../codegen-surface.ts';
 import type { NodeTrivia as ReadTrivia } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
@@ -132,8 +133,9 @@ function printRawNode(node: Record<string, unknown>, ctx: PrintContext, depth: n
 	if (slotKeys.length === 0 && typeof node.$text === 'string') {
 		const id = ctx.memberIdOfText?.(node.$text);
 		if (id !== undefined) return printValue(id, ctx, depth);
-		if (typeof node.$type === 'number' && ctx.memberNameOfId(node.$type) !== undefined) {
-			return printValue(node.$type, ctx, depth);
+		const shown = nativeShownKindId(node as { $type: unknown });
+		if (typeof shown === 'number' && ctx.memberNameOfId(shown) !== undefined) {
+			return printValue(shown, ctx, depth);
 		}
 		return JSON.stringify(node.$text);
 	}
@@ -862,7 +864,7 @@ function spellTriviaTree(node: unknown, ctx: TriviaTextContext, depth = 0): void
 function spelledTriviaEntry(entry: unknown, ctx: TriviaTextContext): unknown {
 	if (!isPlainObject(entry) || typeof entry.$text !== 'string' || typeof entry.$type !== 'number') return entry;
 	if (Object.keys(entry).some((key) => key.startsWith('_'))) return entry;
-	const kind = ctx.kindNameFromId(entry.$type);
+	const kind = ctx.kindNameFromId(nativeShownKindId(entry as { $type: number }));
 	if (kind === undefined || ctx.textLeafKinds.has(kind)) return entry;
 	const form = ctx.fullForms[kind];
 	const field = ctx.factoryFields[kind]?.[0];
@@ -908,7 +910,8 @@ function seatFormTree(node: unknown, ctx: SeatWalkContext, depth = 0): void {
 }
 
 function seatFormChild(node: Record<string, unknown>, mctx: SeatWalkContext): void {
-	const kind = typeof node.$type === 'number' ? mctx.kindNameFromId(node.$type) : undefined;
+	const shown = nativeShownKindId(node as { $type: unknown });
+	const kind = typeof shown === 'number' ? mctx.kindNameFromId(shown) : undefined;
 	if (kind === undefined) return;
 	const slots = mctx.seats[kind];
 	if (slots === undefined) return;
@@ -1053,7 +1056,8 @@ export async function emitFactorySourceText(
 		factoryFields: withPublicNames(model.factoryFields),
 		factorySlots: withPublicNames(model.factorySlots)
 	};
-	const rootKind = typeof root.$type === 'number' ? kindNameFromId(root.$type) : root.$type;
+	const shownRoot = nativeShownKindId(root);
+	const rootKind = typeof shownRoot === 'number' ? kindNameFromId(shownRoot) : shownRoot;
 	if (!rootKind) throw new Error(`emit-factory-source: root kind id ${String(root.$type)} is not in the catalog`);
 	const body = printFactorySource(root, rootKind, artifacts, { kindNameFromId, tree: handle }, ctx);
 	for (const finding of new Set(leafFindings)) process.stderr.write(`[emit-factory-source] leaf finding: ${finding}\n`);

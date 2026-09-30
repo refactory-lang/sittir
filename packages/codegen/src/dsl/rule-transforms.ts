@@ -11,6 +11,7 @@ import {
 	SYMBOL,
 	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
+import { isPrecWrapper, isTokenWrapperType } from '../types/runtime-shapes.ts';
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
 import { RuleWalker, SyntacticRuleWalker } from './rule-walker.ts';
 import { absorbIds, withId } from './rule-attrs.ts';
@@ -72,6 +73,111 @@ export function distributeInlineAliasChoices<R extends AnyRule>(rule: R, ctx: Di
 export interface LiteralAliasStorage<R> {
 	readonly rules: Record<string, R>;
 	readonly storageNames: readonly string[];
+}
+
+export interface InlineTextTokens<R> {
+	readonly rules: Record<string, R>;
+	readonly mintedNames: readonly string[];
+	readonly owners: Readonly<Record<string, readonly string[]>>;
+}
+
+function peelPrec<R extends AnyRule>(r: R): R {
+	return isPrecWrapper(r) ? peelPrec((r as unknown as { content: R }).content) : r;
+}
+
+export function isTerminalRootRule(rule: AnyRule): boolean {
+	const root = peelPrec(rule);
+	return root.type === PATTERN || root.type === STRING || isTokenWrapperType(root.type);
+}
+
+export function isLiteralOnlyRule(rule: AnyRule): boolean {
+	const root = peelPrec(rule);
+	if (root.type === STRING) return true;
+	if (isTokenWrapperType(root.type)) return isLiteralOnlyRule((root as unknown as { content: AnyRule }).content);
+	if (root.type === CHOICE || root.type === SEQ) return (root as unknown as { members: readonly AnyRule[] }).members.every(isLiteralOnlyRule);
+	return false;
+}
+
+export function tokenBodyKey(rule: AnyRule): string {
+	return JSON.stringify(rule, (key, value: unknown) =>
+		key === 'annotations' || key === 'metadata' || key === 'id' || key === 'hidden' ? undefined : value
+	);
+}
+
+export interface TextTokenMintCtx<R> {
+	readonly symbol: (name: string) => R;
+	readonly namingRules?: Readonly<Record<string, AnyRule>>;
+}
+
+interface TextSiteCtx<T> {
+	readonly visit: (site: T) => T;
+}
+
+function isTextTokenSite(rule: AnyRule): boolean {
+	return (
+		rule.type === PATTERN ||
+		(isTokenWrapperType(rule.type) && peelPrec((rule as unknown as { content: AnyRule }).content).type !== STRING)
+	);
+}
+
+function mapTextTokenSites<T extends AnyRule>(rule: T, ctx: TextSiteCtx<T>): T {
+	if (isTextTokenSite(rule)) return ctx.visit(rule);
+	if (rule.type === ALIAS && (rule as unknown as { named?: boolean }).named === true) return rule;
+	const { content, members } = rule as unknown as { content?: T; members?: readonly T[] };
+	if (content !== undefined) return { ...rule, content: mapTextTokenSites(content, ctx) };
+	if (members !== undefined) return { ...rule, members: members.map((member) => mapTextTokenSites(member, ctx)) };
+	return rule;
+}
+
+export function mintInlineTextTokens<R extends AnyRule>(rules: Record<string, R>, ctx: TextTokenMintCtx<R>): InlineTextTokens<R> {
+	const bodyOf = <T extends AnyRule>(site: T): T => {
+		const { annotations: _annotations, ...body } = site as T & { annotations?: unknown };
+		return body as T;
+	};
+	const bodyKey = (site: AnyRule): string => tokenBodyKey(bodyOf(site));
+	const nonTerminal = <T extends AnyRule>(bag: Readonly<Record<string, T>>): [string, T][] => Object.entries(bag).filter(([, rule]) => !isTerminalRootRule(rule));
+	const nameOf = new Map<string, string>();
+	const nameSites = (bag: Readonly<Record<string, AnyRule>>): void => {
+		for (const [owner, rule] of nonTerminal(bag)) {
+			const fresh: string[] = [];
+			mapTextTokenSites(rule, {
+				visit: (site) => {
+					const key = bodyKey(site);
+					if (!nameOf.has(key) && !fresh.includes(key)) fresh.push(key);
+					return site;
+				}
+			});
+			const base = `${owner.replace(/^_+/, '')}_text`;
+			fresh.forEach((key, i) => {
+				const name = fresh.length === 1 ? base : `${base}${i + 1}`;
+				if (Object.hasOwn(rules, name)) throw new Error(`mintInlineTextTokens: '${owner}' mints '${name}', which the grammar already names`);
+				nameOf.set(key, name);
+			});
+		}
+	};
+	nameSites(ctx.namingRules ?? rules);
+	nameSites(rules);
+	const out: Record<string, R> = { ...rules };
+	const bodies = new Map<string, R>();
+	const ownersOf: Record<string, string[]> = {};
+	for (const [owner, rule] of nonTerminal(rules)) {
+		let holds = false;
+		const rewritten = mapTextTokenSites(rule, {
+			visit: (site) => {
+				holds = true;
+				const { annotations } = site as R & { annotations?: unknown };
+				const name = nameOf.get(bodyKey(site))!;
+				if (!bodies.has(name)) bodies.set(name, bodyOf(site));
+				if (!(ownersOf[name] ??= []).includes(owner)) ownersOf[name].push(owner);
+				const reference = ctx.symbol(name);
+				return annotations === undefined ? reference : ({ ...reference, annotations } as R);
+			}
+		});
+		if (holds) out[owner] = rewritten;
+	}
+	const mintedNames = [...new Set(nameOf.values())].filter((name) => bodies.has(name));
+	for (const name of mintedNames) out[name] = bodies.get(name)!;
+	return { rules: out, mintedNames, owners: ownersOf };
 }
 
 export function mintInlineLiteralAliasStorage<R extends AnyRule>(rules: Record<string, R>): LiteralAliasStorage<R> {

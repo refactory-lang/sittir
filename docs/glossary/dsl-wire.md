@@ -198,6 +198,30 @@ array form `transform()` consumes as its rest parameter.
 A `rule('w', body)` mints `w` itself, visible or hidden as the author named
 it.
 
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.symbols`
+
+The base grammar's predicted symbol facts (`baseSymbolSourceOf`), computed on first use. A patch asks it what a referenced name is to the parser (`wireSymbols`) before any parser exists.
+
+### `packages/codegen/src/dsl/wire/wire.ts::baseSymbolSourceOf`
+
+The predicted `SymbolSource` of the base grammar a wire runs over (`predictedSymbolSourceOf` over its rules, externals, supertypes and inline names), deferred behind a thunk so a wire that never asks does not pay for the prediction. A base with no rules has no symbols to predict, so it yields none.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.textTokens`
+
+The text tokens enrich minted (`getEnrichTextTokens`), each with the rules that reference it. `wireImpl` gives each one a deferred rule function (`makeDeferredContentFn`), so a patch that rewrites its body lands before the minted rule is read.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireTextTokenOf`
+
+The minted text token a member references, when the member is a SYMBOL naming one; otherwise undefined.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireTextTokenBody`
+
+A minted text token's current body: the deposit of an earlier patch, or the enriched body.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireDepositTextToken`
+
+Rewrites a minted text token's body. `rewrite` receives the body so far: the deposit of an earlier patch, or the enriched body. The result becomes the deposit the minted rule's deferred function returns. A token that more than one rule references cannot be rewritten through one of them, since every sharer would change, so it throws, naming the sharers.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::wireHasDeposit`
 
 Whether the active wire context holds a deposited body under `name`. Only
@@ -917,6 +941,10 @@ The index paths each kind's authored patches mark with `field()`, read from `pat
 ### `packages/codegen/src/dsl/wire/wire.ts::baseSupertypeNamesOf`
 
 The names in the base grammar's `supertypes`, evaluating the list when the base declares it as a callback.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireSymbols`
+
+The active wire context's predicted symbol facts (`WireContext.symbols`), or undefined outside a wire.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireIsBaseSupertype`
 

@@ -342,6 +342,7 @@ export const ir: {
 	readonly importPrefix: typeof F.buildImportPrefix;
 	readonly typeConversion: typeof F.buildTypeConversion;
 	readonly identifier: typeof F.buildIdentifier;
+	readonly formatSpecifierText: typeof F.buildFormatSpecifierText;
 	readonly stringStart: typeof F.buildStringStart;
 	readonly stringFragment: typeof F.buildStringFragment;
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
@@ -517,6 +518,7 @@ export const ir: {
 	importPrefix: F.buildImportPrefix,
 	typeConversion: F.buildTypeConversion,
 	identifier: F.buildIdentifier,
+	formatSpecifierText: F.buildFormatSpecifierText,
 	stringStart: F.buildStringStart,
 	stringFragment: F.buildStringFragment,
 	escapeInterpolation: F.buildEscapeInterpolation,

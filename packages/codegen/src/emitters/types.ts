@@ -584,7 +584,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	lines.push('');
 
 	lines.push(
-		'/** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */'
+		'/** Parser display label of each kind id — the spelling of an anonymous token the reader sends without text, and the label validator bridging matches. Never use for wrapNode dispatch. */'
 	);
 	lines.push('export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([');
 	for (const entry of entries) {

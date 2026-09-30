@@ -2,7 +2,7 @@
 
 use ::sittir_core::options::{ResolvedOptions, NO_SITE};
 
-pub const SPACING_SITE_COUNT: usize = 152;
+pub const SPACING_SITE_COUNT: usize = 149;
 pub const DELIMITER_SITE_COUNT: usize = 0;
 
 pub const SITE_ANONYMOUS_NODE_CONTENT_CAPTURE_AFTER: usize = 0;
@@ -126,37 +126,34 @@ pub const SITE_PARAMETERS_ELEMENTS_START: usize = 117;
 pub const SITE_PARAMETERS_ELEMENTS_SEPARATOR_SPACE: usize = 118;
 pub const SITE_PARAMETERS_PARAMETERS_BEFORE: usize = 119;
 pub const SITE_PARAMETERS_PARAMETERS_AFTER: usize = 120;
-pub const SITE_PREDICATE_POUND_AFTER: usize = 121;
+pub const SITE_PREDICATE_PREFIX_BEFORE: usize = 121;
 pub const SITE_PREDICATE_LPAREN_AFTER: usize = 122;
 pub const SITE_PREDICATE_RPAREN_BEFORE: usize = 123;
-pub const SITE_PREDICATE_DOT_AFTER: usize = 124;
-pub const SITE_PREDICATE_PREDICATE_BEFORE: usize = 125;
-pub const SITE_PREDICATE_PREDICATE_AFTER: usize = 126;
-pub const SITE_PREDICATE_TYPE_BANG_BEFORE: usize = 127;
-pub const SITE_PREDICATE_TYPE_BANG_AFTER: usize = 128;
-pub const SITE_PREDICATE_TYPE_QMARK_BEFORE: usize = 129;
-pub const SITE_PREDICATE_TYPE_QMARK_AFTER: usize = 130;
-pub const SITE_PROGRAM_DEFINITIONS_ANONYMOUS_NODE_AFTER: usize = 131;
-pub const SITE_PROGRAM_DEFINITIONS_FIELD_DEFINITION_AFTER: usize = 132;
-pub const SITE_PROGRAM_DEFINITIONS_GROUPING_AFTER: usize = 133;
-pub const SITE_PROGRAM_DEFINITIONS_LIST_AFTER: usize = 134;
-pub const SITE_PROGRAM_DEFINITIONS_MISSING_NODE_AFTER: usize = 135;
-pub const SITE_PROGRAM_DEFINITIONS_NAMED_NODE_PLAIN_AFTER: usize = 136;
-pub const SITE_PROGRAM_DEFINITIONS_NAMED_NODE_SUPERTYPED_AFTER: usize = 137;
-pub const SITE_PROGRAM_DEFINITIONS_PREDICATE_AFTER: usize = 138;
-pub const SITE_PROGRAM_DEFINITIONS_END: usize = 139;
-pub const SITE_PROGRAM_DEFINITIONS_START: usize = 140;
-pub const SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE: usize = 141;
-pub const SITE_PROGRAM_PROGRAM_BEFORE: usize = 142;
-pub const SITE_PROGRAM_PROGRAM_AFTER: usize = 143;
-pub const SITE_QUANTIFIER_STAR_BEFORE: usize = 144;
-pub const SITE_QUANTIFIER_STAR_AFTER: usize = 145;
-pub const SITE_QUANTIFIER_PLUS_BEFORE: usize = 146;
-pub const SITE_QUANTIFIER_PLUS_AFTER: usize = 147;
-pub const SITE_QUANTIFIER_QMARK_BEFORE: usize = 148;
-pub const SITE_QUANTIFIER_QMARK_AFTER: usize = 149;
-pub const SITE_STRING_STRING_BEFORE: usize = 150;
-pub const SITE_STRING_STRING_AFTER: usize = 151;
+pub const SITE_PREDICATE_PREDICATE_BEFORE: usize = 124;
+pub const SITE_PREDICATE_PREDICATE_AFTER: usize = 125;
+pub const SITE_PREDICATE_TYPE_BANG_AFTER: usize = 126;
+pub const SITE_PREDICATE_TYPE_QMARK_AFTER: usize = 127;
+pub const SITE_PROGRAM_DEFINITIONS_ANONYMOUS_NODE_AFTER: usize = 128;
+pub const SITE_PROGRAM_DEFINITIONS_FIELD_DEFINITION_AFTER: usize = 129;
+pub const SITE_PROGRAM_DEFINITIONS_GROUPING_AFTER: usize = 130;
+pub const SITE_PROGRAM_DEFINITIONS_LIST_AFTER: usize = 131;
+pub const SITE_PROGRAM_DEFINITIONS_MISSING_NODE_AFTER: usize = 132;
+pub const SITE_PROGRAM_DEFINITIONS_NAMED_NODE_PLAIN_AFTER: usize = 133;
+pub const SITE_PROGRAM_DEFINITIONS_NAMED_NODE_SUPERTYPED_AFTER: usize = 134;
+pub const SITE_PROGRAM_DEFINITIONS_PREDICATE_AFTER: usize = 135;
+pub const SITE_PROGRAM_DEFINITIONS_END: usize = 136;
+pub const SITE_PROGRAM_DEFINITIONS_START: usize = 137;
+pub const SITE_PROGRAM_DEFINITIONS_SEPARATOR_SPACE: usize = 138;
+pub const SITE_PROGRAM_PROGRAM_BEFORE: usize = 139;
+pub const SITE_PROGRAM_PROGRAM_AFTER: usize = 140;
+pub const SITE_QUANTIFIER_STAR_BEFORE: usize = 141;
+pub const SITE_QUANTIFIER_STAR_AFTER: usize = 142;
+pub const SITE_QUANTIFIER_PLUS_BEFORE: usize = 143;
+pub const SITE_QUANTIFIER_PLUS_AFTER: usize = 144;
+pub const SITE_QUANTIFIER_QMARK_BEFORE: usize = 145;
+pub const SITE_QUANTIFIER_QMARK_AFTER: usize = 146;
+pub const SITE_STRING_STRING_BEFORE: usize = 147;
+pub const SITE_STRING_STRING_AFTER: usize = 148;
 
 /// (kind, address, label, allowed kind ids), in canonical path order.
 pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
@@ -281,15 +278,12 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("parameters", "elements_separator_space", "empty_separator_space", &[24, 25, 26, 27, 28, 29]),
     ("parameters", "parameters_before", "parameters_before", &[24, 25, 26, 27, 28, 29, 30, 31]),
     ("parameters", "parameters_after", "parameters_after", &[24, 25, 26, 27, 28, 29, 30, 31]),
-    ("predicate", "pound_after", "pound_after", &[24, 25, 26, 27, 28, 29, 30, 31]),
+    ("predicate", "prefix_before", "prefix_before", &[24, 25, 26, 27, 28, 29, 30, 31]),
     ("predicate", "lparen_after", "lparen_after", &[24, 25, 26, 27, 28, 29, 30, 31]),
     ("predicate", "rparen_before", "rparen_before", &[24, 25, 26, 27, 28, 29, 30, 31]),
-    ("predicate", "dot_after", "dot_after", &[24, 25, 26, 27, 28, 29, 30, 31]),
     ("predicate", "predicate_before", "predicate_before", &[24, 25, 26, 27, 28, 29, 30, 31]),
     ("predicate", "predicate_after", "predicate_after", &[24, 25, 26, 27, 28, 29, 30, 31]),
-    ("predicate_type", "bang_before", "bang_before", &[24, 25, 26, 27, 28, 29, 30, 31]),
     ("predicate_type", "bang_after", "bang_after", &[24, 25, 26, 27, 28, 29, 30, 31]),
-    ("predicate_type", "qmark_before", "qmark_before", &[24, 25, 26, 27, 28, 29, 30, 31]),
     ("predicate_type", "qmark_after", "qmark_after", &[24, 25, 26, 27, 28, 29, 30, 31]),
     ("program", "definitions_anonymous_node_after", "anonymous_node_after", &[24, 25, 26, 27, 28, 29, 30, 31]),
     ("program", "definitions_field_definition_after", "field_definition_after", &[24, 25, 26, 27, 28, 29, 30, 31]),
@@ -316,9 +310,9 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
 
 /// The before and after site of every kind that owns edge seams, in kind id order.
 pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
-    ::sittir_core::options::EdgeSite { before: 142, after: 143 },
+    ::sittir_core::options::EdgeSite { before: 139, after: 140 },
     ::sittir_core::options::EdgeSite { before: 7, after: 8 },
-    ::sittir_core::options::EdgeSite { before: 150, after: 151 },
+    ::sittir_core::options::EdgeSite { before: 147, after: 148 },
     ::sittir_core::options::EdgeSite { before: NO_SITE, after: 28 },
     ::sittir_core::options::EdgeSite { before: 119, after: 120 },
     ::sittir_core::options::EdgeSite { before: 43, after: 44 },
@@ -327,7 +321,7 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: 5, after: 6 },
     ::sittir_core::options::EdgeSite { before: 11, after: 12 },
     ::sittir_core::options::EdgeSite { before: 112, after: 113 },
-    ::sittir_core::options::EdgeSite { before: 125, after: 126 },
+    ::sittir_core::options::EdgeSite { before: 124, after: 125 },
     ::sittir_core::options::EdgeSite { before: 15, after: 16 },
     ::sittir_core::options::EdgeSite { before: 58, after: 59 },
     ::sittir_core::options::EdgeSite { before: 26, after: 27 },
@@ -345,10 +339,10 @@ pub static EDGE_ROWS: &[u16] = &[
     NO_SITE, 9, 10, 11, 12, 13, 14, NO_SITE, 15, 16, 17, 18,
 ];
 
-/// Per kind id, its flags: KIND_ANON (the parser's anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED, KIND_ROOT.
+/// Per kind id, its flags: KIND_ANON (the parser's anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED.
 pub static KIND_FLAGS: &[u8] = &[
-    0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-    8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
+    0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
     1, 1,
 ];
 
@@ -377,11 +371,11 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("named_node_supertyped", &[109, 106, 107, 108, 104, 103, 110, 102]),
     ("negated_field", &[112, 111, 113]),
     ("parameters", &[119, 117, 116, 120, 114, 115]),
-    ("predicate", &[125, 122, 121, 124, 123, 126]),
-    ("predicate_type", &[129, 130, 127, 128]),
-    ("program", &[142, 140, 139, 143, 131, 132, 133, 134, 135, 136, 137, 138]),
-    ("quantifier", &[144, 145, 146, 147, 148, 149]),
-    ("string", &[150, 151]),
+    ("predicate", &[124, 122, 121, 123, 125]),
+    ("predicate_type", &[127, 126]),
+    ("program", &[139, 137, 136, 140, 128, 129, 130, 131, 132, 133, 134, 135]),
+    ("quantifier", &[141, 142, 143, 144, 145, 146]),
+    ("string", &[147, 148]),
 ];
 
 pub fn spacing_text(kind: u16) -> &'static str {
@@ -548,9 +542,6 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 25, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 25, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 25, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 24, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 27, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 25, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 25, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 25, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 25, strength: 0 },
@@ -645,8 +636,8 @@ pub static SEATS_PARAMETERS_ELEMENTS: &[u16] = &[
 pub static SEATS_PROGRAM_DEFINITIONS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 134, 133, 135, 131, NO_SITE,
-    NO_SITE, 132, NO_SITE, 138, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 136, 137,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 131, 130, 132, 128, NO_SITE,
+    NO_SITE, 129, NO_SITE, 135, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 133, 134,
 ];
 
 pub fn defaults() -> ResolvedOptions {
@@ -955,14 +946,11 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "predicate", path: "(predicate)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PREDICATE_PREDICATE_AFTER, path: "(predicate)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PREDICATE_PREDICATE_BEFORE, path: "(predicate)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "dot", path: "(predicate)/\".\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PREDICATE_DOT_AFTER, path: "(predicate)/\".\"/after" }] },
-        ] },
         ::sittir_core::options::AddressNode::Branch { key: "lparen", path: "(predicate)/\"(\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PREDICATE_LPAREN_AFTER, path: "(predicate)/\"(\"/after" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "pound", path: "(predicate)/\"#\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PREDICATE_POUND_AFTER, path: "(predicate)/\"#\"/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "prefix", path: "(predicate)/prefix:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PREDICATE_PREFIX_BEFORE, path: "(predicate)/prefix:/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "rparen", path: "(predicate)/\")\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PREDICATE_RPAREN_BEFORE, path: "(predicate)/\")\"/before" }] },
@@ -971,11 +959,9 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "predicateType", path: "(predicate_type)", children: &[
         ::sittir_core::options::AddressNode::Branch { key: "bang", path: "(predicate_type)/\"!\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PREDICATE_TYPE_BANG_AFTER, path: "(predicate_type)/\"!\"/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PREDICATE_TYPE_BANG_BEFORE, path: "(predicate_type)/\"!\"/before" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "qmark", path: "(predicate_type)/\"?\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PREDICATE_TYPE_QMARK_AFTER, path: "(predicate_type)/\"?\"/after" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PREDICATE_TYPE_QMARK_BEFORE, path: "(predicate_type)/\"?\"/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "program", path: "(program)", children: &[

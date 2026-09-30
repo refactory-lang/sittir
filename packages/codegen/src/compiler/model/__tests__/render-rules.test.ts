@@ -3,7 +3,7 @@ import { DEDENT_TEXT, INDENT_TEXT } from '../../../dsl/primitives/spacing.ts';
 import type { NodeMap } from '../../types.ts';
 import type { RenderRule } from '../../../types/rule.ts';
 import { flanksOf, isSeamChoice, resolveRenderRules, seamChoiceDefault, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
-import { AssembledBranch, AssembledKeyword, AssembledSupertype, AssembledPunctuation } from '../node-map.ts';
+import { AssembledBranch, AssembledEnum, AssembledKeyword, AssembledSupertype, AssembledPunctuation } from '../node-map.ts';
 import { preference } from '../../../dsl/primitives/preference.ts';
 import { formatPreferencePath } from '../../../dsl/primitives/preference-path.ts';
 import { stampDisplay } from '../display-name.ts';
@@ -313,6 +313,25 @@ describe('seamRenderRules', () => {
 		expect(namesWith(chain, 'optional')).toEqual(['object', 'S(qmark_dot_before)', 'arm_kind', 'S(qmark_dot_after)', 'index']);
 		expect(namesWith(chain)).toEqual(['object', 'S(qmark_dot_before)', 'arm_kind', 'S(qmark_dot_after)', 'index']);
 		expect(namesWith(new AssembledKeyword('arm_kind', str('?.') as never))).toEqual(['object', 'S(chain_before)', 'arm_kind', 'S(chain_after)', 'index']);
+	});
+
+	it('gives no arm of an immediate token choice a before seam, as an enum or inside a seq', () => {
+		const entries = [
+			...(kindEntries as never as object[]),
+			{ kind: 'qmark', anon: true, symbolName: '?', literalText: '?', member: 'Qmark', id: 22 },
+			{ kind: 'bang', anon: true, symbolName: '!', literalText: '!', member: 'Bang', id: 23 }
+		] as never;
+		const marks = (): RenderRule => ({ ...choice(str('?'), str('!')), tokenized: true, immediate: true }) as unknown as RenderRule;
+		const armNames = (group: RenderRule) => membersOf(group).map((m) => memberNames(m));
+		const enumConfig = { nodeMap: nodeMapOf({ mark: marks() }, {}), kindEntries: entries };
+		enumConfig.nodeMap.nodes.set('mark', new AssembledEnum('mark', marks() as never, { kindEntries: entries }) as never);
+		expect(armNames(seamRenderRules(spaceRenderRules(enumConfig), enumConfig).rules.mark!)).toEqual([
+			['?', 'S(qmark_after)'],
+			['!', 'S(bang_after)']
+		]);
+		const { out } = seamed({ call: seq(sym('name'), marks()) }, {}, { kindEntries: entries });
+		const group = membersOf(out.rules.call!).find((m) => (m as { type: string }).type === 'CHOICE' && !isSeamChoice(m))!;
+		expect(membersOf(group).map((m) => (m as { value?: string }).value ?? memberNames(m))).toEqual(['?', '!']);
 	});
 
 	it('defaults to space where the seam-stamping dry run baked a space', () => {

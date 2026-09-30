@@ -77,18 +77,18 @@ export enum TSKindId {
 	Lt = 32,
 	LparenQmarkPEq = 33,
 	DecimalEscape = 34,
-	CharacterClassEscapeToken1 = 35,
-	UnicodeCharacterEscapeToken1 = 36,
-	UnicodeCharacterEscapeToken2 = 37,
-	UnicodePropertyValue = 38,
-	ControlEscapeToken1 = 39,
-	ControlEscapeToken2 = 40,
-	ControlLetterEscape = 41,
-	IdentityEscape = 42,
-	GroupName = 43,
-	DecimalDigits = 44,
-	Colon = 45,
-	CharacterClassEscapeArmToken1 = 46,
+	UnicodePropertyValue = 35,
+	ControlLetterEscape = 36,
+	IdentityEscape = 37,
+	GroupName = 38,
+	DecimalDigits = 39,
+	Colon = 40,
+	CharacterClassEscapeText1 = 41,
+	CharacterClassEscapeText2 = 42,
+	UnicodeCharacterEscapeText1 = 43,
+	UnicodeCharacterEscapeText2 = 44,
+	ControlEscapeText1 = 45,
+	ControlEscapeText2 = 46,
 	Tight = 47,
 	Newline = 48,
 	Blankline = 49,
@@ -173,18 +173,18 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[32, 'lt'],
 	[33, 'lparen_qmarkP_eq'],
 	[34, 'decimal_escape'],
-	[35, 'character_class_escape_token1'],
-	[36, 'unicode_character_escape_token1'],
-	[37, 'unicode_character_escape_token2'],
-	[38, 'unicode_property_value'],
-	[39, 'control_escape_token1'],
-	[40, 'control_escape_token2'],
-	[41, 'control_letter_escape'],
-	[42, 'identity_escape'],
-	[43, 'group_name'],
-	[44, 'decimal_digits'],
-	[45, 'colon'],
-	[46, 'character_class_escape_arm_token1'],
+	[35, 'unicode_property_value'],
+	[36, 'control_letter_escape'],
+	[37, 'identity_escape'],
+	[38, 'group_name'],
+	[39, 'decimal_digits'],
+	[40, 'colon'],
+	[41, 'character_class_escape_text1'],
+	[42, 'character_class_escape_text2'],
+	[43, 'unicode_character_escape_text1'],
+	[44, 'unicode_character_escape_text2'],
+	[45, 'control_escape_text1'],
+	[46, 'control_escape_text2'],
 	[47, '_tight'],
 	[48, '_newline'],
 	[49, '_blankline'],
@@ -231,7 +231,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[65535, 'ERROR']
 ]);
 
-/** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
+/** Parser display label of each kind id — the spelling of an anonymous token the reader sends without text, and the label validator bridging matches. Never use for wrapNode dispatch. */
 export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, '|'],
 	[2, 'any_character'],
@@ -267,18 +267,18 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[32, '<'],
 	[33, '(?P='],
 	[34, 'decimal_escape'],
-	[35, 'character_class_escape_token1'],
-	[36, 'unicode_character_escape_token1'],
-	[37, 'unicode_character_escape_token2'],
-	[38, 'unicode_property_value'],
-	[39, 'control_escape_token1'],
-	[40, 'control_escape_token2'],
-	[41, 'control_letter_escape'],
-	[42, 'identity_escape'],
-	[43, 'group_name'],
-	[44, 'decimal_digits'],
-	[45, ':'],
-	[46, 'character_class_escape_arm_token1'],
+	[35, 'unicode_property_value'],
+	[36, 'control_letter_escape'],
+	[37, 'identity_escape'],
+	[38, 'group_name'],
+	[39, 'decimal_digits'],
+	[40, ':'],
+	[41, 'character_class_escape_text1'],
+	[42, 'character_class_escape_text2'],
+	[43, 'unicode_character_escape_text1'],
+	[44, 'unicode_character_escape_text2'],
+	[45, 'control_escape_text1'],
+	[46, 'control_escape_text2'],
 	[47, '_tight'],
 	[48, '_newline'],
 	[49, '_blankline'],
@@ -398,18 +398,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LparenQmarkPEq;
 		case 'decimal_escape':
 			return TSKindId.DecimalEscape;
-		case 'character_class_escape_token1':
-			return TSKindId.CharacterClassEscapeToken1;
-		case 'unicode_character_escape_token1':
-			return TSKindId.UnicodeCharacterEscapeToken1;
-		case 'unicode_character_escape_token2':
-			return TSKindId.UnicodeCharacterEscapeToken2;
 		case 'unicode_property_value':
 			return TSKindId.UnicodePropertyValue;
-		case 'control_escape_token1':
-			return TSKindId.ControlEscapeToken1;
-		case 'control_escape_token2':
-			return TSKindId.ControlEscapeToken2;
 		case 'control_letter_escape':
 			return TSKindId.ControlLetterEscape;
 		case 'identity_escape':
@@ -420,8 +410,18 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DecimalDigits;
 		case 'colon':
 			return TSKindId.Colon;
-		case 'character_class_escape_arm_token1':
-			return TSKindId.CharacterClassEscapeArmToken1;
+		case 'character_class_escape_text1':
+			return TSKindId.CharacterClassEscapeText1;
+		case 'character_class_escape_text2':
+			return TSKindId.CharacterClassEscapeText2;
+		case 'unicode_character_escape_text1':
+			return TSKindId.UnicodeCharacterEscapeText1;
+		case 'unicode_character_escape_text2':
+			return TSKindId.UnicodeCharacterEscapeText2;
+		case 'control_escape_text1':
+			return TSKindId.ControlEscapeText1;
+		case 'control_escape_text2':
+			return TSKindId.ControlEscapeText2;
 		case '_tight':
 			return TSKindId.Tight;
 		case '_newline':
@@ -825,11 +825,11 @@ export interface NamedGroupBackreference {
 
 export interface CharacterClassEscape {
 	readonly $type: TSKindId.CharacterClassEscape;
-	readonly _content: '\\\\[dDsSwW]' | CharacterClassEscapeArm | UnicodeCharacterEscape;
+	readonly _content: CharacterClassEscapeText1 | CharacterClassEscapeArm | UnicodeCharacterEscape;
 	readonly __slotHints__?: {
-		readonly content: SlotHint<'\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>;
+		readonly content: SlotHint<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>;
 	};
-	content(): '\\\\[dDsSwW]' | CharacterClassEscapeArm | UnicodeCharacterEscape;
+	content(): CharacterClassEscapeText1 | CharacterClassEscapeArm | UnicodeCharacterEscape;
 }
 
 export interface UnicodePropertyValueExpression {
@@ -958,13 +958,13 @@ export interface CountQuantifierArm {
 
 export interface CharacterClassEscapeArm {
 	readonly $type: TSKindId.CharacterClassEscapeArm;
-	readonly _content: '\\\\[pP]';
+	readonly _character_class_escape_text2: CharacterClassEscapeText2;
 	readonly _unicode_property_value_expression: UnicodePropertyValueExpression;
 	readonly __slotHints__?: {
-		readonly content: SlotHint<'\\\\[pP]'>;
+		readonly characterClassEscapeText2: SlotHint<T.CharacterClassEscapeText2>;
 		readonly unicodePropertyValueExpression: SlotHint<T.UnicodePropertyValueExpression>;
 	};
-	content(): '\\\\[pP]';
+	characterClassEscapeText2(): CharacterClassEscapeText2;
 	unicodePropertyValueExpression(): UnicodePropertyValueExpression;
 }
 
@@ -1071,6 +1071,8 @@ export type ControlEscape = Terminal<TSKindId.ControlEscape, string>;
 export type ControlLetterEscape = Terminal<TSKindId.ControlLetterEscape, string>;
 export type GroupName = Terminal<TSKindId.GroupName, string>;
 export type DecimalDigits = Terminal<TSKindId.DecimalDigits, string>;
+export type CharacterClassEscapeText1 = Terminal<TSKindId.CharacterClassEscapeText1, string>;
+export type CharacterClassEscapeText2 = Terminal<TSKindId.CharacterClassEscapeText2, string>;
 export type Tight = TSKindId.Tight;
 export type Newline = TSKindId.Newline;
 export type Blankline = TSKindId.Blankline;
@@ -1819,6 +1821,18 @@ export interface DecimalDigitsNs extends LeafNs<
 	DecimalDigits.Bound,
 	TSKindId.DecimalDigits
 > {}
+export interface CharacterClassEscapeText1Ns extends LeafNs<
+	CharacterClassEscapeText1,
+	string,
+	CharacterClassEscapeText1.Bound,
+	TSKindId.CharacterClassEscapeText1
+> {}
+export interface CharacterClassEscapeText2Ns extends LeafNs<
+	CharacterClassEscapeText2,
+	string,
+	CharacterClassEscapeText2.Bound,
+	TSKindId.CharacterClassEscapeText2
+> {}
 
 export interface NamespaceMap {
 	[TSKindId.Pattern]: PatternNs;
@@ -1872,6 +1886,8 @@ export interface NamespaceMap {
 	[TSKindId.ControlLetterEscape]: ControlLetterEscapeNs;
 	[TSKindId.GroupName]: GroupNameNs;
 	[TSKindId.DecimalDigits]: DecimalDigitsNs;
+	[TSKindId.CharacterClassEscapeText1]: CharacterClassEscapeText1Ns;
+	[TSKindId.CharacterClassEscapeText2]: CharacterClassEscapeText2Ns;
 }
 
 export interface BoundByKindId {
@@ -1917,6 +1933,8 @@ export interface BoundByKindId {
 	[TSKindId.ControlLetterEscape]: ControlLetterEscape.Bound;
 	[TSKindId.GroupName]: GroupName.Bound;
 	[TSKindId.DecimalDigits]: DecimalDigits.Bound;
+	[TSKindId.CharacterClassEscapeText1]: CharacterClassEscapeText1.Bound;
+	[TSKindId.CharacterClassEscapeText2]: CharacterClassEscapeText2.Bound;
 }
 
 export interface ParsedByKindId {
@@ -1962,6 +1980,8 @@ export interface ParsedByKindId {
 	[TSKindId.ControlLetterEscape]: ControlLetterEscape.Parsed;
 	[TSKindId.GroupName]: GroupName.Parsed;
 	[TSKindId.DecimalDigits]: DecimalDigits.Parsed;
+	[TSKindId.CharacterClassEscapeText1]: CharacterClassEscapeText1.Parsed;
+	[TSKindId.CharacterClassEscapeText2]: CharacterClassEscapeText2.Parsed;
 }
 
 export interface EmptyByKindId {
@@ -2058,6 +2078,8 @@ export interface IrKeyOf {
 	[TSKindId.ControlLetterEscape]: 'controlLetterEscape';
 	[TSKindId.GroupName]: 'groupName';
 	[TSKindId.DecimalDigits]: 'decimalDigits';
+	[TSKindId.CharacterClassEscapeText1]: 'characterClassEscapeText1';
+	[TSKindId.CharacterClassEscapeText2]: 'characterClassEscapeText2';
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -2370,11 +2392,14 @@ export namespace CharacterClassEscape {
 	export type Loose = LooseFor<TSKindId.CharacterClassEscape>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CharacterClassEscape>;
 	export type BuildArgs = [
-		value: AdmitBound<'\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape, T.AdmittedNodes>
+		value: AdmitBound<
+			T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape,
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		value: LooseValue<
-			'\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape,
+			T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -2590,8 +2615,8 @@ export namespace Lazy {
 	}
 	export type Loose = LooseFor<TSKindId.Lazy>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Lazy>;
-	export type BuildArgs = [value: AdmitBound<TSKindId.Qmark, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<TSKindId.Qmark, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value?: AdmitBound<TSKindId.Qmark, T.AdmittedNodes>];
+	export type LooseArgs = [value?: LooseValue<TSKindId.Qmark, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.Lazy;
 }
 export namespace UnicodePropertyName {
@@ -2910,6 +2935,36 @@ export namespace DecimalDigits {
 	export type BuildArgs = DecimalDigitsNs['BuildArgs'];
 	export type LooseArgs = DecimalDigitsNs['LooseArgs'];
 	export type Kind = TSKindId.DecimalDigits;
+}
+export namespace CharacterClassEscapeText1 {
+	export type Config = CharacterClassEscapeText1Ns['Config'];
+	export interface Bound extends NodeMethodsOf {
+		readonly $type: TSKindId.CharacterClassEscapeText1;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export interface Parsed extends Bound {}
+	export type Loose = CharacterClassEscapeText1Ns['Loose'];
+	export type LooseConfig = CharacterClassEscapeText1Ns['LooseConfig'];
+	export type BuildArgs = CharacterClassEscapeText1Ns['BuildArgs'];
+	export type LooseArgs = CharacterClassEscapeText1Ns['LooseArgs'];
+	export type Kind = TSKindId.CharacterClassEscapeText1;
+}
+export namespace CharacterClassEscapeText2 {
+	export type Config = CharacterClassEscapeText2Ns['Config'];
+	export interface Bound extends NodeMethodsOf {
+		readonly $type: TSKindId.CharacterClassEscapeText2;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export interface Parsed extends Bound {}
+	export type Loose = CharacterClassEscapeText2Ns['Loose'];
+	export type LooseConfig = CharacterClassEscapeText2Ns['LooseConfig'];
+	export type BuildArgs = CharacterClassEscapeText2Ns['BuildArgs'];
+	export type LooseArgs = CharacterClassEscapeText2Ns['LooseArgs'];
+	export type Kind = TSKindId.CharacterClassEscapeText2;
 }
 
 export interface RegexTypeMap extends GrammarTypeMap {

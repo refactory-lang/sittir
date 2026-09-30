@@ -629,7 +629,7 @@ export interface FormatExpressionTransport {
 export interface FormatSpecifierTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _elements?: Array<SlotValue<FormatSpecifierElementsTransportSlot>>
+  _elements?: Array<SlotValue<FormatSpecifierElementsTransportSlot, true>>
 }
 
 export interface ForStatementTransport {
@@ -834,6 +834,12 @@ export interface MatchBlockBlockTransport {
   '$_edges'?: Edges
   _alternative?: Array<SlotValue<CaseClauseTransport>>
   _alternative_separator_space?: number
+}
+
+export interface MatchBlockEmptyTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _newline: SlotValue<NewlineTransport>
 }
 
 export interface MatchBlockTransport {

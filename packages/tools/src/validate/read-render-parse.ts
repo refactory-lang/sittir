@@ -40,6 +40,7 @@ import {
 	type ValidatorSkip,
 	loadNativeRender
 } from './common.ts';
+import { nativeShownKindId } from './shown-kind.ts';
 
 /**
  * The kinds that participate in variant() adoption (each override-defined
@@ -391,7 +392,8 @@ export function selfContainedRenderInput(
 				out[key] = key.startsWith('_') || key === '$other' ? walk(raw) : raw;
 			}
 		}
-		if (!hasStorage(out) && typeof out.$type === 'number' && isLeafKind(out.$type) && out.$text === undefined) {
+		const shown = typeof out.$type === 'number' ? nativeShownKindId(out as { $type: number }) : undefined;
+		if (!hasStorage(out) && shown !== undefined && isLeafKind(shown) && out.$text === undefined) {
 			const text = textOf(out);
 			if (text !== undefined) out.$text = text;
 		}
@@ -550,6 +552,7 @@ export async function validateReadRenderParse(
 	const isLeafKind = await loadIsLeafKind(grammar);
 	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
+	const { root } = await loadNodeModel(grammar);
 	const variantChildKinds = await loadVariantChildKindsByOwner(grammar);
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
 	// Wrap so unknown kind names return undefined (instead of throwing).
@@ -760,7 +763,8 @@ export async function validateReadRenderParse(
 						// wrapper lookup needs no separate source resolution.
 						const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
 							adoptedVariantKinds: adoptedVariantKindNames,
-							targetKind
+							targetKind,
+							root
 						});
 						if (wrapped === null) {
 							excluded.push({ entry: entry.name, kind, reason: 'no-reparse-wrapper', input: inputSource });

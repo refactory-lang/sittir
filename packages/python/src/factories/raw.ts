@@ -66,6 +66,7 @@ const _reservedWords_buildIdentifier: ReadonlySet<string> = new Set(_reservedWor
 const _leafRe_buildImportPrefix = /^(?:(?:\.)+)$/u;
 const _leafRe_buildTypeConversion = /^(?:(?:![a-z]))$/u;
 const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
+const _leafRe_buildFormatSpecifierText = /^(?:(?:[^{}\n]+))$/u;
 const _leafRe_buildIntegerDecimalLong = /^(?:(?:(?:[0-9]+_?))+(?:[Ll]))$/u;
 const _leafRe_buildIntegerDecimalImaginary = /^(?:(?:(?:[0-9]+_?))+(?:[jJ]))$/u;
 const _leafRe_buildIntegerDecimalPlain = /^(?:(?:(?:[0-9]+_?))+)$/u;
@@ -759,13 +760,9 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 }
 
 export function buildMatchBlock(
-	value: AdmitBound<T.MatchBlockBlock | TSKindId.Newline, T.AdmittedNodes>
+	value: AdmitBound<T.MatchBlockBlock | T.MatchBlockEmpty, T.AdmittedNodes>
 ): T.MatchBlock.Bound {
-	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.MatchBlock['_content']>>(value, [['\n', TSKindId.Newline] as const]),
-		'MatchBlock.content',
-		'a built MatchBlockBlock'
-	);
+	const _content = rejectBareText(value, 'MatchBlock.content', 'a built MatchBlockBlock / MatchBlockEmpty');
 	return withMethods(
 		withAccessors(
 			{
@@ -774,7 +771,7 @@ export function buildMatchBlock(
 				$named: true as const,
 				_content,
 				$with: {
-					content: (value: NonNullable<T.MatchBlockBlock | TSKindId.Newline>) => buildMatchBlock(value)
+					content: (value: T.MatchBlockBlock | T.MatchBlockEmpty) => buildMatchBlock(value)
 				}
 			},
 			{
@@ -2422,8 +2419,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 		[
 			[
 				[
-					212, 206, 207, 213, 256, 208, 1, 68, 38, 69, 70, 39, 22, 247, 246, 90, 91, 92, 93, 94, 95, 96, 97, 98, 71, 72,
-					73, 209, 220, 221, 223, 232, 237, 235, 238, 233, 239, 234, 241, 240, 64, 200, 245, 142, 202
+					212, 206, 207, 213, 256, 208, 1, 67, 38, 68, 69, 39, 22, 247, 246, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71,
+					72, 209, 220, 221, 223, 232, 237, 235, 238, 233, 239, 234, 241, 240, 64, 200, 245, 142, 202
 				],
 				(v: unknown) => buildAsPatternTarget(v as never)
 			]
@@ -3862,11 +3859,12 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 export const buildNotEscapeSequence: TSKindId.NotEscapeSequence = TSKindId.NotEscapeSequence;
 
 export function buildFormatSpecifier(
-	...children: AdmitBound<(('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[], T.AdmittedNodes>
+	...children: AdmitBound<((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[], T.AdmittedNodes>
 ): T.FormatSpecifier.Bound {
-	const _elements = admitAliasContent<NonNullable<T.FormatSpecifier['_elements']>>(children, [
-		[[249], (v: unknown) => buildFormatExpression(v as never)]
-	]);
+	const _elements = admitAliasContent<NonNullable<T.FormatSpecifier['_elements']>>(
+		rejectBareText(children, 'FormatSpecifier.elements', 'buildFormatSpecifierText(…)'),
+		[[[249], (v: unknown) => buildFormatExpression(v as never)]]
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -3875,7 +3873,7 @@ export function buildFormatSpecifier(
 				$named: true as const,
 				_elements,
 				$with: {
-					elements: (...vs: (('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[]) =>
+					elements: (...vs: ((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[]) =>
 						buildFormatSpecifier(...vs)
 				}
 			},
@@ -4632,6 +4630,18 @@ export function buildSliceGroup(value?: AdmitBound<T.Expression, T.AdmittedNodes
 			}
 		)
 	) as unknown as T.SliceGroup.Bound;
+}
+
+export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bound {
+	if (text.length === 0) throw new Error(`format_specifier_text: text must be non-empty`);
+	if (!_leafRe_buildFormatSpecifierText.test(text))
+		throw new Error(`format_specifier_text: text does not match pattern: ${text}`);
+	return withMethods({
+		$type: TSKindId.FormatSpecifierText as const,
+		$source: 2 as const,
+		$named: true as const,
+		$text: text
+	});
 }
 
 export function buildExceptClauseExceptionAs(
@@ -5838,6 +5848,46 @@ export function buildMatchBlockBlock(
 	) as unknown as T.MatchBlockBlock.Bound;
 }
 
+export function buildMatchBlockEmpty(): ReturnType<typeof _buildMatchBlockEmpty>;
+export function buildMatchBlockEmpty(
+	value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>
+): ReturnType<typeof _buildMatchBlockEmpty>;
+export function buildMatchBlockEmpty(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+		return _buildMatchBlockEmpty(args[0] as TSKindId.Newline);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.Newline as const);
+	return prebuilt
+		? _buildMatchBlockEmpty(args[0] as TSKindId.Newline)
+		: _buildMatchBlockEmpty(buildNewline as TSKindId.Newline);
+}
+function _buildMatchBlockEmpty(value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>): T.MatchBlockEmpty.Bound {
+	const _newline = coerceKindEnumStorage<NonNullable<T.MatchBlockEmpty['_newline']>>(
+		orDefault(value, () => TSKindId.Newline as const),
+		[['\n', TSKindId.Newline] as const]
+	);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.MatchBlockEmpty as const,
+				$source: 2 as const,
+				$named: true as const,
+				_newline,
+				$with: {
+					newline: (value: NonNullable<TSKindId.Newline>) => buildMatchBlockEmpty(value)
+				}
+			},
+			{
+				newline: () => _newline
+			}
+		)
+	) as unknown as T.MatchBlockEmpty.Bound;
+}
+
 export function buildSuiteInline(
 	value: AdmitBound<T.SimpleStatementsElements, T.AdmittedNodes>
 ): ReturnType<typeof _buildSuiteInline>;
@@ -5937,12 +5987,9 @@ function _buildSuiteBlock(value: AdmitBound<T.Block, T.AdmittedNodes>): T.SuiteB
 
 export function buildSuiteEmpty(): ReturnType<typeof _buildSuiteEmpty>;
 export function buildSuiteEmpty(
-	value: AdmitBound<TSKindId.Newline, T.AdmittedNodes>
+	value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>
 ): ReturnType<typeof _buildSuiteEmpty>;
 export function buildSuiteEmpty(...args: unknown[]) {
-	if (args.length === 0) {
-		return _buildSuiteEmpty(buildNewline as TSKindId.Newline);
-	}
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildSuiteEmpty(args[0] as TSKindId.Newline);
 	}
@@ -5953,10 +6000,11 @@ export function buildSuiteEmpty(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Newline as const);
 	return prebuilt ? _buildSuiteEmpty(args[0] as TSKindId.Newline) : _buildSuiteEmpty(buildNewline as TSKindId.Newline);
 }
-function _buildSuiteEmpty(value: AdmitBound<TSKindId.Newline, T.AdmittedNodes>): T.SuiteEmpty.Bound {
-	const _newline = coerceKindEnumStorage<NonNullable<T.SuiteEmpty['_newline']>>(value, [
-		['\n', TSKindId.Newline] as const
-	]);
+function _buildSuiteEmpty(value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>): T.SuiteEmpty.Bound {
+	const _newline = coerceKindEnumStorage<NonNullable<T.SuiteEmpty['_newline']>>(
+		orDefault(value, () => TSKindId.Newline as const),
+		[['\n', TSKindId.Newline] as const]
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -6327,6 +6375,7 @@ export type FluentKindMap = {
 	subscripts: T.Subscripts.Bound;
 	dictionary_elements: T.DictionaryElements.Bound;
 	slice_group: T.SliceGroup.Bound;
+	format_specifier_text: T.FormatSpecifierText;
 	except_clause_exception_as: T.ExceptClauseExceptionAs.Bound;
 	case_tuple_pattern: T.CaseTuplePattern.Bound;
 	case_list_pattern: T.CaseListPattern.Bound;
@@ -6365,6 +6414,7 @@ export type FluentKindMap = {
 	with_clause_bare: T.WithClauseBare.Bound;
 	with_clause_paren: T.WithClauseParen.Bound;
 	match_block_block: T.MatchBlockBlock.Bound;
+	match_block_empty: T.MatchBlockEmpty.Bound;
 	suite_inline: T.SuiteInline.Bound;
 	suite_block: T.SuiteBlock.Bound;
 	suite_empty: T.SuiteEmpty.Bound;
@@ -6524,6 +6574,7 @@ export const _factoryMap = {
 	subscripts: buildSubscripts,
 	dictionary_elements: buildDictionaryElements,
 	slice_group: buildSliceGroup,
+	format_specifier_text: buildFormatSpecifierText,
 	except_clause_exception_as: buildExceptClauseExceptionAs,
 	case_tuple_pattern: buildCaseTuplePattern,
 	case_list_pattern: buildCaseListPattern,
@@ -6562,6 +6613,7 @@ export const _factoryMap = {
 	with_clause_bare: buildWithClauseBare,
 	with_clause_paren: buildWithClauseParen,
 	match_block_block: buildMatchBlockBlock,
+	match_block_empty: buildMatchBlockEmpty,
 	suite_inline: buildSuiteInline,
 	suite_block: buildSuiteBlock,
 	suite_empty: buildSuiteEmpty,

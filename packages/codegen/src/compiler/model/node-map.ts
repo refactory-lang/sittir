@@ -1785,19 +1785,13 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	}
 
 	#computeParameterless(): boolean {
-		return this.rawFactoryName !== undefined && this._slots.length === 0;
+		return this.rawFactoryName !== undefined && this._slots.every(fillsItself);
 	}
 
 	override argumentOptional(ctx: ArgumentOptionalCtx): boolean {
 		const seen = ctx.seen ?? EMPTY_SEEN;
 		if (seen.has(this.kind)) return false;
-		// Optional sibling slots (e.g. a keyword-presence flag alongside a
-		// required body) never block a zero-argument call on their own — only
-		// the ONE required slot's own forwarding decides it. `soleSlot`
-		// (exactly one slot total) undercounts this: a node can have several
-		// slots and still take no argument as long as all but one are
-		// optional and that one forwards to an argument-optional target.
-		const requiredSlots = this.configSlots.filter((slot) => isRequired(slot));
+		const requiredSlots = this.configSlots.filter((slot) => isRequired(slot) && !holdsFixedText(slot));
 		if (requiredSlots.length === 0) return true;
 		if (requiredSlots.length > 1) return false;
 		const slot = requiredSlots[0]!;
@@ -1807,6 +1801,24 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 		const target = kindId === undefined ? undefined : ctx.nodeByKindId.get(kindId);
 		return target !== undefined && target.argumentOptional({ ...ctx, seen: new Set([...seen, this.kind]) });
 	}
+}
+
+function soleRequiredValue(slot: { values: readonly NodeOrTerminal[] }): NodeOrTerminal | undefined {
+	return isRequired(slot) && !isMultiple(slot) && slot.values.length === 1 ? slot.values[0] : undefined;
+}
+
+export function holdsFixedText(slot: { values: readonly NodeOrTerminal[] }): boolean {
+	const value = soleRequiredValue(slot);
+	if (value === undefined) return false;
+	if (!isNodeRef(value)) return isTerminalValue(value);
+	return !isUnresolvedRef(value.node) && isFixedTextLeaf(value.node);
+}
+
+function fillsItself(slot: AssembledNonterminal): boolean {
+	const value = soleRequiredValue(slot);
+	if (value === undefined) return false;
+	if (!isNodeRef(value)) return isTerminalValue(value);
+	return !isUnresolvedRef(value.node) && value.node.parameterless;
 }
 
 export class AssembledBranch extends AbstractAssembledCompound {

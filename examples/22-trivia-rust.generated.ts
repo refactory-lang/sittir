@@ -10,17 +10,17 @@ export function rebuildTriviaRustGenerated() {
 			name: build.identifier("f"),
 			parameters: build.parameters.strict(),
 			body: build.block.strict().$trivia.inner(build.lineComment.strict(build.lineCommentRegular(" TODO"))),
-		}).$trivia.leading(build.blockComment.strict(build.blockCommentContent(" a "))), build.functionItem.strict({
+		}).$trivia.leading(build.blockComment.strict(build.blockCommentRegular(" a "))), build.functionItem.strict({
 			name: build.identifier("g"),
 			parameters: build.parameters.strict(),
 			body: build.block.strict({}),
-		}).$trivia.trailing(build.blockComment.strict(build.blockCommentContent(" t "))), build.functionItem.strict({
+		}).$trivia.trailing(build.blockComment.strict(build.blockCommentRegular(" t "))), build.functionItem.strict({
 			name: build.identifier("h"),
 			parameters: build.parameters.strict(),
 			body: build.block.strict({
 				statements: [build.expressionStatement.withSemi.strict(build.callExpression.strict({
 					function: build.identifier("f"),
-					arguments: build.arguments.strict().$trivia.inner(build.blockComment.strict(build.blockCommentContent(" a "))),
+					arguments: build.arguments.strict().$trivia.inner(build.blockComment.strict(build.blockCommentRegular(" a "))),
 				}))],
 			}),
 		})],

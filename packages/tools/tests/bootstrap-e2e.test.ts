@@ -99,7 +99,8 @@ describe('bootstrapping an upstream grammar runs the whole pipeline once every b
 
 	it('tree-sitter-go emits with no throw after the gate, its list separator and flank shapes floored', async () => {
 		const { floors, typesSource } = await bootstrapEndToEnd('go');
-		expect(floors['separator-pattern']).toHaveLength(7);
+		expect(floors['separator-pattern']).toBeUndefined();
+		expect(floors['separator-default-undeclared']).toHaveLength(7);
 		expect(floors['field-optional-delimiter']).toEqual(['special_argument_list_group']);
 		expect(typesSource).toContain('export');
 	}, 600_000);

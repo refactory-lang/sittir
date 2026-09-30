@@ -41,7 +41,7 @@ import {
 	needsNonEmptyHoist,
 	fromEmitsChildrenCoercer,
 	fromBareInput,
-	canDefaultToEmpty,
+	emptyDefaultOf,
 	scalarLeafKinds,
 	classifyFromEmission,
 	isWrapChildrenKind,
@@ -499,9 +499,9 @@ function emitBranchFrom(
 				kindEntries
 			);
 			const call = soleShape === undefined ? resolved : `(${numberInputTest(soleShape, '_value')} ? _value : ${resolved})`;
-			const directDefaultFactory = canDefaultToEmpty(soleField, nodeMap);
-			const guardedCall = directDefaultFactory
-				? `${call} ?? F.${directDefaultFactory}()`
+			const directDefault = emptyDefaultOf(soleField, nodeMap, kindEntries, 'F.');
+			const guardedCall = directDefault
+				? `${call} ?? ${directDefault}`
 				: isRequired(soleField)
 					? `_requireField(${JSON.stringify(node.kind)}, ${JSON.stringify(soleField.configKey)}, ${call})`
 					: call;
@@ -513,9 +513,9 @@ function emitBranchFrom(
 					lines.push(`    ${f.configKey}: ${neName(f)},`);
 				} else {
 					const call = fieldValue(f, `${cfg}${inputOptional ? '?' : ''}.${f.configKey}`);
-					const defaultFactory = canDefaultToEmpty(f, nodeMap);
-					if (defaultFactory) {
-						lines.push(`    ${f.configKey}: ${call} ?? F.${defaultFactory}(),`);
+					const emptyDefault = emptyDefaultOf(f, nodeMap, kindEntries, 'F.');
+					if (emptyDefault) {
+						lines.push(`    ${f.configKey}: ${call} ?? ${emptyDefault},`);
 					} else if (isRequired(f)) {
 						lines.push(
 							`    ${f.configKey}: _requireField(${JSON.stringify(node.kind)}, ${JSON.stringify(f.configKey)}, ${call}),`

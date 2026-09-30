@@ -1,6 +1,6 @@
 import { grammarDisplayName, type GrammarName } from '../grammars.ts';
 
-export const NATIVE_RENDER_TRANSPORT_ABI = 2;
+export const NATIVE_RENDER_TRANSPORT_ABI = 3;
 
 export interface NativeCrateFile {
 	readonly path: string;
@@ -211,27 +211,6 @@ impl EngineGrammar for ${v.Name}Grammar {
 }
 
 impl sittir_core::read_node::ReadModel for ${v.Name}Grammar {
-    fn is_text_kind(&self, kind: sittir_core::types::KindId) -> bool {
-        render::kind_ids::is_text_kind(kind)
-    }
-
-    fn is_slot_separator(
-        &self,
-        parent: sittir_core::types::KindId,
-        field: &str,
-        child: sittir_core::types::KindId,
-    ) -> bool {
-        render::kind_ids::is_slot_separator(parent, field, child)
-    }
-
-    fn is_alias_envelope(&self, kind: sittir_core::types::KindId) -> bool {
-        render::kind_ids::is_alias_envelope(kind)
-    }
-
-    fn keeps_anonymous_children(&self, kind: sittir_core::types::KindId) -> bool {
-        render::kind_ids::keeps_anonymous_children(kind)
-    }
-
     fn wire_slot(
         &self,
         parent: sittir_core::types::KindId,

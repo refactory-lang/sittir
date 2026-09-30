@@ -1010,20 +1010,12 @@
           }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_newline",
-            "annotations": {
-              "variant": "empty",
-              "variantOf": "_match_block"
-            },
-            "metadata": {
-              "fieldSource": "override"
-            }
-          },
-          "named": true,
-          "value": "newline"
+          "type": "SYMBOL",
+          "name": "match_block_empty",
+          "annotations": {
+            "variant": "empty",
+            "variantOf": "_match_block"
+          }
         }
       ]
     },
@@ -5698,14 +5690,10 @@
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "IMMEDIATE_TOKEN",
-                  "content": {
-                    "type": "PREC",
-                    "value": 1,
-                    "content": {
-                      "type": "PATTERN",
-                      "value": "[^{}\\n]+"
-                    }
+                  "type": "SYMBOL",
+                  "name": "format_specifier_text",
+                  "annotations": {
+                    "variantOf": "format_specifier"
                   }
                 },
                 {
@@ -6913,6 +6901,17 @@
           }
         }
       ]
+    },
+    "format_specifier_text": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 1,
+        "content": {
+          "type": "PATTERN",
+          "value": "[^{}\\n]+"
+        }
+      }
     },
     "_whitespace": {
       "type": "CHOICE",
@@ -8453,6 +8452,18 @@
         "hoisted": true
       }
     },
+    "match_block_empty": {
+      "type": "ALIAS",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_newline",
+        "annotations": {
+          "hoisted": true
+        }
+      },
+      "named": true,
+      "value": "newline"
+    },
     "suite_inline": {
       "type": "SYMBOL",
       "name": "_simple_statements",
@@ -8751,6 +8762,7 @@
     "_statement",
     "assignment",
     "with_clause",
+    "_match_block",
     "_suite"
   ],
   "reserved": {
