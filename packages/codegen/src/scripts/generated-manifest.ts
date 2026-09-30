@@ -59,23 +59,26 @@ function sha256(file: string): string {
 
 let cachedTrackedPaths: ReadonlySet<string> | null = null;
 
-function trackedPaths(): ReadonlySet<string> {
-	if (cachedTrackedPaths !== null) return cachedTrackedPaths;
+export function gitVisiblePaths(root: string): ReadonlySet<string> {
 	let stdout: string;
 	try {
-		stdout = execFileSync('git', ['ls-files', '-z'], {
-			cwd: REPO_ROOT,
+		stdout = execFileSync('git', ['ls-files', '-z', '--cached', '--others', '--exclude-standard'], {
+			cwd: root,
 			maxBuffer: 1 << 28,
 			encoding: 'utf8'
 		});
 	} catch (cause) {
 		throw new Error(
-			`generated-manifest: could not list git-tracked files in ${REPO_ROOT}. The manifest records exactly ` +
-				`the generated artifacts the repository tracks, so this fact has to come from git.`,
+			`generated-manifest: could not list git-visible files in ${root}. The manifest records exactly ` +
+				`the generated artifacts the repository tracks or would track, so this fact has to come from git.`,
 			{ cause }
 		);
 	}
-	cachedTrackedPaths = new Set(stdout.split('\0').filter((p) => p.length > 0));
+	return new Set(stdout.split('\0').filter((p) => p.length > 0));
+}
+
+function trackedPaths(): ReadonlySet<string> {
+	cachedTrackedPaths ??= gitVisiblePaths(REPO_ROOT);
 	return cachedTrackedPaths;
 }
 

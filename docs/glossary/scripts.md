@@ -136,24 +136,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
+### `packages/codegen/src/scripts/generated-manifest.ts::gitVisiblePaths`
+
+The repo-relative paths git tracks or would track: `git ls-files --cached --others --exclude-standard`. A generated file that codegen has just written is untracked until someone runs `git add`; counting only tracked files left it out of the manifest on the first `gen` and put it in on the second. Untracked-but-not-ignored files count, ignored ones never do. Whether a generated artifact belongs in the repository is git's fact, not something a filename pattern can be trusted to reproduce, so this raises instead of degrading when git cannot be consulted: a manifest built from a guess verifies clean locally and fails on a clean checkout.
+
 ### `packages/codegen/src/scripts/generated-manifest.ts::trackedPaths`
 
-```text
-/**
- * The set of repo-relative paths git tracks, read once and cached.
- *
- * Whether a generated artifact lives in the repository is git's fact, not
- * something a filename pattern can be trusted to reproduce. A hardcoded
- * suffix list drifts the moment codegen starts writing a new artifact, and
- * the drift is invisible on a developer machine where the file exists —
- * it only surfaces on a clean checkout, as a manifest entry nothing can
- * satisfy.
- *
- * Raises rather than degrading when git cannot be consulted: a manifest
- * built from a guess about tracking is worse than no manifest, because it
- * verifies clean locally and fails everywhere else.
- */
-```
+`gitVisiblePaths` for the repository root, read once and cached.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::isManifestExcluded`
 
