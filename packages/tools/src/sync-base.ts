@@ -102,7 +102,7 @@ export function syncBase(opts: SyncBaseOptions, target: SyncBaseTarget, out: (li
 export async function repoSyncTarget(): Promise<{ target: SyncBaseTarget; cwd: string }> {
 	const [manifest, grammars] = await Promise.all([load('generatedManifest'), load('grammars')]);
 	const cwd = manifest.REPO_ROOT;
-	const roots = Object.fromEntries(grammars.stableGrammars().map((grammar) => [grammar, manifest.generatedRootsFor(grammar)]));
+	const roots = Object.fromEntries(grammars.allGrammars().map((grammar) => [grammar, manifest.generatedRootsFor(grammar)]));
 	return {
 		cwd,
 		target: {

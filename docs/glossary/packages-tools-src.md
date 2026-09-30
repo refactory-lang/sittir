@@ -22,4 +22,4 @@ Merges the base ref into the current branch and resolves the one conflict class 
 
 ### `packages/tools/src/sync-base.ts::repoSyncTarget`
 
-The repository's `SyncBaseTarget`: the stable grammars' generated roots and a `verify` that is `verifyManifestForGrammar(...).ok` and a `regenerate` that runs `gen --grammar <name> --all` in a fresh process, the way `pnpm run regen:all` does.
+The repository's `SyncBaseTarget`: every registered grammar's generated roots (stable or not: regex and scm have manifests too) and a `verify` that is `verifyManifestForGrammar(...).ok` and a `regenerate` that runs `gen --grammar <name> --all` in a fresh process, the way `pnpm run regen:all` does.
