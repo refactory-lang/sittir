@@ -17,7 +17,16 @@ import type {
 	GrammarTypeMap,
 	NodeMethods,
 	TriviaSetter,
-	GrammarInnerTrivia
+	GrammarInnerTrivia,
+	SlotHint,
+	ListOwnerHint,
+	BoundOf,
+	ParsedOf,
+	AdmitBound,
+	AdmitLookup,
+	SupertypeSurface,
+	WithNode,
+	BoundWithNode
 } from '@sittir/types';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types.js';
@@ -3136,6 +3145,10 @@ export interface Program {
 	readonly __inputHints__?: {
 		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
+	readonly __slotHints__?: {
+		readonly hashBangLine: SlotHint<T.HashBangLine, true>;
+		readonly statements: SlotHint<NonNullable<T.Program.Config>['statements'], true>;
+	};
 	hashBangLine(): HashBangLine | undefined;
 	statements(): readonly Statement[];
 }
@@ -3143,12 +3156,18 @@ export interface Program {
 export interface HashBangLine {
 	readonly $type: TSKindId.HashBangLine;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+	};
 	content(): string;
 }
 
 export interface NamespaceExport {
 	readonly $type: TSKindId.NamespaceExport;
 	readonly _module_export_name: Identifier | String;
+	readonly __slotHints__?: {
+		readonly moduleExportName: SlotHint<T.Identifier | T.String>;
+	};
 	moduleExportName(): Identifier | String;
 }
 
@@ -3157,6 +3176,14 @@ export interface ExportClause {
 	readonly _export_specifiers?: ExportSpecifiers;
 	readonly __looseHints__?: {
 		readonly export_specifiers?: readonly ExportSpecifier[];
+	};
+	readonly __slotHints__?: {
+		readonly exportSpecifiers: SlotHint<T.ExportSpecifiers, true>;
+		readonly $listOwner: ListOwnerHint<
+			T.ExportSpecifier,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.ExportSpecifier | T.Identifier | T.String
+		>;
 	};
 	exportSpecifiers(): ExportSpecifiers | undefined;
 }
@@ -3168,6 +3195,11 @@ export interface ExportSpecifier {
 	readonly _alias?: Identifier | String;
 	readonly __inputHints__?: {
 		readonly export_kind?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
+	};
+	readonly __slotHints__?: {
+		readonly exportKind: SlotHint<NonNullable<T.ExportSpecifier.Config>['exportKind'], true>;
+		readonly name: SlotHint<T.Identifier | T.String>;
+		readonly alias: SlotHint<T.Identifier | T.String, true>;
 	};
 	exportKind(): number | undefined;
 	name(): Identifier | String;
@@ -3184,6 +3216,12 @@ export interface ImportStatement {
 		readonly import_clause?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly importClause: SlotHint<NonNullable<T.ImportStatement.Config>['importClause'], true>;
+		readonly fromClause: SlotHint<T.ImportStatementClauseFrom | T.ImportRequireClause | T.String>;
+		readonly importAttribute: SlotHint<T.ImportAttribute, true>;
+		readonly terminator: SlotHint<NonNullable<T.ImportStatement.Options>['terminator']>;
+	};
 	importClause(): number | undefined;
 	fromClause(): ImportStatementClauseFrom | ImportRequireClause | String;
 	importAttribute(): ImportAttribute | undefined;
@@ -3193,12 +3231,18 @@ export interface ImportStatement {
 export interface ImportClause {
 	readonly $type: TSKindId.ImportClause;
 	readonly _content: NamespaceImport | NamedImports | ImportClauseDefaultImport;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>;
+	};
 	content(): NamespaceImport | NamedImports | ImportClauseDefaultImport;
 }
 
 export interface NamespaceImport {
 	readonly $type: TSKindId.NamespaceImport;
 	readonly _name: Identifier;
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier>;
+	};
 	name(): Identifier;
 }
 
@@ -3207,6 +3251,14 @@ export interface NamedImports {
 	readonly _import_specifiers?: ImportSpecifiers;
 	readonly __looseHints__?: {
 		readonly import_specifiers?: readonly ImportSpecifier[];
+	};
+	readonly __slotHints__?: {
+		readonly importSpecifiers: SlotHint<T.ImportSpecifiers, true>;
+		readonly $listOwner: ListOwnerHint<
+			T.ImportSpecifier,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.ImportSpecifier
+		>;
 	};
 	importSpecifiers(): ImportSpecifiers | undefined;
 }
@@ -3248,6 +3300,10 @@ export interface ImportAttribute {
 			| 'let'
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly attributeKind: SlotHint<NonNullable<T.ImportAttribute.Config>['attributeKind']>;
+		readonly object: SlotHint<T.Object>;
+	};
 	attributeKind(): number;
 	object(): Object;
 }
@@ -3266,6 +3322,10 @@ export interface ExpressionStatement {
 			| SequenceExpression;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression | T.SequenceExpression>>;
+		readonly terminator: SlotHint<NonNullable<T.ExpressionStatement.Options>['terminator']>;
+	};
 	expression(): Expression | SequenceExpression;
 	terminator(): number;
 }
@@ -3276,6 +3336,10 @@ export interface VariableDeclaration {
 	readonly _terminator: number;
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __slotHints__?: {
+		readonly declarators: SlotHint<NonEmptyArray<T.VariableDeclarator>, false, true>;
+		readonly terminator: SlotHint<NonNullable<T.VariableDeclaration.Options>['terminator']>;
 	};
 	declarators(): NonEmptyArray<VariableDeclarator>;
 	terminator(): number;
@@ -3290,6 +3354,11 @@ export interface LexicalDeclaration {
 		readonly kind: KindEnum<'let' | 'const', TSKindId.LetKeyword | TSKindId.ConstKeyword>;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly kind: SlotHint<NonNullable<T.LexicalDeclaration.Config>['kind']>;
+		readonly declarators: SlotHint<NonEmptyArray<T.VariableDeclarator>, false, true>;
+		readonly terminator: SlotHint<NonNullable<T.LexicalDeclaration.Options>['terminator']>;
+	};
 	kind(): number;
 	declarators(): NonEmptyArray<VariableDeclarator>;
 	terminator(): number;
@@ -3303,6 +3372,10 @@ export interface StatementBlock {
 		readonly statements?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 		readonly automatic_semicolon?: BaseBooleanKeyword<'\n'>;
 	};
+	readonly __slotHints__?: {
+		readonly statements: SlotHint<NonNullable<T.StatementBlock.Config>['statements'], true>;
+		readonly automaticSemicolon: SlotHint<NonNullable<T.StatementBlock.Config>['automaticSemicolon'], true>;
+	};
 	statements(): readonly Statement[];
 	automaticSemicolon(): boolean | undefined;
 }
@@ -3312,6 +3385,9 @@ export interface ElseClause {
 	readonly _body: Statement;
 	readonly __inputHints__?: {
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
+	};
+	readonly __slotHints__?: {
+		readonly body: SlotHint<NonNullable<T.Statement>>;
 	};
 	body(): Statement;
 }
@@ -3327,6 +3403,11 @@ export interface IfStatement {
 	readonly __looseHints__?: {
 		readonly alternative?: readonly Statement[];
 	};
+	readonly __slotHints__?: {
+		readonly condition: SlotHint<T.ParenthesizedExpression>;
+		readonly consequence: SlotHint<NonNullable<T.IfStatement.Config>['consequence']>;
+		readonly alternative: SlotHint<T.ElseClause, true>;
+	};
 	condition(): ParenthesizedExpression;
 	consequence(): Statement;
 	alternative(): ElseClause | undefined;
@@ -3338,6 +3419,10 @@ export interface SwitchStatement {
 	readonly _body: SwitchBody;
 	readonly __looseHints__?: {
 		readonly body: readonly (SwitchCase | SwitchDefault)[];
+	};
+	readonly __slotHints__?: {
+		readonly value: SlotHint<T.ParenthesizedExpression>;
+		readonly body: SlotHint<T.SwitchBody>;
 	};
 	value(): ParenthesizedExpression;
 	body(): SwitchBody;
@@ -3394,6 +3479,12 @@ export interface ForStatement {
 			| SequenceExpression;
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
 	};
+	readonly __slotHints__?: {
+		readonly initializer: SlotHint<NonNullable<T.ForStatement.Config>['initializer']>;
+		readonly condition: SlotHint<NonNullable<T.ForStatement.Config>['condition']>;
+		readonly increment: SlotHint<NonNullable<T.ForStatement.Config>['increment'], true>;
+		readonly body: SlotHint<NonNullable<T.ForStatement.Config>['body']>;
+	};
 	initializer(): LexicalDeclaration | VariableDeclaration | Expression | SequenceExpression | TSKindId.EmptyStatement;
 	condition(): Expression | SequenceExpression | TSKindId.EmptyStatement;
 	increment(): Expression | SequenceExpression | undefined;
@@ -3412,6 +3503,11 @@ export interface ForInStatement {
 	readonly __looseHints__?: {
 		readonly await_marker?: 'await' | 'await';
 	};
+	readonly __slotHints__?: {
+		readonly awaitMarker: SlotHint<NonNullable<T.ForInStatement.Config>['awaitMarker'], true>;
+		readonly forHeader: SlotHint<T.ForHeader>;
+		readonly body: SlotHint<NonNullable<T.ForInStatement.Config>['body']>;
+	};
 	awaitMarker(): boolean | undefined;
 	forHeader(): ForHeader;
 	body(): Statement;
@@ -3423,6 +3519,10 @@ export interface WhileStatement {
 	readonly _body: Statement;
 	readonly __inputHints__?: {
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
+	};
+	readonly __slotHints__?: {
+		readonly condition: SlotHint<T.ParenthesizedExpression>;
+		readonly body: SlotHint<NonNullable<T.WhileStatement.Config>['body']>;
 	};
 	condition(): ParenthesizedExpression;
 	body(): Statement;
@@ -3437,6 +3537,11 @@ export interface DoStatement {
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
 		readonly terminator?: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly body: SlotHint<NonNullable<T.DoStatement.Config>['body']>;
+		readonly condition: SlotHint<T.ParenthesizedExpression>;
+		readonly terminator: SlotHint<NonNullable<T.DoStatement.Options>['terminator'], true>;
+	};
 	body(): Statement;
 	condition(): ParenthesizedExpression;
 	terminator(): number | undefined;
@@ -3450,6 +3555,11 @@ export interface TryStatement {
 	readonly __looseHints__?: {
 		readonly finalizer?: readonly Statement[];
 	};
+	readonly __slotHints__?: {
+		readonly body: SlotHint<T.StatementBlock>;
+		readonly handler: SlotHint<T.CatchClause, true>;
+		readonly finalizer: SlotHint<T.FinallyClause, true>;
+	};
 	body(): StatementBlock;
 	handler(): CatchClause | undefined;
 	finalizer(): FinallyClause | undefined;
@@ -3461,6 +3571,10 @@ export interface WithStatement {
 	readonly _body: Statement;
 	readonly __inputHints__?: {
 		readonly body: KindEnum<';', TSKindId.Semi> | Statement;
+	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<T.ParenthesizedExpression>;
+		readonly body: SlotHint<NonNullable<T.WithStatement.Config>['body']>;
 	};
 	object(): ParenthesizedExpression;
 	body(): Statement;
@@ -3500,6 +3614,10 @@ export interface BreakStatement {
 			| 'let'
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly label: SlotHint<T.StatementIdentifier | T.StatementIdentifier.Types, true>;
+		readonly terminator: SlotHint<NonNullable<T.BreakStatement.Options>['terminator']>;
+	};
 	label(): StatementIdentifier | undefined;
 	terminator(): number;
 }
@@ -3538,6 +3656,10 @@ export interface ContinueStatement {
 			| 'let'
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly label: SlotHint<T.StatementIdentifier | T.StatementIdentifier.Types, true>;
+		readonly terminator: SlotHint<NonNullable<T.ContinueStatement.Options>['terminator']>;
+	};
 	label(): StatementIdentifier | undefined;
 	terminator(): number;
 }
@@ -3547,6 +3669,9 @@ export interface DebuggerStatement {
 	readonly _terminator: number;
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __slotHints__?: {
+		readonly terminator: SlotHint<NonNullable<TSKindId.AutomaticSemicolon | TSKindId.Semi>>;
 	};
 	terminator(): number;
 }
@@ -3565,6 +3690,10 @@ export interface ReturnStatement {
 			| SequenceExpression;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression | T.SequenceExpression>, true>;
+		readonly terminator: SlotHint<NonNullable<T.ReturnStatement.Options>['terminator']>;
+	};
 	expression(): Expression | SequenceExpression | undefined;
 	terminator(): number;
 }
@@ -3582,6 +3711,10 @@ export interface ThrowStatement {
 			| Expression
 			| SequenceExpression;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression | T.SequenceExpression>>;
+		readonly terminator: SlotHint<NonNullable<T.ThrowStatement.Options>['terminator']>;
 	};
 	expression(): Expression | SequenceExpression;
 	terminator(): number;
@@ -3692,6 +3825,10 @@ export interface LabeledStatement {
 			| 'let'
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly label: SlotHint<NonNullable<T.LabeledStatement.Config>['label']>;
+		readonly body: SlotHint<NonNullable<T.LabeledStatement.Config>['body']>;
+	};
 	label():
 		| StatementIdentifier
 		| TSKindId.DeclareKeyword
@@ -3722,6 +3859,9 @@ export interface LabeledStatement {
 export interface SwitchBody {
 	readonly $type: TSKindId.SwitchBody;
 	readonly _cases?: readonly (SwitchCase | SwitchDefault)[];
+	readonly __slotHints__?: {
+		readonly cases: SlotHint<(T.SwitchCase | T.SwitchDefault)[], false, true>;
+	};
 	cases(): readonly (SwitchCase | SwitchDefault)[];
 }
 
@@ -3739,6 +3879,10 @@ export interface SwitchCase {
 			| SequenceExpression;
 		readonly body?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
+	readonly __slotHints__?: {
+		readonly value: SlotHint<NonNullable<T.SwitchCase.Config>['value']>;
+		readonly bodies: SlotHint<NonNullable<T.SwitchCase.Config>['body'], true>;
+	};
 	value(): Expression | SequenceExpression;
 	bodies(): readonly Statement[];
 }
@@ -3749,6 +3893,9 @@ export interface SwitchDefault {
 	readonly __inputHints__?: {
 		readonly body?: readonly (KindEnum<';', TSKindId.Semi> | Statement)[];
 	};
+	readonly __slotHints__?: {
+		readonly bodies: SlotHint<T.Statement[], false, true>;
+	};
 	bodies(): readonly Statement[];
 }
 
@@ -3756,6 +3903,10 @@ export interface CatchClause {
 	readonly $type: TSKindId.CatchClause;
 	readonly _catch_clause_group?: CatchClauseGroup;
 	readonly _body: StatementBlock;
+	readonly __slotHints__?: {
+		readonly catchClauseGroup: SlotHint<T.CatchClauseGroup, true>;
+		readonly body: SlotHint<T.StatementBlock>;
+	};
 	catchClauseGroup(): CatchClauseGroup | undefined;
 	body(): StatementBlock;
 }
@@ -3763,6 +3914,9 @@ export interface CatchClause {
 export interface FinallyClause {
 	readonly $type: TSKindId.FinallyClause;
 	readonly _body: StatementBlock;
+	readonly __slotHints__?: {
+		readonly body: SlotHint<T.StatementBlock>;
+	};
 	body(): StatementBlock;
 }
 
@@ -3776,6 +3930,9 @@ export interface YieldExpression {
 					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
 			  >
 			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression>, true>;
 	};
 	expression(): Expression | undefined;
 }
@@ -3864,6 +4021,43 @@ export interface Object {
 			| MethodDefinition
 			| ShorthandPropertyIdentifier
 		)[];
+	};
+	readonly __slotHints__?: {
+		readonly properties: SlotHint<
+			(
+				| (
+						| T.Pair
+						| T.SpreadElement
+						| T.MethodDefinition
+						| T.ShorthandPropertyIdentifier
+						| TSKindId.DeclareKeyword
+						| TSKindId.NamespaceKeyword
+						| TSKindId.TypeKeyword
+						| TSKindId.PublicKeyword
+						| TSKindId.PrivateKeyword
+						| TSKindId.ProtectedKeyword
+						| TSKindId.OverrideKeyword
+						| TSKindId.ReadonlyKeyword
+						| TSKindId.ModuleKeyword
+						| TSKindId.AnyKeyword
+						| TSKindId.NumberKeyword
+						| TSKindId.BooleanKeyword
+						| TSKindId.StringKeyword
+						| TSKindId.SymbolKeyword
+						| TSKindId.ExportKeyword
+						| TSKindId.ObjectKeyword
+						| TSKindId.NewKeyword
+						| TSKindId.GetKeyword
+						| TSKindId.SetKeyword
+						| TSKindId.AsyncKeyword
+						| TSKindId.StaticKeyword
+						| TSKindId.LetKeyword
+				  )
+				| T.ShorthandPropertyIdentifier.Types
+			)[],
+			false,
+			true
+		>;
 	};
 	properties(): readonly (
 		| Pair
@@ -3981,6 +4175,43 @@ export interface ObjectPattern {
 			| ShorthandPropertyIdentifierPattern
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly properties: SlotHint<
+			(
+				| (
+						| T.PairPattern
+						| T.RestPattern
+						| T.ObjectAssignmentPattern
+						| T.ShorthandPropertyIdentifierPattern
+						| TSKindId.DeclareKeyword
+						| TSKindId.NamespaceKeyword
+						| TSKindId.TypeKeyword
+						| TSKindId.PublicKeyword
+						| TSKindId.PrivateKeyword
+						| TSKindId.ProtectedKeyword
+						| TSKindId.OverrideKeyword
+						| TSKindId.ReadonlyKeyword
+						| TSKindId.ModuleKeyword
+						| TSKindId.AnyKeyword
+						| TSKindId.NumberKeyword
+						| TSKindId.BooleanKeyword
+						| TSKindId.StringKeyword
+						| TSKindId.SymbolKeyword
+						| TSKindId.ExportKeyword
+						| TSKindId.ObjectKeyword
+						| TSKindId.NewKeyword
+						| TSKindId.GetKeyword
+						| TSKindId.SetKeyword
+						| TSKindId.AsyncKeyword
+						| TSKindId.StaticKeyword
+						| TSKindId.LetKeyword
+				  )
+				| T.ShorthandPropertyIdentifierPattern.Types
+			)[],
+			false,
+			true
+		>;
+	};
 	properties(): readonly (
 		| PairPattern
 		| RestPattern
@@ -4023,6 +4254,10 @@ export interface AssignmentPattern {
 					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
 			  >
 			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<T.Pattern>;
+		readonly right: SlotHint<NonNullable<T.AssignmentPattern.Config>['right']>;
 	};
 	left(): Pattern;
 	right(): Expression;
@@ -4115,6 +4350,10 @@ export interface ObjectAssignmentPattern {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<NonNullable<T.ObjectAssignmentPattern.Config>['left']>;
+		readonly right: SlotHint<NonNullable<T.ObjectAssignmentPattern.Config>['right']>;
+	};
 	left():
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
@@ -4157,12 +4396,18 @@ export interface Array {
 			| SpreadElement
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<(T.Expression | T.SpreadElement)[], false, true>;
+	};
 	elements(): readonly (Expression | SpreadElement | undefined)[];
 }
 
 export interface ArrayPattern {
 	readonly $type: TSKindId.ArrayPattern;
 	readonly _elements?: readonly (Pattern | AssignmentPattern | undefined)[];
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<(T.Pattern | T.AssignmentPattern)[], false, true>;
+	};
 	elements(): readonly (Pattern | AssignmentPattern | undefined)[];
 }
 
@@ -4197,6 +4442,10 @@ export interface NestedIdentifier {
 			| 'let'
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<T.Identifier | T.NestedIdentifier>;
+		readonly property: SlotHint<T.PropertyIdentifier | T.PropertyIdentifier.Types>;
+	};
 	object(): Identifier | NestedIdentifier;
 	property(): PropertyIdentifier;
 }
@@ -4213,6 +4462,13 @@ export interface Class {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
 		readonly body: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
+	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types, true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly heritage: SlotHint<T.ClassHeritage, true>;
+		readonly body: SlotHint<T.ClassBody>;
 	};
 	decorators(): readonly Decorator[];
 	name(): TypeIdentifier | undefined;
@@ -4238,6 +4494,14 @@ export interface ClassDeclaration {
 		readonly heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
 		readonly body: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
 	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly heritage: SlotHint<T.ClassHeritage, true>;
+		readonly body: SlotHint<T.ClassBody>;
+		readonly automaticSemicolon: SlotHint<NonNullable<T.ClassDeclaration.Config>['automaticSemicolon'], true>;
+	};
 	decorators(): readonly Decorator[];
 	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
@@ -4249,6 +4513,9 @@ export interface ClassDeclaration {
 export interface ClassHeritage {
 	readonly $type: TSKindId.ClassHeritage;
 	readonly _content: ClassHeritageExtendsClause | ImplementsClause;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.ClassHeritageExtendsClause | T.ImplementsClause>;
+	};
 	content(): ClassHeritageExtendsClause | ImplementsClause;
 }
 
@@ -4267,6 +4534,14 @@ export interface FunctionExpression {
 		readonly async_marker?: 'async' | 'async';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+	};
+	readonly __slotHints__?: {
+		readonly asyncMarker: SlotHint<NonNullable<T.FunctionExpression.Config>['asyncMarker'], true>;
+		readonly name: SlotHint<T.Identifier, true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
+		readonly body: SlotHint<T.StatementBlock>;
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier | undefined;
@@ -4294,6 +4569,15 @@ export interface FunctionDeclaration {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
+	readonly __slotHints__?: {
+		readonly asyncMarker: SlotHint<NonNullable<T.FunctionDeclaration.Config>['asyncMarker'], true>;
+		readonly name: SlotHint<T.Identifier>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
+		readonly body: SlotHint<T.StatementBlock>;
+		readonly automaticSemicolon: SlotHint<NonNullable<T.FunctionDeclaration.Config>['automaticSemicolon'], true>;
+	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
@@ -4318,6 +4602,14 @@ export interface GeneratorFunction {
 		readonly async_marker?: 'async' | 'async';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+	};
+	readonly __slotHints__?: {
+		readonly asyncMarker: SlotHint<NonNullable<T.GeneratorFunction.Config>['asyncMarker'], true>;
+		readonly name: SlotHint<T.Identifier, true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
+		readonly body: SlotHint<T.StatementBlock>;
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier | undefined;
@@ -4344,6 +4636,18 @@ export interface GeneratorFunctionDeclaration {
 		readonly async_marker?: 'async' | 'async';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+	};
+	readonly __slotHints__?: {
+		readonly asyncMarker: SlotHint<NonNullable<T.GeneratorFunctionDeclaration.Config>['asyncMarker'], true>;
+		readonly name: SlotHint<T.Identifier>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
+		readonly body: SlotHint<T.StatementBlock>;
+		readonly automaticSemicolon: SlotHint<
+			NonNullable<T.GeneratorFunctionDeclaration.Config>['automaticSemicolon'],
+			true
+		>;
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
@@ -4372,6 +4676,11 @@ export interface ArrowFunction {
 	readonly __looseHints__?: {
 		readonly async_marker?: 'async' | 'async';
 	};
+	readonly __slotHints__?: {
+		readonly asyncMarker: SlotHint<NonNullable<T.ArrowFunction.Config>['asyncMarker'], true>;
+		readonly content: SlotHint<T.ArrowFunctionParameter | T.CallSignature>;
+		readonly body: SlotHint<NonNullable<T.ArrowFunction.Config>['body']>;
+	};
 	asyncMarker(): boolean | undefined;
 	content(): ArrowFunctionParameter | CallSignature;
 	body(): Expression | StatementBlock;
@@ -4394,6 +4703,11 @@ export interface NewExpression {
 		readonly type_arguments?: readonly Type[];
 		readonly arguments?: readonly (Expression | SpreadElement)[];
 	};
+	readonly __slotHints__?: {
+		readonly constructor_: SlotHint<NonNullable<T.NewExpression.Config>['constructor_']>;
+		readonly typeArguments: SlotHint<T.TypeArguments, true>;
+		readonly arguments: SlotHint<T.Arguments, true>;
+	};
 	constructor_(): PrimaryExpression;
 	typeArguments(): TypeArguments | undefined;
 	arguments(): Arguments | undefined;
@@ -4409,6 +4723,9 @@ export interface AwaitExpression {
 					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
 			  >
 			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression>>;
 	};
 	expression(): Expression;
 }
@@ -4434,6 +4751,11 @@ export interface MemberExpression {
 			| Expression
 			| PrimaryExpression;
 		readonly separator: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.OptionalChain | TSKindId.QmarkDot>;
+	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<NonNullable<T.MemberExpression.Config>['object']>;
+		readonly separator: SlotHint<NonNullable<T.MemberExpression.Config>['separator']>;
+		readonly property: SlotHint<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>;
 	};
 	object(): Expression | PrimaryExpression | TSKindId.Import;
 	separator(): number;
@@ -4461,6 +4783,11 @@ export interface SubscriptExpression {
 			  >
 			| Expression
 			| SequenceExpression;
+	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<NonNullable<T.SubscriptExpression.Config>['object']>;
+		readonly optionalChain: SlotHint<NonNullable<T.SubscriptExpression.Config>['optionalChain'], true>;
+		readonly index: SlotHint<NonNullable<T.SubscriptExpression.Config>['index']>;
 	};
 	object(): Expression | PrimaryExpression;
 	optionalChain(): boolean | undefined;
@@ -4556,6 +4883,41 @@ export interface LhsExpression {
 			| ArrayPattern
 			| NonNullExpression;
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<
+			NonNullable<
+				| T.MemberExpression
+				| T.SubscriptExpression
+				| TSKindId.Undefined
+				| T.Identifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+				| T.ObjectPattern
+				| T.ArrayPattern
+				| T.NonNullExpression
+			>
+		>;
+	};
 	content():
 		| MemberExpression
 		| SubscriptExpression
@@ -4604,6 +4966,11 @@ export interface AssignmentExpression {
 	};
 	readonly __looseHints__?: {
 		readonly using_marker?: 'using' | 'using';
+	};
+	readonly __slotHints__?: {
+		readonly usingMarker: SlotHint<NonNullable<T.AssignmentExpression.Config>['usingMarker'], true>;
+		readonly left: SlotHint<T.ParenthesizedExpression | T.LhsExpression>;
+		readonly right: SlotHint<NonNullable<T.AssignmentExpression.Config>['right']>;
 	};
 	usingMarker(): boolean | undefined;
 	left(): ParenthesizedExpression | LhsExpression;
@@ -4720,6 +5087,11 @@ export interface AugmentedAssignmentExpression {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<NonNullable<T.AugmentedAssignmentExpression.Config>['left']>;
+		readonly operator: SlotHint<NonNullable<T.AugmentedAssignmentExpression.Config>['operator']>;
+		readonly right: SlotHint<NonNullable<T.AugmentedAssignmentExpression.Config>['right']>;
+	};
 	left():
 		| MemberExpression
 		| SubscriptExpression
@@ -4763,6 +5135,9 @@ export interface SpreadElement {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression>>;
+	};
 	expression(): Expression;
 }
 
@@ -4790,6 +5165,11 @@ export interface TernaryExpression {
 					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
 			  >
 			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly condition: SlotHint<NonNullable<T.TernaryExpression.Config>['condition']>;
+		readonly consequence: SlotHint<NonNullable<T.TernaryExpression.Config>['consequence']>;
+		readonly alternative: SlotHint<NonNullable<T.TernaryExpression.Config>['alternative']>;
 	};
 	condition(): Expression;
 	consequence(): Expression;
@@ -4866,6 +5246,12 @@ export interface BinaryExpression {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<NonNullable<T.BinaryExpression.Config>['left'], true>;
+		readonly operator: SlotHint<NonNullable<T.BinaryExpression.Config>['operator'], true>;
+		readonly right: SlotHint<NonNullable<T.BinaryExpression.Config>['right'], true>;
+		readonly binaryExpressionIn: SlotHint<T.BinaryExpressionIn, true>;
+	};
 	left(): Expression | undefined;
 	operator(): number | undefined;
 	right(): Expression | undefined;
@@ -4894,6 +5280,10 @@ export interface UnaryExpression {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly operator: SlotHint<NonNullable<T.UnaryExpression.Config>['operator']>;
+		readonly argument: SlotHint<NonNullable<T.UnaryExpression.Config>['argument']>;
+	};
 	operator(): number;
 	argument(): Expression;
 }
@@ -4910,18 +5300,27 @@ export interface SequenceExpression {
 			| Expression
 		>;
 	};
+	readonly __slotHints__?: {
+		readonly expressions: SlotHint<T.Expression[], false, true>;
+	};
 	expressions(): NonEmptyArray<Expression>;
 }
 
 export interface EscapeSequence {
 	readonly $type: TSKindId.EscapeSequence;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+	};
 	content(): string;
 }
 
 export interface TemplateString {
 	readonly $type: TSKindId.TemplateString;
 	readonly _elements?: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<(T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[], false, true>;
+	};
 	elements(): readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
 }
 
@@ -4937,6 +5336,9 @@ export interface TemplateSubstitution {
 			| Expression
 			| SequenceExpression;
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression | T.SequenceExpression>>;
+	};
 	expression(): Expression | SequenceExpression;
 }
 
@@ -4944,6 +5346,10 @@ export interface Regex {
 	readonly $type: TSKindId.Regex;
 	readonly _pattern: RegexPattern;
 	readonly _flags?: RegexFlags;
+	readonly __slotHints__?: {
+		readonly pattern: SlotHint<T.RegexPattern>;
+		readonly flags: SlotHint<T.RegexFlags, true>;
+	};
 	pattern(): RegexPattern;
 	flags(): RegexFlags | undefined;
 }
@@ -4951,6 +5357,9 @@ export interface Regex {
 export interface PrivatePropertyIdentifier {
 	readonly $type: TSKindId.PrivatePropertyIdentifier;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+	};
 	content(): string;
 }
 
@@ -4967,6 +5376,9 @@ export interface Arguments {
 			| SpreadElement
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<(T.Expression | T.SpreadElement)[], false, true>;
+	};
 	elements(): readonly (Expression | SpreadElement | undefined)[];
 }
 
@@ -4977,6 +5389,11 @@ export interface Decorator {
 		| DecoratorMemberExpression
 		| DecoratorCallExpression
 		| DecoratorParenthesizedExpression;
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<
+			T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+		>;
+	};
 	expression(): Identifier | DecoratorMemberExpression | DecoratorCallExpression | DecoratorParenthesizedExpression;
 }
 
@@ -5011,6 +5428,10 @@ export interface DecoratorMemberExpression {
 			| 'let'
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<T.Identifier | T.DecoratorMemberExpression>;
+		readonly property: SlotHint<T.PropertyIdentifier | T.PropertyIdentifier.Types>;
+	};
 	object(): Identifier | DecoratorMemberExpression;
 	property(): PropertyIdentifier;
 }
@@ -5023,6 +5444,11 @@ export interface DecoratorCallExpression {
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly Type[];
 		readonly arguments: readonly (Expression | SpreadElement)[];
+	};
+	readonly __slotHints__?: {
+		readonly function: SlotHint<T.Identifier | T.DecoratorMemberExpression>;
+		readonly typeArguments: SlotHint<T.TypeArguments, true>;
+		readonly arguments: SlotHint<T.Arguments>;
 	};
 	function(): Identifier | DecoratorMemberExpression;
 	typeArguments(): TypeArguments | undefined;
@@ -5047,6 +5473,13 @@ export interface ClassBody {
 			| ClassBodyMember
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly contents: SlotHint<
+			(T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.EmptyMember)[],
+			false,
+			true
+		>;
+	};
 	contents(): readonly (
 		| ClassBodyMethod
 		| ClassBodyMethodSig
@@ -5062,6 +5495,14 @@ export interface FormalParameters {
 	readonly __looseHints__?: {
 		readonly formal_parameters_elements?: readonly (RequiredParameter | OptionalParameter)[];
 	};
+	readonly __slotHints__?: {
+		readonly formalParametersElements: SlotHint<T.FormalParametersElements, true>;
+		readonly $listOwner: ListOwnerHint<
+			T.RequiredParameter | T.OptionalParameter,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.RequiredParameter | T.OptionalParameter
+		>;
+	};
 	formalParametersElements(): FormalParametersElements | undefined;
 }
 
@@ -5071,6 +5512,10 @@ export interface ClassStaticBlock {
 	readonly _body: StatementBlock;
 	readonly __inputHints__?: {
 		readonly automatic_semicolon?: BaseBooleanKeyword<'\n'>;
+	};
+	readonly __slotHints__?: {
+		readonly automaticSemicolon: SlotHint<NonNullable<T.ClassStaticBlock.Config>['automaticSemicolon'], true>;
+		readonly body: SlotHint<T.StatementBlock>;
 	};
 	automaticSemicolon(): boolean | undefined;
 	body(): StatementBlock;
@@ -5164,6 +5609,41 @@ export interface RestPattern {
 			| ObjectPattern
 			| ArrayPattern
 			| NonNullExpression;
+	};
+	readonly __slotHints__?: {
+		readonly lhsExpression: SlotHint<
+			NonNullable<
+				| T.MemberExpression
+				| T.SubscriptExpression
+				| TSKindId.Undefined
+				| T.Identifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+				| T.ObjectPattern
+				| T.ArrayPattern
+				| T.NonNullExpression
+			>
+		>;
 	};
 	lhsExpression():
 		| MemberExpression
@@ -5309,6 +5789,20 @@ export interface MethodDefinition {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
+	readonly __slotHints__?: {
+		readonly accessibilityModifier: SlotHint<NonNullable<T.MethodDefinition.Config>['accessibilityModifier'], true>;
+		readonly staticMarker: SlotHint<NonNullable<T.MethodDefinition.Config>['staticMarker'], true>;
+		readonly overrideModifier: SlotHint<NonNullable<T.MethodDefinition.Config>['overrideModifier'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.MethodDefinition.Config>['readonlyMarker'], true>;
+		readonly asyncMarker: SlotHint<NonNullable<T.MethodDefinition.Config>['asyncMarker'], true>;
+		readonly accessorKind: SlotHint<NonNullable<T.MethodDefinition.Config>['accessorKind'], true>;
+		readonly name: SlotHint<NonNullable<T.MethodDefinition.Config>['name']>;
+		readonly optionalMarker: SlotHint<NonNullable<T.MethodDefinition.Config>['optionalMarker'], true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
+		readonly body: SlotHint<T.StatementBlock>;
+	};
 	accessibilityModifier(): number | undefined;
 	staticMarker(): boolean | undefined;
 	overrideModifier(): boolean | undefined;
@@ -5441,6 +5935,10 @@ export interface Pair {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly key: SlotHint<NonNullable<T.Pair.Config>['key']>;
+		readonly value: SlotHint<NonNullable<T.Pair.Config>['value']>;
+	};
 	key():
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -5557,6 +6055,10 @@ export interface PairPattern {
 			| Number
 			| ComputedPropertyName;
 	};
+	readonly __slotHints__?: {
+		readonly key: SlotHint<NonNullable<T.PairPattern.Config>['key']>;
+		readonly value: SlotHint<T.Pattern | T.AssignmentPattern>;
+	};
 	key():
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -5598,6 +6100,9 @@ export interface ComputedPropertyName {
 					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
 			  >
 			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression>>;
 	};
 	expression(): Expression;
 }
@@ -5722,6 +6227,23 @@ export interface PublicFieldDefinition {
 		readonly override_modifier?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly declareMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['declareMarker'], true>;
+		readonly accessibilityModifier: SlotHint<
+			NonNullable<T.PublicFieldDefinition.Config>['accessibilityModifier'],
+			true
+		>;
+		readonly staticMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['staticMarker'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['readonlyMarker'], true>;
+		readonly abstractMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['abstractMarker'], true>;
+		readonly accessorMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['accessorMarker'], true>;
+		readonly overrideModifier: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['overrideModifier'], true>;
+		readonly name: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['name']>;
+		readonly optionalityMarker: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['optionalityMarker'], true>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
+		readonly value: SlotHint<NonNullable<T.PublicFieldDefinition.Config>['value'], true>;
+	};
 	decorators(): readonly Decorator[];
 	declareMarker(): boolean | undefined;
 	accessibilityModifier(): number | undefined;
@@ -5773,6 +6295,9 @@ export interface NonNullExpression {
 					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
 			  >
 			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression>>;
 	};
 	expression(): Expression;
 }
@@ -5887,6 +6412,19 @@ export interface MethodSignature {
 		readonly async_marker?: 'async' | 'async';
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+	};
+	readonly __slotHints__?: {
+		readonly accessibilityModifier: SlotHint<NonNullable<T.MethodSignature.Config>['accessibilityModifier'], true>;
+		readonly staticMarker: SlotHint<NonNullable<T.MethodSignature.Config>['staticMarker'], true>;
+		readonly overrideModifier: SlotHint<NonNullable<T.MethodSignature.Config>['overrideModifier'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.MethodSignature.Config>['readonlyMarker'], true>;
+		readonly asyncMarker: SlotHint<NonNullable<T.MethodSignature.Config>['asyncMarker'], true>;
+		readonly accessorKind: SlotHint<NonNullable<T.MethodSignature.Config>['accessorKind'], true>;
+		readonly name: SlotHint<NonNullable<T.MethodSignature.Config>['name']>;
+		readonly optionalMarker: SlotHint<NonNullable<T.MethodSignature.Config>['optionalMarker'], true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
 	};
 	accessibilityModifier(): number | undefined;
 	staticMarker(): boolean | undefined;
@@ -6031,6 +6569,19 @@ export interface AbstractMethodSignature {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
+	readonly __slotHints__?: {
+		readonly accessibilityModifier: SlotHint<
+			NonNullable<T.AbstractMethodSignature.Config>['accessibilityModifier'],
+			true
+		>;
+		readonly overrideModifier: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['overrideModifier'], true>;
+		readonly accessorKind: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['accessorKind'], true>;
+		readonly name: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['name']>;
+		readonly optionalMarker: SlotHint<NonNullable<T.AbstractMethodSignature.Config>['optionalMarker'], true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
+	};
 	accessibilityModifier(): number | undefined;
 	overrideModifier(): boolean | undefined;
 	accessorKind(): number | undefined;
@@ -6088,6 +6639,14 @@ export interface FunctionSignature {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
+	readonly __slotHints__?: {
+		readonly asyncMarker: SlotHint<NonNullable<T.FunctionSignature.Config>['asyncMarker'], true>;
+		readonly name: SlotHint<T.Identifier>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
+		readonly terminator: SlotHint<NonNullable<T.FunctionSignature.Options>['terminator']>;
+	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
@@ -6099,6 +6658,9 @@ export interface FunctionSignature {
 export interface DecoratorParenthesizedExpression {
 	readonly $type: TSKindId.DecoratorParenthesizedExpression;
 	readonly _expression: Identifier | DecoratorMemberExpression | DecoratorCallExpression;
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>;
+	};
 	expression(): Identifier | DecoratorMemberExpression | DecoratorCallExpression;
 }
 
@@ -6116,6 +6678,10 @@ export interface TypeAssertion {
 	};
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly typeArguments: SlotHint<T.TypeArguments>;
+		readonly expression: SlotHint<NonNullable<T.TypeAssertion.Config>['expression']>;
 	};
 	typeArguments(): TypeArguments;
 	expression(): Expression;
@@ -6161,6 +6727,10 @@ export interface AsExpression {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.AsExpression.Config>['expression']>;
+		readonly typeAnnotation: SlotHint<NonNullable<T.AsExpression.Config>['typeAnnotation']>;
+	};
 	expression(): Expression;
 	typeAnnotation(): TSKindId.ConstKeyword | Type;
 }
@@ -6203,6 +6773,10 @@ export interface SatisfiesExpression {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.SatisfiesExpression.Config>['expression']>;
+		readonly typeAnnotation: SlotHint<NonNullable<T.SatisfiesExpression.Config>['typeAnnotation']>;
+	};
 	expression(): Expression;
 	typeAnnotation(): Type;
 }
@@ -6222,6 +6796,10 @@ export interface InstantiationExpression {
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.InstantiationExpression.Config>['expression']>;
+		readonly typeArguments: SlotHint<T.TypeArguments>;
+	};
 	expression(): Expression;
 	typeArguments(): TypeArguments;
 }
@@ -6230,6 +6808,10 @@ export interface ImportRequireClause {
 	readonly $type: TSKindId.ImportRequireClause;
 	readonly _name: Identifier;
 	readonly _source: String;
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier>;
+		readonly source: SlotHint<T.String>;
+	};
 	name(): Identifier;
 	source(): String;
 }
@@ -6237,6 +6819,9 @@ export interface ImportRequireClause {
 export interface ExtendsClause {
 	readonly $type: TSKindId.ExtendsClause;
 	readonly _extends_clause_single: NonEmptyArray<ExtendsClauseSingle>;
+	readonly __slotHints__?: {
+		readonly extendsClauseSingles: SlotHint<T.ExtendsClauseSingle[], false, true>;
+	};
 	extendsClauseSingles(): NonEmptyArray<ExtendsClauseSingle>;
 }
 
@@ -6254,6 +6839,10 @@ export interface ExtendsClauseSingle {
 	};
 	readonly __looseHints__?: {
 		readonly type_arguments?: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly value: SlotHint<NonNullable<T.ExtendsClauseSingle.Config>['value']>;
+		readonly typeArguments: SlotHint<T.TypeArguments, true>;
 	};
 	value(): Expression;
 	typeArguments(): TypeArguments | undefined;
@@ -6291,12 +6880,18 @@ export interface ImplementsClause {
 			| Type
 		>;
 	};
+	readonly __slotHints__?: {
+		readonly types: SlotHint<(T.Type | T.TypeIdentifier.Types)[], false, true>;
+	};
 	types(): NonEmptyArray<Type>;
 }
 
 export interface AmbientDeclaration {
 	readonly $type: TSKindId.AmbientDeclaration;
 	readonly _content: Declaration | AmbientDeclarationGlobal | AmbientDeclarationModule;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>;
+	};
 	content(): Declaration | AmbientDeclarationGlobal | AmbientDeclarationModule;
 }
 
@@ -6313,6 +6908,13 @@ export interface AbstractClassDeclaration {
 		readonly heritage?: readonly (ClassHeritageExtendsClause | ImplementsClause)[];
 		readonly body: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ';')[];
 	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly heritage: SlotHint<T.ClassHeritage, true>;
+		readonly body: SlotHint<T.ClassBody>;
+	};
 	decorators(): readonly Decorator[];
 	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
@@ -6324,6 +6926,10 @@ export interface Module {
 	readonly $type: TSKindId.Module;
 	readonly _name: String | Identifier | NestedIdentifier;
 	readonly _body?: StatementBlock;
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.String | T.Identifier | T.NestedIdentifier>;
+		readonly body: SlotHint<T.StatementBlock, true>;
+	};
 	name(): String | Identifier | NestedIdentifier;
 	body(): StatementBlock | undefined;
 }
@@ -6332,6 +6938,10 @@ export interface InternalModule {
 	readonly $type: TSKindId.InternalModule;
 	readonly _name: String | Identifier | NestedIdentifier;
 	readonly _body?: StatementBlock;
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.String | T.Identifier | T.NestedIdentifier>;
+		readonly body: SlotHint<T.StatementBlock, true>;
+	};
 	name(): String | Identifier | NestedIdentifier;
 	body(): StatementBlock | undefined;
 }
@@ -6344,6 +6954,11 @@ export interface ImportAlias {
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier>;
+		readonly value: SlotHint<T.Identifier | T.NestedIdentifier>;
+		readonly terminator: SlotHint<NonNullable<T.ImportAlias.Options>['terminator']>;
+	};
 	name(): Identifier;
 	value(): Identifier | NestedIdentifier;
 	terminator(): number;
@@ -6355,6 +6970,10 @@ export interface NestedTypeIdentifier {
 	readonly _name: TypeIdentifier;
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
+	};
+	readonly __slotHints__?: {
+		readonly module: SlotHint<T.Identifier | T.NestedIdentifier>;
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
 	};
 	module(): Identifier | NestedIdentifier;
 	name(): TypeIdentifier;
@@ -6372,6 +6991,12 @@ export interface InterfaceDeclaration {
 		readonly extends_type_clause?: readonly (TypeIdentifier | NestedTypeIdentifier | GenericType)[];
 		readonly body: readonly ObjectType[];
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly extendsTypeClause: SlotHint<T.ExtendsTypeClause, true>;
+		readonly body: SlotHint<T.InterfaceBody | T.InterfaceBody.Types>;
+	};
 	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
 	extendsTypeClause(): ExtendsTypeClause | undefined;
@@ -6381,6 +7006,13 @@ export interface InterfaceDeclaration {
 export interface ExtendsTypeClause {
 	readonly $type: TSKindId.ExtendsTypeClause;
 	readonly _type: NonEmptyArray<TypeIdentifier | NestedTypeIdentifier | GenericType>;
+	readonly __slotHints__?: {
+		readonly types: SlotHint<
+			((T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types)[],
+			false,
+			true
+		>;
+	};
 	types(): NonEmptyArray<TypeIdentifier | NestedTypeIdentifier | GenericType>;
 }
 
@@ -6425,6 +7057,11 @@ export interface EnumDeclaration {
 			| ComputedPropertyName
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly constMarker: SlotHint<NonNullable<T.EnumDeclaration.Config>['constMarker'], true>;
+		readonly name: SlotHint<T.Identifier>;
+		readonly body: SlotHint<T.EnumBody>;
+	};
 	constMarker(): boolean | undefined;
 	name(): Identifier;
 	body(): EnumBody;
@@ -6464,6 +7101,69 @@ export interface EnumBody {
 			| Number
 			| ComputedPropertyName
 		)[];
+	};
+	readonly __slotHints__?: {
+		readonly enumBodyElements: SlotHint<T.EnumBodyElements, true>;
+		readonly $listOwner: ListOwnerHint<
+			| T.PropertyIdentifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
+			| T.PrivatePropertyIdentifier
+			| T.String
+			| T.Number
+			| T.ComputedPropertyName
+			| T.EnumAssignment,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			| T.PropertyIdentifier
+			| TSKindId.DeclareKeyword
+			| TSKindId.NamespaceKeyword
+			| TSKindId.TypeKeyword
+			| TSKindId.PublicKeyword
+			| TSKindId.PrivateKeyword
+			| TSKindId.ProtectedKeyword
+			| TSKindId.OverrideKeyword
+			| TSKindId.ReadonlyKeyword
+			| TSKindId.ModuleKeyword
+			| TSKindId.AnyKeyword
+			| TSKindId.NumberKeyword
+			| TSKindId.BooleanKeyword
+			| TSKindId.StringKeyword
+			| TSKindId.SymbolKeyword
+			| TSKindId.ExportKeyword
+			| TSKindId.ObjectKeyword
+			| TSKindId.NewKeyword
+			| TSKindId.GetKeyword
+			| TSKindId.SetKeyword
+			| TSKindId.AsyncKeyword
+			| TSKindId.StaticKeyword
+			| TSKindId.LetKeyword
+			| T.PrivatePropertyIdentifier
+			| T.String
+			| T.Number
+			| T.ComputedPropertyName
+			| T.EnumAssignment
+			| T.PropertyIdentifier.Types
+		>;
 	};
 	enumBodyElements(): EnumBodyElements | undefined;
 }
@@ -6559,6 +7259,10 @@ export interface EnumAssignment {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<NonNullable<T.EnumAssignment.Config>['name']>;
+		readonly value: SlotHint<NonNullable<T.EnumAssignment.Config>['value']>;
+	};
 	name():
 		| PropertyIdentifier
 		| TSKindId.DeclareKeyword
@@ -6629,6 +7333,12 @@ export interface TypeAliasDeclaration {
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly TypeParameter[];
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly value: SlotHint<NonNullable<T.TypeAliasDeclaration.Config>['value']>;
+		readonly terminator: SlotHint<NonNullable<T.TypeAliasDeclaration.Options>['terminator']>;
+	};
 	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
 	value(): Type;
@@ -6662,6 +7372,15 @@ export interface RequiredParameter {
 	readonly __looseHints__?: {
 		readonly override_modifier?: 'override' | 'override';
 		readonly type?: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly accessibilityModifier: SlotHint<NonNullable<T.RequiredParameter.Config>['accessibilityModifier'], true>;
+		readonly overrideModifier: SlotHint<NonNullable<T.RequiredParameter.Config>['overrideModifier'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.RequiredParameter.Config>['readonlyMarker'], true>;
+		readonly pattern: SlotHint<NonNullable<T.RequiredParameter.Config>['pattern']>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
+		readonly value: SlotHint<NonNullable<T.RequiredParameter.Config>['value'], true>;
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
@@ -6699,6 +7418,15 @@ export interface OptionalParameter {
 	readonly __looseHints__?: {
 		readonly override_modifier?: 'override' | 'override';
 		readonly type?: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly accessibilityModifier: SlotHint<NonNullable<T.OptionalParameter.Config>['accessibilityModifier'], true>;
+		readonly overrideModifier: SlotHint<NonNullable<T.OptionalParameter.Config>['overrideModifier'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.OptionalParameter.Config>['readonlyMarker'], true>;
+		readonly pattern: SlotHint<NonNullable<T.OptionalParameter.Config>['pattern']>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
+		readonly value: SlotHint<NonNullable<T.OptionalParameter.Config>['value'], true>;
 	};
 	decorators(): readonly Decorator[];
 	accessibilityModifier(): number | undefined;
@@ -6740,6 +7468,9 @@ export interface OmittingTypeAnnotation {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+	};
 	type(): Type;
 }
 
@@ -6773,6 +7504,9 @@ export interface AddingTypeAnnotation {
 					| TSKindId.Star
 			  >
 			| Type;
+	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
 	};
 	type(): Type;
 }
@@ -6808,6 +7542,9 @@ export interface OptingTypeAnnotation {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+	};
 	type(): Type;
 }
 
@@ -6842,6 +7579,9 @@ export interface TypeAnnotation {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+	};
 	type(): Type;
 }
 
@@ -6857,6 +7597,10 @@ export interface TypeQueryMemberExpressionInTypeAnnotation {
 			| KindEnum<'import', TSKindId.Import | TSKindId.ImportKeyword>
 			| TypeQueryMemberExpressionInTypeAnnotation
 			| TypeQueryCallExpressionInTypeAnnotation;
+	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<NonNullable<T.TypeQueryMemberExpressionInTypeAnnotation.Config>['object']>;
+		readonly property: SlotHint<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>;
 	};
 	object(): TSKindId.Import | TypeQueryMemberExpressionInTypeAnnotation | TypeQueryCallExpressionInTypeAnnotation;
 	property(): PrivatePropertyIdentifier | PropertyIdentifier;
@@ -6874,6 +7618,10 @@ export interface TypeQueryCallExpressionInTypeAnnotation {
 	readonly __looseHints__?: {
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
+	readonly __slotHints__?: {
+		readonly function: SlotHint<NonNullable<T.TypeQueryCallExpressionInTypeAnnotation.Config>['function']>;
+		readonly arguments: SlotHint<T.Arguments>;
+	};
 	function(): TSKindId.Import | TypeQueryMemberExpressionInTypeAnnotation;
 	arguments(): Arguments;
 }
@@ -6884,6 +7632,9 @@ export interface Asserts {
 	readonly __inputHints__?: {
 		readonly value: KindEnum<'this', TSKindId.This> | TypePredicate | Identifier;
 	};
+	readonly __slotHints__?: {
+		readonly value: SlotHint<NonNullable<T.TypePredicate | T.Identifier | TSKindId.This>>;
+	};
 	value(): TypePredicate | Identifier | TSKindId.This;
 }
 
@@ -6892,6 +7643,9 @@ export interface AssertsAnnotation {
 	readonly _asserts: Asserts;
 	readonly __looseHints__?: {
 		readonly asserts: Asserts | 'this' | readonly (TypePredicate | Identifier | 'this')[];
+	};
+	readonly __slotHints__?: {
+		readonly asserts: SlotHint<T.Asserts>;
 	};
 	asserts(): Asserts;
 }
@@ -6903,6 +7657,10 @@ export interface TupleParameter {
 	readonly __looseHints__?: {
 		readonly type: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier | T.RestPattern>;
+		readonly type: SlotHint<T.TypeAnnotation>;
+	};
 	name(): Identifier | RestPattern;
 	type(): TypeAnnotation;
 }
@@ -6913,6 +7671,10 @@ export interface OptionalTupleParameter {
 	readonly _type: TypeAnnotation;
 	readonly __looseHints__?: {
 		readonly type: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier>;
+		readonly type: SlotHint<T.TypeAnnotation>;
 	};
 	name(): Identifier;
 	type(): TypeAnnotation;
@@ -6949,6 +7711,9 @@ export interface OptionalType {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+	};
 	type(): Type;
 }
 
@@ -6982,6 +7747,9 @@ export interface RestType {
 					| TSKindId.Star
 			  >
 			| Type;
+	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
 	};
 	type(): Type;
 }
@@ -7026,6 +7794,12 @@ export interface ConstructorType {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
+	readonly __slotHints__?: {
+		readonly abstractMarker: SlotHint<NonNullable<T.ConstructorType.Config>['abstractMarker'], true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly type: SlotHint<NonNullable<T.ConstructorType.Config>['type']>;
+	};
 	abstractMarker(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
@@ -7064,12 +7838,18 @@ export interface TemplateType {
 			| PrimaryType
 			| InferType;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>>;
+	};
 	type(): PrimaryType | InferType;
 }
 
 export interface TemplateLiteralType {
 	readonly $type: TSKindId.TemplateLiteralType;
 	readonly _elements?: readonly (TemplateChars | TemplateType)[];
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<(T.TemplateChars | T.TemplateType)[], false, true>;
+	};
 	elements(): readonly (TemplateChars | TemplateType)[];
 }
 
@@ -7107,6 +7887,10 @@ export interface InferType {
 	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
+	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
+		readonly type: SlotHint<NonNullable<T.InferType.Config>['type'], true>;
 	};
 	name(): TypeIdentifier;
 	type(): Type | undefined;
@@ -7224,6 +8008,12 @@ export interface ConditionalType {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<NonNullable<T.ConditionalType.Config>['left']>;
+		readonly right: SlotHint<NonNullable<T.ConditionalType.Config>['right']>;
+		readonly consequence: SlotHint<NonNullable<T.ConditionalType.Config>['consequence']>;
+		readonly alternative: SlotHint<NonNullable<T.ConditionalType.Config>['alternative']>;
+	};
 	left(): Type;
 	right(): Type;
 	consequence(): Type;
@@ -7236,6 +8026,10 @@ export interface GenericType {
 	readonly _type_arguments: TypeArguments;
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.TypeIdentifier | T.NestedTypeIdentifier | T.TypeIdentifier.Types>;
+		readonly typeArguments: SlotHint<T.TypeArguments>;
 	};
 	name(): TypeIdentifier | NestedTypeIdentifier;
 	typeArguments(): TypeArguments;
@@ -7311,6 +8105,10 @@ export interface TypePredicate {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<NonNullable<T.TypePredicate.Config>['name']>;
+		readonly type: SlotHint<NonNullable<T.TypePredicate.Config>['type']>;
+	};
 	name():
 		| Identifier
 		| TSKindId.This
@@ -7330,6 +8128,9 @@ export interface TypePredicate {
 export interface TypePredicateAnnotation {
 	readonly $type: TSKindId.TypePredicateAnnotation;
 	readonly _type_predicate: TypePredicate;
+	readonly __slotHints__?: {
+		readonly typePredicate: SlotHint<T.TypePredicate>;
+	};
 	typePredicate(): TypePredicate;
 }
 
@@ -7351,6 +8152,11 @@ export interface TypeQueryMemberExpression {
 			| TypeQueryMemberExpression
 			| TypeQueryCallExpression;
 		readonly content: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.QmarkDot>;
+	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<NonNullable<T.TypeQueryMemberExpression.Config>['object']>;
+		readonly content: SlotHint<NonNullable<T.TypeQueryMemberExpression.Config>['content']>;
+		readonly property: SlotHint<T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types>;
 	};
 	object():
 		| Identifier
@@ -7416,6 +8222,10 @@ export interface TypeQuerySubscriptExpression {
 			| String
 			| Number;
 	};
+	readonly __slotHints__?: {
+		readonly object: SlotHint<NonNullable<T.TypeQuerySubscriptExpression.Config>['object']>;
+		readonly index: SlotHint<NonNullable<T.TypeQuerySubscriptExpression.Config>['index']>;
+	};
 	object():
 		| Identifier
 		| TSKindId.This
@@ -7451,6 +8261,10 @@ export interface TypeQueryCallExpression {
 	readonly __looseHints__?: {
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
+	readonly __slotHints__?: {
+		readonly function: SlotHint<NonNullable<T.TypeQueryCallExpression.Config>['function']>;
+		readonly arguments: SlotHint<T.Arguments>;
+	};
 	function(): TSKindId.Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	arguments(): Arguments;
 }
@@ -7468,6 +8282,10 @@ export interface TypeQueryInstantiationExpression {
 	};
 	readonly __looseHints__?: {
 		readonly type_arguments: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly function: SlotHint<NonNullable<T.TypeQueryInstantiationExpression.Config>['function']>;
+		readonly typeArguments: SlotHint<T.TypeArguments>;
 	};
 	function(): TSKindId.Import | Identifier | TypeQueryMemberExpression | TypeQuerySubscriptExpression;
 	typeArguments(): TypeArguments;
@@ -7490,6 +8308,18 @@ export interface TypeQuery {
 			| TypeQueryCallExpression
 			| TypeQueryInstantiationExpression
 			| Identifier;
+	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<
+			NonNullable<
+				| T.TypeQuerySubscriptExpression
+				| T.TypeQueryMemberExpression
+				| T.TypeQueryCallExpression
+				| T.TypeQueryInstantiationExpression
+				| T.Identifier
+				| TSKindId.This
+			>
+		>;
 	};
 	expression():
 		| TypeQuerySubscriptExpression
@@ -7530,6 +8360,9 @@ export interface IndexTypeQuery {
 					| TSKindId.Star
 			  >
 			| PrimaryType;
+	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>;
 	};
 	type(): PrimaryType;
 }
@@ -7591,6 +8424,10 @@ export interface LookupType {
 					| TSKindId.Star
 			  >
 			| Type;
+	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.LookupType.Config>['type']>;
+		readonly indexType: SlotHint<NonNullable<T.LookupType.Config>['indexType']>;
 	};
 	type(): PrimaryType;
 	indexType(): Type;
@@ -7658,6 +8495,11 @@ export interface MappedTypeClause {
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
+		readonly type: SlotHint<NonNullable<T.MappedTypeClause.Config>['type']>;
+		readonly alias: SlotHint<NonNullable<T.MappedTypeClause.Config>['alias'], true>;
+	};
 	name(): TypeIdentifier;
 	type(): Type;
 	alias(): Type | undefined;
@@ -7682,6 +8524,19 @@ export interface LiteralType {
 			| LiteralTypeNegativeNumber
 			| Number
 			| String;
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<
+			NonNullable<
+				| T.LiteralTypeNegativeNumber
+				| T.Number
+				| T.String
+				| TSKindId.True
+				| TSKindId.False
+				| TSKindId.Null
+				| TSKindId.Undefined
+			>
+		>;
 	};
 	content():
 		| LiteralTypeNegativeNumber
@@ -7724,6 +8579,9 @@ export interface FlowMaybeType {
 			  >
 			| PrimaryType;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>;
+	};
 	type(): PrimaryType;
 }
 
@@ -7758,6 +8616,9 @@ export interface ParenthesizedType {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+	};
 	type(): Type;
 }
 
@@ -7766,6 +8627,14 @@ export interface TypeArguments {
 	readonly _types: Types;
 	readonly __looseHints__?: {
 		readonly types: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly types: SlotHint<T.Types>;
+		readonly $listOwner: ListOwnerHint<
+			T.Type,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.Type | T.TypeIdentifier.Types
+		>;
 	};
 	types(): Types;
 }
@@ -7789,6 +8658,11 @@ export interface ObjectType {
 			| MethodSignature
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly opening: SlotHint<NonNullable<ConfigOf<T.ObjectType, T.NamespaceMap>>['opening']>;
+		readonly members: SlotHint<T.ObjectTypeContent, true>;
+		readonly closing: SlotHint<NonNullable<ConfigOf<T.ObjectType, T.NamespaceMap>>['closing']>;
+	};
 	opening(): number;
 	members(): ObjectTypeContent | undefined;
 	closing(): number;
@@ -7802,6 +8676,11 @@ export interface CallSignature {
 	readonly __looseHints__?: {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
+	};
+	readonly __slotHints__?: {
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation, true>;
 	};
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
@@ -7911,6 +8790,15 @@ export interface PropertySignature {
 		readonly override_modifier?: 'override' | 'override';
 		readonly type?: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly accessibilityModifier: SlotHint<NonNullable<T.PropertySignature.Config>['accessibilityModifier'], true>;
+		readonly staticMarker: SlotHint<NonNullable<T.PropertySignature.Config>['staticMarker'], true>;
+		readonly overrideModifier: SlotHint<NonNullable<T.PropertySignature.Config>['overrideModifier'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.PropertySignature.Config>['readonlyMarker'], true>;
+		readonly name: SlotHint<NonNullable<T.PropertySignature.Config>['name']>;
+		readonly optionalMarker: SlotHint<NonNullable<T.PropertySignature.Config>['optionalMarker'], true>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
+	};
 	accessibilityModifier(): number | undefined;
 	staticMarker(): boolean | undefined;
 	overrideModifier(): boolean | undefined;
@@ -7953,6 +8841,14 @@ export interface TypeParameters {
 	readonly __looseHints__?: {
 		readonly type_parameters_elements: readonly TypeParameter[];
 	};
+	readonly __slotHints__?: {
+		readonly typeParametersElements: SlotHint<T.TypeParametersElements>;
+		readonly $listOwner: ListOwnerHint<
+			T.TypeParameter,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types
+		>;
+	};
 	typeParametersElements(): TypeParametersElements;
 }
 
@@ -7969,6 +8865,12 @@ export interface TypeParameter {
 		readonly const_marker?: 'const' | 'const';
 		readonly name: readonly Identifier[];
 		readonly value?: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly constMarker: SlotHint<NonNullable<T.TypeParameter.Config>['constMarker'], true>;
+		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
+		readonly constraint: SlotHint<T.Constraint, true>;
+		readonly value: SlotHint<T.DefaultType, true>;
 	};
 	constMarker(): boolean | undefined;
 	name(): TypeIdentifier;
@@ -8007,6 +8909,9 @@ export interface DefaultType {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+	};
 	type(): Type;
 }
 
@@ -8043,6 +8948,10 @@ export interface Constraint {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<T.Constraint.Config>['content']>;
+		readonly type: SlotHint<NonNullable<T.Constraint.Config>['type']>;
+	};
 	content(): number;
 	type(): Type;
 }
@@ -8061,6 +8970,12 @@ export interface ConstructSignature {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 		readonly type?: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly abstractMarker: SlotHint<NonNullable<T.ConstructSignature.Config>['abstractMarker'], true>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
 	};
 	abstractMarker(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
@@ -8099,6 +9014,9 @@ export interface ArrayType {
 			  >
 			| PrimaryType;
 	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.PrimaryType | T.TypeIdentifier.Types>>;
+	};
 	type(): PrimaryType;
 }
 
@@ -8107,6 +9025,14 @@ export interface TupleType {
 	readonly _tuple_type_members?: TupleTypeMembers;
 	readonly __looseHints__?: {
 		readonly tuple_type_members?: readonly (TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type)[];
+	};
+	readonly __slotHints__?: {
+		readonly tupleTypeMembers: SlotHint<T.TupleTypeMembers, true>;
+		readonly $listOwner: ListOwnerHint<
+			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
+		>;
 	};
 	tupleTypeMembers(): TupleTypeMembers | undefined;
 }
@@ -8141,6 +9067,9 @@ export interface ReadonlyType {
 					| TSKindId.Star
 			  >
 			| Type;
+	};
+	readonly __slotHints__?: {
+		readonly type: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
 	};
 	type(): Type;
 }
@@ -8202,6 +9131,10 @@ export interface UnionType {
 					| TSKindId.Star
 			  >
 			| Type;
+	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<NonNullable<T.UnionType.Config>['left'], true>;
+		readonly right: SlotHint<NonNullable<T.UnionType.Config>['right']>;
 	};
 	left(): Type | undefined;
 	right(): Type;
@@ -8265,6 +9198,10 @@ export interface IntersectionType {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<NonNullable<T.IntersectionType.Config>['left'], true>;
+		readonly right: SlotHint<NonNullable<T.IntersectionType.Config>['right']>;
+	};
 	left(): Type | undefined;
 	right(): Type;
 }
@@ -8308,6 +9245,11 @@ export interface FunctionType {
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly parameters: readonly (RequiredParameter | OptionalParameter)[];
 	};
+	readonly __slotHints__?: {
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly returnType: SlotHint<NonNullable<T.FunctionType.Config>['returnType']>;
+	};
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): Type | Asserts | TypePredicate;
@@ -8319,18 +9261,30 @@ export interface ExportSpecifiers {
 	readonly __inputHints__?: {
 		readonly export_specifier: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>;
 	};
+	readonly __slotHints__?: {
+		readonly exportSpecifiers: SlotHint<NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>, false, true>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+	};
 	exportSpecifiers(): NonEmptyArray<ExportSpecifier>;
 }
 
 export interface ImportSpecifiers {
 	readonly $type: TSKindId.ImportSpecifiers;
 	readonly _import_specifier: NonEmptyArray<ImportSpecifier>;
+	readonly __slotHints__?: {
+		readonly importSpecifiers: SlotHint<NonEmptyArray<T.ImportSpecifier>, false, true>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+	};
 	importSpecifiers(): NonEmptyArray<ImportSpecifier>;
 }
 
 export interface FormalParametersElements {
 	readonly $type: TSKindId.FormalParametersElements;
 	readonly _formal_parameter: NonEmptyArray<RequiredParameter | OptionalParameter>;
+	readonly __slotHints__?: {
+		readonly formalParameters: SlotHint<NonEmptyArray<T.RequiredParameter | T.OptionalParameter>, false, true>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+	};
 	formalParameters(): NonEmptyArray<RequiredParameter | OptionalParameter>;
 }
 
@@ -8366,6 +9320,44 @@ export interface EnumBodyElements {
 		| Number
 		| ComputedPropertyName
 	)[];
+	readonly __slotHints__?: {
+		readonly contents: SlotHint<
+			NonEmptyArray<
+				| T.PropertyIdentifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+				| T.PrivatePropertyIdentifier
+				| T.String
+				| T.Number
+				| T.ComputedPropertyName
+				| T.EnumAssignment
+				| T.PropertyIdentifier.Types
+			>,
+			false,
+			true
+		>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+	};
 	contents(): readonly (
 		| EnumAssignment
 		| PropertyIdentifier
@@ -8401,6 +9393,10 @@ export interface EnumBodyElements {
 export interface Types {
 	readonly $type: TSKindId.Types;
 	readonly _type: NonEmptyArray<Type>;
+	readonly __slotHints__?: {
+		readonly types: SlotHint<NonEmptyArray<T.Type | T.TypeIdentifier.Types>, false, true>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+	};
 	types(): NonEmptyArray<Type>;
 }
 
@@ -8410,18 +9406,39 @@ export interface TypeParametersElements {
 	readonly __inputHints__?: {
 		readonly type_parameter: NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>;
 	};
+	readonly __slotHints__?: {
+		readonly typeParameters: SlotHint<
+			NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>,
+			false,
+			true
+		>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+	};
 	typeParameters(): NonEmptyArray<TypeParameter>;
 }
 
 export interface TupleTypeMembers {
 	readonly $type: TSKindId.TupleTypeMembers;
 	readonly _tuple_type_member: NonEmptyArray<TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type>;
+	readonly __slotHints__?: {
+		readonly tupleTypeMembers: SlotHint<
+			NonEmptyArray<
+				T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
+			>,
+			false,
+			true
+		>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+	};
 	tupleTypeMembers(): NonEmptyArray<TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type>;
 }
 
 export interface ImportClauseGroup {
 	readonly $type: TSKindId.ImportClauseGroup;
 	readonly _content: NamespaceImport | NamedImports;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.NamespaceImport | T.NamedImports>;
+	};
 	content(): NamespaceImport | NamedImports;
 }
 
@@ -8432,6 +9449,10 @@ export interface CatchClauseGroup {
 	readonly __looseHints__?: {
 		readonly type?: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly parameter: SlotHint<T.Identifier | T.ObjectPattern | T.ArrayPattern>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
+	};
 	parameter(): Identifier | ObjectPattern | ArrayPattern;
 	type(): TypeAnnotation | undefined;
 }
@@ -8439,6 +9460,9 @@ export interface CatchClauseGroup {
 export interface AmbientDeclarationGlobal {
 	readonly $type: TSKindId.AmbientDeclarationGlobal;
 	readonly _body: StatementBlock;
+	readonly __slotHints__?: {
+		readonly body: SlotHint<T.StatementBlock>;
+	};
 	body(): StatementBlock;
 }
 
@@ -8503,6 +9527,11 @@ export interface AmbientDeclarationModule {
 			| 'let'
 		)[];
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.PropertyIdentifier | T.PropertyIdentifier.Types>;
+		readonly type: SlotHint<NonNullable<T.AmbientDeclarationModule.Config>['type']>;
+		readonly terminator: SlotHint<NonNullable<T.AmbientDeclarationModule.Options>['terminator'], true>;
+	};
 	name(): PropertyIdentifier;
 	type(): Type;
 	terminator(): number | undefined;
@@ -8513,6 +9542,22 @@ export interface ObjectTypeContent {
 	readonly _members: NonEmptyArray<
 		ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature
 	>;
+	readonly __slotHints__?: {
+		readonly members: SlotHint<
+			NonEmptyArray<
+				| T.ExportStatement
+				| T.PropertySignature
+				| T.CallSignature
+				| T.ConstructSignature
+				| T.IndexSignature
+				| T.MethodSignature
+			>,
+			false,
+			true
+		>;
+		readonly separator: SlotHint<TSKindId.Comma | TSKindId.Semi>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both, true>;
+	};
 	members(): NonEmptyArray<
 		ExportStatement | PropertySignature | CallSignature | ConstructSignature | IndexSignature | MethodSignature
 	>;
@@ -8524,6 +9569,10 @@ export interface ExportStatementNamespaceExport {
 	readonly _terminator: number;
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier>;
+		readonly terminator: SlotHint<NonNullable<T.ExportStatementNamespaceExport.Options>['terminator']>;
 	};
 	name(): Identifier;
 	terminator(): number;
@@ -8539,6 +9588,11 @@ export interface ExportStatementTypeExport {
 	};
 	readonly __looseHints__?: {
 		readonly export_clause: readonly ExportSpecifier[];
+	};
+	readonly __slotHints__?: {
+		readonly exportClause: SlotHint<T.ExportClause>;
+		readonly source: SlotHint<T.String, true>;
+		readonly terminator: SlotHint<NonNullable<T.ExportStatementTypeExport.Options>['terminator']>;
 	};
 	exportClause(): ExportClause;
 	source(): String | undefined;
@@ -8558,6 +9612,10 @@ export interface ExportStatementEqualsExport {
 			| Expression;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression>>;
+		readonly terminator: SlotHint<NonNullable<T.ExportStatementEqualsExport.Options>['terminator']>;
+	};
 	expression(): Expression;
 	terminator(): number;
 }
@@ -8565,12 +9623,18 @@ export interface ExportStatementEqualsExport {
 export interface CommentLine {
 	readonly $type: TSKindId.CommentLine;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+	};
 	content(): string;
 }
 
 export interface CommentBlock {
 	readonly $type: TSKindId.CommentBlock;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+	};
 	content(): string;
 }
 
@@ -8581,6 +9645,10 @@ export interface LiteralTypeNegativeNumber {
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'-' | '+', TSKindId.Dash | TSKindId.Plus>;
 	};
+	readonly __slotHints__?: {
+		readonly operator: SlotHint<NonNullable<T.LiteralTypeNegativeNumber.Config>['operator']>;
+		readonly argument: SlotHint<T.Number>;
+	};
 	operator(): number;
 	argument(): Number;
 }
@@ -8589,6 +9657,10 @@ export interface NumberHex {
 	readonly $type: TSKindId.NumberHex;
 	readonly _prefix: '0x' | '0X';
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+		readonly prefix: SlotHint<'0x' | '0X'>;
+	};
 	prefix(): '0x' | '0X';
 	content(): string;
 }
@@ -8600,6 +9672,13 @@ export interface NumberFloatPoint {
 	readonly _marker?: 'e' | 'E';
 	readonly _sign?: '-' | '+';
 	readonly _exponent?: string;
+	readonly __slotHints__?: {
+		readonly integer: SlotHint<string | number | bigint>;
+		readonly fraction: SlotHint<string | number | bigint, true>;
+		readonly sign: SlotHint<'-' | '+', true>;
+		readonly exponent: SlotHint<string | number | bigint, true>;
+		readonly marker: SlotHint<'e' | 'E', true>;
+	};
 	integer(): string;
 	fraction(): string | undefined;
 	marker(): 'e' | 'E' | undefined;
@@ -8613,6 +9692,12 @@ export interface NumberFloatLeadingPoint {
 	readonly _marker?: 'e' | 'E';
 	readonly _sign?: '-' | '+';
 	readonly _exponent?: string;
+	readonly __slotHints__?: {
+		readonly fraction: SlotHint<string | number | bigint>;
+		readonly sign: SlotHint<'-' | '+', true>;
+		readonly exponent: SlotHint<string | number | bigint, true>;
+		readonly marker: SlotHint<'e' | 'E', true>;
+	};
 	fraction(): string;
 	marker(): 'e' | 'E' | undefined;
 	sign(): '-' | '+' | undefined;
@@ -8625,6 +9710,12 @@ export interface NumberFloatScientific {
 	readonly _marker: 'e' | 'E';
 	readonly _sign?: '-' | '+';
 	readonly _exponent: string;
+	readonly __slotHints__?: {
+		readonly integer: SlotHint<string | number | bigint>;
+		readonly sign: SlotHint<'-' | '+', true>;
+		readonly exponent: SlotHint<string | number | bigint>;
+		readonly marker: SlotHint<'e' | 'E'>;
+	};
 	integer(): string;
 	marker(): 'e' | 'E';
 	sign(): '-' | '+' | undefined;
@@ -8635,6 +9726,10 @@ export interface NumberBinary {
 	readonly $type: TSKindId.NumberBinary;
 	readonly _prefix: '0b' | '0B';
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+		readonly prefix: SlotHint<'0b' | '0B'>;
+	};
 	prefix(): '0b' | '0B';
 	content(): string;
 }
@@ -8643,6 +9738,10 @@ export interface NumberOctal {
 	readonly $type: TSKindId.NumberOctal;
 	readonly _prefix: '0o' | '0O';
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+		readonly prefix: SlotHint<'0o' | '0O'>;
+	};
 	prefix(): '0o' | '0O';
 	content(): string;
 }
@@ -8650,24 +9749,36 @@ export interface NumberOctal {
 export interface NumberBigintHex {
 	readonly $type: TSKindId.NumberBigintHex;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+	};
 	content(): string;
 }
 
 export interface NumberBigintBinary {
 	readonly $type: TSKindId.NumberBigintBinary;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+	};
 	content(): string;
 }
 
 export interface NumberBigintOctal {
 	readonly $type: TSKindId.NumberBigintOctal;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+	};
 	content(): string;
 }
 
 export interface NumberBigintDecimal {
 	readonly $type: TSKindId.NumberBigintDecimal;
 	readonly _content: string;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string | number | bigint>;
+	};
 	content(): string;
 }
 
@@ -8690,6 +9801,10 @@ export interface BinaryExpressionIn {
 			  >
 			| Expression;
 	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<NonNullable<T.BinaryExpressionIn.Config>['left']>;
+		readonly right: SlotHint<NonNullable<T.BinaryExpressionIn.Config>['right']>;
+	};
 	left(): Expression | PrivatePropertyIdentifier;
 	right(): Expression;
 }
@@ -8701,6 +9816,11 @@ export interface ClassBodyMethod {
 	readonly _terminator?: number;
 	readonly __inputHints__?: {
 		readonly terminator?: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly methodDefinition: SlotHint<T.MethodDefinition>;
+		readonly terminator: SlotHint<NonNullable<T.ClassBodyMethod.Options>['terminator'], true>;
 	};
 	decorators(): readonly Decorator[];
 	methodDefinition(): MethodDefinition;
@@ -8714,6 +9834,10 @@ export interface ClassBodyMethodSig {
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ',', TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma>;
 	};
+	readonly __slotHints__?: {
+		readonly methodSignature: SlotHint<T.MethodSignature>;
+		readonly terminator: SlotHint<NonNullable<T.ClassBodyMethodSig.Config>['terminator']>;
+	};
 	methodSignature(): MethodSignature;
 	terminator(): number;
 }
@@ -8724,6 +9848,12 @@ export interface ClassBodyMember {
 	readonly _terminator: number;
 	readonly __inputHints__?: {
 		readonly terminator: KindEnum<'\n' | ';' | ',', TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma>;
+	};
+	readonly __slotHints__?: {
+		readonly member: SlotHint<
+			T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition
+		>;
+		readonly terminator: SlotHint<NonNullable<T.ClassBodyMember.Options>['terminator']>;
 	};
 	member(): AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
 	terminator(): number;
@@ -8837,6 +9967,15 @@ export interface IndexSignatureColon {
 			  >
 			| Type;
 	};
+	readonly __slotHints__?: {
+		readonly sign: SlotHint<NonNullable<T.IndexSignatureColon.Config>['sign'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.IndexSignatureColon.Config>['readonlyMarker'], true>;
+		readonly name: SlotHint<NonNullable<T.IndexSignatureColon.Config>['name']>;
+		readonly indexType: SlotHint<NonNullable<T.IndexSignatureColon.Config>['indexType']>;
+		readonly type: SlotHint<
+			T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation
+		>;
+	};
 	sign(): number | undefined;
 	readonlyMarker(): boolean | undefined;
 	name():
@@ -8877,6 +10016,14 @@ export interface IndexSignatureMappedTypeClause {
 		readonly sign?: KindEnum<'-' | '+', TSKindId.Dash | TSKindId.Plus>;
 		readonly readonly_marker?: BaseBooleanKeyword<'readonly'>;
 	};
+	readonly __slotHints__?: {
+		readonly sign: SlotHint<NonNullable<T.IndexSignatureMappedTypeClause.Config>['sign'], true>;
+		readonly readonlyMarker: SlotHint<NonNullable<T.IndexSignatureMappedTypeClause.Config>['readonlyMarker'], true>;
+		readonly mappedTypeClause: SlotHint<T.MappedTypeClause>;
+		readonly type: SlotHint<
+			T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation
+		>;
+	};
 	sign(): number | undefined;
 	readonlyMarker(): boolean | undefined;
 	mappedTypeClause(): MappedTypeClause;
@@ -8890,6 +10037,10 @@ export interface ImportStatementClauseFrom {
 	readonly __looseHints__?: {
 		readonly import_clause: readonly (NamespaceImport | NamedImports | ImportClauseDefaultImport)[];
 	};
+	readonly __slotHints__?: {
+		readonly importClause: SlotHint<T.ImportClause>;
+		readonly source: SlotHint<T.String>;
+	};
 	importClause(): ImportClause;
 	source(): String;
 }
@@ -8901,6 +10052,10 @@ export interface ImportSpecifierName {
 	readonly __inputHints__?: {
 		readonly import_kind?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
 		readonly name: KindEnum<'type', TSKindId.TypeKeyword> | Identifier;
+	};
+	readonly __slotHints__?: {
+		readonly importKind: SlotHint<NonNullable<T.ImportSpecifierName.Config>['importKind'], true>;
+		readonly name: SlotHint<NonNullable<T.ImportSpecifierName.Config>['name']>;
 	};
 	importKind(): number | undefined;
 	name(): Identifier | TSKindId.TypeKeyword;
@@ -8915,6 +10070,11 @@ export interface ImportSpecifierAs {
 		readonly import_kind?: KindEnum<'type' | 'typeof', TSKindId.TypeKeyword | TSKindId.TypeofKeyword>;
 		readonly name: KindEnum<'type', TSKindId.TypeKeyword> | Identifier | String;
 		readonly alias: KindEnum<'type', TSKindId.TypeKeyword> | Identifier;
+	};
+	readonly __slotHints__?: {
+		readonly importKind: SlotHint<NonNullable<T.ImportSpecifierAs.Config>['importKind'], true>;
+		readonly name: SlotHint<NonNullable<T.ImportSpecifierAs.Config>['name']>;
+		readonly alias: SlotHint<NonNullable<T.ImportSpecifierAs.Config>['alias']>;
 	};
 	importKind(): number | undefined;
 	name(): Identifier | String | TSKindId.TypeKeyword;
@@ -8936,6 +10096,10 @@ export interface ParenthesizedExpressionTyped {
 	readonly __looseHints__?: {
 		readonly type?: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.ParenthesizedExpressionTyped.Config>['expression']>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
+	};
 	expression(): Expression;
 	type(): TypeAnnotation | undefined;
 }
@@ -8945,6 +10109,9 @@ export interface ParenthesizedExpressionSequence {
 	readonly _sequence_expression: SequenceExpression;
 	readonly __looseHints__?: {
 		readonly sequence_expression: readonly Expression[];
+	};
+	readonly __slotHints__?: {
+		readonly sequenceExpression: SlotHint<T.SequenceExpression>;
 	};
 	sequenceExpression(): SequenceExpression;
 }
@@ -8973,6 +10140,11 @@ export interface CallExpressionCall {
 		readonly type_arguments?: readonly Type[];
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
+	readonly __slotHints__?: {
+		readonly function: SlotHint<NonNullable<T.CallExpressionCall.Config>['function']>;
+		readonly typeArguments: SlotHint<T.TypeArguments, true>;
+		readonly arguments: SlotHint<T.Arguments>;
+	};
 	function(): Expression | TSKindId.Import;
 	typeArguments(): TypeArguments | undefined;
 	arguments(): Arguments;
@@ -8993,6 +10165,10 @@ export interface CallExpressionTemplateCall {
 	};
 	readonly __looseHints__?: {
 		readonly arguments: readonly (TemplateChars | EscapeSequence | TemplateSubstitution)[];
+	};
+	readonly __slotHints__?: {
+		readonly function: SlotHint<NonNullable<T.CallExpressionTemplateCall.Config>['function']>;
+		readonly arguments: SlotHint<T.TemplateString>;
 	};
 	function(): PrimaryExpression | NewExpression;
 	arguments(): TemplateString;
@@ -9015,6 +10191,11 @@ export interface CallExpressionMember {
 		readonly type_arguments?: readonly Type[];
 		readonly arguments: readonly (Expression | SpreadElement)[];
 	};
+	readonly __slotHints__?: {
+		readonly function: SlotHint<NonNullable<T.CallExpressionMember.Config>['function']>;
+		readonly typeArguments: SlotHint<T.TypeArguments, true>;
+		readonly arguments: SlotHint<T.Arguments>;
+	};
 	function(): PrimaryExpression;
 	typeArguments(): TypeArguments | undefined;
 	arguments(): Arguments;
@@ -9023,12 +10204,18 @@ export interface CallExpressionMember {
 export interface StringDouble {
 	readonly $type: TSKindId.StringDouble;
 	readonly _elements?: readonly (UnescapedDoubleStringFragment | EscapeSequence)[];
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<(T.UnescapedDoubleStringFragment | T.EscapeSequence)[], false, true>;
+	};
 	elements(): readonly (UnescapedDoubleStringFragment | EscapeSequence)[];
 }
 
 export interface StringSingle {
 	readonly $type: TSKindId.StringSingle;
 	readonly _elements?: readonly (UnescapedSingleStringFragment | EscapeSequence)[];
+	readonly __slotHints__?: {
+		readonly elements: SlotHint<(T.UnescapedSingleStringFragment | T.EscapeSequence)[], false, true>;
+	};
 	elements(): readonly (UnescapedSingleStringFragment | EscapeSequence)[];
 }
 
@@ -9044,6 +10231,10 @@ export interface UpdateExpressionPostfix {
 			  >
 			| Expression;
 		readonly operator: KindEnum<'++' | '--', TSKindId.PlusPlus | TSKindId.DashDash>;
+	};
+	readonly __slotHints__?: {
+		readonly argument: SlotHint<NonNullable<T.UpdateExpressionPostfix.Config>['argument']>;
+		readonly operator: SlotHint<NonNullable<T.UpdateExpressionPostfix.Config>['operator']>;
 	};
 	argument(): Expression;
 	operator(): number;
@@ -9061,6 +10252,10 @@ export interface UpdateExpressionPrefix {
 					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
 			  >
 			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly operator: SlotHint<NonNullable<T.UpdateExpressionPrefix.Config>['operator']>;
+		readonly argument: SlotHint<NonNullable<T.UpdateExpressionPrefix.Config>['argument']>;
 	};
 	operator(): number;
 	argument(): Expression;
@@ -9142,6 +10337,35 @@ export interface ArrowFunctionParameter {
 			  >
 			| Identifier;
 	};
+	readonly __slotHints__?: {
+		readonly parameter: SlotHint<
+			NonNullable<
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+				| T.Identifier
+			>
+		>;
+	};
 	parameter():
 		| TSKindId.DeclareKeyword
 		| TSKindId.NamespaceKeyword
@@ -9176,6 +10400,10 @@ export interface ClassHeritageExtendsClause {
 		readonly extends_clause: readonly ExtendsClauseSingle[];
 		readonly implements_clause?: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly extendsClause: SlotHint<T.ExtendsClause>;
+		readonly implementsClause: SlotHint<T.ImplementsClause, true>;
+	};
 	extendsClause(): ExtendsClause;
 	implementsClause(): ImplementsClause | undefined;
 }
@@ -9189,6 +10417,10 @@ export interface ImportClauseDefaultImport {
 	};
 	readonly __looseHints__?: {
 		readonly import_clause_group?: readonly (NamespaceImport | NamedImports)[];
+	};
+	readonly __slotHints__?: {
+		readonly identifier: SlotHint<NonNullable<T.ImportClauseDefaultImport.Config>['identifier']>;
+		readonly importClauseGroup: SlotHint<T.ImportClauseGroup, true>;
 	};
 	identifier(): Identifier | TSKindId.TypeKeyword;
 	importClauseGroup(): ImportClauseGroup | undefined;
@@ -9205,6 +10437,15 @@ export interface ExportStatementDefaultFrom {
 	readonly __inputHints__?: {
 		readonly automatic_semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<
+			| T.ExportStatementDefaultFromStarFrom
+			| T.ExportStatementDefaultFromNsFrom
+			| T.ExportStatementDefaultFromClauseFrom
+			| T.ExportClause
+		>;
+		readonly automaticSemicolon: SlotHint<NonNullable<T.ExportStatementDefaultFrom.Options>['automaticSemicolon']>;
+	};
 	content():
 		| ExportStatementDefaultFromStarFrom
 		| ExportStatementDefaultFromNsFrom
@@ -9217,6 +10458,10 @@ export interface ExportStatementDefaultDeclaration {
 	readonly $type: TSKindId.ExportStatementDefaultDeclaration;
 	readonly _decorator?: readonly Decorator[];
 	readonly _content: ExportStatementDefaultDeclarationDefaultKw | Declaration;
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<T.Decorator[], true, true>;
+		readonly content: SlotHint<T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration>;
+	};
 	decorators(): readonly Decorator[];
 	content(): ExportStatementDefaultDeclarationDefaultKw | Declaration;
 }
@@ -9224,6 +10469,9 @@ export interface ExportStatementDefaultDeclaration {
 export interface ExportStatementDefaultFromStarFrom {
 	readonly $type: TSKindId.ExportStatementDefaultFromStarFrom;
 	readonly _source: String;
+	readonly __slotHints__?: {
+		readonly source: SlotHint<T.String>;
+	};
 	source(): String;
 }
 
@@ -9233,6 +10481,10 @@ export interface ExportStatementDefaultFromNsFrom {
 	readonly _source: String;
 	readonly __looseHints__?: {
 		readonly namespace_export: readonly (Identifier | String)[];
+	};
+	readonly __slotHints__?: {
+		readonly namespaceExport: SlotHint<T.NamespaceExport>;
+		readonly source: SlotHint<T.String>;
 	};
 	namespaceExport(): NamespaceExport;
 	source(): String;
@@ -9245,6 +10497,10 @@ export interface ExportStatementDefaultFromClauseFrom {
 	readonly __looseHints__?: {
 		readonly export_clause: readonly ExportSpecifier[];
 	};
+	readonly __slotHints__?: {
+		readonly exportClause: SlotHint<T.ExportClause>;
+		readonly source: SlotHint<T.String>;
+	};
 	exportClause(): ExportClause;
 	source(): String;
 }
@@ -9252,6 +10508,9 @@ export interface ExportStatementDefaultFromClauseFrom {
 export interface ExportStatementDefaultDeclarationDefaultKw {
 	readonly $type: TSKindId.ExportStatementDefaultDeclarationDefaultKw;
 	readonly _content: ExportStatementDefaultDeclarationDefaultKwValue | Declaration;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>;
+	};
 	content(): ExportStatementDefaultDeclarationDefaultKwValue | Declaration;
 }
 
@@ -9267,6 +10526,12 @@ export interface ExportStatementDefaultDeclarationDefaultKwValue {
 			  >
 			| Expression;
 		readonly automatic_semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	readonly __slotHints__?: {
+		readonly value: SlotHint<NonNullable<T.Expression>>;
+		readonly automaticSemicolon: SlotHint<
+			NonNullable<T.ExportStatementDefaultDeclarationDefaultKwValue.Options>['automaticSemicolon']
+		>;
 	};
 	value(): Expression;
 	automaticSemicolon(): number;
@@ -9288,6 +10553,11 @@ export interface VariableDeclaratorPlain {
 	readonly __looseHints__?: {
 		readonly type?: readonly Type[];
 	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier | T.ObjectPattern | T.ArrayPattern>;
+		readonly type: SlotHint<T.TypeAnnotation, true>;
+		readonly value: SlotHint<NonNullable<T.VariableDeclaratorPlain.Config>['value'], true>;
+	};
 	name(): Identifier | ObjectPattern | ArrayPattern;
 	type(): TypeAnnotation | undefined;
 	value(): Expression | undefined;
@@ -9299,6 +10569,10 @@ export interface VariableDeclaratorDefinite {
 	readonly _type: TypeAnnotation;
 	readonly __looseHints__?: {
 		readonly type: readonly Type[];
+	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<T.Identifier>;
+		readonly type: SlotHint<T.TypeAnnotation>;
 	};
 	name(): Identifier;
 	type(): TypeAnnotation;
@@ -9318,6 +10592,11 @@ export interface ForHeaderLhs {
 			  >
 			| Expression
 			| SequenceExpression;
+	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<T.LhsExpression | T.ParenthesizedExpression>;
+		readonly operator: SlotHint<NonNullable<T.ForHeaderLhs.Config>['operator']>;
+		readonly right: SlotHint<NonNullable<T.ForHeaderLhs.Config>['right']>;
 	};
 	left(): LhsExpression | ParenthesizedExpression;
 	operator(): number;
@@ -9346,6 +10625,12 @@ export interface ForHeaderVarKind {
 			| Expression
 			| SequenceExpression;
 	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<T.Identifier | T.ObjectPattern | T.ArrayPattern>;
+		readonly value: SlotHint<NonNullable<T.ForHeaderVarKind.Config>['value'], true>;
+		readonly operator: SlotHint<NonNullable<T.ForHeaderVarKind.Config>['operator']>;
+		readonly right: SlotHint<NonNullable<T.ForHeaderVarKind.Config>['right']>;
+	};
 	left(): Identifier | ObjectPattern | ArrayPattern;
 	value(): Expression | undefined;
 	operator(): number;
@@ -9370,6 +10655,13 @@ export interface ForHeaderLetConstKind {
 			  >
 			| Expression
 			| SequenceExpression;
+	};
+	readonly __slotHints__?: {
+		readonly kind: SlotHint<NonNullable<T.ForHeaderLetConstKind.Config>['kind']>;
+		readonly left: SlotHint<T.Identifier | T.ObjectPattern | T.ArrayPattern>;
+		readonly automaticSemicolon: SlotHint<NonNullable<T.ForHeaderLetConstKind.Config>['automaticSemicolon'], true>;
+		readonly operator: SlotHint<NonNullable<T.ForHeaderLetConstKind.Config>['operator']>;
+		readonly right: SlotHint<NonNullable<T.ForHeaderLetConstKind.Config>['right']>;
 	};
 	kind(): number;
 	left(): Identifier | ObjectPattern | ArrayPattern;
@@ -9453,6 +10745,35 @@ export interface StatementIdentifier {
 					| TSKindId.LetKeyword
 			  >
 			| Identifier;
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<
+			NonNullable<
+				| T.Identifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+			>
+		>;
 	};
 	readonly __aliasContent__?: StatementIdentifier.Types;
 	content():
@@ -9557,6 +10878,35 @@ export interface ShorthandPropertyIdentifier {
 			  >
 			| Identifier;
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<
+			NonNullable<
+				| T.Identifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+			>
+		>;
+	};
 	readonly __aliasContent__?: ShorthandPropertyIdentifier.Types;
 	content():
 		| Identifier
@@ -9659,6 +11009,35 @@ export interface ShorthandPropertyIdentifierPattern {
 					| TSKindId.LetKeyword
 			  >
 			| Identifier;
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<
+			NonNullable<
+				| T.Identifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+			>
+		>;
 	};
 	readonly __aliasContent__?: ShorthandPropertyIdentifierPattern.Types;
 	content():
@@ -9763,6 +11142,35 @@ export interface PropertyIdentifier {
 			  >
 			| Identifier;
 	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<
+			NonNullable<
+				| T.Identifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+			>
+		>;
+	};
 	readonly __aliasContent__?: PropertyIdentifier.Types;
 	content():
 		| Identifier
@@ -9793,6 +11201,9 @@ export interface PropertyIdentifier {
 export interface TypeIdentifier {
 	readonly $type: TSKindId.TypeIdentifier;
 	readonly _content: Identifier;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.Identifier>;
+	};
 	readonly __aliasContent__?: TypeIdentifier.Types;
 	content(): Identifier;
 }
@@ -9800,6 +11211,9 @@ export interface TypeIdentifier {
 export interface InterfaceBody {
 	readonly $type: TSKindId.InterfaceBody;
 	readonly _content: ObjectType;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<T.ObjectType>;
+	};
 	readonly __aliasContent__?: InterfaceBody.Types;
 	content(): ObjectType;
 }
@@ -10062,90 +11476,134 @@ export type NumberBigint = NumberBigintHex | NumberBigintBinary | NumberBigintOc
 
 export namespace ExportStatement {
 	export type Kind = 'export_statement';
+	export type Bound = SupertypeSurface<ExportStatement, BoundByKindId>;
+	export type Parsed = SupertypeSurface<ExportStatement, ParsedByKindId>;
 }
 
 export namespace Declaration {
 	export type Kind = 'declaration';
+	export type Bound = SupertypeSurface<Declaration, BoundByKindId>;
+	export type Parsed = SupertypeSurface<Declaration, ParsedByKindId>;
 }
 
 export namespace ImportSpecifier {
 	export type Kind = 'import_specifier';
+	export type Bound = SupertypeSurface<ImportSpecifier, BoundByKindId>;
+	export type Parsed = SupertypeSurface<ImportSpecifier, ParsedByKindId>;
 }
 
 export namespace Statement {
 	export type Kind = 'statement';
+	export type Bound = SupertypeSurface<Statement, BoundByKindId>;
+	export type Parsed = SupertypeSurface<Statement, ParsedByKindId>;
 }
 
 export namespace VariableDeclarator {
 	export type Kind = 'variable_declarator';
+	export type Bound = SupertypeSurface<VariableDeclarator, BoundByKindId>;
+	export type Parsed = SupertypeSurface<VariableDeclarator, ParsedByKindId>;
 }
 
 export namespace ForHeader {
 	export type Kind = '_for_header';
+	export type Bound = SupertypeSurface<ForHeader, BoundByKindId>;
+	export type Parsed = SupertypeSurface<ForHeader, ParsedByKindId>;
 }
 
 export namespace ParenthesizedExpression {
 	export type Kind = 'parenthesized_expression';
+	export type Bound = SupertypeSurface<ParenthesizedExpression, BoundByKindId>;
+	export type Parsed = SupertypeSurface<ParenthesizedExpression, ParsedByKindId>;
 }
 
 export namespace Expression {
 	export type Kind = 'expression';
+	export type Bound = SupertypeSurface<Expression, BoundByKindId>;
+	export type Parsed = SupertypeSurface<Expression, ParsedByKindId>;
 }
 
 export namespace PrimaryExpression {
 	export type Kind = 'primary_expression';
+	export type Bound = SupertypeSurface<PrimaryExpression, BoundByKindId>;
+	export type Parsed = SupertypeSurface<PrimaryExpression, ParsedByKindId>;
 }
 
 export namespace CallExpression {
 	export type Kind = 'call_expression';
+	export type Bound = SupertypeSurface<CallExpression, BoundByKindId>;
+	export type Parsed = SupertypeSurface<CallExpression, ParsedByKindId>;
 }
 
 export namespace UpdateExpression {
 	export type Kind = 'update_expression';
+	export type Bound = SupertypeSurface<UpdateExpression, BoundByKindId>;
+	export type Parsed = SupertypeSurface<UpdateExpression, ParsedByKindId>;
 }
 
 export namespace String {
 	export type Kind = 'string';
+	export type Bound = SupertypeSurface<String, BoundByKindId>;
+	export type Parsed = SupertypeSurface<String, ParsedByKindId>;
 }
 
 export namespace Comment {
 	export type Kind = 'comment';
+	export type Bound = SupertypeSurface<Comment, BoundByKindId>;
+	export type Parsed = SupertypeSurface<Comment, ParsedByKindId>;
 }
 
 export namespace Number {
 	export type Kind = 'number';
+	export type Bound = SupertypeSurface<Number, BoundByKindId>;
+	export type Parsed = SupertypeSurface<Number, ParsedByKindId>;
 }
 
 export namespace MetaProperty {
 	export type Kind = 'meta_property';
+	export type Bound = SupertypeSurface<MetaProperty, BoundByKindId>;
+	export type Parsed = SupertypeSurface<MetaProperty, ParsedByKindId>;
 }
 
 export namespace Pattern {
 	export type Kind = 'pattern';
+	export type Bound = SupertypeSurface<Pattern, BoundByKindId>;
+	export type Parsed = SupertypeSurface<Pattern, ParsedByKindId>;
 }
 
 export namespace Type {
 	export type Kind = 'type';
+	export type Bound = SupertypeSurface<Type, BoundByKindId>;
+	export type Parsed = SupertypeSurface<Type, ParsedByKindId>;
 }
 
 export namespace PrimaryType {
 	export type Kind = 'primary_type';
+	export type Bound = SupertypeSurface<PrimaryType, BoundByKindId>;
+	export type Parsed = SupertypeSurface<PrimaryType, ParsedByKindId>;
 }
 
 export namespace IndexSignature {
 	export type Kind = 'index_signature';
+	export type Bound = SupertypeSurface<IndexSignature, BoundByKindId>;
+	export type Parsed = SupertypeSurface<IndexSignature, ParsedByKindId>;
 }
 
 export namespace Whitespace {
 	export type Kind = '_whitespace';
+	export type Bound = SupertypeSurface<Whitespace, BoundByKindId>;
+	export type Parsed = SupertypeSurface<Whitespace, ParsedByKindId>;
 }
 
 export namespace ExportStatementDefault {
 	export type Kind = 'export_statement_default';
+	export type Bound = SupertypeSurface<ExportStatementDefault, BoundByKindId>;
+	export type Parsed = SupertypeSurface<ExportStatementDefault, ParsedByKindId>;
 }
 
 export namespace NumberBigint {
 	export type Kind = 'number_bigint';
+	export type Bound = SupertypeSurface<NumberBigint, BoundByKindId>;
+	export type Parsed = SupertypeSurface<NumberBigint, ParsedByKindId>;
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
@@ -12965,2420 +14423,2860 @@ export interface ProgramNs extends NodeNs<
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Program.Built,
+	Program.Bound,
 	Program.BuildArgs,
 	Program.LooseArgs,
 	never,
-	TSKindId.Program
+	TSKindId.Program,
+	Program.Parsed,
+	EmptyProgram
 > {}
 export interface HashBangLineNs extends NodeNs<
 	HashBangLine,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	HashBangLine.Built,
+	HashBangLine.Bound,
 	HashBangLine.BuildArgs,
 	HashBangLine.LooseArgs,
 	'content',
-	TSKindId.HashBangLine
+	TSKindId.HashBangLine,
+	HashBangLine.Parsed,
+	never
 > {}
 export interface NamespaceExportNs extends NodeNs<
 	NamespaceExport,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NamespaceExport.Built,
+	NamespaceExport.Bound,
 	NamespaceExport.BuildArgs,
 	NamespaceExport.LooseArgs,
 	'module_export_name',
-	TSKindId.NamespaceExport
+	TSKindId.NamespaceExport,
+	NamespaceExport.Parsed,
+	never
 > {}
 export interface ExportClauseNs extends NodeNs<
 	ExportClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportClause.Built,
+	ExportClause.Bound,
 	ExportClause.BuildArgs,
 	ExportClause.LooseArgs,
 	'export_specifiers',
-	TSKindId.ExportClause
+	TSKindId.ExportClause,
+	ExportClause.Parsed,
+	EmptyExportClause
 > {}
 export interface ExportSpecifierNs extends NodeNs<
 	ExportSpecifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportSpecifier.Built,
+	ExportSpecifier.Bound,
 	ExportSpecifier.BuildArgs,
 	ExportSpecifier.LooseArgs,
 	never,
-	TSKindId.ExportSpecifier
+	TSKindId.ExportSpecifier,
+	ExportSpecifier.Parsed,
+	never
 > {}
 export interface ImportStatementNs extends NodeNs<
 	ImportStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ImportStatement.Built,
+	ImportStatement.Bound,
 	ImportStatement.BuildArgs,
 	ImportStatement.LooseArgs,
 	never,
-	TSKindId.ImportStatement
+	TSKindId.ImportStatement,
+	ImportStatement.Parsed,
+	never
 > {}
 export interface ImportClauseNs extends NodeNs<
 	ImportClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ImportClause.Built,
+	ImportClause.Bound,
 	ImportClause.BuildArgs,
 	ImportClause.LooseArgs,
 	'content',
-	TSKindId.ImportClause
+	TSKindId.ImportClause,
+	ImportClause.Parsed,
+	never
 > {}
 export interface NamespaceImportNs extends NodeNs<
 	NamespaceImport,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NamespaceImport.Built,
+	NamespaceImport.Bound,
 	NamespaceImport.BuildArgs,
 	NamespaceImport.LooseArgs,
 	'name',
-	TSKindId.NamespaceImport
+	TSKindId.NamespaceImport,
+	NamespaceImport.Parsed,
+	never
 > {}
 export interface NamedImportsNs extends NodeNs<
 	NamedImports,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NamedImports.Built,
+	NamedImports.Bound,
 	NamedImports.BuildArgs,
 	NamedImports.LooseArgs,
 	'import_specifiers',
-	TSKindId.NamedImports
+	TSKindId.NamedImports,
+	NamedImports.Parsed,
+	EmptyNamedImports
 > {}
 export interface ImportAttributeNs extends NodeNs<
 	ImportAttribute,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ImportAttribute.Built,
+	ImportAttribute.Bound,
 	ImportAttribute.BuildArgs,
 	ImportAttribute.LooseArgs,
 	never,
-	TSKindId.ImportAttribute
+	TSKindId.ImportAttribute,
+	ImportAttribute.Parsed,
+	never
 > {}
 export interface ExpressionStatementNs extends NodeNs<
 	ExpressionStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExpressionStatement.Built,
+	ExpressionStatement.Bound,
 	ExpressionStatement.BuildArgs,
 	ExpressionStatement.LooseArgs,
 	'expression',
-	TSKindId.ExpressionStatement
+	TSKindId.ExpressionStatement,
+	ExpressionStatement.Parsed,
+	never
 > {}
 export interface VariableDeclarationNs extends NodeNs<
 	VariableDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	VariableDeclaration.Built,
+	VariableDeclaration.Bound,
 	VariableDeclaration.BuildArgs,
 	VariableDeclaration.LooseArgs,
 	never,
-	TSKindId.VariableDeclaration
+	TSKindId.VariableDeclaration,
+	VariableDeclaration.Parsed,
+	never
 > {}
 export interface LexicalDeclarationNs extends NodeNs<
 	LexicalDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	LexicalDeclaration.Built,
+	LexicalDeclaration.Bound,
 	LexicalDeclaration.BuildArgs,
 	LexicalDeclaration.LooseArgs,
 	never,
-	TSKindId.LexicalDeclaration
+	TSKindId.LexicalDeclaration,
+	LexicalDeclaration.Parsed,
+	never
 > {}
 export interface StatementBlockNs extends NodeNs<
 	StatementBlock,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	StatementBlock.Built,
+	StatementBlock.Bound,
 	StatementBlock.BuildArgs,
 	StatementBlock.LooseArgs,
 	never,
-	TSKindId.StatementBlock
+	TSKindId.StatementBlock,
+	StatementBlock.Parsed,
+	EmptyStatementBlock
 > {}
 export interface ElseClauseNs extends NodeNs<
 	ElseClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ElseClause.Built,
+	ElseClause.Bound,
 	ElseClause.BuildArgs,
 	ElseClause.LooseArgs,
 	'body',
-	TSKindId.ElseClause
+	TSKindId.ElseClause,
+	ElseClause.Parsed,
+	never
 > {}
 export interface IfStatementNs extends NodeNs<
 	IfStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	IfStatement.Built,
+	IfStatement.Bound,
 	IfStatement.BuildArgs,
 	IfStatement.LooseArgs,
 	never,
-	TSKindId.IfStatement
+	TSKindId.IfStatement,
+	IfStatement.Parsed,
+	never
 > {}
 export interface SwitchStatementNs extends NodeNs<
 	SwitchStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	SwitchStatement.Built,
+	SwitchStatement.Bound,
 	SwitchStatement.BuildArgs,
 	SwitchStatement.LooseArgs,
 	never,
-	TSKindId.SwitchStatement
+	TSKindId.SwitchStatement,
+	SwitchStatement.Parsed,
+	never
 > {}
 export interface ForStatementNs extends NodeNs<
 	ForStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ForStatement.Built,
+	ForStatement.Bound,
 	ForStatement.BuildArgs,
 	ForStatement.LooseArgs,
 	never,
-	TSKindId.ForStatement
+	TSKindId.ForStatement,
+	ForStatement.Parsed,
+	never
 > {}
 export interface ForInStatementNs extends NodeNs<
 	ForInStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ForInStatement.Built,
+	ForInStatement.Bound,
 	ForInStatement.BuildArgs,
 	ForInStatement.LooseArgs,
 	never,
-	TSKindId.ForInStatement
+	TSKindId.ForInStatement,
+	ForInStatement.Parsed,
+	never
 > {}
 export interface WhileStatementNs extends NodeNs<
 	WhileStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	WhileStatement.Built,
+	WhileStatement.Bound,
 	WhileStatement.BuildArgs,
 	WhileStatement.LooseArgs,
 	never,
-	TSKindId.WhileStatement
+	TSKindId.WhileStatement,
+	WhileStatement.Parsed,
+	never
 > {}
 export interface DoStatementNs extends NodeNs<
 	DoStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	DoStatement.Built,
+	DoStatement.Bound,
 	DoStatement.BuildArgs,
 	DoStatement.LooseArgs,
 	never,
-	TSKindId.DoStatement
+	TSKindId.DoStatement,
+	DoStatement.Parsed,
+	never
 > {}
 export interface TryStatementNs extends NodeNs<
 	TryStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TryStatement.Built,
+	TryStatement.Bound,
 	TryStatement.BuildArgs,
 	TryStatement.LooseArgs,
 	never,
-	TSKindId.TryStatement
+	TSKindId.TryStatement,
+	TryStatement.Parsed,
+	never
 > {}
 export interface WithStatementNs extends NodeNs<
 	WithStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	WithStatement.Built,
+	WithStatement.Bound,
 	WithStatement.BuildArgs,
 	WithStatement.LooseArgs,
 	never,
-	TSKindId.WithStatement
+	TSKindId.WithStatement,
+	WithStatement.Parsed,
+	never
 > {}
 export interface BreakStatementNs extends NodeNs<
 	BreakStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	BreakStatement.Built,
+	BreakStatement.Bound,
 	BreakStatement.BuildArgs,
 	BreakStatement.LooseArgs,
 	'label',
-	TSKindId.BreakStatement
+	TSKindId.BreakStatement,
+	BreakStatement.Parsed,
+	never
 > {}
 export interface ContinueStatementNs extends NodeNs<
 	ContinueStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ContinueStatement.Built,
+	ContinueStatement.Bound,
 	ContinueStatement.BuildArgs,
 	ContinueStatement.LooseArgs,
 	'label',
-	TSKindId.ContinueStatement
+	TSKindId.ContinueStatement,
+	ContinueStatement.Parsed,
+	never
 > {}
 export interface DebuggerStatementNs extends NodeNs<
 	DebuggerStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	DebuggerStatement.Built,
+	DebuggerStatement.Bound,
 	DebuggerStatement.BuildArgs,
 	DebuggerStatement.LooseArgs,
 	'terminator',
-	TSKindId.DebuggerStatement
+	TSKindId.DebuggerStatement,
+	DebuggerStatement.Parsed,
+	never
 > {}
 export interface ReturnStatementNs extends NodeNs<
 	ReturnStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ReturnStatement.Built,
+	ReturnStatement.Bound,
 	ReturnStatement.BuildArgs,
 	ReturnStatement.LooseArgs,
 	'expression',
-	TSKindId.ReturnStatement
+	TSKindId.ReturnStatement,
+	ReturnStatement.Parsed,
+	never
 > {}
 export interface ThrowStatementNs extends NodeNs<
 	ThrowStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ThrowStatement.Built,
+	ThrowStatement.Bound,
 	ThrowStatement.BuildArgs,
 	ThrowStatement.LooseArgs,
 	'expression',
-	TSKindId.ThrowStatement
+	TSKindId.ThrowStatement,
+	ThrowStatement.Parsed,
+	never
 > {}
 export interface LabeledStatementNs extends NodeNs<
 	LabeledStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	LabeledStatement.Built,
+	LabeledStatement.Bound,
 	LabeledStatement.BuildArgs,
 	LabeledStatement.LooseArgs,
 	never,
-	TSKindId.LabeledStatement
+	TSKindId.LabeledStatement,
+	LabeledStatement.Parsed,
+	never
 > {}
 export interface SwitchBodyNs extends NodeNs<
 	SwitchBody,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	SwitchBody.Built,
+	SwitchBody.Bound,
 	SwitchBody.BuildArgs,
 	SwitchBody.LooseArgs,
 	never,
-	TSKindId.SwitchBody
+	TSKindId.SwitchBody,
+	SwitchBody.Parsed,
+	EmptySwitchBody
 > {}
 export interface SwitchCaseNs extends NodeNs<
 	SwitchCase,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	SwitchCase.Built,
+	SwitchCase.Bound,
 	SwitchCase.BuildArgs,
 	SwitchCase.LooseArgs,
 	never,
-	TSKindId.SwitchCase
+	TSKindId.SwitchCase,
+	SwitchCase.Parsed,
+	never
 > {}
 export interface SwitchDefaultNs extends NodeNs<
 	SwitchDefault,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	SwitchDefault.Built,
+	SwitchDefault.Bound,
 	SwitchDefault.BuildArgs,
 	SwitchDefault.LooseArgs,
 	never,
-	TSKindId.SwitchDefault
+	TSKindId.SwitchDefault,
+	SwitchDefault.Parsed,
+	never
 > {}
 export interface CatchClauseNs extends NodeNs<
 	CatchClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	CatchClause.Built,
+	CatchClause.Bound,
 	CatchClause.BuildArgs,
 	CatchClause.LooseArgs,
 	never,
-	TSKindId.CatchClause
+	TSKindId.CatchClause,
+	CatchClause.Parsed,
+	never
 > {}
 export interface FinallyClauseNs extends NodeNs<
 	FinallyClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	FinallyClause.Built,
+	FinallyClause.Bound,
 	FinallyClause.BuildArgs,
 	FinallyClause.LooseArgs,
 	'body',
-	TSKindId.FinallyClause
+	TSKindId.FinallyClause,
+	FinallyClause.Parsed,
+	never
 > {}
 export interface YieldExpressionNs extends NodeNs<
 	YieldExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	YieldExpression.Built,
+	YieldExpression.Bound,
 	YieldExpression.BuildArgs,
 	YieldExpression.LooseArgs,
 	'expression',
-	TSKindId.YieldExpression
+	TSKindId.YieldExpression,
+	YieldExpression.Parsed,
+	never
 > {}
 export interface ObjectNs extends NodeNs<
 	Object,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Object.Built,
+	Object.Bound,
 	Object.BuildArgs,
 	Object.LooseArgs,
 	never,
-	TSKindId.Object
+	TSKindId.Object,
+	Object.Parsed,
+	EmptyObject
 > {}
 export interface ObjectPatternNs extends NodeNs<
 	ObjectPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ObjectPattern.Built,
+	ObjectPattern.Bound,
 	ObjectPattern.BuildArgs,
 	ObjectPattern.LooseArgs,
 	never,
-	TSKindId.ObjectPattern
+	TSKindId.ObjectPattern,
+	ObjectPattern.Parsed,
+	EmptyObjectPattern
 > {}
 export interface AssignmentPatternNs extends NodeNs<
 	AssignmentPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	AssignmentPattern.Built,
+	AssignmentPattern.Bound,
 	AssignmentPattern.BuildArgs,
 	AssignmentPattern.LooseArgs,
 	never,
-	TSKindId.AssignmentPattern
+	TSKindId.AssignmentPattern,
+	AssignmentPattern.Parsed,
+	never
 > {}
 export interface ObjectAssignmentPatternNs extends NodeNs<
 	ObjectAssignmentPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ObjectAssignmentPattern.Built,
+	ObjectAssignmentPattern.Bound,
 	ObjectAssignmentPattern.BuildArgs,
 	ObjectAssignmentPattern.LooseArgs,
 	never,
-	TSKindId.ObjectAssignmentPattern
+	TSKindId.ObjectAssignmentPattern,
+	ObjectAssignmentPattern.Parsed,
+	never
 > {}
 export interface ArrayNs extends NodeNs<
 	Array,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Array.Built,
+	Array.Bound,
 	Array.BuildArgs,
 	Array.LooseArgs,
 	never,
-	TSKindId.Array
+	TSKindId.Array,
+	Array.Parsed,
+	EmptyArray
 > {}
 export interface ArrayPatternNs extends NodeNs<
 	ArrayPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ArrayPattern.Built,
+	ArrayPattern.Bound,
 	ArrayPattern.BuildArgs,
 	ArrayPattern.LooseArgs,
 	never,
-	TSKindId.ArrayPattern
+	TSKindId.ArrayPattern,
+	ArrayPattern.Parsed,
+	EmptyArrayPattern
 > {}
 export interface NestedIdentifierNs extends NodeNs<
 	NestedIdentifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NestedIdentifier.Built,
+	NestedIdentifier.Bound,
 	NestedIdentifier.BuildArgs,
 	NestedIdentifier.LooseArgs,
 	never,
-	TSKindId.NestedIdentifier
+	TSKindId.NestedIdentifier,
+	NestedIdentifier.Parsed,
+	never
 > {}
 export interface ClassNs extends NodeNs<
 	Class,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Class.Built,
+	Class.Bound,
 	Class.BuildArgs,
 	Class.LooseArgs,
 	never,
-	TSKindId.Class
+	TSKindId.Class,
+	Class.Parsed,
+	never
 > {}
 export interface ClassDeclarationNs extends NodeNs<
 	ClassDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ClassDeclaration.Built,
+	ClassDeclaration.Bound,
 	ClassDeclaration.BuildArgs,
 	ClassDeclaration.LooseArgs,
 	never,
-	TSKindId.ClassDeclaration
+	TSKindId.ClassDeclaration,
+	ClassDeclaration.Parsed,
+	never
 > {}
 export interface ClassHeritageNs extends NodeNs<
 	ClassHeritage,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ClassHeritage.Built,
+	ClassHeritage.Bound,
 	ClassHeritage.BuildArgs,
 	ClassHeritage.LooseArgs,
 	'content',
-	TSKindId.ClassHeritage
+	TSKindId.ClassHeritage,
+	ClassHeritage.Parsed,
+	never
 > {}
 export interface FunctionExpressionNs extends NodeNs<
 	FunctionExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	FunctionExpression.Built,
+	FunctionExpression.Bound,
 	FunctionExpression.BuildArgs,
 	FunctionExpression.LooseArgs,
 	never,
-	TSKindId.FunctionExpression
+	TSKindId.FunctionExpression,
+	FunctionExpression.Parsed,
+	never
 > {}
 export interface FunctionDeclarationNs extends NodeNs<
 	FunctionDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	FunctionDeclaration.Built,
+	FunctionDeclaration.Bound,
 	FunctionDeclaration.BuildArgs,
 	FunctionDeclaration.LooseArgs,
 	never,
-	TSKindId.FunctionDeclaration
+	TSKindId.FunctionDeclaration,
+	FunctionDeclaration.Parsed,
+	never
 > {}
 export interface GeneratorFunctionNs extends NodeNs<
 	GeneratorFunction,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	GeneratorFunction.Built,
+	GeneratorFunction.Bound,
 	GeneratorFunction.BuildArgs,
 	GeneratorFunction.LooseArgs,
 	never,
-	TSKindId.GeneratorFunction
+	TSKindId.GeneratorFunction,
+	GeneratorFunction.Parsed,
+	never
 > {}
 export interface GeneratorFunctionDeclarationNs extends NodeNs<
 	GeneratorFunctionDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	GeneratorFunctionDeclaration.Built,
+	GeneratorFunctionDeclaration.Bound,
 	GeneratorFunctionDeclaration.BuildArgs,
 	GeneratorFunctionDeclaration.LooseArgs,
 	never,
-	TSKindId.GeneratorFunctionDeclaration
+	TSKindId.GeneratorFunctionDeclaration,
+	GeneratorFunctionDeclaration.Parsed,
+	never
 > {}
 export interface ArrowFunctionNs extends NodeNs<
 	ArrowFunction,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ArrowFunction.Built,
+	ArrowFunction.Bound,
 	ArrowFunction.BuildArgs,
 	ArrowFunction.LooseArgs,
 	never,
-	TSKindId.ArrowFunction
+	TSKindId.ArrowFunction,
+	ArrowFunction.Parsed,
+	never
 > {}
 export interface NewExpressionNs extends NodeNs<
 	NewExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NewExpression.Built,
+	NewExpression.Bound,
 	NewExpression.BuildArgs,
 	NewExpression.LooseArgs,
 	never,
-	TSKindId.NewExpression
+	TSKindId.NewExpression,
+	NewExpression.Parsed,
+	never
 > {}
 export interface AwaitExpressionNs extends NodeNs<
 	AwaitExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	AwaitExpression.Built,
+	AwaitExpression.Bound,
 	AwaitExpression.BuildArgs,
 	AwaitExpression.LooseArgs,
 	'expression',
-	TSKindId.AwaitExpression
+	TSKindId.AwaitExpression,
+	AwaitExpression.Parsed,
+	never
 > {}
 export interface MemberExpressionNs extends NodeNs<
 	MemberExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	MemberExpression.Built,
+	MemberExpression.Bound,
 	MemberExpression.BuildArgs,
 	MemberExpression.LooseArgs,
 	never,
-	TSKindId.MemberExpression
+	TSKindId.MemberExpression,
+	MemberExpression.Parsed,
+	never
 > {}
 export interface SubscriptExpressionNs extends NodeNs<
 	SubscriptExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	SubscriptExpression.Built,
+	SubscriptExpression.Bound,
 	SubscriptExpression.BuildArgs,
 	SubscriptExpression.LooseArgs,
 	never,
-	TSKindId.SubscriptExpression
+	TSKindId.SubscriptExpression,
+	SubscriptExpression.Parsed,
+	never
 > {}
 export interface LhsExpressionNs extends NodeNs<
 	LhsExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	LhsExpression.Built,
+	LhsExpression.Bound,
 	LhsExpression.BuildArgs,
 	LhsExpression.LooseArgs,
 	'content',
-	TSKindId.LhsExpression
+	TSKindId.LhsExpression,
+	LhsExpression.Parsed,
+	never
 > {}
 export interface AssignmentExpressionNs extends NodeNs<
 	AssignmentExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	AssignmentExpression.Built,
+	AssignmentExpression.Bound,
 	AssignmentExpression.BuildArgs,
 	AssignmentExpression.LooseArgs,
 	never,
-	TSKindId.AssignmentExpression
+	TSKindId.AssignmentExpression,
+	AssignmentExpression.Parsed,
+	never
 > {}
 export interface AugmentedAssignmentExpressionNs extends NodeNs<
 	AugmentedAssignmentExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	AugmentedAssignmentExpression.Built,
+	AugmentedAssignmentExpression.Bound,
 	AugmentedAssignmentExpression.BuildArgs,
 	AugmentedAssignmentExpression.LooseArgs,
 	never,
-	TSKindId.AugmentedAssignmentExpression
+	TSKindId.AugmentedAssignmentExpression,
+	AugmentedAssignmentExpression.Parsed,
+	never
 > {}
 export interface SpreadElementNs extends NodeNs<
 	SpreadElement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	SpreadElement.Built,
+	SpreadElement.Bound,
 	SpreadElement.BuildArgs,
 	SpreadElement.LooseArgs,
 	'expression',
-	TSKindId.SpreadElement
+	TSKindId.SpreadElement,
+	SpreadElement.Parsed,
+	never
 > {}
 export interface TernaryExpressionNs extends NodeNs<
 	TernaryExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TernaryExpression.Built,
+	TernaryExpression.Bound,
 	TernaryExpression.BuildArgs,
 	TernaryExpression.LooseArgs,
 	never,
-	TSKindId.TernaryExpression
+	TSKindId.TernaryExpression,
+	TernaryExpression.Parsed,
+	never
 > {}
 export interface BinaryExpressionNs extends NodeNs<
 	BinaryExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	BinaryExpression.Built,
+	BinaryExpression.Bound,
 	BinaryExpression.BuildArgs,
 	BinaryExpression.LooseArgs,
 	never,
-	TSKindId.BinaryExpression
+	TSKindId.BinaryExpression,
+	BinaryExpression.Parsed,
+	never
 > {}
 export interface UnaryExpressionNs extends NodeNs<
 	UnaryExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	UnaryExpression.Built,
+	UnaryExpression.Bound,
 	UnaryExpression.BuildArgs,
 	UnaryExpression.LooseArgs,
 	never,
-	TSKindId.UnaryExpression
+	TSKindId.UnaryExpression,
+	UnaryExpression.Parsed,
+	never
 > {}
 export interface SequenceExpressionNs extends NodeNs<
 	SequenceExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	SequenceExpression.Built,
+	SequenceExpression.Bound,
 	SequenceExpression.BuildArgs,
 	SequenceExpression.LooseArgs,
 	never,
-	TSKindId.SequenceExpression
+	TSKindId.SequenceExpression,
+	SequenceExpression.Parsed,
+	never
 > {}
 export interface EscapeSequenceNs extends NodeNs<
 	EscapeSequence,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	EscapeSequence.Built,
+	EscapeSequence.Bound,
 	EscapeSequence.BuildArgs,
 	EscapeSequence.LooseArgs,
 	'content',
-	TSKindId.EscapeSequence
+	TSKindId.EscapeSequence,
+	EscapeSequence.Parsed,
+	never
 > {}
 export interface TemplateStringNs extends NodeNs<
 	TemplateString,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TemplateString.Built,
+	TemplateString.Bound,
 	TemplateString.BuildArgs,
 	TemplateString.LooseArgs,
 	never,
-	TSKindId.TemplateString
+	TSKindId.TemplateString,
+	TemplateString.Parsed,
+	never
 > {}
 export interface TemplateSubstitutionNs extends NodeNs<
 	TemplateSubstitution,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TemplateSubstitution.Built,
+	TemplateSubstitution.Bound,
 	TemplateSubstitution.BuildArgs,
 	TemplateSubstitution.LooseArgs,
 	'expression',
-	TSKindId.TemplateSubstitution
+	TSKindId.TemplateSubstitution,
+	TemplateSubstitution.Parsed,
+	never
 > {}
 export interface RegexNs extends NodeNs<
 	Regex,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Regex.Built,
+	Regex.Bound,
 	Regex.BuildArgs,
 	Regex.LooseArgs,
 	never,
-	TSKindId.Regex
+	TSKindId.Regex,
+	Regex.Parsed,
+	never
 > {}
 export interface PrivatePropertyIdentifierNs extends NodeNs<
 	PrivatePropertyIdentifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	PrivatePropertyIdentifier.Built,
+	PrivatePropertyIdentifier.Bound,
 	PrivatePropertyIdentifier.BuildArgs,
 	PrivatePropertyIdentifier.LooseArgs,
 	'content',
-	TSKindId.PrivatePropertyIdentifier
+	TSKindId.PrivatePropertyIdentifier,
+	PrivatePropertyIdentifier.Parsed,
+	never
 > {}
 export interface ArgumentsNs extends NodeNs<
 	Arguments,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Arguments.Built,
+	Arguments.Bound,
 	Arguments.BuildArgs,
 	Arguments.LooseArgs,
 	never,
-	TSKindId.Arguments
+	TSKindId.Arguments,
+	Arguments.Parsed,
+	EmptyArguments
 > {}
 export interface DecoratorNs extends NodeNs<
 	Decorator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Decorator.Built,
+	Decorator.Bound,
 	Decorator.BuildArgs,
 	Decorator.LooseArgs,
 	'expression',
-	TSKindId.Decorator
+	TSKindId.Decorator,
+	Decorator.Parsed,
+	never
 > {}
 export interface DecoratorMemberExpressionNs extends NodeNs<
 	DecoratorMemberExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	DecoratorMemberExpression.Built,
+	DecoratorMemberExpression.Bound,
 	DecoratorMemberExpression.BuildArgs,
 	DecoratorMemberExpression.LooseArgs,
 	never,
-	TSKindId.DecoratorMemberExpression
+	TSKindId.DecoratorMemberExpression,
+	DecoratorMemberExpression.Parsed,
+	never
 > {}
 export interface DecoratorCallExpressionNs extends NodeNs<
 	DecoratorCallExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	DecoratorCallExpression.Built,
+	DecoratorCallExpression.Bound,
 	DecoratorCallExpression.BuildArgs,
 	DecoratorCallExpression.LooseArgs,
 	never,
-	TSKindId.DecoratorCallExpression
+	TSKindId.DecoratorCallExpression,
+	DecoratorCallExpression.Parsed,
+	never
 > {}
 export interface ClassBodyNs extends NodeNs<
 	ClassBody,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ClassBody.Built,
+	ClassBody.Bound,
 	ClassBody.BuildArgs,
 	ClassBody.LooseArgs,
 	never,
-	TSKindId.ClassBody
+	TSKindId.ClassBody,
+	ClassBody.Parsed,
+	EmptyClassBody
 > {}
 export interface FormalParametersNs extends NodeNs<
 	FormalParameters,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	FormalParameters.Built,
+	FormalParameters.Bound,
 	FormalParameters.BuildArgs,
 	FormalParameters.LooseArgs,
 	'formal_parameters_elements',
-	TSKindId.FormalParameters
+	TSKindId.FormalParameters,
+	FormalParameters.Parsed,
+	EmptyFormalParameters
 > {}
 export interface ClassStaticBlockNs extends NodeNs<
 	ClassStaticBlock,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ClassStaticBlock.Built,
+	ClassStaticBlock.Bound,
 	ClassStaticBlock.BuildArgs,
 	ClassStaticBlock.LooseArgs,
 	never,
-	TSKindId.ClassStaticBlock
+	TSKindId.ClassStaticBlock,
+	ClassStaticBlock.Parsed,
+	never
 > {}
 export interface RestPatternNs extends NodeNs<
 	RestPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	RestPattern.Built,
+	RestPattern.Bound,
 	RestPattern.BuildArgs,
 	RestPattern.LooseArgs,
 	'lhs_expression',
-	TSKindId.RestPattern
+	TSKindId.RestPattern,
+	RestPattern.Parsed,
+	never
 > {}
 export interface MethodDefinitionNs extends NodeNs<
 	MethodDefinition,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	MethodDefinition.Built,
+	MethodDefinition.Bound,
 	MethodDefinition.BuildArgs,
 	MethodDefinition.LooseArgs,
 	never,
-	TSKindId.MethodDefinition
+	TSKindId.MethodDefinition,
+	MethodDefinition.Parsed,
+	never
 > {}
 export interface PairNs extends NodeNs<
 	Pair,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Pair.Built,
+	Pair.Bound,
 	Pair.BuildArgs,
 	Pair.LooseArgs,
 	never,
-	TSKindId.Pair
+	TSKindId.Pair,
+	Pair.Parsed,
+	never
 > {}
 export interface PairPatternNs extends NodeNs<
 	PairPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	PairPattern.Built,
+	PairPattern.Bound,
 	PairPattern.BuildArgs,
 	PairPattern.LooseArgs,
 	never,
-	TSKindId.PairPattern
+	TSKindId.PairPattern,
+	PairPattern.Parsed,
+	never
 > {}
 export interface ComputedPropertyNameNs extends NodeNs<
 	ComputedPropertyName,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ComputedPropertyName.Built,
+	ComputedPropertyName.Bound,
 	ComputedPropertyName.BuildArgs,
 	ComputedPropertyName.LooseArgs,
 	'expression',
-	TSKindId.ComputedPropertyName
+	TSKindId.ComputedPropertyName,
+	ComputedPropertyName.Parsed,
+	never
 > {}
 export interface PublicFieldDefinitionNs extends NodeNs<
 	PublicFieldDefinition,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	PublicFieldDefinition.Built,
+	PublicFieldDefinition.Bound,
 	PublicFieldDefinition.BuildArgs,
 	PublicFieldDefinition.LooseArgs,
 	never,
-	TSKindId.PublicFieldDefinition
+	TSKindId.PublicFieldDefinition,
+	PublicFieldDefinition.Parsed,
+	never
 > {}
 export interface NonNullExpressionNs extends NodeNs<
 	NonNullExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NonNullExpression.Built,
+	NonNullExpression.Bound,
 	NonNullExpression.BuildArgs,
 	NonNullExpression.LooseArgs,
 	'expression',
-	TSKindId.NonNullExpression
+	TSKindId.NonNullExpression,
+	NonNullExpression.Parsed,
+	never
 > {}
 export interface MethodSignatureNs extends NodeNs<
 	MethodSignature,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	MethodSignature.Built,
+	MethodSignature.Bound,
 	MethodSignature.BuildArgs,
 	MethodSignature.LooseArgs,
 	never,
-	TSKindId.MethodSignature
+	TSKindId.MethodSignature,
+	MethodSignature.Parsed,
+	never
 > {}
 export interface AbstractMethodSignatureNs extends NodeNs<
 	AbstractMethodSignature,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	AbstractMethodSignature.Built,
+	AbstractMethodSignature.Bound,
 	AbstractMethodSignature.BuildArgs,
 	AbstractMethodSignature.LooseArgs,
 	never,
-	TSKindId.AbstractMethodSignature
+	TSKindId.AbstractMethodSignature,
+	AbstractMethodSignature.Parsed,
+	never
 > {}
 export interface FunctionSignatureNs extends NodeNs<
 	FunctionSignature,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	FunctionSignature.Built,
+	FunctionSignature.Bound,
 	FunctionSignature.BuildArgs,
 	FunctionSignature.LooseArgs,
 	never,
-	TSKindId.FunctionSignature
+	TSKindId.FunctionSignature,
+	FunctionSignature.Parsed,
+	never
 > {}
 export interface DecoratorParenthesizedExpressionNs extends NodeNs<
 	DecoratorParenthesizedExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	DecoratorParenthesizedExpression.Built,
+	DecoratorParenthesizedExpression.Bound,
 	DecoratorParenthesizedExpression.BuildArgs,
 	DecoratorParenthesizedExpression.LooseArgs,
 	'expression',
-	TSKindId.DecoratorParenthesizedExpression
+	TSKindId.DecoratorParenthesizedExpression,
+	DecoratorParenthesizedExpression.Parsed,
+	never
 > {}
 export interface TypeAssertionNs extends NodeNs<
 	TypeAssertion,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypeAssertion.Built,
+	TypeAssertion.Bound,
 	TypeAssertion.BuildArgs,
 	TypeAssertion.LooseArgs,
 	never,
-	TSKindId.TypeAssertion
+	TSKindId.TypeAssertion,
+	TypeAssertion.Parsed,
+	never
 > {}
 export interface AsExpressionNs extends NodeNs<
 	AsExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	AsExpression.Built,
+	AsExpression.Bound,
 	AsExpression.BuildArgs,
 	AsExpression.LooseArgs,
 	never,
-	TSKindId.AsExpression
+	TSKindId.AsExpression,
+	AsExpression.Parsed,
+	never
 > {}
 export interface SatisfiesExpressionNs extends NodeNs<
 	SatisfiesExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	SatisfiesExpression.Built,
+	SatisfiesExpression.Bound,
 	SatisfiesExpression.BuildArgs,
 	SatisfiesExpression.LooseArgs,
 	never,
-	TSKindId.SatisfiesExpression
+	TSKindId.SatisfiesExpression,
+	SatisfiesExpression.Parsed,
+	never
 > {}
 export interface InstantiationExpressionNs extends NodeNs<
 	InstantiationExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	InstantiationExpression.Built,
+	InstantiationExpression.Bound,
 	InstantiationExpression.BuildArgs,
 	InstantiationExpression.LooseArgs,
 	never,
-	TSKindId.InstantiationExpression
+	TSKindId.InstantiationExpression,
+	InstantiationExpression.Parsed,
+	never
 > {}
 export interface ImportRequireClauseNs extends NodeNs<
 	ImportRequireClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ImportRequireClause.Built,
+	ImportRequireClause.Bound,
 	ImportRequireClause.BuildArgs,
 	ImportRequireClause.LooseArgs,
 	never,
-	TSKindId.ImportRequireClause
+	TSKindId.ImportRequireClause,
+	ImportRequireClause.Parsed,
+	never
 > {}
 export interface ExtendsClauseNs extends NodeNs<
 	ExtendsClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExtendsClause.Built,
+	ExtendsClause.Bound,
 	ExtendsClause.BuildArgs,
 	ExtendsClause.LooseArgs,
 	never,
-	TSKindId.ExtendsClause
+	TSKindId.ExtendsClause,
+	ExtendsClause.Parsed,
+	never
 > {}
 export interface ExtendsClauseSingleNs extends NodeNs<
 	ExtendsClauseSingle,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExtendsClauseSingle.Built,
+	ExtendsClauseSingle.Bound,
 	ExtendsClauseSingle.BuildArgs,
 	ExtendsClauseSingle.LooseArgs,
 	never,
-	TSKindId.ExtendsClauseSingle
+	TSKindId.ExtendsClauseSingle,
+	ExtendsClauseSingle.Parsed,
+	never
 > {}
 export interface ImplementsClauseNs extends NodeNs<
 	ImplementsClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ImplementsClause.Built,
+	ImplementsClause.Bound,
 	ImplementsClause.BuildArgs,
 	ImplementsClause.LooseArgs,
 	never,
-	TSKindId.ImplementsClause
+	TSKindId.ImplementsClause,
+	ImplementsClause.Parsed,
+	never
 > {}
 export interface AmbientDeclarationNs extends NodeNs<
 	AmbientDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	AmbientDeclaration.Built,
+	AmbientDeclaration.Bound,
 	AmbientDeclaration.BuildArgs,
 	AmbientDeclaration.LooseArgs,
 	'content',
-	TSKindId.AmbientDeclaration
+	TSKindId.AmbientDeclaration,
+	AmbientDeclaration.Parsed,
+	never
 > {}
 export interface AbstractClassDeclarationNs extends NodeNs<
 	AbstractClassDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	AbstractClassDeclaration.Built,
+	AbstractClassDeclaration.Bound,
 	AbstractClassDeclaration.BuildArgs,
 	AbstractClassDeclaration.LooseArgs,
 	never,
-	TSKindId.AbstractClassDeclaration
+	TSKindId.AbstractClassDeclaration,
+	AbstractClassDeclaration.Parsed,
+	never
 > {}
 export interface ModuleNs extends NodeNs<
 	Module,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Module.Built,
+	Module.Bound,
 	Module.BuildArgs,
 	Module.LooseArgs,
 	never,
-	TSKindId.Module
+	TSKindId.Module,
+	Module.Parsed,
+	never
 > {}
 export interface InternalModuleNs extends NodeNs<
 	InternalModule,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	InternalModule.Built,
+	InternalModule.Bound,
 	InternalModule.BuildArgs,
 	InternalModule.LooseArgs,
 	never,
-	TSKindId.InternalModule
+	TSKindId.InternalModule,
+	InternalModule.Parsed,
+	never
 > {}
 export interface ImportAliasNs extends NodeNs<
 	ImportAlias,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ImportAlias.Built,
+	ImportAlias.Bound,
 	ImportAlias.BuildArgs,
 	ImportAlias.LooseArgs,
 	never,
-	TSKindId.ImportAlias
+	TSKindId.ImportAlias,
+	ImportAlias.Parsed,
+	never
 > {}
 export interface NestedTypeIdentifierNs extends NodeNs<
 	NestedTypeIdentifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NestedTypeIdentifier.Built,
+	NestedTypeIdentifier.Bound,
 	NestedTypeIdentifier.BuildArgs,
 	NestedTypeIdentifier.LooseArgs,
 	never,
-	TSKindId.NestedTypeIdentifier
+	TSKindId.NestedTypeIdentifier,
+	NestedTypeIdentifier.Parsed,
+	never
 > {}
 export interface InterfaceDeclarationNs extends NodeNs<
 	InterfaceDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	InterfaceDeclaration.Built,
+	InterfaceDeclaration.Bound,
 	InterfaceDeclaration.BuildArgs,
 	InterfaceDeclaration.LooseArgs,
 	never,
-	TSKindId.InterfaceDeclaration
+	TSKindId.InterfaceDeclaration,
+	InterfaceDeclaration.Parsed,
+	never
 > {}
 export interface ExtendsTypeClauseNs extends NodeNs<
 	ExtendsTypeClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExtendsTypeClause.Built,
+	ExtendsTypeClause.Bound,
 	ExtendsTypeClause.BuildArgs,
 	ExtendsTypeClause.LooseArgs,
 	never,
-	TSKindId.ExtendsTypeClause
+	TSKindId.ExtendsTypeClause,
+	ExtendsTypeClause.Parsed,
+	never
 > {}
 export interface EnumDeclarationNs extends NodeNs<
 	EnumDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	EnumDeclaration.Built,
+	EnumDeclaration.Bound,
 	EnumDeclaration.BuildArgs,
 	EnumDeclaration.LooseArgs,
 	never,
-	TSKindId.EnumDeclaration
+	TSKindId.EnumDeclaration,
+	EnumDeclaration.Parsed,
+	never
 > {}
 export interface EnumBodyNs extends NodeNs<
 	EnumBody,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	EnumBody.Built,
+	EnumBody.Bound,
 	EnumBody.BuildArgs,
 	EnumBody.LooseArgs,
 	'enum_body_elements',
-	TSKindId.EnumBody
+	TSKindId.EnumBody,
+	EnumBody.Parsed,
+	EmptyEnumBody
 > {}
 export interface EnumAssignmentNs extends NodeNs<
 	EnumAssignment,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	EnumAssignment.Built,
+	EnumAssignment.Bound,
 	EnumAssignment.BuildArgs,
 	EnumAssignment.LooseArgs,
 	never,
-	TSKindId.EnumAssignment
+	TSKindId.EnumAssignment,
+	EnumAssignment.Parsed,
+	never
 > {}
 export interface TypeAliasDeclarationNs extends NodeNs<
 	TypeAliasDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypeAliasDeclaration.Built,
+	TypeAliasDeclaration.Bound,
 	TypeAliasDeclaration.BuildArgs,
 	TypeAliasDeclaration.LooseArgs,
 	never,
-	TSKindId.TypeAliasDeclaration
+	TSKindId.TypeAliasDeclaration,
+	TypeAliasDeclaration.Parsed,
+	never
 > {}
 export interface RequiredParameterNs extends NodeNs<
 	RequiredParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	RequiredParameter.Built,
+	RequiredParameter.Bound,
 	RequiredParameter.BuildArgs,
 	RequiredParameter.LooseArgs,
 	never,
-	TSKindId.RequiredParameter
+	TSKindId.RequiredParameter,
+	RequiredParameter.Parsed,
+	never
 > {}
 export interface OptionalParameterNs extends NodeNs<
 	OptionalParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	OptionalParameter.Built,
+	OptionalParameter.Bound,
 	OptionalParameter.BuildArgs,
 	OptionalParameter.LooseArgs,
 	never,
-	TSKindId.OptionalParameter
+	TSKindId.OptionalParameter,
+	OptionalParameter.Parsed,
+	never
 > {}
 export interface OmittingTypeAnnotationNs extends NodeNs<
 	OmittingTypeAnnotation,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	OmittingTypeAnnotation.Built,
+	OmittingTypeAnnotation.Bound,
 	OmittingTypeAnnotation.BuildArgs,
 	OmittingTypeAnnotation.LooseArgs,
 	'type',
-	TSKindId.OmittingTypeAnnotation
+	TSKindId.OmittingTypeAnnotation,
+	OmittingTypeAnnotation.Parsed,
+	never
 > {}
 export interface AddingTypeAnnotationNs extends NodeNs<
 	AddingTypeAnnotation,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	AddingTypeAnnotation.Built,
+	AddingTypeAnnotation.Bound,
 	AddingTypeAnnotation.BuildArgs,
 	AddingTypeAnnotation.LooseArgs,
 	'type',
-	TSKindId.AddingTypeAnnotation
+	TSKindId.AddingTypeAnnotation,
+	AddingTypeAnnotation.Parsed,
+	never
 > {}
 export interface OptingTypeAnnotationNs extends NodeNs<
 	OptingTypeAnnotation,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	OptingTypeAnnotation.Built,
+	OptingTypeAnnotation.Bound,
 	OptingTypeAnnotation.BuildArgs,
 	OptingTypeAnnotation.LooseArgs,
 	'type',
-	TSKindId.OptingTypeAnnotation
+	TSKindId.OptingTypeAnnotation,
+	OptingTypeAnnotation.Parsed,
+	never
 > {}
 export interface TypeAnnotationNs extends NodeNs<
 	TypeAnnotation,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypeAnnotation.Built,
+	TypeAnnotation.Bound,
 	TypeAnnotation.BuildArgs,
 	TypeAnnotation.LooseArgs,
 	'type',
-	TSKindId.TypeAnnotation
+	TSKindId.TypeAnnotation,
+	TypeAnnotation.Parsed,
+	never
 > {}
 export interface TypeQueryMemberExpressionInTypeAnnotationNs extends NodeNs<
 	TypeQueryMemberExpressionInTypeAnnotation,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypeQueryMemberExpressionInTypeAnnotation.Built,
+	TypeQueryMemberExpressionInTypeAnnotation.Bound,
 	TypeQueryMemberExpressionInTypeAnnotation.BuildArgs,
 	TypeQueryMemberExpressionInTypeAnnotation.LooseArgs,
 	never,
-	TSKindId.TypeQueryMemberExpressionInTypeAnnotation
+	TSKindId.TypeQueryMemberExpressionInTypeAnnotation,
+	TypeQueryMemberExpressionInTypeAnnotation.Parsed,
+	never
 > {}
 export interface TypeQueryCallExpressionInTypeAnnotationNs extends NodeNs<
 	TypeQueryCallExpressionInTypeAnnotation,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypeQueryCallExpressionInTypeAnnotation.Built,
+	TypeQueryCallExpressionInTypeAnnotation.Bound,
 	TypeQueryCallExpressionInTypeAnnotation.BuildArgs,
 	TypeQueryCallExpressionInTypeAnnotation.LooseArgs,
 	never,
-	TSKindId.TypeQueryCallExpressionInTypeAnnotation
+	TSKindId.TypeQueryCallExpressionInTypeAnnotation,
+	TypeQueryCallExpressionInTypeAnnotation.Parsed,
+	never
 > {}
 export interface AssertsNs extends NodeNs<
 	Asserts,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Asserts.Built,
+	Asserts.Bound,
 	Asserts.BuildArgs,
 	Asserts.LooseArgs,
 	'value',
-	TSKindId.Asserts
+	TSKindId.Asserts,
+	Asserts.Parsed,
+	never
 > {}
 export interface AssertsAnnotationNs extends NodeNs<
 	AssertsAnnotation,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	AssertsAnnotation.Built,
+	AssertsAnnotation.Bound,
 	AssertsAnnotation.BuildArgs,
 	AssertsAnnotation.LooseArgs,
 	'asserts',
-	TSKindId.AssertsAnnotation
+	TSKindId.AssertsAnnotation,
+	AssertsAnnotation.Parsed,
+	never
 > {}
 export interface TupleParameterNs extends NodeNs<
 	TupleParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TupleParameter.Built,
+	TupleParameter.Bound,
 	TupleParameter.BuildArgs,
 	TupleParameter.LooseArgs,
 	never,
-	TSKindId.TupleParameter
+	TSKindId.TupleParameter,
+	TupleParameter.Parsed,
+	never
 > {}
 export interface OptionalTupleParameterNs extends NodeNs<
 	OptionalTupleParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	OptionalTupleParameter.Built,
+	OptionalTupleParameter.Bound,
 	OptionalTupleParameter.BuildArgs,
 	OptionalTupleParameter.LooseArgs,
 	never,
-	TSKindId.OptionalTupleParameter
+	TSKindId.OptionalTupleParameter,
+	OptionalTupleParameter.Parsed,
+	never
 > {}
 export interface OptionalTypeNs extends NodeNs<
 	OptionalType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	OptionalType.Built,
+	OptionalType.Bound,
 	OptionalType.BuildArgs,
 	OptionalType.LooseArgs,
 	'type',
-	TSKindId.OptionalType
+	TSKindId.OptionalType,
+	OptionalType.Parsed,
+	never
 > {}
 export interface RestTypeNs extends NodeNs<
 	RestType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	RestType.Built,
+	RestType.Bound,
 	RestType.BuildArgs,
 	RestType.LooseArgs,
 	'type',
-	TSKindId.RestType
+	TSKindId.RestType,
+	RestType.Parsed,
+	never
 > {}
 export interface ConstructorTypeNs extends NodeNs<
 	ConstructorType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ConstructorType.Built,
+	ConstructorType.Bound,
 	ConstructorType.BuildArgs,
 	ConstructorType.LooseArgs,
 	never,
-	TSKindId.ConstructorType
+	TSKindId.ConstructorType,
+	ConstructorType.Parsed,
+	never
 > {}
 export interface TemplateTypeNs extends NodeNs<
 	TemplateType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TemplateType.Built,
+	TemplateType.Bound,
 	TemplateType.BuildArgs,
 	TemplateType.LooseArgs,
 	'type',
-	TSKindId.TemplateType
+	TSKindId.TemplateType,
+	TemplateType.Parsed,
+	never
 > {}
 export interface TemplateLiteralTypeNs extends NodeNs<
 	TemplateLiteralType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TemplateLiteralType.Built,
+	TemplateLiteralType.Bound,
 	TemplateLiteralType.BuildArgs,
 	TemplateLiteralType.LooseArgs,
 	never,
-	TSKindId.TemplateLiteralType
+	TSKindId.TemplateLiteralType,
+	TemplateLiteralType.Parsed,
+	never
 > {}
 export interface InferTypeNs extends NodeNs<
 	InferType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	InferType.Built,
+	InferType.Bound,
 	InferType.BuildArgs,
 	InferType.LooseArgs,
 	never,
-	TSKindId.InferType
+	TSKindId.InferType,
+	InferType.Parsed,
+	never
 > {}
 export interface ConditionalTypeNs extends NodeNs<
 	ConditionalType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ConditionalType.Built,
+	ConditionalType.Bound,
 	ConditionalType.BuildArgs,
 	ConditionalType.LooseArgs,
 	never,
-	TSKindId.ConditionalType
+	TSKindId.ConditionalType,
+	ConditionalType.Parsed,
+	never
 > {}
 export interface GenericTypeNs extends NodeNs<
 	GenericType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	GenericType.Built,
+	GenericType.Bound,
 	GenericType.BuildArgs,
 	GenericType.LooseArgs,
 	never,
-	TSKindId.GenericType
+	TSKindId.GenericType,
+	GenericType.Parsed,
+	never
 > {}
 export interface TypePredicateNs extends NodeNs<
 	TypePredicate,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypePredicate.Built,
+	TypePredicate.Bound,
 	TypePredicate.BuildArgs,
 	TypePredicate.LooseArgs,
 	never,
-	TSKindId.TypePredicate
+	TSKindId.TypePredicate,
+	TypePredicate.Parsed,
+	never
 > {}
 export interface TypePredicateAnnotationNs extends NodeNs<
 	TypePredicateAnnotation,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypePredicateAnnotation.Built,
+	TypePredicateAnnotation.Bound,
 	TypePredicateAnnotation.BuildArgs,
 	TypePredicateAnnotation.LooseArgs,
 	'type_predicate',
-	TSKindId.TypePredicateAnnotation
+	TSKindId.TypePredicateAnnotation,
+	TypePredicateAnnotation.Parsed,
+	never
 > {}
 export interface TypeQueryMemberExpressionNs extends NodeNs<
 	TypeQueryMemberExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypeQueryMemberExpression.Built,
+	TypeQueryMemberExpression.Bound,
 	TypeQueryMemberExpression.BuildArgs,
 	TypeQueryMemberExpression.LooseArgs,
 	never,
-	TSKindId.TypeQueryMemberExpression
+	TSKindId.TypeQueryMemberExpression,
+	TypeQueryMemberExpression.Parsed,
+	never
 > {}
 export interface TypeQuerySubscriptExpressionNs extends NodeNs<
 	TypeQuerySubscriptExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypeQuerySubscriptExpression.Built,
+	TypeQuerySubscriptExpression.Bound,
 	TypeQuerySubscriptExpression.BuildArgs,
 	TypeQuerySubscriptExpression.LooseArgs,
 	never,
-	TSKindId.TypeQuerySubscriptExpression
+	TSKindId.TypeQuerySubscriptExpression,
+	TypeQuerySubscriptExpression.Parsed,
+	never
 > {}
 export interface TypeQueryCallExpressionNs extends NodeNs<
 	TypeQueryCallExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypeQueryCallExpression.Built,
+	TypeQueryCallExpression.Bound,
 	TypeQueryCallExpression.BuildArgs,
 	TypeQueryCallExpression.LooseArgs,
 	never,
-	TSKindId.TypeQueryCallExpression
+	TSKindId.TypeQueryCallExpression,
+	TypeQueryCallExpression.Parsed,
+	never
 > {}
 export interface TypeQueryInstantiationExpressionNs extends NodeNs<
 	TypeQueryInstantiationExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypeQueryInstantiationExpression.Built,
+	TypeQueryInstantiationExpression.Bound,
 	TypeQueryInstantiationExpression.BuildArgs,
 	TypeQueryInstantiationExpression.LooseArgs,
 	never,
-	TSKindId.TypeQueryInstantiationExpression
+	TSKindId.TypeQueryInstantiationExpression,
+	TypeQueryInstantiationExpression.Parsed,
+	never
 > {}
 export interface TypeQueryNs extends NodeNs<
 	TypeQuery,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypeQuery.Built,
+	TypeQuery.Bound,
 	TypeQuery.BuildArgs,
 	TypeQuery.LooseArgs,
 	'expression',
-	TSKindId.TypeQuery
+	TSKindId.TypeQuery,
+	TypeQuery.Parsed,
+	never
 > {}
 export interface IndexTypeQueryNs extends NodeNs<
 	IndexTypeQuery,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	IndexTypeQuery.Built,
+	IndexTypeQuery.Bound,
 	IndexTypeQuery.BuildArgs,
 	IndexTypeQuery.LooseArgs,
 	'type',
-	TSKindId.IndexTypeQuery
+	TSKindId.IndexTypeQuery,
+	IndexTypeQuery.Parsed,
+	never
 > {}
 export interface LookupTypeNs extends NodeNs<
 	LookupType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	LookupType.Built,
+	LookupType.Bound,
 	LookupType.BuildArgs,
 	LookupType.LooseArgs,
 	never,
-	TSKindId.LookupType
+	TSKindId.LookupType,
+	LookupType.Parsed,
+	never
 > {}
 export interface MappedTypeClauseNs extends NodeNs<
 	MappedTypeClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	MappedTypeClause.Built,
+	MappedTypeClause.Bound,
 	MappedTypeClause.BuildArgs,
 	MappedTypeClause.LooseArgs,
 	never,
-	TSKindId.MappedTypeClause
+	TSKindId.MappedTypeClause,
+	MappedTypeClause.Parsed,
+	never
 > {}
 export interface LiteralTypeNs extends NodeNs<
 	LiteralType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	LiteralType.Built,
+	LiteralType.Bound,
 	LiteralType.BuildArgs,
 	LiteralType.LooseArgs,
 	'content',
-	TSKindId.LiteralType
+	TSKindId.LiteralType,
+	LiteralType.Parsed,
+	never
 > {}
 export interface FlowMaybeTypeNs extends NodeNs<
 	FlowMaybeType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	FlowMaybeType.Built,
+	FlowMaybeType.Bound,
 	FlowMaybeType.BuildArgs,
 	FlowMaybeType.LooseArgs,
 	'type',
-	TSKindId.FlowMaybeType
+	TSKindId.FlowMaybeType,
+	FlowMaybeType.Parsed,
+	never
 > {}
 export interface ParenthesizedTypeNs extends NodeNs<
 	ParenthesizedType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ParenthesizedType.Built,
+	ParenthesizedType.Bound,
 	ParenthesizedType.BuildArgs,
 	ParenthesizedType.LooseArgs,
 	'type',
-	TSKindId.ParenthesizedType
+	TSKindId.ParenthesizedType,
+	ParenthesizedType.Parsed,
+	never
 > {}
 export interface TypeArgumentsNs extends NodeNs<
 	TypeArguments,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypeArguments.Built,
+	TypeArguments.Bound,
 	TypeArguments.BuildArgs,
 	TypeArguments.LooseArgs,
 	'types',
-	TSKindId.TypeArguments
+	TSKindId.TypeArguments,
+	TypeArguments.Parsed,
+	never
 > {}
 export interface ObjectTypeNs extends NodeNs<
 	ObjectType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ObjectType.Built,
+	ObjectType.Bound,
 	ObjectType.BuildArgs,
 	ObjectType.LooseArgs,
 	never,
-	TSKindId.ObjectType
+	TSKindId.ObjectType,
+	ObjectType.Parsed,
+	never
 > {}
 export interface CallSignatureNs extends NodeNs<
 	CallSignature,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	CallSignature.Built,
+	CallSignature.Bound,
 	CallSignature.BuildArgs,
 	CallSignature.LooseArgs,
 	never,
-	TSKindId.CallSignature
+	TSKindId.CallSignature,
+	CallSignature.Parsed,
+	never
 > {}
 export interface PropertySignatureNs extends NodeNs<
 	PropertySignature,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	PropertySignature.Built,
+	PropertySignature.Bound,
 	PropertySignature.BuildArgs,
 	PropertySignature.LooseArgs,
 	never,
-	TSKindId.PropertySignature
+	TSKindId.PropertySignature,
+	PropertySignature.Parsed,
+	never
 > {}
 export interface TypeParametersNs extends NodeNs<
 	TypeParameters,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypeParameters.Built,
+	TypeParameters.Bound,
 	TypeParameters.BuildArgs,
 	TypeParameters.LooseArgs,
 	'type_parameters_elements',
-	TSKindId.TypeParameters
+	TSKindId.TypeParameters,
+	TypeParameters.Parsed,
+	never
 > {}
 export interface TypeParameterNs extends NodeNs<
 	TypeParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypeParameter.Built,
+	TypeParameter.Bound,
 	TypeParameter.BuildArgs,
 	TypeParameter.LooseArgs,
 	never,
-	TSKindId.TypeParameter
+	TSKindId.TypeParameter,
+	TypeParameter.Parsed,
+	never
 > {}
 export interface DefaultTypeNs extends NodeNs<
 	DefaultType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	DefaultType.Built,
+	DefaultType.Bound,
 	DefaultType.BuildArgs,
 	DefaultType.LooseArgs,
 	'type',
-	TSKindId.DefaultType
+	TSKindId.DefaultType,
+	DefaultType.Parsed,
+	never
 > {}
 export interface ConstraintNs extends NodeNs<
 	Constraint,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Constraint.Built,
+	Constraint.Bound,
 	Constraint.BuildArgs,
 	Constraint.LooseArgs,
 	never,
-	TSKindId.Constraint
+	TSKindId.Constraint,
+	Constraint.Parsed,
+	never
 > {}
 export interface ConstructSignatureNs extends NodeNs<
 	ConstructSignature,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ConstructSignature.Built,
+	ConstructSignature.Bound,
 	ConstructSignature.BuildArgs,
 	ConstructSignature.LooseArgs,
 	never,
-	TSKindId.ConstructSignature
+	TSKindId.ConstructSignature,
+	ConstructSignature.Parsed,
+	never
 > {}
 export interface ArrayTypeNs extends NodeNs<
 	ArrayType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ArrayType.Built,
+	ArrayType.Bound,
 	ArrayType.BuildArgs,
 	ArrayType.LooseArgs,
 	'type',
-	TSKindId.ArrayType
+	TSKindId.ArrayType,
+	ArrayType.Parsed,
+	never
 > {}
 export interface TupleTypeNs extends NodeNs<
 	TupleType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TupleType.Built,
+	TupleType.Bound,
 	TupleType.BuildArgs,
 	TupleType.LooseArgs,
 	'tuple_type_members',
-	TSKindId.TupleType
+	TSKindId.TupleType,
+	TupleType.Parsed,
+	EmptyTupleType
 > {}
 export interface ReadonlyTypeNs extends NodeNs<
 	ReadonlyType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ReadonlyType.Built,
+	ReadonlyType.Bound,
 	ReadonlyType.BuildArgs,
 	ReadonlyType.LooseArgs,
 	'type',
-	TSKindId.ReadonlyType
+	TSKindId.ReadonlyType,
+	ReadonlyType.Parsed,
+	never
 > {}
 export interface UnionTypeNs extends NodeNs<
 	UnionType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	UnionType.Built,
+	UnionType.Bound,
 	UnionType.BuildArgs,
 	UnionType.LooseArgs,
 	never,
-	TSKindId.UnionType
+	TSKindId.UnionType,
+	UnionType.Parsed,
+	never
 > {}
 export interface IntersectionTypeNs extends NodeNs<
 	IntersectionType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	IntersectionType.Built,
+	IntersectionType.Bound,
 	IntersectionType.BuildArgs,
 	IntersectionType.LooseArgs,
 	never,
-	TSKindId.IntersectionType
+	TSKindId.IntersectionType,
+	IntersectionType.Parsed,
+	never
 > {}
 export interface FunctionTypeNs extends NodeNs<
 	FunctionType,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	FunctionType.Built,
+	FunctionType.Bound,
 	FunctionType.BuildArgs,
 	FunctionType.LooseArgs,
 	never,
-	TSKindId.FunctionType
+	TSKindId.FunctionType,
+	FunctionType.Parsed,
+	never
 > {}
 export interface ExportSpecifiersNs extends NodeNs<
 	ExportSpecifiers,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportSpecifiers.Built,
+	ExportSpecifiers.Bound,
 	ExportSpecifiers.BuildArgs,
 	ExportSpecifiers.LooseArgs,
 	'export_specifier',
-	TSKindId.ExportSpecifiers
+	TSKindId.ExportSpecifiers,
+	ExportSpecifiers.Parsed,
+	never
 > {}
 export interface ImportSpecifiersNs extends NodeNs<
 	ImportSpecifiers,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ImportSpecifiers.Built,
+	ImportSpecifiers.Bound,
 	ImportSpecifiers.BuildArgs,
 	ImportSpecifiers.LooseArgs,
 	'import_specifier',
-	TSKindId.ImportSpecifiers
+	TSKindId.ImportSpecifiers,
+	ImportSpecifiers.Parsed,
+	never
 > {}
 export interface FormalParametersElementsNs extends NodeNs<
 	FormalParametersElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	FormalParametersElements.Built,
+	FormalParametersElements.Bound,
 	FormalParametersElements.BuildArgs,
 	FormalParametersElements.LooseArgs,
 	'formal_parameter',
-	TSKindId.FormalParametersElements
+	TSKindId.FormalParametersElements,
+	FormalParametersElements.Parsed,
+	never
 > {}
 export interface EnumBodyElementsNs extends NodeNs<
 	EnumBodyElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	EnumBodyElements.Built,
+	EnumBodyElements.Bound,
 	EnumBodyElements.BuildArgs,
 	EnumBodyElements.LooseArgs,
 	'content',
-	TSKindId.EnumBodyElements
+	TSKindId.EnumBodyElements,
+	EnumBodyElements.Parsed,
+	never
 > {}
 export interface TypesNs extends NodeNs<
 	Types,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	Types.Built,
+	Types.Bound,
 	Types.BuildArgs,
 	Types.LooseArgs,
 	'type',
-	TSKindId.Types
+	TSKindId.Types,
+	Types.Parsed,
+	never
 > {}
 export interface TypeParametersElementsNs extends NodeNs<
 	TypeParametersElements,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypeParametersElements.Built,
+	TypeParametersElements.Bound,
 	TypeParametersElements.BuildArgs,
 	TypeParametersElements.LooseArgs,
 	'type_parameter',
-	TSKindId.TypeParametersElements
+	TSKindId.TypeParametersElements,
+	TypeParametersElements.Parsed,
+	never
 > {}
 export interface TupleTypeMembersNs extends NodeNs<
 	TupleTypeMembers,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TupleTypeMembers.Built,
+	TupleTypeMembers.Bound,
 	TupleTypeMembers.BuildArgs,
 	TupleTypeMembers.LooseArgs,
 	'tuple_type_member',
-	TSKindId.TupleTypeMembers
+	TSKindId.TupleTypeMembers,
+	TupleTypeMembers.Parsed,
+	never
 > {}
 export interface ImportClauseGroupNs extends NodeNs<
 	ImportClauseGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ImportClauseGroup.Built,
+	ImportClauseGroup.Bound,
 	ImportClauseGroup.BuildArgs,
 	ImportClauseGroup.LooseArgs,
 	'content',
-	TSKindId.ImportClauseGroup
+	TSKindId.ImportClauseGroup,
+	ImportClauseGroup.Parsed,
+	never
 > {}
 export interface CatchClauseGroupNs extends NodeNs<
 	CatchClauseGroup,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	CatchClauseGroup.Built,
+	CatchClauseGroup.Bound,
 	CatchClauseGroup.BuildArgs,
 	CatchClauseGroup.LooseArgs,
 	never,
-	TSKindId.CatchClauseGroup
+	TSKindId.CatchClauseGroup,
+	CatchClauseGroup.Parsed,
+	never
 > {}
 export interface AmbientDeclarationGlobalNs extends NodeNs<
 	AmbientDeclarationGlobal,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	AmbientDeclarationGlobal.Built,
+	AmbientDeclarationGlobal.Bound,
 	AmbientDeclarationGlobal.BuildArgs,
 	AmbientDeclarationGlobal.LooseArgs,
 	'body',
-	TSKindId.AmbientDeclarationGlobal
+	TSKindId.AmbientDeclarationGlobal,
+	AmbientDeclarationGlobal.Parsed,
+	never
 > {}
 export interface AmbientDeclarationModuleNs extends NodeNs<
 	AmbientDeclarationModule,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	AmbientDeclarationModule.Built,
+	AmbientDeclarationModule.Bound,
 	AmbientDeclarationModule.BuildArgs,
 	AmbientDeclarationModule.LooseArgs,
 	never,
-	TSKindId.AmbientDeclarationModule
+	TSKindId.AmbientDeclarationModule,
+	AmbientDeclarationModule.Parsed,
+	never
 > {}
 export interface ObjectTypeContentNs extends NodeNs<
 	ObjectTypeContent,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ObjectTypeContent.Built,
+	ObjectTypeContent.Bound,
 	ObjectTypeContent.BuildArgs,
 	ObjectTypeContent.LooseArgs,
 	'members',
-	TSKindId.ObjectTypeContent
+	TSKindId.ObjectTypeContent,
+	ObjectTypeContent.Parsed,
+	never
 > {}
 export interface ExportStatementNamespaceExportNs extends NodeNs<
 	ExportStatementNamespaceExport,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementNamespaceExport.Built,
+	ExportStatementNamespaceExport.Bound,
 	ExportStatementNamespaceExport.BuildArgs,
 	ExportStatementNamespaceExport.LooseArgs,
 	'name',
-	TSKindId.ExportStatementNamespaceExport
+	TSKindId.ExportStatementNamespaceExport,
+	ExportStatementNamespaceExport.Parsed,
+	never
 > {}
 export interface ExportStatementTypeExportNs extends NodeNs<
 	ExportStatementTypeExport,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementTypeExport.Built,
+	ExportStatementTypeExport.Bound,
 	ExportStatementTypeExport.BuildArgs,
 	ExportStatementTypeExport.LooseArgs,
 	never,
-	TSKindId.ExportStatementTypeExport
+	TSKindId.ExportStatementTypeExport,
+	ExportStatementTypeExport.Parsed,
+	never
 > {}
 export interface ExportStatementEqualsExportNs extends NodeNs<
 	ExportStatementEqualsExport,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementEqualsExport.Built,
+	ExportStatementEqualsExport.Bound,
 	ExportStatementEqualsExport.BuildArgs,
 	ExportStatementEqualsExport.LooseArgs,
 	'expression',
-	TSKindId.ExportStatementEqualsExport
+	TSKindId.ExportStatementEqualsExport,
+	ExportStatementEqualsExport.Parsed,
+	never
 > {}
 export interface CommentLineNs extends NodeNs<
 	CommentLine,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	CommentLine.Built,
+	CommentLine.Bound,
 	CommentLine.BuildArgs,
 	CommentLine.LooseArgs,
 	'content',
-	TSKindId.CommentLine
+	TSKindId.CommentLine,
+	CommentLine.Parsed,
+	never
 > {}
 export interface CommentBlockNs extends NodeNs<
 	CommentBlock,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	CommentBlock.Built,
+	CommentBlock.Bound,
 	CommentBlock.BuildArgs,
 	CommentBlock.LooseArgs,
 	'content',
-	TSKindId.CommentBlock
+	TSKindId.CommentBlock,
+	CommentBlock.Parsed,
+	never
 > {}
 export interface LiteralTypeNegativeNumberNs extends NodeNs<
 	LiteralTypeNegativeNumber,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	LiteralTypeNegativeNumber.Built,
+	LiteralTypeNegativeNumber.Bound,
 	LiteralTypeNegativeNumber.BuildArgs,
 	LiteralTypeNegativeNumber.LooseArgs,
 	never,
-	TSKindId.LiteralTypeNegativeNumber
+	TSKindId.LiteralTypeNegativeNumber,
+	LiteralTypeNegativeNumber.Parsed,
+	never
 > {}
 export interface NumberHexNs extends NodeNs<
 	NumberHex,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NumberHex.Built,
+	NumberHex.Bound,
 	NumberHex.BuildArgs,
 	NumberHex.LooseArgs,
 	'content',
-	TSKindId.NumberHex
+	TSKindId.NumberHex,
+	NumberHex.Parsed,
+	never
 > {}
 export interface NumberFloatPointNs extends NodeNs<
 	NumberFloatPoint,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NumberFloatPoint.Built,
+	NumberFloatPoint.Bound,
 	NumberFloatPoint.BuildArgs,
 	NumberFloatPoint.LooseArgs,
 	never,
-	TSKindId.NumberFloatPoint
+	TSKindId.NumberFloatPoint,
+	NumberFloatPoint.Parsed,
+	never
 > {}
 export interface NumberFloatLeadingPointNs extends NodeNs<
 	NumberFloatLeadingPoint,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NumberFloatLeadingPoint.Built,
+	NumberFloatLeadingPoint.Bound,
 	NumberFloatLeadingPoint.BuildArgs,
 	NumberFloatLeadingPoint.LooseArgs,
 	never,
-	TSKindId.NumberFloatLeadingPoint
+	TSKindId.NumberFloatLeadingPoint,
+	NumberFloatLeadingPoint.Parsed,
+	never
 > {}
 export interface NumberFloatScientificNs extends NodeNs<
 	NumberFloatScientific,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NumberFloatScientific.Built,
+	NumberFloatScientific.Bound,
 	NumberFloatScientific.BuildArgs,
 	NumberFloatScientific.LooseArgs,
 	never,
-	TSKindId.NumberFloatScientific
+	TSKindId.NumberFloatScientific,
+	NumberFloatScientific.Parsed,
+	never
 > {}
 export interface NumberBinaryNs extends NodeNs<
 	NumberBinary,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NumberBinary.Built,
+	NumberBinary.Bound,
 	NumberBinary.BuildArgs,
 	NumberBinary.LooseArgs,
 	'content',
-	TSKindId.NumberBinary
+	TSKindId.NumberBinary,
+	NumberBinary.Parsed,
+	never
 > {}
 export interface NumberOctalNs extends NodeNs<
 	NumberOctal,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NumberOctal.Built,
+	NumberOctal.Bound,
 	NumberOctal.BuildArgs,
 	NumberOctal.LooseArgs,
 	'content',
-	TSKindId.NumberOctal
+	TSKindId.NumberOctal,
+	NumberOctal.Parsed,
+	never
 > {}
 export interface NumberBigintHexNs extends NodeNs<
 	NumberBigintHex,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NumberBigintHex.Built,
+	NumberBigintHex.Bound,
 	NumberBigintHex.BuildArgs,
 	NumberBigintHex.LooseArgs,
 	'content',
-	TSKindId.NumberBigintHex
+	TSKindId.NumberBigintHex,
+	NumberBigintHex.Parsed,
+	never
 > {}
 export interface NumberBigintBinaryNs extends NodeNs<
 	NumberBigintBinary,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NumberBigintBinary.Built,
+	NumberBigintBinary.Bound,
 	NumberBigintBinary.BuildArgs,
 	NumberBigintBinary.LooseArgs,
 	'content',
-	TSKindId.NumberBigintBinary
+	TSKindId.NumberBigintBinary,
+	NumberBigintBinary.Parsed,
+	never
 > {}
 export interface NumberBigintOctalNs extends NodeNs<
 	NumberBigintOctal,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NumberBigintOctal.Built,
+	NumberBigintOctal.Bound,
 	NumberBigintOctal.BuildArgs,
 	NumberBigintOctal.LooseArgs,
 	'content',
-	TSKindId.NumberBigintOctal
+	TSKindId.NumberBigintOctal,
+	NumberBigintOctal.Parsed,
+	never
 > {}
 export interface NumberBigintDecimalNs extends NodeNs<
 	NumberBigintDecimal,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	NumberBigintDecimal.Built,
+	NumberBigintDecimal.Bound,
 	NumberBigintDecimal.BuildArgs,
 	NumberBigintDecimal.LooseArgs,
 	'content',
-	TSKindId.NumberBigintDecimal
+	TSKindId.NumberBigintDecimal,
+	NumberBigintDecimal.Parsed,
+	never
 > {}
 export interface BinaryExpressionInNs extends NodeNs<
 	BinaryExpressionIn,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	BinaryExpressionIn.Built,
+	BinaryExpressionIn.Bound,
 	BinaryExpressionIn.BuildArgs,
 	BinaryExpressionIn.LooseArgs,
 	never,
-	TSKindId.BinaryExpressionIn
+	TSKindId.BinaryExpressionIn,
+	BinaryExpressionIn.Parsed,
+	never
 > {}
 export interface ClassBodyMethodNs extends NodeNs<
 	ClassBodyMethod,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ClassBodyMethod.Built,
+	ClassBodyMethod.Bound,
 	ClassBodyMethod.BuildArgs,
 	ClassBodyMethod.LooseArgs,
 	never,
-	TSKindId.ClassBodyMethod
+	TSKindId.ClassBodyMethod,
+	ClassBodyMethod.Parsed,
+	never
 > {}
 export interface ClassBodyMethodSigNs extends NodeNs<
 	ClassBodyMethodSig,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ClassBodyMethodSig.Built,
+	ClassBodyMethodSig.Bound,
 	ClassBodyMethodSig.BuildArgs,
 	ClassBodyMethodSig.LooseArgs,
 	never,
-	TSKindId.ClassBodyMethodSig
+	TSKindId.ClassBodyMethodSig,
+	ClassBodyMethodSig.Parsed,
+	never
 > {}
 export interface ClassBodyMemberNs extends NodeNs<
 	ClassBodyMember,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ClassBodyMember.Built,
+	ClassBodyMember.Bound,
 	ClassBodyMember.BuildArgs,
 	ClassBodyMember.LooseArgs,
 	'member',
-	TSKindId.ClassBodyMember
+	TSKindId.ClassBodyMember,
+	ClassBodyMember.Parsed,
+	never
 > {}
 export interface IndexSignatureColonNs extends NodeNs<
 	IndexSignatureColon,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	IndexSignatureColon.Built,
+	IndexSignatureColon.Bound,
 	IndexSignatureColon.BuildArgs,
 	IndexSignatureColon.LooseArgs,
 	never,
-	TSKindId.IndexSignatureColon
+	TSKindId.IndexSignatureColon,
+	IndexSignatureColon.Parsed,
+	never
 > {}
 export interface IndexSignatureMappedTypeClauseNs extends NodeNs<
 	IndexSignatureMappedTypeClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	IndexSignatureMappedTypeClause.Built,
+	IndexSignatureMappedTypeClause.Bound,
 	IndexSignatureMappedTypeClause.BuildArgs,
 	IndexSignatureMappedTypeClause.LooseArgs,
 	never,
-	TSKindId.IndexSignatureMappedTypeClause
+	TSKindId.IndexSignatureMappedTypeClause,
+	IndexSignatureMappedTypeClause.Parsed,
+	never
 > {}
 export interface ImportStatementClauseFromNs extends NodeNs<
 	ImportStatementClauseFrom,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ImportStatementClauseFrom.Built,
+	ImportStatementClauseFrom.Bound,
 	ImportStatementClauseFrom.BuildArgs,
 	ImportStatementClauseFrom.LooseArgs,
 	never,
-	TSKindId.ImportStatementClauseFrom
+	TSKindId.ImportStatementClauseFrom,
+	ImportStatementClauseFrom.Parsed,
+	never
 > {}
 export interface ImportSpecifierNameNs extends NodeNs<
 	ImportSpecifierName,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ImportSpecifierName.Built,
+	ImportSpecifierName.Bound,
 	ImportSpecifierName.BuildArgs,
 	ImportSpecifierName.LooseArgs,
 	never,
-	TSKindId.ImportSpecifierName
+	TSKindId.ImportSpecifierName,
+	ImportSpecifierName.Parsed,
+	never
 > {}
 export interface ImportSpecifierAsNs extends NodeNs<
 	ImportSpecifierAs,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ImportSpecifierAs.Built,
+	ImportSpecifierAs.Bound,
 	ImportSpecifierAs.BuildArgs,
 	ImportSpecifierAs.LooseArgs,
 	never,
-	TSKindId.ImportSpecifierAs
+	TSKindId.ImportSpecifierAs,
+	ImportSpecifierAs.Parsed,
+	never
 > {}
 export interface ParenthesizedExpressionTypedNs extends NodeNs<
 	ParenthesizedExpressionTyped,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ParenthesizedExpressionTyped.Built,
+	ParenthesizedExpressionTyped.Bound,
 	ParenthesizedExpressionTyped.BuildArgs,
 	ParenthesizedExpressionTyped.LooseArgs,
 	never,
-	TSKindId.ParenthesizedExpressionTyped
+	TSKindId.ParenthesizedExpressionTyped,
+	ParenthesizedExpressionTyped.Parsed,
+	never
 > {}
 export interface ParenthesizedExpressionSequenceNs extends NodeNs<
 	ParenthesizedExpressionSequence,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ParenthesizedExpressionSequence.Built,
+	ParenthesizedExpressionSequence.Bound,
 	ParenthesizedExpressionSequence.BuildArgs,
 	ParenthesizedExpressionSequence.LooseArgs,
 	'sequence_expression',
-	TSKindId.ParenthesizedExpressionSequence
+	TSKindId.ParenthesizedExpressionSequence,
+	ParenthesizedExpressionSequence.Parsed,
+	never
 > {}
 export interface CallExpressionCallNs extends NodeNs<
 	CallExpressionCall,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	CallExpressionCall.Built,
+	CallExpressionCall.Bound,
 	CallExpressionCall.BuildArgs,
 	CallExpressionCall.LooseArgs,
 	never,
-	TSKindId.CallExpressionCall
+	TSKindId.CallExpressionCall,
+	CallExpressionCall.Parsed,
+	never
 > {}
 export interface CallExpressionTemplateCallNs extends NodeNs<
 	CallExpressionTemplateCall,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	CallExpressionTemplateCall.Built,
+	CallExpressionTemplateCall.Bound,
 	CallExpressionTemplateCall.BuildArgs,
 	CallExpressionTemplateCall.LooseArgs,
 	never,
-	TSKindId.CallExpressionTemplateCall
+	TSKindId.CallExpressionTemplateCall,
+	CallExpressionTemplateCall.Parsed,
+	never
 > {}
 export interface CallExpressionMemberNs extends NodeNs<
 	CallExpressionMember,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	CallExpressionMember.Built,
+	CallExpressionMember.Bound,
 	CallExpressionMember.BuildArgs,
 	CallExpressionMember.LooseArgs,
 	never,
-	TSKindId.CallExpressionMember
+	TSKindId.CallExpressionMember,
+	CallExpressionMember.Parsed,
+	never
 > {}
 export interface StringDoubleNs extends NodeNs<
 	StringDouble,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	StringDouble.Built,
+	StringDouble.Bound,
 	StringDouble.BuildArgs,
 	StringDouble.LooseArgs,
 	never,
-	TSKindId.StringDouble
+	TSKindId.StringDouble,
+	StringDouble.Parsed,
+	never
 > {}
 export interface StringSingleNs extends NodeNs<
 	StringSingle,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	StringSingle.Built,
+	StringSingle.Bound,
 	StringSingle.BuildArgs,
 	StringSingle.LooseArgs,
 	never,
-	TSKindId.StringSingle
+	TSKindId.StringSingle,
+	StringSingle.Parsed,
+	never
 > {}
 export interface UpdateExpressionPostfixNs extends NodeNs<
 	UpdateExpressionPostfix,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	UpdateExpressionPostfix.Built,
+	UpdateExpressionPostfix.Bound,
 	UpdateExpressionPostfix.BuildArgs,
 	UpdateExpressionPostfix.LooseArgs,
 	never,
-	TSKindId.UpdateExpressionPostfix
+	TSKindId.UpdateExpressionPostfix,
+	UpdateExpressionPostfix.Parsed,
+	never
 > {}
 export interface UpdateExpressionPrefixNs extends NodeNs<
 	UpdateExpressionPrefix,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	UpdateExpressionPrefix.Built,
+	UpdateExpressionPrefix.Bound,
 	UpdateExpressionPrefix.BuildArgs,
 	UpdateExpressionPrefix.LooseArgs,
 	never,
-	TSKindId.UpdateExpressionPrefix
+	TSKindId.UpdateExpressionPrefix,
+	UpdateExpressionPrefix.Parsed,
+	never
 > {}
 export interface ArrowFunctionParameterNs extends NodeNs<
 	ArrowFunctionParameter,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ArrowFunctionParameter.Built,
+	ArrowFunctionParameter.Bound,
 	ArrowFunctionParameter.BuildArgs,
 	ArrowFunctionParameter.LooseArgs,
 	'parameter',
-	TSKindId.ArrowFunctionParameter
+	TSKindId.ArrowFunctionParameter,
+	ArrowFunctionParameter.Parsed,
+	never
 > {}
 export interface ClassHeritageExtendsClauseNs extends NodeNs<
 	ClassHeritageExtendsClause,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ClassHeritageExtendsClause.Built,
+	ClassHeritageExtendsClause.Bound,
 	ClassHeritageExtendsClause.BuildArgs,
 	ClassHeritageExtendsClause.LooseArgs,
 	never,
-	TSKindId.ClassHeritageExtendsClause
+	TSKindId.ClassHeritageExtendsClause,
+	ClassHeritageExtendsClause.Parsed,
+	never
 > {}
 export interface ImportClauseDefaultImportNs extends NodeNs<
 	ImportClauseDefaultImport,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ImportClauseDefaultImport.Built,
+	ImportClauseDefaultImport.Bound,
 	ImportClauseDefaultImport.BuildArgs,
 	ImportClauseDefaultImport.LooseArgs,
 	never,
-	TSKindId.ImportClauseDefaultImport
+	TSKindId.ImportClauseDefaultImport,
+	ImportClauseDefaultImport.Parsed,
+	never
 > {}
 export interface ExportStatementDefaultFromNs extends NodeNs<
 	ExportStatementDefaultFrom,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementDefaultFrom.Built,
+	ExportStatementDefaultFrom.Bound,
 	ExportStatementDefaultFrom.BuildArgs,
 	ExportStatementDefaultFrom.LooseArgs,
 	'content',
-	TSKindId.ExportStatementDefaultFrom
+	TSKindId.ExportStatementDefaultFrom,
+	ExportStatementDefaultFrom.Parsed,
+	never
 > {}
 export interface ExportStatementDefaultDeclarationNs extends NodeNs<
 	ExportStatementDefaultDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementDefaultDeclaration.Built,
+	ExportStatementDefaultDeclaration.Bound,
 	ExportStatementDefaultDeclaration.BuildArgs,
 	ExportStatementDefaultDeclaration.LooseArgs,
 	never,
-	TSKindId.ExportStatementDefaultDeclaration
+	TSKindId.ExportStatementDefaultDeclaration,
+	ExportStatementDefaultDeclaration.Parsed,
+	never
 > {}
 export interface ExportStatementDefaultFromStarFromNs extends NodeNs<
 	ExportStatementDefaultFromStarFrom,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementDefaultFromStarFrom.Built,
+	ExportStatementDefaultFromStarFrom.Bound,
 	ExportStatementDefaultFromStarFrom.BuildArgs,
 	ExportStatementDefaultFromStarFrom.LooseArgs,
 	'source',
-	TSKindId.ExportStatementDefaultFromStarFrom
+	TSKindId.ExportStatementDefaultFromStarFrom,
+	ExportStatementDefaultFromStarFrom.Parsed,
+	never
 > {}
 export interface ExportStatementDefaultFromNsFromNs extends NodeNs<
 	ExportStatementDefaultFromNsFrom,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementDefaultFromNsFrom.Built,
+	ExportStatementDefaultFromNsFrom.Bound,
 	ExportStatementDefaultFromNsFrom.BuildArgs,
 	ExportStatementDefaultFromNsFrom.LooseArgs,
 	never,
-	TSKindId.ExportStatementDefaultFromNsFrom
+	TSKindId.ExportStatementDefaultFromNsFrom,
+	ExportStatementDefaultFromNsFrom.Parsed,
+	never
 > {}
 export interface ExportStatementDefaultFromClauseFromNs extends NodeNs<
 	ExportStatementDefaultFromClauseFrom,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementDefaultFromClauseFrom.Built,
+	ExportStatementDefaultFromClauseFrom.Bound,
 	ExportStatementDefaultFromClauseFrom.BuildArgs,
 	ExportStatementDefaultFromClauseFrom.LooseArgs,
 	never,
-	TSKindId.ExportStatementDefaultFromClauseFrom
+	TSKindId.ExportStatementDefaultFromClauseFrom,
+	ExportStatementDefaultFromClauseFrom.Parsed,
+	never
 > {}
 export interface ExportStatementDefaultDeclarationDefaultKwNs extends NodeNs<
 	ExportStatementDefaultDeclarationDefaultKw,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementDefaultDeclarationDefaultKw.Built,
+	ExportStatementDefaultDeclarationDefaultKw.Bound,
 	ExportStatementDefaultDeclarationDefaultKw.BuildArgs,
 	ExportStatementDefaultDeclarationDefaultKw.LooseArgs,
 	'content',
-	TSKindId.ExportStatementDefaultDeclarationDefaultKw
+	TSKindId.ExportStatementDefaultDeclarationDefaultKw,
+	ExportStatementDefaultDeclarationDefaultKw.Parsed,
+	never
 > {}
 export interface ExportStatementDefaultDeclarationDefaultKwValueNs extends NodeNs<
 	ExportStatementDefaultDeclarationDefaultKwValue,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ExportStatementDefaultDeclarationDefaultKwValue.Built,
+	ExportStatementDefaultDeclarationDefaultKwValue.Bound,
 	ExportStatementDefaultDeclarationDefaultKwValue.BuildArgs,
 	ExportStatementDefaultDeclarationDefaultKwValue.LooseArgs,
 	'value',
-	TSKindId.ExportStatementDefaultDeclarationDefaultKwValue
+	TSKindId.ExportStatementDefaultDeclarationDefaultKwValue,
+	ExportStatementDefaultDeclarationDefaultKwValue.Parsed,
+	never
 > {}
 export interface VariableDeclaratorPlainNs extends NodeNs<
 	VariableDeclaratorPlain,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	VariableDeclaratorPlain.Built,
+	VariableDeclaratorPlain.Bound,
 	VariableDeclaratorPlain.BuildArgs,
 	VariableDeclaratorPlain.LooseArgs,
 	never,
-	TSKindId.VariableDeclaratorPlain
+	TSKindId.VariableDeclaratorPlain,
+	VariableDeclaratorPlain.Parsed,
+	never
 > {}
 export interface VariableDeclaratorDefiniteNs extends NodeNs<
 	VariableDeclaratorDefinite,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	VariableDeclaratorDefinite.Built,
+	VariableDeclaratorDefinite.Bound,
 	VariableDeclaratorDefinite.BuildArgs,
 	VariableDeclaratorDefinite.LooseArgs,
 	never,
-	TSKindId.VariableDeclaratorDefinite
+	TSKindId.VariableDeclaratorDefinite,
+	VariableDeclaratorDefinite.Parsed,
+	never
 > {}
 export interface ForHeaderLhsNs extends NodeNs<
 	ForHeaderLhs,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ForHeaderLhs.Built,
+	ForHeaderLhs.Bound,
 	ForHeaderLhs.BuildArgs,
 	ForHeaderLhs.LooseArgs,
 	never,
-	TSKindId.ForHeaderLhs
+	TSKindId.ForHeaderLhs,
+	ForHeaderLhs.Parsed,
+	never
 > {}
 export interface ForHeaderVarKindNs extends NodeNs<
 	ForHeaderVarKind,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ForHeaderVarKind.Built,
+	ForHeaderVarKind.Bound,
 	ForHeaderVarKind.BuildArgs,
 	ForHeaderVarKind.LooseArgs,
 	never,
-	TSKindId.ForHeaderVarKind
+	TSKindId.ForHeaderVarKind,
+	ForHeaderVarKind.Parsed,
+	never
 > {}
 export interface ForHeaderLetConstKindNs extends NodeNs<
 	ForHeaderLetConstKind,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ForHeaderLetConstKind.Built,
+	ForHeaderLetConstKind.Bound,
 	ForHeaderLetConstKind.BuildArgs,
 	ForHeaderLetConstKind.LooseArgs,
 	never,
-	TSKindId.ForHeaderLetConstKind
+	TSKindId.ForHeaderLetConstKind,
+	ForHeaderLetConstKind.Parsed,
+	never
 > {}
 export interface StatementIdentifierNs extends NodeNs<
 	StatementIdentifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	StatementIdentifier.Built,
+	StatementIdentifier.Bound,
 	StatementIdentifier.BuildArgs,
 	StatementIdentifier.LooseArgs,
 	'content',
-	TSKindId.StatementIdentifier
+	TSKindId.StatementIdentifier,
+	StatementIdentifier.Parsed,
+	never
 > {}
 export interface ShorthandPropertyIdentifierNs extends NodeNs<
 	ShorthandPropertyIdentifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ShorthandPropertyIdentifier.Built,
+	ShorthandPropertyIdentifier.Bound,
 	ShorthandPropertyIdentifier.BuildArgs,
 	ShorthandPropertyIdentifier.LooseArgs,
 	'content',
-	TSKindId.ShorthandPropertyIdentifier
+	TSKindId.ShorthandPropertyIdentifier,
+	ShorthandPropertyIdentifier.Parsed,
+	never
 > {}
 export interface ShorthandPropertyIdentifierPatternNs extends NodeNs<
 	ShorthandPropertyIdentifierPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	ShorthandPropertyIdentifierPattern.Built,
+	ShorthandPropertyIdentifierPattern.Bound,
 	ShorthandPropertyIdentifierPattern.BuildArgs,
 	ShorthandPropertyIdentifierPattern.LooseArgs,
 	'content',
-	TSKindId.ShorthandPropertyIdentifierPattern
+	TSKindId.ShorthandPropertyIdentifierPattern,
+	ShorthandPropertyIdentifierPattern.Parsed,
+	never
 > {}
 export interface PropertyIdentifierNs extends NodeNs<
 	PropertyIdentifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	PropertyIdentifier.Built,
+	PropertyIdentifier.Bound,
 	PropertyIdentifier.BuildArgs,
 	PropertyIdentifier.LooseArgs,
 	'content',
-	TSKindId.PropertyIdentifier
+	TSKindId.PropertyIdentifier,
+	PropertyIdentifier.Parsed,
+	never
 > {}
 export interface TypeIdentifierNs extends NodeNs<
 	TypeIdentifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	TypeIdentifier.Built,
+	TypeIdentifier.Bound,
 	TypeIdentifier.BuildArgs,
 	TypeIdentifier.LooseArgs,
 	'content',
-	TSKindId.TypeIdentifier
+	TSKindId.TypeIdentifier,
+	TypeIdentifier.Parsed,
+	never
 > {}
 export interface InterfaceBodyNs extends NodeNs<
 	InterfaceBody,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	InterfaceBody.Built,
+	InterfaceBody.Bound,
 	InterfaceBody.BuildArgs,
 	InterfaceBody.LooseArgs,
 	'content',
-	TSKindId.InterfaceBody
+	TSKindId.InterfaceBody,
+	InterfaceBody.Parsed,
+	never
 > {}
 export interface ImportNs extends KeywordNs<TSKindId.Import, 'import', TSKindId.Import> {}
 export interface EmptyStatementNs extends KeywordNs<TSKindId.EmptyStatement, ';', TSKindId.EmptyStatement> {}
@@ -15473,29 +17371,29 @@ export interface StaticKeywordNs extends KeywordNs<TSKindId.StaticKeyword, 'stat
 export interface UnescapedDoubleStringFragmentNs extends LeafNs<
 	UnescapedDoubleStringFragment,
 	string,
-	UnescapedDoubleStringFragment.Built,
+	UnescapedDoubleStringFragment.Bound,
 	TSKindId.UnescapedDoubleStringFragment
 > {}
 export interface UnescapedSingleStringFragmentNs extends LeafNs<
 	UnescapedSingleStringFragment,
 	string,
-	UnescapedSingleStringFragment.Built,
+	UnescapedSingleStringFragment.Bound,
 	TSKindId.UnescapedSingleStringFragment
 > {}
-export interface RegexPatternNs extends LeafNs<RegexPattern, string, RegexPattern.Built, TSKindId.RegexPattern> {}
-export interface RegexFlagsNs extends LeafNs<RegexFlags, string, RegexFlags.Built, TSKindId.RegexFlags> {}
-export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Built, TSKindId.Identifier> {}
+export interface RegexPatternNs extends LeafNs<RegexPattern, string, RegexPattern.Bound, TSKindId.RegexPattern> {}
+export interface RegexFlagsNs extends LeafNs<RegexFlags, string, RegexFlags.Bound, TSKindId.RegexFlags> {}
+export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Bound, TSKindId.Identifier> {}
 export interface NumberDecimalNs extends LeafNs<
 	NumberDecimal,
 	string | number | bigint,
-	NumberDecimal.Built,
+	NumberDecimal.Bound,
 	TSKindId.NumberDecimal
 > {}
-export interface HtmlCommentNs extends LeafNs<HtmlComment, string, HtmlComment.Built, TSKindId.HtmlComment> {}
-export interface JsxTextNs extends LeafNs<JsxText, string, JsxText.Built, TSKindId.JsxText> {}
-export interface TemplateCharsNs extends LeafNs<TemplateChars, string, TemplateChars.Built, TSKindId.TemplateChars> {}
-export interface TernaryQmarkNs extends LeafNs<TernaryQmark, string, TernaryQmark.Built, TSKindId.TernaryQmark> {}
-export interface ErrorRecoveryNs extends LeafNs<ErrorRecovery, string, ErrorRecovery.Built, TSKindId.ErrorRecovery> {}
+export interface HtmlCommentNs extends LeafNs<HtmlComment, string, HtmlComment.Bound, TSKindId.HtmlComment> {}
+export interface JsxTextNs extends LeafNs<JsxText, string, JsxText.Bound, TSKindId.JsxText> {}
+export interface TemplateCharsNs extends LeafNs<TemplateChars, string, TemplateChars.Bound, TSKindId.TemplateChars> {}
+export interface TernaryQmarkNs extends LeafNs<TernaryQmark, string, TernaryQmark.Bound, TSKindId.TernaryQmark> {}
+export interface ErrorRecoveryNs extends LeafNs<ErrorRecovery, string, ErrorRecovery.Bound, TSKindId.ErrorRecovery> {}
 
 export interface NamespaceMap {
 	[TSKindId.Program]: ProgramNs;
@@ -15784,6 +17682,493 @@ export interface NamespaceMap {
 	[TSKindId.TernaryQmark]: TernaryQmarkNs;
 	[TSKindId.ErrorRecovery]: ErrorRecoveryNs;
 }
+
+export interface BoundByKindId {
+	[TSKindId.Program]: Program.Bound;
+	[TSKindId.HashBangLine]: HashBangLine.Bound;
+	[TSKindId.NamespaceExport]: NamespaceExport.Bound;
+	[TSKindId.ExportClause]: ExportClause.Bound;
+	[TSKindId.ExportSpecifier]: ExportSpecifier.Bound;
+	[TSKindId.ImportStatement]: ImportStatement.Bound;
+	[TSKindId.ImportClause]: ImportClause.Bound;
+	[TSKindId.NamespaceImport]: NamespaceImport.Bound;
+	[TSKindId.NamedImports]: NamedImports.Bound;
+	[TSKindId.ImportAttribute]: ImportAttribute.Bound;
+	[TSKindId.ExpressionStatement]: ExpressionStatement.Bound;
+	[TSKindId.VariableDeclaration]: VariableDeclaration.Bound;
+	[TSKindId.LexicalDeclaration]: LexicalDeclaration.Bound;
+	[TSKindId.StatementBlock]: StatementBlock.Bound;
+	[TSKindId.ElseClause]: ElseClause.Bound;
+	[TSKindId.IfStatement]: IfStatement.Bound;
+	[TSKindId.SwitchStatement]: SwitchStatement.Bound;
+	[TSKindId.ForStatement]: ForStatement.Bound;
+	[TSKindId.ForInStatement]: ForInStatement.Bound;
+	[TSKindId.WhileStatement]: WhileStatement.Bound;
+	[TSKindId.DoStatement]: DoStatement.Bound;
+	[TSKindId.TryStatement]: TryStatement.Bound;
+	[TSKindId.WithStatement]: WithStatement.Bound;
+	[TSKindId.BreakStatement]: BreakStatement.Bound;
+	[TSKindId.ContinueStatement]: ContinueStatement.Bound;
+	[TSKindId.DebuggerStatement]: DebuggerStatement.Bound;
+	[TSKindId.ReturnStatement]: ReturnStatement.Bound;
+	[TSKindId.ThrowStatement]: ThrowStatement.Bound;
+	[TSKindId.LabeledStatement]: LabeledStatement.Bound;
+	[TSKindId.SwitchBody]: SwitchBody.Bound;
+	[TSKindId.SwitchCase]: SwitchCase.Bound;
+	[TSKindId.SwitchDefault]: SwitchDefault.Bound;
+	[TSKindId.CatchClause]: CatchClause.Bound;
+	[TSKindId.FinallyClause]: FinallyClause.Bound;
+	[TSKindId.YieldExpression]: YieldExpression.Bound;
+	[TSKindId.Object]: Object.Bound;
+	[TSKindId.ObjectPattern]: ObjectPattern.Bound;
+	[TSKindId.AssignmentPattern]: AssignmentPattern.Bound;
+	[TSKindId.ObjectAssignmentPattern]: ObjectAssignmentPattern.Bound;
+	[TSKindId.Array]: Array.Bound;
+	[TSKindId.ArrayPattern]: ArrayPattern.Bound;
+	[TSKindId.NestedIdentifier]: NestedIdentifier.Bound;
+	[TSKindId.Class]: Class.Bound;
+	[TSKindId.ClassDeclaration]: ClassDeclaration.Bound;
+	[TSKindId.ClassHeritage]: ClassHeritage.Bound;
+	[TSKindId.FunctionExpression]: FunctionExpression.Bound;
+	[TSKindId.FunctionDeclaration]: FunctionDeclaration.Bound;
+	[TSKindId.GeneratorFunction]: GeneratorFunction.Bound;
+	[TSKindId.GeneratorFunctionDeclaration]: GeneratorFunctionDeclaration.Bound;
+	[TSKindId.ArrowFunction]: ArrowFunction.Bound;
+	[TSKindId.NewExpression]: NewExpression.Bound;
+	[TSKindId.AwaitExpression]: AwaitExpression.Bound;
+	[TSKindId.MemberExpression]: MemberExpression.Bound;
+	[TSKindId.SubscriptExpression]: SubscriptExpression.Bound;
+	[TSKindId.LhsExpression]: LhsExpression.Bound;
+	[TSKindId.AssignmentExpression]: AssignmentExpression.Bound;
+	[TSKindId.AugmentedAssignmentExpression]: AugmentedAssignmentExpression.Bound;
+	[TSKindId.SpreadElement]: SpreadElement.Bound;
+	[TSKindId.TernaryExpression]: TernaryExpression.Bound;
+	[TSKindId.BinaryExpression]: BinaryExpression.Bound;
+	[TSKindId.UnaryExpression]: UnaryExpression.Bound;
+	[TSKindId.SequenceExpression]: SequenceExpression.Bound;
+	[TSKindId.EscapeSequence]: EscapeSequence.Bound;
+	[TSKindId.TemplateString]: TemplateString.Bound;
+	[TSKindId.TemplateSubstitution]: TemplateSubstitution.Bound;
+	[TSKindId.Regex]: Regex.Bound;
+	[TSKindId.PrivatePropertyIdentifier]: PrivatePropertyIdentifier.Bound;
+	[TSKindId.Arguments]: Arguments.Bound;
+	[TSKindId.Decorator]: Decorator.Bound;
+	[TSKindId.DecoratorMemberExpression]: DecoratorMemberExpression.Bound;
+	[TSKindId.DecoratorCallExpression]: DecoratorCallExpression.Bound;
+	[TSKindId.ClassBody]: ClassBody.Bound;
+	[TSKindId.FormalParameters]: FormalParameters.Bound;
+	[TSKindId.ClassStaticBlock]: ClassStaticBlock.Bound;
+	[TSKindId.RestPattern]: RestPattern.Bound;
+	[TSKindId.MethodDefinition]: MethodDefinition.Bound;
+	[TSKindId.Pair]: Pair.Bound;
+	[TSKindId.PairPattern]: PairPattern.Bound;
+	[TSKindId.ComputedPropertyName]: ComputedPropertyName.Bound;
+	[TSKindId.PublicFieldDefinition]: PublicFieldDefinition.Bound;
+	[TSKindId.NonNullExpression]: NonNullExpression.Bound;
+	[TSKindId.MethodSignature]: MethodSignature.Bound;
+	[TSKindId.AbstractMethodSignature]: AbstractMethodSignature.Bound;
+	[TSKindId.FunctionSignature]: FunctionSignature.Bound;
+	[TSKindId.DecoratorParenthesizedExpression]: DecoratorParenthesizedExpression.Bound;
+	[TSKindId.TypeAssertion]: TypeAssertion.Bound;
+	[TSKindId.AsExpression]: AsExpression.Bound;
+	[TSKindId.SatisfiesExpression]: SatisfiesExpression.Bound;
+	[TSKindId.InstantiationExpression]: InstantiationExpression.Bound;
+	[TSKindId.ImportRequireClause]: ImportRequireClause.Bound;
+	[TSKindId.ExtendsClause]: ExtendsClause.Bound;
+	[TSKindId.ExtendsClauseSingle]: ExtendsClauseSingle.Bound;
+	[TSKindId.ImplementsClause]: ImplementsClause.Bound;
+	[TSKindId.AmbientDeclaration]: AmbientDeclaration.Bound;
+	[TSKindId.AbstractClassDeclaration]: AbstractClassDeclaration.Bound;
+	[TSKindId.Module]: Module.Bound;
+	[TSKindId.InternalModule]: InternalModule.Bound;
+	[TSKindId.ImportAlias]: ImportAlias.Bound;
+	[TSKindId.NestedTypeIdentifier]: NestedTypeIdentifier.Bound;
+	[TSKindId.InterfaceDeclaration]: InterfaceDeclaration.Bound;
+	[TSKindId.ExtendsTypeClause]: ExtendsTypeClause.Bound;
+	[TSKindId.EnumDeclaration]: EnumDeclaration.Bound;
+	[TSKindId.EnumBody]: EnumBody.Bound;
+	[TSKindId.EnumAssignment]: EnumAssignment.Bound;
+	[TSKindId.TypeAliasDeclaration]: TypeAliasDeclaration.Bound;
+	[TSKindId.RequiredParameter]: RequiredParameter.Bound;
+	[TSKindId.OptionalParameter]: OptionalParameter.Bound;
+	[TSKindId.OmittingTypeAnnotation]: OmittingTypeAnnotation.Bound;
+	[TSKindId.AddingTypeAnnotation]: AddingTypeAnnotation.Bound;
+	[TSKindId.OptingTypeAnnotation]: OptingTypeAnnotation.Bound;
+	[TSKindId.TypeAnnotation]: TypeAnnotation.Bound;
+	[TSKindId.TypeQueryMemberExpressionInTypeAnnotation]: TypeQueryMemberExpressionInTypeAnnotation.Bound;
+	[TSKindId.TypeQueryCallExpressionInTypeAnnotation]: TypeQueryCallExpressionInTypeAnnotation.Bound;
+	[TSKindId.Asserts]: Asserts.Bound;
+	[TSKindId.AssertsAnnotation]: AssertsAnnotation.Bound;
+	[TSKindId.TupleParameter]: TupleParameter.Bound;
+	[TSKindId.OptionalTupleParameter]: OptionalTupleParameter.Bound;
+	[TSKindId.OptionalType]: OptionalType.Bound;
+	[TSKindId.RestType]: RestType.Bound;
+	[TSKindId.ConstructorType]: ConstructorType.Bound;
+	[TSKindId.TemplateType]: TemplateType.Bound;
+	[TSKindId.TemplateLiteralType]: TemplateLiteralType.Bound;
+	[TSKindId.InferType]: InferType.Bound;
+	[TSKindId.ConditionalType]: ConditionalType.Bound;
+	[TSKindId.GenericType]: GenericType.Bound;
+	[TSKindId.TypePredicate]: TypePredicate.Bound;
+	[TSKindId.TypePredicateAnnotation]: TypePredicateAnnotation.Bound;
+	[TSKindId.TypeQueryMemberExpression]: TypeQueryMemberExpression.Bound;
+	[TSKindId.TypeQuerySubscriptExpression]: TypeQuerySubscriptExpression.Bound;
+	[TSKindId.TypeQueryCallExpression]: TypeQueryCallExpression.Bound;
+	[TSKindId.TypeQueryInstantiationExpression]: TypeQueryInstantiationExpression.Bound;
+	[TSKindId.TypeQuery]: TypeQuery.Bound;
+	[TSKindId.IndexTypeQuery]: IndexTypeQuery.Bound;
+	[TSKindId.LookupType]: LookupType.Bound;
+	[TSKindId.MappedTypeClause]: MappedTypeClause.Bound;
+	[TSKindId.LiteralType]: LiteralType.Bound;
+	[TSKindId.FlowMaybeType]: FlowMaybeType.Bound;
+	[TSKindId.ParenthesizedType]: ParenthesizedType.Bound;
+	[TSKindId.TypeArguments]: TypeArguments.Bound;
+	[TSKindId.ObjectType]: ObjectType.Bound;
+	[TSKindId.CallSignature]: CallSignature.Bound;
+	[TSKindId.PropertySignature]: PropertySignature.Bound;
+	[TSKindId.TypeParameters]: TypeParameters.Bound;
+	[TSKindId.TypeParameter]: TypeParameter.Bound;
+	[TSKindId.DefaultType]: DefaultType.Bound;
+	[TSKindId.Constraint]: Constraint.Bound;
+	[TSKindId.ConstructSignature]: ConstructSignature.Bound;
+	[TSKindId.ArrayType]: ArrayType.Bound;
+	[TSKindId.TupleType]: TupleType.Bound;
+	[TSKindId.ReadonlyType]: ReadonlyType.Bound;
+	[TSKindId.UnionType]: UnionType.Bound;
+	[TSKindId.IntersectionType]: IntersectionType.Bound;
+	[TSKindId.FunctionType]: FunctionType.Bound;
+	[TSKindId.ExportSpecifiers]: ExportSpecifiers.Bound;
+	[TSKindId.ImportSpecifiers]: ImportSpecifiers.Bound;
+	[TSKindId.FormalParametersElements]: FormalParametersElements.Bound;
+	[TSKindId.EnumBodyElements]: EnumBodyElements.Bound;
+	[TSKindId.Types]: Types.Bound;
+	[TSKindId.TypeParametersElements]: TypeParametersElements.Bound;
+	[TSKindId.TupleTypeMembers]: TupleTypeMembers.Bound;
+	[TSKindId.ImportClauseGroup]: ImportClauseGroup.Bound;
+	[TSKindId.CatchClauseGroup]: CatchClauseGroup.Bound;
+	[TSKindId.AmbientDeclarationGlobal]: AmbientDeclarationGlobal.Bound;
+	[TSKindId.AmbientDeclarationModule]: AmbientDeclarationModule.Bound;
+	[TSKindId.ObjectTypeContent]: ObjectTypeContent.Bound;
+	[TSKindId.ExportStatementNamespaceExport]: ExportStatementNamespaceExport.Bound;
+	[TSKindId.ExportStatementTypeExport]: ExportStatementTypeExport.Bound;
+	[TSKindId.ExportStatementEqualsExport]: ExportStatementEqualsExport.Bound;
+	[TSKindId.CommentLine]: CommentLine.Bound;
+	[TSKindId.CommentBlock]: CommentBlock.Bound;
+	[TSKindId.LiteralTypeNegativeNumber]: LiteralTypeNegativeNumber.Bound;
+	[TSKindId.NumberHex]: NumberHex.Bound;
+	[TSKindId.NumberFloatPoint]: NumberFloatPoint.Bound;
+	[TSKindId.NumberFloatLeadingPoint]: NumberFloatLeadingPoint.Bound;
+	[TSKindId.NumberFloatScientific]: NumberFloatScientific.Bound;
+	[TSKindId.NumberBinary]: NumberBinary.Bound;
+	[TSKindId.NumberOctal]: NumberOctal.Bound;
+	[TSKindId.NumberBigintHex]: NumberBigintHex.Bound;
+	[TSKindId.NumberBigintBinary]: NumberBigintBinary.Bound;
+	[TSKindId.NumberBigintOctal]: NumberBigintOctal.Bound;
+	[TSKindId.NumberBigintDecimal]: NumberBigintDecimal.Bound;
+	[TSKindId.BinaryExpressionIn]: BinaryExpressionIn.Bound;
+	[TSKindId.ClassBodyMethod]: ClassBodyMethod.Bound;
+	[TSKindId.ClassBodyMethodSig]: ClassBodyMethodSig.Bound;
+	[TSKindId.ClassBodyMember]: ClassBodyMember.Bound;
+	[TSKindId.IndexSignatureColon]: IndexSignatureColon.Bound;
+	[TSKindId.IndexSignatureMappedTypeClause]: IndexSignatureMappedTypeClause.Bound;
+	[TSKindId.ImportStatementClauseFrom]: ImportStatementClauseFrom.Bound;
+	[TSKindId.ImportSpecifierName]: ImportSpecifierName.Bound;
+	[TSKindId.ImportSpecifierAs]: ImportSpecifierAs.Bound;
+	[TSKindId.ParenthesizedExpressionTyped]: ParenthesizedExpressionTyped.Bound;
+	[TSKindId.ParenthesizedExpressionSequence]: ParenthesizedExpressionSequence.Bound;
+	[TSKindId.CallExpressionCall]: CallExpressionCall.Bound;
+	[TSKindId.CallExpressionTemplateCall]: CallExpressionTemplateCall.Bound;
+	[TSKindId.CallExpressionMember]: CallExpressionMember.Bound;
+	[TSKindId.StringDouble]: StringDouble.Bound;
+	[TSKindId.StringSingle]: StringSingle.Bound;
+	[TSKindId.UpdateExpressionPostfix]: UpdateExpressionPostfix.Bound;
+	[TSKindId.UpdateExpressionPrefix]: UpdateExpressionPrefix.Bound;
+	[TSKindId.ArrowFunctionParameter]: ArrowFunctionParameter.Bound;
+	[TSKindId.ClassHeritageExtendsClause]: ClassHeritageExtendsClause.Bound;
+	[TSKindId.ImportClauseDefaultImport]: ImportClauseDefaultImport.Bound;
+	[TSKindId.ExportStatementDefaultFrom]: ExportStatementDefaultFrom.Bound;
+	[TSKindId.ExportStatementDefaultDeclaration]: ExportStatementDefaultDeclaration.Bound;
+	[TSKindId.ExportStatementDefaultFromStarFrom]: ExportStatementDefaultFromStarFrom.Bound;
+	[TSKindId.ExportStatementDefaultFromNsFrom]: ExportStatementDefaultFromNsFrom.Bound;
+	[TSKindId.ExportStatementDefaultFromClauseFrom]: ExportStatementDefaultFromClauseFrom.Bound;
+	[TSKindId.ExportStatementDefaultDeclarationDefaultKw]: ExportStatementDefaultDeclarationDefaultKw.Bound;
+	[TSKindId.ExportStatementDefaultDeclarationDefaultKwValue]: ExportStatementDefaultDeclarationDefaultKwValue.Bound;
+	[TSKindId.VariableDeclaratorPlain]: VariableDeclaratorPlain.Bound;
+	[TSKindId.VariableDeclaratorDefinite]: VariableDeclaratorDefinite.Bound;
+	[TSKindId.ForHeaderLhs]: ForHeaderLhs.Bound;
+	[TSKindId.ForHeaderVarKind]: ForHeaderVarKind.Bound;
+	[TSKindId.ForHeaderLetConstKind]: ForHeaderLetConstKind.Bound;
+	[TSKindId.StatementIdentifier]: StatementIdentifier.Bound;
+	[TSKindId.ShorthandPropertyIdentifier]: ShorthandPropertyIdentifier.Bound;
+	[TSKindId.ShorthandPropertyIdentifierPattern]: ShorthandPropertyIdentifierPattern.Bound;
+	[TSKindId.PropertyIdentifier]: PropertyIdentifier.Bound;
+	[TSKindId.TypeIdentifier]: TypeIdentifier.Bound;
+	[TSKindId.InterfaceBody]: InterfaceBody.Bound;
+	[TSKindId.UnescapedDoubleStringFragment]: UnescapedDoubleStringFragment.Bound;
+	[TSKindId.UnescapedSingleStringFragment]: UnescapedSingleStringFragment.Bound;
+	[TSKindId.RegexPattern]: RegexPattern.Bound;
+	[TSKindId.RegexFlags]: RegexFlags.Bound;
+	[TSKindId.Identifier]: Identifier.Bound;
+	[TSKindId.NumberDecimal]: NumberDecimal.Bound;
+	[TSKindId.HtmlComment]: HtmlComment.Bound;
+	[TSKindId.JsxText]: JsxText.Bound;
+	[TSKindId.TemplateChars]: TemplateChars.Bound;
+	[TSKindId.TernaryQmark]: TernaryQmark.Bound;
+	[TSKindId.ErrorRecovery]: ErrorRecovery.Bound;
+}
+
+export interface ParsedByKindId {
+	[TSKindId.Program]: Program.Parsed;
+	[TSKindId.HashBangLine]: HashBangLine.Parsed;
+	[TSKindId.NamespaceExport]: NamespaceExport.Parsed;
+	[TSKindId.ExportClause]: ExportClause.Parsed;
+	[TSKindId.ExportSpecifier]: ExportSpecifier.Parsed;
+	[TSKindId.ImportStatement]: ImportStatement.Parsed;
+	[TSKindId.ImportClause]: ImportClause.Parsed;
+	[TSKindId.NamespaceImport]: NamespaceImport.Parsed;
+	[TSKindId.NamedImports]: NamedImports.Parsed;
+	[TSKindId.ImportAttribute]: ImportAttribute.Parsed;
+	[TSKindId.ExpressionStatement]: ExpressionStatement.Parsed;
+	[TSKindId.VariableDeclaration]: VariableDeclaration.Parsed;
+	[TSKindId.LexicalDeclaration]: LexicalDeclaration.Parsed;
+	[TSKindId.StatementBlock]: StatementBlock.Parsed;
+	[TSKindId.ElseClause]: ElseClause.Parsed;
+	[TSKindId.IfStatement]: IfStatement.Parsed;
+	[TSKindId.SwitchStatement]: SwitchStatement.Parsed;
+	[TSKindId.ForStatement]: ForStatement.Parsed;
+	[TSKindId.ForInStatement]: ForInStatement.Parsed;
+	[TSKindId.WhileStatement]: WhileStatement.Parsed;
+	[TSKindId.DoStatement]: DoStatement.Parsed;
+	[TSKindId.TryStatement]: TryStatement.Parsed;
+	[TSKindId.WithStatement]: WithStatement.Parsed;
+	[TSKindId.BreakStatement]: BreakStatement.Parsed;
+	[TSKindId.ContinueStatement]: ContinueStatement.Parsed;
+	[TSKindId.DebuggerStatement]: DebuggerStatement.Parsed;
+	[TSKindId.ReturnStatement]: ReturnStatement.Parsed;
+	[TSKindId.ThrowStatement]: ThrowStatement.Parsed;
+	[TSKindId.LabeledStatement]: LabeledStatement.Parsed;
+	[TSKindId.SwitchBody]: SwitchBody.Parsed;
+	[TSKindId.SwitchCase]: SwitchCase.Parsed;
+	[TSKindId.SwitchDefault]: SwitchDefault.Parsed;
+	[TSKindId.CatchClause]: CatchClause.Parsed;
+	[TSKindId.FinallyClause]: FinallyClause.Parsed;
+	[TSKindId.YieldExpression]: YieldExpression.Parsed;
+	[TSKindId.Object]: Object.Parsed;
+	[TSKindId.ObjectPattern]: ObjectPattern.Parsed;
+	[TSKindId.AssignmentPattern]: AssignmentPattern.Parsed;
+	[TSKindId.ObjectAssignmentPattern]: ObjectAssignmentPattern.Parsed;
+	[TSKindId.Array]: Array.Parsed;
+	[TSKindId.ArrayPattern]: ArrayPattern.Parsed;
+	[TSKindId.NestedIdentifier]: NestedIdentifier.Parsed;
+	[TSKindId.Class]: Class.Parsed;
+	[TSKindId.ClassDeclaration]: ClassDeclaration.Parsed;
+	[TSKindId.ClassHeritage]: ClassHeritage.Parsed;
+	[TSKindId.FunctionExpression]: FunctionExpression.Parsed;
+	[TSKindId.FunctionDeclaration]: FunctionDeclaration.Parsed;
+	[TSKindId.GeneratorFunction]: GeneratorFunction.Parsed;
+	[TSKindId.GeneratorFunctionDeclaration]: GeneratorFunctionDeclaration.Parsed;
+	[TSKindId.ArrowFunction]: ArrowFunction.Parsed;
+	[TSKindId.NewExpression]: NewExpression.Parsed;
+	[TSKindId.AwaitExpression]: AwaitExpression.Parsed;
+	[TSKindId.MemberExpression]: MemberExpression.Parsed;
+	[TSKindId.SubscriptExpression]: SubscriptExpression.Parsed;
+	[TSKindId.LhsExpression]: LhsExpression.Parsed;
+	[TSKindId.AssignmentExpression]: AssignmentExpression.Parsed;
+	[TSKindId.AugmentedAssignmentExpression]: AugmentedAssignmentExpression.Parsed;
+	[TSKindId.SpreadElement]: SpreadElement.Parsed;
+	[TSKindId.TernaryExpression]: TernaryExpression.Parsed;
+	[TSKindId.BinaryExpression]: BinaryExpression.Parsed;
+	[TSKindId.UnaryExpression]: UnaryExpression.Parsed;
+	[TSKindId.SequenceExpression]: SequenceExpression.Parsed;
+	[TSKindId.EscapeSequence]: EscapeSequence.Parsed;
+	[TSKindId.TemplateString]: TemplateString.Parsed;
+	[TSKindId.TemplateSubstitution]: TemplateSubstitution.Parsed;
+	[TSKindId.Regex]: Regex.Parsed;
+	[TSKindId.PrivatePropertyIdentifier]: PrivatePropertyIdentifier.Parsed;
+	[TSKindId.Arguments]: Arguments.Parsed;
+	[TSKindId.Decorator]: Decorator.Parsed;
+	[TSKindId.DecoratorMemberExpression]: DecoratorMemberExpression.Parsed;
+	[TSKindId.DecoratorCallExpression]: DecoratorCallExpression.Parsed;
+	[TSKindId.ClassBody]: ClassBody.Parsed;
+	[TSKindId.FormalParameters]: FormalParameters.Parsed;
+	[TSKindId.ClassStaticBlock]: ClassStaticBlock.Parsed;
+	[TSKindId.RestPattern]: RestPattern.Parsed;
+	[TSKindId.MethodDefinition]: MethodDefinition.Parsed;
+	[TSKindId.Pair]: Pair.Parsed;
+	[TSKindId.PairPattern]: PairPattern.Parsed;
+	[TSKindId.ComputedPropertyName]: ComputedPropertyName.Parsed;
+	[TSKindId.PublicFieldDefinition]: PublicFieldDefinition.Parsed;
+	[TSKindId.NonNullExpression]: NonNullExpression.Parsed;
+	[TSKindId.MethodSignature]: MethodSignature.Parsed;
+	[TSKindId.AbstractMethodSignature]: AbstractMethodSignature.Parsed;
+	[TSKindId.FunctionSignature]: FunctionSignature.Parsed;
+	[TSKindId.DecoratorParenthesizedExpression]: DecoratorParenthesizedExpression.Parsed;
+	[TSKindId.TypeAssertion]: TypeAssertion.Parsed;
+	[TSKindId.AsExpression]: AsExpression.Parsed;
+	[TSKindId.SatisfiesExpression]: SatisfiesExpression.Parsed;
+	[TSKindId.InstantiationExpression]: InstantiationExpression.Parsed;
+	[TSKindId.ImportRequireClause]: ImportRequireClause.Parsed;
+	[TSKindId.ExtendsClause]: ExtendsClause.Parsed;
+	[TSKindId.ExtendsClauseSingle]: ExtendsClauseSingle.Parsed;
+	[TSKindId.ImplementsClause]: ImplementsClause.Parsed;
+	[TSKindId.AmbientDeclaration]: AmbientDeclaration.Parsed;
+	[TSKindId.AbstractClassDeclaration]: AbstractClassDeclaration.Parsed;
+	[TSKindId.Module]: Module.Parsed;
+	[TSKindId.InternalModule]: InternalModule.Parsed;
+	[TSKindId.ImportAlias]: ImportAlias.Parsed;
+	[TSKindId.NestedTypeIdentifier]: NestedTypeIdentifier.Parsed;
+	[TSKindId.InterfaceDeclaration]: InterfaceDeclaration.Parsed;
+	[TSKindId.ExtendsTypeClause]: ExtendsTypeClause.Parsed;
+	[TSKindId.EnumDeclaration]: EnumDeclaration.Parsed;
+	[TSKindId.EnumBody]: EnumBody.Parsed;
+	[TSKindId.EnumAssignment]: EnumAssignment.Parsed;
+	[TSKindId.TypeAliasDeclaration]: TypeAliasDeclaration.Parsed;
+	[TSKindId.RequiredParameter]: RequiredParameter.Parsed;
+	[TSKindId.OptionalParameter]: OptionalParameter.Parsed;
+	[TSKindId.OmittingTypeAnnotation]: OmittingTypeAnnotation.Parsed;
+	[TSKindId.AddingTypeAnnotation]: AddingTypeAnnotation.Parsed;
+	[TSKindId.OptingTypeAnnotation]: OptingTypeAnnotation.Parsed;
+	[TSKindId.TypeAnnotation]: TypeAnnotation.Parsed;
+	[TSKindId.TypeQueryMemberExpressionInTypeAnnotation]: TypeQueryMemberExpressionInTypeAnnotation.Parsed;
+	[TSKindId.TypeQueryCallExpressionInTypeAnnotation]: TypeQueryCallExpressionInTypeAnnotation.Parsed;
+	[TSKindId.Asserts]: Asserts.Parsed;
+	[TSKindId.AssertsAnnotation]: AssertsAnnotation.Parsed;
+	[TSKindId.TupleParameter]: TupleParameter.Parsed;
+	[TSKindId.OptionalTupleParameter]: OptionalTupleParameter.Parsed;
+	[TSKindId.OptionalType]: OptionalType.Parsed;
+	[TSKindId.RestType]: RestType.Parsed;
+	[TSKindId.ConstructorType]: ConstructorType.Parsed;
+	[TSKindId.TemplateType]: TemplateType.Parsed;
+	[TSKindId.TemplateLiteralType]: TemplateLiteralType.Parsed;
+	[TSKindId.InferType]: InferType.Parsed;
+	[TSKindId.ConditionalType]: ConditionalType.Parsed;
+	[TSKindId.GenericType]: GenericType.Parsed;
+	[TSKindId.TypePredicate]: TypePredicate.Parsed;
+	[TSKindId.TypePredicateAnnotation]: TypePredicateAnnotation.Parsed;
+	[TSKindId.TypeQueryMemberExpression]: TypeQueryMemberExpression.Parsed;
+	[TSKindId.TypeQuerySubscriptExpression]: TypeQuerySubscriptExpression.Parsed;
+	[TSKindId.TypeQueryCallExpression]: TypeQueryCallExpression.Parsed;
+	[TSKindId.TypeQueryInstantiationExpression]: TypeQueryInstantiationExpression.Parsed;
+	[TSKindId.TypeQuery]: TypeQuery.Parsed;
+	[TSKindId.IndexTypeQuery]: IndexTypeQuery.Parsed;
+	[TSKindId.LookupType]: LookupType.Parsed;
+	[TSKindId.MappedTypeClause]: MappedTypeClause.Parsed;
+	[TSKindId.LiteralType]: LiteralType.Parsed;
+	[TSKindId.FlowMaybeType]: FlowMaybeType.Parsed;
+	[TSKindId.ParenthesizedType]: ParenthesizedType.Parsed;
+	[TSKindId.TypeArguments]: TypeArguments.Parsed;
+	[TSKindId.ObjectType]: ObjectType.Parsed;
+	[TSKindId.CallSignature]: CallSignature.Parsed;
+	[TSKindId.PropertySignature]: PropertySignature.Parsed;
+	[TSKindId.TypeParameters]: TypeParameters.Parsed;
+	[TSKindId.TypeParameter]: TypeParameter.Parsed;
+	[TSKindId.DefaultType]: DefaultType.Parsed;
+	[TSKindId.Constraint]: Constraint.Parsed;
+	[TSKindId.ConstructSignature]: ConstructSignature.Parsed;
+	[TSKindId.ArrayType]: ArrayType.Parsed;
+	[TSKindId.TupleType]: TupleType.Parsed;
+	[TSKindId.ReadonlyType]: ReadonlyType.Parsed;
+	[TSKindId.UnionType]: UnionType.Parsed;
+	[TSKindId.IntersectionType]: IntersectionType.Parsed;
+	[TSKindId.FunctionType]: FunctionType.Parsed;
+	[TSKindId.ExportSpecifiers]: ExportSpecifiers.Parsed;
+	[TSKindId.ImportSpecifiers]: ImportSpecifiers.Parsed;
+	[TSKindId.FormalParametersElements]: FormalParametersElements.Parsed;
+	[TSKindId.EnumBodyElements]: EnumBodyElements.Parsed;
+	[TSKindId.Types]: Types.Parsed;
+	[TSKindId.TypeParametersElements]: TypeParametersElements.Parsed;
+	[TSKindId.TupleTypeMembers]: TupleTypeMembers.Parsed;
+	[TSKindId.ImportClauseGroup]: ImportClauseGroup.Parsed;
+	[TSKindId.CatchClauseGroup]: CatchClauseGroup.Parsed;
+	[TSKindId.AmbientDeclarationGlobal]: AmbientDeclarationGlobal.Parsed;
+	[TSKindId.AmbientDeclarationModule]: AmbientDeclarationModule.Parsed;
+	[TSKindId.ObjectTypeContent]: ObjectTypeContent.Parsed;
+	[TSKindId.ExportStatementNamespaceExport]: ExportStatementNamespaceExport.Parsed;
+	[TSKindId.ExportStatementTypeExport]: ExportStatementTypeExport.Parsed;
+	[TSKindId.ExportStatementEqualsExport]: ExportStatementEqualsExport.Parsed;
+	[TSKindId.CommentLine]: CommentLine.Parsed;
+	[TSKindId.CommentBlock]: CommentBlock.Parsed;
+	[TSKindId.LiteralTypeNegativeNumber]: LiteralTypeNegativeNumber.Parsed;
+	[TSKindId.NumberHex]: NumberHex.Parsed;
+	[TSKindId.NumberFloatPoint]: NumberFloatPoint.Parsed;
+	[TSKindId.NumberFloatLeadingPoint]: NumberFloatLeadingPoint.Parsed;
+	[TSKindId.NumberFloatScientific]: NumberFloatScientific.Parsed;
+	[TSKindId.NumberBinary]: NumberBinary.Parsed;
+	[TSKindId.NumberOctal]: NumberOctal.Parsed;
+	[TSKindId.NumberBigintHex]: NumberBigintHex.Parsed;
+	[TSKindId.NumberBigintBinary]: NumberBigintBinary.Parsed;
+	[TSKindId.NumberBigintOctal]: NumberBigintOctal.Parsed;
+	[TSKindId.NumberBigintDecimal]: NumberBigintDecimal.Parsed;
+	[TSKindId.BinaryExpressionIn]: BinaryExpressionIn.Parsed;
+	[TSKindId.ClassBodyMethod]: ClassBodyMethod.Parsed;
+	[TSKindId.ClassBodyMethodSig]: ClassBodyMethodSig.Parsed;
+	[TSKindId.ClassBodyMember]: ClassBodyMember.Parsed;
+	[TSKindId.IndexSignatureColon]: IndexSignatureColon.Parsed;
+	[TSKindId.IndexSignatureMappedTypeClause]: IndexSignatureMappedTypeClause.Parsed;
+	[TSKindId.ImportStatementClauseFrom]: ImportStatementClauseFrom.Parsed;
+	[TSKindId.ImportSpecifierName]: ImportSpecifierName.Parsed;
+	[TSKindId.ImportSpecifierAs]: ImportSpecifierAs.Parsed;
+	[TSKindId.ParenthesizedExpressionTyped]: ParenthesizedExpressionTyped.Parsed;
+	[TSKindId.ParenthesizedExpressionSequence]: ParenthesizedExpressionSequence.Parsed;
+	[TSKindId.CallExpressionCall]: CallExpressionCall.Parsed;
+	[TSKindId.CallExpressionTemplateCall]: CallExpressionTemplateCall.Parsed;
+	[TSKindId.CallExpressionMember]: CallExpressionMember.Parsed;
+	[TSKindId.StringDouble]: StringDouble.Parsed;
+	[TSKindId.StringSingle]: StringSingle.Parsed;
+	[TSKindId.UpdateExpressionPostfix]: UpdateExpressionPostfix.Parsed;
+	[TSKindId.UpdateExpressionPrefix]: UpdateExpressionPrefix.Parsed;
+	[TSKindId.ArrowFunctionParameter]: ArrowFunctionParameter.Parsed;
+	[TSKindId.ClassHeritageExtendsClause]: ClassHeritageExtendsClause.Parsed;
+	[TSKindId.ImportClauseDefaultImport]: ImportClauseDefaultImport.Parsed;
+	[TSKindId.ExportStatementDefaultFrom]: ExportStatementDefaultFrom.Parsed;
+	[TSKindId.ExportStatementDefaultDeclaration]: ExportStatementDefaultDeclaration.Parsed;
+	[TSKindId.ExportStatementDefaultFromStarFrom]: ExportStatementDefaultFromStarFrom.Parsed;
+	[TSKindId.ExportStatementDefaultFromNsFrom]: ExportStatementDefaultFromNsFrom.Parsed;
+	[TSKindId.ExportStatementDefaultFromClauseFrom]: ExportStatementDefaultFromClauseFrom.Parsed;
+	[TSKindId.ExportStatementDefaultDeclarationDefaultKw]: ExportStatementDefaultDeclarationDefaultKw.Parsed;
+	[TSKindId.ExportStatementDefaultDeclarationDefaultKwValue]: ExportStatementDefaultDeclarationDefaultKwValue.Parsed;
+	[TSKindId.VariableDeclaratorPlain]: VariableDeclaratorPlain.Parsed;
+	[TSKindId.VariableDeclaratorDefinite]: VariableDeclaratorDefinite.Parsed;
+	[TSKindId.ForHeaderLhs]: ForHeaderLhs.Parsed;
+	[TSKindId.ForHeaderVarKind]: ForHeaderVarKind.Parsed;
+	[TSKindId.ForHeaderLetConstKind]: ForHeaderLetConstKind.Parsed;
+	[TSKindId.StatementIdentifier]: StatementIdentifier.Parsed;
+	[TSKindId.ShorthandPropertyIdentifier]: ShorthandPropertyIdentifier.Parsed;
+	[TSKindId.ShorthandPropertyIdentifierPattern]: ShorthandPropertyIdentifierPattern.Parsed;
+	[TSKindId.PropertyIdentifier]: PropertyIdentifier.Parsed;
+	[TSKindId.TypeIdentifier]: TypeIdentifier.Parsed;
+	[TSKindId.InterfaceBody]: InterfaceBody.Parsed;
+	[TSKindId.UnescapedDoubleStringFragment]: UnescapedDoubleStringFragment.Parsed;
+	[TSKindId.UnescapedSingleStringFragment]: UnescapedSingleStringFragment.Parsed;
+	[TSKindId.RegexPattern]: RegexPattern.Parsed;
+	[TSKindId.RegexFlags]: RegexFlags.Parsed;
+	[TSKindId.Identifier]: Identifier.Parsed;
+	[TSKindId.NumberDecimal]: NumberDecimal.Parsed;
+	[TSKindId.HtmlComment]: HtmlComment.Parsed;
+	[TSKindId.JsxText]: JsxText.Parsed;
+	[TSKindId.TemplateChars]: TemplateChars.Parsed;
+	[TSKindId.TernaryQmark]: TernaryQmark.Parsed;
+	[TSKindId.ErrorRecovery]: ErrorRecovery.Parsed;
+}
+
+export interface EmptyByKindId {
+	[TSKindId.Program]: EmptyProgram;
+	[TSKindId.ExportClause]: EmptyExportClause;
+	[TSKindId.NamedImports]: EmptyNamedImports;
+	[TSKindId.StatementBlock]: EmptyStatementBlock;
+	[TSKindId.SwitchBody]: EmptySwitchBody;
+	[TSKindId.Object]: EmptyObject;
+	[TSKindId.ObjectPattern]: EmptyObjectPattern;
+	[TSKindId.Array]: EmptyArray;
+	[TSKindId.ArrayPattern]: EmptyArrayPattern;
+	[TSKindId.Arguments]: EmptyArguments;
+	[TSKindId.ClassBody]: EmptyClassBody;
+	[TSKindId.FormalParameters]: EmptyFormalParameters;
+	[TSKindId.EnumBody]: EmptyEnumBody;
+	[TSKindId.TupleType]: EmptyTupleType;
+}
+
+export type AdmittedNodes = AdmitLookup<BoundByKindId, ParsedByKindId, EmptyByKindId>;
 
 export type FixedTextKindId =
 	| TSKindId.Import
@@ -16246,59 +18631,63 @@ export interface IrKeyOf {
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
-export type BuiltFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Built'];
+export type BoundFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Bound'];
 export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];
 export type LooseConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseConfig'];
 export type BuildArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['BuildArgs'];
 export type LooseArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseArgs'];
 
 // Namespace sugar — merges with each data interface so consumers can write
-// <TypeName>.Config / .Built / .Loose alongside using <TypeName> as a type.
+// <TypeName>.Config / .Bound / .Parsed / .Loose alongside using <TypeName> as a type.
 export namespace Program {
 	export type Config = ConfigFor<TSKindId.Program>;
-	export interface Built extends T.Program, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			hashBangLine(value?: T.HashBangLine): T.Program.Built;
-			statements(value?: NonNullable<T.Program.Config>['statements']): T.Program.Built;
-		};
+	export interface Bound extends BoundOf<T.Program, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Program['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Program, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Program['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Program>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Program>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.Program>>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.Program, T.NamespaceMap>>];
 	export type LooseArgs = [
-		config?: LooseConfigOf<T.Program, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Program
+		config?:
+			| LooseConfigOf<T.Program, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.Program, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.Program;
 }
 export namespace HashBangLine {
 	export type Config = ConfigFor<TSKindId.HashBangLine>;
-	export interface Built extends T.HashBangLine, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string): T.HashBangLine.Built;
-		};
+	export interface Bound extends BoundOf<T.HashBangLine, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.HashBangLine['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.HashBangLine, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.HashBangLine['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.HashBangLine>;
 	export type LooseConfig = LooseConfigFor<TSKindId.HashBangLine>;
-	export type BuildArgs = [value: string];
+	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.HashBangLine;
 }
 export namespace NamespaceExport {
 	export type Config = ConfigFor<TSKindId.NamespaceExport>;
-	export interface Built extends T.NamespaceExport, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			moduleExportName(value: T.Identifier | T.String): T.NamespaceExport.Built;
-		};
+	export interface Bound extends BoundOf<T.NamespaceExport, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NamespaceExport['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NamespaceExport, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NamespaceExport['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.NamespaceExport>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamespaceExport>;
-	export type BuildArgs = [value: T.Identifier | T.String];
+	export type BuildArgs = [value: AdmitBound<T.Identifier | T.String, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -16306,77 +18695,80 @@ export namespace NamespaceExport {
 }
 export namespace ExportClause {
 	export type Config = ConfigFor<TSKindId.ExportClause>;
-	export interface Built extends T.ExportClause, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			exportSpecifiers(value?: T.ExportSpecifiers): T.ExportClause.Built;
-		};
+	export interface Bound extends BoundOf<T.ExportClause, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportClause['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ExportClause, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportClause['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ExportClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportClause>;
-	export type BuildArgs = [value?: T.ExportSpecifiers];
+	export type BuildArgs = [value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNodes>];
 	export type LooseArgs = [value?: LooseValue<T.ExportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.ExportClause;
 }
 export namespace ExportSpecifier {
 	export type Config = ConfigFor<TSKindId.ExportSpecifier>;
-	export interface Built extends T.ExportSpecifier, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			exportKind(value?: NonNullable<T.ExportSpecifier.Config>['exportKind']): T.ExportSpecifier.Built;
-			name(value: T.Identifier | T.String): T.ExportSpecifier.Built;
-			alias(value?: T.Identifier | T.String): T.ExportSpecifier.Built;
-		};
+	export interface Bound extends BoundOf<T.ExportSpecifier, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportSpecifier['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ExportSpecifier, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportSpecifier['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ExportSpecifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportSpecifier>;
-	export type BuildArgs = [config: ConfigOf<T.ExportSpecifier>];
+	export type BuildArgs = [config: ConfigOf<T.ExportSpecifier, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ExportSpecifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ExportSpecifier
+		config:
+			| LooseConfigOf<T.ExportSpecifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.ExportSpecifier, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ExportSpecifier;
 }
 export namespace ImportStatement {
 	export type Config = OmitEach<ConfigFor<TSKindId.ImportStatement>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.ImportStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			importClause(value?: NonNullable<T.ImportStatement.Config>['importClause']): T.ImportStatement.Built;
-			fromClause(value: T.ImportStatementClauseFrom | T.ImportRequireClause | T.String): T.ImportStatement.Built;
-			importAttribute(value?: T.ImportAttribute): T.ImportStatement.Built;
-			terminator(value: NonNullable<T.ImportStatement.Options>['terminator']): T.ImportStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.ImportStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ImportStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ImportStatement>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ImportStatement>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.ImportStatement>, 'terminator'>,
+		config: OmitEach<ConfigOf<T.ImportStatement, T.NamespaceMap>, 'terminator'>,
 		options?: T.ImportStatement.Options
 	];
 	export type LooseArgs = [
 		config:
 			| OmitEach<LooseConfigOf<T.ImportStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'terminator'>
-			| T.ImportStatement,
+			| AdmitBound<T.ImportStatement, T.AdmittedNodes>,
 		options?: T.ImportStatement.Options
 	];
 	export type Kind = TSKindId.ImportStatement;
 }
 export namespace ImportClause {
 	export type Config = ConfigFor<TSKindId.ImportClause>;
-	export interface Built extends T.ImportClause, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport): T.ImportClause.Built;
-		};
+	export interface Bound extends BoundOf<T.ImportClause, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportClause['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ImportClause, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportClause['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ImportClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportClause>;
-	export type BuildArgs = [value: T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport];
+	export type BuildArgs = [
+		value: AdmitBound<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport, T.AdmittedNodes>
+	];
 	export type LooseArgs = [
 		value: LooseValue<
 			T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport,
@@ -16389,66 +18781,73 @@ export namespace ImportClause {
 }
 export namespace NamespaceImport {
 	export type Config = ConfigFor<TSKindId.NamespaceImport>;
-	export interface Built extends T.NamespaceImport, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.Identifier): T.NamespaceImport.Built;
-		};
+	export interface Bound extends BoundOf<T.NamespaceImport, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NamespaceImport['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NamespaceImport, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NamespaceImport['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.NamespaceImport>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamespaceImport>;
-	export type BuildArgs = [value: T.Identifier];
+	export type BuildArgs = [value: AdmitBound<T.Identifier, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.NamespaceImport;
 }
 export namespace NamedImports {
 	export type Config = ConfigFor<TSKindId.NamedImports>;
-	export interface Built extends T.NamedImports, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			importSpecifiers(value?: T.ImportSpecifiers): T.NamedImports.Built;
-		};
+	export interface Bound extends BoundOf<T.NamedImports, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NamedImports['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NamedImports, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NamedImports['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.NamedImports>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedImports>;
-	export type BuildArgs = [value?: T.ImportSpecifiers];
+	export type BuildArgs = [value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNodes>];
 	export type LooseArgs = [value?: LooseValue<T.ImportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.NamedImports;
 }
 export namespace ImportAttribute {
 	export type Config = ConfigFor<TSKindId.ImportAttribute>;
-	export interface Built extends T.ImportAttribute, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			attributeKind(value: NonNullable<T.ImportAttribute.Config>['attributeKind']): T.ImportAttribute.Built;
-			object(value: T.Object): T.ImportAttribute.Built;
-		};
+	export interface Bound extends BoundOf<T.ImportAttribute, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportAttribute['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ImportAttribute, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportAttribute['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ImportAttribute>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportAttribute>;
-	export type BuildArgs = [config: ConfigOf<T.ImportAttribute>];
+	export type BuildArgs = [config: ConfigOf<T.ImportAttribute, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ImportAttribute, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ImportAttribute
+		config:
+			| LooseConfigOf<T.ImportAttribute, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.ImportAttribute, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ImportAttribute;
 }
 export namespace ExpressionStatement {
 	export type Config = OmitEach<ConfigFor<TSKindId.ExpressionStatement>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.ExpressionStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(value: NonNullable<T.Expression | T.SequenceExpression>): T.ExpressionStatement.Built;
-			terminator(value: NonNullable<T.ExpressionStatement.Options>['terminator']): T.ExpressionStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.ExpressionStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExpressionStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ExpressionStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExpressionStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ExpressionStatement>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExpressionStatement>, 'terminator'>;
-	export type BuildArgs = [value: T.Expression | T.SequenceExpression, options?: T.ExpressionStatement.Options];
+	export type BuildArgs = [
+		value: AdmitBound<T.Expression | T.SequenceExpression, T.AdmittedNodes>,
+		options?: T.ExpressionStatement.Options
+	];
 	export type LooseArgs = [
 		value: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ExpressionStatement.Options
@@ -16458,18 +18857,18 @@ export namespace ExpressionStatement {
 export namespace VariableDeclaration {
 	export type Config = OmitEach<ConfigFor<TSKindId.VariableDeclaration>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.VariableDeclaration, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			declarators(...values: NonEmptyArray<T.VariableDeclarator>): T.VariableDeclaration.Built;
-			terminator(value: NonNullable<T.VariableDeclaration.Options>['terminator']): T.VariableDeclaration.Built;
-		};
+	export interface Bound extends BoundOf<T.VariableDeclaration, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.VariableDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.VariableDeclaration, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.VariableDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.VariableDeclaration>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.VariableDeclaration>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.VariableDeclaration>, 'terminator'>,
+		config: OmitEach<ConfigOf<T.VariableDeclaration, T.NamespaceMap>, 'terminator'>,
 		options?: T.VariableDeclaration.Options
 	];
 	export type LooseArgs = [
@@ -16478,7 +18877,7 @@ export namespace VariableDeclaration {
 					LooseConfigOf<T.VariableDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
 					'terminator'
 			  >
-			| T.VariableDeclaration,
+			| AdmitBound<T.VariableDeclaration, T.AdmittedNodes>,
 		options?: T.VariableDeclaration.Options
 	];
 	export type Kind = TSKindId.VariableDeclaration;
@@ -16486,19 +18885,18 @@ export namespace VariableDeclaration {
 export namespace LexicalDeclaration {
 	export type Config = OmitEach<ConfigFor<TSKindId.LexicalDeclaration>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.LexicalDeclaration, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			kind(value: NonNullable<T.LexicalDeclaration.Config>['kind']): T.LexicalDeclaration.Built;
-			declarators(...values: NonEmptyArray<T.VariableDeclarator>): T.LexicalDeclaration.Built;
-			terminator(value: NonNullable<T.LexicalDeclaration.Options>['terminator']): T.LexicalDeclaration.Built;
-		};
+	export interface Bound extends BoundOf<T.LexicalDeclaration, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.LexicalDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.LexicalDeclaration, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.LexicalDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.LexicalDeclaration>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.LexicalDeclaration>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.LexicalDeclaration>, 'terminator'>,
+		config: OmitEach<ConfigOf<T.LexicalDeclaration, T.NamespaceMap>, 'terminator'>,
 		options?: T.LexicalDeclaration.Options
 	];
 	export type LooseArgs = [
@@ -16507,213 +18905,227 @@ export namespace LexicalDeclaration {
 					LooseConfigOf<T.LexicalDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
 					'terminator'
 			  >
-			| T.LexicalDeclaration,
+			| AdmitBound<T.LexicalDeclaration, T.AdmittedNodes>,
 		options?: T.LexicalDeclaration.Options
 	];
 	export type Kind = TSKindId.LexicalDeclaration;
 }
 export namespace StatementBlock {
 	export type Config = ConfigFor<TSKindId.StatementBlock>;
-	export interface Built extends T.StatementBlock, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			statements(value?: NonNullable<T.StatementBlock.Config>['statements']): T.StatementBlock.Built;
-			automaticSemicolon(value?: NonNullable<T.StatementBlock.Config>['automaticSemicolon']): T.StatementBlock.Built;
-		};
+	export interface Bound extends BoundOf<T.StatementBlock, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.StatementBlock['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.StatementBlock, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.StatementBlock['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.StatementBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StatementBlock>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.StatementBlock>>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.StatementBlock, T.NamespaceMap>>];
 	export type LooseArgs = [
-		config?: LooseConfigOf<T.StatementBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.StatementBlock
+		config?:
+			| LooseConfigOf<T.StatementBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.StatementBlock, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.StatementBlock;
 }
 export namespace ElseClause {
 	export type Config = ConfigFor<TSKindId.ElseClause>;
-	export interface Built extends T.ElseClause, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			body(value: NonNullable<T.Statement>): T.ElseClause.Built;
-		};
+	export interface Bound extends BoundOf<T.ElseClause, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ElseClause['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ElseClause, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ElseClause['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ElseClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ElseClause>;
-	export type BuildArgs = [value: T.Statement];
+	export type BuildArgs = [value: AdmitBound<T.Statement, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.ElseClause;
 }
 export namespace IfStatement {
 	export type Config = ConfigFor<TSKindId.IfStatement>;
-	export interface Built extends T.IfStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			condition(value: T.ParenthesizedExpression): T.IfStatement.Built;
-			consequence(value: NonNullable<T.IfStatement.Config>['consequence']): T.IfStatement.Built;
-			alternative(value?: T.ElseClause): T.IfStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.IfStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.IfStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.IfStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.IfStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.IfStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IfStatement>;
-	export type BuildArgs = [config: ConfigOf<T.IfStatement>];
+	export type BuildArgs = [config: ConfigOf<T.IfStatement, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.IfStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.IfStatement
+		config:
+			| LooseConfigOf<T.IfStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.IfStatement, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.IfStatement;
 }
 export namespace SwitchStatement {
 	export type Config = ConfigFor<TSKindId.SwitchStatement>;
-	export interface Built extends T.SwitchStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			value(value: T.ParenthesizedExpression): T.SwitchStatement.Built;
-			body(value: T.SwitchBody): T.SwitchStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.SwitchStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.SwitchStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.SwitchStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.SwitchStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.SwitchStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SwitchStatement>;
-	export type BuildArgs = [config: ConfigOf<T.SwitchStatement>];
+	export type BuildArgs = [config: ConfigOf<T.SwitchStatement, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.SwitchStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.SwitchStatement
+		config:
+			| LooseConfigOf<T.SwitchStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.SwitchStatement, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.SwitchStatement;
 }
 export namespace ForStatement {
 	export type Config = ConfigFor<TSKindId.ForStatement>;
-	export interface Built extends T.ForStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			initializer(value: NonNullable<T.ForStatement.Config>['initializer']): T.ForStatement.Built;
-			condition(value: NonNullable<T.ForStatement.Config>['condition']): T.ForStatement.Built;
-			increment(value?: NonNullable<T.ForStatement.Config>['increment']): T.ForStatement.Built;
-			body(value: NonNullable<T.ForStatement.Config>['body']): T.ForStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.ForStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ForStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ForStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ForStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ForStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForStatement>;
-	export type BuildArgs = [config: ConfigOf<T.ForStatement>];
+	export type BuildArgs = [config: ConfigOf<T.ForStatement, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ForStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ForStatement
+		config:
+			| LooseConfigOf<T.ForStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.ForStatement, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ForStatement;
 }
 export namespace ForInStatement {
 	export type Config = ConfigFor<TSKindId.ForInStatement>;
-	export interface Built extends T.ForInStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			awaitMarker(value?: NonNullable<T.ForInStatement.Config>['awaitMarker']): T.ForInStatement.Built;
-			forHeader(value: T.ForHeader): T.ForInStatement.Built;
-			body(value: NonNullable<T.ForInStatement.Config>['body']): T.ForInStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.ForInStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ForInStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ForInStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ForInStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ForInStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForInStatement>;
-	export type BuildArgs = [config: ConfigOf<T.ForInStatement>];
+	export type BuildArgs = [config: ConfigOf<T.ForInStatement, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ForInStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ForInStatement
+		config:
+			| LooseConfigOf<T.ForInStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.ForInStatement, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ForInStatement;
 }
 export namespace WhileStatement {
 	export type Config = ConfigFor<TSKindId.WhileStatement>;
-	export interface Built extends T.WhileStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			condition(value: T.ParenthesizedExpression): T.WhileStatement.Built;
-			body(value: NonNullable<T.WhileStatement.Config>['body']): T.WhileStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.WhileStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.WhileStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.WhileStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.WhileStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.WhileStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WhileStatement>;
-	export type BuildArgs = [config: ConfigOf<T.WhileStatement>];
+	export type BuildArgs = [config: ConfigOf<T.WhileStatement, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.WhileStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.WhileStatement
+		config:
+			| LooseConfigOf<T.WhileStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.WhileStatement, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.WhileStatement;
 }
 export namespace DoStatement {
 	export type Config = OmitEach<ConfigFor<TSKindId.DoStatement>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.DoStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			body(value: NonNullable<T.DoStatement.Config>['body']): T.DoStatement.Built;
-			condition(value: T.ParenthesizedExpression): T.DoStatement.Built;
-			terminator(value?: NonNullable<T.DoStatement.Options>['terminator']): T.DoStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.DoStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.DoStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.DoStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.DoStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.DoStatement>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.DoStatement>, 'terminator'>;
-	export type BuildArgs = [config: OmitEach<ConfigOf<T.DoStatement>, 'terminator'>, options?: T.DoStatement.Options];
+	export type BuildArgs = [
+		config: OmitEach<ConfigOf<T.DoStatement, T.NamespaceMap>, 'terminator'>,
+		options?: T.DoStatement.Options
+	];
 	export type LooseArgs = [
 		config:
 			| OmitEach<LooseConfigOf<T.DoStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'terminator'>
-			| T.DoStatement,
+			| AdmitBound<T.DoStatement, T.AdmittedNodes>,
 		options?: T.DoStatement.Options
 	];
 	export type Kind = TSKindId.DoStatement;
 }
 export namespace TryStatement {
 	export type Config = ConfigFor<TSKindId.TryStatement>;
-	export interface Built extends T.TryStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			body(value: T.StatementBlock): T.TryStatement.Built;
-			handler(value?: T.CatchClause): T.TryStatement.Built;
-			finalizer(value?: T.FinallyClause): T.TryStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.TryStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TryStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TryStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TryStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TryStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TryStatement>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.TryStatement>>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.TryStatement, T.NamespaceMap>>];
 	export type LooseArgs = [
-		config?: LooseConfigOf<T.TryStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TryStatement
+		config?:
+			| LooseConfigOf<T.TryStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.TryStatement, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.TryStatement;
 }
 export namespace WithStatement {
 	export type Config = ConfigFor<TSKindId.WithStatement>;
-	export interface Built extends T.WithStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			object(value: T.ParenthesizedExpression): T.WithStatement.Built;
-			body(value: NonNullable<T.WithStatement.Config>['body']): T.WithStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.WithStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.WithStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.WithStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.WithStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.WithStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithStatement>;
-	export type BuildArgs = [config: ConfigOf<T.WithStatement>];
+	export type BuildArgs = [config: ConfigOf<T.WithStatement, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.WithStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.WithStatement
+		config:
+			| LooseConfigOf<T.WithStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.WithStatement, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.WithStatement;
 }
 export namespace BreakStatement {
 	export type Config = OmitEach<ConfigFor<TSKindId.BreakStatement>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.BreakStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			label(value?: T.StatementIdentifier | T.StatementIdentifier.Types): T.BreakStatement.Built;
-			terminator(value: NonNullable<T.BreakStatement.Options>['terminator']): T.BreakStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.BreakStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.BreakStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.BreakStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.BreakStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.BreakStatement>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.BreakStatement>, 'terminator'>;
 	export type BuildArgs = [
-		value?: T.StatementIdentifier | T.StatementIdentifier.Types,
+		value?: AdmitBound<T.StatementIdentifier | T.StatementIdentifier.Types, T.AdmittedNodes>,
 		options?: T.BreakStatement.Options
 	];
 	export type LooseArgs = [
@@ -16730,18 +19142,18 @@ export namespace BreakStatement {
 export namespace ContinueStatement {
 	export type Config = OmitEach<ConfigFor<TSKindId.ContinueStatement>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.ContinueStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			label(value?: T.StatementIdentifier | T.StatementIdentifier.Types): T.ContinueStatement.Built;
-			terminator(value: NonNullable<T.ContinueStatement.Options>['terminator']): T.ContinueStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.ContinueStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ContinueStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ContinueStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ContinueStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ContinueStatement>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ContinueStatement>, 'terminator'>;
 	export type BuildArgs = [
-		value?: T.StatementIdentifier | T.StatementIdentifier.Types,
+		value?: AdmitBound<T.StatementIdentifier | T.StatementIdentifier.Types, T.AdmittedNodes>,
 		options?: T.ContinueStatement.Options
 	];
 	export type LooseArgs = [
@@ -16757,16 +19169,17 @@ export namespace ContinueStatement {
 }
 export namespace DebuggerStatement {
 	export type Config = ConfigFor<TSKindId.DebuggerStatement>;
-	export interface Built extends T.DebuggerStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			terminator(value: NonNullable<TSKindId.AutomaticSemicolon | TSKindId.Semi>): T.DebuggerStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.DebuggerStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.DebuggerStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.DebuggerStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.DebuggerStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.DebuggerStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DebuggerStatement>;
-	export type BuildArgs = [value: TSKindId.AutomaticSemicolon | TSKindId.Semi];
+	export type BuildArgs = [value: AdmitBound<TSKindId.AutomaticSemicolon | TSKindId.Semi, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<TSKindId.AutomaticSemicolon | TSKindId.Semi, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -16775,17 +19188,20 @@ export namespace DebuggerStatement {
 export namespace ReturnStatement {
 	export type Config = OmitEach<ConfigFor<TSKindId.ReturnStatement>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.ReturnStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(value?: NonNullable<T.Expression | T.SequenceExpression>): T.ReturnStatement.Built;
-			terminator(value: NonNullable<T.ReturnStatement.Options>['terminator']): T.ReturnStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.ReturnStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ReturnStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ReturnStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ReturnStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ReturnStatement>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ReturnStatement>, 'terminator'>;
-	export type BuildArgs = [value?: T.Expression | T.SequenceExpression, options?: T.ReturnStatement.Options];
+	export type BuildArgs = [
+		value?: AdmitBound<T.Expression | T.SequenceExpression, T.AdmittedNodes>,
+		options?: T.ReturnStatement.Options
+	];
 	export type LooseArgs = [
 		value?: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ReturnStatement.Options
@@ -16795,17 +19211,20 @@ export namespace ReturnStatement {
 export namespace ThrowStatement {
 	export type Config = OmitEach<ConfigFor<TSKindId.ThrowStatement>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.ThrowStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(value: NonNullable<T.Expression | T.SequenceExpression>): T.ThrowStatement.Built;
-			terminator(value: NonNullable<T.ThrowStatement.Options>['terminator']): T.ThrowStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.ThrowStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ThrowStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ThrowStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ThrowStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ThrowStatement>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ThrowStatement>, 'terminator'>;
-	export type BuildArgs = [value: T.Expression | T.SequenceExpression, options?: T.ThrowStatement.Options];
+	export type BuildArgs = [
+		value: AdmitBound<T.Expression | T.SequenceExpression, T.AdmittedNodes>,
+		options?: T.ThrowStatement.Options
+	];
 	export type LooseArgs = [
 		value: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ThrowStatement.Options
@@ -16814,34 +19233,37 @@ export namespace ThrowStatement {
 }
 export namespace LabeledStatement {
 	export type Config = ConfigFor<TSKindId.LabeledStatement>;
-	export interface Built extends T.LabeledStatement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			label(value: NonNullable<T.LabeledStatement.Config>['label']): T.LabeledStatement.Built;
-			body(value: NonNullable<T.LabeledStatement.Config>['body']): T.LabeledStatement.Built;
-		};
+	export interface Bound extends BoundOf<T.LabeledStatement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.LabeledStatement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.LabeledStatement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.LabeledStatement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.LabeledStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LabeledStatement>;
-	export type BuildArgs = [config: ConfigOf<T.LabeledStatement>];
+	export type BuildArgs = [config: ConfigOf<T.LabeledStatement, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.LabeledStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.LabeledStatement
+		config:
+			| LooseConfigOf<T.LabeledStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.LabeledStatement, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.LabeledStatement;
 }
 export namespace SwitchBody {
 	export type Config = ConfigFor<TSKindId.SwitchBody>;
-	export interface Built extends T.SwitchBody, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			cases(...vs: (T.SwitchCase | T.SwitchDefault)[]): T.SwitchBody.Built;
-		};
+	export interface Bound extends BoundOf<T.SwitchBody, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.SwitchBody['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.SwitchBody, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.SwitchBody['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.SwitchBody>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SwitchBody>;
-	export type BuildArgs = [...children: (T.SwitchCase | T.SwitchDefault)[]];
+	export type BuildArgs = [...children: AdmitBound<(T.SwitchCase | T.SwitchDefault)[], T.AdmittedNodes>];
 	export type LooseArgs = [
 		...children: LooseValue<T.SwitchCase | T.SwitchDefault, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
@@ -16849,160 +19271,139 @@ export namespace SwitchBody {
 }
 export namespace SwitchCase {
 	export type Config = ConfigFor<TSKindId.SwitchCase>;
-	export interface Built extends T.SwitchCase, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			value(value: NonNullable<T.SwitchCase.Config>['value']): T.SwitchCase.Built;
-			bodies(value?: NonNullable<T.SwitchCase.Config>['body']): T.SwitchCase.Built;
-		};
+	export interface Bound extends BoundOf<T.SwitchCase, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.SwitchCase['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.SwitchCase, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.SwitchCase['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.SwitchCase>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SwitchCase>;
-	export type BuildArgs = [config: ConfigOf<T.SwitchCase>];
+	export type BuildArgs = [config: ConfigOf<T.SwitchCase, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.SwitchCase, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.SwitchCase
+		config:
+			| LooseConfigOf<T.SwitchCase, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.SwitchCase, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.SwitchCase;
 }
 export namespace SwitchDefault {
 	export type Config = ConfigFor<TSKindId.SwitchDefault>;
-	export interface Built extends T.SwitchDefault, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			bodies(...vs: T.Statement[]): T.SwitchDefault.Built;
-		};
+	export interface Bound extends BoundOf<T.SwitchDefault, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.SwitchDefault['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.SwitchDefault, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.SwitchDefault['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.SwitchDefault>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SwitchDefault>;
-	export type BuildArgs = [...children: T.Statement[]];
+	export type BuildArgs = [...children: AdmitBound<T.Statement[], T.AdmittedNodes>];
 	export type LooseArgs = [...children: LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
 	export type Kind = TSKindId.SwitchDefault;
 }
 export namespace CatchClause {
 	export type Config = ConfigFor<TSKindId.CatchClause>;
-	export interface Built extends T.CatchClause, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			catchClauseGroup(value?: T.CatchClauseGroup): T.CatchClause.Built;
-			body(value: T.StatementBlock): T.CatchClause.Built;
-		};
+	export interface Bound extends BoundOf<T.CatchClause, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.CatchClause['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.CatchClause, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.CatchClause['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CatchClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CatchClause>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.CatchClause>>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.CatchClause, T.NamespaceMap>>];
 	export type LooseArgs = [
-		config?: LooseConfigOf<T.CatchClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CatchClause
+		config?:
+			| LooseConfigOf<T.CatchClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.CatchClause, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.CatchClause;
 }
 export namespace FinallyClause {
 	export type Config = ConfigFor<TSKindId.FinallyClause>;
-	export interface Built extends T.FinallyClause, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			body(value: T.StatementBlock): T.FinallyClause.Built;
-		};
+	export interface Bound extends BoundOf<T.FinallyClause, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.FinallyClause['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.FinallyClause, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.FinallyClause['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.FinallyClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FinallyClause>;
-	export type BuildArgs = [value: T.StatementBlock];
+	export type BuildArgs = [value: AdmitBound<T.StatementBlock, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.StatementBlock, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.FinallyClause;
 }
 export namespace YieldExpression {
 	export type Config = ConfigFor<TSKindId.YieldExpression>;
-	export interface Built extends T.YieldExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(value?: NonNullable<T.Expression>): T.YieldExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.YieldExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.YieldExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.YieldExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.YieldExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.YieldExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.YieldExpression>;
-	export type BuildArgs = [value?: T.Expression];
+	export type BuildArgs = [value?: AdmitBound<T.Expression, T.AdmittedNodes>];
 	export type LooseArgs = [value?: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.YieldExpression;
 }
 export namespace Object {
 	export type Config = ConfigFor<TSKindId.Object>;
-	export interface Built extends T.Object, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			properties(
-				...vs: (
-					| (
-							| T.Pair
-							| T.SpreadElement
-							| T.MethodDefinition
-							| T.ShorthandPropertyIdentifier
-							| TSKindId.DeclareKeyword
-							| TSKindId.NamespaceKeyword
-							| TSKindId.TypeKeyword
-							| TSKindId.PublicKeyword
-							| TSKindId.PrivateKeyword
-							| TSKindId.ProtectedKeyword
-							| TSKindId.OverrideKeyword
-							| TSKindId.ReadonlyKeyword
-							| TSKindId.ModuleKeyword
-							| TSKindId.AnyKeyword
-							| TSKindId.NumberKeyword
-							| TSKindId.BooleanKeyword
-							| TSKindId.StringKeyword
-							| TSKindId.SymbolKeyword
-							| TSKindId.ExportKeyword
-							| TSKindId.ObjectKeyword
-							| TSKindId.NewKeyword
-							| TSKindId.GetKeyword
-							| TSKindId.SetKeyword
-							| TSKindId.AsyncKeyword
-							| TSKindId.StaticKeyword
-							| TSKindId.LetKeyword
-					  )
-					| T.ShorthandPropertyIdentifier.Types
-				)[]
-			): T.Object.Built;
-		};
+	export interface Bound extends BoundOf<T.Object, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Object['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Object, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Object['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Object>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Object>;
 	export type BuildArgs = [
-		...children: (
-			| (
-					| T.Pair
-					| T.SpreadElement
-					| T.MethodDefinition
-					| T.ShorthandPropertyIdentifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-			  )
-			| T.ShorthandPropertyIdentifier.Types
-		)[]
+		...children: AdmitBound<
+			(
+				| (
+						| T.Pair
+						| T.SpreadElement
+						| T.MethodDefinition
+						| T.ShorthandPropertyIdentifier
+						| TSKindId.DeclareKeyword
+						| TSKindId.NamespaceKeyword
+						| TSKindId.TypeKeyword
+						| TSKindId.PublicKeyword
+						| TSKindId.PrivateKeyword
+						| TSKindId.ProtectedKeyword
+						| TSKindId.OverrideKeyword
+						| TSKindId.ReadonlyKeyword
+						| TSKindId.ModuleKeyword
+						| TSKindId.AnyKeyword
+						| TSKindId.NumberKeyword
+						| TSKindId.BooleanKeyword
+						| TSKindId.StringKeyword
+						| TSKindId.SymbolKeyword
+						| TSKindId.ExportKeyword
+						| TSKindId.ObjectKeyword
+						| TSKindId.NewKeyword
+						| TSKindId.GetKeyword
+						| TSKindId.SetKeyword
+						| TSKindId.AsyncKeyword
+						| TSKindId.StaticKeyword
+						| TSKindId.LetKeyword
+				  )
+				| T.ShorthandPropertyIdentifier.Types
+			)[],
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
@@ -17044,79 +19445,51 @@ export namespace Object {
 }
 export namespace ObjectPattern {
 	export type Config = ConfigFor<TSKindId.ObjectPattern>;
-	export interface Built extends T.ObjectPattern, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			properties(
-				...vs: (
-					| (
-							| T.PairPattern
-							| T.RestPattern
-							| T.ObjectAssignmentPattern
-							| T.ShorthandPropertyIdentifierPattern
-							| TSKindId.DeclareKeyword
-							| TSKindId.NamespaceKeyword
-							| TSKindId.TypeKeyword
-							| TSKindId.PublicKeyword
-							| TSKindId.PrivateKeyword
-							| TSKindId.ProtectedKeyword
-							| TSKindId.OverrideKeyword
-							| TSKindId.ReadonlyKeyword
-							| TSKindId.ModuleKeyword
-							| TSKindId.AnyKeyword
-							| TSKindId.NumberKeyword
-							| TSKindId.BooleanKeyword
-							| TSKindId.StringKeyword
-							| TSKindId.SymbolKeyword
-							| TSKindId.ExportKeyword
-							| TSKindId.ObjectKeyword
-							| TSKindId.NewKeyword
-							| TSKindId.GetKeyword
-							| TSKindId.SetKeyword
-							| TSKindId.AsyncKeyword
-							| TSKindId.StaticKeyword
-							| TSKindId.LetKeyword
-					  )
-					| T.ShorthandPropertyIdentifierPattern.Types
-				)[]
-			): T.ObjectPattern.Built;
-		};
+	export interface Bound extends BoundOf<T.ObjectPattern, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ObjectPattern['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ObjectPattern, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ObjectPattern['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ObjectPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ObjectPattern>;
 	export type BuildArgs = [
-		...children: (
-			| (
-					| T.PairPattern
-					| T.RestPattern
-					| T.ObjectAssignmentPattern
-					| T.ShorthandPropertyIdentifierPattern
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-			  )
-			| T.ShorthandPropertyIdentifierPattern.Types
-		)[]
+		...children: AdmitBound<
+			(
+				| (
+						| T.PairPattern
+						| T.RestPattern
+						| T.ObjectAssignmentPattern
+						| T.ShorthandPropertyIdentifierPattern
+						| TSKindId.DeclareKeyword
+						| TSKindId.NamespaceKeyword
+						| TSKindId.TypeKeyword
+						| TSKindId.PublicKeyword
+						| TSKindId.PrivateKeyword
+						| TSKindId.ProtectedKeyword
+						| TSKindId.OverrideKeyword
+						| TSKindId.ReadonlyKeyword
+						| TSKindId.ModuleKeyword
+						| TSKindId.AnyKeyword
+						| TSKindId.NumberKeyword
+						| TSKindId.BooleanKeyword
+						| TSKindId.StringKeyword
+						| TSKindId.SymbolKeyword
+						| TSKindId.ExportKeyword
+						| TSKindId.ObjectKeyword
+						| TSKindId.NewKeyword
+						| TSKindId.GetKeyword
+						| TSKindId.SetKeyword
+						| TSKindId.AsyncKeyword
+						| TSKindId.StaticKeyword
+						| TSKindId.LetKeyword
+				  )
+				| T.ShorthandPropertyIdentifierPattern.Types
+			)[],
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
@@ -17158,56 +19531,57 @@ export namespace ObjectPattern {
 }
 export namespace AssignmentPattern {
 	export type Config = ConfigFor<TSKindId.AssignmentPattern>;
-	export interface Built extends T.AssignmentPattern, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			left(value: T.Pattern): T.AssignmentPattern.Built;
-			right(value: NonNullable<T.AssignmentPattern.Config>['right']): T.AssignmentPattern.Built;
-		};
+	export interface Bound extends BoundOf<T.AssignmentPattern, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.AssignmentPattern['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.AssignmentPattern, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.AssignmentPattern['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.AssignmentPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssignmentPattern>;
-	export type BuildArgs = [config: ConfigOf<T.AssignmentPattern>];
+	export type BuildArgs = [config: ConfigOf<T.AssignmentPattern, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.AssignmentPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.AssignmentPattern
+			| AdmitBound<T.AssignmentPattern, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.AssignmentPattern;
 }
 export namespace ObjectAssignmentPattern {
 	export type Config = ConfigFor<TSKindId.ObjectAssignmentPattern>;
-	export interface Built extends T.ObjectAssignmentPattern, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			left(value: NonNullable<T.ObjectAssignmentPattern.Config>['left']): T.ObjectAssignmentPattern.Built;
-			right(value: NonNullable<T.ObjectAssignmentPattern.Config>['right']): T.ObjectAssignmentPattern.Built;
-		};
+	export interface Bound extends BoundOf<T.ObjectAssignmentPattern, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ObjectAssignmentPattern['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ObjectAssignmentPattern, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ObjectAssignmentPattern['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ObjectAssignmentPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ObjectAssignmentPattern>;
-	export type BuildArgs = [config: ConfigOf<T.ObjectAssignmentPattern>];
+	export type BuildArgs = [config: ConfigOf<T.ObjectAssignmentPattern, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.ObjectAssignmentPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ObjectAssignmentPattern
+			| AdmitBound<T.ObjectAssignmentPattern, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ObjectAssignmentPattern;
 }
 export namespace Array {
 	export type Config = ConfigFor<TSKindId.Array>;
-	export interface Built extends T.Array, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			elements(...vs: (T.Expression | T.SpreadElement)[]): T.Array.Built;
-		};
+	export interface Bound extends BoundOf<T.Array, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Array['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Array, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Array['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Array>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Array>;
-	export type BuildArgs = [...children: (T.Expression | T.SpreadElement)[]];
+	export type BuildArgs = [...children: AdmitBound<(T.Expression | T.SpreadElement)[], T.AdmittedNodes>];
 	export type LooseArgs = [
 		...children: LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
@@ -17215,16 +19589,17 @@ export namespace Array {
 }
 export namespace ArrayPattern {
 	export type Config = ConfigFor<TSKindId.ArrayPattern>;
-	export interface Built extends T.ArrayPattern, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			elements(...vs: (T.Pattern | T.AssignmentPattern)[]): T.ArrayPattern.Built;
-		};
+	export interface Bound extends BoundOf<T.ArrayPattern, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ArrayPattern['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ArrayPattern, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ArrayPattern['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ArrayPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArrayPattern>;
-	export type BuildArgs = [...children: (T.Pattern | T.AssignmentPattern)[]];
+	export type BuildArgs = [...children: AdmitBound<(T.Pattern | T.AssignmentPattern)[], T.AdmittedNodes>];
 	export type LooseArgs = [
 		...children: LooseValue<T.Pattern | T.AssignmentPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
@@ -17232,79 +19607,77 @@ export namespace ArrayPattern {
 }
 export namespace NestedIdentifier {
 	export type Config = ConfigFor<TSKindId.NestedIdentifier>;
-	export interface Built extends T.NestedIdentifier, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			object(value: T.Identifier | T.NestedIdentifier): T.NestedIdentifier.Built;
-			property(value: T.PropertyIdentifier | T.PropertyIdentifier.Types): T.NestedIdentifier.Built;
-		};
+	export interface Bound extends BoundOf<T.NestedIdentifier, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NestedIdentifier['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NestedIdentifier, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NestedIdentifier['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.NestedIdentifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NestedIdentifier>;
-	export type BuildArgs = [config: ConfigOf<T.NestedIdentifier>];
+	export type BuildArgs = [config: ConfigOf<T.NestedIdentifier, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.NestedIdentifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NestedIdentifier
+		config:
+			| LooseConfigOf<T.NestedIdentifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.NestedIdentifier, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.NestedIdentifier;
 }
 export namespace Class {
 	export type Config = ConfigFor<TSKindId.Class>;
-	export interface Built extends T.Class, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			decorators(...values: T.Decorator[]): T.Class.Built;
-			name(value?: T.TypeIdentifier | T.TypeIdentifier.Types): T.Class.Built;
-			typeParameters(value?: T.TypeParameters): T.Class.Built;
-			heritage(value?: T.ClassHeritage): T.Class.Built;
-			body(value: T.ClassBody): T.Class.Built;
-		};
+	export interface Bound extends BoundOf<T.Class, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Class['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Class, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Class['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Class>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Class>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.Class>>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.Class, T.NamespaceMap>>];
 	export type LooseArgs = [
-		config?: LooseConfigOf<T.Class, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Class
+		config?:
+			| LooseConfigOf<T.Class, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.Class, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.Class;
 }
 export namespace ClassDeclaration {
 	export type Config = ConfigFor<TSKindId.ClassDeclaration>;
-	export interface Built extends T.ClassDeclaration, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			decorators(...values: T.Decorator[]): T.ClassDeclaration.Built;
-			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.ClassDeclaration.Built;
-			typeParameters(value?: T.TypeParameters): T.ClassDeclaration.Built;
-			heritage(value?: T.ClassHeritage): T.ClassDeclaration.Built;
-			body(value: T.ClassBody): T.ClassDeclaration.Built;
-			automaticSemicolon(
-				value?: NonNullable<T.ClassDeclaration.Config>['automaticSemicolon']
-			): T.ClassDeclaration.Built;
-		};
+	export interface Bound extends BoundOf<T.ClassDeclaration, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ClassDeclaration, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ClassDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.ClassDeclaration>];
+	export type BuildArgs = [config: ConfigOf<T.ClassDeclaration, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ClassDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ClassDeclaration
+		config:
+			| LooseConfigOf<T.ClassDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.ClassDeclaration, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ClassDeclaration;
 }
 export namespace ClassHeritage {
 	export type Config = ConfigFor<TSKindId.ClassHeritage>;
-	export interface Built extends T.ClassHeritage, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: T.ClassHeritageExtendsClause | T.ImplementsClause): T.ClassHeritage.Built;
-		};
+	export interface Bound extends BoundOf<T.ClassHeritage, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassHeritage['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ClassHeritage, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassHeritage['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ClassHeritage>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassHeritage>;
-	export type BuildArgs = [value: T.ClassHeritageExtendsClause | T.ImplementsClause];
+	export type BuildArgs = [value: AdmitBound<T.ClassHeritageExtendsClause | T.ImplementsClause, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<
 			T.ClassHeritageExtendsClause | T.ImplementsClause,
@@ -17317,254 +19690,194 @@ export namespace ClassHeritage {
 }
 export namespace FunctionExpression {
 	export type Config = ConfigFor<TSKindId.FunctionExpression>;
-	export interface Built extends T.FunctionExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			asyncMarker(value?: NonNullable<T.FunctionExpression.Config>['asyncMarker']): T.FunctionExpression.Built;
-			name(value?: T.Identifier): T.FunctionExpression.Built;
-			typeParameters(value?: T.TypeParameters): T.FunctionExpression.Built;
-			parameters(value: T.FormalParameters): T.FunctionExpression.Built;
-			returnType(
-				value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation
-			): T.FunctionExpression.Built;
-			body(value: T.StatementBlock): T.FunctionExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.FunctionExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.FunctionExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.FunctionExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.FunctionExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.FunctionExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionExpression>;
-	export type BuildArgs = [config: ConfigOf<T.FunctionExpression>];
+	export type BuildArgs = [config: ConfigOf<T.FunctionExpression, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.FunctionExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.FunctionExpression
+			| AdmitBound<T.FunctionExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.FunctionExpression;
 }
 export namespace FunctionDeclaration {
 	export type Config = ConfigFor<TSKindId.FunctionDeclaration>;
-	export interface Built extends T.FunctionDeclaration, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			asyncMarker(value?: NonNullable<T.FunctionDeclaration.Config>['asyncMarker']): T.FunctionDeclaration.Built;
-			name(value: T.Identifier): T.FunctionDeclaration.Built;
-			typeParameters(value?: T.TypeParameters): T.FunctionDeclaration.Built;
-			parameters(value: T.FormalParameters): T.FunctionDeclaration.Built;
-			returnType(
-				value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation
-			): T.FunctionDeclaration.Built;
-			body(value: T.StatementBlock): T.FunctionDeclaration.Built;
-			automaticSemicolon(
-				value?: NonNullable<T.FunctionDeclaration.Config>['automaticSemicolon']
-			): T.FunctionDeclaration.Built;
-		};
+	export interface Bound extends BoundOf<T.FunctionDeclaration, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.FunctionDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.FunctionDeclaration, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.FunctionDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.FunctionDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.FunctionDeclaration>];
+	export type BuildArgs = [config: ConfigOf<T.FunctionDeclaration, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.FunctionDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.FunctionDeclaration
+			| AdmitBound<T.FunctionDeclaration, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.FunctionDeclaration;
 }
 export namespace GeneratorFunction {
 	export type Config = ConfigFor<TSKindId.GeneratorFunction>;
-	export interface Built extends T.GeneratorFunction, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			asyncMarker(value?: NonNullable<T.GeneratorFunction.Config>['asyncMarker']): T.GeneratorFunction.Built;
-			name(value?: T.Identifier): T.GeneratorFunction.Built;
-			typeParameters(value?: T.TypeParameters): T.GeneratorFunction.Built;
-			parameters(value: T.FormalParameters): T.GeneratorFunction.Built;
-			returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation): T.GeneratorFunction.Built;
-			body(value: T.StatementBlock): T.GeneratorFunction.Built;
-		};
+	export interface Bound extends BoundOf<T.GeneratorFunction, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.GeneratorFunction['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.GeneratorFunction, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.GeneratorFunction['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.GeneratorFunction>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GeneratorFunction>;
-	export type BuildArgs = [config: ConfigOf<T.GeneratorFunction>];
+	export type BuildArgs = [config: ConfigOf<T.GeneratorFunction, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.GeneratorFunction, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.GeneratorFunction
+			| AdmitBound<T.GeneratorFunction, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.GeneratorFunction;
 }
 export namespace GeneratorFunctionDeclaration {
 	export type Config = ConfigFor<TSKindId.GeneratorFunctionDeclaration>;
-	export interface Built extends T.GeneratorFunctionDeclaration, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			asyncMarker(
-				value?: NonNullable<T.GeneratorFunctionDeclaration.Config>['asyncMarker']
-			): T.GeneratorFunctionDeclaration.Built;
-			name(value: T.Identifier): T.GeneratorFunctionDeclaration.Built;
-			typeParameters(value?: T.TypeParameters): T.GeneratorFunctionDeclaration.Built;
-			parameters(value: T.FormalParameters): T.GeneratorFunctionDeclaration.Built;
-			returnType(
-				value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation
-			): T.GeneratorFunctionDeclaration.Built;
-			body(value: T.StatementBlock): T.GeneratorFunctionDeclaration.Built;
-			automaticSemicolon(
-				value?: NonNullable<T.GeneratorFunctionDeclaration.Config>['automaticSemicolon']
-			): T.GeneratorFunctionDeclaration.Built;
-		};
+	export interface Bound extends BoundOf<T.GeneratorFunctionDeclaration, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.GeneratorFunctionDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.GeneratorFunctionDeclaration, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.GeneratorFunctionDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.GeneratorFunctionDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GeneratorFunctionDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.GeneratorFunctionDeclaration>];
+	export type BuildArgs = [config: ConfigOf<T.GeneratorFunctionDeclaration, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.GeneratorFunctionDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.GeneratorFunctionDeclaration
+			| AdmitBound<T.GeneratorFunctionDeclaration, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.GeneratorFunctionDeclaration;
 }
 export namespace ArrowFunction {
 	export type Config = ConfigFor<TSKindId.ArrowFunction>;
-	export interface Built extends T.ArrowFunction, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			asyncMarker(value?: NonNullable<T.ArrowFunction.Config>['asyncMarker']): T.ArrowFunction.Built;
-			content(value: T.ArrowFunctionParameter | T.CallSignature): T.ArrowFunction.Built;
-			body(value: NonNullable<T.ArrowFunction.Config>['body']): T.ArrowFunction.Built;
-		};
+	export interface Bound extends BoundOf<T.ArrowFunction, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ArrowFunction['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ArrowFunction, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ArrowFunction['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ArrowFunction>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArrowFunction>;
-	export type BuildArgs = [config: ConfigOf<T.ArrowFunction>];
+	export type BuildArgs = [config: ConfigOf<T.ArrowFunction, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ArrowFunction, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ArrowFunction
+		config:
+			| LooseConfigOf<T.ArrowFunction, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.ArrowFunction, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ArrowFunction;
 }
 export namespace NewExpression {
 	export type Config = ConfigFor<TSKindId.NewExpression>;
-	export interface Built extends T.NewExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			constructor_(value: NonNullable<T.NewExpression.Config>['constructor_']): T.NewExpression.Built;
-			typeArguments(value?: T.TypeArguments): T.NewExpression.Built;
-			arguments(value?: T.Arguments): T.NewExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.NewExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NewExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NewExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NewExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.NewExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NewExpression>;
-	export type BuildArgs = [config: ConfigOf<T.NewExpression>];
+	export type BuildArgs = [config: ConfigOf<T.NewExpression, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.NewExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NewExpression
+		config:
+			| LooseConfigOf<T.NewExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.NewExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.NewExpression;
 }
 export namespace AwaitExpression {
 	export type Config = ConfigFor<TSKindId.AwaitExpression>;
-	export interface Built extends T.AwaitExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(value: NonNullable<T.Expression>): T.AwaitExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.AwaitExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.AwaitExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.AwaitExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.AwaitExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.AwaitExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AwaitExpression>;
-	export type BuildArgs = [value: T.Expression];
+	export type BuildArgs = [value: AdmitBound<T.Expression, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.AwaitExpression;
 }
 export namespace MemberExpression {
 	export type Config = ConfigFor<TSKindId.MemberExpression>;
-	export interface Built extends T.MemberExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			object(value: NonNullable<T.MemberExpression.Config>['object']): T.MemberExpression.Built;
-			separator(value: NonNullable<T.MemberExpression.Config>['separator']): T.MemberExpression.Built;
-			property(
-				value: T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types
-			): T.MemberExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.MemberExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.MemberExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.MemberExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.MemberExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.MemberExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MemberExpression>;
-	export type BuildArgs = [config: ConfigOf<T.MemberExpression>];
+	export type BuildArgs = [config: ConfigOf<T.MemberExpression, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.MemberExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MemberExpression
+		config:
+			| LooseConfigOf<T.MemberExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.MemberExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.MemberExpression;
 }
 export namespace SubscriptExpression {
 	export type Config = ConfigFor<TSKindId.SubscriptExpression>;
-	export interface Built extends T.SubscriptExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			object(value: NonNullable<T.SubscriptExpression.Config>['object']): T.SubscriptExpression.Built;
-			optionalChain(value?: NonNullable<T.SubscriptExpression.Config>['optionalChain']): T.SubscriptExpression.Built;
-			index(value: NonNullable<T.SubscriptExpression.Config>['index']): T.SubscriptExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.SubscriptExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.SubscriptExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.SubscriptExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.SubscriptExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.SubscriptExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SubscriptExpression>;
-	export type BuildArgs = [config: ConfigOf<T.SubscriptExpression>];
+	export type BuildArgs = [config: ConfigOf<T.SubscriptExpression, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.SubscriptExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.SubscriptExpression
+			| AdmitBound<T.SubscriptExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.SubscriptExpression;
 }
 export namespace LhsExpression {
 	export type Config = ConfigFor<TSKindId.LhsExpression>;
-	export interface Built extends T.LhsExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(
-				value: NonNullable<
-					| T.MemberExpression
-					| T.SubscriptExpression
-					| TSKindId.Undefined
-					| T.Identifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-					| T.ObjectPattern
-					| T.ArrayPattern
-					| T.NonNullExpression
-				>
-			): T.LhsExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.LhsExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.LhsExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.LhsExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.LhsExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.LhsExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LhsExpression>;
 	export type BuildArgs = [
-		value:
+		value: AdmitBound<
 			| T.MemberExpression
 			| T.SubscriptExpression
 			| TSKindId.Undefined
@@ -17593,7 +19906,9 @@ export namespace LhsExpression {
 			| TSKindId.LetKeyword
 			| T.ObjectPattern
 			| T.ArrayPattern
-			| T.NonNullExpression
+			| T.NonNullExpression,
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		value: LooseValue<
@@ -17635,166 +19950,167 @@ export namespace LhsExpression {
 }
 export namespace AssignmentExpression {
 	export type Config = ConfigFor<TSKindId.AssignmentExpression>;
-	export interface Built extends T.AssignmentExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			usingMarker(value?: NonNullable<T.AssignmentExpression.Config>['usingMarker']): T.AssignmentExpression.Built;
-			left(value: T.ParenthesizedExpression | T.LhsExpression): T.AssignmentExpression.Built;
-			right(value: NonNullable<T.AssignmentExpression.Config>['right']): T.AssignmentExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.AssignmentExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.AssignmentExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.AssignmentExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.AssignmentExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.AssignmentExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssignmentExpression>;
-	export type BuildArgs = [config: ConfigOf<T.AssignmentExpression>];
+	export type BuildArgs = [config: ConfigOf<T.AssignmentExpression, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.AssignmentExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.AssignmentExpression
+			| AdmitBound<T.AssignmentExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.AssignmentExpression;
 }
 export namespace AugmentedAssignmentExpression {
 	export type Config = ConfigFor<TSKindId.AugmentedAssignmentExpression>;
-	export interface Built extends T.AugmentedAssignmentExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			left(value: NonNullable<T.AugmentedAssignmentExpression.Config>['left']): T.AugmentedAssignmentExpression.Built;
-			operator(
-				value: NonNullable<T.AugmentedAssignmentExpression.Config>['operator']
-			): T.AugmentedAssignmentExpression.Built;
-			right(value: NonNullable<T.AugmentedAssignmentExpression.Config>['right']): T.AugmentedAssignmentExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.AugmentedAssignmentExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.AugmentedAssignmentExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.AugmentedAssignmentExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.AugmentedAssignmentExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.AugmentedAssignmentExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AugmentedAssignmentExpression>;
-	export type BuildArgs = [config: ConfigOf<T.AugmentedAssignmentExpression>];
+	export type BuildArgs = [config: ConfigOf<T.AugmentedAssignmentExpression, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.AugmentedAssignmentExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.AugmentedAssignmentExpression
+			| AdmitBound<T.AugmentedAssignmentExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.AugmentedAssignmentExpression;
 }
 export namespace SpreadElement {
 	export type Config = ConfigFor<TSKindId.SpreadElement>;
-	export interface Built extends T.SpreadElement, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(value: NonNullable<T.Expression>): T.SpreadElement.Built;
-		};
+	export interface Bound extends BoundOf<T.SpreadElement, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.SpreadElement['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.SpreadElement, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.SpreadElement['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.SpreadElement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SpreadElement>;
-	export type BuildArgs = [value: T.Expression];
+	export type BuildArgs = [value: AdmitBound<T.Expression, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.SpreadElement;
 }
 export namespace TernaryExpression {
 	export type Config = ConfigFor<TSKindId.TernaryExpression>;
-	export interface Built extends T.TernaryExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			condition(value: NonNullable<T.TernaryExpression.Config>['condition']): T.TernaryExpression.Built;
-			consequence(value: NonNullable<T.TernaryExpression.Config>['consequence']): T.TernaryExpression.Built;
-			alternative(value: NonNullable<T.TernaryExpression.Config>['alternative']): T.TernaryExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.TernaryExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TernaryExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TernaryExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TernaryExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TernaryExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TernaryExpression>;
-	export type BuildArgs = [config: ConfigOf<T.TernaryExpression>];
+	export type BuildArgs = [config: ConfigOf<T.TernaryExpression, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.TernaryExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.TernaryExpression
+			| AdmitBound<T.TernaryExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.TernaryExpression;
 }
 export namespace BinaryExpression {
 	export type Config = ConfigFor<TSKindId.BinaryExpression>;
-	export interface Built extends T.BinaryExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			left(value?: NonNullable<T.BinaryExpression.Config>['left']): T.BinaryExpression.Built;
-			operator(value?: NonNullable<T.BinaryExpression.Config>['operator']): T.BinaryExpression.Built;
-			right(value?: NonNullable<T.BinaryExpression.Config>['right']): T.BinaryExpression.Built;
-			binaryExpressionIn(value?: T.BinaryExpressionIn): T.BinaryExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.BinaryExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.BinaryExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.BinaryExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.BinaryExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.BinaryExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BinaryExpression>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.BinaryExpression>>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.BinaryExpression, T.NamespaceMap>>];
 	export type LooseArgs = [
 		config?:
 			| LooseConfigOf<T.BinaryExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.BinaryExpression
+			| AdmitBound<T.BinaryExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.BinaryExpression;
 }
 export namespace UnaryExpression {
 	export type Config = ConfigFor<TSKindId.UnaryExpression>;
-	export interface Built extends T.UnaryExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			operator(value: NonNullable<T.UnaryExpression.Config>['operator']): T.UnaryExpression.Built;
-			argument(value: NonNullable<T.UnaryExpression.Config>['argument']): T.UnaryExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.UnaryExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.UnaryExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.UnaryExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.UnaryExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.UnaryExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnaryExpression>;
-	export type BuildArgs = [config: ConfigOf<T.UnaryExpression>];
+	export type BuildArgs = [config: ConfigOf<T.UnaryExpression, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.UnaryExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.UnaryExpression
+		config:
+			| LooseConfigOf<T.UnaryExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.UnaryExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.UnaryExpression;
 }
 export namespace SequenceExpression {
 	export type Config = ConfigFor<TSKindId.SequenceExpression>;
-	export interface Built extends T.SequenceExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expressions(...vs: T.Expression[]): T.SequenceExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.SequenceExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.SequenceExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.SequenceExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.SequenceExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.SequenceExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SequenceExpression>;
-	export type BuildArgs = [...children: T.Expression[]];
+	export type BuildArgs = [...children: AdmitBound<T.Expression[], T.AdmittedNodes>];
 	export type LooseArgs = [...children: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
 	export type Kind = TSKindId.SequenceExpression;
 }
 export namespace EscapeSequence {
 	export type Config = ConfigFor<TSKindId.EscapeSequence>;
-	export interface Built extends T.EscapeSequence, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string): T.EscapeSequence.Built;
-		};
+	export interface Bound extends BoundOf<T.EscapeSequence, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.EscapeSequence['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.EscapeSequence, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.EscapeSequence['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.EscapeSequence>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequence>;
-	export type BuildArgs = [value: string];
+	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.EscapeSequence;
 }
 export namespace TemplateString {
 	export type Config = ConfigFor<TSKindId.TemplateString>;
-	export interface Built extends T.TemplateString, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			elements(...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]): T.TemplateString.Built;
-		};
+	export interface Bound extends BoundOf<T.TemplateString, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TemplateString['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TemplateString, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TemplateString['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TemplateString>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TemplateString>;
-	export type BuildArgs = [...children: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]];
+	export type BuildArgs = [
+		...children: AdmitBound<(T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[], T.AdmittedNodes>
+	];
 	export type LooseArgs = [
 		...children: LooseValue<
 			T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution,
@@ -17807,16 +20123,17 @@ export namespace TemplateString {
 }
 export namespace TemplateSubstitution {
 	export type Config = ConfigFor<TSKindId.TemplateSubstitution>;
-	export interface Built extends T.TemplateSubstitution, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(value: NonNullable<T.Expression | T.SequenceExpression>): T.TemplateSubstitution.Built;
-		};
+	export interface Bound extends BoundOf<T.TemplateSubstitution, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TemplateSubstitution['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TemplateSubstitution, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TemplateSubstitution['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TemplateSubstitution>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TemplateSubstitution>;
-	export type BuildArgs = [value: T.Expression | T.SequenceExpression];
+	export type BuildArgs = [value: AdmitBound<T.Expression | T.SequenceExpression, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -17824,49 +20141,53 @@ export namespace TemplateSubstitution {
 }
 export namespace Regex {
 	export type Config = ConfigFor<TSKindId.Regex>;
-	export interface Built extends T.Regex, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			pattern(value: T.RegexPattern): T.Regex.Built;
-			flags(value?: T.RegexFlags): T.Regex.Built;
-		};
+	export interface Bound extends BoundOf<T.Regex, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Regex['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Regex, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Regex['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Regex>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Regex>;
-	export type BuildArgs = [config: ConfigOf<T.Regex>];
+	export type BuildArgs = [config: ConfigOf<T.Regex, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.Regex, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Regex
+		config:
+			| LooseConfigOf<T.Regex, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.Regex, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.Regex;
 }
 export namespace PrivatePropertyIdentifier {
 	export type Config = ConfigFor<TSKindId.PrivatePropertyIdentifier>;
-	export interface Built extends T.PrivatePropertyIdentifier, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string): T.PrivatePropertyIdentifier.Built;
-		};
+	export interface Bound extends BoundOf<T.PrivatePropertyIdentifier, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.PrivatePropertyIdentifier['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.PrivatePropertyIdentifier, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.PrivatePropertyIdentifier['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.PrivatePropertyIdentifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrivatePropertyIdentifier>;
-	export type BuildArgs = [value: string];
+	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.PrivatePropertyIdentifier;
 }
 export namespace Arguments {
 	export type Config = ConfigFor<TSKindId.Arguments>;
-	export interface Built extends T.Arguments, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			elements(...vs: (T.Expression | T.SpreadElement)[]): T.Arguments.Built;
-		};
+	export interface Bound extends BoundOf<T.Arguments, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Arguments['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Arguments, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Arguments['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Arguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Arguments>;
-	export type BuildArgs = [...children: (T.Expression | T.SpreadElement)[]];
+	export type BuildArgs = [...children: AdmitBound<(T.Expression | T.SpreadElement)[], T.AdmittedNodes>];
 	export type LooseArgs = [
 		...children: LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
@@ -17874,23 +20195,21 @@ export namespace Arguments {
 }
 export namespace Decorator {
 	export type Config = ConfigFor<TSKindId.Decorator>;
-	export interface Built extends T.Decorator, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(
-				value:
-					| T.Identifier
-					| T.DecoratorMemberExpression
-					| T.DecoratorCallExpression
-					| T.DecoratorParenthesizedExpression
-			): T.Decorator.Built;
-		};
+	export interface Bound extends BoundOf<T.Decorator, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Decorator['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Decorator, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Decorator['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Decorator>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Decorator>;
 	export type BuildArgs = [
-		value: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
+		value: AdmitBound<
+			T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression,
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		value: LooseValue<
@@ -17904,72 +20223,61 @@ export namespace Decorator {
 }
 export namespace DecoratorMemberExpression {
 	export type Config = ConfigFor<TSKindId.DecoratorMemberExpression>;
-	export interface Built extends T.DecoratorMemberExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			object(value: T.Identifier | T.DecoratorMemberExpression): T.DecoratorMemberExpression.Built;
-			property(value: T.PropertyIdentifier | T.PropertyIdentifier.Types): T.DecoratorMemberExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.DecoratorMemberExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.DecoratorMemberExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.DecoratorMemberExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.DecoratorMemberExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.DecoratorMemberExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DecoratorMemberExpression>;
-	export type BuildArgs = [config: ConfigOf<T.DecoratorMemberExpression>];
+	export type BuildArgs = [config: ConfigOf<T.DecoratorMemberExpression, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.DecoratorMemberExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.DecoratorMemberExpression
+			| AdmitBound<T.DecoratorMemberExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.DecoratorMemberExpression;
 }
 export namespace DecoratorCallExpression {
 	export type Config = ConfigFor<TSKindId.DecoratorCallExpression>;
-	export interface Built extends T.DecoratorCallExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			function(value: T.Identifier | T.DecoratorMemberExpression): T.DecoratorCallExpression.Built;
-			typeArguments(value?: T.TypeArguments): T.DecoratorCallExpression.Built;
-			arguments(value: T.Arguments): T.DecoratorCallExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.DecoratorCallExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.DecoratorCallExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.DecoratorCallExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.DecoratorCallExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.DecoratorCallExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DecoratorCallExpression>;
-	export type BuildArgs = [config: ConfigOf<T.DecoratorCallExpression>];
+	export type BuildArgs = [config: ConfigOf<T.DecoratorCallExpression, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.DecoratorCallExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.DecoratorCallExpression
+			| AdmitBound<T.DecoratorCallExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.DecoratorCallExpression;
 }
 export namespace ClassBody {
 	export type Config = ConfigFor<TSKindId.ClassBody>;
-	export interface Built extends T.ClassBody, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			contents(
-				...vs: (
-					| T.ClassBodyMethod
-					| T.ClassBodyMethodSig
-					| T.ClassStaticBlock
-					| T.ClassBodyMember
-					| TSKindId.EmptyMember
-				)[]
-			): T.ClassBody.Built;
-		};
+	export interface Bound extends BoundOf<T.ClassBody, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassBody['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ClassBody, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassBody['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ClassBody>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassBody>;
 	export type BuildArgs = [
-		...children: (
-			| T.ClassBodyMethod
-			| T.ClassBodyMethodSig
-			| T.ClassStaticBlock
-			| T.ClassBodyMember
-			| TSKindId.EmptyMember
-		)[]
+		...children: AdmitBound<
+			(T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.EmptyMember)[],
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
@@ -17983,16 +20291,17 @@ export namespace ClassBody {
 }
 export namespace FormalParameters {
 	export type Config = ConfigFor<TSKindId.FormalParameters>;
-	export interface Built extends T.FormalParameters, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			formalParametersElements(value?: T.FormalParametersElements): T.FormalParameters.Built;
-		};
+	export interface Bound extends BoundOf<T.FormalParameters, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.FormalParameters['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.FormalParameters, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.FormalParameters['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.FormalParameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormalParameters>;
-	export type BuildArgs = [value?: T.FormalParametersElements];
+	export type BuildArgs = [value?: AdmitBound<T.FormalParametersElements, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value?: LooseValue<T.FormalParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -18000,71 +20309,38 @@ export namespace FormalParameters {
 }
 export namespace ClassStaticBlock {
 	export type Config = ConfigFor<TSKindId.ClassStaticBlock>;
-	export interface Built extends T.ClassStaticBlock, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			automaticSemicolon(
-				value?: NonNullable<T.ClassStaticBlock.Config>['automaticSemicolon']
-			): T.ClassStaticBlock.Built;
-			body(value: T.StatementBlock): T.ClassStaticBlock.Built;
-		};
+	export interface Bound extends BoundOf<T.ClassStaticBlock, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassStaticBlock['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ClassStaticBlock, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassStaticBlock['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ClassStaticBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassStaticBlock>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.ClassStaticBlock>>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.ClassStaticBlock, T.NamespaceMap>>];
 	export type LooseArgs = [
 		config?:
 			| LooseConfigOf<T.ClassStaticBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ClassStaticBlock
+			| AdmitBound<T.ClassStaticBlock, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ClassStaticBlock;
 }
 export namespace RestPattern {
 	export type Config = ConfigFor<TSKindId.RestPattern>;
-	export interface Built extends T.RestPattern, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			lhsExpression(
-				value: NonNullable<
-					| T.MemberExpression
-					| T.SubscriptExpression
-					| TSKindId.Undefined
-					| T.Identifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-					| T.ObjectPattern
-					| T.ArrayPattern
-					| T.NonNullExpression
-				>
-			): T.RestPattern.Built;
-		};
+	export interface Bound extends BoundOf<T.RestPattern, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.RestPattern['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.RestPattern, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.RestPattern['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.RestPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RestPattern>;
 	export type BuildArgs = [
-		value:
+		value: AdmitBound<
 			| T.MemberExpression
 			| T.SubscriptExpression
 			| TSKindId.Undefined
@@ -18093,7 +20369,9 @@ export namespace RestPattern {
 			| TSKindId.LetKeyword
 			| T.ObjectPattern
 			| T.ArrayPattern
-			| T.NonNullExpression
+			| T.NonNullExpression,
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		value: LooseValue<
@@ -18135,206 +20413,153 @@ export namespace RestPattern {
 }
 export namespace MethodDefinition {
 	export type Config = ConfigFor<TSKindId.MethodDefinition>;
-	export interface Built extends T.MethodDefinition, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			accessibilityModifier(
-				value?: NonNullable<T.MethodDefinition.Config>['accessibilityModifier']
-			): T.MethodDefinition.Built;
-			staticMarker(value?: NonNullable<T.MethodDefinition.Config>['staticMarker']): T.MethodDefinition.Built;
-			overrideModifier(value?: NonNullable<T.MethodDefinition.Config>['overrideModifier']): T.MethodDefinition.Built;
-			readonlyMarker(value?: NonNullable<T.MethodDefinition.Config>['readonlyMarker']): T.MethodDefinition.Built;
-			asyncMarker(value?: NonNullable<T.MethodDefinition.Config>['asyncMarker']): T.MethodDefinition.Built;
-			accessorKind(value?: NonNullable<T.MethodDefinition.Config>['accessorKind']): T.MethodDefinition.Built;
-			name(value: NonNullable<T.MethodDefinition.Config>['name']): T.MethodDefinition.Built;
-			optionalMarker(value?: NonNullable<T.MethodDefinition.Config>['optionalMarker']): T.MethodDefinition.Built;
-			typeParameters(value?: T.TypeParameters): T.MethodDefinition.Built;
-			parameters(value: T.FormalParameters): T.MethodDefinition.Built;
-			returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation): T.MethodDefinition.Built;
-			body(value: T.StatementBlock): T.MethodDefinition.Built;
-		};
+	export interface Bound extends BoundOf<T.MethodDefinition, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.MethodDefinition['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.MethodDefinition, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.MethodDefinition['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.MethodDefinition>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MethodDefinition>;
-	export type BuildArgs = [config: ConfigOf<T.MethodDefinition>];
+	export type BuildArgs = [config: ConfigOf<T.MethodDefinition, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.MethodDefinition, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MethodDefinition
+		config:
+			| LooseConfigOf<T.MethodDefinition, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.MethodDefinition, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.MethodDefinition;
 }
 export namespace Pair {
 	export type Config = ConfigFor<TSKindId.Pair>;
-	export interface Built extends T.Pair, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			key(value: NonNullable<T.Pair.Config>['key']): T.Pair.Built;
-			value(value: NonNullable<T.Pair.Config>['value']): T.Pair.Built;
-		};
+	export interface Bound extends BoundOf<T.Pair, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Pair['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Pair, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Pair['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Pair>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Pair>;
-	export type BuildArgs = [config: ConfigOf<T.Pair>];
+	export type BuildArgs = [config: ConfigOf<T.Pair, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.Pair, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Pair
+		config:
+			| LooseConfigOf<T.Pair, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.Pair, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.Pair;
 }
 export namespace PairPattern {
 	export type Config = ConfigFor<TSKindId.PairPattern>;
-	export interface Built extends T.PairPattern, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			key(value: NonNullable<T.PairPattern.Config>['key']): T.PairPattern.Built;
-			value(value: T.Pattern | T.AssignmentPattern): T.PairPattern.Built;
-		};
+	export interface Bound extends BoundOf<T.PairPattern, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.PairPattern['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.PairPattern, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.PairPattern['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.PairPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PairPattern>;
-	export type BuildArgs = [config: ConfigOf<T.PairPattern>];
+	export type BuildArgs = [config: ConfigOf<T.PairPattern, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.PairPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.PairPattern
+		config:
+			| LooseConfigOf<T.PairPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.PairPattern, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.PairPattern;
 }
 export namespace ComputedPropertyName {
 	export type Config = ConfigFor<TSKindId.ComputedPropertyName>;
-	export interface Built extends T.ComputedPropertyName, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(value: NonNullable<T.Expression>): T.ComputedPropertyName.Built;
-		};
+	export interface Bound extends BoundOf<T.ComputedPropertyName, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ComputedPropertyName['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ComputedPropertyName, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ComputedPropertyName['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ComputedPropertyName>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComputedPropertyName>;
-	export type BuildArgs = [value: T.Expression];
+	export type BuildArgs = [value: AdmitBound<T.Expression, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.ComputedPropertyName;
 }
 export namespace PublicFieldDefinition {
 	export type Config = ConfigFor<TSKindId.PublicFieldDefinition>;
-	export interface Built extends T.PublicFieldDefinition, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			decorators(...values: T.Decorator[]): T.PublicFieldDefinition.Built;
-			declareMarker(
-				value?: NonNullable<T.PublicFieldDefinition.Config>['declareMarker']
-			): T.PublicFieldDefinition.Built;
-			accessibilityModifier(
-				value?: NonNullable<T.PublicFieldDefinition.Config>['accessibilityModifier']
-			): T.PublicFieldDefinition.Built;
-			staticMarker(value?: NonNullable<T.PublicFieldDefinition.Config>['staticMarker']): T.PublicFieldDefinition.Built;
-			readonlyMarker(
-				value?: NonNullable<T.PublicFieldDefinition.Config>['readonlyMarker']
-			): T.PublicFieldDefinition.Built;
-			abstractMarker(
-				value?: NonNullable<T.PublicFieldDefinition.Config>['abstractMarker']
-			): T.PublicFieldDefinition.Built;
-			accessorMarker(
-				value?: NonNullable<T.PublicFieldDefinition.Config>['accessorMarker']
-			): T.PublicFieldDefinition.Built;
-			overrideModifier(
-				value?: NonNullable<T.PublicFieldDefinition.Config>['overrideModifier']
-			): T.PublicFieldDefinition.Built;
-			name(value: NonNullable<T.PublicFieldDefinition.Config>['name']): T.PublicFieldDefinition.Built;
-			optionalityMarker(
-				value?: NonNullable<T.PublicFieldDefinition.Config>['optionalityMarker']
-			): T.PublicFieldDefinition.Built;
-			type(value?: T.TypeAnnotation): T.PublicFieldDefinition.Built;
-			value(value?: NonNullable<T.PublicFieldDefinition.Config>['value']): T.PublicFieldDefinition.Built;
-		};
+	export interface Bound extends BoundOf<T.PublicFieldDefinition, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.PublicFieldDefinition['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.PublicFieldDefinition, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.PublicFieldDefinition['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.PublicFieldDefinition>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PublicFieldDefinition>;
-	export type BuildArgs = [config: ConfigOf<T.PublicFieldDefinition>];
+	export type BuildArgs = [config: ConfigOf<T.PublicFieldDefinition, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.PublicFieldDefinition, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.PublicFieldDefinition
+			| AdmitBound<T.PublicFieldDefinition, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.PublicFieldDefinition;
 }
 export namespace NonNullExpression {
 	export type Config = ConfigFor<TSKindId.NonNullExpression>;
-	export interface Built extends T.NonNullExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(value: NonNullable<T.Expression>): T.NonNullExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.NonNullExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NonNullExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NonNullExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NonNullExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.NonNullExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NonNullExpression>;
-	export type BuildArgs = [value: T.Expression];
+	export type BuildArgs = [value: AdmitBound<T.Expression, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.NonNullExpression;
 }
 export namespace MethodSignature {
 	export type Config = ConfigFor<TSKindId.MethodSignature>;
-	export interface Built extends T.MethodSignature, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			accessibilityModifier(
-				value?: NonNullable<T.MethodSignature.Config>['accessibilityModifier']
-			): T.MethodSignature.Built;
-			staticMarker(value?: NonNullable<T.MethodSignature.Config>['staticMarker']): T.MethodSignature.Built;
-			overrideModifier(value?: NonNullable<T.MethodSignature.Config>['overrideModifier']): T.MethodSignature.Built;
-			readonlyMarker(value?: NonNullable<T.MethodSignature.Config>['readonlyMarker']): T.MethodSignature.Built;
-			asyncMarker(value?: NonNullable<T.MethodSignature.Config>['asyncMarker']): T.MethodSignature.Built;
-			accessorKind(value?: NonNullable<T.MethodSignature.Config>['accessorKind']): T.MethodSignature.Built;
-			name(value: NonNullable<T.MethodSignature.Config>['name']): T.MethodSignature.Built;
-			optionalMarker(value?: NonNullable<T.MethodSignature.Config>['optionalMarker']): T.MethodSignature.Built;
-			typeParameters(value?: T.TypeParameters): T.MethodSignature.Built;
-			parameters(value: T.FormalParameters): T.MethodSignature.Built;
-			returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation): T.MethodSignature.Built;
-		};
+	export interface Bound extends BoundOf<T.MethodSignature, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.MethodSignature['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.MethodSignature, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.MethodSignature['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.MethodSignature>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MethodSignature>;
-	export type BuildArgs = [config: ConfigOf<T.MethodSignature>];
+	export type BuildArgs = [config: ConfigOf<T.MethodSignature, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.MethodSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MethodSignature
+		config:
+			| LooseConfigOf<T.MethodSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.MethodSignature, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.MethodSignature;
 }
 export namespace AbstractMethodSignature {
 	export type Config = ConfigFor<TSKindId.AbstractMethodSignature>;
-	export interface Built extends T.AbstractMethodSignature, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			accessibilityModifier(
-				value?: NonNullable<T.AbstractMethodSignature.Config>['accessibilityModifier']
-			): T.AbstractMethodSignature.Built;
-			overrideModifier(
-				value?: NonNullable<T.AbstractMethodSignature.Config>['overrideModifier']
-			): T.AbstractMethodSignature.Built;
-			accessorKind(
-				value?: NonNullable<T.AbstractMethodSignature.Config>['accessorKind']
-			): T.AbstractMethodSignature.Built;
-			name(value: NonNullable<T.AbstractMethodSignature.Config>['name']): T.AbstractMethodSignature.Built;
-			optionalMarker(
-				value?: NonNullable<T.AbstractMethodSignature.Config>['optionalMarker']
-			): T.AbstractMethodSignature.Built;
-			typeParameters(value?: T.TypeParameters): T.AbstractMethodSignature.Built;
-			parameters(value: T.FormalParameters): T.AbstractMethodSignature.Built;
-			returnType(
-				value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation
-			): T.AbstractMethodSignature.Built;
-		};
+	export interface Bound extends BoundOf<T.AbstractMethodSignature, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.AbstractMethodSignature['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.AbstractMethodSignature, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.AbstractMethodSignature['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.AbstractMethodSignature>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AbstractMethodSignature>;
-	export type BuildArgs = [config: ConfigOf<T.AbstractMethodSignature>];
+	export type BuildArgs = [config: ConfigOf<T.AbstractMethodSignature, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.AbstractMethodSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.AbstractMethodSignature
+			| AdmitBound<T.AbstractMethodSignature, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.AbstractMethodSignature;
 }
@@ -18343,46 +20568,43 @@ export namespace FunctionSignature {
 	export type Options = {
 		readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon;
 	};
-	export interface Built extends T.FunctionSignature, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			asyncMarker(value?: NonNullable<T.FunctionSignature.Config>['asyncMarker']): T.FunctionSignature.Built;
-			name(value: T.Identifier): T.FunctionSignature.Built;
-			typeParameters(value?: T.TypeParameters): T.FunctionSignature.Built;
-			parameters(value: T.FormalParameters): T.FunctionSignature.Built;
-			returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation): T.FunctionSignature.Built;
-			terminator(value: NonNullable<T.FunctionSignature.Options>['terminator']): T.FunctionSignature.Built;
-		};
+	export interface Bound extends BoundOf<T.FunctionSignature, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.FunctionSignature['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.FunctionSignature, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.FunctionSignature['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.FunctionSignature>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.FunctionSignature>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.FunctionSignature>, 'terminator'>,
+		config: OmitEach<ConfigOf<T.FunctionSignature, T.NamespaceMap>, 'terminator'>,
 		options?: T.FunctionSignature.Options
 	];
 	export type LooseArgs = [
 		config:
 			| OmitEach<LooseConfigOf<T.FunctionSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'terminator'>
-			| T.FunctionSignature,
+			| AdmitBound<T.FunctionSignature, T.AdmittedNodes>,
 		options?: T.FunctionSignature.Options
 	];
 	export type Kind = TSKindId.FunctionSignature;
 }
 export namespace DecoratorParenthesizedExpression {
 	export type Config = ConfigFor<TSKindId.DecoratorParenthesizedExpression>;
-	export interface Built extends T.DecoratorParenthesizedExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(
-				value: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression
-			): T.DecoratorParenthesizedExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.DecoratorParenthesizedExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.DecoratorParenthesizedExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.DecoratorParenthesizedExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.DecoratorParenthesizedExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.DecoratorParenthesizedExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DecoratorParenthesizedExpression>;
-	export type BuildArgs = [value: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression];
+	export type BuildArgs = [
+		value: AdmitBound<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression, T.AdmittedNodes>
+	];
 	export type LooseArgs = [
 		value: LooseValue<
 			T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression,
@@ -18395,112 +20617,117 @@ export namespace DecoratorParenthesizedExpression {
 }
 export namespace TypeAssertion {
 	export type Config = ConfigFor<TSKindId.TypeAssertion>;
-	export interface Built extends T.TypeAssertion, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			typeArguments(value: T.TypeArguments): T.TypeAssertion.Built;
-			expression(value: NonNullable<T.TypeAssertion.Config>['expression']): T.TypeAssertion.Built;
-		};
+	export interface Bound extends BoundOf<T.TypeAssertion, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeAssertion['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypeAssertion, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeAssertion['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TypeAssertion>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeAssertion>;
-	export type BuildArgs = [config: ConfigOf<T.TypeAssertion>];
+	export type BuildArgs = [config: ConfigOf<T.TypeAssertion, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.TypeAssertion, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TypeAssertion
+		config:
+			| LooseConfigOf<T.TypeAssertion, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.TypeAssertion, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.TypeAssertion;
 }
 export namespace AsExpression {
 	export type Config = ConfigFor<TSKindId.AsExpression>;
-	export interface Built extends T.AsExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(value: NonNullable<T.AsExpression.Config>['expression']): T.AsExpression.Built;
-			typeAnnotation(value: NonNullable<T.AsExpression.Config>['typeAnnotation']): T.AsExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.AsExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.AsExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.AsExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.AsExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.AsExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AsExpression>;
-	export type BuildArgs = [config: ConfigOf<T.AsExpression>];
+	export type BuildArgs = [config: ConfigOf<T.AsExpression, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.AsExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.AsExpression
+		config:
+			| LooseConfigOf<T.AsExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.AsExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.AsExpression;
 }
 export namespace SatisfiesExpression {
 	export type Config = ConfigFor<TSKindId.SatisfiesExpression>;
-	export interface Built extends T.SatisfiesExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(value: NonNullable<T.SatisfiesExpression.Config>['expression']): T.SatisfiesExpression.Built;
-			typeAnnotation(value: NonNullable<T.SatisfiesExpression.Config>['typeAnnotation']): T.SatisfiesExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.SatisfiesExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.SatisfiesExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.SatisfiesExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.SatisfiesExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.SatisfiesExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SatisfiesExpression>;
-	export type BuildArgs = [config: ConfigOf<T.SatisfiesExpression>];
+	export type BuildArgs = [config: ConfigOf<T.SatisfiesExpression, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.SatisfiesExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.SatisfiesExpression
+			| AdmitBound<T.SatisfiesExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.SatisfiesExpression;
 }
 export namespace InstantiationExpression {
 	export type Config = ConfigFor<TSKindId.InstantiationExpression>;
-	export interface Built extends T.InstantiationExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(value: NonNullable<T.InstantiationExpression.Config>['expression']): T.InstantiationExpression.Built;
-			typeArguments(value: T.TypeArguments): T.InstantiationExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.InstantiationExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.InstantiationExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.InstantiationExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.InstantiationExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.InstantiationExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InstantiationExpression>;
-	export type BuildArgs = [config: ConfigOf<T.InstantiationExpression>];
+	export type BuildArgs = [config: ConfigOf<T.InstantiationExpression, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.InstantiationExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.InstantiationExpression
+			| AdmitBound<T.InstantiationExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.InstantiationExpression;
 }
 export namespace ImportRequireClause {
 	export type Config = ConfigFor<TSKindId.ImportRequireClause>;
-	export interface Built extends T.ImportRequireClause, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.Identifier): T.ImportRequireClause.Built;
-			source(value: T.String): T.ImportRequireClause.Built;
-		};
+	export interface Bound extends BoundOf<T.ImportRequireClause, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportRequireClause['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ImportRequireClause, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportRequireClause['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ImportRequireClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportRequireClause>;
-	export type BuildArgs = [config: ConfigOf<T.ImportRequireClause>];
+	export type BuildArgs = [config: ConfigOf<T.ImportRequireClause, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.ImportRequireClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ImportRequireClause
+			| AdmitBound<T.ImportRequireClause, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ImportRequireClause;
 }
 export namespace ExtendsClause {
 	export type Config = ConfigFor<TSKindId.ExtendsClause>;
-	export interface Built extends T.ExtendsClause, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			extendsClauseSingles(...vs: T.ExtendsClauseSingle[]): T.ExtendsClause.Built;
-		};
+	export interface Bound extends BoundOf<T.ExtendsClause, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExtendsClause['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ExtendsClause, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExtendsClause['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ExtendsClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExtendsClause>;
-	export type BuildArgs = [...children: T.ExtendsClauseSingle[]];
+	export type BuildArgs = [...children: AdmitBound<T.ExtendsClauseSingle[], T.AdmittedNodes>];
 	export type LooseArgs = [
 		...children: LooseValue<T.ExtendsClauseSingle, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
@@ -18508,36 +20735,37 @@ export namespace ExtendsClause {
 }
 export namespace ExtendsClauseSingle {
 	export type Config = ConfigFor<TSKindId.ExtendsClauseSingle>;
-	export interface Built extends T.ExtendsClauseSingle, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			value(value: NonNullable<T.ExtendsClauseSingle.Config>['value']): T.ExtendsClauseSingle.Built;
-			typeArguments(value?: T.TypeArguments): T.ExtendsClauseSingle.Built;
-		};
+	export interface Bound extends BoundOf<T.ExtendsClauseSingle, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExtendsClauseSingle['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ExtendsClauseSingle, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExtendsClauseSingle['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ExtendsClauseSingle>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExtendsClauseSingle>;
-	export type BuildArgs = [config: ConfigOf<T.ExtendsClauseSingle>];
+	export type BuildArgs = [config: ConfigOf<T.ExtendsClauseSingle, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.ExtendsClauseSingle, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ExtendsClauseSingle
+			| AdmitBound<T.ExtendsClauseSingle, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ExtendsClauseSingle;
 }
 export namespace ImplementsClause {
 	export type Config = ConfigFor<TSKindId.ImplementsClause>;
-	export interface Built extends T.ImplementsClause, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			types(...vs: (T.Type | T.TypeIdentifier.Types)[]): T.ImplementsClause.Built;
-		};
+	export interface Bound extends BoundOf<T.ImplementsClause, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ImplementsClause['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ImplementsClause, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ImplementsClause['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ImplementsClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImplementsClause>;
-	export type BuildArgs = [...children: (T.Type | T.TypeIdentifier.Types)[]];
+	export type BuildArgs = [...children: AdmitBound<(T.Type | T.TypeIdentifier.Types)[], T.AdmittedNodes>];
 	export type LooseArgs = [
 		...children: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
@@ -18545,18 +20773,19 @@ export namespace ImplementsClause {
 }
 export namespace AmbientDeclaration {
 	export type Config = ConfigFor<TSKindId.AmbientDeclaration>;
-	export interface Built extends T.AmbientDeclaration, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(
-				value: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule
-			): T.AmbientDeclaration.Built;
-		};
+	export interface Bound extends BoundOf<T.AmbientDeclaration, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.AmbientDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.AmbientDeclaration, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.AmbientDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.AmbientDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AmbientDeclaration>;
-	export type BuildArgs = [value: T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule];
+	export type BuildArgs = [
+		value: AdmitBound<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule, T.AdmittedNodes>
+	];
 	export type LooseArgs = [
 		value: LooseValue<
 			T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule,
@@ -18569,143 +20798,146 @@ export namespace AmbientDeclaration {
 }
 export namespace AbstractClassDeclaration {
 	export type Config = ConfigFor<TSKindId.AbstractClassDeclaration>;
-	export interface Built extends T.AbstractClassDeclaration, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			decorators(...values: T.Decorator[]): T.AbstractClassDeclaration.Built;
-			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.AbstractClassDeclaration.Built;
-			typeParameters(value?: T.TypeParameters): T.AbstractClassDeclaration.Built;
-			heritage(value?: T.ClassHeritage): T.AbstractClassDeclaration.Built;
-			body(value: T.ClassBody): T.AbstractClassDeclaration.Built;
-		};
+	export interface Bound extends BoundOf<T.AbstractClassDeclaration, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.AbstractClassDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.AbstractClassDeclaration, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.AbstractClassDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.AbstractClassDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AbstractClassDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.AbstractClassDeclaration>];
+	export type BuildArgs = [config: ConfigOf<T.AbstractClassDeclaration, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.AbstractClassDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.AbstractClassDeclaration
+			| AdmitBound<T.AbstractClassDeclaration, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.AbstractClassDeclaration;
 }
 export namespace Module {
 	export type Config = ConfigFor<TSKindId.Module>;
-	export interface Built extends T.Module, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.String | T.Identifier | T.NestedIdentifier): T.Module.Built;
-			body(value?: T.StatementBlock): T.Module.Built;
-		};
+	export interface Bound extends BoundOf<T.Module, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Module['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Module, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Module['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Module>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Module>;
-	export type BuildArgs = [config: ConfigOf<T.Module>];
+	export type BuildArgs = [config: ConfigOf<T.Module, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.Module, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Module
+		config:
+			| LooseConfigOf<T.Module, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.Module, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.Module;
 }
 export namespace InternalModule {
 	export type Config = ConfigFor<TSKindId.InternalModule>;
-	export interface Built extends T.InternalModule, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.String | T.Identifier | T.NestedIdentifier): T.InternalModule.Built;
-			body(value?: T.StatementBlock): T.InternalModule.Built;
-		};
+	export interface Bound extends BoundOf<T.InternalModule, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.InternalModule['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.InternalModule, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.InternalModule['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.InternalModule>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InternalModule>;
-	export type BuildArgs = [config: ConfigOf<T.InternalModule>];
+	export type BuildArgs = [config: ConfigOf<T.InternalModule, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.InternalModule, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.InternalModule
+		config:
+			| LooseConfigOf<T.InternalModule, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.InternalModule, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.InternalModule;
 }
 export namespace ImportAlias {
 	export type Config = OmitEach<ConfigFor<TSKindId.ImportAlias>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.ImportAlias, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.Identifier): T.ImportAlias.Built;
-			value(value: T.Identifier | T.NestedIdentifier): T.ImportAlias.Built;
-			terminator(value: NonNullable<T.ImportAlias.Options>['terminator']): T.ImportAlias.Built;
-		};
+	export interface Bound extends BoundOf<T.ImportAlias, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportAlias['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ImportAlias, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportAlias['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ImportAlias>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ImportAlias>, 'terminator'>;
-	export type BuildArgs = [config: OmitEach<ConfigOf<T.ImportAlias>, 'terminator'>, options?: T.ImportAlias.Options];
+	export type BuildArgs = [
+		config: OmitEach<ConfigOf<T.ImportAlias, T.NamespaceMap>, 'terminator'>,
+		options?: T.ImportAlias.Options
+	];
 	export type LooseArgs = [
 		config:
 			| OmitEach<LooseConfigOf<T.ImportAlias, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'terminator'>
-			| T.ImportAlias,
+			| AdmitBound<T.ImportAlias, T.AdmittedNodes>,
 		options?: T.ImportAlias.Options
 	];
 	export type Kind = TSKindId.ImportAlias;
 }
 export namespace NestedTypeIdentifier {
 	export type Config = ConfigFor<TSKindId.NestedTypeIdentifier>;
-	export interface Built extends T.NestedTypeIdentifier, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			module(value: T.Identifier | T.NestedIdentifier): T.NestedTypeIdentifier.Built;
-			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.NestedTypeIdentifier.Built;
-		};
+	export interface Bound extends BoundOf<T.NestedTypeIdentifier, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NestedTypeIdentifier['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NestedTypeIdentifier, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NestedTypeIdentifier['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.NestedTypeIdentifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NestedTypeIdentifier>;
-	export type BuildArgs = [config: ConfigOf<T.NestedTypeIdentifier>];
+	export type BuildArgs = [config: ConfigOf<T.NestedTypeIdentifier, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.NestedTypeIdentifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.NestedTypeIdentifier
+			| AdmitBound<T.NestedTypeIdentifier, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.NestedTypeIdentifier;
 }
 export namespace InterfaceDeclaration {
 	export type Config = ConfigFor<TSKindId.InterfaceDeclaration>;
-	export interface Built extends T.InterfaceDeclaration, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.InterfaceDeclaration.Built;
-			typeParameters(value?: T.TypeParameters): T.InterfaceDeclaration.Built;
-			extendsTypeClause(value?: T.ExtendsTypeClause): T.InterfaceDeclaration.Built;
-			body(value: T.InterfaceBody | T.InterfaceBody.Types): T.InterfaceDeclaration.Built;
-		};
+	export interface Bound extends BoundOf<T.InterfaceDeclaration, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.InterfaceDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.InterfaceDeclaration, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.InterfaceDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.InterfaceDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InterfaceDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.InterfaceDeclaration>];
+	export type BuildArgs = [config: ConfigOf<T.InterfaceDeclaration, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.InterfaceDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.InterfaceDeclaration
+			| AdmitBound<T.InterfaceDeclaration, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.InterfaceDeclaration;
 }
 export namespace ExtendsTypeClause {
 	export type Config = ConfigFor<TSKindId.ExtendsTypeClause>;
-	export interface Built extends T.ExtendsTypeClause, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			types(
-				...vs: ((T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types)[]
-			): T.ExtendsTypeClause.Built;
-		};
+	export interface Bound extends BoundOf<T.ExtendsTypeClause, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExtendsTypeClause['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ExtendsTypeClause, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExtendsTypeClause['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ExtendsTypeClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExtendsTypeClause>;
 	export type BuildArgs = [
-		...children: ((T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types)[]
+		...children: AdmitBound<
+			((T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types)[],
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
@@ -18719,73 +20951,75 @@ export namespace ExtendsTypeClause {
 }
 export namespace EnumDeclaration {
 	export type Config = ConfigFor<TSKindId.EnumDeclaration>;
-	export interface Built extends T.EnumDeclaration, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			constMarker(value?: NonNullable<T.EnumDeclaration.Config>['constMarker']): T.EnumDeclaration.Built;
-			name(value: T.Identifier): T.EnumDeclaration.Built;
-			body(value: T.EnumBody): T.EnumDeclaration.Built;
-		};
+	export interface Bound extends BoundOf<T.EnumDeclaration, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.EnumDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.EnumDeclaration, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.EnumDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.EnumDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.EnumDeclaration>];
+	export type BuildArgs = [config: ConfigOf<T.EnumDeclaration, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.EnumDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.EnumDeclaration
+		config:
+			| LooseConfigOf<T.EnumDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.EnumDeclaration, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.EnumDeclaration;
 }
 export namespace EnumBody {
 	export type Config = ConfigFor<TSKindId.EnumBody>;
-	export interface Built extends T.EnumBody, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			enumBodyElements(value?: T.EnumBodyElements): T.EnumBody.Built;
-		};
+	export interface Bound extends BoundOf<T.EnumBody, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.EnumBody['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.EnumBody, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.EnumBody['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.EnumBody>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumBody>;
-	export type BuildArgs = [value?: T.EnumBodyElements];
+	export type BuildArgs = [value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>];
 	export type LooseArgs = [value?: LooseValue<T.EnumBodyElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.EnumBody;
 }
 export namespace EnumAssignment {
 	export type Config = ConfigFor<TSKindId.EnumAssignment>;
-	export interface Built extends T.EnumAssignment, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: NonNullable<T.EnumAssignment.Config>['name']): T.EnumAssignment.Built;
-			value(value: NonNullable<T.EnumAssignment.Config>['value']): T.EnumAssignment.Built;
-		};
+	export interface Bound extends BoundOf<T.EnumAssignment, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.EnumAssignment['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.EnumAssignment, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.EnumAssignment['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.EnumAssignment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumAssignment>;
-	export type BuildArgs = [config: ConfigOf<T.EnumAssignment>];
+	export type BuildArgs = [config: ConfigOf<T.EnumAssignment, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.EnumAssignment, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.EnumAssignment
+		config:
+			| LooseConfigOf<T.EnumAssignment, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.EnumAssignment, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.EnumAssignment;
 }
 export namespace TypeAliasDeclaration {
 	export type Config = OmitEach<ConfigFor<TSKindId.TypeAliasDeclaration>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.TypeAliasDeclaration, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.TypeAliasDeclaration.Built;
-			typeParameters(value?: T.TypeParameters): T.TypeAliasDeclaration.Built;
-			value(value: NonNullable<T.TypeAliasDeclaration.Config>['value']): T.TypeAliasDeclaration.Built;
-			terminator(value: NonNullable<T.TypeAliasDeclaration.Options>['terminator']): T.TypeAliasDeclaration.Built;
-		};
+	export interface Bound extends BoundOf<T.TypeAliasDeclaration, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeAliasDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypeAliasDeclaration, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeAliasDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.TypeAliasDeclaration>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.TypeAliasDeclaration>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.TypeAliasDeclaration>, 'terminator'>,
+		config: OmitEach<ConfigOf<T.TypeAliasDeclaration, T.NamespaceMap>, 'terminator'>,
 		options?: T.TypeAliasDeclaration.Options
 	];
 	export type LooseArgs = [
@@ -18794,77 +21028,64 @@ export namespace TypeAliasDeclaration {
 					LooseConfigOf<T.TypeAliasDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
 					'terminator'
 			  >
-			| T.TypeAliasDeclaration,
+			| AdmitBound<T.TypeAliasDeclaration, T.AdmittedNodes>,
 		options?: T.TypeAliasDeclaration.Options
 	];
 	export type Kind = TSKindId.TypeAliasDeclaration;
 }
 export namespace RequiredParameter {
 	export type Config = ConfigFor<TSKindId.RequiredParameter>;
-	export interface Built extends T.RequiredParameter, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			decorators(...values: T.Decorator[]): T.RequiredParameter.Built;
-			accessibilityModifier(
-				value?: NonNullable<T.RequiredParameter.Config>['accessibilityModifier']
-			): T.RequiredParameter.Built;
-			overrideModifier(value?: NonNullable<T.RequiredParameter.Config>['overrideModifier']): T.RequiredParameter.Built;
-			readonlyMarker(value?: NonNullable<T.RequiredParameter.Config>['readonlyMarker']): T.RequiredParameter.Built;
-			pattern(value: NonNullable<T.RequiredParameter.Config>['pattern']): T.RequiredParameter.Built;
-			type(value?: T.TypeAnnotation): T.RequiredParameter.Built;
-			value(value?: NonNullable<T.RequiredParameter.Config>['value']): T.RequiredParameter.Built;
-		};
+	export interface Bound extends BoundOf<T.RequiredParameter, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.RequiredParameter['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.RequiredParameter, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.RequiredParameter['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.RequiredParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RequiredParameter>;
-	export type BuildArgs = [config: ConfigOf<T.RequiredParameter>];
+	export type BuildArgs = [config: ConfigOf<T.RequiredParameter, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.RequiredParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.RequiredParameter
+			| AdmitBound<T.RequiredParameter, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.RequiredParameter;
 }
 export namespace OptionalParameter {
 	export type Config = ConfigFor<TSKindId.OptionalParameter>;
-	export interface Built extends T.OptionalParameter, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			decorators(...values: T.Decorator[]): T.OptionalParameter.Built;
-			accessibilityModifier(
-				value?: NonNullable<T.OptionalParameter.Config>['accessibilityModifier']
-			): T.OptionalParameter.Built;
-			overrideModifier(value?: NonNullable<T.OptionalParameter.Config>['overrideModifier']): T.OptionalParameter.Built;
-			readonlyMarker(value?: NonNullable<T.OptionalParameter.Config>['readonlyMarker']): T.OptionalParameter.Built;
-			pattern(value: NonNullable<T.OptionalParameter.Config>['pattern']): T.OptionalParameter.Built;
-			type(value?: T.TypeAnnotation): T.OptionalParameter.Built;
-			value(value?: NonNullable<T.OptionalParameter.Config>['value']): T.OptionalParameter.Built;
-		};
+	export interface Bound extends BoundOf<T.OptionalParameter, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.OptionalParameter['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.OptionalParameter, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.OptionalParameter['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.OptionalParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OptionalParameter>;
-	export type BuildArgs = [config: ConfigOf<T.OptionalParameter>];
+	export type BuildArgs = [config: ConfigOf<T.OptionalParameter, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.OptionalParameter
+			| AdmitBound<T.OptionalParameter, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.OptionalParameter;
 }
 export namespace OmittingTypeAnnotation {
 	export type Config = ConfigFor<TSKindId.OmittingTypeAnnotation>;
-	export interface Built extends T.OmittingTypeAnnotation, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			type(value: NonNullable<T.Type | T.TypeIdentifier.Types>): T.OmittingTypeAnnotation.Built;
-		};
+	export interface Bound extends BoundOf<T.OmittingTypeAnnotation, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.OmittingTypeAnnotation['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.OmittingTypeAnnotation, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.OmittingTypeAnnotation['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.OmittingTypeAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OmittingTypeAnnotation>;
-	export type BuildArgs = [value: T.Type | T.TypeIdentifier.Types];
+	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -18872,16 +21093,17 @@ export namespace OmittingTypeAnnotation {
 }
 export namespace AddingTypeAnnotation {
 	export type Config = ConfigFor<TSKindId.AddingTypeAnnotation>;
-	export interface Built extends T.AddingTypeAnnotation, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			type(value: NonNullable<T.Type | T.TypeIdentifier.Types>): T.AddingTypeAnnotation.Built;
-		};
+	export interface Bound extends BoundOf<T.AddingTypeAnnotation, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.AddingTypeAnnotation['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.AddingTypeAnnotation, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.AddingTypeAnnotation['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.AddingTypeAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AddingTypeAnnotation>;
-	export type BuildArgs = [value: T.Type | T.TypeIdentifier.Types];
+	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -18889,16 +21111,17 @@ export namespace AddingTypeAnnotation {
 }
 export namespace OptingTypeAnnotation {
 	export type Config = ConfigFor<TSKindId.OptingTypeAnnotation>;
-	export interface Built extends T.OptingTypeAnnotation, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			type(value: NonNullable<T.Type | T.TypeIdentifier.Types>): T.OptingTypeAnnotation.Built;
-		};
+	export interface Bound extends BoundOf<T.OptingTypeAnnotation, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.OptingTypeAnnotation['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.OptingTypeAnnotation, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.OptingTypeAnnotation['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.OptingTypeAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OptingTypeAnnotation>;
-	export type BuildArgs = [value: T.Type | T.TypeIdentifier.Types];
+	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -18906,16 +21129,17 @@ export namespace OptingTypeAnnotation {
 }
 export namespace TypeAnnotation {
 	export type Config = ConfigFor<TSKindId.TypeAnnotation>;
-	export interface Built extends T.TypeAnnotation, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			type(value: NonNullable<T.Type | T.TypeIdentifier.Types>): T.TypeAnnotation.Built;
-		};
+	export interface Bound extends BoundOf<T.TypeAnnotation, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeAnnotation['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypeAnnotation, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeAnnotation['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TypeAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeAnnotation>;
-	export type BuildArgs = [value: T.Type | T.TypeIdentifier.Types];
+	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -18923,62 +21147,57 @@ export namespace TypeAnnotation {
 }
 export namespace TypeQueryMemberExpressionInTypeAnnotation {
 	export type Config = ConfigFor<TSKindId.TypeQueryMemberExpressionInTypeAnnotation>;
-	export interface Built extends T.TypeQueryMemberExpressionInTypeAnnotation, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			object(
-				value: NonNullable<T.TypeQueryMemberExpressionInTypeAnnotation.Config>['object']
-			): T.TypeQueryMemberExpressionInTypeAnnotation.Built;
-			property(
-				value: T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types
-			): T.TypeQueryMemberExpressionInTypeAnnotation.Built;
-		};
+	export interface Bound extends BoundOf<T.TypeQueryMemberExpressionInTypeAnnotation, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeQueryMemberExpressionInTypeAnnotation['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypeQueryMemberExpressionInTypeAnnotation, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeQueryMemberExpressionInTypeAnnotation['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TypeQueryMemberExpressionInTypeAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryMemberExpressionInTypeAnnotation>;
-	export type BuildArgs = [config: ConfigOf<T.TypeQueryMemberExpressionInTypeAnnotation>];
+	export type BuildArgs = [config: ConfigOf<T.TypeQueryMemberExpressionInTypeAnnotation, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.TypeQueryMemberExpressionInTypeAnnotation, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.TypeQueryMemberExpressionInTypeAnnotation
+			| AdmitBound<T.TypeQueryMemberExpressionInTypeAnnotation, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.TypeQueryMemberExpressionInTypeAnnotation;
 }
 export namespace TypeQueryCallExpressionInTypeAnnotation {
 	export type Config = ConfigFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
-	export interface Built extends T.TypeQueryCallExpressionInTypeAnnotation, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			function(
-				value: NonNullable<T.TypeQueryCallExpressionInTypeAnnotation.Config>['function']
-			): T.TypeQueryCallExpressionInTypeAnnotation.Built;
-			arguments(value: T.Arguments): T.TypeQueryCallExpressionInTypeAnnotation.Built;
-		};
+	export interface Bound extends BoundOf<T.TypeQueryCallExpressionInTypeAnnotation, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeQueryCallExpressionInTypeAnnotation['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypeQueryCallExpressionInTypeAnnotation, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeQueryCallExpressionInTypeAnnotation['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
-	export type BuildArgs = [config: ConfigOf<T.TypeQueryCallExpressionInTypeAnnotation>];
+	export type BuildArgs = [config: ConfigOf<T.TypeQueryCallExpressionInTypeAnnotation, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.TypeQueryCallExpressionInTypeAnnotation, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.TypeQueryCallExpressionInTypeAnnotation
+			| AdmitBound<T.TypeQueryCallExpressionInTypeAnnotation, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.TypeQueryCallExpressionInTypeAnnotation;
 }
 export namespace Asserts {
 	export type Config = ConfigFor<TSKindId.Asserts>;
-	export interface Built extends T.Asserts, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			value(value: NonNullable<T.TypePredicate | T.Identifier | TSKindId.This>): T.Asserts.Built;
-		};
+	export interface Bound extends BoundOf<T.Asserts, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Asserts['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Asserts, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Asserts['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Asserts>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Asserts>;
-	export type BuildArgs = [value: T.TypePredicate | T.Identifier | TSKindId.This];
+	export type BuildArgs = [value: AdmitBound<T.TypePredicate | T.Identifier | TSKindId.This, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.TypePredicate | T.Identifier | TSKindId.This, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -18986,69 +21205,73 @@ export namespace Asserts {
 }
 export namespace AssertsAnnotation {
 	export type Config = ConfigFor<TSKindId.AssertsAnnotation>;
-	export interface Built extends T.AssertsAnnotation, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			asserts(value: T.Asserts): T.AssertsAnnotation.Built;
-		};
+	export interface Bound extends BoundOf<T.AssertsAnnotation, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.AssertsAnnotation['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.AssertsAnnotation, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.AssertsAnnotation['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.AssertsAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssertsAnnotation>;
-	export type BuildArgs = [value: T.Asserts];
+	export type BuildArgs = [value: AdmitBound<T.Asserts, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.Asserts, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.AssertsAnnotation;
 }
 export namespace TupleParameter {
 	export type Config = ConfigFor<TSKindId.TupleParameter>;
-	export interface Built extends T.TupleParameter, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.Identifier | T.RestPattern): T.TupleParameter.Built;
-			type(value: T.TypeAnnotation): T.TupleParameter.Built;
-		};
+	export interface Bound extends BoundOf<T.TupleParameter, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TupleParameter['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TupleParameter, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TupleParameter['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TupleParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleParameter>;
-	export type BuildArgs = [config: ConfigOf<T.TupleParameter>];
+	export type BuildArgs = [config: ConfigOf<T.TupleParameter, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.TupleParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TupleParameter
+		config:
+			| LooseConfigOf<T.TupleParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.TupleParameter, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.TupleParameter;
 }
 export namespace OptionalTupleParameter {
 	export type Config = ConfigFor<TSKindId.OptionalTupleParameter>;
-	export interface Built extends T.OptionalTupleParameter, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.Identifier): T.OptionalTupleParameter.Built;
-			type(value: T.TypeAnnotation): T.OptionalTupleParameter.Built;
-		};
+	export interface Bound extends BoundOf<T.OptionalTupleParameter, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.OptionalTupleParameter['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.OptionalTupleParameter, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.OptionalTupleParameter['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.OptionalTupleParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OptionalTupleParameter>;
-	export type BuildArgs = [config: ConfigOf<T.OptionalTupleParameter>];
+	export type BuildArgs = [config: ConfigOf<T.OptionalTupleParameter, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.OptionalTupleParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.OptionalTupleParameter
+			| AdmitBound<T.OptionalTupleParameter, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.OptionalTupleParameter;
 }
 export namespace OptionalType {
 	export type Config = ConfigFor<TSKindId.OptionalType>;
-	export interface Built extends T.OptionalType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			type(value: NonNullable<T.Type | T.TypeIdentifier.Types>): T.OptionalType.Built;
-		};
+	export interface Bound extends BoundOf<T.OptionalType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.OptionalType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.OptionalType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.OptionalType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.OptionalType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OptionalType>;
-	export type BuildArgs = [value: T.Type | T.TypeIdentifier.Types];
+	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -19056,16 +21279,17 @@ export namespace OptionalType {
 }
 export namespace RestType {
 	export type Config = ConfigFor<TSKindId.RestType>;
-	export interface Built extends T.RestType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			type(value: NonNullable<T.Type | T.TypeIdentifier.Types>): T.RestType.Built;
-		};
+	export interface Bound extends BoundOf<T.RestType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.RestType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.RestType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.RestType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.RestType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RestType>;
-	export type BuildArgs = [value: T.Type | T.TypeIdentifier.Types];
+	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -19073,36 +21297,37 @@ export namespace RestType {
 }
 export namespace ConstructorType {
 	export type Config = ConfigFor<TSKindId.ConstructorType>;
-	export interface Built extends T.ConstructorType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			abstractMarker(value?: NonNullable<T.ConstructorType.Config>['abstractMarker']): T.ConstructorType.Built;
-			typeParameters(value?: T.TypeParameters): T.ConstructorType.Built;
-			parameters(value: T.FormalParameters): T.ConstructorType.Built;
-			type(value: NonNullable<T.ConstructorType.Config>['type']): T.ConstructorType.Built;
-		};
+	export interface Bound extends BoundOf<T.ConstructorType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ConstructorType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ConstructorType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ConstructorType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ConstructorType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConstructorType>;
-	export type BuildArgs = [config: ConfigOf<T.ConstructorType>];
+	export type BuildArgs = [config: ConfigOf<T.ConstructorType, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ConstructorType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ConstructorType
+		config:
+			| LooseConfigOf<T.ConstructorType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.ConstructorType, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ConstructorType;
 }
 export namespace TemplateType {
 	export type Config = ConfigFor<TSKindId.TemplateType>;
-	export interface Built extends T.TemplateType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			type(value: NonNullable<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types>): T.TemplateType.Built;
-		};
+	export interface Bound extends BoundOf<T.TemplateType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TemplateType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TemplateType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TemplateType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TemplateType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TemplateType>;
-	export type BuildArgs = [value: (T.PrimaryType | T.InferType) | T.TypeIdentifier.Types];
+	export type BuildArgs = [value: AdmitBound<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<
 			(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types,
@@ -19115,16 +21340,17 @@ export namespace TemplateType {
 }
 export namespace TemplateLiteralType {
 	export type Config = ConfigFor<TSKindId.TemplateLiteralType>;
-	export interface Built extends T.TemplateLiteralType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			elements(...vs: (T.TemplateChars | T.TemplateType)[]): T.TemplateLiteralType.Built;
-		};
+	export interface Bound extends BoundOf<T.TemplateLiteralType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TemplateLiteralType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TemplateLiteralType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TemplateLiteralType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TemplateLiteralType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TemplateLiteralType>;
-	export type BuildArgs = [...children: (T.TemplateChars | T.TemplateType)[]];
+	export type BuildArgs = [...children: AdmitBound<(T.TemplateChars | T.TemplateType)[], T.AdmittedNodes>];
 	export type LooseArgs = [
 		...children: LooseValue<T.TemplateChars | T.TemplateType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
@@ -19132,206 +21358,202 @@ export namespace TemplateLiteralType {
 }
 export namespace InferType {
 	export type Config = ConfigFor<TSKindId.InferType>;
-	export interface Built extends T.InferType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.InferType.Built;
-			type(value?: NonNullable<T.InferType.Config>['type']): T.InferType.Built;
-		};
+	export interface Bound extends BoundOf<T.InferType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.InferType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.InferType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.InferType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.InferType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InferType>;
-	export type BuildArgs = [config: ConfigOf<T.InferType>];
+	export type BuildArgs = [config: ConfigOf<T.InferType, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.InferType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.InferType
+		config:
+			| LooseConfigOf<T.InferType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.InferType, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.InferType;
 }
 export namespace ConditionalType {
 	export type Config = ConfigFor<TSKindId.ConditionalType>;
-	export interface Built extends T.ConditionalType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			left(value: NonNullable<T.ConditionalType.Config>['left']): T.ConditionalType.Built;
-			right(value: NonNullable<T.ConditionalType.Config>['right']): T.ConditionalType.Built;
-			consequence(value: NonNullable<T.ConditionalType.Config>['consequence']): T.ConditionalType.Built;
-			alternative(value: NonNullable<T.ConditionalType.Config>['alternative']): T.ConditionalType.Built;
-		};
+	export interface Bound extends BoundOf<T.ConditionalType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ConditionalType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ConditionalType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ConditionalType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ConditionalType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConditionalType>;
-	export type BuildArgs = [config: ConfigOf<T.ConditionalType>];
+	export type BuildArgs = [config: ConfigOf<T.ConditionalType, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ConditionalType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ConditionalType
+		config:
+			| LooseConfigOf<T.ConditionalType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.ConditionalType, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ConditionalType;
 }
 export namespace GenericType {
 	export type Config = ConfigFor<TSKindId.GenericType>;
-	export interface Built extends T.GenericType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.TypeIdentifier | T.NestedTypeIdentifier | T.TypeIdentifier.Types): T.GenericType.Built;
-			typeArguments(value: T.TypeArguments): T.GenericType.Built;
-		};
+	export interface Bound extends BoundOf<T.GenericType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.GenericType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.GenericType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.GenericType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.GenericType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GenericType>;
-	export type BuildArgs = [config: ConfigOf<T.GenericType>];
+	export type BuildArgs = [config: ConfigOf<T.GenericType, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.GenericType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.GenericType
+		config:
+			| LooseConfigOf<T.GenericType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.GenericType, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.GenericType;
 }
 export namespace TypePredicate {
 	export type Config = ConfigFor<TSKindId.TypePredicate>;
-	export interface Built extends T.TypePredicate, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: NonNullable<T.TypePredicate.Config>['name']): T.TypePredicate.Built;
-			type(value: NonNullable<T.TypePredicate.Config>['type']): T.TypePredicate.Built;
-		};
+	export interface Bound extends BoundOf<T.TypePredicate, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypePredicate['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypePredicate, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypePredicate['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TypePredicate>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypePredicate>;
-	export type BuildArgs = [config: ConfigOf<T.TypePredicate>];
+	export type BuildArgs = [config: ConfigOf<T.TypePredicate, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.TypePredicate, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TypePredicate
+		config:
+			| LooseConfigOf<T.TypePredicate, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.TypePredicate, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.TypePredicate;
 }
 export namespace TypePredicateAnnotation {
 	export type Config = ConfigFor<TSKindId.TypePredicateAnnotation>;
-	export interface Built extends T.TypePredicateAnnotation, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			typePredicate(value: T.TypePredicate): T.TypePredicateAnnotation.Built;
-		};
+	export interface Bound extends BoundOf<T.TypePredicateAnnotation, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypePredicateAnnotation['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypePredicateAnnotation, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypePredicateAnnotation['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TypePredicateAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypePredicateAnnotation>;
-	export type BuildArgs = [value: T.TypePredicate];
+	export type BuildArgs = [value: AdmitBound<T.TypePredicate, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.TypePredicate, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.TypePredicateAnnotation;
 }
 export namespace TypeQueryMemberExpression {
 	export type Config = ConfigFor<TSKindId.TypeQueryMemberExpression>;
-	export interface Built extends T.TypeQueryMemberExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			object(value: NonNullable<T.TypeQueryMemberExpression.Config>['object']): T.TypeQueryMemberExpression.Built;
-			content(value: NonNullable<T.TypeQueryMemberExpression.Config>['content']): T.TypeQueryMemberExpression.Built;
-			property(
-				value: T.PrivatePropertyIdentifier | T.PropertyIdentifier | T.PropertyIdentifier.Types
-			): T.TypeQueryMemberExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.TypeQueryMemberExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeQueryMemberExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypeQueryMemberExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeQueryMemberExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TypeQueryMemberExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryMemberExpression>;
-	export type BuildArgs = [config: ConfigOf<T.TypeQueryMemberExpression>];
+	export type BuildArgs = [config: ConfigOf<T.TypeQueryMemberExpression, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.TypeQueryMemberExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.TypeQueryMemberExpression
+			| AdmitBound<T.TypeQueryMemberExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.TypeQueryMemberExpression;
 }
 export namespace TypeQuerySubscriptExpression {
 	export type Config = ConfigFor<TSKindId.TypeQuerySubscriptExpression>;
-	export interface Built extends T.TypeQuerySubscriptExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			object(value: NonNullable<T.TypeQuerySubscriptExpression.Config>['object']): T.TypeQuerySubscriptExpression.Built;
-			index(value: NonNullable<T.TypeQuerySubscriptExpression.Config>['index']): T.TypeQuerySubscriptExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.TypeQuerySubscriptExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeQuerySubscriptExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypeQuerySubscriptExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeQuerySubscriptExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TypeQuerySubscriptExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeQuerySubscriptExpression>;
-	export type BuildArgs = [config: ConfigOf<T.TypeQuerySubscriptExpression>];
+	export type BuildArgs = [config: ConfigOf<T.TypeQuerySubscriptExpression, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.TypeQuerySubscriptExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.TypeQuerySubscriptExpression
+			| AdmitBound<T.TypeQuerySubscriptExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.TypeQuerySubscriptExpression;
 }
 export namespace TypeQueryCallExpression {
 	export type Config = ConfigFor<TSKindId.TypeQueryCallExpression>;
-	export interface Built extends T.TypeQueryCallExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			function(value: NonNullable<T.TypeQueryCallExpression.Config>['function']): T.TypeQueryCallExpression.Built;
-			arguments(value: T.Arguments): T.TypeQueryCallExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.TypeQueryCallExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeQueryCallExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypeQueryCallExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeQueryCallExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TypeQueryCallExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryCallExpression>;
-	export type BuildArgs = [config: ConfigOf<T.TypeQueryCallExpression>];
+	export type BuildArgs = [config: ConfigOf<T.TypeQueryCallExpression, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.TypeQueryCallExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.TypeQueryCallExpression
+			| AdmitBound<T.TypeQueryCallExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.TypeQueryCallExpression;
 }
 export namespace TypeQueryInstantiationExpression {
 	export type Config = ConfigFor<TSKindId.TypeQueryInstantiationExpression>;
-	export interface Built extends T.TypeQueryInstantiationExpression, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			function(
-				value: NonNullable<T.TypeQueryInstantiationExpression.Config>['function']
-			): T.TypeQueryInstantiationExpression.Built;
-			typeArguments(value: T.TypeArguments): T.TypeQueryInstantiationExpression.Built;
-		};
+	export interface Bound extends BoundOf<T.TypeQueryInstantiationExpression, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeQueryInstantiationExpression['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypeQueryInstantiationExpression, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeQueryInstantiationExpression['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TypeQueryInstantiationExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryInstantiationExpression>;
-	export type BuildArgs = [config: ConfigOf<T.TypeQueryInstantiationExpression>];
+	export type BuildArgs = [config: ConfigOf<T.TypeQueryInstantiationExpression, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.TypeQueryInstantiationExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.TypeQueryInstantiationExpression
+			| AdmitBound<T.TypeQueryInstantiationExpression, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.TypeQueryInstantiationExpression;
 }
 export namespace TypeQuery {
 	export type Config = ConfigFor<TSKindId.TypeQuery>;
-	export interface Built extends T.TypeQuery, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(
-				value: NonNullable<
-					| T.TypeQuerySubscriptExpression
-					| T.TypeQueryMemberExpression
-					| T.TypeQueryCallExpression
-					| T.TypeQueryInstantiationExpression
-					| T.Identifier
-					| TSKindId.This
-				>
-			): T.TypeQuery.Built;
-		};
+	export interface Bound extends BoundOf<T.TypeQuery, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeQuery['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypeQuery, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeQuery['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TypeQuery>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeQuery>;
 	export type BuildArgs = [
-		value:
+		value: AdmitBound<
 			| T.TypeQuerySubscriptExpression
 			| T.TypeQueryMemberExpression
 			| T.TypeQueryCallExpression
 			| T.TypeQueryInstantiationExpression
 			| T.Identifier
-			| TSKindId.This
+			| TSKindId.This,
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		value: LooseValue<
@@ -19350,16 +21572,17 @@ export namespace TypeQuery {
 }
 export namespace IndexTypeQuery {
 	export type Config = ConfigFor<TSKindId.IndexTypeQuery>;
-	export interface Built extends T.IndexTypeQuery, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			type(value: NonNullable<T.PrimaryType | T.TypeIdentifier.Types>): T.IndexTypeQuery.Built;
-		};
+	export interface Bound extends BoundOf<T.IndexTypeQuery, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.IndexTypeQuery['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.IndexTypeQuery, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.IndexTypeQuery['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.IndexTypeQuery>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IndexTypeQuery>;
-	export type BuildArgs = [value: T.PrimaryType | T.TypeIdentifier.Types];
+	export type BuildArgs = [value: AdmitBound<T.PrimaryType | T.TypeIdentifier.Types, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.PrimaryType | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -19367,71 +21590,67 @@ export namespace IndexTypeQuery {
 }
 export namespace LookupType {
 	export type Config = ConfigFor<TSKindId.LookupType>;
-	export interface Built extends T.LookupType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			type(value: NonNullable<T.LookupType.Config>['type']): T.LookupType.Built;
-			indexType(value: NonNullable<T.LookupType.Config>['indexType']): T.LookupType.Built;
-		};
+	export interface Bound extends BoundOf<T.LookupType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.LookupType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.LookupType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.LookupType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.LookupType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LookupType>;
-	export type BuildArgs = [config: ConfigOf<T.LookupType>];
+	export type BuildArgs = [config: ConfigOf<T.LookupType, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.LookupType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.LookupType
+		config:
+			| LooseConfigOf<T.LookupType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.LookupType, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.LookupType;
 }
 export namespace MappedTypeClause {
 	export type Config = ConfigFor<TSKindId.MappedTypeClause>;
-	export interface Built extends T.MappedTypeClause, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.MappedTypeClause.Built;
-			type(value: NonNullable<T.MappedTypeClause.Config>['type']): T.MappedTypeClause.Built;
-			alias(value?: NonNullable<T.MappedTypeClause.Config>['alias']): T.MappedTypeClause.Built;
-		};
+	export interface Bound extends BoundOf<T.MappedTypeClause, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.MappedTypeClause['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.MappedTypeClause, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.MappedTypeClause['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.MappedTypeClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MappedTypeClause>;
-	export type BuildArgs = [config: ConfigOf<T.MappedTypeClause>];
+	export type BuildArgs = [config: ConfigOf<T.MappedTypeClause, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.MappedTypeClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MappedTypeClause
+		config:
+			| LooseConfigOf<T.MappedTypeClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.MappedTypeClause, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.MappedTypeClause;
 }
 export namespace LiteralType {
 	export type Config = ConfigFor<TSKindId.LiteralType>;
-	export interface Built extends T.LiteralType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(
-				value: NonNullable<
-					| T.LiteralTypeNegativeNumber
-					| T.Number
-					| T.String
-					| TSKindId.True
-					| TSKindId.False
-					| TSKindId.Null
-					| TSKindId.Undefined
-				>
-			): T.LiteralType.Built;
-		};
+	export interface Bound extends BoundOf<T.LiteralType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.LiteralType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.LiteralType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.LiteralType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.LiteralType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LiteralType>;
 	export type BuildArgs = [
-		value:
+		value: AdmitBound<
 			| T.LiteralTypeNegativeNumber
 			| T.Number
 			| T.String
 			| TSKindId.True
 			| TSKindId.False
 			| TSKindId.Null
-			| TSKindId.Undefined
+			| TSKindId.Undefined,
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		value: LooseValue<
@@ -19451,16 +21670,17 @@ export namespace LiteralType {
 }
 export namespace FlowMaybeType {
 	export type Config = ConfigFor<TSKindId.FlowMaybeType>;
-	export interface Built extends T.FlowMaybeType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			type(value: NonNullable<T.PrimaryType | T.TypeIdentifier.Types>): T.FlowMaybeType.Built;
-		};
+	export interface Bound extends BoundOf<T.FlowMaybeType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.FlowMaybeType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.FlowMaybeType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.FlowMaybeType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.FlowMaybeType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FlowMaybeType>;
-	export type BuildArgs = [value: T.PrimaryType | T.TypeIdentifier.Types];
+	export type BuildArgs = [value: AdmitBound<T.PrimaryType | T.TypeIdentifier.Types, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.PrimaryType | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -19468,16 +21688,17 @@ export namespace FlowMaybeType {
 }
 export namespace ParenthesizedType {
 	export type Config = ConfigFor<TSKindId.ParenthesizedType>;
-	export interface Built extends T.ParenthesizedType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			type(value: NonNullable<T.Type | T.TypeIdentifier.Types>): T.ParenthesizedType.Built;
-		};
+	export interface Bound extends BoundOf<T.ParenthesizedType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ParenthesizedType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ParenthesizedType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ParenthesizedType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ParenthesizedType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedType>;
-	export type BuildArgs = [value: T.Type | T.TypeIdentifier.Types];
+	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -19485,121 +21706,120 @@ export namespace ParenthesizedType {
 }
 export namespace TypeArguments {
 	export type Config = ConfigFor<TSKindId.TypeArguments>;
-	export interface Built extends T.TypeArguments, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			types(value: T.Types): T.TypeArguments.Built;
-		};
+	export interface Bound extends BoundOf<T.TypeArguments, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeArguments['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypeArguments, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeArguments['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TypeArguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeArguments>;
-	export type BuildArgs = [value: T.Types];
+	export type BuildArgs = [value: AdmitBound<T.Types, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.TypeArguments;
 }
 export namespace ObjectType {
 	export namespace Curly {
 		export type Config = Omit<ConfigFor<TSKindId.ObjectType>, 'opening' | 'closing'>;
-		export interface Built extends T.ObjectType, NodeMethodsOf {
-			readonly $source: 2;
-			readonly $named: true;
-			readonly $with: {
-				members(value?: T.ObjectTypeContent): T.ObjectType.Curly.Built;
-			};
+		export interface Bound extends BoundOf<T.ObjectType, BoundByKindId>, NodeMethodsOf {
+			readonly $type: T.ObjectType['$type'];
+			readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+		}
+		export interface Parsed extends ParsedOf<T.ObjectType, ParsedByKindId>, NodeMethodsOf {
+			readonly $type: T.ObjectType['$type'];
+			readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 		}
 		export type BuildArgs = [config?: T.ObjectType.Curly.Config];
 		export type LooseArgs = [config?: T.ObjectType.Curly.Config];
 	}
 	export namespace Flow {
 		export type Config = Omit<ConfigFor<TSKindId.ObjectType>, 'opening' | 'closing'>;
-		export interface Built extends T.ObjectType, NodeMethodsOf {
-			readonly $source: 2;
-			readonly $named: true;
-			readonly $with: {
-				members(value?: T.ObjectTypeContent): T.ObjectType.Flow.Built;
-			};
+		export interface Bound extends BoundOf<T.ObjectType, BoundByKindId>, NodeMethodsOf {
+			readonly $type: T.ObjectType['$type'];
+			readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+		}
+		export interface Parsed extends ParsedOf<T.ObjectType, ParsedByKindId>, NodeMethodsOf {
+			readonly $type: T.ObjectType['$type'];
+			readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 		}
 		export type BuildArgs = [config?: T.ObjectType.Flow.Config];
 		export type LooseArgs = [config?: T.ObjectType.Flow.Config];
 	}
 	/** Default form: 'curly' (first-declared). */
 	export type Config = Curly.Config;
-	export interface Built extends T.ObjectType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			opening(value: NonNullable<ConfigOf<T.ObjectType>>['opening']): T.ObjectType.Built;
-			members(value?: T.ObjectTypeContent): T.ObjectType.Built;
-			closing(value: NonNullable<ConfigOf<T.ObjectType>>['closing']): T.ObjectType.Built;
-		};
+	export interface Bound extends BoundOf<T.ObjectType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ObjectType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ObjectType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ObjectType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ObjectType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ObjectType>;
-	export type BuildArgs = [config: ConfigOf<T.ObjectType>];
+	export type BuildArgs = [config: ConfigOf<T.ObjectType, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ObjectType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ObjectType
+		config:
+			| LooseConfigOf<T.ObjectType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.ObjectType, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ObjectType;
 }
 export namespace CallSignature {
 	export type Config = ConfigFor<TSKindId.CallSignature>;
-	export interface Built extends T.CallSignature, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			typeParameters(value?: T.TypeParameters): T.CallSignature.Built;
-			parameters(value: T.FormalParameters): T.CallSignature.Built;
-			returnType(value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation): T.CallSignature.Built;
-		};
+	export interface Bound extends BoundOf<T.CallSignature, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.CallSignature['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.CallSignature, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.CallSignature['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CallSignature>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CallSignature>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.CallSignature>>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.CallSignature, T.NamespaceMap>>];
 	export type LooseArgs = [
-		config?: LooseConfigOf<T.CallSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CallSignature
+		config?:
+			| LooseConfigOf<T.CallSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.CallSignature, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.CallSignature;
 }
 export namespace PropertySignature {
 	export type Config = ConfigFor<TSKindId.PropertySignature>;
-	export interface Built extends T.PropertySignature, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			accessibilityModifier(
-				value?: NonNullable<T.PropertySignature.Config>['accessibilityModifier']
-			): T.PropertySignature.Built;
-			staticMarker(value?: NonNullable<T.PropertySignature.Config>['staticMarker']): T.PropertySignature.Built;
-			overrideModifier(value?: NonNullable<T.PropertySignature.Config>['overrideModifier']): T.PropertySignature.Built;
-			readonlyMarker(value?: NonNullable<T.PropertySignature.Config>['readonlyMarker']): T.PropertySignature.Built;
-			name(value: NonNullable<T.PropertySignature.Config>['name']): T.PropertySignature.Built;
-			optionalMarker(value?: NonNullable<T.PropertySignature.Config>['optionalMarker']): T.PropertySignature.Built;
-			type(value?: T.TypeAnnotation): T.PropertySignature.Built;
-		};
+	export interface Bound extends BoundOf<T.PropertySignature, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.PropertySignature['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.PropertySignature, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.PropertySignature['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.PropertySignature>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PropertySignature>;
-	export type BuildArgs = [config: ConfigOf<T.PropertySignature>];
+	export type BuildArgs = [config: ConfigOf<T.PropertySignature, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.PropertySignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.PropertySignature
+			| AdmitBound<T.PropertySignature, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.PropertySignature;
 }
 export namespace TypeParameters {
 	export type Config = ConfigFor<TSKindId.TypeParameters>;
-	export interface Built extends T.TypeParameters, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			typeParametersElements(value: T.TypeParametersElements): T.TypeParameters.Built;
-		};
+	export interface Bound extends BoundOf<T.TypeParameters, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeParameters['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypeParameters, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeParameters['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TypeParameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeParameters>;
-	export type BuildArgs = [value: T.TypeParametersElements];
+	export type BuildArgs = [value: AdmitBound<T.TypeParametersElements, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.TypeParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -19607,36 +21827,37 @@ export namespace TypeParameters {
 }
 export namespace TypeParameter {
 	export type Config = ConfigFor<TSKindId.TypeParameter>;
-	export interface Built extends T.TypeParameter, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			constMarker(value?: NonNullable<T.TypeParameter.Config>['constMarker']): T.TypeParameter.Built;
-			name(value: T.TypeIdentifier | T.TypeIdentifier.Types): T.TypeParameter.Built;
-			constraint(value?: T.Constraint): T.TypeParameter.Built;
-			value(value?: T.DefaultType): T.TypeParameter.Built;
-		};
+	export interface Bound extends BoundOf<T.TypeParameter, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeParameter['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypeParameter, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeParameter['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TypeParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeParameter>;
-	export type BuildArgs = [config: ConfigOf<T.TypeParameter>];
+	export type BuildArgs = [config: ConfigOf<T.TypeParameter, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.TypeParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TypeParameter
+		config:
+			| LooseConfigOf<T.TypeParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.TypeParameter, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.TypeParameter;
 }
 export namespace DefaultType {
 	export type Config = ConfigFor<TSKindId.DefaultType>;
-	export interface Built extends T.DefaultType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			type(value: NonNullable<T.Type | T.TypeIdentifier.Types>): T.DefaultType.Built;
-		};
+	export interface Bound extends BoundOf<T.DefaultType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.DefaultType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.DefaultType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.DefaultType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.DefaultType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DefaultType>;
-	export type BuildArgs = [value: T.Type | T.TypeIdentifier.Types];
+	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -19644,56 +21865,57 @@ export namespace DefaultType {
 }
 export namespace Constraint {
 	export type Config = ConfigFor<TSKindId.Constraint>;
-	export interface Built extends T.Constraint, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: NonNullable<T.Constraint.Config>['content']): T.Constraint.Built;
-			type(value: NonNullable<T.Constraint.Config>['type']): T.Constraint.Built;
-		};
+	export interface Bound extends BoundOf<T.Constraint, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Constraint['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Constraint, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Constraint['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.Constraint>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Constraint>;
-	export type BuildArgs = [config: ConfigOf<T.Constraint>];
+	export type BuildArgs = [config: ConfigOf<T.Constraint, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.Constraint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Constraint
+		config:
+			| LooseConfigOf<T.Constraint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.Constraint, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.Constraint;
 }
 export namespace ConstructSignature {
 	export type Config = ConfigFor<TSKindId.ConstructSignature>;
-	export interface Built extends T.ConstructSignature, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			abstractMarker(value?: NonNullable<T.ConstructSignature.Config>['abstractMarker']): T.ConstructSignature.Built;
-			typeParameters(value?: T.TypeParameters): T.ConstructSignature.Built;
-			parameters(value: T.FormalParameters): T.ConstructSignature.Built;
-			type(value?: T.TypeAnnotation): T.ConstructSignature.Built;
-		};
+	export interface Bound extends BoundOf<T.ConstructSignature, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ConstructSignature['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ConstructSignature, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ConstructSignature['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ConstructSignature>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConstructSignature>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.ConstructSignature>>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.ConstructSignature, T.NamespaceMap>>];
 	export type LooseArgs = [
 		config?:
 			| LooseConfigOf<T.ConstructSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ConstructSignature
+			| AdmitBound<T.ConstructSignature, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ConstructSignature;
 }
 export namespace ArrayType {
 	export type Config = ConfigFor<TSKindId.ArrayType>;
-	export interface Built extends T.ArrayType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			type(value: NonNullable<T.PrimaryType | T.TypeIdentifier.Types>): T.ArrayType.Built;
-		};
+	export interface Bound extends BoundOf<T.ArrayType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ArrayType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ArrayType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ArrayType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ArrayType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArrayType>;
-	export type BuildArgs = [value: T.PrimaryType | T.TypeIdentifier.Types];
+	export type BuildArgs = [value: AdmitBound<T.PrimaryType | T.TypeIdentifier.Types, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.PrimaryType | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -19701,31 +21923,33 @@ export namespace ArrayType {
 }
 export namespace TupleType {
 	export type Config = ConfigFor<TSKindId.TupleType>;
-	export interface Built extends T.TupleType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			tupleTypeMembers(value?: T.TupleTypeMembers): T.TupleType.Built;
-		};
+	export interface Bound extends BoundOf<T.TupleType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TupleType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TupleType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TupleType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TupleType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleType>;
-	export type BuildArgs = [value?: T.TupleTypeMembers];
+	export type BuildArgs = [value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>];
 	export type LooseArgs = [value?: LooseValue<T.TupleTypeMembers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.TupleType;
 }
 export namespace ReadonlyType {
 	export type Config = ConfigFor<TSKindId.ReadonlyType>;
-	export interface Built extends T.ReadonlyType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			type(value: NonNullable<T.Type | T.TypeIdentifier.Types>): T.ReadonlyType.Built;
-		};
+	export interface Bound extends BoundOf<T.ReadonlyType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ReadonlyType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ReadonlyType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ReadonlyType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ReadonlyType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ReadonlyType>;
-	export type BuildArgs = [value: T.Type | T.TypeIdentifier.Types];
+	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -19733,75 +21957,81 @@ export namespace ReadonlyType {
 }
 export namespace UnionType {
 	export type Config = ConfigFor<TSKindId.UnionType>;
-	export interface Built extends T.UnionType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			left(value?: NonNullable<T.UnionType.Config>['left']): T.UnionType.Built;
-			right(value: NonNullable<T.UnionType.Config>['right']): T.UnionType.Built;
-		};
+	export interface Bound extends BoundOf<T.UnionType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.UnionType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.UnionType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.UnionType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.UnionType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnionType>;
-	export type BuildArgs = [config: ConfigOf<T.UnionType>];
+	export type BuildArgs = [config: ConfigOf<T.UnionType, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.UnionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.UnionType
+		config:
+			| LooseConfigOf<T.UnionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.UnionType, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.UnionType;
 }
 export namespace IntersectionType {
 	export type Config = ConfigFor<TSKindId.IntersectionType>;
-	export interface Built extends T.IntersectionType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			left(value?: NonNullable<T.IntersectionType.Config>['left']): T.IntersectionType.Built;
-			right(value: NonNullable<T.IntersectionType.Config>['right']): T.IntersectionType.Built;
-		};
+	export interface Bound extends BoundOf<T.IntersectionType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.IntersectionType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.IntersectionType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.IntersectionType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.IntersectionType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IntersectionType>;
-	export type BuildArgs = [config: ConfigOf<T.IntersectionType>];
+	export type BuildArgs = [config: ConfigOf<T.IntersectionType, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.IntersectionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.IntersectionType
+		config:
+			| LooseConfigOf<T.IntersectionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.IntersectionType, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.IntersectionType;
 }
 export namespace FunctionType {
 	export type Config = ConfigFor<TSKindId.FunctionType>;
-	export interface Built extends T.FunctionType, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			typeParameters(value?: T.TypeParameters): T.FunctionType.Built;
-			parameters(value: T.FormalParameters): T.FunctionType.Built;
-			returnType(value: NonNullable<T.FunctionType.Config>['returnType']): T.FunctionType.Built;
-		};
+	export interface Bound extends BoundOf<T.FunctionType, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.FunctionType['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.FunctionType, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.FunctionType['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.FunctionType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionType>;
-	export type BuildArgs = [config: ConfigOf<T.FunctionType>];
+	export type BuildArgs = [config: ConfigOf<T.FunctionType, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.FunctionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.FunctionType
+		config:
+			| LooseConfigOf<T.FunctionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.FunctionType, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.FunctionType;
 }
 export namespace ExportSpecifiers {
 	export type Config = ConfigFor<TSKindId.ExportSpecifiers>;
-	export interface Built extends T.ExportSpecifiers, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
+	export interface Bound extends BoundOf<T.ExportSpecifiers, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportSpecifiers['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
 		readonly _delimiter: Delimiter;
-		readonly $with: {
-			exportSpecifiers(...vs: NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>): T.ExportSpecifiers.Built;
-			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ExportSpecifiers.Built;
-		};
+	}
+	export interface Parsed extends ParsedOf<T.ExportSpecifiers, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportSpecifiers['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly _delimiter: Delimiter;
 	}
 	export type Loose = LooseFor<TSKindId.ExportSpecifiers>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportSpecifiers>;
 	export type BuildArgs = [
-		element: T.ExportSpecifier | T.Identifier | T.String,
-		...elements: (T.ExportSpecifier | T.Identifier | T.String)[]
+		element: AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>,
+		...elements: AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>[]
 	];
 	export type LooseArgs = [
 		element: LooseValue<T.ExportSpecifier | T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
@@ -19816,18 +22046,22 @@ export namespace ExportSpecifiers {
 }
 export namespace ImportSpecifiers {
 	export type Config = ConfigFor<TSKindId.ImportSpecifiers>;
-	export interface Built extends T.ImportSpecifiers, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
+	export interface Bound extends BoundOf<T.ImportSpecifiers, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportSpecifiers['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
 		readonly _delimiter: Delimiter;
-		readonly $with: {
-			importSpecifiers(...vs: NonEmptyArray<T.ImportSpecifier>): T.ImportSpecifiers.Built;
-			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.ImportSpecifiers.Built;
-		};
+	}
+	export interface Parsed extends ParsedOf<T.ImportSpecifiers, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportSpecifiers['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly _delimiter: Delimiter;
 	}
 	export type Loose = LooseFor<TSKindId.ImportSpecifiers>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportSpecifiers>;
-	export type BuildArgs = [element: T.ImportSpecifier, ...elements: T.ImportSpecifier[]];
+	export type BuildArgs = [
+		element: AdmitBound<T.ImportSpecifier, T.AdmittedNodes>,
+		...elements: AdmitBound<T.ImportSpecifier, T.AdmittedNodes>[]
+	];
 	export type LooseArgs = [
 		element: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		...elements: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
@@ -19836,22 +22070,21 @@ export namespace ImportSpecifiers {
 }
 export namespace FormalParametersElements {
 	export type Config = ConfigFor<TSKindId.FormalParametersElements>;
-	export interface Built extends T.FormalParametersElements, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
+	export interface Bound extends BoundOf<T.FormalParametersElements, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.FormalParametersElements['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
 		readonly _delimiter: Delimiter;
-		readonly $with: {
-			formalParameters(
-				...vs: NonEmptyArray<T.RequiredParameter | T.OptionalParameter>
-			): T.FormalParametersElements.Built;
-			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.FormalParametersElements.Built;
-		};
+	}
+	export interface Parsed extends ParsedOf<T.FormalParametersElements, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.FormalParametersElements['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly _delimiter: Delimiter;
 	}
 	export type Loose = LooseFor<TSKindId.FormalParametersElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormalParametersElements>;
 	export type BuildArgs = [
-		element: T.RequiredParameter | T.OptionalParameter,
-		...elements: (T.RequiredParameter | T.OptionalParameter)[]
+		element: AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>,
+		...elements: AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>[]
 	];
 	export type LooseArgs = [
 		element: LooseValue<T.RequiredParameter | T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
@@ -19866,51 +22099,20 @@ export namespace FormalParametersElements {
 }
 export namespace EnumBodyElements {
 	export type Config = ConfigFor<TSKindId.EnumBodyElements>;
-	export interface Built extends T.EnumBodyElements, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
+	export interface Bound extends BoundOf<T.EnumBodyElements, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.EnumBodyElements['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
 		readonly _delimiter: Delimiter;
-		readonly $with: {
-			contents(
-				...vs: NonEmptyArray<
-					| T.PropertyIdentifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-					| T.PrivatePropertyIdentifier
-					| T.String
-					| T.Number
-					| T.ComputedPropertyName
-					| T.EnumAssignment
-					| T.PropertyIdentifier.Types
-				>
-			): T.EnumBodyElements.Built;
-			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.EnumBodyElements.Built;
-		};
+	}
+	export interface Parsed extends ParsedOf<T.EnumBodyElements, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.EnumBodyElements['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly _delimiter: Delimiter;
 	}
 	export type Loose = LooseFor<TSKindId.EnumBodyElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumBodyElements>;
 	export type BuildArgs = [
-		element:
+		element: AdmitBound<
 			| T.PropertyIdentifier
 			| TSKindId.DeclareKeyword
 			| TSKindId.NamespaceKeyword
@@ -19940,7 +22142,9 @@ export namespace EnumBodyElements {
 			| T.ComputedPropertyName
 			| T.EnumAssignment
 			| T.PropertyIdentifier.Types,
-		...elements: (
+			T.AdmittedNodes
+		>,
+		...elements: AdmitBound<
 			| T.PropertyIdentifier
 			| TSKindId.DeclareKeyword
 			| TSKindId.NamespaceKeyword
@@ -19969,8 +22173,9 @@ export namespace EnumBodyElements {
 			| T.Number
 			| T.ComputedPropertyName
 			| T.EnumAssignment
-			| T.PropertyIdentifier.Types
-		)[]
+			| T.PropertyIdentifier.Types,
+			T.AdmittedNodes
+		>[]
 	];
 	export type LooseArgs = [
 		element: LooseValue<
@@ -20046,18 +22251,22 @@ export namespace EnumBodyElements {
 }
 export namespace Types {
 	export type Config = ConfigFor<TSKindId.Types>;
-	export interface Built extends T.Types, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
+	export interface Bound extends BoundOf<T.Types, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.Types['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
 		readonly _delimiter: Delimiter;
-		readonly $with: {
-			types(...vs: NonEmptyArray<T.Type | T.TypeIdentifier.Types>): T.Types.Built;
-			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.Types.Built;
-		};
+	}
+	export interface Parsed extends ParsedOf<T.Types, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.Types['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly _delimiter: Delimiter;
 	}
 	export type Loose = LooseFor<TSKindId.Types>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Types>;
-	export type BuildArgs = [element: T.Type | T.TypeIdentifier.Types, ...elements: (T.Type | T.TypeIdentifier.Types)[]];
+	export type BuildArgs = [
+		element: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>,
+		...elements: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>[]
+	];
 	export type LooseArgs = [
 		element: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		...elements: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
@@ -20066,22 +22275,21 @@ export namespace Types {
 }
 export namespace TypeParametersElements {
 	export type Config = ConfigFor<TSKindId.TypeParametersElements>;
-	export interface Built extends T.TypeParametersElements, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
+	export interface Bound extends BoundOf<T.TypeParametersElements, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeParametersElements['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
 		readonly _delimiter: Delimiter;
-		readonly $with: {
-			typeParameters(
-				...vs: NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>
-			): T.TypeParametersElements.Built;
-			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TypeParametersElements.Built;
-		};
+	}
+	export interface Parsed extends ParsedOf<T.TypeParametersElements, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeParametersElements['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly _delimiter: Delimiter;
 	}
 	export type Loose = LooseFor<TSKindId.TypeParametersElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeParametersElements>;
 	export type BuildArgs = [
-		element: T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
-		...elements: (T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types)[]
+		element: AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>,
+		...elements: AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>[]
 	];
 	export type LooseArgs = [
 		element: LooseValue<
@@ -20101,37 +22309,27 @@ export namespace TypeParametersElements {
 }
 export namespace TupleTypeMembers {
 	export type Config = ConfigFor<TSKindId.TupleTypeMembers>;
-	export interface Built extends T.TupleTypeMembers, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
+	export interface Bound extends BoundOf<T.TupleTypeMembers, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TupleTypeMembers['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
 		readonly _delimiter: Delimiter;
-		readonly $with: {
-			tupleTypeMembers(
-				...vs: NonEmptyArray<
-					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
-				>
-			): T.TupleTypeMembers.Built;
-			delimiter(v?: Delimiter.None | Delimiter.Trailing): T.TupleTypeMembers.Built;
-		};
+	}
+	export interface Parsed extends ParsedOf<T.TupleTypeMembers, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TupleTypeMembers['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly _delimiter: Delimiter;
 	}
 	export type Loose = LooseFor<TSKindId.TupleTypeMembers>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleTypeMembers>;
 	export type BuildArgs = [
-		element:
-			| T.TupleParameter
-			| T.OptionalTupleParameter
-			| T.OptionalType
-			| T.RestType
-			| T.Type
-			| T.TypeIdentifier.Types,
-		...elements: (
-			| T.TupleParameter
-			| T.OptionalTupleParameter
-			| T.OptionalType
-			| T.RestType
-			| T.Type
-			| T.TypeIdentifier.Types
-		)[]
+		element: AdmitBound<
+			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
+			T.AdmittedNodes
+		>,
+		...elements: AdmitBound<
+			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
+			T.AdmittedNodes
+		>[]
 	];
 	export type LooseArgs = [
 		element: LooseValue<
@@ -20151,16 +22349,17 @@ export namespace TupleTypeMembers {
 }
 export namespace ImportClauseGroup {
 	export type Config = ConfigFor<TSKindId.ImportClauseGroup>;
-	export interface Built extends T.ImportClauseGroup, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: T.NamespaceImport | T.NamedImports): T.ImportClauseGroup.Built;
-		};
+	export interface Bound extends BoundOf<T.ImportClauseGroup, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportClauseGroup['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ImportClauseGroup, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportClauseGroup['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ImportClauseGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportClauseGroup>;
-	export type BuildArgs = [value: T.NamespaceImport | T.NamedImports];
+	export type BuildArgs = [value: AdmitBound<T.NamespaceImport | T.NamedImports, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<T.NamespaceImport | T.NamedImports, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -20168,55 +22367,55 @@ export namespace ImportClauseGroup {
 }
 export namespace CatchClauseGroup {
 	export type Config = ConfigFor<TSKindId.CatchClauseGroup>;
-	export interface Built extends T.CatchClauseGroup, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			parameter(value: T.Identifier | T.ObjectPattern | T.ArrayPattern): T.CatchClauseGroup.Built;
-			type(value?: T.TypeAnnotation): T.CatchClauseGroup.Built;
-		};
+	export interface Bound extends BoundOf<T.CatchClauseGroup, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.CatchClauseGroup['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.CatchClauseGroup, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.CatchClauseGroup['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CatchClauseGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CatchClauseGroup>;
-	export type BuildArgs = [config: ConfigOf<T.CatchClauseGroup>];
+	export type BuildArgs = [config: ConfigOf<T.CatchClauseGroup, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.CatchClauseGroup, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CatchClauseGroup
+		config:
+			| LooseConfigOf<T.CatchClauseGroup, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.CatchClauseGroup, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.CatchClauseGroup;
 }
 export namespace AmbientDeclarationGlobal {
 	export type Config = ConfigFor<TSKindId.AmbientDeclarationGlobal>;
-	export interface Built extends T.AmbientDeclarationGlobal, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			body(value: T.StatementBlock): T.AmbientDeclarationGlobal.Built;
-		};
+	export interface Bound extends BoundOf<T.AmbientDeclarationGlobal, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.AmbientDeclarationGlobal['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.AmbientDeclarationGlobal, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.AmbientDeclarationGlobal['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.AmbientDeclarationGlobal>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AmbientDeclarationGlobal>;
-	export type BuildArgs = [value: T.StatementBlock];
+	export type BuildArgs = [value: AdmitBound<T.StatementBlock, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.StatementBlock, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.AmbientDeclarationGlobal;
 }
 export namespace AmbientDeclarationModule {
 	export type Config = OmitEach<ConfigFor<TSKindId.AmbientDeclarationModule>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.AmbientDeclarationModule, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.PropertyIdentifier | T.PropertyIdentifier.Types): T.AmbientDeclarationModule.Built;
-			type(value: NonNullable<T.AmbientDeclarationModule.Config>['type']): T.AmbientDeclarationModule.Built;
-			terminator(
-				value?: NonNullable<T.AmbientDeclarationModule.Options>['terminator']
-			): T.AmbientDeclarationModule.Built;
-		};
+	export interface Bound extends BoundOf<T.AmbientDeclarationModule, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.AmbientDeclarationModule['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.AmbientDeclarationModule, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.AmbientDeclarationModule['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.AmbientDeclarationModule>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.AmbientDeclarationModule>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.AmbientDeclarationModule>, 'terminator'>,
+		config: OmitEach<ConfigOf<T.AmbientDeclarationModule, T.NamespaceMap>, 'terminator'>,
 		options?: T.AmbientDeclarationModule.Options
 	];
 	export type LooseArgs = [
@@ -20225,53 +22424,46 @@ export namespace AmbientDeclarationModule {
 					LooseConfigOf<T.AmbientDeclarationModule, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
 					'terminator'
 			  >
-			| T.AmbientDeclarationModule,
+			| AdmitBound<T.AmbientDeclarationModule, T.AdmittedNodes>,
 		options?: T.AmbientDeclarationModule.Options
 	];
 	export type Kind = TSKindId.AmbientDeclarationModule;
 }
 export namespace ObjectTypeContent {
 	export type Config = ConfigFor<TSKindId.ObjectTypeContent>;
-	export interface Built extends T.ObjectTypeContent, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
+	export interface Bound extends BoundOf<T.ObjectTypeContent, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ObjectTypeContent['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
 		readonly _separator: number | undefined;
 		readonly _delimiter: Delimiter;
-		readonly $with: {
-			members(
-				...vs: NonEmptyArray<
-					| T.ExportStatement
-					| T.PropertySignature
-					| T.CallSignature
-					| T.ConstructSignature
-					| T.IndexSignature
-					| T.MethodSignature
-				>
-			): T.ObjectTypeContent.Built;
-			separator(v: TSKindId.Comma | TSKindId.Semi): T.ObjectTypeContent.Built;
-			delimiter(
-				v?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both
-			): T.ObjectTypeContent.Built;
-		};
+	}
+	export interface Parsed extends ParsedOf<T.ObjectTypeContent, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ObjectTypeContent['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly _separator: number | undefined;
+		readonly _delimiter: Delimiter;
 	}
 	export type Loose = LooseFor<TSKindId.ObjectTypeContent>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ObjectTypeContent>;
 	export type BuildArgs = [
-		element:
+		element: AdmitBound<
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
 			| T.MethodSignature,
-		...elements: (
+			T.AdmittedNodes
+		>,
+		...elements: AdmitBound<
 			| T.ExportStatement
 			| T.PropertySignature
 			| T.CallSignature
 			| T.ConstructSignature
 			| T.IndexSignature
-			| T.MethodSignature
-		)[]
+			| T.MethodSignature,
+			T.AdmittedNodes
+		>[]
 	];
 	export type LooseArgs = [
 		element: LooseValue<
@@ -20302,19 +22494,20 @@ export namespace ObjectTypeContent {
 export namespace ExportStatementNamespaceExport {
 	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementNamespaceExport>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.ExportStatementNamespaceExport, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.Identifier): T.ExportStatementNamespaceExport.Built;
-			terminator(
-				value: NonNullable<T.ExportStatementNamespaceExport.Options>['terminator']
-			): T.ExportStatementNamespaceExport.Built;
-		};
+	export interface Bound extends BoundOf<T.ExportStatementNamespaceExport, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementNamespaceExport['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ExportStatementNamespaceExport, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementNamespaceExport['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ExportStatementNamespaceExport>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExportStatementNamespaceExport>, 'terminator'>;
-	export type BuildArgs = [value: T.Identifier, options?: T.ExportStatementNamespaceExport.Options];
+	export type BuildArgs = [
+		value: AdmitBound<T.Identifier, T.AdmittedNodes>,
+		options?: T.ExportStatementNamespaceExport.Options
+	];
 	export type LooseArgs = [
 		value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ExportStatementNamespaceExport.Options
@@ -20324,46 +22517,46 @@ export namespace ExportStatementNamespaceExport {
 export namespace ExportStatementTypeExport {
 	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementTypeExport>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.ExportStatementTypeExport, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			exportClause(value: T.ExportClause): T.ExportStatementTypeExport.Built;
-			source(value?: T.String): T.ExportStatementTypeExport.Built;
-			terminator(
-				value: NonNullable<T.ExportStatementTypeExport.Options>['terminator']
-			): T.ExportStatementTypeExport.Built;
-		};
+	export interface Bound extends BoundOf<T.ExportStatementTypeExport, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementTypeExport['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ExportStatementTypeExport, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementTypeExport['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ExportStatementTypeExport>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExportStatementTypeExport>, 'terminator'>;
-	export type BuildArgs = [config?: Partial<OmitEach<ConfigOf<T.ExportStatementTypeExport>, 'terminator'>>];
+	export type BuildArgs = [
+		config?: Partial<OmitEach<ConfigOf<T.ExportStatementTypeExport, T.NamespaceMap>, 'terminator'>>
+	];
 	export type LooseArgs = [
 		config?:
 			| OmitEach<
 					LooseConfigOf<T.ExportStatementTypeExport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
 					'terminator'
 			  >
-			| T.ExportStatementTypeExport
+			| AdmitBound<T.ExportStatementTypeExport, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ExportStatementTypeExport;
 }
 export namespace ExportStatementEqualsExport {
 	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementEqualsExport>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.ExportStatementEqualsExport, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(value: NonNullable<T.Expression>): T.ExportStatementEqualsExport.Built;
-			terminator(
-				value: NonNullable<T.ExportStatementEqualsExport.Options>['terminator']
-			): T.ExportStatementEqualsExport.Built;
-		};
+	export interface Bound extends BoundOf<T.ExportStatementEqualsExport, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementEqualsExport['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ExportStatementEqualsExport, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementEqualsExport['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ExportStatementEqualsExport>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExportStatementEqualsExport>, 'terminator'>;
-	export type BuildArgs = [value: T.Expression, options?: T.ExportStatementEqualsExport.Options];
+	export type BuildArgs = [
+		value: AdmitBound<T.Expression, T.AdmittedNodes>,
+		options?: T.ExportStatementEqualsExport.Options
+	];
 	export type LooseArgs = [
 		value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ExportStatementEqualsExport.Options
@@ -20372,64 +22565,66 @@ export namespace ExportStatementEqualsExport {
 }
 export namespace CommentLine {
 	export type Config = ConfigFor<TSKindId.CommentLine>;
-	export interface Built extends T.CommentLine, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string): T.CommentLine.Built;
-		};
+	export interface Bound extends BoundOf<T.CommentLine, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.CommentLine['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.CommentLine, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.CommentLine['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CommentLine>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CommentLine>;
-	export type BuildArgs = [value: string];
+	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.CommentLine;
 }
 export namespace CommentBlock {
 	export type Config = ConfigFor<TSKindId.CommentBlock>;
-	export interface Built extends T.CommentBlock, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string): T.CommentBlock.Built;
-		};
+	export interface Bound extends BoundOf<T.CommentBlock, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.CommentBlock['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.CommentBlock, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.CommentBlock['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CommentBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CommentBlock>;
-	export type BuildArgs = [value: string];
+	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.CommentBlock;
 }
 export namespace LiteralTypeNegativeNumber {
 	export type Config = ConfigFor<TSKindId.LiteralTypeNegativeNumber>;
-	export interface Built extends T.LiteralTypeNegativeNumber, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			operator(value: NonNullable<T.LiteralTypeNegativeNumber.Config>['operator']): T.LiteralTypeNegativeNumber.Built;
-			argument(value: T.Number): T.LiteralTypeNegativeNumber.Built;
-		};
+	export interface Bound extends BoundOf<T.LiteralTypeNegativeNumber, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.LiteralTypeNegativeNumber['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.LiteralTypeNegativeNumber, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.LiteralTypeNegativeNumber['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.LiteralTypeNegativeNumber>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LiteralTypeNegativeNumber>;
-	export type BuildArgs = [config: ConfigOf<T.LiteralTypeNegativeNumber>];
+	export type BuildArgs = [config: ConfigOf<T.LiteralTypeNegativeNumber, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.LiteralTypeNegativeNumber, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.LiteralTypeNegativeNumber
+			| AdmitBound<T.LiteralTypeNegativeNumber, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.LiteralTypeNegativeNumber;
 }
 export namespace NumberHex {
 	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.NumberHex>, 'prefix'>, { content: number | bigint }>;
 	export type Options = { readonly prefix?: '0x' | '0X' };
-	export interface Built extends T.NumberHex, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string | number | bigint): T.NumberHex.Built;
-			prefix(value: '0x' | '0X'): T.NumberHex.Built;
-		};
+	export interface Bound extends BoundOf<T.NumberHex, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberHex['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NumberHex, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberHex['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberHex>, 'prefix'>
@@ -20440,7 +22635,7 @@ export namespace NumberHex {
 		OmitEach<LooseConfigFor<TSKindId.NumberHex>, 'prefix'>,
 		{ content: number | bigint }
 	>;
-	export type BuildArgs = [value: string | number | bigint, options?: T.NumberHex.Options];
+	export type BuildArgs = [value: AdmitBound<string | number | bigint, T.AdmittedNodes>, options?: T.NumberHex.Options];
 	export type LooseArgs = [
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.NumberHex.Options
@@ -20453,16 +22648,13 @@ export namespace NumberFloatPoint {
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
 	export type Options = { readonly marker?: 'e' | 'E' };
-	export interface Built extends T.NumberFloatPoint, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			integer(value: string | number | bigint): T.NumberFloatPoint.Built;
-			fraction(value?: string | number | bigint): T.NumberFloatPoint.Built;
-			sign(value?: '-' | '+'): T.NumberFloatPoint.Built;
-			exponent(value?: string | number | bigint): T.NumberFloatPoint.Built;
-			marker(value?: 'e' | 'E'): T.NumberFloatPoint.Built;
-		};
+	export interface Bound extends BoundOf<T.NumberFloatPoint, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberFloatPoint['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NumberFloatPoint, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberFloatPoint['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberFloatPoint>, 'marker'>
@@ -20478,7 +22670,7 @@ export namespace NumberFloatPoint {
 	>;
 	export type BuildArgs = [
 		config: WidenNumeric<
-			OmitEach<ConfigOf<T.NumberFloatPoint>, 'marker'>,
+			OmitEach<ConfigOf<T.NumberFloatPoint, T.NamespaceMap>, 'marker'>,
 			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 		>,
 		options?: T.NumberFloatPoint.Options
@@ -20489,7 +22681,7 @@ export namespace NumberFloatPoint {
 					OmitEach<LooseConfigOf<T.NumberFloatPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'marker'>,
 					{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			  >
-			| T.NumberFloatPoint,
+			| AdmitBound<T.NumberFloatPoint, T.AdmittedNodes>,
 		options?: T.NumberFloatPoint.Options
 	];
 	export type Kind = TSKindId.NumberFloatPoint;
@@ -20500,15 +22692,13 @@ export namespace NumberFloatLeadingPoint {
 		{ fraction: number | bigint; exponent: number | bigint }
 	>;
 	export type Options = { readonly marker?: 'e' | 'E' };
-	export interface Built extends T.NumberFloatLeadingPoint, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			fraction(value: string | number | bigint): T.NumberFloatLeadingPoint.Built;
-			sign(value?: '-' | '+'): T.NumberFloatLeadingPoint.Built;
-			exponent(value?: string | number | bigint): T.NumberFloatLeadingPoint.Built;
-			marker(value?: 'e' | 'E'): T.NumberFloatLeadingPoint.Built;
-		};
+	export interface Bound extends BoundOf<T.NumberFloatLeadingPoint, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberFloatLeadingPoint['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NumberFloatLeadingPoint, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberFloatLeadingPoint['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>
@@ -20524,7 +22714,7 @@ export namespace NumberFloatLeadingPoint {
 	>;
 	export type BuildArgs = [
 		config: WidenNumeric<
-			OmitEach<ConfigOf<T.NumberFloatLeadingPoint>, 'marker'>,
+			OmitEach<ConfigOf<T.NumberFloatLeadingPoint, T.NamespaceMap>, 'marker'>,
 			{ fraction: number | bigint; exponent: number | bigint }
 		>,
 		options?: T.NumberFloatLeadingPoint.Options
@@ -20538,7 +22728,7 @@ export namespace NumberFloatLeadingPoint {
 					>,
 					{ fraction: number | bigint; exponent: number | bigint }
 			  >
-			| T.NumberFloatLeadingPoint,
+			| AdmitBound<T.NumberFloatLeadingPoint, T.AdmittedNodes>,
 		options?: T.NumberFloatLeadingPoint.Options
 	];
 	export type Kind = TSKindId.NumberFloatLeadingPoint;
@@ -20549,15 +22739,13 @@ export namespace NumberFloatScientific {
 		{ integer: number | bigint; exponent: number | bigint }
 	>;
 	export type Options = { readonly marker?: 'e' | 'E' };
-	export interface Built extends T.NumberFloatScientific, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			integer(value: string | number | bigint): T.NumberFloatScientific.Built;
-			sign(value?: '-' | '+'): T.NumberFloatScientific.Built;
-			exponent(value: string | number | bigint): T.NumberFloatScientific.Built;
-			marker(value: 'e' | 'E'): T.NumberFloatScientific.Built;
-		};
+	export interface Bound extends BoundOf<T.NumberFloatScientific, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberFloatScientific['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NumberFloatScientific, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberFloatScientific['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberFloatScientific>, 'marker'>
@@ -20573,7 +22761,7 @@ export namespace NumberFloatScientific {
 	>;
 	export type BuildArgs = [
 		config: WidenNumeric<
-			OmitEach<ConfigOf<T.NumberFloatScientific>, 'marker'>,
+			OmitEach<ConfigOf<T.NumberFloatScientific, T.NamespaceMap>, 'marker'>,
 			{ integer: number | bigint; exponent: number | bigint }
 		>,
 		options?: T.NumberFloatScientific.Options
@@ -20587,7 +22775,7 @@ export namespace NumberFloatScientific {
 					>,
 					{ integer: number | bigint; exponent: number | bigint }
 			  >
-			| T.NumberFloatScientific,
+			| AdmitBound<T.NumberFloatScientific, T.AdmittedNodes>,
 		options?: T.NumberFloatScientific.Options
 	];
 	export type Kind = TSKindId.NumberFloatScientific;
@@ -20595,13 +22783,13 @@ export namespace NumberFloatScientific {
 export namespace NumberBinary {
 	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.NumberBinary>, 'prefix'>, { content: number | bigint }>;
 	export type Options = { readonly prefix?: '0b' | '0B' };
-	export interface Built extends T.NumberBinary, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string | number | bigint): T.NumberBinary.Built;
-			prefix(value: '0b' | '0B'): T.NumberBinary.Built;
-		};
+	export interface Bound extends BoundOf<T.NumberBinary, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberBinary['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NumberBinary, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberBinary['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberBinary>, 'prefix'>
@@ -20612,7 +22800,10 @@ export namespace NumberBinary {
 		OmitEach<LooseConfigFor<TSKindId.NumberBinary>, 'prefix'>,
 		{ content: number | bigint }
 	>;
-	export type BuildArgs = [value: string | number | bigint, options?: T.NumberBinary.Options];
+	export type BuildArgs = [
+		value: AdmitBound<string | number | bigint, T.AdmittedNodes>,
+		options?: T.NumberBinary.Options
+	];
 	export type LooseArgs = [
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.NumberBinary.Options
@@ -20622,13 +22813,13 @@ export namespace NumberBinary {
 export namespace NumberOctal {
 	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.NumberOctal>, 'prefix'>, { content: number | bigint }>;
 	export type Options = { readonly prefix?: '0o' | '0O' };
-	export interface Built extends T.NumberOctal, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string | number | bigint): T.NumberOctal.Built;
-			prefix(value: '0o' | '0O'): T.NumberOctal.Built;
-		};
+	export interface Bound extends BoundOf<T.NumberOctal, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberOctal['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NumberOctal, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberOctal['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberOctal>, 'prefix'>
@@ -20639,7 +22830,10 @@ export namespace NumberOctal {
 		OmitEach<LooseConfigFor<TSKindId.NumberOctal>, 'prefix'>,
 		{ content: number | bigint }
 	>;
-	export type BuildArgs = [value: string | number | bigint, options?: T.NumberOctal.Options];
+	export type BuildArgs = [
+		value: AdmitBound<string | number | bigint, T.AdmittedNodes>,
+		options?: T.NumberOctal.Options
+	];
 	export type LooseArgs = [
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.NumberOctal.Options
@@ -20648,12 +22842,13 @@ export namespace NumberOctal {
 }
 export namespace NumberBigintHex {
 	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberBigintHex>, { content: number | bigint }>;
-	export interface Built extends T.NumberBigintHex, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string | number | bigint): T.NumberBigintHex.Built;
-		};
+	export interface Bound extends BoundOf<T.NumberBigintHex, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberBigintHex['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NumberBigintHex, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberBigintHex['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose =
 		| LooseFor<TSKindId.NumberBigintHex>
@@ -20661,7 +22856,7 @@ export namespace NumberBigintHex {
 		| number
 		| bigint;
 	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintHex>, { content: number | bigint }>;
-	export type BuildArgs = [value: string | number | bigint];
+	export type BuildArgs = [value: AdmitBound<string | number | bigint, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -20669,12 +22864,13 @@ export namespace NumberBigintHex {
 }
 export namespace NumberBigintBinary {
 	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberBigintBinary>, { content: number | bigint }>;
-	export interface Built extends T.NumberBigintBinary, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string | number | bigint): T.NumberBigintBinary.Built;
-		};
+	export interface Bound extends BoundOf<T.NumberBigintBinary, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberBigintBinary['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NumberBigintBinary, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberBigintBinary['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose =
 		| LooseFor<TSKindId.NumberBigintBinary>
@@ -20682,7 +22878,7 @@ export namespace NumberBigintBinary {
 		| number
 		| bigint;
 	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintBinary>, { content: number | bigint }>;
-	export type BuildArgs = [value: string | number | bigint];
+	export type BuildArgs = [value: AdmitBound<string | number | bigint, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -20690,12 +22886,13 @@ export namespace NumberBigintBinary {
 }
 export namespace NumberBigintOctal {
 	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberBigintOctal>, { content: number | bigint }>;
-	export interface Built extends T.NumberBigintOctal, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string | number | bigint): T.NumberBigintOctal.Built;
-		};
+	export interface Bound extends BoundOf<T.NumberBigintOctal, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberBigintOctal['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NumberBigintOctal, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberBigintOctal['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose =
 		| LooseFor<TSKindId.NumberBigintOctal>
@@ -20703,7 +22900,7 @@ export namespace NumberBigintOctal {
 		| number
 		| bigint;
 	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintOctal>, { content: number | bigint }>;
-	export type BuildArgs = [value: string | number | bigint];
+	export type BuildArgs = [value: AdmitBound<string | number | bigint, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -20711,12 +22908,13 @@ export namespace NumberBigintOctal {
 }
 export namespace NumberBigintDecimal {
 	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberBigintDecimal>, { content: number | bigint }>;
-	export interface Built extends T.NumberBigintDecimal, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: string | number | bigint): T.NumberBigintDecimal.Built;
-		};
+	export interface Bound extends BoundOf<T.NumberBigintDecimal, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberBigintDecimal['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.NumberBigintDecimal, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.NumberBigintDecimal['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose =
 		| LooseFor<TSKindId.NumberBigintDecimal>
@@ -20724,7 +22922,7 @@ export namespace NumberBigintDecimal {
 		| number
 		| bigint;
 	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintDecimal>, { content: number | bigint }>;
-	export type BuildArgs = [value: string | number | bigint];
+	export type BuildArgs = [value: AdmitBound<string | number | bigint, T.AdmittedNodes>];
 	export type LooseArgs = [
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
@@ -20732,87 +22930,87 @@ export namespace NumberBigintDecimal {
 }
 export namespace BinaryExpressionIn {
 	export type Config = ConfigFor<TSKindId.BinaryExpressionIn>;
-	export interface Built extends T.BinaryExpressionIn, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			left(value: NonNullable<T.BinaryExpressionIn.Config>['left']): T.BinaryExpressionIn.Built;
-			right(value: NonNullable<T.BinaryExpressionIn.Config>['right']): T.BinaryExpressionIn.Built;
-		};
+	export interface Bound extends BoundOf<T.BinaryExpressionIn, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.BinaryExpressionIn['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.BinaryExpressionIn, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.BinaryExpressionIn['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.BinaryExpressionIn>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BinaryExpressionIn>;
-	export type BuildArgs = [config: ConfigOf<T.BinaryExpressionIn>];
+	export type BuildArgs = [config: ConfigOf<T.BinaryExpressionIn, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.BinaryExpressionIn, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.BinaryExpressionIn
+			| AdmitBound<T.BinaryExpressionIn, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.BinaryExpressionIn;
 }
 export namespace ClassBodyMethod {
 	export type Config = OmitEach<ConfigFor<TSKindId.ClassBodyMethod>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.ClassBodyMethod, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			decorators(...values: T.Decorator[]): T.ClassBodyMethod.Built;
-			methodDefinition(value: T.MethodDefinition): T.ClassBodyMethod.Built;
-			terminator(value?: NonNullable<T.ClassBodyMethod.Options>['terminator']): T.ClassBodyMethod.Built;
-		};
+	export interface Bound extends BoundOf<T.ClassBodyMethod, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassBodyMethod['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ClassBodyMethod, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassBodyMethod['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ClassBodyMethod>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ClassBodyMethod>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.ClassBodyMethod>, 'terminator'>,
+		config: OmitEach<ConfigOf<T.ClassBodyMethod, T.NamespaceMap>, 'terminator'>,
 		options?: T.ClassBodyMethod.Options
 	];
 	export type LooseArgs = [
 		config:
 			| OmitEach<LooseConfigOf<T.ClassBodyMethod, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'terminator'>
-			| T.ClassBodyMethod,
+			| AdmitBound<T.ClassBodyMethod, T.AdmittedNodes>,
 		options?: T.ClassBodyMethod.Options
 	];
 	export type Kind = TSKindId.ClassBodyMethod;
 }
 export namespace ClassBodyMethodSig {
 	export type Config = ConfigFor<TSKindId.ClassBodyMethodSig>;
-	export interface Built extends T.ClassBodyMethodSig, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			methodSignature(value: T.MethodSignature): T.ClassBodyMethodSig.Built;
-			terminator(value: NonNullable<T.ClassBodyMethodSig.Config>['terminator']): T.ClassBodyMethodSig.Built;
-		};
+	export interface Bound extends BoundOf<T.ClassBodyMethodSig, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassBodyMethodSig['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ClassBodyMethodSig, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassBodyMethodSig['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ClassBodyMethodSig>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassBodyMethodSig>;
-	export type BuildArgs = [config: ConfigOf<T.ClassBodyMethodSig>];
+	export type BuildArgs = [config: ConfigOf<T.ClassBodyMethodSig, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.ClassBodyMethodSig, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ClassBodyMethodSig
+			| AdmitBound<T.ClassBodyMethodSig, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ClassBodyMethodSig;
 }
 export namespace ClassBodyMember {
 	export type Config = OmitEach<ConfigFor<TSKindId.ClassBodyMember>, 'terminator'>;
 	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma };
-	export interface Built extends T.ClassBodyMember, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			member(
-				value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition
-			): T.ClassBodyMember.Built;
-			terminator(value: NonNullable<T.ClassBodyMember.Options>['terminator']): T.ClassBodyMember.Built;
-		};
+	export interface Bound extends BoundOf<T.ClassBodyMember, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassBodyMember['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ClassBodyMember, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassBodyMember['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ClassBodyMember>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ClassBodyMember>, 'terminator'>;
 	export type BuildArgs = [
-		value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition,
+		value: AdmitBound<
+			T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition,
+			T.AdmittedNodes
+		>,
 		options?: T.ClassBodyMember.Options
 	];
 	export type LooseArgs = [
@@ -20828,229 +23026,215 @@ export namespace ClassBodyMember {
 }
 export namespace IndexSignatureColon {
 	export type Config = ConfigFor<TSKindId.IndexSignatureColon>;
-	export interface Built extends T.IndexSignatureColon, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			sign(value?: NonNullable<T.IndexSignatureColon.Config>['sign']): T.IndexSignatureColon.Built;
-			readonlyMarker(value?: NonNullable<T.IndexSignatureColon.Config>['readonlyMarker']): T.IndexSignatureColon.Built;
-			name(value: NonNullable<T.IndexSignatureColon.Config>['name']): T.IndexSignatureColon.Built;
-			indexType(value: NonNullable<T.IndexSignatureColon.Config>['indexType']): T.IndexSignatureColon.Built;
-			type(
-				value: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation
-			): T.IndexSignatureColon.Built;
-		};
+	export interface Bound extends BoundOf<T.IndexSignatureColon, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.IndexSignatureColon['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.IndexSignatureColon, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.IndexSignatureColon['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.IndexSignatureColon>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IndexSignatureColon>;
-	export type BuildArgs = [config: ConfigOf<T.IndexSignatureColon>];
+	export type BuildArgs = [config: ConfigOf<T.IndexSignatureColon, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.IndexSignatureColon, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.IndexSignatureColon
+			| AdmitBound<T.IndexSignatureColon, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.IndexSignatureColon;
 }
 export namespace IndexSignatureMappedTypeClause {
 	export type Config = ConfigFor<TSKindId.IndexSignatureMappedTypeClause>;
-	export interface Built extends T.IndexSignatureMappedTypeClause, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			sign(
-				value?: NonNullable<T.IndexSignatureMappedTypeClause.Config>['sign']
-			): T.IndexSignatureMappedTypeClause.Built;
-			readonlyMarker(
-				value?: NonNullable<T.IndexSignatureMappedTypeClause.Config>['readonlyMarker']
-			): T.IndexSignatureMappedTypeClause.Built;
-			mappedTypeClause(value: T.MappedTypeClause): T.IndexSignatureMappedTypeClause.Built;
-			type(
-				value: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation
-			): T.IndexSignatureMappedTypeClause.Built;
-		};
+	export interface Bound extends BoundOf<T.IndexSignatureMappedTypeClause, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.IndexSignatureMappedTypeClause['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.IndexSignatureMappedTypeClause, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.IndexSignatureMappedTypeClause['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.IndexSignatureMappedTypeClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IndexSignatureMappedTypeClause>;
-	export type BuildArgs = [config: ConfigOf<T.IndexSignatureMappedTypeClause>];
+	export type BuildArgs = [config: ConfigOf<T.IndexSignatureMappedTypeClause, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.IndexSignatureMappedTypeClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.IndexSignatureMappedTypeClause
+			| AdmitBound<T.IndexSignatureMappedTypeClause, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.IndexSignatureMappedTypeClause;
 }
 export namespace ImportStatementClauseFrom {
 	export type Config = ConfigFor<TSKindId.ImportStatementClauseFrom>;
-	export interface Built extends T.ImportStatementClauseFrom, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			importClause(value: T.ImportClause): T.ImportStatementClauseFrom.Built;
-			source(value: T.String): T.ImportStatementClauseFrom.Built;
-		};
+	export interface Bound extends BoundOf<T.ImportStatementClauseFrom, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportStatementClauseFrom['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ImportStatementClauseFrom, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportStatementClauseFrom['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ImportStatementClauseFrom>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportStatementClauseFrom>;
-	export type BuildArgs = [config: ConfigOf<T.ImportStatementClauseFrom>];
+	export type BuildArgs = [config: ConfigOf<T.ImportStatementClauseFrom, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.ImportStatementClauseFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ImportStatementClauseFrom
+			| AdmitBound<T.ImportStatementClauseFrom, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ImportStatementClauseFrom;
 }
 export namespace ImportSpecifierName {
 	export type Config = ConfigFor<TSKindId.ImportSpecifierName>;
-	export interface Built extends T.ImportSpecifierName, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			importKind(value?: NonNullable<T.ImportSpecifierName.Config>['importKind']): T.ImportSpecifierName.Built;
-			name(value: NonNullable<T.ImportSpecifierName.Config>['name']): T.ImportSpecifierName.Built;
-		};
+	export interface Bound extends BoundOf<T.ImportSpecifierName, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportSpecifierName['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ImportSpecifierName, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportSpecifierName['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ImportSpecifierName>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportSpecifierName>;
-	export type BuildArgs = [config: ConfigOf<T.ImportSpecifierName>];
+	export type BuildArgs = [config: ConfigOf<T.ImportSpecifierName, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.ImportSpecifierName, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ImportSpecifierName
+			| AdmitBound<T.ImportSpecifierName, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ImportSpecifierName;
 }
 export namespace ImportSpecifierAs {
 	export type Config = ConfigFor<TSKindId.ImportSpecifierAs>;
-	export interface Built extends T.ImportSpecifierAs, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			importKind(value?: NonNullable<T.ImportSpecifierAs.Config>['importKind']): T.ImportSpecifierAs.Built;
-			name(value: NonNullable<T.ImportSpecifierAs.Config>['name']): T.ImportSpecifierAs.Built;
-			alias(value: NonNullable<T.ImportSpecifierAs.Config>['alias']): T.ImportSpecifierAs.Built;
-		};
+	export interface Bound extends BoundOf<T.ImportSpecifierAs, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportSpecifierAs['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ImportSpecifierAs, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportSpecifierAs['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ImportSpecifierAs>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportSpecifierAs>;
-	export type BuildArgs = [config: ConfigOf<T.ImportSpecifierAs>];
+	export type BuildArgs = [config: ConfigOf<T.ImportSpecifierAs, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.ImportSpecifierAs, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ImportSpecifierAs
+			| AdmitBound<T.ImportSpecifierAs, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ImportSpecifierAs;
 }
 export namespace ParenthesizedExpressionTyped {
 	export type Config = ConfigFor<TSKindId.ParenthesizedExpressionTyped>;
-	export interface Built extends T.ParenthesizedExpressionTyped, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			expression(
-				value: NonNullable<T.ParenthesizedExpressionTyped.Config>['expression']
-			): T.ParenthesizedExpressionTyped.Built;
-			type(value?: T.TypeAnnotation): T.ParenthesizedExpressionTyped.Built;
-		};
+	export interface Bound extends BoundOf<T.ParenthesizedExpressionTyped, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ParenthesizedExpressionTyped['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ParenthesizedExpressionTyped, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ParenthesizedExpressionTyped['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ParenthesizedExpressionTyped>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedExpressionTyped>;
-	export type BuildArgs = [config: ConfigOf<T.ParenthesizedExpressionTyped>];
+	export type BuildArgs = [config: ConfigOf<T.ParenthesizedExpressionTyped, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.ParenthesizedExpressionTyped, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ParenthesizedExpressionTyped
+			| AdmitBound<T.ParenthesizedExpressionTyped, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ParenthesizedExpressionTyped;
 }
 export namespace ParenthesizedExpressionSequence {
 	export type Config = ConfigFor<TSKindId.ParenthesizedExpressionSequence>;
-	export interface Built extends T.ParenthesizedExpressionSequence, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			sequenceExpression(value: T.SequenceExpression): T.ParenthesizedExpressionSequence.Built;
-		};
+	export interface Bound extends BoundOf<T.ParenthesizedExpressionSequence, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ParenthesizedExpressionSequence['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ParenthesizedExpressionSequence, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ParenthesizedExpressionSequence['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ParenthesizedExpressionSequence>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedExpressionSequence>;
-	export type BuildArgs = [value: T.SequenceExpression];
+	export type BuildArgs = [value: AdmitBound<T.SequenceExpression, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.ParenthesizedExpressionSequence;
 }
 export namespace CallExpressionCall {
 	export type Config = ConfigFor<TSKindId.CallExpressionCall>;
-	export interface Built extends T.CallExpressionCall, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			function(value: NonNullable<T.CallExpressionCall.Config>['function']): T.CallExpressionCall.Built;
-			typeArguments(value?: T.TypeArguments): T.CallExpressionCall.Built;
-			arguments(value: T.Arguments): T.CallExpressionCall.Built;
-		};
+	export interface Bound extends BoundOf<T.CallExpressionCall, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.CallExpressionCall['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.CallExpressionCall, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.CallExpressionCall['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CallExpressionCall>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CallExpressionCall>;
-	export type BuildArgs = [config: ConfigOf<T.CallExpressionCall>];
+	export type BuildArgs = [config: ConfigOf<T.CallExpressionCall, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.CallExpressionCall, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.CallExpressionCall
+			| AdmitBound<T.CallExpressionCall, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.CallExpressionCall;
 }
 export namespace CallExpressionTemplateCall {
 	export type Config = ConfigFor<TSKindId.CallExpressionTemplateCall>;
-	export interface Built extends T.CallExpressionTemplateCall, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			function(value: NonNullable<T.CallExpressionTemplateCall.Config>['function']): T.CallExpressionTemplateCall.Built;
-			arguments(value: T.TemplateString): T.CallExpressionTemplateCall.Built;
-		};
+	export interface Bound extends BoundOf<T.CallExpressionTemplateCall, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.CallExpressionTemplateCall['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.CallExpressionTemplateCall, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.CallExpressionTemplateCall['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CallExpressionTemplateCall>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CallExpressionTemplateCall>;
-	export type BuildArgs = [config: ConfigOf<T.CallExpressionTemplateCall>];
+	export type BuildArgs = [config: ConfigOf<T.CallExpressionTemplateCall, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.CallExpressionTemplateCall, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.CallExpressionTemplateCall
+			| AdmitBound<T.CallExpressionTemplateCall, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.CallExpressionTemplateCall;
 }
 export namespace CallExpressionMember {
 	export type Config = ConfigFor<TSKindId.CallExpressionMember>;
-	export interface Built extends T.CallExpressionMember, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			function(value: NonNullable<T.CallExpressionMember.Config>['function']): T.CallExpressionMember.Built;
-			typeArguments(value?: T.TypeArguments): T.CallExpressionMember.Built;
-			arguments(value: T.Arguments): T.CallExpressionMember.Built;
-		};
+	export interface Bound extends BoundOf<T.CallExpressionMember, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.CallExpressionMember['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.CallExpressionMember, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.CallExpressionMember['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.CallExpressionMember>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CallExpressionMember>;
-	export type BuildArgs = [config: ConfigOf<T.CallExpressionMember>];
+	export type BuildArgs = [config: ConfigOf<T.CallExpressionMember, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.CallExpressionMember, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.CallExpressionMember
+			| AdmitBound<T.CallExpressionMember, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.CallExpressionMember;
 }
 export namespace StringDouble {
 	export type Config = ConfigFor<TSKindId.StringDouble>;
-	export interface Built extends T.StringDouble, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			elements(...vs: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]): T.StringDouble.Built;
-		};
+	export interface Bound extends BoundOf<T.StringDouble, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.StringDouble['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.StringDouble, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.StringDouble['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.StringDouble>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StringDouble>;
-	export type BuildArgs = [...children: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]];
+	export type BuildArgs = [
+		...children: AdmitBound<(T.UnescapedDoubleStringFragment | T.EscapeSequence)[], T.AdmittedNodes>
+	];
 	export type LooseArgs = [
 		...children: LooseValue<
 			T.UnescapedDoubleStringFragment | T.EscapeSequence,
@@ -21063,16 +23247,19 @@ export namespace StringDouble {
 }
 export namespace StringSingle {
 	export type Config = ConfigFor<TSKindId.StringSingle>;
-	export interface Built extends T.StringSingle, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			elements(...vs: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]): T.StringSingle.Built;
-		};
+	export interface Bound extends BoundOf<T.StringSingle, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.StringSingle['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.StringSingle, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.StringSingle['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.StringSingle>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StringSingle>;
-	export type BuildArgs = [...children: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]];
+	export type BuildArgs = [
+		...children: AdmitBound<(T.UnescapedSingleStringFragment | T.EscapeSequence)[], T.AdmittedNodes>
+	];
 	export type LooseArgs = [
 		...children: LooseValue<
 			T.UnescapedSingleStringFragment | T.EscapeSequence,
@@ -21085,83 +23272,58 @@ export namespace StringSingle {
 }
 export namespace UpdateExpressionPostfix {
 	export type Config = ConfigFor<TSKindId.UpdateExpressionPostfix>;
-	export interface Built extends T.UpdateExpressionPostfix, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			argument(value: NonNullable<T.UpdateExpressionPostfix.Config>['argument']): T.UpdateExpressionPostfix.Built;
-			operator(value: NonNullable<T.UpdateExpressionPostfix.Config>['operator']): T.UpdateExpressionPostfix.Built;
-		};
+	export interface Bound extends BoundOf<T.UpdateExpressionPostfix, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.UpdateExpressionPostfix['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.UpdateExpressionPostfix, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.UpdateExpressionPostfix['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.UpdateExpressionPostfix>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UpdateExpressionPostfix>;
-	export type BuildArgs = [config: ConfigOf<T.UpdateExpressionPostfix>];
+	export type BuildArgs = [config: ConfigOf<T.UpdateExpressionPostfix, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.UpdateExpressionPostfix, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.UpdateExpressionPostfix
+			| AdmitBound<T.UpdateExpressionPostfix, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.UpdateExpressionPostfix;
 }
 export namespace UpdateExpressionPrefix {
 	export type Config = ConfigFor<TSKindId.UpdateExpressionPrefix>;
-	export interface Built extends T.UpdateExpressionPrefix, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			operator(value: NonNullable<T.UpdateExpressionPrefix.Config>['operator']): T.UpdateExpressionPrefix.Built;
-			argument(value: NonNullable<T.UpdateExpressionPrefix.Config>['argument']): T.UpdateExpressionPrefix.Built;
-		};
+	export interface Bound extends BoundOf<T.UpdateExpressionPrefix, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.UpdateExpressionPrefix['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.UpdateExpressionPrefix, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.UpdateExpressionPrefix['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.UpdateExpressionPrefix>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UpdateExpressionPrefix>;
-	export type BuildArgs = [config: ConfigOf<T.UpdateExpressionPrefix>];
+	export type BuildArgs = [config: ConfigOf<T.UpdateExpressionPrefix, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.UpdateExpressionPrefix, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.UpdateExpressionPrefix
+			| AdmitBound<T.UpdateExpressionPrefix, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.UpdateExpressionPrefix;
 }
 export namespace ArrowFunctionParameter {
 	export type Config = ConfigFor<TSKindId.ArrowFunctionParameter>;
-	export interface Built extends T.ArrowFunctionParameter, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			parameter(
-				value: NonNullable<
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-					| T.Identifier
-				>
-			): T.ArrowFunctionParameter.Built;
-		};
+	export interface Bound extends BoundOf<T.ArrowFunctionParameter, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ArrowFunctionParameter['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ArrowFunctionParameter, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ArrowFunctionParameter['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ArrowFunctionParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArrowFunctionParameter>;
 	export type BuildArgs = [
-		value:
+		value: AdmitBound<
 			| TSKindId.DeclareKeyword
 			| TSKindId.NamespaceKeyword
 			| TSKindId.TypeKeyword
@@ -21184,7 +23346,9 @@ export namespace ArrowFunctionParameter {
 			| TSKindId.AsyncKeyword
 			| TSKindId.StaticKeyword
 			| TSKindId.LetKeyword
-			| T.Identifier
+			| T.Identifier,
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		value: LooseValue<
@@ -21220,73 +23384,65 @@ export namespace ArrowFunctionParameter {
 }
 export namespace ClassHeritageExtendsClause {
 	export type Config = ConfigFor<TSKindId.ClassHeritageExtendsClause>;
-	export interface Built extends T.ClassHeritageExtendsClause, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			extendsClause(value: T.ExtendsClause): T.ClassHeritageExtendsClause.Built;
-			implementsClause(value?: T.ImplementsClause): T.ClassHeritageExtendsClause.Built;
-		};
+	export interface Bound extends BoundOf<T.ClassHeritageExtendsClause, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassHeritageExtendsClause['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ClassHeritageExtendsClause, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ClassHeritageExtendsClause['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ClassHeritageExtendsClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassHeritageExtendsClause>;
-	export type BuildArgs = [config: ConfigOf<T.ClassHeritageExtendsClause>];
+	export type BuildArgs = [config: ConfigOf<T.ClassHeritageExtendsClause, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.ClassHeritageExtendsClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ClassHeritageExtendsClause
+			| AdmitBound<T.ClassHeritageExtendsClause, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ClassHeritageExtendsClause;
 }
 export namespace ImportClauseDefaultImport {
 	export type Config = ConfigFor<TSKindId.ImportClauseDefaultImport>;
-	export interface Built extends T.ImportClauseDefaultImport, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			identifier(
-				value: NonNullable<T.ImportClauseDefaultImport.Config>['identifier']
-			): T.ImportClauseDefaultImport.Built;
-			importClauseGroup(value?: T.ImportClauseGroup): T.ImportClauseDefaultImport.Built;
-		};
+	export interface Bound extends BoundOf<T.ImportClauseDefaultImport, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportClauseDefaultImport['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ImportClauseDefaultImport, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ImportClauseDefaultImport['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ImportClauseDefaultImport>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportClauseDefaultImport>;
-	export type BuildArgs = [config: ConfigOf<T.ImportClauseDefaultImport>];
+	export type BuildArgs = [config: ConfigOf<T.ImportClauseDefaultImport, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.ImportClauseDefaultImport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ImportClauseDefaultImport
+			| AdmitBound<T.ImportClauseDefaultImport, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ImportClauseDefaultImport;
 }
 export namespace ExportStatementDefaultFrom {
 	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementDefaultFrom>, 'automaticSemicolon'>;
 	export type Options = { readonly automaticSemicolon?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.ExportStatementDefaultFrom, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(
-				value:
-					| T.ExportStatementDefaultFromStarFrom
-					| T.ExportStatementDefaultFromNsFrom
-					| T.ExportStatementDefaultFromClauseFrom
-					| T.ExportClause
-			): T.ExportStatementDefaultFrom.Built;
-			automaticSemicolon(
-				value: NonNullable<T.ExportStatementDefaultFrom.Options>['automaticSemicolon']
-			): T.ExportStatementDefaultFrom.Built;
-		};
+	export interface Bound extends BoundOf<T.ExportStatementDefaultFrom, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementDefaultFrom['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ExportStatementDefaultFrom, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementDefaultFrom['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ExportStatementDefaultFrom>, 'automaticSemicolon'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExportStatementDefaultFrom>, 'automaticSemicolon'>;
 	export type BuildArgs = [
-		value:
+		value: AdmitBound<
 			| T.ExportStatementDefaultFromStarFrom
 			| T.ExportStatementDefaultFromNsFrom
 			| T.ExportStatementDefaultFromClauseFrom
 			| T.ExportClause,
+			T.AdmittedNodes
+		>,
 		options?: T.ExportStatementDefaultFrom.Options
 	];
 	export type LooseArgs = [
@@ -21305,95 +23461,96 @@ export namespace ExportStatementDefaultFrom {
 }
 export namespace ExportStatementDefaultDeclaration {
 	export type Config = ConfigFor<TSKindId.ExportStatementDefaultDeclaration>;
-	export interface Built extends T.ExportStatementDefaultDeclaration, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			decorators(...values: T.Decorator[]): T.ExportStatementDefaultDeclaration.Built;
-			content(
-				value: T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration
-			): T.ExportStatementDefaultDeclaration.Built;
-		};
+	export interface Bound extends BoundOf<T.ExportStatementDefaultDeclaration, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementDefaultDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ExportStatementDefaultDeclaration, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementDefaultDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ExportStatementDefaultDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultDeclaration>];
+	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultDeclaration, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.ExportStatementDefaultDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ExportStatementDefaultDeclaration
+			| AdmitBound<T.ExportStatementDefaultDeclaration, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ExportStatementDefaultDeclaration;
 }
 export namespace ExportStatementDefaultFromStarFrom {
 	export type Config = ConfigFor<TSKindId.ExportStatementDefaultFromStarFrom>;
-	export interface Built extends T.ExportStatementDefaultFromStarFrom, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			source(value: T.String): T.ExportStatementDefaultFromStarFrom.Built;
-		};
+	export interface Bound extends BoundOf<T.ExportStatementDefaultFromStarFrom, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementDefaultFromStarFrom['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ExportStatementDefaultFromStarFrom, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementDefaultFromStarFrom['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ExportStatementDefaultFromStarFrom>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultFromStarFrom>;
-	export type BuildArgs = [value: T.String];
+	export type BuildArgs = [value: AdmitBound<T.String, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.ExportStatementDefaultFromStarFrom;
 }
 export namespace ExportStatementDefaultFromNsFrom {
 	export type Config = ConfigFor<TSKindId.ExportStatementDefaultFromNsFrom>;
-	export interface Built extends T.ExportStatementDefaultFromNsFrom, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			namespaceExport(value: T.NamespaceExport): T.ExportStatementDefaultFromNsFrom.Built;
-			source(value: T.String): T.ExportStatementDefaultFromNsFrom.Built;
-		};
+	export interface Bound extends BoundOf<T.ExportStatementDefaultFromNsFrom, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementDefaultFromNsFrom['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ExportStatementDefaultFromNsFrom, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementDefaultFromNsFrom['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ExportStatementDefaultFromNsFrom>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultFromNsFrom>;
-	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultFromNsFrom>];
+	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultFromNsFrom, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.ExportStatementDefaultFromNsFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ExportStatementDefaultFromNsFrom
+			| AdmitBound<T.ExportStatementDefaultFromNsFrom, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ExportStatementDefaultFromNsFrom;
 }
 export namespace ExportStatementDefaultFromClauseFrom {
 	export type Config = ConfigFor<TSKindId.ExportStatementDefaultFromClauseFrom>;
-	export interface Built extends T.ExportStatementDefaultFromClauseFrom, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			exportClause(value: T.ExportClause): T.ExportStatementDefaultFromClauseFrom.Built;
-			source(value: T.String): T.ExportStatementDefaultFromClauseFrom.Built;
-		};
+	export interface Bound extends BoundOf<T.ExportStatementDefaultFromClauseFrom, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementDefaultFromClauseFrom['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ExportStatementDefaultFromClauseFrom, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementDefaultFromClauseFrom['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ExportStatementDefaultFromClauseFrom>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultFromClauseFrom>;
-	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultFromClauseFrom>];
+	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultFromClauseFrom, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.ExportStatementDefaultFromClauseFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ExportStatementDefaultFromClauseFrom
+			| AdmitBound<T.ExportStatementDefaultFromClauseFrom, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ExportStatementDefaultFromClauseFrom;
 }
 export namespace ExportStatementDefaultDeclarationDefaultKw {
 	export type Config = ConfigFor<TSKindId.ExportStatementDefaultDeclarationDefaultKw>;
-	export interface Built extends T.ExportStatementDefaultDeclarationDefaultKw, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(
-				value: T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration
-			): T.ExportStatementDefaultDeclarationDefaultKw.Built;
-		};
+	export interface Bound extends BoundOf<T.ExportStatementDefaultDeclarationDefaultKw, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementDefaultDeclarationDefaultKw['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.ExportStatementDefaultDeclarationDefaultKw, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementDefaultDeclarationDefaultKw['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ExportStatementDefaultDeclarationDefaultKw>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultDeclarationDefaultKw>;
-	export type BuildArgs = [value: T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration];
+	export type BuildArgs = [
+		value: AdmitBound<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration, T.AdmittedNodes>
+	];
 	export type LooseArgs = [
 		value: LooseValue<
 			T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration,
@@ -21410,15 +23567,15 @@ export namespace ExportStatementDefaultDeclarationDefaultKwValue {
 		'automaticSemicolon'
 	>;
 	export type Options = { readonly automaticSemicolon?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
-	export interface Built extends T.ExportStatementDefaultDeclarationDefaultKwValue, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			value(value: NonNullable<T.Expression>): T.ExportStatementDefaultDeclarationDefaultKwValue.Built;
-			automaticSemicolon(
-				value: NonNullable<T.ExportStatementDefaultDeclarationDefaultKwValue.Options>['automaticSemicolon']
-			): T.ExportStatementDefaultDeclarationDefaultKwValue.Built;
-		};
+	export interface Bound
+		extends BoundOf<T.ExportStatementDefaultDeclarationDefaultKwValue, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementDefaultDeclarationDefaultKwValue['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.ExportStatementDefaultDeclarationDefaultKwValue, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ExportStatementDefaultDeclarationDefaultKwValue['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = OmitEach<
 		LooseFor<TSKindId.ExportStatementDefaultDeclarationDefaultKwValue>,
@@ -21428,7 +23585,10 @@ export namespace ExportStatementDefaultDeclarationDefaultKwValue {
 		LooseConfigFor<TSKindId.ExportStatementDefaultDeclarationDefaultKwValue>,
 		'automaticSemicolon'
 	>;
-	export type BuildArgs = [value: T.Expression, options?: T.ExportStatementDefaultDeclarationDefaultKwValue.Options];
+	export type BuildArgs = [
+		value: AdmitBound<T.Expression, T.AdmittedNodes>,
+		options?: T.ExportStatementDefaultDeclarationDefaultKwValue.Options
+	];
 	export type LooseArgs = [
 		value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ExportStatementDefaultDeclarationDefaultKwValue.Options
@@ -21437,106 +23597,101 @@ export namespace ExportStatementDefaultDeclarationDefaultKwValue {
 }
 export namespace VariableDeclaratorPlain {
 	export type Config = ConfigFor<TSKindId.VariableDeclaratorPlain>;
-	export interface Built extends T.VariableDeclaratorPlain, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.Identifier | T.ObjectPattern | T.ArrayPattern): T.VariableDeclaratorPlain.Built;
-			type(value?: T.TypeAnnotation): T.VariableDeclaratorPlain.Built;
-			value(value?: NonNullable<T.VariableDeclaratorPlain.Config>['value']): T.VariableDeclaratorPlain.Built;
-		};
+	export interface Bound extends BoundOf<T.VariableDeclaratorPlain, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.VariableDeclaratorPlain['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.VariableDeclaratorPlain, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.VariableDeclaratorPlain['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.VariableDeclaratorPlain>;
 	export type LooseConfig = LooseConfigFor<TSKindId.VariableDeclaratorPlain>;
-	export type BuildArgs = [config: ConfigOf<T.VariableDeclaratorPlain>];
+	export type BuildArgs = [config: ConfigOf<T.VariableDeclaratorPlain, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.VariableDeclaratorPlain, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.VariableDeclaratorPlain
+			| AdmitBound<T.VariableDeclaratorPlain, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.VariableDeclaratorPlain;
 }
 export namespace VariableDeclaratorDefinite {
 	export type Config = ConfigFor<TSKindId.VariableDeclaratorDefinite>;
-	export interface Built extends T.VariableDeclaratorDefinite, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			name(value: T.Identifier): T.VariableDeclaratorDefinite.Built;
-			type(value: T.TypeAnnotation): T.VariableDeclaratorDefinite.Built;
-		};
+	export interface Bound extends BoundOf<T.VariableDeclaratorDefinite, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.VariableDeclaratorDefinite['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.VariableDeclaratorDefinite, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.VariableDeclaratorDefinite['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.VariableDeclaratorDefinite>;
 	export type LooseConfig = LooseConfigFor<TSKindId.VariableDeclaratorDefinite>;
-	export type BuildArgs = [config: ConfigOf<T.VariableDeclaratorDefinite>];
+	export type BuildArgs = [config: ConfigOf<T.VariableDeclaratorDefinite, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.VariableDeclaratorDefinite, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.VariableDeclaratorDefinite
+			| AdmitBound<T.VariableDeclaratorDefinite, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.VariableDeclaratorDefinite;
 }
 export namespace ForHeaderLhs {
 	export type Config = ConfigFor<TSKindId.ForHeaderLhs>;
-	export interface Built extends T.ForHeaderLhs, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			left(value: T.LhsExpression | T.ParenthesizedExpression): T.ForHeaderLhs.Built;
-			operator(value: NonNullable<T.ForHeaderLhs.Config>['operator']): T.ForHeaderLhs.Built;
-			right(value: NonNullable<T.ForHeaderLhs.Config>['right']): T.ForHeaderLhs.Built;
-		};
+	export interface Bound extends BoundOf<T.ForHeaderLhs, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ForHeaderLhs['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ForHeaderLhs, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ForHeaderLhs['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ForHeaderLhs>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForHeaderLhs>;
-	export type BuildArgs = [config: ConfigOf<T.ForHeaderLhs>];
+	export type BuildArgs = [config: ConfigOf<T.ForHeaderLhs, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ForHeaderLhs, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ForHeaderLhs
+		config:
+			| LooseConfigOf<T.ForHeaderLhs, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.ForHeaderLhs, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ForHeaderLhs;
 }
 export namespace ForHeaderVarKind {
 	export type Config = ConfigFor<TSKindId.ForHeaderVarKind>;
-	export interface Built extends T.ForHeaderVarKind, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			left(value: T.Identifier | T.ObjectPattern | T.ArrayPattern): T.ForHeaderVarKind.Built;
-			value(value?: NonNullable<T.ForHeaderVarKind.Config>['value']): T.ForHeaderVarKind.Built;
-			operator(value: NonNullable<T.ForHeaderVarKind.Config>['operator']): T.ForHeaderVarKind.Built;
-			right(value: NonNullable<T.ForHeaderVarKind.Config>['right']): T.ForHeaderVarKind.Built;
-		};
+	export interface Bound extends BoundOf<T.ForHeaderVarKind, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ForHeaderVarKind['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ForHeaderVarKind, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ForHeaderVarKind['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ForHeaderVarKind>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForHeaderVarKind>;
-	export type BuildArgs = [config: ConfigOf<T.ForHeaderVarKind>];
+	export type BuildArgs = [config: ConfigOf<T.ForHeaderVarKind, T.NamespaceMap>];
 	export type LooseArgs = [
-		config: LooseConfigOf<T.ForHeaderVarKind, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ForHeaderVarKind
+		config:
+			| LooseConfigOf<T.ForHeaderVarKind, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.ForHeaderVarKind, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ForHeaderVarKind;
 }
 export namespace ForHeaderLetConstKind {
 	export type Config = ConfigFor<TSKindId.ForHeaderLetConstKind>;
-	export interface Built extends T.ForHeaderLetConstKind, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			kind(value: NonNullable<T.ForHeaderLetConstKind.Config>['kind']): T.ForHeaderLetConstKind.Built;
-			left(value: T.Identifier | T.ObjectPattern | T.ArrayPattern): T.ForHeaderLetConstKind.Built;
-			automaticSemicolon(
-				value?: NonNullable<T.ForHeaderLetConstKind.Config>['automaticSemicolon']
-			): T.ForHeaderLetConstKind.Built;
-			operator(value: NonNullable<T.ForHeaderLetConstKind.Config>['operator']): T.ForHeaderLetConstKind.Built;
-			right(value: NonNullable<T.ForHeaderLetConstKind.Config>['right']): T.ForHeaderLetConstKind.Built;
-		};
+	export interface Bound extends BoundOf<T.ForHeaderLetConstKind, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ForHeaderLetConstKind['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ForHeaderLetConstKind, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ForHeaderLetConstKind['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ForHeaderLetConstKind>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForHeaderLetConstKind>;
-	export type BuildArgs = [config: ConfigOf<T.ForHeaderLetConstKind>];
+	export type BuildArgs = [config: ConfigOf<T.ForHeaderLetConstKind, T.NamespaceMap>];
 	export type LooseArgs = [
 		config:
 			| LooseConfigOf<T.ForHeaderLetConstKind, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| T.ForHeaderLetConstKind
+			| AdmitBound<T.ForHeaderLetConstKind, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ForHeaderLetConstKind;
 }
@@ -21566,43 +23721,18 @@ export namespace StatementIdentifier {
 		| TSKindId.AsyncKeyword
 		| TSKindId.StaticKeyword
 		| TSKindId.LetKeyword;
-	export interface Built extends T.StatementIdentifier, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(
-				value: NonNullable<
-					| T.Identifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-				>
-			): T.StatementIdentifier.Built;
-		};
+	export interface Bound extends BoundOf<T.StatementIdentifier, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.StatementIdentifier['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.StatementIdentifier, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.StatementIdentifier['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.StatementIdentifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StatementIdentifier>;
 	export type BuildArgs = [
-		value:
+		value: AdmitBound<
 			| T.Identifier
 			| TSKindId.DeclareKeyword
 			| TSKindId.NamespaceKeyword
@@ -21625,7 +23755,9 @@ export namespace StatementIdentifier {
 			| TSKindId.SetKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
+			| TSKindId.LetKeyword,
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		value: LooseValue<
@@ -21685,43 +23817,18 @@ export namespace ShorthandPropertyIdentifier {
 		| TSKindId.AsyncKeyword
 		| TSKindId.StaticKeyword
 		| TSKindId.LetKeyword;
-	export interface Built extends T.ShorthandPropertyIdentifier, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(
-				value: NonNullable<
-					| T.Identifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-				>
-			): T.ShorthandPropertyIdentifier.Built;
-		};
+	export interface Bound extends BoundOf<T.ShorthandPropertyIdentifier, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ShorthandPropertyIdentifier['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ShorthandPropertyIdentifier, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ShorthandPropertyIdentifier['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ShorthandPropertyIdentifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ShorthandPropertyIdentifier>;
 	export type BuildArgs = [
-		value:
+		value: AdmitBound<
 			| T.Identifier
 			| TSKindId.DeclareKeyword
 			| TSKindId.NamespaceKeyword
@@ -21744,7 +23851,9 @@ export namespace ShorthandPropertyIdentifier {
 			| TSKindId.SetKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
+			| TSKindId.LetKeyword,
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		value: LooseValue<
@@ -21804,43 +23913,18 @@ export namespace ShorthandPropertyIdentifierPattern {
 		| TSKindId.AsyncKeyword
 		| TSKindId.StaticKeyword
 		| TSKindId.LetKeyword;
-	export interface Built extends T.ShorthandPropertyIdentifierPattern, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(
-				value: NonNullable<
-					| T.Identifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-				>
-			): T.ShorthandPropertyIdentifierPattern.Built;
-		};
+	export interface Bound extends BoundOf<T.ShorthandPropertyIdentifierPattern, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ShorthandPropertyIdentifierPattern['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ShorthandPropertyIdentifierPattern, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ShorthandPropertyIdentifierPattern['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.ShorthandPropertyIdentifierPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ShorthandPropertyIdentifierPattern>;
 	export type BuildArgs = [
-		value:
+		value: AdmitBound<
 			| T.Identifier
 			| TSKindId.DeclareKeyword
 			| TSKindId.NamespaceKeyword
@@ -21863,7 +23947,9 @@ export namespace ShorthandPropertyIdentifierPattern {
 			| TSKindId.SetKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
+			| TSKindId.LetKeyword,
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		value: LooseValue<
@@ -21923,43 +24009,18 @@ export namespace PropertyIdentifier {
 		| TSKindId.AsyncKeyword
 		| TSKindId.StaticKeyword
 		| TSKindId.LetKeyword;
-	export interface Built extends T.PropertyIdentifier, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(
-				value: NonNullable<
-					| T.Identifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-				>
-			): T.PropertyIdentifier.Built;
-		};
+	export interface Bound extends BoundOf<T.PropertyIdentifier, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.PropertyIdentifier['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.PropertyIdentifier, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.PropertyIdentifier['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.PropertyIdentifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PropertyIdentifier>;
 	export type BuildArgs = [
-		value:
+		value: AdmitBound<
 			| T.Identifier
 			| TSKindId.DeclareKeyword
 			| TSKindId.NamespaceKeyword
@@ -21982,7 +24043,9 @@ export namespace PropertyIdentifier {
 			| TSKindId.SetKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
+			| TSKindId.LetKeyword,
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		value: LooseValue<
@@ -22019,38 +24082,41 @@ export namespace PropertyIdentifier {
 export namespace TypeIdentifier {
 	export type Config = ConfigFor<TSKindId.TypeIdentifier>;
 	export type Types = Identifier;
-	export interface Built extends T.TypeIdentifier, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: T.Identifier): T.TypeIdentifier.Built;
-		};
+	export interface Bound extends BoundOf<T.TypeIdentifier, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeIdentifier['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.TypeIdentifier, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.TypeIdentifier['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.TypeIdentifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeIdentifier>;
-	export type BuildArgs = [value: T.Identifier];
+	export type BuildArgs = [value: AdmitBound<T.Identifier, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.TypeIdentifier;
 }
 export namespace InterfaceBody {
 	export type Config = ConfigFor<TSKindId.InterfaceBody>;
 	export type Types = ObjectType;
-	export interface Built extends T.InterfaceBody, NodeMethodsOf {
-		readonly $source: 2;
-		readonly $named: true;
-		readonly $with: {
-			content(value: T.ObjectType): T.InterfaceBody.Built;
-		};
+	export interface Bound extends BoundOf<T.InterfaceBody, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.InterfaceBody['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.InterfaceBody, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.InterfaceBody['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
 	}
 	export type Loose = LooseFor<TSKindId.InterfaceBody>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InterfaceBody>;
-	export type BuildArgs = [value: T.ObjectType];
+	export type BuildArgs = [value: AdmitBound<T.ObjectType, T.AdmittedNodes>];
 	export type LooseArgs = [value: LooseValue<T.ObjectType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.InterfaceBody;
 }
 export namespace Import {
 	export type Config = ImportNs['Config'];
-	export type Built = ImportNs['Built'];
+	export type Bound = ImportNs['Bound'];
+	export type Parsed = ImportNs['Bound'];
 	export type Loose = ImportNs['Loose'];
 	export type LooseConfig = ImportNs['LooseConfig'];
 	export type BuildArgs = ImportNs['BuildArgs'];
@@ -22059,7 +24125,8 @@ export namespace Import {
 }
 export namespace EmptyStatement {
 	export type Config = EmptyStatementNs['Config'];
-	export type Built = EmptyStatementNs['Built'];
+	export type Bound = EmptyStatementNs['Bound'];
+	export type Parsed = EmptyStatementNs['Bound'];
 	export type Loose = EmptyStatementNs['Loose'];
 	export type LooseConfig = EmptyStatementNs['LooseConfig'];
 	export type BuildArgs = EmptyStatementNs['BuildArgs'];
@@ -22068,7 +24135,8 @@ export namespace EmptyStatement {
 }
 export namespace OptionalChain {
 	export type Config = OptionalChainNs['Config'];
-	export type Built = OptionalChainNs['Built'];
+	export type Bound = OptionalChainNs['Bound'];
+	export type Parsed = OptionalChainNs['Bound'];
 	export type Loose = OptionalChainNs['Loose'];
 	export type LooseConfig = OptionalChainNs['LooseConfig'];
 	export type BuildArgs = OptionalChainNs['BuildArgs'];
@@ -22077,7 +24145,8 @@ export namespace OptionalChain {
 }
 export namespace This {
 	export type Config = ThisNs['Config'];
-	export type Built = ThisNs['Built'];
+	export type Bound = ThisNs['Bound'];
+	export type Parsed = ThisNs['Bound'];
 	export type Loose = ThisNs['Loose'];
 	export type LooseConfig = ThisNs['LooseConfig'];
 	export type BuildArgs = ThisNs['BuildArgs'];
@@ -22086,7 +24155,8 @@ export namespace This {
 }
 export namespace Super {
 	export type Config = SuperNs['Config'];
-	export type Built = SuperNs['Built'];
+	export type Bound = SuperNs['Bound'];
+	export type Parsed = SuperNs['Bound'];
 	export type Loose = SuperNs['Loose'];
 	export type LooseConfig = SuperNs['LooseConfig'];
 	export type BuildArgs = SuperNs['BuildArgs'];
@@ -22095,7 +24165,8 @@ export namespace Super {
 }
 export namespace True {
 	export type Config = TrueNs['Config'];
-	export type Built = TrueNs['Built'];
+	export type Bound = TrueNs['Bound'];
+	export type Parsed = TrueNs['Bound'];
 	export type Loose = TrueNs['Loose'];
 	export type LooseConfig = TrueNs['LooseConfig'];
 	export type BuildArgs = TrueNs['BuildArgs'];
@@ -22104,7 +24175,8 @@ export namespace True {
 }
 export namespace False {
 	export type Config = FalseNs['Config'];
-	export type Built = FalseNs['Built'];
+	export type Bound = FalseNs['Bound'];
+	export type Parsed = FalseNs['Bound'];
 	export type Loose = FalseNs['Loose'];
 	export type LooseConfig = FalseNs['LooseConfig'];
 	export type BuildArgs = FalseNs['BuildArgs'];
@@ -22113,7 +24185,8 @@ export namespace False {
 }
 export namespace Null {
 	export type Config = NullNs['Config'];
-	export type Built = NullNs['Built'];
+	export type Bound = NullNs['Bound'];
+	export type Parsed = NullNs['Bound'];
 	export type Loose = NullNs['Loose'];
 	export type LooseConfig = NullNs['LooseConfig'];
 	export type BuildArgs = NullNs['BuildArgs'];
@@ -22122,7 +24195,8 @@ export namespace Null {
 }
 export namespace Undefined {
 	export type Config = UndefinedNs['Config'];
-	export type Built = UndefinedNs['Built'];
+	export type Bound = UndefinedNs['Bound'];
+	export type Parsed = UndefinedNs['Bound'];
 	export type Loose = UndefinedNs['Loose'];
 	export type LooseConfig = UndefinedNs['LooseConfig'];
 	export type BuildArgs = UndefinedNs['BuildArgs'];
@@ -22131,7 +24205,8 @@ export namespace Undefined {
 }
 export namespace OverrideModifier {
 	export type Config = OverrideModifierNs['Config'];
-	export type Built = OverrideModifierNs['Built'];
+	export type Bound = OverrideModifierNs['Bound'];
+	export type Parsed = OverrideModifierNs['Bound'];
 	export type Loose = OverrideModifierNs['Loose'];
 	export type LooseConfig = OverrideModifierNs['LooseConfig'];
 	export type BuildArgs = OverrideModifierNs['BuildArgs'];
@@ -22140,7 +24215,8 @@ export namespace OverrideModifier {
 }
 export namespace ExistentialType {
 	export type Config = ExistentialTypeNs['Config'];
-	export type Built = ExistentialTypeNs['Built'];
+	export type Bound = ExistentialTypeNs['Bound'];
+	export type Parsed = ExistentialTypeNs['Bound'];
 	export type Loose = ExistentialTypeNs['Loose'];
 	export type LooseConfig = ExistentialTypeNs['LooseConfig'];
 	export type BuildArgs = ExistentialTypeNs['BuildArgs'];
@@ -22149,7 +24225,8 @@ export namespace ExistentialType {
 }
 export namespace KwAwaitMarker {
 	export type Config = KwAwaitMarkerNs['Config'];
-	export type Built = KwAwaitMarkerNs['Built'];
+	export type Bound = KwAwaitMarkerNs['Bound'];
+	export type Parsed = KwAwaitMarkerNs['Bound'];
 	export type Loose = KwAwaitMarkerNs['Loose'];
 	export type LooseConfig = KwAwaitMarkerNs['LooseConfig'];
 	export type BuildArgs = KwAwaitMarkerNs['BuildArgs'];
@@ -22158,7 +24235,8 @@ export namespace KwAwaitMarker {
 }
 export namespace KwAsyncMarker {
 	export type Config = KwAsyncMarkerNs['Config'];
-	export type Built = KwAsyncMarkerNs['Built'];
+	export type Bound = KwAsyncMarkerNs['Bound'];
+	export type Parsed = KwAsyncMarkerNs['Bound'];
 	export type Loose = KwAsyncMarkerNs['Loose'];
 	export type LooseConfig = KwAsyncMarkerNs['LooseConfig'];
 	export type BuildArgs = KwAsyncMarkerNs['BuildArgs'];
@@ -22167,7 +24245,8 @@ export namespace KwAsyncMarker {
 }
 export namespace KwUsingMarker {
 	export type Config = KwUsingMarkerNs['Config'];
-	export type Built = KwUsingMarkerNs['Built'];
+	export type Bound = KwUsingMarkerNs['Bound'];
+	export type Parsed = KwUsingMarkerNs['Bound'];
 	export type Loose = KwUsingMarkerNs['Loose'];
 	export type LooseConfig = KwUsingMarkerNs['LooseConfig'];
 	export type BuildArgs = KwUsingMarkerNs['BuildArgs'];
@@ -22176,7 +24255,8 @@ export namespace KwUsingMarker {
 }
 export namespace KwStaticMarker {
 	export type Config = KwStaticMarkerNs['Config'];
-	export type Built = KwStaticMarkerNs['Built'];
+	export type Bound = KwStaticMarkerNs['Bound'];
+	export type Parsed = KwStaticMarkerNs['Bound'];
 	export type Loose = KwStaticMarkerNs['Loose'];
 	export type LooseConfig = KwStaticMarkerNs['LooseConfig'];
 	export type BuildArgs = KwStaticMarkerNs['BuildArgs'];
@@ -22185,7 +24265,8 @@ export namespace KwStaticMarker {
 }
 export namespace KwDeclareMarker {
 	export type Config = KwDeclareMarkerNs['Config'];
-	export type Built = KwDeclareMarkerNs['Built'];
+	export type Bound = KwDeclareMarkerNs['Bound'];
+	export type Parsed = KwDeclareMarkerNs['Bound'];
 	export type Loose = KwDeclareMarkerNs['Loose'];
 	export type LooseConfig = KwDeclareMarkerNs['LooseConfig'];
 	export type BuildArgs = KwDeclareMarkerNs['BuildArgs'];
@@ -22194,7 +24275,8 @@ export namespace KwDeclareMarker {
 }
 export namespace KwAbstractMarker {
 	export type Config = KwAbstractMarkerNs['Config'];
-	export type Built = KwAbstractMarkerNs['Built'];
+	export type Bound = KwAbstractMarkerNs['Bound'];
+	export type Parsed = KwAbstractMarkerNs['Bound'];
 	export type Loose = KwAbstractMarkerNs['Loose'];
 	export type LooseConfig = KwAbstractMarkerNs['LooseConfig'];
 	export type BuildArgs = KwAbstractMarkerNs['BuildArgs'];
@@ -22203,7 +24285,8 @@ export namespace KwAbstractMarker {
 }
 export namespace KwAccessorMarker {
 	export type Config = KwAccessorMarkerNs['Config'];
-	export type Built = KwAccessorMarkerNs['Built'];
+	export type Bound = KwAccessorMarkerNs['Bound'];
+	export type Parsed = KwAccessorMarkerNs['Bound'];
 	export type Loose = KwAccessorMarkerNs['Loose'];
 	export type LooseConfig = KwAccessorMarkerNs['LooseConfig'];
 	export type BuildArgs = KwAccessorMarkerNs['BuildArgs'];
@@ -22212,7 +24295,8 @@ export namespace KwAccessorMarker {
 }
 export namespace KwConstMarker {
 	export type Config = KwConstMarkerNs['Config'];
-	export type Built = KwConstMarkerNs['Built'];
+	export type Bound = KwConstMarkerNs['Bound'];
+	export type Parsed = KwConstMarkerNs['Bound'];
 	export type Loose = KwConstMarkerNs['Loose'];
 	export type LooseConfig = KwConstMarkerNs['LooseConfig'];
 	export type BuildArgs = KwConstMarkerNs['BuildArgs'];
@@ -22221,7 +24305,8 @@ export namespace KwConstMarker {
 }
 export namespace EmptyMember {
 	export type Config = EmptyMemberNs['Config'];
-	export type Built = EmptyMemberNs['Built'];
+	export type Bound = EmptyMemberNs['Bound'];
+	export type Parsed = EmptyMemberNs['Bound'];
 	export type Loose = EmptyMemberNs['Loose'];
 	export type LooseConfig = EmptyMemberNs['LooseConfig'];
 	export type BuildArgs = EmptyMemberNs['BuildArgs'];
@@ -22230,7 +24315,8 @@ export namespace EmptyMember {
 }
 export namespace MetaPropertyNewTarget {
 	export type Config = MetaPropertyNewTargetNs['Config'];
-	export type Built = MetaPropertyNewTargetNs['Built'];
+	export type Bound = MetaPropertyNewTargetNs['Bound'];
+	export type Parsed = MetaPropertyNewTargetNs['Bound'];
 	export type Loose = MetaPropertyNewTargetNs['Loose'];
 	export type LooseConfig = MetaPropertyNewTargetNs['LooseConfig'];
 	export type BuildArgs = MetaPropertyNewTargetNs['BuildArgs'];
@@ -22239,7 +24325,8 @@ export namespace MetaPropertyNewTarget {
 }
 export namespace MetaPropertyImportMeta {
 	export type Config = MetaPropertyImportMetaNs['Config'];
-	export type Built = MetaPropertyImportMetaNs['Built'];
+	export type Bound = MetaPropertyImportMetaNs['Bound'];
+	export type Parsed = MetaPropertyImportMetaNs['Bound'];
 	export type Loose = MetaPropertyImportMetaNs['Loose'];
 	export type LooseConfig = MetaPropertyImportMetaNs['LooseConfig'];
 	export type BuildArgs = MetaPropertyImportMetaNs['BuildArgs'];
@@ -22248,7 +24335,8 @@ export namespace MetaPropertyImportMeta {
 }
 export namespace AutomaticSemicolon {
 	export type Config = AutomaticSemicolonNs['Config'];
-	export type Built = AutomaticSemicolonNs['Built'];
+	export type Bound = AutomaticSemicolonNs['Bound'];
+	export type Parsed = AutomaticSemicolonNs['Bound'];
 	export type Loose = AutomaticSemicolonNs['Loose'];
 	export type LooseConfig = AutomaticSemicolonNs['LooseConfig'];
 	export type BuildArgs = AutomaticSemicolonNs['BuildArgs'];
@@ -22257,7 +24345,8 @@ export namespace AutomaticSemicolon {
 }
 export namespace FunctionSignatureAutomaticSemicolon {
 	export type Config = FunctionSignatureAutomaticSemicolonNs['Config'];
-	export type Built = FunctionSignatureAutomaticSemicolonNs['Built'];
+	export type Bound = FunctionSignatureAutomaticSemicolonNs['Bound'];
+	export type Parsed = FunctionSignatureAutomaticSemicolonNs['Bound'];
 	export type Loose = FunctionSignatureAutomaticSemicolonNs['Loose'];
 	export type LooseConfig = FunctionSignatureAutomaticSemicolonNs['LooseConfig'];
 	export type BuildArgs = FunctionSignatureAutomaticSemicolonNs['BuildArgs'];
@@ -22266,7 +24355,8 @@ export namespace FunctionSignatureAutomaticSemicolon {
 }
 export namespace Tight {
 	export type Config = TightNs['Config'];
-	export type Built = TightNs['Built'];
+	export type Bound = TightNs['Bound'];
+	export type Parsed = TightNs['Bound'];
 	export type Loose = TightNs['Loose'];
 	export type LooseConfig = TightNs['LooseConfig'];
 	export type BuildArgs = TightNs['BuildArgs'];
@@ -22275,7 +24365,8 @@ export namespace Tight {
 }
 export namespace Space {
 	export type Config = SpaceNs['Config'];
-	export type Built = SpaceNs['Built'];
+	export type Bound = SpaceNs['Bound'];
+	export type Parsed = SpaceNs['Bound'];
 	export type Loose = SpaceNs['Loose'];
 	export type LooseConfig = SpaceNs['LooseConfig'];
 	export type BuildArgs = SpaceNs['BuildArgs'];
@@ -22284,7 +24375,8 @@ export namespace Space {
 }
 export namespace Tab {
 	export type Config = TabNs['Config'];
-	export type Built = TabNs['Built'];
+	export type Bound = TabNs['Bound'];
+	export type Parsed = TabNs['Bound'];
 	export type Loose = TabNs['Loose'];
 	export type LooseConfig = TabNs['LooseConfig'];
 	export type BuildArgs = TabNs['BuildArgs'];
@@ -22293,7 +24385,8 @@ export namespace Tab {
 }
 export namespace Newline {
 	export type Config = NewlineNs['Config'];
-	export type Built = NewlineNs['Built'];
+	export type Bound = NewlineNs['Bound'];
+	export type Parsed = NewlineNs['Bound'];
 	export type Loose = NewlineNs['Loose'];
 	export type LooseConfig = NewlineNs['LooseConfig'];
 	export type BuildArgs = NewlineNs['BuildArgs'];
@@ -22302,7 +24395,8 @@ export namespace Newline {
 }
 export namespace Blankline {
 	export type Config = BlanklineNs['Config'];
-	export type Built = BlanklineNs['Built'];
+	export type Bound = BlanklineNs['Bound'];
+	export type Parsed = BlanklineNs['Bound'];
 	export type Loose = BlanklineNs['Loose'];
 	export type LooseConfig = BlanklineNs['LooseConfig'];
 	export type BuildArgs = BlanklineNs['BuildArgs'];
@@ -22311,7 +24405,8 @@ export namespace Blankline {
 }
 export namespace DoubleBlankline {
 	export type Config = DoubleBlanklineNs['Config'];
-	export type Built = DoubleBlanklineNs['Built'];
+	export type Bound = DoubleBlanklineNs['Bound'];
+	export type Parsed = DoubleBlanklineNs['Bound'];
 	export type Loose = DoubleBlanklineNs['Loose'];
 	export type LooseConfig = DoubleBlanklineNs['LooseConfig'];
 	export type BuildArgs = DoubleBlanklineNs['BuildArgs'];
@@ -22320,7 +24415,8 @@ export namespace DoubleBlankline {
 }
 export namespace Indent {
 	export type Config = IndentNs['Config'];
-	export type Built = IndentNs['Built'];
+	export type Bound = IndentNs['Bound'];
+	export type Parsed = IndentNs['Bound'];
 	export type Loose = IndentNs['Loose'];
 	export type LooseConfig = IndentNs['LooseConfig'];
 	export type BuildArgs = IndentNs['BuildArgs'];
@@ -22329,7 +24425,8 @@ export namespace Indent {
 }
 export namespace Dedent {
 	export type Config = DedentNs['Config'];
-	export type Built = DedentNs['Built'];
+	export type Bound = DedentNs['Bound'];
+	export type Parsed = DedentNs['Bound'];
 	export type Loose = DedentNs['Loose'];
 	export type LooseConfig = DedentNs['LooseConfig'];
 	export type BuildArgs = DedentNs['BuildArgs'];
@@ -22338,7 +24435,8 @@ export namespace Dedent {
 }
 export namespace TypeKeyword {
 	export type Config = TypeKeywordNs['Config'];
-	export type Built = TypeKeywordNs['Built'];
+	export type Bound = TypeKeywordNs['Bound'];
+	export type Parsed = TypeKeywordNs['Bound'];
 	export type Loose = TypeKeywordNs['Loose'];
 	export type LooseConfig = TypeKeywordNs['LooseConfig'];
 	export type BuildArgs = TypeKeywordNs['BuildArgs'];
@@ -22347,7 +24445,8 @@ export namespace TypeKeyword {
 }
 export namespace LetKeyword {
 	export type Config = LetKeywordNs['Config'];
-	export type Built = LetKeywordNs['Built'];
+	export type Bound = LetKeywordNs['Bound'];
+	export type Parsed = LetKeywordNs['Bound'];
 	export type Loose = LetKeywordNs['Loose'];
 	export type LooseConfig = LetKeywordNs['LooseConfig'];
 	export type BuildArgs = LetKeywordNs['BuildArgs'];
@@ -22356,7 +24455,8 @@ export namespace LetKeyword {
 }
 export namespace DeclareKeyword {
 	export type Config = DeclareKeywordNs['Config'];
-	export type Built = DeclareKeywordNs['Built'];
+	export type Bound = DeclareKeywordNs['Bound'];
+	export type Parsed = DeclareKeywordNs['Bound'];
 	export type Loose = DeclareKeywordNs['Loose'];
 	export type LooseConfig = DeclareKeywordNs['LooseConfig'];
 	export type BuildArgs = DeclareKeywordNs['BuildArgs'];
@@ -22365,7 +24465,8 @@ export namespace DeclareKeyword {
 }
 export namespace NamespaceKeyword {
 	export type Config = NamespaceKeywordNs['Config'];
-	export type Built = NamespaceKeywordNs['Built'];
+	export type Bound = NamespaceKeywordNs['Bound'];
+	export type Parsed = NamespaceKeywordNs['Bound'];
 	export type Loose = NamespaceKeywordNs['Loose'];
 	export type LooseConfig = NamespaceKeywordNs['LooseConfig'];
 	export type BuildArgs = NamespaceKeywordNs['BuildArgs'];
@@ -22374,7 +24475,8 @@ export namespace NamespaceKeyword {
 }
 export namespace PublicKeyword {
 	export type Config = PublicKeywordNs['Config'];
-	export type Built = PublicKeywordNs['Built'];
+	export type Bound = PublicKeywordNs['Bound'];
+	export type Parsed = PublicKeywordNs['Bound'];
 	export type Loose = PublicKeywordNs['Loose'];
 	export type LooseConfig = PublicKeywordNs['LooseConfig'];
 	export type BuildArgs = PublicKeywordNs['BuildArgs'];
@@ -22383,7 +24485,8 @@ export namespace PublicKeyword {
 }
 export namespace PrivateKeyword {
 	export type Config = PrivateKeywordNs['Config'];
-	export type Built = PrivateKeywordNs['Built'];
+	export type Bound = PrivateKeywordNs['Bound'];
+	export type Parsed = PrivateKeywordNs['Bound'];
 	export type Loose = PrivateKeywordNs['Loose'];
 	export type LooseConfig = PrivateKeywordNs['LooseConfig'];
 	export type BuildArgs = PrivateKeywordNs['BuildArgs'];
@@ -22392,7 +24495,8 @@ export namespace PrivateKeyword {
 }
 export namespace ProtectedKeyword {
 	export type Config = ProtectedKeywordNs['Config'];
-	export type Built = ProtectedKeywordNs['Built'];
+	export type Bound = ProtectedKeywordNs['Bound'];
+	export type Parsed = ProtectedKeywordNs['Bound'];
 	export type Loose = ProtectedKeywordNs['Loose'];
 	export type LooseConfig = ProtectedKeywordNs['LooseConfig'];
 	export type BuildArgs = ProtectedKeywordNs['BuildArgs'];
@@ -22401,7 +24505,8 @@ export namespace ProtectedKeyword {
 }
 export namespace OverrideKeyword {
 	export type Config = OverrideKeywordNs['Config'];
-	export type Built = OverrideKeywordNs['Built'];
+	export type Bound = OverrideKeywordNs['Bound'];
+	export type Parsed = OverrideKeywordNs['Bound'];
 	export type Loose = OverrideKeywordNs['Loose'];
 	export type LooseConfig = OverrideKeywordNs['LooseConfig'];
 	export type BuildArgs = OverrideKeywordNs['BuildArgs'];
@@ -22410,7 +24515,8 @@ export namespace OverrideKeyword {
 }
 export namespace ReadonlyKeyword {
 	export type Config = ReadonlyKeywordNs['Config'];
-	export type Built = ReadonlyKeywordNs['Built'];
+	export type Bound = ReadonlyKeywordNs['Bound'];
+	export type Parsed = ReadonlyKeywordNs['Bound'];
 	export type Loose = ReadonlyKeywordNs['Loose'];
 	export type LooseConfig = ReadonlyKeywordNs['LooseConfig'];
 	export type BuildArgs = ReadonlyKeywordNs['BuildArgs'];
@@ -22419,7 +24525,8 @@ export namespace ReadonlyKeyword {
 }
 export namespace ModuleKeyword {
 	export type Config = ModuleKeywordNs['Config'];
-	export type Built = ModuleKeywordNs['Built'];
+	export type Bound = ModuleKeywordNs['Bound'];
+	export type Parsed = ModuleKeywordNs['Bound'];
 	export type Loose = ModuleKeywordNs['Loose'];
 	export type LooseConfig = ModuleKeywordNs['LooseConfig'];
 	export type BuildArgs = ModuleKeywordNs['BuildArgs'];
@@ -22428,7 +24535,8 @@ export namespace ModuleKeyword {
 }
 export namespace AnyKeyword {
 	export type Config = AnyKeywordNs['Config'];
-	export type Built = AnyKeywordNs['Built'];
+	export type Bound = AnyKeywordNs['Bound'];
+	export type Parsed = AnyKeywordNs['Bound'];
 	export type Loose = AnyKeywordNs['Loose'];
 	export type LooseConfig = AnyKeywordNs['LooseConfig'];
 	export type BuildArgs = AnyKeywordNs['BuildArgs'];
@@ -22437,7 +24545,8 @@ export namespace AnyKeyword {
 }
 export namespace NumberKeyword {
 	export type Config = NumberKeywordNs['Config'];
-	export type Built = NumberKeywordNs['Built'];
+	export type Bound = NumberKeywordNs['Bound'];
+	export type Parsed = NumberKeywordNs['Bound'];
 	export type Loose = NumberKeywordNs['Loose'];
 	export type LooseConfig = NumberKeywordNs['LooseConfig'];
 	export type BuildArgs = NumberKeywordNs['BuildArgs'];
@@ -22446,7 +24555,8 @@ export namespace NumberKeyword {
 }
 export namespace BooleanKeyword {
 	export type Config = BooleanKeywordNs['Config'];
-	export type Built = BooleanKeywordNs['Built'];
+	export type Bound = BooleanKeywordNs['Bound'];
+	export type Parsed = BooleanKeywordNs['Bound'];
 	export type Loose = BooleanKeywordNs['Loose'];
 	export type LooseConfig = BooleanKeywordNs['LooseConfig'];
 	export type BuildArgs = BooleanKeywordNs['BuildArgs'];
@@ -22455,7 +24565,8 @@ export namespace BooleanKeyword {
 }
 export namespace StringKeyword {
 	export type Config = StringKeywordNs['Config'];
-	export type Built = StringKeywordNs['Built'];
+	export type Bound = StringKeywordNs['Bound'];
+	export type Parsed = StringKeywordNs['Bound'];
 	export type Loose = StringKeywordNs['Loose'];
 	export type LooseConfig = StringKeywordNs['LooseConfig'];
 	export type BuildArgs = StringKeywordNs['BuildArgs'];
@@ -22464,7 +24575,8 @@ export namespace StringKeyword {
 }
 export namespace SymbolKeyword {
 	export type Config = SymbolKeywordNs['Config'];
-	export type Built = SymbolKeywordNs['Built'];
+	export type Bound = SymbolKeywordNs['Bound'];
+	export type Parsed = SymbolKeywordNs['Bound'];
 	export type Loose = SymbolKeywordNs['Loose'];
 	export type LooseConfig = SymbolKeywordNs['LooseConfig'];
 	export type BuildArgs = SymbolKeywordNs['BuildArgs'];
@@ -22473,7 +24585,8 @@ export namespace SymbolKeyword {
 }
 export namespace ExportKeyword {
 	export type Config = ExportKeywordNs['Config'];
-	export type Built = ExportKeywordNs['Built'];
+	export type Bound = ExportKeywordNs['Bound'];
+	export type Parsed = ExportKeywordNs['Bound'];
 	export type Loose = ExportKeywordNs['Loose'];
 	export type LooseConfig = ExportKeywordNs['LooseConfig'];
 	export type BuildArgs = ExportKeywordNs['BuildArgs'];
@@ -22482,7 +24595,8 @@ export namespace ExportKeyword {
 }
 export namespace ObjectKeyword {
 	export type Config = ObjectKeywordNs['Config'];
-	export type Built = ObjectKeywordNs['Built'];
+	export type Bound = ObjectKeywordNs['Bound'];
+	export type Parsed = ObjectKeywordNs['Bound'];
 	export type Loose = ObjectKeywordNs['Loose'];
 	export type LooseConfig = ObjectKeywordNs['LooseConfig'];
 	export type BuildArgs = ObjectKeywordNs['BuildArgs'];
@@ -22491,7 +24605,8 @@ export namespace ObjectKeyword {
 }
 export namespace NewKeyword {
 	export type Config = NewKeywordNs['Config'];
-	export type Built = NewKeywordNs['Built'];
+	export type Bound = NewKeywordNs['Bound'];
+	export type Parsed = NewKeywordNs['Bound'];
 	export type Loose = NewKeywordNs['Loose'];
 	export type LooseConfig = NewKeywordNs['LooseConfig'];
 	export type BuildArgs = NewKeywordNs['BuildArgs'];
@@ -22500,7 +24615,8 @@ export namespace NewKeyword {
 }
 export namespace GetKeyword {
 	export type Config = GetKeywordNs['Config'];
-	export type Built = GetKeywordNs['Built'];
+	export type Bound = GetKeywordNs['Bound'];
+	export type Parsed = GetKeywordNs['Bound'];
 	export type Loose = GetKeywordNs['Loose'];
 	export type LooseConfig = GetKeywordNs['LooseConfig'];
 	export type BuildArgs = GetKeywordNs['BuildArgs'];
@@ -22509,7 +24625,8 @@ export namespace GetKeyword {
 }
 export namespace SetKeyword {
 	export type Config = SetKeywordNs['Config'];
-	export type Built = SetKeywordNs['Built'];
+	export type Bound = SetKeywordNs['Bound'];
+	export type Parsed = SetKeywordNs['Bound'];
 	export type Loose = SetKeywordNs['Loose'];
 	export type LooseConfig = SetKeywordNs['LooseConfig'];
 	export type BuildArgs = SetKeywordNs['BuildArgs'];
@@ -22518,7 +24635,8 @@ export namespace SetKeyword {
 }
 export namespace AsyncKeyword {
 	export type Config = AsyncKeywordNs['Config'];
-	export type Built = AsyncKeywordNs['Built'];
+	export type Bound = AsyncKeywordNs['Bound'];
+	export type Parsed = AsyncKeywordNs['Bound'];
 	export type Loose = AsyncKeywordNs['Loose'];
 	export type LooseConfig = AsyncKeywordNs['LooseConfig'];
 	export type BuildArgs = AsyncKeywordNs['BuildArgs'];
@@ -22527,7 +24645,8 @@ export namespace AsyncKeyword {
 }
 export namespace StaticKeyword {
 	export type Config = StaticKeywordNs['Config'];
-	export type Built = StaticKeywordNs['Built'];
+	export type Bound = StaticKeywordNs['Bound'];
+	export type Parsed = StaticKeywordNs['Bound'];
 	export type Loose = StaticKeywordNs['Loose'];
 	export type LooseConfig = StaticKeywordNs['LooseConfig'];
 	export type BuildArgs = StaticKeywordNs['BuildArgs'];
@@ -22536,12 +24655,13 @@ export namespace StaticKeyword {
 }
 export namespace UnescapedDoubleStringFragment {
 	export type Config = UnescapedDoubleStringFragmentNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.UnescapedDoubleStringFragment;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = UnescapedDoubleStringFragmentNs['Loose'];
 	export type LooseConfig = UnescapedDoubleStringFragmentNs['LooseConfig'];
 	export type BuildArgs = UnescapedDoubleStringFragmentNs['BuildArgs'];
@@ -22550,12 +24670,13 @@ export namespace UnescapedDoubleStringFragment {
 }
 export namespace UnescapedSingleStringFragment {
 	export type Config = UnescapedSingleStringFragmentNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.UnescapedSingleStringFragment;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = UnescapedSingleStringFragmentNs['Loose'];
 	export type LooseConfig = UnescapedSingleStringFragmentNs['LooseConfig'];
 	export type BuildArgs = UnescapedSingleStringFragmentNs['BuildArgs'];
@@ -22564,12 +24685,13 @@ export namespace UnescapedSingleStringFragment {
 }
 export namespace RegexPattern {
 	export type Config = RegexPatternNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.RegexPattern;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = RegexPatternNs['Loose'];
 	export type LooseConfig = RegexPatternNs['LooseConfig'];
 	export type BuildArgs = RegexPatternNs['BuildArgs'];
@@ -22578,12 +24700,13 @@ export namespace RegexPattern {
 }
 export namespace RegexFlags {
 	export type Config = RegexFlagsNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.RegexFlags;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = RegexFlagsNs['Loose'];
 	export type LooseConfig = RegexFlagsNs['LooseConfig'];
 	export type BuildArgs = RegexFlagsNs['BuildArgs'];
@@ -22592,12 +24715,13 @@ export namespace RegexFlags {
 }
 export namespace Identifier {
 	export type Config = IdentifierNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.Identifier;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = IdentifierNs['Loose'];
 	export type LooseConfig = IdentifierNs['LooseConfig'];
 	export type BuildArgs = IdentifierNs['BuildArgs'];
@@ -22606,12 +24730,13 @@ export namespace Identifier {
 }
 export namespace NumberDecimal {
 	export type Config = NumberDecimalNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.NumberDecimal;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = NumberDecimalNs['Loose'];
 	export type LooseConfig = NumberDecimalNs['LooseConfig'];
 	export type BuildArgs = NumberDecimalNs['BuildArgs'];
@@ -22620,12 +24745,13 @@ export namespace NumberDecimal {
 }
 export namespace HtmlComment {
 	export type Config = HtmlCommentNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.HtmlComment;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = HtmlCommentNs['Loose'];
 	export type LooseConfig = HtmlCommentNs['LooseConfig'];
 	export type BuildArgs = HtmlCommentNs['BuildArgs'];
@@ -22634,12 +24760,13 @@ export namespace HtmlComment {
 }
 export namespace JsxText {
 	export type Config = JsxTextNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.JsxText;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = JsxTextNs['Loose'];
 	export type LooseConfig = JsxTextNs['LooseConfig'];
 	export type BuildArgs = JsxTextNs['BuildArgs'];
@@ -22648,12 +24775,13 @@ export namespace JsxText {
 }
 export namespace TemplateChars {
 	export type Config = TemplateCharsNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.TemplateChars;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = TemplateCharsNs['Loose'];
 	export type LooseConfig = TemplateCharsNs['LooseConfig'];
 	export type BuildArgs = TemplateCharsNs['BuildArgs'];
@@ -22662,12 +24790,13 @@ export namespace TemplateChars {
 }
 export namespace TernaryQmark {
 	export type Config = TernaryQmarkNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.TernaryQmark;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = TernaryQmarkNs['Loose'];
 	export type LooseConfig = TernaryQmarkNs['LooseConfig'];
 	export type BuildArgs = TernaryQmarkNs['BuildArgs'];
@@ -22676,12 +24805,13 @@ export namespace TernaryQmark {
 }
 export namespace ErrorRecovery {
 	export type Config = ErrorRecoveryNs['Config'];
-	export interface Built extends NodeMethodsOf {
+	export interface Bound extends NodeMethodsOf {
 		readonly $type: TSKindId.ErrorRecovery;
-		readonly $source: 2;
+		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
+	export interface Parsed extends Bound {}
 	export type Loose = ErrorRecoveryNs['Loose'];
 	export type LooseConfig = ErrorRecoveryNs['LooseConfig'];
 	export type BuildArgs = ErrorRecoveryNs['BuildArgs'];
@@ -22722,45 +24852,45 @@ export type NodeMethodsOf = NodeMethods<TypescriptTypeMap['trivia']>;
 export type TriviaSetterOf<Self> = TriviaSetter<Self, TypescriptTypeMap['trivia']>;
 export type InnerTrivia<N> = GrammarInnerTrivia<N, TypescriptTypeMap['trivia']>;
 
-export interface EmptyProgram extends Program.Built {
+export interface EmptyProgram extends Program.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
-export interface EmptyExportClause extends ExportClause.Built {
+export interface EmptyExportClause extends ExportClause.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
-export interface EmptyNamedImports extends NamedImports.Built {
+export interface EmptyNamedImports extends NamedImports.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
-export interface EmptyStatementBlock extends StatementBlock.Built {
+export interface EmptyStatementBlock extends StatementBlock.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
-export interface EmptySwitchBody extends SwitchBody.Built {
+export interface EmptySwitchBody extends SwitchBody.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
-export interface EmptyObject extends Object.Built {
+export interface EmptyObject extends Object.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
-export interface EmptyObjectPattern extends ObjectPattern.Built {
+export interface EmptyObjectPattern extends ObjectPattern.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
-export interface EmptyArray extends Array.Built {
+export interface EmptyArray extends Array.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
-export interface EmptyArrayPattern extends ArrayPattern.Built {
+export interface EmptyArrayPattern extends ArrayPattern.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
-export interface EmptyArguments extends Arguments.Built {
+export interface EmptyArguments extends Arguments.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
-export interface EmptyClassBody extends ClassBody.Built {
+export interface EmptyClassBody extends ClassBody.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
-export interface EmptyFormalParameters extends FormalParameters.Built {
+export interface EmptyFormalParameters extends FormalParameters.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
-export interface EmptyEnumBody extends EnumBody.Built {
+export interface EmptyEnumBody extends EnumBody.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
-export interface EmptyTupleType extends TupleType.Built {
+export interface EmptyTupleType extends TupleType.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }

@@ -186,7 +186,7 @@ describe('emitPolymorphsOverlay', () => {
 		expect(text).toContain(
 			'const comment$doc = <PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>'
 		);
-		expect(text).toContain('export const comment: typeof B.comment & {');
+		expect(text).toContain('export const comment = Object.freeze({');
 		expect(text).toContain('	...B.comment,');
 		expect(text).toContain(
 			'	doc: { strict: comment$doc(F.buildComment, F.buildCommentDoc), coerce: comment$doc(F.buildComment, C.coerceToCommentDoc) },'
@@ -256,7 +256,7 @@ describe('a single hoisted group flattens onto its parent', () => {
 		expect(out).toContain(
 			`ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, '${seatKey}'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>))`
 		);
-		expect(out).toContain('export const clause: typeof B.clause & {');
+		expect(out).toContain('export const clause = Object.freeze({');
 		expect(out).toContain('= clause$flatten(F.buildClause, F.buildClauseGroup);');
 		expect(out).toContain('strict: clause$seated,');
 		expect(out.indexOf('...B.clause,')).toBeLessThan(out.indexOf('strict: clause$seated,'));

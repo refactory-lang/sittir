@@ -3,7 +3,8 @@
 // Composition: kind × shape = concrete type via NamespaceMap.
 
 import { TSKindId } from './types.js';
-import type { NamespaceMap, InlineFlagsGroup, Whitespace } from './types.js';
+import type { NamespaceMap } from './types.js';
+import type { NarrowTo } from '@sittir/types';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
@@ -59,8 +60,15 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TermGroup };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	inlineFlagsGroup(v: { readonly $type: string | number } | number): v is InlineFlagsGroup;
-	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
+	inlineFlagsGroup<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		TSKindId.InlineFlagsGroupEnable | TSKindId.InlineFlagsGroupToggle | TSKindId.InlineFlagsGroupDisable
+	>;
+	whitespace<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline>;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.

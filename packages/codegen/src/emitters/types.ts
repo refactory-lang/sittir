@@ -91,6 +91,7 @@ import {
 import {
 	constructorTargetKind,
 	builtTypeSurfaceOf,
+	listOwnerHint,
 	omitRegistered,
 	spellingTypeOf,
 	refineFormBuiltTypeSurfaceOf,
@@ -273,7 +274,8 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 			emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
 				? builtTypeSurfaceOf(node, nodeMap, kindEntries)
 				: undefined,
-			coercerRowArgs(kind, node, nodeMap, kindEntries)
+			coercerRowArgs(kind, node, nodeMap, kindEntries),
+			emptyForms(nodeMap).get(kind)?.typeName
 		);
 	}
 	const keywordNamespaceKinds = leafKinds.filter((kind) => {
@@ -297,7 +299,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	for (const kind of leafNamespaceKinds) {
 		const node = nodeMap.nodes.get(kind)!;
 		lines.push(
-			`export interface ${node.typeName}Ns extends LeafNs<${node.typeName}, ${leafConstructionTextType(node)}, ${node.typeName}.Built, ${kindIdOrNever(kind, nodeMap, kindEntries)}> {}`
+			`export interface ${node.typeName}Ns extends LeafNs<${node.typeName}, ${leafConstructionTextType(node)}, ${node.typeName}.Bound, ${kindIdOrNever(kind, nodeMap, kindEntries)}> {}`
 		);
 	}
 	lines.push('');
@@ -313,6 +315,25 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 		lines.push(`  [${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]: ${node.typeName}Ns;`);
 	}
 	lines.push('}');
+	lines.push('');
+	const surfaceKinds = [...namespaceKinds, ...leafNamespaceKinds.filter((kind) => hasKindId(kind, kindEntries))];
+	for (const surfaceName of ['Bound', 'Parsed']) {
+		lines.push(`export interface ${surfaceName}ByKindId {`);
+		for (const kind of surfaceKinds) {
+			const node = nodeMap.nodes.get(kind)!;
+			lines.push(`  [${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]: ${node.typeName}.${surfaceName};`);
+		}
+		lines.push('}');
+		lines.push('');
+	}
+	lines.push('export interface EmptyByKindId {');
+	for (const kind of surfaceKinds) {
+		const empty = emptyForms(nodeMap).get(kind);
+		if (empty !== undefined) lines.push(`  [${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)}]: ${empty.typeName};`);
+	}
+	lines.push('}');
+	lines.push('');
+	lines.push('export type AdmittedNodes = AdmitLookup<BoundByKindId, ParsedByKindId, EmptyByKindId>;');
 	lines.push('');
 
 	const fixedTextKindIds = new Set(
@@ -333,7 +354,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	lines.push('');
 
 	lines.push("export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];");
-	lines.push("export type BuiltFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Built'];");
+	lines.push("export type BoundFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Bound'];");
 	lines.push("export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];");
 	lines.push("export type LooseConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['LooseConfig'];");
 	lines.push("export type BuildArgsFor<K extends keyof NamespaceMap> = NamespaceMap[K]['BuildArgs'];");
@@ -341,7 +362,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 	lines.push('');
 
 	lines.push('// Namespace sugar — merges with each data interface so consumers can write');
-	lines.push('// <TypeName>.Config / .Built / .Loose alongside using <TypeName> as a type.');
+	lines.push('// <TypeName>.Config / .Bound / .Parsed / .Loose alongside using <TypeName> as a type.');
 	const refineInfoByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineInfoByKind.set(info.kind, info);
 	for (const kind of namespaceKinds) {
@@ -361,8 +382,10 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 		const ns = `${node.typeName}Ns`;
 		const surface = isKindIdStored(node) ? undefined : builtTypeSurfaceOf(node, nodeMap, kindEntries);
 		lines.push(`export namespace ${node.typeName} {`);
-		for (const member of ['Config', 'Built', 'Loose', 'LooseConfig', 'BuildArgs', 'LooseArgs']) {
-			if (member === 'Built' && surface !== undefined) emitBuiltInterface(lines, surface, '  ');
+		for (const member of ['Config', 'Bound', 'Parsed', 'Loose', 'LooseConfig', 'BuildArgs', 'LooseArgs']) {
+			if (member === 'Bound' && surface !== undefined) emitNodeSurfaceInterfaces(lines, surface, '  ');
+			else if (member === 'Parsed' && surface !== undefined) continue;
+			else if (member === 'Parsed') lines.push(`  export type Parsed = ${ns}['Bound'];`);
 			else lines.push(`  export type ${member} = ${ns}['${member}'];`);
 		}
 		lines.push(`  export type Kind = ${kindIdOrNever(kind, nodeMap, kindEntries)};`);
@@ -376,7 +399,7 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 		const node = nodeMap.nodes.get(kind)!;
 		const gaps = keyed ? `, ${empty.gaps.map((gap) => JSON.stringify(gap)).join(' | ')}` : '';
 		lines.push(
-			`export interface ${empty.typeName} extends ${node.typeName}.Built {`,
+			`export interface ${empty.typeName} extends ${node.typeName}.Bound {`,
 			`  readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this${gaps}>;`,
 			'}'
 		);
@@ -446,7 +469,17 @@ const VOCABULARY_IMPORTS = [
 	'NodeMethods',
 	'TriviaSetter',
 	'GrammarInnerTrivia',
-	'GrammarInnerTriviaAt'
+	'GrammarInnerTriviaAt',
+	'SlotHint',
+	'ListOwnerHint',
+	'BoundOf',
+	'ParsedOf',
+	'AdmitBound',
+	'AdmitLookup',
+	'SupertypeSurface',
+	'NodeLookup',
+	'WithNode',
+	'BoundWithNode'
 ];
 
 function emitGrammarTypeMap(grammar: string, nodeMap: NodeMap, triviaKinds: readonly string[], keyed: boolean): string[] {
@@ -704,6 +737,10 @@ function emitSupertypeNamespaces(lines: string[], internalLines: string[], emitt
 		const out = st.internal ? internalLines : lines;
 		out.push(`export namespace ${st.typeName} {`);
 		out.push(`  export type Kind = '${st.kind}';`);
+		if (!st.internal) {
+			out.push(`  export type Bound = SupertypeSurface<${st.typeName}, BoundByKindId>;`);
+			out.push(`  export type Parsed = SupertypeSurface<${st.typeName}, ParsedByKindId>;`);
+		}
 		out.push('}');
 		out.push('');
 	}
@@ -829,7 +866,8 @@ function emitNamespaceInterfaceLine(
 	lines: string[],
 	typeName: string,
 	surface: BuiltTypeSurface | undefined,
-	coercer: CoercerRowArgs | undefined
+	coercer: CoercerRowArgs | undefined,
+	emptyTypeName: string | undefined
 ): void {
 	if (surface === undefined) {
 		if (coercer !== undefined) {
@@ -846,19 +884,33 @@ function emitNamespaceInterfaceLine(
 		'  LeafScalarMap,',
 		'  LeafStringMap,',
 		'  NamespaceMap,',
-		`  ${typeName}.Built,`,
+		`  ${typeName}.Bound,`,
 		`  ${typeName}.BuildArgs,`,
-		...(coercer === undefined
-			? [`  ${typeName}.LooseArgs`]
-			: [`  ${typeName}.LooseArgs,`, `  ${coercer.bare ?? 'never'},`, `  ${coercer.kind}`]),
+		`  ${typeName}.LooseArgs,`,
+		`  ${coercer?.bare ?? 'never'},`,
+		`  ${coercer?.kind ?? 'never'},`,
+		`  ${typeName}.Parsed,`,
+		`  ${emptyTypeName ?? 'never'}`,
 		'> {}'
 	);
 }
 
-function emitBuiltInterface(lines: string[], surface: BuiltTypeSurface, indent: string): void {
-	lines.push(`${indent}export interface Built extends ${surface.extendsList.join(', ')} {`);
-	for (const member of surface.members) lines.push(`${indent}${member}`);
-	lines.push(`${indent}}`);
+function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, indent: string): void {
+	const emit = (name: string, extendsList: string, withNode: boolean): void => {
+		lines.push(`${indent}export interface ${name} extends ${extendsList} {`);
+		if (withNode) lines.push(`${indent}  readonly $type: ${surface.mainType}['$type'];`);
+		if (withNode)
+			lines.push(`${indent}  readonly $with: ${name === 'Bound' ? 'BoundWithNode' : 'WithNode'}<this, BoundByKindId, ParsedByKindId>;`);
+		for (const member of surface.members) lines.push(`${indent}${member}`);
+		lines.push(`${indent}}`);
+	};
+	if (surface.mainType === undefined) {
+		emit('Bound', 'NodeMethodsOf', false);
+		lines.push(`${indent}export interface Parsed extends Bound {}`);
+		return;
+	}
+	emit('Bound', `BoundOf<${surface.mainType}, BoundByKindId>, NodeMethodsOf`, true);
+	emit('Parsed', `ParsedOf<${surface.mainType}, ParsedByKindId>, NodeMethodsOf`, true);
 }
 
 type LookupUnion = (parts: readonly string[]) => string | undefined;
@@ -897,6 +949,7 @@ function emitInterface(
 			}
 		}
 		emitFieldInputHints(lines, slots, node.kind, nodeMap, kindEntries, lookupUnion);
+		emitSlotHints(lines, node, nodeMap, kindEntries);
 		if (aliasContentTypeExpr(node, nodeMap, kindEntries) !== undefined) {
 			lines.push(`  readonly __aliasContent__?: ${node.typeName}.Types;`);
 		}
@@ -918,6 +971,24 @@ function emitInterface(
 
 	lines.push('}');
 	lines.push('');
+}
+
+function emitSlotHints(
+	lines: string[],
+	node: StructuralNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): void {
+	const setters = builtTypeSurfaceOf(node, nodeMap, kindEntries)?.setters ?? [];
+	const owner = listOwnerHint(node, nodeMap, kindEntries);
+	if (setters.length === 0 && owner === undefined) return;
+	lines.push('  readonly __slotHints__?: {');
+	for (const setter of setters) {
+		const flags = setter.rest ? `, ${setter.optional}, true` : setter.optional ? ', true' : '';
+		lines.push(`    readonly ${setter.name}: SlotHint<${setter.input}${flags}>;`);
+	}
+	if (owner !== undefined) lines.push(`    readonly $listOwner: ListOwnerHint<${owner.element}, ${owner.options}, ${owner.input}>;`);
+	lines.push('  };');
 }
 
 function emitFieldArrayDeclaration(
@@ -1195,8 +1266,11 @@ function emitNamespaceSugarBlock(
 	const surface = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
 		? builtTypeSurfaceOf(node, nodeMap, kindEntries)
 		: undefined;
-	if (surface !== undefined) emitBuiltInterface(lines, surface, '  ');
-	else lines.push(`  export type Built = BuiltFor<${nsKey}>;`);
+	if (surface !== undefined) emitNodeSurfaceInterfaces(lines, surface, '  ');
+	else {
+		lines.push(`  export type Bound = BoundFor<${nsKey}>;`);
+		lines.push(`  export type Parsed = BoundFor<${nsKey}>;`);
+	}
 	const looseConfig = omitRegistered(`LooseConfigFor<${nsKey}>`, node);
 	const widenedLooseConfig = widenNumericSlots(looseConfig, node);
 	const looseWidened = widenedLooseConfig === looseConfig ? '' : ` | ${widenedLooseConfig}`;
@@ -1240,7 +1314,7 @@ function emitRefineFormSubNamespaces(
 		if (formSpelling !== undefined) lines.push(`    export type Options = ${formSpelling};`);
 		const surface = refineFormBuiltTypeSurfaceOf(node, form, refineInfo, nodeMap, kindEntries);
 		if (surface !== undefined) {
-			emitBuiltInterface(lines, surface, '    ');
+			emitNodeSurfaceInterfaces(lines, surface, '    ');
 			lines.push(`    export type BuildArgs = ${surface.buildArgs};`);
 			lines.push(`    export type LooseArgs = ${surface.looseArgs};`);
 		}

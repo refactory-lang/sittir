@@ -3,25 +3,8 @@
 // Composition: kind × shape = concrete type via NamespaceMap.
 
 import { TSKindId } from './types.js';
-import type {
-	NamespaceMap,
-	Assignment,
-	CompoundStatement,
-	EscapeSequence,
-	Expression,
-	Float,
-	Integer,
-	IntegerDecimal,
-	LineContinuation,
-	Parameter,
-	Pattern,
-	PrimaryExpression,
-	SimpleStatement,
-	Statement,
-	Suite,
-	Whitespace,
-	WithClause
-} from './types.js';
+import type { NamespaceMap } from './types.js';
+import type { NarrowTo } from '@sittir/types';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
@@ -392,22 +375,172 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseBare };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	statement(v: { readonly $type: string | number } | number): v is Statement;
-	simpleStatement(v: { readonly $type: string | number } | number): v is SimpleStatement;
-	compoundStatement(v: { readonly $type: string | number } | number): v is CompoundStatement;
-	withClause(v: { readonly $type: string | number } | number): v is WithClause;
-	suite(v: { readonly $type: string | number } | number): v is Suite;
-	parameter(v: { readonly $type: string | number } | number): v is Parameter;
-	pattern(v: { readonly $type: string | number } | number): v is Pattern;
-	expression(v: { readonly $type: string | number } | number): v is Expression;
-	primaryExpression(v: { readonly $type: string | number } | number): v is PrimaryExpression;
-	assignment(v: { readonly $type: string | number } | number): v is Assignment;
-	escapeSequence(v: { readonly $type: string | number } | number): v is EscapeSequence;
-	integer(v: { readonly $type: string | number } | number): v is Integer;
-	float(v: { readonly $type: string | number } | number): v is Float;
-	lineContinuation(v: { readonly $type: string | number } | number): v is LineContinuation;
-	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
-	integerDecimal(v: { readonly $type: string | number } | number): v is IntegerDecimal;
+	statement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.SimpleStatements
+		| TSKindId.IfStatement
+		| TSKindId.ForStatement
+		| TSKindId.WhileStatement
+		| TSKindId.TryStatement
+		| TSKindId.WithStatement
+		| TSKindId.FunctionDefinition
+		| TSKindId.ClassDefinition
+		| TSKindId.DecoratedDefinition
+		| TSKindId.MatchStatement
+	>;
+	simpleStatement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.FutureImportStatement
+		| TSKindId.ImportStatement
+		| TSKindId.ImportFromStatement
+		| TSKindId.PrintStatement
+		| TSKindId.AssertStatement
+		| TSKindId.ExpressionStatement
+		| TSKindId.ReturnStatement
+		| TSKindId.DeleteStatement
+		| TSKindId.RaiseStatement
+		| TSKindId.PassStatement
+		| TSKindId.BreakStatement
+		| TSKindId.ContinueStatement
+		| TSKindId.GlobalStatement
+		| TSKindId.NonlocalStatement
+		| TSKindId.ExecStatement
+		| TSKindId.TypeAliasStatement
+	>;
+	compoundStatement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.IfStatement
+		| TSKindId.ForStatement
+		| TSKindId.WhileStatement
+		| TSKindId.TryStatement
+		| TSKindId.WithStatement
+		| TSKindId.FunctionDefinition
+		| TSKindId.ClassDefinition
+		| TSKindId.DecoratedDefinition
+		| TSKindId.MatchStatement
+	>;
+	withClause<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.WithClauseBare | TSKindId.WithClauseParen>;
+	suite<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.SuiteInline | TSKindId.SuiteBlock | TSKindId.SuiteEmpty>;
+	parameter<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.Identifier
+		| TSKindId.TypedParameter
+		| TSKindId.DefaultParameter
+		| TSKindId.TypedDefaultParameter
+		| TSKindId.ListSplatPattern
+		| TSKindId.TuplePattern
+		| TSKindId.KeywordSeparator
+		| TSKindId.PositionalSeparator
+		| TSKindId.DictionarySplatPattern
+	>;
+	pattern<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.Identifier
+		| TSKindId.PrintKeyword
+		| TSKindId.ExecKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.MatchKeyword
+		| TSKindId.Subscript
+		| TSKindId.Attribute
+		| TSKindId.ListSplatPattern
+		| TSKindId.TuplePattern
+		| TSKindId.ListPattern
+	>;
+	expression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.ComparisonOperator
+		| TSKindId.NotOperator
+		| TSKindId.BooleanOperator
+		| TSKindId.Lambda
+		| TSKindId.ConditionalExpression
+		| TSKindId.NamedExpression
+		| TSKindId.AsPattern
+	>;
+	primaryExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.Await
+		| TSKindId.BinaryOperator
+		| TSKindId.Identifier
+		| TSKindId.PrintKeyword
+		| TSKindId.ExecKeyword
+		| TSKindId.AsyncKeyword
+		| TSKindId.AwaitKeyword
+		| TSKindId.TypeKeyword
+		| TSKindId.MatchKeyword
+		| TSKindId.String
+		| TSKindId.ConcatenatedString
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
+		| TSKindId.UnaryOperator
+		| TSKindId.Attribute
+		| TSKindId.Subscript
+		| TSKindId.Call
+		| TSKindId.List
+		| TSKindId.ListComprehension
+		| TSKindId.Dictionary
+		| TSKindId.DictionaryComprehension
+		| TSKindId.Set
+		| TSKindId.SetComprehension
+		| TSKindId.Tuple
+		| TSKindId.ParenthesizedExpression
+		| TSKindId.GeneratorExpression
+		| TSKindId.Ellipsis
+		| TSKindId.ListSplatPattern
+	>;
+	assignment<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped>;
+	escapeSequence<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.EscapeSequenceUnicodeFixed
+		| TSKindId.EscapeSequenceUnicodeWide
+		| TSKindId.EscapeSequenceHex
+		| TSKindId.EscapeSequenceOctal
+		| TSKindId.EscapeSequenceLineBreak
+		| TSKindId.EscapeSequenceSimple
+		| TSKindId.EscapeSequenceNamed
+	>;
+	integer<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.IntegerHex | TSKindId.IntegerOctal | TSKindId.IntegerBinary>;
+	float<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.FloatPoint | TSKindId.FloatLeadingPoint | TSKindId.FloatScientific>;
+	lineContinuation<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.LineContinuationNewline | TSKindId.LineContinuationNul>;
+	whitespace<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		TSKindId.Tight | TSKindId.Space | TSKindId.Tab | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline
+	>;
+	integerDecimal<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.IntegerDecimalLong | TSKindId.IntegerDecimalImaginary | TSKindId.IntegerDecimalPlain>;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.

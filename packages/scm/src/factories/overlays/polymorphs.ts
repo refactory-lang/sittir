@@ -6,40 +6,40 @@ import type { ArgsOf, OmitEach, OptionsArg } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 export * from './refines.js';
 
-export const stringContent: typeof B.stringContent & {
-	escapeSequence: typeof B.escapeSequence;
-} = Object.freeze({
+export const stringContent = Object.freeze({
 	...B.stringContent,
 	escapeSequence: B.escapeSequence
-});
+}) as unknown as typeof B.stringContent & {
+	escapeSequence: typeof B.escapeSequence;
+};
 
-export const list: typeof B.list & {
-	capture: typeof B.capture;
-} = Object.freeze({
+export const list = Object.freeze({
 	...B.list,
 	capture: B.capture
-});
-
-export const grouping: typeof B.grouping & {
+}) as unknown as typeof B.list & {
 	capture: typeof B.capture;
-} = Object.freeze({
+};
+
+export const grouping = Object.freeze({
 	...B.grouping,
 	capture: B.capture
-});
-
-export const missingNode: typeof B.missingNode & {
+}) as unknown as typeof B.grouping & {
 	capture: typeof B.capture;
-} = Object.freeze({
+};
+
+export const missingNode = Object.freeze({
 	...B.missingNode,
 	capture: B.capture
-});
-
-export const anonymousNode: typeof B.anonymousNode & {
+}) as unknown as typeof B.missingNode & {
 	capture: typeof B.capture;
-} = Object.freeze({
+};
+
+export const anonymousNode = Object.freeze({
 	...B.anonymousNode,
 	capture: B.capture
-});
+}) as unknown as typeof B.anonymousNode & {
+	capture: typeof B.capture;
+};
 
 // Erased applications, centralized: TS cannot infer a Cfg type parameter
 // constrained by another inference variable in a contravariant position,

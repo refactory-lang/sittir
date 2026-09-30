@@ -67,7 +67,11 @@ produces, whether built by a factory or read from a tree.
 - **Accessors:** each returns the child's `.Bound`. A supertype-typed
   child distributes member by member: `Statement` becomes the union of its
   members' `.Bound`.
-- **`$with`:** each setter returns `X.Bound`.
+  Each declared supertype `S` has `S.Bound` and `S.Parsed`, the unions over
+  its members, so a helper that takes or returns a supertype-typed node
+  annotates `S.Bound` and narrows through `is.*` like any member union.
+- **`$with`:** each setter takes the slot's admitted input and returns
+  the node itself (`X.Bound`).
 - **Node methods:** `$render`, `$trivia` and the rest, as the node
   methods type declares them.
 - **List owners** (per `__slotHints__`):
@@ -174,6 +178,29 @@ node, or a `$with` draft of one, which keeps `$nodeHandle`.
 - **Factories:** each factory returns `X.Bound`.
 - **Wraps:** each `wrapX` is annotated `: X.Parsed`. The wrap-return map
   and `drillIn`/`drillInAll` type through the `.Parsed` map.
+- **Acceptance is explicit:** wherever a kind is asked for (a config
+  slot, a positional or list-element parameter, a `$with` setter's input),
+  the type is `X | X.Bound | X.Parsed`, plus the empty form of a kind that
+  can be empty, written as members of the union and never left to
+  structural assignability of `X.Bound` to `X`.
+  - **Why:** the checker (TypeScript 7) relates nested interface pairs to
+    a bounded depth, about 33. Relating `X.Bound` to storage `X` walks
+    every accessor of both and exceeds it on deeply nested grammars, where
+    TypeScript 6 accepts the same relation. A union member the checker
+    finds by identity is matched without that walk.
+  - **One widening:** `AdmitBound<V, Lookup>` distributes over `V`, adds
+    each member's `.Bound`, `.Parsed` and empty form from a lookup built
+    from the emitted id-keyed maps, and widens arrays element by element.
+    The config and loose surfaces receive it through the namespace map.
+  - **Factories return `X.Bound`** through one cast (`as unknown as
+    X.Bound`); the storage object they build is not related to `X.Bound`.
+  - **Property order matters:** `X.Bound` and `X.Parsed` declare `$type`
+    first, so a different kind fails on the discriminant before the deep
+    members are compared.
+  - **Non-reducing forms in generated code:** a `?:`, `??` or narrowing
+    over a union that holds a node's `.Bound` beside its storage type
+    reduces the members against each other and exceeds the same depth, so
+    generated code uses helpers that never narrow or reduce.
 - **`X.Built` is removed:**
   - every reference moves to `X.Bound`: generated types, `@sittir/types`,
     tools, examples and the READMEs;

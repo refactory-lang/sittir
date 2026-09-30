@@ -3,18 +3,21 @@
 import type * as T from '../types-internal.js';
 import { Delimiter } from '@sittir/common/utils';
 import { TSKindId } from '../types.js';
-import type { NonEmptyArray, WidenNumeric } from '@sittir/types';
+import type { AdmitBound, NonEmptyArray, WidenNumeric } from '@sittir/types';
 import {
 	withAccessors,
+	isNodeOfKind,
 	admitAliasContent,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
 	numberText,
+	orDefault,
 	rejectBareText,
-	rejectKeywordText
+	rejectKeywordText,
+	withListOwner
 } from '@sittir/common/utils';
-import { withMethods, isNode } from '../utils.js';
+import { withMethods } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
 	if (arr.length === 0) {
@@ -60,8 +63,8 @@ export const _slotRe_buildEscapeSequenceUnicodeBraced_content = /^(?:(?:u\{[0-9a
 export const _slotRe_buildEscapeSequenceHex_content = /^(?:(?:x[0-9a-fA-F]{2}))$/u;
 
 export function buildSourceFile(): T.EmptySourceFile;
-export function buildSourceFile(config?: Partial<T.SourceFile.Config>): T.SourceFile.Built;
-export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.SourceFile.Built {
+export function buildSourceFile(config?: Partial<T.SourceFile.Config>): T.SourceFile.Bound;
+export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.SourceFile.Bound {
 	const _shebang = rejectBareText(config.shebang, 'SourceFile.shebang', 'a built Shebang');
 	const _statements = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.SourceFile['_statements']>>(config.statements ?? [], []),
@@ -87,13 +90,13 @@ export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.So
 				statements: () => _statements
 			}
 		)
-	);
+	) as unknown as T.SourceFile.Bound;
 }
 
 export const buildEmptyStatement: TSKindId.EmptyStatement = TSKindId.EmptyStatement;
 
 export function buildExpressionStatement(
-	value:
+	value: AdmitBound<
 		| T.ExpressionStatementWithSemi
 		| T.UnsafeBlock
 		| T.AsyncBlock
@@ -105,8 +108,10 @@ export function buildExpressionStatement(
 		| T.WhileExpression
 		| T.LoopExpression
 		| T.ForExpression
-		| T.ConstBlock
-): T.ExpressionStatement.Built {
+		| T.ConstBlock,
+		T.AdmittedNodes
+	>
+): T.ExpressionStatement.Bound {
 	const _content = rejectBareText(
 		value,
 		'ExpressionStatement.content',
@@ -141,10 +146,10 @@ export function buildExpressionStatement(
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.ExpressionStatement.Bound;
 }
 
-export function buildMacroRule(config: T.MacroRule.Config): T.MacroRule.Built {
+export function buildMacroRule(config: T.MacroRule.Config): T.MacroRule.Bound {
 	const _left = rejectBareText(config.left, 'MacroRule.left', 'a built TokenTreePattern');
 	const _right = rejectBareText(config.right, 'MacroRule.right', 'a built TokenTree');
 	return withMethods(
@@ -165,10 +170,10 @@ export function buildMacroRule(config: T.MacroRule.Config): T.MacroRule.Built {
 				right: () => _right
 			}
 		)
-	);
+	) as unknown as T.MacroRule.Bound;
 }
 
-export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): T.TokenBindingPattern.Built {
+export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): T.TokenBindingPattern.Bound {
 	const _name = rejectBareText(config.name, 'TokenBindingPattern.name', 'a built Metavariable');
 	const _type = coerceKindEnumStorage<NonNullable<T.TokenBindingPattern['_type']>>(config.type, [
 		['block', TSKindId.BlockKeyword] as const,
@@ -206,10 +211,10 @@ export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): 
 				type: () => _type
 			}
 		)
-	);
+	) as unknown as T.TokenBindingPattern.Bound;
 }
 
-export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Config): T.TokenRepetitionPattern.Built {
+export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Config): T.TokenRepetitionPattern.Bound {
 	const _token_patterns = rejectBareText(
 		config.tokenPatterns ?? [],
 		'TokenRepetitionPattern.tokenPatterns',
@@ -251,10 +256,10 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 				operator: () => _operator
 			}
 		)
-	);
+	) as unknown as T.TokenRepetitionPattern.Bound;
 }
 
-export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenRepetition.Built {
+export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenRepetition.Bound {
 	const _tokens = rejectBareText(
 		config.tokens ?? [],
 		'TokenRepetition.tokens',
@@ -289,11 +294,11 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenR
 				operator: () => _operator
 			}
 		)
-	);
+	) as unknown as T.TokenRepetition.Bound;
 }
 
 export function buildNonSpecialToken(
-	value:
+	value: AdmitBound<
 		| T.Literal
 		| T.Identifier
 		| TSKindId.MutableSpecifier
@@ -389,8 +394,10 @@ export function buildNonSpecialToken(
 		| TSKindId.UnsafeKeyword
 		| TSKindId.UseKeyword
 		| TSKindId.WhereKeyword
-		| TSKindId.WhileKeyword
-): T.NonSpecialToken.Built {
+		| TSKindId.WhileKeyword,
+		T.AdmittedNodes
+	>
+): T.NonSpecialToken.Bound {
 	const _content = rejectKeywordText(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.NonSpecialToken['_content']>>(value, [
@@ -661,10 +668,12 @@ export function buildNonSpecialToken(
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.NonSpecialToken.Bound;
 }
 
-export function buildAttributeItem(value: T.Attribute): ReturnType<typeof _buildAttributeItem>;
+export function buildAttributeItem(
+	value: AdmitBound<T.Attribute, T.AdmittedNodes>
+): ReturnType<typeof _buildAttributeItem>;
 export function buildAttributeItem(_config: T.Attribute.Config): ReturnType<typeof _buildAttributeItem>;
 export function buildAttributeItem(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -679,7 +688,7 @@ export function buildAttributeItem(...args: unknown[]) {
 		? _buildAttributeItem(args[0] as T.Attribute)
 		: _buildAttributeItem((buildAttribute as (...a: unknown[]) => unknown)(...args) as T.Attribute);
 }
-function _buildAttributeItem(value: T.Attribute): T.AttributeItem.Built {
+function _buildAttributeItem(value: AdmitBound<T.Attribute, T.AdmittedNodes>): T.AttributeItem.Bound {
 	const _attribute = rejectBareText(value, 'AttributeItem.attribute', 'a built Attribute');
 	return withMethods(
 		withAccessors(
@@ -696,10 +705,12 @@ function _buildAttributeItem(value: T.Attribute): T.AttributeItem.Built {
 				attribute: () => _attribute
 			}
 		)
-	);
+	) as unknown as T.AttributeItem.Bound;
 }
 
-export function buildInnerAttributeItem(value: T.Attribute): ReturnType<typeof _buildInnerAttributeItem>;
+export function buildInnerAttributeItem(
+	value: AdmitBound<T.Attribute, T.AdmittedNodes>
+): ReturnType<typeof _buildInnerAttributeItem>;
 export function buildInnerAttributeItem(_config: T.Attribute.Config): ReturnType<typeof _buildInnerAttributeItem>;
 export function buildInnerAttributeItem(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -714,7 +725,7 @@ export function buildInnerAttributeItem(...args: unknown[]) {
 		? _buildInnerAttributeItem(args[0] as T.Attribute)
 		: _buildInnerAttributeItem((buildAttribute as (...a: unknown[]) => unknown)(...args) as T.Attribute);
 }
-function _buildInnerAttributeItem(value: T.Attribute): T.InnerAttributeItem.Built {
+function _buildInnerAttributeItem(value: AdmitBound<T.Attribute, T.AdmittedNodes>): T.InnerAttributeItem.Bound {
 	const _attribute = rejectBareText(value, 'InnerAttributeItem.attribute', 'a built Attribute');
 	return withMethods(
 		withAccessors(
@@ -731,10 +742,10 @@ function _buildInnerAttributeItem(value: T.Attribute): T.InnerAttributeItem.Buil
 				attribute: () => _attribute
 			}
 		)
-	);
+	) as unknown as T.InnerAttributeItem.Bound;
 }
 
-export function buildAttribute(config: T.Attribute.Config): T.Attribute.Built {
+export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.Attribute['_path']>>(config.path, [
@@ -812,12 +823,16 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Built {
 				input: () => _input
 			}
 		)
-	);
+	) as unknown as T.Attribute.Bound;
 }
 
 export function buildDeclarationList(): T.EmptyDeclarationList;
-export function buildDeclarationList(...children: T.DeclarationStatement[]): T.DeclarationList.Built;
-export function buildDeclarationList(...children: T.DeclarationStatement[]): T.DeclarationList.Built {
+export function buildDeclarationList(
+	...children: AdmitBound<T.DeclarationStatement[], T.AdmittedNodes>
+): T.DeclarationList.Bound;
+export function buildDeclarationList(
+	...children: AdmitBound<T.DeclarationStatement[], T.AdmittedNodes>
+): T.DeclarationList.Bound {
 	const _declarations = rejectBareText(children, 'DeclarationList.declarations', 'a built DeclarationStatement');
 	return withMethods(
 		withAccessors(
@@ -832,10 +847,10 @@ export function buildDeclarationList(...children: T.DeclarationStatement[]): T.D
 				declarations: () => _declarations
 			}
 		)
-	);
+	) as unknown as T.DeclarationList.Bound;
 }
 
-export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Built {
+export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'UnionItem.visibilityModifier',
@@ -848,7 +863,7 @@ export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Built {
 	const _type_parameters = rejectBareText(config.typeParameters, 'UnionItem.typeParameters', 'a built TypeParameters');
 	const _where_clause = rejectBareText(config.whereClause, 'UnionItem.whereClause', 'a built WhereClause');
 	const _body = rejectBareText(
-		config.body ?? buildFieldDeclarationList(),
+		orDefault(config.body, () => buildFieldDeclarationList()),
 		'UnionItem.body',
 		'a built FieldDeclarationList'
 	);
@@ -880,10 +895,10 @@ export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Built {
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.UnionItem.Bound;
 }
 
-export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Built {
+export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'EnumItem.visibilityModifier',
@@ -895,7 +910,11 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Built {
 	);
 	const _type_parameters = rejectBareText(config.typeParameters, 'EnumItem.typeParameters', 'a built TypeParameters');
 	const _where_clause = rejectBareText(config.whereClause, 'EnumItem.whereClause', 'a built WhereClause');
-	const _body = rejectBareText(config.body ?? buildEnumVariantList(), 'EnumItem.body', 'a built EnumVariantList');
+	const _body = rejectBareText(
+		orDefault(config.body, () => buildEnumVariantList()),
+		'EnumItem.body',
+		'a built EnumVariantList'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -923,17 +942,19 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Built {
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.EnumItem.Bound;
 }
 
 export function buildEnumVariantList(): T.EmptyEnumVariantList;
-export function buildEnumVariantList(value?: T.EnumVariantListElements): ReturnType<typeof _buildEnumVariantList>;
 export function buildEnumVariantList(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>
+	value?: AdmitBound<T.EnumVariantListElements, T.AdmittedNodes>
 ): ReturnType<typeof _buildEnumVariantList>;
 export function buildEnumVariantList(
-	...elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	...elements: NonEmptyArray<AdmitBound<T.AttributedEnumVariant | T.EnumVariant, T.AdmittedNodes>>
+): ReturnType<typeof _buildEnumVariantList>;
+export function buildEnumVariantList(
+	...elements: NonEmptyArray<AdmitBound<T.AttributedEnumVariant | T.EnumVariant, T.AdmittedNodes>>
 ): ReturnType<typeof _buildEnumVariantList>;
 export function buildEnumVariantList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -950,31 +971,41 @@ export function buildEnumVariantList(...args: unknown[]) {
 				(buildEnumVariantListElements as (...a: unknown[]) => unknown)(...args) as T.EnumVariantListElements
 			);
 }
-function _buildEnumVariantList(value?: T.EnumVariantListElements): T.EnumVariantList.Built {
+function _buildEnumVariantList(
+	value?: AdmitBound<T.EnumVariantListElements, T.AdmittedNodes>
+): T.EnumVariantList.Bound {
 	const _enum_variant_list_elements = rejectBareText(
 		value,
 		'EnumVariantList.enumVariantListElements',
 		'a built EnumVariantListElements'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.EnumVariantList as const,
-				$source: 2 as const,
-				$named: true as const,
-				_enum_variant_list_elements,
-				$with: {
-					enumVariantListElements: (value?: T.EnumVariantListElements) => buildEnumVariantList(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.EnumVariantList as const,
+					$source: 2 as const,
+					$named: true as const,
+					_enum_variant_list_elements,
+					$with: {
+						enumVariantListElements: (value?: T.EnumVariantListElements) => buildEnumVariantList(value)
+					}
+				},
+				{
+					enumVariantListElements: () => _enum_variant_list_elements
 				}
-			},
+			),
 			{
-				enumVariantListElements: () => _enum_variant_list_elements
+				list: 'enumVariantListElements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
+				make: buildEnumVariantListElements
 			}
 		)
-	);
+	) as unknown as T.EnumVariantList.Bound;
 }
 
-export function buildEnumVariant(config: T.EnumVariant.Config): T.EnumVariant.Built {
+export function buildEnumVariant(config: T.EnumVariant.Config): T.EnumVariant.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'EnumVariant.visibilityModifier',
@@ -1017,19 +1048,19 @@ export function buildEnumVariant(config: T.EnumVariant.Config): T.EnumVariant.Bu
 				value: () => _value
 			}
 		)
-	);
+	) as unknown as T.EnumVariant.Bound;
 }
 
 export function buildFieldDeclarationList(): T.EmptyFieldDeclarationList;
 export function buildFieldDeclarationList(
-	value?: T.FieldDeclarationListElements
+	value?: AdmitBound<T.FieldDeclarationListElements, T.AdmittedNodes>
 ): ReturnType<typeof _buildFieldDeclarationList>;
 export function buildFieldDeclarationList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
+	...elements: NonEmptyArray<AdmitBound<T.AttributedFieldDeclaration | T.FieldDeclaration, T.AdmittedNodes>>
 ): ReturnType<typeof _buildFieldDeclarationList>;
 export function buildFieldDeclarationList(
-	...elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
+	...elements: NonEmptyArray<AdmitBound<T.AttributedFieldDeclaration | T.FieldDeclaration, T.AdmittedNodes>>
 ): ReturnType<typeof _buildFieldDeclarationList>;
 export function buildFieldDeclarationList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1046,31 +1077,41 @@ export function buildFieldDeclarationList(...args: unknown[]) {
 				(buildFieldDeclarationListElements as (...a: unknown[]) => unknown)(...args) as T.FieldDeclarationListElements
 			);
 }
-function _buildFieldDeclarationList(value?: T.FieldDeclarationListElements): T.FieldDeclarationList.Built {
+function _buildFieldDeclarationList(
+	value?: AdmitBound<T.FieldDeclarationListElements, T.AdmittedNodes>
+): T.FieldDeclarationList.Bound {
 	const _field_declaration_list_elements = rejectBareText(
 		value,
 		'FieldDeclarationList.fieldDeclarationListElements',
 		'a built FieldDeclarationListElements'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FieldDeclarationList as const,
-				$source: 2 as const,
-				$named: true as const,
-				_field_declaration_list_elements,
-				$with: {
-					fieldDeclarationListElements: (value?: T.FieldDeclarationListElements) => buildFieldDeclarationList(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.FieldDeclarationList as const,
+					$source: 2 as const,
+					$named: true as const,
+					_field_declaration_list_elements,
+					$with: {
+						fieldDeclarationListElements: (value?: T.FieldDeclarationListElements) => buildFieldDeclarationList(value)
+					}
+				},
+				{
+					fieldDeclarationListElements: () => _field_declaration_list_elements
 				}
-			},
+			),
 			{
-				fieldDeclarationListElements: () => _field_declaration_list_elements
+				list: 'fieldDeclarationListElements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
+				make: buildFieldDeclarationListElements
 			}
 		)
-	);
+	) as unknown as T.FieldDeclarationList.Bound;
 }
 
-export function buildFieldDeclaration(config: T.FieldDeclaration.Config): T.FieldDeclaration.Built {
+export function buildFieldDeclaration(config: T.FieldDeclaration.Config): T.FieldDeclaration.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'FieldDeclaration.visibilityModifier',
@@ -1112,19 +1153,19 @@ export function buildFieldDeclaration(config: T.FieldDeclaration.Config): T.Fiel
 				type: () => _type
 			}
 		)
-	);
+	) as unknown as T.FieldDeclaration.Bound;
 }
 
 export function buildOrderedFieldDeclarationList(): T.EmptyOrderedFieldDeclarationList;
 export function buildOrderedFieldDeclarationList(
-	value?: T.OrderedFieldDeclarationListElements
+	value?: AdmitBound<T.OrderedFieldDeclarationListElements, T.AdmittedNodes>
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>
+	...elements: NonEmptyArray<AdmitBound<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(
-	...elements: NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>
+	...elements: NonEmptyArray<AdmitBound<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -1144,32 +1185,40 @@ export function buildOrderedFieldDeclarationList(...args: unknown[]) {
 			);
 }
 function _buildOrderedFieldDeclarationList(
-	value?: T.OrderedFieldDeclarationListElements
-): T.OrderedFieldDeclarationList.Built {
+	value?: AdmitBound<T.OrderedFieldDeclarationListElements, T.AdmittedNodes>
+): T.OrderedFieldDeclarationList.Bound {
 	const _attributes = rejectBareText(
 		value,
 		'OrderedFieldDeclarationList.attributes',
 		'a built OrderedFieldDeclarationListElements'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.OrderedFieldDeclarationList as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attributes,
-				$with: {
-					attributes: (value?: T.OrderedFieldDeclarationListElements) => buildOrderedFieldDeclarationList(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.OrderedFieldDeclarationList as const,
+					$source: 2 as const,
+					$named: true as const,
+					_attributes,
+					$with: {
+						attributes: (value?: T.OrderedFieldDeclarationListElements) => buildOrderedFieldDeclarationList(value)
+					}
+				},
+				{
+					attributes: () => _attributes
 				}
-			},
+			),
 			{
-				attributes: () => _attributes
+				list: 'attributes',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildOrderedFieldDeclarationListElements
 			}
 		)
-	);
+	) as unknown as T.OrderedFieldDeclarationList.Bound;
 }
 
-export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Config): T.ExternCrateDeclaration.Built {
+export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Config): T.ExternCrateDeclaration.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'ExternCrateDeclaration.visibilityModifier',
@@ -1199,10 +1248,10 @@ export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Con
 				alias: () => _alias
 			}
 		)
-	);
+	) as unknown as T.ExternCrateDeclaration.Bound;
 }
 
-export function buildConstItem(config: T.ConstItem.Config): T.ConstItem.Built {
+export function buildConstItem(config: T.ConstItem.Config): T.ConstItem.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'ConstItem.visibilityModifier',
@@ -1247,10 +1296,10 @@ export function buildConstItem(config: T.ConstItem.Config): T.ConstItem.Built {
 				value: () => _value
 			}
 		)
-	);
+	) as unknown as T.ConstItem.Bound;
 }
 
-export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Built {
+export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'StaticItem.visibilityModifier',
@@ -1305,10 +1354,10 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Built
 				value: () => _value
 			}
 		)
-	);
+	) as unknown as T.StaticItem.Bound;
 }
 
-export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Built {
+export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'TypeItem.visibilityModifier',
@@ -1363,10 +1412,10 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Built {
 				trailingWhereClause: () => _trailing_where_clause
 			}
 		)
-	);
+	) as unknown as T.TypeItem.Bound;
 }
 
-export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem.Built {
+export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'FunctionItem.visibilityModifier',
@@ -1384,7 +1433,7 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 		'a built TypeParameters'
 	);
 	const _parameters = rejectBareText(
-		config.parameters ?? buildParameters(),
+		orDefault(config.parameters, () => buildParameters()),
 		'FunctionItem.parameters',
 		'a built Parameters'
 	);
@@ -1397,7 +1446,11 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _where_clause = rejectBareText(config.whereClause, 'FunctionItem.whereClause', 'a built WhereClause');
-	const _body = rejectBareText(config.body ?? buildBlock(), 'FunctionItem.body', 'a built Block');
+	const _body = rejectBareText(
+		orDefault(config.body, () => buildBlock()),
+		'FunctionItem.body',
+		'a built Block'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1437,10 +1490,10 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.FunctionItem.Bound;
 }
 
-export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Config): T.FunctionSignatureItem.Built {
+export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Config): T.FunctionSignatureItem.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'FunctionSignatureItem.visibilityModifier',
@@ -1458,7 +1511,7 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 		'a built TypeParameters'
 	);
 	const _parameters = rejectBareText(
-		config.parameters ?? buildParameters(),
+		orDefault(config.parameters, () => buildParameters()),
 		'FunctionSignatureItem.parameters',
 		'a built Parameters'
 	);
@@ -1508,18 +1561,21 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 				whereClause: () => _where_clause
 			}
 		)
-	);
+	) as unknown as T.FunctionSignatureItem.Bound;
 }
 
 export function buildFunctionModifiers(
-	...children: (
-		| TSKindId.AsyncKeyword
-		| TSKindId.DefaultKeyword
-		| TSKindId.ConstKeyword
-		| TSKindId.UnsafeKeyword
-		| T.ExternModifier
-	)[]
-): T.FunctionModifiers.Built {
+	...children: AdmitBound<
+		(
+			| TSKindId.AsyncKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.UnsafeKeyword
+			| T.ExternModifier
+		)[],
+		T.AdmittedNodes
+	>
+): T.FunctionModifiers.Bound {
 	_assertNonEmpty(children, 'function_modifiers.children');
 	const _modifier = rejectBareText(children, 'FunctionModifiers.modifier', 'a built ExternModifier');
 	return withMethods(
@@ -1545,15 +1601,19 @@ export function buildFunctionModifiers(
 				modifiers: () => _modifier
 			}
 		)
-	);
+	) as unknown as T.FunctionModifiers.Bound;
 }
 
-export function buildWhereClause(value?: T.WherePredicates): ReturnType<typeof _buildWhereClause>;
+export function buildWhereClause(
+	value?: AdmitBound<T.WherePredicates, T.AdmittedNodes>
+): ReturnType<typeof _buildWhereClause>;
 export function buildWhereClause(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.WherePredicate>
+	...elements: NonEmptyArray<AdmitBound<T.WherePredicate, T.AdmittedNodes>>
 ): ReturnType<typeof _buildWhereClause>;
-export function buildWhereClause(...elements: NonEmptyArray<T.WherePredicate>): ReturnType<typeof _buildWhereClause>;
+export function buildWhereClause(
+	...elements: NonEmptyArray<AdmitBound<T.WherePredicate, T.AdmittedNodes>>
+): ReturnType<typeof _buildWhereClause>;
 export function buildWhereClause(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildWhereClause(args[0] as T.WherePredicates);
@@ -1567,27 +1627,35 @@ export function buildWhereClause(...args: unknown[]) {
 		? _buildWhereClause(args[0] as T.WherePredicates)
 		: _buildWhereClause((buildWherePredicates as (...a: unknown[]) => unknown)(...args) as T.WherePredicates);
 }
-function _buildWhereClause(value?: T.WherePredicates): T.WhereClause.Built {
+function _buildWhereClause(value?: AdmitBound<T.WherePredicates, T.AdmittedNodes>): T.WhereClause.Bound {
 	const _where_predicates = rejectBareText(value, 'WhereClause.wherePredicates', 'a built WherePredicates');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.WhereClause as const,
-				$source: 2 as const,
-				$named: true as const,
-				_where_predicates,
-				$with: {
-					wherePredicates: (value?: T.WherePredicates) => buildWhereClause(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.WhereClause as const,
+					$source: 2 as const,
+					$named: true as const,
+					_where_predicates,
+					$with: {
+						wherePredicates: (value?: T.WherePredicates) => buildWhereClause(value)
+					}
+				},
+				{
+					wherePredicates: () => _where_predicates
 				}
-			},
+			),
 			{
-				wherePredicates: () => _where_predicates
+				list: 'wherePredicates',
+				elements: 'wherePredicates',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildWherePredicates
 			}
 		)
-	);
+	) as unknown as T.WhereClause.Bound;
 }
 
-export function buildWherePredicate(config: T.WherePredicate.Config): T.WherePredicate.Built {
+export function buildWherePredicate(config: T.WherePredicate.Config): T.WherePredicate.Bound {
 	const _left = admitAliasContent<NonNullable<T.WherePredicate['_left']>>(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.WherePredicate['_left']>>(config.left, [
@@ -1614,7 +1682,11 @@ export function buildWherePredicate(config: T.WherePredicate.Config): T.WherePre
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	const _bounds = rejectBareText(config.bounds ?? buildTraitBounds(), 'WherePredicate.bounds', 'a built TraitBounds');
+	const _bounds = rejectBareText(
+		orDefault(config.bounds, () => buildTraitBounds()),
+		'WherePredicate.bounds',
+		'a built TraitBounds'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1634,10 +1706,10 @@ export function buildWherePredicate(config: T.WherePredicate.Config): T.WherePre
 				bounds: () => _bounds
 			}
 		)
-	);
+	) as unknown as T.WherePredicate.Bound;
 }
 
-export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Built {
+export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'TraitItem.visibilityModifier',
@@ -1651,7 +1723,11 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Built {
 	const _type_parameters = rejectBareText(config.typeParameters, 'TraitItem.typeParameters', 'a built TypeParameters');
 	const _bounds = rejectBareText(config.bounds, 'TraitItem.bounds', 'a built TraitBounds');
 	const _where_clause = rejectBareText(config.whereClause, 'TraitItem.whereClause', 'a built WhereClause');
-	const _body = rejectBareText(config.body ?? buildDeclarationList(), 'TraitItem.body', 'a built DeclarationList');
+	const _body = rejectBareText(
+		orDefault(config.body, () => buildDeclarationList()),
+		'TraitItem.body',
+		'a built DeclarationList'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -1687,10 +1763,10 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Built {
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.TraitItem.Bound;
 }
 
-export function buildAssociatedType(config: T.AssociatedType.Config): T.AssociatedType.Built {
+export function buildAssociatedType(config: T.AssociatedType.Config): T.AssociatedType.Bound {
 	const _name = admitAliasContent<NonNullable<T.AssociatedType['_name']>>(
 		rejectBareText(config.name, 'AssociatedType.name', 'a built TypeIdentifier'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -1726,12 +1802,15 @@ export function buildAssociatedType(config: T.AssociatedType.Config): T.Associat
 				whereClause: () => _where_clause
 			}
 		)
-	);
+	) as unknown as T.AssociatedType.Bound;
 }
 
 export function buildTraitBounds(
-	...children: ((T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types)[]
-): T.TraitBounds.Built {
+	...children: AdmitBound<
+		((T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types)[],
+		T.AdmittedNodes
+	>
+): T.TraitBounds.Bound {
 	_assertNonEmpty(children, 'trait_bounds.children');
 	const _bounds = admitAliasContent<NonNullable<T.TraitBounds['_bounds']>>(
 		rejectBareText(children, 'TraitBounds.bounds', 'a built Type / Lifetime / HigherRankedTraitBound'),
@@ -1753,10 +1832,10 @@ export function buildTraitBounds(
 				bounds: () => _bounds
 			}
 		)
-	);
+	) as unknown as T.TraitBounds.Bound;
 }
 
-export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Config): T.HigherRankedTraitBound.Built {
+export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Config): T.HigherRankedTraitBound.Bound {
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
 		'HigherRankedTraitBound.typeParameters',
@@ -1790,10 +1869,12 @@ export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Con
 				type: () => _type
 			}
 		)
-	);
+	) as unknown as T.HigherRankedTraitBound.Bound;
 }
 
-export function buildRemovedTraitBound(value: T.Type | T.TypeIdentifier.Types): T.RemovedTraitBound.Built {
+export function buildRemovedTraitBound(
+	value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
+): T.RemovedTraitBound.Bound {
 	const _type = admitAliasContent<NonNullable<T.RemovedTraitBound['_type']>>(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.RemovedTraitBound['_type']>>(value, []),
@@ -1817,19 +1898,27 @@ export function buildRemovedTraitBound(value: T.Type | T.TypeIdentifier.Types): 
 				type: () => _type
 			}
 		)
-	);
+	) as unknown as T.RemovedTraitBound.Bound;
 }
 
-export function buildTypeParameters(value: T.TypeParametersElements): ReturnType<typeof _buildTypeParameters>;
+export function buildTypeParameters(
+	value: AdmitBound<T.TypeParametersElements, T.AdmittedNodes>
+): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
-		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+		AdmitBound<
+			T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(
 	...elements: NonEmptyArray<
-		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+		AdmitBound<
+			T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(...args: unknown[]) {
@@ -1847,31 +1936,39 @@ export function buildTypeParameters(...args: unknown[]) {
 				(buildTypeParametersElements as (...a: unknown[]) => unknown)(...args) as T.TypeParametersElements
 			);
 }
-function _buildTypeParameters(value: T.TypeParametersElements): T.TypeParameters.Built {
+function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.AdmittedNodes>): T.TypeParameters.Bound {
 	const _type_parameters_elements = rejectBareText(
 		value,
 		'TypeParameters.typeParametersElements',
 		'a built TypeParametersElements'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TypeParameters as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type_parameters_elements,
-				$with: {
-					typeParametersElements: (value: T.TypeParametersElements) => buildTypeParameters(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.TypeParameters as const,
+					$source: 2 as const,
+					$named: true as const,
+					_type_parameters_elements,
+					$with: {
+						typeParametersElements: (value: T.TypeParametersElements) => buildTypeParameters(value)
+					}
+				},
+				{
+					typeParametersElements: () => _type_parameters_elements
 				}
-			},
+			),
 			{
-				typeParametersElements: () => _type_parameters_elements
+				list: 'typeParametersElements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildTypeParametersElements
 			}
 		)
-	);
+	) as unknown as T.TypeParameters.Bound;
 }
 
-export function buildConstParameter(config: T.ConstParameter.Config): T.ConstParameter.Built {
+export function buildConstParameter(config: T.ConstParameter.Config): T.ConstParameter.Bound {
 	const _name = rejectBareText(config.name, 'ConstParameter.name', 'buildIdentifier(…)');
 	const _type = admitAliasContent<NonNullable<T.ConstParameter['_type']>>(
 		rejectBareText(
@@ -1909,10 +2006,10 @@ export function buildConstParameter(config: T.ConstParameter.Config): T.ConstPar
 				value: () => _value
 			}
 		)
-	);
+	) as unknown as T.ConstParameter.Bound;
 }
 
-export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParameter.Built {
+export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParameter.Bound {
 	const _name = admitAliasContent<NonNullable<T.TypeParameter['_name']>>(
 		rejectBareText(config.name, 'TypeParameter.name', 'a built TypeIdentifier'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -1948,10 +2045,10 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 				defaultType: () => _default_type
 			}
 		)
-	);
+	) as unknown as T.TypeParameter.Bound;
 }
 
-export function buildLifetimeParameter(config: T.LifetimeParameter.Config): T.LifetimeParameter.Built {
+export function buildLifetimeParameter(config: T.LifetimeParameter.Config): T.LifetimeParameter.Bound {
 	const _name = rejectBareText(config.name, 'LifetimeParameter.name', 'a built Lifetime');
 	const _bounds = rejectBareText(config.bounds, 'LifetimeParameter.bounds', 'a built TraitBounds');
 	return withMethods(
@@ -1972,10 +2069,10 @@ export function buildLifetimeParameter(config: T.LifetimeParameter.Config): T.Li
 				bounds: () => _bounds
 			}
 		)
-	);
+	) as unknown as T.LifetimeParameter.Bound;
 }
 
-export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDeclaration.Built {
+export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDeclaration.Bound {
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _pattern = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.LetDeclaration['_pattern']>>(config.pattern, []),
@@ -2027,10 +2124,10 @@ export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDecla
 				alternative: () => _alternative
 			}
 		)
-	);
+	) as unknown as T.LetDeclaration.Bound;
 }
 
-export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDeclaration.Built {
+export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDeclaration.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'UseDeclaration.visibilityModifier',
@@ -2114,10 +2211,10 @@ export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDecla
 				argument: () => _argument
 			}
 		)
-	);
+	) as unknown as T.UseDeclaration.Bound;
 }
 
-export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {}): T.ScopedUseList.Built {
+export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {}): T.ScopedUseList.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.ScopedUseList['_path']>>(config.path, [
@@ -2176,7 +2273,11 @@ export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {})
 			'gen'
 		]
 	);
-	const _list = rejectBareText(config.list ?? buildUseList(), 'ScopedUseList.list', 'a built UseList');
+	const _list = rejectBareText(
+		orDefault(config.list, () => buildUseList()),
+		'ScopedUseList.list',
+		'a built UseList'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -2195,78 +2296,84 @@ export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {})
 				list: () => _list
 			}
 		)
-	);
+	) as unknown as T.ScopedUseList.Bound;
 }
 
 export function buildUseList(): T.EmptyUseList;
-export function buildUseList(value?: T.UseClauses): ReturnType<typeof _buildUseList>;
+export function buildUseList(value?: AdmitBound<T.UseClauses, T.AdmittedNodes>): ReturnType<typeof _buildUseList>;
 export function buildUseList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| T.Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| T.Identifier
-		| T.ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
-		| T.UseAsClause
-		| T.UseList
-		| T.ScopedUseList
-		| T.UseWildcard
+		AdmitBound<
+			| TSKindId.Self
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
+			| T.UseAsClause
+			| T.UseList
+			| T.ScopedUseList
+			| T.UseWildcard,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildUseList>;
 export function buildUseList(
 	...elements: NonEmptyArray<
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| T.Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| T.Identifier
-		| T.ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
-		| T.UseAsClause
-		| T.UseList
-		| T.ScopedUseList
-		| T.UseWildcard
+		AdmitBound<
+			| TSKindId.Self
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
+			| T.UseAsClause
+			| T.UseList
+			| T.ScopedUseList
+			| T.UseWildcard,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildUseList>;
 export function buildUseList(...args: unknown[]) {
@@ -2282,27 +2389,35 @@ export function buildUseList(...args: unknown[]) {
 		? _buildUseList(args[0] as T.UseClauses)
 		: _buildUseList((buildUseClauses as (...a: unknown[]) => unknown)(...args) as T.UseClauses);
 }
-function _buildUseList(value?: T.UseClauses): T.UseList.Built {
+function _buildUseList(value?: AdmitBound<T.UseClauses, T.AdmittedNodes>): T.UseList.Bound {
 	const _use_clauses = rejectBareText(value, 'UseList.useClauses', 'a built UseClauses');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.UseList as const,
-				$source: 2 as const,
-				$named: true as const,
-				_use_clauses,
-				$with: {
-					useClauses: (value?: T.UseClauses) => buildUseList(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.UseList as const,
+					$source: 2 as const,
+					$named: true as const,
+					_use_clauses,
+					$with: {
+						useClauses: (value?: T.UseClauses) => buildUseList(value)
+					}
+				},
+				{
+					useClauses: () => _use_clauses
 				}
-			},
+			),
 			{
-				useClauses: () => _use_clauses
+				list: 'useClauses',
+				elements: 'useClauses',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildUseClauses
 			}
 		)
-	);
+	) as unknown as T.UseList.Bound;
 }
 
-export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Built {
+export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.UseAsClause['_path']>>(config.path, [
@@ -2380,12 +2495,14 @@ export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bu
 				alias: () => _alias
 			}
 		)
-	);
+	) as unknown as T.UseAsClause.Bound;
 }
 
-export function buildUseWildcard(value?: T.UseWildcardGroup): ReturnType<typeof _buildUseWildcard>;
 export function buildUseWildcard(
-	value?:
+	value?: AdmitBound<T.UseWildcardGroup, T.AdmittedNodes>
+): ReturnType<typeof _buildUseWildcard>;
+export function buildUseWildcard(
+	value?: AdmitBound<
 		| TSKindId.Self
 		| TSKindId.U8Keyword
 		| TSKindId.I8Keyword
@@ -2411,7 +2528,9 @@ export function buildUseWildcard(
 		| T.ScopedIdentifier
 		| TSKindId.DefaultKeyword
 		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
+		| TSKindId.GenKeyword,
+		T.AdmittedNodes
+	>
 ): ReturnType<typeof _buildUseWildcard>;
 export function buildUseWildcard(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -2426,7 +2545,7 @@ export function buildUseWildcard(...args: unknown[]) {
 		? _buildUseWildcard(args[0] as T.UseWildcardGroup)
 		: _buildUseWildcard((buildUseWildcardGroup as (...a: unknown[]) => unknown)(...args) as T.UseWildcardGroup);
 }
-function _buildUseWildcard(value?: T.UseWildcardGroup): T.UseWildcard.Built {
+function _buildUseWildcard(value?: AdmitBound<T.UseWildcardGroup, T.AdmittedNodes>): T.UseWildcard.Bound {
 	const _use_wildcard_group = rejectBareText(value, 'UseWildcard.useWildcardGroup', 'a built UseWildcardGroup');
 	return withMethods(
 		withAccessors(
@@ -2443,32 +2562,40 @@ function _buildUseWildcard(value?: T.UseWildcardGroup): T.UseWildcard.Built {
 				useWildcardGroup: () => _use_wildcard_group
 			}
 		)
-	);
+	) as unknown as T.UseWildcard.Bound;
 }
 
 export function buildParameters(): T.EmptyParameters;
-export function buildParameters(value?: T.ParametersElements): ReturnType<typeof _buildParameters>;
+export function buildParameters(
+	value?: AdmitBound<T.ParametersElements, T.AdmittedNodes>
+): ReturnType<typeof _buildParameters>;
 export function buildParameters(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
-		| T.AttributedParameter
-		| T.Parameter
-		| T.SelfParameter
-		| T.VariadicParameter
-		| TSKindId.Underscore
-		| T.Type
-		| T.TypeIdentifier.Types
+		AdmitBound<
+			| T.AttributedParameter
+			| T.Parameter
+			| T.SelfParameter
+			| T.VariadicParameter
+			| TSKindId.Underscore
+			| T.Type
+			| T.TypeIdentifier.Types,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildParameters>;
 export function buildParameters(
 	...elements: NonEmptyArray<
-		| T.AttributedParameter
-		| T.Parameter
-		| T.SelfParameter
-		| T.VariadicParameter
-		| TSKindId.Underscore
-		| T.Type
-		| T.TypeIdentifier.Types
+		AdmitBound<
+			| T.AttributedParameter
+			| T.Parameter
+			| T.SelfParameter
+			| T.VariadicParameter
+			| TSKindId.Underscore
+			| T.Type
+			| T.TypeIdentifier.Types,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildParameters>;
 export function buildParameters(...args: unknown[]) {
@@ -2484,27 +2611,35 @@ export function buildParameters(...args: unknown[]) {
 		? _buildParameters(args[0] as T.ParametersElements)
 		: _buildParameters((buildParametersElements as (...a: unknown[]) => unknown)(...args) as T.ParametersElements);
 }
-function _buildParameters(value?: T.ParametersElements): T.Parameters.Built {
+function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNodes>): T.Parameters.Bound {
 	const _parameters_elements = rejectBareText(value, 'Parameters.parametersElements', 'a built ParametersElements');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.Parameters as const,
-				$source: 2 as const,
-				$named: true as const,
-				_parameters_elements,
-				$with: {
-					parametersElements: (value?: T.ParametersElements) => buildParameters(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.Parameters as const,
+					$source: 2 as const,
+					$named: true as const,
+					_parameters_elements,
+					$with: {
+						parametersElements: (value?: T.ParametersElements) => buildParameters(value)
+					}
+				},
+				{
+					parametersElements: () => _parameters_elements
 				}
-			},
+			),
 			{
-				parametersElements: () => _parameters_elements
+				list: 'parametersElements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildParametersElements
 			}
 		)
-	);
+	) as unknown as T.Parameters.Bound;
 }
 
-export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {}): T.SelfParameter.Built {
+export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {}): T.SelfParameter.Bound {
 	const _reference = coerceBooleanKeywordStorage(config.reference);
 	const _lifetime = rejectBareText(config.lifetime, 'SelfParameter.lifetime', 'a built Lifetime');
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
@@ -2531,10 +2666,10 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 				mutableSpecifier: () => _mutable_specifier
 			}
 		)
-	);
+	) as unknown as T.SelfParameter.Bound;
 }
 
-export function buildVariadicParameter(config: Partial<T.VariadicParameter.Config> = {}): T.VariadicParameter.Built {
+export function buildVariadicParameter(config: Partial<T.VariadicParameter.Config> = {}): T.VariadicParameter.Bound {
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _pattern = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.VariadicParameter['_pattern']>>(config.pattern, []),
@@ -2561,10 +2696,10 @@ export function buildVariadicParameter(config: Partial<T.VariadicParameter.Confi
 				pattern: () => _pattern
 			}
 		)
-	);
+	) as unknown as T.VariadicParameter.Bound;
 }
 
-export function buildParameter(config: T.Parameter.Config): T.Parameter.Built {
+export function buildParameter(config: T.Parameter.Config): T.Parameter.Bound {
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _name = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.Parameter['_name']>>(config.name, [['self', TSKindId.Self] as const]),
@@ -2601,10 +2736,12 @@ export function buildParameter(config: T.Parameter.Config): T.Parameter.Built {
 				type: () => _type
 			}
 		)
-	);
+	) as unknown as T.Parameter.Bound;
 }
 
-export function buildExternModifier(value?: T.StringLiteral): ReturnType<typeof _buildExternModifier>;
+export function buildExternModifier(
+	value?: AdmitBound<T.StringLiteral, T.AdmittedNodes>
+): ReturnType<typeof _buildExternModifier>;
 export function buildExternModifier(_config: T.StringLiteral.Config): ReturnType<typeof _buildExternModifier>;
 export function buildExternModifier(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -2619,7 +2756,7 @@ export function buildExternModifier(...args: unknown[]) {
 		? _buildExternModifier(args[0] as T.StringLiteral)
 		: _buildExternModifier((buildStringLiteral as (...a: unknown[]) => unknown)(...args) as T.StringLiteral);
 }
-function _buildExternModifier(value?: T.StringLiteral): T.ExternModifier.Built {
+function _buildExternModifier(value?: AdmitBound<T.StringLiteral, T.AdmittedNodes>): T.ExternModifier.Bound {
 	const _abi = rejectBareText(value, 'ExternModifier.abi', 'a built StringLiteral');
 	return withMethods(
 		withAccessors(
@@ -2636,10 +2773,12 @@ function _buildExternModifier(value?: T.StringLiteral): T.ExternModifier.Built {
 				abi: () => _abi
 			}
 		)
-	);
+	) as unknown as T.ExternModifier.Bound;
 }
 
-export function buildVisibilityModifier(value: TSKindId.Crate | T.VisibilityModifierPub): T.VisibilityModifier.Built {
+export function buildVisibilityModifier(
+	value: AdmitBound<TSKindId.Crate | T.VisibilityModifierPub, T.AdmittedNodes>
+): T.VisibilityModifier.Bound {
 	const _content = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.VisibilityModifier['_content']>>(value, [['crate', TSKindId.Crate] as const]),
 		'VisibilityModifier.content',
@@ -2660,10 +2799,12 @@ export function buildVisibilityModifier(value: TSKindId.Crate | T.VisibilityModi
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.VisibilityModifier.Bound;
 }
 
-export function buildBracketedType(value: (T.Type | T.QualifiedType) | T.TypeIdentifier.Types): T.BracketedType.Built {
+export function buildBracketedType(
+	value: AdmitBound<(T.Type | T.QualifiedType) | T.TypeIdentifier.Types, T.AdmittedNodes>
+): T.BracketedType.Bound {
 	const _type = admitAliasContent<NonNullable<T.BracketedType['_type']>>(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.BracketedType['_type']>>(value, []),
@@ -2687,10 +2828,10 @@ export function buildBracketedType(value: (T.Type | T.QualifiedType) | T.TypeIde
 				type: () => _type
 			}
 		)
-	);
+	) as unknown as T.BracketedType.Bound;
 }
 
-export function buildQualifiedType(config: T.QualifiedType.Config): T.QualifiedType.Built {
+export function buildQualifiedType(config: T.QualifiedType.Config): T.QualifiedType.Bound {
 	const _type = admitAliasContent<NonNullable<T.QualifiedType['_type']>>(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.QualifiedType['_type']>>(config.type, []),
@@ -2726,10 +2867,10 @@ export function buildQualifiedType(config: T.QualifiedType.Config): T.QualifiedT
 				alias: () => _alias
 			}
 		)
-	);
+	) as unknown as T.QualifiedType.Bound;
 }
 
-export function buildLifetime(value: T.Identifier): ReturnType<typeof _buildLifetime>;
+export function buildLifetime(value: AdmitBound<T.Identifier, T.AdmittedNodes>): ReturnType<typeof _buildLifetime>;
 export function buildLifetime(text: string): ReturnType<typeof _buildLifetime>;
 export function buildLifetime(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -2744,7 +2885,7 @@ export function buildLifetime(...args: unknown[]) {
 		? _buildLifetime(args[0] as T.Identifier)
 		: _buildLifetime((buildIdentifier as (...a: unknown[]) => unknown)(...args) as T.Identifier);
 }
-function _buildLifetime(value: T.Identifier): T.Lifetime.Built {
+function _buildLifetime(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.Lifetime.Bound {
 	const _name = rejectBareText(value, 'Lifetime.name', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
@@ -2761,10 +2902,10 @@ function _buildLifetime(value: T.Identifier): T.Lifetime.Built {
 				name: () => _name
 			}
 		)
-	);
+	) as unknown as T.Lifetime.Bound;
 }
 
-export function buildArrayType(config: T.ArrayType.Config): T.ArrayType.Built {
+export function buildArrayType(config: T.ArrayType.Config): T.ArrayType.Bound {
 	const _element = admitAliasContent<NonNullable<T.ArrayType['_element']>>(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.ArrayType['_element']>>(config.element, []),
@@ -2796,15 +2937,19 @@ export function buildArrayType(config: T.ArrayType.Config): T.ArrayType.Built {
 				length: () => _length
 			}
 		)
-	);
+	) as unknown as T.ArrayType.Bound;
 }
 
-export function buildForLifetimes(value: T.Lifetimes): ReturnType<typeof _buildForLifetimes>;
+export function buildForLifetimes(
+	value: AdmitBound<T.Lifetimes, T.AdmittedNodes>
+): ReturnType<typeof _buildForLifetimes>;
 export function buildForLifetimes(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.Lifetime>
+	...elements: NonEmptyArray<AdmitBound<T.Lifetime, T.AdmittedNodes>>
 ): ReturnType<typeof _buildForLifetimes>;
-export function buildForLifetimes(...elements: NonEmptyArray<T.Lifetime>): ReturnType<typeof _buildForLifetimes>;
+export function buildForLifetimes(
+	...elements: NonEmptyArray<AdmitBound<T.Lifetime, T.AdmittedNodes>>
+): ReturnType<typeof _buildForLifetimes>;
 export function buildForLifetimes(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildForLifetimes(args[0] as T.Lifetimes);
@@ -2818,27 +2963,35 @@ export function buildForLifetimes(...args: unknown[]) {
 		? _buildForLifetimes(args[0] as T.Lifetimes)
 		: _buildForLifetimes((buildLifetimes as (...a: unknown[]) => unknown)(...args) as T.Lifetimes);
 }
-function _buildForLifetimes(value: T.Lifetimes): T.ForLifetimes.Built {
+function _buildForLifetimes(value: AdmitBound<T.Lifetimes, T.AdmittedNodes>): T.ForLifetimes.Bound {
 	const _lifetimes = rejectBareText(value, 'ForLifetimes.lifetimes', 'a built Lifetimes');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ForLifetimes as const,
-				$source: 2 as const,
-				$named: true as const,
-				_lifetimes,
-				$with: {
-					lifetimes: (value: T.Lifetimes) => buildForLifetimes(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.ForLifetimes as const,
+					$source: 2 as const,
+					$named: true as const,
+					_lifetimes,
+					$with: {
+						lifetimes: (value: T.Lifetimes) => buildForLifetimes(value)
+					}
+				},
+				{
+					lifetimes: () => _lifetimes
 				}
-			},
+			),
 			{
-				lifetimes: () => _lifetimes
+				list: 'lifetimes',
+				elements: 'lifetimes',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildLifetimes
 			}
 		)
-	);
+	) as unknown as T.ForLifetimes.Bound;
 }
 
-export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType.Built {
+export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType.Bound {
 	const _for_lifetimes = rejectBareText(config.forLifetimes, 'FunctionType.forLifetimes', 'a built ForLifetimes');
 	const _content = rejectBareText(
 		config.content,
@@ -2846,7 +2999,7 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 		'a built FunctionTypeTraitForm / FunctionTypeFnForm'
 	);
 	const _parameters = rejectBareText(
-		config.parameters ?? buildParameters(),
+		orDefault(config.parameters, () => buildParameters()),
 		'FunctionType.parameters',
 		'a built Parameters'
 	);
@@ -2884,16 +3037,18 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 				returnType: () => _return_type
 			}
 		)
-	);
+	) as unknown as T.FunctionType.Bound;
 }
 
-export function buildTupleType(value: T.TupleTypeElements): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.Type | T.TypeIdentifier.Types>
+	value: AdmitBound<T.TupleTypeElements, T.AdmittedNodes>
 ): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(
-	...elements: NonEmptyArray<T.Type | T.TypeIdentifier.Types>
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	...elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
+): ReturnType<typeof _buildTupleType>;
+export function buildTupleType(
+	...elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -2908,29 +3063,37 @@ export function buildTupleType(...args: unknown[]) {
 		? _buildTupleType(args[0] as T.TupleTypeElements)
 		: _buildTupleType((buildTupleTypeElements as (...a: unknown[]) => unknown)(...args) as T.TupleTypeElements);
 }
-function _buildTupleType(value: T.TupleTypeElements): T.TupleType.Built {
+function _buildTupleType(value: AdmitBound<T.TupleTypeElements, T.AdmittedNodes>): T.TupleType.Bound {
 	const _tuple_type_elements = rejectBareText(value, 'TupleType.tupleTypeElements', 'a built TupleTypeElements');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TupleType as const,
-				$source: 2 as const,
-				$named: true as const,
-				_tuple_type_elements,
-				$with: {
-					tupleTypeElements: (value: T.TupleTypeElements) => buildTupleType(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.TupleType as const,
+					$source: 2 as const,
+					$named: true as const,
+					_tuple_type_elements,
+					$with: {
+						tupleTypeElements: (value: T.TupleTypeElements) => buildTupleType(value)
+					}
+				},
+				{
+					tupleTypeElements: () => _tuple_type_elements
 				}
-			},
+			),
 			{
-				tupleTypeElements: () => _tuple_type_elements
+				list: 'tupleTypeElements',
+				elements: 'types',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildTupleTypeElements
 			}
 		)
-	);
+	) as unknown as T.TupleType.Bound;
 }
 
 export const buildUnitType: TSKindId.UnitType = TSKindId.UnitType;
 
-export function buildGenericFunction(config: T.GenericFunction.Config): T.GenericFunction.Built {
+export function buildGenericFunction(config: T.GenericFunction.Config): T.GenericFunction.Bound {
 	const _function = rejectBareText(config.function, 'GenericFunction.function', 'buildIdentifier(…)');
 	const _type_arguments = rejectBareText(
 		config.typeArguments,
@@ -2956,10 +3119,10 @@ export function buildGenericFunction(config: T.GenericFunction.Config): T.Generi
 				typeArguments: () => _type_arguments
 			}
 		)
-	);
+	) as unknown as T.GenericFunction.Bound;
 }
 
-export function buildGenericType(config: T.GenericType.Config): T.GenericType.Built {
+export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bound {
 	const _type = admitAliasContent<NonNullable<T.GenericType['_type']>>(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.GenericType['_type']>>(config.type, [
@@ -2991,12 +3154,12 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bu
 				typeArguments: () => _type_arguments
 			}
 		)
-	);
+	) as unknown as T.GenericType.Bound;
 }
 
 export function buildGenericTypeWithTurbofish(
 	config: T.GenericTypeWithTurbofish.Config
-): T.GenericTypeWithTurbofish.Built {
+): T.GenericTypeWithTurbofish.Bound {
 	const _type = admitAliasContent<NonNullable<T.GenericTypeWithTurbofish['_type']>>(
 		rejectBareText(config.type, 'GenericTypeWithTurbofish.type', 'a built TypeIdentifier / ScopedIdentifier'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -3025,10 +3188,10 @@ export function buildGenericTypeWithTurbofish(
 				typeArguments: () => _type_arguments
 			}
 		)
-	);
+	) as unknown as T.GenericTypeWithTurbofish.Bound;
 }
 
-export function buildBoundedType(config: T.BoundedType.Config): T.BoundedType.Built {
+export function buildBoundedType(config: T.BoundedType.Config): T.BoundedType.Bound {
 	const _left = admitAliasContent<NonNullable<T.BoundedType['_left']>>(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.BoundedType['_left']>>(config.left, []),
@@ -3063,17 +3226,19 @@ export function buildBoundedType(config: T.BoundedType.Config): T.BoundedType.Bu
 				right: () => _right
 			}
 		)
-	);
+	) as unknown as T.BoundedType.Bound;
 }
 
 export function buildUseBounds(): T.EmptyUseBounds;
-export function buildUseBounds(value?: T.UseBoundsElements): ReturnType<typeof _buildUseBounds>;
 export function buildUseBounds(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>
+	value?: AdmitBound<T.UseBoundsElements, T.AdmittedNodes>
 ): ReturnType<typeof _buildUseBounds>;
 export function buildUseBounds(
-	...elements: NonEmptyArray<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	...elements: NonEmptyArray<AdmitBound<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
+): ReturnType<typeof _buildUseBounds>;
+export function buildUseBounds(
+	...elements: NonEmptyArray<AdmitBound<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildUseBounds>;
 export function buildUseBounds(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -3088,36 +3253,52 @@ export function buildUseBounds(...args: unknown[]) {
 		? _buildUseBounds(args[0] as T.UseBoundsElements)
 		: _buildUseBounds((buildUseBoundsElements as (...a: unknown[]) => unknown)(...args) as T.UseBoundsElements);
 }
-function _buildUseBounds(value?: T.UseBoundsElements): T.UseBounds.Built {
+function _buildUseBounds(value?: AdmitBound<T.UseBoundsElements, T.AdmittedNodes>): T.UseBounds.Bound {
 	const _bounds = rejectBareText(value, 'UseBounds.bounds', 'a built UseBoundsElements');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.UseBounds as const,
-				$source: 2 as const,
-				$named: true as const,
-				_bounds,
-				$with: {
-					bounds: (value?: T.UseBoundsElements) => buildUseBounds(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.UseBounds as const,
+					$source: 2 as const,
+					$named: true as const,
+					_bounds,
+					$with: {
+						bounds: (value?: T.UseBoundsElements) => buildUseBounds(value)
+					}
+				},
+				{
+					bounds: () => _bounds
 				}
-			},
+			),
 			{
-				bounds: () => _bounds
+				list: 'bounds',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildUseBoundsElements
 			}
 		)
-	);
+	) as unknown as T.UseBounds.Bound;
 }
 
-export function buildTypeArguments(value: T.TypeArgumentsElements): ReturnType<typeof _buildTypeArguments>;
+export function buildTypeArguments(
+	value: AdmitBound<T.TypeArgumentsElements, T.AdmittedNodes>
+): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
-		T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
+		AdmitBound<
+			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(
 	...elements: NonEmptyArray<
-		T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
+		AdmitBound<
+			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(...args: unknown[]) {
@@ -3135,31 +3316,39 @@ export function buildTypeArguments(...args: unknown[]) {
 				(buildTypeArgumentsElements as (...a: unknown[]) => unknown)(...args) as T.TypeArgumentsElements
 			);
 }
-function _buildTypeArguments(value: T.TypeArgumentsElements): T.TypeArguments.Built {
+function _buildTypeArguments(value: AdmitBound<T.TypeArgumentsElements, T.AdmittedNodes>): T.TypeArguments.Bound {
 	const _type_arguments_elements = rejectBareText(
 		value,
 		'TypeArguments.typeArgumentsElements',
 		'a built TypeArgumentsElements'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TypeArguments as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type_arguments_elements,
-				$with: {
-					typeArgumentsElements: (value: T.TypeArgumentsElements) => buildTypeArguments(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.TypeArguments as const,
+					$source: 2 as const,
+					$named: true as const,
+					_type_arguments_elements,
+					$with: {
+						typeArgumentsElements: (value: T.TypeArgumentsElements) => buildTypeArguments(value)
+					}
+				},
+				{
+					typeArgumentsElements: () => _type_arguments_elements
 				}
-			},
+			),
 			{
-				typeArgumentsElements: () => _type_arguments_elements
+				list: 'typeArgumentsElements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildTypeArgumentsElements
 			}
 		)
-	);
+	) as unknown as T.TypeArguments.Bound;
 }
 
-export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Built {
+export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Bound {
 	const _name = admitAliasContent<NonNullable<T.TypeBinding['_name']>>(
 		rejectBareText(config.name, 'TypeBinding.name', 'a built TypeIdentifier'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -3194,10 +3383,10 @@ export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Bu
 				type: () => _type
 			}
 		)
-	);
+	) as unknown as T.TypeBinding.Bound;
 }
 
-export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceType.Built {
+export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceType.Bound {
 	const _lifetime = rejectBareText(config.lifetime, 'ReferenceType.lifetime', 'a built Lifetime');
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _type = admitAliasContent<NonNullable<T.ReferenceType['_type']>>(
@@ -3230,12 +3419,12 @@ export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceT
 				type: () => _type
 			}
 		)
-	);
+	) as unknown as T.ReferenceType.Bound;
 }
 
 export const buildNeverType: TSKindId.NeverType = TSKindId.NeverType;
 
-export function buildAbstractType(config: T.AbstractType.Config): T.AbstractType.Built {
+export function buildAbstractType(config: T.AbstractType.Config): T.AbstractType.Bound {
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
 		'AbstractType.typeParameters',
@@ -3277,11 +3466,11 @@ export function buildAbstractType(config: T.AbstractType.Config): T.AbstractType
 				trait: () => _trait
 			}
 		)
-	);
+	) as unknown as T.AbstractType.Bound;
 }
 
 export function buildDynamicType(
-	value:
+	value: AdmitBound<
 		| (
 				| T.HigherRankedTraitBound
 				| T.TypeIdentifier
@@ -3290,8 +3479,10 @@ export function buildDynamicType(
 				| T.FunctionType
 				| T.TupleType
 		  )
-		| T.TypeIdentifier.Types
-): T.DynamicType.Built {
+		| T.TypeIdentifier.Types,
+		T.AdmittedNodes
+	>
+): T.DynamicType.Bound {
 	const _trait = admitAliasContent<NonNullable<T.DynamicType['_trait']>>(
 		rejectBareText(
 			value,
@@ -3326,12 +3517,12 @@ export function buildDynamicType(
 				trait: () => _trait
 			}
 		)
-	);
+	) as unknown as T.DynamicType.Bound;
 }
 
 export const buildMutableSpecifier: TSKindId.MutableSpecifier = TSKindId.MutableSpecifier;
 
-export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroInvocation.Built {
+export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroInvocation.Bound {
 	const _macro = rejectKeywordText(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.MacroInvocation['_macro']>>(config.macro, [
@@ -3366,10 +3557,10 @@ export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroI
 				arguments: () => _arguments
 			}
 		)
-	);
+	) as unknown as T.MacroInvocation.Bound;
 }
 
-export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.ScopedIdentifier.Built {
+export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.ScopedIdentifier.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.ScopedIdentifier['_path']>>(config.path, [
@@ -3460,12 +3651,12 @@ export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.Scop
 				name: () => _name
 			}
 		)
-	);
+	) as unknown as T.ScopedIdentifier.Bound;
 }
 
 export function buildScopedTypeIdentifierInExpressionPosition(
 	config: T.ScopedTypeIdentifierInExpressionPosition.Config
-): T.ScopedTypeIdentifierInExpressionPosition.Built {
+): T.ScopedTypeIdentifierInExpressionPosition.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_path']>>(config.path, [
@@ -3548,10 +3739,10 @@ export function buildScopedTypeIdentifierInExpressionPosition(
 				name: () => _name
 			}
 		)
-	);
+	) as unknown as T.ScopedTypeIdentifierInExpressionPosition.Bound;
 }
 
-export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config): T.ScopedTypeIdentifier.Built {
+export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config): T.ScopedTypeIdentifier.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.ScopedTypeIdentifier['_path']>>(config.path, [
@@ -3634,12 +3825,15 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 				name: () => _name
 			}
 		)
-	);
+	) as unknown as T.ScopedTypeIdentifier.Bound;
 }
 
 export function buildRangeExpression(
-	value: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | TSKindId.RangeExpressionBare
-): T.RangeExpression.Built {
+	value: AdmitBound<
+		T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | TSKindId.RangeExpressionBare,
+		T.AdmittedNodes
+	>
+): T.RangeExpression.Bound {
 	const _content = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.RangeExpression['_content']>>(value, [
 			['..', TSKindId.RangeExpressionBare] as const
@@ -3669,10 +3863,10 @@ export function buildRangeExpression(
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.RangeExpression.Bound;
 }
 
-export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryExpression.Built {
+export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryExpression.Bound {
 	const _operator = coerceKindEnumStorage<NonNullable<T.UnaryExpression['_operator']>>(config.operator, [
 		['-', TSKindId.Dash] as const,
 		['*', TSKindId.Star] as const,
@@ -3703,10 +3897,10 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 				operand: () => _operand
 			}
 		)
-	);
+	) as unknown as T.UnaryExpression.Bound;
 }
 
-export function buildTryExpression(value: T.Expression): T.TryExpression.Built {
+export function buildTryExpression(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.TryExpression.Bound {
 	const _value = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.TryExpression['_value']>>(value, []),
 		'TryExpression.value',
@@ -3727,10 +3921,10 @@ export function buildTryExpression(value: T.Expression): T.TryExpression.Built {
 				value: () => _value
 			}
 		)
-	);
+	) as unknown as T.TryExpression.Bound;
 }
 
-export function buildBinaryExpression(config: T.BinaryExpression.Config): T.BinaryExpression.Built {
+export function buildBinaryExpression(config: T.BinaryExpression.Config): T.BinaryExpression.Bound {
 	const _left = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.BinaryExpression['_left']>>(config.left, []),
 		'BinaryExpression.left',
@@ -3785,10 +3979,10 @@ export function buildBinaryExpression(config: T.BinaryExpression.Config): T.Bina
 				right: () => _right
 			}
 		)
-	);
+	) as unknown as T.BinaryExpression.Bound;
 }
 
-export function buildAssignmentExpression(config: T.AssignmentExpression.Config): T.AssignmentExpression.Built {
+export function buildAssignmentExpression(config: T.AssignmentExpression.Config): T.AssignmentExpression.Bound {
 	const _left = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.AssignmentExpression['_left']>>(config.left, []),
 		'AssignmentExpression.left',
@@ -3819,10 +4013,10 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 				right: () => _right
 			}
 		)
-	);
+	) as unknown as T.AssignmentExpression.Bound;
 }
 
-export function buildCompoundAssignmentExpr(config: T.CompoundAssignmentExpr.Config): T.CompoundAssignmentExpr.Built {
+export function buildCompoundAssignmentExpr(config: T.CompoundAssignmentExpr.Config): T.CompoundAssignmentExpr.Bound {
 	const _left = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.CompoundAssignmentExpr['_left']>>(config.left, []),
 		'CompoundAssignmentExpr.left',
@@ -3869,10 +4063,10 @@ export function buildCompoundAssignmentExpr(config: T.CompoundAssignmentExpr.Con
 				right: () => _right
 			}
 		)
-	);
+	) as unknown as T.CompoundAssignmentExpr.Bound;
 }
 
-export function buildTypeCastExpression(config: T.TypeCastExpression.Config): T.TypeCastExpression.Built {
+export function buildTypeCastExpression(config: T.TypeCastExpression.Config): T.TypeCastExpression.Bound {
 	const _value = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.TypeCastExpression['_value']>>(config.value, []),
 		'TypeCastExpression.value',
@@ -3906,10 +4100,10 @@ export function buildTypeCastExpression(config: T.TypeCastExpression.Config): T.
 				type: () => _type
 			}
 		)
-	);
+	) as unknown as T.TypeCastExpression.Bound;
 }
 
-export function buildReturnExpression(value?: T.Expression): T.ReturnExpression.Built {
+export function buildReturnExpression(value?: AdmitBound<T.Expression, T.AdmittedNodes>): T.ReturnExpression.Bound {
 	const _expression = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.ReturnExpression['_expression']>>(value, []),
 		'ReturnExpression.expression',
@@ -3930,10 +4124,10 @@ export function buildReturnExpression(value?: T.Expression): T.ReturnExpression.
 				expression: () => _expression
 			}
 		)
-	);
+	) as unknown as T.ReturnExpression.Bound;
 }
 
-export function buildYieldExpression(value?: T.Expression): T.YieldExpression.Built {
+export function buildYieldExpression(value?: AdmitBound<T.Expression, T.AdmittedNodes>): T.YieldExpression.Bound {
 	const _expression = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.YieldExpression['_expression']>>(value, []),
 		'YieldExpression.expression',
@@ -3954,10 +4148,10 @@ export function buildYieldExpression(value?: T.Expression): T.YieldExpression.Bu
 				expression: () => _expression
 			}
 		)
-	);
+	) as unknown as T.YieldExpression.Bound;
 }
 
-export function buildCallExpression(config: T.CallExpression.Config): T.CallExpression.Built {
+export function buildCallExpression(config: T.CallExpression.Config): T.CallExpression.Bound {
 	const _function = rejectKeywordText(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.CallExpression['_function']>>(config.function, [
@@ -4014,7 +4208,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 		]
 	);
 	const _arguments = rejectBareText(
-		config.arguments ?? buildArguments(),
+		orDefault(config.arguments, () => buildArguments()),
 		'CallExpression.arguments',
 		'a built Arguments'
 	);
@@ -4037,17 +4231,19 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 				arguments: () => _arguments
 			}
 		)
-	);
+	) as unknown as T.CallExpression.Bound;
 }
 
 export function buildArguments(): T.EmptyArguments;
-export function buildArguments(value?: T.ArgumentsElements): ReturnType<typeof _buildArguments>;
 export function buildArguments(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedArgument | T.Expression>
+	value?: AdmitBound<T.ArgumentsElements, T.AdmittedNodes>
 ): ReturnType<typeof _buildArguments>;
 export function buildArguments(
-	...elements: NonEmptyArray<T.AttributedArgument | T.Expression>
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	...elements: NonEmptyArray<AdmitBound<T.AttributedArgument | T.Expression, T.AdmittedNodes>>
+): ReturnType<typeof _buildArguments>;
+export function buildArguments(
+	...elements: NonEmptyArray<AdmitBound<T.AttributedArgument | T.Expression, T.AdmittedNodes>>
 ): ReturnType<typeof _buildArguments>;
 export function buildArguments(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -4062,27 +4258,37 @@ export function buildArguments(...args: unknown[]) {
 		? _buildArguments(args[0] as T.ArgumentsElements)
 		: _buildArguments((buildArgumentsElements as (...a: unknown[]) => unknown)(...args) as T.ArgumentsElements);
 }
-function _buildArguments(value?: T.ArgumentsElements): T.Arguments.Built {
+function _buildArguments(value?: AdmitBound<T.ArgumentsElements, T.AdmittedNodes>): T.Arguments.Bound {
 	const _arguments_elements = rejectBareText(value, 'Arguments.argumentsElements', 'a built ArgumentsElements');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.Arguments as const,
-				$source: 2 as const,
-				$named: true as const,
-				_arguments_elements,
-				$with: {
-					argumentsElements: (value?: T.ArgumentsElements) => buildArguments(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.Arguments as const,
+					$source: 2 as const,
+					$named: true as const,
+					_arguments_elements,
+					$with: {
+						argumentsElements: (value?: T.ArgumentsElements) => buildArguments(value)
+					}
+				},
+				{
+					argumentsElements: () => _arguments_elements
 				}
-			},
+			),
 			{
-				argumentsElements: () => _arguments_elements
+				list: 'argumentsElements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildArgumentsElements
 			}
 		)
-	);
+	) as unknown as T.Arguments.Bound;
 }
 
-export function buildParenthesizedExpression(value: T.Expression): T.ParenthesizedExpression.Built {
+export function buildParenthesizedExpression(
+	value: AdmitBound<T.Expression, T.AdmittedNodes>
+): T.ParenthesizedExpression.Bound {
 	const _expression = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.ParenthesizedExpression['_expression']>>(value, []),
 		'ParenthesizedExpression.expression',
@@ -4103,10 +4309,10 @@ export function buildParenthesizedExpression(value: T.Expression): T.Parenthesiz
 				expression: () => _expression
 			}
 		)
-	);
+	) as unknown as T.ParenthesizedExpression.Bound;
 }
 
-export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleExpression.Built {
+export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleExpression.Bound {
 	const _attributes = rejectBareText(config.attributes ?? [], 'TupleExpression.attributes', 'a built AttributeItem');
 	const _tuple_expression_elements = rejectBareText(
 		config.tupleExpressionElements,
@@ -4132,12 +4338,12 @@ export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleE
 				tupleExpressionElements: () => _tuple_expression_elements
 			}
 		)
-	);
+	) as unknown as T.TupleExpression.Bound;
 }
 
 export const buildUnitExpression: TSKindId.UnitExpression = TSKindId.UnitExpression;
 
-export function buildStructExpression(config: T.StructExpression.Config): T.StructExpression.Built {
+export function buildStructExpression(config: T.StructExpression.Config): T.StructExpression.Bound {
 	const _name = admitAliasContent<NonNullable<T.StructExpression['_name']>>(
 		rejectBareText(
 			config.name,
@@ -4147,7 +4353,7 @@ export function buildStructExpression(config: T.StructExpression.Config): T.Stru
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _body = rejectBareText(
-		config.body ?? buildFieldInitializerList(),
+		orDefault(config.body, () => buildFieldInitializerList()),
 		'StructExpression.body',
 		'a built FieldInitializerList'
 	);
@@ -4175,19 +4381,23 @@ export function buildStructExpression(config: T.StructExpression.Config): T.Stru
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.StructExpression.Bound;
 }
 
 export function buildFieldInitializerList(): T.EmptyFieldInitializerList;
 export function buildFieldInitializerList(
-	value?: T.FieldInitializerListElements
+	value?: AdmitBound<T.FieldInitializerListElements, T.AdmittedNodes>
 ): ReturnType<typeof _buildFieldInitializerList>;
 export function buildFieldInitializerList(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
+	...elements: NonEmptyArray<
+		AdmitBound<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer, T.AdmittedNodes>
+	>
 ): ReturnType<typeof _buildFieldInitializerList>;
 export function buildFieldInitializerList(
-	...elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
+	...elements: NonEmptyArray<
+		AdmitBound<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer, T.AdmittedNodes>
+	>
 ): ReturnType<typeof _buildFieldInitializerList>;
 export function buildFieldInitializerList(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -4204,33 +4414,43 @@ export function buildFieldInitializerList(...args: unknown[]) {
 				(buildFieldInitializerListElements as (...a: unknown[]) => unknown)(...args) as T.FieldInitializerListElements
 			);
 }
-function _buildFieldInitializerList(value?: T.FieldInitializerListElements): T.FieldInitializerList.Built {
+function _buildFieldInitializerList(
+	value?: AdmitBound<T.FieldInitializerListElements, T.AdmittedNodes>
+): T.FieldInitializerList.Bound {
 	const _initializers = rejectBareText(
 		value,
 		'FieldInitializerList.initializers',
 		'a built FieldInitializerListElements'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FieldInitializerList as const,
-				$source: 2 as const,
-				$named: true as const,
-				_initializers,
-				$with: {
-					initializers: (value?: T.FieldInitializerListElements) => buildFieldInitializerList(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.FieldInitializerList as const,
+					$source: 2 as const,
+					$named: true as const,
+					_initializers,
+					$with: {
+						initializers: (value?: T.FieldInitializerListElements) => buildFieldInitializerList(value)
+					}
+				},
+				{
+					initializers: () => _initializers
 				}
-			},
+			),
 			{
-				initializers: () => _initializers
+				list: 'initializers',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildFieldInitializerListElements
 			}
 		)
-	);
+	) as unknown as T.FieldInitializerList.Bound;
 }
 
 export function buildShorthandFieldInitializer(
 	config: T.ShorthandFieldInitializer.Config
-): T.ShorthandFieldInitializer.Built {
+): T.ShorthandFieldInitializer.Bound {
 	const _attributes = rejectBareText(
 		config.attributes ?? [],
 		'ShorthandFieldInitializer.attributes',
@@ -4256,10 +4476,10 @@ export function buildShorthandFieldInitializer(
 				name: () => _name
 			}
 		)
-	);
+	) as unknown as T.ShorthandFieldInitializer.Bound;
 }
 
-export function buildFieldInitializer(config: T.FieldInitializer.Config): T.FieldInitializer.Built {
+export function buildFieldInitializer(config: T.FieldInitializer.Config): T.FieldInitializer.Bound {
 	const _attribute_item = rejectBareText(
 		config.attributeItem ?? [],
 		'FieldInitializer.attributeItem',
@@ -4297,10 +4517,12 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): T.Fiel
 				value: () => _value
 			}
 		)
-	);
+	) as unknown as T.FieldInitializer.Bound;
 }
 
-export function buildBaseFieldInitializer(value: T.Expression): T.BaseFieldInitializer.Built {
+export function buildBaseFieldInitializer(
+	value: AdmitBound<T.Expression, T.AdmittedNodes>
+): T.BaseFieldInitializer.Bound {
 	const _value = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.BaseFieldInitializer['_value']>>(value, []),
 		'BaseFieldInitializer.value',
@@ -4321,16 +4543,20 @@ export function buildBaseFieldInitializer(value: T.Expression): T.BaseFieldIniti
 				value: () => _value
 			}
 		)
-	);
+	) as unknown as T.BaseFieldInitializer.Bound;
 }
 
-export function buildIfExpression(config: T.IfExpression.Config): T.IfExpression.Built {
+export function buildIfExpression(config: T.IfExpression.Config): T.IfExpression.Bound {
 	const _condition = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.IfExpression['_condition']>>(config.condition, []),
 		'IfExpression.condition',
 		'a built Expression / LetCondition / LetChain'
 	);
-	const _consequence = rejectBareText(config.consequence ?? buildBlock(), 'IfExpression.consequence', 'a built Block');
+	const _consequence = rejectBareText(
+		orDefault(config.consequence, () => buildBlock()),
+		'IfExpression.consequence',
+		'a built Block'
+	);
 	const _alternative = rejectBareText(config.alternative, 'IfExpression.alternative', 'a built ElseClause');
 	return withMethods(
 		withAccessors(
@@ -4354,10 +4580,10 @@ export function buildIfExpression(config: T.IfExpression.Config): T.IfExpression
 				alternative: () => _alternative
 			}
 		)
-	);
+	) as unknown as T.IfExpression.Bound;
 }
 
-export function buildLetCondition(config: T.LetCondition.Config): T.LetCondition.Built {
+export function buildLetCondition(config: T.LetCondition.Config): T.LetCondition.Bound {
 	const _pattern = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.LetCondition['_pattern']>>(config.pattern, []),
 		'LetCondition.pattern',
@@ -4387,10 +4613,10 @@ export function buildLetCondition(config: T.LetCondition.Config): T.LetCondition
 				value: () => _value
 			}
 		)
-	);
+	) as unknown as T.LetCondition.Bound;
 }
 
-export function buildLetChain(config: T.LetChain.Config): T.LetChain.Built {
+export function buildLetChain(config: T.LetChain.Config): T.LetChain.Bound {
 	const _left = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.LetChain['_left']>>(config.left, []),
 		'LetChain.left',
@@ -4419,10 +4645,10 @@ export function buildLetChain(config: T.LetChain.Config): T.LetChain.Built {
 				rights: () => _right
 			}
 		)
-	);
+	) as unknown as T.LetChain.Bound;
 }
 
-export function buildElseClause(value: T.Block | T.IfExpression): T.ElseClause.Built {
+export function buildElseClause(value: AdmitBound<T.Block | T.IfExpression, T.AdmittedNodes>): T.ElseClause.Bound {
 	const _body = rejectBareText(value, 'ElseClause.body', 'a built Block / IfExpression');
 	return withMethods(
 		withAccessors(
@@ -4439,16 +4665,20 @@ export function buildElseClause(value: T.Block | T.IfExpression): T.ElseClause.B
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.ElseClause.Bound;
 }
 
-export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchExpression.Built {
+export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchExpression.Bound {
 	const _value = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.MatchExpression['_value']>>(config.value, []),
 		'MatchExpression.value',
 		'a built Expression'
 	);
-	const _body = rejectBareText(config.body ?? buildMatchBlock(), 'MatchExpression.body', 'a built MatchBlock');
+	const _body = rejectBareText(
+		orDefault(config.body, () => buildMatchBlock()),
+		'MatchExpression.body',
+		'a built MatchBlock'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4468,12 +4698,12 @@ export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchE
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.MatchExpression.Bound;
 }
 
 export function buildMatchBlock(): T.EmptyMatchBlock;
-export function buildMatchBlock(value?: T.MatchBlockArms): T.MatchBlock.Built;
-export function buildMatchBlock(value?: T.MatchBlockArms): T.MatchBlock.Built {
+export function buildMatchBlock(value?: AdmitBound<T.MatchBlockArms, T.AdmittedNodes>): T.MatchBlock.Bound;
+export function buildMatchBlock(value?: AdmitBound<T.MatchBlockArms, T.AdmittedNodes>): T.MatchBlock.Bound {
 	const _match_block_arms = rejectBareText(value, 'MatchBlock.matchBlockArms', 'a built MatchBlockArms');
 	return withMethods(
 		withAccessors(
@@ -4490,10 +4720,10 @@ export function buildMatchBlock(value?: T.MatchBlockArms): T.MatchBlock.Built {
 				matchBlockArms: () => _match_block_arms
 			}
 		)
-	);
+	) as unknown as T.MatchBlock.Bound;
 }
 
-export function buildLastMatchArm(config: T.LastMatchArm.Config): T.LastMatchArm.Built {
+export function buildLastMatchArm(config: T.LastMatchArm.Config): T.LastMatchArm.Bound {
 	const _attributes = rejectBareText(
 		config.attributes ?? [],
 		'LastMatchArm.attributes',
@@ -4531,10 +4761,10 @@ export function buildLastMatchArm(config: T.LastMatchArm.Config): T.LastMatchArm
 				comma: () => _comma
 			}
 		)
-	);
+	) as unknown as T.LastMatchArm.Bound;
 }
 
-export function buildMatchPattern(config: T.MatchPattern.Config): T.MatchPattern.Built {
+export function buildMatchPattern(config: T.MatchPattern.Config): T.MatchPattern.Bound {
 	const _pattern = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.MatchPattern['_pattern']>>(config.pattern, []),
 		'MatchPattern.pattern',
@@ -4565,17 +4795,21 @@ export function buildMatchPattern(config: T.MatchPattern.Config): T.MatchPattern
 				condition: () => _condition
 			}
 		)
-	);
+	) as unknown as T.MatchPattern.Bound;
 }
 
-export function buildWhileExpression(config: T.WhileExpression.Config): T.WhileExpression.Built {
+export function buildWhileExpression(config: T.WhileExpression.Config): T.WhileExpression.Bound {
 	const _label = rejectBareText(config.label, 'WhileExpression.label', 'a built Label');
 	const _condition = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.WhileExpression['_condition']>>(config.condition, []),
 		'WhileExpression.condition',
 		'a built Expression / LetCondition / LetChain'
 	);
-	const _body = rejectBareText(config.body ?? buildBlock(), 'WhileExpression.body', 'a built Block');
+	const _body = rejectBareText(
+		orDefault(config.body, () => buildBlock()),
+		'WhileExpression.body',
+		'a built Block'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4598,12 +4832,16 @@ export function buildWhileExpression(config: T.WhileExpression.Config): T.WhileE
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.WhileExpression.Bound;
 }
 
-export function buildLoopExpression(config: Partial<T.LoopExpression.Config> = {}): T.LoopExpression.Built {
+export function buildLoopExpression(config: Partial<T.LoopExpression.Config> = {}): T.LoopExpression.Bound {
 	const _label = rejectBareText(config.label, 'LoopExpression.label', 'a built Label');
-	const _body = rejectBareText(config.body ?? buildBlock(), 'LoopExpression.body', 'a built Block');
+	const _body = rejectBareText(
+		orDefault(config.body, () => buildBlock()),
+		'LoopExpression.body',
+		'a built Block'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4622,10 +4860,10 @@ export function buildLoopExpression(config: Partial<T.LoopExpression.Config> = {
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.LoopExpression.Bound;
 }
 
-export function buildForExpression(config: T.ForExpression.Config): T.ForExpression.Built {
+export function buildForExpression(config: T.ForExpression.Config): T.ForExpression.Bound {
 	const _label = rejectBareText(config.label, 'ForExpression.label', 'a built Label');
 	const _pattern = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.ForExpression['_pattern']>>(config.pattern, []),
@@ -4637,7 +4875,11 @@ export function buildForExpression(config: T.ForExpression.Config): T.ForExpress
 		'ForExpression.value',
 		'a built Expression'
 	);
-	const _body = rejectBareText(config.body ?? buildBlock(), 'ForExpression.body', 'a built Block');
+	const _body = rejectBareText(
+		orDefault(config.body, () => buildBlock()),
+		'ForExpression.body',
+		'a built Block'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4664,10 +4906,10 @@ export function buildForExpression(config: T.ForExpression.Config): T.ForExpress
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.ForExpression.Bound;
 }
 
-export function buildConstBlock(value: T.Block): ReturnType<typeof _buildConstBlock>;
+export function buildConstBlock(value: AdmitBound<T.Block, T.AdmittedNodes>): ReturnType<typeof _buildConstBlock>;
 export function buildConstBlock(_config?: Partial<T.Block.Config>): ReturnType<typeof _buildConstBlock>;
 export function buildConstBlock(...args: unknown[]) {
 	if (args.length === 0) {
@@ -4685,7 +4927,7 @@ export function buildConstBlock(...args: unknown[]) {
 		? _buildConstBlock(args[0] as T.Block)
 		: _buildConstBlock((buildBlock as (...a: unknown[]) => unknown)(...args) as T.Block);
 }
-function _buildConstBlock(value: T.Block): T.ConstBlock.Built {
+function _buildConstBlock(value: AdmitBound<T.Block, T.AdmittedNodes>): T.ConstBlock.Bound {
 	const _body = rejectBareText(value, 'ConstBlock.body', 'a built Block');
 	return withMethods(
 		withAccessors(
@@ -4702,12 +4944,16 @@ function _buildConstBlock(value: T.Block): T.ConstBlock.Built {
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.ConstBlock.Bound;
 }
 
 export function buildClosureParameters(): T.EmptyClosureParameters;
-export function buildClosureParameters(...children: (T.Pattern | T.Parameter)[]): T.ClosureParameters.Built;
-export function buildClosureParameters(...children: (T.Pattern | T.Parameter)[]): T.ClosureParameters.Built {
+export function buildClosureParameters(
+	...children: AdmitBound<(T.Pattern | T.Parameter)[], T.AdmittedNodes>
+): T.ClosureParameters.Bound;
+export function buildClosureParameters(
+	...children: AdmitBound<(T.Pattern | T.Parameter)[], T.AdmittedNodes>
+): T.ClosureParameters.Bound {
 	const _parameters = rejectBareText(children, 'ClosureParameters.parameters', 'a built Pattern / Parameter');
 	return withMethods(
 		withAccessors(
@@ -4722,10 +4968,10 @@ export function buildClosureParameters(...children: (T.Pattern | T.Parameter)[])
 				parameters: () => _parameters
 			}
 		)
-	);
+	) as unknown as T.ClosureParameters.Bound;
 }
 
-export function buildLabel(value: T.Identifier): ReturnType<typeof _buildLabel>;
+export function buildLabel(value: AdmitBound<T.Identifier, T.AdmittedNodes>): ReturnType<typeof _buildLabel>;
 export function buildLabel(text: string): ReturnType<typeof _buildLabel>;
 export function buildLabel(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -4740,7 +4986,7 @@ export function buildLabel(...args: unknown[]) {
 		? _buildLabel(args[0] as T.Identifier)
 		: _buildLabel((buildIdentifier as (...a: unknown[]) => unknown)(...args) as T.Identifier);
 }
-function _buildLabel(value: T.Identifier): T.Label.Built {
+function _buildLabel(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.Label.Bound {
 	const _name = rejectBareText(value, 'Label.name', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
@@ -4757,10 +5003,10 @@ function _buildLabel(value: T.Identifier): T.Label.Built {
 				name: () => _name
 			}
 		)
-	);
+	) as unknown as T.Label.Bound;
 }
 
-export function buildBreakExpression(config: Partial<T.BreakExpression.Config> = {}): T.BreakExpression.Built {
+export function buildBreakExpression(config: Partial<T.BreakExpression.Config> = {}): T.BreakExpression.Bound {
 	const _label = rejectBareText(config.label, 'BreakExpression.label', 'a built Label');
 	const _expression = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.BreakExpression['_expression']>>(config.expression, []),
@@ -4786,10 +5032,12 @@ export function buildBreakExpression(config: Partial<T.BreakExpression.Config> =
 				expression: () => _expression
 			}
 		)
-	);
+	) as unknown as T.BreakExpression.Bound;
 }
 
-export function buildContinueExpression(value?: T.Label): ReturnType<typeof _buildContinueExpression>;
+export function buildContinueExpression(
+	value?: AdmitBound<T.Label, T.AdmittedNodes>
+): ReturnType<typeof _buildContinueExpression>;
 export function buildContinueExpression(text: string): ReturnType<typeof _buildContinueExpression>;
 export function buildContinueExpression(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -4804,7 +5052,7 @@ export function buildContinueExpression(...args: unknown[]) {
 		? _buildContinueExpression(args[0] as T.Label)
 		: _buildContinueExpression((buildLabel as (...a: unknown[]) => unknown)(...args) as T.Label);
 }
-function _buildContinueExpression(value?: T.Label): T.ContinueExpression.Built {
+function _buildContinueExpression(value?: AdmitBound<T.Label, T.AdmittedNodes>): T.ContinueExpression.Bound {
 	const _label = rejectBareText(value, 'ContinueExpression.label', 'a built Label');
 	return withMethods(
 		withAccessors(
@@ -4821,10 +5069,10 @@ function _buildContinueExpression(value?: T.Label): T.ContinueExpression.Built {
 				label: () => _label
 			}
 		)
-	);
+	) as unknown as T.ContinueExpression.Bound;
 }
 
-export function buildIndexExpression(config: T.IndexExpression.Config): T.IndexExpression.Built {
+export function buildIndexExpression(config: T.IndexExpression.Config): T.IndexExpression.Bound {
 	const _object = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.IndexExpression['_object']>>(config.object, []),
 		'IndexExpression.object',
@@ -4855,10 +5103,10 @@ export function buildIndexExpression(config: T.IndexExpression.Config): T.IndexE
 				index: () => _index
 			}
 		)
-	);
+	) as unknown as T.IndexExpression.Bound;
 }
 
-export function buildAwaitExpression(value: T.Expression): T.AwaitExpression.Built {
+export function buildAwaitExpression(value: AdmitBound<T.Expression, T.AdmittedNodes>): T.AwaitExpression.Bound {
 	const _expression = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.AwaitExpression['_expression']>>(value, []),
 		'AwaitExpression.expression',
@@ -4879,10 +5127,10 @@ export function buildAwaitExpression(value: T.Expression): T.AwaitExpression.Bui
 				expression: () => _expression
 			}
 		)
-	);
+	) as unknown as T.AwaitExpression.Bound;
 }
 
-export function buildFieldExpression(config: T.FieldExpression.Config): T.FieldExpression.Built {
+export function buildFieldExpression(config: T.FieldExpression.Config): T.FieldExpression.Bound {
 	const _value = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.FieldExpression['_value']>>(config.value, []),
 		'FieldExpression.value',
@@ -4912,10 +5160,10 @@ export function buildFieldExpression(config: T.FieldExpression.Config): T.FieldE
 				field: () => _field
 			}
 		)
-	);
+	) as unknown as T.FieldExpression.Bound;
 }
 
-export function buildUnsafeBlock(value: T.Block): ReturnType<typeof _buildUnsafeBlock>;
+export function buildUnsafeBlock(value: AdmitBound<T.Block, T.AdmittedNodes>): ReturnType<typeof _buildUnsafeBlock>;
 export function buildUnsafeBlock(_config?: Partial<T.Block.Config>): ReturnType<typeof _buildUnsafeBlock>;
 export function buildUnsafeBlock(...args: unknown[]) {
 	if (args.length === 0) {
@@ -4933,7 +5181,7 @@ export function buildUnsafeBlock(...args: unknown[]) {
 		? _buildUnsafeBlock(args[0] as T.Block)
 		: _buildUnsafeBlock((buildBlock as (...a: unknown[]) => unknown)(...args) as T.Block);
 }
-function _buildUnsafeBlock(value: T.Block): T.UnsafeBlock.Built {
+function _buildUnsafeBlock(value: AdmitBound<T.Block, T.AdmittedNodes>): T.UnsafeBlock.Bound {
 	const _body = rejectBareText(value, 'UnsafeBlock.body', 'a built Block');
 	return withMethods(
 		withAccessors(
@@ -4950,12 +5198,16 @@ function _buildUnsafeBlock(value: T.Block): T.UnsafeBlock.Built {
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.UnsafeBlock.Bound;
 }
 
-export function buildAsyncBlock(config: Partial<T.AsyncBlock.Config> = {}): T.AsyncBlock.Built {
+export function buildAsyncBlock(config: Partial<T.AsyncBlock.Config> = {}): T.AsyncBlock.Bound {
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
-	const _body = rejectBareText(config.body ?? buildBlock(), 'AsyncBlock.body', 'a built Block');
+	const _body = rejectBareText(
+		orDefault(config.body, () => buildBlock()),
+		'AsyncBlock.body',
+		'a built Block'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -4975,12 +5227,16 @@ export function buildAsyncBlock(config: Partial<T.AsyncBlock.Config> = {}): T.As
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.AsyncBlock.Bound;
 }
 
-export function buildGenBlock(config: Partial<T.GenBlock.Config> = {}): T.GenBlock.Built {
+export function buildGenBlock(config: Partial<T.GenBlock.Config> = {}): T.GenBlock.Bound {
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
-	const _body = rejectBareText(config.body ?? buildBlock(), 'GenBlock.body', 'a built Block');
+	const _body = rejectBareText(
+		orDefault(config.body, () => buildBlock()),
+		'GenBlock.body',
+		'a built Block'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -5000,10 +5256,10 @@ export function buildGenBlock(config: Partial<T.GenBlock.Config> = {}): T.GenBlo
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.GenBlock.Bound;
 }
 
-export function buildTryBlock(value: T.Block): ReturnType<typeof _buildTryBlock>;
+export function buildTryBlock(value: AdmitBound<T.Block, T.AdmittedNodes>): ReturnType<typeof _buildTryBlock>;
 export function buildTryBlock(_config?: Partial<T.Block.Config>): ReturnType<typeof _buildTryBlock>;
 export function buildTryBlock(...args: unknown[]) {
 	if (args.length === 0) {
@@ -5021,7 +5277,7 @@ export function buildTryBlock(...args: unknown[]) {
 		? _buildTryBlock(args[0] as T.Block)
 		: _buildTryBlock((buildBlock as (...a: unknown[]) => unknown)(...args) as T.Block);
 }
-function _buildTryBlock(value: T.Block): T.TryBlock.Built {
+function _buildTryBlock(value: AdmitBound<T.Block, T.AdmittedNodes>): T.TryBlock.Bound {
 	const _body = rejectBareText(value, 'TryBlock.body', 'a built Block');
 	return withMethods(
 		withAccessors(
@@ -5038,12 +5294,12 @@ function _buildTryBlock(value: T.Block): T.TryBlock.Built {
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.TryBlock.Bound;
 }
 
 export function buildBlock(): T.EmptyBlock;
-export function buildBlock(config?: Partial<T.Block.Config>): T.Block.Built;
-export function buildBlock(config: Partial<T.Block.Config> = {}): T.Block.Built {
+export function buildBlock(config?: Partial<T.Block.Config>): T.Block.Bound;
+export function buildBlock(config: Partial<T.Block.Config> = {}): T.Block.Bound {
 	const _label = rejectBareText(config.label, 'Block.label', 'a built Label');
 	const _statements = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.Block['_statements']>>(config.statements ?? [], []),
@@ -5078,10 +5334,10 @@ export function buildBlock(config: Partial<T.Block.Config> = {}): T.Block.Built 
 				trailingExpression: () => _trailing_expression
 			}
 		)
-	);
+	) as unknown as T.Block.Bound;
 }
 
-export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericPattern.Built {
+export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericPattern.Bound {
 	const _name = rejectBareText(config.name, 'GenericPattern.name', 'buildIdentifier(…)');
 	const _type_arguments = rejectBareText(config.typeArguments, 'GenericPattern.typeArguments', 'a built TypeArguments');
 	return withMethods(
@@ -5102,17 +5358,19 @@ export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericP
 				typeArguments: () => _type_arguments
 			}
 		)
-	);
+	) as unknown as T.GenericPattern.Bound;
 }
 
 export function buildTuplePattern(): T.EmptyTuplePattern;
-export function buildTuplePattern(value?: T.TuplePatternElements): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.Pattern | T.ClosureExpression>
+	value?: AdmitBound<T.TuplePatternElements, T.AdmittedNodes>
 ): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(
-	...elements: NonEmptyArray<T.Pattern | T.ClosureExpression>
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+	...elements: NonEmptyArray<AdmitBound<T.Pattern | T.ClosureExpression, T.AdmittedNodes>>
+): ReturnType<typeof _buildTuplePattern>;
+export function buildTuplePattern(
+	...elements: NonEmptyArray<AdmitBound<T.Pattern | T.ClosureExpression, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -5129,33 +5387,45 @@ export function buildTuplePattern(...args: unknown[]) {
 				(buildTuplePatternElements as (...a: unknown[]) => unknown)(...args) as T.TuplePatternElements
 			);
 }
-function _buildTuplePattern(value?: T.TuplePatternElements): T.TuplePattern.Built {
+function _buildTuplePattern(value?: AdmitBound<T.TuplePatternElements, T.AdmittedNodes>): T.TuplePattern.Bound {
 	const _elements = rejectBareText(value, 'TuplePattern.elements', 'a built TuplePatternElements');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TuplePattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_elements,
-				$with: {
-					elements: (value?: T.TuplePatternElements) => buildTuplePattern(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.TuplePattern as const,
+					$source: 2 as const,
+					$named: true as const,
+					_elements,
+					$with: {
+						elements: (value?: T.TuplePatternElements) => buildTuplePattern(value)
+					}
+				},
+				{
+					elements: () => _elements
 				}
-			},
+			),
 			{
-				elements: () => _elements
+				list: 'elements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildTuplePatternElements
 			}
 		)
-	);
+	) as unknown as T.TuplePattern.Bound;
 }
 
 export function buildSlicePattern(): T.EmptySlicePattern;
-export function buildSlicePattern(value?: T.Patterns): ReturnType<typeof _buildSlicePattern>;
+export function buildSlicePattern(
+	value?: AdmitBound<T.Patterns, T.AdmittedNodes>
+): ReturnType<typeof _buildSlicePattern>;
 export function buildSlicePattern(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.Pattern>
+	...elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildSlicePattern>;
-export function buildSlicePattern(...elements: NonEmptyArray<T.Pattern>): ReturnType<typeof _buildSlicePattern>;
+export function buildSlicePattern(
+	...elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>
+): ReturnType<typeof _buildSlicePattern>;
 export function buildSlicePattern(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
 		return _buildSlicePattern(args[0] as T.Patterns);
@@ -5169,27 +5439,35 @@ export function buildSlicePattern(...args: unknown[]) {
 		? _buildSlicePattern(args[0] as T.Patterns)
 		: _buildSlicePattern((buildPatterns as (...a: unknown[]) => unknown)(...args) as T.Patterns);
 }
-function _buildSlicePattern(value?: T.Patterns): T.SlicePattern.Built {
+function _buildSlicePattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.SlicePattern.Bound {
 	const _patterns = rejectBareText(value, 'SlicePattern.patterns', 'a built Patterns');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.SlicePattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_patterns,
-				$with: {
-					patterns: (value?: T.Patterns) => buildSlicePattern(value)
+		withListOwner(
+			withAccessors(
+				{
+					$type: TSKindId.SlicePattern as const,
+					$source: 2 as const,
+					$named: true as const,
+					_patterns,
+					$with: {
+						patterns: (value?: T.Patterns) => buildSlicePattern(value)
+					}
+				},
+				{
+					patterns: () => _patterns
 				}
-			},
+			),
 			{
-				patterns: () => _patterns
+				list: 'patterns',
+				elements: 'patterns',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildPatterns
 			}
 		)
-	);
+	) as unknown as T.SlicePattern.Bound;
 }
 
-export function buildTupleStructPattern(config: T.TupleStructPattern.Config): T.TupleStructPattern.Built {
+export function buildTupleStructPattern(config: T.TupleStructPattern.Config): T.TupleStructPattern.Bound {
 	const _type = rejectBareText(config.type, 'TupleStructPattern.type', 'buildIdentifier(…)');
 	const _patterns = rejectBareText(config.patterns, 'TupleStructPattern.patterns', 'a built Patterns');
 	return withMethods(
@@ -5211,10 +5489,10 @@ export function buildTupleStructPattern(config: T.TupleStructPattern.Config): T.
 				patterns: () => _patterns
 			}
 		)
-	);
+	) as unknown as T.TupleStructPattern.Bound;
 }
 
-export function buildStructPattern(config: T.StructPattern.Config): T.StructPattern.Built {
+export function buildStructPattern(config: T.StructPattern.Config): T.StructPattern.Bound {
 	const _type = admitAliasContent<NonNullable<T.StructPattern['_type']>>(
 		rejectBareText(config.type, 'StructPattern.type', 'a built TypeIdentifier / ScopedTypeIdentifier'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -5239,12 +5517,12 @@ export function buildStructPattern(config: T.StructPattern.Config): T.StructPatt
 				fields: () => _fields
 			}
 		)
-	);
+	) as unknown as T.StructPattern.Bound;
 }
 
 export const buildRemainingFieldPattern: TSKindId.RemainingFieldPattern = TSKindId.RemainingFieldPattern;
 
-export function buildMutPattern(value: T.Pattern): T.MutPattern.Built {
+export function buildMutPattern(value: AdmitBound<T.Pattern, T.AdmittedNodes>): T.MutPattern.Bound {
 	const _pattern = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.MutPattern['_pattern']>>(value, []),
 		'MutPattern.pattern',
@@ -5265,10 +5543,10 @@ export function buildMutPattern(value: T.Pattern): T.MutPattern.Built {
 				pattern: () => _pattern
 			}
 		)
-	);
+	) as unknown as T.MutPattern.Bound;
 }
 
-export function buildRefPattern(value: T.Pattern): T.RefPattern.Built {
+export function buildRefPattern(value: AdmitBound<T.Pattern, T.AdmittedNodes>): T.RefPattern.Bound {
 	const _pattern = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.RefPattern['_pattern']>>(value, []),
 		'RefPattern.pattern',
@@ -5289,10 +5567,10 @@ export function buildRefPattern(value: T.Pattern): T.RefPattern.Built {
 				pattern: () => _pattern
 			}
 		)
-	);
+	) as unknown as T.RefPattern.Bound;
 }
 
-export function buildCapturedPattern(config: T.CapturedPattern.Config): T.CapturedPattern.Built {
+export function buildCapturedPattern(config: T.CapturedPattern.Config): T.CapturedPattern.Bound {
 	const _name = rejectBareText(config.name, 'CapturedPattern.name', 'buildIdentifier(…)');
 	const _pattern = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.CapturedPattern['_pattern']>>(config.pattern, []),
@@ -5318,10 +5596,10 @@ export function buildCapturedPattern(config: T.CapturedPattern.Config): T.Captur
 				pattern: () => _pattern
 			}
 		)
-	);
+	) as unknown as T.CapturedPattern.Bound;
 }
 
-export function buildReferencePattern(config: T.ReferencePattern.Config): T.ReferencePattern.Built {
+export function buildReferencePattern(config: T.ReferencePattern.Config): T.ReferencePattern.Bound {
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _pattern = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.ReferencePattern['_pattern']>>(config.pattern, []),
@@ -5348,10 +5626,12 @@ export function buildReferencePattern(config: T.ReferencePattern.Config): T.Refe
 				pattern: () => _pattern
 			}
 		)
-	);
+	) as unknown as T.ReferencePattern.Bound;
 }
 
-export function buildNegativeLiteral(value: T.IntegerLiteral | T.FloatLiteral): T.NegativeLiteral.Built {
+export function buildNegativeLiteral(
+	value: AdmitBound<T.IntegerLiteral | T.FloatLiteral, T.AdmittedNodes>
+): T.NegativeLiteral.Bound {
 	const _value = rejectBareText(value, 'NegativeLiteral.value', 'buildFloatLiteral(…)');
 	return withMethods(
 		withAccessors(
@@ -5368,10 +5648,10 @@ export function buildNegativeLiteral(value: T.IntegerLiteral | T.FloatLiteral): 
 				value: () => _value
 			}
 		)
-	);
+	) as unknown as T.NegativeLiteral.Bound;
 }
 
-export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLiteral.Built {
+export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLiteral.Bound {
 	const _string_open = rejectBareText(config.stringOpen, 'StringLiteral.stringOpen', 'buildStringOpen(…)');
 	const _elements = rejectBareText(config.elements ?? [], 'StringLiteral.elements', 'buildStringContent(…)');
 	return withMethods(
@@ -5393,10 +5673,10 @@ export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLite
 				elements: () => _elements
 			}
 		)
-	);
+	) as unknown as T.StringLiteral.Bound;
 }
 
-export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawStringLiteral.Built {
+export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawStringLiteral.Bound {
 	const _raw_string_literal_start = rejectBareText(
 		config.rawStringLiteralStart,
 		'RawStringLiteral.rawStringLiteralStart',
@@ -5436,12 +5716,15 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 				rawStringLiteralEnd: () => _raw_string_literal_end
 			}
 		)
-	);
+	) as unknown as T.RawStringLiteral.Bound;
 }
 
 export function buildLineComment(
-	value: T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular
-): T.LineComment.Built {
+	value: AdmitBound<
+		T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular,
+		T.AdmittedNodes
+	>
+): T.LineComment.Bound {
 	const _content = rejectBareText(
 		value,
 		'LineComment.content',
@@ -5464,7 +5747,7 @@ export function buildLineComment(
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.LineComment.Bound;
 }
 
 export const buildInnerLineDocCommentMarker: TSKindId.InnerLineDocCommentMarker = TSKindId.InnerLineDocCommentMarker;
@@ -5472,8 +5755,8 @@ export const buildInnerLineDocCommentMarker: TSKindId.InnerLineDocCommentMarker 
 export const buildOuterLineDocCommentMarker: TSKindId.OuterLineDocCommentMarker = TSKindId.OuterLineDocCommentMarker;
 
 export function buildBlockComment(
-	value?: T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent
-): T.BlockComment.Built {
+	value?: AdmitBound<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent, T.AdmittedNodes>
+): T.BlockComment.Bound {
 	const _content = rejectBareText(value, 'BlockComment.content', 'buildBlockCommentContent(…)');
 	return withMethods(
 		withAccessors(
@@ -5491,10 +5774,10 @@ export function buildBlockComment(
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.BlockComment.Bound;
 }
 
-export function buildIdentifier(text: string): T.Identifier.Built {
+export function buildIdentifier(text: string): T.Identifier.Bound {
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
 	if (!_leafRe_buildIdentifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
 	return withMethods({
@@ -5505,7 +5788,7 @@ export function buildIdentifier(text: string): T.Identifier.Built {
 	});
 }
 
-export function buildShebang(value: string): T.Shebang.Built {
+export function buildShebang(value: AdmitBound<string, T.AdmittedNodes>): T.Shebang.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildShebang_content.test(_content))
 		throw new Error(`shebang.content: text does not match pattern: ${_content}`);
@@ -5524,7 +5807,7 @@ export function buildShebang(value: string): T.Shebang.Built {
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.Shebang.Bound;
 }
 
 export const buildSelf: TSKindId.Self = TSKindId.Self;
@@ -5533,7 +5816,7 @@ export const buildSuper: TSKindId.Super = TSKindId.Super;
 
 export const buildCrate: TSKindId.Crate = TSKindId.Crate;
 
-export function buildMetavariable(value: string): T.Metavariable.Built {
+export function buildMetavariable(value: AdmitBound<string, T.AdmittedNodes>): T.Metavariable.Bound {
 	const _name = value;
 	if (_name !== undefined && !_slotRe_buildMetavariable_name.test(_name))
 		throw new Error(`metavariable.name: text does not match pattern: ${_name}`);
@@ -5552,29 +5835,35 @@ export function buildMetavariable(value: string): T.Metavariable.Built {
 				name: () => _name
 			}
 		)
-	);
+	) as unknown as T.Metavariable.Bound;
 }
 
-export function buildMacroRules(...elements: NonEmptyArray<T.MacroRule>): ReturnType<typeof _buildMacroRules>;
+export function buildMacroRules(
+	...elements: NonEmptyArray<AdmitBound<T.MacroRule, T.AdmittedNodes>>
+): ReturnType<typeof _buildMacroRules>;
 export function buildMacroRules(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.MacroRule>
+	...elements: NonEmptyArray<AdmitBound<T.MacroRule, T.AdmittedNodes>>
 ): ReturnType<typeof _buildMacroRules>;
-export function buildMacroRules(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.MacroRule)[]) {
+export function buildMacroRules(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | AdmitBound<T.MacroRule, T.AdmittedNodes>)[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.MacroRule>;
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		AdmitBound<T.MacroRule, T.AdmittedNodes>
+	>;
 	return _buildMacroRules(elements, options);
 }
 function _buildMacroRules(
-	elements: NonEmptyArray<T.MacroRule>,
+	elements: NonEmptyArray<AdmitBound<T.MacroRule, T.AdmittedNodes>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.MacroRules.Built {
+): T.MacroRules.Bound {
 	_assertNonEmpty(elements, 'macro_rules.elements');
 	const _macro_rule = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
@@ -5587,7 +5876,8 @@ function _buildMacroRules(
 				_macro_rule,
 				_delimiter,
 				$with: {
-					macroRules: (...vs: NonEmptyArray<T.MacroRule>) => buildMacroRules(options, ...vs),
+					macroRules: (...vs: NonEmptyArray<AdmitBound<T.MacroRule, T.AdmittedNodes>>) =>
+						buildMacroRules(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildMacroRules({ ...options, delimiter: v }, ...elements)
 				}
@@ -5596,18 +5886,21 @@ function _buildMacroRules(
 				macroRules: () => _macro_rule
 			}
 		)
-	);
+	) as unknown as T.MacroRules.Bound;
 }
 
 export function buildEnumVariantListElements(
-	...elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>
+	...elements: NonEmptyArray<AdmitBound<T.AttributedEnumVariant | T.EnumVariant, T.AdmittedNodes>>
 ): ReturnType<typeof _buildEnumVariantListElements>;
 export function buildEnumVariantListElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>
+	...elements: NonEmptyArray<AdmitBound<T.AttributedEnumVariant | T.EnumVariant, T.AdmittedNodes>>
 ): ReturnType<typeof _buildEnumVariantListElements>;
 export function buildEnumVariantListElements(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.AttributedEnumVariant | T.EnumVariant))[]
+	...args: (
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
+		| AdmitBound<T.AttributedEnumVariant | T.EnumVariant, T.AdmittedNodes>
+	)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -5615,22 +5908,24 @@ export function buildEnumVariantListElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.AttributedEnumVariant | T.EnumVariant
+		AdmitBound<T.AttributedEnumVariant | T.EnumVariant, T.AdmittedNodes>
 	>;
 	return _buildEnumVariantListElements(elements, options);
 }
 function _buildEnumVariantListElements(
-	elements: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>,
+	elements: NonEmptyArray<AdmitBound<T.AttributedEnumVariant | T.EnumVariant, T.AdmittedNodes>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.EnumVariantListElements.Built {
+): T.EnumVariantListElements.Bound {
 	_assertNonEmpty(elements, 'enum_variant_list_elements.elements');
 	const _mapped = elements.map(
 		(e): T.AttributedEnumVariant =>
-			isNode(e) && e.$type === TSKindId.AttributedEnumVariant
-				? (e as T.AttributedEnumVariant)
-				: buildAttributedEnumVariant({ enumVariant: e } as Parameters<typeof buildAttributedEnumVariant>[0])
+			(isNodeOfKind(e, TSKindId.AttributedEnumVariant)
+				? (e as unknown)
+				: buildAttributedEnumVariant({ enumVariant: e } as Parameters<
+						typeof buildAttributedEnumVariant
+					>[0])) as T.AttributedEnumVariant
 	);
 	_assertNonEmpty(_mapped, 'enum_variant_list_elements.elements');
 	const _element = _mapped;
@@ -5644,7 +5939,7 @@ function _buildEnumVariantListElements(
 				_element,
 				_delimiter,
 				$with: {
-					elements: (...vs: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>) =>
+					elements: (...vs: NonEmptyArray<AdmitBound<T.AttributedEnumVariant | T.EnumVariant, T.AdmittedNodes>>) =>
 						buildEnumVariantListElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildEnumVariantListElements({ ...options, delimiter: v }, ...elements)
@@ -5654,18 +5949,21 @@ function _buildEnumVariantListElements(
 				elements: () => _element
 			}
 		)
-	);
+	) as unknown as T.EnumVariantListElements.Bound;
 }
 
 export function buildFieldDeclarationListElements(
-	...elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
+	...elements: NonEmptyArray<AdmitBound<T.AttributedFieldDeclaration | T.FieldDeclaration, T.AdmittedNodes>>
 ): ReturnType<typeof _buildFieldDeclarationListElements>;
 export function buildFieldDeclarationListElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>
+	...elements: NonEmptyArray<AdmitBound<T.AttributedFieldDeclaration | T.FieldDeclaration, T.AdmittedNodes>>
 ): ReturnType<typeof _buildFieldDeclarationListElements>;
 export function buildFieldDeclarationListElements(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.AttributedFieldDeclaration | T.FieldDeclaration))[]
+	...args: (
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
+		| AdmitBound<T.AttributedFieldDeclaration | T.FieldDeclaration, T.AdmittedNodes>
+	)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -5673,24 +5971,24 @@ export function buildFieldDeclarationListElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.AttributedFieldDeclaration | T.FieldDeclaration
+		AdmitBound<T.AttributedFieldDeclaration | T.FieldDeclaration, T.AdmittedNodes>
 	>;
 	return _buildFieldDeclarationListElements(elements, options);
 }
 function _buildFieldDeclarationListElements(
-	elements: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>,
+	elements: NonEmptyArray<AdmitBound<T.AttributedFieldDeclaration | T.FieldDeclaration, T.AdmittedNodes>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.FieldDeclarationListElements.Built {
+): T.FieldDeclarationListElements.Bound {
 	_assertNonEmpty(elements, 'field_declaration_list_elements.elements');
 	const _mapped = elements.map(
 		(e): T.AttributedFieldDeclaration =>
-			isNode(e) && e.$type === TSKindId.AttributedFieldDeclaration
-				? (e as T.AttributedFieldDeclaration)
+			(isNodeOfKind(e, TSKindId.AttributedFieldDeclaration)
+				? (e as unknown)
 				: buildAttributedFieldDeclaration({ fieldDeclaration: e } as Parameters<
 						typeof buildAttributedFieldDeclaration
-					>[0])
+					>[0])) as T.AttributedFieldDeclaration
 	);
 	_assertNonEmpty(_mapped, 'field_declaration_list_elements.elements');
 	const _element = _mapped;
@@ -5704,8 +6002,9 @@ function _buildFieldDeclarationListElements(
 				_element,
 				_delimiter,
 				$with: {
-					elements: (...vs: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>) =>
-						buildFieldDeclarationListElements(options, ...vs),
+					elements: (
+						...vs: NonEmptyArray<AdmitBound<T.AttributedFieldDeclaration | T.FieldDeclaration, T.AdmittedNodes>>
+					) => buildFieldDeclarationListElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -5714,20 +6013,20 @@ function _buildFieldDeclarationListElements(
 				elements: () => _element
 			}
 		)
-	);
+	) as unknown as T.FieldDeclarationListElements.Bound;
 }
 
 export function buildOrderedFieldDeclarationListElements(
-	...elements: NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>
+	...elements: NonEmptyArray<AdmitBound<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildOrderedFieldDeclarationListElements>;
 export function buildOrderedFieldDeclarationListElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>
+	...elements: NonEmptyArray<AdmitBound<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildOrderedFieldDeclarationListElements>;
 export function buildOrderedFieldDeclarationListElements(
 	...args: (
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| (T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types)
+		| AdmitBound<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
 	)[]
 ) {
 	const _optsFirst =
@@ -5736,22 +6035,24 @@ export function buildOrderedFieldDeclarationListElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types
+		AdmitBound<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
 	>;
 	return _buildOrderedFieldDeclarationListElements(elements, options);
 }
 function _buildOrderedFieldDeclarationListElements(
-	elements: NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>,
+	elements: NonEmptyArray<AdmitBound<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.OrderedFieldDeclarationListElements.Built {
+): T.OrderedFieldDeclarationListElements.Bound {
 	_assertNonEmpty(elements, 'ordered_field_declaration_list_elements.elements');
 	const _mapped = elements.map(
 		(e): T.AttributedOrderedField =>
-			isNode(e) && e.$type === TSKindId.AttributedOrderedField
-				? (e as T.AttributedOrderedField)
-				: buildAttributedOrderedField({ type: e } as Parameters<typeof buildAttributedOrderedField>[0])
+			(isNodeOfKind(e, TSKindId.AttributedOrderedField)
+				? (e as unknown)
+				: buildAttributedOrderedField({ type: e } as Parameters<
+						typeof buildAttributedOrderedField
+					>[0])) as T.AttributedOrderedField
 	);
 	_assertNonEmpty(_mapped, 'ordered_field_declaration_list_elements.elements');
 	const _element = _mapped;
@@ -5765,8 +6066,11 @@ function _buildOrderedFieldDeclarationListElements(
 				_element,
 				_delimiter,
 				$with: {
-					elements: (...vs: NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>) =>
-						buildOrderedFieldDeclarationListElements(options, ...vs),
+					elements: (
+						...vs: NonEmptyArray<
+							AdmitBound<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
+						>
+					) => buildOrderedFieldDeclarationListElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildOrderedFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -5775,18 +6079,18 @@ function _buildOrderedFieldDeclarationListElements(
 				elements: () => _element
 			}
 		)
-	);
+	) as unknown as T.OrderedFieldDeclarationListElements.Bound;
 }
 
 export function buildWherePredicates(
-	...elements: NonEmptyArray<T.WherePredicate>
+	...elements: NonEmptyArray<AdmitBound<T.WherePredicate, T.AdmittedNodes>>
 ): ReturnType<typeof _buildWherePredicates>;
 export function buildWherePredicates(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.WherePredicate>
+	...elements: NonEmptyArray<AdmitBound<T.WherePredicate, T.AdmittedNodes>>
 ): ReturnType<typeof _buildWherePredicates>;
 export function buildWherePredicates(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.WherePredicate)[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | AdmitBound<T.WherePredicate, T.AdmittedNodes>)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -5794,14 +6098,16 @@ export function buildWherePredicates(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.WherePredicate>;
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		AdmitBound<T.WherePredicate, T.AdmittedNodes>
+	>;
 	return _buildWherePredicates(elements, options);
 }
 function _buildWherePredicates(
-	elements: NonEmptyArray<T.WherePredicate>,
+	elements: NonEmptyArray<AdmitBound<T.WherePredicate, T.AdmittedNodes>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.WherePredicates.Built {
+): T.WherePredicates.Bound {
 	_assertNonEmpty(elements, 'where_predicates.elements');
 	const _where_predicate = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
@@ -5814,7 +6120,8 @@ function _buildWherePredicates(
 				_where_predicate,
 				_delimiter,
 				$with: {
-					wherePredicates: (...vs: NonEmptyArray<T.WherePredicate>) => buildWherePredicates(options, ...vs),
+					wherePredicates: (...vs: NonEmptyArray<AdmitBound<T.WherePredicate, T.AdmittedNodes>>) =>
+						buildWherePredicates(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildWherePredicates({ ...options, delimiter: v }, ...elements)
 				}
@@ -5823,24 +6130,33 @@ function _buildWherePredicates(
 				wherePredicates: () => _where_predicate
 			}
 		)
-	);
+	) as unknown as T.WherePredicates.Bound;
 }
 
 export function buildTypeParametersElements(
 	...elements: NonEmptyArray<
-		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+		AdmitBound<
+			T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
-		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+		AdmitBound<
+			T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildTypeParametersElements>;
 export function buildTypeParametersElements(
 	...args: (
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| (T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)
+		| AdmitBound<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				T.AdmittedNodes
+		  >
 	)[]
 ) {
 	const _optsFirst =
@@ -5849,24 +6165,32 @@ export function buildTypeParametersElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+		AdmitBound<
+			T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+			T.AdmittedNodes
+		>
 	>;
 	return _buildTypeParametersElements(elements, options);
 }
 function _buildTypeParametersElements(
 	elements: NonEmptyArray<
-		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+		AdmitBound<
+			T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+			T.AdmittedNodes
+		>
 	>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.TypeParametersElements.Built {
+): T.TypeParametersElements.Bound {
 	_assertNonEmpty(elements, 'type_parameters_elements.elements');
 	const _mapped = elements.map(
 		(e): T.AttributedTypeParameter =>
-			isNode(e) && e.$type === TSKindId.AttributedTypeParameter
-				? (e as T.AttributedTypeParameter)
-				: buildAttributedTypeParameter({ content: e } as Parameters<typeof buildAttributedTypeParameter>[0])
+			(isNodeOfKind(e, TSKindId.AttributedTypeParameter)
+				? (e as unknown)
+				: buildAttributedTypeParameter({ content: e } as Parameters<
+						typeof buildAttributedTypeParameter
+					>[0])) as T.AttributedTypeParameter
 	);
 	_assertNonEmpty(_mapped, 'type_parameters_elements.elements');
 	const _element = _mapped;
@@ -5882,7 +6206,10 @@ function _buildTypeParametersElements(
 				$with: {
 					elements: (
 						...vs: NonEmptyArray<
-							T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+							AdmitBound<
+								T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+								T.AdmittedNodes
+							>
 						>
 					) => buildTypeParametersElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -5893,82 +6220,88 @@ function _buildTypeParametersElements(
 				elements: () => _element
 			}
 		)
-	);
+	) as unknown as T.TypeParametersElements.Bound;
 }
 
 export function buildUseClauses(
 	...elements: NonEmptyArray<
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| T.Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| T.Identifier
-		| T.ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
-		| T.UseAsClause
-		| T.UseList
-		| T.ScopedUseList
-		| T.UseWildcard
+		AdmitBound<
+			| TSKindId.Self
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
+			| T.UseAsClause
+			| T.UseList
+			| T.ScopedUseList
+			| T.UseWildcard,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildUseClauses>;
 export function buildUseClauses(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| T.Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| T.Identifier
-		| T.ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
-		| T.UseAsClause
-		| T.UseList
-		| T.ScopedUseList
-		| T.UseWildcard
+		AdmitBound<
+			| TSKindId.Self
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
+			| T.UseAsClause
+			| T.UseList
+			| T.ScopedUseList
+			| T.UseWildcard,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildUseClauses>;
 export function buildUseClauses(
 	...args: (
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| (
+		| AdmitBound<
 				| TSKindId.Self
 				| TSKindId.U8Keyword
 				| TSKindId.I8Keyword
@@ -5998,8 +6331,9 @@ export function buildUseClauses(
 				| T.UseAsClause
 				| T.UseList
 				| T.ScopedUseList
-				| T.UseWildcard
-		  )
+				| T.UseWildcard,
+				T.AdmittedNodes
+		  >
 	)[]
 ) {
 	const _optsFirst =
@@ -6008,76 +6342,82 @@ export function buildUseClauses(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| T.Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| T.Identifier
-		| T.ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
-		| T.UseAsClause
-		| T.UseList
-		| T.ScopedUseList
-		| T.UseWildcard
+		AdmitBound<
+			| TSKindId.Self
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
+			| T.UseAsClause
+			| T.UseList
+			| T.ScopedUseList
+			| T.UseWildcard,
+			T.AdmittedNodes
+		>
 	>;
 	return _buildUseClauses(elements, options);
 }
 function _buildUseClauses(
 	elements: NonEmptyArray<
-		| TSKindId.Self
-		| TSKindId.U8Keyword
-		| TSKindId.I8Keyword
-		| TSKindId.U16Keyword
-		| TSKindId.I16Keyword
-		| TSKindId.U32Keyword
-		| TSKindId.I32Keyword
-		| TSKindId.U64Keyword
-		| TSKindId.I64Keyword
-		| TSKindId.U128Keyword
-		| TSKindId.I128Keyword
-		| TSKindId.IsizeKeyword
-		| TSKindId.UsizeKeyword
-		| TSKindId.F32Keyword
-		| TSKindId.F64Keyword
-		| TSKindId.BoolKeyword
-		| TSKindId.StrKeyword
-		| TSKindId.CharKeyword
-		| T.Metavariable
-		| TSKindId.Super
-		| TSKindId.Crate
-		| T.Identifier
-		| T.ScopedIdentifier
-		| TSKindId.DefaultKeyword
-		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
-		| T.UseAsClause
-		| T.UseList
-		| T.ScopedUseList
-		| T.UseWildcard
+		AdmitBound<
+			| TSKindId.Self
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
+			| T.UseAsClause
+			| T.UseList
+			| T.ScopedUseList
+			| T.UseWildcard,
+			T.AdmittedNodes
+		>
 	>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.UseClauses.Built {
+): T.UseClauses.Bound {
 	_assertNonEmpty(elements, 'use_clauses.elements');
 	const _use_clause = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
@@ -6092,36 +6432,39 @@ function _buildUseClauses(
 				$with: {
 					useClauses: (
 						...vs: NonEmptyArray<
-							| TSKindId.Self
-							| TSKindId.U8Keyword
-							| TSKindId.I8Keyword
-							| TSKindId.U16Keyword
-							| TSKindId.I16Keyword
-							| TSKindId.U32Keyword
-							| TSKindId.I32Keyword
-							| TSKindId.U64Keyword
-							| TSKindId.I64Keyword
-							| TSKindId.U128Keyword
-							| TSKindId.I128Keyword
-							| TSKindId.IsizeKeyword
-							| TSKindId.UsizeKeyword
-							| TSKindId.F32Keyword
-							| TSKindId.F64Keyword
-							| TSKindId.BoolKeyword
-							| TSKindId.StrKeyword
-							| TSKindId.CharKeyword
-							| T.Metavariable
-							| TSKindId.Super
-							| TSKindId.Crate
-							| T.Identifier
-							| T.ScopedIdentifier
-							| TSKindId.DefaultKeyword
-							| TSKindId.UnionKeyword
-							| TSKindId.GenKeyword
-							| T.UseAsClause
-							| T.UseList
-							| T.ScopedUseList
-							| T.UseWildcard
+							AdmitBound<
+								| TSKindId.Self
+								| TSKindId.U8Keyword
+								| TSKindId.I8Keyword
+								| TSKindId.U16Keyword
+								| TSKindId.I16Keyword
+								| TSKindId.U32Keyword
+								| TSKindId.I32Keyword
+								| TSKindId.U64Keyword
+								| TSKindId.I64Keyword
+								| TSKindId.U128Keyword
+								| TSKindId.I128Keyword
+								| TSKindId.IsizeKeyword
+								| TSKindId.UsizeKeyword
+								| TSKindId.F32Keyword
+								| TSKindId.F64Keyword
+								| TSKindId.BoolKeyword
+								| TSKindId.StrKeyword
+								| TSKindId.CharKeyword
+								| T.Metavariable
+								| TSKindId.Super
+								| TSKindId.Crate
+								| T.Identifier
+								| T.ScopedIdentifier
+								| TSKindId.DefaultKeyword
+								| TSKindId.UnionKeyword
+								| TSKindId.GenKeyword
+								| T.UseAsClause
+								| T.UseList
+								| T.ScopedUseList
+								| T.UseWildcard,
+								T.AdmittedNodes
+							>
 						>
 					) => buildUseClauses(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -6132,44 +6475,51 @@ function _buildUseClauses(
 				useClauses: () => _use_clause
 			}
 		)
-	);
+	) as unknown as T.UseClauses.Bound;
 }
 
 export function buildParametersElements(
 	...elements: NonEmptyArray<
-		| T.AttributedParameter
-		| T.Parameter
-		| T.SelfParameter
-		| T.VariadicParameter
-		| TSKindId.Underscore
-		| T.Type
-		| T.TypeIdentifier.Types
+		AdmitBound<
+			| T.AttributedParameter
+			| T.Parameter
+			| T.SelfParameter
+			| T.VariadicParameter
+			| TSKindId.Underscore
+			| T.Type
+			| T.TypeIdentifier.Types,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
-		| T.AttributedParameter
-		| T.Parameter
-		| T.SelfParameter
-		| T.VariadicParameter
-		| TSKindId.Underscore
-		| T.Type
-		| T.TypeIdentifier.Types
+		AdmitBound<
+			| T.AttributedParameter
+			| T.Parameter
+			| T.SelfParameter
+			| T.VariadicParameter
+			| TSKindId.Underscore
+			| T.Type
+			| T.TypeIdentifier.Types,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements(
 	...args: (
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| (
+		| AdmitBound<
 				| T.AttributedParameter
 				| T.Parameter
 				| T.SelfParameter
 				| T.VariadicParameter
 				| TSKindId.Underscore
 				| T.Type
-				| T.TypeIdentifier.Types
-		  )
+				| T.TypeIdentifier.Types,
+				T.AdmittedNodes
+		  >
 	)[]
 ) {
 	const _optsFirst =
@@ -6178,36 +6528,44 @@ export function buildParametersElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		| T.AttributedParameter
-		| T.Parameter
-		| T.SelfParameter
-		| T.VariadicParameter
-		| TSKindId.Underscore
-		| T.Type
-		| T.TypeIdentifier.Types
+		AdmitBound<
+			| T.AttributedParameter
+			| T.Parameter
+			| T.SelfParameter
+			| T.VariadicParameter
+			| TSKindId.Underscore
+			| T.Type
+			| T.TypeIdentifier.Types,
+			T.AdmittedNodes
+		>
 	>;
 	return _buildParametersElements(elements, options);
 }
 function _buildParametersElements(
 	elements: NonEmptyArray<
-		| T.AttributedParameter
-		| T.Parameter
-		| T.SelfParameter
-		| T.VariadicParameter
-		| TSKindId.Underscore
-		| T.Type
-		| T.TypeIdentifier.Types
+		AdmitBound<
+			| T.AttributedParameter
+			| T.Parameter
+			| T.SelfParameter
+			| T.VariadicParameter
+			| TSKindId.Underscore
+			| T.Type
+			| T.TypeIdentifier.Types,
+			T.AdmittedNodes
+		>
 	>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.ParametersElements.Built {
+): T.ParametersElements.Bound {
 	_assertNonEmpty(elements, 'parameters_elements.elements');
 	const _mapped = elements.map(
 		(e): T.AttributedParameter =>
-			isNode(e) && e.$type === TSKindId.AttributedParameter
-				? (e as T.AttributedParameter)
-				: buildAttributedParameter({ content: e } as Parameters<typeof buildAttributedParameter>[0])
+			(isNodeOfKind(e, TSKindId.AttributedParameter)
+				? (e as unknown)
+				: buildAttributedParameter({ content: e } as Parameters<
+						typeof buildAttributedParameter
+					>[0])) as T.AttributedParameter
 	);
 	_assertNonEmpty(_mapped, 'parameters_elements.elements');
 	const _element = _mapped;
@@ -6223,13 +6581,16 @@ function _buildParametersElements(
 				$with: {
 					elements: (
 						...vs: NonEmptyArray<
-							| T.AttributedParameter
-							| T.Parameter
-							| T.SelfParameter
-							| T.VariadicParameter
-							| TSKindId.Underscore
-							| T.Type
-							| T.TypeIdentifier.Types
+							AdmitBound<
+								| T.AttributedParameter
+								| T.Parameter
+								| T.SelfParameter
+								| T.VariadicParameter
+								| TSKindId.Underscore
+								| T.Type
+								| T.TypeIdentifier.Types,
+								T.AdmittedNodes
+							>
 						>
 					) => buildParametersElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -6240,29 +6601,35 @@ function _buildParametersElements(
 				elements: () => _element
 			}
 		)
-	);
+	) as unknown as T.ParametersElements.Bound;
 }
 
-export function buildLifetimes(...elements: NonEmptyArray<T.Lifetime>): ReturnType<typeof _buildLifetimes>;
+export function buildLifetimes(
+	...elements: NonEmptyArray<AdmitBound<T.Lifetime, T.AdmittedNodes>>
+): ReturnType<typeof _buildLifetimes>;
 export function buildLifetimes(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.Lifetime>
+	...elements: NonEmptyArray<AdmitBound<T.Lifetime, T.AdmittedNodes>>
 ): ReturnType<typeof _buildLifetimes>;
-export function buildLifetimes(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Lifetime)[]) {
+export function buildLifetimes(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | AdmitBound<T.Lifetime, T.AdmittedNodes>)[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Lifetime>;
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		AdmitBound<T.Lifetime, T.AdmittedNodes>
+	>;
 	return _buildLifetimes(elements, options);
 }
 function _buildLifetimes(
-	elements: NonEmptyArray<T.Lifetime>,
+	elements: NonEmptyArray<AdmitBound<T.Lifetime, T.AdmittedNodes>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.Lifetimes.Built {
+): T.Lifetimes.Bound {
 	_assertNonEmpty(elements, 'lifetimes.elements');
 	const _lifetime = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
@@ -6275,7 +6642,7 @@ function _buildLifetimes(
 				_lifetime,
 				_delimiter,
 				$with: {
-					lifetimes: (...vs: NonEmptyArray<T.Lifetime>) => buildLifetimes(options, ...vs),
+					lifetimes: (...vs: NonEmptyArray<AdmitBound<T.Lifetime, T.AdmittedNodes>>) => buildLifetimes(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildLifetimes({ ...options, delimiter: v }, ...elements)
 				}
@@ -6284,20 +6651,20 @@ function _buildLifetimes(
 				lifetimes: () => _lifetime
 			}
 		)
-	);
+	) as unknown as T.Lifetimes.Bound;
 }
 
 export function buildUseBoundsElements(
-	...elements: NonEmptyArray<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>
+	...elements: NonEmptyArray<AdmitBound<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildUseBoundsElements>;
 export function buildUseBoundsElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>
+	...elements: NonEmptyArray<AdmitBound<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildUseBoundsElements>;
 export function buildUseBoundsElements(
 	...args: (
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| (T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types)
+		| AdmitBound<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>
 	)[]
 ) {
 	const _optsFirst =
@@ -6306,16 +6673,16 @@ export function buildUseBoundsElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types
+		AdmitBound<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>
 	>;
 	return _buildUseBoundsElements(elements, options);
 }
 function _buildUseBoundsElements(
-	elements: NonEmptyArray<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>,
+	elements: NonEmptyArray<AdmitBound<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.UseBoundsElements.Built {
+): T.UseBoundsElements.Bound {
 	_assertNonEmpty(elements, 'use_bounds_elements.elements');
 	const _element = admitAliasContent<NonEmptyArray<T.Lifetime | T.TypeIdentifier>>(elements, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
@@ -6330,8 +6697,9 @@ function _buildUseBoundsElements(
 				_element,
 				_delimiter,
 				$with: {
-					elements: (...vs: NonEmptyArray<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>) =>
-						buildUseBoundsElements(options, ...vs),
+					elements: (
+						...vs: NonEmptyArray<AdmitBound<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
+					) => buildUseBoundsElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildUseBoundsElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -6340,24 +6708,33 @@ function _buildUseBoundsElements(
 				elements: () => _element
 			}
 		)
-	);
+	) as unknown as T.UseBoundsElements.Bound;
 }
 
 export function buildTypeArgumentsElements(
 	...elements: NonEmptyArray<
-		T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
+		AdmitBound<
+			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildTypeArgumentsElements>;
 export function buildTypeArgumentsElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 	...elements: NonEmptyArray<
-		T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
+		AdmitBound<
+			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+			T.AdmittedNodes
+		>
 	>
 ): ReturnType<typeof _buildTypeArgumentsElements>;
 export function buildTypeArgumentsElements(
 	...args: (
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| (T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types)
+		| AdmitBound<
+				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+				T.AdmittedNodes
+		  >
 	)[]
 ) {
 	const _optsFirst =
@@ -6366,24 +6743,30 @@ export function buildTypeArgumentsElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
+		AdmitBound<
+			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+			T.AdmittedNodes
+		>
 	>;
 	return _buildTypeArgumentsElements(elements, options);
 }
 function _buildTypeArgumentsElements(
 	elements: NonEmptyArray<
-		T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
+		AdmitBound<
+			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+			T.AdmittedNodes
+		>
 	>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.TypeArgumentsElements.Built {
+): T.TypeArgumentsElements.Bound {
 	_assertNonEmpty(elements, 'type_arguments_elements.elements');
 	const _mapped = elements.map(
 		(e): T.TypeArgument =>
-			isNode(e) && e.$type === TSKindId.TypeArgument
-				? (e as T.TypeArgument)
-				: buildTypeArgument({ content: e } as Parameters<typeof buildTypeArgument>[0])
+			(isNodeOfKind(e, TSKindId.TypeArgument)
+				? (e as unknown)
+				: buildTypeArgument({ content: e } as Parameters<typeof buildTypeArgument>[0])) as T.TypeArgument
 	);
 	_assertNonEmpty(_mapped, 'type_arguments_elements.elements');
 	const _element = _mapped;
@@ -6399,7 +6782,10 @@ function _buildTypeArgumentsElements(
 				$with: {
 					elements: (
 						...vs: NonEmptyArray<
-							T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
+							AdmitBound<
+								T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+								T.AdmittedNodes
+							>
 						>
 					) => buildTypeArgumentsElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
@@ -6410,18 +6796,21 @@ function _buildTypeArgumentsElements(
 				elements: () => _element
 			}
 		)
-	);
+	) as unknown as T.TypeArgumentsElements.Bound;
 }
 
 export function buildArgumentsElements(
-	...elements: NonEmptyArray<T.AttributedArgument | T.Expression>
+	...elements: NonEmptyArray<AdmitBound<T.AttributedArgument | T.Expression, T.AdmittedNodes>>
 ): ReturnType<typeof _buildArgumentsElements>;
 export function buildArgumentsElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.AttributedArgument | T.Expression>
+	...elements: NonEmptyArray<AdmitBound<T.AttributedArgument | T.Expression, T.AdmittedNodes>>
 ): ReturnType<typeof _buildArgumentsElements>;
 export function buildArgumentsElements(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.AttributedArgument | T.Expression))[]
+	...args: (
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
+		| AdmitBound<T.AttributedArgument | T.Expression, T.AdmittedNodes>
+	)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -6429,20 +6818,24 @@ export function buildArgumentsElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.AttributedArgument | T.Expression>;
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		AdmitBound<T.AttributedArgument | T.Expression, T.AdmittedNodes>
+	>;
 	return _buildArgumentsElements(elements, options);
 }
 function _buildArgumentsElements(
-	elements: NonEmptyArray<T.AttributedArgument | T.Expression>,
+	elements: NonEmptyArray<AdmitBound<T.AttributedArgument | T.Expression, T.AdmittedNodes>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.ArgumentsElements.Built {
+): T.ArgumentsElements.Bound {
 	_assertNonEmpty(elements, 'arguments_elements.elements');
 	const _mapped = elements.map(
 		(e): T.AttributedArgument =>
-			isNode(e) && e.$type === TSKindId.AttributedArgument
-				? (e as T.AttributedArgument)
-				: buildAttributedArgument({ expression: e } as Parameters<typeof buildAttributedArgument>[0])
+			(isNodeOfKind(e, TSKindId.AttributedArgument)
+				? (e as unknown)
+				: buildAttributedArgument({ expression: e } as Parameters<
+						typeof buildAttributedArgument
+					>[0])) as T.AttributedArgument
 	);
 	_assertNonEmpty(_mapped, 'arguments_elements.elements');
 	const _element = _mapped;
@@ -6456,7 +6849,7 @@ function _buildArgumentsElements(
 				_element,
 				_delimiter,
 				$with: {
-					elements: (...vs: NonEmptyArray<T.AttributedArgument | T.Expression>) =>
+					elements: (...vs: NonEmptyArray<AdmitBound<T.AttributedArgument | T.Expression, T.AdmittedNodes>>) =>
 						buildArgumentsElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildArgumentsElements({ ...options, delimiter: v }, ...elements)
@@ -6466,20 +6859,24 @@ function _buildArgumentsElements(
 				elements: () => _element
 			}
 		)
-	);
+	) as unknown as T.ArgumentsElements.Bound;
 }
 
 export function buildFieldInitializerListElements(
-	...elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
+	...elements: NonEmptyArray<
+		AdmitBound<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer, T.AdmittedNodes>
+	>
 ): ReturnType<typeof _buildFieldInitializerListElements>;
 export function buildFieldInitializerListElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>
+	...elements: NonEmptyArray<
+		AdmitBound<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer, T.AdmittedNodes>
+	>
 ): ReturnType<typeof _buildFieldInitializerListElements>;
 export function buildFieldInitializerListElements(
 	...args: (
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)
+		| AdmitBound<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer, T.AdmittedNodes>
 	)[]
 ) {
 	const _optsFirst =
@@ -6488,16 +6885,18 @@ export function buildFieldInitializerListElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer
+		AdmitBound<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer, T.AdmittedNodes>
 	>;
 	return _buildFieldInitializerListElements(elements, options);
 }
 function _buildFieldInitializerListElements(
-	elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>,
+	elements: NonEmptyArray<
+		AdmitBound<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer, T.AdmittedNodes>
+	>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.FieldInitializerListElements.Built {
+): T.FieldInitializerListElements.Bound {
 	_assertNonEmpty(elements, 'field_initializer_list_elements.elements');
 	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
@@ -6510,8 +6909,11 @@ function _buildFieldInitializerListElements(
 				_element,
 				_delimiter,
 				$with: {
-					elements: (...vs: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>) =>
-						buildFieldInitializerListElements(options, ...vs),
+					elements: (
+						...vs: NonEmptyArray<
+							AdmitBound<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer, T.AdmittedNodes>
+						>
+					) => buildFieldInitializerListElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildFieldInitializerListElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -6520,18 +6922,21 @@ function _buildFieldInitializerListElements(
 				elements: () => _element
 			}
 		)
-	);
+	) as unknown as T.FieldInitializerListElements.Bound;
 }
 
 export function buildTuplePatternElements(
-	...elements: NonEmptyArray<T.Pattern | T.ClosureExpression>
+	...elements: NonEmptyArray<AdmitBound<T.Pattern | T.ClosureExpression, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTuplePatternElements>;
 export function buildTuplePatternElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.Pattern | T.ClosureExpression>
+	...elements: NonEmptyArray<AdmitBound<T.Pattern | T.ClosureExpression, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTuplePatternElements>;
 export function buildTuplePatternElements(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.Pattern | T.ClosureExpression))[]
+	...args: (
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
+		| AdmitBound<T.Pattern | T.ClosureExpression, T.AdmittedNodes>
+	)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -6539,14 +6944,16 @@ export function buildTuplePatternElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Pattern | T.ClosureExpression>;
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		AdmitBound<T.Pattern | T.ClosureExpression, T.AdmittedNodes>
+	>;
 	return _buildTuplePatternElements(elements, options);
 }
 function _buildTuplePatternElements(
-	elements: NonEmptyArray<T.Pattern | T.ClosureExpression>,
+	elements: NonEmptyArray<AdmitBound<T.Pattern | T.ClosureExpression, T.AdmittedNodes>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.TuplePatternElements.Built {
+): T.TuplePatternElements.Bound {
 	_assertNonEmpty(elements, 'tuple_pattern_elements.elements');
 	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
@@ -6559,7 +6966,7 @@ function _buildTuplePatternElements(
 				_element,
 				_delimiter,
 				$with: {
-					elements: (...vs: NonEmptyArray<T.Pattern | T.ClosureExpression>) =>
+					elements: (...vs: NonEmptyArray<AdmitBound<T.Pattern | T.ClosureExpression, T.AdmittedNodes>>) =>
 						buildTuplePatternElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildTuplePatternElements({ ...options, delimiter: v }, ...elements)
@@ -6569,29 +6976,35 @@ function _buildTuplePatternElements(
 				elements: () => _element
 			}
 		)
-	);
+	) as unknown as T.TuplePatternElements.Bound;
 }
 
-export function buildPatterns(...elements: NonEmptyArray<T.Pattern>): ReturnType<typeof _buildPatterns>;
+export function buildPatterns(
+	...elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>
+): ReturnType<typeof _buildPatterns>;
 export function buildPatterns(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.Pattern>
+	...elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildPatterns>;
-export function buildPatterns(...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Pattern)[]) {
+export function buildPatterns(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | AdmitBound<T.Pattern, T.AdmittedNodes>)[]
+) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Pattern>;
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		AdmitBound<T.Pattern, T.AdmittedNodes>
+	>;
 	return _buildPatterns(elements, options);
 }
 function _buildPatterns(
-	elements: NonEmptyArray<T.Pattern>,
+	elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.Patterns.Built {
+): T.Patterns.Bound {
 	_assertNonEmpty(elements, 'patterns.elements');
 	const _pattern = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
@@ -6604,7 +7017,7 @@ function _buildPatterns(
 				_pattern,
 				_delimiter,
 				$with: {
-					patterns: (...vs: NonEmptyArray<T.Pattern>) => buildPatterns(options, ...vs),
+					patterns: (...vs: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>) => buildPatterns(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildPatterns({ ...options, delimiter: v }, ...elements)
 				}
@@ -6613,18 +7026,21 @@ function _buildPatterns(
 				patterns: () => _pattern
 			}
 		)
-	);
+	) as unknown as T.Patterns.Bound;
 }
 
 export function buildStructPatternElements(
-	...elements: NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>
+	...elements: NonEmptyArray<AdmitBound<T.FieldPattern | TSKindId.RemainingFieldPattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildStructPatternElements>;
 export function buildStructPatternElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>
+	...elements: NonEmptyArray<AdmitBound<T.FieldPattern | TSKindId.RemainingFieldPattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildStructPatternElements>;
 export function buildStructPatternElements(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.FieldPattern | TSKindId.RemainingFieldPattern))[]
+	...args: (
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
+		| AdmitBound<T.FieldPattern | TSKindId.RemainingFieldPattern, T.AdmittedNodes>
+	)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -6632,16 +7048,16 @@ export function buildStructPatternElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		T.FieldPattern | TSKindId.RemainingFieldPattern
+		AdmitBound<T.FieldPattern | TSKindId.RemainingFieldPattern, T.AdmittedNodes>
 	>;
 	return _buildStructPatternElements(elements, options);
 }
 function _buildStructPatternElements(
-	elements: NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>,
+	elements: NonEmptyArray<AdmitBound<T.FieldPattern | TSKindId.RemainingFieldPattern, T.AdmittedNodes>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.StructPatternElements.Built {
+): T.StructPatternElements.Bound {
 	_assertNonEmpty(elements, 'struct_pattern_elements.elements');
 	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
@@ -6654,8 +7070,9 @@ function _buildStructPatternElements(
 				_element,
 				_delimiter,
 				$with: {
-					elements: (...vs: NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>) =>
-						buildStructPatternElements(options, ...vs),
+					elements: (
+						...vs: NonEmptyArray<AdmitBound<T.FieldPattern | TSKindId.RemainingFieldPattern, T.AdmittedNodes>>
+					) => buildStructPatternElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildStructPatternElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -6664,11 +7081,11 @@ function _buildStructPatternElements(
 				elements: () => _element
 			}
 		)
-	);
+	) as unknown as T.StructPatternElements.Bound;
 }
 
 export function buildUseWildcardGroup(
-	value?:
+	value?: AdmitBound<
 		| TSKindId.Self
 		| TSKindId.U8Keyword
 		| TSKindId.I8Keyword
@@ -6694,8 +7111,10 @@ export function buildUseWildcardGroup(
 		| T.ScopedIdentifier
 		| TSKindId.DefaultKeyword
 		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
-): T.UseWildcardGroup.Built {
+		| TSKindId.GenKeyword,
+		T.AdmittedNodes
+	>
+): T.UseWildcardGroup.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.UseWildcardGroup['_path']>>(value, [
@@ -6798,18 +7217,21 @@ export function buildUseWildcardGroup(
 				path: () => _path
 			}
 		)
-	);
+	) as unknown as T.UseWildcardGroup.Bound;
 }
 
 export function buildTupleTypeElements(
-	...elements: NonEmptyArray<T.Type | T.TypeIdentifier.Types>
+	...elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTupleTypeElements>;
 export function buildTupleTypeElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.Type | T.TypeIdentifier.Types>
+	...elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTupleTypeElements>;
 export function buildTupleTypeElements(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | (T.Type | T.TypeIdentifier.Types))[]
+	...args: (
+		| { delimiter?: Delimiter.None | Delimiter.Trailing }
+		| AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
+	)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -6817,14 +7239,16 @@ export function buildTupleTypeElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Type | T.TypeIdentifier.Types>;
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
+	>;
 	return _buildTupleTypeElements(elements, options);
 }
 function _buildTupleTypeElements(
-	elements: NonEmptyArray<T.Type | T.TypeIdentifier.Types>,
+	elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.TupleTypeElements.Built {
+): T.TupleTypeElements.Bound {
 	_assertNonEmpty(elements, 'tuple_type_elements.elements');
 	const _type = admitAliasContent<NonEmptyArray<T.Type>>(elements, [
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
@@ -6839,7 +7263,8 @@ function _buildTupleTypeElements(
 				_type,
 				_delimiter,
 				$with: {
-					types: (...vs: NonEmptyArray<T.Type | T.TypeIdentifier.Types>) => buildTupleTypeElements(options, ...vs),
+					types: (...vs: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>) =>
+						buildTupleTypeElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildTupleTypeElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -6848,18 +7273,18 @@ function _buildTupleTypeElements(
 				types: () => _type
 			}
 		)
-	);
+	) as unknown as T.TupleTypeElements.Bound;
 }
 
 export function buildTupleExpressionElements(
-	...elements: NonEmptyArray<T.Expression>
+	...elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTupleExpressionElements>;
 export function buildTupleExpressionElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<T.Expression>
+	...elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTupleExpressionElements>;
 export function buildTupleExpressionElements(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | T.Expression)[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | AdmitBound<T.Expression, T.AdmittedNodes>)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -6867,14 +7292,16 @@ export function buildTupleExpressionElements(
 		!Array.isArray(args[0]) &&
 		!('$type' in (args[0] as object)) &&
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? args[0] : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<T.Expression>;
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		AdmitBound<T.Expression, T.AdmittedNodes>
+	>;
 	return _buildTupleExpressionElements(elements, options);
 }
 function _buildTupleExpressionElements(
-	elements: NonEmptyArray<T.Expression>,
+	elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.TupleExpressionElements.Built {
+): T.TupleExpressionElements.Bound {
 	_assertNonEmpty(elements, 'tuple_expression_elements.elements');
 	if (elements.length === 1 && ((options.delimiter ?? Delimiter.None) & Delimiter.Trailing) === 0) {
 		throw new Error('tuple_expression_elements: a single element requires a trailing delimiter (delimiter: 2)');
@@ -6890,7 +7317,8 @@ function _buildTupleExpressionElements(
 				_element,
 				_delimiter,
 				$with: {
-					elements: (...vs: NonEmptyArray<T.Expression>) => buildTupleExpressionElements(options, ...vs),
+					elements: (...vs: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>) =>
+						buildTupleExpressionElements(options, ...vs),
 					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 						buildTupleExpressionElements({ ...options, delimiter: v }, ...elements)
 				}
@@ -6899,14 +7327,14 @@ function _buildTupleExpressionElements(
 				elements: () => _element
 			}
 		)
-	);
+	) as unknown as T.TupleExpressionElements.Bound;
 }
 
 export const buildRangeExpressionBare: TSKindId.RangeExpressionBare = TSKindId.RangeExpressionBare;
 
 export function buildIntegerLiteralDecimal(
 	config: WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>
-): T.IntegerLiteralDecimal.Built {
+): T.IntegerLiteralDecimal.Bound {
 	const _content = numberText(10, '', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralDecimal_content.test(_content))
 		throw new Error(`integer_literal_decimal.content: text does not match pattern: ${_content}`);
@@ -6947,12 +7375,12 @@ export function buildIntegerLiteralDecimal(
 				suffix: () => _suffix
 			}
 		)
-	);
+	) as unknown as T.IntegerLiteralDecimal.Bound;
 }
 
 export function buildIntegerLiteralHex(
 	config: WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>
-): T.IntegerLiteralHex.Built {
+): T.IntegerLiteralHex.Bound {
 	const _content = numberText(16, '0x', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralHex_content.test(_content))
 		throw new Error(`integer_literal_hex.content: text does not match pattern: ${_content}`);
@@ -6993,12 +7421,12 @@ export function buildIntegerLiteralHex(
 				suffix: () => _suffix
 			}
 		)
-	);
+	) as unknown as T.IntegerLiteralHex.Bound;
 }
 
 export function buildIntegerLiteralBinary(
 	config: WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>
-): T.IntegerLiteralBinary.Built {
+): T.IntegerLiteralBinary.Bound {
 	const _content = numberText(2, '0b', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralBinary_content.test(_content))
 		throw new Error(`integer_literal_binary.content: text does not match pattern: ${_content}`);
@@ -7039,12 +7467,12 @@ export function buildIntegerLiteralBinary(
 				suffix: () => _suffix
 			}
 		)
-	);
+	) as unknown as T.IntegerLiteralBinary.Bound;
 }
 
 export function buildIntegerLiteralOctal(
 	config: WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>
-): T.IntegerLiteralOctal.Built {
+): T.IntegerLiteralOctal.Bound {
 	const _content = numberText(8, '0o', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralOctal_content.test(_content))
 		throw new Error(`integer_literal_octal.content: text does not match pattern: ${_content}`);
@@ -7085,10 +7513,10 @@ export function buildIntegerLiteralOctal(
 				suffix: () => _suffix
 			}
 		)
-	);
+	) as unknown as T.IntegerLiteralOctal.Bound;
 }
 
-export function buildCharLiteralPlain(config: T.CharLiteralPlain.Config): T.CharLiteralPlain.Built {
+export function buildCharLiteralPlain(config: T.CharLiteralPlain.Config): T.CharLiteralPlain.Bound {
 	const _b = coerceBooleanKeywordStorage(config.b);
 	const _content = config.content;
 	if (_content !== undefined && !_slotRe_buildCharLiteralPlain_content.test(_content))
@@ -7111,10 +7539,10 @@ export function buildCharLiteralPlain(config: T.CharLiteralPlain.Config): T.Char
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.CharLiteralPlain.Bound;
 }
 
-export function buildCharLiteralEmpty(text: string): T.CharLiteralEmpty.Built {
+export function buildCharLiteralEmpty(text: string): T.CharLiteralEmpty.Bound {
 	if (text.length === 0) throw new Error(`char_literal_empty: text must be non-empty`);
 	if (!_leafRe_buildCharLiteralEmpty.test(text))
 		throw new Error(`char_literal_empty: text does not match pattern: ${text}`);
@@ -7128,7 +7556,7 @@ export function buildCharLiteralEmpty(text: string): T.CharLiteralEmpty.Built {
 
 export function buildCharLiteralEscapedSimple(
 	config: T.CharLiteralEscapedSimple.Config
-): T.CharLiteralEscapedSimple.Built {
+): T.CharLiteralEscapedSimple.Bound {
 	const _b = coerceBooleanKeywordStorage(config.b);
 	const _content = config.content;
 	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedSimple_content.test(_content))
@@ -7152,12 +7580,12 @@ export function buildCharLiteralEscapedSimple(
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.CharLiteralEscapedSimple.Bound;
 }
 
 export function buildCharLiteralEscapedUnicodeFixed(
 	config: T.CharLiteralEscapedUnicodeFixed.Config
-): T.CharLiteralEscapedUnicodeFixed.Built {
+): T.CharLiteralEscapedUnicodeFixed.Bound {
 	const _b = coerceBooleanKeywordStorage(config.b);
 	const _content = config.content;
 	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedUnicodeFixed_content.test(_content))
@@ -7181,12 +7609,12 @@ export function buildCharLiteralEscapedUnicodeFixed(
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.CharLiteralEscapedUnicodeFixed.Bound;
 }
 
 export function buildCharLiteralEscapedUnicodeBraced(
 	config: T.CharLiteralEscapedUnicodeBraced.Config
-): T.CharLiteralEscapedUnicodeBraced.Built {
+): T.CharLiteralEscapedUnicodeBraced.Bound {
 	const _b = coerceBooleanKeywordStorage(config.b);
 	const _content = config.content;
 	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedUnicodeBraced_content.test(_content))
@@ -7210,10 +7638,10 @@ export function buildCharLiteralEscapedUnicodeBraced(
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.CharLiteralEscapedUnicodeBraced.Bound;
 }
 
-export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Config): T.CharLiteralEscapedHex.Built {
+export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Config): T.CharLiteralEscapedHex.Bound {
 	const _b = coerceBooleanKeywordStorage(config.b);
 	const _content = config.content;
 	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedHex_content.test(_content))
@@ -7237,10 +7665,10 @@ export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Confi
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.CharLiteralEscapedHex.Bound;
 }
 
-export function buildEscapeSequenceSimple(value: string): T.EscapeSequenceSimple.Built {
+export function buildEscapeSequenceSimple(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequenceSimple.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildEscapeSequenceSimple_content.test(_content))
 		throw new Error(`escape_sequence_simple.content: text does not match pattern: ${_content}`);
@@ -7259,10 +7687,12 @@ export function buildEscapeSequenceSimple(value: string): T.EscapeSequenceSimple
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.EscapeSequenceSimple.Bound;
 }
 
-export function buildEscapeSequenceUnicodeFixed(value: string): T.EscapeSequenceUnicodeFixed.Built {
+export function buildEscapeSequenceUnicodeFixed(
+	value: AdmitBound<string, T.AdmittedNodes>
+): T.EscapeSequenceUnicodeFixed.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
 		throw new Error(`escape_sequence_unicode_fixed.content: text does not match pattern: ${_content}`);
@@ -7281,10 +7711,12 @@ export function buildEscapeSequenceUnicodeFixed(value: string): T.EscapeSequence
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.EscapeSequenceUnicodeFixed.Bound;
 }
 
-export function buildEscapeSequenceUnicodeBraced(value: string): T.EscapeSequenceUnicodeBraced.Built {
+export function buildEscapeSequenceUnicodeBraced(
+	value: AdmitBound<string, T.AdmittedNodes>
+): T.EscapeSequenceUnicodeBraced.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildEscapeSequenceUnicodeBraced_content.test(_content))
 		throw new Error(`escape_sequence_unicode_braced.content: text does not match pattern: ${_content}`);
@@ -7303,10 +7735,10 @@ export function buildEscapeSequenceUnicodeBraced(value: string): T.EscapeSequenc
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.EscapeSequenceUnicodeBraced.Bound;
 }
 
-export function buildEscapeSequenceHex(value: string): T.EscapeSequenceHex.Built {
+export function buildEscapeSequenceHex(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequenceHex.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildEscapeSequenceHex_content.test(_content))
 		throw new Error(`escape_sequence_hex.content: text does not match pattern: ${_content}`);
@@ -7325,10 +7757,10 @@ export function buildEscapeSequenceHex(value: string): T.EscapeSequenceHex.Built
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.EscapeSequenceHex.Bound;
 }
 
-export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config): T.ArrayExpressionSemi.Built {
+export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config): T.ArrayExpressionSemi.Bound {
 	const _attributes = rejectBareText(
 		config.attributes ?? [],
 		'ArrayExpressionSemi.attributes',
@@ -7367,14 +7799,14 @@ export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config): 
 				length: () => _length
 			}
 		)
-	);
+	) as unknown as T.ArrayExpressionSemi.Bound;
 }
 
 export function buildArrayExpressionList(): T.EmptyArrayExpressionList;
-export function buildArrayExpressionList(config?: Partial<T.ArrayExpressionList.Config>): T.ArrayExpressionList.Built;
+export function buildArrayExpressionList(config?: Partial<T.ArrayExpressionList.Config>): T.ArrayExpressionList.Bound;
 export function buildArrayExpressionList(
 	config: Partial<T.ArrayExpressionList.Config> = {}
-): T.ArrayExpressionList.Built {
+): T.ArrayExpressionList.Bound {
 	const _attributes = rejectBareText(
 		config.attributes ?? [],
 		'ArrayExpressionList.attributes',
@@ -7404,10 +7836,10 @@ export function buildArrayExpressionList(
 				argumentsElements: () => _arguments_elements
 			}
 		)
-	);
+	) as unknown as T.ArrayExpressionList.Bound;
 }
 
-export function buildAttributeInput(config: Partial<T.AttributeInput.Config> = {}): T.AttributeInput.Built {
+export function buildAttributeInput(config: Partial<T.AttributeInput.Config> = {}): T.AttributeInput.Bound {
 	const _value = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.AttributeInput['_value']>>(config.value, []),
 		'AttributeInput.value',
@@ -7433,15 +7865,15 @@ export function buildAttributeInput(config: Partial<T.AttributeInput.Config> = {
 				arguments: () => _arguments
 			}
 		)
-	);
+	) as unknown as T.AttributeInput.Bound;
 }
 
-export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Config): T.ClosureExpressionBlock.Built {
+export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Config): T.ClosureExpressionBlock.Bound {
 	const _static_marker = coerceBooleanKeywordStorage(config.staticMarker);
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
 	const _parameters = rejectBareText(
-		config.parameters ?? buildClosureParameters(),
+		orDefault(config.parameters, () => buildClosureParameters()),
 		'ClosureExpressionBlock.parameters',
 		'a built ClosureParameters'
 	);
@@ -7453,7 +7885,11 @@ export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Con
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	const _body = rejectBareText(config.body ?? buildBlock(), 'ClosureExpressionBlock.body', 'a built Block');
+	const _body = rejectBareText(
+		orDefault(config.body, () => buildBlock()),
+		'ClosureExpressionBlock.body',
+		'a built Block'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -7488,15 +7924,15 @@ export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Con
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.ClosureExpressionBlock.Bound;
 }
 
-export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Config): T.ClosureExpressionExpr.Built {
+export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Config): T.ClosureExpressionExpr.Bound {
 	const _static_marker = coerceBooleanKeywordStorage(config.staticMarker);
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
 	const _parameters = rejectBareText(
-		config.parameters ?? buildClosureParameters(),
+		orDefault(config.parameters, () => buildClosureParameters()),
 		'ClosureExpressionExpr.parameters',
 		'a built ClosureParameters'
 	);
@@ -7538,10 +7974,12 @@ export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Confi
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.ClosureExpressionExpr.Bound;
 }
 
-export function buildReferenceExpressionRawConst(value: T.Expression): T.ReferenceExpressionRawConst.Built {
+export function buildReferenceExpressionRawConst(
+	value: AdmitBound<T.Expression, T.AdmittedNodes>
+): T.ReferenceExpressionRawConst.Bound {
 	const _value = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.ReferenceExpressionRawConst['_value']>>(value, []),
 		'ReferenceExpressionRawConst.value',
@@ -7562,10 +8000,12 @@ export function buildReferenceExpressionRawConst(value: T.Expression): T.Referen
 				value: () => _value
 			}
 		)
-	);
+	) as unknown as T.ReferenceExpressionRawConst.Bound;
 }
 
-export function buildReferenceExpressionRawMut(value: T.Expression): T.ReferenceExpressionRawMut.Built {
+export function buildReferenceExpressionRawMut(
+	value: AdmitBound<T.Expression, T.AdmittedNodes>
+): T.ReferenceExpressionRawMut.Bound {
 	const _value = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.ReferenceExpressionRawMut['_value']>>(value, []),
 		'ReferenceExpressionRawMut.value',
@@ -7586,10 +8026,12 @@ export function buildReferenceExpressionRawMut(value: T.Expression): T.Reference
 				value: () => _value
 			}
 		)
-	);
+	) as unknown as T.ReferenceExpressionRawMut.Bound;
 }
 
-export function buildReferenceExpressionMut(value: T.Expression): T.ReferenceExpressionMut.Built {
+export function buildReferenceExpressionMut(
+	value: AdmitBound<T.Expression, T.AdmittedNodes>
+): T.ReferenceExpressionMut.Bound {
 	const _value = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.ReferenceExpressionMut['_value']>>(value, []),
 		'ReferenceExpressionMut.value',
@@ -7610,10 +8052,12 @@ export function buildReferenceExpressionMut(value: T.Expression): T.ReferenceExp
 				value: () => _value
 			}
 		)
-	);
+	) as unknown as T.ReferenceExpressionMut.Bound;
 }
 
-export function buildReferenceExpressionBare(value: T.Expression): T.ReferenceExpressionBare.Built {
+export function buildReferenceExpressionBare(
+	value: AdmitBound<T.Expression, T.AdmittedNodes>
+): T.ReferenceExpressionBare.Bound {
 	const _value = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.ReferenceExpressionBare['_value']>>(value, []),
 		'ReferenceExpressionBare.value',
@@ -7634,12 +8078,15 @@ export function buildReferenceExpressionBare(value: T.Expression): T.ReferenceEx
 				value: () => _value
 			}
 		)
-	);
+	) as unknown as T.ReferenceExpressionBare.Bound;
 }
 
 export function buildImplItemPositiveClause(
-	value: (T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types
-): T.ImplItemPositiveClause.Built {
+	value: AdmitBound<
+		(T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types,
+		T.AdmittedNodes
+	>
+): T.ImplItemPositiveClause.Bound {
 	const _trait = admitAliasContent<NonNullable<T.ImplItemPositiveClause['_trait']>>(
 		rejectBareText(
 			value,
@@ -7664,12 +8111,15 @@ export function buildImplItemPositiveClause(
 				trait: () => _trait
 			}
 		)
-	);
+	) as unknown as T.ImplItemPositiveClause.Bound;
 }
 
 export function buildImplItemNegativeClause(
-	value: (T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types
-): T.ImplItemNegativeClause.Built {
+	value: AdmitBound<
+		(T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types,
+		T.AdmittedNodes
+	>
+): T.ImplItemNegativeClause.Bound {
 	const _trait = admitAliasContent<NonNullable<T.ImplItemNegativeClause['_trait']>>(
 		rejectBareText(
 			value,
@@ -7694,10 +8144,10 @@ export function buildImplItemNegativeClause(
 				trait: () => _trait
 			}
 		)
-	);
+	) as unknown as T.ImplItemNegativeClause.Bound;
 }
 
-export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody.Built {
+export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody.Bound {
 	const _unsafe_marker = coerceBooleanKeywordStorage(config.unsafeMarker);
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
@@ -7719,7 +8169,7 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 	);
 	const _where_clause = rejectBareText(config.whereClause, 'ImplItemBody.whereClause', 'a built WhereClause');
 	const _declaration_list = rejectBareText(
-		config.declarationList ?? buildDeclarationList(),
+		orDefault(config.declarationList, () => buildDeclarationList()),
 		'ImplItemBody.declarationList',
 		'a built DeclarationList'
 	);
@@ -7755,10 +8205,10 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 				declarationList: () => _declaration_list
 			}
 		)
-	);
+	) as unknown as T.ImplItemBody.Bound;
 }
 
-export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi.Built {
+export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi.Bound {
 	const _unsafe_marker = coerceBooleanKeywordStorage(config.unsafeMarker);
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
@@ -7808,11 +8258,11 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 				whereClause: () => _where_clause
 			}
 		)
-	);
+	) as unknown as T.ImplItemSemi.Bound;
 }
 
 export function buildVisibilityModifierPubScopeInPath(
-	value:
+	value: AdmitBound<
 		| TSKindId.Self
 		| TSKindId.U8Keyword
 		| TSKindId.I8Keyword
@@ -7838,8 +8288,10 @@ export function buildVisibilityModifierPubScopeInPath(
 		| T.ScopedIdentifier
 		| TSKindId.DefaultKeyword
 		| TSKindId.UnionKeyword
-		| TSKindId.GenKeyword
-): T.VisibilityModifierPubScopeInPath.Built {
+		| TSKindId.GenKeyword,
+		T.AdmittedNodes
+	>
+): T.VisibilityModifierPubScopeInPath.Bound {
 	const _path = rejectKeywordText(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.VisibilityModifierPubScopeInPath['_path']>>(value, [
@@ -7942,12 +8394,15 @@ export function buildVisibilityModifierPubScopeInPath(
 				path: () => _path
 			}
 		)
-	);
+	) as unknown as T.VisibilityModifierPubScopeInPath.Bound;
 }
 
 export function buildVisibilityModifierPubScope(
-	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath
-): T.VisibilityModifierPubScope.Built {
+	value: AdmitBound<
+		TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath,
+		T.AdmittedNodes
+	>
+): T.VisibilityModifierPubScope.Bound {
 	const _content = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.VisibilityModifierPubScope['_content']>>(value, [
 			['self', TSKindId.Self] as const,
@@ -7974,14 +8429,17 @@ export function buildVisibilityModifierPubScope(
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.VisibilityModifierPubScope.Bound;
 }
 
 export function buildVisibilityModifierPub(
-	value?: T.VisibilityModifierPubScope
+	value?: AdmitBound<T.VisibilityModifierPubScope, T.AdmittedNodes>
 ): ReturnType<typeof _buildVisibilityModifierPub>;
 export function buildVisibilityModifierPub(
-	value: TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath
+	value: AdmitBound<
+		TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath,
+		T.AdmittedNodes
+	>
 ): ReturnType<typeof _buildVisibilityModifierPub>;
 export function buildVisibilityModifierPub(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -7998,7 +8456,9 @@ export function buildVisibilityModifierPub(...args: unknown[]) {
 				(buildVisibilityModifierPubScope as (...a: unknown[]) => unknown)(...args) as T.VisibilityModifierPubScope
 			);
 }
-function _buildVisibilityModifierPub(value?: T.VisibilityModifierPubScope): T.VisibilityModifierPub.Built {
+function _buildVisibilityModifierPub(
+	value?: AdmitBound<T.VisibilityModifierPubScope, T.AdmittedNodes>
+): T.VisibilityModifierPub.Bound {
 	const _visibility_modifier_pub_scope = rejectBareText(
 		value,
 		'VisibilityModifierPub.visibilityModifierPubScope',
@@ -8019,12 +8479,12 @@ function _buildVisibilityModifierPub(value?: T.VisibilityModifierPubScope): T.Vi
 				visibilityModifierPubScope: () => _visibility_modifier_pub_scope
 			}
 		)
-	);
+	) as unknown as T.VisibilityModifierPub.Bound;
 }
 
 export function buildFunctionTypeTraitForm(
-	value: (T.TypeIdentifier | T.ScopedTypeIdentifier) | T.TypeIdentifier.Types
-): T.FunctionTypeTraitForm.Built {
+	value: AdmitBound<(T.TypeIdentifier | T.ScopedTypeIdentifier) | T.TypeIdentifier.Types, T.AdmittedNodes>
+): T.FunctionTypeTraitForm.Bound {
 	const _trait = admitAliasContent<NonNullable<T.FunctionTypeTraitForm['_trait']>>(
 		rejectBareText(value, 'FunctionTypeTraitForm.trait', 'a built TypeIdentifier / ScopedTypeIdentifier'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -8045,18 +8505,23 @@ export function buildFunctionTypeTraitForm(
 				trait: () => _trait
 			}
 		)
-	);
+	) as unknown as T.FunctionTypeTraitForm.Bound;
 }
 
-export function buildFunctionTypeFnForm(value?: T.FunctionModifiers): ReturnType<typeof _buildFunctionTypeFnForm>;
 export function buildFunctionTypeFnForm(
-	...children: (
-		| TSKindId.AsyncKeyword
-		| TSKindId.DefaultKeyword
-		| TSKindId.ConstKeyword
-		| TSKindId.UnsafeKeyword
-		| T.ExternModifier
-	)[]
+	value?: AdmitBound<T.FunctionModifiers, T.AdmittedNodes>
+): ReturnType<typeof _buildFunctionTypeFnForm>;
+export function buildFunctionTypeFnForm(
+	...children: AdmitBound<
+		(
+			| TSKindId.AsyncKeyword
+			| TSKindId.DefaultKeyword
+			| TSKindId.ConstKeyword
+			| TSKindId.UnsafeKeyword
+			| T.ExternModifier
+		)[],
+		T.AdmittedNodes
+	>
 ): ReturnType<typeof _buildFunctionTypeFnForm>;
 export function buildFunctionTypeFnForm(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -8073,7 +8538,9 @@ export function buildFunctionTypeFnForm(...args: unknown[]) {
 				(buildFunctionModifiers as (...a: unknown[]) => unknown)(...args) as T.FunctionModifiers
 			);
 }
-function _buildFunctionTypeFnForm(value?: T.FunctionModifiers): T.FunctionTypeFnForm.Built {
+function _buildFunctionTypeFnForm(
+	value?: AdmitBound<T.FunctionModifiers, T.AdmittedNodes>
+): T.FunctionTypeFnForm.Bound {
 	const _function_modifiers = rejectBareText(
 		value,
 		'FunctionTypeFnForm.functionModifiers',
@@ -8094,10 +8561,10 @@ function _buildFunctionTypeFnForm(value?: T.FunctionModifiers): T.FunctionTypeFn
 				functionModifiers: () => _function_modifiers
 			}
 		)
-	);
+	) as unknown as T.FunctionTypeFnForm.Bound;
 }
 
-export function buildModItemExternal(config: T.ModItemExternal.Config): T.ModItemExternal.Built {
+export function buildModItemExternal(config: T.ModItemExternal.Config): T.ModItemExternal.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'ModItemExternal.visibilityModifier',
@@ -8123,17 +8590,21 @@ export function buildModItemExternal(config: T.ModItemExternal.Config): T.ModIte
 				name: () => _name
 			}
 		)
-	);
+	) as unknown as T.ModItemExternal.Bound;
 }
 
-export function buildModItemInline(config: T.ModItemInline.Config): T.ModItemInline.Built {
+export function buildModItemInline(config: T.ModItemInline.Config): T.ModItemInline.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'ModItemInline.visibilityModifier',
 		'a built VisibilityModifier'
 	);
 	const _name = rejectBareText(config.name, 'ModItemInline.name', 'buildIdentifier(…)');
-	const _body = rejectBareText(config.body ?? buildDeclarationList(), 'ModItemInline.body', 'a built DeclarationList');
+	const _body = rejectBareText(
+		orDefault(config.body, () => buildDeclarationList()),
+		'ModItemInline.body',
+		'a built DeclarationList'
+	);
 	return withMethods(
 		withAccessors(
 			{
@@ -8156,10 +8627,10 @@ export function buildModItemInline(config: T.ModItemInline.Config): T.ModItemInl
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.ModItemInline.Bound;
 }
 
-export function buildOrPatternBinary(config: T.OrPatternBinary.Config): T.OrPatternBinary.Built {
+export function buildOrPatternBinary(config: T.OrPatternBinary.Config): T.OrPatternBinary.Bound {
 	const _left = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.OrPatternBinary['_left']>>(config.left, []),
 		'OrPatternBinary.left',
@@ -8190,10 +8661,10 @@ export function buildOrPatternBinary(config: T.OrPatternBinary.Config): T.OrPatt
 				right: () => _right
 			}
 		)
-	);
+	) as unknown as T.OrPatternBinary.Bound;
 }
 
-export function buildOrPatternPrefix(value: T.Pattern): T.OrPatternPrefix.Built {
+export function buildOrPatternPrefix(value: AdmitBound<T.Pattern, T.AdmittedNodes>): T.OrPatternPrefix.Bound {
 	const _right = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.OrPatternPrefix['_right']>>(value, []),
 		'OrPatternPrefix.right',
@@ -8214,10 +8685,12 @@ export function buildOrPatternPrefix(value: T.Pattern): T.OrPatternPrefix.Built 
 				right: () => _right
 			}
 		)
-	);
+	) as unknown as T.OrPatternPrefix.Bound;
 }
 
-export function buildPointerTypeConst(value: T.Type | T.TypeIdentifier.Types): T.PointerTypeConst.Built {
+export function buildPointerTypeConst(
+	value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
+): T.PointerTypeConst.Bound {
 	const _type = admitAliasContent<NonNullable<T.PointerTypeConst['_type']>>(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.PointerTypeConst['_type']>>(value, []),
@@ -8241,10 +8714,12 @@ export function buildPointerTypeConst(value: T.Type | T.TypeIdentifier.Types): T
 				type: () => _type
 			}
 		)
-	);
+	) as unknown as T.PointerTypeConst.Bound;
 }
 
-export function buildPointerTypeMut(value: T.Type | T.TypeIdentifier.Types): T.PointerTypeMut.Built {
+export function buildPointerTypeMut(
+	value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
+): T.PointerTypeMut.Bound {
 	const _type = admitAliasContent<NonNullable<T.PointerTypeMut['_type']>>(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.PointerTypeMut['_type']>>(value, []),
@@ -8268,10 +8743,10 @@ export function buildPointerTypeMut(value: T.Type | T.TypeIdentifier.Types): T.P
 				type: () => _type
 			}
 		)
-	);
+	) as unknown as T.PointerTypeMut.Bound;
 }
 
-export function buildStringOpen(text: string): T.StringOpen.Built {
+export function buildStringOpen(text: string): T.StringOpen.Bound {
 	if (text.length === 0) throw new Error(`string_open: text must be non-empty`);
 	if (!_leafRe_buildStringOpen.test(text)) throw new Error(`string_open: text does not match pattern: ${text}`);
 	return withMethods({
@@ -8282,7 +8757,7 @@ export function buildStringOpen(text: string): T.StringOpen.Built {
 	});
 }
 
-export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Config): T.RangeExpressionBinary.Built {
+export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Config): T.RangeExpressionBinary.Bound {
 	const _start = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.RangeExpressionBinary['_start']>>(config.start, []),
 		'RangeExpressionBinary.start',
@@ -8322,10 +8797,12 @@ export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Confi
 				end: () => _end
 			}
 		)
-	);
+	) as unknown as T.RangeExpressionBinary.Bound;
 }
 
-export function buildRangeExpressionPostfix(value: T.Expression): T.RangeExpressionPostfix.Built {
+export function buildRangeExpressionPostfix(
+	value: AdmitBound<T.Expression, T.AdmittedNodes>
+): T.RangeExpressionPostfix.Bound {
 	const _start = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.RangeExpressionPostfix['_start']>>(value, []),
 		'RangeExpressionPostfix.start',
@@ -8346,10 +8823,12 @@ export function buildRangeExpressionPostfix(value: T.Expression): T.RangeExpress
 				start: () => _start
 			}
 		)
-	);
+	) as unknown as T.RangeExpressionPostfix.Bound;
 }
 
-export function buildRangeExpressionPrefix(value: T.Expression): T.RangeExpressionPrefix.Built {
+export function buildRangeExpressionPrefix(
+	value: AdmitBound<T.Expression, T.AdmittedNodes>
+): T.RangeExpressionPrefix.Bound {
 	const _end = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.RangeExpressionPrefix['_end']>>(value, []),
 		'RangeExpressionPrefix.end',
@@ -8370,10 +8849,12 @@ export function buildRangeExpressionPrefix(value: T.Expression): T.RangeExpressi
 				end: () => _end
 			}
 		)
-	);
+	) as unknown as T.RangeExpressionPrefix.Bound;
 }
 
-export function buildExpressionStatementWithSemi(value: T.Expression): T.ExpressionStatementWithSemi.Built {
+export function buildExpressionStatementWithSemi(
+	value: AdmitBound<T.Expression, T.AdmittedNodes>
+): T.ExpressionStatementWithSemi.Bound {
 	const _expression = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.ExpressionStatementWithSemi['_expression']>>(value, []),
 		'ExpressionStatementWithSemi.expression',
@@ -8394,17 +8875,17 @@ export function buildExpressionStatementWithSemi(value: T.Expression): T.Express
 				expression: () => _expression
 			}
 		)
-	);
+	) as unknown as T.ExpressionStatementWithSemi.Bound;
 }
 
-export function buildForeignModItemSemi(config: Partial<T.ForeignModItemSemi.Config> = {}): T.ForeignModItemSemi.Built {
+export function buildForeignModItemSemi(config: Partial<T.ForeignModItemSemi.Config> = {}): T.ForeignModItemSemi.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'ForeignModItemSemi.visibilityModifier',
 		'a built VisibilityModifier'
 	);
 	const _extern_modifier = rejectBareText(
-		config.externModifier ?? buildExternModifier(),
+		orDefault(config.externModifier, () => buildExternModifier()),
 		'ForeignModItemSemi.externModifier',
 		'a built ExternModifier'
 	);
@@ -8427,22 +8908,22 @@ export function buildForeignModItemSemi(config: Partial<T.ForeignModItemSemi.Con
 				externModifier: () => _extern_modifier
 			}
 		)
-	);
+	) as unknown as T.ForeignModItemSemi.Bound;
 }
 
-export function buildForeignModItemBody(config: T.ForeignModItemBody.Config): T.ForeignModItemBody.Built {
+export function buildForeignModItemBody(config: T.ForeignModItemBody.Config): T.ForeignModItemBody.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'ForeignModItemBody.visibilityModifier',
 		'a built VisibilityModifier'
 	);
 	const _extern_modifier = rejectBareText(
-		config.externModifier ?? buildExternModifier(),
+		orDefault(config.externModifier, () => buildExternModifier()),
 		'ForeignModItemBody.externModifier',
 		'a built ExternModifier'
 	);
 	const _body = rejectBareText(
-		config.body ?? buildDeclarationList(),
+		orDefault(config.body, () => buildDeclarationList()),
 		'ForeignModItemBody.body',
 		'a built DeclarationList'
 	);
@@ -8468,10 +8949,10 @@ export function buildForeignModItemBody(config: T.ForeignModItemBody.Config): T.
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.ForeignModItemBody.Bound;
 }
 
-export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.MatchArmWithComma.Built {
+export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.MatchArmWithComma.Bound {
 	const _attributes = rejectBareText(
 		config.attributes ?? [],
 		'MatchArmWithComma.attributes',
@@ -8506,10 +8987,10 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 				value: () => _value
 			}
 		)
-	);
+	) as unknown as T.MatchArmWithComma.Bound;
 }
 
-export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): T.MatchArmBlockEnding.Built {
+export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): T.MatchArmBlockEnding.Bound {
 	const _attributes = rejectBareText(
 		config.attributes ?? [],
 		'MatchArmBlockEnding.attributes',
@@ -8556,10 +9037,10 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 				value: () => _value
 			}
 		)
-	);
+	) as unknown as T.MatchArmBlockEnding.Bound;
 }
 
-export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSlashes.Built {
+export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSlashes.Bound {
 	if (text.length === 0) throw new Error(`line_comment_extra_slashes: text must be non-empty`);
 	if (!_leafRe_buildLineCommentExtraSlashes.test(text))
 		throw new Error(`line_comment_extra_slashes: text does not match pattern: ${text}`);
@@ -8571,7 +9052,9 @@ export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSl
 	});
 }
 
-export function buildLineCommentDocOuter(value: T.DocComment): ReturnType<typeof _buildLineCommentDocOuter>;
+export function buildLineCommentDocOuter(
+	value: AdmitBound<T.DocComment, T.AdmittedNodes>
+): ReturnType<typeof _buildLineCommentDocOuter>;
 export function buildLineCommentDocOuter(text: string): ReturnType<typeof _buildLineCommentDocOuter>;
 export function buildLineCommentDocOuter(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -8586,7 +9069,7 @@ export function buildLineCommentDocOuter(...args: unknown[]) {
 		? _buildLineCommentDocOuter(args[0] as T.DocComment)
 		: _buildLineCommentDocOuter((buildDocComment as (...a: unknown[]) => unknown)(...args) as T.DocComment);
 }
-function _buildLineCommentDocOuter(value: T.DocComment): T.LineCommentDocOuter.Built {
+function _buildLineCommentDocOuter(value: AdmitBound<T.DocComment, T.AdmittedNodes>): T.LineCommentDocOuter.Bound {
 	const _doc = rejectBareText(value, 'LineCommentDocOuter.doc', 'buildDocComment(…)');
 	return withMethods(
 		withAccessors(
@@ -8603,10 +9086,12 @@ function _buildLineCommentDocOuter(value: T.DocComment): T.LineCommentDocOuter.B
 				doc: () => _doc
 			}
 		)
-	);
+	) as unknown as T.LineCommentDocOuter.Bound;
 }
 
-export function buildLineCommentDocInner(value: T.DocComment): ReturnType<typeof _buildLineCommentDocInner>;
+export function buildLineCommentDocInner(
+	value: AdmitBound<T.DocComment, T.AdmittedNodes>
+): ReturnType<typeof _buildLineCommentDocInner>;
 export function buildLineCommentDocInner(text: string): ReturnType<typeof _buildLineCommentDocInner>;
 export function buildLineCommentDocInner(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -8621,7 +9106,7 @@ export function buildLineCommentDocInner(...args: unknown[]) {
 		? _buildLineCommentDocInner(args[0] as T.DocComment)
 		: _buildLineCommentDocInner((buildDocComment as (...a: unknown[]) => unknown)(...args) as T.DocComment);
 }
-function _buildLineCommentDocInner(value: T.DocComment): T.LineCommentDocInner.Built {
+function _buildLineCommentDocInner(value: AdmitBound<T.DocComment, T.AdmittedNodes>): T.LineCommentDocInner.Bound {
 	const _doc = rejectBareText(value, 'LineCommentDocInner.doc', 'buildDocComment(…)');
 	return withMethods(
 		withAccessors(
@@ -8638,10 +9123,10 @@ function _buildLineCommentDocInner(value: T.DocComment): T.LineCommentDocInner.B
 				doc: () => _doc
 			}
 		)
-	);
+	) as unknown as T.LineCommentDocInner.Bound;
 }
 
-export function buildLineCommentRegular(text: string): T.LineCommentRegular.Built {
+export function buildLineCommentRegular(text: string): T.LineCommentRegular.Bound {
 	if (!_leafRe_buildLineCommentRegular.test(text))
 		throw new Error(`line_comment_regular: text does not match pattern: ${text}`);
 	return withMethods({
@@ -8652,7 +9137,9 @@ export function buildLineCommentRegular(text: string): T.LineCommentRegular.Buil
 	});
 }
 
-export function buildBlockCommentDocOuter(value?: T.BlockCommentContent): ReturnType<typeof _buildBlockCommentDocOuter>;
+export function buildBlockCommentDocOuter(
+	value?: AdmitBound<T.BlockCommentContent, T.AdmittedNodes>
+): ReturnType<typeof _buildBlockCommentDocOuter>;
 export function buildBlockCommentDocOuter(text: string): ReturnType<typeof _buildBlockCommentDocOuter>;
 export function buildBlockCommentDocOuter(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -8669,7 +9156,9 @@ export function buildBlockCommentDocOuter(...args: unknown[]) {
 				(buildBlockCommentContent as (...a: unknown[]) => unknown)(...args) as T.BlockCommentContent
 			);
 }
-function _buildBlockCommentDocOuter(value?: T.BlockCommentContent): T.BlockCommentDocOuter.Built {
+function _buildBlockCommentDocOuter(
+	value?: AdmitBound<T.BlockCommentContent, T.AdmittedNodes>
+): T.BlockCommentDocOuter.Bound {
 	const _doc = rejectBareText(value, 'BlockCommentDocOuter.doc', 'buildBlockCommentContent(…)');
 	return withMethods(
 		withAccessors(
@@ -8686,10 +9175,12 @@ function _buildBlockCommentDocOuter(value?: T.BlockCommentContent): T.BlockComme
 				doc: () => _doc
 			}
 		)
-	);
+	) as unknown as T.BlockCommentDocOuter.Bound;
 }
 
-export function buildBlockCommentDocInner(value?: T.BlockCommentContent): ReturnType<typeof _buildBlockCommentDocInner>;
+export function buildBlockCommentDocInner(
+	value?: AdmitBound<T.BlockCommentContent, T.AdmittedNodes>
+): ReturnType<typeof _buildBlockCommentDocInner>;
 export function buildBlockCommentDocInner(text: string): ReturnType<typeof _buildBlockCommentDocInner>;
 export function buildBlockCommentDocInner(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -8706,7 +9197,9 @@ export function buildBlockCommentDocInner(...args: unknown[]) {
 				(buildBlockCommentContent as (...a: unknown[]) => unknown)(...args) as T.BlockCommentContent
 			);
 }
-function _buildBlockCommentDocInner(value?: T.BlockCommentContent): T.BlockCommentDocInner.Built {
+function _buildBlockCommentDocInner(
+	value?: AdmitBound<T.BlockCommentContent, T.AdmittedNodes>
+): T.BlockCommentDocInner.Bound {
 	const _doc = rejectBareText(value, 'BlockCommentDocInner.doc', 'buildBlockCommentContent(…)');
 	return withMethods(
 		withAccessors(
@@ -8723,28 +9216,22 @@ function _buildBlockCommentDocInner(value?: T.BlockCommentContent): T.BlockComme
 				doc: () => _doc
 			}
 		)
-	);
+	) as unknown as T.BlockCommentDocInner.Bound;
 }
 
 export function buildTokenTreePatternParen(): T.EmptyTokenTreePatternParen;
 export function buildTokenTreePatternParen(
-	...children: (
-		| T.TokenTreePattern
-		| T.TokenRepetitionPattern
-		| T.TokenBindingPattern
-		| T.Metavariable
-		| T.NonSpecialToken
-	)[]
-): T.TokenTreePatternParen.Built;
+	...children: AdmitBound<
+		(T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken)[],
+		T.AdmittedNodes
+	>
+): T.TokenTreePatternParen.Bound;
 export function buildTokenTreePatternParen(
-	...children: (
-		| T.TokenTreePattern
-		| T.TokenRepetitionPattern
-		| T.TokenBindingPattern
-		| T.Metavariable
-		| T.NonSpecialToken
-	)[]
-): T.TokenTreePatternParen.Built {
+	...children: AdmitBound<
+		(T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken)[],
+		T.AdmittedNodes
+	>
+): T.TokenTreePatternParen.Bound {
 	const _token_patterns = rejectBareText(
 		children,
 		'TokenTreePatternParen.tokenPatterns',
@@ -8773,28 +9260,22 @@ export function buildTokenTreePatternParen(
 				tokenPatterns: () => _token_patterns
 			}
 		)
-	);
+	) as unknown as T.TokenTreePatternParen.Bound;
 }
 
 export function buildTokenTreePatternBracket(): T.EmptyTokenTreePatternBracket;
 export function buildTokenTreePatternBracket(
-	...children: (
-		| T.TokenTreePattern
-		| T.TokenRepetitionPattern
-		| T.TokenBindingPattern
-		| T.Metavariable
-		| T.NonSpecialToken
-	)[]
-): T.TokenTreePatternBracket.Built;
+	...children: AdmitBound<
+		(T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken)[],
+		T.AdmittedNodes
+	>
+): T.TokenTreePatternBracket.Bound;
 export function buildTokenTreePatternBracket(
-	...children: (
-		| T.TokenTreePattern
-		| T.TokenRepetitionPattern
-		| T.TokenBindingPattern
-		| T.Metavariable
-		| T.NonSpecialToken
-	)[]
-): T.TokenTreePatternBracket.Built {
+	...children: AdmitBound<
+		(T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken)[],
+		T.AdmittedNodes
+	>
+): T.TokenTreePatternBracket.Bound {
 	const _token_patterns = rejectBareText(
 		children,
 		'TokenTreePatternBracket.tokenPatterns',
@@ -8823,28 +9304,22 @@ export function buildTokenTreePatternBracket(
 				tokenPatterns: () => _token_patterns
 			}
 		)
-	);
+	) as unknown as T.TokenTreePatternBracket.Bound;
 }
 
 export function buildTokenTreePatternBrace(): T.EmptyTokenTreePatternBrace;
 export function buildTokenTreePatternBrace(
-	...children: (
-		| T.TokenTreePattern
-		| T.TokenRepetitionPattern
-		| T.TokenBindingPattern
-		| T.Metavariable
-		| T.NonSpecialToken
-	)[]
-): T.TokenTreePatternBrace.Built;
+	...children: AdmitBound<
+		(T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken)[],
+		T.AdmittedNodes
+	>
+): T.TokenTreePatternBrace.Bound;
 export function buildTokenTreePatternBrace(
-	...children: (
-		| T.TokenTreePattern
-		| T.TokenRepetitionPattern
-		| T.TokenBindingPattern
-		| T.Metavariable
-		| T.NonSpecialToken
-	)[]
-): T.TokenTreePatternBrace.Built {
+	...children: AdmitBound<
+		(T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken)[],
+		T.AdmittedNodes
+	>
+): T.TokenTreePatternBrace.Bound {
 	const _token_patterns = rejectBareText(
 		children,
 		'TokenTreePatternBrace.tokenPatterns',
@@ -8873,16 +9348,16 @@ export function buildTokenTreePatternBrace(
 				tokenPatterns: () => _token_patterns
 			}
 		)
-	);
+	) as unknown as T.TokenTreePatternBrace.Bound;
 }
 
 export function buildTokenTreeParen(): T.EmptyTokenTreeParen;
 export function buildTokenTreeParen(
-	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
-): T.TokenTreeParen.Built;
+	...children: AdmitBound<(T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[], T.AdmittedNodes>
+): T.TokenTreeParen.Bound;
 export function buildTokenTreeParen(
-	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
-): T.TokenTreeParen.Built {
+	...children: AdmitBound<(T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[], T.AdmittedNodes>
+): T.TokenTreeParen.Bound {
 	const _tokens = rejectBareText(
 		children,
 		'TokenTreeParen.tokens',
@@ -8904,16 +9379,16 @@ export function buildTokenTreeParen(
 				tokens: () => _tokens
 			}
 		)
-	);
+	) as unknown as T.TokenTreeParen.Bound;
 }
 
 export function buildTokenTreeBracket(): T.EmptyTokenTreeBracket;
 export function buildTokenTreeBracket(
-	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
-): T.TokenTreeBracket.Built;
+	...children: AdmitBound<(T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[], T.AdmittedNodes>
+): T.TokenTreeBracket.Bound;
 export function buildTokenTreeBracket(
-	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
-): T.TokenTreeBracket.Built {
+	...children: AdmitBound<(T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[], T.AdmittedNodes>
+): T.TokenTreeBracket.Bound {
 	const _tokens = rejectBareText(
 		children,
 		'TokenTreeBracket.tokens',
@@ -8935,16 +9410,16 @@ export function buildTokenTreeBracket(
 				tokens: () => _tokens
 			}
 		)
-	);
+	) as unknown as T.TokenTreeBracket.Bound;
 }
 
 export function buildTokenTreeBrace(): T.EmptyTokenTreeBrace;
 export function buildTokenTreeBrace(
-	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
-): T.TokenTreeBrace.Built;
+	...children: AdmitBound<(T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[], T.AdmittedNodes>
+): T.TokenTreeBrace.Bound;
 export function buildTokenTreeBrace(
-	...children: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]
-): T.TokenTreeBrace.Built {
+	...children: AdmitBound<(T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[], T.AdmittedNodes>
+): T.TokenTreeBrace.Bound {
 	const _tokens = rejectBareText(
 		children,
 		'TokenTreeBrace.tokens',
@@ -8966,16 +9441,16 @@ export function buildTokenTreeBrace(
 				tokens: () => _tokens
 			}
 		)
-	);
+	) as unknown as T.TokenTreeBrace.Bound;
 }
 
 export function buildDelimTokenTreeParen(): T.EmptyDelimTokenTreeParen;
 export function buildDelimTokenTreeParen(
-	...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
-): T.DelimTokenTreeParen.Built;
+	...children: AdmitBound<(T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[], T.AdmittedNodes>
+): T.DelimTokenTreeParen.Bound;
 export function buildDelimTokenTreeParen(
-	...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
-): T.DelimTokenTreeParen.Built {
+	...children: AdmitBound<(T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[], T.AdmittedNodes>
+): T.DelimTokenTreeParen.Bound {
 	const _delim_tokens = rejectBareText(
 		children,
 		'DelimTokenTreeParen.delimTokens',
@@ -8997,16 +9472,16 @@ export function buildDelimTokenTreeParen(
 				delimTokens: () => _delim_tokens
 			}
 		)
-	);
+	) as unknown as T.DelimTokenTreeParen.Bound;
 }
 
 export function buildDelimTokenTreeBracket(): T.EmptyDelimTokenTreeBracket;
 export function buildDelimTokenTreeBracket(
-	...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
-): T.DelimTokenTreeBracket.Built;
+	...children: AdmitBound<(T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[], T.AdmittedNodes>
+): T.DelimTokenTreeBracket.Bound;
 export function buildDelimTokenTreeBracket(
-	...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
-): T.DelimTokenTreeBracket.Built {
+	...children: AdmitBound<(T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[], T.AdmittedNodes>
+): T.DelimTokenTreeBracket.Bound {
 	const _delim_tokens = rejectBareText(
 		children,
 		'DelimTokenTreeBracket.delimTokens',
@@ -9028,16 +9503,16 @@ export function buildDelimTokenTreeBracket(
 				delimTokens: () => _delim_tokens
 			}
 		)
-	);
+	) as unknown as T.DelimTokenTreeBracket.Bound;
 }
 
 export function buildDelimTokenTreeBrace(): T.EmptyDelimTokenTreeBrace;
 export function buildDelimTokenTreeBrace(
-	...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
-): T.DelimTokenTreeBrace.Built;
+	...children: AdmitBound<(T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[], T.AdmittedNodes>
+): T.DelimTokenTreeBrace.Bound;
 export function buildDelimTokenTreeBrace(
-	...children: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]
-): T.DelimTokenTreeBrace.Built {
+	...children: AdmitBound<(T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[], T.AdmittedNodes>
+): T.DelimTokenTreeBrace.Bound {
 	const _delim_tokens = rejectBareText(
 		children,
 		'DelimTokenTreeBrace.delimTokens',
@@ -9059,10 +9534,10 @@ export function buildDelimTokenTreeBrace(
 				delimTokens: () => _delim_tokens
 			}
 		)
-	);
+	) as unknown as T.DelimTokenTreeBrace.Bound;
 }
 
-export function buildFieldPatternShorthand(config: T.FieldPatternShorthand.Config): T.FieldPatternShorthand.Built {
+export function buildFieldPatternShorthand(config: T.FieldPatternShorthand.Config): T.FieldPatternShorthand.Bound {
 	const _ref_marker = coerceBooleanKeywordStorage(config.refMarker);
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _name = admitAliasContent<NonNullable<T.FieldPatternShorthand['_name']>>(
@@ -9093,10 +9568,10 @@ export function buildFieldPatternShorthand(config: T.FieldPatternShorthand.Confi
 				name: () => _name
 			}
 		)
-	);
+	) as unknown as T.FieldPatternShorthand.Bound;
 }
 
-export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.FieldPatternNamed.Built {
+export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.FieldPatternNamed.Bound {
 	const _ref_marker = coerceBooleanKeywordStorage(config.refMarker);
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _name = admitAliasContent<NonNullable<T.FieldPatternNamed['_name']>>(
@@ -9136,10 +9611,10 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 				pattern: () => _pattern
 			}
 		)
-	);
+	) as unknown as T.FieldPatternNamed.Bound;
 }
 
-export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config): T.MacroDefinitionParen.Built {
+export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config): T.MacroDefinitionParen.Bound {
 	const _name = rejectKeywordText(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.MacroDefinitionParen['_name']>>(config.name, [
@@ -9174,10 +9649,10 @@ export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config)
 				macroRules: () => _macro_rules
 			}
 		)
-	);
+	) as unknown as T.MacroDefinitionParen.Bound;
 }
 
-export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Config): T.MacroDefinitionBracket.Built {
+export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Config): T.MacroDefinitionBracket.Bound {
 	const _name = rejectKeywordText(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.MacroDefinitionBracket['_name']>>(config.name, [
@@ -9212,10 +9687,10 @@ export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Con
 				macroRules: () => _macro_rules
 			}
 		)
-	);
+	) as unknown as T.MacroDefinitionBracket.Bound;
 }
 
-export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config): T.MacroDefinitionBrace.Built {
+export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config): T.MacroDefinitionBrace.Bound {
 	const _name = rejectKeywordText(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.MacroDefinitionBrace['_name']>>(config.name, [
@@ -9250,10 +9725,10 @@ export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config)
 				macroRules: () => _macro_rules
 			}
 		)
-	);
+	) as unknown as T.MacroDefinitionBrace.Bound;
 }
 
-export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.RangePatternPrefix.Built {
+export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.RangePatternPrefix.Bound {
 	const _content = coerceKindEnumStorage<NonNullable<T.RangePatternPrefix['_content']>>(config.content, [
 		['..=', TSKindId.DotDotEq] as const,
 		['..', TSKindId.DotDot] as const
@@ -9336,12 +9811,12 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.
 				right: () => _right
 			}
 		)
-	);
+	) as unknown as T.RangePatternPrefix.Bound;
 }
 
 export function buildRangePatternWithLeftWithRight(
 	config: T.RangePatternWithLeftWithRight.Config
-): T.RangePatternWithLeftWithRight.Built {
+): T.RangePatternWithLeftWithRight.Bound {
 	const _content = coerceKindEnumStorage<NonNullable<T.RangePatternWithLeftWithRight['_content']>>(config.content, [
 		['...', TSKindId.DotDotDot] as const,
 		['..=', TSKindId.DotDotEq] as const,
@@ -9425,12 +9900,12 @@ export function buildRangePatternWithLeftWithRight(
 				right: () => _right
 			}
 		)
-	);
+	) as unknown as T.RangePatternWithLeftWithRight.Bound;
 }
 
 export const buildRangePatternWithLeftBare: TSKindId.RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
 
-export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config): T.RangePatternWithLeft.Built {
+export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config): T.RangePatternWithLeft.Bound {
 	const _left = rejectKeywordText(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.RangePatternWithLeft['_left']>>(config.left, [
@@ -9516,10 +9991,10 @@ export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config)
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.RangePatternWithLeft.Bound;
 }
 
-export function buildStructItemBrace(config: T.StructItemBrace.Config): T.StructItemBrace.Built {
+export function buildStructItemBrace(config: T.StructItemBrace.Config): T.StructItemBrace.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'StructItemBrace.visibilityModifier',
@@ -9536,7 +10011,7 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 	);
 	const _where_clause = rejectBareText(config.whereClause, 'StructItemBrace.whereClause', 'a built WhereClause');
 	const _body = rejectBareText(
-		config.body ?? buildFieldDeclarationList(),
+		orDefault(config.body, () => buildFieldDeclarationList()),
 		'StructItemBrace.body',
 		'a built FieldDeclarationList'
 	);
@@ -9568,10 +10043,10 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 				body: () => _body
 			}
 		)
-	);
+	) as unknown as T.StructItemBrace.Bound;
 }
 
-export function buildStructItemTuple(config: T.StructItemTuple.Config): T.StructItemTuple.Built {
+export function buildStructItemTuple(config: T.StructItemTuple.Config): T.StructItemTuple.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'StructItemTuple.visibilityModifier',
@@ -9587,7 +10062,7 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): T.Struct
 		'a built TypeParameters'
 	);
 	const _body = rejectBareText(
-		config.body ?? buildOrderedFieldDeclarationList(),
+		orDefault(config.body, () => buildOrderedFieldDeclarationList()),
 		'StructItemTuple.body',
 		'a built OrderedFieldDeclarationList'
 	);
@@ -9620,10 +10095,10 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): T.Struct
 				whereClause: () => _where_clause
 			}
 		)
-	);
+	) as unknown as T.StructItemTuple.Bound;
 }
 
-export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructItemUnit.Built {
+export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructItemUnit.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'StructItemUnit.visibilityModifier',
@@ -9660,14 +10135,14 @@ export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructIt
 				typeParameters: () => _type_parameters
 			}
 		)
-	);
+	) as unknown as T.StructItemUnit.Bound;
 }
 
 export const buildWildcardPattern: TSKindId.WildcardPattern = TSKindId.WildcardPattern;
 
 export function buildAttributedFieldDeclaration(
 	config: T.AttributedFieldDeclaration.Config
-): T.AttributedFieldDeclaration.Built {
+): T.AttributedFieldDeclaration.Bound {
 	const _attribute_item = rejectBareText(
 		config.attributeItem ?? [],
 		'AttributedFieldDeclaration.attributeItem',
@@ -9698,10 +10173,10 @@ export function buildAttributedFieldDeclaration(
 				fieldDeclaration: () => _field_declaration
 			}
 		)
-	);
+	) as unknown as T.AttributedFieldDeclaration.Bound;
 }
 
-export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Config): T.AttributedEnumVariant.Built {
+export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Config): T.AttributedEnumVariant.Bound {
 	const _attribute_item = rejectBareText(
 		config.attributeItem ?? [],
 		'AttributedEnumVariant.attributeItem',
@@ -9727,10 +10202,10 @@ export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Confi
 				enumVariant: () => _enum_variant
 			}
 		)
-	);
+	) as unknown as T.AttributedEnumVariant.Bound;
 }
 
-export function buildAttributedParameter(config: T.AttributedParameter.Config): T.AttributedParameter.Built {
+export function buildAttributedParameter(config: T.AttributedParameter.Config): T.AttributedParameter.Bound {
 	const _attribute_item = rejectBareText(
 		config.attributeItem,
 		'AttributedParameter.attributeItem',
@@ -9765,12 +10240,12 @@ export function buildAttributedParameter(config: T.AttributedParameter.Config): 
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.AttributedParameter.Bound;
 }
 
 export function buildAttributedTypeParameter(
 	config: T.AttributedTypeParameter.Config
-): T.AttributedTypeParameter.Built {
+): T.AttributedTypeParameter.Bound {
 	const _attribute_item = rejectBareText(
 		config.attributeItem ?? [],
 		'AttributedTypeParameter.attributeItem',
@@ -9801,10 +10276,10 @@ export function buildAttributedTypeParameter(
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.AttributedTypeParameter.Bound;
 }
 
-export function buildAttributedArgument(config: T.AttributedArgument.Config): T.AttributedArgument.Built {
+export function buildAttributedArgument(config: T.AttributedArgument.Config): T.AttributedArgument.Bound {
 	const _attribute_item = rejectBareText(
 		config.attributeItem ?? [],
 		'AttributedArgument.attributeItem',
@@ -9835,10 +10310,10 @@ export function buildAttributedArgument(config: T.AttributedArgument.Config): T.
 				expression: () => _expression
 			}
 		)
-	);
+	) as unknown as T.AttributedArgument.Bound;
 }
 
-export function buildAttributedOrderedField(config: T.AttributedOrderedField.Config): T.AttributedOrderedField.Built {
+export function buildAttributedOrderedField(config: T.AttributedOrderedField.Config): T.AttributedOrderedField.Bound {
 	const _attribute_item = rejectBareText(
 		config.attributeItem ?? [],
 		'AttributedOrderedField.attributeItem',
@@ -9881,10 +10356,10 @@ export function buildAttributedOrderedField(config: T.AttributedOrderedField.Con
 				type: () => _type
 			}
 		)
-	);
+	) as unknown as T.AttributedOrderedField.Bound;
 }
 
-export function buildTypeArgument(config: T.TypeArgument.Config): T.TypeArgument.Built {
+export function buildTypeArgument(config: T.TypeArgument.Config): T.TypeArgument.Bound {
 	const _content = admitAliasContent<NonNullable<T.TypeArgument['_content']>>(
 		rejectBareText(
 			coerceMixedEnumStorage<NonNullable<T.TypeArgument['_content']>>(config.content, []),
@@ -9913,10 +10388,10 @@ export function buildTypeArgument(config: T.TypeArgument.Config): T.TypeArgument
 				traitBounds: () => _trait_bounds
 			}
 		)
-	);
+	) as unknown as T.TypeArgument.Bound;
 }
 
-export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlockArms.Built {
+export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlockArms.Bound {
 	const _match_arm = rejectBareText(config.matchArm ?? [], 'MatchBlockArms.matchArm', 'a built MatchArm');
 	const _last_arm = rejectBareText(config.lastArm, 'MatchBlockArms.lastArm', 'a built LastMatchArm');
 	return withMethods(
@@ -9937,10 +10412,10 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 				lastArm: () => _last_arm
 			}
 		)
-	);
+	) as unknown as T.MatchBlockArms.Bound;
 }
 
-export function buildFloatLiteral(text: string | number): T.FloatLiteral.Built {
+export function buildFloatLiteral(text: string | number): T.FloatLiteral.Bound {
 	text = numberText('float', '.0', text);
 	if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
 	if (!_leafRe_buildFloatLiteral.test(text)) throw new Error(`float_literal: text does not match pattern: ${text}`);
@@ -9952,7 +10427,7 @@ export function buildFloatLiteral(text: string | number): T.FloatLiteral.Built {
 	});
 }
 
-export function buildStringContent(text: string): T.StringContent.Built {
+export function buildStringContent(text: string): T.StringContent.Bound {
 	if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
 	if (!_leafRe_buildStringContent.test(text)) throw new Error(`string_content: text does not match pattern: ${text}`);
 	return withMethods({
@@ -9963,7 +10438,7 @@ export function buildStringContent(text: string): T.StringContent.Built {
 	});
 }
 
-export function buildRawStringLiteralContent(text: string): T.RawStringLiteralContent.Built {
+export function buildRawStringLiteralContent(text: string): T.RawStringLiteralContent.Bound {
 	if (!_leafRe_buildRawStringLiteralContent.test(text))
 		throw new Error(`raw_string_literal_content: text does not match pattern: ${text}`);
 	return withMethods({
@@ -9978,7 +10453,7 @@ export const buildOuterDocCommentMarker: TSKindId.OuterDocCommentMarker = TSKind
 
 export const buildInnerDocCommentMarker: TSKindId.InnerDocCommentMarker = TSKindId.InnerDocCommentMarker;
 
-export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStart.Built {
+export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStart.Bound {
 	if (text.length === 0) throw new Error(`raw_string_literal_start: text must be non-empty`);
 	if (!_leafRe_buildRawStringLiteralStart.test(text))
 		throw new Error(`raw_string_literal_start: text does not match pattern: ${text}`);
@@ -9990,7 +10465,7 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 	});
 }
 
-export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Built {
+export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bound {
 	if (text.length === 0) throw new Error(`raw_string_literal_end: text must be non-empty`);
 	if (!_leafRe_buildRawStringLiteralEnd.test(text))
 		throw new Error(`raw_string_literal_end: text does not match pattern: ${text}`);
@@ -10002,7 +10477,7 @@ export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bu
 	});
 }
 
-export function buildDocComment(text: string): T.DocComment.Built {
+export function buildDocComment(text: string): T.DocComment.Bound {
 	if (!_leafRe_buildDocComment.test(text)) throw new Error(`doc_comment: text does not match pattern: ${text}`);
 	return withMethods({
 		$type: TSKindId.DocComment as const,
@@ -10012,7 +10487,7 @@ export function buildDocComment(text: string): T.DocComment.Built {
 	});
 }
 
-export function buildBlockCommentContent(text: string): T.BlockCommentContent.Built {
+export function buildBlockCommentContent(text: string): T.BlockCommentContent.Bound {
 	if (!_leafRe_buildBlockCommentContent.test(text))
 		throw new Error(`_block_comment_content: text does not match pattern: ${text}`);
 	return withMethods({
@@ -10039,7 +10514,7 @@ export const buildIndent: TSKindId.Indent = TSKindId.Indent;
 
 export const buildDedent: TSKindId.Dedent = TSKindId.Dedent;
 
-export function buildErrorSentinel(text: string): T.ErrorSentinel.Built {
+export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
 	if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
 	return withMethods({
 		$type: TSKindId.ErrorSentinel as const,
@@ -10049,7 +10524,7 @@ export function buildErrorSentinel(text: string): T.ErrorSentinel.Built {
 	});
 }
 
-export function buildTypeIdentifier(value: T.Identifier): T.TypeIdentifier.Built {
+export function buildTypeIdentifier(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.TypeIdentifier.Bound {
 	const _content = rejectBareText(value, 'TypeIdentifier.content', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
@@ -10066,10 +10541,10 @@ export function buildTypeIdentifier(value: T.Identifier): T.TypeIdentifier.Built
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.TypeIdentifier.Bound;
 }
 
-export function buildFieldIdentifier(value: T.Identifier): T.FieldIdentifier.Built {
+export function buildFieldIdentifier(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T.FieldIdentifier.Bound {
 	const _content = rejectBareText(value, 'FieldIdentifier.content', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
@@ -10086,10 +10561,12 @@ export function buildFieldIdentifier(value: T.Identifier): T.FieldIdentifier.Bui
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.FieldIdentifier.Bound;
 }
 
-export function buildShorthandFieldIdentifier(value: T.Identifier): T.ShorthandFieldIdentifier.Built {
+export function buildShorthandFieldIdentifier(
+	value: AdmitBound<T.Identifier, T.AdmittedNodes>
+): T.ShorthandFieldIdentifier.Bound {
 	const _content = rejectBareText(value, 'ShorthandFieldIdentifier.content', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
@@ -10106,252 +10583,252 @@ export function buildShorthandFieldIdentifier(value: T.Identifier): T.ShorthandF
 				content: () => _content
 			}
 		)
-	);
+	) as unknown as T.ShorthandFieldIdentifier.Bound;
 }
 
 export type FluentKindMap = {
-	source_file: T.SourceFile.Built;
+	source_file: T.SourceFile.Bound;
 	empty_statement: T.EmptyStatement;
-	expression_statement: T.ExpressionStatement.Built;
-	macro_rule: T.MacroRule.Built;
-	token_binding_pattern: T.TokenBindingPattern.Built;
-	token_repetition_pattern: T.TokenRepetitionPattern.Built;
-	token_repetition: T.TokenRepetition.Built;
-	non_special_token: T.NonSpecialToken.Built;
-	attribute_item: T.AttributeItem.Built;
-	inner_attribute_item: T.InnerAttributeItem.Built;
-	attribute: T.Attribute.Built;
-	declaration_list: T.DeclarationList.Built;
-	union_item: T.UnionItem.Built;
-	enum_item: T.EnumItem.Built;
-	enum_variant_list: T.EnumVariantList.Built;
-	enum_variant: T.EnumVariant.Built;
-	field_declaration_list: T.FieldDeclarationList.Built;
-	field_declaration: T.FieldDeclaration.Built;
-	ordered_field_declaration_list: T.OrderedFieldDeclarationList.Built;
-	extern_crate_declaration: T.ExternCrateDeclaration.Built;
-	const_item: T.ConstItem.Built;
-	static_item: T.StaticItem.Built;
-	type_item: T.TypeItem.Built;
-	function_item: T.FunctionItem.Built;
-	function_signature_item: T.FunctionSignatureItem.Built;
-	function_modifiers: T.FunctionModifiers.Built;
-	where_clause: T.WhereClause.Built;
-	where_predicate: T.WherePredicate.Built;
-	trait_item: T.TraitItem.Built;
-	associated_type: T.AssociatedType.Built;
-	trait_bounds: T.TraitBounds.Built;
-	higher_ranked_trait_bound: T.HigherRankedTraitBound.Built;
-	removed_trait_bound: T.RemovedTraitBound.Built;
-	type_parameters: T.TypeParameters.Built;
-	const_parameter: T.ConstParameter.Built;
-	type_parameter: T.TypeParameter.Built;
-	lifetime_parameter: T.LifetimeParameter.Built;
-	let_declaration: T.LetDeclaration.Built;
-	use_declaration: T.UseDeclaration.Built;
-	scoped_use_list: T.ScopedUseList.Built;
-	use_list: T.UseList.Built;
-	use_as_clause: T.UseAsClause.Built;
-	use_wildcard: T.UseWildcard.Built;
-	parameters: T.Parameters.Built;
-	self_parameter: T.SelfParameter.Built;
-	variadic_parameter: T.VariadicParameter.Built;
-	parameter: T.Parameter.Built;
-	extern_modifier: T.ExternModifier.Built;
-	visibility_modifier: T.VisibilityModifier.Built;
-	bracketed_type: T.BracketedType.Built;
-	qualified_type: T.QualifiedType.Built;
-	lifetime: T.Lifetime.Built;
-	array_type: T.ArrayType.Built;
-	for_lifetimes: T.ForLifetimes.Built;
-	function_type: T.FunctionType.Built;
-	tuple_type: T.TupleType.Built;
+	expression_statement: T.ExpressionStatement.Bound;
+	macro_rule: T.MacroRule.Bound;
+	token_binding_pattern: T.TokenBindingPattern.Bound;
+	token_repetition_pattern: T.TokenRepetitionPattern.Bound;
+	token_repetition: T.TokenRepetition.Bound;
+	non_special_token: T.NonSpecialToken.Bound;
+	attribute_item: T.AttributeItem.Bound;
+	inner_attribute_item: T.InnerAttributeItem.Bound;
+	attribute: T.Attribute.Bound;
+	declaration_list: T.DeclarationList.Bound;
+	union_item: T.UnionItem.Bound;
+	enum_item: T.EnumItem.Bound;
+	enum_variant_list: T.EnumVariantList.Bound;
+	enum_variant: T.EnumVariant.Bound;
+	field_declaration_list: T.FieldDeclarationList.Bound;
+	field_declaration: T.FieldDeclaration.Bound;
+	ordered_field_declaration_list: T.OrderedFieldDeclarationList.Bound;
+	extern_crate_declaration: T.ExternCrateDeclaration.Bound;
+	const_item: T.ConstItem.Bound;
+	static_item: T.StaticItem.Bound;
+	type_item: T.TypeItem.Bound;
+	function_item: T.FunctionItem.Bound;
+	function_signature_item: T.FunctionSignatureItem.Bound;
+	function_modifiers: T.FunctionModifiers.Bound;
+	where_clause: T.WhereClause.Bound;
+	where_predicate: T.WherePredicate.Bound;
+	trait_item: T.TraitItem.Bound;
+	associated_type: T.AssociatedType.Bound;
+	trait_bounds: T.TraitBounds.Bound;
+	higher_ranked_trait_bound: T.HigherRankedTraitBound.Bound;
+	removed_trait_bound: T.RemovedTraitBound.Bound;
+	type_parameters: T.TypeParameters.Bound;
+	const_parameter: T.ConstParameter.Bound;
+	type_parameter: T.TypeParameter.Bound;
+	lifetime_parameter: T.LifetimeParameter.Bound;
+	let_declaration: T.LetDeclaration.Bound;
+	use_declaration: T.UseDeclaration.Bound;
+	scoped_use_list: T.ScopedUseList.Bound;
+	use_list: T.UseList.Bound;
+	use_as_clause: T.UseAsClause.Bound;
+	use_wildcard: T.UseWildcard.Bound;
+	parameters: T.Parameters.Bound;
+	self_parameter: T.SelfParameter.Bound;
+	variadic_parameter: T.VariadicParameter.Bound;
+	parameter: T.Parameter.Bound;
+	extern_modifier: T.ExternModifier.Bound;
+	visibility_modifier: T.VisibilityModifier.Bound;
+	bracketed_type: T.BracketedType.Bound;
+	qualified_type: T.QualifiedType.Bound;
+	lifetime: T.Lifetime.Bound;
+	array_type: T.ArrayType.Bound;
+	for_lifetimes: T.ForLifetimes.Bound;
+	function_type: T.FunctionType.Bound;
+	tuple_type: T.TupleType.Bound;
 	unit_type: T.UnitType;
-	generic_function: T.GenericFunction.Built;
-	generic_type: T.GenericType.Built;
-	generic_type_with_turbofish: T.GenericTypeWithTurbofish.Built;
-	bounded_type: T.BoundedType.Built;
-	use_bounds: T.UseBounds.Built;
-	type_arguments: T.TypeArguments.Built;
-	type_binding: T.TypeBinding.Built;
-	reference_type: T.ReferenceType.Built;
+	generic_function: T.GenericFunction.Bound;
+	generic_type: T.GenericType.Bound;
+	generic_type_with_turbofish: T.GenericTypeWithTurbofish.Bound;
+	bounded_type: T.BoundedType.Bound;
+	use_bounds: T.UseBounds.Bound;
+	type_arguments: T.TypeArguments.Bound;
+	type_binding: T.TypeBinding.Bound;
+	reference_type: T.ReferenceType.Bound;
 	never_type: T.NeverType;
-	abstract_type: T.AbstractType.Built;
-	dynamic_type: T.DynamicType.Built;
+	abstract_type: T.AbstractType.Bound;
+	dynamic_type: T.DynamicType.Bound;
 	mutable_specifier: T.MutableSpecifier;
-	macro_invocation: T.MacroInvocation.Built;
-	scoped_identifier: T.ScopedIdentifier.Built;
-	scoped_type_identifier_in_expression_position: T.ScopedTypeIdentifierInExpressionPosition.Built;
-	scoped_type_identifier: T.ScopedTypeIdentifier.Built;
-	range_expression: T.RangeExpression.Built;
-	unary_expression: T.UnaryExpression.Built;
-	try_expression: T.TryExpression.Built;
-	binary_expression: T.BinaryExpression.Built;
-	assignment_expression: T.AssignmentExpression.Built;
-	compound_assignment_expr: T.CompoundAssignmentExpr.Built;
-	type_cast_expression: T.TypeCastExpression.Built;
-	return_expression: T.ReturnExpression.Built;
-	yield_expression: T.YieldExpression.Built;
-	call_expression: T.CallExpression.Built;
-	arguments: T.Arguments.Built;
-	parenthesized_expression: T.ParenthesizedExpression.Built;
-	tuple_expression: T.TupleExpression.Built;
+	macro_invocation: T.MacroInvocation.Bound;
+	scoped_identifier: T.ScopedIdentifier.Bound;
+	scoped_type_identifier_in_expression_position: T.ScopedTypeIdentifierInExpressionPosition.Bound;
+	scoped_type_identifier: T.ScopedTypeIdentifier.Bound;
+	range_expression: T.RangeExpression.Bound;
+	unary_expression: T.UnaryExpression.Bound;
+	try_expression: T.TryExpression.Bound;
+	binary_expression: T.BinaryExpression.Bound;
+	assignment_expression: T.AssignmentExpression.Bound;
+	compound_assignment_expr: T.CompoundAssignmentExpr.Bound;
+	type_cast_expression: T.TypeCastExpression.Bound;
+	return_expression: T.ReturnExpression.Bound;
+	yield_expression: T.YieldExpression.Bound;
+	call_expression: T.CallExpression.Bound;
+	arguments: T.Arguments.Bound;
+	parenthesized_expression: T.ParenthesizedExpression.Bound;
+	tuple_expression: T.TupleExpression.Bound;
 	unit_expression: T.UnitExpression;
-	struct_expression: T.StructExpression.Built;
-	field_initializer_list: T.FieldInitializerList.Built;
-	shorthand_field_initializer: T.ShorthandFieldInitializer.Built;
-	field_initializer: T.FieldInitializer.Built;
-	base_field_initializer: T.BaseFieldInitializer.Built;
-	if_expression: T.IfExpression.Built;
-	let_condition: T.LetCondition.Built;
-	_let_chain: T.LetChain.Built;
-	else_clause: T.ElseClause.Built;
-	match_expression: T.MatchExpression.Built;
-	match_block: T.MatchBlock.Built;
-	last_match_arm: T.LastMatchArm.Built;
-	match_pattern: T.MatchPattern.Built;
-	while_expression: T.WhileExpression.Built;
-	loop_expression: T.LoopExpression.Built;
-	for_expression: T.ForExpression.Built;
-	const_block: T.ConstBlock.Built;
-	closure_parameters: T.ClosureParameters.Built;
-	label: T.Label.Built;
-	break_expression: T.BreakExpression.Built;
-	continue_expression: T.ContinueExpression.Built;
-	index_expression: T.IndexExpression.Built;
-	await_expression: T.AwaitExpression.Built;
-	field_expression: T.FieldExpression.Built;
-	unsafe_block: T.UnsafeBlock.Built;
-	async_block: T.AsyncBlock.Built;
-	gen_block: T.GenBlock.Built;
-	try_block: T.TryBlock.Built;
-	block: T.Block.Built;
-	generic_pattern: T.GenericPattern.Built;
-	tuple_pattern: T.TuplePattern.Built;
-	slice_pattern: T.SlicePattern.Built;
-	tuple_struct_pattern: T.TupleStructPattern.Built;
-	struct_pattern: T.StructPattern.Built;
+	struct_expression: T.StructExpression.Bound;
+	field_initializer_list: T.FieldInitializerList.Bound;
+	shorthand_field_initializer: T.ShorthandFieldInitializer.Bound;
+	field_initializer: T.FieldInitializer.Bound;
+	base_field_initializer: T.BaseFieldInitializer.Bound;
+	if_expression: T.IfExpression.Bound;
+	let_condition: T.LetCondition.Bound;
+	_let_chain: T.LetChain.Bound;
+	else_clause: T.ElseClause.Bound;
+	match_expression: T.MatchExpression.Bound;
+	match_block: T.MatchBlock.Bound;
+	last_match_arm: T.LastMatchArm.Bound;
+	match_pattern: T.MatchPattern.Bound;
+	while_expression: T.WhileExpression.Bound;
+	loop_expression: T.LoopExpression.Bound;
+	for_expression: T.ForExpression.Bound;
+	const_block: T.ConstBlock.Bound;
+	closure_parameters: T.ClosureParameters.Bound;
+	label: T.Label.Bound;
+	break_expression: T.BreakExpression.Bound;
+	continue_expression: T.ContinueExpression.Bound;
+	index_expression: T.IndexExpression.Bound;
+	await_expression: T.AwaitExpression.Bound;
+	field_expression: T.FieldExpression.Bound;
+	unsafe_block: T.UnsafeBlock.Bound;
+	async_block: T.AsyncBlock.Bound;
+	gen_block: T.GenBlock.Bound;
+	try_block: T.TryBlock.Bound;
+	block: T.Block.Bound;
+	generic_pattern: T.GenericPattern.Bound;
+	tuple_pattern: T.TuplePattern.Bound;
+	slice_pattern: T.SlicePattern.Bound;
+	tuple_struct_pattern: T.TupleStructPattern.Bound;
+	struct_pattern: T.StructPattern.Bound;
 	remaining_field_pattern: T.RemainingFieldPattern;
-	mut_pattern: T.MutPattern.Built;
-	ref_pattern: T.RefPattern.Built;
-	captured_pattern: T.CapturedPattern.Built;
-	reference_pattern: T.ReferencePattern.Built;
-	negative_literal: T.NegativeLiteral.Built;
-	string_literal: T.StringLiteral.Built;
-	raw_string_literal: T.RawStringLiteral.Built;
-	line_comment: T.LineComment.Built;
+	mut_pattern: T.MutPattern.Bound;
+	ref_pattern: T.RefPattern.Bound;
+	captured_pattern: T.CapturedPattern.Bound;
+	reference_pattern: T.ReferencePattern.Bound;
+	negative_literal: T.NegativeLiteral.Bound;
+	string_literal: T.StringLiteral.Bound;
+	raw_string_literal: T.RawStringLiteral.Bound;
+	line_comment: T.LineComment.Bound;
 	inner_line_doc_comment_marker: T.InnerLineDocCommentMarker;
 	outer_line_doc_comment_marker: T.OuterLineDocCommentMarker;
-	block_comment: T.BlockComment.Built;
+	block_comment: T.BlockComment.Bound;
 	identifier: T.Identifier;
-	shebang: T.Shebang.Built;
+	shebang: T.Shebang.Bound;
 	self: T.Self;
 	super: T.Super;
 	crate: T.Crate;
-	metavariable: T.Metavariable.Built;
-	macro_rules: T.MacroRules.Built;
-	enum_variant_list_elements: T.EnumVariantListElements.Built;
-	field_declaration_list_elements: T.FieldDeclarationListElements.Built;
-	ordered_field_declaration_list_elements: T.OrderedFieldDeclarationListElements.Built;
-	where_predicates: T.WherePredicates.Built;
-	type_parameters_elements: T.TypeParametersElements.Built;
-	use_clauses: T.UseClauses.Built;
-	parameters_elements: T.ParametersElements.Built;
-	lifetimes: T.Lifetimes.Built;
-	use_bounds_elements: T.UseBoundsElements.Built;
-	type_arguments_elements: T.TypeArgumentsElements.Built;
-	arguments_elements: T.ArgumentsElements.Built;
-	field_initializer_list_elements: T.FieldInitializerListElements.Built;
-	tuple_pattern_elements: T.TuplePatternElements.Built;
-	patterns: T.Patterns.Built;
-	struct_pattern_elements: T.StructPatternElements.Built;
-	use_wildcard_group: T.UseWildcardGroup.Built;
-	tuple_type_elements: T.TupleTypeElements.Built;
-	tuple_expression_elements: T.TupleExpressionElements.Built;
+	metavariable: T.Metavariable.Bound;
+	macro_rules: T.MacroRules.Bound;
+	enum_variant_list_elements: T.EnumVariantListElements.Bound;
+	field_declaration_list_elements: T.FieldDeclarationListElements.Bound;
+	ordered_field_declaration_list_elements: T.OrderedFieldDeclarationListElements.Bound;
+	where_predicates: T.WherePredicates.Bound;
+	type_parameters_elements: T.TypeParametersElements.Bound;
+	use_clauses: T.UseClauses.Bound;
+	parameters_elements: T.ParametersElements.Bound;
+	lifetimes: T.Lifetimes.Bound;
+	use_bounds_elements: T.UseBoundsElements.Bound;
+	type_arguments_elements: T.TypeArgumentsElements.Bound;
+	arguments_elements: T.ArgumentsElements.Bound;
+	field_initializer_list_elements: T.FieldInitializerListElements.Bound;
+	tuple_pattern_elements: T.TuplePatternElements.Bound;
+	patterns: T.Patterns.Bound;
+	struct_pattern_elements: T.StructPatternElements.Bound;
+	use_wildcard_group: T.UseWildcardGroup.Bound;
+	tuple_type_elements: T.TupleTypeElements.Bound;
+	tuple_expression_elements: T.TupleExpressionElements.Bound;
 	range_expression_bare: T.RangeExpressionBare;
-	integer_literal_decimal: T.IntegerLiteralDecimal.Built;
-	integer_literal_hex: T.IntegerLiteralHex.Built;
-	integer_literal_binary: T.IntegerLiteralBinary.Built;
-	integer_literal_octal: T.IntegerLiteralOctal.Built;
-	char_literal_plain: T.CharLiteralPlain.Built;
+	integer_literal_decimal: T.IntegerLiteralDecimal.Bound;
+	integer_literal_hex: T.IntegerLiteralHex.Bound;
+	integer_literal_binary: T.IntegerLiteralBinary.Bound;
+	integer_literal_octal: T.IntegerLiteralOctal.Bound;
+	char_literal_plain: T.CharLiteralPlain.Bound;
 	char_literal_empty: T.CharLiteralEmpty;
-	char_literal_escaped_simple: T.CharLiteralEscapedSimple.Built;
-	char_literal_escaped_unicode_fixed: T.CharLiteralEscapedUnicodeFixed.Built;
-	char_literal_escaped_unicode_braced: T.CharLiteralEscapedUnicodeBraced.Built;
-	char_literal_escaped_hex: T.CharLiteralEscapedHex.Built;
-	escape_sequence_simple: T.EscapeSequenceSimple.Built;
-	escape_sequence_unicode_fixed: T.EscapeSequenceUnicodeFixed.Built;
-	escape_sequence_unicode_braced: T.EscapeSequenceUnicodeBraced.Built;
-	escape_sequence_hex: T.EscapeSequenceHex.Built;
-	array_expression_semi: T.ArrayExpressionSemi.Built;
-	array_expression_list: T.ArrayExpressionList.Built;
-	attribute_input: T.AttributeInput.Built;
-	closure_expression_block: T.ClosureExpressionBlock.Built;
-	closure_expression_expr: T.ClosureExpressionExpr.Built;
-	reference_expression_raw_const: T.ReferenceExpressionRawConst.Built;
-	reference_expression_raw_mut: T.ReferenceExpressionRawMut.Built;
-	reference_expression_mut: T.ReferenceExpressionMut.Built;
-	reference_expression_bare: T.ReferenceExpressionBare.Built;
-	impl_item_positive_clause: T.ImplItemPositiveClause.Built;
-	impl_item_negative_clause: T.ImplItemNegativeClause.Built;
-	impl_item_body: T.ImplItemBody.Built;
-	impl_item_semi: T.ImplItemSemi.Built;
-	visibility_modifier_pub_scope_in_path: T.VisibilityModifierPubScopeInPath.Built;
-	visibility_modifier_pub_scope: T.VisibilityModifierPubScope.Built;
-	visibility_modifier_pub: T.VisibilityModifierPub.Built;
-	function_type_trait_form: T.FunctionTypeTraitForm.Built;
-	function_type_fn_form: T.FunctionTypeFnForm.Built;
-	mod_item_external: T.ModItemExternal.Built;
-	mod_item_inline: T.ModItemInline.Built;
-	or_pattern_binary: T.OrPatternBinary.Built;
-	or_pattern_prefix: T.OrPatternPrefix.Built;
-	pointer_type_const: T.PointerTypeConst.Built;
-	pointer_type_mut: T.PointerTypeMut.Built;
+	char_literal_escaped_simple: T.CharLiteralEscapedSimple.Bound;
+	char_literal_escaped_unicode_fixed: T.CharLiteralEscapedUnicodeFixed.Bound;
+	char_literal_escaped_unicode_braced: T.CharLiteralEscapedUnicodeBraced.Bound;
+	char_literal_escaped_hex: T.CharLiteralEscapedHex.Bound;
+	escape_sequence_simple: T.EscapeSequenceSimple.Bound;
+	escape_sequence_unicode_fixed: T.EscapeSequenceUnicodeFixed.Bound;
+	escape_sequence_unicode_braced: T.EscapeSequenceUnicodeBraced.Bound;
+	escape_sequence_hex: T.EscapeSequenceHex.Bound;
+	array_expression_semi: T.ArrayExpressionSemi.Bound;
+	array_expression_list: T.ArrayExpressionList.Bound;
+	attribute_input: T.AttributeInput.Bound;
+	closure_expression_block: T.ClosureExpressionBlock.Bound;
+	closure_expression_expr: T.ClosureExpressionExpr.Bound;
+	reference_expression_raw_const: T.ReferenceExpressionRawConst.Bound;
+	reference_expression_raw_mut: T.ReferenceExpressionRawMut.Bound;
+	reference_expression_mut: T.ReferenceExpressionMut.Bound;
+	reference_expression_bare: T.ReferenceExpressionBare.Bound;
+	impl_item_positive_clause: T.ImplItemPositiveClause.Bound;
+	impl_item_negative_clause: T.ImplItemNegativeClause.Bound;
+	impl_item_body: T.ImplItemBody.Bound;
+	impl_item_semi: T.ImplItemSemi.Bound;
+	visibility_modifier_pub_scope_in_path: T.VisibilityModifierPubScopeInPath.Bound;
+	visibility_modifier_pub_scope: T.VisibilityModifierPubScope.Bound;
+	visibility_modifier_pub: T.VisibilityModifierPub.Bound;
+	function_type_trait_form: T.FunctionTypeTraitForm.Bound;
+	function_type_fn_form: T.FunctionTypeFnForm.Bound;
+	mod_item_external: T.ModItemExternal.Bound;
+	mod_item_inline: T.ModItemInline.Bound;
+	or_pattern_binary: T.OrPatternBinary.Bound;
+	or_pattern_prefix: T.OrPatternPrefix.Bound;
+	pointer_type_const: T.PointerTypeConst.Bound;
+	pointer_type_mut: T.PointerTypeMut.Bound;
 	string_open: T.StringOpen;
-	range_expression_binary: T.RangeExpressionBinary.Built;
-	range_expression_postfix: T.RangeExpressionPostfix.Built;
-	range_expression_prefix: T.RangeExpressionPrefix.Built;
-	expression_statement_with_semi: T.ExpressionStatementWithSemi.Built;
-	foreign_mod_item_semi: T.ForeignModItemSemi.Built;
-	foreign_mod_item_body: T.ForeignModItemBody.Built;
-	match_arm_with_comma: T.MatchArmWithComma.Built;
-	match_arm_block_ending: T.MatchArmBlockEnding.Built;
+	range_expression_binary: T.RangeExpressionBinary.Bound;
+	range_expression_postfix: T.RangeExpressionPostfix.Bound;
+	range_expression_prefix: T.RangeExpressionPrefix.Bound;
+	expression_statement_with_semi: T.ExpressionStatementWithSemi.Bound;
+	foreign_mod_item_semi: T.ForeignModItemSemi.Bound;
+	foreign_mod_item_body: T.ForeignModItemBody.Bound;
+	match_arm_with_comma: T.MatchArmWithComma.Bound;
+	match_arm_block_ending: T.MatchArmBlockEnding.Bound;
 	line_comment_extra_slashes: T.LineCommentExtraSlashes;
-	line_comment_doc_outer: T.LineCommentDocOuter.Built;
-	line_comment_doc_inner: T.LineCommentDocInner.Built;
+	line_comment_doc_outer: T.LineCommentDocOuter.Bound;
+	line_comment_doc_inner: T.LineCommentDocInner.Bound;
 	line_comment_regular: T.LineCommentRegular;
-	block_comment_doc_outer: T.BlockCommentDocOuter.Built;
-	block_comment_doc_inner: T.BlockCommentDocInner.Built;
-	token_tree_pattern_paren: T.TokenTreePatternParen.Built;
-	token_tree_pattern_bracket: T.TokenTreePatternBracket.Built;
-	token_tree_pattern_brace: T.TokenTreePatternBrace.Built;
-	token_tree_paren: T.TokenTreeParen.Built;
-	token_tree_bracket: T.TokenTreeBracket.Built;
-	token_tree_brace: T.TokenTreeBrace.Built;
-	delim_token_tree_paren: T.DelimTokenTreeParen.Built;
-	delim_token_tree_bracket: T.DelimTokenTreeBracket.Built;
-	delim_token_tree_brace: T.DelimTokenTreeBrace.Built;
-	field_pattern_shorthand: T.FieldPatternShorthand.Built;
-	field_pattern_named: T.FieldPatternNamed.Built;
-	macro_definition_paren: T.MacroDefinitionParen.Built;
-	macro_definition_bracket: T.MacroDefinitionBracket.Built;
-	macro_definition_brace: T.MacroDefinitionBrace.Built;
-	range_pattern_prefix: T.RangePatternPrefix.Built;
-	range_pattern_with_left_with_right: T.RangePatternWithLeftWithRight.Built;
+	block_comment_doc_outer: T.BlockCommentDocOuter.Bound;
+	block_comment_doc_inner: T.BlockCommentDocInner.Bound;
+	token_tree_pattern_paren: T.TokenTreePatternParen.Bound;
+	token_tree_pattern_bracket: T.TokenTreePatternBracket.Bound;
+	token_tree_pattern_brace: T.TokenTreePatternBrace.Bound;
+	token_tree_paren: T.TokenTreeParen.Bound;
+	token_tree_bracket: T.TokenTreeBracket.Bound;
+	token_tree_brace: T.TokenTreeBrace.Bound;
+	delim_token_tree_paren: T.DelimTokenTreeParen.Bound;
+	delim_token_tree_bracket: T.DelimTokenTreeBracket.Bound;
+	delim_token_tree_brace: T.DelimTokenTreeBrace.Bound;
+	field_pattern_shorthand: T.FieldPatternShorthand.Bound;
+	field_pattern_named: T.FieldPatternNamed.Bound;
+	macro_definition_paren: T.MacroDefinitionParen.Bound;
+	macro_definition_bracket: T.MacroDefinitionBracket.Bound;
+	macro_definition_brace: T.MacroDefinitionBrace.Bound;
+	range_pattern_prefix: T.RangePatternPrefix.Bound;
+	range_pattern_with_left_with_right: T.RangePatternWithLeftWithRight.Bound;
 	range_pattern_with_left_bare: T.RangePatternWithLeftBare;
-	range_pattern_with_left: T.RangePatternWithLeft.Built;
-	struct_item_brace: T.StructItemBrace.Built;
-	struct_item_tuple: T.StructItemTuple.Built;
-	struct_item_unit: T.StructItemUnit.Built;
+	range_pattern_with_left: T.RangePatternWithLeft.Bound;
+	struct_item_brace: T.StructItemBrace.Bound;
+	struct_item_tuple: T.StructItemTuple.Bound;
+	struct_item_unit: T.StructItemUnit.Bound;
 	wildcard_pattern: T.WildcardPattern;
-	attributed_field_declaration: T.AttributedFieldDeclaration.Built;
-	attributed_enum_variant: T.AttributedEnumVariant.Built;
-	attributed_parameter: T.AttributedParameter.Built;
-	attributed_type_parameter: T.AttributedTypeParameter.Built;
-	attributed_argument: T.AttributedArgument.Built;
-	attributed_ordered_field: T.AttributedOrderedField.Built;
-	type_argument: T.TypeArgument.Built;
-	match_block_arms: T.MatchBlockArms.Built;
+	attributed_field_declaration: T.AttributedFieldDeclaration.Bound;
+	attributed_enum_variant: T.AttributedEnumVariant.Bound;
+	attributed_parameter: T.AttributedParameter.Bound;
+	attributed_type_parameter: T.AttributedTypeParameter.Bound;
+	attributed_argument: T.AttributedArgument.Bound;
+	attributed_ordered_field: T.AttributedOrderedField.Bound;
+	type_argument: T.TypeArgument.Bound;
+	match_block_arms: T.MatchBlockArms.Bound;
 	float_literal: T.FloatLiteral;
 	string_content: T.StringContent;
 	raw_string_literal_content: T.RawStringLiteralContent;
@@ -10370,9 +10847,9 @@ export type FluentKindMap = {
 	_indent: T.Indent;
 	_dedent: T.Dedent;
 	_error_sentinel: T.ErrorSentinel;
-	type_identifier: T.TypeIdentifier.Built;
-	field_identifier: T.FieldIdentifier.Built;
-	shorthand_field_identifier: T.ShorthandFieldIdentifier.Built;
+	type_identifier: T.TypeIdentifier.Bound;
+	field_identifier: T.FieldIdentifier.Bound;
+	shorthand_field_identifier: T.ShorthandFieldIdentifier.Bound;
 };
 
 export const _factoryMap = {

@@ -146,7 +146,7 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
 	}
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
-	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage } from '@sittir/common/utils';");
+	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind } from '@sittir/common/utils';");
 	lines.push("import { isNode } from '../utils.js';");
 	lines.push('');
 }
@@ -418,7 +418,7 @@ function emitBranchFrom(
 	if (slots.length > 0) {
 		if (canDirectFactoryCall) {
 			lines.push(
-				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNode(input) && (input.$type as string | number) === ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)}) return input as unknown as ${spelledType ?? returnType};`
+				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeOfKind(input, ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)})) return input as unknown as ${spelledType ?? returnType};`
 			);
 		} else {
 			const bareKind =
@@ -469,7 +469,7 @@ function emitBranchFrom(
 				spelled.length === 0
 					? optionsArg
 					: `, _spelled === undefined ? options : { ${spelled.map(([side, slot]) => `${slot.configKey}: _spelled.${side}`).join(', ')}, ...options }`;
-			const inputExpr = `(input !== null && typeof input === 'object' && !isNode(input) && ${JSON.stringify(soleField.configKey)} in input ? input.${soleField.configKey} : ${bare})`;
+			const inputExpr = `configFieldOr(input, ${JSON.stringify(soleField.configKey)}, () => ${bare})`;
 			const soleShape = numericSlotShape(soleField);
 			const numeric = soleShape !== undefined;
 			if (numeric) lines.push(`  const _value = ${inputExpr};`);
@@ -588,7 +588,7 @@ function emitRestParamFromResolver(
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
 		...head,
-		`  if (input.length === 1 && isNode(input[0]) && input[0].$type === ${typeCheck}) {`,
+		`  if (input.length === 1 && isNodeOfKind(input[0], ${typeCheck})) {`,
 		`    const data = input[0];`,
 		`    const stored = ${storageAccess};`,
 		`    const children${childrenTypeAnnotation} = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];`,
@@ -673,7 +673,7 @@ function emitSingularChildrenFrom(
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	return [
 		`export function ${fn}(input?: ${resolvesLooseInput(slot, nodeMap) ? looseElementType(elementType, slot, nodeMap) : elementType}${inputWiden !== undefined ? ` | ${inputWiden}` : ''} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
-		`  if (isNode(input) && input.$type === ${typeCheck}) {`,
+		`  if (isNodeOfKind(input, ${typeCheck})) {`,
 		`    const data = input;`,
 		`    const child = ${storageAccess};`,
 		`    return ${factory}(child as Parameters<typeof ${factory}>[0]);`,
@@ -1008,7 +1008,7 @@ function resolveFieldCall(
 			elementTypeOverride,
 			kindEntries
 		);
-		return `(_keywordOf(${prop}, ${keywords}) ?? ${resolved})`;
+		return `_keywordOr(${prop}, ${keywords}, () => ${resolved})`;
 	}
 	const element = storedFieldCall('_e', field, storageInfo, false, nodeMap, intern, elementTypeOverride, kindEntries);
 	return `(${prop} == null ? [] : Array.isArray(${prop}) ? ${prop} : [${prop}]).map((_e: _LooseFieldInput) => _keywordOf(_e, ${keywords}) ?? ${element}).filter((_e) => _e !== undefined)`;
@@ -1616,6 +1616,12 @@ function emitResolverHelpers(
 		'function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {'
 	);
 	lines.push('  return typeof v === "string" ? keywords.find(([text]) => text === v)?.[1] : undefined;');
+	lines.push('}');
+	lines.push('');
+	lines.push(
+		'function _keywordOr<R>(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[], orElse: () => R): number | R {'
+	);
+	lines.push('  return _keywordOf(v, keywords) ?? orElse();');
 	lines.push('}');
 	lines.push('');
 

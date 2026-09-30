@@ -3,38 +3,8 @@
 // Composition: kind × shape = concrete type via NamespaceMap.
 
 import { TSKindId } from './types.js';
-import type {
-	NamespaceMap,
-	ArrayExpression,
-	CharLiteral,
-	CharLiteralEscaped,
-	ClosureExpression,
-	Comment,
-	DeclarationStatement,
-	DelimTokenTree,
-	EscapeSequence,
-	Expression,
-	FieldPattern,
-	ForeignModItem,
-	ImplItem,
-	IntegerLiteral,
-	Literal,
-	LiteralPattern,
-	MacroDefinition,
-	MatchArm,
-	ModItem,
-	OrPattern,
-	Pattern,
-	PointerType,
-	RangePattern,
-	ReferenceExpression,
-	Statement,
-	StructItem,
-	TokenTree,
-	TokenTreePattern,
-	Type,
-	Whitespace
-} from './types.js';
+import type { NamespaceMap } from './types.js';
+import type { NarrowTo } from '@sittir/types';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
@@ -470,35 +440,287 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UseWildcardGroup };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	statement(v: { readonly $type: string | number } | number): v is Statement;
-	declarationStatement(v: { readonly $type: string | number } | number): v is DeclarationStatement;
-	macroDefinition(v: { readonly $type: string | number } | number): v is MacroDefinition;
-	tokenTreePattern(v: { readonly $type: string | number } | number): v is TokenTreePattern;
-	tokenTree(v: { readonly $type: string | number } | number): v is TokenTree;
-	modItem(v: { readonly $type: string | number } | number): v is ModItem;
-	foreignModItem(v: { readonly $type: string | number } | number): v is ForeignModItem;
-	structItem(v: { readonly $type: string | number } | number): v is StructItem;
-	implItem(v: { readonly $type: string | number } | number): v is ImplItem;
-	type(v: { readonly $type: string | number } | number): v is Type;
-	pointerType(v: { readonly $type: string | number } | number): v is PointerType;
-	expression(v: { readonly $type: string | number } | number): v is Expression;
-	delimTokenTree(v: { readonly $type: string | number } | number): v is DelimTokenTree;
-	referenceExpression(v: { readonly $type: string | number } | number): v is ReferenceExpression;
-	arrayExpression(v: { readonly $type: string | number } | number): v is ArrayExpression;
-	matchArm(v: { readonly $type: string | number } | number): v is MatchArm;
-	closureExpression(v: { readonly $type: string | number } | number): v is ClosureExpression;
-	pattern(v: { readonly $type: string | number } | number): v is Pattern;
-	fieldPattern(v: { readonly $type: string | number } | number): v is FieldPattern;
-	rangePattern(v: { readonly $type: string | number } | number): v is RangePattern;
-	orPattern(v: { readonly $type: string | number } | number): v is OrPattern;
-	literal(v: { readonly $type: string | number } | number): v is Literal;
-	literalPattern(v: { readonly $type: string | number } | number): v is LiteralPattern;
-	integerLiteral(v: { readonly $type: string | number } | number): v is IntegerLiteral;
-	charLiteral(v: { readonly $type: string | number } | number): v is CharLiteral;
-	escapeSequence(v: { readonly $type: string | number } | number): v is EscapeSequence;
-	comment(v: { readonly $type: string | number } | number): v is Comment;
-	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
-	charLiteralEscaped(v: { readonly $type: string | number } | number): v is CharLiteralEscaped;
+	statement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.ExpressionStatement
+		| TSKindId.ConstItem
+		| TSKindId.MacroInvocation
+		| TSKindId.EmptyStatement
+		| TSKindId.AttributeItem
+		| TSKindId.InnerAttributeItem
+		| TSKindId.UnionItem
+		| TSKindId.EnumItem
+		| TSKindId.TypeItem
+		| TSKindId.FunctionItem
+		| TSKindId.FunctionSignatureItem
+		| TSKindId.TraitItem
+		| TSKindId.AssociatedType
+		| TSKindId.LetDeclaration
+		| TSKindId.UseDeclaration
+		| TSKindId.ExternCrateDeclaration
+		| TSKindId.StaticItem
+	>;
+	declarationStatement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.ConstItem
+		| TSKindId.MacroInvocation
+		| TSKindId.EmptyStatement
+		| TSKindId.AttributeItem
+		| TSKindId.InnerAttributeItem
+		| TSKindId.UnionItem
+		| TSKindId.EnumItem
+		| TSKindId.TypeItem
+		| TSKindId.FunctionItem
+		| TSKindId.FunctionSignatureItem
+		| TSKindId.TraitItem
+		| TSKindId.AssociatedType
+		| TSKindId.LetDeclaration
+		| TSKindId.UseDeclaration
+		| TSKindId.ExternCrateDeclaration
+		| TSKindId.StaticItem
+	>;
+	macroDefinition<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.MacroDefinitionParen | TSKindId.MacroDefinitionBracket | TSKindId.MacroDefinitionBrace>;
+	tokenTreePattern<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		TSKindId.TokenTreePatternParen | TSKindId.TokenTreePatternBracket | TSKindId.TokenTreePatternBrace
+	>;
+	tokenTree<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.TokenTreeParen | TSKindId.TokenTreeBracket | TSKindId.TokenTreeBrace>;
+	modItem<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.ModItemExternal | TSKindId.ModItemInline>;
+	foreignModItem<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.ForeignModItemSemi | TSKindId.ForeignModItemBody>;
+	structItem<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit>;
+	implItem<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.ImplItemBody | TSKindId.ImplItemSemi>;
+	type<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.AbstractType
+		| TSKindId.ReferenceType
+		| TSKindId.Metavariable
+		| TSKindId.GenericType
+		| TSKindId.ScopedTypeIdentifier
+		| TSKindId.TupleType
+		| TSKindId.UnitType
+		| TSKindId.ArrayType
+		| TSKindId.FunctionType
+		| TSKindId.MacroInvocation
+		| TSKindId.NeverType
+		| TSKindId.DynamicType
+		| TSKindId.BoundedType
+		| TSKindId.RemovedTraitBound
+	>;
+	pointerType<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.PointerTypeConst | TSKindId.PointerTypeMut>;
+	expression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.UnaryExpression
+		| TSKindId.TryExpression
+		| TSKindId.BinaryExpression
+		| TSKindId.AssignmentExpression
+		| TSKindId.CompoundAssignmentExpr
+		| TSKindId.TypeCastExpression
+		| TSKindId.CallExpression
+		| TSKindId.ReturnExpression
+		| TSKindId.YieldExpression
+		| TSKindId.Identifier
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
+		| TSKindId.Self
+		| TSKindId.ScopedIdentifier
+		| TSKindId.GenericFunction
+		| TSKindId.AwaitExpression
+		| TSKindId.FieldExpression
+		| TSKindId.TupleExpression
+		| TSKindId.MacroInvocation
+		| TSKindId.UnitExpression
+		| TSKindId.BreakExpression
+		| TSKindId.ContinueExpression
+		| TSKindId.IndexExpression
+		| TSKindId.Metavariable
+		| TSKindId.ParenthesizedExpression
+		| TSKindId.StructExpression
+		| TSKindId.UnsafeBlock
+		| TSKindId.AsyncBlock
+		| TSKindId.GenBlock
+		| TSKindId.TryBlock
+		| TSKindId.Block
+		| TSKindId.IfExpression
+		| TSKindId.MatchExpression
+		| TSKindId.WhileExpression
+		| TSKindId.LoopExpression
+		| TSKindId.ForExpression
+		| TSKindId.ConstBlock
+		| TSKindId.RangeExpression
+	>;
+	delimTokenTree<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.DelimTokenTreeParen | TSKindId.DelimTokenTreeBracket | TSKindId.DelimTokenTreeBrace>;
+	referenceExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.ReferenceExpressionRawConst
+		| TSKindId.ReferenceExpressionRawMut
+		| TSKindId.ReferenceExpressionMut
+		| TSKindId.ReferenceExpressionBare
+	>;
+	arrayExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.ArrayExpressionSemi | TSKindId.ArrayExpressionList>;
+	matchArm<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.MatchArmWithComma | TSKindId.MatchArmBlockEnding>;
+	closureExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.ClosureExpressionBlock | TSKindId.ClosureExpressionExpr>;
+	pattern<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.U8Keyword
+		| TSKindId.I8Keyword
+		| TSKindId.U16Keyword
+		| TSKindId.I16Keyword
+		| TSKindId.U32Keyword
+		| TSKindId.I32Keyword
+		| TSKindId.U64Keyword
+		| TSKindId.I64Keyword
+		| TSKindId.U128Keyword
+		| TSKindId.I128Keyword
+		| TSKindId.IsizeKeyword
+		| TSKindId.UsizeKeyword
+		| TSKindId.F32Keyword
+		| TSKindId.F64Keyword
+		| TSKindId.BoolKeyword
+		| TSKindId.StrKeyword
+		| TSKindId.CharKeyword
+		| TSKindId.Identifier
+		| TSKindId.ScopedIdentifier
+		| TSKindId.GenericPattern
+		| TSKindId.TuplePattern
+		| TSKindId.TupleStructPattern
+		| TSKindId.StructPattern
+		| TSKindId.DefaultKeyword
+		| TSKindId.UnionKeyword
+		| TSKindId.GenKeyword
+		| TSKindId.RefPattern
+		| TSKindId.SlicePattern
+		| TSKindId.CapturedPattern
+		| TSKindId.ReferencePattern
+		| TSKindId.RemainingFieldPattern
+		| TSKindId.MutPattern
+		| TSKindId.ConstBlock
+		| TSKindId.MacroInvocation
+	>;
+	fieldPattern<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.FieldPatternShorthand | TSKindId.FieldPatternNamed>;
+	rangePattern<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.RangePatternWithLeft | TSKindId.RangePatternPrefix>;
+	orPattern<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.OrPatternBinary | TSKindId.OrPatternPrefix>;
+	literal<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		TSKindId.StringLiteral | TSKindId.RawStringLiteral | TSKindId.BooleanLiteral | TSKindId.FloatLiteral
+	>;
+	literalPattern<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.StringLiteral
+		| TSKindId.RawStringLiteral
+		| TSKindId.BooleanLiteral
+		| TSKindId.FloatLiteral
+		| TSKindId.NegativeLiteral
+	>;
+	integerLiteral<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.IntegerLiteralDecimal
+		| TSKindId.IntegerLiteralHex
+		| TSKindId.IntegerLiteralBinary
+		| TSKindId.IntegerLiteralOctal
+	>;
+	charLiteral<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.CharLiteralPlain | TSKindId.CharLiteralEmpty>;
+	escapeSequence<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.EscapeSequenceSimple
+		| TSKindId.EscapeSequenceUnicodeFixed
+		| TSKindId.EscapeSequenceUnicodeBraced
+		| TSKindId.EscapeSequenceHex
+	>;
+	comment<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.LineComment | TSKindId.BlockComment>;
+	whitespace<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.Tight
+		| TSKindId.Space
+		| TSKindId.Tab
+		| TSKindId.Newline
+		| TSKindId.Blankline
+		| TSKindId.DoubleBlankline
+		| TSKindId.Indent
+		| TSKindId.Dedent
+	>;
+	charLiteralEscaped<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.CharLiteralEscapedSimple
+		| TSKindId.CharLiteralEscapedUnicodeFixed
+		| TSKindId.CharLiteralEscapedUnicodeBraced
+		| TSKindId.CharLiteralEscapedHex
+	>;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.
