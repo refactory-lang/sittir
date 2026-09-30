@@ -881,8 +881,13 @@ export class WrapEmitter implements CodegenEmitter<string> {
 	}
 
 	#aliasIdentityLines(): string[] {
+		const displayOf = [
+			"function _displayOf(entry: _NodeData): _NodeData['$type'] {",
+			"  return (entry as { readonly $displayType?: _NodeData['$type'] }).$displayType ?? entry.$type;",
+			'}'
+		];
 		if (!this.#kindEntries) {
-			return ["function _kindOf(entry: _NodeData): _NodeData['$type'] {", '  return entry.$type;', '}', ''];
+			return [...displayOf, "function _kindOf(entry: _NodeData): _NodeData['$type'] {", '  return entry.$type;', '}', ''];
 		}
 		const envelopes = [...this.#nodeMap.nodes.values()].filter((node) => node instanceof AssembledAlias);
 		const envelopeIds = [...new Set(envelopes.map((node) => node.aliasTypeId))].sort((a, b) => a - b);
@@ -891,11 +896,12 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				? []
 				: [...new Set(this.#kindEntries.filter((entry) => entry.hidden).map((entry) => entry.id))].sort((a, b) => a - b);
 		return [
-			`const _ALIAS_ENVELOPES: ReadonlySet<number> = new Set([${envelopeIds.join(', ')}]);`,
+			`const _ALIAS_ENVELOPES: ReadonlySet<_NodeData["$type"]> = new Set([${envelopeIds.join(', ')}]);`,
 			...(envelopes.length === 0 ? [] : [`const _HIDDEN_KINDS: ReadonlySet<_NodeData["$type"]> = new Set([${hiddenIds.join(', ')}]);`]),
+			...displayOf,
 			"function _kindOf(entry: _NodeData): _NodeData['$type'] {",
-			'  const display = (entry as { readonly $displayType?: number }).$displayType;',
-			'  return display !== undefined && _ALIAS_ENVELOPES.has(display) ? display : entry.$type;',
+			'  const display = _displayOf(entry);',
+			'  return _ALIAS_ENVELOPES.has(display) ? display : entry.$type;',
 			'}',
 			'function _withoutDisplay(data: _NodeData): _NodeData {',
 			'  const { $displayType: _display, ...node } = data as _NodeData & { readonly $displayType?: number };',
@@ -922,13 +928,66 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			: [...new Set(reclaiming.map((node) => JSON.stringify(node.kind)))].sort();
 		return [
 			`const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData["$type"]> = new Set([${keys.join(', ')}]);`,
-			'function _dropSpelling(data: _NodeData): _NodeData {',
+			'function _spellingTokens(data: _NodeData): readonly _NodeData[] | undefined {',
 			'  const { $other, ...node } = data;',
-			'  if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return data;',
-			'  if (Object.keys(node).some((key) => key.charCodeAt(0) === 95)) return data;',
+			'  if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return undefined;',
+			'  if (Object.keys(node).some((key) => key.charCodeAt(0) === 95)) return undefined;',
 			'  const tokens = (Array.isArray($other) ? $other : [$other]) as readonly unknown[];',
-			'  if (tokens.some((token) => typeof token !== "object" || token === null || (token as _NodeData).$named !== false)) return data;',
-			'  return node as _NodeData;',
+			'  if (tokens.some((token) => typeof token !== "object" || token === null || (token as _NodeData).$named !== false)) return undefined;',
+			'  return tokens as readonly _NodeData[];',
+			'}',
+			'function _spelledText(data: _NodeData): string | undefined {',
+			'  if (data.$text !== undefined) return data.$text;',
+			'  const tokens = _spellingTokens(data);',
+			'  return tokens === undefined ? undefined : _tiledSpelling(data.$span, tokens);',
+			'}',
+			'function _dropSpelling(data: _NodeData): _NodeData {',
+			'  if (_spellingTokens(data) === undefined) return data;',
+			'  const { $other: _tokens, ...node } = data;',
+			'  const $text = _spelledText(data);',
+			'  return ($text === undefined ? node : { ...node, $text }) as _NodeData;',
+			'}',
+			'function _spellingOf(entry: _NodeData): string | undefined {',
+			'  const text = _spelledText(entry);',
+			'  if (text !== undefined || entry.$named !== false) return text;',
+			'  const shown = _displayOf(entry);',
+			`  return ${this.#kindEntries ? 'typeof shown === "number" ? KIND_DISPLAY_NAMES.get(shown) : shown' : 'String(shown)'};`,
+			'}',
+			'function _tiledSpelling(span: _NodeData["$span"], children: readonly _NodeData[]): string | undefined {',
+			'  if (span === undefined) return undefined;',
+			'  let at = span.start;',
+			'  let text = "";',
+			'  for (const child of children) {',
+			'    const spelling = _spellingOf(child);',
+			'    if (child.$span?.start !== at || spelling === undefined) return undefined;',
+			'    text += spelling;',
+			'    at = child.$span.end;',
+			'  }',
+			'  return at === span.end ? text : undefined;',
+			'}',
+			'function _readChildren(data: _NodeData): readonly _NodeData[] | undefined {',
+			'  const children: _NodeData[] = [];',
+			'  for (const [key, value] of Object.entries(data)) {',
+			'    if (key.charCodeAt(0) !== 95 && key !== "$other") continue;',
+			'    for (const child of (Array.isArray(value) ? value : [value]) as readonly unknown[]) {',
+			'      if (child === undefined) continue;',
+			'      if (typeof child !== "object" || child === null) return undefined;',
+			'      children.push(child as _NodeData);',
+			'    }',
+			'  }',
+			'  return children.sort((a, b) => (a.$span?.start ?? 0) - (b.$span?.start ?? 0));',
+			'}',
+			'function _spelledLeaf(data: _NodeData): _NodeData {',
+			'  if (data.$text !== undefined) return data;',
+			'  const children = _readChildren(data);',
+			'  if (children === undefined || children.length === 0) return data;',
+			'  const $text = _tiledSpelling(data.$span, children);',
+			'  if ($text === undefined) return data;',
+			'  const leaf: Record<string, unknown> = {};',
+			'  for (const [key, value] of Object.entries(data)) {',
+			'    if (key.charCodeAt(0) !== 95 && key !== "$other" && key !== "$slotOrder") leaf[key] = value;',
+			'  }',
+			'  return { ...leaf, $text } as _NodeData;',
 			'}',
 			''
 		];
@@ -968,7 +1027,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'// Import _NodeData (== AnyNodeData) from @sittir/types',
 			'// instead of re-declaring locally. Single source of truth.',
 			"import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray, SupertypeSurface } from '@sittir/types';",
-			...(this.#kindEntries ? ["import { TSKindId, KIND_NAMES } from './types.js';"] : []),
+			...(this.#kindEntries ? ["import { TSKindId, KIND_NAMES, KIND_DISPLAY_NAMES } from './types.js';"] : []),
 			DELIMITER_IMPORT,
 			"import type * as T from './types-internal.js';",
 			...(this.#typeImportLine ? [this.#typeImportLine] : []),
@@ -1187,10 +1246,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  if (typeof value === "number") return (altIds?.[value] ?? value) as unknown as T;',
 						'  const kind = _kindOf(entry);',
 						'  if (typeof kind === "number" && altIds?.[kind] !== undefined) return altIds[kind] as unknown as T;',
-						'  if (typeof entry.$text === "string") {',
-						'    const mappedId = textIds?.[entry.$text];',
+						'  const text = _spelledText(entry);',
+						'  if (text !== undefined) {',
+						'    const mappedId = textIds?.[text];',
 						'    if (typeof mappedId === "number") return mappedId as unknown as T;',
-						'    return entry.$text as unknown as T;',
+						'    return text as unknown as T;',
 						'  }',
 						'  return typeof kind === "number" ? (kind as T) : value;',
 						'}'
@@ -1212,8 +1272,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    const folded = altIds?.[kind];',
 						'    if (folded !== undefined) return folded as unknown as T;',
 						'    if (textIds && Object.values(textIds).includes(kind)) return kind as unknown as T;',
-						'    if (ownSymbols?.includes(kind) && typeof entry.$text === "string") {',
-						'      const memberId = textIds?.[entry.$text];',
+						'    const text = ownSymbols?.includes(kind) ? _spelledText(entry) : undefined;',
+						'    if (text !== undefined) {',
+						'      const memberId = textIds?.[text];',
 						'      if (typeof memberId === "number") return memberId as unknown as T;',
 						'    }',
 						'  }',
@@ -1559,12 +1620,12 @@ export class WrapEmitter implements CodegenEmitter<string> {
 					if (entry === undefined) continue;
 					claimRow(
 						entry.member,
-						`  [TSKindId.${entry.member}]: (d) => ({ ...d, $type: TSKindId.${entry.member} as const }),`,
+						`  [TSKindId.${entry.member}]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.${entry.member} as const }),`,
 						entry.kind === kind,
 						`_NodeData & { readonly $type: TSKindId.${entry.member} }`
 					);
 				} else {
-					claimRow(kind, `  '${kind}': (d) => d,`, true, `_NodeData`);
+					claimRow(kind, `  '${kind}': (d) => _spelledLeaf(d),`, true, `_NodeData`);
 				}
 			}
 		}
