@@ -1,6 +1,6 @@
 {
   "grammar": "scm",
-  "source_hash": "ef2a5d1660c0f54cb3dcf55cfb170b884d402071aa1abf766534a3ab114be3d1",
+  "source_hash": "eea1f452a0f589aa2fdd94edb3628a8d1d39fadaaa1bd7bd07b126483201c6b7",
   "files": {
     "packages/scm/.sittir/grammar-diagnostics.json": "75994c5f3d295950e127de18849925e9084e0757c715bcaad81bb31be7052ba6",
     "packages/scm/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -36,12 +36,12 @@
     "packages/scm/src/types-internal.ts": "471c667850e9cc3518a7eedbcd78dca22e6b8537172fd3ab1d3c4b1949829faa",
     "packages/scm/src/types.ts": "630cc5d747b87f50753b2ebaa647cedb9a31c2529abe88e72ea31d93f2a64587",
     "packages/scm/src/utils.ts": "661bde5d04b33251f095d1ef580cc04eaba033b184f6b2e4a7ae80f42a6d868b",
-    "packages/scm/src/wrap.ts": "d5e72942fa86a3669921ec532a47ab0ddfbeb2f0ecfb2efabd27885678b1741c",
+    "packages/scm/src/wrap.ts": "b23cdb9af952b58d7c8220ea730784a5e5d760c1ae06694bab638838882a33d4",
     "rust/crates/sittir-scm/index.d.ts": "1a7c621f7da9e3108a04c23cd0b51e45ac6b6d646fdc29b7424bae0b3c4165c3",
     "rust/crates/sittir-scm/index.js": "8205a0432859ea6b53a39948debc97e3851ad4bda59e0409542ed9a243567a6c",
-    "rust/crates/sittir-scm/src/lib.rs": "8b339d9a88bddf03fc2f0d8cf488c1020922c85fa7b77d18bfd65cc232455bd1",
+    "rust/crates/sittir-scm/src/lib.rs": "3bcfa133d735f10b3b290378e4f9934bb61da16e6e6704fa1de9e84eb788c4fc",
     "rust/crates/sittir-scm/src/render/hash.rs": "a6649ce6138e5af2a64cf766ccac406371f7bb8a22b690bfb407bc7186980b00",
-    "rust/crates/sittir-scm/src/render/kind_ids.rs": "cf90b37c5367b596ee1ecb90a5b058fc089aa26441fade1386beaf0533557179",
+    "rust/crates/sittir-scm/src/render/kind_ids.rs": "fe5c763e3b45f1e6f9bdce741bbb79dc75e8f0d189d46d71f71cdb25fbb2ce6f",
     "rust/crates/sittir-scm/src/render/mod.rs": "36803e5721be1df2edd7839bd72b043bb04fa66adfade5e6993cd1ad546584cf",
     "rust/crates/sittir-scm/src/render/options.rs": "c9c2c625a17c7447115b0e0d747d391ee93e9ccc8388113d0870ae8f85b179e0",
     "rust/crates/sittir-scm/src/render/transport.rs": "748dcc76f19daaca535024268a65c14b205568539daba25478df4e102e2bec1f"

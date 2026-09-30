@@ -446,6 +446,34 @@ function _filterWrapChildrenByKind<T>(
 	});
 }
 
+// A wire delimiter is a field-tagged separator token: either its bare
+// numeric kind id (text-collapsed contexts) or an anonymous node stub
+// `{ $type: <id>, $named: false }` (node-stub contexts).
+type _WireDelimiter = number | { readonly $type: number; readonly $named: false };
+function _isWireDelimiter(e: unknown, separatorKindIds: readonly number[]): e is _WireDelimiter {
+	if (typeof e === 'number') return separatorKindIds.includes(e);
+	if (typeof e === 'object' && e !== null) {
+		const stub = e as { $type?: unknown; $named?: unknown };
+		return stub.$named === false && typeof stub.$type === 'number' && separatorKindIds.includes(stub.$type);
+	}
+	return false;
+}
+
+// A `many` slot with a separator fact whose separator the parser
+// field-tagged into the slot: the render body re-joins the slot
+// with its own separator, so the wire delimiter is dropped rather
+// than stored.
+// Assumes T itself is never an array type — slot elements are node unions.
+function dropWireDelimiters<T>(
+	value: T | readonly (T | _WireDelimiter)[] | undefined,
+	separatorKindIds: readonly number[]
+): T | readonly T[] | undefined {
+	const isSlotList = (v: T | readonly (T | _WireDelimiter)[]): v is readonly (T | _WireDelimiter)[] => Array.isArray(v);
+	if (value == null) return undefined;
+	if (!isSlotList(value)) return _isWireDelimiter(value, separatorKindIds) ? undefined : value;
+	return value.filter((e): e is T => !_isWireDelimiter(e, separatorKindIds));
+}
+
 export function wrapProgram(data: T.Program, tree: TreeHandle): T.Program.Parsed {
 	data = _keepModelledSlots(data, ['_definitions']);
 	const _node = withMethods({
@@ -1081,7 +1109,7 @@ export function wrapFieldDefinition(data: T.FieldDefinition, tree: TreeHandle): 
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.FieldDefinition as const,
-		_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+		_name: normalizeSingularWrapSlot(dropWireDelimiters(data._name, [TSKindId.Colon]), 'name', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'name',
@@ -1149,12 +1177,13 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 			),
 			{ '#': 20, '.': 21 }
 		),
-		_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'name',
-			span: (data as _NodeData).$span
-		}),
+		_name: normalizeSingularWrapSlot(
+			dropWireDelimiters(data._name, [TSKindId.Pound, TSKindId.Dot]),
+			'name',
+			true,
+			data.$type,
+			{ tree, nodeType: data.$type, slotName: 'name', span: (data as _NodeData).$span }
+		),
 		_type: projectKindEnumStorage(
 			normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 				tree,
@@ -1636,6 +1665,17 @@ function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData
 	return trivia && mapTriviaEntries(trivia, (entries) => drillInAll(entries, tree) as unknown as typeof entries);
 }
 
+const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData['$type']> = new Set([43, 44, 45, 46, 51, 56, 57]);
+function _dropSpelling(data: _NodeData): _NodeData {
+	const { $other, ...node } = data;
+	if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return data;
+	if (Object.keys(node).some((key) => key.charCodeAt(0) === 95)) return data;
+	const tokens = (Array.isArray($other) ? $other : [$other]) as readonly unknown[];
+	if (tokens.some((token) => typeof token !== 'object' || token === null || (token as _NodeData).$named !== false))
+		return data;
+	return node as _NodeData;
+}
+
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode<T extends _NodeData & { readonly $type: keyof _WrapReturnByKindId }>(
 	data: T,
@@ -1648,7 +1688,8 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// catalog-less kind (the deprecated JS diagnostic lane stamps those
 	// as strings), which never had a table entry to reach.
 	const fn = typeof data.$type === 'number' ? _wrapTable[data.$type] : undefined;
-	const shown = data.$_trivia == null ? data : { ...data, $_trivia: _wrapTrivia(data.$_trivia, tree) };
+	const own = _dropSpelling(data);
+	const shown = own.$_trivia == null ? own : { ...own, $_trivia: _wrapTrivia(own.$_trivia, tree) };
 	return inTreeEngine(tree, () => (fn ? fn(shown, tree) : _drillUnknownKindChildren(shown, tree)));
 }
 

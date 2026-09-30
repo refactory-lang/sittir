@@ -1,6 +1,6 @@
 // A C-style `for` keeps its two `;` in the statement's own template:
 // tree-sitter tags the condition's `;` with the `condition` field, so the
-// reader drops it as punctuation instead of seating it beside the
+// wrap layer drops it as punctuation instead of seating it beside the
 // expression, and the render body writes each `;` under a gate on the
 // kind the slot holds — an expression takes one, an `empty_statement`
 // already is one.
@@ -10,7 +10,6 @@ import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
-const tsNative = (await typescript.load()).createNative();
 
 const SOURCE = 'for (let i = 0; i < 3; i++) {}\n';
 
@@ -18,11 +17,8 @@ type Read = { readonly $type: number; readonly $span: { start: number; end: numb
 
 describe('for_statement.condition', () => {
 	it('holds the condition alone: the field-tagged `;` is punctuation', () => {
-		const { root } = tsNative.parseAndRead(SOURCE, { deep: true });
-		const statement = (root as unknown as { _statements: { _condition: unknown } | { _condition: unknown }[] })
-			._statements;
-		const forStatement = Array.isArray(statement) ? statement[0]! : statement;
-		const condition = forStatement._condition;
+		const forStatement = ts.parse(SOURCE).statements()[0] as unknown as { condition(): unknown };
+		const condition = forStatement.condition();
 		expect(Array.isArray(condition)).toBe(false);
 		const node = condition as Read;
 		expect(node.$type).toBe(ts.kinds.BinaryExpression);

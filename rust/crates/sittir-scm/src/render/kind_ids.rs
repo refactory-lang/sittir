@@ -164,13 +164,6 @@ pub fn is_alias_envelope(_kind: KindId) -> bool {
     false
 }
 
-/// Whether a node of this kind keeps its anonymous children as `$other`
-/// when it has no named child: an unnamed slot of the kind stores terminal
-/// kinds, and the wrap layer reclaims that slot's value from `$other`.
-pub fn keeps_anonymous_children(kind: KindId) -> bool {
-    matches!(kind.0, 43 | 44 | 45 | 46 | 51 | 56 | 57)
-}
-
 /// The model slot a child is stored under where its name differs from the
 /// parser's key: a field-tagged child by (parent kind id, field), a named
 /// child without a field by (parent kind id, the child's kind name).
@@ -219,24 +212,6 @@ pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str
         _ => None,
     }
 }
-
-/// (parent kind id, tree-sitter field name, punctuation kind ids) for every
-/// slot the parser field-tags a literal into: the separator of a repeated
-/// slot, or a literal a rule puts beside a singular slot under the same
-/// field. The template prints such a token itself, so the reader drops the
-/// child instead of seating it, and a native read and a wrapped read hand
-/// back the same slot contents.
-static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
-    (49, "name", &[18]),
-    (51, "name", &[20, 21]),
-];
-
-pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {
-    SLOT_SEPARATORS
-        .iter()
-        .any(|(p, f, seps)| *p == parent.0 && *f == field && seps.contains(&child.0))
-}
-
 /// Whether the model stores a `child` of a `parent` node, reached under the
 /// parser field `field` (`None` for an untagged child), as a scalar: a
 /// presence flag or a kind id rather than a node. Such a child keeps no

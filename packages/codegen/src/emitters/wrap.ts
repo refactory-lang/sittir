@@ -1,7 +1,9 @@
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { AssembledAlias, isBuilderTextLeaf, storageKindOfRef } from '../compiler/model/node-map.ts';
-import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
+import { AbstractAssembledCompound, AssembledAlias, isBuilderTextLeaf, storageKindOfRef } from '../compiler/model/node-map.ts';
+import { CHOICE, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
+import type { RenderRule } from '../types/rule.ts';
+import { findOwnKindEntry, type GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import {
 	AssembledSupertype,
@@ -185,7 +187,7 @@ function resolveSlotDrillExprs(
 		};
 	}
 	const slotStoreExpr =
-		config.separatorIdsExpr !== undefined && slot.arity === 'many'
+		config.separatorIdsExpr !== undefined
 			? `dropWireDelimiters(${rawStoreExpr}, ${config.separatorIdsExpr})`
 			: rawStoreExpr;
 	const filteredStoreExpr =
@@ -443,7 +445,7 @@ function emitSeparatedListWrap(
 	}
 	lines.push('');
 	if (node.slots.length > 1) {
-		emitFieldAccessorLines(node.slots, 'data', lines, kindEntries, nodeMap);
+		emitFieldAccessorLines(node.slots, node.kind, 'data', lines, kindEntries, nodeMap);
 	} else {
 		lines.push(`    ${canonical.propertyName}() { ${accessorBody}; },`);
 	}
@@ -523,7 +525,7 @@ function emitFieldStorageLines(
 					? kindEnumAltIdPairs(f, nodeMap)
 					: undefined,
 			kindEnumOwnSymbolIds: storageInfo.kind === 'mixedEnum' ? kindEnumOwnSymbolIds(f, nodeMap) : undefined,
-			separatorIdsExpr: separatorIdsExprOf(f, kindEntries, elided),
+			separatorIdsExpr: separatorIdsExprOf(f, nodeMap.nodes.get(ownerKind), kindEntries, elided),
 			elided
 		});
 		lines.push(`    ${f.storageKey}: ${storeExpr},`);
@@ -532,17 +534,45 @@ function emitFieldStorageLines(
 
 function separatorIdsExprOf(
 	f: AssembledNonterminal,
+	owner: AssembledNode | undefined,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	elided: boolean
 ): string | undefined {
 	if (!kindEntries) return undefined;
-	const sepTexts = slotSeparatorTexts(f, elided);
+	const tagged = owner !== undefined && f.fieldName !== undefined ? (fieldTaggedLiteralTexts(owner).get(f.fieldName) ?? []) : [];
+	const sepTexts = [...new Set([...slotSeparatorTexts(f, elided), ...tagged])];
 	if (sepTexts.length === 0) return undefined;
 	return `[${sepTexts.map((text) => kindDiscriminantExprForLiteral(text, kindEntries)).join(', ')}]`;
 }
 
+function fieldTaggedLiteralTexts(node: AssembledNode): ReadonlyMap<string, readonly string[]> {
+	const out = new Map<string, string[]>();
+	const walk = (rule: RenderRule, field: string | undefined): void => {
+		const own = (rule as { fieldName?: string }).fieldName ?? field;
+		switch (rule.type) {
+			case STRING:
+				if (own !== undefined && own !== (rule as { fieldName?: string }).fieldName) {
+					const list = out.get(own) ?? [];
+					if (!list.includes(rule.value)) list.push(rule.value);
+					out.set(own, list);
+				}
+				return;
+			case SEQ:
+			case CHOICE:
+				for (const member of rule.members) walk(member, own);
+				return;
+			default:
+				return;
+		}
+	};
+	if (node instanceof AbstractAssembledCompound && !node.lexedInterior) walk(node.renderRule, undefined);
+	return out;
+}
+
+
 function emitFieldAccessorLines(
 	slots: readonly AssembledNonterminal[],
+	ownerKind: string,
 	dataExpr: string,
 	lines: string[],
 	kindEntries: readonly KindEnumEntry[] | undefined,
@@ -558,7 +588,7 @@ function emitFieldAccessorLines(
 			required: isRequired(f),
 			nonEmpty: isNonEmpty(f),
 			storageInfo,
-			separatorIdsExpr: separatorIdsExprOf(f, kindEntries, elided),
+			separatorIdsExpr: separatorIdsExprOf(f, nodeMap.nodes.get(ownerKind), kindEntries, elided),
 			elided
 		});
 		lines.push(`    ${propName}() { ${accessorBody}; },`);
@@ -629,7 +659,7 @@ function emitFieldCarryingWrap(
 	}
 	lines.push('');
 
-	emitFieldAccessorLines(slots, 'data', lines, kindEntries, nodeMap);
+	emitFieldAccessorLines(slots, node.kind, 'data', lines, kindEntries, nodeMap);
 	if (children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, kindEntries);
 		const { accessorBody } = resolveSlotDrillExprs(childrenConfig.slot, {
@@ -821,6 +851,35 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			default:
 				break;
 		}
+	}
+
+	#dropSpellingLines(): string[] {
+		const reclaiming = [...this.#nodeMap.nodes.values()].filter((node) =>
+			node.slots.some((slot) => reclaimsAnonymousChild(slot, this.#nodeMap))
+		);
+		const keys = this.#kindEntries
+			? [
+					...new Set(
+						reclaiming
+							.map((node) => findOwnKindEntry(this.#kindEntries!, node.kind)?.id)
+							.filter((id): id is number => id !== undefined)
+					)
+				]
+					.sort((a, b) => a - b)
+					.map(String)
+			: [...new Set(reclaiming.map((node) => JSON.stringify(node.kind)))].sort();
+		return [
+			`const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData["$type"]> = new Set([${keys.join(', ')}]);`,
+			'function _dropSpelling(data: _NodeData): _NodeData {',
+			'  const { $other, ...node } = data;',
+			'  if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return data;',
+			'  if (Object.keys(node).some((key) => key.charCodeAt(0) === 95)) return data;',
+			'  const tokens = (Array.isArray($other) ? $other : [$other]) as readonly unknown[];',
+			'  if (tokens.some((token) => typeof token !== "object" || token === null || (token as _NodeData).$named !== false)) return data;',
+			'  return node as _NodeData;',
+			'}',
+			''
+		];
 	}
 
 	finalize(): string {
@@ -1515,6 +1574,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('}');
 		lines.push('');
 
+		lines.push(...this.#dropSpellingLines());
 		lines.push('/** Wrap a NodeData into its lazy read-only view. */');
 		if (this.#kindEntries) {
 			lines.push('export function wrapNode<T extends _NodeData & { readonly $type: keyof _WrapReturnByKindId }>(');
@@ -1537,7 +1597,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			lines.push('  const fn = _wrapTable[rawType];');
 		}
 		lines.push(
-			'  const shown = data.$_trivia == null ? data : { ...data, $_trivia: _wrapTrivia(data.$_trivia, tree) };'
+			'  const own = _dropSpelling(data);',
+			'  const shown = own.$_trivia == null ? own : { ...own, $_trivia: _wrapTrivia(own.$_trivia, tree) };'
 		);
 		lines.push('  return inTreeEngine(tree, () => (fn ? fn(shown, tree) : _drillUnknownKindChildren(shown, tree)));');
 		lines.push('}');

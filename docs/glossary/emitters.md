@@ -2922,10 +2922,6 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
 // see `wrap.ts::_keepModelledSlots`.)
 ```
 
-#### keeps_anonymous_children
-
-The kinds with an unnamed slot that stores terminal kinds (`reclaimsAnonymousChild`). The reader keeps such a node's anonymous children as `$other` even when it has no named child, so the wrap layer can reclaim the slot's value from `$other` (rust `non_special_token > "'"`).
-
 #### token interior
 
 ```text
@@ -2950,21 +2946,7 @@ defaults a missing `$text` to it.
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::kindIdSetFn`
 
-The generated Rust predicate `pub fn <name>(kind: KindId) -> bool` over a set of kind ids: `matches!` over the ids, or, for an empty set, a body of `false` with the parameter named `_kind` so it compiles without an unused-variable warning. `is_text_kind`, `is_alias_envelope` and `keeps_anonymous_children` are emitted through it.
-
-### `packages/codegen/src/emitters/kind-id-rust.ts::is_slot_separator`
-
-The generated table behind the reader's separator drop: `(parent kind id,
-tree-sitter field name, separator kind ids)` for every repeated slot whose
-separator the parser field-tags into the slot (python `for_in_clause.right`
-carries its `,`; typescript `for_statement.condition` its `;`). Keyed by the
-tree-sitter field name because that is the string `read_children` has in
-hand; the texts come from `shared.ts::slotSeparatorTexts`, the same source
-the wrap layer's `dropWireDelimiters` expression is formatted from. An
-elidable list (`hasOptionalElements`) has no row: its separators place the
-holes, so the wrap layer splits by them (`splitElidedWrapSlot`) and the
-reader must hand them over. Only an anonymous child is ever dropped — a
-named child sharing the kind id is a member.
+The generated Rust predicate `pub fn <name>(kind: KindId) -> bool` over a set of kind ids: `matches!` over the ids, or, for an empty set, a body of `false` with the parameter named `_kind` so it compiles without an unused-variable warning. `is_text_kind` and `is_alias_envelope` are emitted through it.
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::wire_slot`
 
@@ -2979,7 +2961,7 @@ row names it. `None` keeps the parser's key: the slot is named for the child,
 or the model has no slot for it (a literal the template prints, or a parent
 with no slots, such as an alias over hidden supertype storage). The wrap reads
 only slot keys, and `_keepModelledSlots` drops any other `_` key. The parent
-is the reader's grammar id (`findOwnKindEntry`), as in `is_slot_separator`;
+is the reader's grammar id (`findOwnKindEntry`), as in `stores_scalar`;
 the child is keyed by its name, the key the reader stored it under before
 the contract existed. Rows come from `wireSlotRows`.
 
@@ -4615,10 +4597,9 @@ sides use. An arm missing either side is left out.
 ### `packages/codegen/src/emitters/shared.ts::slotSeparatorTexts`
 
 The literal separator texts a repeated slot's values carry — the one source
-of "what separates this slot". The wrap layer's drop expression
-(`separatorIdsExprOf`) and the reader's separator table
-(`kind-id-rust.ts::is_slot_separator`) are both derived from it, so the two
-read paths hand back the same slot contents. `elidedOnly` narrows to the
+of "what separates this slot". The reader ships a field-tagged separator
+with the slot's items, and the wrap layer's drop expression
+(`separatorIdsExprOf`), derived from this, removes it. `elidedOnly` narrows to the
 values that may be absent, which is the elidable-list form.
 
 ### `packages/codegen/src/emitters/shared.ts::canonicalSeparatedListField`
@@ -10748,8 +10729,8 @@ two slots at once.
 A choice's field name pushed down onto the members that carry a slot, so
 each arm emits as the parser tags it: the symbol takes the field, a literal
 beside it stays the arm's own text. Tree-sitter tags that literal with the
-field too; the reader drops it as punctuation (`fieldTaggedLiteralTexts`),
-which is why the template must print it.
+field too, and the wrap layer drops it as punctuation, which is why the
+template must print it.
 
 ### `packages/codegen/src/emitters/templates.ts::emitKindGatedLiterals`
 
@@ -13361,9 +13342,10 @@ After the kind-id pass-through the node is read through a typed local (`_NodeDat
 
 ```text
 /**
- * Emitted `[<sep kind id>, …]` expression for any `many` slot carrying a
- * separator fact — the texts `slotSeparatorTexts` derives, formatted as
- * kind ids. `elided` selects which values count: true restricts to
+ * Emitted `[<sep kind id>, …]` expression for any slot carrying a
+ * delimiter fact — the texts `slotSeparatorTexts` derives, unioned with the
+ * owner's field-tagged literals for this field (`fieldTaggedLiteralTexts`),
+ * formatted as kind ids. `elided` selects which values count: true restricts to
  * `hasOptionalElements` positions (feeding `splitElidedWrapSlot`'s
  * positional split), false takes every separator-bearing value (feeding
  * `dropWireDelimiters`'s flat strip). Throws (via
@@ -13479,6 +13461,14 @@ normalization; a node that already carries slot storage (built or edited) is lef
 	 *  its input declares — the wrap spreads the data it is given — so
 	 *  `engine.parse()` reaches this alias without a cast. */
 ```
+
+### `packages/codegen/src/emitters/wrap.ts::fieldTaggedLiteralTexts`
+
+The literal texts a compound's render rule places directly under each field, keyed by field name: a `STRING` reached through `CHOICE`/`SEQ` inside `field(name, …)`. Tree-sitter tags such a token with the field (the `,` in python's `for_in_clause.right`, the `;` in typescript's `for_statement.condition`), so the reader puts it in the field's storage beside the field's real content. The token is punctuation the render template already emits, so `separatorIdsExprOf` adds these texts to the slot's drop set and `dropWireDelimiters` strips them, for singular slots as well as `many` ones. Lexed-interior compounds are skipped: their interior is one token, not fields.
+
+### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.dropSpellingLines`
+
+Emits `_RECLAIMS_ANONYMOUS` and `_dropSpelling`, which `wrapNode` applies to every node before its per-kind wrap, trivia entries included. The reader ships anonymous children as `$other`. A node whose only unfielded content is anonymous tokens (no `_`-prefixed slot keys, every `$other` entry `$named: false`) is spelled by those tokens, not structured by them, so `_dropSpelling` removes that `$other` and keeps the node's own `$text` when the reader sent one. It never takes a token's text as the node's: a token can be part of a node whose remaining content is a hidden token (`format_specifier`'s `:` before `#06x`, `block_comment`'s delimiters around its body). Kinds with a `reclaimsAnonymousChild` slot keep `$other`, because their wrap reads the token into that slot. Without the drop, a node that keeps `$other` counts as storage-bearing in the transport projection and loses its `$text` (a `primitive_type`, an `import_prefix`).
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`
 
@@ -14746,16 +14736,6 @@ The Rust slice literal a kind-gated arm tests against: the arm's kind names
 expanded through `concreteKindsOf` (a supertype to its members) and mapped to
 ids. A name with no id table or no id at all is an error, since a gate that
 can never fire would silently drop the literal.
-
-### `packages/codegen/src/emitters/kind-id-rust.ts::fieldTaggedLiteralTexts`
-
-The literals a kind's render rule places under a field beside the slot's own
-member, keyed by field name: `field(condition, choice(seq(_expressions, ';'),
-empty_statement))` tags the `;` with `condition`, so the reader would seat it
-as a second value. These join the repeated-slot separators in the
-punctuation table the reader consults (`is_slot_separator`), because the
-template prints them itself. A lexed interior has none: the parser tags
-nothing inside a token.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::FLATTEN_HELPER`
 
@@ -16411,7 +16391,7 @@ Wraps a config type in `WidenNumeric` for the numeric text slots of a node, each
 
 ### `packages/codegen/src/emitters/shared.ts::reclaimsAnonymousChild`
 
-Whether a slot takes an anonymous child from `$other`: it is unnamed and stores terminal (enum or literal) kinds. A fielded slot does not: the reader keys a field's child by field id, anonymous or not. The one predicate behind the wrap reclaim (`readTerminalFromOther<ElementType>(data, ids)` after the slot's storage keys), its collision guard, and the reader's `keeps_anonymous_children` table.
+Whether a slot takes an anonymous child from `$other`: it is unnamed and stores terminal (enum or literal) kinds. A fielded slot does not: the reader keys a field's child by field id, anonymous or not. The one predicate behind the wrap reclaim (`readTerminalFromOther<ElementType>(data, ids)` after the slot's storage keys) and its collision guard. The reader keeps every node's anonymous children as `$other`, so the reclaim always finds them.
 
 ### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
 

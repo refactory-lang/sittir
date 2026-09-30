@@ -32,17 +32,6 @@ impl ReadModel for TextKinds {
     }
 }
 
-/// No text kinds; the kinds named here keep their anonymous children.
-struct KeepsAnonymous(Vec<u16>);
-impl ReadModel for KeepsAnonymous {
-    fn is_text_kind(&self, _kind: KindId) -> bool {
-        false
-    }
-    fn keeps_anonymous_children(&self, kind: KindId) -> bool {
-        self.0.contains(&kind.0)
-    }
-}
-
 /// Recursively assert that every object-shaped JSON node in `value`
 /// (matching the NodeData wire shape) has only keys in
 /// the de-hoisted NodeData contract. Descends into `_<slot>` values and
@@ -199,10 +188,6 @@ fn anonymous_leaf_children_do_not_invent_fields() {
         !params.contains_key("_|"),
         "native read must not invent _<text> fields for anonymous children"
     );
-    assert!(
-        params.get("$other").is_none(),
-        "anonymous-only leaf nodes should still collapse to text"
-    );
     assert!(params.get("$text").is_none());
     assert_eq!(
         params
@@ -265,13 +250,15 @@ fn structural_nodes_carry_a_span_and_no_text_while_text_kinds_keep_theirs() {
         .iter()
         .filter(|(t, _, _)| *t == identifier)
         .all(|(_, has_text, _)| *has_text));
-    // Anonymous tokens are never gated: their text is their content.
+    // Every anonymous token here is spelled as its kind name, so its kind id
+    // alone names it.
     let anonymous: Vec<_> = seen
         .iter()
         .filter(|(t, _, _)| !tree.language().node_kind_is_named(*t))
         .collect();
+    assert!(!anonymous.is_empty());
     assert!(
-        anonymous.iter().all(|(_, has_text, _)| *has_text),
+        anonymous.iter().all(|(_, has_text, _)| !*has_text),
         "{seen:?}"
     );
 }
@@ -403,13 +390,12 @@ fn find_first_ts_node_by_kind<'a>(
 }
 
 #[test]
-fn a_kind_that_keeps_anonymous_children_reads_its_only_anonymous_child_as_other() {
+fn a_node_whose_only_children_are_anonymous_keeps_them_as_other() {
     let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
     let source = "fn f() { let _ = async move || async move {}; }";
     let tree = parse_tree(lang, source);
     let params = find_first_ts_node_by_kind(tree.root_node(), "closure_parameters")
         .expect("closure_parameters cst node");
-    let closure_parameters = tree.language().id_for_node_kind("closure_parameters", true);
     let pipe = tree.language().id_for_node_kind("|", false);
     let node = read_node(
         &tree,
@@ -417,7 +403,7 @@ fn a_kind_that_keeps_anonymous_children_reads_its_only_anonymous_child_as_other(
         Some(params),
         Some(0),
         ReadDepth::Shallow,
-        &KeepsAnonymous(vec![closure_parameters]),
+        &TextKinds(vec![]),
     );
     let json = serde_json::to_value(&node).expect("serialize");
     assert_shape(&json, "closure_parameters");
@@ -431,6 +417,34 @@ fn a_kind_that_keeps_anonymous_children_reads_its_only_anonymous_child_as_other(
         .collect();
     assert_eq!(kinds, vec![u64::from(pipe), u64::from(pipe)]);
     assert!(json.get("$text").is_none());
+}
+
+#[test]
+fn a_field_tagged_separator_is_read_into_its_field() {
+    // python's `for_in_clause.right` field-tags the `,` between its items
+    let lang: tree_sitter::Language = tree_sitter_python::LANGUAGE.into();
+    let source = "[x for x in a, b]\n";
+    let tree = parse_tree(lang, source);
+    let clause = find_first_ts_node_by_kind(tree.root_node(), "for_in_clause").expect("for_in_clause cst node");
+    let comma = u64::from(tree.language().id_for_node_kind(",", false));
+    let node = read_node(&tree, source, Some(clause), Some(0), ReadDepth::Shallow, &TextKinds(vec![]));
+    let json = serde_json::to_value(&node).expect("serialize");
+    let right = json.get("_right").and_then(Value::as_array).expect("right holds its items and separator");
+    assert!(right.iter().any(|item| item.get("$type").and_then(Value::as_u64) == Some(comma)));
+}
+
+#[test]
+fn an_anonymous_token_spelled_as_its_kind_name_ships_its_kind_id_alone() {
+    let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
+    let source = "fn f(a: u8, b: u8) {}";
+    let tree = parse_tree(lang, source);
+    let params = find_first_ts_node_by_kind(tree.root_node(), "parameters").expect("parameters cst node");
+    let comma = u64::from(tree.language().id_for_node_kind(",", false));
+    let node = read_node(&tree, source, Some(params), Some(0), ReadDepth::Shallow, &AllText);
+    let json = serde_json::to_value(&node).expect("serialize");
+    let other = json.get("$other").and_then(Value::as_array).expect("the punctuation stays as $other");
+    let token = other.iter().find(|child| child.get("$type").and_then(Value::as_u64) == Some(comma)).expect("the comma");
+    assert!(token.get("$text").is_none(), "its kind id already spells it: {token}");
 }
 
 /// No text kinds; a `block` keys the gap after its `{` to `statements`.
@@ -540,6 +554,17 @@ fn a_block_comment_before_its_owner_on_the_same_row_is_same_line_leading() {
     assert!(leading[0].same_line);
     let json = serde_json::to_value(&leading[0]).expect("serialize");
     assert_eq!(json["$sameLine"], Value::Bool(true));
+}
+
+#[test]
+fn a_trivia_entry_spelled_only_by_anonymous_tokens_carries_its_text() {
+    let statements = read_rust_kind("fn f() { /* c */ a; }", "expression_statement");
+    let leading = statements[0]
+        .trivia_data
+        .as_ref()
+        .and_then(|trivia| trivia.leading.as_ref())
+        .expect("the comment leads a;");
+    assert_eq!(leading[0].text.as_deref(), Some("/* c */"));
 }
 
 #[test]

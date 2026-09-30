@@ -66,22 +66,13 @@ describe('wire_slot', () => {
 	});
 });
 
-describe('is_slot_separator', () => {
-	it("names a slot's field-tagged separator by the parent kind and the field", async () => {
-		const { source, idOf } = await emittedKindIds('python');
-		expect(source).toContain('pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {');
-		const table = source.slice(source.indexOf('static SLOT_SEPARATORS'), source.indexOf('pub fn is_slot_separator'));
-		expect(table).toContain(`(${idOf('for_in_clause')}, "right", &[${idOf('comma')}]),`);
-	});
-	it("names a literal a rule field-tags beside a singular slot, so the reader drops it as the template's own", async () => {
-		const { source, idOf } = await emittedKindIds('typescript');
-		const table = source.slice(source.indexOf('static SLOT_SEPARATORS'), source.indexOf('pub fn is_slot_separator'));
-		// for_statement: `field(condition, choice(seq(_expressions, ';'), empty_statement))`
-		expect(table).toContain(`(${idOf('for_statement')}, "condition", &[${idOf('semi')}]),`);
-	});
-	it('leaves an elidable list alone: its separators place the holes', async () => {
-		const { source, idOf } = await emittedKindIds('typescript');
-		const table = source.slice(source.indexOf('static SLOT_SEPARATORS'), source.indexOf('pub fn is_slot_separator'));
-		expect(table).not.toContain(`(${idOf('array')}, `);
+describe('facts the wrap layer owns', () => {
+	it('emits no slot-separator or anonymous-children table for the reader', async () => {
+		for (const grammar of ['python', 'typescript', 'rust'] as const) {
+			const { source } = await emittedKindIds(grammar);
+			expect(source).not.toContain('SLOT_SEPARATORS');
+			expect(source).not.toContain('is_slot_separator');
+			expect(source).not.toContain('keeps_anonymous_children');
+		}
 	});
 });

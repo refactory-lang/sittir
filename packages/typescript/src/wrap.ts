@@ -2053,7 +2053,7 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 			{ 20: 224 }
 		),
 		_condition: projectMixedEnumStorage(
-			normalizeSingularWrapSlot(data._condition, 'condition', true, data.$type, {
+			normalizeSingularWrapSlot(dropWireDelimiters(data._condition, [TSKindId.Semi]), 'condition', true, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'condition',
@@ -3309,12 +3309,13 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle): 
 		...data,
 		$type: TSKindId.YieldExpression as const,
 		_expression: projectMixedEnumStorage(
-			normalizeSingularWrapSlot(data._expression, 'expression', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'expression',
-				span: (data as _NodeData).$span
-			}),
+			normalizeSingularWrapSlot(
+				dropWireDelimiters(data._expression, [TSKindId.Star]),
+				'expression',
+				false,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
+			),
 			{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123 }
 		),
 
@@ -15055,6 +15056,19 @@ function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData
 	return trivia && mapTriviaEntries(trivia, (entries) => drillInAll(entries, tree) as unknown as typeof entries);
 }
 
+const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData['$type']> = new Set([
+	258, 284, 320, 321, 346, 354, 367, 379, 404, 415, 416, 422
+]);
+function _dropSpelling(data: _NodeData): _NodeData {
+	const { $other, ...node } = data;
+	if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return data;
+	if (Object.keys(node).some((key) => key.charCodeAt(0) === 95)) return data;
+	const tokens = (Array.isArray($other) ? $other : [$other]) as readonly unknown[];
+	if (tokens.some((token) => typeof token !== 'object' || token === null || (token as _NodeData).$named !== false))
+		return data;
+	return node as _NodeData;
+}
+
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode<T extends _NodeData & { readonly $type: keyof _WrapReturnByKindId }>(
 	data: T,
@@ -15067,7 +15081,8 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// catalog-less kind (the deprecated JS diagnostic lane stamps those
 	// as strings), which never had a table entry to reach.
 	const fn = typeof data.$type === 'number' ? _wrapTable[data.$type] : undefined;
-	const shown = data.$_trivia == null ? data : { ...data, $_trivia: _wrapTrivia(data.$_trivia, tree) };
+	const own = _dropSpelling(data);
+	const shown = own.$_trivia == null ? own : { ...own, $_trivia: _wrapTrivia(own.$_trivia, tree) };
 	return inTreeEngine(tree, () => (fn ? fn(shown, tree) : _drillUnknownKindChildren(shown, tree)));
 }
 

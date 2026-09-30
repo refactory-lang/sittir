@@ -63,24 +63,6 @@ pub trait ReadModel {
     /// spelling the template could rebuild.
     fn is_text_kind(&self, kind: KindId) -> bool;
 
-    /// Whether `child` is the token that separates the `field` slot's items
-    /// on a `parent` node. Such a token is punctuation the template
-    /// re-emits, not a slot member, so the reader drops it rather than
-    /// seating it beside the items.
-    fn is_slot_separator(&self, parent: KindId, field: &str, child: KindId) -> bool {
-        let _ = (parent, field, child);
-        false
-    }
-
-    /// Whether a node of this kind keeps its anonymous children as `$other`
-    /// even when it has no named child: the kind has an unnamed slot that
-    /// stores terminal kinds, so an anonymous child is that slot's value and
-    /// the wrap layer reclaims it from `$other`.
-    fn keeps_anonymous_children(&self, kind: KindId) -> bool {
-        let _ = kind;
-        false
-    }
-
     /// The model slot a child of a `parent` node is stored under, when its
     /// name differs from the key the parser gives the child: a field-tagged
     /// child by its field, a named child without a field by its kind name.
@@ -241,26 +223,7 @@ fn read_ts_node(
         read_children(node, source, node_handle, tree_handle, depth, model)
     };
 
-    // Leaf heuristic: no named fields AND no (named) children. The
-    // tree-sitter convention is that purely-anonymous terminals are
-    // leaves with `is_named() == false`; named leaves (e.g.
-    // `identifier`) have no substructure and get `$text` here.
-    let is_leaf = fields.is_none()
-        && children
-            .as_ref()
-            .is_none_or(|cs| cs.iter().all(|c| !c.named))
-        && !keeps_anonymous_children(&node, model);
-    let text = if carries_text(&node, model) {
-        source.get(byte_range.clone()).map(|s| s.to_string())
-    } else {
-        None
-    };
-
-    // On leaves, drop the (possibly empty) `$other` entirely — the
-    // shape gate in `tests/read_node.rs` enforces that leaves don't carry `$other`
-    // even when empty, and purely-anonymous token structure is still
-    // represented by `$text` for the native read surface.
-    let children = if is_leaf { None } else { children };
+    let text = node_text(node, source, model);
 
     NodeData {
         type_: kind,
@@ -335,7 +298,11 @@ fn node_trivia(
             ReadDepth::Deep,
             model,
         );
-        let childless = data.fields.is_none() && data.children.is_none();
+        let childless = data.fields.is_none()
+            && data
+                .children
+                .as_ref()
+                .is_none_or(|children| children.iter().all(|child| !child.named));
         let text = data.text.or_else(|| {
             childless
                 .then(|| source.get(extra.byte_range()).map(str::to_string))
@@ -538,14 +505,6 @@ fn read_children(
             continue;
         }
         let field_name = node.field_name_for_child(i).map(|s| s.to_string());
-        // A separator is always an anonymous literal token; a named child
-        // that shares its kind id is still a member.
-        if let Some(name) = field_name.as_deref() {
-            if !child.is_named() && model.is_slot_separator(parent_kind, name, stamped_kind(&child))
-            {
-                continue;
-            }
-        }
         let data = if child.child_count() == 0 {
             // A leaf keeps a coordinate at either depth. Under a shallow read
             // it is a child like any stub — the parent's handle and its index,
@@ -638,11 +597,6 @@ fn read_children(
 /// shown as (`kind_id`, the alias target) — `print` used as an identifier
 /// parses as its own symbol and is shown as `identifier`, and it is the
 /// identifier's transport that takes the text.
-fn keeps_anonymous_children(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
-    model.keeps_anonymous_children(stamped_kind(node))
-        || model.keeps_anonymous_children(KindId(node.kind_id()))
-}
-
 fn carries_text(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
     !node.is_named()
         || node.is_error()
@@ -650,13 +604,18 @@ fn carries_text(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> bool {
         || model.is_text_kind(KindId(node.kind_id()))
 }
 
-/// The text a child carries: its bytes when `carries_text`, nothing otherwise.
-fn child_text(child: tree_sitter::Node<'_>, source: &str, model: &dyn ReadModel) -> Option<String> {
-    if carries_text(&child, model) {
-        source.get(child.byte_range()).map(|s| s.to_string())
-    } else {
-        None
+/// The text a node carries: its bytes when `carries_text`, nothing otherwise.
+/// An anonymous token spelled exactly as its kind name carries none: its kind
+/// id already names the text.
+fn node_text(node: tree_sitter::Node<'_>, source: &str, model: &dyn ReadModel) -> Option<String> {
+    if !carries_text(&node, model) {
+        return None;
     }
+    let text = source.get(node.byte_range())?;
+    if !node.is_named() && !node.is_error() && text == node.kind() {
+        return None;
+    }
+    Some(text.to_string())
 }
 
 fn read_child_stub(
@@ -675,7 +634,7 @@ fn read_child_stub(
         named: child.is_named(),
         fields: None,
         children: None,
-        text: child_text(child, source, model),
+        text: node_text(child, source, model),
         span: Some(Span {
             start: byte_range.start as u32,
             end: byte_range.end as u32,
@@ -705,7 +664,7 @@ fn read_materialized_leaf(
         named: child.is_named(),
         fields: None,
         children: None,
-        text: child_text(child, source, model),
+        text: node_text(child, source, model),
         span: Some(Span {
             start: byte_range.start as u32,
             end: byte_range.end as u32,
