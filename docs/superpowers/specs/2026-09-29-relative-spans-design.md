@@ -88,10 +88,18 @@ included.
 
 ### Absolute positions
 
-Nothing in sittir holds an absolute position. Tree-sitter knows each live
-node's byte range, so a tree-bound node's absolute position is read through
-its handle; for an editor, a diagnostic or a range edit it can also be summed
-from its ancestors' starts. A detached or serialized node has none.
+No node carries an absolute position, and none is derived by sittir.
+Rendering and editing need only relative coordinates. Tree-sitter owns
+positions, so a tree-bound node exposes them from tree-sitter directly:
+
+- **`$cst()`**, on tree-bound nodes only (like `$commit`), returns tree-sitter's
+  facts for the node it was read from: its kind, byte range, start and end
+  row and column, and text. The tree lives on the native side, so these are
+  fetched through the node's handle when asked, not held as a live
+  tree-sitter object.
+- A detached or serialized node has no `$cst()`.
+- sittir's own diagnostics read a location the same way when a node is
+  tree-bound.
 
 ### The native side
 
@@ -138,10 +146,9 @@ Each moves to relative coordinates or to the derived absolute position.
 
 ## Open decisions
 
-1. **The public name** for a tree-bound node's absolute position.
-2. **The key** for a serialized node's buffer and its buffer-backed id.
+1. **The key** for a serialized node's buffer and its buffer-backed id.
    `$source` is taken (it is the node's provenance).
-3. **The key** for the line part of a coordinate: extend `$span` with rows
+2. **The key** for the line part of a coordinate: extend `$span` with rows
    and columns, or a sibling key.
 
 ## Verification
