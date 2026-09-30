@@ -23,4 +23,11 @@ describe('typescript keeps `let` an identifier only where a declaration cannot s
 		expect(tree).toContain('(assignment_expression left: (lhs_expression (identifier))');
 		expect(tree).toContain('(member_expression object: (identifier)');
 	});
+
+	it('parses `for (let [a] of b)` with a pattern, and `for await (let [a] of b)` as upstream does', async () => {
+		expect(await parse('for (let [a] of b) {}')).toContain('(for_header_let_const_kind left: (array_pattern');
+		const awaited = await parse('for await (let [a] of b) {}');
+		expect(awaited).toContain('left: (lhs_expression (subscript_expression');
+		expect(awaited).not.toContain('array_pattern');
+	});
 });
