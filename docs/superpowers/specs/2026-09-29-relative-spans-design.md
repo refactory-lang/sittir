@@ -72,10 +72,33 @@ Every fact coordinates can give is derived, never stamped:
 
 - `$sameLine` is gone: it is a row comparison between two coordinates, for
   source-backed and detached nodes alike.
-- `$tokensBetween` is gone: a source-backed node reads the gap bytes, and a
-  detached node has no tokens to report.
+- `$tokensBetween` is gone: which side of a token a comment sits on is
+  carried by its owner (see [trivia ownership](#trivia-ownership)).
 - Anonymous tokens are not stored for gaps: two siblings' own coordinates
   bound the gap between them.
+
+### Trivia ownership
+
+A comment's owner decides which side of the surrounding tokens it renders
+on, so no count of tokens is recorded. The reader assigns each extra while
+tree-sitter is at hand:
+
+- **Trailing the previous sibling** when no token lies between that sibling
+  and the extra: `a /* x */, b` trails `a`, and renders before the
+  template's `,`.
+- **Leading the next sibling** when a token lies between: `a, /* x */ b` and
+  `a, // x⏎ b` lead `b`, and render after the `,`. Rows then give the
+  line break, as for any leading entry.
+- **The parent's closing gap** when a token lies between and no next sibling
+  exists: `[a, b, // c⏎]` is inner trivia of the list, after its last
+  element's tokens and before its closer.
+
+A **closing gap** is an inner gap every compound gets when its render rule
+ends in an unconditional token after its last slot. It is derived from the
+render rule by the same walk as the existing inner gaps, never declared.
+A compound with no closing token has none: an extra after its last token lies
+outside its bytes, and tree-sitter gives it to an ancestor, where the same
+rules apply.
 
 ### Detaching
 
@@ -162,6 +185,10 @@ position.
   coordinates and leaf text and copies nothing else.
 - **Stamps removed:** `$sameLine` and `$tokensBetween` on trivia entries, and
   the self-contained `$text` copies.
+- **Trivia ownership:** `node_trivia` and `extras_run` (owner assignment),
+  `TransportTrivia::render_trailing` (no held entries), and the node map's
+  `innerGaps` with the `inner_gap_key` and `INNER_GAPS` rows it feeds (the
+  closing gap).
 
 ## Verification
 
@@ -183,3 +210,6 @@ position.
 - **Validate rows** are identical across the three grammars.
 - **No coordinate stamp remains:** `$sameLine` and `$tokensBetween` are gone
   from the wire.
+- **Comments beside tokens:** detached renders of `f(a /* x */, b)`,
+  `f(a, /* x */ b)`, `f(a, // x⏎ b)`, `a + /* x */ b` and `[a, b, // c⏎]`
+  keep each comment on its side of the token.
