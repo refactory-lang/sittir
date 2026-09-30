@@ -46,6 +46,7 @@ function emitterFor(rel: string): Emitter {
 		case 'wrap.ts':
 			return 'wrap';
 		case 'types.ts':
+		case 'types-internal.ts':
 			return 'types';
 		case 'consts.ts':
 			return 'consts';

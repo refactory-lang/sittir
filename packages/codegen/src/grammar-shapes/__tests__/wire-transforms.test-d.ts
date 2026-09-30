@@ -6,6 +6,8 @@ import type { IsPath } from '../path-type.ts';
 import type { IsPreferencePath } from '../../dsl/primitives/preference-path.ts';
 import { wire } from '../../dsl/wire/wire.ts';
 import { field, variant, preference } from '../../dsl/index.ts';
+import { field as authoringField, role } from '../../dsl/dsl-authoring.ts';
+import type { SymbolRule } from '../grammar-json.ts';
 import { emptyBase } from '../../__tests__/helpers/empty-base.ts';
 
 type Rules = RustGrammarShape['rules'];
@@ -41,6 +43,14 @@ describe('IsPath accepts what applyPath walks and rejects what it throws on', ()
 		expectTypeOf<IsPath<R<'await_expression'>, 'expression:'>>().toEqualTypeOf<false>();
 	});
 
+	it('a label segment on a bare node passes only when an earlier map minted that label', () => {
+		expectTypeOf<IsPath<R<'await_expression'>, 'expression:/0', 'expression'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'await_expression'>, 'expression:/0'>>().toEqualTypeOf<false>();
+		expectTypeOf<IsPath<R<'await_expression'>, 'expression:/0', 'other'>>().toEqualTypeOf<false>();
+		expectTypeOf<IsPath<R<'await_expression'>, 'expression:/9', 'expression'>>().toEqualTypeOf<false>();
+		expectTypeOf<IsPath<R<'await_expression'>, '0/nope:', 'nope'>>().toEqualTypeOf<false>();
+	});
+
 	it('a literal segment names a string member', () => {
 		expectTypeOf<IsPath<R<'await_expression'>, '"."'>>().toEqualTypeOf<true>();
 		expectTypeOf<IsPath<R<'await_expression'>, '"!"'>>().toEqualTypeOf<false>();
@@ -50,6 +60,17 @@ describe('IsPath accepts what applyPath walks and rejects what it throws on', ()
 		expectTypeOf<IsPath<R<'or_pattern'>, '(_pattern)'>>().toEqualTypeOf<true>();
 		expectTypeOf<IsPath<R<'or_pattern'>, '(_expression)'>>().toEqualTypeOf<false>();
 		expectTypeOf<IsPath<R<'await_expression'>, '(_expression)'>>().toEqualTypeOf<false>();
+	});
+
+	it('a token distributes into arms, so a numeric segment below one resolves', () => {
+		expectTypeOf<IsPath<R<'integer_literal'>, '0'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'integer_literal'>, '3'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'escape_sequence'>, '2'>>().toEqualTypeOf<true>();
+		expectTypeOf<IsPath<R<'integer_literal'>, '"x"'>>().toEqualTypeOf<false>();
+	});
+
+	it('the root path is always a path', () => {
+		expectTypeOf<IsPath<R<'metavariable'>, '.'>>().toEqualTypeOf<true>();
 	});
 
 	it('a deep authored path resolves', () => {
@@ -76,6 +97,16 @@ describe('wire() checks patch keys per rule, from the base it is given', () => {
 		wire({ name: 'rust', patches: { parameter: { '9': field('name') } } }, enriched);
 		// @ts-expect-error — the second patch set names a member or_pattern's arm 1 lacks
 		wire({ name: 'rust', patches: { or_pattern: [{ '0/0': field('left') }, { '1/9': variant('x') }] } }, enriched);
+	});
+
+	it('a later map may walk through a label an earlier map minted, and only that label', () => {
+		wire({ name: 'rust', patches: { or_pattern: [{ '1': authoringField('rhs') }, { '1/rhs:/0': variant('x') }] } }, enriched);
+		// @ts-expect-error — no earlier map minted `rhs`
+		wire({ name: 'rust', patches: { or_pattern: [{}, { '1/rhs:/0': variant('x') }] } }, enriched);
+		// @ts-expect-error — the earlier map minted `rhs`, not `lhs`
+		wire({ name: 'rust', patches: { or_pattern: [{ '1': authoringField('rhs') }, { '1/lhs:/0': variant('x') }] } }, enriched);
+		// @ts-expect-error — a label is never minted by the map that walks through it
+		wire({ name: 'rust', patches: { or_pattern: [{ '1/rhs:/0': variant('x'), '1': authoringField('rhs') }] } }, enriched);
 	});
 
 	it('an unshaped base checks nothing', () => {
@@ -146,5 +177,12 @@ describe('IsPreferencePath mirrors parsePreferencePath', () => {
 		expectTypeOf<IsPreferencePath<'block/'>>().toEqualTypeOf<false>();
 		expectTypeOf<IsPreferencePath<'a b'>>().toEqualTypeOf<false>();
 		expectTypeOf<IsPreferencePath<'(:)/after'>>().toEqualTypeOf<false>();
+	});
+});
+
+describe('the authoring role() takes a symbol', () => {
+	it('is typed as a symbol reference plus one of the three role names', () => {
+		expectTypeOf(role).parameter(0).toEqualTypeOf<SymbolRule<string>>();
+		expectTypeOf(role).parameter(1).toEqualTypeOf<'indent' | 'dedent' | 'newline'>();
 	});
 });
