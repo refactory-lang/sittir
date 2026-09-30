@@ -159,12 +159,16 @@ positions, so a tree-bound node exposes them from tree-sitter directly:
   `NodeCoordinate` carries a relative span; resolution composes down the walk
   instead of indexing a whole source by stored bytes.
 - **A coordinate the frame cannot place anchors itself.** When the frame is
-  unknown or from another tree, the coordinate's handle names its own node,
-  and tree-sitter gives the start of that node's parent: the point its
-  offsets are measured from. The render root's frame is (0, 0) in its own
-  tree. Every coordinate therefore carries a handle for its own node,
-  comments included; a handle that names only a tree cannot anchor, and the
-  render refuses such a coordinate outside its tree's frame.
+  unknown or from another tree, tree-sitter gives the point the coordinate's
+  offsets are measured from, through its handle:
+  - a stub carries its parent's handle and its child index, so its base is
+    the start of the handle's node;
+  - any other coordinate's handle names a node whose parent is its base: its
+    own node for a read root or an expanded stub, and its owner for a trivia
+    entry, whose parent is the trivia's parent too.
+  The render root's frame is (0, 0) in its own tree. A deep read's
+  descendants carry only their tree's handle; they are placed by their
+  root's frame, and the render refuses one outside it.
 - **Detached gaps** are classified from geometry by the same classifier
   entry, with the gap's two points in place of its bytes.
 
@@ -191,8 +195,8 @@ position.
   coordinates and leaf text and copies nothing else.
 - **Stamps removed:** `$sameLine` and `$tokensBetween` on trivia entries, and
   the self-contained `$text` copies.
-- **Handles:** a trivia entry and a deep-read leaf get a handle for their own
-  node instead of their tree's.
+- **Handles:** a trivia entry carries its owner's handle instead of its
+  tree's, when the owner has one.
 - **Trivia ownership:** `node_trivia` and `extras_run` (owner assignment),
   `TransportTrivia::render_trailing` (no held entries), and the node map's
   `innerGaps` with the `inner_gap_key` and `INNER_GAPS` rows it feeds (the
