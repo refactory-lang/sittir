@@ -240,7 +240,7 @@ One segment against one node, returning the child it lands on or `never`.
 Mirrors the dispatch in `applyPath`: a FIELD takes `0`, `-1`, `_`, its own
 `name:` and a literal of its content; ALIAS and the repeat/token wrappers take
 `0`, `-1`, `_` and a literal; a `(kind)` match is terminal and lands on the
-symbol itself.
+symbol itself. A `label:` segment on a non-field node is not a step (see `Walk`).
 
 ### `packages/codegen/src/grammar-shapes/path-type.ts::Segments`
 
@@ -254,16 +254,24 @@ Shared with `IsPreferencePath` (`dsl/primitives/preference-path.ts`), the way
 Steps every segment; `true` when all resolve. A union child (from `_`)
 distributes, so a member on which the rest fails drops out as `never` and the
 path holds if any member accepts it — the walker's skip-on-failure rule.
+`Minted` is the union of field labels that earlier maps in the same patch list
+introduced with `field(...)`. A `label:` segment that `Step` rejects on a node
+that is not a FIELD stays on the same node only when its label is in `Minted`:
+the earlier map wrapped that node in the field, and the fielded content is the
+node itself. A FIELD with a different name still rejects, and a label no earlier
+map minted rejects, in the first map as in any other.
 
 ### `packages/codegen/src/grammar-shapes/path-type.ts::IsPath`
 
 `true` when `applyPath` would accept path `P` on rule `N`, `false` when it
-would throw. What `PatchesCheck` consults per written key.
+would throw; `Minted` (default `never`) is the set of labels earlier maps in a
+patch list minted, threaded by `PatchesCheck`. What `PatchesCheck` consults per written key.
 
 ### `packages/codegen/src/grammar-shapes/path-type.ts::TransformPatchValue`
 
-A single patch value: a rule or literal, or a `field` / `alias` / `variant` /
-`arm.default` placeholder.
+A single patch value: a rule or literal (tree-sitter's or the grammar-json
+`GrammarRule` the typed authoring builders return), or a `field` / `alias` /
+`variant` / `arm.default` placeholder.
 
 ### `packages/codegen/src/grammar-shapes/path-type.ts::TransformPatchMap`
 
@@ -468,23 +476,56 @@ grammar hands `wire()`.
  */
 ```
 
-### `packages/codegen/src/grammar-shapes/grammar-shape.rust.ts::module`
+### `packages/codegen/src/grammar-shapes/grammar-shape.<grammar>.ts::module`
 
-```text
-/**
- * grammar-shape.rust.ts — GENERATED literal+tuple-preserving emit of the
- * RAW upstream tree-sitter-rust grammar.json.
- *
- * Emitted with `as const` so every STRING value stays a string LITERAL,
- * every rule name stays a literal key, and every JSON array becomes a
- * readonly TUPLE (positional indexing survives). A plain
- * `resolveJsonModule` import would widen all of these to
- * `string` / `T[]` and destroy the discriminants + tuple indices the
- * recursive deriver and path-key `Get` depend on.
- *
- * DO NOT hand-edit. Regenerate via grammar-shapes/emit-grammar-shape.mjs.
- *
- * Source (realpath, same pnpm-store entry as the production base import):
- *   node_modules/.pnpm/tree-sitter-rust@0.24.0_tree-sitter@0.22.4/node_modules/tree-sitter-rust/src/grammar.json
- */
-```
+Generated, one per registered grammar: the upstream `src/grammar.json` reduced
+to `{ name, rules, supertypeNames }` and emitted `as const satisfies
+GrammarJson`, so every STRING stays a literal, every rule name a literal key
+and every array a readonly tuple. A `resolveJsonModule` import would widen all
+three and destroy the discriminants and tuple indices the type-level deriver
+and `IsPath` depend on. `packages/<grammar>/base.ts` re-exports the upstream `grammar.js`, which
+tsconfig `paths` types as this shape (see `emitUpstreamDeclarationSource`). Never hand-edited: `emit-grammar-shape.ts` rewrites
+it and `grammar-shape-fresh.test.ts` fails when it is stale.
+
+### `packages/codegen/src/grammar-shapes/emit-grammar-shape.ts::BASE_ENTRY`
+
+The per-package file that names the upstream grammar (`base.ts`). It is the
+one place a grammar's upstream package is written down: `grammar.sittir.ts`
+imports the base from it, and the shape emitter reads its `import raw from
+'<upstream grammar.js>'` line to find the matching `src/grammar.json`, so a
+grammar's runtime base and its type-level shape cannot name different sources.
+`base.ts` is loaded by Node type stripping (through tree-sitter's grammar
+run), so it holds only erasable syntax.
+
+### `packages/codegen/src/grammar-shapes/emit-grammar-shape.ts::upstreamDeclarationFile`
+
+Where a grammar's declaration of its upstream module lives:
+`grammar-shapes/upstream/<specifier minus the tree-sitter- prefix and .js>.d.ts`.
+The specifier must be a `tree-sitter-<name>/…/grammar.js` package specifier so the
+one `tree-sitter-*` entry in the root tsconfig `paths` maps every grammar to its
+declaration; a base that names anything else fails at emit.
+
+### `packages/codegen/src/grammar-shapes/emit-grammar-shape.ts::emitUpstreamDeclarationSource`
+
+The declaration itself: the module's default export is the grammar's shape type.
+tree-sitter ships no `.d.ts`, and a `@ts-expect-error` on the import would hide
+every later import failure, so the untyped module is given its type at the
+boundary instead. Node ignores `paths` and loads the real `grammar.js`.
+
+### `packages/codegen/src/grammar-shapes/emit-grammar-shape.ts::grammarShapeFile`
+
+Path of a grammar's generated shape file, keyed by the registry name.
+
+### `packages/codegen/src/grammar-shapes/emit-grammar-shape.ts::upstreamGrammarJson`
+
+Resolves the upstream `src/grammar.json` beside the `grammar.js` that a
+package's `base.ts` imports, through the realpath so the pnpm-store entry that
+production loads is the one that is read.
+
+### `packages/codegen/src/grammar-shapes/emit-grammar-shape.ts::emitGrammarShapeSource`
+
+The shape file's text for one grammar, formatted with the repo's oxfmt config.
+Supertypes are emitted under `supertypeNames`: tree-sitter's ambient
+`Grammar.supertypes` is an authoring callback, so the same key would keep
+`GrammarJson` from matching its schema. Run the file directly to rewrite every
+grammar's shape.

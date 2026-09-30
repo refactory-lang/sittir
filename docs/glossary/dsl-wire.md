@@ -1541,6 +1541,20 @@ Wire never applies authored conflict sets: it hands `grammar()` no `conflicts`, 
 // assignable here (bivariant), so known keys retain their precise shape.
 ```
 
+### `packages/codegen/src/dsl/wire/wire.ts::WireConfig.extras`
+
+`WireConfig` replaces tree-sitter's one-parameter `extras` callback with
+`($, previous?)`: the runtime hands the base grammar's extras as `previous`, and
+`overriddenList` builds the result from it, so a grammar that spreads the base
+extras types cleanly.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireConfig.rules.previous`
+
+`previous` reaches a `rules` callback typed `any`, not as the base rule: the
+index-signature arm for new rule names is intersected with the per-base-rule
+arm, and the callback's contextual signature collapses to the `any` one. A
+callback that walks `previous` annotates the parameters it uses.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::WireConfig.factoryInline`
 
 ```text

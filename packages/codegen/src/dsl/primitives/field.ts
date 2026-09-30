@@ -49,9 +49,9 @@ function synthesizeKwSymbol(
 
 type Input = string | RegExp | Rule;
 
-export interface FieldPlaceholder {
+export interface FieldPlaceholder<N extends string = string> {
 	readonly __sittirPlaceholder: 'field';
-	readonly name: string;
+	readonly name: N;
 }
 
 export function isFieldPlaceholder(v: unknown): v is FieldPlaceholder {

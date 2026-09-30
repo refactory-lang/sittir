@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { type PatternNode, parseQuery, walk } from '../../src/inventory/query.ts';
+import { type PatternNode, bindingIssues, parseQuery, topLevelPatterns, walk } from '../../src/inventory/query.ts';
 import { compileBindings, deriveVocabulary, inventoryGrammars } from '../../src/inventory/index.ts';
 import { levelMembers } from '../../src/inventory/derive.ts';
 import { renderVocabularyFile, vocabularyFiles } from '../../src/inventory/emit.ts';
@@ -33,6 +33,19 @@ describe('parseQuery', () => {
 		expect(container?.children.some((c) => c.field === 'definition' && c.captures.includes('element'))).toBe(true);
 		expect(predicate?.kind).toBe('<group>');
 		expect(nodes(predicate).some((n) => n.predicates.some((p) => p[0] === '#eq?'))).toBe(true);
+	});
+});
+
+describe('bindingIssues', () => {
+	const text = ['; comment (nope)', '(module) @module', '(no_such_kind) @a', '(function_definition no_such_field: (identifier))', '(identifier) @identifier'].join('\n');
+	it('splits a bindings file into its top-level patterns with their lines', () => {
+		expect(topLevelPatterns(text).map((p) => p.line)).toEqual([2, 3, 4, 5]);
+	});
+	it('lists every unknown node and field, not just the first', async () => {
+		expect(await bindingIssues('python', text)).toEqual([
+			{ line: 3, message: 'unknown node no_such_kind' },
+			{ line: 4, message: 'unknown field no_such_field' }
+		]);
 	});
 });
 
