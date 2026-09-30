@@ -196,7 +196,9 @@ export function emitIs(config: EmitIsConfig): string {
 		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };`
 	);
 	for (const s of supertypes) {
-		lines.push(`    ${s.guardKey}(v: { readonly $type: string | number } | number): v is ${s.typeName};`);
+		lines.push(
+			`    ${s.guardKey}(v: { readonly $type: string | number } | number): v is ${s.typeName}.Bound | ${s.typeName}.Parsed;`
+		);
 	}
 	lines.push('}');
 	lines.push('');

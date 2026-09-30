@@ -7661,6 +7661,8 @@ Collision guard for the `$other` reclaim. Across a kind's reclaiming slots (`rec
  */
 ```
 
+A repeated slot's setter takes its values as rest arguments only when the slot's storage is verbatim, and as one array otherwise. That is the rule the factory's own `$with` follows (`slotSetter`), so a built node and a parsed node take the same call for the same slot.
+
 #### body
 
 ```text
@@ -8931,6 +8933,8 @@ All producers emit a numeric `$type`, so the emitted guards compare numeric
 `TSKindId` values only. The one exception is the legacy path taken when
 `generatedIdTables` is absent — unit-test callers that bypass the full codegen
 pipeline — which falls back to string equality.
+
+A supertype guard narrows to the supertype's `.Bound` and `.Parsed` unions and to no storage type: relating a `.Parsed` union to a storage member walks both interfaces past the checker's relation depth, while each `.Parsed` member is matched by identity against the `.Parsed` union.
 
 #### body
 
@@ -13161,6 +13165,22 @@ A mixed-enum slot resolves a bare string by keyword extraction first, then lexic
 	 *  exported alias so `engine.ts` can type `parse()`'s return without
 	 *  re-deriving the wrap table's row for it. */
 ```
+
+### `packages/codegen/src/emitters/wrap.ts::declaredParsedType`
+
+The declared return type of a kind's wrap: `T.<Kind>.Parsed` when the kind has a catalog entry (a kind id and a namespace), nothing when it has none. The wrap-return map keys on the same kind ids, so its rows are the declared returns and no wrap's type is inferred from its body.
+
+### `packages/codegen/src/emitters/wrap.ts::castToParsed`
+
+The one cast a wrap makes at each return: the object literal it builds carries the storage keys, the accessors and `$with`, and is not related to `T.<Kind>.Parsed` structurally. Relating them walks every accessor of both interfaces and exceeds the checker's relation depth on deep grammars, so the literal is cast through `unknown` once, at the return, and the declared `Parsed` is what callers see.
+
+### `packages/codegen/src/emitters/wrap.ts::returnAnnotation`
+
+The `: T.<Kind>.Parsed` annotation on a wrap's signature, or an empty string when the kind has no catalog entry. A transparent supertype wrap is annotated with the supertype's own `.Parsed` union, since it returns whichever member it dispatches to.
+
+### `packages/codegen/src/emitters/wrap.ts::ParsedOfData`
+
+The wrap header's type from a wrapped datum to its declared `Parsed` node: a datum whose `$type` is a kind id in the parsed-by-kind-id map becomes that map's row, anything else stays as it is. `drillIn` and `drillInAll` return through it, so an accessor's return type is the child's declared surface and never an inference through the tree's recursion.
 
 ### `packages/codegen/src/emitters/wrap.ts::renameUnusedTreeParam`
 

@@ -479,44 +479,58 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UseWildcardGroup };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	statement(v: { readonly $type: string | number } | number): v is Statement;
-	declarationStatement(v: { readonly $type: string | number } | number): v is DeclarationStatement;
-	macroDefinition(v: { readonly $type: string | number } | number): v is MacroDefinition;
-	tokenPattern(v: { readonly $type: string | number } | number): v is TokenPattern;
-	tokenTreePattern(v: { readonly $type: string | number } | number): v is TokenTreePattern;
-	tokens(v: { readonly $type: string | number } | number): v is Tokens;
-	tokenTree(v: { readonly $type: string | number } | number): v is TokenTree;
-	modItem(v: { readonly $type: string | number } | number): v is ModItem;
-	foreignModItem(v: { readonly $type: string | number } | number): v is ForeignModItem;
-	structItem(v: { readonly $type: string | number } | number): v is StructItem;
-	implItem(v: { readonly $type: string | number } | number): v is ImplItem;
-	useClause(v: { readonly $type: string | number } | number): v is UseClause;
-	type(v: { readonly $type: string | number } | number): v is Type;
-	pointerType(v: { readonly $type: string | number } | number): v is PointerType;
-	expressionExceptRange(v: { readonly $type: string | number } | number): v is ExpressionExceptRange;
-	expression(v: { readonly $type: string | number } | number): v is Expression;
-	expressionEndingWithBlock(v: { readonly $type: string | number } | number): v is ExpressionEndingWithBlock;
-	delimTokenTree(v: { readonly $type: string | number } | number): v is DelimTokenTree;
-	delimTokens(v: { readonly $type: string | number } | number): v is DelimTokens;
-	nonDelimToken(v: { readonly $type: string | number } | number): v is NonDelimToken;
-	referenceExpression(v: { readonly $type: string | number } | number): v is ReferenceExpression;
-	arrayExpression(v: { readonly $type: string | number } | number): v is ArrayExpression;
-	condition(v: { readonly $type: string | number } | number): v is Condition;
-	matchArm(v: { readonly $type: string | number } | number): v is MatchArm;
-	closureExpression(v: { readonly $type: string | number } | number): v is ClosureExpression;
-	pattern(v: { readonly $type: string | number } | number): v is Pattern;
-	fieldPattern(v: { readonly $type: string | number } | number): v is FieldPattern;
-	rangePattern(v: { readonly $type: string | number } | number): v is RangePattern;
-	orPattern(v: { readonly $type: string | number } | number): v is OrPattern;
-	literal(v: { readonly $type: string | number } | number): v is Literal;
-	literalPattern(v: { readonly $type: string | number } | number): v is LiteralPattern;
-	integerLiteral(v: { readonly $type: string | number } | number): v is IntegerLiteral;
-	charLiteral(v: { readonly $type: string | number } | number): v is CharLiteral;
-	escapeSequence(v: { readonly $type: string | number } | number): v is EscapeSequence;
-	comment(v: { readonly $type: string | number } | number): v is Comment;
-	path(v: { readonly $type: string | number } | number): v is Path;
-	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
-	charLiteralEscaped(v: { readonly $type: string | number } | number): v is CharLiteralEscaped;
+	statement(v: { readonly $type: string | number } | number): v is Statement.Bound | Statement.Parsed;
+	declarationStatement(
+		v: { readonly $type: string | number } | number
+	): v is DeclarationStatement.Bound | DeclarationStatement.Parsed;
+	macroDefinition(v: { readonly $type: string | number } | number): v is MacroDefinition.Bound | MacroDefinition.Parsed;
+	tokenPattern(v: { readonly $type: string | number } | number): v is TokenPattern.Bound | TokenPattern.Parsed;
+	tokenTreePattern(
+		v: { readonly $type: string | number } | number
+	): v is TokenTreePattern.Bound | TokenTreePattern.Parsed;
+	tokens(v: { readonly $type: string | number } | number): v is Tokens.Bound | Tokens.Parsed;
+	tokenTree(v: { readonly $type: string | number } | number): v is TokenTree.Bound | TokenTree.Parsed;
+	modItem(v: { readonly $type: string | number } | number): v is ModItem.Bound | ModItem.Parsed;
+	foreignModItem(v: { readonly $type: string | number } | number): v is ForeignModItem.Bound | ForeignModItem.Parsed;
+	structItem(v: { readonly $type: string | number } | number): v is StructItem.Bound | StructItem.Parsed;
+	implItem(v: { readonly $type: string | number } | number): v is ImplItem.Bound | ImplItem.Parsed;
+	useClause(v: { readonly $type: string | number } | number): v is UseClause.Bound | UseClause.Parsed;
+	type(v: { readonly $type: string | number } | number): v is Type.Bound | Type.Parsed;
+	pointerType(v: { readonly $type: string | number } | number): v is PointerType.Bound | PointerType.Parsed;
+	expressionExceptRange(
+		v: { readonly $type: string | number } | number
+	): v is ExpressionExceptRange.Bound | ExpressionExceptRange.Parsed;
+	expression(v: { readonly $type: string | number } | number): v is Expression.Bound | Expression.Parsed;
+	expressionEndingWithBlock(
+		v: { readonly $type: string | number } | number
+	): v is ExpressionEndingWithBlock.Bound | ExpressionEndingWithBlock.Parsed;
+	delimTokenTree(v: { readonly $type: string | number } | number): v is DelimTokenTree.Bound | DelimTokenTree.Parsed;
+	delimTokens(v: { readonly $type: string | number } | number): v is DelimTokens.Bound | DelimTokens.Parsed;
+	nonDelimToken(v: { readonly $type: string | number } | number): v is NonDelimToken.Bound | NonDelimToken.Parsed;
+	referenceExpression(
+		v: { readonly $type: string | number } | number
+	): v is ReferenceExpression.Bound | ReferenceExpression.Parsed;
+	arrayExpression(v: { readonly $type: string | number } | number): v is ArrayExpression.Bound | ArrayExpression.Parsed;
+	condition(v: { readonly $type: string | number } | number): v is Condition.Bound | Condition.Parsed;
+	matchArm(v: { readonly $type: string | number } | number): v is MatchArm.Bound | MatchArm.Parsed;
+	closureExpression(
+		v: { readonly $type: string | number } | number
+	): v is ClosureExpression.Bound | ClosureExpression.Parsed;
+	pattern(v: { readonly $type: string | number } | number): v is Pattern.Bound | Pattern.Parsed;
+	fieldPattern(v: { readonly $type: string | number } | number): v is FieldPattern.Bound | FieldPattern.Parsed;
+	rangePattern(v: { readonly $type: string | number } | number): v is RangePattern.Bound | RangePattern.Parsed;
+	orPattern(v: { readonly $type: string | number } | number): v is OrPattern.Bound | OrPattern.Parsed;
+	literal(v: { readonly $type: string | number } | number): v is Literal.Bound | Literal.Parsed;
+	literalPattern(v: { readonly $type: string | number } | number): v is LiteralPattern.Bound | LiteralPattern.Parsed;
+	integerLiteral(v: { readonly $type: string | number } | number): v is IntegerLiteral.Bound | IntegerLiteral.Parsed;
+	charLiteral(v: { readonly $type: string | number } | number): v is CharLiteral.Bound | CharLiteral.Parsed;
+	escapeSequence(v: { readonly $type: string | number } | number): v is EscapeSequence.Bound | EscapeSequence.Parsed;
+	comment(v: { readonly $type: string | number } | number): v is Comment.Bound | Comment.Parsed;
+	path(v: { readonly $type: string | number } | number): v is Path.Bound | Path.Parsed;
+	whitespace(v: { readonly $type: string | number } | number): v is Whitespace.Bound | Whitespace.Parsed;
+	charLiteralEscaped(
+		v: { readonly $type: string | number } | number
+	): v is CharLiteralEscaped.Bound | CharLiteralEscaped.Parsed;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.

@@ -1,0 +1,37 @@
+/**
+ * Type-level pins for a parsed tree: a statement read from a parse and
+ * narrowed by its guard has the tree-bound surface (children are `.Parsed`,
+ * `$with` and the node methods exist), and a replaced slot reads as `.Bound`.
+ *
+ * Compile-time only: `pnpm --filter @sittir/rust type-check`.
+ */
+
+import type * as T from '../src/types.ts';
+import rust from '../src/index.ts';
+import { createEngine } from '@sittir/common';
+
+type Equals<A, B> = (<X>() => X extends A ? 1 : 2) extends <X>() => X extends B ? 1 : 2 ? true : false;
+function expectTrue<_T extends true>(): void {}
+
+const rs = await createEngine(rust);
+
+export function parsedSurface(): string {
+	const item = rs.parse('fn f() {}\n').statements()[0]!;
+	if (!rs.is.functionItem(item)) return '';
+	expectTrue<Equals<typeof item, T.FunctionItem.Parsed>>();
+	expectTrue<Equals<ReturnType<typeof item.parameters>, T.Parameters.Parsed>>();
+	const edited = item.$with.parameters(rs.build.parameters());
+	expectTrue<Equals<ReturnType<typeof edited.parameters>, T.Parameters.Bound>>();
+	expectTrue<Equals<ReturnType<typeof edited.body>, T.Block.Parsed>>();
+	return edited.$render();
+}
+
+export function supertypeGuardKeepsParsed(): string {
+	for (const stmt of rs.parse('struct S;\n').statements()) {
+		if (rs.is.functionItem(stmt)) continue;
+		if (!rs.is.structItem(stmt)) continue;
+		expectTrue<Equals<typeof stmt, T.StructItem.Parsed>>();
+		return stmt.$render();
+	}
+	return '';
+}

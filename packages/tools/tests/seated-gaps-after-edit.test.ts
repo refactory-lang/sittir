@@ -19,11 +19,11 @@ const cases: readonly Case[] = [
 			const root = rust.parse('use x;\n\nfn f() {}\n');
 			const [use, fn] = root.statements();
 			const built = rust.build.functionItem({ name: 'g', parameters: rust.build.parameters(), body: rust.build.block() });
-			let items: Parameters<typeof root.$with.statements>;
+			let items: (typeof built | NonNullable<typeof fn>)[];
 			if (order === 'reversed') items = [fn!, use!];
-			else if (order === 'parsed-built') items = [use!, built as never];
-			else items = [built as never, use!];
-			return root.$with.statements(...items).$render();
+			else if (order === 'parsed-built') items = [use!, built];
+			else items = [built, use!];
+			return root.$with.statements(items).$render();
 		},
 		expected: { reversed: 'fn f() {}\n\nuse x;', 'parsed-built': 'use x;\n\nfn g() {}', 'built-parsed': 'fn g() {}\n\nuse x;' }
 	},
@@ -37,11 +37,11 @@ const cases: readonly Case[] = [
 				parameters: typescript.build.formalParameters(),
 				body: typescript.build.statementBlock()
 			});
-			let items: Parameters<typeof root.$with.statements>;
+			let items: (typeof built | NonNullable<typeof fn>)[];
 			if (order === 'reversed') items = [fn!, imp!];
-			else if (order === 'parsed-built') items = [imp!, built as never];
-			else items = [built as never, imp!];
-			return root.$with.statements(...items).$render();
+			else if (order === 'parsed-built') items = [imp!, built];
+			else items = [built, imp!];
+			return root.$with.statements(items).$render();
 		},
 		expected: {
 			reversed: 'function f() {}\n\nimport x from "x";',
@@ -61,8 +61,8 @@ const cases: readonly Case[] = [
 			});
 			let items: Parameters<typeof root.$with.statements>;
 			if (order === 'reversed') items = [fn!, imp!];
-			else if (order === 'parsed-built') items = [imp!, built as never];
-			else items = [built as never, imp!];
+			else if (order === 'parsed-built') items = [imp!, built];
+			else items = [built, imp!];
 			return root.$with.statements(...items).$render();
 		},
 		expected: {
@@ -99,13 +99,13 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 
 	it('keeps the source gap when the items keep their source order', () => {
 		const root = rust.parse('use x;\nuse y;\n');
-		expect(root.$with.statements(...root.statements()).$render()).toBe('use x;\nuse y;');
+		expect(root.$with.statements(root.statements()).$render()).toBe('use x;\nuse y;');
 	});
 
 	it('takes the seat when a removed item sat between two kept ones', () => {
 		const root = rust.parse('use x;\nfn f() {}\nuse y;\n');
 		const [x, , y] = root.statements();
-		expect(root.$with.statements(x!, y!).$render()).toBe('use x;\n\nuse y;');
+		expect(root.$with.statements([x!, y!]).$render()).toBe('use x;\n\nuse y;');
 	});
 
 	it('python: takes the seat when a removed statement sat between two kept ones', () => {

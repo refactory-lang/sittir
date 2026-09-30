@@ -59,10 +59,12 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TermGroup };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	classAtom(v: { readonly $type: string | number } | number): v is ClassAtom;
-	inlineFlagsGroup(v: { readonly $type: string | number } | number): v is InlineFlagsGroup;
-	characterEscape(v: { readonly $type: string | number } | number): v is CharacterEscape;
-	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
+	classAtom(v: { readonly $type: string | number } | number): v is ClassAtom.Bound | ClassAtom.Parsed;
+	inlineFlagsGroup(
+		v: { readonly $type: string | number } | number
+	): v is InlineFlagsGroup.Bound | InlineFlagsGroup.Parsed;
+	characterEscape(v: { readonly $type: string | number } | number): v is CharacterEscape.Bound | CharacterEscape.Parsed;
+	whitespace(v: { readonly $type: string | number } | number): v is Whitespace.Bound | Whitespace.Parsed;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.

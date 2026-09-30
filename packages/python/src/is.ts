@@ -399,29 +399,41 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseBare };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	statement(v: { readonly $type: string | number } | number): v is Statement;
-	simpleStatement(v: { readonly $type: string | number } | number): v is SimpleStatement;
-	namedExpressionLhs(v: { readonly $type: string | number } | number): v is NamedExpressionLhs;
-	expressions(v: { readonly $type: string | number } | number): v is Expressions;
-	compoundStatement(v: { readonly $type: string | number } | number): v is CompoundStatement;
-	withClause(v: { readonly $type: string | number } | number): v is WithClause;
-	suite(v: { readonly $type: string | number } | number): v is Suite;
-	parameter(v: { readonly $type: string | number } | number): v is Parameter;
-	pattern(v: { readonly $type: string | number } | number): v is Pattern;
-	expressionWithinForInClause(v: { readonly $type: string | number } | number): v is ExpressionWithinForInClause;
-	expression(v: { readonly $type: string | number } | number): v is Expression;
-	primaryExpression(v: { readonly $type: string | number } | number): v is PrimaryExpression;
-	assignment(v: { readonly $type: string | number } | number): v is Assignment;
-	leftHandSide(v: { readonly $type: string | number } | number): v is LeftHandSide;
-	rightHandSide(v: { readonly $type: string | number } | number): v is RightHandSide;
-	fExpression(v: { readonly $type: string | number } | number): v is FExpression;
-	escapeSequence(v: { readonly $type: string | number } | number): v is EscapeSequence;
-	integer(v: { readonly $type: string | number } | number): v is Integer;
-	float(v: { readonly $type: string | number } | number): v is Float;
-	keywordIdentifier(v: { readonly $type: string | number } | number): v is KeywordIdentifier;
-	lineContinuation(v: { readonly $type: string | number } | number): v is LineContinuation;
-	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
-	integerDecimal(v: { readonly $type: string | number } | number): v is IntegerDecimal;
+	statement(v: { readonly $type: string | number } | number): v is Statement.Bound | Statement.Parsed;
+	simpleStatement(v: { readonly $type: string | number } | number): v is SimpleStatement.Bound | SimpleStatement.Parsed;
+	namedExpressionLhs(
+		v: { readonly $type: string | number } | number
+	): v is NamedExpressionLhs.Bound | NamedExpressionLhs.Parsed;
+	expressions(v: { readonly $type: string | number } | number): v is Expressions.Bound | Expressions.Parsed;
+	compoundStatement(
+		v: { readonly $type: string | number } | number
+	): v is CompoundStatement.Bound | CompoundStatement.Parsed;
+	withClause(v: { readonly $type: string | number } | number): v is WithClause.Bound | WithClause.Parsed;
+	suite(v: { readonly $type: string | number } | number): v is Suite.Bound | Suite.Parsed;
+	parameter(v: { readonly $type: string | number } | number): v is Parameter.Bound | Parameter.Parsed;
+	pattern(v: { readonly $type: string | number } | number): v is Pattern.Bound | Pattern.Parsed;
+	expressionWithinForInClause(
+		v: { readonly $type: string | number } | number
+	): v is ExpressionWithinForInClause.Bound | ExpressionWithinForInClause.Parsed;
+	expression(v: { readonly $type: string | number } | number): v is Expression.Bound | Expression.Parsed;
+	primaryExpression(
+		v: { readonly $type: string | number } | number
+	): v is PrimaryExpression.Bound | PrimaryExpression.Parsed;
+	assignment(v: { readonly $type: string | number } | number): v is Assignment.Bound | Assignment.Parsed;
+	leftHandSide(v: { readonly $type: string | number } | number): v is LeftHandSide.Bound | LeftHandSide.Parsed;
+	rightHandSide(v: { readonly $type: string | number } | number): v is RightHandSide.Bound | RightHandSide.Parsed;
+	fExpression(v: { readonly $type: string | number } | number): v is FExpression.Bound | FExpression.Parsed;
+	escapeSequence(v: { readonly $type: string | number } | number): v is EscapeSequence.Bound | EscapeSequence.Parsed;
+	integer(v: { readonly $type: string | number } | number): v is Integer.Bound | Integer.Parsed;
+	float(v: { readonly $type: string | number } | number): v is Float.Bound | Float.Parsed;
+	keywordIdentifier(
+		v: { readonly $type: string | number } | number
+	): v is KeywordIdentifier.Bound | KeywordIdentifier.Parsed;
+	lineContinuation(
+		v: { readonly $type: string | number } | number
+	): v is LineContinuation.Bound | LineContinuation.Parsed;
+	whitespace(v: { readonly $type: string | number } | number): v is Whitespace.Bound | Whitespace.Parsed;
+	integerDecimal(v: { readonly $type: string | number } | number): v is IntegerDecimal.Bound | IntegerDecimal.Parsed;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.

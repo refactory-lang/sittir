@@ -65,13 +65,15 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeExpressionArm };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	definition(v: { readonly $type: string | number } | number): v is Definition;
-	groupExpression(v: { readonly $type: string | number } | number): v is GroupExpression;
-	namedNodeExpression(v: { readonly $type: string | number } | number): v is NamedNodeExpression;
-	nodeIdentifier(v: { readonly $type: string | number } | number): v is NodeIdentifier;
-	namedNode(v: { readonly $type: string | number } | number): v is NamedNode;
-	namedNodeGroup(v: { readonly $type: string | number } | number): v is NamedNodeGroup;
-	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
+	definition(v: { readonly $type: string | number } | number): v is Definition.Bound | Definition.Parsed;
+	groupExpression(v: { readonly $type: string | number } | number): v is GroupExpression.Bound | GroupExpression.Parsed;
+	namedNodeExpression(
+		v: { readonly $type: string | number } | number
+	): v is NamedNodeExpression.Bound | NamedNodeExpression.Parsed;
+	nodeIdentifier(v: { readonly $type: string | number } | number): v is NodeIdentifier.Bound | NodeIdentifier.Parsed;
+	namedNode(v: { readonly $type: string | number } | number): v is NamedNode.Bound | NamedNode.Parsed;
+	namedNodeGroup(v: { readonly $type: string | number } | number): v is NamedNodeGroup.Bound | NamedNodeGroup.Parsed;
+	whitespace(v: { readonly $type: string | number } | number): v is Whitespace.Bound | Whitespace.Parsed;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.

@@ -38,7 +38,14 @@ import {
 	slotSeparatorTexts,
 	pruneUnusedImports
 } from './shared.ts';
-import { fieldElementType, childElementType, childrenSetterRestType, declaredSeparatorDefault, listOwnerRuntimeSpec } from './factories.ts';
+import {
+	builtTypeSurfaceOf,
+	childElementType,
+	childrenSetterRestType,
+	declaredSeparatorDefault,
+	fieldElementType,
+	listOwnerRuntimeSpec
+} from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
 import {
 	collectKindEntries,
@@ -72,8 +79,25 @@ function collectTypeImports(_nodeMap: NodeMap): Set<string> {
 	return new Set<string>();
 }
 
+function declaredParsedType(
+	node: { readonly kind: string; readonly typeName: string },
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | undefined {
+	return kindEntries !== undefined && findKindEntry(kindEntries, node.kind) !== undefined
+		? `T.${node.typeName}.Parsed`
+		: undefined;
+}
+
+function castToParsed(expression: string, parsedType: string | undefined): string {
+	return parsedType === undefined ? expression : `${expression} as unknown as ${parsedType}`;
+}
+
+function returnAnnotation(parsedType: string | undefined): string {
+	return parsedType === undefined ? '' : `: ${parsedType}`;
+}
+
 function renameUnusedTreeParam(source: string): string {
-	const header = source.match(/^export function wrap\w+\(data: .*, tree: TreeHandle\) \{$/m)?.[0];
+	const header = source.match(/^export function wrap\w+\(data: .*, tree: TreeHandle\)(?:: [^\n{]+)? \{$/m)?.[0];
 	if (header === undefined) return source;
 	if (/\btree\b/.test(source.replace(header, ''))) return source;
 	return source.replace(header, header.replace(', tree: TreeHandle)', ', _tree: TreeHandle)'));
@@ -292,6 +316,8 @@ function resolveSlotAccessorBody(slot: SlotModel, valueType: string): string {
 
 function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	const fn = `wrap${node.typeName}`;
+	const parsed = `T.${node.typeName}.Parsed`;
+	const cast = (expression: string): string => `${expression} as unknown as ${parsed}`;
 	const reachable = [
 		...node.subtypeNames,
 		...(node.transitiveParseKinds ?? []).filter(isNodeRef).map((ref) => storageKindOfRef(ref.node))
@@ -300,16 +326,16 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	const paramType = buildWrapParamType(node.typeName, `T.${node.typeName} | readonly T.${node.typeName}[]`);
 	const subtypeRefs = node.subtypes.filter(isNodeRef);
 	if (subtypeRefs.length > 0 && subtypeRefs.every((ref) => ref.node instanceof AssembledPunctuation || ref.node instanceof AssembledKeyword)) {
-		return [`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`, '  return data;', '}'].join('\n');
+		return [`export function ${fn}(data: ${paramType}, tree: TreeHandle): ${parsed} {`, `  return ${cast('data')};`, '}'].join('\n');
 	}
 	return [
-		`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`,
-		`  if (typeof data === 'number') return data;`,
+		`export function ${fn}(data: ${paramType}, tree: TreeHandle): ${parsed} {`,
+		`  if (typeof data === 'number') return ${cast('data')};`,
 		`  const node = _keepModelledSlots(data, ${JSON.stringify(allowedKinds.map((k) => `_${k}`))});`,
 		`  const kindKeyed = _firstKindKeyedWrapChild(node, ${JSON.stringify(allowedKinds)}) as T.${node.typeName} | readonly T.${node.typeName}[] | undefined;`,
 		`  const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ${JSON.stringify(allowedKinds)});`,
 		`  if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)) {`,
-		`    return drillInSelf<T.${node.typeName}>(node as T.${node.typeName}, tree);`,
+		`    return ${cast(`drillInSelf<T.${node.typeName}>(node as T.${node.typeName}, tree)`)};`,
 		`  }`,
 		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(filtered, "children", true, node.$type, { tree, nodeType: node.$type, slotName: "children", span: (node as _NodeData).$span }), tree);`,
 		`}`
@@ -343,11 +369,12 @@ function emitSeparatedListWrap(
 	const canonical = canonicalSeparatedListField(node);
 	const canonicalKeys = new Set(node.slots.map((f) => f.storageKey));
 	const paramType = buildSeparatedListWrapParamType(node.typeName);
-	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
+	const parsedType = declaredParsedType(node, kindEntries);
+	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle)${returnAnnotation(parsedType)} {`);
 	lines.push(`  data = _keepModelledSlots(data, ${JSON.stringify([...canonicalKeys])});`);
 	if (wrapsAnonLiteralContent(node.slots, nodeMap)) {
 		lines.push(
-			`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} });`
+			`  if (_isReadTextLeaf(data)) return ${castToParsed(`withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} })`, parsedType)};`
 		);
 	}
 
@@ -412,7 +439,7 @@ function emitSeparatedListWrap(
 		lines.push(`    ${canonical.propertyName}() { ${accessorBody}; },`);
 	}
 	lines.push('    $with: {},');
-	lines.push('  });');
+	lines.push(`  })${parsedType === undefined ? '' : ` as unknown as ${parsedType}`};`);
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -554,14 +581,15 @@ function emitFieldCarryingWrap(
 	const needsOther = children.length > 0;
 	const paramType = buildWrapParamType(node.typeName, needsOther ? "_NodeData['$other']" : undefined);
 	const interior = interiorOf(nodeMap.nodes.get(node.kind)!);
-	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
+	const parsedType = declaredParsedType(node, kindEntries);
+	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle)${returnAnnotation(parsedType)} {`);
 	lines.push(`  data = _keepModelledSlots(data, ${JSON.stringify([...new Set(slots.map((f) => f.storageKey))])});`);
 	if (interior !== undefined) {
 		lines.push(`  data = _projectLexed(data, TOKEN_INTERIORS[${JSON.stringify(node.kind)}], ${JSON.stringify(node.kind)});`);
 	}
 	if (wrapsAnonLiteralContent(slots, nodeMap)) {
 		lines.push(
-			`  if (_isReadTextLeaf(data)) return withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} });`
+			`  if (_isReadTextLeaf(data)) return ${castToParsed(`withMethods({ ...data${wrapTextLeafTypeStamp(node, kindEntries)} })`, parsedType)};`
 		);
 	}
 
@@ -606,9 +634,10 @@ function emitFieldCarryingWrap(
 
 	emitInlineWithProperty(lines, node, slots, children, nodeMap, kindEntries);
 
-	lines.push(ownerSpec === undefined ? '  });' : `  }, ${ownerSpec}));`);
+	const closing = ownerSpec === undefined ? '  })' : `  }, ${ownerSpec}))`;
+	lines.push(hasWithSetters ? `${closing};` : `${closing}${parsedType === undefined ? '' : ` as unknown as ${parsedType}`};`);
 	if (hasWithSetters) {
-		lines.push('  return _node;');
+		lines.push(`  return ${castToParsed('_node', parsedType)};`);
 	}
 	lines.push('}');
 	return lines.join('\n');
@@ -647,11 +676,13 @@ function emitInlineWithProperty(
 		return;
 	}
 
+	const restSlots = new Set(
+		(builtTypeSurfaceOf(nodeMap.nodes.get(node.kind)!, nodeMap, kindEntries)?.setters ?? []).filter((setter) => setter.rest).map((setter) => setter.name)
+	);
 	lines.push('    $with: {');
 	for (const f of slots) {
 		const method = f.propertyName;
-		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-		if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
+		if (isMultiple(f) && restSlots.has(method)) {
 			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>[number]`;
 			const setterRestElement = setterValueType.includes(' | ') ? `(${setterValueType})` : setterValueType;
 			const restType = isNonEmpty(f) ? `NonEmptyArray<${setterValueType}>` : `${setterRestElement}[]`;
@@ -993,13 +1024,22 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'// read already expanded carries no coordinates to re-read by (and',
 			'// re-reading would replace the expansion with a shallow one), so the',
 			'// wrap layer adds its methods in place instead.',
-			'function drillIn<T>(entry: T, tree: TreeHandle): T {',
+			...(this.#kindEntries
+				? [
+						'type ParsedOfData<D> = D extends { readonly $type: infer Id }',
+						'  ? Id extends keyof T.ParsedByKindId',
+						'    ? T.ParsedByKindId[Id]',
+						'    : D',
+						'  : D;'
+					]
+				: ['type ParsedOfData<D> = D;']),
+			'function drillIn<T>(entry: T, tree: TreeHandle): ParsedOfData<T> {',
 			'  const resolved = drillInSelf(entry, tree);',
 			'  const e = resolved as unknown as _NodeData;',
-			'  if (resolved === entry && typeof e?.$type === "number") return wrapNode(e, tree) as unknown as T;',
-			'  return resolved;',
+			'  if (resolved === entry && typeof e?.$type === "number") return wrapNode(e, tree) as unknown as ParsedOfData<T>;',
+			'  return resolved as unknown as ParsedOfData<T>;',
 			'}',
-			'function drillInAll<T>(entries: readonly T[] | undefined, tree: TreeHandle): T[] {',
+			'function drillInAll<T>(entries: readonly T[] | undefined, tree: TreeHandle): ParsedOfData<T>[] {',
 			'  if (!entries) return [];',
 			'  const arr = Array.isArray(entries) ? entries : [entries];',
 			'  return arr.map(e => drillIn(e, tree));',
@@ -1450,7 +1490,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('');
 
 		lines.push("function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData['$_trivia'] {");
-		lines.push('  return trivia && mapTriviaEntries(trivia, (entries) => drillInAll(entries, tree));');
+		lines.push('  return trivia && mapTriviaEntries(trivia, (entries) => drillInAll(entries, tree) as unknown as typeof entries);');
 		lines.push('}');
 		lines.push('');
 

@@ -32,6 +32,11 @@ describe('a list owner', () => {
 		expect([...ps]).toHaveLength(1);
 		expect(ps.delimiter).toBe(Delimiter.Trailing);
 	});
+	it('carries only the options its list factory takes', () => {
+		const ps = fnOf('fn f(a: u8) {}\n').parameters();
+		expect('delimiter' in ps).toBe(true);
+		expect('separator' in ps).toBe(false);
+	});
 	it('spreads and serialises as before: the list-owner members are not enumerable', () => {
 		const ps = fnOf('fn f(a: u8) {}\n').parameters();
 		expect(Object.keys(ps)).not.toContain('length');

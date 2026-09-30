@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "f99937bf8c81e5c202804d529fd5f722e1d1fd98e59a32fcda566d616c63d6d2",
+  "source_hash": "02110d4785440cff992d5c52dd2b588fd696df46a41c941c36b475a44030a7cb",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "363a71690231d7c003c02c0661e859cee9dc7b4cd53998c94289b623da4d11a8",
     "packages/python/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -30,13 +30,13 @@
     "packages/python/src/hash.ts": "925d215caa2c96768dede83a8d06c2856cef4f1c00d3ac59086cde5436cb4a0f",
     "packages/python/src/index.ts": "17ed93b68e62dd5152140ce3455adeea2d5715c750b8d793a29cd870c85d801a",
     "packages/python/src/ir.ts": "7acac043d5706c6130e9192661b871414417eb2cb70f26c6b4ae963c5ca0b349",
-    "packages/python/src/is.ts": "c3cb69608f6455ba20a1d9506464a1a4508314cd9ee1029bfb87862955c335b1",
+    "packages/python/src/is.ts": "5f057a82df4bbf64a7453dd7e735a598185da94c9d3caa5164e68abe73b13609",
     "packages/python/src/node-model.json5": "59bcc36484d7515504418e3c0000f78930ee73935a9513e980515bd5a772c2f6",
     "packages/python/src/options.ts": "623cd2eb223bbf9c1cedbf47776494114ffe42251498ade12fdeb9e3a0b3b354",
     "packages/python/src/render-engine.ts": "2403508cd23589ff86caf55ccf1e329d35592077cc690ec3e8006bd67bdac05d",
     "packages/python/src/types.ts": "86f737973b36f9ca420b9ffc51766b805b7e74fdf577733fef37a02b5ee10273",
     "packages/python/src/utils.ts": "0439a7b6c500a6bce1c24b76f55d028acaa59341949338b9497ea866974be536",
-    "packages/python/src/wrap.ts": "23a5bf1c5dfd579f5a37ad55cd760706ee9ffb67c637052523fd821543a4e7e4",
+    "packages/python/src/wrap.ts": "d2479e77fb332dd0045a50640be36b5641375a3fb9871f5e502e9584b612be1b",
     "rust/crates/sittir-python/index.d.ts": "711bed8103db26b0a80c94fd28e6e92179d3230d2b6de3d68d2983a5a924cf29",
     "rust/crates/sittir-python/index.js": "5e33261f669652249b6a82047b8c48b87e7c9f1265e772b799933c2bc5b0b3ec",
     "rust/crates/sittir-python/src/lib.rs": "b88555fd1668553b8fbd214c25d1c7764d48184f1d46ecd43fbabd82a150b0af",

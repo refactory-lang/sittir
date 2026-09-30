@@ -518,37 +518,55 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementEqualsExport };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	exportStatement(v: { readonly $type: string | number } | number): v is ExportStatement;
-	moduleExportName(v: { readonly $type: string | number } | number): v is ModuleExportName;
-	declaration(v: { readonly $type: string | number } | number): v is Declaration;
-	importSpecifier(v: { readonly $type: string | number } | number): v is ImportSpecifier;
-	statement(v: { readonly $type: string | number } | number): v is Statement;
-	variableDeclarator(v: { readonly $type: string | number } | number): v is VariableDeclarator;
-	forHeader(v: { readonly $type: string | number } | number): v is ForHeader;
-	parenthesizedExpression(v: { readonly $type: string | number } | number): v is ParenthesizedExpression;
-	expressions(v: { readonly $type: string | number } | number): v is Expressions;
-	expression(v: { readonly $type: string | number } | number): v is Expression;
-	primaryExpression(v: { readonly $type: string | number } | number): v is PrimaryExpression;
-	formalParameter(v: { readonly $type: string | number } | number): v is FormalParameter;
-	callExpression(v: { readonly $type: string | number } | number): v is CallExpression;
-	augmentedAssignmentLhs(v: { readonly $type: string | number } | number): v is AugmentedAssignmentLhs;
-	destructuringPattern(v: { readonly $type: string | number } | number): v is DestructuringPattern;
-	updateExpression(v: { readonly $type: string | number } | number): v is UpdateExpression;
-	string(v: { readonly $type: string | number } | number): v is String;
-	comment(v: { readonly $type: string | number } | number): v is Comment;
-	number(v: { readonly $type: string | number } | number): v is Number;
-	identifier(v: { readonly $type: string | number } | number): v is _Identifier;
-	metaProperty(v: { readonly $type: string | number } | number): v is MetaProperty;
-	pattern(v: { readonly $type: string | number } | number): v is Pattern;
-	propertyName(v: { readonly $type: string | number } | number): v is PropertyName;
-	importIdentifier(v: { readonly $type: string | number } | number): v is ImportIdentifier;
-	type(v: { readonly $type: string | number } | number): v is Type;
-	tupleTypeMember(v: { readonly $type: string | number } | number): v is TupleTypeMember;
-	primaryType(v: { readonly $type: string | number } | number): v is PrimaryType;
-	indexSignature(v: { readonly $type: string | number } | number): v is IndexSignature;
-	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
-	exportStatementDefault(v: { readonly $type: string | number } | number): v is ExportStatementDefault;
-	numberBigint(v: { readonly $type: string | number } | number): v is NumberBigint;
+	exportStatement(v: { readonly $type: string | number } | number): v is ExportStatement.Bound | ExportStatement.Parsed;
+	moduleExportName(
+		v: { readonly $type: string | number } | number
+	): v is ModuleExportName.Bound | ModuleExportName.Parsed;
+	declaration(v: { readonly $type: string | number } | number): v is Declaration.Bound | Declaration.Parsed;
+	importSpecifier(v: { readonly $type: string | number } | number): v is ImportSpecifier.Bound | ImportSpecifier.Parsed;
+	statement(v: { readonly $type: string | number } | number): v is Statement.Bound | Statement.Parsed;
+	variableDeclarator(
+		v: { readonly $type: string | number } | number
+	): v is VariableDeclarator.Bound | VariableDeclarator.Parsed;
+	forHeader(v: { readonly $type: string | number } | number): v is ForHeader.Bound | ForHeader.Parsed;
+	parenthesizedExpression(
+		v: { readonly $type: string | number } | number
+	): v is ParenthesizedExpression.Bound | ParenthesizedExpression.Parsed;
+	expressions(v: { readonly $type: string | number } | number): v is Expressions.Bound | Expressions.Parsed;
+	expression(v: { readonly $type: string | number } | number): v is Expression.Bound | Expression.Parsed;
+	primaryExpression(
+		v: { readonly $type: string | number } | number
+	): v is PrimaryExpression.Bound | PrimaryExpression.Parsed;
+	formalParameter(v: { readonly $type: string | number } | number): v is FormalParameter.Bound | FormalParameter.Parsed;
+	callExpression(v: { readonly $type: string | number } | number): v is CallExpression.Bound | CallExpression.Parsed;
+	augmentedAssignmentLhs(
+		v: { readonly $type: string | number } | number
+	): v is AugmentedAssignmentLhs.Bound | AugmentedAssignmentLhs.Parsed;
+	destructuringPattern(
+		v: { readonly $type: string | number } | number
+	): v is DestructuringPattern.Bound | DestructuringPattern.Parsed;
+	updateExpression(
+		v: { readonly $type: string | number } | number
+	): v is UpdateExpression.Bound | UpdateExpression.Parsed;
+	string(v: { readonly $type: string | number } | number): v is String.Bound | String.Parsed;
+	comment(v: { readonly $type: string | number } | number): v is Comment.Bound | Comment.Parsed;
+	number(v: { readonly $type: string | number } | number): v is Number.Bound | Number.Parsed;
+	identifier(v: { readonly $type: string | number } | number): v is _Identifier.Bound | _Identifier.Parsed;
+	metaProperty(v: { readonly $type: string | number } | number): v is MetaProperty.Bound | MetaProperty.Parsed;
+	pattern(v: { readonly $type: string | number } | number): v is Pattern.Bound | Pattern.Parsed;
+	propertyName(v: { readonly $type: string | number } | number): v is PropertyName.Bound | PropertyName.Parsed;
+	importIdentifier(
+		v: { readonly $type: string | number } | number
+	): v is ImportIdentifier.Bound | ImportIdentifier.Parsed;
+	type(v: { readonly $type: string | number } | number): v is Type.Bound | Type.Parsed;
+	tupleTypeMember(v: { readonly $type: string | number } | number): v is TupleTypeMember.Bound | TupleTypeMember.Parsed;
+	primaryType(v: { readonly $type: string | number } | number): v is PrimaryType.Bound | PrimaryType.Parsed;
+	indexSignature(v: { readonly $type: string | number } | number): v is IndexSignature.Bound | IndexSignature.Parsed;
+	whitespace(v: { readonly $type: string | number } | number): v is Whitespace.Bound | Whitespace.Parsed;
+	exportStatementDefault(
+		v: { readonly $type: string | number } | number
+	): v is ExportStatementDefault.Bound | ExportStatementDefault.Parsed;
+	numberBigint(v: { readonly $type: string | number } | number): v is NumberBigint.Bound | NumberBigint.Parsed;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.

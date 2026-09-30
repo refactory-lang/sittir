@@ -170,7 +170,7 @@ A language's kind-to-node-type map, derived from two emitted type maps: `Keys` n
 
 ### `packages/types/src/engine-api.ts::NodeOfNamespaces`
 
-Every node a language builds or reads, derived from its namespace map: each kind's `Node` and `Built`, kept only where they are objects. A keyword's namespace gives its kind id (a number) for both, so keywords drop out: a kind id is not a node. A grammar's `<Prefix>Node` (`RustNode`) is this union over its `NamespaceMap`, and it is the language API's `node`, so everything `build` returns and everything `parse` reads is accepted by `render`, with no second list of kinds.
+Every node a language builds or reads, derived from its namespace map: each kind's `Node`, `Bound` and (where the namespace has one) `Parsed`, kept only where the namespace has a `Node` and a `Bound` and they are objects. A keyword's namespace gives its kind id (a number) for both, so keywords drop out: a kind id is not a node. A grammar's `<Prefix>Node` (`RustNode`) is this union over its `NamespaceMap`, and it is the language API's `node`, so everything `build` returns and everything `parse` reads is accepted by `render` by identity, with no structural relation from a `Parsed` node to its storage type, with no second list of kinds.
 
 ### `packages/types/src/engine-api.ts::Types`
 

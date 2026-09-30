@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "fda941835b3b754f841fea31c1344ea4ae7d09142fe7af0e9aa424a4e62991b4",
+  "source_hash": "d5cddc6047e1d067078aa3bf8c552946776bebf23214cf981949c0de524f13a9",
   "files": {
     "packages/rust/.sittir/grammar-diagnostics.json": "923a011eee9d92ea0897c59d5d06b398434d75b36944967f8645b25c073a731d",
     "packages/rust/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -30,13 +30,13 @@
     "packages/rust/src/hash.ts": "c5855ad090c02ccbbf5712927d1decac5347fe0511e9fc74c8a819f0d8f5cf2d",
     "packages/rust/src/index.ts": "4206dcb32870c5ba4de14218575b9dc50949ec83e1c6b11189b44f7aab3c2ffd",
     "packages/rust/src/ir.ts": "51bfcabdcc0a7f4f0504b81cab69ac79e0efb15fb3199c2ff67f79b1a54cb2fc",
-    "packages/rust/src/is.ts": "fbd11f666e31ed9dcd6e75d2ed5c47bb1511a803427f06e8a28c0ec48c7f0fbd",
+    "packages/rust/src/is.ts": "aab08c777ec488e02542a6b81722cf1d8919383040037c5e3534161f3004724d",
     "packages/rust/src/node-model.json5": "52abf050fb47abc7887a9de46f37071a171fb1f176a430f0fe18b5b40268e880",
     "packages/rust/src/options.ts": "e7468890ddfb86f88661ebe7f25b4fedb8e9dc3f5aa8b13144e233e644ea9e25",
     "packages/rust/src/render-engine.ts": "8d7608214f88bf360956f0147f63657fa959c1a281276f74eda65c43d59b9e37",
     "packages/rust/src/types.ts": "fa8a3f219f01717d9a60270b26594c6ef0ad0ccd3adfd9e1a6fcffb3346ff4da",
     "packages/rust/src/utils.ts": "0000d9e0bee6e440458a19894f7569d62eab1e58cf408c12f8fefa196a0cfa1b",
-    "packages/rust/src/wrap.ts": "db67cadea2f9d1449d4ffa2a274cefd5fff4c40ada9f90b1b7b7f872e1020e6f",
+    "packages/rust/src/wrap.ts": "e5ff32567cbfc7a7f174914401c705000782d645b244c1c04869873ea58b91d4",
     "rust/crates/sittir-rust/index.d.ts": "b6f76ab78b73c822e6ed18a35c67c7f70c78387b26c98b2052a43fb96e4e845e",
     "rust/crates/sittir-rust/index.js": "65870d2849ecee2c83c421e32039918e09f25dfe01828f8cea710a7e31e5a48d",
     "rust/crates/sittir-rust/src/lib.rs": "7b074da8afa4986c0df738bf1ac7d337653087bb40b57d99c6f0f802ed93f171",
