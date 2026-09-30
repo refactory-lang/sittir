@@ -56,6 +56,7 @@ export const _fromMap = {
 	unicode_property_value_expression_group: coerceToUnicodePropertyValueExpressionGroup,
 	character_class_escape_text1: coerceToCharacterClassEscapeText1,
 	character_class_escape_text2: coerceToCharacterClassEscapeText2,
+	negation: coerceToNegation,
 	inline_flags_group_enable: coerceToInlineFlagsGroupEnable,
 	inline_flags_group_toggle: coerceToInlineFlagsGroupToggle,
 	inline_flags_group_disable: coerceToInlineFlagsGroupDisable,
@@ -100,6 +101,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	decimal_digits: { pattern: /^(?:(?:\d+))$/u, factory: F.buildDecimalDigits },
 	character_class_escape_text1: { pattern: /^(?:(?:\\[dDsSwW]))$/u, factory: F.buildCharacterClassEscapeText1 },
 	character_class_escape_text2: { pattern: /^(?:(?:\\[pP]))$/u, factory: F.buildCharacterClassEscapeText2 },
+	negation: { values: ['^'], factory: () => F.buildNegation },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_newline: { values: ['\n'], factory: () => F.buildNewline },
 	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline },
@@ -132,6 +134,7 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'end_assertion',
 	'boundary_assertion',
 	'non_boundary_assertion',
+	'negation',
 	'pattern_character',
 	'posix_class_name',
 	'class_character',
@@ -243,7 +246,7 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 40, 47,
-	48, 49, 50, 54
+	48, 49, 50, 54, 82
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	pattern: new Set([52, 53]),
@@ -255,7 +258,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	named_group_backreference: new Set([38]),
 	character_class_escape: new Set([41, 74, 80]),
 	count_quantifier_group: new Set([39]),
-	unicode_property_value_expression_group: new Set([35, 89]),
+	unicode_property_value_expression_group: new Set([35, 90]),
 	unicode_property_name: new Set([35])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {};
@@ -658,7 +661,7 @@ export function coerceToAlternation(
 ): ReturnType<typeof F.buildAlternation> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Alternation)) {
 		const data = input[0];
-		const stored = (data as unknown as { _term?: unknown })._term;
+		const stored = (data as unknown as { _terms?: unknown })._terms;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildAlternation(
 			...(_resolveManyBranch<T.Term>(children, 'term') as unknown as Parameters<typeof F.buildAlternation>)
@@ -667,8 +670,8 @@ export function coerceToAlternation(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNode(head) || !('term' in head)) return input;
-		const v = (head as Record<string, unknown>)['term'];
+		if (typeof head !== 'object' || head === null || isNode(head) || !('terms' in head)) return input;
+		const v = (head as Record<string, unknown>)['terms'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildAlternation(
@@ -802,6 +805,12 @@ export function coerceToPatternCharacter(input: T.PatternCharacter.Loose): Retur
 	return F.buildPatternCharacter(input as Parameters<typeof F.buildPatternCharacter>[0]);
 }
 
+export function resolveCharacterClass_negation(
+	value: T.CharacterClass.LooseConfig['negation']
+): T.CharacterClass['_negation'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolveCharacterClass_leading(
 	value: T.CharacterClass.LooseConfig['leading']
 ): T.CharacterClass['_leading'] {
@@ -840,6 +849,7 @@ export function coerceToCharacterClass(input?: T.CharacterClass.Loose): ReturnTy
 	if (!_isLooseConfig<T.CharacterClass.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildCharacterClass>;
 	return F.buildCharacterClass({
+		negation: resolveCharacterClass_negation(input?.negation),
 		leading: resolveCharacterClass_leading(input?.leading),
 		classAtoms: resolveCharacterClass_classAtoms(input?.classAtoms),
 		trailing: resolveCharacterClass_trailing(input?.trailing)
@@ -1370,6 +1380,10 @@ export function coerceToCharacterClassEscapeText2(
 ): ReturnType<typeof F.buildCharacterClassEscapeText2> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCharacterClassEscapeText2>;
 	return F.buildCharacterClassEscapeText2(input as Parameters<typeof F.buildCharacterClassEscapeText2>[0]);
+}
+
+export function coerceToNegation(_input?: T.Negation.Loose): typeof F.buildNegation {
+	return F.buildNegation;
 }
 
 export function resolveInlineFlagsGroupEnable_enabled(

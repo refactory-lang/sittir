@@ -3280,10 +3280,12 @@ one representation difference `rulesEqual` treats as equal).
 ```text
 // The one expression for any content: `{...content, aliasedTo: target.name,
 // aliasedToId: target.kindId, inline: false}` — an alias never changes
-// terminality. `name`/
+// terminality, with one exception: a literal aliased to a named symbol is a
+// slot (`nonterminal: true`), because the parser produces a named node for
+// it. `name`/
 // `kindId` on `content` stay the SOURCE (storage) kind; `aliasedTo` is the
-// alias TARGET (the parse kind). No branching on content shape — a literal,
-// a symbol, or any other built rule all take the same stamp uniformly.
+// alias TARGET (the parse kind). No other branching on content shape — a
+// symbol or any other built rule takes the same stamp uniformly.
 ```
 
 ### `packages/codegen/src/dsl/builders.ts::structuralBuilder.alias`
@@ -6904,3 +6906,7 @@ The resolutions of a grammar nothing has been derived for, carrying `UNVERIFIED_
 
 Sets the grammar's final `conflicts` to the resolution sets, replacing whatever `grammar()` produced. Upstream's declared conflicts and anything an author wrote never reach the final list; every conflict the grammar keeps was derived. It runs last in `sittirGrammar`, so both runtimes see the same list.
 
+
+### `packages/codegen/src/dsl/enrich.ts::applyElidedListField`
+
+Wraps an elided separated list in one field, separators included. The list is an optional first element followed by a repeat of separator and optional element, as a whole seq or as the body of an optional member of a seq. The field is named for the pluralised element symbol, or `elements` when the element is not one symbol. A tree-sitter field tags every child inside it, so the separators land in the field's slot beside the elements and a hole between two separators survives a parse. An already fielded list is left alone, and a name the rule already uses is skipped with a report.

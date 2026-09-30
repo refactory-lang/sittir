@@ -2,6 +2,7 @@
 import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
 import {
+	alias,
 	field,
 	variant,
 	sittirGrammar
@@ -11,7 +12,7 @@ export default sittirGrammar(base, {
 	resolutions,
 	name: 'regex',
 	patches: {
-		character_class: { 2: field('leading'), 4: field('trailing') },
+		character_class: { '1/0': alias('negation'), 2: field('leading'), 4: field('trailing') },
 		class_range: { 0: field('start'), 2: field('end') },
 		term: { '0/1': field('quantifier') },
 		inline_flags_group: [

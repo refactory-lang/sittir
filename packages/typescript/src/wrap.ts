@@ -3407,17 +3407,17 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle): 
 }
 
 export function wrapObject(data: T.Object, tree: TreeHandle): T.Object.Parsed {
-	data = _keepModelledSlots(data, ['_properties']);
+	data = _keepModelledSlots(data, ['_elements']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.Object as const }) as unknown as T.Object.Parsed;
 	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.Object as const,
-		_properties: splitElidedWrapSlot(data._properties, [TSKindId.Comma], undefined, _order, 'properties'),
+		_elements: splitElidedWrapSlot(data._elements, [TSKindId.Comma], undefined, _order, 'elements'),
 		...(_order && { $slotOrder: _order }),
 
-		properties() {
+		elements() {
 			return drillInAll<
 				| T.Pair
 				| T.SpreadElement
@@ -3447,7 +3447,7 @@ export function wrapObject(data: T.Object, tree: TreeHandle): T.Object.Parsed {
 				| TSKindId.LetKeyword
 				| undefined
 			>(
-				this._properties as
+				this._elements as
 					| readonly (
 							| T.Pair
 							| T.SpreadElement
@@ -3482,8 +3482,8 @@ export function wrapObject(data: T.Object, tree: TreeHandle): T.Object.Parsed {
 			);
 		},
 		$with: {
-			properties: (...v: NonNullable<T.Object['_properties']>[number][]) =>
-				wrapObject({ ...$edited(data), _properties: v }, tree)
+			elements: (...v: NonNullable<T.Object['_elements']>[number][]) =>
+				wrapObject({ ...$edited(data), _elements: v }, tree)
 		}
 	});
 	return _node as unknown as T.Object.Parsed;

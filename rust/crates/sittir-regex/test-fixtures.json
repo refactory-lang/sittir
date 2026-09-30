@@ -746,7 +746,7 @@
         "$type": 52,
         "$source": 0,
         "$named": true,
-        "_term": [
+        "_terms": [
           {
             "$type": 53,
             "$source": 0,
@@ -884,17 +884,6 @@
               }
             ]
           }
-        ],
-        "$other": [
-          {
-            "$type": 1,
-            "$source": 0,
-            "$named": false,
-            "$span": {
-              "start": 5,
-              "end": 6
-            }
-          }
         ]
       }
     },
@@ -907,8 +896,180 @@
     "pattern": "pattern",
     "edits": [],
     "expectedSourceOut": "he..o|wo.ld",
-    "expectedReparseTree": "(pattern (alternation (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (any_character)) (term_group (any_character)) (term_group (pattern_character))) (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (any_character)) (term_group (pattern_character)) (term_group (pattern_character)))))",
+    "expectedReparseTree": "(pattern (alternation terms: (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (any_character)) (term_group (any_character)) (term_group (pattern_character))) terms: (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (any_character)) (term_group (pattern_character)) (term_group (pattern_character)))))",
     "wrappedText": "he..o|wo.ld",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "pattern",
+    "input": {
+      "$type": 51,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 52,
+        "$source": 0,
+        "$named": true,
+        "_terms": [
+          null,
+          null,
+          {
+            "$type": 53,
+            "$source": 0,
+            "$named": true,
+            "_term_group": [
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 12,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "h",
+                  "$span": {
+                    "start": 2,
+                    "end": 3
+                  }
+                }
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 12,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "e",
+                  "$span": {
+                    "start": 3,
+                    "end": 4
+                  }
+                }
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": 2
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": 2
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 12,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "o",
+                  "$span": {
+                    "start": 6,
+                    "end": 7
+                  }
+                }
+              }
+            ]
+          },
+          null,
+          {
+            "$type": 53,
+            "$source": 0,
+            "$named": true,
+            "_term_group": [
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 12,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "w",
+                  "$span": {
+                    "start": 9,
+                    "end": 10
+                  }
+                }
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 12,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "o",
+                  "$span": {
+                    "start": 10,
+                    "end": 11
+                  }
+                }
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": 2
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 12,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "l",
+                  "$span": {
+                    "start": 12,
+                    "end": 13
+                  }
+                }
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 12,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "d",
+                  "$span": {
+                    "start": 13,
+                    "end": 14
+                  }
+                }
+              }
+            ]
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "expectedOutput": "||he..o||wo.ld|||"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "||he..o||wo.ld|||",
+    "pattern": "pattern",
+    "edits": [],
+    "expectedSourceOut": "||he..o||wo.ld|||",
+    "expectedReparseTree": "(pattern (alternation terms: (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (any_character)) (term_group (any_character)) (term_group (pattern_character))) terms: (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (any_character)) (term_group (pattern_character)) (term_group (pattern_character)))))",
+    "wrappedText": "||he..o||wo.ld|||",
     "wrappedOffset": 0
   },
   {
@@ -1105,6 +1266,182 @@
     "expectedSourceOut": "\\Bhe..o\\b",
     "expectedReparseTree": "(pattern (term (term_group (non_boundary_assertion)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (any_character)) (term_group (any_character)) (term_group (pattern_character)) (term_group (boundary_assertion))))",
     "wrappedText": "\\Bhe..o\\b",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "pattern",
+    "input": {
+      "$type": 51,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 52,
+        "$source": 0,
+        "$named": true,
+        "_terms": [
+          {
+            "$type": 53,
+            "$source": 0,
+            "$named": true,
+            "_term_group": [
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": 54
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 12,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "h",
+                  "$span": {
+                    "start": 1,
+                    "end": 2
+                  }
+                }
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 12,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "e",
+                  "$span": {
+                    "start": 2,
+                    "end": 3
+                  }
+                }
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": 2
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": 2
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 12,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "o",
+                  "$span": {
+                    "start": 5,
+                    "end": 6
+                  }
+                }
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": 4
+              }
+            ]
+          },
+          null,
+          {
+            "$type": 53,
+            "$source": 0,
+            "$named": true,
+            "_term_group": [
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 12,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "w",
+                  "$span": {
+                    "start": 9,
+                    "end": 10
+                  }
+                }
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": 2
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": 2
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 12,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "l",
+                  "$span": {
+                    "start": 12,
+                    "end": 13
+                  }
+                }
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": {
+                  "$type": 12,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "d",
+                  "$span": {
+                    "start": 13,
+                    "end": 14
+                  }
+                }
+              },
+              {
+                "$type": 77,
+                "$source": 0,
+                "$named": true,
+                "_content": 4
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "expectedOutput": "^he..o$||w..ld$"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "^he..o$||w..ld$",
+    "pattern": "pattern",
+    "edits": [],
+    "expectedSourceOut": "^he..o$||w..ld$",
+    "expectedReparseTree": "(pattern (alternation terms: (term (term_group (start_assertion)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (any_character)) (term_group (any_character)) (term_group (pattern_character)) (term_group (end_assertion))) terms: (term (term_group (pattern_character)) (term_group (any_character)) (term_group (any_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (end_assertion)))))",
+    "wrappedText": "^he..o$||w..ld$",
     "wrappedOffset": 0
   },
   {
@@ -2398,6 +2735,205 @@
               "$type": 58,
               "$source": 0,
               "$named": true,
+              "_class_atoms": [
+                {
+                  "$type": 61,
+                  "$source": 0,
+                  "$named": true,
+                  "_start": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "A",
+                    "$span": {
+                      "start": 1,
+                      "end": 2
+                    }
+                  },
+                  "_end": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "Z",
+                    "$span": {
+                      "start": 3,
+                      "end": 4
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 14,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 2,
+                        "end": 3
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "start",
+                    "end"
+                  ]
+                },
+                {
+                  "$type": 61,
+                  "$source": 0,
+                  "$named": true,
+                  "_start": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "a",
+                    "$span": {
+                      "start": 4,
+                      "end": 5
+                    }
+                  },
+                  "_end": {
+                    "$type": 20,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "z",
+                    "$span": {
+                      "start": 6,
+                      "end": 7
+                    }
+                  },
+                  "$other": [
+                    {
+                      "$type": 14,
+                      "$source": 0,
+                      "$named": false,
+                      "$span": {
+                        "start": 5,
+                        "end": 6
+                      }
+                    }
+                  ],
+                  "$slotOrder": [
+                    "start",
+                    "end"
+                  ]
+                }
+              ],
+              "$other": [
+                {
+                  "$type": 13,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 0,
+                    "end": 1
+                  }
+                },
+                {
+                  "$type": 15,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 7,
+                    "end": 8
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 58,
+              "$source": 0,
+              "$named": true,
+              "_negation": true,
+              "_class_atoms": [
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "X",
+                  "$span": {
+                    "start": 10,
+                    "end": 11
+                  }
+                },
+                {
+                  "$type": 20,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "x",
+                  "$span": {
+                    "start": 11,
+                    "end": 12
+                  }
+                }
+              ],
+              "$other": [
+                {
+                  "$type": 13,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 8,
+                    "end": 9
+                  }
+                },
+                {
+                  "$type": 15,
+                  "$source": 0,
+                  "$named": false,
+                  "$span": {
+                    "start": 12,
+                    "end": 13
+                  }
+                }
+              ],
+              "$slotOrder": [
+                "negation",
+                "class_atoms",
+                "class_atoms"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "expectedOutput": "[A-Za-z][^Xx]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "regex",
+    "sourceIn": "[A-Za-z][^Xx]",
+    "pattern": "pattern",
+    "edits": [],
+    "expectedSourceOut": "[A-Za-z][^Xx]",
+    "expectedReparseTree": "(pattern (term (term_group (character_class class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)))) (term_group (character_class (negation) class_atoms: (class_character) class_atoms: (class_character)))))",
+    "wrappedText": "[A-Za-z][^Xx]",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "regex",
+    "pattern": "pattern",
+    "input": {
+      "$type": 51,
+      "$source": 0,
+      "$named": true,
+      "_content": {
+        "$type": 53,
+        "$source": 0,
+        "$named": true,
+        "_term_group": [
+          {
+            "$type": 77,
+            "$source": 0,
+            "$named": true,
+            "_content": {
+              "$type": 58,
+              "$source": 0,
+              "$named": true,
               "_leading": true,
               "$other": [
                 {
@@ -3470,7 +4006,7 @@
                     "$source": 0,
                     "$named": true,
                     "_unicode_property_name": {
-                      "$type": 89,
+                      "$type": 90,
                       "$source": 0,
                       "$named": true,
                       "_content": {
@@ -7571,7 +8107,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 82,
+              "$type": 83,
               "$source": 0,
               "$named": true,
               "_enabled": {
@@ -7611,7 +8147,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 82,
+              "$type": 83,
               "$source": 0,
               "$named": true,
               "_enabled": {
@@ -7736,7 +8272,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 83,
+              "$type": 84,
               "$source": 0,
               "$named": true,
               "_enabled": {
@@ -7881,7 +8417,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 84,
+              "$type": 85,
               "$source": 0,
               "$named": true,
               "_disabled": {
@@ -8015,7 +8551,7 @@
             "$source": 0,
             "$named": true,
             "_content": {
-              "$type": 84,
+              "$type": 85,
               "$source": 0,
               "$named": true,
               "_disabled": {

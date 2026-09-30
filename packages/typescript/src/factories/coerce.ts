@@ -3638,7 +3638,7 @@ export function coerceToObject(
 ): ReturnType<typeof F.buildObject> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Object)) {
 		const data = input[0];
-		const stored = (data as unknown as { _properties?: unknown })._properties;
+		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildObject(
 			...((children == null ? [] : Array.isArray(children) ? children : [children])
@@ -3731,8 +3731,8 @@ export function coerceToObject(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNode(head) || !('properties' in head)) return input;
-		const v = (head as Record<string, unknown>)['properties'];
+		if (typeof head !== 'object' || head === null || isNode(head) || !('elements' in head)) return input;
+		const v = (head as Record<string, unknown>)['elements'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildObject(

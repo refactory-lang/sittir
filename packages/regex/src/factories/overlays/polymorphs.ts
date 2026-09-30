@@ -413,7 +413,7 @@ const termGroup$characterClass =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'leading' || key === 'classAtoms' || key === 'trailing') inner[key] = value;
+			if (key === 'negation' || key === 'leading' || key === 'classAtoms' || key === 'trailing') inner[key] = value;
 			else rest[key] = value;
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);

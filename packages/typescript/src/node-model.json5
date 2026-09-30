@@ -890,7 +890,7 @@
       }
     },
     "object": {
-      "properties": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -19536,9 +19536,9 @@
       "hidden": false,
       "slots": [
         {
-          "name": "properties",
-          "propertyName": "properties",
-          "paramName": "properties",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -19711,7 +19711,7 @@
       ],
       "factoryShape": "spread",
       "factoryFields": [
-        "properties"
+        "elements"
       ]
     },
     {

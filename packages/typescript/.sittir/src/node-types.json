@@ -5545,7 +5545,7 @@
     "type": "object",
     "named": true,
     "fields": {
-      "properties": {
+      "elements": {
         "multiple": true,
         "required": false,
         "types": [

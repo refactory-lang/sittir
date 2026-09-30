@@ -3893,7 +3893,7 @@ export interface YieldExpression {
 
 export interface Object {
 	readonly $type: TSKindId.Object;
-	readonly _properties?: readonly (
+	readonly _elements?: readonly (
 		| Pair
 		| SpreadElement
 		| MethodDefinition
@@ -3923,7 +3923,7 @@ export interface Object {
 		| undefined
 	)[];
 	readonly __inputHints__?: {
-		readonly properties?: readonly (
+		readonly elements?: readonly (
 			| KindEnum<
 					| 'declare'
 					| 'namespace'
@@ -3977,7 +3977,7 @@ export interface Object {
 		)[];
 	};
 	readonly __slotHints__?: {
-		readonly properties: SlotHint<
+		readonly elements: SlotHint<
 			(
 				| (
 						| T.Pair
@@ -4013,7 +4013,7 @@ export interface Object {
 			true
 		>;
 	};
-	properties(): readonly (
+	elements(): readonly (
 		| Pair
 		| SpreadElement
 		| MethodDefinition
@@ -12645,8 +12645,7 @@ export namespace Object {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly lbrace?: { readonly after?: WhitespaceArm };
-			readonly properties?: {
+			readonly elements?: {
 				readonly end?: WhitespaceArm;
 				readonly methodDefinition?: { readonly after?: WhitespaceArm };
 				readonly pair?: { readonly after?: WhitespaceArm };
@@ -12654,6 +12653,7 @@ export namespace Object {
 				readonly spreadElement?: { readonly after?: WhitespaceArm };
 				readonly start?: WhitespaceArm;
 			};
+			readonly lbrace?: { readonly after?: WhitespaceArm };
 			readonly rbrace?: { readonly before?: WhitespaceArm };
 		};
 	}

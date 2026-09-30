@@ -5873,7 +5873,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "properties"
+			"name": "elements"
 		},
 		{
 			"kind": "seam",

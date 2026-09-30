@@ -757,13 +757,13 @@ pub const SITE_NEW_EXPRESSION_NEW_EXPRESSION_AFTER: usize = 748;
 pub const SITE_NON_NULL_EXPRESSION_BANG_BEFORE: usize = 749;
 pub const SITE_NON_NULL_EXPRESSION_NON_NULL_EXPRESSION_BEFORE: usize = 750;
 pub const SITE_NON_NULL_EXPRESSION_NON_NULL_EXPRESSION_AFTER: usize = 751;
-pub const SITE_OBJECT_PROPERTIES_METHOD_DEFINITION_AFTER: usize = 752;
-pub const SITE_OBJECT_PROPERTIES_PAIR_AFTER: usize = 753;
-pub const SITE_OBJECT_PROPERTIES_SPREAD_ELEMENT_AFTER: usize = 754;
-pub const SITE_OBJECT_PROPERTIES_END: usize = 755;
-pub const SITE_OBJECT_PROPERTIES_START: usize = 756;
-pub const SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_BEFORE: usize = 757;
-pub const SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_AFTER: usize = 758;
+pub const SITE_OBJECT_ELEMENTS_METHOD_DEFINITION_AFTER: usize = 752;
+pub const SITE_OBJECT_ELEMENTS_PAIR_AFTER: usize = 753;
+pub const SITE_OBJECT_ELEMENTS_SPREAD_ELEMENT_AFTER: usize = 754;
+pub const SITE_OBJECT_ELEMENTS_END: usize = 755;
+pub const SITE_OBJECT_ELEMENTS_START: usize = 756;
+pub const SITE_OBJECT_ELEMENTS_SEPARATOR_SPACE_BEFORE: usize = 757;
+pub const SITE_OBJECT_ELEMENTS_SEPARATOR_SPACE_AFTER: usize = 758;
 pub const SITE_OBJECT_LBRACE_AFTER: usize = 759;
 pub const SITE_OBJECT_RBRACE_BEFORE: usize = 760;
 pub const SITE_OBJECT_OBJECT_BEFORE: usize = 761;
@@ -2124,13 +2124,13 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("non_null_expression", "bang_before", "bang_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("non_null_expression", "non_null_expression_before", "non_null_expression_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("non_null_expression", "non_null_expression_after", "non_null_expression_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object", "properties_method_definition_after", "method_definition_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object", "properties_pair_after", "pair_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object", "properties_spread_element_after", "spread_element_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("object", "elements_method_definition_after", "method_definition_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("object", "elements_pair_after", "pair_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("object", "elements_spread_element_after", "spread_element_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("object", "object_end", "object_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("object", "object_start", "object_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("object", "properties_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
-    ("object", "properties_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
+    ("object", "elements_separator_space_before", "comma_separator_space_before", &[180, 181, 182, 183, 184, 185]),
+    ("object", "elements_separator_space_after", "comma_separator_space_after", &[180, 181, 182, 183, 184, 185]),
     ("object", "lbrace_after", "lbrace_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("object", "rbrace_before", "rbrace_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("object", "object_before", "object_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -5008,7 +5008,7 @@ pub static SEATS_LEXICAL_DECLARATION_DECLARATORS: &[u16] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_OBJECT_PROPERTIES: &[u16] = &[
+pub static SEATS_OBJECT_ELEMENTS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -7219,27 +7219,27 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "object", path: "(object)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_OBJECT_AFTER, path: "(object)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_OBJECT_BEFORE, path: "(object)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "lbrace", path: "(object)/\"{\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_LBRACE_AFTER, path: "(object)/\"{\"/after" }] },
-        ] },
-        ::sittir_core::options::AddressNode::Branch { key: "properties", path: "(object)/properties:", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_PROPERTIES_END, path: "(object)/properties:/end" }] },
-            ::sittir_core::options::AddressNode::Branch { key: "methodDefinition", path: "(object)/properties:/(method_definition)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_PROPERTIES_METHOD_DEFINITION_AFTER, path: "(object)/properties:/(method_definition)/after" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "elements", path: "(object)/elements:", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_ELEMENTS_END, path: "(object)/elements:/end" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "methodDefinition", path: "(object)/elements:/(method_definition)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_ELEMENTS_METHOD_DEFINITION_AFTER, path: "(object)/elements:/(method_definition)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "pair", path: "(object)/properties:/(pair)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_PROPERTIES_PAIR_AFTER, path: "(object)/properties:/(pair)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "pair", path: "(object)/elements:/(pair)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_ELEMENTS_PAIR_AFTER, path: "(object)/elements:/(pair)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(object)/properties:/separator", children: &[
-                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(object)/properties:/separator/\",\"", children: &[
-                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_AFTER, path: "(object)/properties:/separator/\",\"/after" }] },
-                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_BEFORE, path: "(object)/properties:/separator/\",\"/before" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(object)/elements:/separator", children: &[
+                ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(object)/elements:/separator/\",\"", children: &[
+                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_ELEMENTS_SEPARATOR_SPACE_AFTER, path: "(object)/elements:/separator/\",\"/after" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_ELEMENTS_SEPARATOR_SPACE_BEFORE, path: "(object)/elements:/separator/\",\"/before" }] },
                 ] },
             ] },
-            ::sittir_core::options::AddressNode::Branch { key: "spreadElement", path: "(object)/properties:/(spread_element)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_PROPERTIES_SPREAD_ELEMENT_AFTER, path: "(object)/properties:/(spread_element)/after" }] },
+            ::sittir_core::options::AddressNode::Branch { key: "spreadElement", path: "(object)/elements:/(spread_element)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_ELEMENTS_SPREAD_ELEMENT_AFTER, path: "(object)/elements:/(spread_element)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_PROPERTIES_START, path: "(object)/properties:/start" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_ELEMENTS_START, path: "(object)/elements:/start" }] },
+        ] },
+        ::sittir_core::options::AddressNode::Branch { key: "lbrace", path: "(object)/\"{\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_LBRACE_AFTER, path: "(object)/\"{\"/after" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "rbrace", path: "(object)/\"}\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_OBJECT_RBRACE_BEFORE, path: "(object)/\"}\"/before" }] },

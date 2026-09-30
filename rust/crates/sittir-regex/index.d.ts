@@ -111,9 +111,9 @@ export declare class SittirEngine {
 export interface AlternationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _term: Array<SlotValue<TermTransport> | undefined | null>
-  _term_separator_space_before?: number
-  _term_separator_space_after?: number
+  _terms: Array<SlotValue<TermTransport> | undefined | null>
+  _terms_separator_space_before?: number
+  _terms_separator_space_after?: number
 }
 
 export interface AnonymousCapturingGroupTransport {
@@ -147,6 +147,7 @@ export interface CharacterClassTransport {
   _leading?: boolean
   _class_atoms?: Array<SlotValue<CharacterClassClassAtomsTransportSlot>>
   _trailing?: boolean
+  _negation?: SlotValue<NegationTransport>
 }
 
 export interface ClassRangeTransport {

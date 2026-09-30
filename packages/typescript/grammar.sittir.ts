@@ -120,7 +120,7 @@ export default sittirGrammar(base, {
 		import_specifiers: { 'import_specifier:/start': preference('space'), 'import_specifier:/end': preference('space') },
 		export_clause: { before: preference('space'), after: preference('space') },
 		export_specifiers: { 'export_specifier:/start': preference('space'), 'export_specifier:/end': preference('space') },
-		object: { 'properties:/start': preference('space'), 'properties:/end': preference('space') },
+		object: { 'elements:/start': preference('space'), 'elements:/end': preference('space') },
 		object_pattern: { 'properties:/start': preference('space'), 'properties:/end': preference('space') },
 		ternary_expression: { '":"/before': preference('space') },
 		for_statement: { '"("/before': preference('space'), '";"/after': preference('space') },
@@ -200,15 +200,6 @@ export default sittirGrammar(base, {
 		},
 		arguments: {
 			1: field('elements')
-		},
-		array: {
-			1: field('elements')
-		},
-		array_pattern: {
-			1: field('elements')
-		},
-		object: {
-			1: field('properties')
 		},
 		object_pattern: {
 			1: field('properties')

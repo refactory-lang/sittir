@@ -1,7 +1,7 @@
 {
   "name": "regex",
   "root": "pattern",
-  "nodeCount": 83,
+  "nodeCount": 84,
   "word": null,
   "supertypes": [
     "_character_escape",
@@ -107,7 +107,7 @@
       }
     },
     "alternation": {
-      "term": {
+      "terms": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -166,6 +166,13 @@
       }
     },
     "character_class": {
+      "negation": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "leading": {
         "unnamed": false,
         "slotCount": 1,
@@ -566,7 +573,7 @@
       "hidden": false,
       "slots": [
         {
-          "name": "term",
+          "name": "terms",
           "propertyName": "terms",
           "paramName": "terms",
           "required": true,
@@ -588,7 +595,7 @@
       ],
       "factoryShape": "spread",
       "factoryFields": [
-        "term"
+        "terms"
       ]
     },
     {
@@ -754,6 +761,26 @@
       "hidden": false,
       "slots": [
         {
+          "name": "negation",
+          "propertyName": "negation",
+          "paramName": "negation",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "negation"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "negation",
+              "parseKind": "negation"
+            }
+          ]
+        },
+        {
           "name": "leading",
           "propertyName": "leading",
           "paramName": "leading",
@@ -860,6 +887,7 @@
       ],
       "factoryShape": "config",
       "factoryFields": [
+        "negation",
         "leading",
         "class_atoms",
         "trailing"
@@ -2121,6 +2149,18 @@
       "bareAccepts": [
         "group_name"
       ]
+    },
+    {
+      "kind": "negation",
+      "modelType": "punctuation",
+      "typeName": "Negation",
+      "factoryName": "negation",
+      "irKey": "negation",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"^\" as const",
+      "text": "^",
+      "factoryShape": "constant"
     },
     {
       "kind": "non_boundary_assertion",

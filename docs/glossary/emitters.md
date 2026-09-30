@@ -16590,3 +16590,11 @@ The nodes that own a list: those `listViewTarget` finds an owner slot for. The w
 
 The separated list a node reads as: the node itself when it is an `AssembledList`, or, for a list owner, the list it forwards to together with its sole slot (`owner`). `undefined` when the node reads as neither.
 
+
+### `packages/codegen/src/emitters/templates.ts::droppedLiteralTexts`
+
+The render-only literals of a node's rule that its template does not write and no slot carries. A literal counts as written when some template text contains it or a slot holds it as a terminal value; indent and dedent markers and literals inside a token are not counted. Each result is a token a parse of the source reads but the render loses.
+
+### `packages/codegen/src/emitters/templates.ts::templateTexts`
+
+The text nodes of a template body, descending into the arms of its conditionals.

@@ -14,6 +14,7 @@ import {
 	blockedRecords,
 	formatGrammarDiagnostics,
 	writeGrammarDiagnosticsJson,
+	fromDroppedTokens,
 	fromSlotGrouping,
 	type GrammarDiagnostic
 } from './compiler/diagnostics/grammar-diagnostics.ts';
@@ -226,6 +227,10 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	if (result.slotGroupingDiagnostics.length > 0) {
 		const mapped = result.slotGroupingDiagnostics.map((d) => fromSlotGrouping(grammar, d));
 		process.stderr.write(formatGrammarDiagnostics(mapped) + '\n');
+	}
+
+	if (result.droppedTokens.length > 0) {
+		process.stderr.write(formatGrammarDiagnostics(result.droppedTokens.map((d) => fromDroppedTokens(grammar, d))) + '\n');
 	}
 
 	const outDir = outputDir;

@@ -61,18 +61,18 @@ export function buildPattern(value: AdmitBound<T.Alternation | T.Term, T.Admitte
 
 export function buildAlternation(...children: AdmitBound<T.Term[], T.AdmittedNodes>): T.Alternation.Bound {
 	_assertNonEmpty(children, 'alternation.children');
-	const _term = rejectBareText(children, 'Alternation.term', 'a built Term');
+	const _terms = rejectBareText(children, 'Alternation.terms', 'a built Term');
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.Alternation as const,
 				$source: 2 as const,
 				$named: true as const,
-				_term,
+				_terms,
 				$with: { terms: (...vs: T.Term[]) => buildAlternation(...vs) }
 			},
 			{
-				terms: () => _term
+				terms: () => _terms
 			}
 		)
 	) as unknown as T.Alternation.Bound;
@@ -204,6 +204,7 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
 export function buildCharacterClass(): T.EmptyCharacterClass;
 export function buildCharacterClass(config?: Partial<T.CharacterClass.Config>): T.CharacterClass.Bound;
 export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {}): T.CharacterClass.Bound {
+	const _negation = coerceBooleanKeywordStorage(config.negation);
 	const _leading = coerceBooleanKeywordStorage(config.leading);
 	const _class_atoms = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.CharacterClass['_class_atoms']>>(config.classAtoms ?? [], [
@@ -219,10 +220,13 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 				$type: TSKindId.CharacterClass as const,
 				$source: 2 as const,
 				$named: true as const,
+				_negation,
 				_leading,
 				_class_atoms,
 				_trailing,
 				$with: {
+					negation: (value?: NonNullable<T.CharacterClass.Config>['negation']) =>
+						buildCharacterClass({ ...config, negation: value }),
 					leading: (value?: NonNullable<T.CharacterClass.Config>['leading']) =>
 						buildCharacterClass({ ...config, leading: value }),
 					classAtoms: (value?: NonNullable<T.CharacterClass.Config>['classAtoms']) =>
@@ -232,6 +236,7 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 				}
 			},
 			{
+				negation: () => _negation,
 				leading: () => _leading,
 				classAtoms: () => _class_atoms,
 				trailing: () => _trailing
@@ -977,6 +982,8 @@ export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEs
 	});
 }
 
+export const buildNegation: TSKindId.Negation = TSKindId.Negation;
+
 export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Config): T.InlineFlagsGroupEnable.Bound {
 	const _enabled = rejectBareText(config.enabled, 'InlineFlagsGroupEnable.enabled', 'buildFlags(…)');
 	const _pattern = rejectBareText(config.pattern, 'InlineFlagsGroupEnable.pattern', 'a built Pattern');
@@ -1153,6 +1160,7 @@ export type FluentKindMap = {
 	unicode_property_value_expression_group: T.UnicodePropertyValueExpressionGroup.Bound;
 	character_class_escape_text1: T.CharacterClassEscapeText1;
 	character_class_escape_text2: T.CharacterClassEscapeText2;
+	negation: T.Negation;
 	inline_flags_group_enable: T.InlineFlagsGroupEnable.Bound;
 	inline_flags_group_toggle: T.InlineFlagsGroupToggle.Bound;
 	inline_flags_group_disable: T.InlineFlagsGroupDisable.Bound;
@@ -1209,6 +1217,7 @@ export const _factoryMap = {
 	unicode_property_value_expression_group: buildUnicodePropertyValueExpressionGroup,
 	character_class_escape_text1: buildCharacterClassEscapeText1,
 	character_class_escape_text2: buildCharacterClassEscapeText2,
+	negation: buildNegation,
 	inline_flags_group_enable: buildInlineFlagsGroupEnable,
 	inline_flags_group_toggle: buildInlineFlagsGroupToggle,
 	inline_flags_group_disable: buildInlineFlagsGroupDisable,

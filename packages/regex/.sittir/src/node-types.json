@@ -20,16 +20,21 @@
   {
     "type": "alternation",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "term",
-          "named": true
-        }
-      ]
+    "fields": {
+      "terms": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "term",
+            "named": true
+          },
+          {
+            "type": "|",
+            "named": false
+          }
+        ]
+      }
     }
   },
   {
@@ -122,6 +127,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "negation",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -474,6 +489,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "negation",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "non_capturing_group",

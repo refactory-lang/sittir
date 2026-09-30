@@ -12,7 +12,7 @@ describe('pattern', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_term: [
+			_terms: [
 				{
 					$type: TSKindId.Term,
 					$text: 'test',
@@ -39,7 +39,7 @@ describe('pattern', () => {
 			$text: 'test',
 			$source: 2,
 			$named: true,
-			_term: [
+			_terms: [
 				{
 					$type: TSKindId.Term,
 					$text: 'test',
@@ -227,7 +227,7 @@ describe('lookaround_assertion', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -267,7 +267,7 @@ describe('lookaround_assertion', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -307,7 +307,7 @@ describe('lookaround_assertion sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -344,7 +344,7 @@ describe('lookaround_assertion sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -380,7 +380,7 @@ describe('lookaround_assertion sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -416,7 +416,7 @@ describe('lookaround_assertion sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -452,7 +452,7 @@ describe('lookaround_assertion sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -488,7 +488,7 @@ describe('lookaround_assertion sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -528,7 +528,7 @@ describe('lookahead_assertion', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -564,7 +564,7 @@ describe('lookahead_assertion', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -602,7 +602,7 @@ describe('lookahead_assertion sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -639,7 +639,7 @@ describe('lookahead_assertion sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -680,7 +680,7 @@ describe('lookbehind_assertion', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -716,7 +716,7 @@ describe('lookbehind_assertion', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -754,7 +754,7 @@ describe('lookbehind_assertion sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -791,7 +791,7 @@ describe('lookbehind_assertion sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -912,7 +912,7 @@ describe('anonymous_capturing_group', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_term: [
+				_terms: [
 					{
 						$type: TSKindId.Term,
 						$text: 'test',
@@ -945,7 +945,7 @@ describe('anonymous_capturing_group', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_term: [
+				_terms: [
 					{
 						$type: TSKindId.Term,
 						$text: 'test',
@@ -985,7 +985,7 @@ describe('named_capturing_group', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -1022,7 +1022,7 @@ describe('named_capturing_group', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -1061,7 +1061,7 @@ describe('named_capturing_group sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -1099,7 +1099,7 @@ describe('named_capturing_group sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -1138,7 +1138,7 @@ describe('non_capturing_group', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_term: [
+				_terms: [
 					{
 						$type: TSKindId.Term,
 						$text: 'test',
@@ -1171,7 +1171,7 @@ describe('non_capturing_group', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_term: [
+				_terms: [
 					{
 						$type: TSKindId.Term,
 						$text: 'test',
@@ -1513,7 +1513,7 @@ describe('term_group sub-factories', () => {
 						$text: 'test',
 						$source: 2,
 						$named: true,
-						_term: [
+						_terms: [
 							{
 								$type: TSKindId.Term,
 								$text: 'test',
@@ -1607,7 +1607,7 @@ describe('term_group sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -1645,7 +1645,7 @@ describe('term_group sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -1681,7 +1681,7 @@ describe('term_group sub-factories', () => {
 					$text: 'test',
 					$source: 2,
 					$named: true,
-					_term: [
+					_terms: [
 						{
 							$type: TSKindId.Term,
 							$text: 'test',
@@ -1745,7 +1745,7 @@ describe('term_group sub-factories', () => {
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_term: [
+							_terms: [
 								{
 									$type: TSKindId.Term,
 									$text: 'test',
@@ -1786,7 +1786,7 @@ describe('term_group sub-factories', () => {
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_term: [
+							_terms: [
 								{
 									$type: TSKindId.Term,
 									$text: 'test',
@@ -1826,7 +1826,7 @@ describe('term_group sub-factories', () => {
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_term: [
+							_terms: [
 								{
 									$type: TSKindId.Term,
 									$text: 'test',
@@ -1866,7 +1866,7 @@ describe('term_group sub-factories', () => {
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_term: [
+							_terms: [
 								{
 									$type: TSKindId.Term,
 									$text: 'test',
@@ -1906,7 +1906,7 @@ describe('term_group sub-factories', () => {
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_term: [
+							_terms: [
 								{
 									$type: TSKindId.Term,
 									$text: 'test',
@@ -1946,7 +1946,7 @@ describe('term_group sub-factories', () => {
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_term: [
+							_terms: [
 								{
 									$type: TSKindId.Term,
 									$text: 'test',
@@ -2022,7 +2022,7 @@ describe('term_group sub-factories', () => {
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_term: [
+							_terms: [
 								{
 									$type: TSKindId.Term,
 									$text: 'test',
@@ -2063,7 +2063,7 @@ describe('term_group sub-factories', () => {
 							$text: 'test',
 							$source: 2,
 							$named: true,
-							_term: [
+							_terms: [
 								{
 									$type: TSKindId.Term,
 									$text: 'test',
@@ -2106,5 +2106,11 @@ describe('character_class_escape_text2', () => {
 		expect(node.$type).toBe(TSKindId.CharacterClassEscapeText2);
 		expect(node.$source).toBe(2);
 		expect(node.$text).toBe('\\p');
+	});
+});
+
+describe('negation', () => {
+	it('is the kind id', () => {
+		expect(ir.negation).toBe(TSKindId.Negation);
 	});
 });

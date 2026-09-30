@@ -44,6 +44,7 @@ import {
 	listSeparatorOfOptionalSeq,
 	optionalStringLiteral,
 	separatedListBodyInfo,
+	separatedListElementName,
 	armLeadingSymbolName,
 	armStartsWithSymbol,
 	armsDifferOnlyByLiteralChoice,
@@ -283,6 +284,7 @@ function applyFieldWrapPasses(ruleName: string, rule: Rule, ctx: EnrichCtx): Rul
 		r = applySymbolToField(ruleName, r, ctx);
 		r = applyChoiceArmFieldWrap(ruleName, r, ctx);
 		r = applyRepeatUnionFieldPromotion(ruleName, r, ctx);
+		r = applyElidedListField(ruleName, r, ctx);
 		r = applyOptionalKeyword(ruleName, r, ctx);
 		if (r === before) {
 			converged = true;
@@ -1015,6 +1017,61 @@ function applyRepeatUnionFieldPromotion(ruleName: string, rule: Rule, ctx: Enric
 			}
 			const content = rebuild(n.content);
 			return content === n.content ? node : withContent(node, content);
+		}
+		if (n.members) {
+			let changed = false;
+			const members = n.members.map((m) => {
+				const r = rebuild(m);
+				if (r !== m) changed = true;
+				return r;
+			});
+			return changed ? ({ ...node, members } as Rule) : node;
+		}
+		if (n.content) {
+			const content = rebuild(n.content);
+			return content === n.content ? node : withContent(node, content);
+		}
+		return node;
+	};
+	return rebuild(rule);
+}
+
+function applyElidedListField(ruleName: string, rule: Rule, ctx: EnrichCtx): Rule {
+	const fieldNames = syntacticWalker.fold(rule, new Set<string>(), (names, node) => {
+		const n = node as unknown as { type: string; name?: unknown };
+		if (isFieldType(n.type) && typeof n.name === 'string') names.add(n.name);
+		return names;
+	});
+	const elidedListFieldName = (seq: Rule): string | undefined => {
+		const info = separatedListBodyInfo(seq, ctx.sourceSymbols);
+		if (info === null || info.form !== 'head') return undefined;
+		const repeatAt = info.flatMembers.findIndex((m) => isRepeatType((m as { type: string }).type));
+		const element = repeatAt > 0 ? optionalContentOf(info.flatMembers[repeatAt - 1]!) : undefined;
+		if (element === undefined) return undefined;
+		const elementName = separatedListElementName(element);
+		return elementName === null ? 'elements' : pluralizeFieldName(elementName);
+	};
+	const wrapList = (node: Rule, seq: Rule): Rule | null => {
+		const name = elidedListFieldName(seq);
+		if (name === undefined) return null;
+		if (fieldNames.has(name)) {
+			reportSkip('elided-list-field', ruleName, `field '${name}' already exists`);
+			return null;
+		}
+		fieldNames.add(name);
+		return makeField(name, node);
+	};
+	const rebuild = (node: Rule): Rule => {
+		const n = node as unknown as { type: string; content?: Rule; members?: Rule[] };
+		if (isFieldType(n.type) || isLexedBoundary(n)) return node;
+		if (isSeqType(n.type)) {
+			const wrapped = wrapList(node, node);
+			if (wrapped !== null) return wrapped;
+		}
+		const inner = optionalContentOf(node);
+		if (inner !== undefined && isSeqType((inner as { type: string }).type)) {
+			const wrapped = wrapList(node, inner);
+			if (wrapped !== null) return wrapped;
 		}
 		if (n.members) {
 			let changed = false;

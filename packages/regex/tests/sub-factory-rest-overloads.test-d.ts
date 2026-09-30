@@ -11,6 +11,6 @@ import { createEngine } from '@sittir/common';
 
 const rx = await createEngine(regex);
 
-rx.build.termGroup.characterClass.coerce({ content: [] });
-// @ts-expect-error a number is not a character class atom
-rx.build.termGroup.characterClass.coerce({ content: [42] });
+rx.build.pattern.alternation.coerce();
+// @ts-expect-error a number is not an alternation term
+rx.build.pattern.alternation.coerce(42);

@@ -806,7 +806,7 @@ export namespace Expression {
 		export interface Object<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Collection<G>>> {
 			// claimed by t
 			readonly kind: 'expression.collection.object';
-			readonly properties?: (
+			readonly elements?: (
 				| V.Declaration.Method<G>
 				| G['element']
 				| V.Identifier.Property.Shorthand<G>

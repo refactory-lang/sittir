@@ -2660,7 +2660,7 @@
           },
           {
             "type": "FIELD",
-            "name": "properties",
+            "name": "elements",
             "content": {
               "type": "CHOICE",
               "members": [
@@ -3187,7 +3187,7 @@
               ]
             },
             "metadata": {
-              "fieldSource": "override"
+              "fieldSource": "enriched"
             }
           },
           {
@@ -4104,7 +4104,7 @@
             ]
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -4191,7 +4191,7 @@
             ]
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {

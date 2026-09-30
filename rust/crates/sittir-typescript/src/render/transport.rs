@@ -17873,7 +17873,7 @@ impl ::sittir_core::render::Render for SwitchCaseValueTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ObjectPropertiesTransportSlot {
+pub enum ObjectElementsTransportSlot {
     Pair(PairTransport),
     SpreadElement(SpreadElementTransport),
     MethodDefinition(MethodDefinitionTransport),
@@ -17902,40 +17902,40 @@ pub enum ObjectPropertiesTransportSlot {
     Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64,
 }
 
-impl ::sittir_core::prepare::Prepare for ObjectPropertiesTransportSlot {
+impl ::sittir_core::prepare::Prepare for ObjectElementsTransportSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ObjectPropertiesTransportSlot::Pair(t) => t.prepare(ctx),
-            ObjectPropertiesTransportSlot::SpreadElement(t) => t.prepare(ctx),
-            ObjectPropertiesTransportSlot::MethodDefinition(t) => t.prepare(ctx),
-            ObjectPropertiesTransportSlot::ShorthandPropertyIdentifier(t) => t.prepare(ctx),
-            ObjectPropertiesTransportSlot::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
-            ObjectPropertiesTransportSlot::Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Pair(t) => t.prepare(ctx),
+            ObjectElementsTransportSlot::SpreadElement(t) => t.prepare(ctx),
+            ObjectElementsTransportSlot::MethodDefinition(t) => t.prepare(ctx),
+            ObjectElementsTransportSlot::ShorthandPropertyIdentifier(t) => t.prepare(ctx),
+            ObjectElementsTransportSlot::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ObjectElementsTransportSlot::Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for ObjectPropertiesTransportSlot {
+impl ::sittir_core::view::KindOf for ObjectElementsTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Pair(inner) => inner.kind_in(kinds),
@@ -17969,7 +17969,7 @@ impl ::sittir_core::view::KindOf for ObjectPropertiesTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ObjectPropertiesTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ObjectElementsTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -18012,14 +18012,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPropertiesTransportSlot {
                         ShorthandPropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ObjectPropertiesTransportSlot",
+                        "unknown kind id {other} in ObjectElementsTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ObjectPropertiesTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ObjectElementsTransportSlot")
                 )?;
                 match kind_id {
                     30 => Ok(Self::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64),
@@ -18057,105 +18057,105 @@ impl ::napi::bindgen_prelude::FromNapiValue for ObjectPropertiesTransportSlot {
                         ShorthandPropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ObjectPropertiesTransportSlot",
+                        "unknown kind id {other} in ObjectElementsTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ObjectPropertiesTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ObjectElementsTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ObjectPropertiesTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ObjectElementsTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ObjectPropertiesTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ObjectElementsTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ObjectPropertiesTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ObjectElementsTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ObjectPropertiesTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ObjectElementsTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ObjectPropertiesTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ObjectElementsTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ObjectPropertiesTransportSlot::to_napi_value(env, *val)
+        ObjectElementsTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn object_properties_transport_slot_to_any(t: ObjectPropertiesTransportSlot) -> AnyTransport {
+fn object_elements_transport_slot_to_any(t: ObjectElementsTransportSlot) -> AnyTransport {
     match t {
-        ObjectPropertiesTransportSlot::Pair(inner) => AnyTransport::Pair(inner),
-        ObjectPropertiesTransportSlot::SpreadElement(inner) => AnyTransport::SpreadElement(inner),
-        ObjectPropertiesTransportSlot::MethodDefinition(inner) => AnyTransport::MethodDefinition(inner),
-        ObjectPropertiesTransportSlot::ShorthandPropertyIdentifier(inner) => AnyTransport::ShorthandPropertyIdentifier(inner),
-        ObjectPropertiesTransportSlot::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64,
-        ObjectPropertiesTransportSlot::Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Pair(inner) => AnyTransport::Pair(inner),
+        ObjectElementsTransportSlot::SpreadElement(inner) => AnyTransport::SpreadElement(inner),
+        ObjectElementsTransportSlot::MethodDefinition(inner) => AnyTransport::MethodDefinition(inner),
+        ObjectElementsTransportSlot::ShorthandPropertyIdentifier(inner) => AnyTransport::ShorthandPropertyIdentifier(inner),
+        ObjectElementsTransportSlot::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64,
+        ObjectElementsTransportSlot::Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64,
     }
 }
 
-impl ::sittir_core::render::Render for ObjectPropertiesTransportSlot {
+impl ::sittir_core::render::Render for ObjectElementsTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ObjectPropertiesTransportSlot::Pair(inner) => inner.render(w),
-            ObjectPropertiesTransportSlot::SpreadElement(inner) => inner.render(w),
-            ObjectPropertiesTransportSlot::MethodDefinition(inner) => inner.render(w),
-            ObjectPropertiesTransportSlot::ShorthandPropertyIdentifier(inner) => inner.render(w),
-            ObjectPropertiesTransportSlot::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64 => w.text("declare"),
-            ObjectPropertiesTransportSlot::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64 => w.text("namespace"),
-            ObjectPropertiesTransportSlot::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => w.text("type"),
-            ObjectPropertiesTransportSlot::Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64 => w.text("public"),
-            ObjectPropertiesTransportSlot::Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64 => w.text("private"),
-            ObjectPropertiesTransportSlot::Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64 => w.text("protected"),
-            ObjectPropertiesTransportSlot::Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64 => w.text("override"),
-            ObjectPropertiesTransportSlot::Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64 => w.text("readonly"),
-            ObjectPropertiesTransportSlot::Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64 => w.text("module"),
-            ObjectPropertiesTransportSlot::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64 => w.text("any"),
-            ObjectPropertiesTransportSlot::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64 => w.text("number"),
-            ObjectPropertiesTransportSlot::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64 => w.text("boolean"),
-            ObjectPropertiesTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => w.text("string"),
-            ObjectPropertiesTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => w.text("symbol"),
-            ObjectPropertiesTransportSlot::Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64 => w.text("export"),
-            ObjectPropertiesTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => w.text("object"),
-            ObjectPropertiesTransportSlot::Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64 => w.text("new"),
-            ObjectPropertiesTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => w.text("get"),
-            ObjectPropertiesTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => w.text("set"),
-            ObjectPropertiesTransportSlot::Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => w.text("async"),
-            ObjectPropertiesTransportSlot::Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64 => w.text("static"),
-            ObjectPropertiesTransportSlot::Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64 => w.text("let"),
+            ObjectElementsTransportSlot::Pair(inner) => inner.render(w),
+            ObjectElementsTransportSlot::SpreadElement(inner) => inner.render(w),
+            ObjectElementsTransportSlot::MethodDefinition(inner) => inner.render(w),
+            ObjectElementsTransportSlot::ShorthandPropertyIdentifier(inner) => inner.render(w),
+            ObjectElementsTransportSlot::Literal10_64_65_63_6c_61_72_65_5f_6b_65_79_77_6f_72_64 => w.text("declare"),
+            ObjectElementsTransportSlot::Literal11_6e_61_6d_65_73_70_61_63_65_5f_6b_65_79_77_6f_72_64 => w.text("namespace"),
+            ObjectElementsTransportSlot::Literal0_74_79_70_65_5f_6b_65_79_77_6f_72_64 => w.text("type"),
+            ObjectElementsTransportSlot::Literal12_70_75_62_6c_69_63_5f_6b_65_79_77_6f_72_64 => w.text("public"),
+            ObjectElementsTransportSlot::Literal13_70_72_69_76_61_74_65_5f_6b_65_79_77_6f_72_64 => w.text("private"),
+            ObjectElementsTransportSlot::Literal14_70_72_6f_74_65_63_74_65_64_5f_6b_65_79_77_6f_72_64 => w.text("protected"),
+            ObjectElementsTransportSlot::Literal15_6f_76_65_72_72_69_64_65_5f_6b_65_79_77_6f_72_64 => w.text("override"),
+            ObjectElementsTransportSlot::Literal16_72_65_61_64_6f_6e_6c_79_5f_6b_65_79_77_6f_72_64 => w.text("readonly"),
+            ObjectElementsTransportSlot::Literal17_6d_6f_64_75_6c_65_5f_6b_65_79_77_6f_72_64 => w.text("module"),
+            ObjectElementsTransportSlot::Literal18_61_6e_79_5f_6b_65_79_77_6f_72_64 => w.text("any"),
+            ObjectElementsTransportSlot::Literal19_6e_75_6d_62_65_72_5f_6b_65_79_77_6f_72_64 => w.text("number"),
+            ObjectElementsTransportSlot::Literal20_62_6f_6f_6c_65_61_6e_5f_6b_65_79_77_6f_72_64 => w.text("boolean"),
+            ObjectElementsTransportSlot::Literal21_73_74_72_69_6e_67_5f_6b_65_79_77_6f_72_64 => w.text("string"),
+            ObjectElementsTransportSlot::Literal22_73_79_6d_62_6f_6c_5f_6b_65_79_77_6f_72_64 => w.text("symbol"),
+            ObjectElementsTransportSlot::Literal23_65_78_70_6f_72_74_5f_6b_65_79_77_6f_72_64 => w.text("export"),
+            ObjectElementsTransportSlot::Literal24_6f_62_6a_65_63_74_5f_6b_65_79_77_6f_72_64 => w.text("object"),
+            ObjectElementsTransportSlot::Literal25_6e_65_77_5f_6b_65_79_77_6f_72_64 => w.text("new"),
+            ObjectElementsTransportSlot::Literal26_67_65_74_5f_6b_65_79_77_6f_72_64 => w.text("get"),
+            ObjectElementsTransportSlot::Literal27_73_65_74_5f_6b_65_79_77_6f_72_64 => w.text("set"),
+            ObjectElementsTransportSlot::Literal28_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => w.text("async"),
+            ObjectElementsTransportSlot::Literal29_73_74_61_74_69_63_5f_6b_65_79_77_6f_72_64 => w.text("static"),
+            ObjectElementsTransportSlot::Literal6_6c_65_74_5f_6b_65_79_77_6f_72_64 => w.text("let"),
         }
     }
 }
@@ -64490,12 +64490,12 @@ pub struct ObjectTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties"))]
-    pub properties: Option<Vec<Option<::sittir_core::SlotValue<ObjectPropertiesTransportSlot>>>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_before"))]
-    pub properties_separator_space_before: Option<u16>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_properties_separator_space_after"))]
-    pub properties_separator_space_after: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements"))]
+    pub elements: Option<Vec<Option<::sittir_core::SlotValue<ObjectElementsTransportSlot>>>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_before"))]
+    pub elements_separator_space_before: Option<u16>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_elements_separator_space_after"))]
+    pub elements_separator_space_after: Option<u16>,
 }
 
 impl ::sittir_core::view::KindOf for ObjectTransport {
@@ -64520,17 +64520,17 @@ impl ::sittir_core::prepare::Prepare for ObjectTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        let separated_properties = {
-            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.properties.as_deref().unwrap_or(&[]).iter().map(|item| item.as_ref().and_then(|i| i.coord())).collect();
-            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
-            if self.properties_separator_space_before.is_none() { self.properties_separator_space_before = gaps.before; }
-            if self.properties_separator_space_after.is_none() { self.properties_separator_space_after = gaps.after; }
+        let separated_elements = {
+            let coords: Vec<Option<&::sittir_core::NodeCoordinate>> = self.elements.as_deref().unwrap_or(&[]).iter().map(|item| item.as_ref().and_then(|i| i.coord())).collect();
+            let gaps = ::sittir_core::classify::classify_list_gaps(&coords, ctx.sources, ",", options::allowed(options::SITE_OBJECT_ELEMENTS_SEPARATOR_SPACE_BEFORE), options::allowed(options::SITE_OBJECT_ELEMENTS_SEPARATOR_SPACE_AFTER), &options::WHITESPACE);
+            if self.elements_separator_space_before.is_none() { self.elements_separator_space_before = gaps.before; }
+            if self.elements_separator_space_after.is_none() { self.elements_separator_space_after = gaps.after; }
             gaps.separated
         };
-        self.properties_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_BEFORE].arm);
-        self.properties_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_OBJECT_PROPERTIES_SEPARATOR_SPACE_AFTER].arm);
-        if let Some(seated_items) = self.properties.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Option::as_mut), options::SEATS_OBJECT_PROPERTIES, &separated_properties, ctx); }
-        self.properties.prepare(ctx)?;
+        self.elements_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_OBJECT_ELEMENTS_SEPARATOR_SPACE_BEFORE].arm);
+        self.elements_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_OBJECT_ELEMENTS_SEPARATOR_SPACE_AFTER].arm);
+        if let Some(seated_items) = self.elements.as_mut() { ::sittir_core::prepare::fill_seated_gaps(seated_items.iter_mut().map(Option::as_mut), options::SEATS_OBJECT_ELEMENTS, &separated_elements, ctx); }
+        self.elements.prepare(ctx)?;
         Ok(())
     }
 }
@@ -96517,7 +96517,7 @@ impl ::sittir_core::prepare::SeatTarget for SwitchCaseValueTransportSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for ObjectPropertiesTransportSlot {
+impl ::sittir_core::prepare::SeatTarget for ObjectElementsTransportSlot {
     fn seat_target(&mut self, table: &[u16]) -> Option<(&mut ::sittir_core::options::Edges, usize)> {
         match self {
             Self::Pair(t) => t.seat_target(table),
@@ -98314,22 +98314,22 @@ fn render_yield_expression(node: &YieldExpressionTransport, w: &mut dyn ::sittir
 }
 
 fn render_object(node: &ObjectTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let properties = ListView {
-        items: node.properties.as_deref().unwrap_or(&[]),
+    let elements = ListView {
+        items: node.elements.as_deref().unwrap_or(&[]),
         template: "{}",
         token: ",",
-        before: node.properties_separator_space_before.unwrap_or(0),
-        after: node.properties_separator_space_after.unwrap_or(0),
+        before: node.elements_separator_space_before.unwrap_or(0),
+        after: node.elements_separator_space_after.unwrap_or(0),
         leading: false,
         trailing: false,
-        head: Some(options::SITE_OBJECT_PROPERTIES_START),
-        tail: Some(options::SITE_OBJECT_PROPERTIES_END),
+        head: Some(options::SITE_OBJECT_ELEMENTS_START),
+        tail: Some(options::SITE_OBJECT_ELEMENTS_END),
     };
     w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("{")?;
     w.site_at(options::SITE_OBJECT_LBRACE_AFTER);
-    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "properties", w)?;
-    properties.render(w)?;
+    ::sittir_core::trivia::render_inner(&node.transport_trivia_data, "elements", w)?;
+    elements.render(w)?;
     w.site_at(options::SITE_OBJECT_RBRACE_BEFORE);
     w.text("}")?;
     w.edge(::sittir_core::types::KindId(235), ::sittir_core::options::Side::After, node.edges.and_then(|e| e.after));

@@ -1223,9 +1223,9 @@ export interface ObjectPatternTransport {
 export interface ObjectTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _properties?: Array<SlotValue<ObjectPropertiesTransportSlot> | undefined | null>
-  _properties_separator_space_before?: number
-  _properties_separator_space_after?: number
+  _elements?: Array<SlotValue<ObjectElementsTransportSlot> | undefined | null>
+  _elements_separator_space_before?: number
+  _elements_separator_space_after?: number
 }
 
 export interface ObjectTypeContentTransport {

@@ -17615,7 +17615,7 @@
                       "$type": 235,
                       "$source": 0,
                       "$named": true,
-                      "_properties": [
+                      "_elements": [
                         {
                           "$type": 457,
                           "$source": 0,
@@ -18078,7 +18078,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export default function point(x: number, y: number) {\n  return { x, y };\n}\n\n// a comment\nexport default class A {}\n\nexport async function readFile(filename: string): Promise<Buffer>\n",
-    "expectedReparseTree": "(program statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))) (comment_line) statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))) statements: (export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(program statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object elements: (shorthand_property_identifier) elements: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon)))) (comment_line) statements: (export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (class_declaration name: (type_identifier) body: (class_body) automatic_semicolon: (automatic_semicolon)))) statements: (export_statement_default_declaration declaration: (function_signature name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types type: (type_identifier))))) terminator: (automatic_semicolon))))",
     "wrappedText": "export default function point(x: number, y: number) {\n  return { x, y };\n}\n\n// a comment\nexport default class A {}\n\nexport async function readFile(filename: string): Promise<Buffer>\n",
     "wrappedOffset": 0
   },
@@ -18249,7 +18249,7 @@
                   "$type": 235,
                   "$source": 0,
                   "$named": true,
-                  "_properties": [
+                  "_elements": [
                     {
                       "$type": 457,
                       "$source": 0,
@@ -18399,7 +18399,7 @@
     "pattern": "export_statement_default_declaration",
     "edits": [],
     "expectedSourceOut": "export default function point(x: number, y: number) {\n  return { x, y };\n}\n",
-    "expectedReparseTree": "(export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))))",
+    "expectedReparseTree": "(export_statement_default_declaration (export_statement_default_declaration_default_kw declaration: (function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object elements: (shorthand_property_identifier) elements: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))))",
     "wrappedText": "export default function point(x: number, y: number) {\n  return { x, y };\n}\n",
     "wrappedOffset": 0
   },
@@ -18907,7 +18907,7 @@
               "$type": 235,
               "$source": 0,
               "$named": true,
-              "_properties": [
+              "_elements": [
                 {
                   "$type": 457,
                   "$source": 0,
@@ -19032,7 +19032,7 @@
     "pattern": "function_declaration",
     "edits": [],
     "expectedSourceOut": "function point(x: number, y: number) {\n  return { x, y };\n}\n",
-    "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))",
+    "expectedReparseTree": "(function_declaration name: (identifier) parameters: (formal_parameters (formal_parameters_elements formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))) formal_parameter: (required_parameter pattern: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (return_statement expression: (object elements: (shorthand_property_identifier) elements: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon)) (automatic_semicolon))",
     "wrappedText": "function point(x: number, y: number) {\n  return { x, y };\n}\n",
     "wrappedOffset": 0
   },
@@ -19770,7 +19770,7 @@
             "$type": 235,
             "$source": 0,
             "$named": true,
-            "_properties": [
+            "_elements": [
               {
                 "$type": 457,
                 "$source": 0,
@@ -19876,7 +19876,7 @@
     "pattern": "statement_block",
     "edits": [],
     "expectedSourceOut": "{\n  return { x, y };\n}\n",
-    "expectedReparseTree": "(statement_block statements: (return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (return_statement expression: (object elements: (shorthand_property_identifier) elements: (shorthand_property_identifier))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "{\n  return { x, y };\n}\n",
     "wrappedOffset": 0
   },
@@ -19892,7 +19892,7 @@
         "$type": 235,
         "$source": 0,
         "$named": true,
-        "_properties": [
+        "_elements": [
           {
             "$type": 457,
             "$source": 0,
@@ -19971,7 +19971,7 @@
     "pattern": "return_statement",
     "edits": [],
     "expectedSourceOut": "return { x, y };",
-    "expectedReparseTree": "(return_statement expression: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier)))",
+    "expectedReparseTree": "(return_statement expression: (object elements: (shorthand_property_identifier) elements: (shorthand_property_identifier)))",
     "wrappedText": "return { x, y };",
     "wrappedOffset": 0
   },
@@ -19983,7 +19983,7 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_properties": [
+      "_elements": [
         {
           "$type": 457,
           "$source": 0,
@@ -20045,7 +20045,7 @@
     "pattern": "object",
     "edits": [],
     "expectedSourceOut": "{ x, y }",
-    "expectedReparseTree": "(object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier))",
+    "expectedReparseTree": "(object elements: (shorthand_property_identifier) elements: (shorthand_property_identifier))",
     "wrappedText": "let _ = { x, y };",
     "wrappedOffset": 8
   },
@@ -30848,7 +30848,7 @@
               "$type": 235,
               "$source": 0,
               "$named": true,
-              "_properties": [
+              "_elements": [
                 {
                   "$type": 457,
                   "$source": 0,
@@ -30970,7 +30970,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "x = { name, description, private: private_ }\n",
-    "expectedReparseTree": "(program statements: (expression_statement expression: (assignment_expression left: (lhs_expression (identifier)) right: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier) properties: (pair key: (property_identifier) value: (identifier)))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (expression_statement expression: (assignment_expression left: (lhs_expression (identifier)) right: (object elements: (shorthand_property_identifier) elements: (shorthand_property_identifier) elements: (pair key: (property_identifier) value: (identifier)))) terminator: (automatic_semicolon)))",
     "wrappedText": "x = { name, description, private: private_ }\n",
     "wrappedOffset": 0
   },
@@ -31005,7 +31005,7 @@
           "$type": 235,
           "$source": 0,
           "$named": true,
-          "_properties": [
+          "_elements": [
             {
               "$type": 457,
               "$source": 0,
@@ -31125,7 +31125,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "x = { name, description, private: private_ }\n",
-    "expectedReparseTree": "(expression_statement expression: (assignment_expression left: (lhs_expression (identifier)) right: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier) properties: (pair key: (property_identifier) value: (identifier)))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(expression_statement expression: (assignment_expression left: (lhs_expression (identifier)) right: (object elements: (shorthand_property_identifier) elements: (shorthand_property_identifier) elements: (pair key: (property_identifier) value: (identifier)))) terminator: (automatic_semicolon))",
     "wrappedText": "x = { name, description, private: private_ }\n",
     "wrappedOffset": 0
   },
@@ -31156,7 +31156,7 @@
         "$type": 235,
         "$source": 0,
         "$named": true,
-        "_properties": [
+        "_elements": [
           {
             "$type": 457,
             "$source": 0,
@@ -31270,7 +31270,7 @@
     "pattern": "assignment_expression",
     "edits": [],
     "expectedSourceOut": "x = { name, description, private: private_ }",
-    "expectedReparseTree": "(assignment_expression left: (lhs_expression (identifier)) right: (object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier) properties: (pair key: (property_identifier) value: (identifier))))",
+    "expectedReparseTree": "(assignment_expression left: (lhs_expression (identifier)) right: (object elements: (shorthand_property_identifier) elements: (shorthand_property_identifier) elements: (pair key: (property_identifier) value: (identifier))))",
     "wrappedText": "let _ = x = { name, description, private: private_ };",
     "wrappedOffset": 8
   },
@@ -31314,7 +31314,7 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_properties": [
+      "_elements": [
         {
           "$type": 457,
           "$source": 0,
@@ -31412,7 +31412,7 @@
     "pattern": "object",
     "edits": [],
     "expectedSourceOut": "{ name, description, private: private_ }",
-    "expectedReparseTree": "(object properties: (shorthand_property_identifier) properties: (shorthand_property_identifier) properties: (pair key: (property_identifier) value: (identifier)))",
+    "expectedReparseTree": "(object elements: (shorthand_property_identifier) elements: (shorthand_property_identifier) elements: (pair key: (property_identifier) value: (identifier)))",
     "wrappedText": "let _ = { name, description, private: private_ };",
     "wrappedOffset": 8
   },
@@ -89527,7 +89527,7 @@
             "$type": 235,
             "$source": 0,
             "$named": true,
-            "_properties": [
+            "_elements": [
               {
                 "$type": 286,
                 "$source": 0,
@@ -89645,7 +89645,7 @@
             "$type": 235,
             "$source": 0,
             "$named": true,
-            "_properties": [
+            "_elements": [
               {
                 "$type": 286,
                 "$source": 0,
@@ -89802,7 +89802,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "{ public: true, private: true, readonly: true };\n\n{ readonly: 1, abstract: 1, static: 1 };\n",
-    "expectedReparseTree": "(program statements: (expression_statement expression: (object properties: (pair key: (property_identifier) value: (true)) properties: (pair key: (property_identifier) value: (true)) properties: (pair key: (property_identifier) value: (true)))) statements: (expression_statement expression: (object properties: (pair key: (property_identifier) value: (number_decimal)) properties: (pair key: (property_identifier) value: (number_decimal)) properties: (pair key: (property_identifier) value: (number_decimal)))))",
+    "expectedReparseTree": "(program statements: (expression_statement expression: (object elements: (pair key: (property_identifier) value: (true)) elements: (pair key: (property_identifier) value: (true)) elements: (pair key: (property_identifier) value: (true)))) statements: (expression_statement expression: (object elements: (pair key: (property_identifier) value: (number_decimal)) elements: (pair key: (property_identifier) value: (number_decimal)) elements: (pair key: (property_identifier) value: (number_decimal)))))",
     "wrappedText": "{ public: true, private: true, readonly: true };\n\n{ readonly: 1, abstract: 1, static: 1 };\n",
     "wrappedOffset": 0
   },
@@ -89818,7 +89818,7 @@
         "$type": 235,
         "$source": 0,
         "$named": true,
-        "_properties": [
+        "_elements": [
           {
             "$type": 286,
             "$source": 0,
@@ -89937,7 +89937,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{ public: true, private: true, readonly: true };",
-    "expectedReparseTree": "(expression_statement expression: (object properties: (pair key: (property_identifier) value: (true)) properties: (pair key: (property_identifier) value: (true)) properties: (pair key: (property_identifier) value: (true))))",
+    "expectedReparseTree": "(expression_statement expression: (object elements: (pair key: (property_identifier) value: (true)) elements: (pair key: (property_identifier) value: (true)) elements: (pair key: (property_identifier) value: (true))))",
     "wrappedText": "{ public: true, private: true, readonly: true };",
     "wrappedOffset": 0
   },
@@ -89953,7 +89953,7 @@
         "$type": 235,
         "$source": 0,
         "$named": true,
-        "_properties": [
+        "_elements": [
           {
             "$type": 286,
             "$source": 0,
@@ -90108,7 +90108,7 @@
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "{ readonly: 1, abstract: 1, static: 1 };",
-    "expectedReparseTree": "(expression_statement expression: (object properties: (pair key: (property_identifier) value: (number_decimal)) properties: (pair key: (property_identifier) value: (number_decimal)) properties: (pair key: (property_identifier) value: (number_decimal))))",
+    "expectedReparseTree": "(expression_statement expression: (object elements: (pair key: (property_identifier) value: (number_decimal)) elements: (pair key: (property_identifier) value: (number_decimal)) elements: (pair key: (property_identifier) value: (number_decimal))))",
     "wrappedText": "{ readonly: 1, abstract: 1, static: 1 };",
     "wrappedOffset": 0
   },
@@ -90120,7 +90120,7 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_properties": [
+      "_elements": [
         {
           "$type": 286,
           "$source": 0,
@@ -90233,7 +90233,7 @@
     "pattern": "object",
     "edits": [],
     "expectedSourceOut": "{ public: true, private: true, readonly: true }",
-    "expectedReparseTree": "(object properties: (pair key: (property_identifier) value: (true)) properties: (pair key: (property_identifier) value: (true)) properties: (pair key: (property_identifier) value: (true)))",
+    "expectedReparseTree": "(object elements: (pair key: (property_identifier) value: (true)) elements: (pair key: (property_identifier) value: (true)) elements: (pair key: (property_identifier) value: (true)))",
     "wrappedText": "let _ = { public: true, private: true, readonly: true };",
     "wrappedOffset": 8
   },
@@ -90245,7 +90245,7 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_properties": [
+      "_elements": [
         {
           "$type": 286,
           "$source": 0,
@@ -90394,7 +90394,7 @@
     "pattern": "object",
     "edits": [],
     "expectedSourceOut": "{ readonly: 1, abstract: 1, static: 1 }",
-    "expectedReparseTree": "(object properties: (pair key: (property_identifier) value: (number_decimal)) properties: (pair key: (property_identifier) value: (number_decimal)) properties: (pair key: (property_identifier) value: (number_decimal)))",
+    "expectedReparseTree": "(object elements: (pair key: (property_identifier) value: (number_decimal)) elements: (pair key: (property_identifier) value: (number_decimal)) elements: (pair key: (property_identifier) value: (number_decimal)))",
     "wrappedText": "let _ = { readonly: 1, abstract: 1, static: 1 };",
     "wrappedOffset": 8
   },
@@ -230201,7 +230201,7 @@
               "$type": 235,
               "$source": 0,
               "$named": true,
-              "_properties": [
+              "_elements": [
                 {
                   "$type": 286,
                   "$source": 0,
@@ -230323,7 +230323,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "import something from 'foo.css' assert { type: 'css' }\n",
-    "expectedReparseTree": "(program statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string_single elements: (string_fragment))) import_attribute: (import_attribute object: (object properties: (pair key: (property_identifier) value: (string_single elements: (string_fragment))))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string_single elements: (string_fragment))) import_attribute: (import_attribute object: (object elements: (pair key: (property_identifier) value: (string_single elements: (string_fragment))))) terminator: (automatic_semicolon)))",
     "wrappedText": "import something from 'foo.css' assert { type: 'css' }\n",
     "wrappedOffset": 0
   },
@@ -230422,7 +230422,7 @@
           "$type": 235,
           "$source": 0,
           "$named": true,
-          "_properties": [
+          "_elements": [
             {
               "$type": 286,
               "$source": 0,
@@ -230542,7 +230542,7 @@
     "pattern": "import_statement",
     "edits": [],
     "expectedSourceOut": "import something from 'foo.css' assert { type: 'css' }\n",
-    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string_single elements: (string_fragment))) import_attribute: (import_attribute object: (object properties: (pair key: (property_identifier) value: (string_single elements: (string_fragment))))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(import_statement from_clause: (import_statement_clause_from (import_clause (import_clause_default_import (identifier))) source: (string_single elements: (string_fragment))) import_attribute: (import_attribute object: (object elements: (pair key: (property_identifier) value: (string_single elements: (string_fragment))))) terminator: (automatic_semicolon))",
     "wrappedText": "import something from 'foo.css' assert { type: 'css' }\n",
     "wrappedOffset": 0
   },
@@ -230664,7 +230664,7 @@
       "$type": 235,
       "$source": 0,
       "$named": true,
-      "_properties": [
+      "_elements": [
         {
           "$type": 286,
           "$source": 0,
@@ -230760,7 +230760,7 @@
     "pattern": "object",
     "edits": [],
     "expectedSourceOut": "{ type: 'css' }",
-    "expectedReparseTree": "(object properties: (pair key: (property_identifier) value: (string_single elements: (string_fragment))))",
+    "expectedReparseTree": "(object elements: (pair key: (property_identifier) value: (string_single elements: (string_fragment))))",
     "wrappedText": "let _ = { type: 'css' };",
     "wrappedOffset": 8
   },

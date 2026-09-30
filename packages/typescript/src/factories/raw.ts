@@ -1485,10 +1485,10 @@ export function buildObject(
 		T.AdmittedNodes
 	>
 ): T.Object.Bound {
-	const _properties = admitAliasContent<NonNullable<T.Object['_properties']>>(
+	const _elements = admitAliasContent<NonNullable<T.Object['_elements']>>(
 		rejectBareText(
 			children,
-			'Object.properties',
+			'Object.elements',
 			'a built Pair / SpreadElement / MethodDefinition / ShorthandPropertyIdentifier'
 		),
 		[[[1], (v: unknown) => buildShorthandPropertyIdentifier(v as never)]]
@@ -1499,9 +1499,9 @@ export function buildObject(
 				$type: TSKindId.Object as const,
 				$source: 2 as const,
 				$named: true as const,
-				_properties,
+				_elements,
 				$with: {
-					properties: (
+					elements: (
 						...vs: (
 							| (
 									| T.Pair
@@ -1537,7 +1537,7 @@ export function buildObject(
 				}
 			},
 			{
-				properties: () => _properties
+				elements: () => _elements
 			}
 		)
 	) as unknown as T.Object.Bound;
