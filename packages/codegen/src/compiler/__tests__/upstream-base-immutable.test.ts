@@ -2,8 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { evaluate } from '../evaluate.ts';
-import { resolveGrammarJsPath, resolveOverridesPath } from '../resolve-grammar.ts';
 import type { RawGrammar } from '../types.ts';
+import { NO_FILE_TYPES } from '../upstream-file-types.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const enrichedEntry = resolve(__dirname, '../../__tests__/fixtures/enriched-upstream-entry.ts');
@@ -43,16 +45,16 @@ async function freshEnrichedUpstream(grammar: string, pass: string): Promise<str
 	(globalThis as { __enrichedUpstreamGrammar__?: string }).__enrichedUpstreamGrammar__ = grammar;
 	const { rules, extras, externals, supertypes, inline, conflicts, precedences, word }: RawGrammar = await evaluate(
 		`${enrichedEntry}?grammar=${grammar}&pass=${pass}`
-	);
+	, NO_FILE_TYPES);
 	return JSON.stringify({ rules, extras, externals, supertypes, inline, conflicts, precedences, word });
 }
 
 describe('evaluating a grammar leaves its upstream and its enriched base untouched', () => {
 	for (const grammar of GRAMMARS) {
 		it(`${grammar}: the frozen upstream base and the frozen enriched base survive the wired evaluation`, async () => {
-			deepFreeze(await evaluate(resolveGrammarJsPath(grammar)));
+			deepFreeze(await evaluatePackage(grammarPackage(grammar), { base: true }));
 			const before = await freshEnrichedUpstream(grammar, 'before');
-			await evaluate(resolveOverridesPath(grammar));
+			await evaluatePackage(grammarPackage(grammar));
 			expect(await freshEnrichedUpstream(grammar, 'after')).toBe(before);
 		}, 120_000);
 	}

@@ -36,7 +36,7 @@ describe('typescript NamespaceMap access-path convergence', () => {
 	it('Fluent / Loose / Kind each converge', () => {
 		expectTrue<Equals<ClassDeclaration.Built, BuiltFor<TSKindId.ClassDeclaration>>>();
 		expectTrue<Equals<ClassDeclaration.Loose, LooseFor<TSKindId.ClassDeclaration>>>();
-		expectTrue<Equals<ClassDeclaration.Kind, 'class_declaration'>>();
+		expectTrue<Equals<ClassDeclaration.Kind, TSKindId.ClassDeclaration>>();
 	});
 
 	it('Program (root kind) converges', () => {

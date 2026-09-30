@@ -3,7 +3,7 @@
 import * as F from './raw.js';
 import { TOKEN_INTERIORS } from '../consts.js';
 import { lexedConfig, numberText, spelledForm, spelledInterior } from '@sittir/common/utils';
-import type * as T from '../types.js';
+import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import { Delimiter } from '@sittir/common/utils';
 import type { AnyNodeData, LooseValue, NonEmptyArray, SpelledAffix, WithSpelling } from '@sittir/types';
@@ -278,9 +278,9 @@ interface _LeafEntry {
 }
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	hash_bang_line: { factory: (content: string) => _resolveByKind('hash_bang_line', content) },
-	import: { values: ['import'], factory: () => F.buildImport() },
-	empty_statement: { values: [';'], factory: () => F.buildEmptyStatement() },
-	optional_chain: { values: ['?.'], factory: () => F.buildOptionalChain() },
+	import: { values: ['import'], factory: () => F.buildImport },
+	empty_statement: { values: [';'], factory: () => F.buildEmptyStatement },
+	optional_chain: { values: ['?.'], factory: () => F.buildOptionalChain },
 	unescaped_double_string_fragment: {
 		pattern: /^(?:(?:[^"\\\r\n]+))$/u,
 		factory: F.buildUnescapedDoubleStringFragment
@@ -301,14 +301,14 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		factory: F.buildIdentifier
 	},
 	private_property_identifier: { factory: (content: string) => _resolveByKind('private_property_identifier', content) },
-	this: { values: ['this'], factory: () => F.buildThis() },
-	super: { values: ['super'], factory: () => F.buildSuper() },
-	true: { values: ['true'], factory: () => F.buildTrue() },
-	false: { values: ['false'], factory: () => F.buildFalse() },
-	null: { values: ['null'], factory: () => F.buildNull() },
-	undefined: { values: ['undefined'], factory: () => F.buildUndefined() },
-	override_modifier: { values: ['override'], factory: () => F.buildOverrideModifier() },
-	existential_type: { values: ['*'], factory: () => F.buildExistentialType() },
+	this: { values: ['this'], factory: () => F.buildThis },
+	super: { values: ['super'], factory: () => F.buildSuper },
+	true: { values: ['true'], factory: () => F.buildTrue },
+	false: { values: ['false'], factory: () => F.buildFalse },
+	null: { values: ['null'], factory: () => F.buildNull },
+	undefined: { values: ['undefined'], factory: () => F.buildUndefined },
+	override_modifier: { values: ['override'], factory: () => F.buildOverrideModifier },
+	existential_type: { values: ['*'], factory: () => F.buildExistentialType },
 	comment_line: { factory: (content: string) => _resolveByKind('comment_line', content) },
 	comment_block: { factory: (content: string) => _resolveByKind('comment_block', content) },
 	number_hex: {
@@ -358,25 +358,25 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	number_bigint_binary: { factory: (content: string) => _resolveByKind('number_bigint_binary', content) },
 	number_bigint_octal: { factory: (content: string) => _resolveByKind('number_bigint_octal', content) },
 	number_bigint_decimal: { factory: (content: string) => _resolveByKind('number_bigint_decimal', content) },
-	empty_member: { values: [';'], factory: () => F.buildEmptyMember() },
-	meta_property_new_target: { values: ['new.target'], factory: () => F.buildMetaPropertyNewTarget() },
-	meta_property_import_meta: { values: ['import.meta'], factory: () => F.buildMetaPropertyImportMeta() },
+	empty_member: { values: [';'], factory: () => F.buildEmptyMember },
+	meta_property_new_target: { values: ['new.target'], factory: () => F.buildMetaPropertyNewTarget },
+	meta_property_import_meta: { values: ['import.meta'], factory: () => F.buildMetaPropertyImportMeta },
 	html_comment: { pattern: /^(?:(?:<!--[\s\S]*?-->))$/u, factory: F.buildHtmlComment },
 	jsx_text: { pattern: /^(?:(?:[^{}<>]+))$/u, factory: F.buildJsxText },
 	_template_chars: { pattern: /^(?:(?:[^`\\$]+))$/u, factory: F.buildTemplateChars },
-	_automatic_semicolon: { values: ['\n'], factory: () => F.buildAutomaticSemicolon() },
+	_automatic_semicolon: { values: ['\n'], factory: () => F.buildAutomaticSemicolon },
 	_function_signature_automatic_semicolon: {
 		values: ['\n'],
-		factory: () => F.buildFunctionSignatureAutomaticSemicolon()
+		factory: () => F.buildFunctionSignatureAutomaticSemicolon
 	},
-	_tight: { values: [''], factory: () => F.buildTight() },
-	_space: { values: [' '], factory: () => F.buildSpace() },
-	_tab: { values: ['\t'], factory: () => F.buildTab() },
-	_newline: { values: ['\n'], factory: () => F.buildNewline() },
-	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline() },
-	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline() },
-	_indent: { values: ['﷐\n'], factory: () => F.buildIndent() },
-	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent() },
+	_tight: { values: [''], factory: () => F.buildTight },
+	_space: { values: [' '], factory: () => F.buildSpace },
+	_tab: { values: ['\t'], factory: () => F.buildTab },
+	_newline: { values: ['\n'], factory: () => F.buildNewline },
+	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline },
+	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline },
+	_indent: { values: ['﷐\n'], factory: () => F.buildIndent },
+	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent },
 	statement_identifier: {
 		pattern:
 			/^(?:(?:[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\})(?:(?:[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}))*)$/u,
@@ -495,170 +495,21 @@ function _isFromKind(k: string): k is keyof _FromMap {
 	return k in _fromMap;
 }
 
-const _SUPERTYPE_KIND_TAGS: Record<string, string | readonly string[] | undefined> = {
-	export_statement: [
-		'export_statement_default',
-		'export_statement_type_export',
-		'export_statement_equals_export',
-		'export_statement_namespace_export'
-	],
-	declaration: [
-		'function_declaration',
-		'generator_function_declaration',
-		'class_declaration',
-		'lexical_declaration',
-		'variable_declaration',
-		'function_signature',
-		'abstract_class_declaration',
-		'module',
-		'internal_module',
-		'type_alias_declaration',
-		'enum_declaration',
-		'interface_declaration',
-		'import_alias',
-		'ambient_declaration'
-	],
-	import_specifier: ['import_specifier_name', 'import_specifier_as'],
-	statement: [
-		'export_statement',
-		'import_statement',
-		'debugger_statement',
-		'expression_statement',
-		'declaration',
-		'statement_block',
-		'if_statement',
-		'switch_statement',
-		'for_statement',
-		'for_in_statement',
-		'while_statement',
-		'do_statement',
-		'try_statement',
-		'with_statement',
-		'break_statement',
-		'continue_statement',
-		'return_statement',
-		'throw_statement',
-		'empty_statement',
-		'labeled_statement'
-	],
-	variable_declarator: ['variable_declarator_plain', 'variable_declarator_definite'],
-	_for_header: ['for_header_lhs', 'for_header_var_kind', 'for_header_let_const_kind'],
-	parenthesized_expression: ['parenthesized_expression_typed', 'parenthesized_expression_sequence'],
-	expression: [
-		'as_expression',
-		'satisfies_expression',
-		'instantiation_expression',
-		'internal_module',
-		'type_assertion',
-		'primary_expression',
-		'assignment_expression',
-		'augmented_assignment_expression',
-		'await_expression',
-		'unary_expression',
-		'binary_expression',
-		'ternary_expression',
-		'update_expression',
-		'new_expression',
-		'yield_expression'
-	],
-	primary_expression: [
-		'subscript_expression',
-		'member_expression',
-		'parenthesized_expression',
-		'undefined',
-		'identifier',
-		'declare_keyword',
-		'namespace_keyword',
-		'type_keyword',
-		'public_keyword',
-		'private_keyword',
-		'protected_keyword',
-		'override_keyword',
-		'readonly_keyword',
-		'module_keyword',
-		'any_keyword',
-		'number_keyword',
-		'boolean_keyword',
-		'string_keyword',
-		'symbol_keyword',
-		'export_keyword',
-		'object_keyword',
-		'new_keyword',
-		'get_keyword',
-		'set_keyword',
-		'async_keyword',
-		'static_keyword',
-		'let_keyword',
-		'this',
-		'super',
-		'number',
-		'string',
-		'template_string',
-		'regex',
-		'true',
-		'false',
-		'null',
-		'object',
-		'array',
-		'function_expression',
-		'arrow_function',
-		'generator_function',
-		'class',
-		'meta_property',
-		'call_expression',
-		'non_null_expression'
-	],
-	call_expression: ['call_expression_call', 'call_expression_template_call', 'call_expression_member'],
-	update_expression: 'update_expression_postfix',
-	string: ['string_double', 'string_single'],
-	comment: 'comment_line',
-	number: 'number_decimal',
-	meta_property: ['meta_property_new_target', 'meta_property_import_meta'],
-	pattern: ['_lhs_expression', 'rest_pattern'],
-	type: [
-		'primary_type',
-		'function_type',
-		'readonly_type',
-		'constructor_type',
-		'infer_type',
-		'type_query_member_expression_in_type_annotation',
-		'type_query_call_expression_in_type_annotation'
-	],
-	primary_type: [
-		'parenthesized_type',
-		'predefined_type',
-		'type_identifier',
-		'nested_type_identifier',
-		'generic_type',
-		'object_type',
-		'array_type',
-		'tuple_type',
-		'flow_maybe_type',
-		'type_query',
-		'index_type_query',
-		'this',
-		'existential_type',
-		'literal_type',
-		'lookup_type',
-		'conditional_type',
-		'template_literal_type',
-		'intersection_type',
-		'union_type'
-	],
-	index_signature: ['index_signature_colon', 'index_signature_mapped_type_clause'],
-	_whitespace: ['_tight', '_space', '_tab', '_newline', '_blankline', '_double_blankline', '_indent', '_dedent'],
-	export_statement_default: ['export_statement_default_from', 'export_statement_default_declaration'],
-	number_bigint: 'number_bigint_decimal'
-};
+function _fromOfTag(tag: unknown, candidates: readonly string[]): keyof _FromMap {
+	const name = typeof tag === 'number' ? KIND_NAMES.get(tag) : undefined;
+	if (
+		name !== undefined &&
+		_isFromKind(name) &&
+		candidates.some((c) => c === name || _BARE_ACCEPTS[c]?.has(tag as number))
+	)
+		return name;
+	throw new Error(`the $type tag ${JSON.stringify(tag)} is not a kind id of [${candidates.join(', ')}]`);
+}
 
-/** A `kind:` discriminant names its kind by the grammar string or the
- *  stamped `TSKindId` enum value — both spellings resolve to the same name.
- *  A supertype tag names its default arm; one without a default names no kind. */
-function _kindNameOf(kind: unknown): string | undefined {
-	const name = typeof kind === 'number' ? KIND_NAMES.get(kind) : typeof kind === 'string' ? kind : undefined;
-	const tag = name === undefined || _isFromKind(name) ? undefined : _SUPERTYPE_KIND_TAGS[name];
-	if (tag === undefined || typeof tag === 'string') return tag ?? name;
-	throw new Error(`kind ${JSON.stringify(name)} has no default arm; name one of [${tag.join(', ')}]`);
+function _splitTag(v: unknown): { readonly tag: unknown; readonly rest: _LooseFieldInput } | undefined {
+	if (typeof v !== 'object' || v === null || Array.isArray(v) || isNode(v) || !('$type' in v)) return undefined;
+	const { $type, ...rest } = v as Record<string, unknown>;
+	return { tag: $type, rest };
 }
 
 function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInput): ReturnType<_FromMap[K]> {
@@ -666,8 +517,7 @@ function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInpu
 	if (!(kind in _leafRegistry) || typeof rest !== 'object' || rest === null || Array.isArray(rest) || isNode(rest))
 		return fn(rest);
 	const text = (rest as { text?: unknown }).text;
-	if (typeof text !== 'string')
-		throw new Error(`the ${kind} tag takes its text: { kind: ${JSON.stringify(kind)}, text: "…" }`);
+	if (typeof text !== 'string') throw new Error(`the ${kind} tag takes its text: { $type: <kind id>, text: "…" }`);
 	return fn(text);
 }
 
@@ -736,235 +586,235 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 112, 114, 119, 120, 121, 122, 123, 124,
 	125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147,
 	148, 149, 150, 151, 165, 167, 169, 170, 171, 172, 173, 178, 180, 181, 182, 183, 184, 185, 186, 187, 195, 224, 252,
-	318, 319, 356, 359, 376, 377, 378, 379, 380, 381, 382, 383, 393, 394, 405, 435, 436
+	318, 319, 356, 359, 376, 377, 378, 379, 380, 381, 382, 383, 403, 433, 434
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
-	namespace_export: new Set([1, 419, 420]),
-	export_clause: new Set([1, 192, 384, 419, 420]),
-	import_clause: new Set([1, 199, 200, 385, 412, 413, 425]),
+	namespace_export: new Set([1, 417, 418]),
+	export_clause: new Set([1, 192, 384, 417, 418]),
+	import_clause: new Set([1, 199, 200, 385, 410, 411, 423]),
 	namespace_import: new Set([1]),
-	named_imports: new Set([385, 412, 413]),
+	named_imports: new Set([385, 410, 411]),
 	expression_statement: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 414, 415, 416, 417, 418, 419, 420, 421, 422,
-		435, 436
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 412, 413, 414, 415, 416, 417, 418, 419, 420,
+		433, 434
 	]),
 	else_clause: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 173, 191, 192, 196, 204, 205, 206, 208, 210, 211, 212,
 		213, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 234, 235, 239, 242, 243, 245, 246, 247, 248, 249, 254,
 		255, 256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 295, 297, 298, 299, 300, 305, 306, 307, 308, 310, 312,
-		314, 317, 384, 395, 396, 399, 400, 401, 414, 415, 416, 417, 418, 419, 420, 421, 422, 426, 427, 428, 429, 430, 435,
-		436, 469
+		314, 317, 384, 393, 394, 397, 398, 399, 412, 413, 414, 415, 416, 417, 418, 419, 420, 424, 425, 426, 427, 428, 433,
+		434, 467
 	]),
-	break_statement: new Set([1, 469]),
-	continue_statement: new Set([1, 469]),
+	break_statement: new Set([1, 467]),
+	continue_statement: new Set([1, 467]),
 	debugger_statement: new Set([173]),
 	return_statement: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 414, 415, 416, 417, 418, 419, 420, 421, 422,
-		435, 436
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 412, 413, 414, 415, 416, 417, 418, 419, 420,
+		433, 434
 	]),
 	throw_statement: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 414, 415, 416, 417, 418, 419, 420, 421, 422,
-		435, 436
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 412, 413, 414, 415, 416, 417, 418, 419, 420,
+		433, 434
 	]),
 	finally_clause: new Set([208]),
 	yield_expression: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 414, 415, 416, 417, 418, 419, 420, 421, 422,
-		435, 436
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 412, 413, 414, 415, 416, 417, 418, 419, 420,
+		433, 434
 	]),
-	class_heritage: new Set([304, 424]),
+	class_heritage: new Set([304, 422]),
 	await_expression: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 414, 415, 416, 417, 418, 419, 420, 421, 422,
-		435, 436
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 412, 413, 414, 415, 416, 417, 418, 419, 420,
+		433, 434
 	]),
 	_lhs_expression: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 236, 239, 240, 242, 245, 247, 249, 254, 255,
-		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 414, 415, 416, 417, 418, 419, 420,
-		421, 422, 435, 436
+		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 412, 413, 414, 415, 416, 417, 418,
+		419, 420, 433, 434
 	]),
 	spread_element: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 414, 415, 416, 417, 418, 419, 420, 421, 422,
-		435, 436
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 412, 413, 414, 415, 416, 417, 418, 419, 420,
+		433, 434
 	]),
 	template_substitution: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 414, 415, 416, 417, 418, 419, 420, 421, 422,
-		435, 436
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 412, 413, 414, 415, 416, 417, 418, 419, 420,
+		433, 434
 	]),
 	decorator: new Set([1, 278, 279, 296]),
 	formal_parameters: new Set([320, 321, 386]),
 	rest_pattern: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 236, 239, 240, 242, 245, 247, 249, 254, 255,
-		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 414, 415, 416, 417, 418, 419, 420,
-		421, 422, 435, 436
+		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 412, 413, 414, 415, 416, 417, 418,
+		419, 420, 433, 434
 	]),
 	computed_property_name: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 414, 415, 416, 417, 418, 419, 420, 421, 422,
-		435, 436
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 412, 413, 414, 415, 416, 417, 418, 419, 420,
+		433, 434
 	]),
 	non_null_expression: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 414, 415, 416, 417, 418, 419, 420, 421, 422,
-		435, 436
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 412, 413, 414, 415, 416, 417, 418, 419, 420,
+		433, 434
 	]),
 	decorator_parenthesized_expression: new Set([1, 278, 279]),
-	ambient_declaration: new Set([205, 206, 208, 243, 246, 248, 295, 305, 306, 307, 308, 310, 312, 314, 317, 395, 396]),
+	ambient_declaration: new Set([205, 206, 208, 243, 246, 248, 295, 305, 306, 307, 308, 310, 312, 314, 317, 393, 394]),
 	enum_body: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 118, 119, 120, 121, 122,
 		123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256,
-		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 316, 387, 414, 415, 416, 417, 418,
-		419, 420, 421, 422, 435, 436, 466
+		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 316, 387, 412, 413, 414, 415, 416,
+		417, 418, 419, 420, 433, 434, 464
 	]),
 	omitting_type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
 	adding_type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
 	opting_type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
 	type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
 	asserts: new Set([1, 119, 344]),
 	asserts_annotation: new Set([1, 119, 329, 344]),
 	optional_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
 	rest_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
 	template_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
 	type_predicate_annotation: new Set([344]),
 	type_query: new Set([1, 119, 346, 347, 348, 349]),
 	index_type_query: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
-	literal_type: new Set([121, 122, 123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 402, 419, 420]),
+	literal_type: new Set([121, 122, 123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 400, 417, 418]),
 	flow_maybe_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
 	parenthesized_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
 	type_arguments: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 388, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 388, 390, 400, 417, 418, 469
 	]),
-	type_parameters: new Set([1, 365, 389, 471]),
+	type_parameters: new Set([1, 365, 389, 469]),
 	default_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
 	array_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
 	tuple_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
 	readonly_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
-	export_specifiers: new Set([1, 192, 419, 420]),
-	import_specifiers: new Set([412, 413]),
+	export_specifiers: new Set([1, 192, 417, 418]),
+	import_specifiers: new Set([410, 411]),
 	formal_parameters_elements: new Set([320, 321]),
 	enum_body_elements: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 118, 119, 120, 121, 122,
 		123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256,
-		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 316, 414, 415, 416, 417, 418, 419,
-		420, 421, 422, 435, 436, 466
+		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 316, 412, 413, 414, 415, 416, 417,
+		418, 419, 420, 433, 434, 464
 	]),
 	types: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
-	type_parameters_elements: new Set([1, 365, 471]),
+	type_parameters_elements: new Set([1, 365, 469]),
 	tuple_type_members: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 402, 419, 420, 471
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 390, 400, 417, 418, 469
 	]),
-	import_clause_group: new Set([1, 199, 200, 385, 412, 413]),
+	import_clause_group: new Set([1, 199, 200, 385, 410, 411]),
 	ambient_declaration_global: new Set([208]),
 	object_type_content: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 191, 192, 234, 235, 239, 242, 245, 247, 249, 254, 255,
-		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 293, 297, 298, 299, 300, 308, 362, 363, 368, 384, 399, 400,
-		401, 409, 410, 414, 415, 416, 417, 418, 419, 420, 421, 422, 426, 427, 428, 429, 430, 435, 436
+		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 293, 297, 298, 299, 300, 308, 362, 363, 368, 384, 397, 398,
+		399, 407, 408, 412, 413, 414, 415, 416, 417, 418, 419, 420, 424, 425, 426, 427, 428, 433, 434
 	]),
 	export_statement_namespace_export: new Set([1]),
 	export_statement_equals_export: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 414, 415, 416, 417, 418, 419, 420, 421, 422,
-		435, 436
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 412, 413, 414, 415, 416, 417, 418, 419, 420,
+		433, 434
 	]),
-	class_body_member: new Set([290, 293, 294, 409, 410]),
+	class_body_member: new Set([290, 293, 294, 407, 408]),
 	parenthesized_expression_sequence: new Set([269]),
 	arrow_function_parameter: new Set([1]),
-	export_statement_default_from: new Set([1, 191, 192, 384, 419, 420, 428, 429, 430]),
-	export_statement_default_from_star_from: new Set([419, 420]),
+	export_statement_default_from: new Set([1, 191, 192, 384, 417, 418, 426, 427, 428]),
+	export_statement_default_from_star_from: new Set([417, 418]),
 	export_statement_default_declaration_default_kw: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 205, 206, 208, 234, 235, 239, 242, 243, 245, 246, 247,
 		248, 249, 254, 255, 256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 295, 297, 298, 299, 300, 305, 306, 307,
-		308, 310, 312, 314, 317, 395, 396, 414, 415, 416, 417, 418, 419, 420, 421, 422, 432, 435, 436
+		308, 310, 312, 314, 317, 393, 394, 412, 413, 414, 415, 416, 417, 418, 419, 420, 430, 433, 434
 	]),
 	export_statement_default_declaration_default_kw_value: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 414, 415, 416, 417, 418, 419, 420, 421, 422,
-		435, 436
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 412, 413, 414, 415, 416, 417, 418, 419, 420,
+		433, 434
 	]),
 	statement_identifier: new Set([1]),
 	shorthand_property_identifier: new Set([1]),
@@ -983,14 +833,10 @@ const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	41: ['predefined_type', 'predefined_type'],
 	42: ['predefined_type'],
 	44: ['predefined_type'],
-	50: ['_kind'],
 	107: ['predefined_type'],
-	128: ['_kind'],
-	142: ['__for_header_operator'],
 	143: ['predefined_type'],
 	144: ['predefined_type'],
-	145: ['predefined_type'],
-	150: ['__for_header_operator']
+	145: ['predefined_type']
 };
 
 function _resolveOne<T>(
@@ -1042,13 +888,13 @@ function _resolveOne<T>(
 			if (_isFromKind(bk)) return _resolveByKind(bk, {}) as T;
 		}
 	}
-	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
-		const { kind, ...rest } = v;
-		const kindName = _kindNameOf(kind);
-		if (kindName !== undefined && _isFromKind(kindName)) {
-			const built = _resolveByKind(kindName, rest) as _LooseFieldInput;
-			return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;
-		}
+	const tagged = _splitTag(v);
+	if (tagged !== undefined) {
+		const built = _resolveByKind(
+			_fromOfTag(tagged.tag, [...leafKinds, ...branchKinds]),
+			tagged.rest
+		) as _LooseFieldInput;
+		return (isNode(built) ? _resolveOne<T>(built, leafKinds, branchKinds, defaultArm) : built) as T;
 	}
 	if (branchKinds.length === 1 && typeof v === 'object' && !Array.isArray(v)) {
 		const bk = branchKinds[0]!;
@@ -1099,7 +945,9 @@ function _listElements(
 	input: readonly unknown[],
 	optionKeys: readonly string[],
 	wrapperKind: string | undefined,
-	resolve: (elements: readonly unknown[]) => readonly unknown[]
+	resolve: (elements: readonly unknown[]) => readonly unknown[],
+	tagKinds: readonly string[],
+	bagKinds?: readonly string[]
 ): readonly unknown[] {
 	const head = input[0];
 	const optionsFirst =
@@ -1109,17 +957,17 @@ function _listElements(
 		!Array.isArray(head) &&
 		!isNode(head) &&
 		Object.keys(head).every((k) => optionKeys.includes(k));
-	const elements = (optionsFirst ? input.slice(1) : input).map((e) =>
-		wrapperKind !== undefined &&
-		_isFromKind(wrapperKind) &&
-		typeof e === 'object' &&
-		e !== null &&
-		!Array.isArray(e) &&
-		!isNode(e) &&
-		!('kind' in e)
-			? _resolveByKind(wrapperKind, e)
-			: e
-	);
+	const elements = (optionsFirst ? input.slice(1) : input).map((e) => {
+		if (typeof e !== 'object' || e === null || Array.isArray(e) || isNode(e)) return e;
+		const tagged = _splitTag(e);
+		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);
+		if (bagKinds === undefined || bagKinds.length === 0) return e;
+		if (bagKinds.length > 1)
+			throw new Error(
+				`a bag in this list needs a $type tag naming one of [${bagKinds.join(', ')}]: ${JSON.stringify(e)}`
+			);
+		return _isFromKind(bagKinds[0]!) ? _resolveByKind(bagKinds[0]!, e) : e;
+	});
 	const resolved = elements.map((e) =>
 		wrapperKind !== undefined && isNode(e) && typeof e.$type === 'number' && KIND_NAMES.get(e.$type) === wrapperKind
 			? e
@@ -1136,11 +984,8 @@ function _resolveOneLeaf<T>(v: _LooseFieldInput, kind: string): T {
 		if (scalar !== undefined) return scalar as T;
 	}
 	if (typeof v === 'string' && _leafRegistry[kind] !== undefined) return _buildGuardedText(v, kind) as T;
-	if (typeof v === 'object' && !Array.isArray(v) && 'kind' in v) {
-		const { kind: k, ...rest } = v;
-		const kn = _kindNameOf(k);
-		if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;
-	}
+	const tagged = _splitTag(v);
+	if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;
 	if (typeof v === 'object') {
 		throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);
 	}
@@ -1594,12 +1439,11 @@ function _resolveOneBranch<T>(
 ): T {
 	if (v === undefined || v === null) return v as T;
 	if (optionalSlot === true && Array.isArray(v) && v.length === 0) return undefined as T;
-	if (typeof v === 'object' && !Array.isArray(v) && !isNode(v) && 'kind' in v) {
-		const { kind: k, ...rest } = v;
-		const kn = _kindNameOf(k);
-		if (kn !== undefined && kn !== kind && kind in _wrapKindIds && _isFromKind(kn)) {
-			return _resolveOneBranch<T>(_resolveByKind(kn, rest), kind, altKinds);
-		}
+	const tagged = _splitTag(v);
+	if (tagged !== undefined) {
+		const kn = _fromOfTag(tagged.tag, [kind]);
+		if (kn !== kind && kind in _wrapKindIds)
+			return _resolveOneBranch<T>(_resolveByKind(kn, tagged.rest), kind, altKinds);
 	}
 	if (isNode(v)) {
 		const wrapId = _wrapKindIds[kind];
@@ -1616,11 +1460,8 @@ function _resolveOneBranch<T>(
 		return _resolveByKind(kind, v) as T;
 	}
 	if (typeof v === 'object' && !Array.isArray(v)) {
-		if ('kind' in v) {
-			const { kind: k, ...rest } = v;
-			const kn = _kindNameOf(k);
-			if (kn !== undefined && _isFromKind(kn)) return _resolveByKind(kn, rest) as T;
-		}
+		const tagged = _splitTag(v);
+		if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as T;
 		if (_isFromKind(kind)) return _resolveByKind(kind, v) as T;
 	}
 	if (typeof v === 'object') {
@@ -2768,8 +2609,8 @@ export function coerceToExportSpecifier(input: T.ExportSpecifier.Loose): ReturnT
 	});
 }
 
-export function coerceToImport(_input?: T.Import.Loose): ReturnType<typeof F.buildImport> {
-	return F.buildImport();
+export function coerceToImport(_input?: T.Import.Loose): typeof F.buildImport {
+	return F.buildImport;
 }
 
 export function resolveImportStatement_importClause(
@@ -2973,7 +2814,7 @@ export function resolveLexicalDeclaration_kind(
 	value: T.LexicalDeclaration.LooseConfig['kind']
 ): T.LexicalDeclaration['_kind'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'let' | 'const'>(value, '_kind')),
+		_resolveKindEnumScalar(value, () => _resolveOne<'let' | 'const'>(value, _K2, _K2)),
 		[['let', TSKindId.LetKeyword] as const, ['const', TSKindId.ConstKeyword] as const]
 	);
 }
@@ -3448,8 +3289,8 @@ export function coerceToThrowStatement(
 	);
 }
 
-export function coerceToEmptyStatement(_input?: T.EmptyStatement.Loose): ReturnType<typeof F.buildEmptyStatement> {
-	return F.buildEmptyStatement();
+export function coerceToEmptyStatement(_input?: T.EmptyStatement.Loose): typeof F.buildEmptyStatement {
+	return F.buildEmptyStatement;
 }
 
 export function resolveLabeledStatement_label(
@@ -4814,8 +4655,8 @@ export function coerceToArrowFunction(input: T.ArrowFunction.Loose): ReturnType<
 	});
 }
 
-export function coerceToOptionalChain(_input?: T.OptionalChain.Loose): ReturnType<typeof F.buildOptionalChain> {
-	return F.buildOptionalChain();
+export function coerceToOptionalChain(_input?: T.OptionalChain.Loose): typeof F.buildOptionalChain {
+	return F.buildOptionalChain;
 }
 
 export function resolveNewExpression_constructor_(
@@ -5768,28 +5609,28 @@ export function coerceToPrivatePropertyIdentifier(
 	);
 }
 
-export function coerceToThis(_input?: T.This.Loose): ReturnType<typeof F.buildThis> {
-	return F.buildThis();
+export function coerceToThis(_input?: T.This.Loose): typeof F.buildThis {
+	return F.buildThis;
 }
 
-export function coerceToSuper(_input?: T.Super.Loose): ReturnType<typeof F.buildSuper> {
-	return F.buildSuper();
+export function coerceToSuper(_input?: T.Super.Loose): typeof F.buildSuper {
+	return F.buildSuper;
 }
 
-export function coerceToTrue(_input?: T.True.Loose): ReturnType<typeof F.buildTrue> {
-	return F.buildTrue();
+export function coerceToTrue(_input?: T.True.Loose): typeof F.buildTrue {
+	return F.buildTrue;
 }
 
-export function coerceToFalse(_input?: T.False.Loose): ReturnType<typeof F.buildFalse> {
-	return F.buildFalse();
+export function coerceToFalse(_input?: T.False.Loose): typeof F.buildFalse {
+	return F.buildFalse;
 }
 
-export function coerceToNull(_input?: T.Null.Loose): ReturnType<typeof F.buildNull> {
-	return F.buildNull();
+export function coerceToNull(_input?: T.Null.Loose): typeof F.buildNull {
+	return F.buildNull;
 }
 
-export function coerceToUndefined(_input?: T.Undefined.Loose): ReturnType<typeof F.buildUndefined> {
-	return F.buildUndefined();
+export function coerceToUndefined(_input?: T.Undefined.Loose): typeof F.buildUndefined {
+	return F.buildUndefined;
 }
 
 export function coerceToArguments(): T.EmptyArguments;
@@ -7940,10 +7781,8 @@ export function coerceToTypeAliasDeclaration(
 	);
 }
 
-export function coerceToOverrideModifier(
-	_input?: T.OverrideModifier.Loose
-): ReturnType<typeof F.buildOverrideModifier> {
-	return F.buildOverrideModifier();
+export function coerceToOverrideModifier(_input?: T.OverrideModifier.Loose): typeof F.buildOverrideModifier {
+	return F.buildOverrideModifier;
 }
 
 export function resolveRequiredParameter_decorators(
@@ -9180,8 +9019,8 @@ export function coerceToLiteralType(input: T.LiteralType.Loose): ReturnType<type
 	);
 }
 
-export function coerceToExistentialType(_input?: T.ExistentialType.Loose): ReturnType<typeof F.buildExistentialType> {
-	return F.buildExistentialType();
+export function coerceToExistentialType(_input?: T.ExistentialType.Loose): typeof F.buildExistentialType {
+	return F.buildExistentialType;
 }
 
 export function resolveFlowMaybeType_type(value: T.FlowMaybeType.LooseConfig['type']): T.FlowMaybeType['_type'] {
@@ -9814,8 +9653,13 @@ export function coerceToExportSpecifiers(
 		);
 	}
 	return F.buildExportSpecifiers(
-		...(_listElements(input, ['delimiter'], 'export_specifier', (els) =>
-			_resolveMany<T.ExportSpecifier | T.Identifier | T.String>(els, _K3, _super_string, 'string_double')
+		...(_listElements(
+			input,
+			['delimiter'],
+			'export_specifier',
+			(els) => _resolveMany<T.ExportSpecifier | T.Identifier | T.String>(els, _K3, _super_string, 'string_double'),
+			['export_specifier', 'identifier', 'string_double', 'string_single'],
+			['export_specifier', 'string_double', 'string_single']
 		) as unknown as NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String>)
 	);
 }
@@ -9857,8 +9701,12 @@ export function coerceToImportSpecifiers(
 		);
 	}
 	return F.buildImportSpecifiers(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveMany<T.ImportSpecifier>(els, _K2, _super_import_specifier)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) => _resolveMany<T.ImportSpecifier>(els, _K2, _super_import_specifier),
+			['import_specifier_name', 'import_specifier_as']
 		) as unknown as NonEmptyArray<T.ImportSpecifier>)
 	);
 }
@@ -9900,8 +9748,12 @@ export function coerceToFormalParametersElements(
 		);
 	}
 	return F.buildFormalParametersElements(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			_resolveMany<T.RequiredParameter | T.OptionalParameter>(els, _K2, _super_formal_parameter)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) => _resolveMany<T.RequiredParameter | T.OptionalParameter>(els, _K2, _super_formal_parameter),
+			['required_parameter', 'optional_parameter']
 		) as unknown as NonEmptyArray<T.RequiredParameter | T.OptionalParameter>)
 	);
 }
@@ -10105,7 +9957,25 @@ export function coerceToEnumBodyElements(
 		);
 	}
 	return F.buildEnumBodyElements(
-		...(_listElements(input, ['delimiter'], undefined, (els) => els) as unknown as NonEmptyArray<
+		...(_listElements(input, ['delimiter'], undefined, (els) => els, [
+			'number_decimal',
+			'property_identifier',
+			'private_property_identifier',
+			'string_double',
+			'string_single',
+			'number_hex',
+			'number_float_point',
+			'number_float_leading_point',
+			'number_float_scientific',
+			'number_binary',
+			'number_octal',
+			'number_bigint_hex',
+			'number_bigint_binary',
+			'number_bigint_octal',
+			'number_bigint_decimal',
+			'computed_property_name',
+			'enum_assignment'
+		]) as unknown as NonEmptyArray<
 			| T.PropertyIdentifier
 			| TSKindId.DeclareKeyword
 			| TSKindId.NamespaceKeyword
@@ -10176,11 +10046,42 @@ export function coerceToTypes(
 		);
 	}
 	return F.buildTypes(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () => _resolveMany<T.Type | T.TypeIdentifier.Types>(els, _K37, _K38)),
-				[]
-			)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				coerceMixedEnumStorage(
+					_resolveKindEnum(els, () => _resolveMany<T.Type | T.TypeIdentifier.Types>(els, _K37, _K38)),
+					[]
+				),
+			[
+				'predefined_type',
+				'this',
+				'existential_type',
+				'parenthesized_type',
+				'type_identifier',
+				'nested_type_identifier',
+				'generic_type',
+				'object_type',
+				'array_type',
+				'tuple_type',
+				'flow_maybe_type',
+				'type_query',
+				'index_type_query',
+				'literal_type',
+				'lookup_type',
+				'conditional_type',
+				'template_literal_type',
+				'intersection_type',
+				'union_type',
+				'function_type',
+				'readonly_type',
+				'constructor_type',
+				'infer_type',
+				'type_query_member_expression_in_type_annotation',
+				'type_query_call_expression_in_type_annotation'
+			]
 		) as unknown as NonEmptyArray<T.Type | T.TypeIdentifier.Types>)
 	);
 }
@@ -10242,8 +10143,13 @@ export function coerceToTypeParametersElements(
 		);
 	}
 	return F.buildTypeParametersElements(
-		...(_listElements(input, ['delimiter'], 'type_parameter', (els) =>
-			_resolveManyBranch<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>(els, 'type_identifier')
+		...(_listElements(
+			input,
+			['delimiter'],
+			'type_parameter',
+			(els) => _resolveManyBranch<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>(els, 'type_identifier'),
+			['type_parameter', 'type_identifier'],
+			['type_parameter', 'type_identifier']
 		) as unknown as NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>)
 	);
 }
@@ -10327,15 +10233,55 @@ export function coerceToTupleTypeMembers(
 		);
 	}
 	return F.buildTupleTypeMembers(
-		...(_listElements(input, ['delimiter'], undefined, (els) =>
-			coerceMixedEnumStorage(
-				_resolveKindEnum(els, () =>
-					_resolveMany<
-						T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
-					>(els, _K37, _K63)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) =>
+				coerceMixedEnumStorage(
+					_resolveKindEnum(els, () =>
+						_resolveMany<
+							| T.TupleParameter
+							| T.OptionalTupleParameter
+							| T.OptionalType
+							| T.RestType
+							| T.Type
+							| T.TypeIdentifier.Types
+						>(els, _K37, _K63)
+					),
+					[]
 				),
-				[]
-			)
+			[
+				'predefined_type',
+				'this',
+				'existential_type',
+				'tuple_parameter',
+				'optional_tuple_parameter',
+				'optional_type',
+				'rest_type',
+				'parenthesized_type',
+				'type_identifier',
+				'nested_type_identifier',
+				'generic_type',
+				'object_type',
+				'array_type',
+				'tuple_type',
+				'flow_maybe_type',
+				'type_query',
+				'index_type_query',
+				'literal_type',
+				'lookup_type',
+				'conditional_type',
+				'template_literal_type',
+				'intersection_type',
+				'union_type',
+				'function_type',
+				'readonly_type',
+				'constructor_type',
+				'infer_type',
+				'type_query_member_expression_in_type_annotation',
+				'type_query_call_expression_in_type_annotation'
+			]
 		) as unknown as NonEmptyArray<
 			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
 		>)
@@ -10526,15 +10472,32 @@ export function coerceToObjectTypeContent(
 		);
 	}
 	return F.buildObjectTypeContent(
-		...(_listElements(input, ['separator', 'delimiter'], undefined, (els) =>
-			_resolveMany<
-				| T.ExportStatement
-				| T.PropertySignature
-				| T.CallSignature
-				| T.ConstructSignature
-				| T.IndexSignature
-				| T.MethodSignature
-			>(els, _K2, _K65)
+		...(_listElements(
+			input,
+			['separator', 'delimiter'],
+			undefined,
+			(els) =>
+				_resolveMany<
+					| T.ExportStatement
+					| T.PropertySignature
+					| T.CallSignature
+					| T.ConstructSignature
+					| T.IndexSignature
+					| T.MethodSignature
+				>(els, _K2, _K65),
+			[
+				'export_statement_default_from',
+				'export_statement_default_declaration',
+				'export_statement_type_export',
+				'export_statement_equals_export',
+				'export_statement_namespace_export',
+				'property_signature',
+				'call_signature',
+				'construct_signature',
+				'index_signature_colon',
+				'index_signature_mapped_type_clause',
+				'method_signature'
+			]
 		) as unknown as NonEmptyArray<
 			| T.ExportStatement
 			| T.PropertySignature
@@ -11142,8 +11105,8 @@ export function coerceToBinaryExpressionIn(
 	});
 }
 
-export function coerceToEmptyMember(_input?: T.EmptyMember.Loose): ReturnType<typeof F.buildEmptyMember> {
-	return F.buildEmptyMember();
+export function coerceToEmptyMember(_input?: T.EmptyMember.Loose): typeof F.buildEmptyMember {
+	return F.buildEmptyMember;
 }
 
 export function resolveClassBodyMethod_decorators(
@@ -12333,14 +12296,14 @@ export function coerceToVariableDeclaratorDefinite(
 
 export function coerceToMetaPropertyNewTarget(
 	_input?: T.MetaPropertyNewTarget.Loose
-): ReturnType<typeof F.buildMetaPropertyNewTarget> {
-	return F.buildMetaPropertyNewTarget();
+): typeof F.buildMetaPropertyNewTarget {
+	return F.buildMetaPropertyNewTarget;
 }
 
 export function coerceToMetaPropertyImportMeta(
 	_input?: T.MetaPropertyImportMeta.Loose
-): ReturnType<typeof F.buildMetaPropertyImportMeta> {
-	return F.buildMetaPropertyImportMeta();
+): typeof F.buildMetaPropertyImportMeta {
+	return F.buildMetaPropertyImportMeta;
 }
 
 export function resolveForHeaderLhs_left(value: T.ForHeaderLhs.LooseConfig['left']): T.ForHeaderLhs['_left'] {
@@ -12351,7 +12314,7 @@ export function resolveForHeaderLhs_operator(
 	value: T.ForHeaderLhs.LooseConfig['operator']
 ): T.ForHeaderLhs['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'in' | 'of'>(value, '__for_header_operator')),
+		_resolveKindEnumScalar(value, () => _resolveOne<'in' | 'of'>(value, _K2, _K2)),
 		[['in', TSKindId.InKeyword] as const, ['of', TSKindId.OfKeyword] as const]
 	);
 }
@@ -12392,7 +12355,7 @@ export function resolveForHeaderVarKind_operator(
 	value: T.ForHeaderVarKind.LooseConfig['operator']
 ): T.ForHeaderVarKind['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'in' | 'of'>(value, '__for_header_operator')),
+		_resolveKindEnumScalar(value, () => _resolveOne<'in' | 'of'>(value, _K2, _K2)),
 		[['in', TSKindId.InKeyword] as const, ['of', TSKindId.OfKeyword] as const]
 	);
 }
@@ -12421,7 +12384,7 @@ export function resolveForHeaderLetConstKind_kind(
 	value: T.ForHeaderLetConstKind.LooseConfig['kind']
 ): T.ForHeaderLetConstKind['_kind'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'let' | 'const'>(value, '_kind')),
+		_resolveKindEnumScalar(value, () => _resolveOne<'let' | 'const'>(value, _K2, _K2)),
 		[['let', TSKindId.LetKeyword] as const, ['const', TSKindId.ConstKeyword] as const]
 	);
 }
@@ -12442,7 +12405,7 @@ export function resolveForHeaderLetConstKind_operator(
 	value: T.ForHeaderLetConstKind.LooseConfig['operator']
 ): T.ForHeaderLetConstKind['_operator'] {
 	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'in' | 'of'>(value, '__for_header_operator')),
+		_resolveKindEnumScalar(value, () => _resolveOne<'in' | 'of'>(value, _K2, _K2)),
 		[['in', TSKindId.InKeyword] as const, ['of', TSKindId.OfKeyword] as const]
 	);
 }
@@ -12489,48 +12452,46 @@ export function coerceToTemplateChars(input: T.TemplateChars.Loose): ReturnType<
 	return F.buildTemplateChars(input as Parameters<typeof F.buildTemplateChars>[0]);
 }
 
-export function coerceToAutomaticSemicolon(
-	_input?: T.AutomaticSemicolon.Loose
-): ReturnType<typeof F.buildAutomaticSemicolon> {
-	return F.buildAutomaticSemicolon();
+export function coerceToAutomaticSemicolon(_input?: T.AutomaticSemicolon.Loose): typeof F.buildAutomaticSemicolon {
+	return F.buildAutomaticSemicolon;
 }
 
 export function coerceToFunctionSignatureAutomaticSemicolon(
 	_input?: T.FunctionSignatureAutomaticSemicolon.Loose
-): ReturnType<typeof F.buildFunctionSignatureAutomaticSemicolon> {
-	return F.buildFunctionSignatureAutomaticSemicolon();
+): typeof F.buildFunctionSignatureAutomaticSemicolon {
+	return F.buildFunctionSignatureAutomaticSemicolon;
 }
 
-export function coerceToTight(_input?: T.Tight.Loose): ReturnType<typeof F.buildTight> {
-	return F.buildTight();
+export function coerceToTight(_input?: T.Tight.Loose): typeof F.buildTight {
+	return F.buildTight;
 }
 
-export function coerceToSpace(_input?: T.Space.Loose): ReturnType<typeof F.buildSpace> {
-	return F.buildSpace();
+export function coerceToSpace(_input?: T.Space.Loose): typeof F.buildSpace {
+	return F.buildSpace;
 }
 
-export function coerceToTab(_input?: T.Tab.Loose): ReturnType<typeof F.buildTab> {
-	return F.buildTab();
+export function coerceToTab(_input?: T.Tab.Loose): typeof F.buildTab {
+	return F.buildTab;
 }
 
-export function coerceToNewline(_input?: T.Newline.Loose): ReturnType<typeof F.buildNewline> {
-	return F.buildNewline();
+export function coerceToNewline(_input?: T.Newline.Loose): typeof F.buildNewline {
+	return F.buildNewline;
 }
 
-export function coerceToBlankline(_input?: T.Blankline.Loose): ReturnType<typeof F.buildBlankline> {
-	return F.buildBlankline();
+export function coerceToBlankline(_input?: T.Blankline.Loose): typeof F.buildBlankline {
+	return F.buildBlankline;
 }
 
-export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): ReturnType<typeof F.buildDoubleBlankline> {
-	return F.buildDoubleBlankline();
+export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeof F.buildDoubleBlankline {
+	return F.buildDoubleBlankline;
 }
 
-export function coerceToIndent(_input?: T.Indent.Loose): ReturnType<typeof F.buildIndent> {
-	return F.buildIndent();
+export function coerceToIndent(_input?: T.Indent.Loose): typeof F.buildIndent {
+	return F.buildIndent;
 }
 
-export function coerceToDedent(_input?: T.Dedent.Loose): ReturnType<typeof F.buildDedent> {
-	return F.buildDedent();
+export function coerceToDedent(_input?: T.Dedent.Loose): typeof F.buildDedent {
+	return F.buildDedent;
 }
 
 export function resolveStatementIdentifier_content(

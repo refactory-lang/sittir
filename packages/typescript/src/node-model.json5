@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 439,
+  "nodeCount": 437,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -4297,19 +4297,6 @@
       "hidden": false
     },
     {
-      "kind": "__for_header_operator",
-      "modelType": "enum",
-      "typeName": "ForHeaderOperator",
-      "factoryName": "forHeaderOperator",
-      "irKey": "forHeaderOperator",
-      "hidden": false,
-      "values": [
-        "in",
-        "of"
-      ],
-      "factoryShape": "text"
-    },
-    {
       "kind": "_augmented_assignment_lhs",
       "modelType": "supertype",
       "typeName": "AugmentedAssignmentLhs",
@@ -4356,7 +4343,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
       "text": "\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_blankline",
@@ -4368,7 +4355,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\" as const",
       "text": "\n\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_dedent",
@@ -4380,7 +4367,7 @@
       "isParameterless": true,
       "stampExpression": "\"﷑\\n\" as const",
       "text": "﷑\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_destructuring_pattern",
@@ -4404,7 +4391,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\\n\\n\" as const",
       "text": "\n\n\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_expressions",
@@ -4453,7 +4440,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
       "text": "\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_identifier",
@@ -4489,20 +4476,7 @@
       "isParameterless": true,
       "stampExpression": "\"﷐\\n\" as const",
       "text": "﷐\n",
-      "factoryShape": "text"
-    },
-    {
-      "kind": "_kind",
-      "modelType": "enum",
-      "typeName": "Kind",
-      "factoryName": "kind",
-      "irKey": "kind",
-      "hidden": false,
-      "values": [
-        "let",
-        "const"
-      ],
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_abstract_marker",
@@ -4514,7 +4488,7 @@
       "isParameterless": true,
       "stampExpression": "\"abstract\" as const",
       "text": "abstract",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_accessor_marker",
@@ -4526,7 +4500,7 @@
       "isParameterless": true,
       "stampExpression": "\"accessor\" as const",
       "text": "accessor",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_async_marker",
@@ -4538,7 +4512,7 @@
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
       "text": "async",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_await_marker",
@@ -4550,7 +4524,7 @@
       "isParameterless": true,
       "stampExpression": "\"await\" as const",
       "text": "await",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_const_marker",
@@ -4562,7 +4536,7 @@
       "isParameterless": true,
       "stampExpression": "\"const\" as const",
       "text": "const",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_declare_marker",
@@ -4574,7 +4548,7 @@
       "isParameterless": true,
       "stampExpression": "\"declare\" as const",
       "text": "declare",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_static_marker",
@@ -4586,7 +4560,7 @@
       "isParameterless": true,
       "stampExpression": "\"static\" as const",
       "text": "static",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_kw_using_marker",
@@ -4598,7 +4572,7 @@
       "isParameterless": true,
       "stampExpression": "\"using\" as const",
       "text": "using",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_lhs_expression",
@@ -4914,7 +4888,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
       "text": "\n",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_property_name",
@@ -4941,7 +4915,7 @@
       "isParameterless": true,
       "stampExpression": "\" \" as const",
       "text": " ",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_tab",
@@ -4953,7 +4927,7 @@
       "isParameterless": true,
       "stampExpression": "\"\\t\" as const",
       "text": "\t",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_template_chars",
@@ -4984,7 +4958,7 @@
       "isParameterless": true,
       "stampExpression": "\"\" as const",
       "text": "",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "_tuple_type_member",
@@ -10369,7 +10343,7 @@
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "text": ";",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "empty_statement",
@@ -10381,7 +10355,7 @@
       "isParameterless": true,
       "stampExpression": "\";\" as const",
       "text": ";",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "enum_assignment",
@@ -11028,7 +11002,7 @@
       "isParameterless": true,
       "stampExpression": "\"*\" as const",
       "text": "*",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "export_clause",
@@ -12475,7 +12449,7 @@
       "isParameterless": true,
       "stampExpression": "\"false\" as const",
       "text": "false",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "finally_clause",
@@ -12644,15 +12618,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_kind"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_kind",
-              "parseKind": "_kind"
+              "value": "let",
+              "parseKind": "let_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "const",
+              "parseKind": "const_keyword"
             }
           ]
         },
@@ -12718,15 +12696,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "__for_header_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "__for_header_operator",
-              "parseKind": "__for_header_operator"
+              "value": "in",
+              "parseKind": "in_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "of",
+              "parseKind": "of_keyword"
             }
           ]
         },
@@ -12814,15 +12796,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "__for_header_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "__for_header_operator",
-              "parseKind": "__for_header_operator"
+              "value": "in",
+              "parseKind": "in_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "of",
+              "parseKind": "of_keyword"
             }
           ]
         },
@@ -12935,15 +12921,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "__for_header_operator"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "__for_header_operator",
-              "parseKind": "__for_header_operator"
+              "value": "in",
+              "parseKind": "in_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "of",
+              "parseKind": "of_keyword"
             }
           ]
         },
@@ -14583,7 +14573,7 @@
       "isParameterless": true,
       "stampExpression": "\"import\" as const",
       "text": "import",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "import_alias",
@@ -16581,15 +16571,19 @@
           "multiple": false,
           "nonEmpty": false,
           "storage": "kindEnum",
-          "kinds": [
-            "_kind"
-          ],
+          "kinds": [],
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_kind",
-              "parseKind": "_kind"
+              "value": "let",
+              "parseKind": "let_keyword"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "const",
+              "parseKind": "const_keyword"
             }
           ]
         },
@@ -17130,7 +17124,7 @@
       "isParameterless": true,
       "stampExpression": "\"import.meta\" as const",
       "text": "import.meta",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "meta_property_new_target",
@@ -17145,7 +17139,7 @@
       "isParameterless": true,
       "stampExpression": "\"new.target\" as const",
       "text": "new.target",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "method_definition",
@@ -18575,7 +18569,7 @@
       "isParameterless": true,
       "stampExpression": "\"null\" as const",
       "text": "null",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "number",
@@ -20667,7 +20661,7 @@
       "isParameterless": true,
       "stampExpression": "\"?.\" as const",
       "text": "?.",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "optional_parameter",
@@ -21009,7 +21003,7 @@
       "isParameterless": true,
       "stampExpression": "\"override\" as const",
       "text": "override",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "pair",
@@ -25051,7 +25045,7 @@
       "isParameterless": true,
       "stampExpression": "\"super\" as const",
       "text": "super",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "switch_body",
@@ -25678,7 +25672,7 @@
       "isParameterless": true,
       "stampExpression": "\"this\" as const",
       "text": "this",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "throw_keyword",
@@ -25856,7 +25850,7 @@
       "isParameterless": true,
       "stampExpression": "\"true\" as const",
       "text": "true",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "try_keyword",
@@ -27671,7 +27665,7 @@
       "isParameterless": true,
       "stampExpression": "\"undefined\" as const",
       "text": "undefined",
-      "factoryShape": "text"
+      "factoryShape": "constant"
     },
     {
       "kind": "unescaped_double_string_fragment",

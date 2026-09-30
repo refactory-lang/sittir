@@ -1,9 +1,11 @@
-import type { PrecRuleUnion } from './grammar-json.ts';
+import type { GrammarRule, PrecRuleUnion } from './grammar-json.ts';
 import type { FieldPlaceholder } from '../dsl/primitives/field.ts';
 import type { VariantPlaceholder } from '../dsl/primitives/variant.ts';
 import type { AliasPlaceholder } from '../dsl/primitives/alias.ts';
 import type { RulePlaceholder } from '../dsl/primitives/rule.ts';
 import type { ArmDefaultPlaceholder } from '../dsl/primitives/arm.ts';
+import type { FlattenPlaceholder } from '../dsl/primitives/flatten.ts';
+import type { RegexPlaceholder } from '../dsl/primitives/regex.ts';
 import type { FieldLike } from '../types/runtime-shapes.ts';
 
 type PeelPrec<N> = N extends PrecRuleUnion ? PeelPrec<N['content']> : N;
@@ -65,6 +67,14 @@ type Step<P, S extends string> = P extends Opaque
 			: S extends Literal<P['content']>
 				? Leaf
 				: never
+		: P extends { readonly type: 'TOKEN' | 'IMMEDIATE_TOKEN'; readonly content: unknown }
+			? S extends `${number}`
+				? P['content'] | Opaque
+				: S extends '-1' | '_'
+					? P['content']
+					: S extends Literal<P['content']>
+						? Leaf
+						: never
 		: P extends Wrapper
 			? S extends '0' | '-1' | '_'
 				? P['content']
@@ -89,23 +99,36 @@ export type Segments<P extends string> = P extends `"${infer Lit}"/${infer Rest}
 			? [Seg, ...Segments<Rest>]
 			: [P];
 
-type Walk<N, Segs extends readonly string[]> = Segs extends readonly [infer S extends string, ...infer Rest extends string[]]
+type Walk<N, Segs extends readonly string[], Minted extends string> = Segs extends readonly [infer S extends string, ...infer Rest extends string[]]
 	? Step<PeelPrec<N>, S> extends infer C
 		? [C] extends [never]
-			? false
-			: Walk<C, Rest>
+			? S extends `${infer L}:`
+				? [L] extends [Minted]
+					? PeelPrec<N> extends Field
+						? false
+						: Walk<N, Rest, Minted>
+					: false
+				: false
+			: Walk<C, Rest, Minted>
 		: never
 	: true;
 
-export type IsPath<N, P extends string> = true extends Walk<N, Segments<P>> ? true : false;
+export type IsPath<N, P extends string, Minted extends string = never> = P extends '.'
+	? true
+	: true extends Walk<N, Segments<P>, Minted>
+		? true
+		: false;
 
 export type TransformPatchValue =
 	| RuleOrLiteral
+	| GrammarRule
 	| FieldPlaceholder
 	| FieldLike
 	| VariantPlaceholder
 	| AliasPlaceholder
 	| RulePlaceholder
-	| ArmDefaultPlaceholder;
+	| ArmDefaultPlaceholder
+	| FlattenPlaceholder
+	| RegexPlaceholder;
 
 export type TransformPatchMap = Partial<Record<string, TransformPatchValue>>;

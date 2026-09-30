@@ -1,4 +1,5 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
+import { kindTypeName } from '../compiler/model/casing.ts';
 import { SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
 import {
@@ -217,7 +218,7 @@ export function classifyValueStorage(value: NodeOrTerminal, nodeMap: NodeMap): V
 		return {
 			via: 'node',
 			kind,
-			typeName: kind.replace(/(?:^|_)([a-z])/g, (_, c: string) => c.toUpperCase()),
+			typeName: kindTypeName(kind),
 			missing: true
 		};
 	}
@@ -606,7 +607,7 @@ export function resolveFieldStorageInfo(
 	return field.storageInfo;
 }
 
-export type FactoryShape = 'config' | 'spread' | 'text' | 'direct' | 'elements' | 'forwarded';
+export type FactoryShape = 'config' | 'spread' | 'text' | 'constant' | 'direct' | 'elements' | 'forwarded';
 export type ChildFactorySurface = 'direct' | 'spread';
 
 export function stringConstructibleTexts(kind: string, nodeMap: NodeMap): string[] {
@@ -866,6 +867,7 @@ export function classifyFactoryShape(
 	nodeMap: NodeMap,
 	options?: { includeTokenText?: boolean }
 ): FactoryShape | null {
+	if (isBuilderTextLeaf(node)) return 'constant';
 	if (node instanceof AssembledPattern || node instanceof AssembledEnum || isWordOrBuilderTextLeaf(node)) return 'text';
 	if (isBuilderlessPunctuationLeaf(node)) return options?.includeTokenText ? 'text' : null;
 	if (node instanceof AssembledList) return 'elements';
@@ -1144,6 +1146,10 @@ const NAMESPACE_IMPORT = /^import \* as (\w+) from /;
 
 export function importLocalName(specifier: string): string {
 	return specifier.split(' as ').at(-1)!;
+}
+
+export function isDeclaredSupertype(node: AssembledNode | undefined): node is AssembledSupertype {
+	return node instanceof AssembledSupertype && node.declared;
 }
 
 export function pruneUnusedImports(lines: readonly string[], names: readonly string[]): string[] {

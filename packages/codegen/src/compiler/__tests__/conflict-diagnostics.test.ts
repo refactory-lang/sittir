@@ -6,10 +6,9 @@ import { grammarPackage } from '../../grammars.ts';
 import { diagnoseGrammar } from '../compile.ts';
 import { conflictRecords, conflictStaleRecord, conflictUnresolvableRecord } from '../diagnostics/conflicts.ts';
 import { blockedRecords, unexpectableExpectEntries } from '../diagnostics/grammar-diagnostics.ts';
-import { evaluate } from '../evaluate.ts';
-import { packageEntryPath } from '../resolve-grammar.ts';
 import type { RawGrammar } from '../types.ts';
 import { evaluateSittirGrammar } from './_sittir-grammar.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
 
 const require = createRequire(import.meta.url);
 
@@ -27,7 +26,7 @@ function codesOf(grammar: RawGrammar): string[] {
 describe('python conflict records', () => {
 	let python: RawGrammar;
 	beforeAll(async () => {
-		python = await evaluate(packageEntryPath(grammarPackage('python')));
+		python = await evaluatePackage(grammarPackage('python'));
 	});
 
 	it('records one informational conflict-resolution per derived resolution, with its step and conflict', () => {

@@ -4,8 +4,8 @@ import type { AnyRule } from '../../types/rule.ts';
 import { typeEq } from '../../types/runtime-shapes.ts';
 import { RuleWalker } from '../rule-walker.ts';
 import { transform as transformFn } from '../transform/transform.ts';
-import { isPreference } from '../primitives/preference.ts';
-import { BINDINGS_KEY, type OptionsConfig } from './options-block.ts';
+import { isPreference, type PreferencePlaceholder } from '../primitives/preference.ts';
+import { BINDINGS_KEY, INDENT_KEY, type OptionsConfig } from './options-block.ts';
 import type { IsPreferencePath } from '../primitives/preference-path.ts';
 import {
 	parseFlankAddress,
@@ -25,7 +25,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { rulesEqual } from '../rule-patterns.ts';
-import { getEnrichHiddenSubsequences, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
+import { getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
@@ -291,19 +291,36 @@ export type PatchMap = Record<string, unknown>;
 
 type RulesOf<B> = B extends { readonly rules: infer R } ? R : never;
 
-type PatchKeyCheck<Rule, M> = {
+type PatchKeyCheck<Rule, M, Minted extends string> = {
 	readonly [Path in keyof M]: Path extends string | number
 		? string extends Path
 			? M[Path]
-			: IsPath<Rule, `${Path}`> extends true
+			: IsPath<Rule, `${Path}`, Minted> extends true
 				? M[Path]
 				: { readonly 'patches: no such path in this rule': `${Path}` }
 		: M[Path];
 };
 
+type MintedLabels<M> = {
+	readonly [K in keyof M]: M[K] extends { readonly name: infer N extends string }
+		? M[K] extends { readonly __sittirPlaceholder: 'field' } | { readonly type: 'FIELD' }
+			? N
+			: never
+		: never;
+}[keyof M];
+
+type CheckMaps<Rule, E extends readonly unknown[], Minted extends string> = E extends readonly [
+	infer Head,
+	...infer Tail
+]
+	? readonly [PatchKeyCheck<Rule, Head, Minted>, ...CheckMaps<Rule, Tail, Minted | MintedLabels<Head>>]
+	: readonly [];
+
 type PatchEntryCheck<Rule, E> = E extends readonly unknown[]
-	? { readonly [I in keyof E]: PatchKeyCheck<Rule, E[I]> }
-	: PatchKeyCheck<Rule, E>;
+	? number extends E['length']
+		? { readonly [I in keyof E]: PatchKeyCheck<Rule, E[I], never> }
+		: CheckMaps<Rule, E, never>
+	: PatchKeyCheck<Rule, E, never>;
 
 type IsShaped<B> = 0 extends 1 & B ? false : [GrammarRule] extends [RulesOf<B>[keyof RulesOf<B>]] ? false : true;
 
@@ -312,8 +329,8 @@ export type PatchesCheck<B, P> = IsShaped<B> extends false
 	: { readonly [K in keyof P]: K extends keyof RulesOf<B> ? PatchEntryCheck<RulesOf<B>[K], P[K]> : P[K] };
 
 type DeclaredLabels<O> = {
-	[K in Exclude<keyof O, typeof BINDINGS_KEY> & string]: `${K}/${keyof O[K] & string}`;
-}[Exclude<keyof O, typeof BINDINGS_KEY> & string];
+	[K in Exclude<keyof O, typeof BINDINGS_KEY | typeof INDENT_KEY> & string]: `${K}/${keyof O[K] & string}`;
+}[Exclude<keyof O, typeof BINDINGS_KEY | typeof INDENT_KEY> & string];
 
 type PreferencePathCheck<M> = {
 	readonly [Path in keyof M]: Path extends string
@@ -346,7 +363,9 @@ type BindingsCheck<B, O, M> = {
 export type OptionsCheck<B, O> = {
 	readonly [K in keyof O]: K extends typeof BINDINGS_KEY
 		? BindingsCheck<B, O, O[K]>
-		: PreferencePathCheck<O[K]>;
+		: K extends typeof INDENT_KEY
+			? PreferencePlaceholder
+			: PreferencePathCheck<O[K]>;
 };
 
 export type ShapedSymbols<B extends GrammarJson> = {
@@ -357,8 +376,9 @@ export type ShapedSymbols<B extends GrammarJson> = {
 
 export type WireConfig<B extends GrammarJson, NewRules extends string = string> = Omit<
 	Grammar<NewRules, keyof B['rules'] & string>,
-	'rules' | 'conflicts'
+	'rules' | 'conflicts' | 'extras'
 > & {
+	readonly extras?: ($: ShapedSymbols<B>, previous?: readonly GrammarRule[]) => readonly AuthoringRule[];
 	readonly conflicts?: (
 		$: ShapedSymbols<B>,
 		previous: readonly (readonly AuthoringRule[])[]
@@ -472,6 +492,9 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 
 	if (baseArg) {
 		for (const name of getEnrichHiddenSubsequences(base)) {
+			context.syntheticInline.add(name);
+		}
+		for (const name of getEnrichFieldBackings(base)) {
 			context.syntheticInline.add(name);
 		}
 		for (const name of getEnrichVisibleSubsequenceSources(base)) {

@@ -183,7 +183,7 @@ export interface AugmentedAssignmentTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _left: SlotValue<AugmentedAssignmentLeftTransportSlot>
-  _operator: SlotValue<AugmentedAssignmentOperatorEnum>
+  _operator: SlotValue<Box<AnyTransport>>
   _right: SlotValue<Box<AugmentedAssignmentRightTransportSlot>>
 }
 

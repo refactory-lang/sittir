@@ -2866,12 +2866,55 @@
         "symbolSequence": [
           "'for'",
           "'('",
-          "_kind",
+          "'let'",
           "identifier"
         ],
         "lookahead": "_automatic_semicolon",
         "interpretations": [
           "variable_declarator_plain",
+          "for_header_let_const_kind"
+        ]
+      }
+    }
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "message": "conflict between primary_expression, for_header_let_const_kind on '[' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "primary_expression",
+          "for_header_let_const_kind"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "primary_expression"
+        ],
+        [
+          "for_header_let_const_kind",
+          "_for_header"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'for'",
+          "_kw_await_marker",
+          "'('",
+          "'let'"
+        ],
+        "lookahead": "'['",
+        "interpretations": [
+          "primary_expression",
+          "for_header_let_const_kind",
           "for_header_let_const_kind"
         ]
       }

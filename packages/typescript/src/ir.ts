@@ -16,8 +16,8 @@ import * as F from './factories/index.js';
 // Role synonyms — resolve a native JS value to this grammar's node for that role.
 // Tree-shakeable via the standalone `synonym` export; also reachable as `ir.synonym.*`.
 export const synonym = Object.freeze({
-	boolean(value: boolean): ReturnType<typeof F.buildTrue> | ReturnType<typeof F.buildFalse> {
-		return value ? F.buildTrue() : F.buildFalse();
+	boolean(value: boolean): typeof F.buildTrue | typeof F.buildFalse {
+		return value ? F.buildTrue : F.buildFalse;
 	},
 	number(value: number): ReturnType<typeof F.number> {
 		return F.number(String(value));

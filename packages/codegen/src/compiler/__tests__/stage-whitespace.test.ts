@@ -1,12 +1,12 @@
-import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { evaluate } from '../evaluate.ts';
 import { collectGrammarDiagnosticsForGrammar } from '../diagnostics/grammar-diagnostics.ts';
 import { AssembledPattern, AssembledPunctuation } from '../model/node-map.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 describe('the enriched stage sees the whitespace bodies enrich mints', () => {
 	it('assembles _tight as a literal kind, as the final evaluation does', async () => {
-		const raw = await evaluate(resolve(__dirname, '../../../../regex/grammar.sittir.ts'));
+		const raw = await evaluatePackage(grammarPackage('regex'));
 		const enriched = raw.stages!.enriched.grammar;
 		const tight = collectGrammarDiagnosticsForGrammar({ rawGrammar: enriched }).nodeMap.nodes.get('_tight');
 		expect(tight).toBeInstanceOf(AssembledPunctuation);
@@ -14,7 +14,7 @@ describe('the enriched stage sees the whitespace bodies enrich mints', () => {
 	}, 120_000);
 
 	it('leaves out depth members that collide with upstream externals, so python has no _indent/_dedent members', async () => {
-		const raw = await evaluate(resolve(__dirname, '../../../../python/grammar.sittir.ts'));
+		const raw = await evaluatePackage(grammarPackage('python'));
 		const members = JSON.stringify(raw.stages!.enriched.grammar.rules['_whitespace']);
 		expect(members).toContain('"_tight"');
 		expect(members).not.toContain('"_indent"');

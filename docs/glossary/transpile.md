@@ -68,6 +68,8 @@ Writes a grammar package's `.sittir/` scaffolding for the tree-sitter CLI and re
 - `tree-sitter.json` is required for ABI 15; without it `generate` falls back to ABI 14.
 - The external scanner sources are copied in (`copyExternalScannerSources`), and an empty `resolutions.json` is written when the package has none (`ensureConflictResolutions`), since the entry imports it.
 
+The generated `tree-sitter.json` and `package.json` list the grammar's file types, from `upstreamFileTypes`, instead of an empty list.
+
 ### `packages/codegen/src/transpile/transpile-overrides.ts::copyExternalScannerSources`
 
 Put the external scanner the transpiled grammar needs into `.sittir/src/`, resolving the upstream package from the grammar package (`packageRequire`).

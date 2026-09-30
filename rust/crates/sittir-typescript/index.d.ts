@@ -687,9 +687,9 @@ export interface FlowMaybeTypeTransport {
 export interface ForHeaderLetConstKindTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _kind: SlotValue<KindEnum>
+  _kind: SlotValue<Box<AnyTransport>>
   _left: SlotValue<ForHeaderLetConstKindLeftTransportSlot>
-  _operator: SlotValue<ForHeaderOperatorEnum>
+  _operator: SlotValue<Box<AnyTransport>>
   _right: SlotValue<ForHeaderLetConstKindRightTransportSlot>
   _automatic_semicolon?: SlotValue<AutomaticSemicolonTransport>
 }
@@ -698,7 +698,7 @@ export interface ForHeaderLhsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _left: SlotValue<ForHeaderLhsLeftTransportSlot>
-  _operator: SlotValue<ForHeaderOperatorEnum>
+  _operator: SlotValue<Box<AnyTransport>>
   _right: SlotValue<ForHeaderLhsRightTransportSlot>
 }
 
@@ -707,7 +707,7 @@ export interface ForHeaderVarKindTransport {
   '$_edges'?: Edges
   _left: SlotValue<ForHeaderVarKindLeftTransportSlot>
   _value?: SlotValue<ExpressionTransport>
-  _operator: SlotValue<ForHeaderOperatorEnum>
+  _operator: SlotValue<Box<AnyTransport>>
   _right: SlotValue<ForHeaderVarKindRightTransportSlot>
 }
 
@@ -996,7 +996,7 @@ export interface LabeledStatementTransport {
 export interface LexicalDeclarationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _kind: SlotValue<KindEnum>
+  _kind: SlotValue<Box<AnyTransport>>
   _declarators: Array<SlotValue<VariableDeclaratorTransport>>
   _terminator?: SlotValue<LexicalDeclarationTerminatorTransportSlot>
   _declarators_separator_space_before?: number

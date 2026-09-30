@@ -41,7 +41,7 @@ const str = (text: string) =>
 export function useEditStrict() {
 	return engine.build.useDeclaration.strict({
 		argument: engine.build.scopedIdentifier.strict({
-			path: engine.build.scopedIdentifier.strict({ path: engine.build.crate(), name: id('types') }),
+			path: engine.build.scopedIdentifier.strict({ path: engine.build.crate, name: id('types') }),
 			name: id('Edit'),
 		}),
 	});
@@ -147,7 +147,7 @@ export function displayImplStrict() {
 					returnType: scopedTy(ns('std', 'fmt'), 'Result'),
 					body: engine.build.block.strict({
 						trailingExpression: engine.build.matchExpression.strict({
-							value: engine.build.self(),
+							value: engine.build.self,
 							body: engine.build.matchBlock.strict({
 								// A comma-terminated arm carrying a macro invocation: the arm
 								// variant holds the whole arm, its pattern and its value.

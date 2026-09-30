@@ -1,10 +1,12 @@
 import {
 	buildFactoryNodeFromReference,
 	type FactoryDispatchArtifacts,
+	type FactoryEntry,
 	type FactoryDispatchOpts,
 	type IrEntry,
 	type IrSurface,
 	type ReadNodeLike,
+	seatKindOf,
 	type Seat,
 	type SeatTable
 } from '../validate/common.ts';
@@ -13,9 +15,8 @@ import type { NodeTrivia as ReadTrivia } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import { mapTriviaEntries } from '@sittir/common/utils';
 
-const ENGINE = 'engine';
-const ENGINE_BUILD = `${ENGINE}.build`;
-const ENGINE_KINDS = `${ENGINE}.kinds`;
+const ENGINE_MEMBERS = ['build', 'kinds'] as const;
+const [BUILD, KINDS] = ENGINE_MEMBERS;
 
 export interface PrintContext {
 	readonly grammar: string;
@@ -139,6 +140,10 @@ function printRawNode(node: Record<string, unknown>, ctx: PrintContext, depth: n
 	return undefined;
 }
 
+function isTagEntry(key: string, value: unknown): boolean {
+	return key === '$type' && value instanceof Printed;
+}
+
 export function printValue(value: unknown, ctx: PrintContext, depth: number): string {
 	if (value instanceof Printed) {
 		return reindent(printedSource(value), depth) + triviaSuffix(value.$_trivia, ctx);
@@ -148,7 +153,7 @@ export function printValue(value: unknown, ctx: PrintContext, depth: number): st
 	if (typeof value === 'number') {
 		const member = ctx.memberNameOfId(value);
 		if (member === undefined) throw new Error(`emit-factory-source: kind id ${value} has no kinds member`);
-		return `${ENGINE_KINDS}.${member}`;
+		return `${KINDS}.${member}`;
 	}
 	if (Array.isArray(value)) {
 		const [first, ...rest] = value;
@@ -163,7 +168,7 @@ export function printValue(value: unknown, ctx: PrintContext, depth: number): st
 			if (raw !== undefined) return raw;
 		}
 		const entries = Object.entries(value).filter(
-			([k, v]) => v !== undefined && !k.startsWith('$') && !(Array.isArray(v) && v.length === 0)
+			([k, v]) => v !== undefined && (!k.startsWith('$') || isTagEntry(k, v)) && !(Array.isArray(v) && v.length === 0)
 		);
 		if (entries.length === 0) return '{}';
 		const body = entries.map(([k, v]) => `${pad(depth + 1)}${k}: ${printValue(v, ctx, depth + 1)},`).join('\n');
@@ -351,36 +356,27 @@ function seatHoistedSlot(seatKind: string, loose: LooseFacts): string | undefine
 	return required.length === 1 ? required[0] : undefined;
 }
 
-function hoistSeatElement(listKind: string, item: unknown, ctx: PrintContext): unknown {
+function hoistSeatElement(item: unknown, ctx: PrintContext): unknown {
 	const loose = ctx.loose;
-	if (loose === undefined || !isPlainObject(item) || '$type' in item) return item;
+	const seatKind = seatKindOf(item);
+	if (loose === undefined || seatKind === undefined || !isPlainObject(item) || '$type' in item) return item;
 	const keys = Object.keys(item).filter(
 		(k) => item[k] !== undefined && !(Array.isArray(item[k]) && item[k].length === 0)
 	);
-	if (keys.length !== 1) return item;
-	for (const seat of Object.values(ctx.seats?.[listKind]?.['*'] ?? {})) {
-		if (seat.shape !== 'elements') continue;
-		if (seatHoistedSlot(seat.kind, loose) === keys[0]) return item[keys[0]!];
-	}
-	return item;
+	return keys.length === 1 && seatHoistedSlot(seatKind, loose) === keys[0] ? item[keys[0]!] : item;
 }
 
-/**
- * A seated element that stayed a plain config after hoisting: its keys are
- * the seat's slots, so the seat's rules decide their spelling. The seat is
- * the one element seat whose slots hold every key the config sets.
- */
-function wrapSeatElement(listKind: string, item: unknown, ctx: PrintContext): unknown {
-	if (!isPlainObject(item) || '$type' in item) return item;
-	const keys = Object.keys(item).filter((k) => item[k] !== undefined);
-	const seats = Object.values(ctx.seats?.[listKind]?.['*'] ?? {}).filter(
-		(seat) => seat.shape === 'elements' && keys.every((k) => k in (ctx.slotKinds?.[seat.kind] ?? {}))
-	);
-	if (seats.length !== 1) return item;
-	const seat = seats[0]!;
-	const wrapped = wrapTextLeaves(seat.kind, item, ctx);
-	const sharesElementSlot = ctx.loose !== undefined && seatHoistedSlot(seat.kind, ctx.loose) !== undefined;
-	return sharesElementSlot && isPlainObject(wrapped) ? { kind: seat.kind, ...wrapped } : wrapped;
+function kindTagSource(id: number, ctx: PrintContext): string {
+	return printValue(id, ctx, 0);
+}
+
+function wrapSeatElement(item: unknown, ctx: PrintContext): unknown {
+	const seatKind = seatKindOf(item);
+	if (seatKind === undefined || !isPlainObject(item) || '$type' in item) return item;
+	const wrapped = wrapTextLeaves(seatKind, item, ctx);
+	const id = ctx.loose?.kindIdOfName(seatKind);
+	const tagged = id !== undefined && ctx.loose !== undefined && seatHoistedSlot(seatKind, ctx.loose) !== undefined;
+	return tagged && isPlainObject(wrapped) ? { $type: new Printed(id, kindTagSource(id, ctx), seatKind), ...wrapped } : wrapped;
 }
 
 function soleSlotKind(kind: string, ctx: PrintContext): string | undefined {
@@ -457,7 +453,7 @@ function loosenValue(
 	if (array !== undefined && target === value.kind) {
 		const { listKind, items } = array;
 		const printed = items.map((item) =>
-			printValue(looseListElement(listKind, hoistSeatElement(listKind, item, ctx), ctx), ctx, 0)
+			printValue(looseListElement(listKind, hoistSeatElement(item, ctx), ctx), ctx, 0)
 		);
 		const bare = printed.length === 1 && !/^[{[]/.test(printed[0]!) ? printed[0]! : undefined;
 		return new Printed(value.$type, bare ?? `[${printed.join(', ')}]`, value.kind);
@@ -498,12 +494,9 @@ function loosenValue(
 	const config = value.facts?.config;
 	if (config !== undefined && loose.nested === 'configs' && isFlatKind(value.kind, ctx)) {
 		if (branch.length === 1 && branch[0] === value.kind) return new Printed(value.$type, config, value.kind);
-		const member = typeof value.$type === 'number' ? ctx.memberNameOfId(value.$type) : undefined;
-		if (member !== undefined) {
-			const keyed =
-				config === '{}'
-					? `{ kind: ${ENGINE_KINDS}.${member} }`
-					: config.replace(/^\{\n/, `{\n\tkind: ${ENGINE_KINDS}.${member},\n`);
+		if (typeof value.$type === 'number' && ctx.memberNameOfId(value.$type) !== undefined) {
+			const tag = kindTagSource(value.$type, ctx);
+			const keyed = config === '{}' ? `{ $type: ${tag} }` : config.replace(/^\{\n/, `{\n\t$type: ${tag},\n`);
 			return new Printed(value.$type, keyed, value.kind);
 		}
 	}
@@ -590,6 +583,8 @@ export function printingFactoryMap(
 		const entry = (...args: unknown[]): Printed | string => {
 			if (ctx.aliasKinds?.has(kind)) return args[0] instanceof Printed ? args[0] : printValue(args[0], ctx, 0);
 			switch (shape) {
+				case 'constant':
+					return new Printed(id, path, kind);
 				case 'text': {
 					const text = String(args[0] ?? '');
 					if (ctx.enumKinds?.has(kind)) {
@@ -632,7 +627,7 @@ export function printingFactoryMap(
 					const [first, ...rest] = args;
 					const hasOptions = isListOptions(first);
 					const items = (hasOptions ? rest : args).map((a) =>
-						wrapSeatElement(kind, hoistSeatElement(kind, wrapDirectArg(kind, a, ctx), ctx), ctx)
+						wrapSeatElement(hoistSeatElement(wrapDirectArg(kind, a, ctx), ctx), ctx)
 					);
 					const elements = items.map((a) => printValue(looseListElement(kind, a, ctx), ctx, 0));
 					const options = hasOptions ? first : undefined;
@@ -660,6 +655,15 @@ export function printingFactoryMap(
 		if (!(publicName in map) && !kinds.includes(publicName)) map[publicName] = entry;
 	}
 	return map;
+}
+
+function constantsAsValues(
+	map: Record<string, (...args: unknown[]) => Printed | string>,
+	shapes: Record<string, FactoryShape>
+): Record<string, FactoryEntry> {
+	const values: Record<string, FactoryEntry> = {};
+	for (const [kind, entry] of Object.entries(map)) values[kind] = shapes[kind] === 'constant' ? (entry() as Printed) : entry;
+	return values;
 }
 
 export function printingIrSurface(
@@ -826,7 +830,7 @@ function irPathResolver(
 		seen.add(kind);
 		return [...segments(form.parent, seen), camelCase(form.form)];
 	};
-	return (kind: string): string => `${ENGINE_BUILD}.${segments(kind, new Set()).join('.')}`;
+	return (kind: string): string => `${BUILD}.${segments(kind, new Set()).join('.')}`;
 }
 
 interface TriviaTextContext {
@@ -1042,7 +1046,7 @@ export async function emitFactorySourceText(
 	const factoryShapes: Record<string, FactoryShape> = withPublicNames(model.factoryShapes);
 	const factoryMap = printingFactoryMap(model.factoryShapes, (kind) => idOfName.get(kind), ctx);
 	const artifacts: FactoryDispatchArtifacts = {
-		factoryMap,
+		factoryMap: constantsAsValues(factoryMap, model.factoryShapes),
 		surface: printingIrSurface(factoryMap, (kind) => idOfName.get(kind), model.modelTypes, ctx),
 		factoryShapes,
 		fieldAliasMap: withPublicNames(model.fieldAliasMap),
@@ -1053,6 +1057,8 @@ export async function emitFactorySourceText(
 	if (!rootKind) throw new Error(`emit-factory-source: root kind id ${String(root.$type)} is not in the catalog`);
 	const body = printFactorySource(root, rootKind, artifacts, { kindNameFromId, tree: handle }, ctx);
 	for (const finding of new Set(leafFindings)) process.stderr.write(`[emit-factory-source] leaf finding: ${finding}\n`);
+	const used = ENGINE_MEMBERS.filter((member) => new RegExp(`(?<![\\w.$"'\`])${member}\\.`).test(body));
+	const engineBinding = used.length === 0 ? 'await' : `const { ${used.join(', ')} } = await`;
 	const flags = surface === 'loose' ? ` --surface loose${nested === 'configs' ? ' --nested configs' : ''}` : '';
 	return [
 		`// @generated by \`sittir tool emit-factory-source${flags}\`; do not edit.`,
@@ -1060,7 +1066,7 @@ export async function emitFactorySourceText(
 		`import ${grammar} from '@sittir/${grammar}';`,
 		...(/\bDelimiter\b/.test(body) ? ["import { Delimiter } from '@sittir/common/utils';"] : []),
 		'',
-		`const ${ENGINE} = await createEngine(${grammar});`,
+		`${engineBinding} createEngine(${grammar});`,
 		'',
 		`export function ${exportName}() {`,
 		`\treturn ${body.replace(/\n/g, '\n\t')};`,

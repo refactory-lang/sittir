@@ -1,11 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { evaluate } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
-import { existsSync } from 'node:fs';
-import { resolveGrammarJsPath, resolveOverridesPath } from '../resolve-grammar.ts';
 import type { NodeMap } from '../types.ts';
 import type { AssembledNode } from '../model/node-map.ts';
 import {
@@ -16,6 +13,8 @@ import {
 	soleSlotFacts
 } from '../../emitters/shared.ts';
 import { buildFactoryMap } from '../../emitters/factory-map.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
+import { grammarPackage } from '../../grammars.ts';
 
 let nodeMap: NodeMap;
 let typescriptNodeMap: NodeMap;
@@ -28,9 +27,7 @@ let pythonNodeMap: NodeMap;
 // (e.g. rust self_parameter's `reference`), which changes shape
 // classification.
 async function assembleGrammar(grammar: string): Promise<NodeMap> {
-	const overridesPath = resolveOverridesPath(grammar);
-	const entryPath = existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
-	const raw = await evaluate(entryPath);
+	const raw = await evaluatePackage(grammarPackage(grammar));
 	const normalized = normalizeGrammar(link(raw));
 	const nodeMap = assemble(AssembleCtx.from(normalized));
 	// Mirror the generate() pipeline: determined slots leave the record

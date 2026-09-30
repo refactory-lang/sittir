@@ -64,8 +64,6 @@ export type LeafStringMap = {
 	[TSKindId.KwAbstractMarker]: 'abstract';
 	[TSKindId.KwAccessorMarker]: 'accessor';
 	[TSKindId.KwConstMarker]: 'const';
-	[TSKindId.Kind]: 'let' | 'const';
-	[TSKindId.ForHeaderOperator]: 'in' | 'of';
 	[TSKindId.EmptyMember]: ';';
 	[TSKindId.MetaPropertyNewTarget]: 'new.target';
 	[TSKindId.MetaPropertyImportMeta]: 'import.meta';
@@ -85,6 +83,8 @@ export type LeafStringMap = {
 	[TSKindId.WithKeyword]: 'with';
 	[TSKindId.AssertKeyword]: 'assert';
 	[TSKindId.VarKeyword]: 'var';
+	[TSKindId.LetKeyword]: 'let';
+	[TSKindId.ConstKeyword]: 'const';
 	[TSKindId.ElseKeyword]: 'else';
 	[TSKindId.IfKeyword]: 'if';
 	[TSKindId.SwitchKeyword]: 'switch';
@@ -117,7 +117,6 @@ export type LeafStringMap = {
 	[TSKindId.SetKeyword]: 'set';
 	[TSKindId.AsyncKeyword]: 'async';
 	[TSKindId.StaticKeyword]: 'static';
-	[TSKindId.LetKeyword]: 'let';
 	[TSKindId.CaseKeyword]: 'case';
 	[TSKindId.DefaultKeyword]: 'default';
 	[TSKindId.CatchKeyword]: 'catch';
@@ -130,7 +129,6 @@ export type LeafStringMap = {
 	[TSKindId.VoidKeyword]: 'void';
 	[TSKindId.DeleteKeyword]: 'delete';
 	[TSKindId.AbstractKeyword]: 'abstract';
-	[TSKindId.ConstKeyword]: 'const';
 	[TSKindId.SatisfiesKeyword]: 'satisfies';
 	[TSKindId.RequireKeyword]: 'require';
 	[TSKindId.ExtendsKeyword]: 'extends';
@@ -146,11 +144,11 @@ export type LeafStringMap = {
 	[TSKindId.NeverKeyword]: 'never';
 	[TSKindId.UsingKeyword]: 'using';
 	[TSKindId.AccessorKeyword]: 'accessor';
-	[TSKindId.OfKeyword]: 'of';
 	[TSKindId.GlobalKeyword]: 'global';
 	[TSKindId.FromKeyword]: 'from';
 	[TSKindId.TargetKeyword]: 'target';
 	[TSKindId.MetaKeyword]: 'meta';
+	[TSKindId.OfKeyword]: 'of';
 };
 
 export enum TSKindId {
@@ -546,84 +544,82 @@ export enum TSKindId {
 	TupleTypeMembers = 390,
 	ImportClauseGroup = 391,
 	CatchClauseGroup = 392,
-	Kind = 393,
-	ForHeaderOperator = 394,
-	AmbientDeclarationGlobal = 395,
-	AmbientDeclarationModule = 396,
-	ObjectTypeContent = 397,
-	ExportStatementDefault = 398,
-	ExportStatementNamespaceExport = 399,
-	ExportStatementTypeExport = 400,
-	ExportStatementEqualsExport = 401,
-	LiteralTypeNegativeNumber = 402,
-	NumberBigint = 403,
-	BinaryExpressionIn = 404,
-	EmptyMember = 405,
-	ClassBodyMethod = 406,
-	ClassBodyMethodSig = 407,
-	ClassBodyMember = 408,
-	IndexSignatureColon = 409,
-	IndexSignatureMappedTypeClause = 410,
-	ImportStatementClauseFrom = 411,
-	ImportSpecifierName = 412,
-	ImportSpecifierAs = 413,
-	ParenthesizedExpressionTyped = 414,
-	ParenthesizedExpressionSequence = 415,
-	CallExpressionCall = 416,
-	CallExpressionTemplateCall = 417,
-	CallExpressionMember = 418,
-	StringDouble = 419,
-	StringSingle = 420,
-	UpdateExpressionPostfix = 421,
-	UpdateExpressionPrefix = 422,
-	ArrowFunctionParameter = 423,
-	ClassHeritageExtendsClause = 424,
-	ImportClauseDefaultImport = 425,
-	ExportStatementDefaultFrom = 426,
-	ExportStatementDefaultDeclaration = 427,
-	ExportStatementDefaultFromStarFrom = 428,
-	ExportStatementDefaultFromNsFrom = 429,
-	ExportStatementDefaultFromClauseFrom = 430,
-	ExportStatementDefaultDeclarationDefaultKw = 431,
-	ExportStatementDefaultDeclarationDefaultKwValue = 432,
-	VariableDeclaratorPlain = 433,
-	VariableDeclaratorDefinite = 434,
-	MetaPropertyNewTarget = 435,
-	MetaPropertyImportMeta = 436,
-	ForHeaderLhs = 437,
-	ForHeaderVarKind = 438,
-	ForHeaderLetConstKind = 439,
-	ProgramRepeat1 = 440,
-	VariableDeclarationRepeat1 = 441,
-	SwitchBodyRepeat1 = 442,
-	ObjectRepeat1 = 443,
-	ObjectPatternRepeat1 = 444,
-	ArrayRepeat1 = 445,
-	ArrayPatternRepeat1 = 446,
-	ClassRepeat1 = 447,
-	SequenceExpressionRepeat1 = 448,
-	TemplateStringRepeat1 = 449,
-	ClassBodyRepeat1 = 450,
-	ExtendsClauseRepeat1 = 451,
-	ImplementsClauseRepeat1 = 452,
-	ExtendsTypeClauseRepeat1 = 453,
-	TemplateLiteralTypeRepeat1 = 454,
-	ExportSpecifiersRepeat1 = 455,
-	ImportSpecifiersRepeat1 = 456,
-	FormalParametersElementsRepeat1 = 457,
-	EnumBodyElementsRepeat1 = 458,
-	TypeParametersElementsRepeat1 = 459,
-	TupleTypeMembersRepeat1 = 460,
-	ObjectTypeContentRepeat1 = 461,
-	StringDoubleRepeat1 = 462,
-	StringSingleRepeat1 = 463,
-	InterfaceBody = 464,
-	PropertyIdentifier = 466,
-	ShorthandPropertyIdentifier = 467,
-	ShorthandPropertyIdentifierPattern = 468,
-	StatementIdentifier = 469,
-	ThisType = 470,
-	TypeIdentifier = 471,
+	AmbientDeclarationGlobal = 393,
+	AmbientDeclarationModule = 394,
+	ObjectTypeContent = 395,
+	ExportStatementDefault = 396,
+	ExportStatementNamespaceExport = 397,
+	ExportStatementTypeExport = 398,
+	ExportStatementEqualsExport = 399,
+	LiteralTypeNegativeNumber = 400,
+	NumberBigint = 401,
+	BinaryExpressionIn = 402,
+	EmptyMember = 403,
+	ClassBodyMethod = 404,
+	ClassBodyMethodSig = 405,
+	ClassBodyMember = 406,
+	IndexSignatureColon = 407,
+	IndexSignatureMappedTypeClause = 408,
+	ImportStatementClauseFrom = 409,
+	ImportSpecifierName = 410,
+	ImportSpecifierAs = 411,
+	ParenthesizedExpressionTyped = 412,
+	ParenthesizedExpressionSequence = 413,
+	CallExpressionCall = 414,
+	CallExpressionTemplateCall = 415,
+	CallExpressionMember = 416,
+	StringDouble = 417,
+	StringSingle = 418,
+	UpdateExpressionPostfix = 419,
+	UpdateExpressionPrefix = 420,
+	ArrowFunctionParameter = 421,
+	ClassHeritageExtendsClause = 422,
+	ImportClauseDefaultImport = 423,
+	ExportStatementDefaultFrom = 424,
+	ExportStatementDefaultDeclaration = 425,
+	ExportStatementDefaultFromStarFrom = 426,
+	ExportStatementDefaultFromNsFrom = 427,
+	ExportStatementDefaultFromClauseFrom = 428,
+	ExportStatementDefaultDeclarationDefaultKw = 429,
+	ExportStatementDefaultDeclarationDefaultKwValue = 430,
+	VariableDeclaratorPlain = 431,
+	VariableDeclaratorDefinite = 432,
+	MetaPropertyNewTarget = 433,
+	MetaPropertyImportMeta = 434,
+	ForHeaderLhs = 435,
+	ForHeaderVarKind = 436,
+	ForHeaderLetConstKind = 437,
+	ProgramRepeat1 = 438,
+	VariableDeclarationRepeat1 = 439,
+	SwitchBodyRepeat1 = 440,
+	ObjectRepeat1 = 441,
+	ObjectPatternRepeat1 = 442,
+	ArrayRepeat1 = 443,
+	ArrayPatternRepeat1 = 444,
+	ClassRepeat1 = 445,
+	SequenceExpressionRepeat1 = 446,
+	TemplateStringRepeat1 = 447,
+	ClassBodyRepeat1 = 448,
+	ExtendsClauseRepeat1 = 449,
+	ImplementsClauseRepeat1 = 450,
+	ExtendsTypeClauseRepeat1 = 451,
+	TemplateLiteralTypeRepeat1 = 452,
+	ExportSpecifiersRepeat1 = 453,
+	ImportSpecifiersRepeat1 = 454,
+	FormalParametersElementsRepeat1 = 455,
+	EnumBodyElementsRepeat1 = 456,
+	TypeParametersElementsRepeat1 = 457,
+	TupleTypeMembersRepeat1 = 458,
+	ObjectTypeContentRepeat1 = 459,
+	StringDoubleRepeat1 = 460,
+	StringSingleRepeat1 = 461,
+	InterfaceBody = 462,
+	PropertyIdentifier = 464,
+	ShorthandPropertyIdentifier = 465,
+	ShorthandPropertyIdentifierPattern = 466,
+	StatementIdentifier = 467,
+	ThisType = 468,
+	TypeIdentifier = 469,
 	Error = 65535
 }
 Object.freeze(TSKindId);
@@ -889,7 +885,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[256, 'member_expression'],
 	[257, 'subscript_expression'],
 	[258, '_lhs_expression'],
-	[465, '_lhs_expression'],
+	[463, '_lhs_expression'],
 	[259, 'assignment_expression'],
 	[260, '_augmented_assignment_lhs'],
 	[261, 'augmented_assignment_expression'],
@@ -1024,84 +1020,82 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[390, 'tuple_type_members'],
 	[391, 'import_clause_group'],
 	[392, 'catch_clause_group'],
-	[393, '_kind'],
-	[394, '__for_header_operator'],
-	[395, 'ambient_declaration_global'],
-	[396, 'ambient_declaration_module'],
-	[397, 'object_type_content'],
-	[398, 'export_statement_default'],
-	[399, 'export_statement_namespace_export'],
-	[400, 'export_statement_type_export'],
-	[401, 'export_statement_equals_export'],
-	[402, 'literal_type_negative_number'],
-	[403, 'number_bigint'],
-	[404, 'binary_expression_in'],
-	[405, 'empty_member'],
-	[406, 'class_body_method'],
-	[407, 'class_body_method_sig'],
-	[408, 'class_body_member'],
-	[409, 'index_signature_colon'],
-	[410, 'index_signature_mapped_type_clause'],
-	[411, 'import_statement_clause_from'],
-	[412, 'import_specifier_name'],
-	[413, 'import_specifier_as'],
-	[414, 'parenthesized_expression_typed'],
-	[415, 'parenthesized_expression_sequence'],
-	[416, 'call_expression_call'],
-	[417, 'call_expression_template_call'],
-	[418, 'call_expression_member'],
-	[419, 'string_double'],
-	[420, 'string_single'],
-	[421, 'update_expression_postfix'],
-	[422, 'update_expression_prefix'],
-	[423, 'arrow_function_parameter'],
-	[424, 'class_heritage_extends_clause'],
-	[425, 'import_clause_default_import'],
-	[426, 'export_statement_default_from'],
-	[427, 'export_statement_default_declaration'],
-	[428, 'export_statement_default_from_star_from'],
-	[429, 'export_statement_default_from_ns_from'],
-	[430, 'export_statement_default_from_clause_from'],
-	[431, 'export_statement_default_declaration_default_kw'],
-	[432, 'export_statement_default_declaration_default_kw_value'],
-	[433, 'variable_declarator_plain'],
-	[434, 'variable_declarator_definite'],
-	[435, 'meta_property_new_target'],
-	[436, 'meta_property_import_meta'],
-	[437, 'for_header_lhs'],
-	[438, 'for_header_var_kind'],
-	[439, 'for_header_let_const_kind'],
-	[440, 'program_repeat1'],
-	[441, 'variable_declaration_repeat1'],
-	[442, 'switch_body_repeat1'],
-	[443, 'object_repeat1'],
-	[444, 'object_pattern_repeat1'],
-	[445, 'array_repeat1'],
-	[446, 'array_pattern_repeat1'],
-	[447, 'class_repeat1'],
-	[448, 'sequence_expression_repeat1'],
-	[449, 'template_string_repeat1'],
-	[450, 'class_body_repeat1'],
-	[451, 'extends_clause_repeat1'],
-	[452, 'implements_clause_repeat1'],
-	[453, 'extends_type_clause_repeat1'],
-	[454, 'template_literal_type_repeat1'],
-	[455, 'export_specifiers_repeat1'],
-	[456, 'import_specifiers_repeat1'],
-	[457, 'formal_parameters_elements_repeat1'],
-	[458, 'enum_body_elements_repeat1'],
-	[459, 'type_parameters_elements_repeat1'],
-	[460, 'tuple_type_members_repeat1'],
-	[461, 'object_type_content_repeat1'],
-	[462, 'string_double_repeat1'],
-	[463, 'string_single_repeat1'],
-	[464, 'interface_body'],
-	[466, 'property_identifier'],
-	[467, 'shorthand_property_identifier'],
-	[468, 'shorthand_property_identifier_pattern'],
-	[469, 'statement_identifier'],
-	[470, 'this_type'],
-	[471, 'type_identifier'],
+	[393, 'ambient_declaration_global'],
+	[394, 'ambient_declaration_module'],
+	[395, 'object_type_content'],
+	[396, 'export_statement_default'],
+	[397, 'export_statement_namespace_export'],
+	[398, 'export_statement_type_export'],
+	[399, 'export_statement_equals_export'],
+	[400, 'literal_type_negative_number'],
+	[401, 'number_bigint'],
+	[402, 'binary_expression_in'],
+	[403, 'empty_member'],
+	[404, 'class_body_method'],
+	[405, 'class_body_method_sig'],
+	[406, 'class_body_member'],
+	[407, 'index_signature_colon'],
+	[408, 'index_signature_mapped_type_clause'],
+	[409, 'import_statement_clause_from'],
+	[410, 'import_specifier_name'],
+	[411, 'import_specifier_as'],
+	[412, 'parenthesized_expression_typed'],
+	[413, 'parenthesized_expression_sequence'],
+	[414, 'call_expression_call'],
+	[415, 'call_expression_template_call'],
+	[416, 'call_expression_member'],
+	[417, 'string_double'],
+	[418, 'string_single'],
+	[419, 'update_expression_postfix'],
+	[420, 'update_expression_prefix'],
+	[421, 'arrow_function_parameter'],
+	[422, 'class_heritage_extends_clause'],
+	[423, 'import_clause_default_import'],
+	[424, 'export_statement_default_from'],
+	[425, 'export_statement_default_declaration'],
+	[426, 'export_statement_default_from_star_from'],
+	[427, 'export_statement_default_from_ns_from'],
+	[428, 'export_statement_default_from_clause_from'],
+	[429, 'export_statement_default_declaration_default_kw'],
+	[430, 'export_statement_default_declaration_default_kw_value'],
+	[431, 'variable_declarator_plain'],
+	[432, 'variable_declarator_definite'],
+	[433, 'meta_property_new_target'],
+	[434, 'meta_property_import_meta'],
+	[435, 'for_header_lhs'],
+	[436, 'for_header_var_kind'],
+	[437, 'for_header_let_const_kind'],
+	[438, 'program_repeat1'],
+	[439, 'variable_declaration_repeat1'],
+	[440, 'switch_body_repeat1'],
+	[441, 'object_repeat1'],
+	[442, 'object_pattern_repeat1'],
+	[443, 'array_repeat1'],
+	[444, 'array_pattern_repeat1'],
+	[445, 'class_repeat1'],
+	[446, 'sequence_expression_repeat1'],
+	[447, 'template_string_repeat1'],
+	[448, 'class_body_repeat1'],
+	[449, 'extends_clause_repeat1'],
+	[450, 'implements_clause_repeat1'],
+	[451, 'extends_type_clause_repeat1'],
+	[452, 'template_literal_type_repeat1'],
+	[453, 'export_specifiers_repeat1'],
+	[454, 'import_specifiers_repeat1'],
+	[455, 'formal_parameters_elements_repeat1'],
+	[456, 'enum_body_elements_repeat1'],
+	[457, 'type_parameters_elements_repeat1'],
+	[458, 'tuple_type_members_repeat1'],
+	[459, 'object_type_content_repeat1'],
+	[460, 'string_double_repeat1'],
+	[461, 'string_single_repeat1'],
+	[462, 'interface_body'],
+	[464, 'property_identifier'],
+	[465, 'shorthand_property_identifier'],
+	[466, 'shorthand_property_identifier_pattern'],
+	[467, 'statement_identifier'],
+	[468, 'this_type'],
+	[469, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -1365,7 +1359,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[256, 'member_expression'],
 	[257, 'subscript_expression'],
 	[258, '_lhs_expression'],
-	[465, 'lhs_expression'],
+	[463, 'lhs_expression'],
 	[259, 'assignment_expression'],
 	[260, '_augmented_assignment_lhs'],
 	[261, 'augmented_assignment_expression'],
@@ -1500,84 +1494,82 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[390, 'tuple_type_members'],
 	[391, 'import_clause_group'],
 	[392, 'catch_clause_group'],
-	[393, '_kind'],
-	[394, '__for_header_operator'],
-	[395, 'ambient_declaration_global'],
-	[396, 'ambient_declaration_module'],
-	[397, 'object_type_content'],
-	[398, 'export_statement_default'],
-	[399, 'export_statement_namespace_export'],
-	[400, 'export_statement_type_export'],
-	[401, 'export_statement_equals_export'],
-	[402, 'literal_type_negative_number'],
-	[403, 'number_bigint'],
-	[404, 'binary_expression_in'],
-	[405, 'empty_member'],
-	[406, 'class_body_method'],
-	[407, 'class_body_method_sig'],
-	[408, 'class_body_member'],
-	[409, 'index_signature_colon'],
-	[410, 'index_signature_mapped_type_clause'],
-	[411, 'import_statement_clause_from'],
-	[412, 'import_specifier_name'],
-	[413, 'import_specifier_as'],
-	[414, 'parenthesized_expression_typed'],
-	[415, 'parenthesized_expression_sequence'],
-	[416, 'call_expression_call'],
-	[417, 'call_expression_template_call'],
-	[418, 'call_expression_member'],
-	[419, 'string_double'],
-	[420, 'string_single'],
-	[421, 'update_expression_postfix'],
-	[422, 'update_expression_prefix'],
-	[423, 'arrow_function_parameter'],
-	[424, 'class_heritage_extends_clause'],
-	[425, 'import_clause_default_import'],
-	[426, 'export_statement_default_from'],
-	[427, 'export_statement_default_declaration'],
-	[428, 'export_statement_default_from_star_from'],
-	[429, 'export_statement_default_from_ns_from'],
-	[430, 'export_statement_default_from_clause_from'],
-	[431, 'export_statement_default_declaration_default_kw'],
-	[432, 'export_statement_default_declaration_default_kw_value'],
-	[433, 'variable_declarator_plain'],
-	[434, 'variable_declarator_definite'],
-	[435, 'meta_property_new_target'],
-	[436, 'meta_property_import_meta'],
-	[437, 'for_header_lhs'],
-	[438, 'for_header_var_kind'],
-	[439, 'for_header_let_const_kind'],
-	[440, 'program_repeat1'],
-	[441, 'variable_declaration_repeat1'],
-	[442, 'switch_body_repeat1'],
-	[443, 'object_repeat1'],
-	[444, 'object_pattern_repeat1'],
-	[445, 'array_repeat1'],
-	[446, 'array_pattern_repeat1'],
-	[447, 'class_repeat1'],
-	[448, 'sequence_expression_repeat1'],
-	[449, 'template_string_repeat1'],
-	[450, 'class_body_repeat1'],
-	[451, 'extends_clause_repeat1'],
-	[452, 'implements_clause_repeat1'],
-	[453, 'extends_type_clause_repeat1'],
-	[454, 'template_literal_type_repeat1'],
-	[455, 'export_specifiers_repeat1'],
-	[456, 'import_specifiers_repeat1'],
-	[457, 'formal_parameters_elements_repeat1'],
-	[458, 'enum_body_elements_repeat1'],
-	[459, 'type_parameters_elements_repeat1'],
-	[460, 'tuple_type_members_repeat1'],
-	[461, 'object_type_content_repeat1'],
-	[462, 'string_double_repeat1'],
-	[463, 'string_single_repeat1'],
-	[464, 'interface_body'],
-	[466, 'property_identifier'],
-	[467, 'shorthand_property_identifier'],
-	[468, 'shorthand_property_identifier_pattern'],
-	[469, 'statement_identifier'],
-	[470, 'this_type'],
-	[471, 'type_identifier'],
+	[393, 'ambient_declaration_global'],
+	[394, 'ambient_declaration_module'],
+	[395, 'object_type_content'],
+	[396, 'export_statement_default'],
+	[397, 'export_statement_namespace_export'],
+	[398, 'export_statement_type_export'],
+	[399, 'export_statement_equals_export'],
+	[400, 'literal_type_negative_number'],
+	[401, 'number_bigint'],
+	[402, 'binary_expression_in'],
+	[403, 'empty_member'],
+	[404, 'class_body_method'],
+	[405, 'class_body_method_sig'],
+	[406, 'class_body_member'],
+	[407, 'index_signature_colon'],
+	[408, 'index_signature_mapped_type_clause'],
+	[409, 'import_statement_clause_from'],
+	[410, 'import_specifier_name'],
+	[411, 'import_specifier_as'],
+	[412, 'parenthesized_expression_typed'],
+	[413, 'parenthesized_expression_sequence'],
+	[414, 'call_expression_call'],
+	[415, 'call_expression_template_call'],
+	[416, 'call_expression_member'],
+	[417, 'string_double'],
+	[418, 'string_single'],
+	[419, 'update_expression_postfix'],
+	[420, 'update_expression_prefix'],
+	[421, 'arrow_function_parameter'],
+	[422, 'class_heritage_extends_clause'],
+	[423, 'import_clause_default_import'],
+	[424, 'export_statement_default_from'],
+	[425, 'export_statement_default_declaration'],
+	[426, 'export_statement_default_from_star_from'],
+	[427, 'export_statement_default_from_ns_from'],
+	[428, 'export_statement_default_from_clause_from'],
+	[429, 'export_statement_default_declaration_default_kw'],
+	[430, 'export_statement_default_declaration_default_kw_value'],
+	[431, 'variable_declarator_plain'],
+	[432, 'variable_declarator_definite'],
+	[433, 'meta_property_new_target'],
+	[434, 'meta_property_import_meta'],
+	[435, 'for_header_lhs'],
+	[436, 'for_header_var_kind'],
+	[437, 'for_header_let_const_kind'],
+	[438, 'program_repeat1'],
+	[439, 'variable_declaration_repeat1'],
+	[440, 'switch_body_repeat1'],
+	[441, 'object_repeat1'],
+	[442, 'object_pattern_repeat1'],
+	[443, 'array_repeat1'],
+	[444, 'array_pattern_repeat1'],
+	[445, 'class_repeat1'],
+	[446, 'sequence_expression_repeat1'],
+	[447, 'template_string_repeat1'],
+	[448, 'class_body_repeat1'],
+	[449, 'extends_clause_repeat1'],
+	[450, 'implements_clause_repeat1'],
+	[451, 'extends_type_clause_repeat1'],
+	[452, 'template_literal_type_repeat1'],
+	[453, 'export_specifiers_repeat1'],
+	[454, 'import_specifiers_repeat1'],
+	[455, 'formal_parameters_elements_repeat1'],
+	[456, 'enum_body_elements_repeat1'],
+	[457, 'type_parameters_elements_repeat1'],
+	[458, 'tuple_type_members_repeat1'],
+	[459, 'object_type_content_repeat1'],
+	[460, 'string_double_repeat1'],
+	[461, 'string_single_repeat1'],
+	[462, 'interface_body'],
+	[464, 'property_identifier'],
+	[465, 'shorthand_property_identifier'],
+	[466, 'shorthand_property_identifier_pattern'],
+	[467, 'statement_identifier'],
+	[468, 'this_type'],
+	[469, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -2373,10 +2365,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ImportClauseGroup;
 		case 'catch_clause_group':
 			return TSKindId.CatchClauseGroup;
-		case '_kind':
-			return TSKindId.Kind;
-		case '__for_header_operator':
-			return TSKindId.ForHeaderOperator;
 		case 'ambient_declaration_global':
 			return TSKindId.AmbientDeclarationGlobal;
 		case 'ambient_declaration_module':
@@ -9853,8 +9841,6 @@ export type KwDeclareMarker = TSKindId.KwDeclareMarker;
 export type KwAbstractMarker = TSKindId.KwAbstractMarker;
 export type KwAccessorMarker = TSKindId.KwAccessorMarker;
 export type KwConstMarker = TSKindId.KwConstMarker;
-export type Kind = TSKindId.LetKeyword | TSKindId.ConstKeyword;
-export type ForHeaderOperator = TSKindId.InKeyword | TSKindId.OfKeyword;
 export type NumberDecimal = Terminal<TSKindId.NumberDecimal, string>;
 export type EmptyMember = TSKindId.EmptyMember;
 export type MetaPropertyNewTarget = TSKindId.MetaPropertyNewTarget;
@@ -9875,6 +9861,7 @@ export type Dedent = TSKindId.Dedent;
 export type TernaryQmark = Terminal<TSKindId.TernaryQmark, string>;
 export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
 export type TypeKeyword = TSKindId.TypeKeyword;
+export type LetKeyword = TSKindId.LetKeyword;
 export type DeclareKeyword = TSKindId.DeclareKeyword;
 export type NamespaceKeyword = TSKindId.NamespaceKeyword;
 export type PublicKeyword = TSKindId.PublicKeyword;
@@ -9895,7 +9882,6 @@ export type GetKeyword = TSKindId.GetKeyword;
 export type SetKeyword = TSKindId.SetKeyword;
 export type AsyncKeyword = TSKindId.AsyncKeyword;
 export type StaticKeyword = TSKindId.StaticKeyword;
-export type LetKeyword = TSKindId.LetKeyword;
 
 // Supertype unions
 export type ExportStatement =
@@ -9903,8 +9889,6 @@ export type ExportStatement =
 	| ExportStatementTypeExport
 	| ExportStatementEqualsExport
 	| ExportStatementNamespaceExport;
-
-export type ModuleExportName = Identifier | String;
 
 export type Declaration =
 	| FunctionDeclaration
@@ -9951,8 +9935,6 @@ export type VariableDeclarator = VariableDeclaratorPlain | VariableDeclaratorDef
 export type ForHeader = ForHeaderLhs | ForHeaderVarKind | ForHeaderLetConstKind;
 
 export type ParenthesizedExpression = ParenthesizedExpressionTyped | ParenthesizedExpressionSequence;
-
-export type Expressions = Expression | SequenceExpression;
 
 export type Expression =
 	| AsExpression
@@ -10018,40 +10000,7 @@ export type PrimaryExpression =
 	| CallExpression
 	| NonNullExpression;
 
-export type FormalParameter = RequiredParameter | OptionalParameter;
-
 export type CallExpression = CallExpressionCall | CallExpressionTemplateCall | CallExpressionMember;
-
-export type AugmentedAssignmentLhs =
-	| MemberExpression
-	| SubscriptExpression
-	| DeclareKeyword
-	| NamespaceKeyword
-	| TypeKeyword
-	| PublicKeyword
-	| PrivateKeyword
-	| ProtectedKeyword
-	| OverrideKeyword
-	| ReadonlyKeyword
-	| ModuleKeyword
-	| AnyKeyword
-	| NumberKeyword
-	| BooleanKeyword
-	| StringKeyword
-	| SymbolKeyword
-	| ExportKeyword
-	| ObjectKeyword
-	| NewKeyword
-	| GetKeyword
-	| SetKeyword
-	| AsyncKeyword
-	| StaticKeyword
-	| LetKeyword
-	| Identifier
-	| ParenthesizedExpression
-	| NonNullExpression;
-
-export type DestructuringPattern = ObjectPattern | ArrayPattern;
 
 export type UpdateExpression = UpdateExpressionPostfix | UpdateExpressionPrefix;
 
@@ -10069,15 +10018,9 @@ export type Number =
 	| NumberOctal
 	| NumberBigint;
 
-export type _Identifier = Undefined | Identifier;
-
 export type MetaProperty = MetaPropertyNewTarget | MetaPropertyImportMeta;
 
 export type Pattern = LhsExpression | RestPattern;
-
-export type PropertyName = PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
-
-export type ImportIdentifier = Identifier | TypeKeyword;
 
 export type Type =
 	| PrimaryType
@@ -10087,8 +10030,6 @@ export type Type =
 	| InferType
 	| TypeQueryMemberExpressionInTypeAnnotation
 	| TypeQueryCallExpressionInTypeAnnotation;
-
-export type TupleTypeMember = TupleParameter | OptionalTupleParameter | OptionalType | RestType | Type;
 
 export type PrimaryType =
 	| ParenthesizedType
@@ -10123,10 +10064,6 @@ export namespace ExportStatement {
 	export type Kind = 'export_statement';
 }
 
-export namespace ModuleExportName {
-	export type Kind = '_module_export_name';
-}
-
 export namespace Declaration {
 	export type Kind = 'declaration';
 }
@@ -10151,10 +10088,6 @@ export namespace ParenthesizedExpression {
 	export type Kind = 'parenthesized_expression';
 }
 
-export namespace Expressions {
-	export type Kind = '_expressions';
-}
-
 export namespace Expression {
 	export type Kind = 'expression';
 }
@@ -10163,20 +10096,8 @@ export namespace PrimaryExpression {
 	export type Kind = 'primary_expression';
 }
 
-export namespace FormalParameter {
-	export type Kind = '_formal_parameter';
-}
-
 export namespace CallExpression {
 	export type Kind = 'call_expression';
-}
-
-export namespace AugmentedAssignmentLhs {
-	export type Kind = '_augmented_assignment_lhs';
-}
-
-export namespace DestructuringPattern {
-	export type Kind = '_destructuring_pattern';
 }
 
 export namespace UpdateExpression {
@@ -10195,10 +10116,6 @@ export namespace Number {
 	export type Kind = 'number';
 }
 
-export namespace _Identifier {
-	export type Kind = '_identifier';
-}
-
 export namespace MetaProperty {
 	export type Kind = 'meta_property';
 }
@@ -10207,20 +10124,8 @@ export namespace Pattern {
 	export type Kind = 'pattern';
 }
 
-export namespace PropertyName {
-	export type Kind = '_property_name';
-}
-
-export namespace ImportIdentifier {
-	export type Kind = '_import_identifier';
-}
-
 export namespace Type {
 	export type Kind = 'type';
-}
-
-export namespace TupleTypeMember {
-	export type Kind = '_tuple_type_member';
 }
 
 export namespace PrimaryType {
@@ -13064,7 +12969,7 @@ export interface ProgramNs extends NodeNs<
 	Program.BuildArgs,
 	Program.LooseArgs,
 	never,
-	'program'
+	TSKindId.Program
 > {}
 export interface HashBangLineNs extends NodeNs<
 	HashBangLine,
@@ -13075,7 +12980,7 @@ export interface HashBangLineNs extends NodeNs<
 	HashBangLine.BuildArgs,
 	HashBangLine.LooseArgs,
 	'content',
-	'hash_bang_line'
+	TSKindId.HashBangLine
 > {}
 export interface NamespaceExportNs extends NodeNs<
 	NamespaceExport,
@@ -13086,7 +12991,7 @@ export interface NamespaceExportNs extends NodeNs<
 	NamespaceExport.BuildArgs,
 	NamespaceExport.LooseArgs,
 	'module_export_name',
-	'namespace_export'
+	TSKindId.NamespaceExport
 > {}
 export interface ExportClauseNs extends NodeNs<
 	ExportClause,
@@ -13097,7 +13002,7 @@ export interface ExportClauseNs extends NodeNs<
 	ExportClause.BuildArgs,
 	ExportClause.LooseArgs,
 	'export_specifiers',
-	'export_clause'
+	TSKindId.ExportClause
 > {}
 export interface ExportSpecifierNs extends NodeNs<
 	ExportSpecifier,
@@ -13108,7 +13013,7 @@ export interface ExportSpecifierNs extends NodeNs<
 	ExportSpecifier.BuildArgs,
 	ExportSpecifier.LooseArgs,
 	never,
-	'export_specifier'
+	TSKindId.ExportSpecifier
 > {}
 export interface ImportStatementNs extends NodeNs<
 	ImportStatement,
@@ -13119,7 +13024,7 @@ export interface ImportStatementNs extends NodeNs<
 	ImportStatement.BuildArgs,
 	ImportStatement.LooseArgs,
 	never,
-	'import_statement'
+	TSKindId.ImportStatement
 > {}
 export interface ImportClauseNs extends NodeNs<
 	ImportClause,
@@ -13130,7 +13035,7 @@ export interface ImportClauseNs extends NodeNs<
 	ImportClause.BuildArgs,
 	ImportClause.LooseArgs,
 	'content',
-	'import_clause'
+	TSKindId.ImportClause
 > {}
 export interface NamespaceImportNs extends NodeNs<
 	NamespaceImport,
@@ -13141,7 +13046,7 @@ export interface NamespaceImportNs extends NodeNs<
 	NamespaceImport.BuildArgs,
 	NamespaceImport.LooseArgs,
 	'name',
-	'namespace_import'
+	TSKindId.NamespaceImport
 > {}
 export interface NamedImportsNs extends NodeNs<
 	NamedImports,
@@ -13152,7 +13057,7 @@ export interface NamedImportsNs extends NodeNs<
 	NamedImports.BuildArgs,
 	NamedImports.LooseArgs,
 	'import_specifiers',
-	'named_imports'
+	TSKindId.NamedImports
 > {}
 export interface ImportAttributeNs extends NodeNs<
 	ImportAttribute,
@@ -13163,7 +13068,7 @@ export interface ImportAttributeNs extends NodeNs<
 	ImportAttribute.BuildArgs,
 	ImportAttribute.LooseArgs,
 	never,
-	'import_attribute'
+	TSKindId.ImportAttribute
 > {}
 export interface ExpressionStatementNs extends NodeNs<
 	ExpressionStatement,
@@ -13174,7 +13079,7 @@ export interface ExpressionStatementNs extends NodeNs<
 	ExpressionStatement.BuildArgs,
 	ExpressionStatement.LooseArgs,
 	'expression',
-	'expression_statement'
+	TSKindId.ExpressionStatement
 > {}
 export interface VariableDeclarationNs extends NodeNs<
 	VariableDeclaration,
@@ -13185,7 +13090,7 @@ export interface VariableDeclarationNs extends NodeNs<
 	VariableDeclaration.BuildArgs,
 	VariableDeclaration.LooseArgs,
 	never,
-	'variable_declaration'
+	TSKindId.VariableDeclaration
 > {}
 export interface LexicalDeclarationNs extends NodeNs<
 	LexicalDeclaration,
@@ -13196,7 +13101,7 @@ export interface LexicalDeclarationNs extends NodeNs<
 	LexicalDeclaration.BuildArgs,
 	LexicalDeclaration.LooseArgs,
 	never,
-	'lexical_declaration'
+	TSKindId.LexicalDeclaration
 > {}
 export interface StatementBlockNs extends NodeNs<
 	StatementBlock,
@@ -13207,7 +13112,7 @@ export interface StatementBlockNs extends NodeNs<
 	StatementBlock.BuildArgs,
 	StatementBlock.LooseArgs,
 	never,
-	'statement_block'
+	TSKindId.StatementBlock
 > {}
 export interface ElseClauseNs extends NodeNs<
 	ElseClause,
@@ -13218,7 +13123,7 @@ export interface ElseClauseNs extends NodeNs<
 	ElseClause.BuildArgs,
 	ElseClause.LooseArgs,
 	'body',
-	'else_clause'
+	TSKindId.ElseClause
 > {}
 export interface IfStatementNs extends NodeNs<
 	IfStatement,
@@ -13229,7 +13134,7 @@ export interface IfStatementNs extends NodeNs<
 	IfStatement.BuildArgs,
 	IfStatement.LooseArgs,
 	never,
-	'if_statement'
+	TSKindId.IfStatement
 > {}
 export interface SwitchStatementNs extends NodeNs<
 	SwitchStatement,
@@ -13240,7 +13145,7 @@ export interface SwitchStatementNs extends NodeNs<
 	SwitchStatement.BuildArgs,
 	SwitchStatement.LooseArgs,
 	never,
-	'switch_statement'
+	TSKindId.SwitchStatement
 > {}
 export interface ForStatementNs extends NodeNs<
 	ForStatement,
@@ -13251,7 +13156,7 @@ export interface ForStatementNs extends NodeNs<
 	ForStatement.BuildArgs,
 	ForStatement.LooseArgs,
 	never,
-	'for_statement'
+	TSKindId.ForStatement
 > {}
 export interface ForInStatementNs extends NodeNs<
 	ForInStatement,
@@ -13262,7 +13167,7 @@ export interface ForInStatementNs extends NodeNs<
 	ForInStatement.BuildArgs,
 	ForInStatement.LooseArgs,
 	never,
-	'for_in_statement'
+	TSKindId.ForInStatement
 > {}
 export interface WhileStatementNs extends NodeNs<
 	WhileStatement,
@@ -13273,7 +13178,7 @@ export interface WhileStatementNs extends NodeNs<
 	WhileStatement.BuildArgs,
 	WhileStatement.LooseArgs,
 	never,
-	'while_statement'
+	TSKindId.WhileStatement
 > {}
 export interface DoStatementNs extends NodeNs<
 	DoStatement,
@@ -13284,7 +13189,7 @@ export interface DoStatementNs extends NodeNs<
 	DoStatement.BuildArgs,
 	DoStatement.LooseArgs,
 	never,
-	'do_statement'
+	TSKindId.DoStatement
 > {}
 export interface TryStatementNs extends NodeNs<
 	TryStatement,
@@ -13295,7 +13200,7 @@ export interface TryStatementNs extends NodeNs<
 	TryStatement.BuildArgs,
 	TryStatement.LooseArgs,
 	never,
-	'try_statement'
+	TSKindId.TryStatement
 > {}
 export interface WithStatementNs extends NodeNs<
 	WithStatement,
@@ -13306,7 +13211,7 @@ export interface WithStatementNs extends NodeNs<
 	WithStatement.BuildArgs,
 	WithStatement.LooseArgs,
 	never,
-	'with_statement'
+	TSKindId.WithStatement
 > {}
 export interface BreakStatementNs extends NodeNs<
 	BreakStatement,
@@ -13317,7 +13222,7 @@ export interface BreakStatementNs extends NodeNs<
 	BreakStatement.BuildArgs,
 	BreakStatement.LooseArgs,
 	'label',
-	'break_statement'
+	TSKindId.BreakStatement
 > {}
 export interface ContinueStatementNs extends NodeNs<
 	ContinueStatement,
@@ -13328,7 +13233,7 @@ export interface ContinueStatementNs extends NodeNs<
 	ContinueStatement.BuildArgs,
 	ContinueStatement.LooseArgs,
 	'label',
-	'continue_statement'
+	TSKindId.ContinueStatement
 > {}
 export interface DebuggerStatementNs extends NodeNs<
 	DebuggerStatement,
@@ -13339,7 +13244,7 @@ export interface DebuggerStatementNs extends NodeNs<
 	DebuggerStatement.BuildArgs,
 	DebuggerStatement.LooseArgs,
 	'terminator',
-	'debugger_statement'
+	TSKindId.DebuggerStatement
 > {}
 export interface ReturnStatementNs extends NodeNs<
 	ReturnStatement,
@@ -13350,7 +13255,7 @@ export interface ReturnStatementNs extends NodeNs<
 	ReturnStatement.BuildArgs,
 	ReturnStatement.LooseArgs,
 	'expression',
-	'return_statement'
+	TSKindId.ReturnStatement
 > {}
 export interface ThrowStatementNs extends NodeNs<
 	ThrowStatement,
@@ -13361,7 +13266,7 @@ export interface ThrowStatementNs extends NodeNs<
 	ThrowStatement.BuildArgs,
 	ThrowStatement.LooseArgs,
 	'expression',
-	'throw_statement'
+	TSKindId.ThrowStatement
 > {}
 export interface LabeledStatementNs extends NodeNs<
 	LabeledStatement,
@@ -13372,7 +13277,7 @@ export interface LabeledStatementNs extends NodeNs<
 	LabeledStatement.BuildArgs,
 	LabeledStatement.LooseArgs,
 	never,
-	'labeled_statement'
+	TSKindId.LabeledStatement
 > {}
 export interface SwitchBodyNs extends NodeNs<
 	SwitchBody,
@@ -13383,7 +13288,7 @@ export interface SwitchBodyNs extends NodeNs<
 	SwitchBody.BuildArgs,
 	SwitchBody.LooseArgs,
 	never,
-	'switch_body'
+	TSKindId.SwitchBody
 > {}
 export interface SwitchCaseNs extends NodeNs<
 	SwitchCase,
@@ -13394,7 +13299,7 @@ export interface SwitchCaseNs extends NodeNs<
 	SwitchCase.BuildArgs,
 	SwitchCase.LooseArgs,
 	never,
-	'switch_case'
+	TSKindId.SwitchCase
 > {}
 export interface SwitchDefaultNs extends NodeNs<
 	SwitchDefault,
@@ -13405,7 +13310,7 @@ export interface SwitchDefaultNs extends NodeNs<
 	SwitchDefault.BuildArgs,
 	SwitchDefault.LooseArgs,
 	never,
-	'switch_default'
+	TSKindId.SwitchDefault
 > {}
 export interface CatchClauseNs extends NodeNs<
 	CatchClause,
@@ -13416,7 +13321,7 @@ export interface CatchClauseNs extends NodeNs<
 	CatchClause.BuildArgs,
 	CatchClause.LooseArgs,
 	never,
-	'catch_clause'
+	TSKindId.CatchClause
 > {}
 export interface FinallyClauseNs extends NodeNs<
 	FinallyClause,
@@ -13427,7 +13332,7 @@ export interface FinallyClauseNs extends NodeNs<
 	FinallyClause.BuildArgs,
 	FinallyClause.LooseArgs,
 	'body',
-	'finally_clause'
+	TSKindId.FinallyClause
 > {}
 export interface YieldExpressionNs extends NodeNs<
 	YieldExpression,
@@ -13438,7 +13343,7 @@ export interface YieldExpressionNs extends NodeNs<
 	YieldExpression.BuildArgs,
 	YieldExpression.LooseArgs,
 	'expression',
-	'yield_expression'
+	TSKindId.YieldExpression
 > {}
 export interface ObjectNs extends NodeNs<
 	Object,
@@ -13449,7 +13354,7 @@ export interface ObjectNs extends NodeNs<
 	Object.BuildArgs,
 	Object.LooseArgs,
 	never,
-	'object'
+	TSKindId.Object
 > {}
 export interface ObjectPatternNs extends NodeNs<
 	ObjectPattern,
@@ -13460,7 +13365,7 @@ export interface ObjectPatternNs extends NodeNs<
 	ObjectPattern.BuildArgs,
 	ObjectPattern.LooseArgs,
 	never,
-	'object_pattern'
+	TSKindId.ObjectPattern
 > {}
 export interface AssignmentPatternNs extends NodeNs<
 	AssignmentPattern,
@@ -13471,7 +13376,7 @@ export interface AssignmentPatternNs extends NodeNs<
 	AssignmentPattern.BuildArgs,
 	AssignmentPattern.LooseArgs,
 	never,
-	'assignment_pattern'
+	TSKindId.AssignmentPattern
 > {}
 export interface ObjectAssignmentPatternNs extends NodeNs<
 	ObjectAssignmentPattern,
@@ -13482,7 +13387,7 @@ export interface ObjectAssignmentPatternNs extends NodeNs<
 	ObjectAssignmentPattern.BuildArgs,
 	ObjectAssignmentPattern.LooseArgs,
 	never,
-	'object_assignment_pattern'
+	TSKindId.ObjectAssignmentPattern
 > {}
 export interface ArrayNs extends NodeNs<
 	Array,
@@ -13493,7 +13398,7 @@ export interface ArrayNs extends NodeNs<
 	Array.BuildArgs,
 	Array.LooseArgs,
 	never,
-	'array'
+	TSKindId.Array
 > {}
 export interface ArrayPatternNs extends NodeNs<
 	ArrayPattern,
@@ -13504,7 +13409,7 @@ export interface ArrayPatternNs extends NodeNs<
 	ArrayPattern.BuildArgs,
 	ArrayPattern.LooseArgs,
 	never,
-	'array_pattern'
+	TSKindId.ArrayPattern
 > {}
 export interface NestedIdentifierNs extends NodeNs<
 	NestedIdentifier,
@@ -13515,7 +13420,7 @@ export interface NestedIdentifierNs extends NodeNs<
 	NestedIdentifier.BuildArgs,
 	NestedIdentifier.LooseArgs,
 	never,
-	'nested_identifier'
+	TSKindId.NestedIdentifier
 > {}
 export interface ClassNs extends NodeNs<
 	Class,
@@ -13526,7 +13431,7 @@ export interface ClassNs extends NodeNs<
 	Class.BuildArgs,
 	Class.LooseArgs,
 	never,
-	'class'
+	TSKindId.Class
 > {}
 export interface ClassDeclarationNs extends NodeNs<
 	ClassDeclaration,
@@ -13537,7 +13442,7 @@ export interface ClassDeclarationNs extends NodeNs<
 	ClassDeclaration.BuildArgs,
 	ClassDeclaration.LooseArgs,
 	never,
-	'class_declaration'
+	TSKindId.ClassDeclaration
 > {}
 export interface ClassHeritageNs extends NodeNs<
 	ClassHeritage,
@@ -13548,7 +13453,7 @@ export interface ClassHeritageNs extends NodeNs<
 	ClassHeritage.BuildArgs,
 	ClassHeritage.LooseArgs,
 	'content',
-	'class_heritage'
+	TSKindId.ClassHeritage
 > {}
 export interface FunctionExpressionNs extends NodeNs<
 	FunctionExpression,
@@ -13559,7 +13464,7 @@ export interface FunctionExpressionNs extends NodeNs<
 	FunctionExpression.BuildArgs,
 	FunctionExpression.LooseArgs,
 	never,
-	'function_expression'
+	TSKindId.FunctionExpression
 > {}
 export interface FunctionDeclarationNs extends NodeNs<
 	FunctionDeclaration,
@@ -13570,7 +13475,7 @@ export interface FunctionDeclarationNs extends NodeNs<
 	FunctionDeclaration.BuildArgs,
 	FunctionDeclaration.LooseArgs,
 	never,
-	'function_declaration'
+	TSKindId.FunctionDeclaration
 > {}
 export interface GeneratorFunctionNs extends NodeNs<
 	GeneratorFunction,
@@ -13581,7 +13486,7 @@ export interface GeneratorFunctionNs extends NodeNs<
 	GeneratorFunction.BuildArgs,
 	GeneratorFunction.LooseArgs,
 	never,
-	'generator_function'
+	TSKindId.GeneratorFunction
 > {}
 export interface GeneratorFunctionDeclarationNs extends NodeNs<
 	GeneratorFunctionDeclaration,
@@ -13592,7 +13497,7 @@ export interface GeneratorFunctionDeclarationNs extends NodeNs<
 	GeneratorFunctionDeclaration.BuildArgs,
 	GeneratorFunctionDeclaration.LooseArgs,
 	never,
-	'generator_function_declaration'
+	TSKindId.GeneratorFunctionDeclaration
 > {}
 export interface ArrowFunctionNs extends NodeNs<
 	ArrowFunction,
@@ -13603,7 +13508,7 @@ export interface ArrowFunctionNs extends NodeNs<
 	ArrowFunction.BuildArgs,
 	ArrowFunction.LooseArgs,
 	never,
-	'arrow_function'
+	TSKindId.ArrowFunction
 > {}
 export interface NewExpressionNs extends NodeNs<
 	NewExpression,
@@ -13614,7 +13519,7 @@ export interface NewExpressionNs extends NodeNs<
 	NewExpression.BuildArgs,
 	NewExpression.LooseArgs,
 	never,
-	'new_expression'
+	TSKindId.NewExpression
 > {}
 export interface AwaitExpressionNs extends NodeNs<
 	AwaitExpression,
@@ -13625,7 +13530,7 @@ export interface AwaitExpressionNs extends NodeNs<
 	AwaitExpression.BuildArgs,
 	AwaitExpression.LooseArgs,
 	'expression',
-	'await_expression'
+	TSKindId.AwaitExpression
 > {}
 export interface MemberExpressionNs extends NodeNs<
 	MemberExpression,
@@ -13636,7 +13541,7 @@ export interface MemberExpressionNs extends NodeNs<
 	MemberExpression.BuildArgs,
 	MemberExpression.LooseArgs,
 	never,
-	'member_expression'
+	TSKindId.MemberExpression
 > {}
 export interface SubscriptExpressionNs extends NodeNs<
 	SubscriptExpression,
@@ -13647,7 +13552,7 @@ export interface SubscriptExpressionNs extends NodeNs<
 	SubscriptExpression.BuildArgs,
 	SubscriptExpression.LooseArgs,
 	never,
-	'subscript_expression'
+	TSKindId.SubscriptExpression
 > {}
 export interface LhsExpressionNs extends NodeNs<
 	LhsExpression,
@@ -13658,7 +13563,7 @@ export interface LhsExpressionNs extends NodeNs<
 	LhsExpression.BuildArgs,
 	LhsExpression.LooseArgs,
 	'content',
-	'_lhs_expression'
+	TSKindId.LhsExpression
 > {}
 export interface AssignmentExpressionNs extends NodeNs<
 	AssignmentExpression,
@@ -13669,7 +13574,7 @@ export interface AssignmentExpressionNs extends NodeNs<
 	AssignmentExpression.BuildArgs,
 	AssignmentExpression.LooseArgs,
 	never,
-	'assignment_expression'
+	TSKindId.AssignmentExpression
 > {}
 export interface AugmentedAssignmentExpressionNs extends NodeNs<
 	AugmentedAssignmentExpression,
@@ -13680,7 +13585,7 @@ export interface AugmentedAssignmentExpressionNs extends NodeNs<
 	AugmentedAssignmentExpression.BuildArgs,
 	AugmentedAssignmentExpression.LooseArgs,
 	never,
-	'augmented_assignment_expression'
+	TSKindId.AugmentedAssignmentExpression
 > {}
 export interface SpreadElementNs extends NodeNs<
 	SpreadElement,
@@ -13691,7 +13596,7 @@ export interface SpreadElementNs extends NodeNs<
 	SpreadElement.BuildArgs,
 	SpreadElement.LooseArgs,
 	'expression',
-	'spread_element'
+	TSKindId.SpreadElement
 > {}
 export interface TernaryExpressionNs extends NodeNs<
 	TernaryExpression,
@@ -13702,7 +13607,7 @@ export interface TernaryExpressionNs extends NodeNs<
 	TernaryExpression.BuildArgs,
 	TernaryExpression.LooseArgs,
 	never,
-	'ternary_expression'
+	TSKindId.TernaryExpression
 > {}
 export interface BinaryExpressionNs extends NodeNs<
 	BinaryExpression,
@@ -13713,7 +13618,7 @@ export interface BinaryExpressionNs extends NodeNs<
 	BinaryExpression.BuildArgs,
 	BinaryExpression.LooseArgs,
 	never,
-	'binary_expression'
+	TSKindId.BinaryExpression
 > {}
 export interface UnaryExpressionNs extends NodeNs<
 	UnaryExpression,
@@ -13724,7 +13629,7 @@ export interface UnaryExpressionNs extends NodeNs<
 	UnaryExpression.BuildArgs,
 	UnaryExpression.LooseArgs,
 	never,
-	'unary_expression'
+	TSKindId.UnaryExpression
 > {}
 export interface SequenceExpressionNs extends NodeNs<
 	SequenceExpression,
@@ -13735,7 +13640,7 @@ export interface SequenceExpressionNs extends NodeNs<
 	SequenceExpression.BuildArgs,
 	SequenceExpression.LooseArgs,
 	never,
-	'sequence_expression'
+	TSKindId.SequenceExpression
 > {}
 export interface EscapeSequenceNs extends NodeNs<
 	EscapeSequence,
@@ -13746,7 +13651,7 @@ export interface EscapeSequenceNs extends NodeNs<
 	EscapeSequence.BuildArgs,
 	EscapeSequence.LooseArgs,
 	'content',
-	'escape_sequence'
+	TSKindId.EscapeSequence
 > {}
 export interface TemplateStringNs extends NodeNs<
 	TemplateString,
@@ -13757,7 +13662,7 @@ export interface TemplateStringNs extends NodeNs<
 	TemplateString.BuildArgs,
 	TemplateString.LooseArgs,
 	never,
-	'template_string'
+	TSKindId.TemplateString
 > {}
 export interface TemplateSubstitutionNs extends NodeNs<
 	TemplateSubstitution,
@@ -13768,7 +13673,7 @@ export interface TemplateSubstitutionNs extends NodeNs<
 	TemplateSubstitution.BuildArgs,
 	TemplateSubstitution.LooseArgs,
 	'expression',
-	'template_substitution'
+	TSKindId.TemplateSubstitution
 > {}
 export interface RegexNs extends NodeNs<
 	Regex,
@@ -13779,7 +13684,7 @@ export interface RegexNs extends NodeNs<
 	Regex.BuildArgs,
 	Regex.LooseArgs,
 	never,
-	'regex'
+	TSKindId.Regex
 > {}
 export interface PrivatePropertyIdentifierNs extends NodeNs<
 	PrivatePropertyIdentifier,
@@ -13790,7 +13695,7 @@ export interface PrivatePropertyIdentifierNs extends NodeNs<
 	PrivatePropertyIdentifier.BuildArgs,
 	PrivatePropertyIdentifier.LooseArgs,
 	'content',
-	'private_property_identifier'
+	TSKindId.PrivatePropertyIdentifier
 > {}
 export interface ArgumentsNs extends NodeNs<
 	Arguments,
@@ -13801,7 +13706,7 @@ export interface ArgumentsNs extends NodeNs<
 	Arguments.BuildArgs,
 	Arguments.LooseArgs,
 	never,
-	'arguments'
+	TSKindId.Arguments
 > {}
 export interface DecoratorNs extends NodeNs<
 	Decorator,
@@ -13812,7 +13717,7 @@ export interface DecoratorNs extends NodeNs<
 	Decorator.BuildArgs,
 	Decorator.LooseArgs,
 	'expression',
-	'decorator'
+	TSKindId.Decorator
 > {}
 export interface DecoratorMemberExpressionNs extends NodeNs<
 	DecoratorMemberExpression,
@@ -13823,7 +13728,7 @@ export interface DecoratorMemberExpressionNs extends NodeNs<
 	DecoratorMemberExpression.BuildArgs,
 	DecoratorMemberExpression.LooseArgs,
 	never,
-	'decorator_member_expression'
+	TSKindId.DecoratorMemberExpression
 > {}
 export interface DecoratorCallExpressionNs extends NodeNs<
 	DecoratorCallExpression,
@@ -13834,7 +13739,7 @@ export interface DecoratorCallExpressionNs extends NodeNs<
 	DecoratorCallExpression.BuildArgs,
 	DecoratorCallExpression.LooseArgs,
 	never,
-	'decorator_call_expression'
+	TSKindId.DecoratorCallExpression
 > {}
 export interface ClassBodyNs extends NodeNs<
 	ClassBody,
@@ -13845,7 +13750,7 @@ export interface ClassBodyNs extends NodeNs<
 	ClassBody.BuildArgs,
 	ClassBody.LooseArgs,
 	never,
-	'class_body'
+	TSKindId.ClassBody
 > {}
 export interface FormalParametersNs extends NodeNs<
 	FormalParameters,
@@ -13856,7 +13761,7 @@ export interface FormalParametersNs extends NodeNs<
 	FormalParameters.BuildArgs,
 	FormalParameters.LooseArgs,
 	'formal_parameters_elements',
-	'formal_parameters'
+	TSKindId.FormalParameters
 > {}
 export interface ClassStaticBlockNs extends NodeNs<
 	ClassStaticBlock,
@@ -13867,7 +13772,7 @@ export interface ClassStaticBlockNs extends NodeNs<
 	ClassStaticBlock.BuildArgs,
 	ClassStaticBlock.LooseArgs,
 	never,
-	'class_static_block'
+	TSKindId.ClassStaticBlock
 > {}
 export interface RestPatternNs extends NodeNs<
 	RestPattern,
@@ -13878,7 +13783,7 @@ export interface RestPatternNs extends NodeNs<
 	RestPattern.BuildArgs,
 	RestPattern.LooseArgs,
 	'lhs_expression',
-	'rest_pattern'
+	TSKindId.RestPattern
 > {}
 export interface MethodDefinitionNs extends NodeNs<
 	MethodDefinition,
@@ -13889,7 +13794,7 @@ export interface MethodDefinitionNs extends NodeNs<
 	MethodDefinition.BuildArgs,
 	MethodDefinition.LooseArgs,
 	never,
-	'method_definition'
+	TSKindId.MethodDefinition
 > {}
 export interface PairNs extends NodeNs<
 	Pair,
@@ -13900,7 +13805,7 @@ export interface PairNs extends NodeNs<
 	Pair.BuildArgs,
 	Pair.LooseArgs,
 	never,
-	'pair'
+	TSKindId.Pair
 > {}
 export interface PairPatternNs extends NodeNs<
 	PairPattern,
@@ -13911,7 +13816,7 @@ export interface PairPatternNs extends NodeNs<
 	PairPattern.BuildArgs,
 	PairPattern.LooseArgs,
 	never,
-	'pair_pattern'
+	TSKindId.PairPattern
 > {}
 export interface ComputedPropertyNameNs extends NodeNs<
 	ComputedPropertyName,
@@ -13922,7 +13827,7 @@ export interface ComputedPropertyNameNs extends NodeNs<
 	ComputedPropertyName.BuildArgs,
 	ComputedPropertyName.LooseArgs,
 	'expression',
-	'computed_property_name'
+	TSKindId.ComputedPropertyName
 > {}
 export interface PublicFieldDefinitionNs extends NodeNs<
 	PublicFieldDefinition,
@@ -13933,7 +13838,7 @@ export interface PublicFieldDefinitionNs extends NodeNs<
 	PublicFieldDefinition.BuildArgs,
 	PublicFieldDefinition.LooseArgs,
 	never,
-	'public_field_definition'
+	TSKindId.PublicFieldDefinition
 > {}
 export interface NonNullExpressionNs extends NodeNs<
 	NonNullExpression,
@@ -13944,7 +13849,7 @@ export interface NonNullExpressionNs extends NodeNs<
 	NonNullExpression.BuildArgs,
 	NonNullExpression.LooseArgs,
 	'expression',
-	'non_null_expression'
+	TSKindId.NonNullExpression
 > {}
 export interface MethodSignatureNs extends NodeNs<
 	MethodSignature,
@@ -13955,7 +13860,7 @@ export interface MethodSignatureNs extends NodeNs<
 	MethodSignature.BuildArgs,
 	MethodSignature.LooseArgs,
 	never,
-	'method_signature'
+	TSKindId.MethodSignature
 > {}
 export interface AbstractMethodSignatureNs extends NodeNs<
 	AbstractMethodSignature,
@@ -13966,7 +13871,7 @@ export interface AbstractMethodSignatureNs extends NodeNs<
 	AbstractMethodSignature.BuildArgs,
 	AbstractMethodSignature.LooseArgs,
 	never,
-	'abstract_method_signature'
+	TSKindId.AbstractMethodSignature
 > {}
 export interface FunctionSignatureNs extends NodeNs<
 	FunctionSignature,
@@ -13977,7 +13882,7 @@ export interface FunctionSignatureNs extends NodeNs<
 	FunctionSignature.BuildArgs,
 	FunctionSignature.LooseArgs,
 	never,
-	'function_signature'
+	TSKindId.FunctionSignature
 > {}
 export interface DecoratorParenthesizedExpressionNs extends NodeNs<
 	DecoratorParenthesizedExpression,
@@ -13988,7 +13893,7 @@ export interface DecoratorParenthesizedExpressionNs extends NodeNs<
 	DecoratorParenthesizedExpression.BuildArgs,
 	DecoratorParenthesizedExpression.LooseArgs,
 	'expression',
-	'decorator_parenthesized_expression'
+	TSKindId.DecoratorParenthesizedExpression
 > {}
 export interface TypeAssertionNs extends NodeNs<
 	TypeAssertion,
@@ -13999,7 +13904,7 @@ export interface TypeAssertionNs extends NodeNs<
 	TypeAssertion.BuildArgs,
 	TypeAssertion.LooseArgs,
 	never,
-	'type_assertion'
+	TSKindId.TypeAssertion
 > {}
 export interface AsExpressionNs extends NodeNs<
 	AsExpression,
@@ -14010,7 +13915,7 @@ export interface AsExpressionNs extends NodeNs<
 	AsExpression.BuildArgs,
 	AsExpression.LooseArgs,
 	never,
-	'as_expression'
+	TSKindId.AsExpression
 > {}
 export interface SatisfiesExpressionNs extends NodeNs<
 	SatisfiesExpression,
@@ -14021,7 +13926,7 @@ export interface SatisfiesExpressionNs extends NodeNs<
 	SatisfiesExpression.BuildArgs,
 	SatisfiesExpression.LooseArgs,
 	never,
-	'satisfies_expression'
+	TSKindId.SatisfiesExpression
 > {}
 export interface InstantiationExpressionNs extends NodeNs<
 	InstantiationExpression,
@@ -14032,7 +13937,7 @@ export interface InstantiationExpressionNs extends NodeNs<
 	InstantiationExpression.BuildArgs,
 	InstantiationExpression.LooseArgs,
 	never,
-	'instantiation_expression'
+	TSKindId.InstantiationExpression
 > {}
 export interface ImportRequireClauseNs extends NodeNs<
 	ImportRequireClause,
@@ -14043,7 +13948,7 @@ export interface ImportRequireClauseNs extends NodeNs<
 	ImportRequireClause.BuildArgs,
 	ImportRequireClause.LooseArgs,
 	never,
-	'import_require_clause'
+	TSKindId.ImportRequireClause
 > {}
 export interface ExtendsClauseNs extends NodeNs<
 	ExtendsClause,
@@ -14054,7 +13959,7 @@ export interface ExtendsClauseNs extends NodeNs<
 	ExtendsClause.BuildArgs,
 	ExtendsClause.LooseArgs,
 	never,
-	'extends_clause'
+	TSKindId.ExtendsClause
 > {}
 export interface ExtendsClauseSingleNs extends NodeNs<
 	ExtendsClauseSingle,
@@ -14065,7 +13970,7 @@ export interface ExtendsClauseSingleNs extends NodeNs<
 	ExtendsClauseSingle.BuildArgs,
 	ExtendsClauseSingle.LooseArgs,
 	never,
-	'extends_clause_single'
+	TSKindId.ExtendsClauseSingle
 > {}
 export interface ImplementsClauseNs extends NodeNs<
 	ImplementsClause,
@@ -14076,7 +13981,7 @@ export interface ImplementsClauseNs extends NodeNs<
 	ImplementsClause.BuildArgs,
 	ImplementsClause.LooseArgs,
 	never,
-	'implements_clause'
+	TSKindId.ImplementsClause
 > {}
 export interface AmbientDeclarationNs extends NodeNs<
 	AmbientDeclaration,
@@ -14087,7 +13992,7 @@ export interface AmbientDeclarationNs extends NodeNs<
 	AmbientDeclaration.BuildArgs,
 	AmbientDeclaration.LooseArgs,
 	'content',
-	'ambient_declaration'
+	TSKindId.AmbientDeclaration
 > {}
 export interface AbstractClassDeclarationNs extends NodeNs<
 	AbstractClassDeclaration,
@@ -14098,7 +14003,7 @@ export interface AbstractClassDeclarationNs extends NodeNs<
 	AbstractClassDeclaration.BuildArgs,
 	AbstractClassDeclaration.LooseArgs,
 	never,
-	'abstract_class_declaration'
+	TSKindId.AbstractClassDeclaration
 > {}
 export interface ModuleNs extends NodeNs<
 	Module,
@@ -14109,7 +14014,7 @@ export interface ModuleNs extends NodeNs<
 	Module.BuildArgs,
 	Module.LooseArgs,
 	never,
-	'module'
+	TSKindId.Module
 > {}
 export interface InternalModuleNs extends NodeNs<
 	InternalModule,
@@ -14120,7 +14025,7 @@ export interface InternalModuleNs extends NodeNs<
 	InternalModule.BuildArgs,
 	InternalModule.LooseArgs,
 	never,
-	'internal_module'
+	TSKindId.InternalModule
 > {}
 export interface ImportAliasNs extends NodeNs<
 	ImportAlias,
@@ -14131,7 +14036,7 @@ export interface ImportAliasNs extends NodeNs<
 	ImportAlias.BuildArgs,
 	ImportAlias.LooseArgs,
 	never,
-	'import_alias'
+	TSKindId.ImportAlias
 > {}
 export interface NestedTypeIdentifierNs extends NodeNs<
 	NestedTypeIdentifier,
@@ -14142,7 +14047,7 @@ export interface NestedTypeIdentifierNs extends NodeNs<
 	NestedTypeIdentifier.BuildArgs,
 	NestedTypeIdentifier.LooseArgs,
 	never,
-	'nested_type_identifier'
+	TSKindId.NestedTypeIdentifier
 > {}
 export interface InterfaceDeclarationNs extends NodeNs<
 	InterfaceDeclaration,
@@ -14153,7 +14058,7 @@ export interface InterfaceDeclarationNs extends NodeNs<
 	InterfaceDeclaration.BuildArgs,
 	InterfaceDeclaration.LooseArgs,
 	never,
-	'interface_declaration'
+	TSKindId.InterfaceDeclaration
 > {}
 export interface ExtendsTypeClauseNs extends NodeNs<
 	ExtendsTypeClause,
@@ -14164,7 +14069,7 @@ export interface ExtendsTypeClauseNs extends NodeNs<
 	ExtendsTypeClause.BuildArgs,
 	ExtendsTypeClause.LooseArgs,
 	never,
-	'extends_type_clause'
+	TSKindId.ExtendsTypeClause
 > {}
 export interface EnumDeclarationNs extends NodeNs<
 	EnumDeclaration,
@@ -14175,7 +14080,7 @@ export interface EnumDeclarationNs extends NodeNs<
 	EnumDeclaration.BuildArgs,
 	EnumDeclaration.LooseArgs,
 	never,
-	'enum_declaration'
+	TSKindId.EnumDeclaration
 > {}
 export interface EnumBodyNs extends NodeNs<
 	EnumBody,
@@ -14186,7 +14091,7 @@ export interface EnumBodyNs extends NodeNs<
 	EnumBody.BuildArgs,
 	EnumBody.LooseArgs,
 	'enum_body_elements',
-	'enum_body'
+	TSKindId.EnumBody
 > {}
 export interface EnumAssignmentNs extends NodeNs<
 	EnumAssignment,
@@ -14197,7 +14102,7 @@ export interface EnumAssignmentNs extends NodeNs<
 	EnumAssignment.BuildArgs,
 	EnumAssignment.LooseArgs,
 	never,
-	'enum_assignment'
+	TSKindId.EnumAssignment
 > {}
 export interface TypeAliasDeclarationNs extends NodeNs<
 	TypeAliasDeclaration,
@@ -14208,7 +14113,7 @@ export interface TypeAliasDeclarationNs extends NodeNs<
 	TypeAliasDeclaration.BuildArgs,
 	TypeAliasDeclaration.LooseArgs,
 	never,
-	'type_alias_declaration'
+	TSKindId.TypeAliasDeclaration
 > {}
 export interface RequiredParameterNs extends NodeNs<
 	RequiredParameter,
@@ -14219,7 +14124,7 @@ export interface RequiredParameterNs extends NodeNs<
 	RequiredParameter.BuildArgs,
 	RequiredParameter.LooseArgs,
 	never,
-	'required_parameter'
+	TSKindId.RequiredParameter
 > {}
 export interface OptionalParameterNs extends NodeNs<
 	OptionalParameter,
@@ -14230,7 +14135,7 @@ export interface OptionalParameterNs extends NodeNs<
 	OptionalParameter.BuildArgs,
 	OptionalParameter.LooseArgs,
 	never,
-	'optional_parameter'
+	TSKindId.OptionalParameter
 > {}
 export interface OmittingTypeAnnotationNs extends NodeNs<
 	OmittingTypeAnnotation,
@@ -14241,7 +14146,7 @@ export interface OmittingTypeAnnotationNs extends NodeNs<
 	OmittingTypeAnnotation.BuildArgs,
 	OmittingTypeAnnotation.LooseArgs,
 	'type',
-	'omitting_type_annotation'
+	TSKindId.OmittingTypeAnnotation
 > {}
 export interface AddingTypeAnnotationNs extends NodeNs<
 	AddingTypeAnnotation,
@@ -14252,7 +14157,7 @@ export interface AddingTypeAnnotationNs extends NodeNs<
 	AddingTypeAnnotation.BuildArgs,
 	AddingTypeAnnotation.LooseArgs,
 	'type',
-	'adding_type_annotation'
+	TSKindId.AddingTypeAnnotation
 > {}
 export interface OptingTypeAnnotationNs extends NodeNs<
 	OptingTypeAnnotation,
@@ -14263,7 +14168,7 @@ export interface OptingTypeAnnotationNs extends NodeNs<
 	OptingTypeAnnotation.BuildArgs,
 	OptingTypeAnnotation.LooseArgs,
 	'type',
-	'opting_type_annotation'
+	TSKindId.OptingTypeAnnotation
 > {}
 export interface TypeAnnotationNs extends NodeNs<
 	TypeAnnotation,
@@ -14274,7 +14179,7 @@ export interface TypeAnnotationNs extends NodeNs<
 	TypeAnnotation.BuildArgs,
 	TypeAnnotation.LooseArgs,
 	'type',
-	'type_annotation'
+	TSKindId.TypeAnnotation
 > {}
 export interface TypeQueryMemberExpressionInTypeAnnotationNs extends NodeNs<
 	TypeQueryMemberExpressionInTypeAnnotation,
@@ -14285,7 +14190,7 @@ export interface TypeQueryMemberExpressionInTypeAnnotationNs extends NodeNs<
 	TypeQueryMemberExpressionInTypeAnnotation.BuildArgs,
 	TypeQueryMemberExpressionInTypeAnnotation.LooseArgs,
 	never,
-	'type_query_member_expression_in_type_annotation'
+	TSKindId.TypeQueryMemberExpressionInTypeAnnotation
 > {}
 export interface TypeQueryCallExpressionInTypeAnnotationNs extends NodeNs<
 	TypeQueryCallExpressionInTypeAnnotation,
@@ -14296,7 +14201,7 @@ export interface TypeQueryCallExpressionInTypeAnnotationNs extends NodeNs<
 	TypeQueryCallExpressionInTypeAnnotation.BuildArgs,
 	TypeQueryCallExpressionInTypeAnnotation.LooseArgs,
 	never,
-	'type_query_call_expression_in_type_annotation'
+	TSKindId.TypeQueryCallExpressionInTypeAnnotation
 > {}
 export interface AssertsNs extends NodeNs<
 	Asserts,
@@ -14307,7 +14212,7 @@ export interface AssertsNs extends NodeNs<
 	Asserts.BuildArgs,
 	Asserts.LooseArgs,
 	'value',
-	'asserts'
+	TSKindId.Asserts
 > {}
 export interface AssertsAnnotationNs extends NodeNs<
 	AssertsAnnotation,
@@ -14318,7 +14223,7 @@ export interface AssertsAnnotationNs extends NodeNs<
 	AssertsAnnotation.BuildArgs,
 	AssertsAnnotation.LooseArgs,
 	'asserts',
-	'asserts_annotation'
+	TSKindId.AssertsAnnotation
 > {}
 export interface TupleParameterNs extends NodeNs<
 	TupleParameter,
@@ -14329,7 +14234,7 @@ export interface TupleParameterNs extends NodeNs<
 	TupleParameter.BuildArgs,
 	TupleParameter.LooseArgs,
 	never,
-	'tuple_parameter'
+	TSKindId.TupleParameter
 > {}
 export interface OptionalTupleParameterNs extends NodeNs<
 	OptionalTupleParameter,
@@ -14340,7 +14245,7 @@ export interface OptionalTupleParameterNs extends NodeNs<
 	OptionalTupleParameter.BuildArgs,
 	OptionalTupleParameter.LooseArgs,
 	never,
-	'optional_tuple_parameter'
+	TSKindId.OptionalTupleParameter
 > {}
 export interface OptionalTypeNs extends NodeNs<
 	OptionalType,
@@ -14351,7 +14256,7 @@ export interface OptionalTypeNs extends NodeNs<
 	OptionalType.BuildArgs,
 	OptionalType.LooseArgs,
 	'type',
-	'optional_type'
+	TSKindId.OptionalType
 > {}
 export interface RestTypeNs extends NodeNs<
 	RestType,
@@ -14362,7 +14267,7 @@ export interface RestTypeNs extends NodeNs<
 	RestType.BuildArgs,
 	RestType.LooseArgs,
 	'type',
-	'rest_type'
+	TSKindId.RestType
 > {}
 export interface ConstructorTypeNs extends NodeNs<
 	ConstructorType,
@@ -14373,7 +14278,7 @@ export interface ConstructorTypeNs extends NodeNs<
 	ConstructorType.BuildArgs,
 	ConstructorType.LooseArgs,
 	never,
-	'constructor_type'
+	TSKindId.ConstructorType
 > {}
 export interface TemplateTypeNs extends NodeNs<
 	TemplateType,
@@ -14384,7 +14289,7 @@ export interface TemplateTypeNs extends NodeNs<
 	TemplateType.BuildArgs,
 	TemplateType.LooseArgs,
 	'type',
-	'template_type'
+	TSKindId.TemplateType
 > {}
 export interface TemplateLiteralTypeNs extends NodeNs<
 	TemplateLiteralType,
@@ -14395,7 +14300,7 @@ export interface TemplateLiteralTypeNs extends NodeNs<
 	TemplateLiteralType.BuildArgs,
 	TemplateLiteralType.LooseArgs,
 	never,
-	'template_literal_type'
+	TSKindId.TemplateLiteralType
 > {}
 export interface InferTypeNs extends NodeNs<
 	InferType,
@@ -14406,7 +14311,7 @@ export interface InferTypeNs extends NodeNs<
 	InferType.BuildArgs,
 	InferType.LooseArgs,
 	never,
-	'infer_type'
+	TSKindId.InferType
 > {}
 export interface ConditionalTypeNs extends NodeNs<
 	ConditionalType,
@@ -14417,7 +14322,7 @@ export interface ConditionalTypeNs extends NodeNs<
 	ConditionalType.BuildArgs,
 	ConditionalType.LooseArgs,
 	never,
-	'conditional_type'
+	TSKindId.ConditionalType
 > {}
 export interface GenericTypeNs extends NodeNs<
 	GenericType,
@@ -14428,7 +14333,7 @@ export interface GenericTypeNs extends NodeNs<
 	GenericType.BuildArgs,
 	GenericType.LooseArgs,
 	never,
-	'generic_type'
+	TSKindId.GenericType
 > {}
 export interface TypePredicateNs extends NodeNs<
 	TypePredicate,
@@ -14439,7 +14344,7 @@ export interface TypePredicateNs extends NodeNs<
 	TypePredicate.BuildArgs,
 	TypePredicate.LooseArgs,
 	never,
-	'type_predicate'
+	TSKindId.TypePredicate
 > {}
 export interface TypePredicateAnnotationNs extends NodeNs<
 	TypePredicateAnnotation,
@@ -14450,7 +14355,7 @@ export interface TypePredicateAnnotationNs extends NodeNs<
 	TypePredicateAnnotation.BuildArgs,
 	TypePredicateAnnotation.LooseArgs,
 	'type_predicate',
-	'type_predicate_annotation'
+	TSKindId.TypePredicateAnnotation
 > {}
 export interface TypeQueryMemberExpressionNs extends NodeNs<
 	TypeQueryMemberExpression,
@@ -14461,7 +14366,7 @@ export interface TypeQueryMemberExpressionNs extends NodeNs<
 	TypeQueryMemberExpression.BuildArgs,
 	TypeQueryMemberExpression.LooseArgs,
 	never,
-	'type_query_member_expression'
+	TSKindId.TypeQueryMemberExpression
 > {}
 export interface TypeQuerySubscriptExpressionNs extends NodeNs<
 	TypeQuerySubscriptExpression,
@@ -14472,7 +14377,7 @@ export interface TypeQuerySubscriptExpressionNs extends NodeNs<
 	TypeQuerySubscriptExpression.BuildArgs,
 	TypeQuerySubscriptExpression.LooseArgs,
 	never,
-	'type_query_subscript_expression'
+	TSKindId.TypeQuerySubscriptExpression
 > {}
 export interface TypeQueryCallExpressionNs extends NodeNs<
 	TypeQueryCallExpression,
@@ -14483,7 +14388,7 @@ export interface TypeQueryCallExpressionNs extends NodeNs<
 	TypeQueryCallExpression.BuildArgs,
 	TypeQueryCallExpression.LooseArgs,
 	never,
-	'type_query_call_expression'
+	TSKindId.TypeQueryCallExpression
 > {}
 export interface TypeQueryInstantiationExpressionNs extends NodeNs<
 	TypeQueryInstantiationExpression,
@@ -14494,7 +14399,7 @@ export interface TypeQueryInstantiationExpressionNs extends NodeNs<
 	TypeQueryInstantiationExpression.BuildArgs,
 	TypeQueryInstantiationExpression.LooseArgs,
 	never,
-	'type_query_instantiation_expression'
+	TSKindId.TypeQueryInstantiationExpression
 > {}
 export interface TypeQueryNs extends NodeNs<
 	TypeQuery,
@@ -14505,7 +14410,7 @@ export interface TypeQueryNs extends NodeNs<
 	TypeQuery.BuildArgs,
 	TypeQuery.LooseArgs,
 	'expression',
-	'type_query'
+	TSKindId.TypeQuery
 > {}
 export interface IndexTypeQueryNs extends NodeNs<
 	IndexTypeQuery,
@@ -14516,7 +14421,7 @@ export interface IndexTypeQueryNs extends NodeNs<
 	IndexTypeQuery.BuildArgs,
 	IndexTypeQuery.LooseArgs,
 	'type',
-	'index_type_query'
+	TSKindId.IndexTypeQuery
 > {}
 export interface LookupTypeNs extends NodeNs<
 	LookupType,
@@ -14527,7 +14432,7 @@ export interface LookupTypeNs extends NodeNs<
 	LookupType.BuildArgs,
 	LookupType.LooseArgs,
 	never,
-	'lookup_type'
+	TSKindId.LookupType
 > {}
 export interface MappedTypeClauseNs extends NodeNs<
 	MappedTypeClause,
@@ -14538,7 +14443,7 @@ export interface MappedTypeClauseNs extends NodeNs<
 	MappedTypeClause.BuildArgs,
 	MappedTypeClause.LooseArgs,
 	never,
-	'mapped_type_clause'
+	TSKindId.MappedTypeClause
 > {}
 export interface LiteralTypeNs extends NodeNs<
 	LiteralType,
@@ -14549,7 +14454,7 @@ export interface LiteralTypeNs extends NodeNs<
 	LiteralType.BuildArgs,
 	LiteralType.LooseArgs,
 	'content',
-	'literal_type'
+	TSKindId.LiteralType
 > {}
 export interface FlowMaybeTypeNs extends NodeNs<
 	FlowMaybeType,
@@ -14560,7 +14465,7 @@ export interface FlowMaybeTypeNs extends NodeNs<
 	FlowMaybeType.BuildArgs,
 	FlowMaybeType.LooseArgs,
 	'type',
-	'flow_maybe_type'
+	TSKindId.FlowMaybeType
 > {}
 export interface ParenthesizedTypeNs extends NodeNs<
 	ParenthesizedType,
@@ -14571,7 +14476,7 @@ export interface ParenthesizedTypeNs extends NodeNs<
 	ParenthesizedType.BuildArgs,
 	ParenthesizedType.LooseArgs,
 	'type',
-	'parenthesized_type'
+	TSKindId.ParenthesizedType
 > {}
 export interface TypeArgumentsNs extends NodeNs<
 	TypeArguments,
@@ -14582,7 +14487,7 @@ export interface TypeArgumentsNs extends NodeNs<
 	TypeArguments.BuildArgs,
 	TypeArguments.LooseArgs,
 	'types',
-	'type_arguments'
+	TSKindId.TypeArguments
 > {}
 export interface ObjectTypeNs extends NodeNs<
 	ObjectType,
@@ -14593,7 +14498,7 @@ export interface ObjectTypeNs extends NodeNs<
 	ObjectType.BuildArgs,
 	ObjectType.LooseArgs,
 	never,
-	'object_type'
+	TSKindId.ObjectType
 > {}
 export interface CallSignatureNs extends NodeNs<
 	CallSignature,
@@ -14604,7 +14509,7 @@ export interface CallSignatureNs extends NodeNs<
 	CallSignature.BuildArgs,
 	CallSignature.LooseArgs,
 	never,
-	'call_signature'
+	TSKindId.CallSignature
 > {}
 export interface PropertySignatureNs extends NodeNs<
 	PropertySignature,
@@ -14615,7 +14520,7 @@ export interface PropertySignatureNs extends NodeNs<
 	PropertySignature.BuildArgs,
 	PropertySignature.LooseArgs,
 	never,
-	'property_signature'
+	TSKindId.PropertySignature
 > {}
 export interface TypeParametersNs extends NodeNs<
 	TypeParameters,
@@ -14626,7 +14531,7 @@ export interface TypeParametersNs extends NodeNs<
 	TypeParameters.BuildArgs,
 	TypeParameters.LooseArgs,
 	'type_parameters_elements',
-	'type_parameters'
+	TSKindId.TypeParameters
 > {}
 export interface TypeParameterNs extends NodeNs<
 	TypeParameter,
@@ -14637,7 +14542,7 @@ export interface TypeParameterNs extends NodeNs<
 	TypeParameter.BuildArgs,
 	TypeParameter.LooseArgs,
 	never,
-	'type_parameter'
+	TSKindId.TypeParameter
 > {}
 export interface DefaultTypeNs extends NodeNs<
 	DefaultType,
@@ -14648,7 +14553,7 @@ export interface DefaultTypeNs extends NodeNs<
 	DefaultType.BuildArgs,
 	DefaultType.LooseArgs,
 	'type',
-	'default_type'
+	TSKindId.DefaultType
 > {}
 export interface ConstraintNs extends NodeNs<
 	Constraint,
@@ -14659,7 +14564,7 @@ export interface ConstraintNs extends NodeNs<
 	Constraint.BuildArgs,
 	Constraint.LooseArgs,
 	never,
-	'constraint'
+	TSKindId.Constraint
 > {}
 export interface ConstructSignatureNs extends NodeNs<
 	ConstructSignature,
@@ -14670,7 +14575,7 @@ export interface ConstructSignatureNs extends NodeNs<
 	ConstructSignature.BuildArgs,
 	ConstructSignature.LooseArgs,
 	never,
-	'construct_signature'
+	TSKindId.ConstructSignature
 > {}
 export interface ArrayTypeNs extends NodeNs<
 	ArrayType,
@@ -14681,7 +14586,7 @@ export interface ArrayTypeNs extends NodeNs<
 	ArrayType.BuildArgs,
 	ArrayType.LooseArgs,
 	'type',
-	'array_type'
+	TSKindId.ArrayType
 > {}
 export interface TupleTypeNs extends NodeNs<
 	TupleType,
@@ -14692,7 +14597,7 @@ export interface TupleTypeNs extends NodeNs<
 	TupleType.BuildArgs,
 	TupleType.LooseArgs,
 	'tuple_type_members',
-	'tuple_type'
+	TSKindId.TupleType
 > {}
 export interface ReadonlyTypeNs extends NodeNs<
 	ReadonlyType,
@@ -14703,7 +14608,7 @@ export interface ReadonlyTypeNs extends NodeNs<
 	ReadonlyType.BuildArgs,
 	ReadonlyType.LooseArgs,
 	'type',
-	'readonly_type'
+	TSKindId.ReadonlyType
 > {}
 export interface UnionTypeNs extends NodeNs<
 	UnionType,
@@ -14714,7 +14619,7 @@ export interface UnionTypeNs extends NodeNs<
 	UnionType.BuildArgs,
 	UnionType.LooseArgs,
 	never,
-	'union_type'
+	TSKindId.UnionType
 > {}
 export interface IntersectionTypeNs extends NodeNs<
 	IntersectionType,
@@ -14725,7 +14630,7 @@ export interface IntersectionTypeNs extends NodeNs<
 	IntersectionType.BuildArgs,
 	IntersectionType.LooseArgs,
 	never,
-	'intersection_type'
+	TSKindId.IntersectionType
 > {}
 export interface FunctionTypeNs extends NodeNs<
 	FunctionType,
@@ -14736,7 +14641,7 @@ export interface FunctionTypeNs extends NodeNs<
 	FunctionType.BuildArgs,
 	FunctionType.LooseArgs,
 	never,
-	'function_type'
+	TSKindId.FunctionType
 > {}
 export interface ExportSpecifiersNs extends NodeNs<
 	ExportSpecifiers,
@@ -14747,7 +14652,7 @@ export interface ExportSpecifiersNs extends NodeNs<
 	ExportSpecifiers.BuildArgs,
 	ExportSpecifiers.LooseArgs,
 	'export_specifier',
-	'export_specifiers'
+	TSKindId.ExportSpecifiers
 > {}
 export interface ImportSpecifiersNs extends NodeNs<
 	ImportSpecifiers,
@@ -14758,7 +14663,7 @@ export interface ImportSpecifiersNs extends NodeNs<
 	ImportSpecifiers.BuildArgs,
 	ImportSpecifiers.LooseArgs,
 	'import_specifier',
-	'import_specifiers'
+	TSKindId.ImportSpecifiers
 > {}
 export interface FormalParametersElementsNs extends NodeNs<
 	FormalParametersElements,
@@ -14769,7 +14674,7 @@ export interface FormalParametersElementsNs extends NodeNs<
 	FormalParametersElements.BuildArgs,
 	FormalParametersElements.LooseArgs,
 	'formal_parameter',
-	'formal_parameters_elements'
+	TSKindId.FormalParametersElements
 > {}
 export interface EnumBodyElementsNs extends NodeNs<
 	EnumBodyElements,
@@ -14780,7 +14685,7 @@ export interface EnumBodyElementsNs extends NodeNs<
 	EnumBodyElements.BuildArgs,
 	EnumBodyElements.LooseArgs,
 	'content',
-	'enum_body_elements'
+	TSKindId.EnumBodyElements
 > {}
 export interface TypesNs extends NodeNs<
 	Types,
@@ -14791,7 +14696,7 @@ export interface TypesNs extends NodeNs<
 	Types.BuildArgs,
 	Types.LooseArgs,
 	'type',
-	'types'
+	TSKindId.Types
 > {}
 export interface TypeParametersElementsNs extends NodeNs<
 	TypeParametersElements,
@@ -14802,7 +14707,7 @@ export interface TypeParametersElementsNs extends NodeNs<
 	TypeParametersElements.BuildArgs,
 	TypeParametersElements.LooseArgs,
 	'type_parameter',
-	'type_parameters_elements'
+	TSKindId.TypeParametersElements
 > {}
 export interface TupleTypeMembersNs extends NodeNs<
 	TupleTypeMembers,
@@ -14813,7 +14718,7 @@ export interface TupleTypeMembersNs extends NodeNs<
 	TupleTypeMembers.BuildArgs,
 	TupleTypeMembers.LooseArgs,
 	'tuple_type_member',
-	'tuple_type_members'
+	TSKindId.TupleTypeMembers
 > {}
 export interface ImportClauseGroupNs extends NodeNs<
 	ImportClauseGroup,
@@ -14824,7 +14729,7 @@ export interface ImportClauseGroupNs extends NodeNs<
 	ImportClauseGroup.BuildArgs,
 	ImportClauseGroup.LooseArgs,
 	'content',
-	'import_clause_group'
+	TSKindId.ImportClauseGroup
 > {}
 export interface CatchClauseGroupNs extends NodeNs<
 	CatchClauseGroup,
@@ -14835,7 +14740,7 @@ export interface CatchClauseGroupNs extends NodeNs<
 	CatchClauseGroup.BuildArgs,
 	CatchClauseGroup.LooseArgs,
 	never,
-	'catch_clause_group'
+	TSKindId.CatchClauseGroup
 > {}
 export interface AmbientDeclarationGlobalNs extends NodeNs<
 	AmbientDeclarationGlobal,
@@ -14846,7 +14751,7 @@ export interface AmbientDeclarationGlobalNs extends NodeNs<
 	AmbientDeclarationGlobal.BuildArgs,
 	AmbientDeclarationGlobal.LooseArgs,
 	'body',
-	'ambient_declaration_global'
+	TSKindId.AmbientDeclarationGlobal
 > {}
 export interface AmbientDeclarationModuleNs extends NodeNs<
 	AmbientDeclarationModule,
@@ -14857,7 +14762,7 @@ export interface AmbientDeclarationModuleNs extends NodeNs<
 	AmbientDeclarationModule.BuildArgs,
 	AmbientDeclarationModule.LooseArgs,
 	never,
-	'ambient_declaration_module'
+	TSKindId.AmbientDeclarationModule
 > {}
 export interface ObjectTypeContentNs extends NodeNs<
 	ObjectTypeContent,
@@ -14868,7 +14773,7 @@ export interface ObjectTypeContentNs extends NodeNs<
 	ObjectTypeContent.BuildArgs,
 	ObjectTypeContent.LooseArgs,
 	'members',
-	'object_type_content'
+	TSKindId.ObjectTypeContent
 > {}
 export interface ExportStatementNamespaceExportNs extends NodeNs<
 	ExportStatementNamespaceExport,
@@ -14879,7 +14784,7 @@ export interface ExportStatementNamespaceExportNs extends NodeNs<
 	ExportStatementNamespaceExport.BuildArgs,
 	ExportStatementNamespaceExport.LooseArgs,
 	'name',
-	'export_statement_namespace_export'
+	TSKindId.ExportStatementNamespaceExport
 > {}
 export interface ExportStatementTypeExportNs extends NodeNs<
 	ExportStatementTypeExport,
@@ -14890,7 +14795,7 @@ export interface ExportStatementTypeExportNs extends NodeNs<
 	ExportStatementTypeExport.BuildArgs,
 	ExportStatementTypeExport.LooseArgs,
 	never,
-	'export_statement_type_export'
+	TSKindId.ExportStatementTypeExport
 > {}
 export interface ExportStatementEqualsExportNs extends NodeNs<
 	ExportStatementEqualsExport,
@@ -14901,7 +14806,7 @@ export interface ExportStatementEqualsExportNs extends NodeNs<
 	ExportStatementEqualsExport.BuildArgs,
 	ExportStatementEqualsExport.LooseArgs,
 	'expression',
-	'export_statement_equals_export'
+	TSKindId.ExportStatementEqualsExport
 > {}
 export interface CommentLineNs extends NodeNs<
 	CommentLine,
@@ -14912,7 +14817,7 @@ export interface CommentLineNs extends NodeNs<
 	CommentLine.BuildArgs,
 	CommentLine.LooseArgs,
 	'content',
-	'comment_line'
+	TSKindId.CommentLine
 > {}
 export interface CommentBlockNs extends NodeNs<
 	CommentBlock,
@@ -14923,7 +14828,7 @@ export interface CommentBlockNs extends NodeNs<
 	CommentBlock.BuildArgs,
 	CommentBlock.LooseArgs,
 	'content',
-	'comment_block'
+	TSKindId.CommentBlock
 > {}
 export interface LiteralTypeNegativeNumberNs extends NodeNs<
 	LiteralTypeNegativeNumber,
@@ -14934,7 +14839,7 @@ export interface LiteralTypeNegativeNumberNs extends NodeNs<
 	LiteralTypeNegativeNumber.BuildArgs,
 	LiteralTypeNegativeNumber.LooseArgs,
 	never,
-	'literal_type_negative_number'
+	TSKindId.LiteralTypeNegativeNumber
 > {}
 export interface NumberHexNs extends NodeNs<
 	NumberHex,
@@ -14945,7 +14850,7 @@ export interface NumberHexNs extends NodeNs<
 	NumberHex.BuildArgs,
 	NumberHex.LooseArgs,
 	'content',
-	'number_hex'
+	TSKindId.NumberHex
 > {}
 export interface NumberFloatPointNs extends NodeNs<
 	NumberFloatPoint,
@@ -14956,7 +14861,7 @@ export interface NumberFloatPointNs extends NodeNs<
 	NumberFloatPoint.BuildArgs,
 	NumberFloatPoint.LooseArgs,
 	never,
-	'number_float_point'
+	TSKindId.NumberFloatPoint
 > {}
 export interface NumberFloatLeadingPointNs extends NodeNs<
 	NumberFloatLeadingPoint,
@@ -14967,7 +14872,7 @@ export interface NumberFloatLeadingPointNs extends NodeNs<
 	NumberFloatLeadingPoint.BuildArgs,
 	NumberFloatLeadingPoint.LooseArgs,
 	never,
-	'number_float_leading_point'
+	TSKindId.NumberFloatLeadingPoint
 > {}
 export interface NumberFloatScientificNs extends NodeNs<
 	NumberFloatScientific,
@@ -14978,7 +14883,7 @@ export interface NumberFloatScientificNs extends NodeNs<
 	NumberFloatScientific.BuildArgs,
 	NumberFloatScientific.LooseArgs,
 	never,
-	'number_float_scientific'
+	TSKindId.NumberFloatScientific
 > {}
 export interface NumberBinaryNs extends NodeNs<
 	NumberBinary,
@@ -14989,7 +14894,7 @@ export interface NumberBinaryNs extends NodeNs<
 	NumberBinary.BuildArgs,
 	NumberBinary.LooseArgs,
 	'content',
-	'number_binary'
+	TSKindId.NumberBinary
 > {}
 export interface NumberOctalNs extends NodeNs<
 	NumberOctal,
@@ -15000,7 +14905,7 @@ export interface NumberOctalNs extends NodeNs<
 	NumberOctal.BuildArgs,
 	NumberOctal.LooseArgs,
 	'content',
-	'number_octal'
+	TSKindId.NumberOctal
 > {}
 export interface NumberBigintHexNs extends NodeNs<
 	NumberBigintHex,
@@ -15011,7 +14916,7 @@ export interface NumberBigintHexNs extends NodeNs<
 	NumberBigintHex.BuildArgs,
 	NumberBigintHex.LooseArgs,
 	'content',
-	'number_bigint_hex'
+	TSKindId.NumberBigintHex
 > {}
 export interface NumberBigintBinaryNs extends NodeNs<
 	NumberBigintBinary,
@@ -15022,7 +14927,7 @@ export interface NumberBigintBinaryNs extends NodeNs<
 	NumberBigintBinary.BuildArgs,
 	NumberBigintBinary.LooseArgs,
 	'content',
-	'number_bigint_binary'
+	TSKindId.NumberBigintBinary
 > {}
 export interface NumberBigintOctalNs extends NodeNs<
 	NumberBigintOctal,
@@ -15033,7 +14938,7 @@ export interface NumberBigintOctalNs extends NodeNs<
 	NumberBigintOctal.BuildArgs,
 	NumberBigintOctal.LooseArgs,
 	'content',
-	'number_bigint_octal'
+	TSKindId.NumberBigintOctal
 > {}
 export interface NumberBigintDecimalNs extends NodeNs<
 	NumberBigintDecimal,
@@ -15044,7 +14949,7 @@ export interface NumberBigintDecimalNs extends NodeNs<
 	NumberBigintDecimal.BuildArgs,
 	NumberBigintDecimal.LooseArgs,
 	'content',
-	'number_bigint_decimal'
+	TSKindId.NumberBigintDecimal
 > {}
 export interface BinaryExpressionInNs extends NodeNs<
 	BinaryExpressionIn,
@@ -15055,7 +14960,7 @@ export interface BinaryExpressionInNs extends NodeNs<
 	BinaryExpressionIn.BuildArgs,
 	BinaryExpressionIn.LooseArgs,
 	never,
-	'binary_expression_in'
+	TSKindId.BinaryExpressionIn
 > {}
 export interface ClassBodyMethodNs extends NodeNs<
 	ClassBodyMethod,
@@ -15066,7 +14971,7 @@ export interface ClassBodyMethodNs extends NodeNs<
 	ClassBodyMethod.BuildArgs,
 	ClassBodyMethod.LooseArgs,
 	never,
-	'class_body_method'
+	TSKindId.ClassBodyMethod
 > {}
 export interface ClassBodyMethodSigNs extends NodeNs<
 	ClassBodyMethodSig,
@@ -15077,7 +14982,7 @@ export interface ClassBodyMethodSigNs extends NodeNs<
 	ClassBodyMethodSig.BuildArgs,
 	ClassBodyMethodSig.LooseArgs,
 	never,
-	'class_body_method_sig'
+	TSKindId.ClassBodyMethodSig
 > {}
 export interface ClassBodyMemberNs extends NodeNs<
 	ClassBodyMember,
@@ -15088,7 +14993,7 @@ export interface ClassBodyMemberNs extends NodeNs<
 	ClassBodyMember.BuildArgs,
 	ClassBodyMember.LooseArgs,
 	'member',
-	'class_body_member'
+	TSKindId.ClassBodyMember
 > {}
 export interface IndexSignatureColonNs extends NodeNs<
 	IndexSignatureColon,
@@ -15099,7 +15004,7 @@ export interface IndexSignatureColonNs extends NodeNs<
 	IndexSignatureColon.BuildArgs,
 	IndexSignatureColon.LooseArgs,
 	never,
-	'index_signature_colon'
+	TSKindId.IndexSignatureColon
 > {}
 export interface IndexSignatureMappedTypeClauseNs extends NodeNs<
 	IndexSignatureMappedTypeClause,
@@ -15110,7 +15015,7 @@ export interface IndexSignatureMappedTypeClauseNs extends NodeNs<
 	IndexSignatureMappedTypeClause.BuildArgs,
 	IndexSignatureMappedTypeClause.LooseArgs,
 	never,
-	'index_signature_mapped_type_clause'
+	TSKindId.IndexSignatureMappedTypeClause
 > {}
 export interface ImportStatementClauseFromNs extends NodeNs<
 	ImportStatementClauseFrom,
@@ -15121,7 +15026,7 @@ export interface ImportStatementClauseFromNs extends NodeNs<
 	ImportStatementClauseFrom.BuildArgs,
 	ImportStatementClauseFrom.LooseArgs,
 	never,
-	'import_statement_clause_from'
+	TSKindId.ImportStatementClauseFrom
 > {}
 export interface ImportSpecifierNameNs extends NodeNs<
 	ImportSpecifierName,
@@ -15132,7 +15037,7 @@ export interface ImportSpecifierNameNs extends NodeNs<
 	ImportSpecifierName.BuildArgs,
 	ImportSpecifierName.LooseArgs,
 	never,
-	'import_specifier_name'
+	TSKindId.ImportSpecifierName
 > {}
 export interface ImportSpecifierAsNs extends NodeNs<
 	ImportSpecifierAs,
@@ -15143,7 +15048,7 @@ export interface ImportSpecifierAsNs extends NodeNs<
 	ImportSpecifierAs.BuildArgs,
 	ImportSpecifierAs.LooseArgs,
 	never,
-	'import_specifier_as'
+	TSKindId.ImportSpecifierAs
 > {}
 export interface ParenthesizedExpressionTypedNs extends NodeNs<
 	ParenthesizedExpressionTyped,
@@ -15154,7 +15059,7 @@ export interface ParenthesizedExpressionTypedNs extends NodeNs<
 	ParenthesizedExpressionTyped.BuildArgs,
 	ParenthesizedExpressionTyped.LooseArgs,
 	never,
-	'parenthesized_expression_typed'
+	TSKindId.ParenthesizedExpressionTyped
 > {}
 export interface ParenthesizedExpressionSequenceNs extends NodeNs<
 	ParenthesizedExpressionSequence,
@@ -15165,7 +15070,7 @@ export interface ParenthesizedExpressionSequenceNs extends NodeNs<
 	ParenthesizedExpressionSequence.BuildArgs,
 	ParenthesizedExpressionSequence.LooseArgs,
 	'sequence_expression',
-	'parenthesized_expression_sequence'
+	TSKindId.ParenthesizedExpressionSequence
 > {}
 export interface CallExpressionCallNs extends NodeNs<
 	CallExpressionCall,
@@ -15176,7 +15081,7 @@ export interface CallExpressionCallNs extends NodeNs<
 	CallExpressionCall.BuildArgs,
 	CallExpressionCall.LooseArgs,
 	never,
-	'call_expression_call'
+	TSKindId.CallExpressionCall
 > {}
 export interface CallExpressionTemplateCallNs extends NodeNs<
 	CallExpressionTemplateCall,
@@ -15187,7 +15092,7 @@ export interface CallExpressionTemplateCallNs extends NodeNs<
 	CallExpressionTemplateCall.BuildArgs,
 	CallExpressionTemplateCall.LooseArgs,
 	never,
-	'call_expression_template_call'
+	TSKindId.CallExpressionTemplateCall
 > {}
 export interface CallExpressionMemberNs extends NodeNs<
 	CallExpressionMember,
@@ -15198,7 +15103,7 @@ export interface CallExpressionMemberNs extends NodeNs<
 	CallExpressionMember.BuildArgs,
 	CallExpressionMember.LooseArgs,
 	never,
-	'call_expression_member'
+	TSKindId.CallExpressionMember
 > {}
 export interface StringDoubleNs extends NodeNs<
 	StringDouble,
@@ -15209,7 +15114,7 @@ export interface StringDoubleNs extends NodeNs<
 	StringDouble.BuildArgs,
 	StringDouble.LooseArgs,
 	never,
-	'string_double'
+	TSKindId.StringDouble
 > {}
 export interface StringSingleNs extends NodeNs<
 	StringSingle,
@@ -15220,7 +15125,7 @@ export interface StringSingleNs extends NodeNs<
 	StringSingle.BuildArgs,
 	StringSingle.LooseArgs,
 	never,
-	'string_single'
+	TSKindId.StringSingle
 > {}
 export interface UpdateExpressionPostfixNs extends NodeNs<
 	UpdateExpressionPostfix,
@@ -15231,7 +15136,7 @@ export interface UpdateExpressionPostfixNs extends NodeNs<
 	UpdateExpressionPostfix.BuildArgs,
 	UpdateExpressionPostfix.LooseArgs,
 	never,
-	'update_expression_postfix'
+	TSKindId.UpdateExpressionPostfix
 > {}
 export interface UpdateExpressionPrefixNs extends NodeNs<
 	UpdateExpressionPrefix,
@@ -15242,7 +15147,7 @@ export interface UpdateExpressionPrefixNs extends NodeNs<
 	UpdateExpressionPrefix.BuildArgs,
 	UpdateExpressionPrefix.LooseArgs,
 	never,
-	'update_expression_prefix'
+	TSKindId.UpdateExpressionPrefix
 > {}
 export interface ArrowFunctionParameterNs extends NodeNs<
 	ArrowFunctionParameter,
@@ -15253,7 +15158,7 @@ export interface ArrowFunctionParameterNs extends NodeNs<
 	ArrowFunctionParameter.BuildArgs,
 	ArrowFunctionParameter.LooseArgs,
 	'parameter',
-	'arrow_function_parameter'
+	TSKindId.ArrowFunctionParameter
 > {}
 export interface ClassHeritageExtendsClauseNs extends NodeNs<
 	ClassHeritageExtendsClause,
@@ -15264,7 +15169,7 @@ export interface ClassHeritageExtendsClauseNs extends NodeNs<
 	ClassHeritageExtendsClause.BuildArgs,
 	ClassHeritageExtendsClause.LooseArgs,
 	never,
-	'class_heritage_extends_clause'
+	TSKindId.ClassHeritageExtendsClause
 > {}
 export interface ImportClauseDefaultImportNs extends NodeNs<
 	ImportClauseDefaultImport,
@@ -15275,7 +15180,7 @@ export interface ImportClauseDefaultImportNs extends NodeNs<
 	ImportClauseDefaultImport.BuildArgs,
 	ImportClauseDefaultImport.LooseArgs,
 	never,
-	'import_clause_default_import'
+	TSKindId.ImportClauseDefaultImport
 > {}
 export interface ExportStatementDefaultFromNs extends NodeNs<
 	ExportStatementDefaultFrom,
@@ -15286,7 +15191,7 @@ export interface ExportStatementDefaultFromNs extends NodeNs<
 	ExportStatementDefaultFrom.BuildArgs,
 	ExportStatementDefaultFrom.LooseArgs,
 	'content',
-	'export_statement_default_from'
+	TSKindId.ExportStatementDefaultFrom
 > {}
 export interface ExportStatementDefaultDeclarationNs extends NodeNs<
 	ExportStatementDefaultDeclaration,
@@ -15297,7 +15202,7 @@ export interface ExportStatementDefaultDeclarationNs extends NodeNs<
 	ExportStatementDefaultDeclaration.BuildArgs,
 	ExportStatementDefaultDeclaration.LooseArgs,
 	never,
-	'export_statement_default_declaration'
+	TSKindId.ExportStatementDefaultDeclaration
 > {}
 export interface ExportStatementDefaultFromStarFromNs extends NodeNs<
 	ExportStatementDefaultFromStarFrom,
@@ -15308,7 +15213,7 @@ export interface ExportStatementDefaultFromStarFromNs extends NodeNs<
 	ExportStatementDefaultFromStarFrom.BuildArgs,
 	ExportStatementDefaultFromStarFrom.LooseArgs,
 	'source',
-	'export_statement_default_from_star_from'
+	TSKindId.ExportStatementDefaultFromStarFrom
 > {}
 export interface ExportStatementDefaultFromNsFromNs extends NodeNs<
 	ExportStatementDefaultFromNsFrom,
@@ -15319,7 +15224,7 @@ export interface ExportStatementDefaultFromNsFromNs extends NodeNs<
 	ExportStatementDefaultFromNsFrom.BuildArgs,
 	ExportStatementDefaultFromNsFrom.LooseArgs,
 	never,
-	'export_statement_default_from_ns_from'
+	TSKindId.ExportStatementDefaultFromNsFrom
 > {}
 export interface ExportStatementDefaultFromClauseFromNs extends NodeNs<
 	ExportStatementDefaultFromClauseFrom,
@@ -15330,7 +15235,7 @@ export interface ExportStatementDefaultFromClauseFromNs extends NodeNs<
 	ExportStatementDefaultFromClauseFrom.BuildArgs,
 	ExportStatementDefaultFromClauseFrom.LooseArgs,
 	never,
-	'export_statement_default_from_clause_from'
+	TSKindId.ExportStatementDefaultFromClauseFrom
 > {}
 export interface ExportStatementDefaultDeclarationDefaultKwNs extends NodeNs<
 	ExportStatementDefaultDeclarationDefaultKw,
@@ -15341,7 +15246,7 @@ export interface ExportStatementDefaultDeclarationDefaultKwNs extends NodeNs<
 	ExportStatementDefaultDeclarationDefaultKw.BuildArgs,
 	ExportStatementDefaultDeclarationDefaultKw.LooseArgs,
 	'content',
-	'export_statement_default_declaration_default_kw'
+	TSKindId.ExportStatementDefaultDeclarationDefaultKw
 > {}
 export interface ExportStatementDefaultDeclarationDefaultKwValueNs extends NodeNs<
 	ExportStatementDefaultDeclarationDefaultKwValue,
@@ -15352,7 +15257,7 @@ export interface ExportStatementDefaultDeclarationDefaultKwValueNs extends NodeN
 	ExportStatementDefaultDeclarationDefaultKwValue.BuildArgs,
 	ExportStatementDefaultDeclarationDefaultKwValue.LooseArgs,
 	'value',
-	'export_statement_default_declaration_default_kw_value'
+	TSKindId.ExportStatementDefaultDeclarationDefaultKwValue
 > {}
 export interface VariableDeclaratorPlainNs extends NodeNs<
 	VariableDeclaratorPlain,
@@ -15363,7 +15268,7 @@ export interface VariableDeclaratorPlainNs extends NodeNs<
 	VariableDeclaratorPlain.BuildArgs,
 	VariableDeclaratorPlain.LooseArgs,
 	never,
-	'variable_declarator_plain'
+	TSKindId.VariableDeclaratorPlain
 > {}
 export interface VariableDeclaratorDefiniteNs extends NodeNs<
 	VariableDeclaratorDefinite,
@@ -15374,7 +15279,7 @@ export interface VariableDeclaratorDefiniteNs extends NodeNs<
 	VariableDeclaratorDefinite.BuildArgs,
 	VariableDeclaratorDefinite.LooseArgs,
 	never,
-	'variable_declarator_definite'
+	TSKindId.VariableDeclaratorDefinite
 > {}
 export interface ForHeaderLhsNs extends NodeNs<
 	ForHeaderLhs,
@@ -15385,7 +15290,7 @@ export interface ForHeaderLhsNs extends NodeNs<
 	ForHeaderLhs.BuildArgs,
 	ForHeaderLhs.LooseArgs,
 	never,
-	'for_header_lhs'
+	TSKindId.ForHeaderLhs
 > {}
 export interface ForHeaderVarKindNs extends NodeNs<
 	ForHeaderVarKind,
@@ -15396,7 +15301,7 @@ export interface ForHeaderVarKindNs extends NodeNs<
 	ForHeaderVarKind.BuildArgs,
 	ForHeaderVarKind.LooseArgs,
 	never,
-	'for_header_var_kind'
+	TSKindId.ForHeaderVarKind
 > {}
 export interface ForHeaderLetConstKindNs extends NodeNs<
 	ForHeaderLetConstKind,
@@ -15407,7 +15312,7 @@ export interface ForHeaderLetConstKindNs extends NodeNs<
 	ForHeaderLetConstKind.BuildArgs,
 	ForHeaderLetConstKind.LooseArgs,
 	never,
-	'for_header_let_const_kind'
+	TSKindId.ForHeaderLetConstKind
 > {}
 export interface StatementIdentifierNs extends NodeNs<
 	StatementIdentifier,
@@ -15418,7 +15323,7 @@ export interface StatementIdentifierNs extends NodeNs<
 	StatementIdentifier.BuildArgs,
 	StatementIdentifier.LooseArgs,
 	'content',
-	'statement_identifier'
+	TSKindId.StatementIdentifier
 > {}
 export interface ShorthandPropertyIdentifierNs extends NodeNs<
 	ShorthandPropertyIdentifier,
@@ -15429,7 +15334,7 @@ export interface ShorthandPropertyIdentifierNs extends NodeNs<
 	ShorthandPropertyIdentifier.BuildArgs,
 	ShorthandPropertyIdentifier.LooseArgs,
 	'content',
-	'shorthand_property_identifier'
+	TSKindId.ShorthandPropertyIdentifier
 > {}
 export interface ShorthandPropertyIdentifierPatternNs extends NodeNs<
 	ShorthandPropertyIdentifierPattern,
@@ -15440,7 +15345,7 @@ export interface ShorthandPropertyIdentifierPatternNs extends NodeNs<
 	ShorthandPropertyIdentifierPattern.BuildArgs,
 	ShorthandPropertyIdentifierPattern.LooseArgs,
 	'content',
-	'shorthand_property_identifier_pattern'
+	TSKindId.ShorthandPropertyIdentifierPattern
 > {}
 export interface PropertyIdentifierNs extends NodeNs<
 	PropertyIdentifier,
@@ -15451,7 +15356,7 @@ export interface PropertyIdentifierNs extends NodeNs<
 	PropertyIdentifier.BuildArgs,
 	PropertyIdentifier.LooseArgs,
 	'content',
-	'property_identifier'
+	TSKindId.PropertyIdentifier
 > {}
 export interface TypeIdentifierNs extends NodeNs<
 	TypeIdentifier,
@@ -15462,7 +15367,7 @@ export interface TypeIdentifierNs extends NodeNs<
 	TypeIdentifier.BuildArgs,
 	TypeIdentifier.LooseArgs,
 	'content',
-	'type_identifier'
+	TSKindId.TypeIdentifier
 > {}
 export interface InterfaceBodyNs extends NodeNs<
 	InterfaceBody,
@@ -15473,100 +15378,124 @@ export interface InterfaceBodyNs extends NodeNs<
 	InterfaceBody.BuildArgs,
 	InterfaceBody.LooseArgs,
 	'content',
-	'interface_body'
+	TSKindId.InterfaceBody
 > {}
-export interface ImportNs extends KeywordNs<TSKindId.Import, 'import', 'import'> {}
-export interface EmptyStatementNs extends KeywordNs<TSKindId.EmptyStatement, ';', 'empty_statement'> {}
-export interface OptionalChainNs extends KeywordNs<TSKindId.OptionalChain, '?.', 'optional_chain'> {}
-export interface ThisNs extends KeywordNs<TSKindId.This, 'this', 'this'> {}
-export interface SuperNs extends KeywordNs<TSKindId.Super, 'super', 'super'> {}
-export interface TrueNs extends KeywordNs<TSKindId.True, 'true', 'true'> {}
-export interface FalseNs extends KeywordNs<TSKindId.False, 'false', 'false'> {}
-export interface NullNs extends KeywordNs<TSKindId.Null, 'null', 'null'> {}
-export interface UndefinedNs extends KeywordNs<TSKindId.Undefined, 'undefined', 'undefined'> {}
-export interface OverrideModifierNs extends KeywordNs<TSKindId.OverrideModifier, 'override', 'override_modifier'> {}
-export interface ExistentialTypeNs extends KeywordNs<TSKindId.ExistentialType, '*', 'existential_type'> {}
-export interface KwAwaitMarkerNs extends KeywordNs<TSKindId.KwAwaitMarker, 'await', '_kw_await_marker'> {}
-export interface KwAsyncMarkerNs extends KeywordNs<TSKindId.KwAsyncMarker, 'async', '_kw_async_marker'> {}
-export interface KwUsingMarkerNs extends KeywordNs<TSKindId.KwUsingMarker, 'using', '_kw_using_marker'> {}
-export interface KwStaticMarkerNs extends KeywordNs<TSKindId.KwStaticMarker, 'static', '_kw_static_marker'> {}
-export interface KwDeclareMarkerNs extends KeywordNs<TSKindId.KwDeclareMarker, 'declare', '_kw_declare_marker'> {}
-export interface KwAbstractMarkerNs extends KeywordNs<TSKindId.KwAbstractMarker, 'abstract', '_kw_abstract_marker'> {}
-export interface KwAccessorMarkerNs extends KeywordNs<TSKindId.KwAccessorMarker, 'accessor', '_kw_accessor_marker'> {}
-export interface KwConstMarkerNs extends KeywordNs<TSKindId.KwConstMarker, 'const', '_kw_const_marker'> {}
-export interface EmptyMemberNs extends KeywordNs<TSKindId.EmptyMember, ';', 'empty_member'> {}
+export interface ImportNs extends KeywordNs<TSKindId.Import, 'import', TSKindId.Import> {}
+export interface EmptyStatementNs extends KeywordNs<TSKindId.EmptyStatement, ';', TSKindId.EmptyStatement> {}
+export interface OptionalChainNs extends KeywordNs<TSKindId.OptionalChain, '?.', TSKindId.OptionalChain> {}
+export interface ThisNs extends KeywordNs<TSKindId.This, 'this', TSKindId.This> {}
+export interface SuperNs extends KeywordNs<TSKindId.Super, 'super', TSKindId.Super> {}
+export interface TrueNs extends KeywordNs<TSKindId.True, 'true', TSKindId.True> {}
+export interface FalseNs extends KeywordNs<TSKindId.False, 'false', TSKindId.False> {}
+export interface NullNs extends KeywordNs<TSKindId.Null, 'null', TSKindId.Null> {}
+export interface UndefinedNs extends KeywordNs<TSKindId.Undefined, 'undefined', TSKindId.Undefined> {}
+export interface OverrideModifierNs extends KeywordNs<
+	TSKindId.OverrideModifier,
+	'override',
+	TSKindId.OverrideModifier
+> {}
+export interface ExistentialTypeNs extends KeywordNs<TSKindId.ExistentialType, '*', TSKindId.ExistentialType> {}
+export interface KwAwaitMarkerNs extends KeywordNs<TSKindId.KwAwaitMarker, 'await', TSKindId.KwAwaitMarker> {}
+export interface KwAsyncMarkerNs extends KeywordNs<TSKindId.KwAsyncMarker, 'async', TSKindId.KwAsyncMarker> {}
+export interface KwUsingMarkerNs extends KeywordNs<TSKindId.KwUsingMarker, 'using', TSKindId.KwUsingMarker> {}
+export interface KwStaticMarkerNs extends KeywordNs<TSKindId.KwStaticMarker, 'static', TSKindId.KwStaticMarker> {}
+export interface KwDeclareMarkerNs extends KeywordNs<TSKindId.KwDeclareMarker, 'declare', TSKindId.KwDeclareMarker> {}
+export interface KwAbstractMarkerNs extends KeywordNs<
+	TSKindId.KwAbstractMarker,
+	'abstract',
+	TSKindId.KwAbstractMarker
+> {}
+export interface KwAccessorMarkerNs extends KeywordNs<
+	TSKindId.KwAccessorMarker,
+	'accessor',
+	TSKindId.KwAccessorMarker
+> {}
+export interface KwConstMarkerNs extends KeywordNs<TSKindId.KwConstMarker, 'const', TSKindId.KwConstMarker> {}
+export interface EmptyMemberNs extends KeywordNs<TSKindId.EmptyMember, ';', TSKindId.EmptyMember> {}
 export interface MetaPropertyNewTargetNs extends KeywordNs<
 	TSKindId.MetaPropertyNewTarget,
 	'new.target',
-	'meta_property_new_target'
+	TSKindId.MetaPropertyNewTarget
 > {}
 export interface MetaPropertyImportMetaNs extends KeywordNs<
 	TSKindId.MetaPropertyImportMeta,
 	'import.meta',
-	'meta_property_import_meta'
+	TSKindId.MetaPropertyImportMeta
 > {}
-export interface AutomaticSemicolonNs extends KeywordNs<TSKindId.AutomaticSemicolon, '\n', '_automatic_semicolon'> {}
+export interface AutomaticSemicolonNs extends KeywordNs<
+	TSKindId.AutomaticSemicolon,
+	'\n',
+	TSKindId.AutomaticSemicolon
+> {}
 export interface FunctionSignatureAutomaticSemicolonNs extends KeywordNs<
 	TSKindId.FunctionSignatureAutomaticSemicolon,
 	'\n',
-	'_function_signature_automatic_semicolon'
+	TSKindId.FunctionSignatureAutomaticSemicolon
 > {}
-export interface TightNs extends KeywordNs<TSKindId.Tight, '', '_tight'> {}
-export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', '_space'> {}
-export interface TabNs extends KeywordNs<TSKindId.Tab, '\t', '_tab'> {}
-export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', '_newline'> {}
-export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', '_blankline'> {}
-export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', '_double_blankline'> {}
-export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', '_indent'> {}
-export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', '_dedent'> {}
-export interface TypeKeywordNs extends KeywordNs<TSKindId.TypeKeyword, 'type', 'type_keyword'> {}
-export interface DeclareKeywordNs extends KeywordNs<TSKindId.DeclareKeyword, 'declare', 'declare_keyword'> {}
-export interface NamespaceKeywordNs extends KeywordNs<TSKindId.NamespaceKeyword, 'namespace', 'namespace_keyword'> {}
-export interface PublicKeywordNs extends KeywordNs<TSKindId.PublicKeyword, 'public', 'public_keyword'> {}
-export interface PrivateKeywordNs extends KeywordNs<TSKindId.PrivateKeyword, 'private', 'private_keyword'> {}
-export interface ProtectedKeywordNs extends KeywordNs<TSKindId.ProtectedKeyword, 'protected', 'protected_keyword'> {}
-export interface OverrideKeywordNs extends KeywordNs<TSKindId.OverrideKeyword, 'override', 'override_keyword'> {}
-export interface ReadonlyKeywordNs extends KeywordNs<TSKindId.ReadonlyKeyword, 'readonly', 'readonly_keyword'> {}
-export interface ModuleKeywordNs extends KeywordNs<TSKindId.ModuleKeyword, 'module', 'module_keyword'> {}
-export interface AnyKeywordNs extends KeywordNs<TSKindId.AnyKeyword, 'any', 'any_keyword'> {}
-export interface NumberKeywordNs extends KeywordNs<TSKindId.NumberKeyword, 'number', 'number_keyword'> {}
-export interface BooleanKeywordNs extends KeywordNs<TSKindId.BooleanKeyword, 'boolean', 'boolean_keyword'> {}
-export interface StringKeywordNs extends KeywordNs<TSKindId.StringKeyword, 'string', 'string_keyword'> {}
-export interface SymbolKeywordNs extends KeywordNs<TSKindId.SymbolKeyword, 'symbol', 'symbol_keyword'> {}
-export interface ExportKeywordNs extends KeywordNs<TSKindId.ExportKeyword, 'export', 'export_keyword'> {}
-export interface ObjectKeywordNs extends KeywordNs<TSKindId.ObjectKeyword, 'object', 'object_keyword'> {}
-export interface NewKeywordNs extends KeywordNs<TSKindId.NewKeyword, 'new', 'new_keyword'> {}
-export interface GetKeywordNs extends KeywordNs<TSKindId.GetKeyword, 'get', 'get_keyword'> {}
-export interface SetKeywordNs extends KeywordNs<TSKindId.SetKeyword, 'set', 'set_keyword'> {}
-export interface AsyncKeywordNs extends KeywordNs<TSKindId.AsyncKeyword, 'async', 'async_keyword'> {}
-export interface StaticKeywordNs extends KeywordNs<TSKindId.StaticKeyword, 'static', 'static_keyword'> {}
-export interface LetKeywordNs extends KeywordNs<TSKindId.LetKeyword, 'let', 'let_keyword'> {}
+export interface TightNs extends KeywordNs<TSKindId.Tight, '', TSKindId.Tight> {}
+export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', TSKindId.Space> {}
+export interface TabNs extends KeywordNs<TSKindId.Tab, '\t', TSKindId.Tab> {}
+export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', TSKindId.Newline> {}
+export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', TSKindId.Blankline> {}
+export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', TSKindId.DoubleBlankline> {}
+export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', TSKindId.Indent> {}
+export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', TSKindId.Dedent> {}
+export interface TypeKeywordNs extends KeywordNs<TSKindId.TypeKeyword, 'type', TSKindId.TypeKeyword> {}
+export interface LetKeywordNs extends KeywordNs<TSKindId.LetKeyword, 'let', TSKindId.LetKeyword> {}
+export interface DeclareKeywordNs extends KeywordNs<TSKindId.DeclareKeyword, 'declare', TSKindId.DeclareKeyword> {}
+export interface NamespaceKeywordNs extends KeywordNs<
+	TSKindId.NamespaceKeyword,
+	'namespace',
+	TSKindId.NamespaceKeyword
+> {}
+export interface PublicKeywordNs extends KeywordNs<TSKindId.PublicKeyword, 'public', TSKindId.PublicKeyword> {}
+export interface PrivateKeywordNs extends KeywordNs<TSKindId.PrivateKeyword, 'private', TSKindId.PrivateKeyword> {}
+export interface ProtectedKeywordNs extends KeywordNs<
+	TSKindId.ProtectedKeyword,
+	'protected',
+	TSKindId.ProtectedKeyword
+> {}
+export interface OverrideKeywordNs extends KeywordNs<TSKindId.OverrideKeyword, 'override', TSKindId.OverrideKeyword> {}
+export interface ReadonlyKeywordNs extends KeywordNs<TSKindId.ReadonlyKeyword, 'readonly', TSKindId.ReadonlyKeyword> {}
+export interface ModuleKeywordNs extends KeywordNs<TSKindId.ModuleKeyword, 'module', TSKindId.ModuleKeyword> {}
+export interface AnyKeywordNs extends KeywordNs<TSKindId.AnyKeyword, 'any', TSKindId.AnyKeyword> {}
+export interface NumberKeywordNs extends KeywordNs<TSKindId.NumberKeyword, 'number', TSKindId.NumberKeyword> {}
+export interface BooleanKeywordNs extends KeywordNs<TSKindId.BooleanKeyword, 'boolean', TSKindId.BooleanKeyword> {}
+export interface StringKeywordNs extends KeywordNs<TSKindId.StringKeyword, 'string', TSKindId.StringKeyword> {}
+export interface SymbolKeywordNs extends KeywordNs<TSKindId.SymbolKeyword, 'symbol', TSKindId.SymbolKeyword> {}
+export interface ExportKeywordNs extends KeywordNs<TSKindId.ExportKeyword, 'export', TSKindId.ExportKeyword> {}
+export interface ObjectKeywordNs extends KeywordNs<TSKindId.ObjectKeyword, 'object', TSKindId.ObjectKeyword> {}
+export interface NewKeywordNs extends KeywordNs<TSKindId.NewKeyword, 'new', TSKindId.NewKeyword> {}
+export interface GetKeywordNs extends KeywordNs<TSKindId.GetKeyword, 'get', TSKindId.GetKeyword> {}
+export interface SetKeywordNs extends KeywordNs<TSKindId.SetKeyword, 'set', TSKindId.SetKeyword> {}
+export interface AsyncKeywordNs extends KeywordNs<TSKindId.AsyncKeyword, 'async', TSKindId.AsyncKeyword> {}
+export interface StaticKeywordNs extends KeywordNs<TSKindId.StaticKeyword, 'static', TSKindId.StaticKeyword> {}
 export interface UnescapedDoubleStringFragmentNs extends LeafNs<
 	UnescapedDoubleStringFragment,
 	string,
 	UnescapedDoubleStringFragment.Built,
-	'unescaped_double_string_fragment'
+	TSKindId.UnescapedDoubleStringFragment
 > {}
 export interface UnescapedSingleStringFragmentNs extends LeafNs<
 	UnescapedSingleStringFragment,
 	string,
 	UnescapedSingleStringFragment.Built,
-	'unescaped_single_string_fragment'
+	TSKindId.UnescapedSingleStringFragment
 > {}
-export interface RegexPatternNs extends LeafNs<RegexPattern, string, RegexPattern.Built, 'regex_pattern'> {}
-export interface RegexFlagsNs extends LeafNs<RegexFlags, string, RegexFlags.Built, 'regex_flags'> {}
-export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Built, 'identifier'> {}
+export interface RegexPatternNs extends LeafNs<RegexPattern, string, RegexPattern.Built, TSKindId.RegexPattern> {}
+export interface RegexFlagsNs extends LeafNs<RegexFlags, string, RegexFlags.Built, TSKindId.RegexFlags> {}
+export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Built, TSKindId.Identifier> {}
 export interface NumberDecimalNs extends LeafNs<
 	NumberDecimal,
 	string | number | bigint,
 	NumberDecimal.Built,
-	'number_decimal'
+	TSKindId.NumberDecimal
 > {}
-export interface HtmlCommentNs extends LeafNs<HtmlComment, string, HtmlComment.Built, 'html_comment'> {}
-export interface JsxTextNs extends LeafNs<JsxText, string, JsxText.Built, 'jsx_text'> {}
-export interface TemplateCharsNs extends LeafNs<TemplateChars, string, TemplateChars.Built, '_template_chars'> {}
-export interface TernaryQmarkNs extends LeafNs<TernaryQmark, string, TernaryQmark.Built, '_ternary_qmark'> {}
-export interface ErrorRecoveryNs extends LeafNs<ErrorRecovery, string, ErrorRecovery.Built, '__error_recovery'> {}
+export interface HtmlCommentNs extends LeafNs<HtmlComment, string, HtmlComment.Built, TSKindId.HtmlComment> {}
+export interface JsxTextNs extends LeafNs<JsxText, string, JsxText.Built, TSKindId.JsxText> {}
+export interface TemplateCharsNs extends LeafNs<TemplateChars, string, TemplateChars.Built, TSKindId.TemplateChars> {}
+export interface TernaryQmarkNs extends LeafNs<TernaryQmark, string, TernaryQmark.Built, TSKindId.TernaryQmark> {}
+export interface ErrorRecoveryNs extends LeafNs<ErrorRecovery, string, ErrorRecovery.Built, TSKindId.ErrorRecovery> {}
 
 export interface NamespaceMap {
 	[TSKindId.Program]: ProgramNs;
@@ -15822,6 +15751,7 @@ export interface NamespaceMap {
 	[TSKindId.Indent]: IndentNs;
 	[TSKindId.Dedent]: DedentNs;
 	[TSKindId.TypeKeyword]: TypeKeywordNs;
+	[TSKindId.LetKeyword]: LetKeywordNs;
 	[TSKindId.DeclareKeyword]: DeclareKeywordNs;
 	[TSKindId.NamespaceKeyword]: NamespaceKeywordNs;
 	[TSKindId.PublicKeyword]: PublicKeywordNs;
@@ -15842,7 +15772,6 @@ export interface NamespaceMap {
 	[TSKindId.SetKeyword]: SetKeywordNs;
 	[TSKindId.AsyncKeyword]: AsyncKeywordNs;
 	[TSKindId.StaticKeyword]: StaticKeywordNs;
-	[TSKindId.LetKeyword]: LetKeywordNs;
 	[TSKindId.UnescapedDoubleStringFragment]: UnescapedDoubleStringFragmentNs;
 	[TSKindId.UnescapedSingleStringFragment]: UnescapedSingleStringFragmentNs;
 	[TSKindId.RegexPattern]: RegexPatternNs;
@@ -15897,6 +15826,8 @@ export type FixedTextKindId =
 	| TSKindId.WithKeyword
 	| TSKindId.AssertKeyword
 	| TSKindId.VarKeyword
+	| TSKindId.LetKeyword
+	| TSKindId.ConstKeyword
 	| TSKindId.ElseKeyword
 	| TSKindId.IfKeyword
 	| TSKindId.SwitchKeyword
@@ -15931,7 +15862,6 @@ export type FixedTextKindId =
 	| TSKindId.SetKeyword
 	| TSKindId.AsyncKeyword
 	| TSKindId.StaticKeyword
-	| TSKindId.LetKeyword
 	| TSKindId.Colon
 	| TSKindId.CaseKeyword
 	| TSKindId.DefaultKeyword
@@ -15995,7 +15925,6 @@ export type FixedTextKindId =
 	| TSKindId.DollarLbrace
 	| TSKindId.At
 	| TSKindId.AbstractKeyword
-	| TSKindId.ConstKeyword
 	| TSKindId.SatisfiesKeyword
 	| TSKindId.RequireKeyword
 	| TSKindId.ExtendsKeyword
@@ -16018,7 +15947,6 @@ export type FixedTextKindId =
 	| TSKindId.UsingKeyword
 	| TSKindId.AccessorKeyword
 	| TSKindId.Comma
-	| TSKindId.OfKeyword
 	| TSKindId.GlobalKeyword
 	| TSKindId.FromKeyword
 	| TSKindId.Dquote
@@ -16026,7 +15954,8 @@ export type FixedTextKindId =
 	| TSKindId.PlusPlus
 	| TSKindId.DashDash
 	| TSKindId.TargetKeyword
-	| TSKindId.MetaKeyword;
+	| TSKindId.MetaKeyword
+	| TSKindId.OfKeyword;
 
 export interface IrKeyOf {
 	[TSKindId.Program]: 'program';
@@ -16282,6 +16211,7 @@ export interface IrKeyOf {
 	[TSKindId.Indent]: 'indent';
 	[TSKindId.Dedent]: 'dedent';
 	[TSKindId.TypeKeyword]: 'typeKeyword';
+	[TSKindId.LetKeyword]: 'letKeyword';
 	[TSKindId.DeclareKeyword]: 'declareKeyword';
 	[TSKindId.NamespaceKeyword]: 'namespaceKeyword';
 	[TSKindId.PublicKeyword]: 'publicKeyword';
@@ -16302,7 +16232,6 @@ export interface IrKeyOf {
 	[TSKindId.SetKeyword]: 'setKeyword';
 	[TSKindId.AsyncKeyword]: 'asyncKeyword';
 	[TSKindId.StaticKeyword]: 'staticKeyword';
-	[TSKindId.LetKeyword]: 'letKeyword';
 	[TSKindId.UnescapedDoubleStringFragment]: 'unescapedDoubleStringFragment';
 	[TSKindId.UnescapedSingleStringFragment]: 'unescapedSingleStringFragment';
 	[TSKindId.RegexPattern]: 'regexPattern';
@@ -16341,7 +16270,7 @@ export namespace Program {
 	export type LooseArgs = [
 		config?: LooseConfigOf<T.Program, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Program
 	];
-	export type Kind = 'program';
+	export type Kind = TSKindId.Program;
 }
 export namespace HashBangLine {
 	export type Config = ConfigFor<TSKindId.HashBangLine>;
@@ -16356,7 +16285,7 @@ export namespace HashBangLine {
 	export type LooseConfig = LooseConfigFor<TSKindId.HashBangLine>;
 	export type BuildArgs = [value: string];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'hash_bang_line';
+	export type Kind = TSKindId.HashBangLine;
 }
 export namespace NamespaceExport {
 	export type Config = ConfigFor<TSKindId.NamespaceExport>;
@@ -16373,7 +16302,7 @@ export namespace NamespaceExport {
 	export type LooseArgs = [
 		value: LooseValue<T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'namespace_export';
+	export type Kind = TSKindId.NamespaceExport;
 }
 export namespace ExportClause {
 	export type Config = ConfigFor<TSKindId.ExportClause>;
@@ -16388,7 +16317,7 @@ export namespace ExportClause {
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportClause>;
 	export type BuildArgs = [value?: T.ExportSpecifiers];
 	export type LooseArgs = [value?: LooseValue<T.ExportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'export_clause';
+	export type Kind = TSKindId.ExportClause;
 }
 export namespace ExportSpecifier {
 	export type Config = ConfigFor<TSKindId.ExportSpecifier>;
@@ -16407,7 +16336,7 @@ export namespace ExportSpecifier {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ExportSpecifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ExportSpecifier
 	];
-	export type Kind = 'export_specifier';
+	export type Kind = TSKindId.ExportSpecifier;
 }
 export namespace ImportStatement {
 	export type Config = OmitEach<ConfigFor<TSKindId.ImportStatement>, 'terminator'>;
@@ -16434,7 +16363,7 @@ export namespace ImportStatement {
 			| T.ImportStatement,
 		options?: T.ImportStatement.Options
 	];
-	export type Kind = 'import_statement';
+	export type Kind = TSKindId.ImportStatement;
 }
 export namespace ImportClause {
 	export type Config = ConfigFor<TSKindId.ImportClause>;
@@ -16456,7 +16385,7 @@ export namespace ImportClause {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'import_clause';
+	export type Kind = TSKindId.ImportClause;
 }
 export namespace NamespaceImport {
 	export type Config = ConfigFor<TSKindId.NamespaceImport>;
@@ -16471,7 +16400,7 @@ export namespace NamespaceImport {
 	export type LooseConfig = LooseConfigFor<TSKindId.NamespaceImport>;
 	export type BuildArgs = [value: T.Identifier];
 	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'namespace_import';
+	export type Kind = TSKindId.NamespaceImport;
 }
 export namespace NamedImports {
 	export type Config = ConfigFor<TSKindId.NamedImports>;
@@ -16486,7 +16415,7 @@ export namespace NamedImports {
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedImports>;
 	export type BuildArgs = [value?: T.ImportSpecifiers];
 	export type LooseArgs = [value?: LooseValue<T.ImportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'named_imports';
+	export type Kind = TSKindId.NamedImports;
 }
 export namespace ImportAttribute {
 	export type Config = ConfigFor<TSKindId.ImportAttribute>;
@@ -16504,7 +16433,7 @@ export namespace ImportAttribute {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ImportAttribute, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ImportAttribute
 	];
-	export type Kind = 'import_attribute';
+	export type Kind = TSKindId.ImportAttribute;
 }
 export namespace ExpressionStatement {
 	export type Config = OmitEach<ConfigFor<TSKindId.ExpressionStatement>, 'terminator'>;
@@ -16524,7 +16453,7 @@ export namespace ExpressionStatement {
 		value: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ExpressionStatement.Options
 	];
-	export type Kind = 'expression_statement';
+	export type Kind = TSKindId.ExpressionStatement;
 }
 export namespace VariableDeclaration {
 	export type Config = OmitEach<ConfigFor<TSKindId.VariableDeclaration>, 'terminator'>;
@@ -16552,7 +16481,7 @@ export namespace VariableDeclaration {
 			| T.VariableDeclaration,
 		options?: T.VariableDeclaration.Options
 	];
-	export type Kind = 'variable_declaration';
+	export type Kind = TSKindId.VariableDeclaration;
 }
 export namespace LexicalDeclaration {
 	export type Config = OmitEach<ConfigFor<TSKindId.LexicalDeclaration>, 'terminator'>;
@@ -16581,7 +16510,7 @@ export namespace LexicalDeclaration {
 			| T.LexicalDeclaration,
 		options?: T.LexicalDeclaration.Options
 	];
-	export type Kind = 'lexical_declaration';
+	export type Kind = TSKindId.LexicalDeclaration;
 }
 export namespace StatementBlock {
 	export type Config = ConfigFor<TSKindId.StatementBlock>;
@@ -16599,7 +16528,7 @@ export namespace StatementBlock {
 	export type LooseArgs = [
 		config?: LooseConfigOf<T.StatementBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.StatementBlock
 	];
-	export type Kind = 'statement_block';
+	export type Kind = TSKindId.StatementBlock;
 }
 export namespace ElseClause {
 	export type Config = ConfigFor<TSKindId.ElseClause>;
@@ -16614,7 +16543,7 @@ export namespace ElseClause {
 	export type LooseConfig = LooseConfigFor<TSKindId.ElseClause>;
 	export type BuildArgs = [value: T.Statement];
 	export type LooseArgs = [value: LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'else_clause';
+	export type Kind = TSKindId.ElseClause;
 }
 export namespace IfStatement {
 	export type Config = ConfigFor<TSKindId.IfStatement>;
@@ -16633,7 +16562,7 @@ export namespace IfStatement {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.IfStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.IfStatement
 	];
-	export type Kind = 'if_statement';
+	export type Kind = TSKindId.IfStatement;
 }
 export namespace SwitchStatement {
 	export type Config = ConfigFor<TSKindId.SwitchStatement>;
@@ -16651,7 +16580,7 @@ export namespace SwitchStatement {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.SwitchStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.SwitchStatement
 	];
-	export type Kind = 'switch_statement';
+	export type Kind = TSKindId.SwitchStatement;
 }
 export namespace ForStatement {
 	export type Config = ConfigFor<TSKindId.ForStatement>;
@@ -16671,7 +16600,7 @@ export namespace ForStatement {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ForStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ForStatement
 	];
-	export type Kind = 'for_statement';
+	export type Kind = TSKindId.ForStatement;
 }
 export namespace ForInStatement {
 	export type Config = ConfigFor<TSKindId.ForInStatement>;
@@ -16690,7 +16619,7 @@ export namespace ForInStatement {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ForInStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ForInStatement
 	];
-	export type Kind = 'for_in_statement';
+	export type Kind = TSKindId.ForInStatement;
 }
 export namespace WhileStatement {
 	export type Config = ConfigFor<TSKindId.WhileStatement>;
@@ -16708,7 +16637,7 @@ export namespace WhileStatement {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.WhileStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.WhileStatement
 	];
-	export type Kind = 'while_statement';
+	export type Kind = TSKindId.WhileStatement;
 }
 export namespace DoStatement {
 	export type Config = OmitEach<ConfigFor<TSKindId.DoStatement>, 'terminator'>;
@@ -16731,7 +16660,7 @@ export namespace DoStatement {
 			| T.DoStatement,
 		options?: T.DoStatement.Options
 	];
-	export type Kind = 'do_statement';
+	export type Kind = TSKindId.DoStatement;
 }
 export namespace TryStatement {
 	export type Config = ConfigFor<TSKindId.TryStatement>;
@@ -16750,7 +16679,7 @@ export namespace TryStatement {
 	export type LooseArgs = [
 		config?: LooseConfigOf<T.TryStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TryStatement
 	];
-	export type Kind = 'try_statement';
+	export type Kind = TSKindId.TryStatement;
 }
 export namespace WithStatement {
 	export type Config = ConfigFor<TSKindId.WithStatement>;
@@ -16768,7 +16697,7 @@ export namespace WithStatement {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.WithStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.WithStatement
 	];
-	export type Kind = 'with_statement';
+	export type Kind = TSKindId.WithStatement;
 }
 export namespace BreakStatement {
 	export type Config = OmitEach<ConfigFor<TSKindId.BreakStatement>, 'terminator'>;
@@ -16796,7 +16725,7 @@ export namespace BreakStatement {
 		>,
 		options?: T.BreakStatement.Options
 	];
-	export type Kind = 'break_statement';
+	export type Kind = TSKindId.BreakStatement;
 }
 export namespace ContinueStatement {
 	export type Config = OmitEach<ConfigFor<TSKindId.ContinueStatement>, 'terminator'>;
@@ -16824,7 +16753,7 @@ export namespace ContinueStatement {
 		>,
 		options?: T.ContinueStatement.Options
 	];
-	export type Kind = 'continue_statement';
+	export type Kind = TSKindId.ContinueStatement;
 }
 export namespace DebuggerStatement {
 	export type Config = ConfigFor<TSKindId.DebuggerStatement>;
@@ -16841,7 +16770,7 @@ export namespace DebuggerStatement {
 	export type LooseArgs = [
 		value: LooseValue<TSKindId.AutomaticSemicolon | TSKindId.Semi, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'debugger_statement';
+	export type Kind = TSKindId.DebuggerStatement;
 }
 export namespace ReturnStatement {
 	export type Config = OmitEach<ConfigFor<TSKindId.ReturnStatement>, 'terminator'>;
@@ -16861,7 +16790,7 @@ export namespace ReturnStatement {
 		value?: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ReturnStatement.Options
 	];
-	export type Kind = 'return_statement';
+	export type Kind = TSKindId.ReturnStatement;
 }
 export namespace ThrowStatement {
 	export type Config = OmitEach<ConfigFor<TSKindId.ThrowStatement>, 'terminator'>;
@@ -16881,7 +16810,7 @@ export namespace ThrowStatement {
 		value: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ThrowStatement.Options
 	];
-	export type Kind = 'throw_statement';
+	export type Kind = TSKindId.ThrowStatement;
 }
 export namespace LabeledStatement {
 	export type Config = ConfigFor<TSKindId.LabeledStatement>;
@@ -16899,7 +16828,7 @@ export namespace LabeledStatement {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.LabeledStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.LabeledStatement
 	];
-	export type Kind = 'labeled_statement';
+	export type Kind = TSKindId.LabeledStatement;
 }
 export namespace SwitchBody {
 	export type Config = ConfigFor<TSKindId.SwitchBody>;
@@ -16916,7 +16845,7 @@ export namespace SwitchBody {
 	export type LooseArgs = [
 		...children: LooseValue<T.SwitchCase | T.SwitchDefault, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Kind = 'switch_body';
+	export type Kind = TSKindId.SwitchBody;
 }
 export namespace SwitchCase {
 	export type Config = ConfigFor<TSKindId.SwitchCase>;
@@ -16934,7 +16863,7 @@ export namespace SwitchCase {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.SwitchCase, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.SwitchCase
 	];
-	export type Kind = 'switch_case';
+	export type Kind = TSKindId.SwitchCase;
 }
 export namespace SwitchDefault {
 	export type Config = ConfigFor<TSKindId.SwitchDefault>;
@@ -16949,7 +16878,7 @@ export namespace SwitchDefault {
 	export type LooseConfig = LooseConfigFor<TSKindId.SwitchDefault>;
 	export type BuildArgs = [...children: T.Statement[]];
 	export type LooseArgs = [...children: LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
-	export type Kind = 'switch_default';
+	export type Kind = TSKindId.SwitchDefault;
 }
 export namespace CatchClause {
 	export type Config = ConfigFor<TSKindId.CatchClause>;
@@ -16967,7 +16896,7 @@ export namespace CatchClause {
 	export type LooseArgs = [
 		config?: LooseConfigOf<T.CatchClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CatchClause
 	];
-	export type Kind = 'catch_clause';
+	export type Kind = TSKindId.CatchClause;
 }
 export namespace FinallyClause {
 	export type Config = ConfigFor<TSKindId.FinallyClause>;
@@ -16982,7 +16911,7 @@ export namespace FinallyClause {
 	export type LooseConfig = LooseConfigFor<TSKindId.FinallyClause>;
 	export type BuildArgs = [value: T.StatementBlock];
 	export type LooseArgs = [value: LooseValue<T.StatementBlock, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'finally_clause';
+	export type Kind = TSKindId.FinallyClause;
 }
 export namespace YieldExpression {
 	export type Config = ConfigFor<TSKindId.YieldExpression>;
@@ -16997,7 +16926,7 @@ export namespace YieldExpression {
 	export type LooseConfig = LooseConfigFor<TSKindId.YieldExpression>;
 	export type BuildArgs = [value?: T.Expression];
 	export type LooseArgs = [value?: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'yield_expression';
+	export type Kind = TSKindId.YieldExpression;
 }
 export namespace Object {
 	export type Config = ConfigFor<TSKindId.Object>;
@@ -17111,7 +17040,7 @@ export namespace Object {
 			T.NamespaceMap
 		>[]
 	];
-	export type Kind = 'object';
+	export type Kind = TSKindId.Object;
 }
 export namespace ObjectPattern {
 	export type Config = ConfigFor<TSKindId.ObjectPattern>;
@@ -17225,7 +17154,7 @@ export namespace ObjectPattern {
 			T.NamespaceMap
 		>[]
 	];
-	export type Kind = 'object_pattern';
+	export type Kind = TSKindId.ObjectPattern;
 }
 export namespace AssignmentPattern {
 	export type Config = ConfigFor<TSKindId.AssignmentPattern>;
@@ -17245,7 +17174,7 @@ export namespace AssignmentPattern {
 			| LooseConfigOf<T.AssignmentPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.AssignmentPattern
 	];
-	export type Kind = 'assignment_pattern';
+	export type Kind = TSKindId.AssignmentPattern;
 }
 export namespace ObjectAssignmentPattern {
 	export type Config = ConfigFor<TSKindId.ObjectAssignmentPattern>;
@@ -17265,7 +17194,7 @@ export namespace ObjectAssignmentPattern {
 			| LooseConfigOf<T.ObjectAssignmentPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ObjectAssignmentPattern
 	];
-	export type Kind = 'object_assignment_pattern';
+	export type Kind = TSKindId.ObjectAssignmentPattern;
 }
 export namespace Array {
 	export type Config = ConfigFor<TSKindId.Array>;
@@ -17282,7 +17211,7 @@ export namespace Array {
 	export type LooseArgs = [
 		...children: LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Kind = 'array';
+	export type Kind = TSKindId.Array;
 }
 export namespace ArrayPattern {
 	export type Config = ConfigFor<TSKindId.ArrayPattern>;
@@ -17299,7 +17228,7 @@ export namespace ArrayPattern {
 	export type LooseArgs = [
 		...children: LooseValue<T.Pattern | T.AssignmentPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Kind = 'array_pattern';
+	export type Kind = TSKindId.ArrayPattern;
 }
 export namespace NestedIdentifier {
 	export type Config = ConfigFor<TSKindId.NestedIdentifier>;
@@ -17317,7 +17246,7 @@ export namespace NestedIdentifier {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.NestedIdentifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NestedIdentifier
 	];
-	export type Kind = 'nested_identifier';
+	export type Kind = TSKindId.NestedIdentifier;
 }
 export namespace Class {
 	export type Config = ConfigFor<TSKindId.Class>;
@@ -17338,7 +17267,7 @@ export namespace Class {
 	export type LooseArgs = [
 		config?: LooseConfigOf<T.Class, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Class
 	];
-	export type Kind = 'class';
+	export type Kind = TSKindId.Class;
 }
 export namespace ClassDeclaration {
 	export type Config = ConfigFor<TSKindId.ClassDeclaration>;
@@ -17362,7 +17291,7 @@ export namespace ClassDeclaration {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ClassDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ClassDeclaration
 	];
-	export type Kind = 'class_declaration';
+	export type Kind = TSKindId.ClassDeclaration;
 }
 export namespace ClassHeritage {
 	export type Config = ConfigFor<TSKindId.ClassHeritage>;
@@ -17384,7 +17313,7 @@ export namespace ClassHeritage {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'class_heritage';
+	export type Kind = TSKindId.ClassHeritage;
 }
 export namespace FunctionExpression {
 	export type Config = ConfigFor<TSKindId.FunctionExpression>;
@@ -17410,7 +17339,7 @@ export namespace FunctionExpression {
 			| LooseConfigOf<T.FunctionExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.FunctionExpression
 	];
-	export type Kind = 'function_expression';
+	export type Kind = TSKindId.FunctionExpression;
 }
 export namespace FunctionDeclaration {
 	export type Config = ConfigFor<TSKindId.FunctionDeclaration>;
@@ -17439,7 +17368,7 @@ export namespace FunctionDeclaration {
 			| LooseConfigOf<T.FunctionDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.FunctionDeclaration
 	];
-	export type Kind = 'function_declaration';
+	export type Kind = TSKindId.FunctionDeclaration;
 }
 export namespace GeneratorFunction {
 	export type Config = ConfigFor<TSKindId.GeneratorFunction>;
@@ -17463,7 +17392,7 @@ export namespace GeneratorFunction {
 			| LooseConfigOf<T.GeneratorFunction, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.GeneratorFunction
 	];
-	export type Kind = 'generator_function';
+	export type Kind = TSKindId.GeneratorFunction;
 }
 export namespace GeneratorFunctionDeclaration {
 	export type Config = ConfigFor<TSKindId.GeneratorFunctionDeclaration>;
@@ -17494,7 +17423,7 @@ export namespace GeneratorFunctionDeclaration {
 			| LooseConfigOf<T.GeneratorFunctionDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.GeneratorFunctionDeclaration
 	];
-	export type Kind = 'generator_function_declaration';
+	export type Kind = TSKindId.GeneratorFunctionDeclaration;
 }
 export namespace ArrowFunction {
 	export type Config = ConfigFor<TSKindId.ArrowFunction>;
@@ -17513,7 +17442,7 @@ export namespace ArrowFunction {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ArrowFunction, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ArrowFunction
 	];
-	export type Kind = 'arrow_function';
+	export type Kind = TSKindId.ArrowFunction;
 }
 export namespace NewExpression {
 	export type Config = ConfigFor<TSKindId.NewExpression>;
@@ -17532,7 +17461,7 @@ export namespace NewExpression {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.NewExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.NewExpression
 	];
-	export type Kind = 'new_expression';
+	export type Kind = TSKindId.NewExpression;
 }
 export namespace AwaitExpression {
 	export type Config = ConfigFor<TSKindId.AwaitExpression>;
@@ -17547,7 +17476,7 @@ export namespace AwaitExpression {
 	export type LooseConfig = LooseConfigFor<TSKindId.AwaitExpression>;
 	export type BuildArgs = [value: T.Expression];
 	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'await_expression';
+	export type Kind = TSKindId.AwaitExpression;
 }
 export namespace MemberExpression {
 	export type Config = ConfigFor<TSKindId.MemberExpression>;
@@ -17568,7 +17497,7 @@ export namespace MemberExpression {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.MemberExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MemberExpression
 	];
-	export type Kind = 'member_expression';
+	export type Kind = TSKindId.MemberExpression;
 }
 export namespace SubscriptExpression {
 	export type Config = ConfigFor<TSKindId.SubscriptExpression>;
@@ -17589,7 +17518,7 @@ export namespace SubscriptExpression {
 			| LooseConfigOf<T.SubscriptExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.SubscriptExpression
 	];
-	export type Kind = 'subscript_expression';
+	export type Kind = TSKindId.SubscriptExpression;
 }
 export namespace LhsExpression {
 	export type Config = ConfigFor<TSKindId.LhsExpression>;
@@ -17702,7 +17631,7 @@ export namespace LhsExpression {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = '_lhs_expression';
+	export type Kind = TSKindId.LhsExpression;
 }
 export namespace AssignmentExpression {
 	export type Config = ConfigFor<TSKindId.AssignmentExpression>;
@@ -17723,7 +17652,7 @@ export namespace AssignmentExpression {
 			| LooseConfigOf<T.AssignmentExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.AssignmentExpression
 	];
-	export type Kind = 'assignment_expression';
+	export type Kind = TSKindId.AssignmentExpression;
 }
 export namespace AugmentedAssignmentExpression {
 	export type Config = ConfigFor<TSKindId.AugmentedAssignmentExpression>;
@@ -17746,7 +17675,7 @@ export namespace AugmentedAssignmentExpression {
 			| LooseConfigOf<T.AugmentedAssignmentExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.AugmentedAssignmentExpression
 	];
-	export type Kind = 'augmented_assignment_expression';
+	export type Kind = TSKindId.AugmentedAssignmentExpression;
 }
 export namespace SpreadElement {
 	export type Config = ConfigFor<TSKindId.SpreadElement>;
@@ -17761,7 +17690,7 @@ export namespace SpreadElement {
 	export type LooseConfig = LooseConfigFor<TSKindId.SpreadElement>;
 	export type BuildArgs = [value: T.Expression];
 	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'spread_element';
+	export type Kind = TSKindId.SpreadElement;
 }
 export namespace TernaryExpression {
 	export type Config = ConfigFor<TSKindId.TernaryExpression>;
@@ -17782,7 +17711,7 @@ export namespace TernaryExpression {
 			| LooseConfigOf<T.TernaryExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.TernaryExpression
 	];
-	export type Kind = 'ternary_expression';
+	export type Kind = TSKindId.TernaryExpression;
 }
 export namespace BinaryExpression {
 	export type Config = ConfigFor<TSKindId.BinaryExpression>;
@@ -17804,7 +17733,7 @@ export namespace BinaryExpression {
 			| LooseConfigOf<T.BinaryExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.BinaryExpression
 	];
-	export type Kind = 'binary_expression';
+	export type Kind = TSKindId.BinaryExpression;
 }
 export namespace UnaryExpression {
 	export type Config = ConfigFor<TSKindId.UnaryExpression>;
@@ -17822,7 +17751,7 @@ export namespace UnaryExpression {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.UnaryExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.UnaryExpression
 	];
-	export type Kind = 'unary_expression';
+	export type Kind = TSKindId.UnaryExpression;
 }
 export namespace SequenceExpression {
 	export type Config = ConfigFor<TSKindId.SequenceExpression>;
@@ -17837,7 +17766,7 @@ export namespace SequenceExpression {
 	export type LooseConfig = LooseConfigFor<TSKindId.SequenceExpression>;
 	export type BuildArgs = [...children: T.Expression[]];
 	export type LooseArgs = [...children: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
-	export type Kind = 'sequence_expression';
+	export type Kind = TSKindId.SequenceExpression;
 }
 export namespace EscapeSequence {
 	export type Config = ConfigFor<TSKindId.EscapeSequence>;
@@ -17852,7 +17781,7 @@ export namespace EscapeSequence {
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequence>;
 	export type BuildArgs = [value: string];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'escape_sequence';
+	export type Kind = TSKindId.EscapeSequence;
 }
 export namespace TemplateString {
 	export type Config = ConfigFor<TSKindId.TemplateString>;
@@ -17874,7 +17803,7 @@ export namespace TemplateString {
 			T.NamespaceMap
 		>[]
 	];
-	export type Kind = 'template_string';
+	export type Kind = TSKindId.TemplateString;
 }
 export namespace TemplateSubstitution {
 	export type Config = ConfigFor<TSKindId.TemplateSubstitution>;
@@ -17891,7 +17820,7 @@ export namespace TemplateSubstitution {
 	export type LooseArgs = [
 		value: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'template_substitution';
+	export type Kind = TSKindId.TemplateSubstitution;
 }
 export namespace Regex {
 	export type Config = ConfigFor<TSKindId.Regex>;
@@ -17909,7 +17838,7 @@ export namespace Regex {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.Regex, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Regex
 	];
-	export type Kind = 'regex';
+	export type Kind = TSKindId.Regex;
 }
 export namespace PrivatePropertyIdentifier {
 	export type Config = ConfigFor<TSKindId.PrivatePropertyIdentifier>;
@@ -17924,7 +17853,7 @@ export namespace PrivatePropertyIdentifier {
 	export type LooseConfig = LooseConfigFor<TSKindId.PrivatePropertyIdentifier>;
 	export type BuildArgs = [value: string];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'private_property_identifier';
+	export type Kind = TSKindId.PrivatePropertyIdentifier;
 }
 export namespace Arguments {
 	export type Config = ConfigFor<TSKindId.Arguments>;
@@ -17941,7 +17870,7 @@ export namespace Arguments {
 	export type LooseArgs = [
 		...children: LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Kind = 'arguments';
+	export type Kind = TSKindId.Arguments;
 }
 export namespace Decorator {
 	export type Config = ConfigFor<TSKindId.Decorator>;
@@ -17971,7 +17900,7 @@ export namespace Decorator {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'decorator';
+	export type Kind = TSKindId.Decorator;
 }
 export namespace DecoratorMemberExpression {
 	export type Config = ConfigFor<TSKindId.DecoratorMemberExpression>;
@@ -17991,7 +17920,7 @@ export namespace DecoratorMemberExpression {
 			| LooseConfigOf<T.DecoratorMemberExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.DecoratorMemberExpression
 	];
-	export type Kind = 'decorator_member_expression';
+	export type Kind = TSKindId.DecoratorMemberExpression;
 }
 export namespace DecoratorCallExpression {
 	export type Config = ConfigFor<TSKindId.DecoratorCallExpression>;
@@ -18012,7 +17941,7 @@ export namespace DecoratorCallExpression {
 			| LooseConfigOf<T.DecoratorCallExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.DecoratorCallExpression
 	];
-	export type Kind = 'decorator_call_expression';
+	export type Kind = TSKindId.DecoratorCallExpression;
 }
 export namespace ClassBody {
 	export type Config = ConfigFor<TSKindId.ClassBody>;
@@ -18050,7 +17979,7 @@ export namespace ClassBody {
 			T.NamespaceMap
 		>[]
 	];
-	export type Kind = 'class_body';
+	export type Kind = TSKindId.ClassBody;
 }
 export namespace FormalParameters {
 	export type Config = ConfigFor<TSKindId.FormalParameters>;
@@ -18067,7 +17996,7 @@ export namespace FormalParameters {
 	export type LooseArgs = [
 		value?: LooseValue<T.FormalParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'formal_parameters';
+	export type Kind = TSKindId.FormalParameters;
 }
 export namespace ClassStaticBlock {
 	export type Config = ConfigFor<TSKindId.ClassStaticBlock>;
@@ -18089,7 +18018,7 @@ export namespace ClassStaticBlock {
 			| LooseConfigOf<T.ClassStaticBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ClassStaticBlock
 	];
-	export type Kind = 'class_static_block';
+	export type Kind = TSKindId.ClassStaticBlock;
 }
 export namespace RestPattern {
 	export type Config = ConfigFor<TSKindId.RestPattern>;
@@ -18202,7 +18131,7 @@ export namespace RestPattern {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'rest_pattern';
+	export type Kind = TSKindId.RestPattern;
 }
 export namespace MethodDefinition {
 	export type Config = ConfigFor<TSKindId.MethodDefinition>;
@@ -18232,7 +18161,7 @@ export namespace MethodDefinition {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.MethodDefinition, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MethodDefinition
 	];
-	export type Kind = 'method_definition';
+	export type Kind = TSKindId.MethodDefinition;
 }
 export namespace Pair {
 	export type Config = ConfigFor<TSKindId.Pair>;
@@ -18250,7 +18179,7 @@ export namespace Pair {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.Pair, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Pair
 	];
-	export type Kind = 'pair';
+	export type Kind = TSKindId.Pair;
 }
 export namespace PairPattern {
 	export type Config = ConfigFor<TSKindId.PairPattern>;
@@ -18268,7 +18197,7 @@ export namespace PairPattern {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.PairPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.PairPattern
 	];
-	export type Kind = 'pair_pattern';
+	export type Kind = TSKindId.PairPattern;
 }
 export namespace ComputedPropertyName {
 	export type Config = ConfigFor<TSKindId.ComputedPropertyName>;
@@ -18283,7 +18212,7 @@ export namespace ComputedPropertyName {
 	export type LooseConfig = LooseConfigFor<TSKindId.ComputedPropertyName>;
 	export type BuildArgs = [value: T.Expression];
 	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'computed_property_name';
+	export type Kind = TSKindId.ComputedPropertyName;
 }
 export namespace PublicFieldDefinition {
 	export type Config = ConfigFor<TSKindId.PublicFieldDefinition>;
@@ -18327,7 +18256,7 @@ export namespace PublicFieldDefinition {
 			| LooseConfigOf<T.PublicFieldDefinition, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.PublicFieldDefinition
 	];
-	export type Kind = 'public_field_definition';
+	export type Kind = TSKindId.PublicFieldDefinition;
 }
 export namespace NonNullExpression {
 	export type Config = ConfigFor<TSKindId.NonNullExpression>;
@@ -18342,7 +18271,7 @@ export namespace NonNullExpression {
 	export type LooseConfig = LooseConfigFor<TSKindId.NonNullExpression>;
 	export type BuildArgs = [value: T.Expression];
 	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'non_null_expression';
+	export type Kind = TSKindId.NonNullExpression;
 }
 export namespace MethodSignature {
 	export type Config = ConfigFor<TSKindId.MethodSignature>;
@@ -18371,7 +18300,7 @@ export namespace MethodSignature {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.MethodSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MethodSignature
 	];
-	export type Kind = 'method_signature';
+	export type Kind = TSKindId.MethodSignature;
 }
 export namespace AbstractMethodSignature {
 	export type Config = ConfigFor<TSKindId.AbstractMethodSignature>;
@@ -18407,7 +18336,7 @@ export namespace AbstractMethodSignature {
 			| LooseConfigOf<T.AbstractMethodSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.AbstractMethodSignature
 	];
-	export type Kind = 'abstract_method_signature';
+	export type Kind = TSKindId.AbstractMethodSignature;
 }
 export namespace FunctionSignature {
 	export type Config = OmitEach<ConfigFor<TSKindId.FunctionSignature>, 'terminator'>;
@@ -18438,7 +18367,7 @@ export namespace FunctionSignature {
 			| T.FunctionSignature,
 		options?: T.FunctionSignature.Options
 	];
-	export type Kind = 'function_signature';
+	export type Kind = TSKindId.FunctionSignature;
 }
 export namespace DecoratorParenthesizedExpression {
 	export type Config = ConfigFor<TSKindId.DecoratorParenthesizedExpression>;
@@ -18462,7 +18391,7 @@ export namespace DecoratorParenthesizedExpression {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'decorator_parenthesized_expression';
+	export type Kind = TSKindId.DecoratorParenthesizedExpression;
 }
 export namespace TypeAssertion {
 	export type Config = ConfigFor<TSKindId.TypeAssertion>;
@@ -18480,7 +18409,7 @@ export namespace TypeAssertion {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.TypeAssertion, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TypeAssertion
 	];
-	export type Kind = 'type_assertion';
+	export type Kind = TSKindId.TypeAssertion;
 }
 export namespace AsExpression {
 	export type Config = ConfigFor<TSKindId.AsExpression>;
@@ -18498,7 +18427,7 @@ export namespace AsExpression {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.AsExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.AsExpression
 	];
-	export type Kind = 'as_expression';
+	export type Kind = TSKindId.AsExpression;
 }
 export namespace SatisfiesExpression {
 	export type Config = ConfigFor<TSKindId.SatisfiesExpression>;
@@ -18518,7 +18447,7 @@ export namespace SatisfiesExpression {
 			| LooseConfigOf<T.SatisfiesExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.SatisfiesExpression
 	];
-	export type Kind = 'satisfies_expression';
+	export type Kind = TSKindId.SatisfiesExpression;
 }
 export namespace InstantiationExpression {
 	export type Config = ConfigFor<TSKindId.InstantiationExpression>;
@@ -18538,7 +18467,7 @@ export namespace InstantiationExpression {
 			| LooseConfigOf<T.InstantiationExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.InstantiationExpression
 	];
-	export type Kind = 'instantiation_expression';
+	export type Kind = TSKindId.InstantiationExpression;
 }
 export namespace ImportRequireClause {
 	export type Config = ConfigFor<TSKindId.ImportRequireClause>;
@@ -18558,7 +18487,7 @@ export namespace ImportRequireClause {
 			| LooseConfigOf<T.ImportRequireClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ImportRequireClause
 	];
-	export type Kind = 'import_require_clause';
+	export type Kind = TSKindId.ImportRequireClause;
 }
 export namespace ExtendsClause {
 	export type Config = ConfigFor<TSKindId.ExtendsClause>;
@@ -18575,7 +18504,7 @@ export namespace ExtendsClause {
 	export type LooseArgs = [
 		...children: LooseValue<T.ExtendsClauseSingle, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Kind = 'extends_clause';
+	export type Kind = TSKindId.ExtendsClause;
 }
 export namespace ExtendsClauseSingle {
 	export type Config = ConfigFor<TSKindId.ExtendsClauseSingle>;
@@ -18595,7 +18524,7 @@ export namespace ExtendsClauseSingle {
 			| LooseConfigOf<T.ExtendsClauseSingle, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ExtendsClauseSingle
 	];
-	export type Kind = 'extends_clause_single';
+	export type Kind = TSKindId.ExtendsClauseSingle;
 }
 export namespace ImplementsClause {
 	export type Config = ConfigFor<TSKindId.ImplementsClause>;
@@ -18612,7 +18541,7 @@ export namespace ImplementsClause {
 	export type LooseArgs = [
 		...children: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Kind = 'implements_clause';
+	export type Kind = TSKindId.ImplementsClause;
 }
 export namespace AmbientDeclaration {
 	export type Config = ConfigFor<TSKindId.AmbientDeclaration>;
@@ -18636,7 +18565,7 @@ export namespace AmbientDeclaration {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'ambient_declaration';
+	export type Kind = TSKindId.AmbientDeclaration;
 }
 export namespace AbstractClassDeclaration {
 	export type Config = ConfigFor<TSKindId.AbstractClassDeclaration>;
@@ -18659,7 +18588,7 @@ export namespace AbstractClassDeclaration {
 			| LooseConfigOf<T.AbstractClassDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.AbstractClassDeclaration
 	];
-	export type Kind = 'abstract_class_declaration';
+	export type Kind = TSKindId.AbstractClassDeclaration;
 }
 export namespace Module {
 	export type Config = ConfigFor<TSKindId.Module>;
@@ -18677,7 +18606,7 @@ export namespace Module {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.Module, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Module
 	];
-	export type Kind = 'module';
+	export type Kind = TSKindId.Module;
 }
 export namespace InternalModule {
 	export type Config = ConfigFor<TSKindId.InternalModule>;
@@ -18695,7 +18624,7 @@ export namespace InternalModule {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.InternalModule, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.InternalModule
 	];
-	export type Kind = 'internal_module';
+	export type Kind = TSKindId.InternalModule;
 }
 export namespace ImportAlias {
 	export type Config = OmitEach<ConfigFor<TSKindId.ImportAlias>, 'terminator'>;
@@ -18718,7 +18647,7 @@ export namespace ImportAlias {
 			| T.ImportAlias,
 		options?: T.ImportAlias.Options
 	];
-	export type Kind = 'import_alias';
+	export type Kind = TSKindId.ImportAlias;
 }
 export namespace NestedTypeIdentifier {
 	export type Config = ConfigFor<TSKindId.NestedTypeIdentifier>;
@@ -18738,7 +18667,7 @@ export namespace NestedTypeIdentifier {
 			| LooseConfigOf<T.NestedTypeIdentifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.NestedTypeIdentifier
 	];
-	export type Kind = 'nested_type_identifier';
+	export type Kind = TSKindId.NestedTypeIdentifier;
 }
 export namespace InterfaceDeclaration {
 	export type Config = ConfigFor<TSKindId.InterfaceDeclaration>;
@@ -18760,7 +18689,7 @@ export namespace InterfaceDeclaration {
 			| LooseConfigOf<T.InterfaceDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.InterfaceDeclaration
 	];
-	export type Kind = 'interface_declaration';
+	export type Kind = TSKindId.InterfaceDeclaration;
 }
 export namespace ExtendsTypeClause {
 	export type Config = ConfigFor<TSKindId.ExtendsTypeClause>;
@@ -18786,7 +18715,7 @@ export namespace ExtendsTypeClause {
 			T.NamespaceMap
 		>[]
 	];
-	export type Kind = 'extends_type_clause';
+	export type Kind = TSKindId.ExtendsTypeClause;
 }
 export namespace EnumDeclaration {
 	export type Config = ConfigFor<TSKindId.EnumDeclaration>;
@@ -18805,7 +18734,7 @@ export namespace EnumDeclaration {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.EnumDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.EnumDeclaration
 	];
-	export type Kind = 'enum_declaration';
+	export type Kind = TSKindId.EnumDeclaration;
 }
 export namespace EnumBody {
 	export type Config = ConfigFor<TSKindId.EnumBody>;
@@ -18820,7 +18749,7 @@ export namespace EnumBody {
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumBody>;
 	export type BuildArgs = [value?: T.EnumBodyElements];
 	export type LooseArgs = [value?: LooseValue<T.EnumBodyElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'enum_body';
+	export type Kind = TSKindId.EnumBody;
 }
 export namespace EnumAssignment {
 	export type Config = ConfigFor<TSKindId.EnumAssignment>;
@@ -18838,7 +18767,7 @@ export namespace EnumAssignment {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.EnumAssignment, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.EnumAssignment
 	];
-	export type Kind = 'enum_assignment';
+	export type Kind = TSKindId.EnumAssignment;
 }
 export namespace TypeAliasDeclaration {
 	export type Config = OmitEach<ConfigFor<TSKindId.TypeAliasDeclaration>, 'terminator'>;
@@ -18868,7 +18797,7 @@ export namespace TypeAliasDeclaration {
 			| T.TypeAliasDeclaration,
 		options?: T.TypeAliasDeclaration.Options
 	];
-	export type Kind = 'type_alias_declaration';
+	export type Kind = TSKindId.TypeAliasDeclaration;
 }
 export namespace RequiredParameter {
 	export type Config = ConfigFor<TSKindId.RequiredParameter>;
@@ -18895,7 +18824,7 @@ export namespace RequiredParameter {
 			| LooseConfigOf<T.RequiredParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.RequiredParameter
 	];
-	export type Kind = 'required_parameter';
+	export type Kind = TSKindId.RequiredParameter;
 }
 export namespace OptionalParameter {
 	export type Config = ConfigFor<TSKindId.OptionalParameter>;
@@ -18922,7 +18851,7 @@ export namespace OptionalParameter {
 			| LooseConfigOf<T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.OptionalParameter
 	];
-	export type Kind = 'optional_parameter';
+	export type Kind = TSKindId.OptionalParameter;
 }
 export namespace OmittingTypeAnnotation {
 	export type Config = ConfigFor<TSKindId.OmittingTypeAnnotation>;
@@ -18939,7 +18868,7 @@ export namespace OmittingTypeAnnotation {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'omitting_type_annotation';
+	export type Kind = TSKindId.OmittingTypeAnnotation;
 }
 export namespace AddingTypeAnnotation {
 	export type Config = ConfigFor<TSKindId.AddingTypeAnnotation>;
@@ -18956,7 +18885,7 @@ export namespace AddingTypeAnnotation {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'adding_type_annotation';
+	export type Kind = TSKindId.AddingTypeAnnotation;
 }
 export namespace OptingTypeAnnotation {
 	export type Config = ConfigFor<TSKindId.OptingTypeAnnotation>;
@@ -18973,7 +18902,7 @@ export namespace OptingTypeAnnotation {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'opting_type_annotation';
+	export type Kind = TSKindId.OptingTypeAnnotation;
 }
 export namespace TypeAnnotation {
 	export type Config = ConfigFor<TSKindId.TypeAnnotation>;
@@ -18990,7 +18919,7 @@ export namespace TypeAnnotation {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'type_annotation';
+	export type Kind = TSKindId.TypeAnnotation;
 }
 export namespace TypeQueryMemberExpressionInTypeAnnotation {
 	export type Config = ConfigFor<TSKindId.TypeQueryMemberExpressionInTypeAnnotation>;
@@ -19014,7 +18943,7 @@ export namespace TypeQueryMemberExpressionInTypeAnnotation {
 			| LooseConfigOf<T.TypeQueryMemberExpressionInTypeAnnotation, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.TypeQueryMemberExpressionInTypeAnnotation
 	];
-	export type Kind = 'type_query_member_expression_in_type_annotation';
+	export type Kind = TSKindId.TypeQueryMemberExpressionInTypeAnnotation;
 }
 export namespace TypeQueryCallExpressionInTypeAnnotation {
 	export type Config = ConfigFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
@@ -19036,7 +18965,7 @@ export namespace TypeQueryCallExpressionInTypeAnnotation {
 			| LooseConfigOf<T.TypeQueryCallExpressionInTypeAnnotation, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.TypeQueryCallExpressionInTypeAnnotation
 	];
-	export type Kind = 'type_query_call_expression_in_type_annotation';
+	export type Kind = TSKindId.TypeQueryCallExpressionInTypeAnnotation;
 }
 export namespace Asserts {
 	export type Config = ConfigFor<TSKindId.Asserts>;
@@ -19053,7 +18982,7 @@ export namespace Asserts {
 	export type LooseArgs = [
 		value: LooseValue<T.TypePredicate | T.Identifier | TSKindId.This, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'asserts';
+	export type Kind = TSKindId.Asserts;
 }
 export namespace AssertsAnnotation {
 	export type Config = ConfigFor<TSKindId.AssertsAnnotation>;
@@ -19068,7 +18997,7 @@ export namespace AssertsAnnotation {
 	export type LooseConfig = LooseConfigFor<TSKindId.AssertsAnnotation>;
 	export type BuildArgs = [value: T.Asserts];
 	export type LooseArgs = [value: LooseValue<T.Asserts, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'asserts_annotation';
+	export type Kind = TSKindId.AssertsAnnotation;
 }
 export namespace TupleParameter {
 	export type Config = ConfigFor<TSKindId.TupleParameter>;
@@ -19086,7 +19015,7 @@ export namespace TupleParameter {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.TupleParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TupleParameter
 	];
-	export type Kind = 'tuple_parameter';
+	export type Kind = TSKindId.TupleParameter;
 }
 export namespace OptionalTupleParameter {
 	export type Config = ConfigFor<TSKindId.OptionalTupleParameter>;
@@ -19106,7 +19035,7 @@ export namespace OptionalTupleParameter {
 			| LooseConfigOf<T.OptionalTupleParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.OptionalTupleParameter
 	];
-	export type Kind = 'optional_tuple_parameter';
+	export type Kind = TSKindId.OptionalTupleParameter;
 }
 export namespace OptionalType {
 	export type Config = ConfigFor<TSKindId.OptionalType>;
@@ -19123,7 +19052,7 @@ export namespace OptionalType {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'optional_type';
+	export type Kind = TSKindId.OptionalType;
 }
 export namespace RestType {
 	export type Config = ConfigFor<TSKindId.RestType>;
@@ -19140,7 +19069,7 @@ export namespace RestType {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'rest_type';
+	export type Kind = TSKindId.RestType;
 }
 export namespace ConstructorType {
 	export type Config = ConfigFor<TSKindId.ConstructorType>;
@@ -19160,7 +19089,7 @@ export namespace ConstructorType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ConstructorType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ConstructorType
 	];
-	export type Kind = 'constructor_type';
+	export type Kind = TSKindId.ConstructorType;
 }
 export namespace TemplateType {
 	export type Config = ConfigFor<TSKindId.TemplateType>;
@@ -19182,7 +19111,7 @@ export namespace TemplateType {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'template_type';
+	export type Kind = TSKindId.TemplateType;
 }
 export namespace TemplateLiteralType {
 	export type Config = ConfigFor<TSKindId.TemplateLiteralType>;
@@ -19199,7 +19128,7 @@ export namespace TemplateLiteralType {
 	export type LooseArgs = [
 		...children: LooseValue<T.TemplateChars | T.TemplateType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Kind = 'template_literal_type';
+	export type Kind = TSKindId.TemplateLiteralType;
 }
 export namespace InferType {
 	export type Config = ConfigFor<TSKindId.InferType>;
@@ -19217,7 +19146,7 @@ export namespace InferType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.InferType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.InferType
 	];
-	export type Kind = 'infer_type';
+	export type Kind = TSKindId.InferType;
 }
 export namespace ConditionalType {
 	export type Config = ConfigFor<TSKindId.ConditionalType>;
@@ -19237,7 +19166,7 @@ export namespace ConditionalType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ConditionalType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ConditionalType
 	];
-	export type Kind = 'conditional_type';
+	export type Kind = TSKindId.ConditionalType;
 }
 export namespace GenericType {
 	export type Config = ConfigFor<TSKindId.GenericType>;
@@ -19255,7 +19184,7 @@ export namespace GenericType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.GenericType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.GenericType
 	];
-	export type Kind = 'generic_type';
+	export type Kind = TSKindId.GenericType;
 }
 export namespace TypePredicate {
 	export type Config = ConfigFor<TSKindId.TypePredicate>;
@@ -19273,7 +19202,7 @@ export namespace TypePredicate {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.TypePredicate, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TypePredicate
 	];
-	export type Kind = 'type_predicate';
+	export type Kind = TSKindId.TypePredicate;
 }
 export namespace TypePredicateAnnotation {
 	export type Config = ConfigFor<TSKindId.TypePredicateAnnotation>;
@@ -19288,7 +19217,7 @@ export namespace TypePredicateAnnotation {
 	export type LooseConfig = LooseConfigFor<TSKindId.TypePredicateAnnotation>;
 	export type BuildArgs = [value: T.TypePredicate];
 	export type LooseArgs = [value: LooseValue<T.TypePredicate, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'type_predicate_annotation';
+	export type Kind = TSKindId.TypePredicateAnnotation;
 }
 export namespace TypeQueryMemberExpression {
 	export type Config = ConfigFor<TSKindId.TypeQueryMemberExpression>;
@@ -19311,7 +19240,7 @@ export namespace TypeQueryMemberExpression {
 			| LooseConfigOf<T.TypeQueryMemberExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.TypeQueryMemberExpression
 	];
-	export type Kind = 'type_query_member_expression';
+	export type Kind = TSKindId.TypeQueryMemberExpression;
 }
 export namespace TypeQuerySubscriptExpression {
 	export type Config = ConfigFor<TSKindId.TypeQuerySubscriptExpression>;
@@ -19331,7 +19260,7 @@ export namespace TypeQuerySubscriptExpression {
 			| LooseConfigOf<T.TypeQuerySubscriptExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.TypeQuerySubscriptExpression
 	];
-	export type Kind = 'type_query_subscript_expression';
+	export type Kind = TSKindId.TypeQuerySubscriptExpression;
 }
 export namespace TypeQueryCallExpression {
 	export type Config = ConfigFor<TSKindId.TypeQueryCallExpression>;
@@ -19351,7 +19280,7 @@ export namespace TypeQueryCallExpression {
 			| LooseConfigOf<T.TypeQueryCallExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.TypeQueryCallExpression
 	];
-	export type Kind = 'type_query_call_expression';
+	export type Kind = TSKindId.TypeQueryCallExpression;
 }
 export namespace TypeQueryInstantiationExpression {
 	export type Config = ConfigFor<TSKindId.TypeQueryInstantiationExpression>;
@@ -19373,7 +19302,7 @@ export namespace TypeQueryInstantiationExpression {
 			| LooseConfigOf<T.TypeQueryInstantiationExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.TypeQueryInstantiationExpression
 	];
-	export type Kind = 'type_query_instantiation_expression';
+	export type Kind = TSKindId.TypeQueryInstantiationExpression;
 }
 export namespace TypeQuery {
 	export type Config = ConfigFor<TSKindId.TypeQuery>;
@@ -19417,7 +19346,7 @@ export namespace TypeQuery {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'type_query';
+	export type Kind = TSKindId.TypeQuery;
 }
 export namespace IndexTypeQuery {
 	export type Config = ConfigFor<TSKindId.IndexTypeQuery>;
@@ -19434,7 +19363,7 @@ export namespace IndexTypeQuery {
 	export type LooseArgs = [
 		value: LooseValue<T.PrimaryType | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'index_type_query';
+	export type Kind = TSKindId.IndexTypeQuery;
 }
 export namespace LookupType {
 	export type Config = ConfigFor<TSKindId.LookupType>;
@@ -19452,7 +19381,7 @@ export namespace LookupType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.LookupType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.LookupType
 	];
-	export type Kind = 'lookup_type';
+	export type Kind = TSKindId.LookupType;
 }
 export namespace MappedTypeClause {
 	export type Config = ConfigFor<TSKindId.MappedTypeClause>;
@@ -19471,7 +19400,7 @@ export namespace MappedTypeClause {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.MappedTypeClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.MappedTypeClause
 	];
-	export type Kind = 'mapped_type_clause';
+	export type Kind = TSKindId.MappedTypeClause;
 }
 export namespace LiteralType {
 	export type Config = ConfigFor<TSKindId.LiteralType>;
@@ -19518,7 +19447,7 @@ export namespace LiteralType {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'literal_type';
+	export type Kind = TSKindId.LiteralType;
 }
 export namespace FlowMaybeType {
 	export type Config = ConfigFor<TSKindId.FlowMaybeType>;
@@ -19535,7 +19464,7 @@ export namespace FlowMaybeType {
 	export type LooseArgs = [
 		value: LooseValue<T.PrimaryType | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'flow_maybe_type';
+	export type Kind = TSKindId.FlowMaybeType;
 }
 export namespace ParenthesizedType {
 	export type Config = ConfigFor<TSKindId.ParenthesizedType>;
@@ -19552,7 +19481,7 @@ export namespace ParenthesizedType {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'parenthesized_type';
+	export type Kind = TSKindId.ParenthesizedType;
 }
 export namespace TypeArguments {
 	export type Config = ConfigFor<TSKindId.TypeArguments>;
@@ -19567,7 +19496,7 @@ export namespace TypeArguments {
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeArguments>;
 	export type BuildArgs = [value: T.Types];
 	export type LooseArgs = [value: LooseValue<T.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'type_arguments';
+	export type Kind = TSKindId.TypeArguments;
 }
 export namespace ObjectType {
 	export namespace Curly {
@@ -19611,7 +19540,7 @@ export namespace ObjectType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ObjectType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ObjectType
 	];
-	export type Kind = 'object_type';
+	export type Kind = TSKindId.ObjectType;
 }
 export namespace CallSignature {
 	export type Config = ConfigFor<TSKindId.CallSignature>;
@@ -19630,7 +19559,7 @@ export namespace CallSignature {
 	export type LooseArgs = [
 		config?: LooseConfigOf<T.CallSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CallSignature
 	];
-	export type Kind = 'call_signature';
+	export type Kind = TSKindId.CallSignature;
 }
 export namespace PropertySignature {
 	export type Config = ConfigFor<TSKindId.PropertySignature>;
@@ -19657,7 +19586,7 @@ export namespace PropertySignature {
 			| LooseConfigOf<T.PropertySignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.PropertySignature
 	];
-	export type Kind = 'property_signature';
+	export type Kind = TSKindId.PropertySignature;
 }
 export namespace TypeParameters {
 	export type Config = ConfigFor<TSKindId.TypeParameters>;
@@ -19674,7 +19603,7 @@ export namespace TypeParameters {
 	export type LooseArgs = [
 		value: LooseValue<T.TypeParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'type_parameters';
+	export type Kind = TSKindId.TypeParameters;
 }
 export namespace TypeParameter {
 	export type Config = ConfigFor<TSKindId.TypeParameter>;
@@ -19694,7 +19623,7 @@ export namespace TypeParameter {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.TypeParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.TypeParameter
 	];
-	export type Kind = 'type_parameter';
+	export type Kind = TSKindId.TypeParameter;
 }
 export namespace DefaultType {
 	export type Config = ConfigFor<TSKindId.DefaultType>;
@@ -19711,7 +19640,7 @@ export namespace DefaultType {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'default_type';
+	export type Kind = TSKindId.DefaultType;
 }
 export namespace Constraint {
 	export type Config = ConfigFor<TSKindId.Constraint>;
@@ -19729,7 +19658,7 @@ export namespace Constraint {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.Constraint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.Constraint
 	];
-	export type Kind = 'constraint';
+	export type Kind = TSKindId.Constraint;
 }
 export namespace ConstructSignature {
 	export type Config = ConfigFor<TSKindId.ConstructSignature>;
@@ -19751,7 +19680,7 @@ export namespace ConstructSignature {
 			| LooseConfigOf<T.ConstructSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ConstructSignature
 	];
-	export type Kind = 'construct_signature';
+	export type Kind = TSKindId.ConstructSignature;
 }
 export namespace ArrayType {
 	export type Config = ConfigFor<TSKindId.ArrayType>;
@@ -19768,7 +19697,7 @@ export namespace ArrayType {
 	export type LooseArgs = [
 		value: LooseValue<T.PrimaryType | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'array_type';
+	export type Kind = TSKindId.ArrayType;
 }
 export namespace TupleType {
 	export type Config = ConfigFor<TSKindId.TupleType>;
@@ -19783,7 +19712,7 @@ export namespace TupleType {
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleType>;
 	export type BuildArgs = [value?: T.TupleTypeMembers];
 	export type LooseArgs = [value?: LooseValue<T.TupleTypeMembers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'tuple_type';
+	export type Kind = TSKindId.TupleType;
 }
 export namespace ReadonlyType {
 	export type Config = ConfigFor<TSKindId.ReadonlyType>;
@@ -19800,7 +19729,7 @@ export namespace ReadonlyType {
 	export type LooseArgs = [
 		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'readonly_type';
+	export type Kind = TSKindId.ReadonlyType;
 }
 export namespace UnionType {
 	export type Config = ConfigFor<TSKindId.UnionType>;
@@ -19818,7 +19747,7 @@ export namespace UnionType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.UnionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.UnionType
 	];
-	export type Kind = 'union_type';
+	export type Kind = TSKindId.UnionType;
 }
 export namespace IntersectionType {
 	export type Config = ConfigFor<TSKindId.IntersectionType>;
@@ -19836,7 +19765,7 @@ export namespace IntersectionType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.IntersectionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.IntersectionType
 	];
-	export type Kind = 'intersection_type';
+	export type Kind = TSKindId.IntersectionType;
 }
 export namespace FunctionType {
 	export type Config = ConfigFor<TSKindId.FunctionType>;
@@ -19855,7 +19784,7 @@ export namespace FunctionType {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.FunctionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.FunctionType
 	];
-	export type Kind = 'function_type';
+	export type Kind = TSKindId.FunctionType;
 }
 export namespace ExportSpecifiers {
 	export type Config = ConfigFor<TSKindId.ExportSpecifiers>;
@@ -19883,7 +19812,7 @@ export namespace ExportSpecifiers {
 			T.NamespaceMap
 		>[]
 	];
-	export type Kind = 'export_specifiers';
+	export type Kind = TSKindId.ExportSpecifiers;
 }
 export namespace ImportSpecifiers {
 	export type Config = ConfigFor<TSKindId.ImportSpecifiers>;
@@ -19903,7 +19832,7 @@ export namespace ImportSpecifiers {
 		element: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		...elements: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Kind = 'import_specifiers';
+	export type Kind = TSKindId.ImportSpecifiers;
 }
 export namespace FormalParametersElements {
 	export type Config = ConfigFor<TSKindId.FormalParametersElements>;
@@ -19933,7 +19862,7 @@ export namespace FormalParametersElements {
 			T.NamespaceMap
 		>[]
 	];
-	export type Kind = 'formal_parameters_elements';
+	export type Kind = TSKindId.FormalParametersElements;
 }
 export namespace EnumBodyElements {
 	export type Config = ConfigFor<TSKindId.EnumBodyElements>;
@@ -20113,7 +20042,7 @@ export namespace EnumBodyElements {
 			T.NamespaceMap
 		>[]
 	];
-	export type Kind = 'enum_body_elements';
+	export type Kind = TSKindId.EnumBodyElements;
 }
 export namespace Types {
 	export type Config = ConfigFor<TSKindId.Types>;
@@ -20133,7 +20062,7 @@ export namespace Types {
 		element: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		...elements: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 	];
-	export type Kind = 'types';
+	export type Kind = TSKindId.Types;
 }
 export namespace TypeParametersElements {
 	export type Config = ConfigFor<TSKindId.TypeParametersElements>;
@@ -20168,7 +20097,7 @@ export namespace TypeParametersElements {
 			T.NamespaceMap
 		>[]
 	];
-	export type Kind = 'type_parameters_elements';
+	export type Kind = TSKindId.TypeParametersElements;
 }
 export namespace TupleTypeMembers {
 	export type Config = ConfigFor<TSKindId.TupleTypeMembers>;
@@ -20218,7 +20147,7 @@ export namespace TupleTypeMembers {
 			T.NamespaceMap
 		>[]
 	];
-	export type Kind = 'tuple_type_members';
+	export type Kind = TSKindId.TupleTypeMembers;
 }
 export namespace ImportClauseGroup {
 	export type Config = ConfigFor<TSKindId.ImportClauseGroup>;
@@ -20235,7 +20164,7 @@ export namespace ImportClauseGroup {
 	export type LooseArgs = [
 		value: LooseValue<T.NamespaceImport | T.NamedImports, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'import_clause_group';
+	export type Kind = TSKindId.ImportClauseGroup;
 }
 export namespace CatchClauseGroup {
 	export type Config = ConfigFor<TSKindId.CatchClauseGroup>;
@@ -20253,7 +20182,7 @@ export namespace CatchClauseGroup {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.CatchClauseGroup, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.CatchClauseGroup
 	];
-	export type Kind = 'catch_clause_group';
+	export type Kind = TSKindId.CatchClauseGroup;
 }
 export namespace AmbientDeclarationGlobal {
 	export type Config = ConfigFor<TSKindId.AmbientDeclarationGlobal>;
@@ -20268,7 +20197,7 @@ export namespace AmbientDeclarationGlobal {
 	export type LooseConfig = LooseConfigFor<TSKindId.AmbientDeclarationGlobal>;
 	export type BuildArgs = [value: T.StatementBlock];
 	export type LooseArgs = [value: LooseValue<T.StatementBlock, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'ambient_declaration_global';
+	export type Kind = TSKindId.AmbientDeclarationGlobal;
 }
 export namespace AmbientDeclarationModule {
 	export type Config = OmitEach<ConfigFor<TSKindId.AmbientDeclarationModule>, 'terminator'>;
@@ -20299,7 +20228,7 @@ export namespace AmbientDeclarationModule {
 			| T.AmbientDeclarationModule,
 		options?: T.AmbientDeclarationModule.Options
 	];
-	export type Kind = 'ambient_declaration_module';
+	export type Kind = TSKindId.AmbientDeclarationModule;
 }
 export namespace ObjectTypeContent {
 	export type Config = ConfigFor<TSKindId.ObjectTypeContent>;
@@ -20368,7 +20297,7 @@ export namespace ObjectTypeContent {
 			T.NamespaceMap
 		>[]
 	];
-	export type Kind = 'object_type_content';
+	export type Kind = TSKindId.ObjectTypeContent;
 }
 export namespace ExportStatementNamespaceExport {
 	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementNamespaceExport>, 'terminator'>;
@@ -20390,7 +20319,7 @@ export namespace ExportStatementNamespaceExport {
 		value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ExportStatementNamespaceExport.Options
 	];
-	export type Kind = 'export_statement_namespace_export';
+	export type Kind = TSKindId.ExportStatementNamespaceExport;
 }
 export namespace ExportStatementTypeExport {
 	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementTypeExport>, 'terminator'>;
@@ -20417,7 +20346,7 @@ export namespace ExportStatementTypeExport {
 			  >
 			| T.ExportStatementTypeExport
 	];
-	export type Kind = 'export_statement_type_export';
+	export type Kind = TSKindId.ExportStatementTypeExport;
 }
 export namespace ExportStatementEqualsExport {
 	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementEqualsExport>, 'terminator'>;
@@ -20439,7 +20368,7 @@ export namespace ExportStatementEqualsExport {
 		value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ExportStatementEqualsExport.Options
 	];
-	export type Kind = 'export_statement_equals_export';
+	export type Kind = TSKindId.ExportStatementEqualsExport;
 }
 export namespace CommentLine {
 	export type Config = ConfigFor<TSKindId.CommentLine>;
@@ -20454,7 +20383,7 @@ export namespace CommentLine {
 	export type LooseConfig = LooseConfigFor<TSKindId.CommentLine>;
 	export type BuildArgs = [value: string];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'comment_line';
+	export type Kind = TSKindId.CommentLine;
 }
 export namespace CommentBlock {
 	export type Config = ConfigFor<TSKindId.CommentBlock>;
@@ -20469,7 +20398,7 @@ export namespace CommentBlock {
 	export type LooseConfig = LooseConfigFor<TSKindId.CommentBlock>;
 	export type BuildArgs = [value: string];
 	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'comment_block';
+	export type Kind = TSKindId.CommentBlock;
 }
 export namespace LiteralTypeNegativeNumber {
 	export type Config = ConfigFor<TSKindId.LiteralTypeNegativeNumber>;
@@ -20489,7 +20418,7 @@ export namespace LiteralTypeNegativeNumber {
 			| LooseConfigOf<T.LiteralTypeNegativeNumber, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.LiteralTypeNegativeNumber
 	];
-	export type Kind = 'literal_type_negative_number';
+	export type Kind = TSKindId.LiteralTypeNegativeNumber;
 }
 export namespace NumberHex {
 	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.NumberHex>, 'prefix'>, { content: number | bigint }>;
@@ -20516,7 +20445,7 @@ export namespace NumberHex {
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.NumberHex.Options
 	];
-	export type Kind = 'number_hex';
+	export type Kind = TSKindId.NumberHex;
 }
 export namespace NumberFloatPoint {
 	export type Config = WidenNumeric<
@@ -20563,7 +20492,7 @@ export namespace NumberFloatPoint {
 			| T.NumberFloatPoint,
 		options?: T.NumberFloatPoint.Options
 	];
-	export type Kind = 'number_float_point';
+	export type Kind = TSKindId.NumberFloatPoint;
 }
 export namespace NumberFloatLeadingPoint {
 	export type Config = WidenNumeric<
@@ -20612,7 +20541,7 @@ export namespace NumberFloatLeadingPoint {
 			| T.NumberFloatLeadingPoint,
 		options?: T.NumberFloatLeadingPoint.Options
 	];
-	export type Kind = 'number_float_leading_point';
+	export type Kind = TSKindId.NumberFloatLeadingPoint;
 }
 export namespace NumberFloatScientific {
 	export type Config = WidenNumeric<
@@ -20661,7 +20590,7 @@ export namespace NumberFloatScientific {
 			| T.NumberFloatScientific,
 		options?: T.NumberFloatScientific.Options
 	];
-	export type Kind = 'number_float_scientific';
+	export type Kind = TSKindId.NumberFloatScientific;
 }
 export namespace NumberBinary {
 	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.NumberBinary>, 'prefix'>, { content: number | bigint }>;
@@ -20688,7 +20617,7 @@ export namespace NumberBinary {
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.NumberBinary.Options
 	];
-	export type Kind = 'number_binary';
+	export type Kind = TSKindId.NumberBinary;
 }
 export namespace NumberOctal {
 	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.NumberOctal>, 'prefix'>, { content: number | bigint }>;
@@ -20715,7 +20644,7 @@ export namespace NumberOctal {
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.NumberOctal.Options
 	];
-	export type Kind = 'number_octal';
+	export type Kind = TSKindId.NumberOctal;
 }
 export namespace NumberBigintHex {
 	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberBigintHex>, { content: number | bigint }>;
@@ -20736,7 +20665,7 @@ export namespace NumberBigintHex {
 	export type LooseArgs = [
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'number_bigint_hex';
+	export type Kind = TSKindId.NumberBigintHex;
 }
 export namespace NumberBigintBinary {
 	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberBigintBinary>, { content: number | bigint }>;
@@ -20757,7 +20686,7 @@ export namespace NumberBigintBinary {
 	export type LooseArgs = [
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'number_bigint_binary';
+	export type Kind = TSKindId.NumberBigintBinary;
 }
 export namespace NumberBigintOctal {
 	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberBigintOctal>, { content: number | bigint }>;
@@ -20778,7 +20707,7 @@ export namespace NumberBigintOctal {
 	export type LooseArgs = [
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'number_bigint_octal';
+	export type Kind = TSKindId.NumberBigintOctal;
 }
 export namespace NumberBigintDecimal {
 	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberBigintDecimal>, { content: number | bigint }>;
@@ -20799,7 +20728,7 @@ export namespace NumberBigintDecimal {
 	export type LooseArgs = [
 		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
-	export type Kind = 'number_bigint_decimal';
+	export type Kind = TSKindId.NumberBigintDecimal;
 }
 export namespace BinaryExpressionIn {
 	export type Config = ConfigFor<TSKindId.BinaryExpressionIn>;
@@ -20819,7 +20748,7 @@ export namespace BinaryExpressionIn {
 			| LooseConfigOf<T.BinaryExpressionIn, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.BinaryExpressionIn
 	];
-	export type Kind = 'binary_expression_in';
+	export type Kind = TSKindId.BinaryExpressionIn;
 }
 export namespace ClassBodyMethod {
 	export type Config = OmitEach<ConfigFor<TSKindId.ClassBodyMethod>, 'terminator'>;
@@ -20845,7 +20774,7 @@ export namespace ClassBodyMethod {
 			| T.ClassBodyMethod,
 		options?: T.ClassBodyMethod.Options
 	];
-	export type Kind = 'class_body_method';
+	export type Kind = TSKindId.ClassBodyMethod;
 }
 export namespace ClassBodyMethodSig {
 	export type Config = ConfigFor<TSKindId.ClassBodyMethodSig>;
@@ -20865,7 +20794,7 @@ export namespace ClassBodyMethodSig {
 			| LooseConfigOf<T.ClassBodyMethodSig, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ClassBodyMethodSig
 	];
-	export type Kind = 'class_body_method_sig';
+	export type Kind = TSKindId.ClassBodyMethodSig;
 }
 export namespace ClassBodyMember {
 	export type Config = OmitEach<ConfigFor<TSKindId.ClassBodyMember>, 'terminator'>;
@@ -20895,7 +20824,7 @@ export namespace ClassBodyMember {
 		>,
 		options?: T.ClassBodyMember.Options
 	];
-	export type Kind = 'class_body_member';
+	export type Kind = TSKindId.ClassBodyMember;
 }
 export namespace IndexSignatureColon {
 	export type Config = ConfigFor<TSKindId.IndexSignatureColon>;
@@ -20920,7 +20849,7 @@ export namespace IndexSignatureColon {
 			| LooseConfigOf<T.IndexSignatureColon, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.IndexSignatureColon
 	];
-	export type Kind = 'index_signature_colon';
+	export type Kind = TSKindId.IndexSignatureColon;
 }
 export namespace IndexSignatureMappedTypeClause {
 	export type Config = ConfigFor<TSKindId.IndexSignatureMappedTypeClause>;
@@ -20948,7 +20877,7 @@ export namespace IndexSignatureMappedTypeClause {
 			| LooseConfigOf<T.IndexSignatureMappedTypeClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.IndexSignatureMappedTypeClause
 	];
-	export type Kind = 'index_signature_mapped_type_clause';
+	export type Kind = TSKindId.IndexSignatureMappedTypeClause;
 }
 export namespace ImportStatementClauseFrom {
 	export type Config = ConfigFor<TSKindId.ImportStatementClauseFrom>;
@@ -20968,7 +20897,7 @@ export namespace ImportStatementClauseFrom {
 			| LooseConfigOf<T.ImportStatementClauseFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ImportStatementClauseFrom
 	];
-	export type Kind = 'import_statement_clause_from';
+	export type Kind = TSKindId.ImportStatementClauseFrom;
 }
 export namespace ImportSpecifierName {
 	export type Config = ConfigFor<TSKindId.ImportSpecifierName>;
@@ -20988,7 +20917,7 @@ export namespace ImportSpecifierName {
 			| LooseConfigOf<T.ImportSpecifierName, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ImportSpecifierName
 	];
-	export type Kind = 'import_specifier_name';
+	export type Kind = TSKindId.ImportSpecifierName;
 }
 export namespace ImportSpecifierAs {
 	export type Config = ConfigFor<TSKindId.ImportSpecifierAs>;
@@ -21009,7 +20938,7 @@ export namespace ImportSpecifierAs {
 			| LooseConfigOf<T.ImportSpecifierAs, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ImportSpecifierAs
 	];
-	export type Kind = 'import_specifier_as';
+	export type Kind = TSKindId.ImportSpecifierAs;
 }
 export namespace ParenthesizedExpressionTyped {
 	export type Config = ConfigFor<TSKindId.ParenthesizedExpressionTyped>;
@@ -21031,7 +20960,7 @@ export namespace ParenthesizedExpressionTyped {
 			| LooseConfigOf<T.ParenthesizedExpressionTyped, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ParenthesizedExpressionTyped
 	];
-	export type Kind = 'parenthesized_expression_typed';
+	export type Kind = TSKindId.ParenthesizedExpressionTyped;
 }
 export namespace ParenthesizedExpressionSequence {
 	export type Config = ConfigFor<TSKindId.ParenthesizedExpressionSequence>;
@@ -21046,7 +20975,7 @@ export namespace ParenthesizedExpressionSequence {
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedExpressionSequence>;
 	export type BuildArgs = [value: T.SequenceExpression];
 	export type LooseArgs = [value: LooseValue<T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'parenthesized_expression_sequence';
+	export type Kind = TSKindId.ParenthesizedExpressionSequence;
 }
 export namespace CallExpressionCall {
 	export type Config = ConfigFor<TSKindId.CallExpressionCall>;
@@ -21067,7 +20996,7 @@ export namespace CallExpressionCall {
 			| LooseConfigOf<T.CallExpressionCall, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.CallExpressionCall
 	];
-	export type Kind = 'call_expression_call';
+	export type Kind = TSKindId.CallExpressionCall;
 }
 export namespace CallExpressionTemplateCall {
 	export type Config = ConfigFor<TSKindId.CallExpressionTemplateCall>;
@@ -21087,7 +21016,7 @@ export namespace CallExpressionTemplateCall {
 			| LooseConfigOf<T.CallExpressionTemplateCall, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.CallExpressionTemplateCall
 	];
-	export type Kind = 'call_expression_template_call';
+	export type Kind = TSKindId.CallExpressionTemplateCall;
 }
 export namespace CallExpressionMember {
 	export type Config = ConfigFor<TSKindId.CallExpressionMember>;
@@ -21108,7 +21037,7 @@ export namespace CallExpressionMember {
 			| LooseConfigOf<T.CallExpressionMember, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.CallExpressionMember
 	];
-	export type Kind = 'call_expression_member';
+	export type Kind = TSKindId.CallExpressionMember;
 }
 export namespace StringDouble {
 	export type Config = ConfigFor<TSKindId.StringDouble>;
@@ -21130,7 +21059,7 @@ export namespace StringDouble {
 			T.NamespaceMap
 		>[]
 	];
-	export type Kind = 'string_double';
+	export type Kind = TSKindId.StringDouble;
 }
 export namespace StringSingle {
 	export type Config = ConfigFor<TSKindId.StringSingle>;
@@ -21152,7 +21081,7 @@ export namespace StringSingle {
 			T.NamespaceMap
 		>[]
 	];
-	export type Kind = 'string_single';
+	export type Kind = TSKindId.StringSingle;
 }
 export namespace UpdateExpressionPostfix {
 	export type Config = ConfigFor<TSKindId.UpdateExpressionPostfix>;
@@ -21172,7 +21101,7 @@ export namespace UpdateExpressionPostfix {
 			| LooseConfigOf<T.UpdateExpressionPostfix, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.UpdateExpressionPostfix
 	];
-	export type Kind = 'update_expression_postfix';
+	export type Kind = TSKindId.UpdateExpressionPostfix;
 }
 export namespace UpdateExpressionPrefix {
 	export type Config = ConfigFor<TSKindId.UpdateExpressionPrefix>;
@@ -21192,7 +21121,7 @@ export namespace UpdateExpressionPrefix {
 			| LooseConfigOf<T.UpdateExpressionPrefix, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.UpdateExpressionPrefix
 	];
-	export type Kind = 'update_expression_prefix';
+	export type Kind = TSKindId.UpdateExpressionPrefix;
 }
 export namespace ArrowFunctionParameter {
 	export type Config = ConfigFor<TSKindId.ArrowFunctionParameter>;
@@ -21287,7 +21216,7 @@ export namespace ArrowFunctionParameter {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'arrow_function_parameter';
+	export type Kind = TSKindId.ArrowFunctionParameter;
 }
 export namespace ClassHeritageExtendsClause {
 	export type Config = ConfigFor<TSKindId.ClassHeritageExtendsClause>;
@@ -21307,7 +21236,7 @@ export namespace ClassHeritageExtendsClause {
 			| LooseConfigOf<T.ClassHeritageExtendsClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ClassHeritageExtendsClause
 	];
-	export type Kind = 'class_heritage_extends_clause';
+	export type Kind = TSKindId.ClassHeritageExtendsClause;
 }
 export namespace ImportClauseDefaultImport {
 	export type Config = ConfigFor<TSKindId.ImportClauseDefaultImport>;
@@ -21329,7 +21258,7 @@ export namespace ImportClauseDefaultImport {
 			| LooseConfigOf<T.ImportClauseDefaultImport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ImportClauseDefaultImport
 	];
-	export type Kind = 'import_clause_default_import';
+	export type Kind = TSKindId.ImportClauseDefaultImport;
 }
 export namespace ExportStatementDefaultFrom {
 	export type Config = OmitEach<ConfigFor<TSKindId.ExportStatementDefaultFrom>, 'automaticSemicolon'>;
@@ -21372,7 +21301,7 @@ export namespace ExportStatementDefaultFrom {
 		>,
 		options?: T.ExportStatementDefaultFrom.Options
 	];
-	export type Kind = 'export_statement_default_from';
+	export type Kind = TSKindId.ExportStatementDefaultFrom;
 }
 export namespace ExportStatementDefaultDeclaration {
 	export type Config = ConfigFor<TSKindId.ExportStatementDefaultDeclaration>;
@@ -21394,7 +21323,7 @@ export namespace ExportStatementDefaultDeclaration {
 			| LooseConfigOf<T.ExportStatementDefaultDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ExportStatementDefaultDeclaration
 	];
-	export type Kind = 'export_statement_default_declaration';
+	export type Kind = TSKindId.ExportStatementDefaultDeclaration;
 }
 export namespace ExportStatementDefaultFromStarFrom {
 	export type Config = ConfigFor<TSKindId.ExportStatementDefaultFromStarFrom>;
@@ -21409,7 +21338,7 @@ export namespace ExportStatementDefaultFromStarFrom {
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultFromStarFrom>;
 	export type BuildArgs = [value: T.String];
 	export type LooseArgs = [value: LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'export_statement_default_from_star_from';
+	export type Kind = TSKindId.ExportStatementDefaultFromStarFrom;
 }
 export namespace ExportStatementDefaultFromNsFrom {
 	export type Config = ConfigFor<TSKindId.ExportStatementDefaultFromNsFrom>;
@@ -21429,7 +21358,7 @@ export namespace ExportStatementDefaultFromNsFrom {
 			| LooseConfigOf<T.ExportStatementDefaultFromNsFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ExportStatementDefaultFromNsFrom
 	];
-	export type Kind = 'export_statement_default_from_ns_from';
+	export type Kind = TSKindId.ExportStatementDefaultFromNsFrom;
 }
 export namespace ExportStatementDefaultFromClauseFrom {
 	export type Config = ConfigFor<TSKindId.ExportStatementDefaultFromClauseFrom>;
@@ -21449,7 +21378,7 @@ export namespace ExportStatementDefaultFromClauseFrom {
 			| LooseConfigOf<T.ExportStatementDefaultFromClauseFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ExportStatementDefaultFromClauseFrom
 	];
-	export type Kind = 'export_statement_default_from_clause_from';
+	export type Kind = TSKindId.ExportStatementDefaultFromClauseFrom;
 }
 export namespace ExportStatementDefaultDeclarationDefaultKw {
 	export type Config = ConfigFor<TSKindId.ExportStatementDefaultDeclarationDefaultKw>;
@@ -21473,7 +21402,7 @@ export namespace ExportStatementDefaultDeclarationDefaultKw {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'export_statement_default_declaration_default_kw';
+	export type Kind = TSKindId.ExportStatementDefaultDeclarationDefaultKw;
 }
 export namespace ExportStatementDefaultDeclarationDefaultKwValue {
 	export type Config = OmitEach<
@@ -21504,7 +21433,7 @@ export namespace ExportStatementDefaultDeclarationDefaultKwValue {
 		value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 		options?: T.ExportStatementDefaultDeclarationDefaultKwValue.Options
 	];
-	export type Kind = 'export_statement_default_declaration_default_kw_value';
+	export type Kind = TSKindId.ExportStatementDefaultDeclarationDefaultKwValue;
 }
 export namespace VariableDeclaratorPlain {
 	export type Config = ConfigFor<TSKindId.VariableDeclaratorPlain>;
@@ -21525,7 +21454,7 @@ export namespace VariableDeclaratorPlain {
 			| LooseConfigOf<T.VariableDeclaratorPlain, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.VariableDeclaratorPlain
 	];
-	export type Kind = 'variable_declarator_plain';
+	export type Kind = TSKindId.VariableDeclaratorPlain;
 }
 export namespace VariableDeclaratorDefinite {
 	export type Config = ConfigFor<TSKindId.VariableDeclaratorDefinite>;
@@ -21545,7 +21474,7 @@ export namespace VariableDeclaratorDefinite {
 			| LooseConfigOf<T.VariableDeclaratorDefinite, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.VariableDeclaratorDefinite
 	];
-	export type Kind = 'variable_declarator_definite';
+	export type Kind = TSKindId.VariableDeclaratorDefinite;
 }
 export namespace ForHeaderLhs {
 	export type Config = ConfigFor<TSKindId.ForHeaderLhs>;
@@ -21564,7 +21493,7 @@ export namespace ForHeaderLhs {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ForHeaderLhs, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ForHeaderLhs
 	];
-	export type Kind = 'for_header_lhs';
+	export type Kind = TSKindId.ForHeaderLhs;
 }
 export namespace ForHeaderVarKind {
 	export type Config = ConfigFor<TSKindId.ForHeaderVarKind>;
@@ -21584,7 +21513,7 @@ export namespace ForHeaderVarKind {
 	export type LooseArgs = [
 		config: LooseConfigOf<T.ForHeaderVarKind, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap> | T.ForHeaderVarKind
 	];
-	export type Kind = 'for_header_var_kind';
+	export type Kind = TSKindId.ForHeaderVarKind;
 }
 export namespace ForHeaderLetConstKind {
 	export type Config = ConfigFor<TSKindId.ForHeaderLetConstKind>;
@@ -21609,7 +21538,7 @@ export namespace ForHeaderLetConstKind {
 			| LooseConfigOf<T.ForHeaderLetConstKind, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| T.ForHeaderLetConstKind
 	];
-	export type Kind = 'for_header_let_const_kind';
+	export type Kind = TSKindId.ForHeaderLetConstKind;
 }
 export namespace StatementIdentifier {
 	export type Config = ConfigFor<TSKindId.StatementIdentifier>;
@@ -21728,7 +21657,7 @@ export namespace StatementIdentifier {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'statement_identifier';
+	export type Kind = TSKindId.StatementIdentifier;
 }
 export namespace ShorthandPropertyIdentifier {
 	export type Config = ConfigFor<TSKindId.ShorthandPropertyIdentifier>;
@@ -21847,7 +21776,7 @@ export namespace ShorthandPropertyIdentifier {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'shorthand_property_identifier';
+	export type Kind = TSKindId.ShorthandPropertyIdentifier;
 }
 export namespace ShorthandPropertyIdentifierPattern {
 	export type Config = ConfigFor<TSKindId.ShorthandPropertyIdentifierPattern>;
@@ -21966,7 +21895,7 @@ export namespace ShorthandPropertyIdentifierPattern {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'shorthand_property_identifier_pattern';
+	export type Kind = TSKindId.ShorthandPropertyIdentifierPattern;
 }
 export namespace PropertyIdentifier {
 	export type Config = ConfigFor<TSKindId.PropertyIdentifier>;
@@ -22085,7 +22014,7 @@ export namespace PropertyIdentifier {
 			T.NamespaceMap
 		>
 	];
-	export type Kind = 'property_identifier';
+	export type Kind = TSKindId.PropertyIdentifier;
 }
 export namespace TypeIdentifier {
 	export type Config = ConfigFor<TSKindId.TypeIdentifier>;
@@ -22101,7 +22030,7 @@ export namespace TypeIdentifier {
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeIdentifier>;
 	export type BuildArgs = [value: T.Identifier];
 	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'type_identifier';
+	export type Kind = TSKindId.TypeIdentifier;
 }
 export namespace InterfaceBody {
 	export type Config = ConfigFor<TSKindId.InterfaceBody>;
@@ -22117,7 +22046,7 @@ export namespace InterfaceBody {
 	export type LooseConfig = LooseConfigFor<TSKindId.InterfaceBody>;
 	export type BuildArgs = [value: T.ObjectType];
 	export type LooseArgs = [value: LooseValue<T.ObjectType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
-	export type Kind = 'interface_body';
+	export type Kind = TSKindId.InterfaceBody;
 }
 export namespace Import {
 	export type Config = ImportNs['Config'];
@@ -22126,7 +22055,7 @@ export namespace Import {
 	export type LooseConfig = ImportNs['LooseConfig'];
 	export type BuildArgs = ImportNs['BuildArgs'];
 	export type LooseArgs = ImportNs['LooseArgs'];
-	export type Kind = 'import';
+	export type Kind = TSKindId.Import;
 }
 export namespace EmptyStatement {
 	export type Config = EmptyStatementNs['Config'];
@@ -22135,7 +22064,7 @@ export namespace EmptyStatement {
 	export type LooseConfig = EmptyStatementNs['LooseConfig'];
 	export type BuildArgs = EmptyStatementNs['BuildArgs'];
 	export type LooseArgs = EmptyStatementNs['LooseArgs'];
-	export type Kind = 'empty_statement';
+	export type Kind = TSKindId.EmptyStatement;
 }
 export namespace OptionalChain {
 	export type Config = OptionalChainNs['Config'];
@@ -22144,7 +22073,7 @@ export namespace OptionalChain {
 	export type LooseConfig = OptionalChainNs['LooseConfig'];
 	export type BuildArgs = OptionalChainNs['BuildArgs'];
 	export type LooseArgs = OptionalChainNs['LooseArgs'];
-	export type Kind = 'optional_chain';
+	export type Kind = TSKindId.OptionalChain;
 }
 export namespace This {
 	export type Config = ThisNs['Config'];
@@ -22153,7 +22082,7 @@ export namespace This {
 	export type LooseConfig = ThisNs['LooseConfig'];
 	export type BuildArgs = ThisNs['BuildArgs'];
 	export type LooseArgs = ThisNs['LooseArgs'];
-	export type Kind = 'this';
+	export type Kind = TSKindId.This;
 }
 export namespace Super {
 	export type Config = SuperNs['Config'];
@@ -22162,7 +22091,7 @@ export namespace Super {
 	export type LooseConfig = SuperNs['LooseConfig'];
 	export type BuildArgs = SuperNs['BuildArgs'];
 	export type LooseArgs = SuperNs['LooseArgs'];
-	export type Kind = 'super';
+	export type Kind = TSKindId.Super;
 }
 export namespace True {
 	export type Config = TrueNs['Config'];
@@ -22171,7 +22100,7 @@ export namespace True {
 	export type LooseConfig = TrueNs['LooseConfig'];
 	export type BuildArgs = TrueNs['BuildArgs'];
 	export type LooseArgs = TrueNs['LooseArgs'];
-	export type Kind = 'true';
+	export type Kind = TSKindId.True;
 }
 export namespace False {
 	export type Config = FalseNs['Config'];
@@ -22180,7 +22109,7 @@ export namespace False {
 	export type LooseConfig = FalseNs['LooseConfig'];
 	export type BuildArgs = FalseNs['BuildArgs'];
 	export type LooseArgs = FalseNs['LooseArgs'];
-	export type Kind = 'false';
+	export type Kind = TSKindId.False;
 }
 export namespace Null {
 	export type Config = NullNs['Config'];
@@ -22189,7 +22118,7 @@ export namespace Null {
 	export type LooseConfig = NullNs['LooseConfig'];
 	export type BuildArgs = NullNs['BuildArgs'];
 	export type LooseArgs = NullNs['LooseArgs'];
-	export type Kind = 'null';
+	export type Kind = TSKindId.Null;
 }
 export namespace Undefined {
 	export type Config = UndefinedNs['Config'];
@@ -22198,7 +22127,7 @@ export namespace Undefined {
 	export type LooseConfig = UndefinedNs['LooseConfig'];
 	export type BuildArgs = UndefinedNs['BuildArgs'];
 	export type LooseArgs = UndefinedNs['LooseArgs'];
-	export type Kind = 'undefined';
+	export type Kind = TSKindId.Undefined;
 }
 export namespace OverrideModifier {
 	export type Config = OverrideModifierNs['Config'];
@@ -22207,7 +22136,7 @@ export namespace OverrideModifier {
 	export type LooseConfig = OverrideModifierNs['LooseConfig'];
 	export type BuildArgs = OverrideModifierNs['BuildArgs'];
 	export type LooseArgs = OverrideModifierNs['LooseArgs'];
-	export type Kind = 'override_modifier';
+	export type Kind = TSKindId.OverrideModifier;
 }
 export namespace ExistentialType {
 	export type Config = ExistentialTypeNs['Config'];
@@ -22216,7 +22145,7 @@ export namespace ExistentialType {
 	export type LooseConfig = ExistentialTypeNs['LooseConfig'];
 	export type BuildArgs = ExistentialTypeNs['BuildArgs'];
 	export type LooseArgs = ExistentialTypeNs['LooseArgs'];
-	export type Kind = 'existential_type';
+	export type Kind = TSKindId.ExistentialType;
 }
 export namespace KwAwaitMarker {
 	export type Config = KwAwaitMarkerNs['Config'];
@@ -22225,7 +22154,7 @@ export namespace KwAwaitMarker {
 	export type LooseConfig = KwAwaitMarkerNs['LooseConfig'];
 	export type BuildArgs = KwAwaitMarkerNs['BuildArgs'];
 	export type LooseArgs = KwAwaitMarkerNs['LooseArgs'];
-	export type Kind = '_kw_await_marker';
+	export type Kind = TSKindId.KwAwaitMarker;
 }
 export namespace KwAsyncMarker {
 	export type Config = KwAsyncMarkerNs['Config'];
@@ -22234,7 +22163,7 @@ export namespace KwAsyncMarker {
 	export type LooseConfig = KwAsyncMarkerNs['LooseConfig'];
 	export type BuildArgs = KwAsyncMarkerNs['BuildArgs'];
 	export type LooseArgs = KwAsyncMarkerNs['LooseArgs'];
-	export type Kind = '_kw_async_marker';
+	export type Kind = TSKindId.KwAsyncMarker;
 }
 export namespace KwUsingMarker {
 	export type Config = KwUsingMarkerNs['Config'];
@@ -22243,7 +22172,7 @@ export namespace KwUsingMarker {
 	export type LooseConfig = KwUsingMarkerNs['LooseConfig'];
 	export type BuildArgs = KwUsingMarkerNs['BuildArgs'];
 	export type LooseArgs = KwUsingMarkerNs['LooseArgs'];
-	export type Kind = '_kw_using_marker';
+	export type Kind = TSKindId.KwUsingMarker;
 }
 export namespace KwStaticMarker {
 	export type Config = KwStaticMarkerNs['Config'];
@@ -22252,7 +22181,7 @@ export namespace KwStaticMarker {
 	export type LooseConfig = KwStaticMarkerNs['LooseConfig'];
 	export type BuildArgs = KwStaticMarkerNs['BuildArgs'];
 	export type LooseArgs = KwStaticMarkerNs['LooseArgs'];
-	export type Kind = '_kw_static_marker';
+	export type Kind = TSKindId.KwStaticMarker;
 }
 export namespace KwDeclareMarker {
 	export type Config = KwDeclareMarkerNs['Config'];
@@ -22261,7 +22190,7 @@ export namespace KwDeclareMarker {
 	export type LooseConfig = KwDeclareMarkerNs['LooseConfig'];
 	export type BuildArgs = KwDeclareMarkerNs['BuildArgs'];
 	export type LooseArgs = KwDeclareMarkerNs['LooseArgs'];
-	export type Kind = '_kw_declare_marker';
+	export type Kind = TSKindId.KwDeclareMarker;
 }
 export namespace KwAbstractMarker {
 	export type Config = KwAbstractMarkerNs['Config'];
@@ -22270,7 +22199,7 @@ export namespace KwAbstractMarker {
 	export type LooseConfig = KwAbstractMarkerNs['LooseConfig'];
 	export type BuildArgs = KwAbstractMarkerNs['BuildArgs'];
 	export type LooseArgs = KwAbstractMarkerNs['LooseArgs'];
-	export type Kind = '_kw_abstract_marker';
+	export type Kind = TSKindId.KwAbstractMarker;
 }
 export namespace KwAccessorMarker {
 	export type Config = KwAccessorMarkerNs['Config'];
@@ -22279,7 +22208,7 @@ export namespace KwAccessorMarker {
 	export type LooseConfig = KwAccessorMarkerNs['LooseConfig'];
 	export type BuildArgs = KwAccessorMarkerNs['BuildArgs'];
 	export type LooseArgs = KwAccessorMarkerNs['LooseArgs'];
-	export type Kind = '_kw_accessor_marker';
+	export type Kind = TSKindId.KwAccessorMarker;
 }
 export namespace KwConstMarker {
 	export type Config = KwConstMarkerNs['Config'];
@@ -22288,7 +22217,7 @@ export namespace KwConstMarker {
 	export type LooseConfig = KwConstMarkerNs['LooseConfig'];
 	export type BuildArgs = KwConstMarkerNs['BuildArgs'];
 	export type LooseArgs = KwConstMarkerNs['LooseArgs'];
-	export type Kind = '_kw_const_marker';
+	export type Kind = TSKindId.KwConstMarker;
 }
 export namespace EmptyMember {
 	export type Config = EmptyMemberNs['Config'];
@@ -22297,7 +22226,7 @@ export namespace EmptyMember {
 	export type LooseConfig = EmptyMemberNs['LooseConfig'];
 	export type BuildArgs = EmptyMemberNs['BuildArgs'];
 	export type LooseArgs = EmptyMemberNs['LooseArgs'];
-	export type Kind = 'empty_member';
+	export type Kind = TSKindId.EmptyMember;
 }
 export namespace MetaPropertyNewTarget {
 	export type Config = MetaPropertyNewTargetNs['Config'];
@@ -22306,7 +22235,7 @@ export namespace MetaPropertyNewTarget {
 	export type LooseConfig = MetaPropertyNewTargetNs['LooseConfig'];
 	export type BuildArgs = MetaPropertyNewTargetNs['BuildArgs'];
 	export type LooseArgs = MetaPropertyNewTargetNs['LooseArgs'];
-	export type Kind = 'meta_property_new_target';
+	export type Kind = TSKindId.MetaPropertyNewTarget;
 }
 export namespace MetaPropertyImportMeta {
 	export type Config = MetaPropertyImportMetaNs['Config'];
@@ -22315,7 +22244,7 @@ export namespace MetaPropertyImportMeta {
 	export type LooseConfig = MetaPropertyImportMetaNs['LooseConfig'];
 	export type BuildArgs = MetaPropertyImportMetaNs['BuildArgs'];
 	export type LooseArgs = MetaPropertyImportMetaNs['LooseArgs'];
-	export type Kind = 'meta_property_import_meta';
+	export type Kind = TSKindId.MetaPropertyImportMeta;
 }
 export namespace AutomaticSemicolon {
 	export type Config = AutomaticSemicolonNs['Config'];
@@ -22324,7 +22253,7 @@ export namespace AutomaticSemicolon {
 	export type LooseConfig = AutomaticSemicolonNs['LooseConfig'];
 	export type BuildArgs = AutomaticSemicolonNs['BuildArgs'];
 	export type LooseArgs = AutomaticSemicolonNs['LooseArgs'];
-	export type Kind = '_automatic_semicolon';
+	export type Kind = TSKindId.AutomaticSemicolon;
 }
 export namespace FunctionSignatureAutomaticSemicolon {
 	export type Config = FunctionSignatureAutomaticSemicolonNs['Config'];
@@ -22333,7 +22262,7 @@ export namespace FunctionSignatureAutomaticSemicolon {
 	export type LooseConfig = FunctionSignatureAutomaticSemicolonNs['LooseConfig'];
 	export type BuildArgs = FunctionSignatureAutomaticSemicolonNs['BuildArgs'];
 	export type LooseArgs = FunctionSignatureAutomaticSemicolonNs['LooseArgs'];
-	export type Kind = '_function_signature_automatic_semicolon';
+	export type Kind = TSKindId.FunctionSignatureAutomaticSemicolon;
 }
 export namespace Tight {
 	export type Config = TightNs['Config'];
@@ -22342,7 +22271,7 @@ export namespace Tight {
 	export type LooseConfig = TightNs['LooseConfig'];
 	export type BuildArgs = TightNs['BuildArgs'];
 	export type LooseArgs = TightNs['LooseArgs'];
-	export type Kind = '_tight';
+	export type Kind = TSKindId.Tight;
 }
 export namespace Space {
 	export type Config = SpaceNs['Config'];
@@ -22351,7 +22280,7 @@ export namespace Space {
 	export type LooseConfig = SpaceNs['LooseConfig'];
 	export type BuildArgs = SpaceNs['BuildArgs'];
 	export type LooseArgs = SpaceNs['LooseArgs'];
-	export type Kind = '_space';
+	export type Kind = TSKindId.Space;
 }
 export namespace Tab {
 	export type Config = TabNs['Config'];
@@ -22360,7 +22289,7 @@ export namespace Tab {
 	export type LooseConfig = TabNs['LooseConfig'];
 	export type BuildArgs = TabNs['BuildArgs'];
 	export type LooseArgs = TabNs['LooseArgs'];
-	export type Kind = '_tab';
+	export type Kind = TSKindId.Tab;
 }
 export namespace Newline {
 	export type Config = NewlineNs['Config'];
@@ -22369,7 +22298,7 @@ export namespace Newline {
 	export type LooseConfig = NewlineNs['LooseConfig'];
 	export type BuildArgs = NewlineNs['BuildArgs'];
 	export type LooseArgs = NewlineNs['LooseArgs'];
-	export type Kind = '_newline';
+	export type Kind = TSKindId.Newline;
 }
 export namespace Blankline {
 	export type Config = BlanklineNs['Config'];
@@ -22378,7 +22307,7 @@ export namespace Blankline {
 	export type LooseConfig = BlanklineNs['LooseConfig'];
 	export type BuildArgs = BlanklineNs['BuildArgs'];
 	export type LooseArgs = BlanklineNs['LooseArgs'];
-	export type Kind = '_blankline';
+	export type Kind = TSKindId.Blankline;
 }
 export namespace DoubleBlankline {
 	export type Config = DoubleBlanklineNs['Config'];
@@ -22387,7 +22316,7 @@ export namespace DoubleBlankline {
 	export type LooseConfig = DoubleBlanklineNs['LooseConfig'];
 	export type BuildArgs = DoubleBlanklineNs['BuildArgs'];
 	export type LooseArgs = DoubleBlanklineNs['LooseArgs'];
-	export type Kind = '_double_blankline';
+	export type Kind = TSKindId.DoubleBlankline;
 }
 export namespace Indent {
 	export type Config = IndentNs['Config'];
@@ -22396,7 +22325,7 @@ export namespace Indent {
 	export type LooseConfig = IndentNs['LooseConfig'];
 	export type BuildArgs = IndentNs['BuildArgs'];
 	export type LooseArgs = IndentNs['LooseArgs'];
-	export type Kind = '_indent';
+	export type Kind = TSKindId.Indent;
 }
 export namespace Dedent {
 	export type Config = DedentNs['Config'];
@@ -22405,7 +22334,7 @@ export namespace Dedent {
 	export type LooseConfig = DedentNs['LooseConfig'];
 	export type BuildArgs = DedentNs['BuildArgs'];
 	export type LooseArgs = DedentNs['LooseArgs'];
-	export type Kind = '_dedent';
+	export type Kind = TSKindId.Dedent;
 }
 export namespace TypeKeyword {
 	export type Config = TypeKeywordNs['Config'];
@@ -22414,187 +22343,7 @@ export namespace TypeKeyword {
 	export type LooseConfig = TypeKeywordNs['LooseConfig'];
 	export type BuildArgs = TypeKeywordNs['BuildArgs'];
 	export type LooseArgs = TypeKeywordNs['LooseArgs'];
-	export type Kind = 'type_keyword';
-}
-export namespace DeclareKeyword {
-	export type Config = DeclareKeywordNs['Config'];
-	export type Built = DeclareKeywordNs['Built'];
-	export type Loose = DeclareKeywordNs['Loose'];
-	export type LooseConfig = DeclareKeywordNs['LooseConfig'];
-	export type BuildArgs = DeclareKeywordNs['BuildArgs'];
-	export type LooseArgs = DeclareKeywordNs['LooseArgs'];
-	export type Kind = 'declare_keyword';
-}
-export namespace NamespaceKeyword {
-	export type Config = NamespaceKeywordNs['Config'];
-	export type Built = NamespaceKeywordNs['Built'];
-	export type Loose = NamespaceKeywordNs['Loose'];
-	export type LooseConfig = NamespaceKeywordNs['LooseConfig'];
-	export type BuildArgs = NamespaceKeywordNs['BuildArgs'];
-	export type LooseArgs = NamespaceKeywordNs['LooseArgs'];
-	export type Kind = 'namespace_keyword';
-}
-export namespace PublicKeyword {
-	export type Config = PublicKeywordNs['Config'];
-	export type Built = PublicKeywordNs['Built'];
-	export type Loose = PublicKeywordNs['Loose'];
-	export type LooseConfig = PublicKeywordNs['LooseConfig'];
-	export type BuildArgs = PublicKeywordNs['BuildArgs'];
-	export type LooseArgs = PublicKeywordNs['LooseArgs'];
-	export type Kind = 'public_keyword';
-}
-export namespace PrivateKeyword {
-	export type Config = PrivateKeywordNs['Config'];
-	export type Built = PrivateKeywordNs['Built'];
-	export type Loose = PrivateKeywordNs['Loose'];
-	export type LooseConfig = PrivateKeywordNs['LooseConfig'];
-	export type BuildArgs = PrivateKeywordNs['BuildArgs'];
-	export type LooseArgs = PrivateKeywordNs['LooseArgs'];
-	export type Kind = 'private_keyword';
-}
-export namespace ProtectedKeyword {
-	export type Config = ProtectedKeywordNs['Config'];
-	export type Built = ProtectedKeywordNs['Built'];
-	export type Loose = ProtectedKeywordNs['Loose'];
-	export type LooseConfig = ProtectedKeywordNs['LooseConfig'];
-	export type BuildArgs = ProtectedKeywordNs['BuildArgs'];
-	export type LooseArgs = ProtectedKeywordNs['LooseArgs'];
-	export type Kind = 'protected_keyword';
-}
-export namespace OverrideKeyword {
-	export type Config = OverrideKeywordNs['Config'];
-	export type Built = OverrideKeywordNs['Built'];
-	export type Loose = OverrideKeywordNs['Loose'];
-	export type LooseConfig = OverrideKeywordNs['LooseConfig'];
-	export type BuildArgs = OverrideKeywordNs['BuildArgs'];
-	export type LooseArgs = OverrideKeywordNs['LooseArgs'];
-	export type Kind = 'override_keyword';
-}
-export namespace ReadonlyKeyword {
-	export type Config = ReadonlyKeywordNs['Config'];
-	export type Built = ReadonlyKeywordNs['Built'];
-	export type Loose = ReadonlyKeywordNs['Loose'];
-	export type LooseConfig = ReadonlyKeywordNs['LooseConfig'];
-	export type BuildArgs = ReadonlyKeywordNs['BuildArgs'];
-	export type LooseArgs = ReadonlyKeywordNs['LooseArgs'];
-	export type Kind = 'readonly_keyword';
-}
-export namespace ModuleKeyword {
-	export type Config = ModuleKeywordNs['Config'];
-	export type Built = ModuleKeywordNs['Built'];
-	export type Loose = ModuleKeywordNs['Loose'];
-	export type LooseConfig = ModuleKeywordNs['LooseConfig'];
-	export type BuildArgs = ModuleKeywordNs['BuildArgs'];
-	export type LooseArgs = ModuleKeywordNs['LooseArgs'];
-	export type Kind = 'module_keyword';
-}
-export namespace AnyKeyword {
-	export type Config = AnyKeywordNs['Config'];
-	export type Built = AnyKeywordNs['Built'];
-	export type Loose = AnyKeywordNs['Loose'];
-	export type LooseConfig = AnyKeywordNs['LooseConfig'];
-	export type BuildArgs = AnyKeywordNs['BuildArgs'];
-	export type LooseArgs = AnyKeywordNs['LooseArgs'];
-	export type Kind = 'any_keyword';
-}
-export namespace NumberKeyword {
-	export type Config = NumberKeywordNs['Config'];
-	export type Built = NumberKeywordNs['Built'];
-	export type Loose = NumberKeywordNs['Loose'];
-	export type LooseConfig = NumberKeywordNs['LooseConfig'];
-	export type BuildArgs = NumberKeywordNs['BuildArgs'];
-	export type LooseArgs = NumberKeywordNs['LooseArgs'];
-	export type Kind = 'number_keyword';
-}
-export namespace BooleanKeyword {
-	export type Config = BooleanKeywordNs['Config'];
-	export type Built = BooleanKeywordNs['Built'];
-	export type Loose = BooleanKeywordNs['Loose'];
-	export type LooseConfig = BooleanKeywordNs['LooseConfig'];
-	export type BuildArgs = BooleanKeywordNs['BuildArgs'];
-	export type LooseArgs = BooleanKeywordNs['LooseArgs'];
-	export type Kind = 'boolean_keyword';
-}
-export namespace StringKeyword {
-	export type Config = StringKeywordNs['Config'];
-	export type Built = StringKeywordNs['Built'];
-	export type Loose = StringKeywordNs['Loose'];
-	export type LooseConfig = StringKeywordNs['LooseConfig'];
-	export type BuildArgs = StringKeywordNs['BuildArgs'];
-	export type LooseArgs = StringKeywordNs['LooseArgs'];
-	export type Kind = 'string_keyword';
-}
-export namespace SymbolKeyword {
-	export type Config = SymbolKeywordNs['Config'];
-	export type Built = SymbolKeywordNs['Built'];
-	export type Loose = SymbolKeywordNs['Loose'];
-	export type LooseConfig = SymbolKeywordNs['LooseConfig'];
-	export type BuildArgs = SymbolKeywordNs['BuildArgs'];
-	export type LooseArgs = SymbolKeywordNs['LooseArgs'];
-	export type Kind = 'symbol_keyword';
-}
-export namespace ExportKeyword {
-	export type Config = ExportKeywordNs['Config'];
-	export type Built = ExportKeywordNs['Built'];
-	export type Loose = ExportKeywordNs['Loose'];
-	export type LooseConfig = ExportKeywordNs['LooseConfig'];
-	export type BuildArgs = ExportKeywordNs['BuildArgs'];
-	export type LooseArgs = ExportKeywordNs['LooseArgs'];
-	export type Kind = 'export_keyword';
-}
-export namespace ObjectKeyword {
-	export type Config = ObjectKeywordNs['Config'];
-	export type Built = ObjectKeywordNs['Built'];
-	export type Loose = ObjectKeywordNs['Loose'];
-	export type LooseConfig = ObjectKeywordNs['LooseConfig'];
-	export type BuildArgs = ObjectKeywordNs['BuildArgs'];
-	export type LooseArgs = ObjectKeywordNs['LooseArgs'];
-	export type Kind = 'object_keyword';
-}
-export namespace NewKeyword {
-	export type Config = NewKeywordNs['Config'];
-	export type Built = NewKeywordNs['Built'];
-	export type Loose = NewKeywordNs['Loose'];
-	export type LooseConfig = NewKeywordNs['LooseConfig'];
-	export type BuildArgs = NewKeywordNs['BuildArgs'];
-	export type LooseArgs = NewKeywordNs['LooseArgs'];
-	export type Kind = 'new_keyword';
-}
-export namespace GetKeyword {
-	export type Config = GetKeywordNs['Config'];
-	export type Built = GetKeywordNs['Built'];
-	export type Loose = GetKeywordNs['Loose'];
-	export type LooseConfig = GetKeywordNs['LooseConfig'];
-	export type BuildArgs = GetKeywordNs['BuildArgs'];
-	export type LooseArgs = GetKeywordNs['LooseArgs'];
-	export type Kind = 'get_keyword';
-}
-export namespace SetKeyword {
-	export type Config = SetKeywordNs['Config'];
-	export type Built = SetKeywordNs['Built'];
-	export type Loose = SetKeywordNs['Loose'];
-	export type LooseConfig = SetKeywordNs['LooseConfig'];
-	export type BuildArgs = SetKeywordNs['BuildArgs'];
-	export type LooseArgs = SetKeywordNs['LooseArgs'];
-	export type Kind = 'set_keyword';
-}
-export namespace AsyncKeyword {
-	export type Config = AsyncKeywordNs['Config'];
-	export type Built = AsyncKeywordNs['Built'];
-	export type Loose = AsyncKeywordNs['Loose'];
-	export type LooseConfig = AsyncKeywordNs['LooseConfig'];
-	export type BuildArgs = AsyncKeywordNs['BuildArgs'];
-	export type LooseArgs = AsyncKeywordNs['LooseArgs'];
-	export type Kind = 'async_keyword';
-}
-export namespace StaticKeyword {
-	export type Config = StaticKeywordNs['Config'];
-	export type Built = StaticKeywordNs['Built'];
-	export type Loose = StaticKeywordNs['Loose'];
-	export type LooseConfig = StaticKeywordNs['LooseConfig'];
-	export type BuildArgs = StaticKeywordNs['BuildArgs'];
-	export type LooseArgs = StaticKeywordNs['LooseArgs'];
-	export type Kind = 'static_keyword';
+	export type Kind = TSKindId.TypeKeyword;
 }
 export namespace LetKeyword {
 	export type Config = LetKeywordNs['Config'];
@@ -22603,7 +22352,187 @@ export namespace LetKeyword {
 	export type LooseConfig = LetKeywordNs['LooseConfig'];
 	export type BuildArgs = LetKeywordNs['BuildArgs'];
 	export type LooseArgs = LetKeywordNs['LooseArgs'];
-	export type Kind = 'let_keyword';
+	export type Kind = TSKindId.LetKeyword;
+}
+export namespace DeclareKeyword {
+	export type Config = DeclareKeywordNs['Config'];
+	export type Built = DeclareKeywordNs['Built'];
+	export type Loose = DeclareKeywordNs['Loose'];
+	export type LooseConfig = DeclareKeywordNs['LooseConfig'];
+	export type BuildArgs = DeclareKeywordNs['BuildArgs'];
+	export type LooseArgs = DeclareKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.DeclareKeyword;
+}
+export namespace NamespaceKeyword {
+	export type Config = NamespaceKeywordNs['Config'];
+	export type Built = NamespaceKeywordNs['Built'];
+	export type Loose = NamespaceKeywordNs['Loose'];
+	export type LooseConfig = NamespaceKeywordNs['LooseConfig'];
+	export type BuildArgs = NamespaceKeywordNs['BuildArgs'];
+	export type LooseArgs = NamespaceKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.NamespaceKeyword;
+}
+export namespace PublicKeyword {
+	export type Config = PublicKeywordNs['Config'];
+	export type Built = PublicKeywordNs['Built'];
+	export type Loose = PublicKeywordNs['Loose'];
+	export type LooseConfig = PublicKeywordNs['LooseConfig'];
+	export type BuildArgs = PublicKeywordNs['BuildArgs'];
+	export type LooseArgs = PublicKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.PublicKeyword;
+}
+export namespace PrivateKeyword {
+	export type Config = PrivateKeywordNs['Config'];
+	export type Built = PrivateKeywordNs['Built'];
+	export type Loose = PrivateKeywordNs['Loose'];
+	export type LooseConfig = PrivateKeywordNs['LooseConfig'];
+	export type BuildArgs = PrivateKeywordNs['BuildArgs'];
+	export type LooseArgs = PrivateKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.PrivateKeyword;
+}
+export namespace ProtectedKeyword {
+	export type Config = ProtectedKeywordNs['Config'];
+	export type Built = ProtectedKeywordNs['Built'];
+	export type Loose = ProtectedKeywordNs['Loose'];
+	export type LooseConfig = ProtectedKeywordNs['LooseConfig'];
+	export type BuildArgs = ProtectedKeywordNs['BuildArgs'];
+	export type LooseArgs = ProtectedKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.ProtectedKeyword;
+}
+export namespace OverrideKeyword {
+	export type Config = OverrideKeywordNs['Config'];
+	export type Built = OverrideKeywordNs['Built'];
+	export type Loose = OverrideKeywordNs['Loose'];
+	export type LooseConfig = OverrideKeywordNs['LooseConfig'];
+	export type BuildArgs = OverrideKeywordNs['BuildArgs'];
+	export type LooseArgs = OverrideKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.OverrideKeyword;
+}
+export namespace ReadonlyKeyword {
+	export type Config = ReadonlyKeywordNs['Config'];
+	export type Built = ReadonlyKeywordNs['Built'];
+	export type Loose = ReadonlyKeywordNs['Loose'];
+	export type LooseConfig = ReadonlyKeywordNs['LooseConfig'];
+	export type BuildArgs = ReadonlyKeywordNs['BuildArgs'];
+	export type LooseArgs = ReadonlyKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.ReadonlyKeyword;
+}
+export namespace ModuleKeyword {
+	export type Config = ModuleKeywordNs['Config'];
+	export type Built = ModuleKeywordNs['Built'];
+	export type Loose = ModuleKeywordNs['Loose'];
+	export type LooseConfig = ModuleKeywordNs['LooseConfig'];
+	export type BuildArgs = ModuleKeywordNs['BuildArgs'];
+	export type LooseArgs = ModuleKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.ModuleKeyword;
+}
+export namespace AnyKeyword {
+	export type Config = AnyKeywordNs['Config'];
+	export type Built = AnyKeywordNs['Built'];
+	export type Loose = AnyKeywordNs['Loose'];
+	export type LooseConfig = AnyKeywordNs['LooseConfig'];
+	export type BuildArgs = AnyKeywordNs['BuildArgs'];
+	export type LooseArgs = AnyKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.AnyKeyword;
+}
+export namespace NumberKeyword {
+	export type Config = NumberKeywordNs['Config'];
+	export type Built = NumberKeywordNs['Built'];
+	export type Loose = NumberKeywordNs['Loose'];
+	export type LooseConfig = NumberKeywordNs['LooseConfig'];
+	export type BuildArgs = NumberKeywordNs['BuildArgs'];
+	export type LooseArgs = NumberKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.NumberKeyword;
+}
+export namespace BooleanKeyword {
+	export type Config = BooleanKeywordNs['Config'];
+	export type Built = BooleanKeywordNs['Built'];
+	export type Loose = BooleanKeywordNs['Loose'];
+	export type LooseConfig = BooleanKeywordNs['LooseConfig'];
+	export type BuildArgs = BooleanKeywordNs['BuildArgs'];
+	export type LooseArgs = BooleanKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.BooleanKeyword;
+}
+export namespace StringKeyword {
+	export type Config = StringKeywordNs['Config'];
+	export type Built = StringKeywordNs['Built'];
+	export type Loose = StringKeywordNs['Loose'];
+	export type LooseConfig = StringKeywordNs['LooseConfig'];
+	export type BuildArgs = StringKeywordNs['BuildArgs'];
+	export type LooseArgs = StringKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.StringKeyword;
+}
+export namespace SymbolKeyword {
+	export type Config = SymbolKeywordNs['Config'];
+	export type Built = SymbolKeywordNs['Built'];
+	export type Loose = SymbolKeywordNs['Loose'];
+	export type LooseConfig = SymbolKeywordNs['LooseConfig'];
+	export type BuildArgs = SymbolKeywordNs['BuildArgs'];
+	export type LooseArgs = SymbolKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.SymbolKeyword;
+}
+export namespace ExportKeyword {
+	export type Config = ExportKeywordNs['Config'];
+	export type Built = ExportKeywordNs['Built'];
+	export type Loose = ExportKeywordNs['Loose'];
+	export type LooseConfig = ExportKeywordNs['LooseConfig'];
+	export type BuildArgs = ExportKeywordNs['BuildArgs'];
+	export type LooseArgs = ExportKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.ExportKeyword;
+}
+export namespace ObjectKeyword {
+	export type Config = ObjectKeywordNs['Config'];
+	export type Built = ObjectKeywordNs['Built'];
+	export type Loose = ObjectKeywordNs['Loose'];
+	export type LooseConfig = ObjectKeywordNs['LooseConfig'];
+	export type BuildArgs = ObjectKeywordNs['BuildArgs'];
+	export type LooseArgs = ObjectKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.ObjectKeyword;
+}
+export namespace NewKeyword {
+	export type Config = NewKeywordNs['Config'];
+	export type Built = NewKeywordNs['Built'];
+	export type Loose = NewKeywordNs['Loose'];
+	export type LooseConfig = NewKeywordNs['LooseConfig'];
+	export type BuildArgs = NewKeywordNs['BuildArgs'];
+	export type LooseArgs = NewKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.NewKeyword;
+}
+export namespace GetKeyword {
+	export type Config = GetKeywordNs['Config'];
+	export type Built = GetKeywordNs['Built'];
+	export type Loose = GetKeywordNs['Loose'];
+	export type LooseConfig = GetKeywordNs['LooseConfig'];
+	export type BuildArgs = GetKeywordNs['BuildArgs'];
+	export type LooseArgs = GetKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.GetKeyword;
+}
+export namespace SetKeyword {
+	export type Config = SetKeywordNs['Config'];
+	export type Built = SetKeywordNs['Built'];
+	export type Loose = SetKeywordNs['Loose'];
+	export type LooseConfig = SetKeywordNs['LooseConfig'];
+	export type BuildArgs = SetKeywordNs['BuildArgs'];
+	export type LooseArgs = SetKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.SetKeyword;
+}
+export namespace AsyncKeyword {
+	export type Config = AsyncKeywordNs['Config'];
+	export type Built = AsyncKeywordNs['Built'];
+	export type Loose = AsyncKeywordNs['Loose'];
+	export type LooseConfig = AsyncKeywordNs['LooseConfig'];
+	export type BuildArgs = AsyncKeywordNs['BuildArgs'];
+	export type LooseArgs = AsyncKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.AsyncKeyword;
+}
+export namespace StaticKeyword {
+	export type Config = StaticKeywordNs['Config'];
+	export type Built = StaticKeywordNs['Built'];
+	export type Loose = StaticKeywordNs['Loose'];
+	export type LooseConfig = StaticKeywordNs['LooseConfig'];
+	export type BuildArgs = StaticKeywordNs['BuildArgs'];
+	export type LooseArgs = StaticKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.StaticKeyword;
 }
 export namespace UnescapedDoubleStringFragment {
 	export type Config = UnescapedDoubleStringFragmentNs['Config'];
@@ -22617,7 +22546,7 @@ export namespace UnescapedDoubleStringFragment {
 	export type LooseConfig = UnescapedDoubleStringFragmentNs['LooseConfig'];
 	export type BuildArgs = UnescapedDoubleStringFragmentNs['BuildArgs'];
 	export type LooseArgs = UnescapedDoubleStringFragmentNs['LooseArgs'];
-	export type Kind = 'unescaped_double_string_fragment';
+	export type Kind = TSKindId.UnescapedDoubleStringFragment;
 }
 export namespace UnescapedSingleStringFragment {
 	export type Config = UnescapedSingleStringFragmentNs['Config'];
@@ -22631,7 +22560,7 @@ export namespace UnescapedSingleStringFragment {
 	export type LooseConfig = UnescapedSingleStringFragmentNs['LooseConfig'];
 	export type BuildArgs = UnescapedSingleStringFragmentNs['BuildArgs'];
 	export type LooseArgs = UnescapedSingleStringFragmentNs['LooseArgs'];
-	export type Kind = 'unescaped_single_string_fragment';
+	export type Kind = TSKindId.UnescapedSingleStringFragment;
 }
 export namespace RegexPattern {
 	export type Config = RegexPatternNs['Config'];
@@ -22645,7 +22574,7 @@ export namespace RegexPattern {
 	export type LooseConfig = RegexPatternNs['LooseConfig'];
 	export type BuildArgs = RegexPatternNs['BuildArgs'];
 	export type LooseArgs = RegexPatternNs['LooseArgs'];
-	export type Kind = 'regex_pattern';
+	export type Kind = TSKindId.RegexPattern;
 }
 export namespace RegexFlags {
 	export type Config = RegexFlagsNs['Config'];
@@ -22659,7 +22588,7 @@ export namespace RegexFlags {
 	export type LooseConfig = RegexFlagsNs['LooseConfig'];
 	export type BuildArgs = RegexFlagsNs['BuildArgs'];
 	export type LooseArgs = RegexFlagsNs['LooseArgs'];
-	export type Kind = 'regex_flags';
+	export type Kind = TSKindId.RegexFlags;
 }
 export namespace Identifier {
 	export type Config = IdentifierNs['Config'];
@@ -22673,7 +22602,7 @@ export namespace Identifier {
 	export type LooseConfig = IdentifierNs['LooseConfig'];
 	export type BuildArgs = IdentifierNs['BuildArgs'];
 	export type LooseArgs = IdentifierNs['LooseArgs'];
-	export type Kind = 'identifier';
+	export type Kind = TSKindId.Identifier;
 }
 export namespace NumberDecimal {
 	export type Config = NumberDecimalNs['Config'];
@@ -22687,7 +22616,7 @@ export namespace NumberDecimal {
 	export type LooseConfig = NumberDecimalNs['LooseConfig'];
 	export type BuildArgs = NumberDecimalNs['BuildArgs'];
 	export type LooseArgs = NumberDecimalNs['LooseArgs'];
-	export type Kind = 'number_decimal';
+	export type Kind = TSKindId.NumberDecimal;
 }
 export namespace HtmlComment {
 	export type Config = HtmlCommentNs['Config'];
@@ -22701,7 +22630,7 @@ export namespace HtmlComment {
 	export type LooseConfig = HtmlCommentNs['LooseConfig'];
 	export type BuildArgs = HtmlCommentNs['BuildArgs'];
 	export type LooseArgs = HtmlCommentNs['LooseArgs'];
-	export type Kind = 'html_comment';
+	export type Kind = TSKindId.HtmlComment;
 }
 export namespace JsxText {
 	export type Config = JsxTextNs['Config'];
@@ -22715,7 +22644,7 @@ export namespace JsxText {
 	export type LooseConfig = JsxTextNs['LooseConfig'];
 	export type BuildArgs = JsxTextNs['BuildArgs'];
 	export type LooseArgs = JsxTextNs['LooseArgs'];
-	export type Kind = 'jsx_text';
+	export type Kind = TSKindId.JsxText;
 }
 export namespace TemplateChars {
 	export type Config = TemplateCharsNs['Config'];
@@ -22729,7 +22658,7 @@ export namespace TemplateChars {
 	export type LooseConfig = TemplateCharsNs['LooseConfig'];
 	export type BuildArgs = TemplateCharsNs['BuildArgs'];
 	export type LooseArgs = TemplateCharsNs['LooseArgs'];
-	export type Kind = '_template_chars';
+	export type Kind = TSKindId.TemplateChars;
 }
 export namespace TernaryQmark {
 	export type Config = TernaryQmarkNs['Config'];
@@ -22743,7 +22672,7 @@ export namespace TernaryQmark {
 	export type LooseConfig = TernaryQmarkNs['LooseConfig'];
 	export type BuildArgs = TernaryQmarkNs['BuildArgs'];
 	export type LooseArgs = TernaryQmarkNs['LooseArgs'];
-	export type Kind = '_ternary_qmark';
+	export type Kind = TSKindId.TernaryQmark;
 }
 export namespace ErrorRecovery {
 	export type Config = ErrorRecoveryNs['Config'];
@@ -22757,7 +22686,7 @@ export namespace ErrorRecovery {
 	export type LooseConfig = ErrorRecoveryNs['LooseConfig'];
 	export type BuildArgs = ErrorRecoveryNs['BuildArgs'];
 	export type LooseArgs = ErrorRecoveryNs['LooseArgs'];
-	export type Kind = '__error_recovery';
+	export type Kind = TSKindId.ErrorRecovery;
 }
 
 export interface TypescriptTypeMap extends GrammarTypeMap {

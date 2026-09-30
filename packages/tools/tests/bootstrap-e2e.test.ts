@@ -10,7 +10,7 @@ import { conflictResolutionsPath, ensureConflictResolutions } from '../../codege
 import type { ConflictResolutionsFile } from '../../codegen/src/dsl/conflict-resolutions.ts';
 import { loadPackageIdTables } from '../../codegen/src/compiler/generated-metadata.ts';
 import { compileGrammar } from '../../codegen/src/compiler/compile.ts';
-import { evaluate } from '../../codegen/src/compiler/evaluate.ts';
+import { evaluatePackage } from '../../codegen/src/compiler/evaluate-package.ts';
 import { packageEntryPath } from '../../codegen/src/compiler/resolve-grammar.ts';
 import { GrammarDiagnosticError } from '../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts';
 import { generate } from '../../codegen/src/compiler/generate.ts';
@@ -83,7 +83,7 @@ async function bootstrapEndToEnd(name: string): Promise<{ floors: Record<string,
 		const compilation = await compileGrammar({ package: pkg, generatedIdTables });
 		const derived = JSON.parse(readFileSync(conflictResolutionsPath(pkg), 'utf8')) as ConflictResolutionsFile;
 		expect(derived.resolutions.length).toBeGreaterThan(0);
-		expect((await evaluate(packageEntryPath(pkg))).conflicts).toEqual(derived.resolutions.map((entry) => entry.resolution.symbols));
+		expect((await evaluatePackage(pkg)).conflicts).toEqual(derived.resolutions.map((entry) => entry.resolution.symbols));
 		const files = await generate({ grammar: name, outputDir: join(root, 'out'), compilation });
 		return { floors, typesSource: files.types };
 	} finally {

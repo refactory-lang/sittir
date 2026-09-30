@@ -34,7 +34,7 @@ describe('python NamespaceMap access-path convergence', () => {
 	it('Fluent / Loose / Kind each converge', () => {
 		expectTrue<Equals<FunctionDefinition.Built, BuiltFor<TSKindId.FunctionDefinition>>>();
 		expectTrue<Equals<FunctionDefinition.Loose, LooseFor<TSKindId.FunctionDefinition>>>();
-		expectTrue<Equals<FunctionDefinition.Kind, 'function_definition'>>();
+		expectTrue<Equals<FunctionDefinition.Kind, TSKindId.FunctionDefinition>>();
 	});
 
 	it('Module (root kind) converges', () => {

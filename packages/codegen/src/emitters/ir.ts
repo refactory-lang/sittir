@@ -8,7 +8,7 @@ import {
 	AssembledSupertype,
 	AssembledPattern
 } from '../compiler/model/node-map.ts';
-import { isValidIdent, irNamespacesChildFactory, lexedContentSlot } from './shared.ts';
+import { isValidIdent, irNamespacesChildFactory, lexedContentSlot, isDeclaredSupertype } from './shared.ts';
 import { supertypeMemberName } from '../dsl/arm-names.ts';
 import { lowerCamelCase } from '../compiler/model/casing.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
@@ -78,7 +78,7 @@ export function emitIr(config: EmitIrConfig): string {
 	const flattenedKeyByKind = new Map(flattenedParents.map((parent) => [parent.node.kind, parent.key] as const));
 
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!(node instanceof AssembledSupertype) || !node.declared || flattenedKinds.has(kind)) continue;
+		if (!isDeclaredSupertype(node) || flattenedKinds.has(kind)) continue;
 		const sup = node;
 		const groupName = groupNameFor(kind);
 		if (!isValidIdent(groupName) || usedGroupNames.has(groupName)) continue;
@@ -273,7 +273,7 @@ function factoryRef(node: AssembledNode): string {
 }
 
 function returnTypeExpr(node: AssembledNode): string {
-	return `ReturnType<typeof ${factoryRef(node)}>`;
+	return isBuilderTextLeaf(node) ? `typeof ${factoryRef(node)}` : `ReturnType<typeof ${factoryRef(node)}>`;
 }
 
 function emitSynonymNamespace(grammarRoles: GrammarRoles, nodeMap: NodeMap): string[] {
@@ -315,7 +315,7 @@ function emitSynonymBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 	if (trueNode && falseNode) {
 		const retType = `${returnTypeExpr(trueNode)} | ${returnTypeExpr(falseNode)}`;
 		fns.push(`  boolean(value: boolean): ${retType} {`);
-		fns.push(`    return value ? ${factoryRef(trueNode)}() : ${factoryRef(falseNode)}();`);
+		fns.push(`    return value ? ${factoryRef(trueNode)} : ${factoryRef(falseNode)};`);
 		fns.push('  },');
 		return;
 	}

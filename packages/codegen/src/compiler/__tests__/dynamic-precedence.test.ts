@@ -3,9 +3,8 @@ import type { DerivationRecords } from '../../dsl/wire/derivation-records.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { dynamicPrecedenceRecords } from '../diagnostics/dynamic-precedence.ts';
 import { unexpectableExpectEntries } from '../diagnostics/grammar-diagnostics.ts';
-import { evaluate } from '../evaluate.ts';
-import { packageEntryPath } from '../resolve-grammar.ts';
 import type { RawGrammar } from '../types.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
 
 type Fixture = Pick<RawGrammar, 'name' | 'derivationRecords' | 'ruleCauses' | 'undeclaredRules'>;
 
@@ -68,7 +67,7 @@ describe('dynamicPrecedenceRecords', () => {
 describe('python dynamic precedence', () => {
 	let python: RawGrammar;
 	beforeAll(async () => {
-		python = await evaluate(packageEntryPath(grammarPackage('python')));
+		python = await evaluatePackage(grammarPackage('python'));
 	});
 
 	it('loses nothing upstream declared, and records the authored primary_expression addition', () => {

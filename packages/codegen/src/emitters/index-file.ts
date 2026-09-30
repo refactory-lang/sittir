@@ -16,7 +16,7 @@ export function emitIndex(config: EmitIndexConfig): string {
 		'',
 		`export type { ${api} } from './api.js';`,
 		'',
-		`const ${config.grammar}: Language<${api}> = { name: '${config.grammar}', load: () => import('./api.js').then((m) => m.hooks) };`,
+		`const ${config.grammar}: Language<${api}> = { name: '${config.grammar}', fileTypes: ${JSON.stringify(config.nodeMap.fileTypes)}, load: () => import('./api.js').then((m) => m.hooks) };`,
 		`export default ${config.grammar};`,
 		'',
 		"export type * from './types.js';",

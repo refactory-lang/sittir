@@ -206,7 +206,7 @@ describe('namespaced constructors reach the arm kinds', () => {
 	// A variant minted inside another variant's rule is spelled inside it: the
 	// caller types each authored form name, under the arm that reaches it.
 	it('reaches an in-path visibility modifier under the arm it nests in', () => {
-		const path = rs.build.scopedIdentifier({ path: rs.build.crate(), name: rs.build.identifier('x') });
+		const path = rs.build.scopedIdentifier({ path: rs.build.crate, name: rs.build.identifier('x') });
 		expect(rs.build.visibilityModifier.pub.scope.inPath.strict(path).$render()).toBe('pub(in crate::x)');
 		expect(rs.build.visibilityModifier.pub.scope.self.strict().$render()).toBe('pub(self)');
 	});
