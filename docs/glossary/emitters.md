@@ -2946,7 +2946,7 @@ defaults a missing `$text` to it.
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::kindIdSetFn`
 
-The generated Rust predicate `pub fn <name>(kind: KindId) -> bool` over a set of kind ids: `matches!` over the ids, or, for an empty set, a body of `false` with the parameter named `_kind` so it compiles without an unused-variable warning. `is_text_kind` and `is_alias_envelope` are emitted through it.
+The generated Rust predicate `pub fn <name>(kind: KindId) -> bool` over a set of kind ids: `matches!` over the ids, or, for an empty set, a body of `false` with the parameter named `_kind` so it compiles without an unused-variable warning. `is_text_kind` is emitted through it.
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::wire_slot`
 
@@ -13482,6 +13482,17 @@ Removes the `occurrence`-th entry named `slot` from a node's `$slotOrder` draft.
 
 The literal texts a compound's render rule places directly under each field, keyed by field name: a `STRING` reached through `CHOICE`/`SEQ` inside `field(name, …)`. Tree-sitter tags such a token with the field (the `,` in python's `for_in_clause.right`, the `;` in typescript's `for_statement.condition`), so the reader puts it in the field's storage beside the field's real content. The token is punctuation the render template already emits, so `separatorIdsExprOf` adds these texts to the slot's drop set and `dropWireDelimiters` strips them, for singular slots as well as `many` ones, along with their `$slotOrder` entries (`_dropOrderEntry`). Lexed-interior compounds are skipped: their interior is one token, not fields.
 
+### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.aliasIdentityLines`
+
+Emits the wrap layer's alias identity. The reader ships every node's `$type` as the grammar symbol that parsed it, plus `$displayType` (the kind the parser shows) when the two differ. Whether a display kind is an alias envelope is a model fact, so it is decided here from `AssembledAlias.aliasTypeId`:
+
+- `_ALIAS_ENVELOPES`: the envelope display ids.
+- `_HIDDEN_KINDS`: the catalog's hidden kind ids (the parser's own visibility), emitted when the grammar has an envelope. `_aliasEnvelope` uses it to tell an envelope's own container (a hidden grammar symbol, whose one slot becomes `_content`) from a visible storage node shown under the alias (which becomes `_content` whole).
+- `_kindOf(entry)`: the kind a read node has in the model, which is the envelope id when its `$displayType` is an envelope and its `$type` otherwise. `wrapNode` dispatches on it, and every projection that reads a raw child's kind (`projectKindEnumStorage`, `projectMixedEnumStorage`, `_wrapKindNameOf`) goes through it. So a raw child still sitting in its parent's storage is judged by the same identity it will wrap to: a keyword spelled as a property name stays a `property_identifier` node rather than folding into the keyword's enum id.
+- `_withoutDisplay(data)`: removes `$displayType` from a node that is not an envelope, so only envelope seating ever sees it.
+
+A grammar without a kind catalog gets a `_kindOf` that returns `$type`.
+
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.dropSpellingLines`
 
 Emits `_RECLAIMS_ANONYMOUS` and `_dropSpelling`, which `wrapNode` applies to every node before its per-kind wrap, trivia entries included. The reader ships anonymous children as `$other`. A node whose only unfielded content is anonymous tokens (no `_`-prefixed slot keys, every `$other` entry `$named: false`) is spelled by those tokens, not structured by them, so `_dropSpelling` removes that `$other` and keeps the node's own `$text` when the reader sent one. It never takes a token's text as the node's: a token can be part of a node whose remaining content is a hidden token (`format_specifier`'s `:` before `#06x`, `block_comment`'s delimiters around its body). Kinds with a `reclaimsAnonymousChild` slot keep `$other`, because their wrap reads the token into that slot. Without the drop, a node that keeps `$other` counts as storage-bearing in the transport projection and loses its `$text` (a `primitive_type`, an `import_prefix`).
@@ -13610,7 +13621,7 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 // through `wrapNode` by its own `$type`: a comment entry exposes its
 // kind's accessors. `wrapNode`
 // wraps the trivia before dispatch, once per node; `_aliasEnvelope`
-// keeps the display node's wrapped trivia and wraps only trivia that
+// keeps the shown node's wrapped trivia and wraps only trivia that
 // arrived with the storage re-read. Text entries have no `$type` and
 // pass through as they are.
 ```

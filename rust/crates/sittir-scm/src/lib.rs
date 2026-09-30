@@ -52,10 +52,6 @@ impl sittir_core::read_node::ReadModel for ScmGrammar {
         render::kind_ids::is_text_kind(kind)
     }
 
-    fn is_alias_envelope(&self, kind: sittir_core::types::KindId) -> bool {
-        render::kind_ids::is_alias_envelope(kind)
-    }
-
     fn wire_slot(
         &self,
         parent: sittir_core::types::KindId,

@@ -186,7 +186,7 @@ describe('a visible enum leaf reads as its own parser symbol', () => {
 	it('the wrap projection folds a read enum node onto its member id by text', () => {
 		const { nodeMap } = makeMixedEnumNodeMap('primitive_type');
 		const source = emitWrap({ grammar: 'synth', nodeMap, kindEntries: wrapKindEntries });
-		expect(source).toContain('ownSymbols?.includes(entry.$type) && typeof entry.$text === "string"');
+		expect(source).toContain('ownSymbols?.includes(kind) && typeof entry.$text === "string"');
 		expect(source).toMatch(/projectMixedEnumStorage\([\s\S]*?\{ "?u8"?: 1, "?bool"?: 2 \}, undefined, \[346\]/);
 	});
 });

@@ -958,13 +958,6 @@ pub fn is_text_kind(kind: KindId) -> bool {
     matches!(kind.0, 1 | 125 | 129 | 138 | 139 | 140 | 141 | 142 | 143 | 144 | 145 | 146 | 147 | 148 | 149 | 150 | 151 | 153 | 156 | 158 | 159 | 160 | 161 | 162 | 165 | 166 | 167 | 186 | 336 | 341 | 361 | 362 | 398)
 }
 
-/// Whether this parse kind id is an alias envelope: the reader stamps the
-/// grammar symbol beside it when the node is the storage node shown under
-/// the alias, so the wrap layer can seat it as the envelope's content.
-pub fn is_alias_envelope(kind: KindId) -> bool {
-    matches!(kind.0, 463 | 465 | 466)
-}
-
 /// The model slot a child is stored under where its name differs from the
 /// parser's key: a field-tagged child by (parent kind id, field), a named
 /// child without a field by (parent kind id, the child's kind name).

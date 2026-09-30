@@ -246,14 +246,14 @@ function projectKindEnumStorage<T>(
 		return typeof mappedId === 'number' ? (mappedId as unknown as T) : value;
 	}
 	if (typeof value === 'number') return (altIds?.[value] ?? value) as unknown as T;
-	if (typeof entry.$type === 'number' && altIds?.[entry.$type] !== undefined)
-		return altIds[entry.$type] as unknown as T;
+	const kind = _kindOf(entry);
+	if (typeof kind === 'number' && altIds?.[kind] !== undefined) return altIds[kind] as unknown as T;
 	if (typeof entry.$text === 'string') {
 		const mappedId = textIds?.[entry.$text];
 		if (typeof mappedId === 'number') return mappedId as unknown as T;
 		return entry.$text as unknown as T;
 	}
-	return typeof entry.$type === 'number' ? (entry.$type as T) : value;
+	return typeof kind === 'number' ? (kind as T) : value;
 }
 function projectMixedEnumStorage<T>(
 	value: T,
@@ -270,11 +270,12 @@ function projectMixedEnumStorage<T>(
 		return typeof mappedId === 'number' ? (mappedId as unknown as T) : value;
 	}
 	if (typeof value === 'number') return (altIds?.[value] ?? value) as unknown as T;
-	if (typeof entry.$type === 'number') {
-		const folded = altIds?.[entry.$type];
+	const kind = _kindOf(entry);
+	if (typeof kind === 'number') {
+		const folded = altIds?.[kind];
 		if (folded !== undefined) return folded as unknown as T;
-		if (textIds && Object.values(textIds).includes(entry.$type)) return entry.$type as unknown as T;
-		if (ownSymbols?.includes(entry.$type) && typeof entry.$text === 'string') {
+		if (textIds && Object.values(textIds).includes(kind)) return kind as unknown as T;
+		if (ownSymbols?.includes(kind) && typeof entry.$text === 'string') {
 			const memberId = textIds?.[entry.$text];
 			if (typeof memberId === 'number') return memberId as unknown as T;
 		}
@@ -330,7 +331,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 
 function _wrapKindNameOf(entry: unknown): string | undefined {
 	if (!entry || typeof entry !== 'object') return undefined;
-	const raw = (entry as { $type?: unknown }).$type;
+	const raw: unknown = _kindOf(entry as _NodeData);
 	if (raw === undefined) return undefined;
 	if (typeof raw === 'number') return KIND_NAMES.get(raw as never) ?? String(raw);
 	return typeof raw === 'string' ? raw : undefined;
@@ -1536,33 +1537,35 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 
 function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
 	type Wire = _NodeData & {
-		readonly $storageType?: number;
+		readonly $displayType?: number;
 		readonly $nodeHandle?: number;
 		readonly $childIndex?: number;
 		readonly $span?: unknown;
 	};
-	const shown = data as Wire;
-	if (shown.$storageType === undefined) {
+	const { $displayType, ...shown } = data as Wire;
+	if ($displayType === undefined) return data;
+	const envelope = $displayType as _NodeData['$type'];
+	if (_HIDDEN_KINDS.has(shown.$type)) {
 		const slots = Object.keys(shown).filter((key) => key.charCodeAt(0) === 95);
-		if (slots.length !== 1 || slots[0] === '_content') return data;
+		if (slots.length !== 1 || slots[0] === '_content') return { ...shown, $type: envelope } as _NodeData;
 		const { [slots[0]!]: child, ...container } = shown as unknown as Record<string, unknown>;
-		return { ...container, _content: child } as unknown as _NodeData;
+		return { ...container, $type: envelope, _content: child } as unknown as _NodeData;
 	}
 	const full = (
 		shown.$nodeHandle != null && shown.$childIndex != null
 			? readNode(tree, shown.$nodeHandle, shown.$childIndex)
 			: shown
 	) as Wire;
-	const { $storageType, $_trivia, $childIndex: _childIndex, ...storage } = full;
+	const { $displayType: _display, $_trivia, $childIndex: _childIndex, ...storage } = full;
 	return {
-		$type: shown.$type,
+		$type: envelope,
 		$source: shown.$source,
 		$named: shown.$named,
 		$span: shown.$span,
 		$nodeHandle: shown.$nodeHandle,
 		$childIndex: shown.$childIndex,
 		$_trivia: shown.$_trivia ?? _wrapTrivia($_trivia, tree),
-		_content: { ...storage, $type: $storageType }
+		_content: storage
 	} as unknown as _NodeData;
 }
 
@@ -1642,6 +1645,19 @@ function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData
 	return trivia && mapTriviaEntries(trivia, (entries) => drillInAll(entries, tree) as unknown as typeof entries);
 }
 
+const _ALIAS_ENVELOPES: ReadonlySet<number> = new Set([88, 89]);
+const _HIDDEN_KINDS: ReadonlySet<_NodeData['$type']> = new Set([
+	18, 35, 36, 37, 39, 40, 46, 47, 48, 49, 50, 65, 85, 86, 87
+]);
+function _kindOf(entry: _NodeData): _NodeData['$type'] {
+	const display = (entry as { readonly $displayType?: number }).$displayType;
+	return display !== undefined && _ALIAS_ENVELOPES.has(display) ? display : entry.$type;
+}
+function _withoutDisplay(data: _NodeData): _NodeData {
+	const { $displayType: _display, ...node } = data as _NodeData & { readonly $displayType?: number };
+	return node as _NodeData;
+}
+
 const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData['$type']> = new Set([56, 57, 63, 77]);
 function _dropSpelling(data: _NodeData): _NodeData {
 	const { $other, ...node } = data;
@@ -1664,8 +1680,9 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// is a direct id-keyed lookup. A non-numeric `$type` can only be a
 	// catalog-less kind (the deprecated JS diagnostic lane stamps those
 	// as strings), which never had a table entry to reach.
-	const fn = typeof data.$type === 'number' ? _wrapTable[data.$type] : undefined;
-	const own = _dropSpelling(data);
+	const type = _kindOf(data);
+	const fn = typeof type === 'number' ? _wrapTable[type] : undefined;
+	const own = _dropSpelling(type === data.$type ? _withoutDisplay(data) : data);
 	const shown = own.$_trivia == null ? own : { ...own, $_trivia: _wrapTrivia(own.$_trivia, tree) };
 	return inTreeEngine(tree, () => (fn ? fn(shown, tree) : _drillUnknownKindChildren(shown, tree)));
 }

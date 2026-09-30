@@ -73,15 +73,6 @@ pub trait ReadModel {
         None
     }
 
-    /// Whether this parse kind id is an alias envelope: a kind the model
-    /// wraps around the storage node the parser shows under that id. The
-    /// reader stamps both ids on such a node when it is the storage node
-    /// itself, so the wrap layer can seat it as the envelope's content.
-    fn is_alias_envelope(&self, kind: KindId) -> bool {
-        let _ = kind;
-        false
-    }
-
     /// The gap an extra inside a node of this kind occupies when the node
     /// has no named child to own it, named by the model slot whose position
     /// the gap holds, given the count of anonymous tokens before the extra.
@@ -171,23 +162,12 @@ fn stamped_kind(node: &tree_sitter::Node<'_>) -> KindId {
     KindId(node.grammar_id())
 }
 
-/// The `($type, $storageType)` pair a read stamps. A node the parser shows
-/// under an alias envelope's id has the envelope as its identity either way;
-/// its content is decided by the node itself. A hidden grammar symbol is the
-/// envelope's own container, whose child is its content; a visible one is
-/// the storage node itself under the alias, so its grammar symbol rides
-/// along as the content's storage kind.
-fn identity(node: &tree_sitter::Node<'_>, model: &dyn ReadModel) -> (KindId, Option<KindId>) {
+/// The `($type, $displayType)` pair a read stamps: the grammar symbol that
+/// parsed the node, and the kind the parser shows it as when that differs.
+fn identity(node: &tree_sitter::Node<'_>) -> (KindId, Option<KindId>) {
+    let grammar = stamped_kind(node);
     let display = KindId(node.kind_id());
-    let storage = stamped_kind(node);
-    if display == storage || !model.is_alias_envelope(display) {
-        return (storage, None);
-    }
-    if node.language().node_kind_is_visible(storage.0) {
-        (display, Some(storage))
-    } else {
-        (display, None)
-    }
+    (grammar, (display != grammar).then_some(display))
 }
 
 /// Read core — converts a tree-sitter `Node` into `NodeData`.
@@ -208,7 +188,7 @@ fn read_ts_node(
     // so NodeData.type_: KindId flows end-to-end without a heap-allocated
     // String per node; identity comes from the grammar symbol (see
     // `stamped_kind`).
-    let (kind, storage_type) = identity(&node, model);
+    let (kind, display_type) = identity(&node);
 
     let named = node.is_named();
     let byte_range = node.byte_range();
@@ -227,7 +207,7 @@ fn read_ts_node(
 
     NodeData {
         type_: kind,
-        storage_type,
+        display_type,
         source: Source::Ts,
         named,
         fields,
@@ -626,10 +606,10 @@ fn read_child_stub(
     model: &dyn ReadModel,
 ) -> NodeData {
     let byte_range = child.byte_range();
-    let (type_, storage_type) = identity(&child, model);
+    let (type_, display_type) = identity(&child);
     NodeData {
         type_,
-        storage_type,
+        display_type,
         source: Source::Ts,
         named: child.is_named(),
         fields: None,
@@ -656,10 +636,10 @@ fn read_materialized_leaf(
     child_index: Option<u16>,
 ) -> NodeData {
     let byte_range = child.byte_range();
-    let (type_, storage_type) = identity(&child, model);
+    let (type_, display_type) = identity(&child);
     NodeData {
         type_,
-        storage_type,
+        display_type,
         source: Source::Ts,
         named: child.is_named(),
         fields: None,

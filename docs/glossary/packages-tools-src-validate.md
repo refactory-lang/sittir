@@ -285,6 +285,10 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
  */
 ```
 
+### `packages/tools/src/validate/common.ts::nativeNodeIsKind`
+
+Whether a node from the native read is of a given kind name, under either identity it carries: the grammar symbol that parsed it (`$type`), or the kind the parser shows it as (`$displayType`, present only at an alias). The corpus names an alias envelope by the shown kind (`property_identifier`, `field_identifier`), so a lookup by `$type` alone would never find one. `findNativeNodeId` and `walkNativeForKind` both locate nodes through it.
+
 ### `packages/tools/src/validate/common.ts::findNativeNodeId`
 
 ```text

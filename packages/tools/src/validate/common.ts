@@ -340,6 +340,17 @@ function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
 	return false;
 }
 
+function nativeNodeIsKind(
+	d: AnyNodeData,
+	kind: string,
+	kindNameFromId: ((id: number) => string | undefined) | undefined
+): boolean {
+	const nameOf = (type: AnyNodeData['$type']): string =>
+		typeof type === 'number' ? (kindNameFromId?.(type) ?? String(type)) : type;
+	const display = (d as { readonly $displayType?: number }).$displayType;
+	return nameOf(d.$type) === kind || (display !== undefined && nameOf(display) === kind);
+}
+
 export function findNativeNodeId(
 	handle: TreeHandle,
 	kind: string,
@@ -350,11 +361,9 @@ export function findNativeNodeId(
 	const read = handle.read;
 	const root = handle.read();
 
-	function kindOf(d: AnyNodeData): string {
-		return typeof d.$type === 'number' ? (kindNameFromId?.(d.$type) ?? String(d.$type)) : d.$type;
-	}
+	const isKind = (d: AnyNodeData): boolean => nativeNodeIsKind(d, kind, kindNameFromId);
 
-	if (kindOf(root) === kind) {
+	if (isKind(root)) {
 		return {};
 	}
 
@@ -363,7 +372,7 @@ export function findNativeNodeId(
 	}
 
 	function findEmbedded(d: AnyNodeData): NativeNodeCoords | null {
-		if (kindOf(d) === kind && spanMatches(d)) return { embeddedData: d };
+		if (isKind(d) && spanMatches(d)) return { embeddedData: d };
 		for (const child of collectNativeChildNodes(d)) {
 			const found = findEmbedded(child);
 			if (found !== null) return found;
@@ -378,7 +387,7 @@ export function findNativeNodeId(
 		}
 		for (const child of collectNativeChildNodes(d)) {
 			const handleForChild = child.$nodeHandle ?? d.$nodeHandle;
-			if (kindOf(child) === kind && handleForChild !== undefined && child.$childIndex !== undefined) {
+			if (isKind(child) && handleForChild !== undefined && child.$childIndex !== undefined) {
 				return { handle: handleForChild, childIndex: child.$childIndex };
 			}
 			let drilled = child;
@@ -409,22 +418,20 @@ export function walkNativeForKind(
 	const root = read();
 	const results: NativeCandidateCoords[] = [];
 
-	function kindOf(d: AnyNodeData): string {
-		return typeof d.$type === 'number' ? (kindNameFromId?.(d.$type) ?? String(d.$type)) : d.$type;
-	}
+	const isKind = (d: AnyNodeData): boolean => nativeNodeIsKind(d, kind, kindNameFromId);
 
 	function spanOf(d: AnyNodeData): { start: number; end: number } | undefined {
 		return (d as unknown as Record<string, unknown>).$span as { start: number; end: number } | undefined;
 	}
 
-	if (kindOf(root) === kind) {
+	if (isKind(root)) {
 		results.push({ coords: {}, span: spanOf(root) });
 	}
 
 	function walk(d: AnyNodeData): void {
 		for (const child of collectNativeChildNodes(d)) {
 			const handleForChild = child.$nodeHandle ?? d.$nodeHandle;
-			if (kindOf(child) === kind && handleForChild !== undefined && child.$childIndex !== undefined) {
+			if (isKind(child) && handleForChild !== undefined && child.$childIndex !== undefined) {
 				results.push({
 					coords: { handle: handleForChild, childIndex: child.$childIndex },
 					span: spanOf(child)

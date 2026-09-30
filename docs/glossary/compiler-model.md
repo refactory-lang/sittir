@@ -4680,8 +4680,9 @@ without a seam of its own.
 ```text
 Required: the parser's
 alias type id, which is the node's identity (`$type`) in place of its
-content's grammar id. The reader stamps this id on the node, wrap dispatches
-it to the envelope, and kind-id-rust emits the set as `is_alias_envelope`.
+content's grammar id. The reader ships it as `$displayType` beside the
+grammar symbol, and the wrap layer's `_ALIAS_ENVELOPES` set (these ids)
+makes `_kindOf` dispatch the node to the envelope.
 ```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::CompoundOpts.aliasTypeId`

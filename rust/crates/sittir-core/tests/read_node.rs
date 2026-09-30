@@ -447,6 +447,28 @@ fn an_anonymous_token_spelled_as_its_kind_name_ships_its_kind_id_alone() {
     assert!(token.get("$text").is_none(), "its kind id already spells it: {token}");
 }
 
+#[test]
+fn an_aliased_node_ships_its_grammar_symbol_and_its_display_id() {
+    let source = "struct S { a: u8 }";
+    let tree = parse_tree(tree_sitter_rust::LANGUAGE.into(), source);
+    let field = find_first_ts_node_by_kind(tree.root_node(), "field_identifier").expect("field_identifier");
+    assert_ne!(field.kind_id(), field.grammar_id(), "the parser shows `a` under an alias");
+    let node = read_node(&tree, source, Some(field), None, ReadDepth::Deep, &AllText);
+    let json = serde_json::to_value(&node).expect("serialize");
+    assert_eq!(json["$type"].as_u64(), Some(u64::from(field.grammar_id())));
+    assert_eq!(json["$displayType"].as_u64(), Some(u64::from(field.kind_id())));
+}
+
+#[test]
+fn an_unaliased_node_ships_no_display_id() {
+    let source = "struct S { a: u8 }";
+    let tree = parse_tree(tree_sitter_rust::LANGUAGE.into(), source);
+    let item = find_first_ts_node_by_kind(tree.root_node(), "struct_item").expect("struct_item");
+    let node = read_node(&tree, source, Some(item), None, ReadDepth::Deep, &AllText);
+    let json = serde_json::to_value(&node).expect("serialize");
+    assert!(json.get("$displayType").is_none(), "{json}");
+}
+
 /// No text kinds; a `block` keys the gap after its `{` to `statements`.
 struct BlockGap(u16);
 impl ReadModel for BlockGap {

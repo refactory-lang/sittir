@@ -1,7 +1,7 @@
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { modelKindOfEntry, type GeneratedIdTables, type KindEntryLike } from '../dsl/symbol-table.ts';
-import { AbstractAssembledCompound, AssembledAlias } from '../compiler/model/node-map.ts';
+import { AbstractAssembledCompound } from '../compiler/model/node-map.ts';
 import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
 import { wireRoutesOf } from './shared.ts';
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
@@ -73,20 +73,6 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push("/// template renders from that text, so the text is the node's content —");
 	lines.push('/// free text for a pattern kind, the literal it holds for an enum kind.');
 	lines.push(...kindIdSetFn('is_text_kind', textKindIds));
-
-	const aliasEnvelopeIds = [
-		...new Set(
-			[...nodeMap.nodes.values()]
-				.map((node) => (node instanceof AssembledAlias ? node.aliasTypeId : undefined))
-				.filter((id): id is number => id !== undefined)
-		)
-	].sort((a, b) => a - b);
-	lines.push('');
-	lines.push('/// Whether this parse kind id is an alias envelope: the reader stamps the');
-	lines.push('/// grammar symbol beside it when the node is the storage node shown under');
-	lines.push("/// the alias, so the wrap layer can seat it as the envelope's content.");
-	lines.push(...kindIdSetFn('is_alias_envelope', aliasEnvelopeIds));
-
 
 	lines.push('');
 	lines.push('/// The model slot a child is stored under where its name differs from the');

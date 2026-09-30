@@ -1,6 +1,6 @@
 {
   "grammar": "regex",
-  "source_hash": "f5555b204d0b1e570fe09c1cd5fcacf3698e340f6b2f9625d1f60d47d4ce9cee",
+  "source_hash": "79ccdb4ebdaa14c4c3642a63ccb61edd1cad7af94b24b540f84ba1db36bf338f",
   "files": {
     "packages/regex/.sittir/grammar-diagnostics.json": "d3b245116457aeb378ce22778a877561b7a128b64a30e32e0e6431f64e307aa3",
     "packages/regex/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -36,12 +36,12 @@
     "packages/regex/src/types-internal.ts": "d96f07eeb6eaf951795f854b86f9457e9b545e43fabd2fd07d7d48bfc0951c48",
     "packages/regex/src/types.ts": "eb74bfeeaf4de0f73bcdf187429bf76916fa842453ee748f333be38d218a1668",
     "packages/regex/src/utils.ts": "149b70b8e27ca012a8db1954625f76fd1a48708b79fc362f4f95f245ef5dfc15",
-    "packages/regex/src/wrap.ts": "650aec4e84dec7016bbb97caf12c691349ccafd2a57dc7da540ce9d246bdbea1",
+    "packages/regex/src/wrap.ts": "52c1d572e6835d43fa5cb48c33448308e09c9d47609d61b4bce64c827bb82242",
     "rust/crates/sittir-regex/index.d.ts": "2aa719bc6637f20ad088d434237a493faf1efd28311a1cb64706c19485cc2978",
     "rust/crates/sittir-regex/index.js": "6476237a6d6a87ef8d8d90e2d25a069fb6ba02e687ecba666512e47f34b8bb6d",
-    "rust/crates/sittir-regex/src/lib.rs": "a9094819aff557d213d52eb64752d61373656b19130134c543b062eb6bb4fb7e",
+    "rust/crates/sittir-regex/src/lib.rs": "f50ebc1073a0cfee3f3a350c95bf225db28b92fec865fff6665a998631fb75a3",
     "rust/crates/sittir-regex/src/render/hash.rs": "5ffa310e5a6c589be80fbc062ea2f118f6f2690db67f66663ff74b6a0fd8b4a4",
-    "rust/crates/sittir-regex/src/render/kind_ids.rs": "afd47acf9b6d7cd6b74746b7f43545433f12a276ab522f141670ef1497859a50",
+    "rust/crates/sittir-regex/src/render/kind_ids.rs": "ce7f4f4cf694c2c0c095b7b3d8007d7a9d3ce68425f5d8077d1f4d8b4675764d",
     "rust/crates/sittir-regex/src/render/mod.rs": "522bb214e1012dc3fe9e8cf30819170956eeb97452c5694fbf7b07d199f13eed",
     "rust/crates/sittir-regex/src/render/options.rs": "db898255ceeb87dd5cab629af4c584ed30ff6f2b51b102895a3cba1c55eff9da",
     "rust/crates/sittir-regex/src/render/transport.rs": "e84314de1adae3a1dca674bb6107a4e388080df966a03b1789a66c97fb3bbc24"
