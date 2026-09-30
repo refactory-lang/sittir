@@ -202,6 +202,9 @@ export type ElementsOf<F> = F extends (...args: infer A extends readonly unknown
 		: never;
 
 export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+export type RenameKeys<T, M extends { readonly [From: string]: string }> = T extends unknown
+	? { [K in keyof T as K extends keyof M ? M[K] : K]: T[K] }
+	: never;
 
 /** Pairs a kind's strict builder with its loose coercer under one bundle entry. */
 export interface FlavorPair<S, C> {

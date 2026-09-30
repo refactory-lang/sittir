@@ -767,6 +767,12 @@ wrapper is dropped, so the stamp must sit on the seq itself.
  */
 ```
 
+A reference to a hidden terminal (`isHiddenTerminal`) counts as a token, not a named child: it has no node of its own, so a variant over it alone is a token-bearing kind the parser materializes (rust `block_comment_regular` over the `_block_comment_content` external).
+
+### `packages/codegen/src/dsl/transform/transform.ts::isHiddenTerminal`
+
+Whether a referenced name is a terminal the parser hides (`SymbolSource.isTerminal` and `isHidden` from `wireSymbols`). It is the same predicate pair link's `spliceTextLeaves` uses to splice such a terminal into an all-text parent.
+
 ### `packages/codegen/src/dsl/transform/transform.ts::enrichLiftArmOf`
 
 ```text
@@ -1341,7 +1347,14 @@ stamp above) and, when set, adds `default: true` to the same stamp — so a
 variant that also carries `arm.default` reaches the flattened-parent emitter
 as one arm fact, not two derivations of the same declaration.
 
+### `packages/codegen/src/dsl/transform/transform.ts::rewritesText`
+
+Whether a patch rewrites the text of the member it lands on: a replacement rule or `regex()`. Every placeholder that reshapes the site itself (`field()`, `variant()`, `alias()`, `rule()`, `group()`, `flatten()`, an arm default, a two-argument field) does not.
+
 ### `packages/codegen/src/dsl/transform/transform.ts::resolvePatch`
+
+A patch that lands on a reference to a minted text token (`wireTextTokenOf`) and rewrites text (`rewritesText`) addresses through the mint. The patch is resolved against the minted rule's body and deposited (`wireDepositTextToken`), and the reference, with its annotations, stays in place. So a patch path written against the upstream token keeps working after enrich names the token. A `variant()` that lands on a minted reference lifts through the mint: it resolves against the token body (`wireTextTokenBody`, keeping the reference's annotations), so the variant kind carries the author's variant name and the token body. The minted rule it leaves unreferenced is blanked as a dead enrich mint.
+
 
 #### body
 

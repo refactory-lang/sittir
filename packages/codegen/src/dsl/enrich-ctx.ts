@@ -31,7 +31,10 @@ export function enrichSymbolSource(init: EnrichCtxInit, rules: Readonly<Record<s
 
 export type EnrichMintKind = 'keyword' | 'hidden-subsequence' | 'visible-subsequence' | 'literal-alias-storage' | 'field-enum' | 'whitespace';
 
-export type EnrichRuleOrigin = { readonly kind: EnrichMintKind } | { readonly kind: 'promoted-group'; readonly visibleName: string };
+export type EnrichRuleOrigin =
+	| { readonly kind: EnrichMintKind }
+	| { readonly kind: 'promoted-group'; readonly visibleName: string }
+	| { readonly kind: 'text'; readonly owners: readonly string[] };
 
 export interface ClauseHoistState {
 	readonly separatedListNameCounts: ReadonlyMap<string, number>;

@@ -90,6 +90,10 @@ A lazily rendered text: the render runs on first use and its text is cached. `sa
 
 The public `EngineDiagnostics` fixed to the native engine's types (a root that carries the whole-file span, a `TreeHandle`), plus `readNode`, the drill-in read only the native engine has. Reached through `SittirEngine.diagnostics` rather than the engine's own surface, because it returns raw node data with reader stubs for children; the public entry point is `parse`, which wraps what these produce.
 
+### `packages/common/src/engine.ts::readDepthOf`
+
+The level count a native read takes for a set of parse options: absent (one level) by default, `Infinity` (the whole tree) under `deep`. `parseAndRead` and the diagnostics `readNode` both pass through it, so `deep` has one meaning at the boundary.
+
 ### `packages/common/src/engine.ts::nativeLanguageEngine`
 
 Adapts one grammar's native engine to the language hooks' native engine shape, the same for every grammar. `render` splits the call's flat options into the native `ignoreFormat` and the render options it resolves over its own, passing none when the call has none. `parseAndRead` returns the native read untouched; the engine that owns the result binds its tree. `buildProfile` is the native build's compile profile.
@@ -191,18 +195,27 @@ The value, or the default's when it is absent. The default's type is not an infe
 
 `hoistRoutes` with the result type given and the argument taken as `unknown`, so a bundle entry is hoisted without relating the overlay's declared type to the pair type the hoister would infer. The generated `factories/index.ts` uses it for every entry.
 
-### `packages/common/src/utils.ts::withListOwner`
+### `packages/common/src/utils.ts::withListView`
 
-Gives a list owner (a node whose sole content is a separated list) the members its type declares. The accessor of the list slot returns the list's items, in place of the list node: each item is the element the list stores, except that a transparent wrapper carrying only its content reads as that content (the spec names the wrapper kind, its content accessor and the storage keys of its other slots; a decorated wrapper stays as it is). The node iterates the same items, reports `length`, answers `at(index)`, and carries one getter per option the list's factory takes, read from the list's stored `_<option>` and falling back to the default the spec stamps for that option (a list that is absent reads every default). No default is named at runtime: each comes from the same derivation as the factory's own. Everything is read through the accessor the wrap or the builder defined, so a parsed owner drills lazily and a built owner reads what it stores. Every member is defined non-enumerable (the list accessor keeps the enumerability it had), so a spread, `Object.keys` and serialisation see the node exactly as before, and rendering never reads them.
+Makes a node that reads as a list (a separated list, or a list owner whose sole content is one) a `ReadonlyArray` of its items. The items are the list's elements, except that a transparent wrapper carrying only its content reads as that content (the spec names the wrapper kind, its content accessor and the storage keys of its other slots; a decorated wrapper stays as it is). For an owner the items are read through the owner's own list accessor (`list.accessor`), so a parsed owner drills the list and a built one reads what it stores; for a list node the node is the list.
 
-It also makes the node's `$with` take the factory's shapes. The list slot's setter takes the whole list node, the arguments of the list's own factory (`make`), or nothing; a whole list is recognised as a single non-object argument or a single node of the list's kind, exactly as the owner factory recognises it, and anything else is built into a list first. `$with` itself is the same function, looked up at call time so a setter wrapped after this call (trivia carry) still applies; the other setters stay on it as enumerable properties.
+It defines a getter per index up to the element count, the length of the list's stored elements (`count`; the reader stores a lone element as a single node, which counts as one), so the elements themselves are not materialized. For a list node that storage is its own; for an owner it is the list node stored under `list.storage`. A parsed owner normally arrives with that list node already read, its elements as stubs, because the wrap reads a list owner two levels at once. An owner reached another way (the parsed root, or a read by handle alone) stores its list only as a read stub (a parent handle and a child index; a read node's own handle alone is not one), which carries no count; the view then reads that one node from `tree` without wrapping it. A node built from a read stub has no tree: it builds, has no index getters, and its `length` throws naming the stub. The view then defines `length`; the iterator; `Symbol.isConcatSpreadable`, so `concat` from either side spreads the items; every non-mutating array method, `toString` and `toLocaleString` included, delegating to the items; and one getter per option the list's factory takes, read from the list's stored `_<option>` and falling back to the default the spec stamps (an absent list reads every default and has no items). The items are computed on first use and kept on the node. Every member is non-enumerable, so a spread, `Object.keys` and serialisation see the node exactly as before, and rendering never reads them. The list accessor and `$with` are left as they are.
 
 ### `packages/common/src/utils.ts::withListSlots`
 
-Gives a parent with several slots the list-slot half of `withListOwner` for each hoisted list slot it has: the slot's accessor returns the list's items (a transparent wrapper carrying only its content reads as that content), and the slot's `$with` setter takes the shapes its config key takes: the whole list node, an array of items or an array led by the options (built into a list by the list's factory), or nothing. It adds no iteration, `length`, `at` or options members and does not make `$with` callable, since the parent holds more than the list. The list node the accessor replaced stays reachable through `storedSlotReader`.
+Makes the `$with` setter of each slot that holds a list take the builder arguments of the kind it holds: `(...items)` or `(options, ...items)`, built through that kind's raw factory, or the whole node of that kind, seated as it is. When the list's element is a config-shaped group (`element`), an item that is that group's config object is built through the group's factory first. No arguments clear an optional slot and build an empty list for a required one. A whole node is recognised as a single argument whose kind is the slot's kind (or `undefined`); anything else is passed to the factory.
+
+### `packages/common/src/utils.ts::LIST_VIEW_MEMBERS`
+
+The names `withListView` defines on a node from `ReadonlyArray`: its non-mutating methods and `length`. `toString` and `toLocaleString` are not among them; every object already has them. A compile-time check keeps the method list equal to `ReadonlyArray`'s own, so the runtime cannot miss a method the type promises. The emitter refuses a list whose accessors or options take one of these names.
+
 ### `packages/common/src/utils.ts::withGroupSeat`
 
-Flattens a group onto the parent that seats it. The group stays stored in its slot and the slot's own accessor stays, but the group's fields are readable on the parent by the names of the config keys that flatten it, and each key's `$with` setter rebuilds the group with that one field replaced and re-seats it (absent groups are built from the key alone). A key that spells the seat's slot reads the group's inner value; its setter takes that value, or the whole group when the argument's kind is the group's. The group's own accessor stays reachable through `storedSlotReader`.
+Flattens a group onto the parent that seats it. The group stays stored in its slot and the slot's own accessor stays, but the group's fields are readable on the parent under the names the spec gives them, and each name's `$with` setter rebuilds the group with that one field replaced and re-seats it (an absent group is built from that field alone). A name the seat prefixed carries the group field it stands for (`field`), so `seatLeft` reads and sets the group's `left` while the parent's own `left` is untouched. A name that spells the seat's slot reads the group's inner value; its setter takes that value, or the whole group when the argument's kind is the group's. The group's own accessor stays reachable through `storedSlotReader`.
+
+### `packages/common/src/utils.ts::storedSlotReader`
+
+The accessor that reads a slot's stored value as a node, for a caller that walks storage by accessor name (the validator's materialization). It is the node's own accessor unless a seat replaced it: a flattened key that spells the seat's slot reads the group's inner value, and the seat records the group's reader here.
 
 ### `packages/common/src/utils.ts::withElementsSeat`
 
@@ -210,5 +223,5 @@ Makes the `$with` setter of an elements-seat slot take the group config objects 
 
 ### `packages/common/src/utils.ts::isGroupConfig`
 
-Whether a value is a group's config object rather than a node: a non-empty plain object without a `$type` whose keys are all among the group's config keys. The overlay factories and the setters built by `withElementsSeat` and the list setters share it, so a config object means the same thing on every surface.
+Whether a value is a group's config object rather than a node: a non-empty plain object without a `$type` whose keys are all among the group's config keys. The overlay factories, the setters `withElementsSeat` builds and the list-slot setters share it, so a config object means the same thing on every surface.
 

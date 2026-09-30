@@ -65,23 +65,24 @@ export declare class SittirEngine {
   /**
    * Parse `source` and read its root.
    *
-   * `deep` expands the whole tree in one pass instead of leaving
-   * each child with substructure as a stub. Default (absent /
-   * `false`) is the lazy one-level read.
+   * `depth` is the number of levels the read expands (see
+   * [`read_depth`]): absent is the lazy one-level read, `Infinity`
+   * expands the whole tree in one pass.
    *
    * The tree is retained under a fresh id so the handles this read
    * hands out stay answerable; the id rides in those handles and is
    * echoed as `treeId` for `disposeTree`.
    */
-  parseAndRead(source: string, deep?: boolean | undefined | null): string
+  parseAndRead(source: string, depth?: number | undefined | null): string
   /**
    * Expand one child of the node named by `handle`.
    *
    * The handle names its own tree, so a handle from a tree that has
    * been disposed — or one never minted here — is refused rather
    * than answered out of whichever tree happens to be present.
+   * `depth` counts the levels read, as for `parse_and_read`.
    */
-  readNode(handle: number, childIndex: number, deep?: boolean | undefined | null): string
+  readNode(handle: number, childIndex: number, depth?: number | undefined | null): string
   /**
    * Render a typed transport object (napi-native, numeric `$type`).
    *
@@ -413,7 +414,7 @@ export interface DictionarySplatTransport {
 export interface DictionaryTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _entries?: SlotValue<DictionaryElementsTransport>
+  _elements?: SlotValue<DictionaryElementsTransport>
 }
 
 export interface DictPatternElementsTransport {
@@ -629,7 +630,7 @@ export interface FormatExpressionTransport {
 export interface FormatSpecifierTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _elements?: Array<SlotValue<FormatSpecifierElementsTransportSlot>>
+  _elements?: Array<SlotValue<FormatSpecifierElementsTransportSlot, true>>
 }
 
 export interface ForStatementTransport {
@@ -834,6 +835,12 @@ export interface MatchBlockBlockTransport {
   '$_edges'?: Edges
   _alternative?: Array<SlotValue<CaseClauseTransport>>
   _alternative_separator_space?: number
+}
+
+export interface MatchBlockEmptyTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _newline: SlotValue<NewlineTransport>
 }
 
 export interface MatchBlockTransport {

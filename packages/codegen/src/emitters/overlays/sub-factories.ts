@@ -278,16 +278,29 @@ function isHoistedAt(value: NodeBackedRef, group: AssembledNode | undefined): bo
 	return group?.annotations?.hoisted === true || value.flattened === true;
 }
 
+export interface FlattenKey {
+	readonly key: string;
+	readonly field: string;
+}
+
 export interface FlattenSeat {
 	readonly slot: AssembledNonterminal;
 	readonly group: AssembledNode;
 	readonly directKey?: string;
 }
 
-export function flattenSeatOf(node: AssembledNode, nodeMap: NodeMap): FlattenSeat | undefined {
+export interface FlattenedSeat extends FlattenSeat {
+	readonly keys: readonly FlattenKey[];
+}
+
+export function prefixedKey(seat: string, field: string): string {
+	return `${seat}${field.charAt(0).toUpperCase()}${field.slice(1)}`;
+}
+
+export function flattenSeatOf(node: AssembledNode, nodeMap: NodeMap): FlattenedSeat | undefined {
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return undefined;
 	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return undefined;
-	const seats: FlattenSeat[] = [];
+	const seats: FlattenedSeat[] = [];
 	for (const slot of node.slots) {
 		if (isMultiple(slot) || slot.values.length !== 1) continue;
 		const value = slot.values[0]!;
@@ -301,13 +314,16 @@ export function flattenSeatOf(node: AssembledNode, nodeMap: NodeMap): FlattenSea
 		const keys = shape === 'config' ? configKeysOf(group) : direct === undefined ? undefined : [direct.configKey];
 		if (keys === undefined) continue;
 		const own = new Set(node.slots.filter((f) => f !== slot).map((f) => f.configKey));
-		const clash = keys.find((k) => own.has(k));
+		const flattened = keys.map((field) => ({ key: own.has(field) ? prefixedKey(slot.configKey, field) : field, field }));
+		const clash = flattened.find((k) => k.key !== k.field && own.has(k.key));
 		if (clash !== undefined) {
 			throw new Error(
-				`flattenSeatOf: '${node.kind}' seats '${group.kind}' in '${slot.propertyName}', and the group's key '${clash}' collides with another slot of the parent`
+				`flattenSeatOf: '${node.kind}' seats '${group.kind}' in '${slot.propertyName}', and the group's key '${clash.field}' collides with another slot of the parent even as '${clash.key}'`
 			);
 		}
-		seats.push(direct === undefined ? { slot, group } : { slot, group, directKey: direct.configKey });
+		seats.push(
+			direct === undefined ? { slot, group, keys: flattened } : { slot, group, directKey: direct.configKey, keys: flattened }
+		);
 	}
 	if (seats.length > 1) {
 		throw new Error(

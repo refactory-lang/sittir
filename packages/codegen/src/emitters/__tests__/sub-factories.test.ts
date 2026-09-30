@@ -444,8 +444,8 @@ describe('flattenSeatOf on a direct-shaped group', () => {
 	});
 });
 
-describe('flattenSeatOf fails a group whose keys collide with the parent', () => {
-	it('names the collision when one of the group keys is also a slot of the parent', () => {
+describe('flattenSeatOf prefixes a group key that collides with the parent', () => {
+	it('names the colliding key after its seat, and keeps the others as they are', () => {
 		const nodeMap = buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'binary' }] },
 			binary: {
@@ -465,9 +465,12 @@ describe('flattenSeatOf fails a group whose keys collide with the parent', () =>
 				annotations: { hoisted: true }
 			}
 		});
-		expect(() => flattenSeatOf(nodeMap.nodes.get('binary')!, nodeMap)).toThrow(
-			/'binary' seats 'binary_in' in '\w+', and the group's key 'left' collides with another slot of the parent/
-		);
+		const seat = flattenSeatOf(nodeMap.nodes.get('binary')!, nodeMap)!;
+		expect(seat.group.kind).toBe('binary_in');
+		expect(seat.keys).toEqual([
+			{ key: `${seat.slot.configKey}Left`, field: 'left' },
+			{ key: 'right', field: 'right' }
+		]);
 	});
 });
 

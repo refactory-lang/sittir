@@ -542,18 +542,16 @@
 			"text": "("
 		},
 		{
-			"kind": "adjacent"
-		},
-		{
 			"kind": "seam",
 			"field": "lparen_after"
 		},
 		{
-			"kind": "slot",
-			"name": "content"
+			"kind": "seam",
+			"field": "prefix_before"
 		},
 		{
-			"kind": "adjacent"
+			"kind": "slot",
+			"name": "prefix"
 		},
 		{
 			"kind": "slot",

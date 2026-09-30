@@ -42,6 +42,20 @@
     ]
   },
   {
+    "type": "_match_block",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "match_block_block",
+        "named": true
+      },
+      {
+        "type": "match_block_empty",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "_simple_statement",
     "named": true,
     "subtypes": [
@@ -1700,7 +1714,7 @@
     "type": "dictionary",
     "named": true,
     "fields": {
-      "entries": {
+      "elements": {
         "multiple": false,
         "required": false,
         "types": [
@@ -2281,6 +2295,10 @@
         "types": [
           {
             "type": "format_expression",
+            "named": true
+          },
+          {
+            "type": "format_specifier_text",
             "named": true
           }
         ]
@@ -3022,25 +3040,6 @@
     }
   },
   {
-    "type": "match_block",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "match_block_block",
-          "named": true
-        },
-        {
-          "type": "newline",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "match_block_block",
     "named": true,
     "fields": {
@@ -3054,6 +3053,21 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "match_block_empty",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "newline",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -4884,6 +4898,10 @@
   {
     "type": "for",
     "named": false
+  },
+  {
+    "type": "format_specifier_text",
+    "named": true
   },
   {
     "type": "from",

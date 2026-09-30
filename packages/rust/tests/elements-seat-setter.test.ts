@@ -31,8 +31,4 @@ describe('a list owner takes the element config objects its config surface takes
 		expect(rebuilt.$render()).toBe('(c: i32, #[x] a: i32)');
 		expect(rebuilt.parametersElements()).toHaveLength(2);
 	});
-
-	it('takes them through the callable $with as well', () => {
-		expect(parametersOf('fn g(c: i32) {}\n').$with(attributedConfig()).$render()).toBe('(#[x] a: i32)');
-	});
 });

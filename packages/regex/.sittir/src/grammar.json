@@ -790,8 +790,8 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "PATTERN",
-          "value": "\\\\[dDsSwW]",
+          "type": "SYMBOL",
+          "name": "character_class_escape_text1",
           "annotations": {
             "variantOf": "character_class_escape"
           }
@@ -821,15 +821,15 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "PATTERN",
-          "value": "\\\\u[0-9a-fA-F]{4}",
+          "type": "SYMBOL",
+          "name": "unicode_character_escape_text1",
           "annotations": {
             "variantOf": "unicode_character_escape"
           }
         },
         {
-          "type": "PATTERN",
-          "value": "\\\\u\\{[0-9a-fA-F]{1,6}\\}",
+          "type": "SYMBOL",
+          "name": "unicode_character_escape_text2",
           "annotations": {
             "variantOf": "unicode_character_escape"
           }
@@ -902,15 +902,15 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "PATTERN",
-          "value": "\\\\[bfnrtv0]",
+          "type": "SYMBOL",
+          "name": "control_escape_text1",
           "annotations": {
             "variantOf": "control_escape"
           }
         },
         {
-          "type": "PATTERN",
-          "value": "\\\\x[0-9a-fA-F]{2}",
+          "type": "SYMBOL",
+          "name": "control_escape_text2",
           "annotations": {
             "variantOf": "control_escape"
           }
@@ -1213,8 +1213,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "PATTERN",
-          "value": "\\\\[pP]"
+          "type": "SYMBOL",
+          "name": "character_class_escape_text2"
         },
         {
           "type": "STRING",
@@ -1260,6 +1260,30 @@
       "annotations": {
         "hoisted": true
       }
+    },
+    "character_class_escape_text1": {
+      "type": "PATTERN",
+      "value": "\\\\[dDsSwW]"
+    },
+    "character_class_escape_text2": {
+      "type": "PATTERN",
+      "value": "\\\\[pP]"
+    },
+    "unicode_character_escape_text1": {
+      "type": "PATTERN",
+      "value": "\\\\u[0-9a-fA-F]{4}"
+    },
+    "unicode_character_escape_text2": {
+      "type": "PATTERN",
+      "value": "\\\\u\\{[0-9a-fA-F]{1,6}\\}"
+    },
+    "control_escape_text1": {
+      "type": "PATTERN",
+      "value": "\\\\[bfnrtv0]"
+    },
+    "control_escape_text2": {
+      "type": "PATTERN",
+      "value": "\\\\x[0-9a-fA-F]{2}"
     },
     "_whitespace": {
       "type": "CHOICE",

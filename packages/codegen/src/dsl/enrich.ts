@@ -5,6 +5,7 @@ import {
 	distributeInlineAliasChoices,
 	liftAliasedHiddenRuleBodies,
 	mintInlineLiteralAliasStorage,
+	mintInlineTextTokens,
 	unaliasOverloadedDisplays
 } from './rule-transforms.ts';
 import { makeRuleMetadata, normalizeEnumMembers } from './rule-metadata.ts';
@@ -185,6 +186,9 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	}
 	synthesizeFieldEnumRules(mergedRules, ruleOrigins);
 	const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
+	const textTokens = mintInlineTextTokens(mergedRules, { symbol: nativeRuleFn<(name: string) => Rule>('sym'), namingRules: baseRules });
+	Object.assign(mergedRules, textTokens.rules);
+	for (const name of textTokens.mintedNames) ruleOrigins.set(name, { kind: 'text', owners: textTokens.owners[name]! });
 	const whitespace = enrichWhitespace(ctx.externals, ctx.extras, mergedRules);
 	for (const { name } of whitespace.collisions) delete mergedRules[name];
 	mergedRules[WHITESPACE_SUPERTYPE] = whitespace.rule;
@@ -228,6 +232,22 @@ export function getEnrichRuleOrigins(grammar: unknown): ReadonlyMap<string, Enri
 
 function enrichRuleNamesOf(grammar: unknown, keep: (origin: EnrichRuleOrigin) => boolean): ReadonlySet<string> {
 	return new Set([...getEnrichRuleOrigins(grammar)].filter(([, origin]) => keep(origin)).map(([name]) => name));
+}
+
+export function getEnrichTextTokens(grammar: unknown): ReadonlyMap<string, readonly string[]> {
+	return new Map([...getEnrichRuleOrigins(grammar)].flatMap(([name, origin]) => (origin.kind === 'text' ? [[name, origin.owners] as const] : [])));
+}
+
+export const TEXT_TOKENS_KEY = '__textTokens__' as const;
+
+export function attachTextTokens(grammar: object, names: readonly string[]): void {
+	Object.defineProperty(grammar, TEXT_TOKENS_KEY, { value: names, enumerable: false, writable: false, configurable: true });
+}
+
+export function getTextTokens(grammar: unknown): readonly string[] {
+	if (!grammar || typeof grammar !== 'object') return [];
+	const names = (grammar as Record<string, unknown>)[TEXT_TOKENS_KEY];
+	return Array.isArray(names) ? (names as readonly string[]) : [];
 }
 
 export function getEnrichMints(grammar: unknown): ReadonlySet<string> {

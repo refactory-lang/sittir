@@ -14,7 +14,7 @@ import type { ParsedRoot } from '@sittir/common/engine';
 // Import _NodeData (== AnyNodeData) from @sittir/types
 // instead of re-declaring locally. Single source of truth.
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray, SupertypeSurface } from '@sittir/types';
-import { TSKindId, KIND_NAMES } from './types.js';
+import { TSKindId, KIND_NAMES, KIND_DISPLAY_NAMES } from './types.js';
 import type * as T from './types-internal.js';
 import { withMethods } from './utils.js';
 
@@ -246,14 +246,15 @@ function projectKindEnumStorage<T>(
 		return typeof mappedId === 'number' ? (mappedId as unknown as T) : value;
 	}
 	if (typeof value === 'number') return (altIds?.[value] ?? value) as unknown as T;
-	if (typeof entry.$type === 'number' && altIds?.[entry.$type] !== undefined)
-		return altIds[entry.$type] as unknown as T;
-	if (typeof entry.$text === 'string') {
-		const mappedId = textIds?.[entry.$text];
+	const kind = _kindOf(entry);
+	if (typeof kind === 'number' && altIds?.[kind] !== undefined) return altIds[kind] as unknown as T;
+	const text = _spelledText(entry);
+	if (text !== undefined) {
+		const mappedId = textIds?.[text];
 		if (typeof mappedId === 'number') return mappedId as unknown as T;
-		return entry.$text as unknown as T;
+		return text as unknown as T;
 	}
-	return typeof entry.$type === 'number' ? (entry.$type as T) : value;
+	return typeof kind === 'number' ? (kind as T) : value;
 }
 function projectMixedEnumStorage<T>(
 	value: T,
@@ -270,12 +271,14 @@ function projectMixedEnumStorage<T>(
 		return typeof mappedId === 'number' ? (mappedId as unknown as T) : value;
 	}
 	if (typeof value === 'number') return (altIds?.[value] ?? value) as unknown as T;
-	if (typeof entry.$type === 'number') {
-		const folded = altIds?.[entry.$type];
+	const kind = _kindOf(entry);
+	if (typeof kind === 'number') {
+		const folded = altIds?.[kind];
 		if (folded !== undefined) return folded as unknown as T;
-		if (textIds && Object.values(textIds).includes(entry.$type)) return entry.$type as unknown as T;
-		if (ownSymbols?.includes(entry.$type) && typeof entry.$text === 'string') {
-			const memberId = textIds?.[entry.$text];
+		if (textIds && Object.values(textIds).includes(kind)) return kind as unknown as T;
+		const text = ownSymbols?.includes(kind) ? _spelledText(entry) : undefined;
+		if (text !== undefined) {
+			const memberId = textIds?.[text];
 			if (typeof memberId === 'number') return memberId as unknown as T;
 		}
 	}
@@ -367,7 +370,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 
 function _wrapKindNameOf(entry: unknown): string | undefined {
 	if (!entry || typeof entry !== 'object') return undefined;
-	const raw = (entry as { $type?: unknown }).$type;
+	const raw: unknown = _kindOf(entry as _NodeData);
 	if (raw === undefined) return undefined;
 	if (typeof raw === 'number') return KIND_NAMES.get(raw as never) ?? String(raw);
 	return typeof raw === 'string' ? raw : undefined;
@@ -443,6 +446,51 @@ function _filterWrapChildrenByKind<T>(
 		const kind = _wrapKindNameOf(entry);
 		if (kind === undefined) return false;
 		return _matchesAllowedWrapKind(kind, allowedKinds);
+	});
+}
+
+// A wire delimiter is a field-tagged separator token: either its bare
+// numeric kind id (text-collapsed contexts) or an anonymous node stub
+// `{ $type: <id>, $named: false }` (node-stub contexts).
+type _WireDelimiter = number | { readonly $type: number; readonly $named: false };
+function _isWireDelimiter(e: unknown, separatorKindIds: readonly number[]): e is _WireDelimiter {
+	if (typeof e === 'number') return separatorKindIds.includes(e);
+	if (typeof e === 'object' && e !== null) {
+		const stub = e as { $type?: unknown; $named?: unknown };
+		return stub.$named === false && typeof stub.$type === 'number' && separatorKindIds.includes(stub.$type);
+	}
+	return false;
+}
+
+function _dropOrderEntry(order: string[] | undefined, slot: string, occurrence: number): void {
+	if (order === undefined) return;
+	let seen = 0;
+	const at = order.findIndex((name) => name === slot && seen++ === occurrence);
+	if (at >= 0) order.splice(at, 1);
+}
+
+// A delimiter the parser field-tagged into a slot is punctuation the
+// render body writes itself, so it is dropped rather than stored, and
+// its entry leaves the node's `$slotOrder` draft with it.
+// Assumes T itself is never an array type — slot elements are node unions.
+function dropWireDelimiters<T>(
+	value: T | readonly (T | _WireDelimiter)[] | undefined,
+	separatorKindIds: readonly number[],
+	order: string[] | undefined,
+	slot: string
+): T | readonly T[] | undefined {
+	const isSlotList = (v: T | readonly (T | _WireDelimiter)[]): v is readonly (T | _WireDelimiter)[] => Array.isArray(v);
+	if (value == null) return undefined;
+	if (!isSlotList(value)) {
+		if (!_isWireDelimiter(value, separatorKindIds)) return value;
+		_dropOrderEntry(order, slot, 0);
+		return undefined;
+	}
+	let kept = 0;
+	return value.filter((e): e is T => {
+		if (!_isWireDelimiter(e, separatorKindIds)) return (kept++, true);
+		_dropOrderEntry(order, slot, kept);
+		return false;
 	});
 }
 
@@ -780,8 +828,6 @@ export function wrapImmediateString(data: T.ImmediateString, tree: TreeHandle): 
 
 export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.StringContent.Parsed {
 	data = _keepModelledSlots(data, ['_content']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.StringContent as const }) as unknown as T.StringContent.Parsed;
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.StringContent as const,
@@ -793,8 +839,8 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 		}),
 
 		contents() {
-			return drillInAll<'[^"\\\\\\n]+' | T.EscapeSequence>(
-				this._content as readonly ('[^"\\\\\\n]+' | T.EscapeSequence)[] | undefined,
+			return drillInAll<T.StringContentText | T.EscapeSequence>(
+				this._content as readonly (T.StringContentText | T.EscapeSequence)[] | undefined,
 				tree
 			);
 		},
@@ -1078,21 +1124,24 @@ export function wrapNamedNode(
 
 export function wrapFieldDefinition(data: T.FieldDefinition, tree: TreeHandle): T.FieldDefinition.Parsed {
 	data = _keepModelledSlots(data, ['_name', '_definition']);
+	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.FieldDefinition as const,
-		_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'name',
-			span: (data as _NodeData).$span
-		}),
+		_name: normalizeSingularWrapSlot(
+			dropWireDelimiters(data._name, [TSKindId.Colon], _order, 'name'),
+			'name',
+			true,
+			data.$type,
+			{ tree, nodeType: data.$type, slotName: 'name', span: (data as _NodeData).$span }
+		),
 		_definition: normalizeSingularWrapSlot(data._definition, 'definition', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'definition',
 			span: (data as _NodeData).$span
 		}),
+		...(_order && { $slotOrder: _order }),
 
 		name() {
 			return drillIn<T.Identifier>(this._name, tree);
@@ -1133,21 +1182,20 @@ export function wrapNegatedField(data: T.NegatedField, tree: TreeHandle): T.Nega
 }
 
 export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.Parsed {
-	data = _keepModelledSlots(data, ['_content', '_name', '_type', '_parameters']);
+	data = _keepModelledSlots(data, ['_prefix', '_name', '_type', '_parameters']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.Predicate as const }) as unknown as T.Predicate.Parsed;
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.Predicate as const,
-		_content: projectKindEnumStorage(
-			normalizeSingularWrapSlot(
-				data._content ?? readTerminalFromOther<'#' | '.'>(data, [TSKindId.Pound, TSKindId.Dot]),
-				'content',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
-			{ '#': 20, '.': 21 }
+		_prefix: projectKindEnumStorage(
+			normalizeSingularWrapSlot(data._prefix, 'prefix', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'prefix',
+				span: (data as _NodeData).$span
+			}),
+			{ '#': 19, '.': 20 }
 		),
 		_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 			tree,
@@ -1162,7 +1210,7 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 				slotName: 'type',
 				span: (data as _NodeData).$span
 			}),
-			{ '?': 4, '!': 19 }
+			{ '?': 4, '!': 18 }
 		),
 		_parameters: normalizeSingularWrapSlot(data._parameters, 'parameters', false, data.$type, {
 			tree,
@@ -1171,8 +1219,8 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 			span: (data as _NodeData).$span
 		}),
 
-		content() {
-			return this._content;
+		prefix() {
+			return this._prefix;
 		},
 		name() {
 			return drillIn<T.ImmediateIdentifier>(this._name, tree);
@@ -1184,7 +1232,7 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 			return drillIn<T.Parameters | undefined>(this._parameters, tree);
 		},
 		$with: {
-			content: (v: NonNullable<T.Predicate['_content']>) => wrapPredicate({ ...$edited(data), _content: v }, tree),
+			prefix: (v: NonNullable<T.Predicate['_prefix']>) => wrapPredicate({ ...$edited(data), _prefix: v }, tree),
 			name: (v: NonNullable<T.Predicate['_name']>) => wrapPredicate({ ...$edited(data), _name: v }, tree),
 			type: (v: NonNullable<T.Predicate['_type']>) => wrapPredicate({ ...$edited(data), _type: v }, tree),
 			parameters: (v: NonNullable<T.Predicate['_parameters']>) =>
@@ -1534,9 +1582,9 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.GroupExpression]: (d, t) => wrapGroupExpression(d as unknown as T.GroupExpression, t),
 	[TSKindId.NamedNodeExpression]: (d, t) => wrapNamedNodeExpression(d as unknown as T.NamedNodeExpression, t),
 	[TSKindId.EscapeSequence]: (d, t) => wrapEscapeSequence(d as unknown as T.EscapeSequence, t),
-	[TSKindId.Quantifier]: (d) => ({ ...d, $type: TSKindId.Quantifier as const }),
-	[TSKindId.Identifier]: (d) => ({ ...d, $type: TSKindId.Identifier as const }),
-	[TSKindId.ImmediateIdentifier]: (d) => ({ ...d, $type: TSKindId.ImmediateIdentifier as const }),
+	[TSKindId.Quantifier]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Quantifier as const }),
+	[TSKindId.Identifier]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Identifier as const }),
+	[TSKindId.ImmediateIdentifier]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.ImmediateIdentifier as const }),
 	[TSKindId.NodeIdentifier]: (d, t) => wrapNodeIdentifier(d as unknown as T.NodeIdentifier, t),
 	[TSKindId.Capture]: (d, t) => wrapCapture(d as unknown as T.Capture, t),
 	[TSKindId.String]: (d, t) => wrapString(d as unknown as T.String, t),
@@ -1552,24 +1600,25 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.FieldDefinition]: (d, t) => wrapFieldDefinition(d as unknown as T.FieldDefinition, t),
 	[TSKindId.NegatedField]: (d, t) => wrapNegatedField(d as unknown as T.NegatedField, t),
 	[TSKindId.Predicate]: (d, t) => wrapPredicate(d as unknown as T.Predicate, t),
-	[TSKindId.PredicateType]: (d) => ({ ...d, $type: TSKindId.PredicateType as const }),
+	[TSKindId.PredicateType]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.PredicateType as const }),
 	[TSKindId.GroupExpressionArm]: (d, t) => wrapGroupExpressionArm(d as unknown as T.GroupExpressionArm, t),
 	[TSKindId.NamedNodeExpressionArm]: (d, t) => wrapNamedNodeExpressionArm(d as unknown as T.NamedNodeExpressionArm, t),
 	[TSKindId.GroupingGroup]: (d, t) => wrapGroupingGroup(d as unknown as T.GroupingGroup, t),
 	[TSKindId.NamedNodeGroup]: (d, t) => wrapNamedNodeGroup(d as unknown as T.NamedNodeGroup, t),
+	[TSKindId.StringContentText]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.StringContentText as const }),
 	[TSKindId.NamedNodePlain]: (d, t) => wrapNamedNodePlain(d as unknown as T.NamedNodePlain, t),
 	[TSKindId.NamedNodeSupertyped]: (d, t) => wrapNamedNodeSupertyped(d as unknown as T.NamedNodeSupertyped, t),
 	[TSKindId.NamedNodeGroupChildren]: (d, t) => wrapNamedNodeGroupChildren(d as unknown as T.NamedNodeGroupChildren, t),
 	[TSKindId.NamedNodeGroupAnchoredLast]: (d, t) =>
 		wrapNamedNodeGroupAnchoredLast(d as unknown as T.NamedNodeGroupAnchoredLast, t),
-	[TSKindId.Tight]: (d) => ({ ...d, $type: TSKindId.Tight as const }),
-	[TSKindId.Space]: (d) => ({ ...d, $type: TSKindId.Space as const }),
-	[TSKindId.Tab]: (d) => ({ ...d, $type: TSKindId.Tab as const }),
-	[TSKindId.Newline]: (d) => ({ ...d, $type: TSKindId.Newline as const }),
-	[TSKindId.Blankline]: (d) => ({ ...d, $type: TSKindId.Blankline as const }),
-	[TSKindId.DoubleBlankline]: (d) => ({ ...d, $type: TSKindId.DoubleBlankline as const }),
-	[TSKindId.Indent]: (d) => ({ ...d, $type: TSKindId.Indent as const }),
-	[TSKindId.Dedent]: (d) => ({ ...d, $type: TSKindId.Dedent as const })
+	[TSKindId.Tight]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Tight as const }),
+	[TSKindId.Space]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Space as const }),
+	[TSKindId.Tab]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Tab as const }),
+	[TSKindId.Newline]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Newline as const }),
+	[TSKindId.Blankline]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Blankline as const }),
+	[TSKindId.DoubleBlankline]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.DoubleBlankline as const }),
+	[TSKindId.Indent]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Indent as const }),
+	[TSKindId.Dedent]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Dedent as const })
 };
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
@@ -1593,6 +1642,83 @@ function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData
 	return trivia && mapTriviaEntries(trivia, (entries) => drillInAll(entries, tree) as unknown as typeof entries);
 }
 
+const _ALIAS_ENVELOPES: ReadonlySet<_NodeData['$type']> = new Set([]);
+function _displayOf(entry: _NodeData): _NodeData['$type'] {
+	return (entry as { readonly $displayType?: _NodeData['$type'] }).$displayType ?? entry.$type;
+}
+function _kindOf(entry: _NodeData): _NodeData['$type'] {
+	const display = _displayOf(entry);
+	return _ALIAS_ENVELOPES.has(display) ? display : entry.$type;
+}
+function _withoutDisplay(data: _NodeData): _NodeData {
+	const { $displayType: _display, ...node } = data as _NodeData & { readonly $displayType?: number };
+	return node as _NodeData;
+}
+
+const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData['$type']> = new Set([43, 44, 45, 46, 56, 57]);
+function _spellingTokens(data: _NodeData): readonly _NodeData[] | undefined {
+	const { $other, ...node } = data;
+	if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return undefined;
+	if (Object.keys(node).some((key) => key.charCodeAt(0) === 95)) return undefined;
+	const tokens = (Array.isArray($other) ? $other : [$other]) as readonly unknown[];
+	if (tokens.some((token) => typeof token !== 'object' || token === null || (token as _NodeData).$named !== false))
+		return undefined;
+	return tokens as readonly _NodeData[];
+}
+function _spelledText(data: _NodeData): string | undefined {
+	if (data.$text !== undefined) return data.$text;
+	const tokens = _spellingTokens(data);
+	return tokens === undefined ? undefined : _tiledSpelling(data.$span, tokens);
+}
+function _dropSpelling(data: _NodeData): _NodeData {
+	if (_spellingTokens(data) === undefined) return data;
+	const { $other: _tokens, ...node } = data;
+	const $text = _spelledText(data);
+	return ($text === undefined ? node : { ...node, $text }) as _NodeData;
+}
+function _spellingOf(entry: _NodeData): string | undefined {
+	const text = _spelledText(entry);
+	if (text !== undefined || entry.$named !== false) return text;
+	const shown = _displayOf(entry);
+	return typeof shown === 'number' ? KIND_DISPLAY_NAMES.get(shown) : shown;
+}
+function _tiledSpelling(span: _NodeData['$span'], children: readonly _NodeData[]): string | undefined {
+	if (span === undefined) return undefined;
+	let at = span.start;
+	let text = '';
+	for (const child of children) {
+		const spelling = _spellingOf(child);
+		if (child.$span?.start !== at || spelling === undefined) return undefined;
+		text += spelling;
+		at = child.$span.end;
+	}
+	return at === span.end ? text : undefined;
+}
+function _readChildren(data: _NodeData): readonly _NodeData[] | undefined {
+	const children: _NodeData[] = [];
+	for (const [key, value] of Object.entries(data)) {
+		if (key.charCodeAt(0) !== 95 && key !== '$other') continue;
+		for (const child of (Array.isArray(value) ? value : [value]) as readonly unknown[]) {
+			if (child === undefined) continue;
+			if (typeof child !== 'object' || child === null) return undefined;
+			children.push(child as _NodeData);
+		}
+	}
+	return children.sort((a, b) => (a.$span?.start ?? 0) - (b.$span?.start ?? 0));
+}
+function _spelledLeaf(data: _NodeData): _NodeData {
+	if (data.$text !== undefined) return data;
+	const children = _readChildren(data);
+	if (children === undefined || children.length === 0) return data;
+	const $text = _tiledSpelling(data.$span, children);
+	if ($text === undefined) return data;
+	const leaf: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(data)) {
+		if (key.charCodeAt(0) !== 95 && key !== '$other' && key !== '$slotOrder') leaf[key] = value;
+	}
+	return { ...leaf, $text } as _NodeData;
+}
+
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode<D extends _NodeData & { readonly $type: keyof T.ParsedByKindId }>(
 	data: D,
@@ -1604,8 +1730,10 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// is a direct id-keyed lookup. A non-numeric `$type` can only be a
 	// catalog-less kind (the deprecated JS diagnostic lane stamps those
 	// as strings), which never had a table entry to reach.
-	const fn = typeof data.$type === 'number' ? _wrapTable[data.$type] : undefined;
-	const shown = data.$_trivia == null ? data : { ...data, $_trivia: _wrapTrivia(data.$_trivia, tree) };
+	const type = _kindOf(data);
+	const fn = typeof type === 'number' ? _wrapTable[type] : undefined;
+	const own = _dropSpelling(type === data.$type ? _withoutDisplay(data) : data);
+	const shown = own.$_trivia == null ? own : { ...own, $_trivia: _wrapTrivia(own.$_trivia, tree) };
 	return inTreeEngine(tree, () => (fn ? fn(shown, tree) : _drillUnknownKindChildren(shown, tree)));
 }
 
@@ -1623,13 +1751,13 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
  * --engine js`) leave it absent and fall back to `readNodeJs`
  * (the in-process walker).
  */
-function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNodeData {
+function readNode(tree: TreeHandle, handle?: number, childIndex?: number, depth?: number): AnyNodeData {
 	// Per-handle dispatch: native-engine handles carry a `read`
 	// closure that routes through napi (engine owns the tree;
 	// navigation via handle + childIndex replaces nodeId).
 	// Wasm/JS handles (retained diagnostic tooling) leave `read`
 	// absent and fall back to the in-process JS walker.
-	return tree.read ? tree.read(handle, childIndex) : readNodeJs(tree, handle, childIndex);
+	return tree.read ? tree.read(handle, childIndex, depth) : readNodeJs(tree, handle, childIndex);
 }
 
 /**
@@ -1639,6 +1767,6 @@ function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNo
  * the grammar symbol (stamped by the read), so no per-site alias
  * rewriting exists between the read and the wrap.
  */
-export function readTreeNode(tree: TreeHandle, handle?: number, childIndex?: number): unknown {
-	return wrapNode(readNode(tree, handle, childIndex), tree);
+export function readTreeNode(tree: TreeHandle, handle?: number, childIndex?: number, depth?: number): unknown {
+	return wrapNode(readNode(tree, handle, childIndex, depth), tree);
 }

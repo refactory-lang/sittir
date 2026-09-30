@@ -25,7 +25,7 @@ describe('emitFactorySourceText (real rust grammar)', () => {
 	it('prints a regular block comment from its text, leading, trailing and inner, on the strict surface', async () => {
 		const source = await emitFactorySourceText('rust', '/* a */\nfn f() {} /* t */\n\nfn g() {\n    h(/* i */);\n}\n', 'rebuild');
 		for (const text of [' a ', ' t ', ' i ']) {
-			expect(source).toContain(`build.blockComment.strict(build.blockCommentContent(${JSON.stringify(text)}))`);
+			expect(source).toContain(`build.blockComment.strict(build.blockCommentRegular(${JSON.stringify(text)}))`);
 		}
 		expect(source).toContain('build.arguments.strict().$trivia.inner(');
 		expect(source).not.toContain('innerAt(');

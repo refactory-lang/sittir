@@ -52,7 +52,7 @@ describe('wrap emitter separator-tagged field slots', () => {
 	const source = emitWrap({ grammar: 'synth', nodeMap: makeSeparatedFieldNodeMap(), kindEntries: KIND_ENTRIES });
 
 	it('drops the field-tagged separator id from a mixedEnum many slot before normalization', () => {
-		expect(source).toContain('_right: projectMixedEnumStorage(normalizeRepeatedWrapSlot(dropWireDelimiters(data._right, [TSKindId.Comma]),');
+		expect(source).toContain('_right: projectMixedEnumStorage(normalizeRepeatedWrapSlot(dropWireDelimiters(data._right, [TSKindId.Comma], _order, "right"),');
 		expect(source).toContain('function dropWireDelimiters<T>(');
 		expect(source).toContain('function _isWireDelimiter(e: unknown, separatorKindIds: readonly number[]): e is _WireDelimiter {');
 	});

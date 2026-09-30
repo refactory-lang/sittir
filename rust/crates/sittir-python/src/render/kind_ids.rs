@@ -73,30 +73,30 @@ pub const LAMBDA_KEYWORD: KindId = KindId(62);
 pub const YIELD_KEYWORD: KindId = KindId(63);
 pub const ELLIPSIS: KindId = KindId(64);
 pub const BSLASH: KindId = KindId(65);
-pub const FORMAT_SPECIFIER_TOKEN1: KindId = KindId(66);
-pub const TYPE_CONVERSION: KindId = KindId(67);
-pub const PRINT_KEYWORD: KindId = KindId(68);
-pub const ASYNC_KEYWORD: KindId = KindId(69);
-pub const AWAIT_KEYWORD: KindId = KindId(70);
-pub const TRUE: KindId = KindId(71);
-pub const FALSE: KindId = KindId(72);
-pub const NONE: KindId = KindId(73);
-pub const COMMENT: KindId = KindId(74);
-pub const SEMI: KindId = KindId(75);
-pub const DASH_GT: KindId = KindId(76);
-pub const PLUS_EQ: KindId = KindId(77);
-pub const DASH_EQ: KindId = KindId(78);
-pub const STAR_EQ: KindId = KindId(79);
-pub const SLASH_EQ: KindId = KindId(80);
-pub const AT_EQ: KindId = KindId(81);
-pub const SLASH_SLASH_EQ: KindId = KindId(82);
-pub const PERCENT_EQ: KindId = KindId(83);
-pub const STAR_STAR_EQ: KindId = KindId(84);
-pub const GT_GT_EQ: KindId = KindId(85);
-pub const LT_LT_EQ: KindId = KindId(86);
-pub const AMP_EQ: KindId = KindId(87);
-pub const CARET_EQ: KindId = KindId(88);
-pub const PIPE_EQ: KindId = KindId(89);
+pub const TYPE_CONVERSION: KindId = KindId(66);
+pub const PRINT_KEYWORD: KindId = KindId(67);
+pub const ASYNC_KEYWORD: KindId = KindId(68);
+pub const AWAIT_KEYWORD: KindId = KindId(69);
+pub const TRUE: KindId = KindId(70);
+pub const FALSE: KindId = KindId(71);
+pub const NONE: KindId = KindId(72);
+pub const COMMENT: KindId = KindId(73);
+pub const SEMI: KindId = KindId(74);
+pub const DASH_GT: KindId = KindId(75);
+pub const PLUS_EQ: KindId = KindId(76);
+pub const DASH_EQ: KindId = KindId(77);
+pub const STAR_EQ: KindId = KindId(78);
+pub const SLASH_EQ: KindId = KindId(79);
+pub const AT_EQ: KindId = KindId(80);
+pub const SLASH_SLASH_EQ: KindId = KindId(81);
+pub const PERCENT_EQ: KindId = KindId(82);
+pub const STAR_STAR_EQ: KindId = KindId(83);
+pub const GT_GT_EQ: KindId = KindId(84);
+pub const LT_LT_EQ: KindId = KindId(85);
+pub const AMP_EQ: KindId = KindId(86);
+pub const CARET_EQ: KindId = KindId(87);
+pub const PIPE_EQ: KindId = KindId(88);
+pub const FORMAT_SPECIFIER_TEXT: KindId = KindId(89);
 pub const INTEGER_HEX: KindId = KindId(90);
 pub const INTEGER_OCTAL: KindId = KindId(91);
 pub const INTEGER_BINARY: KindId = KindId(92);
@@ -300,49 +300,50 @@ pub const EXPRESSION_STATEMENT_TUPLE: KindId = KindId(289);
 pub const WITH_CLAUSE_BARE: KindId = KindId(290);
 pub const WITH_CLAUSE_PAREN: KindId = KindId(291);
 pub const MATCH_BLOCK_BLOCK: KindId = KindId(292);
-pub const SUITE_INLINE: KindId = KindId(293);
-pub const SUITE_BLOCK: KindId = KindId(294);
-pub const SUITE_EMPTY: KindId = KindId(295);
-pub const _COMPARISON_OPERATOR_COMPARATOR: KindId = KindId(296);
-pub const _YIELD_FROM_CLAUSE: KindId = KindId(297);
-pub const MODULE_REPEAT1: KindId = KindId(298);
-pub const IMPORT_PREFIX_REPEAT1: KindId = KindId(299);
-pub const _IMPORT_LIST_REPEAT1: KindId = KindId(300);
-pub const ASSERT_STATEMENT_REPEAT1: KindId = KindId(301);
-pub const IF_STATEMENT_REPEAT1: KindId = KindId(302);
-pub const TRY_STATEMENT_REPEAT1: KindId = KindId(303);
-pub const GLOBAL_STATEMENT_REPEAT1: KindId = KindId(304);
-pub const DECORATED_DEFINITION_REPEAT1: KindId = KindId(305);
-pub const DOTTED_NAME_REPEAT1: KindId = KindId(306);
-pub const UNION_PATTERN_REPEAT1: KindId = KindId(307);
-pub const _PARAMETERS_REPEAT1: KindId = KindId(308);
-pub const _PATTERNS_REPEAT1: KindId = KindId(309);
-pub const COMPARISON_OPERATOR_REPEAT1: KindId = KindId(310);
-pub const _COLLECTION_ELEMENTS_REPEAT1: KindId = KindId(311);
-pub const FOR_IN_CLAUSE_REPEAT1: KindId = KindId(312);
-pub const CONCATENATED_STRING_REPEAT1: KindId = KindId(313);
-pub const STRING_REPEAT1: KindId = KindId(314);
-pub const STRING_CONTENT_REPEAT1: KindId = KindId(315);
-pub const FORMAT_SPECIFIER_REPEAT1: KindId = KindId(316);
-pub const SIMPLE_STATEMENTS_ELEMENTS_REPEAT1: KindId = KindId(317);
-pub const SUBJECTS_REPEAT1: KindId = KindId(318);
-pub const CASE_PATTERNS_REPEAT1: KindId = KindId(319);
-pub const WITH_CLAUSE_WITH_ITEMS_REPEAT1: KindId = KindId(320);
-pub const _EXEC_STATEMENT_OPTIONAL1_REPEAT1: KindId = KindId(321);
-pub const TYPES_REPEAT1: KindId = KindId(322);
-pub const ARGUMENT_LIST_ELEMENTS_REPEAT1: KindId = KindId(323);
-pub const EXPRESSION_LIST_EXPRESSIONS_REPEAT1: KindId = KindId(324);
-pub const DICT_PATTERN_ELEMENTS_REPEAT1: KindId = KindId(325);
-pub const PATTERN_LIST_PATTERNS_REPEAT1: KindId = KindId(326);
-pub const SUBSCRIPTS_REPEAT1: KindId = KindId(327);
-pub const DICTIONARY_ELEMENTS_REPEAT1: KindId = KindId(328);
-pub const _PRINT_ARGUMENTS_REPEAT1: KindId = KindId(329);
-pub const COMPREHENSION_CLAUSES_REPEAT1: KindId = KindId(330);
-pub const EXCEPT_CLAUSE_EXCEPTION_LIST_REPEAT1: KindId = KindId(331);
-pub const MATCH_BLOCK_BLOCK_REPEAT1: KindId = KindId(332);
-pub const _AS_PATTERN_TARGET: KindId = KindId(333);
-pub const _FORMAT_EXPRESSION: KindId = KindId(334);
-pub const _NAMES: KindId = KindId(335);
+pub const MATCH_BLOCK_EMPTY: KindId = KindId(293);
+pub const SUITE_INLINE: KindId = KindId(294);
+pub const SUITE_BLOCK: KindId = KindId(295);
+pub const SUITE_EMPTY: KindId = KindId(296);
+pub const _COMPARISON_OPERATOR_COMPARATOR: KindId = KindId(297);
+pub const _YIELD_FROM_CLAUSE: KindId = KindId(298);
+pub const MODULE_REPEAT1: KindId = KindId(299);
+pub const IMPORT_PREFIX_REPEAT1: KindId = KindId(300);
+pub const _IMPORT_LIST_REPEAT1: KindId = KindId(301);
+pub const ASSERT_STATEMENT_REPEAT1: KindId = KindId(302);
+pub const IF_STATEMENT_REPEAT1: KindId = KindId(303);
+pub const TRY_STATEMENT_REPEAT1: KindId = KindId(304);
+pub const GLOBAL_STATEMENT_REPEAT1: KindId = KindId(305);
+pub const DECORATED_DEFINITION_REPEAT1: KindId = KindId(306);
+pub const DOTTED_NAME_REPEAT1: KindId = KindId(307);
+pub const UNION_PATTERN_REPEAT1: KindId = KindId(308);
+pub const _PARAMETERS_REPEAT1: KindId = KindId(309);
+pub const _PATTERNS_REPEAT1: KindId = KindId(310);
+pub const COMPARISON_OPERATOR_REPEAT1: KindId = KindId(311);
+pub const _COLLECTION_ELEMENTS_REPEAT1: KindId = KindId(312);
+pub const FOR_IN_CLAUSE_REPEAT1: KindId = KindId(313);
+pub const CONCATENATED_STRING_REPEAT1: KindId = KindId(314);
+pub const STRING_REPEAT1: KindId = KindId(315);
+pub const STRING_CONTENT_REPEAT1: KindId = KindId(316);
+pub const FORMAT_SPECIFIER_REPEAT1: KindId = KindId(317);
+pub const SIMPLE_STATEMENTS_ELEMENTS_REPEAT1: KindId = KindId(318);
+pub const SUBJECTS_REPEAT1: KindId = KindId(319);
+pub const CASE_PATTERNS_REPEAT1: KindId = KindId(320);
+pub const WITH_CLAUSE_WITH_ITEMS_REPEAT1: KindId = KindId(321);
+pub const _EXEC_STATEMENT_OPTIONAL1_REPEAT1: KindId = KindId(322);
+pub const TYPES_REPEAT1: KindId = KindId(323);
+pub const ARGUMENT_LIST_ELEMENTS_REPEAT1: KindId = KindId(324);
+pub const EXPRESSION_LIST_EXPRESSIONS_REPEAT1: KindId = KindId(325);
+pub const DICT_PATTERN_ELEMENTS_REPEAT1: KindId = KindId(326);
+pub const PATTERN_LIST_PATTERNS_REPEAT1: KindId = KindId(327);
+pub const SUBSCRIPTS_REPEAT1: KindId = KindId(328);
+pub const DICTIONARY_ELEMENTS_REPEAT1: KindId = KindId(329);
+pub const _PRINT_ARGUMENTS_REPEAT1: KindId = KindId(330);
+pub const COMPREHENSION_CLAUSES_REPEAT1: KindId = KindId(331);
+pub const EXCEPT_CLAUSE_EXCEPTION_LIST_REPEAT1: KindId = KindId(332);
+pub const MATCH_BLOCK_BLOCK_REPEAT1: KindId = KindId(333);
+pub const _AS_PATTERN_TARGET: KindId = KindId(334);
+pub const _FORMAT_EXPRESSION: KindId = KindId(335);
+pub const _NAMES: KindId = KindId(336);
 pub const ERROR: KindId = KindId(65535);
 const _: () = assert!(ERROR.0 == KindId::ERROR.0);
 
@@ -415,30 +416,30 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         63 => "yield", // "yield_keyword"
         64 => "ellipsis", // "ellipsis"
         65 => "\\", // "bslash"
-        66 => "format_specifier_token1", // "format_specifier_token1"
-        67 => "type_conversion", // "type_conversion"
-        68 => "print", // "print_keyword"
-        69 => "async", // "async_keyword"
-        70 => "await", // "await_keyword"
-        71 => "true", // "true"
-        72 => "false", // "false"
-        73 => "none", // "none"
-        74 => "comment", // "comment"
-        75 => ";", // "semi"
-        76 => "->", // "dash_gt"
-        77 => "+=", // "plus_eq"
-        78 => "-=", // "dash_eq"
-        79 => "*=", // "star_eq"
-        80 => "/=", // "slash_eq"
-        81 => "@=", // "at_eq"
-        82 => "//=", // "slash_slash_eq"
-        83 => "%=", // "percent_eq"
-        84 => "**=", // "star_star_eq"
-        85 => ">>=", // "gt_gt_eq"
-        86 => "<<=", // "lt_lt_eq"
-        87 => "&=", // "amp_eq"
-        88 => "^=", // "caret_eq"
-        89 => "|=", // "pipe_eq"
+        66 => "type_conversion", // "type_conversion"
+        67 => "print", // "print_keyword"
+        68 => "async", // "async_keyword"
+        69 => "await", // "await_keyword"
+        70 => "true", // "true"
+        71 => "false", // "false"
+        72 => "none", // "none"
+        73 => "comment", // "comment"
+        74 => ";", // "semi"
+        75 => "->", // "dash_gt"
+        76 => "+=", // "plus_eq"
+        77 => "-=", // "dash_eq"
+        78 => "*=", // "star_eq"
+        79 => "/=", // "slash_eq"
+        80 => "@=", // "at_eq"
+        81 => "//=", // "slash_slash_eq"
+        82 => "%=", // "percent_eq"
+        83 => "**=", // "star_star_eq"
+        84 => ">>=", // "gt_gt_eq"
+        85 => "<<=", // "lt_lt_eq"
+        86 => "&=", // "amp_eq"
+        87 => "^=", // "caret_eq"
+        88 => "|=", // "pipe_eq"
+        89 => "format_specifier_text", // "format_specifier_text"
         90 => "integer_hex", // "integer_hex"
         91 => "integer_octal", // "integer_octal"
         92 => "integer_binary", // "integer_binary"
@@ -479,7 +480,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         127 => "module", // "module"
         128 => "_statement", // "_statement"
         129 => "_simple_statements", // "_simple_statements"
-        337 => "simple_statements", // "_simple_statements"
+        338 => "simple_statements", // "_simple_statements"
         130 => "import_statement", // "import_statement"
         131 => "import_prefix", // "import_prefix"
         132 => "relative_import", // "relative_import"
@@ -534,7 +535,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         181 => "dotted_name", // "dotted_name"
         182 => "case_pattern", // "case_pattern"
         183 => "_simple_pattern", // "_simple_pattern"
-        336 => "simple_pattern", // "_simple_pattern"
+        337 => "simple_pattern", // "_simple_pattern"
         184 => "case_as_pattern", // "_as_pattern"
         185 => "union_pattern", // "union_pattern"
         186 => "dict_pattern", // "dict_pattern"
@@ -644,73 +645,53 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         290 => "with_clause_bare", // "with_clause_bare"
         291 => "with_clause_paren", // "with_clause_paren"
         292 => "match_block_block", // "match_block_block"
-        293 => "suite_inline", // "suite_inline"
-        294 => "suite_block", // "suite_block"
-        295 => "suite_empty", // "suite_empty"
-        296 => "comparison_operator_comparator", // "_comparison_operator_comparator"
-        297 => "yield_from_clause", // "_yield_from_clause"
-        298 => "module_repeat1", // "module_repeat1"
-        299 => "import_prefix_repeat1", // "import_prefix_repeat1"
-        300 => "_import_list_repeat1", // "_import_list_repeat1"
-        301 => "assert_statement_repeat1", // "assert_statement_repeat1"
-        302 => "if_statement_repeat1", // "if_statement_repeat1"
-        303 => "try_statement_repeat1", // "try_statement_repeat1"
-        304 => "global_statement_repeat1", // "global_statement_repeat1"
-        305 => "decorated_definition_repeat1", // "decorated_definition_repeat1"
-        306 => "dotted_name_repeat1", // "dotted_name_repeat1"
-        307 => "union_pattern_repeat1", // "union_pattern_repeat1"
-        308 => "_parameters_repeat1", // "_parameters_repeat1"
-        309 => "_patterns_repeat1", // "_patterns_repeat1"
-        310 => "comparison_operator_repeat1", // "comparison_operator_repeat1"
-        311 => "_collection_elements_repeat1", // "_collection_elements_repeat1"
-        312 => "for_in_clause_repeat1", // "for_in_clause_repeat1"
-        313 => "concatenated_string_repeat1", // "concatenated_string_repeat1"
-        314 => "string_repeat1", // "string_repeat1"
-        315 => "string_content_repeat1", // "string_content_repeat1"
-        316 => "format_specifier_repeat1", // "format_specifier_repeat1"
-        317 => "simple_statements_elements_repeat1", // "simple_statements_elements_repeat1"
-        318 => "subjects_repeat1", // "subjects_repeat1"
-        319 => "case_patterns_repeat1", // "case_patterns_repeat1"
-        320 => "with_clause_with_items_repeat1", // "with_clause_with_items_repeat1"
-        321 => "_exec_statement_optional1_repeat1", // "_exec_statement_optional1_repeat1"
-        322 => "types_repeat1", // "types_repeat1"
-        323 => "argument_list_elements_repeat1", // "argument_list_elements_repeat1"
-        324 => "expression_list_expressions_repeat1", // "expression_list_expressions_repeat1"
-        325 => "dict_pattern_elements_repeat1", // "dict_pattern_elements_repeat1"
-        326 => "pattern_list_patterns_repeat1", // "pattern_list_patterns_repeat1"
-        327 => "subscripts_repeat1", // "subscripts_repeat1"
-        328 => "dictionary_elements_repeat1", // "dictionary_elements_repeat1"
-        329 => "_print_arguments_repeat1", // "_print_arguments_repeat1"
-        330 => "comprehension_clauses_repeat1", // "comprehension_clauses_repeat1"
-        331 => "except_clause_exception_list_repeat1", // "except_clause_exception_list_repeat1"
-        332 => "match_block_block_repeat1", // "match_block_block_repeat1"
-        333 => "as_pattern_target", // "_as_pattern_target"
-        334 => "format_expression", // "_format_expression"
-        335 => "names", // "_names"
+        293 => "match_block_empty", // "match_block_empty"
+        294 => "suite_inline", // "suite_inline"
+        295 => "suite_block", // "suite_block"
+        296 => "suite_empty", // "suite_empty"
+        297 => "comparison_operator_comparator", // "_comparison_operator_comparator"
+        298 => "yield_from_clause", // "_yield_from_clause"
+        299 => "module_repeat1", // "module_repeat1"
+        300 => "import_prefix_repeat1", // "import_prefix_repeat1"
+        301 => "_import_list_repeat1", // "_import_list_repeat1"
+        302 => "assert_statement_repeat1", // "assert_statement_repeat1"
+        303 => "if_statement_repeat1", // "if_statement_repeat1"
+        304 => "try_statement_repeat1", // "try_statement_repeat1"
+        305 => "global_statement_repeat1", // "global_statement_repeat1"
+        306 => "decorated_definition_repeat1", // "decorated_definition_repeat1"
+        307 => "dotted_name_repeat1", // "dotted_name_repeat1"
+        308 => "union_pattern_repeat1", // "union_pattern_repeat1"
+        309 => "_parameters_repeat1", // "_parameters_repeat1"
+        310 => "_patterns_repeat1", // "_patterns_repeat1"
+        311 => "comparison_operator_repeat1", // "comparison_operator_repeat1"
+        312 => "_collection_elements_repeat1", // "_collection_elements_repeat1"
+        313 => "for_in_clause_repeat1", // "for_in_clause_repeat1"
+        314 => "concatenated_string_repeat1", // "concatenated_string_repeat1"
+        315 => "string_repeat1", // "string_repeat1"
+        316 => "string_content_repeat1", // "string_content_repeat1"
+        317 => "format_specifier_repeat1", // "format_specifier_repeat1"
+        318 => "simple_statements_elements_repeat1", // "simple_statements_elements_repeat1"
+        319 => "subjects_repeat1", // "subjects_repeat1"
+        320 => "case_patterns_repeat1", // "case_patterns_repeat1"
+        321 => "with_clause_with_items_repeat1", // "with_clause_with_items_repeat1"
+        322 => "_exec_statement_optional1_repeat1", // "_exec_statement_optional1_repeat1"
+        323 => "types_repeat1", // "types_repeat1"
+        324 => "argument_list_elements_repeat1", // "argument_list_elements_repeat1"
+        325 => "expression_list_expressions_repeat1", // "expression_list_expressions_repeat1"
+        326 => "dict_pattern_elements_repeat1", // "dict_pattern_elements_repeat1"
+        327 => "pattern_list_patterns_repeat1", // "pattern_list_patterns_repeat1"
+        328 => "subscripts_repeat1", // "subscripts_repeat1"
+        329 => "dictionary_elements_repeat1", // "dictionary_elements_repeat1"
+        330 => "_print_arguments_repeat1", // "_print_arguments_repeat1"
+        331 => "comprehension_clauses_repeat1", // "comprehension_clauses_repeat1"
+        332 => "except_clause_exception_list_repeat1", // "except_clause_exception_list_repeat1"
+        333 => "match_block_block_repeat1", // "match_block_block_repeat1"
+        334 => "as_pattern_target", // "_as_pattern_target"
+        335 => "format_expression", // "_format_expression"
+        336 => "names", // "_names"
         65535 => "ERROR", // "ERROR"
         _ => "<unknown>",
     }
-}
-
-/// Whether the reader captures a named node of this kind as text: its
-/// template renders from that text, so the text is the node's content —
-/// free text for a pattern kind, the literal it holds for an enum kind.
-pub fn is_text_kind(kind: KindId) -> bool {
-    matches!(kind.0, 1 | 67 | 74 | 90 | 91 | 92 | 93 | 94 | 95 | 96 | 97 | 98 | 99 | 100 | 101 | 102 | 103 | 104 | 105 | 106 | 116 | 117 | 118 | 119 | 120 | 121 | 131)
-}
-
-/// Whether this parse kind id is an alias envelope: the reader stamps the
-/// grammar symbol beside it when the node is the storage node shown under
-/// the alias, so the wrap layer can seat it as the envelope's content.
-pub fn is_alias_envelope(kind: KindId) -> bool {
-    matches!(kind.0, 333 | 334 | 335)
-}
-
-/// Whether a node of this kind keeps its anonymous children as `$other`
-/// when it has no named child: an unnamed slot of the kind stores terminal
-/// kinds, and the wrap layer reclaims that slot's value from `$other`.
-pub fn keeps_anonymous_children(kind: KindId) -> bool {
-    matches!(kind.0, 134 | 141 | 144 | 145 | 146 | 154 | 180 | 183 | 219 | 225 | 248 | 265 | 271 | 277 | 295 | 296 | 297)
 }
 
 /// The model slot a child is stored under where its name differs from the
@@ -916,7 +897,7 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
         (146, None, "type_keyword") => Some("expressions"),
         (146, None, "unary_operator") => Some("expressions"),
         (154, None, "match_block_block") => Some("content"),
-        (154, None, "newline") => Some("content"),
+        (154, None, "match_block_empty") => Some("content"),
         (159, None, "suite_block") => Some("suite"),
         (159, None, "suite_empty") => Some("suite"),
         (159, None, "suite_inline") => Some("suite"),
@@ -1207,89 +1188,89 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
         (277, None, "comma") => Some("print_chevron_arguments"),
         (285, None, "except_clause_exception_as") => Some("content"),
         (285, None, "except_clause_exception_list") => Some("content"),
-        (296, None, "async_keyword") => Some("primary_expression"),
-        (296, None, "attribute") => Some("primary_expression"),
-        (296, None, "await") => Some("primary_expression"),
-        (296, None, "await_keyword") => Some("primary_expression"),
-        (296, None, "binary_operator") => Some("primary_expression"),
-        (296, None, "call") => Some("primary_expression"),
-        (296, None, "concatenated_string") => Some("primary_expression"),
-        (296, None, "dictionary") => Some("primary_expression"),
-        (296, None, "dictionary_comprehension") => Some("primary_expression"),
-        (296, None, "ellipsis") => Some("primary_expression"),
-        (296, None, "exec_keyword") => Some("primary_expression"),
-        (296, None, "false") => Some("primary_expression"),
-        (296, None, "float_leading_point") => Some("primary_expression"),
-        (296, None, "float_point") => Some("primary_expression"),
-        (296, None, "float_scientific") => Some("primary_expression"),
-        (296, None, "generator_expression") => Some("primary_expression"),
-        (296, None, "identifier") => Some("primary_expression"),
-        (296, None, "integer_binary") => Some("primary_expression"),
-        (296, None, "integer_decimal_imaginary") => Some("primary_expression"),
-        (296, None, "integer_decimal_long") => Some("primary_expression"),
-        (296, None, "integer_decimal_plain") => Some("primary_expression"),
-        (296, None, "integer_hex") => Some("primary_expression"),
-        (296, None, "integer_octal") => Some("primary_expression"),
-        (296, None, "list") => Some("primary_expression"),
-        (296, None, "list_comprehension") => Some("primary_expression"),
-        (296, None, "list_splat_pattern") => Some("primary_expression"),
-        (296, None, "match_keyword") => Some("primary_expression"),
-        (296, None, "none") => Some("primary_expression"),
-        (296, None, "parenthesized_expression") => Some("primary_expression"),
-        (296, None, "print_keyword") => Some("primary_expression"),
-        (296, None, "set") => Some("primary_expression"),
-        (296, None, "set_comprehension") => Some("primary_expression"),
-        (296, None, "string") => Some("primary_expression"),
-        (296, None, "subscript") => Some("primary_expression"),
-        (296, None, "true") => Some("primary_expression"),
-        (296, None, "tuple") => Some("primary_expression"),
-        (296, None, "type_keyword") => Some("primary_expression"),
-        (296, None, "unary_operator") => Some("primary_expression"),
-        (297, None, "as_pattern") => Some("expression"),
-        (297, None, "async_keyword") => Some("expression"),
-        (297, None, "attribute") => Some("expression"),
-        (297, None, "await") => Some("expression"),
-        (297, None, "await_keyword") => Some("expression"),
-        (297, None, "binary_operator") => Some("expression"),
-        (297, None, "boolean_operator") => Some("expression"),
-        (297, None, "call") => Some("expression"),
-        (297, None, "comparison_operator") => Some("expression"),
-        (297, None, "concatenated_string") => Some("expression"),
-        (297, None, "conditional_expression") => Some("expression"),
-        (297, None, "dictionary") => Some("expression"),
-        (297, None, "dictionary_comprehension") => Some("expression"),
-        (297, None, "ellipsis") => Some("expression"),
-        (297, None, "exec_keyword") => Some("expression"),
-        (297, None, "false") => Some("expression"),
-        (297, None, "float_leading_point") => Some("expression"),
-        (297, None, "float_point") => Some("expression"),
-        (297, None, "float_scientific") => Some("expression"),
-        (297, None, "generator_expression") => Some("expression"),
-        (297, None, "identifier") => Some("expression"),
-        (297, None, "integer_binary") => Some("expression"),
-        (297, None, "integer_decimal_imaginary") => Some("expression"),
-        (297, None, "integer_decimal_long") => Some("expression"),
-        (297, None, "integer_decimal_plain") => Some("expression"),
-        (297, None, "integer_hex") => Some("expression"),
-        (297, None, "integer_octal") => Some("expression"),
-        (297, None, "lambda") => Some("expression"),
-        (297, None, "list") => Some("expression"),
-        (297, None, "list_comprehension") => Some("expression"),
-        (297, None, "list_splat_pattern") => Some("expression"),
-        (297, None, "match_keyword") => Some("expression"),
-        (297, None, "named_expression") => Some("expression"),
-        (297, None, "none") => Some("expression"),
-        (297, None, "not_operator") => Some("expression"),
-        (297, None, "parenthesized_expression") => Some("expression"),
-        (297, None, "print_keyword") => Some("expression"),
-        (297, None, "set") => Some("expression"),
-        (297, None, "set_comprehension") => Some("expression"),
-        (297, None, "string") => Some("expression"),
-        (297, None, "subscript") => Some("expression"),
-        (297, None, "true") => Some("expression"),
-        (297, None, "tuple") => Some("expression"),
-        (297, None, "type_keyword") => Some("expression"),
-        (297, None, "unary_operator") => Some("expression"),
+        (297, None, "async_keyword") => Some("primary_expression"),
+        (297, None, "attribute") => Some("primary_expression"),
+        (297, None, "await") => Some("primary_expression"),
+        (297, None, "await_keyword") => Some("primary_expression"),
+        (297, None, "binary_operator") => Some("primary_expression"),
+        (297, None, "call") => Some("primary_expression"),
+        (297, None, "concatenated_string") => Some("primary_expression"),
+        (297, None, "dictionary") => Some("primary_expression"),
+        (297, None, "dictionary_comprehension") => Some("primary_expression"),
+        (297, None, "ellipsis") => Some("primary_expression"),
+        (297, None, "exec_keyword") => Some("primary_expression"),
+        (297, None, "false") => Some("primary_expression"),
+        (297, None, "float_leading_point") => Some("primary_expression"),
+        (297, None, "float_point") => Some("primary_expression"),
+        (297, None, "float_scientific") => Some("primary_expression"),
+        (297, None, "generator_expression") => Some("primary_expression"),
+        (297, None, "identifier") => Some("primary_expression"),
+        (297, None, "integer_binary") => Some("primary_expression"),
+        (297, None, "integer_decimal_imaginary") => Some("primary_expression"),
+        (297, None, "integer_decimal_long") => Some("primary_expression"),
+        (297, None, "integer_decimal_plain") => Some("primary_expression"),
+        (297, None, "integer_hex") => Some("primary_expression"),
+        (297, None, "integer_octal") => Some("primary_expression"),
+        (297, None, "list") => Some("primary_expression"),
+        (297, None, "list_comprehension") => Some("primary_expression"),
+        (297, None, "list_splat_pattern") => Some("primary_expression"),
+        (297, None, "match_keyword") => Some("primary_expression"),
+        (297, None, "none") => Some("primary_expression"),
+        (297, None, "parenthesized_expression") => Some("primary_expression"),
+        (297, None, "print_keyword") => Some("primary_expression"),
+        (297, None, "set") => Some("primary_expression"),
+        (297, None, "set_comprehension") => Some("primary_expression"),
+        (297, None, "string") => Some("primary_expression"),
+        (297, None, "subscript") => Some("primary_expression"),
+        (297, None, "true") => Some("primary_expression"),
+        (297, None, "tuple") => Some("primary_expression"),
+        (297, None, "type_keyword") => Some("primary_expression"),
+        (297, None, "unary_operator") => Some("primary_expression"),
+        (298, None, "as_pattern") => Some("expression"),
+        (298, None, "async_keyword") => Some("expression"),
+        (298, None, "attribute") => Some("expression"),
+        (298, None, "await") => Some("expression"),
+        (298, None, "await_keyword") => Some("expression"),
+        (298, None, "binary_operator") => Some("expression"),
+        (298, None, "boolean_operator") => Some("expression"),
+        (298, None, "call") => Some("expression"),
+        (298, None, "comparison_operator") => Some("expression"),
+        (298, None, "concatenated_string") => Some("expression"),
+        (298, None, "conditional_expression") => Some("expression"),
+        (298, None, "dictionary") => Some("expression"),
+        (298, None, "dictionary_comprehension") => Some("expression"),
+        (298, None, "ellipsis") => Some("expression"),
+        (298, None, "exec_keyword") => Some("expression"),
+        (298, None, "false") => Some("expression"),
+        (298, None, "float_leading_point") => Some("expression"),
+        (298, None, "float_point") => Some("expression"),
+        (298, None, "float_scientific") => Some("expression"),
+        (298, None, "generator_expression") => Some("expression"),
+        (298, None, "identifier") => Some("expression"),
+        (298, None, "integer_binary") => Some("expression"),
+        (298, None, "integer_decimal_imaginary") => Some("expression"),
+        (298, None, "integer_decimal_long") => Some("expression"),
+        (298, None, "integer_decimal_plain") => Some("expression"),
+        (298, None, "integer_hex") => Some("expression"),
+        (298, None, "integer_octal") => Some("expression"),
+        (298, None, "lambda") => Some("expression"),
+        (298, None, "list") => Some("expression"),
+        (298, None, "list_comprehension") => Some("expression"),
+        (298, None, "list_splat_pattern") => Some("expression"),
+        (298, None, "match_keyword") => Some("expression"),
+        (298, None, "named_expression") => Some("expression"),
+        (298, None, "none") => Some("expression"),
+        (298, None, "not_operator") => Some("expression"),
+        (298, None, "parenthesized_expression") => Some("expression"),
+        (298, None, "print_keyword") => Some("expression"),
+        (298, None, "set") => Some("expression"),
+        (298, None, "set_comprehension") => Some("expression"),
+        (298, None, "string") => Some("expression"),
+        (298, None, "subscript") => Some("expression"),
+        (298, None, "true") => Some("expression"),
+        (298, None, "tuple") => Some("expression"),
+        (298, None, "type_keyword") => Some("expression"),
+        (298, None, "unary_operator") => Some("expression"),
         _ => None,
     }
 }
@@ -1307,55 +1288,13 @@ pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str
         (197, 1) => Some("patterns"),
         (232, 1) => Some("collection_elements"),
         (234, 1) => Some("collection_elements"),
-        (235, 1) => Some("entries"),
+        (235, 1) => Some("elements"),
         (273, 1) => Some("list_pattern_case_patterns"),
         (274, 1) => Some("list_pattern_case_patterns"),
         (292, 1) => Some("alternative"),
         _ => None,
     }
 }
-
-/// (parent kind id, tree-sitter field name, punctuation kind ids) for every
-/// slot the parser field-tags a literal into: the separator of a repeated
-/// slot, or a literal a rule puts beside a singular slot under the same
-/// field. The template prints such a token itself, so the reader drops the
-/// child instead of seating it, and a native read and a wrapped read hand
-/// back the same slot contents.
-static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
-    (135, "name", &[6]),
-    (140, "expression", &[6]),
-    (169, "names", &[6]),
-    (170, "names", &[6]),
-    (171, "in_clause", &[6]),
-    (181, "names", &[3]),
-    (185, "patterns", &[45]),
-    (192, "parameter", &[6]),
-    (193, "pattern", &[6]),
-    (242, "element", &[6]),
-    (243, "right", &[6]),
-    (259, "simple_statement", &[75]),
-    (260, "subject", &[6]),
-    (261, "case_pattern", &[6]),
-    (262, "with_item", &[6]),
-    (263, "type", &[6]),
-    (264, "element", &[6]),
-    (266, "case_pattern", &[6]),
-    (267, "element", &[6]),
-    (269, "subscript", &[6]),
-    (270, "element", &[6]),
-    (275, "argument", &[6]),
-    (276, "argument", &[6]),
-    (284, "value", &[6]),
-    (289, "expression", &[6]),
-    (290, "with_item", &[6]),
-];
-
-pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {
-    SLOT_SEPARATORS
-        .iter()
-        .any(|(p, f, seps)| *p == parent.0 && *f == field && seps.contains(&child.0))
-}
-
 /// Whether the model stores a `child` of a `parent` node, reached under the
 /// parser field `field` (`None` for an untagged child), as a scalar: a
 /// presence flag or a kind id rather than a node. Such a child keeps no
@@ -1363,101 +1302,101 @@ pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {
 pub fn stores_scalar(parent: KindId, field: Option<&str>, child: KindId) -> bool {
     match (parent.0, field) {
         (134, None) => matches!(child.0, 137),
-        (139, Some("expression")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (140, Some("expression")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (141, None) => matches!(child.0, 64 | 71 | 72 | 73),
-        (142, Some("name")) => matches!(child.0, 22 | 38 | 39 | 68 | 69 | 70),
-        (142, Some("value")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (144, None) => matches!(child.0, 64 | 71 | 72 | 73),
-        (145, None) => matches!(child.0, 64 | 71 | 72 | 73),
-        (146, None) => matches!(child.0, 64 | 71 | 72 | 73),
-        (146, Some("cause")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (150, Some("condition")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (151, Some("condition")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (154, None) => matches!(child.0, 115),
-        (156, Some("right")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (157, Some("condition")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (163, Some("value")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (167, Some("expression")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (168, Some("expression")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (171, Some("in_clause")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (178, Some("expression")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (180, None) => matches!(child.0, 64 | 71 | 72 | 73),
+        (139, Some("expression")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (140, Some("expression")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (141, None) => matches!(child.0, 64 | 70 | 71 | 72),
+        (142, Some("name")) => matches!(child.0, 22 | 38 | 39 | 67 | 68 | 69),
+        (142, Some("value")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (144, None) => matches!(child.0, 64 | 70 | 71 | 72),
+        (145, None) => matches!(child.0, 64 | 70 | 71 | 72),
+        (146, None) => matches!(child.0, 64 | 70 | 71 | 72),
+        (146, Some("cause")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (150, Some("condition")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (151, Some("condition")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (156, Some("right")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (157, Some("condition")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (163, Some("value")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (167, Some("expression")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (168, Some("expression")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (171, Some("in_clause")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (178, Some("expression")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (180, None) => matches!(child.0, 64 | 70 | 71 | 72),
         (180, Some("tail")) => matches!(child.0, 6),
-        (183, None) => matches!(child.0, 71 | 72 | 73 | 279),
-        (185, Some("patterns")) => matches!(child.0, 71 | 72 | 73 | 279),
-        (187, Some("key")) => matches!(child.0, 71 | 72 | 73 | 279),
-        (188, Some("value")) => matches!(child.0, 71 | 72 | 73 | 279),
+        (183, None) => matches!(child.0, 70 | 71 | 72 | 279),
+        (185, Some("patterns")) => matches!(child.0, 70 | 71 | 72 | 279),
+        (187, Some("key")) => matches!(child.0, 70 | 71 | 72 | 279),
+        (188, Some("value")) => matches!(child.0, 70 | 71 | 72 | 279),
         (189, Some("name")) => matches!(child.0, 48),
         (189, Some("operator")) => matches!(child.0, 8 | 35),
         (191, Some("operator")) => matches!(child.0, 49 | 50),
         (192, Some("parameter")) => matches!(child.0, 257 | 258),
-        (198, Some("value")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (199, Some("value")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (200, Some("target")) => matches!(child.0, 22 | 38 | 39 | 68 | 69 | 70),
-        (201, Some("target")) => matches!(child.0, 22 | 38 | 39 | 68 | 69 | 70),
-        (202, Some("expression")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (206, Some("argument")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (207, Some("left")) => matches!(child.0, 64 | 71 | 72 | 73),
+        (198, Some("value")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (199, Some("value")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (200, Some("target")) => matches!(child.0, 22 | 38 | 39 | 67 | 68 | 69),
+        (201, Some("target")) => matches!(child.0, 22 | 38 | 39 | 67 | 68 | 69),
+        (202, Some("expression")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (206, Some("argument")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (207, Some("left")) => matches!(child.0, 64 | 70 | 71 | 72),
         (207, Some("operator")) => matches!(child.0, 52 | 53),
-        (207, Some("right")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (208, Some("left")) => matches!(child.0, 64 | 71 | 72 | 73),
+        (207, Some("right")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (208, Some("left")) => matches!(child.0, 64 | 70 | 71 | 72),
         (208, Some("operator")) => matches!(child.0, 8 | 9 | 35 | 44 | 45 | 49 | 50 | 54 | 55 | 56 | 57 | 58 | 59),
-        (208, Some("right")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (209, Some("argument")) => matches!(child.0, 64 | 71 | 72 | 73),
+        (208, Some("right")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (209, Some("argument")) => matches!(child.0, 64 | 70 | 71 | 72),
         (209, Some("operator")) => matches!(child.0, 49 | 50 | 60),
-        (212, Some("left")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (213, Some("body")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (214, Some("body")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (216, Some("operator")) => matches!(child.0, 77 | 78 | 79 | 80 | 81 | 82 | 83 | 84 | 85 | 86 | 87 | 88 | 89),
-        (216, Some("right")) => matches!(child.0, 64 | 71 | 72 | 73),
+        (212, Some("left")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (213, Some("body")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (214, Some("body")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (216, Some("operator")) => matches!(child.0, 76 | 77 | 78 | 79 | 80 | 81 | 82 | 83 | 84 | 85 | 86 | 87 | 88),
+        (216, Some("right")) => matches!(child.0, 64 | 70 | 71 | 72),
         (217, Some("tail")) => matches!(child.0, 6),
-        (219, None) => matches!(child.0, 64 | 71 | 72 | 73),
-        (220, Some("object")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (221, Some("value")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (222, Some("start")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (222, Some("stop")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (223, Some("function")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (225, None) => matches!(child.0, 64 | 71 | 72 | 73),
+        (219, None) => matches!(child.0, 64 | 70 | 71 | 72),
+        (220, Some("object")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (221, Some("value")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (222, Some("start")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (222, Some("stop")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (223, Some("function")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (225, None) => matches!(child.0, 64 | 70 | 71 | 72),
         (226, Some("operator")) => matches!(child.0, 8 | 35),
         (227, Some("name")) => matches!(child.0, 39),
-        (231, Some("name")) => matches!(child.0, 22 | 38 | 39 | 68 | 69 | 70),
-        (231, Some("value")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (236, Some("key")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (236, Some("value")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (237, Some("body")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (239, Some("body")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (240, Some("body")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (241, Some("expression")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (242, Some("element")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (243, Some("right")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (244, Some("condition")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (245, Some("alternative")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (245, Some("body")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (245, Some("condition")) => matches!(child.0, 64 | 71 | 72 | 73),
+        (231, Some("name")) => matches!(child.0, 22 | 38 | 39 | 67 | 68 | 69),
+        (231, Some("value")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (236, Some("key")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (236, Some("value")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (237, Some("body")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (239, Some("body")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (240, Some("body")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (241, Some("expression")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (242, Some("element")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (243, Some("right")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (244, Some("condition")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (245, Some("alternative")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (245, Some("body")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (245, Some("condition")) => matches!(child.0, 64 | 70 | 71 | 72),
         (248, None) => matches!(child.0, 252),
-        (249, Some("expression")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (256, Some("expression")) => matches!(child.0, 64 | 71 | 72 | 73),
+        (249, Some("expression")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (256, Some("expression")) => matches!(child.0, 64 | 70 | 71 | 72),
         (259, Some("simple_statement")) => matches!(child.0, 147 | 148 | 149),
-        (260, Some("subject")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (264, Some("element")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (265, None) => matches!(child.0, 64 | 71 | 72 | 73),
-        (269, Some("subscript")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (271, None) => matches!(child.0, 64 | 71 | 72 | 73),
-        (272, Some("alias")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (272, Some("value")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (275, Some("argument")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (276, Some("argument")) => matches!(child.0, 64 | 71 | 72 | 73),
+        (260, Some("subject")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (264, Some("element")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (265, None) => matches!(child.0, 64 | 70 | 71 | 72),
+        (269, Some("subscript")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (271, None) => matches!(child.0, 64 | 70 | 71 | 72),
+        (272, Some("alias")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (272, Some("value")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (275, Some("argument")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (276, Some("argument")) => matches!(child.0, 64 | 70 | 71 | 72),
         (277, None) => matches!(child.0, 6),
-        (284, Some("value")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (286, Some("right")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (288, Some("right")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (289, Some("expression")) => matches!(child.0, 64 | 71 | 72 | 73),
-        (295, None) => matches!(child.0, 115),
-        (296, None) => matches!(child.0, 64 | 71 | 72 | 73),
-        (296, Some("operators")) => matches!(child.0, 25 | 61 | 108 | 109 | 110 | 111 | 112 | 113 | 114 | 210 | 211),
-        (297, None) => matches!(child.0, 64 | 71 | 72 | 73),
-        (333, Some("content")) => matches!(child.0, 64 | 71 | 72 | 73),
+        (284, Some("value")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (286, Some("right")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (288, Some("right")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (289, Some("expression")) => matches!(child.0, 64 | 70 | 71 | 72),
+        (293, None) => matches!(child.0, 115),
+        (296, None) => matches!(child.0, 115),
+        (297, None) => matches!(child.0, 64 | 70 | 71 | 72),
+        (297, Some("operators")) => matches!(child.0, 25 | 61 | 108 | 109 | 110 | 111 | 112 | 113 | 114 | 210 | 211),
+        (298, None) => matches!(child.0, 64 | 70 | 71 | 72),
+        (334, Some("content")) => matches!(child.0, 64 | 70 | 71 | 72),
         _ => false,
     }
 }

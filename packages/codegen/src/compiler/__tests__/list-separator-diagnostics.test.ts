@@ -11,12 +11,13 @@ const require = createRequire(import.meta.url);
 const LIST_CODES = ['separator-pattern', 'separator-default-undeclared', 'field-optional-delimiter'];
 
 describe('list separator and flank shapes are blocking records', () => {
-	it('tree-sitter-go: pattern separators and an optional field flank are recorded, and floors clear them at the gate', async () => {
+	it('tree-sitter-go: newline-or-semicolon separators with no declared default and an optional field flank are recorded, and floors clear them at the gate', async () => {
 		const raw = await evaluateSittirGrammar(require.resolve('tree-sitter-go/grammar.js'), 'go');
 		const { diagnostics, nodeMap } = collectGrammarDiagnosticsForGrammar({ rawGrammar: raw });
 		const records = diagnostics.filter((d) => LIST_CODES.includes(d.code));
 		const owners = (code: string): string[] => records.filter((d) => d.code === code).map((d) => d.ownerKind!).sort();
-		expect(owners('separator-pattern')).toEqual([
+		expect(owners('separator-pattern')).toEqual([]);
+		expect(owners('separator-default-undeclared')).toEqual([
 			'const_declaration_arm',
 			'field_declarations',
 			'import_specs',
@@ -26,10 +27,10 @@ describe('list separator and flank shapes are blocking records', () => {
 			'var_spec_list'
 		]);
 		expect(owners('field-optional-delimiter')).toEqual(['special_argument_list_group']);
-		expect(owners('separator-default-undeclared')).toEqual([]);
 		expect(records.every((d) => d.severity === 'error' && d.canProceed === false)).toBe(true);
 		const statements = nodeMap.nodes.get('statements');
-		expect(statements instanceof AssembledList ? statements.separatorRule : 'not a list').toBeUndefined();
+		const separatorArms = statements instanceof AssembledList && statements.separatorRule?.type === CHOICE ? statements.separatorRule.members : [];
+		expect(separatorArms.map((arm) => (arm.type === SYMBOL ? arm.name : arm.type === STRING ? arm.value : arm.type))).toEqual(['source_file_text', ';', '\0']);
 		expect(blockedRecords(records, {})).toHaveLength(8);
 		const floors = Object.fromEntries(LIST_CODES.map((code) => [code, owners(code)]));
 		expect(blockedRecords(records, floors)).toEqual([]);

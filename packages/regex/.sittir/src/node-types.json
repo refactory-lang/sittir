@@ -120,10 +120,14 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "character_class_escape_arm",
+          "named": true
+        },
+        {
+          "type": "character_class_escape_text1",
           "named": true
         },
         {
@@ -147,6 +151,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "character_class_escape_text2",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -194,7 +208,21 @@
   {
     "type": "control_escape",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "control_escape_text1",
+          "named": true
+        },
+        {
+          "type": "control_escape_text2",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "count_quantifier",
@@ -661,7 +689,21 @@
   {
     "type": "unicode_character_escape",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "unicode_character_escape_text1",
+          "named": true
+        },
+        {
+          "type": "unicode_character_escape_text2",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "unicode_property_value_expression",
@@ -813,7 +855,23 @@
     "named": true
   },
   {
+    "type": "character_class_escape_text1",
+    "named": true
+  },
+  {
+    "type": "character_class_escape_text2",
+    "named": true
+  },
+  {
     "type": "class_character",
+    "named": true
+  },
+  {
+    "type": "control_escape_text1",
+    "named": true
+  },
+  {
+    "type": "control_escape_text2",
     "named": true
   },
   {
@@ -850,6 +908,14 @@
   },
   {
     "type": "pattern_character",
+    "named": true
+  },
+  {
+    "type": "unicode_character_escape_text1",
+    "named": true
+  },
+  {
+    "type": "unicode_character_escape_text2",
     "named": true
   },
   {

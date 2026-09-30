@@ -1140,11 +1140,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "entries",
+					"test": "elements",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "entries"
+							"name": "elements"
 						}
 					]
 				}
@@ -2950,6 +2950,12 @@
 		{
 			"kind": "seam",
 			"field": "match_block_block_after"
+		}
+	],
+	"match_block_empty": [
+		{
+			"kind": "tokenSeam",
+			"text": "\n"
 		}
 	],
 	"match_statement": [

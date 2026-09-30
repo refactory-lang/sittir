@@ -1,6 +1,6 @@
 import type { NodeMap } from '../../compiler/types.ts';
 import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
-import { AbstractAssembledCompound, AssembledList, AssembledSupertype, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
+import { AbstractAssembledCompound, AssembledList, AssembledSupertype, isRequired, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
 import {
 	classifyFactoryEmission,
 	classifyFromEmission,
@@ -23,7 +23,9 @@ import {
 	tupleSeatOf,
 	subFactoriesOf,
 	variantArmsOf,
+	type FlattenKey,
 	type FlattenSeat,
+	type FlattenedSeat,
 	type SubFactory
 } from './sub-factories.ts';
 import { bundleEntries, flattenedVariantParents, overlayFrame, overlayImportPath } from './module.ts';
@@ -114,7 +116,7 @@ export interface PolymorphWireSet {
 	readonly node: AssembledNode;
 	readonly subs: readonly SubFactory[];
 	readonly aliases: readonly AliasWire[];
-	readonly flatten?: FlattenSeat;
+	readonly flatten?: FlattenedSeat;
 	readonly elements?: readonly FlattenSeat[];
 	readonly tuples?: readonly FlattenSeat[];
 }
@@ -603,6 +605,16 @@ function shape(
 				`(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & ArgsOf<typeof ${c}>[0], options?: OptionsArg<typeof ${p}>)`
 		};
 	}
+	if (sub.arm.child.parameterless) {
+		const config = sub.residual.some(isRequired) ? 'config' : 'config?';
+		return {
+			method: [
+				`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
+				`	(${config}: OmitEach<ArgsOf<PF>[0], '${k}'>, options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)({ ...config, ${k}: ${CALL_C}() } as never, options as never);`
+			],
+			paramFor: (p) => `(${config}: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'>, options?: OptionsArg<typeof ${p}>)`
+		};
+	}
 	if (seatsConfig) {
 		return {
 			method: [
@@ -614,15 +626,6 @@ function shape(
 			],
 			paramFor: (p, c) =>
 				`(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'> & { ${k}: ArgsOf<typeof ${c}>[0] }, options?: OptionsArg<typeof ${p}>)`
-		};
-	}
-	if (sub.arm.child.parameterless) {
-		return {
-			method: [
-				`const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
-				`	(config: OmitEach<ArgsOf<PF>[0], '${k}'>, options?: OptionsArg<PF>): ReturnType<PF> => _s<ReturnType<PF>>(parent)({ ...config, ${k}: ${CALL_C}() } as never, options as never);`
-			],
-			paramFor: (p) => `(config: OmitEach<ArgsOf<typeof ${p}>[0], '${k}'>, options?: OptionsArg<typeof ${p}>)`
 		};
 	}
 	return {
@@ -646,7 +649,8 @@ interface SeatShape {
 
 function flattenShape(
 	k: string,
-	mergeKeys: readonly string[],
+	keys: readonly FlattenKey[],
+	groupKeys: readonly string[],
 	m: string,
 	positional: boolean,
 	directKey: string | undefined,
@@ -662,9 +666,20 @@ function flattenShape(
 			paramFor: (p, c) => `(config: ${p} | ArgsOf<typeof ${c}>[0])`
 		};
 	}
-	const keyTests = mergeKeys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ');
+	const keyTests = keys.map(({ key }) => `key === ${JSON.stringify(key)}`).join(' || ');
+	const ownKeyTests = groupKeys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ');
+	const renames = Object.fromEntries(keys.filter(({ key, field }) => key !== field).map(({ key, field }) => [field, key]));
+	const renamed = Object.keys(renames).length > 0;
+	const outerKey = (field: string): string => renames[field] ?? field;
 	const groupConfig = (c: string): string =>
-		directKey === undefined ? `ArgsOf<${c}>[0]` : `{ ${directKey}: ArgsOf<${c}>[0] }`;
+		directKey !== undefined
+			? `{ ${outerKey(directKey)}: ArgsOf<${c}>[0] }`
+			: renamed
+				? `RenameKeys<ArgsOf<${c}>[0], ${JSON.stringify(renames)}>`
+				: `ArgsOf<${c}>[0]`;
+	const fieldOf = renamed
+		? `(${JSON.stringify(Object.fromEntries(keys.map(({ key, field }) => [key, field])))} as Record<string, string>)[key]!`
+		: 'key';
 	const flattened = (p: string, c: string): string =>
 		`${p} | (OmitEach<NonNullable<${p}>, '${k}'> & (${groupConfig(c)} | NoneOf<${groupConfig(c)}>))`;
 	const buildGroup = directKey === undefined ? `${CALL_C}(inner)` : `${CALL_C}(inner[${JSON.stringify(directKey)}])`;
@@ -677,7 +692,7 @@ function flattenShape(
 				? [
 						`		const own = _o(config)[${JSON.stringify(k)}];`,
 						`		if (typeof own === 'object' && own !== null && !Array.isArray(own)) {`,
-						`			const spelled = '$type' in own ? (own as { $type?: unknown }).$type === wrapperId : !('kind' in own) && Object.keys(own).every((key) => ${keyTests});`,
+						`			const spelled = '$type' in own ? (own as { $type?: unknown }).$type === wrapperId : !('kind' in own) && Object.keys(own).every((key) => ${ownKeyTests});`,
 						`			if (spelled) return ${CALL_PO('config')};`,
 						`		}`
 					]
@@ -687,7 +702,7 @@ function flattenShape(
 			`		let seated = false;`,
 			`		for (const [key, value] of Object.entries(_o(config))) {`,
 			`			if (${keyTests}) {`,
-			`				inner[key] = value;`,
+			`				inner[${fieldOf}] = value;`,
 			`				seated = seated || value !== undefined;`,
 			`			} else rest[key] = value;`,
 			`		}`,
@@ -773,10 +788,15 @@ interface SeatEmission {
 	readonly spread: boolean;
 }
 
+function flattenedKeysOf(seat: FlattenSeat | FlattenedSeat): readonly FlattenKey[] {
+	if (!('keys' in seat)) throw new Error(`flattenedKeysOf: '${seat.group.kind}' in '${seat.slot.propertyName}' is not a flatten seat`);
+	return seat.keys;
+}
+
 function seatEmission(
 	parent: AssembledNode,
 	parentKey: string,
-	seat: FlattenSeat,
+	seat: FlattenSeat | FlattenedSeat,
 	kind: 'flatten' | 'elements' | 'tuple',
 	wires: PolymorphWires,
 	nodeMap: NodeMap
@@ -797,7 +817,7 @@ function seatEmission(
 		kind === 'tuple'
 			? tupleShape(seat.slot.configKey, m)
 			: kind === 'flatten'
-			? flattenShape(seat.slot.configKey, configKeysOf(seat.group), m, direct, seat.directKey, wrapperSeat)
+			? flattenShape(seat.slot.configKey, flattenedKeysOf(seat), configKeysOf(seat.group), m, direct, seat.directKey, wrapperSeat)
 			: elementsShape(
 					seat.slot.configKey,
 					configKeysOf(seat.group),
@@ -1055,7 +1075,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 	const extraImports = [
 		"import * as F from '../raw.js';",
 		"import * as C from '../coerce.js';",
-		`import type { ArgsOf, ${blocks.some((b) => b.includes('ElementsOf<')) ? 'ElementsOf, ' : ''}OmitEach${blocks.some((b) => b.includes('OptionsArg<')) ? ', OptionsArg' : ''} } from '@sittir/types';`,
+		`import type { ArgsOf, ${blocks.some((b) => b.includes('ElementsOf<')) ? 'ElementsOf, ' : ''}OmitEach${blocks.some((b) => b.includes('OptionsArg<')) ? ', OptionsArg' : ''}${blocks.some((b) => b.includes('RenameKeys<')) ? ', RenameKeys' : ''} } from '@sittir/types';`,
 		...(usesKindId ? ["import { TSKindId } from '../../types.js';"] : []),
 		...(blocks.some((b) => b.includes('isGroupConfig(')) ? ["import { isGroupConfig } from '@sittir/common/utils';"] : []),
 		...(blocks.some((b) => /(?<![\w$.])T\./.test(b)) ? ["import type * as T from '../../types.js';"] : [])

@@ -42,18 +42,18 @@ pub const BSLASHK: KindId = KindId(31);
 pub const LT: KindId = KindId(32);
 pub const LPAREN_QMARK_P_EQ: KindId = KindId(33);
 pub const DECIMAL_ESCAPE: KindId = KindId(34);
-pub const CHARACTER_CLASS_ESCAPE_TOKEN1: KindId = KindId(35);
-pub const UNICODE_CHARACTER_ESCAPE_TOKEN1: KindId = KindId(36);
-pub const UNICODE_CHARACTER_ESCAPE_TOKEN2: KindId = KindId(37);
-pub const UNICODE_PROPERTY_VALUE: KindId = KindId(38);
-pub const CONTROL_ESCAPE_TOKEN1: KindId = KindId(39);
-pub const CONTROL_ESCAPE_TOKEN2: KindId = KindId(40);
-pub const CONTROL_LETTER_ESCAPE: KindId = KindId(41);
-pub const IDENTITY_ESCAPE: KindId = KindId(42);
-pub const GROUP_NAME: KindId = KindId(43);
-pub const DECIMAL_DIGITS: KindId = KindId(44);
-pub const COLON: KindId = KindId(45);
-pub const CHARACTER_CLASS_ESCAPE_ARM_TOKEN1: KindId = KindId(46);
+pub const UNICODE_PROPERTY_VALUE: KindId = KindId(35);
+pub const CONTROL_LETTER_ESCAPE: KindId = KindId(36);
+pub const IDENTITY_ESCAPE: KindId = KindId(37);
+pub const GROUP_NAME: KindId = KindId(38);
+pub const DECIMAL_DIGITS: KindId = KindId(39);
+pub const COLON: KindId = KindId(40);
+pub const CHARACTER_CLASS_ESCAPE_TEXT1: KindId = KindId(41);
+pub const CHARACTER_CLASS_ESCAPE_TEXT2: KindId = KindId(42);
+pub const UNICODE_CHARACTER_ESCAPE_TEXT1: KindId = KindId(43);
+pub const UNICODE_CHARACTER_ESCAPE_TEXT2: KindId = KindId(44);
+pub const CONTROL_ESCAPE_TEXT1: KindId = KindId(45);
+pub const CONTROL_ESCAPE_TEXT2: KindId = KindId(46);
 pub const _TIGHT: KindId = KindId(47);
 pub const _NEWLINE: KindId = KindId(48);
 pub const _BLANKLINE: KindId = KindId(49);
@@ -138,18 +138,18 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         32 => "<", // "lt"
         33 => "(?P=", // "lparen_qmarkP_eq"
         34 => "decimal_escape", // "decimal_escape"
-        35 => "character_class_escape_token1", // "character_class_escape_token1"
-        36 => "unicode_character_escape_token1", // "unicode_character_escape_token1"
-        37 => "unicode_character_escape_token2", // "unicode_character_escape_token2"
-        38 => "unicode_property_value", // "unicode_property"
-        39 => "control_escape_token1", // "control_escape_token1"
-        40 => "control_escape_token2", // "control_escape_token2"
-        41 => "control_letter_escape", // "control_letter_escape"
-        42 => "identity_escape", // "identity_escape"
-        43 => "group_name", // "group_name"
-        44 => "decimal_digits", // "decimal_digits"
-        45 => ":", // "colon"
-        46 => "character_class_escape_arm_token1", // "character_class_escape_arm_token1"
+        35 => "unicode_property_value", // "unicode_property"
+        36 => "control_letter_escape", // "control_letter_escape"
+        37 => "identity_escape", // "identity_escape"
+        38 => "group_name", // "group_name"
+        39 => "decimal_digits", // "decimal_digits"
+        40 => ":", // "colon"
+        41 => "character_class_escape_text1", // "character_class_escape_text1"
+        42 => "character_class_escape_text2", // "character_class_escape_text2"
+        43 => "unicode_character_escape_text1", // "unicode_character_escape_text1"
+        44 => "unicode_character_escape_text2", // "unicode_character_escape_text2"
+        45 => "control_escape_text1", // "control_escape_text1"
+        46 => "control_escape_text2", // "control_escape_text2"
         47 => "_tight", // "_tight"
         48 => "_newline", // "_newline"
         49 => "_blankline", // "_blankline"
@@ -198,27 +198,6 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
     }
 }
 
-/// Whether the reader captures a named node of this kind as text: its
-/// template renders from that text, so the text is the node's content —
-/// free text for a pattern kind, the literal it holds for an enum kind.
-pub fn is_text_kind(kind: KindId) -> bool {
-    matches!(kind.0, 12 | 20 | 34 | 38 | 41 | 42 | 43 | 44 | 60 | 66 | 67 | 68 | 69 | 74 | 76)
-}
-
-/// Whether this parse kind id is an alias envelope: the reader stamps the
-/// grammar symbol beside it when the node is the storage node shown under
-/// the alias, so the wrap layer can seat it as the envelope's content.
-pub fn is_alias_envelope(kind: KindId) -> bool {
-    matches!(kind.0, 88 | 89)
-}
-
-/// Whether a node of this kind keeps its anonymous children as `$other`
-/// when it has no named child: an unnamed slot of the kind stores terminal
-/// kinds, and the wrap layer reclaims that slot's value from `$other`.
-pub fn keeps_anonymous_children(kind: KindId) -> bool {
-    matches!(kind.0, 56 | 57 | 63 | 77)
-}
-
 /// The model slot a child is stored under where its name differs from the
 /// parser's key: a field-tagged child by (parent kind id, field), a named
 /// child without a field by (parent kind id, the child's kind name).
@@ -238,6 +217,7 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
         (70, None, "count_quantifier_arm") => Some("content"),
         (70, None, "decimal_digits") => Some("content"),
         (73, None, "character_class_escape_arm") => Some("content"),
+        (73, None, "character_class_escape_text1") => Some("content"),
         (73, None, "unicode_character_escape") => Some("content"),
         (77, None, "anonymous_capturing_group") => Some("content"),
         (77, None, "any_character") => Some("content"),
@@ -274,22 +254,6 @@ pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str
         _ => None,
     }
 }
-
-/// (parent kind id, tree-sitter field name, punctuation kind ids) for every
-/// slot the parser field-tags a literal into: the separator of a repeated
-/// slot, or a literal a rule puts beside a singular slot under the same
-/// field. The template prints such a token itself, so the reader drops the
-/// child instead of seating it, and a native read and a wrapped read hand
-/// back the same slot contents.
-static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[
-];
-
-pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {
-    SLOT_SEPARATORS
-        .iter()
-        .any(|(p, f, seps)| *p == parent.0 && *f == field && seps.contains(&child.0))
-}
-
 /// Whether the model stores a `child` of a `parent` node, reached under the
 /// parser field `field` (`None` for an untagged child), as a scalar: a
 /// presence flag or a kind id rather than a node. Such a child keeps no

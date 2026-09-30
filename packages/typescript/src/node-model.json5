@@ -1,5 +1,6 @@
 {
   "name": "typescript",
+  "root": "program",
   "nodeCount": 429,
   "word": "identifier",
   "supertypes": [

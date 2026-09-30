@@ -18,7 +18,7 @@ import type {
 	TriviaSetter,
 	GrammarInnerTrivia,
 	SlotHint,
-	ListOwnerHint,
+	ListViewHint,
 	ListSlotHint,
 	FlatHint,
 	BoundOf,
@@ -257,154 +257,154 @@ export enum TSKindId {
 	Dollar = 5,
 	Lparen = 6,
 	Rparen = 7,
-	TokenRepetitionPatternToken1 = 8,
-	Plus = 9,
-	Star = 10,
-	Qmark = 11,
-	BlockKeyword = 12,
-	ExprKeyword = 13,
-	Expr2021Keyword = 14,
-	IdentKeyword = 15,
-	ItemKeyword = 16,
-	LifetimeKeyword = 17,
-	LiteralKeyword = 18,
-	MetaKeyword = 19,
-	PatKeyword = 20,
-	PatParamKeyword = 21,
-	PathKeyword = 22,
-	StmtKeyword = 23,
-	TtKeyword = 24,
-	TyKeyword = 25,
-	VisKeyword = 26,
-	Pound = 27,
-	Lbrack = 28,
-	Rbrack = 29,
-	Bang = 30,
-	Lbrace = 31,
-	Rbrace = 32,
-	UnionKeyword = 33,
-	EnumKeyword = 34,
-	ExternKeyword = 35,
-	ConstKeyword = 36,
-	StaticKeyword = 37,
-	TypeKeyword = 38,
-	Eq = 39,
-	FnKeyword = 40,
-	WhereKeyword = 41,
-	TraitKeyword = 42,
-	ForKeyword = 43,
-	Lt = 44,
-	Gt = 45,
-	LetKeyword = 46,
-	UseKeyword = 47,
-	ColonColon = 48,
-	AsKeyword = 49,
-	DotDotDot = 50,
-	Squote = 51,
-	DefaultKeyword = 52,
-	GenKeyword = 53,
-	Lt2 = 54,
-	Amp = 55,
-	ImplKeyword = 56,
-	DynKeyword = 57,
-	MutableSpecifier = 58,
-	U8Keyword = 59,
-	I8Keyword = 60,
-	U16Keyword = 61,
-	I16Keyword = 62,
-	U32Keyword = 63,
-	I32Keyword = 64,
-	U64Keyword = 65,
-	I64Keyword = 66,
-	U128Keyword = 67,
-	I128Keyword = 68,
-	IsizeKeyword = 69,
-	UsizeKeyword = 70,
-	F32Keyword = 71,
-	F64Keyword = 72,
-	BoolKeyword = 73,
-	StrKeyword = 74,
-	CharKeyword = 75,
-	Dash = 76,
-	AmpAmp = 77,
-	PipePipe = 78,
-	Pipe = 79,
-	Caret = 80,
-	EqEq = 81,
-	BangEq = 82,
-	LtEq = 83,
-	GtEq = 84,
-	LtLt = 85,
-	GtGt = 86,
-	Slash = 87,
-	Percent = 88,
-	PlusEq = 89,
-	DashEq = 90,
-	StarEq = 91,
-	SlashEq = 92,
-	PercentEq = 93,
-	AmpEq = 94,
-	PipeEq = 95,
-	CaretEq = 96,
-	LtLtEq = 97,
-	GtGtEq = 98,
-	ReturnKeyword = 99,
-	YieldKeyword = 100,
-	DotDot = 101,
-	IfKeyword = 102,
-	ElseKeyword = 103,
-	MatchKeyword = 104,
-	WhileKeyword = 105,
-	LoopKeyword = 106,
-	InKeyword = 107,
-	BreakKeyword = 108,
-	ContinueKeyword = 109,
-	Dot = 110,
-	AwaitKeyword = 111,
-	UnsafeKeyword = 112,
-	AsyncKeyword = 113,
-	TryKeyword = 114,
-	RefKeyword = 115,
-	At = 116,
-	Dquote = 117,
-	TrueKeyword = 118,
-	FalseKeyword = 119,
-	SlashSlash = 120,
-	Bang2 = 121,
-	Slash2 = 122,
-	SlashStar = 123,
-	StarSlash = 124,
-	Shebang = 125,
-	Self = 126,
-	Super = 127,
-	Crate = 128,
-	Metavariable = 129,
-	MoveKeyword = 130,
-	Comma = 131,
-	DashGt = 132,
-	Underscore = 133,
-	DotDotEq = 134,
-	ModKeyword = 135,
-	PubKeyword = 136,
-	StructKeyword = 137,
-	IntegerLiteralDecimal = 138,
-	IntegerLiteralHex = 139,
-	IntegerLiteralBinary = 140,
-	IntegerLiteralOctal = 141,
-	CharLiteralPlain = 142,
-	CharLiteralEmpty = 143,
-	CharLiteralEscapedSimple = 144,
-	CharLiteralEscapedUnicodeFixed = 145,
-	CharLiteralEscapedUnicodeBraced = 146,
-	CharLiteralEscapedHex = 147,
-	EscapeSequenceSimple = 148,
-	EscapeSequenceUnicodeFixed = 149,
-	EscapeSequenceUnicodeBraced = 150,
-	EscapeSequenceHex = 151,
-	RawKeyword = 152,
-	StringOpen = 153,
-	LineCommentExtraSlashesToken1 = 154,
-	LineCommentExtraSlashesToken2 = 155,
+	Plus = 8,
+	Star = 9,
+	Qmark = 10,
+	BlockKeyword = 11,
+	ExprKeyword = 12,
+	Expr2021Keyword = 13,
+	IdentKeyword = 14,
+	ItemKeyword = 15,
+	LifetimeKeyword = 16,
+	LiteralKeyword = 17,
+	MetaKeyword = 18,
+	PatKeyword = 19,
+	PatParamKeyword = 20,
+	PathKeyword = 21,
+	StmtKeyword = 22,
+	TtKeyword = 23,
+	TyKeyword = 24,
+	VisKeyword = 25,
+	Pound = 26,
+	Lbrack = 27,
+	Rbrack = 28,
+	Bang = 29,
+	Lbrace = 30,
+	Rbrace = 31,
+	UnionKeyword = 32,
+	EnumKeyword = 33,
+	ExternKeyword = 34,
+	ConstKeyword = 35,
+	StaticKeyword = 36,
+	TypeKeyword = 37,
+	Eq = 38,
+	FnKeyword = 39,
+	WhereKeyword = 40,
+	TraitKeyword = 41,
+	ForKeyword = 42,
+	Lt = 43,
+	Gt = 44,
+	LetKeyword = 45,
+	UseKeyword = 46,
+	ColonColon = 47,
+	AsKeyword = 48,
+	DotDotDot = 49,
+	Squote = 50,
+	DefaultKeyword = 51,
+	GenKeyword = 52,
+	Lt2 = 53,
+	Amp = 54,
+	ImplKeyword = 55,
+	DynKeyword = 56,
+	MutableSpecifier = 57,
+	U8Keyword = 58,
+	I8Keyword = 59,
+	U16Keyword = 60,
+	I16Keyword = 61,
+	U32Keyword = 62,
+	I32Keyword = 63,
+	U64Keyword = 64,
+	I64Keyword = 65,
+	U128Keyword = 66,
+	I128Keyword = 67,
+	IsizeKeyword = 68,
+	UsizeKeyword = 69,
+	F32Keyword = 70,
+	F64Keyword = 71,
+	BoolKeyword = 72,
+	StrKeyword = 73,
+	CharKeyword = 74,
+	Dash = 75,
+	AmpAmp = 76,
+	PipePipe = 77,
+	Pipe = 78,
+	Caret = 79,
+	EqEq = 80,
+	BangEq = 81,
+	LtEq = 82,
+	GtEq = 83,
+	LtLt = 84,
+	GtGt = 85,
+	Slash = 86,
+	Percent = 87,
+	PlusEq = 88,
+	DashEq = 89,
+	StarEq = 90,
+	SlashEq = 91,
+	PercentEq = 92,
+	AmpEq = 93,
+	PipeEq = 94,
+	CaretEq = 95,
+	LtLtEq = 96,
+	GtGtEq = 97,
+	ReturnKeyword = 98,
+	YieldKeyword = 99,
+	DotDot = 100,
+	IfKeyword = 101,
+	ElseKeyword = 102,
+	MatchKeyword = 103,
+	WhileKeyword = 104,
+	LoopKeyword = 105,
+	InKeyword = 106,
+	BreakKeyword = 107,
+	ContinueKeyword = 108,
+	Dot = 109,
+	AwaitKeyword = 110,
+	UnsafeKeyword = 111,
+	AsyncKeyword = 112,
+	TryKeyword = 113,
+	RefKeyword = 114,
+	At = 115,
+	Dquote = 116,
+	TrueKeyword = 117,
+	FalseKeyword = 118,
+	SlashSlash = 119,
+	Bang2 = 120,
+	Slash2 = 121,
+	SlashStar = 122,
+	StarSlash = 123,
+	Shebang = 124,
+	Self = 125,
+	Super = 126,
+	Crate = 127,
+	Metavariable = 128,
+	MoveKeyword = 129,
+	Comma = 130,
+	DashGt = 131,
+	TokenRepetitionPatternText = 132,
+	StringOpen = 133,
+	LineCommentText1 = 134,
+	LineCommentText2 = 135,
+	Underscore = 136,
+	DotDotEq = 137,
+	ModKeyword = 138,
+	PubKeyword = 139,
+	StructKeyword = 140,
+	IntegerLiteralDecimal = 141,
+	IntegerLiteralHex = 142,
+	IntegerLiteralBinary = 143,
+	IntegerLiteralOctal = 144,
+	CharLiteralPlain = 145,
+	CharLiteralEmpty = 146,
+	CharLiteralEscapedSimple = 147,
+	CharLiteralEscapedUnicodeFixed = 148,
+	CharLiteralEscapedUnicodeBraced = 149,
+	CharLiteralEscapedHex = 150,
+	EscapeSequenceSimple = 151,
+	EscapeSequenceUnicodeFixed = 152,
+	EscapeSequenceUnicodeBraced = 153,
+	EscapeSequenceHex = 154,
+	RawKeyword = 155,
 	LineCommentRegular = 156,
 	MacroRulesBang = 157,
 	StringContent = 158,
@@ -652,69 +652,70 @@ export enum TSKindId {
 	LineCommentDocInner = 400,
 	BlockCommentDocOuter = 401,
 	BlockCommentDocInner = 402,
-	TokenTreePatternParen = 403,
-	TokenTreePatternBracket = 404,
-	TokenTreePatternBrace = 405,
-	TokenTreeParen = 406,
-	TokenTreeBracket = 407,
-	TokenTreeBrace = 408,
-	DelimTokenTreeParen = 409,
-	DelimTokenTreeBracket = 410,
-	DelimTokenTreeBrace = 411,
-	FieldPatternShorthand = 412,
-	FieldPatternNamed = 413,
-	MacroDefinitionParen = 414,
-	MacroDefinitionBracket = 415,
-	MacroDefinitionBrace = 416,
-	RangePatternPrefix = 417,
-	RangePatternWithLeftWithRight = 418,
-	RangePatternWithLeftBare = 419,
-	RangePatternWithLeft = 420,
-	StructItemBrace = 421,
-	StructItemTuple = 422,
-	StructItemUnit = 423,
-	WildcardPattern = 424,
-	AttributedFieldDeclaration = 425,
-	AttributedEnumVariant = 426,
-	AttributedParameter = 427,
-	AttributedTypeParameter = 428,
-	AttributedArgument = 429,
-	AttributedOrderedField = 430,
-	TypeArgument = 431,
-	MatchBlockArms = 432,
-	SourceFileRepeat1 = 433,
-	TokenRepetitionPatternRepeat1 = 434,
-	TokenRepetitionRepeat1 = 435,
-	DeclarationListRepeat1 = 436,
-	FunctionModifiersRepeat1 = 437,
-	TraitBoundsRepeat1 = 438,
-	TupleExpressionRepeat1 = 439,
-	LastMatchArmRepeat1 = 440,
-	StringLiteralRepeat1 = 441,
-	MacroRulesRepeat1 = 442,
-	EnumVariantListElementsRepeat1 = 443,
-	FieldDeclarationListElementsRepeat1 = 444,
-	OrderedFieldDeclarationListElementsRepeat1 = 445,
-	WherePredicatesRepeat1 = 446,
-	TypeParametersElementsRepeat1 = 447,
-	UseClausesRepeat1 = 448,
-	ParametersElementsRepeat1 = 449,
-	LifetimesRepeat1 = 450,
-	UseBoundsElementsRepeat1 = 451,
-	TypeArgumentsElementsRepeat1 = 452,
-	ArgumentsElementsRepeat1 = 453,
-	FieldInitializerListElementsRepeat1 = 454,
-	_ClosureParametersOptional1Repeat1 = 455,
-	TuplePatternElementsRepeat1 = 456,
-	PatternsRepeat1 = 457,
-	StructPatternElementsRepeat1 = 458,
-	_TupleTypeElementsRepeat1 = 459,
-	_TupleExpressionElementsRepeat1 = 460,
-	DelimTokenTreeParenRepeat1 = 461,
-	_MatchBlockArmsRepeat1 = 462,
-	FieldIdentifier = 463,
-	ShorthandFieldIdentifier = 465,
-	TypeIdentifier = 466,
+	BlockCommentRegular = 403,
+	TokenTreePatternParen = 404,
+	TokenTreePatternBracket = 405,
+	TokenTreePatternBrace = 406,
+	TokenTreeParen = 407,
+	TokenTreeBracket = 408,
+	TokenTreeBrace = 409,
+	DelimTokenTreeParen = 410,
+	DelimTokenTreeBracket = 411,
+	DelimTokenTreeBrace = 412,
+	FieldPatternShorthand = 413,
+	FieldPatternNamed = 414,
+	MacroDefinitionParen = 415,
+	MacroDefinitionBracket = 416,
+	MacroDefinitionBrace = 417,
+	RangePatternPrefix = 418,
+	RangePatternWithLeftWithRight = 419,
+	RangePatternWithLeftBare = 420,
+	RangePatternWithLeft = 421,
+	StructItemBrace = 422,
+	StructItemTuple = 423,
+	StructItemUnit = 424,
+	WildcardPattern = 425,
+	AttributedFieldDeclaration = 426,
+	AttributedEnumVariant = 427,
+	AttributedParameter = 428,
+	AttributedTypeParameter = 429,
+	AttributedArgument = 430,
+	AttributedOrderedField = 431,
+	TypeArgument = 432,
+	MatchBlockArms = 433,
+	SourceFileRepeat1 = 434,
+	TokenRepetitionPatternRepeat1 = 435,
+	TokenRepetitionRepeat1 = 436,
+	DeclarationListRepeat1 = 437,
+	FunctionModifiersRepeat1 = 438,
+	TraitBoundsRepeat1 = 439,
+	TupleExpressionRepeat1 = 440,
+	LastMatchArmRepeat1 = 441,
+	StringLiteralRepeat1 = 442,
+	MacroRulesRepeat1 = 443,
+	EnumVariantListElementsRepeat1 = 444,
+	FieldDeclarationListElementsRepeat1 = 445,
+	OrderedFieldDeclarationListElementsRepeat1 = 446,
+	WherePredicatesRepeat1 = 447,
+	TypeParametersElementsRepeat1 = 448,
+	UseClausesRepeat1 = 449,
+	ParametersElementsRepeat1 = 450,
+	LifetimesRepeat1 = 451,
+	UseBoundsElementsRepeat1 = 452,
+	TypeArgumentsElementsRepeat1 = 453,
+	ArgumentsElementsRepeat1 = 454,
+	FieldInitializerListElementsRepeat1 = 455,
+	_ClosureParametersOptional1Repeat1 = 456,
+	TuplePatternElementsRepeat1 = 457,
+	PatternsRepeat1 = 458,
+	StructPatternElementsRepeat1 = 459,
+	_TupleTypeElementsRepeat1 = 460,
+	_TupleExpressionElementsRepeat1 = 461,
+	DelimTokenTreeParenRepeat1 = 462,
+	_MatchBlockArmsRepeat1 = 463,
+	FieldIdentifier = 464,
+	ShorthandFieldIdentifier = 466,
+	TypeIdentifier = 467,
 	Error = 65535
 }
 Object.freeze(TSKindId);
@@ -729,154 +730,154 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[5, 'dollar'],
 	[6, 'lparen'],
 	[7, 'rparen'],
-	[8, 'token_repetition_pattern_token1'],
-	[9, 'plus'],
-	[10, 'star'],
-	[11, 'qmark'],
-	[12, 'block_keyword'],
-	[13, 'expr_keyword'],
-	[14, 'expr_2021_keyword'],
-	[15, 'ident_keyword'],
-	[16, 'item_keyword'],
-	[17, 'lifetime_keyword'],
-	[18, 'literal_keyword'],
-	[19, 'meta_keyword'],
-	[20, 'pat_keyword'],
-	[21, 'pat_param_keyword'],
-	[22, 'path_keyword'],
-	[23, 'stmt_keyword'],
-	[24, 'tt_keyword'],
-	[25, 'ty_keyword'],
-	[26, 'vis_keyword'],
-	[27, 'pound'],
-	[28, 'lbrack'],
-	[29, 'rbrack'],
-	[30, 'bang'],
-	[31, 'lbrace'],
-	[32, 'rbrace'],
-	[33, 'union_keyword'],
-	[34, 'enum_keyword'],
-	[35, 'extern_keyword'],
-	[36, 'const_keyword'],
-	[37, 'static_keyword'],
-	[38, 'type_keyword'],
-	[39, 'eq'],
-	[40, 'fn_keyword'],
-	[41, 'where_keyword'],
-	[42, 'trait_keyword'],
-	[43, 'for_keyword'],
-	[44, 'lt'],
-	[45, 'gt'],
-	[46, 'let_keyword'],
-	[47, 'use_keyword'],
-	[48, 'colon_colon'],
-	[49, 'as_keyword'],
-	[50, 'dot_dot_dot'],
-	[51, 'squote'],
-	[52, 'default_keyword'],
-	[53, 'gen_keyword'],
-	[54, 'lt2'],
-	[55, 'amp'],
-	[56, 'impl_keyword'],
-	[57, 'dyn_keyword'],
-	[58, 'mutable_specifier'],
-	[59, 'u8_keyword'],
-	[60, 'i8_keyword'],
-	[61, 'u16_keyword'],
-	[62, 'i16_keyword'],
-	[63, 'u32_keyword'],
-	[64, 'i32_keyword'],
-	[65, 'u64_keyword'],
-	[66, 'i64_keyword'],
-	[67, 'u128_keyword'],
-	[68, 'i128_keyword'],
-	[69, 'isize_keyword'],
-	[70, 'usize_keyword'],
-	[71, 'f32_keyword'],
-	[72, 'f64_keyword'],
-	[73, 'bool_keyword'],
-	[74, 'str_keyword'],
-	[75, 'char_keyword'],
-	[76, 'dash'],
-	[77, 'amp_amp'],
-	[78, 'pipe_pipe'],
-	[79, 'pipe'],
-	[80, 'caret'],
-	[81, 'eq_eq'],
-	[82, 'bang_eq'],
-	[83, 'lt_eq'],
-	[84, 'gt_eq'],
-	[85, 'lt_lt'],
-	[86, 'gt_gt'],
-	[87, 'slash'],
-	[88, 'percent'],
-	[89, 'plus_eq'],
-	[90, 'dash_eq'],
-	[91, 'star_eq'],
-	[92, 'slash_eq'],
-	[93, 'percent_eq'],
-	[94, 'amp_eq'],
-	[95, 'pipe_eq'],
-	[96, 'caret_eq'],
-	[97, 'lt_lt_eq'],
-	[98, 'gt_gt_eq'],
-	[99, 'return_keyword'],
-	[100, 'yield_keyword'],
-	[101, 'dot_dot'],
-	[102, 'if_keyword'],
-	[103, 'else_keyword'],
-	[104, 'match_keyword'],
-	[105, 'while_keyword'],
-	[106, 'loop_keyword'],
-	[107, 'in_keyword'],
-	[108, 'break_keyword'],
-	[109, 'continue_keyword'],
-	[110, 'dot'],
-	[111, 'await_keyword'],
-	[112, 'unsafe_keyword'],
-	[113, 'async_keyword'],
-	[114, 'try_keyword'],
-	[115, 'ref_keyword'],
-	[116, 'at'],
-	[117, 'dquote'],
-	[118, 'true_keyword'],
-	[119, 'false_keyword'],
-	[120, 'slash_slash'],
-	[121, 'bang2'],
-	[122, 'slash2'],
-	[123, 'slash_star'],
-	[124, 'star_slash'],
-	[125, 'shebang'],
-	[126, 'self'],
-	[127, 'super'],
-	[128, 'crate'],
-	[129, 'metavariable'],
-	[130, 'move_keyword'],
-	[131, 'comma'],
-	[132, 'dash_gt'],
-	[133, 'underscore'],
-	[134, 'dot_dot_eq'],
-	[135, 'mod_keyword'],
-	[136, 'pub_keyword'],
-	[137, 'struct_keyword'],
-	[138, 'integer_literal_decimal'],
-	[139, 'integer_literal_hex'],
-	[140, 'integer_literal_binary'],
-	[141, 'integer_literal_octal'],
-	[142, 'char_literal_plain'],
-	[143, 'char_literal_empty'],
-	[144, 'char_literal_escaped_simple'],
-	[145, 'char_literal_escaped_unicode_fixed'],
-	[146, 'char_literal_escaped_unicode_braced'],
-	[147, 'char_literal_escaped_hex'],
-	[148, 'escape_sequence_simple'],
-	[149, 'escape_sequence_unicode_fixed'],
-	[150, 'escape_sequence_unicode_braced'],
-	[151, 'escape_sequence_hex'],
-	[152, 'raw_keyword'],
-	[153, 'string_open'],
-	[154, 'line_comment_extra_slashes_token1'],
-	[155, 'line_comment_extra_slashes_token2'],
+	[8, 'plus'],
+	[9, 'star'],
+	[10, 'qmark'],
+	[11, 'block_keyword'],
+	[12, 'expr_keyword'],
+	[13, 'expr_2021_keyword'],
+	[14, 'ident_keyword'],
+	[15, 'item_keyword'],
+	[16, 'lifetime_keyword'],
+	[17, 'literal_keyword'],
+	[18, 'meta_keyword'],
+	[19, 'pat_keyword'],
+	[20, 'pat_param_keyword'],
+	[21, 'path_keyword'],
+	[22, 'stmt_keyword'],
+	[23, 'tt_keyword'],
+	[24, 'ty_keyword'],
+	[25, 'vis_keyword'],
+	[26, 'pound'],
+	[27, 'lbrack'],
+	[28, 'rbrack'],
+	[29, 'bang'],
+	[30, 'lbrace'],
+	[31, 'rbrace'],
+	[32, 'union_keyword'],
+	[33, 'enum_keyword'],
+	[34, 'extern_keyword'],
+	[35, 'const_keyword'],
+	[36, 'static_keyword'],
+	[37, 'type_keyword'],
+	[38, 'eq'],
+	[39, 'fn_keyword'],
+	[40, 'where_keyword'],
+	[41, 'trait_keyword'],
+	[42, 'for_keyword'],
+	[43, 'lt'],
+	[44, 'gt'],
+	[45, 'let_keyword'],
+	[46, 'use_keyword'],
+	[47, 'colon_colon'],
+	[48, 'as_keyword'],
+	[49, 'dot_dot_dot'],
+	[50, 'squote'],
+	[51, 'default_keyword'],
+	[52, 'gen_keyword'],
+	[53, 'lt2'],
+	[54, 'amp'],
+	[55, 'impl_keyword'],
+	[56, 'dyn_keyword'],
+	[57, 'mutable_specifier'],
+	[58, 'u8_keyword'],
+	[59, 'i8_keyword'],
+	[60, 'u16_keyword'],
+	[61, 'i16_keyword'],
+	[62, 'u32_keyword'],
+	[63, 'i32_keyword'],
+	[64, 'u64_keyword'],
+	[65, 'i64_keyword'],
+	[66, 'u128_keyword'],
+	[67, 'i128_keyword'],
+	[68, 'isize_keyword'],
+	[69, 'usize_keyword'],
+	[70, 'f32_keyword'],
+	[71, 'f64_keyword'],
+	[72, 'bool_keyword'],
+	[73, 'str_keyword'],
+	[74, 'char_keyword'],
+	[75, 'dash'],
+	[76, 'amp_amp'],
+	[77, 'pipe_pipe'],
+	[78, 'pipe'],
+	[79, 'caret'],
+	[80, 'eq_eq'],
+	[81, 'bang_eq'],
+	[82, 'lt_eq'],
+	[83, 'gt_eq'],
+	[84, 'lt_lt'],
+	[85, 'gt_gt'],
+	[86, 'slash'],
+	[87, 'percent'],
+	[88, 'plus_eq'],
+	[89, 'dash_eq'],
+	[90, 'star_eq'],
+	[91, 'slash_eq'],
+	[92, 'percent_eq'],
+	[93, 'amp_eq'],
+	[94, 'pipe_eq'],
+	[95, 'caret_eq'],
+	[96, 'lt_lt_eq'],
+	[97, 'gt_gt_eq'],
+	[98, 'return_keyword'],
+	[99, 'yield_keyword'],
+	[100, 'dot_dot'],
+	[101, 'if_keyword'],
+	[102, 'else_keyword'],
+	[103, 'match_keyword'],
+	[104, 'while_keyword'],
+	[105, 'loop_keyword'],
+	[106, 'in_keyword'],
+	[107, 'break_keyword'],
+	[108, 'continue_keyword'],
+	[109, 'dot'],
+	[110, 'await_keyword'],
+	[111, 'unsafe_keyword'],
+	[112, 'async_keyword'],
+	[113, 'try_keyword'],
+	[114, 'ref_keyword'],
+	[115, 'at'],
+	[116, 'dquote'],
+	[117, 'true_keyword'],
+	[118, 'false_keyword'],
+	[119, 'slash_slash'],
+	[120, 'bang2'],
+	[121, 'slash2'],
+	[122, 'slash_star'],
+	[123, 'star_slash'],
+	[124, 'shebang'],
+	[125, 'self'],
+	[126, 'super'],
+	[127, 'crate'],
+	[128, 'metavariable'],
+	[129, 'move_keyword'],
+	[130, 'comma'],
+	[131, 'dash_gt'],
+	[132, 'token_repetition_pattern_text'],
+	[133, 'string_open'],
+	[134, 'line_comment_text1'],
+	[135, 'line_comment_text2'],
+	[136, 'underscore'],
+	[137, 'dot_dot_eq'],
+	[138, 'mod_keyword'],
+	[139, 'pub_keyword'],
+	[140, 'struct_keyword'],
+	[141, 'integer_literal_decimal'],
+	[142, 'integer_literal_hex'],
+	[143, 'integer_literal_binary'],
+	[144, 'integer_literal_octal'],
+	[145, 'char_literal_plain'],
+	[146, 'char_literal_empty'],
+	[147, 'char_literal_escaped_simple'],
+	[148, 'char_literal_escaped_unicode_fixed'],
+	[149, 'char_literal_escaped_unicode_braced'],
+	[150, 'char_literal_escaped_hex'],
+	[151, 'escape_sequence_simple'],
+	[152, 'escape_sequence_unicode_fixed'],
+	[153, 'escape_sequence_unicode_braced'],
+	[154, 'escape_sequence_hex'],
+	[155, 'raw_keyword'],
 	[156, 'line_comment_regular'],
 	[157, 'macro_rules_bang'],
 	[158, 'string_content'],
@@ -1011,7 +1012,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[287, 'if_expression'],
 	[288, 'let_condition'],
 	[289, '_let_chain'],
-	[464, '_let_chain'],
+	[465, '_let_chain'],
 	[290, '_condition'],
 	[291, 'else_clause'],
 	[292, 'match_expression'],
@@ -1125,73 +1126,74 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[400, 'line_comment_doc_inner'],
 	[401, 'block_comment_doc_outer'],
 	[402, 'block_comment_doc_inner'],
-	[403, 'token_tree_pattern_paren'],
-	[404, 'token_tree_pattern_bracket'],
-	[405, 'token_tree_pattern_brace'],
-	[406, 'token_tree_paren'],
-	[407, 'token_tree_bracket'],
-	[408, 'token_tree_brace'],
-	[409, 'delim_token_tree_paren'],
-	[410, 'delim_token_tree_bracket'],
-	[411, 'delim_token_tree_brace'],
-	[412, 'field_pattern_shorthand'],
-	[413, 'field_pattern_named'],
-	[414, 'macro_definition_paren'],
-	[415, 'macro_definition_bracket'],
-	[416, 'macro_definition_brace'],
-	[417, 'range_pattern_prefix'],
-	[418, 'range_pattern_with_left_with_right'],
-	[419, 'range_pattern_with_left_bare'],
-	[420, 'range_pattern_with_left'],
-	[421, 'struct_item_brace'],
-	[422, 'struct_item_tuple'],
-	[423, 'struct_item_unit'],
-	[424, 'wildcard_pattern'],
-	[425, 'attributed_field_declaration'],
-	[426, 'attributed_enum_variant'],
-	[427, 'attributed_parameter'],
-	[428, 'attributed_type_parameter'],
-	[429, 'attributed_argument'],
-	[430, 'attributed_ordered_field'],
-	[431, 'type_argument'],
-	[432, 'match_block_arms'],
-	[433, 'source_file_repeat1'],
-	[434, 'token_repetition_pattern_repeat1'],
-	[435, 'token_repetition_repeat1'],
-	[436, 'declaration_list_repeat1'],
-	[437, 'function_modifiers_repeat1'],
-	[438, 'trait_bounds_repeat1'],
-	[439, 'tuple_expression_repeat1'],
-	[440, 'last_match_arm_repeat1'],
-	[441, 'string_literal_repeat1'],
-	[442, 'macro_rules_repeat1'],
-	[443, 'enum_variant_list_elements_repeat1'],
-	[444, 'field_declaration_list_elements_repeat1'],
-	[445, 'ordered_field_declaration_list_elements_repeat1'],
-	[446, 'where_predicates_repeat1'],
-	[447, 'type_parameters_elements_repeat1'],
-	[448, 'use_clauses_repeat1'],
-	[449, 'parameters_elements_repeat1'],
-	[450, 'lifetimes_repeat1'],
-	[451, 'use_bounds_elements_repeat1'],
-	[452, 'type_arguments_elements_repeat1'],
-	[453, 'arguments_elements_repeat1'],
-	[454, 'field_initializer_list_elements_repeat1'],
-	[455, '_closure_parameters_optional1_repeat1'],
-	[456, 'tuple_pattern_elements_repeat1'],
-	[457, 'patterns_repeat1'],
-	[458, 'struct_pattern_elements_repeat1'],
-	[459, '_tuple_type_elements_repeat1'],
-	[460, '_tuple_expression_elements_repeat1'],
-	[461, 'delim_token_tree_paren_repeat1'],
-	[462, '_match_block_arms_repeat1'],
-	[463, 'field_identifier'],
-	[465, 'shorthand_field_identifier'],
-	[466, 'type_identifier'],
+	[403, 'block_comment_regular'],
+	[404, 'token_tree_pattern_paren'],
+	[405, 'token_tree_pattern_bracket'],
+	[406, 'token_tree_pattern_brace'],
+	[407, 'token_tree_paren'],
+	[408, 'token_tree_bracket'],
+	[409, 'token_tree_brace'],
+	[410, 'delim_token_tree_paren'],
+	[411, 'delim_token_tree_bracket'],
+	[412, 'delim_token_tree_brace'],
+	[413, 'field_pattern_shorthand'],
+	[414, 'field_pattern_named'],
+	[415, 'macro_definition_paren'],
+	[416, 'macro_definition_bracket'],
+	[417, 'macro_definition_brace'],
+	[418, 'range_pattern_prefix'],
+	[419, 'range_pattern_with_left_with_right'],
+	[420, 'range_pattern_with_left_bare'],
+	[421, 'range_pattern_with_left'],
+	[422, 'struct_item_brace'],
+	[423, 'struct_item_tuple'],
+	[424, 'struct_item_unit'],
+	[425, 'wildcard_pattern'],
+	[426, 'attributed_field_declaration'],
+	[427, 'attributed_enum_variant'],
+	[428, 'attributed_parameter'],
+	[429, 'attributed_type_parameter'],
+	[430, 'attributed_argument'],
+	[431, 'attributed_ordered_field'],
+	[432, 'type_argument'],
+	[433, 'match_block_arms'],
+	[434, 'source_file_repeat1'],
+	[435, 'token_repetition_pattern_repeat1'],
+	[436, 'token_repetition_repeat1'],
+	[437, 'declaration_list_repeat1'],
+	[438, 'function_modifiers_repeat1'],
+	[439, 'trait_bounds_repeat1'],
+	[440, 'tuple_expression_repeat1'],
+	[441, 'last_match_arm_repeat1'],
+	[442, 'string_literal_repeat1'],
+	[443, 'macro_rules_repeat1'],
+	[444, 'enum_variant_list_elements_repeat1'],
+	[445, 'field_declaration_list_elements_repeat1'],
+	[446, 'ordered_field_declaration_list_elements_repeat1'],
+	[447, 'where_predicates_repeat1'],
+	[448, 'type_parameters_elements_repeat1'],
+	[449, 'use_clauses_repeat1'],
+	[450, 'parameters_elements_repeat1'],
+	[451, 'lifetimes_repeat1'],
+	[452, 'use_bounds_elements_repeat1'],
+	[453, 'type_arguments_elements_repeat1'],
+	[454, 'arguments_elements_repeat1'],
+	[455, 'field_initializer_list_elements_repeat1'],
+	[456, '_closure_parameters_optional1_repeat1'],
+	[457, 'tuple_pattern_elements_repeat1'],
+	[458, 'patterns_repeat1'],
+	[459, 'struct_pattern_elements_repeat1'],
+	[460, '_tuple_type_elements_repeat1'],
+	[461, '_tuple_expression_elements_repeat1'],
+	[462, 'delim_token_tree_paren_repeat1'],
+	[463, '_match_block_arms_repeat1'],
+	[464, 'field_identifier'],
+	[466, 'shorthand_field_identifier'],
+	[467, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
-/** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
+/** Parser display label of each kind id — the spelling of an anonymous token the reader sends without text, and the label validator bridging matches. Never use for wrapNode dispatch. */
 export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'identifier'],
 	[2, ';'],
@@ -1200,154 +1202,154 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[5, '$'],
 	[6, '('],
 	[7, ')'],
-	[8, 'token_repetition_pattern_token1'],
-	[9, '+'],
-	[10, '*'],
-	[11, '?'],
-	[12, 'block'],
-	[13, 'expr'],
-	[14, 'expr_2021'],
-	[15, 'ident'],
-	[16, 'item'],
-	[17, 'lifetime'],
-	[18, 'literal'],
-	[19, 'meta'],
-	[20, 'pat'],
-	[21, 'pat_param'],
-	[22, 'path'],
-	[23, 'stmt'],
-	[24, 'tt'],
-	[25, 'ty'],
-	[26, 'vis'],
-	[27, '#'],
-	[28, '['],
-	[29, ']'],
-	[30, '!'],
-	[31, '{'],
-	[32, '}'],
-	[33, 'union'],
-	[34, 'enum'],
-	[35, 'extern'],
-	[36, 'const'],
-	[37, 'static'],
-	[38, 'type'],
-	[39, '='],
-	[40, 'fn'],
-	[41, 'where'],
-	[42, 'trait'],
-	[43, 'for'],
-	[44, '<'],
-	[45, '>'],
-	[46, 'let'],
-	[47, 'use'],
-	[48, '::'],
-	[49, 'as'],
-	[50, '...'],
-	[51, "'"],
-	[52, 'default'],
-	[53, 'gen'],
-	[54, '<'],
-	[55, '&'],
-	[56, 'impl'],
-	[57, 'dyn'],
-	[58, 'mutable_specifier'],
-	[59, 'u8'],
-	[60, 'i8'],
-	[61, 'u16'],
-	[62, 'i16'],
-	[63, 'u32'],
-	[64, 'i32'],
-	[65, 'u64'],
-	[66, 'i64'],
-	[67, 'u128'],
-	[68, 'i128'],
-	[69, 'isize'],
-	[70, 'usize'],
-	[71, 'f32'],
-	[72, 'f64'],
-	[73, 'bool'],
-	[74, 'str'],
-	[75, 'char'],
-	[76, '-'],
-	[77, '&&'],
-	[78, '||'],
-	[79, '|'],
-	[80, '^'],
-	[81, '=='],
-	[82, '!='],
-	[83, '<='],
-	[84, '>='],
-	[85, '<<'],
-	[86, '>>'],
-	[87, '/'],
-	[88, '%'],
-	[89, '+='],
-	[90, '-='],
-	[91, '*='],
-	[92, '/='],
-	[93, '%='],
-	[94, '&='],
-	[95, '|='],
-	[96, '^='],
-	[97, '<<='],
-	[98, '>>='],
-	[99, 'return'],
-	[100, 'yield'],
-	[101, '..'],
-	[102, 'if'],
-	[103, 'else'],
-	[104, 'match'],
-	[105, 'while'],
-	[106, 'loop'],
-	[107, 'in'],
-	[108, 'break'],
-	[109, 'continue'],
-	[110, '.'],
-	[111, 'await'],
-	[112, 'unsafe'],
-	[113, 'async'],
-	[114, 'try'],
-	[115, 'ref'],
-	[116, '@'],
-	[117, '"'],
-	[118, 'true'],
-	[119, 'false'],
-	[120, '//'],
-	[121, '!'],
-	[122, '/'],
-	[123, '/*'],
-	[124, '*/'],
-	[125, 'shebang'],
-	[126, 'self'],
-	[127, 'super'],
-	[128, 'crate'],
-	[129, 'metavariable'],
-	[130, 'move'],
-	[131, ','],
-	[132, '->'],
-	[133, '_'],
-	[134, '..='],
-	[135, 'mod'],
-	[136, 'pub'],
-	[137, 'struct'],
-	[138, 'integer_literal_decimal'],
-	[139, 'integer_literal_hex'],
-	[140, 'integer_literal_binary'],
-	[141, 'integer_literal_octal'],
-	[142, 'char_literal_plain'],
-	[143, 'char_literal_empty'],
-	[144, 'char_literal_escaped_simple'],
-	[145, 'char_literal_escaped_unicode_fixed'],
-	[146, 'char_literal_escaped_unicode_braced'],
-	[147, 'char_literal_escaped_hex'],
-	[148, 'escape_sequence_simple'],
-	[149, 'escape_sequence_unicode_fixed'],
-	[150, 'escape_sequence_unicode_braced'],
-	[151, 'escape_sequence_hex'],
-	[152, 'raw'],
-	[153, 'string_open'],
-	[154, 'line_comment_extra_slashes_token1'],
-	[155, 'line_comment_extra_slashes_token2'],
+	[8, '+'],
+	[9, '*'],
+	[10, '?'],
+	[11, 'block'],
+	[12, 'expr'],
+	[13, 'expr_2021'],
+	[14, 'ident'],
+	[15, 'item'],
+	[16, 'lifetime'],
+	[17, 'literal'],
+	[18, 'meta'],
+	[19, 'pat'],
+	[20, 'pat_param'],
+	[21, 'path'],
+	[22, 'stmt'],
+	[23, 'tt'],
+	[24, 'ty'],
+	[25, 'vis'],
+	[26, '#'],
+	[27, '['],
+	[28, ']'],
+	[29, '!'],
+	[30, '{'],
+	[31, '}'],
+	[32, 'union'],
+	[33, 'enum'],
+	[34, 'extern'],
+	[35, 'const'],
+	[36, 'static'],
+	[37, 'type'],
+	[38, '='],
+	[39, 'fn'],
+	[40, 'where'],
+	[41, 'trait'],
+	[42, 'for'],
+	[43, '<'],
+	[44, '>'],
+	[45, 'let'],
+	[46, 'use'],
+	[47, '::'],
+	[48, 'as'],
+	[49, '...'],
+	[50, "'"],
+	[51, 'default'],
+	[52, 'gen'],
+	[53, '<'],
+	[54, '&'],
+	[55, 'impl'],
+	[56, 'dyn'],
+	[57, 'mutable_specifier'],
+	[58, 'u8'],
+	[59, 'i8'],
+	[60, 'u16'],
+	[61, 'i16'],
+	[62, 'u32'],
+	[63, 'i32'],
+	[64, 'u64'],
+	[65, 'i64'],
+	[66, 'u128'],
+	[67, 'i128'],
+	[68, 'isize'],
+	[69, 'usize'],
+	[70, 'f32'],
+	[71, 'f64'],
+	[72, 'bool'],
+	[73, 'str'],
+	[74, 'char'],
+	[75, '-'],
+	[76, '&&'],
+	[77, '||'],
+	[78, '|'],
+	[79, '^'],
+	[80, '=='],
+	[81, '!='],
+	[82, '<='],
+	[83, '>='],
+	[84, '<<'],
+	[85, '>>'],
+	[86, '/'],
+	[87, '%'],
+	[88, '+='],
+	[89, '-='],
+	[90, '*='],
+	[91, '/='],
+	[92, '%='],
+	[93, '&='],
+	[94, '|='],
+	[95, '^='],
+	[96, '<<='],
+	[97, '>>='],
+	[98, 'return'],
+	[99, 'yield'],
+	[100, '..'],
+	[101, 'if'],
+	[102, 'else'],
+	[103, 'match'],
+	[104, 'while'],
+	[105, 'loop'],
+	[106, 'in'],
+	[107, 'break'],
+	[108, 'continue'],
+	[109, '.'],
+	[110, 'await'],
+	[111, 'unsafe'],
+	[112, 'async'],
+	[113, 'try'],
+	[114, 'ref'],
+	[115, '@'],
+	[116, '"'],
+	[117, 'true'],
+	[118, 'false'],
+	[119, '//'],
+	[120, '!'],
+	[121, '/'],
+	[122, '/*'],
+	[123, '*/'],
+	[124, 'shebang'],
+	[125, 'self'],
+	[126, 'super'],
+	[127, 'crate'],
+	[128, 'metavariable'],
+	[129, 'move'],
+	[130, ','],
+	[131, '->'],
+	[132, 'token_repetition_pattern_text'],
+	[133, 'string_open'],
+	[134, 'line_comment_text1'],
+	[135, 'line_comment_text2'],
+	[136, '_'],
+	[137, '..='],
+	[138, 'mod'],
+	[139, 'pub'],
+	[140, 'struct'],
+	[141, 'integer_literal_decimal'],
+	[142, 'integer_literal_hex'],
+	[143, 'integer_literal_binary'],
+	[144, 'integer_literal_octal'],
+	[145, 'char_literal_plain'],
+	[146, 'char_literal_empty'],
+	[147, 'char_literal_escaped_simple'],
+	[148, 'char_literal_escaped_unicode_fixed'],
+	[149, 'char_literal_escaped_unicode_braced'],
+	[150, 'char_literal_escaped_hex'],
+	[151, 'escape_sequence_simple'],
+	[152, 'escape_sequence_unicode_fixed'],
+	[153, 'escape_sequence_unicode_braced'],
+	[154, 'escape_sequence_hex'],
+	[155, 'raw'],
 	[156, 'line_comment_regular'],
 	[157, 'macro_rules!'],
 	[158, 'string_content'],
@@ -1482,7 +1484,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[287, 'if_expression'],
 	[288, 'let_condition'],
 	[289, '_let_chain'],
-	[464, 'let_chain'],
+	[465, 'let_chain'],
 	[290, '_condition'],
 	[291, 'else_clause'],
 	[292, 'match_expression'],
@@ -1596,69 +1598,70 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[400, 'line_comment_doc_inner'],
 	[401, 'block_comment_doc_outer'],
 	[402, 'block_comment_doc_inner'],
-	[403, 'token_tree_pattern_paren'],
-	[404, 'token_tree_pattern_bracket'],
-	[405, 'token_tree_pattern_brace'],
-	[406, 'token_tree_paren'],
-	[407, 'token_tree_bracket'],
-	[408, 'token_tree_brace'],
-	[409, 'delim_token_tree_paren'],
-	[410, 'delim_token_tree_bracket'],
-	[411, 'delim_token_tree_brace'],
-	[412, 'field_pattern_shorthand'],
-	[413, 'field_pattern_named'],
-	[414, 'macro_definition_paren'],
-	[415, 'macro_definition_bracket'],
-	[416, 'macro_definition_brace'],
-	[417, 'range_pattern_prefix'],
-	[418, 'range_pattern_with_left_with_right'],
-	[419, 'range_pattern_with_left_bare'],
-	[420, 'range_pattern_with_left'],
-	[421, 'struct_item_brace'],
-	[422, 'struct_item_tuple'],
-	[423, 'struct_item_unit'],
-	[424, 'wildcard_pattern'],
-	[425, 'attributed_field_declaration'],
-	[426, 'attributed_enum_variant'],
-	[427, 'attributed_parameter'],
-	[428, 'attributed_type_parameter'],
-	[429, 'attributed_argument'],
-	[430, 'attributed_ordered_field'],
-	[431, 'type_argument'],
-	[432, 'match_block_arms'],
-	[433, 'source_file_repeat1'],
-	[434, 'token_repetition_pattern_repeat1'],
-	[435, 'token_repetition_repeat1'],
-	[436, 'declaration_list_repeat1'],
-	[437, 'function_modifiers_repeat1'],
-	[438, 'trait_bounds_repeat1'],
-	[439, 'tuple_expression_repeat1'],
-	[440, 'last_match_arm_repeat1'],
-	[441, 'string_literal_repeat1'],
-	[442, 'macro_rules_repeat1'],
-	[443, 'enum_variant_list_elements_repeat1'],
-	[444, 'field_declaration_list_elements_repeat1'],
-	[445, 'ordered_field_declaration_list_elements_repeat1'],
-	[446, 'where_predicates_repeat1'],
-	[447, 'type_parameters_elements_repeat1'],
-	[448, 'use_clauses_repeat1'],
-	[449, 'parameters_elements_repeat1'],
-	[450, 'lifetimes_repeat1'],
-	[451, 'use_bounds_elements_repeat1'],
-	[452, 'type_arguments_elements_repeat1'],
-	[453, 'arguments_elements_repeat1'],
-	[454, 'field_initializer_list_elements_repeat1'],
-	[455, '_closure_parameters_optional1_repeat1'],
-	[456, 'tuple_pattern_elements_repeat1'],
-	[457, 'patterns_repeat1'],
-	[458, 'struct_pattern_elements_repeat1'],
-	[459, '_tuple_type_elements_repeat1'],
-	[460, '_tuple_expression_elements_repeat1'],
-	[461, 'delim_token_tree_paren_repeat1'],
-	[462, '_match_block_arms_repeat1'],
-	[463, 'field_identifier'],
-	[465, 'shorthand_field_identifier'],
-	[466, 'type_identifier'],
+	[403, 'block_comment_regular'],
+	[404, 'token_tree_pattern_paren'],
+	[405, 'token_tree_pattern_bracket'],
+	[406, 'token_tree_pattern_brace'],
+	[407, 'token_tree_paren'],
+	[408, 'token_tree_bracket'],
+	[409, 'token_tree_brace'],
+	[410, 'delim_token_tree_paren'],
+	[411, 'delim_token_tree_bracket'],
+	[412, 'delim_token_tree_brace'],
+	[413, 'field_pattern_shorthand'],
+	[414, 'field_pattern_named'],
+	[415, 'macro_definition_paren'],
+	[416, 'macro_definition_bracket'],
+	[417, 'macro_definition_brace'],
+	[418, 'range_pattern_prefix'],
+	[419, 'range_pattern_with_left_with_right'],
+	[420, 'range_pattern_with_left_bare'],
+	[421, 'range_pattern_with_left'],
+	[422, 'struct_item_brace'],
+	[423, 'struct_item_tuple'],
+	[424, 'struct_item_unit'],
+	[425, 'wildcard_pattern'],
+	[426, 'attributed_field_declaration'],
+	[427, 'attributed_enum_variant'],
+	[428, 'attributed_parameter'],
+	[429, 'attributed_type_parameter'],
+	[430, 'attributed_argument'],
+	[431, 'attributed_ordered_field'],
+	[432, 'type_argument'],
+	[433, 'match_block_arms'],
+	[434, 'source_file_repeat1'],
+	[435, 'token_repetition_pattern_repeat1'],
+	[436, 'token_repetition_repeat1'],
+	[437, 'declaration_list_repeat1'],
+	[438, 'function_modifiers_repeat1'],
+	[439, 'trait_bounds_repeat1'],
+	[440, 'tuple_expression_repeat1'],
+	[441, 'last_match_arm_repeat1'],
+	[442, 'string_literal_repeat1'],
+	[443, 'macro_rules_repeat1'],
+	[444, 'enum_variant_list_elements_repeat1'],
+	[445, 'field_declaration_list_elements_repeat1'],
+	[446, 'ordered_field_declaration_list_elements_repeat1'],
+	[447, 'where_predicates_repeat1'],
+	[448, 'type_parameters_elements_repeat1'],
+	[449, 'use_clauses_repeat1'],
+	[450, 'parameters_elements_repeat1'],
+	[451, 'lifetimes_repeat1'],
+	[452, 'use_bounds_elements_repeat1'],
+	[453, 'type_arguments_elements_repeat1'],
+	[454, 'arguments_elements_repeat1'],
+	[455, 'field_initializer_list_elements_repeat1'],
+	[456, '_closure_parameters_optional1_repeat1'],
+	[457, 'tuple_pattern_elements_repeat1'],
+	[458, 'patterns_repeat1'],
+	[459, 'struct_pattern_elements_repeat1'],
+	[460, '_tuple_type_elements_repeat1'],
+	[461, '_tuple_expression_elements_repeat1'],
+	[462, 'delim_token_tree_paren_repeat1'],
+	[463, '_match_block_arms_repeat1'],
+	[464, 'field_identifier'],
+	[466, 'shorthand_field_identifier'],
+	[467, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -1681,8 +1684,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Lparen;
 		case 'rparen':
 			return TSKindId.Rparen;
-		case 'token_repetition_pattern_token1':
-			return TSKindId.TokenRepetitionPatternToken1;
 		case 'plus':
 			return TSKindId.Plus;
 		case 'star':
@@ -1931,6 +1932,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Comma;
 		case 'dash_gt':
 			return TSKindId.DashGt;
+		case 'token_repetition_pattern_text':
+			return TSKindId.TokenRepetitionPatternText;
+		case 'string_open':
+			return TSKindId.StringOpen;
+		case 'line_comment_text1':
+			return TSKindId.LineCommentText1;
+		case 'line_comment_text2':
+			return TSKindId.LineCommentText2;
 		case 'underscore':
 			return TSKindId.Underscore;
 		case 'dot_dot_eq':
@@ -1971,12 +1980,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.EscapeSequenceHex;
 		case 'raw_keyword':
 			return TSKindId.RawKeyword;
-		case 'string_open':
-			return TSKindId.StringOpen;
-		case 'line_comment_extra_slashes_token1':
-			return TSKindId.LineCommentExtraSlashesToken1;
-		case 'line_comment_extra_slashes_token2':
-			return TSKindId.LineCommentExtraSlashesToken2;
 		case 'line_comment_regular':
 			return TSKindId.LineCommentRegular;
 		case 'macro_rules_bang':
@@ -2471,6 +2474,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.BlockCommentDocOuter;
 		case 'block_comment_doc_inner':
 			return TSKindId.BlockCommentDocInner;
+		case 'block_comment_regular':
+			return TSKindId.BlockCommentRegular;
 		case 'token_tree_pattern_paren':
 			return TSKindId.TokenTreePatternParen;
 		case 'token_tree_pattern_bracket':
@@ -3498,7 +3503,7 @@ export interface TokenRepetitionPattern {
 		| Metavariable
 		| NonSpecialToken
 	)[];
-	readonly _separator?: string;
+	readonly _separator?: TokenRepetitionPatternText;
 	readonly _operator: number;
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
@@ -3509,7 +3514,7 @@ export interface TokenRepetitionPattern {
 			true,
 			true
 		>;
-		readonly separator: SlotHint<string, true>;
+		readonly separator: SlotHint<T.TokenRepetitionPatternText, true>;
 		readonly operator: SlotHint<NonNullable<T.TokenRepetitionPattern.Config>['operator']>;
 	};
 	tokenPatterns(): readonly (
@@ -3519,25 +3524,25 @@ export interface TokenRepetitionPattern {
 		| Metavariable
 		| NonSpecialToken
 	)[];
-	separator(): string | undefined;
+	separator(): TokenRepetitionPatternText | undefined;
 	operator(): number;
 }
 
 export interface TokenRepetition {
 	readonly $type: TSKindId.TokenRepetition;
 	readonly _tokens?: readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
-	readonly _separator?: string;
+	readonly _separator?: TokenRepetitionPatternText;
 	readonly _operator: number;
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
 	};
 	readonly __slotHints__?: {
 		readonly tokens: SlotHint<(T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[], true, true>;
-		readonly separator: SlotHint<string, true>;
+		readonly separator: SlotHint<T.TokenRepetitionPatternText, true>;
 		readonly operator: SlotHint<NonNullable<T.TokenRepetition.Config>['operator']>;
 	};
 	tokens(): readonly (TokenTree | TokenRepetition | Metavariable | NonSpecialToken)[];
-	separator(): string | undefined;
+	separator(): TokenRepetitionPatternText | undefined;
 	operator(): number;
 }
 
@@ -4208,6 +4213,19 @@ export interface UnionItem {
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly whereClause: SlotHint<T.WhereClause, true>;
 		readonly body: SlotHint<T.FieldDeclarationList>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly body: ListSlotHint<
+				T.AttributedFieldDeclaration | T.FieldDeclaration,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedFieldDeclaration.Config
+			>;
+		};
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): TypeIdentifier;
@@ -4236,6 +4254,19 @@ export interface EnumItem {
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly whereClause: SlotHint<T.WhereClause, true>;
 		readonly body: SlotHint<T.EnumVariantList>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly body: ListSlotHint<
+				T.AttributedEnumVariant | T.EnumVariant,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedEnumVariant.Config
+			>;
+		};
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): TypeIdentifier;
@@ -4252,14 +4283,19 @@ export interface EnumVariantList {
 	};
 	readonly __slotHints__?: {
 		readonly enumVariantListElements: SlotHint<T.EnumVariantListElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.AttributedEnumVariant | T.EnumVariant,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'enumVariantListElements',
-			T.AttributedEnumVariant.Config
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly enumVariantListElements: ListSlotHint<
+				T.AttributedEnumVariant | T.EnumVariant,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedEnumVariant.Config
+			>;
+		};
 	};
-	enumVariantListElements(): NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant> | undefined;
+	enumVariantListElements(): EnumVariantListElements | undefined;
 }
 
 export interface EnumVariant {
@@ -4296,14 +4332,19 @@ export interface FieldDeclarationList {
 	};
 	readonly __slotHints__?: {
 		readonly fieldDeclarationListElements: SlotHint<T.FieldDeclarationListElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.AttributedFieldDeclaration | T.FieldDeclaration,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'fieldDeclarationListElements',
-			T.AttributedFieldDeclaration.Config
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly fieldDeclarationListElements: ListSlotHint<
+				T.AttributedFieldDeclaration | T.FieldDeclaration,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedFieldDeclaration.Config
+			>;
+		};
 	};
-	fieldDeclarationListElements(): NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration> | undefined;
+	fieldDeclarationListElements(): FieldDeclarationListElements | undefined;
 }
 
 export interface FieldDeclaration {
@@ -4375,14 +4416,19 @@ export interface OrderedFieldDeclarationList {
 	};
 	readonly __slotHints__?: {
 		readonly attributes: SlotHint<T.OrderedFieldDeclarationListElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'attributes',
-			T.AttributedOrderedField.Config
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly attributes: ListSlotHint<
+				T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedOrderedField.Config
+			>;
+		};
 	};
-	attributes(): NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types> | undefined;
+	attributes(): OrderedFieldDeclarationListElements | undefined;
 }
 
 export interface ExternCrateDeclaration {
@@ -4608,6 +4654,15 @@ export interface TypeItem {
 		readonly whereClause: SlotHint<T.WhereClause, true>;
 		readonly type: SlotHint<NonNullable<T.TypeItem.Config>['type']>;
 		readonly trailingWhereClause: SlotHint<T.WhereClause, true>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly trailingWhereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): TypeIdentifier;
@@ -4685,6 +4740,25 @@ export interface FunctionItem {
 		readonly returnType: SlotHint<NonNullable<T.FunctionItem.Config>['returnType'], true>;
 		readonly whereClause: SlotHint<T.WhereClause, true>;
 		readonly body: SlotHint<T.Block>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+			readonly parameters: ListSlotHint<
+				| T.AttributedParameter
+				| T.Parameter
+				| T.SelfParameter
+				| T.VariadicParameter
+				| TSKindId.Underscore
+				| T.Type
+				| T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedParameter.Config
+			>;
+			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	functionModifiers(): FunctionModifiers | undefined;
@@ -4762,6 +4836,25 @@ export interface FunctionSignatureItem {
 		readonly parameters: SlotHint<T.Parameters>;
 		readonly returnType: SlotHint<NonNullable<T.FunctionSignatureItem.Config>['returnType'], true>;
 		readonly whereClause: SlotHint<T.WhereClause, true>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+			readonly parameters: ListSlotHint<
+				| T.AttributedParameter
+				| T.Parameter
+				| T.SelfParameter
+				| T.VariadicParameter
+				| TSKindId.Underscore
+				| T.Type
+				| T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedParameter.Config
+			>;
+			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	functionModifiers(): FunctionModifiers | undefined;
@@ -4812,14 +4905,12 @@ export interface WhereClause {
 	};
 	readonly __slotHints__?: {
 		readonly wherePredicates: SlotHint<T.WherePredicates, true>;
-		readonly $listOwner: ListOwnerHint<
-			T.WherePredicate,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'wherePredicates',
-			never
-		>;
+		readonly $listView: ListViewHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly wherePredicates: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
-	wherePredicates(): NonEmptyArray<T.WherePredicate> | undefined;
+	wherePredicates(): WherePredicates | undefined;
 }
 
 export interface WherePredicate {
@@ -4965,6 +5056,14 @@ export interface TraitItem {
 		readonly bounds: SlotHint<T.TraitBounds, true>;
 		readonly whereClause: SlotHint<T.WhereClause, true>;
 		readonly body: SlotHint<T.DeclarationList>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	unsafeMarker(): boolean | undefined;
@@ -4992,6 +5091,14 @@ export interface AssociatedType {
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly bounds: SlotHint<T.TraitBounds, true>;
 		readonly whereClause: SlotHint<T.WhereClause, true>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	name(): TypeIdentifier;
 	typeParameters(): TypeParameters | undefined;
@@ -5109,6 +5216,13 @@ export interface HigherRankedTraitBound {
 	readonly __slotHints__?: {
 		readonly typeParameters: SlotHint<T.TypeParameters>;
 		readonly type: SlotHint<NonNullable<T.HigherRankedTraitBound.Config>['type']>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+		};
 	};
 	typeParameters(): TypeParameters;
 	type(): Type;
@@ -5173,16 +5287,19 @@ export interface TypeParameters {
 	};
 	readonly __slotHints__?: {
 		readonly typeParametersElements: SlotHint<T.TypeParametersElements>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'typeParametersElements',
-			T.AttributedTypeParameter.Config
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly typeParametersElements: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+		};
 	};
-	typeParametersElements(): NonEmptyArray<
-		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
-	>;
+	typeParametersElements(): TypeParametersElements;
 }
 
 export interface ConstParameter {
@@ -5654,6 +5771,41 @@ export interface ScopedUseList {
 	readonly __slotHints__?: {
 		readonly path: SlotHint<NonNullable<T.ScopedUseList.Config>['path'], true>;
 		readonly list: SlotHint<T.UseList>;
+		readonly $listSlots: {
+			readonly list: ListSlotHint<
+				| TSKindId.Self
+				| TSKindId.U8Keyword
+				| TSKindId.I8Keyword
+				| TSKindId.U16Keyword
+				| TSKindId.I16Keyword
+				| TSKindId.U32Keyword
+				| TSKindId.I32Keyword
+				| TSKindId.U64Keyword
+				| TSKindId.I64Keyword
+				| TSKindId.U128Keyword
+				| TSKindId.I128Keyword
+				| TSKindId.IsizeKeyword
+				| TSKindId.UsizeKeyword
+				| TSKindId.F32Keyword
+				| TSKindId.F64Keyword
+				| TSKindId.BoolKeyword
+				| TSKindId.StrKeyword
+				| TSKindId.CharKeyword
+				| T.Metavariable
+				| TSKindId.Super
+				| TSKindId.Crate
+				| T.Identifier
+				| T.ScopedIdentifier
+				| TSKindId.DefaultKeyword
+				| TSKindId.UnionKeyword
+				| TSKindId.GenKeyword
+				| T.UseAsClause
+				| T.UseList
+				| T.ScopedUseList
+				| T.UseWildcard,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	path():
 		| TSKindId.Self
@@ -5725,7 +5877,7 @@ export interface UseList {
 	};
 	readonly __slotHints__?: {
 		readonly useClauses: SlotHint<T.UseClauses, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			| TSKindId.Self
 			| TSKindId.U8Keyword
 			| TSKindId.I8Keyword
@@ -5756,13 +5908,10 @@ export interface UseList {
 			| T.UseList
 			| T.ScopedUseList
 			| T.UseWildcard,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'useClauses',
-			never
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
-	};
-	useClauses():
-		| NonEmptyArray<
+		readonly $listSlots: {
+			readonly useClauses: ListSlotHint<
 				| TSKindId.Self
 				| TSKindId.U8Keyword
 				| TSKindId.I8Keyword
@@ -5792,9 +5941,12 @@ export interface UseList {
 				| T.UseAsClause
 				| T.UseList
 				| T.ScopedUseList
-				| T.UseWildcard
-		  >
-		| undefined;
+				| T.UseWildcard,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
+	};
+	useClauses(): UseClauses | undefined;
 }
 
 export interface UseAsClause {
@@ -5967,7 +6119,7 @@ export interface Parameters {
 	};
 	readonly __slotHints__?: {
 		readonly parametersElements: SlotHint<T.ParametersElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			| T.AttributedParameter
 			| T.Parameter
 			| T.SelfParameter
@@ -5975,22 +6127,23 @@ export interface Parameters {
 			| TSKindId.Underscore
 			| T.Type
 			| T.TypeIdentifier.Types,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'parametersElements',
-			T.AttributedParameter.Config
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
-	};
-	parametersElements():
-		| NonEmptyArray<
+		readonly $listSlots: {
+			readonly parametersElements: ListSlotHint<
 				| T.AttributedParameter
 				| T.Parameter
 				| T.SelfParameter
 				| T.VariadicParameter
 				| TSKindId.Underscore
 				| T.Type
-				| T.TypeIdentifier.Types
-		  >
-		| undefined;
+				| T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedParameter.Config
+			>;
+		};
+	};
+	parametersElements(): ParametersElements | undefined;
 }
 
 export interface SelfParameter {
@@ -6347,14 +6500,12 @@ export interface ForLifetimes {
 	};
 	readonly __slotHints__?: {
 		readonly lifetimes: SlotHint<T.Lifetimes>;
-		readonly $listOwner: ListOwnerHint<
-			T.Lifetime,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'lifetimes',
-			never
-		>;
+		readonly $listView: ListViewHint<T.Lifetime, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly lifetimes: ListSlotHint<T.Lifetime, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
-	lifetimes(): NonEmptyArray<T.Lifetime>;
+	lifetimes(): Lifetimes;
 }
 
 export interface FunctionType {
@@ -6414,6 +6565,20 @@ export interface FunctionType {
 		readonly content: SlotHint<T.FunctionTypeTraitForm | T.FunctionTypeFnForm>;
 		readonly parameters: SlotHint<T.Parameters>;
 		readonly returnType: SlotHint<NonNullable<T.FunctionType.Config>['returnType'], true>;
+		readonly $listSlots: {
+			readonly forLifetimes: ListSlotHint<T.Lifetime, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly parameters: ListSlotHint<
+				| T.AttributedParameter
+				| T.Parameter
+				| T.SelfParameter
+				| T.VariadicParameter
+				| TSKindId.Underscore
+				| T.Type
+				| T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedParameter.Config
+			>;
+		};
 	};
 	forLifetimes(): ForLifetimes | undefined;
 	content(): FunctionTypeTraitForm | FunctionTypeFnForm;
@@ -6429,14 +6594,18 @@ export interface TupleType {
 	};
 	readonly __slotHints__?: {
 		readonly tupleTypeElements: SlotHint<T.TupleTypeElements>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.Type | T.TypeIdentifier.Types,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'tupleTypeElements',
-			never
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly tupleTypeElements: ListSlotHint<
+				T.Type | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
-	tupleTypeElements(): NonEmptyArray<T.Type | T.TypeIdentifier.Types>;
+	tupleTypeElements(): TupleTypeElements;
 }
 
 export interface GenericFunction {
@@ -6449,6 +6618,13 @@ export interface GenericFunction {
 	readonly __slotHints__?: {
 		readonly function: SlotHint<T.Identifier | T.ScopedIdentifier | T.FieldExpression>;
 		readonly typeArguments: SlotHint<T.TypeArguments>;
+		readonly $listSlots: {
+			readonly typeArguments: ListSlotHint<
+				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.TypeArgument.Config
+			>;
+		};
 	};
 	function(): Identifier | ScopedIdentifier | FieldExpression;
 	typeArguments(): TypeArguments;
@@ -6475,6 +6651,13 @@ export interface GenericType {
 	readonly __slotHints__?: {
 		readonly type: SlotHint<NonNullable<T.GenericType.Config>['type']>;
 		readonly typeArguments: SlotHint<T.TypeArguments>;
+		readonly $listSlots: {
+			readonly typeArguments: ListSlotHint<
+				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.TypeArgument.Config
+			>;
+		};
 	};
 	type(): TypeIdentifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword | ScopedTypeIdentifier;
 	typeArguments(): TypeArguments;
@@ -6490,6 +6673,13 @@ export interface GenericTypeWithTurbofish {
 	readonly __slotHints__?: {
 		readonly type: SlotHint<T.TypeIdentifier | T.ScopedIdentifier | T.TypeIdentifier.Types>;
 		readonly typeArguments: SlotHint<T.TypeArguments>;
+		readonly $listSlots: {
+			readonly typeArguments: ListSlotHint<
+				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.TypeArgument.Config
+			>;
+		};
 	};
 	type(): TypeIdentifier | ScopedIdentifier;
 	typeArguments(): TypeArguments;
@@ -6601,14 +6791,18 @@ export interface UseBounds {
 	};
 	readonly __slotHints__?: {
 		readonly bounds: SlotHint<T.UseBoundsElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'bounds',
-			never
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly bounds: ListSlotHint<
+				T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
-	bounds(): NonEmptyArray<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types> | undefined;
+	bounds(): UseBoundsElements | undefined;
 }
 
 export interface TypeArguments {
@@ -6619,16 +6813,19 @@ export interface TypeArguments {
 	};
 	readonly __slotHints__?: {
 		readonly typeArgumentsElements: SlotHint<T.TypeArgumentsElements>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'typeArgumentsElements',
-			T.TypeArgument.Config
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly typeArgumentsElements: ListSlotHint<
+				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.TypeArgument.Config
+			>;
+		};
 	};
-	typeArgumentsElements(): NonEmptyArray<
-		T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
-	>;
+	typeArgumentsElements(): TypeArgumentsElements;
 }
 
 export interface TypeBinding {
@@ -6686,6 +6883,13 @@ export interface TypeBinding {
 		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
 		readonly typeArguments: SlotHint<T.TypeArguments, true>;
 		readonly type: SlotHint<NonNullable<T.TypeBinding.Config>['type']>;
+		readonly $listSlots: {
+			readonly typeArguments: ListSlotHint<
+				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.TypeArgument.Config
+			>;
+		};
 	};
 	name(): TypeIdentifier;
 	typeArguments(): TypeArguments | undefined;
@@ -6779,6 +6983,13 @@ export interface AbstractType {
 			| T.BoundedType
 			| T.TypeIdentifier.Types
 		>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+		};
 	};
 	typeParameters(): TypeParameters | undefined;
 	trait():
@@ -7621,6 +7832,13 @@ export interface CallExpression {
 	readonly __slotHints__?: {
 		readonly function: SlotHint<NonNullable<T.CallExpression.Config>['function']>;
 		readonly arguments: SlotHint<T.Arguments>;
+		readonly $listSlots: {
+			readonly arguments: ListSlotHint<
+				T.AttributedArgument | T.Expression,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedArgument.Config
+			>;
+		};
 	};
 	function():
 		| UnaryExpression
@@ -7693,14 +7911,19 @@ export interface Arguments {
 	};
 	readonly __slotHints__?: {
 		readonly argumentsElements: SlotHint<T.ArgumentsElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.AttributedArgument | T.Expression,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'argumentsElements',
-			T.AttributedArgument.Config
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly argumentsElements: ListSlotHint<
+				T.AttributedArgument | T.Expression,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedArgument.Config
+			>;
+		};
 	};
-	argumentsElements(): NonEmptyArray<T.AttributedArgument | T.Expression> | undefined;
+	argumentsElements(): ArgumentsElements | undefined;
 }
 
 export interface ParenthesizedExpression {
@@ -7727,6 +7950,9 @@ export interface TupleExpression {
 	readonly __slotHints__?: {
 		readonly attributes: SlotHint<T.AttributeItem[], true, true>;
 		readonly tupleExpressionElements: SlotHint<T.TupleExpressionElements>;
+		readonly $listSlots: {
+			readonly tupleExpressionElements: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	attributes(): readonly AttributeItem[];
 	tupleExpressionElements(): TupleExpressionElements;
@@ -7747,6 +7973,12 @@ export interface StructExpression {
 			| T.TypeIdentifier.Types
 		>;
 		readonly body: SlotHint<T.FieldInitializerList>;
+		readonly $listSlots: {
+			readonly body: ListSlotHint<
+				T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	name(): TypeIdentifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
 	body(): FieldInitializerList;
@@ -7760,14 +7992,18 @@ export interface FieldInitializerList {
 	};
 	readonly __slotHints__?: {
 		readonly initializers: SlotHint<T.FieldInitializerListElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'initializers',
-			never
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly initializers: ListSlotHint<
+				T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
-	initializers(): NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer> | undefined;
+	initializers(): FieldInitializerListElements | undefined;
 }
 
 export interface ShorthandFieldInitializer {
@@ -7922,7 +8158,12 @@ export interface MatchBlock {
 	readonly _match_block_arms?: MatchBlockArms;
 	readonly __slotHints__?: {
 		readonly matchBlockArms: SlotHint<T.MatchBlockArms, true>;
-		readonly $flat: FlatHint<'matchBlockArms', T.MatchBlockArms, 'matchArms' | 'lastArm', true>;
+		readonly $flat: FlatHint<
+			'matchBlockArms',
+			T.MatchBlockArms,
+			{ readonly matchArms: 'matchArms'; readonly lastArm: 'lastArm' },
+			true
+		>;
 	};
 	matchBlockArms(): MatchBlockArms | undefined;
 }
@@ -7944,7 +8185,12 @@ export interface LastMatchArm {
 		readonly pattern: SlotHint<T.MatchPattern>;
 		readonly value: SlotHint<NonNullable<T.LastMatchArm.Config>['value']>;
 		readonly comma: SlotHint<NonNullable<T.LastMatchArm.Config>['comma'], true>;
-		readonly $flat: FlatHint<'pattern', T.MatchPattern, 'pattern' | 'condition', false>;
+		readonly $flat: FlatHint<
+			'pattern',
+			T.MatchPattern,
+			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
+			false
+		>;
 	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
 	pattern(): MatchPattern;
@@ -8233,6 +8479,13 @@ export interface GenericPattern {
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Identifier | T.ScopedIdentifier>;
 		readonly typeArguments: SlotHint<T.TypeArguments>;
+		readonly $listSlots: {
+			readonly typeArguments: ListSlotHint<
+				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.TypeArgument.Config
+			>;
+		};
 	};
 	name(): Identifier | ScopedIdentifier;
 	typeArguments(): TypeArguments;
@@ -8246,14 +8499,18 @@ export interface TuplePattern {
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<T.TuplePatternElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.Pattern | T.ClosureExpression,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'elements',
-			never
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly elements: ListSlotHint<
+				T.Pattern | T.ClosureExpression,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
-	elements(): NonEmptyArray<T.Pattern | T.ClosureExpression> | undefined;
+	elements(): TuplePatternElements | undefined;
 }
 
 export interface SlicePattern {
@@ -8264,14 +8521,12 @@ export interface SlicePattern {
 	};
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<T.Patterns, true>;
-		readonly $listOwner: ListOwnerHint<
-			T.Pattern,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'patterns',
-			never
-		>;
+		readonly $listView: ListViewHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly patterns: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
-	patterns(): NonEmptyArray<T.Pattern> | undefined;
+	patterns(): Patterns | undefined;
 }
 
 export interface TupleStructPattern {
@@ -8285,11 +8540,11 @@ export interface TupleStructPattern {
 		readonly type: SlotHint<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>;
 		readonly patterns: SlotHint<T.Patterns, true>;
 		readonly $listSlots: {
-			readonly patterns: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }, never>;
+			readonly patterns: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
 	type(): Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
-	patterns(): NonEmptyArray<T.Pattern> | undefined;
+	patterns(): Patterns | undefined;
 }
 
 export interface StructPattern {
@@ -8305,13 +8560,12 @@ export interface StructPattern {
 		readonly $listSlots: {
 			readonly fields: ListSlotHint<
 				T.FieldPattern | TSKindId.RemainingFieldPattern,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing },
-				never
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
 			>;
 		};
 	};
 	type(): TypeIdentifier | ScopedTypeIdentifier;
-	fields(): NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern> | undefined;
+	fields(): StructPatternElements | undefined;
 }
 
 export interface MutPattern {
@@ -8441,11 +8695,11 @@ export interface LineComment {
 
 export interface BlockComment {
 	readonly $type: TSKindId.BlockComment;
-	readonly _content?: BlockCommentDocOuter | BlockCommentDocInner | BlockCommentContent;
+	readonly _content?: BlockCommentDocOuter | BlockCommentDocInner | BlockCommentRegular;
 	readonly __slotHints__?: {
-		readonly content: SlotHint<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent, true>;
+		readonly content: SlotHint<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentRegular, true>;
 	};
-	content(): BlockCommentDocOuter | BlockCommentDocInner | BlockCommentContent | undefined;
+	content(): BlockCommentDocOuter | BlockCommentDocInner | BlockCommentRegular | undefined;
 }
 
 export interface Shebang {
@@ -8472,6 +8726,7 @@ export interface MacroRules {
 	readonly __slotHints__?: {
 		readonly macroRules: SlotHint<NonEmptyArray<T.MacroRule>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	macroRules(): NonEmptyArray<MacroRule>;
 }
@@ -8490,6 +8745,10 @@ export interface EnumVariantListElements {
 			T.AttributedEnumVariant.Config
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.AttributedEnumVariant | T.EnumVariant,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<AttributedEnumVariant>;
 }
@@ -8508,6 +8767,10 @@ export interface FieldDeclarationListElements {
 			T.AttributedFieldDeclaration.Config
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.AttributedFieldDeclaration | T.FieldDeclaration,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<AttributedFieldDeclaration>;
 }
@@ -8526,6 +8789,10 @@ export interface OrderedFieldDeclarationListElements {
 			T.AttributedOrderedField.Config
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<AttributedOrderedField>;
 }
@@ -8536,6 +8803,7 @@ export interface WherePredicates {
 	readonly __slotHints__?: {
 		readonly wherePredicates: SlotHint<NonEmptyArray<T.WherePredicate>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	wherePredicates(): NonEmptyArray<WherePredicate>;
 }
@@ -8558,6 +8826,10 @@ export interface TypeParametersElements {
 			T.AttributedTypeParameter.Config
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<AttributedTypeParameter>;
 }
@@ -8634,6 +8906,39 @@ export interface UseClauses {
 			true
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			| TSKindId.Self
+			| TSKindId.U8Keyword
+			| TSKindId.I8Keyword
+			| TSKindId.U16Keyword
+			| TSKindId.I16Keyword
+			| TSKindId.U32Keyword
+			| TSKindId.I32Keyword
+			| TSKindId.U64Keyword
+			| TSKindId.I64Keyword
+			| TSKindId.U128Keyword
+			| TSKindId.I128Keyword
+			| TSKindId.IsizeKeyword
+			| TSKindId.UsizeKeyword
+			| TSKindId.F32Keyword
+			| TSKindId.F64Keyword
+			| TSKindId.BoolKeyword
+			| TSKindId.StrKeyword
+			| TSKindId.CharKeyword
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+			| TSKindId.DefaultKeyword
+			| TSKindId.UnionKeyword
+			| TSKindId.GenKeyword
+			| T.UseAsClause
+			| T.UseList
+			| T.ScopedUseList
+			| T.UseWildcard,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	useClauses(): NonEmptyArray<
 		| TSKindId.Self
@@ -8699,6 +9004,16 @@ export interface ParametersElements {
 			T.AttributedParameter.Config
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			| T.AttributedParameter
+			| T.Parameter
+			| T.SelfParameter
+			| T.VariadicParameter
+			| TSKindId.Underscore
+			| T.Type
+			| T.TypeIdentifier.Types,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<AttributedParameter>;
 }
@@ -8709,6 +9024,7 @@ export interface Lifetimes {
 	readonly __slotHints__?: {
 		readonly lifetimes: SlotHint<NonEmptyArray<T.Lifetime>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Lifetime, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	lifetimes(): NonEmptyArray<Lifetime>;
 }
@@ -8719,6 +9035,10 @@ export interface UseBoundsElements {
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonEmptyArray<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<Lifetime | TypeIdentifier>;
 }
@@ -8741,6 +9061,10 @@ export interface TypeArgumentsElements {
 			T.TypeArgument.Config
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<TypeArgument>;
 }
@@ -8759,6 +9083,10 @@ export interface ArgumentsElements {
 			T.AttributedArgument.Config
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.AttributedArgument | T.Expression,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<AttributedArgument>;
 }
@@ -8773,6 +9101,10 @@ export interface FieldInitializerListElements {
 			true
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer>;
 }
@@ -8783,6 +9115,10 @@ export interface TuplePatternElements {
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonEmptyArray<T.Pattern | T.ClosureExpression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.Pattern | T.ClosureExpression,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<Pattern | ClosureExpression>;
 }
@@ -8793,6 +9129,7 @@ export interface Patterns {
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<NonEmptyArray<T.Pattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	patterns(): NonEmptyArray<Pattern>;
 }
@@ -8803,6 +9140,10 @@ export interface StructPatternElements {
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonEmptyArray<T.FieldPattern | TSKindId.RemainingFieldPattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.FieldPattern | TSKindId.RemainingFieldPattern,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<FieldPattern | TSKindId.RemainingFieldPattern>;
 }
@@ -8959,6 +9300,10 @@ export interface TupleTypeElements {
 	readonly __slotHints__?: {
 		readonly types: SlotHint<NonEmptyArray<T.Type | T.TypeIdentifier.Types>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.Type | T.TypeIdentifier.Types,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	types(): NonEmptyArray<Type>;
 }
@@ -8969,6 +9314,7 @@ export interface TupleExpressionElements {
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	elements(): NonEmptyArray<Expression>;
 }
@@ -9302,7 +9648,7 @@ export interface ArrayExpressionList {
 		};
 	};
 	attributes(): readonly AttributeItem[];
-	argumentsElements(): NonEmptyArray<T.AttributedArgument | T.Expression> | undefined;
+	argumentsElements(): ArgumentsElements | undefined;
 }
 
 export interface AttributeInput {
@@ -9567,6 +9913,14 @@ export interface ImplItemBody {
 		readonly type: SlotHint<NonNullable<T.ImplItemBody.Config>['type']>;
 		readonly whereClause: SlotHint<T.WhereClause, true>;
 		readonly declarationList: SlotHint<T.DeclarationList>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	unsafeMarker(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
@@ -9637,6 +9991,14 @@ export interface ImplItemSemi {
 		readonly traitClause: SlotHint<T.ImplItemPositiveClause | T.ImplItemNegativeClause, true>;
 		readonly type: SlotHint<NonNullable<T.ImplItemSemi.Config>['type']>;
 		readonly whereClause: SlotHint<T.WhereClause, true>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	unsafeMarker(): boolean | undefined;
 	typeParameters(): TypeParameters | undefined;
@@ -10138,7 +10500,12 @@ export interface MatchArmWithComma {
 		readonly attributes: SlotHint<(T.AttributeItem | T.InnerAttributeItem)[], true, true>;
 		readonly pattern: SlotHint<T.MatchPattern>;
 		readonly value: SlotHint<NonNullable<T.MatchArmWithComma.Config>['value']>;
-		readonly $flat: FlatHint<'pattern', T.MatchPattern, 'pattern' | 'condition', false>;
+		readonly $flat: FlatHint<
+			'pattern',
+			T.MatchPattern,
+			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
+			false
+		>;
 	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
 	pattern(): MatchPattern;
@@ -10177,7 +10544,12 @@ export interface MatchArmBlockEnding {
 			| T.ForExpression
 			| T.ConstBlock
 		>;
-		readonly $flat: FlatHint<'pattern', T.MatchPattern, 'pattern' | 'condition', false>;
+		readonly $flat: FlatHint<
+			'pattern',
+			T.MatchPattern,
+			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
+			false
+		>;
 	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
 	pattern(): MatchPattern;
@@ -10440,11 +10812,11 @@ export interface MacroDefinitionParen {
 		readonly name: SlotHint<NonNullable<T.MacroDefinitionParen.Config>['name']>;
 		readonly macroRules: SlotHint<T.MacroRules, true>;
 		readonly $listSlots: {
-			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }, never>;
+			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
 	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
-	macroRules(): NonEmptyArray<T.MacroRule> | undefined;
+	macroRules(): MacroRules | undefined;
 }
 
 export interface MacroDefinitionBracket {
@@ -10463,11 +10835,11 @@ export interface MacroDefinitionBracket {
 		readonly name: SlotHint<NonNullable<T.MacroDefinitionBracket.Config>['name']>;
 		readonly macroRules: SlotHint<T.MacroRules, true>;
 		readonly $listSlots: {
-			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }, never>;
+			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
 	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
-	macroRules(): NonEmptyArray<T.MacroRule> | undefined;
+	macroRules(): MacroRules | undefined;
 }
 
 export interface MacroDefinitionBrace {
@@ -10486,11 +10858,11 @@ export interface MacroDefinitionBrace {
 		readonly name: SlotHint<NonNullable<T.MacroDefinitionBrace.Config>['name']>;
 		readonly macroRules: SlotHint<T.MacroRules, true>;
 		readonly $listSlots: {
-			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }, never>;
+			readonly macroRules: ListSlotHint<T.MacroRule, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
 	name(): Identifier | TSKindId.DefaultKeyword | TSKindId.UnionKeyword | TSKindId.GenKeyword;
-	macroRules(): NonEmptyArray<T.MacroRule> | undefined;
+	macroRules(): MacroRules | undefined;
 }
 
 export interface RangePatternPrefix {
@@ -10893,6 +11265,19 @@ export interface StructItemBrace {
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly whereClause: SlotHint<T.WhereClause, true>;
 		readonly body: SlotHint<T.FieldDeclarationList>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly body: ListSlotHint<
+				T.AttributedFieldDeclaration | T.FieldDeclaration,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedFieldDeclaration.Config
+			>;
+		};
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): TypeIdentifier;
@@ -10921,6 +11306,19 @@ export interface StructItemTuple {
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly body: SlotHint<T.OrderedFieldDeclarationList>;
 		readonly whereClause: SlotHint<T.WhereClause, true>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+			readonly body: ListSlotHint<
+				T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedOrderedField.Config
+			>;
+			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): TypeIdentifier;
@@ -10943,6 +11341,13 @@ export interface StructItemUnit {
 		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
 		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+		};
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
 	name(): TypeIdentifier;
@@ -11306,6 +11711,8 @@ export type PrimitiveType =
 	| TSKindId.BoolKeyword
 	| TSKindId.StrKeyword
 	| TSKindId.CharKeyword;
+export type TokenRepetitionPatternText = Terminal<TSKindId.TokenRepetitionPatternText, string>;
+export type StringOpen = Terminal<TSKindId.StringOpen, string>;
 export type TokenTreePunctuation =
 	| TSKindId.Plus
 	| TSKindId.Dash
@@ -11384,9 +11791,9 @@ export type TokenKeywords =
 export type RangeExpressionBare = TSKindId.RangeExpressionBare;
 export type ImplItemUnsafeMarker = TSKindId.ImplItemUnsafeMarker;
 export type CharLiteralEmpty = Terminal<TSKindId.CharLiteralEmpty, string>;
-export type StringOpen = Terminal<TSKindId.StringOpen, string>;
 export type LineCommentExtraSlashes = Terminal<TSKindId.LineCommentExtraSlashes, string>;
 export type LineCommentRegular = Terminal<TSKindId.LineCommentRegular, string>;
+export type BlockCommentRegular = Terminal<TSKindId.BlockCommentRegular, string>;
 export type RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
 export type WildcardPattern = TSKindId.WildcardPattern;
 export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
@@ -17874,13 +18281,19 @@ export interface DefaultKeywordNs extends KeywordNs<TSKindId.DefaultKeyword, 'de
 export interface UnionKeywordNs extends KeywordNs<TSKindId.UnionKeyword, 'union', TSKindId.UnionKeyword> {}
 export interface GenKeywordNs extends KeywordNs<TSKindId.GenKeyword, 'gen', TSKindId.GenKeyword> {}
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Bound, TSKindId.Identifier> {}
+export interface TokenRepetitionPatternTextNs extends LeafNs<
+	TokenRepetitionPatternText,
+	string,
+	TokenRepetitionPatternText.Bound,
+	TSKindId.TokenRepetitionPatternText
+> {}
+export interface StringOpenNs extends LeafNs<StringOpen, string, StringOpen.Bound, TSKindId.StringOpen> {}
 export interface CharLiteralEmptyNs extends LeafNs<
 	CharLiteralEmpty,
 	string,
 	CharLiteralEmpty.Bound,
 	TSKindId.CharLiteralEmpty
 > {}
-export interface StringOpenNs extends LeafNs<StringOpen, string, StringOpen.Bound, TSKindId.StringOpen> {}
 export interface LineCommentExtraSlashesNs extends LeafNs<
 	LineCommentExtraSlashes,
 	string,
@@ -17892,6 +18305,12 @@ export interface LineCommentRegularNs extends LeafNs<
 	string,
 	LineCommentRegular.Bound,
 	TSKindId.LineCommentRegular
+> {}
+export interface BlockCommentRegularNs extends LeafNs<
+	BlockCommentRegular,
+	string,
+	BlockCommentRegular.Bound,
+	TSKindId.BlockCommentRegular
 > {}
 export interface FloatLiteralNs extends LeafNs<
 	FloatLiteral,
@@ -18200,10 +18619,12 @@ export interface NamespaceMap {
 	[TSKindId.UnionKeyword]: UnionKeywordNs;
 	[TSKindId.GenKeyword]: GenKeywordNs;
 	[TSKindId.Identifier]: IdentifierNs;
-	[TSKindId.CharLiteralEmpty]: CharLiteralEmptyNs;
+	[TSKindId.TokenRepetitionPatternText]: TokenRepetitionPatternTextNs;
 	[TSKindId.StringOpen]: StringOpenNs;
+	[TSKindId.CharLiteralEmpty]: CharLiteralEmptyNs;
 	[TSKindId.LineCommentExtraSlashes]: LineCommentExtraSlashesNs;
 	[TSKindId.LineCommentRegular]: LineCommentRegularNs;
+	[TSKindId.BlockCommentRegular]: BlockCommentRegularNs;
 	[TSKindId.FloatLiteral]: FloatLiteralNs;
 	[TSKindId.StringContent]: StringContentNs;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContentNs;
@@ -18442,10 +18863,12 @@ export interface BoundByKindId {
 	[TSKindId.FieldIdentifier]: FieldIdentifier.Bound;
 	[TSKindId.ShorthandFieldIdentifier]: ShorthandFieldIdentifier.Bound;
 	[TSKindId.Identifier]: Identifier.Bound;
-	[TSKindId.CharLiteralEmpty]: CharLiteralEmpty.Bound;
+	[TSKindId.TokenRepetitionPatternText]: TokenRepetitionPatternText.Bound;
 	[TSKindId.StringOpen]: StringOpen.Bound;
+	[TSKindId.CharLiteralEmpty]: CharLiteralEmpty.Bound;
 	[TSKindId.LineCommentExtraSlashes]: LineCommentExtraSlashes.Bound;
 	[TSKindId.LineCommentRegular]: LineCommentRegular.Bound;
+	[TSKindId.BlockCommentRegular]: BlockCommentRegular.Bound;
 	[TSKindId.FloatLiteral]: FloatLiteral.Bound;
 	[TSKindId.StringContent]: StringContent.Bound;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContent.Bound;
@@ -18684,10 +19107,12 @@ export interface ParsedByKindId {
 	[TSKindId.FieldIdentifier]: FieldIdentifier.Parsed;
 	[TSKindId.ShorthandFieldIdentifier]: ShorthandFieldIdentifier.Parsed;
 	[TSKindId.Identifier]: Identifier.Parsed;
-	[TSKindId.CharLiteralEmpty]: CharLiteralEmpty.Parsed;
+	[TSKindId.TokenRepetitionPatternText]: TokenRepetitionPatternText.Parsed;
 	[TSKindId.StringOpen]: StringOpen.Parsed;
+	[TSKindId.CharLiteralEmpty]: CharLiteralEmpty.Parsed;
 	[TSKindId.LineCommentExtraSlashes]: LineCommentExtraSlashes.Parsed;
 	[TSKindId.LineCommentRegular]: LineCommentRegular.Parsed;
+	[TSKindId.BlockCommentRegular]: BlockCommentRegular.Parsed;
 	[TSKindId.FloatLiteral]: FloatLiteral.Parsed;
 	[TSKindId.StringContent]: StringContent.Parsed;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContent.Parsed;
@@ -19153,10 +19578,12 @@ export interface IrKeyOf {
 	[TSKindId.UnionKeyword]: 'unionKeyword';
 	[TSKindId.GenKeyword]: 'genKeyword';
 	[TSKindId.Identifier]: 'identifier';
-	[TSKindId.CharLiteralEmpty]: 'charLiteralEmpty';
+	[TSKindId.TokenRepetitionPatternText]: 'tokenRepetitionPatternText';
 	[TSKindId.StringOpen]: 'stringOpen';
+	[TSKindId.CharLiteralEmpty]: 'charLiteralEmpty';
 	[TSKindId.LineCommentExtraSlashes]: 'lineCommentExtraSlashes';
 	[TSKindId.LineCommentRegular]: 'lineCommentRegular';
+	[TSKindId.BlockCommentRegular]: 'blockCommentRegular';
 	[TSKindId.FloatLiteral]: 'floatLiteral';
 	[TSKindId.StringContent]: 'stringContent';
 	[TSKindId.RawStringLiteralContent]: 'rawStringLiteralContent';
@@ -21832,11 +22259,11 @@ export namespace BlockComment {
 	export type Loose = LooseFor<TSKindId.BlockComment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BlockComment>;
 	export type BuildArgs = [
-		value?: AdmitBound<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent, T.AdmittedNodes>
+		value?: AdmitBound<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentRegular, T.AdmittedNodes>
 	];
 	export type LooseArgs = [
 		value?: LooseValue<
-			T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentContent,
+			T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentRegular,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -24802,20 +25229,20 @@ export namespace Identifier {
 	export type LooseArgs = IdentifierNs['LooseArgs'];
 	export type Kind = TSKindId.Identifier;
 }
-export namespace CharLiteralEmpty {
-	export type Config = CharLiteralEmptyNs['Config'];
+export namespace TokenRepetitionPatternText {
+	export type Config = TokenRepetitionPatternTextNs['Config'];
 	export interface Bound extends NodeMethodsOf {
-		readonly $type: TSKindId.CharLiteralEmpty;
+		readonly $type: TSKindId.TokenRepetitionPatternText;
 		readonly $source?: 0 | 1 | 2;
 		readonly $named: true;
 		readonly $text: string;
 	}
 	export interface Parsed extends Bound {}
-	export type Loose = CharLiteralEmptyNs['Loose'];
-	export type LooseConfig = CharLiteralEmptyNs['LooseConfig'];
-	export type BuildArgs = CharLiteralEmptyNs['BuildArgs'];
-	export type LooseArgs = CharLiteralEmptyNs['LooseArgs'];
-	export type Kind = TSKindId.CharLiteralEmpty;
+	export type Loose = TokenRepetitionPatternTextNs['Loose'];
+	export type LooseConfig = TokenRepetitionPatternTextNs['LooseConfig'];
+	export type BuildArgs = TokenRepetitionPatternTextNs['BuildArgs'];
+	export type LooseArgs = TokenRepetitionPatternTextNs['LooseArgs'];
+	export type Kind = TSKindId.TokenRepetitionPatternText;
 }
 export namespace StringOpen {
 	export type Config = StringOpenNs['Config'];
@@ -24831,6 +25258,21 @@ export namespace StringOpen {
 	export type BuildArgs = StringOpenNs['BuildArgs'];
 	export type LooseArgs = StringOpenNs['LooseArgs'];
 	export type Kind = TSKindId.StringOpen;
+}
+export namespace CharLiteralEmpty {
+	export type Config = CharLiteralEmptyNs['Config'];
+	export interface Bound extends NodeMethodsOf {
+		readonly $type: TSKindId.CharLiteralEmpty;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export interface Parsed extends Bound {}
+	export type Loose = CharLiteralEmptyNs['Loose'];
+	export type LooseConfig = CharLiteralEmptyNs['LooseConfig'];
+	export type BuildArgs = CharLiteralEmptyNs['BuildArgs'];
+	export type LooseArgs = CharLiteralEmptyNs['LooseArgs'];
+	export type Kind = TSKindId.CharLiteralEmpty;
 }
 export namespace LineCommentExtraSlashes {
 	export type Config = LineCommentExtraSlashesNs['Config'];
@@ -24861,6 +25303,21 @@ export namespace LineCommentRegular {
 	export type BuildArgs = LineCommentRegularNs['BuildArgs'];
 	export type LooseArgs = LineCommentRegularNs['LooseArgs'];
 	export type Kind = TSKindId.LineCommentRegular;
+}
+export namespace BlockCommentRegular {
+	export type Config = BlockCommentRegularNs['Config'];
+	export interface Bound extends NodeMethodsOf {
+		readonly $type: TSKindId.BlockCommentRegular;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export interface Parsed extends Bound {}
+	export type Loose = BlockCommentRegularNs['Loose'];
+	export type LooseConfig = BlockCommentRegularNs['LooseConfig'];
+	export type BuildArgs = BlockCommentRegularNs['BuildArgs'];
+	export type LooseArgs = BlockCommentRegularNs['LooseArgs'];
+	export type Kind = TSKindId.BlockCommentRegular;
 }
 export namespace FloatLiteral {
 	export type Config = FloatLiteralNs['Config'];

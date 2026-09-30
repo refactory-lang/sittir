@@ -4,6 +4,7 @@ import { loadPackageIdTables } from '../compiler/generated-metadata.ts';
 import { AssembledSupertype } from '../compiler/model/node-map.ts';
 import type { AssembledNodeMap } from '../compiler/assemble.ts';
 import { grammarPackage } from '../grammars.ts';
+import { FULL_PIPELINE_TIMEOUT } from './helpers/timeouts.ts';
 
 /**
  * Phantom-kind ratchet — every non-supertype kind in the compiled model
@@ -23,8 +24,6 @@ const CEILINGS: Record<string, number> = {
 	scm: 0,
 	regex: 0
 };
-
-const FULL_PIPELINE_TIMEOUT = 180_000;
 
 function phantomKinds(nodeMap: AssembledNodeMap): string[] {
 	return [...nodeMap.nodes]

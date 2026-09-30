@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -11,7 +11,7 @@ import {
 	emitVocabulary,
 	inventoryGrammars
 } from '../../src/inventory/index.ts';
-import { levelMembers } from '../../src/inventory/derive.ts';
+import { type Derivation, levelMembers } from '../../src/inventory/derive.ts';
 import { renderVocabularyFile, vocabularyFiles } from '../../src/inventory/emit.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
@@ -68,7 +68,16 @@ describe('compileBindings', () => {
 });
 
 describe('deriveVocabulary', () => {
-	const d = deriveVocabulary();
+	let d: Derivation;
+	beforeAll(async () => {
+		d = await deriveVocabulary();
+	}, 120_000);
+	it('reads a minted text kind as the token text it replaced', () => {
+		const format = d.members.get('expression.interpolation.format');
+		const kinds = [...format?.values() ?? []].flatMap((member) => [...member.kinds]);
+		expect(kinds).toContain('text:[^{}\\n]+');
+		expect(d.unmapped.has('<python:format_specifier_text>')).toBe(false);
+	});
 	it('claims every namespace the spec names and derives no inclusion cycle', () => {
 		const tops = new Set([...d.allvocab].map((v) => v.split('.')[0]));
 		for (const ns of [
@@ -125,7 +134,7 @@ describe('the committed vocabulary', () => {
 	it('is what the bindings emit', async () => {
 		const out = mkdtempSync(join(tmpdir(), 'vocabulary-'));
 		try {
-			await emitVocabulary(deriveVocabulary(), out);
+			await emitVocabulary(await deriveVocabulary(), out);
 			const emitted = readdirSync(out);
 			expect(readdirSync(VOCABULARY_DIR).filter((file) => !emitted.includes(file))).toEqual(['utils.ts']);
 			for (const file of emitted) {
@@ -148,7 +157,7 @@ describe('the committed vocabulary', () => {
 
 describe('vocabularyFiles', () => {
 	it('renders a namespace through the typescript factories', async () => {
-		const files = vocabularyFiles(deriveVocabulary());
+		const files = vocabularyFiles(await deriveVocabulary());
 		expect(files.map((f) => f.name)).toContain('context');
 		const comment = files.find((f) => f.name === 'comment');
 		expect(comment).toBeDefined();
@@ -158,7 +167,7 @@ describe('vocabularyFiles', () => {
 		expect(source).toContain("import type { GrammarContext } from './context.ts';");
 	});
 	it('spells a sub-kind as its parent narrowed by SubKindOf, importing the helpers it uses', async () => {
-		const files = vocabularyFiles(deriveVocabulary());
+		const files = vocabularyFiles(await deriveVocabulary());
 		const modifier = files.find((f) => f.name === 'modifier');
 		expect(modifier).toBeDefined();
 		if (!modifier) return;

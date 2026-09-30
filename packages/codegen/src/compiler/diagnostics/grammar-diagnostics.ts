@@ -10,6 +10,7 @@ import { optionalFlankSlots, type AssembleWarning, type NamingEvent } from '../m
 import { undeclaredSeparatorSites, type SitePreferencesConfig } from '../model/site-preferences.ts';
 import { makeSlotGroupingCollector } from '../simplify.ts';
 import { diagnoseRepeatedSeqGrouping, type SlotGroupingDiagnostic } from './slot-grouping.ts';
+import { isLiteralOnlyRule, isTerminalRootRule } from '../../dsl/rule-transforms.ts';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar, IncludeFilter, DesugarDivergenceEvent, ReservedWordsets, RuleCatalog } from '../types.ts';
 import {
 	kindCatalogOf,
@@ -21,7 +22,9 @@ import {
 } from '../../dsl/symbol-table.ts';
 import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { diagnoseDistributedAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
-import { symbolFactsOf } from '../../dsl/rule-patterns.ts';
+import { isParserHiddenName, ruleListParts, symbolFactsOf } from '../../dsl/rule-patterns.ts';
+import { ALIAS, SYMBOL } from '../../types/rule-types.ts';
+import type { Rule } from '../../types/rule.ts';
 import { lineTerminated, triviaKinds } from '../model/trivia.ts';
 import type { NodeMap } from '../types.ts';
 
@@ -156,6 +159,53 @@ export function fromDesugarDivergence(grammar: string, event: DesugarDivergenceE
 		proposal: `Route this synthesis through the DSL layer (enrich/wire) pre-generate, so both executions mint the same rule, instead of leaving it to this evaluate-only fallback.`,
 		canProceed: true
 	};
+}
+
+export interface HiddenTerminalSite {
+	readonly ownerKind: string;
+	readonly target: string;
+}
+
+const LAYOUT_ROLES: ReadonlySet<string> = new Set(['indent', 'dedent']);
+
+export function hiddenTerminalNonliteralSites(grammar: Pick<RawGrammar, 'rules' | 'externals' | 'externalRoles'>): HiddenTerminalSite[] {
+	const externals = new Set(ruleListParts(grammar.externals).names);
+	const nonliteral = (name: string): boolean => {
+		if (!isParserHiddenName(name)) return false;
+		if (externals.has(name)) return !LAYOUT_ROLES.has(grammar.externalRoles?.get(name)?.role ?? '');
+		const body = grammar.rules[name];
+		return body !== undefined && isTerminalRootRule(body) && !isLiteralOnlyRule(body);
+	};
+	const sites: HiddenTerminalSite[] = [];
+	const walk = (ownerKind: string, rule: Rule<'evaluate'>): void => {
+		if (rule.type === SYMBOL) {
+			if (nonliteral(rule.name)) sites.push({ ownerKind, target: rule.name });
+			return;
+		}
+		if (rule.type === ALIAS) return;
+		const { content, members } = rule as { content?: Rule<'evaluate'>; members?: readonly Rule<'evaluate'>[] };
+		if (content !== undefined) walk(ownerKind, content);
+		for (const member of members ?? []) walk(ownerKind, member);
+	};
+	for (const [ownerKind, rule] of Object.entries(grammar.rules)) {
+		if (rule.type === SYMBOL || isTerminalRootRule(rule)) continue;
+		walk(ownerKind, rule);
+	}
+	return sites;
+}
+
+export function hiddenTerminalNonliteralDiagnostics(grammar: RawGrammar): GrammarDiagnostic[] {
+	return hiddenTerminalNonliteralSites(grammar).map(({ ownerKind, target }) => ({
+		scope: 'grammar' as const,
+		code: 'hidden-terminal-nonliteral',
+		severity: 'error' as const,
+		grammar: grammar.name,
+		ownerKind,
+		message: `kind '${ownerKind}' references the hidden terminal '${target}' bare; its text has no kind the parse tree reports.`,
+		proposal: `Give the text a visible rule of its own with a rule() patch.`,
+		canProceed: false,
+		details: { target }
+	}));
 }
 
 export function optionalFlankFieldDiagnostics(grammar: string, nodeMap: AssembledNodeMap): GrammarDiagnostic[] {
@@ -360,6 +410,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 			...reservedMemberDiagnostics(rawGrammar.name, nodeMap.reserved, kindEntries),
 			...triviaLineEndDiagnostics(rawGrammar.name, nodeMap),
 			...optionalFlankFieldDiagnostics(rawGrammar.name, nodeMap),
+			...hiddenTerminalNonliteralDiagnostics(rawGrammar),
 			...undeclaredSeparatorDiagnostics(rawGrammar.name, { nodeMap, kindEntries, options: rawGrammar.options }),
 			...surfacedCompilerDiagnostics
 		])

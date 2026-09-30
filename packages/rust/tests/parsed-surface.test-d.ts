@@ -65,23 +65,24 @@ export function renderTakesEveryNodeAUserCanHold(): string {
 	return [rs.render(root), rs.render(item), rs.render(draft)].map(String).join('');
 }
 
-export function listOwnerReadsItems(): string {
+export function listsReadAsReadonlyArrays(): string {
 	const item = rs.parse('fn f(a: i32) {}\n').statements()[0]!;
 	if (!rs.is.functionItem(item)) return '';
 	const params = item.parameters();
-	const items = params.parametersElements();
-	expectTrue<Equals<NonNullable<typeof items>[number], ItemOf<typeof params>>>();
-	return params.$with.parametersElements(...items!).$render();
+	type Item = ItemOf<typeof params>;
+	const owner: ReadonlyArray<Item> = params;
+	const list: ReadonlyArray<Item> | undefined = params.parametersElements();
+	const rendered = params.map((param) => (typeof param === 'number' ? '' : param.$render()));
+	const first: Item | undefined = params[0];
+	return [owner.length, list?.length, rendered.join(','), String(first)].join('');
 }
 
-export function hoistedListSlotReadsItems(): string {
-	const item = rs.parse('fn f() { let Some(a) = x; }\n').statements()[0]!;
+export function aListSlotTakesItsBuilderArguments(): string {
+	const item = rs.parse('fn f(a: i32) {}\n').statements()[0]!;
 	if (!rs.is.functionItem(item)) return '';
-	const statement = item.body().statements()[0]!;
-	if (!rs.is.letDeclaration(statement)) return '';
-	const pattern = statement.pattern();
-	if (!rs.is.tupleStructPattern(pattern)) return '';
-	const items = pattern.patterns();
-	const rebuilt = pattern.$with.patterns(items!);
-	return rebuilt.$render();
+	const params = item.parameters();
+	const fromItems = item.$with.parameters(...params);
+	const fromNode = item.$with.parameters(params);
+	const inner = params.$with.parametersElements(...params);
+	return fromItems.$render() + fromNode.$render() + inner.$render();
 }

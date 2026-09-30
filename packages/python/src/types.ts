@@ -19,7 +19,7 @@ import type {
 	TriviaSetter,
 	GrammarInnerTrivia,
 	SlotHint,
-	ListOwnerHint,
+	ListViewHint,
 	ListSlotHint,
 	FlatHint,
 	BoundOf,
@@ -169,30 +169,30 @@ export enum TSKindId {
 	YieldKeyword = 63,
 	Ellipsis = 64,
 	Bslash = 65,
-	FormatSpecifierToken1 = 66,
-	TypeConversion = 67,
-	PrintKeyword = 68,
-	AsyncKeyword = 69,
-	AwaitKeyword = 70,
-	True = 71,
-	False = 72,
-	None = 73,
-	Comment = 74,
-	Semi = 75,
-	DashGt = 76,
-	PlusEq = 77,
-	DashEq = 78,
-	StarEq = 79,
-	SlashEq = 80,
-	AtEq = 81,
-	SlashSlashEq = 82,
-	PercentEq = 83,
-	StarStarEq = 84,
-	GtGtEq = 85,
-	LtLtEq = 86,
-	AmpEq = 87,
-	CaretEq = 88,
-	PipeEq = 89,
+	TypeConversion = 66,
+	PrintKeyword = 67,
+	AsyncKeyword = 68,
+	AwaitKeyword = 69,
+	True = 70,
+	False = 71,
+	None = 72,
+	Comment = 73,
+	Semi = 74,
+	DashGt = 75,
+	PlusEq = 76,
+	DashEq = 77,
+	StarEq = 78,
+	SlashEq = 79,
+	AtEq = 80,
+	SlashSlashEq = 81,
+	PercentEq = 82,
+	StarStarEq = 83,
+	GtGtEq = 84,
+	LtLtEq = 85,
+	AmpEq = 86,
+	CaretEq = 87,
+	PipeEq = 88,
+	FormatSpecifierText = 89,
 	IntegerHex = 90,
 	IntegerOctal = 91,
 	IntegerBinary = 92,
@@ -396,49 +396,50 @@ export enum TSKindId {
 	WithClauseBare = 290,
 	WithClauseParen = 291,
 	MatchBlockBlock = 292,
-	SuiteInline = 293,
-	SuiteBlock = 294,
-	SuiteEmpty = 295,
-	ComparisonOperatorComparator = 296,
-	YieldFromClause = 297,
-	ModuleRepeat1 = 298,
-	ImportPrefixRepeat1 = 299,
-	_ImportListRepeat1 = 300,
-	AssertStatementRepeat1 = 301,
-	IfStatementRepeat1 = 302,
-	TryStatementRepeat1 = 303,
-	GlobalStatementRepeat1 = 304,
-	DecoratedDefinitionRepeat1 = 305,
-	DottedNameRepeat1 = 306,
-	UnionPatternRepeat1 = 307,
-	_ParametersRepeat1 = 308,
-	_PatternsRepeat1 = 309,
-	ComparisonOperatorRepeat1 = 310,
-	_CollectionElementsRepeat1 = 311,
-	ForInClauseRepeat1 = 312,
-	ConcatenatedStringRepeat1 = 313,
-	StringRepeat1 = 314,
-	StringContentRepeat1 = 315,
-	FormatSpecifierRepeat1 = 316,
-	SimpleStatementsElementsRepeat1 = 317,
-	SubjectsRepeat1 = 318,
-	CasePatternsRepeat1 = 319,
-	WithClauseWithItemsRepeat1 = 320,
-	_ExecStatementOptional1Repeat1 = 321,
-	TypesRepeat1 = 322,
-	ArgumentListElementsRepeat1 = 323,
-	ExpressionListExpressionsRepeat1 = 324,
-	DictPatternElementsRepeat1 = 325,
-	PatternListPatternsRepeat1 = 326,
-	SubscriptsRepeat1 = 327,
-	DictionaryElementsRepeat1 = 328,
-	_PrintArgumentsRepeat1 = 329,
-	ComprehensionClausesRepeat1 = 330,
-	ExceptClauseExceptionListRepeat1 = 331,
-	MatchBlockBlockRepeat1 = 332,
-	AsPatternTarget = 333,
-	FormatExpression = 334,
-	Names = 335,
+	MatchBlockEmpty = 293,
+	SuiteInline = 294,
+	SuiteBlock = 295,
+	SuiteEmpty = 296,
+	ComparisonOperatorComparator = 297,
+	YieldFromClause = 298,
+	ModuleRepeat1 = 299,
+	ImportPrefixRepeat1 = 300,
+	_ImportListRepeat1 = 301,
+	AssertStatementRepeat1 = 302,
+	IfStatementRepeat1 = 303,
+	TryStatementRepeat1 = 304,
+	GlobalStatementRepeat1 = 305,
+	DecoratedDefinitionRepeat1 = 306,
+	DottedNameRepeat1 = 307,
+	UnionPatternRepeat1 = 308,
+	_ParametersRepeat1 = 309,
+	_PatternsRepeat1 = 310,
+	ComparisonOperatorRepeat1 = 311,
+	_CollectionElementsRepeat1 = 312,
+	ForInClauseRepeat1 = 313,
+	ConcatenatedStringRepeat1 = 314,
+	StringRepeat1 = 315,
+	StringContentRepeat1 = 316,
+	FormatSpecifierRepeat1 = 317,
+	SimpleStatementsElementsRepeat1 = 318,
+	SubjectsRepeat1 = 319,
+	CasePatternsRepeat1 = 320,
+	WithClauseWithItemsRepeat1 = 321,
+	_ExecStatementOptional1Repeat1 = 322,
+	TypesRepeat1 = 323,
+	ArgumentListElementsRepeat1 = 324,
+	ExpressionListExpressionsRepeat1 = 325,
+	DictPatternElementsRepeat1 = 326,
+	PatternListPatternsRepeat1 = 327,
+	SubscriptsRepeat1 = 328,
+	DictionaryElementsRepeat1 = 329,
+	_PrintArgumentsRepeat1 = 330,
+	ComprehensionClausesRepeat1 = 331,
+	ExceptClauseExceptionListRepeat1 = 332,
+	MatchBlockBlockRepeat1 = 333,
+	AsPatternTarget = 334,
+	FormatExpression = 335,
+	Names = 336,
 	Error = 65535
 }
 Object.freeze(TSKindId);
@@ -511,30 +512,30 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[63, 'yield_keyword'],
 	[64, 'ellipsis'],
 	[65, 'bslash'],
-	[66, 'format_specifier_token1'],
-	[67, 'type_conversion'],
-	[68, 'print_keyword'],
-	[69, 'async_keyword'],
-	[70, 'await_keyword'],
-	[71, 'true'],
-	[72, 'false'],
-	[73, 'none'],
-	[74, 'comment'],
-	[75, 'semi'],
-	[76, 'dash_gt'],
-	[77, 'plus_eq'],
-	[78, 'dash_eq'],
-	[79, 'star_eq'],
-	[80, 'slash_eq'],
-	[81, 'at_eq'],
-	[82, 'slash_slash_eq'],
-	[83, 'percent_eq'],
-	[84, 'star_star_eq'],
-	[85, 'gt_gt_eq'],
-	[86, 'lt_lt_eq'],
-	[87, 'amp_eq'],
-	[88, 'caret_eq'],
-	[89, 'pipe_eq'],
+	[66, 'type_conversion'],
+	[67, 'print_keyword'],
+	[68, 'async_keyword'],
+	[69, 'await_keyword'],
+	[70, 'true'],
+	[71, 'false'],
+	[72, 'none'],
+	[73, 'comment'],
+	[74, 'semi'],
+	[75, 'dash_gt'],
+	[76, 'plus_eq'],
+	[77, 'dash_eq'],
+	[78, 'star_eq'],
+	[79, 'slash_eq'],
+	[80, 'at_eq'],
+	[81, 'slash_slash_eq'],
+	[82, 'percent_eq'],
+	[83, 'star_star_eq'],
+	[84, 'gt_gt_eq'],
+	[85, 'lt_lt_eq'],
+	[86, 'amp_eq'],
+	[87, 'caret_eq'],
+	[88, 'pipe_eq'],
+	[89, 'format_specifier_text'],
 	[90, 'integer_hex'],
 	[91, 'integer_octal'],
 	[92, 'integer_binary'],
@@ -575,7 +576,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[127, 'module'],
 	[128, '_statement'],
 	[129, '_simple_statements'],
-	[337, '_simple_statements'],
+	[338, '_simple_statements'],
 	[130, 'import_statement'],
 	[131, 'import_prefix'],
 	[132, 'relative_import'],
@@ -630,7 +631,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[181, 'dotted_name'],
 	[182, 'case_pattern'],
 	[183, '_simple_pattern'],
-	[336, '_simple_pattern'],
+	[337, '_simple_pattern'],
 	[184, 'case_as_pattern'],
 	[185, 'union_pattern'],
 	[186, 'dict_pattern'],
@@ -740,53 +741,54 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[290, 'with_clause_bare'],
 	[291, 'with_clause_paren'],
 	[292, 'match_block_block'],
-	[293, 'suite_inline'],
-	[294, 'suite_block'],
-	[295, 'suite_empty'],
-	[296, 'comparison_operator_comparator'],
-	[297, 'yield_from_clause'],
-	[298, 'module_repeat1'],
-	[299, 'import_prefix_repeat1'],
-	[300, '_import_list_repeat1'],
-	[301, 'assert_statement_repeat1'],
-	[302, 'if_statement_repeat1'],
-	[303, 'try_statement_repeat1'],
-	[304, 'global_statement_repeat1'],
-	[305, 'decorated_definition_repeat1'],
-	[306, 'dotted_name_repeat1'],
-	[307, 'union_pattern_repeat1'],
-	[308, '_parameters_repeat1'],
-	[309, '_patterns_repeat1'],
-	[310, 'comparison_operator_repeat1'],
-	[311, '_collection_elements_repeat1'],
-	[312, 'for_in_clause_repeat1'],
-	[313, 'concatenated_string_repeat1'],
-	[314, 'string_repeat1'],
-	[315, 'string_content_repeat1'],
-	[316, 'format_specifier_repeat1'],
-	[317, 'simple_statements_elements_repeat1'],
-	[318, 'subjects_repeat1'],
-	[319, 'case_patterns_repeat1'],
-	[320, 'with_clause_with_items_repeat1'],
-	[321, '_exec_statement_optional1_repeat1'],
-	[322, 'types_repeat1'],
-	[323, 'argument_list_elements_repeat1'],
-	[324, 'expression_list_expressions_repeat1'],
-	[325, 'dict_pattern_elements_repeat1'],
-	[326, 'pattern_list_patterns_repeat1'],
-	[327, 'subscripts_repeat1'],
-	[328, 'dictionary_elements_repeat1'],
-	[329, '_print_arguments_repeat1'],
-	[330, 'comprehension_clauses_repeat1'],
-	[331, 'except_clause_exception_list_repeat1'],
-	[332, 'match_block_block_repeat1'],
-	[333, 'as_pattern_target'],
-	[334, 'format_expression'],
-	[335, 'names'],
+	[293, 'match_block_empty'],
+	[294, 'suite_inline'],
+	[295, 'suite_block'],
+	[296, 'suite_empty'],
+	[297, 'comparison_operator_comparator'],
+	[298, 'yield_from_clause'],
+	[299, 'module_repeat1'],
+	[300, 'import_prefix_repeat1'],
+	[301, '_import_list_repeat1'],
+	[302, 'assert_statement_repeat1'],
+	[303, 'if_statement_repeat1'],
+	[304, 'try_statement_repeat1'],
+	[305, 'global_statement_repeat1'],
+	[306, 'decorated_definition_repeat1'],
+	[307, 'dotted_name_repeat1'],
+	[308, 'union_pattern_repeat1'],
+	[309, '_parameters_repeat1'],
+	[310, '_patterns_repeat1'],
+	[311, 'comparison_operator_repeat1'],
+	[312, '_collection_elements_repeat1'],
+	[313, 'for_in_clause_repeat1'],
+	[314, 'concatenated_string_repeat1'],
+	[315, 'string_repeat1'],
+	[316, 'string_content_repeat1'],
+	[317, 'format_specifier_repeat1'],
+	[318, 'simple_statements_elements_repeat1'],
+	[319, 'subjects_repeat1'],
+	[320, 'case_patterns_repeat1'],
+	[321, 'with_clause_with_items_repeat1'],
+	[322, '_exec_statement_optional1_repeat1'],
+	[323, 'types_repeat1'],
+	[324, 'argument_list_elements_repeat1'],
+	[325, 'expression_list_expressions_repeat1'],
+	[326, 'dict_pattern_elements_repeat1'],
+	[327, 'pattern_list_patterns_repeat1'],
+	[328, 'subscripts_repeat1'],
+	[329, 'dictionary_elements_repeat1'],
+	[330, '_print_arguments_repeat1'],
+	[331, 'comprehension_clauses_repeat1'],
+	[332, 'except_clause_exception_list_repeat1'],
+	[333, 'match_block_block_repeat1'],
+	[334, 'as_pattern_target'],
+	[335, 'format_expression'],
+	[336, 'names'],
 	[65535, 'ERROR']
 ]);
 
-/** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
+/** Parser display label of each kind id — the spelling of an anonymous token the reader sends without text, and the label validator bridging matches. Never use for wrapNode dispatch. */
 export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'identifier'],
 	[2, 'import'],
@@ -853,30 +855,30 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[63, 'yield'],
 	[64, 'ellipsis'],
 	[65, '\\'],
-	[66, 'format_specifier_token1'],
-	[67, 'type_conversion'],
-	[68, 'print'],
-	[69, 'async'],
-	[70, 'await'],
-	[71, 'true'],
-	[72, 'false'],
-	[73, 'none'],
-	[74, 'comment'],
-	[75, ';'],
-	[76, '->'],
-	[77, '+='],
-	[78, '-='],
-	[79, '*='],
-	[80, '/='],
-	[81, '@='],
-	[82, '//='],
-	[83, '%='],
-	[84, '**='],
-	[85, '>>='],
-	[86, '<<='],
-	[87, '&='],
-	[88, '^='],
-	[89, '|='],
+	[66, 'type_conversion'],
+	[67, 'print'],
+	[68, 'async'],
+	[69, 'await'],
+	[70, 'true'],
+	[71, 'false'],
+	[72, 'none'],
+	[73, 'comment'],
+	[74, ';'],
+	[75, '->'],
+	[76, '+='],
+	[77, '-='],
+	[78, '*='],
+	[79, '/='],
+	[80, '@='],
+	[81, '//='],
+	[82, '%='],
+	[83, '**='],
+	[84, '>>='],
+	[85, '<<='],
+	[86, '&='],
+	[87, '^='],
+	[88, '|='],
+	[89, 'format_specifier_text'],
 	[90, 'integer_hex'],
 	[91, 'integer_octal'],
 	[92, 'integer_binary'],
@@ -917,7 +919,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[127, 'module'],
 	[128, '_statement'],
 	[129, '_simple_statements'],
-	[337, 'simple_statements'],
+	[338, 'simple_statements'],
 	[130, 'import_statement'],
 	[131, 'import_prefix'],
 	[132, 'relative_import'],
@@ -972,7 +974,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[181, 'dotted_name'],
 	[182, 'case_pattern'],
 	[183, '_simple_pattern'],
-	[336, 'simple_pattern'],
+	[337, 'simple_pattern'],
 	[184, 'case_as_pattern'],
 	[185, 'union_pattern'],
 	[186, 'dict_pattern'],
@@ -1082,49 +1084,50 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[290, 'with_clause_bare'],
 	[291, 'with_clause_paren'],
 	[292, 'match_block_block'],
-	[293, 'suite_inline'],
-	[294, 'suite_block'],
-	[295, 'suite_empty'],
-	[296, 'comparison_operator_comparator'],
-	[297, 'yield_from_clause'],
-	[298, 'module_repeat1'],
-	[299, 'import_prefix_repeat1'],
-	[300, '_import_list_repeat1'],
-	[301, 'assert_statement_repeat1'],
-	[302, 'if_statement_repeat1'],
-	[303, 'try_statement_repeat1'],
-	[304, 'global_statement_repeat1'],
-	[305, 'decorated_definition_repeat1'],
-	[306, 'dotted_name_repeat1'],
-	[307, 'union_pattern_repeat1'],
-	[308, '_parameters_repeat1'],
-	[309, '_patterns_repeat1'],
-	[310, 'comparison_operator_repeat1'],
-	[311, '_collection_elements_repeat1'],
-	[312, 'for_in_clause_repeat1'],
-	[313, 'concatenated_string_repeat1'],
-	[314, 'string_repeat1'],
-	[315, 'string_content_repeat1'],
-	[316, 'format_specifier_repeat1'],
-	[317, 'simple_statements_elements_repeat1'],
-	[318, 'subjects_repeat1'],
-	[319, 'case_patterns_repeat1'],
-	[320, 'with_clause_with_items_repeat1'],
-	[321, '_exec_statement_optional1_repeat1'],
-	[322, 'types_repeat1'],
-	[323, 'argument_list_elements_repeat1'],
-	[324, 'expression_list_expressions_repeat1'],
-	[325, 'dict_pattern_elements_repeat1'],
-	[326, 'pattern_list_patterns_repeat1'],
-	[327, 'subscripts_repeat1'],
-	[328, 'dictionary_elements_repeat1'],
-	[329, '_print_arguments_repeat1'],
-	[330, 'comprehension_clauses_repeat1'],
-	[331, 'except_clause_exception_list_repeat1'],
-	[332, 'match_block_block_repeat1'],
-	[333, 'as_pattern_target'],
-	[334, 'format_expression'],
-	[335, 'names'],
+	[293, 'match_block_empty'],
+	[294, 'suite_inline'],
+	[295, 'suite_block'],
+	[296, 'suite_empty'],
+	[297, 'comparison_operator_comparator'],
+	[298, 'yield_from_clause'],
+	[299, 'module_repeat1'],
+	[300, 'import_prefix_repeat1'],
+	[301, '_import_list_repeat1'],
+	[302, 'assert_statement_repeat1'],
+	[303, 'if_statement_repeat1'],
+	[304, 'try_statement_repeat1'],
+	[305, 'global_statement_repeat1'],
+	[306, 'decorated_definition_repeat1'],
+	[307, 'dotted_name_repeat1'],
+	[308, 'union_pattern_repeat1'],
+	[309, '_parameters_repeat1'],
+	[310, '_patterns_repeat1'],
+	[311, 'comparison_operator_repeat1'],
+	[312, '_collection_elements_repeat1'],
+	[313, 'for_in_clause_repeat1'],
+	[314, 'concatenated_string_repeat1'],
+	[315, 'string_repeat1'],
+	[316, 'string_content_repeat1'],
+	[317, 'format_specifier_repeat1'],
+	[318, 'simple_statements_elements_repeat1'],
+	[319, 'subjects_repeat1'],
+	[320, 'case_patterns_repeat1'],
+	[321, 'with_clause_with_items_repeat1'],
+	[322, '_exec_statement_optional1_repeat1'],
+	[323, 'types_repeat1'],
+	[324, 'argument_list_elements_repeat1'],
+	[325, 'expression_list_expressions_repeat1'],
+	[326, 'dict_pattern_elements_repeat1'],
+	[327, 'pattern_list_patterns_repeat1'],
+	[328, 'subscripts_repeat1'],
+	[329, 'dictionary_elements_repeat1'],
+	[330, '_print_arguments_repeat1'],
+	[331, 'comprehension_clauses_repeat1'],
+	[332, 'except_clause_exception_list_repeat1'],
+	[333, 'match_block_block_repeat1'],
+	[334, 'as_pattern_target'],
+	[335, 'format_expression'],
+	[336, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -1263,8 +1266,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Ellipsis;
 		case 'bslash':
 			return TSKindId.Bslash;
-		case 'format_specifier_token1':
-			return TSKindId.FormatSpecifierToken1;
 		case 'type_conversion':
 			return TSKindId.TypeConversion;
 		case 'print_keyword':
@@ -1311,6 +1312,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.CaretEq;
 		case 'pipe_eq':
 			return TSKindId.PipeEq;
+		case 'format_specifier_text':
+			return TSKindId.FormatSpecifierText;
 		case 'integer_hex':
 			return TSKindId.IntegerHex;
 		case 'integer_octal':
@@ -1717,6 +1720,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.WithClauseParen;
 		case 'match_block_block':
 			return TSKindId.MatchBlockBlock;
+		case 'match_block_empty':
+			return TSKindId.MatchBlockEmpty;
 		case 'suite_inline':
 			return TSKindId.SuiteInline;
 		case 'suite_block':
@@ -2247,14 +2252,15 @@ export interface SimpleStatements {
 	};
 	readonly __slotHints__?: {
 		readonly simpleStatementsElements: SlotHint<T.SimpleStatementsElements>;
-		readonly $listOwner: ListOwnerHint<
-			T.SimpleStatement,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'simpleStatementsElements',
-			never
-		>;
+		readonly $listView: ListViewHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly simpleStatementsElements: ListSlotHint<
+				T.SimpleStatement,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
-	simpleStatementsElements(): NonEmptyArray<T.SimpleStatement>;
+	simpleStatementsElements(): SimpleStatementsElements;
 }
 
 export interface ImportStatement {
@@ -2314,6 +2320,10 @@ export interface ImportList {
 	readonly __slotHints__?: {
 		readonly names: SlotHint<NonEmptyArray<T.DottedName | T.AliasedImport>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.DottedName | T.AliasedImport,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	names(): NonEmptyArray<DottedName | AliasedImport>;
 }
@@ -2536,29 +2546,26 @@ export interface MatchStatement {
 	readonly _body: MatchBlock;
 	readonly __looseHints__?: {
 		readonly subjects: readonly Expression[];
-		readonly body: readonly (MatchBlockBlock | '\n')[];
+		readonly body: readonly (MatchBlockBlock | MatchBlockEmpty)[];
 	};
 	readonly __slotHints__?: {
 		readonly subjects: SlotHint<T.Subjects>;
 		readonly body: SlotHint<T.MatchBlock>;
 		readonly $listSlots: {
-			readonly subjects: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }, never>;
+			readonly subjects: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	subjects(): NonEmptyArray<T.Expression>;
+	subjects(): Subjects;
 	body(): MatchBlock;
 }
 
 export interface MatchBlock {
 	readonly $type: TSKindId.MatchBlock;
-	readonly _content: MatchBlockBlock | TSKindId.Newline;
-	readonly __inputHints__?: {
-		readonly content: KindEnum<'\n', TSKindId.Newline> | MatchBlockBlock;
-	};
+	readonly _content: MatchBlockBlock | MatchBlockEmpty;
 	readonly __slotHints__?: {
-		readonly content: SlotHint<NonNullable<T.MatchBlockBlock | TSKindId.Newline>>;
+		readonly content: SlotHint<T.MatchBlockBlock | T.MatchBlockEmpty>;
 	};
-	content(): MatchBlockBlock | TSKindId.Newline;
+	content(): MatchBlockBlock | MatchBlockEmpty;
 }
 
 export interface CaseClause {
@@ -2575,10 +2582,10 @@ export interface CaseClause {
 		readonly guard: SlotHint<T.IfClause, true>;
 		readonly consequence: SlotHint<T.Suite>;
 		readonly $listSlots: {
-			readonly casePatterns: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }, never>;
+			readonly casePatterns: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	casePatterns(): NonEmptyArray<T.CasePattern>;
+	casePatterns(): CasePatterns;
 	guard(): IfClause | undefined;
 	consequence(): Suite;
 }
@@ -2744,6 +2751,10 @@ export interface FunctionDefinition {
 		readonly parameters: SlotHint<T.Parameters>;
 		readonly returnType: SlotHint<T.Type, true>;
 		readonly body: SlotHint<T.Suite>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
@@ -2761,14 +2772,12 @@ export interface Parameters {
 	};
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<T.ParametersElements, true>;
-		readonly $listOwner: ListOwnerHint<
-			T.Parameter,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'elements',
-			never
-		>;
+		readonly $listView: ListViewHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly elements: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
-	elements(): NonEmptyArray<T.Parameter> | undefined;
+	elements(): ParametersElements | undefined;
 }
 
 export interface LambdaParameters {
@@ -2779,14 +2788,12 @@ export interface LambdaParameters {
 	};
 	readonly __slotHints__?: {
 		readonly parametersElements: SlotHint<T.ParametersElements>;
-		readonly $listOwner: ListOwnerHint<
-			T.Parameter,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'parametersElements',
-			never
-		>;
+		readonly $listView: ListViewHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly parametersElements: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
-	parametersElements(): NonEmptyArray<T.Parameter>;
+	parametersElements(): ParametersElements;
 }
 
 export interface ListSplat {
@@ -2890,6 +2897,13 @@ export interface ClassDefinition {
 		readonly typeParameters: SlotHint<T.TypeParameter, true>;
 		readonly superclasses: SlotHint<T.ArgumentList, true>;
 		readonly body: SlotHint<T.Suite>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly superclasses: ListSlotHint<
+				T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	name(): Identifier;
 	typeParameters(): TypeParameter | undefined;
@@ -2905,9 +2919,12 @@ export interface TypeParameter {
 	};
 	readonly __slotHints__?: {
 		readonly types: SlotHint<T.Types>;
-		readonly $listOwner: ListOwnerHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }, 'types', never>;
+		readonly $listView: ListViewHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly types: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
-	types(): NonEmptyArray<T.Type>;
+	types(): Types;
 }
 
 export interface ParenthesizedListSplat {
@@ -2933,16 +2950,18 @@ export interface ArgumentList {
 	};
 	readonly __slotHints__?: {
 		readonly arguments: SlotHint<T.ArgumentListElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'arguments',
-			never
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly arguments: ListSlotHint<
+				T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
-	arguments():
-		| NonEmptyArray<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>
-		| undefined;
+	arguments(): ArgumentListElements | undefined;
 }
 
 export interface DecoratedDefinition {
@@ -2997,11 +3016,11 @@ export interface ExpressionList {
 		readonly expression: SlotHint<NonNullable<T.ExpressionList.Config>['expression']>;
 		readonly tail: SlotHint<NonNullable<T.ExpressionList.Config>['tail']>;
 		readonly $listSlots: {
-			readonly tail: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }, never>;
+			readonly tail: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
 	expression(): Expression;
-	tail(): NonEmptyArray<T.Expression>;
+	tail(): TSKindId.Comma | ExpressionListExpressions;
 }
 
 export interface DottedName {
@@ -3201,14 +3220,18 @@ export interface DictPattern {
 	};
 	readonly __slotHints__?: {
 		readonly dictPatternElements: SlotHint<T.DictPatternElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.KeyValuePattern | T.SplatPattern,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'dictPatternElements',
-			never
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly dictPatternElements: ListSlotHint<
+				T.KeyValuePattern | T.SplatPattern,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
-	dictPatternElements(): NonEmptyArray<T.KeyValuePattern | T.SplatPattern> | undefined;
+	dictPatternElements(): DictPatternElements | undefined;
 }
 
 export interface KeyValuePattern {
@@ -3362,11 +3385,11 @@ export interface ClassPattern {
 		readonly name: SlotHint<T.DottedName>;
 		readonly arguments: SlotHint<T.ListPatternCasePatterns, true>;
 		readonly $listSlots: {
-			readonly arguments: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }, never>;
+			readonly arguments: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
 	name(): DottedName;
-	arguments(): NonEmptyArray<T.CasePattern> | undefined;
+	arguments(): ListPatternCasePatterns | undefined;
 }
 
 export interface ComplexPattern {
@@ -3397,6 +3420,7 @@ export interface ParametersElements {
 	readonly __slotHints__?: {
 		readonly parameters: SlotHint<NonEmptyArray<T.Parameter>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	parameters(): NonEmptyArray<Parameter>;
 }
@@ -3407,6 +3431,7 @@ export interface Patterns {
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<NonEmptyArray<T.Pattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	patterns(): NonEmptyArray<Pattern>;
 }
@@ -3419,14 +3444,12 @@ export interface TuplePattern {
 	};
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<T.Patterns, true>;
-		readonly $listOwner: ListOwnerHint<
-			T.Pattern,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'patterns',
-			never
-		>;
+		readonly $listView: ListViewHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly patterns: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
-	patterns(): NonEmptyArray<T.Pattern> | undefined;
+	patterns(): Patterns | undefined;
 }
 
 export interface ListPattern {
@@ -3437,14 +3460,12 @@ export interface ListPattern {
 	};
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<T.Patterns, true>;
-		readonly $listOwner: ListOwnerHint<
-			T.Pattern,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'patterns',
-			never
-		>;
+		readonly $listView: ListViewHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly patterns: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
-	patterns(): NonEmptyArray<T.Pattern> | undefined;
+	patterns(): Patterns | undefined;
 }
 
 export interface DefaultParameter {
@@ -3747,6 +3768,9 @@ export interface Lambda {
 	readonly __slotHints__?: {
 		readonly parameters: SlotHint<T.LambdaParameters, true>;
 		readonly body: SlotHint<NonNullable<T.Lambda.Config>['body']>;
+		readonly $listSlots: {
+			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	parameters(): LambdaParameters | undefined;
 	body(): Expression;
@@ -3768,6 +3792,9 @@ export interface LambdaWithinForInClause {
 	readonly __slotHints__?: {
 		readonly parameters: SlotHint<T.LambdaParameters, true>;
 		readonly body: SlotHint<NonNullable<T.LambdaWithinForInClause.Config>['body']>;
+		readonly $listSlots: {
+			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	parameters(): LambdaParameters | undefined;
 	body(): Expression | LambdaWithinForInClause;
@@ -3828,11 +3855,11 @@ export interface PatternList {
 		readonly pattern: SlotHint<T.Pattern>;
 		readonly tail: SlotHint<NonNullable<T.PatternList.Config>['tail']>;
 		readonly $listSlots: {
-			readonly tail: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }, never>;
+			readonly tail: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
 	pattern(): Pattern;
-	tail(): NonEmptyArray<T.Pattern>;
+	tail(): TSKindId.Comma | PatternListPatterns;
 }
 
 export interface Yield {
@@ -3884,15 +3911,11 @@ export interface Subscript {
 		readonly value: SlotHint<NonNullable<T.Subscript.Config>['value']>;
 		readonly subscripts: SlotHint<T.Subscripts>;
 		readonly $listSlots: {
-			readonly subscripts: ListSlotHint<
-				T.Expression | T.Slice,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing },
-				never
-			>;
+			readonly subscripts: ListSlotHint<T.Expression | T.Slice, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
 	value(): PrimaryExpression;
-	subscripts(): NonEmptyArray<T.Expression | T.Slice>;
+	subscripts(): Subscripts;
 }
 
 export interface Slice {
@@ -3915,7 +3938,7 @@ export interface Slice {
 		readonly start: SlotHint<NonNullable<T.Slice.Config>['start'], true>;
 		readonly stop: SlotHint<NonNullable<T.Slice.Config>['stop'], true>;
 		readonly step: SlotHint<T.SliceGroup, true>;
-		readonly $flat: FlatHint<'step', T.SliceGroup, 'expression', true>;
+		readonly $flat: FlatHint<'step', T.SliceGroup, { readonly expression: 'expression' }, true>;
 	};
 	start(): Expression | undefined;
 	stop(): Expression | undefined;
@@ -4003,6 +4026,9 @@ export interface GenericType {
 	readonly __slotHints__?: {
 		readonly name: SlotHint<NonNullable<T.GenericType.Config>['name']>;
 		readonly typeParameter: SlotHint<T.TypeParameter>;
+		readonly $listSlots: {
+			readonly typeParameter: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	name(): Identifier | TSKindId.TypeKeyword;
 	typeParameter(): TypeParameter;
@@ -4105,14 +4131,18 @@ export interface List {
 	};
 	readonly __slotHints__?: {
 		readonly collectionElements: SlotHint<T.CollectionElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'collectionElements',
-			never
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly collectionElements: ListSlotHint<
+				T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
-	collectionElements(): NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat> | undefined;
+	collectionElements(): CollectionElements | undefined;
 }
 
 export interface Set {
@@ -4123,14 +4153,18 @@ export interface Set {
 	};
 	readonly __slotHints__?: {
 		readonly collectionElements: SlotHint<T.CollectionElements>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'collectionElements',
-			never
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly collectionElements: ListSlotHint<
+				T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
-	collectionElements(): NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>;
+	collectionElements(): CollectionElements;
 }
 
 export interface Tuple {
@@ -4141,32 +4175,34 @@ export interface Tuple {
 	};
 	readonly __slotHints__?: {
 		readonly collectionElements: SlotHint<T.CollectionElements, true>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'collectionElements',
-			never
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly collectionElements: ListSlotHint<
+				T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
-	collectionElements(): NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat> | undefined;
+	collectionElements(): CollectionElements | undefined;
 }
 
 export interface Dictionary {
 	readonly $type: TSKindId.Dictionary;
-	readonly _entries?: DictionaryElements;
+	readonly _elements?: DictionaryElements;
 	readonly __looseHints__?: {
-		readonly entries?: readonly (Pair | DictionarySplat)[];
+		readonly elements?: readonly (Pair | DictionarySplat)[];
 	};
 	readonly __slotHints__?: {
-		readonly entries: SlotHint<T.DictionaryElements, true>;
-		readonly $listOwner: ListOwnerHint<
-			T.Pair | T.DictionarySplat,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'entries',
-			never
-		>;
+		readonly elements: SlotHint<T.DictionaryElements, true>;
+		readonly $listView: ListViewHint<T.Pair | T.DictionarySplat, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly elements: ListSlotHint<T.Pair | T.DictionarySplat, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
-	entries(): NonEmptyArray<T.Pair | T.DictionarySplat> | undefined;
+	elements(): DictionaryElements | undefined;
 }
 
 export interface Pair {
@@ -4289,6 +4325,10 @@ export interface CollectionElements {
 			true
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<Expression | Yield | ListSplat | ParenthesizedListSplat>;
 }
@@ -4421,7 +4461,7 @@ export interface Interpolation {
 		readonly eq_marker?: BaseBooleanKeyword<'='>;
 	};
 	readonly __looseHints__?: {
-		readonly format_specifier?: readonly ('[^{}\\n]+' | FormatExpression)[];
+		readonly format_specifier?: readonly (FormatSpecifierText | FormatExpression)[];
 	};
 	readonly __slotHints__?: {
 		readonly expression: SlotHint<NonNullable<T.Interpolation.Config>['expression']>;
@@ -4437,11 +4477,15 @@ export interface Interpolation {
 
 export interface FormatSpecifier {
 	readonly $type: TSKindId.FormatSpecifier;
-	readonly _elements?: readonly ('[^{}\\n]+' | FormatExpression)[];
+	readonly _elements?: readonly (FormatSpecifierText | FormatExpression)[];
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<(('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[], false, true>;
+		readonly elements: SlotHint<
+			((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[],
+			false,
+			true
+		>;
 	};
-	elements(): readonly ('[^{}\\n]+' | FormatExpression)[];
+	elements(): readonly (FormatSpecifierText | FormatExpression)[];
 }
 
 export interface Await {
@@ -4473,6 +4517,7 @@ export interface SimpleStatementsElements {
 	readonly __slotHints__?: {
 		readonly simpleStatements: SlotHint<NonEmptyArray<T.SimpleStatement>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	simpleStatements(): NonEmptyArray<SimpleStatement>;
 }
@@ -4483,6 +4528,7 @@ export interface Subjects {
 	readonly __slotHints__?: {
 		readonly subjects: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	subjects(): NonEmptyArray<Expression>;
 }
@@ -4493,6 +4539,7 @@ export interface CasePatterns {
 	readonly __slotHints__?: {
 		readonly casePatterns: SlotHint<NonEmptyArray<T.CasePattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	casePatterns(): NonEmptyArray<CasePattern>;
 }
@@ -4503,6 +4550,7 @@ export interface WithClauseWithItems {
 	readonly __slotHints__?: {
 		readonly withItems: SlotHint<NonEmptyArray<T.WithItem>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	withItems(): NonEmptyArray<WithItem>;
 }
@@ -4513,6 +4561,7 @@ export interface Types {
 	readonly __slotHints__?: {
 		readonly types: SlotHint<NonEmptyArray<T.Type>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	types(): NonEmptyArray<Type>;
 }
@@ -4527,6 +4576,10 @@ export interface ArgumentListElements {
 			true
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument>;
 }
@@ -4537,6 +4590,7 @@ export interface ExpressionListExpressions {
 	readonly __slotHints__?: {
 		readonly expressions: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	expressions(): NonEmptyArray<Expression>;
 }
@@ -4547,6 +4601,7 @@ export interface ListPatternCasePatterns {
 	readonly __slotHints__?: {
 		readonly casePatterns: SlotHint<NonEmptyArray<T.CasePattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	casePatterns(): NonEmptyArray<CasePattern>;
 }
@@ -4557,6 +4612,10 @@ export interface DictPatternElements {
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonEmptyArray<T.KeyValuePattern | T.SplatPattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.KeyValuePattern | T.SplatPattern,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
 	};
 	elements(): NonEmptyArray<KeyValuePattern | SplatPattern>;
 }
@@ -4567,6 +4626,7 @@ export interface PatternListPatterns {
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<NonEmptyArray<T.Pattern>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	patterns(): NonEmptyArray<Pattern>;
 }
@@ -4577,6 +4637,7 @@ export interface Subscripts {
 	readonly __slotHints__?: {
 		readonly subscripts: SlotHint<NonEmptyArray<T.Expression | T.Slice>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Expression | T.Slice, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	subscripts(): NonEmptyArray<Expression | Slice>;
 }
@@ -4587,6 +4648,7 @@ export interface DictionaryElements {
 	readonly __slotHints__?: {
 		readonly elements: SlotHint<NonEmptyArray<T.Pair | T.DictionarySplat>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Pair | T.DictionarySplat, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	elements(): NonEmptyArray<Pair | DictionarySplat>;
 }
@@ -4633,14 +4695,15 @@ export interface CaseTuplePattern {
 	};
 	readonly __slotHints__?: {
 		readonly listPatternCasePatterns: SlotHint<T.ListPatternCasePatterns, true>;
-		readonly $listOwner: ListOwnerHint<
-			T.CasePattern,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'listPatternCasePatterns',
-			never
-		>;
+		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly listPatternCasePatterns: ListSlotHint<
+				T.CasePattern,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
-	listPatternCasePatterns(): NonEmptyArray<T.CasePattern> | undefined;
+	listPatternCasePatterns(): ListPatternCasePatterns | undefined;
 }
 
 export interface CaseListPattern {
@@ -4651,14 +4714,15 @@ export interface CaseListPattern {
 	};
 	readonly __slotHints__?: {
 		readonly listPatternCasePatterns: SlotHint<T.ListPatternCasePatterns, true>;
-		readonly $listOwner: ListOwnerHint<
-			T.CasePattern,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'listPatternCasePatterns',
-			never
-		>;
+		readonly $listView: ListViewHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly listPatternCasePatterns: ListSlotHint<
+				T.CasePattern,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
-	listPatternCasePatterns(): NonEmptyArray<T.CasePattern> | undefined;
+	listPatternCasePatterns(): ListPatternCasePatterns | undefined;
 }
 
 export interface PrintArguments {
@@ -4667,6 +4731,7 @@ export interface PrintArguments {
 	readonly __slotHints__?: {
 		readonly arguments: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	arguments(): NonEmptyArray<Expression>;
 }
@@ -4677,6 +4742,7 @@ export interface PrintChevronArguments {
 	readonly __slotHints__?: {
 		readonly arguments: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	arguments(): NonEmptyArray<Expression>;
 }
@@ -4698,6 +4764,9 @@ export interface PrintStatementChevron {
 			NonNullable<T.PrintStatementChevron.Config>['printChevronArguments'],
 			true
 		>;
+		readonly $listSlots: {
+			readonly printChevronArguments: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	chevron(): Chevron;
 	printChevronArguments(): PrintChevronArguments | TSKindId.Comma | undefined;
@@ -4711,14 +4780,12 @@ export interface PrintStatementPlain {
 	};
 	readonly __slotHints__?: {
 		readonly printArguments: SlotHint<T.PrintArguments>;
-		readonly $listOwner: ListOwnerHint<
-			T.Expression,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'printArguments',
-			never
-		>;
+		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly printArguments: ListSlotHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
-	printArguments(): NonEmptyArray<T.Expression>;
+	printArguments(): PrintArguments;
 }
 
 export interface ParenthesizedImportList {
@@ -4729,14 +4796,18 @@ export interface ParenthesizedImportList {
 	};
 	readonly __slotHints__?: {
 		readonly importList: SlotHint<T.ImportList>;
-		readonly $listOwner: ListOwnerHint<
+		readonly $listView: ListViewHint<
 			T.DottedName | T.AliasedImport,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'importList',
-			never
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
 		>;
+		readonly $listSlots: {
+			readonly importList: ListSlotHint<
+				T.DottedName | T.AliasedImport,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
-	importList(): NonEmptyArray<T.DottedName | T.AliasedImport>;
+	importList(): ImportList;
 }
 
 export interface ComprehensionClauses {
@@ -5017,6 +5088,7 @@ export interface ExpressionStatementTuple {
 	readonly __slotHints__?: {
 		readonly expressions: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.Expression, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	expressions(): NonEmptyArray<Expression>;
 }
@@ -5027,6 +5099,7 @@ export interface WithClauseBare {
 	readonly __slotHints__?: {
 		readonly withItems: SlotHint<NonEmptyArray<T.WithItem>, false, true>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 	};
 	withItems(): NonEmptyArray<WithItem>;
 }
@@ -5039,14 +5112,12 @@ export interface WithClauseParen {
 	};
 	readonly __slotHints__?: {
 		readonly withClauseWithItems: SlotHint<T.WithClauseWithItems>;
-		readonly $listOwner: ListOwnerHint<
-			T.WithItem,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'withClauseWithItems',
-			never
-		>;
+		readonly $listView: ListViewHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly withClauseWithItems: ListSlotHint<T.WithItem, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
-	withClauseWithItems(): NonEmptyArray<T.WithItem>;
+	withClauseWithItems(): WithClauseWithItems;
 }
 
 export interface MatchBlockBlock {
@@ -5058,6 +5129,18 @@ export interface MatchBlockBlock {
 	alternatives(): readonly CaseClause[];
 }
 
+export interface MatchBlockEmpty {
+	readonly $type: TSKindId.MatchBlockEmpty;
+	readonly _newline: number;
+	readonly __inputHints__?: {
+		readonly newline: KindEnum<'\n', TSKindId.Newline>;
+	};
+	readonly __slotHints__?: {
+		readonly newline: SlotHint<NonNullable<TSKindId.Newline>>;
+	};
+	newline(): number;
+}
+
 export interface SuiteInline {
 	readonly $type: TSKindId.SuiteInline;
 	readonly _simple_statements_elements: SimpleStatementsElements;
@@ -5066,14 +5149,15 @@ export interface SuiteInline {
 	};
 	readonly __slotHints__?: {
 		readonly simpleStatementsElements: SlotHint<T.SimpleStatementsElements>;
-		readonly $listOwner: ListOwnerHint<
-			T.SimpleStatement,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			'simpleStatementsElements',
-			never
-		>;
+		readonly $listView: ListViewHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		readonly $listSlots: {
+			readonly simpleStatementsElements: ListSlotHint<
+				T.SimpleStatement,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
-	simpleStatementsElements(): NonEmptyArray<T.SimpleStatement>;
+	simpleStatementsElements(): SimpleStatementsElements;
 }
 
 export interface SuiteBlock {
@@ -5153,6 +5237,12 @@ export interface Names {
 	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.ImportList>;
+		readonly $listSlots: {
+			readonly content: ListSlotHint<
+				T.DottedName | T.AliasedImport,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+			>;
+		};
 	};
 	readonly __aliasContent__?: Names.Types;
 	content(): ImportList;
@@ -5198,6 +5288,7 @@ export type False = TSKindId.False;
 export type None = TSKindId.None;
 export type PositionalSeparator = TSKindId.PositionalSeparator;
 export type KeywordSeparator = TSKindId.KeywordSeparator;
+export type FormatSpecifierText = Terminal<TSKindId.FormatSpecifierText, string>;
 export type WildcardPattern = TSKindId.WildcardPattern;
 export type IntegerDecimalLong = Terminal<TSKindId.IntegerDecimalLong, string>;
 export type IntegerDecimalImaginary = Terminal<TSKindId.IntegerDecimalImaginary, string>;
@@ -8648,7 +8739,7 @@ export interface DictionaryNs extends NodeNs<
 	Dictionary.Bound,
 	Dictionary.BuildArgs,
 	Dictionary.LooseArgs,
-	'entries',
+	'elements',
 	TSKindId.Dictionary,
 	Dictionary.Parsed,
 	EmptyDictionary
@@ -9459,6 +9550,19 @@ export interface MatchBlockBlockNs extends NodeNs<
 	MatchBlockBlock.Parsed,
 	EmptyMatchBlockBlock
 > {}
+export interface MatchBlockEmptyNs extends NodeNs<
+	MatchBlockEmpty,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	MatchBlockEmpty.Bound,
+	MatchBlockEmpty.BuildArgs,
+	MatchBlockEmpty.LooseArgs,
+	'newline',
+	TSKindId.MatchBlockEmpty,
+	MatchBlockEmpty.Parsed,
+	never
+> {}
 export interface SuiteInlineNs extends NodeNs<
 	SuiteInline,
 	LeafScalarMap,
@@ -9608,6 +9712,12 @@ export interface TypeConversionNs extends LeafNs<
 	TSKindId.TypeConversion
 > {}
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Bound, TSKindId.Identifier> {}
+export interface FormatSpecifierTextNs extends LeafNs<
+	FormatSpecifierText,
+	string,
+	FormatSpecifierText.Bound,
+	TSKindId.FormatSpecifierText
+> {}
 export interface IntegerDecimalLongNs extends LeafNs<
 	IntegerDecimalLong,
 	string,
@@ -9804,6 +9914,7 @@ export interface NamespaceMap {
 	[TSKindId.WithClauseBare]: WithClauseBareNs;
 	[TSKindId.WithClauseParen]: WithClauseParenNs;
 	[TSKindId.MatchBlockBlock]: MatchBlockBlockNs;
+	[TSKindId.MatchBlockEmpty]: MatchBlockEmptyNs;
 	[TSKindId.SuiteInline]: SuiteInlineNs;
 	[TSKindId.SuiteBlock]: SuiteBlockNs;
 	[TSKindId.SuiteEmpty]: SuiteEmptyNs;
@@ -9840,6 +9951,7 @@ export interface NamespaceMap {
 	[TSKindId.ImportPrefix]: ImportPrefixNs;
 	[TSKindId.TypeConversion]: TypeConversionNs;
 	[TSKindId.Identifier]: IdentifierNs;
+	[TSKindId.FormatSpecifierText]: FormatSpecifierTextNs;
 	[TSKindId.IntegerDecimalLong]: IntegerDecimalLongNs;
 	[TSKindId.IntegerDecimalImaginary]: IntegerDecimalImaginaryNs;
 	[TSKindId.IntegerDecimalPlain]: IntegerDecimalPlainNs;
@@ -10007,6 +10119,7 @@ export interface BoundByKindId {
 	[TSKindId.WithClauseBare]: WithClauseBare.Bound;
 	[TSKindId.WithClauseParen]: WithClauseParen.Bound;
 	[TSKindId.MatchBlockBlock]: MatchBlockBlock.Bound;
+	[TSKindId.MatchBlockEmpty]: MatchBlockEmpty.Bound;
 	[TSKindId.SuiteInline]: SuiteInline.Bound;
 	[TSKindId.SuiteBlock]: SuiteBlock.Bound;
 	[TSKindId.SuiteEmpty]: SuiteEmpty.Bound;
@@ -10018,6 +10131,7 @@ export interface BoundByKindId {
 	[TSKindId.ImportPrefix]: ImportPrefix.Bound;
 	[TSKindId.TypeConversion]: TypeConversion.Bound;
 	[TSKindId.Identifier]: Identifier.Bound;
+	[TSKindId.FormatSpecifierText]: FormatSpecifierText.Bound;
 	[TSKindId.IntegerDecimalLong]: IntegerDecimalLong.Bound;
 	[TSKindId.IntegerDecimalImaginary]: IntegerDecimalImaginary.Bound;
 	[TSKindId.IntegerDecimalPlain]: IntegerDecimalPlain.Bound;
@@ -10185,6 +10299,7 @@ export interface ParsedByKindId {
 	[TSKindId.WithClauseBare]: WithClauseBare.Parsed;
 	[TSKindId.WithClauseParen]: WithClauseParen.Parsed;
 	[TSKindId.MatchBlockBlock]: MatchBlockBlock.Parsed;
+	[TSKindId.MatchBlockEmpty]: MatchBlockEmpty.Parsed;
 	[TSKindId.SuiteInline]: SuiteInline.Parsed;
 	[TSKindId.SuiteBlock]: SuiteBlock.Parsed;
 	[TSKindId.SuiteEmpty]: SuiteEmpty.Parsed;
@@ -10196,6 +10311,7 @@ export interface ParsedByKindId {
 	[TSKindId.ImportPrefix]: ImportPrefix.Parsed;
 	[TSKindId.TypeConversion]: TypeConversion.Parsed;
 	[TSKindId.Identifier]: Identifier.Parsed;
+	[TSKindId.FormatSpecifierText]: FormatSpecifierText.Parsed;
 	[TSKindId.IntegerDecimalLong]: IntegerDecimalLong.Parsed;
 	[TSKindId.IntegerDecimalImaginary]: IntegerDecimalImaginary.Parsed;
 	[TSKindId.IntegerDecimalPlain]: IntegerDecimalPlain.Parsed;
@@ -10488,6 +10604,7 @@ export interface IrKeyOf {
 	[TSKindId.WithClauseBare]: 'withClauseBare';
 	[TSKindId.WithClauseParen]: 'withClauseParen';
 	[TSKindId.MatchBlockBlock]: 'matchBlockBlock';
+	[TSKindId.MatchBlockEmpty]: 'matchBlockEmpty';
 	[TSKindId.SuiteInline]: 'suiteInline';
 	[TSKindId.SuiteBlock]: 'suiteBlock';
 	[TSKindId.SuiteEmpty]: 'suiteEmpty';
@@ -10524,6 +10641,7 @@ export interface IrKeyOf {
 	[TSKindId.ImportPrefix]: 'importPrefix';
 	[TSKindId.TypeConversion]: 'typeConversion';
 	[TSKindId.Identifier]: 'identifier';
+	[TSKindId.FormatSpecifierText]: 'formatSpecifierText';
 	[TSKindId.IntegerDecimalLong]: 'integerDecimalLong';
 	[TSKindId.IntegerDecimalImaginary]: 'integerDecimalImaginary';
 	[TSKindId.IntegerDecimalPlain]: 'integerDecimalPlain';
@@ -10941,9 +11059,9 @@ export namespace MatchBlock {
 	}
 	export type Loose = LooseFor<TSKindId.MatchBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlock>;
-	export type BuildArgs = [value: AdmitBound<T.MatchBlockBlock | TSKindId.Newline, T.AdmittedNodes>];
+	export type BuildArgs = [value: AdmitBound<T.MatchBlockBlock | T.MatchBlockEmpty, T.AdmittedNodes>];
 	export type LooseArgs = [
-		value: LooseValue<T.MatchBlockBlock | TSKindId.Newline, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		value: LooseValue<T.MatchBlockBlock | T.MatchBlockEmpty, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	];
 	export type Kind = TSKindId.MatchBlock;
 }
@@ -12730,11 +12848,14 @@ export namespace FormatSpecifier {
 	export type Loose = LooseFor<TSKindId.FormatSpecifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormatSpecifier>;
 	export type BuildArgs = [
-		...children: AdmitBound<(('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types)[], T.AdmittedNodes>
+		...children: AdmitBound<
+			((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[],
+			T.AdmittedNodes
+		>
 	];
 	export type LooseArgs = [
 		...children: LooseValue<
-			('[^{}\\n]+' | T.FormatExpression) | T.FormatExpression.Types,
+			(T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types,
 			T.LeafScalarMap,
 			T.LeafStringMap,
 			T.NamespaceMap
@@ -13798,6 +13919,22 @@ export namespace MatchBlockBlock {
 	export type LooseArgs = [...children: LooseValue<T.CaseClause, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
 	export type Kind = TSKindId.MatchBlockBlock;
 }
+export namespace MatchBlockEmpty {
+	export type Config = ConfigFor<TSKindId.MatchBlockEmpty>;
+	export interface Bound extends BoundOf<T.MatchBlockEmpty, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.MatchBlockEmpty['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.MatchBlockEmpty, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.MatchBlockEmpty['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export type Loose = LooseFor<TSKindId.MatchBlockEmpty>;
+	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlockEmpty>;
+	export type BuildArgs = [value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>];
+	export type LooseArgs = [value?: LooseValue<TSKindId.Newline, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Kind = TSKindId.MatchBlockEmpty;
+}
 export namespace SuiteInline {
 	export type Config = ConfigFor<TSKindId.SuiteInline>;
 	export interface Bound extends BoundOf<T.SuiteInline, BoundByKindId>, NodeMethodsOf {
@@ -13844,8 +13981,8 @@ export namespace SuiteEmpty {
 	}
 	export type Loose = LooseFor<TSKindId.SuiteEmpty>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SuiteEmpty>;
-	export type BuildArgs = [value: AdmitBound<TSKindId.Newline, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<TSKindId.Newline, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>];
+	export type LooseArgs = [value?: LooseValue<TSKindId.Newline, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.SuiteEmpty;
 }
 export namespace ComparisonOperatorComparator {
@@ -14229,6 +14366,21 @@ export namespace Identifier {
 	export type BuildArgs = IdentifierNs['BuildArgs'];
 	export type LooseArgs = IdentifierNs['LooseArgs'];
 	export type Kind = TSKindId.Identifier;
+}
+export namespace FormatSpecifierText {
+	export type Config = FormatSpecifierTextNs['Config'];
+	export interface Bound extends NodeMethodsOf {
+		readonly $type: TSKindId.FormatSpecifierText;
+		readonly $source?: 0 | 1 | 2;
+		readonly $named: true;
+		readonly $text: string;
+	}
+	export interface Parsed extends Bound {}
+	export type Loose = FormatSpecifierTextNs['Loose'];
+	export type LooseConfig = FormatSpecifierTextNs['LooseConfig'];
+	export type BuildArgs = FormatSpecifierTextNs['BuildArgs'];
+	export type LooseArgs = FormatSpecifierTextNs['LooseArgs'];
+	export type Kind = TSKindId.FormatSpecifierText;
 }
 export namespace IntegerDecimalLong {
 	export type Config = IntegerDecimalLongNs['Config'];

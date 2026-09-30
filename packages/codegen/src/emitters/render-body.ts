@@ -319,6 +319,19 @@ export function refersTo(body: Body, name: string): boolean {
 	});
 }
 
+export function writesText(body: Body): boolean {
+	return body.some((node) => {
+		switch (node.kind) {
+			case 'text':
+				return !isWhitespaceOnly(node.text);
+			case 'if':
+				return node.arms.some((arm) => writesText(arm.body)) || (node.fallback !== undefined && writesText(node.fallback));
+			default:
+				return false;
+		}
+	});
+}
+
 export function writesTokenSeam(body: Body, text: string): boolean {
 	return body.some((node) => {
 		switch (node.kind) {

@@ -48,6 +48,7 @@ import {
 	buildFactoryNodeFromReference,
 	importGrammarModule
 } from './common.ts';
+import { nativeShownKindId } from './shown-kind.ts';
 
 /**
  * Which factory surface a run builds through: `raw` calls each kind's raw
@@ -231,8 +232,10 @@ function compareNodeStorage(
 	path: string,
 	ctx: CompareCtx
 ): string | null {
-	if (expected.$type !== actual.$type) {
-		return `${path || 'root'}: $type ${String(expected.$type)} ≠ ${String(actual.$type)}`;
+	const expectedKind = nativeShownKindId(expected);
+	const actualKind = nativeShownKindId(actual);
+	if (expectedKind !== actualKind) {
+		return `${path || 'root'}: $type ${String(expectedKind)} ≠ ${String(actualKind)}`;
 	}
 	const expectedKeys = storageKeysOf(expected, ctx);
 	const actualKeys = new Set(storageKeysOf(actual, ctx));
@@ -635,7 +638,7 @@ export async function validateFactoryRenderParse(
 		const seen = new Set<string>();
 		walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
 			if (w.$named === false) return;
-			const sourceKind = kindNameFromId ? kindNameFromId(w.$type) : undefined;
+			const sourceKind = kindNameFromId ? kindNameFromId(nativeShownKindId(w)) : undefined;
 			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
 			if (surface !== undefined && surface.entries[sourceKind] === undefined) return;
 			const span = (w as { $span?: { start: number; end: number } }).$span;

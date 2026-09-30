@@ -159,11 +159,12 @@ spliced and the group is built from its value.
 A group-lifted list (`_arguments_elements`, `_where_predicates`) is not seated
 as a group, since its keys are not spliced onto the parent's config, but its
 parent hoists it all the same. The parent's factory takes the list's items
-(or its options and items) directly, or the whole list node, and the parent's
-node surface reads the slot the same way: its accessor returns the items, its
-`$with` setter takes the same shapes, and it iterates them. The census does
-not count lists as seated groups; it counts them as hoisted slots, whose
-accessor type must equal the element type the factory takes.
+(or its options and items) directly, or the whole list node, and so does the
+`$with` setter of the slot that holds it. The slot's accessor returns the list
+node, which reads as a `ReadonlyArray` of those items and carries the list's
+options, so a list read back round-trips with its options intact. The census
+does not count lists as seated groups; it checks that every list view is
+stamped with the item type its factory takes.
 
 ### Shape 3 — a repeated group is an array of its configs
 

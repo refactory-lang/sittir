@@ -469,6 +469,7 @@ export interface GeneratedKindEntry {
 	readonly symbolName?: string;
 	readonly literalText?: string;
 	readonly anon?: boolean;
+	readonly aux?: boolean;
 	readonly literalRule?: boolean;
 	readonly alias?: boolean;
 	readonly hidden?: boolean;
@@ -517,6 +518,7 @@ export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefine
 				: undefined,
 			literalText: entry.parser?.literalText,
 			anon: entry.parser?.anon || undefined,
+			aux: entry.parser?.aux || undefined,
 			literalRule: entry.parser?.literalRule || undefined,
 			alias: entry.parser?.alias || undefined,
 			hidden: entry.parser?.hidden || undefined,
@@ -634,6 +636,11 @@ export function isSurfaceHiddenKind(kind: string, entries: readonly KindEntryLik
 export function isAliasedHiddenStorage(kind: string, entries: readonly KindEntryLike[]): boolean {
 	const entry = findOwnKindEntry(entries, kind);
 	return entry?.aliasedNonTerminal === true && surfaceHiddenOf(entry, kind);
+}
+
+export function isShownConcreteKind(kind: string, entries: readonly KindEntryLike[]): boolean {
+	const entry = findOwnKindEntry(entries, kind);
+	return entry !== undefined && entry.supertype !== true && !surfaceHiddenOf(entry, kind);
 }
 
 export function isParserHiddenKind(kind: string, entries: readonly KindEntryLike[]): boolean {
@@ -1258,7 +1265,7 @@ export function predictSymbolTable(grammar: PredictedGrammar): PredictedSymbolTa
 		names.set(cName, display.name);
 		visible.set(cName, display.visible);
 		namedFlags.set(cName, display.named);
-		if (key.startsWith('nt:') && supertypes.has(variableOf(key).name)) supertypeCNames.add(cName);
+		if (key.startsWith('nt:') && !defaults.has(key) && supertypes.has(variableOf(key).name)) supertypeCNames.add(cName);
 		if (aliasedNonTerminals.has(key)) aliasedNonTerminalCNames.add(cName);
 	}
 	aliasSymbols.sort((a, b) => (a.value < b.value ? -1 : a.value > b.value ? 1 : Number(a.named) - Number(b.named)));

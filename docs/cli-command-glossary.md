@@ -700,6 +700,22 @@ Report the owner and position the reader gives every corpus extra; exits 1 if an
 pnpm exec tsx packages/cli/src/cli.ts tool trivia-placement [options]
 ```
 
+### `tool uncovered-content`
+
+List corpus nodes whose non-whitespace text no child covers, with the hidden grammar producer; exits 1 if any
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+- `--all-grammars` — Run every grammar
+- `--json` — Print the census as JSON
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool uncovered-content [options]
+```
+
 ### `tool variant-derivation-probe`
 
 Assert the live structural variantChildKinds derivation equals committed node-model.json5 (cross-commit drift detector)

@@ -54,6 +54,8 @@ export const _fromMap = {
 	count_quantifier_arm: coerceToCountQuantifierArm,
 	character_class_escape_arm: coerceToCharacterClassEscapeArm,
 	unicode_property_value_expression_group: coerceToUnicodePropertyValueExpressionGroup,
+	character_class_escape_text1: coerceToCharacterClassEscapeText1,
+	character_class_escape_text2: coerceToCharacterClassEscapeText2,
 	inline_flags_group_enable: coerceToInlineFlagsGroupEnable,
 	inline_flags_group_toggle: coerceToInlineFlagsGroupToggle,
 	inline_flags_group_disable: coerceToInlineFlagsGroupDisable,
@@ -96,6 +98,8 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	identity_escape: { factory: (content: string) => _resolveByKind('identity_escape', content) },
 	group_name: { pattern: /^(?:(?:[A-Za-z_][A-Za-z0-9_]*))$/u, factory: F.buildGroupName },
 	decimal_digits: { pattern: /^(?:(?:\d+))$/u, factory: F.buildDecimalDigits },
+	character_class_escape_text1: { pattern: /^(?:(?:\\[dDsSwW]))$/u, factory: F.buildCharacterClassEscapeText1 },
+	character_class_escape_text2: { pattern: /^(?:(?:\\[pP]))$/u, factory: F.buildCharacterClassEscapeText2 },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_newline: { values: ['\n'], factory: () => F.buildNewline },
 	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline },
@@ -142,7 +146,9 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'control_escape',
 	'control_letter_escape',
 	'group_name',
-	'decimal_digits'
+	'decimal_digits',
+	'character_class_escape_text1',
+	'character_class_escape_text2'
 ];
 
 const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {};
@@ -236,7 +242,7 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'unicode_property_name'
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
-	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 45, 47,
+	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 40, 47,
 	48, 49, 50, 54
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
@@ -245,13 +251,13 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	posix_character_class: new Set([60]),
 	anonymous_capturing_group: new Set([51, 52, 53]),
 	non_capturing_group: new Set([51, 52, 53]),
-	count_quantifier: new Set([44, 79]),
-	backreference_escape: new Set([43]),
-	named_group_backreference: new Set([43]),
-	character_class_escape: new Set([74, 80]),
-	count_quantifier_group: new Set([44]),
-	unicode_property_value_expression_group: new Set([38, 89]),
-	unicode_property_name: new Set([38])
+	count_quantifier: new Set([39, 79]),
+	backreference_escape: new Set([38]),
+	named_group_backreference: new Set([38]),
+	character_class_escape: new Set([41, 74, 80]),
+	count_quantifier_group: new Set([39]),
+	unicode_property_value_expression_group: new Set([35, 89]),
+	unicode_property_name: new Set([35])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {};
 
@@ -605,7 +611,7 @@ const _K5: readonly string[] = ['class_character', 'control_escape'];
 const _K6: readonly string[] = ['character_class_escape'];
 const _K7: readonly string[] = ['decimal_digits'];
 const _K8: readonly string[] = ['count_quantifier_arm'];
-const _K9: readonly string[] = ['unicode_character_escape'];
+const _K9: readonly string[] = ['character_class_escape_text1', 'unicode_character_escape'];
 const _K10: readonly string[] = ['character_class_escape_arm'];
 const _K11: readonly string[] = [
 	'start_assertion',
@@ -1133,7 +1139,11 @@ export function coerceToDecimalEscape(input: T.DecimalEscape.Loose): ReturnType<
 export function resolveCharacterClassEscape_content(
 	value: T.CharacterClassEscape.LooseConfig['content']
 ): T.CharacterClassEscape['_content'] {
-	return _resolveOne<'\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>(value, _K9, _K10);
+	return _resolveOne<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>(
+		value,
+		_K9,
+		_K10
+	);
 }
 
 export function coerceToCharacterClassEscape(
@@ -1145,7 +1155,7 @@ export function coerceToCharacterClassEscape(
 		_requireField(
 			'character_class_escape',
 			'content',
-			_resolveOne<'\\\\[dDsSwW]' | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>(
+			_resolveOne<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>(
 				configFieldOr(input, 'content', () => input),
 				_K9,
 				_K10
@@ -1344,10 +1354,10 @@ export function coerceToCountQuantifierArm(
 	});
 }
 
-export function resolveCharacterClassEscapeArm_content(
-	value: T.CharacterClassEscapeArm.LooseConfig['content']
-): T.CharacterClassEscapeArm['_content'] {
-	return _resolveOne<'\\\\[pP]'>(value, _K0, _K0);
+export function resolveCharacterClassEscapeArm_characterClassEscapeText2(
+	value: T.CharacterClassEscapeArm.LooseConfig['characterClassEscapeText2']
+): T.CharacterClassEscapeArm['_character_class_escape_text2'] {
+	return _resolveOneLeaf<T.CharacterClassEscapeText2>(value, 'character_class_escape_text2');
 }
 
 export function resolveCharacterClassEscapeArm_unicodePropertyValueExpression(
@@ -1362,10 +1372,10 @@ export function coerceToCharacterClassEscapeArm(
 	if (!_isLooseConfig<T.CharacterClassEscapeArm.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCharacterClassEscapeArm>;
 	return F.buildCharacterClassEscapeArm({
-		content: _requireField(
+		characterClassEscapeText2: _requireField(
 			'character_class_escape_arm',
-			'content',
-			resolveCharacterClassEscapeArm_content(input.content)
+			'characterClassEscapeText2',
+			resolveCharacterClassEscapeArm_characterClassEscapeText2(input.characterClassEscapeText2)
 		),
 		unicodePropertyValueExpression: _requireField(
 			'character_class_escape_arm',
@@ -1398,6 +1408,20 @@ export function coerceToUnicodePropertyValueExpressionGroup(
 			)
 		)
 	);
+}
+
+export function coerceToCharacterClassEscapeText1(
+	input: T.CharacterClassEscapeText1.Loose
+): ReturnType<typeof F.buildCharacterClassEscapeText1> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCharacterClassEscapeText1>;
+	return F.buildCharacterClassEscapeText1(input as Parameters<typeof F.buildCharacterClassEscapeText1>[0]);
+}
+
+export function coerceToCharacterClassEscapeText2(
+	input: T.CharacterClassEscapeText2.Loose
+): ReturnType<typeof F.buildCharacterClassEscapeText2> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCharacterClassEscapeText2>;
+	return F.buildCharacterClassEscapeText2(input as Parameters<typeof F.buildCharacterClassEscapeText2>[0]);
 }
 
 export function resolveInlineFlagsGroupEnable_enabled(
@@ -1508,32 +1532,29 @@ export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeo
 	return F.buildDoubleBlankline;
 }
 
-export function resolveLazy_content(value: T.Lazy.LooseConfig['content']): T.Lazy['_content'] {
+export function resolveLazy_content(value: T.Lazy.LooseConfig['content'] | undefined): T.Lazy['_content'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOne<'?'>(value, _K0, _K0)),
 		[['?', TSKindId.Qmark] as const]
 	);
 }
 
-export function coerceToLazy(input: T.Lazy.Loose): ReturnType<typeof F.buildLazy> {
-	if (isNodeOfKind(input, TSKindId.Lazy)) return input as unknown as ReturnType<typeof F.buildLazy>;
+export function coerceToLazy(input?: T.Lazy.Loose): ReturnType<typeof F.buildLazy> {
+	if (input !== undefined && isNodeOfKind(input, TSKindId.Lazy))
+		return input as unknown as ReturnType<typeof F.buildLazy>;
 	return F.buildLazy(
-		_requireField(
-			'lazy',
-			'content',
-			coerceKindEnumStorage(
-				_resolveKindEnumScalar(
-					configFieldOr(input, 'content', () => input),
-					() =>
-						_resolveOne<'?'>(
-							configFieldOr(input, 'content', () => input),
-							_K0,
-							_K0
-						)
-				),
-				[['?', TSKindId.Qmark] as const]
-			)
-		)
+		coerceKindEnumStorage(
+			_resolveKindEnumScalar(
+				configFieldOr(input, 'content', () => input),
+				() =>
+					_resolveOne<'?'>(
+						configFieldOr(input, 'content', () => input),
+						_K0,
+						_K0
+					)
+			),
+			[['?', TSKindId.Qmark] as const]
+		) ?? (TSKindId.Qmark as const)
 	);
 }
 

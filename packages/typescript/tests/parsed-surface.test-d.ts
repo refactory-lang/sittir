@@ -35,11 +35,24 @@ export function renderTakesEveryNodeAUserCanHold(): string {
 	return [engine.render(root), engine.render(item), engine.render(draft)].map(String).join('');
 }
 
-export function listOwnerReadsItems(): string {
+export function listsReadAsReadonlyArrays(): string {
 	const item = engine.parse('function f(a) {}\n').statements()[0]!;
 	if (!engine.is.functionDeclaration(item)) return '';
 	const params = item.parameters();
-	const items = params.formalParametersElements();
-	expectTrue<Equals<NonNullable<typeof items>[number], ItemOf<typeof params>>>();
-	return params.$with.formalParametersElements(...items!).$render();
+	type Item = ItemOf<typeof params>;
+	const owner: ReadonlyArray<Item> = params;
+	const list: ReadonlyArray<Item> | undefined = params.formalParametersElements();
+	const rendered = params.map((param) => (typeof param === 'number' ? '' : param.$render()));
+	const first: Item | undefined = params[0];
+	return [owner.length, list?.length, rendered.join(','), String(first)].join('');
+}
+
+export function aListSlotTakesItsBuilderArguments(): string {
+	const item = engine.parse('function f(a) {}\n').statements()[0]!;
+	if (!engine.is.functionDeclaration(item)) return '';
+	const params = item.parameters();
+	const fromItems = item.$with.parameters(...params);
+	const fromNode = item.$with.parameters(params);
+	const inner = params.$with.formalParametersElements(...params);
+	return fromItems.$render() + fromNode.$render() + inner.$render();
 }

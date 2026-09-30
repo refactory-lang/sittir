@@ -16,7 +16,8 @@ import {
 	rejectBareText,
 	rejectKeywordText,
 	withGroupSeat,
-	withListOwner
+	withListSlots,
+	withListView
 } from '@sittir/common/utils';
 import { withMethods } from '../utils.js';
 
@@ -169,28 +170,37 @@ export function buildExportClause(...args: unknown[]) {
 function _buildExportClause(value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNodes>): T.ExportClause.Bound {
 	const _export_specifiers = rejectBareText(value, 'ExportClause.exportSpecifiers', 'a built ExportSpecifiers');
 	return withMethods(
-		withListOwner(
-			withAccessors(
-				{
-					$type: TSKindId.ExportClause as const,
-					$source: 2 as const,
-					$named: true as const,
-					_export_specifiers,
-					$with: {
-						exportSpecifiers: (value?: T.ExportSpecifiers) => buildExportClause(value)
+		withListView(
+			withListSlots(
+				withAccessors(
+					{
+						$type: TSKindId.ExportClause as const,
+						$source: 2 as const,
+						$named: true as const,
+						_export_specifiers,
+						$with: {
+							exportSpecifiers: (value?: T.ExportSpecifiers) => buildExportClause(value)
+						}
+					},
+					{
+						exportSpecifiers: () => _export_specifiers
 					}
-				},
-				{
-					exportSpecifiers: () => _export_specifiers
-				}
+				),
+				[
+					{
+						slot: 'exportSpecifiers',
+						kind: TSKindId.ExportSpecifiers as const,
+						optional: true,
+						make: buildExportSpecifiers
+					}
+				]
 			),
 			{
-				list: 'exportSpecifiers',
+				list: { accessor: 'exportSpecifiers', storage: '_export_specifiers' },
 				elements: 'exportSpecifiers',
-				kind: TSKindId.ExportSpecifiers as const,
-				make: buildExportSpecifiers,
-				wrapper: { kind: TSKindId.ExportSpecifier, content: 'name', decorations: ['_export_kind', '_alias'] },
-				options: [{ key: 'delimiter', default: Delimiter.None }]
+				count: '_export_specifier',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				wrapper: { kind: TSKindId.ExportSpecifier, content: 'name', decorations: ['_export_kind', '_alias'] }
 			}
 		)
 	) as unknown as T.ExportClause.Bound;
@@ -373,26 +383,35 @@ export function buildNamedImports(...args: unknown[]) {
 function _buildNamedImports(value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNodes>): T.NamedImports.Bound {
 	const _import_specifiers = rejectBareText(value, 'NamedImports.importSpecifiers', 'a built ImportSpecifiers');
 	return withMethods(
-		withListOwner(
-			withAccessors(
-				{
-					$type: TSKindId.NamedImports as const,
-					$source: 2 as const,
-					$named: true as const,
-					_import_specifiers,
-					$with: {
-						importSpecifiers: (value?: T.ImportSpecifiers) => buildNamedImports(value)
+		withListView(
+			withListSlots(
+				withAccessors(
+					{
+						$type: TSKindId.NamedImports as const,
+						$source: 2 as const,
+						$named: true as const,
+						_import_specifiers,
+						$with: {
+							importSpecifiers: (value?: T.ImportSpecifiers) => buildNamedImports(value)
+						}
+					},
+					{
+						importSpecifiers: () => _import_specifiers
 					}
-				},
-				{
-					importSpecifiers: () => _import_specifiers
-				}
+				),
+				[
+					{
+						slot: 'importSpecifiers',
+						kind: TSKindId.ImportSpecifiers as const,
+						optional: true,
+						make: buildImportSpecifiers
+					}
+				]
 			),
 			{
-				list: 'importSpecifiers',
+				list: { accessor: 'importSpecifiers', storage: '_import_specifiers' },
 				elements: 'importSpecifiers',
-				kind: TSKindId.ImportSpecifiers as const,
-				make: buildImportSpecifiers,
+				count: '_import_specifier',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
@@ -1851,31 +1870,34 @@ export function buildClass(config: Partial<T.Class.Config> = {}): T.Class.Bound 
 		'a built ClassBody'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.Class as const,
-				$source: 2 as const,
-				$named: true as const,
-				_decorator,
-				_name,
-				_type_parameters,
-				_heritage,
-				_body,
-				$with: {
-					decorators: (...values: T.Decorator[]) => buildClass({ ...config, decorator: values }),
-					name: (value?: T.TypeIdentifier | T.TypeIdentifier.Types) => buildClass({ ...config, name: value }),
-					typeParameters: (value?: T.TypeParameters) => buildClass({ ...config, typeParameters: value }),
-					heritage: (value?: T.ClassHeritage) => buildClass({ ...config, heritage: value }),
-					body: (value: T.ClassBody) => buildClass({ ...config, body: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.Class as const,
+					$source: 2 as const,
+					$named: true as const,
+					_decorator,
+					_name,
+					_type_parameters,
+					_heritage,
+					_body,
+					$with: {
+						decorators: (...values: T.Decorator[]) => buildClass({ ...config, decorator: values }),
+						name: (value?: T.TypeIdentifier | T.TypeIdentifier.Types) => buildClass({ ...config, name: value }),
+						typeParameters: (value?: T.TypeParameters) => buildClass({ ...config, typeParameters: value }),
+						heritage: (value?: T.ClassHeritage) => buildClass({ ...config, heritage: value }),
+						body: (value: T.ClassBody) => buildClass({ ...config, body: value })
+					}
+				},
+				{
+					decorators: () => _decorator,
+					name: () => _name,
+					typeParameters: () => _type_parameters,
+					heritage: () => _heritage,
+					body: () => _body
 				}
-			},
-			{
-				decorators: () => _decorator,
-				name: () => _name,
-				typeParameters: () => _type_parameters,
-				heritage: () => _heritage,
-				body: () => _body
-			}
+			),
+			[{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters }]
 		)
 	) as unknown as T.Class.Bound;
 }
@@ -1899,35 +1921,39 @@ export function buildClassDeclaration(config: T.ClassDeclaration.Config): T.Clas
 	);
 	const _automatic_semicolon = coerceBooleanKeywordStorage(config.automaticSemicolon);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ClassDeclaration as const,
-				$source: 2 as const,
-				$named: true as const,
-				_decorator,
-				_name,
-				_type_parameters,
-				_heritage,
-				_body,
-				_automatic_semicolon,
-				$with: {
-					decorators: (...values: T.Decorator[]) => buildClassDeclaration({ ...config, decorator: values }),
-					name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) => buildClassDeclaration({ ...config, name: value }),
-					typeParameters: (value?: T.TypeParameters) => buildClassDeclaration({ ...config, typeParameters: value }),
-					heritage: (value?: T.ClassHeritage) => buildClassDeclaration({ ...config, heritage: value }),
-					body: (value: T.ClassBody) => buildClassDeclaration({ ...config, body: value }),
-					automaticSemicolon: (value?: NonNullable<T.ClassDeclaration.Config>['automaticSemicolon']) =>
-						buildClassDeclaration({ ...config, automaticSemicolon: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.ClassDeclaration as const,
+					$source: 2 as const,
+					$named: true as const,
+					_decorator,
+					_name,
+					_type_parameters,
+					_heritage,
+					_body,
+					_automatic_semicolon,
+					$with: {
+						decorators: (...values: T.Decorator[]) => buildClassDeclaration({ ...config, decorator: values }),
+						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+							buildClassDeclaration({ ...config, name: value }),
+						typeParameters: (value?: T.TypeParameters) => buildClassDeclaration({ ...config, typeParameters: value }),
+						heritage: (value?: T.ClassHeritage) => buildClassDeclaration({ ...config, heritage: value }),
+						body: (value: T.ClassBody) => buildClassDeclaration({ ...config, body: value }),
+						automaticSemicolon: (value?: NonNullable<T.ClassDeclaration.Config>['automaticSemicolon']) =>
+							buildClassDeclaration({ ...config, automaticSemicolon: value })
+					}
+				},
+				{
+					decorators: () => _decorator,
+					name: () => _name,
+					typeParameters: () => _type_parameters,
+					heritage: () => _heritage,
+					body: () => _body,
+					automaticSemicolon: () => _automatic_semicolon
 				}
-			},
-			{
-				decorators: () => _decorator,
-				name: () => _name,
-				typeParameters: () => _type_parameters,
-				heritage: () => _heritage,
-				body: () => _body,
-				automaticSemicolon: () => _automatic_semicolon
-			}
+			),
+			[{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters }]
 		)
 	) as unknown as T.ClassDeclaration.Bound;
 }
@@ -1982,36 +2008,42 @@ export function buildFunctionExpression(config: T.FunctionExpression.Config): T.
 		'a built StatementBlock'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FunctionExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_async_marker,
-				_name,
-				_type_parameters,
-				_parameters,
-				_return_type,
-				_body,
-				$with: {
-					asyncMarker: (value?: NonNullable<T.FunctionExpression.Config>['asyncMarker']) =>
-						buildFunctionExpression({ ...config, asyncMarker: value }),
-					name: (value?: T.Identifier) => buildFunctionExpression({ ...config, name: value }),
-					typeParameters: (value?: T.TypeParameters) => buildFunctionExpression({ ...config, typeParameters: value }),
-					parameters: (value: T.FormalParameters) => buildFunctionExpression({ ...config, parameters: value }),
-					returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-						buildFunctionExpression({ ...config, returnType: value }),
-					body: (value: T.StatementBlock) => buildFunctionExpression({ ...config, body: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.FunctionExpression as const,
+					$source: 2 as const,
+					$named: true as const,
+					_async_marker,
+					_name,
+					_type_parameters,
+					_parameters,
+					_return_type,
+					_body,
+					$with: {
+						asyncMarker: (value?: NonNullable<T.FunctionExpression.Config>['asyncMarker']) =>
+							buildFunctionExpression({ ...config, asyncMarker: value }),
+						name: (value?: T.Identifier) => buildFunctionExpression({ ...config, name: value }),
+						typeParameters: (value?: T.TypeParameters) => buildFunctionExpression({ ...config, typeParameters: value }),
+						parameters: (value: T.FormalParameters) => buildFunctionExpression({ ...config, parameters: value }),
+						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+							buildFunctionExpression({ ...config, returnType: value }),
+						body: (value: T.StatementBlock) => buildFunctionExpression({ ...config, body: value })
+					}
+				},
+				{
+					asyncMarker: () => _async_marker,
+					name: () => _name,
+					typeParameters: () => _type_parameters,
+					parameters: () => _parameters,
+					returnType: () => _return_type,
+					body: () => _body
 				}
-			},
-			{
-				asyncMarker: () => _async_marker,
-				name: () => _name,
-				typeParameters: () => _type_parameters,
-				parameters: () => _parameters,
-				returnType: () => _return_type,
-				body: () => _body
-			}
+			),
+			[
+				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
+			]
 		)
 	) as unknown as T.FunctionExpression.Bound;
 }
@@ -2041,40 +2073,47 @@ export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): 
 	);
 	const _automatic_semicolon = coerceBooleanKeywordStorage(config.automaticSemicolon);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FunctionDeclaration as const,
-				$source: 2 as const,
-				$named: true as const,
-				_async_marker,
-				_name,
-				_type_parameters,
-				_parameters,
-				_return_type,
-				_body,
-				_automatic_semicolon,
-				$with: {
-					asyncMarker: (value?: NonNullable<T.FunctionDeclaration.Config>['asyncMarker']) =>
-						buildFunctionDeclaration({ ...config, asyncMarker: value }),
-					name: (value: T.Identifier) => buildFunctionDeclaration({ ...config, name: value }),
-					typeParameters: (value?: T.TypeParameters) => buildFunctionDeclaration({ ...config, typeParameters: value }),
-					parameters: (value: T.FormalParameters) => buildFunctionDeclaration({ ...config, parameters: value }),
-					returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-						buildFunctionDeclaration({ ...config, returnType: value }),
-					body: (value: T.StatementBlock) => buildFunctionDeclaration({ ...config, body: value }),
-					automaticSemicolon: (value?: NonNullable<T.FunctionDeclaration.Config>['automaticSemicolon']) =>
-						buildFunctionDeclaration({ ...config, automaticSemicolon: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.FunctionDeclaration as const,
+					$source: 2 as const,
+					$named: true as const,
+					_async_marker,
+					_name,
+					_type_parameters,
+					_parameters,
+					_return_type,
+					_body,
+					_automatic_semicolon,
+					$with: {
+						asyncMarker: (value?: NonNullable<T.FunctionDeclaration.Config>['asyncMarker']) =>
+							buildFunctionDeclaration({ ...config, asyncMarker: value }),
+						name: (value: T.Identifier) => buildFunctionDeclaration({ ...config, name: value }),
+						typeParameters: (value?: T.TypeParameters) =>
+							buildFunctionDeclaration({ ...config, typeParameters: value }),
+						parameters: (value: T.FormalParameters) => buildFunctionDeclaration({ ...config, parameters: value }),
+						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+							buildFunctionDeclaration({ ...config, returnType: value }),
+						body: (value: T.StatementBlock) => buildFunctionDeclaration({ ...config, body: value }),
+						automaticSemicolon: (value?: NonNullable<T.FunctionDeclaration.Config>['automaticSemicolon']) =>
+							buildFunctionDeclaration({ ...config, automaticSemicolon: value })
+					}
+				},
+				{
+					asyncMarker: () => _async_marker,
+					name: () => _name,
+					typeParameters: () => _type_parameters,
+					parameters: () => _parameters,
+					returnType: () => _return_type,
+					body: () => _body,
+					automaticSemicolon: () => _automatic_semicolon
 				}
-			},
-			{
-				asyncMarker: () => _async_marker,
-				name: () => _name,
-				typeParameters: () => _type_parameters,
-				parameters: () => _parameters,
-				returnType: () => _return_type,
-				body: () => _body,
-				automaticSemicolon: () => _automatic_semicolon
-			}
+			),
+			[
+				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
+			]
 		)
 	) as unknown as T.FunctionDeclaration.Bound;
 }
@@ -2103,36 +2142,42 @@ export function buildGeneratorFunction(config: T.GeneratorFunction.Config): T.Ge
 		'a built StatementBlock'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.GeneratorFunction as const,
-				$source: 2 as const,
-				$named: true as const,
-				_async_marker,
-				_name,
-				_type_parameters,
-				_parameters,
-				_return_type,
-				_body,
-				$with: {
-					asyncMarker: (value?: NonNullable<T.GeneratorFunction.Config>['asyncMarker']) =>
-						buildGeneratorFunction({ ...config, asyncMarker: value }),
-					name: (value?: T.Identifier) => buildGeneratorFunction({ ...config, name: value }),
-					typeParameters: (value?: T.TypeParameters) => buildGeneratorFunction({ ...config, typeParameters: value }),
-					parameters: (value: T.FormalParameters) => buildGeneratorFunction({ ...config, parameters: value }),
-					returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-						buildGeneratorFunction({ ...config, returnType: value }),
-					body: (value: T.StatementBlock) => buildGeneratorFunction({ ...config, body: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.GeneratorFunction as const,
+					$source: 2 as const,
+					$named: true as const,
+					_async_marker,
+					_name,
+					_type_parameters,
+					_parameters,
+					_return_type,
+					_body,
+					$with: {
+						asyncMarker: (value?: NonNullable<T.GeneratorFunction.Config>['asyncMarker']) =>
+							buildGeneratorFunction({ ...config, asyncMarker: value }),
+						name: (value?: T.Identifier) => buildGeneratorFunction({ ...config, name: value }),
+						typeParameters: (value?: T.TypeParameters) => buildGeneratorFunction({ ...config, typeParameters: value }),
+						parameters: (value: T.FormalParameters) => buildGeneratorFunction({ ...config, parameters: value }),
+						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+							buildGeneratorFunction({ ...config, returnType: value }),
+						body: (value: T.StatementBlock) => buildGeneratorFunction({ ...config, body: value })
+					}
+				},
+				{
+					asyncMarker: () => _async_marker,
+					name: () => _name,
+					typeParameters: () => _type_parameters,
+					parameters: () => _parameters,
+					returnType: () => _return_type,
+					body: () => _body
 				}
-			},
-			{
-				asyncMarker: () => _async_marker,
-				name: () => _name,
-				typeParameters: () => _type_parameters,
-				parameters: () => _parameters,
-				returnType: () => _return_type,
-				body: () => _body
-			}
+			),
+			[
+				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
+			]
 		)
 	) as unknown as T.GeneratorFunction.Bound;
 }
@@ -2164,42 +2209,48 @@ export function buildGeneratorFunctionDeclaration(
 	);
 	const _automatic_semicolon = coerceBooleanKeywordStorage(config.automaticSemicolon);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.GeneratorFunctionDeclaration as const,
-				$source: 2 as const,
-				$named: true as const,
-				_async_marker,
-				_name,
-				_type_parameters,
-				_parameters,
-				_return_type,
-				_body,
-				_automatic_semicolon,
-				$with: {
-					asyncMarker: (value?: NonNullable<T.GeneratorFunctionDeclaration.Config>['asyncMarker']) =>
-						buildGeneratorFunctionDeclaration({ ...config, asyncMarker: value }),
-					name: (value: T.Identifier) => buildGeneratorFunctionDeclaration({ ...config, name: value }),
-					typeParameters: (value?: T.TypeParameters) =>
-						buildGeneratorFunctionDeclaration({ ...config, typeParameters: value }),
-					parameters: (value: T.FormalParameters) =>
-						buildGeneratorFunctionDeclaration({ ...config, parameters: value }),
-					returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-						buildGeneratorFunctionDeclaration({ ...config, returnType: value }),
-					body: (value: T.StatementBlock) => buildGeneratorFunctionDeclaration({ ...config, body: value }),
-					automaticSemicolon: (value?: NonNullable<T.GeneratorFunctionDeclaration.Config>['automaticSemicolon']) =>
-						buildGeneratorFunctionDeclaration({ ...config, automaticSemicolon: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.GeneratorFunctionDeclaration as const,
+					$source: 2 as const,
+					$named: true as const,
+					_async_marker,
+					_name,
+					_type_parameters,
+					_parameters,
+					_return_type,
+					_body,
+					_automatic_semicolon,
+					$with: {
+						asyncMarker: (value?: NonNullable<T.GeneratorFunctionDeclaration.Config>['asyncMarker']) =>
+							buildGeneratorFunctionDeclaration({ ...config, asyncMarker: value }),
+						name: (value: T.Identifier) => buildGeneratorFunctionDeclaration({ ...config, name: value }),
+						typeParameters: (value?: T.TypeParameters) =>
+							buildGeneratorFunctionDeclaration({ ...config, typeParameters: value }),
+						parameters: (value: T.FormalParameters) =>
+							buildGeneratorFunctionDeclaration({ ...config, parameters: value }),
+						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+							buildGeneratorFunctionDeclaration({ ...config, returnType: value }),
+						body: (value: T.StatementBlock) => buildGeneratorFunctionDeclaration({ ...config, body: value }),
+						automaticSemicolon: (value?: NonNullable<T.GeneratorFunctionDeclaration.Config>['automaticSemicolon']) =>
+							buildGeneratorFunctionDeclaration({ ...config, automaticSemicolon: value })
+					}
+				},
+				{
+					asyncMarker: () => _async_marker,
+					name: () => _name,
+					typeParameters: () => _type_parameters,
+					parameters: () => _parameters,
+					returnType: () => _return_type,
+					body: () => _body,
+					automaticSemicolon: () => _automatic_semicolon
 				}
-			},
-			{
-				asyncMarker: () => _async_marker,
-				name: () => _name,
-				typeParameters: () => _type_parameters,
-				parameters: () => _parameters,
-				returnType: () => _return_type,
-				body: () => _body,
-				automaticSemicolon: () => _automatic_semicolon
-			}
+			),
+			[
+				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
+			]
 		)
 	) as unknown as T.GeneratorFunctionDeclaration.Bound;
 }
@@ -2253,26 +2304,29 @@ export function buildNewExpression(config: T.NewExpression.Config): T.NewExpress
 	const _type_arguments = rejectBareText(config.typeArguments, 'NewExpression.typeArguments', 'a built TypeArguments');
 	const _arguments = rejectBareText(config.arguments, 'NewExpression.arguments', 'a built Arguments');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.NewExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_constructor,
-				_type_arguments,
-				_arguments,
-				$with: {
-					constructor_: (value: NonNullable<T.NewExpression.Config>['constructor_']) =>
-						buildNewExpression({ ...config, constructor_: value }),
-					typeArguments: (value?: T.TypeArguments) => buildNewExpression({ ...config, typeArguments: value }),
-					arguments: (value?: T.Arguments) => buildNewExpression({ ...config, arguments: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.NewExpression as const,
+					$source: 2 as const,
+					$named: true as const,
+					_constructor,
+					_type_arguments,
+					_arguments,
+					$with: {
+						constructor_: (value: NonNullable<T.NewExpression.Config>['constructor_']) =>
+							buildNewExpression({ ...config, constructor_: value }),
+						typeArguments: (value?: T.TypeArguments) => buildNewExpression({ ...config, typeArguments: value }),
+						arguments: (value?: T.Arguments) => buildNewExpression({ ...config, arguments: value })
+					}
+				},
+				{
+					constructor_: () => _constructor,
+					typeArguments: () => _type_arguments,
+					arguments: () => _arguments
 				}
-			},
-			{
-				constructor_: () => _constructor,
-				typeArguments: () => _type_arguments,
-				arguments: () => _arguments
-			}
+			),
+			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments }]
 		)
 	) as unknown as T.NewExpression.Bound;
 }
@@ -3174,26 +3228,30 @@ export function buildDecoratorCallExpression(
 		'a built Arguments'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.DecoratorCallExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_function,
-				_type_arguments,
-				_arguments,
-				$with: {
-					function: (value: T.Identifier | T.DecoratorMemberExpression) =>
-						buildDecoratorCallExpression({ ...config, function: value }),
-					typeArguments: (value?: T.TypeArguments) => buildDecoratorCallExpression({ ...config, typeArguments: value }),
-					arguments: (value: T.Arguments) => buildDecoratorCallExpression({ ...config, arguments: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.DecoratorCallExpression as const,
+					$source: 2 as const,
+					$named: true as const,
+					_function,
+					_type_arguments,
+					_arguments,
+					$with: {
+						function: (value: T.Identifier | T.DecoratorMemberExpression) =>
+							buildDecoratorCallExpression({ ...config, function: value }),
+						typeArguments: (value?: T.TypeArguments) =>
+							buildDecoratorCallExpression({ ...config, typeArguments: value }),
+						arguments: (value: T.Arguments) => buildDecoratorCallExpression({ ...config, arguments: value })
+					}
+				},
+				{
+					function: () => _function,
+					typeArguments: () => _type_arguments,
+					arguments: () => _arguments
 				}
-			},
-			{
-				function: () => _function,
-				typeArguments: () => _type_arguments,
-				arguments: () => _arguments
-			}
+			),
+			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments }]
 		)
 	) as unknown as T.DecoratorCallExpression.Bound;
 }
@@ -3277,26 +3335,35 @@ function _buildFormalParameters(
 		'a built FormalParametersElements'
 	);
 	return withMethods(
-		withListOwner(
-			withAccessors(
-				{
-					$type: TSKindId.FormalParameters as const,
-					$source: 2 as const,
-					$named: true as const,
-					_formal_parameters_elements,
-					$with: {
-						formalParametersElements: (value?: T.FormalParametersElements) => buildFormalParameters(value)
+		withListView(
+			withListSlots(
+				withAccessors(
+					{
+						$type: TSKindId.FormalParameters as const,
+						$source: 2 as const,
+						$named: true as const,
+						_formal_parameters_elements,
+						$with: {
+							formalParametersElements: (value?: T.FormalParametersElements) => buildFormalParameters(value)
+						}
+					},
+					{
+						formalParametersElements: () => _formal_parameters_elements
 					}
-				},
-				{
-					formalParametersElements: () => _formal_parameters_elements
-				}
+				),
+				[
+					{
+						slot: 'formalParametersElements',
+						kind: TSKindId.FormalParametersElements as const,
+						optional: true,
+						make: buildFormalParametersElements
+					}
+				]
 			),
 			{
-				list: 'formalParametersElements',
+				list: { accessor: 'formalParametersElements', storage: '_formal_parameters_elements' },
 				elements: 'formalParameters',
-				kind: TSKindId.FormalParametersElements as const,
-				make: buildFormalParametersElements,
+				count: '_formal_parameter',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
@@ -3545,61 +3612,67 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 		'a built StatementBlock'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MethodDefinition as const,
-				$source: 2 as const,
-				$named: true as const,
-				_accessibility_modifier,
-				_static_marker,
-				_override_modifier,
-				_readonly_marker,
-				_async_marker,
-				_accessor_kind,
-				_name,
-				_optional_marker,
-				_type_parameters,
-				_parameters,
-				_return_type,
-				_body,
-				$with: {
-					accessibilityModifier: (value?: NonNullable<T.MethodDefinition.Config>['accessibilityModifier']) =>
-						buildMethodDefinition({ ...config, accessibilityModifier: value }),
-					staticMarker: (value?: NonNullable<T.MethodDefinition.Config>['staticMarker']) =>
-						buildMethodDefinition({ ...config, staticMarker: value }),
-					overrideModifier: (value?: NonNullable<T.MethodDefinition.Config>['overrideModifier']) =>
-						buildMethodDefinition({ ...config, overrideModifier: value }),
-					readonlyMarker: (value?: NonNullable<T.MethodDefinition.Config>['readonlyMarker']) =>
-						buildMethodDefinition({ ...config, readonlyMarker: value }),
-					asyncMarker: (value?: NonNullable<T.MethodDefinition.Config>['asyncMarker']) =>
-						buildMethodDefinition({ ...config, asyncMarker: value }),
-					accessorKind: (value?: NonNullable<T.MethodDefinition.Config>['accessorKind']) =>
-						buildMethodDefinition({ ...config, accessorKind: value }),
-					name: (value: NonNullable<T.MethodDefinition.Config>['name']) =>
-						buildMethodDefinition({ ...config, name: value }),
-					optionalMarker: (value?: NonNullable<T.MethodDefinition.Config>['optionalMarker']) =>
-						buildMethodDefinition({ ...config, optionalMarker: value }),
-					typeParameters: (value?: T.TypeParameters) => buildMethodDefinition({ ...config, typeParameters: value }),
-					parameters: (value: T.FormalParameters) => buildMethodDefinition({ ...config, parameters: value }),
-					returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-						buildMethodDefinition({ ...config, returnType: value }),
-					body: (value: T.StatementBlock) => buildMethodDefinition({ ...config, body: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.MethodDefinition as const,
+					$source: 2 as const,
+					$named: true as const,
+					_accessibility_modifier,
+					_static_marker,
+					_override_modifier,
+					_readonly_marker,
+					_async_marker,
+					_accessor_kind,
+					_name,
+					_optional_marker,
+					_type_parameters,
+					_parameters,
+					_return_type,
+					_body,
+					$with: {
+						accessibilityModifier: (value?: NonNullable<T.MethodDefinition.Config>['accessibilityModifier']) =>
+							buildMethodDefinition({ ...config, accessibilityModifier: value }),
+						staticMarker: (value?: NonNullable<T.MethodDefinition.Config>['staticMarker']) =>
+							buildMethodDefinition({ ...config, staticMarker: value }),
+						overrideModifier: (value?: NonNullable<T.MethodDefinition.Config>['overrideModifier']) =>
+							buildMethodDefinition({ ...config, overrideModifier: value }),
+						readonlyMarker: (value?: NonNullable<T.MethodDefinition.Config>['readonlyMarker']) =>
+							buildMethodDefinition({ ...config, readonlyMarker: value }),
+						asyncMarker: (value?: NonNullable<T.MethodDefinition.Config>['asyncMarker']) =>
+							buildMethodDefinition({ ...config, asyncMarker: value }),
+						accessorKind: (value?: NonNullable<T.MethodDefinition.Config>['accessorKind']) =>
+							buildMethodDefinition({ ...config, accessorKind: value }),
+						name: (value: NonNullable<T.MethodDefinition.Config>['name']) =>
+							buildMethodDefinition({ ...config, name: value }),
+						optionalMarker: (value?: NonNullable<T.MethodDefinition.Config>['optionalMarker']) =>
+							buildMethodDefinition({ ...config, optionalMarker: value }),
+						typeParameters: (value?: T.TypeParameters) => buildMethodDefinition({ ...config, typeParameters: value }),
+						parameters: (value: T.FormalParameters) => buildMethodDefinition({ ...config, parameters: value }),
+						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+							buildMethodDefinition({ ...config, returnType: value }),
+						body: (value: T.StatementBlock) => buildMethodDefinition({ ...config, body: value })
+					}
+				},
+				{
+					accessibilityModifier: () => _accessibility_modifier,
+					staticMarker: () => _static_marker,
+					overrideModifier: () => _override_modifier,
+					readonlyMarker: () => _readonly_marker,
+					asyncMarker: () => _async_marker,
+					accessorKind: () => _accessor_kind,
+					name: () => _name,
+					optionalMarker: () => _optional_marker,
+					typeParameters: () => _type_parameters,
+					parameters: () => _parameters,
+					returnType: () => _return_type,
+					body: () => _body
 				}
-			},
-			{
-				accessibilityModifier: () => _accessibility_modifier,
-				staticMarker: () => _static_marker,
-				overrideModifier: () => _override_modifier,
-				readonlyMarker: () => _readonly_marker,
-				asyncMarker: () => _async_marker,
-				accessorKind: () => _accessor_kind,
-				name: () => _name,
-				optionalMarker: () => _optional_marker,
-				typeParameters: () => _type_parameters,
-				parameters: () => _parameters,
-				returnType: () => _return_type,
-				body: () => _body
-			}
+			),
+			[
+				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
+			]
 		)
 	) as unknown as T.MethodDefinition.Bound;
 }
@@ -3949,58 +4022,64 @@ export function buildMethodSignature(config: T.MethodSignature.Config): T.Method
 		'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MethodSignature as const,
-				$source: 2 as const,
-				$named: true as const,
-				_accessibility_modifier,
-				_static_marker,
-				_override_modifier,
-				_readonly_marker,
-				_async_marker,
-				_accessor_kind,
-				_name,
-				_optional_marker,
-				_type_parameters,
-				_parameters,
-				_return_type,
-				$with: {
-					accessibilityModifier: (value?: NonNullable<T.MethodSignature.Config>['accessibilityModifier']) =>
-						buildMethodSignature({ ...config, accessibilityModifier: value }),
-					staticMarker: (value?: NonNullable<T.MethodSignature.Config>['staticMarker']) =>
-						buildMethodSignature({ ...config, staticMarker: value }),
-					overrideModifier: (value?: NonNullable<T.MethodSignature.Config>['overrideModifier']) =>
-						buildMethodSignature({ ...config, overrideModifier: value }),
-					readonlyMarker: (value?: NonNullable<T.MethodSignature.Config>['readonlyMarker']) =>
-						buildMethodSignature({ ...config, readonlyMarker: value }),
-					asyncMarker: (value?: NonNullable<T.MethodSignature.Config>['asyncMarker']) =>
-						buildMethodSignature({ ...config, asyncMarker: value }),
-					accessorKind: (value?: NonNullable<T.MethodSignature.Config>['accessorKind']) =>
-						buildMethodSignature({ ...config, accessorKind: value }),
-					name: (value: NonNullable<T.MethodSignature.Config>['name']) =>
-						buildMethodSignature({ ...config, name: value }),
-					optionalMarker: (value?: NonNullable<T.MethodSignature.Config>['optionalMarker']) =>
-						buildMethodSignature({ ...config, optionalMarker: value }),
-					typeParameters: (value?: T.TypeParameters) => buildMethodSignature({ ...config, typeParameters: value }),
-					parameters: (value: T.FormalParameters) => buildMethodSignature({ ...config, parameters: value }),
-					returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-						buildMethodSignature({ ...config, returnType: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.MethodSignature as const,
+					$source: 2 as const,
+					$named: true as const,
+					_accessibility_modifier,
+					_static_marker,
+					_override_modifier,
+					_readonly_marker,
+					_async_marker,
+					_accessor_kind,
+					_name,
+					_optional_marker,
+					_type_parameters,
+					_parameters,
+					_return_type,
+					$with: {
+						accessibilityModifier: (value?: NonNullable<T.MethodSignature.Config>['accessibilityModifier']) =>
+							buildMethodSignature({ ...config, accessibilityModifier: value }),
+						staticMarker: (value?: NonNullable<T.MethodSignature.Config>['staticMarker']) =>
+							buildMethodSignature({ ...config, staticMarker: value }),
+						overrideModifier: (value?: NonNullable<T.MethodSignature.Config>['overrideModifier']) =>
+							buildMethodSignature({ ...config, overrideModifier: value }),
+						readonlyMarker: (value?: NonNullable<T.MethodSignature.Config>['readonlyMarker']) =>
+							buildMethodSignature({ ...config, readonlyMarker: value }),
+						asyncMarker: (value?: NonNullable<T.MethodSignature.Config>['asyncMarker']) =>
+							buildMethodSignature({ ...config, asyncMarker: value }),
+						accessorKind: (value?: NonNullable<T.MethodSignature.Config>['accessorKind']) =>
+							buildMethodSignature({ ...config, accessorKind: value }),
+						name: (value: NonNullable<T.MethodSignature.Config>['name']) =>
+							buildMethodSignature({ ...config, name: value }),
+						optionalMarker: (value?: NonNullable<T.MethodSignature.Config>['optionalMarker']) =>
+							buildMethodSignature({ ...config, optionalMarker: value }),
+						typeParameters: (value?: T.TypeParameters) => buildMethodSignature({ ...config, typeParameters: value }),
+						parameters: (value: T.FormalParameters) => buildMethodSignature({ ...config, parameters: value }),
+						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+							buildMethodSignature({ ...config, returnType: value })
+					}
+				},
+				{
+					accessibilityModifier: () => _accessibility_modifier,
+					staticMarker: () => _static_marker,
+					overrideModifier: () => _override_modifier,
+					readonlyMarker: () => _readonly_marker,
+					asyncMarker: () => _async_marker,
+					accessorKind: () => _accessor_kind,
+					name: () => _name,
+					optionalMarker: () => _optional_marker,
+					typeParameters: () => _type_parameters,
+					parameters: () => _parameters,
+					returnType: () => _return_type
 				}
-			},
-			{
-				accessibilityModifier: () => _accessibility_modifier,
-				staticMarker: () => _static_marker,
-				overrideModifier: () => _override_modifier,
-				readonlyMarker: () => _readonly_marker,
-				asyncMarker: () => _async_marker,
-				accessorKind: () => _accessor_kind,
-				name: () => _name,
-				optionalMarker: () => _optional_marker,
-				typeParameters: () => _type_parameters,
-				parameters: () => _parameters,
-				returnType: () => _return_type
-			}
+			),
+			[
+				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
+			]
 		)
 	) as unknown as T.MethodSignature.Bound;
 }
@@ -4068,47 +4147,53 @@ export function buildAbstractMethodSignature(
 		'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.AbstractMethodSignature as const,
-				$source: 2 as const,
-				$named: true as const,
-				_accessibility_modifier,
-				_override_modifier,
-				_accessor_kind,
-				_name,
-				_optional_marker,
-				_type_parameters,
-				_parameters,
-				_return_type,
-				$with: {
-					accessibilityModifier: (value?: NonNullable<T.AbstractMethodSignature.Config>['accessibilityModifier']) =>
-						buildAbstractMethodSignature({ ...config, accessibilityModifier: value }),
-					overrideModifier: (value?: NonNullable<T.AbstractMethodSignature.Config>['overrideModifier']) =>
-						buildAbstractMethodSignature({ ...config, overrideModifier: value }),
-					accessorKind: (value?: NonNullable<T.AbstractMethodSignature.Config>['accessorKind']) =>
-						buildAbstractMethodSignature({ ...config, accessorKind: value }),
-					name: (value: NonNullable<T.AbstractMethodSignature.Config>['name']) =>
-						buildAbstractMethodSignature({ ...config, name: value }),
-					optionalMarker: (value?: NonNullable<T.AbstractMethodSignature.Config>['optionalMarker']) =>
-						buildAbstractMethodSignature({ ...config, optionalMarker: value }),
-					typeParameters: (value?: T.TypeParameters) =>
-						buildAbstractMethodSignature({ ...config, typeParameters: value }),
-					parameters: (value: T.FormalParameters) => buildAbstractMethodSignature({ ...config, parameters: value }),
-					returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-						buildAbstractMethodSignature({ ...config, returnType: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.AbstractMethodSignature as const,
+					$source: 2 as const,
+					$named: true as const,
+					_accessibility_modifier,
+					_override_modifier,
+					_accessor_kind,
+					_name,
+					_optional_marker,
+					_type_parameters,
+					_parameters,
+					_return_type,
+					$with: {
+						accessibilityModifier: (value?: NonNullable<T.AbstractMethodSignature.Config>['accessibilityModifier']) =>
+							buildAbstractMethodSignature({ ...config, accessibilityModifier: value }),
+						overrideModifier: (value?: NonNullable<T.AbstractMethodSignature.Config>['overrideModifier']) =>
+							buildAbstractMethodSignature({ ...config, overrideModifier: value }),
+						accessorKind: (value?: NonNullable<T.AbstractMethodSignature.Config>['accessorKind']) =>
+							buildAbstractMethodSignature({ ...config, accessorKind: value }),
+						name: (value: NonNullable<T.AbstractMethodSignature.Config>['name']) =>
+							buildAbstractMethodSignature({ ...config, name: value }),
+						optionalMarker: (value?: NonNullable<T.AbstractMethodSignature.Config>['optionalMarker']) =>
+							buildAbstractMethodSignature({ ...config, optionalMarker: value }),
+						typeParameters: (value?: T.TypeParameters) =>
+							buildAbstractMethodSignature({ ...config, typeParameters: value }),
+						parameters: (value: T.FormalParameters) => buildAbstractMethodSignature({ ...config, parameters: value }),
+						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+							buildAbstractMethodSignature({ ...config, returnType: value })
+					}
+				},
+				{
+					accessibilityModifier: () => _accessibility_modifier,
+					overrideModifier: () => _override_modifier,
+					accessorKind: () => _accessor_kind,
+					name: () => _name,
+					optionalMarker: () => _optional_marker,
+					typeParameters: () => _type_parameters,
+					parameters: () => _parameters,
+					returnType: () => _return_type
 				}
-			},
-			{
-				accessibilityModifier: () => _accessibility_modifier,
-				overrideModifier: () => _override_modifier,
-				accessorKind: () => _accessor_kind,
-				name: () => _name,
-				optionalMarker: () => _optional_marker,
-				typeParameters: () => _type_parameters,
-				parameters: () => _parameters,
-				returnType: () => _return_type
-			}
+			),
+			[
+				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
+			]
 		)
 	) as unknown as T.AbstractMethodSignature.Bound;
 }
@@ -4140,39 +4225,46 @@ export function buildFunctionSignature(
 		['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const
 	]);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FunctionSignature as const,
-				$source: 2 as const,
-				$named: true as const,
-				_async_marker,
-				_name,
-				_type_parameters,
-				_parameters,
-				_return_type,
-				_terminator,
-				$with: {
-					asyncMarker: (value?: NonNullable<T.FunctionSignature.Config>['asyncMarker']) =>
-						buildFunctionSignature({ ...config, asyncMarker: value }, options),
-					name: (value: T.Identifier) => buildFunctionSignature({ ...config, name: value }, options),
-					typeParameters: (value?: T.TypeParameters) =>
-						buildFunctionSignature({ ...config, typeParameters: value }, options),
-					parameters: (value: T.FormalParameters) => buildFunctionSignature({ ...config, parameters: value }, options),
-					returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-						buildFunctionSignature({ ...config, returnType: value }, options),
-					terminator: (
-						spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon
-					) => buildFunctionSignature(config, { ...options, terminator: spelling })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.FunctionSignature as const,
+					$source: 2 as const,
+					$named: true as const,
+					_async_marker,
+					_name,
+					_type_parameters,
+					_parameters,
+					_return_type,
+					_terminator,
+					$with: {
+						asyncMarker: (value?: NonNullable<T.FunctionSignature.Config>['asyncMarker']) =>
+							buildFunctionSignature({ ...config, asyncMarker: value }, options),
+						name: (value: T.Identifier) => buildFunctionSignature({ ...config, name: value }, options),
+						typeParameters: (value?: T.TypeParameters) =>
+							buildFunctionSignature({ ...config, typeParameters: value }, options),
+						parameters: (value: T.FormalParameters) =>
+							buildFunctionSignature({ ...config, parameters: value }, options),
+						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+							buildFunctionSignature({ ...config, returnType: value }, options),
+						terminator: (
+							spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon
+						) => buildFunctionSignature(config, { ...options, terminator: spelling })
+					}
+				},
+				{
+					asyncMarker: () => _async_marker,
+					name: () => _name,
+					typeParameters: () => _type_parameters,
+					parameters: () => _parameters,
+					returnType: () => _return_type,
+					terminator: () => _terminator
 				}
-			},
-			{
-				asyncMarker: () => _async_marker,
-				name: () => _name,
-				typeParameters: () => _type_parameters,
-				parameters: () => _parameters,
-				returnType: () => _return_type,
-				terminator: () => _terminator
-			}
+			),
+			[
+				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
+			]
 		)
 	) as unknown as T.FunctionSignature.Bound;
 }
@@ -4208,23 +4300,26 @@ export function buildTypeAssertion(config: T.TypeAssertion.Config): T.TypeAssert
 		'a built Expression'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TypeAssertion as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type_arguments,
-				_expression,
-				$with: {
-					typeArguments: (value: T.TypeArguments) => buildTypeAssertion({ ...config, typeArguments: value }),
-					expression: (value: NonNullable<T.TypeAssertion.Config>['expression']) =>
-						buildTypeAssertion({ ...config, expression: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.TypeAssertion as const,
+					$source: 2 as const,
+					$named: true as const,
+					_type_arguments,
+					_expression,
+					$with: {
+						typeArguments: (value: T.TypeArguments) => buildTypeAssertion({ ...config, typeArguments: value }),
+						expression: (value: NonNullable<T.TypeAssertion.Config>['expression']) =>
+							buildTypeAssertion({ ...config, expression: value })
+					}
+				},
+				{
+					typeArguments: () => _type_arguments,
+					expression: () => _expression
 				}
-			},
-			{
-				typeArguments: () => _type_arguments,
-				expression: () => _expression
-			}
+			),
+			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments }]
 		)
 	) as unknown as T.TypeAssertion.Bound;
 }
@@ -4319,23 +4414,26 @@ export function buildInstantiationExpression(
 		'a built TypeArguments'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.InstantiationExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_expression,
-				_type_arguments,
-				$with: {
-					expression: (value: NonNullable<T.InstantiationExpression.Config>['expression']) =>
-						buildInstantiationExpression({ ...config, expression: value }),
-					typeArguments: (value: T.TypeArguments) => buildInstantiationExpression({ ...config, typeArguments: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.InstantiationExpression as const,
+					$source: 2 as const,
+					$named: true as const,
+					_expression,
+					_type_arguments,
+					$with: {
+						expression: (value: NonNullable<T.InstantiationExpression.Config>['expression']) =>
+							buildInstantiationExpression({ ...config, expression: value }),
+						typeArguments: (value: T.TypeArguments) => buildInstantiationExpression({ ...config, typeArguments: value })
+					}
+				},
+				{
+					expression: () => _expression,
+					typeArguments: () => _type_arguments
 				}
-			},
-			{
-				expression: () => _expression,
-				typeArguments: () => _type_arguments
-			}
+			),
+			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments }]
 		)
 	) as unknown as T.InstantiationExpression.Bound;
 }
@@ -4401,23 +4499,26 @@ export function buildExtendsClauseSingle(config: T.ExtendsClauseSingle.Config): 
 		'a built TypeArguments'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExtendsClauseSingle as const,
-				$source: 2 as const,
-				$named: true as const,
-				_value,
-				_type_arguments,
-				$with: {
-					value: (value: NonNullable<T.ExtendsClauseSingle.Config>['value']) =>
-						buildExtendsClauseSingle({ ...config, value: value }),
-					typeArguments: (value?: T.TypeArguments) => buildExtendsClauseSingle({ ...config, typeArguments: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.ExtendsClauseSingle as const,
+					$source: 2 as const,
+					$named: true as const,
+					_value,
+					_type_arguments,
+					$with: {
+						value: (value: NonNullable<T.ExtendsClauseSingle.Config>['value']) =>
+							buildExtendsClauseSingle({ ...config, value: value }),
+						typeArguments: (value?: T.TypeArguments) => buildExtendsClauseSingle({ ...config, typeArguments: value })
+					}
+				},
+				{
+					value: () => _value,
+					typeArguments: () => _type_arguments
 				}
-			},
-			{
-				value: () => _value,
-				typeArguments: () => _type_arguments
-			}
+			),
+			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments }]
 		)
 	) as unknown as T.ExtendsClauseSingle.Bound;
 }
@@ -4493,33 +4594,36 @@ export function buildAbstractClassDeclaration(
 		'a built ClassBody'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.AbstractClassDeclaration as const,
-				$source: 2 as const,
-				$named: true as const,
-				_decorator,
-				_name,
-				_type_parameters,
-				_heritage,
-				_body,
-				$with: {
-					decorators: (...values: T.Decorator[]) => buildAbstractClassDeclaration({ ...config, decorator: values }),
-					name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
-						buildAbstractClassDeclaration({ ...config, name: value }),
-					typeParameters: (value?: T.TypeParameters) =>
-						buildAbstractClassDeclaration({ ...config, typeParameters: value }),
-					heritage: (value?: T.ClassHeritage) => buildAbstractClassDeclaration({ ...config, heritage: value }),
-					body: (value: T.ClassBody) => buildAbstractClassDeclaration({ ...config, body: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.AbstractClassDeclaration as const,
+					$source: 2 as const,
+					$named: true as const,
+					_decorator,
+					_name,
+					_type_parameters,
+					_heritage,
+					_body,
+					$with: {
+						decorators: (...values: T.Decorator[]) => buildAbstractClassDeclaration({ ...config, decorator: values }),
+						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+							buildAbstractClassDeclaration({ ...config, name: value }),
+						typeParameters: (value?: T.TypeParameters) =>
+							buildAbstractClassDeclaration({ ...config, typeParameters: value }),
+						heritage: (value?: T.ClassHeritage) => buildAbstractClassDeclaration({ ...config, heritage: value }),
+						body: (value: T.ClassBody) => buildAbstractClassDeclaration({ ...config, body: value })
+					}
+				},
+				{
+					decorators: () => _decorator,
+					name: () => _name,
+					typeParameters: () => _type_parameters,
+					heritage: () => _heritage,
+					body: () => _body
 				}
-			},
-			{
-				decorators: () => _decorator,
-				name: () => _name,
-				typeParameters: () => _type_parameters,
-				heritage: () => _heritage,
-				body: () => _body
-			}
+			),
+			[{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters }]
 		)
 	) as unknown as T.AbstractClassDeclaration.Bound;
 }
@@ -4653,31 +4757,35 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 		[[[361], (v: unknown) => buildInterfaceBody(v as never)]]
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.InterfaceDeclaration as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_type_parameters,
-				_extends_type_clause,
-				_body,
-				$with: {
-					name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
-						buildInterfaceDeclaration({ ...config, name: value }),
-					typeParameters: (value?: T.TypeParameters) => buildInterfaceDeclaration({ ...config, typeParameters: value }),
-					extendsTypeClause: (value?: T.ExtendsTypeClause) =>
-						buildInterfaceDeclaration({ ...config, extendsTypeClause: value }),
-					body: (value: T.InterfaceBody | T.InterfaceBody.Types) =>
-						buildInterfaceDeclaration({ ...config, body: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.InterfaceDeclaration as const,
+					$source: 2 as const,
+					$named: true as const,
+					_name,
+					_type_parameters,
+					_extends_type_clause,
+					_body,
+					$with: {
+						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+							buildInterfaceDeclaration({ ...config, name: value }),
+						typeParameters: (value?: T.TypeParameters) =>
+							buildInterfaceDeclaration({ ...config, typeParameters: value }),
+						extendsTypeClause: (value?: T.ExtendsTypeClause) =>
+							buildInterfaceDeclaration({ ...config, extendsTypeClause: value }),
+						body: (value: T.InterfaceBody | T.InterfaceBody.Types) =>
+							buildInterfaceDeclaration({ ...config, body: value })
+					}
+				},
+				{
+					name: () => _name,
+					typeParameters: () => _type_parameters,
+					extendsTypeClause: () => _extends_type_clause,
+					body: () => _body
 				}
-			},
-			{
-				name: () => _name,
-				typeParameters: () => _type_parameters,
-				extendsTypeClause: () => _extends_type_clause,
-				body: () => _body
-			}
+			),
+			[{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters }]
 		)
 	) as unknown as T.InterfaceDeclaration.Bound;
 }
@@ -4721,26 +4829,29 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 		'a built EnumBody'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.EnumDeclaration as const,
-				$source: 2 as const,
-				$named: true as const,
-				_const_marker,
-				_name,
-				_body,
-				$with: {
-					constMarker: (value?: NonNullable<T.EnumDeclaration.Config>['constMarker']) =>
-						buildEnumDeclaration({ ...config, constMarker: value }),
-					name: (value: T.Identifier) => buildEnumDeclaration({ ...config, name: value }),
-					body: (value: T.EnumBody) => buildEnumDeclaration({ ...config, body: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.EnumDeclaration as const,
+					$source: 2 as const,
+					$named: true as const,
+					_const_marker,
+					_name,
+					_body,
+					$with: {
+						constMarker: (value?: NonNullable<T.EnumDeclaration.Config>['constMarker']) =>
+							buildEnumDeclaration({ ...config, constMarker: value }),
+						name: (value: T.Identifier) => buildEnumDeclaration({ ...config, name: value }),
+						body: (value: T.EnumBody) => buildEnumDeclaration({ ...config, body: value })
+					}
+				},
+				{
+					constMarker: () => _const_marker,
+					name: () => _name,
+					body: () => _body
 				}
-			},
-			{
-				constMarker: () => _const_marker,
-				name: () => _name,
-				body: () => _body
-			}
+			),
+			[{ slot: 'body', kind: TSKindId.EnumBody as const, optional: false, make: buildEnumBody }]
 		)
 	) as unknown as T.EnumDeclaration.Bound;
 }
@@ -4838,26 +4949,35 @@ export function buildEnumBody(...args: unknown[]) {
 function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>): T.EnumBody.Bound {
 	const _enum_body_elements = rejectBareText(value, 'EnumBody.enumBodyElements', 'a built EnumBodyElements');
 	return withMethods(
-		withListOwner(
-			withAccessors(
-				{
-					$type: TSKindId.EnumBody as const,
-					$source: 2 as const,
-					$named: true as const,
-					_enum_body_elements,
-					$with: {
-						enumBodyElements: (value?: T.EnumBodyElements) => buildEnumBody(value)
+		withListView(
+			withListSlots(
+				withAccessors(
+					{
+						$type: TSKindId.EnumBody as const,
+						$source: 2 as const,
+						$named: true as const,
+						_enum_body_elements,
+						$with: {
+							enumBodyElements: (value?: T.EnumBodyElements) => buildEnumBody(value)
+						}
+					},
+					{
+						enumBodyElements: () => _enum_body_elements
 					}
-				},
-				{
-					enumBodyElements: () => _enum_body_elements
-				}
+				),
+				[
+					{
+						slot: 'enumBodyElements',
+						kind: TSKindId.EnumBodyElements as const,
+						optional: true,
+						make: buildEnumBodyElements
+					}
+				]
 			),
 			{
-				list: 'enumBodyElements',
+				list: { accessor: 'enumBodyElements', storage: '_enum_body_elements' },
 				elements: 'contents',
-				kind: TSKindId.EnumBodyElements as const,
-				make: buildEnumBodyElements,
+				count: '_content',
 				options: [{ key: 'delimiter', default: Delimiter.Trailing }]
 			}
 		)
@@ -4950,32 +5070,35 @@ export function buildTypeAliasDeclaration(
 		[';', TSKindId.Semi] as const
 	]);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TypeAliasDeclaration as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_type_parameters,
-				_value,
-				_terminator,
-				$with: {
-					name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
-						buildTypeAliasDeclaration({ ...config, name: value }, options),
-					typeParameters: (value?: T.TypeParameters) =>
-						buildTypeAliasDeclaration({ ...config, typeParameters: value }, options),
-					value: (value: NonNullable<T.TypeAliasDeclaration.Config>['value']) =>
-						buildTypeAliasDeclaration({ ...config, value: value }, options),
-					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-						buildTypeAliasDeclaration(config, { ...options, terminator: spelling })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.TypeAliasDeclaration as const,
+					$source: 2 as const,
+					$named: true as const,
+					_name,
+					_type_parameters,
+					_value,
+					_terminator,
+					$with: {
+						name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
+							buildTypeAliasDeclaration({ ...config, name: value }, options),
+						typeParameters: (value?: T.TypeParameters) =>
+							buildTypeAliasDeclaration({ ...config, typeParameters: value }, options),
+						value: (value: NonNullable<T.TypeAliasDeclaration.Config>['value']) =>
+							buildTypeAliasDeclaration({ ...config, value: value }, options),
+						terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+							buildTypeAliasDeclaration(config, { ...options, terminator: spelling })
+					}
+				},
+				{
+					name: () => _name,
+					typeParameters: () => _type_parameters,
+					value: () => _value,
+					terminator: () => _terminator
 				}
-			},
-			{
-				name: () => _name,
-				typeParameters: () => _type_parameters,
-				value: () => _value,
-				terminator: () => _terminator
-			}
+			),
+			[{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters }]
 		)
 	) as unknown as T.TypeAliasDeclaration.Bound;
 }
@@ -5509,30 +5632,36 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ConstructorType as const,
-				$source: 2 as const,
-				$named: true as const,
-				_abstract_marker,
-				_type_parameters,
-				_parameters,
-				_type,
-				$with: {
-					abstractMarker: (value?: NonNullable<T.ConstructorType.Config>['abstractMarker']) =>
-						buildConstructorType({ ...config, abstractMarker: value }),
-					typeParameters: (value?: T.TypeParameters) => buildConstructorType({ ...config, typeParameters: value }),
-					parameters: (value: T.FormalParameters) => buildConstructorType({ ...config, parameters: value }),
-					type: (value: NonNullable<T.ConstructorType.Config>['type']) =>
-						buildConstructorType({ ...config, type: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.ConstructorType as const,
+					$source: 2 as const,
+					$named: true as const,
+					_abstract_marker,
+					_type_parameters,
+					_parameters,
+					_type,
+					$with: {
+						abstractMarker: (value?: NonNullable<T.ConstructorType.Config>['abstractMarker']) =>
+							buildConstructorType({ ...config, abstractMarker: value }),
+						typeParameters: (value?: T.TypeParameters) => buildConstructorType({ ...config, typeParameters: value }),
+						parameters: (value: T.FormalParameters) => buildConstructorType({ ...config, parameters: value }),
+						type: (value: NonNullable<T.ConstructorType.Config>['type']) =>
+							buildConstructorType({ ...config, type: value })
+					}
+				},
+				{
+					abstractMarker: () => _abstract_marker,
+					typeParameters: () => _type_parameters,
+					parameters: () => _parameters,
+					type: () => _type
 				}
-			},
-			{
-				abstractMarker: () => _abstract_marker,
-				typeParameters: () => _type_parameters,
-				parameters: () => _parameters,
-				type: () => _type
-			}
+			),
+			[
+				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
+			]
 		)
 	) as unknown as T.ConstructorType.Bound;
 }
@@ -5691,23 +5820,26 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 	);
 	const _type_arguments = rejectBareText(config.typeArguments, 'GenericType.typeArguments', 'a built TypeArguments');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.GenericType as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				_type_arguments,
-				$with: {
-					name: (value: T.TypeIdentifier | T.NestedTypeIdentifier | T.TypeIdentifier.Types) =>
-						buildGenericType({ ...config, name: value }),
-					typeArguments: (value: T.TypeArguments) => buildGenericType({ ...config, typeArguments: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.GenericType as const,
+					$source: 2 as const,
+					$named: true as const,
+					_name,
+					_type_arguments,
+					$with: {
+						name: (value: T.TypeIdentifier | T.NestedTypeIdentifier | T.TypeIdentifier.Types) =>
+							buildGenericType({ ...config, name: value }),
+						typeArguments: (value: T.TypeArguments) => buildGenericType({ ...config, typeArguments: value })
+					}
+				},
+				{
+					name: () => _name,
+					typeArguments: () => _type_arguments
 				}
-			},
-			{
-				name: () => _name,
-				typeArguments: () => _type_arguments
-			}
+			),
+			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments }]
 		)
 	) as unknown as T.GenericType.Bound;
 }
@@ -5981,24 +6113,27 @@ export function buildTypeQueryInstantiationExpression(
 		'a built TypeArguments'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TypeQueryInstantiationExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_function,
-				_type_arguments,
-				$with: {
-					function: (value: NonNullable<T.TypeQueryInstantiationExpression.Config>['function']) =>
-						buildTypeQueryInstantiationExpression({ ...config, function: value }),
-					typeArguments: (value: T.TypeArguments) =>
-						buildTypeQueryInstantiationExpression({ ...config, typeArguments: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.TypeQueryInstantiationExpression as const,
+					$source: 2 as const,
+					$named: true as const,
+					_function,
+					_type_arguments,
+					$with: {
+						function: (value: NonNullable<T.TypeQueryInstantiationExpression.Config>['function']) =>
+							buildTypeQueryInstantiationExpression({ ...config, function: value }),
+						typeArguments: (value: T.TypeArguments) =>
+							buildTypeQueryInstantiationExpression({ ...config, typeArguments: value })
+					}
+				},
+				{
+					function: () => _function,
+					typeArguments: () => _type_arguments
 				}
-			},
-			{
-				function: () => _function,
-				typeArguments: () => _type_arguments
-			}
+			),
+			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments }]
 		)
 	) as unknown as T.TypeQueryInstantiationExpression.Bound;
 }
@@ -6300,26 +6435,28 @@ export function buildTypeArguments(...args: unknown[]) {
 function _buildTypeArguments(value: AdmitBound<T.Types, T.AdmittedNodes>): T.TypeArguments.Bound {
 	const _types = rejectBareText(value, 'TypeArguments.types', 'a built Types');
 	return withMethods(
-		withListOwner(
-			withAccessors(
-				{
-					$type: TSKindId.TypeArguments as const,
-					$source: 2 as const,
-					$named: true as const,
-					_types,
-					$with: {
-						types: (value: T.Types) => buildTypeArguments(value)
+		withListView(
+			withListSlots(
+				withAccessors(
+					{
+						$type: TSKindId.TypeArguments as const,
+						$source: 2 as const,
+						$named: true as const,
+						_types,
+						$with: {
+							types: (value: T.Types) => buildTypeArguments(value)
+						}
+					},
+					{
+						types: () => _types
 					}
-				},
-				{
-					types: () => _types
-				}
+				),
+				[{ slot: 'types', kind: TSKindId.Types as const, optional: false, make: buildTypes }]
 			),
 			{
-				list: 'types',
+				list: { accessor: 'types', storage: '_types' },
 				elements: 'types',
-				kind: TSKindId.Types as const,
-				make: buildTypes,
+				count: '_type',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
@@ -6337,27 +6474,30 @@ export function buildObjectType(config: ConfigOf<T.ObjectType, T.NamespaceMap>):
 		['|}', TSKindId.PipeRbrace] as const
 	]);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ObjectType as const,
-				$source: 2 as const,
-				$named: true as const,
-				_opening,
-				_members,
-				_closing,
-				$with: {
-					opening: (value: NonNullable<ConfigOf<T.ObjectType, T.NamespaceMap>>['opening']) =>
-						buildObjectType({ ...config, opening: value }),
-					members: (value?: T.ObjectTypeContent) => buildObjectType({ ...config, members: value }),
-					closing: (value: NonNullable<ConfigOf<T.ObjectType, T.NamespaceMap>>['closing']) =>
-						buildObjectType({ ...config, closing: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.ObjectType as const,
+					$source: 2 as const,
+					$named: true as const,
+					_opening,
+					_members,
+					_closing,
+					$with: {
+						opening: (value: NonNullable<ConfigOf<T.ObjectType, T.NamespaceMap>>['opening']) =>
+							buildObjectType({ ...config, opening: value }),
+						members: (value?: T.ObjectTypeContent) => buildObjectType({ ...config, members: value }),
+						closing: (value: NonNullable<ConfigOf<T.ObjectType, T.NamespaceMap>>['closing']) =>
+							buildObjectType({ ...config, closing: value })
+					}
+				},
+				{
+					opening: () => _opening,
+					members: () => _members,
+					closing: () => _closing
 				}
-			},
-			{
-				opening: () => _opening,
-				members: () => _members,
-				closing: () => _closing
-			}
+			),
+			[{ slot: 'members', kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent }]
 		)
 	) as unknown as T.ObjectType.Bound;
 }
@@ -6443,26 +6583,32 @@ export function buildCallSignature(config: Partial<T.CallSignature.Config> = {})
 		'a built TypeAnnotation / AssertsAnnotation / TypePredicateAnnotation'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CallSignature as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type_parameters,
-				_parameters,
-				_return_type,
-				$with: {
-					typeParameters: (value?: T.TypeParameters) => buildCallSignature({ ...config, typeParameters: value }),
-					parameters: (value: T.FormalParameters) => buildCallSignature({ ...config, parameters: value }),
-					returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
-						buildCallSignature({ ...config, returnType: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.CallSignature as const,
+					$source: 2 as const,
+					$named: true as const,
+					_type_parameters,
+					_parameters,
+					_return_type,
+					$with: {
+						typeParameters: (value?: T.TypeParameters) => buildCallSignature({ ...config, typeParameters: value }),
+						parameters: (value: T.FormalParameters) => buildCallSignature({ ...config, parameters: value }),
+						returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
+							buildCallSignature({ ...config, returnType: value })
+					}
+				},
+				{
+					typeParameters: () => _type_parameters,
+					parameters: () => _parameters,
+					returnType: () => _return_type
 				}
-			},
-			{
-				typeParameters: () => _type_parameters,
-				parameters: () => _parameters,
-				returnType: () => _return_type
-			}
+			),
+			[
+				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
+			]
 		)
 	) as unknown as T.CallSignature.Bound;
 }
@@ -6586,32 +6732,41 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 		'a built TypeParametersElements'
 	);
 	return withMethods(
-		withListOwner(
-			withAccessors(
-				{
-					$type: TSKindId.TypeParameters as const,
-					$source: 2 as const,
-					$named: true as const,
-					_type_parameters_elements,
-					$with: {
-						typeParametersElements: (value: T.TypeParametersElements) => buildTypeParameters(value)
+		withListView(
+			withListSlots(
+				withAccessors(
+					{
+						$type: TSKindId.TypeParameters as const,
+						$source: 2 as const,
+						$named: true as const,
+						_type_parameters_elements,
+						$with: {
+							typeParametersElements: (value: T.TypeParametersElements) => buildTypeParameters(value)
+						}
+					},
+					{
+						typeParametersElements: () => _type_parameters_elements
 					}
-				},
-				{
-					typeParametersElements: () => _type_parameters_elements
-				}
+				),
+				[
+					{
+						slot: 'typeParametersElements',
+						kind: TSKindId.TypeParametersElements as const,
+						optional: false,
+						make: buildTypeParametersElements
+					}
+				]
 			),
 			{
-				list: 'typeParametersElements',
+				list: { accessor: 'typeParametersElements', storage: '_type_parameters_elements' },
 				elements: 'typeParameters',
-				kind: TSKindId.TypeParametersElements as const,
-				make: buildTypeParametersElements,
+				count: '_type_parameter',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				wrapper: {
 					kind: TSKindId.TypeParameter,
 					content: 'name',
 					decorations: ['_const_marker', '_constraint', '_value']
-				},
-				options: [{ key: 'delimiter', default: Delimiter.None }]
+				}
 			}
 		)
 	) as unknown as T.TypeParameters.Bound;
@@ -6731,29 +6886,35 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 	);
 	const _type = rejectBareText(config.type, 'ConstructSignature.type', 'a built TypeAnnotation');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ConstructSignature as const,
-				$source: 2 as const,
-				$named: true as const,
-				_abstract_marker,
-				_type_parameters,
-				_parameters,
-				_type,
-				$with: {
-					abstractMarker: (value?: NonNullable<T.ConstructSignature.Config>['abstractMarker']) =>
-						buildConstructSignature({ ...config, abstractMarker: value }),
-					typeParameters: (value?: T.TypeParameters) => buildConstructSignature({ ...config, typeParameters: value }),
-					parameters: (value: T.FormalParameters) => buildConstructSignature({ ...config, parameters: value }),
-					type: (value?: T.TypeAnnotation) => buildConstructSignature({ ...config, type: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.ConstructSignature as const,
+					$source: 2 as const,
+					$named: true as const,
+					_abstract_marker,
+					_type_parameters,
+					_parameters,
+					_type,
+					$with: {
+						abstractMarker: (value?: NonNullable<T.ConstructSignature.Config>['abstractMarker']) =>
+							buildConstructSignature({ ...config, abstractMarker: value }),
+						typeParameters: (value?: T.TypeParameters) => buildConstructSignature({ ...config, typeParameters: value }),
+						parameters: (value: T.FormalParameters) => buildConstructSignature({ ...config, parameters: value }),
+						type: (value?: T.TypeAnnotation) => buildConstructSignature({ ...config, type: value })
+					}
+				},
+				{
+					abstractMarker: () => _abstract_marker,
+					typeParameters: () => _type_parameters,
+					parameters: () => _parameters,
+					type: () => _type
 				}
-			},
-			{
-				abstractMarker: () => _abstract_marker,
-				typeParameters: () => _type_parameters,
-				parameters: () => _parameters,
-				type: () => _type
-			}
+			),
+			[
+				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
+			]
 		)
 	) as unknown as T.ConstructSignature.Bound;
 }
@@ -6824,26 +6985,35 @@ export function buildTupleType(...args: unknown[]) {
 function _buildTupleType(value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>): T.TupleType.Bound {
 	const _tuple_type_members = rejectBareText(value, 'TupleType.tupleTypeMembers', 'a built TupleTypeMembers');
 	return withMethods(
-		withListOwner(
-			withAccessors(
-				{
-					$type: TSKindId.TupleType as const,
-					$source: 2 as const,
-					$named: true as const,
-					_tuple_type_members,
-					$with: {
-						tupleTypeMembers: (value?: T.TupleTypeMembers) => buildTupleType(value)
+		withListView(
+			withListSlots(
+				withAccessors(
+					{
+						$type: TSKindId.TupleType as const,
+						$source: 2 as const,
+						$named: true as const,
+						_tuple_type_members,
+						$with: {
+							tupleTypeMembers: (value?: T.TupleTypeMembers) => buildTupleType(value)
+						}
+					},
+					{
+						tupleTypeMembers: () => _tuple_type_members
 					}
-				},
-				{
-					tupleTypeMembers: () => _tuple_type_members
-				}
+				),
+				[
+					{
+						slot: 'tupleTypeMembers',
+						kind: TSKindId.TupleTypeMembers as const,
+						optional: true,
+						make: buildTupleTypeMembers
+					}
+				]
 			),
 			{
-				list: 'tupleTypeMembers',
+				list: { accessor: 'tupleTypeMembers', storage: '_tuple_type_members' },
 				elements: 'tupleTypeMembers',
-				kind: TSKindId.TupleTypeMembers as const,
-				make: buildTupleTypeMembers,
+				count: '_tuple_type_member',
 				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
@@ -6977,26 +7147,32 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FunctionType as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type_parameters,
-				_parameters,
-				_return_type,
-				$with: {
-					typeParameters: (value?: T.TypeParameters) => buildFunctionType({ ...config, typeParameters: value }),
-					parameters: (value: T.FormalParameters) => buildFunctionType({ ...config, parameters: value }),
-					returnType: (value: NonNullable<T.FunctionType.Config>['returnType']) =>
-						buildFunctionType({ ...config, returnType: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.FunctionType as const,
+					$source: 2 as const,
+					$named: true as const,
+					_type_parameters,
+					_parameters,
+					_return_type,
+					$with: {
+						typeParameters: (value?: T.TypeParameters) => buildFunctionType({ ...config, typeParameters: value }),
+						parameters: (value: T.FormalParameters) => buildFunctionType({ ...config, parameters: value }),
+						returnType: (value: NonNullable<T.FunctionType.Config>['returnType']) =>
+							buildFunctionType({ ...config, returnType: value })
+					}
+				},
+				{
+					typeParameters: () => _type_parameters,
+					parameters: () => _parameters,
+					returnType: () => _return_type
 				}
-			},
-			{
-				typeParameters: () => _type_parameters,
-				parameters: () => _parameters,
-				returnType: () => _return_type
-			}
+			),
+			[
+				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{ slot: 'parameters', kind: TSKindId.FormalParameters as const, optional: false, make: buildFormalParameters }
+			]
 		)
 	) as unknown as T.FunctionType.Bound;
 }
@@ -7041,23 +7217,31 @@ function _buildExportSpecifiers(
 	const _export_specifier = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportSpecifiers as const,
-				$source: 2 as const,
-				$named: true as const,
-				_export_specifier,
-				_delimiter,
-				$with: {
-					exportSpecifiers: (
-						...vs: NonEmptyArray<AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>>
-					) => buildExportSpecifiers(options, ...vs),
-					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-						buildExportSpecifiers({ ...options, delimiter: v }, ...elements)
+		withListView(
+			withAccessors(
+				{
+					$type: TSKindId.ExportSpecifiers as const,
+					$source: 2 as const,
+					$named: true as const,
+					_export_specifier,
+					_delimiter,
+					$with: {
+						exportSpecifiers: (
+							...vs: NonEmptyArray<AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>>
+						) => buildExportSpecifiers(options, ...vs),
+						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+							buildExportSpecifiers({ ...options, delimiter: v }, ...elements)
+					}
+				},
+				{
+					exportSpecifiers: () => _export_specifier
 				}
-			},
+			),
 			{
-				exportSpecifiers: () => _export_specifier
+				elements: 'exportSpecifiers',
+				count: '_export_specifier',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				wrapper: { kind: TSKindId.ExportSpecifier, content: 'name', decorations: ['_export_kind', '_alias'] }
 			}
 		)
 	) as unknown as T.ExportSpecifiers.Bound;
@@ -7093,22 +7277,29 @@ function _buildImportSpecifiers(
 	const _import_specifier = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ImportSpecifiers as const,
-				$source: 2 as const,
-				$named: true as const,
-				_import_specifier,
-				_delimiter,
-				$with: {
-					importSpecifiers: (...vs: NonEmptyArray<AdmitBound<T.ImportSpecifier, T.AdmittedNodes>>) =>
-						buildImportSpecifiers(options, ...vs),
-					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-						buildImportSpecifiers({ ...options, delimiter: v }, ...elements)
+		withListView(
+			withAccessors(
+				{
+					$type: TSKindId.ImportSpecifiers as const,
+					$source: 2 as const,
+					$named: true as const,
+					_import_specifier,
+					_delimiter,
+					$with: {
+						importSpecifiers: (...vs: NonEmptyArray<AdmitBound<T.ImportSpecifier, T.AdmittedNodes>>) =>
+							buildImportSpecifiers(options, ...vs),
+						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+							buildImportSpecifiers({ ...options, delimiter: v }, ...elements)
+					}
+				},
+				{
+					importSpecifiers: () => _import_specifier
 				}
-			},
+			),
 			{
-				importSpecifiers: () => _import_specifier
+				elements: 'importSpecifiers',
+				count: '_import_specifier',
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.ImportSpecifiers.Bound;
@@ -7147,23 +7338,30 @@ function _buildFormalParametersElements(
 	const _formal_parameter = elements;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.FormalParametersElements as const,
-				$source: 2 as const,
-				$named: true as const,
-				_formal_parameter,
-				_delimiter,
-				$with: {
-					formalParameters: (
-						...vs: NonEmptyArray<AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>>
-					) => buildFormalParametersElements(options, ...vs),
-					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-						buildFormalParametersElements({ ...options, delimiter: v }, ...elements)
+		withListView(
+			withAccessors(
+				{
+					$type: TSKindId.FormalParametersElements as const,
+					$source: 2 as const,
+					$named: true as const,
+					_formal_parameter,
+					_delimiter,
+					$with: {
+						formalParameters: (
+							...vs: NonEmptyArray<AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>>
+						) => buildFormalParametersElements(options, ...vs),
+						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+							buildFormalParametersElements({ ...options, delimiter: v }, ...elements)
+					}
+				},
+				{
+					formalParameters: () => _formal_parameter
 				}
-			},
+			),
 			{
-				formalParameters: () => _formal_parameter
+				elements: 'formalParameters',
+				count: '_formal_parameter',
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.FormalParametersElements.Bound;
@@ -7394,57 +7592,60 @@ function _buildEnumBodyElements(
 	>(elements, [[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]);
 	const _delimiter = options.delimiter ?? Delimiter.Trailing;
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.EnumBodyElements as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				_delimiter,
-				$with: {
-					contents: (
-						...vs: NonEmptyArray<
-							AdmitBound<
-								| T.PropertyIdentifier
-								| TSKindId.DeclareKeyword
-								| TSKindId.NamespaceKeyword
-								| TSKindId.TypeKeyword
-								| TSKindId.PublicKeyword
-								| TSKindId.PrivateKeyword
-								| TSKindId.ProtectedKeyword
-								| TSKindId.OverrideKeyword
-								| TSKindId.ReadonlyKeyword
-								| TSKindId.ModuleKeyword
-								| TSKindId.AnyKeyword
-								| TSKindId.NumberKeyword
-								| TSKindId.BooleanKeyword
-								| TSKindId.StringKeyword
-								| TSKindId.SymbolKeyword
-								| TSKindId.ExportKeyword
-								| TSKindId.ObjectKeyword
-								| TSKindId.NewKeyword
-								| TSKindId.GetKeyword
-								| TSKindId.SetKeyword
-								| TSKindId.AsyncKeyword
-								| TSKindId.StaticKeyword
-								| TSKindId.LetKeyword
-								| T.PrivatePropertyIdentifier
-								| T.String
-								| T.Number
-								| T.ComputedPropertyName
-								| T.EnumAssignment
-								| T.PropertyIdentifier.Types,
-								T.AdmittedNodes
+		withListView(
+			withAccessors(
+				{
+					$type: TSKindId.EnumBodyElements as const,
+					$source: 2 as const,
+					$named: true as const,
+					_content,
+					_delimiter,
+					$with: {
+						contents: (
+							...vs: NonEmptyArray<
+								AdmitBound<
+									| T.PropertyIdentifier
+									| TSKindId.DeclareKeyword
+									| TSKindId.NamespaceKeyword
+									| TSKindId.TypeKeyword
+									| TSKindId.PublicKeyword
+									| TSKindId.PrivateKeyword
+									| TSKindId.ProtectedKeyword
+									| TSKindId.OverrideKeyword
+									| TSKindId.ReadonlyKeyword
+									| TSKindId.ModuleKeyword
+									| TSKindId.AnyKeyword
+									| TSKindId.NumberKeyword
+									| TSKindId.BooleanKeyword
+									| TSKindId.StringKeyword
+									| TSKindId.SymbolKeyword
+									| TSKindId.ExportKeyword
+									| TSKindId.ObjectKeyword
+									| TSKindId.NewKeyword
+									| TSKindId.GetKeyword
+									| TSKindId.SetKeyword
+									| TSKindId.AsyncKeyword
+									| TSKindId.StaticKeyword
+									| TSKindId.LetKeyword
+									| T.PrivatePropertyIdentifier
+									| T.String
+									| T.Number
+									| T.ComputedPropertyName
+									| T.EnumAssignment
+									| T.PropertyIdentifier.Types,
+									T.AdmittedNodes
+								>
 							>
-						>
-					) => buildEnumBodyElements(options, ...vs),
-					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-						buildEnumBodyElements({ ...options, delimiter: v }, ...elements)
+						) => buildEnumBodyElements(options, ...vs),
+						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+							buildEnumBodyElements({ ...options, delimiter: v }, ...elements)
+					}
+				},
+				{
+					contents: () => _content
 				}
-			},
-			{
-				contents: () => _content
-			}
+			),
+			{ elements: 'contents', count: '_content', options: [{ key: 'delimiter', default: Delimiter.Trailing }] }
 		)
 	) as unknown as T.EnumBodyElements.Bound;
 }
@@ -7484,22 +7685,26 @@ function _buildTypes(
 	]);
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.Types as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type,
-				_delimiter,
-				$with: {
-					types: (...vs: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>) =>
-						buildTypes(options, ...vs),
-					delimiter: (v?: Delimiter.None | Delimiter.Trailing) => buildTypes({ ...options, delimiter: v }, ...elements)
+		withListView(
+			withAccessors(
+				{
+					$type: TSKindId.Types as const,
+					$source: 2 as const,
+					$named: true as const,
+					_type,
+					_delimiter,
+					$with: {
+						types: (...vs: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>) =>
+							buildTypes(options, ...vs),
+						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+							buildTypes({ ...options, delimiter: v }, ...elements)
+					}
+				},
+				{
+					types: () => _type
 				}
-			},
-			{
-				types: () => _type
-			}
+			),
+			{ elements: 'types', count: '_type', options: [{ key: 'delimiter', default: Delimiter.None }] }
 		)
 	) as unknown as T.Types.Bound;
 }
@@ -7544,25 +7749,37 @@ function _buildTypeParametersElements(
 	const _type_parameter = _mapped;
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TypeParametersElements as const,
-				$source: 2 as const,
-				$named: true as const,
-				_type_parameter,
-				_delimiter,
-				$with: {
-					typeParameters: (
-						...vs: NonEmptyArray<
-							AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>
-						>
-					) => buildTypeParametersElements(options, ...vs),
-					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-						buildTypeParametersElements({ ...options, delimiter: v }, ...elements)
+		withListView(
+			withAccessors(
+				{
+					$type: TSKindId.TypeParametersElements as const,
+					$source: 2 as const,
+					$named: true as const,
+					_type_parameter,
+					_delimiter,
+					$with: {
+						typeParameters: (
+							...vs: NonEmptyArray<
+								AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>
+							>
+						) => buildTypeParametersElements(options, ...vs),
+						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+							buildTypeParametersElements({ ...options, delimiter: v }, ...elements)
+					}
+				},
+				{
+					typeParameters: () => _type_parameter
 				}
-			},
+			),
 			{
-				typeParameters: () => _type_parameter
+				elements: 'typeParameters',
+				count: '_type_parameter',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				wrapper: {
+					kind: TSKindId.TypeParameter,
+					content: 'name',
+					decorations: ['_const_marker', '_constraint', '_value']
+				}
 			}
 		)
 	) as unknown as T.TypeParametersElements.Bound;
@@ -7624,33 +7841,40 @@ function _buildTupleTypeMembers(
 	>(elements, [[[1], (v: unknown) => buildTypeIdentifier(v as never)]]);
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.TupleTypeMembers as const,
-				$source: 2 as const,
-				$named: true as const,
-				_tuple_type_member,
-				_delimiter,
-				$with: {
-					tupleTypeMembers: (
-						...vs: NonEmptyArray<
-							AdmitBound<
-								| T.TupleParameter
-								| T.OptionalTupleParameter
-								| T.OptionalType
-								| T.RestType
-								| T.Type
-								| T.TypeIdentifier.Types,
-								T.AdmittedNodes
+		withListView(
+			withAccessors(
+				{
+					$type: TSKindId.TupleTypeMembers as const,
+					$source: 2 as const,
+					$named: true as const,
+					_tuple_type_member,
+					_delimiter,
+					$with: {
+						tupleTypeMembers: (
+							...vs: NonEmptyArray<
+								AdmitBound<
+									| T.TupleParameter
+									| T.OptionalTupleParameter
+									| T.OptionalType
+									| T.RestType
+									| T.Type
+									| T.TypeIdentifier.Types,
+									T.AdmittedNodes
+								>
 							>
-						>
-					) => buildTupleTypeMembers(options, ...vs),
-					delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-						buildTupleTypeMembers({ ...options, delimiter: v }, ...elements)
+						) => buildTupleTypeMembers(options, ...vs),
+						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+							buildTupleTypeMembers({ ...options, delimiter: v }, ...elements)
+					}
+				},
+				{
+					tupleTypeMembers: () => _tuple_type_member
 				}
-			},
+			),
 			{
-				tupleTypeMembers: () => _tuple_type_member
+				elements: 'tupleTypeMembers',
+				count: '_tuple_type_member',
+				options: [{ key: 'delimiter', default: Delimiter.None }]
 			}
 		)
 	) as unknown as T.TupleTypeMembers.Bound;
@@ -7893,36 +8117,46 @@ function _buildObjectTypeContent(
 	const _separator = options.separator ?? TSKindId.Semi;
 	const _delimiter = options.delimiter ?? Delimiter.Trailing;
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ObjectTypeContent as const,
-				$source: 2 as const,
-				$named: true as const,
-				_members,
-				_separator,
-				_delimiter,
-				$with: {
-					members: (
-						...vs: NonEmptyArray<
-							AdmitBound<
-								| T.ExportStatement
-								| T.PropertySignature
-								| T.CallSignature
-								| T.ConstructSignature
-								| T.IndexSignature
-								| T.MethodSignature,
-								T.AdmittedNodes
+		withListView(
+			withAccessors(
+				{
+					$type: TSKindId.ObjectTypeContent as const,
+					$source: 2 as const,
+					$named: true as const,
+					_members,
+					_separator,
+					_delimiter,
+					$with: {
+						members: (
+							...vs: NonEmptyArray<
+								AdmitBound<
+									| T.ExportStatement
+									| T.PropertySignature
+									| T.CallSignature
+									| T.ConstructSignature
+									| T.IndexSignature
+									| T.MethodSignature,
+									T.AdmittedNodes
+								>
 							>
-						>
-					) => buildObjectTypeContent(options, ...vs),
-					separator: (v: TSKindId.Comma | TSKindId.Semi) =>
-						buildObjectTypeContent({ ...options, separator: v }, ...elements),
-					delimiter: (v?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both) =>
-						buildObjectTypeContent({ ...options, delimiter: v }, ...elements)
+						) => buildObjectTypeContent(options, ...vs),
+						separator: (v: TSKindId.Comma | TSKindId.Semi) =>
+							buildObjectTypeContent({ ...options, separator: v }, ...elements),
+						delimiter: (v?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both) =>
+							buildObjectTypeContent({ ...options, delimiter: v }, ...elements)
+					}
+				},
+				{
+					members: () => _members
 				}
-			},
+			),
 			{
-				members: () => _members
+				elements: 'members',
+				count: '_members',
+				options: [
+					{ key: 'separator', default: TSKindId.Semi },
+					{ key: 'delimiter', default: Delimiter.Trailing }
+				]
 			}
 		)
 	) as unknown as T.ObjectTypeContent.Bound;
@@ -7999,27 +8233,30 @@ export function buildExportStatementTypeExport(
 		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportStatementTypeExport as const,
-				$source: 2 as const,
-				$named: true as const,
-				_export_clause,
-				_source,
-				_terminator,
-				$with: {
-					exportClause: (value: T.ExportClause) =>
-						buildExportStatementTypeExport({ ...config, exportClause: value }, options),
-					source: (value?: T.String) => buildExportStatementTypeExport({ ...config, source: value }, options),
-					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-						buildExportStatementTypeExport(config, { ...options, terminator: spelling })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.ExportStatementTypeExport as const,
+					$source: 2 as const,
+					$named: true as const,
+					_export_clause,
+					_source,
+					_terminator,
+					$with: {
+						exportClause: (value: T.ExportClause) =>
+							buildExportStatementTypeExport({ ...config, exportClause: value }, options),
+						source: (value?: T.String) => buildExportStatementTypeExport({ ...config, source: value }, options),
+						terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+							buildExportStatementTypeExport(config, { ...options, terminator: spelling })
+					}
+				},
+				{
+					exportClause: () => _export_clause,
+					source: () => _source,
+					terminator: () => _terminator
 				}
-			},
-			{
-				exportClause: () => _export_clause,
-				source: () => _source,
-				terminator: () => _terminator
-			}
+			),
+			[{ slot: 'exportClause', kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause }]
 		)
 	) as unknown as T.ExportStatementTypeExport.Bound;
 }
@@ -9010,26 +9247,29 @@ export function buildCallExpressionCall(config: T.CallExpressionCall.Config): T.
 		'a built Arguments'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CallExpressionCall as const,
-				$source: 2 as const,
-				$named: true as const,
-				_function,
-				_type_arguments,
-				_arguments,
-				$with: {
-					function: (value: NonNullable<T.CallExpressionCall.Config>['function']) =>
-						buildCallExpressionCall({ ...config, function: value }),
-					typeArguments: (value?: T.TypeArguments) => buildCallExpressionCall({ ...config, typeArguments: value }),
-					arguments: (value: T.Arguments) => buildCallExpressionCall({ ...config, arguments: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.CallExpressionCall as const,
+					$source: 2 as const,
+					$named: true as const,
+					_function,
+					_type_arguments,
+					_arguments,
+					$with: {
+						function: (value: NonNullable<T.CallExpressionCall.Config>['function']) =>
+							buildCallExpressionCall({ ...config, function: value }),
+						typeArguments: (value?: T.TypeArguments) => buildCallExpressionCall({ ...config, typeArguments: value }),
+						arguments: (value: T.Arguments) => buildCallExpressionCall({ ...config, arguments: value })
+					}
+				},
+				{
+					function: () => _function,
+					typeArguments: () => _type_arguments,
+					arguments: () => _arguments
 				}
-			},
-			{
-				function: () => _function,
-				typeArguments: () => _type_arguments,
-				arguments: () => _arguments
-			}
+			),
+			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments }]
 		)
 	) as unknown as T.CallExpressionCall.Bound;
 }
@@ -9086,26 +9326,29 @@ export function buildCallExpressionMember(config: T.CallExpressionMember.Config)
 		'a built Arguments'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CallExpressionMember as const,
-				$source: 2 as const,
-				$named: true as const,
-				_function,
-				_type_arguments,
-				_arguments,
-				$with: {
-					function: (value: NonNullable<T.CallExpressionMember.Config>['function']) =>
-						buildCallExpressionMember({ ...config, function: value }),
-					typeArguments: (value?: T.TypeArguments) => buildCallExpressionMember({ ...config, typeArguments: value }),
-					arguments: (value: T.Arguments) => buildCallExpressionMember({ ...config, arguments: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.CallExpressionMember as const,
+					$source: 2 as const,
+					$named: true as const,
+					_function,
+					_type_arguments,
+					_arguments,
+					$with: {
+						function: (value: NonNullable<T.CallExpressionMember.Config>['function']) =>
+							buildCallExpressionMember({ ...config, function: value }),
+						typeArguments: (value?: T.TypeArguments) => buildCallExpressionMember({ ...config, typeArguments: value }),
+						arguments: (value: T.Arguments) => buildCallExpressionMember({ ...config, arguments: value })
+					}
+				},
+				{
+					function: () => _function,
+					typeArguments: () => _type_arguments,
+					arguments: () => _arguments
 				}
-			},
-			{
-				function: () => _function,
-				typeArguments: () => _type_arguments,
-				arguments: () => _arguments
-			}
+			),
+			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments }]
 		)
 	) as unknown as T.CallExpressionMember.Bound;
 }
@@ -9571,23 +9814,26 @@ export function buildExportStatementDefaultFromClauseFrom(
 	);
 	const _source = rejectBareText(config.source, 'ExportStatementDefaultFromClauseFrom.source', 'a built String');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ExportStatementDefaultFromClauseFrom as const,
-				$source: 2 as const,
-				$named: true as const,
-				_export_clause,
-				_source,
-				$with: {
-					exportClause: (value: T.ExportClause) =>
-						buildExportStatementDefaultFromClauseFrom({ ...config, exportClause: value }),
-					source: (value: T.String) => buildExportStatementDefaultFromClauseFrom({ ...config, source: value })
+		withListSlots(
+			withAccessors(
+				{
+					$type: TSKindId.ExportStatementDefaultFromClauseFrom as const,
+					$source: 2 as const,
+					$named: true as const,
+					_export_clause,
+					_source,
+					$with: {
+						exportClause: (value: T.ExportClause) =>
+							buildExportStatementDefaultFromClauseFrom({ ...config, exportClause: value }),
+						source: (value: T.String) => buildExportStatementDefaultFromClauseFrom({ ...config, source: value })
+					}
+				},
+				{
+					exportClause: () => _export_clause,
+					source: () => _source
 				}
-			},
-			{
-				exportClause: () => _export_clause,
-				source: () => _source
-			}
+			),
+			[{ slot: 'exportClause', kind: TSKindId.ExportClause as const, optional: false, make: buildExportClause }]
 		)
 	) as unknown as T.ExportStatementDefaultFromClauseFrom.Bound;
 }

@@ -91,8 +91,8 @@ import {
 import {
 	constructorTargetKind,
 	builtTypeSurfaceOf,
+	listViewHint,
 	elementConfigsOf,
-	listOwnerHint,
 	listSlotHints,
 	groupSeatHint,
 	omitRegistered,
@@ -474,7 +474,7 @@ const VOCABULARY_IMPORTS = [
 	'GrammarInnerTrivia',
 	'GrammarInnerTriviaAt',
 	'SlotHint',
-	'ListOwnerHint',
+	'ListViewHint',
 	'ListSlotHint',
 	'FlatHint',
 	'BoundOf',
@@ -589,7 +589,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	lines.push('');
 
 	lines.push(
-		'/** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */'
+		'/** Parser display label of each kind id — the spelling of an anonymous token the reader sends without text, and the label validator bridging matches. Never use for wrapNode dispatch. */'
 	);
 	lines.push('export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([');
 	for (const entry of entries) {
@@ -958,21 +958,13 @@ function emitInterface(
 		if (aliasContentTypeExpr(node, nodeMap, kindEntries) !== undefined) {
 			lines.push(`  readonly __aliasContent__?: ${node.typeName}.Types;`);
 		}
-		const listSlots = new Map(
-			[listOwnerHint(node, nodeMap, kindEntries), ...listSlotHints(node, nodeMap, kindEntries)].flatMap((hint) =>
-				hint === undefined ? [] : [[hint.slot, hint.items] as const]
-			)
-		);
 		for (const f of slots) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 			const propName = f.propertyName;
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			const opt = isRequired(f) ? '' : '?';
-			const items = listSlots.get(propName);
-			if (items !== undefined) {
-				lines.push(`  ${propName}(): ${items}${opt ? ' | undefined' : ''};`);
-			} else if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
+			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;
 				const arrType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `readonly (${elemType})[]`;
 				lines.push(`  ${propName}(): ${arrType};`);
@@ -993,10 +985,10 @@ function emitSlotHints(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): void {
 	const setters = builtTypeSurfaceOf(node, nodeMap, kindEntries)?.setters ?? [];
-	const owner = listOwnerHint(node, nodeMap, kindEntries);
+	const view = listViewHint(node, nodeMap, kindEntries);
 	const listSlots = listSlotHints(node, nodeMap, kindEntries);
 	const groupSeat = groupSeatHint(node, nodeMap, kindEntries);
-	if (setters.length === 0 && owner === undefined) return;
+	if (setters.length === 0 && view === undefined) return;
 	lines.push('  readonly __slotHints__?: {');
 	const elementConfigs = new Map(elementConfigsOf(node, nodeMap).map((fact) => [fact.slot, fact.config]));
 	for (const setter of setters) {
@@ -1011,17 +1003,16 @@ function emitSlotHints(
 						: '';
 		lines.push(`    readonly ${setter.name}: SlotHint<${setter.input}${flags}>;`);
 	}
-	if (owner !== undefined)
-		lines.push(`    readonly $listOwner: ListOwnerHint<${owner.element}, ${owner.options}, ${JSON.stringify(owner.slot)}, ${owner.config}>;`);
+	if (view !== undefined) lines.push(`    readonly $listView: ListViewHint<${view.element}, ${view.options}>;`);
 	if (groupSeat !== undefined) {
-		const keys = groupSeat.keys.map((key) => JSON.stringify(key.name)).join(' | ');
+		const keys = groupSeat.keys.map((key) => `readonly ${JSON.stringify(key.name)}: ${JSON.stringify(key.field)}`).join('; ');
 		lines.push(
-			`    readonly $flat: FlatHint<${JSON.stringify(groupSeat.slot)}, T.${groupSeat.group}, ${keys}, ${groupSeat.optional}>;`
+			`    readonly $flat: FlatHint<${JSON.stringify(groupSeat.slot)}, T.${groupSeat.group}, { ${keys} }, ${groupSeat.optional}>;`
 		);
 	}
 	if (listSlots.length > 0) {
 		lines.push('    readonly $listSlots: {');
-		for (const hint of listSlots) lines.push(`      readonly ${hint.slot}: ListSlotHint<${hint.element}, ${hint.options}, ${hint.config}>;`);
+		for (const hint of listSlots) lines.push(`      readonly ${hint.slot}: ListSlotHint<${hint.element}, ${hint.options}${hint.config === 'never' ? '' : `, ${hint.config}`}>;`);
 		lines.push('    };');
 	}
 	lines.push('  };');

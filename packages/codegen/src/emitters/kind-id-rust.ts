@@ -1,11 +1,9 @@
 import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { findEntryForLiteralText, modelKindOfEntry, type GeneratedIdTables, type KindEntryLike } from '../dsl/symbol-table.ts';
-import { AbstractAssembledCompound, AssembledAlias, hasOptionalElements, isMultiple, type AssembledNode } from '../compiler/model/node-map.ts';
-import { CHOICE, SEQ, STRING } from '../types/rule-types.ts'; // @rule-type-consts
-import type { RenderRule } from '../types/rule.ts';
+import type { GeneratedIdTables, KindEntryLike } from '../dsl/symbol-table.ts';
+import { AbstractAssembledCompound } from '../compiler/model/node-map.ts';
 import { collectKindEntries, collectCatalogKinds } from './kind-discriminant.ts';
-import { reclaimsAnonymousChild, slotSeparatorTexts, wireRoutesOf } from './shared.ts';
+import { wireRoutesOf } from './shared.ts';
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 
@@ -56,53 +54,6 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push(`    }`);
 	lines.push(`}`);
 
-	const textKindIds = [
-		...new Set(
-			entries
-				.filter((entry) => {
-					const node = nodeMap.nodes.get(modelKindOfEntry(entry, entries));
-					return (
-						node?.modelType === 'pattern' ||
-						node?.modelType === 'enum' ||
-						(node instanceof AbstractAssembledCompound && node.lexedInterior)
-					);
-				})
-				.map((entry) => entry.id)
-		)
-	].sort((a, b) => a - b);
-	lines.push('');
-	lines.push('/// Whether the reader captures a named node of this kind as text: its');
-	lines.push("/// template renders from that text, so the text is the node's content —");
-	lines.push('/// free text for a pattern kind, the literal it holds for an enum kind.');
-	lines.push(...kindIdSetFn('is_text_kind', textKindIds));
-
-	const aliasEnvelopeIds = [
-		...new Set(
-			[...nodeMap.nodes.values()]
-				.map((node) => (node instanceof AssembledAlias ? node.aliasTypeId : undefined))
-				.filter((id): id is number => id !== undefined)
-		)
-	].sort((a, b) => a - b);
-	lines.push('');
-	lines.push('/// Whether this parse kind id is an alias envelope: the reader stamps the');
-	lines.push('/// grammar symbol beside it when the node is the storage node shown under');
-	lines.push("/// the alias, so the wrap layer can seat it as the envelope's content.");
-	lines.push(...kindIdSetFn('is_alias_envelope', aliasEnvelopeIds));
-
-	const keepsAnonymousIds = [
-		...new Set(
-			[...nodeMap.nodes.values()]
-				.filter((node) => node.slots.some((slot) => reclaimsAnonymousChild(slot, nodeMap)))
-				.map((node) => findOwnKindEntry(entries, node.kind)?.id)
-				.filter((id): id is number => id !== undefined)
-		)
-	].sort((a, b) => a - b);
-	lines.push('');
-	lines.push('/// Whether a node of this kind keeps its anonymous children as `$other`');
-	lines.push('/// when it has no named child: an unnamed slot of the kind stores terminal');
-	lines.push("/// kinds, and the wrap layer reclaims that slot's value from `$other`.");
-	lines.push(...kindIdSetFn('keeps_anonymous_children', keepsAnonymousIds));
-
 	lines.push('');
 	lines.push('/// The model slot a child is stored under where its name differs from the');
 	lines.push("/// parser's key: a field-tagged child by (parent kind id, field), a named");
@@ -132,44 +83,6 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('    }');
 	lines.push('}');
 
-	const separatorRows: string[] = [];
-	for (const [, node] of nodeMap.nodes) {
-		const parentId = findOwnKindEntry(entries, node.kind)?.id;
-		if (parentId === undefined) continue;
-		const taggedLiterals = fieldTaggedLiteralTexts(node);
-		for (const slot of node.slots) {
-			if (slot.fieldName === undefined) continue;
-			const texts = new Set<string>(taggedLiterals.get(slot.fieldName) ?? []);
-			if (isMultiple(slot) && !hasOptionalElements(slot)) {
-				for (const text of slotSeparatorTexts(slot, false)) texts.add(text);
-			}
-			const ids = [
-				...new Set(
-					[...texts].map((text) => findEntryForLiteralText(entries, text)?.id).filter((id): id is number => id !== undefined)
-				)
-			].sort((a, b) => a - b);
-			if (ids.length === 0) continue;
-			separatorRows.push(`    (${parentId}, ${JSON.stringify(slot.fieldName)}, &[${ids.join(', ')}]),`);
-		}
-	}
-	lines.push('');
-	lines.push('/// (parent kind id, tree-sitter field name, punctuation kind ids) for every');
-	lines.push('/// slot the parser field-tags a literal into: the separator of a repeated');
-	lines.push('/// slot, or a literal a rule puts beside a singular slot under the same');
-	lines.push('/// field. The template prints such a token itself, so the reader drops the');
-	lines.push('/// child instead of seating it, and a native read and a wrapped read hand');
-	lines.push('/// back the same slot contents.');
-	lines.push('static SLOT_SEPARATORS: &[(u16, &str, &[u16])] = &[');
-	lines.push(...separatorRows);
-	lines.push('];');
-	lines.push('');
-	lines.push('pub fn is_slot_separator(parent: KindId, field: &str, child: KindId) -> bool {');
-	lines.push('    SLOT_SEPARATORS');
-	lines.push('        .iter()');
-	lines.push('        .any(|(p, f, seps)| *p == parent.0 && *f == field && seps.contains(&child.0))');
-	lines.push('}');
-
-	lines.push('');
 	lines.push('/// Whether the model stores a `child` of a `parent` node, reached under the');
 	lines.push('/// parser field `field` (`None` for an untagged child), as a scalar: a');
 	lines.push('/// presence flag or a kind id rather than a node. Such a child keeps no');
@@ -187,12 +100,6 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push('');
 
 	return lines.join('\n');
-}
-
-function kindIdSetFn(name: string, ids: readonly number[]): string[] {
-	return ids.length === 0
-		? [`pub fn ${name}(_kind: KindId) -> bool {`, '    false', '}']
-		: [`pub fn ${name}(kind: KindId) -> bool {`, `    matches!(kind.0, ${ids.join(' | ')})`, '}'];
 }
 
 interface InnerGapRow {
@@ -281,27 +188,4 @@ export function wireSlotRows(
 		.sort((a, b) => a.parentId - b.parentId || (order(a) < order(b) ? -1 : order(a) > order(b) ? 1 : 0));
 }
 
-export function fieldTaggedLiteralTexts(node: AssembledNode): ReadonlyMap<string, readonly string[]> {
-	const out = new Map<string, string[]>();
-	const walk = (rule: RenderRule, field: string | undefined): void => {
-		const own = (rule as { fieldName?: string }).fieldName ?? field;
-		switch (rule.type) {
-			case STRING:
-				if (own !== undefined && own !== (rule as { fieldName?: string }).fieldName) {
-					const list = out.get(own) ?? [];
-					if (!list.includes(rule.value)) list.push(rule.value);
-					out.set(own, list);
-				}
-				return;
-			case SEQ:
-			case CHOICE:
-				for (const member of rule.members) walk(member, own);
-				return;
-			default:
-				return;
-		}
-	};
-	if (node instanceof AbstractAssembledCompound && !node.lexedInterior) walk(node.renderRule, undefined);
-	return out;
-}
 

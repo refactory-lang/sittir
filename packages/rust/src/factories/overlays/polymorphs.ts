@@ -722,8 +722,8 @@ export const blockComment = Object.freeze({
 		coerce: blockComment$docInner(F.buildBlockComment, C.coerceToBlockCommentDocInner)
 	},
 	regular: {
-		strict: blockComment$regular(F.buildBlockComment, F.buildBlockCommentContent),
-		coerce: blockComment$regular(F.buildBlockComment, C.coerceToBlockCommentContent)
+		strict: blockComment$regular(F.buildBlockComment, F.buildBlockCommentRegular),
+		coerce: blockComment$regular(F.buildBlockComment, C.coerceToBlockCommentRegular)
 	}
 }) as unknown as typeof B.blockComment & {
 	docOuter: {
@@ -735,8 +735,8 @@ export const blockComment = Object.freeze({
 		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentDocInner>) => ReturnType<typeof F.buildBlockComment>;
 	};
 	regular: {
-		strict: (...args: ArgsOf<typeof F.buildBlockCommentContent>) => ReturnType<typeof F.buildBlockComment>;
-		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentContent>) => ReturnType<typeof F.buildBlockComment>;
+		strict: (...args: ArgsOf<typeof F.buildBlockCommentRegular>) => ReturnType<typeof F.buildBlockComment>;
+		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentRegular>) => ReturnType<typeof F.buildBlockComment>;
 	};
 };
 
