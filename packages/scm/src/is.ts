@@ -3,7 +3,8 @@
 // Composition: kind × shape = concrete type via NamespaceMap.
 
 import { TSKindId } from './types.js';
-import type { NamespaceMap, Definition, NamedNode, NamedNodeGroup, Whitespace } from './types.js';
+import type { NamespaceMap } from './types.js';
+import type { NarrowTo } from '@sittir/types';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
@@ -56,10 +57,36 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeExpressionArm };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	definition(v: { readonly $type: string | number } | number): v is Definition;
-	namedNode(v: { readonly $type: string | number } | number): v is NamedNode;
-	namedNodeGroup(v: { readonly $type: string | number } | number): v is NamedNodeGroup;
-	whitespace(v: { readonly $type: string | number } | number): v is Whitespace;
+	definition<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.AnonymousNode
+		| TSKindId.MissingNode
+		| TSKindId.Grouping
+		| TSKindId.Predicate
+		| TSKindId.List
+		| TSKindId.FieldDefinition
+	>;
+	namedNode<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.NamedNodePlain | TSKindId.NamedNodeSupertyped>;
+	namedNodeGroup<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.NamedNodeGroupChildren | TSKindId.NamedNodeGroupAnchoredLast>;
+	whitespace<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<
+		T,
+		| TSKindId.Tight
+		| TSKindId.Space
+		| TSKindId.Tab
+		| TSKindId.Newline
+		| TSKindId.Blankline
+		| TSKindId.DoubleBlankline
+		| TSKindId.Indent
+		| TSKindId.Dedent
+	>;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.

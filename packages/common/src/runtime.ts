@@ -146,6 +146,10 @@ export function hoist<B extends { strict: unknown; coerce?: unknown }>(b: B): Ho
 	return Object.freeze(callable) as Hoisted<B>;
 }
 
+export function hoistAs<B>(value: unknown): Hoisted<B> {
+	return hoistRoutes(value) as Hoisted<B>;
+}
+
 export function hoistRoutes<B>(b: B): Hoisted<B> {
 	if (isFlavorPair(b)) return hoist(b) as Hoisted<B>;
 	if (typeof b !== 'object' || b === null || Array.isArray(b)) return b as Hoisted<B>;

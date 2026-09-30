@@ -37,7 +37,13 @@ const importStatement$clauseFrom =
 		const { fromClause: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, fromClause: _c(child)(seated) } as never, options as never);
 	};
-export const importStatement: typeof B.importStatement & {
+export const importStatement = Object.freeze({
+	...B.importStatement,
+	clauseFrom: {
+		strict: importStatement$clauseFrom(F.buildImportStatement, F.buildImportStatementClauseFrom),
+		coerce: importStatement$clauseFrom(C.coerceToImportStatement, C.coerceToImportStatementClauseFrom)
+	}
+}) as unknown as typeof B.importStatement & {
 	clauseFrom: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildImportStatement>[0], 'fromClause'> & {
@@ -52,13 +58,7 @@ export const importStatement: typeof B.importStatement & {
 			options?: OptionsArg<typeof C.coerceToImportStatement>
 		) => ReturnType<typeof C.coerceToImportStatement>;
 	};
-} = Object.freeze({
-	...B.importStatement,
-	clauseFrom: {
-		strict: importStatement$clauseFrom(F.buildImportStatement, F.buildImportStatementClauseFrom),
-		coerce: importStatement$clauseFrom(C.coerceToImportStatement, C.coerceToImportStatementClauseFrom)
-	}
-});
+};
 
 const importClauseGroup$namespaceImport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -212,44 +212,7 @@ const importClause$defaultImport$importClauseGroup$namedImports =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const importClause: typeof B.importClause & {
-	namespaceImport: {
-		strict: (...args: ArgsOf<typeof F.buildNamespaceImport>) => ReturnType<typeof F.buildImportClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNamespaceImport>) => ReturnType<typeof F.buildImportClause>;
-	};
-	namedImports: {
-		strict: (...args: ArgsOf<typeof F.buildNamedImports>) => ReturnType<typeof F.buildImportClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNamedImports>) => ReturnType<typeof F.buildImportClause>;
-	};
-	defaultImport: {
-		strict: (...args: ArgsOf<typeof F.buildImportClauseDefaultImport>) => ReturnType<typeof F.buildImportClause>;
-		coerce: (...args: ArgsOf<typeof C.coerceToImportClauseDefaultImport>) => ReturnType<typeof F.buildImportClause>;
-		importClauseGroup: {
-			strict: (
-				...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.strict>
-			) => ReturnType<typeof F.buildImportClause>;
-			coerce: (
-				...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.coerce>
-			) => ReturnType<typeof F.buildImportClause>;
-			namespaceImport: {
-				strict: (
-					...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namespaceImport.strict>
-				) => ReturnType<typeof F.buildImportClause>;
-				coerce: (
-					...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namespaceImport.coerce>
-				) => ReturnType<typeof F.buildImportClause>;
-			};
-			namedImports: {
-				strict: (
-					...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namedImports.strict>
-				) => ReturnType<typeof F.buildImportClause>;
-				coerce: (
-					...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namedImports.coerce>
-				) => ReturnType<typeof F.buildImportClause>;
-			};
-		};
-	};
-} = Object.freeze({
+export const importClause = Object.freeze({
 	...B.importClause,
 	namespaceImport: {
 		strict: importClause$namespaceImport(F.buildImportClause, F.buildNamespaceImport),
@@ -293,7 +256,44 @@ export const importClause: typeof B.importClause & {
 			}
 		}
 	}
-});
+}) as unknown as typeof B.importClause & {
+	namespaceImport: {
+		strict: (...args: ArgsOf<typeof F.buildNamespaceImport>) => ReturnType<typeof F.buildImportClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNamespaceImport>) => ReturnType<typeof F.buildImportClause>;
+	};
+	namedImports: {
+		strict: (...args: ArgsOf<typeof F.buildNamedImports>) => ReturnType<typeof F.buildImportClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNamedImports>) => ReturnType<typeof F.buildImportClause>;
+	};
+	defaultImport: {
+		strict: (...args: ArgsOf<typeof F.buildImportClauseDefaultImport>) => ReturnType<typeof F.buildImportClause>;
+		coerce: (...args: ArgsOf<typeof C.coerceToImportClauseDefaultImport>) => ReturnType<typeof F.buildImportClause>;
+		importClauseGroup: {
+			strict: (
+				...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.strict>
+			) => ReturnType<typeof F.buildImportClause>;
+			coerce: (
+				...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.coerce>
+			) => ReturnType<typeof F.buildImportClause>;
+			namespaceImport: {
+				strict: (
+					...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namespaceImport.strict>
+				) => ReturnType<typeof F.buildImportClause>;
+				coerce: (
+					...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namespaceImport.coerce>
+				) => ReturnType<typeof F.buildImportClause>;
+			};
+			namedImports: {
+				strict: (
+					...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namedImports.strict>
+				) => ReturnType<typeof F.buildImportClause>;
+				coerce: (
+					...args: ArgsOf<typeof importClauseDefaultImport.importClauseGroup.namedImports.coerce>
+				) => ReturnType<typeof F.buildImportClause>;
+			};
+		};
+	};
+};
 
 const forInStatement$lhs =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -329,7 +329,21 @@ const forInStatement$letConstKind =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, forHeader: _c(child)(inner) } as never, options as never);
 	};
-export const forInStatement: typeof B.forInStatement & {
+export const forInStatement = Object.freeze({
+	...B.forInStatement,
+	lhs: {
+		strict: forInStatement$lhs(F.buildForInStatement, F.buildForHeaderLhs),
+		coerce: forInStatement$lhs(C.coerceToForInStatement, C.coerceToForHeaderLhs)
+	},
+	varKind: {
+		strict: forInStatement$varKind(F.buildForInStatement, F.buildForHeaderVarKind),
+		coerce: forInStatement$varKind(C.coerceToForInStatement, C.coerceToForHeaderVarKind)
+	},
+	letConstKind: {
+		strict: forInStatement$letConstKind(F.buildForInStatement, F.buildForHeaderLetConstKind),
+		coerce: forInStatement$letConstKind(C.coerceToForInStatement, C.coerceToForHeaderLetConstKind)
+	}
+}) as unknown as typeof B.forInStatement & {
 	lhs: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildForInStatement>[0], 'forHeader'> & ArgsOf<typeof F.buildForHeaderLhs>[0],
@@ -365,21 +379,7 @@ export const forInStatement: typeof B.forInStatement & {
 			options?: OptionsArg<typeof C.coerceToForInStatement>
 		) => ReturnType<typeof C.coerceToForInStatement>;
 	};
-} = Object.freeze({
-	...B.forInStatement,
-	lhs: {
-		strict: forInStatement$lhs(F.buildForInStatement, F.buildForHeaderLhs),
-		coerce: forInStatement$lhs(C.coerceToForInStatement, C.coerceToForHeaderLhs)
-	},
-	varKind: {
-		strict: forInStatement$varKind(F.buildForInStatement, F.buildForHeaderVarKind),
-		coerce: forInStatement$varKind(C.coerceToForInStatement, C.coerceToForHeaderVarKind)
-	},
-	letConstKind: {
-		strict: forInStatement$letConstKind(F.buildForInStatement, F.buildForHeaderLetConstKind),
-		coerce: forInStatement$letConstKind(C.coerceToForInStatement, C.coerceToForHeaderLetConstKind)
-	}
-});
+};
 
 const catchClause$flatten =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -413,14 +413,14 @@ const catchClause$seatedCoerce: (
 		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToCatchClause>[0]>, 'catchClauseGroup'> &
 				(ArgsOf<typeof C.coerceToCatchClauseGroup>[0] | NoneOf<ArgsOf<typeof C.coerceToCatchClauseGroup>[0]>))
 ) => ReturnType<typeof C.coerceToCatchClause> = catchClause$flatten(C.coerceToCatchClause, C.coerceToCatchClauseGroup);
-export const catchClause: typeof B.catchClause & {
-	strict: typeof catchClause$seated;
-	coerce: typeof catchClause$seatedCoerce;
-} = Object.freeze({
+export const catchClause = Object.freeze({
 	...B.catchClause,
 	strict: catchClause$seated,
 	coerce: catchClause$seatedCoerce
-});
+}) as unknown as typeof B.catchClause & {
+	strict: typeof catchClause$seated;
+	coerce: typeof catchClause$seatedCoerce;
+};
 
 const classHeritage$extendsClause =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -430,16 +430,7 @@ const classHeritage$implementsClause =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const classHeritage: typeof B.classHeritage & {
-	extendsClause: {
-		strict: (...args: ArgsOf<typeof F.buildClassHeritageExtendsClause>) => ReturnType<typeof F.buildClassHeritage>;
-		coerce: (...args: ArgsOf<typeof C.coerceToClassHeritageExtendsClause>) => ReturnType<typeof F.buildClassHeritage>;
-	};
-	implementsClause: {
-		strict: (...args: ArgsOf<typeof F.buildImplementsClause>) => ReturnType<typeof F.buildClassHeritage>;
-		coerce: (...args: ArgsOf<typeof C.coerceToImplementsClause>) => ReturnType<typeof F.buildClassHeritage>;
-	};
-} = Object.freeze({
+export const classHeritage = Object.freeze({
 	...B.classHeritage,
 	extendsClause: {
 		strict: classHeritage$extendsClause(F.buildClassHeritage, F.buildClassHeritageExtendsClause),
@@ -449,7 +440,16 @@ export const classHeritage: typeof B.classHeritage & {
 		strict: classHeritage$implementsClause(F.buildClassHeritage, F.buildImplementsClause),
 		coerce: classHeritage$implementsClause(F.buildClassHeritage, C.coerceToImplementsClause)
 	}
-});
+}) as unknown as typeof B.classHeritage & {
+	extendsClause: {
+		strict: (...args: ArgsOf<typeof F.buildClassHeritageExtendsClause>) => ReturnType<typeof F.buildClassHeritage>;
+		coerce: (...args: ArgsOf<typeof C.coerceToClassHeritageExtendsClause>) => ReturnType<typeof F.buildClassHeritage>;
+	};
+	implementsClause: {
+		strict: (...args: ArgsOf<typeof F.buildImplementsClause>) => ReturnType<typeof F.buildClassHeritage>;
+		coerce: (...args: ArgsOf<typeof C.coerceToImplementsClause>) => ReturnType<typeof F.buildClassHeritage>;
+	};
+};
 
 const arrowFunction$parameter =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -460,7 +460,13 @@ const arrowFunction$parameter =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
-export const arrowFunction: typeof B.arrowFunction & {
+export const arrowFunction = Object.freeze({
+	...B.arrowFunction,
+	parameter: {
+		strict: arrowFunction$parameter(F.buildArrowFunction, F.buildArrowFunctionParameter),
+		coerce: arrowFunction$parameter(C.coerceToArrowFunction, C.coerceToArrowFunctionParameter)
+	}
+}) as unknown as typeof B.arrowFunction & {
 	parameter: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildArrowFunction>[0], 'content'> & {
@@ -475,13 +481,7 @@ export const arrowFunction: typeof B.arrowFunction & {
 			options?: OptionsArg<typeof C.coerceToArrowFunction>
 		) => ReturnType<typeof C.coerceToArrowFunction>;
 	};
-} = Object.freeze({
-	...B.arrowFunction,
-	parameter: {
-		strict: arrowFunction$parameter(F.buildArrowFunction, F.buildArrowFunctionParameter),
-		coerce: arrowFunction$parameter(C.coerceToArrowFunction, C.coerceToArrowFunctionParameter)
-	}
-});
+};
 
 const lhsExpression$memberExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -495,20 +495,7 @@ const lhsExpression$nonNullExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const lhsExpression: typeof B.lhsExpression & {
-	memberExpression: {
-		strict: (...args: ArgsOf<typeof F.buildMemberExpression>) => ReturnType<typeof F.buildLhsExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToMemberExpression>) => ReturnType<typeof F.buildLhsExpression>;
-	};
-	subscriptExpression: {
-		strict: (...args: ArgsOf<typeof F.buildSubscriptExpression>) => ReturnType<typeof F.buildLhsExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSubscriptExpression>) => ReturnType<typeof F.buildLhsExpression>;
-	};
-	nonNullExpression: {
-		strict: (...args: ArgsOf<typeof F.buildNonNullExpression>) => ReturnType<typeof F.buildLhsExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNonNullExpression>) => ReturnType<typeof F.buildLhsExpression>;
-	};
-} = Object.freeze({
+export const lhsExpression = Object.freeze({
 	...B.lhsExpression,
 	memberExpression: {
 		strict: lhsExpression$memberExpression(F.buildLhsExpression, F.buildMemberExpression),
@@ -522,7 +509,20 @@ export const lhsExpression: typeof B.lhsExpression & {
 		strict: lhsExpression$nonNullExpression(F.buildLhsExpression, F.buildNonNullExpression),
 		coerce: lhsExpression$nonNullExpression(F.buildLhsExpression, C.coerceToNonNullExpression)
 	}
-});
+}) as unknown as typeof B.lhsExpression & {
+	memberExpression: {
+		strict: (...args: ArgsOf<typeof F.buildMemberExpression>) => ReturnType<typeof F.buildLhsExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToMemberExpression>) => ReturnType<typeof F.buildLhsExpression>;
+	};
+	subscriptExpression: {
+		strict: (...args: ArgsOf<typeof F.buildSubscriptExpression>) => ReturnType<typeof F.buildLhsExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSubscriptExpression>) => ReturnType<typeof F.buildLhsExpression>;
+	};
+	nonNullExpression: {
+		strict: (...args: ArgsOf<typeof F.buildNonNullExpression>) => ReturnType<typeof F.buildLhsExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNonNullExpression>) => ReturnType<typeof F.buildLhsExpression>;
+	};
+};
 
 const binaryExpression$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -533,7 +533,13 @@ const binaryExpression$in =
 		const { binaryExpressionIn: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) } as never, options as never);
 	};
-export const binaryExpression: typeof B.binaryExpression & {
+export const binaryExpression = Object.freeze({
+	...B.binaryExpression,
+	in: {
+		strict: binaryExpression$in(F.buildBinaryExpression, F.buildBinaryExpressionIn),
+		coerce: binaryExpression$in(C.coerceToBinaryExpression, C.coerceToBinaryExpressionIn)
+	}
+}) as unknown as typeof B.binaryExpression & {
 	in: {
 		strict: (
 			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'binaryExpressionIn'> & {
@@ -548,24 +554,18 @@ export const binaryExpression: typeof B.binaryExpression & {
 			options?: OptionsArg<typeof C.coerceToBinaryExpression>
 		) => ReturnType<typeof C.coerceToBinaryExpression>;
 	};
-} = Object.freeze({
-	...B.binaryExpression,
-	in: {
-		strict: binaryExpression$in(F.buildBinaryExpression, F.buildBinaryExpressionIn),
-		coerce: binaryExpression$in(C.coerceToBinaryExpression, C.coerceToBinaryExpressionIn)
-	}
-});
+};
 
-export const classBody: typeof B.classBody & {
-	method: { strict: typeof F.buildClassBodyMethod; coerce: typeof C.coerceToClassBodyMethod };
-	methodSig: { strict: typeof F.buildClassBodyMethodSig; coerce: typeof C.coerceToClassBodyMethodSig };
-	member: { strict: typeof F.buildClassBodyMember; coerce: typeof C.coerceToClassBodyMember };
-} = Object.freeze({
+export const classBody = Object.freeze({
 	...B.classBody,
 	method: Object.freeze({ strict: F.buildClassBodyMethod, coerce: C.coerceToClassBodyMethod }),
 	methodSig: Object.freeze({ strict: F.buildClassBodyMethodSig, coerce: C.coerceToClassBodyMethodSig }),
 	member: Object.freeze({ strict: F.buildClassBodyMember, coerce: C.coerceToClassBodyMember })
-});
+}) as unknown as typeof B.classBody & {
+	method: { strict: typeof F.buildClassBodyMethod; coerce: typeof C.coerceToClassBodyMethod };
+	methodSig: { strict: typeof F.buildClassBodyMethodSig; coerce: typeof C.coerceToClassBodyMethodSig };
+	member: { strict: typeof F.buildClassBodyMember; coerce: typeof C.coerceToClassBodyMember };
+};
 
 const restPattern$memberExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -579,20 +579,7 @@ const restPattern$nonNullExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const restPattern: typeof B.restPattern & {
-	memberExpression: {
-		strict: (...args: ArgsOf<typeof F.buildMemberExpression>) => ReturnType<typeof F.buildRestPattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToMemberExpression>) => ReturnType<typeof F.buildRestPattern>;
-	};
-	subscriptExpression: {
-		strict: (...args: ArgsOf<typeof F.buildSubscriptExpression>) => ReturnType<typeof F.buildRestPattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToSubscriptExpression>) => ReturnType<typeof F.buildRestPattern>;
-	};
-	nonNullExpression: {
-		strict: (...args: ArgsOf<typeof F.buildNonNullExpression>) => ReturnType<typeof F.buildRestPattern>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNonNullExpression>) => ReturnType<typeof F.buildRestPattern>;
-	};
-} = Object.freeze({
+export const restPattern = Object.freeze({
 	...B.restPattern,
 	memberExpression: {
 		strict: restPattern$memberExpression(F.buildRestPattern, F.buildMemberExpression),
@@ -606,7 +593,20 @@ export const restPattern: typeof B.restPattern & {
 		strict: restPattern$nonNullExpression(F.buildRestPattern, F.buildNonNullExpression),
 		coerce: restPattern$nonNullExpression(F.buildRestPattern, C.coerceToNonNullExpression)
 	}
-});
+}) as unknown as typeof B.restPattern & {
+	memberExpression: {
+		strict: (...args: ArgsOf<typeof F.buildMemberExpression>) => ReturnType<typeof F.buildRestPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToMemberExpression>) => ReturnType<typeof F.buildRestPattern>;
+	};
+	subscriptExpression: {
+		strict: (...args: ArgsOf<typeof F.buildSubscriptExpression>) => ReturnType<typeof F.buildRestPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToSubscriptExpression>) => ReturnType<typeof F.buildRestPattern>;
+	};
+	nonNullExpression: {
+		strict: (...args: ArgsOf<typeof F.buildNonNullExpression>) => ReturnType<typeof F.buildRestPattern>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNonNullExpression>) => ReturnType<typeof F.buildRestPattern>;
+	};
+};
 
 const ambientDeclaration$function =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -664,7 +664,66 @@ const ambientDeclaration$global =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const ambientDeclaration: typeof B.ambientDeclaration & {
+export const ambientDeclaration = Object.freeze({
+	...B.ambientDeclaration,
+	function: {
+		strict: ambientDeclaration$function(F.buildAmbientDeclaration, F.buildFunctionDeclaration),
+		coerce: ambientDeclaration$function(F.buildAmbientDeclaration, C.coerceToFunctionDeclaration)
+	},
+	generatorFunction: {
+		strict: ambientDeclaration$generatorFunction(F.buildAmbientDeclaration, F.buildGeneratorFunctionDeclaration),
+		coerce: ambientDeclaration$generatorFunction(F.buildAmbientDeclaration, C.coerceToGeneratorFunctionDeclaration)
+	},
+	class: {
+		strict: ambientDeclaration$class(F.buildAmbientDeclaration, F.buildClassDeclaration),
+		coerce: ambientDeclaration$class(F.buildAmbientDeclaration, C.coerceToClassDeclaration)
+	},
+	lexical: {
+		strict: ambientDeclaration$lexical(F.buildAmbientDeclaration, F.buildLexicalDeclaration),
+		coerce: ambientDeclaration$lexical(F.buildAmbientDeclaration, C.coerceToLexicalDeclaration)
+	},
+	variable: {
+		strict: ambientDeclaration$variable(F.buildAmbientDeclaration, F.buildVariableDeclaration),
+		coerce: ambientDeclaration$variable(F.buildAmbientDeclaration, C.coerceToVariableDeclaration)
+	},
+	functionSignature: {
+		strict: ambientDeclaration$functionSignature(F.buildAmbientDeclaration, F.buildFunctionSignature),
+		coerce: ambientDeclaration$functionSignature(F.buildAmbientDeclaration, C.coerceToFunctionSignature)
+	},
+	abstractClass: {
+		strict: ambientDeclaration$abstractClass(F.buildAmbientDeclaration, F.buildAbstractClassDeclaration),
+		coerce: ambientDeclaration$abstractClass(F.buildAmbientDeclaration, C.coerceToAbstractClassDeclaration)
+	},
+	internalModule: {
+		strict: ambientDeclaration$internalModule(F.buildAmbientDeclaration, F.buildInternalModule),
+		coerce: ambientDeclaration$internalModule(F.buildAmbientDeclaration, C.coerceToInternalModule)
+	},
+	typeAlias: {
+		strict: ambientDeclaration$typeAlias(F.buildAmbientDeclaration, F.buildTypeAliasDeclaration),
+		coerce: ambientDeclaration$typeAlias(F.buildAmbientDeclaration, C.coerceToTypeAliasDeclaration)
+	},
+	enum: {
+		strict: ambientDeclaration$enum(F.buildAmbientDeclaration, F.buildEnumDeclaration),
+		coerce: ambientDeclaration$enum(F.buildAmbientDeclaration, C.coerceToEnumDeclaration)
+	},
+	interface: {
+		strict: ambientDeclaration$interface(F.buildAmbientDeclaration, F.buildInterfaceDeclaration),
+		coerce: ambientDeclaration$interface(F.buildAmbientDeclaration, C.coerceToInterfaceDeclaration)
+	},
+	importAlias: {
+		strict: ambientDeclaration$importAlias(F.buildAmbientDeclaration, F.buildImportAlias),
+		coerce: ambientDeclaration$importAlias(F.buildAmbientDeclaration, C.coerceToImportAlias)
+	},
+	ambient: {
+		strict: ambientDeclaration$ambient(F.buildAmbientDeclaration, F.buildAmbientDeclaration),
+		coerce: ambientDeclaration$ambient(F.buildAmbientDeclaration, C.coerceToAmbientDeclaration)
+	},
+	global: {
+		strict: ambientDeclaration$global(F.buildAmbientDeclaration, F.buildAmbientDeclarationGlobal),
+		coerce: ambientDeclaration$global(F.buildAmbientDeclaration, C.coerceToAmbientDeclarationGlobal)
+	},
+	module: B.ambientDeclarationModule
+}) as unknown as typeof B.ambientDeclaration & {
 	function: {
 		strict: (...args: ArgsOf<typeof F.buildFunctionDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
 		coerce: (...args: ArgsOf<typeof C.coerceToFunctionDeclaration>) => ReturnType<typeof F.buildAmbientDeclaration>;
@@ -730,83 +789,24 @@ export const ambientDeclaration: typeof B.ambientDeclaration & {
 		) => ReturnType<typeof F.buildAmbientDeclaration>;
 	};
 	module: typeof B.ambientDeclarationModule;
-} = Object.freeze({
-	...B.ambientDeclaration,
-	function: {
-		strict: ambientDeclaration$function(F.buildAmbientDeclaration, F.buildFunctionDeclaration),
-		coerce: ambientDeclaration$function(F.buildAmbientDeclaration, C.coerceToFunctionDeclaration)
-	},
-	generatorFunction: {
-		strict: ambientDeclaration$generatorFunction(F.buildAmbientDeclaration, F.buildGeneratorFunctionDeclaration),
-		coerce: ambientDeclaration$generatorFunction(F.buildAmbientDeclaration, C.coerceToGeneratorFunctionDeclaration)
-	},
-	class: {
-		strict: ambientDeclaration$class(F.buildAmbientDeclaration, F.buildClassDeclaration),
-		coerce: ambientDeclaration$class(F.buildAmbientDeclaration, C.coerceToClassDeclaration)
-	},
-	lexical: {
-		strict: ambientDeclaration$lexical(F.buildAmbientDeclaration, F.buildLexicalDeclaration),
-		coerce: ambientDeclaration$lexical(F.buildAmbientDeclaration, C.coerceToLexicalDeclaration)
-	},
-	variable: {
-		strict: ambientDeclaration$variable(F.buildAmbientDeclaration, F.buildVariableDeclaration),
-		coerce: ambientDeclaration$variable(F.buildAmbientDeclaration, C.coerceToVariableDeclaration)
-	},
-	functionSignature: {
-		strict: ambientDeclaration$functionSignature(F.buildAmbientDeclaration, F.buildFunctionSignature),
-		coerce: ambientDeclaration$functionSignature(F.buildAmbientDeclaration, C.coerceToFunctionSignature)
-	},
-	abstractClass: {
-		strict: ambientDeclaration$abstractClass(F.buildAmbientDeclaration, F.buildAbstractClassDeclaration),
-		coerce: ambientDeclaration$abstractClass(F.buildAmbientDeclaration, C.coerceToAbstractClassDeclaration)
-	},
-	internalModule: {
-		strict: ambientDeclaration$internalModule(F.buildAmbientDeclaration, F.buildInternalModule),
-		coerce: ambientDeclaration$internalModule(F.buildAmbientDeclaration, C.coerceToInternalModule)
-	},
-	typeAlias: {
-		strict: ambientDeclaration$typeAlias(F.buildAmbientDeclaration, F.buildTypeAliasDeclaration),
-		coerce: ambientDeclaration$typeAlias(F.buildAmbientDeclaration, C.coerceToTypeAliasDeclaration)
-	},
-	enum: {
-		strict: ambientDeclaration$enum(F.buildAmbientDeclaration, F.buildEnumDeclaration),
-		coerce: ambientDeclaration$enum(F.buildAmbientDeclaration, C.coerceToEnumDeclaration)
-	},
-	interface: {
-		strict: ambientDeclaration$interface(F.buildAmbientDeclaration, F.buildInterfaceDeclaration),
-		coerce: ambientDeclaration$interface(F.buildAmbientDeclaration, C.coerceToInterfaceDeclaration)
-	},
-	importAlias: {
-		strict: ambientDeclaration$importAlias(F.buildAmbientDeclaration, F.buildImportAlias),
-		coerce: ambientDeclaration$importAlias(F.buildAmbientDeclaration, C.coerceToImportAlias)
-	},
-	ambient: {
-		strict: ambientDeclaration$ambient(F.buildAmbientDeclaration, F.buildAmbientDeclaration),
-		coerce: ambientDeclaration$ambient(F.buildAmbientDeclaration, C.coerceToAmbientDeclaration)
-	},
-	global: {
-		strict: ambientDeclaration$global(F.buildAmbientDeclaration, F.buildAmbientDeclarationGlobal),
-		coerce: ambientDeclaration$global(F.buildAmbientDeclaration, C.coerceToAmbientDeclarationGlobal)
-	},
-	module: B.ambientDeclarationModule
-});
+};
 
 const enumBody$elements =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const enumBody: typeof B.enumBody & {
-	elements: {
-		strict: (...args: ArgsOf<typeof F.buildEnumBodyElements>) => ReturnType<typeof F.buildEnumBody>;
-		coerce: (...args: ArgsOf<typeof C.coerceToEnumBodyElements>) => ReturnType<typeof F.buildEnumBody>;
-	};
-} = Object.freeze({
+export const enumBody = Object.freeze({
 	...B.enumBody,
 	elements: {
 		strict: enumBody$elements(F.buildEnumBody, F.buildEnumBodyElements),
 		coerce: enumBody$elements(F.buildEnumBody, C.coerceToEnumBodyElements)
 	}
-});
+}) as unknown as typeof B.enumBody & {
+	elements: {
+		strict: (...args: ArgsOf<typeof F.buildEnumBodyElements>) => ReturnType<typeof F.buildEnumBody>;
+		coerce: (...args: ArgsOf<typeof C.coerceToEnumBodyElements>) => ReturnType<typeof F.buildEnumBody>;
+	};
+};
 
 const typeQueryMemberExpression$dot =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
@@ -816,28 +816,7 @@ const typeQueryMemberExpression$qmarkDot =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
-export const typeQueryMemberExpression: typeof B.typeQueryMemberExpression & {
-	dot: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTypeQueryMemberExpression>[0], 'content'>,
-			options?: OptionsArg<typeof F.buildTypeQueryMemberExpression>
-		) => ReturnType<typeof F.buildTypeQueryMemberExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryMemberExpression>[0], 'content'>,
-			options?: OptionsArg<typeof C.coerceToTypeQueryMemberExpression>
-		) => ReturnType<typeof C.coerceToTypeQueryMemberExpression>;
-	};
-	qmarkDot: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTypeQueryMemberExpression>[0], 'content'>,
-			options?: OptionsArg<typeof F.buildTypeQueryMemberExpression>
-		) => ReturnType<typeof F.buildTypeQueryMemberExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryMemberExpression>[0], 'content'>,
-			options?: OptionsArg<typeof C.coerceToTypeQueryMemberExpression>
-		) => ReturnType<typeof C.coerceToTypeQueryMemberExpression>;
-	};
-} = Object.freeze({
+export const typeQueryMemberExpression = Object.freeze({
 	...B.typeQueryMemberExpression,
 	dot: {
 		strict: typeQueryMemberExpression$dot(F.buildTypeQueryMemberExpression, TSKindId.Dot),
@@ -847,7 +826,28 @@ export const typeQueryMemberExpression: typeof B.typeQueryMemberExpression & {
 		strict: typeQueryMemberExpression$qmarkDot(F.buildTypeQueryMemberExpression, TSKindId.QmarkDot),
 		coerce: typeQueryMemberExpression$qmarkDot(C.coerceToTypeQueryMemberExpression, TSKindId.QmarkDot)
 	}
-});
+}) as unknown as typeof B.typeQueryMemberExpression & {
+	dot: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryMemberExpression>[0], 'content'>,
+			options?: OptionsArg<typeof F.buildTypeQueryMemberExpression>
+		) => ReturnType<typeof F.buildTypeQueryMemberExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryMemberExpression>[0], 'content'>,
+			options?: OptionsArg<typeof C.coerceToTypeQueryMemberExpression>
+		) => ReturnType<typeof C.coerceToTypeQueryMemberExpression>;
+	};
+	qmarkDot: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildTypeQueryMemberExpression>[0], 'content'>,
+			options?: OptionsArg<typeof F.buildTypeQueryMemberExpression>
+		) => ReturnType<typeof F.buildTypeQueryMemberExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToTypeQueryMemberExpression>[0], 'content'>,
+			options?: OptionsArg<typeof C.coerceToTypeQueryMemberExpression>
+		) => ReturnType<typeof C.coerceToTypeQueryMemberExpression>;
+	};
+};
 
 const constraint$extends =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
@@ -857,28 +857,7 @@ const constraint$colon =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
-export const constraint: typeof B.constraint & {
-	extends: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildConstraint>[0], 'content'>,
-			options?: OptionsArg<typeof F.buildConstraint>
-		) => ReturnType<typeof F.buildConstraint>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToConstraint>[0], 'content'>,
-			options?: OptionsArg<typeof C.coerceToConstraint>
-		) => ReturnType<typeof C.coerceToConstraint>;
-	};
-	colon: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildConstraint>[0], 'content'>,
-			options?: OptionsArg<typeof F.buildConstraint>
-		) => ReturnType<typeof F.buildConstraint>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToConstraint>[0], 'content'>,
-			options?: OptionsArg<typeof C.coerceToConstraint>
-		) => ReturnType<typeof C.coerceToConstraint>;
-	};
-} = Object.freeze({
+export const constraint = Object.freeze({
 	...B.constraint,
 	extends: {
 		strict: constraint$extends(F.buildConstraint, TSKindId.ExtendsKeyword),
@@ -888,7 +867,28 @@ export const constraint: typeof B.constraint & {
 		strict: constraint$colon(F.buildConstraint, TSKindId.Colon),
 		coerce: constraint$colon(C.coerceToConstraint, TSKindId.Colon)
 	}
-});
+}) as unknown as typeof B.constraint & {
+	extends: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildConstraint>[0], 'content'>,
+			options?: OptionsArg<typeof F.buildConstraint>
+		) => ReturnType<typeof F.buildConstraint>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToConstraint>[0], 'content'>,
+			options?: OptionsArg<typeof C.coerceToConstraint>
+		) => ReturnType<typeof C.coerceToConstraint>;
+	};
+	colon: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildConstraint>[0], 'content'>,
+			options?: OptionsArg<typeof F.buildConstraint>
+		) => ReturnType<typeof F.buildConstraint>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToConstraint>[0], 'content'>,
+			options?: OptionsArg<typeof C.coerceToConstraint>
+		) => ReturnType<typeof C.coerceToConstraint>;
+	};
+};
 
 const indexSignatureMappedTypeClause$mappedTypeClause =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4679,84 +4679,7 @@ const literalType$bigint$decimal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const literalType: typeof B.literalType & {
-	negativeNumber: {
-		strict: (...args: ArgsOf<typeof F.buildLiteralTypeNegativeNumber>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToLiteralTypeNegativeNumber>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	hex: {
-		strict: (...args: ArgsOf<typeof F.buildNumberHex>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberHex>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	floatPoint: {
-		strict: (...args: ArgsOf<typeof F.buildNumberFloatPoint>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatPoint>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	floatLeadingPoint: {
-		strict: (...args: ArgsOf<typeof F.buildNumberFloatLeadingPoint>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	floatScientific: {
-		strict: (...args: ArgsOf<typeof F.buildNumberFloatScientific>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatScientific>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	decimal: {
-		strict: (...args: ArgsOf<typeof F.buildNumberDecimal>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberDecimal>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	binary: {
-		strict: (...args: ArgsOf<typeof F.buildNumberBinary>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberBinary>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	octal: {
-		strict: (...args: ArgsOf<typeof F.buildNumberOctal>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToNumberOctal>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	bigint: {
-		strict: (...args: ArgsOf<typeof numberBigint.strict>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof numberBigint.coerce>) => ReturnType<typeof F.buildLiteralType>;
-		hex: {
-			strict: (...args: ArgsOf<typeof numberBigint.hex.strict>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof numberBigint.hex.coerce>) => ReturnType<typeof F.buildLiteralType>;
-		};
-		binary: {
-			strict: (...args: ArgsOf<typeof numberBigint.binary.strict>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof numberBigint.binary.coerce>) => ReturnType<typeof F.buildLiteralType>;
-		};
-		octal: {
-			strict: (...args: ArgsOf<typeof numberBigint.octal.strict>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof numberBigint.octal.coerce>) => ReturnType<typeof F.buildLiteralType>;
-		};
-		decimal: {
-			strict: (...args: ArgsOf<typeof numberBigint.decimal.strict>) => ReturnType<typeof F.buildLiteralType>;
-			coerce: (...args: ArgsOf<typeof numberBigint.decimal.coerce>) => ReturnType<typeof F.buildLiteralType>;
-		};
-	};
-	double: {
-		strict: (...args: ArgsOf<typeof F.buildStringDouble>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToStringDouble>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	single: {
-		strict: (...args: ArgsOf<typeof F.buildStringSingle>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (...args: ArgsOf<typeof C.coerceToStringSingle>) => ReturnType<typeof F.buildLiteralType>;
-	};
-	true: {
-		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
-	};
-	false: {
-		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
-	};
-	null: {
-		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
-	};
-	undefined: {
-		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
-		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
-	};
-} = Object.freeze({
+export const literalType = Object.freeze({
 	...B.literalType,
 	negativeNumber: {
 		strict: literalType$negativeNumber(F.buildLiteralType, F.buildLiteralTypeNegativeNumber),
@@ -4834,7 +4757,84 @@ export const literalType: typeof B.literalType & {
 		strict: literalType$undefined(F.buildLiteralType, TSKindId.Undefined),
 		coerce: literalType$undefined(C.coerceToLiteralType, TSKindId.Undefined)
 	}
-});
+}) as unknown as typeof B.literalType & {
+	negativeNumber: {
+		strict: (...args: ArgsOf<typeof F.buildLiteralTypeNegativeNumber>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToLiteralTypeNegativeNumber>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	hex: {
+		strict: (...args: ArgsOf<typeof F.buildNumberHex>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberHex>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	floatPoint: {
+		strict: (...args: ArgsOf<typeof F.buildNumberFloatPoint>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatPoint>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	floatLeadingPoint: {
+		strict: (...args: ArgsOf<typeof F.buildNumberFloatLeadingPoint>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatLeadingPoint>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	floatScientific: {
+		strict: (...args: ArgsOf<typeof F.buildNumberFloatScientific>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberFloatScientific>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	decimal: {
+		strict: (...args: ArgsOf<typeof F.buildNumberDecimal>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberDecimal>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	binary: {
+		strict: (...args: ArgsOf<typeof F.buildNumberBinary>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberBinary>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	octal: {
+		strict: (...args: ArgsOf<typeof F.buildNumberOctal>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNumberOctal>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	bigint: {
+		strict: (...args: ArgsOf<typeof numberBigint.strict>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof numberBigint.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		hex: {
+			strict: (...args: ArgsOf<typeof numberBigint.hex.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof numberBigint.hex.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		binary: {
+			strict: (...args: ArgsOf<typeof numberBigint.binary.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof numberBigint.binary.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		octal: {
+			strict: (...args: ArgsOf<typeof numberBigint.octal.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof numberBigint.octal.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+		decimal: {
+			strict: (...args: ArgsOf<typeof numberBigint.decimal.strict>) => ReturnType<typeof F.buildLiteralType>;
+			coerce: (...args: ArgsOf<typeof numberBigint.decimal.coerce>) => ReturnType<typeof F.buildLiteralType>;
+		};
+	};
+	double: {
+		strict: (...args: ArgsOf<typeof F.buildStringDouble>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToStringDouble>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	single: {
+		strict: (...args: ArgsOf<typeof F.buildStringSingle>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (...args: ArgsOf<typeof C.coerceToStringSingle>) => ReturnType<typeof F.buildLiteralType>;
+	};
+	true: {
+		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
+	};
+	false: {
+		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
+	};
+	null: {
+		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
+	};
+	undefined: {
+		strict: (options?: OptionsArg<typeof F.buildLiteralType>) => ReturnType<typeof F.buildLiteralType>;
+		coerce: (options?: OptionsArg<typeof C.coerceToLiteralType>) => ReturnType<typeof C.coerceToLiteralType>;
+	};
+};
 
 export const exportStatement: {
 	readonly default: typeof exportStatementDefault;

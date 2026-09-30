@@ -383,7 +383,7 @@ reach.
  * polymorph forms never carry one.
  *
  * @remarks
- * ONE predicate for every consumer of "this kind has a Built alias": the
+ * ONE predicate for every consumer of "this kind has a Bound alias": the
  * types emitter passes it as NodeNs' `Built` argument (pinning the
  * `Fluent` projection to the factory's exact return type), and
  * buildFactoryMapEntries drives FluentKindMap entries with it. Deriving
@@ -474,7 +474,7 @@ Whether a kind gets a top-level factory, and the skip reason when it does not. A
  * @param mapEntries - Factory map entry descriptors produced by `buildFactoryMapEntries`.
  * @returns Array of source lines for the type declaration.
  * @remarks
- *   Only branches / containers / polymorphs get a `<TypeName>.Built` entry; leaves /
+ *   Only branches / containers / polymorphs get a `<TypeName>.Bound` entry; leaves /
  *   keywords / enums produce raw `NodeData` instead and are keyed to their own
  *   interface.
  */
@@ -7005,6 +7005,8 @@ The type name a supertype's union is declared under: the node's own
 
 ### `packages/codegen/src/emitters/types.ts::emitSupertypeNamespaces`
 
+Besides the `Kind` alias, each declared supertype's namespace carries `Bound` and `Parsed`, the unions over its members, both derived through `SupertypeSurface` from the id-keyed maps. Only a supertype the model declares gets them; a hidden choice the grammar does not declare as a supertype gets no public surface.
+
 `export namespace X { Kind }` for every emitted supertype, so a
 supertype has the same kind of home a struct kind has. It merges with the
 union alias of the same name.
@@ -7126,6 +7128,8 @@ The bare slot of a coercer row is the direct slot, or the content slot of a lexe
 
 ### `packages/codegen/src/emitters/types.ts::emitNamespaceInterfaceLine`
 
+The row ends with the kind's `.Parsed` and its empty form (`never` when the kind cannot be empty), which is what lets the namespace-map lookup admit an empty form where a kind is asked for.
+
 ```text
 /**
  * Emit one `export interface <TypeName>Ns extends NodeNs<…> {}` row.
@@ -7136,7 +7140,7 @@ The bare slot of a coercer row is the direct slot, or the content slot of a lexe
  * instead of re-projecting per arm. When the kind has a factory, the row
  * also carries the kind's {@link BuiltTypeSurface} — the built type, the
  * build-args tuple and the loose-args tuple — inline as the trailing
- * `NodeNs` arguments: this file is where `<Kind>.Built` is DEFINED, and
+ * `NodeNs` arguments: this file is where `<Kind>.Bound` is DEFINED, and
  * `raw.ts` only annotates its builders with that name. The surface text is
  * written against `T.`, which is why `types.ts` imports itself as `T`
  * (type-only): the same text serves both files without a rewrite.
@@ -7328,8 +7332,8 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
 ```text
 /** Each refine form's sub-namespace carries its own `Built` / `BuildArgs` /
  *  `LooseArgs` (from `refineFormBuiltTypeSurfaceOf`) beside `Config`, so a
- *  form factory annotates `T.<Kind>.<Form>.Built` exactly as
- *  a plain kind's factory annotates `T.<Kind>.Built`. */
+ *  form factory annotates `T.<Kind>.<Form>.Bound` exactly as
+ *  a plain kind's factory annotates `T.<Kind>.Bound`. */
 ```
 
 ```text
@@ -7657,6 +7661,8 @@ Collision guard for the `$other` reclaim. Across a kind's reclaiming slots (`rec
  * @param children - Always `[]` from both call sites.
  */
 ```
+
+A repeated slot's setter takes its values as rest arguments only when the slot's storage is verbatim, and as one array otherwise. That is the rule the factory's own `$with` follows (`slotSetter`), so a built node and a parsed node take the same call for the same slot.
 
 #### body
 
@@ -8929,6 +8935,8 @@ All producers emit a numeric `$type`, so the emitted guards compare numeric
 `generatedIdTables` is absent — unit-test callers that bypass the full codegen
 pipeline — which falls back to string equality.
 
+A supertype guard is generic over its input and narrows through the shared `NarrowTo<T, <member kind ids>>`: storage data stays storage, and a `.Bound` or `.Parsed` node stays `.Bound` or `.Parsed`, so a guard never claims node methods its input lacks. A numeric input narrows to its member ids, and a node broadly typed `{ $type: number }` narrows to the intersection with them, so the declared narrowing matches the runtime guard, which accepts raw kind ids. The check reads one property, where relating a `.Parsed` union to a storage member walks both interfaces past the checker's relation depth.
+
 #### body
 
 ```text
@@ -9848,7 +9856,7 @@ The types module of `emitTypesModules`, for callers that need only the public su
 //      — declaration-merges with the data interface so consumers can
 //      write `<TypeName>.Config` alongside using `<TypeName>` as a type.
 //
-// Generic accessors `ConfigFor<K>` / `BuiltFor<K>` / `LooseFor<K>`
+// Generic accessors `ConfigFor<K>` / `BoundFor<K>` / `LooseFor<K>`
 // resolve via NamespaceMap for code parametric over kinds.
 // All three access paths (`<TypeName>.Config`, `ConfigFor<'kind'>`,
 // `NamespaceMap['kind']['Config']`) resolve to the same type.
@@ -9989,6 +9997,12 @@ After the namespaces, one `Empty<TypeName>` interface per empty form. It extends
 ```text
 // Multiple accessor returns the array type (same as storage type).
 ```
+
+A kind with setters, or that owns a list, stamps `__slotHints__` (`emitSlotHints`) after its input hints; the accessors are unchanged.
+
+### `packages/codegen/src/emitters/types.ts::emitSlotHints`
+
+Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` per setter of the kind's built surface, keyed by the setter name that its accessor and `$with` share, and `$listOwner` when `listOwnerHint` is defined. The node surface types read these hints and never re-derive a slot's input or a kind's list-ownership from storage keys.
 
 ### `packages/codegen/src/emitters/types.ts::enumStorageDiscriminantExpr`
 
@@ -11472,6 +11486,8 @@ Wraps a slot's admitted value in `rejectKeywordText(value, '<Kind>.<configKey>',
 
 ### `packages/codegen/src/emitters/factories.ts::slotStorageExpr`
 
+A slot that can default to its empty form stores `orDefault(<config value>, () => <empty factory>())` and never `<config value> ?? <empty factory>()`: the `??` expression reduces the union of the two operands, which exceeds the checker's depth when one holds a node's `.Bound` beside its storage type.
+
 #### body
 
 ```text
@@ -11542,6 +11558,8 @@ when the list declares no default separator.
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::FactoryParam`
+
+A parameter that holds a node (`admitsNodes`) is typed through `AdmitBound` over the emitted `AdmittedNodes`, so it takes the kind, its `.Bound`, its `.Parsed` and its empty form; a leaf parameter is raw text and is not widened.
 
 ```text
 /**
@@ -11824,7 +11842,7 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
  *
  * Three cycle rules decide the shapes. `Built` is an INTERFACE, not an
  * alias, because its setters return itself and an interface's members
- * resolve lazily. The `<Kind>Ns` row passes `<Kind>.Built` /
+ * resolve lazily. The `<Kind>Ns` row passes `<Kind>.Bound` /
  * `<Kind>.BuildArgs` / `<Kind>.LooseArgs` by NAME: a base-type argument is
  * resolved eagerly, and an inline tuple whose `LooseValue<…>` walks
  * `NamespaceMap[arm]` for a union containing the kind itself reaches the
@@ -11832,7 +11850,7 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
  * as `ConfigOf<T.<Kind>>` / `LooseConfigOf<…> | T.<Kind>` rather than
  * `<Kind>.Config` / `<Kind>.Loose` (`rowStrictType` / `rowLooseType` on the
  * factory param), because those namespace members are projections OF the
- * row. The setter record's `T.<Kind>.Built` is also what keeps declaration
+ * row. The setter record's `T.<Kind>.Bound` is also what keeps declaration
  * emit finite: an inferred recursive `$with` closure blows the serializer
  * (TS7056) and the package cannot publish types. And a separated list's
  * tuples spell a non-empty element list as `[element: E, ...elements: E[]]`
@@ -11855,6 +11873,8 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
  */
 ```
 
+`setters` is the surface's slot setters as parts (`SlotSetter`): the one derivation of what each `$with` setter takes. The interface's `$with` record prints them, and the types emitter stamps the same parts as `__slotHints__`, so the two cannot disagree. A leaf has none.
+
 ### `packages/codegen/src/emitters/factories.ts::elementsTuple`
 
 ```text
@@ -11873,7 +11893,7 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
  *  spread convention), or a text-constructible leaf. Keyword kinds have no
  *  surface here — their `Built` is the id (`KeywordNs`). The types emitter
  *  calls it for every namespace row; the factory emitter no longer emits
- *  the aliases it used to, it annotates each builder with `T.<Kind>.Built`
+ *  the aliases it used to, it annotates each builder with `T.<Kind>.Bound`
  *  and lets the types emitter define it. */
 ```
 
@@ -11882,16 +11902,20 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
 ```text
 /** The {@link BuiltTypeSurface} of one refine form: the parent's interface
  *  with setters for every non-narrowed slot, self-referencing
- *  `T.<Kind>.<Form>.Built`, and the form's own `config` tuple. */
+ *  `T.<Kind>.<Form>.Bound`, and the form's own `config` tuple. */
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::setterTypeMember`
 
-```text
-/** One `$with` setter's type member: a rest signature for a verbatim
- *  multi-valued slot, else a single `value` whose type indexes the kind's
- *  config type by the slot's config key. */
-```
+Prints one `SlotSetter` as its `$with` type member: a rest signature when the setter takes rest arguments, else a single `value` (optional when the slot is). It only prints; `slotSetter` decides what the setter takes.
+
+### `packages/codegen/src/emitters/factories.ts::slotSetter`
+
+What one slot's `$with` setter takes, as parts: a verbatim multi-valued slot takes rest arguments typed as the array (`NonEmptyArray` when the slot is non-empty); any other slot takes one value whose type indexes the kind's config type by the slot's config key when the slot's storage is not verbatim. The single derivation of a slot's setter input, used by the built surface and, through it, by `__slotHints__`.
+
+### `packages/codegen/src/emitters/factories.ts::SlotSetter`
+
+A slot's setter as parts: the accessor `name`, the `input` type text, whether the slot is `optional`, and whether the setter takes the input as `rest` arguments.
 
 ### `packages/codegen/src/emitters/factories.ts::valueKindIdExpr`
 
@@ -11960,6 +11984,8 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
 
 ### `packages/codegen/src/emitters/factories.ts::parenthesizeUnion`
 
+Wraps an element type in parentheses only when it has a union at its top level. A union inside generic arguments (`AdmitBound<A | B, T.AdmittedNodes>`) is atomic and stays bare before an array suffix.
+
 ```text
 /** `fieldElementType` doesn't parenthesize multi-member unions (unlike
  *  `childElementType`) — guard the bare-array case, or `A | B[]` binds
@@ -12017,6 +12043,20 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
 The `separator` option is typed by the kind ids of the choice's literal
 tokens (`TSKindId.Comma | TSKindId.Semi`), the same tier as every other
 preference; the literal texts are not part of the surface.
+
+`storageElemType` is the element type the list stores and its `elements()` accessor returns, before the factory's wrapper alternative is added to `elemType`, so a read loses no content. The option keys come from `listOptionParts`.
+
+### `packages/codegen/src/emitters/factories.ts::listOptionParts`
+
+A separated list's option facts: whether it takes a `separator` and `delimiter` option, the separator kinds it allows, whether the separator is required, and the options type the factory's `options` argument takes (`undefined` when the list has none). One derivation shared by the list surface, the list factory and `listOwnerHint`.
+
+### `packages/codegen/src/emitters/factories.ts::listOptionsType`
+
+The options type a list's factory takes as its leading argument, or `undefined` when it has none. Takes the kind entries because the separator's allowed kinds are catalog kinds.
+
+### `packages/codegen/src/emitters/factories.ts::listOwnerHint`
+
+Whether a kind's sole content is a separated list, as the facts a list owner's node surface needs: the stored element of the list, the options its factory takes (`{}` when it takes none) and the element input its factory accepts. Defined exactly when `forwardedTargetKind` names an `AssembledList`, the fact that gives the owner's strict factory its `(options?, ...items)` overloads, so read and build cannot disagree about which kinds are list owners.
 
 ### `packages/codegen/src/emitters/factories.ts::TextFactoryNode`
 
@@ -13146,6 +13186,22 @@ A mixed-enum slot resolves a bare string by keyword extraction first, then lexic
 	 *  exported alias so `engine.ts` can type `parse()`'s return without
 	 *  re-deriving the wrap table's row for it. */
 ```
+
+### `packages/codegen/src/emitters/wrap.ts::declaredParsedType`
+
+The declared return type of a kind's wrap: `T.<Kind>.Parsed` when the kind has a catalog entry (a kind id and a namespace), nothing when it has none. The wrap-return map keys on the same kind ids, so its rows are the declared returns and no wrap's type is inferred from its body.
+
+### `packages/codegen/src/emitters/wrap.ts::castToParsed`
+
+The one cast a wrap makes at each return: the object literal it builds carries the storage keys, the accessors and `$with`, and is not related to `T.<Kind>.Parsed` structurally. Relating them walks every accessor of both interfaces and exceeds the checker's relation depth on deep grammars, so the literal is cast through `unknown` once, at the return, and the declared `Parsed` is what callers see.
+
+### `packages/codegen/src/emitters/wrap.ts::returnAnnotation`
+
+The `: T.<Kind>.Parsed` annotation on a wrap's signature, or an empty string when the kind has no catalog entry. A transparent supertype wrap is annotated with the supertype's own `.Parsed` union, since it returns whichever member it dispatches to.
+
+### `packages/codegen/src/emitters/wrap.ts::ParsedOfData`
+
+The wrap header's type from a wrapped datum to its declared `Parsed` node: a datum whose `$type` is a kind id in the parsed-by-kind-id map becomes that map's row, anything else stays as it is. `drillIn` and `drillInAll` return through it, so an accessor's return type is the child's declared surface and never an inference through the tree's recursion.
 
 ### `packages/codegen/src/emitters/wrap.ts::renameUnusedTreeParam`
 
@@ -14492,6 +14548,8 @@ optional.
 Import path each chain layer loads its predecessor from: index 0 (refines) imports `../bundle.js`; later layers import the previous overlay. The chain is raw → coerce → bundle → refines → polymorphs → supertypes → index.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::emitFactoriesIndex`
+
+Each entry is `export const <name>: Hoisted<typeof O.<name>> = hoistAs<typeof O.<name>>(O.<name>);`, so the annotation and the call carry the same type and nothing is related between the overlay's declared type and an inferred one.
 
 Emits `factories/index.ts`, the dynamic final chain step: re-exports the top overlay and, for every bundle entry, `export const <exportName> = hoist(O.<exportName>);` — the consumer surface where a bare call is the coerce flavor and `.strict` stays reachable (recursively, sub-factory pairs included).
 
@@ -16375,3 +16433,30 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 The version of the JS → native render transport shape — the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into the scaffolded crate's `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. Bump it when the transport shape changes; crates are scaffolded once, so a test pins every existing crate's `lib.rs` to it and names the crates to update.
 
+### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
+
+Emits a kind's `Bound` and `Parsed` interfaces. Each declares `$type` first, then `$with` over `this`, then its own members. The order matters: the checker compares a target's properties in declaration order, and a mismatched kind must fail on the `$type` discriminant before it reaches the deep `$with` and accessor members; without it every non-matching arm of a wide union is compared structurally to the checker's depth limit.
+
+### `packages/codegen/src/emitters/types.ts::AdmittedNodes`
+
+The emitted alias `AdmitLookup<BoundByKindId, ParsedByKindId, EmptyByKindId>`: for every kind id, the nodes a slot input admits. Generated factories, coercers and setters name it as the second argument of `AdmitBound`; it is built from the id-keyed maps and never from the namespace map, which keeps it out of the cycle formed by the argument lists.
+
+### `packages/codegen/src/emitters/factories.ts::hasTopLevelUnion`
+
+Whether a type text has ` | ` outside every bracket pair, the test `parenthesizeUnion` applies.
+
+### `packages/codegen/src/emitters/from.ts::keywordOr`
+
+The emitted `_keywordOr(input, keywords, () => resolved)` that replaces `_keywordOf(input, keywords) ?? resolved` for a single slot. Its declared result is `number | R`, so the checker forms the union without reducing it, which a `??` expression does and which exceeds the depth on a union that holds a node's `.Bound`.
+
+### `packages/codegen/src/emitters/factories.ts::listOptionDefaults`
+
+The options a separated list's factory takes, each with the expression the factory falls back to when the option is not passed: the delimiter's resolved arm (`Delimiter.None` when the list declares none) and the separator's declared arm (`undefined` when there is none). It reads the same option flags as the options type and the same default derivations as the list factory, so a list owner's getters report exactly what the factory would build.
+
+### `packages/codegen/src/emitters/factories.ts::listOwnerRuntimeSpec`
+
+The object literal `{ list, elements, options, make }` a list owner's builder and wrap pass to `withListOwner`: the owner's accessor for its list, the list's accessor for its elements, each option its factory takes as `{ key, default }`, and the list's own raw factory. `factoryScope` prefixes that factory's name where the caller reaches it through a namespace import (the wrap module). It shares `listOwnerTarget` with `listOwnerHint`, so the type-level marker and the runtime members come from one test of list-ownership; `undefined` means the node is not a list owner and neither emitter adds the call.
+
+### `packages/codegen/src/emitters/factories.ts::listOwnerTarget`
+
+The owner's sole slot and the separated list it forwards to, or `undefined` when the node does not forward to a list.

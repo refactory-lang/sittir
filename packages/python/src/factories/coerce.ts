@@ -7,7 +7,7 @@ import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import { Delimiter } from '@sittir/common/utils';
 import type { AnyNodeData, LooseValue, NonEmptyArray, SpelledAffix, WithSpelling } from '@sittir/types';
-import { coerceKindEnumStorage, coerceMixedEnumStorage } from '@sittir/common/utils';
+import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind } from '@sittir/common/utils';
 import { isNode } from '../utils.js';
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
@@ -412,6 +412,14 @@ function _resolveByKind<K extends keyof _FromMap>(kind: K, rest: _LooseFieldInpu
 
 function _keywordOf(v: _LooseFieldInput, keywords: readonly (readonly [string, number])[]): number | undefined {
 	return typeof v === 'string' ? keywords.find(([text]) => text === v)?.[1] : undefined;
+}
+
+function _keywordOr<R>(
+	v: _LooseFieldInput,
+	keywords: readonly (readonly [string, number])[],
+	orElse: () => R
+): number | R {
+	return _keywordOf(v, keywords) ?? orElse();
 }
 
 /** A kind-enum slot's loose input. A stored kind id is already the slot's
@@ -2056,7 +2064,7 @@ export function coerceToModule(
 export function coerceToModule(
 	...input: readonly (T.Module.Loose | LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 ): ReturnType<typeof F.buildModule> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.Module) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Module)) {
 		const data = input[0];
 		const stored = (data as unknown as { _statements?: unknown })._statements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -2081,16 +2089,14 @@ export function resolveSimpleStatements_simpleStatementsElements(
 }
 
 export function coerceToSimpleStatements(input: T.SimpleStatements.Loose): ReturnType<typeof F.buildSimpleStatements> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.SimpleStatements)
+	if (isNodeOfKind(input, TSKindId.SimpleStatements))
 		return input as unknown as ReturnType<typeof F.buildSimpleStatements>;
 	return F.buildSimpleStatements(
 		_requireField(
 			'_simple_statements',
 			'simpleStatementsElements',
 			_resolveOneBranch<T.SimpleStatementsElements>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'simpleStatementsElements' in input
-					? input.simpleStatementsElements
-					: input,
+				configFieldOr(input, 'simpleStatementsElements', () => input),
 				'simple_statements_elements'
 			)
 		)
@@ -2104,14 +2110,14 @@ export function resolveImportStatement_names(
 }
 
 export function coerceToImportStatement(input: T.ImportStatement.Loose): ReturnType<typeof F.buildImportStatement> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.ImportStatement)
+	if (isNodeOfKind(input, TSKindId.ImportStatement))
 		return input as unknown as ReturnType<typeof F.buildImportStatement>;
 	return F.buildImportStatement(
 		_requireField(
 			'import_statement',
 			'names',
 			_resolveOneBranch<T.Names>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'names' in input ? input.names : input,
+				configFieldOr(input, 'names', () => input),
 				'names'
 			)
 		)
@@ -2151,14 +2157,14 @@ export function resolveFutureImportStatement_content(
 export function coerceToFutureImportStatement(
 	input: T.FutureImportStatement.Loose
 ): ReturnType<typeof F.buildFutureImportStatement> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.FutureImportStatement)
+	if (isNodeOfKind(input, TSKindId.FutureImportStatement))
 		return input as unknown as ReturnType<typeof F.buildFutureImportStatement>;
 	return F.buildFutureImportStatement(
 		_requireField(
 			'future_import_statement',
 			'content',
 			_resolveOne<T.ImportList | T.ParenthesizedImportList>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
+				configFieldOr(input, 'content', () => input),
 				_K0,
 				_K2
 			)
@@ -2218,7 +2224,7 @@ export function coerceToImportList(
 				)[]
 		  ]
 ): ReturnType<typeof F.buildImportList> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.ImportList) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ImportList)) {
 		const data = input[0];
 		const stored = (data as unknown as { _name?: unknown })._name;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -2271,14 +2277,13 @@ export function resolvePrintStatement_content(
 }
 
 export function coerceToPrintStatement(input: T.PrintStatement.Loose): ReturnType<typeof F.buildPrintStatement> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.PrintStatement)
-		return input as unknown as ReturnType<typeof F.buildPrintStatement>;
+	if (isNodeOfKind(input, TSKindId.PrintStatement)) return input as unknown as ReturnType<typeof F.buildPrintStatement>;
 	return F.buildPrintStatement(
 		_requireField(
 			'print_statement',
 			'content',
 			_resolveOne<T.PrintStatementChevron | T.PrintStatementPlain>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
+				configFieldOr(input, 'content', () => input),
 				_K0,
 				_K6
 			)
@@ -2294,22 +2299,17 @@ export function resolveChevron_expression(value: T.Chevron.LooseConfig['expressi
 }
 
 export function coerceToChevron(input: T.Chevron.Loose): ReturnType<typeof F.buildChevron> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.Chevron)
-		return input as unknown as ReturnType<typeof F.buildChevron>;
+	if (isNodeOfKind(input, TSKindId.Chevron)) return input as unknown as ReturnType<typeof F.buildChevron>;
 	return F.buildChevron(
 		_requireField(
 			'chevron',
 			'expression',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-						? input.expression
-						: input,
+					configFieldOr(input, 'expression', () => input),
 					() =>
 						_resolveOne<T.Expression>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-								? input.expression
-								: input,
+							configFieldOr(input, 'expression', () => input),
 							_K7,
 							_K8
 						)
@@ -2326,7 +2326,7 @@ export function coerceToAssertStatement(
 		| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildAssertStatement> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.AssertStatement) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.AssertStatement)) {
 		const data = input[0];
 		const stored = (data as unknown as { _expression?: unknown })._expression;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -2370,7 +2370,7 @@ export function resolveExpressionStatement_content(
 export function coerceToExpressionStatement(
 	input: T.ExpressionStatement.Loose
 ): ReturnType<typeof F.buildExpressionStatement> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.ExpressionStatement)
+	if (isNodeOfKind(input, TSKindId.ExpressionStatement))
 		return input as unknown as ReturnType<typeof F.buildExpressionStatement>;
 	return F.buildExpressionStatement(
 		_requireField(
@@ -2378,12 +2378,10 @@ export function coerceToExpressionStatement(
 			'content',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
+					configFieldOr(input, 'content', () => input),
 					() =>
 						_resolveOne<T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-								? input.content
-								: input,
+							configFieldOr(input, 'content', () => input),
 							_K7,
 							_K9
 						)
@@ -2395,28 +2393,30 @@ export function coerceToExpressionStatement(
 }
 
 export function resolveNamedExpression_name(value: T.NamedExpression.LooseConfig['name']): T.NamedExpression['_name'] {
-	return (
-		_keywordOf(value, [
+	return _keywordOr(
+		value,
+		[
 			['print', TSKindId.PrintKeyword] as const,
 			['exec', TSKindId.ExecKeyword] as const,
 			['async', TSKindId.AsyncKeyword] as const,
 			['await', TSKindId.AwaitKeyword] as const,
 			['type', TSKindId.TypeKeyword] as const,
 			['match', TSKindId.MatchKeyword] as const
-		]) ??
-		coerceMixedEnumStorage(
-			_resolveKindEnum(value, () =>
-				_resolveOneLeaf<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match'>(value, 'identifier')
-			),
-			[
-				['print', TSKindId.PrintKeyword] as const,
-				['exec', TSKindId.ExecKeyword] as const,
-				['async', TSKindId.AsyncKeyword] as const,
-				['await', TSKindId.AwaitKeyword] as const,
-				['type', TSKindId.TypeKeyword] as const,
-				['match', TSKindId.MatchKeyword] as const
-			]
-		)
+		],
+		() =>
+			coerceMixedEnumStorage(
+				_resolveKindEnum(value, () =>
+					_resolveOneLeaf<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match'>(value, 'identifier')
+				),
+				[
+					['print', TSKindId.PrintKeyword] as const,
+					['exec', TSKindId.ExecKeyword] as const,
+					['async', TSKindId.AsyncKeyword] as const,
+					['await', TSKindId.AwaitKeyword] as const,
+					['type', TSKindId.TypeKeyword] as const,
+					['match', TSKindId.MatchKeyword] as const
+				]
+			)
 	);
 }
 
@@ -2448,19 +2448,15 @@ export function resolveReturnStatement_expressions(
 }
 
 export function coerceToReturnStatement(input?: T.ReturnStatement.Loose): ReturnType<typeof F.buildReturnStatement> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.ReturnStatement)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.ReturnStatement))
 		return input as unknown as ReturnType<typeof F.buildReturnStatement>;
 	return F.buildReturnStatement(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				input !== null && typeof input === 'object' && !isNode(input) && 'expressions' in input
-					? input.expressions
-					: input,
+				configFieldOr(input, 'expressions', () => input),
 				() =>
 					_resolveOne<T.Expression | T.ExpressionList>(
-						input !== null && typeof input === 'object' && !isNode(input) && 'expressions' in input
-							? input.expressions
-							: input,
+						configFieldOr(input, 'expressions', () => input),
 						_K7,
 						_K10
 					)
@@ -2480,7 +2476,7 @@ export function resolveDeleteStatement_expressions(
 }
 
 export function coerceToDeleteStatement(input: T.DeleteStatement.Loose): ReturnType<typeof F.buildDeleteStatement> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.DeleteStatement)
+	if (isNodeOfKind(input, TSKindId.DeleteStatement))
 		return input as unknown as ReturnType<typeof F.buildDeleteStatement>;
 	return F.buildDeleteStatement(
 		_requireField(
@@ -2488,14 +2484,10 @@ export function coerceToDeleteStatement(input: T.DeleteStatement.Loose): ReturnT
 			'expressions',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNode(input) && 'expressions' in input
-						? input.expressions
-						: input,
+					configFieldOr(input, 'expressions', () => input),
 					() =>
 						_resolveOne<T.Expression | T.ExpressionList>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'expressions' in input
-								? input.expressions
-								: input,
+							configFieldOr(input, 'expressions', () => input),
 							_K7,
 							_K10
 						)
@@ -2600,14 +2592,13 @@ export function resolveElseClause_body(value: T.ElseClause.LooseConfig['body']):
 }
 
 export function coerceToElseClause(input: T.ElseClause.Loose): ReturnType<typeof F.buildElseClause> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.ElseClause)
-		return input as unknown as ReturnType<typeof F.buildElseClause>;
+	if (isNodeOfKind(input, TSKindId.ElseClause)) return input as unknown as ReturnType<typeof F.buildElseClause>;
 	return F.buildElseClause(
 		_requireField(
 			'else_clause',
 			'body',
 			_resolveOne<T.Suite>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'body' in input ? input.body : input,
+				configFieldOr(input, 'body', () => input),
 				_K0,
 				_super_suite
 			)
@@ -2642,20 +2633,17 @@ export function resolveMatchBlock_content(value: T.MatchBlock.LooseConfig['conte
 }
 
 export function coerceToMatchBlock(input: T.MatchBlock.Loose): ReturnType<typeof F.buildMatchBlock> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.MatchBlock)
-		return input as unknown as ReturnType<typeof F.buildMatchBlock>;
+	if (isNodeOfKind(input, TSKindId.MatchBlock)) return input as unknown as ReturnType<typeof F.buildMatchBlock>;
 	return F.buildMatchBlock(
 		_requireField(
 			'match_block',
 			'content',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
+					configFieldOr(input, 'content', () => input),
 					() =>
 						_resolveOne<T.MatchBlockBlock | '\n'>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-								? input.content
-								: input,
+							configFieldOr(input, 'content', () => input),
 							_K12,
 							_K13,
 							'match_block_block'
@@ -2824,14 +2812,13 @@ export function resolveFinallyClause_block(value: T.FinallyClause.LooseConfig['b
 }
 
 export function coerceToFinallyClause(input: T.FinallyClause.Loose): ReturnType<typeof F.buildFinallyClause> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.FinallyClause)
-		return input as unknown as ReturnType<typeof F.buildFinallyClause>;
+	if (isNodeOfKind(input, TSKindId.FinallyClause)) return input as unknown as ReturnType<typeof F.buildFinallyClause>;
 	return F.buildFinallyClause(
 		_requireField(
 			'finally_clause',
 			'block',
 			_resolveOne<T.Suite>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'block' in input ? input.block : input,
+				configFieldOr(input, 'block', () => input),
 				_K0,
 				_super_suite
 			)
@@ -2873,18 +2860,17 @@ export function resolveWithItem_value(value: T.WithItem.LooseConfig['value']): T
 }
 
 export function coerceToWithItem(input: T.WithItem.Loose): ReturnType<typeof F.buildWithItem> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.WithItem)
-		return input as unknown as ReturnType<typeof F.buildWithItem>;
+	if (isNodeOfKind(input, TSKindId.WithItem)) return input as unknown as ReturnType<typeof F.buildWithItem>;
 	return F.buildWithItem(
 		_requireField(
 			'with_item',
 			'value',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNode(input) && 'value' in input ? input.value : input,
+					configFieldOr(input, 'value', () => input),
 					() =>
 						_resolveOne<T.Expression>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'value' in input ? input.value : input,
+							configFieldOr(input, 'value', () => input),
 							_K7,
 							_K8
 						)
@@ -2953,11 +2939,11 @@ export function resolveParameters_elements(value: T.Parameters.LooseConfig['elem
 export function coerceToParameters(): T.EmptyParameters;
 export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeof F.buildParameters>;
 export function coerceToParameters(input?: T.Parameters.Loose): ReturnType<typeof F.buildParameters> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.Parameters)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.Parameters))
 		return input as unknown as ReturnType<typeof F.buildParameters>;
 	return F.buildParameters(
 		_resolveOneBranch<T.ParametersElements>(
-			input !== null && typeof input === 'object' && !isNode(input) && 'elements' in input ? input.elements : input,
+			configFieldOr(input, 'elements', () => input),
 			'parameters_elements',
 			undefined,
 			true
@@ -2972,16 +2958,14 @@ export function resolveLambdaParameters_parametersElements(
 }
 
 export function coerceToLambdaParameters(input: T.LambdaParameters.Loose): ReturnType<typeof F.buildLambdaParameters> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.LambdaParameters)
+	if (isNodeOfKind(input, TSKindId.LambdaParameters))
 		return input as unknown as ReturnType<typeof F.buildLambdaParameters>;
 	return F.buildLambdaParameters(
 		_requireField(
 			'lambda_parameters',
 			'parametersElements',
 			_resolveOneBranch<T.ParametersElements>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'parametersElements' in input
-					? input.parametersElements
-					: input,
+				configFieldOr(input, 'parametersElements', () => input),
 				'parameters_elements'
 			)
 		)
@@ -2996,22 +2980,17 @@ export function resolveListSplat_expression(value: T.ListSplat.LooseConfig['expr
 }
 
 export function coerceToListSplat(input: T.ListSplat.Loose): ReturnType<typeof F.buildListSplat> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.ListSplat)
-		return input as unknown as ReturnType<typeof F.buildListSplat>;
+	if (isNodeOfKind(input, TSKindId.ListSplat)) return input as unknown as ReturnType<typeof F.buildListSplat>;
 	return F.buildListSplat(
 		_requireField(
 			'list_splat',
 			'expression',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-						? input.expression
-						: input,
+					configFieldOr(input, 'expression', () => input),
 					() =>
 						_resolveOne<T.Expression>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-								? input.expression
-								: input,
+							configFieldOr(input, 'expression', () => input),
 							_K7,
 							_K8
 						)
@@ -3032,7 +3011,7 @@ export function resolveDictionarySplat_expression(
 }
 
 export function coerceToDictionarySplat(input: T.DictionarySplat.Loose): ReturnType<typeof F.buildDictionarySplat> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.DictionarySplat)
+	if (isNodeOfKind(input, TSKindId.DictionarySplat))
 		return input as unknown as ReturnType<typeof F.buildDictionarySplat>;
 	return F.buildDictionarySplat(
 		_requireField(
@@ -3040,14 +3019,10 @@ export function coerceToDictionarySplat(input: T.DictionarySplat.Loose): ReturnT
 			'expression',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-						? input.expression
-						: input,
+					configFieldOr(input, 'expression', () => input),
 					() =>
 						_resolveOne<T.Expression>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-								? input.expression
-								: input,
+							configFieldOr(input, 'expression', () => input),
 							_K7,
 							_K8
 						)
@@ -3064,7 +3039,7 @@ export function coerceToGlobalStatement(
 		| LooseValue<T.Identifier | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildGlobalStatement> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.GlobalStatement) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.GlobalStatement)) {
 		const data = input[0];
 		const stored = (data as unknown as { _names?: unknown })._names;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -3092,7 +3067,7 @@ export function coerceToNonlocalStatement(
 		| LooseValue<T.Identifier | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildNonlocalStatement> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.NonlocalStatement) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.NonlocalStatement)) {
 		const data = input[0];
 		const stored = (data as unknown as { _names?: unknown })._names;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -3195,14 +3170,13 @@ export function resolveTypeParameter_types(value: T.TypeParameter.LooseConfig['t
 }
 
 export function coerceToTypeParameter(input: T.TypeParameter.Loose): ReturnType<typeof F.buildTypeParameter> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.TypeParameter)
-		return input as unknown as ReturnType<typeof F.buildTypeParameter>;
+	if (isNodeOfKind(input, TSKindId.TypeParameter)) return input as unknown as ReturnType<typeof F.buildTypeParameter>;
 	return F.buildTypeParameter(
 		_requireField(
 			'type_parameter',
 			'types',
 			_resolveOneBranch<T.Types>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'types' in input ? input.types : input,
+				configFieldOr(input, 'types', () => input),
 				'types'
 			)
 		)
@@ -3218,14 +3192,14 @@ export function resolveParenthesizedListSplat_content(
 export function coerceToParenthesizedListSplat(
 	input: T.ParenthesizedListSplat.Loose
 ): ReturnType<typeof F.buildParenthesizedListSplat> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.ParenthesizedListSplat)
+	if (isNodeOfKind(input, TSKindId.ParenthesizedListSplat))
 		return input as unknown as ReturnType<typeof F.buildParenthesizedListSplat>;
 	return F.buildParenthesizedListSplat(
 		_requireField(
 			'parenthesized_list_splat',
 			'content',
 			_resolveOne<T.ParenthesizedListSplat | T.ListSplat>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
+				configFieldOr(input, 'content', () => input),
 				_K0,
 				_K17
 			)
@@ -3242,11 +3216,11 @@ export function resolveArgumentList_arguments(
 export function coerceToArgumentList(): T.EmptyArgumentList;
 export function coerceToArgumentList(input?: T.ArgumentList.Loose): ReturnType<typeof F.buildArgumentList>;
 export function coerceToArgumentList(input?: T.ArgumentList.Loose): ReturnType<typeof F.buildArgumentList> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.ArgumentList)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.ArgumentList))
 		return input as unknown as ReturnType<typeof F.buildArgumentList>;
 	return F.buildArgumentList(
 		_resolveOneBranch<T.ArgumentListElements>(
-			input !== null && typeof input === 'object' && !isNode(input) && 'arguments' in input ? input.arguments : input,
+			configFieldOr(input, 'arguments', () => input),
 			'argument_list_elements',
 			undefined,
 			true
@@ -3298,22 +3272,17 @@ export function resolveDecorator_expression(value: T.Decorator.LooseConfig['expr
 }
 
 export function coerceToDecorator(input: T.Decorator.Loose): ReturnType<typeof F.buildDecorator> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.Decorator)
-		return input as unknown as ReturnType<typeof F.buildDecorator>;
+	if (isNodeOfKind(input, TSKindId.Decorator)) return input as unknown as ReturnType<typeof F.buildDecorator>;
 	return F.buildDecorator(
 		_requireField(
 			'decorator',
 			'expression',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-						? input.expression
-						: input,
+					configFieldOr(input, 'expression', () => input),
 					() =>
 						_resolveOne<T.Expression>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-								? input.expression
-								: input,
+							configFieldOr(input, 'expression', () => input),
 							_K7,
 							_K8
 						)
@@ -3327,7 +3296,7 @@ export function coerceToDecorator(input: T.Decorator.Loose): ReturnType<typeof F
 export function coerceToBlock(
 	...input: readonly (T.Block.Loose | LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 ): ReturnType<typeof F.buildBlock> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.Block) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Block)) {
 		const data = input[0];
 		const stored = (data as unknown as { _statements?: unknown })._statements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -3378,7 +3347,7 @@ export function coerceToDottedName(
 		| LooseValue<T.Identifier | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildDottedName> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.DottedName) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DottedName)) {
 		const data = input[0];
 		const stored = (data as unknown as { _names?: unknown })._names;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -3403,14 +3372,13 @@ export function resolveCasePattern_content(value: T.CasePattern.LooseConfig['con
 }
 
 export function coerceToCasePattern(input: T.CasePattern.Loose): ReturnType<typeof F.buildCasePattern> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.CasePattern)
-		return input as unknown as ReturnType<typeof F.buildCasePattern>;
+	if (isNodeOfKind(input, TSKindId.CasePattern)) return input as unknown as ReturnType<typeof F.buildCasePattern>;
 	return F.buildCasePattern(
 		_requireField(
 			'case_pattern',
 			'content',
 			_resolveOne<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
+				configFieldOr(input, 'content', () => input),
 				_K0,
 				_K19
 			)
@@ -3421,94 +3389,94 @@ export function coerceToCasePattern(input: T.CasePattern.Loose): ReturnType<type
 export function resolveSimplePattern_content(
 	value: T.SimplePattern.LooseConfig['content']
 ): T.SimplePattern['_content'] {
-	return (
-		_keywordOf(value, [
+	return _keywordOr(
+		value,
+		[
 			['True', TSKindId.True] as const,
 			['False', TSKindId.False] as const,
 			['None', TSKindId.None] as const,
 			['_', TSKindId.WildcardPattern] as const
-		]) ??
-		coerceMixedEnumStorage(
-			_resolveKindEnum(value, () =>
-				_resolveOne<
-					| T.ClassPattern
-					| T.SplatPattern
-					| T.UnionPattern
-					| T.CaseListPattern
-					| T.CaseTuplePattern
-					| T.DictPattern
-					| T.String
-					| T.ConcatenatedString
-					| 'True'
-					| 'False'
-					| 'None'
-					| T.SimplePatternNegative
-					| T.ComplexPattern
-					| T.DottedName
-					| '_'
-				>(value, _K20, _K21)
-			),
-			[
-				['True', TSKindId.True] as const,
-				['False', TSKindId.False] as const,
-				['None', TSKindId.None] as const,
-				['_', TSKindId.WildcardPattern] as const
-			]
-		)
-	);
-}
-
-export function coerceToSimplePattern(input: T.SimplePattern.Loose): ReturnType<typeof F.buildSimplePattern> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.SimplePattern)
-		return input as unknown as ReturnType<typeof F.buildSimplePattern>;
-	return F.buildSimplePattern(
-		_requireField(
-			'_simple_pattern',
-			'content',
-			_keywordOf(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
+		],
+		() =>
+			coerceMixedEnumStorage(
+				_resolveKindEnum(value, () =>
+					_resolveOne<
+						| T.ClassPattern
+						| T.SplatPattern
+						| T.UnionPattern
+						| T.CaseListPattern
+						| T.CaseTuplePattern
+						| T.DictPattern
+						| T.String
+						| T.ConcatenatedString
+						| 'True'
+						| 'False'
+						| 'None'
+						| T.SimplePatternNegative
+						| T.ComplexPattern
+						| T.DottedName
+						| '_'
+					>(value, _K20, _K21)
+				),
 				[
 					['True', TSKindId.True] as const,
 					['False', TSKindId.False] as const,
 					['None', TSKindId.None] as const,
 					['_', TSKindId.WildcardPattern] as const
 				]
-			) ??
-				coerceMixedEnumStorage(
-					_resolveKindEnum(
-						input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
-						() =>
-							_resolveOne<
-								| T.ClassPattern
-								| T.SplatPattern
-								| T.UnionPattern
-								| T.CaseListPattern
-								| T.CaseTuplePattern
-								| T.DictPattern
-								| T.String
-								| T.ConcatenatedString
-								| 'True'
-								| 'False'
-								| 'None'
-								| T.SimplePatternNegative
-								| T.ComplexPattern
-								| T.DottedName
-								| '_'
-							>(
-								input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-									? input.content
-									: input,
-								_K20,
-								_K21
-							)
-					),
-					[
-						['True', TSKindId.True] as const,
-						['False', TSKindId.False] as const,
-						['None', TSKindId.None] as const,
-						['_', TSKindId.WildcardPattern] as const
-					]
-				)
+			)
+	);
+}
+
+export function coerceToSimplePattern(input: T.SimplePattern.Loose): ReturnType<typeof F.buildSimplePattern> {
+	if (isNodeOfKind(input, TSKindId.SimplePattern)) return input as unknown as ReturnType<typeof F.buildSimplePattern>;
+	return F.buildSimplePattern(
+		_requireField(
+			'_simple_pattern',
+			'content',
+			_keywordOr(
+				configFieldOr(input, 'content', () => input),
+				[
+					['True', TSKindId.True] as const,
+					['False', TSKindId.False] as const,
+					['None', TSKindId.None] as const,
+					['_', TSKindId.WildcardPattern] as const
+				],
+				() =>
+					coerceMixedEnumStorage(
+						_resolveKindEnum(
+							configFieldOr(input, 'content', () => input),
+							() =>
+								_resolveOne<
+									| T.ClassPattern
+									| T.SplatPattern
+									| T.UnionPattern
+									| T.CaseListPattern
+									| T.CaseTuplePattern
+									| T.DictPattern
+									| T.String
+									| T.ConcatenatedString
+									| 'True'
+									| 'False'
+									| 'None'
+									| T.SimplePatternNegative
+									| T.ComplexPattern
+									| T.DottedName
+									| '_'
+								>(
+									configFieldOr(input, 'content', () => input),
+									_K20,
+									_K21
+								)
+						),
+						[
+							['True', TSKindId.True] as const,
+							['False', TSKindId.False] as const,
+							['None', TSKindId.None] as const,
+							['_', TSKindId.WildcardPattern] as const
+						]
+					)
+			)
 		)
 	);
 }
@@ -3559,7 +3527,7 @@ export function coerceToUnionPattern(
 		  >
 	)[]
 ): ReturnType<typeof F.buildUnionPattern> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.UnionPattern) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.UnionPattern)) {
 		const data = input[0];
 		const stored = (data as unknown as { _patterns?: unknown })._patterns;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -3662,13 +3630,11 @@ export function resolveDictPattern_dictPatternElements(
 export function coerceToDictPattern(): T.EmptyDictPattern;
 export function coerceToDictPattern(input?: T.DictPattern.Loose): ReturnType<typeof F.buildDictPattern>;
 export function coerceToDictPattern(input?: T.DictPattern.Loose): ReturnType<typeof F.buildDictPattern> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.DictPattern)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.DictPattern))
 		return input as unknown as ReturnType<typeof F.buildDictPattern>;
 	return F.buildDictPattern(
 		_resolveOneBranch<T.DictPatternElements>(
-			input !== null && typeof input === 'object' && !isNode(input) && 'dictPatternElements' in input
-				? input.dictPatternElements
-				: input,
+			configFieldOr(input, 'dictPatternElements', () => input),
 			'dict_pattern_elements',
 			undefined,
 			true
@@ -3677,40 +3643,42 @@ export function coerceToDictPattern(input?: T.DictPattern.Loose): ReturnType<typ
 }
 
 export function resolveKeyValuePattern_key(value: T.KeyValuePattern.LooseConfig['key']): T.KeyValuePattern['_key'] {
-	return (
-		_keywordOf(value, [
+	return _keywordOr(
+		value,
+		[
 			['True', TSKindId.True] as const,
 			['False', TSKindId.False] as const,
 			['None', TSKindId.None] as const,
 			['_', TSKindId.WildcardPattern] as const
-		]) ??
-		coerceMixedEnumStorage(
-			_resolveKindEnum(value, () =>
-				_resolveOne<
-					| T.ClassPattern
-					| T.SplatPattern
-					| T.UnionPattern
-					| T.CaseListPattern
-					| T.CaseTuplePattern
-					| T.DictPattern
-					| T.String
-					| T.ConcatenatedString
-					| 'True'
-					| 'False'
-					| 'None'
-					| T.SimplePatternNegative
-					| T.ComplexPattern
-					| T.DottedName
-					| '_'
-				>(value, _K20, _K21)
-			),
-			[
-				['True', TSKindId.True] as const,
-				['False', TSKindId.False] as const,
-				['None', TSKindId.None] as const,
-				['_', TSKindId.WildcardPattern] as const
-			]
-		)
+		],
+		() =>
+			coerceMixedEnumStorage(
+				_resolveKindEnum(value, () =>
+					_resolveOne<
+						| T.ClassPattern
+						| T.SplatPattern
+						| T.UnionPattern
+						| T.CaseListPattern
+						| T.CaseTuplePattern
+						| T.DictPattern
+						| T.String
+						| T.ConcatenatedString
+						| 'True'
+						| 'False'
+						| 'None'
+						| T.SimplePatternNegative
+						| T.ComplexPattern
+						| T.DottedName
+						| '_'
+					>(value, _K20, _K21)
+				),
+				[
+					['True', TSKindId.True] as const,
+					['False', TSKindId.False] as const,
+					['None', TSKindId.None] as const,
+					['_', TSKindId.WildcardPattern] as const
+				]
+			)
 	);
 }
 
@@ -3734,40 +3702,42 @@ export function resolveKeywordPattern_name(value: T.KeywordPattern.LooseConfig['
 }
 
 export function resolveKeywordPattern_value(value: T.KeywordPattern.LooseConfig['value']): T.KeywordPattern['_value'] {
-	return (
-		_keywordOf(value, [
+	return _keywordOr(
+		value,
+		[
 			['True', TSKindId.True] as const,
 			['False', TSKindId.False] as const,
 			['None', TSKindId.None] as const,
 			['_', TSKindId.WildcardPattern] as const
-		]) ??
-		coerceMixedEnumStorage(
-			_resolveKindEnum(value, () =>
-				_resolveOne<
-					| T.ClassPattern
-					| T.SplatPattern
-					| T.UnionPattern
-					| T.CaseListPattern
-					| T.CaseTuplePattern
-					| T.DictPattern
-					| T.String
-					| T.ConcatenatedString
-					| 'True'
-					| 'False'
-					| 'None'
-					| T.SimplePatternNegative
-					| T.ComplexPattern
-					| T.DottedName
-					| '_'
-				>(value, _K20, _K21)
-			),
-			[
-				['True', TSKindId.True] as const,
-				['False', TSKindId.False] as const,
-				['None', TSKindId.None] as const,
-				['_', TSKindId.WildcardPattern] as const
-			]
-		)
+		],
+		() =>
+			coerceMixedEnumStorage(
+				_resolveKindEnum(value, () =>
+					_resolveOne<
+						| T.ClassPattern
+						| T.SplatPattern
+						| T.UnionPattern
+						| T.CaseListPattern
+						| T.CaseTuplePattern
+						| T.DictPattern
+						| T.String
+						| T.ConcatenatedString
+						| 'True'
+						| 'False'
+						| 'None'
+						| T.SimplePatternNegative
+						| T.ComplexPattern
+						| T.DottedName
+						| '_'
+					>(value, _K20, _K21)
+				),
+				[
+					['True', TSKindId.True] as const,
+					['False', TSKindId.False] as const,
+					['None', TSKindId.None] as const,
+					['_', TSKindId.WildcardPattern] as const
+				]
+			)
 	);
 }
 
@@ -3790,8 +3760,7 @@ export function resolveSplatPattern_operator(
 }
 
 export function resolveSplatPattern_name(value: T.SplatPattern.LooseConfig['name']): T.SplatPattern['_name'] {
-	return (
-		_keywordOf(value, [['_', TSKindId.Underscore] as const]) ??
+	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | '_'>(value, 'identifier')),
 			[['_', TSKindId.Underscore] as const]
@@ -3879,7 +3848,7 @@ export function coerceToParametersElements(
 				)[]
 		  ]
 ): ReturnType<typeof F.buildParametersElements> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.ParametersElements) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ParametersElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _parameter?: unknown })._parameter;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -3930,7 +3899,7 @@ export function coerceToPatterns(
 				...rest: (T.Patterns.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 ): ReturnType<typeof F.buildPatterns> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.Patterns) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Patterns)) {
 		const data = input[0];
 		const stored = (data as unknown as { _pattern?: unknown })._pattern;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -3971,11 +3940,11 @@ export function resolveTuplePattern_patterns(
 export function coerceToTuplePattern(): T.EmptyTuplePattern;
 export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<typeof F.buildTuplePattern>;
 export function coerceToTuplePattern(input?: T.TuplePattern.Loose): ReturnType<typeof F.buildTuplePattern> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.TuplePattern)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.TuplePattern))
 		return input as unknown as ReturnType<typeof F.buildTuplePattern>;
 	return F.buildTuplePattern(
 		_resolveOneBranch<T.Patterns>(
-			input !== null && typeof input === 'object' && !isNode(input) && 'patterns' in input ? input.patterns : input,
+			configFieldOr(input, 'patterns', () => input),
 			'patterns',
 			undefined,
 			true
@@ -3990,11 +3959,11 @@ export function resolveListPattern_patterns(value: T.ListPattern.LooseConfig['pa
 export function coerceToListPattern(): T.EmptyListPattern;
 export function coerceToListPattern(input?: T.ListPattern.Loose): ReturnType<typeof F.buildListPattern>;
 export function coerceToListPattern(input?: T.ListPattern.Loose): ReturnType<typeof F.buildListPattern> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.ListPattern)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.ListPattern))
 		return input as unknown as ReturnType<typeof F.buildListPattern>;
 	return F.buildListPattern(
 		_resolveOneBranch<T.Patterns>(
-			input !== null && typeof input === 'object' && !isNode(input) && 'patterns' in input ? input.patterns : input,
+			configFieldOr(input, 'patterns', () => input),
 			'patterns',
 			undefined,
 			true
@@ -4062,44 +4031,23 @@ export function coerceToTypedDefaultParameter(
 export function resolveListSplatPattern_target(
 	value: T.ListSplatPattern.LooseConfig['target']
 ): T.ListSplatPattern['_target'] {
-	return (
-		_keywordOf(value, [
+	return _keywordOr(
+		value,
+		[
 			['print', TSKindId.PrintKeyword] as const,
 			['exec', TSKindId.ExecKeyword] as const,
 			['async', TSKindId.AsyncKeyword] as const,
 			['await', TSKindId.AwaitKeyword] as const,
 			['type', TSKindId.TypeKeyword] as const,
 			['match', TSKindId.MatchKeyword] as const
-		]) ??
-		coerceMixedEnumStorage(
-			_resolveKindEnum(value, () =>
-				_resolveOne<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute>(
-					value,
-					_K14,
-					_K27
-				)
-			),
-			[
-				['print', TSKindId.PrintKeyword] as const,
-				['exec', TSKindId.ExecKeyword] as const,
-				['async', TSKindId.AsyncKeyword] as const,
-				['await', TSKindId.AwaitKeyword] as const,
-				['type', TSKindId.TypeKeyword] as const,
-				['match', TSKindId.MatchKeyword] as const
-			]
-		)
-	);
-}
-
-export function coerceToListSplatPattern(input: T.ListSplatPattern.Loose): ReturnType<typeof F.buildListSplatPattern> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.ListSplatPattern)
-		return input as unknown as ReturnType<typeof F.buildListSplatPattern>;
-	return F.buildListSplatPattern(
-		_requireField(
-			'list_splat_pattern',
-			'target',
-			_keywordOf(
-				input !== null && typeof input === 'object' && !isNode(input) && 'target' in input ? input.target : input,
+		],
+		() =>
+			coerceMixedEnumStorage(
+				_resolveKindEnum(value, () =>
+					_resolveOne<
+						T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute
+					>(value, _K14, _K27)
+				),
 				[
 					['print', TSKindId.PrintKeyword] as const,
 					['exec', TSKindId.ExecKeyword] as const,
@@ -4108,30 +4056,50 @@ export function coerceToListSplatPattern(input: T.ListSplatPattern.Loose): Retur
 					['type', TSKindId.TypeKeyword] as const,
 					['match', TSKindId.MatchKeyword] as const
 				]
-			) ??
-				coerceMixedEnumStorage(
-					_resolveKindEnum(
-						input !== null && typeof input === 'object' && !isNode(input) && 'target' in input ? input.target : input,
-						() =>
-							_resolveOne<
-								T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute
-							>(
-								input !== null && typeof input === 'object' && !isNode(input) && 'target' in input
-									? input.target
-									: input,
-								_K14,
-								_K27
-							)
-					),
-					[
-						['print', TSKindId.PrintKeyword] as const,
-						['exec', TSKindId.ExecKeyword] as const,
-						['async', TSKindId.AsyncKeyword] as const,
-						['await', TSKindId.AwaitKeyword] as const,
-						['type', TSKindId.TypeKeyword] as const,
-						['match', TSKindId.MatchKeyword] as const
-					]
-				)
+			)
+	);
+}
+
+export function coerceToListSplatPattern(input: T.ListSplatPattern.Loose): ReturnType<typeof F.buildListSplatPattern> {
+	if (isNodeOfKind(input, TSKindId.ListSplatPattern))
+		return input as unknown as ReturnType<typeof F.buildListSplatPattern>;
+	return F.buildListSplatPattern(
+		_requireField(
+			'list_splat_pattern',
+			'target',
+			_keywordOr(
+				configFieldOr(input, 'target', () => input),
+				[
+					['print', TSKindId.PrintKeyword] as const,
+					['exec', TSKindId.ExecKeyword] as const,
+					['async', TSKindId.AsyncKeyword] as const,
+					['await', TSKindId.AwaitKeyword] as const,
+					['type', TSKindId.TypeKeyword] as const,
+					['match', TSKindId.MatchKeyword] as const
+				],
+				() =>
+					coerceMixedEnumStorage(
+						_resolveKindEnum(
+							configFieldOr(input, 'target', () => input),
+							() =>
+								_resolveOne<
+									T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute
+								>(
+									configFieldOr(input, 'target', () => input),
+									_K14,
+									_K27
+								)
+						),
+						[
+							['print', TSKindId.PrintKeyword] as const,
+							['exec', TSKindId.ExecKeyword] as const,
+							['async', TSKindId.AsyncKeyword] as const,
+							['await', TSKindId.AwaitKeyword] as const,
+							['type', TSKindId.TypeKeyword] as const,
+							['match', TSKindId.MatchKeyword] as const
+						]
+					)
+			)
 		)
 	);
 }
@@ -4139,46 +4107,23 @@ export function coerceToListSplatPattern(input: T.ListSplatPattern.Loose): Retur
 export function resolveDictionarySplatPattern_target(
 	value: T.DictionarySplatPattern.LooseConfig['target']
 ): T.DictionarySplatPattern['_target'] {
-	return (
-		_keywordOf(value, [
+	return _keywordOr(
+		value,
+		[
 			['print', TSKindId.PrintKeyword] as const,
 			['exec', TSKindId.ExecKeyword] as const,
 			['async', TSKindId.AsyncKeyword] as const,
 			['await', TSKindId.AwaitKeyword] as const,
 			['type', TSKindId.TypeKeyword] as const,
 			['match', TSKindId.MatchKeyword] as const
-		]) ??
-		coerceMixedEnumStorage(
-			_resolveKindEnum(value, () =>
-				_resolveOne<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute>(
-					value,
-					_K14,
-					_K27
-				)
-			),
-			[
-				['print', TSKindId.PrintKeyword] as const,
-				['exec', TSKindId.ExecKeyword] as const,
-				['async', TSKindId.AsyncKeyword] as const,
-				['await', TSKindId.AwaitKeyword] as const,
-				['type', TSKindId.TypeKeyword] as const,
-				['match', TSKindId.MatchKeyword] as const
-			]
-		)
-	);
-}
-
-export function coerceToDictionarySplatPattern(
-	input: T.DictionarySplatPattern.Loose
-): ReturnType<typeof F.buildDictionarySplatPattern> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.DictionarySplatPattern)
-		return input as unknown as ReturnType<typeof F.buildDictionarySplatPattern>;
-	return F.buildDictionarySplatPattern(
-		_requireField(
-			'dictionary_splat_pattern',
-			'target',
-			_keywordOf(
-				input !== null && typeof input === 'object' && !isNode(input) && 'target' in input ? input.target : input,
+		],
+		() =>
+			coerceMixedEnumStorage(
+				_resolveKindEnum(value, () =>
+					_resolveOne<
+						T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute
+					>(value, _K14, _K27)
+				),
 				[
 					['print', TSKindId.PrintKeyword] as const,
 					['exec', TSKindId.ExecKeyword] as const,
@@ -4187,30 +4132,52 @@ export function coerceToDictionarySplatPattern(
 					['type', TSKindId.TypeKeyword] as const,
 					['match', TSKindId.MatchKeyword] as const
 				]
-			) ??
-				coerceMixedEnumStorage(
-					_resolveKindEnum(
-						input !== null && typeof input === 'object' && !isNode(input) && 'target' in input ? input.target : input,
-						() =>
-							_resolveOne<
-								T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute
-							>(
-								input !== null && typeof input === 'object' && !isNode(input) && 'target' in input
-									? input.target
-									: input,
-								_K14,
-								_K27
-							)
-					),
-					[
-						['print', TSKindId.PrintKeyword] as const,
-						['exec', TSKindId.ExecKeyword] as const,
-						['async', TSKindId.AsyncKeyword] as const,
-						['await', TSKindId.AwaitKeyword] as const,
-						['type', TSKindId.TypeKeyword] as const,
-						['match', TSKindId.MatchKeyword] as const
-					]
-				)
+			)
+	);
+}
+
+export function coerceToDictionarySplatPattern(
+	input: T.DictionarySplatPattern.Loose
+): ReturnType<typeof F.buildDictionarySplatPattern> {
+	if (isNodeOfKind(input, TSKindId.DictionarySplatPattern))
+		return input as unknown as ReturnType<typeof F.buildDictionarySplatPattern>;
+	return F.buildDictionarySplatPattern(
+		_requireField(
+			'dictionary_splat_pattern',
+			'target',
+			_keywordOr(
+				configFieldOr(input, 'target', () => input),
+				[
+					['print', TSKindId.PrintKeyword] as const,
+					['exec', TSKindId.ExecKeyword] as const,
+					['async', TSKindId.AsyncKeyword] as const,
+					['await', TSKindId.AwaitKeyword] as const,
+					['type', TSKindId.TypeKeyword] as const,
+					['match', TSKindId.MatchKeyword] as const
+				],
+				() =>
+					coerceMixedEnumStorage(
+						_resolveKindEnum(
+							configFieldOr(input, 'target', () => input),
+							() =>
+								_resolveOne<
+									T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match' | T.Subscript | T.Attribute
+								>(
+									configFieldOr(input, 'target', () => input),
+									_K14,
+									_K27
+								)
+						),
+						[
+							['print', TSKindId.PrintKeyword] as const,
+							['exec', TSKindId.ExecKeyword] as const,
+							['async', TSKindId.AsyncKeyword] as const,
+							['await', TSKindId.AwaitKeyword] as const,
+							['type', TSKindId.TypeKeyword] as const,
+							['match', TSKindId.MatchKeyword] as const
+						]
+					)
+			)
 		)
 	);
 }
@@ -4242,20 +4209,17 @@ export function resolveNotOperator_argument(value: T.NotOperator.LooseConfig['ar
 }
 
 export function coerceToNotOperator(input: T.NotOperator.Loose): ReturnType<typeof F.buildNotOperator> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.NotOperator)
-		return input as unknown as ReturnType<typeof F.buildNotOperator>;
+	if (isNodeOfKind(input, TSKindId.NotOperator)) return input as unknown as ReturnType<typeof F.buildNotOperator>;
 	return F.buildNotOperator(
 		_requireField(
 			'not_operator',
 			'argument',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNode(input) && 'argument' in input ? input.argument : input,
+					configFieldOr(input, 'argument', () => input),
 					() =>
 						_resolveOne<T.Expression>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'argument' in input
-								? input.argument
-								: input,
+							configFieldOr(input, 'argument', () => input),
 							_K7,
 							_K8
 						)
@@ -4547,15 +4511,15 @@ export function resolveYield_content(value: T.Yield.LooseConfig['content']): T.Y
 }
 
 export function coerceToYield(input?: T.Yield.Loose): ReturnType<typeof F.buildYield> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.Yield)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.Yield))
 		return input as unknown as ReturnType<typeof F.buildYield>;
 	return F.buildYield(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
+				configFieldOr(input, 'content', () => input),
 				() =>
 					_resolveOne<T.YieldFromClause | T.Expression | T.ExpressionList>(
-						input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
+						configFieldOr(input, 'content', () => input),
 						_K7,
 						_K31
 					)
@@ -4685,20 +4649,17 @@ export function resolveType_content(value: T.Type.LooseConfig['content']): T.Typ
 }
 
 export function coerceToType(input: T.Type.Loose): ReturnType<typeof F.buildType> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.Type)
-		return input as unknown as ReturnType<typeof F.buildType>;
+	if (isNodeOfKind(input, TSKindId.Type)) return input as unknown as ReturnType<typeof F.buildType>;
 	return F.buildType(
 		_requireField(
 			'type',
 			'content',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
+					configFieldOr(input, 'content', () => input),
 					() =>
 						_resolveOne<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-								? input.content
-								: input,
+							configFieldOr(input, 'content', () => input),
 							_K7,
 							_K34
 						)
@@ -4729,8 +4690,7 @@ export function coerceToSplatType(input: T.SplatType.Loose): ReturnType<typeof F
 }
 
 export function resolveGenericType_name(value: T.GenericType.LooseConfig['name']): T.GenericType['_name'] {
-	return (
-		_keywordOf(value, [['type', TSKindId.TypeKeyword] as const]) ??
+	return _keywordOr(value, [['type', TSKindId.TypeKeyword] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, () => _resolveOneLeaf<T.Identifier | 'type'>(value, 'identifier')),
 			[['type', TSKindId.TypeKeyword] as const]
@@ -4807,28 +4767,30 @@ export function coerceToMemberType(input: T.MemberType.Loose): ReturnType<typeof
 }
 
 export function resolveKeywordArgument_name(value: T.KeywordArgument.LooseConfig['name']): T.KeywordArgument['_name'] {
-	return (
-		_keywordOf(value, [
+	return _keywordOr(
+		value,
+		[
 			['print', TSKindId.PrintKeyword] as const,
 			['exec', TSKindId.ExecKeyword] as const,
 			['async', TSKindId.AsyncKeyword] as const,
 			['await', TSKindId.AwaitKeyword] as const,
 			['type', TSKindId.TypeKeyword] as const,
 			['match', TSKindId.MatchKeyword] as const
-		]) ??
-		coerceMixedEnumStorage(
-			_resolveKindEnum(value, () =>
-				_resolveOneLeaf<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match'>(value, 'identifier')
-			),
-			[
-				['print', TSKindId.PrintKeyword] as const,
-				['exec', TSKindId.ExecKeyword] as const,
-				['async', TSKindId.AsyncKeyword] as const,
-				['await', TSKindId.AwaitKeyword] as const,
-				['type', TSKindId.TypeKeyword] as const,
-				['match', TSKindId.MatchKeyword] as const
-			]
-		)
+		],
+		() =>
+			coerceMixedEnumStorage(
+				_resolveKindEnum(value, () =>
+					_resolveOneLeaf<T.Identifier | 'print' | 'exec' | 'async' | 'await' | 'type' | 'match'>(value, 'identifier')
+				),
+				[
+					['print', TSKindId.PrintKeyword] as const,
+					['exec', TSKindId.ExecKeyword] as const,
+					['async', TSKindId.AsyncKeyword] as const,
+					['await', TSKindId.AwaitKeyword] as const,
+					['type', TSKindId.TypeKeyword] as const,
+					['match', TSKindId.MatchKeyword] as const
+				]
+			)
 	);
 }
 
@@ -4859,13 +4821,11 @@ export function resolveList_collectionElements(
 export function coerceToList(): T.EmptyList;
 export function coerceToList(input?: T.List.Loose): ReturnType<typeof F.buildList>;
 export function coerceToList(input?: T.List.Loose): ReturnType<typeof F.buildList> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.List)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.List))
 		return input as unknown as ReturnType<typeof F.buildList>;
 	return F.buildList(
 		_resolveOneBranch<T.CollectionElements>(
-			input !== null && typeof input === 'object' && !isNode(input) && 'collectionElements' in input
-				? input.collectionElements
-				: input,
+			configFieldOr(input, 'collectionElements', () => input),
 			'collection_elements',
 			undefined,
 			true
@@ -4880,16 +4840,13 @@ export function resolveSet_collectionElements(
 }
 
 export function coerceToSet(input: T.Set.Loose): ReturnType<typeof F.buildSet> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.Set)
-		return input as unknown as ReturnType<typeof F.buildSet>;
+	if (isNodeOfKind(input, TSKindId.Set)) return input as unknown as ReturnType<typeof F.buildSet>;
 	return F.buildSet(
 		_requireField(
 			'set',
 			'collectionElements',
 			_resolveOneBranch<T.CollectionElements>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'collectionElements' in input
-					? input.collectionElements
-					: input,
+				configFieldOr(input, 'collectionElements', () => input),
 				'collection_elements'
 			)
 		)
@@ -4905,13 +4862,11 @@ export function resolveTuple_collectionElements(
 export function coerceToTuple(): T.EmptyTuple;
 export function coerceToTuple(input?: T.Tuple.Loose): ReturnType<typeof F.buildTuple>;
 export function coerceToTuple(input?: T.Tuple.Loose): ReturnType<typeof F.buildTuple> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.Tuple)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.Tuple))
 		return input as unknown as ReturnType<typeof F.buildTuple>;
 	return F.buildTuple(
 		_resolveOneBranch<T.CollectionElements>(
-			input !== null && typeof input === 'object' && !isNode(input) && 'collectionElements' in input
-				? input.collectionElements
-				: input,
+			configFieldOr(input, 'collectionElements', () => input),
 			'collection_elements',
 			undefined,
 			true
@@ -4926,11 +4881,11 @@ export function resolveDictionary_entries(value: T.Dictionary.LooseConfig['entri
 export function coerceToDictionary(): T.EmptyDictionary;
 export function coerceToDictionary(input?: T.Dictionary.Loose): ReturnType<typeof F.buildDictionary>;
 export function coerceToDictionary(input?: T.Dictionary.Loose): ReturnType<typeof F.buildDictionary> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.Dictionary)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.Dictionary))
 		return input as unknown as ReturnType<typeof F.buildDictionary>;
 	return F.buildDictionary(
 		_resolveOneBranch<T.DictionaryElements>(
-			input !== null && typeof input === 'object' && !isNode(input) && 'entries' in input ? input.entries : input,
+			configFieldOr(input, 'entries', () => input),
 			'dictionary_elements',
 			undefined,
 			true
@@ -5075,7 +5030,7 @@ export function resolveParenthesizedExpression_expression(
 export function coerceToParenthesizedExpression(
 	input: T.ParenthesizedExpression.Loose
 ): ReturnType<typeof F.buildParenthesizedExpression> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.ParenthesizedExpression)
+	if (isNodeOfKind(input, TSKindId.ParenthesizedExpression))
 		return input as unknown as ReturnType<typeof F.buildParenthesizedExpression>;
 	return F.buildParenthesizedExpression(
 		_requireField(
@@ -5083,14 +5038,10 @@ export function coerceToParenthesizedExpression(
 			'expression',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-						? input.expression
-						: input,
+					configFieldOr(input, 'expression', () => input),
 					() =>
 						_resolveOne<T.Expression | T.Yield>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-								? input.expression
-								: input,
+							configFieldOr(input, 'expression', () => input),
 							_K7,
 							_K35
 						)
@@ -5143,7 +5094,7 @@ export function coerceToCollectionElements(
 				)[]
 		  ]
 ): ReturnType<typeof F.buildCollectionElements> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.CollectionElements) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.CollectionElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _element?: unknown })._element;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -5265,22 +5216,17 @@ export function resolveIfClause_condition(value: T.IfClause.LooseConfig['conditi
 }
 
 export function coerceToIfClause(input: T.IfClause.Loose): ReturnType<typeof F.buildIfClause> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.IfClause)
-		return input as unknown as ReturnType<typeof F.buildIfClause>;
+	if (isNodeOfKind(input, TSKindId.IfClause)) return input as unknown as ReturnType<typeof F.buildIfClause>;
 	return F.buildIfClause(
 		_requireField(
 			'if_clause',
 			'condition',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNode(input) && 'condition' in input
-						? input.condition
-						: input,
+					configFieldOr(input, 'condition', () => input),
 					() =>
 						_resolveOne<T.Expression>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'condition' in input
-								? input.condition
-								: input,
+							configFieldOr(input, 'condition', () => input),
 							_K7,
 							_K8
 						)
@@ -5344,7 +5290,7 @@ export function coerceToConcatenatedString(
 		| LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildConcatenatedString> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.ConcatenatedString) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ConcatenatedString)) {
 		const data = input[0];
 		const stored = (data as unknown as { _string?: unknown })._string;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -5396,7 +5342,7 @@ export function coerceToStringContent(
 		  >
 	)[]
 ): ReturnType<typeof F.buildStringContent> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.StringContent) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringContent)) {
 		const data = input[0];
 		const stored = (data as unknown as { _content?: unknown })._content;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -5484,7 +5430,7 @@ export function coerceToFormatSpecifier(
 		| LooseValue<'[^{}\\n]+' | T.FormatExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildFormatSpecifier> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.FormatSpecifier) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FormatSpecifier)) {
 		const data = input[0];
 		const stored = (data as unknown as { _elements?: unknown })._elements;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -5538,22 +5484,17 @@ export function resolveAwait_expression(value: T.Await.LooseConfig['expression']
 }
 
 export function coerceToAwait(input: T.Await.Loose): ReturnType<typeof F.buildAwait> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.Await)
-		return input as unknown as ReturnType<typeof F.buildAwait>;
+	if (isNodeOfKind(input, TSKindId.Await)) return input as unknown as ReturnType<typeof F.buildAwait>;
 	return F.buildAwait(
 		_requireField(
 			'await',
 			'expression',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-						? input.expression
-						: input,
+					configFieldOr(input, 'expression', () => input),
 					() =>
 						_resolveOne<T.PrimaryExpression>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-								? input.expression
-								: input,
+							configFieldOr(input, 'expression', () => input),
 							_K7,
 							_K28
 						)
@@ -5569,18 +5510,15 @@ export function resolveComment_content(value: T.Comment.LooseConfig['content']):
 }
 
 export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.buildComment> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.Comment)
-		return input as unknown as ReturnType<typeof F.buildComment>;
+	if (isNodeOfKind(input, TSKindId.Comment)) return input as unknown as ReturnType<typeof F.buildComment>;
 	return F.buildComment(
 		_requireField(
 			'comment',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-					? input.content
-					: typeof input === 'string'
-						? spelledInterior(input, '#', '', F._slotRe_buildComment_content)
-						: input,
+				configFieldOr(input, 'content', () =>
+					typeof input === 'string' ? spelledInterior(input, '#', '', F._slotRe_buildComment_content) : input
+				),
 				_K0,
 				_K0
 			)
@@ -5618,7 +5556,7 @@ export function coerceToSimpleStatementsElements(
 				)[]
 		  ]
 ): ReturnType<typeof F.buildSimpleStatementsElements> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.SimpleStatementsElements) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SimpleStatementsElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _simple_statement?: unknown })._simple_statement;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -5676,7 +5614,7 @@ export function coerceToSubjects(
 				...rest: (T.Subjects.Loose | LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 ): ReturnType<typeof F.buildSubjects> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.Subjects) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Subjects)) {
 		const data = input[0];
 		const stored = (data as unknown as { _subject?: unknown })._subject;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -5763,7 +5701,7 @@ export function coerceToCasePatterns(
 				...rest: (T.CasePatterns.Loose | LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 ): ReturnType<typeof F.buildCasePatterns> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.CasePatterns) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.CasePatterns)) {
 		const data = input[0];
 		const stored = (data as unknown as { _case_pattern?: unknown })._case_pattern;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -5806,7 +5744,7 @@ export function coerceToWithClauseWithItems(
 				)[]
 		  ]
 ): ReturnType<typeof F.buildWithClauseWithItems> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.WithClauseWithItems) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.WithClauseWithItems)) {
 		const data = input[0];
 		const stored = (data as unknown as { _with_item?: unknown })._with_item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -5839,7 +5777,7 @@ export function coerceToTypes(
 				...rest: (T.Types.Loose | LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 ): ReturnType<typeof F.buildTypes> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.Types) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Types)) {
 		const data = input[0];
 		const stored = (data as unknown as { _type?: unknown })._type;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -5902,7 +5840,7 @@ export function coerceToArgumentListElements(
 				)[]
 		  ]
 ): ReturnType<typeof F.buildArgumentListElements> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.ArgumentListElements) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ArgumentListElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _element?: unknown })._element;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -6013,7 +5951,7 @@ export function coerceToExpressionListExpressions(
 				)[]
 		  ]
 ): ReturnType<typeof F.buildExpressionListExpressions> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.ExpressionListExpressions) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExpressionListExpressions)) {
 		const data = input[0];
 		const stored = (data as unknown as { _expression?: unknown })._expression;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -6110,7 +6048,7 @@ export function coerceToListPatternCasePatterns(
 				)[]
 		  ]
 ): ReturnType<typeof F.buildListPatternCasePatterns> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.ListPatternCasePatterns) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ListPatternCasePatterns)) {
 		const data = input[0];
 		const stored = (data as unknown as { _case_pattern?: unknown })._case_pattern;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -6157,7 +6095,7 @@ export function coerceToDictPatternElements(
 				)[]
 		  ]
 ): ReturnType<typeof F.buildDictPatternElements> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.DictPatternElements) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DictPatternElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _element?: unknown })._element;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -6200,7 +6138,7 @@ export function coerceToPatternListPatterns(
 				)[]
 		  ]
 ): ReturnType<typeof F.buildPatternListPatterns> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.PatternListPatterns) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.PatternListPatterns)) {
 		const data = input[0];
 		const stored = (data as unknown as { _pattern?: unknown })._pattern;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -6254,7 +6192,7 @@ export function coerceToSubscripts(
 				)[]
 		  ]
 ): ReturnType<typeof F.buildSubscripts> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.Subscripts) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Subscripts)) {
 		const data = input[0];
 		const stored = (data as unknown as { _subscript?: unknown })._subscript;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -6352,7 +6290,7 @@ export function coerceToDictionaryElements(
 				)[]
 		  ]
 ): ReturnType<typeof F.buildDictionaryElements> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.DictionaryElements) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DictionaryElements)) {
 		const data = input[0];
 		const stored = (data as unknown as { _element?: unknown })._element;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -6387,19 +6325,15 @@ export function resolveSliceGroup_expression(
 }
 
 export function coerceToSliceGroup(input?: T.SliceGroup.Loose): ReturnType<typeof F.buildSliceGroup> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.SliceGroup)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.SliceGroup))
 		return input as unknown as ReturnType<typeof F.buildSliceGroup>;
 	return F.buildSliceGroup(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
-				input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-					? input.expression
-					: input,
+				configFieldOr(input, 'expression', () => input),
 				() =>
 					_resolveOne<T.Expression>(
-						input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-							? input.expression
-							: input,
+						configFieldOr(input, 'expression', () => input),
 						_K7,
 						_K8
 					)
@@ -6447,13 +6381,11 @@ export function resolveCaseTuplePattern_listPatternCasePatterns(
 export function coerceToCaseTuplePattern(): T.EmptyCaseTuplePattern;
 export function coerceToCaseTuplePattern(input?: T.CaseTuplePattern.Loose): ReturnType<typeof F.buildCaseTuplePattern>;
 export function coerceToCaseTuplePattern(input?: T.CaseTuplePattern.Loose): ReturnType<typeof F.buildCaseTuplePattern> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.CaseTuplePattern)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.CaseTuplePattern))
 		return input as unknown as ReturnType<typeof F.buildCaseTuplePattern>;
 	return F.buildCaseTuplePattern(
 		_resolveOneBranch<T.ListPatternCasePatterns>(
-			input !== null && typeof input === 'object' && !isNode(input) && 'listPatternCasePatterns' in input
-				? input.listPatternCasePatterns
-				: input,
+			configFieldOr(input, 'listPatternCasePatterns', () => input),
 			'list_pattern_case_patterns',
 			undefined,
 			true
@@ -6470,13 +6402,11 @@ export function resolveCaseListPattern_listPatternCasePatterns(
 export function coerceToCaseListPattern(): T.EmptyCaseListPattern;
 export function coerceToCaseListPattern(input?: T.CaseListPattern.Loose): ReturnType<typeof F.buildCaseListPattern>;
 export function coerceToCaseListPattern(input?: T.CaseListPattern.Loose): ReturnType<typeof F.buildCaseListPattern> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.CaseListPattern)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.CaseListPattern))
 		return input as unknown as ReturnType<typeof F.buildCaseListPattern>;
 	return F.buildCaseListPattern(
 		_resolveOneBranch<T.ListPatternCasePatterns>(
-			input !== null && typeof input === 'object' && !isNode(input) && 'listPatternCasePatterns' in input
-				? input.listPatternCasePatterns
-				: input,
+			configFieldOr(input, 'listPatternCasePatterns', () => input),
 			'list_pattern_case_patterns',
 			undefined,
 			true
@@ -6496,7 +6426,7 @@ export function coerceToPrintArguments(
 				...rest: (T.PrintArguments.Loose | LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 ): ReturnType<typeof F.buildPrintArguments> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.PrintArguments) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.PrintArguments)) {
 		const data = input[0];
 		const stored = (data as unknown as { _argument?: unknown })._argument;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -6593,7 +6523,7 @@ export function coerceToPrintChevronArguments(
 				)[]
 		  ]
 ): ReturnType<typeof F.buildPrintChevronArguments> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.PrintChevronArguments) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.PrintChevronArguments)) {
 		const data = input[0];
 		const stored = (data as unknown as { _argument?: unknown })._argument;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -6705,16 +6635,14 @@ export function resolvePrintStatementPlain_printArguments(
 export function coerceToPrintStatementPlain(
 	input: T.PrintStatementPlain.Loose
 ): ReturnType<typeof F.buildPrintStatementPlain> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.PrintStatementPlain)
+	if (isNodeOfKind(input, TSKindId.PrintStatementPlain))
 		return input as unknown as ReturnType<typeof F.buildPrintStatementPlain>;
 	return F.buildPrintStatementPlain(
 		_requireField(
 			'print_statement_plain',
 			'printArguments',
 			_resolveOneBranch<T.PrintArguments>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'printArguments' in input
-					? input.printArguments
-					: input,
+				configFieldOr(input, 'printArguments', () => input),
 				'print_arguments'
 			)
 		)
@@ -6734,16 +6662,14 @@ export function resolveParenthesizedImportList_importList(
 export function coerceToParenthesizedImportList(
 	input: T.ParenthesizedImportList.Loose
 ): ReturnType<typeof F.buildParenthesizedImportList> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.ParenthesizedImportList)
+	if (isNodeOfKind(input, TSKindId.ParenthesizedImportList))
 		return input as unknown as ReturnType<typeof F.buildParenthesizedImportList>;
 	return F.buildParenthesizedImportList(
 		_requireField(
 			'parenthesized_import_list',
 			'importList',
 			_resolveOneBranch<T.ImportList>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'importList' in input
-					? input.importList
-					: input,
+				configFieldOr(input, 'importList', () => input),
 				'import_list'
 			)
 		)
@@ -6756,7 +6682,7 @@ export function coerceToComprehensionClauses(
 		| LooseValue<T.ForInClause | T.IfClause, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildComprehensionClauses> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.ComprehensionClauses) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ComprehensionClauses)) {
 		const data = input[0];
 		const stored = (data as unknown as { _content?: unknown })._content;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -6794,19 +6720,14 @@ export function coerceToIntegerHex<const I extends T.IntegerHex.Loose, const O e
 	'prefix',
 	O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
 > {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.IntegerHex)
+	if (isNodeOfKind(input, TSKindId.IntegerHex))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildIntegerHex>,
 			'prefix',
 			O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0x', '0X'] as const, [''] as const) : undefined;
-	const _value =
-		input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-			? input.content
-			: _spelled === undefined
-				? input
-				: _spelled.interior;
+	const _value = configFieldOr(input, 'content', () => (_spelled === undefined ? input : _spelled.interior));
 	return F.buildIntegerHex(
 		_requireField(
 			'integer_hex',
@@ -6835,19 +6756,14 @@ export function coerceToIntegerOctal<const I extends T.IntegerOctal.Loose, const
 	'prefix',
 	O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
 > {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.IntegerOctal)
+	if (isNodeOfKind(input, TSKindId.IntegerOctal))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildIntegerOctal>,
 			'prefix',
 			O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0o', '0O'] as const, [''] as const) : undefined;
-	const _value =
-		input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-			? input.content
-			: _spelled === undefined
-				? input
-				: _spelled.interior;
+	const _value = configFieldOr(input, 'content', () => (_spelled === undefined ? input : _spelled.interior));
 	return F.buildIntegerOctal(
 		_requireField(
 			'integer_octal',
@@ -6881,19 +6797,14 @@ export function coerceToIntegerBinary<
 	'prefix',
 	O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
 > {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.IntegerBinary)
+	if (isNodeOfKind(input, TSKindId.IntegerBinary))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildIntegerBinary>,
 			'prefix',
 			O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
 		>;
 	const _spelled = typeof input === 'string' ? spelledForm(input, ['0b', '0B'] as const, [''] as const) : undefined;
-	const _value =
-		input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-			? input.content
-			: _spelled === undefined
-				? input
-				: _spelled.interior;
+	const _value = configFieldOr(input, 'content', () => (_spelled === undefined ? input : _spelled.interior));
 	return F.buildIntegerBinary(
 		_requireField(
 			'integer_binary',
@@ -7081,18 +6992,18 @@ export function resolveEscapeSequenceUnicodeFixed_content(
 export function coerceToEscapeSequenceUnicodeFixed(
 	input: T.EscapeSequenceUnicodeFixed.Loose
 ): ReturnType<typeof F.buildEscapeSequenceUnicodeFixed> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.EscapeSequenceUnicodeFixed)
+	if (isNodeOfKind(input, TSKindId.EscapeSequenceUnicodeFixed))
 		return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeFixed>;
 	return F.buildEscapeSequenceUnicodeFixed(
 		_requireField(
 			'escape_sequence_unicode_fixed',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-					? input.content
-					: typeof input === 'string'
+				configFieldOr(input, 'content', () =>
+					typeof input === 'string'
 						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceUnicodeFixed_content)
-						: input,
+						: input
+				),
 				_K0,
 				_K0
 			)
@@ -7109,18 +7020,18 @@ export function resolveEscapeSequenceUnicodeWide_content(
 export function coerceToEscapeSequenceUnicodeWide(
 	input: T.EscapeSequenceUnicodeWide.Loose
 ): ReturnType<typeof F.buildEscapeSequenceUnicodeWide> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.EscapeSequenceUnicodeWide)
+	if (isNodeOfKind(input, TSKindId.EscapeSequenceUnicodeWide))
 		return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeWide>;
 	return F.buildEscapeSequenceUnicodeWide(
 		_requireField(
 			'escape_sequence_unicode_wide',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-					? input.content
-					: typeof input === 'string'
+				configFieldOr(input, 'content', () =>
+					typeof input === 'string'
 						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceUnicodeWide_content)
-						: input,
+						: input
+				),
 				_K0,
 				_K0
 			)
@@ -7137,18 +7048,16 @@ export function resolveEscapeSequenceHex_content(
 export function coerceToEscapeSequenceHex(
 	input: T.EscapeSequenceHex.Loose
 ): ReturnType<typeof F.buildEscapeSequenceHex> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.EscapeSequenceHex)
+	if (isNodeOfKind(input, TSKindId.EscapeSequenceHex))
 		return input as unknown as ReturnType<typeof F.buildEscapeSequenceHex>;
 	return F.buildEscapeSequenceHex(
 		_requireField(
 			'escape_sequence_hex',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-					? input.content
-					: typeof input === 'string'
-						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceHex_content)
-						: input,
+				configFieldOr(input, 'content', () =>
+					typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceHex_content) : input
+				),
 				_K0,
 				_K0
 			)
@@ -7167,14 +7076,11 @@ export function resolveEscapeSequenceOctal_content(
 export function coerceToEscapeSequenceOctal(
 	input: T.EscapeSequenceOctal.Loose
 ): ReturnType<typeof F.buildEscapeSequenceOctal> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.EscapeSequenceOctal)
+	if (isNodeOfKind(input, TSKindId.EscapeSequenceOctal))
 		return input as unknown as ReturnType<typeof F.buildEscapeSequenceOctal>;
-	const _value =
-		input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-			? input.content
-			: typeof input === 'string'
-				? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceOctal_content)
-				: input;
+	const _value = configFieldOr(input, 'content', () =>
+		typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceOctal_content) : input
+	);
 	return F.buildEscapeSequenceOctal(
 		_requireField(
 			'escape_sequence_octal',
@@ -7193,18 +7099,18 @@ export function resolveEscapeSequenceLineBreak_content(
 export function coerceToEscapeSequenceLineBreak(
 	input: T.EscapeSequenceLineBreak.Loose
 ): ReturnType<typeof F.buildEscapeSequenceLineBreak> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.EscapeSequenceLineBreak)
+	if (isNodeOfKind(input, TSKindId.EscapeSequenceLineBreak))
 		return input as unknown as ReturnType<typeof F.buildEscapeSequenceLineBreak>;
 	return F.buildEscapeSequenceLineBreak(
 		_requireField(
 			'escape_sequence_line_break',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-					? input.content
-					: typeof input === 'string'
+				configFieldOr(input, 'content', () =>
+					typeof input === 'string'
 						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceLineBreak_content)
-						: input,
+						: input
+				),
 				_K0,
 				_K0
 			)
@@ -7221,18 +7127,18 @@ export function resolveEscapeSequenceSimple_content(
 export function coerceToEscapeSequenceSimple(
 	input: T.EscapeSequenceSimple.Loose
 ): ReturnType<typeof F.buildEscapeSequenceSimple> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.EscapeSequenceSimple)
+	if (isNodeOfKind(input, TSKindId.EscapeSequenceSimple))
 		return input as unknown as ReturnType<typeof F.buildEscapeSequenceSimple>;
 	return F.buildEscapeSequenceSimple(
 		_requireField(
 			'escape_sequence_simple',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-					? input.content
-					: typeof input === 'string'
+				configFieldOr(input, 'content', () =>
+					typeof input === 'string'
 						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceSimple_content)
-						: input,
+						: input
+				),
 				_K0,
 				_K0
 			)
@@ -7249,18 +7155,18 @@ export function resolveEscapeSequenceNamed_content(
 export function coerceToEscapeSequenceNamed(
 	input: T.EscapeSequenceNamed.Loose
 ): ReturnType<typeof F.buildEscapeSequenceNamed> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.EscapeSequenceNamed)
+	if (isNodeOfKind(input, TSKindId.EscapeSequenceNamed))
 		return input as unknown as ReturnType<typeof F.buildEscapeSequenceNamed>;
 	return F.buildEscapeSequenceNamed(
 		_requireField(
 			'escape_sequence_named',
 			'content',
 			_resolveOne<string>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-					? input.content
-					: typeof input === 'string'
+				configFieldOr(input, 'content', () =>
+					typeof input === 'string'
 						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceNamed_content)
-						: input,
+						: input
+				),
 				_K0,
 				_K0
 			)
@@ -7308,7 +7214,7 @@ export function coerceToExceptClauseExceptionList(
 		| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildExceptClauseExceptionList> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.ExceptClauseExceptionList) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExceptClauseExceptionList)) {
 		const data = input[0];
 		const stored = (data as unknown as { _value?: unknown })._value;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -7343,14 +7249,14 @@ export function resolveExceptClauseException_content(
 export function coerceToExceptClauseException(
 	input: T.ExceptClauseException.Loose
 ): ReturnType<typeof F.buildExceptClauseException> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.ExceptClauseException)
+	if (isNodeOfKind(input, TSKindId.ExceptClauseException))
 		return input as unknown as ReturnType<typeof F.buildExceptClauseException>;
 	return F.buildExceptClauseException(
 		_requireField(
 			'except_clause_exception',
 			'content',
 			_resolveOne<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
+				configFieldOr(input, 'content', () => input),
 				_K0,
 				_K47
 			)
@@ -7456,7 +7362,7 @@ export function coerceToExpressionStatementTuple(
 				)[]
 		  ]
 ): ReturnType<typeof F.buildExpressionStatementTuple> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.ExpressionStatementTuple) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExpressionStatementTuple)) {
 		const data = input[0];
 		const stored = (data as unknown as { _expression?: unknown })._expression;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -7543,7 +7449,7 @@ export function coerceToWithClauseBare(
 				...rest: (T.WithClauseBare.Loose | LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 ): ReturnType<typeof F.buildWithClauseBare> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.WithClauseBare) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.WithClauseBare)) {
 		const data = input[0];
 		const stored = (data as unknown as { _with_item?: unknown })._with_item;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -7571,16 +7477,14 @@ export function resolveWithClauseParen_withClauseWithItems(
 }
 
 export function coerceToWithClauseParen(input: T.WithClauseParen.Loose): ReturnType<typeof F.buildWithClauseParen> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.WithClauseParen)
+	if (isNodeOfKind(input, TSKindId.WithClauseParen))
 		return input as unknown as ReturnType<typeof F.buildWithClauseParen>;
 	return F.buildWithClauseParen(
 		_requireField(
 			'with_clause_paren',
 			'withClauseWithItems',
 			_resolveOneBranch<T.WithClauseWithItems>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'withClauseWithItems' in input
-					? input.withClauseWithItems
-					: input,
+				configFieldOr(input, 'withClauseWithItems', () => input),
 				'with_clause_with_items'
 			)
 		)
@@ -7600,7 +7504,7 @@ export function coerceToMatchBlockBlock(
 		| LooseValue<T.CaseClause, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 	)[]
 ): ReturnType<typeof F.buildMatchBlockBlock> {
-	if (input.length === 1 && isNode(input[0]) && input[0].$type === TSKindId.MatchBlockBlock) {
+	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.MatchBlockBlock)) {
 		const data = input[0];
 		const stored = (data as unknown as { _alternative?: unknown })._alternative;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
@@ -7629,16 +7533,13 @@ export function resolveSuiteInline_simpleStatementsElements(
 }
 
 export function coerceToSuiteInline(input: T.SuiteInline.Loose): ReturnType<typeof F.buildSuiteInline> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.SuiteInline)
-		return input as unknown as ReturnType<typeof F.buildSuiteInline>;
+	if (isNodeOfKind(input, TSKindId.SuiteInline)) return input as unknown as ReturnType<typeof F.buildSuiteInline>;
 	return F.buildSuiteInline(
 		_requireField(
 			'suite_inline',
 			'simpleStatementsElements',
 			_resolveOneBranch<T.SimpleStatementsElements>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'simpleStatementsElements' in input
-					? input.simpleStatementsElements
-					: input,
+				configFieldOr(input, 'simpleStatementsElements', () => input),
 				'simple_statements_elements'
 			)
 		)
@@ -7650,11 +7551,11 @@ export function resolveSuiteBlock_block(value: T.SuiteBlock.LooseConfig['block']
 }
 
 export function coerceToSuiteBlock(input?: T.SuiteBlock.Loose): ReturnType<typeof F.buildSuiteBlock> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.SuiteBlock)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.SuiteBlock))
 		return input as unknown as ReturnType<typeof F.buildSuiteBlock>;
 	return F.buildSuiteBlock(
 		_resolveOneBranch<T.Block>(
-			input !== null && typeof input === 'object' && !isNode(input) && 'block' in input ? input.block : input,
+			configFieldOr(input, 'block', () => input),
 			'block'
 		) ?? F.buildBlock()
 	);
@@ -7670,7 +7571,7 @@ export function resolveSuiteEmpty_newline(
 }
 
 export function coerceToSuiteEmpty(input?: T.SuiteEmpty.Loose): ReturnType<typeof F.buildSuiteEmpty> {
-	if (input !== undefined && isNode(input) && (input.$type as string | number) === TSKindId.SuiteEmpty)
+	if (input !== undefined && isNodeOfKind(input, TSKindId.SuiteEmpty))
 		return input as unknown as ReturnType<typeof F.buildSuiteEmpty>;
 	return F.buildSuiteEmpty(
 		_requireField(
@@ -7678,12 +7579,10 @@ export function coerceToSuiteEmpty(input?: T.SuiteEmpty.Loose): ReturnType<typeo
 			'newline',
 			coerceKindEnumStorage(
 				_resolveKindEnumScalar(
-					input !== null && typeof input === 'object' && !isNode(input) && 'newline' in input ? input.newline : input,
+					configFieldOr(input, 'newline', () => input),
 					() =>
 						_resolveOneLeaf<'\n'>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'newline' in input
-								? input.newline
-								: input,
+							configFieldOr(input, 'newline', () => input),
 							'_newline'
 						)
 				),
@@ -7754,7 +7653,7 @@ export function resolveYieldFromClause_expression(
 }
 
 export function coerceToYieldFromClause(input: T.YieldFromClause.Loose): ReturnType<typeof F.buildYieldFromClause> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.YieldFromClause)
+	if (isNodeOfKind(input, TSKindId.YieldFromClause))
 		return input as unknown as ReturnType<typeof F.buildYieldFromClause>;
 	return F.buildYieldFromClause(
 		_requireField(
@@ -7762,14 +7661,10 @@ export function coerceToYieldFromClause(input: T.YieldFromClause.Loose): ReturnT
 			'expression',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-						? input.expression
-						: input,
+					configFieldOr(input, 'expression', () => input),
 					() =>
 						_resolveOne<T.Expression>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'expression' in input
-								? input.expression
-								: input,
+							configFieldOr(input, 'expression', () => input),
 							_K7,
 							_K8
 						)
@@ -7831,14 +7726,13 @@ export function resolveNames_content(value: T.Names.LooseConfig['content']): T.N
 }
 
 export function coerceToNames(input: T.Names.Loose): ReturnType<typeof F.buildNames> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.Names)
-		return input as unknown as ReturnType<typeof F.buildNames>;
+	if (isNodeOfKind(input, TSKindId.Names)) return input as unknown as ReturnType<typeof F.buildNames>;
 	return F.buildNames(
 		_requireField(
 			'names',
 			'content',
 			_resolveOneBranch<T.ImportList>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
+				configFieldOr(input, 'content', () => input),
 				'import_list'
 			)
 		)
@@ -7855,7 +7749,7 @@ export function resolveAsPatternTarget_content(
 }
 
 export function coerceToAsPatternTarget(input: T.AsPatternTarget.Loose): ReturnType<typeof F.buildAsPatternTarget> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.AsPatternTarget)
+	if (isNodeOfKind(input, TSKindId.AsPatternTarget))
 		return input as unknown as ReturnType<typeof F.buildAsPatternTarget>;
 	return F.buildAsPatternTarget(
 		_requireField(
@@ -7863,12 +7757,10 @@ export function coerceToAsPatternTarget(input: T.AsPatternTarget.Loose): ReturnT
 			'content',
 			coerceMixedEnumStorage(
 				_resolveKindEnum(
-					input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
+					configFieldOr(input, 'content', () => input),
 					() =>
 						_resolveOne<T.Expression>(
-							input !== null && typeof input === 'object' && !isNode(input) && 'content' in input
-								? input.content
-								: input,
+							configFieldOr(input, 'content', () => input),
 							_K7,
 							_K8
 						)
@@ -7886,14 +7778,14 @@ export function resolveFormatExpression_content(
 }
 
 export function coerceToFormatExpression(input: T.FormatExpression.Loose): ReturnType<typeof F.buildFormatExpression> {
-	if (isNode(input) && (input.$type as string | number) === TSKindId.FormatExpression)
+	if (isNodeOfKind(input, TSKindId.FormatExpression))
 		return input as unknown as ReturnType<typeof F.buildFormatExpression>;
 	return F.buildFormatExpression(
 		_requireField(
 			'format_expression',
 			'content',
 			_resolveOneBranch<T.Interpolation>(
-				input !== null && typeof input === 'object' && !isNode(input) && 'content' in input ? input.content : input,
+				configFieldOr(input, 'content', () => input),
 				'interpolation'
 			)
 		)

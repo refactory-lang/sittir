@@ -58,9 +58,9 @@ describe('factory ergonomics', () => {
 			// The parameter's TYPE is the slot's own element type. Indexing
 			// `Config` instead re-projects the slot through the config surface
 			// and loses the union of kinds it admits.
-			expect(content).toMatch(/export function buildLabel\(value: T\.Identifier\)/);
-			expect(content).toMatch(/function _buildLabel\(value: T\.Identifier\)/);
-			expect(content).toMatch(/function _buildLabel\(value: T\.Identifier\): T\.Label\.Built \{/);
+			expect(content).toMatch(/export function buildLabel\(value: AdmitBound<T\.Identifier, T\.AdmittedNodes>\)/);
+			expect(content).toMatch(/function _buildLabel\(value: AdmitBound<T\.Identifier, T\.AdmittedNodes>\)/);
+			expect(content).toMatch(/function _buildLabel\(value: AdmitBound<T\.Identifier, T\.AdmittedNodes>\): T\.Label\.Bound \{/);
 			// Should NOT have a config parameter
 			expect(content).not.toMatch(/export function buildLabel\(config/);
 		});
@@ -110,7 +110,7 @@ describe('factory ergonomics', () => {
 			const indexContent = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/index.ts'), 'utf-8');
 
 			expect(bundleContent).toContain('bundle(F.buildSourceFile, C.coerceToSourceFile)');
-			expect(indexContent).toContain('export const sourceFile: Hoisted<typeof O.sourceFile> = hoist(O.sourceFile);');
+			expect(indexContent).toContain('export const sourceFile: Hoisted<typeof O.sourceFile> = hoistAs<typeof O.sourceFile>(O.sourceFile);');
 			expect(irContent).toContain('sourceFile: F.sourceFile,');
 			// The hoisted call position IS the coercer, so a `from` prop would
 			// be the same function under a second name.
