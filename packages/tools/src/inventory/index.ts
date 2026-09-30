@@ -7,6 +7,7 @@ import { loadSlotModel } from './model.ts';
 import { type Derivation, type GrammarInput, derive } from './derive.ts';
 import { renderIndexFile, renderVocabularyFile, vocabularyFiles } from './emit.ts';
 import { allGrammars, grammarPackageDir, type GrammarName } from '@sittir/codegen/grammars';
+import { evaluateGrammar } from '../codegen-surface.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 export const VOCABULARY_DIR = join(ROOT, 'packages', 'types', 'src', 'vocabulary');
@@ -48,16 +49,19 @@ export async function compileBindings(grammars: readonly string[]): Promise<Comp
 	return out;
 }
 
-export function loadInputs(grammars: readonly string[]): GrammarInput[] {
-	return grammars.map((grammar) => ({
-		grammar,
-		patterns: parseQuery(readFileSync(join(grammarPackageDir(grammar), 'bindings.scm'), 'utf8')),
-		model: loadSlotModel(grammar)
-	}));
+export async function loadInputs(grammars: readonly string[]): Promise<GrammarInput[]> {
+	return Promise.all(
+		grammars.map(async (grammar) => ({
+			grammar,
+			patterns: parseQuery(readFileSync(join(grammarPackageDir(grammar), 'bindings.scm'), 'utf8')),
+			model: loadSlotModel(grammar),
+			textTokens: new Set((await evaluateGrammar(grammar)).textTokens ?? [])
+		}))
+	);
 }
 
-export function deriveVocabulary(grammars: readonly string[] = inventoryGrammars()): Derivation {
-	return derive(loadInputs(grammars));
+export async function deriveVocabulary(grammars: readonly string[] = inventoryGrammars()): Promise<Derivation> {
+	return derive(await loadInputs(grammars));
 }
 
 export async function emitVocabulary(d: Derivation, outDir: string): Promise<string[]> {
@@ -124,7 +128,7 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 			} else process.stdout.write(`${report.grammar}: bindings.scm compiles, ${report.patterns} patterns\n`);
 		}
 	}
-	const d = deriveVocabulary(grammars);
+	const d = await deriveVocabulary(grammars);
 	process.stdout.write(`${summarize(d)}\n`);
 	if (opts.members) process.stdout.write(`${membersTable(d)}\n`);
 	if (opts.emit !== undefined) {

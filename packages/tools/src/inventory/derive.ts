@@ -5,6 +5,7 @@ export interface GrammarInput {
 	readonly grammar: string;
 	readonly patterns: readonly PatternNode[];
 	readonly model: SlotModel;
+	readonly textTokens: ReadonlySet<string>;
 }
 
 export interface MemberFacts {
@@ -330,6 +331,7 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		const direct = vocabOf(input.grammar).get(k) ?? vocabOf(input.grammar).get(k.replace(/^_+/, ''));
 		if (direct !== undefined) return [direct];
 		const node = modelNode(input.model, k);
+		if (input.textTokens.has(k) && node?.pattern != null) return [`text:${node.pattern}`];
 		if (node?.modelType === 'enum') return node.enumValues.map((v) => `text:${v}`);
 		if (node?.modelType === 'keyword' || node?.modelType === 'punctuation') return [`literal:${k}`];
 		if (node && node.subtypes.length > 0) {

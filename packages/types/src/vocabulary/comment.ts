@@ -11,15 +11,15 @@ export interface Comment<G extends GrammarContext> {
 	// claimed by t
 	readonly kind: 'comment';
 	readonly content?:
-		| V.Unmapped<'rust:block_comment_content'>
 		| V.Unmapped<'rust:block_comment_doc_inner'>
 		| V.Unmapped<'rust:block_comment_doc_outer'>
+		| V.Unmapped<'rust:block_comment_regular'>
 		| V.Unmapped<'rust:line_comment_doc_inner'>
 		| V.Unmapped<'rust:line_comment_doc_outer'>
 		| V.Unmapped<'rust:line_comment_extra_slashes'>
 		| V.Unmapped<'rust:line_comment_regular'>;
 	// prt only
-	// unmapped: <rust:block_comment_content> <rust:block_comment_doc_inner> <rust:block_comment_doc_outer> <rust:line_comment_doc_inner> <rust:line_comment_doc_outer> <rust:line_comment_extra_slashes> <rust:line_comment_regular>
+	// unmapped: <rust:block_comment_doc_inner> <rust:block_comment_doc_outer> <rust:block_comment_regular> <rust:line_comment_doc_inner> <rust:line_comment_doc_outer> <rust:line_comment_extra_slashes> <rust:line_comment_regular>
 }
 
 export namespace Comment {
@@ -27,32 +27,32 @@ export namespace Comment {
 		// claimed by rt
 		readonly kind: 'comment.block';
 		readonly content?:
-			| V.Unmapped<'rust:block_comment_content'>
 			| V.Unmapped<'rust:block_comment_doc_inner'>
-			| V.Unmapped<'rust:block_comment_doc_outer'>;
+			| V.Unmapped<'rust:block_comment_doc_outer'>
+			| V.Unmapped<'rust:block_comment_regular'>;
 		// r only
-		// unmapped: <rust:block_comment_content> <rust:block_comment_doc_inner> <rust:block_comment_doc_outer>
+		// unmapped: <rust:block_comment_doc_inner> <rust:block_comment_doc_outer> <rust:block_comment_regular>
 	}
 	export namespace Block {
 		export interface Doc<G extends GrammarContext> extends Simplify<SubKindOf<V.Comment.Block<G>>> {
 			// claimed by rt
 			readonly kind: 'comment.block.doc';
 			readonly content?:
-				| V.Unmapped<'rust:block_comment_content'>
 				| V.Unmapped<'rust:block_comment_doc_inner'>
-				| V.Unmapped<'rust:block_comment_doc_outer'>;
+				| V.Unmapped<'rust:block_comment_doc_outer'>
+				| V.Unmapped<'rust:block_comment_regular'>;
 			// r only
-			// unmapped: <rust:block_comment_content> <rust:block_comment_doc_inner> <rust:block_comment_doc_outer>
+			// unmapped: <rust:block_comment_doc_inner> <rust:block_comment_doc_outer> <rust:block_comment_regular>
 		}
 		export namespace Doc {
 			export interface Inner<G extends GrammarContext> extends Simplify<SubKindOf<V.Comment.Block.Doc<G>>> {
 				// claimed by r
 				readonly kind: 'comment.block.doc.inner';
 				readonly content?:
-					| V.Unmapped<'rust:block_comment_content'>
 					| V.Unmapped<'rust:block_comment_doc_inner'>
-					| V.Unmapped<'rust:block_comment_doc_outer'>;
-				// unmapped: <rust:block_comment_content> <rust:block_comment_doc_inner> <rust:block_comment_doc_outer>
+					| V.Unmapped<'rust:block_comment_doc_outer'>
+					| V.Unmapped<'rust:block_comment_regular'>;
+				// unmapped: <rust:block_comment_doc_inner> <rust:block_comment_doc_outer> <rust:block_comment_regular>
 			}
 			export type Any<G extends GrammarContext> = V.Comment.Block.Doc<G> | V.Comment.Block.Doc.Inner<G>;
 		}
