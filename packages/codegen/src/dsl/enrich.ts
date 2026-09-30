@@ -247,7 +247,7 @@ export function getEnrichHiddenSubsequences(grammar: unknown): ReadonlySet<strin
 }
 
 export function getEnrichFieldBackings(grammar: unknown): ReadonlySet<string> {
-	return enrichRuleNamesOf(grammar, (origin) => origin.kind === 'field-enum');
+	return enrichRuleNamesOf(grammar, (origin) => origin.kind === 'keyword' || origin.kind === 'field-enum');
 }
 
 export function getEnrichVisibleSubsequenceSources(grammar: unknown): ReadonlySet<string> {

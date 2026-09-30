@@ -27,22 +27,6 @@ export namespace Identifier {
 		readonly kind: 'identifier.field';
 		readonly content: G['identifier'];
 	}
-	export interface Jsx<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
-		// claimed by t
-		readonly kind: 'identifier.jsx';
-	}
-	export namespace Jsx {
-		export interface Namespace<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier.Jsx<G>>> {
-			// claimed by t
-			readonly kind: 'identifier.jsx.namespace';
-		}
-		export type Any<G extends GrammarContext> = V.Identifier.Jsx<G> | V.Identifier.Jsx.Namespace<G>;
-	}
-	export interface Keyword<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
-		// claimed by p
-		readonly kind: 'identifier.keyword';
-		readonly identifier: 'print';
-	}
 	export interface Label<G extends GrammarContext> extends Simplify<SubKindOf<V.Identifier<G>>> {
 		// claimed by rt
 		readonly kind: 'identifier.label';
@@ -208,9 +192,6 @@ export namespace Identifier {
 		| V.Identifier.Crate<G>
 		| V.Identifier.Dotted<G>
 		| V.Identifier.Field<G>
-		| V.Identifier.Jsx<G>
-		| V.Identifier.Jsx.Namespace<G>
-		| V.Identifier.Keyword<G>
 		| V.Identifier.Label<G>
 		| V.Identifier.Lifetime<G>
 		| V.Identifier.Metavariable<G>

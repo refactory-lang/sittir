@@ -2030,7 +2030,7 @@ export function wrapNonSpecialToken(data: T.NonSpecialToken, tree: TreeHandle): 
 				while: 105
 			},
 			undefined,
-			[336, 341, 370, 371]
+			[336, 341, 361, 362]
 		),
 
 		content() {
@@ -3389,8 +3389,7 @@ export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandl
 				slotName: 'modifier',
 				span: (data as _NodeData).$span
 			}),
-			{ async: 113, default: 52, const: 36, unsafe: 112 },
-			{ 364: 113, 365: 52, 366: 36, 367: 112 }
+			{ async: 113, default: 52, const: 36, unsafe: 112 }
 		),
 
 		modifiers() {
@@ -4107,7 +4106,7 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.
 				slotName: 'pattern',
 				span: (data as _NodeData).$span
 			}),
-			{ true: 118, false: 119, '..': 321, _: 433 },
+			{ true: 118, false: 119, '..': 321, _: 424 },
 			undefined,
 			[336]
 		),
@@ -4749,7 +4748,7 @@ export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandl
 				slotName: 'pattern',
 				span: (data as _NodeData).$span
 			}),
-			{ true: 118, false: 119, '..': 321, _: 433 },
+			{ true: 118, false: 119, '..': 321, _: 424 },
 			undefined,
 			[336]
 		),
@@ -4792,7 +4791,7 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.
 				slotName: 'name',
 				span: (data as _NodeData).$span
 			}),
-			{ true: 118, false: 119, '..': 321, _: 433, self: 126 },
+			{ true: 118, false: 119, '..': 321, _: 424, self: 126 },
 			undefined,
 			[336]
 		),
@@ -6874,8 +6873,8 @@ export function wrapRangeExpression(data: T.RangeExpression, tree: TreeHandle): 
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
-			{ '..': 372 },
-			{ 101: 372 }
+			{ '..': 363 },
+			{ 101: 363 }
 		),
 
 		content() {
@@ -7823,7 +7822,7 @@ export function wrapLetCondition(data: T.LetCondition, tree: TreeHandle): T.LetC
 				slotName: 'pattern',
 				span: (data as _NodeData).$span
 			}),
-			{ true: 118, false: 119, '..': 321, _: 433 },
+			{ true: 118, false: 119, '..': 321, _: 424 },
 			undefined,
 			[336]
 		),
@@ -8368,7 +8367,7 @@ export function wrapMatchPattern(data: T.MatchPattern, tree: TreeHandle): T.Matc
 				slotName: 'pattern',
 				span: (data as _NodeData).$span
 			}),
-			{ true: 118, false: 119, '..': 321, _: 433 },
+			{ true: 118, false: 119, '..': 321, _: 424 },
 			undefined,
 			[336]
 		),
@@ -8499,7 +8498,7 @@ export function wrapForExpression(data: T.ForExpression, tree: TreeHandle): T.Fo
 				slotName: 'pattern',
 				span: (data as _NodeData).$span
 			}),
-			{ true: 118, false: 119, '..': 321, _: 433 },
+			{ true: 118, false: 119, '..': 321, _: 424 },
 			undefined,
 			[336]
 		),
@@ -8607,7 +8606,7 @@ export function wrapClosureParameters(data: T.ClosureParameters, tree: TreeHandl
 				slotName: 'parameters',
 				span: (data as _NodeData).$span
 			}),
-			{ true: 118, false: 119, '..': 321, _: 433 },
+			{ true: 118, false: 119, '..': 321, _: 424 },
 			undefined,
 			[336]
 		),
@@ -9400,7 +9399,7 @@ export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle): T.MutPatte
 				slotName: 'pattern',
 				span: (data as _NodeData).$span
 			}),
-			{ true: 118, false: 119, '..': 321, _: 433 },
+			{ true: 118, false: 119, '..': 321, _: 424 },
 			undefined,
 			[336]
 		),
@@ -9456,7 +9455,7 @@ export function wrapRefPattern(data: T.RefPattern, tree: TreeHandle): T.RefPatte
 				slotName: 'pattern',
 				span: (data as _NodeData).$span
 			}),
-			{ true: 118, false: 119, '..': 321, _: 433 },
+			{ true: 118, false: 119, '..': 321, _: 424 },
 			undefined,
 			[336]
 		),
@@ -9489,7 +9488,7 @@ export function wrapCapturedPattern(data: T.CapturedPattern, tree: TreeHandle): 
 				slotName: 'pattern',
 				span: (data as _NodeData).$span
 			}),
-			{ true: 118, false: 119, '..': 321, _: 433 },
+			{ true: 118, false: 119, '..': 321, _: 424 },
 			undefined,
 			[336]
 		),
@@ -9531,7 +9530,7 @@ export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle)
 				slotName: 'pattern',
 				span: (data as _NodeData).$span
 			}),
-			{ true: 118, false: 119, '..': 321, _: 433 },
+			{ true: 118, false: 119, '..': 321, _: 424 },
 			undefined,
 			[336]
 		),
@@ -12429,7 +12428,7 @@ export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle): 
 				slotName: 'left',
 				span: (data as _NodeData).$span
 			}),
-			{ true: 118, false: 119, '..': 321, _: 433 },
+			{ true: 118, false: 119, '..': 321, _: 424 },
 			undefined,
 			[336]
 		),
@@ -12440,7 +12439,7 @@ export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle): 
 				slotName: 'right',
 				span: (data as _NodeData).$span
 			}),
-			{ true: 118, false: 119, '..': 321, _: 433 },
+			{ true: 118, false: 119, '..': 321, _: 424 },
 			undefined,
 			[336]
 		),
@@ -12471,7 +12470,7 @@ export function wrapOrPatternPrefix(data: T.OrPatternPrefix, tree: TreeHandle): 
 				slotName: 'right',
 				span: (data as _NodeData).$span
 			}),
-			{ true: 118, false: 119, '..': 321, _: 433 },
+			{ true: 118, false: 119, '..': 321, _: 424 },
 			undefined,
 			[336]
 		),
@@ -13425,7 +13424,7 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
 				slotName: 'pattern',
 				span: (data as _NodeData).$span
 			}),
-			{ true: 118, false: 119, '..': 321, _: 433 },
+			{ true: 118, false: 119, '..': 321, _: 424 },
 			undefined,
 			[336]
 		),
@@ -13869,8 +13868,8 @@ export function wrapRangePatternWithLeft(
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
-			{ '..': 428 },
-			{ 101: 428 }
+			{ '..': 419 },
+			{ 101: 419 }
 		),
 
 		left() {
@@ -14779,11 +14778,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.Crate]: (d) => ({ ...d, $type: TSKindId.Crate as const }),
 	[TSKindId.Metavariable]: (d, t) => wrapMetavariable(d as unknown as T.Metavariable, t),
 	[TSKindId.PrimitiveType]: (d) => ({ ...d, $type: TSKindId.PrimitiveType as const }),
-	[TSKindId.KwRefMarker]: (d) => ({ ...d, $type: TSKindId.KwRefMarker as const }),
-	[TSKindId.KwUnsafeMarker]: (d) => ({ ...d, $type: TSKindId.KwUnsafeMarker as const }),
-	[TSKindId.KwStaticMarker]: (d) => ({ ...d, $type: TSKindId.KwStaticMarker as const }),
-	[TSKindId.KwAsyncMarker]: (d) => ({ ...d, $type: TSKindId.KwAsyncMarker as const }),
-	[TSKindId.KwMoveMarker]: (d) => ({ ...d, $type: TSKindId.KwMoveMarker as const }),
 	[TSKindId.MacroRules]: (d, t) => wrapMacroRules(d as unknown as T.MacroRules, t),
 	[TSKindId.EnumVariantListElements]: (d, t) =>
 		wrapEnumVariantListElements(d as unknown as T.EnumVariantListElements, t),
@@ -14805,10 +14799,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.Patterns]: (d, t) => wrapPatterns(d as unknown as T.Patterns, t),
 	[TSKindId.StructPatternElements]: (d, t) => wrapStructPatternElements(d as unknown as T.StructPatternElements, t),
 	[TSKindId.UseWildcardGroup]: (d, t) => wrapUseWildcardGroup(d as unknown as T.UseWildcardGroup, t),
-	[TSKindId.KwAsync]: (d) => ({ ...d, $type: TSKindId.KwAsync as const }),
-	[TSKindId.KwDefault]: (d) => ({ ...d, $type: TSKindId.KwDefault as const }),
-	[TSKindId.KwConst]: (d) => ({ ...d, $type: TSKindId.KwConst as const }),
-	[TSKindId.KwUnsafe]: (d) => ({ ...d, $type: TSKindId.KwUnsafe as const }),
 	[TSKindId.TupleTypeElements]: (d, t) => wrapTupleTypeElements(d as unknown as T.TupleTypeElements, t),
 	[TSKindId.TupleExpressionElements]: (d, t) =>
 		wrapTupleExpressionElements(d as unknown as T.TupleExpressionElements, t),
@@ -15145,11 +15135,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.Crate]: _NodeData & { readonly $type: TSKindId.Crate };
 	[TSKindId.Metavariable]: ReturnType<typeof wrapMetavariable>;
 	[TSKindId.PrimitiveType]: _NodeData & { readonly $type: TSKindId.PrimitiveType };
-	[TSKindId.KwRefMarker]: _NodeData & { readonly $type: TSKindId.KwRefMarker };
-	[TSKindId.KwUnsafeMarker]: _NodeData & { readonly $type: TSKindId.KwUnsafeMarker };
-	[TSKindId.KwStaticMarker]: _NodeData & { readonly $type: TSKindId.KwStaticMarker };
-	[TSKindId.KwAsyncMarker]: _NodeData & { readonly $type: TSKindId.KwAsyncMarker };
-	[TSKindId.KwMoveMarker]: _NodeData & { readonly $type: TSKindId.KwMoveMarker };
 	[TSKindId.MacroRules]: ReturnType<typeof wrapMacroRules>;
 	[TSKindId.EnumVariantListElements]: ReturnType<typeof wrapEnumVariantListElements>;
 	[TSKindId.FieldDeclarationListElements]: ReturnType<typeof wrapFieldDeclarationListElements>;
@@ -15167,10 +15152,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.Patterns]: ReturnType<typeof wrapPatterns>;
 	[TSKindId.StructPatternElements]: ReturnType<typeof wrapStructPatternElements>;
 	[TSKindId.UseWildcardGroup]: ReturnType<typeof wrapUseWildcardGroup>;
-	[TSKindId.KwAsync]: _NodeData & { readonly $type: TSKindId.KwAsync };
-	[TSKindId.KwDefault]: _NodeData & { readonly $type: TSKindId.KwDefault };
-	[TSKindId.KwConst]: _NodeData & { readonly $type: TSKindId.KwConst };
-	[TSKindId.KwUnsafe]: _NodeData & { readonly $type: TSKindId.KwUnsafe };
 	[TSKindId.TupleTypeElements]: ReturnType<typeof wrapTupleTypeElements>;
 	[TSKindId.TupleExpressionElements]: ReturnType<typeof wrapTupleExpressionElements>;
 	[TSKindId.TokenTreePunctuation]: _NodeData & { readonly $type: TSKindId.TokenTreePunctuation };

@@ -10,6 +10,16 @@ import type * as V from './index.ts';
 export interface Comment<G extends GrammarContext> {
 	// claimed by t
 	readonly kind: 'comment';
+	readonly content?:
+		| V.Unmapped<'rust:block_comment_content'>
+		| V.Unmapped<'rust:block_comment_doc_inner'>
+		| V.Unmapped<'rust:block_comment_doc_outer'>
+		| V.Unmapped<'rust:line_comment_doc_inner'>
+		| V.Unmapped<'rust:line_comment_doc_outer'>
+		| V.Unmapped<'rust:line_comment_extra_slashes'>
+		| V.Unmapped<'rust:line_comment_regular'>;
+	// prt only
+	// unmapped: <rust:block_comment_content> <rust:block_comment_doc_inner> <rust:block_comment_doc_outer> <rust:line_comment_doc_inner> <rust:line_comment_doc_outer> <rust:line_comment_extra_slashes> <rust:line_comment_regular>
 }
 
 export namespace Comment {

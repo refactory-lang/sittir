@@ -130,11 +130,8 @@ export namespace Clause {
 	export interface Else<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause<G>>> {
 		// claimed by prt
 		readonly kind: 'clause.else';
-		readonly body?: V.Unmapped<'python:suite'> | V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
-		// pt only
+		readonly body: V.Unmapped<'python:suite'> | V.Clause.Import.Alias<G> | G['declaration'] | G['statement'];
 		// unmapped: <python:suite>
-		readonly content?: G['statement'];
-		// r only
 	}
 	export interface Except<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause<G>>> {
 		// claimed by p
@@ -367,14 +364,15 @@ export namespace Clause {
 	export interface Let<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause<G>>> {
 		// claimed by r
 		readonly kind: 'clause.let';
-		readonly pattern?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+		readonly pattern?: V.Unmapped<'rust:pattern'>;
+		// unmapped: <rust:pattern>
 		readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 	}
 	export namespace Let {
 		export interface Chain<G extends GrammarContext> extends Simplify<SubKindOf<V.Clause.Let<G>>> {
 			// claimed by r
 			readonly kind: 'clause.let.chain';
-			readonly left?: G['expression'] | G['identifier'] | G['literal'] | V.Clause.Let.Any<G> | G['statement'];
+			readonly left: G['expression'] | G['identifier'] | G['literal'] | V.Clause.Let.Any<G> | G['statement'];
 			readonly rights?: (V.Clause.Let<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement'])[];
 		}
 		export type Any<G extends GrammarContext> = V.Clause.Let<G> | V.Clause.Let.Chain<G>;

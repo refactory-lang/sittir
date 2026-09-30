@@ -196,7 +196,7 @@ export interface ArrowFunctionParameterTransport {
 export interface ArrowFunctionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: SlotValue<KwAsyncMarkerTransport>
+  _async_marker?: boolean
   _body: SlotValue<Box<ArrowFunctionBodyTransportSlot>>
   _content: SlotValue<ArrowFunctionContentTransportSlot>
 }
@@ -223,7 +223,7 @@ export interface AssertsTransport {
 export interface AssignmentExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _using_marker?: SlotValue<KwUsingMarkerTransport>
+  _using_marker?: boolean
   _left: SlotValue<Box<AssignmentExpressionLeftTransportSlot>>
   _right: SlotValue<Box<ExpressionTransport>>
 }
@@ -427,7 +427,7 @@ export interface ConstraintTransport {
 export interface ConstructorTypeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _abstract_marker?: SlotValue<KwAbstractMarkerTransport>
+  _abstract_marker?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _type: SlotValue<Box<TypeTransport>>
@@ -436,7 +436,7 @@ export interface ConstructorTypeTransport {
 export interface ConstructSignatureTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _abstract_marker?: SlotValue<KwAbstractMarkerTransport>
+  _abstract_marker?: boolean
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
   _type?: SlotValue<TypeAnnotationTransport>
@@ -538,7 +538,7 @@ export interface EnumBodyTransport {
 export interface EnumDeclarationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _const_marker?: SlotValue<KwConstMarkerTransport>
+  _const_marker?: boolean
   _name: SlotValue<IdentifierTransport>
   _body: SlotValue<EnumBodyTransport>
 }
@@ -714,7 +714,7 @@ export interface ForHeaderVarKindTransport {
 export interface ForInStatementTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _await_marker?: SlotValue<KwAwaitMarkerTransport>
+  _await_marker?: boolean
   _body: SlotValue<Box<StatementTransport>>
   _for_header: SlotValue<ForHeaderTransport>
 }
@@ -746,7 +746,7 @@ export interface ForStatementTransport {
 export interface FunctionDeclarationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: SlotValue<KwAsyncMarkerTransport>
+  _async_marker?: boolean
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
@@ -758,7 +758,7 @@ export interface FunctionDeclarationTransport {
 export interface FunctionExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: SlotValue<KwAsyncMarkerTransport>
+  _async_marker?: boolean
   _name?: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
@@ -769,7 +769,7 @@ export interface FunctionExpressionTransport {
 export interface FunctionSignatureTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: SlotValue<KwAsyncMarkerTransport>
+  _async_marker?: boolean
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
@@ -788,7 +788,7 @@ export interface FunctionTypeTransport {
 export interface GeneratorFunctionDeclarationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: SlotValue<KwAsyncMarkerTransport>
+  _async_marker?: boolean
   _name: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
@@ -800,7 +800,7 @@ export interface GeneratorFunctionDeclarationTransport {
 export interface GeneratorFunctionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _async_marker?: SlotValue<KwAsyncMarkerTransport>
+  _async_marker?: boolean
   _name?: SlotValue<IdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _parameters: SlotValue<FormalParametersTransport>
@@ -1049,10 +1049,10 @@ export interface MethodDefinitionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _static_marker?: SlotValue<KwStaticMarkerTransport>
+  _static_marker?: boolean
   _override_modifier?: SlotValue<OverrideModifierTransport>
   _readonly_marker?: boolean
-  _async_marker?: SlotValue<KwAsyncMarkerTransport>
+  _async_marker?: boolean
   _accessor_kind?: SlotValue<Box<AnyTransport>>
   _name: SlotValue<MethodDefinitionNameTransportSlot>
   _optional_marker?: boolean
@@ -1066,10 +1066,10 @@ export interface MethodSignatureTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _static_marker?: SlotValue<KwStaticMarkerTransport>
+  _static_marker?: boolean
   _override_modifier?: SlotValue<OverrideModifierTransport>
   _readonly_marker?: boolean
-  _async_marker?: SlotValue<KwAsyncMarkerTransport>
+  _async_marker?: boolean
   _accessor_kind?: SlotValue<Box<AnyTransport>>
   _name: SlotValue<MethodSignatureNameTransportSlot>
   _optional_marker?: boolean
@@ -1340,7 +1340,7 @@ export interface PropertySignatureTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _static_marker?: SlotValue<KwStaticMarkerTransport>
+  _static_marker?: boolean
   _override_modifier?: SlotValue<OverrideModifierTransport>
   _readonly_marker?: boolean
   _name: SlotValue<PropertySignatureNameTransportSlot>
@@ -1352,12 +1352,12 @@ export interface PublicFieldDefinitionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _decorator?: Array<SlotValue<DecoratorTransport>>
-  _declare_marker?: SlotValue<KwDeclareMarkerTransport>
+  _declare_marker?: boolean
   _accessibility_modifier?: SlotValue<AccessibilityModifierEnum>
-  _static_marker?: SlotValue<KwStaticMarkerTransport>
+  _static_marker?: boolean
   _readonly_marker?: boolean
-  _abstract_marker?: SlotValue<KwAbstractMarkerTransport>
-  _accessor_marker?: SlotValue<KwAccessorMarkerTransport>
+  _abstract_marker?: boolean
+  _accessor_marker?: boolean
   _name: SlotValue<PublicFieldDefinitionNameTransportSlot>
   _optionality_marker?: SlotValue<Box<AnyTransport>>
   _type?: SlotValue<TypeAnnotationTransport>
@@ -1628,7 +1628,7 @@ export interface TypeParametersTransport {
 export interface TypeParameterTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _const_marker?: SlotValue<KwConstMarkerTransport>
+  _const_marker?: boolean
   _name: SlotValue<TypeIdentifierTransport>
   _constraint?: SlotValue<ConstraintTransport>
   _value?: SlotValue<DefaultTypeTransport>

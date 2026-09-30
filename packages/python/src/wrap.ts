@@ -2799,8 +2799,8 @@ export function wrapSimplePattern(data: T.SimplePattern, tree: TreeHandle): T.Si
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
-			{ True: 71, False: 72, None: 73, _: 280 },
-			{ 48: 280 }
+			{ True: 71, False: 72, None: 73, _: 279 },
+			{ 48: 279 }
 		),
 
 		content() {
@@ -2878,8 +2878,8 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.Unio
 				slotName: 'patterns',
 				span: (data as _NodeData).$span
 			}),
-			{ True: 71, False: 72, None: 73, _: 280 },
-			{ 48: 280 }
+			{ True: 71, False: 72, None: 73, _: 279 },
+			{ 48: 279 }
 		),
 
 		patterns() {
@@ -2978,8 +2978,8 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle): 
 				slotName: 'key',
 				span: (data as _NodeData).$span
 			}),
-			{ True: 71, False: 72, None: 73, _: 280 },
-			{ 48: 280 }
+			{ True: 71, False: 72, None: 73, _: 279 },
+			{ 48: 279 }
 		),
 		_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 			tree,
@@ -3038,8 +3038,8 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 				slotName: 'value',
 				span: (data as _NodeData).$span
 			}),
-			{ True: 71, False: 72, None: 73, _: 280 },
-			{ 48: 280 }
+			{ True: 71, False: 72, None: 73, _: 279 },
+			{ 48: 279 }
 		),
 
 		name() {
@@ -8262,7 +8262,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.Comment]: (d, t) => wrapComment(d as unknown as T.Comment, t),
 	[TSKindId.PositionalSeparator]: (d) => ({ ...d, $type: TSKindId.PositionalSeparator as const }),
 	[TSKindId.KeywordSeparator]: (d) => ({ ...d, $type: TSKindId.KeywordSeparator as const }),
-	[TSKindId.KwAsyncMarker]: (d) => ({ ...d, $type: TSKindId.KwAsyncMarker as const }),
 	[TSKindId.SimpleStatementsElements]: (d, t) =>
 		wrapSimpleStatementsElements(d as unknown as T.SimpleStatementsElements, t),
 	[TSKindId.Subjects]: (d, t) => wrapSubjects(d as unknown as T.Subjects, t),
@@ -8518,7 +8517,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.Comment]: ReturnType<typeof wrapComment>;
 	[TSKindId.PositionalSeparator]: _NodeData & { readonly $type: TSKindId.PositionalSeparator };
 	[TSKindId.KeywordSeparator]: _NodeData & { readonly $type: TSKindId.KeywordSeparator };
-	[TSKindId.KwAsyncMarker]: _NodeData & { readonly $type: TSKindId.KwAsyncMarker };
 	[TSKindId.SimpleStatementsElements]: ReturnType<typeof wrapSimpleStatementsElements>;
 	[TSKindId.Subjects]: ReturnType<typeof wrapSubjects>;
 	[TSKindId.CasePatterns]: ReturnType<typeof wrapCasePatterns>;

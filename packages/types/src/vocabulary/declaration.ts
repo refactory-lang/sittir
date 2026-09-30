@@ -215,12 +215,26 @@ export namespace Declaration {
 		// claimed by r
 		readonly kind: 'declaration.extension';
 		readonly receiver?: V.Declaration.Parameter.Self<G>;
+		readonly traitClause?: V.Unmapped<'rust:impl_item_negative_clause'> | V.Unmapped<'rust:impl_item_positive_clause'>;
+		// unmapped: <rust:impl_item_negative_clause> <rust:impl_item_positive_clause>
+		readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
+		readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+		readonly unsafe?: boolean;
+		readonly whereClause?: V.Clause.Where<G>;
 	}
 	export namespace Extension {
 		export interface Conformance<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Extension<G>>> {
 			// claimed by r
 			readonly kind: 'declaration.extension.conformance';
 			readonly receiver?: V.Declaration.Parameter.Self<G>;
+			readonly traitClause?:
+				| V.Unmapped<'rust:impl_item_negative_clause'>
+				| V.Unmapped<'rust:impl_item_positive_clause'>;
+			// unmapped: <rust:impl_item_negative_clause> <rust:impl_item_positive_clause>
+			readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
+			readonly typeParameters?: V.Declaration.TypeParameter<G>[];
+			readonly unsafe?: boolean;
+			readonly whereClause?: V.Clause.Where<G>;
 		}
 		export type Any<G extends GrammarContext> = V.Declaration.Extension<G> | V.Declaration.Extension.Conformance<G>;
 	}
@@ -600,7 +614,6 @@ export namespace Declaration {
 			readonly stem: string;
 		}
 		// claimed by p content-derived
-
 		export interface Getter<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Method<G>>> {
 			readonly kind: 'declaration.method.getter';
 			readonly accessor: 'get';
@@ -832,8 +845,8 @@ export namespace Declaration {
 		// pt only
 		readonly mutable?: boolean;
 		// r only
-		readonly name?: V.Unmapped<'typescript:pattern'> | G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
-		// unmapped: <typescript:pattern>
+		readonly name?: V.Unmapped<'rust:pattern'> | V.Unmapped<'typescript:pattern'> | G['identifier'] | G['pattern'];
+		// unmapped: <rust:pattern> <typescript:pattern>
 		readonly override?: boolean;
 		// t only
 		readonly readonly?: boolean;
@@ -875,7 +888,7 @@ export namespace Declaration {
 		export interface Typed<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Parameter<G>>> {
 			// claimed by p
 			readonly kind: 'declaration.parameter.typed';
-			readonly content: G['identifier'] | V.Pattern.Splat.Any<G>;
+			readonly name: G['identifier'] | V.Pattern.Splat.Any<G>;
 			readonly type: G['type'];
 		}
 		export interface TypedDefault<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Parameter<G>>> {
@@ -889,7 +902,8 @@ export namespace Declaration {
 			// claimed by r
 			readonly kind: 'declaration.parameter.variadic';
 			readonly mutableSpecifier?: boolean;
-			readonly pattern?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
+			readonly pattern?: V.Unmapped<'rust:pattern'>;
+			// unmapped: <rust:pattern>
 		}
 		export type Any<G extends GrammarContext> =
 			| V.Declaration.Parameter<G>
@@ -1040,19 +1054,22 @@ export namespace Declaration {
 		// r only
 		readonly mutableSpecifier?: boolean;
 		// r only
-		readonly name?: G['expression'] | G['identifier'] | G['literal'] | G['pattern'];
-		// r only
-		readonly type?: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
-		// r only
-		readonly value?: G['expression'] | G['identifier'] | G['literal'] | G['statement'];
-		// r only
+		readonly name?: V.Unmapped<'rust:pattern'> | G['expression'] | G['identifier'] | G['pattern'];
+		// unmapped: <rust:pattern>
+		readonly type?: G['type'] | V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'];
+		readonly value?:
+			| G['declaration']
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| G['pattern']
+			| G['statement'];
 	}
 	export namespace Variable {
 		export interface Lexical<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Variable<G>>> {
 			// claimed by t
 			readonly kind: 'declaration.variable.lexical';
-			readonly declarators: V.Unmapped<'typescript:variable_declarator'>[];
-			// unmapped: <typescript:variable_declarator>
+			readonly declarators: V.Declaration.Variable<G>[];
 			readonly declare?: boolean;
 			readonly keyword: 'const' | 'let';
 			readonly label?:
@@ -1083,6 +1100,9 @@ export namespace Declaration {
 		export interface Pattern<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Variable<G>>> {
 			// claimed by t
 			readonly kind: 'declaration.variable.pattern';
+			readonly name: G['identifier'] | G['pattern'];
+			readonly type?: G['type'];
+			readonly value?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
 		}
 		export interface Static<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Variable<G>>> {
 			// claimed by r
@@ -1097,8 +1117,7 @@ export namespace Declaration {
 		export interface Var<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Variable<G>>> {
 			// claimed by t
 			readonly kind: 'declaration.variable.var';
-			readonly declarators: V.Unmapped<'typescript:variable_declarator'>[];
-			// unmapped: <typescript:variable_declarator>
+			readonly declarators: V.Declaration.Variable<G>[];
 			readonly declare?: boolean;
 			readonly label?:
 				| V.Identifier.Label<G>

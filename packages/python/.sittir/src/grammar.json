@@ -8730,6 +8730,7 @@
     "_raise_statement_optional1",
     "_function_definition_optional1",
     "_exec_statement_optional1",
+    "_kw_async_marker",
     "_augmented_assignment_operator",
     "_kw_comma",
     "_kw_eq_marker"

@@ -172,7 +172,7 @@ export interface AssociatedTypeTransport {
 export interface AsyncBlockTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _move_marker?: SlotValue<KwMoveMarkerTransport>
+  _move_marker?: boolean
   _body: SlotValue<Box<BlockTransport>>
 }
 
@@ -363,9 +363,9 @@ export interface CharLiteralPlainTransport {
 export interface ClosureExpressionBlockTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _static_marker?: SlotValue<KwStaticMarkerTransport>
-  _async_marker?: SlotValue<KwAsyncMarkerTransport>
-  _move_marker?: SlotValue<KwMoveMarkerTransport>
+  _static_marker?: boolean
+  _async_marker?: boolean
+  _move_marker?: boolean
   _parameters: SlotValue<ClosureParametersTransport>
   _return_type?: SlotValue<Box<TypeTransport>>
   _body: SlotValue<Box<BlockTransport>>
@@ -374,9 +374,9 @@ export interface ClosureExpressionBlockTransport {
 export interface ClosureExpressionExprTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _static_marker?: SlotValue<KwStaticMarkerTransport>
-  _async_marker?: SlotValue<KwAsyncMarkerTransport>
-  _move_marker?: SlotValue<KwMoveMarkerTransport>
+  _static_marker?: boolean
+  _async_marker?: boolean
+  _move_marker?: boolean
   _parameters: SlotValue<ClosureParametersTransport>
   _body: SlotValue<Box<ClosureExpressionExprBodyTransportSlot>>
 }
@@ -624,7 +624,7 @@ export interface FieldInitializerTransport {
 export interface FieldPatternNamedTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _ref_marker?: SlotValue<KwRefMarkerTransport>
+  _ref_marker?: boolean
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _name: SlotValue<FieldIdentifierTransport>
   _pattern: SlotValue<PatternTransport>
@@ -633,7 +633,7 @@ export interface FieldPatternNamedTransport {
 export interface FieldPatternShorthandTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _ref_marker?: SlotValue<KwRefMarkerTransport>
+  _ref_marker?: boolean
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _name: SlotValue<ShorthandFieldIdentifierTransport>
 }
@@ -724,7 +724,7 @@ export interface FunctionTypeTransport {
 export interface GenBlockTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _move_marker?: SlotValue<KwMoveMarkerTransport>
+  _move_marker?: boolean
   _body: SlotValue<Box<BlockTransport>>
 }
 
@@ -1334,7 +1334,7 @@ export interface StaticItemTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
-  _ref_marker?: SlotValue<KwRefMarkerTransport>
+  _ref_marker?: boolean
   _mutable_specifier?: SlotValue<MutableSpecifierTransport>
   _name: SlotValue<IdentifierTransport>
   _type: SlotValue<TypeTransport>
@@ -1478,7 +1478,7 @@ export interface TraitItemTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _visibility_modifier?: SlotValue<VisibilityModifierTransport>
-  _unsafe_marker?: SlotValue<KwUnsafeMarkerTransport>
+  _unsafe_marker?: boolean
   _name: SlotValue<TypeIdentifierTransport>
   _type_parameters?: SlotValue<TypeParametersTransport>
   _bounds?: SlotValue<TraitBoundsTransport>

@@ -5723,8 +5723,8 @@ export function wrapClassBody(data: T.ClassBody, tree: TreeHandle): T.ClassBody.
 				slotName: 'content',
 				span: (data as _NodeData).$span
 			}),
-			{ ';': 403 },
-			{ 20: 403 }
+			{ ';': 395 },
+			{ 20: 395 }
 		),
 
 		contents() {
@@ -14582,14 +14582,6 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.UnionType]: (d, t) => wrapUnionType(d as unknown as T.UnionType, t),
 	[TSKindId.IntersectionType]: (d, t) => wrapIntersectionType(d as unknown as T.IntersectionType, t),
 	[TSKindId.FunctionType]: (d, t) => wrapFunctionType(d as unknown as T.FunctionType, t),
-	[TSKindId.KwAwaitMarker]: (d) => ({ ...d, $type: TSKindId.KwAwaitMarker as const }),
-	[TSKindId.KwAsyncMarker]: (d) => ({ ...d, $type: TSKindId.KwAsyncMarker as const }),
-	[TSKindId.KwUsingMarker]: (d) => ({ ...d, $type: TSKindId.KwUsingMarker as const }),
-	[TSKindId.KwStaticMarker]: (d) => ({ ...d, $type: TSKindId.KwStaticMarker as const }),
-	[TSKindId.KwDeclareMarker]: (d) => ({ ...d, $type: TSKindId.KwDeclareMarker as const }),
-	[TSKindId.KwAbstractMarker]: (d) => ({ ...d, $type: TSKindId.KwAbstractMarker as const }),
-	[TSKindId.KwAccessorMarker]: (d) => ({ ...d, $type: TSKindId.KwAccessorMarker as const }),
-	[TSKindId.KwConstMarker]: (d) => ({ ...d, $type: TSKindId.KwConstMarker as const }),
 	[TSKindId.ExportSpecifiers]: (d, t) => wrapExportSpecifiers(d as unknown as T.ExportSpecifiers, t),
 	[TSKindId.ImportSpecifiers]: (d, t) => wrapImportSpecifiers(d as unknown as T.ImportSpecifiers, t),
 	[TSKindId.FormalParametersElements]: (d, t) =>
@@ -14946,14 +14938,6 @@ interface _WrapReturnByKindId {
 	[TSKindId.UnionType]: ReturnType<typeof wrapUnionType>;
 	[TSKindId.IntersectionType]: ReturnType<typeof wrapIntersectionType>;
 	[TSKindId.FunctionType]: ReturnType<typeof wrapFunctionType>;
-	[TSKindId.KwAwaitMarker]: _NodeData & { readonly $type: TSKindId.KwAwaitMarker };
-	[TSKindId.KwAsyncMarker]: _NodeData & { readonly $type: TSKindId.KwAsyncMarker };
-	[TSKindId.KwUsingMarker]: _NodeData & { readonly $type: TSKindId.KwUsingMarker };
-	[TSKindId.KwStaticMarker]: _NodeData & { readonly $type: TSKindId.KwStaticMarker };
-	[TSKindId.KwDeclareMarker]: _NodeData & { readonly $type: TSKindId.KwDeclareMarker };
-	[TSKindId.KwAbstractMarker]: _NodeData & { readonly $type: TSKindId.KwAbstractMarker };
-	[TSKindId.KwAccessorMarker]: _NodeData & { readonly $type: TSKindId.KwAccessorMarker };
-	[TSKindId.KwConstMarker]: _NodeData & { readonly $type: TSKindId.KwConstMarker };
 	[TSKindId.ExportSpecifiers]: ReturnType<typeof wrapExportSpecifiers>;
 	[TSKindId.ImportSpecifiers]: ReturnType<typeof wrapImportSpecifiers>;
 	[TSKindId.FormalParametersElements]: ReturnType<typeof wrapFormalParametersElements>;

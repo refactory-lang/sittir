@@ -63,6 +63,7 @@ import {
 import {
 	fieldElementType,
 	childElementType,
+	kindEnumMemberDiscriminants,
 	kindEnumTextMapExpr,
 	keywordArmTextMapExpr,
 	delimiterMembersFor,
@@ -1033,7 +1034,12 @@ function storedFieldCall(
 		prop,
 		leafKinds,
 		branchKinds,
-		altKindDiscriminants(tokenKinds, field.values, nodeMap, kindEntries),
+		[
+			...altKindDiscriminants(tokenKinds, field.values, nodeMap, kindEntries),
+			...(storageInfo?.kind === 'kindEnum' || storageInfo?.kind === 'mixedEnum'
+				? kindEnumMemberDiscriminants(field as AssembledNonterminal, nodeMap, kindEntries)
+				: [])
+		],
 		fieldMultiple,
 		elementType,
 		'name' in field && !isRequired(field as AssembledNonterminal)
