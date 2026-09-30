@@ -1,5 +1,6 @@
 {
   "name": "rust",
+  "root": "source_file",
   "nodeCount": 437,
   "word": "identifier",
   "supertypes": [

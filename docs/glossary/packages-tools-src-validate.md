@@ -745,6 +745,12 @@ An assignment target reparses as the left side of a parenthesized assignment, `(
 The wrapper is chosen by the kind being rendered when it is visible, else by the parse kind the fixture targets —
 never by stripping underscores, which can land on an unrelated kind (`_number` is not `number`).
 
+The grammar's root kind reparses as written, with no wrapper: `opts.root` names it, and `reparseWrappersOf` adds its identity entry. A kind with no wrapper of its own and no supertype wrapper returns `null`.
+
+### `packages/tools/src/validate/common.ts::reparseWrappersOf`
+
+A grammar's reparse wrappers: an identity wrapper for the node model's root kind, then the grammar's own `REPARSE_WRAPPERS` entries. The root entry comes from the model for every grammar, so `REPARSE_WRAPPERS` holds only the context wrappers a grammar needs beyond its root, and a new grammar reparses its root kind with no table of its own.
+
 ### `packages/tools/src/validate/common.ts::WASM_PATHS`
 
 ```text
@@ -1728,6 +1734,10 @@ The rows and summary for one grammar's whole corpus. Entries that parse with err
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel.fullForms`
 
 Each kind's `fullForm` from the node model: the literal delimiters around its one text content.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel.root`
+
+The grammar's root kind as the node model records it; `undefined` when no model is loaded.
 
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel.innerGapsKeyed`
 

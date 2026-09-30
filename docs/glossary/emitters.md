@@ -11142,6 +11142,8 @@ passes the generator's `generatedIdTables` through for that reason.
 
 `innerGapsKeyed` publishes the predicate that decided whether the emitted `InnerTrivia` takes a gap key, so the source emitter prints the inner-trivia surface that was emitted: `innerAt(gap, …)` when keyed, `.inner(…)` otherwise.
 
+`root` is the grammar's root kind (`NodeMap.root`, the first rule), so tools reparse a rendered root without naming it per grammar.
+
 `externals` and `extras` are the grammar's rule lists, serialized as grammar.json holds them (SYMBOL, STRING and PATTERN entries, in declaration order).
 
 `variantRoutes` publishes `variantRoutePaths` — each flattened variant kind's public `ir` path — sorted by kind, so tools read the one derivation instead of reconstructing paths from `polymorphVariants` and hoisting facts.

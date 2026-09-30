@@ -1,5 +1,6 @@
 {
   "name": "scm",
+  "root": "program",
   "nodeCount": 58,
   "word": null,
   "supertypes": [

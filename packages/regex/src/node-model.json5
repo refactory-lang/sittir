@@ -1,5 +1,6 @@
 {
   "name": "regex",
+  "root": "pattern",
   "nodeCount": 83,
   "word": null,
   "supertypes": [

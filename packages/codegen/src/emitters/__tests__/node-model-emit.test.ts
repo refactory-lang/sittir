@@ -13,6 +13,10 @@ import { flatten } from '../../compiler/flatten.ts';
 import { clauseNodeMap, comparisonNodeMap, twoChoiceSlotsNodeMap } from './sub-factories.test.ts';
 
 describe('node-model emitter', () => {
+	it('records the grammar root kind', () => {
+		expect(buildNodeModel({ ...makeNodeMapWith(new Map()), root: 'program' }).root).toBe('program');
+	});
+
 	it('serializes per-value parseKind without slot-level aliasSources', () => {
 		const rule: SeqRule<'link'> = {
 			type: SEQ,

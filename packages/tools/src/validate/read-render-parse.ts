@@ -552,6 +552,7 @@ export async function validateReadRenderParse(
 	const isLeafKind = await loadIsLeafKind(grammar);
 	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
+	const { root } = await loadNodeModel(grammar);
 	const variantChildKinds = await loadVariantChildKindsByOwner(grammar);
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
 	// Wrap so unknown kind names return undefined (instead of throwing).
@@ -761,7 +762,8 @@ export async function validateReadRenderParse(
 						// wrapper lookup needs no separate source resolution.
 						const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
 							adoptedVariantKinds: adoptedVariantKindNames,
-							targetKind
+							targetKind,
+							root
 						});
 						if (wrapped === null) {
 							excluded.push({ entry: entry.name, kind, reason: 'no-reparse-wrapper', input: inputSource });

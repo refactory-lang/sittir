@@ -486,7 +486,6 @@ export function buildKindToSupertypes(
 
 const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = {
 	rust: {
-		source_file: (r) => r,
 		_expression: (r) => `fn _f() { let _ = ${r}; }`,
 		_type: (r) => `type _X = ${r};`,
 		_pattern: (r) => `fn _f() { let ${r} = (); }`,
@@ -506,7 +505,6 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		visibility_modifier: (r) => `${r} fn _f() {}`
 	},
 	typescript: {
-		program: (r) => r,
 		expression: (r) => `let _ = ${r};`,
 		type: (r) => `type _X = ${r};`,
 		pattern: (r) => `let ${r} = null;`,
@@ -529,7 +527,6 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		lhs_expression: (r) => `(${r} = null);`
 	},
 	python: {
-		module: (r) => r,
 		expression: (r) => `_ = ${r}`,
 		type: (r) => `_: ${r} = None`,
 		pattern: (r) => `for ${r} in _: pass`,
@@ -608,15 +605,18 @@ export const VARIANT_ADOPTION_GATED_WRAPPERS: Record<string, readonly string[]> 
 	rust: ['visibility_modifier']
 };
 
+function reparseWrappersOf(grammar: string, root: string | undefined): Record<string, (r: string) => string> {
+	return { ...(root === undefined ? {} : { [root]: (r: string) => r }), ...REPARSE_WRAPPERS[grammar] };
+}
+
 export function wrapForReparse(
 	rendered: string,
 	kind: string,
 	grammar: string,
 	kindToSupertypes: Map<string, string[]>,
-	opts?: { adoptedVariantKinds?: ReadonlySet<string>; targetKind?: string }
+	opts?: { adoptedVariantKinds?: ReadonlySet<string>; targetKind?: string; root?: string }
 ): WrapForReparseResult | null {
-	const wrappers = REPARSE_WRAPPERS[grammar];
-	if (!wrappers) return null;
+	const wrappers = reparseWrappersOf(grammar, opts?.root);
 	const visibleKind = wrappers[kind] !== undefined ? kind : (opts?.targetKind ?? kind);
 	const direct = wrappers[kind] ?? wrappers[visibleKind];
 	if (direct) {
@@ -682,6 +682,7 @@ export interface Seat {
 export type SeatTable = Record<string, Record<string, Record<string, Seat>>>;
 
 export interface LoadedNodeModel {
+	readonly root: string | undefined;
 	readonly irKeys: Record<string, string>;
 	readonly modelTypes: Record<string, string>;
 	readonly leafPatterns: Record<string, RegExp>;
@@ -714,6 +715,7 @@ export interface ModelFullForm {
 }
 
 interface ParsedNodeModel {
+	root?: string | null;
 	nodes?: ReadonlyArray<{
 		kind: string;
 		irKey?: string;
@@ -748,6 +750,7 @@ interface ParsedNodeModel {
 }
 
 const EMPTY_NODE_MODEL: LoadedNodeModel = {
+	root: undefined,
 	irKeys: {},
 	modelTypes: {},
 	leafPatterns: {},
@@ -852,6 +855,7 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 		if (node.fullForm !== undefined) fullForms[node.kind] = node.fullForm;
 	}
 	return {
+		root: model.root ?? undefined,
 		irKeys,
 		modelTypes,
 		leafPatterns,
