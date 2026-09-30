@@ -1,3 +1,4 @@
+import { nativeShownKindId } from './shown-kind.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -347,8 +348,7 @@ function nativeNodeIsKind(
 ): boolean {
 	const nameOf = (type: AnyNodeData['$type']): string =>
 		typeof type === 'number' ? (kindNameFromId?.(type) ?? String(type)) : type;
-	const display = (d as { readonly $displayType?: number }).$displayType;
-	return nameOf(d.$type) === kind || (display !== undefined && nameOf(display) === kind);
+	return nameOf(d.$type) === kind || nameOf(nativeShownKindId(d)) === kind;
 }
 
 export function findNativeNodeId(

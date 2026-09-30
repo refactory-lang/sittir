@@ -7,7 +7,7 @@ export const uncoveredContent: CommandModule = {
 		'List corpus nodes whose non-whitespace text no child covers, with the hidden grammar producer; exits 1 if any',
 	register: (program) => {
 		withGrammar(defineCommand(program, uncoveredContent))
-			.option('--all-grammars', 'Run every stable grammar')
+			.option('--all-grammars', 'Run every grammar')
 			.option('--json', 'Print the census as JSON')
 			.action(async (opts: { grammar?: string; allGrammars?: boolean; json?: boolean }) => {
 				const { uncoveredContent: runUncoveredContent } = await import('@sittir/tools');

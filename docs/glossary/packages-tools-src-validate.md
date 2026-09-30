@@ -289,6 +289,10 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
 
 Whether a node from the native read is of a given kind name, under either identity it carries: the grammar symbol that parsed it (`$type`), or the kind the parser shows it as (`$displayType`, present only at an alias). The corpus names an alias envelope by the shown kind (`property_identifier`, `field_identifier`), so a lookup by `$type` alone would never find one. `findNativeNodeId` and `walkNativeForKind` both locate nodes through it.
 
+### `packages/tools/src/validate/shown-kind.ts::nativeShownKindId`
+
+The kind a node from the native read is shown as: its `$displayType` when the reader sent one, and its `$type` otherwise. An in-place leaf alias reads as the token it aliases, for example regex `lazy` over `?`, which arrives as `$type` `?` with `$displayType` `lazy`. The model kind of such a node is the shown one. Every site that classifies a read node as a model kind reads it here: the factory-render-parse candidate walk and storage comparison, the read-render-parse leaf check, the exercise walk, the factory-source printer, and `nativeNodeIsKind`. Sites that compare two reads, or that name the grammar symbol that parsed a node, keep `$type`.
+
 ### `packages/tools/src/validate/common.ts::findNativeNodeId`
 
 ```text

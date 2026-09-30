@@ -707,7 +707,7 @@ List corpus nodes whose non-whitespace text no child covers, with the hidden gra
 **Options**
 
 - `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
-- `--all-grammars` — Run every stable grammar
+- `--all-grammars` — Run every grammar
 - `--json` — Print the census as JSON
 
 **Example**

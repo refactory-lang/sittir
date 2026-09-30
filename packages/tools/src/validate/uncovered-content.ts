@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { assertGrammar, grammarPackage, sittirDirOf, stableGrammars } from '@sittir/codegen/grammars';
+import { allGrammars, assertGrammar, grammarPackage, sittirDirOf } from '@sittir/codegen/grammars';
 import { invoke } from '../codegen-surface.ts';
 import { loadCorpusEntries, loadKindNameFromId, loadNativeEngine, readNativeTree } from './common.ts';
 
@@ -202,7 +202,7 @@ export interface UncoveredContentOptions {
 }
 
 export async function run(opts: UncoveredContentOptions): Promise<number> {
-	const grammars = opts.allGrammars ? stableGrammars() : [assertGrammar(opts.grammar)];
+	const grammars = opts.allGrammars ? allGrammars() : [assertGrammar(opts.grammar)];
 	const censuses: UncoveredContentCensus[] = [];
 	for (const grammar of grammars) censuses.push(await computeUncoveredContentCensus(grammar));
 	if (opts.json) {

@@ -40,6 +40,7 @@ import {
 	type ValidatorSkip,
 	loadNativeRender
 } from './common.ts';
+import { nativeShownKindId } from './shown-kind.ts';
 
 /**
  * The kinds that participate in variant() adoption (each override-defined
@@ -391,7 +392,8 @@ export function selfContainedRenderInput(
 				out[key] = key.startsWith('_') || key === '$other' ? walk(raw) : raw;
 			}
 		}
-		if (!hasStorage(out) && typeof out.$type === 'number' && isLeafKind(out.$type) && out.$text === undefined) {
+		const shown = typeof out.$type === 'number' ? nativeShownKindId(out as { $type: number }) : undefined;
+		if (!hasStorage(out) && shown !== undefined && isLeafKind(shown) && out.$text === undefined) {
 			const text = textOf(out);
 			if (text !== undefined) out.$text = text;
 		}
