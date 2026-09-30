@@ -439,8 +439,8 @@ const _supertype_simpleStatement_ids = new Set<number>([
 const _supertype_namedExpressionLhs_ids = new Set<number>([1, 68, 38, 69, 70, 39, 22]);
 const _supertype_expressions_ids = new Set<number>([180]);
 const _supertype_compoundStatement_ids = new Set<number>([150, 156, 157, 158, 161, 164, 173, 177, 153]);
-const _supertype_withClause_ids = new Set<number>([292, 293]);
-const _supertype_suite_ids = new Set<number>([295, 296, 297]);
+const _supertype_withClause_ids = new Set<number>([291, 292]);
+const _supertype_suite_ids = new Set<number>([294, 295, 296]);
 const _supertype_parameter_ids = new Set<number>([1, 224, 198, 199, 200, 196, 258, 257, 201]);
 const _supertype_pattern_ids = new Set<number>([1, 68, 38, 69, 70, 39, 22, 221, 220, 200, 196, 197]);
 const _supertype_expressionWithinForInClause_ids = new Set<number>([214]);
@@ -449,7 +449,7 @@ const _supertype_primaryExpression_ids = new Set<number>([
 	256, 208, 1, 68, 38, 69, 70, 39, 22, 247, 246, 71, 72, 73, 209, 220, 221, 223, 232, 237, 235, 238, 233, 239, 234, 241,
 	240, 64, 200
 ]);
-const _supertype_assignment_ids = new Set<number>([288, 289, 290]);
+const _supertype_assignment_ids = new Set<number>([287, 288, 289]);
 const _supertype_leftHandSide_ids = new Set<number>([217]);
 const _supertype_rightHandSide_ids = new Set<number>([180, 216, 217, 219]);
 const _supertype_fExpression_ids = new Set<number>([180, 217, 219]);

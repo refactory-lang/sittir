@@ -25,7 +25,7 @@ import {
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { rulesEqual } from '../rule-patterns.ts';
-import { getEnrichHiddenSubsequences, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
+import { getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
@@ -474,6 +474,9 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 
 	if (baseArg) {
 		for (const name of getEnrichHiddenSubsequences(base)) {
+			context.syntheticInline.add(name);
+		}
+		for (const name of getEnrichFieldBackings(base)) {
 			context.syntheticInline.add(name);
 		}
 		for (const name of getEnrichVisibleSubsequenceSources(base)) {
