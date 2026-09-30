@@ -1197,7 +1197,7 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle): T.Expo
 			{
 				list: 'exportSpecifiers',
 				elements: 'exportSpecifiers',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildExportSpecifiers
 			}
 		)
@@ -1490,7 +1490,7 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle): T.Name
 			{
 				list: 'importSpecifiers',
 				elements: 'importSpecifiers',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildImportSpecifiers
 			}
 		)
@@ -5777,7 +5777,7 @@ export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle)
 			{
 				list: 'formalParametersElements',
 				elements: 'formalParameters',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildFormalParametersElements
 			}
 		)
@@ -8063,7 +8063,12 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle): T.EnumBody.Par
 						wrapEnumBody({ ...$edited(data), _enum_body_elements: v }, tree)
 				}
 			},
-			{ list: 'enumBodyElements', elements: 'contents', options: ['delimiter'], make: RAW.buildEnumBodyElements }
+			{
+				list: 'enumBodyElements',
+				elements: 'contents',
+				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
+				make: RAW.buildEnumBodyElements
+			}
 		)
 	);
 	return _node as unknown as T.EnumBody.Parsed;
@@ -10326,7 +10331,12 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 					types: (v: NonNullable<T.TypeArguments['_types']>) => wrapTypeArguments({ ...$edited(data), _types: v }, tree)
 				}
 			},
-			{ list: 'types', elements: 'types', options: ['delimiter'], make: RAW.buildTypes }
+			{
+				list: 'types',
+				elements: 'types',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: RAW.buildTypes
+			}
 		)
 	);
 	return _node as unknown as T.TypeArguments.Parsed;
@@ -10623,7 +10633,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 			{
 				list: 'typeParametersElements',
 				elements: 'typeParameters',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildTypeParametersElements
 			}
 		)
@@ -10941,7 +10951,7 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 			{
 				list: 'tupleTypeMembers',
 				elements: 'tupleTypeMembers',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildTupleTypeMembers
 			}
 		)

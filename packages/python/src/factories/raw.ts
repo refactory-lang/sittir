@@ -175,7 +175,7 @@ function _buildSimpleStatements(
 			{
 				list: 'simpleStatementsElements',
 				elements: 'simpleStatements',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: buildSimpleStatementsElements
 			}
 		)
@@ -1115,7 +1115,12 @@ function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNod
 					elements: () => _elements
 				}
 			),
-			{ list: 'elements', elements: 'parameters', options: ['delimiter'], make: buildParametersElements }
+			{
+				list: 'elements',
+				elements: 'parameters',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildParametersElements
+			}
 		)
 	) as unknown as T.Parameters.Bound;
 }
@@ -1167,7 +1172,12 @@ function _buildLambdaParameters(value: AdmitBound<T.ParametersElements, T.Admitt
 					parametersElements: () => _parameters_elements
 				}
 			),
-			{ list: 'parametersElements', elements: 'parameters', options: ['delimiter'], make: buildParametersElements }
+			{
+				list: 'parametersElements',
+				elements: 'parameters',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildParametersElements
+			}
 		)
 	) as unknown as T.LambdaParameters.Bound;
 }
@@ -1390,7 +1400,7 @@ function _buildTypeParameter(value: AdmitBound<T.Types, T.AdmittedNodes>): T.Typ
 					types: () => _types
 				}
 			),
-			{ list: 'types', elements: 'types', options: ['delimiter'], make: buildTypes }
+			{ list: 'types', elements: 'types', options: [{ key: 'delimiter', default: Delimiter.None }], make: buildTypes }
 		)
 	) as unknown as T.TypeParameter.Bound;
 }
@@ -1475,7 +1485,12 @@ function _buildArgumentList(value?: AdmitBound<T.ArgumentListElements, T.Admitte
 					arguments: () => _arguments
 				}
 			),
-			{ list: 'arguments', elements: 'elements', options: ['delimiter'], make: buildArgumentListElements }
+			{
+				list: 'arguments',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildArgumentListElements
+			}
 		)
 	) as unknown as T.ArgumentList.Bound;
 }
@@ -1830,7 +1845,12 @@ function _buildDictPattern(value?: AdmitBound<T.DictPatternElements, T.AdmittedN
 					dictPatternElements: () => _dict_pattern_elements
 				}
 			),
-			{ list: 'dictPatternElements', elements: 'elements', options: ['delimiter'], make: buildDictPatternElements }
+			{
+				list: 'dictPatternElements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildDictPatternElements
+			}
 		)
 	) as unknown as T.DictPattern.Bound;
 }
@@ -2147,7 +2167,12 @@ function _buildTuplePattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.
 					patterns: () => _patterns
 				}
 			),
-			{ list: 'patterns', elements: 'patterns', options: ['delimiter'], make: buildPatterns }
+			{
+				list: 'patterns',
+				elements: 'patterns',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildPatterns
+			}
 		)
 	) as unknown as T.TuplePattern.Bound;
 }
@@ -2192,7 +2217,12 @@ function _buildListPattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.L
 					patterns: () => _patterns
 				}
 			),
-			{ list: 'patterns', elements: 'patterns', options: ['delimiter'], make: buildPatterns }
+			{
+				list: 'patterns',
+				elements: 'patterns',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildPatterns
+			}
 		)
 	) as unknown as T.ListPattern.Bound;
 }
@@ -3178,7 +3208,12 @@ function _buildList(value?: AdmitBound<T.CollectionElements, T.AdmittedNodes>): 
 					collectionElements: () => _collection_elements
 				}
 			),
-			{ list: 'collectionElements', elements: 'elements', options: ['delimiter'], make: buildCollectionElements }
+			{
+				list: 'collectionElements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildCollectionElements
+			}
 		)
 	) as unknown as T.List.Bound;
 }
@@ -3226,7 +3261,12 @@ function _buildSet(value: AdmitBound<T.CollectionElements, T.AdmittedNodes>): T.
 					collectionElements: () => _collection_elements
 				}
 			),
-			{ list: 'collectionElements', elements: 'elements', options: ['delimiter'], make: buildCollectionElements }
+			{
+				list: 'collectionElements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildCollectionElements
+			}
 		)
 	) as unknown as T.Set.Bound;
 }
@@ -3275,7 +3315,12 @@ function _buildTuple(value?: AdmitBound<T.CollectionElements, T.AdmittedNodes>):
 					collectionElements: () => _collection_elements
 				}
 			),
-			{ list: 'collectionElements', elements: 'elements', options: ['delimiter'], make: buildCollectionElements }
+			{
+				list: 'collectionElements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildCollectionElements
+			}
 		)
 	) as unknown as T.Tuple.Bound;
 }
@@ -3322,7 +3367,12 @@ function _buildDictionary(value?: AdmitBound<T.DictionaryElements, T.AdmittedNod
 					entries: () => _entries
 				}
 			),
-			{ list: 'entries', elements: 'elements', options: ['delimiter'], make: buildDictionaryElements }
+			{
+				list: 'entries',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildDictionaryElements
+			}
 		)
 	) as unknown as T.Dictionary.Bound;
 }
@@ -4673,7 +4723,7 @@ function _buildCaseTuplePattern(
 			{
 				list: 'listPatternCasePatterns',
 				elements: 'casePatterns',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: buildListPatternCasePatterns
 			}
 		)
@@ -4733,7 +4783,7 @@ function _buildCaseListPattern(
 			{
 				list: 'listPatternCasePatterns',
 				elements: 'casePatterns',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: buildListPatternCasePatterns
 			}
 		)
@@ -4915,7 +4965,12 @@ function _buildPrintStatementPlain(value: AdmitBound<T.PrintArguments, T.Admitte
 					printArguments: () => _print_arguments
 				}
 			),
-			{ list: 'printArguments', elements: 'arguments', options: ['delimiter'], make: buildPrintArguments }
+			{
+				list: 'printArguments',
+				elements: 'arguments',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildPrintArguments
+			}
 		)
 	) as unknown as T.PrintStatementPlain.Bound;
 }
@@ -4965,7 +5020,12 @@ function _buildParenthesizedImportList(
 					importList: () => _import_list
 				}
 			),
-			{ list: 'importList', elements: 'names', options: ['delimiter'], make: buildImportList }
+			{
+				list: 'importList',
+				elements: 'names',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildImportList
+			}
 		)
 	) as unknown as T.ParenthesizedImportList.Bound;
 }
@@ -5746,7 +5806,12 @@ function _buildWithClauseParen(value: AdmitBound<T.WithClauseWithItems, T.Admitt
 					withClauseWithItems: () => _with_clause_with_items
 				}
 			),
-			{ list: 'withClauseWithItems', elements: 'withItems', options: ['delimiter'], make: buildWithClauseWithItems }
+			{
+				list: 'withClauseWithItems',
+				elements: 'withItems',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildWithClauseWithItems
+			}
 		)
 	) as unknown as T.WithClauseParen.Bound;
 }
@@ -5823,7 +5888,7 @@ function _buildSuiteInline(value: AdmitBound<T.SimpleStatementsElements, T.Admit
 			{
 				list: 'simpleStatementsElements',
 				elements: 'simpleStatements',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: buildSimpleStatementsElements
 			}
 		)

@@ -16445,9 +16445,13 @@ Whether a type text has ` | ` outside every bracket pair, the test `parenthesize
 
 The emitted `_keywordOr(input, keywords, () => resolved)` that replaces `_keywordOf(input, keywords) ?? resolved` for a single slot. Its declared result is `number | R`, so the checker forms the union without reducing it, which a `??` expression does and which exceeds the depth on a union that holds a node's `.Bound`.
 
+### `packages/codegen/src/emitters/factories.ts::listOptionDefaults`
+
+The options a separated list's factory takes, each with the expression the factory falls back to when the option is not passed: the delimiter's resolved arm (`Delimiter.None` when the list declares none) and the separator's declared arm (`undefined` when there is none). It reads the same option flags as the options type and the same default derivations as the list factory, so a list owner's getters report exactly what the factory would build.
+
 ### `packages/codegen/src/emitters/factories.ts::listOwnerRuntimeSpec`
 
-The object literal `{ list, elements, options, make }` a list owner's builder and wrap pass to `withListOwner`: the owner's accessor for its list, the list's accessor for its elements, the option keys its factory takes, and the list's own raw factory. `factoryScope` prefixes that factory's name where the caller reaches it through a namespace import (the wrap module). It shares `listOwnerTarget` with `listOwnerHint`, so the type-level marker and the runtime members come from one test of list-ownership; `undefined` means the node is not a list owner and neither emitter adds the call.
+The object literal `{ list, elements, options, make }` a list owner's builder and wrap pass to `withListOwner`: the owner's accessor for its list, the list's accessor for its elements, each option its factory takes as `{ key, default }`, and the list's own raw factory. `factoryScope` prefixes that factory's name where the caller reaches it through a namespace import (the wrap module). It shares `listOwnerTarget` with `listOwnerHint`, so the type-level marker and the runtime members come from one test of list-ownership; `undefined` means the node is not a list owner and neither emitter adds the call.
 
 ### `packages/codegen/src/emitters/factories.ts::listOwnerTarget`
 

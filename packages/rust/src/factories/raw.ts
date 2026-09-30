@@ -998,7 +998,7 @@ function _buildEnumVariantList(
 			{
 				list: 'enumVariantListElements',
 				elements: 'elements',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
 				make: buildEnumVariantListElements
 			}
 		)
@@ -1104,7 +1104,7 @@ function _buildFieldDeclarationList(
 			{
 				list: 'fieldDeclarationListElements',
 				elements: 'elements',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
 				make: buildFieldDeclarationListElements
 			}
 		)
@@ -1211,7 +1211,7 @@ function _buildOrderedFieldDeclarationList(
 			{
 				list: 'attributes',
 				elements: 'elements',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: buildOrderedFieldDeclarationListElements
 			}
 		)
@@ -1645,7 +1645,12 @@ function _buildWhereClause(value?: AdmitBound<T.WherePredicates, T.AdmittedNodes
 					wherePredicates: () => _where_predicates
 				}
 			),
-			{ list: 'wherePredicates', elements: 'wherePredicates', options: ['delimiter'], make: buildWherePredicates }
+			{
+				list: 'wherePredicates',
+				elements: 'wherePredicates',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildWherePredicates
+			}
 		)
 	) as unknown as T.WhereClause.Bound;
 }
@@ -1956,7 +1961,7 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 			{
 				list: 'typeParametersElements',
 				elements: 'elements',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: buildTypeParametersElements
 			}
 		)
@@ -2402,7 +2407,12 @@ function _buildUseList(value?: AdmitBound<T.UseClauses, T.AdmittedNodes>): T.Use
 					useClauses: () => _use_clauses
 				}
 			),
-			{ list: 'useClauses', elements: 'useClauses', options: ['delimiter'], make: buildUseClauses }
+			{
+				list: 'useClauses',
+				elements: 'useClauses',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildUseClauses
+			}
 		)
 	) as unknown as T.UseList.Bound;
 }
@@ -2619,7 +2629,12 @@ function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNod
 					parametersElements: () => _parameters_elements
 				}
 			),
-			{ list: 'parametersElements', elements: 'elements', options: ['delimiter'], make: buildParametersElements }
+			{
+				list: 'parametersElements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildParametersElements
+			}
 		)
 	) as unknown as T.Parameters.Bound;
 }
@@ -2966,7 +2981,12 @@ function _buildForLifetimes(value: AdmitBound<T.Lifetimes, T.AdmittedNodes>): T.
 					lifetimes: () => _lifetimes
 				}
 			),
-			{ list: 'lifetimes', elements: 'lifetimes', options: ['delimiter'], make: buildLifetimes }
+			{
+				list: 'lifetimes',
+				elements: 'lifetimes',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildLifetimes
+			}
 		)
 	) as unknown as T.ForLifetimes.Bound;
 }
@@ -3061,7 +3081,12 @@ function _buildTupleType(value: AdmitBound<T.TupleTypeElements, T.AdmittedNodes>
 					tupleTypeElements: () => _tuple_type_elements
 				}
 			),
-			{ list: 'tupleTypeElements', elements: 'types', options: ['delimiter'], make: buildTupleTypeElements }
+			{
+				list: 'tupleTypeElements',
+				elements: 'types',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildTupleTypeElements
+			}
 		)
 	) as unknown as T.TupleType.Bound;
 }
@@ -3246,7 +3271,12 @@ function _buildUseBounds(value?: AdmitBound<T.UseBoundsElements, T.AdmittedNodes
 					bounds: () => _bounds
 				}
 			),
-			{ list: 'bounds', elements: 'elements', options: ['delimiter'], make: buildUseBoundsElements }
+			{
+				list: 'bounds',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildUseBoundsElements
+			}
 		)
 	) as unknown as T.UseBounds.Bound;
 }
@@ -3308,7 +3338,12 @@ function _buildTypeArguments(value: AdmitBound<T.TypeArgumentsElements, T.Admitt
 					typeArgumentsElements: () => _type_arguments_elements
 				}
 			),
-			{ list: 'typeArgumentsElements', elements: 'elements', options: ['delimiter'], make: buildTypeArgumentsElements }
+			{
+				list: 'typeArgumentsElements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildTypeArgumentsElements
+			}
 		)
 	) as unknown as T.TypeArguments.Bound;
 }
@@ -4241,7 +4276,12 @@ function _buildArguments(value?: AdmitBound<T.ArgumentsElements, T.AdmittedNodes
 					argumentsElements: () => _arguments_elements
 				}
 			),
-			{ list: 'argumentsElements', elements: 'elements', options: ['delimiter'], make: buildArgumentsElements }
+			{
+				list: 'argumentsElements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildArgumentsElements
+			}
 		)
 	) as unknown as T.Arguments.Bound;
 }
@@ -4398,7 +4438,12 @@ function _buildFieldInitializerList(
 					initializers: () => _initializers
 				}
 			),
-			{ list: 'initializers', elements: 'elements', options: ['delimiter'], make: buildFieldInitializerListElements }
+			{
+				list: 'initializers',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildFieldInitializerListElements
+			}
 		)
 	) as unknown as T.FieldInitializerList.Bound;
 }
@@ -5360,7 +5405,12 @@ function _buildTuplePattern(value?: AdmitBound<T.TuplePatternElements, T.Admitte
 					elements: () => _elements
 				}
 			),
-			{ list: 'elements', elements: 'elements', options: ['delimiter'], make: buildTuplePatternElements }
+			{
+				list: 'elements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildTuplePatternElements
+			}
 		)
 	) as unknown as T.TuplePattern.Bound;
 }
@@ -5407,7 +5457,12 @@ function _buildSlicePattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.
 					patterns: () => _patterns
 				}
 			),
-			{ list: 'patterns', elements: 'patterns', options: ['delimiter'], make: buildPatterns }
+			{
+				list: 'patterns',
+				elements: 'patterns',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: buildPatterns
+			}
 		)
 	) as unknown as T.SlicePattern.Bound;
 }

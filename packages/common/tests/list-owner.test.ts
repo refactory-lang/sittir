@@ -5,7 +5,10 @@ const made: unknown[][] = [];
 const spec = {
 	list: 'items',
 	elements: 'elements',
-	options: ['delimiter', 'separator'],
+	options: [
+		{ key: 'delimiter', default: Delimiter.None },
+		{ key: 'separator', default: undefined }
+	],
 	make: (...args: unknown[]) => {
 		made.push(args);
 		return { list: args };
@@ -23,6 +26,17 @@ describe('withListOwner', () => {
 		expect(node.at(-1)).toBe('b');
 		expect(node.delimiter).toBe(Delimiter.Trailing);
 		expect(node.separator).toBe(7);
+	});
+	it('a list that stored no option reads the default its spec stamps', () => {
+		const stamped = withListOwner({ $type: 1, items: () => ({ elements: () => [] }) } as Record<string, unknown>, {
+			...spec,
+			options: [
+				{ key: 'delimiter', default: Delimiter.Trailing },
+				{ key: 'separator', default: 7 }
+			]
+		}) as any;
+		expect(stamped.delimiter).toBe(Delimiter.Trailing);
+		expect(stamped.separator).toBe(7);
 	});
 	it('an absent list iterates nothing and reads no delimiter', () => {
 		const node = owner(undefined);

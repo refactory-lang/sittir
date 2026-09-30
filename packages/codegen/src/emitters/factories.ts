@@ -1547,6 +1547,20 @@ export function listOptionKeys(surface: {
 	];
 }
 
+export function listOptionDefaults(
+	node: AssembledList,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): readonly { readonly key: string; readonly default: string }[] {
+	const parts = listOptionParts(node, nodeMap, kindEntries);
+	return [
+		...(parts.hasSeparatorKindOption
+			? [{ key: 'separator', default: declaredSeparatorDefault(node, nodeMap, kindEntries) ?? 'undefined' }]
+			: []),
+		...(parts.hasDelimiterOption ? [{ key: 'delimiter', default: declaredDelimiterDefault(node) }] : [])
+	];
+}
+
 export function listHasOptions(node: AssembledList): boolean {
 	return (
 		node.separatorRule !== undefined || node.leadingDelimiter === 'optional' || node.trailingDelimiter === 'optional'
@@ -1619,8 +1633,9 @@ export function listOwnerRuntimeSpec(
 ): string | undefined {
 	const target = listOwnerTarget(node, nodeMap);
 	if (target === undefined) return undefined;
-	const surface = separatedListSurface(target.list, nodeMap, kindEntries);
-	const options = listOptionKeys(surface).map((key) => JSON.stringify(key)).join(', ');
+	const options = listOptionDefaults(target.list, nodeMap, kindEntries)
+		.map((option) => `{ key: ${JSON.stringify(option.key)}, default: ${option.default} }`)
+		.join(', ');
 	return `{ list: ${JSON.stringify(target.owner.propertyName)}, elements: ${JSON.stringify(canonicalSeparatedListField(target.list).propertyName)}, options: [${options}], make: ${factoryScope}${target.list.rawFactoryName} }`;
 }
 

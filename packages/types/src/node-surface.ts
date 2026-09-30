@@ -1,3 +1,5 @@
+import type { AnyNodeData } from './core-types.ts';
+
 export interface SlotHint<Input, Optional extends boolean = false, Rest extends boolean = false> {
 	readonly input: Input;
 	readonly optional: Optional;
@@ -114,7 +116,7 @@ type ListPart<N, ByKindId> = [ListOwnerOf<N>] extends [never]
 type SurfaceOf<N, ByChild> = Storage<N> &
 	Accessors<N, ByChild> &
 	ListPart<N, ByChild> & {
-		readonly $source?: 0 | 1 | 2;
+		readonly $source?: AnyNodeData['$source'];
 		readonly __slotHints__?: HintsOf<N>;
 	};
 export type BoundOf<N, ByBound> = SurfaceOf<N, ByBound>;

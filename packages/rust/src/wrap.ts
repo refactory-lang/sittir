@@ -2548,7 +2548,7 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle): 
 			{
 				list: 'enumVariantListElements',
 				elements: 'elements',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
 				make: RAW.buildEnumVariantListElements
 			}
 		)
@@ -2644,7 +2644,7 @@ export function wrapFieldDeclarationList(
 			{
 				list: 'fieldDeclarationListElements',
 				elements: 'elements',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
 				make: RAW.buildFieldDeclarationListElements
 			}
 		)
@@ -2748,7 +2748,7 @@ export function wrapOrderedFieldDeclarationList(
 			{
 				list: 'attributes',
 				elements: 'elements',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildOrderedFieldDeclarationListElements
 			}
 		)
@@ -3443,7 +3443,12 @@ export function wrapWhereClause(data: T.WhereClause, tree: TreeHandle): T.WhereC
 						wrapWhereClause({ ...$edited(data), _where_predicates: v }, tree)
 				}
 			},
-			{ list: 'wherePredicates', elements: 'wherePredicates', options: ['delimiter'], make: RAW.buildWherePredicates }
+			{
+				list: 'wherePredicates',
+				elements: 'wherePredicates',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: RAW.buildWherePredicates
+			}
 		)
 	);
 	return _node as unknown as T.WhereClause.Parsed;
@@ -3900,7 +3905,7 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 			{
 				list: 'typeParametersElements',
 				elements: 'elements',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildTypeParametersElements
 			}
 		)
@@ -4512,7 +4517,12 @@ export function wrapUseList(data: T.UseList, tree: TreeHandle): T.UseList.Parsed
 						wrapUseList({ ...$edited(data), _use_clauses: v }, tree)
 				}
 			},
-			{ list: 'useClauses', elements: 'useClauses', options: ['delimiter'], make: RAW.buildUseClauses }
+			{
+				list: 'useClauses',
+				elements: 'useClauses',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: RAW.buildUseClauses
+			}
 		)
 	);
 	return _node as unknown as T.UseList.Parsed;
@@ -4652,7 +4662,12 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 						wrapParameters({ ...$edited(data), _parameters_elements: v }, tree)
 				}
 			},
-			{ list: 'parametersElements', elements: 'elements', options: ['delimiter'], make: RAW.buildParametersElements }
+			{
+				list: 'parametersElements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: RAW.buildParametersElements
+			}
 		)
 	);
 	return _node as unknown as T.Parameters.Parsed;
@@ -5206,7 +5221,12 @@ export function wrapForLifetimes(data: T.ForLifetimes, tree: TreeHandle): T.ForL
 						wrapForLifetimes({ ...$edited(data), _lifetimes: v }, tree)
 				}
 			},
-			{ list: 'lifetimes', elements: 'lifetimes', options: ['delimiter'], make: RAW.buildLifetimes }
+			{
+				list: 'lifetimes',
+				elements: 'lifetimes',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: RAW.buildLifetimes
+			}
 		)
 	);
 	return _node as unknown as T.ForLifetimes.Parsed;
@@ -5315,7 +5335,12 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 						wrapTupleType({ ...$edited(data), _tuple_type_elements: v }, tree)
 				}
 			},
-			{ list: 'tupleTypeElements', elements: 'types', options: ['delimiter'], make: RAW.buildTupleTypeElements }
+			{
+				list: 'tupleTypeElements',
+				elements: 'types',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: RAW.buildTupleTypeElements
+			}
 		)
 	);
 	return _node as unknown as T.TupleType.Parsed;
@@ -5537,7 +5562,12 @@ export function wrapUseBounds(data: T.UseBounds, tree: TreeHandle): T.UseBounds.
 					bounds: (v: NonNullable<T.UseBounds['_bounds']>) => wrapUseBounds({ ...$edited(data), _bounds: v }, tree)
 				}
 			},
-			{ list: 'bounds', elements: 'elements', options: ['delimiter'], make: RAW.buildUseBoundsElements }
+			{
+				list: 'bounds',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: RAW.buildUseBoundsElements
+			}
 		)
 	);
 	return _node as unknown as T.UseBounds.Parsed;
@@ -5569,7 +5599,7 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 			{
 				list: 'typeArgumentsElements',
 				elements: 'elements',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildTypeArgumentsElements
 			}
 		)
@@ -7436,7 +7466,12 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 						wrapArguments({ ...$edited(data), _arguments_elements: v }, tree)
 				}
 			},
-			{ list: 'argumentsElements', elements: 'elements', options: ['delimiter'], make: RAW.buildArgumentsElements }
+			{
+				list: 'argumentsElements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: RAW.buildArgumentsElements
+			}
 		)
 	);
 	return _node as unknown as T.Arguments.Parsed;
@@ -7600,7 +7635,7 @@ export function wrapFieldInitializerList(
 			{
 				list: 'initializers',
 				elements: 'elements',
-				options: ['delimiter'],
+				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildFieldInitializerListElements
 			}
 		)
@@ -9214,7 +9249,12 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 						wrapTuplePattern({ ...$edited(data), _elements: v }, tree)
 				}
 			},
-			{ list: 'elements', elements: 'elements', options: ['delimiter'], make: RAW.buildTuplePatternElements }
+			{
+				list: 'elements',
+				elements: 'elements',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: RAW.buildTuplePatternElements
+			}
 		)
 	);
 	return _node as unknown as T.TuplePattern.Parsed;
@@ -9242,7 +9282,12 @@ export function wrapSlicePattern(data: T.SlicePattern, tree: TreeHandle): T.Slic
 						wrapSlicePattern({ ...$edited(data), _patterns: v }, tree)
 				}
 			},
-			{ list: 'patterns', elements: 'patterns', options: ['delimiter'], make: RAW.buildPatterns }
+			{
+				list: 'patterns',
+				elements: 'patterns',
+				options: [{ key: 'delimiter', default: Delimiter.None }],
+				make: RAW.buildPatterns
+			}
 		)
 	);
 	return _node as unknown as T.SlicePattern.Parsed;

@@ -194,10 +194,15 @@ export function withAccessors<T extends object, A extends Record<string, unknown
 	return node as T & A;
 }
 
+interface ListOwnerOption {
+	readonly key: string;
+	readonly default: unknown;
+}
+
 interface ListOwnerSpec {
 	readonly list: string;
 	readonly elements: string;
-	readonly options: readonly string[];
+	readonly options: readonly ListOwnerOption[];
 	readonly make: (...args: never[]) => unknown;
 }
 
@@ -226,11 +231,10 @@ export function withListOwner<T extends object>(node: T, spec: ListOwnerSpec): T
 			return elementsOf(this).at(index);
 		}
 	});
-	for (const key of spec.options) {
-		define(key, {
+	for (const option of spec.options) {
+		define(option.key, {
 			get(this: object) {
-				const stored = listOf(this)?.[`_${key}`];
-				return stored ?? (key === 'delimiter' ? Delimiter.None : undefined);
+				return listOf(this)?.[`_${option.key}`] ?? option.default;
 			}
 		});
 	}
