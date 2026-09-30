@@ -110,10 +110,12 @@ rules apply.
 - **What changes:** the handle is dropped, and each leaf's text becomes data,
   since text is content and can no longer come from bytes. Coordinates are
   kept unchanged; being relative, they need no rebasing.
-- **Edits:** an edited node drops its handle and coordinates and renders from
-  its data. Its untouched children keep theirs, and place themselves through
-  their own handles (see [the native side](#the-native-side)). A gap next to
-  an edited sibling is left to the options and defaults, as today.
+- **Edits:** an edit marks the node `$edited`: it renders from its data and
+  never folds to a coordinate or slices. It keeps its handle and span as the
+  record of where it was read, so its trivia keeps its rows (a same-line
+  trailing comment stays on the line) and the walk can still place it. A
+  gap next to an edited sibling is left to the options and defaults, as
+  today.
 
 ### Serialized data
 
@@ -144,13 +146,16 @@ positions, so a tree-bound node exposes them from tree-sitter directly:
 - **The wire and `NodeData` carry relative points.** `read_node` emits each
   stored child's start and end point relative to its parent's start point,
   with the root at (0, 0) after `widen_to_whole_source`.
+- **Transports carry their points.** A node that renders from its data
+  crosses with its `$span`, and with `$anchor` (its handle and child index)
+  when it has a handle, edited or not.
 - **The prepare walk threads a frame from the render root.** A frame is a
   parent's position and the tree it is in. The walk is top-down, so it holds
   the frame when it reaches a child, and a child's position is the frame's
-  plus its offset, by the column rule; nothing stores it. A transport passes a
-  frame on only when it is untouched and from the frame's tree; below any
-  other transport (edited, factory-built, or seated from another tree) the
-  frame is unknown. A transport's trivia is placed with the frame it
+  plus its offset, by the column rule; nothing stores it. A transport with an
+  `$anchor` places itself through it (below); one without passes the frame
+  on through its `$span`; a factory-built one, with neither, leaves the frame
+  below it unknown. A transport's trivia is placed with the frame it
   received, since trivia is measured from the owner's parent.
 - **Bytes come from the anchor's line-start table.** An anchor's source gets
   one table of line-start byte offsets, built once and shared for the render.
@@ -167,8 +172,9 @@ positions, so a tree-bound node exposes them from tree-sitter directly:
     own node for a read root or an expanded stub, and its owner for a trivia
     entry, whose parent is the trivia's parent too.
   The render root's frame is (0, 0) in its own tree. A deep read's
-  descendants carry only their tree's handle; they are placed by their
-  root's frame, and the render refuses one outside it.
+  descendants carry a tree-only handle (a reserved index), which names no
+  node: they are placed by their root's frame, and the render refuses one
+  outside it rather than anchoring it.
 - **Detached gaps** are classified from geometry by the same classifier
   entry, with the gap's two points in place of its bytes.
 
