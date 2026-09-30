@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "4e3dfecdf64e3d8d87e1e95521b129b310d5c8f6debfd3a67d4e0846f16735b2",
+  "source_hash": "2a77b72ca564f717059eacc457c2cac5be4491c6c21d2238d465101a52346eb4",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "363a71690231d7c003c02c0661e859cee9dc7b4cd53998c94289b623da4d11a8",
     "packages/python/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -20,10 +20,10 @@
     "packages/python/src/api.ts": "8673e6d8f48b544d5059433a55a82f2edf5af399e24dfcf00cbb9fe86995a0d2",
     "packages/python/src/backend.ts": "19286f9b2efc9700ebc4c9407a0c5a8583ef165febfd6ebf32afadbcce965720",
     "packages/python/src/consts.ts": "34bcc28b01e311183bf7c89895e0219ced96b77fd36b44347c4e6230b5c411ce",
-    "packages/python/src/factories/bundle.ts": "7c717e61dd15227cf7c25b958c4dc09266a9ef3bebe6fff8e4db4f66f130e51d",
+    "packages/python/src/factories/bundle.ts": "71830cb98a5c3487e52d99ff8455d13ede02a7a8a8d8d62ef6a5a4ccef3a5496",
     "packages/python/src/factories/coerce.ts": "6a3838c64d35e4edae8ffc3506f141f8e404ed2f3f87bf79fa6b34d58aace120",
-    "packages/python/src/factories/index.ts": "fb4c08d56a62ac94d38d7f2428fcc0936bf65e0b088a7f378e93cba6c312e708",
-    "packages/python/src/factories/overlays/polymorphs.ts": "a2d409ed7c03d693d3bdf5b1e2bc5c793e1182707da18a8616606e96ae337928",
+    "packages/python/src/factories/index.ts": "2ec9e101485c4c4573580f6a2e1ed82649677801ca5f6efbac5a44fe4fed9a1b",
+    "packages/python/src/factories/overlays/polymorphs.ts": "f40b782f1b84073debac4b8ae3b67ab1072be1b06dcd819c7ca4efad135cfe32",
     "packages/python/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/python/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
     "packages/python/src/factories/raw.ts": "87fb3c128b7d6ded7aa16a3c047f11156674b6f9ded8daf39968f0445ecdb896",

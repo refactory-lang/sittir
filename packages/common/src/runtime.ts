@@ -1,10 +1,12 @@
 import type {
 	AnyNodeData,
 	FlavorPair,
+	HoistArity,
 	NodeMethods,
 	GrammarTypeMap,
 	Hoisted,
-	MaxArity
+	MaxArity,
+	StrictFlavor
 } from '@sittir/types';
 import { isNode as isAnyNode, withMethods as withAnyMethods } from './utils.ts';
 
@@ -121,11 +123,19 @@ function extractNodeText(value: unknown): string | undefined {
 	return undefined;
 }
 
-export function bundle<S, C>(strict: S, coerce: C): FlavorPair<S, C> {
-	return Object.freeze({ strict, coerce });
-}
-
 type AnyFlavorFn = (...args: never[]) => unknown;
+
+type ArityArgs<F> = number extends MaxArity<F> ? [] : [arity: HoistArity<MaxArity<F>>];
+
+export function bundle<S extends AnyFlavorFn>(strict: S, coerce: undefined, ...arity: NoInfer<ArityArgs<S>>): StrictFlavor<S>;
+export function bundle<S, C extends AnyFlavorFn>(strict: S, coerce: C, ...arity: NoInfer<ArityArgs<C>>): FlavorPair<S, C>;
+export function bundle(
+	strict: unknown,
+	coerce: AnyFlavorFn | undefined,
+	arity?: HoistArity
+): StrictFlavor<unknown> | FlavorPair<unknown, AnyFlavorFn> {
+	return Object.freeze(coerce === undefined ? { strict, arity } : { strict, coerce, arity });
+}
 
 function isFlavorPair(value: unknown): value is { strict: unknown; coerce?: unknown } {
 	if (typeof value !== 'object' || value === null) return false;
@@ -133,19 +143,9 @@ function isFlavorPair(value: unknown): value is { strict: unknown; coerce?: unkn
 	return typeof v.strict === 'function' || typeof v.coerce === 'function';
 }
 
-export interface HoistArity<Max extends number = number> {
-	readonly key: string;
-	readonly max: Max;
-}
-
-type HoistedFlavor<B> = B extends { coerce: infer C extends AnyFlavorFn } ? C : B extends { strict: infer S } ? S : never;
-
-type HoistArityArgs<B> = number extends MaxArity<HoistedFlavor<B>>
-	? []
-	: [arity: HoistArity<MaxArity<HoistedFlavor<B>>>];
-
-export function hoist<B extends { strict: unknown; coerce?: unknown }>(b: B, ...[arity]: HoistArityArgs<B>): Hoisted<B> {
+export function hoist<B extends { strict: unknown; coerce?: unknown; arity?: HoistArity }>(b: B): Hoisted<B> {
 	const target = (typeof b.coerce === 'function' ? b.coerce : b.strict) as AnyFlavorFn;
+	const arity = b.arity;
 	const callable = (...args: never[]) => {
 		if (arity !== undefined && args.length > arity.max) {
 			throw new Error(
@@ -155,6 +155,7 @@ export function hoist<B extends { strict: unknown; coerce?: unknown }>(b: B, ...
 		return target(...args);
 	};
 	for (const [key, value] of Object.entries(b)) {
+		if (key === 'arity') continue;
 		Object.defineProperty(callable, key, {
 			value: hoistRoutes(value),
 			writable: false,

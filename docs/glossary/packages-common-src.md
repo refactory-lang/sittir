@@ -159,7 +159,11 @@ Storage for a slot that holds only kind ids: text, or a node's text, in the slot
 
 ### `packages/common/src/runtime.ts::bundle`
 
-The `FlavorPair` constructor: a factory's strict and coerce flavours as one value.
+The `FlavorPair` constructor: a factory's strict and coerce flavours as one value, with the pair's arity stamp, `bundle(strict, coerce, { key, max })`. Every pair the factories surface carries is built here, so each pair holds its own stamp and no route needs a mirror structure for it.
+
+When `coerce` is present, `strict` need not be callable: a keyword leaf's strict entry is its kind id. `coerce` may be `undefined` for a strict-only pair (a refine form); the result is a `StrictFlavor` with no `coerce` key, so hoisting falls back to the strict flavour. The stamp's type is `HoistArity<MaxArity<flavor>>`, the flavor being `coerce` when present and `strict` otherwise: it is required exactly when that flavor's `MaxArity` is a number literal and refused when the flavor takes a rest parameter, so a missing, wrong or superfluous stamp is a type error in the generated package.
+
+The pair always has an `arity` key, `undefined` when unstamped, so spreading a pair into a route object after an earlier pair (`{ ...B.<key>, ...bundle(seated, …) }`) replaces the earlier stamp with its own.
 
 The pair is frozen.
 
@@ -169,11 +173,7 @@ Wraps a flavour pair as a callable (the coerce flavour when present, strict othe
 
 The callable's copied properties are non-writable and non-configurable, and the callable is frozen, so a factory shared under several keys cannot be changed under one of them.
 
-A fixed-arity builder is hoisted with its stamp, `hoist(pair, { key, max })`: a call with more than `max` arguments throws `<key>: takes at most <max> argument(s), got <n>`. An explicit trailing `undefined` counts, as it does for the type checker. The stamp's type is `HoistArity<MaxArity<flavor>>` and it is required exactly when the flavor's `MaxArity` is a number literal, so the emitted stamp cannot drift from the builder's declared signature, and an unbounded (rest) flavor takes none.
-
-### `packages/common/src/runtime.ts::HoistArity`
-
-The arity stamp `hoist` checks: the builder's key, for the error, and `max`, the most arguments it takes, typed as the hoisted flavor's `MaxArity` at every call.
+The pair's own stamp (`b.arity`, set by `bundle`) bounds the callable: a call with more than `max` arguments throws `<key>: takes at most <max> argument(s), got <n>`. An explicit trailing `undefined` counts, as it does for the type checker. A pair without a stamp (an unbounded, rest flavor) takes any number. The `arity` key itself is not copied onto the callable, and every nested pair is hoisted through `hoistRoutes` with its own stamp, so sub-factory and variant routes are bounded exactly as top-level builders are.
 
 ### `packages/common/src/runtime.ts::hoistRoutes`
 

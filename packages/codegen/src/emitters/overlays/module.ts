@@ -57,6 +57,11 @@ export function overlayFrame(
 	return [HEADER, ...imports, `export * from '${importPath}';`, ''];
 }
 
+export function bundleExpr(strict: string, coerce: string | undefined, key: string, max: number | undefined): string {
+	const stamp = max === undefined ? '' : `, { key: ${JSON.stringify(key)}, max: ${max} }`;
+	return `bundle(${strict}, ${coerce ?? 'undefined'}${stamp})`;
+}
+
 export interface BundleEntry {
 	readonly key: string;
 	readonly exportName: string;
@@ -229,8 +234,8 @@ export function emitBundleModule(config: { nodeMap: NodeMap; generatedIdTables?:
 		"export * from './coerce.js';",
 		''
 	];
-	for (const { exportName, node } of bundleEntries(config.nodeMap, config.generatedIdTables)) {
-		lines.push(`export const ${exportName} = bundle(F.${node.rawFactoryName}, C.${node.fromFunctionName});`);
+	for (const { exportName, node, maxArgs } of bundleEntries(config.nodeMap, config.generatedIdTables)) {
+		lines.push(`export const ${exportName} = ${bundleExpr(`F.${node.rawFactoryName}`, `C.${node.fromFunctionName}`, exportName, maxArgs)};`);
 	}
 	lines.push('');
 	return lines.join('\n');
@@ -249,9 +254,8 @@ export function emitFactoriesIndex(
 		`export * from '${source}';`,
 		''
 	];
-	for (const { exportName, maxArgs } of bundleEntries(config.nodeMap, config.generatedIdTables)) {
-		const arity = maxArgs === undefined ? '' : `, { key: ${JSON.stringify(exportName)}, max: ${maxArgs} }`;
-		lines.push(`export const ${exportName}: Hoisted<typeof O.${exportName}> = hoist(O.${exportName}${arity});`);
+	for (const { exportName } of bundleEntries(config.nodeMap, config.generatedIdTables)) {
+		lines.push(`export const ${exportName}: Hoisted<typeof O.${exportName}> = hoist(O.${exportName});`);
 	}
 	for (const { key } of flattenedVariantParents(config.nodeMap, config.generatedIdTables)) {
 		lines.push(`export const ${key}: Hoisted<typeof O.${key}> = hoistRoutes(O.${key});`);
