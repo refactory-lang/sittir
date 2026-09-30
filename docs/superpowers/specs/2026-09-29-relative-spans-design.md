@@ -38,11 +38,12 @@ alone.
 - **No byte offsets are stored.** Bytes are derived where a source exists (see
   [the native side](#the-native-side)); a detached node needs only rows and
   columns.
-- **Parent** means the node whose bytes contain the child: the storage
-  parent for a slot or `$other` child (a hoisted or inlined slot's children
-  are stored on an ancestor, whose bytes contain them), and the owner's parent
-  for trivia. Tree-sitter makes extras siblings of their owner, so trivia is
-  measured from the same base as the node it is attached to.
+- **Parent** means the tree-sitter parent, which is where the reader stores
+  every child. A layer that moves a child onto an ancestor (hoisting,
+  flattening) composes the intermediate node's offset into the child's, by
+  the column rule. Trivia is measured from its owner's parent: tree-sitter
+  makes extras siblings of their owner, so an extra's own parent is that same
+  node.
 - **Offsets are never negative.** Every child lies inside its parent's bytes
   and the root starts at (0, 0), so each field is a `u32`.
 
@@ -109,10 +110,10 @@ rules apply.
 - **What changes:** the handle is dropped, and each leaf's text becomes data,
   since text is content and can no longer come from bytes. Coordinates are
   kept unchanged; being relative, they need no rebasing.
-- **Edits:** an edited node renders from its data and never as a slice, but
-  keeps its original start point: its untouched children are measured from
-  it, so it remains their base. A gap next to an edited sibling is left to
-  the options and defaults, as today.
+- **Edits:** an edited node drops its handle and coordinates and renders from
+  its data. Its untouched children keep theirs, and place themselves through
+  their own handles (see [the native side](#the-native-side)). A gap next to
+  an edited sibling is left to the options and defaults, as today.
 
 ### Serialized data
 
@@ -143,22 +144,27 @@ positions, so a tree-bound node exposes them from tree-sitter directly:
 - **The wire and `NodeData` carry relative points.** `read_node` emits each
   stored child's start and end point relative to its parent's start point,
   with the root at (0, 0) after `widen_to_whole_source`.
-- **The prepare walk threads positions from the render root.** It is
-  top-down, so it holds each parent's position in the anchor's source when it
-  reaches a child. A child's position is the parent's plus its offset, by the
-  column rule; nothing stores it.
+- **The prepare walk threads a frame from the render root.** A frame is a
+  parent's position and the tree it is in. The walk is top-down, so it holds
+  the frame when it reaches a child, and a child's position is the frame's
+  plus its offset, by the column rule; nothing stores it. A transport passes a
+  frame on only when it is untouched and from the frame's tree; below any
+  other transport (edited, factory-built, or seated from another tree) the
+  frame is unknown. A transport's trivia is placed with the frame it
+  received, since trivia is measured from the owner's parent.
 - **Bytes come from the anchor's line-start table.** An anchor's source gets
   one table of line-start byte offsets, built once and shared for the render.
   A position `(row, column)` is byte `line_start[row] + column`, so a child's
   bytes and the gap between two siblings are slices of the anchor's source.
   `NodeCoordinate` carries a relative span; resolution composes down the walk
   instead of indexing a whole source by stored bytes.
-- **Anchors start a chain.** A node whose position cannot come from its
-  parent's resolves on its own:
-  - the render root: (0, 0) in its tree's source;
-  - a subtree seated from another tree (its handle names a different tree
-    than its parent's): tree-sitter's start point through the handle, in its
-    own tree's source.
+- **A coordinate the frame cannot place anchors itself.** When the frame is
+  unknown or from another tree, the coordinate's handle names its own node,
+  and tree-sitter gives the start of that node's parent: the point its
+  offsets are measured from. The render root's frame is (0, 0) in its own
+  tree. Every coordinate therefore carries a handle for its own node,
+  comments included; a handle that names only a tree cannot anchor, and the
+  render refuses such a coordinate outside its tree's frame.
 - **Detached gaps** are classified from geometry by the same classifier
   entry, with the gap's two points in place of its bytes.
 
@@ -185,6 +191,8 @@ position.
   coordinates and leaf text and copies nothing else.
 - **Stamps removed:** `$sameLine` and `$tokensBetween` on trivia entries, and
   the self-contained `$text` copies.
+- **Handles:** a trivia entry and a deep-read leaf get a handle for their own
+  node instead of their tree's.
 - **Trivia ownership:** `node_trivia` and `extras_run` (owner assignment),
   `TransportTrivia::render_trailing` (no held entries), and the node map's
   `innerGaps` with the `inner_gap_key` and `INNER_GAPS` rows it feeds (the
@@ -204,6 +212,9 @@ position.
   freed, it renders as detached.
 - **Edited parents:** editing a node that has untouched multi-line children
   keeps those children's bytes and indentation.
+- **Mixed trees:** a node from tree B seated inside an untouched subtree of
+  tree A, itself seated into tree B, renders both its own and the subtree's
+  original bytes.
 - **Line-start resolution:** for every corpus file, each node's position
   threaded from the root equals tree-sitter's start point and byte through
   `$cst()`.
