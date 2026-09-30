@@ -4251,12 +4251,12 @@ export interface EnumVariantList {
 	readonly __slotHints__?: {
 		readonly enumVariantListElements: SlotHint<T.EnumVariantListElements, true>;
 		readonly $listOwner: ListOwnerHint<
-			T.AttributedEnumVariant,
+			T.AttributedEnumVariant | T.EnumVariant,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.AttributedEnumVariant | T.EnumVariant
+			'enumVariantListElements'
 		>;
 	};
-	enumVariantListElements(): EnumVariantListElements | undefined;
+	enumVariantListElements(): NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant> | undefined;
 }
 
 export interface EnumVariant {
@@ -4294,12 +4294,12 @@ export interface FieldDeclarationList {
 	readonly __slotHints__?: {
 		readonly fieldDeclarationListElements: SlotHint<T.FieldDeclarationListElements, true>;
 		readonly $listOwner: ListOwnerHint<
-			T.AttributedFieldDeclaration,
+			T.AttributedFieldDeclaration | T.FieldDeclaration,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.AttributedFieldDeclaration | T.FieldDeclaration
+			'fieldDeclarationListElements'
 		>;
 	};
-	fieldDeclarationListElements(): FieldDeclarationListElements | undefined;
+	fieldDeclarationListElements(): NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration> | undefined;
 }
 
 export interface FieldDeclaration {
@@ -4372,12 +4372,12 @@ export interface OrderedFieldDeclarationList {
 	readonly __slotHints__?: {
 		readonly attributes: SlotHint<T.OrderedFieldDeclarationListElements, true>;
 		readonly $listOwner: ListOwnerHint<
-			T.AttributedOrderedField,
+			T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types
+			'attributes'
 		>;
 	};
-	attributes(): OrderedFieldDeclarationListElements | undefined;
+	attributes(): NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types> | undefined;
 }
 
 export interface ExternCrateDeclaration {
@@ -4810,10 +4810,10 @@ export interface WhereClause {
 		readonly $listOwner: ListOwnerHint<
 			T.WherePredicate,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.WherePredicate
+			'wherePredicates'
 		>;
 	};
-	wherePredicates(): WherePredicates | undefined;
+	wherePredicates(): NonEmptyArray<T.WherePredicate> | undefined;
 }
 
 export interface WherePredicate {
@@ -5168,12 +5168,14 @@ export interface TypeParameters {
 	readonly __slotHints__?: {
 		readonly typeParametersElements: SlotHint<T.TypeParametersElements>;
 		readonly $listOwner: ListOwnerHint<
-			T.AttributedTypeParameter,
+			T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+			'typeParametersElements'
 		>;
 	};
-	typeParametersElements(): TypeParametersElements;
+	typeParametersElements(): NonEmptyArray<
+		T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
+	>;
 }
 
 export interface ConstParameter {
@@ -5748,39 +5750,43 @@ export interface UseList {
 			| T.ScopedUseList
 			| T.UseWildcard,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			| TSKindId.Self
-			| TSKindId.U8Keyword
-			| TSKindId.I8Keyword
-			| TSKindId.U16Keyword
-			| TSKindId.I16Keyword
-			| TSKindId.U32Keyword
-			| TSKindId.I32Keyword
-			| TSKindId.U64Keyword
-			| TSKindId.I64Keyword
-			| TSKindId.U128Keyword
-			| TSKindId.I128Keyword
-			| TSKindId.IsizeKeyword
-			| TSKindId.UsizeKeyword
-			| TSKindId.F32Keyword
-			| TSKindId.F64Keyword
-			| TSKindId.BoolKeyword
-			| TSKindId.StrKeyword
-			| TSKindId.CharKeyword
-			| T.Metavariable
-			| TSKindId.Super
-			| TSKindId.Crate
-			| T.Identifier
-			| T.ScopedIdentifier
-			| TSKindId.DefaultKeyword
-			| TSKindId.UnionKeyword
-			| TSKindId.GenKeyword
-			| T.UseAsClause
-			| T.UseList
-			| T.ScopedUseList
-			| T.UseWildcard
+			'useClauses'
 		>;
 	};
-	useClauses(): UseClauses | undefined;
+	useClauses():
+		| NonEmptyArray<
+				| TSKindId.Self
+				| TSKindId.U8Keyword
+				| TSKindId.I8Keyword
+				| TSKindId.U16Keyword
+				| TSKindId.I16Keyword
+				| TSKindId.U32Keyword
+				| TSKindId.I32Keyword
+				| TSKindId.U64Keyword
+				| TSKindId.I64Keyword
+				| TSKindId.U128Keyword
+				| TSKindId.I128Keyword
+				| TSKindId.IsizeKeyword
+				| TSKindId.UsizeKeyword
+				| TSKindId.F32Keyword
+				| TSKindId.F64Keyword
+				| TSKindId.BoolKeyword
+				| TSKindId.StrKeyword
+				| TSKindId.CharKeyword
+				| T.Metavariable
+				| TSKindId.Super
+				| TSKindId.Crate
+				| T.Identifier
+				| T.ScopedIdentifier
+				| TSKindId.DefaultKeyword
+				| TSKindId.UnionKeyword
+				| TSKindId.GenKeyword
+				| T.UseAsClause
+				| T.UseList
+				| T.ScopedUseList
+				| T.UseWildcard
+		  >
+		| undefined;
 }
 
 export interface UseAsClause {
@@ -5954,18 +5960,28 @@ export interface Parameters {
 	readonly __slotHints__?: {
 		readonly parametersElements: SlotHint<T.ParametersElements, true>;
 		readonly $listOwner: ListOwnerHint<
-			T.AttributedParameter,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
 			| T.AttributedParameter
 			| T.Parameter
 			| T.SelfParameter
 			| T.VariadicParameter
 			| TSKindId.Underscore
 			| T.Type
-			| T.TypeIdentifier.Types
+			| T.TypeIdentifier.Types,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			'parametersElements'
 		>;
 	};
-	parametersElements(): ParametersElements | undefined;
+	parametersElements():
+		| NonEmptyArray<
+				| T.AttributedParameter
+				| T.Parameter
+				| T.SelfParameter
+				| T.VariadicParameter
+				| TSKindId.Underscore
+				| T.Type
+				| T.TypeIdentifier.Types
+		  >
+		| undefined;
 }
 
 export interface SelfParameter {
@@ -6322,9 +6338,9 @@ export interface ForLifetimes {
 	};
 	readonly __slotHints__?: {
 		readonly lifetimes: SlotHint<T.Lifetimes>;
-		readonly $listOwner: ListOwnerHint<T.Lifetime, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.Lifetime>;
+		readonly $listOwner: ListOwnerHint<T.Lifetime, { delimiter?: Delimiter.None | Delimiter.Trailing }, 'lifetimes'>;
 	};
-	lifetimes(): Lifetimes;
+	lifetimes(): NonEmptyArray<T.Lifetime>;
 }
 
 export interface FunctionType {
@@ -6400,12 +6416,12 @@ export interface TupleType {
 	readonly __slotHints__?: {
 		readonly tupleTypeElements: SlotHint<T.TupleTypeElements>;
 		readonly $listOwner: ListOwnerHint<
-			T.Type,
+			T.Type | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.Type | T.TypeIdentifier.Types
+			'tupleTypeElements'
 		>;
 	};
-	tupleTypeElements(): TupleTypeElements;
+	tupleTypeElements(): NonEmptyArray<T.Type | T.TypeIdentifier.Types>;
 }
 
 export interface GenericFunction {
@@ -6571,12 +6587,12 @@ export interface UseBounds {
 	readonly __slotHints__?: {
 		readonly bounds: SlotHint<T.UseBoundsElements, true>;
 		readonly $listOwner: ListOwnerHint<
-			T.Lifetime | T.TypeIdentifier,
+			T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types
+			'bounds'
 		>;
 	};
-	bounds(): UseBoundsElements | undefined;
+	bounds(): NonEmptyArray<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types> | undefined;
 }
 
 export interface TypeArguments {
@@ -6588,12 +6604,14 @@ export interface TypeArguments {
 	readonly __slotHints__?: {
 		readonly typeArgumentsElements: SlotHint<T.TypeArgumentsElements>;
 		readonly $listOwner: ListOwnerHint<
-			T.TypeArgument,
+			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
+			'typeArgumentsElements'
 		>;
 	};
-	typeArgumentsElements(): TypeArgumentsElements;
+	typeArgumentsElements(): NonEmptyArray<
+		T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
+	>;
 }
 
 export interface TypeBinding {
@@ -7659,12 +7677,12 @@ export interface Arguments {
 	readonly __slotHints__?: {
 		readonly argumentsElements: SlotHint<T.ArgumentsElements, true>;
 		readonly $listOwner: ListOwnerHint<
-			T.AttributedArgument,
+			T.AttributedArgument | T.Expression,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.AttributedArgument | T.Expression
+			'argumentsElements'
 		>;
 	};
-	argumentsElements(): ArgumentsElements | undefined;
+	argumentsElements(): NonEmptyArray<T.AttributedArgument | T.Expression> | undefined;
 }
 
 export interface ParenthesizedExpression {
@@ -7727,10 +7745,10 @@ export interface FieldInitializerList {
 		readonly $listOwner: ListOwnerHint<
 			T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer
+			'initializers'
 		>;
 	};
-	initializers(): FieldInitializerListElements | undefined;
+	initializers(): NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer> | undefined;
 }
 
 export interface ShorthandFieldInitializer {
@@ -8210,10 +8228,10 @@ export interface TuplePattern {
 		readonly $listOwner: ListOwnerHint<
 			T.Pattern | T.ClosureExpression,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.Pattern | T.ClosureExpression
+			'elements'
 		>;
 	};
-	elements(): TuplePatternElements | undefined;
+	elements(): NonEmptyArray<T.Pattern | T.ClosureExpression> | undefined;
 }
 
 export interface SlicePattern {
@@ -8224,9 +8242,9 @@ export interface SlicePattern {
 	};
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<T.Patterns, true>;
-		readonly $listOwner: ListOwnerHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }, T.Pattern>;
+		readonly $listOwner: ListOwnerHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }, 'patterns'>;
 	};
-	patterns(): Patterns | undefined;
+	patterns(): NonEmptyArray<T.Pattern> | undefined;
 }
 
 export interface TupleStructPattern {

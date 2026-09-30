@@ -25,11 +25,16 @@ describe('__slotHints__', () => {
 			"readonly statements: SlotHint<NonNullable<T.Block.Config>['statements'], true>;"
 		);
 	});
-	it('a sole-list owner stamps its stored element, its factory options and the elements its factory takes', () => {
-		const ps = interfaceBlock(rustTypes(), 'Parameters');
-		expect(ps.replace(/\s+/g, ' ')).toContain(
-			'ListOwnerHint< T.AttributedParameter, { delimiter?: Delimiter.None | Delimiter.Trailing }, | T.AttributedParameter | T.Parameter | T.SelfParameter'
+	it('a sole-list owner stamps the elements its factory takes, its factory options and its list slot', () => {
+		const ps = interfaceBlock(rustTypes(), 'Parameters').replace(/\s+/g, ' ');
+		expect(ps).toContain(
+			"ListOwnerHint< | T.AttributedParameter | T.Parameter | T.SelfParameter | T.VariadicParameter | TSKindId.Underscore | T.Type | T.TypeIdentifier.Types, { delimiter?: Delimiter.None | Delimiter.Trailing }, 'parametersElements' >"
 		);
+	});
+	it('a sole-list owner declares its list accessor as the items the factory takes', () => {
+		const ps = interfaceBlock(rustTypes(), 'Parameters').replace(/\s+/g, ' ');
+		expect(ps).toMatch(/parametersElements\(\): \| NonEmptyArray< \| T\.AttributedParameter[^;]*> \| undefined;/);
+		expect(ps).not.toContain('parametersElements(): ParametersElements');
 	});
 	it('a kind that is not a list owner stamps no $listOwner', () => {
 		expect(interfaceBlock(rustTypes(), 'FunctionItem')).not.toContain('$listOwner');

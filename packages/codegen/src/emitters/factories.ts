@@ -1626,11 +1626,21 @@ export function listOwnerHint(
 	node: AssembledNode,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
-): { readonly element: string; readonly options: string; readonly input: string } | undefined {
+): {
+	readonly element: string;
+	readonly options: string;
+	readonly slot: string;
+	readonly items: string;
+} | undefined {
 	const target = listOwnerTarget(node, nodeMap);
 	if (target === undefined) return undefined;
 	const surface = separatedListSurface(target.list, nodeMap, kindEntries);
-	return { element: surface.storageElemType, options: surface.optionsType ?? '{}', input: surface.elemType };
+	return {
+		element: surface.elemType,
+		options: surface.optionsType ?? '{}',
+		slot: target.owner.propertyName,
+		items: target.list.nonEmpty ? `NonEmptyArray<${surface.elemType}>` : `readonly ${parenthesizeUnion(surface.elemType)}[]`
+	};
 }
 
 export function listOwnerRuntimeSpec(
@@ -1644,7 +1654,12 @@ export function listOwnerRuntimeSpec(
 	const options = listOptionDefaults(target.list, nodeMap, kindEntries)
 		.map((option) => `{ key: ${JSON.stringify(option.key)}, default: ${option.default} }`)
 		.join(', ');
-	return `{ list: ${JSON.stringify(target.owner.propertyName)}, elements: ${JSON.stringify(canonicalSeparatedListField(target.list).propertyName)}, options: [${options}], make: ${factoryScope}${target.list.rawFactoryName} }`;
+	const wrapper = separatedListSurface(target.list, nodeMap, kindEntries).wrapper;
+	const wrapperSpec =
+		wrapper === undefined
+			? ''
+			: `, wrapper: { kind: TSKindId.${wrapper.member}, content: ${JSON.stringify(wrapper.contentProperty)}, decorations: ${JSON.stringify(wrapper.decorationKeys)} }`;
+	return `{ list: ${JSON.stringify(target.owner.propertyName)}, elements: ${JSON.stringify(canonicalSeparatedListField(target.list).propertyName)}, kind: ${factoryTypeDiscriminant(target.list.kind, nodeMap, kindEntries)}, options: [${options}], make: ${factoryScope}${target.list.rawFactoryName}${wrapperSpec} }`;
 }
 
 export function separatedListSurface(
@@ -1669,6 +1684,8 @@ export function separatedListSurface(
 		readonly member: string;
 		readonly factory: string;
 		readonly contentKey: string;
+		readonly contentProperty: string;
+		readonly decorationKeys: readonly string[];
 		readonly typeName: string;
 	};
 	readonly storageElementsType: string;
@@ -1676,18 +1693,22 @@ export function separatedListSurface(
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const baseElemType = fieldElementType(contentSlot, nodeMap, kindEntries);
 	let elemType = withAliasContentTypes(baseElemType, contentSlot, nodeMap);
-	let wrapper: { member: string; factory: string; contentKey: string; typeName: string } | undefined;
+	let wrapper: ReturnType<typeof separatedListSurface>['wrapper'];
 	const contentKinds = slotKindNames(contentSlot);
 	if (contentKinds.length === 1 && kindEntries) {
 		const wKind = contentKinds[0]!;
 		const entry = findKindEntry(kindEntries, wKind);
 		const content = transparentWrapperContentSlot(wKind, nodeMap);
 		const factoryName = nodeMap.nodes.get(wKind)?.rawFactoryName;
+		const wrapperNode = nodeMap.nodes.get(wKind);
+		const wrapperSlots = wrapperNode !== undefined && isSlotBearingCompound(wrapperNode) ? wrapperNode.slots : [];
 		if (entry !== undefined && content !== undefined && factoryName !== undefined) {
 			wrapper = {
 				member: entry.member,
 				factory: factoryName,
 				contentKey: content.configKey,
+				contentProperty: content.propertyName,
+				decorationKeys: wrapperSlots.filter((slot) => slot !== content).map((slot) => slot.storageKey),
 				typeName: nodeMap.nodes.get(wKind)!.typeName
 			};
 			elemType = `${elemType} | ${withAliasContentTypes(fieldElementType(content, nodeMap, kindEntries), content, nodeMap)}`;

@@ -2548,8 +2548,10 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle): 
 			{
 				list: 'enumVariantListElements',
 				elements: 'elements',
+				kind: TSKindId.EnumVariantListElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
-				make: RAW.buildEnumVariantListElements
+				make: RAW.buildEnumVariantListElements,
+				wrapper: { kind: TSKindId.AttributedEnumVariant, content: 'enumVariant', decorations: ['_attribute_item'] }
 			}
 		)
 	);
@@ -2644,8 +2646,14 @@ export function wrapFieldDeclarationList(
 			{
 				list: 'fieldDeclarationListElements',
 				elements: 'elements',
+				kind: TSKindId.FieldDeclarationListElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.Trailing }],
-				make: RAW.buildFieldDeclarationListElements
+				make: RAW.buildFieldDeclarationListElements,
+				wrapper: {
+					kind: TSKindId.AttributedFieldDeclaration,
+					content: 'fieldDeclaration',
+					decorations: ['_attribute_item']
+				}
 			}
 		)
 	);
@@ -2748,8 +2756,14 @@ export function wrapOrderedFieldDeclarationList(
 			{
 				list: 'attributes',
 				elements: 'elements',
+				kind: TSKindId.OrderedFieldDeclarationListElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: RAW.buildOrderedFieldDeclarationListElements
+				make: RAW.buildOrderedFieldDeclarationListElements,
+				wrapper: {
+					kind: TSKindId.AttributedOrderedField,
+					content: 'type',
+					decorations: ['_attribute_item', '_visibility_modifier']
+				}
 			}
 		)
 	);
@@ -3445,6 +3459,7 @@ export function wrapWhereClause(data: T.WhereClause, tree: TreeHandle): T.WhereC
 			{
 				list: 'wherePredicates',
 				elements: 'wherePredicates',
+				kind: TSKindId.WherePredicates as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildWherePredicates
 			}
@@ -3904,8 +3919,10 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 			{
 				list: 'typeParametersElements',
 				elements: 'elements',
+				kind: TSKindId.TypeParametersElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: RAW.buildTypeParametersElements
+				make: RAW.buildTypeParametersElements,
+				wrapper: { kind: TSKindId.AttributedTypeParameter, content: 'content', decorations: ['_attribute_item'] }
 			}
 		)
 	);
@@ -4519,6 +4536,7 @@ export function wrapUseList(data: T.UseList, tree: TreeHandle): T.UseList.Parsed
 			{
 				list: 'useClauses',
 				elements: 'useClauses',
+				kind: TSKindId.UseClauses as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildUseClauses
 			}
@@ -4664,8 +4682,10 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 			{
 				list: 'parametersElements',
 				elements: 'elements',
+				kind: TSKindId.ParametersElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: RAW.buildParametersElements
+				make: RAW.buildParametersElements,
+				wrapper: { kind: TSKindId.AttributedParameter, content: 'content', decorations: ['_attribute_item'] }
 			}
 		)
 	);
@@ -5223,6 +5243,7 @@ export function wrapForLifetimes(data: T.ForLifetimes, tree: TreeHandle): T.ForL
 			{
 				list: 'lifetimes',
 				elements: 'lifetimes',
+				kind: TSKindId.Lifetimes as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildLifetimes
 			}
@@ -5337,6 +5358,7 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 			{
 				list: 'tupleTypeElements',
 				elements: 'types',
+				kind: TSKindId.TupleTypeElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildTupleTypeElements
 			}
@@ -5564,6 +5586,7 @@ export function wrapUseBounds(data: T.UseBounds, tree: TreeHandle): T.UseBounds.
 			{
 				list: 'bounds',
 				elements: 'elements',
+				kind: TSKindId.UseBoundsElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildUseBoundsElements
 			}
@@ -5598,8 +5621,10 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 			{
 				list: 'typeArgumentsElements',
 				elements: 'elements',
+				kind: TSKindId.TypeArgumentsElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: RAW.buildTypeArgumentsElements
+				make: RAW.buildTypeArgumentsElements,
+				wrapper: { kind: TSKindId.TypeArgument, content: 'content', decorations: ['_trait_bounds'] }
 			}
 		)
 	);
@@ -7468,8 +7493,10 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 			{
 				list: 'argumentsElements',
 				elements: 'elements',
+				kind: TSKindId.ArgumentsElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
-				make: RAW.buildArgumentsElements
+				make: RAW.buildArgumentsElements,
+				wrapper: { kind: TSKindId.AttributedArgument, content: 'expression', decorations: ['_attribute_item'] }
 			}
 		)
 	);
@@ -7634,6 +7661,7 @@ export function wrapFieldInitializerList(
 			{
 				list: 'initializers',
 				elements: 'elements',
+				kind: TSKindId.FieldInitializerListElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildFieldInitializerListElements
 			}
@@ -9251,6 +9279,7 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 			{
 				list: 'elements',
 				elements: 'elements',
+				kind: TSKindId.TuplePatternElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildTuplePatternElements
 			}
@@ -9284,6 +9313,7 @@ export function wrapSlicePattern(data: T.SlicePattern, tree: TreeHandle): T.Slic
 			{
 				list: 'patterns',
 				elements: 'patterns',
+				kind: TSKindId.Patterns as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildPatterns
 			}

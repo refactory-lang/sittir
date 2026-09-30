@@ -200,7 +200,7 @@ What one slot of a kind interface contributes to its node surfaces: the type its
 
 ### `packages/types/src/node-surface.ts::ListOwnerHint`
 
-Marks a kind whose sole content is a separated list: the element type its stored list yields (the stored element, not the spread's arms, so no content is lost on read) the options type its factory takes, and the element input its factory accepts (the stored element plus the bare arms a transparent wrapper takes; the element itself when there is none). Stamped under the reserved `$listOwner` key of `__slotHints__`, from the same fact that gives the strict factory its `(options?, ...items)` overloads.
+Marks a kind whose sole content is a separated list: the element type its factory accepts (`Element`), the options its factory takes, and the name of the slot that holds the list (`Slot`). Stamped under the reserved `$listOwner` key of `__slotHints__`, from the same fact that gives the strict factory its `(options?, ...items)` overloads. One element type serves every surface: the accessor reads it, iteration yields it, the `$with` setter admits it, so a read item is always accepted back by the setter that rebuilds the owner.
 
 ### `packages/types/src/node-surface.ts::NarrowTo`
 
@@ -220,11 +220,13 @@ The `$listOwner` hint of a kind interface, or `never` when it is not a list owne
 
 ### `packages/types/src/node-surface.ts::ListOwnerMembers`
 
-The members a list owner adds on top of its own accessors (its `$with` is callable, see `Setters`): it iterates its stored elements, reports `length`, gives `at(index)` over the same stored array, and carries the factory's options flattened on as read-only properties.
+The members a list owner adds on top of its own accessors (its `$with` is callable, see `Setters`): it iterates the items its list accessor returns, reports `length`, gives `at(index)` over the same items, and carries the factory's options flattened on as read-only properties.
 
 ### `packages/types/src/node-surface.ts::Setters`
 
-One setter per stamped slot, reading only `__slotHints__`. A required slot takes its input and returns the node with that slot's accessor retyped to the input. An optional slot also has a no-argument form that clears it, and reads back `undefined`. A slot stamped `rest` is set with rest arguments, its input being the rest type, exactly as the factory takes it; a slot whose input is an array but is not stamped `rest` takes the array as one value. The retyped accessor comes from the declared input, never from the argument's own type: inferring the argument per call is what made type-checking unbounded. A list owner's `$with` is also callable with its list factory's arguments, `(options, ...items)` or `(...items)`, each item admitted like the factory's element input; the call replaces the list slot, so it returns what that slot's setter returns.
+One setter per stamped slot, reading only `__slotHints__`. A required slot takes its input and returns the node with that slot's accessor retyped to the input. An optional slot also has a no-argument form that clears it, and reads back `undefined`. A slot stamped `rest` is set with rest arguments, its input being the rest type, exactly as the factory takes it; a slot whose input is an array but is not stamped `rest` takes the array as one value. The retyped accessor comes from the declared input, never from the argument's own type: inferring the argument per call is what made type-checking unbounded.
+
+A list owner's list slot takes the shapes its factory takes: the whole list node, `(options, ...items)` or `(...items)`, each item admitted like the factory's element input. The owner's `$with` is callable with the same signature, so `owner.$with(...)` and `owner.$with.<list>(...)` are one setter. The call replaces the list slot, so it returns what that slot's setter returns.
 
 ### `packages/types/src/node-surface.ts::WithOf`
 
@@ -232,7 +234,7 @@ The type of `$with` on a node: its slot setters. A node passes itself in (`WithO
 
 ### `packages/types/src/node-surface.ts::WithSlot`
 
-The node after `$with.<slot>(v)` (the accessor reads the slot's input resolved through the `.Bound` map, so a storage-typed input reads as its `.Bound` surface): the node with the slot's accessor and `$with` removed by key-remapping and re-added, the accessor reading the slot's input type and `$with` pointing back at this type, so a chain accumulates. A plain intersection would leave each an overload pair in which the original signature wins.
+The node after `$with.<slot>(v)` (the accessor reads the slot's input resolved through the `.Bound` map, so a storage-typed input reads as its `.Bound` surface): the node with the slot's accessor and `$with` removed by key-remapping and re-added, the accessor reading the slot's input type and `$with` pointing back at this type, so a chain accumulates. A plain intersection would leave each an overload pair in which the original signature wins. A list owner's list slot keeps reading as items after it is set: whatever shape set it, the accessor returns the list's element type resolved through the `.Bound` map, or `undefined` when the slot was cleared.
 
 ### `packages/types/src/node-surface.ts::BoundOf`
 

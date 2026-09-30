@@ -953,13 +953,16 @@ function emitInterface(
 		if (aliasContentTypeExpr(node, nodeMap, kindEntries) !== undefined) {
 			lines.push(`  readonly __aliasContent__?: ${node.typeName}.Types;`);
 		}
+		const owner = listOwnerHint(node, nodeMap, kindEntries);
 		for (const f of slots) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 			const propName = f.propertyName;
 			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr, kindEntries);
 			const opt = isRequired(f) ? '' : '?';
-			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
+			if (owner?.slot === propName) {
+				lines.push(`  ${propName}(): ${owner.items}${opt ? ' | undefined' : ''};`);
+			} else if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				const elemType = hasOptionalElements(f) ? `${storageType} | undefined` : storageType;
 				const arrType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `readonly (${elemType})[]`;
 				lines.push(`  ${propName}(): ${arrType};`);
@@ -987,7 +990,8 @@ function emitSlotHints(
 		const flags = setter.rest ? `, ${setter.optional}, true` : setter.optional ? ', true' : '';
 		lines.push(`    readonly ${setter.name}: SlotHint<${setter.input}${flags}>;`);
 	}
-	if (owner !== undefined) lines.push(`    readonly $listOwner: ListOwnerHint<${owner.element}, ${owner.options}, ${owner.input}>;`);
+	if (owner !== undefined)
+		lines.push(`    readonly $listOwner: ListOwnerHint<${owner.element}, ${owner.options}, ${JSON.stringify(owner.slot)}>;`);
 	lines.push('  };');
 }
 

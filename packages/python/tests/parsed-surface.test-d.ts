@@ -12,6 +12,7 @@ import { createEngine } from '@sittir/common';
 
 type Equals<A, B> = (<X>() => X extends A ? 1 : 2) extends <X>() => X extends B ? 1 : 2 ? true : false;
 function expectTrue<_T extends true>(): void {}
+type ItemOf<I> = I extends Iterable<infer E> ? E : never;
 
 const engine = await createEngine(python);
 
@@ -32,4 +33,13 @@ export function renderTakesEveryNodeAUserCanHold(): string {
 	if (!engine.is.functionDefinition(item)) return '';
 	const draft = item.$with.parameters(engine.build.parameters());
 	return [engine.render(root), engine.render(item), engine.render(draft)].map(String).join('');
+}
+
+export function listOwnerReadsItems(): string {
+	const item = engine.parse('def f(a):\n    pass\n').statements()[0]!;
+	if (!engine.is.functionDefinition(item)) return '';
+	const params = item.parameters();
+	const items = params.elements();
+	expectTrue<Equals<NonNullable<typeof items>[number], ItemOf<typeof params>>>();
+	return params.$with.elements(...items!).$render();
 }

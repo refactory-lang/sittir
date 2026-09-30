@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine, dumpMetrics, sliceSpan } from '@sittir/common';
-import { readNode as readNodeFn, metricsEnabled, mapTriviaEntries } from '@sittir/common/utils';
+import { readNode as readNodeFn, metricsEnabled, mapTriviaEntries, storedSlotReader } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
@@ -959,7 +959,7 @@ function resolveWrappedStorageValue(
 		return node[storageKey];
 	}
 	for (const accessorName of accessorCandidatesForStorageKey(storageKey)) {
-		const accessor = node[accessorName];
+		const accessor = storedSlotReader(node, accessorName);
 		if (typeof accessor === 'function' && accessor.length === 0) {
 			try {
 				return (accessor as () => unknown).call(node);

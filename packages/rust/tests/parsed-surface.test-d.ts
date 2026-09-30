@@ -12,6 +12,7 @@ import { createEngine } from '@sittir/common';
 
 type Equals<A, B> = (<X>() => X extends A ? 1 : 2) extends <X>() => X extends B ? 1 : 2 ? true : false;
 function expectTrue<_T extends true>(): void {}
+type ItemOf<I> = I extends Iterable<infer E> ? E : never;
 
 const rs = await createEngine(rust);
 
@@ -62,4 +63,13 @@ export function renderTakesEveryNodeAUserCanHold(): string {
 	if (!rs.is.functionItem(item)) return '';
 	const draft = item.$with.parameters(rs.build.parameters());
 	return [rs.render(root), rs.render(item), rs.render(draft)].map(String).join('');
+}
+
+export function listOwnerReadsItems(): string {
+	const item = rs.parse('fn f(a: i32) {}\n').statements()[0]!;
+	if (!rs.is.functionItem(item)) return '';
+	const params = item.parameters();
+	const items = params.parametersElements();
+	expectTrue<Equals<NonNullable<typeof items>[number], ItemOf<typeof params>>>();
+	return params.$with.parametersElements(...items!).$render();
 }

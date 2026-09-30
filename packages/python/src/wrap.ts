@@ -1047,6 +1047,7 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 			{
 				list: 'simpleStatementsElements',
 				elements: 'simpleStatements',
+				kind: TSKindId.SimpleStatementsElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildSimpleStatementsElements
 			}
@@ -2241,6 +2242,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 			{
 				list: 'elements',
 				elements: 'parameters',
+				kind: TSKindId.ParametersElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildParametersElements
 			}
@@ -2275,6 +2277,7 @@ export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle)
 			{
 				list: 'parametersElements',
 				elements: 'parameters',
+				kind: TSKindId.ParametersElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildParametersElements
 			}
@@ -2529,6 +2532,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 			{
 				list: 'types',
 				elements: 'types',
+				kind: TSKindId.Types as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildTypes
 			}
@@ -2588,6 +2592,7 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle): T.Argu
 			{
 				list: 'arguments',
 				elements: 'elements',
+				kind: TSKindId.ArgumentListElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildArgumentListElements
 			}
@@ -2956,6 +2961,7 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle): T.DictPa
 			{
 				list: 'dictPatternElements',
 				elements: 'elements',
+				kind: TSKindId.DictPatternElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildDictPatternElements
 			}
@@ -3410,6 +3416,7 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 			{
 				list: 'patterns',
 				elements: 'patterns',
+				kind: TSKindId.Patterns as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildPatterns
 			}
@@ -3443,6 +3450,7 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle): T.ListPa
 			{
 				list: 'patterns',
 				elements: 'patterns',
+				kind: TSKindId.Patterns as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildPatterns
 			}
@@ -5279,6 +5287,7 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 			{
 				list: 'collectionElements',
 				elements: 'elements',
+				kind: TSKindId.CollectionElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildCollectionElements
 			}
@@ -5313,6 +5322,7 @@ export function wrapSet(data: T.Set, tree: TreeHandle): T.Set.Parsed {
 			{
 				list: 'collectionElements',
 				elements: 'elements',
+				kind: TSKindId.CollectionElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildCollectionElements
 			}
@@ -5347,6 +5357,7 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle): T.Tuple.Parsed {
 			{
 				list: 'collectionElements',
 				elements: 'elements',
+				kind: TSKindId.CollectionElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildCollectionElements
 			}
@@ -5379,6 +5390,7 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle): T.Dictiona
 			{
 				list: 'entries',
 				elements: 'elements',
+				kind: TSKindId.DictionaryElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildDictionaryElements
 			}
@@ -6785,6 +6797,7 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 			{
 				list: 'listPatternCasePatterns',
 				elements: 'casePatterns',
+				kind: TSKindId.ListPatternCasePatterns as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildListPatternCasePatterns
 			}
@@ -6819,6 +6832,7 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): 
 			{
 				list: 'listPatternCasePatterns',
 				elements: 'casePatterns',
+				kind: TSKindId.ListPatternCasePatterns as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildListPatternCasePatterns
 			}
@@ -6954,6 +6968,7 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 			{
 				list: 'printArguments',
 				elements: 'arguments',
+				kind: TSKindId.PrintArguments as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildPrintArguments
 			}
@@ -6990,6 +7005,7 @@ export function wrapParenthesizedImportList(
 			{
 				list: 'importList',
 				elements: 'names',
+				kind: TSKindId.ImportList as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildImportList
 			}
@@ -7839,6 +7855,7 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): 
 			{
 				list: 'withClauseWithItems',
 				elements: 'withItems',
+				kind: TSKindId.WithClauseWithItems as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildWithClauseWithItems
 			}
@@ -7896,6 +7913,7 @@ export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteI
 			{
 				list: 'simpleStatementsElements',
 				elements: 'simpleStatements',
+				kind: TSKindId.SimpleStatementsElements as const,
 				options: [{ key: 'delimiter', default: Delimiter.None }],
 				make: RAW.buildSimpleStatementsElements
 			}

@@ -2934,7 +2934,7 @@ describe('enum_body sub-factories', () => {
 			$named: true
 		} as any);
 		expect(node.$type).toBe(TSKindId.EnumBody);
-		expect((node as any).enumBodyElements()?.$type).toBe(TSKindId.EnumBodyElements);
+		expect((node as any).enumBodyElements()).toHaveLength(1);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

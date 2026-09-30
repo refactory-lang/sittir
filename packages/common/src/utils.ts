@@ -199,36 +199,80 @@ interface ListOwnerOption {
 	readonly default: unknown;
 }
 
+interface ListOwnerWrapper {
+	readonly kind: number;
+	readonly content: string;
+	readonly decorations: readonly string[];
+}
+
 interface ListOwnerSpec {
 	readonly list: string;
 	readonly elements: string;
+	readonly kind: number;
 	readonly options: readonly ListOwnerOption[];
 	readonly make: (...args: never[]) => unknown;
+	readonly wrapper?: ListOwnerWrapper;
+}
+
+type Members = Record<string, (...args: unknown[]) => unknown>;
+
+const isWholeList = (args: readonly unknown[], kind: number): boolean =>
+	args.length === 0 ||
+	(args.length === 1 &&
+		(typeof args[0] !== 'object' || (args[0] !== null && (args[0] as { $type?: unknown }).$type === kind)));
+
+const collapseWrapper = (item: unknown, wrapper: ListOwnerWrapper | undefined): unknown => {
+	if (wrapper === undefined || item === null || typeof item !== 'object') return item;
+	const node = item as Members & Record<string, unknown>;
+	if ((node as { $type?: unknown }).$type !== wrapper.kind) return item;
+	if (wrapper.decorations.some((key) => node[key] !== undefined)) return item;
+	return node[wrapper.content]!.call(node);
+};
+
+const STORED_SLOT_READERS = Symbol('sittir.storedSlotReaders');
+
+type StoredSlotReaders = Readonly<Record<string, (this: object) => unknown>>;
+
+export function storedSlotReader(node: object, accessor: string): unknown {
+	const readers = (node as { readonly [STORED_SLOT_READERS]?: StoredSlotReaders })[STORED_SLOT_READERS];
+	return readers?.[accessor] ?? (node as Record<string, unknown>)[accessor];
 }
 
 export function withListOwner<T extends object>(node: T, spec: ListOwnerSpec): T {
-	const listOf = (self: object): Record<string, unknown> | undefined =>
-		(self as Record<string, () => Record<string, unknown> | undefined>)[spec.list]?.call(self);
-	const elementsOf = (self: object): readonly unknown[] => {
+	const own = Object.getOwnPropertyDescriptor(node, spec.list);
+	const readList = (own?.value ?? (node as unknown as Members)[spec.list]) as (
+		this: object
+	) => Record<string, unknown> | undefined;
+	const listOf = (self: object): Record<string, unknown> | undefined => readList.call(self);
+	const itemsOf = (self: object): readonly unknown[] | undefined => {
 		const list = listOf(self);
-		return list === undefined ? [] : ((list[spec.elements] as () => readonly unknown[]).call(list) ?? []);
+		if (list === undefined) return undefined;
+		const elements = ((list[spec.elements] as () => readonly unknown[]).call(list) ?? []) as readonly unknown[];
+		return elements.map((element) => collapseWrapper(element, spec.wrapper));
 	};
 	const define = (key: PropertyKey, descriptor: PropertyDescriptor): void => {
-		Object.defineProperty(node, key, { ...descriptor, enumerable: false, configurable: true });
+		Object.defineProperty(node, key, { enumerable: false, configurable: true, ...descriptor });
 	};
+	define(STORED_SLOT_READERS, { value: { [spec.list]: readList } });
+	define(spec.list, {
+		enumerable: own?.enumerable ?? false,
+		value: function (this: object): readonly unknown[] | undefined {
+			return itemsOf(this);
+		}
+	});
 	define(Symbol.iterator, {
 		value: function (this: object): IterableIterator<unknown> {
-			return elementsOf(this)[Symbol.iterator]();
+			return (itemsOf(this) ?? [])[Symbol.iterator]();
 		}
 	});
 	define('length', {
 		get(this: object) {
-			return elementsOf(this).length;
+			return itemsOf(this)?.length ?? 0;
 		}
 	});
 	define('at', {
 		value: function (this: object, index: number): unknown {
-			return elementsOf(this).at(index);
+			return itemsOf(this)?.at(index);
 		}
 	});
 	for (const option of spec.options) {
@@ -244,12 +288,12 @@ export function withListOwner<T extends object>(node: T, spec: ListOwnerSpec): T
 
 function makeWithCallable(node: object, spec: ListOwnerSpec): void {
 	const own = Object.getOwnPropertyDescriptor(node, '$with');
-	const setters = own?.value as Record<string, unknown> | undefined;
-	if (own === undefined || setters === undefined) return;
-	const call = (...args: unknown[]): unknown =>
-		(call as unknown as Record<string, (list: unknown) => unknown>)[spec.list]!(
-			(spec.make as (...a: unknown[]) => unknown)(...args)
-		);
+	const setters = own?.value as Members | undefined;
+	const setList = setters?.[spec.list];
+	if (own === undefined || setters === undefined || setList === undefined) return;
+	const make = spec.make as (...args: unknown[]) => unknown;
+	setters[spec.list] = (...args) => setList(isWholeList(args, spec.kind) ? args[0] : make(...args));
+	const call = (...args: unknown[]): unknown => (call as unknown as Members)[spec.list]!(...args);
 	for (const key of Object.keys(setters)) {
 		Object.defineProperty(call, key, { value: setters[key], enumerable: true, writable: true, configurable: true });
 	}

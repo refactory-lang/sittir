@@ -12044,7 +12044,7 @@ The `separator` option is typed by the kind ids of the choice's literal
 tokens (`TSKindId.Comma | TSKindId.Semi`), the same tier as every other
 preference; the literal texts are not part of the surface.
 
-`storageElemType` is the element type the list stores and its `elements()` accessor returns, before the factory's wrapper alternative is added to `elemType`, so a read loses no content. The option keys come from `listOptionParts`.
+`storageElemType` is the element type the list stores and its `elements()` accessor returns, before the factory's wrapper alternative is added to `elemType`, so a read loses no content. The option keys come from `listOptionParts`. When the element is a transparent wrapper, `wrapper` also names the wrapper's content accessor (`contentProperty`) and the storage keys of every other slot it has (`decorationKeys`): an element is undecorated exactly when none of those keys holds a value, which is when a list owner's accessor reads it as its content.
 
 ### `packages/codegen/src/emitters/factories.ts::listOptionParts`
 
@@ -12056,7 +12056,9 @@ The options type a list's factory takes as its leading argument, or `undefined` 
 
 ### `packages/codegen/src/emitters/factories.ts::listOwnerHint`
 
-Whether a kind's sole content is a separated list, as the facts a list owner's node surface needs: the stored element of the list, the options its factory takes (`{}` when it takes none) and the element input its factory accepts. Defined exactly when `forwardedTargetKind` names an `AssembledList`, the fact that gives the owner's strict factory its `(options?, ...items)` overloads, so read and build cannot disagree about which kinds are list owners.
+Whether a kind's sole content is a separated list, as the facts a list owner's node surface needs: the element type its factory accepts, the options its factory takes (`{}` when it takes none), the name of the list slot, and the type its accessor returns for that slot (`NonEmptyArray` of the element when the list is non-empty, a readonly array otherwise). Defined exactly when `forwardedTargetKind` names an `AssembledList`, the fact that gives the owner's strict factory its `(options?, ...items)` overloads, so read and build cannot disagree about which kinds are list owners.
+
+The accessor of a list owner's list slot reads the slot as the elements the factory takes. The stored value stays the list node, so storage, the render transport and `$with` inputs are unchanged; the accessor is the one member that hoists the list away, the way the factory does. It is value-dependent where the factory's input is: a transparent wrapper element that carries only its content (none of the wrapper's other slots is populated) reads as its content arm, and a decorated one stays the wrapper, which is what the factory accepts for each. Both forms are in the element type, so a read item can be passed straight back to the setter.
 
 ### `packages/codegen/src/emitters/factories.ts::TextFactoryNode`
 
@@ -16455,7 +16457,7 @@ The options a separated list's factory takes, each with the expression the facto
 
 ### `packages/codegen/src/emitters/factories.ts::listOwnerRuntimeSpec`
 
-The object literal `{ list, elements, options, make }` a list owner's builder and wrap pass to `withListOwner`: the owner's accessor for its list, the list's accessor for its elements, each option its factory takes as `{ key, default }`, and the list's own raw factory. `factoryScope` prefixes that factory's name where the caller reaches it through a namespace import (the wrap module). It shares `listOwnerTarget` with `listOwnerHint`, so the type-level marker and the runtime members come from one test of list-ownership; `undefined` means the node is not a list owner and neither emitter adds the call.
+The object literal a list owner's builder and wrap pass to `withListOwner`: the owner's accessor for its list (`list`), the list's accessor for its elements (`elements`), the list's kind id (`kind`), each option its factory takes as `{ key, default }`, the list's own raw factory (`make`), and, when the list's element is a transparent wrapper, the wrapper's kind id, the accessor that names its content and the storage keys of its other slots (`wrapper`). `factoryScope` prefixes the raw factory's name where the caller reaches it through a namespace import (the wrap module). It shares `listOwnerTarget` with `listOwnerHint`, so the type-level marker and the runtime members come from one test of list-ownership; `undefined` means the node is not a list owner and neither emitter adds the call. The wrapper facts come from `separatedListSurface`, which derives the factory's element union from the same wrapper, so the read collapse and the factory's wrap of bare content cannot disagree.
 
 ### `packages/codegen/src/emitters/factories.ts::listOwnerTarget`
 

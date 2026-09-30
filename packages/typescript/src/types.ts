@@ -3132,12 +3132,12 @@ export interface ExportClause {
 	readonly __slotHints__?: {
 		readonly exportSpecifiers: SlotHint<T.ExportSpecifiers, true>;
 		readonly $listOwner: ListOwnerHint<
-			T.ExportSpecifier,
+			T.ExportSpecifier | T.Identifier | T.String,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.ExportSpecifier | T.Identifier | T.String
+			'exportSpecifiers'
 		>;
 	};
-	exportSpecifiers(): ExportSpecifiers | undefined;
+	exportSpecifiers(): NonEmptyArray<T.ExportSpecifier | T.Identifier | T.String> | undefined;
 }
 
 export interface ExportSpecifier {
@@ -3209,10 +3209,10 @@ export interface NamedImports {
 		readonly $listOwner: ListOwnerHint<
 			T.ImportSpecifier,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.ImportSpecifier
+			'importSpecifiers'
 		>;
 	};
-	importSpecifiers(): ImportSpecifiers | undefined;
+	importSpecifiers(): NonEmptyArray<T.ImportSpecifier> | undefined;
 }
 
 export interface ImportAttribute {
@@ -5439,10 +5439,10 @@ export interface FormalParameters {
 		readonly $listOwner: ListOwnerHint<
 			T.RequiredParameter | T.OptionalParameter,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.RequiredParameter | T.OptionalParameter
+			'formalParametersElements'
 		>;
 	};
-	formalParametersElements(): FormalParametersElements | undefined;
+	formalParametersElements(): NonEmptyArray<T.RequiredParameter | T.OptionalParameter> | undefined;
 }
 
 export interface ClassStaticBlock {
@@ -7061,40 +7061,45 @@ export interface EnumBody {
 			| T.String
 			| T.Number
 			| T.ComputedPropertyName
-			| T.EnumAssignment,
-			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName
 			| T.EnumAssignment
-			| T.PropertyIdentifier.Types
+			| T.PropertyIdentifier.Types,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing },
+			'enumBodyElements'
 		>;
 	};
-	enumBodyElements(): EnumBodyElements | undefined;
+	enumBodyElements():
+		| NonEmptyArray<
+				| T.PropertyIdentifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+				| T.PrivatePropertyIdentifier
+				| T.String
+				| T.Number
+				| T.ComputedPropertyName
+				| T.EnumAssignment
+				| T.PropertyIdentifier.Types
+		  >
+		| undefined;
 }
 
 export interface EnumAssignment {
@@ -8559,12 +8564,12 @@ export interface TypeArguments {
 	readonly __slotHints__?: {
 		readonly types: SlotHint<T.Types>;
 		readonly $listOwner: ListOwnerHint<
-			T.Type,
+			T.Type | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.Type | T.TypeIdentifier.Types
+			'types'
 		>;
 	};
-	types(): Types;
+	types(): NonEmptyArray<T.Type | T.TypeIdentifier.Types>;
 }
 
 export interface ObjectType {
@@ -8771,12 +8776,12 @@ export interface TypeParameters {
 	readonly __slotHints__?: {
 		readonly typeParametersElements: SlotHint<T.TypeParametersElements>;
 		readonly $listOwner: ListOwnerHint<
-			T.TypeParameter,
+			T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types
+			'typeParametersElements'
 		>;
 	};
-	typeParametersElements(): TypeParametersElements;
+	typeParametersElements(): NonEmptyArray<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>;
 }
 
 export interface TypeParameter {
@@ -8954,12 +8959,16 @@ export interface TupleType {
 	readonly __slotHints__?: {
 		readonly tupleTypeMembers: SlotHint<T.TupleTypeMembers, true>;
 		readonly $listOwner: ListOwnerHint<
-			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type,
+			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
 			{ delimiter?: Delimiter.None | Delimiter.Trailing },
-			T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
+			'tupleTypeMembers'
 		>;
 	};
-	tupleTypeMembers(): TupleTypeMembers | undefined;
+	tupleTypeMembers():
+		| NonEmptyArray<
+				T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types
+		  >
+		| undefined;
 }
 
 export interface ReadonlyType {

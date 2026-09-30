@@ -7,10 +7,10 @@ const rs = await createEngine(rust);
 const fnOf = (src: string) => rs.parse(src).statements()[0] as any;
 
 describe('a list owner', () => {
-	it('iterates the stored elements of a parsed list', () => {
+	it('iterates the items of a parsed list: a decorated element stays its wrapper, a bare one reads as its content', () => {
 		const ps = fnOf('fn f(#[cfg(test)] a: u8, b: u16) {}\n').parameters();
 		const items = [...ps];
-		expect(items.map((p: any) => p.$type)).toEqual([rs.kinds.AttributedParameter, rs.kinds.AttributedParameter]);
+		expect(items.map((p: any) => p.$type)).toEqual([rs.kinds.AttributedParameter, rs.kinds.Parameter]);
 		expect(items[0].attributeItem()).toBeDefined();
 		expect(ps.length).toBe(2);
 		expect(ps.at(1).$render()).toBe('b: u16');
