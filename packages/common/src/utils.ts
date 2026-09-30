@@ -208,6 +208,20 @@ export function isNode(v: unknown): v is AnyNodeData {
 	);
 }
 
+export function isNodeOfKind(v: unknown, kind: number): boolean {
+	return isNode(v) && v.$type === kind;
+}
+
+export function orDefault<V>(value: V | undefined, make: () => NoInfer<V>): V {
+	return value ?? make();
+}
+
+export function configFieldOr(input: unknown, key: string, orElse: () => unknown): unknown {
+	return input !== null && typeof input === 'object' && !isNode(input) && key in input
+		? (input as Record<string, unknown>)[key]
+		: orElse();
+}
+
 export function isParsedNode(v: unknown): v is AnyNodeData {
 	return isNode(v) && (v.$source === Source.Ts || v.$source === Source.Sg);
 }

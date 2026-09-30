@@ -10,7 +10,7 @@ import type {
 	Module,
 	SimpleStatementsElements,
 	ConfigFor,
-	BuiltFor,
+	BoundFor,
 	LooseFor,
 	LooseConfigFor,
 	NamespaceMap,
@@ -32,7 +32,7 @@ describe('python NamespaceMap access-path convergence', () => {
 	});
 
 	it('Fluent / Loose / Kind each converge', () => {
-		expectTrue<Equals<FunctionDefinition.Built, BuiltFor<TSKindId.FunctionDefinition>>>();
+		expectTrue<Equals<FunctionDefinition.Bound, BoundFor<TSKindId.FunctionDefinition>>>();
 		expectTrue<Equals<FunctionDefinition.Loose, LooseFor<TSKindId.FunctionDefinition>>>();
 		expectTrue<Equals<FunctionDefinition.Kind, 'function_definition'>>();
 	});
@@ -41,12 +41,12 @@ describe('python NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<Module.Config, ConfigFor<TSKindId.Module>>>();
 	});
 
-	it('Fluent is the factory-emitted Built alias for factory-backed kinds', () => {
+	it('Fluent is the factory-emitted Bound alias for factory-backed kinds', () => {
 		// Every Fluent access path resolves to the factory's EXACT return
 		// type — not a re-derived generic projection.
-		expectTrue<Equals<FunctionDefinition.Built, ReturnType<typeof buildFunctionDefinition>>>();
-		expectTrue<Equals<BuiltFor<TSKindId.FunctionDefinition>, ReturnType<typeof buildFunctionDefinition>>>();
-		expectTrue<Equals<NamespaceMap[TSKindId.FunctionDefinition]['Built'], ReturnType<typeof buildFunctionDefinition>>>();
+		expectTrue<Equals<FunctionDefinition.Bound, ReturnType<typeof buildFunctionDefinition>>>();
+		expectTrue<Equals<BoundFor<TSKindId.FunctionDefinition>, ReturnType<typeof buildFunctionDefinition>>>();
+		expectTrue<Equals<NamespaceMap[TSKindId.FunctionDefinition]['Bound'], ReturnType<typeof buildFunctionDefinition>>>();
 	});
 
 
@@ -99,7 +99,7 @@ describe('python NamespaceMap access-path convergence', () => {
 		// recovered downstream as `Exclude<Loose, T>`. This pin is what makes
 		// the split provably semantics-free: `Loose` still admits exactly what
 		// it admitted before, so the passthrough arm is untouched.
-		expectTrue<Equals<FunctionDefinition.Loose, FunctionDefinition.LooseConfig | FunctionDefinition>>();
+		expectTrue<Equals<FunctionDefinition.Loose, FunctionDefinition.LooseConfig | FunctionDefinition | FunctionDefinition.Bound | FunctionDefinition.Parsed>>();
 		expectTrue<Equals<FunctionDefinition.LooseConfig, LooseConfigFor<TSKindId.FunctionDefinition>>>();
 	});
 });

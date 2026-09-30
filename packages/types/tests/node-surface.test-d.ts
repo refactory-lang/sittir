@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest';
-import type { BoundOf, ParsedOf, SlotHint, ListOwnerHint } from '../src/index.ts';
+import type { BoundOf, ParsedOf, SlotHint, ListOwnerHint, WithNode } from '../src/index.ts';
 
 const enum K {
 	Fn = 1,
@@ -28,19 +28,19 @@ interface Fn {
 	readonly _kw?: K.Kw;
 	params(): Params;
 	kw(): K.Kw | undefined;
-	readonly __slotHints__?: { params: SlotHint<Params.Bound>; kw: SlotHint<K.Kw, true> };
+	readonly __slotHints__?: { params: SlotHint<Params>; kw: SlotHint<K.Kw, true> };
 }
 declare namespace Param {
-	interface Bound extends BoundOf<Param, ByB> {}
-	interface Parsed extends ParsedOf<Param, ByP> {}
+	interface Bound extends BoundOf<Param, ByB> { readonly $with: WithNode<this, ByB, ByP> }
+	interface Parsed extends ParsedOf<Param, ByP> { readonly $with: WithNode<this, ByB, ByP> }
 }
 declare namespace Params {
-	interface Bound extends BoundOf<Params, ByB> {}
-	interface Parsed extends ParsedOf<Params, ByP> {}
+	interface Bound extends BoundOf<Params, ByB> { readonly $with: WithNode<this, ByB, ByP> }
+	interface Parsed extends ParsedOf<Params, ByP> { readonly $with: WithNode<this, ByB, ByP> }
 }
 declare namespace Fn {
-	interface Bound extends BoundOf<Fn, ByB> {}
-	interface Parsed extends ParsedOf<Fn, ByP> {}
+	interface Bound extends BoundOf<Fn, ByB> { readonly $with: WithNode<this, ByB, ByP> }
+	interface Parsed extends ParsedOf<Fn, ByP> { readonly $with: WithNode<this, ByB, ByP> }
 }
 interface ByB {
 	[K.Fn]: Fn.Bound;
@@ -55,6 +55,7 @@ interface ByP {
 
 declare const fn: Fn.Parsed;
 declare const built: Params.Bound;
+declare const storageParams: Params;
 declare const bound: Fn.Bound;
 declare const param: Param;
 declare const owner: Params.Parsed;
@@ -84,13 +85,16 @@ describe('BoundOf / ParsedOf', () => {
 	it('an optional slot can be cleared', () => {
 		expectTypeOf(fn.$with.kw()).toHaveProperty('kw');
 	});
+	it('a storage-typed input reads back as its Bound surface', () => {
+		expectTypeOf(fn.$with.params(storageParams).params()).toEqualTypeOf<Params.Bound>();
+	});
 	it('a wrong input is rejected', () => {
 		// @ts-expect-error Params.Bound expected
 		fn.$with.params('x');
 	});
 	it('a multiple slot is set with rest arguments and reads back its input', () => {
 		const d = owner.$with.elements(param, param);
-		expectTypeOf(d.elements()).toEqualTypeOf<readonly Param[]>();
+		expectTypeOf(d.elements()).toEqualTypeOf<readonly Param.Bound[]>();
 		expectTypeOf(owner.$with.elements()).toHaveProperty('elements');
 	});
 	it('Bound $with returns Bound', () => {

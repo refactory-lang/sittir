@@ -218,7 +218,7 @@ The type of `$with` on a node: its slot setters. A node passes itself in (`WithO
 
 ### `packages/types/src/node-surface.ts::WithSlot`
 
-The node after `$with.<slot>(v)`: the node with the slot's accessor and `$with` removed by key-remapping and re-added, the accessor reading the slot's input type and `$with` pointing back at this type, so a chain accumulates. A plain intersection would leave each an overload pair in which the original signature wins.
+The node after `$with.<slot>(v)` (the accessor reads the slot's input resolved through the `.Bound` map, so a storage-typed input reads as its `.Bound` surface): the node with the slot's accessor and `$with` removed by key-remapping and re-added, the accessor reading the slot's input type and `$with` pointing back at this type, so a chain accumulates. A plain intersection would leave each an overload pair in which the original signature wins.
 
 ### `packages/types/src/node-surface.ts::BoundOf`
 
@@ -226,4 +226,36 @@ The surface of every engine-bound node, computed from a kind's main interface an
 
 ### `packages/types/src/node-surface.ts::ParsedOf`
 
-The surface of a tree-bound node: `BoundOf` with children resolved through the id-keyed map of `.Parsed` interfaces, so a parsed node's children are parsed nodes.
+The surface of a tree-bound node: `BoundOf` with children resolved through the id-keyed map of `.Parsed` interfaces, so a parsed node's children are parsed nodes. It also takes the `.Bound` map, because a slot replaced through `$with` holds a factory node until it is committed and reads as its `.Bound` surface.
+
+### `packages/types/src/node-surface.ts::AdmitLookup`
+
+The map from a kind id to every node type a slot input may hold for that kind: its `.Bound`, its `.Parsed`, and, for a kind that realizes empty, its empty form. It is built from the emitted id-keyed maps, so it never reads a kind's namespace interface, which keeps it acyclic with the argument lists that name it.
+
+### `packages/types/src/node-surface.ts::AdmitBound`
+
+Widens an input type so it also takes the nodes an engine produces: each member with a `$type` becomes itself plus the lookup's entry for that id, arrays and tuples widen element by element, and everything else is unchanged. It distributes over unions. The checker relates nested interface pairs to a bounded depth. Relating a kind's `.Bound` or `.Parsed` to its storage interface walks every accessor of both, and the walk exceeds that depth on deeply nested grammars. A node is therefore admitted where a kind is asked for by naming `.Bound` and `.Parsed` as explicit union members, which the checker matches by identity instead of by structure. The widening is the only place that fact is handled; every config input, positional parameter, list element and `$with` setter goes through it.
+
+### `packages/types/src/node-surface.ts::WithNode`
+
+`$with` for a node: the slot setters of `WithOf` with every input admitted through the lookup built from the `.Bound` and `.Parsed` maps. Each emitted `.Bound` and `.Parsed` interface declares it over `this`.
+
+### `packages/types/src/index.ts::NodeLookup`
+
+The `AdmitLookup` a namespace map yields, for the config and loose surfaces that receive a namespace map instead of the id-keyed maps: each id's `Bound`, `Parsed` and `Empty` members read by indexed access. It is an indexed access and never a conditional, because a conditional over a namespace row resolves the row's base types and cycles through the argument lists of the kinds that name it.
+
+### `packages/types/src/index.ts::Hoisted`
+
+The type of a hoisted pair or route tree. The flavours are read by key (`B['coerce']`, then `B['strict']`), never by testing `B` against an object type with a `coerce` member: a pair whose flavours are intersections (an overlay's flavour over a base's) would otherwise be compared member against member, and that comparison exceeds the checker's depth.
+
+### `packages/types/src/index.ts::NodeNs`
+
+The single computed namespace of a kind. `Bound`, `Parsed` and `Empty` are the kind's engine-bound surface, its tree-bound surface and its empty form (`never` when the kind cannot be empty); `NodeLookup` reads all three.
+
+### `packages/types/src/node-surface.ts::SupertypeSurface`
+
+The union over a declared supertype's members of the node each id-keyed map holds for it: a member with a `$type` resolves through the map, and a stored kind id passes through. It is the one derivation behind both `S.Bound` (the `.Bound` map) and `S.Parsed` (the `.Parsed` map), so the two unions can never disagree about which members a supertype has.
+
+### `packages/types/src/node-surface.ts::BoundWithNode`
+
+`$with` for an engine-bound node: the same admitted slot setters as `WithNode`, but each returns the node itself, since a bound node is not tied to a tree and needs no retyped accessor. A tree-bound node keeps `WithNode`, whose setters return the node with the replaced slot reading as `.Bound`.

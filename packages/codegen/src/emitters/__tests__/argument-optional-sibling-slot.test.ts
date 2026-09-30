@@ -67,7 +67,7 @@ describe('an optional sibling slot does not block a required forwarding slot fro
 	it('factories.ts: the strict raw factory takes an optional/defaulted config and defaults body to an empty construction', () => {
 		const emitted = emitFactories({ grammar: 'synth', nodeMap });
 		expect(emitted).toContain('function buildAsyncBlock(config: Partial<T.AsyncBlock.Config> = {})');
-		expect(emitted).toContain('config.body ?? buildBlock()');
+		expect(emitted).toContain('orDefault(config.body, () => buildBlock())');
 	});
 });
 

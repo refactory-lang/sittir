@@ -17,7 +17,7 @@ describe('empty forms in the emitted types', () => {
 	it('gives a kind that realizes empty its Empty form and type-map entry, and a kind that cannot none', async () => {
 		const { nodeMap, generatedIdTables } = await rust();
 		const types = emitTypes({ grammar: 'rust', nodeMap, generatedIdTables });
-		expect(types).toContain('export interface EmptyBlock extends Block.Built {');
+		expect(types).toContain('export interface EmptyBlock extends Block.Bound {');
 		expect(types).toContain('InnerTrivia<this>;');
 		expect(types).toContain('{ readonly node: Block; readonly empty: EmptyBlock }');
 		expect(types).not.toContain('EmptyFunctionItem');

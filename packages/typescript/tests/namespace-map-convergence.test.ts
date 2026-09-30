@@ -11,7 +11,7 @@ import type {
 	Program,
 	FormalParametersElements,
 	ConfigFor,
-	BuiltFor,
+	BoundFor,
 	LooseFor,
 	LooseConfigFor,
 	NamespaceMap,
@@ -34,7 +34,7 @@ describe('typescript NamespaceMap access-path convergence', () => {
 	});
 
 	it('Fluent / Loose / Kind each converge', () => {
-		expectTrue<Equals<ClassDeclaration.Built, BuiltFor<TSKindId.ClassDeclaration>>>();
+		expectTrue<Equals<ClassDeclaration.Bound, BoundFor<TSKindId.ClassDeclaration>>>();
 		expectTrue<Equals<ClassDeclaration.Loose, LooseFor<TSKindId.ClassDeclaration>>>();
 		expectTrue<Equals<ClassDeclaration.Kind, 'class_declaration'>>();
 	});
@@ -43,13 +43,13 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<Program.Config, ConfigFor<TSKindId.Program>>>();
 	});
 
-	it('Fluent is the factory-emitted Built alias for factory-backed kinds', () => {
+	it('Fluent is the factory-emitted Bound alias for factory-backed kinds', () => {
 		// Every Fluent access path resolves to the factory's EXACT return
 		// type (`$with` setter record, `$`-prefixed methods, named
 		// self-reference) — not a re-derived generic projection.
-		expectTrue<Equals<Program.Built, ReturnType<typeof buildProgram>>>();
-		expectTrue<Equals<BuiltFor<TSKindId.Program>, ReturnType<typeof buildProgram>>>();
-		expectTrue<Equals<NamespaceMap[TSKindId.Program]['Built'], ReturnType<typeof buildProgram>>>();
+		expectTrue<Equals<Program.Bound, ReturnType<typeof buildProgram>>>();
+		expectTrue<Equals<BoundFor<TSKindId.Program>, ReturnType<typeof buildProgram>>>();
+		expectTrue<Equals<NamespaceMap[TSKindId.Program]['Bound'], ReturnType<typeof buildProgram>>>();
 	});
 
 
@@ -102,7 +102,7 @@ describe('typescript NamespaceMap access-path convergence', () => {
 		// recovered downstream as `Exclude<Loose, T>`. This pin is what makes
 		// the split provably semantics-free: `Loose` still admits exactly what
 		// it admitted before, so the passthrough arm is untouched.
-		expectTrue<Equals<ClassDeclaration.Loose, ClassDeclaration.LooseConfig | ClassDeclaration>>();
+		expectTrue<Equals<ClassDeclaration.Loose, ClassDeclaration.LooseConfig | ClassDeclaration | ClassDeclaration.Bound | ClassDeclaration.Parsed>>();
 		expectTrue<Equals<ClassDeclaration.LooseConfig, LooseConfigFor<TSKindId.ClassDeclaration>>>();
 	});
 });

@@ -435,9 +435,9 @@ const str = (text: string) =>
 			)
 	);
 
-function nestedName(path: readonly string[]): Identifier | ReturnType<typeof ir.nestedIdentifier.strict> {
+function nestedName(path: readonly string[]): Identifier.Bound | ReturnType<typeof ir.nestedIdentifier.strict> {
 	const [head, ...rest] = path;
-	let acc: Identifier | ReturnType<typeof ir.nestedIdentifier.strict> = ir.identifier(head ?? '');
+	let acc: Identifier.Bound | ReturnType<typeof ir.nestedIdentifier.strict> = ir.identifier(head ?? '');
 	for (const seg of rest) acc = ir.nestedIdentifier.strict({ object: acc, property: ir.identifier(seg) });
 	return acc;
 }
@@ -445,7 +445,7 @@ function nestedName(path: readonly string[]): Identifier | ReturnType<typeof ir.
 function extendsIr(
 	t: TypeExpr,
 	base: boolean
-): Identifier | NestedTypeIdentifier | ReturnType<typeof ir.genericType.strict> {
+): Identifier.Bound | NestedTypeIdentifier.Bound | ReturnType<typeof ir.genericType.strict> {
 	if (t.k === 'ident') return ir.identifier(t.name);
 	if (t.k === 'subkind') {
 		const applied = (name: string, arg: ReturnType<typeof extendsIr>) =>
@@ -470,7 +470,7 @@ function extendsIr(
 	throw new Error(`bindings-inventory: an interface extends a name, not a ${t.k}`);
 }
 
-function typeName(path: readonly string[]): Identifier | NestedTypeIdentifier {
+function typeName(path: readonly string[]): Identifier.Bound | NestedTypeIdentifier.Bound {
 	const last = path.at(-1) ?? '';
 	const module = path.slice(0, -1);
 	return module.length === 0
@@ -486,7 +486,7 @@ const KEYWORDS = {
 	never: TSKindId.NeverKeyword
 } as const;
 
-function toPrimary(t: TypeExpr, base: boolean): PrimaryType | TypeIdentifier.Types {
+function toPrimary(t: TypeExpr, base: boolean): PrimaryType.Bound | TypeIdentifier.Types {
 	switch (t.k) {
 		case 'ident':
 			return ir.identifier(t.name);
@@ -519,7 +519,7 @@ function toPrimary(t: TypeExpr, base: boolean): PrimaryType | TypeIdentifier.Typ
 			return ir.parenthesizedType.strict(toIr(t, base));
 		case 'template': {
 			const chunks = t.text.split('${string}');
-			const parts: (TemplateChars | TemplateType)[] = [];
+			const parts: (TemplateChars.Bound | TemplateType.Bound)[] = [];
 			chunks.forEach((c, i) => {
 				if (c !== '') parts.push(ir.templateChars(c));
 				if (i < chunks.length - 1) parts.push(ir.templateType.strict(TSKindId.StringKeyword));
@@ -529,11 +529,11 @@ function toPrimary(t: TypeExpr, base: boolean): PrimaryType | TypeIdentifier.Typ
 	}
 }
 
-function toIr(t: TypeExpr, base: boolean): Type | TypeIdentifier.Types {
+function toIr(t: TypeExpr, base: boolean): Type.Bound | TypeIdentifier.Types {
 	if (t.k === 'kw') return KEYWORDS[t.name];
 	if (t.k !== 'union') return toPrimary(t, base);
 	const parts = t.of.map((p) => toIr(p, base));
-	let acc: Type | TypeIdentifier.Types = parts[0] ?? KEYWORDS.never;
+	let acc: Type.Bound | TypeIdentifier.Types = parts[0] ?? KEYWORDS.never;
 	for (const p of parts.slice(1)) acc = ir.unionType.strict({ left: acc, right: p });
 	return acc;
 }
@@ -564,7 +564,7 @@ function withTrivia<N extends Triviable<N>>(node: N, leading: readonly string[],
 	return trailing.length > 0 ? led.$trivia.trailing(...trailing) : led;
 }
 
-function memberIr(m: Member, base: boolean, leading: readonly string[]): PropertySignature {
+function memberIr(m: Member, base: boolean, leading: readonly string[]): PropertySignature.Bound {
 	const built = ir.propertySignature.strict({
 		readonlyMarker: true,
 		name: ir.identifier(m.name),
@@ -574,7 +574,7 @@ function memberIr(m: Member, base: boolean, leading: readonly string[]): Propert
 	return withTrivia(built, leading, m.trailing);
 }
 
-function interfaceIr(s: Interface, base: boolean): TsStatement {
+function interfaceIr(s: Interface, base: boolean): TsStatement.Bound {
 	const [first, ...rest] = s.members;
 	const members = first
 		? ir.objectTypeContent.strict(
@@ -593,7 +593,7 @@ function interfaceIr(s: Interface, base: boolean): TsStatement {
 	return withTrivia(built, s.leading, s.trailing);
 }
 
-function statementIr(s: Statement, base: boolean): TsStatement {
+function statementIr(s: Statement, base: boolean): TsStatement.Bound {
 	switch (s.k) {
 		case 'interface':
 			return interfaceIr(s, base);
@@ -618,7 +618,7 @@ function statementIr(s: Statement, base: boolean): TsStatement {
 	}
 }
 
-function importIr(imp: VocabularyFile['imports'][number], leading: readonly string[]): TsStatement {
+function importIr(imp: VocabularyFile['imports'][number], leading: readonly string[]): TsStatement.Bound {
 	const [first, ...rest] = (imp.names ?? []).map((n) => ir.importSpecifier.name.strict({ name: ir.identifier(n) }));
 	const clause =
 		imp.namespace !== null
@@ -637,7 +637,7 @@ function importIr(imp: VocabularyFile['imports'][number], leading: readonly stri
 
 export async function renderVocabularyFile(file: VocabularyFile): Promise<string> {
 	const base = file.name === 'context';
-	const statements: TsStatement[] = [
+	const statements: TsStatement.Bound[] = [
 		...file.imports.map((imp, i) => importIr(imp, i === 0 ? file.leading : [])),
 		...file.statements.map((s) => statementIr(s, base))
 	];

@@ -19,7 +19,10 @@ const cases: readonly Case[] = [
 			const root = rust.parse('use x;\n\nfn f() {}\n');
 			const [use, fn] = root.statements();
 			const built = rust.build.functionItem({ name: 'g', parameters: rust.build.parameters(), body: rust.build.block() });
-			const items = order === 'reversed' ? [fn!, use!] : order === 'parsed-built' ? [use!, built] : [built, use!];
+			let items: Parameters<typeof root.$with.statements>;
+			if (order === 'reversed') items = [fn!, use!];
+			else if (order === 'parsed-built') items = [use!, built as never];
+			else items = [built as never, use!];
 			return root.$with.statements(...items).$render();
 		},
 		expected: { reversed: 'fn f() {}\n\nuse x;', 'parsed-built': 'use x;\n\nfn g() {}', 'built-parsed': 'fn g() {}\n\nuse x;' }
@@ -34,7 +37,10 @@ const cases: readonly Case[] = [
 				parameters: typescript.build.formalParameters(),
 				body: typescript.build.statementBlock()
 			});
-			const items = order === 'reversed' ? [fn!, imp!] : order === 'parsed-built' ? [imp!, built] : [built, imp!];
+			let items: Parameters<typeof root.$with.statements>;
+			if (order === 'reversed') items = [fn!, imp!];
+			else if (order === 'parsed-built') items = [imp!, built as never];
+			else items = [built as never, imp!];
 			return root.$with.statements(...items).$render();
 		},
 		expected: {
@@ -53,7 +59,10 @@ const cases: readonly Case[] = [
 				parameters: python.build.parameters(),
 				body: python.build.block(python.build.passStatement)
 			});
-			const items = order === 'reversed' ? [fn!, imp!] : order === 'parsed-built' ? [imp!, built] : [built, imp!];
+			let items: Parameters<typeof root.$with.statements>;
+			if (order === 'reversed') items = [fn!, imp!];
+			else if (order === 'parsed-built') items = [imp!, built as never];
+			else items = [built as never, imp!];
 			return root.$with.statements(...items).$render();
 		},
 		expected: {
