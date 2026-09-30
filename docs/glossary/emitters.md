@@ -16419,7 +16419,7 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 ### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
 
-The version of the JS → native render transport shape — the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into the scaffolded crate's `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. Bump it when the transport shape changes; crates are scaffolded once, so a test pins every existing crate's `lib.rs` to it and names the crates to update.
+The version of the wire between the JS packages and a native build: the render transport shape JS sends, and the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever either shape changes, and regenerate every grammar.
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 

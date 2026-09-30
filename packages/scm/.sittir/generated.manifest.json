@@ -1,6 +1,6 @@
 {
   "grammar": "scm",
-  "source_hash": "adad106e9ff3ff0d632957523978ed5766a7bedb4486f07a4ccebff54edf4bca",
+  "source_hash": "2bd2be2252e81a6dfb00597d198c1f42ba9184e4572fc10d035299e0dc5e708d",
   "files": {
     "packages/scm/.sittir/grammar-diagnostics.json": "75994c5f3d295950e127de18849925e9084e0757c715bcaad81bb31be7052ba6",
     "packages/scm/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -17,7 +17,7 @@
     "packages/scm/.sittir/src/tree_sitter/parser.h": "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2",
     "packages/scm/.sittir/tree-sitter.json": "5a79313e2fa3386b9aad23b9e8e4d15ba6d0404a5a5737bfb54ca38a3b94de5b",
     "packages/scm/src/api.ts": "e7938370a7a5d0cb188921c657a787020446f5a25801a0648c0572396371fb83",
-    "packages/scm/src/backend.ts": "f78cf331cb00102d5213093360de845714ed48ba0688f6d9a7b5e5a004e0073e",
+    "packages/scm/src/backend.ts": "e071b8275d6f062677bc0a0f6bd90ffc5e1b3890be83064c7b7b7a99e896f285",
     "packages/scm/src/consts.ts": "741705fcb9424c942d868f505e95ceb4b2e469863a9d01c7dbee6f1f886671b6",
     "packages/scm/src/factories/bundle.ts": "3ea83ad93517242d1db697651067d3e7e7d23ef5f4fb2791d37a2897ffd80810",
     "packages/scm/src/factories/coerce.ts": "65dd1769cfe158eb349ce3b67cc87217fcd53299b94e2e674519d684f3e2872a",
@@ -39,7 +39,7 @@
     "packages/scm/src/wrap.ts": "5e3e314ef6e9e82853eaebd9ca3e2798f584754d0dfe519a74d0b3d50282e587",
     "rust/crates/sittir-scm/index.d.ts": "ce4629c75795c0e75496bba53e7ca63b8053e6f0eb40afce39b3f8da3115f510",
     "rust/crates/sittir-scm/index.js": "8205a0432859ea6b53a39948debc97e3851ad4bda59e0409542ed9a243567a6c",
-    "rust/crates/sittir-scm/src/lib.rs": "67168472bb5739759a3ed6076adc5f4f978c3f4d6b7f4f85396e8765cba6672c",
+    "rust/crates/sittir-scm/src/lib.rs": "245c973a14bad418fa6dc663c671de4588dd66d7fd4dd853845c1022567c8072",
     "rust/crates/sittir-scm/src/render/hash.rs": "6edde6a2ed517ecda916a797e049d456877765d786b8d5eb1045604ebbcca629",
     "rust/crates/sittir-scm/src/render/kind_ids.rs": "74f492502a78c91975e4c7f1117a5da41d5a33cb0aea699ef5caceac6870d55b",
     "rust/crates/sittir-scm/src/render/mod.rs": "36803e5721be1df2edd7839bd72b043bb04fa66adfade5e6993cd1ad546584cf",

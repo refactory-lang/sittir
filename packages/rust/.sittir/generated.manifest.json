@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "76264d27e0f9d8437e419e9557ea58727e5f58814ee7e43ca7b84d053d8882e1",
+  "source_hash": "6700ac4504ec82ae3b767b3517eb6be93a15210f335941f564ea2bf2dce4f237",
   "files": {
     "packages/rust/.sittir/grammar-diagnostics.json": "4f2eae23a0cd0db71d1991ea88120a426881fdbb2609eeab9cad6033ae64ef26",
     "packages/rust/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -18,7 +18,7 @@
     "packages/rust/.sittir/tree-sitter.json": "f75469604f266ce9d2c9879dec6ff327844ba560560eef0db3f01c5f119dd220",
     "packages/rust/src/.gitignore": "f88dc1e9a9e22edc543fca920b569a3ea4bef48d02700fd098ea1bf22b2e7102",
     "packages/rust/src/api.ts": "33899348c9d75d5de3480c43eba716f254f32abc0621ea02f70e75a11d12ba79",
-    "packages/rust/src/backend.ts": "e2d39c0fcb07642b624899ea48d7eb125dd739abe06fa47bcbd758a65de22abe",
+    "packages/rust/src/backend.ts": "1da76cfba533d65099626e5b38b8bd29ae2d2e72b7f6aa18a65f9dd394c3ac14",
     "packages/rust/src/consts.ts": "66686f523e433b8c82acf229ef2f1a3b21fcba8e37aab80cc3978096437e9d28",
     "packages/rust/src/factories/bundle.ts": "3d86032ce414ea7ccf0811abaf0222023b7f254955823b8128a9f9fc1d71a1cb",
     "packages/rust/src/factories/coerce.ts": "439d0971fefac915ebebb865230fbe0b99dc0c871b2767c1d4a6e35d83eb03a6",
@@ -40,7 +40,7 @@
     "packages/rust/src/wrap.ts": "66b7462e7e2cc23b594233f6a37238e2d9b9c64e9d7c962ec9d8af8cbd35d89b",
     "rust/crates/sittir-rust/index.d.ts": "e1beef934b170d4cb2f5f84f06206d8c8e3ec1a0d78f6428764c79761c93160e",
     "rust/crates/sittir-rust/index.js": "65870d2849ecee2c83c421e32039918e09f25dfe01828f8cea710a7e31e5a48d",
-    "rust/crates/sittir-rust/src/lib.rs": "26b06142ad88e70a4b38c5b1097c8fd68ffea967906745af45ac41a987277bb3",
+    "rust/crates/sittir-rust/src/lib.rs": "be2abe4985b55f28c3b05dfb79edded9c0acf9fb9c3cac71fdfc9526abb5ab46",
     "rust/crates/sittir-rust/src/render/hash.rs": "9e4f0fe7b0b45c0057902da086728039009dbc99269c2f10b8b744c4fe3d199d",
     "rust/crates/sittir-rust/src/render/kind_ids.rs": "c06dcf436df4fc110a24249bae160038ebae78ccf9e9accb38581995d4776553",
     "rust/crates/sittir-rust/src/render/mod.rs": "9d0c135b4fe0951e3466c01453458fa88cf2fad81ba4d3197a9c60a265aeb44c",
