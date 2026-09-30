@@ -15,24 +15,28 @@
 
 ; ── declaration ────────────────────────────────────────────────────────────────
 (function_definition) @declaration.function
-(function_definition body: (block . (expression_statement (string) @doc @literal.string.docstring)))
+(function_definition body: (suite_block (block . (simple_statements (simple_statements_elements . simple_statement: (expression_statement (string) @doc @literal.string.docstring))))))
 (class_definition superclasses: (_)? @bases) @declaration.class
-(class_definition body: (block . (expression_statement (string) @doc @literal.string.docstring)))
-(class_definition (block (function_definition) @declaration.method))
+(class_definition body: (suite_block (block . (simple_statements (simple_statements_elements . simple_statement: (expression_statement (string) @doc @literal.string.docstring))))))
+(class_definition body: (suite_block (block (function_definition) @declaration.method)))
 ((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
 ((function_definition name: (identifier) @name) @declaration.method.dunder (#match? @name "^__(?<stem>.*)__$"))
 ((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.static) (#eq? @_d "staticmethod"))
 ((decorated_definition (decorator (identifier) @_d) (function_definition) @declaration.method.class) (#eq? @_d "classmethod"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)
-(parameters (identifier) @declaration.parameter)
-(parameters . (identifier) @declaration.parameter.self)
-(lambda_parameters (identifier) @declaration.parameter)
+(parameters (parameters_elements (identifier) @declaration.parameter))
+(parameters (parameters_elements . (identifier) @declaration.parameter.self))
+(lambda_parameters (parameters_elements (identifier) @declaration.parameter))
 (typed_parameter) @declaration.parameter.typed
 (default_parameter value: (_)? @default) @declaration.parameter.default
 (typed_default_parameter value: (_)? @default) @declaration.parameter.typed_default
 (type_parameter) @declaration.type_parameter
-(assignment left: (_) @name right: (_) @value) @declaration.variable
-((assignment left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
+(assignment_eq left: (_) @name right: (_) @value) @declaration.variable
+(assignment_typed left: (_) @name right: (_) @value) @declaration.variable
+(assignment_type left: (_) @name) @declaration.variable
+((assignment_eq left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
+((assignment_typed left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
+((assignment_type left: (identifier) @name) @declaration.constant (#match? @name "^[A-Z][A-Z_0-9]*$"))
 (type_alias_statement) @declaration.type_alias
 
 ; ── statement ──────────────────────────────────────────────────────────────────
@@ -45,7 +49,7 @@
 (raise_statement (_)? @expression) @statement.throw
 (import_statement) @statement.import
 (import_from_statement) @statement.import.from
-(match_statement subject: (_)+ @subject) @statement.match
+(match_statement (subjects subject: (_)+ @subject)) @statement.match
 (with_statement) @statement.with
 (assert_statement) @statement.assert
 (delete_statement) @statement.delete
@@ -108,17 +112,17 @@
 (boolean_operator) @expression.binary.logical
 (boolean_operator operator: "and") @expression.binary.logical.and
 (boolean_operator operator: "or") @expression.binary.logical.or
-(comparison_operator operators: (_)+ @operator) @expression.binary
-(comparison_operator operators: "==") @expression.binary.comparison.equal
-(comparison_operator operators: "!=") @expression.binary.comparison.not_equal
-(comparison_operator operators: "<") @expression.binary.comparison.less
-(comparison_operator operators: ">") @expression.binary.comparison.greater
-(comparison_operator operators: "<=") @expression.binary.comparison.less_equal
-(comparison_operator operators: ">=") @expression.binary.comparison.greater_equal
-(comparison_operator operators: "in") @expression.binary.membership.in
-(comparison_operator operators: "not in") @expression.binary.membership.not_in
-(comparison_operator operators: "is") @expression.binary.identity.is
-(comparison_operator operators: "is not") @expression.binary.identity.is_not
+(comparison_operator (comparison_operator_comparator operators: _ @operator)) @expression.binary
+(comparison_operator (comparison_operator_comparator operators: "==")) @expression.binary.comparison.equal
+(comparison_operator (comparison_operator_comparator operators: "!=")) @expression.binary.comparison.not_equal
+(comparison_operator (comparison_operator_comparator operators: "<")) @expression.binary.comparison.less
+(comparison_operator (comparison_operator_comparator operators: ">")) @expression.binary.comparison.greater
+(comparison_operator (comparison_operator_comparator operators: "<=")) @expression.binary.comparison.less_equal
+(comparison_operator (comparison_operator_comparator operators: ">=")) @expression.binary.comparison.greater_equal
+(comparison_operator (comparison_operator_comparator operators: "in")) @expression.binary.membership.in
+(comparison_operator (comparison_operator_comparator operators: "not in")) @expression.binary.membership.not_in
+(comparison_operator (comparison_operator_comparator operators: "is")) @expression.binary.identity.is
+(comparison_operator (comparison_operator_comparator operators: "is not")) @expression.binary.identity.is_not
 (unary_operator) @expression.unary
 (unary_operator operator: "-") @expression.unary.negation
 (unary_operator operator: "+") @expression.unary.plus
@@ -141,7 +145,7 @@
 (named_expression name: (_) @left value: (_) @right) @expression.assignment
 (conditional_expression body: (_)? @consequence) @expression.conditional
 (attribute attribute: (_) @property) @expression.member
-(subscript value: (_) @object subscript: (_)+ @index) @expression.subscript
+(subscript value: (_) @object (subscripts subscript: (_)+ @index)) @expression.subscript
 (slice) @expression.slice
 (lambda) @expression.lambda
 (await (_)? @expression) @expression.await
@@ -206,7 +210,6 @@
 (identifier) @identifier
 (type (identifier) @identifier.type)
 (dotted_name) @identifier.dotted
-(keyword_identifier) @identifier.keyword
 
 ; ── modifier ───────────────────────────────────────────────────────────────────
 ; none: Python's modifiers are `async` (a member) and decorators (attributes)
@@ -230,6 +233,6 @@
 ["," ":" "." ";"] @punctuation.delimiter
 
 ; ── unclaimed (parser artefacts) ───────────────────────────────────────────────
-((line_continuation) @unclaimed (#set! reason "layout token"))
+((line_continuation_newline) @unclaimed (#set! reason "layout token"))
 ((positional_separator) @unclaimed (#set! reason "parameter-list marker, not a parameter"))
 ((keyword_separator) @unclaimed (#set! reason "parameter-list marker, not a parameter"))

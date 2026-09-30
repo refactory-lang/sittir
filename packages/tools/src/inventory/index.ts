@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
-import { compileQuery, parseQuery } from './query.ts';
+import { bindingIssues, compileQuery, parseQuery } from './query.ts';
 import { loadSlotModel } from './model.ts';
 import { type Derivation, type GrammarInput, derive } from './derive.ts';
 import { renderIndexFile, renderVocabularyFile, vocabularyFiles } from './emit.ts';
@@ -35,7 +35,14 @@ export async function compileBindings(grammars: readonly string[]): Promise<Comp
 			const compiled = await compileQuery(grammar, text);
 			out.push({ grammar, patterns: compiled.patterns, error: null });
 		} catch (e) {
-			out.push({ grammar, patterns: 0, error: e instanceof Error ? e.message : String(e) });
+			const issues = await bindingIssues(grammar, text);
+			const error =
+				issues.length > 0
+					? issues.map((issue) => `line ${issue.line}: ${issue.message}`).join('\n  ')
+					: e instanceof Error
+						? e.message
+						: String(e);
+			out.push({ grammar, patterns: 0, error });
 		}
 	}
 	return out;
@@ -113,7 +120,7 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 		for (const report of await compileBindings(grammars)) {
 			if (report.error !== null) {
 				code = 1;
-				process.stdout.write(`${report.grammar}: bindings.scm does not compile: ${report.error}\n`);
+				process.stdout.write(`${report.grammar}: bindings.scm does not compile:\n  ${report.error}\n`);
 			} else process.stdout.write(`${report.grammar}: bindings.scm compiles, ${report.patterns} patterns\n`);
 		}
 	}
