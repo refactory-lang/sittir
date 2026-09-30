@@ -35,3 +35,9 @@ export function supertypeGuardKeepsParsed(): string {
 	}
 	return '';
 }
+
+export function supertypeGuardKeepsStorage(stmt: T.Statement): boolean {
+	if (!rs.is.structItem(stmt)) return false;
+	expectTrue<Equals<typeof stmt, T.StructItem>>();
+	return true;
+}

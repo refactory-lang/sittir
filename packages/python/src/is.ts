@@ -399,41 +399,254 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseBare };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	statement(v: { readonly $type: string | number } | number): v is Statement.Bound | Statement.Parsed;
-	simpleStatement(v: { readonly $type: string | number } | number): v is SimpleStatement.Bound | SimpleStatement.Parsed;
-	namedExpressionLhs(
-		v: { readonly $type: string | number } | number
-	): v is NamedExpressionLhs.Bound | NamedExpressionLhs.Parsed;
-	expressions(v: { readonly $type: string | number } | number): v is Expressions.Bound | Expressions.Parsed;
-	compoundStatement(
-		v: { readonly $type: string | number } | number
-	): v is CompoundStatement.Bound | CompoundStatement.Parsed;
-	withClause(v: { readonly $type: string | number } | number): v is WithClause.Bound | WithClause.Parsed;
-	suite(v: { readonly $type: string | number } | number): v is Suite.Bound | Suite.Parsed;
-	parameter(v: { readonly $type: string | number } | number): v is Parameter.Bound | Parameter.Parsed;
-	pattern(v: { readonly $type: string | number } | number): v is Pattern.Bound | Pattern.Parsed;
-	expressionWithinForInClause(
-		v: { readonly $type: string | number } | number
-	): v is ExpressionWithinForInClause.Bound | ExpressionWithinForInClause.Parsed;
-	expression(v: { readonly $type: string | number } | number): v is Expression.Bound | Expression.Parsed;
-	primaryExpression(
-		v: { readonly $type: string | number } | number
-	): v is PrimaryExpression.Bound | PrimaryExpression.Parsed;
-	assignment(v: { readonly $type: string | number } | number): v is Assignment.Bound | Assignment.Parsed;
-	leftHandSide(v: { readonly $type: string | number } | number): v is LeftHandSide.Bound | LeftHandSide.Parsed;
-	rightHandSide(v: { readonly $type: string | number } | number): v is RightHandSide.Bound | RightHandSide.Parsed;
-	fExpression(v: { readonly $type: string | number } | number): v is FExpression.Bound | FExpression.Parsed;
-	escapeSequence(v: { readonly $type: string | number } | number): v is EscapeSequence.Bound | EscapeSequence.Parsed;
-	integer(v: { readonly $type: string | number } | number): v is Integer.Bound | Integer.Parsed;
-	float(v: { readonly $type: string | number } | number): v is Float.Bound | Float.Parsed;
-	keywordIdentifier(
-		v: { readonly $type: string | number } | number
-	): v is KeywordIdentifier.Bound | KeywordIdentifier.Parsed;
-	lineContinuation(
-		v: { readonly $type: string | number } | number
-	): v is LineContinuation.Bound | LineContinuation.Parsed;
-	whitespace(v: { readonly $type: string | number } | number): v is Whitespace.Bound | Whitespace.Parsed;
-	integerDecimal(v: { readonly $type: string | number } | number): v is IntegerDecimal.Bound | IntegerDecimal.Parsed;
+	statement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.SimpleStatements
+				| TSKindId.IfStatement
+				| TSKindId.ForStatement
+				| TSKindId.WhileStatement
+				| TSKindId.TryStatement
+				| TSKindId.WithStatement
+				| TSKindId.FunctionDefinition
+				| TSKindId.ClassDefinition
+				| TSKindId.DecoratedDefinition
+				| TSKindId.MatchStatement;
+		}
+	>;
+	simpleStatement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.FutureImportStatement
+				| TSKindId.ImportStatement
+				| TSKindId.ImportFromStatement
+				| TSKindId.PrintStatement
+				| TSKindId.AssertStatement
+				| TSKindId.ExpressionStatement
+				| TSKindId.ReturnStatement
+				| TSKindId.DeleteStatement
+				| TSKindId.RaiseStatement
+				| TSKindId.PassStatement
+				| TSKindId.BreakStatement
+				| TSKindId.ContinueStatement
+				| TSKindId.GlobalStatement
+				| TSKindId.NonlocalStatement
+				| TSKindId.ExecStatement
+				| TSKindId.TypeAliasStatement;
+		}
+	>;
+	namedExpressionLhs<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.Identifier
+				| TSKindId.PrintKeyword
+				| TSKindId.ExecKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.AwaitKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.MatchKeyword;
+		}
+	>;
+	expressions<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.ExpressionList }>;
+	compoundStatement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.IfStatement
+				| TSKindId.ForStatement
+				| TSKindId.WhileStatement
+				| TSKindId.TryStatement
+				| TSKindId.WithStatement
+				| TSKindId.FunctionDefinition
+				| TSKindId.ClassDefinition
+				| TSKindId.DecoratedDefinition
+				| TSKindId.MatchStatement;
+		}
+	>;
+	withClause<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.WithClauseBare | TSKindId.WithClauseParen }>;
+	suite<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.SuiteInline | TSKindId.SuiteBlock | TSKindId.SuiteEmpty }>;
+	parameter<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.Identifier
+				| TSKindId.TypedParameter
+				| TSKindId.DefaultParameter
+				| TSKindId.TypedDefaultParameter
+				| TSKindId.ListSplatPattern
+				| TSKindId.TuplePattern
+				| TSKindId.KeywordSeparator
+				| TSKindId.PositionalSeparator
+				| TSKindId.DictionarySplatPattern;
+		}
+	>;
+	pattern<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.Identifier
+				| TSKindId.PrintKeyword
+				| TSKindId.ExecKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.AwaitKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.MatchKeyword
+				| TSKindId.Subscript
+				| TSKindId.Attribute
+				| TSKindId.ListSplatPattern
+				| TSKindId.TuplePattern
+				| TSKindId.ListPattern;
+		}
+	>;
+	expressionWithinForInClause<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.LambdaWithinForInClause }>;
+	expression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.ComparisonOperator
+				| TSKindId.NotOperator
+				| TSKindId.BooleanOperator
+				| TSKindId.Lambda
+				| TSKindId.ConditionalExpression
+				| TSKindId.NamedExpression
+				| TSKindId.AsPattern;
+		}
+	>;
+	primaryExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.Await
+				| TSKindId.BinaryOperator
+				| TSKindId.Identifier
+				| TSKindId.PrintKeyword
+				| TSKindId.ExecKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.AwaitKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.MatchKeyword
+				| TSKindId.String
+				| TSKindId.ConcatenatedString
+				| TSKindId.True
+				| TSKindId.False
+				| TSKindId.None
+				| TSKindId.UnaryOperator
+				| TSKindId.Attribute
+				| TSKindId.Subscript
+				| TSKindId.Call
+				| TSKindId.List
+				| TSKindId.ListComprehension
+				| TSKindId.Dictionary
+				| TSKindId.DictionaryComprehension
+				| TSKindId.Set
+				| TSKindId.SetComprehension
+				| TSKindId.Tuple
+				| TSKindId.ParenthesizedExpression
+				| TSKindId.GeneratorExpression
+				| TSKindId.Ellipsis
+				| TSKindId.ListSplatPattern;
+		}
+	>;
+	assignment<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped }>;
+	leftHandSide<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.PatternList }>;
+	rightHandSide<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{ readonly $type: TSKindId.ExpressionList | TSKindId.AugmentedAssignment | TSKindId.PatternList | TSKindId.Yield }
+	>;
+	fExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.ExpressionList | TSKindId.PatternList | TSKindId.Yield }>;
+	escapeSequence<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.EscapeSequenceUnicodeFixed
+				| TSKindId.EscapeSequenceUnicodeWide
+				| TSKindId.EscapeSequenceHex
+				| TSKindId.EscapeSequenceOctal
+				| TSKindId.EscapeSequenceLineBreak
+				| TSKindId.EscapeSequenceSimple
+				| TSKindId.EscapeSequenceNamed;
+		}
+	>;
+	integer<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.IntegerHex | TSKindId.IntegerOctal | TSKindId.IntegerBinary }>;
+	float<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.FloatPoint | TSKindId.FloatLeadingPoint | TSKindId.FloatScientific }>;
+	keywordIdentifier<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.PrintKeyword
+				| TSKindId.ExecKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.AwaitKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.MatchKeyword;
+		}
+	>;
+	lineContinuation<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.LineContinuationNewline | TSKindId.LineContinuationNul }>;
+	whitespace<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.Tight
+				| TSKindId.Space
+				| TSKindId.Tab
+				| TSKindId.Newline
+				| TSKindId.Blankline
+				| TSKindId.DoubleBlankline;
+		}
+	>;
+	integerDecimal<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{ readonly $type: TSKindId.IntegerDecimalLong | TSKindId.IntegerDecimalImaginary | TSKindId.IntegerDecimalPlain }
+	>;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.

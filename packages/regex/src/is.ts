@@ -59,12 +59,44 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TermGroup };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	classAtom(v: { readonly $type: string | number } | number): v is ClassAtom.Bound | ClassAtom.Parsed;
-	inlineFlagsGroup(
-		v: { readonly $type: string | number } | number
-	): v is InlineFlagsGroup.Bound | InlineFlagsGroup.Parsed;
-	characterEscape(v: { readonly $type: string | number } | number): v is CharacterEscape.Bound | CharacterEscape.Parsed;
-	whitespace(v: { readonly $type: string | number } | number): v is Whitespace.Bound | Whitespace.Parsed;
+	classAtom<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.ClassCharacter
+				| TSKindId.CharacterClassEscape
+				| TSKindId.ControlEscape
+				| TSKindId.ControlLetterEscape
+				| TSKindId.IdentityEscape
+				| TSKindId.PosixCharacterClass
+				| TSKindId.ClassRange;
+		}
+	>;
+	inlineFlagsGroup<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.InlineFlagsGroupEnable
+				| TSKindId.InlineFlagsGroupToggle
+				| TSKindId.InlineFlagsGroupDisable;
+		}
+	>;
+	characterEscape<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{ readonly $type: TSKindId.ControlEscape | TSKindId.ControlLetterEscape | TSKindId.IdentityEscape }
+	>;
+	whitespace<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{ readonly $type: TSKindId.Tight | TSKindId.Newline | TSKindId.Blankline | TSKindId.DoubleBlankline }
+	>;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.

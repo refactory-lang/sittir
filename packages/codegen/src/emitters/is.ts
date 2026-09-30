@@ -139,6 +139,7 @@ export function emitIs(config: EmitIsConfig): string {
 		guardKey: string;
 		memberKinds: string[];
 		memberIds: number[];
+		memberKindIds: string[];
 	}> = [];
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!(node instanceof AssembledSupertype)) continue;
@@ -149,17 +150,20 @@ export function emitIs(config: EmitIsConfig): string {
 		const guardKey = safeGuardKey(camel);
 		const memberKinds: string[] = [];
 		const memberIds: number[] = [];
+		const memberKindIds: string[] = [];
 		for (const sub of st.subtypeNames) {
 			const subNode = nodeMap.nodes.get(sub);
 			if (!subNode) continue;
 			memberKinds.push(sub);
 			const numId = kindIdOf(sub);
 			if (numId !== undefined) memberIds.push(numId);
+			const member = kindEntries ? findOwnKindEntry(kindEntries, sub)?.member : undefined;
+			if (member !== undefined) memberKindIds.push(`TSKindId.${member}`);
 		}
 		if (memberKinds.length === 0) continue;
 		if (usedCamelKeys.has(guardKey)) continue;
 		usedCamelKeys.add(guardKey);
-		supertypes.push({ kind, typeName, guardKey, memberKinds, memberIds });
+		supertypes.push({ kind, typeName, guardKey, memberKinds, memberIds, memberKindIds });
 	}
 
 	const typeImports = new Set<string>();
@@ -196,8 +200,9 @@ export function emitIs(config: EmitIsConfig): string {
 		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };`
 	);
 	for (const s of supertypes) {
+		const discriminant = s.memberKindIds.length > 0 ? s.memberKindIds.join(' | ') : 'string | number';
 		lines.push(
-			`    ${s.guardKey}(v: { readonly $type: string | number } | number): v is ${s.typeName}.Bound | ${s.typeName}.Parsed;`
+			`    ${s.guardKey}<T extends { readonly $type: string | number } | number>(v: T): v is Extract<T, { readonly $type: ${discriminant} }>;`
 		);
 	}
 	lines.push('}');

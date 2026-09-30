@@ -65,15 +65,51 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeExpressionArm };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	definition(v: { readonly $type: string | number } | number): v is Definition.Bound | Definition.Parsed;
-	groupExpression(v: { readonly $type: string | number } | number): v is GroupExpression.Bound | GroupExpression.Parsed;
-	namedNodeExpression(
-		v: { readonly $type: string | number } | number
-	): v is NamedNodeExpression.Bound | NamedNodeExpression.Parsed;
-	nodeIdentifier(v: { readonly $type: string | number } | number): v is NodeIdentifier.Bound | NodeIdentifier.Parsed;
-	namedNode(v: { readonly $type: string | number } | number): v is NamedNode.Bound | NamedNode.Parsed;
-	namedNodeGroup(v: { readonly $type: string | number } | number): v is NamedNodeGroup.Bound | NamedNodeGroup.Parsed;
-	whitespace(v: { readonly $type: string | number } | number): v is Whitespace.Bound | Whitespace.Parsed;
+	definition<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.AnonymousNode
+				| TSKindId.MissingNode
+				| TSKindId.Grouping
+				| TSKindId.Predicate
+				| TSKindId.List
+				| TSKindId.FieldDefinition;
+		}
+	>;
+	groupExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.GroupExpressionArm }>;
+	namedNodeExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.NegatedField | TSKindId.NamedNodeExpressionArm }>;
+	nodeIdentifier<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.Identifier }>;
+	namedNode<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.NamedNodePlain | TSKindId.NamedNodeSupertyped }>;
+	namedNodeGroup<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.NamedNodeGroupChildren | TSKindId.NamedNodeGroupAnchoredLast }>;
+	whitespace<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.Tight
+				| TSKindId.Space
+				| TSKindId.Tab
+				| TSKindId.Newline
+				| TSKindId.Blankline
+				| TSKindId.DoubleBlankline
+				| TSKindId.Indent
+				| TSKindId.Dedent;
+		}
+	>;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.

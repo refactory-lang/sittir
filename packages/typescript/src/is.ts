@@ -518,55 +518,326 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExportStatementEqualsExport };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	exportStatement(v: { readonly $type: string | number } | number): v is ExportStatement.Bound | ExportStatement.Parsed;
-	moduleExportName(
-		v: { readonly $type: string | number } | number
-	): v is ModuleExportName.Bound | ModuleExportName.Parsed;
-	declaration(v: { readonly $type: string | number } | number): v is Declaration.Bound | Declaration.Parsed;
-	importSpecifier(v: { readonly $type: string | number } | number): v is ImportSpecifier.Bound | ImportSpecifier.Parsed;
-	statement(v: { readonly $type: string | number } | number): v is Statement.Bound | Statement.Parsed;
-	variableDeclarator(
-		v: { readonly $type: string | number } | number
-	): v is VariableDeclarator.Bound | VariableDeclarator.Parsed;
-	forHeader(v: { readonly $type: string | number } | number): v is ForHeader.Bound | ForHeader.Parsed;
-	parenthesizedExpression(
-		v: { readonly $type: string | number } | number
-	): v is ParenthesizedExpression.Bound | ParenthesizedExpression.Parsed;
-	expressions(v: { readonly $type: string | number } | number): v is Expressions.Bound | Expressions.Parsed;
-	expression(v: { readonly $type: string | number } | number): v is Expression.Bound | Expression.Parsed;
-	primaryExpression(
-		v: { readonly $type: string | number } | number
-	): v is PrimaryExpression.Bound | PrimaryExpression.Parsed;
-	formalParameter(v: { readonly $type: string | number } | number): v is FormalParameter.Bound | FormalParameter.Parsed;
-	callExpression(v: { readonly $type: string | number } | number): v is CallExpression.Bound | CallExpression.Parsed;
-	augmentedAssignmentLhs(
-		v: { readonly $type: string | number } | number
-	): v is AugmentedAssignmentLhs.Bound | AugmentedAssignmentLhs.Parsed;
-	destructuringPattern(
-		v: { readonly $type: string | number } | number
-	): v is DestructuringPattern.Bound | DestructuringPattern.Parsed;
-	updateExpression(
-		v: { readonly $type: string | number } | number
-	): v is UpdateExpression.Bound | UpdateExpression.Parsed;
-	string(v: { readonly $type: string | number } | number): v is String.Bound | String.Parsed;
-	comment(v: { readonly $type: string | number } | number): v is Comment.Bound | Comment.Parsed;
-	number(v: { readonly $type: string | number } | number): v is Number.Bound | Number.Parsed;
-	identifier(v: { readonly $type: string | number } | number): v is _Identifier.Bound | _Identifier.Parsed;
-	metaProperty(v: { readonly $type: string | number } | number): v is MetaProperty.Bound | MetaProperty.Parsed;
-	pattern(v: { readonly $type: string | number } | number): v is Pattern.Bound | Pattern.Parsed;
-	propertyName(v: { readonly $type: string | number } | number): v is PropertyName.Bound | PropertyName.Parsed;
-	importIdentifier(
-		v: { readonly $type: string | number } | number
-	): v is ImportIdentifier.Bound | ImportIdentifier.Parsed;
-	type(v: { readonly $type: string | number } | number): v is Type.Bound | Type.Parsed;
-	tupleTypeMember(v: { readonly $type: string | number } | number): v is TupleTypeMember.Bound | TupleTypeMember.Parsed;
-	primaryType(v: { readonly $type: string | number } | number): v is PrimaryType.Bound | PrimaryType.Parsed;
-	indexSignature(v: { readonly $type: string | number } | number): v is IndexSignature.Bound | IndexSignature.Parsed;
-	whitespace(v: { readonly $type: string | number } | number): v is Whitespace.Bound | Whitespace.Parsed;
-	exportStatementDefault(
-		v: { readonly $type: string | number } | number
-	): v is ExportStatementDefault.Bound | ExportStatementDefault.Parsed;
-	numberBigint(v: { readonly $type: string | number } | number): v is NumberBigint.Bound | NumberBigint.Parsed;
+	exportStatement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.ExportStatementTypeExport
+				| TSKindId.ExportStatementEqualsExport
+				| TSKindId.ExportStatementNamespaceExport;
+		}
+	>;
+	moduleExportName<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.Identifier }>;
+	declaration<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.FunctionDeclaration
+				| TSKindId.GeneratorFunctionDeclaration
+				| TSKindId.ClassDeclaration
+				| TSKindId.LexicalDeclaration
+				| TSKindId.VariableDeclaration
+				| TSKindId.FunctionSignature
+				| TSKindId.AbstractClassDeclaration
+				| TSKindId.Module
+				| TSKindId.InternalModule
+				| TSKindId.TypeAliasDeclaration
+				| TSKindId.EnumDeclaration
+				| TSKindId.InterfaceDeclaration
+				| TSKindId.ImportAlias
+				| TSKindId.AmbientDeclaration;
+		}
+	>;
+	importSpecifier<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.ImportSpecifierName | TSKindId.ImportSpecifierAs }>;
+	statement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.ImportStatement
+				| TSKindId.DebuggerStatement
+				| TSKindId.ExpressionStatement
+				| TSKindId.StatementBlock
+				| TSKindId.IfStatement
+				| TSKindId.SwitchStatement
+				| TSKindId.ForStatement
+				| TSKindId.ForInStatement
+				| TSKindId.WhileStatement
+				| TSKindId.DoStatement
+				| TSKindId.TryStatement
+				| TSKindId.WithStatement
+				| TSKindId.BreakStatement
+				| TSKindId.ContinueStatement
+				| TSKindId.ReturnStatement
+				| TSKindId.ThrowStatement
+				| TSKindId.EmptyStatement
+				| TSKindId.LabeledStatement;
+		}
+	>;
+	variableDeclarator<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.VariableDeclaratorPlain | TSKindId.VariableDeclaratorDefinite }>;
+	forHeader<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{ readonly $type: TSKindId.ForHeaderLhs | TSKindId.ForHeaderVarKind | TSKindId.ForHeaderLetConstKind }
+	>;
+	parenthesizedExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{ readonly $type: TSKindId.ParenthesizedExpressionTyped | TSKindId.ParenthesizedExpressionSequence }
+	>;
+	expressions<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.SequenceExpression }>;
+	expression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.AsExpression
+				| TSKindId.SatisfiesExpression
+				| TSKindId.InstantiationExpression
+				| TSKindId.InternalModule
+				| TSKindId.TypeAssertion
+				| TSKindId.AssignmentExpression
+				| TSKindId.AugmentedAssignmentExpression
+				| TSKindId.AwaitExpression
+				| TSKindId.UnaryExpression
+				| TSKindId.BinaryExpression
+				| TSKindId.TernaryExpression
+				| TSKindId.NewExpression
+				| TSKindId.YieldExpression;
+		}
+	>;
+	primaryExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.SubscriptExpression
+				| TSKindId.MemberExpression
+				| TSKindId.Undefined
+				| TSKindId.Identifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+				| TSKindId.This
+				| TSKindId.Super
+				| TSKindId.TemplateString
+				| TSKindId.Regex
+				| TSKindId.True
+				| TSKindId.False
+				| TSKindId.Null
+				| TSKindId.Object
+				| TSKindId.Array
+				| TSKindId.FunctionExpression
+				| TSKindId.ArrowFunction
+				| TSKindId.GeneratorFunction
+				| TSKindId.Class
+				| TSKindId.NonNullExpression;
+		}
+	>;
+	formalParameter<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.RequiredParameter | TSKindId.OptionalParameter }>;
+	callExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type: TSKindId.CallExpressionCall | TSKindId.CallExpressionTemplateCall | TSKindId.CallExpressionMember;
+		}
+	>;
+	augmentedAssignmentLhs<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.MemberExpression
+				| TSKindId.SubscriptExpression
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+				| TSKindId.Identifier
+				| TSKindId.NonNullExpression;
+		}
+	>;
+	destructuringPattern<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.ObjectPattern | TSKindId.ArrayPattern }>;
+	updateExpression<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix }>;
+	string<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.StringDouble | TSKindId.StringSingle }>;
+	comment<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.CommentLine | TSKindId.CommentBlock }>;
+	number<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.NumberHex
+				| TSKindId.NumberFloatPoint
+				| TSKindId.NumberFloatLeadingPoint
+				| TSKindId.NumberFloatScientific
+				| TSKindId.NumberDecimal
+				| TSKindId.NumberBinary
+				| TSKindId.NumberOctal;
+		}
+	>;
+	identifier<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.Undefined | TSKindId.Identifier }>;
+	metaProperty<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.MetaPropertyNewTarget | TSKindId.MetaPropertyImportMeta }>;
+	pattern<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.LhsExpression | TSKindId.RestPattern }>;
+	propertyName<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.PrivatePropertyIdentifier | TSKindId.ComputedPropertyName }>;
+	importIdentifier<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.Identifier | TSKindId.TypeKeyword }>;
+	type<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{ readonly $type: TSKindId.FunctionType | TSKindId.ReadonlyType | TSKindId.ConstructorType | TSKindId.InferType }
+	>;
+	tupleTypeMember<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.TupleParameter
+				| TSKindId.OptionalTupleParameter
+				| TSKindId.OptionalType
+				| TSKindId.RestType;
+		}
+	>;
+	primaryType<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.ParenthesizedType
+				| TSKindId.PredefinedType
+				| TSKindId.NestedTypeIdentifier
+				| TSKindId.GenericType
+				| TSKindId.ObjectType
+				| TSKindId.ArrayType
+				| TSKindId.TupleType
+				| TSKindId.FlowMaybeType
+				| TSKindId.TypeQuery
+				| TSKindId.IndexTypeQuery
+				| TSKindId.This
+				| TSKindId.ExistentialType
+				| TSKindId.LiteralType
+				| TSKindId.LookupType
+				| TSKindId.ConditionalType
+				| TSKindId.TemplateLiteralType
+				| TSKindId.IntersectionType
+				| TSKindId.UnionType;
+		}
+	>;
+	indexSignature<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: TSKindId.IndexSignatureColon | TSKindId.IndexSignatureMappedTypeClause }>;
+	whitespace<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.Tight
+				| TSKindId.Space
+				| TSKindId.Tab
+				| TSKindId.Newline
+				| TSKindId.Blankline
+				| TSKindId.DoubleBlankline
+				| TSKindId.Indent
+				| TSKindId.Dedent;
+		}
+	>;
+	exportStatementDefault<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{ readonly $type: TSKindId.ExportStatementDefaultFrom | TSKindId.ExportStatementDefaultDeclaration }
+	>;
+	numberBigint<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is Extract<
+		T,
+		{
+			readonly $type:
+				| TSKindId.NumberBigintHex
+				| TSKindId.NumberBigintBinary
+				| TSKindId.NumberBigintOctal
+				| TSKindId.NumberBigintDecimal;
+		}
+	>;
 }
 
 // Runtime: kind guards compare numeric TSKindId only.
