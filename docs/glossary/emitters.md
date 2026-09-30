@@ -15128,11 +15128,12 @@ splicing it too would flatten its one key onto the parent and leave the
 arm with no spelling to reach it by. Such an (unlabelled) group is not an
 arm — there is nothing to choose between — and has no name a caller would
 type; its keys are flattened onto the parent's `strict` by the overlay
-(`flattenShape`), present as a whole or absent as a whole. A parent with two such seats gets none and the
-census reports it. A group whose keys collide with one of the parent's own
-slots is not a seat either: the flatten could not tell the parent's `left`
-from the group's (typescript `_binary_expression_in`), so the group stays
-unseated and the census reports it. A direct-shaped group (one slot, taken positionally by its factory) is a
+(`flattenShape`), present as a whole or absent as a whole. A parent with two such seats fails the emit with a diagnostic naming both groups, since flattening one would
+hide the other. A group whose keys collide with one of the parent's own slots
+fails the emit too, naming the key: the flatten could not tell the parent's `left`
+from the group's, and a group that should flatten must not silently stay
+whole. A key that spells the seat's own slot is the one exception; it is not a
+collision, since the group's value is what that slot reads. A direct-shaped group (one slot, taken positionally by its factory) is a
 flatten with one key: the seat records `directKey` and `flattenShape` builds
 the group from that key's value alone (python `slice.step`, `except_clause.exception`,
 typescript `_import_clause_default_import.import_clause_group`). A forwarded
@@ -16479,7 +16480,7 @@ The closing half of `seatOpening`: the specs of the seat runtimes, in reverse ne
 
 ### `packages/codegen/src/emitters/factories.ts::groupSeatHint`
 
-The facts a node's flattened group needs for its node surface: the slot that seats the group, the group's type and kind, its raw factory, whether the seat is optional, and the group's config keys (each marked when its setter takes rest arguments). Defined exactly when `flattenSeatOf` names a seat, the fact that gives the strict factory its flattened config keys, so the config surface and the node surface cannot disagree about which kinds flatten a group or which keys it flattens. A key that spells the seat's own slot is not a collision: it reads the group's inner value, and its setter takes the inner value or the whole group. A key that spells a different slot of the parent is unreachable, because `flattenSeatOf` declines such a seat; the emitter throws if one is ever seated.
+The facts a node's flattened group needs for its node surface: the slot that seats the group, the group's type and kind, its raw factory, whether the seat is optional, and the group's config keys (each marked when its setter takes rest arguments). Defined exactly when `flattenSeatOf` names a seat, the fact that gives the strict factory its flattened config keys, so the config surface and the node surface cannot disagree about which kinds flatten a group or which keys it flattens. A key that spells the seat's own slot is not a collision: it reads the group's inner value, and its setter takes the inner value or the whole group. A key that spells a different slot of the parent never reaches it: `flattenSeatOf` fails the emit for such a seat.
 
 ### `packages/codegen/src/emitters/factories.ts::groupSeatRuntimeSpec`
 

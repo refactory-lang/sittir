@@ -444,18 +444,18 @@ describe('flattenSeatOf on a direct-shaped group', () => {
 	});
 });
 
-describe('flattenSeatOf refuses a group whose keys collide with the parent', () => {
-	it('leaves a group unseated when one of its keys is also a slot of the parent', () => {
+describe('flattenSeatOf fails a group whose keys collide with the parent', () => {
+	it('names the collision when one of the group keys is also a slot of the parent', () => {
 		const nodeMap = buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'binary' }] },
 			binary: {
 				type: SEQ,
 				members: [
 					{ type: FIELD, name: 'left', content: { type: PATTERN, value: '[a-z]+' } },
-					{ type: OPTIONAL, content: { type: SYMBOL, name: '_binary_in' } }
+					{ type: OPTIONAL, content: { type: SYMBOL, name: 'binary_in' } }
 				]
 			},
-			_binary_in: {
+			binary_in: {
 				type: SEQ,
 				members: [
 					{ type: FIELD, name: 'left', content: { type: PATTERN, value: '[a-z]+' } },
@@ -465,7 +465,9 @@ describe('flattenSeatOf refuses a group whose keys collide with the parent', () 
 				annotations: { hoisted: true }
 			}
 		});
-		expect(flattenSeatOf(nodeMap.nodes.get('binary')!, nodeMap)).toBeUndefined();
+		expect(() => flattenSeatOf(nodeMap.nodes.get('binary')!, nodeMap)).toThrow(
+			/'binary' seats 'binary_in' in '\w+', and the group's key 'left' collides with another slot of the parent/
+		);
 	});
 });
 
@@ -498,5 +500,33 @@ describe('a hoisted token the factories do not emit mounts as a value arm', () =
 		const arm = set.entries.find((e) => e.name === 'const');
 		expect(arm?.arm.via).toBe('value');
 		expect(arm?.arm.via === 'value' ? arm.arm.storage.text : undefined).toBe('const');
+	});
+});
+
+describe('flattenSeatOf fails a parent that seats two flattenable groups', () => {
+	it('names both groups instead of flattening neither', () => {
+		const nodeMap = buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'clause' }] },
+			clause: {
+				type: SEQ,
+				members: [
+					{ type: OPTIONAL, content: { type: SYMBOL, name: 'first_group' } },
+					{ type: OPTIONAL, content: { type: SYMBOL, name: 'second_group' } }
+				]
+			},
+			first_group: {
+				type: SEQ,
+				members: [{ type: STRING, value: '(' }, { type: FIELD, name: 'parameter', content: { type: PATTERN, value: '[a-z]+' } }, { type: FIELD, name: 'label', content: { type: PATTERN, value: '[a-z]+' } }],
+				annotations: { hoisted: true }
+			},
+			second_group: {
+				type: SEQ,
+				members: [{ type: STRING, value: '[' }, { type: FIELD, name: 'size', content: { type: PATTERN, value: '[0-9]+' } }, { type: FIELD, name: 'unit', content: { type: PATTERN, value: '[a-z]+' } }],
+				annotations: { hoisted: true }
+			}
+		});
+		expect(() => flattenSeatOf(nodeMap.nodes.get('clause')!, nodeMap)).toThrow(
+			/'clause' seats more than one flattenable group \('first_group' in '\w+', 'second_group' in '\w+'\)/
+		);
 	});
 });

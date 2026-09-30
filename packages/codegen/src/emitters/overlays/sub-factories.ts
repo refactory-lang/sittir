@@ -301,10 +301,20 @@ export function flattenSeatOf(node: AssembledNode, nodeMap: NodeMap): FlattenSea
 		const keys = shape === 'config' ? configKeysOf(group) : direct === undefined ? undefined : [direct.configKey];
 		if (keys === undefined) continue;
 		const own = new Set(node.slots.filter((f) => f !== slot).map((f) => f.configKey));
-		if (keys.some((k) => own.has(k))) continue;
+		const clash = keys.find((k) => own.has(k));
+		if (clash !== undefined) {
+			throw new Error(
+				`flattenSeatOf: '${node.kind}' seats '${group.kind}' in '${slot.propertyName}', and the group's key '${clash}' collides with another slot of the parent`
+			);
+		}
 		seats.push(direct === undefined ? { slot, group } : { slot, group, directKey: direct.configKey });
 	}
-	return seats.length === 1 ? seats[0] : undefined;
+	if (seats.length > 1) {
+		throw new Error(
+			`flattenSeatOf: '${node.kind}' seats more than one flattenable group (${seats.map((seat) => `'${seat.group.kind}' in '${seat.slot.propertyName}'`).join(', ')})`
+		);
+	}
+	return seats[0];
 }
 
 export function elementsSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly FlattenSeat[] {

@@ -1643,14 +1643,7 @@ export function groupSeatHint(
 		(builtTypeSurfaceOf(seat.group, nodeMap, kindEntries)?.setters ?? []).filter((setter) => setter.rest).map((setter) => setter.name)
 	);
 	const seated = seat.directKey === undefined ? seat.group.slots : seat.group.slots.filter((slot) => slot.configKey === seat.directKey);
-	const own = new Set(node.slots.filter((slot) => slot !== seat.slot).map((slot) => slot.propertyName));
 	const keys = seated.map((slot) => ({ name: slot.propertyName, rest: restKeys.has(slot.propertyName) }));
-	const clash = keys.find((key) => own.has(key.name));
-	if (clash !== undefined) {
-		throw new Error(
-			`groupSeatHint: '${node.kind}' seats '${seat.group.kind}' in '${seat.slot.propertyName}', and the group's '${clash.name}' collides with another slot of the parent`
-		);
-	}
 	return {
 		slot: seat.slot.propertyName,
 		group: seat.group.typeName,
