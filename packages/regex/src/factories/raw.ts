@@ -252,7 +252,7 @@ export function buildPosixCharacterClass(
 ): ReturnType<typeof _buildPosixCharacterClass>;
 export function buildPosixCharacterClass(text: string): ReturnType<typeof _buildPosixCharacterClass>;
 export function buildPosixCharacterClass(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildPosixCharacterClass(args[0] as T.PosixClassName);
 	}
 	const prebuilt =
@@ -274,7 +274,7 @@ function _buildPosixCharacterClass(value: AdmitBound<T.PosixClassName, T.Admitte
 				$named: true as const,
 				_posix_class_name,
 				$with: {
-					posixClassName: (value: T.PosixClassName) => buildPosixCharacterClass(value)
+					posixClassName: (value: T.PosixClassName) => _buildPosixCharacterClass(value)
 				}
 			},
 			{
@@ -347,7 +347,7 @@ export function buildAnonymousCapturingGroup(
 	value: AdmitBound<T.Alternation | T.Term, T.AdmittedNodes>
 ): ReturnType<typeof _buildAnonymousCapturingGroup>;
 export function buildAnonymousCapturingGroup(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildAnonymousCapturingGroup(args[0] as T.Pattern);
 	}
 	const prebuilt =
@@ -369,7 +369,7 @@ function _buildAnonymousCapturingGroup(value: AdmitBound<T.Pattern, T.AdmittedNo
 				$named: true as const,
 				_pattern,
 				$with: {
-					pattern: (value: T.Pattern) => buildAnonymousCapturingGroup(value)
+					pattern: (value: T.Pattern) => _buildAnonymousCapturingGroup(value)
 				}
 			},
 			{
@@ -418,7 +418,7 @@ export function buildNonCapturingGroup(
 	value: AdmitBound<T.Alternation | T.Term, T.AdmittedNodes>
 ): ReturnType<typeof _buildNonCapturingGroup>;
 export function buildNonCapturingGroup(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildNonCapturingGroup(args[0] as T.Pattern);
 	}
 	const prebuilt =
@@ -440,7 +440,7 @@ function _buildNonCapturingGroup(value: AdmitBound<T.Pattern, T.AdmittedNodes>):
 				$named: true as const,
 				_pattern,
 				$with: {
-					pattern: (value: T.Pattern) => buildNonCapturingGroup(value)
+					pattern: (value: T.Pattern) => _buildNonCapturingGroup(value)
 				}
 			},
 			{
@@ -528,7 +528,7 @@ export function buildBackreferenceEscape(
 ): ReturnType<typeof _buildBackreferenceEscape>;
 export function buildBackreferenceEscape(text: string): ReturnType<typeof _buildBackreferenceEscape>;
 export function buildBackreferenceEscape(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildBackreferenceEscape(args[0] as T.GroupName);
 	}
 	const prebuilt =
@@ -550,7 +550,7 @@ function _buildBackreferenceEscape(value: AdmitBound<T.GroupName, T.AdmittedNode
 				$named: true as const,
 				_group_name,
 				$with: {
-					groupName: (value: T.GroupName) => buildBackreferenceEscape(value)
+					groupName: (value: T.GroupName) => _buildBackreferenceEscape(value)
 				}
 			},
 			{
@@ -565,7 +565,7 @@ export function buildNamedGroupBackreference(
 ): ReturnType<typeof _buildNamedGroupBackreference>;
 export function buildNamedGroupBackreference(text: string): ReturnType<typeof _buildNamedGroupBackreference>;
 export function buildNamedGroupBackreference(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildNamedGroupBackreference(args[0] as T.GroupName);
 	}
 	const prebuilt =
@@ -589,7 +589,7 @@ function _buildNamedGroupBackreference(
 				$named: true as const,
 				_group_name,
 				$with: {
-					groupName: (value: T.GroupName) => buildNamedGroupBackreference(value)
+					groupName: (value: T.GroupName) => _buildNamedGroupBackreference(value)
 				}
 			},
 			{
@@ -815,7 +815,7 @@ export function buildCountQuantifierGroup(
 	text: string | number | bigint
 ): ReturnType<typeof _buildCountQuantifierGroup>;
 export function buildCountQuantifierGroup(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildCountQuantifierGroup(args[0] as T.DecimalDigits);
 	}
 	const prebuilt =
@@ -839,7 +839,7 @@ function _buildCountQuantifierGroup(
 				$named: true as const,
 				_decimal_digits,
 				$with: {
-					decimalDigits: (value?: T.DecimalDigits) => buildCountQuantifierGroup(value)
+					decimalDigits: (value?: T.DecimalDigits) => _buildCountQuantifierGroup(value)
 				}
 			},
 			{
@@ -925,7 +925,7 @@ export function buildUnicodePropertyValueExpressionGroup(
 	value: AdmitBound<T.UnicodePropertyValue, T.AdmittedNodes>
 ): ReturnType<typeof _buildUnicodePropertyValueExpressionGroup>;
 export function buildUnicodePropertyValueExpressionGroup(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildUnicodePropertyValueExpressionGroup(args[0] as T.UnicodePropertyName | T.UnicodePropertyName.Types);
 	}
 	const prebuilt =
@@ -958,7 +958,7 @@ function _buildUnicodePropertyValueExpressionGroup(
 				_unicode_property_name,
 				$with: {
 					unicodePropertyName: (value: T.UnicodePropertyName | T.UnicodePropertyName.Types) =>
-						buildUnicodePropertyValueExpressionGroup(value)
+						_buildUnicodePropertyValueExpressionGroup(value)
 				}
 			},
 			{

@@ -51,7 +51,7 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 		source: 'packages/tools/tests/emit/__fixtures__/keyword-openers.rs',
 		stem: '20-keyword-openers-rust',
 		name: 'KeywordOpenersRust',
-		surfaces: ['strict'],
+		surfaces: ['strict', 'loose'],
 		rendered: 'keyword-openers-rust.rendered'
 	},
 	{
@@ -59,7 +59,7 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 		source: 'packages/tools/tests/emit/__fixtures__/keyword-openers.ts',
 		stem: '20-keyword-openers-typescript',
 		name: 'KeywordOpenersTypescript',
-		surfaces: ['strict'],
+		surfaces: ['strict', 'loose'],
 		rendered: 'keyword-openers-typescript.rendered'
 	},
 	{
@@ -67,7 +67,7 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 		source: 'packages/tools/tests/emit/__fixtures__/keyword-openers.py',
 		stem: '20-keyword-openers-python',
 		name: 'KeywordOpenersPython',
-		surfaces: ['strict'],
+		surfaces: ['strict', 'loose'],
 		rendered: 'keyword-openers-python.rendered'
 	},
 	{
@@ -83,7 +83,7 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 		source: 'packages/tools/tests/emit/__fixtures__/trivia.rs',
 		stem: '22-trivia-rust',
 		name: 'TriviaRust',
-		surfaces: ['strict'],
+		surfaces: ['strict', 'loose'],
 		rendered: 'trivia-rust.rendered'
 	},
 	{
@@ -91,7 +91,7 @@ export const DOGFOOD_TARGETS: readonly DogfoodTarget[] = [
 		source: 'packages/tools/tests/emit/__fixtures__/trivia.ts',
 		stem: '22-trivia-typescript',
 		name: 'TriviaTypescript',
-		surfaces: ['strict'],
+		surfaces: ['strict', 'loose'],
 		rendered: 'trivia-typescript.rendered'
 	}
 ];

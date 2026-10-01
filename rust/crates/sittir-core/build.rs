@@ -12,10 +12,10 @@
 //! a warm cargo cache (local, or CI's Swatinem/rust-cache) skips
 //! sittir-core recompilation, its type defs never reach the current build's
 //! tmp folder, and `Edit`/`Span` silently vanish from
-//! `rust/crates/sittir-{rust,typescript,python}/index.d.ts` —
+//! `packages/{rust,typescript,python}/native/index.d.ts` —
 //! nondeterministically, per whichever grammar build lost the race.
 //! `assertGeneratedManifestsClean` then fails CI with
-//! `MODIFIED: rust/crates/sittir-<grammar>/index.d.ts`.
+//! `MODIFIED: packages/<grammar>/native/index.d.ts`.
 //!
 //! Emitting the two markers directly (rather than pulling in the full
 //! `napi-build` crate) avoids `setup()`'s cdylib linker flags, which don't

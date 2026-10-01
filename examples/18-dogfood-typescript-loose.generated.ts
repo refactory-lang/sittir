@@ -2,201 +2,201 @@
 import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 
-const { build, kinds } = await createEngine(typescript);
+const ts = await createEngine(typescript);
 
 export function rebuildFormatLoose() {
-	return build.program({
-		statements: [build.importStatement.clauseFrom({
-			importClause: kinds.TypeKeyword,
+	return ts.build.program({
+		statements: [ts.build.importStatement.clauseFrom({
+			importClause: ts.kinds.TypeKeyword,
 			fromClause: {
-				importClause: build.namedImports([build.importSpecifier.name({
+				importClause: ts.build.namedImports([ts.build.importSpecifier.name({
 					name: "FormatRecord",
-				}), build.importSpecifier.name({
+				}), ts.build.importSpecifier.name({
 					name: "FormatTrivia",
 				})]),
-				source: build.string.single("@sittir/types"),
+				source: ts.build.string.single("@sittir/types"),
 			},
 		}, {
-			terminator: kinds.Semi,
-		}), build.exportStatement.default.declaration({
-			content: build.functionDeclaration({
+			terminator: ts.kinds.Semi,
+		}), ts.build.exportStatement.default.declaration({
+			content: ts.build.functionDeclaration({
 				name: "applyFormat",
-				parameters: [build.requiredParameter({
+				parameters: [ts.build.requiredParameter({
 					pattern: "canonicalRender",
-					type: kinds.StringKeyword,
-				}), build.requiredParameter({
+					type: ts.kinds.StringKeyword,
+				}), ts.build.requiredParameter({
 					pattern: "format",
 					type: "FormatRecord",
 				})],
-				returnType: kinds.StringKeyword,
-				body: build.statementBlock({
-					statements: [build.lexicalDeclaration({
-						kind: kinds.LetKeyword,
-						declarators: [build.variableDeclarator.plain({
+				returnType: ts.kinds.StringKeyword,
+				body: ts.build.statementBlock({
+					statements: [ts.build.lexicalDeclaration({
+						kind: ts.kinds.LetKeyword,
+						declarators: [ts.build.variableDeclarator.plain({
 							name: "result",
 							value: "canonicalRender",
 						})],
 					}, {
-						terminator: kinds.Semi,
-					}), build.expressionStatement(build.assignmentExpression({
+						terminator: ts.kinds.Semi,
+					}), ts.build.expressionStatement(ts.build.assignmentExpression({
 						left: "result",
-						right: build.callExpression.call({
+						right: ts.build.callExpression.call({
 							function: "applyTrivia",
 							arguments: ["result", "format"],
 						}),
 					}), {
-						terminator: kinds.Semi,
-					}), build.expressionStatement(build.assignmentExpression({
+						terminator: ts.kinds.Semi,
+					}), ts.build.expressionStatement(ts.build.assignmentExpression({
 						left: "result",
-						right: build.callExpression.call({
+						right: ts.build.callExpression.call({
 							function: "applyBoundary",
 							arguments: ["result", "format"],
 						}),
 					}), {
-						terminator: kinds.Semi,
-					}), build.returnStatement(build.identifier("result"), {
-						terminator: kinds.Semi,
+						terminator: ts.kinds.Semi,
+					}), ts.build.returnStatement(ts.build.identifier("result"), {
+						terminator: ts.kinds.Semi,
 					})],
 					automaticSemicolon: true,
 				}),
 				automaticSemicolon: true,
 			}),
-		}).$trivia.leading(build.comment.block("*\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n *\n * @remarks\n * Steps:\n * 1. Insert `trivia` items at their recorded byte offsets (applied\n *    right-to-left to preserve earlier offsets). Offsets are\n *    canonical-relative, so trivia must be applied before boundary.\n * 2. Prepend `boundary.leading` and append `boundary.trailing`.\n * 3. `slots` and `literals` adjustments are reserved for future phases;\n *    if present they are noted but do not alter the output in Phase 1.\n ")), build.functionDeclaration({
+		}).$trivia.leading(ts.build.comment.block("*\n * Apply a {@link FormatRecord} to a canonical render string.\n *\n * @param canonicalRender - The template-canonical rendered string.\n * @param format - The format record to apply.\n * @returns The reconstructed string with boundary, trivia, slots, and\n *   literals applied.\n *\n * @remarks\n * Steps:\n * 1. Insert `trivia` items at their recorded byte offsets (applied\n *    right-to-left to preserve earlier offsets). Offsets are\n *    canonical-relative, so trivia must be applied before boundary.\n * 2. Prepend `boundary.leading` and append `boundary.trailing`.\n * 3. `slots` and `literals` adjustments are reserved for future phases;\n *    if present they are noted but do not alter the output in Phase 1.\n ")), ts.build.functionDeclaration({
 			name: "applyBoundary",
-			parameters: [build.requiredParameter({
+			parameters: [ts.build.requiredParameter({
 				pattern: "s",
-				type: kinds.StringKeyword,
-			}), build.requiredParameter({
+				type: ts.kinds.StringKeyword,
+			}), ts.build.requiredParameter({
 				pattern: "format",
 				type: "FormatRecord",
 			})],
-			returnType: kinds.StringKeyword,
-			body: build.statementBlock({
-				statements: [build.lexicalDeclaration({
-					kind: kinds.ConstKeyword,
-					declarators: [build.variableDeclarator.plain({
-						name: build.objectPattern("boundary"),
+			returnType: ts.kinds.StringKeyword,
+			body: ts.build.statementBlock({
+				statements: [ts.build.lexicalDeclaration({
+					kind: ts.kinds.ConstKeyword,
+					declarators: [ts.build.variableDeclarator.plain({
+						name: ts.build.objectPattern("boundary"),
 						value: "format",
 					})],
 				}, {
-					terminator: kinds.Semi,
-				}), build.ifStatement({
-					condition: build.parenthesizedExpression.typed({
-						expression: build.unaryExpression({
-							operator: kinds.Bang,
+					terminator: ts.kinds.Semi,
+				}), ts.build.ifStatement({
+					condition: ts.build.parenthesizedExpression.typed({
+						expression: ts.build.unaryExpression({
+							operator: ts.kinds.Bang,
 							argument: "boundary",
 						}),
 					}),
-					consequence: build.returnStatement(build.identifier("s"), {
-						terminator: kinds.Semi,
+					consequence: ts.build.returnStatement(ts.build.identifier("s"), {
+						terminator: ts.kinds.Semi,
 					}),
-				}), build.lexicalDeclaration({
-					kind: kinds.ConstKeyword,
-					declarators: [build.variableDeclarator.plain({
+				}), ts.build.lexicalDeclaration({
+					kind: ts.kinds.ConstKeyword,
+					declarators: [ts.build.variableDeclarator.plain({
 						name: "leading",
-						value: build.binaryExpression({
-							left: build.memberExpression({
+						value: ts.build.binaryExpression({
+							left: ts.build.memberExpression({
 								object: "boundary",
-								separator: kinds.Dot,
+								separator: ts.kinds.Dot,
 								property: "leading",
 							}),
-							operator: kinds.QmarkQmark,
-							right: build.string.single(),
+							operator: ts.kinds.QmarkQmark,
+							right: ts.build.string.single(),
 						}),
 					})],
 				}, {
-					terminator: kinds.Semi,
-				}), build.lexicalDeclaration({
-					kind: kinds.ConstKeyword,
-					declarators: [build.variableDeclarator.plain({
+					terminator: ts.kinds.Semi,
+				}), ts.build.lexicalDeclaration({
+					kind: ts.kinds.ConstKeyword,
+					declarators: [ts.build.variableDeclarator.plain({
 						name: "trailing",
-						value: build.binaryExpression({
-							left: build.memberExpression({
+						value: ts.build.binaryExpression({
+							left: ts.build.memberExpression({
 								object: "boundary",
-								separator: kinds.Dot,
+								separator: ts.kinds.Dot,
 								property: "trailing",
 							}),
-							operator: kinds.QmarkQmark,
-							right: build.string.single(),
+							operator: ts.kinds.QmarkQmark,
+							right: ts.build.string.single(),
 						}),
 					})],
 				}, {
-					terminator: kinds.Semi,
-				}), build.returnStatement(build.templateString(build.identifier("leading"), build.identifier("s"), build.identifier("trailing")), {
-					terminator: kinds.Semi,
+					terminator: ts.kinds.Semi,
+				}), ts.build.returnStatement(ts.build.templateString(ts.build.identifier("leading"), ts.build.identifier("s"), ts.build.identifier("trailing")), {
+					terminator: ts.kinds.Semi,
 				})],
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(build.comment.block("* Prepend/append boundary whitespace. ")), build.functionDeclaration({
+		}).$trivia.leading(ts.build.comment.block("* Prepend/append boundary whitespace. ")), ts.build.functionDeclaration({
 			name: "applyTrivia",
-			parameters: [build.requiredParameter({
+			parameters: [ts.build.requiredParameter({
 				pattern: "s",
-				type: kinds.StringKeyword,
-			}), build.requiredParameter({
+				type: ts.kinds.StringKeyword,
+			}), ts.build.requiredParameter({
 				pattern: "format",
 				type: "FormatRecord",
 			})],
-			returnType: kinds.StringKeyword,
-			body: build.statementBlock({
-				statements: [build.lexicalDeclaration({
-					kind: kinds.ConstKeyword,
-					declarators: [build.variableDeclarator.plain({
-						name: build.objectPattern("trivia"),
+			returnType: ts.kinds.StringKeyword,
+			body: ts.build.statementBlock({
+				statements: [ts.build.lexicalDeclaration({
+					kind: ts.kinds.ConstKeyword,
+					declarators: [ts.build.variableDeclarator.plain({
+						name: ts.build.objectPattern("trivia"),
 						value: "format",
 					})],
 				}, {
-					terminator: kinds.Semi,
-				}), build.ifStatement({
-					condition: build.parenthesizedExpression.typed({
-						expression: build.binaryExpression({
-							left: build.unaryExpression({
-								operator: kinds.Bang,
+					terminator: ts.kinds.Semi,
+				}), ts.build.ifStatement({
+					condition: ts.build.parenthesizedExpression.typed({
+						expression: ts.build.binaryExpression({
+							left: ts.build.unaryExpression({
+								operator: ts.kinds.Bang,
 								argument: "trivia",
 							}),
-							operator: kinds.PipePipe,
-							right: build.binaryExpression({
-								left: build.memberExpression({
+							operator: ts.kinds.PipePipe,
+							right: ts.build.binaryExpression({
+								left: ts.build.memberExpression({
 									object: "trivia",
-									separator: kinds.Dot,
+									separator: ts.kinds.Dot,
 									property: "length",
 								}),
-								operator: kinds.EqEqEq,
+								operator: ts.kinds.EqEqEq,
 								right: "0",
 							}),
 						}),
 					}),
-					consequence: build.returnStatement(build.identifier("s"), {
-						terminator: kinds.Semi,
+					consequence: ts.build.returnStatement(ts.build.identifier("s"), {
+						terminator: ts.kinds.Semi,
 					}),
-				}), build.lexicalDeclaration({
-					kind: kinds.ConstKeyword,
-					declarators: [build.variableDeclarator.plain({
+				}), ts.build.lexicalDeclaration({
+					kind: ts.kinds.ConstKeyword,
+					declarators: [ts.build.variableDeclarator.plain({
 						name: "sorted",
-						value: build.callExpression.call({
-							function: build.memberExpression({
-								object: build.array(build.spreadElement("trivia")),
-								separator: kinds.Dot,
+						value: ts.build.callExpression.call({
+							function: ts.build.memberExpression({
+								object: ts.build.array(ts.build.spreadElement("trivia")),
+								separator: ts.kinds.Dot,
 								property: "sort",
 							}),
-							arguments: build.arrowFunction({
-								content: build.callSignature({
-									parameters: [build.requiredParameter({
+							arguments: ts.build.arrowFunction({
+								content: ts.build.callSignature({
+									parameters: [ts.build.requiredParameter({
 										pattern: "a",
-									}), build.requiredParameter({
+									}), ts.build.requiredParameter({
 										pattern: "b",
 									})],
 								}),
-								body: build.binaryExpression({
-									left: build.memberExpression({
+								body: ts.build.binaryExpression({
+									left: ts.build.memberExpression({
 										object: "b",
-										separator: kinds.Dot,
+										separator: ts.kinds.Dot,
 										property: "offset",
 									}),
-									operator: kinds.Dash,
-									right: build.memberExpression({
+									operator: ts.kinds.Dash,
+									right: ts.build.memberExpression({
 										object: "a",
-										separator: kinds.Dot,
+										separator: ts.kinds.Dot,
 										property: "offset",
 									}),
 								}),
@@ -204,343 +204,343 @@ export function rebuildFormatLoose() {
 						}),
 					})],
 				}, {
-					terminator: kinds.Semi,
-				}), build.lexicalDeclaration({
-					kind: kinds.LetKeyword,
-					declarators: [build.variableDeclarator.plain({
+					terminator: ts.kinds.Semi,
+				}), ts.build.lexicalDeclaration({
+					kind: ts.kinds.LetKeyword,
+					declarators: [ts.build.variableDeclarator.plain({
 						name: "result",
 						value: "s",
 					})],
 				}, {
-					terminator: kinds.Semi,
-				}), build.forInStatement({
-					forHeader: build.forHeader.letConstKind({
-						kind: kinds.ConstKeyword,
+					terminator: ts.kinds.Semi,
+				}), ts.build.forInStatement({
+					forHeader: ts.build.forHeader.letConstKind({
+						kind: ts.kinds.ConstKeyword,
 						left: "item",
-						operator: kinds.OfKeyword,
+						operator: ts.kinds.OfKeyword,
 						right: "sorted",
 					}),
-					body: build.statementBlock({
-						statements: [build.lexicalDeclaration({
-							kind: kinds.ConstKeyword,
-							declarators: [build.variableDeclarator.plain({
+					body: ts.build.statementBlock({
+						statements: [ts.build.lexicalDeclaration({
+							kind: ts.kinds.ConstKeyword,
+							declarators: [ts.build.variableDeclarator.plain({
 								name: "offset",
-								value: build.callExpression.call({
-									function: build.memberExpression({
+								value: ts.build.callExpression.call({
+									function: ts.build.memberExpression({
 										object: "Math",
-										separator: kinds.Dot,
+										separator: ts.kinds.Dot,
 										property: "max",
 									}),
-									arguments: ["0", build.callExpression.call({
-										function: build.memberExpression({
+									arguments: ["0", ts.build.callExpression.call({
+										function: ts.build.memberExpression({
 											object: "Math",
-											separator: kinds.Dot,
+											separator: ts.kinds.Dot,
 											property: "min",
 										}),
-										arguments: [build.memberExpression({
+										arguments: [ts.build.memberExpression({
 											object: "item",
-											separator: kinds.Dot,
+											separator: ts.kinds.Dot,
 											property: "offset",
-										}), build.memberExpression({
+										}), ts.build.memberExpression({
 											object: "result",
-											separator: kinds.Dot,
+											separator: ts.kinds.Dot,
 											property: "length",
 										})],
 									})],
 								}),
 							})],
 						}, {
-							terminator: kinds.Semi,
-						}), build.expressionStatement(build.assignmentExpression({
+							terminator: ts.kinds.Semi,
+						}), ts.build.expressionStatement(ts.build.assignmentExpression({
 							left: "result",
-							right: build.binaryExpression({
-								left: build.binaryExpression({
-									left: build.callExpression.call({
-										function: build.memberExpression({
+							right: ts.build.binaryExpression({
+								left: ts.build.binaryExpression({
+									left: ts.build.callExpression.call({
+										function: ts.build.memberExpression({
 											object: "result",
-											separator: kinds.Dot,
+											separator: ts.kinds.Dot,
 											property: "slice",
 										}),
 										arguments: ["0", "offset"],
 									}),
-									operator: kinds.Plus,
-									right: build.memberExpression({
+									operator: ts.kinds.Plus,
+									right: ts.build.memberExpression({
 										object: "item",
-										separator: kinds.Dot,
+										separator: ts.kinds.Dot,
 										property: "text",
 									}),
 								}),
-								operator: kinds.Plus,
-								right: build.callExpression.call({
-									function: build.memberExpression({
+								operator: ts.kinds.Plus,
+								right: ts.build.callExpression.call({
+									function: ts.build.memberExpression({
 										object: "result",
-										separator: kinds.Dot,
+										separator: ts.kinds.Dot,
 										property: "slice",
 									}),
 									arguments: "offset",
 								}),
 							}),
 						}), {
-							terminator: kinds.Semi,
+							terminator: ts.kinds.Semi,
 						})],
 						automaticSemicolon: true,
 					}),
-				}), build.returnStatement(build.identifier("result"), {
-					terminator: kinds.Semi,
+				}), ts.build.returnStatement(ts.build.identifier("result"), {
+					terminator: ts.kinds.Semi,
 				})],
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(build.comment.block("*\n * Insert trivia items at their recorded byte offsets.\n * Items are applied in descending offset order so earlier offsets\n * are not invalidated.\n ")), build.exportStatement.default.declaration({
-			content: build.functionDeclaration({
+		}).$trivia.leading(ts.build.comment.block("*\n * Insert trivia items at their recorded byte offsets.\n * Items are applied in descending offset order so earlier offsets\n * are not invalidated.\n ")), ts.build.exportStatement.default.declaration({
+			content: ts.build.functionDeclaration({
 				name: "rebaseTrivia",
-				parameters: [build.requiredParameter({
+				parameters: [ts.build.requiredParameter({
 					pattern: "format",
 					type: "FormatRecord",
-				}), build.requiredParameter({
+				}), ts.build.requiredParameter({
 					pattern: "editStart",
-					type: kinds.NumberKeyword,
-				}), build.requiredParameter({
+					type: ts.kinds.NumberKeyword,
+				}), ts.build.requiredParameter({
 					pattern: "delta",
-					type: kinds.NumberKeyword,
+					type: ts.kinds.NumberKeyword,
 				})],
-				returnType: build.typeAnnotation("FormatRecord"),
-				body: build.statementBlock({
-					statements: [build.lexicalDeclaration({
-						kind: kinds.ConstKeyword,
-						declarators: [build.variableDeclarator.plain({
+				returnType: ts.build.typeAnnotation("FormatRecord"),
+				body: ts.build.statementBlock({
+					statements: [ts.build.lexicalDeclaration({
+						kind: ts.kinds.ConstKeyword,
+						declarators: [ts.build.variableDeclarator.plain({
 							name: "trivia",
-							value: build.callExpression.call({
+							value: ts.build.callExpression.call({
 								function: "rebaseTriviaItems",
-								arguments: [build.memberExpression({
+								arguments: [ts.build.memberExpression({
 									object: "format",
-									separator: kinds.Dot,
+									separator: ts.kinds.Dot,
 									property: "trivia",
 								}), "editStart", "delta"],
 							}),
 						})],
 					}, {
-						terminator: kinds.Semi,
-					}), build.lexicalDeclaration({
-						kind: kinds.ConstKeyword,
-						declarators: [build.variableDeclarator.plain({
+						terminator: ts.kinds.Semi,
+					}), ts.build.lexicalDeclaration({
+						kind: ts.kinds.ConstKeyword,
+						declarators: [ts.build.variableDeclarator.plain({
 							name: "kinds",
-							value: build.callExpression.call({
+							value: ts.build.callExpression.call({
 								function: "rebaseKinds",
-								arguments: [build.memberExpression({
+								arguments: [ts.build.memberExpression({
 									object: "format",
-									separator: kinds.Dot,
+									separator: ts.kinds.Dot,
 									property: "kinds",
 								}), "editStart", "delta"],
 							}),
 						})],
 					}, {
-						terminator: kinds.Semi,
-					}), build.returnStatement(build.object(build.spreadElement("format"), build.parenthesizedExpression.typed({
-						expression: build.binaryExpression({
-							left: build.binaryExpression({
+						terminator: ts.kinds.Semi,
+					}), ts.build.returnStatement(ts.build.object(ts.build.spreadElement("format"), ts.build.parenthesizedExpression.typed({
+						expression: ts.build.binaryExpression({
+							left: ts.build.binaryExpression({
 								left: "trivia",
-								operator: kinds.BangEqEq,
-								right: kinds.Undefined,
+								operator: ts.kinds.BangEqEq,
+								right: ts.kinds.Undefined,
 							}),
-							operator: kinds.AmpAmp,
-							right: build.object("trivia"),
+							operator: ts.kinds.AmpAmp,
+							right: ts.build.object("trivia"),
 						}),
-					}), build.parenthesizedExpression.typed({
-						expression: build.binaryExpression({
-							left: build.binaryExpression({
+					}), ts.build.parenthesizedExpression.typed({
+						expression: ts.build.binaryExpression({
+							left: ts.build.binaryExpression({
 								left: "kinds",
-								operator: kinds.BangEqEq,
-								right: kinds.Undefined,
+								operator: ts.kinds.BangEqEq,
+								right: ts.kinds.Undefined,
 							}),
-							operator: kinds.AmpAmp,
-							right: build.object("kinds"),
+							operator: ts.kinds.AmpAmp,
+							right: ts.build.object("kinds"),
 						}),
 					})), {
-						terminator: kinds.Semi,
+						terminator: ts.kinds.Semi,
 					})],
 					automaticSemicolon: true,
 				}),
 				automaticSemicolon: true,
 			}),
-		}).$trivia.leading(build.comment.block("*\n * Shift all {@link FormatTrivia} offsets that fall at or above `editStart`\n * by `delta` bytes, returning a shallow-cloned {@link FormatRecord}.\n *\n * Offsets below `editStart` are left unchanged. Sub-records in\n * `kinds` are rebased recursively with the same parameters.\n *\n * @param format - The source format record to rebase.\n * @param editStart - Absolute byte position of the edit boundary.\n * @param delta - Signed byte delta to apply (positive = insertion, negative = deletion).\n * @returns A new `FormatRecord` with adjusted trivia offsets.\n *\n * @remarks\n * RebaseTrivia is the single derivation for trivia offset adjustment\n * after any edit. Callers must not adjust offsets manually.\n ")), build.functionDeclaration({
+		}).$trivia.leading(ts.build.comment.block("*\n * Shift all {@link FormatTrivia} offsets that fall at or above `editStart`\n * by `delta` bytes, returning a shallow-cloned {@link FormatRecord}.\n *\n * Offsets below `editStart` are left unchanged. Sub-records in\n * `kinds` are rebased recursively with the same parameters.\n *\n * @param format - The source format record to rebase.\n * @param editStart - Absolute byte position of the edit boundary.\n * @param delta - Signed byte delta to apply (positive = insertion, negative = deletion).\n * @returns A new `FormatRecord` with adjusted trivia offsets.\n *\n * @remarks\n * RebaseTrivia is the single derivation for trivia offset adjustment\n * after any edit. Callers must not adjust offsets manually.\n ")), ts.build.functionDeclaration({
 			name: "rebaseTriviaItems",
-			parameters: [build.requiredParameter({
+			parameters: [ts.build.requiredParameter({
 				pattern: "trivia",
-				type: build.readonlyType(build.unionType({
-					left: build.arrayType("FormatTrivia"),
-					right: build.literalType(kinds.Undefined),
+				type: ts.build.readonlyType(ts.build.unionType({
+					left: ts.build.arrayType("FormatTrivia"),
+					right: ts.build.literalType(ts.kinds.Undefined),
 				})),
-			}), build.requiredParameter({
+			}), ts.build.requiredParameter({
 				pattern: "editStart",
-				type: kinds.NumberKeyword,
-			}), build.requiredParameter({
+				type: ts.kinds.NumberKeyword,
+			}), ts.build.requiredParameter({
 				pattern: "delta",
-				type: kinds.NumberKeyword,
+				type: ts.kinds.NumberKeyword,
 			})],
-			returnType: build.unionType({
-				left: build.arrayType("FormatTrivia"),
-				right: build.literalType(kinds.Undefined),
+			returnType: ts.build.unionType({
+				left: ts.build.arrayType("FormatTrivia"),
+				right: ts.build.literalType(ts.kinds.Undefined),
 			}),
-			body: build.statementBlock({
-				statements: [build.ifStatement({
-					condition: build.parenthesizedExpression.typed({
-						expression: build.unaryExpression({
-							operator: kinds.Bang,
+			body: ts.build.statementBlock({
+				statements: [ts.build.ifStatement({
+					condition: ts.build.parenthesizedExpression.typed({
+						expression: ts.build.unaryExpression({
+							operator: ts.kinds.Bang,
 							argument: "trivia",
 						}),
 					}),
-					consequence: build.returnStatement(kinds.Undefined, {
-						terminator: kinds.Semi,
+					consequence: ts.build.returnStatement(ts.kinds.Undefined, {
+						terminator: ts.kinds.Semi,
 					}),
-				}), build.returnStatement(build.callExpression.call({
-					function: build.memberExpression({
+				}), ts.build.returnStatement(ts.build.callExpression.call({
+					function: ts.build.memberExpression({
 						object: "trivia",
-						separator: kinds.Dot,
+						separator: ts.kinds.Dot,
 						property: "map",
 					}),
-					arguments: build.arrowFunction({
-						content: build.callSignature({
-							parameters: build.requiredParameter({
+					arguments: ts.build.arrowFunction({
+						content: ts.build.callSignature({
+							parameters: ts.build.requiredParameter({
 								pattern: "item",
 							}),
 						}),
-						body: build.statementBlock({
-							statements: [build.ifStatement({
-								condition: build.parenthesizedExpression.typed({
-									expression: build.binaryExpression({
-										left: build.memberExpression({
+						body: ts.build.statementBlock({
+							statements: [ts.build.ifStatement({
+								condition: ts.build.parenthesizedExpression.typed({
+									expression: ts.build.binaryExpression({
+										left: ts.build.memberExpression({
 											object: "item",
-											separator: kinds.Dot,
+											separator: ts.kinds.Dot,
 											property: "offset",
 										}),
-										operator: kinds.Lt,
+										operator: ts.kinds.Lt,
 										right: "editStart",
 									}),
 								}),
-								consequence: build.returnStatement(build.identifier("item"), {
-									terminator: kinds.Semi,
+								consequence: ts.build.returnStatement(ts.build.identifier("item"), {
+									terminator: ts.kinds.Semi,
 								}),
-							}), build.lexicalDeclaration({
-								kind: kinds.ConstKeyword,
-								declarators: [build.variableDeclarator.plain({
+							}), ts.build.lexicalDeclaration({
+								kind: ts.kinds.ConstKeyword,
+								declarators: [ts.build.variableDeclarator.plain({
 									name: "newOffset",
-									value: build.binaryExpression({
-										left: build.memberExpression({
+									value: ts.build.binaryExpression({
+										left: ts.build.memberExpression({
 											object: "item",
-											separator: kinds.Dot,
+											separator: ts.kinds.Dot,
 											property: "offset",
 										}),
-										operator: kinds.Plus,
+										operator: ts.kinds.Plus,
 										right: "delta",
 									}),
 								})],
 							}, {
-								terminator: kinds.Semi,
-							}), build.returnStatement(build.object(build.spreadElement("item"), build.pair({
+								terminator: ts.kinds.Semi,
+							}), ts.build.returnStatement(ts.build.object(ts.build.spreadElement("item"), ts.build.pair({
 								key: "offset",
-								value: build.callExpression.call({
-									function: build.memberExpression({
+								value: ts.build.callExpression.call({
+									function: ts.build.memberExpression({
 										object: "Math",
-										separator: kinds.Dot,
+										separator: ts.kinds.Dot,
 										property: "max",
 									}),
 									arguments: ["0", "newOffset"],
 								}),
 							})), {
-								terminator: kinds.Semi,
-							}).$trivia.leading(build.comment.line(" Clamp to zero: a large negative delta must not produce a negative"), build.comment.line(" offset (negative indices into slice() silently corrupt output)."))],
+								terminator: ts.kinds.Semi,
+							}).$trivia.leading(ts.build.comment.line(" Clamp to zero: a large negative delta must not produce a negative"), ts.build.comment.line(" offset (negative indices into slice() silently corrupt output)."))],
 						}),
 					}),
 				}), {
-					terminator: kinds.Semi,
+					terminator: ts.kinds.Semi,
 				})],
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(build.comment.block("* Rebase a trivia array, returning the adjusted array or undefined if absent. ")), build.functionDeclaration({
+		}).$trivia.leading(ts.build.comment.block("* Rebase a trivia array, returning the adjusted array or undefined if absent. ")), ts.build.functionDeclaration({
 			name: "rebaseKinds",
-			parameters: [build.requiredParameter({
+			parameters: [ts.build.requiredParameter({
 				pattern: "kinds",
-				type: build.unionType({
-					left: build.genericType({
+				type: ts.build.unionType({
+					left: ts.build.genericType({
 						name: "Record",
-						typeArguments: [kinds.StringKeyword, "FormatRecord"],
+						typeArguments: [ts.kinds.StringKeyword, "FormatRecord"],
 					}),
-					right: build.literalType(kinds.Undefined),
+					right: ts.build.literalType(ts.kinds.Undefined),
 				}),
-			}), build.requiredParameter({
+			}), ts.build.requiredParameter({
 				pattern: "editStart",
-				type: kinds.NumberKeyword,
-			}), build.requiredParameter({
+				type: ts.kinds.NumberKeyword,
+			}), ts.build.requiredParameter({
 				pattern: "delta",
-				type: kinds.NumberKeyword,
+				type: ts.kinds.NumberKeyword,
 			})],
-			returnType: build.unionType({
-				left: build.genericType({
+			returnType: ts.build.unionType({
+				left: ts.build.genericType({
 					name: "Record",
-					typeArguments: [kinds.StringKeyword, "FormatRecord"],
+					typeArguments: [ts.kinds.StringKeyword, "FormatRecord"],
 				}),
-				right: build.literalType(kinds.Undefined),
+				right: ts.build.literalType(ts.kinds.Undefined),
 			}),
-			body: build.statementBlock({
-				statements: [build.ifStatement({
-					condition: build.parenthesizedExpression.typed({
-						expression: build.unaryExpression({
-							operator: kinds.Bang,
+			body: ts.build.statementBlock({
+				statements: [ts.build.ifStatement({
+					condition: ts.build.parenthesizedExpression.typed({
+						expression: ts.build.unaryExpression({
+							operator: ts.kinds.Bang,
 							argument: "kinds",
 						}),
 					}),
-					consequence: build.returnStatement(kinds.Undefined, {
-						terminator: kinds.Semi,
+					consequence: ts.build.returnStatement(ts.kinds.Undefined, {
+						terminator: ts.kinds.Semi,
 					}),
-				}), build.lexicalDeclaration({
-					kind: kinds.ConstKeyword,
-					declarators: [build.variableDeclarator.plain({
+				}), ts.build.lexicalDeclaration({
+					kind: ts.kinds.ConstKeyword,
+					declarators: [ts.build.variableDeclarator.plain({
 						name: "result",
-						type: build.genericType({
+						type: ts.build.genericType({
 							name: "Record",
-							typeArguments: [kinds.StringKeyword, "FormatRecord"],
+							typeArguments: [ts.kinds.StringKeyword, "FormatRecord"],
 						}),
-						value: build.object(),
+						value: ts.build.object(),
 					})],
 				}, {
-					terminator: kinds.Semi,
-				}), build.forInStatement({
-					forHeader: build.forHeader.letConstKind({
-						kind: kinds.ConstKeyword,
-						left: build.arrayPattern("key", "sub"),
-						operator: kinds.OfKeyword,
-						right: build.callExpression.call({
-							function: build.memberExpression({
+					terminator: ts.kinds.Semi,
+				}), ts.build.forInStatement({
+					forHeader: ts.build.forHeader.letConstKind({
+						kind: ts.kinds.ConstKeyword,
+						left: ts.build.arrayPattern("key", "sub"),
+						operator: ts.kinds.OfKeyword,
+						right: ts.build.callExpression.call({
+							function: ts.build.memberExpression({
 								object: "Object",
-								separator: kinds.Dot,
+								separator: ts.kinds.Dot,
 								property: "entries",
 							}),
 							arguments: "kinds",
 						}),
 					}),
-					body: build.statementBlock({
-						statements: [build.expressionStatement(build.assignmentExpression({
-							left: build.subscriptExpression({
+					body: ts.build.statementBlock({
+						statements: [ts.build.expressionStatement(ts.build.assignmentExpression({
+							left: ts.build.subscriptExpression({
 								object: "result",
 								index: "key",
 							}),
-							right: build.callExpression.call({
+							right: ts.build.callExpression.call({
 								function: "rebaseTrivia",
 								arguments: ["sub", "editStart", "delta"],
 							}),
 						}), {
-							terminator: kinds.Semi,
+							terminator: ts.kinds.Semi,
 						})],
 						automaticSemicolon: true,
 					}),
-				}), build.returnStatement(build.identifier("result"), {
-					terminator: kinds.Semi,
+				}), ts.build.returnStatement(ts.build.identifier("result"), {
+					terminator: ts.kinds.Semi,
 				})],
 				automaticSemicolon: true,
 			}),
 			automaticSemicolon: true,
-		}).$trivia.leading(build.comment.block("* Recursively rebase all sub-records in `kinds`. "))],
+		}).$trivia.leading(ts.build.comment.block("* Recursively rebase all sub-records in `kinds`. "))],
 	});
 }

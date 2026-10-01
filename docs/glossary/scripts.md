@@ -309,7 +309,7 @@ The repo-relative paths git tracks or would track: `git ls-files --cached --othe
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::rel`
 
 ```text
-/** Repo-relative binary path, e.g. `rust/crates/sittir-rust/sittir-rust.darwin-arm64.node`. */
+/** Repo-relative binary path, e.g. `packages/rust/native/sittir-rust.darwin-arm64.node`. */
 ```
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::newestInputMtimeMs`

@@ -2,85 +2,85 @@
 import { createEngine } from '@sittir/common';
 import python from '@sittir/python';
 
-const { build, kinds } = await createEngine(python);
+const py = await createEngine(python);
 
 export function rebuildPython4spaceLoose() {
-	return build.module(build.simpleStatementsElements(build.expressionStatement(build.string({
+	return py.build.module(py.build.simpleStatementsElements(py.build.expressionStatement(py.build.string({
 		stringStart: "\"\"\"",
-		content: [build.stringContent("Simple user management module.")],
+		content: [py.build.stringContent("Simple user management module.")],
 		stringEnd: "\"\"\"",
-	}))), build.simpleStatementsElements(build.importFromStatement({
-		moduleName: build.dottedName("typing"),
-		content: build.importList(build.dottedName("Optional")),
-	})), build.classDefinition({
+	}))), py.build.simpleStatementsElements(py.build.importFromStatement({
+		moduleName: py.build.dottedName("typing"),
+		content: py.build.importList(py.build.dottedName("Optional")),
+	})), py.build.classDefinition({
 		name: "User",
-		body: build.block(build.functionDefinition({
+		body: py.build.block(py.build.functionDefinition({
 			name: "__init__",
-			parameters: ["self", build.typedParameter({
+			parameters: ["self", py.build.typedParameter({
 				name: "user_id",
 				type: "int",
-			}), build.typedParameter({
+			}), py.build.typedParameter({
 				name: "name",
 				type: "str",
 			})],
-			returnType: kinds.None,
-			body: build.block(build.simpleStatementsElements(build.assignment.eq({
-				left: build.attribute({
+			returnType: py.kinds.None,
+			body: py.build.block(py.build.simpleStatementsElements(py.build.assignment.eq({
+				left: py.build.attribute({
 					object: "self",
 					attribute: "user_id",
 				}),
 				right: "user_id",
-			})), build.simpleStatementsElements(build.assignment.eq({
-				left: build.attribute({
+			})), py.build.simpleStatementsElements(py.build.assignment.eq({
+				left: py.build.attribute({
 					object: "self",
 					attribute: "name",
 				}),
 				right: "name",
 			}))),
-		}), build.functionDefinition({
+		}), py.build.functionDefinition({
 			name: "greet",
 			parameters: "self",
 			returnType: "str",
-			body: build.block(build.simpleStatementsElements(build.returnStatement(build.string({
+			body: py.build.block(py.build.simpleStatementsElements(py.build.returnStatement(py.build.string({
 				stringStart: "f\"",
-				content: [build.stringContent("Hello, "), build.interpolation({
-					expression: build.attribute({
+				content: [py.build.stringContent("Hello, "), py.build.interpolation({
+					expression: py.build.attribute({
 						object: "self",
 						attribute: "name",
 					}),
-				}), build.stringContent("!")],
+				}), py.build.stringContent("!")],
 				stringEnd: "\"",
 			})))),
 		})),
-	}), build.functionDefinition({
+	}), py.build.functionDefinition({
 		name: "find_user",
-		parameters: [build.typedParameter({
+		parameters: [py.build.typedParameter({
 			name: "users",
 			type: "list",
-		}), build.typedParameter({
+		}), py.build.typedParameter({
 			name: "user_id",
 			type: "int",
 		})],
-		returnType: build.genericType({
+		returnType: py.build.genericType({
 			name: "Optional",
 			typeParameter: "User",
 		}),
-		body: build.block(build.forStatement({
+		body: py.build.block(py.build.forStatement({
 			left: "user",
 			right: "users",
-			body: build.block(build.ifStatement({
-				condition: build.comparisonOperator({
-					left: build.attribute({
+			body: py.build.block(py.build.ifStatement({
+				condition: py.build.comparisonOperator({
+					left: py.build.attribute({
 						object: "user",
 						attribute: "user_id",
 					}),
 					comparators: [{
-						operators: kinds.EqEq,
+						operators: py.kinds.EqEq,
 						primaryExpression: "user_id",
 					}],
 				}),
-				consequence: build.block(build.simpleStatementsElements(build.returnStatement("user"))),
+				consequence: py.build.block(py.build.simpleStatementsElements(py.build.returnStatement("user"))),
 			})),
-		}), build.simpleStatementsElements(build.returnStatement(kinds.None))),
+		}), py.build.simpleStatementsElements(py.build.returnStatement(py.kinds.None))),
 	}));
 }

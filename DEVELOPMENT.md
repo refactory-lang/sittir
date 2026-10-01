@@ -105,9 +105,14 @@ Each grammar's render engine is a Rust N-API crate under
 
 ```bash
 cd rust/crates/sittir-rust
-pnpm run build                # napi build --platform --release
+pnpm run build                # release binding, written into packages/rust/native
 pnpm run build:debug          # debug binding (dev only)
 ```
+
+Both go through `scripts/build-native.mts <lang>`, which writes the loader
+(`index.cjs`), its typings (`index.d.ts`) and the host's `.node` into
+`packages/<lang>/native/` — the directory the grammar package ships. The loader
+and typings are committed; the binaries are git-ignored.
 
 Prefer release builds when running the validators; the validation load is
 sized for the optimized binding.
@@ -115,9 +120,25 @@ sized for the optimized binding.
 Rebuild natives through `pnpm exec tsx packages/cli/src/cli.ts gen --grammar
 <lang> --all --output packages/<lang>/src` (or `pnpm run validate:native`), not
 by running cargo and copying the dylib: only the `napi build` step regenerates
-`rust/crates/sittir-<lang>/index.d.ts`, so a hand-copied binary leaves it stale.
+`packages/<lang>/native/index.d.ts`, so a hand-copied binary leaves it stale.
 The workspace `[profile.release] strip = "none"` keeps the binding loadable on
 macOS (see the comment in `Cargo.toml`).
+
+### Published shape
+
+A grammar package ships its native binaries inside itself (`files` lists
+`native`), so a consumer installs one package per grammar. Check what would be
+published with:
+
+```bash
+pnpm run build
+pnpm run check:published                 # pack, install outside the workspace, createEngine + parse + render
+pnpm run check:published --release       # also require a binary for every declared target
+```
+
+The default run accepts a pack holding only the host's binary; `--release`
+fails unless every target in `NATIVE_TARGETS`
+(`packages/codegen/src/grammars.ts`) has one.
 
 ## Diagnostic tooling
 
