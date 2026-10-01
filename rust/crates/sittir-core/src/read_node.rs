@@ -90,9 +90,9 @@ pub trait HandleMint {
 
 /// A read with no node table to mint into. The stubs under a child it
 /// expands carry no handle.
-pub struct NoHandles;
+pub struct NoMint;
 
-impl HandleMint for NoHandles {
+impl HandleMint for NoMint {
     fn mint(&mut self, _parent: u64, _child_index: u16) -> Option<u64> {
         None
     }
@@ -316,7 +316,7 @@ fn node_trivia(
     let entry = |extra: tree_sitter::Node<'_>, same_line: bool, tokens_between: u16| {
         let data = NodeData {
             handle: tree_handle.map(NodeHandle::Tree),
-            ..read_ts_node(extra, source, None, tree_handle, ReadDepth::Deep, model, &mut NoHandles)
+            ..read_ts_node(extra, source, None, tree_handle, ReadDepth::Deep, model, &mut NoMint)
         };
         let childless = data.fields.is_none()
             && data
@@ -689,7 +689,7 @@ fn read_leaf(
     let (fields, children, slot_order) = if child.is_error() || child.child_count() == 0 {
         (None, None, None)
     } else {
-        read_slots(child, source, None, tree_handle, ReadDepth::Deep, model, &mut NoHandles)
+        read_slots(child, source, None, tree_handle, ReadDepth::Deep, model, &mut NoMint)
     };
     NodeData {
         type_,

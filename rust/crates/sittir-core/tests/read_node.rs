@@ -12,7 +12,7 @@
 //! recursive `$fields` payloads no longer appear on native reads.
 
 use serde_json::Value;
-use sittir_core::read_node::{read_node, HandleMint, NoHandles, ReadDepth, ReadModel};
+use sittir_core::read_node::{read_node, HandleMint, NoMint, ReadDepth, ReadModel};
 use sittir_core::types::{FieldValue, KindId, NodeData, NodeHandle, Source};
 use std::num::NonZeroU32;
 
@@ -68,7 +68,7 @@ fn parse_and_read(language: tree_sitter::Language, source: &str) -> NodeData {
     let mut parser = tree_sitter::Parser::new();
     parser.set_language(&language).expect("set language");
     let tree = parser.parse(source, None).expect("parse succeeds");
-    read_node(&tree, source, None, Some(0), ReadDepth::SHALLOW, &Plain, &mut NoHandles)
+    read_node(&tree, source, None, Some(0), ReadDepth::SHALLOW, &Plain, &mut NoMint)
 }
 
 fn parse_tree(language: tree_sitter::Language, source: &str) -> tree_sitter::Tree {
@@ -208,7 +208,7 @@ fn a_deep_read_tags_its_leaves_and_trivia_with_the_tree_and_names_no_other_coord
     let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
     let source = "fn f() { g(x); } // c\n";
     let tree = parse_tree(lang, source);
-    let root = read_node(&tree, source, None, Some(7), ReadDepth::Deep, &Plain, &mut NoHandles);
+    let root = read_node(&tree, source, None, Some(7), ReadDepth::Deep, &Plain, &mut NoMint);
     assert_eq!(root.handle, Some(NodeHandle::Own(7)));
 
     fn walk(v: &Value, keys: &mut Vec<(bool, bool, Option<u64>, bool)>) {
@@ -271,7 +271,7 @@ fn anonymous_leaf_children_do_not_invent_fields() {
         Some(0),
         ReadDepth::SHALLOW,
         &Plain,
-        &mut NoHandles,
+        &mut NoMint,
     );
     let json = serde_json::to_value(&node).expect("serialize");
     let params = json.as_object().expect("closure_parameters object");
@@ -298,7 +298,7 @@ fn a_node_with_children_carries_no_text_while_a_childless_one_keeps_its_own() {
     let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
     let source = "fn main() { let x = 1; }";
     let tree = parse_tree(lang, source);
-    let root = read_node(&tree, source, None, Some(0), ReadDepth::Deep, &Plain, &mut NoHandles);
+    let root = read_node(&tree, source, None, Some(0), ReadDepth::Deep, &Plain, &mut NoMint);
     let json = serde_json::to_value(&root).expect("serialize");
 
     fn walk(v: &Value, seen: &mut Vec<(u16, bool, bool, bool)>) {
@@ -342,7 +342,7 @@ fn a_named_node_spelled_by_a_token_carries_no_text_of_its_own() {
     let tree = parse_tree(lang, source);
     let predefined = find_first_ts_node_by_kind(tree.root_node(), "predefined_type").expect("predefined_type");
     assert_eq!(predefined.child_count(), 1, "the parser shows `number` as a token under it");
-    let node = read_node(&tree, source, Some(predefined), None, ReadDepth::Deep, &Plain, &mut NoHandles);
+    let node = read_node(&tree, source, Some(predefined), None, ReadDepth::Deep, &Plain, &mut NoMint);
     let json = serde_json::to_value(&node).expect("serialize");
     assert!(json.get("$text").is_none(), "{json}");
     let token = json.get("$other").and_then(Value::as_array).and_then(|other| other.first()).expect("the token");
@@ -357,7 +357,7 @@ fn an_aliased_leaf_keeps_its_text() {
     let source = "struct Foo;";
     let tree = parse_tree(lang, source);
     let name = find_first_ts_node_by_kind(tree.root_node(), "type_identifier").expect("type_identifier node");
-    let node = read_node(&tree, source, Some(name), Some(0), ReadDepth::SHALLOW, &Plain, &mut NoHandles);
+    let node = read_node(&tree, source, Some(name), Some(0), ReadDepth::SHALLOW, &Plain, &mut NoMint);
     assert_eq!(node.text.as_deref(), Some("Foo"));
 }
 
@@ -373,7 +373,7 @@ fn the_root_covers_the_whole_file_by_span_and_carries_no_text() {
         Some(0),
         ReadDepth::SHALLOW,
         &Plain,
-        &mut NoHandles,
+        &mut NoMint,
     );
     assert_eq!(
         root.span.map(|s| (s.start, s.end)),
@@ -388,7 +388,7 @@ fn raw_native_children_payload_stays_array_shaped() {
     let source = "fn f() { g(x); }";
     let tree = parse_tree(lang, source);
     let args = find_first_ts_node_by_kind(tree.root_node(), "arguments").expect("arguments node");
-    let node = read_node(&tree, source, Some(args), Some(0), ReadDepth::SHALLOW, &Plain, &mut NoHandles);
+    let node = read_node(&tree, source, Some(args), Some(0), ReadDepth::SHALLOW, &Plain, &mut NoMint);
     let json = serde_json::to_value(&node).expect("serialize");
 
     assert!(
@@ -483,7 +483,7 @@ fn a_node_whose_only_children_are_anonymous_keeps_them_as_other() {
         Some(0),
         ReadDepth::SHALLOW,
         &Plain,
-        &mut NoHandles,
+        &mut NoMint,
     );
     let json = serde_json::to_value(&node).expect("serialize");
     assert_shape(&json, "closure_parameters");
@@ -507,7 +507,7 @@ fn a_field_tagged_separator_is_read_into_its_field() {
     let tree = parse_tree(lang, source);
     let clause = find_first_ts_node_by_kind(tree.root_node(), "for_in_clause").expect("for_in_clause cst node");
     let comma = u64::from(tree.language().id_for_node_kind(",", false));
-    let node = read_node(&tree, source, Some(clause), Some(0), ReadDepth::SHALLOW, &Plain, &mut NoHandles);
+    let node = read_node(&tree, source, Some(clause), Some(0), ReadDepth::SHALLOW, &Plain, &mut NoMint);
     let json = serde_json::to_value(&node).expect("serialize");
     let right = json.get("_right").and_then(Value::as_array).expect("right holds its items and separator");
     assert!(right.iter().any(|item| item.get("$type").and_then(Value::as_u64) == Some(comma)));
@@ -520,7 +520,7 @@ fn an_anonymous_token_spelled_as_its_kind_name_ships_its_kind_id_alone() {
     let tree = parse_tree(lang, source);
     let params = find_first_ts_node_by_kind(tree.root_node(), "parameters").expect("parameters cst node");
     let comma = u64::from(tree.language().id_for_node_kind(",", false));
-    let node = read_node(&tree, source, Some(params), Some(0), ReadDepth::SHALLOW, &Plain, &mut NoHandles);
+    let node = read_node(&tree, source, Some(params), Some(0), ReadDepth::SHALLOW, &Plain, &mut NoMint);
     let json = serde_json::to_value(&node).expect("serialize");
     let other = json.get("$other").and_then(Value::as_array).expect("the punctuation stays as $other");
     let token = other.iter().find(|child| child.get("$type").and_then(Value::as_u64) == Some(comma)).expect("the comma");
@@ -533,7 +533,7 @@ fn an_aliased_node_ships_its_grammar_symbol_and_its_display_id() {
     let tree = parse_tree(tree_sitter_rust::LANGUAGE.into(), source);
     let field = find_first_ts_node_by_kind(tree.root_node(), "field_identifier").expect("field_identifier");
     assert_ne!(field.kind_id(), field.grammar_id(), "the parser shows `a` under an alias");
-    let node = read_node(&tree, source, Some(field), None, ReadDepth::Deep, &Plain, &mut NoHandles);
+    let node = read_node(&tree, source, Some(field), None, ReadDepth::Deep, &Plain, &mut NoMint);
     let json = serde_json::to_value(&node).expect("serialize");
     assert_eq!(json["$type"].as_u64(), Some(u64::from(field.grammar_id())));
     assert_eq!(json["$displayType"].as_u64(), Some(u64::from(field.kind_id())));
@@ -544,7 +544,7 @@ fn an_unaliased_node_ships_no_display_id() {
     let source = "struct S { a: u8 }";
     let tree = parse_tree(tree_sitter_rust::LANGUAGE.into(), source);
     let item = find_first_ts_node_by_kind(tree.root_node(), "struct_item").expect("struct_item");
-    let node = read_node(&tree, source, Some(item), None, ReadDepth::Deep, &Plain, &mut NoHandles);
+    let node = read_node(&tree, source, Some(item), None, ReadDepth::Deep, &Plain, &mut NoMint);
     let json = serde_json::to_value(&node).expect("serialize");
     assert!(json.get("$displayType").is_none(), "{json}");
 }
@@ -581,7 +581,7 @@ fn read_rust_kind(source: &str, kind: &str) -> Vec<NodeData> {
                 Some(0),
                 ReadDepth::SHALLOW,
                 &BlockGap(block),
-                &mut NoHandles,
+                &mut NoMint,
             )
         })
         .collect()
@@ -728,7 +728,7 @@ fn nodes_of_kind<'v>(value: &'v Value, kind: KindId, found: &mut Vec<&'v Value>)
 
 fn read_python_errors(source: &str) -> Vec<Value> {
     let tree = parse_tree(tree_sitter_python::LANGUAGE.into(), source);
-    let root = read_node(&tree, source, None, Some(0), ReadDepth::Deep, &Plain, &mut NoHandles);
+    let root = read_node(&tree, source, None, Some(0), ReadDepth::Deep, &Plain, &mut NoMint);
     let json = serde_json::to_value(&root).expect("serialize");
     let mut found = Vec::new();
     nodes_of_kind(&json, KindId::ERROR, &mut found);
@@ -762,7 +762,7 @@ fn a_zero_width_node_carries_no_text() {
     let tree = parse_tree(lang, source);
     let block = find_first_ts_node_by_kind(tree.root_node(), "block").expect("block");
     assert_eq!((block.start_byte(), block.child_count()), (block.end_byte(), 0), "an empty block at the end of input");
-    let node = read_node(&tree, source, Some(block), None, ReadDepth::Deep, &Plain, &mut NoHandles);
+    let node = read_node(&tree, source, Some(block), None, ReadDepth::Deep, &Plain, &mut NoMint);
     assert_eq!(node.text, None, "its span says it is empty");
 }
 
@@ -773,7 +773,7 @@ fn a_shallow_read_materializes_a_child_with_no_named_children() {
     let source = "class A { public a: string; }";
     let tree = parse_tree(lang, source);
     let field = find_first_ts_node_by_kind(tree.root_node(), "public_field_definition").expect("public_field_definition");
-    let node = read_node(&tree, source, Some(field), None, ReadDepth::SHALLOW, &Plain, &mut NoHandles);
+    let node = read_node(&tree, source, Some(field), None, ReadDepth::SHALLOW, &Plain, &mut NoMint);
     let json = serde_json::to_value(&node).expect("serialize");
     let mut found = Vec::new();
     nodes_of_kind(&json, KindId(modifier), &mut found);

@@ -66,12 +66,12 @@ impl NodeCoord {
 
 /// Mints into a tree's node table the handle a bounded read gives a child it
 /// expands. A parent from another tree mints nothing.
-struct TableMint<'a> {
+struct TreeMint<'a> {
     nodes: &'a mut Vec<NodeCoord>,
     tree_id: u32,
 }
 
-impl HandleMint for TableMint<'_> {
+impl HandleMint for TreeMint<'_> {
     fn mint(&mut self, parent: u64, child_index: u16) -> Option<u64> {
         let (tree_id, index) = decode_handle(parent);
         if tree_id != self.tree_id {
@@ -248,7 +248,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             Some(handle),
             depth,
             &self.grammar,
-            &mut TableMint {
+            &mut TreeMint {
                 nodes: &mut self.nodes,
                 tree_id: self.tree_id,
             },
@@ -307,7 +307,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             Some(encode_handle(self.tree_id, new_index)),
             depth,
             &self.grammar,
-            &mut TableMint {
+            &mut TreeMint {
                 nodes: &mut self.nodes,
                 tree_id: self.tree_id,
             },

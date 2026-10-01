@@ -1,4 +1,4 @@
-use sittir_core::read_node::{read_node, NoHandles, ReadDepth};
+use sittir_core::read_node::{read_node, NoMint, ReadDepth};
 use sittir_core::types::FieldValue;
 use sittir_typescript::render::{CONST_KEYWORD, LEXICAL_DECLARATION, SEMI};
 use tree_sitter::Parser;
@@ -18,7 +18,7 @@ fn typescript_lexical_declaration_reads_override_named_fields() {
 
     assert_eq!(node.kind(), "lexical_declaration");
 
-    let data = read_node(&tree, source, Some(node), Some(0), ReadDepth::SHALLOW, &sittir_typescript::TypeScriptGrammar, &mut NoHandles);
+    let data = read_node(&tree, source, Some(node), Some(0), ReadDepth::SHALLOW, &sittir_typescript::TypeScriptGrammar, &mut NoMint);
     let fields = data.fields.expect("named fields");
 
     assert_eq!(data.type_, LEXICAL_DECLARATION);
@@ -70,7 +70,7 @@ fn typescript_enum_body_elements_reads_members_into_one_slot() {
     }
     let elements = elements.expect("enum_body_elements node");
 
-    let data = read_node(&tree, source, Some(elements), Some(0), ReadDepth::SHALLOW, &sittir_typescript::TypeScriptGrammar, &mut NoHandles);
+    let data = read_node(&tree, source, Some(elements), Some(0), ReadDepth::SHALLOW, &sittir_typescript::TypeScriptGrammar, &mut NoMint);
     let fields = data.fields.as_ref().expect("named fields");
     assert_eq!(fields.keys().collect::<Vec<_>>(), vec!["content"]);
     let members = match &fields["content"] {
@@ -92,7 +92,7 @@ fn typescript_enum_body_elements_reads_members_into_one_slot() {
         Some(0),
         ReadDepth::SHALLOW,
         &sittir_typescript::TypeScriptGrammar,
-        &mut NoHandles,
+        &mut NoMint,
     );
     assert!(leaf.slot_order.is_none(), "leaf must not stamp $slotOrder");
 }
