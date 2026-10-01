@@ -107,7 +107,7 @@ import {
 import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyUntypedNode, AnyTreeNode } from '@sittir/types';
-import { detachCoordinates } from '@sittir/common';
+import { detachCoordinates, sourceSpans, type ByteSpan, type SourceSpans } from '@sittir/common';
 import { isStub, readUntypedNode, toTransportData } from '@sittir/common/utils';
 // ---------------------------------------------------------------------------
 // CLI
@@ -530,7 +530,7 @@ export async function probe(
 	let isRoot = true;
 	let probeRange: ProbeReport['probeRange'] | undefined;
 	if (opts.range) {
-		targetNode = findNodeCoveringRange(tree.rootNode, opts.range.start, opts.range.end);
+		targetNode = findNodeCoveringSpan(tree.rootNode, sourceSpans(source), opts.range);
 		if (!targetNode) throw new Error(`probe-kind: no node covers range ${opts.range.start}–${opts.range.end}`);
 		isRoot = false;
 	} else if (opts.kind) {
@@ -540,8 +540,7 @@ export async function probe(
 	}
 	if (!isRoot) {
 		probeRange = {
-			start: targetNode.startIndex,
-			end: targetNode.endIndex,
+			...spanOfNode(sourceSpans(source), targetNode),
 			kind: targetNode.type,
 			text: targetNode.text
 		};
@@ -717,7 +716,7 @@ async function probeShipped(
 	if (!tree) return undefined;
 	let node = tree.rootNode;
 	if (target.range) {
-		node = findNodeCoveringRange(tree.rootNode, target.range.start, target.range.end) ?? tree.rootNode;
+		node = findNodeCoveringSpan(tree.rootNode, sourceSpans(source), target.range) ?? tree.rootNode;
 	} else if (target.kind) {
 		node = findFirstByKind(tree.rootNode, target.kind) ?? tree.rootNode;
 	}
@@ -762,7 +761,7 @@ export async function probeTrace(
 	let isRoot = true;
 	let probeRange: ProbeTraceReport['probeRange'] | undefined;
 	if (opts.range) {
-		targetNode = findNodeCoveringRange(tree.rootNode, opts.range.start, opts.range.end);
+		targetNode = findNodeCoveringSpan(tree.rootNode, sourceSpans(source), opts.range);
 		if (!targetNode) throw new Error(`probe-kind: no node covers range ${opts.range.start}–${opts.range.end}`);
 		isRoot = false;
 	} else if (opts.kind) {
@@ -772,8 +771,7 @@ export async function probeTrace(
 	}
 	if (!isRoot) {
 		probeRange = {
-			start: targetNode.startIndex,
-			end: targetNode.endIndex,
+			...spanOfNode(sourceSpans(source), targetNode),
 			kind: targetNode.type,
 			text: targetNode.text
 		};
@@ -887,9 +885,10 @@ async function readProbeLanes(
 		}
 		if (targetKind) {
 			const kindNameFromId = await loadKindNameFromId(grammar);
+			const targetSpan = spanOfNode(sourceSpans(source), targetNode);
 			const targetCandidate =
 				walkNativeForKind(handle, targetKind, kindNameFromId).find(
-					(candidate) => candidate.span?.start === targetNode.startIndex && candidate.span?.end === targetNode.endIndex
+					(candidate) => candidate.span?.start === targetSpan.start && candidate.span?.end === targetSpan.end
 				) ?? null;
 			if (targetCandidate?.coords.handle !== undefined && targetCandidate.coords.childIndex !== undefined) {
 				const shallow = handle.read?.(targetCandidate.coords.handle, targetCandidate.coords.childIndex);
@@ -906,7 +905,8 @@ async function readProbeLanes(
 		const root = readNode
 			? materializeDetached(readNode(handle), onAccessorThrow)
 			: readUntypedNode(handle, undefined, undefined, Infinity);
-		const target = findInUntypedNodeByRange(root, targetNode.startIndex, targetNode.endIndex);
+		const rootTargetSpan = spanOfNode(sourceSpans(source), targetNode);
+		const target = findInUntypedNodeByRange(root, rootTargetSpan.start, rootTargetSpan.end);
 		if (!target) throw new Error('probe-kind: no native node match in UntypedNode tree');
 		const targetHandle = getTargetHandle(target);
 		const shallow = targetHandle ? handle.read?.(targetHandle.handle, targetHandle.childIndex) : target;
@@ -1055,8 +1055,19 @@ function findFirstByKind(node: any, kind: string): any | null {
 	return null;
 }
 
+/** The byte span of a parser node, whose own `startIndex` / `endIndex` are string indices. */
+function spanOfNode(spans: SourceSpans, node: { readonly startIndex: number; readonly endIndex: number }): ByteSpan {
+	return spans.toSpan({ start: node.startIndex, end: node.endIndex });
+}
+
+/** The smallest parser node covering a byte span (see `findNodeCoveringRange`). */
+function findNodeCoveringSpan(root: any, spans: SourceSpans, span: ByteSpan): any | null {
+	const indices = spans.toIndices(span);
+	return findNodeCoveringRange(root, indices.start, indices.end);
+}
+
 /**
- * Find the smallest node whose byte range exactly covers `[start, end)`.
+ * Find the smallest node whose string-index range exactly covers `[start, end)`.
  * Falls back to any node covering the range when no exact match exists.
  */
 function findNodeCoveringRange(node: any, start: number, end: number): any | null {

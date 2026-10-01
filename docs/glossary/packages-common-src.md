@@ -254,3 +254,8 @@ Drops the pre-edit spelling and the coordinate that would slice it from every no
 ### `packages/common/src/utils.ts::describeValue`
 
 A value as the text of a refusal message: a string as itself, anything else as JSON (a bigint as `<n>n`), falling back to `String` when it cannot be serialised. Generated pattern guards use it so a node or object that reached a text slot prints as what it was, not `[object Object]`.
+
+### `packages/common/src/span.ts::sourceSpans`
+
+The wire unit of a position is tree-sitter's: UTF-8 bytes. Converting every span to string indices at the boundary would need a table per tree, so the conversion happens only where text is wanted, and in one place. A consumer that holds a span and wants text calls `slice`; one that must meet a parser node's `startIndex` / `endIndex` (string indices, in the node binding the validators use) converts with `toIndices` or `toSpan`. An ASCII source needs no conversion and takes the identity path, which is every corpus entry but a handful; for the rest a conversion decodes or encodes the prefix, which is linear in the offset and fine for the tools that call it. `packages/tools/tests/span-unit-census.test.ts` fails when a hand-written source slices by a span's fields or compares them with a node index directly; it reads names, so a span copied into a differently named variable escapes it.
+

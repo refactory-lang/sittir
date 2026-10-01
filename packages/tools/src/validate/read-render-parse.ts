@@ -11,7 +11,7 @@
 import { writeSync } from 'node:fs';
 
 import type { AnyUntypedNode } from '@sittir/types';
-import { spanSlicer, type TriviaSides } from '@sittir/common';
+import { sourceSpans, spanSlicer, type TriviaSides } from '@sittir/common';
 import { hydrateStub, isStub, mapTriviaEntries } from '@sittir/common/utils';
 import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
@@ -603,6 +603,7 @@ export async function validateReadRenderParse(
 		try {
 			// Parse original
 			const tree1 = parser.parse(entry.source) as TSTree;
+		const spans = sourceSpans(entry.source);
 			if (tree1.rootNode.hasError) {
 				skips.push({ entry: entry.name, reason: 'parse-error', input: entry.source });
 				if (process.env.SITTIR_VALIDATOR_ENTRY_LOG) {
@@ -682,9 +683,8 @@ export async function validateReadRenderParse(
 
 				for (const cand of candidatesByKind.get(kind)!) {
 					if (shouldStop) break;
-					const nodeStartIndex = cand.start;
-					const nodeEndIndex = cand.end;
-					const inputSource = entry.source.slice(nodeStartIndex, nodeEndIndex);
+					const inputSource = spans.slice(cand);
+					const indices = spans.toIndices(cand);
 					// WASM node at this span: the AST-compare target and the parser
 					// DISPLAY kind (targetKind) used for post-reparse node lookup.
 					// Prefer the same-span node whose type matches the candidate's
@@ -693,8 +693,8 @@ export async function validateReadRenderParse(
 					// anchors on `tuple_struct_pattern`, not the enclosing same-span
 					// `match_pattern`); fall back to the outermost.
 					const node1ForAst =
-						findNodeBySpanOfKind(tree1.rootNode, nodeStartIndex, nodeEndIndex, cand.displayKind) ??
-						findNodeBySpan(tree1.rootNode, nodeStartIndex, nodeEndIndex);
+						findNodeBySpanOfKind(tree1.rootNode, indices.start, indices.end, cand.displayKind) ??
+						findNodeBySpan(tree1.rootNode, indices.start, indices.end);
 					const tsVisibleKind = node1ForAst?.type;
 
 					// Materialize the wrapped node directly — it already IS its source
@@ -806,7 +806,7 @@ export async function validateReadRenderParse(
 								kind,
 								renderedKind,
 								targetKind,
-								range: { start: nodeStartIndex, end: nodeEndIndex },
+								range: { start: cand.start, end: cand.end },
 								input: inputSource,
 								rendered,
 								message: failure.message
@@ -845,7 +845,7 @@ export async function validateReadRenderParse(
 								kind,
 								renderedKind,
 								targetKind,
-								range: { start: nodeStartIndex, end: nodeEndIndex },
+								range: { start: cand.start, end: cand.end },
 								input: inputSource,
 								rendered,
 								message: failure.message
@@ -875,8 +875,8 @@ export async function validateReadRenderParse(
 								message: diff,
 								input: inputSource,
 								rendered,
-								start: nodeStartIndex,
-								end: nodeEndIndex
+								start: cand.start,
+								end: cand.end
 							});
 						} else {
 							kindAstMatch = true;
@@ -922,7 +922,7 @@ export async function validateReadRenderParse(
 							kind,
 							renderedKind,
 							targetKind,
-							range: { start: nodeStartIndex, end: nodeEndIndex },
+							range: { start: cand.start, end: cand.end },
 							message: failure.message
 						});
 						shouldStop = options.stopOnFirstFailure === true;

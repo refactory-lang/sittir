@@ -92,7 +92,14 @@ export interface AnyUntypedNode {
 	 * variable falls back to a best-effort field+children concatenation.
 	 */
 	$text?: string;
-	/** Byte offset span in source. */
+	/**
+	 * Where this node sits in its source, as a half-open range of UTF-8 byte
+	 * offsets (tree-sitter's byte range). These are not string indices: a JS
+	 * string counts UTF-16 code units, and the two differ after the first
+	 * non-ASCII character. Get the text or the string indices of a span through
+	 * `sourceSpans` (or `sliceSpan`) from `@sittir/common`; never pass these
+	 * offsets to `String.prototype.slice`.
+	 */
 	$span?: { start: number; end: number };
 	/** This node's own handle, on a node a read returns: re-reading it reads this node. */
 	$handle?: number;
@@ -233,7 +240,7 @@ export interface RulesConfig {
 // Edit — ast-grep compatible byte-range replacement
 // ---------------------------------------------------------------------------
 
-/** A text-level edit: replace bytes [startPos, endPos) with insertedText. */
+/** A text-level edit: replace the UTF-8 bytes `[startPos, endPos)` with `insertedText`. The positions count bytes, as `$span` does, not string indices. */
 export interface Edit {
 	readonly startPos: number;
 	readonly endPos: number;
