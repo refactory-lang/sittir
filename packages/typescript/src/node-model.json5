@@ -186,6 +186,12 @@
         "ambient_declaration_module": "module"
       }
     },
+    "enum_body": {
+      "definedBy": "enrich",
+      "childKind": {
+        "enum_body_elements": "elements"
+      }
+    },
     "literal_type": {
       "definedBy": "override",
       "childKind": {
@@ -10519,7 +10525,12 @@
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "enum_body_elements",
-              "parseKind": "enum_body_elements"
+              "parseKind": "enum_body_elements",
+              "seat": {
+                "kind": "enum_body_elements",
+                "shape": "arm",
+                "mount": "elements"
+              }
             }
           ]
         }

@@ -10354,6 +10354,10 @@
               "name": "enum_body_elements",
               "metadata": {
                 "symbolSource": "group-lift"
+              },
+              "annotations": {
+                "variant": "elements",
+                "variantOf": "enum_body"
               }
             },
             {

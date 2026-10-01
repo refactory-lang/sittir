@@ -1,4 +1,4 @@
-rust: hoisted=79 seated=79 unseated=0
+rust: hoisted=80 seated=80 unseated=0
 typescript: hoisted=53 seated=53 unseated=0
 python: hoisted=33 seated=33 unseated=0
 scm: hoisted=5 seated=5 unseated=0

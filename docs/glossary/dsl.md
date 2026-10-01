@@ -2692,6 +2692,10 @@ inside one. Used only to answer whether a hoisted group is itself a
 choice-holding one (`isHoistedChoiceGroup`); `visit`/`stamp` find and label
 a choice directly, on their own walk, when they reach one.
 
+### `packages/codegen/src/dsl/automatic-variants.ts::isElementChoiceRef`
+
+Whether a node is a reference to an element supertype, bare or as a field's value. The supertype is the group's element choice minted as its own rule (`registerElementSupertype`), so `holdsChoice` counts the reference as the choice it replaced: a list group keeps its label on the parent, and the parent keeps the route that mounts the group, whether or not the element choice was lifted.
+
 ### `packages/codegen/src/dsl/automatic-variants.ts::isHoistedChoiceGroup`
 
 Whether a referenced rule is a hoisted group (`annotations.hoisted`) that
@@ -7011,7 +7015,7 @@ The slot name has one derivation. An authored `field()` at the repeat's index pa
 
 ### `packages/codegen/src/dsl/enrich.ts::singularFieldName`
 
-The singular of a slot name (`members` → `member`, `entries` → `entry`).
+The singular of a slot name (`members` → `member`, `entries` → `entry`). It is a suffix rule: `-ies` → `-y`, otherwise a trailing `s` is dropped. It mis-handles `-ses`, `-xes` and `-ches` (`classes` → `classe`, `boxes` → `boxe`, `matches` → `matche`); no slot name enrich produces today ends that way.
 
 ### `packages/codegen/src/dsl/enrich.ts::registerElementSupertype`
 

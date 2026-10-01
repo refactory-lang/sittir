@@ -1,5 +1,6 @@
 import { ALIAS, CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, SimplifiedRule } from '../types/rule.ts';
+import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import { isNonterminalRuleType, optionalContentOf } from './rule-patterns.ts';
 
 export interface ArmStage {
@@ -19,12 +20,10 @@ export const simplifyArmStage: ArmStage = {
 	unwrap: (rule) => rule
 };
 
-const PREC_TYPES: ReadonlySet<string> = new Set(['PREC', 'PREC_LEFT', 'PREC_RIGHT', 'PREC_DYNAMIC']);
-
 function unwrapPrecAndOptional(rule: AnyRule): AnyRule {
 	let node = rule;
 	for (;;) {
-		if (PREC_TYPES.has(node.type)) {
+		if (isPrecWrapper(node)) {
 			node = (node as { content: AnyRule }).content;
 			continue;
 		}

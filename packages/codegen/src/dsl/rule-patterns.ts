@@ -77,7 +77,7 @@ export function classifyByType(
 }
 
 export function isNonterminalRuleType<Phase extends PhaseName>(rule: Rule<Phase>): boolean {
-	if ((rule as { type: string }).type === 'BLANK') return false;
+	if (isBlank(rule)) return false;
 	const anyChildNonterminal = ruleChildren(rule).some((child) => isNonterminalRuleType(child));
 	return classifyByType(rule.type, anyChildNonterminal) === 'nonterminal';
 }

@@ -211,6 +211,7 @@ export default sittirGrammar(base, {
 			1: field('cases')
 		},
 		object_type: {},
+		enum_body: {},
 
 		jsx_expression: {
 			1: field('expression')

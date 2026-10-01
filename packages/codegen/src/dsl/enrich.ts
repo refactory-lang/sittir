@@ -201,7 +201,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	}
 	synthesizeFieldEnumRules(mergedRules, ruleOrigins);
 	const elementSupertypes = [...ruleOrigins].flatMap(([name, origin]) => (origin.kind === 'element-supertype' && name in mergedRules ? [name] : []));
-	const automaticVariants = stampAutomaticVariants(mergedRules, new Set([...supertypeNames, ...elementSupertypes]), inlineNames);
+	const automaticVariants = stampAutomaticVariants(mergedRules, new Set([...supertypeNames, ...elementSupertypes]), inlineNames, new Set(elementSupertypes));
 	const textTokens = mintInlineTextTokens(mergedRules, { symbol: nativeRuleFn<(name: string) => Rule>('sym'), namingRules: baseRules });
 	Object.assign(mergedRules, textTokens.rules);
 	for (const name of textTokens.mintedNames) ruleOrigins.set(name, { kind: 'text', owners: textTokens.owners[name]! });
@@ -2237,6 +2237,10 @@ function elementChoiceSlots(
 	const authoredAt = (path: readonly number[]): string | undefined =>
 		authoredSites.find((site) => site.path.length === path.length && site.path.every((step, i) => step === path[i]))?.name;
 	const walk = (node: AnyRule, path: readonly number[], repeat: { readonly path: readonly number[]; readonly separated: boolean } | undefined): void => {
+		if (isPrecWrapper(node)) {
+			walk((node as { content: AnyRule }).content, path, repeat);
+			return;
+		}
 		switch (node.type) {
 			case CHOICE:
 				if (repeat !== undefined && isTopologyMixed(partitionChoiceArms(node, dslArmStage))) {
@@ -2261,12 +2265,6 @@ function elementChoiceSlots(
 			case OPTIONAL:
 			case FIELD:
 				walk((node as { content: AnyRule }).content, [...path, 0], repeat);
-				return;
-			case 'PREC':
-			case 'PREC_LEFT':
-			case 'PREC_RIGHT':
-			case 'PREC_DYNAMIC':
-				walk((node as { content: AnyRule }).content, path, repeat);
 				return;
 			default:
 				return;

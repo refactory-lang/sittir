@@ -64,15 +64,22 @@ function withAutomaticLabel(core: ArmShape, label: RuleAnnotations, automatic: A
 	return out;
 }
 
-function holdsChoice(node: ArmShape | undefined): boolean {
-	if (node === undefined) return false;
-	if (node.type === 'CHOICE') return (node.members ?? []).filter((m) => !isBlank(m)).length >= 2 || (node.members ?? []).some(holdsChoice);
-	if (node.type !== undefined && SLOT_BOUNDARIES.has(node.type)) return false;
-	return (node.members ?? []).some(holdsChoice) || (node.content !== undefined && holdsChoice(node.content));
+function isElementChoiceRef(node: ArmShape, elementChoices: ReadonlySet<string>): boolean {
+	const ref = node.type === 'FIELD' ? node.content : node;
+	return ref?.type === 'SYMBOL' && typeof ref.name === 'string' && elementChoices.has(ref.name);
 }
 
-function isHoistedChoiceGroup(rule: ArmShape | undefined): boolean {
-	return rule?.annotations?.hoisted === true && holdsChoice(rule);
+function holdsChoice(node: ArmShape | undefined, elementChoices: ReadonlySet<string>): boolean {
+	if (node === undefined) return false;
+	const inner = (child: ArmShape): boolean => holdsChoice(child, elementChoices);
+	if (node.type === 'CHOICE') return (node.members ?? []).filter((m) => !isBlank(m)).length >= 2 || (node.members ?? []).some(inner);
+	if (isElementChoiceRef(node, elementChoices)) return true;
+	if (node.type !== undefined && SLOT_BOUNDARIES.has(node.type)) return false;
+	return (node.members ?? []).some(inner) || (node.content !== undefined && inner(node.content));
+}
+
+function isHoistedChoiceGroup(rule: ArmShape | undefined, elementChoices: ReadonlySet<string>): boolean {
+	return rule?.annotations?.hoisted === true && holdsChoice(rule, elementChoices);
 }
 
 export function isSupertypeOwner(
@@ -91,7 +98,8 @@ function stampRuleVariants(
 	owner: string,
 	rule: unknown,
 	ruleOf: (name: string) => unknown,
-	automatic: AutomaticVariants
+	automatic: AutomaticVariants,
+	elementChoices: ReadonlySet<string>
 ): unknown {
 	const ownerIsSupertype = automatic.supertypeOwners.has(owner);
 	const label = (core: ArmShape): ArmShape => withAutomaticLabel(core, labelOf(owner, armDisplayOf(core), ownerIsSupertype), automatic);
@@ -107,7 +115,7 @@ function stampRuleVariants(
 			return members.some((m, i) => m !== node.members![i]) ? { ...node, members } : node;
 		}
 		if (node.type === 'SYMBOL' && typeof node.name === 'string' && annotationsOf(node)?.variantOf === undefined) {
-			return isHoistedChoiceGroup(ruleOf(node.name) as ArmShape | undefined) ? label(node) : node;
+			return isHoistedChoiceGroup(ruleOf(node.name) as ArmShape | undefined, elementChoices) ? label(node) : node;
 		}
 		if (node.type !== undefined && SLOT_BOUNDARIES.has(node.type)) return node;
 		if (node.members !== undefined) {
@@ -126,14 +134,15 @@ function stampRuleVariants(
 export function stampAutomaticVariants(
 	rules: Record<string, Rule>,
 	supertypeNames: ReadonlySet<string>,
-	inlineNames: ReadonlySet<string>
+	inlineNames: ReadonlySet<string>,
+	elementChoices: ReadonlySet<string> = new Set()
 ): AutomaticVariants {
 	const supertypeOwners = new Set(Object.keys(rules).filter((owner) => isSupertypeOwner(owner, rules, supertypeNames, inlineNames)));
 	const automatic: AutomaticVariants = { keys: new Set(), supertypeOwners };
 	for (const owner of Object.keys(rules)) {
 		const rule = rules[owner];
 		if (rule === undefined) continue;
-		rules[owner] = stampRuleVariants(owner, rule, (name) => rules[name], automatic) as Rule;
+		rules[owner] = stampRuleVariants(owner, rule, (name) => rules[name], automatic, elementChoices) as Rule;
 	}
 	return automatic;
 }

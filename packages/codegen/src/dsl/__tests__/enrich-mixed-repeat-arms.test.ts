@@ -141,3 +141,11 @@ describe('a variant() name declared under both the owner and its element superty
 		}
 	}, 120_000);
 });
+
+describe('a list group whose element choice became a supertype', () => {
+	it('is still labelled a variant of its parent, so the parent keeps the route that mounts it', async () => {
+		const { rules } = await evaluatePackage(grammarPackage('typescript'));
+		const group = nodes(rules['enum_body'] as Node).find((n) => n.type === 'SYMBOL' && n.name === 'enum_body_elements');
+		expect(group?.annotations).toMatchObject({ variant: 'elements', variantOf: 'enum_body' });
+	}, 120_000);
+});
