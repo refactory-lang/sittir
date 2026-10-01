@@ -617,4 +617,28 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
         let index = tree.local_index(coord.handle).ok()?;
         ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index).map(|node| KindId(node.kind_id()))
     }
+
+    fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {
+        let Some(tree) = self.get(&coord.tree_id()) else {
+            return;
+        };
+        let Ok(index) = tree.local_index(coord.handle) else {
+            return;
+        };
+        let mut node = ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index);
+        let exact = node.is_some_and(|n| {
+            n.start_byte() == coord.span.start as usize && n.end_byte() == coord.span.end as usize
+        });
+        while let Some(current) = node {
+            f(KindId(current.kind_id()));
+            if !exact {
+                return;
+            }
+            node = u32::try_from(current.child_count())
+                .ok()
+                .and_then(|count| count.checked_sub(1))
+                .and_then(|last| current.child(last))
+                .filter(|last| last.end_byte() == current.end_byte());
+        }
+    }
 }
