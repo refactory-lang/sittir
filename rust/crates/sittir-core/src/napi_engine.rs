@@ -120,7 +120,7 @@ macro_rules! napi_engine {
             /// Parse `source` and read its root.
             ///
             /// `depth` is the number of levels the read expands (see
-            /// [`read_depth`]): absent is the lazy one-level read, `Infinity`
+            /// [`depth_from_wire`]): absent is the lazy one-level read, `Infinity`
             /// expands the whole tree in one pass.
             ///
             /// The tree is retained under a fresh id so the handles this read
@@ -134,7 +134,7 @@ macro_rules! napi_engine {
                 depth: Option<f64>,
             ) -> ::napi::Result<String> {
                 let tree_id = self.claim_tree_id(&env)?;
-                let depth = $crate::napi_engine::read_depth(depth)?;
+                let depth = $crate::napi_engine::depth_from_wire(depth)?;
                 let mut parsed = self
                     .engine
                     .parse(source, tree_id)
@@ -192,7 +192,7 @@ macro_rules! napi_engine {
                     ))
                 })?;
                 parsed
-                    .read_at(handle, child_index, $crate::napi_engine::read_depth(depth)?)
+                    .read_at(handle, child_index, $crate::napi_engine::depth_from_wire(depth)?)
                     .map_err(::napi::Error::from_reason)
             }
 
@@ -371,7 +371,7 @@ pub fn checked_index(value: f64, label: &str) -> napi::Result<u64> {
 /// Map the boundary's optional level count onto a [`ReadDepth`](crate::ReadDepth):
 /// absent is one level, `Infinity` is the whole tree, and anything else must
 /// be a whole number of levels, at least one.
-pub fn read_depth(depth: Option<f64>) -> napi::Result<crate::ReadDepth> {
+pub fn depth_from_wire(depth: Option<f64>) -> napi::Result<crate::ReadDepth> {
     let Some(levels) = depth else {
         return Ok(crate::ReadDepth::SHALLOW);
     };

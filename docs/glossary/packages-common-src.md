@@ -90,7 +90,7 @@ A lazily rendered text: the render runs on first use and its text is cached. `sa
 
 The public `EngineDiagnostics` fixed to the native engine's types (a root that carries the whole-file span, a `TreeHandle`), plus `readNode`, the drill-in read only the native engine has. Reached through `SittirEngine.diagnostics` rather than the engine's own surface, because it returns raw node data with reader stubs for children; the public entry point is `parse`, which wraps what these produce.
 
-### `packages/common/src/engine.ts::readDepthOf`
+### `packages/common/src/engine.ts::depthOf`
 
 The level count a native read takes for a set of parse options: absent (one level) by default, `Infinity` (the whole tree) under `deep`. `parseAndRead` and the diagnostics `readNode` both pass through it, so `deep` has one meaning at the boundary.
 

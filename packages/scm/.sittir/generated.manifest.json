@@ -37,7 +37,7 @@
     "packages/scm/src/types.ts": "e5e50d696de9da2f82da3a40262d7d07637e672149c4704804e0cd0480166645",
     "packages/scm/src/utils.ts": "661bde5d04b33251f095d1ef580cc04eaba033b184f6b2e4a7ae80f42a6d868b",
     "packages/scm/src/wrap.ts": "5218c0f646d9ffd5a27bebe8c20f4476adf84cba4e7f0030d0930fbe6fb1418e",
-    "rust/crates/sittir-scm/index.d.ts": "682f031e79c4f077f267abcf9d9999dc76f43a7141616f3f127897f61ec60a9d",
+    "rust/crates/sittir-scm/index.d.ts": "02f58d3f6a8a44eda20e1d89d122c9345ef4fba98e94dd96db312958c6fc8554",
     "rust/crates/sittir-scm/index.js": "8205a0432859ea6b53a39948debc97e3851ad4bda59e0409542ed9a243567a6c",
     "rust/crates/sittir-scm/src/lib.rs": "be499be87247674d99d9b8d9f8bea667e4148508e05e1324015fdbc433fa9849",
     "rust/crates/sittir-scm/src/render/hash.rs": "ffac47d35be44ba729d60639676e46fa95d3d6d3f98307d9b38bfe876fd4e782",

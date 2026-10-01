@@ -57,7 +57,7 @@ export function createRenderHandle(renderText: () => string, saveImpl?: (path: s
 }
 
 /** The level count a read takes: one by default, the whole tree under `deep`. */
-function readDepthOf(options: ParseOptions | undefined): number | undefined {
+function depthOf(options: ParseOptions | undefined): number | undefined {
 	return options?.deep === true ? Infinity : undefined;
 }
 
@@ -287,7 +287,7 @@ export function createNativeEngine<
 				diagnostics: {
 					buildProfile: engine.buildProfile,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
-						const json = engine.parseAndRead(source, readDepthOf(parseOptions));
+						const json = engine.parseAndRead(source, depthOf(parseOptions));
 						const parsed = JSON.parse(json) as NativeParseResultShape;
 						// Boundary assertion: the native reader returns the grammar's
 						// root kind for a whole-source parse, stamped with its span and
@@ -324,7 +324,7 @@ export function createNativeEngine<
 					},
 
 					readNode(handle: number, childIndex = 0, parseOptions?: ParseOptions) {
-						const json = engine.readNode(handle, childIndex, readDepthOf(parseOptions));
+						const json = engine.readNode(handle, childIndex, depthOf(parseOptions));
 						return JSON.parse(json) as AnyNodeData;
 					}
 				}

@@ -38,7 +38,7 @@
     "packages/typescript/src/types.ts": "379d3cccfcfa55c0f2efbb7c2d016a9565a61f15246e9e5a5539b3c2e56e307a",
     "packages/typescript/src/utils.ts": "a80d044b225e874b93a84ad855ad76fc1dae2348d508df2b897b52eb5a795a01",
     "packages/typescript/src/wrap.ts": "922eba820da7fac0b20eb4e0decd09021f2de42208a9aa641e3a730629ac10a7",
-    "rust/crates/sittir-typescript/index.d.ts": "634cc808910c2156f13ed6c1ba386073fd265f0694e578cd2a275430a70d878e",
+    "rust/crates/sittir-typescript/index.d.ts": "5b3a77164be4fac6ba184d4d8f66f5717858119f1435da4f86a11d76e5da6c32",
     "rust/crates/sittir-typescript/index.js": "81302159cbccdd486f6a9e17d7103b77d1d0fd14788a674a6a1f43a67b7fbbc9",
     "rust/crates/sittir-typescript/src/lib.rs": "bb25c0094d0ed8f10a94db5f7f68b4f3062a6b30d211c6c3c218b0bd0eac3fb6",
     "rust/crates/sittir-typescript/src/render/hash.rs": "9a4c5aefeb2a559725231a38ff8dfcf0db5a6ecc95a794b4690c702e3e090c68",

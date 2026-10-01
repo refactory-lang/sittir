@@ -66,7 +66,7 @@ export declare class SittirEngine {
    * Parse `source` and read its root.
    *
    * `depth` is the number of levels the read expands (see
-   * [`read_depth`]): absent is the lazy one-level read, `Infinity`
+   * [`depth_from_wire`]): absent is the lazy one-level read, `Infinity`
    * expands the whole tree in one pass.
    *
    * The tree is retained under a fresh id so the handles this read
