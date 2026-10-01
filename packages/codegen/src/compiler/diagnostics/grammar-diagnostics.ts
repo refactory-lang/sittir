@@ -120,11 +120,11 @@ export function fromDroppedTokens(grammar: string, dropped: DroppedTokens): Gram
 	return {
 		scope: 'grammar',
 		code: 'dropped-token',
-		severity: 'warning',
+		severity: 'error',
 		grammar,
 		ownerKind: dropped.kind,
 		message: `kind '${dropped.kind}': ${dropped.tokens.map((t) => JSON.stringify(t)).join(', ')} is neither template text nor a slot, so a parse of it renders without it. Give the token a named wrapper in patches so it becomes a slot`,
-		canProceed: true,
+		canProceed: false,
 		details: { tokens: dropped.tokens }
 	};
 }

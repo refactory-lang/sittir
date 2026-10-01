@@ -5873,7 +5873,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "elements"
+			"name": "properties"
 		},
 		{
 			"kind": "seam",
@@ -8116,6 +8116,28 @@
 			"name": "object"
 		},
 		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "optional_chain",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "qmark_dot_before"
+						},
+						{
+							"kind": "slot",
+							"name": "optional_chain"
+						},
+						{
+							"kind": "seam",
+							"field": "qmark_dot_after"
+						}
+					]
+				}
+			]
+		},
+		{
 			"kind": "seam",
 			"field": "lbrack_before"
 		},
@@ -8486,6 +8508,28 @@
 		{
 			"kind": "seam",
 			"field": "yield_expression_after"
+		}
+	],
+	"yield_expression_delegate": [
+		{
+			"kind": "seam",
+			"field": "yield_expression_delegate_before"
+		},
+		{
+			"kind": "text",
+			"text": "*"
+		},
+		{
+			"kind": "seam",
+			"field": "star_after"
+		},
+		{
+			"kind": "slot",
+			"name": "expression"
+		},
+		{
+			"kind": "seam",
+			"field": "yield_expression_delegate_after"
 		}
 	]
 }

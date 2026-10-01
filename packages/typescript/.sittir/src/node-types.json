@@ -5545,7 +5545,7 @@
     "type": "object",
     "named": true,
     "fields": {
-      "elements": {
+      "properties": {
         "multiple": true,
         "required": false,
         "types": [
@@ -7527,6 +7527,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "optional_chain",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -7838,19 +7848,34 @@
     "named": true,
     "fields": {
       "expression": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "*",
-            "named": false
+            "type": "expression",
+            "named": true
           },
           {
-            "type": "expression",
+            "type": "yield_expression_delegate",
             "named": true
           }
         ]
       }
+    }
+  },
+  {
+    "type": "yield_expression_delegate",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        }
+      ]
     }
   },
   {

@@ -1223,9 +1223,9 @@ export interface ObjectPatternTransport {
 export interface ObjectTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _elements?: Array<SlotValue<ObjectElementsTransportSlot> | undefined | null>
-  _elements_separator_space_before?: number
-  _elements_separator_space_after?: number
+  _properties?: Array<SlotValue<ObjectPropertiesTransportSlot> | undefined | null>
+  _properties_separator_space_before?: number
+  _properties_separator_space_after?: number
 }
 
 export interface ObjectTypeContentTransport {
@@ -1475,7 +1475,7 @@ export interface SubscriptExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _object: SlotValue<Box<SubscriptExpressionObjectTransportSlot>>
-  _optional_chain?: SlotValue<OptionalChainTransport>
+  _optional_chain?: SlotValue<OptionalChain2Transport>
   _index: SlotValue<Box<SubscriptExpressionIndexTransportSlot>>
 }
 
@@ -1689,6 +1689,7 @@ export interface TypeQuerySubscriptExpressionTransport {
   '$_edges'?: Edges
   _object: SlotValue<Box<TypeQuerySubscriptExpressionObjectTransportSlot>>
   _index: SlotValue<TypeQuerySubscriptExpressionIndexTransportSlot>
+  _optional_chain?: SlotValue<OptionalChainTransport>
 }
 
 export interface TypeQueryTransport {
@@ -1772,8 +1773,14 @@ export interface WithStatementTransport {
   _body: SlotValue<Box<StatementTransport>>
 }
 
+export interface YieldExpressionDelegateTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _expression: SlotValue<Box<ExpressionTransport>>
+}
+
 export interface YieldExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _expression?: SlotValue<Box<ExpressionTransport>>
+  _expression?: SlotValue<Box<YieldExpressionExpressionTransportSlot>>
 }

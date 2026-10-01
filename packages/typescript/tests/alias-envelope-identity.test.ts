@@ -6,11 +6,11 @@ const ts = await createEngine(typescript);
 
 type Node = { readonly $type: number; readonly _content?: unknown };
 type Pair = Node & { key(): Node };
-type Assignment = Node & { right(): { elements(): readonly Pair[] } };
+type Assignment = Node & { right(): { properties(): readonly Pair[] } };
 
 function keysOf(source: string): readonly Node[] {
 	const statement = ts.parse(source).statements()[0] as unknown as { expression(): Assignment };
-	return statement.expression().right().elements().map((pair) => pair.key());
+	return statement.expression().right().properties().map((pair) => pair.key());
 }
 
 describe('an alias envelope is seated by the kind the parser shows', () => {

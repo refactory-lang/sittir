@@ -230,7 +230,9 @@ async function runCodegenInternal(opts: CodegenOptions): Promise<NodeMap> {
 	}
 
 	if (result.droppedTokens.length > 0) {
-		process.stderr.write(formatGrammarDiagnostics(result.droppedTokens.map((d) => fromDroppedTokens(grammar, d))) + '\n');
+		const dropped = result.droppedTokens.map((d) => fromDroppedTokens(grammar, d));
+		process.stderr.write(formatGrammarDiagnostics(dropped) + '\n');
+		if (!allowDiagnostics.has('dropped-token')) throw new GrammarDiagnosticError(dropped, dropped);
 	}
 
 	const outDir = outputDir;

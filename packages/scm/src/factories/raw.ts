@@ -3,7 +3,13 @@
 import type * as T from '../types-internal.js';
 import { TSKindId } from '../types.js';
 import type { AdmitBound, NonEmptyArray } from '@sittir/types';
-import { withAccessors, coerceKindEnumStorage, coerceMixedEnumStorage, rejectBareText } from '@sittir/common/utils';
+import {
+	withAccessors,
+	coerceBooleanKeywordStorage,
+	coerceKindEnumStorage,
+	coerceMixedEnumStorage,
+	rejectBareText
+} from '@sittir/common/utils';
 import { withMethods } from '../utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
@@ -553,14 +559,13 @@ export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Con
 	) as unknown as T.NamedNodeExpressionArm.Bound;
 }
 
-export function buildGroupingGroup(
-	value: AdmitBound<T.Definition | T.GroupExpressionArm, T.AdmittedNodes>
-): T.GroupingGroup.Bound {
+export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGroup.Bound {
 	const _group_expression = rejectBareText(
-		value,
+		config.groupExpression,
 		'GroupingGroup.groupExpression',
 		'a built Definition / GroupExpressionArm'
 	);
+	const _anchor = coerceBooleanKeywordStorage(config.anchor);
 	return withMethods(
 		withAccessors(
 			{
@@ -568,12 +573,17 @@ export function buildGroupingGroup(
 				$source: 2 as const,
 				$named: true as const,
 				_group_expression,
+				_anchor,
 				$with: {
-					groupExpression: (value: T.Definition | T.GroupExpressionArm) => buildGroupingGroup(value)
+					groupExpression: (value: T.Definition | T.GroupExpressionArm) =>
+						buildGroupingGroup({ ...config, groupExpression: value }),
+					anchor: (value?: NonNullable<T.GroupingGroup.Config>['anchor']) =>
+						buildGroupingGroup({ ...config, anchor: value })
 				}
 			},
 			{
-				groupExpression: () => _group_expression
+				groupExpression: () => _group_expression,
+				anchor: () => _anchor
 			}
 		)
 	) as unknown as T.GroupingGroup.Bound;
@@ -590,6 +600,8 @@ export function buildStringContentText(text: string): T.StringContentText.Bound 
 		$text: text
 	});
 }
+
+export const buildAnchor: TSKindId.Anchor = TSKindId.Anchor;
 
 export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNodePlain.Bound {
 	const _name = rejectBareText(
@@ -683,12 +695,10 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 	) as unknown as T.NamedNodeSupertyped.Bound;
 }
 
-export function buildNamedNodeGroupChildren(
-	...children: AdmitBound<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[], T.AdmittedNodes>
-): T.NamedNodeGroupChildren.Bound {
-	_assertNonEmpty(children, 'named_node_group_children.children');
+export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Config): T.NamedNodeGroupChildren.Bound {
+	const _anchor = coerceBooleanKeywordStorage(config.anchor);
 	const _named_node_expressions = rejectBareText(
-		children,
+		config.namedNodeExpressions ?? [],
 		'NamedNodeGroupChildren.namedNodeExpressions',
 		'a built Definition / NegatedField / NamedNodeExpressionArm'
 	);
@@ -698,13 +708,17 @@ export function buildNamedNodeGroupChildren(
 				$type: TSKindId.NamedNodeGroupChildren as const,
 				$source: 2 as const,
 				$named: true as const,
+				_anchor,
 				_named_node_expressions,
 				$with: {
-					namedNodeExpressions: (...vs: (T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]) =>
-						buildNamedNodeGroupChildren(...vs)
+					anchor: (value?: NonNullable<T.NamedNodeGroupChildren.Config>['anchor']) =>
+						buildNamedNodeGroupChildren({ ...config, anchor: value }),
+					namedNodeExpressions: (...values: NonEmptyArray<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
+						buildNamedNodeGroupChildren({ ...config, namedNodeExpressions: values })
 				}
 			},
 			{
+				anchor: () => _anchor,
 				namedNodeExpressions: () => _named_node_expressions
 			}
 		)
@@ -714,6 +728,7 @@ export function buildNamedNodeGroupChildren(
 export function buildNamedNodeGroupAnchoredLast(
 	config: T.NamedNodeGroupAnchoredLast.Config
 ): T.NamedNodeGroupAnchoredLast.Bound {
+	const _anchor = coerceBooleanKeywordStorage(config.anchor);
 	const _named_node_expressions = rejectBareText(
 		config.namedNodeExpressions ?? [],
 		'NamedNodeGroupAnchoredLast.namedNodeExpressions',
@@ -730,9 +745,12 @@ export function buildNamedNodeGroupAnchoredLast(
 				$type: TSKindId.NamedNodeGroupAnchoredLast as const,
 				$source: 2 as const,
 				$named: true as const,
+				_anchor,
 				_named_node_expressions,
 				_last,
 				$with: {
+					anchor: (value?: NonNullable<T.NamedNodeGroupAnchoredLast.Config>['anchor']) =>
+						buildNamedNodeGroupAnchoredLast({ ...config, anchor: value }),
 					namedNodeExpressions: (...values: (T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]) =>
 						buildNamedNodeGroupAnchoredLast({ ...config, namedNodeExpressions: values }),
 					last: (value: T.Definition | T.NegatedField | T.NamedNodeExpressionArm) =>
@@ -740,6 +758,7 @@ export function buildNamedNodeGroupAnchoredLast(
 				}
 			},
 			{
+				anchor: () => _anchor,
 				namedNodeExpressions: () => _named_node_expressions,
 				last: () => _last
 			}
@@ -785,6 +804,7 @@ export type FluentKindMap = {
 	named_node_expression_arm: T.NamedNodeExpressionArm.Bound;
 	grouping_group: T.GroupingGroup.Bound;
 	string_content_text: T.StringContentText;
+	anchor: T.Anchor;
 	named_node_plain: T.NamedNodePlain.Bound;
 	named_node_supertyped: T.NamedNodeSupertyped.Bound;
 	named_node_group_children: T.NamedNodeGroupChildren.Bound;
@@ -821,6 +841,7 @@ export const _factoryMap = {
 	named_node_expression_arm: buildNamedNodeExpressionArm,
 	grouping_group: buildGroupingGroup,
 	string_content_text: buildStringContentText,
+	anchor: buildAnchor,
 	named_node_plain: buildNamedNodePlain,
 	named_node_supertyped: buildNamedNodeSupertyped,
 	named_node_group_children: buildNamedNodeGroupChildren,

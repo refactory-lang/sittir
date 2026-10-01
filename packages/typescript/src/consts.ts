@@ -102,7 +102,7 @@ export const INNER_GAPS: { readonly [kind: string]: readonly string[] } = Object
 	export_clause: Object.freeze(['export_specifiers']),
 	formal_parameters: Object.freeze(['formal_parameters_elements']),
 	named_imports: Object.freeze(['import_specifiers']),
-	object: Object.freeze(['elements']),
+	object: Object.freeze(['properties']),
 	object_pattern: Object.freeze(['properties']),
 	program: Object.freeze(['statements']),
 	statement_block: Object.freeze(['statements']),

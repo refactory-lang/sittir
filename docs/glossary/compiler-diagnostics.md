@@ -719,4 +719,4 @@ A kind and the literal tokens its template neither writes nor seats in a slot.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromDroppedTokens`
 
-The `dropped-token` warning for one kind: the tokens lost by its render, and the remedy, a named wrapper for the token in patches so it becomes a slot. It is printed after generation, because the template is the only place the loss is visible.
+The blocking `dropped-token` error for one kind: the tokens lost by its render, and the remedy, a named wrapper for the token in patches so it becomes a slot. Generation stops on it unless `dropped-token` is allowed. It is raised once the templates are emitted, because the template is the only place the loss is visible.

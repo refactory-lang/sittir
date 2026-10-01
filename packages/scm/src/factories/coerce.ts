@@ -33,6 +33,7 @@ export const _fromMap = {
 	named_node_expression_arm: coerceToNamedNodeExpressionArm,
 	grouping_group: coerceToGroupingGroup,
 	string_content_text: coerceToStringContentText,
+	anchor: coerceToAnchor,
 	named_node_plain: coerceToNamedNodePlain,
 	named_node_supertyped: coerceToNamedNodeSupertyped,
 	named_node_group_children: coerceToNamedNodeGroupChildren,
@@ -60,6 +61,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	_immediate_identifier: { pattern: /^(?:(?:[a-zA-Z0-9\-_][a-zA-Z0-9.\-_]*))$/u, factory: F.buildImmediateIdentifier },
 	comment: { factory: (content: string) => _resolveByKind('comment', content) },
 	string_content_text: { pattern: /^(?:(?:[^"\\\n]+))$/u, factory: F.buildStringContentText },
+	anchor: { values: ['.'], factory: () => F.buildAnchor },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_space: { values: [' '], factory: () => F.buildSpace },
 	_tab: { values: ['\t'], factory: () => F.buildTab },
@@ -92,6 +94,7 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'_indent',
 	'_dedent',
 	'string_content_text',
+	'anchor',
 	'identifier',
 	'_immediate_identifier'
 ];
@@ -173,14 +176,13 @@ const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {};
 const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undefined> = {};
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['capture', 'negated_field']);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
-	2, 3, 4, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36
+	2, 3, 4, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36, 56
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	capture: new Set([6]),
 	string: new Set([41]),
 	immediate_string: new Set([41]),
-	negated_field: new Set([5]),
-	grouping_group: new Set([43, 44, 45, 46, 49, 51, 52, 56, 57])
+	negated_field: new Set([5])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	2: ['quantifier'],
@@ -349,9 +351,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	immediate_string: TSKindId.ImmediateString,
 	string_content: TSKindId.StringContent,
 	parameters: TSKindId.Parameters,
-	negated_field: TSKindId.NegatedField,
-	grouping_group: TSKindId.GroupingGroup,
-	named_node_group_children: TSKindId.NamedNodeGroupChildren
+	negated_field: TSKindId.NegatedField
 };
 
 const _wrapElementKinds: { readonly [kind: string]: string } = {
@@ -362,13 +362,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	negated_field: 'identifier'
 };
 
-const _wrapDirectKinds: ReadonlySet<string> = new Set([
-	'capture',
-	'string',
-	'immediate_string',
-	'negated_field',
-	'grouping_group'
-]);
+const _wrapDirectKinds: ReadonlySet<string> = new Set(['capture', 'string', 'immediate_string', 'negated_field']);
 
 const _wrapOptionalSoleKinds: ReadonlySet<string> = new Set(['string', 'immediate_string']);
 
@@ -388,10 +382,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToParameters as (...args: unknown[]) => unknown)(...children);
 		case 'negated_field':
 			return F.buildNegatedField(children[0] as Parameters<typeof F.buildNegatedField>[0]);
-		case 'grouping_group':
-			return F.buildGroupingGroup(children[0] as Parameters<typeof F.buildGroupingGroup>[0]);
-		case 'named_node_group_children':
-			return (coerceToNamedNodeGroupChildren as (...args: unknown[]) => unknown)(...children);
 		default:
 			return undefined;
 	}
@@ -963,19 +953,21 @@ export function resolveGroupingGroup_groupExpression(
 	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K8);
 }
 
+export function resolveGroupingGroup_anchor(value: T.GroupingGroup.LooseConfig['anchor']): T.GroupingGroup['_anchor'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function coerceToGroupingGroup(input: T.GroupingGroup.Loose): ReturnType<typeof F.buildGroupingGroup> {
-	if (isNodeOfKind(input, TSKindId.GroupingGroup)) return input as unknown as ReturnType<typeof F.buildGroupingGroup>;
-	return F.buildGroupingGroup(
-		_requireField(
+	if (!_isLooseConfig<T.GroupingGroup.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildGroupingGroup>;
+	return F.buildGroupingGroup({
+		groupExpression: _requireField(
 			'grouping_group',
 			'groupExpression',
-			_resolveOne<T.Definition | T.GroupExpressionArm>(
-				configFieldOr(input, 'groupExpression', () => input),
-				_K0,
-				_K8
-			)
-		)
-	);
+			resolveGroupingGroup_groupExpression(input.groupExpression)
+		),
+		anchor: resolveGroupingGroup_anchor(input.anchor)
+	});
 }
 
 export function coerceToStringContentText(
@@ -983,6 +975,10 @@ export function coerceToStringContentText(
 ): ReturnType<typeof F.buildStringContentText> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringContentText>;
 	return F.buildStringContentText(input as Parameters<typeof F.buildStringContentText>[0]);
+}
+
+export function coerceToAnchor(_input?: T.Anchor.Loose): typeof F.buildAnchor {
+	return F.buildAnchor;
 }
 
 export function resolveNamedNodePlain_name(value: T.NamedNodePlain.LooseConfig['name']): T.NamedNodePlain['_name'] {
@@ -1063,43 +1059,41 @@ export function coerceToNamedNodeSupertyped(
 	});
 }
 
+export function resolveNamedNodeGroupChildren_anchor(
+	value: T.NamedNodeGroupChildren.LooseConfig['anchor']
+): T.NamedNodeGroupChildren['_anchor'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveNamedNodeGroupChildren_namedNodeExpressions(
+	value: T.NamedNodeGroupChildren.LooseConfig['namedNodeExpressions']
+): T.NamedNodeGroupChildren['_named_node_expressions'] {
+	const resolved: readonly T.NamedNodeGroupChildren['_named_node_expressions'][number][] = _resolveMany<
+		T.Definition | T.NegatedField | T.NamedNodeExpressionArm
+	>(value, _K0, _K9);
+	_assertNonEmpty(resolved, 'named_node_group_children.namedNodeExpressions');
+	return resolved;
+}
+
 export function coerceToNamedNodeGroupChildren(
-	...input: readonly (
-		| T.NamedNodeGroupChildren.Loose
-		| LooseValue<
-				T.Definition | T.NegatedField | T.NamedNodeExpressionArm,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
+	input: T.NamedNodeGroupChildren.Loose
 ): ReturnType<typeof F.buildNamedNodeGroupChildren> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.NamedNodeGroupChildren)) {
-		const data = input[0];
-		const stored = (data as unknown as { _named_node_expressions?: unknown })._named_node_expressions;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildNamedNodeGroupChildren(
-			...(_resolveMany<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
-				children,
-				_K0,
-				_K9
-			) as unknown as Parameters<typeof F.buildNamedNodeGroupChildren>)
-		);
-	}
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNode(head) || !('namedNodeExpressions' in head)) return input;
-		const v = (head as Record<string, unknown>)['namedNodeExpressions'];
-		return Array.isArray(v) ? v : [v];
-	})();
-	return F.buildNamedNodeGroupChildren(
-		...(_resolveMany<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
-			_elems,
-			_K0,
-			_K9
-		) as unknown as Parameters<typeof F.buildNamedNodeGroupChildren>)
-	);
+	if (!_isLooseConfig<T.NamedNodeGroupChildren.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildNamedNodeGroupChildren>;
+	return F.buildNamedNodeGroupChildren({
+		anchor: resolveNamedNodeGroupChildren_anchor(input.anchor),
+		namedNodeExpressions: _requireField(
+			'named_node_group_children',
+			'namedNodeExpressions',
+			resolveNamedNodeGroupChildren_namedNodeExpressions(input.namedNodeExpressions)
+		)
+	});
+}
+
+export function resolveNamedNodeGroupAnchoredLast_anchor(
+	value: T.NamedNodeGroupAnchoredLast.LooseConfig['anchor']
+): T.NamedNodeGroupAnchoredLast['_anchor'] {
+	return _resolveBooleanKeyword(value);
 }
 
 export function resolveNamedNodeGroupAnchoredLast_namedNodeExpressions(
@@ -1120,6 +1114,7 @@ export function coerceToNamedNodeGroupAnchoredLast(
 	if (!_isLooseConfig<T.NamedNodeGroupAnchoredLast.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildNamedNodeGroupAnchoredLast>;
 	return F.buildNamedNodeGroupAnchoredLast({
+		anchor: resolveNamedNodeGroupAnchoredLast_anchor(input.anchor),
 		namedNodeExpressions: resolveNamedNodeGroupAnchoredLast_namedNodeExpressions(input.namedNodeExpressions),
 		last: _requireField('named_node_group_anchored_last', 'last', resolveNamedNodeGroupAnchoredLast_last(input.last))
 	});

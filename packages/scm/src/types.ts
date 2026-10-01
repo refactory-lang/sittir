@@ -9,6 +9,7 @@ import type {
 	LeafNs,
 	Terminal,
 	NonEmptyArray,
+	BooleanKeyword as BaseBooleanKeyword,
 	KindEnum,
 	NodeOfNamespaces,
 	GrammarTypeMap,
@@ -32,6 +33,7 @@ export type LeafScalarMap = {};
 export type LeafStringMap = {
 	[TSKindId.Quantifier]: '*' | '+' | '?';
 	[TSKindId.PredicateType]: '?' | '!';
+	[TSKindId.Anchor]: '.';
 	[TSKindId.Space]: ' ';
 	[TSKindId.Tab]: '\t';
 	[TSKindId.Newline]: '\n';
@@ -99,16 +101,17 @@ export enum TSKindId {
 	NamedNodeExpressionArm = 53,
 	GroupingGroup = 54,
 	NamedNodeGroup = 55,
-	NamedNodePlain = 56,
-	NamedNodeSupertyped = 57,
-	NamedNodeGroupChildren = 58,
-	NamedNodeGroupAnchoredLast = 59,
-	ProgramRepeat1 = 60,
-	StringContentRepeat1 = 61,
-	ParametersRepeat1 = 62,
-	ListRepeat1 = 63,
-	GroupingRepeat1 = 64,
-	NamedNodeGroupChildrenRepeat1 = 65,
+	Anchor = 56,
+	NamedNodePlain = 57,
+	NamedNodeSupertyped = 58,
+	NamedNodeGroupChildren = 59,
+	NamedNodeGroupAnchoredLast = 60,
+	ProgramRepeat1 = 61,
+	StringContentRepeat1 = 62,
+	ParametersRepeat1 = 63,
+	ListRepeat1 = 64,
+	GroupingRepeat1 = 65,
+	NamedNodeGroupChildrenRepeat1 = 66,
 	Error = 65535
 }
 Object.freeze(TSKindId);
@@ -171,16 +174,17 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[53, 'named_node_expression_arm'],
 	[54, 'grouping_group'],
 	[55, 'named_node_group'],
-	[56, 'named_node_plain'],
-	[57, 'named_node_supertyped'],
-	[58, 'named_node_group_children'],
-	[59, 'named_node_group_anchored_last'],
-	[60, 'program_repeat1'],
-	[61, 'string_content_repeat1'],
-	[62, 'parameters_repeat1'],
-	[63, 'list_repeat1'],
-	[64, 'grouping_repeat1'],
-	[65, 'named_node_group_children_repeat1'],
+	[56, 'anchor'],
+	[57, 'named_node_plain'],
+	[58, 'named_node_supertyped'],
+	[59, 'named_node_group_children'],
+	[60, 'named_node_group_anchored_last'],
+	[61, 'program_repeat1'],
+	[62, 'string_content_repeat1'],
+	[63, 'parameters_repeat1'],
+	[64, 'list_repeat1'],
+	[65, 'grouping_repeat1'],
+	[66, 'named_node_group_children_repeat1'],
 	[65535, 'ERROR']
 ]);
 
@@ -241,16 +245,17 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[53, 'named_node_expression_arm'],
 	[54, 'grouping_group'],
 	[55, 'named_node_group'],
-	[56, 'named_node_plain'],
-	[57, 'named_node_supertyped'],
-	[58, 'named_node_group_children'],
-	[59, 'named_node_group_anchored_last'],
-	[60, 'program_repeat1'],
-	[61, 'string_content_repeat1'],
-	[62, 'parameters_repeat1'],
-	[63, 'list_repeat1'],
-	[64, 'grouping_repeat1'],
-	[65, 'named_node_group_children_repeat1'],
+	[56, 'anchor'],
+	[57, 'named_node_plain'],
+	[58, 'named_node_supertyped'],
+	[59, 'named_node_group_children'],
+	[60, 'named_node_group_anchored_last'],
+	[61, 'program_repeat1'],
+	[62, 'string_content_repeat1'],
+	[63, 'parameters_repeat1'],
+	[64, 'list_repeat1'],
+	[65, 'grouping_repeat1'],
+	[66, 'named_node_group_children_repeat1'],
 	[65535, 'ERROR']
 ]);
 
@@ -369,6 +374,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.GroupingGroup;
 		case 'named_node_group':
 			return TSKindId.NamedNodeGroup;
+		case 'anchor':
+			return TSKindId.Anchor;
 		case 'named_node_plain':
 			return TSKindId.NamedNodePlain;
 		case 'named_node_supertyped':
@@ -708,10 +715,16 @@ export interface NamedNodeExpressionArm {
 export interface GroupingGroup {
 	readonly $type: TSKindId.GroupingGroup;
 	readonly _group_expression: Definition | GroupExpressionArm;
+	readonly _anchor?: boolean;
+	readonly __inputHints__?: {
+		readonly anchor?: BaseBooleanKeyword<'.'>;
+	};
 	readonly __slotHints__?: {
 		readonly groupExpression: SlotHint<T.Definition | T.GroupExpressionArm>;
+		readonly anchor: SlotHint<NonNullable<T.GroupingGroup.Config>['anchor'], true>;
 	};
 	groupExpression(): Definition | GroupExpressionArm;
+	anchor(): boolean | undefined;
 }
 
 export interface NamedNodePlain {
@@ -756,21 +769,37 @@ export interface NamedNodeSupertyped {
 
 export interface NamedNodeGroupChildren {
 	readonly $type: TSKindId.NamedNodeGroupChildren;
+	readonly _anchor?: boolean;
 	readonly _named_node_expressions: NonEmptyArray<Definition | NegatedField | NamedNodeExpressionArm>;
-	readonly __slotHints__?: {
-		readonly namedNodeExpressions: SlotHint<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[], false, true>;
+	readonly __inputHints__?: {
+		readonly anchor?: BaseBooleanKeyword<'.'>;
 	};
+	readonly __slotHints__?: {
+		readonly anchor: SlotHint<NonNullable<T.NamedNodeGroupChildren.Config>['anchor'], true>;
+		readonly namedNodeExpressions: SlotHint<
+			NonEmptyArray<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>,
+			false,
+			true
+		>;
+	};
+	anchor(): boolean | undefined;
 	namedNodeExpressions(): NonEmptyArray<Definition | NegatedField | NamedNodeExpressionArm>;
 }
 
 export interface NamedNodeGroupAnchoredLast {
 	readonly $type: TSKindId.NamedNodeGroupAnchoredLast;
+	readonly _anchor?: boolean;
 	readonly _named_node_expressions?: readonly (Definition | NegatedField | NamedNodeExpressionArm)[];
 	readonly _last: Definition | NegatedField | NamedNodeExpressionArm;
+	readonly __inputHints__?: {
+		readonly anchor?: BaseBooleanKeyword<'.'>;
+	};
 	readonly __slotHints__?: {
+		readonly anchor: SlotHint<NonNullable<T.NamedNodeGroupAnchoredLast.Config>['anchor'], true>;
 		readonly namedNodeExpressions: SlotHint<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[], true, true>;
 		readonly last: SlotHint<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>;
 	};
+	anchor(): boolean | undefined;
 	namedNodeExpressions(): readonly (Definition | NegatedField | NamedNodeExpressionArm)[];
 	last(): Definition | NegatedField | NamedNodeExpressionArm;
 }
@@ -781,6 +810,7 @@ export type Identifier = Terminal<TSKindId.Identifier, string>;
 export type ImmediateIdentifier = Terminal<TSKindId.ImmediateIdentifier, string>;
 export type PredicateType = TSKindId.Qmark | TSKindId.Bang;
 export type StringContentText = Terminal<TSKindId.StringContentText, string>;
+export type Anchor = TSKindId.Anchor;
 export type Tight = TSKindId.Tight;
 export type Space = TSKindId.Space;
 export type Tab = TSKindId.Tab;
@@ -1034,7 +1064,11 @@ export namespace NamedNodeExpressionArm {
 
 export namespace GroupingGroup {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly dot?: { readonly before?: WhitespaceArm };
+		};
 	}
 }
 
@@ -1078,6 +1112,7 @@ export namespace NamedNodeGroupChildren {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
+			readonly dot?: { readonly after?: WhitespaceArm };
 			readonly namedNodeExpressions?: {
 				readonly anonymousNode?: { readonly after?: WhitespaceArm };
 				readonly end?: WhitespaceArm;
@@ -1102,7 +1137,7 @@ export namespace NamedNodeGroupAnchoredLast {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly dot?: { readonly before?: WhitespaceArm };
+			readonly dot?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly namedNodeExpressions?: {
 				readonly anonymousNode?: { readonly after?: WhitespaceArm };
 				readonly end?: WhitespaceArm;
@@ -1371,7 +1406,7 @@ export interface GroupingGroupNs extends NodeNs<
 	GroupingGroup.Bound,
 	GroupingGroup.BuildArgs,
 	GroupingGroup.LooseArgs,
-	'group_expression',
+	never,
 	TSKindId.GroupingGroup,
 	GroupingGroup.Parsed,
 	never
@@ -1428,6 +1463,7 @@ export interface NamedNodeGroupAnchoredLastNs extends NodeNs<
 	NamedNodeGroupAnchoredLast.Parsed,
 	never
 > {}
+export interface AnchorNs extends KeywordNs<TSKindId.Anchor, '.', TSKindId.Anchor> {}
 export interface TightNs extends KeywordNs<TSKindId.Tight, '', TSKindId.Tight> {}
 export interface SpaceNs extends KeywordNs<TSKindId.Space, ' ', TSKindId.Space> {}
 export interface TabNs extends KeywordNs<TSKindId.Tab, '\t', TSKindId.Tab> {}
@@ -1473,6 +1509,7 @@ export interface NamespaceMap {
 	[TSKindId.NamedNodeSupertyped]: NamedNodeSupertypedNs;
 	[TSKindId.NamedNodeGroupChildren]: NamedNodeGroupChildrenNs;
 	[TSKindId.NamedNodeGroupAnchoredLast]: NamedNodeGroupAnchoredLastNs;
+	[TSKindId.Anchor]: AnchorNs;
 	[TSKindId.Tight]: TightNs;
 	[TSKindId.Space]: SpaceNs;
 	[TSKindId.Tab]: TabNs;
@@ -1550,6 +1587,7 @@ export interface EmptyByKindId {
 export type AdmittedNodes = AdmitLookup<BoundByKindId, ParsedByKindId, EmptyByKindId>;
 
 export type FixedTextKindId =
+	| TSKindId.Anchor
 	| TSKindId.Space
 	| TSKindId.Tab
 	| TSKindId.Newline
@@ -1595,6 +1633,7 @@ export interface IrKeyOf {
 	[TSKindId.NamedNodeSupertyped]: 'namedNodeSupertyped';
 	[TSKindId.NamedNodeGroupChildren]: 'namedNodeGroupChildren';
 	[TSKindId.NamedNodeGroupAnchoredLast]: 'namedNodeGroupAnchoredLast';
+	[TSKindId.Anchor]: 'anchor';
 	[TSKindId.Tight]: 'tight';
 	[TSKindId.Space]: 'space';
 	[TSKindId.Tab]: 'tab';
@@ -1937,9 +1976,11 @@ export namespace GroupingGroup {
 	}
 	export type Loose = LooseFor<TSKindId.GroupingGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GroupingGroup>;
-	export type BuildArgs = [value: AdmitBound<T.Definition | T.GroupExpressionArm, T.AdmittedNodes>];
+	export type BuildArgs = [config: ConfigOf<T.GroupingGroup, T.NamespaceMap>];
 	export type LooseArgs = [
-		value: LooseValue<T.Definition | T.GroupExpressionArm, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		config:
+			| LooseConfigOf<T.GroupingGroup, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.GroupingGroup, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.GroupingGroup;
 }
@@ -1995,16 +2036,11 @@ export namespace NamedNodeGroupChildren {
 	}
 	export type Loose = LooseFor<TSKindId.NamedNodeGroupChildren>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedNodeGroupChildren>;
-	export type BuildArgs = [
-		...children: AdmitBound<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[], T.AdmittedNodes>
-	];
+	export type BuildArgs = [config: ConfigOf<T.NamedNodeGroupChildren, T.NamespaceMap>];
 	export type LooseArgs = [
-		...children: LooseValue<
-			T.Definition | T.NegatedField | T.NamedNodeExpressionArm,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
+		config:
+			| LooseConfigOf<T.NamedNodeGroupChildren, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.NamedNodeGroupChildren, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.NamedNodeGroupChildren;
 }
@@ -2027,6 +2063,16 @@ export namespace NamedNodeGroupAnchoredLast {
 			| AdmitBound<T.NamedNodeGroupAnchoredLast, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.NamedNodeGroupAnchoredLast;
+}
+export namespace Anchor {
+	export type Config = AnchorNs['Config'];
+	export type Bound = AnchorNs['Bound'];
+	export type Parsed = AnchorNs['Bound'];
+	export type Loose = AnchorNs['Loose'];
+	export type LooseConfig = AnchorNs['LooseConfig'];
+	export type BuildArgs = AnchorNs['BuildArgs'];
+	export type LooseArgs = AnchorNs['LooseArgs'];
+	export type Kind = TSKindId.Anchor;
 }
 export namespace Tight {
 	export type Config = TightNs['Config'];

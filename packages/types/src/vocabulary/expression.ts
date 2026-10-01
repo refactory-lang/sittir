@@ -806,7 +806,7 @@ export namespace Expression {
 		export interface Object<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Collection<G>>> {
 			// claimed by t
 			readonly kind: 'expression.collection.object';
-			readonly elements?: (
+			readonly properties?: (
 				| V.Declaration.Method<G>
 				| G['element']
 				| V.Identifier.Property.Shorthand<G>
@@ -1160,8 +1160,15 @@ export namespace Expression {
 			| G['pattern'];
 		// p only
 		// unmapped: <python:yield_from_clause>
-		readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement'];
+		readonly expression?:
+			| V.Unmapped<'typescript:yield_expression_delegate'>
+			| V.Declaration.Module<G>
+			| G['expression']
+			| G['identifier']
+			| G['literal']
+			| G['statement'];
 		// rt only
+		// unmapped: <typescript:yield_expression_delegate>
 	}
 	export type Any<G extends GrammarContext> =
 		| V.Expression.Assignment<G>

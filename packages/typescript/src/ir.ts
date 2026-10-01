@@ -410,7 +410,7 @@ export const ir: {
 	readonly number: typeof F.number;
 	readonly import: typeof F.buildImport;
 	readonly emptyStatement: typeof F.buildEmptyStatement;
-	readonly optionalChain: typeof F.buildOptionalChain;
+	readonly optionalChain2: typeof F.buildOptionalChain2;
 	readonly this: typeof F.buildThis;
 	readonly super: typeof F.buildSuper;
 	readonly true: typeof F.buildTrue;
@@ -420,6 +420,7 @@ export const ir: {
 	readonly overrideModifier: typeof F.buildOverrideModifier;
 	readonly existentialType: typeof F.buildExistentialType;
 	readonly emptyMember: typeof F.buildEmptyMember;
+	readonly optionalChain: typeof F.buildOptionalChain;
 	readonly metaPropertyNewTarget: typeof F.buildMetaPropertyNewTarget;
 	readonly metaPropertyImportMeta: typeof F.buildMetaPropertyImportMeta;
 	readonly automaticSemicolon: typeof F.buildAutomaticSemicolon;
@@ -627,7 +628,7 @@ export const ir: {
 	// Keyword factories
 	import: F.buildImport,
 	emptyStatement: F.buildEmptyStatement,
-	optionalChain: F.buildOptionalChain,
+	optionalChain2: F.buildOptionalChain2,
 	this: F.buildThis,
 	super: F.buildSuper,
 	true: F.buildTrue,
@@ -637,6 +638,7 @@ export const ir: {
 	overrideModifier: F.buildOverrideModifier,
 	existentialType: F.buildExistentialType,
 	emptyMember: F.buildEmptyMember,
+	optionalChain: F.buildOptionalChain,
 	metaPropertyNewTarget: F.buildMetaPropertyNewTarget,
 	metaPropertyImportMeta: F.buildMetaPropertyImportMeta,
 	automaticSemicolon: F.buildAutomaticSemicolon,
