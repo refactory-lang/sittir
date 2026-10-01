@@ -30,9 +30,9 @@ Attaches a printer (`mountPrinter`) for every arm mount a host kind's seats decl
 
 The printer for a form reached through a parent's mount route (`ir.<parent>.<mount>.strict(...)`, or deeper, `ir.<parent>.<mount>.<mount>.strict(...)`): each argument is printed as a seated config of the host kind (the kind whose seat declares the mount) when it is an object, and as a direct value otherwise. The printed node is the built kind: the parent the call returns, whatever depth the mount sits at. Arguments are printed only up to the last one that is defined, so a form whose optional slot the source left empty prints as `strict()` rather than `strict(undefined)` — the spelling the form's own surface admits.
 
-### `packages/tools/src/emit/factory-source.ts::LooseFacts`
+### `packages/tools/src/emit/factory-source.ts::ModelFacts`
 
-The stamped facts the loose spelling reads, all from `node-model.json5`
+The stamped facts the printer reads on either surface (`PrintContext.facts`), all from `node-model.json5`
 through `loadNodeModel`: `modelTypes` (which kinds are pattern leaves and
 which are compounds), `subtypes` (to expand a slot's supertypes the way the
 coercer's resolver tables are built), `slotDefaults` (the `arm.default`
@@ -277,7 +277,7 @@ The one required slot of a seat kind, or nothing when it has none or several. It
 /** The source the read came from: the bytes a span addresses. */
 ```
 
-### `packages/tools/src/emit/factory-source.ts::LooseFacts.kindIdOfName`
+### `packages/tools/src/emit/factory-source.ts::ModelFacts.kindIdOfName`
 
 ```text
 /** A kind's parser id; an alias shares its target's, and the runtime admits by id. */
@@ -595,7 +595,9 @@ The no-argument call of a config-shaped node whose config printed empty.
 
 ### `packages/tools/src/emit/factory-source.ts::emitFactorySourceText`
 
-The generated file destructures the engine once, `const { build, kinds } = await createEngine(<grammar>);`, naming only the members the printed body uses (`ENGINE_MEMBERS`; a body that uses neither awaits `createEngine` unbound). Every printed factory path is `build.<path>` and every kind id `kinds.<Member>`; the two prefixes are the one pair of constants `BUILD` and `KINDS`, read by the kind-id printer, the loose kind tag and the mounted-path printer.
+The generated file binds the engine once to a variable named by `engineBinding`, `const rs = await createEngine(rust);`, and calls through it: every printed factory path is `<engine>.build.<path>` and every kind id `<engine>.kinds.<Member>` (`buildPath`, `kindsPath`, read by the kind-id printer, the loose kind tag and the path resolver). A body that uses neither awaits the engine unbound. The call that creates the engine is printed by `engineCall` alone, so a different entry point is one change there.
+
+Both surfaces print from the same `ModelFacts`; `PrintContext.surface` decides only what the surface itself differs in: the `.strict` call spelling, and the coercions the loose contract admits (bare text, dropped single-slot wrappers, bare arrays, `$type`-tagged seat configs). Hoisting is not a loose coercion, so it reads the facts on both: a seat element that sets one required slot is that value (`hoistSeatElement`), an options bag restating the list's default delimiter is dropped (`listOptionsAreDefault`), and an owner takes its list's arguments (`ownedListArgs`).
 
 The factory map handed to the dispatch holds, for a `constant`-shaped kind, the printed value of its build entry (`constantsAsValues`), the same shape a runtime factory map holds; every other kind keeps its printing function.
 
@@ -606,3 +608,16 @@ The factory map handed to the dispatch holds, for a `constant`-shaped kind, the 
 // with its underscore, and a public spelling would collide with a
 // visible kind of the same name (`_identifier` over `identifier`).
 ```
+
+### `packages/tools/src/emit/factory-source.ts::ownedListArgs`
+
+The arguments an owner prints in place of its list's call: an owner is a kind that forwards to a list (`forwardsTo`), and its factory takes the list's own arguments, so `owner(list(a, b))` is spelled `owner(a, b)`. One case keeps the list's call: the list carries trivia of its own, which the owner's call would have nowhere to hold. Seat config elements and an options bag go to the owner as they would to the list.
+
+The owner route is tried before the absorbed-list form, so a hoisted list with no seats is also spelled through its owner's arguments, options included.
+
+On the loose surface a slot whose kind is the owner keeps the owner's call (`PrintedFacts.ownsList`) where `loosenValue` would otherwise drop the owner as a single-slot wrapper and leave the list's call.
+
+### `packages/tools/src/emit/factory-source.ts::engineBinding`
+
+The names a generated file uses for its engine and for the language descriptor it imports. The engine is named after the grammar's first declared file type (`rs`, `ts`, `py`), read from the descriptor's `fileTypes`, the one place that fact is stamped. A grammar that declares none is named after the grammar. When the engine's name is the grammar's name (no file type, or a file type equal to the name, as with `scm`), the descriptor import takes `<grammar>Language` so the two do not collide.
+

@@ -791,13 +791,18 @@ A pattern value contributes `string`; a slot holding only pattern values never t
 #### body
 
 ```text
-// A single non-object argument (undefined = optional-empty; string
-// = text-collapsed scalar storage; number = scalarized kind-enum
-// storage; boolean = keyword-presence storage) keeps the direct
-// pass-through semantics — read-side storage scalar-collapses such
-// children, so constructing a node here would diverge from what a
-// real parse stores. Only structured forwarded args (config
-// objects, node spreads) construct the child.
+// The wrapper's dispatch has three outcomes. No argument, or a lone
+// `undefined`, is the absent child and goes to the direct builder as
+// is. A lone object whose `$type` is the target kind is the pre-built
+// child. Everything else is the target's own argument list — text or a
+// number for a leaf target, a keyword kind, elements for a list — and
+// the target's factory builds the child from it. No primitive is ever
+// a pre-built child, so the test names the target node and never
+// enumerates argument types.
+//
+// The node's `$with` setters call the private direct builder, not this
+// wrapper: a setter takes the slot's own type and stores it, so it must
+// not inherit the wrapper's building of the target from text.
 ```
 
 #### body
@@ -825,13 +830,10 @@ tested against a slot value.
 #### body
 
 ```text
-// This node's own registered slot (e.g. terminator) gave the public
-// wrapper a trailing options argument that the count-only dispatch
-// below never accounted for — args.length alone can no longer tell
-// the plain-value call `(value?, options?)` apart from the bare-text
-// shorthand call `(text)`, so the shorthand branch is narrowed to
-// its one unambiguous shape (a single non-object argument) and every
-// other branch threads args[1] through as options.
+// A node with a registered slot (e.g. terminator) takes a trailing
+// options argument, so its wrapper reads the child from args[0] alone
+// and threads args[1] through as options on every branch; the target
+// is built from args[0], never from the whole argument list.
 ```
 
 #### overload order
@@ -11781,20 +11783,23 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
  * emit finite: an inferred recursive `$with` closure blows the serializer
  * (TS7056) and the package cannot publish types. And a separated list's
  * tuples spell a non-empty element list as `[element: E, ...elements: E[]]`
- * (`elementsTuple`), never as `[...elements: NonEmptyArray<E>]`: a variadic
+ * (`listRestParamType`), never as `[...elements: NonEmptyArray<E>]`: a variadic
  * spread of an alias makes the whole tuple alias resolve eagerly, and the
  * loose element's widening walks each element kind's bare slot straight back
  * into the list's own row while that row's base types are still resolving
  * (TS2310). A rest element that is an array type keeps the alias deferred.
  *
- * `buildArgs` names THE CANONICAL CALL SHAPE — the one signature the kind is
- * built through — not the full public overload set, which a tuple cannot
- * represent. Two kinds carry an extra overload the tuple deliberately does
- * not describe: a forwarded wrapper also accepts its target's constructor
- * arguments, and a separated list also accepts a leading options bag. Both
- * are sugar over the canonical shape, and both are what makes
- * `Parameters<typeof build<Kind>>` pick the wrong signature — which is why
- * the tuple is derived from the factory shape, never from the function.
+ * `buildArgs` names the argument lists the kind is built through, as a
+ * tuple or a union of tuples. For most kinds that is one signature. A
+ * separated list's is every form its call takes: the elements alone or the
+ * options bag first. A kind that forwards to a list (`listSpreadTarget`)
+ * unions the list's tuples into its own, so neither needs a second spelling
+ * of the other's arguments. One overload is still outside the tuples: a
+ * wrapper that forwards to a kind that is not a list also accepts that
+ * target's constructor arguments (text for a leaf target, a keyword kind),
+ * and its row names the direct form only. The tuples are derived from the
+ * factory shape, never from the function: `Parameters<typeof build<Kind>>`
+ * resolves to the last overload only.
  * `looseArgs` is the same arity and the same labels with every parameter
  * widened to what a coercing caller may pass.
  */
@@ -11804,15 +11809,10 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
 
 `maxArgs` is the most arguments the calling convention accepts, beside the tuples it counts: the factory surface's `arity`, 1 for a leaf, 1 or 2 for a refine form (its config, plus its options when it has registered slots), and none for a list or for a kind that forwards a wrapped-list spread, whose tuples end in a rest element. `bundleEntries` reads it to stamp the hoisted builder.
 
-### `packages/codegen/src/emitters/factories.ts::elementsTuple`
+### `packages/codegen/src/emitters/factories.ts::listBuiltTypeSurface`
 
-```text
-/** A separated list's `BuildArgs` / `LooseArgs` tuple for one element type:
- *  a rest of that element, preceded by one required element when the list
- *  is non-empty. The same call shape as the builder's `NonEmptyArray<E>`
- *  rest parameter, spelled so the tuple alias stays a deferred type
- *  reference — see the cycle rules on {@link BuiltTypeSurface}. */
-```
+The construction surface of a separated list. Its `BuildArgs` / `LooseArgs` are every argument list the list's public call takes, spelled by `listRestParamType` exactly as the coercer and the overlay spell it: the elements alone, and the options bag first when the list has options. An element is the list's own element type or, when the list seats a hoisted group (`emittedElementsSeats`), that group's config (`T.<Group>.BuildArgs[0]` / `.LooseArgs[0]`), by name. A kind that forwards to the list unions these rows into its own (`fieldCarryingBuiltTypeSurface`), so an owner's row takes whatever its list's row takes without a second spelling.
+
 
 ### `packages/codegen/src/emitters/factories.ts::builtTypeSurfaceOf`
 
@@ -16304,7 +16304,9 @@ disagree on what counts as an options object.
 
 ### `packages/codegen/src/emitters/shared.ts::listRestParamType`
 
-The rest parameter of a separated list's loose coercer and seated overlay, from one place. A non-empty list requires an element: `[first: E, ...rest: E[]]`, and with options also `[options: O, first: E, ...rest: E[]]`, so the empty call and an options-only call are type errors, matching the non-empty guard the raw builder runs. An empty-capable list takes any number: `readonly E[]`, or `[first?: E | O, ...rest: E[]]` with options, where the options object alone is a valid call. When the options are required (`separatorRequired`: a separator site with no declared default), the options object always comes first and there is no elements-only form: `[options: O, first: E, ...rest: E[]]`, or `[options: O, ...rest: E[]]` for an empty-capable list, so an elements-only call is a type error, matching the raw builder's throw.
+The argument tuples of a separated list, from one place: its `BuildArgs` / `LooseArgs` rows, its loose coercer's rest parameter and its seated overlay all spell them here. It is a union of labelled tuples, one per call form. The elements-only form is `[...elements: E[]]`, or `[element: E, ...elements: E[]]` for a non-empty list, so the empty call is a type error, matching the non-empty guard the raw builder runs. With options there is also the options-first form, `[options: O, ...]` followed by the same elements; on an empty-capable list the options object alone is a valid call, on a non-empty list it is a type error. When the options are required (`separatorRequired`: a separator site with no declared default), only the options-first form exists, so an elements-only call is a type error, matching the raw builder's throw.
+
+A non-empty element list is never spelled as a variadic spread of an alias: a rest element that is an array type keeps the tuple alias deferred (see the cycle rules on `BuiltTypeSurface`).
 
 ### `packages/codegen/src/emitters/shared.ts::withEmptyOverload`
 
