@@ -4,8 +4,12 @@ description: Propagate spec changes downstream to plan.md and tasks.md
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: refine:commands/speckit.refine.propagate.md
+  source: extension:refine
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Refine Propagate Skill
 
 # Propagate Spec Changes
 

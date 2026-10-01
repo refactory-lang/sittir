@@ -1278,10 +1278,10 @@ narrowing guard.
  * `scope` is the discriminant; `ruleId` is the stable back-pointer; `subject`
  * is an optional typed escape hatch.
  *
- * NOTE: NodeData is a generated per-grammar type (emitted by emitters/types.ts),
+ * NOTE: UntypedNode is a generated per-grammar type (emitted by emitters/types.ts),
  * not statically importable into the compiler. TSubject defaults to `Rule | unknown`
  * as the documented fallback. Callers with concrete node data may specialize
- * the generic (e.g. CompilerDiagnostic<MyNodeData>).
+ * the generic (e.g. CompilerDiagnostic<MyUntypedNode>).
  */
 ```
 

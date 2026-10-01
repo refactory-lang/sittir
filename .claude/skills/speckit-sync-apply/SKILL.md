@@ -4,8 +4,12 @@ description: Apply approved drift resolutions to specs and/or code
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: sync:commands/apply.md
+  source: extension:sync
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Sync Apply Skill
 
 # Spec Sync: Apply Resolutions
 

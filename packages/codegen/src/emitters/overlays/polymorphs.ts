@@ -20,11 +20,13 @@ import {
 	seatsConfigChild,
 	configKeysOf,
 	elementsSeatOf,
-	flattenSeatOf,
+	flattenSeatsOf,
 	tupleSeatOf,
 	subFactoriesOf,
 	variantArmsOf,
+	type FlattenKey,
 	type FlattenSeat,
+	type FlattenedSeat,
 	type SubFactory
 } from './sub-factories.ts';
 import { bundleEntries, bundleExpr, flattenedVariantParents, overlayFrame, overlayImportPath, type FlattenedVariantParent } from './module.ts';
@@ -151,7 +153,7 @@ export interface PolymorphWireSet {
 	readonly node: AssembledNode;
 	readonly subs: readonly SubFactory[];
 	readonly aliases: readonly AliasWire[];
-	readonly flatten?: FlattenSeat;
+	readonly flattens?: readonly FlattenedSeat[];
 	readonly elements?: readonly FlattenSeat[];
 	readonly tuples?: readonly FlattenSeat[];
 }
@@ -239,23 +241,22 @@ export function collectPolymorphWires(
 			return childRefs(sub, keyByKind, coerceEmitted) !== undefined;
 		});
 		const aliases = variantAliasWires(node, nodeMap, isEmitted, subs);
-		const seat = flattenSeatOf(node, nodeMap);
-		const flatten = seat !== undefined && isEmitted(seat.group.kind) ? seat : undefined;
+		const flattens = flattenSeatsOf(node, nodeMap).filter((seat) => isEmitted(seat.group.kind));
 		const elements = elementsSeatOf(node, nodeMap).filter((e) => isEmitted(e.group.kind));
 		const claimed = new Set(subs.map((sub) => sub.slot));
 		const tuples = tupleSeatOf(node, nodeMap).filter((e) => isEmitted(e.group.kind) && !claimed.has(e.slot));
 		visiting.add(node.kind);
-		for (const s of [...(flatten ? [flatten] : []), ...elements, ...tuples]) visit(s.group);
+		for (const s of [...flattens, ...elements, ...tuples]) visit(s.group);
 		for (const alias of aliases) visit(alias.child);
 		visiting.delete(node.kind);
-		if (subs.length > 0 || aliases.length > 0 || flatten !== undefined || elements.length > 0 || tuples.length > 0) {
+		if (subs.length > 0 || aliases.length > 0 || flattens.length > 0 || elements.length > 0 || tuples.length > 0) {
 			order.push(node.kind);
 			byKind.set(node.kind, {
 				parentKey,
 				node,
 				subs,
 				aliases,
-				...(flatten ? { flatten } : {}),
+				...(flattens.length > 0 ? { flattens } : {}),
 				...(elements.length > 0 ? { elements } : {}),
 				...(tuples.length > 0 ? { tuples } : {})
 			});
@@ -302,7 +303,7 @@ function inDependencyOrder(chunks: readonly OverlayChunk[]): OverlayChunk[] {
 function seatBearing(wires: PolymorphWires, kind: string, parentKind: string): boolean {
 	const set = wires.byKind.get(kind);
 	if (set === undefined) return false;
-	if (set.flatten === undefined && (set.elements ?? []).length === 0 && (set.tuples ?? []).length === 0) return false;
+	if ((set.flattens ?? []).length === 0 && (set.elements ?? []).length === 0 && (set.tuples ?? []).length === 0) return false;
 	const at = wires.order.indexOf(kind);
 	return at !== -1 && at < wires.order.indexOf(parentKind);
 }
@@ -493,7 +494,7 @@ function seatedOptionsType(wireSet: PolymorphWireSet, wires: PolymorphWires, spr
 
 function seatsOf(wireSet: PolymorphWireSet, wires: PolymorphWires): SeatEmission[] {
 	return [
-		...(wireSet.flatten ? [seatEmission(wireSet.node, wireSet.parentKey, wireSet.flatten, 'flatten', wires, wires.nodeMap)] : []),
+		...(wireSet.flattens ?? []).map((e) => seatEmission(wireSet.node, wireSet.parentKey, e, 'flatten', wires, wires.nodeMap)),
 		...(wireSet.elements ?? []).map((e) => seatEmission(wireSet.node, wireSet.parentKey, e, 'elements', wires, wires.nodeMap)),
 		...(wireSet.tuples ?? []).map((e) => seatEmission(wireSet.node, wireSet.parentKey, e, 'tuple', wires, wires.nodeMap))
 	];
@@ -590,9 +591,11 @@ const LIST_HELPER = [
 ];
 
 const FLATTEN_HELPER = [
-	'// A flattened group is present as a whole or absent as a whole: the second',
-	'// overload forbids every one of its keys.',
-	'type NoneOf<T> = { [K in keyof T]?: never };'
+	'// A flattened group is present as a whole or absent as a whole: a config',
+	'// that seats the group by its slot names none of its keys, and one that',
+	'// flattens it names the whole group or none of it.',
+	'type NoneOf<T> = { [K in keyof T]?: never };',
+	'type WithoutGroup<P, G> = P extends undefined ? P : P & NoneOf<G>;'
 ];
 
 interface WireShape {
@@ -746,7 +749,8 @@ interface SeatShape {
 
 function flattenShape(
 	k: string,
-	mergeKeys: readonly string[],
+	keys: readonly FlattenKey[],
+	groupKeys: readonly string[],
 	m: string,
 	positional: boolean,
 	directKey: string | undefined,
@@ -762,11 +766,22 @@ function flattenShape(
 			paramFor: (p, c) => `(config: ${p} | ArgsOf<typeof ${c}>[0])`
 		};
 	}
-	const keyTests = mergeKeys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ');
+	const keyTests = keys.map(({ key }) => `key === ${JSON.stringify(key)}`).join(' || ');
+	const ownKeyTests = groupKeys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ');
+	const renames = Object.fromEntries(keys.filter(({ key, field }) => key !== field).map(({ key, field }) => [field, key]));
+	const renamed = Object.keys(renames).length > 0;
+	const outerKey = (field: string): string => renames[field] ?? field;
 	const groupConfig = (c: string): string =>
-		directKey === undefined ? `ArgsOf<${c}>[0]` : `{ ${directKey}: ArgsOf<${c}>[0] }`;
+		directKey !== undefined
+			? `{ ${outerKey(directKey)}: ArgsOf<${c}>[0] }`
+			: renamed
+				? `RenameKeys<ArgsOf<${c}>[0], ${JSON.stringify(renames)}>`
+				: `ArgsOf<${c}>[0]`;
+	const fieldOf = renamed
+		? `(${JSON.stringify(Object.fromEntries(keys.map(({ key, field }) => [key, field])))} as Record<string, string>)[key]!`
+		: 'key';
 	const flattened = (p: string, c: string): string =>
-		`${p} | (OmitEach<NonNullable<${p}>, '${k}'> & (${groupConfig(c)} | NoneOf<${groupConfig(c)}>))`;
+		`WithoutGroup<${p}, OmitEach<NonNullable<${groupConfig(c)}>, '${k}'>> | (OmitEach<NonNullable<${p}>, '${k}'> & (${groupConfig(c)} | NoneOf<${groupConfig(c)}>))`;
 	const buildGroup = directKey === undefined ? `${CALL_C}(inner)` : `${CALL_C}(inner[${JSON.stringify(directKey)}])`;
 	return {
 		method: [
@@ -777,7 +792,7 @@ function flattenShape(
 				? [
 						`		const own = _o(config)[${JSON.stringify(k)}];`,
 						`		if (typeof own === 'object' && own !== null && !Array.isArray(own)) {`,
-						`			const spelled = '$type' in own ? (own as { $type?: unknown }).$type === wrapperId : !('kind' in own) && Object.keys(own).every((key) => ${keyTests});`,
+						`			const spelled = '$type' in own ? (own as { $type?: unknown }).$type === wrapperId : !('kind' in own) && Object.keys(own).every((key) => ${ownKeyTests});`,
 						`			if (spelled) return ${CALL_PO('config')};`,
 						`		}`
 					]
@@ -787,7 +802,7 @@ function flattenShape(
 			`		let seated = false;`,
 			`		for (const [key, value] of Object.entries(_o(config))) {`,
 			`			if (${keyTests}) {`,
-			`				inner[key] = value;`,
+			`				inner[${fieldOf}] = value;`,
 			`				seated = seated || value !== undefined;`,
 			`			} else rest[key] = value;`,
 			`		}`,
@@ -801,8 +816,7 @@ function flattenShape(
 const PFS = 'PF extends (...args: never[]) => unknown';
 
 function configTest(keys: readonly string[]): string {
-	const keyTests = keys.map((key) => `key === ${JSON.stringify(key)}`).join(' || ') || 'false';
-	return `(e: unknown): boolean => typeof e === 'object' && e !== null && !('$type' in e) && Object.keys(e).every((key) => ${keyTests})`;
+	return `(e: unknown): boolean => isGroupConfig(e, ${JSON.stringify(keys)})`;
 }
 
 function elementsShape(
@@ -874,15 +888,20 @@ interface SeatEmission {
 	readonly spread: boolean;
 }
 
+function flattenedKeysOf(seat: FlattenSeat | FlattenedSeat): readonly FlattenKey[] {
+	if (!('keys' in seat)) throw new Error(`flattenedKeysOf: '${seat.group.kind}' in '${seat.slot.propertyName}' is not a flatten seat`);
+	return seat.keys;
+}
+
 function seatEmission(
 	parent: AssembledNode,
 	parentKey: string,
-	seat: FlattenSeat,
+	seat: FlattenSeat | FlattenedSeat,
 	kind: 'flatten' | 'elements' | 'tuple',
 	wires: PolymorphWires,
 	nodeMap: NodeMap
 ): SeatEmission {
-	const m = methodName(parentKey, kind === 'flatten' ? 'flatten' : seat.slot.configKey);
+	const m = methodName(parentKey, kind === 'flatten' ? `flatten$${seat.slot.configKey}` : seat.slot.configKey);
 	const direct = resolveDirectFactorySlot(parent, nodeMap) !== undefined;
 	const wrapperSeat = kind === 'flatten' && !direct && configKeysOf(seat.group).includes(seat.slot.configKey);
 	const wrapperId = wrapperSeat ? kindDiscriminantExpr(seat.group.kind, nodeMap, wires.kindEntries) : undefined;
@@ -898,7 +917,7 @@ function seatEmission(
 		kind === 'tuple'
 			? tupleShape(seat.slot.configKey, m)
 			: kind === 'flatten'
-			? flattenShape(seat.slot.configKey, configKeysOf(seat.group), m, direct, seat.directKey, wrapperSeat)
+			? flattenShape(seat.slot.configKey, flattenedKeysOf(seat), configKeysOf(seat.group), m, direct, seat.directKey, wrapperSeat)
 			: elementsShape(
 					seat.slot.configKey,
 					configKeysOf(seat.group),
@@ -1150,8 +1169,9 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		"import * as F from '../raw.js';",
 		"import * as C from '../coerce.js';",
 		"import { bundle } from '@sittir/common/utils';",
-		`import type { ArgsOf, ${blocks.some((b) => b.includes('ElementsOf<')) ? 'ElementsOf, ' : ''}OmitEach${blocks.some((b) => b.includes('OptionsArg<')) ? ', OptionsArg' : ''} } from '@sittir/types';`,
+		`import type { ArgsOf, ${blocks.some((b) => b.includes('ElementsOf<')) ? 'ElementsOf, ' : ''}OmitEach${blocks.some((b) => b.includes('OptionsArg<')) ? ', OptionsArg' : ''}${blocks.some((b) => b.includes('RenameKeys<')) ? ', RenameKeys' : ''} } from '@sittir/types';`,
 		...(usesKindId ? ["import { TSKindId } from '../../types.js';"] : []),
+		...(blocks.some((b) => b.includes('isGroupConfig(')) ? ["import { isGroupConfig } from '@sittir/common/utils';"] : []),
 		...(blocks.some((b) => /(?<![\w$.])T\./.test(b)) ? ["import type * as T from '../../types.js';"] : [])
 	];
 	const start = blocks.indexOf(ERASED_HELPERS[0]!);

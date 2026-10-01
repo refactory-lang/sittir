@@ -1,8 +1,6 @@
 ---
 name: speckit-superb-check
-description: Bridge-native diagnostics command. Verifies that required and optional
-  superpowers skills are installed in workspace or global skill roots and reports
-  which hooks are ready to run.
+description: Bridge-native diagnostics command. Verifies that required and optional superpowers skills are installed in workspace or global skill roots and reports which hooks are ready to run.
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
@@ -50,22 +48,33 @@ Do **not** claim a skill is available unless the file is actually present.
 
 ## Required Skills
 
+This bridge operates on a **Dual-Layer Fallback Architecture**. Skills are classified into Hard Requirements and Optional Skills based on whether the bridge can run its baseline validation hooks without them. For a detailed mapping of skills to Spec Kit stages and fallback states, refer to the **"Superb" Skill Set Matrix** in the extension [README.md](../README.md#dual-layer-fallback--the-superb-skill-set-matrix).
+
 ### Hard Requirements
 
 - `test-driven-development`
 - `verification-before-completion`
 
-If either hard requirement is unavailable, the corresponding mandatory hook is
-not ready and the bridge is not fully operational.
+If either hard requirement is unavailable, the corresponding mandatory hook cannot start, and the bridge is blocked.
 
 ### Optional Skills
 
+These skills are not strictly required for the baseline workflow because the bridge provides **Layer 2 local fallbacks** (such as regular expressions, local checklists, or embedded prompts) or treats the corresponding stages as non-blocking.
+
+- `brainstorming`
+- `subagent-driven-development`
+- `executing-plans`
 - `systematic-debugging`
 - `receiving-code-review`
 - `finishing-a-development-branch`
+- `dispatching-parallel-agents`
+- `requesting-code-review`
+- `code-review`
+- `writing-plans`
 
 Optional skills do not block the Spec Kit main flow, but their corresponding
-bridge commands should be reported as unavailable until installed.
+bridge commands or discipline enhancements should be reported as unavailable
+until installed.
 
 ---
 
@@ -77,34 +86,53 @@ Produce a compact diagnostic report:
 ## Superpowers Bridge Check
 
 **Discovery roots**
-
 - Workspace: [path]
 - Global: [path]
 
 ## Skill Status
 
-| Skill                          | Required | Source    | Path                                                     | Status  |
-| ------------------------------ | -------- | --------- | -------------------------------------------------------- | ------- |
-| test-driven-development        | Hard     | workspace | ./.agents/skills/test-driven-development/SKILL.md        | READY   |
-| verification-before-completion | Hard     | global    | ~/.agents/skills/verification-before-completion/SKILL.md | READY   |
-| systematic-debugging           | Optional | —         | —                                                        | MISSING |
+| Skill | Required | Source | Path | Status |
+|-------|----------|--------|------|--------|
+| test-driven-development | Hard | workspace | ./.agents/skills/test-driven-development/SKILL.md | READY |
+| verification-before-completion | Hard | global | ~/.agents/skills/verification-before-completion/SKILL.md | READY |
+| brainstorming | Optional | workspace | ./.agents/skills/brainstorming/SKILL.md | READY |
+| subagent-driven-development | Optional | workspace | ./.agents/skills/subagent-driven-development/SKILL.md | READY |
+| executing-plans | Optional | workspace | ./.agents/skills/executing-plans/SKILL.md | READY |
+| systematic-debugging | Optional | — | — | MISSING |
+| dispatching-parallel-agents | Optional discipline | — | — | MISSING |
+| requesting-code-review | Optional discipline | global | ~/.agents/skills/requesting-code-review/SKILL.md | READY |
+| code-review | Optional discipline | global | ~/.agents/skills/code-review/SKILL.md | READY |
+| writing-plans | Optional discipline | global | ~/.agents/skills/writing-plans/SKILL.md | READY |
 
 ## Hook Readiness
 
-| Hook             | Command                | Status | Reason                    |
-| ---------------- | ---------------------- | ------ | ------------------------- |
-| before_implement | /speckit.superb.tdd    | READY  | Hard dependency installed |
-| after_implement  | /speckit.superb.verify | READY  | Hard dependency installed |
-| after_tasks      | /speckit.superb.review | READY  | Bridge-native command     |
+| Hook | Command | Requirement | Status | Reason |
+|------|---------|-------------|--------|--------|
+| after_specify | /speckit.superb.brainstorm | Optional | READY | Optional brainstorming skill installed |
+| after_plan | /speckit.superb.plan-gate | Required | READY | Bridge-native command |
+| after_tasks | /speckit.superb.review | Optional | READY | Bridge-native command |
+| before_implement | /speckit.superb.controller | Required | READY | Hard dependency installed |
+| after_implement | /speckit.superb.verify | Required | READY | Hard dependency installed |
 
 ## Standalone Commands
 
-| Command                  | Status      | Reason                                 |
-| ------------------------ | ----------- | -------------------------------------- |
-| /speckit.superb.debug    | UNAVAILABLE | systematic-debugging missing           |
-| /speckit.superb.respond  | READY       | receiving-code-review installed        |
-| /speckit.superb.finish   | UNAVAILABLE | finishing-a-development-branch missing |
-| /speckit.superb.critique | READY       | Bridge-native command                  |
+| Command | Status | Reason |
+|---------|--------|--------|
+| /speckit.superb.debug | UNAVAILABLE | systematic-debugging missing |
+| /speckit.superb.respond | READY | receiving-code-review installed |
+| /speckit.superb.finish | UNAVAILABLE | finishing-a-development-branch missing |
+| /speckit.superb.critique | READY | Bridge-native command |
+| /speckit.superb.brainstorm | READY | brainstorming installed |
+
+## Discipline Enhancements
+
+| Discipline | Used By | Status | Reason |
+|------------|---------|--------|--------|
+| dispatching-parallel-agents | /speckit.superb.debug | UNAVAILABLE | optional skill missing |
+| requesting-code-review | /speckit.superb.critique | READY | context packaging discipline available |
+| writing-plans | /speckit.superb.review | READY | task quality discipline available |
+| executing-plans | /speckit.superb.controller | READY | inline execution discipline available |
+| code-review | /speckit.superb.controller | READY | quality reviewer discipline available |
 
 ## Verdict
 

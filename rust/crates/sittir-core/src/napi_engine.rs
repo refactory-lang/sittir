@@ -9,7 +9,7 @@
 //! ## Trees are kept, not replaced
 //!
 //! Reads are lazy: a parse hands back one level, and every child with
-//! substructure comes back as a stub carrying the handle to expand it later.
+//! substructure comes back as a stub carrying the handle to hydrate it later.
 //! Those handles stay live for as long as the caller holds any node, so an
 //! engine that kept only the newest parse would answer a held tree's handles
 //! out of a different tree — and, because handles are dense indices that
@@ -120,7 +120,7 @@ macro_rules! napi_engine {
             /// Parse `source` and read its root.
             ///
             /// `depth` is the number of levels the read expands (see
-            /// [`read_depth`]): absent is the lazy one-level read, `Infinity`
+            /// [`depth_from_wire`]): absent is the lazy one-level read, `Infinity`
             /// expands the whole tree in one pass.
             ///
             /// The tree is retained under a fresh id so the handles this read
@@ -134,7 +134,7 @@ macro_rules! napi_engine {
                 depth: Option<f64>,
             ) -> ::napi::Result<String> {
                 let tree_id = self.claim_tree_id(&env)?;
-                let depth = $crate::napi_engine::read_depth(depth)?;
+                let depth = $crate::napi_engine::depth_from_wire(depth)?;
                 let mut parsed = self
                     .engine
                     .parse(source, tree_id)
@@ -146,7 +146,7 @@ macro_rules! napi_engine {
                     Ok(data) => {
                         let format = parsed.format().cloned();
                         let json = ::serde_json::to_string(&$crate::ParseResult {
-                            node_data: &data,
+                            untyped_node: &data,
                             format,
                             tree_id,
                         })
@@ -164,14 +164,14 @@ macro_rules! napi_engine {
                 }
             }
 
-            /// Expand one child of the node named by `handle`.
+            /// Hydrate one child of the node named by `handle`.
             ///
             /// The handle names its own tree, so a handle from a tree that has
             /// been disposed — or one never minted here — is refused rather
             /// than answered out of whichever tree happens to be present.
             /// `depth` counts the levels read, as for `parse_and_read`.
             #[::napi_derive::napi]
-            pub fn read_node(
+            pub fn read_untyped_node(
                 &mut self,
                 handle: f64,
                 child_index: f64,
@@ -192,8 +192,35 @@ macro_rules! napi_engine {
                     ))
                 })?;
                 parsed
-                    .read_child(handle, child_index, $crate::napi_engine::read_depth(depth)?)
+                    .read_at(handle, child_index, $crate::napi_engine::depth_from_wire(depth)?)
                     .map_err(::napi::Error::from_reason)
+            }
+
+            /// Read the root of a live tree again, `depth` levels down, so a
+            /// caller holding a shallow root can ask for a deeper one without
+            /// re-parsing. Refuses a tree that is not live, as
+            /// `read_untyped_node` does.
+            #[::napi_derive::napi]
+            pub fn read_root(&mut self, tree_id: f64, depth: Option<f64>) -> ::napi::Result<String> {
+                let tree_id = $crate::napi_engine::checked_index(tree_id, "treeId")?;
+                let tree_id = u32::try_from(tree_id).map_err(|_| {
+                    ::napi::Error::from_reason(format!("treeId {tree_id} names no tree"))
+                })?;
+                let depth = $crate::napi_engine::depth_from_wire(depth)?;
+                let parsed = self.trees.get_mut(&tree_id).ok_or_else(|| {
+                    ::napi::Error::from_reason(format!(
+                        "tree {tree_id} is not live (never parsed, or already disposed)"
+                    ))
+                })?;
+                let data = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| {
+                    parsed.read_root(depth)
+                }))
+                .map_err(|payload| {
+                    ::napi::Error::from_reason($crate::panic_msg(payload, "read_root panicked"))
+                })?;
+                ::serde_json::to_string(&data).map_err(|e| {
+                    ::napi::Error::from_reason(format!("serialize root failed: {e}"))
+                })
             }
 
             /// Render a typed transport object (napi-native, numeric `$type`).
@@ -274,7 +301,7 @@ macro_rules! napi_engine {
             /// and the registry has no way to know whether it already was.
             #[::napi_derive::napi]
             pub fn dispose_tree(&mut self, tree_id: f64) {
-                // Checked for the same reason `read_node` checks its handle:
+                // Checked for the same reason `read_untyped_node` checks its handle:
                 // `as` saturates, so `NaN` and every negative arrive as 0 —
                 // and 0 is the first tree, so an unchecked cast would let a
                 // nonsense id drop a live tree. Invalid input is a no-op
@@ -371,7 +398,7 @@ pub fn checked_index(value: f64, label: &str) -> napi::Result<u64> {
 /// Map the boundary's optional level count onto a [`ReadDepth`](crate::ReadDepth):
 /// absent is one level, `Infinity` is the whole tree, and anything else must
 /// be a whole number of levels, at least one.
-pub fn read_depth(depth: Option<f64>) -> napi::Result<crate::ReadDepth> {
+pub fn depth_from_wire(depth: Option<f64>) -> napi::Result<crate::ReadDepth> {
     let Some(levels) = depth else {
         return Ok(crate::ReadDepth::SHALLOW);
     };

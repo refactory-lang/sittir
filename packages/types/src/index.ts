@@ -12,8 +12,8 @@ import type { AdmitBound } from './node-surface.ts';
 // ---------------------------------------------------------------------------
 
 export type {
-	AnyNodeData,
-	NodeDataOf,
+	AnyUntypedNode,
+	UntypedNodeOf,
 	NodeChildValue,
 	NodeMemberValue,
 	AnyTreeNode,
@@ -65,7 +65,7 @@ export type NonEmptyArray<T> = readonly [T, ...(readonly T[])];
 
 /**
  * BooleanKeyword<TText> — brands boolean storage for a keyword-presence
- * position. NodeData stores `boolean`; the brand preserves the keyword's
+ * position. UntypedNode stores `boolean`; the brand preserves the keyword's
  * literal text so ConfigOf / LooseConfigOf can continue to widen to the
  * ergonomic string form when desired.
  */
@@ -82,7 +82,7 @@ type BooleanKeywordText<T> = T extends { readonly __booleanKeyword__?: infer V }
 /**
  * Bitflag<E, TStorage> — brands numeric bitflag storage.
  * `E` is the const-enum type the Config / Loose surface expose; the
- * underlying NodeData storage is numeric and native-aligned.
+ * underlying UntypedNode storage is numeric and native-aligned.
  */
 export type Bitflag<E, TStorage extends number = number> = TStorage & { readonly __bitflag__?: E };
 
@@ -212,6 +212,9 @@ export type ElementsOf<F> = F extends (...args: infer A extends readonly unknown
 		: never;
 
 export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+export type RenameKeys<T, M extends { readonly [From: string]: string }> = T extends unknown
+	? { [K in keyof T as K extends keyof M ? M[K] : K]: T[K] }
+	: never;
 
 /** The most arguments a flavor pair's hoisted call accepts, and the route key its refusal names. */
 export interface HoistArity<Max extends number = number> {
@@ -418,7 +421,7 @@ type WidenLooseFieldValue<
 /**
  * Extract the child-slot shape for the Config/Loose bag surface —
  * consumer code writes `config.children`, not `config.$other`. The
- * `$`-prefixed metadata shape is internal NodeData.
+ * `$`-prefixed metadata shape is internal UntypedNode.
  */
 type ChildSlotsOf<T, NsMap = {}> = T extends { readonly $other?: infer C }
 	? { readonly children: AdmitBound<AdmitSlotInput<C>, NodeLookup<NsMap>> }
@@ -427,7 +430,7 @@ type ChildSlotsOf<T, NsMap = {}> = T extends { readonly $other?: infer C }
 /**
  * WrappedNode<T> — the read-only lazy view produced by the generated
  * `wrap<TypeName>(data, tree)` functions. Starts from the concrete
- * NodeData interface T and augments it with camelCase getters at
+ * UntypedNode interface T and augments it with camelCase getters at
  * the top level so callers reach fields via `node.fieldName` instead
  * of `node.fields.field_name`. Children get a `child` / `children`
  * getter matching the interface's children slot shape.
@@ -614,7 +617,7 @@ type OptionalKeys<T> = {
 /** @internal — non-auto-stamp optional keys of T. */
 /**
  * LooseConfigOf<T, Scalars, Strings, Depth, NsMap> — widened input type derived
- * from a concrete node interface. Accepts NodeData passthroughs, strings for
+ * from a concrete node interface. Accepts UntypedNode passthroughs, strings for
  * leaves, objects for branches. Required fields stay required; optional
  * fields stay optional. Auto-stamped fields are excluded (same as ConfigOf).
  *
@@ -797,7 +800,7 @@ type LooseProjection<T, NsMap> = T extends {
  * conditional-types bind `extends` over the whole union on the left. That
  * distributes per arm and, for any non-never T, collapses to just
  * `LooseProjection<T>`, silently dropping the `T` passthrough (and thus
- * the "caller already has a NodeData" escape hatch).
+ * the "caller already has an UntypedNode" escape hatch).
  */
 type LooseOrConfigBag<
 	T,
@@ -838,7 +841,7 @@ type WidenValue<
 
 /** @internal — the keyword-presence brand members (boolean keyword, bitflag,
  *  kind enum), each projected to its Config surface with the branded value
- *  still accepted for readNode round-trips. A brand is a branded primitive,
+ *  still accepted for readUntypedNode round-trips. A brand is a branded primitive,
  *  so it is classified here and nowhere else: `BareKindId` excludes branded
  *  numbers and `OtherMembers` excludes every brand. */
 type WidenBrandMembers<T> = T extends { readonly __booleanKeyword__?: unknown }
@@ -1096,8 +1099,8 @@ export interface NodeNs<
 	// multi-branch recursions to `NsMap[K]['Loose']` instead of re-projecting
 	// `LooseConfigOf<U>` per arm.
 	//
-	// Unions the `T` NodeData passthrough with the widened `LooseConfigOf`
-	// bag so callers hand a fully-realised NodeData straight to
+	// Unions the `T` UntypedNode passthrough with the widened `LooseConfigOf`
+	// bag so callers hand a fully-realised UntypedNode straight to
 	// `<kind>.from(x)` without re-wrapping. Before this, per-signature
 	// `T.${Kind} | T.${Kind}.Loose` unions added the passthrough
 	// explicitly at every call site; absorbing it into `Loose` lets the
@@ -1118,12 +1121,12 @@ export interface NodeNs<
 	/** The `FieldsOf<T>` key of the slot the coercer accepts bare, or
 	 *  `never` — see the `Bare` type parameter. */
 	readonly Bare: Bare;
-	/** `Loose` minus the NodeData passthrough arm — the config bag alone.
+	/** `Loose` minus the UntypedNode passthrough arm — the config bag alone.
 	 *
 	 *  Reading a caller-supplied field by name off `Loose` picks up the
 	 *  interface's accessor signature from the `| T` arm, because negative
 	 *  narrowing drops a union constituent only when it is a strict subtype
-	 *  of the guard, and `AnyNodeData`'s optional members defeat that for
+	 *  of the guard, and `AnyUntypedNode`'s optional members defeat that for
 	 *  every kind interface. Indexing `LooseConfig` avoids the arm entirely
 	 *  while keeping each field's `__looseHints__`. */
 	readonly LooseConfig: LooseConfigOf<T, Scalars, Strings, [], NsMap>;

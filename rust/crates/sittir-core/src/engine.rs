@@ -9,16 +9,16 @@
 //!
 //! `Engine<G>` is stateless (parser + grammar config). Parsing returns a
 //! `ParsedTree<G>` that owns the tree, source, format, and a node coordinate
-//! table for drill-in navigation. Coordinates are stable child-index paths
+//! table for hydration navigation. Coordinates are stable child-index paths
 //! from the root, re-resolved on each access — no lifetime-erasure needed.
 
 use crate::format::{apply_format, extract_format};
 use crate::options::ResolvedOptions;
-use crate::read_node::{read_node, HandleMint, ReadDepth, ReadModel};
+use crate::read_untyped_node::{read_untyped_node, HandleMint, ReadDepth, ReadModel};
 use crate::render::SourceTable;
 use crate::splice::apply_edits as splice_apply_edits;
 use crate::slot::NodeCoordinate;
-use crate::types::{Edit, FormatRecord, KindId, NodeData, Source};
+use crate::types::{Edit, FormatRecord, KindId, UntypedNode, Source};
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -34,7 +34,7 @@ pub trait EngineGrammar: Copy + ReadModel {
 /// child index taken from that parent.
 ///
 /// This replaces the earlier `Vec<u32>` root-relative path. Storing a full
-/// path meant every `read_child` cloned the parent's O(depth) `Vec` to append
+/// path meant every `read_at` cloned the parent's O(depth) `Vec` to append
 /// one index — O(depth) alloc+copy per node-handle creation. A parent-link
 /// pair is `Copy`, so pushing a coordinate is O(1) with zero allocation; the
 /// node table itself encodes the tree spine, and resolution re-walks parent
@@ -66,12 +66,12 @@ impl NodeCoord {
 
 /// Mints into a tree's node table the handle a bounded read gives a child it
 /// expands. A parent from another tree mints nothing.
-struct TableMint<'a> {
+struct TreeMint<'a> {
     nodes: &'a mut Vec<NodeCoord>,
     tree_id: u32,
 }
 
-impl HandleMint for TableMint<'_> {
+impl HandleMint for TreeMint<'_> {
     fn mint(&mut self, parent: u64, child_index: u16) -> Option<u64> {
         let (tree_id, index) = decode_handle(parent);
         if tree_id != self.tree_id {
@@ -115,7 +115,7 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// parse, so a handle names the tree it belongs to and cannot be spent
     /// against another one.
     tree_id: u32,
-    /// Node coordinate table for drill-in navigation. Each entry back-links
+    /// Node coordinate table for hydration navigation. Each entry back-links
     /// to its parent handle; the root entry has `parent: None`.
     nodes: Vec<NodeCoord>,
 }
@@ -238,17 +238,17 @@ impl<G: EngineGrammar> ParsedTree<G> {
         }
     }
 
-    /// Read the root node of the parsed tree into a `NodeData`.
-    pub fn read_root(&mut self, depth: ReadDepth) -> NodeData {
+    /// Read the root node of the parsed tree into an `UntypedNode`.
+    pub fn read_root(&mut self, depth: ReadDepth) -> UntypedNode {
         let handle = self.push_coord(NodeCoord::root());
-        read_node(
+        read_untyped_node(
             &self.tree,
             &self.source,
             None,
             Some(handle),
             depth,
             &self.grammar,
-            &mut TableMint {
+            &mut TreeMint {
                 nodes: &mut self.nodes,
                 tree_id: self.tree_id,
             },
@@ -265,8 +265,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// Re-resolves the parent `Node` from `self.tree` (walking parent
     /// back-links), takes `parent.child(child_index)` to confirm the child
     /// exists, records an O(1) `(handle, child_index)` coordinate, and reads
-    /// the (already resolved) child into a `NodeData`.
-    pub fn read_child(
+    /// the (already resolved) child into an `UntypedNode`.
+    pub fn read_at(
         &mut self,
         handle: u64,
         child_index: u16,
@@ -300,25 +300,25 @@ impl<G: EngineGrammar> ParsedTree<G> {
             parent: Some(index),
             child_index: child_index as u32,
         });
-        let data = read_node(
+        let data = read_untyped_node(
             &self.tree,
             &self.source,
             Some(child_node),
             Some(encode_handle(self.tree_id, new_index)),
             depth,
             &self.grammar,
-            &mut TableMint {
+            &mut TreeMint {
                 nodes: &mut self.nodes,
                 tree_id: self.tree_id,
             },
         );
-        serde_json::to_string(&data).map_err(|e| format!("serialize NodeData failed: {e}"))
+        serde_json::to_string(&data).map_err(|e| format!("serialize UntypedNode failed: {e}"))
     }
 
     /// Apply format to a pre-rendered canonical string.
     pub fn render_canonical_node(
         &self,
-        node: &NodeData,
+        node: &UntypedNode,
         canonical: String,
     ) -> Result<String, String> {
         Ok(apply_render_format(
@@ -359,8 +359,8 @@ pub struct Engine<G: EngineGrammar> {
 /// Result wrapper for parse-and-read calls.
 #[derive(serde::Serialize)]
 pub struct ParseResult<'a> {
-    #[serde(rename = "nodeData")]
-    pub node_data: &'a NodeData,
+    #[serde(rename = "untypedNode")]
+    pub untyped_node: &'a UntypedNode,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub format: Option<FormatRecord>,
     /// Which tree this parse produced. Handles already carry it, but the
@@ -428,7 +428,7 @@ impl<G: EngineGrammar> Engine<G> {
     /// override with tree-level format.
     pub fn render_canonical_node(
         &self,
-        node: &NodeData,
+        node: &UntypedNode,
         canonical: String,
         tree_format: Option<&FormatRecord>,
     ) -> Result<String, String> {
@@ -445,9 +445,9 @@ impl<G: EngineGrammar> Engine<G> {
     }
 }
 
-/// Resolve the effective format from source provenance alone — no NodeData
+/// Resolve the effective format from source provenance alone — no UntypedNode
 /// required. Engine-level format takes priority; tree-level format applies
-/// only to non-factory nodes (readNode output). Factory-constructed nodes
+/// only to non-factory nodes (readUntypedNode output). Factory-constructed nodes
 /// get no tree format (they had no original source to preserve).
 fn resolve_render_format_from_source<'a>(
     source: Source,
@@ -464,10 +464,10 @@ fn resolve_render_format_from_source<'a>(
 }
 
 /// Apply format to a pre-rendered canonical string using scalar parameters
-/// instead of `&NodeData`. This is the public standalone API for format
+/// instead of `&UntypedNode`. This is the public standalone API for format
 /// application — callers that have KindId + Source + Span from any source
-/// (transport structs, readNode output, etc.) can apply format without
-/// constructing a full `NodeData`.
+/// (transport structs, readUntypedNode output, etc.) can apply format without
+/// constructing a full `UntypedNode`.
 ///
 /// Parameters:
 /// - `source` — provenance of the node (Ts/Sg/Factory). Controls whether
@@ -537,11 +537,11 @@ mod tests {
         }
     }
 
-    fn node(source: Source) -> NodeData {
+    fn node(source: Source) -> UntypedNode {
         // KindId(1) is the `identifier` symbol in the Rust grammar (see
         // kind_ids.rs); used for test assertions. The render fn below formats
         // the numeric id — tests assert on the number, not the name.
-        NodeData {
+        UntypedNode {
             type_: crate::types::KindId(1),
             display_type: None,
             source,
@@ -550,7 +550,7 @@ mod tests {
             children: None,
             text: Some("x".to_string()),
             span: None,
-            node_handle: None,
+            handle: None,
             child_index: None,
             trivia_data: None,
             slot_order: None,
@@ -616,5 +616,29 @@ impl<G: EngineGrammar> SourceTable for HashMap<u32, ParsedTree<G>> {
         let tree = self.get(&coord.tree_id())?;
         let index = tree.local_index(coord.handle).ok()?;
         ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index).map(|node| KindId(node.kind_id()))
+    }
+
+    fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {
+        let Some(tree) = self.get(&coord.tree_id()) else {
+            return;
+        };
+        let Ok(index) = tree.local_index(coord.handle) else {
+            return;
+        };
+        let mut node = ParsedTree::<G>::resolve_handle(&tree.nodes, &tree.tree, index);
+        let exact = node.is_some_and(|n| {
+            n.start_byte() == coord.span.start as usize && n.end_byte() == coord.span.end as usize
+        });
+        while let Some(current) = node {
+            f(KindId(current.kind_id()));
+            if !exact {
+                return;
+            }
+            node = u32::try_from(current.child_count())
+                .ok()
+                .and_then(|count| count.checked_sub(1))
+                .and_then(|last| current.child(last))
+                .filter(|last| last.end_byte() == current.end_byte());
+        }
     }
 }

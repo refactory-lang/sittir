@@ -517,7 +517,7 @@ them once each, in canonical flat order. The former per-arm kinds and their
 
 ```text
 				// expression_statement: label the trailing `_semicolon` so the
-				// template emits `{{ semicolon }}`. Without the label, readNode
+				// template emits `{{ semicolon }}`. Without the label, readUntypedNode
 				// captures the anon `;` child but the parent template's
 				// `{{ children | join(" ") }}` filters to NAMED-only children
 				// and the `;` drops. Grammar: `seq(_expressions, _semicolon)`.

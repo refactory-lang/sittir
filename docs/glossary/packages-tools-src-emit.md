@@ -380,7 +380,7 @@ The pattern kinds counted are the slot's text candidates (`textCandidateKinds`),
  */
 ```
 
-### `packages/tools/src/emit/factory-source.ts::buildsNodeData`
+### `packages/tools/src/emit/factory-source.ts::buildsUntypedNode`
 
 ```text
 /**

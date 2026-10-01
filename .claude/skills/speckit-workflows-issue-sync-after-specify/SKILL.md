@@ -4,8 +4,12 @@ description: Sync linked issue status for after_specify hook.
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: workflows:commands/issue-sync-after-specify.md
+  source: extension:workflows
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Workflows Issue Sync After Specify Skill
 
 Run:
 

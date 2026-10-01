@@ -78,7 +78,7 @@ describe('withListView', () => {
 		const node = withListView(
 			{
 				$type: 1,
-				_items: { $type: 9, $nodeHandle: 4, $childIndex: 1 },
+				_items: { $type: 9, $parentHandle: 4, $childIndex: 1 },
 				items: () => (itemReads++, listNode(['a', 'b']))
 			} as Record<string, unknown>,
 			ownerSpec,
@@ -92,7 +92,7 @@ describe('withListView', () => {
 
 	it('builds an owner over a read stub no tree can read, and refuses to count it', () => {
 		const node = withListView(
-			{ $type: 1, _items: { $type: 9, $nodeHandle: 4, $childIndex: 1 }, items: () => undefined },
+			{ $type: 1, _items: { $type: 9, $parentHandle: 4, $childIndex: 1 }, items: () => undefined },
 			ownerSpec
 		) as any;
 		expect(() => node.length).toThrow(/read stub/);
@@ -100,7 +100,7 @@ describe('withListView', () => {
 	});
 
 	it('reads an empty list node that carries its own handle as empty, not as a stub', () => {
-		const node = withListView({ $type: 9, $nodeHandle: 3, elements: () => [] } as Record<string, unknown>, {
+		const node = withListView({ $type: 9, $handle: 3, elements: () => [] } as Record<string, unknown>, {
 			elements: 'elements',
 			count: '_element'
 		}) as any;

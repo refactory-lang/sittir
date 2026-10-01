@@ -4,8 +4,12 @@ description: Update an existing spec.md in-place based on new requirements or fe
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: refine:commands/speckit.refine.update.md
+  source: extension:refine
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Refine Update Skill
 
 # Refine Specification
 

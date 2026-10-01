@@ -1,4 +1,4 @@
-import type { AnyNodeData, ByteRange, Edit, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, ByteRange, Edit, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries, type TriviaSides } from './trivia.ts';
 import { detachCoordinate } from './transport-data.ts';
 import { Source } from './source.ts';
@@ -6,7 +6,7 @@ import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { toEditAt } from './edit.ts';
 import { Delimiter } from './delimiter.ts';
-import { readNode, type TreeHandle } from './readNode.ts';
+import { hydrateStub, isStub, readUntypedNode, type TreeHandle } from './readUntypedNode.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { Source };
@@ -17,7 +17,7 @@ export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
  * runtime shape backing the `$with` update namespace. Not yet wired into
  * generated output; scaffolding only.
  */
-interface WithMethodsRuntime<T extends object = AnyNodeData> {
+interface WithMethodsRuntime<T extends object = AnyUntypedNode> {
 	$render(): string;
 	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
 	$replace(target: { range(): ByteRange }): Edit;
@@ -40,32 +40,32 @@ type Scoped = <R>(fn: () => R) => R;
 
 const NO_ENGINE = 'node has no engine; render it with engine.render(node)';
 
-export function withMethods<T extends AnyNodeData>(node: T): T & WithMethodsRuntime<T> {
+export function withMethods<T extends AnyUntypedNode>(node: T): T & WithMethodsRuntime<T> {
 	const handle = currentHandle();
 	const scoped: Scoped = handle === undefined ? (fn) => fn() : (fn) => inEngine(handle, fn);
 	const facts = (): TriviaFacts => {
 		if (handle === undefined) throw new Error(NO_ENGINE);
 		return handle.current.trivia;
 	};
-	const renderText = (self: AnyNodeData): string => {
+	const renderText = (self: AnyUntypedNode): string => {
 		if (handle === undefined) throw new Error(NO_ENGINE);
 		if (!isLive(handle.current)) throw new Error('engine disposed; render it with engine.render(node)');
 		return handle.current.render(self).toString();
 	};
 	carryTriviaThroughWith(node, handle, scoped);
 	Object.assign(node, {
-		$render(this: AnyNodeData): string {
+		$render(this: AnyUntypedNode): string {
 			return renderText(this);
 		},
-		$toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+		$toEdit(this: AnyUntypedNode, startOrRange: number | ByteRange, endPos?: number): Edit {
 			return toEditAt(renderText(this), startOrRange, endPos);
 		},
-		$replace(this: AnyNodeData, target: { range(): ByteRange }): Edit {
+		$replace(this: AnyUntypedNode, target: { range(): ByteRange }): Edit {
 			return toEditAt(renderText(this), target.range());
 		}
 	});
 	Object.defineProperty(node, '$trivia', {
-		get(this: AnyNodeData) {
+		get(this: AnyUntypedNode) {
 			return triviaSetterOf(this, facts(), scoped);
 		},
 		enumerable: false,
@@ -89,7 +89,7 @@ function bindEngine(node: object, handle: EngineHandle): void {
  * absent or an empty list. Only such a node can hold inner trivia, since a
  * comment beside any child has that child to lead or trail.
  */
-export function isEmptyNode(node: AnyNodeData): boolean {
+export function isEmptyNode(node: AnyUntypedNode): boolean {
 	return Object.entries(node).every(
 		([key, value]) => !key.startsWith('_') || value == null || (Array.isArray(value) && value.length === 0)
 	);
@@ -107,7 +107,7 @@ export function isEmptyNode(node: AnyNodeData): boolean {
  * `inner` and `innerAt` write only to an empty node of a kind with inner
  * gaps, and a write detaches the node's coordinate.
  */
-function triviaSetterOf<Self extends AnyNodeData>(
+function triviaSetterOf<Self extends AnyUntypedNode>(
 	node: Self,
 	facts: TriviaFacts,
 	scoped: Scoped
@@ -214,11 +214,17 @@ interface ListViewSpec {
 	readonly wrapper?: ListViewWrapper;
 }
 
+interface ElementConfig {
+	readonly keys: readonly string[];
+	readonly make: (config: never) => unknown;
+}
+
 interface ListSlotSpec {
 	readonly slot: string;
 	readonly kind: number;
 	readonly optional: boolean;
 	readonly make: (...args: never[]) => unknown;
+	readonly element?: ElementConfig;
 }
 
 type Members = Record<string, (...args: unknown[]) => unknown>;
@@ -277,17 +283,40 @@ const defineHidden = (node: object, key: PropertyKey, descriptor: PropertyDescri
 
 const LIST_ITEMS = Symbol('sittir.listItems');
 
+export const isGroupConfig = (value: unknown, keys: readonly string[]): boolean =>
+	typeof value === 'object' &&
+	value !== null &&
+	!('$type' in value) &&
+	Object.keys(value).length > 0 &&
+	Object.keys(value).every((key) => keys.includes(key));
+
+const convertElements = (args: readonly unknown[], element: ElementConfig | undefined): readonly unknown[] => {
+	if (element === undefined) return args;
+	const make = element.make as (config: unknown) => unknown;
+	const convert = (item: unknown): unknown => (isGroupConfig(item, element.keys) ? make(item) : item);
+	return args.length === 1 && Array.isArray(args[0]) ? [args[0].map(convert)] : args.map(convert);
+};
+
+const STORED_SLOT_READERS = Symbol('sittir.storedSlotReaders');
+
+type StoredSlotReaders = Readonly<Record<string, (this: object) => unknown>>;
+
+export function storedSlotReader(node: object, accessor: string): unknown {
+	const readers = (node as { readonly [STORED_SLOT_READERS]?: StoredSlotReaders })[STORED_SLOT_READERS];
+	return readers?.[accessor] ?? (node as Record<string, unknown>)[accessor];
+}
+
 const storedElementsOf = (node: object, spec: ListViewSpec, tree: TreeHandle | undefined): readonly unknown[] | undefined => {
 	const list = (spec.list === undefined ? node : (node as Record<string, unknown>)[spec.list.storage]) as
-		| (object & Partial<AnyNodeData>)
+		| (object & Partial<AnyUntypedNode>)
 		| undefined;
 	if (list == null) return [];
 	const elementsIn = (source: object): readonly unknown[] => {
 		const elements = (source as Record<string, unknown>)[spec.count];
 		return Array.isArray(elements) ? elements : elements == null ? [] : [elements];
 	};
-	if (spec.count in list || list.$nodeHandle == null || list.$childIndex == null) return elementsIn(list);
-	return tree === undefined ? undefined : elementsIn(readNode(tree, list.$nodeHandle, list.$childIndex));
+	if (spec.count in list || !isStub(list)) return elementsIn(list);
+	return tree === undefined ? undefined : elementsIn(hydrateStub(list, tree));
 };
 
 export function withListView<T extends object>(node: T, spec: ListViewSpec, tree?: TreeHandle): T {
@@ -357,13 +386,96 @@ export function withListSlots<T extends object>(node: T, specs: readonly ListSlo
 		setters[spec.slot] = (...args) => {
 			if (args.length === 0) return spec.optional ? set() : set(make());
 			const whole = args.length === 1 && (args[0] === undefined || (args[0] as { $type?: unknown } | null)?.$type === spec.kind);
-			return set(whole ? args[0] : make(...args));
+			return set(whole ? args[0] : make(...convertElements(args, spec.element)));
 		};
 	}
 	return node;
 }
 
-export function isNode(v: unknown): v is AnyNodeData {
+interface ElementsSeatSpec extends ElementConfig {
+	readonly slot: string;
+}
+
+export function withElementsSeat<T extends object>(node: T, spec: ElementsSeatSpec): T {
+	const setters = Object.getOwnPropertyDescriptor(node, '$with')?.value as Members | undefined;
+	const set = setters?.[spec.slot];
+	if (setters === undefined || set === undefined) return node;
+	setters[spec.slot] = (...args) => {
+		if (args.some(Array.isArray)) {
+			throw new TypeError(
+				`$with.${spec.slot} takes its elements as rest arguments, $with.${spec.slot}(a, b), not an array; spread it: $with.${spec.slot}(...items)`
+			);
+		}
+		return set(...convertElements(args, spec));
+	};
+	return node;
+}
+
+interface GroupSeatKey {
+	readonly name: string;
+	readonly field?: string;
+	readonly rest: boolean;
+	readonly required?: boolean;
+}
+
+interface GroupSeatSpec {
+	readonly slot: string;
+	readonly stored: string;
+	readonly kind: number;
+	readonly make: (config: never) => unknown;
+	readonly keys: readonly GroupSeatKey[];
+}
+
+function seatedReader(node: object, stored: string, read: (this: object) => unknown): (() => unknown) | undefined {
+	return (node as Record<string, unknown>)[stored] === undefined ? undefined : () => read.call(node);
+}
+
+export function withGroupSeat<T extends object>(node: T, spec: GroupSeatSpec): T {
+	const own = Object.getOwnPropertyDescriptor(node, spec.slot);
+	const readGroup = (own?.value ?? (node as unknown as Members)[spec.slot]) as (this: object) => Members | undefined;
+	const known = (node as { readonly [STORED_SLOT_READERS]?: StoredSlotReaders })[STORED_SLOT_READERS];
+	defineHidden(node, STORED_SLOT_READERS, { value: { ...known, [spec.slot]: readGroup } });
+	const fieldOf = (key: GroupSeatKey): string => key.field ?? key.name;
+	for (const key of spec.keys) {
+		const read = function (this: object): unknown {
+			const group = readGroup.call(this);
+			return group?.[fieldOf(key)]?.call(group);
+		};
+		defineHidden(node, key.name, {
+			enumerable: key.name === spec.slot ? (own?.enumerable ?? false) : false,
+			get(this: object) {
+				return seatedReader(this, spec.stored, read);
+			}
+		});
+	}
+	const setters = Object.getOwnPropertyDescriptor(node, '$with')?.value as Members | undefined;
+	const seat = setters?.[spec.slot];
+	if (setters === undefined || seat === undefined) return node;
+	const make = spec.make as (config: unknown) => unknown;
+	for (const key of spec.keys) {
+		setters[key.name] = (...args: unknown[]): unknown => {
+			if (key.name === spec.slot && args.length === 1 && (args[0] as { $type?: unknown } | null)?.$type === spec.kind) {
+				return seat(args[0]);
+			}
+			const group = readGroup.call(node);
+			if (group !== undefined) {
+				return seat(((group.$with as unknown as Members)[fieldOf(key)] as (...values: unknown[]) => unknown)(...args));
+			}
+			const value = key.rest ? args : args[0];
+			if (key.rest ? args.length === 0 : value === undefined) return seat();
+			const missing = spec.keys.filter((other) => other !== key && other.required === true).map((other) => other.name);
+			if (missing.length > 0) {
+				throw new TypeError(
+					`$with.${key.name} cannot build the absent '${spec.slot}' group without its required ${missing.join(', ')}; set ${missing.length === 1 ? 'it' : 'them'} first, or pass the whole group to $with.${spec.slot}`
+				);
+			}
+			return seat(make({ [fieldOf(key)]: value }));
+		};
+	}
+	return node;
+}
+
+export function isNode(v: unknown): v is AnyUntypedNode {
 	if (v === null || typeof v !== 'object') return false;
 	const o = v as Record<string, unknown>;
 	if (typeof o.$type !== 'number') return false;
@@ -392,11 +504,11 @@ export function configFieldOr(input: unknown, key: string, orElse: () => unknown
 		: orElse();
 }
 
-export function isParsedNode(v: unknown): v is AnyNodeData {
+export function isParsedNode(v: unknown): v is AnyUntypedNode {
 	return isNode(v) && (v.$source === Source.Ts || v.$source === Source.Sg);
 }
 
-export function isFactoryNode(v: unknown): v is AnyNodeData {
+export function isFactoryNode(v: unknown): v is AnyUntypedNode {
 	return isNode(v) && !isParsedNode(v);
 }
 
@@ -404,7 +516,7 @@ export function isFactoryNode(v: unknown): v is AnyNodeData {
  * A parsed ERROR node: the source it wraps, as text over its span. Only a
  * reader produces one; there is no factory for it.
  */
-export interface ErrorNode extends AnyNodeData {
+export interface ErrorNode extends AnyUntypedNode {
 	readonly $type: typeof ERROR_KIND_ID;
 	readonly $source: typeof Source.Ts | typeof Source.Sg;
 	readonly $text: string;
@@ -460,7 +572,7 @@ function isTriviaObject(value: unknown): value is TriviaSides<unknown> {
 	return isRecord(value) && !isNode(value) && ('leading' in value || 'trailing' in value || 'inner' in value);
 }
 
-function setTriviaData(node: AnyNodeData, triviaData: NodeTrivia): void {
+function setTriviaData(node: AnyUntypedNode, triviaData: NodeTrivia): void {
 	(node as unknown as Record<string, unknown>).$_trivia = triviaData;
 }
 
@@ -473,7 +585,7 @@ function setTriviaData(node: AnyNodeData, triviaData: NodeTrivia): void {
  * empty: once the rebuild gives the node a child, the comment would sit beside
  * it, so the setter refuses.
  */
-function carryTriviaThroughWith(node: AnyNodeData, handle: EngineHandle | undefined, scoped: Scoped): void {
+function carryTriviaThroughWith(node: AnyUntypedNode, handle: EngineHandle | undefined, scoped: Scoped): void {
 	const setters = (node as { $with?: Record<string, unknown> }).$with;
 	if (setters === undefined) return;
 	for (const key of Object.keys(setters)) {
@@ -495,11 +607,11 @@ function carryTriviaThroughWith(node: AnyNodeData, handle: EngineHandle | undefi
 }
 
 export { numberText, type NumberBase } from './number.ts';
-export { readNode, type TreeHandle } from './readNode.ts';
+export { hydrateStub, isStub, readUntypedNode, type Stub, type TreeHandle } from './readUntypedNode.ts';
 export { toEditAt } from './edit.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toTransportData, markEdited } from './transport-data.ts';
+export { toTransportData, markEdited, treeHandleOf } from './transport-data.ts';
 export {
 	projectInterior,
 	lexedConfig,

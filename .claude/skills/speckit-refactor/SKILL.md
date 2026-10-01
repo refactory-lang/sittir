@@ -1,7 +1,6 @@
 ---
 name: speckit-refactor
-description: Create a refactoring workflow with metrics tracking and behavior preservation
-  validation.
+description: Create a refactoring workflow with metrics tracking and behavior preservation validation.
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit

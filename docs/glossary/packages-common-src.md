@@ -56,7 +56,7 @@ The one object an engine shares with every node it stamps. `current` is the live
 
 ### `packages/common/src/engine-scope.ts::inEngine`
 
-Runs a synchronous call with a handle in scope and restores the previous one afterwards, also when the call throws. Every builder call, wrap and lazy child expansion, and `$with` and `$trivia` setter runs inside it, so a node created there is stamped with that engine's handle. It never wraps an `await`: the scope is a module-level variable that only a synchronous call may hold.
+Runs a synchronous call with a handle in scope and restores the previous one afterwards, also when the call throws. Every builder call, wrap and lazy child hydration, and `$with` and `$trivia` setter runs inside it, so a node created there is stamped with that engine's handle. It never wraps an `await`: the scope is a module-level variable that only a synchronous call may hold.
 
 ### `packages/common/src/engine-scope.ts::sameLanguage`
 
@@ -72,7 +72,7 @@ Records the engine handle that read a tree, so the wrap layer can find it from t
 
 ### `packages/common/src/engine-scope.ts::inTreeEngine`
 
-Runs a call inside the handle of the engine that read a tree, or plainly when the tree is bound to none. Every wrap of a read node goes through it, so a child expanded long after the parse returned, outside any engine call, is stamped with the reading engine.
+Runs a call inside the handle of the engine that read a tree, or plainly when the tree is bound to none. Every wrap of a read node goes through it, so a child hydrated long after the parse returned, outside any engine call, is stamped with the reading engine.
 
 ### `packages/common/src/engine-scope.ts::currentHandle`
 
@@ -88,11 +88,11 @@ A lazily rendered text: the render runs on first use and its text is cached. `sa
 
 ### `packages/common/src/engine.ts::NativeEngineDiagnostics`
 
-The public `EngineDiagnostics` fixed to the native engine's types (a root that carries the whole-file span, a `TreeHandle`), plus `readNode`, the drill-in read only the native engine has. Reached through `SittirEngine.diagnostics` rather than the engine's own surface, because it returns raw node data with reader stubs for children; the public entry point is `parse`, which wraps what these produce.
+The public `EngineDiagnostics` fixed to the native engine's types (a root that carries the whole-file span, a `TreeHandle`), plus `readUntypedNode`, the hydration read only the native engine has. Reached through `SittirEngine.diagnostics` rather than the engine's own surface, because it returns raw node data with reader stubs for children; the public entry point is `parse`, which wraps what these produce.
 
-### `packages/common/src/engine.ts::readDepthOf`
+### `packages/common/src/engine.ts::depthOf`
 
-The level count a native read takes for a set of parse options: absent (one level) by default, `Infinity` (the whole tree) under `deep`. `parseAndRead` and the diagnostics `readNode` both pass through it, so `deep` has one meaning at the boundary.
+The level count a native read takes for a set of parse options: absent (one level) by default, `Infinity` (the whole tree) under `deep`. `parseAndRead` and the diagnostics `readUntypedNode` both pass through it, so `deep` has one meaning at the boundary.
 
 ### `packages/common/src/engine.ts::nativeLanguageEngine`
 
@@ -105,7 +105,7 @@ The bitflag encoding of a separated list's optional flanks: the wire's `_delimit
 
 ### `packages/common/src/source.ts::Source`
 
-Where a node came from, the value of its `$source` stamp: `Ts` for a node read from a tree-sitter parse, `Sg` for the ast-grep read path, `Factory` for a node a builder made. The reader and the factories stamp it once, and an edit keeps it (`$with` and `detachCoordinate` drop only coordinates), so it records the node's origin, not whether it still holds a live tree handle. Rust's `enum Source` in sittir-core is the mirror the native renderer branches on: any non-`Factory` node renders with its tree's format. The object `satisfies` `AnyNodeData['$source']`, so the type-level `0 | 1 | 2` union stays the one declaration of the values.
+Where a node came from, the value of its `$source` stamp: `Ts` for a node read from a tree-sitter parse, `Sg` for the ast-grep read path, `Factory` for a node a builder made. The reader and the factories stamp it once, and an edit keeps it (`$with` and `detachCoordinate` drop only coordinates), so it records the node's origin, not whether it still holds a live tree handle. Rust's `enum Source` in sittir-core is the mirror the native renderer branches on: any non-`Factory` node renders with its tree's format. The object `satisfies` `AnyUntypedNode['$source']`, so the type-level `0 | 1 | 2` union stays the one declaration of the values.
 
 ### `packages/common/src/utils.ts::withMethods`
 
@@ -134,7 +134,7 @@ One member (`Node` or `Loose`) of kind `K`'s namespace in a grammar type map; `n
 ### `packages/common/src/runtime.ts::GrammarRuntime`
 
 The runtime a grammar binds, one generic signature per guard over its type map:
-- `isNode`'s kind-parameterised overload narrows to `Extract<Node, AnyNodeData>`, not `Node`: the namespaces carry keyword kinds whose `Node` is the bare id, and an id is never node data, so with the plain `Node` the predicate would contain numbers and stop narrowing ids away in every `coerceTo*` `isNode(input)` check.
+- `isNode`'s kind-parameterised overload narrows to `Extract<Node, AnyUntypedNode>`, not `Node`: the namespaces carry keyword kinds whose `Node` is the bare id, and an id is never node data, so with the plain `Node` the predicate would contain numbers and stop narrowing ids away in every `coerceTo*` `isNode(input)` check.
 - `withMethods` attaches the node methods, typed by the map's trivia union. A node built inside an engine's scope renders, edits and takes trivia through that engine; one built outside any scope carries no engine and refuses each of those.
 
 ### `packages/common/src/runtime.ts::bindRuntime`
@@ -203,18 +203,46 @@ The value, or the default's when it is absent. The default's type is not an infe
 
 ### `packages/common/src/utils.ts::withListView`
 
-Makes a node that reads as a list (a separated list, or a list owner whose sole content is one) a `ReadonlyArray` of its items. The items are the list's elements, except that a transparent wrapper carrying only its content reads as that content (the spec names the wrapper kind, its content accessor and the storage keys of its other slots; a decorated wrapper stays as it is). For an owner the items are read through the owner's own list accessor (`list.accessor`), so a parsed owner drills the list and a built one reads what it stores; for a list node the node is the list.
+Makes a node that reads as a list (a separated list, or a list owner whose sole content is one) a `ReadonlyArray` of its items. The items are the list's elements, except that a transparent wrapper carrying only its content reads as that content (the spec names the wrapper kind, its content accessor and the storage keys of its other slots; a decorated wrapper stays as it is). For an owner the items are read through the owner's own list accessor (`list.accessor`), so a parsed owner expands the list and a built one reads what it stores; for a list node the node is the list.
 
 It defines a getter per index up to the element count, the length of the list's stored elements (`count`; the reader stores a lone element as a single node, which counts as one), so the elements themselves are not materialized. For a list node that storage is its own; for an owner it is the list node stored under `list.storage`. A parsed owner normally arrives with that list node already read, its elements as stubs, because the wrap reads a list owner two levels at once. An owner reached another way (the parsed root, or a read by handle alone) stores its list only as a read stub (a parent handle and a child index; a read node's own handle alone is not one), which carries no count; the view then reads that one node from `tree` without wrapping it. A node built from a read stub has no tree: it builds, has no index getters, and its `length` throws naming the stub. The view then defines `length`; the iterator; `Symbol.isConcatSpreadable`, so `concat` from either side spreads the items; every non-mutating array method, `toString` and `toLocaleString` included, delegating to the items; and one getter per option the list's factory takes, read from the list's stored `_<option>` and falling back to the default the spec stamps (an absent list reads every default and has no items). The items are computed on first use and kept on the node. Every member is non-enumerable, so a spread, `Object.keys` and serialisation see the node exactly as before, and rendering never reads them. The list accessor and `$with` are left as they are.
 
 ### `packages/common/src/utils.ts::withListSlots`
 
-Makes the `$with` setter of each slot that holds a list take the builder arguments of the kind it holds: `(...items)` or `(options, ...items)`, built through that kind's raw factory, or the whole node of that kind, seated as it is. No arguments clear an optional slot and build an empty list for a required one. A whole node is recognised as a single argument whose kind is the slot's kind (or `undefined`); anything else is passed to the factory.
+Makes the `$with` setter of each slot that holds a list take the builder arguments of the kind it holds: `(...items)` or `(options, ...items)`, built through that kind's raw factory, or the whole node of that kind, seated as it is. When the list's element is a config-shaped group (`element`), an item that is that group's config object is built through the group's factory first. No arguments clear an optional slot and build an empty list for a required one. A whole node is recognised as a single argument whose kind is the slot's kind (or `undefined`); anything else is passed to the factory.
 
 ### `packages/common/src/utils.ts::LIST_VIEW_MEMBERS`
 
 The names `withListView` defines on a node from `ReadonlyArray`: its non-mutating methods and `length`. `toString` and `toLocaleString` are not among them; every object already has them. A compile-time check keeps the method list equal to `ReadonlyArray`'s own, so the runtime cannot miss a method the type promises. The emitter refuses a list whose accessors or options take one of these names.
 
-### `packages/common/src/transport-data.ts::stripStructuralProvenance`
+### `packages/common/src/utils.ts::withGroupSeat`
 
-Drops the pre-edit spelling and the coordinate that would slice it from every node that holds storage, in place, for data that reached a render by a path other than `toTransportData`. A coordinate that survives (a leaf whose slots are projected from its text) addresses that text and nothing of the layout around it, so it is stamped `$textOnly`. The root's edge flanks and a list's source gaps are read from tree bytes, and only a coordinate that names its tree position is evidence for them; a text-only one is not, so a render of such data takes the grammar's defaults where a tree-bound render keeps the source's layout.
+Flattens a group onto the parent that seats it. The group stays stored in its slot and the slot's own accessor stays, but the group's fields are readable on the parent under the names the spec gives them, each a property whose getter returns the field's reader while the seat's stored property (`stored`) holds a group and `undefined` while it does not, so a reader exists only when it has a value, and each name's `$with` setter rebuilds the group with that one field replaced and re-seats it. The types offer no such setter for an optional field of an absent group; for an untyped caller, on an absent group a setter given no value clears the seat, so the group stays absent, as an `undefined` flattened key does in the strict config; a value builds the group from that field alone when it is the group's only required field, and otherwise throws naming the required fields, so no partial group is ever seated. A name the seat prefixed carries the group field it stands for (`field`), so `seatLeft` reads and sets the group's `left` while the parent's own `left` is untouched. A name that spells the seat's slot reads the group's inner value; its setter takes that value, or the whole group when the argument's kind is the group's. The group's own accessor stays reachable through `storedSlotReader`. A node that seats several groups applies it once per seat.
+
+### `packages/common/src/utils.ts::storedSlotReader`
+
+The accessor that reads a slot's stored value as a node, for a caller that walks storage by accessor name (the validator's materialization). It is the node's own accessor unless a seat replaced it: a flattened key that spells the seat's slot reads the group's inner value, and the seat records the group's reader here.
+
+### `packages/common/src/utils.ts::withElementsSeat`
+
+Makes the `$with` setter of an elements-seat slot take the group config objects its config surface takes: an argument that is a plain object naming only the group's config keys is built through the group's factory, and every other argument is passed as it was. The setter takes its elements as rest arguments only: an array argument, which only an untyped caller can pass, throws a `TypeError` naming the slot and the spread form, instead of reaching the transport as a malformed element.
+
+### `packages/common/src/utils.ts::isGroupConfig`
+
+Whether a value is a group's config object rather than a node: a non-empty plain object without a `$type` whose keys are all among the group's config keys. The overlay factories, the setters `withElementsSeat` builds and the list-slot setters share it, so a config object means the same thing on every surface.
+
+### `packages/common/src/readUntypedNode.ts::isStub`
+
+Whether a node is a stub: a child a read left at its coordinate, `$parentHandle` beside `$childIndex`. A read stamps `$parentHandle` only with its index, so the pair is the whole test; every consumer that asks "is this unhydrated" asks this.
+
+### `packages/common/src/readUntypedNode.ts::hydrateStub`
+
+The node a stub names, read `depth` levels (one when absent) and left unwrapped; anything that is not a stub comes back as it is. The list view sizes a stubbed list with it and the tools hydrate read nodes with it. The generated wrap module's own `hydrateSelf` wraps instead: it reads the same coordinate through `readNode`, so its result is typed.
+
+### `packages/common/src/transport-data.ts::treeHandleOf`
+
+The tree a node's handle names, whichever of `$handle` (its own), `$parentHandle` (a stub's coordinate, beside `$childIndex`) or `$treeHandle` (a node nothing re-reads) it carries. Every handle is tagged with its tree, so each identifies it; this is the TypeScript side of the Rust `NodeHandle::raw`. The fold uses it to decide a node still names its tree and emits it as the coordinate's `$treeHandle`; the generated wrap uses it to recognize a node that arrived as a coordinate.
+
+### `packages/common/src/transport-data.ts::detachCoordinates`
+
+Drops the pre-edit spelling and the coordinate that would slice it from every node that holds storage, in place, for data that reached a render by a path other than `toTransportData`. A coordinate that survives (a leaf whose slots are projected from its text) addresses that text and nothing of the layout around it, so it is stamped `$textOnly`, and whichever handle it carries is re-keyed to `$treeHandle`, the only coordinate key the render side reads. The root's edge flanks and a list's source gaps are read from tree bytes, and only a coordinate that names its tree position is evidence for them; a text-only one is not, so a render of such data takes the grammar's defaults where a tree-bound render keeps the source's layout.

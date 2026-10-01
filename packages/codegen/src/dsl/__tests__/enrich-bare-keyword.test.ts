@@ -22,7 +22,7 @@ function topSeq(g: ReturnType<typeof mkGrammar>, ruleName: string): SeqRule {
 // wrapping bare leading literals as FIELD(SYM) adds `_kw_<name>`
 // hidden rules that shift tree-sitter's parser-generator tables and
 // break unrelated rules' reparse. The enrich.ts docstring documents
-// this: readNode's `promoteAnonymousKeyword` picks up bare leading
+// this: readUntypedNode's `promoteAnonymousKeyword` picks up bare leading
 // literals at runtime without grammar-side wrapping.
 //
 // Tests here verify that enrich does NOT touch leading literals.

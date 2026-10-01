@@ -5,8 +5,12 @@ description: Propose resolutions for detected drift. AI generates spec updates o
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: sync:commands/propose.md
+  source: extension:sync
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Sync Propose Skill
 
 # Spec Sync: Propose Resolutions
 

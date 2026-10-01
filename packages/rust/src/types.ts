@@ -20,6 +20,8 @@ import type {
 	SlotHint,
 	ListViewHint,
 	ListSlotHint,
+	FlatHint,
+	FlatShapesOf,
 	BoundOf,
 	ParsedOf,
 	AdmitBound,
@@ -4215,12 +4217,14 @@ export interface UnionItem {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
 			>;
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 			readonly body: ListSlotHint<
 				T.AttributedFieldDeclaration | T.FieldDeclaration,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedFieldDeclaration.Config
 			>;
 		};
 	};
@@ -4254,12 +4258,14 @@ export interface EnumItem {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
 			>;
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 			readonly body: ListSlotHint<
 				T.AttributedEnumVariant | T.EnumVariant,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedEnumVariant.Config
 			>;
 		};
 	};
@@ -4285,7 +4291,8 @@ export interface EnumVariantList {
 		readonly $listSlots: {
 			readonly enumVariantListElements: ListSlotHint<
 				T.AttributedEnumVariant | T.EnumVariant,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedEnumVariant.Config
 			>;
 		};
 	};
@@ -4333,7 +4340,8 @@ export interface FieldDeclarationList {
 		readonly $listSlots: {
 			readonly fieldDeclarationListElements: ListSlotHint<
 				T.AttributedFieldDeclaration | T.FieldDeclaration,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedFieldDeclaration.Config
 			>;
 		};
 	};
@@ -4416,7 +4424,8 @@ export interface OrderedFieldDeclarationList {
 		readonly $listSlots: {
 			readonly attributes: ListSlotHint<
 				T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedOrderedField.Config
 			>;
 		};
 	};
@@ -4649,7 +4658,8 @@ export interface TypeItem {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
 			>;
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 			readonly trailingWhereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
@@ -4734,7 +4744,8 @@ export interface FunctionItem {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
 			>;
 			readonly parameters: ListSlotHint<
 				| T.AttributedParameter
@@ -4744,7 +4755,8 @@ export interface FunctionItem {
 				| TSKindId.Underscore
 				| T.Type
 				| T.TypeIdentifier.Types,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedParameter.Config
 			>;
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
@@ -4828,7 +4840,8 @@ export interface FunctionSignatureItem {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
 			>;
 			readonly parameters: ListSlotHint<
 				| T.AttributedParameter
@@ -4838,7 +4851,8 @@ export interface FunctionSignatureItem {
 				| TSKindId.Underscore
 				| T.Type
 				| T.TypeIdentifier.Types,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedParameter.Config
 			>;
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
@@ -5046,7 +5060,8 @@ export interface TraitItem {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
 			>;
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
@@ -5080,7 +5095,8 @@ export interface AssociatedType {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
 			>;
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
@@ -5204,7 +5220,8 @@ export interface HigherRankedTraitBound {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
 			>;
 		};
 	};
@@ -5278,7 +5295,8 @@ export interface TypeParameters {
 		readonly $listSlots: {
 			readonly typeParametersElements: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
 			>;
 		};
 	};
@@ -6121,7 +6139,8 @@ export interface Parameters {
 				| TSKindId.Underscore
 				| T.Type
 				| T.TypeIdentifier.Types,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedParameter.Config
 			>;
 		};
 	};
@@ -6557,7 +6576,8 @@ export interface FunctionType {
 				| TSKindId.Underscore
 				| T.Type
 				| T.TypeIdentifier.Types,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedParameter.Config
 			>;
 		};
 	};
@@ -6602,7 +6622,8 @@ export interface GenericFunction {
 		readonly $listSlots: {
 			readonly typeArguments: ListSlotHint<
 				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.TypeArgument.Config
 			>;
 		};
 	};
@@ -6634,7 +6655,8 @@ export interface GenericType {
 		readonly $listSlots: {
 			readonly typeArguments: ListSlotHint<
 				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.TypeArgument.Config
 			>;
 		};
 	};
@@ -6655,7 +6677,8 @@ export interface GenericTypeWithTurbofish {
 		readonly $listSlots: {
 			readonly typeArguments: ListSlotHint<
 				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.TypeArgument.Config
 			>;
 		};
 	};
@@ -6798,7 +6821,8 @@ export interface TypeArguments {
 		readonly $listSlots: {
 			readonly typeArgumentsElements: ListSlotHint<
 				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.TypeArgument.Config
 			>;
 		};
 	};
@@ -6863,7 +6887,8 @@ export interface TypeBinding {
 		readonly $listSlots: {
 			readonly typeArguments: ListSlotHint<
 				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.TypeArgument.Config
 			>;
 		};
 	};
@@ -6962,7 +6987,8 @@ export interface AbstractType {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
 			>;
 		};
 	};
@@ -7810,7 +7836,8 @@ export interface CallExpression {
 		readonly $listSlots: {
 			readonly arguments: ListSlotHint<
 				T.AttributedArgument | T.Expression,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedArgument.Config
 			>;
 		};
 	};
@@ -7892,7 +7919,8 @@ export interface Arguments {
 		readonly $listSlots: {
 			readonly argumentsElements: ListSlotHint<
 				T.AttributedArgument | T.Expression,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedArgument.Config
 			>;
 		};
 	};
@@ -8131,6 +8159,13 @@ export interface MatchBlock {
 	readonly _match_block_arms?: MatchBlockArms;
 	readonly __slotHints__?: {
 		readonly matchBlockArms: SlotHint<T.MatchBlockArms, true>;
+		readonly $flat: FlatHint<
+			'matchBlockArms',
+			T.MatchBlockArms,
+			{ readonly matchArms: 'matchArms'; readonly lastArm: 'lastArm' },
+			true,
+			'_match_block_arms'
+		>;
 	};
 	matchBlockArms(): MatchBlockArms | undefined;
 }
@@ -8152,6 +8187,13 @@ export interface LastMatchArm {
 		readonly pattern: SlotHint<T.MatchPattern>;
 		readonly value: SlotHint<NonNullable<T.LastMatchArm.Config>['value']>;
 		readonly comma: SlotHint<NonNullable<T.LastMatchArm.Config>['comma'], true>;
+		readonly $flat: FlatHint<
+			'pattern',
+			T.MatchPattern,
+			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
+			false,
+			'_pattern'
+		>;
 	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
 	pattern(): MatchPattern;
@@ -8443,7 +8485,8 @@ export interface GenericPattern {
 		readonly $listSlots: {
 			readonly typeArguments: ListSlotHint<
 				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.TypeArgument.Config
 			>;
 		};
 	};
@@ -8698,7 +8741,12 @@ export interface EnumVariantListElements {
 		readonly element: NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>, false, true>;
+		readonly elements: SlotHint<
+			NonEmptyArray<T.AttributedEnumVariant | T.EnumVariant>,
+			false,
+			true,
+			T.AttributedEnumVariant.Config
+		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
 			T.AttributedEnumVariant | T.EnumVariant,
@@ -8715,7 +8763,12 @@ export interface FieldDeclarationListElements {
 		readonly element: NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>, false, true>;
+		readonly elements: SlotHint<
+			NonEmptyArray<T.AttributedFieldDeclaration | T.FieldDeclaration>,
+			false,
+			true,
+			T.AttributedFieldDeclaration.Config
+		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
 			T.AttributedFieldDeclaration | T.FieldDeclaration,
@@ -8732,7 +8785,12 @@ export interface OrderedFieldDeclarationListElements {
 		readonly element: NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>, false, true>;
+		readonly elements: SlotHint<
+			NonEmptyArray<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>,
+			false,
+			true,
+			T.AttributedOrderedField.Config
+		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
 			T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
@@ -8767,7 +8825,8 @@ export interface TypeParametersElements {
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter
 			>,
 			false,
-			true
+			true,
+			T.AttributedTypeParameter.Config
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
@@ -8944,7 +9003,8 @@ export interface ParametersElements {
 				| T.TypeIdentifier.Types
 			>,
 			false,
-			true
+			true,
+			T.AttributedParameter.Config
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
@@ -9000,7 +9060,8 @@ export interface TypeArgumentsElements {
 				T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types
 			>,
 			false,
-			true
+			true,
+			T.TypeArgument.Config
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
@@ -9018,7 +9079,12 @@ export interface ArgumentsElements {
 		readonly element: NonEmptyArray<T.AttributedArgument | T.Expression>;
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<NonEmptyArray<T.AttributedArgument | T.Expression>, false, true>;
+		readonly elements: SlotHint<
+			NonEmptyArray<T.AttributedArgument | T.Expression>,
+			false,
+			true,
+			T.AttributedArgument.Config
+		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
 			T.AttributedArgument | T.Expression,
@@ -9579,7 +9645,8 @@ export interface ArrayExpressionList {
 		readonly $listSlots: {
 			readonly argumentsElements: ListSlotHint<
 				T.AttributedArgument | T.Expression,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedArgument.Config
 			>;
 		};
 	};
@@ -9852,7 +9919,8 @@ export interface ImplItemBody {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
 			>;
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
@@ -9929,7 +9997,8 @@ export interface ImplItemSemi {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
 			>;
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
@@ -10434,6 +10503,13 @@ export interface MatchArmWithComma {
 		readonly attributes: SlotHint<(T.AttributeItem | T.InnerAttributeItem)[], true, true>;
 		readonly pattern: SlotHint<T.MatchPattern>;
 		readonly value: SlotHint<NonNullable<T.MatchArmWithComma.Config>['value']>;
+		readonly $flat: FlatHint<
+			'pattern',
+			T.MatchPattern,
+			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
+			false,
+			'_pattern'
+		>;
 	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
 	pattern(): MatchPattern;
@@ -10471,6 +10547,13 @@ export interface MatchArmBlockEnding {
 			| T.LoopExpression
 			| T.ForExpression
 			| T.ConstBlock
+		>;
+		readonly $flat: FlatHint<
+			'pattern',
+			T.MatchPattern,
+			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
+			false,
+			'_pattern'
 		>;
 	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
@@ -11190,12 +11273,14 @@ export interface StructItemBrace {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
 			>;
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 			readonly body: ListSlotHint<
 				T.AttributedFieldDeclaration | T.FieldDeclaration,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedFieldDeclaration.Config
 			>;
 		};
 	};
@@ -11229,11 +11314,13 @@ export interface StructItemTuple {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
 			>;
 			readonly body: ListSlotHint<
 				T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedOrderedField.Config
 			>;
 			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
@@ -11262,7 +11349,8 @@ export interface StructItemUnit {
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
 			>;
 		};
 	};
@@ -21589,14 +21677,18 @@ export namespace MatchExpression {
 }
 export namespace MatchBlock {
 	export type Config = ConfigFor<TSKindId.MatchBlock>;
-	export interface Bound extends BoundOf<T.MatchBlock, BoundByKindId>, NodeMethodsOf {
+	interface BoundSurface extends BoundOf<T.MatchBlock, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchBlock['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId, BoundSurface>;
 	}
-	export interface Parsed extends ParsedOf<T.MatchBlock, ParsedByKindId>, NodeMethodsOf {
+	export type Bound = BoundSurface &
+		FlatShapesOf<BoundSurface, T.MatchBlock, BoundByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
+	interface ParsedSurface extends ParsedOf<T.MatchBlock, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchBlock['$type'];
-		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedByKindId, ParsedSurface>;
 	}
+	export type Parsed = ParsedSurface &
+		FlatShapesOf<ParsedSurface, T.MatchBlock, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.MatchBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlock>;
 	export type BuildArgs = [value?: AdmitBound<T.MatchBlockArms, T.AdmittedNodes>];
@@ -21605,14 +21697,18 @@ export namespace MatchBlock {
 }
 export namespace LastMatchArm {
 	export type Config = ConfigFor<TSKindId.LastMatchArm>;
-	export interface Bound extends BoundOf<T.LastMatchArm, BoundByKindId>, NodeMethodsOf {
+	interface BoundSurface extends BoundOf<T.LastMatchArm, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.LastMatchArm['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId, BoundSurface>;
 	}
-	export interface Parsed extends ParsedOf<T.LastMatchArm, ParsedByKindId>, NodeMethodsOf {
+	export type Bound = BoundSurface &
+		FlatShapesOf<BoundSurface, T.LastMatchArm, BoundByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
+	interface ParsedSurface extends ParsedOf<T.LastMatchArm, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.LastMatchArm['$type'];
-		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedByKindId, ParsedSurface>;
 	}
+	export type Parsed = ParsedSurface &
+		FlatShapesOf<ParsedSurface, T.LastMatchArm, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.LastMatchArm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LastMatchArm>;
 	export type BuildArgs = [config: ConfigOf<T.LastMatchArm, T.NamespaceMap>];
@@ -23944,14 +24040,18 @@ export namespace ForeignModItemBody {
 }
 export namespace MatchArmWithComma {
 	export type Config = ConfigFor<TSKindId.MatchArmWithComma>;
-	export interface Bound extends BoundOf<T.MatchArmWithComma, BoundByKindId>, NodeMethodsOf {
+	interface BoundSurface extends BoundOf<T.MatchArmWithComma, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchArmWithComma['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId, BoundSurface>;
 	}
-	export interface Parsed extends ParsedOf<T.MatchArmWithComma, ParsedByKindId>, NodeMethodsOf {
+	export type Bound = BoundSurface &
+		FlatShapesOf<BoundSurface, T.MatchArmWithComma, BoundByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
+	interface ParsedSurface extends ParsedOf<T.MatchArmWithComma, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchArmWithComma['$type'];
-		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedByKindId, ParsedSurface>;
 	}
+	export type Parsed = ParsedSurface &
+		FlatShapesOf<ParsedSurface, T.MatchArmWithComma, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.MatchArmWithComma>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchArmWithComma>;
 	export type BuildArgs = [config: ConfigOf<T.MatchArmWithComma, T.NamespaceMap>];
@@ -23964,14 +24064,18 @@ export namespace MatchArmWithComma {
 }
 export namespace MatchArmBlockEnding {
 	export type Config = ConfigFor<TSKindId.MatchArmBlockEnding>;
-	export interface Bound extends BoundOf<T.MatchArmBlockEnding, BoundByKindId>, NodeMethodsOf {
+	interface BoundSurface extends BoundOf<T.MatchArmBlockEnding, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchArmBlockEnding['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId, BoundSurface>;
 	}
-	export interface Parsed extends ParsedOf<T.MatchArmBlockEnding, ParsedByKindId>, NodeMethodsOf {
+	export type Bound = BoundSurface &
+		FlatShapesOf<BoundSurface, T.MatchArmBlockEnding, BoundByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
+	interface ParsedSurface extends ParsedOf<T.MatchArmBlockEnding, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchArmBlockEnding['$type'];
-		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedByKindId, ParsedSurface>;
 	}
+	export type Parsed = ParsedSurface &
+		FlatShapesOf<ParsedSurface, T.MatchArmBlockEnding, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.MatchArmBlockEnding>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchArmBlockEnding>;
 	export type BuildArgs = [config: ConfigOf<T.MatchArmBlockEnding, T.NamespaceMap>];
@@ -25452,9 +25556,9 @@ export interface EmptyArguments extends Arguments.Bound {
 export interface EmptyFieldInitializerList extends FieldInitializerList.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
-export interface EmptyMatchBlock extends MatchBlock.Bound {
-	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
-}
+export type EmptyMatchBlock = MatchBlock.Bound & {
+	readonly $trivia: TriviaSetterOf<EmptyMatchBlock> & InnerTrivia<EmptyMatchBlock>;
+};
 export interface EmptyClosureParameters extends ClosureParameters.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }

@@ -1,5 +1,5 @@
 /**
- * ADR-0018 Phase 2 — NodeData surface shape verification.
+ * ADR-0018 Phase 2 — UntypedNode surface shape verification.
  *
  * Verifies the de-hoisted storage contract, non-enumerable accessor functions,
  * Object.freeze, $with immutability, JSON.stringify, and unified factory/wrap
@@ -53,13 +53,13 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 		expect((node as unknown as Record<string, unknown>)['$fields']).toBeUndefined();
 	});
 
-	it('FR-001: named field is stored under _<name> prefix (full NodeData, not the raw config value)', () => {
+	it('FR-001: named field is stored under _<name> prefix (full UntypedNode, not the raw config value)', () => {
 		// A loose string config value ('my_fn') is coerced into a proper leaf
-		// NodeData object before storage for the `_name` child slot exercised
+		// UntypedNode object before storage for the `_name` child slot exercised
 		// here (matches its typed accessor signature, `identifier(): Identifier`,
 		// never `identifier(): string`). This is NOT a blanket claim about every
 		// `_<name>` slot — auto-stamped kind-enum slots (e.g. python's `_type`)
-		// legitimately store a primitive numeric `TSKindId`, not NodeData.
+		// legitimately store a primitive numeric `TSKindId`, not UntypedNode.
 		const rec = node as unknown as Record<string, unknown>;
 		expect(rec['_name']).toBeDefined();
 		expect(typeof rec['_name']).toBe('object');
@@ -182,7 +182,7 @@ describe('ADR-0018 Phase 2 — JSON serialization (SC-007)', () => {
 	const node = rs.build.functionItem({ name: 'serialize_me', parameters: [], body: minimalBlock } as any);
 
 	it('SC-007: JSON.stringify includes $type, $source, _<field> keys', () => {
-		// _name holds the coerced leaf NodeData object, not the raw config
+		// _name holds the coerced leaf UntypedNode object, not the raw config
 		// string — see the FR-001 note above (same current, consistent shape).
 		const parsed = JSON.parse(JSON.stringify(node)) as Record<string, unknown>;
 		expect(parsed['$type']).toBe(rs.kinds.FunctionItem);

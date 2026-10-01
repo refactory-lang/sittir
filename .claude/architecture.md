@@ -4,8 +4,8 @@ Use this file when the task touches generated packages, runtime data shapes, or 
 
 ## Package layers
 
-- `@sittir/types` — zero-runtime TypeScript types such as `AnyNodeData`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>`, `ByteRange`, `Edit`, and `RenderContext`.
-- `@sittir/common` — backend-neutral runtime: `readNode`, `applyEdits`, the native boundary, and `createNativeEngine` behind the shared engine interface.
+- `@sittir/types` — zero-runtime TypeScript types such as `AnyUntypedNode`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>`, `ByteRange`, `Edit`, and `RenderContext`.
+- `@sittir/common` — backend-neutral runtime: `readUntypedNode`, `applyEdits`, the native boundary, and `createNativeEngine` behind the shared engine interface.
 - `@sittir/codegen` — the compiler (evaluate → link → normalize → simplify → assemble → emit) and emitters producing the grammar-specific packages.
 - `@sittir/cli` — the unified `sittir` binary (`gen`, `tool *`, `validate *`).
 - `@sittir/tools` — validator + diagnostic implementations the CLI dispatches to.
@@ -32,9 +32,9 @@ Each generated package (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) 
 - `index.ts` — barrel exports
 - `../.sittir/render-bodies.json` — one render body per renderable kind (the validators' catalog; the same bodies are compiled into the native crate)
 
-## Current NodeData shape
+## Current UntypedNode shape
 
-- NodeData is plain data, not an ES class.
+- UntypedNode is plain data, not an ES class.
 - Branch nodes use `{ $type, $source, $named, _<field>..., $children? }`.
 - Leaf nodes use `{ $type, $source, $named, $text }`.
 - Field storage is top-level `_<raw_name>` data, not `$fields`.
@@ -76,9 +76,9 @@ expression.binary(config);
 ## Data-flow tiers
 
 - **Factory input** — `Config` uses camelCase ergonomic keys.
-- **Factory output** — NodeData with pure getters, `$with` setters, and `withMethods<T>` helpers.
+- **Factory output** — UntypedNode with pure getters, `$with` setters, and `withMethods<T>` helpers.
 - **From input/output** — same shape as factory output, with loose resolution layered on top.
-- **readNode / readTreeNode** — raw tree input mapped into NodeData with no ergonomic translation.
+- **readUntypedNode / readNode** — raw tree input mapped into UntypedNode with no ergonomic translation (`readUntypedNode` plain, `readNode` wrapped).
 - **Render input** — runtime reads `_raw_name` fields and `$children` directly.
 
 ## Design decisions to preserve

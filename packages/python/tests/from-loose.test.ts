@@ -2,9 +2,9 @@
  * Loose-input from() tests — exercise the C6-prereq resolver scaffolding.
  *
  * These are the T052d-i / T052d-ii / T052d-iii cases that corpus-validation
- * doesn't cover (it feeds materialized NodeData both ways). Here we feed
+ * doesn't cover (it feeds materialized UntypedNode both ways). Here we feed
  * developer-shaped loose input — strings, kind-tagged objects, primitive
- * coercion — and check the resolvers produce the right NodeData.
+ * coercion — and check the resolvers produce the right UntypedNode.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -92,14 +92,14 @@ describe('loose from() — supertype subtype (T052d-iii)', () => {
 	});
 });
 
-describe('loose from() — NodeData passthrough still works', () => {
-	it('pre-built NodeData is passed through unchanged', () => {
-		const nodeData = py.build.integer('42') as any;
+describe('loose from() — UntypedNode passthrough still works', () => {
+	it('pre-built UntypedNode is passed through unchanged', () => {
+		const untypedNode = py.build.integer('42') as any;
 		const result = py.build.assignment.eq({
 			left: 'x' as any,
-			right: nodeData
+			right: untypedNode
 		}) as any;
 		expect(result.$type).toBe(py.kinds.AssignmentEq);
-		expect(result.right()).toBe(nodeData);
+		expect(result.right()).toBe(untypedNode);
 	});
 });

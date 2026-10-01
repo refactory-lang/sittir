@@ -4,8 +4,12 @@ description: Show all active worktrees with feature status and spec artifact sum
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: worktree:commands/speckit.worktree.list.md
+  source: extension:worktree
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Worktree List Skill
 
 # List Worktrees
 

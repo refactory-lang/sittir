@@ -65,7 +65,7 @@ for (const grammar of GRAMMARS) {
 			expect(result.from).toBeDefined();
 		});
 
-		// SKIPPED: these exercise the default JS backend (`readNode` tree-walk),
+		// SKIPPED: these exercise the default JS backend (`readUntypedNode` tree-walk),
 		// which is @deprecated — production validation runs `--backend native`
 		// (`pnpm validate:native`, the authoritative gate: rust 117 / ts 75 /
 		// py 102). The JS path no longer produces passing cases, so `rt.pass > 0`
@@ -75,7 +75,7 @@ for (const grammar of GRAMMARS) {
 		describe.skip('render-parse validation', () => {
 			const ceiling = RENDER_PARSE_CEILINGS[grammar]!;
 
-			it('parse → readNode → render → reparse preserves structure', async () => {
+			it('parse → readUntypedNode → render → reparse preserves structure', async () => {
 				const rt = await validateReadRenderParse(grammar);
 				expect(rt.pass).toBeGreaterThan(0);
 				// Ceiling: fail count must not regress above known baseline

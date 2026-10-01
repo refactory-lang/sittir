@@ -4,8 +4,12 @@ description: Sync linked issue status for before_implement hook.
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: workflows:commands/issue-sync-before-implement.md
+  source: extension:workflows
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Workflows Issue Sync Before Implement Skill
 
 Run:
 

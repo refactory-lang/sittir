@@ -46,7 +46,7 @@ describe('engine', () => {
 						parseAndRead(_source: string): string {
 							// $type is numeric (TSKindId).
 							return JSON.stringify({
-								nodeData: {
+								untypedNode: {
 									$type: TSKindId.Identifier,
 									$source: 0,
 									$named: true,
@@ -55,7 +55,7 @@ describe('engine', () => {
 								format: undefined
 							});
 						}
-						readNode(_nodeId: number): string {
+						readUntypedNode(_nodeId: number): string {
 							// $type is numeric (TSKindId).
 							return JSON.stringify({
 								$type: TSKindId.Identifier,
@@ -81,7 +81,7 @@ describe('engine', () => {
 		expect(typeof native.parseAndRead).toBe('function');
 	});
 
-	it('passes through native read payloads already in JS readNode shape', async () => {
+	it('passes through native read payloads already in JS readUntypedNode shape', async () => {
 		vi.doMock('../src/backend.js', () => ({
 			getActiveBackend: () => ({
 				name: 'native',
@@ -96,19 +96,19 @@ describe('engine', () => {
 						}
 						parseAndRead(_source: string): string {
 							return JSON.stringify({
-								nodeData: {
+								untypedNode: {
 									$type: TSKindId.FunctionItem,
 									$source: 0,
 									$named: true,
 									$span: { start: 0, end: 10 },
-									$nodeHandle: 0,
+									$handle: 0,
 									_name: {
 										$type: TSKindId.Identifier,
 										$source: 0,
 										$named: true,
 										$text: 'main',
 										$span: { start: 3, end: 7 },
-										$nodeHandle: 0,
+										$parentHandle: 0,
 										$childIndex: 1
 									},
 									_pub: {
@@ -117,26 +117,26 @@ describe('engine', () => {
 										$named: false,
 										$text: 'pub',
 										$span: { start: 0, end: 3 },
-										$nodeHandle: 0,
+										$parentHandle: 0,
 										$childIndex: 0
 									}
 								}
 							});
 						}
-						readNode(_handle: number, _childIndex: number): string {
+						readUntypedNode(_handle: number, _childIndex: number): string {
 							return JSON.stringify({
 								$type: TSKindId.FunctionItem,
 								$source: 0,
 								$named: true,
 								$span: { start: 0, end: 10 },
-								$nodeHandle: 7,
+								$handle: 7,
 								_name: {
 									$type: TSKindId.Identifier,
 									$source: 0,
 									$named: true,
 									$text: 'main',
 									$span: { start: 3, end: 7 },
-									$nodeHandle: 7,
+									$parentHandle: 7,
 									$childIndex: 1
 								},
 								_pub: {
@@ -145,7 +145,7 @@ describe('engine', () => {
 									$named: false,
 									$text: 'pub',
 									$span: { start: 0, end: 3 },
-									$nodeHandle: 7,
+									$parentHandle: 7,
 									$childIndex: 0
 								}
 							});
@@ -161,13 +161,13 @@ describe('engine', () => {
 		expect((parsed.root as unknown as Record<string, unknown>).$fields).toBeUndefined();
 		expect((parsed.root as unknown as Record<string, unknown>)._name).toMatchObject({
 			$text: 'main',
-			$nodeHandle: 0,
+			$parentHandle: 0,
 			$childIndex: 1
 		});
 		expect((parsed.root as unknown as Record<string, unknown>).$children).toBeUndefined();
 		expect((parsed.root as unknown as Record<string, unknown>)._pub).toMatchObject({
 			$text: 'pub',
-			$nodeHandle: 0,
+			$parentHandle: 0,
 			$childIndex: 0,
 			$named: false
 		});
@@ -177,7 +177,7 @@ describe('engine', () => {
 		expect((child as unknown as Record<string, unknown>).$fields).toBeUndefined();
 		expect((child as unknown as Record<string, unknown>)._name).toMatchObject({
 			$text: 'main',
-			$nodeHandle: 7,
+			$parentHandle: 7,
 			$childIndex: 1
 		});
 	});
@@ -235,8 +235,8 @@ describe('engine', () => {
 						render(node: Record<string, unknown>): string {
 							return render(node);
 						}
-						renderToFile(nodeData: Record<string, unknown>, path: string): void {
-							renderToFile(nodeData, path);
+						renderToFile(untypedNode: Record<string, unknown>, path: string): void {
+							renderToFile(untypedNode, path);
 						}
 						applyEdits(
 							source: string,

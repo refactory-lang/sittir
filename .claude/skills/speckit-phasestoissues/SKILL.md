@@ -1,7 +1,6 @@
 ---
 name: speckit-phasestoissues
-description: Convert development phases into individual GitHub issues for better tracking
-  and collaboration.
+description: Convert development phases into individual GitHub issues for better tracking and collaboration.
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit

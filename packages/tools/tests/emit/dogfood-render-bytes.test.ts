@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 import type { TypescriptAPI } from '@sittir/typescript';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -21,7 +21,7 @@ describe('dogfood rebuild render bytes', () => {
 					? (await createEngine(await languageByName('typescript'), { render: target.renderOptions }))
 							.render(node as TypescriptAPI['node'])
 							.toString()
-					: (await createEngine(await languageByName(anyGrammar))).render(node as AnyNodeData).toString();
+					: (await createEngine(await languageByName(anyGrammar))).render(node as AnyUntypedNode).toString();
 			await expect(rendered).toMatchFileSnapshot(ROOT + 'packages/tools/tests/emit/__fixtures__/' + fixture);
 		});
 	}

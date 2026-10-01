@@ -25,7 +25,7 @@
 
 import { stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { readFileSync } from 'node:fs';
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 import type { LanguageAPI, NativeLanguageEngine } from '@sittir/types';
 import { languageByName } from '../languages.ts';
 import { loadCorpusEntries } from '../validate/common.ts';
@@ -90,12 +90,12 @@ async function loadEngine(grammar: GrammarName): Promise<NativeLanguageEngine<La
 }
 
 /** The nodes a workload renders: one read root per corpus fixture, or every parity render fixture's input. */
-function collectNodeData(grammar: GrammarName, engine: NativeLanguageEngine<LanguageAPI>, workload: Workload): AnyNodeData[] {
+function collectUntypedNodes(grammar: GrammarName, engine: NativeLanguageEngine<LanguageAPI>, workload: Workload): AnyUntypedNode[] {
 	if (workload === 'coordinate') {
-		return loadCorpusEntries(grammar).map((entry) => engine.parseAndRead(entry.source).root as AnyNodeData);
+		return loadCorpusEntries(grammar).map((entry) => engine.parseAndRead(entry.source).root as AnyUntypedNode);
 	}
 	const fixtures = JSON.parse(readFileSync(fixturesOutputPath(grammar), 'utf8')) as ParityFixture[];
-	return fixtures.flatMap((fixture) => (fixture.kind === 'render' ? [fixture.input as AnyNodeData] : []));
+	return fixtures.flatMap((fixture) => (fixture.kind === 'render' ? [fixture.input as AnyUntypedNode] : []));
 }
 
 function hrNow(): bigint {
@@ -123,8 +123,8 @@ function memoryDelta(before: NodeJS.MemoryUsage, after: NodeJS.MemoryUsage, tota
 }
 
 function runBench(
-	nodes: AnyNodeData[],
-	renderFn: (node: AnyNodeData) => string,
+	nodes: AnyUntypedNode[],
+	renderFn: (node: AnyUntypedNode) => string,
 	iterations: number
 ): Omit<BenchResult, 'grammar' | 'backend' | 'workload'> {
 	if (nodes.length === 0) {
@@ -189,11 +189,11 @@ async function benchGrammar(grammar: GrammarName): Promise<BenchResult[]> {
 
 	process.stderr.write(`[bench] ${grammar}: loading native engine...\n`);
 	const engine = await loadEngine(grammar);
-	const render = (node: AnyNodeData): string => engine.render(node).toString();
+	const render = (node: AnyUntypedNode): string => engine.render(node).toString();
 
 	for (const workload of WORKLOADS) {
 		process.stderr.write(`[bench] ${grammar}/${workload}: collecting corpus nodes...\n`);
-		const nodes = collectNodeData(grammar, engine, workload);
+		const nodes = collectUntypedNodes(grammar, engine, workload);
 		process.stderr.write(`[bench] ${grammar}/${workload}: ${nodes.length} nodes from corpus\n`);
 		if (nodes.length === 0) {
 			process.stderr.write(`[bench] ${grammar}/${workload}: no nodes — skipping\n`);

@@ -1,7 +1,6 @@
 ---
 name: speckit-drift
-description: Analyze drift between specs and implementation. Compares requirements
-  against code to find divergence.
+description: Analyze drift between specs and implementation. Compares requirements against code to find divergence.
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit

@@ -5,8 +5,12 @@ description: Convert development phases into individual GitHub issues for better
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: workflows:commands/phasestoissues.md
+  source: extension:workflows
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Workflows Phasestoissues Skill
 
 ## User Input
 

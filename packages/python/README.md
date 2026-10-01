@@ -30,7 +30,7 @@ A node belongs to the engine that built or read it, and renders, edits and takes
 
 ## Reading
 
-`parse` returns a lazily expanded tree: a child is read the first time an accessor reaches it. Nothing you leave alone is re-spelled, so an untouched tree renders back to its own source, byte for byte.
+`parse` returns a lazily hydrated tree: a child is read the first time an accessor reaches it. Nothing you leave alone is re-spelled, so an untouched tree renders back to its own source, byte for byte.
 
 ```ts
 import { createEngine } from '@sittir/common';

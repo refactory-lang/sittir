@@ -4,8 +4,12 @@ description: Add bidirectional traceability between spec artifacts and source is
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: github-issues:commands/link.md
+  source: extension:github-issues
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Github Issues Link Skill
 
 # Link Spec to GitHub Issue
 

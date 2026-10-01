@@ -4,8 +4,12 @@ description: Track and report token usage across extensions and governance files
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: optimize:commands/speckit.optimize.tokens.md
+  source: extension:optimize
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Optimize Tokens Skill
 
 ## User Input
 
