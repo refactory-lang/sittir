@@ -3,6 +3,7 @@
 
 import {
 	readUntypedNode,
+	isNode,
 	isStub,
 	isTypedNode,
 	holdsSlots,
@@ -223,7 +224,7 @@ type ParsedOfData<D> = D extends { readonly $type: infer Id }
 		? T.ParsedByKindId[Id]
 		: D
 	: D;
-function hydrateChild<T>(entry: T, tree: TreeHandle): ParsedOfData<T> {
+function hydrateChild<T>(entry: T | ParsedOfData<T>, tree: TreeHandle): ParsedOfData<T> {
 	const resolved = hydrateSelf(entry, tree);
 	const e = resolved as unknown as _UntypedNode;
 	if (resolved === entry && typeof e?.$type === 'number' && !isTypedNode(e))
@@ -235,14 +236,18 @@ function hydrateChild<T>(entry: T, tree: TreeHandle): ParsedOfData<T> {
 // level a node can be reached from. A stub stays a stub, typed when
 // it is hydrated; a node with no slots is stored as read, which
 // already is its model shape.
-function storeExpanded<T>(value: T, tree: TreeHandle): T {
-	if (Array.isArray(value)) return value.map((entry) => storeExpanded(entry, tree)) as unknown as T;
-	const e = value as unknown as _UntypedNode | null | undefined;
-	if (e === null || typeof e !== 'object' || typeof e.$type !== 'number') return value;
-	if (isStub(e) || isTypedNode(e) || !holdsSlots(e)) return value;
-	return wrapNode(e, tree) as unknown as T;
+type StoredOf<D> = D extends readonly (infer E)[] ? StoredOf<E>[] : D | ParsedOfData<D>;
+function storeExpanded<T>(value: T, tree: TreeHandle): StoredOf<T>;
+function storeExpanded(value: unknown, tree: TreeHandle): unknown {
+	if (Array.isArray(value)) return value.map((entry) => storeExpanded(entry, tree));
+	if (!isNode(value)) return value;
+	if (isStub(value) || isTypedNode(value) || !holdsSlots(value)) return value;
+	return wrapNode(value, tree);
 }
-function hydrateChildren<T>(entries: readonly T[] | undefined, tree: TreeHandle): ParsedOfData<T>[] {
+function hydrateChildren<T>(
+	entries: readonly (T | ParsedOfData<T>)[] | undefined,
+	tree: TreeHandle
+): ParsedOfData<T>[] {
 	if (!entries) return [];
 	const arr = Array.isArray(entries) ? entries : [entries];
 	return arr.map((e) => hydrateChild(e, tree));
@@ -1812,7 +1817,13 @@ function _hydrateUnknownKindChildren(data: _UntypedNode, tree: TreeHandle): _Unt
 }
 
 function _wrapTrivia(trivia: _UntypedNode['$_trivia'], tree: TreeHandle): _UntypedNode['$_trivia'] {
-	return trivia && mapTriviaEntries(trivia, (entries) => hydrateChildren(entries, tree) as unknown as typeof entries);
+	return (
+		trivia &&
+		mapTriviaEntries(
+			trivia,
+			(entries) => hydrateChildren<(typeof entries)[number]>(entries, tree) as unknown as typeof entries
+		)
+	);
 }
 
 const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([]);

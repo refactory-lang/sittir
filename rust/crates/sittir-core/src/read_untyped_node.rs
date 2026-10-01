@@ -49,14 +49,19 @@ use std::num::NonZeroU32;
 /// hydrates on demand. [`ReadDepth::SHALLOW`] (one level) is the default and
 /// the lazy path. `Deep` expands everything in one pass instead.
 ///
-/// A child expanded above the last level gets a handle minted for it, so the
-/// stubs under it can be re-read, but carries no handle of its own: a stub
-/// is the only node that names a coordinate to re-read, and one on an
-/// expanded node would make the wrap layer's hydration read it again.
+/// Two things a node can carry are kept apart. A coordinate (`$handle`, or
+/// `$parentHandle` beside `$childIndex`) names a position a later read can
+/// re-read. The tree tag (`$treeHandle`, [`NodeHandle::Tree`]) names only
+/// the tree the node was read from.
 ///
-/// A deep descendant keeps its `$childIndex` but gets no handle: nothing
-/// needs to re-read it. A deep read's leaf carries only `$treeHandle`, which
-/// names its tree and no coordinate to re-read.
+/// A child expanded above the last level gets a handle minted for it, so the
+/// stubs under it can be re-read, but carries no coordinate of its own: a
+/// stub is the only node that names one, and a coordinate on an expanded
+/// node would make the wrap layer's hydration read it again. It carries the
+/// tree tag.
+///
+/// A deep descendant keeps its `$childIndex` and carries the tree tag, with
+/// no coordinate: nothing needs to re-read it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ReadDepth {
     Levels(NonZeroU32),

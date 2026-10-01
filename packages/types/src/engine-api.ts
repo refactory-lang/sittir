@@ -14,9 +14,10 @@ export interface ParseOptions {
 	/**
 	 * Read the whole tree in the parse, in place of one level at a time.
 	 *
-	 * A deep parse materializes and types every node up front, so it is for a
-	 * caller that will read the whole tree. The default (`false`) reads one
-	 * level and hydrates each child when an accessor first reaches it.
+	 * A deep parse reads every node up front and types each node that holds
+	 * slots; text leaves and tokens are stored as read. It is for a caller that
+	 * will read the whole tree. The default (`false`) reads one level and
+	 * hydrates each child when an accessor first reaches it.
 	 *
 	 * The choice changes when the work is done, never the result: an untouched
 	 * node renders its source bytes whichever way it was read.
