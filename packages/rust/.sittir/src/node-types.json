@@ -4919,15 +4919,22 @@
   {
     "type": "range_expression",
     "named": true,
-    "fields": {},
+    "fields": {
+      "operator": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "range_expression_bare",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": false,
-      "required": true,
+      "required": false,
       "types": [
-        {
-          "type": "range_expression_bare",
-          "named": true
-        },
         {
           "type": "range_expression_binary",
           "named": true

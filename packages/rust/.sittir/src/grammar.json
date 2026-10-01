@@ -4934,19 +4934,23 @@
             }
           },
           {
-            "type": "ALIAS",
+            "type": "FIELD",
+            "name": "operator",
             "content": {
-              "type": "SYMBOL",
-              "name": "_range_expression_bare",
-              "annotations": {
-                "variant": "bare",
-                "variantOf": "range_expression"
-              }
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_range_expression_bare"
+              },
+              "named": true,
+              "value": "range_expression_bare"
             },
-            "named": true,
-            "value": "range_expression_bare",
             "metadata": {
               "fieldSource": "override"
+            },
+            "annotations": {
+              "variant": "bare",
+              "variantOf": "range_expression"
             }
           }
         ]

@@ -700,6 +700,7 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 			return annotated({ ...(originalMember as object), value: name });
 		}
 		if (variantBranchIsUnmaterializable(originalMember)) {
+			if (isFieldLike(originalMember)) return annotated(originalMember);
 			return annotated({
 				...(deField(originalMember) as object),
 				metadata: makeRuleMetadata({ fieldSource: 'override' })

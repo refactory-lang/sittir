@@ -163,8 +163,7 @@
       "childKind": {
         "range_expression_binary": "binary",
         "range_expression_postfix": "postfix",
-        "range_expression_prefix": "prefix",
-        "range_expression_bare": "bare"
+        "range_expression_prefix": "prefix"
       }
     },
     "line_comment": {

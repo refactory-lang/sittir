@@ -835,6 +835,8 @@ once the lift is pruned. An authored body of that name is left as authored.
  */
 ```
 
+A field arm keeps its field: the variant annotation lands on the field itself, so the parser field survives in `grammar.json` and `node-types.json`. Only a non-field branch is reduced to its bare content (`deField` strips the `fieldName` sittir propagated onto it).
+
 ### `packages/codegen/src/dsl/transform/transform.ts::deField`
 
 ```text

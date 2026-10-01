@@ -1001,6 +1001,7 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
         (266, None, "range_expression_binary") => Some("content"),
         (266, None, "range_expression_postfix") => Some("content"),
         (266, None, "range_expression_prefix") => Some("content"),
+        (266, Some("operator"), _) => Some("content"),
         (304, None, "array_expression_list") => Some("expression"),
         (304, None, "array_expression_semi") => Some("expression"),
         (304, None, "assignment_expression") => Some("expression"),
