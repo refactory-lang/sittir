@@ -142,6 +142,29 @@ describe('a variant() name declared under both the owner and its element superty
 	}, 120_000);
 });
 
+describe('scm variant names declared under the shared element supertype', () => {
+	it('reach neither pipeline: the named_node variants resolve under their owner', async () => {
+		const unused = ['list_element_plain', 'list_element_supertyped'];
+		const parserRules = Object.keys(
+			(JSON.parse(readFileSync(new URL('../../../../scm/.sittir/src/grammar.json', import.meta.url), 'utf8')) as { rules: object }).rules
+		);
+		const { rules } = await evaluatePackage(grammarPackage('scm'));
+		const tables = await loadGeneratedIdTables('scm');
+		if (tables === undefined) throw new Error('no generated id tables for scm');
+		const catalog = JSON.stringify(collectCatalogKinds(tables));
+		for (const name of unused) {
+			expect(parserRules).not.toContain(name);
+			expect(Object.keys(rules)).not.toContain(name);
+			expect(catalog).not.toContain(`"${name}"`);
+		}
+		for (const name of ['named_node_plain', 'named_node_supertyped', 'list_element_quantifier']) {
+			expect(parserRules).toContain(name);
+			expect(Object.keys(rules)).toContain(name);
+			expect(catalog).toContain(`"${name}"`);
+		}
+	}, 120_000);
+});
+
 describe('a list group whose element choice became a supertype', () => {
 	it('is still labelled a variant of its parent, so the parent keeps the route that mounts it', async () => {
 		const { rules } = await evaluatePackage(grammarPackage('typescript'));

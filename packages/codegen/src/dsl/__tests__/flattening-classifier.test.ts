@@ -3,7 +3,7 @@ import { wire } from '../wire/wire.ts';
 import { variant } from '../primitives/variant.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import type { GrammarJson } from '../../grammar-shapes/grammar-json.ts';
-import { emptyBase } from '../../__tests__/helpers/empty-base.ts';
+import { baseOf } from '../../__tests__/helpers/empty-base.ts';
 
 type RuleFn = (this: unknown, $: unknown, previous?: unknown) => unknown;
 
@@ -24,13 +24,14 @@ function flattenedSupertypes(
 }
 
 const tokenArms = { parent: seq(str('('), choice(seq(str('='), sym('x')), seq(str(':'), sym('y'))), str(')')) };
+const bareArms = { parent: seq(choice(sym('x'), sym('y'))) };
 
 describe('flattening classifier', () => {
 	beforeAll(() => installFakeDsl());
 	afterAll(() => restoreFakeDsl());
 
 	it('registers a parent whose variants hoist into a pure choice of its own variant rules', () => {
-		const wired = wire<GrammarJson>({ name: 'g', rules: {}, patches: { parent: { '1/0': variant('eq'), '1/1': variant('type') } } }, emptyBase);
+		const wired = wire<GrammarJson>({ name: 'g', rules: {}, patches: { parent: { '1/0': variant('eq'), '1/1': variant('type') } } }, baseOf(tokenArms));
 		expect(flattenedSupertypes(wired as never, tokenArms)).toEqual(['parent']);
 	});
 
@@ -40,13 +41,13 @@ describe('flattening classifier', () => {
 			rules: {},
 			extras: (d: any) => [d.parent],
 			patches: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }
-		} as never, emptyBase);
+		} as never, baseOf(tokenArms));
 		expect(flattenedSupertypes(wired as never, tokenArms)).toEqual([]);
 	});
 
 	it('does not register a parent whose arms stay unmaterialized', () => {
-		const wired = wire<GrammarJson>({ name: 'g', rules: {}, patches: { parent: { '0/0': variant('x'), '0/1': variant('y') } } }, emptyBase);
-		expect(flattenedSupertypes(wired as never, { parent: seq(choice(sym('x'), sym('y'))) })).toEqual([]);
+		const wired = wire<GrammarJson>({ name: 'g', rules: {}, patches: { parent: { '0/0': variant('x'), '0/1': variant('y') } } }, baseOf(bareArms));
+		expect(flattenedSupertypes(wired as never, bareArms)).toEqual([]);
 	});
 
 	it('does not add a parent that another rule presents as a node of the same kind', () => {
@@ -54,7 +55,7 @@ describe('flattening classifier', () => {
 			name: 'g',
 			rules: { other: (d: any) => (globalThis as any).alias(d.inner, d.parent) },
 			patches: { parent: { '1/0': variant('eq'), '1/1': variant('type') } }
-		} as never, emptyBase);
+		} as never, baseOf(tokenArms));
 		expect(flattenedSupertypes(wired as never, tokenArms)).toEqual([]);
 	});
 });
