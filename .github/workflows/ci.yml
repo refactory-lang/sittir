@@ -297,9 +297,19 @@ jobs:
         # `gen --all` rebuilds each grammar's release binding before it
         # extracts fixtures. The workspace cargo check is the `rust` job's.
         run: |
-          grammars=$(npx tsx packages/tools/src/scripts/stable-grammars.ts)
-          for grammar in $grammars; do
+          for grammar in python rust typescript scm regex; do
             npx tsx packages/cli/src/cli.ts gen --grammar "$grammar" --all --no-workspace-check --output "packages/$grammar/src"
+          done
+      - name: MEASUREMENT — every generated file that differs from the committed one
+        if: always()
+        run: |
+          echo "== git status --porcelain"
+          git status --porcelain
+          echo "== git diff --stat"
+          git diff --stat
+          for f in $(git diff --name-only); do
+            echo "==== $f"
+            git diff -- "$f" | head -60
           done
       - name: Fixture check — no drift from committed
         run: git diff --exit-code rust/crates/sittir-*/test-fixtures.json
