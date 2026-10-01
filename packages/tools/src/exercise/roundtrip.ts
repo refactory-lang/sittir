@@ -1,8 +1,8 @@
-import type { AnyUntypedNode } from '@sittir/types';
 import type { FactoryEntry, ReadNodeLike } from '../validate/common.ts';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
 import type { FactoryShape } from '../codegen-surface.ts';
+import { nativeShownKindId } from '../validate/shown-kind.ts';
 type FactorySlotMeta = {
 	readonly unnamed: boolean;
 	readonly required: boolean;
@@ -18,64 +18,22 @@ interface ExerciseCase {
 	readonly label?: string;
 }
 
-interface ReadHandle {
-	readonly read?: (parentHandle?: number, childIndex?: number) => unknown;
+interface ParsedNode {
+	readonly $type: number;
+	readonly $named?: boolean;
+	readonly $span?: { readonly start: number; readonly end: number };
 }
 
-interface NativeCoords {
-	readonly handle?: number;
-	readonly childIndex?: number;
+interface ExerciseEngine {
+	parse(source: string): unknown;
+	render(node: unknown): { toString(): string };
 }
 
 interface CommonModule {
-	separatedListFactoryOptions(data: unknown): { separator?: number; delimiter?: number } | undefined;
-
-	loadLanguageForGrammar(grammar: string): Promise<{
-		Parser: new () => {
-			setLanguage(language: unknown): void;
-			parse(source: string): { rootNode: TreeSitterNode } | null;
-		};
-		lang: unknown;
-	}>;
-	loadNativeRender(grammar: string): Promise<(node: AnyUntypedNode) => string>;
+	loadNativeEngine(grammar: string): Promise<ExerciseEngine>;
 	loadCorpusEntries(grammar: string): readonly { name: string; source: string }[];
-	loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined>;
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
-	loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined>;
-	buildReadHandle(
-		grammar: string,
-		tree: unknown,
-		source: string,
-		backend?: 'native' | 'js',
-		kindIdFromName?: (kind: string) => number | undefined
-	): Promise<ReadHandle>;
-	findNativeNodeId(
-		handle: ReadHandle,
-		kind: string,
-		kindNameFromId?: (id: number) => string | undefined
-	): NativeCoords | null;
-	adaptNode(node: TreeSitterNode): unknown;
-	findFirst(node: TreeSitterNode, kind: string): TreeSitterNode | null;
-	readUntypedNodeAt(handle: ReadHandle, node: unknown, nativeCoords: NativeCoords | null): ReadNodeLike;
-	nodeToConfig(
-		data: ReadNodeLike,
-		opts?: {
-			tree?: ReadHandle;
-			factoryMap?: Record<string, FactoryEntry>;
-			factoryShapes?: Record<string, FactoryShape>;
-			fieldAliasMap?: Record<string, Record<string, string>>;
-			factoryFields?: Record<string, readonly string[]>;
-			factorySlots?: Record<string, Record<string, FactorySlotMeta>>;
-			polymorphVariants?: Record<string, unknown>;
-			kindNameFromId?: (id: number) => string | undefined;
-		}
-	): Record<string, unknown>;
-	getChildFactoryArgs(
-		kind: string,
-		childConfig: Record<string, unknown>,
-		factorySlots?: Record<string, Record<string, FactorySlotMeta>>,
-		factoryFields?: Record<string, readonly string[]>
-	): readonly unknown[];
+	walkWrappedTree(root: unknown, visit: (node: ParsedNode) => void): void;
 	loadNodeModel(grammar: string): Promise<{
 		factoryShapes: Record<string, FactoryShape>;
 		factoryFields: Record<string, readonly string[]>;
@@ -89,16 +47,8 @@ interface CommonModule {
 		artifacts: FactoryArtifacts,
 		opts?: {
 			kindNameFromId?: (id: number) => string | undefined;
-			tree?: unknown;
 		}
 	): unknown | null;
-}
-
-interface TreeSitterNode {
-	readonly text: string;
-	readonly isNamed: boolean;
-	readonly type: string;
-	readonly children: readonly TreeSitterNode[];
 }
 
 interface FactoryArtifacts {
@@ -161,8 +111,6 @@ export async function loadFactoryArtifacts(grammar: GrammarName): Promise<Factor
 	const factoryModule: { _factoryMap?: Record<string, FactoryEntry> } = await import(
 		new URL(factoryModulePath(grammar), import.meta.url).pathname
 	);
-	// PR-K: validator factory metadata now lives in node-model.json5, read via
-	// the shared `loadNodeModel` loader in codegen's validate/common.ts.
 	const common = await loadCommon();
 	const model = await common.loadNodeModel(grammar);
 	return {
@@ -179,39 +127,27 @@ function normalize(text: string): string {
 	return text.replace(/\s+/g, ' ').trim();
 }
 
-function hasKindTag(value: unknown): value is AnyUntypedNode {
-	return value !== null && typeof value === 'object' && '$type' in value;
+type KindNameFromId = ((id: number) => string | undefined) | undefined;
+
+function findFirstOfKind(
+	root: unknown,
+	kind: string,
+	common: CommonModule,
+	kindNameFromId: KindNameFromId
+): ParsedNode | undefined {
+	let found: ParsedNode | undefined;
+	common.walkWrappedTree(root, (node) => {
+		if (found !== undefined || node.$named === false) return;
+		const shown = nativeShownKindId(node);
+		if (typeof shown === 'number' && kindNameFromId?.(shown) === kind) found = node;
+	});
+	return found;
 }
 
-const TREE_PROVENANCE_KEYS = new Set(['$span', '$handle', '$parentHandle', '$treeHandle', '$childIndex', '$source']);
-
-function toRenderableNode(value: unknown, seen = new WeakMap<object, unknown>()): unknown {
-	if (Array.isArray(value)) {
-		return value.map((entry) => toRenderableNode(entry, seen));
-	}
-	if (value === null || typeof value !== 'object') {
-		return value;
-	}
-	const ref = value as Record<string, unknown>;
-	const cached = seen.get(ref);
-	if (cached !== undefined) {
-		return cached;
-	}
-	const out: Record<string, unknown> = {};
-	seen.set(ref, out);
-	for (const [key, entry] of Object.entries(ref)) {
-		if (!key.startsWith('$') || TREE_PROVENANCE_KEYS.has(key)) continue;
-		if (typeof entry === 'function') continue;
-		out[key] = toRenderableNode(entry, seen);
-	}
-	for (const [key, entry] of Object.entries(ref)) {
-		if (!key.startsWith('_')) continue;
-		const getterName = key.slice(1).replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
-		const getter = ref[getterName];
-		const fieldValue = typeof getter === 'function' && getter.length === 0 ? getter.call(ref) : entry;
-		out[key] = toRenderableNode(fieldValue, seen);
-	}
-	return out;
+function sourceOf(node: ParsedNode, source: string): string {
+	const span = node.$span;
+	if (span === undefined) throw new Error('parsed node carries no span');
+	return Buffer.from(source, 'utf8').subarray(span.start, span.end).toString('utf8');
 }
 
 function resolveFactory(
@@ -233,47 +169,39 @@ function resolveFactory(
 export function buildFactoryNode(
 	kind: string,
 	readData: ReadNodeLike,
-	handle: ReadHandle,
 	artifacts: FactoryArtifacts,
-	common: CommonModule,
-	kindNameFromId: ((id: number) => string | undefined) | undefined
+	common: Pick<CommonModule, 'buildFactoryNodeFromReference'>,
+	kindNameFromId: KindNameFromId
 ): unknown {
 	const { factory, resolvedKind } = resolveFactory(artifacts.factoryMap, kind);
 	if (factory === undefined) {
 		throw new Error(`no factory registered for '${kind}'`);
 	}
-	// One dispatch, shared with the factory-render-parse validator
-	// (`buildFactoryNodeFromReference`, validate/common.ts) — this tool
-	// previously carried a hand-copied twin of the shape switch.
-	return common.buildFactoryNodeFromReference(readData, resolvedKind, artifacts, {
-		kindNameFromId,
-		tree: handle
-	});
+	return common.buildFactoryNodeFromReference(readData, resolvedKind, artifacts, { kindNameFromId });
 }
 
-async function resolveCorpusCase(
+function resolveCorpusCase(
 	grammar: GrammarName,
 	kind: string,
 	common: CommonModule,
-	parser: { parse(source: string): { rootNode: TreeSitterNode } | null }
-): Promise<ExerciseCase | null> {
+	engine: ExerciseEngine,
+	kindNameFromId: KindNameFromId
+): ExerciseCase | null {
 	for (const entry of common.loadCorpusEntries(grammar)) {
-		const tree = parser.parse(entry.source);
-		if (tree === null) continue;
-		const node = common.findFirst(tree.rootNode, kind);
-		if (node !== null) {
+		if (findFirstOfKind(engine.parse(entry.source), kind, common, kindNameFromId) !== undefined) {
 			return { kind, find: kind, source: entry.source, label: entry.name };
 		}
 	}
 	return null;
 }
 
-async function resolveCases(
+function resolveCases(
 	grammar: GrammarName,
 	kinds: readonly string[],
 	common: CommonModule,
-	parser: { parse(source: string): { rootNode: TreeSitterNode } | null }
-): Promise<readonly ExerciseCase[]> {
+	engine: ExerciseEngine,
+	kindNameFromId: KindNameFromId
+): readonly ExerciseCase[] {
 	if (kinds.length === 0) return BUILTIN_CASES[grammar] ?? [];
 	const selected: ExerciseCase[] = [];
 	for (const kind of kinds) {
@@ -282,12 +210,8 @@ async function resolveCases(
 			selected.push(...builtinMatches);
 			continue;
 		}
-		const corpusCase = await resolveCorpusCase(grammar, kind, common, parser);
-		if (corpusCase !== null) {
-			selected.push(corpusCase);
-			continue;
-		}
-		selected.push({ kind, find: kind, source: '', label: 'no matching built-in or corpus case' });
+		const corpusCase = resolveCorpusCase(grammar, kind, common, engine, kindNameFromId);
+		selected.push(corpusCase ?? { kind, find: kind, source: '', label: 'no matching built-in or corpus case' });
 	}
 	return selected;
 }
@@ -298,26 +222,9 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 
 	const common = await loadCommon();
 	const artifacts = await loadFactoryArtifacts(grammar);
-	const rawKindIdFromName = await common.loadKindIdFromName(grammar);
-	const kindIdFromName =
-		rawKindIdFromName === undefined
-			? undefined
-			: (kind: string): number | undefined => {
-					try {
-						return rawKindIdFromName(kind);
-					} catch {
-						return undefined;
-					}
-				};
 	const kindNameFromId = await common.loadKindNameFromId(grammar);
-	// Native engine render — same engine the validators use; the
-	// removed legacy-core renderer had no SpacingWriter, so its output was
-	// seam-less garbage for any grammar with word-word seams.
-	const render = await common.loadNativeRender(grammar);
-	const { Parser, lang } = await common.loadLanguageForGrammar(grammar);
-	const parser = new Parser();
-	parser.setLanguage(lang);
-	const cases = await resolveCases(grammar, kinds, common, parser);
+	const engine = await common.loadNativeEngine(grammar);
+	const cases = resolveCases(grammar, kinds, common, engine, kindNameFromId);
 	if (cases.length === 0) {
 		process.stderr.write(`exercise: no cases available for grammar '${grammar}'\n`);
 		return 1;
@@ -332,46 +239,29 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 			process.stdout.write(`SKIP  ${exercise.kind}: ${exercise.label ?? 'no source'}\n`);
 			continue;
 		}
-		const tree = parser.parse(exercise.source);
-		if (tree === null) {
-			fail += 1;
-			process.stdout.write(`FAIL  ${exercise.kind}: parse returned null\n`);
-			continue;
-		}
-		const node = common.findFirst(tree.rootNode, exercise.find);
-		if (node === null) {
-			skip += 1;
-			process.stdout.write(
-				`SKIP  ${exercise.kind}: could not find ${exercise.find} in ${JSON.stringify(exercise.source)}\n`
-			);
-			continue;
-		}
-		const handle = await common.buildReadHandle(grammar, tree, exercise.source, undefined, kindIdFromName);
-		const nativeCoords = common.findNativeNodeId(handle, exercise.find, kindNameFromId);
-		const readData = common.readUntypedNodeAt(handle, common.adaptNode(node), nativeCoords);
+		let input: string;
 		let rendered: string;
 		try {
-			const factoryNode = buildFactoryNode(
-				exercise.kind,
-				readData,
-				handle,
-				artifacts,
-				common,
-				kindNameFromId
-			);
-			const renderable = toRenderableNode(factoryNode);
-			if (!hasKindTag(renderable)) {
-				throw new Error('factory result did not materialize to UntypedNode');
+			const node = findFirstOfKind(engine.parse(exercise.source), exercise.find, common, kindNameFromId);
+			if (node === undefined) {
+				skip += 1;
+				process.stdout.write(
+					`SKIP  ${exercise.kind}: could not find ${exercise.find} in ${JSON.stringify(exercise.source)}\n`
+				);
+				continue;
 			}
-			rendered = render(renderable);
+			input = sourceOf(node, exercise.source);
+			const factoryNode = buildFactoryNode(exercise.kind, node as ReadNodeLike, artifacts, common, kindNameFromId);
+			if (factoryNode === null) throw new Error('the factory built nothing from the parsed node');
+			rendered = engine.render(factoryNode).toString();
 		} catch (error) {
 			fail += 1;
 			process.stdout.write(`FAIL  ${exercise.kind}: ${(error as Error).message ?? String(error)}\n`);
 			continue;
 		}
-		const ok = normalize(node.text) === normalize(rendered);
+		const ok = normalize(input) === normalize(rendered);
 		process.stdout.write(
-			`${ok ? 'PASS ' : 'FAIL '} ${exercise.kind.padEnd(24)} input=${JSON.stringify(node.text).padEnd(40)} rendered=${JSON.stringify(rendered)}` +
+			`${ok ? 'PASS ' : 'FAIL '} ${exercise.kind.padEnd(24)} input=${JSON.stringify(input).padEnd(40)} rendered=${JSON.stringify(rendered)}` +
 				(exercise.label ? `  # ${exercise.label}` : '') +
 				'\n'
 		);
