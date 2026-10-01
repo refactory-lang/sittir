@@ -3,7 +3,10 @@
 
 import {
 	readUntypedNode,
+	isNode,
 	isStub,
+	isTypedNode,
+	holdsSlots,
 	markEdited as $edited,
 	treeHandleOf,
 	mapTriviaEntries,
@@ -213,22 +216,38 @@ function hydrateSelf<T>(entry: T, tree: TreeHandle): T {
 	if (isStub(e)) return readNode(tree, e.$parentHandle, e.$childIndex) as unknown as T;
 	return entry;
 }
-// Resolve a CHILD position. Beyond the stub read, node data a deep
-// read already expanded carries no coordinates to re-read by (and
-// re-reading would replace the expansion with a shallow one), so the
-// wrap layer adds its methods in place instead.
+// Resolve a CHILD position. A stub reads one more level. A child a
+// read already expanded was typed when its parent was wrapped
+// (`storeExpanded`), so it is returned as stored.
 type ParsedOfData<D> = D extends { readonly $type: infer Id }
 	? Id extends keyof T.ParsedByKindId
 		? T.ParsedByKindId[Id]
 		: D
 	: D;
-function hydrateChild<T>(entry: T, tree: TreeHandle): ParsedOfData<T> {
+function hydrateChild<T>(entry: T | ParsedOfData<T>, tree: TreeHandle): ParsedOfData<T> {
 	const resolved = hydrateSelf(entry, tree);
 	const e = resolved as unknown as _UntypedNode;
-	if (resolved === entry && typeof e?.$type === 'number') return wrapNode(e, tree) as unknown as ParsedOfData<T>;
+	if (resolved === entry && typeof e?.$type === 'number' && !isTypedNode(e))
+		return wrapNode(e, tree) as unknown as ParsedOfData<T>;
 	return resolved as unknown as ParsedOfData<T>;
 }
-function hydrateChildren<T>(entries: readonly T[] | undefined, tree: TreeHandle): ParsedOfData<T>[] {
+// Store a slot value in model shape: a child a read already expanded
+// is typed here, with its parent, so storage has one shape at every
+// level a node can be reached from. A stub stays a stub, typed when
+// it is hydrated; a node with no slots is stored as read, which
+// already is its model shape.
+type StoredOf<D> = D extends readonly (infer E)[] ? StoredOf<E>[] : D | ParsedOfData<D>;
+function storeExpanded<T>(value: T, tree: TreeHandle): StoredOf<T>;
+function storeExpanded(value: unknown, tree: TreeHandle): unknown {
+	if (Array.isArray(value)) return value.map((entry) => storeExpanded(entry, tree));
+	if (!isNode(value)) return value;
+	if (isStub(value) || isTypedNode(value) || !holdsSlots(value)) return value;
+	return wrapNode(value, tree);
+}
+function hydrateChildren<T>(
+	entries: readonly (T | ParsedOfData<T>)[] | undefined,
+	tree: TreeHandle
+): ParsedOfData<T>[] {
 	if (!entries) return [];
 	const arr = Array.isArray(entries) ? entries : [entries];
 	return arr.map((e) => hydrateChild(e, tree));
@@ -478,12 +497,15 @@ export function wrapProgram(data: T.Program, tree: TreeHandle): T.Program.Parsed
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.Program as const,
-		_definitions: normalizeRepeatedWrapSlot(data._definitions, false, 'definitions', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'definitions',
-			span: (data as _UntypedNode).$span
-		}),
+		_definitions: storeExpanded(
+			normalizeRepeatedWrapSlot(data._definitions, false, 'definitions', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'definitions',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		definitions() {
 			return hydrateChildren<T.Definition>(this._definitions as readonly T.Definition[] | undefined, tree);
@@ -688,12 +710,15 @@ export function wrapEscapeSequence(data: T.EscapeSequence, tree: TreeHandle): T.
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.EscapeSequence as const,
-		_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'content',
-			span: (data as _UntypedNode).$span
-		}),
+		_content: storeExpanded(
+			normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		content() {
 			return hydrateChild<string>(this._content, tree);
@@ -742,12 +767,15 @@ export function wrapCapture(data: T.Capture, tree: TreeHandle): T.Capture.Parsed
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.Capture as const,
-		_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'name',
-			span: (data as _UntypedNode).$span
-		}),
+		_name: storeExpanded(
+			normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'name',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		name() {
 			return hydrateChild<T.ImmediateIdentifier>(this._name, tree);
@@ -764,12 +792,15 @@ export function wrapString(data: T.String, tree: TreeHandle): T.String.Parsed {
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.String as const,
-		_string_content: normalizeSingularWrapSlot(data._string_content, 'string_content', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'string_content',
-			span: (data as _UntypedNode).$span
-		}),
+		_string_content: storeExpanded(
+			normalizeSingularWrapSlot(data._string_content, 'string_content', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'string_content',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		stringContent() {
 			return hydrateChild<T.StringContent | undefined>(this._string_content, tree);
@@ -787,12 +818,15 @@ export function wrapImmediateString(data: T.ImmediateString, tree: TreeHandle): 
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.ImmediateString as const,
-		_string_content: normalizeSingularWrapSlot(data._string_content, 'string_content', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'string_content',
-			span: (data as _UntypedNode).$span
-		}),
+		_string_content: storeExpanded(
+			normalizeSingularWrapSlot(data._string_content, 'string_content', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'string_content',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		stringContent() {
 			return hydrateChild<T.StringContent | undefined>(this._string_content, tree);
@@ -810,12 +844,15 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.StringContent as const,
-		_content: normalizeRepeatedWrapSlot(data._content, false, 'content', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'content',
-			span: (data as _UntypedNode).$span
-		}),
+		_content: storeExpanded(
+			normalizeRepeatedWrapSlot(data._content, false, 'content', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		contents() {
 			return hydrateChildren<T.StringContentText | T.EscapeSequence>(
@@ -836,12 +873,15 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.Parameters as const,
-		_elements: normalizeRepeatedWrapSlot(data._elements, true, 'elements', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'elements',
-			span: (data as _UntypedNode).$span
-		}),
+		_elements: storeExpanded(
+			normalizeRepeatedWrapSlot(data._elements, true, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		elements() {
 			return hydrateChildren<T.Capture | T.String | T.Identifier>(
@@ -863,12 +903,15 @@ export function wrapComment(data: T.Comment, tree: TreeHandle): T.Comment.Parsed
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.Comment as const,
-		_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'content',
-			span: (data as _UntypedNode).$span
-		}),
+		_content: storeExpanded(
+			normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'content',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		content() {
 			return hydrateChild<string>(this._content, tree);
@@ -885,18 +928,24 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.List as const,
-		_definitions: normalizeRepeatedWrapSlot(data._definitions, true, 'definitions', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'definitions',
-			span: (data as _UntypedNode).$span
-		}),
-		_elements: normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'elements',
-			span: (data as _UntypedNode).$span
-		}),
+		_definitions: storeExpanded(
+			normalizeRepeatedWrapSlot(data._definitions, true, 'definitions', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'definitions',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
+		_elements: storeExpanded(
+			normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		definitions() {
 			return hydrateChildren<T.Definition>(this._definitions as readonly T.Definition[] | undefined, tree);
@@ -918,18 +967,24 @@ export function wrapGrouping(data: T.Grouping, tree: TreeHandle): T.Grouping.Par
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.Grouping as const,
-		_grouping_group: normalizeRepeatedWrapSlot(data._grouping_group, true, 'grouping_group', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'grouping_group',
-			span: (data as _UntypedNode).$span
-		}),
-		_elements: normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'elements',
-			span: (data as _UntypedNode).$span
-		}),
+		_grouping_group: storeExpanded(
+			normalizeRepeatedWrapSlot(data._grouping_group, true, 'grouping_group', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'grouping_group',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
+		_elements: storeExpanded(
+			normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		groupingGroups() {
 			return hydrateChildren<T.GroupingGroup>(this._grouping_group as readonly T.GroupingGroup[] | undefined, tree);
@@ -952,18 +1007,24 @@ export function wrapMissingNode(data: T.MissingNode, tree: TreeHandle): T.Missin
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.MissingNode as const,
-		_name: normalizeSingularWrapSlot(data._name, 'name', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'name',
-			span: (data as _UntypedNode).$span
-		}),
-		_elements: normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'elements',
-			span: (data as _UntypedNode).$span
-		}),
+		_name: storeExpanded(
+			normalizeSingularWrapSlot(data._name, 'name', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'name',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
+		_elements: storeExpanded(
+			normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		name() {
 			return hydrateChild<T.Identifier | T.String | undefined>(this._name, tree);
@@ -987,21 +1048,27 @@ export function wrapAnonymousNode(data: T.AnonymousNode, tree: TreeHandle): T.An
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.AnonymousNode as const,
-		_name: projectMixedEnumStorage(
-			normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+		_name: storeExpanded(
+			projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'name',
+					span: (data as _UntypedNode).$span
+				}),
+				{ _: 7 }
+			),
+			tree
+		),
+		_elements: storeExpanded(
+			normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
 				tree,
 				nodeType: data.$type,
-				slotName: 'name',
+				slotName: 'elements',
 				span: (data as _UntypedNode).$span
 			}),
-			{ _: 7 }
+			tree
 		),
-		_elements: normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'elements',
-			span: (data as _UntypedNode).$span
-		}),
 
 		name() {
 			return hydrateChild<T.String | TSKindId.Underscore>(this._name, tree);
@@ -1052,19 +1119,25 @@ export function wrapFieldDefinition(data: T.FieldDefinition, tree: TreeHandle): 
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.FieldDefinition as const,
-		_name: normalizeSingularWrapSlot(
-			dropWireDelimiters(data._name, [TSKindId.Colon], _order, 'name'),
-			'name',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'name', span: (data as _UntypedNode).$span }
+		_name: storeExpanded(
+			normalizeSingularWrapSlot(
+				dropWireDelimiters(data._name, [TSKindId.Colon], _order, 'name'),
+				'name',
+				true,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'name', span: (data as _UntypedNode).$span }
+			),
+			tree
 		),
-		_definition: normalizeSingularWrapSlot(data._definition, 'definition', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'definition',
-			span: (data as _UntypedNode).$span
-		}),
+		_definition: storeExpanded(
+			normalizeSingularWrapSlot(data._definition, 'definition', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'definition',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 		...(_order && { $slotOrder: _order }),
 
 		name() {
@@ -1087,12 +1160,15 @@ export function wrapNegatedField(data: T.NegatedField, tree: TreeHandle): T.Nega
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.NegatedField as const,
-		_identifier: normalizeSingularWrapSlot(data._identifier, 'identifier', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'identifier',
-			span: (data as _UntypedNode).$span
-		}),
+		_identifier: storeExpanded(
+			normalizeSingularWrapSlot(data._identifier, 'identifier', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'identifier',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		identifier() {
 			return hydrateChild<T.Identifier>(this._identifier, tree);
@@ -1121,12 +1197,15 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 			}),
 			{ '#': 19, '.': 20 }
 		),
-		_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'name',
-			span: (data as _UntypedNode).$span
-		}),
+		_name: storeExpanded(
+			normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'name',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 		_type: projectKindEnumStorage(
 			normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 				tree,
@@ -1136,12 +1215,15 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 			}),
 			{ '?': 4, '!': 18 }
 		),
-		_parameters: normalizeSingularWrapSlot(data._parameters, 'parameters', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'parameters',
-			span: (data as _UntypedNode).$span
-		}),
+		_parameters: storeExpanded(
+			normalizeSingularWrapSlot(data._parameters, 'parameters', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'parameters',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		prefix() {
 			return this._prefix;
@@ -1233,18 +1315,24 @@ export function wrapGroupExpressionArm(data: T.GroupExpressionArm, tree: TreeHan
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.GroupExpressionArm as const,
-		_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'left',
-			span: (data as _UntypedNode).$span
-		}),
-		_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'right',
-			span: (data as _UntypedNode).$span
-		}),
+		_left: storeExpanded(
+			normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'left',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
+		_right: storeExpanded(
+			normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'right',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		left() {
 			return hydrateChild<T.Definition | T.GroupExpressionArm>(this._left, tree);
@@ -1270,18 +1358,24 @@ export function wrapNamedNodeExpressionArm(
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.NamedNodeExpressionArm as const,
-		_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'left',
-			span: (data as _UntypedNode).$span
-		}),
-		_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'right',
-			span: (data as _UntypedNode).$span
-		}),
+		_left: storeExpanded(
+			normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'left',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
+		_right: storeExpanded(
+			normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'right',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		left() {
 			return hydrateChild<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._left, tree);
@@ -1306,12 +1400,15 @@ export function wrapGroupingGroup(data: T.GroupingGroup, tree: TreeHandle): T.Gr
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.GroupingGroup as const,
-		_group_expression: normalizeSingularWrapSlot(data._group_expression, 'group_expression', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'group_expression',
-			span: (data as _UntypedNode).$span
-		}),
+		_group_expression: storeExpanded(
+			normalizeSingularWrapSlot(data._group_expression, 'group_expression', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'group_expression',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 		_anchor: coerceBooleanKeywordStorage(
 			normalizeSingularWrapSlot(data._anchor, 'anchor', false, data.$type, {
 				tree,
@@ -1373,27 +1470,36 @@ export function wrapNamedNodePlain(data: T.NamedNodePlain, tree: TreeHandle): T.
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.NamedNodePlain as const,
-		_name: projectMixedEnumStorage(
-			normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+		_name: storeExpanded(
+			projectMixedEnumStorage(
+				normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'name',
+					span: (data as _UntypedNode).$span
+				}),
+				{ _: 7 }
+			),
+			tree
+		),
+		_named_node_group: storeExpanded(
+			normalizeSingularWrapSlot(data._named_node_group, 'named_node_group', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'name',
+				slotName: 'named_node_group',
 				span: (data as _UntypedNode).$span
 			}),
-			{ _: 7 }
+			tree
 		),
-		_named_node_group: normalizeSingularWrapSlot(data._named_node_group, 'named_node_group', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'named_node_group',
-			span: (data as _UntypedNode).$span
-		}),
-		_elements: normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'elements',
-			span: (data as _UntypedNode).$span
-		}),
+		_elements: storeExpanded(
+			normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		name() {
 			return hydrateChild<T.Identifier | TSKindId.Underscore>(this._name, tree);
@@ -1420,30 +1526,42 @@ export function wrapNamedNodeSupertyped(data: T.NamedNodeSupertyped, tree: TreeH
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.NamedNodeSupertyped as const,
-		_supertype: normalizeSingularWrapSlot(data._supertype, 'supertype', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'supertype',
-			span: (data as _UntypedNode).$span
-		}),
-		_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'name',
-			span: (data as _UntypedNode).$span
-		}),
-		_named_node_group: normalizeSingularWrapSlot(data._named_node_group, 'named_node_group', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'named_node_group',
-			span: (data as _UntypedNode).$span
-		}),
-		_elements: normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'elements',
-			span: (data as _UntypedNode).$span
-		}),
+		_supertype: storeExpanded(
+			normalizeSingularWrapSlot(data._supertype, 'supertype', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'supertype',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
+		_name: storeExpanded(
+			normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'name',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
+		_named_node_group: storeExpanded(
+			normalizeSingularWrapSlot(data._named_node_group, 'named_node_group', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'named_node_group',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
+		_elements: storeExpanded(
+			normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		supertype() {
 			return hydrateChild<T.Identifier>(this._supertype, tree);
@@ -1492,12 +1610,15 @@ export function wrapNamedNodeGroupChildren(
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_named_node_expressions: normalizeRepeatedWrapSlot(data._named_node_expressions, true, 'named_node_expressions', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'named_node_expressions',
-			span: (data as _UntypedNode).$span
-		}),
+		_named_node_expressions: storeExpanded(
+			normalizeRepeatedWrapSlot(data._named_node_expressions, true, 'named_node_expressions', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'named_node_expressions',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		anchor() {
 			return this._anchor;
@@ -1542,18 +1663,24 @@ export function wrapNamedNodeGroupAnchoredLast(
 				span: (data as _UntypedNode).$span
 			})
 		),
-		_named_node_expressions: normalizeRepeatedWrapSlot(data._named_node_expressions, false, 'named_node_expressions', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'named_node_expressions',
-			span: (data as _UntypedNode).$span
-		}),
-		_last: normalizeSingularWrapSlot(data._last, 'last', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'last',
-			span: (data as _UntypedNode).$span
-		}),
+		_named_node_expressions: storeExpanded(
+			normalizeRepeatedWrapSlot(data._named_node_expressions, false, 'named_node_expressions', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'named_node_expressions',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
+		_last: storeExpanded(
+			normalizeSingularWrapSlot(data._last, 'last', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'last',
+				span: (data as _UntypedNode).$span
+			}),
+			tree
+		),
 
 		anchor() {
 			return this._anchor;
@@ -1647,7 +1774,13 @@ function _hydrateUnknownKindChildren(data: _UntypedNode, tree: TreeHandle): _Unt
 }
 
 function _wrapTrivia(trivia: _UntypedNode['$_trivia'], tree: TreeHandle): _UntypedNode['$_trivia'] {
-	return trivia && mapTriviaEntries(trivia, (entries) => hydrateChildren(entries, tree) as unknown as typeof entries);
+	return (
+		trivia &&
+		mapTriviaEntries(
+			trivia,
+			(entries) => hydrateChildren<(typeof entries)[number]>(entries, tree) as unknown as typeof entries
+		)
+	);
 }
 
 const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([]);

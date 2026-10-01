@@ -48,7 +48,7 @@ The options a single render takes beside the language's render options: `ignoreF
 
 ### `packages/types/src/engine-api.ts::ParseOptions`
 
-How far one read expands. The default is lazy: a read returns one level, and a child with substructure comes back as a stub the accessors hydrate on demand. `deep` expands the whole subtree in one pass instead: one crossing instead of one per level, at the cost of reading what you may not touch.
+Read depth is a performance parameter and never a semantic one. Under the default, a child with substructure comes back as a stub, and each hydration is one more crossing into the native reader. `deep` makes one crossing for the whole subtree, and the generated wrap types every slot-holding node of it as it wraps the parent (`storeExpanded`), so the typing a lazy read spreads over first accesses is paid inside the parse. The two modes agree on every result because each node a read hands back names its tree, whichever depth produced it (`canFold`).
 
 ### `packages/types/src/engine-api.ts::EngineIdentity`
 

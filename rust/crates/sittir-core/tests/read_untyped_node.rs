@@ -184,7 +184,11 @@ fn a_two_level_read_expands_each_child_and_leaves_its_children_as_stubs_under_a_
     assert_eq!(mint.0, vec![(0, 0)]);
     let statement = sole_slot(&root);
     assert!(statement.fields.is_some(), "the child is expanded");
-    assert_eq!(statement.handle, None, "an expanded child names no coordinate of its own");
+    assert_eq!(
+        statement.handle,
+        Some(NodeHandle::Tree(0)),
+        "an expanded child names its tree and no node of it"
+    );
     assert_eq!(statement.child_index, Some(0));
     let assignment = sole_slot(statement);
     assert!(assignment.fields.is_none(), "the grandchild is a stub");
@@ -204,7 +208,7 @@ fn a_one_level_read_mints_nothing() {
 }
 
 #[test]
-fn a_deep_read_tags_its_leaves_and_trivia_with_the_tree_and_names_no_other_coordinate() {
+fn a_deep_read_tags_every_node_below_its_root_with_the_tree_and_names_no_other_coordinate() {
     let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
     let source = "fn f() { g(x); } // c\n";
     let tree = parse_tree(lang, source);
@@ -236,9 +240,10 @@ fn a_deep_read_tags_its_leaves_and_trivia_with_the_tree_and_names_no_other_coord
     let (root_keys, below) = keys.split_first().expect("the root");
     assert_eq!(*root_keys, (true, false, None, false));
     assert!(below.iter().all(|(own, parent, _, _)| !own && !parent), "{keys:?}");
-    let tagged: Vec<_> = below.iter().filter(|(_, _, tree, _)| tree.is_some()).collect();
-    assert!(!tagged.is_empty(), "{keys:?}");
-    assert!(tagged.iter().all(|(_, _, tree, index)| *tree == Some(7) && !index), "{keys:?}");
+    assert!(!below.is_empty(), "{keys:?}");
+    assert!(below.iter().all(|(_, _, tree, _)| *tree == Some(7)), "{keys:?}");
+    assert!(below.iter().any(|(_, _, _, index)| *index), "an expanded child keeps its index: {keys:?}");
+    assert!(below.iter().any(|(_, _, _, index)| !index), "a leaf carries no index: {keys:?}");
     fn trivia_entries<'a>(v: &'a Value, out: &mut Vec<&'a Value>) {
         match v {
             Value::Object(map) => {

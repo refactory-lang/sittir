@@ -27,10 +27,11 @@
 //! - `$parentHandle` — the parent's handle, on every child at a bounded
 //!   read's last level (stubs and leaves alike): with `$childIndex` it is
 //!   the coordinate the child is hydrated at.
-//! - `$treeHandle`   — the tree's tag, on a deep read's leaves and on every
-//!   trivia entry: nothing re-reads them, so it names only the tree their
-//!   span slices.
-//! - A child expanded inside a read carries none of the three.
+//! - `$treeHandle`   — the tree's tag, on every child a read expands, on a
+//!   deep read's leaves and on every trivia entry: nothing re-reads them, so
+//!   it names only the tree their span slices. It is what lets an untouched
+//!   node fold to its span at any read depth once an edit has detached the
+//!   coordinate of the node above it.
 //! - `$childIndex` — position within parent's children array on every
 //!   child a bounded read returns and a deep read's expanded children.
 //!   `None` on the returned node itself and on a deep read's leaves.
@@ -48,14 +49,19 @@ use std::num::NonZeroU32;
 /// hydrates on demand. [`ReadDepth::SHALLOW`] (one level) is the default and
 /// the lazy path. `Deep` expands everything in one pass instead.
 ///
-/// A child expanded above the last level gets a handle minted for it, so the
-/// stubs under it can be re-read, but carries no handle of its own: a stub
-/// is the only node that names a coordinate to re-read, and one on an
-/// expanded node would make the wrap layer's hydration read it again.
+/// Two things a node can carry are kept apart. A coordinate (`$handle`, or
+/// `$parentHandle` beside `$childIndex`) names a position a later read can
+/// re-read. The tree tag (`$treeHandle`, [`NodeHandle::Tree`]) names only
+/// the tree the node was read from.
 ///
-/// A deep descendant keeps its `$childIndex` but gets no handle: nothing
-/// needs to re-read it. A deep read's leaf carries only `$treeHandle`, which
-/// names its tree and no coordinate to re-read.
+/// A child expanded above the last level gets a handle minted for it, so the
+/// stubs under it can be re-read, but carries no coordinate of its own: a
+/// stub is the only node that names one, and a coordinate on an expanded
+/// node would make the wrap layer's hydration read it again. It carries the
+/// tree tag.
+///
+/// A deep descendant keeps its `$childIndex` and carries the tree tag, with
+/// no coordinate: nothing needs to re-read it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ReadDepth {
     Levels(NonZeroU32),
@@ -550,14 +556,18 @@ fn read_slots(
         } else {
             match depth.below() {
                 None => stub_of(child, source, node_handle, i as u16),
+                // An expanded child names its tree and nothing else: an edit
+                // above it detaches its parent's coordinate, and the child
+                // then folds by its own span, which needs the tree it slices.
                 Some(ReadDepth::Deep) => UntypedNode {
+                    handle: tree_handle.map(NodeHandle::Tree),
                     child_index: Some(i as u16),
                     ..read_ts_node(child, source, None, tree_handle, ReadDepth::Deep, model, mint)
                 },
                 Some(below) => {
                     let handle = node_handle.and_then(|parent| mint.mint(parent, i as u16));
                     UntypedNode {
-                        handle: None,
+                        handle: tree_handle.map(NodeHandle::Tree),
                         child_index: Some(i as u16),
                         ..read_ts_node(child, source, handle, tree_handle, below, model, mint)
                     }
