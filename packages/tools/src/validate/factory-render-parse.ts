@@ -34,7 +34,7 @@ import {
 	loadLanguageForGrammar,
 	buildReadHandle,
 	walkWrappedTree,
-	materializeWrappedNodeData,
+	materialize,
 	loadReadTreeNode,
 	emitValidatorMetrics,
 	loadNodeModel,
@@ -667,7 +667,7 @@ export async function validateFactoryRenderParse(
 				// this node, fully materialized (no lazy stubs).
 				// $text is handled per-node by the comparator itself (see
 				// isTextShapeNode) rather than stripped here.
-				const referenceData = materializeWrappedNodeData(cand.node);
+				const referenceData = materialize(cand.node);
 
 				const cstNamedChildKinds = node1 ? namedChildKinds(node1) : [];
 

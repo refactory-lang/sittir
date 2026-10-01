@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { detachCoordinates } from '@sittir/common';
 import type { AnyNodeData } from '@sittir/types';
-import { loadNativeEngine, loadReadTreeNode, materializeWrappedNodeData, readNativeTree } from '../common.ts';
+import { loadNativeEngine, loadReadTreeNode, materializeDetached, readNativeTree } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 
 describe('read trivia layout, rendered detached', () => {
@@ -36,7 +35,7 @@ describe('read trivia layout, rendered detached', () => {
 		const engine = await loadNativeEngine('rust');
 		const read = (await loadReadTreeNode('rust'))!;
 		const source = 'fn f() { x = a + /* x */ b; }';
-		const data = detachCoordinates(materializeWrappedNodeData(read(readNativeTree(engine, source).tree))) as never as {
+		const data = materializeDetached(read(readNativeTree(engine, source).tree)) as never as {
 			_statements: [{ _body: { _statements: [{ _content: { _expression: { _right: Record<string, any> } } }] } }];
 		};
 		const binary = data._statements[0]._body._statements[0]._content._expression._right;

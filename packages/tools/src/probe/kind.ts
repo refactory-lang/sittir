@@ -85,7 +85,7 @@ import {
 	loadNativeEngine,
 	readNativeTree,
 	type NativeEngine,
-	materializeWrappedNodeData,
+	materializeDetached,
 	loadReadTreeNode,
 	walkNativeForKind,
 	buildKindToSupertypes,
@@ -884,13 +884,6 @@ async function deepReadProbeNode(
 	return data;
 }
 
-export function materializeProbeWrappedNodeData(
-	root: unknown,
-	onAccessorThrow?: (rec: AccessorThrowRecord) => void
-): unknown {
-	return detachCoordinates(materializeWrappedNodeData(root, onAccessorThrow));
-}
-
 export function resolveNativeTraceNodeData(
 	readTreeNodeRaw: unknown | undefined,
 	legacyDeepNodeData: unknown,
@@ -898,7 +891,7 @@ export function resolveNativeTraceNodeData(
 ): unknown {
 	return readTreeNodeRaw === undefined
 		? legacyDeepNodeData
-		: materializeProbeWrappedNodeData(readTreeNodeRaw, onAccessorThrow);
+		: materializeDetached(readTreeNodeRaw, onAccessorThrow);
 }
 
 async function readProbeNodeData(
@@ -941,7 +934,7 @@ async function readProbeNodeData(
 			}
 		}
 		const root = readTreeNodeFn
-			? materializeProbeWrappedNodeData(readTreeNodeFn(handle), onAccessorThrow)
+			? materializeDetached(readTreeNodeFn(handle), onAccessorThrow)
 			: await deepReadProbeNode(handle, undefined, undefined);
 		const target = findInNodeDataByRange(root, targetNode.startIndex, targetNode.endIndex);
 		if (!target) throw new Error('probe-kind: no native node match in NodeData tree');
@@ -1124,10 +1117,10 @@ function parseRange(spec: string): { start: number; end: number } {
 }
 
 /** The TypeScript-read lane renders through the native engine too: there is
- *  no other renderer. `materializeProbeWrappedNodeData` resolves the lazy
+ *  no other renderer. `materializeDetached` resolves the lazy
  *  wrap getters the native transport cannot read. */
 async function renderNodeData(grammar: string, nodeData: unknown): Promise<string> {
-	return renderNodeDataNative(grammar, materializeProbeWrappedNodeData(nodeData));
+	return renderNodeDataNative(grammar, materializeDetached(nodeData));
 }
 
 /** @internal — the transport data the engine renders for `nodeData`: the

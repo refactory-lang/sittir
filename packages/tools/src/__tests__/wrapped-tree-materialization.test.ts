@@ -10,7 +10,7 @@ import { verifyManifestForGrammar } from '../../../codegen/src/scripts/generated
 import {
 	buildReadHandle,
 	loadWebTreeSitter,
-	materializeWrappedNodeData,
+	materialize,
 	walkWrappedTree,
 	type WrappedNodeData
 } from '../validate/common.ts';
@@ -169,7 +169,7 @@ describe('wrapped tree materialization', () => {
 			}
 		} satisfies WrappedNodeData;
 
-		const materialized = asRecord(materializeWrappedNodeData(root));
+		const materialized = asRecord(materialize(root));
 
 		expect(materialized.$type).toBe(1);
 		expect(materialized._value).toMatchObject({ $type: 11, $text: 'field' });
@@ -225,7 +225,7 @@ describe('wrapped tree materialization', () => {
 			tree
 		);
 
-		const materialized = asRecord(materializeWrappedNodeData(wrapped));
+		const materialized = asRecord(materialize(wrapped));
 
 		// A nested child with no reader coordinates to re-read by still goes
 		// through its own wrap function, which reconciles the reader's shape
@@ -273,7 +273,7 @@ describe('wrapped tree materialization', () => {
 
 			// A read leaf materializes as itself — its text and the coordinate
 			// it was read at — not as bare text.
-			const declaration = asRecord(materializeWrappedNodeData(declarationArm.content()));
+			const declaration = asRecord(materialize(declarationArm.content()));
 			expect(asRecord(declaration._name).$text).toBe('readFile');
 		}
 	);

@@ -2,7 +2,7 @@ import { nativeShownKindId } from './shown-kind.ts';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { createEngine, dumpMetrics, sliceSpan } from '@sittir/common';
+import { createEngine, detachCoordinates, dumpMetrics, sliceSpan } from '@sittir/common';
 import { readNode as readNodeFn, metricsEnabled, mapTriviaEntries, storedSlotReader } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
@@ -913,11 +913,18 @@ export function walkWrappedTree(
 	recurse(root);
 }
 
-export function materializeWrappedNodeData(
+export function materialize(
 	root: unknown,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyNodeData {
-	return materializeWrappedValue(root, onAccessorThrow) as AnyNodeData;
+	return materializeValue(root, onAccessorThrow) as AnyNodeData;
+}
+
+export function materializeDetached(
+	root: unknown,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void
+): AnyNodeData {
+	return detachCoordinates(materialize(root, onAccessorThrow));
 }
 
 export interface AccessorThrowRecord {
@@ -934,9 +941,9 @@ export interface ValidatorSkip {
 	readonly input?: string;
 }
 
-function materializeWrappedValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): unknown {
+function materializeValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): unknown {
 	if (Array.isArray(value)) {
-		return value.map((entry) => materializeWrappedValue(entry, onAccessorThrow));
+		return value.map((entry) => materializeValue(entry, onAccessorThrow));
 	}
 	if (!isWrappedNodeData(value)) return value;
 	const materialized: Record<string, unknown> = {};
@@ -944,23 +951,23 @@ function materializeWrappedValue(value: unknown, onAccessorThrow?: (rec: Accesso
 		if (key === '$with' || typeof raw === 'function') continue;
 		if (key === '$_trivia' && raw != null) {
 			materialized.$_trivia = mapTriviaEntries(raw as TriviaSides<unknown>, (entries) =>
-				entries.map((entry) => materializeWrappedValue(entry, onAccessorThrow))
+				entries.map((entry) => materializeValue(entry, onAccessorThrow))
 			);
 			continue;
 		}
 		if (key === '$other') {
 			const resolved = resolveWrappedStorageValue(value, key, onAccessorThrow);
 			if (resolved === undefined) continue;
-			materialized.$other = materializeWrappedValue(resolved, onAccessorThrow);
+			materialized.$other = materializeValue(resolved, onAccessorThrow);
 			continue;
 		}
 		if (key.startsWith('_')) {
 			const resolved = resolveWrappedStorageValue(value, key, onAccessorThrow);
 			if (resolved === undefined) continue;
-			materialized[key] = materializeWrappedValue(resolved, onAccessorThrow);
+			materialized[key] = materializeValue(resolved, onAccessorThrow);
 			continue;
 		}
-		materialized[key] = materializeWrappedValue(raw, onAccessorThrow);
+		materialized[key] = materializeValue(raw, onAccessorThrow);
 	}
 	return materialized;
 }

@@ -16,7 +16,7 @@ interface CommonModule {
 	loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined>;
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
 	loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined>;
-	materializeWrappedNodeData(root: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyNodeData;
+	materialize(root: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyNodeData;
 }
 
 interface AccessorThrowRecord {
@@ -161,7 +161,7 @@ export async function run(opts: WalkOptions): Promise<number> {
 		total += 1;
 		if (!render) return;
 		try {
-			const renderable = common.materializeWrappedNodeData(node, onAccessorThrow);
+			const renderable = common.materialize(node, onAccessorThrow);
 			const rendered = renderNode(renderable);
 			process.stdout.write(`${kind}: ${JSON.stringify(rendered)}\n`);
 		} catch (error) {

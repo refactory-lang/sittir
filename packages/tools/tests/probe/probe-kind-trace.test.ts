@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { type WrappedNodeData } from '../../src/validate/common.ts';
+import { materializeDetached, type WrappedNodeData } from '../../src/validate/common.ts';
 import { detachCoordinates } from '@sittir/common';
-import { materializeProbeWrappedNodeData, probeTrace, resolveNativeTraceNodeData } from '../../src/probe/kind.ts';
+import { probeTrace, resolveNativeTraceNodeData } from '../../src/probe/kind.ts';
 
 function leaf(handle: number, text: string): WrappedNodeData {
 	return {
@@ -31,7 +31,7 @@ describe('probe-kind native trace helpers', () => {
 			}
 		} satisfies WrappedNodeData;
 
-		const materialized = asRecord(materializeProbeWrappedNodeData(wrapped));
+		const materialized = asRecord(materializeDetached(wrapped));
 
 		expect(materialized).not.toHaveProperty('$text');
 		expect(materialized._statements).toEqual([
@@ -64,7 +64,7 @@ describe('probe-kind native trace helpers', () => {
 			}
 		} satisfies WrappedNodeData;
 
-		const materialized = asRecord(materializeProbeWrappedNodeData(wrapped));
+		const materialized = asRecord(materializeDetached(wrapped));
 
 		expect(materialized).not.toHaveProperty('$text');
 		expect(materialized._children).toEqual([]);
