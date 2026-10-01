@@ -25,4 +25,19 @@ describe('native boundary', () => {
 			} as AnyNodeData)
 		).not.toThrow();
 	});
+
+	it('refuses a node naming two handles', () => {
+		expect(() =>
+			assertRenderableNodeData({ $type: 1, $source: 0, $named: true, $handle: 1, $treeHandle: 1 } as AnyNodeData)
+		).toThrow('node names more than one of $handle, $parentHandle, $treeHandle');
+	});
+
+	it("refuses a parent handle without the child index that completes a stub's coordinate", () => {
+		expect(() =>
+			assertRenderableNodeData({ $type: 1, $source: 0, $named: true, $parentHandle: 2 } as AnyNodeData)
+		).toThrow('node.$parentHandle needs a $childIndex: a stub is addressed by the pair');
+		expect(() =>
+			assertRenderableNodeData({ $type: 1, $source: 0, $named: true, $parentHandle: 2, $childIndex: 0 } as AnyNodeData)
+		).not.toThrow();
+	});
 });

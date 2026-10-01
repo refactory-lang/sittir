@@ -463,6 +463,11 @@ impl<'de> Deserialize<'de> for NodeData {
         let handle = match (wire.handle, wire.parent_handle, wire.tree_handle) {
             (None, None, None) => None,
             (Some(h), None, None) => Some(NodeHandle::Own(h)),
+            (None, Some(_), None) if wire.child_index.is_none() => {
+                return Err(serde::de::Error::custom(
+                    "NodeData carries $parentHandle without $childIndex: a stub is addressed by the pair",
+                ))
+            }
             (None, Some(h), None) => Some(NodeHandle::Parent(h)),
             (None, None, Some(h)) => Some(NodeHandle::Tree(h)),
             _ => {

@@ -133,7 +133,8 @@ fn each_handle_travels_under_the_key_that_names_what_it_is() {
         (NodeHandle::Parent(7), "$parentHandle"),
         (NodeHandle::Tree(7), "$treeHandle"),
     ] {
-        let node = NodeData { handle: Some(handle), ..sample_leaf() };
+        let child_index = matches!(handle, NodeHandle::Parent(_)).then_some(0);
+        let node = NodeData { handle: Some(handle), child_index, ..sample_leaf() };
         let v = serde_json::to_value(&node).unwrap();
         let keys: Vec<_> = ["$handle", "$parentHandle", "$treeHandle"]
             .into_iter()
@@ -144,6 +145,13 @@ fn each_handle_travels_under_the_key_that_names_what_it_is() {
         let back: NodeData = serde_json::from_value(v).unwrap();
         assert_eq!(back.handle, Some(handle));
     }
+}
+
+#[test]
+fn deserialization_refuses_a_parent_handle_without_its_child_index() {
+    let lone = r#"{"$type":1,"$source":0,"$named":true,"$parentHandle":2}"#;
+    let err = serde_json::from_str::<NodeData>(lone).unwrap_err();
+    assert!(err.to_string().contains("$parentHandle without $childIndex"), "{err}");
 }
 
 #[test]

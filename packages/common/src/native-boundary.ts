@@ -1,4 +1,5 @@
 import type { AnyNodeData, NodeChildValue, NodeMemberValue } from '@sittir/types';
+import { HANDLE_KEYS } from './transport-data.ts';
 
 const ASSERT_ENABLED = typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production';
 
@@ -132,8 +133,13 @@ function assertNativeNodeDataInternal(value: unknown, path: string): asserts val
 	if (value.$other !== undefined) assertNativeChildren(value.$other, `${path}.$other`);
 	if (value.$text !== undefined) assertString(value.$text, `${path}.$text`);
 	if (value.$span !== undefined) assertNativeSpan(value.$span, `${path}.$span`);
-	for (const key of ['$handle', '$parentHandle', '$treeHandle'] as const) {
-		if (value[key] !== undefined) assertFiniteNumber(value[key], `${path}.${key}`);
+	const handles = HANDLE_KEYS.filter((key) => value[key] !== undefined);
+	for (const key of handles) assertFiniteNumber(value[key], `${path}.${key}`);
+	if (handles.length > 1) {
+		throw new TypeError(`${path} names more than one of ${HANDLE_KEYS.join(', ')}`);
+	}
+	if (value.$parentHandle !== undefined && value.$childIndex === undefined) {
+		throw new TypeError(`${path}.$parentHandle needs a $childIndex: a stub is addressed by the pair`);
 	}
 	if (value.$childIndex !== undefined) assertFiniteNumber(value.$childIndex, `${path}.$childIndex`);
 	if (value.$textOnly !== undefined && typeof value.$textOnly !== 'boolean') {
@@ -150,6 +156,8 @@ function assertNativeNodeDataInternal(value: unknown, path: string): asserts val
  *  - `$source` is one of `0 | 1 | 2` (ts, sg, factory)
  *  - `$named` is a boolean
  *  - `$format` is absent
+ *  - at most one of `$handle`, `$parentHandle`, `$treeHandle`, and a
+ *    `$parentHandle` only beside the `$childIndex` it pairs with
  *  - no function-valued properties
  *  - `_<name>` storage keys and `$other` satisfy the same constraints recursively
  */

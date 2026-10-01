@@ -4,7 +4,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-const HANDLE_KEYS = ['$handle', '$parentHandle', '$treeHandle'] as const;
+export const HANDLE_KEYS = ['$handle', '$parentHandle', '$treeHandle'] as const;
 
 const COORDINATE_KEYS = [...HANDLE_KEYS, '$span', '$childIndex', '$textOnly'] as const;
 
