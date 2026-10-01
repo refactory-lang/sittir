@@ -6,3 +6,4 @@
 // binary predates the last regeneration.
 
 export const RENDER_MODULE_HASH = 'f7e2114e0932c96a1366e20812f7a952f971975b92a227d069c9fb2e270bffdc';
+// THROWAWAY: deliberately stale line to prove the CI drift check; reverted in the next commit.
