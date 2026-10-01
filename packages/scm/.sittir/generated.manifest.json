@@ -1,6 +1,6 @@
 {
   "grammar": "scm",
-  "source_hash": "bbe32f1a98ea1f24c7da354910847b45bb6f26e6f737838fa72e08bd55bb767b",
+  "source_hash": "cf490b930bb18518d3c793edb37bd94c16e095d3ac53a6e409eb6bde167c34d7",
   "files": {
     "packages/scm/.sittir/grammar-diagnostics.json": "90639655c429bfe36ef2a36aaa2a31c5fabb65229200218dcf431681dad38f0a",
     "packages/scm/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -45,9 +45,5 @@
     "rust/crates/sittir-scm/src/render/mod.rs": "36803e5721be1df2edd7839bd72b043bb04fa66adfade5e6993cd1ad546584cf",
     "rust/crates/sittir-scm/src/render/options.rs": "f49ff16e21a68ee1ae5772a173a6bf28b1e1c0742d4ce49d41a79dd16e5c3d7b",
     "rust/crates/sittir-scm/src/render/transport.rs": "6e4a865d664a5e3a4c611de570d8a8f4346b5330ded11c0b3600e38389926adf"
-  },
-  "host_files": {
-    "rust/crates/sittir-scm/sittir-scm.darwin-arm64.node": "freshness-checked",
-    "packages/scm/native/sittir-scm.darwin-arm64.node": "freshness-checked"
   }
 }
