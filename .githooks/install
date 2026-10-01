@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 # Installs every tracked hook into the repository's hooks directory. A hook
 # already there that sittir does not manage is moved aside to
-# <name>.pre-sittir rather than overwritten.
+# <name>.pre-sittir rather than overwritten. It also defines the
+# `regenerated` merge driver that .gitattributes names for outputs a merge
+# must regenerate rather than resolve: it keeps the current branch's copy.
 set -euo pipefail
+git config merge.regenerated.name "keep ours; regenerate after merging"
+git config merge.regenerated.driver true
 src="$(cd "$(dirname "$0")" && pwd)"
 dest="$(git rev-parse --path-format=absolute --git-path hooks)"
 mkdir -p "$dest"
