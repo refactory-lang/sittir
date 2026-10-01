@@ -641,18 +641,10 @@ export function listRestParamType(
 	options: string | undefined,
 	optionsRequired = false
 ): string {
-	if (options !== undefined && optionsRequired) {
-		return nonEmpty
-			? `[options: ${options}, first: ${element}, ...rest: ${element}[]]`
-			: `[options: ${options}, ...rest: ${element}[]]`;
-	}
-	if (nonEmpty) {
-		const elements = `[first: ${element}, ...rest: ${element}[]]`;
-		return options === undefined
-			? elements
-			: `${elements} | [options: ${options}, first: ${element}, ...rest: ${element}[]]`;
-	}
-	return options === undefined ? `readonly ${element}[]` : `[first?: ${element} | ${options}, ...rest: ${element}[]]`;
+	const elements = nonEmpty ? `element: ${element}, ...elements: ${element}[]` : `...elements: ${element}[]`;
+	if (options === undefined) return `[${elements}]`;
+	const withOptions = `[options: ${options}, ${elements}]`;
+	return optionsRequired ? withOptions : `[${elements}] | ${withOptions}`;
 }
 
 export function transparentContentKindNames(kinds: readonly string[], nodeMap: NodeMap): string[] {

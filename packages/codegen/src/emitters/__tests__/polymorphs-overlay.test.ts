@@ -446,18 +446,18 @@ function typeChecks(lines: readonly string[]): void {
 
 describe('a list takes its rest parameter by cardinality and options', () => {
 	it('requires an element from a non-empty list and puts the options object first', () => {
-		expect(listRestParamType(true, 'E', undefined)).toBe('[first: E, ...rest: E[]]');
-		expect(listRestParamType(true, 'E', 'O')).toBe('[first: E, ...rest: E[]] | [options: O, first: E, ...rest: E[]]');
+		expect(listRestParamType(true, 'E', undefined)).toBe('[element: E, ...elements: E[]]');
+		expect(listRestParamType(true, 'E', 'O')).toBe('[element: E, ...elements: E[]] | [options: O, element: E, ...elements: E[]]');
 	});
 
 	it('lets an empty-capable list take nothing, or only its options', () => {
-		expect(listRestParamType(false, 'E', undefined)).toBe('readonly E[]');
-		expect(listRestParamType(false, 'E', 'O')).toBe('[first?: E | O, ...rest: E[]]');
+		expect(listRestParamType(false, 'E', undefined)).toBe('[...elements: E[]]');
+		expect(listRestParamType(false, 'E', 'O')).toBe('[...elements: E[]] | [options: O, ...elements: E[]]');
 	});
 
 	it('puts required options first with no elements-only form', () => {
-		expect(listRestParamType(true, 'E', 'O', true)).toBe('[options: O, first: E, ...rest: E[]]');
-		expect(listRestParamType(false, 'E', 'O', true)).toBe('[options: O, ...rest: E[]]');
+		expect(listRestParamType(true, 'E', 'O', true)).toBe('[options: O, element: E, ...elements: E[]]');
+		expect(listRestParamType(false, 'E', 'O', true)).toBe('[options: O, ...elements: E[]]');
 	});
 
 	it('rejects an elements-only call at the type level when the options are required', () => {

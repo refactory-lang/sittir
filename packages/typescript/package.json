@@ -17,7 +17,8 @@
 		"directory": "packages/typescript"
 	},
 	"files": [
-		"dist"
+		"dist",
+		"native"
 	],
 	"type": "module",
 	"main": "./dist/index.js",
@@ -50,7 +51,7 @@
 		"tree-sitter-typescript": "^0.23.2",
 		"type-fest": "^5.6.0"
 	},
-	"//native": "Native artifacts are grammar-local implementation details for @sittir/typescript, built from rust/crates/sittir-typescript.",
+	"//native": "Native artifacts are grammar-local implementation details for @sittir/typescript, shipped in native/ and built from rust/crates/sittir-typescript.",
 	"sittir": {
 		"stable": true,
 		"displayName": "TypeScript"

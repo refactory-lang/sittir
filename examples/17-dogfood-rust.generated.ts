@@ -3,174 +3,150 @@ import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 import { Delimiter } from '@sittir/common/utils';
 
-const { build, kinds } = await createEngine(rust);
+const rs = await createEngine(rust);
 
 export function rebuildSpliceGenerated() {
-	return build.sourceFile.strict({
-		statements: [build.useDeclaration.strict({
-			argument: build.scopedIdentifier.strict({
-				path: build.scopedIdentifier.strict({
-					path: kinds.Crate,
-					name: build.identifier("types"),
+	return rs.build.sourceFile.strict({
+		statements: [rs.build.useDeclaration.strict({
+			argument: rs.build.scopedIdentifier.strict({
+				path: rs.build.scopedIdentifier.strict({
+					path: rs.kinds.Crate,
+					name: rs.build.identifier("types"),
 				}),
-				name: build.identifier("Edit"),
+				name: rs.build.identifier("Edit"),
 			}),
-		}).$trivia.leading(build.lineComment.docInner.strict(build.docComment(" Byte-level `apply_edits` on a source string.\n")), build.lineComment.docInner.strict(build.docComment("\n")), build.lineComment.docInner.strict(build.docComment(" Sorts edits by `start_pos` descending, applies each as a raw byte\n")), build.lineComment.docInner.strict(build.docComment(" splice on a `String`. Descending order guarantees earlier edits\n")), build.lineComment.docInner.strict(build.docComment(" aren't shifted by later ones, so consumers can produce edits in any\n")), build.lineComment.docInner.strict(build.docComment(" order and let us canonicalize.\n")), build.lineComment.docInner.strict(build.docComment("\n")), build.lineComment.docInner.strict(build.docComment(" # Overlap handling\n")), build.lineComment.docInner.strict(build.docComment("\n")), build.lineComment.docInner.strict(build.docComment(" Overlap detection is **explicitly** the consumer's responsibility —\n")), build.lineComment.docInner.strict(build.docComment(" see contracts/napi-api.md `applyEdits` contract. This function does\n")), build.lineComment.docInner.strict(build.docComment(" NOT validate that edits are disjoint; overlapping edits fall through\n")), build.lineComment.docInner.strict(build.docComment(" to last-wins behavior (after sort-descending, the edit with the\n")), build.lineComment.docInner.strict(build.docComment(" greatest `start_pos` applies first, and subsequent edits whose\n")), build.lineComment.docInner.strict(build.docComment(" ranges still reference valid offsets within the intermediate string\n")), build.lineComment.docInner.strict(build.docComment(" apply afterward).\n")), build.lineComment.docInner.strict(build.docComment("\n")), build.lineComment.docInner.strict(build.docComment(" # Validation\n")), build.lineComment.docInner.strict(build.docComment("\n")), build.lineComment.docInner.strict(build.docComment(" Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n")), build.lineComment.docInner.strict(build.docComment(" Violations return `Err` rather than panic so the napi wrapper can\n")), build.lineComment.docInner.strict(build.docComment(" surface a typed error to JS. UTF-8 boundary correctness is also\n")), build.lineComment.docInner.strict(build.docComment(" checked on the splice (via `String::replace_range`) — non-char-\n")), build.lineComment.docInner.strict(build.docComment(" boundary ranges produce a `Result::Err` instead of panicking.\n"))), build.attributeItem.strict(build.attribute.input.strict({
-			path: build.identifier("derive"),
-			arguments: build.delimTokenTree.paren.strict(build.nonSpecialToken.strict(build.identifier("Debug")), build.nonSpecialToken.strict(kinds.Comma), build.nonSpecialToken.strict(build.identifier("Clone")), build.nonSpecialToken.strict(kinds.Comma), build.nonSpecialToken.strict(build.identifier("PartialEq")), build.nonSpecialToken.strict(kinds.Comma), build.nonSpecialToken.strict(build.identifier("Eq"))),
-		})).$trivia.leading(build.lineComment.docOuter.strict(build.docComment(" Error returned from [`apply_edits`] when an edit is invalid.\n"))), build.enumItem.strict({
-			visibilityModifier: build.visibilityModifier.pub.strict(),
-			name: build.identifier("SpliceError"),
-			body: build.enumVariantList.strict(build.enumVariantListElements.strict({ delimiter: Delimiter.Trailing }, {
-				enumVariant: build.enumVariant.strict({
-					name: build.identifier("InvalidRange"),
-					body: build.fieldDeclarationList.strict(build.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, {
-						fieldDeclaration: build.fieldDeclaration.strict({
-							name: build.identifier("start"),
-							type: kinds.U32Keyword,
-						}),
-					}, {
-						fieldDeclaration: build.fieldDeclaration.strict({
-							name: build.identifier("end"),
-							type: kinds.U32Keyword,
-						}),
-					})),
+		}).$trivia.leading(rs.build.lineComment.docInner.strict(rs.build.docComment(" Byte-level `apply_edits` on a source string.\n")), rs.build.lineComment.docInner.strict(rs.build.docComment("\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" Sorts edits by `start_pos` descending, applies each as a raw byte\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" splice on a `String`. Descending order guarantees earlier edits\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" aren't shifted by later ones, so consumers can produce edits in any\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" order and let us canonicalize.\n")), rs.build.lineComment.docInner.strict(rs.build.docComment("\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" # Overlap handling\n")), rs.build.lineComment.docInner.strict(rs.build.docComment("\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" Overlap detection is **explicitly** the consumer's responsibility —\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" see contracts/napi-api.md `applyEdits` contract. This function does\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" NOT validate that edits are disjoint; overlapping edits fall through\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" to last-wins behavior (after sort-descending, the edit with the\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" greatest `start_pos` applies first, and subsequent edits whose\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" ranges still reference valid offsets within the intermediate string\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" apply afterward).\n")), rs.build.lineComment.docInner.strict(rs.build.docComment("\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" # Validation\n")), rs.build.lineComment.docInner.strict(rs.build.docComment("\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" Per-edit validation: `start_pos <= end_pos <= source.len()` (bytes).\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" Violations return `Err` rather than panic so the napi wrapper can\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" surface a typed error to JS. UTF-8 boundary correctness is also\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" checked on the splice (via `String::replace_range`) — non-char-\n")), rs.build.lineComment.docInner.strict(rs.build.docComment(" boundary ranges produce a `Result::Err` instead of panicking.\n"))), rs.build.attributeItem.strict(rs.build.attribute.input.strict({
+			path: rs.build.identifier("derive"),
+			arguments: rs.build.delimTokenTree.paren.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("Debug")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.identifier("Clone")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.identifier("PartialEq")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.identifier("Eq"))),
+		})).$trivia.leading(rs.build.lineComment.docOuter.strict(rs.build.docComment(" Error returned from [`apply_edits`] when an edit is invalid.\n"))), rs.build.enumItem.strict({
+			visibilityModifier: rs.build.visibilityModifier.pub.strict(),
+			name: rs.build.identifier("SpliceError"),
+			body: rs.build.enumVariantList.strict(rs.build.enumVariantListElements.strict(rs.build.enumVariant.strict({
+				name: rs.build.identifier("InvalidRange"),
+				body: rs.build.fieldDeclarationList.strict({ delimiter: Delimiter.None }, rs.build.fieldDeclaration.strict({
+					name: rs.build.identifier("start"),
+					type: rs.kinds.U32Keyword,
+				}), rs.build.fieldDeclaration.strict({
+					name: rs.build.identifier("end"),
+					type: rs.kinds.U32Keyword,
+				})),
+			}), rs.build.enumVariant.strict({
+				name: rs.build.identifier("OutOfBounds"),
+				body: rs.build.fieldDeclarationList.strict({ delimiter: Delimiter.None }, rs.build.fieldDeclaration.strict({
+					name: rs.build.identifier("end"),
+					type: rs.kinds.U32Keyword,
+				}), rs.build.fieldDeclaration.strict({
+					name: rs.build.identifier("source_len"),
+					type: rs.kinds.UsizeKeyword,
+				})),
+			}).$trivia.leading(rs.build.lineComment.docOuter.strict(rs.build.docComment(" `end_pos > source.len()` — edit reaches past end of source.\n"))), rs.build.enumVariant.strict({
+				name: rs.build.identifier("NonCharBoundary"),
+				body: rs.build.fieldDeclarationList.strict({ delimiter: Delimiter.None }, rs.build.fieldDeclaration.strict({
+					name: rs.build.identifier("start"),
+					type: rs.kinds.U32Keyword,
+				}), rs.build.fieldDeclaration.strict({
+					name: rs.build.identifier("end"),
+					type: rs.kinds.U32Keyword,
+				})),
+			}).$trivia.leading(rs.build.lineComment.docOuter.strict(rs.build.docComment(" `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n")))).$trivia.leading(rs.build.lineComment.docOuter.strict(rs.build.docComment(" `end_pos < start_pos` — the edit range is reversed.\n")))),
+		}), rs.build.implItem.body.positiveClause.strict({
+			traitClause: rs.build.scopedTypeIdentifier.strict({
+				path: rs.build.scopedIdentifier.strict({
+					path: rs.build.identifier("std"),
+					name: rs.build.identifier("fmt"),
 				}),
-			}, {
-				enumVariant: build.enumVariant.strict({
-					name: build.identifier("OutOfBounds"),
-					body: build.fieldDeclarationList.strict(build.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, {
-						fieldDeclaration: build.fieldDeclaration.strict({
-							name: build.identifier("end"),
-							type: kinds.U32Keyword,
-						}),
-					}, {
-						fieldDeclaration: build.fieldDeclaration.strict({
-							name: build.identifier("source_len"),
-							type: kinds.UsizeKeyword,
-						}),
-					})),
-				}).$trivia.leading(build.lineComment.docOuter.strict(build.docComment(" `end_pos > source.len()` — edit reaches past end of source.\n"))),
-			}, {
-				enumVariant: build.enumVariant.strict({
-					name: build.identifier("NonCharBoundary"),
-					body: build.fieldDeclarationList.strict(build.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, {
-						fieldDeclaration: build.fieldDeclaration.strict({
-							name: build.identifier("start"),
-							type: kinds.U32Keyword,
-						}),
-					}, {
-						fieldDeclaration: build.fieldDeclaration.strict({
-							name: build.identifier("end"),
-							type: kinds.U32Keyword,
-						}),
-					})),
-				}).$trivia.leading(build.lineComment.docOuter.strict(build.docComment(" `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n"))),
-			}).$trivia.leading(build.lineComment.docOuter.strict(build.docComment(" `end_pos < start_pos` — the edit range is reversed.\n")))),
-		}), build.implItem.body.positiveClause.strict({
-			traitClause: build.scopedTypeIdentifier.strict({
-				path: build.scopedIdentifier.strict({
-					path: build.identifier("std"),
-					name: build.identifier("fmt"),
-				}),
-				name: build.identifier("Display"),
+				name: rs.build.identifier("Display"),
 			}),
-			type: build.identifier("SpliceError"),
-			declarationList: build.declarationList.strict(build.functionItem.strict({
-				name: build.identifier("fmt"),
-				parameters: build.parameters.strict(build.parametersElements.strict({ delimiter: Delimiter.None }, {
-					content: build.selfParameter.strict({
-						reference: true,
-					}),
-				}, {
-					content: build.parameter.strict({
-						name: build.identifier("f"),
-						type: build.referenceType.strict({
-							mutableSpecifier: true,
-							type: build.genericType.strict({
-								type: build.scopedTypeIdentifier.strict({
-									path: build.scopedIdentifier.strict({
-										path: build.identifier("std"),
-										name: build.identifier("fmt"),
-									}),
-									name: build.identifier("Formatter"),
+			type: rs.build.identifier("SpliceError"),
+			declarationList: rs.build.declarationList.strict(rs.build.functionItem.strict({
+				name: rs.build.identifier("fmt"),
+				parameters: rs.build.parameters.strict(rs.build.selfParameter.strict({
+					reference: true,
+				}), rs.build.parameter.strict({
+					name: rs.build.identifier("f"),
+					type: rs.build.referenceType.strict({
+						mutableSpecifier: true,
+						type: rs.build.genericType.strict({
+							type: rs.build.scopedTypeIdentifier.strict({
+								path: rs.build.scopedIdentifier.strict({
+									path: rs.build.identifier("std"),
+									name: rs.build.identifier("fmt"),
 								}),
-								typeArguments: build.typeArguments.strict(build.typeArgumentsElements.strict({ delimiter: Delimiter.None }, {
-									content: build.lifetime.strict(build.identifier("_")),
-								})),
+								name: rs.build.identifier("Formatter"),
 							}),
+							typeArguments: rs.build.typeArguments.strict(rs.build.lifetime.strict(rs.build.identifier("_"))),
 						}),
 					}),
 				})),
-				returnType: build.scopedTypeIdentifier.strict({
-					path: build.scopedIdentifier.strict({
-						path: build.identifier("std"),
-						name: build.identifier("fmt"),
+				returnType: rs.build.scopedTypeIdentifier.strict({
+					path: rs.build.scopedIdentifier.strict({
+						path: rs.build.identifier("std"),
+						name: rs.build.identifier("fmt"),
 					}),
-					name: build.identifier("Result"),
+					name: rs.build.identifier("Result"),
 				}),
-				body: build.block.strict({
-					statements: [build.expressionStatement.strict(build.matchExpression.strict({
-						value: kinds.Self,
-						body: build.matchBlock.strict({
-							matchArm: [build.matchArm.blockEnding.strict({
-								pattern: build.structPattern.strict({
-									type: build.scopedTypeIdentifier.strict({
-										path: build.identifier("SpliceError"),
-										name: build.identifier("InvalidRange"),
+				body: rs.build.block.strict({
+					statements: [rs.build.expressionStatement.strict(rs.build.matchExpression.strict({
+						value: rs.kinds.Self,
+						body: rs.build.matchBlock.strict({
+							matchArm: [rs.build.matchArm.blockEnding.strict({
+								pattern: rs.build.structPattern.strict({
+									type: rs.build.scopedTypeIdentifier.strict({
+										path: rs.build.identifier("SpliceError"),
+										name: rs.build.identifier("InvalidRange"),
 									}),
-									fields: [{ delimiter: Delimiter.None }, build.fieldPattern.shorthand.strict({
-										name: build.identifier("start"),
-									}), build.fieldPattern.shorthand.strict({
-										name: build.identifier("end"),
+									fields: [rs.build.fieldPattern.shorthand.strict({
+										name: rs.build.identifier("start"),
+									}), rs.build.fieldPattern.shorthand.strict({
+										name: rs.build.identifier("end"),
 									})],
 								}),
-								value: build.block.strict({
-									trailingExpression: build.macroInvocation.strict({
-										macro: build.identifier("write"),
-										arguments: build.delimTokenTree.paren.strict(build.nonSpecialToken.strict(build.identifier("f")), build.nonSpecialToken.strict(kinds.Comma), build.nonSpecialToken.strict(build.stringLiteral.strict({
-											stringOpen: build.stringOpen("\""),
-											elements: [build.stringContent("invalid edit range: start={start}, end={end}")],
+								value: rs.build.block.strict({
+									trailingExpression: rs.build.macroInvocation.strict({
+										macro: rs.build.identifier("write"),
+										arguments: rs.build.delimTokenTree.paren.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("f")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.stringLiteral.strict({
+											stringOpen: rs.build.stringOpen("\""),
+											elements: [rs.build.stringContent("invalid edit range: start={start}, end={end}")],
 										}))),
 									}),
 								}),
-							}), build.matchArm.withComma.strict({
-								pattern: build.structPattern.strict({
-									type: build.scopedTypeIdentifier.strict({
-										path: build.identifier("SpliceError"),
-										name: build.identifier("OutOfBounds"),
+							}), rs.build.matchArm.withComma.strict({
+								pattern: rs.build.structPattern.strict({
+									type: rs.build.scopedTypeIdentifier.strict({
+										path: rs.build.identifier("SpliceError"),
+										name: rs.build.identifier("OutOfBounds"),
 									}),
-									fields: [{ delimiter: Delimiter.None }, build.fieldPattern.shorthand.strict({
-										name: build.identifier("end"),
-									}), build.fieldPattern.shorthand.strict({
-										name: build.identifier("source_len"),
+									fields: [rs.build.fieldPattern.shorthand.strict({
+										name: rs.build.identifier("end"),
+									}), rs.build.fieldPattern.shorthand.strict({
+										name: rs.build.identifier("source_len"),
 									})],
 								}),
-								value: build.macroInvocation.strict({
-									macro: build.identifier("write"),
-									arguments: build.delimTokenTree.paren.strict(build.nonSpecialToken.strict(build.identifier("f")), build.nonSpecialToken.strict(kinds.Comma), build.nonSpecialToken.strict(build.stringLiteral.strict({
-										stringOpen: build.stringOpen("\""),
-										elements: [build.stringContent("edit out of bounds: end={end} > source length={source_len}")],
+								value: rs.build.macroInvocation.strict({
+									macro: rs.build.identifier("write"),
+									arguments: rs.build.delimTokenTree.paren.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("f")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.stringLiteral.strict({
+										stringOpen: rs.build.stringOpen("\""),
+										elements: [rs.build.stringContent("edit out of bounds: end={end} > source length={source_len}")],
 									}))),
 								}),
 							})],
-							lastArm: build.lastMatchArm.strict({
-								pattern: build.structPattern.strict({
-									type: build.scopedTypeIdentifier.strict({
-										path: build.identifier("SpliceError"),
-										name: build.identifier("NonCharBoundary"),
+							lastArm: rs.build.lastMatchArm.strict({
+								pattern: rs.build.structPattern.strict({
+									type: rs.build.scopedTypeIdentifier.strict({
+										path: rs.build.identifier("SpliceError"),
+										name: rs.build.identifier("NonCharBoundary"),
 									}),
-									fields: [{ delimiter: Delimiter.None }, build.fieldPattern.shorthand.strict({
-										name: build.identifier("start"),
-									}), build.fieldPattern.shorthand.strict({
-										name: build.identifier("end"),
+									fields: [rs.build.fieldPattern.shorthand.strict({
+										name: rs.build.identifier("start"),
+									}), rs.build.fieldPattern.shorthand.strict({
+										name: rs.build.identifier("end"),
 									})],
 								}),
-								value: build.macroInvocation.strict({
-									macro: build.identifier("write"),
-									arguments: build.delimTokenTree.paren.strict(build.nonSpecialToken.strict(build.identifier("f")), build.nonSpecialToken.strict(kinds.Comma), build.nonSpecialToken.strict(build.stringLiteral.strict({
-										stringOpen: build.stringOpen("\""),
-										elements: [build.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
+								value: rs.build.macroInvocation.strict({
+									macro: rs.build.identifier("write"),
+									arguments: rs.build.delimTokenTree.paren.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("f")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.stringLiteral.strict({
+										stringOpen: rs.build.stringOpen("\""),
+										elements: [rs.build.stringContent("edit range not at UTF-8 char boundary: start={start}, end={end}")],
 									}))),
 								}),
 								comma: true,
@@ -179,313 +155,277 @@ export function rebuildSpliceGenerated() {
 					}))],
 				}),
 			})),
-		}), build.implItem.body.positiveClause.strict({
-			traitClause: build.scopedTypeIdentifier.strict({
-				path: build.scopedIdentifier.strict({
-					path: build.identifier("std"),
-					name: build.identifier("error"),
+		}), rs.build.implItem.body.positiveClause.strict({
+			traitClause: rs.build.scopedTypeIdentifier.strict({
+				path: rs.build.scopedIdentifier.strict({
+					path: rs.build.identifier("std"),
+					name: rs.build.identifier("error"),
 				}),
-				name: build.identifier("Error"),
+				name: rs.build.identifier("Error"),
 			}),
-			type: build.identifier("SpliceError"),
-			declarationList: build.declarationList.strict(),
-		}), build.functionItem.strict({
-			visibilityModifier: build.visibilityModifier.pub.strict(),
-			name: build.identifier("apply_edits"),
-			parameters: build.parameters.strict(build.parametersElements.strict({ delimiter: Delimiter.None }, {
-				content: build.parameter.strict({
-					name: build.identifier("source"),
-					type: build.referenceType.strict({
-						type: kinds.StrKeyword,
-					}),
+			type: rs.build.identifier("SpliceError"),
+			declarationList: rs.build.declarationList.strict(),
+		}), rs.build.functionItem.strict({
+			visibilityModifier: rs.build.visibilityModifier.pub.strict(),
+			name: rs.build.identifier("apply_edits"),
+			parameters: rs.build.parameters.strict(rs.build.parameter.strict({
+				name: rs.build.identifier("source"),
+				type: rs.build.referenceType.strict({
+					type: rs.kinds.StrKeyword,
 				}),
-			}, {
-				content: build.parameter.strict({
-					mutableSpecifier: true,
-					name: build.identifier("edits"),
-					type: build.genericType.strict({
-						type: build.identifier("Vec"),
-						typeArguments: build.typeArguments.strict(build.typeArgumentsElements.strict({ delimiter: Delimiter.None }, {
-							content: build.identifier("Edit"),
-						})),
-					}),
+			}), rs.build.parameter.strict({
+				mutableSpecifier: true,
+				name: rs.build.identifier("edits"),
+				type: rs.build.genericType.strict({
+					type: rs.build.identifier("Vec"),
+					typeArguments: rs.build.typeArguments.strict(rs.build.identifier("Edit")),
 				}),
 			})),
-			returnType: build.genericType.strict({
-				type: build.identifier("Result"),
-				typeArguments: build.typeArguments.strict(build.typeArgumentsElements.strict({ delimiter: Delimiter.None }, {
-					content: build.identifier("String"),
-				}, {
-					content: build.identifier("SpliceError"),
-				})),
+			returnType: rs.build.genericType.strict({
+				type: rs.build.identifier("Result"),
+				typeArguments: rs.build.typeArguments.strict(rs.build.identifier("String"), rs.build.identifier("SpliceError")),
 			}),
-			body: build.block.strict({
-				statements: [build.letDeclaration.strict({
-					pattern: build.identifier("source_len"),
-					value: build.callExpression.strict({
-						function: build.fieldExpression.strict({
-							value: build.identifier("source"),
-							field: build.identifier("len"),
+			body: rs.build.block.strict({
+				statements: [rs.build.letDeclaration.strict({
+					pattern: rs.build.identifier("source_len"),
+					value: rs.build.callExpression.strict({
+						function: rs.build.fieldExpression.strict({
+							value: rs.build.identifier("source"),
+							field: rs.build.identifier("len"),
 						}),
-						arguments: build.arguments.strict(),
+						arguments: rs.build.arguments.strict(),
 					}),
-				}).$trivia.leading(build.lineComment.strict(build.lineCommentRegular(" Pre-validate every edit up-front so we fail atomically (no")), build.lineComment.strict(build.lineCommentRegular(" partial application)."))), build.expressionStatement.strict(build.forExpression.strict({
-					pattern: build.identifier("e"),
-					value: build.referenceExpression.bare.strict(build.identifier("edits")),
-					body: build.block.strict({
-						statements: [build.expressionStatement.strict(build.ifExpression.strict({
-							condition: build.binaryExpression.strict({
-								left: build.fieldExpression.strict({
-									value: build.identifier("e"),
-									field: build.identifier("end_pos"),
+				}).$trivia.leading(rs.build.lineComment.strict(rs.build.lineCommentRegular(" Pre-validate every edit up-front so we fail atomically (no")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" partial application)."))), rs.build.expressionStatement.strict(rs.build.forExpression.strict({
+					pattern: rs.build.identifier("e"),
+					value: rs.build.referenceExpression.bare.strict(rs.build.identifier("edits")),
+					body: rs.build.block.strict({
+						statements: [rs.build.expressionStatement.strict(rs.build.ifExpression.strict({
+							condition: rs.build.binaryExpression.strict({
+								left: rs.build.fieldExpression.strict({
+									value: rs.build.identifier("e"),
+									field: rs.build.identifier("end_pos"),
 								}),
-								operator: kinds.Lt,
-								right: build.fieldExpression.strict({
-									value: build.identifier("e"),
-									field: build.identifier("start_pos"),
+								operator: rs.kinds.Lt,
+								right: rs.build.fieldExpression.strict({
+									value: rs.build.identifier("e"),
+									field: rs.build.identifier("start_pos"),
 								}),
 							}),
-							consequence: build.block.strict({
-								statements: [build.expressionStatement.withSemi.strict(build.returnExpression.strict(build.callExpression.strict({
-									function: build.identifier("Err"),
-									arguments: build.arguments.strict(build.argumentsElements.strict({ delimiter: Delimiter.None }, {
-										expression: build.structExpression.strict({
-											name: build.scopedTypeIdentifierInExpressionPosition.strict({
-												path: build.identifier("SpliceError"),
-												name: build.identifier("InvalidRange"),
-											}),
-											body: build.fieldInitializerList.strict({ delimiter: Delimiter.Trailing }, build.fieldInitializer.strict({
-												field: build.identifier("start"),
-												value: build.fieldExpression.strict({
-													value: build.identifier("e"),
-													field: build.identifier("start_pos"),
-												}),
-											}), build.fieldInitializer.strict({
-												field: build.identifier("end"),
-												value: build.fieldExpression.strict({
-													value: build.identifier("e"),
-													field: build.identifier("end_pos"),
-												}),
-											})),
+							consequence: rs.build.block.strict({
+								statements: [rs.build.expressionStatement.withSemi.strict(rs.build.returnExpression.strict(rs.build.callExpression.strict({
+									function: rs.build.identifier("Err"),
+									arguments: rs.build.arguments.strict(rs.build.structExpression.strict({
+										name: rs.build.scopedTypeIdentifierInExpressionPosition.strict({
+											path: rs.build.identifier("SpliceError"),
+											name: rs.build.identifier("InvalidRange"),
 										}),
+										body: rs.build.fieldInitializerList.strict({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer.strict({
+											field: rs.build.identifier("start"),
+											value: rs.build.fieldExpression.strict({
+												value: rs.build.identifier("e"),
+												field: rs.build.identifier("start_pos"),
+											}),
+										}), rs.build.fieldInitializer.strict({
+											field: rs.build.identifier("end"),
+											value: rs.build.fieldExpression.strict({
+												value: rs.build.identifier("e"),
+												field: rs.build.identifier("end_pos"),
+											}),
+										})),
 									})),
 								})))],
 							}),
-						})), build.expressionStatement.strict(build.ifExpression.strict({
-							condition: build.binaryExpression.strict({
-								left: build.parenthesizedExpression.strict(build.typeCastExpression.strict({
-									value: build.fieldExpression.strict({
-										value: build.identifier("e"),
-										field: build.identifier("end_pos"),
+						})), rs.build.expressionStatement.strict(rs.build.ifExpression.strict({
+							condition: rs.build.binaryExpression.strict({
+								left: rs.build.parenthesizedExpression.strict(rs.build.typeCastExpression.strict({
+									value: rs.build.fieldExpression.strict({
+										value: rs.build.identifier("e"),
+										field: rs.build.identifier("end_pos"),
 									}),
-									type: kinds.UsizeKeyword,
+									type: rs.kinds.UsizeKeyword,
 								})),
-								operator: kinds.Gt,
-								right: build.identifier("source_len"),
+								operator: rs.kinds.Gt,
+								right: rs.build.identifier("source_len"),
 							}),
-							consequence: build.block.strict({
-								statements: [build.expressionStatement.withSemi.strict(build.returnExpression.strict(build.callExpression.strict({
-									function: build.identifier("Err"),
-									arguments: build.arguments.strict(build.argumentsElements.strict({ delimiter: Delimiter.None }, {
-										expression: build.structExpression.strict({
-											name: build.scopedTypeIdentifierInExpressionPosition.strict({
-												path: build.identifier("SpliceError"),
-												name: build.identifier("OutOfBounds"),
-											}),
-											body: build.fieldInitializerList.strict({ delimiter: Delimiter.Trailing }, build.fieldInitializer.strict({
-												field: build.identifier("end"),
-												value: build.fieldExpression.strict({
-													value: build.identifier("e"),
-													field: build.identifier("end_pos"),
-												}),
-											}), build.shorthandFieldInitializer.strict({
-												name: build.identifier("source_len"),
-											})),
+							consequence: rs.build.block.strict({
+								statements: [rs.build.expressionStatement.withSemi.strict(rs.build.returnExpression.strict(rs.build.callExpression.strict({
+									function: rs.build.identifier("Err"),
+									arguments: rs.build.arguments.strict(rs.build.structExpression.strict({
+										name: rs.build.scopedTypeIdentifierInExpressionPosition.strict({
+											path: rs.build.identifier("SpliceError"),
+											name: rs.build.identifier("OutOfBounds"),
 										}),
+										body: rs.build.fieldInitializerList.strict({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer.strict({
+											field: rs.build.identifier("end"),
+											value: rs.build.fieldExpression.strict({
+												value: rs.build.identifier("e"),
+												field: rs.build.identifier("end_pos"),
+											}),
+										}), rs.build.shorthandFieldInitializer.strict({
+											name: rs.build.identifier("source_len"),
+										})),
 									})),
 								})))],
 							}),
-						})), build.expressionStatement.strict(build.ifExpression.strict({
-							condition: build.binaryExpression.strict({
-								left: build.unaryExpression.strict({
-									operator: kinds.Bang,
-									operand: build.callExpression.strict({
-										function: build.fieldExpression.strict({
-											value: build.identifier("source"),
-											field: build.identifier("is_char_boundary"),
+						})), rs.build.expressionStatement.strict(rs.build.ifExpression.strict({
+							condition: rs.build.binaryExpression.strict({
+								left: rs.build.unaryExpression.strict({
+									operator: rs.kinds.Bang,
+									operand: rs.build.callExpression.strict({
+										function: rs.build.fieldExpression.strict({
+											value: rs.build.identifier("source"),
+											field: rs.build.identifier("is_char_boundary"),
 										}),
-										arguments: build.arguments.strict(build.argumentsElements.strict({ delimiter: Delimiter.None }, {
-											expression: build.typeCastExpression.strict({
-												value: build.fieldExpression.strict({
-													value: build.identifier("e"),
-													field: build.identifier("start_pos"),
-												}),
-												type: kinds.UsizeKeyword,
+										arguments: rs.build.arguments.strict(rs.build.typeCastExpression.strict({
+											value: rs.build.fieldExpression.strict({
+												value: rs.build.identifier("e"),
+												field: rs.build.identifier("start_pos"),
 											}),
+											type: rs.kinds.UsizeKeyword,
 										})),
 									}),
 								}),
-								operator: kinds.PipePipe,
-								right: build.unaryExpression.strict({
-									operator: kinds.Bang,
-									operand: build.callExpression.strict({
-										function: build.fieldExpression.strict({
-											value: build.identifier("source"),
-											field: build.identifier("is_char_boundary"),
+								operator: rs.kinds.PipePipe,
+								right: rs.build.unaryExpression.strict({
+									operator: rs.kinds.Bang,
+									operand: rs.build.callExpression.strict({
+										function: rs.build.fieldExpression.strict({
+											value: rs.build.identifier("source"),
+											field: rs.build.identifier("is_char_boundary"),
 										}),
-										arguments: build.arguments.strict(build.argumentsElements.strict({ delimiter: Delimiter.None }, {
-											expression: build.typeCastExpression.strict({
-												value: build.fieldExpression.strict({
-													value: build.identifier("e"),
-													field: build.identifier("end_pos"),
-												}),
-												type: kinds.UsizeKeyword,
+										arguments: rs.build.arguments.strict(rs.build.typeCastExpression.strict({
+											value: rs.build.fieldExpression.strict({
+												value: rs.build.identifier("e"),
+												field: rs.build.identifier("end_pos"),
 											}),
+											type: rs.kinds.UsizeKeyword,
 										})),
 									}),
 								}),
 							}),
-							consequence: build.block.strict({
-								statements: [build.expressionStatement.withSemi.strict(build.returnExpression.strict(build.callExpression.strict({
-									function: build.identifier("Err"),
-									arguments: build.arguments.strict(build.argumentsElements.strict({ delimiter: Delimiter.None }, {
-										expression: build.structExpression.strict({
-											name: build.scopedTypeIdentifierInExpressionPosition.strict({
-												path: build.identifier("SpliceError"),
-												name: build.identifier("NonCharBoundary"),
-											}),
-											body: build.fieldInitializerList.strict({ delimiter: Delimiter.Trailing }, build.fieldInitializer.strict({
-												field: build.identifier("start"),
-												value: build.fieldExpression.strict({
-													value: build.identifier("e"),
-													field: build.identifier("start_pos"),
-												}),
-											}), build.fieldInitializer.strict({
-												field: build.identifier("end"),
-												value: build.fieldExpression.strict({
-													value: build.identifier("e"),
-													field: build.identifier("end_pos"),
-												}),
-											})),
+							consequence: rs.build.block.strict({
+								statements: [rs.build.expressionStatement.withSemi.strict(rs.build.returnExpression.strict(rs.build.callExpression.strict({
+									function: rs.build.identifier("Err"),
+									arguments: rs.build.arguments.strict(rs.build.structExpression.strict({
+										name: rs.build.scopedTypeIdentifierInExpressionPosition.strict({
+											path: rs.build.identifier("SpliceError"),
+											name: rs.build.identifier("NonCharBoundary"),
 										}),
+										body: rs.build.fieldInitializerList.strict({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer.strict({
+											field: rs.build.identifier("start"),
+											value: rs.build.fieldExpression.strict({
+												value: rs.build.identifier("e"),
+												field: rs.build.identifier("start_pos"),
+											}),
+										}), rs.build.fieldInitializer.strict({
+											field: rs.build.identifier("end"),
+											value: rs.build.fieldExpression.strict({
+												value: rs.build.identifier("e"),
+												field: rs.build.identifier("end_pos"),
+											}),
+										})),
 									})),
 								})))],
 							}),
 						}))],
 					}),
-				})), build.expressionStatement.withSemi.strict(build.callExpression.strict({
-					function: build.fieldExpression.strict({
-						value: build.identifier("edits"),
-						field: build.identifier("sort_by"),
+				})), rs.build.expressionStatement.withSemi.strict(rs.build.callExpression.strict({
+					function: rs.build.fieldExpression.strict({
+						value: rs.build.identifier("edits"),
+						field: rs.build.identifier("sort_by"),
 					}),
-					arguments: build.arguments.strict(build.argumentsElements.strict({ delimiter: Delimiter.None }, {
-						expression: build.closureExpression.expr.strict({
-							parameters: build.closureParameters.strict(build.identifier("a"), build.identifier("b")),
-							body: build.block.strict({
-								trailingExpression: build.callExpression.strict({
-									function: build.fieldExpression.strict({
-										value: build.callExpression.strict({
-											function: build.fieldExpression.strict({
-												value: build.fieldExpression.strict({
-													value: build.identifier("b"),
-													field: build.identifier("start_pos"),
-												}),
-												field: build.identifier("cmp"),
+					arguments: rs.build.arguments.strict(rs.build.closureExpression.expr.strict({
+						parameters: rs.build.closureParameters.strict(rs.build.identifier("a"), rs.build.identifier("b")),
+						body: rs.build.block.strict({
+							trailingExpression: rs.build.callExpression.strict({
+								function: rs.build.fieldExpression.strict({
+									value: rs.build.callExpression.strict({
+										function: rs.build.fieldExpression.strict({
+											value: rs.build.fieldExpression.strict({
+												value: rs.build.identifier("b"),
+												field: rs.build.identifier("start_pos"),
 											}),
-											arguments: build.arguments.strict(build.argumentsElements.strict({ delimiter: Delimiter.None }, {
-												expression: build.referenceExpression.bare.strict(build.fieldExpression.strict({
-													value: build.identifier("a"),
-													field: build.identifier("start_pos"),
-												})),
-											})),
+											field: rs.build.identifier("cmp"),
 										}),
-										field: build.identifier("then_with"),
+										arguments: rs.build.arguments.strict(rs.build.referenceExpression.bare.strict(rs.build.fieldExpression.strict({
+											value: rs.build.identifier("a"),
+											field: rs.build.identifier("start_pos"),
+										}))),
 									}),
-									arguments: build.arguments.strict(build.argumentsElements.strict({ delimiter: Delimiter.None }, {
-										expression: build.closureExpression.expr.strict({
-											parameters: build.closureParameters.strict(),
-											body: build.callExpression.strict({
-												function: build.fieldExpression.strict({
-													value: build.fieldExpression.strict({
-														value: build.identifier("b"),
-														field: build.identifier("end_pos"),
-													}),
-													field: build.identifier("cmp"),
-												}),
-												arguments: build.arguments.strict(build.argumentsElements.strict({ delimiter: Delimiter.None }, {
-													expression: build.referenceExpression.bare.strict(build.fieldExpression.strict({
-														value: build.identifier("a"),
-														field: build.identifier("end_pos"),
-													})),
-												})),
-											}),
-										}),
-									})),
+									field: rs.build.identifier("then_with"),
 								}),
+								arguments: rs.build.arguments.strict(rs.build.closureExpression.expr.strict({
+									parameters: rs.build.closureParameters.strict(),
+									body: rs.build.callExpression.strict({
+										function: rs.build.fieldExpression.strict({
+											value: rs.build.fieldExpression.strict({
+												value: rs.build.identifier("b"),
+												field: rs.build.identifier("end_pos"),
+											}),
+											field: rs.build.identifier("cmp"),
+										}),
+										arguments: rs.build.arguments.strict(rs.build.referenceExpression.bare.strict(rs.build.fieldExpression.strict({
+											value: rs.build.identifier("a"),
+											field: rs.build.identifier("end_pos"),
+										}))),
+									}),
+								})),
 							}),
 						}),
 					})),
-				})).$trivia.leading(build.lineComment.strict(build.lineCommentRegular(" Sort descending by start_pos. Ties broken by end_pos descending —")), build.lineComment.strict(build.lineCommentRegular(" with identical start positions, the longer replacement applies")), build.lineComment.strict(build.lineCommentRegular(" first so the shorter doesn't overwrite its tail. (Tie-breaking is")), build.lineComment.strict(build.lineCommentRegular(" documented consumer-visible behavior; overlap detection is still")), build.lineComment.strict(build.lineCommentRegular(" theirs.)"))), build.letDeclaration.strict({
+				})).$trivia.leading(rs.build.lineComment.strict(rs.build.lineCommentRegular(" Sort descending by start_pos. Ties broken by end_pos descending —")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" with identical start positions, the longer replacement applies")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" first so the shorter doesn't overwrite its tail. (Tie-breaking is")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" documented consumer-visible behavior; overlap detection is still")), rs.build.lineComment.strict(rs.build.lineCommentRegular(" theirs.)"))), rs.build.letDeclaration.strict({
 					mutableSpecifier: true,
-					pattern: build.identifier("buf"),
-					value: build.callExpression.strict({
-						function: build.scopedIdentifier.strict({
-							path: build.identifier("String"),
-							name: build.identifier("from"),
+					pattern: rs.build.identifier("buf"),
+					value: rs.build.callExpression.strict({
+						function: rs.build.scopedIdentifier.strict({
+							path: rs.build.identifier("String"),
+							name: rs.build.identifier("from"),
 						}),
-						arguments: build.arguments.strict(build.argumentsElements.strict({ delimiter: Delimiter.None }, {
-							expression: build.identifier("source"),
-						})),
+						arguments: rs.build.arguments.strict(rs.build.identifier("source")),
 					}),
-				}), build.expressionStatement.strict(build.forExpression.strict({
-					pattern: build.identifier("e"),
-					value: build.identifier("edits"),
-					body: build.block.strict({
-						statements: [build.letDeclaration.strict({
-							pattern: build.identifier("start"),
-							value: build.typeCastExpression.strict({
-								value: build.fieldExpression.strict({
-									value: build.identifier("e"),
-									field: build.identifier("start_pos"),
+				}), rs.build.expressionStatement.strict(rs.build.forExpression.strict({
+					pattern: rs.build.identifier("e"),
+					value: rs.build.identifier("edits"),
+					body: rs.build.block.strict({
+						statements: [rs.build.letDeclaration.strict({
+							pattern: rs.build.identifier("start"),
+							value: rs.build.typeCastExpression.strict({
+								value: rs.build.fieldExpression.strict({
+									value: rs.build.identifier("e"),
+									field: rs.build.identifier("start_pos"),
 								}),
-								type: kinds.UsizeKeyword,
+								type: rs.kinds.UsizeKeyword,
 							}),
-						}), build.letDeclaration.strict({
-							pattern: build.identifier("end"),
-							value: build.typeCastExpression.strict({
-								value: build.fieldExpression.strict({
-									value: build.identifier("e"),
-									field: build.identifier("end_pos"),
+						}), rs.build.letDeclaration.strict({
+							pattern: rs.build.identifier("end"),
+							value: rs.build.typeCastExpression.strict({
+								value: rs.build.fieldExpression.strict({
+									value: rs.build.identifier("e"),
+									field: rs.build.identifier("end_pos"),
 								}),
-								type: kinds.UsizeKeyword,
+								type: rs.kinds.UsizeKeyword,
 							}),
-						}), build.expressionStatement.withSemi.strict(build.callExpression.strict({
-							function: build.fieldExpression.strict({
-								value: build.identifier("buf"),
-								field: build.identifier("replace_range"),
+						}), rs.build.expressionStatement.withSemi.strict(rs.build.callExpression.strict({
+							function: rs.build.fieldExpression.strict({
+								value: rs.build.identifier("buf"),
+								field: rs.build.identifier("replace_range"),
 							}),
-							arguments: build.arguments.strict(build.argumentsElements.strict({ delimiter: Delimiter.None }, {
-								expression: build.rangeExpression.binary.strict({
-									start: build.identifier("start"),
-									operator: kinds.DotDot,
-									end: build.identifier("end"),
-								}),
-							}, {
-								expression: build.referenceExpression.bare.strict(build.fieldExpression.strict({
-									value: build.identifier("e"),
-									field: build.identifier("inserted_text"),
-								})),
-							})),
+							arguments: rs.build.arguments.strict(rs.build.rangeExpression.binary.strict({
+								start: rs.build.identifier("start"),
+								operator: rs.kinds.DotDot,
+								end: rs.build.identifier("end"),
+							}), rs.build.referenceExpression.bare.strict(rs.build.fieldExpression.strict({
+								value: rs.build.identifier("e"),
+								field: rs.build.identifier("inserted_text"),
+							}))),
 						}))],
 					}),
 				}))],
-				trailingExpression: build.callExpression.strict({
-					function: build.identifier("Ok"),
-					arguments: build.arguments.strict(build.argumentsElements.strict({ delimiter: Delimiter.None }, {
-						expression: build.identifier("buf"),
-					})),
+				trailingExpression: rs.build.callExpression.strict({
+					function: rs.build.identifier("Ok"),
+					arguments: rs.build.arguments.strict(rs.build.identifier("buf")),
 				}),
 			}),
-		}).$trivia.leading(build.lineComment.docOuter.strict(build.docComment(" Apply a batch of edits to a source string, returning the modified\n")), build.lineComment.docOuter.strict(build.docComment(" source. See module docs for the sort-descending strategy and the\n")), build.lineComment.docOuter.strict(build.docComment(" consumer-owned overlap contract.\n")), build.lineComment.docOuter.strict(build.docComment("\n")), build.lineComment.docOuter.strict(build.docComment(" # Errors\n")), build.lineComment.docOuter.strict(build.docComment("\n")), build.lineComment.docOuter.strict(build.docComment(" - [`SpliceError::InvalidRange`] if any edit has `end_pos < start_pos`.\n")), build.lineComment.docOuter.strict(build.docComment(" - [`SpliceError::OutOfBounds`] if any edit's `end_pos` exceeds\n")), build.lineComment.docOuter.strict(build.docComment("   `source.len()` (bytes).\n")), build.lineComment.docOuter.strict(build.docComment(" - [`SpliceError::NonCharBoundary`] if any edit's start or end is\n")), build.lineComment.docOuter.strict(build.docComment("   not a UTF-8 character boundary of the source.\n")))],
+		}).$trivia.leading(rs.build.lineComment.docOuter.strict(rs.build.docComment(" Apply a batch of edits to a source string, returning the modified\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" source. See module docs for the sort-descending strategy and the\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" consumer-owned overlap contract.\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" # Errors\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" - [`SpliceError::InvalidRange`] if any edit has `end_pos < start_pos`.\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" - [`SpliceError::OutOfBounds`] if any edit's `end_pos` exceeds\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("   `source.len()` (bytes).\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment(" - [`SpliceError::NonCharBoundary`] if any edit's start or end is\n")), rs.build.lineComment.docOuter.strict(rs.build.docComment("   not a UTF-8 character boundary of the source.\n")))],
 	});
 }

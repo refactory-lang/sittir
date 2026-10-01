@@ -6,9 +6,9 @@ describe('emitFactorySourceText (real rust grammar)', () => {
 		const source = await emitFactorySourceText('rust', 'fn main() {}\n', 'rebuildMain');
 		expect(source).toContain("import rust from '@sittir/rust';");
 		expect(source).toContain('export function rebuildMain() {');
-		expect(source).toContain('build.sourceFile.strict(');
-		expect(source).toContain('name: build.identifier("main")');
-		expect(source).toContain('parameters: build.parameters.strict()');
+		expect(source).toContain('rs.build.sourceFile.strict(');
+		expect(source).toContain('name: rs.build.identifier("main")');
+		expect(source).toContain('parameters: rs.build.parameters.strict()');
 		expect(source).not.toContain('.coerce(');
 	});
 	// A comment rides the FOLLOWING node's trivia; construction carries it onto
@@ -17,7 +17,7 @@ describe('emitFactorySourceText (real rust grammar)', () => {
 		const source = await emitFactorySourceText('rust', '#[derive(Debug, Clone)]\nstruct S;\n', 'rebuildDerive');
 		expect(source).toContain("import { createEngine } from '@sittir/common';");
 		expect(source).toContain("import rust from '@sittir/rust';");
-		expect(source).toContain('const { build, kinds } = await createEngine(rust);');
+		expect(source).toContain('const rs = await createEngine(rust);');
 		expect(source).not.toContain('Delimiter');
 		expect(source).not.toContain('engine.');
 	});
@@ -25,27 +25,27 @@ describe('emitFactorySourceText (real rust grammar)', () => {
 	it('prints a regular block comment from its text, leading, trailing and inner, on the strict surface', async () => {
 		const source = await emitFactorySourceText('rust', '/* a */\nfn f() {} /* t */\n\nfn g() {\n    h(/* i */);\n}\n', 'rebuild');
 		for (const text of [' a ', ' t ', ' i ']) {
-			expect(source).toContain(`build.blockComment.strict(build.blockCommentRegular(${JSON.stringify(text)}))`);
+			expect(source).toContain(`rs.build.blockComment.strict(rs.build.blockCommentRegular(${JSON.stringify(text)}))`);
 		}
-		expect(source).toContain('build.arguments.strict().$trivia.inner(');
+		expect(source).toContain('rs.build.arguments.strict().$trivia.inner(');
 		expect(source).not.toContain('innerAt(');
 		expect(source).not.toContain('.coerce(');
 	});
 
 	it('prints an empty owner of inner trivia through its no-argument form', async () => {
 		const source = await emitFactorySourceText('rust', 'fn f() { // TODO\n}\n', 'rebuild');
-		expect(source).toContain('build.block.strict().$trivia.inner(build.lineComment.strict(build.lineCommentRegular(" TODO")))');
+		expect(source).toContain('rs.build.block.strict().$trivia.inner(rs.build.lineComment.strict(rs.build.lineCommentRegular(" TODO")))');
 	});
 
 	it('prints a leading comment through its kind builder', async () => {
 		const source = await emitFactorySourceText('rust', '// hello\nfn main() {}\n', 'rebuildMain');
-		expect(source).toContain('$trivia.leading(build.lineComment.strict(build.lineCommentRegular(" hello")))');
+		expect(source).toContain('$trivia.leading(rs.build.lineComment.strict(rs.build.lineCommentRegular(" hello")))');
 		expect(source).not.toMatch(/\$trivia\.leading\("/);
 	});
 	it('prints a token tree through its form with kind-id punctuation', async () => {
 		const source = await emitFactorySourceText('rust', '#[derive(Debug, Clone)]\nstruct S;\n', 'rebuildDerive');
-		expect(source).toContain('build.delimTokenTree.paren.strict(');
-		expect(source).toContain('kinds.Comma');
+		expect(source).toContain('rs.build.delimTokenTree.paren.strict(');
+		expect(source).toContain('rs.kinds.Comma');
 		expect(source).not.toContain('tokenTreePunctuation');
 	});
 });
@@ -57,8 +57,8 @@ describe('emitFactorySourceText (real python grammar)', () => {
 			'def f(x: list) -> None:\n    return None\n',
 			'rebuildF'
 		);
-		expect(source).toContain('build.identifier("list")');
-		expect(source).toContain('kinds.None');
-		expect(source).not.toContain('kinds.List');
+		expect(source).toContain('py.build.identifier("list")');
+		expect(source).toContain('py.kinds.None');
+		expect(source).not.toContain('py.kinds.List');
 	});
 });

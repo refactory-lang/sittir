@@ -157,7 +157,7 @@ export function buildExportClause(
 	...elements: NonEmptyArray<AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>>
 ): ReturnType<typeof _buildExportClause>;
 export function buildExportClause(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildExportClause(args[0] as T.ExportSpecifiers);
 	}
 	const prebuilt =
@@ -181,7 +181,7 @@ function _buildExportClause(value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNod
 						$named: true as const,
 						_export_specifiers,
 						$with: {
-							exportSpecifiers: (value?: T.ExportSpecifiers) => buildExportClause(value)
+							exportSpecifiers: (value?: T.ExportSpecifiers) => _buildExportClause(value)
 						}
 					},
 					{
@@ -326,7 +326,7 @@ export function buildNamespaceImport(
 ): ReturnType<typeof _buildNamespaceImport>;
 export function buildNamespaceImport(text: string): ReturnType<typeof _buildNamespaceImport>;
 export function buildNamespaceImport(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildNamespaceImport(args[0] as T.Identifier);
 	}
 	const prebuilt =
@@ -348,7 +348,7 @@ function _buildNamespaceImport(value: AdmitBound<T.Identifier, T.AdmittedNodes>)
 				$named: true as const,
 				_name,
 				$with: {
-					name: (value: T.Identifier) => buildNamespaceImport(value)
+					name: (value: T.Identifier) => _buildNamespaceImport(value)
 				}
 			},
 			{
@@ -370,7 +370,7 @@ export function buildNamedImports(
 	...elements: NonEmptyArray<AdmitBound<T.ImportSpecifier, T.AdmittedNodes>>
 ): ReturnType<typeof _buildNamedImports>;
 export function buildNamedImports(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildNamedImports(args[0] as T.ImportSpecifiers);
 	}
 	const prebuilt =
@@ -394,7 +394,7 @@ function _buildNamedImports(value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNod
 						$named: true as const,
 						_import_specifiers,
 						$with: {
-							importSpecifiers: (value?: T.ImportSpecifiers) => buildNamedImports(value)
+							importSpecifiers: (value?: T.ImportSpecifiers) => _buildNamedImports(value)
 						}
 					},
 					{
@@ -931,9 +931,6 @@ export function buildBreakStatement(
 	>
 ): ReturnType<typeof _buildBreakStatement>;
 export function buildBreakStatement(...args: unknown[]) {
-	if (args.length === 1 && typeof args[0] !== 'object') {
-		return _buildBreakStatement(args[0] as T.StatementIdentifier | T.StatementIdentifier.Types);
-	}
 	if (args[0] === undefined) {
 		return _buildBreakStatement(
 			args[0] as unknown as T.StatementIdentifier | T.StatementIdentifier.Types,
@@ -979,9 +976,9 @@ function _buildBreakStatement(
 				_label,
 				_terminator,
 				$with: {
-					label: (value?: T.StatementIdentifier | T.StatementIdentifier.Types) => buildBreakStatement(value, options),
+					label: (value?: T.StatementIdentifier | T.StatementIdentifier.Types) => _buildBreakStatement(value, options),
 					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-						buildBreakStatement(value, { ...options, terminator: spelling })
+						_buildBreakStatement(value, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -1025,9 +1022,6 @@ export function buildContinueStatement(
 	>
 ): ReturnType<typeof _buildContinueStatement>;
 export function buildContinueStatement(...args: unknown[]) {
-	if (args.length === 1 && typeof args[0] !== 'object') {
-		return _buildContinueStatement(args[0] as T.StatementIdentifier | T.StatementIdentifier.Types);
-	}
 	if (args[0] === undefined) {
 		return _buildContinueStatement(
 			args[0] as unknown as T.StatementIdentifier | T.StatementIdentifier.Types,
@@ -1074,9 +1068,9 @@ function _buildContinueStatement(
 				_terminator,
 				$with: {
 					label: (value?: T.StatementIdentifier | T.StatementIdentifier.Types) =>
-						buildContinueStatement(value, options),
+						_buildContinueStatement(value, options),
 					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-						buildContinueStatement(value, { ...options, terminator: spelling })
+						_buildContinueStatement(value, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -1372,7 +1366,7 @@ export function buildFinallyClause(...args: unknown[]) {
 	if (args.length === 0) {
 		return _buildFinallyClause(buildStatementBlock() as T.StatementBlock);
 	}
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildFinallyClause(args[0] as T.StatementBlock);
 	}
 	const prebuilt =
@@ -1394,7 +1388,7 @@ function _buildFinallyClause(value: AdmitBound<T.StatementBlock, T.AdmittedNodes
 				$named: true as const,
 				_body,
 				$with: {
-					body: (value: T.StatementBlock) => buildFinallyClause(value)
+					body: (value: T.StatementBlock) => _buildFinallyClause(value)
 				}
 			},
 			{
@@ -3301,7 +3295,7 @@ export function buildFormalParameters(
 	...elements: NonEmptyArray<AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>>
 ): ReturnType<typeof _buildFormalParameters>;
 export function buildFormalParameters(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildFormalParameters(args[0] as T.FormalParametersElements);
 	}
 	const prebuilt =
@@ -3333,7 +3327,7 @@ function _buildFormalParameters(
 						$named: true as const,
 						_formal_parameters_elements,
 						$with: {
-							formalParametersElements: (value?: T.FormalParametersElements) => buildFormalParameters(value)
+							formalParametersElements: (value?: T.FormalParametersElements) => _buildFormalParameters(value)
 						}
 					},
 					{
@@ -4864,7 +4858,7 @@ export function buildEnumBody(
 	...elements: NonEmptyArray<AdmitBound<T.EnumBodyElement, T.AdmittedNodes>>
 ): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildEnumBody(args[0] as T.EnumBodyElements);
 	}
 	const prebuilt =
@@ -4888,7 +4882,7 @@ function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>)
 						$named: true as const,
 						_enum_body_elements,
 						$with: {
-							enumBodyElements: (value?: T.EnumBodyElements) => buildEnumBody(value)
+							enumBodyElements: (value?: T.EnumBodyElements) => _buildEnumBody(value)
 						}
 					},
 					{
@@ -5407,7 +5401,7 @@ export function buildAssertsAnnotation(
 	value: AdmitBound<T.TypePredicate | T.Identifier | TSKindId.This, T.AdmittedNodes>
 ): ReturnType<typeof _buildAssertsAnnotation>;
 export function buildAssertsAnnotation(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildAssertsAnnotation(args[0] as T.Asserts);
 	}
 	const prebuilt =
@@ -5429,7 +5423,7 @@ function _buildAssertsAnnotation(value: AdmitBound<T.Asserts, T.AdmittedNodes>):
 				$named: true as const,
 				_asserts,
 				$with: {
-					asserts: (value: T.Asserts) => buildAssertsAnnotation(value)
+					asserts: (value: T.Asserts) => _buildAssertsAnnotation(value)
 				}
 			},
 			{
@@ -5838,7 +5832,7 @@ export function buildTypePredicateAnnotation(
 	_config: T.TypePredicate.Config
 ): ReturnType<typeof _buildTypePredicateAnnotation>;
 export function buildTypePredicateAnnotation(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTypePredicateAnnotation(args[0] as T.TypePredicate);
 	}
 	const prebuilt =
@@ -5862,7 +5856,7 @@ function _buildTypePredicateAnnotation(
 				$named: true as const,
 				_type_predicate,
 				$with: {
-					typePredicate: (value: T.TypePredicate) => buildTypePredicateAnnotation(value)
+					typePredicate: (value: T.TypePredicate) => _buildTypePredicateAnnotation(value)
 				}
 			},
 			{
@@ -6360,7 +6354,7 @@ export function buildTypeArguments(
 	...elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTypeArguments(args[0] as T.Types);
 	}
 	const prebuilt =
@@ -6384,7 +6378,7 @@ function _buildTypeArguments(value: AdmitBound<T.Types, T.AdmittedNodes>): T.Typ
 						$named: true as const,
 						_types,
 						$with: {
-							types: (value: T.Types) => buildTypeArguments(value)
+							types: (value: T.Types) => _buildTypeArguments(value)
 						}
 					},
 					{
@@ -6651,7 +6645,7 @@ export function buildTypeParameters(
 	...elements: NonEmptyArray<AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTypeParameters(args[0] as T.TypeParametersElements);
 	}
 	const prebuilt =
@@ -6681,7 +6675,7 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 						$named: true as const,
 						_type_parameters_elements,
 						$with: {
-							typeParametersElements: (value: T.TypeParametersElements) => buildTypeParameters(value)
+							typeParametersElements: (value: T.TypeParametersElements) => _buildTypeParameters(value)
 						}
 					},
 					{
@@ -6910,7 +6904,7 @@ export function buildTupleType(
 	>
 ): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTupleType(args[0] as T.TupleTypeMembers);
 	}
 	const prebuilt =
@@ -6934,7 +6928,7 @@ function _buildTupleType(value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>
 						$named: true as const,
 						_tuple_type_members,
 						$with: {
-							tupleTypeMembers: (value?: T.TupleTypeMembers) => buildTupleType(value)
+							tupleTypeMembers: (value?: T.TupleTypeMembers) => _buildTupleType(value)
 						}
 					},
 					{
@@ -7765,7 +7759,7 @@ export function buildAmbientDeclarationGlobal(...args: unknown[]) {
 	if (args.length === 0) {
 		return _buildAmbientDeclarationGlobal(buildStatementBlock() as T.StatementBlock);
 	}
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildAmbientDeclarationGlobal(args[0] as T.StatementBlock);
 	}
 	const prebuilt =
@@ -7791,7 +7785,7 @@ function _buildAmbientDeclarationGlobal(
 				$named: true as const,
 				_body,
 				$with: {
-					body: (value: T.StatementBlock) => buildAmbientDeclarationGlobal(value)
+					body: (value: T.StatementBlock) => _buildAmbientDeclarationGlobal(value)
 				}
 			},
 			{
@@ -7998,9 +7992,6 @@ export function buildExportStatementNamespaceExport(
 	text: string
 ): ReturnType<typeof _buildExportStatementNamespaceExport>;
 export function buildExportStatementNamespaceExport(...args: unknown[]) {
-	if (args.length === 1 && typeof args[0] !== 'object') {
-		return _buildExportStatementNamespaceExport(args[0] as T.Identifier);
-	}
 	if (args[0] === undefined) {
 		return _buildExportStatementNamespaceExport(args[0] as unknown as T.Identifier, args[1] as never);
 	}
@@ -8033,9 +8024,9 @@ function _buildExportStatementNamespaceExport(
 				_name,
 				_terminator,
 				$with: {
-					name: (value: T.Identifier) => buildExportStatementNamespaceExport(value, options),
+					name: (value: T.Identifier) => _buildExportStatementNamespaceExport(value, options),
 					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-						buildExportStatementNamespaceExport(value, { ...options, terminator: spelling })
+						_buildExportStatementNamespaceExport(value, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -9048,7 +9039,7 @@ export function buildParenthesizedExpressionSequence(
 	...children: AdmitBound<T.Expression[], T.AdmittedNodes>
 ): ReturnType<typeof _buildParenthesizedExpressionSequence>;
 export function buildParenthesizedExpressionSequence(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildParenthesizedExpressionSequence(args[0] as T.SequenceExpression);
 	}
 	const prebuilt =
@@ -9078,7 +9069,7 @@ function _buildParenthesizedExpressionSequence(
 				$named: true as const,
 				_sequence_expression,
 				$with: {
-					sequenceExpression: (value: T.SequenceExpression) => buildParenthesizedExpressionSequence(value)
+					sequenceExpression: (value: T.SequenceExpression) => _buildParenthesizedExpressionSequence(value)
 				}
 			},
 			{

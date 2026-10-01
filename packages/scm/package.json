@@ -17,7 +17,8 @@
 		"directory": "packages/scm"
 	},
 	"files": [
-		"dist"
+		"dist",
+		"native"
 	],
 	"type": "module",
 	"main": "./dist/index.js",
@@ -50,7 +51,7 @@
 		"tree-sitter-scm": "github:tree-sitter-grammars/tree-sitter-query#v0.8.0",
 		"type-fest": "^5.6.0"
 	},
-	"//native": "Native artifacts are grammar-local implementation details for @sittir/scm, built from rust/crates/sittir-scm.",
+	"//native": "Native artifacts are grammar-local implementation details for @sittir/scm, shipped in native/ and built from rust/crates/sittir-scm.",
 	"sittir": {
 		"stable": true
 	}

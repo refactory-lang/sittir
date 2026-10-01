@@ -223326,7 +223326,7 @@
   {
     "kind": "roundtrip",
     "grammar": "rust",
-    "sourceIn": "const σ1 : Σ = 0;\nc",
+    "sourceIn": "const σ1 : Σ = 0;",
     "pattern": "const_item",
     "edits": [],
     "expectedSourceOut": "const σ1: Σ = 0;",
@@ -223427,7 +223427,7 @@
   {
     "kind": "roundtrip",
     "grammar": "rust",
-    "sourceIn": "nst ψ_2 : Ψ = 1;\n",
+    "sourceIn": "const ψ_2 : Ψ = 1;",
     "pattern": "const_item",
     "edits": [],
     "expectedSourceOut": "const ψ_2: Ψ = 1;",
@@ -223459,7 +223459,7 @@
   {
     "kind": "roundtrip",
     "grammar": "rust",
-    "sourceIn": " =",
+    "sourceIn": "Σ",
     "pattern": "type_identifier",
     "edits": [],
     "expectedSourceOut": "Σ",
@@ -223491,7 +223491,7 @@
   {
     "kind": "roundtrip",
     "grammar": "rust",
-    "sourceIn": " 1",
+    "sourceIn": "Ψ",
     "pattern": "type_identifier",
     "edits": [],
     "expectedSourceOut": "Ψ",
@@ -223519,7 +223519,7 @@
   {
     "kind": "roundtrip",
     "grammar": "rust",
-    "sourceIn": "\n",
+    "sourceIn": "0",
     "pattern": "integer_literal_decimal",
     "edits": [],
     "expectedSourceOut": "0",
@@ -223547,7 +223547,7 @@
   {
     "kind": "roundtrip",
     "grammar": "rust",
-    "sourceIn": "",
+    "sourceIn": "1",
     "pattern": "integer_literal_decimal",
     "edits": [],
     "expectedSourceOut": "1",

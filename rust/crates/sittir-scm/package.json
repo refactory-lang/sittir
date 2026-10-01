@@ -1,5 +1,6 @@
 {
 	"name": "sittir-scm",
+	"private": true,
 	"version": "0.1.0",
 	"description": "Grammar-local Rust / napi-rs engine for @sittir/scm.",
 	"keywords": [
@@ -18,17 +19,9 @@
 		"url": "https://github.com/refactory-lang/sittir.git",
 		"directory": "rust/crates/sittir-scm"
 	},
-	"files": [
-		"index.js",
-		"index.d.ts"
-	],
-	"main": "index.js",
-	"types": "index.d.ts",
 	"scripts": {
-		"artifacts": "napi artifacts",
-		"build": "napi build --platform --release",
-		"build:debug": "napi build --platform",
-		"prepublishOnly": "napi prepublish -t npm"
+		"build": "tsx ../../../scripts/build-native.mts scm --release",
+		"build:debug": "tsx ../../../scripts/build-native.mts scm"
 	},
 	"devDependencies": {
 		"@napi-rs/cli": "^3.0.0"
@@ -43,8 +36,7 @@
 			"x86_64-unknown-linux-musl",
 			"aarch64-unknown-linux-gnu",
 			"aarch64-unknown-linux-musl",
-			"x86_64-pc-windows-msvc",
-			"aarch64-pc-windows-msvc"
+			"x86_64-pc-windows-msvc"
 		]
 	},
 	"engines": {
