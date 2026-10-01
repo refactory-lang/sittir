@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { stableGrammars } from '@sittir/codegen/grammars';
 import type { ValidationRun } from '../src/history.ts';
 
 // Mock the run module so CLI tests don't launch live validators.
@@ -216,10 +217,10 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 		logSpy.mockRestore();
 	});
 
-	it('defaults to all three grammars when none specified', async () => {
+	it('defaults to every stable grammar when none specified', async () => {
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 		await runCountsCli([]);
-		expect(vi.mocked(runFrom)).toHaveBeenCalledTimes(3);
+		expect(vi.mocked(runFrom)).toHaveBeenCalledTimes(stableGrammars().length);
 		logSpy.mockRestore();
 	});
 

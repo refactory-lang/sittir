@@ -4,6 +4,7 @@
  * isolate-mode code path of runCountsCli (mocked child_process).
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { stableGrammars } from '@sittir/codegen/grammars';
 
 // Mock child_process so we don't actually spawn anything.
 vi.mock('node:child_process', () => {
@@ -214,17 +215,17 @@ describe('runCountsCli --isolate mode', () => {
 		writeSpy.mockRestore();
 	});
 
-	it('spawns 3 child processes when no grammar specified (defaults to all)', async () => {
+	it('spawns one child process per stable grammar when no grammar specified (defaults to all)', async () => {
 		const mockSpawn = vi.mocked(spawn);
-		// Each of the 3 grammar workers needs its own mock child.
-		mockSpawn
-			.mockReturnValueOnce(makeMockChild({ stdout: 'rust/native:\n', exitCode: 0 }) as ReturnType<typeof spawn>)
-			.mockReturnValueOnce(makeMockChild({ stdout: 'typescript/native:\n', exitCode: 0 }) as ReturnType<typeof spawn>)
-			.mockReturnValueOnce(makeMockChild({ stdout: 'python/native:\n', exitCode: 0 }) as ReturnType<typeof spawn>);
+		for (const grammar of stableGrammars()) {
+			mockSpawn.mockReturnValueOnce(
+				makeMockChild({ stdout: `${grammar}/native:\n`, exitCode: 0 }) as ReturnType<typeof spawn>
+			);
+		}
 		const writeSpy = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
 
 		await runCountsCli([], 'native', { isolate: true });
-		expect(mockSpawn).toHaveBeenCalledTimes(3);
+		expect(mockSpawn).toHaveBeenCalledTimes(stableGrammars().length);
 		writeSpy.mockRestore();
 	});
 
