@@ -1,6 +1,6 @@
 {
   "grammar": "scm",
-  "source_hash": "95098f6bd2c2e598fceb15cc565d24fc5d07c021fae108ccbab73121e35bb5d4",
+  "source_hash": "6bb9b85fb8abbd229b82ac48836b3efb6efe27f541320842be40a46889233f01",
   "files": {
     "packages/scm/.sittir/grammar-diagnostics.json": "90639655c429bfe36ef2a36aaa2a31c5fabb65229200218dcf431681dad38f0a",
     "packages/scm/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -27,7 +27,7 @@
     "packages/scm/src/factories/overlays/polymorphs.ts": "464e48894e42ab4d365578f24f826258fbd6ae24a6e19e52b3c2442358c80f24",
     "packages/scm/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/scm/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
-    "packages/scm/src/factories/raw.ts": "4c6c6e026b27c194f3b9afd2d13e1f9c6c78a43230f0604be48287d90291ece0",
+    "packages/scm/src/factories/raw.ts": "ed373289494ba4e2e3388affb185fe42b3f9ceae591d0df3883a7e290b22d2c0",
     "packages/scm/src/hash.ts": "8c2d921bceb2e4b18da527ddbf753f7ab4d608fec06e43ddebbe98cd92ef4aa3",
     "packages/scm/src/index.ts": "2a2a93fe499c766abb7657ae362b02e13c99453346df1ee555451dc91f6cb204",
     "packages/scm/src/ir.ts": "55c38e9931901c36e327e8bf04b1f49c1f0997e9e16cc18bc46b9d7a41f7bfd0",
@@ -38,7 +38,7 @@
     "packages/scm/src/types-internal.ts": "471c667850e9cc3518a7eedbcd78dca22e6b8537172fd3ab1d3c4b1949829faa",
     "packages/scm/src/types.ts": "a4705f0bc1a209ee919feb7911ec517889319804532fa91e53acdb99681d4785",
     "packages/scm/src/utils.ts": "eb971ad2b4210550096f6b1dc1044ea0d2f27deaa09e59fbb80b5617960e4a86",
-    "packages/scm/src/wrap.ts": "b90cc9f90d19534d52ebb1660d98d55f1d6b66876f3afd6775c03b528d32b1d7",
+    "packages/scm/src/wrap.ts": "6aab5425090e3b82067e3f125767aeb0326449dd7a7743623a621bb19c100fa9",
     "rust/crates/sittir-scm/src/lib.rs": "8ad30ab1037491be0809f7b2880afd2422ac76c3ce28153602c220d755350232",
     "rust/crates/sittir-scm/src/render/hash.rs": "cbf76d509915115e46a1a3db9f03b3602a4da8833d87c44fcdfda298764a14c1",
     "rust/crates/sittir-scm/src/render/kind_ids.rs": "12476d903677e5e5b17b50aad3d3aa36a9380683ed54624fabb20050ceb55869",

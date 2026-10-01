@@ -11881,7 +11881,11 @@ Prints one `SlotSetter` as its `$with` type member: a rest signature when the se
 
 ### `packages/codegen/src/emitters/factories.ts::slotSetter`
 
-What one slot's `$with` setter takes, as parts: a verbatim multi-valued slot takes rest arguments typed as the array (`NonEmptyArray` when the slot is non-empty); any other slot takes one value whose type indexes the kind's config type by the slot's config key when the slot's storage is not verbatim. The single derivation of a slot's setter input, used by the built surface and, through it, by `__slotHints__`.
+What one slot's `$with` setter takes, as parts. Every multi-valued slot takes rest arguments (`restSetterType`); any other slot takes one value, typed through `setterElemType`. The factory `$with`, the form `$with` and the wrap `$with` all ask this one derivation whether a setter is rest, so a list setter has the same call shape in every grammar and on parsed and built nodes alike.
+
+### `packages/codegen/src/emitters/factories.ts::restSetterType`
+
+The rest-parameter type of a multi-valued slot's setter, or nothing for a slot that holds one value. The element is the slot's construction element type when its storage is verbatim, and the element of the config field's array otherwise (a list that mixes nodes with terminal tokens, such as statements with `;`, stores a projected form, so its element type is read off the config). A non-empty slot takes `NonEmptyArray`. The emitted setter passes its arguments through `restItems`, which refuses one array given in place of the items: without that, a rest setter called with an array would store a nested array and fail later, in the native transport, with a message that names no slot.
 
 ### `packages/codegen/src/emitters/factories.ts::SlotSetter`
 

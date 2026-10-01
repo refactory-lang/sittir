@@ -2855,7 +2855,7 @@ export interface ExecStatement {
 	};
 	readonly __slotHints__?: {
 		readonly code: SlotHint<T.String | T.Identifier>;
-		readonly inClauses: SlotHint<NonNullable<T.ExecStatement.Config>['inClause'], true>;
+		readonly inClauses: SlotHint<NonNullable<NonNullable<T.ExecStatement.Config>['inClause']>[number][], true, true>;
 	};
 	code(): String | Identifier;
 	inClauses(): readonly Expression[];
@@ -4352,7 +4352,11 @@ export interface ForInClause {
 	readonly __slotHints__?: {
 		readonly asyncMarker: SlotHint<NonNullable<T.ForInClause.Config>['asyncMarker'], true>;
 		readonly left: SlotHint<T.Pattern | T.PatternList>;
-		readonly rights: SlotHint<NonNullable<T.ForInClause.Config>['right']>;
+		readonly rights: SlotHint<
+			NonEmptyArray<NonNullable<NonNullable<T.ForInClause.Config>['right']>[number]>,
+			false,
+			true
+		>;
 		readonly comma: SlotHint<NonNullable<T.ForInClause.Config>['comma'], true>;
 	};
 	asyncMarker(): boolean | undefined;

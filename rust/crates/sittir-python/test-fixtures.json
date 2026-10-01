@@ -181,7 +181,7 @@
   {
     "kind": "roundtrip",
     "grammar": "python",
-    "sourceIn": "ψ1 = β_γ + Ψ_5\n",
+    "sourceIn": "ψ1 = β_γ + Ψ_5",
     "pattern": "expression_statement",
     "edits": [],
     "expectedSourceOut": "ψ1 = β_γ + Ψ_5",
@@ -259,7 +259,7 @@
   {
     "kind": "roundtrip",
     "grammar": "python",
-    "sourceIn": "ψ1 = β_γ + Ψ_5\n",
+    "sourceIn": "ψ1 = β_γ + Ψ_5",
     "pattern": "assignment_eq",
     "edits": [],
     "expectedSourceOut": "ψ1 = β_γ + Ψ_5",
@@ -307,7 +307,7 @@
   {
     "kind": "roundtrip",
     "grammar": "python",
-    "sourceIn": "_γ + Ψ_5\n",
+    "sourceIn": "β_γ + Ψ_5",
     "pattern": "binary_operator",
     "edits": [],
     "expectedSourceOut": "β_γ + Ψ_5",

@@ -3,6 +3,7 @@
 
 import {
 	readUntypedNode,
+	restItems,
 	isNode,
 	isStub,
 	isTypedNode,
@@ -1250,8 +1251,8 @@ export function wrapSourceFile(data: T.SourceFile, tree: TreeHandle): T.SourceFi
 		},
 		$with: {
 			shebang: (v: NonNullable<T.SourceFile['_shebang']>) => wrapSourceFile({ ...$edited(data), _shebang: v }, tree),
-			statements: (v: NonNullable<T.SourceFile['_statements']>) =>
-				wrapSourceFile({ ...$edited(data), _statements: v }, tree)
+			statements: (...v: NonNullable<T.SourceFile['_statements']>[number][]) =>
+				wrapSourceFile({ ...$edited(data), _statements: restItems('statements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.SourceFile.Parsed;
@@ -1733,7 +1734,7 @@ export function wrapTokenRepetitionPattern(
 		},
 		$with: {
 			tokenPatterns: (...v: NonNullable<T.TokenRepetitionPattern['_token_patterns']>[number][]) =>
-				wrapTokenRepetitionPattern({ ...$edited(data), _token_patterns: v }, tree),
+				wrapTokenRepetitionPattern({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree),
 			separator: (v: NonNullable<T.TokenRepetitionPattern['_separator']>) =>
 				wrapTokenRepetitionPattern({ ...$edited(data), _separator: v }, tree),
 			operator: (v: NonNullable<T.TokenRepetitionPattern['_operator']>) =>
@@ -1821,7 +1822,7 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle): 
 		},
 		$with: {
 			tokens: (...v: NonNullable<T.TokenRepetition['_tokens']>[number][]) =>
-				wrapTokenRepetition({ ...$edited(data), _tokens: v }, tree),
+				wrapTokenRepetition({ ...$edited(data), _tokens: restItems('tokens', v) }, tree),
 			separator: (v: NonNullable<T.TokenRepetition['_separator']>) =>
 				wrapTokenRepetition({ ...$edited(data), _separator: v }, tree),
 			operator: (v: NonNullable<T.TokenRepetition['_operator']>) =>
@@ -2483,7 +2484,7 @@ export function wrapDeclarationList(data: T.DeclarationList, tree: TreeHandle): 
 		},
 		$with: {
 			declarations: (...v: NonNullable<T.DeclarationList['_declarations']>[number][]) =>
-				wrapDeclarationList({ ...$edited(data), _declarations: v }, tree)
+				wrapDeclarationList({ ...$edited(data), _declarations: restItems('declarations', v) }, tree)
 		}
 	});
 	return _node as unknown as T.DeclarationList.Parsed;
@@ -3845,7 +3846,7 @@ export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandl
 		},
 		$with: {
 			modifiers: (...v: NonEmptyArray<NonNullable<T.FunctionModifiers['_modifier']>[number]>) =>
-				wrapFunctionModifiers({ ...$edited(data), _modifier: v }, tree)
+				wrapFunctionModifiers({ ...$edited(data), _modifier: restItems('modifiers', v) }, tree)
 		}
 	});
 	return _node as unknown as T.FunctionModifiers.Parsed;
@@ -4277,7 +4278,7 @@ export function wrapTraitBounds(data: T.TraitBounds, tree: TreeHandle): T.TraitB
 		},
 		$with: {
 			bounds: (...v: NonEmptyArray<NonNullable<T.TraitBounds['_bounds']>[number]>) =>
-				wrapTraitBounds({ ...$edited(data), _bounds: v }, tree)
+				wrapTraitBounds({ ...$edited(data), _bounds: restItems('bounds', v) }, tree)
 		}
 	});
 	return _node as unknown as T.TraitBounds.Parsed;
@@ -8543,7 +8544,7 @@ export function wrapTupleExpression(data: T.TupleExpression, tree: TreeHandle): 
 				},
 				$with: {
 					attributes: (...v: NonNullable<T.TupleExpression['_attributes']>[number][]) =>
-						wrapTupleExpression({ ...$edited(data), _attributes: v }, tree),
+						wrapTupleExpression({ ...$edited(data), _attributes: restItems('attributes', v) }, tree),
 					tupleExpressionElements: (v: NonNullable<T.TupleExpression['_tuple_expression_elements']>) =>
 						wrapTupleExpression({ ...$edited(data), _tuple_expression_elements: v }, tree)
 				}
@@ -8700,7 +8701,7 @@ export function wrapShorthandFieldInitializer(
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.ShorthandFieldInitializer['_attributes']>[number][]) =>
-				wrapShorthandFieldInitializer({ ...$edited(data), _attributes: v }, tree),
+				wrapShorthandFieldInitializer({ ...$edited(data), _attributes: restItems('attributes', v) }, tree),
 			name: (v: NonNullable<T.ShorthandFieldInitializer['_name']>) =>
 				wrapShorthandFieldInitializer({ ...$edited(data), _name: v }, tree)
 		}
@@ -8757,7 +8758,7 @@ export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle)
 		},
 		$with: {
 			attributeItems: (...v: NonNullable<T.FieldInitializer['_attribute_item']>[number][]) =>
-				wrapFieldInitializer({ ...$edited(data), _attribute_item: v }, tree),
+				wrapFieldInitializer({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree),
 			field: (v: NonNullable<T.FieldInitializer['_field']>) =>
 				wrapFieldInitializer({ ...$edited(data), _field: v }, tree),
 			value: (v: NonNullable<T.FieldInitializer['_value']>) =>
@@ -8956,7 +8957,8 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle): T.LetChain.Par
 		},
 		$with: {
 			left: (v: NonNullable<T.LetChain['_left']>) => wrapLetChain({ ...$edited(data), _left: v }, tree),
-			rights: (v: NonNullable<T.LetChain['_right']>) => wrapLetChain({ ...$edited(data), _right: v }, tree)
+			rights: (...v: NonNullable<T.LetChain['_right']>[number][]) =>
+				wrapLetChain({ ...$edited(data), _right: restItems('rights', v) }, tree)
 		}
 	});
 	return _node as unknown as T.LetChain.Parsed;
@@ -9455,7 +9457,7 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 				},
 				$with: {
 					attributes: (...v: NonNullable<T.LastMatchArm['_attributes']>[number][]) =>
-						wrapLastMatchArm({ ...$edited(data), _attributes: v }, tree),
+						wrapLastMatchArm({ ...$edited(data), _attributes: restItems('attributes', v) }, tree),
 					pattern: (v: NonNullable<T.LastMatchArm['_pattern']>) =>
 						wrapLastMatchArm({ ...$edited(data), _pattern: v }, tree),
 					value: (v: NonNullable<T.LastMatchArm['_value']>) => wrapLastMatchArm({ ...$edited(data), _value: v }, tree),
@@ -9782,7 +9784,7 @@ export function wrapClosureParameters(data: T.ClosureParameters, tree: TreeHandl
 		},
 		$with: {
 			parameters: (...v: NonNullable<T.ClosureParameters['_parameters']>[number][]) =>
-				wrapClosureParameters({ ...$edited(data), _parameters: v }, tree)
+				wrapClosureParameters({ ...$edited(data), _parameters: restItems('parameters', v) }, tree)
 		}
 	});
 	return _node as unknown as T.ClosureParameters.Parsed;
@@ -10192,7 +10194,8 @@ export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
 		},
 		$with: {
 			label: (v: NonNullable<T.Block['_label']>) => wrapBlock({ ...$edited(data), _label: v }, tree),
-			statements: (v: NonNullable<T.Block['_statements']>) => wrapBlock({ ...$edited(data), _statements: v }, tree),
+			statements: (...v: NonNullable<T.Block['_statements']>[number][]) =>
+				wrapBlock({ ...$edited(data), _statements: restItems('statements', v) }, tree),
 			trailingExpression: (v: NonNullable<T.Block['_trailing_expression']>) =>
 				wrapBlock({ ...$edited(data), _trailing_expression: v }, tree)
 		}
@@ -11138,7 +11141,7 @@ export function wrapStringLiteral(data: T.StringLiteral, tree: TreeHandle): T.St
 			stringOpen: (v: NonNullable<T.StringLiteral['_string_open']>) =>
 				wrapStringLiteral({ ...$edited(data), _string_open: v }, tree),
 			elements: (...v: NonNullable<T.StringLiteral['_elements']>[number][]) =>
-				wrapStringLiteral({ ...$edited(data), _elements: v }, tree)
+				wrapStringLiteral({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.StringLiteral.Parsed;
@@ -13044,7 +13047,7 @@ export function wrapArrayExpressionSemi(data: T.ArrayExpressionSemi, tree: TreeH
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.ArrayExpressionSemi['_attributes']>[number][]) =>
-				wrapArrayExpressionSemi({ ...$edited(data), _attributes: v }, tree),
+				wrapArrayExpressionSemi({ ...$edited(data), _attributes: restItems('attributes', v) }, tree),
 			element: (v: NonNullable<T.ArrayExpressionSemi['_element']>) =>
 				wrapArrayExpressionSemi({ ...$edited(data), _element: v }, tree),
 			length: (v: NonNullable<T.ArrayExpressionSemi['_length']>) =>
@@ -13088,7 +13091,7 @@ export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeH
 				},
 				$with: {
 					attributes: (...v: NonNullable<T.ArrayExpressionList['_attributes']>[number][]) =>
-						wrapArrayExpressionList({ ...$edited(data), _attributes: v }, tree),
+						wrapArrayExpressionList({ ...$edited(data), _attributes: restItems('attributes', v) }, tree),
 					argumentsElements: (v: NonNullable<T.ArrayExpressionList['_arguments_elements']>) =>
 						wrapArrayExpressionList({ ...$edited(data), _arguments_elements: v }, tree)
 				}
@@ -14729,7 +14732,7 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 				},
 				$with: {
 					attributes: (...v: NonNullable<T.MatchArmWithComma['_attributes']>[number][]) =>
-						wrapMatchArmWithComma({ ...$edited(data), _attributes: v }, tree),
+						wrapMatchArmWithComma({ ...$edited(data), _attributes: restItems('attributes', v) }, tree),
 					pattern: (v: NonNullable<T.MatchArmWithComma['_pattern']>) =>
 						wrapMatchArmWithComma({ ...$edited(data), _pattern: v }, tree),
 					value: (v: NonNullable<T.MatchArmWithComma['_value']>) =>
@@ -14812,7 +14815,7 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 				},
 				$with: {
 					attributes: (...v: NonNullable<T.MatchArmBlockEnding['_attributes']>[number][]) =>
-						wrapMatchArmBlockEnding({ ...$edited(data), _attributes: v }, tree),
+						wrapMatchArmBlockEnding({ ...$edited(data), _attributes: restItems('attributes', v) }, tree),
 					pattern: (v: NonNullable<T.MatchArmBlockEnding['_pattern']>) =>
 						wrapMatchArmBlockEnding({ ...$edited(data), _pattern: v }, tree),
 					value: (v: NonNullable<T.MatchArmBlockEnding['_value']>) =>
@@ -14980,7 +14983,7 @@ export function wrapTokenTreePatternParen(
 		},
 		$with: {
 			tokenPatterns: (...v: NonNullable<T.TokenTreePatternParen['_token_patterns']>[number][]) =>
-				wrapTokenTreePatternParen({ ...$edited(data), _token_patterns: v }, tree)
+				wrapTokenTreePatternParen({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree)
 		}
 	});
 	return _node as unknown as T.TokenTreePatternParen.Parsed;
@@ -15022,7 +15025,7 @@ export function wrapTokenTreePatternBracket(
 		},
 		$with: {
 			tokenPatterns: (...v: NonNullable<T.TokenTreePatternBracket['_token_patterns']>[number][]) =>
-				wrapTokenTreePatternBracket({ ...$edited(data), _token_patterns: v }, tree)
+				wrapTokenTreePatternBracket({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree)
 		}
 	});
 	return _node as unknown as T.TokenTreePatternBracket.Parsed;
@@ -15064,7 +15067,7 @@ export function wrapTokenTreePatternBrace(
 		},
 		$with: {
 			tokenPatterns: (...v: NonNullable<T.TokenTreePatternBrace['_token_patterns']>[number][]) =>
-				wrapTokenTreePatternBrace({ ...$edited(data), _token_patterns: v }, tree)
+				wrapTokenTreePatternBrace({ ...$edited(data), _token_patterns: restItems('tokenPatterns', v) }, tree)
 		}
 	});
 	return _node as unknown as T.TokenTreePatternBrace.Parsed;
@@ -15093,7 +15096,7 @@ export function wrapTokenTreeParen(data: T.TokenTreeParen, tree: TreeHandle): T.
 		},
 		$with: {
 			tokens: (...v: NonNullable<T.TokenTreeParen['_tokens']>[number][]) =>
-				wrapTokenTreeParen({ ...$edited(data), _tokens: v }, tree)
+				wrapTokenTreeParen({ ...$edited(data), _tokens: restItems('tokens', v) }, tree)
 		}
 	});
 	return _node as unknown as T.TokenTreeParen.Parsed;
@@ -15122,7 +15125,7 @@ export function wrapTokenTreeBracket(data: T.TokenTreeBracket, tree: TreeHandle)
 		},
 		$with: {
 			tokens: (...v: NonNullable<T.TokenTreeBracket['_tokens']>[number][]) =>
-				wrapTokenTreeBracket({ ...$edited(data), _tokens: v }, tree)
+				wrapTokenTreeBracket({ ...$edited(data), _tokens: restItems('tokens', v) }, tree)
 		}
 	});
 	return _node as unknown as T.TokenTreeBracket.Parsed;
@@ -15151,7 +15154,7 @@ export function wrapTokenTreeBrace(data: T.TokenTreeBrace, tree: TreeHandle): T.
 		},
 		$with: {
 			tokens: (...v: NonNullable<T.TokenTreeBrace['_tokens']>[number][]) =>
-				wrapTokenTreeBrace({ ...$edited(data), _tokens: v }, tree)
+				wrapTokenTreeBrace({ ...$edited(data), _tokens: restItems('tokens', v) }, tree)
 		}
 	});
 	return _node as unknown as T.TokenTreeBrace.Parsed;
@@ -15188,7 +15191,7 @@ export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeH
 		},
 		$with: {
 			delimTokens: (...v: NonNullable<T.DelimTokenTreeParen['_delim_tokens']>[number][]) =>
-				wrapDelimTokenTreeParen({ ...$edited(data), _delim_tokens: v }, tree)
+				wrapDelimTokenTreeParen({ ...$edited(data), _delim_tokens: restItems('delimTokens', v) }, tree)
 		}
 	});
 	return _node as unknown as T.DelimTokenTreeParen.Parsed;
@@ -15228,7 +15231,7 @@ export function wrapDelimTokenTreeBracket(
 		},
 		$with: {
 			delimTokens: (...v: NonNullable<T.DelimTokenTreeBracket['_delim_tokens']>[number][]) =>
-				wrapDelimTokenTreeBracket({ ...$edited(data), _delim_tokens: v }, tree)
+				wrapDelimTokenTreeBracket({ ...$edited(data), _delim_tokens: restItems('delimTokens', v) }, tree)
 		}
 	});
 	return _node as unknown as T.DelimTokenTreeBracket.Parsed;
@@ -15265,7 +15268,7 @@ export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeH
 		},
 		$with: {
 			delimTokens: (...v: NonNullable<T.DelimTokenTreeBrace['_delim_tokens']>[number][]) =>
-				wrapDelimTokenTreeBrace({ ...$edited(data), _delim_tokens: v }, tree)
+				wrapDelimTokenTreeBrace({ ...$edited(data), _delim_tokens: restItems('delimTokens', v) }, tree)
 		}
 	});
 	return _node as unknown as T.DelimTokenTreeBrace.Parsed;
@@ -16220,7 +16223,7 @@ export function wrapAttributedFieldDeclaration(
 		},
 		$with: {
 			attributeItems: (...v: NonNullable<T.AttributedFieldDeclaration['_attribute_item']>[number][]) =>
-				wrapAttributedFieldDeclaration({ ...$edited(data), _attribute_item: v }, tree),
+				wrapAttributedFieldDeclaration({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree),
 			fieldDeclaration: (v: NonNullable<T.AttributedFieldDeclaration['_field_declaration']>) =>
 				wrapAttributedFieldDeclaration({ ...$edited(data), _field_declaration: v }, tree)
 		}
@@ -16263,7 +16266,7 @@ export function wrapAttributedEnumVariant(
 		},
 		$with: {
 			attributeItems: (...v: NonNullable<T.AttributedEnumVariant['_attribute_item']>[number][]) =>
-				wrapAttributedEnumVariant({ ...$edited(data), _attribute_item: v }, tree),
+				wrapAttributedEnumVariant({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree),
 			enumVariant: (v: NonNullable<T.AttributedEnumVariant['_enum_variant']>) =>
 				wrapAttributedEnumVariant({ ...$edited(data), _enum_variant: v }, tree)
 		}
@@ -16407,7 +16410,7 @@ export function wrapAttributedTypeParameter(
 		},
 		$with: {
 			attributeItems: (...v: NonNullable<T.AttributedTypeParameter['_attribute_item']>[number][]) =>
-				wrapAttributedTypeParameter({ ...$edited(data), _attribute_item: v }, tree),
+				wrapAttributedTypeParameter({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree),
 			content: (v: NonNullable<T.AttributedTypeParameter['_content']>) =>
 				wrapAttributedTypeParameter({ ...$edited(data), _content: v }, tree)
 		}
@@ -16454,7 +16457,7 @@ export function wrapAttributedArgument(data: T.AttributedArgument, tree: TreeHan
 		},
 		$with: {
 			attributeItems: (...v: NonNullable<T.AttributedArgument['_attribute_item']>[number][]) =>
-				wrapAttributedArgument({ ...$edited(data), _attribute_item: v }, tree),
+				wrapAttributedArgument({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree),
 			expression: (v: NonNullable<T.AttributedArgument['_expression']>) =>
 				wrapAttributedArgument({ ...$edited(data), _expression: v }, tree)
 		}
@@ -16533,7 +16536,7 @@ export function wrapAttributedOrderedField(
 		},
 		$with: {
 			attributeItems: (...v: NonNullable<T.AttributedOrderedField['_attribute_item']>[number][]) =>
-				wrapAttributedOrderedField({ ...$edited(data), _attribute_item: v }, tree),
+				wrapAttributedOrderedField({ ...$edited(data), _attribute_item: restItems('attributeItems', v) }, tree),
 			visibilityModifier: (v: NonNullable<T.AttributedOrderedField['_visibility_modifier']>) =>
 				wrapAttributedOrderedField({ ...$edited(data), _visibility_modifier: v }, tree),
 			type: (v: NonNullable<T.AttributedOrderedField['_type']>) =>
@@ -16664,7 +16667,7 @@ export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle): T.
 		},
 		$with: {
 			matchArms: (...v: NonNullable<T.MatchBlockArms['_match_arm']>[number][]) =>
-				wrapMatchBlockArms({ ...$edited(data), _match_arm: v }, tree),
+				wrapMatchBlockArms({ ...$edited(data), _match_arm: restItems('matchArms', v) }, tree),
 			lastArm: (v: NonNullable<T.MatchBlockArms['_last_arm']>) =>
 				wrapMatchBlockArms({ ...$edited(data), _last_arm: v }, tree)
 		}

@@ -3,6 +3,7 @@
 
 import {
 	readUntypedNode,
+	restItems,
 	isNode,
 	isStub,
 	isTypedNode,
@@ -512,7 +513,7 @@ export function wrapProgram(data: T.Program, tree: TreeHandle): T.Program.Parsed
 		},
 		$with: {
 			definitions: (...v: NonNullable<T.Program['_definitions']>[number][]) =>
-				wrapProgram({ ...$edited(data), _definitions: v }, tree)
+				wrapProgram({ ...$edited(data), _definitions: restItems('definitions', v) }, tree)
 		}
 	});
 	return _node as unknown as T.Program.Parsed;
@@ -862,7 +863,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 		},
 		$with: {
 			contents: (...v: NonNullable<T.StringContent['_content']>[number][]) =>
-				wrapStringContent({ ...$edited(data), _content: v }, tree)
+				wrapStringContent({ ...$edited(data), _content: restItems('contents', v) }, tree)
 		}
 	});
 	return _node as unknown as T.StringContent.Parsed;
@@ -891,7 +892,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 		},
 		$with: {
 			elements: (...v: NonEmptyArray<NonNullable<T.Parameters['_elements']>[number]>) =>
-				wrapParameters({ ...$edited(data), _elements: v }, tree)
+				wrapParameters({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.Parameters.Parsed;
@@ -955,8 +956,9 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 		},
 		$with: {
 			definitions: (...v: NonEmptyArray<NonNullable<T.List['_definitions']>[number]>) =>
-				wrapList({ ...$edited(data), _definitions: v }, tree),
-			elements: (...v: NonNullable<T.List['_elements']>[number][]) => wrapList({ ...$edited(data), _elements: v }, tree)
+				wrapList({ ...$edited(data), _definitions: restItems('definitions', v) }, tree),
+			elements: (...v: NonNullable<T.List['_elements']>[number][]) =>
+				wrapList({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.List.Parsed;
@@ -994,9 +996,9 @@ export function wrapGrouping(data: T.Grouping, tree: TreeHandle): T.Grouping.Par
 		},
 		$with: {
 			groupingGroups: (...v: NonEmptyArray<NonNullable<T.Grouping['_grouping_group']>[number]>) =>
-				wrapGrouping({ ...$edited(data), _grouping_group: v }, tree),
+				wrapGrouping({ ...$edited(data), _grouping_group: restItems('groupingGroups', v) }, tree),
 			elements: (...v: NonNullable<T.Grouping['_elements']>[number][]) =>
-				wrapGrouping({ ...$edited(data), _elements: v }, tree)
+				wrapGrouping({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.Grouping.Parsed;
@@ -1035,7 +1037,7 @@ export function wrapMissingNode(data: T.MissingNode, tree: TreeHandle): T.Missin
 		$with: {
 			name: (v: NonNullable<T.MissingNode['_name']>) => wrapMissingNode({ ...$edited(data), _name: v }, tree),
 			elements: (...v: NonNullable<T.MissingNode['_elements']>[number][]) =>
-				wrapMissingNode({ ...$edited(data), _elements: v }, tree)
+				wrapMissingNode({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.MissingNode.Parsed;
@@ -1079,7 +1081,7 @@ export function wrapAnonymousNode(data: T.AnonymousNode, tree: TreeHandle): T.An
 		$with: {
 			name: (v: NonNullable<T.AnonymousNode['_name']>) => wrapAnonymousNode({ ...$edited(data), _name: v }, tree),
 			elements: (...v: NonNullable<T.AnonymousNode['_elements']>[number][]) =>
-				wrapAnonymousNode({ ...$edited(data), _elements: v }, tree)
+				wrapAnonymousNode({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.AnonymousNode.Parsed;
@@ -1515,7 +1517,7 @@ export function wrapNamedNodePlain(data: T.NamedNodePlain, tree: TreeHandle): T.
 			namedNodeGroup: (v: NonNullable<T.NamedNodePlain['_named_node_group']>) =>
 				wrapNamedNodePlain({ ...$edited(data), _named_node_group: v }, tree),
 			elements: (...v: NonNullable<T.NamedNodePlain['_elements']>[number][]) =>
-				wrapNamedNodePlain({ ...$edited(data), _elements: v }, tree)
+				wrapNamedNodePlain({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.NamedNodePlain.Parsed;
@@ -1583,7 +1585,7 @@ export function wrapNamedNodeSupertyped(data: T.NamedNodeSupertyped, tree: TreeH
 			namedNodeGroup: (v: NonNullable<T.NamedNodeSupertyped['_named_node_group']>) =>
 				wrapNamedNodeSupertyped({ ...$edited(data), _named_node_group: v }, tree),
 			elements: (...v: NonNullable<T.NamedNodeSupertyped['_elements']>[number][]) =>
-				wrapNamedNodeSupertyped({ ...$edited(data), _elements: v }, tree)
+				wrapNamedNodeSupertyped({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.NamedNodeSupertyped.Parsed;
@@ -1636,7 +1638,11 @@ export function wrapNamedNodeGroupChildren(
 				wrapNamedNodeGroupChildren({ ...$edited(data), _anchor: v }, tree),
 			namedNodeExpressions: (
 				...v: NonEmptyArray<NonNullable<T.NamedNodeGroupChildren['_named_node_expressions']>[number]>
-			) => wrapNamedNodeGroupChildren({ ...$edited(data), _named_node_expressions: v }, tree)
+			) =>
+				wrapNamedNodeGroupChildren(
+					{ ...$edited(data), _named_node_expressions: restItems('namedNodeExpressions', v) },
+					tree
+				)
 		}
 	});
 	return _node as unknown as T.NamedNodeGroupChildren.Parsed;
@@ -1700,7 +1706,10 @@ export function wrapNamedNodeGroupAnchoredLast(
 			anchor: (v: NonNullable<T.NamedNodeGroupAnchoredLast['_anchor']>) =>
 				wrapNamedNodeGroupAnchoredLast({ ...$edited(data), _anchor: v }, tree),
 			namedNodeExpressions: (...v: NonNullable<T.NamedNodeGroupAnchoredLast['_named_node_expressions']>[number][]) =>
-				wrapNamedNodeGroupAnchoredLast({ ...$edited(data), _named_node_expressions: v }, tree),
+				wrapNamedNodeGroupAnchoredLast(
+					{ ...$edited(data), _named_node_expressions: restItems('namedNodeExpressions', v) },
+					tree
+				),
 			last: (v: NonNullable<T.NamedNodeGroupAnchoredLast['_last']>) =>
 				wrapNamedNodeGroupAnchoredLast({ ...$edited(data), _last: v }, tree)
 		}
