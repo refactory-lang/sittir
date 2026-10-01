@@ -3765,7 +3765,7 @@ is bounded by the supertype's subtype count, not the grammar.
 // (`fieldTransportLiterals`/`collectTransportLiterals`). A node-ref to
 // a HIDDEN keyword/token (e.g. an enrich-synthesized field-promotion
 // helper like `_member_expression_separator`) collapses to a literal
-// there via `resolveHiddenKeywordLiteral`; re-deriving kinds/literals
+// there via `resolveHiddenKeywordLeaf`; re-deriving kinds/literals
 // from `kindsOf`+`isTerminalValue` here missed that collapse, so a
 // hidden-keyword arm got treated as a "real" child needing its own
 // boxed struct variant instead of joining the slot's other literal(s)
@@ -4687,47 +4687,6 @@ machines.
  * stamp the constant directly in factory output. The field stays in the
  * `$fields` block of the concrete TypeScript interface so UntypedNode output
  * shape is unchanged and round-trips with readUntypedNode remain identical.
- */
-```
-
-### `packages/codegen/src/emitters/shared.ts::resolveHiddenKeywordLiteral`
-
-```text
-/**
- * Return the literal string that a hidden single-literal keyword kind
- * produces, or `undefined` if the kind is not a hidden single-literal
- * keyword.
- *
- * @remarks
- * Hidden `_kw_<name>` rules are an implementation detail for preserving
- * FIELD wrappers around bare string tokens (tree-sitter strips FIELD
- * around anonymous STRING; routing through a SYMBOL preserves it).
- * Consumers don't care that a hidden helper rule exists — the surface
- * type should be the literal string the keyword produces. This helper
- * lets type / factory emitters inline `"&"` / `"async"` / etc. in
- * field type expressions and fluent setter signatures instead of
- * surfacing a `KwLifetime` / `KwAsync` wrapper type.
- *
- * A kind qualifies when:
- *   - The kind name starts with `_` (hidden-rule marker).
- *   - The resolved node is an {@link AssembledKeyword} — its rule body
- *     is a single `StringRule`.
- *
- * @param kindName - The kind to probe.
- * @param nodeMap - Assembled node map (needed to resolve `kindName`
- *   to its `AssembledNode` and check for a keyword shape).
- * @returns The keyword's literal text, or `undefined`.
- */
-```
-
-### `packages/codegen/src/emitters/shared.ts::isHiddenInfraSlot`
-
-```text
-/**
- * Returns `true` when every kind a slot resolves to is hidden (`_`-prefixed).
- * Such fields represent parser-inserted infrastructure (e.g. `_semicolon` →
- * `_automatic_semicolon`) that shouldn't be exposed as a required user-facing
- * factory parameter.
  */
 ```
 
@@ -6851,7 +6810,7 @@ nodes and names the variants; `slotElementKinds` reads the kinds alone.
 
 ```text
 // Drop hidden single-literal `_kw_*` helper kinds: field types
-// inline their literal via `resolveHiddenKeywordLiteral`, so no
+// inline their literal via `resolveHiddenKeywordLeaf`, so no
 // consumer needs the `KwXxx` / `KwXxxTree` stub any more. Keeping
 // them would be dead exports — `fieldTypeComponents` resolves the
 // reference to a literal string at emit time, so no generated
@@ -16623,3 +16582,11 @@ The text nodes of a template body, descending into the arms of its conditionals.
 ### `packages/codegen/src/emitters/factories.ts::patternMismatchThrow`
 
 The one place a pattern guard's refusal is worded: `<label>: text does not match pattern: <value>`, with the value written through `describeValue` so a non-text value shows what it was. The leaf-text guard and the per-slot interior guard both emit it, so the message cannot differ between them.
+
+### `packages/codegen/src/emitters/shared.ts::emptyDefaultOf`
+
+The expression that fills a required slot the caller omitted: the fixed text's discriminant, or a call of the target kind's factory. It answers only for a slot `slotFilledWhenOmitted` accepts, so a default is never emitted for a target whose own no-argument build would throw. A hidden infrastructure slot is never defaulted. The predicate also accepts a slot that holds fixed text, so two cases stay `null` after it accepts: fixed text with no kind entry to name it (no discriminant to write), and a reference to a fixed-text leaf with none either; a leaf of that kind has a factory but no no-argument call to emit.
+
+### `packages/codegen/src/emitters/factories.ts::requiredUnfilled`
+
+A text slot's pattern guard in the raw builder skips `undefined` only where `undefined` is legal. A slot that is required, carried by no registered option and not filled when omitted is tested directly, so an untyped `undefined` fails the guard instead of building an empty node; the skip stays on every other guarded slot. A pattern that accepts the text `undefined` (a free-text comment, a shebang) still accepts it: the guard tests the value as text and adds no required-slot check of its own.
