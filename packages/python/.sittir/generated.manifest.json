@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "b37f16e04f7915ff1c3f6b2fb03c9a6a627dcecad8fe4e147582672e68c59bfd",
+  "source_hash": "844206d409098a9dfcade32d6574c2cdf65757b7e81f8208a55afc0c107d5c7b",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "79e843a7af65f2872c099bbca68def0c9e537ef798b567449e225c3b975449e5",
     "packages/python/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -46,9 +46,5 @@
     "rust/crates/sittir-python/src/render/mod.rs": "dfc0341bd2d54b5bcb07095803e9fe77872288f84f839adbf7b032be3a2eb4e6",
     "rust/crates/sittir-python/src/render/options.rs": "9075083943815e1c0d28372333e5d08d1e458764eb8dc6021cd90401f6b1795d",
     "rust/crates/sittir-python/src/render/transport.rs": "c99f6336b6aa659da411e1c04be5bbdc1dc14f49ecbb7832ca1db48764d0ea50"
-  },
-  "host_files": {
-    "rust/crates/sittir-python/sittir-python.darwin-arm64.node": "freshness-checked",
-    "packages/python/native/sittir-python.darwin-arm64.node": "freshness-checked"
   }
 }

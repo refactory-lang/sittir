@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "0a5efac0216f5595d0e314c6f63c4c97094844f2ec6440ec1a0b726676fe1a0a",
+  "source_hash": "ec5ed044d91e8bd04cac34d880c6eec13cf1d956292a839c27e92369b0406011",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "acad5cd6981a84e11fd8dd678598285ca53f14f63456b0e7bc6132feaa762af9",
     "packages/typescript/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -46,9 +46,5 @@
     "rust/crates/sittir-typescript/src/render/mod.rs": "bbce90c45f59fb49d0c5ae0c934cb843b9786eb6eecf32300357531fe5ef3517",
     "rust/crates/sittir-typescript/src/render/options.rs": "f546feb8995aecbdddafec91bff4f2ab404f968ff39ee10a3862c12e28cba25f",
     "rust/crates/sittir-typescript/src/render/transport.rs": "eb1699ed6aca27c649c250fb1db38095a70d68f4264739efdf7476c8390ee93f"
-  },
-  "host_files": {
-    "rust/crates/sittir-typescript/sittir-typescript.darwin-arm64.node": "freshness-checked",
-    "packages/typescript/native/sittir-typescript.darwin-arm64.node": "freshness-checked"
   }
 }
