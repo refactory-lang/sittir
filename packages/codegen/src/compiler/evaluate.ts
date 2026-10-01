@@ -27,7 +27,7 @@ import type {
 	TokenRule
 } from '../types/rule.ts';
 import { structuralBuilder } from '../dsl/builders.ts';
-import type { RawGrammar, DesugarDivergenceEvent, EvaluatedGrammar, EvaluationStages, RuleProvenance, StageEvaluation } from './types.ts';
+import type { RawGrammar, DesugarDivergenceEvent, EvaluatedGrammar, EvaluationStages, StageEvaluation } from './types.ts';
 import { canonicalGrammar } from './canonical-rules.ts';
 import { isComplexBody, optionalContentOf, ruleListEntryOf, type RuleListEntry } from '../dsl/rule-patterns.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
@@ -175,7 +175,7 @@ interface MetadataSinks {
 
 export interface EvaluateCtx {
 	readonly rules: Record<string, Rule<'evaluate'>>;
-	readonly provenanceByKind: Map<string, RuleProvenance>;
+	readonly evaluateSynthesized: Set<string>;
 	readonly opts: GrammarOptions;
 	readonly baseRules: Record<string, Rule<'evaluate'>>;
 	readonly baseGrammar: unknown;
@@ -205,7 +205,7 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 	}
 
 	const rules: Record<string, Rule<'evaluate'>> = { ...baseRules };
-	const provenanceByKind = new Map<string, RuleProvenance>();
+	const evaluateSynthesized = new Set<string>();
 
 	const extras: RuleListEntry[] = [];
 	const externals: RuleListEntry[] = [];
@@ -229,7 +229,7 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 	};
 	const ctx: EvaluateCtx = {
 		rules,
-		provenanceByKind,
+		evaluateSynthesized,
 		opts,
 		baseRules,
 		baseGrammar,
@@ -266,7 +266,7 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 	const grammarResult = {
 		name: opts.name,
 		rules,
-		provenanceByKind,
+		evaluateSynthesized,
 		protectedRuleNames: wireCtx ? [...protectedWireRuleNames(opts), ...supertypes] : undefined,
 		extras,
 		externals,
@@ -361,11 +361,11 @@ function departsFromBase(ctx: EvaluateCtx): boolean {
 function evaluateStages(enriched: GrammarResult, ctx: EvaluateCtx): EvaluationStages<EvaluatedGrammar> {
 	const wireCtx = getWireContext(ctx.opts);
 	if (!wireCtx) throw new Error(`evaluateStages('${ctx.opts.name}'): the grammar departs from its base but carries no wire context`);
-	return { raw: evaluateStage(wireCtx.source as GrammarResult, ctx, true), enriched: evaluateStage(enriched, ctx, false) };
+	return { raw: evaluateStage(wireCtx.source as GrammarResult, ctx), enriched: evaluateStage(enriched, ctx) };
 }
 
-function evaluateStage(base: GrammarResult, ctx: EvaluateCtx, authorsNothing: boolean): StageEvaluation<EvaluatedGrammar> {
-	const stageOpts = wireWithoutConfig(ctx.opts.name, base, authorsNothing);
+function evaluateStage(base: GrammarResult, ctx: EvaluateCtx): StageEvaluation<EvaluatedGrammar> {
+	const stageOpts = wireWithoutConfig(ctx.opts.name, base);
 	const { grammar } = grammarFn(base, stageOpts);
 	const baseRules = ('grammar' in base ? baseRulesOf<Rule<'evaluate'>>(base.grammar) : undefined) ?? {};
 	const ruleNames = [...new Set([...Object.keys(baseRules), ...Object.keys(stageOpts.rules)])].sort();
@@ -389,7 +389,7 @@ function drainExpectTestFailuresMetadata(opts: GrammarOptions): Record<string, s
 }
 
 function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<string, Rule<'evaluate'>> | undefined {
-	const { rules, provenanceByKind } = ctx;
+	const { rules, evaluateSynthesized } = ctx;
 	const wireCtx = getWireContext(opts);
 	if (!wireCtx || !wireCtx.renderAs) return undefined;
 
@@ -402,7 +402,7 @@ function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<s
 		const rule = coerceToRule(rawBody as Input);
 		result[name] = rule;
 		rules[name] = rule;
-		provenanceByKind.set(name, 'evaluate-synthesized');
+		evaluateSynthesized.add(name);
 	}
 	return result;
 }
@@ -411,7 +411,7 @@ function drainVisibleExternalsMetadata(
 	opts: GrammarOptions,
 	ctx: EvaluateCtx
 ): Record<string, Rule<'evaluate'>> | undefined {
-	const { rules, provenanceByKind } = ctx;
+	const { rules, evaluateSynthesized } = ctx;
 	const wireCtx = getWireContext(opts);
 	if (!wireCtx || !wireCtx.visibleExternals) return undefined;
 
@@ -424,13 +424,13 @@ function drainVisibleExternalsMetadata(
 		const rule = coerceToRule(rawBody as Input);
 		result[name] = rule;
 		rules[name] = rule;
-		provenanceByKind.set(name, 'evaluate-synthesized');
+		evaluateSynthesized.add(name);
 	}
 	return result;
 }
 
 function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
-	const { opts, provenanceByKind } = ctx;
+	const { opts, evaluateSynthesized } = ctx;
 	evaluateRuleFunctions(rules, ctx);
 	const wireCtx = getWireContext(opts);
 	if (wireCtx) {
@@ -445,7 +445,7 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 					const result = (value as ($: unknown, previous: unknown) => unknown).call($, $, undefined);
 					if (result && typeof result === 'object' && typeof (result as { type?: unknown }).type === 'string') {
 						rules[hiddenName] = coerceToRule(result as Input);
-						provenanceByKind.set(hiddenName, 'evaluate-synthesized');
+						evaluateSynthesized.add(hiddenName);
 						ctx.desugarDivergences.push({ site: 'body-pattern-group', name: hiddenName });
 					}
 				} catch {}
@@ -468,7 +468,7 @@ function applyPatternReplacement(
 	ctx: EvaluateCtx,
 	wireCtx: WireContext
 ): void {
-	const { baseRules, provenanceByKind } = ctx;
+	const { baseRules } = ctx;
 	const candidates: PatternCandidate[] = [];
 	for (const name of wireCtx.authoredRuleNames) {
 		if (!name.startsWith('_')) continue;
@@ -516,11 +516,6 @@ function applyPatternReplacement(
 		}
 		for (const name of pathBNames) {
 			if (!referenced.has(name)) ctx.bodyPatternZeroMatches.push(name);
-		}
-	}
-	for (const c of candidates) {
-		if (!provenanceByKind.has(c.name)) {
-			provenanceByKind.set(c.name, 'override-authored-or-replaced');
 		}
 	}
 }
@@ -709,14 +704,12 @@ function evaluateMetadataCallbacksInScope(opts: GrammarOptions, ctx: EvaluateCtx
 }
 
 function evaluateRuleFunctions(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
-	const { opts, baseRules, provenanceByKind, isExtension } = ctx;
-	const authorsNothing = getWireContext(opts)?.authorsNothing === true;
+	const { opts, baseRules } = ctx;
 	for (const [name, ruleFn] of Object.entries(opts.rules)) {
 		const $ = createProxy();
 		const baseRule = baseRules[name];
 		const result = ruleFn.call($, $, baseRule);
 		rules[name] = coerceToRule(result);
-		if (!authorsNothing) provenanceByKind.set(name, isExtension ? 'override-authored-or-replaced' : 'grammar-authored');
 	}
 }
 
@@ -728,7 +721,7 @@ function injectSyntheticRules(
 	for (const [name, content] of syntheticRules) {
 		if (name in rules) continue;
 		rules[name] = content as Rule<'evaluate'>;
-		ctx.provenanceByKind.set(name, 'evaluate-synthesized');
+		ctx.evaluateSynthesized.add(name);
 	}
 }
 

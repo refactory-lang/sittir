@@ -119,11 +119,11 @@ function canonicalStages(
 }
 
 export function canonicalGrammar(evaluated: EvaluatedGrammar, fileTypes: readonly string[]): RawGrammar {
-	const { provenanceByKind, protectedRuleNames, stages, renderAs, visibleExternals, ...rest } = evaluated;
+	const { protectedRuleNames, stages, renderAs, visibleExternals, ...rest } = evaluated;
 	const canonical = { rules: canonicalRuleBodies(evaluated.rules), inline: rest.inline, conflicts: rest.conflicts };
 	const roots = [...grammarRootNames(evaluated), ...evaluated.supertypes, ...(protectedRuleNames ?? [])];
 	const { rules, inline, conflicts } = protectedRuleNames === undefined ? canonical : pruneOrphanedRules(canonical, new Set(roots));
-	const identified = buildRuleCatalog(rules, { provenanceByKind, roots });
+	const identified = buildRuleCatalog(rules, { roots });
 	return {
 		...rest,
 		inline,
@@ -141,7 +141,7 @@ export function canonicalGrammar(evaluated: EvaluatedGrammar, fileTypes: readonl
 
 function predictKinds(evaluated: EvaluatedGrammar): PredictedKinds {
 	const rules = Object.fromEntries(
-		Object.entries(evaluated.rules).filter(([name]) => evaluated.provenanceByKind.get(name) !== 'evaluate-synthesized')
+		Object.entries(evaluated.rules).filter(([name]) => !evaluated.evaluateSynthesized.has(name))
 	);
 	return predictedKindsOf({ ...evaluated, rules });
 }

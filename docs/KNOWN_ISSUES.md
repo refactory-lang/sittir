@@ -8,7 +8,6 @@ Suggested attack order (by payoff ÷ effort; remove a line when its entry is del
 
 1. `ki-sclass-residuals` — the corpus clusters, biggest first (python deep-AST mismatches, rust rrp residuals)
 2. `ki-from-string-composition` — blocked on a quote-style design decision
-5. `ki-exercise-span-transport` — one class left: partial `$span` on factory-built nodes reaching the transport
 11. `ki-emitsymbol-fielded-seq` — proactive flag only; act when a grammar exercises the shape
 
 ## `ki-emitsymbol-fielded-seq` — `emitSymbol`'s generalized hidden-helper inlining doesn't yet handle a fielded sequence inside the inlined target
@@ -42,13 +41,4 @@ The override parser resolves `let [`'s declaration-vs-subscript ambiguity to the
 **Found during:** re-pinning `packages/codegen/src/scm/__tests__/scm-roles.test.ts`. Rust's `string_literal` factory takes a config with an explicit `stringOpen` slot (the open-quote token variant: `"`, `b"`, …) plus an `elements` array, so `emitFromString` has no single-positional-child surface to compose and deliberately skips rather than inventing a default quote style (`line_comment`'s content-node shape skips `from.comment` the same way). The test now pins the absence.
 
 **Fix, if/when prioritized:** a composition rule needs an explicit decision on the default open-quote (probably plain `"` with sub-entries like `from.string.raw(...)` for other variants) — an overrides-level declaration, not an emitter heuristic. Flip the scm-roles pin when it lands.
-
-
-## `ki-exercise-span-transport` — exercise factory round-trips fail on `Missing field start on …Transport.$span`
-
-**Found during:** the exercise tool's render step going through the native engine (`loadNativeRender`), which reports native-transport errors instead of rendering garbage. Current inventory: rust 2 pass / 0 fail; python 2 pass / 8 fail (the `$span` class via `comparison_operator`/comprehension clauses); typescript 0 pass / 2 fail (both the `$span` class, via `formal_parameters` / `type_arguments`). The `set_comprehension` brace-padding row that used to sit alongside these is gone — that was the escaping artifact, since fixed; `{a for a in b}` now renders byte-exact.
-
-The dominant class: the native transport deserializer demands a complete `$span` on nested transport structs (e.g. `ComparisonOperatorComparatorTransport.$span`) that the exercise path's factory-built (span-less) nodes cannot supply — while the factory-render-parse validator renders factory output for the same grammars at 1385/1390+, so the gap is specific to how the exercise tool materializes its node inputs (wrapped/read stubs mixed into factory configs), not to factory rendering per se.
-
-**Fix, if/when prioritized:** root-cause why exercise-built nodes reach the transport with partial `$span`s (likely a read-stub surviving `nodeToConfig` into the rebuilt node) and either materialize the stub fully or strip `$span` so the transport takes the factory-shaped (span-less) path; the remaining failures are all one class.
 

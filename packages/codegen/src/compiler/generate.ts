@@ -185,12 +185,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 }
 
 function collectEvaluateSynthesizedKinds(raw: RawGrammar): ReadonlySet<string> {
-	const result = new Set<string>();
-	for (const [kind, rootId] of raw.ruleCatalog.rootsByKind) {
-		const entry = raw.ruleCatalog.byId.get(rootId);
-		if (entry?.provenance === 'evaluate-synthesized') result.add(kind);
-	}
-	return result;
+	return new Set([...raw.evaluateSynthesized].filter((kind) => raw.ruleCatalog.rootsByKind.has(kind)));
 }
 
 async function compileFromPackage(pkg: GrammarPackage, cfg: GenerateConfig): Promise<Compilation> {

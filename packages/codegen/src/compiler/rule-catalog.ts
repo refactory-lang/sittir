@@ -21,7 +21,7 @@ import { classifyByType } from '../dsl/rule-patterns.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { collectOrphanedRules } from '../util/reachable-rules.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
-import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
+import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment } from './types.ts';
 
 interface BuildResult {
 	readonly rule: Rule<'evaluate'>;
@@ -41,7 +41,6 @@ export interface RuleCatalogBuildResult {
 }
 
 export interface BuildRuleCatalogCtx {
-	readonly provenanceByKind?: ReadonlyMap<string, RuleProvenance>;
 	readonly roots?: readonly string[];
 	readonly sourceKindOf?: ReadonlyMap<string, string>;
 }
@@ -50,7 +49,6 @@ export function buildRuleCatalog(
 	rules: Record<string, Rule<'evaluate'>>,
 	ctx: BuildRuleCatalogCtx = {}
 ): RuleCatalogBuildResult {
-	const provenanceByKind = ctx.provenanceByKind ?? new Map<string, RuleProvenance>();
 	const byId = new Map<RuleId, RuleCatalogEntry>();
 	const rootsByKind = new Map<string, RuleId>();
 	const classificationById = new Map<RuleId, RuleClassification>();
@@ -63,14 +61,12 @@ export function buildRuleCatalog(
 		const rule = rules[ownerKind];
 		if (!rule) continue;
 		if (unreachable.has(ownerKind)) continue;
-		const provenance = provenanceByKind.get(ownerKind) ?? 'grammar-authored';
 		const result = identifyRule({
 			rule,
 			ownerKind,
 			sourceKind: ctx.sourceKindOf?.get(ownerKind) ?? ownerKind,
 			parentId: undefined,
 			path: [],
-			provenance,
 			force: {},
 			byId,
 			classificationById
@@ -131,7 +127,6 @@ interface IdentifyParams {
 	readonly sourceKind: string;
 	readonly parentId: RuleId | undefined;
 	readonly path: readonly RulePathSegment[];
-	readonly provenance: RuleProvenance;
 	readonly force: ClassificationForce;
 	readonly byId: Map<RuleId, RuleCatalogEntry>;
 	readonly classificationById: Map<RuleId, RuleClassification>;
@@ -150,8 +145,7 @@ function identifyRule(params: IdentifyParams): BuildResult {
 		ruleType: params.rule.type,
 		parentId: params.parentId,
 		path: params.path,
-		childIds,
-		provenance: params.provenance
+		childIds
 	});
 	params.classificationById.set(id, classification);
 
@@ -168,7 +162,6 @@ function identifyChildren(args: IdentifyParams & { readonly selfId: RuleId }): B
 			sourceKind: params.sourceKind,
 			parentId: selfId,
 			path: [...params.path, childArgs.segment],
-			provenance: params.provenance,
 			force: childArgs.force ?? {},
 			byId: params.byId,
 			classificationById: params.classificationById

@@ -132,6 +132,9 @@ describe('post-evaluate invariant', () => {
 				'fileTypes',
 				'references',
 				'ruleCatalog',
+				// The rules evaluate itself added (render-only rules, visible
+				// externals, wire deposits) — read by generate and kind prediction.
+				'evaluateSynthesized',
 				// Documented sidecar — populated by role() accumulator.
 				'externalRoles',
 				// Nested-alias polymorph metadata — populated by alias() in transform.
