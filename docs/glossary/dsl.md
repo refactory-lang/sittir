@@ -6910,3 +6910,79 @@ Sets the grammar's final `conflicts` to the resolution sets, replacing whatever 
 ### `packages/codegen/src/dsl/enrich.ts::applyElidedListField`
 
 Wraps an elided separated list in one field, separators included. The list is an optional first element followed by a repeat of separator and optional element, as a whole seq or as the body of an optional member of a seq. The field is named for the pluralised element symbol, or `elements` when the element is not one symbol. A tree-sitter field tags every child inside it, so the separators land in the field's slot beside the elements and a hole between two separators survives a parse. An already fielded list is left alone, and a name the rule already uses is skipped with a report.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::module`
+
+The one classification of a choice's arms by slot topology, shared by the DSL stage (enrich) and the simplify stage (collect-slots). Slot identity has exactly two sources, with disjoint parse routing: `field()` is slot identity (named per-arm slots, routed by field label), and an unnamed single-nonterminal arm is union-member kind identity (all such arms share one `content` union slot, routed by kind). Both stages call `partitionChoiceArms` with their `ArmStage`; neither re-derives the buckets.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::ArmStage`
+
+How one compiler stage spells the facts the partition reads. `fieldName` is the field a node names, `fieldBody` the node whose slot-ness decides a degenerate field arm, `isSlotNode` whether a node is a slot, and `unwrap` strips wrappers that carry no slot topology.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::simplifyArmStage`
+
+Simplify-stage reading: a field is the `fieldName` stamp on the node itself, and slot-ness is the `nonterminal` stamp (`flatten.ts::stampTerminality`), falling back to `isNonterminalRuleType` on an unstamped node. Simplified rules carry no precedence wrappers, so `unwrap` is the identity.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::dslArmStage`
+
+DSL-stage reading: a field is a `FIELD` wrapper whose body is its content, slot-ness is `isNonterminalRuleType` (a `SYMBOL`/`ALIAS` reference), and `PREC*` wrappers are transparent.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::carriesNamedField`
+
+True iff the rule, anywhere in its tree, names a field. Decides whether a choice arm contributes named fields or is a bare union member.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition`
+
+The per-arm partition of a choice. Every arm lands in exactly one bucket.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition.degenerateNamedArms`
+
+Arms that reduce to a bare `field(x, ref)`: one slot, no ambient literals (enum_body's `field('name', _property_name)`). They join the union slot, routed by field label; tree-sitter already labels these children.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition.structuredNamedArms`
+
+Arms with fields plus ambient literals, or more than one field (dict_pattern's `field(key) ":" field(value)`). They keep their own field slots.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition.unionArms`
+
+Unnamed single-nonterminal reference arms: union-member kind identity.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition.literalArms`
+
+Bare terminal arms (a literal string or token): no slot and no kind identity.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::ChoiceArmPartition.structuredArms`
+
+Unnamed structured arms: a multi-member seq with ambient literals, or a nested choice.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::soleMember`
+
+Unwraps transparent wrappers and single-member seqs down to the node an arm reduces to.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::isDegenerateFieldArm`
+
+True iff a named arm reduces to exactly one field-named slot node, with no ambient literals and no other field beside it. Only a degenerate named arm can be label-routed into the union slot.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::degenerateArmFieldName`
+
+The field name a degenerate arm carries, read through the same unwrapping as `isDegenerateFieldArm`.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::partitionChoiceArms`
+
+Partitions a choice's arms. Each arm is classified in priority order: field-named (degenerate, else structured named), then nested choice or multi-member seq (structured), then single-nonterminal reference (union), then bare literal. A single-member seq classifies as its sole member.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::unionRoutingGateB`
+
+A fieldless structural choice qualifies for union routing iff it has at least one union arm and every arm is either field-named or a union arm. Whether the union slot's storage name is free in the owning rule needs whole-rule visibility and is checked at the `deriveSlots` boundary (`_deriveSlotsInternal`, node-map.ts), not here.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::ArmTopology`
+
+The slot topology an arm produces: `field-routed` (a degenerate named arm), `union-routed` (a union arm), or `structured` (a structured arm, named or not). Literal arms produce no slot and have no topology.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::armTopologies`
+
+The set of topologies a partition's arms produce.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::isTopologyMixed`
+
+True iff the arms produce more than one slot topology. Kinds, supertype expansion and variant kinds never enter it: two arms routed by different field names are the same topology, and so are two union arms of different kinds.
