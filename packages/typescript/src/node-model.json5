@@ -1,11 +1,13 @@
 {
   "name": "typescript",
   "root": "program",
-  "nodeCount": 431,
+  "nodeCount": 434,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
+    "_class_body_member",
     "_destructuring_pattern",
+    "_enum_body_element",
     "_expressions",
     "_for_header",
     "_formal_parameter",
@@ -176,14 +178,6 @@
         "binary_expression_in": "in"
       }
     },
-    "class_body": {
-      "definedBy": "override",
-      "childKind": {
-        "class_body_method": "method",
-        "class_body_method_sig": "method_sig",
-        "class_body_member": "member"
-      }
-    },
     "ambient_declaration": {
       "definedBy": "override",
       "childKind": {
@@ -249,8 +243,12 @@
     "call_expression_call": "callExpression.call",
     "call_expression_member": "callExpression.member",
     "call_expression_template_call": "callExpression.templateCall",
+    "class_body_member_declaration": "classBodyMember.declaration",
+    "class_body_member_method": "classBodyMember.method",
+    "class_body_member_method_sig": "classBodyMember.methodSig",
     "comment_block": "comment.block",
     "comment_line": "comment.line",
+    "enum_body_element_name": "enumBodyElement.name",
     "export_statement_default": "exportStatement.default",
     "export_statement_default_declaration": "exportStatement.default.declaration",
     "export_statement_default_from": "exportStatement.default.from",
@@ -1612,7 +1610,7 @@
       }
     },
     "class_body": {
-      "content": {
+      "members": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3261,13 +3259,22 @@
         "nonEmpty": true
       }
     },
-    "enum_body_elements": {
-      "content": {
+    "enum_body_element_name": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": true,
+        "required": true,
+        "multiple": false,
         "nonEmpty": false
+      }
+    },
+    "enum_body_elements": {
+      "element": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
       }
     },
     "types": {
@@ -3659,7 +3666,7 @@
         "nonEmpty": false
       }
     },
-    "class_body_method": {
+    "class_body_member_method": {
       "decorator": {
         "unnamed": false,
         "slotCount": 1,
@@ -3683,7 +3690,7 @@
         "registered": true
       }
     },
-    "class_body_method_sig": {
+    "class_body_member_method_sig": {
       "method_signature": {
         "unnamed": false,
         "slotCount": 1,
@@ -3699,7 +3706,7 @@
         "nonEmpty": false
       }
     },
-    "class_body_member": {
+    "class_body_member_declaration": {
       "member": {
         "unnamed": false,
         "slotCount": 1,
@@ -4381,6 +4388,21 @@
       "factoryShape": "constant"
     },
     {
+      "kind": "_class_body_member",
+      "modelType": "supertype",
+      "typeName": "ClassBodyMember",
+      "irKey": "classBodyMember",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "class_body_member_declaration",
+        "class_body_member_method",
+        "class_body_member_method_sig",
+        "class_static_block",
+        "empty_member"
+      ]
+    },
+    {
       "kind": "_dedent",
       "modelType": "punctuation",
       "typeName": "Dedent",
@@ -4415,6 +4437,18 @@
       "stampExpression": "\"\\n\\n\\n\" as const",
       "text": "\n\n\n",
       "factoryShape": "constant"
+    },
+    {
+      "kind": "_enum_body_element",
+      "modelType": "supertype",
+      "typeName": "EnumBodyElement",
+      "irKey": "enumBodyElement",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "enum_assignment",
+        "enum_body_element_name"
+      ]
     },
     {
       "kind": "_expressions",
@@ -8119,65 +8153,37 @@
       "hidden": false,
       "slots": [
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "members",
+          "propertyName": "members",
+          "paramName": "members",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
-            "class_body_method",
-            "class_body_method_sig",
-            "class_static_block",
-            "class_body_member",
-            "empty_member"
+            "_class_body_member"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "class_body_method",
-              "parseKind": "class_body_method"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "class_body_method_sig",
-              "parseKind": "class_body_method_sig"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "class_static_block",
-              "parseKind": "class_static_block"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "class_body_member",
-              "parseKind": "class_body_member"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "empty_member",
-              "parseKind": "empty_member"
+              "name": "_class_body_member",
+              "parseKind": "_class_body_member"
             }
           ]
         }
       ],
       "factoryShape": "spread",
       "factoryFields": [
-        "content"
+        "members"
       ]
     },
     {
-      "kind": "class_body_member",
+      "kind": "class_body_member_declaration",
       "modelType": "branch",
-      "typeName": "ClassBodyMember",
-      "factoryName": "classBodyMember",
-      "irKey": "classBodyMember",
+      "typeName": "ClassBodyMemberDeclaration",
+      "factoryName": "classBodyMemberDeclaration",
+      "irKey": "classBodyMemberDeclaration",
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -8257,7 +8263,7 @@
           ]
         }
       ],
-      "name": "class_body_member",
+      "name": "class_body_member_declaration",
       "factoryShape": "direct",
       "factoryFields": [
         "member"
@@ -8271,11 +8277,11 @@
       ]
     },
     {
-      "kind": "class_body_method",
+      "kind": "class_body_member_method",
       "modelType": "branch",
-      "typeName": "ClassBodyMethod",
-      "factoryName": "classBodyMethod",
-      "irKey": "classBodyMethod",
+      "typeName": "ClassBodyMemberMethod",
+      "factoryName": "classBodyMemberMethod",
+      "irKey": "classBodyMemberMethod",
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -8348,7 +8354,7 @@
           ]
         }
       ],
-      "name": "class_body_method",
+      "name": "class_body_member_method",
       "factoryShape": "config",
       "factoryFields": [
         "decorator",
@@ -8356,11 +8362,11 @@
       ]
     },
     {
-      "kind": "class_body_method_sig",
+      "kind": "class_body_member_method_sig",
       "modelType": "branch",
-      "typeName": "ClassBodyMethodSig",
-      "factoryName": "classBodyMethodSig",
-      "irKey": "classBodyMethodSig",
+      "typeName": "ClassBodyMemberMethodSig",
+      "factoryName": "classBodyMemberMethodSig",
+      "irKey": "classBodyMemberMethodSig",
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -8413,7 +8419,7 @@
           ]
         }
       ],
-      "name": "class_body_method_sig",
+      "name": "class_body_member_method_sig",
       "factoryShape": "config",
       "factoryFields": [
         "method_signature",
@@ -10552,7 +10558,288 @@
         "computed_property_name",
         "declare_keyword",
         "enum_assignment",
+        "enum_body_element_name",
         "enum_body_elements",
+        "export_keyword",
+        "false",
+        "function_expression",
+        "generator_function",
+        "get_keyword",
+        "identifier",
+        "instantiation_expression",
+        "internal_module",
+        "let_keyword",
+        "member_expression",
+        "meta_property_import_meta",
+        "meta_property_new_target",
+        "module_keyword",
+        "namespace_keyword",
+        "new_expression",
+        "new_keyword",
+        "non_null_expression",
+        "null",
+        "number_bigint_binary",
+        "number_bigint_decimal",
+        "number_bigint_hex",
+        "number_bigint_octal",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
+        "number_keyword",
+        "number_octal",
+        "object",
+        "object_keyword",
+        "override_keyword",
+        "parenthesized_expression_sequence",
+        "parenthesized_expression_typed",
+        "private_keyword",
+        "private_property_identifier",
+        "property_identifier",
+        "protected_keyword",
+        "public_keyword",
+        "readonly_keyword",
+        "regex",
+        "satisfies_expression",
+        "sequence_expression",
+        "set_keyword",
+        "static_keyword",
+        "string_double",
+        "string_keyword",
+        "string_single",
+        "subscript_expression",
+        "super",
+        "symbol_keyword",
+        "template_string",
+        "ternary_expression",
+        "this",
+        "true",
+        "type_assertion",
+        "type_keyword",
+        "unary_expression",
+        "undefined",
+        "update_expression_postfix",
+        "update_expression_prefix",
+        "yield_expression",
+        "yield_expression_delegate"
+      ]
+    },
+    {
+      "kind": "enum_body_element_name",
+      "modelType": "branch",
+      "typeName": "EnumBodyElementName",
+      "factoryName": "enumBodyElementName",
+      "irKey": "enumBodyElementName",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "property_identifier",
+            "private_property_identifier",
+            "string",
+            "number",
+            "computed_property_name"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "property_identifier",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "declare",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "namespace",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "public",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "private",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "protected",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "override",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "readonly",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "module",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "any",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "number",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "boolean",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "string",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "symbol",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "export",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "object",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "new",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "get",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "set",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let",
+              "parseKind": "property_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "private_property_identifier",
+              "parseKind": "private_property_identifier"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "string",
+              "parseKind": "string"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "number",
+              "parseKind": "number"
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "computed_property_name",
+              "parseKind": "computed_property_name"
+            }
+          ]
+        }
+      ],
+      "name": "enum_body_element_name",
+      "factoryShape": "direct",
+      "factoryFields": [
+        "name"
+      ],
+      "bareAccepts": [
+        "any_keyword",
+        "array",
+        "arrow_function",
+        "as_expression",
+        "assignment_expression",
+        "async_keyword",
+        "augmented_assignment_expression",
+        "await_expression",
+        "binary_expression",
+        "boolean_keyword",
+        "call_expression_call",
+        "call_expression_member",
+        "call_expression_template_call",
+        "class",
+        "computed_property_name",
+        "declare_keyword",
         "export_keyword",
         "false",
         "function_expression",
@@ -10635,16 +10922,11 @@
       "trailingDelimiter": "optional",
       "defaultDelimiter": "Delimiter.Trailing",
       "elementKinds": [
-        "property_identifier",
-        "private_property_identifier",
-        "string",
-        "number",
-        "computed_property_name",
-        "enum_assignment"
+        "_enum_body_element"
       ],
       "factoryShape": "elements",
       "factoryFields": [
-        "content"
+        "element"
       ],
       "bareAccepts": [
         "any_keyword",
@@ -10664,6 +10946,7 @@
         "computed_property_name",
         "declare_keyword",
         "enum_assignment",
+        "enum_body_element_name",
         "export_keyword",
         "false",
         "function_expression",

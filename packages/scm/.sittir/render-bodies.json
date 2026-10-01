@@ -10,7 +10,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "elements"
 		},
 		{
 			"kind": "seam",
@@ -155,7 +155,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "elements"
 		},
 		{
 			"kind": "seam",
@@ -253,11 +253,17 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "elements"
 		},
 		{
 			"kind": "seam",
 			"field": "list_after"
+		}
+	],
+	"list_element_quantifier": [
+		{
+			"kind": "slot",
+			"name": "quantifier"
 		}
 	],
 	"missing_node": [
@@ -313,7 +319,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "elements"
 		},
 		{
 			"kind": "seam",
@@ -474,7 +480,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "elements"
 		},
 		{
 			"kind": "seam",
@@ -540,7 +546,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "elements"
 		},
 		{
 			"kind": "seam",

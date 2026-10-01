@@ -14,34 +14,6 @@ export const stringContent = Object.freeze({
 	escapeSequence: typeof B.escapeSequence;
 };
 
-export const list = Object.freeze({
-	...B.list,
-	capture: B.capture
-}) as unknown as typeof B.list & {
-	capture: typeof B.capture;
-};
-
-export const grouping = Object.freeze({
-	...B.grouping,
-	capture: B.capture
-}) as unknown as typeof B.grouping & {
-	capture: typeof B.capture;
-};
-
-export const missingNode = Object.freeze({
-	...B.missingNode,
-	capture: B.capture
-}) as unknown as typeof B.missingNode & {
-	capture: typeof B.capture;
-};
-
-export const anonymousNode = Object.freeze({
-	...B.anonymousNode,
-	capture: B.capture
-}) as unknown as typeof B.anonymousNode & {
-	capture: typeof B.capture;
-};
-
 // Erased applications, centralized: TS cannot infer a Cfg type parameter
 // constrained by another inference variable in a contravariant position,
 // so the pair below carries the one sanctioned dsl-bridging double cast;
@@ -329,6 +301,17 @@ export const namedNode: {
 	})
 });
 
+export const listElement: {
+	readonly capture: typeof B.capture;
+	readonly quantifier: { strict: typeof F.buildListElementQuantifier; coerce: typeof C.coerceToListElementQuantifier };
+} = Object.freeze({
+	capture: B.capture,
+	quantifier: bundle(F.buildListElementQuantifier, C.coerceToListElementQuantifier, {
+		key: 'listElement.quantifier',
+		max: 1
+	})
+});
+
 export const namedNodeGroup: {
 	readonly children: { strict: typeof F.buildNamedNodeGroupChildren; coerce: typeof C.coerceToNamedNodeGroupChildren };
 	readonly anchoredLast: {
@@ -348,18 +331,18 @@ export const namedNodeGroup: {
 
 export const definition: {
 	readonly namedNode: typeof namedNode;
-	readonly anonymousNode: typeof anonymousNode;
-	readonly missingNode: typeof missingNode;
-	readonly grouping: typeof grouping;
+	readonly anonymousNode: typeof B.anonymousNode;
+	readonly missingNode: typeof B.missingNode;
+	readonly grouping: typeof B.grouping;
 	readonly predicate: typeof B.predicate;
-	readonly list: typeof list;
+	readonly list: typeof B.list;
 	readonly field: typeof B.fieldDefinition;
 } = Object.freeze({
 	namedNode: namedNode,
-	anonymousNode: anonymousNode,
-	missingNode: missingNode,
-	grouping: grouping,
+	anonymousNode: B.anonymousNode,
+	missingNode: B.missingNode,
+	grouping: B.grouping,
 	predicate: B.predicate,
-	list: list,
+	list: B.list,
 	field: B.fieldDefinition
 });

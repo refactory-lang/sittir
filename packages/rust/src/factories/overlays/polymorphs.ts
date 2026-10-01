@@ -536,67 +536,6 @@ export const functionType = Object.freeze({
 	};
 };
 
-const rangeExpression$binary =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const rangeExpression$binary$strict = rangeExpression$binary(F.buildRangeExpression, F.buildRangeExpressionBinary);
-const rangeExpression$binary$coerce = rangeExpression$binary(F.buildRangeExpression, C.coerceToRangeExpressionBinary);
-const rangeExpression$postfix =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const rangeExpression$postfix$strict = rangeExpression$postfix(F.buildRangeExpression, F.buildRangeExpressionPostfix);
-const rangeExpression$postfix$coerce = rangeExpression$postfix(
-	F.buildRangeExpression,
-	C.coerceToRangeExpressionPostfix
-);
-const rangeExpression$prefix =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-const rangeExpression$prefix$strict = rangeExpression$prefix(F.buildRangeExpression, F.buildRangeExpressionPrefix);
-const rangeExpression$prefix$coerce = rangeExpression$prefix(F.buildRangeExpression, C.coerceToRangeExpressionPrefix);
-const rangeExpression$bare =
-	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
-	(options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(value as never, options as never);
-const rangeExpression$bare$strict = rangeExpression$bare(F.buildRangeExpression, TSKindId.RangeExpressionBare);
-const rangeExpression$bare$coerce = rangeExpression$bare(C.coerceToRangeExpression, TSKindId.RangeExpressionBare);
-export const rangeExpression = Object.freeze({
-	...B.rangeExpression,
-	binary: bundle(rangeExpression$binary$strict, rangeExpression$binary$coerce, {
-		key: 'rangeExpression.binary',
-		max: 1
-	}),
-	postfix: bundle(rangeExpression$postfix$strict, rangeExpression$postfix$coerce, {
-		key: 'rangeExpression.postfix',
-		max: 1
-	}),
-	prefix: bundle(rangeExpression$prefix$strict, rangeExpression$prefix$coerce, {
-		key: 'rangeExpression.prefix',
-		max: 1
-	}),
-	bare: bundle(rangeExpression$bare$strict, rangeExpression$bare$coerce, { key: 'rangeExpression.bare', max: 1 })
-}) as unknown as typeof B.rangeExpression & {
-	binary: {
-		strict: (...args: ArgsOf<typeof F.buildRangeExpressionBinary>) => ReturnType<typeof F.buildRangeExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToRangeExpressionBinary>) => ReturnType<typeof F.buildRangeExpression>;
-	};
-	postfix: {
-		strict: (...args: ArgsOf<typeof F.buildRangeExpressionPostfix>) => ReturnType<typeof F.buildRangeExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToRangeExpressionPostfix>) => ReturnType<typeof F.buildRangeExpression>;
-	};
-	prefix: {
-		strict: (...args: ArgsOf<typeof F.buildRangeExpressionPrefix>) => ReturnType<typeof F.buildRangeExpression>;
-		coerce: (...args: ArgsOf<typeof C.coerceToRangeExpressionPrefix>) => ReturnType<typeof F.buildRangeExpression>;
-	};
-	bare: {
-		strict: (options?: OptionsArg<typeof F.buildRangeExpression>) => ReturnType<typeof F.buildRangeExpression>;
-		coerce: (options?: OptionsArg<typeof C.coerceToRangeExpression>) => ReturnType<typeof C.coerceToRangeExpression>;
-	};
-};
-
 const matchBlock$flatten$matchBlockArms =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: ArgsOf<PF>[0] | ArgsOf<CF>[0], options?: unknown): ReturnType<PF> =>
@@ -2190,6 +2129,27 @@ export const delimTokenTree: {
 	paren: bundle(F.buildDelimTokenTreeParen, C.coerceToDelimTokenTreeParen),
 	bracket: bundle(F.buildDelimTokenTreeBracket, C.coerceToDelimTokenTreeBracket),
 	brace: bundle(F.buildDelimTokenTreeBrace, C.coerceToDelimTokenTreeBrace)
+});
+
+export const rangeExpression: {
+	readonly binary: { strict: typeof F.buildRangeExpressionBinary; coerce: typeof C.coerceToRangeExpressionBinary };
+	readonly postfix: { strict: typeof F.buildRangeExpressionPostfix; coerce: typeof C.coerceToRangeExpressionPostfix };
+	readonly prefix: { strict: typeof F.buildRangeExpressionPrefix; coerce: typeof C.coerceToRangeExpressionPrefix };
+	readonly bare: { strict: typeof F.buildRangeExpressionBare; coerce: typeof C.coerceToRangeExpressionBare };
+} = Object.freeze({
+	binary: bundle(F.buildRangeExpressionBinary, C.coerceToRangeExpressionBinary, {
+		key: 'rangeExpression.binary',
+		max: 1
+	}),
+	postfix: bundle(F.buildRangeExpressionPostfix, C.coerceToRangeExpressionPostfix, {
+		key: 'rangeExpression.postfix',
+		max: 1
+	}),
+	prefix: bundle(F.buildRangeExpressionPrefix, C.coerceToRangeExpressionPrefix, {
+		key: 'rangeExpression.prefix',
+		max: 1
+	}),
+	bare: bundle(F.buildRangeExpressionBare, C.coerceToRangeExpressionBare, { key: 'rangeExpression.bare', max: 1 })
 });
 
 export const referenceExpression: {

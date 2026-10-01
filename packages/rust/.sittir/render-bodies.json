@@ -5254,10 +5254,10 @@
 			"field": "qualified_type_after"
 		}
 	],
-	"range_expression": [
+	"range_expression_bare": [
 		{
-			"kind": "slot",
-			"name": "content"
+			"kind": "text",
+			"text": ".."
 		}
 	],
 	"range_expression_binary": [

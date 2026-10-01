@@ -1248,7 +1248,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "members"
 		},
 		{
 			"kind": "seam",
@@ -1263,10 +1263,10 @@
 			"field": "class_body_after"
 		}
 	],
-	"class_body_member": [
+	"class_body_member_declaration": [
 		{
 			"kind": "seam",
-			"field": "class_body_member_before"
+			"field": "class_body_member_declaration_before"
 		},
 		{
 			"kind": "slot",
@@ -1278,13 +1278,13 @@
 		},
 		{
 			"kind": "seam",
-			"field": "class_body_member_after"
+			"field": "class_body_member_declaration_after"
 		}
 	],
-	"class_body_method": [
+	"class_body_member_method": [
 		{
 			"kind": "seam",
-			"field": "class_body_method_before"
+			"field": "class_body_member_method_before"
 		},
 		{
 			"kind": "slot",
@@ -1310,13 +1310,13 @@
 		},
 		{
 			"kind": "seam",
-			"field": "class_body_method_after"
+			"field": "class_body_member_method_after"
 		}
 	],
-	"class_body_method_sig": [
+	"class_body_member_method_sig": [
 		{
 			"kind": "seam",
-			"field": "class_body_method_sig_before"
+			"field": "class_body_member_method_sig_before"
 		},
 		{
 			"kind": "slot",
@@ -1328,7 +1328,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "class_body_method_sig_after"
+			"field": "class_body_member_method_sig_after"
 		}
 	],
 	"class_declaration": [
@@ -2104,6 +2104,12 @@
 			"field": "enum_body_after"
 		}
 	],
+	"enum_body_element_name": [
+		{
+			"kind": "slot",
+			"name": "name"
+		}
+	],
 	"enum_body_elements": [
 		{
 			"kind": "seam",
@@ -2111,7 +2117,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "element"
 		},
 		{
 			"kind": "seam",

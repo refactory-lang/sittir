@@ -949,20 +949,20 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between class_body_method on ';' resolved by AddConflict (default)",
+    "message": "conflict between class_body_member_method on ';' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
-          "class_body_method"
+          "class_body_member_method"
         ]
       },
       "step": "default",
       "sourceChains": [
         [
-          "class_body_method",
-          "class_body"
+          "class_body_member_method",
+          "_class_body_member"
         ]
       ],
       "conflict": {
@@ -973,8 +973,8 @@
         ],
         "lookahead": "';'",
         "interpretations": [
-          "class_body_method",
-          "class_body_method"
+          "class_body_member_method",
+          "class_body_member_method"
         ]
       }
     }
@@ -1652,25 +1652,25 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between class_body_method_sig, class_body_member on '*' resolved by AddConflict (default)",
+    "message": "conflict between class_body_member_method_sig, class_body_member_declaration on '*' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
-          "class_body_method_sig",
-          "class_body_member"
+          "class_body_member_method_sig",
+          "class_body_member_declaration"
         ]
       },
       "step": "default",
       "sourceChains": [
         [
-          "class_body_method_sig",
-          "class_body"
+          "class_body_member_method_sig",
+          "_class_body_member"
         ],
         [
-          "class_body_member",
-          "class_body"
+          "class_body_member_declaration",
+          "_class_body_member"
         ]
       ],
       "conflict": {
@@ -1682,8 +1682,8 @@
         ],
         "lookahead": "'*'",
         "interpretations": [
-          "class_body_method_sig",
-          "class_body_member"
+          "class_body_member_method_sig",
+          "class_body_member_declaration"
         ]
       }
     }
@@ -2569,51 +2569,8 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",
-    "ownerKind": "enum_body_elements",
-    "message": "[collect-slots] kind 'enum_body_elements': choice rule:enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 29 label-routed arm(s) [field(name):identifier, field(name):declare_keyword, field(name):namespace_keyword, field(name):type_keyword, field(name):public_keyword, field(name):private_keyword, field(name):protected_keyword, field(name):override_keyword, field(name):readonly_keyword, field(name):module_keyword, field(name):any_keyword, field(name):number_keyword, field(name):boolean_keyword, field(name):string_keyword, field(name):symbol_keyword, field(name):export_keyword, field(name):object_keyword, field(name):new_keyword, field(name):readonly_keyword, field(name):get_keyword, field(name):set_keyword, field(name):async_keyword, field(name):static_keyword, field(name):export_keyword, field(name):let_keyword, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "grammar": "typescript",
     "ownerKind": "export_statement_default_declaration",
-    "message": "[collect-slots] kind 'export_statement_default_declaration': choice rule:export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "message": "[collect-slots] kind 'export_statement_default_declaration': choice rule:export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration]",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -2628,7 +2585,7 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "export_statement_default_declaration_default_kw",
-    "message": "[collect-slots] kind 'export_statement_default_declaration_default_kw': choice rule:export_statement_default_declaration_default_kw:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "message": "[collect-slots] kind 'export_statement_default_declaration_default_kw': choice rule:export_statement_default_declaration_default_kw:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration]",
     "canProceed": true,
     "details": {
       "unionSlot": "content",

@@ -1,5 +1,19 @@
 [
   {
+    "type": "_list_element",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "capture",
+        "named": true
+      },
+      {
+        "type": "list_element_quantifier",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "definition",
     "named": true,
     "subtypes": [
@@ -70,6 +84,16 @@
     "type": "anonymous_node",
     "named": true,
     "fields": {
+      "elements": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "_list_element",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -83,27 +107,7 @@
             "named": true
           }
         ]
-      },
-      "quantifier": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "quantifier",
-            "named": true
-          }
-        ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "capture",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -190,12 +194,12 @@
     "type": "grouping",
     "named": true,
     "fields": {
-      "quantifier": {
+      "elements": {
         "multiple": true,
         "required": false,
         "types": [
           {
-            "type": "quantifier",
+            "type": "_list_element",
             "named": true
           }
         ]
@@ -205,10 +209,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "capture",
-          "named": true
-        },
         {
           "type": "grouping_group",
           "named": true
@@ -268,9 +268,25 @@
           }
         ]
       },
-      "quantifier": {
+      "elements": {
         "multiple": true,
         "required": false,
+        "types": [
+          {
+            "type": "_list_element",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "list_element_quantifier",
+    "named": true,
+    "fields": {
+      "quantifier": {
+        "multiple": false,
+        "required": true,
         "types": [
           {
             "type": "quantifier",
@@ -278,22 +294,22 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "capture",
-          "named": true
-        }
-      ]
     }
   },
   {
     "type": "missing_node",
     "named": true,
     "fields": {
+      "elements": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "_list_element",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": false,
@@ -307,27 +323,7 @@
             "named": true
           }
         ]
-      },
-      "quantifier": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "quantifier",
-            "named": true
-          }
-        ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "capture",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -462,6 +458,16 @@
     "type": "named_node_plain",
     "named": true,
     "fields": {
+      "elements": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "_list_element",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -475,26 +481,12 @@
             "named": true
           }
         ]
-      },
-      "quantifier": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "quantifier",
-            "named": true
-          }
-        ]
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
-        {
-          "type": "capture",
-          "named": true
-        },
         {
           "type": "named_node_group",
           "named": true
@@ -506,6 +498,16 @@
     "type": "named_node_supertyped",
     "named": true,
     "fields": {
+      "elements": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "_list_element",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -516,16 +518,6 @@
           },
           {
             "type": "immediate_string",
-            "named": true
-          }
-        ]
-      },
-      "quantifier": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "quantifier",
             "named": true
           }
         ]
@@ -542,13 +534,9 @@
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
-        {
-          "type": "capture",
-          "named": true
-        },
         {
           "type": "named_node_group",
           "named": true

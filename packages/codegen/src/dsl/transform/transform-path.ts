@@ -10,7 +10,7 @@ import {
 import type { RuleAnnotations } from '../../types/rule.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { readRuleMetadata } from '../rule-metadata.ts';
-import { wireGetLiftBody, wireSetLiftBody } from '../wire/wire.ts';
+import { wireGetLiftBody, wireSetLiftBody, wireWithLiftScope } from '../wire/wire.ts';
 
 interface RuntimeDsl {
 	seq?: (...members: RuntimeRule[]) => RuntimeRule;
@@ -211,7 +211,10 @@ function descendThroughGroupLiftSymbol(
 				`(no wire() context, or the name was pruned)`
 		);
 	}
-	wireSetLiftBody(name, applyPath(body, segments, patch, precStack));
+	wireSetLiftBody(
+		name,
+		wireWithLiftScope(name, () => applyPath(body, segments, patch, precStack))
+	);
 	return rule;
 }
 

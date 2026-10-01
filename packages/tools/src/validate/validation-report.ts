@@ -103,6 +103,7 @@ const DIRECT_CODE_TO_S_CLASS: Readonly<Record<string, SClass>> = {
 	'seq-with-nested-seq': 'S3',
 	'union-slot-unaddressable': 'S4',
 	'union-slot-mixed-row': 'S4',
+	'union-slot-routed-repeated': 'S4',
 	'accessor-throw': 'S4',
 	'coverage-missing-field': 'S5'
 };

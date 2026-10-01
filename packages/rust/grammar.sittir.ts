@@ -393,14 +393,12 @@ export default sittirGrammar(base, {
 			}
 		],
 
-		// range_expression's bare-'..' arm (RangeFull, e.g. `let x = ..;`) is
-		// the only choice arm that isn't a seq — arms 0-2 get auto-synthesized
-		// group kinds (range_expression_binary/postfix/prefix), but a bare
-		// literal produces an ANONYMOUS/unnamed token, so the wrap layer's
-		// `content` accessor never finds a value ("singular slot 'content' on
-		// 'range_expression' requires one value; got undefined"). Same fix as
-		// `_pattern`'s `wildcard_pattern` below: alias the literal into its
-		// own real, named node (`_range_expression_bare` in `rules:`).
+		// range_expression is a flattened parent of four variant kinds. The
+		// bare-'..' arm (RangeFull, e.g. `let x = ..;`) is a lone literal, so
+		// the first set aliases it into a named node (`_range_expression_bare`
+		// in `rules:`), which `variant('bare')` then hoists as its own kind
+		// like the three sequence arms. The arm carries no field: a field on
+		// it would be kept by the variant and route beside the union arms.
 		range_expression: [
 			{ '-1': alias('range_expression_bare') },
 			{
@@ -410,8 +408,7 @@ export default sittirGrammar(base, {
 				'1/0': field('start'),
 				'1/1': field('operator'),
 				'2/0': field('operator'),
-				'2/1': field('end'),
-				'3': field('operator')
+				'2/1': field('end')
 			},
 			{
 				'0': variant('binary'),

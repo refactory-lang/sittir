@@ -17,7 +17,7 @@ import { CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '.
 import { describe, it, expect, afterEach } from 'vitest';
 import { collectSlots, setUnnamedChoiceWarner } from '../collect-slots.ts';
 import { flatten } from '../flatten.ts';
-import { isTerminalValue } from '../model/node-map.ts';
+import { AssembleDiagnosticsCollector, isTerminalValue } from '../model/node-map.ts';
 import type { Rule } from '../../types/rule.ts';
 
 const sym = (name: string): Rule<'link'> => ({ type: SYMBOL, name });
@@ -226,5 +226,26 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 		const marker = out.find((s) => s.name === 'trait_form_marker');
 		expect(marker).toBeDefined();
 		expect(marker!.values[0]!.multiplicity).toBe('optional');
+	});
+});
+
+describe('collectSlots — union-slot routing diagnostics', () => {
+	const mixed = (): Rule<'link'> =>
+		({ type: CHOICE, id: 'rule:owner:mixed', members: [{ type: FIELD, name: 'name', content: sym('a') }, sym('b')] }) as Rule<'link'>;
+
+	function routedCodes(rule: Rule<'link'>): string[] {
+		const diagnostics = new AssembleDiagnosticsCollector();
+		collectSlots(flatten(rule) as Rule, 'owner', undefined, 'single', undefined, diagnostics);
+		return diagnostics.assembleWarnings.all.map((warning) => warning.code).filter((code) => code.startsWith('union-slot-routed'));
+	}
+
+	it('reports a singular field-and-union route as union-slot-routed', () => {
+		expect(routedCodes({ type: SEQ, members: [str('{'), mixed(), str('}')] })).toEqual(['union-slot-routed']);
+	});
+
+	it('reports a repeated field-and-union route as union-slot-routed-repeated', () => {
+		expect(routedCodes({ type: SEQ, members: [str('{'), { type: REPEAT, content: mixed() }, str('}')] })).toEqual([
+			'union-slot-routed-repeated'
+		]);
 	});
 });

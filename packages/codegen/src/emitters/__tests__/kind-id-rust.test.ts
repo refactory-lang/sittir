@@ -38,8 +38,9 @@ describe('wire_slot', () => {
 	}, FULL_PIPELINE_TIMEOUT);
 	it('routes a field-tagged child by its field when the model slot has another name', async () => {
 		const { source, idOf } = await emittedKindIds('typescript');
-		expect(source).toContain(`(${idOf('enum_body_elements')}, Some("name"), _) => Some("content"),`);
-		expect(source).toContain(`(${idOf('enum_body_elements')}, None, "enum_assignment") => Some("content"),`);
+		const owner = idOf('export_statement_default_declaration');
+		expect(source).toContain(`(${owner}, Some("declaration"), _) => Some("content"),`);
+		expect(source).toContain(`(${owner}, None, "export_statement_default_declaration_default_kw") => Some("content"),`);
 	}, FULL_PIPELINE_TIMEOUT);
 	it('leaves a child whose key already names its slot to the parser', async () => {
 		const { source } = await emittedKindIds('typescript');
