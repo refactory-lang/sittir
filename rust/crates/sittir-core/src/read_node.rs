@@ -26,7 +26,7 @@
 //! - `$handle`       — the returned node's own handle.
 //! - `$parentHandle` — the parent's handle, on every child at a bounded
 //!   read's last level (stubs and leaves alike): with `$childIndex` it is
-//!   the coordinate the child is expanded at.
+//!   the coordinate the child is hydrated at.
 //! - `$treeHandle`   — the tree's tag, on a deep read's leaves and on every
 //!   trivia entry: nothing re-reads them, so it names only the tree their
 //!   span slices.
@@ -45,13 +45,13 @@ use std::num::NonZeroU32;
 /// `Levels(n)` expands the children within `n - 1` levels below the node
 /// read and leaves every child with substructure at level `n` as a stub
 /// carrying its parent handle and child index, which a later `read_at`
-/// expands on demand. [`ReadDepth::SHALLOW`] (one level) is the default and
+/// hydrates on demand. [`ReadDepth::SHALLOW`] (one level) is the default and
 /// the lazy path. `Deep` expands everything in one pass instead.
 ///
 /// A child expanded above the last level gets a handle minted for it, so the
 /// stubs under it can be re-read, but carries no handle of its own: a stub
 /// is the only node that names a coordinate to re-read, and one on an
-/// expanded node would make the wrap layer's expansion read it again.
+/// expanded node would make the wrap layer's hydration read it again.
 ///
 /// A deep descendant keeps its `$childIndex` but gets no handle: nothing
 /// needs to re-read it. A deep read's leaf carries only `$treeHandle`, which
@@ -297,7 +297,7 @@ fn read_ts_node(
 /// Trivia entries are fully materialized (recursively read via
 /// `read_ts_node`, not shallow stubs) since they are not independently
 /// addressable through the normal `_<slot>`/`$other` handle+child-index
-/// navigation -- nothing would ever expand to hydrate a stub left here.
+/// navigation -- nothing would ever hydrate a stub left here.
 /// Each entry still carries a coordinate — the tree's tag in `$treeHandle`
 /// and its own `$span` — so an untouched comment renders as the bytes it
 /// spans, whatever its kind's transport would otherwise need.
@@ -670,7 +670,7 @@ fn stub_of(
 }
 
 /// Whether a node is read whole wherever it is reached: it has no named
-/// child, so nothing in it is substructure a later read would expand. Its
+/// child, so nothing in it is substructure a later read would hydrate. Its
 /// anonymous tokens, if any, come with it.
 fn is_leaf(node: &tree_sitter::Node<'_>) -> bool {
     node.named_child_count() == 0

@@ -3,7 +3,7 @@
  *
  * Returns ALL children including anonymous tokens (named: false for operators,
  * delimiters, keywords). Every entry carries `$parentHandle` + `$childIndex` for
- * O(1) expansion via `tree.nodes[handle].children()[childIndex]`.
+ * O(1) hydration via `tree.nodes[handle].children()[childIndex]`.
  *
  * Field placement comes from tree-sitter's own `fieldNameForChild(i)` —
  * the grammar-author-declared field names. Anonymous identifier-shaped
@@ -23,7 +23,7 @@ import type { AnyNodeData, AnyTreeNode, FormatRecord } from '@sittir/types';
  *
  * Replaces nodeById(id) with a nodes[] array. Child entries carry
  * $parentHandle (parent index into nodes[]) + $childIndex (position in parent's
- * child array). O(1) expansion via nodes[handle].children()[childIndex].
+ * child array). O(1) hydration via nodes[handle].children()[childIndex].
  */
 export interface TreeHandle {
 	/** The root node of the tree. */
@@ -35,7 +35,7 @@ export interface TreeHandle {
 	 * through this method instead of running `readUntypedNode(handle, childIndex)`
 	 * directly. Native-engine handles set this to a closure that
 	 * calls `engine.diagnostics.parseAndRead(source)` (root) /
-	 * `engine.diagnostics.readUntypedNode(handle, childIndex)` (expansion) so reads
+	 * `engine.diagnostics.readUntypedNode(handle, childIndex)` (hydration) so reads
 	 * stay inside the engine that owns the tree. `depth` counts the levels
 	 * the read expands: absent is one, `Infinity` is the whole subtree.
 	 */
@@ -65,7 +65,7 @@ export interface TreeHandle {
 
 /**
  * Push a tree-sitter node into the handle's nodes[] array and return its index.
- * The returned index is stored as `$parentHandle` on child entries so expansion
+ * The returned index is stored as `$parentHandle` on child entries so hydration
  * can navigate back to this node and access its children by index.
  */
 function pushNode(tree: TreeHandle, node: AnyTreeNode): number {
@@ -251,7 +251,7 @@ export interface Stub {
 }
 
 /**
- * Whether `node` is a stub: it carries the coordinate a later read expands it at. A
+ * Whether `node` is a stub: it carries the coordinate a later read hydrates it at. A
  * read stamps `$parentHandle` only beside `$childIndex`, so the pair is the test.
  */
 export function isStub(node: unknown): node is Stub {
@@ -264,6 +264,6 @@ export function isStub(node: unknown): node is Stub {
  * The node a stub names, read `depth` levels (one when absent) and unwrapped;
  * anything that is not a stub comes back as it is.
  */
-export function expandStub<T>(entry: T, tree: TreeHandle, depth?: number): T | AnyNodeData {
+export function hydrateStub<T>(entry: T, tree: TreeHandle, depth?: number): T | AnyNodeData {
 	return isStub(entry) ? readUntypedNode(tree, entry.$parentHandle, entry.$childIndex, depth) : entry;
 }

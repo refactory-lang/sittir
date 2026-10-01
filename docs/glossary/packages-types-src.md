@@ -48,7 +48,7 @@ The options a single render takes beside the language's render options: `ignoreF
 
 ### `packages/types/src/engine-api.ts::ParseOptions`
 
-How far one read expands. The default is lazy: a read returns one level, and a child with substructure comes back as a stub the accessors expand on demand. `deep` expands the whole subtree in one pass instead: one crossing instead of one per level, at the cost of reading what you may not touch.
+How far one read expands. The default is lazy: a read returns one level, and a child with substructure comes back as a stub the accessors hydrate on demand. `deep` expands the whole subtree in one pass instead: one crossing instead of one per level, at the cost of reading what you may not touch.
 
 ### `packages/types/src/engine-api.ts::EngineIdentity`
 

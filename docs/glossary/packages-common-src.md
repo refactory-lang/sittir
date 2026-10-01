@@ -56,7 +56,7 @@ The one object an engine shares with every node it stamps. `current` is the live
 
 ### `packages/common/src/engine-scope.ts::inEngine`
 
-Runs a synchronous call with a handle in scope and restores the previous one afterwards, also when the call throws. Every builder call, wrap and lazy child expansion, and `$with` and `$trivia` setter runs inside it, so a node created there is stamped with that engine's handle. It never wraps an `await`: the scope is a module-level variable that only a synchronous call may hold.
+Runs a synchronous call with a handle in scope and restores the previous one afterwards, also when the call throws. Every builder call, wrap and lazy child hydration, and `$with` and `$trivia` setter runs inside it, so a node created there is stamped with that engine's handle. It never wraps an `await`: the scope is a module-level variable that only a synchronous call may hold.
 
 ### `packages/common/src/engine-scope.ts::sameLanguage`
 
@@ -72,7 +72,7 @@ Records the engine handle that read a tree, so the wrap layer can find it from t
 
 ### `packages/common/src/engine-scope.ts::inTreeEngine`
 
-Runs a call inside the handle of the engine that read a tree, or plainly when the tree is bound to none. Every wrap of a read node goes through it, so a child expanded long after the parse returned, outside any engine call, is stamped with the reading engine.
+Runs a call inside the handle of the engine that read a tree, or plainly when the tree is bound to none. Every wrap of a read node goes through it, so a child hydrated long after the parse returned, outside any engine call, is stamped with the reading engine.
 
 ### `packages/common/src/engine-scope.ts::currentHandle`
 
@@ -88,7 +88,7 @@ A lazily rendered text: the render runs on first use and its text is cached. `sa
 
 ### `packages/common/src/engine.ts::NativeEngineDiagnostics`
 
-The public `EngineDiagnostics` fixed to the native engine's types (a root that carries the whole-file span, a `TreeHandle`), plus `readUntypedNode`, the expansion read only the native engine has. Reached through `SittirEngine.diagnostics` rather than the engine's own surface, because it returns raw node data with reader stubs for children; the public entry point is `parse`, which wraps what these produce.
+The public `EngineDiagnostics` fixed to the native engine's types (a root that carries the whole-file span, a `TreeHandle`), plus `readUntypedNode`, the hydration read only the native engine has. Reached through `SittirEngine.diagnostics` rather than the engine's own surface, because it returns raw node data with reader stubs for children; the public entry point is `parse`, which wraps what these produce.
 
 ### `packages/common/src/engine.ts::depthOf`
 
@@ -233,11 +233,11 @@ Whether a value is a group's config object rather than a node: a non-empty plain
 
 ### `packages/common/src/readUntypedNode.ts::isStub`
 
-Whether a node is a stub: a child a read left at its coordinate, `$parentHandle` beside `$childIndex`. A read stamps `$parentHandle` only with its index, so the pair is the whole test; every consumer that asks "is this unexpanded" asks this.
+Whether a node is a stub: a child a read left at its coordinate, `$parentHandle` beside `$childIndex`. A read stamps `$parentHandle` only with its index, so the pair is the whole test; every consumer that asks "is this unhydrated" asks this.
 
-### `packages/common/src/readUntypedNode.ts::expandStub`
+### `packages/common/src/readUntypedNode.ts::hydrateStub`
 
-The node a stub names, read `depth` levels (one when absent) and left unwrapped; anything that is not a stub comes back as it is. The list view sizes a stubbed list with it and the tools expand read nodes with it. The generated wrap module's own `expandStub` projects instead: it reads the same coordinate through `readNode`, so its result is wrapped.
+The node a stub names, read `depth` levels (one when absent) and left unwrapped; anything that is not a stub comes back as it is. The list view sizes a stubbed list with it and the tools hydrate read nodes with it. The generated wrap module's own `hydrateSelf` wraps instead: it reads the same coordinate through `readNode`, so its result is typed.
 
 ### `packages/common/src/transport-data.ts::treeHandleOf`
 

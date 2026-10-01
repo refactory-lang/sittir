@@ -122,7 +122,7 @@ pub enum NodeHandle {
     /// it reads this node.
     Own(u64),
     /// `$parentHandle`: the parent's handle, beside the node's `child_index`.
-    /// The pair is the coordinate a stub is expanded at.
+    /// The pair is the coordinate a stub is hydrated at.
     Parent(u64),
     /// `$treeHandle`: any handle of the node's tree, on a node nothing
     /// re-reads (a deep read's leaf, a trivia entry). It names only the tree

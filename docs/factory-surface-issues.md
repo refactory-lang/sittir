@@ -153,7 +153,7 @@ walker over the result. Four defects had to fall with it, and the first is why
 an earlier attempt at the switch alone fixed typescript while regressing rust:
 
 - **`resolveChild` re-read every materialized child.** Materialized nodes keep
-  `$parentHandle` and `$childIndex`, and `expandForConfig` re-reads on those two
+  `$parentHandle` and `$childIndex`, and `hydrateForConfig` re-reads on those two
   keys alone, so the raw parse node came back one level down and the slot
   filter was discarded again. A node that carries its own contents — text, slot
   keys, `$children` or `$other` — is no longer re-read. The emitter is the only

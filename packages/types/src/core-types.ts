@@ -96,7 +96,7 @@ export interface AnyNodeData {
 	$span?: { start: number; end: number };
 	/** This node's own handle, on a node a read returns: re-reading it reads this node. */
 	$handle?: number;
-	/** The parent's handle, beside `$childIndex`: the coordinate a stub is expanded at. */
+	/** The parent's handle, beside `$childIndex`: the coordinate a stub is hydrated at. */
 	$parentHandle?: number;
 	/** Any handle of this node's tree, on a node nothing re-reads (a deep read's leaf, a trivia entry, a folded coordinate): it names only the tree `$span` slices. */
 	$treeHandle?: number;

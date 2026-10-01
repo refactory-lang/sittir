@@ -49,15 +49,15 @@ describe('native node coords', () => {
 		}
 	}, 30000);
 
-	it('expands into shallow native python children to reach nested nodes', async () => {
+	it('hydrates shallow native python children to reach nested nodes', async () => {
 		const grammar = 'python';
-		// NOTE: source was 'x = 1' with a expansion target of 'identifier'.
+		// NOTE: source was 'x = 1' with a hydration target of 'identifier'.
 		// Under the VerbatimTransport design, text-only kinds degrade to
 		// bare strings in the native snapshot (assignment reads as
 		// `_left: "x"`, not a nested identifier NodeData), so 'identifier'
 		// is unfindable by design. Use a call expression instead — 'call'
 		// (depth 3) and 'argument_list' (depth 4) survive transport and
-		// exercise a deeper expansion than the original.
+		// exercise a deeper hydration than the original.
 		const source = 'x = f(1)';
 		const { Parser, lang } = await loadLanguageForGrammar(grammar);
 		const parser = new Parser();
@@ -82,7 +82,7 @@ describe('native node coords', () => {
 		}
 	}, 30000);
 
-	it('resolves root native coords without forcing a child expansion', async () => {
+	it('resolves root native coords without forcing a child hydration', async () => {
 		const grammar = 'python';
 		const source = 'x = 1';
 		const { Parser, lang } = await loadLanguageForGrammar(grammar);

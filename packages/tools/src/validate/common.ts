@@ -3,7 +3,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine, detachCoordinates, dumpMetrics, sliceSpan } from '@sittir/common';
-import { expandStub, isStub, readUntypedNode, metricsEnabled, mapTriviaEntries, storedSlotReader } from '@sittir/common/utils';
+import { hydrateStub, isStub, readUntypedNode, metricsEnabled, mapTriviaEntries, storedSlotReader } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
@@ -390,11 +390,11 @@ export function findNativeNodeId(
 			if (isKind(child) && handleForChild !== undefined && child.$childIndex !== undefined) {
 				return { handle: handleForChild, childIndex: child.$childIndex };
 			}
-			let expanded = child;
-			if (!hasEmbeddedNativeChildren(expanded) && handleForChild !== undefined && expanded.$childIndex !== undefined) {
-				expanded = read(handleForChild, expanded.$childIndex) as AnyNodeData;
+			let hydrated = child;
+			if (!hasEmbeddedNativeChildren(hydrated) && handleForChild !== undefined && hydrated.$childIndex !== undefined) {
+				hydrated = read(handleForChild, hydrated.$childIndex) as AnyNodeData;
 			}
-			const found = walk(expanded);
+			const found = walk(hydrated);
 			if (found !== null) return found;
 		}
 		return null;
@@ -437,11 +437,11 @@ export function walkNativeForKind(
 					span: spanOf(child)
 				});
 			}
-			let expanded = child;
-			if (!hasEmbeddedNativeChildren(expanded) && handleForChild !== undefined && expanded.$childIndex !== undefined) {
-				expanded = read(handleForChild, expanded.$childIndex) as AnyNodeData;
+			let hydrated = child;
+			if (!hasEmbeddedNativeChildren(hydrated) && handleForChild !== undefined && hydrated.$childIndex !== undefined) {
+				hydrated = read(handleForChild, hydrated.$childIndex) as AnyNodeData;
 			}
-			walk(expanded);
+			walk(hydrated);
 		}
 	}
 
@@ -1200,15 +1200,15 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	if (isAnonTokenPassthrough(c)) return child;
 	const { tree, factoryMap, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
 	if (shouldHaltRecursion(_depth, tree, factoryMap)) return child;
-	const expanded = expandForConfig(c, opts);
-	const rawTypeId = expanded.$type ?? c.$type;
+	const hydrated = hydrateForConfig(c, opts);
+	const rawTypeId = hydrated.$type ?? c.$type;
 	const rawKind =
 		rawTypeId !== undefined
 			? typeof rawTypeId === 'number'
 				? (opts.kindNameFromId?.(rawTypeId) ?? String(rawTypeId))
 				: rawTypeId
 			: undefined;
-	if (!rawKind) return expanded;
+	if (!rawKind) return hydrated;
 	let kind = resolveAliasedKind(rawKind, _parentKind, _fieldName, fieldAliasMap);
 	let factory = factoryMap![kind];
 	if (!factory && kind.startsWith('_')) {
@@ -1220,14 +1220,14 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		}
 	}
 	if (!factory) {
-		const inner = soleWrappedNode(expanded, opts);
-		return inner === undefined ? expanded : resolveChild(inner, { ...opts, _depth: _depth + 1 });
+		const inner = soleWrappedNode(hydrated, opts);
+		return inner === undefined ? hydrated : resolveChild(inner, { ...opts, _depth: _depth + 1 });
 	}
-	return buildWithFactory(expanded, kind, factory, { ...opts, _depth: _depth + 1 });
+	return buildWithFactory(hydrated, kind, factory, { ...opts, _depth: _depth + 1 });
 }
 
-function soleWrappedNode(expanded: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike | undefined {
-	const rec = expanded as unknown as Record<string, unknown>;
+function soleWrappedNode(hydrated: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike | undefined {
+	const rec = hydrated as unknown as Record<string, unknown>;
 	const keys = Object.keys(rec).filter((k) => k.startsWith('_') && rec[k] !== undefined);
 	if (keys.length !== 1) return undefined;
 	const value = rec[keys[0]!];
@@ -1250,11 +1250,11 @@ function carriesOwnContents(c: ReadNodeLike): boolean {
 	return Object.keys(rec).some((k) => k.startsWith('_') || k === '$children');
 }
 
-function expandForConfig(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {
+function hydrateForConfig(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {
 	const { tree } = opts;
 	if (!tree || carriesOwnContents(c)) return c;
 	try {
-		return expandStub(c, tree) as ReadNodeLike;
+		return hydrateStub(c, tree) as ReadNodeLike;
 	} catch {
 		return c;
 	}
@@ -1342,7 +1342,7 @@ function projectElements(
 		if (readValueKind(item, opts) !== seat.kind) {
 			return resolveChild(item, memberValueOpts(opts, parentKind, slotName));
 		}
-		const element = expandForConfig(item as ReadNodeLike, opts);
+		const element = hydrateForConfig(item as ReadNodeLike, opts);
 		const config = carryElementTrivia(element, nodeToConfig(element, childOpts(opts)), opts);
 		return withSeatKind(config, seat.kind);
 	});
@@ -1383,11 +1383,11 @@ function projectArmSlot(
 		return setRoute(seat.mount, undefined);
 	const childShape = opts.factoryShapes?.[seat.kind] ?? 'config';
 	if (typeof value === 'string' || modelType === 'pattern' || childShape === 'text') {
-		const args = [typeof value === 'string' ? value : readNodeText(expandForConfig(value as ReadNodeLike, opts), opts)];
+		const args = [typeof value === 'string' ? value : readNodeText(hydrateForConfig(value as ReadNodeLike, opts), opts)];
 		out[key] = args;
 		return setRoute(seat.mount, args);
 	}
-	const child = expandForConfig(value as ReadNodeLike, opts);
+	const child = hydrateForConfig(value as ReadNodeLike, opts);
 	const inner = childOpts(opts);
 	const config = nodeToConfig(child, inner);
 	const nested = armRouteOf(config);
@@ -1423,7 +1423,7 @@ function projectSeatedSlot(
 	const key = slotConfigKey(slot);
 	switch (seat.shape) {
 		case 'flatten': {
-			const group = nodeToConfig(expandForConfig(value as ReadNodeLike, opts), childOpts(opts));
+			const group = nodeToConfig(hydrateForConfig(value as ReadNodeLike, opts), childOpts(opts));
 			const nested = armRouteOf(group);
 			if (nested !== undefined) {
 				throw new Error(
@@ -1438,7 +1438,7 @@ function projectSeatedSlot(
 			out[key] = projectElements(childEntries(value), seat, parentKind, slot.name, opts);
 			return;
 		case 'tuple': {
-			const child = expandForConfig(value as ReadNodeLike, opts);
+			const child = hydrateForConfig(value as ReadNodeLike, opts);
 			const inner = childOpts(opts);
 			const childShape = opts.factoryShapes?.[seat.kind] ?? 'config';
 			const args = factoryArgs(seat.kind, childShape, nodeToConfig(child, inner), child, inner);

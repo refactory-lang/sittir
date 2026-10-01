@@ -157,7 +157,7 @@ interface WrapNode {
 	readonly exposesChildren: boolean;
 }
 
-interface ResolveSlotDrillConfig {
+interface ResolveSlotHydrateConfig {
 	readonly dataExpr: string;
 	readonly elemType: string;
 	readonly required: boolean;
@@ -173,9 +173,9 @@ interface ResolveSlotDrillConfig {
 	readonly elided?: boolean;
 }
 
-function resolveSlotDrillExprs(
+function resolveSlotHydrateExprs(
 	slot: SlotModel,
-	config: ResolveSlotDrillConfig
+	config: ResolveSlotHydrateConfig
 ): {
 	storeExpr: string;
 	accessorBody: string;
@@ -314,9 +314,9 @@ function dataAccessExpr(dataExpr: string, storageKey: string): string {
 function resolveSlotAccessorBody(slot: SlotModel, valueType: string): string {
 	if (slot.arity === 'many') {
 		const arrayElemType = valueType.includes(' | ') ? `(${valueType})` : valueType;
-		return `return expandChildren<${valueType}>(this.${slot.storageKey} as readonly ${arrayElemType}[] | undefined, tree)`;
+		return `return hydrateChildren<${valueType}>(this.${slot.storageKey} as readonly ${arrayElemType}[] | undefined, tree)`;
 	}
-	return `return expandChild<${valueType}>(this.${slot.storageKey}, tree)`;
+	return `return hydrateChild<${valueType}>(this.${slot.storageKey}, tree)`;
 }
 
 function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
@@ -349,9 +349,9 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 		`  const kindKeyed = _firstKindKeyedWrapChild(node, ${JSON.stringify(allowedKinds)}) as T.${node.typeName} | readonly T.${node.typeName}[] | undefined;`,
 		`  const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ${JSON.stringify(allowedKinds)});`,
 		`  if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {`,
-		`    return ${cast(`expandStub<T.${node.typeName}>(node as T.${node.typeName}, tree)`)};`,
+		`    return ${cast(`hydrateSelf<T.${node.typeName}>(node as T.${node.typeName}, tree)`)};`,
 		`  }`,
-		`  return expandChild<T.${node.typeName}>(normalizeSingularWrapSlot(filtered, "children", true, node.$type, { tree, nodeType: node.$type, slotName: "children", span: (node as _NodeData).$span }), tree);`,
+		`  return hydrateChild<T.${node.typeName}>(normalizeSingularWrapSlot(filtered, "children", true, node.$type, { tree, nodeType: node.$type, slotName: "children", span: (node as _NodeData).$span }), tree);`,
 		`}`
 	].join('\n');
 }
@@ -399,7 +399,7 @@ function emitSeparatedListWrap(
 		storageKey: canonical.storageKey,
 		arity: 'many'
 	};
-	const { storeExpr, accessorBody } = resolveSlotDrillExprs(contentModel, {
+	const { storeExpr, accessorBody } = resolveSlotHydrateExprs(contentModel, {
 		dataExpr: 'data',
 		elemType: fieldElementType(contentSlot, nodeMap, kindEntries),
 		required: node.nonEmpty,
@@ -514,7 +514,7 @@ function emitFieldStorageLines(
 				})()
 			: undefined;
 		const elided = hasOptionalElements(f);
-		const { storeExpr } = resolveSlotDrillExprs(f, {
+		const { storeExpr } = resolveSlotHydrateExprs(f, {
 			dataExpr,
 			elemType: fieldElementType(f, nodeMap, kindEntries),
 			required: isRequired(f),
@@ -612,7 +612,7 @@ function emitFieldAccessorLines(
 		const propName = f.propertyName;
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		const elided = hasOptionalElements(f);
-		const { accessorBody } = resolveSlotDrillExprs(f, {
+		const { accessorBody } = resolveSlotHydrateExprs(f, {
 			dataExpr,
 			elemType: fieldElementType(f, nodeMap, kindEntries),
 			required: isRequired(f),
@@ -678,7 +678,7 @@ function emitFieldCarryingWrap(
 	emitFieldStorageLines(slots, node.kind, 'data', lines, kindEntries, nodeMap);
 	if (children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, kindEntries);
-		const { storeExpr } = resolveSlotDrillExprs(childrenConfig.slot, {
+		const { storeExpr } = resolveSlotHydrateExprs(childrenConfig.slot, {
 			dataExpr: 'data',
 			elemType: childrenConfig.elemType,
 			required: childrenConfig.required,
@@ -692,7 +692,7 @@ function emitFieldCarryingWrap(
 	emitFieldAccessorLines(slots, node.kind, 'data', lines, kindEntries, nodeMap);
 	if (children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap, kindEntries);
-		const { accessorBody } = resolveSlotDrillExprs(childrenConfig.slot, {
+		const { accessorBody } = resolveSlotHydrateExprs(childrenConfig.slot, {
 			dataExpr: 'data',
 			elemType: childrenConfig.elemType,
 			required: childrenConfig.required,
@@ -1200,15 +1200,15 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'}'
 					]
 				: []),
-			'// Expansion helpers — call back through `readNode` so the same',
+			'// Hydration helpers — call back through `readNode` so the same',
 			'// per-handle dispatch + wrap pipeline runs at every level. Layering:',
 			'//   readNode (public entry)',
 			'//     → readUntypedNode (handle-driven — tree.read for native, JS walker otherwise)',
 			'//       → wrapNode (dispatches on $type)',
-			'//         → expandChild → readNode (recurse)',
+			'//         → hydrateChild → readNode (recurse)',
 			'// Resolve a node that IS the value being returned — a supertype',
 			'// occurrence the reader collapsed to a text leaf stands in for its',
-			'// own member. An unexpanded stub reads one more level; anything',
+			'// own member. An unhydrated stub reads one more level; anything',
 			'// else passes through untouched. It must NOT re-wrap: wrapping',
 			'// would dispatch straight back into the wrap function that called',
 			'// this, with the same data.',
@@ -1219,7 +1219,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'// its items as stubs, so the owner sizes its list view with no second read.',
 						`const _LIST_OWNER_KINDS: ReadonlySet<number> = new Set([${listOwnerMembers.map((member) => `TSKindId.${member}`).join(', ')}]);`
 					]),
-			'function expandStub<T>(entry: T, tree: TreeHandle): T {',
+			'function hydrateSelf<T>(entry: T, tree: TreeHandle): T {',
 			'  if (entry == null) return undefined as unknown as T;',
 			'  const e = entry as unknown as _NodeData;',
 			listOwnerMembers.length === 0
@@ -1240,16 +1240,16 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'  : D;'
 					]
 				: ['type ParsedOfData<D> = D;']),
-			'function expandChild<T>(entry: T, tree: TreeHandle): ParsedOfData<T> {',
-			'  const resolved = expandStub(entry, tree);',
+			'function hydrateChild<T>(entry: T, tree: TreeHandle): ParsedOfData<T> {',
+			'  const resolved = hydrateSelf(entry, tree);',
 			'  const e = resolved as unknown as _NodeData;',
 			'  if (resolved === entry && typeof e?.$type === "number") return wrapNode(e, tree) as unknown as ParsedOfData<T>;',
 			'  return resolved as unknown as ParsedOfData<T>;',
 			'}',
-			'function expandChildren<T>(entries: readonly T[] | undefined, tree: TreeHandle): ParsedOfData<T>[] {',
+			'function hydrateChildren<T>(entries: readonly T[] | undefined, tree: TreeHandle): ParsedOfData<T>[] {',
 			'  if (!entries) return [];',
 			'  const arr = Array.isArray(entries) ? entries : [entries];',
-			'  return arr.map(e => expandChild(e, tree));',
+			'  return arr.map(e => hydrateChild(e, tree));',
 			'}',
 			...(usesProjectKindEnum
 				? [
@@ -1704,15 +1704,15 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			}
 		}
 
-		lines.push('function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {');
+		lines.push('function _hydrateUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {');
 		lines.push('  const out: Record<string, unknown> = { ...(data as unknown as Record<string, unknown>) };');
 		lines.push('  for (const key of Object.keys(out)) {');
 		lines.push('    if (key.charCodeAt(0) !== 95 /* `_` */) continue;');
 		lines.push('    const value = out[key];');
 		lines.push('    if (Array.isArray(value)) {');
-		lines.push('      out[key] = expandChildren(value, tree);');
+		lines.push('      out[key] = hydrateChildren(value, tree);');
 		lines.push('    } else if (value != null) {');
-		lines.push('      out[key] = expandChild(value, tree);');
+		lines.push('      out[key] = hydrateChild(value, tree);');
 		lines.push('    }');
 		lines.push('  }');
 		lines.push('  return out as unknown as _NodeData;');
@@ -1721,7 +1721,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 
 		lines.push("function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData['$_trivia'] {");
 		lines.push(
-			'  return trivia && mapTriviaEntries(trivia, (entries) => expandChildren(entries, tree) as unknown as typeof entries);'
+			'  return trivia && mapTriviaEntries(trivia, (entries) => hydrateChildren(entries, tree) as unknown as typeof entries);'
 		);
 		lines.push('}');
 		lines.push('');
@@ -1755,12 +1755,12 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push(
 			'  const shown = own.$_trivia == null ? own : { ...own, $_trivia: _wrapTrivia(own.$_trivia, tree) };'
 		);
-		lines.push('  return inTreeEngine(tree, () => (fn ? fn(shown, tree) : _drillUnknownKindChildren(shown, tree)));');
+		lines.push('  return inTreeEngine(tree, () => (fn ? fn(shown, tree) : _hydrateUnknownKindChildren(shown, tree)));');
 		lines.push('}');
 		lines.push('');
 		lines.push('/**');
 		lines.push(' * Read a parsed tree node into a lazily-wrapped NodeData.');
-		lines.push(' * One level deep — getters expand into subtrees on demand by');
+		lines.push(' * One level deep — getters hydrate subtrees on demand by');
 		lines.push(' * recursing back through this same function. The wire `$type` is');
 		lines.push(' * the grammar symbol (stamped by the read), so no per-site alias');
 		lines.push(' * rewriting exists between the read and the wrap.');

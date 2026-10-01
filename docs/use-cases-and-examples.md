@@ -378,7 +378,7 @@ const tree = engine.parse(source);
 ### Read depth
 
 Reading is lazy: `parse` expands one level, and a child with substructure is
-a stub the accessors expand on first access. `{ deep: true }` expands the
+a stub the accessors hydrate on first access. `{ deep: true }` expands the
 whole tree up front instead — one crossing rather than one per level, at the
 cost of reading what you may never touch. A list owner (a function's
 `parameters`) is the exception to one level: it is expanded together with its
@@ -411,8 +411,8 @@ import rust from '@sittir/rust';
 
 const engine = await createEngine(rust);
 const fn = engine.parse(source).statements()[0];
-fn.name(); // expandChild: lazy expand if needed
-fn.body(); // expandChild: returns Block
+fn.name(); // hydrateChild: lazy hydrate if needed
+fn.body(); // hydrateChild: returns Block
 fn.body().statements(); // statements array
 ```
 
@@ -699,10 +699,10 @@ export function emitIsModule(grammar: GrammarModel): string {
 - [ ] `snippets.*.from({})` — template fill with coercion
 - [ ] `template('...').fill({}).read()` / `.render()` — inline templates
 - [ ] Composition: `.read()` output as slot input for another template
-- [x] `engine.parse()` with depth control, `$parentHandle` / `$childIndex` expansion
-- [ ] `engine.readUntypedNode(handle, childIndex)` for lazy expansion
+- [x] `engine.parse()` with depth control, `$parentHandle` / `$childIndex` hydration
+- [ ] `engine.readUntypedNode(handle, childIndex)` for lazy hydration
 - [ ] `engine.findAndRead()` with pattern matching
 - [ ] `engine.applyEdits()` for source modification
-- [ ] `wrap(node, tree)` — getter methods with `expandChild` for lazy expansion
+- [ ] `wrap(node, tree)` — getter methods with `hydrateChild` for lazy hydration
 - [ ] Format-preserving transforms
 - [ ] Native backend: one crossing per terminal

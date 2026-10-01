@@ -195,19 +195,19 @@ function normalizeRepeatedWrapSlot<T>(
 		return handleWrapViolation(`repeated slot ${JSON.stringify(slotName)} requires at least one value`, items, context);
 	return items;
 }
-// Expansion helpers — call back through `readNode` so the same
+// Hydration helpers — call back through `readNode` so the same
 // per-handle dispatch + wrap pipeline runs at every level. Layering:
 //   readNode (public entry)
 //     → readUntypedNode (handle-driven — tree.read for native, JS walker otherwise)
 //       → wrapNode (dispatches on $type)
-//         → expandChild → readNode (recurse)
+//         → hydrateChild → readNode (recurse)
 // Resolve a node that IS the value being returned — a supertype
 // occurrence the reader collapsed to a text leaf stands in for its
-// own member. An unexpanded stub reads one more level; anything
+// own member. An unhydrated stub reads one more level; anything
 // else passes through untouched. It must NOT re-wrap: wrapping
 // would dispatch straight back into the wrap function that called
 // this, with the same data.
-function expandStub<T>(entry: T, tree: TreeHandle): T {
+function hydrateSelf<T>(entry: T, tree: TreeHandle): T {
 	if (entry == null) return undefined as unknown as T;
 	const e = entry as unknown as _NodeData;
 	if (isStub(e)) return readNode(tree, e.$parentHandle, e.$childIndex) as unknown as T;
@@ -222,16 +222,16 @@ type ParsedOfData<D> = D extends { readonly $type: infer Id }
 		? T.ParsedByKindId[Id]
 		: D
 	: D;
-function expandChild<T>(entry: T, tree: TreeHandle): ParsedOfData<T> {
-	const resolved = expandStub(entry, tree);
+function hydrateChild<T>(entry: T, tree: TreeHandle): ParsedOfData<T> {
+	const resolved = hydrateSelf(entry, tree);
 	const e = resolved as unknown as _NodeData;
 	if (resolved === entry && typeof e?.$type === 'number') return wrapNode(e, tree) as unknown as ParsedOfData<T>;
 	return resolved as unknown as ParsedOfData<T>;
 }
-function expandChildren<T>(entries: readonly T[] | undefined, tree: TreeHandle): ParsedOfData<T>[] {
+function hydrateChildren<T>(entries: readonly T[] | undefined, tree: TreeHandle): ParsedOfData<T>[] {
 	if (!entries) return [];
 	const arr = Array.isArray(entries) ? entries : [entries];
-	return arr.map((e) => expandChild(e, tree));
+	return arr.map((e) => hydrateChild(e, tree));
 }
 function projectKindEnumStorage<T>(
 	value: T,
@@ -507,7 +507,7 @@ export function wrapProgram(data: T.Program, tree: TreeHandle): T.Program.Parsed
 		}),
 
 		definitions() {
-			return expandChildren<T.Definition>(this._definitions as readonly T.Definition[] | undefined, tree);
+			return hydrateChildren<T.Definition>(this._definitions as readonly T.Definition[] | undefined, tree);
 		},
 		$with: {
 			definitions: (...v: NonNullable<T.Program['_definitions']>[number][]) =>
@@ -558,9 +558,9 @@ export function wrapDefinition(
 			'named_node_supertyped'
 		]);
 	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
-		return expandStub<T.Definition>(node as T.Definition, tree) as unknown as T.Definition.Parsed;
+		return hydrateSelf<T.Definition>(node as T.Definition, tree) as unknown as T.Definition.Parsed;
 	}
-	return expandChild<T.Definition>(
+	return hydrateChild<T.Definition>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
 			tree,
 			nodeType: node.$type,
@@ -615,12 +615,12 @@ export function wrapGroupExpression(
 			'field_definition'
 		]);
 	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
-		return expandStub<T.GroupExpression>(node as T.GroupExpression, tree) as unknown as SupertypeSurface<
+		return hydrateSelf<T.GroupExpression>(node as T.GroupExpression, tree) as unknown as SupertypeSurface<
 			T.GroupExpression,
 			T.ParsedByKindId
 		>;
 	}
-	return expandChild<T.GroupExpression>(
+	return hydrateChild<T.GroupExpression>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
 			tree,
 			nodeType: node.$type,
@@ -678,12 +678,12 @@ export function wrapNamedNodeExpression(
 			'field_definition'
 		]);
 	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
-		return expandStub<T.NamedNodeExpression>(node as T.NamedNodeExpression, tree) as unknown as SupertypeSurface<
+		return hydrateSelf<T.NamedNodeExpression>(node as T.NamedNodeExpression, tree) as unknown as SupertypeSurface<
 			T.NamedNodeExpression,
 			T.ParsedByKindId
 		>;
 	}
-	return expandChild<T.NamedNodeExpression>(
+	return hydrateChild<T.NamedNodeExpression>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
 			tree,
 			nodeType: node.$type,
@@ -708,7 +708,7 @@ export function wrapEscapeSequence(data: T.EscapeSequence, tree: TreeHandle): T.
 		}),
 
 		content() {
-			return expandChild<string>(this._content, tree);
+			return hydrateChild<string>(this._content, tree);
 		},
 		$with: {
 			content: (v: NonNullable<T.EscapeSequence['_content']>) =>
@@ -730,12 +730,12 @@ export function wrapNodeIdentifier(
 		| undefined;
 	const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['identifier']);
 	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
-		return expandStub<T.NodeIdentifier>(node as T.NodeIdentifier, tree) as unknown as SupertypeSurface<
+		return hydrateSelf<T.NodeIdentifier>(node as T.NodeIdentifier, tree) as unknown as SupertypeSurface<
 			T.NodeIdentifier,
 			T.ParsedByKindId
 		>;
 	}
-	return expandChild<T.NodeIdentifier>(
+	return hydrateChild<T.NodeIdentifier>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
 			tree,
 			nodeType: node.$type,
@@ -759,7 +759,7 @@ export function wrapCapture(data: T.Capture, tree: TreeHandle): T.Capture.Parsed
 		}),
 
 		name() {
-			return expandChild<T.ImmediateIdentifier>(this._name, tree);
+			return hydrateChild<T.ImmediateIdentifier>(this._name, tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.Capture['_name']>) => wrapCapture({ ...$edited(data), _name: v }, tree)
@@ -781,7 +781,7 @@ export function wrapString(data: T.String, tree: TreeHandle): T.String.Parsed {
 		}),
 
 		stringContent() {
-			return expandChild<T.StringContent | undefined>(this._string_content, tree);
+			return hydrateChild<T.StringContent | undefined>(this._string_content, tree);
 		},
 		$with: {
 			stringContent: (v: NonNullable<T.String['_string_content']>) =>
@@ -804,7 +804,7 @@ export function wrapImmediateString(data: T.ImmediateString, tree: TreeHandle): 
 		}),
 
 		stringContent() {
-			return expandChild<T.StringContent | undefined>(this._string_content, tree);
+			return hydrateChild<T.StringContent | undefined>(this._string_content, tree);
 		},
 		$with: {
 			stringContent: (v: NonNullable<T.ImmediateString['_string_content']>) =>
@@ -827,7 +827,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 		}),
 
 		contents() {
-			return expandChildren<T.StringContentText | T.EscapeSequence>(
+			return hydrateChildren<T.StringContentText | T.EscapeSequence>(
 				this._content as readonly (T.StringContentText | T.EscapeSequence)[] | undefined,
 				tree
 			);
@@ -853,7 +853,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 		}),
 
 		elements() {
-			return expandChildren<T.Capture | T.String | T.Identifier>(
+			return hydrateChildren<T.Capture | T.String | T.Identifier>(
 				this._elements as readonly (T.Capture | T.String | T.Identifier)[] | undefined,
 				tree
 			);
@@ -880,7 +880,7 @@ export function wrapComment(data: T.Comment, tree: TreeHandle): T.Comment.Parsed
 		}),
 
 		content() {
-			return expandChild<string>(this._content, tree);
+			return hydrateChild<string>(this._content, tree);
 		},
 		$with: {
 			content: (v: NonNullable<T.Comment['_content']>) => wrapComment({ ...$edited(data), _content: v }, tree)
@@ -919,10 +919,10 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 		),
 
 		definitions() {
-			return expandChildren<T.Definition>(this._definitions as readonly T.Definition[] | undefined, tree);
+			return hydrateChildren<T.Definition>(this._definitions as readonly T.Definition[] | undefined, tree);
 		},
 		contents() {
-			return expandChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
+			return hydrateChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
 				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
 				tree
 			);
@@ -967,10 +967,10 @@ export function wrapGrouping(data: T.Grouping, tree: TreeHandle): T.Grouping.Par
 		),
 
 		groupingGroups() {
-			return expandChildren<T.GroupingGroup>(this._grouping_group as readonly T.GroupingGroup[] | undefined, tree);
+			return hydrateChildren<T.GroupingGroup>(this._grouping_group as readonly T.GroupingGroup[] | undefined, tree);
 		},
 		contents() {
-			return expandChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
+			return hydrateChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
 				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
 				tree
 			);
@@ -1015,10 +1015,10 @@ export function wrapMissingNode(data: T.MissingNode, tree: TreeHandle): T.Missin
 		),
 
 		name() {
-			return expandChild<T.Identifier | T.String | undefined>(this._name, tree);
+			return hydrateChild<T.Identifier | T.String | undefined>(this._name, tree);
 		},
 		contents() {
-			return expandChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
+			return hydrateChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
 				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
 				tree
 			);
@@ -1065,10 +1065,10 @@ export function wrapAnonymousNode(data: T.AnonymousNode, tree: TreeHandle): T.An
 		),
 
 		name() {
-			return expandChild<T.String | TSKindId.Underscore>(this._name, tree);
+			return hydrateChild<T.String | TSKindId.Underscore>(this._name, tree);
 		},
 		contents() {
-			return expandChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
+			return hydrateChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
 				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
 				tree
 			);
@@ -1094,9 +1094,9 @@ export function wrapNamedNode(
 		| undefined;
 	const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['named_node_plain', 'named_node_supertyped']);
 	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
-		return expandStub<T.NamedNode>(node as T.NamedNode, tree) as unknown as T.NamedNode.Parsed;
+		return hydrateSelf<T.NamedNode>(node as T.NamedNode, tree) as unknown as T.NamedNode.Parsed;
 	}
-	return expandChild<T.NamedNode>(
+	return hydrateChild<T.NamedNode>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
 			tree,
 			nodeType: node.$type,
@@ -1129,10 +1129,10 @@ export function wrapFieldDefinition(data: T.FieldDefinition, tree: TreeHandle): 
 		...(_order && { $slotOrder: _order }),
 
 		name() {
-			return expandChild<T.Identifier>(this._name, tree);
+			return hydrateChild<T.Identifier>(this._name, tree);
 		},
 		definition() {
-			return expandChild<T.Definition>(this._definition, tree);
+			return hydrateChild<T.Definition>(this._definition, tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.FieldDefinition['_name']>) => wrapFieldDefinition({ ...$edited(data), _name: v }, tree),
@@ -1156,7 +1156,7 @@ export function wrapNegatedField(data: T.NegatedField, tree: TreeHandle): T.Nega
 		}),
 
 		identifier() {
-			return expandChild<T.Identifier>(this._identifier, tree);
+			return hydrateChild<T.Identifier>(this._identifier, tree);
 		},
 		$with: {
 			identifier: (v: NonNullable<T.NegatedField['_identifier']>) =>
@@ -1208,13 +1208,13 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 			return this._prefix;
 		},
 		name() {
-			return expandChild<T.ImmediateIdentifier>(this._name, tree);
+			return hydrateChild<T.ImmediateIdentifier>(this._name, tree);
 		},
 		type() {
 			return this._type;
 		},
 		parameters() {
-			return expandChild<T.Parameters | undefined>(this._parameters, tree);
+			return hydrateChild<T.Parameters | undefined>(this._parameters, tree);
 		},
 		$with: {
 			prefix: (v: NonNullable<T.Predicate['_prefix']>) => wrapPredicate({ ...$edited(data), _prefix: v }, tree),
@@ -1246,10 +1246,10 @@ export function wrapGroupExpressionArm(data: T.GroupExpressionArm, tree: TreeHan
 		}),
 
 		left() {
-			return expandChild<T.Definition | T.GroupExpressionArm>(this._left, tree);
+			return hydrateChild<T.Definition | T.GroupExpressionArm>(this._left, tree);
 		},
 		right() {
-			return expandChild<T.Definition | T.GroupExpressionArm>(this._right, tree);
+			return hydrateChild<T.Definition | T.GroupExpressionArm>(this._right, tree);
 		},
 		$with: {
 			left: (v: NonNullable<T.GroupExpressionArm['_left']>) =>
@@ -1283,10 +1283,10 @@ export function wrapNamedNodeExpressionArm(
 		}),
 
 		left() {
-			return expandChild<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._left, tree);
+			return hydrateChild<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._left, tree);
 		},
 		right() {
-			return expandChild<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._right, tree);
+			return hydrateChild<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._right, tree);
 		},
 		$with: {
 			left: (v: NonNullable<T.NamedNodeExpressionArm['_left']>) =>
@@ -1321,7 +1321,7 @@ export function wrapGroupingGroup(data: T.GroupingGroup, tree: TreeHandle): T.Gr
 		),
 
 		groupExpression() {
-			return expandChild<T.Definition | T.GroupExpressionArm>(this._group_expression, tree);
+			return hydrateChild<T.Definition | T.GroupExpressionArm>(this._group_expression, tree);
 		},
 		anchor() {
 			return this._anchor;
@@ -1349,9 +1349,9 @@ export function wrapNamedNodeGroup(
 		kindKeyed ??
 		_filterWrapChildrenByKind(node.$other, ['named_node_group_children', 'named_node_group_anchored_last']);
 	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
-		return expandStub<T.NamedNodeGroup>(node as T.NamedNodeGroup, tree) as unknown as T.NamedNodeGroup.Parsed;
+		return hydrateSelf<T.NamedNodeGroup>(node as T.NamedNodeGroup, tree) as unknown as T.NamedNodeGroup.Parsed;
 	}
-	return expandChild<T.NamedNodeGroup>(
+	return hydrateChild<T.NamedNodeGroup>(
 		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
 			tree,
 			nodeType: node.$type,
@@ -1402,13 +1402,13 @@ export function wrapNamedNodePlain(data: T.NamedNodePlain, tree: TreeHandle): T.
 		),
 
 		name() {
-			return expandChild<T.Identifier | TSKindId.Underscore>(this._name, tree);
+			return hydrateChild<T.Identifier | TSKindId.Underscore>(this._name, tree);
 		},
 		namedNodeGroup() {
-			return expandChild<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
+			return hydrateChild<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
 		},
 		contents() {
-			return expandChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
+			return hydrateChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
 				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
 				tree
 			);
@@ -1470,16 +1470,16 @@ export function wrapNamedNodeSupertyped(data: T.NamedNodeSupertyped, tree: TreeH
 		),
 
 		supertype() {
-			return expandChild<T.Identifier>(this._supertype, tree);
+			return hydrateChild<T.Identifier>(this._supertype, tree);
 		},
 		name() {
-			return expandChild<T.ImmediateIdentifier | T.ImmediateString>(this._name, tree);
+			return hydrateChild<T.ImmediateIdentifier | T.ImmediateString>(this._name, tree);
 		},
 		namedNodeGroup() {
-			return expandChild<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
+			return hydrateChild<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
 		},
 		contents() {
-			return expandChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
+			return hydrateChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
 				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
 				tree
 			);
@@ -1530,7 +1530,7 @@ export function wrapNamedNodeGroupChildren(
 			return this._anchor;
 		},
 		namedNodeExpressions() {
-			return expandChildren<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
+			return hydrateChildren<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
 				this._named_node_expressions as
 					| readonly (T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]
 					| undefined,
@@ -1586,7 +1586,7 @@ export function wrapNamedNodeGroupAnchoredLast(
 			return this._anchor;
 		},
 		namedNodeExpressions() {
-			return expandChildren<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
+			return hydrateChildren<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
 				this._named_node_expressions as
 					| readonly (T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]
 					| undefined,
@@ -1594,7 +1594,7 @@ export function wrapNamedNodeGroupAnchoredLast(
 			);
 		},
 		last() {
-			return expandChild<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._last, tree);
+			return hydrateChild<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._last, tree);
 		},
 		$with: {
 			anchor: (v: NonNullable<T.NamedNodeGroupAnchoredLast['_anchor']>) =>
@@ -1657,22 +1657,22 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
 export type ProgramTree = T.ParsedByKindId[TSKindId.Program] & ParsedRoot;
 
-function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {
+function _hydrateUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {
 	const out: Record<string, unknown> = { ...(data as unknown as Record<string, unknown>) };
 	for (const key of Object.keys(out)) {
 		if (key.charCodeAt(0) !== 95 /* `_` */) continue;
 		const value = out[key];
 		if (Array.isArray(value)) {
-			out[key] = expandChildren(value, tree);
+			out[key] = hydrateChildren(value, tree);
 		} else if (value != null) {
-			out[key] = expandChild(value, tree);
+			out[key] = hydrateChild(value, tree);
 		}
 	}
 	return out as unknown as _NodeData;
 }
 
 function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData['$_trivia'] {
-	return trivia && mapTriviaEntries(trivia, (entries) => expandChildren(entries, tree) as unknown as typeof entries);
+	return trivia && mapTriviaEntries(trivia, (entries) => hydrateChildren(entries, tree) as unknown as typeof entries);
 }
 
 const _ALIAS_ENVELOPES: ReadonlySet<_NodeData['$type']> = new Set([]);
@@ -1767,12 +1767,12 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	const fn = typeof type === 'number' ? _wrapTable[type] : undefined;
 	const own = _dropSpelling(type === data.$type ? _withoutDisplay(data) : data);
 	const shown = own.$_trivia == null ? own : { ...own, $_trivia: _wrapTrivia(own.$_trivia, tree) };
-	return inTreeEngine(tree, () => (fn ? fn(shown, tree) : _drillUnknownKindChildren(shown, tree)));
+	return inTreeEngine(tree, () => (fn ? fn(shown, tree) : _hydrateUnknownKindChildren(shown, tree)));
 }
 
 /**
  * Read a parsed tree node into a lazily-wrapped NodeData.
- * One level deep — getters expand into subtrees on demand by
+ * One level deep — getters hydrate subtrees on demand by
  * recursing back through this same function. The wire `$type` is
  * the grammar symbol (stamped by the read), so no per-site alias
  * rewriting exists between the read and the wrap.

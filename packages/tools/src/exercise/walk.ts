@@ -73,7 +73,7 @@ function collectChildren(node: WalkNode): unknown[] {
 		try {
 			children.push(value.call(node));
 		} catch {
-			// Ignore expansion failures; traversal is best-effort diagnostic output.
+			// Ignore hydration failures; traversal is best-effort diagnostic output.
 		}
 	}
 	return children;

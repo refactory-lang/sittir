@@ -53,7 +53,7 @@
  *   - emits a richer matrix for the selected target:
  *     `js.shallow`, `js.deep`, `native.shallow`, `native.deep`
  *   - each lane shows the boundary payload passed to that renderer and the
- *     rendered output / error, so what each lane expands and what it sends
+ *     rendered output / error, so what each lane hydrates and what it sends
  *     to the transport can be compared side-by-side.
  *   - when native wrap is available, `native.deep.nodeData` follows the
  *     validator-equivalent materialized wrap path; the native reader's own
@@ -554,7 +554,7 @@ export async function probe(
 	// The native engine parses internally via the `tree_sitter` Rust
 	// crate (zero web-tree-sitter). A `nativeTreeHandle` wraps the
 	// engine; the grammar's `readNode` then routes the read +
-	// every expansion through `tree.read(id)` → napi. tree-
+	// every hydration through `tree.read(id)` → napi. tree-
 	// sitter `Node::id()` is per-tree, so the engine that parsed the
 	// tree owns the id space — the per-handle dispatch keeps reads
 	// inside that engine. Wasm parser above is kept only so the
@@ -572,7 +572,7 @@ export async function probe(
 			// address the native engine's tree (separate id spaces).
 			// Read root via the native handle, walk its NodeData to
 			// find the matching subtree, then re-read THAT node by its
-			// native `$nodeId` so expansion fires under napi.
+			// native `$nodeId` so hydration fires under napi.
 			const root = readNode ? readNode(handle) : handle.read?.();
 			const target = opts.kind
 				? findInNodeData(root, opts.kind, await loadKindNameFromId(grammar))

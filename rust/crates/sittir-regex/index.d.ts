@@ -75,7 +75,7 @@ export declare class SittirEngine {
    */
   parseAndRead(source: string, depth?: number | undefined | null): string
   /**
-   * Expand one child of the node named by `handle`.
+   * Hydrate one child of the node named by `handle`.
    *
    * The handle names its own tree, so a handle from a tree that has
    * been disposed — or one never minted here — is refused rather

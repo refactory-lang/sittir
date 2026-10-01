@@ -1,5 +1,5 @@
 // Read depth: `engine.parse(source)` expands one level and leaves each child
-// with substructure as a stub the accessors expand on demand;
+// with substructure as a stub the accessors hydrate on demand;
 // `engine.parse(source, { deep: true })` expands the whole tree up front.
 // Nothing was rebuilt under either, so both fold back to the root's
 // coordinate and render the source byte for byte.
@@ -15,7 +15,7 @@ const SOURCE = 'pub fn main() { let x = 1; }\nstruct S { a: u8 }\n';
 const kindOf = (statement: { readonly $type: number } | number): number =>
 	typeof statement === 'number' ? statement : statement.$type;
 
-/** Every node in `value` that is still an unexpanded read stub: it carries the
+/** Every node in `value` that is still an unhydrated read stub: it carries the
  *  coordinates to read one more level and none of the storage that read would
  *  produce. */
 function countStubs(value: unknown): number {
@@ -31,7 +31,7 @@ function countStubs(value: unknown): number {
 
 type Stub = Record<string, unknown> & { readonly $type: number; readonly $parentHandle: number; readonly $childIndex: number };
 
-/** The unexpanded read stubs directly under `value`'s slots, in slot order. */
+/** The unhydrated read stubs directly under `value`'s slots, in slot order. */
 function stubsOf(value: Record<string, unknown>): Stub[] {
 	const children = Object.entries(value)
 		.filter(([key]) => key.startsWith('_'))

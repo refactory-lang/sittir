@@ -6,7 +6,7 @@ import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { toEditAt } from './edit.ts';
 import { Delimiter } from './delimiter.ts';
-import { expandStub, isStub, readUntypedNode, type TreeHandle } from './readUntypedNode.ts';
+import { hydrateStub, isStub, readUntypedNode, type TreeHandle } from './readUntypedNode.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { Source };
@@ -316,7 +316,7 @@ const storedElementsOf = (node: object, spec: ListViewSpec, tree: TreeHandle | u
 		return Array.isArray(elements) ? elements : elements == null ? [] : [elements];
 	};
 	if (spec.count in list || !isStub(list)) return elementsIn(list);
-	return tree === undefined ? undefined : elementsIn(expandStub(list, tree));
+	return tree === undefined ? undefined : elementsIn(hydrateStub(list, tree));
 };
 
 export function withListView<T extends object>(node: T, spec: ListViewSpec, tree?: TreeHandle): T {
@@ -607,7 +607,7 @@ function carryTriviaThroughWith(node: AnyNodeData, handle: EngineHandle | undefi
 }
 
 export { numberText, type NumberBase } from './number.ts';
-export { expandStub, isStub, readUntypedNode, type Stub, type TreeHandle } from './readUntypedNode.ts';
+export { hydrateStub, isStub, readUntypedNode, type Stub, type TreeHandle } from './readUntypedNode.ts';
 export { toEditAt } from './edit.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';

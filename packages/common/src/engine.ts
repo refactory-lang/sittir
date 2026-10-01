@@ -187,7 +187,7 @@ interface NativeParseResultShape {
  * Frees a native tree once JavaScript can no longer read from it.
  *
  * Reads are lazy, so a tree has to outlive the call that parsed it: every
- * unexpanded child holds a handle the native side must still be able to
+ * unhydrated child holds a handle the native side must still be able to
  * answer. Nothing on the JS side knows when the last of those handles is
  * gone — but the garbage collector does. Each tree gets a token that its
  * `read` closure captures, so the token stays reachable exactly as long as

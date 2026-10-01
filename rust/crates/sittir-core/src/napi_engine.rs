@@ -9,7 +9,7 @@
 //! ## Trees are kept, not replaced
 //!
 //! Reads are lazy: a parse hands back one level, and every child with
-//! substructure comes back as a stub carrying the handle to expand it later.
+//! substructure comes back as a stub carrying the handle to hydrate it later.
 //! Those handles stay live for as long as the caller holds any node, so an
 //! engine that kept only the newest parse would answer a held tree's handles
 //! out of a different tree — and, because handles are dense indices that
@@ -164,7 +164,7 @@ macro_rules! napi_engine {
                 }
             }
 
-            /// Expand one child of the node named by `handle`.
+            /// Hydrate one child of the node named by `handle`.
             ///
             /// The handle names its own tree, so a handle from a tree that has
             /// been disposed — or one never minted here — is refused rather

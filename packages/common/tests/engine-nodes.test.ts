@@ -58,7 +58,7 @@ function fakeLanguage(name: string) {
 	};
 	return {
 		language: { name, load: async () => hooks },
-		expand: (tree: object) => inTreeEngine(tree, () => node({ $type: 5, $text: 'lazy', $source: Source.Ts })),
+		hydrate: (tree: object) => inTreeEngine(tree, () => node({ $type: 5, $text: 'lazy', $source: Source.Ts })),
 		trees
 	};
 }
@@ -98,12 +98,12 @@ describe('the nodes an engine builds and reads', () => {
 		expect(two.build.leaf('a').$render()).toBe('B:  :1');
 	});
 
-	it('stamps a parsed root and a child expanded after the parse returned', async () => {
+	it('stamps a parsed root and a child hydrated after the parse returned', async () => {
 		const fake = fakeLanguage('fake');
 		const engine = await engineOf(fake);
 		const root = engine.parse('src');
 		expect(stampOf(root)).toBe(engine);
-		expect(stampOf(fake.expand(fake.trees[0]!))).toBe(engine);
+		expect(stampOf(fake.hydrate(fake.trees[0]!))).toBe(engine);
 	});
 
 	it('detaches every node of a disposed engine and leaves another engine alone', async () => {

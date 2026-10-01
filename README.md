@@ -351,14 +351,14 @@ source ──▶ tree-sitter parse ──▶ TreeHandle ──▶ readUntypedNod
                                                               wrapNode(node, tree)
                                                                        ▼
                                                        NodeData + fluent getters
-                                                       + lazy expansion via $parentHandle
+                                                       + lazy hydration via $parentHandle
 ```
 
 `readUntypedNode` is the shared parse-tree reader: it maps field children into
 `_<field>` slots and unfielded children into `$children`, recurses to a
 configurable depth, and produces the same `NodeData` shape whether the
 parse tree came from `web-tree-sitter` or `@ast-grep/napi`. `wrapNode`
-attaches the typed accessor surface and expands each lazy stub (`$parentHandle`
+attaches the typed accessor surface and hydrates each lazy stub (`$parentHandle`
 + `$childIndex`) back through the engine's reader on demand.
 
 #### Edit pipeline
@@ -385,7 +385,7 @@ lives in `packages/<lang>/grammar.sittir.ts`.
 | `types.ts`                                    | Per-kind interfaces, `TSKindId` const enum, `KIND_NAMES`, `ConfigFor<K>`, `NamespaceMap`, supertype unions |
 | `factories.ts`                                | One factory per kind: `kind.strict(config)` and the coercing `kind(input)` with shared output          |
 | `from.ts`                                     | Closed-form coercion resolver — no runtime inference                                          |
-| `wrap.ts`                                     | `wrapNode(node, tree)` / `readNode(node)` — typed accessors with lazy expansion             |
+| `wrap.ts`                                     | `wrapNode(node, tree)` / `readNode(node)` — typed accessors with lazy hydration             |
 | `ir.ts`                                       | `ir.*` namespace + grouped supertype namespaces (`expression`, `statement`, ...)               |
 | `is.ts`                                       | Kind guards (`is.*`)                                                                           |
 | `consts.ts`                                   | Discoverable arrays/maps: kind names, keywords, operators                                      |
