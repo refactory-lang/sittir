@@ -157,12 +157,15 @@ type AnyKeys = { readonly [Name: string]: string };
 type FlatGetters<N, F, ByChild> =
 	F extends FlatHint<infer S, infer G, infer Keys, boolean>
 		? {
-				[P in keyof Keys & string as G[Keys[P] & keyof G] extends () => unknown ? P : never]: G[Keys[P] & keyof G] extends () => infer R
-					? () => Resolve<R, ByChild>
-					: never;
+				readonly [P in FlatGetterNames<F>]: G[Keys[P] & keyof G] extends () => infer R ? () => Resolve<R, ByChild> : never;
 			} & {
 				[P in S & MethodKeys<N> as P extends keyof Keys ? never : P]: N[P] extends () => infer R ? () => Resolve<NonNullable<R>, ByChild> : never;
 			}
+		: never;
+
+type FlatGetterNames<F> =
+	F extends FlatHint<string, infer G, infer Keys, boolean>
+		? keyof { [P in keyof Keys & string as G[Keys[P] & keyof G] extends () => unknown ? P : never]: 1 } & string
 		: never;
 
 type SeatInput<N, S extends string, Lookup> = S extends keyof SlotHintsOf<N> ? AdmitBound<NonNullable<SlotInput<N, S>>, Lookup> : never;
@@ -218,7 +221,9 @@ type PresentMembers<Surface, N, H, F, ByChild, Lookup> =
 
 type AbsentMembers<Surface, N, H, F, ByChild, Lookup> =
 	F extends FlatHint<infer S, infer G, infer Keys, boolean, infer Stored>
-		? { readonly [K in Stored]?: undefined } & { [P in S & MethodKeys<N> as P extends keyof Keys ? never : P]: () => undefined } & {
+		? { readonly [K in Stored]?: undefined } & { readonly [P in FlatGetterNames<F>]?: undefined } & {
+				[P in S & MethodKeys<N> as P extends keyof Keys ? never : P]: () => undefined;
+			} & {
 				readonly $with: {
 					[P in SoleKey<RequiredFlatKeys<F>>]: (
 						value: AdmitBound<SlotInput<G, Keys[P] & keyof SlotHintsOf<G>>, Lookup>

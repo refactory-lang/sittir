@@ -56,3 +56,16 @@ export function aBuiltNodeNarrowsTheSameWay(): void {
 		expectTrue<Equals<undefined extends ReturnType<typeof c.parameter> ? true : false, false>>();
 	}
 }
+
+export function aFlattenedFieldIsAFunctionOnlyWhileTheGroupIsPresent(c: T.CatchClause.Parsed): void {
+	expectTrue<Equals<undefined extends typeof c.parameter ? true : false, true>>();
+	expectTrue<Equals<NonNullable<typeof c.parameter> extends () => unknown ? true : false, true>>();
+	if (c.parameter !== undefined) {
+		expectTrue<Equals<undefined extends ReturnType<typeof c.parameter> ? true : false, false>>();
+		expectTrue<Equals<undefined extends typeof c.type ? true : false, false>>();
+		expectTrue<Equals<undefined extends typeof c._catch_clause_group ? true : false, false>>();
+	} else {
+		expectTrue<Equals<typeof c.parameter, undefined>>();
+		expectTrue<Equals<typeof c.type, undefined>>();
+	}
+}

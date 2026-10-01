@@ -8729,6 +8729,7 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 			},
 			{
 				slot: 'matchBlockArms',
+				stored: '_match_block_arms',
 				kind: TSKindId.MatchBlockArms as const,
 				make: RAW.buildMatchBlockArms,
 				keys: [
@@ -8837,6 +8838,7 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 			},
 			{
 				slot: 'pattern',
+				stored: '_pattern',
 				kind: TSKindId.MatchPattern as const,
 				make: RAW.buildMatchPattern,
 				keys: [
@@ -13641,6 +13643,7 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 			},
 			{
 				slot: 'pattern',
+				stored: '_pattern',
 				kind: TSKindId.MatchPattern as const,
 				make: RAW.buildMatchPattern,
 				keys: [
@@ -13714,6 +13717,7 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 			},
 			{
 				slot: 'pattern',
+				stored: '_pattern',
 				kind: TSKindId.MatchPattern as const,
 				make: RAW.buildMatchPattern,
 				keys: [

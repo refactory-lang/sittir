@@ -1632,7 +1632,7 @@ function groupSeatRuntimeSpecs(
 			rest,
 			...(required ? { required } : {})
 		}));
-		return `{ slot: ${JSON.stringify(hint.slot)}, kind: ${factoryTypeDiscriminant(hint.groupKind, nodeMap, kindEntries)}, make: ${factoryScope}${hint.factory}, keys: ${JSON.stringify(keys)} }`;
+		return `{ slot: ${JSON.stringify(hint.slot)}, stored: ${JSON.stringify(hint.stored)}, kind: ${factoryTypeDiscriminant(hint.groupKind, nodeMap, kindEntries)}, make: ${factoryScope}${hint.factory}, keys: ${JSON.stringify(keys)} }`;
 	});
 }
 

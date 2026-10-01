@@ -3025,6 +3025,7 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 			),
 			{
 				slot: 'step',
+				stored: '_step',
 				kind: TSKindId.SliceGroup as const,
 				make: buildSliceGroup,
 				keys: [{ name: 'expression', rest: false }]

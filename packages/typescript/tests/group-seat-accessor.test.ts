@@ -14,7 +14,7 @@ const catchOf = (source: string) => {
 
 const presentCatchOf = (source: string) => {
 	const handler = catchOf(source);
-	if (handler._catch_clause_group === undefined) throw new Error('no catch group');
+	if (handler.parameter === undefined) throw new Error('no catch group');
 	return handler;
 };
 

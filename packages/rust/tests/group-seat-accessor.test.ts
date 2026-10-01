@@ -13,7 +13,7 @@ const matchBlockOf = (source: string) => {
 	const expression = statement.content();
 	if (!rs.is.matchExpression(expression)) throw new Error('not a match');
 	const block = expression.body();
-	if (block._match_block_arms === undefined) throw new Error('no arms');
+	if (block.matchArms === undefined) throw new Error('no arms');
 	return block;
 };
 

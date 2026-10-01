@@ -16502,7 +16502,7 @@ The facts each flattened group of a node needs for its node surface, one per sea
 
 ### `packages/codegen/src/emitters/factories.ts::groupSeatRuntimeSpecs`
 
-The object literals a node's builder and wrap pass to `withGroupSeat`, one per seat, each applied in turn: the seat's accessor (`slot`), the group's kind id (`kind`), the group's raw factory (`make`) and its keys (`keys`), each with its rest mark and, for a prefixed key, the group field it names. It shares `groupSeatHints` with the type-level `$flat` stamp, so the flattened members exist at runtime exactly when the interface declares them.
+The object literals a node's builder and wrap pass to `withGroupSeat`, one per seat, each applied in turn: the seat's accessor (`slot`) and storage property (`stored`), the group's kind id (`kind`), the group's raw factory (`make`) and its keys (`keys`), each with its rest mark and, for a prefixed key, the group field it names. It shares `groupSeatHints` with the type-level `$flat` stamp, so the flattened members exist at runtime exactly when the interface declares them.
 
 ### `packages/codegen/src/emitters/factories.ts::elementConfigsOf`
 

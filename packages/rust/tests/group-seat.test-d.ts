@@ -70,3 +70,12 @@ export function anOptionalSeatNarrowsOnItsStoredProperty(block: T.MatchBlock.Bou
 		block.lastArm();
 	}
 }
+
+export function aFlattenedFieldNarrowsItsSiblings(block: T.MatchBlock.Parsed): void {
+	if (block.matchArms !== undefined) {
+		block.matchArms();
+		block.lastArm();
+	} else {
+		expectTrue<Equals<typeof block.lastArm, undefined>>();
+	}
+}

@@ -1349,6 +1349,7 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 			),
 			{
 				slot: 'catchClauseGroup',
+				stored: '_catch_clause_group',
 				kind: TSKindId.CatchClauseGroup as const,
 				make: buildCatchClauseGroup,
 				keys: [

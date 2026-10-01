@@ -17,14 +17,15 @@ const group = (left: string, right?: string): Group => ({
 
 interface Parent {
 	readonly $type: 1;
+	readonly _seat: Group | undefined;
 	left(): string;
 	seat(): Group | undefined;
 	readonly $with: { seat(value?: Group): string };
 }
 
 interface Seated extends Parent {
-	seatLeft(): string | undefined;
-	right(): string | undefined;
+	readonly seatLeft: (() => string) | undefined;
+	readonly right: (() => string | undefined) | undefined;
 	readonly $with: Parent['$with'] & { seatLeft(v?: string): string; right(v?: string): string };
 }
 
@@ -34,12 +35,14 @@ const made: unknown[] = [];
 const parent = (inner: Group | undefined): Seated => {
 	const base: Parent = {
 		$type: 1,
+		_seat: inner,
 		left: () => 'own',
 		seat: () => inner,
 		$with: { seat: (value) => (seated.push(value), 'rebuilt') }
 	};
 	return withGroupSeat(base, {
 		slot: 'seat',
+		stored: '_seat',
 		kind: 7,
 		make: ((config: { left?: string; right?: string }) => (made.push(config), group(config.left ?? 'm', config.right))) as (
 			config: never
@@ -54,9 +57,16 @@ const parent = (inner: Group | undefined): Seated => {
 describe('withGroupSeat', () => {
 	it('reads a prefixed key from the group field it names, and leaves the parent slot of that name alone', () => {
 		const node = parent(group('a', 'b'));
-		expect(node.seatLeft()).toBe('a');
-		expect(node.right()).toBe('b');
+		expect(node.seatLeft?.()).toBe('a');
+		expect(node.right?.()).toBe('b');
 		expect(node.left()).toBe('own');
+	});
+
+	it('has no reader for a flattened key while the group is absent', () => {
+		const node = parent(undefined);
+		expect(node.seatLeft).toBeUndefined();
+		expect(node.right).toBeUndefined();
+		expect(typeof parent(group('a')).seatLeft).toBe('function');
 	});
 
 	it('sets a prefixed key through the group field it names', () => {

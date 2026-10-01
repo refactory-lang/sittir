@@ -420,9 +420,14 @@ interface GroupSeatKey {
 
 interface GroupSeatSpec {
 	readonly slot: string;
+	readonly stored: string;
 	readonly kind: number;
 	readonly make: (config: never) => unknown;
 	readonly keys: readonly GroupSeatKey[];
+}
+
+function seatedReader(node: object, stored: string, read: (this: object) => unknown): (() => unknown) | undefined {
+	return (node as Record<string, unknown>)[stored] === undefined ? undefined : () => read.call(node);
 }
 
 export function withGroupSeat<T extends object>(node: T, spec: GroupSeatSpec): T {
@@ -432,11 +437,14 @@ export function withGroupSeat<T extends object>(node: T, spec: GroupSeatSpec): T
 	defineHidden(node, STORED_SLOT_READERS, { value: { ...known, [spec.slot]: readGroup } });
 	const fieldOf = (key: GroupSeatKey): string => key.field ?? key.name;
 	for (const key of spec.keys) {
+		const read = function (this: object): unknown {
+			const group = readGroup.call(this);
+			return group?.[fieldOf(key)]?.call(group);
+		};
 		defineHidden(node, key.name, {
 			enumerable: key.name === spec.slot ? (own?.enumerable ?? false) : false,
-			value: function (this: object): unknown {
-				const group = readGroup.call(this);
-				return group?.[fieldOf(key)]?.call(group);
+			get(this: object) {
+				return seatedReader(this, spec.stored, read);
 			}
 		});
 	}

@@ -5185,6 +5185,7 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 			},
 			{
 				slot: 'step',
+				stored: '_step',
 				kind: TSKindId.SliceGroup as const,
 				make: RAW.buildSliceGroup,
 				keys: [{ name: 'expression', rest: false }]
