@@ -1,7 +1,6 @@
 ---
 name: speckit-ultraplan-tasks
-description: Generate a deeply-reasoned, implementation-ready task breakdown for the
-  current spec-kit feature using extended analysis.
+description: Generate a deeply-reasoned, implementation-ready task breakdown for the current spec-kit feature using extended analysis.
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit

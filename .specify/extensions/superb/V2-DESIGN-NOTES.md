@@ -100,6 +100,13 @@ happens:
 
 Either result breaks the contract of the Spec Kit flow.
 
+Later gap-closure work revised only the integration boundary, not the ownership
+rule: `brainstorming` can be used safely after `speckit.specify` when the
+active Spec Kit `spec.md` is treated as the user's explicit spec-location
+preference. In that shape, it refines the existing spec and does not create
+`docs/superpowers/specs/...`, replace `speckit.specify`, or invoke
+`writing-plans`.
+
 ### 2. Writing-plans conflicts with `plan` and `tasks`
 
 Superpowers `writing-plans` is not a small planning aid. It is a full plan
@@ -163,6 +170,11 @@ difference between:
 Its principles are useful, but its workflow role is too overlapping to be
 adopted directly.
 
+The bridge therefore represents `requesting-code-review` through
+`speckit.superb.critique` and `speckit.superb.respond`: `critique` can package
+spec, plan, task, diff, and verification context for an external or subagent
+review handoff, while `respond` handles the feedback reception discipline.
+
 ## What Can Be Borrowed Safely
 
 The bridge can safely adopt Superpowers skills when they operate as quality
@@ -170,6 +182,8 @@ discipline rather than as workflow ownership.
 
 These skills fit that rule:
 
+- `brainstorming`, only as optional post-specification refinement of the active
+  Spec Kit `spec.md`
 - `test-driven-development`
 - `verification-before-completion`
 - `systematic-debugging`
@@ -183,6 +197,9 @@ points.
 
 - `after_tasks`:
   bridge-native `review` checks coverage and TDD readiness
+- `after_specify`:
+  optional `brainstorm` refines the existing Spec Kit spec without creating a
+  second design document
 - `before_implement`:
   adapted `tdd` enforces test-first discipline
 - `after_implement`:
@@ -207,6 +224,9 @@ them.
 - map `spec.md` requirements to `tasks.md`
 - detect missing task coverage
 - assess whether the task set is ready for a strict TDD gate
+- borrow the useful `writing-plans` discipline around file ownership, task
+  granularity, RED/GREEN targets, and review checkpoints without generating a
+  second plan
 
 This is narrower than Spec Kit `analyze`, and more Spec-Kit-specific than any
 single Superpowers skill.
@@ -220,6 +240,15 @@ single Superpowers skill.
 - `tasks.md`
 
 It is not simply generic code review. It is a Spec Kit artifact alignment review.
+It also absorbs the useful handoff-packaging discipline from
+`requesting-code-review` without introducing a competing review command.
+
+### `debug`
+
+`debug` bridges systematic debugging directly and may use the
+`dispatching-parallel-agents` discipline only after evidence shows multiple
+independent failure domains. The bridge command remains the controller and must
+perform final verification after any parallel investigation results return.
 
 ### `check`
 
@@ -293,7 +322,8 @@ The result is a narrower but more coherent product.
 It is narrower because it does less:
 
 - it no longer pretends to bridge the whole Superpowers workflow
-- it no longer formalizes a pre-spec brainstorming stage
+- it no longer formalizes a pre-spec brainstorming stage; brainstorming is only
+  an optional post-spec refinement gate
 - it no longer implies a second planning or execution system
 
 It is more coherent because it does one thing well:
@@ -346,3 +376,41 @@ scripts that:
 - find the current `spec.md`
 - insert or update a canonical `**Status**:` line
 - preserve `Abandoned` as a terminal bridge-owned state
+
+## Multi-Agent SDD & Dual-Layer Fallback Refinements
+
+During the Multi-Agent SDD integration feature design, the implementation phase was enhanced from a simple test-driven-development gate into a full-featured Implementation Controller. The key architectural additions include:
+
+### 1. From TDD to Implementation Controller (`/speckit.superb.controller`)
+
+The previous `/speckit.superb.tdd` command was upgraded and renamed to `/speckit.superb.controller` to serve as the unified pre-implementation orchestrator. Instead of only checking for a failing test, it manages single-agent or multi-agent execution, task parallelism, concurrency analysis, state accumulation, and double-review verification loops.
+
+### 2. Dual-Layer Fallback Architecture for Execution
+
+To maintain compatibility when advanced superpowers skills are missing, the Controller introduces a strict two-layer discipline model:
+
+*   **Single-Agent Mode (Inline Execution)**:
+    *   **Layer 1 (Native executing-plans)**: Strictly adheres to the resolved `executing-plans/SKILL.md` inline execution rules and review checkpoints.
+    *   **Layer 2 (Local Fallback TDD)**: Standard TDD loop managed via simple prompts and manual progress updates.
+*   **Multi-Agent Mode (Subagent-Driven Development)**:
+    *   **Layer 1 (Native SDD)**: Uses the full `subagent-driven-development/SKILL.md` discipline and prompt templates.
+    *   **Layer 2 (Composite TDD + Code-Review)**: Combines the baseline `test-driven-development` and `code-review` skills to simulate SDD workers.
+    *   **Automatic Degrade**: If subagent tool capability (`define_subagent`) is missing or explicitly disabled by the user, the Controller automatically falls back to Single-Agent Mode.
+
+### 3. Parallel Dispatch & Write Conflict Serial Fallback
+
+*   **Parallel Detection**: Recognizes adjacent tasks marked with `[P]` in `tasks.md` and runs them concurrently in the background by dispatching them in a single `invoke_subagent` call.
+*   **Conflict Serial Fallback**: Performs static analysis on parallel tasks. If any tasks modify the same files/directories or reference newly created symbols in other tasks, the Controller automatically downgrades them to serial execution to prevent write conflicts or state fragmentation.
+
+### 4. Two-Stage Review Quality Gates & Meltdown
+
+Upon task completion, the Controller spawns two specialized subagents to enforce verification:
+*   **Stage 1 (Spec Reviewer)**: Compares the task's code changes and test outputs directly against functional requirements in `spec.md`. Fallbacks to `critique` command instructions when native SDD is missing.
+*   **Stage 2 (Quality Reviewer)**: Checks for regressions in security, style, and code quality. Fallbacks to `code-review` skill rules or local templates.
+*   **Meltdown (熔断)**: If a task fails double review **3 times**, the Controller aborts immediately to preserve the workspace state and requests manual troubleshooting.
+*   **Continuous Automation**: On successful review pass, the Controller acquires a file lock on `tasks.md`, ticks `[x]`, and automatically proceeds to the next task without interrupting the user.
+
+### 5. Diagnostics & Mapping Alignment
+
+*   `check.md` was updated to diagnose the installation status of optional execution skills (`executing-plans`, `code-review`).
+*   The **"Superb" Skill Set Matrix** was added to the extension `README.md` to define recommended skills and fallback states across all lifecycle stages.

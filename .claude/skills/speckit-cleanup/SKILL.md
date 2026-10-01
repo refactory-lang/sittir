@@ -1,7 +1,6 @@
 ---
 name: speckit-cleanup
-description: Validate and reorganize spec-kit artifacts with proper numbering and
-  structure
+description: Validate and reorganize spec-kit artifacts with proper numbering and structure
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit

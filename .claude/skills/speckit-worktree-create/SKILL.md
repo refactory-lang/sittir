@@ -4,8 +4,12 @@ description: Spawn an isolated git worktree for a new or existing feature branch
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: worktree:commands/speckit.worktree.create.md
+  source: extension:worktree
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Worktree Create Skill
 
 # Create Worktree
 

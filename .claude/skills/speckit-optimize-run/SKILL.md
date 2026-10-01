@@ -4,8 +4,12 @@ description: Audit and optimize governance documents for AI context efficiency.
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: optimize:commands/speckit.optimize.run.md
+  source: extension:optimize
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Optimize Run Skill
 
 ## User Input
 

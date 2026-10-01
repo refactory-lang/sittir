@@ -5,8 +5,12 @@ description: Initiate a feature deprecation workflow with phased sunset process 
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: workflows:commands/deprecate.md
+  source: extension:workflows
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Workflows Deprecate Skill
 
 The user input to you can be provided directly by the agent or as a command argument - you **MUST** consider it before proceeding with the prompt (if not empty).
 

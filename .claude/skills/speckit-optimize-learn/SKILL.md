@@ -4,8 +4,12 @@ description: Analyze AI session patterns to suggest constitution rules or memory
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: optimize:commands/speckit.optimize.learn.md
+  source: extension:optimize
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Optimize Learn Skill
 
 ## User Input
 

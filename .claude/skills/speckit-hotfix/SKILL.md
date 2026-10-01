@@ -1,7 +1,6 @@
 ---
 name: speckit-hotfix
-description: Create an emergency hotfix workflow with expedited process and mandatory
-  post-mortem.
+description: Create an emergency hotfix workflow with expedited process and mandatory post-mortem.
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit

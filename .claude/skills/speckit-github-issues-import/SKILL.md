@@ -4,8 +4,12 @@ description: Import a GitHub Issue and generate spec.md with structured requirem
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: github-issues:commands/import.md
+  source: extension:github-issues
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Github Issues Import Skill
 
 # Import GitHub Issue to Spec
 

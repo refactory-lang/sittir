@@ -56,7 +56,7 @@ pkg/
 target/
 Cargo.lock
 
-# Spec-Kit
+# Framework Cache
 .speckit/cache/
 *.speckit.local.yml
 
@@ -90,3 +90,6 @@ audit-output-*.txt
 config.yml
 local-config.yml
 *.local.yml
+.flash-mem/
+.github/
+.vscode/

@@ -1,7 +1,6 @@
 ---
 name: speckit-deprecate
-description: Initiate a feature deprecation workflow with phased sunset process (warnings
-  -> disabled -> removed).
+description: Initiate a feature deprecation workflow with phased sunset process (warnings -> disabled -> removed).
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit

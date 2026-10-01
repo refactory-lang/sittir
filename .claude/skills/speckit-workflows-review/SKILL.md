@@ -4,8 +4,12 @@ description: Review completed implementation work and update task status.
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: workflows:commands/review.md
+  source: extension:workflows
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Workflows Review Skill
 
 The user input to you can be provided directly by the agent or as a command argument - you **MUST** consider it before proceeding with the prompt (if not empty).
 

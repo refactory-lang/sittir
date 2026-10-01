@@ -5,3 +5,12 @@ dist/
 __pycache__/
 .worktrees/
 .archive/
+
+# Short-lived scratch files. Tools write these mid-build and delete them
+# again, often faster than the watcher drains. The watcher marks the create
+# and can miss the coalesced delete, leaving a dirty mark that pins a
+# "results may be stale" banner on every search until the watcher restarts.
+# `.gitignore`'s `*.tmp` does not cover these: the extension is `.ts`, the
+# `.tmp` is infixed.
+*.tmp.*
+*_tmp.*

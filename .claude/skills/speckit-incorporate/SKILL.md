@@ -1,7 +1,6 @@
 ---
 name: speckit-incorporate
-description: Incorporate documents into an existing or new workflow and advance stages
-  intelligently
+description: Incorporate documents into an existing or new workflow and advance stages intelligently
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit

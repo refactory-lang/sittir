@@ -36,7 +36,6 @@ This review catches all of these before a single line of code is written.
 ---
 
 ## User Context
-
 ```
 $ARGUMENTS
 ```
@@ -53,11 +52,48 @@ Read the following files (all from the current feature directory):
 4. `data-model.md` (if exists) — entity and relationship constraints
 5. `contracts/` (if exists) — interface contracts
 
-If `spec.md` is missing, **STOP** and report:
+If `spec.md` exists and its actual status is `Abandoned`, emit the full
+`Workflow Decision` block before any missing-artifact fallback, even when
+`plan.md` or `tasks.md` is missing or unresolved:
 
+```markdown
+## Workflow Decision
+
+**Feature status:** Abandoned
+**Gate:** after_tasks.review
+**Outcome:** BLOCKED
+**Reason:** abandoned_feature
+**Next command:** none
+**Requires user approval:** true
+
+**Why:** Abandoned features cannot route to implementation or artifact repair until the user reactivates the feature.
 ```
-ERROR: spec.md not found. Cannot perform coverage review without the spec.
-Run speckit.specify first.
+
+Then **STOP** and report:
+```
+ERROR: Feature status is Abandoned. Reactivate the feature before running coverage review.
+```
+
+If `spec.md`, `plan.md`, or `tasks.md` is missing or cannot be resolved after
+the abandoned-status check, emit the full `Workflow Decision` block (use the
+actual spec status from `spec.md` if available, otherwise use `unknown`):
+
+```markdown
+## Workflow Decision
+
+**Feature status:** [actual status or unknown]
+**Gate:** after_tasks.review
+**Outcome:** INCONCLUSIVE
+**Reason:** missing_artifact
+**Next command:** none
+**Requires user approval:** true
+
+**Why:** Required planning artifacts are missing or unresolved. Cannot perform coverage review.
+```
+
+Then **STOP** and report:
+```
+ERROR: One or more required planning artifacts (spec.md, plan.md, tasks.md) are missing or unresolved. Run the appropriate Spec Kit pipeline stage.
 ```
 
 Use the resolved current feature directory as the authoritative path for any
@@ -70,7 +106,6 @@ status synchronization. Do not guess the feature path from the branch name.
 Produce a numbered list of every distinct, testable requirement from `spec.md`:
 
 Format:
-
 ```
 R01: [requirement — one sentence, action-oriented]
 R02: [requirement]
@@ -78,14 +113,12 @@ R02: [requirement]
 ```
 
 Include:
-
 - Every user story acceptance criterion
 - Every constraint mentioned ("must not", "shall not", "required")
 - Every non-functional requirement (performance, security, compatibility)
 - Every error/edge case described
 
 **Mark each requirement as:**
-
 - `[TESTABLE]` — can be verified by a test
 - `[OBSERVABLE]` — can be verified by running the feature
 - `[STRUCTURAL]` — architectural constraint (no direct test, but verifiable via code review)
@@ -109,7 +142,6 @@ Produce the coverage matrix:
 ```
 
 Coverage status:
-
 - `✓ Covered` — at least one task explicitly addresses this requirement
 - `~ Partial` — a task addresses part of this requirement but leaves sub-requirements open
 - `✗ Gap` — no task addresses this requirement
@@ -131,7 +163,6 @@ with a minimum work factor of 12"
 **Missing task:** No task in tasks.md creates or verifies password hashing logic.
 
 **Suggested task addition:**
-
 > Task N+1: Write test asserting stored password hash matches bcrypt format with
 > work factor ≥ 12. Implement bcrypt hashing in the auth service. Verify
 > no plaintext passwords appear in logs or database.
@@ -145,7 +176,6 @@ with a minimum work factor of 12"
 **Missing task:** Session expiry logic has no corresponding test task.
 
 **Suggested task addition:**
-
 > Task N+2: Write test asserting session token is rejected after 24 hours.
 > Implement expiry check in session middleware.
 ```
@@ -156,20 +186,54 @@ with a minimum work factor of 12"
 
 Beyond coverage, flag any task that has these quality issues:
 
-| Quality Issue                  | Example                                                                                                         | Flag                   |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| No test step                   | Task says "implement X" but has no "write failing test" step                                                    | ⚠ Missing TDD step     |
-| Vague file path                | "Update the auth module" with no specific file                                                                  | ⚠ Missing file path    |
-| Placeholder content            | Task says "fill in details later" or "add appropriate handling" — open-ended directives with no concrete action | ⚠ Placeholder detected |
-| Multiple behaviors in one task | Task covers login AND logout AND session                                                                        | ⚠ Overly broad         |
-| No commit step                 | Task has no `git commit` at end                                                                                 | ⚠ Missing commit step  |
+| Quality Issue | Example | Flag |
+|---|---|---|
+| No test step | Task says "implement X" but has no "write failing test" step | ⚠ Missing TDD step |
+| Vague file path | "Update the auth module" with no specific file | ⚠ Missing file path |
+| Placeholder content | Task says "fill in details later" or "add appropriate handling" — open-ended directives with no concrete action | ⚠ Placeholder detected |
+| Multiple behaviors in one task | Task covers login AND logout AND session | ⚠ Overly broad |
+| No commit step | Task has no `git commit` at end | ⚠ Missing commit step |
 
 Also evaluate whether the task set is ready for a strict TDD gate:
 
 - Can each user-visible or testable requirement be linked to at least one test-first task?
-- Are test targets concrete enough that `/speckit.superb.tdd` can enforce RED before GREEN?
+- Are test targets concrete enough that `/speckit.superb.controller` can enforce RED before GREEN?
 - Are tasks ordered so foundational setup does not force speculative production code before tests?
 - Are broad tasks split enough that one failing test can drive one meaningful increment?
+
+Apply these `writing-plans`-derived checks without generating or replacing a
+Spec Kit plan:
+
+### File Ownership Map
+
+Every implementation task should name the concrete file, module, contract, or
+test target it owns. Flag tasks that require an implementer to rediscover the
+intended file map from scratch.
+
+### Task Granularity
+
+Tasks should be bite-sized enough for one RED → GREEN → REFACTOR increment.
+Flag tasks that combine unrelated behaviors, setup, migration, and polish in a
+single checkbox.
+
+### RED/GREEN Target
+
+Every testable behavior should identify the failing test or observable check
+that proves RED before production code is written, and the command that proves
+GREEN after implementation.
+
+### Review Checkpoint Readiness
+
+The task set should make it clear where a reviewer can check spec compliance
+and code quality. Flag task groups that have no natural review checkpoint before
+large cross-cutting changes accumulate.
+
+### Artifact Consistency Checks
+
+Evaluate whether the artifacts contain any obvious blocking discrepancies (note: this command does not replace full consistency checks performed by `/speckit.analyze`, but visible issues must block execution):
+
+- **Spec Ambiguity**: Are requirements in `spec.md` blatantly ambiguous, contradictory, or missing critical details that tasks had to guess?
+- **Plan/Task Discrepancies**: Do `plan.md` and `tasks.md` disagree on architecture, files, interface contracts, or implementation sequencing?
 
 ---
 
@@ -197,7 +261,8 @@ If `C > 0` (gaps exist):
 
 Recommended action:
 1. Review each gap above
-2. Add missing tasks to tasks.md
+2. Recommend adding missing tasks to tasks.md through the Spec Kit task flow or
+   explicit user-approved task edits
 3. Re-run coverage review OR proceed with explicit acknowledgment of scope reduction
 ```
 
@@ -216,6 +281,39 @@ TDD violations during implementation.
 
 Recommended action: Fix flagged tasks before running speckit.implement.
 ```
+
+Then always emit a workflow routing decision. This decision does not create a
+new lifecycle state. It explains whether the current feature status (`Tasked` or `Abandoned`) is
+ready to enter implementation, or which Spec Kit owner should handle the
+remediation loop.
+
+```markdown
+## Workflow Decision
+
+**Feature status:** Tasked | Abandoned | unknown
+**Gate:** after_tasks.review
+**Outcome:** PASS | BLOCKED | INCONCLUSIVE
+**Reason:** none | coverage_gap | task_quality_issue | spec_ambiguity | plan_task_mismatch | missing_artifact | abandoned_feature
+**Next command:** `/speckit.implement` | `/speckit.clarify` | `/speckit.plan` | `/speckit.tasks` | none
+**Requires user approval:** true | false
+
+**Why:** [One sentence explaining why the selected command owns the next step.]
+```
+
+Use this routing table:
+
+| Condition | Outcome | Reason | Next command | Requires user approval | Why |
+|---|---|---|---|---|---|
+| No gaps, no task quality issues, TDD readiness is READY, and feature status is not Abandoned | PASS | none | `/speckit.implement` | false | `tasks.md` is coverage-complete and ready for the TDD gate. |
+| Feature status is Abandoned | BLOCKED | abandoned_feature | none | true | Abandoned features cannot route to implementation. |
+| `spec.md` requirement is ambiguous or contradictory | BLOCKED | spec_ambiguity | `/speckit.clarify` | true | The spec owns requirement meaning; tasks should not guess. |
+| `plan.md` and `tasks.md` disagree about architecture, files, contracts, or sequencing | BLOCKED | plan_task_mismatch | `/speckit.plan` | true | The technical plan owns the implementation approach before tasks are regenerated. |
+| One or more requirements have `✗ Gap` or `~ Partial` task coverage (Normal Mode) | BLOCKED | coverage_gap | `/speckit.tasks` | false | Task generation or explicit task refinement owns missing requirement coverage. |
+| One or more requirements have `✗ Gap` or `~ Partial` task coverage (Non-blocking Mode with explicit gap acknowledgment) | PASS | none | `/speckit.implement` | false | The user explicitly acknowledged gaps to bypass task regeneration. |
+| Coverage is complete but tasks are too broad, vague, missing file ownership, missing RED/GREEN targets, missing test/commit steps, or TDD readiness is PARTIAL/NOT READY | BLOCKED | task_quality_issue | `/speckit.tasks` | false | The task artifact must be shaped before strict TDD can execute it. |
+| Required artifacts are missing or cannot be resolved | INCONCLUSIVE | missing_artifact | none | true | The gate lacks enough evidence to route safely. |
+
+When multiple conditions apply, prioritize `abandoned_feature` (which blocks the review) first, and then `missing_artifact` (which makes the review `INCONCLUSIVE`). Otherwise, choose the earliest owning stage in the Spec Kit flow: `clarify` before `plan`, `plan` before `tasks`, and `tasks` before `implement`. Include the lower-level issues in the report, but route to the earliest stage that can correct the source of truth.
 
 ---
 

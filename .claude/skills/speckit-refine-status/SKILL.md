@@ -4,8 +4,12 @@ description: Show sync status between spec, plan, and tasks — identify stale a
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: refine:commands/speckit.refine.status.md
+  source: extension:refine
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Refine Status Skill
 
 # Artifact Sync Status
 

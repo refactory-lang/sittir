@@ -1,253 +1,111 @@
-# Security Review Extension for Spec-Kit
+<p align="center">
+  <img src="landing/new_logo.png" alt="Security Review logo" width="360">
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Spec-Kit Version](https://img.shields.io/badge/Spec--Kit-%3E%3D0.1.0-blue)](https://github.com/github/spec-kit)
-[![Version](https://img.shields.io/badge/version-1.1.0-green.svg)](https://github.com/DyanGalih/spec-kit-security-review)
+# 🔒 Security Review
 
-## Overview
+> Continuous whitebox security auditing, OWASP governance, and token-optimized developer CLI & AI Agent toolkit.
 
-The Security Review extension adds a dedicated security audit command to a Spec-Kit project. It is installed with the `specify` CLI and executed through the registered slash command `/speckit.security-review.audit`.
+[![Version](https://img.shields.io/badge/version-2.0.0-22c55e)](package.json)
+[![OWASP](https://img.shields.io/badge/OWASP-2025-ef4444)](https://owasp.org/Top10/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-f59e0b)](LICENSE)
+[![Spec Kit](https://img.shields.io/badge/Spec%20Kit-compatible-2563eb)](docs/speckit-extension.md)
 
-The command reviews application code, configuration, dependencies, and infrastructure files to surface:
+---
 
-- OWASP Top 10 (2025) issues
-- Secure coding weaknesses
-- Architecture and trust-boundary risks
-- Supply-chain and dependency concerns
-- DevSecOps configuration gaps
+## What Is Security Review?
 
-## How It Fits Spec-Kit
+`security-review` is a modern **whitebox security review toolkit** designed for AI-assisted development workflows and automated CI/CD pipelines.
 
-Spec-Kit uses the `specify` CLI to install and manage extensions. Once installed, the extension registers a slash command for your agent.
+- **Developer CLI Accelerator**: Fast git diff extraction, security entrypoint discovery, and report frontmatter validation.
+- **AI Agent Skills**: Pre-engineered prompt contracts for full audits, staged reviews, branch diffs, plan reviews, and remediation tasks.
+- **Spec-Kit Compatible**: 100% backward compatible with Spec-Kit SDD workflows via `/speckit.security-review.*` extension hooks.
 
-```text
-specify extension add ...              # install/manage the extension
-/speckit.security-review.audit         # full codebase security review
-/speckit.security-review.staged        # review staged changes only
-/speckit.security-review.branch <br>   # review a branch vs base branch
-```
+---
 
-### Workflow Integration
+## ⚡ Quickstart
 
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                    Spec-Kit Workflow                        │
-├─────────────────────────────────────────────────────────────┤
-│  /speckit.requirements    → Requirements Phase             │
-│  /speckit.plan            → Planning Phase                 │
-│  /speckit.implement       → Implementation Phase           │
-│  /speckit.security-review.audit → Security Review Phase          │
-│  /speckit.test            → Testing Phase                  │
-│  /speckit.deploy          → Deployment Phase               │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## Installation
-
-Run installation from a Spec-Kit project directory.
-
-### Install from a Release Archive
+### 1. Instant Execution (Zero Install)
 
 ```bash
-cd /path/to/spec-kit-project
+# Analyze staged changes for security sensitivity before commit
+npx security-review diff --staged
 
-specify extension add security-review --from \
-  https://github.com/DyanGalih/spec-kit-security-review/archive/refs/tags/v1.1.0.zip
+# Scan project for security entrypoints & trust boundaries
+npx security-review scan
+
+# Compile JSON findings into full Markdown security report
+npx security-review report --input findings.json --output report.md
+
+# Generate or append remediation tasks to tasks.md (auto-detects SDD framework)
+npx security-review tasks --input findings.json --append
+
+# Propose a complete SDD change (OpenSpec / Spec-Kit) from findings
+npx security-review sdd propose --input findings.json --name fix-auth-sqli
+
+# Validate security report YAML frontmatter
+npx security-review validate docs/security-reviews/report.md
 ```
 
-### Install a Local Checkout for Development
+### 2. Global Installation
 
 ```bash
-cd /path/to/spec-kit-project
-
-specify extension add --dev /path/to/spec-kit-security-review
+npm install -g security-review
+# or
+pnpm add -g security-review
 ```
 
-### Verify Registration
+After installation, use any of the binary aliases: `security-review`, `sec-review`, or `sr`.
+
+---
+
+## 🤖 AI Agent Skill Integration
+
+Use Security Review directly with AI coding assistants (Antigravity, Claude Code, Cursor, OpenCode, Codex):
+
+| Slash Command | Skill ID | Development Phase | Purpose |
+|---|---|---|---|
+| `/sr-audit` | `sr-audit` | Milestone / Audit | Full repository security audit across all OWASP categories. |
+| `/sr-staged` | `sr-staged` | Pre-commit | Focused security review of staged changes (`git diff --cached`). |
+| `/sr-branch` | `sr-branch` | Feature / PR | Review security risks introduced by the current feature branch. |
+| `/sr-plan` | `sr-plan` | Technical Design | Review technical plan for trust boundaries and security gaps. |
+| `/sr-tasks` | `sr-tasks` | Strategy & Tasks | Verify that security requirements are sequenced in implementation tasks. |
+| `/sr-followup` | `sr-followup` | Triage | Convert security findings into actionable remediation tasks. |
+| `/sr-apply` | `sr-apply` | Remediation | Automatically apply approved security fixes to `tasks.md` and `plan.md`. |
+| `/sr-export` | `sr-export` | Formal Report | Export formal Executive and Technical Pentest Report. |
+| `/sr-verify` | `sr-verify` | Verification & PoC | Re-verify findings, test exploitability, and generate PoCs. |
+| `/sr-init` | `sr-init` | Onboarding | Initialize or update the project Security Constitution. |
+
+👉 For full details on prompt contracts and agent workflows, see [Agent Skills Guide](docs/agent-skills.md).
+
+---
+
+## 🔌 Spec-Kit Extension (Backward Compatibility)
+
+If you are using [Spec-Kit](https://spec-kit.dev), Security Review can be added as an extension:
 
 ```bash
-specify extension list
-ls .claude/commands/speckit.security-review.audit.*
+specify extension add security-review
 ```
 
-If registration succeeded, open your agent session and run:
+All commands are available as `/speckit.security-review.*` and automatically hook into `/speckit.plan`, `/speckit.tasks`, and `/speckit.implement`.
 
-```text
-/speckit.security-review.audit
-```
+👉 See the complete [Spec-Kit Extension Guide](docs/speckit-extension.md) for lifecycle hook configuration and command mappings.
 
-Detailed setup and troubleshooting steps are in [docs/installation.md](docs/installation.md).
+---
 
-## Usage
+## 📚 Documentation Index
 
-Use the registered slash command from your Spec-Kit agent session.
+- [Installation Guide](docs/installation.md) — Comprehensive install options
+- [CLI Reference](docs/cli-reference.md) — Command-line subcommands & flags
+- [Agent Skills Guide](docs/agent-skills.md) — AI Agent workflows & prompt engineering
+- [Spec-Kit Extension Guide](docs/speckit-extension.md) — Spec-Kit integration & backward compatibility
+- [Field Registry](docs/field-registry.md) — YAML frontmatter schema dictionary
+- [Usage & Lifecycle](docs/usage.md) — End-to-end security review workflows
 
-### Basic Review
+---
 
-```text
-/speckit.security-review.audit
-```
+## License & Repository
 
-### Scoped Review
-
-The command file accepts free-form user input via `$ARGUMENTS`, so you can narrow the review scope in natural language.
-
-```text
-/speckit.security-review.audit focus on authentication, secrets handling, and payment flows
-/speckit.security-review.audit review only the api and worker directories
-/speckit.security-review.audit prioritize OWASP Top 10 and dependency risk
-```
-
-### Staged Changes Review
-
-Review only files staged with `git add` — ideal as a pre-commit check.
-
-```text
-/speckit.security-review.staged
-/speckit.security-review.staged focus on secrets and injection
-```
-
-### Branch Changes Review
-
-Review only the diff between a feature branch and a base branch — ideal as a pre-merge check.
-
-```text
-/speckit.security-review.branch feature/payment-gateway
-/speckit.security-review.branch feature/payment-gateway develop
-```
-
-All three commands produce a structured Markdown report with findings, severity, remediation guidance, and Spec-Kit-ready follow-up tasks.
-
-Detailed examples are in [docs/usage.md](docs/usage.md) and [examples/example-output.md](examples/example-output.md).
-
-## Release Checklist
-
-Use this checklist before creating a new Git tag to keep release metadata consistent.
-
-1. Update `extension.version` in `extension.yml`.
-2. Update `README.md` badge and install URL.
-3. Update `docs/installation.md` install URLs.
-4. Update `docs/usage.md` reinstall URL (if present).
-5. Update `examples/example-output.md` footer version (if present).
-6. Add a new section in `CHANGELOG.md` for the target version and date.
-7. Verify there are no stale version strings:
-8. Add a new section in `CHANGELOG.md` for the target version and date.
-9. Verify there are no stale version strings:
-
-```bash
-grep -RIn "version: 'OLD_VERSION'\|vOLD_VERSION.zip\|version-OLD_VERSION\|Extension vOLD_VERSION" .
-```
-
-8. Commit and tag the release:
-
-```bash
-git add extension.yml README.md CHANGELOG.md docs/installation.md docs/usage.md examples/example-output.md
-git commit -m "release: vX.Y.Z"
-git tag vX.Y.Z
-git push origin main --tags
-```
-
-9. Validate install from tag in a Spec-Kit project:
-
-```bash
-specify extension add security-review --from \
-  https://github.com/DyanGalih/spec-kit-security-review/archive/refs/tags/vX.Y.Z.zip
-specify extension list
-```
-
-## Example Output
-
-Running `/speckit.security-review.audit` produces a report like this:
-
-```markdown
-# SECURITY REVIEW REPORT
-
-## Executive Summary
-
-**Overall Security Posture:** MODERATE RISK
-**Total Findings:** 23
-
-- Critical: 2
-- High: 5
-- Medium: 8
-- Low: 6
-- Informational: 2
-
-## Vulnerability Findings
-
-### [CRITICAL] SQL Injection in User Authentication
-
-**Location:** `src/auth/login.js:45`
-**OWASP Category:** A05:2025-Injection
-**Description:** User input is concatenated directly into SQL query...
-**Exploit Scenario:** Attacker could bypass authentication by...
-**Remediation:** Use parameterized queries or ORM...
-**Spec-Kit Task:** TASK-SEC-001
-
-### [HIGH] Missing Authentication on Admin Endpoints
-
-**Location:** `src/api/admin/routes.js`
-**OWASP Category:** A01:2025-Broken Access Control
-...
-```
-
-## Security Coverage
-
-### OWASP Top 10 (2025)
-
-- A01: Broken Access Control _(includes SSRF)_
-- A02: Security Misconfiguration
-- A03: Software Supply Chain Failures
-- A04: Cryptographic Failures
-- A05: Injection
-- A06: Insecure Design
-- A07: Authentication Failures
-- A08: Software or Data Integrity Failures
-- A09: Security Logging & Alerting Failures
-- A10: Mishandling of Exceptional Conditions
-
-### Additional Coverage
-
-- Input validation and output encoding
-- Secrets management and cryptographic handling
-- Session and API security
-- Trust boundaries and attack surface review
-- Dependency, build, and CI/CD risk analysis
-
-## Repository Structure
-
-```text
-.
-├── extension.yml
-├── config-template.yml
-├── prompts/
-│   ├── security-review.prompt.md
-│   ├── security-review-staged.prompt.md
-│   └── security-review-branch.prompt.md
-├── docs/
-├── examples/
-└── assets/
-```
-
-## Contributing
-
-Contributions should follow the upstream Spec-Kit extension conventions.
-
-- Use the manifest schema described in the Spec-Kit Extension Development Guide
-- Keep the registered command name in the `speckit.<extension>.<command>` format
-- Preserve command-file frontmatter and Markdown structure
-- Test local installs with `specify extension add --dev /path/to/extension`
-- Verify registration with `specify extension list` and `.claude/commands/`
-
-Reference guide: [Spec-Kit Extension Development Guide](https://github.com/github/spec-kit/blob/main/extensions/EXTENSION-DEVELOPMENT-GUIDE.md)
-
-## Support
-
-- Documentation: [docs/](docs/)
-- Examples: [examples/](examples/)
-- Issues: [GitHub Issues](https://github.com/DyanGalih/spec-kit-security-review/issues)
-- Discussions: [GitHub Discussions](https://github.com/DyanGalih/spec-kit-security-review/discussions)
-
-## License
-
-This extension is released under the [MIT License](LICENSE).
+- **Repository**: [https://github.com/DyanGalih/security-review](https://github.com/DyanGalih/security-review)
+- **License**: MIT © DyanGalih

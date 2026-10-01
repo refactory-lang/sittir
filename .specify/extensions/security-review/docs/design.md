@@ -1,174 +1,109 @@
-# Design Document
+# Architecture & Technical Design
 
-This document explains how the Security Review extension is structured and how it aligns with the Spec-Kit Extension Development Guide.
+This document details the architectural design of **Security Review (`v2.0.0`)**, a standalone CLI and multi-agent security audit toolkit with optional Spec-Kit extension compatibility.
 
-## Overview
+---
 
-The extension is intentionally lightweight. It does not ship a compiled runtime or a custom binary. Instead, it registers a prompt-backed slash command that Spec-Kit exposes to the agent after installation.
+## 1. System Overview
 
-Core model:
+Security Review delivers token-budgeted, multi-agent security intelligence by splitting duties between two layers:
 
-- `specify` installs and manages the extension
-- `extension.yml` declares metadata and command registration
-- `prompts/security-review.prompt.md` is the command file executed by the agent
-- The agent runs the command as `/speckit.security-review.audit`
+1. **The CLI Layer (Execution & Token Optimization)**:
+   - High-speed git diff filtering (`security-review diff`).
+   - Security entrypoint and attack-surface scanning (`security-review scan`).
+   - Deterministic report frontmatter validation (`security-review validate`).
+   - Interactive multi-agent skill initialization (`security-review init`).
 
-## Guide Alignment
+2. **The Agent Layer (Reasoning & Auditing)**:
+   - Prompt-driven security audits with OWASP Top 10 (2025), CWE, and CVSS scoring.
+   - Architectural drift detection and trust boundary validation.
+   - Structured remediation task generation (`TASK-SEC-NNN`).
 
-The upstream Extension Development Guide establishes four important conventions that this repository now follows:
+---
 
-1. Manifest schema uses top-level `extension`, `requires`, and `provides` sections.
-2. Registered command names follow `speckit.<extension>.<command>`.
-3. Command files start with YAML frontmatter and then use Markdown body content.
-4. Local installation and registration are project-scoped under `.specify/` and `.claude/`.
-
-## Architecture
-
-```text
-┌──────────────────────────────────────────────────────────────┐
-│                      Spec-Kit Project                        │
-│                                                              │
-│  specify extension add ...                                   │
-│            │                                                 │
-│            ▼                                                 │
-│   .specify/extensions/                                       │
-│   .claude/commands/speckit.security-review.audit.md                │
-│            │                                                 │
-│            ▼                                                 │
-│   /speckit.security-review.audit                                   │
-│            │                                                 │
-│            ▼                                                 │
-│   prompts/security-review.prompt.md                          │
-│            │                                                 │
-│            ▼                                                 │
-│   Security report with findings and remediation tasks        │
-└──────────────────────────────────────────────────────────────┘
-```
-
-## Repository Structure
+## 2. Multi-Agent Integration Architecture
 
 ```text
-security-review-extension/
-├── extension.yml
-├── config-template.yml
-├── prompts/
-│   └── security-review.prompt.md
-├── docs/
-│   ├── installation.md
-│   ├── usage.md
-│   └── design.md
-├── examples/
-│   └── example-output.md
-└── assets/
+┌────────────────────────────────────────────────────────────────────────┐
+│                        AI Coding Workspace                             │
+│                                                                        │
+│   security-review init .                                               │
+│            │                                                           │
+│            ├──▶ .agent/skills/         (Antigravity)                   │
+│            ├──▶ .claude/skills/        (Claude Code)                   │
+│            ├──▶ .cursor/rules/         (Cursor)                        │
+│            ├──▶ .opencode/commands/    (OpenCode)                      │
+│            ├──▶ .codex/skills/         (Codex CLI)                     │
+│            ├──▶ .gemini/commands/      (Gemini Code Assist)            │
+│            ├──▶ .goose/recipes/        (Goose CLI)                     │
+│            └──▶ .windsurf/rules/       (Windsurf)                      │
+│                                                                        │
+│   Slash Command Execution:                                             │
+│   /sr-audit, /sr-staged, /sr-branch, /sr-plan, /sr-tasks, /sr-apply     │
+│            │                                                           │
+│            ▼                                                           │
+│   Token-Budgeted Context Extraction (via security-review diff/scan)    │
+│            │                                                           │
+│            ▼                                                           │
+│   Structured Security Assessment Report (YAML frontmatter + Markdown)  │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Manifest Design
+---
 
-The manifest is declarative and minimal.
+## 3. Command Catalog & Prefix Mapping
 
-- `extension`: identity, version, repository, and descriptive metadata
-- `requires`: Spec-Kit compatibility requirement
-- `provides.commands`: slash-command registration
-- `tags`: catalog and discovery metadata
+All commands are provisioned with standardized short prefixes (`sr-*`) and support canonical alias mappings:
 
-The command remains named `speckit.security-review.audit` because the development guide reserves that namespace for extension commands even though installation and management are done through the `specify` CLI.
+| Command | Short Prefix | Standalone Alias | Purpose |
+|---|---|---|---|
+| `security-audit` | `sr-audit` | `security-review`, `audit` | Full repository security audit |
+| `security-review-staged` | `sr-staged` | `staged` | Pre-commit staged diff review |
+| `security-review-branch` | `sr-branch` | `branch` | Feature branch / PR diff review |
+| `security-review-plan` | `sr-plan` | `plan` | Technical plan & architecture review |
+| `security-review-tasks` | `sr-tasks` | `tasks` | Implementation tasks review |
+| `security-review-followup`| `sr-followup` | `followup` | Findings to backlog conversion |
+| `security-review-apply` | `sr-apply` | `apply` | Apply approved tasks to `tasks.md` |
+| `security-review-export`| `sr-export` | `export` | Formal pentest report synthesis |
+| `init` | `sr-init` | `init` | Security constitution initialization |
 
-## Command File Design
+---
 
-The command file follows the guide's command-file format:
+## 4. Spec-Kit Compatibility Layer
 
-1. YAML frontmatter for metadata
-2. Markdown body for the actual command instructions
-3. `$ARGUMENTS` passthrough so the user can supply natural-language scoping input
+To maintain 100% backward compatibility for projects built on Spec-Kit:
+- `src/extension.yml` defines the extension manifest.
+- Upstream command names like `speckit.security-review.audit` map directly to `commands/security-audit.md`.
+- Lifecycle hooks (`after_plan`, `after_tasks`, `after_implement`) are declared and functional.
+- For complete details, see [Spec-Kit Extension Guide](speckit-extension.md).
 
-This lets the extension stay prompt-driven while still supporting targeted reviews such as focusing on authentication, secrets, or specific directories.
+---
 
-## Security Coverage Model
+## 5. Document Header & Schema Strategy
 
-The prompt is organized around these review layers:
+Every generated security review output starts with a strict YAML frontmatter block:
 
-### OWASP Top 10 (2025)
-
-| Category                                  | Coverage Summary                           |
-| ----------------------------------------- | ------------------------------------------ |
-| A01 Broken Access Control                 | Authorization gaps, IDOR, SSRF             |
-| A02 Security Misconfiguration             | Headers, defaults, exposed internals       |
-| A03 Software Supply Chain Failures        | Dependencies, lockfiles, build integrity   |
-| A04 Cryptographic Failures                | Weak crypto, key handling, TLS             |
-| A05 Injection                             | SQL, NoSQL, command, template injection    |
-| A06 Insecure Design                       | Missing controls, unsafe workflows         |
-| A07 Authentication Failures               | Session, password, MFA, token flaws        |
-| A08 Software or Data Integrity Failures   | Deserialization, update trust, CI/CD abuse |
-| A09 Security Logging & Alerting Failures  | Logging coverage and alerting quality      |
-| A10 Mishandling of Exceptional Conditions | Fail-open paths and unsafe error handling  |
-
-### Additional Analysis Layers
-
-- Secure coding practices
-- Architecture and trust boundaries
-- Supply-chain and dependency review
-- DevSecOps configuration review
-- STRIDE-oriented threat framing
-
-## Installation and Registration Model
-
-The extension guide treats installation as project-local.
-
-### Release install
-
-```bash
-cd /path/to/spec-kit-project
-specify extension add security-review --from <release-zip>
+```yaml
+---
+document_type: security-review
+review_type: <audit|staged|branch|plan|tasks|export>
+assessment_date: "2026-08-19"
+codebase_analyzed: "src/"
+total_files_analyzed: 14
+total_findings: 3
+overall_risk: HIGH
+critical_count: 0
+high_count: 2
+medium_count: 1
+low_count: 0
+informational_count: 0
+owasp_categories: [A01, A05]
+cwe_ids: [CWE-89, CWE-285]
+security_task: TASK-SEC-001
+---
 ```
 
-### Development install
-
-```bash
-cd /path/to/spec-kit-project
-specify extension add --dev /path/to/spec-kit-security-review
-```
-
-### Registration checks
-
-```bash
-specify extension list
-ls .claude/commands/speckit.security-review.audit.*
-cat .specify/extensions/.registry
-```
-
-## Output Design
-
-The report format is optimized for remediation, not just detection. Each finding should include:
-
-- Severity and location
-- OWASP mapping
-- Risk explanation
-- Exploit scenario where relevant
-- Concrete remediation guidance
-- Spec-Kit-ready follow-up tasks
-
-## Design Tradeoffs
-
-### Why a Prompt-Backed Command
-
-- Easier to maintain than a language-specific scanner
-- Works across mixed-language repositories
-- Lets the agent explain why a finding matters
-
-### Why Natural-Language Scoping Instead of CLI Flags
-
-- Matches the command-file model in the extension guide
-- Avoids inventing a parallel standalone CLI interface
-- Keeps the prompt flexible for different review contexts
-
-### Why Project-Local Installation
-
-- Matches the upstream development guide
-- Makes command registration explicit and inspectable
-- Keeps extension behavior tied to the current Spec-Kit project
-
-## Future Enhancements
-
-- Add a manifest-managed config entry if the project moves from an optional review brief to a formal extension configuration file
-- Add `.extensionignore` if release packaging should exclude development-only content
-- Add automated manifest and command-file validation tests
+### Frontmatter Schema Dual-Readiness
+- **Fast LLM Evaluation**: Agents can evaluate risk and categories by reading the frontmatter header without loading the entire document body.
+- **SQL / Flash-Mem Indexing**: Frontmatter columns directly mirror SQLite caching tables for fast indexed retrieval.
+- **Backward Compatibility**: `security_task` is canonical; `spec_kit_task` is supported as a transparent alias.

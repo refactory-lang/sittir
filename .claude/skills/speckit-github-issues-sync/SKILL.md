@@ -4,8 +4,12 @@ description: Sync spec artifacts with updates from the source GitHub Issue
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: github-issues:commands/sync.md
+  source: extension:github-issues
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Github Issues Sync Skill
 
 # Sync Spec with GitHub Issue
 
