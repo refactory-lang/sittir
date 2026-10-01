@@ -400,7 +400,14 @@ export function withElementsSeat<T extends object>(node: T, spec: ElementsSeatSp
 	const setters = Object.getOwnPropertyDescriptor(node, '$with')?.value as Members | undefined;
 	const set = setters?.[spec.slot];
 	if (setters === undefined || set === undefined) return node;
-	setters[spec.slot] = (...args) => set(...convertElements(args, spec));
+	setters[spec.slot] = (...args) => {
+		if (args.some(Array.isArray)) {
+			throw new TypeError(
+				`$with.${spec.slot} takes its elements as rest arguments, $with.${spec.slot}(a, b), not an array; spread it: $with.${spec.slot}(...items)`
+			);
+		}
+		return set(...convertElements(args, spec));
+	};
 	return node;
 }
 

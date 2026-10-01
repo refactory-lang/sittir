@@ -219,7 +219,7 @@ The accessor that reads a slot's stored value as a node, for a caller that walks
 
 ### `packages/common/src/utils.ts::withElementsSeat`
 
-Makes the `$with` setter of an elements-seat slot take the group config objects its config surface takes: an argument that is a plain object naming only the group's config keys is built through the group's factory, and every other argument is passed as it was. The setter's form (rest arguments, or one array) is kept.
+Makes the `$with` setter of an elements-seat slot take the group config objects its config surface takes: an argument that is a plain object naming only the group's config keys is built through the group's factory, and every other argument is passed as it was. The setter takes its elements as rest arguments only: an array argument, which only an untyped caller can pass, throws a `TypeError` naming the slot and the spread form, instead of reaching the transport as a malformed element.
 
 ### `packages/common/src/utils.ts::isGroupConfig`
 
