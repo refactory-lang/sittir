@@ -10387,3 +10387,11 @@ How a `separator-pattern` record names a non-token arm: a pattern as
 
 The gated compile `generate` runs when the caller passes no compilation:
 the package's own id tables, then `compileGrammar` on that package.
+
+### `packages/codegen/src/compiler/flatten.ts::factorSharedLiterals`
+
+The choice counterpart of `factorChoiceArms` for arms of different lengths: when every arm is a seq and every arm opens (or closes) with the same render-only literal, the shared literals are hoisted out and the arms' remainders become one choice between them. `{ n }` and `{ , m }` read as `{`, a choice of `n` and `, m`, then `}`. Only literals stamped `nonterminal: false` are shared, and never the last member of an arm. A literal an arm keeps after the shared edges is dropped from that arm's remainder when the remainder has a slot, because a literal that belongs to one arm cannot be gated on the slot the arms share; the dropped-token census names it.
+
+### `packages/codegen/src/compiler/collect-slots.ts::retargetAliasedLiteral`
+
+A literal that is itself the slot (a STRING stamped `nonterminal: true` with `aliasedTo`) reads as the alias's kind: its value takes the alias target as `resolvedKind` and `parseKind`, so the slot is named for the node the parser produces (`lazy`, `class_character`) rather than for the literal's own token. A literal that is an arm of a choice keeps its literal kind; the choice's union slot is built from the arms and is unchanged.

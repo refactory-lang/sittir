@@ -38,5 +38,39 @@
         ]
       }
     }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "regex",
+    "message": "conflict between character_class on '|' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "character_class"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "character_class"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'['",
+          "'-'",
+          "']'"
+        ],
+        "lookahead": "'|'",
+        "interpretations": [
+          "character_class",
+          "character_class"
+        ]
+      }
+    }
   }
 ]

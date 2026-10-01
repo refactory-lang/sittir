@@ -498,6 +498,37 @@ export const catchClause = Object.freeze({
 	coerce: typeof catchClause$seatedCoerce;
 };
 
+const binaryExpression$in =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { binaryExpressionIn: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) } as never, options as never);
+	};
+const binaryExpression$in$strict = binaryExpression$in(F.buildBinaryExpression, F.buildBinaryExpressionIn);
+const binaryExpression$in$coerce = binaryExpression$in(C.coerceToBinaryExpression, C.coerceToBinaryExpressionIn);
+export const binaryExpression = Object.freeze({
+	...B.binaryExpression,
+	in: bundle(binaryExpression$in$strict, binaryExpression$in$coerce, { key: 'binaryExpression.in', max: 2 })
+}) as unknown as typeof B.binaryExpression & {
+	in: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'binaryExpressionIn'> & {
+				binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
+			},
+			options?: OptionsArg<typeof F.buildBinaryExpression>
+		) => ReturnType<typeof F.buildBinaryExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'binaryExpressionIn'> & {
+				binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToBinaryExpression>
+		) => ReturnType<typeof C.coerceToBinaryExpression>;
+	};
+};
+
 const classHeritage$extendsClause =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -639,37 +670,6 @@ export const lhsExpression = Object.freeze({
 	nonNullExpression: {
 		strict: (...args: ArgsOf<typeof F.buildNonNullExpression>) => ReturnType<typeof F.buildLhsExpression>;
 		coerce: (...args: ArgsOf<typeof C.coerceToNonNullExpression>) => ReturnType<typeof F.buildLhsExpression>;
-	};
-};
-
-const binaryExpression$in =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { binaryExpressionIn: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) } as never, options as never);
-	};
-const binaryExpression$in$strict = binaryExpression$in(F.buildBinaryExpression, F.buildBinaryExpressionIn);
-const binaryExpression$in$coerce = binaryExpression$in(C.coerceToBinaryExpression, C.coerceToBinaryExpressionIn);
-export const binaryExpression = Object.freeze({
-	...B.binaryExpression,
-	in: bundle(binaryExpression$in$strict, binaryExpression$in$coerce, { key: 'binaryExpression.in', max: 2 })
-}) as unknown as typeof B.binaryExpression & {
-	in: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'binaryExpressionIn'> & {
-				binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
-			},
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'binaryExpressionIn'> & {
-				binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
 	};
 };
 
@@ -4747,6 +4747,810 @@ export const updateExpression: {
 	})
 });
 
+const yieldExpressionDelegate$as =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$as$strict = yieldExpressionDelegate$as(
+	F.buildYieldExpressionDelegate,
+	F.buildAsExpression
+);
+const yieldExpressionDelegate$as$coerce = yieldExpressionDelegate$as(
+	F.buildYieldExpressionDelegate,
+	C.coerceToAsExpression
+);
+const yieldExpressionDelegate$satisfies =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$satisfies$strict = yieldExpressionDelegate$satisfies(
+	F.buildYieldExpressionDelegate,
+	F.buildSatisfiesExpression
+);
+const yieldExpressionDelegate$satisfies$coerce = yieldExpressionDelegate$satisfies(
+	F.buildYieldExpressionDelegate,
+	C.coerceToSatisfiesExpression
+);
+const yieldExpressionDelegate$instantiation =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$instantiation$strict = yieldExpressionDelegate$instantiation(
+	F.buildYieldExpressionDelegate,
+	F.buildInstantiationExpression
+);
+const yieldExpressionDelegate$instantiation$coerce = yieldExpressionDelegate$instantiation(
+	F.buildYieldExpressionDelegate,
+	C.coerceToInstantiationExpression
+);
+const yieldExpressionDelegate$internalModule =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$internalModule$strict = yieldExpressionDelegate$internalModule(
+	F.buildYieldExpressionDelegate,
+	F.buildInternalModule
+);
+const yieldExpressionDelegate$internalModule$coerce = yieldExpressionDelegate$internalModule(
+	F.buildYieldExpressionDelegate,
+	C.coerceToInternalModule
+);
+const yieldExpressionDelegate$typeAssertion =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$typeAssertion$strict = yieldExpressionDelegate$typeAssertion(
+	F.buildYieldExpressionDelegate,
+	F.buildTypeAssertion
+);
+const yieldExpressionDelegate$typeAssertion$coerce = yieldExpressionDelegate$typeAssertion(
+	F.buildYieldExpressionDelegate,
+	C.coerceToTypeAssertion
+);
+const yieldExpressionDelegate$assignment =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$assignment$strict = yieldExpressionDelegate$assignment(
+	F.buildYieldExpressionDelegate,
+	F.buildAssignmentExpression
+);
+const yieldExpressionDelegate$assignment$coerce = yieldExpressionDelegate$assignment(
+	F.buildYieldExpressionDelegate,
+	C.coerceToAssignmentExpression
+);
+const yieldExpressionDelegate$augmentedAssignment =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$augmentedAssignment$strict = yieldExpressionDelegate$augmentedAssignment(
+	F.buildYieldExpressionDelegate,
+	F.buildAugmentedAssignmentExpression
+);
+const yieldExpressionDelegate$augmentedAssignment$coerce = yieldExpressionDelegate$augmentedAssignment(
+	F.buildYieldExpressionDelegate,
+	C.coerceToAugmentedAssignmentExpression
+);
+const yieldExpressionDelegate$await =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$await$strict = yieldExpressionDelegate$await(
+	F.buildYieldExpressionDelegate,
+	F.buildAwaitExpression
+);
+const yieldExpressionDelegate$await$coerce = yieldExpressionDelegate$await(
+	F.buildYieldExpressionDelegate,
+	C.coerceToAwaitExpression
+);
+const yieldExpressionDelegate$unary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$unary$strict = yieldExpressionDelegate$unary(
+	F.buildYieldExpressionDelegate,
+	F.buildUnaryExpression
+);
+const yieldExpressionDelegate$unary$coerce = yieldExpressionDelegate$unary(
+	F.buildYieldExpressionDelegate,
+	C.coerceToUnaryExpression
+);
+const yieldExpressionDelegate$binary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$binary$strict = yieldExpressionDelegate$binary(
+	F.buildYieldExpressionDelegate,
+	F.buildBinaryExpression
+);
+const yieldExpressionDelegate$binary$coerce = yieldExpressionDelegate$binary(
+	F.buildYieldExpressionDelegate,
+	C.coerceToBinaryExpression
+);
+const yieldExpressionDelegate$ternary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$ternary$strict = yieldExpressionDelegate$ternary(
+	F.buildYieldExpressionDelegate,
+	F.buildTernaryExpression
+);
+const yieldExpressionDelegate$ternary$coerce = yieldExpressionDelegate$ternary(
+	F.buildYieldExpressionDelegate,
+	C.coerceToTernaryExpression
+);
+const yieldExpressionDelegate$update =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$update$strict = yieldExpressionDelegate$update(
+	F.buildYieldExpressionDelegate,
+	updateExpression.strict
+);
+const yieldExpressionDelegate$update$coerce = yieldExpressionDelegate$update(
+	F.buildYieldExpressionDelegate,
+	updateExpression.coerce
+);
+const yieldExpressionDelegate$new =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$new$strict = yieldExpressionDelegate$new(
+	F.buildYieldExpressionDelegate,
+	F.buildNewExpression
+);
+const yieldExpressionDelegate$new$coerce = yieldExpressionDelegate$new(
+	F.buildYieldExpressionDelegate,
+	C.coerceToNewExpression
+);
+const yieldExpressionDelegate$yield =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$yield$strict = yieldExpressionDelegate$yield(
+	F.buildYieldExpressionDelegate,
+	F.buildYieldExpression
+);
+const yieldExpressionDelegate$yield$coerce = yieldExpressionDelegate$yield(
+	F.buildYieldExpressionDelegate,
+	C.coerceToYieldExpression
+);
+const yieldExpressionDelegate$binary$in =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$binary$in$strict = yieldExpressionDelegate$binary$in(
+	F.buildYieldExpressionDelegate,
+	binaryExpression.in.strict
+);
+const yieldExpressionDelegate$binary$in$coerce = yieldExpressionDelegate$binary$in(
+	F.buildYieldExpressionDelegate,
+	binaryExpression.in.coerce
+);
+const yieldExpressionDelegate$update$postfix =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$update$postfix$strict = yieldExpressionDelegate$update$postfix(
+	F.buildYieldExpressionDelegate,
+	updateExpression.postfix.strict
+);
+const yieldExpressionDelegate$update$postfix$coerce = yieldExpressionDelegate$update$postfix(
+	F.buildYieldExpressionDelegate,
+	updateExpression.postfix.coerce
+);
+const yieldExpressionDelegate$update$prefix =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$update$prefix$strict = yieldExpressionDelegate$update$prefix(
+	F.buildYieldExpressionDelegate,
+	updateExpression.prefix.strict
+);
+const yieldExpressionDelegate$update$prefix$coerce = yieldExpressionDelegate$update$prefix(
+	F.buildYieldExpressionDelegate,
+	updateExpression.prefix.coerce
+);
+const yieldExpressionDelegate: {
+	as: {
+		strict: (...args: ArgsOf<typeof F.buildAsExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToAsExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	satisfies: {
+		strict: (...args: ArgsOf<typeof F.buildSatisfiesExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (
+			...args: ArgsOf<typeof C.coerceToSatisfiesExpression>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	instantiation: {
+		strict: (
+			...args: ArgsOf<typeof F.buildInstantiationExpression>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (
+			...args: ArgsOf<typeof C.coerceToInstantiationExpression>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	internalModule: {
+		strict: (...args: ArgsOf<typeof F.buildInternalModule>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToInternalModule>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	typeAssertion: {
+		strict: (...args: ArgsOf<typeof F.buildTypeAssertion>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTypeAssertion>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	assignment: {
+		strict: (...args: ArgsOf<typeof F.buildAssignmentExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (
+			...args: ArgsOf<typeof C.coerceToAssignmentExpression>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	augmentedAssignment: {
+		strict: (
+			...args: ArgsOf<typeof F.buildAugmentedAssignmentExpression>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (
+			...args: ArgsOf<typeof C.coerceToAugmentedAssignmentExpression>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	await: {
+		strict: (...args: ArgsOf<typeof F.buildAwaitExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToAwaitExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	unary: {
+		strict: (...args: ArgsOf<typeof F.buildUnaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToUnaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	binary: {
+		strict: (...args: ArgsOf<typeof F.buildBinaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToBinaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		in: {
+			strict: (...args: ArgsOf<typeof binaryExpression.in.strict>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+			coerce: (...args: ArgsOf<typeof binaryExpression.in.coerce>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		};
+	};
+	ternary: {
+		strict: (...args: ArgsOf<typeof F.buildTernaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTernaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	update: {
+		strict: (...args: ArgsOf<typeof updateExpression.strict>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof updateExpression.coerce>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		postfix: {
+			strict: (
+				...args: ArgsOf<typeof updateExpression.postfix.strict>
+			) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+			coerce: (
+				...args: ArgsOf<typeof updateExpression.postfix.coerce>
+			) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		};
+		prefix: {
+			strict: (
+				...args: ArgsOf<typeof updateExpression.prefix.strict>
+			) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+			coerce: (
+				...args: ArgsOf<typeof updateExpression.prefix.coerce>
+			) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		};
+	};
+	new: {
+		strict: (...args: ArgsOf<typeof F.buildNewExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNewExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	yield: {
+		strict: (...args: ArgsOf<typeof F.buildYieldExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToYieldExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+} = Object.freeze({
+	as: bundle(yieldExpressionDelegate$as$strict, yieldExpressionDelegate$as$coerce, {
+		key: 'yieldExpressionDelegate.as',
+		max: 1
+	}),
+	satisfies: bundle(yieldExpressionDelegate$satisfies$strict, yieldExpressionDelegate$satisfies$coerce, {
+		key: 'yieldExpressionDelegate.satisfies',
+		max: 1
+	}),
+	instantiation: bundle(yieldExpressionDelegate$instantiation$strict, yieldExpressionDelegate$instantiation$coerce, {
+		key: 'yieldExpressionDelegate.instantiation',
+		max: 1
+	}),
+	internalModule: bundle(yieldExpressionDelegate$internalModule$strict, yieldExpressionDelegate$internalModule$coerce, {
+		key: 'yieldExpressionDelegate.internalModule',
+		max: 1
+	}),
+	typeAssertion: bundle(yieldExpressionDelegate$typeAssertion$strict, yieldExpressionDelegate$typeAssertion$coerce, {
+		key: 'yieldExpressionDelegate.typeAssertion',
+		max: 1
+	}),
+	assignment: bundle(yieldExpressionDelegate$assignment$strict, yieldExpressionDelegate$assignment$coerce, {
+		key: 'yieldExpressionDelegate.assignment',
+		max: 1
+	}),
+	augmentedAssignment: bundle(
+		yieldExpressionDelegate$augmentedAssignment$strict,
+		yieldExpressionDelegate$augmentedAssignment$coerce,
+		{ key: 'yieldExpressionDelegate.augmentedAssignment', max: 1 }
+	),
+	await: bundle(yieldExpressionDelegate$await$strict, yieldExpressionDelegate$await$coerce, {
+		key: 'yieldExpressionDelegate.await',
+		max: 1
+	}),
+	unary: bundle(yieldExpressionDelegate$unary$strict, yieldExpressionDelegate$unary$coerce, {
+		key: 'yieldExpressionDelegate.unary',
+		max: 1
+	}),
+	binary: {
+		...bundle(yieldExpressionDelegate$binary$strict, yieldExpressionDelegate$binary$coerce, {
+			key: 'yieldExpressionDelegate.binary',
+			max: 1
+		}),
+		in: bundle(yieldExpressionDelegate$binary$in$strict, yieldExpressionDelegate$binary$in$coerce, {
+			key: 'yieldExpressionDelegate.binary.in',
+			max: 2
+		})
+	},
+	ternary: bundle(yieldExpressionDelegate$ternary$strict, yieldExpressionDelegate$ternary$coerce, {
+		key: 'yieldExpressionDelegate.ternary',
+		max: 1
+	}),
+	update: {
+		...bundle(yieldExpressionDelegate$update$strict, yieldExpressionDelegate$update$coerce, {
+			key: 'yieldExpressionDelegate.update',
+			max: 1
+		}),
+		postfix: bundle(yieldExpressionDelegate$update$postfix$strict, yieldExpressionDelegate$update$postfix$coerce, {
+			key: 'yieldExpressionDelegate.update.postfix',
+			max: 1
+		}),
+		prefix: bundle(yieldExpressionDelegate$update$prefix$strict, yieldExpressionDelegate$update$prefix$coerce, {
+			key: 'yieldExpressionDelegate.update.prefix',
+			max: 1
+		})
+	},
+	new: bundle(yieldExpressionDelegate$new$strict, yieldExpressionDelegate$new$coerce, {
+		key: 'yieldExpressionDelegate.new',
+		max: 1
+	}),
+	yield: bundle(yieldExpressionDelegate$yield$strict, yieldExpressionDelegate$yield$coerce, {
+		key: 'yieldExpressionDelegate.yield',
+		max: 1
+	})
+});
+
+const yieldExpression$delegate =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$strict = yieldExpression$delegate(
+	F.buildYieldExpression,
+	F.buildYieldExpressionDelegate
+);
+const yieldExpression$delegate$coerce = yieldExpression$delegate(
+	F.buildYieldExpression,
+	C.coerceToYieldExpressionDelegate
+);
+const yieldExpression$delegate$as =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$as$strict = yieldExpression$delegate$as(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.as.strict
+);
+const yieldExpression$delegate$as$coerce = yieldExpression$delegate$as(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.as.coerce
+);
+const yieldExpression$delegate$satisfies =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$satisfies$strict = yieldExpression$delegate$satisfies(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.satisfies.strict
+);
+const yieldExpression$delegate$satisfies$coerce = yieldExpression$delegate$satisfies(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.satisfies.coerce
+);
+const yieldExpression$delegate$instantiation =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$instantiation$strict = yieldExpression$delegate$instantiation(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.instantiation.strict
+);
+const yieldExpression$delegate$instantiation$coerce = yieldExpression$delegate$instantiation(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.instantiation.coerce
+);
+const yieldExpression$delegate$internalModule =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$internalModule$strict = yieldExpression$delegate$internalModule(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.internalModule.strict
+);
+const yieldExpression$delegate$internalModule$coerce = yieldExpression$delegate$internalModule(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.internalModule.coerce
+);
+const yieldExpression$delegate$typeAssertion =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$typeAssertion$strict = yieldExpression$delegate$typeAssertion(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.typeAssertion.strict
+);
+const yieldExpression$delegate$typeAssertion$coerce = yieldExpression$delegate$typeAssertion(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.typeAssertion.coerce
+);
+const yieldExpression$delegate$assignment =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$assignment$strict = yieldExpression$delegate$assignment(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.assignment.strict
+);
+const yieldExpression$delegate$assignment$coerce = yieldExpression$delegate$assignment(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.assignment.coerce
+);
+const yieldExpression$delegate$augmentedAssignment =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$augmentedAssignment$strict = yieldExpression$delegate$augmentedAssignment(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.augmentedAssignment.strict
+);
+const yieldExpression$delegate$augmentedAssignment$coerce = yieldExpression$delegate$augmentedAssignment(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.augmentedAssignment.coerce
+);
+const yieldExpression$delegate$await =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$await$strict = yieldExpression$delegate$await(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.await.strict
+);
+const yieldExpression$delegate$await$coerce = yieldExpression$delegate$await(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.await.coerce
+);
+const yieldExpression$delegate$unary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$unary$strict = yieldExpression$delegate$unary(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.unary.strict
+);
+const yieldExpression$delegate$unary$coerce = yieldExpression$delegate$unary(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.unary.coerce
+);
+const yieldExpression$delegate$binary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$binary$strict = yieldExpression$delegate$binary(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.binary.strict
+);
+const yieldExpression$delegate$binary$coerce = yieldExpression$delegate$binary(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.binary.coerce
+);
+const yieldExpression$delegate$ternary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$ternary$strict = yieldExpression$delegate$ternary(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.ternary.strict
+);
+const yieldExpression$delegate$ternary$coerce = yieldExpression$delegate$ternary(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.ternary.coerce
+);
+const yieldExpression$delegate$update =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$update$strict = yieldExpression$delegate$update(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.update.strict
+);
+const yieldExpression$delegate$update$coerce = yieldExpression$delegate$update(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.update.coerce
+);
+const yieldExpression$delegate$new =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$new$strict = yieldExpression$delegate$new(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.new.strict
+);
+const yieldExpression$delegate$new$coerce = yieldExpression$delegate$new(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.new.coerce
+);
+const yieldExpression$delegate$yield =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$yield$strict = yieldExpression$delegate$yield(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.yield.strict
+);
+const yieldExpression$delegate$yield$coerce = yieldExpression$delegate$yield(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.yield.coerce
+);
+const yieldExpression$delegate$binary$in =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$binary$in$strict = yieldExpression$delegate$binary$in(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.binary.in.strict
+);
+const yieldExpression$delegate$binary$in$coerce = yieldExpression$delegate$binary$in(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.binary.in.coerce
+);
+const yieldExpression$delegate$update$postfix =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$update$postfix$strict = yieldExpression$delegate$update$postfix(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.update.postfix.strict
+);
+const yieldExpression$delegate$update$postfix$coerce = yieldExpression$delegate$update$postfix(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.update.postfix.coerce
+);
+const yieldExpression$delegate$update$prefix =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$update$prefix$strict = yieldExpression$delegate$update$prefix(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.update.prefix.strict
+);
+const yieldExpression$delegate$update$prefix$coerce = yieldExpression$delegate$update$prefix(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.update.prefix.coerce
+);
+export const yieldExpression = Object.freeze({
+	...B.yieldExpression,
+	delegate: {
+		...bundle(yieldExpression$delegate$strict, yieldExpression$delegate$coerce, {
+			key: 'yieldExpression.delegate',
+			max: 1
+		}),
+		as: bundle(yieldExpression$delegate$as$strict, yieldExpression$delegate$as$coerce, {
+			key: 'yieldExpression.delegate.as',
+			max: 1
+		}),
+		satisfies: bundle(yieldExpression$delegate$satisfies$strict, yieldExpression$delegate$satisfies$coerce, {
+			key: 'yieldExpression.delegate.satisfies',
+			max: 1
+		}),
+		instantiation: bundle(
+			yieldExpression$delegate$instantiation$strict,
+			yieldExpression$delegate$instantiation$coerce,
+			{ key: 'yieldExpression.delegate.instantiation', max: 1 }
+		),
+		internalModule: bundle(
+			yieldExpression$delegate$internalModule$strict,
+			yieldExpression$delegate$internalModule$coerce,
+			{ key: 'yieldExpression.delegate.internalModule', max: 1 }
+		),
+		typeAssertion: bundle(
+			yieldExpression$delegate$typeAssertion$strict,
+			yieldExpression$delegate$typeAssertion$coerce,
+			{ key: 'yieldExpression.delegate.typeAssertion', max: 1 }
+		),
+		assignment: bundle(yieldExpression$delegate$assignment$strict, yieldExpression$delegate$assignment$coerce, {
+			key: 'yieldExpression.delegate.assignment',
+			max: 1
+		}),
+		augmentedAssignment: bundle(
+			yieldExpression$delegate$augmentedAssignment$strict,
+			yieldExpression$delegate$augmentedAssignment$coerce,
+			{ key: 'yieldExpression.delegate.augmentedAssignment', max: 1 }
+		),
+		await: bundle(yieldExpression$delegate$await$strict, yieldExpression$delegate$await$coerce, {
+			key: 'yieldExpression.delegate.await',
+			max: 1
+		}),
+		unary: bundle(yieldExpression$delegate$unary$strict, yieldExpression$delegate$unary$coerce, {
+			key: 'yieldExpression.delegate.unary',
+			max: 1
+		}),
+		binary: {
+			...bundle(yieldExpression$delegate$binary$strict, yieldExpression$delegate$binary$coerce, {
+				key: 'yieldExpression.delegate.binary',
+				max: 1
+			}),
+			in: bundle(yieldExpression$delegate$binary$in$strict, yieldExpression$delegate$binary$in$coerce, {
+				key: 'yieldExpression.delegate.binary.in',
+				max: 2
+			})
+		},
+		ternary: bundle(yieldExpression$delegate$ternary$strict, yieldExpression$delegate$ternary$coerce, {
+			key: 'yieldExpression.delegate.ternary',
+			max: 1
+		}),
+		update: {
+			...bundle(yieldExpression$delegate$update$strict, yieldExpression$delegate$update$coerce, {
+				key: 'yieldExpression.delegate.update',
+				max: 1
+			}),
+			postfix: bundle(yieldExpression$delegate$update$postfix$strict, yieldExpression$delegate$update$postfix$coerce, {
+				key: 'yieldExpression.delegate.update.postfix',
+				max: 1
+			}),
+			prefix: bundle(yieldExpression$delegate$update$prefix$strict, yieldExpression$delegate$update$prefix$coerce, {
+				key: 'yieldExpression.delegate.update.prefix',
+				max: 1
+			})
+		},
+		new: bundle(yieldExpression$delegate$new$strict, yieldExpression$delegate$new$coerce, {
+			key: 'yieldExpression.delegate.new',
+			max: 1
+		}),
+		yield: bundle(yieldExpression$delegate$yield$strict, yieldExpression$delegate$yield$coerce, {
+			key: 'yieldExpression.delegate.yield',
+			max: 1
+		})
+	}
+}) as unknown as typeof B.yieldExpression & {
+	delegate: {
+		strict: (...args: ArgsOf<typeof F.buildYieldExpressionDelegate>) => ReturnType<typeof F.buildYieldExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToYieldExpressionDelegate>) => ReturnType<typeof F.buildYieldExpression>;
+		as: {
+			strict: (...args: ArgsOf<typeof yieldExpressionDelegate.as.strict>) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (...args: ArgsOf<typeof yieldExpressionDelegate.as.coerce>) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		satisfies: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.satisfies.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.satisfies.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		instantiation: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.instantiation.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.instantiation.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		internalModule: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.internalModule.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.internalModule.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		typeAssertion: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.typeAssertion.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.typeAssertion.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		assignment: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.assignment.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.assignment.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		augmentedAssignment: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.augmentedAssignment.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.augmentedAssignment.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		await: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.await.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.await.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		unary: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.unary.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.unary.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		binary: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.binary.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.binary.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			in: {
+				strict: (
+					...args: ArgsOf<typeof yieldExpressionDelegate.binary.in.strict>
+				) => ReturnType<typeof F.buildYieldExpression>;
+				coerce: (
+					...args: ArgsOf<typeof yieldExpressionDelegate.binary.in.coerce>
+				) => ReturnType<typeof F.buildYieldExpression>;
+			};
+		};
+		ternary: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.ternary.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.ternary.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		update: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.update.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.update.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			postfix: {
+				strict: (
+					...args: ArgsOf<typeof yieldExpressionDelegate.update.postfix.strict>
+				) => ReturnType<typeof F.buildYieldExpression>;
+				coerce: (
+					...args: ArgsOf<typeof yieldExpressionDelegate.update.postfix.coerce>
+				) => ReturnType<typeof F.buildYieldExpression>;
+			};
+			prefix: {
+				strict: (
+					...args: ArgsOf<typeof yieldExpressionDelegate.update.prefix.strict>
+				) => ReturnType<typeof F.buildYieldExpression>;
+				coerce: (
+					...args: ArgsOf<typeof yieldExpressionDelegate.update.prefix.coerce>
+				) => ReturnType<typeof F.buildYieldExpression>;
+			};
+		};
+		new: {
+			strict: (...args: ArgsOf<typeof yieldExpressionDelegate.new.strict>) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (...args: ArgsOf<typeof yieldExpressionDelegate.new.coerce>) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		yield: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.yield.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.yield.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+	};
+};
+
 const parenthesizedExpressionTyped$as =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -5058,6 +5862,330 @@ const parenthesizedExpressionTyped$update$prefix$coerce = parenthesizedExpressio
 	C.coerceToParenthesizedExpressionTyped,
 	updateExpression.prefix.coerce
 );
+const parenthesizedExpressionTyped$yield$delegate =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$strict = parenthesizedExpressionTyped$yield$delegate(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$coerce = parenthesizedExpressionTyped$yield$delegate(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$as =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$as$strict = parenthesizedExpressionTyped$yield$delegate$as(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.as.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$as$coerce = parenthesizedExpressionTyped$yield$delegate$as(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.as.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$satisfies =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$satisfies$strict =
+	parenthesizedExpressionTyped$yield$delegate$satisfies(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.satisfies.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$satisfies$coerce =
+	parenthesizedExpressionTyped$yield$delegate$satisfies(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.satisfies.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$instantiation =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$instantiation$strict =
+	parenthesizedExpressionTyped$yield$delegate$instantiation(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.instantiation.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$instantiation$coerce =
+	parenthesizedExpressionTyped$yield$delegate$instantiation(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.instantiation.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$internalModule =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$internalModule$strict =
+	parenthesizedExpressionTyped$yield$delegate$internalModule(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.internalModule.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$internalModule$coerce =
+	parenthesizedExpressionTyped$yield$delegate$internalModule(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.internalModule.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$typeAssertion =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$typeAssertion$strict =
+	parenthesizedExpressionTyped$yield$delegate$typeAssertion(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.typeAssertion.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$typeAssertion$coerce =
+	parenthesizedExpressionTyped$yield$delegate$typeAssertion(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.typeAssertion.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$assignment =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$assignment$strict =
+	parenthesizedExpressionTyped$yield$delegate$assignment(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.assignment.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$assignment$coerce =
+	parenthesizedExpressionTyped$yield$delegate$assignment(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.assignment.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$augmentedAssignment =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$strict =
+	parenthesizedExpressionTyped$yield$delegate$augmentedAssignment(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.augmentedAssignment.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$coerce =
+	parenthesizedExpressionTyped$yield$delegate$augmentedAssignment(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.augmentedAssignment.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$await =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$await$strict = parenthesizedExpressionTyped$yield$delegate$await(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.await.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$await$coerce = parenthesizedExpressionTyped$yield$delegate$await(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.await.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$unary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$unary$strict = parenthesizedExpressionTyped$yield$delegate$unary(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.unary.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$unary$coerce = parenthesizedExpressionTyped$yield$delegate$unary(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.unary.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$binary$strict = parenthesizedExpressionTyped$yield$delegate$binary(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.binary.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$binary$coerce = parenthesizedExpressionTyped$yield$delegate$binary(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.binary.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$ternary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$ternary$strict = parenthesizedExpressionTyped$yield$delegate$ternary(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.ternary.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$ternary$coerce = parenthesizedExpressionTyped$yield$delegate$ternary(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.ternary.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$update =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$update$strict = parenthesizedExpressionTyped$yield$delegate$update(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.update.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$update$coerce = parenthesizedExpressionTyped$yield$delegate$update(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.update.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$new =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$new$strict = parenthesizedExpressionTyped$yield$delegate$new(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.new.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$new$coerce = parenthesizedExpressionTyped$yield$delegate$new(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.new.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$yield =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$yield$strict = parenthesizedExpressionTyped$yield$delegate$yield(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.yield.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$yield$coerce = parenthesizedExpressionTyped$yield$delegate$yield(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.yield.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$binary$in =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$binary$in$strict =
+	parenthesizedExpressionTyped$yield$delegate$binary$in(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.binary.in.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$binary$in$coerce =
+	parenthesizedExpressionTyped$yield$delegate$binary$in(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.binary.in.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$update$postfix =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$update$postfix$strict =
+	parenthesizedExpressionTyped$yield$delegate$update$postfix(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.update.postfix.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$update$postfix$coerce =
+	parenthesizedExpressionTyped$yield$delegate$update$postfix(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.update.postfix.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$update$prefix =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$update$prefix$strict =
+	parenthesizedExpressionTyped$yield$delegate$update$prefix(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.update.prefix.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$update$prefix$coerce =
+	parenthesizedExpressionTyped$yield$delegate$update$prefix(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.update.prefix.coerce
+	);
 const parenthesizedExpressionTyped: {
 	as: {
 		strict: (
@@ -5274,6 +6402,258 @@ const parenthesizedExpressionTyped: {
 			},
 			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
 		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+		delegate: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+					expression: ArgsOf<typeof yieldExpression.delegate.strict>;
+				},
+				options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+			) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+					expression: ArgsOf<typeof yieldExpression.delegate.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+			) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			as: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.as.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.as.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			satisfies: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.satisfies.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.satisfies.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			instantiation: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.instantiation.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.instantiation.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			internalModule: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.internalModule.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.internalModule.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			typeAssertion: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.typeAssertion.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.typeAssertion.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			assignment: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.assignment.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.assignment.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			augmentedAssignment: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.augmentedAssignment.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.augmentedAssignment.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			await: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.await.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.await.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			unary: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.unary.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.unary.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			binary: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.binary.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.binary.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+				in: {
+					strict: (
+						config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+							expression: ArgsOf<typeof yieldExpression.delegate.binary.in.strict>;
+						},
+						options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+					) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+					coerce: (
+						config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+							expression: ArgsOf<typeof yieldExpression.delegate.binary.in.coerce>;
+						},
+						options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+					) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+				};
+			};
+			ternary: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.ternary.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.ternary.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			update: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.update.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.update.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+				postfix: {
+					strict: (
+						config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+							expression: ArgsOf<typeof yieldExpression.delegate.update.postfix.strict>;
+						},
+						options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+					) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+					coerce: (
+						config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+							expression: ArgsOf<typeof yieldExpression.delegate.update.postfix.coerce>;
+						},
+						options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+					) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+				};
+				prefix: {
+					strict: (
+						config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+							expression: ArgsOf<typeof yieldExpression.delegate.update.prefix.strict>;
+						},
+						options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+					) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+					coerce: (
+						config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+							expression: ArgsOf<typeof yieldExpression.delegate.update.prefix.coerce>;
+						},
+						options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+					) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+				};
+			};
+			new: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.new.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.new.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			yield: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.yield.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.yield.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+		};
 	};
 } = Object.freeze({
 	as: bundle(parenthesizedExpressionTyped$as$strict, parenthesizedExpressionTyped$as$coerce, {
@@ -5350,10 +6730,108 @@ const parenthesizedExpressionTyped: {
 		key: 'parenthesizedExpressionTyped.new',
 		max: 2
 	}),
-	yield: bundle(parenthesizedExpressionTyped$yield$strict, parenthesizedExpressionTyped$yield$coerce, {
-		key: 'parenthesizedExpressionTyped.yield',
-		max: 2
-	})
+	yield: {
+		...bundle(parenthesizedExpressionTyped$yield$strict, parenthesizedExpressionTyped$yield$coerce, {
+			key: 'parenthesizedExpressionTyped.yield',
+			max: 2
+		}),
+		delegate: {
+			...bundle(
+				parenthesizedExpressionTyped$yield$delegate$strict,
+				parenthesizedExpressionTyped$yield$delegate$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate', max: 2 }
+			),
+			as: bundle(
+				parenthesizedExpressionTyped$yield$delegate$as$strict,
+				parenthesizedExpressionTyped$yield$delegate$as$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.as', max: 2 }
+			),
+			satisfies: bundle(
+				parenthesizedExpressionTyped$yield$delegate$satisfies$strict,
+				parenthesizedExpressionTyped$yield$delegate$satisfies$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.satisfies', max: 2 }
+			),
+			instantiation: bundle(
+				parenthesizedExpressionTyped$yield$delegate$instantiation$strict,
+				parenthesizedExpressionTyped$yield$delegate$instantiation$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.instantiation', max: 2 }
+			),
+			internalModule: bundle(
+				parenthesizedExpressionTyped$yield$delegate$internalModule$strict,
+				parenthesizedExpressionTyped$yield$delegate$internalModule$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.internalModule', max: 2 }
+			),
+			typeAssertion: bundle(
+				parenthesizedExpressionTyped$yield$delegate$typeAssertion$strict,
+				parenthesizedExpressionTyped$yield$delegate$typeAssertion$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.typeAssertion', max: 2 }
+			),
+			assignment: bundle(
+				parenthesizedExpressionTyped$yield$delegate$assignment$strict,
+				parenthesizedExpressionTyped$yield$delegate$assignment$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.assignment', max: 2 }
+			),
+			augmentedAssignment: bundle(
+				parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$strict,
+				parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.augmentedAssignment', max: 2 }
+			),
+			await: bundle(
+				parenthesizedExpressionTyped$yield$delegate$await$strict,
+				parenthesizedExpressionTyped$yield$delegate$await$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.await', max: 2 }
+			),
+			unary: bundle(
+				parenthesizedExpressionTyped$yield$delegate$unary$strict,
+				parenthesizedExpressionTyped$yield$delegate$unary$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.unary', max: 2 }
+			),
+			binary: {
+				...bundle(
+					parenthesizedExpressionTyped$yield$delegate$binary$strict,
+					parenthesizedExpressionTyped$yield$delegate$binary$coerce,
+					{ key: 'parenthesizedExpressionTyped.yield.delegate.binary', max: 2 }
+				),
+				in: bundle(
+					parenthesizedExpressionTyped$yield$delegate$binary$in$strict,
+					parenthesizedExpressionTyped$yield$delegate$binary$in$coerce,
+					{ key: 'parenthesizedExpressionTyped.yield.delegate.binary.in', max: 2 }
+				)
+			},
+			ternary: bundle(
+				parenthesizedExpressionTyped$yield$delegate$ternary$strict,
+				parenthesizedExpressionTyped$yield$delegate$ternary$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.ternary', max: 2 }
+			),
+			update: {
+				...bundle(
+					parenthesizedExpressionTyped$yield$delegate$update$strict,
+					parenthesizedExpressionTyped$yield$delegate$update$coerce,
+					{ key: 'parenthesizedExpressionTyped.yield.delegate.update', max: 2 }
+				),
+				postfix: bundle(
+					parenthesizedExpressionTyped$yield$delegate$update$postfix$strict,
+					parenthesizedExpressionTyped$yield$delegate$update$postfix$coerce,
+					{ key: 'parenthesizedExpressionTyped.yield.delegate.update.postfix', max: 2 }
+				),
+				prefix: bundle(
+					parenthesizedExpressionTyped$yield$delegate$update$prefix$strict,
+					parenthesizedExpressionTyped$yield$delegate$update$prefix$coerce,
+					{ key: 'parenthesizedExpressionTyped.yield.delegate.update.prefix', max: 2 }
+				)
+			},
+			new: bundle(
+				parenthesizedExpressionTyped$yield$delegate$new$strict,
+				parenthesizedExpressionTyped$yield$delegate$new$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.new', max: 2 }
+			),
+			yield: bundle(
+				parenthesizedExpressionTyped$yield$delegate$yield$strict,
+				parenthesizedExpressionTyped$yield$delegate$yield$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.yield', max: 2 }
+			)
+		}
+	}
 });
 
 export const parenthesizedExpression: {

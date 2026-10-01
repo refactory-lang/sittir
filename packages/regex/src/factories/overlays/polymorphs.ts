@@ -409,9 +409,14 @@ const termGroup$patternCharacter$strict = termGroup$patternCharacter(F.buildTerm
 const termGroup$patternCharacter$coerce = termGroup$patternCharacter(C.coerceToTermGroup, C.coerceToPatternCharacter);
 const termGroup$characterClass =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'negation' || key === 'leading' || key === 'classAtoms' || key === 'trailing') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
 const termGroup$characterClass$strict = termGroup$characterClass(F.buildTermGroup, F.buildCharacterClass);
 const termGroup$characterClass$coerce = termGroup$characterClass(C.coerceToTermGroup, C.coerceToCharacterClass);
@@ -1017,15 +1022,11 @@ export const termGroup = Object.freeze({
 	};
 	characterClass: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildCharacterClass>;
-			},
+			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & ArgsOf<typeof F.buildCharacterClass>[0],
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToCharacterClass>;
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & ArgsOf<typeof C.coerceToCharacterClass>[0],
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
@@ -1275,18 +1276,33 @@ export const pattern = Object.freeze({
 };
 
 const countQuantifier$arm =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'decimalDigits' || key === 'countQuantifierGroup') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
+	};
 const countQuantifier$arm$strict = countQuantifier$arm(F.buildCountQuantifier, F.buildCountQuantifierArm);
-const countQuantifier$arm$coerce = countQuantifier$arm(F.buildCountQuantifier, C.coerceToCountQuantifierArm);
+const countQuantifier$arm$coerce = countQuantifier$arm(C.coerceToCountQuantifier, C.coerceToCountQuantifierArm);
 export const countQuantifier = Object.freeze({
 	...B.countQuantifier,
-	arm: bundle(countQuantifier$arm$strict, countQuantifier$arm$coerce, { key: 'countQuantifier.arm', max: 1 })
+	arm: bundle(countQuantifier$arm$strict, countQuantifier$arm$coerce, { key: 'countQuantifier.arm', max: 2 })
 }) as unknown as typeof B.countQuantifier & {
 	arm: {
-		strict: (...args: ArgsOf<typeof F.buildCountQuantifierArm>) => ReturnType<typeof F.buildCountQuantifier>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCountQuantifierArm>) => ReturnType<typeof F.buildCountQuantifier>;
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCountQuantifier>[0], 'content'> &
+				ArgsOf<typeof F.buildCountQuantifierArm>[0],
+			options?: OptionsArg<typeof F.buildCountQuantifier>
+		) => ReturnType<typeof F.buildCountQuantifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCountQuantifier>[0], 'content'> &
+				ArgsOf<typeof C.coerceToCountQuantifierArm>[0],
+			options?: OptionsArg<typeof C.coerceToCountQuantifier>
+		) => ReturnType<typeof C.coerceToCountQuantifier>;
 	};
 };
 

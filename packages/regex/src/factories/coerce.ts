@@ -56,6 +56,7 @@ export const _fromMap = {
 	unicode_property_value_expression_group: coerceToUnicodePropertyValueExpressionGroup,
 	character_class_escape_text1: coerceToCharacterClassEscapeText1,
 	character_class_escape_text2: coerceToCharacterClassEscapeText2,
+	negation: coerceToNegation,
 	inline_flags_group_enable: coerceToInlineFlagsGroupEnable,
 	inline_flags_group_toggle: coerceToInlineFlagsGroupToggle,
 	inline_flags_group_disable: coerceToInlineFlagsGroupDisable,
@@ -100,6 +101,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	decimal_digits: { pattern: /^(?:(?:\d+))$/u, factory: F.buildDecimalDigits },
 	character_class_escape_text1: { pattern: /^(?:(?:\\[dDsSwW]))$/u, factory: F.buildCharacterClassEscapeText1 },
 	character_class_escape_text2: { pattern: /^(?:(?:\\[pP]))$/u, factory: F.buildCharacterClassEscapeText2 },
+	negation: { values: ['^'], factory: () => F.buildNegation },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_newline: { values: ['\n'], factory: () => F.buildNewline },
 	_blankline: { values: ['\n\n'], factory: () => F.buildBlankline },
@@ -132,6 +134,7 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'end_assertion',
 	'boundary_assertion',
 	'non_boundary_assertion',
+	'negation',
 	'pattern_character',
 	'posix_class_name',
 	'class_character',
@@ -243,7 +246,7 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 40, 47,
-	48, 49, 50, 54
+	48, 49, 50, 54, 82
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	pattern: new Set([52, 53]),
@@ -251,12 +254,11 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	posix_character_class: new Set([60]),
 	anonymous_capturing_group: new Set([51, 52, 53]),
 	non_capturing_group: new Set([51, 52, 53]),
-	count_quantifier: new Set([39, 79]),
 	backreference_escape: new Set([38]),
 	named_group_backreference: new Set([38]),
 	character_class_escape: new Set([41, 74, 80]),
 	count_quantifier_group: new Set([39]),
-	unicode_property_value_expression_group: new Set([35, 89]),
+	unicode_property_value_expression_group: new Set([35, 90]),
 	unicode_property_name: new Set([35])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {};
@@ -419,11 +421,9 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	alternation: TSKindId.Alternation,
 	term: TSKindId.Term,
 	lookaround_assertion: TSKindId.LookaroundAssertion,
-	character_class: TSKindId.CharacterClass,
 	posix_character_class: TSKindId.PosixCharacterClass,
 	anonymous_capturing_group: TSKindId.AnonymousCapturingGroup,
 	non_capturing_group: TSKindId.NonCapturingGroup,
-	count_quantifier: TSKindId.CountQuantifier,
 	backreference_escape: TSKindId.BackreferenceEscape,
 	named_group_backreference: TSKindId.NamedGroupBackreference,
 	character_class_escape: TSKindId.CharacterClassEscape,
@@ -451,7 +451,6 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'posix_character_class',
 	'anonymous_capturing_group',
 	'non_capturing_group',
-	'count_quantifier',
 	'backreference_escape',
 	'named_group_backreference',
 	'character_class_escape',
@@ -472,16 +471,12 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToTerm as (...args: unknown[]) => unknown)(...children);
 		case 'lookaround_assertion':
 			return F.buildLookaroundAssertion(children[0] as Parameters<typeof F.buildLookaroundAssertion>[0]);
-		case 'character_class':
-			return (coerceToCharacterClass as (...args: unknown[]) => unknown)(...children);
 		case 'posix_character_class':
 			return F.buildPosixCharacterClass(children[0] as Parameters<typeof F.buildPosixCharacterClass>[0]);
 		case 'anonymous_capturing_group':
 			return F.buildAnonymousCapturingGroup(children[0] as Parameters<typeof F.buildAnonymousCapturingGroup>[0]);
 		case 'non_capturing_group':
 			return F.buildNonCapturingGroup(children[0] as Parameters<typeof F.buildNonCapturingGroup>[0]);
-		case 'count_quantifier':
-			return F.buildCountQuantifier(children[0] as Parameters<typeof F.buildCountQuantifier>[0]);
 		case 'backreference_escape':
 			return F.buildBackreferenceEscape(children[0] as Parameters<typeof F.buildBackreferenceEscape>[0]);
 		case 'named_group_backreference':
@@ -666,7 +661,7 @@ export function coerceToAlternation(
 ): ReturnType<typeof F.buildAlternation> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Alternation)) {
 		const data = input[0];
-		const stored = (data as unknown as { _term?: unknown })._term;
+		const stored = (data as unknown as { _terms?: unknown })._terms;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildAlternation(
 			...(_resolveManyBranch<T.Term>(children, 'term') as unknown as Parameters<typeof F.buildAlternation>)
@@ -675,8 +670,8 @@ export function coerceToAlternation(
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
 		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNode(head) || !('term' in head)) return input;
-		const v = (head as Record<string, unknown>)['term'];
+		if (typeof head !== 'object' || head === null || isNode(head) || !('terms' in head)) return input;
+		const v = (head as Record<string, unknown>)['terms'];
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildAlternation(
@@ -810,11 +805,24 @@ export function coerceToPatternCharacter(input: T.PatternCharacter.Loose): Retur
 	return F.buildPatternCharacter(input as Parameters<typeof F.buildPatternCharacter>[0]);
 }
 
-export function coerceToCharacterClass(): T.EmptyCharacterClass;
-export function coerceToCharacterClass(
-	...input: readonly (
-		| T.CharacterClass.Loose
-		| LooseValue<
+export function resolveCharacterClass_negation(
+	value: T.CharacterClass.LooseConfig['negation']
+): T.CharacterClass['_negation'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveCharacterClass_leading(
+	value: T.CharacterClass.LooseConfig['leading']
+): T.CharacterClass['_leading'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveCharacterClass_classAtoms(
+	value: T.CharacterClass.LooseConfig['classAtoms']
+): T.CharacterClass['_class_atoms'] {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, () =>
+			_resolveMany<
 				| T.ClassCharacter
 				| '\\-'
 				| T.CharacterClassEscape
@@ -822,77 +830,30 @@ export function coerceToCharacterClass(
 				| T.ControlLetterEscape
 				| T.IdentityEscape
 				| T.PosixCharacterClass
-				| T.ClassRange,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
-): ReturnType<typeof F.buildCharacterClass>;
-export function coerceToCharacterClass(
-	...input: readonly (
-		| T.CharacterClass.Loose
-		| LooseValue<
-				| T.ClassCharacter
-				| '\\-'
-				| T.CharacterClassEscape
-				| T.ControlEscape
-				| T.ControlLetterEscape
-				| T.IdentityEscape
-				| T.PosixCharacterClass
-				| T.ClassRange,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
-): ReturnType<typeof F.buildCharacterClass> {
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.CharacterClass)) {
-		const data = input[0];
-		const stored = (data as unknown as { _class_atoms?: unknown })._class_atoms;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildCharacterClass(
-			...(coerceMixedEnumStorage(
-				_resolveKindEnum(children, () =>
-					_resolveMany<
-						| T.ClassCharacter
-						| '\\-'
-						| T.CharacterClassEscape
-						| T.ControlEscape
-						| T.ControlLetterEscape
-						| T.IdentityEscape
-						| T.PosixCharacterClass
-						| T.ClassRange
-					>(children, _K3, _K4)
-				),
-				[['\\-', TSKindId.BslashDash] as const]
-			) as unknown as Parameters<typeof F.buildCharacterClass>)
-		);
-	}
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (typeof head !== 'object' || head === null || isNode(head) || !('classAtoms' in head)) return input;
-		const v = (head as Record<string, unknown>)['classAtoms'];
-		return Array.isArray(v) ? v : [v];
-	})();
-	return F.buildCharacterClass(
-		...(coerceMixedEnumStorage(
-			_resolveKindEnum(_elems, () =>
-				_resolveMany<
-					| T.ClassCharacter
-					| '\\-'
-					| T.CharacterClassEscape
-					| T.ControlEscape
-					| T.ControlLetterEscape
-					| T.IdentityEscape
-					| T.PosixCharacterClass
-					| T.ClassRange
-				>(_elems, _K3, _K4)
-			),
-			[['\\-', TSKindId.BslashDash] as const]
-		) as unknown as Parameters<typeof F.buildCharacterClass>)
+				| T.ClassRange
+			>(value, _K3, _K4)
+		),
+		[['\\-', TSKindId.BslashDash] as const]
 	);
+}
+
+export function resolveCharacterClass_trailing(
+	value: T.CharacterClass.LooseConfig['trailing']
+): T.CharacterClass['_trailing'] {
+	return _resolveBooleanKeyword(value);
+}
+
+export function coerceToCharacterClass(): T.EmptyCharacterClass;
+export function coerceToCharacterClass(input?: T.CharacterClass.Loose): ReturnType<typeof F.buildCharacterClass>;
+export function coerceToCharacterClass(input?: T.CharacterClass.Loose): ReturnType<typeof F.buildCharacterClass> {
+	if (!_isLooseConfig<T.CharacterClass.LooseConfig | undefined>(input))
+		return input as unknown as ReturnType<typeof F.buildCharacterClass>;
+	return F.buildCharacterClass({
+		negation: resolveCharacterClass_negation(input?.negation),
+		leading: resolveCharacterClass_leading(input?.leading),
+		classAtoms: resolveCharacterClass_classAtoms(input?.classAtoms),
+		trailing: resolveCharacterClass_trailing(input?.trailing)
+	});
 }
 
 export function resolvePosixCharacterClass_posixClassName(
@@ -1065,20 +1026,17 @@ export function resolveCountQuantifier_content(
 	return _resolveOne<T.CountQuantifierArm | T.DecimalDigits>(value, _K7, _K8);
 }
 
+export function resolveCountQuantifier_lazy(value: T.CountQuantifier.LooseConfig['lazy']): T.CountQuantifier['_lazy'] {
+	return _resolveBooleanKeyword(value);
+}
+
 export function coerceToCountQuantifier(input: T.CountQuantifier.Loose): ReturnType<typeof F.buildCountQuantifier> {
-	if (isNodeOfKind(input, TSKindId.CountQuantifier))
+	if (!_isLooseConfig<T.CountQuantifier.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCountQuantifier>;
-	return F.buildCountQuantifier(
-		_requireField(
-			'count_quantifier',
-			'content',
-			_resolveOne<T.CountQuantifierArm | T.DecimalDigits>(
-				configFieldOr(input, 'content', () => input),
-				_K7,
-				_K8
-			)
-		)
-	);
+	return F.buildCountQuantifier({
+		content: _requireField('count_quantifier', 'content', resolveCountQuantifier_content(input.content)),
+		lazy: resolveCountQuantifier_lazy(input.lazy)
+	});
 }
 
 export function resolveBackreferenceEscape_groupName(
@@ -1422,6 +1380,10 @@ export function coerceToCharacterClassEscapeText2(
 ): ReturnType<typeof F.buildCharacterClassEscapeText2> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCharacterClassEscapeText2>;
 	return F.buildCharacterClassEscapeText2(input as Parameters<typeof F.buildCharacterClassEscapeText2>[0]);
+}
+
+export function coerceToNegation(_input?: T.Negation.Loose): typeof F.buildNegation {
+	return F.buildNegation;
 }
 
 export function resolveInlineFlagsGroupEnable_enabled(

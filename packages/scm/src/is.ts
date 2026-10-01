@@ -56,6 +56,9 @@ export interface IsGuards {
 	namedNodeExpressionArm<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.NamedNodeExpressionArm };
+	groupingGroup<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.GroupingGroup };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
 	definition<T extends { readonly $type: string | number } | number>(
 		v: T
@@ -98,8 +101,8 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 }
 
 const _supertype_definition_ids = new Set<number>([46, 45, 44, 51, 43, 49]);
-const _supertype_namedNode_ids = new Set<number>([56, 57]);
-const _supertype_namedNodeGroup_ids = new Set<number>([58, 59]);
+const _supertype_namedNode_ids = new Set<number>([57, 58]);
+const _supertype_namedNodeGroup_ids = new Set<number>([59, 60]);
 const _supertype_whitespace_ids = new Set<number>([24, 25, 26, 27, 28, 29, 30, 31]);
 
 export const is = Object.freeze({
@@ -119,6 +122,7 @@ export const is = Object.freeze({
 	predicate: _g(TSKindId.Predicate),
 	groupExpressionArm: _g(TSKindId.GroupExpressionArm),
 	namedNodeExpressionArm: _g(TSKindId.NamedNodeExpressionArm),
+	groupingGroup: _g(TSKindId.GroupingGroup),
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	definition: _sg(_supertype_definition_ids),
 	namedNode: _sg(_supertype_namedNode_ids),

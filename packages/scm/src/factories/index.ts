@@ -25,6 +25,7 @@ export const groupExpressionArm: Hoisted<typeof O.groupExpressionArm> = hoistAs<
 export const namedNodeExpressionArm: Hoisted<typeof O.namedNodeExpressionArm> = hoistAs<
 	typeof O.namedNodeExpressionArm
 >(O.namedNodeExpressionArm);
+export const groupingGroup: Hoisted<typeof O.groupingGroup> = hoistAs<typeof O.groupingGroup>(O.groupingGroup);
 export const namedNode: Hoisted<typeof O.namedNode> = hoistAs<typeof O.namedNode>(O.namedNode);
 export const namedNodeGroup: Hoisted<typeof O.namedNodeGroup> = hoistAs<typeof O.namedNodeGroup>(O.namedNodeGroup);
 export const definition: Hoisted<typeof O.definition> = hoistAs<typeof O.definition>(O.definition);

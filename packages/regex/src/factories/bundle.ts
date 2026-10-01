@@ -20,7 +20,10 @@ export const lookbehindAssertion = bundle(F.buildLookbehindAssertion, C.coerceTo
 	key: 'lookbehindAssertion',
 	max: 1
 });
-export const characterClass = bundle(F.buildCharacterClass, C.coerceToCharacterClass);
+export const characterClass = bundle(F.buildCharacterClass, C.coerceToCharacterClass, {
+	key: 'characterClass',
+	max: 1
+});
 export const posixCharacterClass = bundle(F.buildPosixCharacterClass, C.coerceToPosixCharacterClass, {
 	key: 'posixCharacterClass',
 	max: 1

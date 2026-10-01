@@ -518,12 +518,73 @@ describe('named_node_expression_arm', () => {
 	});
 });
 
+describe('grouping_group', () => {
+	it('factory produces correct type', () => {
+		const node = ir.groupingGroup({
+			groupExpression: {
+				$type: TSKindId.GroupExpressionArm,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_left: {
+					$type: TSKindId.AnonymousNode,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+				} as any,
+				_right: {
+					$type: TSKindId.AnonymousNode,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.GroupingGroup);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.groupingGroup({
+			groupExpression: {
+				$type: TSKindId.GroupExpressionArm,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_left: {
+					$type: TSKindId.AnonymousNode,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+				} as any,
+				_right: {
+					$type: TSKindId.AnonymousNode,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			} as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
 describe('string_content_text', () => {
 	it('factory produces correct type', () => {
 		const node = ir.stringContentText('test');
 		expect(node.$type).toBe(TSKindId.StringContentText);
 		expect(node.$source).toBe(2);
 		expect(node.$text).toBe('test');
+	});
+});
+
+describe('anchor', () => {
+	it('is the kind id', () => {
+		expect(ir.anchor).toBe(TSKindId.Anchor);
 	});
 });
 
@@ -538,7 +599,7 @@ describe('named_node_plain sub-factories', () => {
 	it('children builds the parent', () => {
 		const node = ir.namedNode.plain.children.coerce({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			namedNodeGroup: [
+			namedNodeExpressions: [
 				{
 					$type: TSKindId.NegatedField,
 					$text: 'test',
@@ -574,7 +635,7 @@ describe('named_node_supertyped sub-factories', () => {
 		const node = ir.namedNode.supertyped.children.coerce({
 			supertype: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
 			name: { $type: TSKindId.ImmediateIdentifier, $text: 'test', $source: 2, $named: true } as any,
-			namedNodeGroup: [
+			namedNodeExpressions: [
 				{
 					$type: TSKindId.NegatedField,
 					$text: 'test',

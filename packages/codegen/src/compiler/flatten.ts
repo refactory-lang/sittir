@@ -182,6 +182,39 @@ function factorChoiceArms(rule: RenderRule): RenderRule {
 	return { ...rule, members: rebuilt };
 }
 
+function factorSharedLiterals(rule: RenderRule): RenderRule {
+	if (rule.type !== CHOICE || rule.members.length < 2) return rule;
+	const seqArms = rule.members.filter((arm): arm is SeqRule<'normalize'> => arm.type === SEQ);
+	if (seqArms.length !== rule.members.length) return rule;
+	const isLiteral = (m: RenderRule): boolean => m.type === STRING && m.nonterminal === false;
+	const shortest = Math.min(...seqArms.map((arm) => arm.members.length));
+	const sharedAt = (from: (arm: SeqRule<'normalize'>, offset: number) => RenderRule, offset: number): boolean => {
+		const first = from(seqArms[0]!, offset);
+		return isLiteral(first) && seqArms.every((arm) => structuralKey(from(arm, offset)) === structuralKey(first));
+	};
+	let prefix = 0;
+	while (prefix < shortest - 1 && sharedAt((arm, i) => arm.members[i]!, prefix)) prefix++;
+	let suffix = 0;
+	while (prefix + suffix < shortest - 1 && sharedAt((arm, i) => arm.members[arm.members.length - 1 - i]!, suffix)) suffix++;
+	if (prefix + suffix === 0) return rule;
+	const middle = (arm: SeqRule<'normalize'>): RenderRule => {
+		const members = arm.members.slice(prefix, arm.members.length - suffix);
+		const slots = members.filter((m) => !isLiteral(m));
+		const kept = slots.length > 0 ? slots : members;
+		return kept.length === 1 ? kept[0]! : absorbIds({ ...arm, members: kept });
+	};
+	const first = seqArms[0]!;
+	const variants = seqArms.map(middle);
+	const shared = sharedArmAttrs({ type: CHOICE, members: variants });
+	const inner: RenderRule = {
+		...b.choice(...variants),
+		...(shared.fieldName !== undefined ? { fieldName: shared.fieldName } : {}),
+		...(shared.multiplicity !== undefined ? { multiplicity: shared.multiplicity } : {})
+	};
+	const members = [...first.members.slice(0, prefix), inner, ...first.members.slice(first.members.length - suffix)];
+	return withAttrsFrom(rule, absorbIds({ ...first, members }, ...seqArms.slice(1)));
+}
+
 function permutationKey(rule: RenderRule): string {
 	return JSON.stringify(rule, (key, value: unknown) =>
 		key === 'id' || key === 'absorbedIds' || key === 'multiplicity' ? undefined : value
@@ -230,7 +263,7 @@ function factorChoiceArmsToFixpoint(rules: Record<string, RenderRule>): Record<s
 			name: 'flatten.factorChoiceArmsToFixpoint',
 			cap: 16,
 			step: () => {
-				const step = (r: RenderRule): RenderRule => foldPermutationArms(factorChoiceArms(r));
+				const step = (r: RenderRule): RenderRule => foldPermutationArms(factorSharedLiterals(factorChoiceArms(r)));
 				const next = step(ruleWalker.map(current, step));
 				const changed = !(next === current || structuralKey(next) === structuralKey(current));
 				current = next;

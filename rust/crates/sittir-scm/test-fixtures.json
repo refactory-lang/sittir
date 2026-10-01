@@ -9,7 +9,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -69,7 +69,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -425,7 +425,7 @@
           ]
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": 7,
@@ -483,7 +483,7 @@
           ]
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -497,7 +497,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -568,7 +568,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -582,7 +582,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -601,7 +601,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": 7,
@@ -661,7 +661,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -675,7 +675,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -758,7 +758,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -772,7 +772,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -791,7 +791,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -874,7 +874,7 @@
             }
           },
           "_definition": {
-            "$type": 56,
+            "$type": 57,
             "$source": 0,
             "$named": true,
             "_name": {
@@ -934,7 +934,7 @@
             "$named": true,
             "_definitions": [
               {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -970,7 +970,7 @@
                 "_content": []
               },
               {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -1058,7 +1058,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -1072,7 +1072,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -1091,7 +1091,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -1217,7 +1217,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -1231,12 +1231,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -1381,7 +1381,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -1395,12 +1395,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -1494,7 +1494,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -1508,12 +1508,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -1607,7 +1607,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -1621,12 +1621,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -1720,7 +1720,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -1734,12 +1734,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -1898,7 +1898,7 @@
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -1939,7 +1939,7 @@
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -2008,7 +2008,7 @@
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -2054,7 +2054,7 @@
                 "$named": true,
                 "_definitions": [
                   {
-                    "$type": 56,
+                    "$type": 57,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -2210,7 +2210,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -2224,7 +2224,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -2243,7 +2243,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -2630,7 +2630,7 @@
           ]
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -2644,7 +2644,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -2668,7 +2668,7 @@
                       }
                     },
                     "_definition": {
-                      "$type": 56,
+                      "$type": 57,
                       "$source": 0,
                       "$named": true,
                       "_name": 7,
@@ -2714,7 +2714,7 @@
                       }
                     },
                     "_definition": {
-                      "$type": 56,
+                      "$type": 57,
                       "$source": 0,
                       "$named": true,
                       "_name": 7,
@@ -2760,7 +2760,7 @@
                       }
                     },
                     "_definition": {
-                      "$type": 56,
+                      "$type": 57,
                       "$source": 0,
                       "$named": true,
                       "_name": 7,
@@ -2943,7 +2943,7 @@
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -3187,7 +3187,7 @@
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -3411,7 +3411,7 @@
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -3586,7 +3586,7 @@
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -3622,7 +3622,7 @@
                   "_content": []
                 },
                 "_right": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -3715,7 +3715,7 @@
                   "$source": 0,
                   "$named": true,
                   "_left": {
-                    "$type": 56,
+                    "$type": 57,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -3816,7 +3816,7 @@
                   ]
                 },
                 "_right": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -4056,7 +4056,7 @@
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -4243,7 +4243,7 @@
                   "_content": []
                 },
                 "_right": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -4336,7 +4336,7 @@
                   "$source": 0,
                   "$named": true,
                   "_left": {
-                    "$type": 56,
+                    "$type": 57,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -4377,7 +4377,7 @@
                     "$named": true,
                     "_definitions": [
                       {
-                        "$type": 56,
+                        "$type": 57,
                         "$source": 0,
                         "$named": true,
                         "_name": {
@@ -4501,7 +4501,7 @@
                   ]
                 },
                 "_right": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -4586,7 +4586,7 @@
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -4636,7 +4636,7 @@
                   "$named": true,
                   "_definitions": [
                     {
-                      "$type": 56,
+                      "$type": 57,
                       "$source": 0,
                       "$named": true,
                       "_name": {
@@ -4744,7 +4744,7 @@
                   "_content": []
                 },
                 "_right": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -4833,7 +4833,7 @@
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -4874,7 +4874,7 @@
                   "$named": true,
                   "_definitions": [
                     {
-                      "$type": 56,
+                      "$type": 57,
                       "$source": 0,
                       "$named": true,
                       "_name": {
@@ -5003,7 +5003,7 @@
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -5076,7 +5076,7 @@
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -5117,7 +5117,7 @@
                   "$named": true,
                   "_definitions": [
                     {
-                      "$type": 56,
+                      "$type": 57,
                       "$source": 0,
                       "$named": true,
                       "_name": {
@@ -5251,7 +5251,7 @@
                 "$named": true,
                 "_definitions": [
                   {
-                    "$type": 56,
+                    "$type": 57,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -5351,7 +5351,7 @@
                   "$source": 0,
                   "$named": true,
                   "_left": {
-                    "$type": 56,
+                    "$type": 57,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -5392,7 +5392,7 @@
                     "$named": true,
                     "_definitions": [
                       {
-                        "$type": 56,
+                        "$type": 57,
                         "$source": 0,
                         "$named": true,
                         "_name": {
@@ -5521,7 +5521,7 @@
                   "$named": true,
                   "_definitions": [
                     {
-                      "$type": 56,
+                      "$type": 57,
                       "$source": 0,
                       "$named": true,
                       "_name": {
@@ -5620,7 +5620,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -5634,12 +5634,13 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
+            "_anchor": true,
             "_named_node_expressions": [
               {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -5675,16 +5676,9 @@
                 "_content": []
               }
             ],
-            "$other": [
-              {
-                "$type": 20,
-                "$source": 0,
-                "$named": false,
-                "$span": {
-                  "start": 331,
-                  "end": 332
-                }
-              }
+            "$slotOrder": [
+              "anchor",
+              "named_node_expressions"
             ]
           },
           "$other": [
@@ -5714,7 +5708,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -5728,11 +5722,11 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_last": {
-              "$type": 56,
+              "$type": 57,
               "$source": 0,
               "$named": true,
               "_name": {
@@ -5807,7 +5801,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -5821,11 +5815,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
+            "_anchor": true,
             "_last": {
-              "$type": 56,
+              "$type": 57,
               "$source": 0,
               "$named": true,
               "_name": {
@@ -5866,19 +5861,14 @@
                 "$source": 0,
                 "$named": false,
                 "$span": {
-                  "start": 377,
-                  "end": 378
-                }
-              },
-              {
-                "$type": 20,
-                "$source": 0,
-                "$named": false,
-                "$span": {
                   "start": 392,
                   "end": 393
                 }
               }
+            ],
+            "$slotOrder": [
+              "anchor",
+              "last"
             ],
             "_named_node_expressions": []
           },
@@ -5909,7 +5899,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -5923,9 +5913,10 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
+            "_anchor": true,
             "_named_node_expressions": [
               {
                 "$type": 46,
@@ -5977,16 +5968,9 @@
                 "_content": []
               }
             ],
-            "$other": [
-              {
-                "$type": 20,
-                "$source": 0,
-                "$named": false,
-                "$span": {
-                  "start": 404,
-                  "end": 405
-                }
-              }
+            "$slotOrder": [
+              "anchor",
+              "named_node_expressions"
             ]
           },
           "$other": [
@@ -6016,7 +6000,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -6030,7 +6014,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_last": {
@@ -6122,7 +6106,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -6136,9 +6120,10 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
+            "_anchor": true,
             "_last": {
               "$type": 53,
               "$source": 0,
@@ -6263,19 +6248,14 @@
                 "$source": 0,
                 "$named": false,
                 "$span": {
-                  "start": 434,
-                  "end": 435
-                }
-              },
-              {
-                "$type": 20,
-                "$source": 0,
-                "$named": false,
-                "$span": {
                   "start": 446,
                   "end": 447
                 }
               }
+            ],
+            "$slotOrder": [
+              "anchor",
+              "last"
             ],
             "_named_node_expressions": []
           },
@@ -6306,7 +6286,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -6320,7 +6300,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -6333,7 +6313,7 @@
                   "$source": 0,
                   "$named": true,
                   "_left": {
-                    "$type": 56,
+                    "$type": 57,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -6434,7 +6414,7 @@
                   ]
                 },
                 "_right": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -6514,7 +6494,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -6528,9 +6508,10 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
+            "_anchor": true,
             "_named_node_expressions": [
               {
                 "$type": 53,
@@ -6541,7 +6522,7 @@
                   "$source": 0,
                   "$named": true,
                   "_left": {
-                    "$type": 56,
+                    "$type": 57,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -6642,7 +6623,7 @@
                   ]
                 },
                 "_right": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -6694,16 +6675,9 @@
                 ]
               }
             ],
-            "$other": [
-              {
-                "$type": 20,
-                "$source": 0,
-                "$named": false,
-                "$span": {
-                  "start": 479,
-                  "end": 480
-                }
-              }
+            "$slotOrder": [
+              "anchor",
+              "named_node_expressions"
             ]
           },
           "$other": [
@@ -6733,7 +6707,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -6747,7 +6721,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_last": {
@@ -6759,7 +6733,7 @@
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -6860,7 +6834,7 @@
                 ]
               },
               "_right": {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -6951,7 +6925,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -6965,9 +6939,10 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
+            "_anchor": true,
             "_last": {
               "$type": 53,
               "$source": 0,
@@ -6977,7 +6952,7 @@
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -7078,7 +7053,7 @@
                 ]
               },
               "_right": {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -7135,19 +7110,14 @@
                 "$source": 0,
                 "$named": false,
                 "$span": {
-                  "start": 529,
-                  "end": 530
-                }
-              },
-              {
-                "$type": 20,
-                "$source": 0,
-                "$named": false,
-                "$span": {
                   "start": 547,
                   "end": 548
                 }
               }
+            ],
+            "$slotOrder": [
+              "anchor",
+              "last"
             ],
             "_named_node_expressions": []
           },
@@ -7178,7 +7148,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -7192,9 +7162,10 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
+            "_anchor": true,
             "_named_node_expressions": [
               {
                 "$type": 49,
@@ -7211,7 +7182,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -7252,16 +7223,9 @@
                 ]
               }
             ],
-            "$other": [
-              {
-                "$type": 20,
-                "$source": 0,
-                "$named": false,
-                "$span": {
-                  "start": 557,
-                  "end": 558
-                }
-              }
+            "$slotOrder": [
+              "anchor",
+              "named_node_expressions"
             ]
           },
           "$other": [
@@ -7291,7 +7255,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -7305,7 +7269,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_last": {
@@ -7323,7 +7287,7 @@
                 }
               },
               "_definition": {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -7403,7 +7367,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -7417,9 +7381,10 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
+            "_anchor": true,
             "_last": {
               "$type": 49,
               "$source": 0,
@@ -7435,7 +7400,7 @@
                 }
               },
               "_definition": {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -7481,19 +7446,14 @@
                 "$source": 0,
                 "$named": false,
                 "$span": {
-                  "start": 613,
-                  "end": 614
-                }
-              },
-              {
-                "$type": 20,
-                "$source": 0,
-                "$named": false,
-                "$span": {
                   "start": 634,
                   "end": 635
                 }
               }
+            ],
+            "$slotOrder": [
+              "anchor",
+              "last"
             ],
             "_named_node_expressions": []
           },
@@ -7524,7 +7484,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -7538,9 +7498,10 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
+            "_anchor": true,
             "_named_node_expressions": [
               {
                 "$type": 49,
@@ -7557,7 +7518,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -7598,7 +7559,7 @@
                 ]
               },
               {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -7634,16 +7595,10 @@
                 "_content": []
               }
             ],
-            "$other": [
-              {
-                "$type": 20,
-                "$source": 0,
-                "$named": false,
-                "$span": {
-                  "start": 644,
-                  "end": 645
-                }
-              }
+            "$slotOrder": [
+              "anchor",
+              "named_node_expressions",
+              "named_node_expressions"
             ]
           },
           "$other": [
@@ -7673,7 +7628,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -7687,7 +7642,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -7710,7 +7665,7 @@
                     }
                   },
                   "_definition": {
-                    "$type": 56,
+                    "$type": 57,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -7751,7 +7706,7 @@
                   ]
                 },
                 "_right": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -7831,7 +7786,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -7845,9 +7800,10 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
+            "_anchor": true,
             "_last": {
               "$type": 53,
               "$source": 0,
@@ -7867,7 +7823,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -7908,7 +7864,7 @@
                 ]
               },
               "_right": {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -7965,19 +7921,14 @@
                 "$source": 0,
                 "$named": false,
                 "$span": {
-                  "start": 726,
-                  "end": 727
-                }
-              },
-              {
-                "$type": 20,
-                "$source": 0,
-                "$named": false,
-                "$span": {
                   "start": 762,
                   "end": 763
                 }
               }
+            ],
+            "$slotOrder": [
+              "anchor",
+              "last"
             ],
             "_named_node_expressions": []
           },
@@ -8008,7 +7959,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -8022,9 +7973,10 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
+            "_anchor": true,
             "_last": {
               "$type": 53,
               "$source": 0,
@@ -8044,7 +7996,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -8099,7 +8051,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -8161,19 +8113,14 @@
                 "$source": 0,
                 "$named": false,
                 "$span": {
-                  "start": 772,
-                  "end": 773
-                }
-              },
-              {
-                "$type": 20,
-                "$source": 0,
-                "$named": false,
-                "$span": {
                   "start": 817,
                   "end": 818
                 }
               }
+            ],
+            "$slotOrder": [
+              "anchor",
+              "last"
             ],
             "_named_node_expressions": []
           },
@@ -8204,7 +8151,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -8218,9 +8165,10 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
+            "_anchor": true,
             "_named_node_expressions": [
               {
                 "$type": 53,
@@ -8241,7 +8189,7 @@
                     }
                   },
                   "_definition": {
-                    "$type": 56,
+                    "$type": 57,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -8296,7 +8244,7 @@
                     }
                   },
                   "_definition": {
-                    "$type": 56,
+                    "$type": 57,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -8353,16 +8301,9 @@
                 ]
               }
             ],
-            "$other": [
-              {
-                "$type": 20,
-                "$source": 0,
-                "$named": false,
-                "$span": {
-                  "start": 826,
-                  "end": 827
-                }
-              }
+            "$slotOrder": [
+              "anchor",
+              "named_node_expressions"
             ]
           },
           "$other": [
@@ -8392,7 +8333,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -8406,7 +8347,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_last": {
@@ -8428,7 +8369,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -8483,7 +8424,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -8579,7 +8520,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -8593,7 +8534,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -8616,7 +8557,7 @@
                     }
                   },
                   "_definition": {
-                    "$type": 56,
+                    "$type": 57,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -8671,7 +8612,7 @@
                     }
                   },
                   "_definition": {
-                    "$type": 56,
+                    "$type": 57,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -8756,7 +8697,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -8770,7 +8711,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_last": {
@@ -8783,7 +8724,7 @@
                   "$source": 0,
                   "$named": true,
                   "_group_expression": {
-                    "$type": 56,
+                    "$type": 57,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -8818,16 +8759,10 @@
                     ],
                     "_content": []
                   },
-                  "$other": [
-                    {
-                      "$type": 20,
-                      "$source": 0,
-                      "$named": false,
-                      "$span": {
-                        "start": 1011,
-                        "end": 1012
-                      }
-                    }
+                  "_anchor": true,
+                  "$slotOrder": [
+                    "group_expression",
+                    "anchor"
                   ]
                 }
               ],
@@ -8894,7 +8829,7 @@
         }
       ]
     },
-    "expectedOutput": "( ( comment ) . ( function_declaration ) ) ( ( identifier ) . \"and\" . ( identifier ) ) ( \"test\" . \"test\" ) ( ( identifier ) . \"test\" ) ( \"test\" . ( identifier ) ) ( ( node ) . [ ( node ) \"test\" ] . ( node ) ) ( ( node ) [ ( node ) \"test\" ] . ( node ) ) ( ( node ) . [ ( node ) \"test\" ] ( node ) ) ( ( node ) . [ ( node ) \"test\" ] [ ( node ) ] ) ( ( node ) . [ ( node ) \"test\" ] . [ ( node ) ] ) ( array ( identifier ) ) ( array ( identifier ) . ) ( array ( identifier ) . ) ( string \"'\" ) ( string \"'\" . ) ( string \"'\" . \"'\" . ) ( node ( a ) . \"b\" . ( c ) ) ( node ( a ) . \"b\" . ( c ) ) ( node ( a ) . \"b\" . ( c ) . ) ( node ( a ) . \"b\" . ( c ) . ) ( node name : ( identifier ) ) ( node name : ( identifier ) . ) ( node name : ( identifier ) . ) ( node name : ( identifier ) ( identifier ) ) ( node name : ( identifier ) . ( identifier ) ) ( node name : ( identifier ) . ( identifier ) . ) ( node name : ( identifier ) . another : ( identifier ) . ) ( node name : ( identifier ) . another : ( identifier ) ) ( node name : ( identifier ) . another : ( identifier ) . ) ( node name : ( identifier ) . another : ( identifier ) ) ( trailing_anchor ( ( grouping_anchor ) ) . )\n"
+    "expectedOutput": "( ( comment ) . ( function_declaration ) ) ( ( identifier ) . \"and\" . ( identifier ) ) ( \"test\" . \"test\" ) ( ( identifier ) . \"test\" ) ( \"test\" . ( identifier ) ) ( ( node ) . [ ( node ) \"test\" ] . ( node ) ) ( ( node ) [ ( node ) \"test\" ] . ( node ) ) ( ( node ) . [ ( node ) \"test\" ] ( node ) ) ( ( node ) . [ ( node ) \"test\" ] [ ( node ) ] ) ( ( node ) . [ ( node ) \"test\" ] . [ ( node ) ] ) ( array . ( identifier ) ) ( array ( identifier ) . ) ( array . ( identifier ) . ) ( string . \"'\" ) ( string \"'\" . ) ( string . \"'\" . \"'\" . ) ( node ( a ) . \"b\" . ( c ) ) ( node . ( a ) . \"b\" . ( c ) ) ( node ( a ) . \"b\" . ( c ) . ) ( node . ( a ) . \"b\" . ( c ) . ) ( node . name : ( identifier ) ) ( node name : ( identifier ) . ) ( node . name : ( identifier ) . ) ( node . name : ( identifier ) ( identifier ) ) ( node name : ( identifier ) . ( identifier ) ) ( node . name : ( identifier ) . ( identifier ) . ) ( node . name : ( identifier ) . another : ( identifier ) . ) ( node . name : ( identifier ) . another : ( identifier ) ) ( node name : ( identifier ) . another : ( identifier ) . ) ( node name : ( identifier ) . another : ( identifier ) ) ( trailing_anchor ( ( grouping_anchor ) . ) . )\n"
   },
   {
     "kind": "roundtrip",
@@ -8902,9 +8837,9 @@
     "sourceIn": "\n((comment) . (function_declaration))\n((identifier) . \"and\" . (identifier))\n\n(\"test\" . \"test\")\n((identifier) . \"test\")\n(\"test\" . (identifier))\n\n((node) . [(node) \"test\"] . (node))\n((node) [(node) \"test\"] . (node))\n((node) . [(node) \"test\"] (node))\n\n((node) . [(node) \"test\"] [(node)])\n((node) . [(node) \"test\"] . [(node)])\n\n(array . (identifier))\n(array (identifier) .)\n(array . (identifier) .)\n\n(string . \"'\")\n(string \"'\" .)\n(string . \"'\" . \"'\" .)\n\n(node (a) . \"b\" . (c))\n(node . (a) . \"b\" . (c))\n(node (a) . \"b\" . (c) .)\n(node . (a) . \"b\" . (c) .)\n\n(node . name: (identifier))\n(node name: (identifier) .)\n(node . name: (identifier) .)\n\n(node . name: (identifier) (identifier))\n(node name: (identifier) . (identifier))\n(node . name: (identifier) . (identifier) .)\n\n(node . name: (identifier) . another: (identifier) .)\n(node . name: (identifier) . another: (identifier))\n(node name: (identifier) . another: (identifier) .)\n(node name: (identifier) . another: (identifier))\n\n(trailing_anchor ((grouping_anchor) .) .)\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "( ( comment ) . ( function_declaration ) ) ( ( identifier ) . \"and\" . ( identifier ) ) ( \"test\" . \"test\" ) ( ( identifier ) . \"test\" ) ( \"test\" . ( identifier ) ) ( ( node ) . [ ( node ) \"test\" ] . ( node ) ) ( ( node ) [ ( node ) \"test\" ] . ( node ) ) ( ( node ) . [ ( node ) \"test\" ] ( node ) ) ( ( node ) . [ ( node ) \"test\" ] [ ( node ) ] ) ( ( node ) . [ ( node ) \"test\" ] . [ ( node ) ] ) ( array ( identifier ) ) ( array ( identifier ) . ) ( array ( identifier ) . ) ( string \"'\" ) ( string \"'\" . ) ( string \"'\" . \"'\" . ) ( node ( a ) . \"b\" . ( c ) ) ( node ( a ) . \"b\" . ( c ) ) ( node ( a ) . \"b\" . ( c ) . ) ( node ( a ) . \"b\" . ( c ) . ) ( node name : ( identifier ) ) ( node name : ( identifier ) . ) ( node name : ( identifier ) . ) ( node name : ( identifier ) ( identifier ) ) ( node name : ( identifier ) . ( identifier ) ) ( node name : ( identifier ) . ( identifier ) . ) ( node name : ( identifier ) . another : ( identifier ) . ) ( node name : ( identifier ) . another : ( identifier ) ) ( node name : ( identifier ) . another : ( identifier ) . ) ( node name : ( identifier ) . another : ( identifier ) ) ( trailing_anchor ( ( grouping_anchor ) ) . )\n",
-    "expectedReparseTree": "(program definitions: (grouping (grouping_group (group_expression_arm left: (named_node_plain name: (identifier)) right: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (group_expression_arm left: (group_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (group_expression_arm left: (anonymous_node name: (string string_content: (string_content (string_content_text)))) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))))) definitions: (grouping (grouping_group (group_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))))) definitions: (grouping (grouping_group (group_expression_arm left: (anonymous_node name: (string string_content: (string_content (string_content_text)))) right: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (group_expression_arm left: (group_expression_arm left: (named_node_plain name: (identifier)) right: (list definitions: (named_node_plain name: (identifier)) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))))) right: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (named_node_plain name: (identifier))) (grouping_group (group_expression_arm left: (list definitions: (named_node_plain name: (identifier)) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (group_expression_arm left: (named_node_plain name: (identifier)) right: (list definitions: (named_node_plain name: (identifier)) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text))))))) (grouping_group (named_node_plain name: (identifier)))) definitions: (grouping (grouping_group (group_expression_arm left: (named_node_plain name: (identifier)) right: (list definitions: (named_node_plain name: (identifier)) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text))))))) (grouping_group (list definitions: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (group_expression_arm left: (group_expression_arm left: (named_node_plain name: (identifier)) right: (list definitions: (named_node_plain name: (identifier)) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))))) right: (list definitions: (named_node_plain name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (named_node_plain name: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (named_node_plain name: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (anonymous_node name: (string string_content: (string_content (string_content_text)))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (anonymous_node name: (string string_content: (string_content (string_content_text)))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (named_node_expression_arm left: (anonymous_node name: (string string_content: (string_content (string_content_text)))) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_expression_arm left: (named_node_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_expression_arm left: (named_node_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (named_node_expression_arm left: (named_node_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (named_node_expression_arm left: (named_node_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_plain name: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (field_definition name: (identifier) definition: (named_node_plain name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (field_definition name: (identifier) definition: (named_node_plain name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (field_definition name: (identifier) definition: (named_node_plain name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (field_definition name: (identifier) definition: (named_node_plain name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (grouping (grouping_group (named_node_plain name: (identifier)))))))",
-    "wrappedText": "( ( comment ) . ( function_declaration ) ) ( ( identifier ) . \"and\" . ( identifier ) ) ( \"test\" . \"test\" ) ( ( identifier ) . \"test\" ) ( \"test\" . ( identifier ) ) ( ( node ) . [ ( node ) \"test\" ] . ( node ) ) ( ( node ) [ ( node ) \"test\" ] . ( node ) ) ( ( node ) . [ ( node ) \"test\" ] ( node ) ) ( ( node ) . [ ( node ) \"test\" ] [ ( node ) ] ) ( ( node ) . [ ( node ) \"test\" ] . [ ( node ) ] ) ( array ( identifier ) ) ( array ( identifier ) . ) ( array ( identifier ) . ) ( string \"'\" ) ( string \"'\" . ) ( string \"'\" . \"'\" . ) ( node ( a ) . \"b\" . ( c ) ) ( node ( a ) . \"b\" . ( c ) ) ( node ( a ) . \"b\" . ( c ) . ) ( node ( a ) . \"b\" . ( c ) . ) ( node name : ( identifier ) ) ( node name : ( identifier ) . ) ( node name : ( identifier ) . ) ( node name : ( identifier ) ( identifier ) ) ( node name : ( identifier ) . ( identifier ) ) ( node name : ( identifier ) . ( identifier ) . ) ( node name : ( identifier ) . another : ( identifier ) . ) ( node name : ( identifier ) . another : ( identifier ) ) ( node name : ( identifier ) . another : ( identifier ) . ) ( node name : ( identifier ) . another : ( identifier ) ) ( trailing_anchor ( ( grouping_anchor ) ) . )\n",
+    "expectedSourceOut": "( ( comment ) . ( function_declaration ) ) ( ( identifier ) . \"and\" . ( identifier ) ) ( \"test\" . \"test\" ) ( ( identifier ) . \"test\" ) ( \"test\" . ( identifier ) ) ( ( node ) . [ ( node ) \"test\" ] . ( node ) ) ( ( node ) [ ( node ) \"test\" ] . ( node ) ) ( ( node ) . [ ( node ) \"test\" ] ( node ) ) ( ( node ) . [ ( node ) \"test\" ] [ ( node ) ] ) ( ( node ) . [ ( node ) \"test\" ] . [ ( node ) ] ) ( array . ( identifier ) ) ( array ( identifier ) . ) ( array . ( identifier ) . ) ( string . \"'\" ) ( string \"'\" . ) ( string . \"'\" . \"'\" . ) ( node ( a ) . \"b\" . ( c ) ) ( node . ( a ) . \"b\" . ( c ) ) ( node ( a ) . \"b\" . ( c ) . ) ( node . ( a ) . \"b\" . ( c ) . ) ( node . name : ( identifier ) ) ( node name : ( identifier ) . ) ( node . name : ( identifier ) . ) ( node . name : ( identifier ) ( identifier ) ) ( node name : ( identifier ) . ( identifier ) ) ( node . name : ( identifier ) . ( identifier ) . ) ( node . name : ( identifier ) . another : ( identifier ) . ) ( node . name : ( identifier ) . another : ( identifier ) ) ( node name : ( identifier ) . another : ( identifier ) . ) ( node name : ( identifier ) . another : ( identifier ) ) ( trailing_anchor ( ( grouping_anchor ) . ) . )\n",
+    "expectedReparseTree": "(program definitions: (grouping (grouping_group (group_expression_arm left: (named_node_plain name: (identifier)) right: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (group_expression_arm left: (group_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (group_expression_arm left: (anonymous_node name: (string string_content: (string_content (string_content_text)))) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))))) definitions: (grouping (grouping_group (group_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))))) definitions: (grouping (grouping_group (group_expression_arm left: (anonymous_node name: (string string_content: (string_content (string_content_text)))) right: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (group_expression_arm left: (group_expression_arm left: (named_node_plain name: (identifier)) right: (list definitions: (named_node_plain name: (identifier)) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))))) right: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (named_node_plain name: (identifier))) (grouping_group (group_expression_arm left: (list definitions: (named_node_plain name: (identifier)) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (group_expression_arm left: (named_node_plain name: (identifier)) right: (list definitions: (named_node_plain name: (identifier)) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text))))))) (grouping_group (named_node_plain name: (identifier)))) definitions: (grouping (grouping_group (group_expression_arm left: (named_node_plain name: (identifier)) right: (list definitions: (named_node_plain name: (identifier)) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text))))))) (grouping_group (list definitions: (named_node_plain name: (identifier))))) definitions: (grouping (grouping_group (group_expression_arm left: (group_expression_arm left: (named_node_plain name: (identifier)) right: (list definitions: (named_node_plain name: (identifier)) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))))) right: (list definitions: (named_node_plain name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_children (anchor) named_node_expressions: (named_node_plain name: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (named_node_plain name: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last (anchor) last: (named_node_plain name: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_children (anchor) named_node_expressions: (anonymous_node name: (string string_content: (string_content (string_content_text)))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (anonymous_node name: (string string_content: (string_content (string_content_text)))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last (anchor) last: (named_node_expression_arm left: (anonymous_node name: (string string_content: (string_content (string_content_text)))) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_expression_arm left: (named_node_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_children (anchor) named_node_expressions: (named_node_expression_arm left: (named_node_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (named_node_expression_arm left: (named_node_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last (anchor) last: (named_node_expression_arm left: (named_node_expression_arm left: (named_node_plain name: (identifier)) right: (anonymous_node name: (string string_content: (string_content (string_content_text))))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_children (anchor) named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last (anchor) last: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_children (anchor) named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) named_node_expressions: (named_node_plain name: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last (anchor) last: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (named_node_plain name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last (anchor) last: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (field_definition name: (identifier) definition: (named_node_plain name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_children (anchor) named_node_expressions: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (field_definition name: (identifier) definition: (named_node_plain name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (field_definition name: (identifier) definition: (named_node_plain name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_expression_arm left: (field_definition name: (identifier) definition: (named_node_plain name: (identifier))) right: (field_definition name: (identifier) definition: (named_node_plain name: (identifier)))))) definitions: (named_node_plain name: (identifier) (named_node_group_anchored_last last: (grouping (grouping_group (named_node_plain name: (identifier)) (anchor))))))",
+    "wrappedText": "( ( comment ) . ( function_declaration ) ) ( ( identifier ) . \"and\" . ( identifier ) ) ( \"test\" . \"test\" ) ( ( identifier ) . \"test\" ) ( \"test\" . ( identifier ) ) ( ( node ) . [ ( node ) \"test\" ] . ( node ) ) ( ( node ) [ ( node ) \"test\" ] . ( node ) ) ( ( node ) . [ ( node ) \"test\" ] ( node ) ) ( ( node ) . [ ( node ) \"test\" ] [ ( node ) ] ) ( ( node ) . [ ( node ) \"test\" ] . [ ( node ) ] ) ( array . ( identifier ) ) ( array ( identifier ) . ) ( array . ( identifier ) . ) ( string . \"'\" ) ( string \"'\" . ) ( string . \"'\" . \"'\" . ) ( node ( a ) . \"b\" . ( c ) ) ( node . ( a ) . \"b\" . ( c ) ) ( node ( a ) . \"b\" . ( c ) . ) ( node . ( a ) . \"b\" . ( c ) . ) ( node . name : ( identifier ) ) ( node name : ( identifier ) . ) ( node . name : ( identifier ) . ) ( node . name : ( identifier ) ( identifier ) ) ( node name : ( identifier ) . ( identifier ) ) ( node . name : ( identifier ) . ( identifier ) . ) ( node . name : ( identifier ) . another : ( identifier ) . ) ( node . name : ( identifier ) . another : ( identifier ) ) ( node name : ( identifier ) . another : ( identifier ) . ) ( node name : ( identifier ) . another : ( identifier ) ) ( trailing_anchor ( ( grouping_anchor ) . ) . )\n",
     "wrappedOffset": 0
   },
   {
@@ -8926,7 +8861,7 @@
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -9725,7 +9660,7 @@
           ]
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -9739,7 +9674,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -9758,7 +9693,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 56,
+                  "$type": 57,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -9842,7 +9777,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -9917,7 +9852,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -9931,12 +9866,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -9950,7 +9885,7 @@
                   }
                 },
                 "_named_node_group": {
-                  "$type": 58,
+                  "$type": 59,
                   "$source": 0,
                   "$named": true,
                   "_named_node_expressions": [
@@ -9969,7 +9904,7 @@
                         }
                       },
                       "_definition": {
-                        "$type": 56,
+                        "$type": 57,
                         "$source": 0,
                         "$named": true,
                         "_name": {
@@ -10010,7 +9945,7 @@
                       ]
                     },
                     {
-                      "$type": 57,
+                      "$type": 58,
                       "$source": 0,
                       "$named": true,
                       "_supertype": {
@@ -10125,7 +10060,7 @@
           "_content": []
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -10139,12 +10074,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -10158,7 +10093,7 @@
                   }
                 },
                 "_named_node_group": {
-                  "$type": 58,
+                  "$type": 59,
                   "$source": 0,
                   "$named": true,
                   "_named_node_expressions": [
@@ -10177,7 +10112,7 @@
                         }
                       },
                       "_definition": {
-                        "$type": 56,
+                        "$type": 57,
                         "$source": 0,
                         "$named": true,
                         "_name": {
@@ -10218,7 +10153,7 @@
                       ]
                     },
                     {
-                      "$type": 57,
+                      "$type": 58,
                       "$source": 0,
                       "$named": true,
                       "_supertype": {
@@ -10529,7 +10464,7 @@
           ]
         },
         {
-          "$type": 56,
+          "$type": 57,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -10543,12 +10478,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 58,
+            "$type": 59,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 56,
+                "$type": 57,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -10562,7 +10497,7 @@
                   }
                 },
                 "_named_node_group": {
-                  "$type": 58,
+                  "$type": 59,
                   "$source": 0,
                   "$named": true,
                   "_named_node_expressions": [

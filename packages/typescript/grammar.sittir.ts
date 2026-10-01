@@ -201,12 +201,6 @@ export default sittirGrammar(base, {
 		arguments: {
 			1: field('elements')
 		},
-		array: {
-			1: field('elements')
-		},
-		array_pattern: {
-			1: field('elements')
-		},
 		object: {
 			1: field('properties')
 		},
@@ -370,9 +364,8 @@ export default sittirGrammar(base, {
 			2: field('terminator')
 		},
 
-		yield_expression: {
-			1: field('expression')
-		},
+		yield_expression: [{ '1/0': variant('delegate') }, { 1: field('expression') }],
+		_type_query_subscript_expression: { '1/0': alias('optional_chain_marker') },
 
 		expression_statement: {
 			0: field('expression'),

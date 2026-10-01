@@ -6,6 +6,7 @@ import {
 	markEdited as $edited,
 	mapTriviaEntries,
 	projectInterior,
+	coerceBooleanKeywordStorage,
 	inTreeEngine
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
@@ -501,20 +502,20 @@ export function wrapPattern(data: T.Pattern, tree: TreeHandle): T.Pattern.Parsed
 }
 
 export function wrapAlternation(data: T.Alternation, tree: TreeHandle): T.Alternation.Parsed {
-	data = _keepModelledSlots(data, ['_term']);
+	data = _keepModelledSlots(data, ['_terms']);
 	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.Alternation as const,
-		_term: splitElidedWrapSlot(data._term, [TSKindId.Pipe], undefined, _order, 'term'),
+		_terms: splitElidedWrapSlot(data._terms, [TSKindId.Pipe], undefined, _order, 'terms'),
 		...(_order && { $slotOrder: _order }),
 
 		terms() {
-			return drillInAll<T.Term | undefined>(this._term as readonly (T.Term | undefined)[] | undefined, tree);
+			return drillInAll<T.Term | undefined>(this._terms as readonly (T.Term | undefined)[] | undefined, tree);
 		},
 		$with: {
-			terms: (...v: NonEmptyArray<NonNullable<T.Alternation['_term']>[number]>) =>
-				wrapAlternation({ ...$edited(data), _term: v }, tree)
+			terms: (...v: NonEmptyArray<NonNullable<T.Alternation['_terms']>[number]>) =>
+				wrapAlternation({ ...$edited(data), _terms: v }, tree)
 		}
 	});
 	return _node as unknown as T.Alternation.Parsed;
@@ -653,12 +654,28 @@ export function wrapLookbehindAssertion(data: T.LookbehindAssertion, tree: TreeH
 }
 
 export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.CharacterClass.Parsed {
-	data = _keepModelledSlots(data, ['_class_atoms']);
+	data = _keepModelledSlots(data, ['_negation', '_leading', '_class_atoms', '_trailing']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.CharacterClass as const }) as unknown as T.CharacterClass.Parsed;
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.CharacterClass as const,
+		_negation: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._negation, 'negation', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'negation',
+				span: (data as _NodeData).$span
+			})
+		),
+		_leading: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._leading, 'leading', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'leading',
+				span: (data as _NodeData).$span
+			})
+		),
 		_class_atoms: projectMixedEnumStorage(
 			normalizeRepeatedWrapSlot(data._class_atoms, false, 'class_atoms', {
 				tree,
@@ -668,7 +685,21 @@ export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.
 			}),
 			{ '\\-': 19 }
 		),
+		_trailing: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._trailing, 'trailing', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'trailing',
+				span: (data as _NodeData).$span
+			})
+		),
 
+		negation() {
+			return this._negation;
+		},
+		leading() {
+			return this._leading;
+		},
 		classAtoms() {
 			return drillInAll<
 				| T.ClassCharacter
@@ -695,9 +726,18 @@ export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.
 				tree
 			);
 		},
+		trailing() {
+			return this._trailing;
+		},
 		$with: {
-			classAtoms: (...v: NonNullable<T.CharacterClass['_class_atoms']>[number][]) =>
-				wrapCharacterClass({ ...$edited(data), _class_atoms: v }, tree)
+			negation: (v: NonNullable<T.CharacterClass['_negation']>) =>
+				wrapCharacterClass({ ...$edited(data), _negation: v }, tree),
+			leading: (v: NonNullable<T.CharacterClass['_leading']>) =>
+				wrapCharacterClass({ ...$edited(data), _leading: v }, tree),
+			classAtoms: (v: NonNullable<T.CharacterClass['_class_atoms']>) =>
+				wrapCharacterClass({ ...$edited(data), _class_atoms: v }, tree),
+			trailing: (v: NonNullable<T.CharacterClass['_trailing']>) =>
+				wrapCharacterClass({ ...$edited(data), _trailing: v }, tree)
 		}
 	});
 	return _node as unknown as T.CharacterClass.Parsed;
@@ -909,7 +949,9 @@ export function wrapInlineFlagsGroup(
 }
 
 export function wrapCountQuantifier(data: T.CountQuantifier, tree: TreeHandle): T.CountQuantifier.Parsed {
-	data = _keepModelledSlots(data, ['_content']);
+	data = _keepModelledSlots(data, ['_content', '_lazy']);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.CountQuantifier as const }) as unknown as T.CountQuantifier.Parsed;
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.CountQuantifier as const,
@@ -919,13 +961,25 @@ export function wrapCountQuantifier(data: T.CountQuantifier, tree: TreeHandle): 
 			slotName: 'content',
 			span: (data as _NodeData).$span
 		}),
+		_lazy: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._lazy, 'lazy', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'lazy',
+				span: (data as _NodeData).$span
+			})
+		),
 
 		content() {
 			return drillIn<T.CountQuantifierArm | T.DecimalDigits>(this._content, tree);
 		},
+		lazy() {
+			return this._lazy;
+		},
 		$with: {
 			content: (v: NonNullable<T.CountQuantifier['_content']>) =>
-				wrapCountQuantifier({ ...$edited(data), _content: v }, tree)
+				wrapCountQuantifier({ ...$edited(data), _content: v }, tree),
+			lazy: (v: NonNullable<T.CountQuantifier['_lazy']>) => wrapCountQuantifier({ ...$edited(data), _lazy: v }, tree)
 		}
 	});
 	return _node as unknown as T.CountQuantifier.Parsed;
@@ -1526,6 +1580,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 		..._spelledLeaf(d),
 		$type: TSKindId.CharacterClassEscapeText2 as const
 	}),
+	[TSKindId.Negation]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Negation as const }),
 	[TSKindId.InlineFlagsGroupEnable]: (d, t) => wrapInlineFlagsGroupEnable(d as unknown as T.InlineFlagsGroupEnable, t),
 	[TSKindId.InlineFlagsGroupToggle]: (d, t) => wrapInlineFlagsGroupToggle(d as unknown as T.InlineFlagsGroupToggle, t),
 	[TSKindId.InlineFlagsGroupDisable]: (d, t) =>
@@ -1594,8 +1649,8 @@ function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData
 	return trivia && mapTriviaEntries(trivia, (entries) => drillInAll(entries, tree) as unknown as typeof entries);
 }
 
-const _ALIAS_ENVELOPES: ReadonlySet<_NodeData['$type']> = new Set([88, 89]);
-const _HIDDEN_KINDS: ReadonlySet<_NodeData['$type']> = new Set([18, 47, 48, 49, 50, 65, 85, 86, 87]);
+const _ALIAS_ENVELOPES: ReadonlySet<_NodeData['$type']> = new Set([89, 90]);
+const _HIDDEN_KINDS: ReadonlySet<_NodeData['$type']> = new Set([18, 47, 48, 49, 50, 65, 86, 87, 88]);
 function _displayOf(entry: _NodeData): _NodeData['$type'] {
 	return (entry as { readonly $displayType?: _NodeData['$type'] }).$displayType ?? entry.$type;
 }

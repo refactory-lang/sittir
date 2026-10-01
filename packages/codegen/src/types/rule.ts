@@ -258,6 +258,8 @@ export type StringRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof STRING;
 	readonly value: string;
 	readonly resolvedKindId?: number;
+	readonly aliasedTo?: string;
+	readonly aliasedToId?: number;
 };
 
 export type PatternRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {

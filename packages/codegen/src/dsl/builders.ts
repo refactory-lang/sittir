@@ -333,7 +333,8 @@ function attributeField<R extends Built>(name: string, content: R): R {
 function attributeAlias<R extends Built>(content: R, target: string | SymbolRule<'normalize'>): R {
 	const aliasedTo = typeof target === 'string' ? target : target.name;
 	const aliasedToId = typeof target === 'string' ? undefined : target.kindId;
-	return { ...content, aliasedTo, aliasedToId, inline: false };
+	const namedLiteral = typeof target !== 'string' && content.type === STRING;
+	return { ...content, aliasedTo, aliasedToId, inline: false, ...(namedLiteral ? { nonterminal: true } : {}) };
 }
 
 export const attributeBuilder: AttributeBuilder = {

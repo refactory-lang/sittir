@@ -89,14 +89,15 @@ pub const COUNT_QUANTIFIER_GROUP: KindId = KindId(78);
 pub const COUNT_QUANTIFIER_ARM: KindId = KindId(79);
 pub const CHARACTER_CLASS_ESCAPE_ARM: KindId = KindId(80);
 pub const UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP: KindId = KindId(81);
-pub const INLINE_FLAGS_GROUP_ENABLE: KindId = KindId(82);
-pub const INLINE_FLAGS_GROUP_TOGGLE: KindId = KindId(83);
-pub const INLINE_FLAGS_GROUP_DISABLE: KindId = KindId(84);
-pub const ALTERNATION_REPEAT1: KindId = KindId(85);
-pub const TERM_REPEAT1: KindId = KindId(86);
-pub const CHARACTER_CLASS_REPEAT1: KindId = KindId(87);
-pub const _LAZY: KindId = KindId(88);
-pub const _UNICODE_PROPERTY_NAME: KindId = KindId(89);
+pub const _NEGATION: KindId = KindId(82);
+pub const INLINE_FLAGS_GROUP_ENABLE: KindId = KindId(83);
+pub const INLINE_FLAGS_GROUP_TOGGLE: KindId = KindId(84);
+pub const INLINE_FLAGS_GROUP_DISABLE: KindId = KindId(85);
+pub const ALTERNATION_REPEAT1: KindId = KindId(86);
+pub const TERM_REPEAT1: KindId = KindId(87);
+pub const CHARACTER_CLASS_REPEAT1: KindId = KindId(88);
+pub const _LAZY: KindId = KindId(89);
+pub const _UNICODE_PROPERTY_NAME: KindId = KindId(90);
 pub const ERROR: KindId = KindId(65535);
 const _: () = assert!(ERROR.0 == KindId::ERROR.0);
 
@@ -185,14 +186,15 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         79 => "count_quantifier_arm", // "count_quantifier_arm"
         80 => "character_class_escape_arm", // "character_class_escape_arm"
         81 => "unicode_property_value_expression_group", // "unicode_property_value_expression_group"
-        82 => "inline_flags_group_enable", // "inline_flags_group_enable"
-        83 => "inline_flags_group_toggle", // "inline_flags_group_toggle"
-        84 => "inline_flags_group_disable", // "inline_flags_group_disable"
-        85 => "alternation_repeat1", // "alternation_repeat1"
-        86 => "term_repeat1", // "term_repeat1"
-        87 => "character_class_repeat1", // "character_class_repeat1"
-        88 => "lazy", // "_lazy"
-        89 => "unicode_property_name", // "_unicode_property_name"
+        82 => "negation", // "_negation"
+        83 => "inline_flags_group_enable", // "inline_flags_group_enable"
+        84 => "inline_flags_group_toggle", // "inline_flags_group_toggle"
+        85 => "inline_flags_group_disable", // "inline_flags_group_disable"
+        86 => "alternation_repeat1", // "alternation_repeat1"
+        87 => "term_repeat1", // "term_repeat1"
+        88 => "character_class_repeat1", // "character_class_repeat1"
+        89 => "lazy", // "_lazy"
+        90 => "unicode_property_name", // "_unicode_property_name"
         65535 => "ERROR", // "ERROR"
         _ => "<unknown>",
     }
@@ -250,7 +252,7 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
 /// position the gap holds. `None` when the model has no slot there.
 pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str> {
     match (kind.0, preceding_tokens) {
-        (58, 3) => Some("class_atoms"),
+        (58, 1) => Some("negation"),
         _ => None,
     }
 }
@@ -267,7 +269,7 @@ pub fn stores_scalar(parent: KindId, field: Option<&str>, child: KindId) -> bool
         (61, Some("start")) => matches!(child.0, 14),
         (63, None) => matches!(child.0, 11 | 22),
         (77, None) => matches!(child.0, 2 | 4 | 5 | 6 | 54),
-        (88, Some("content")) => matches!(child.0, 26),
+        (89, Some("content")) => matches!(child.0, 26),
         _ => false,
     }
 }

@@ -953,6 +953,179 @@ describe('yield_expression', () => {
 	});
 });
 
+describe('yield_expression sub-factories', () => {
+	it('delegate builds the parent', () => {
+		const node = ir.yieldExpression.delegate({
+			$type: TSKindId.Undefined,
+			$text: 'undefined',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('delegate.as builds the parent', () => {
+		const node = ir.yieldExpression.delegate.as({
+			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			typeAnnotation: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('delegate.satisfies builds the parent', () => {
+		const node = ir.yieldExpression.delegate.satisfies({
+			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			typeAnnotation: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('delegate.instantiation builds the parent', () => {
+		const node = ir.yieldExpression.delegate.instantiation({
+			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			typeArguments: {
+				$type: TSKindId.TypeArguments,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_types: {
+					$type: TSKindId.Types,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+				} as any
+			} as any
+		});
+		expect(node.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('delegate.internalModule builds the parent', () => {
+		const node = ir.yieldExpression.delegate.internalModule({
+			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('delegate.typeAssertion builds the parent', () => {
+		const node = ir.yieldExpression.delegate.typeAssertion({
+			typeArguments: {
+				$type: TSKindId.TypeArguments,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_types: {
+					$type: TSKindId.Types,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+				} as any
+			} as any,
+			expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('delegate.assignment builds the parent', () => {
+		const node = ir.yieldExpression.delegate.assignment({
+			left: {
+				$type: TSKindId.LhsExpression,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			} as any,
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('delegate.augmentedAssignment builds the parent', () => {
+		const node = ir.yieldExpression.delegate.augmentedAssignment({
+			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			operator: '+=',
+			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('delegate.await builds the parent', () => {
+		const node = ir.yieldExpression.delegate.await({
+			$type: TSKindId.Undefined,
+			$text: 'undefined',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('delegate.unary builds the parent', () => {
+		const node = ir.yieldExpression.delegate.unary({
+			operator: '!',
+			argument: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('delegate.binary builds the parent', () => {
+		const node = ir.yieldExpression.delegate.binary({});
+		expect(node.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('delegate.ternary builds the parent', () => {
+		const node = ir.yieldExpression.delegate.ternary({
+			condition: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			consequence: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			alternative: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('delegate.new builds the parent', () => {
+		const node = ir.yieldExpression.delegate.new({
+			constructor_: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('delegate.yield builds the parent', () => {
+		const node = ir.yieldExpression.delegate.yield({
+			$type: TSKindId.Undefined,
+			$text: 'undefined',
+			$source: 2,
+			$named: true
+		} as any);
+		expect(node.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('delegate.binary.in builds the parent', () => {
+		const node = ir.yieldExpression.delegate.binary.in({
+			binaryExpressionIn: {
+				left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+				right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+			}
+		});
+		expect(node.$type).toBe(TSKindId.YieldExpression);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
 describe('object', () => {
 	it('factory produces correct type', () => {
 		const node = ir.object();
@@ -4523,6 +4696,12 @@ describe('index_signature_mapped_type_clause sub-factories', () => {
 	});
 });
 
+describe('optional_chain_marker', () => {
+	it('is the kind id', () => {
+		expect(ir.optionalChainMarker).toBe(TSKindId.OptionalChainMarker);
+	});
+});
+
 describe('parenthesized_expression_typed sub-factories', () => {
 	it('as builds the parent', () => {
 		const node = ir.parenthesizedExpression.typed.as.coerce({
@@ -4668,6 +4847,200 @@ describe('parenthesized_expression_typed sub-factories', () => {
 	});
 	it('binary.in builds the parent', () => {
 		const node = ir.parenthesizedExpression.typed.binary.in.coerce({
+			expression: [
+				{
+					binaryExpressionIn: {
+						left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+						right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+					}
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.delegate builds the parent', () => {
+		const node = ir.parenthesizedExpression.typed.yield.delegate.coerce({
+			expression: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.delegate.as builds the parent', () => {
+		const node = ir.parenthesizedExpression.typed.yield.delegate.as.coerce({
+			expression: [
+				{
+					expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+					typeAnnotation: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.delegate.satisfies builds the parent', () => {
+		const node = ir.parenthesizedExpression.typed.yield.delegate.satisfies.coerce({
+			expression: [
+				{
+					expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+					typeAnnotation: { $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.delegate.instantiation builds the parent', () => {
+		const node = ir.parenthesizedExpression.typed.yield.delegate.instantiation.coerce({
+			expression: [
+				{
+					expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+					typeArguments: {
+						$type: TSKindId.TypeArguments,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_types: {
+							$type: TSKindId.Types,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+						} as any
+					} as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.delegate.internalModule builds the parent', () => {
+		const node = ir.parenthesizedExpression.typed.yield.delegate.internalModule.coerce({
+			expression: [{ name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any }]
+		});
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.delegate.typeAssertion builds the parent', () => {
+		const node = ir.parenthesizedExpression.typed.yield.delegate.typeAssertion.coerce({
+			expression: [
+				{
+					typeArguments: {
+						$type: TSKindId.TypeArguments,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_types: {
+							$type: TSKindId.Types,
+							$text: 'test',
+							$source: 2,
+							$named: true,
+							_type: [{ $type: TSKindId.This, $text: 'this', $source: 2, $named: true } as any]
+						} as any
+					} as any,
+					expression: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.delegate.assignment builds the parent', () => {
+		const node = ir.parenthesizedExpression.typed.yield.delegate.assignment.coerce({
+			expression: [
+				{
+					left: {
+						$type: TSKindId.LhsExpression,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_content: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+					} as any,
+					right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.delegate.augmentedAssignment builds the parent', () => {
+		const node = ir.parenthesizedExpression.typed.yield.delegate.augmentedAssignment.coerce({
+			expression: [
+				{
+					left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					operator: '+=',
+					right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.delegate.await builds the parent', () => {
+		const node = ir.parenthesizedExpression.typed.yield.delegate.await.coerce({
+			expression: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.delegate.unary builds the parent', () => {
+		const node = ir.parenthesizedExpression.typed.yield.delegate.unary.coerce({
+			expression: [
+				{ operator: '!', argument: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any }
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.delegate.binary builds the parent', () => {
+		const node = ir.parenthesizedExpression.typed.yield.delegate.binary.coerce({ expression: [{}] });
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.delegate.ternary builds the parent', () => {
+		const node = ir.parenthesizedExpression.typed.yield.delegate.ternary.coerce({
+			expression: [
+				{
+					condition: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+					consequence: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+					alternative: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+				}
+			]
+		});
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.delegate.new builds the parent', () => {
+		const node = ir.parenthesizedExpression.typed.yield.delegate.new.coerce({
+			expression: [{ constructor_: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any }]
+		});
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.delegate.yield builds the parent', () => {
+		const node = ir.parenthesizedExpression.typed.yield.delegate.yield.coerce({
+			expression: [{ $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any]
+		});
+		expect(node.$type).toBe(TSKindId.ParenthesizedExpressionTyped);
+		expect((node as any).expression()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('yield.delegate.binary.in builds the parent', () => {
+		const node = ir.parenthesizedExpression.typed.yield.delegate.binary.in.coerce({
 			expression: [
 				{
 					binaryExpressionIn: {

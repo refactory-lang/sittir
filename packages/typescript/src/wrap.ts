@@ -3379,24 +3379,21 @@ export function wrapPrimaryExpression(
 
 export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle): T.YieldExpression.Parsed {
 	data = _keepModelledSlots(data, ['_expression']);
-	const _order = (data as _NodeData).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.YieldExpression as const,
 		_expression: projectMixedEnumStorage(
-			normalizeSingularWrapSlot(
-				dropWireDelimiters(data._expression, [TSKindId.Star], _order, 'expression'),
-				'expression',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
-			),
+			normalizeSingularWrapSlot(data._expression, 'expression', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'expression',
+				span: (data as _NodeData).$span
+			}),
 			{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123 }
 		),
-		...(_order && { $slotOrder: _order }),
 
 		expression() {
-			return drillIn<T.Expression | undefined>(this._expression, tree);
+			return drillIn<T.YieldExpressionDelegate | T.Expression | undefined>(this._expression, tree);
 		},
 		$with: {
 			expression: (v: NonNullable<T.YieldExpression['_expression']>) =>
@@ -10176,7 +10173,7 @@ export function wrapTypeQuerySubscriptExpression(
 	data: T.TypeQuerySubscriptExpression,
 	tree: TreeHandle
 ): T.TypeQuerySubscriptExpression.Parsed {
-	data = _keepModelledSlots(data, ['_object', '_index']);
+	data = _keepModelledSlots(data, ['_object', '_optional_chain_marker', '_index']);
 	if (_isReadTextLeaf(data))
 		return withMethods({
 			...data,
@@ -10193,6 +10190,14 @@ export function wrapTypeQuerySubscriptExpression(
 				span: (data as _NodeData).$span
 			}),
 			{ this: 119 }
+		),
+		_optional_chain_marker: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._optional_chain_marker, 'optional_chain_marker', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'optional_chain_marker',
+				span: (data as _NodeData).$span
+			})
 		),
 		_index: projectMixedEnumStorage(
 			normalizeSingularWrapSlot(data._index, 'index', true, data.$type, {
@@ -10226,6 +10231,9 @@ export function wrapTypeQuerySubscriptExpression(
 				| T.TypeQueryCallExpression
 			>(this._object, tree);
 		},
+		optionalChainMarker() {
+			return this._optional_chain_marker;
+		},
 		index() {
 			return drillIn<
 				| TSKindId.AnyKeyword
@@ -10245,6 +10253,8 @@ export function wrapTypeQuerySubscriptExpression(
 		$with: {
 			object: (v: NonNullable<T.TypeQuerySubscriptExpression['_object']>) =>
 				wrapTypeQuerySubscriptExpression({ ...$edited(data), _object: v }, tree),
+			optionalChainMarker: (v: NonNullable<T.TypeQuerySubscriptExpression['_optional_chain_marker']>) =>
+				wrapTypeQuerySubscriptExpression({ ...$edited(data), _optional_chain_marker: v }, tree),
 			index: (v: NonNullable<T.TypeQuerySubscriptExpression['_index']>) =>
 				wrapTypeQuerySubscriptExpression({ ...$edited(data), _index: v }, tree)
 		}
@@ -13375,6 +13385,44 @@ export function wrapImportStatementClauseFrom(
 	return _node as unknown as T.ImportStatementClauseFrom.Parsed;
 }
 
+export function wrapYieldExpressionDelegate(
+	data: T.YieldExpressionDelegate,
+	tree: TreeHandle
+): T.YieldExpressionDelegate.Parsed {
+	data = _keepModelledSlots(data, ['_expression']);
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.YieldExpressionDelegate as const,
+		_expression: projectMixedEnumStorage(
+			normalizeSingularWrapSlot(
+				data._expression ??
+					readTerminalFromOther<T.Expression>(data, [
+						TSKindId.Undefined,
+						TSKindId.This,
+						TSKindId.Super,
+						TSKindId.True,
+						TSKindId.False,
+						TSKindId.Null
+					]),
+				'expression',
+				true,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
+			),
+			{ undefined: 124, this: 119, super: 120, true: 121, false: 122, null: 123 }
+		),
+
+		expression() {
+			return drillIn<T.Expression>(this._expression, tree);
+		},
+		$with: {
+			expression: (v: NonNullable<T.YieldExpressionDelegate['_expression']>) =>
+				wrapYieldExpressionDelegate({ ...$edited(data), _expression: v }, tree)
+		}
+	});
+	return _node as unknown as T.YieldExpressionDelegate.Parsed;
+}
+
 export function wrapImportSpecifierName(data: T.ImportSpecifierName, tree: TreeHandle): T.ImportSpecifierName.Parsed {
 	data = _keepModelledSlots(data, ['_import_kind', '_name']);
 	if (_isReadTextLeaf(data))
@@ -15224,6 +15272,9 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 		wrapIndexSignatureMappedTypeClause(d as unknown as T.IndexSignatureMappedTypeClause, t),
 	[TSKindId.ImportStatementClauseFrom]: (d, t) =>
 		wrapImportStatementClauseFrom(d as unknown as T.ImportStatementClauseFrom, t),
+	[TSKindId.YieldExpressionDelegate]: (d, t) =>
+		wrapYieldExpressionDelegate(d as unknown as T.YieldExpressionDelegate, t),
+	[TSKindId.OptionalChainMarker]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.OptionalChainMarker as const }),
 	[TSKindId.ImportSpecifierName]: (d, t) => wrapImportSpecifierName(d as unknown as T.ImportSpecifierName, t),
 	[TSKindId.ImportSpecifierAs]: (d, t) => wrapImportSpecifierAs(d as unknown as T.ImportSpecifierAs, t),
 	[TSKindId.ParenthesizedExpressionTyped]: (d, t) =>
@@ -15355,11 +15406,11 @@ function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData
 	return trivia && mapTriviaEntries(trivia, (entries) => drillInAll(entries, tree) as unknown as typeof entries);
 }
 
-const _ALIAS_ENVELOPES: ReadonlySet<_NodeData['$type']> = new Set([454, 456, 457, 458, 459, 461]);
+const _ALIAS_ENVELOPES: ReadonlySet<_NodeData['$type']> = new Set([456, 458, 459, 460, 461, 463]);
 const _HIDDEN_KINDS: ReadonlySet<_NodeData['$type']> = new Set([
 	179, 180, 181, 182, 183, 184, 185, 186, 187, 189, 193, 194, 198, 201, 203, 207, 214, 231, 232, 233, 250, 251, 253,
-	258, 260, 262, 263, 268, 270, 274, 275, 283, 288, 291, 309, 322, 331, 336, 338, 355, 369, 388, 393, 430, 431, 432,
-	433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453
+	258, 260, 262, 263, 268, 270, 274, 275, 283, 288, 291, 309, 322, 331, 336, 338, 355, 369, 388, 393, 432, 433, 434,
+	435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455
 ]);
 function _displayOf(entry: _NodeData): _NodeData['$type'] {
 	return (entry as { readonly $displayType?: _NodeData['$type'] }).$displayType ?? entry.$type;
@@ -15374,7 +15425,7 @@ function _withoutDisplay(data: _NodeData): _NodeData {
 }
 
 const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData['$type']> = new Set([
-	258, 284, 320, 321, 346, 354, 367, 379, 404, 415, 416, 422
+	258, 284, 320, 321, 346, 354, 367, 379, 402, 406, 417, 418, 424
 ]);
 function _spellingTokens(data: _NodeData): readonly _NodeData[] | undefined {
 	const { $other, ...node } = data;

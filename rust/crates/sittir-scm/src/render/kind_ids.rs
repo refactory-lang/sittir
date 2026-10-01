@@ -63,16 +63,17 @@ pub const GROUP_EXPRESSION_ARM: KindId = KindId(52);
 pub const NAMED_NODE_EXPRESSION_ARM: KindId = KindId(53);
 pub const GROUPING_GROUP: KindId = KindId(54);
 pub const NAMED_NODE_GROUP: KindId = KindId(55);
-pub const NAMED_NODE_PLAIN: KindId = KindId(56);
-pub const NAMED_NODE_SUPERTYPED: KindId = KindId(57);
-pub const NAMED_NODE_GROUP_CHILDREN: KindId = KindId(58);
-pub const NAMED_NODE_GROUP_ANCHORED_LAST: KindId = KindId(59);
-pub const PROGRAM_REPEAT1: KindId = KindId(60);
-pub const STRING_CONTENT_REPEAT1: KindId = KindId(61);
-pub const PARAMETERS_REPEAT1: KindId = KindId(62);
-pub const LIST_REPEAT1: KindId = KindId(63);
-pub const GROUPING_REPEAT1: KindId = KindId(64);
-pub const NAMED_NODE_GROUP_CHILDREN_REPEAT1: KindId = KindId(65);
+pub const _ANCHOR: KindId = KindId(56);
+pub const NAMED_NODE_PLAIN: KindId = KindId(57);
+pub const NAMED_NODE_SUPERTYPED: KindId = KindId(58);
+pub const NAMED_NODE_GROUP_CHILDREN: KindId = KindId(59);
+pub const NAMED_NODE_GROUP_ANCHORED_LAST: KindId = KindId(60);
+pub const PROGRAM_REPEAT1: KindId = KindId(61);
+pub const STRING_CONTENT_REPEAT1: KindId = KindId(62);
+pub const PARAMETERS_REPEAT1: KindId = KindId(63);
+pub const LIST_REPEAT1: KindId = KindId(64);
+pub const GROUPING_REPEAT1: KindId = KindId(65);
+pub const NAMED_NODE_GROUP_CHILDREN_REPEAT1: KindId = KindId(66);
 pub const ERROR: KindId = KindId(65535);
 const _: () = assert!(ERROR.0 == KindId::ERROR.0);
 
@@ -135,16 +136,17 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         53 => "named_node_expression_arm", // "named_node_expression_arm"
         54 => "grouping_group", // "grouping_group"
         55 => "named_node_group", // "named_node_group"
-        56 => "named_node_plain", // "named_node_plain"
-        57 => "named_node_supertyped", // "named_node_supertyped"
-        58 => "named_node_group_children", // "named_node_group_children"
-        59 => "named_node_group_anchored_last", // "named_node_group_anchored_last"
-        60 => "program_repeat1", // "program_repeat1"
-        61 => "string_content_repeat1", // "string_content_repeat1"
-        62 => "parameters_repeat1", // "parameters_repeat1"
-        63 => "list_repeat1", // "list_repeat1"
-        64 => "grouping_repeat1", // "grouping_repeat1"
-        65 => "named_node_group_children_repeat1", // "named_node_group_children_repeat1"
+        56 => "anchor", // "_anchor"
+        57 => "named_node_plain", // "named_node_plain"
+        58 => "named_node_supertyped", // "named_node_supertyped"
+        59 => "named_node_group_children", // "named_node_group_children"
+        60 => "named_node_group_anchored_last", // "named_node_group_anchored_last"
+        61 => "program_repeat1", // "program_repeat1"
+        62 => "string_content_repeat1", // "string_content_repeat1"
+        63 => "parameters_repeat1", // "parameters_repeat1"
+        64 => "list_repeat1", // "list_repeat1"
+        65 => "grouping_repeat1", // "grouping_repeat1"
+        66 => "named_node_group_children_repeat1", // "named_node_group_children_repeat1"
         65535 => "ERROR", // "ERROR"
         _ => "<unknown>",
     }
@@ -175,14 +177,14 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
         (54, None, "named_node_plain") => Some("group_expression"),
         (54, None, "named_node_supertyped") => Some("group_expression"),
         (54, None, "predicate") => Some("group_expression"),
-        (56, None, "capture") => Some("content"),
-        (56, None, "named_node_group_anchored_last") => Some("named_node_group"),
-        (56, None, "named_node_group_children") => Some("named_node_group"),
-        (56, Some("quantifier"), _) => Some("content"),
         (57, None, "capture") => Some("content"),
         (57, None, "named_node_group_anchored_last") => Some("named_node_group"),
         (57, None, "named_node_group_children") => Some("named_node_group"),
         (57, Some("quantifier"), _) => Some("content"),
+        (58, None, "capture") => Some("content"),
+        (58, None, "named_node_group_anchored_last") => Some("named_node_group"),
+        (58, None, "named_node_group_children") => Some("named_node_group"),
+        (58, Some("quantifier"), _) => Some("content"),
         _ => None,
     }
 }
@@ -210,9 +212,9 @@ pub fn stores_scalar(parent: KindId, field: Option<&str>, child: KindId) -> bool
         (46, Some("name")) => matches!(child.0, 7),
         (51, Some("prefix")) => matches!(child.0, 19 | 20),
         (51, Some("type")) => matches!(child.0, 4 | 18),
-        (56, None) => matches!(child.0, 2 | 3 | 4),
-        (56, Some("name")) => matches!(child.0, 7),
         (57, None) => matches!(child.0, 2 | 3 | 4),
+        (57, Some("name")) => matches!(child.0, 7),
+        (58, None) => matches!(child.0, 2 | 3 | 4),
         _ => false,
     }
 }

@@ -55,8 +55,10 @@ export const ir: {
 	readonly predicate: typeof F.predicate;
 	readonly groupExpressionArm: typeof F.groupExpressionArm;
 	readonly namedNodeExpressionArm: typeof F.namedNodeExpressionArm;
+	readonly groupingGroup: typeof F.groupingGroup;
 	readonly namedNode: typeof F.namedNode;
 	readonly namedNodeGroup: typeof F.namedNodeGroup;
+	readonly anchor: typeof F.buildAnchor;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly immediateIdentifier: typeof F.buildImmediateIdentifier;
 	readonly stringContentText: typeof F.buildStringContentText;
@@ -81,10 +83,12 @@ export const ir: {
 	predicate: F.predicate,
 	groupExpressionArm: F.groupExpressionArm,
 	namedNodeExpressionArm: F.namedNodeExpressionArm,
+	groupingGroup: F.groupingGroup,
 	namedNode: F.namedNode,
 	namedNodeGroup: F.namedNodeGroup,
 
 	// Keyword factories
+	anchor: F.buildAnchor,
 
 	// Leaf node factories
 	identifier: F.buildIdentifier,

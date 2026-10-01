@@ -2615,17 +2615,12 @@
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": "*"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "expression"
-                    }
-                  ]
+                  "type": "SYMBOL",
+                  "name": "yield_expression_delegate",
+                  "annotations": {
+                    "variant": "delegate",
+                    "variantOf": "yield_expression"
+                  }
                 },
                 {
                   "type": "CHOICE",
@@ -4104,7 +4099,7 @@
             ]
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -4191,7 +4186,7 @@
             ]
           },
           "metadata": {
-            "fieldSource": "override"
+            "fieldSource": "enriched"
           }
         },
         {
@@ -11761,8 +11756,13 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "?."
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_optional_chain_marker"
+              },
+              "named": true,
+              "value": "optional_chain_marker"
             },
             {
               "type": "BLANK"
@@ -15429,6 +15429,31 @@
       "annotations": {
         "hoisted": true
       }
+    },
+    "yield_expression_delegate": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "*"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "expression"
+          }
+        ],
+        "annotations": {
+          "variantOf": "yield_expression",
+          "hoisted": true
+        }
+      }
+    },
+    "_optional_chain_marker": {
+      "type": "STRING",
+      "value": "?."
     },
     "import_specifier_name": {
       "type": "SEQ",

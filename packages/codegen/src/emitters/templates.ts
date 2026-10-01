@@ -24,7 +24,8 @@ import {
 import type { AssembledNode, AssembledNonterminal, NodeOrTerminal, SeamEdgeClass } from '../compiler/model/node-map.ts';
 import type { Rule, RuleBase, RenderRule, Multiplicity, SeamOrigin } from '../types/rule.ts';
 import type { DiagnosticSink } from '../types/diagnostics.ts';
-import type { WhitespaceArm } from '../dsl/primitives/spacing.ts';
+import type { DroppedTokens } from '../compiler/diagnostics/grammar-diagnostics.ts';
+import { DEDENT_TEXT, INDENT_TEXT, type WhitespaceArm } from '../dsl/primitives/spacing.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { classifyTemplateEmission, literalMergePairs } from './shared.ts';
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
@@ -84,6 +85,7 @@ export interface EmitTemplatesConfig {
 export interface EmittedTemplates {
 	bodies: Map<string, Body>;
 	seamCensus: SeamCensusSummary;
+	droppedTokens: readonly DroppedTokens[];
 }
 
 export interface SeamBoundaryRecord {
@@ -142,6 +144,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 	readonly #ctx: EmitCtx;
 	readonly #kindEntries: readonly KindEntryLike[];
 	#bodies = new Map<string, Body>();
+	#droppedTokens: DroppedTokens[] = [];
 	readonly #seamBoundaries: SeamBoundaryRecord[] = [];
 
 	constructor(config: EmitTemplatesConfig) {
@@ -202,6 +205,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		const boundaries = [...this.#seamBoundaries];
 		return {
 			bodies: new Map(this.#bodies),
+			droppedTokens: [...this.#droppedTokens],
 			seamCensus: {
 				boundaries,
 				staticGlued: boundaries.filter((b) => b.resolution === 'static-glued').length,
@@ -265,7 +269,45 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			assertNoDuplicateSlots(node, body);
 		}
 		this.#bodies.set(node.kind, body);
+		this.#recordDroppedTokens(node, body);
 	}
+
+	#recordDroppedTokens(node: AssembledNode, body: Body): void {
+		if (!(node instanceof AbstractAssembledCompound)) return;
+		const tokens = droppedLiteralTexts(this.#ctx.rules[node.kind] ?? node.renderRule, body, node);
+		if (tokens.length > 0) this.#droppedTokens.push({ kind: node.kind, tokens });
+	}
+}
+
+function templateTexts(body: Body, out: Set<string>): Set<string> {
+	for (const node of body as readonly { kind: string; text?: string; arms?: readonly { body: Body }[]; fallback?: Body }[]) {
+		if (node.kind === 'text' && node.text !== undefined) out.add(node.text);
+		for (const arm of node.arms ?? []) templateTexts(arm.body, out);
+		if (node.fallback !== undefined) templateTexts(node.fallback, out);
+	}
+	return out;
+}
+
+export function droppedLiteralTexts(rule: RenderRule, body: Body, node: AbstractAssembledCompound): string[] {
+	const present = templateTexts(body, new Set());
+	for (const slot of node.slots) for (const value of slot.values) if (isTerminalValue(value)) present.add(value.value);
+	const dropped = new Set<string>();
+	const walk = (r: RenderRule): void => {
+		if (r.tokenized === true) return;
+		switch (r.type) {
+			case STRING:
+				if (r.nonterminal !== true && r.value.trim() !== '' && r.value !== INDENT_TEXT && r.value !== DEDENT_TEXT && ![...present].some((text) => text.includes(r.value))) dropped.add(r.value);
+				return;
+			case SEQ:
+			case CHOICE:
+				for (const member of r.members) walk(member);
+				return;
+			default:
+				return;
+		}
+	};
+	walk(rule);
+	return [...dropped];
 }
 
 function renderRuleEdge(
@@ -403,6 +445,10 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 			const stringFieldName = (rule as { fieldName?: string }).fieldName;
 			if (rule.nonterminal === true && stringFieldName !== undefined) {
 				return emitScalarSlot(stringFieldName);
+			}
+			if (rule.nonterminal === true && rule.aliasedTo !== undefined) {
+				const slot = lookupSlot(rule, ctx);
+				if (slot !== undefined) return emitSlotReference(rule, slot, ctx);
 			}
 			if ((rule as { multiplicity?: Multiplicity }).multiplicity === 'optional') {
 				return EMPTY;

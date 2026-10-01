@@ -172,6 +172,24 @@
 			"name": "group_expression"
 		},
 		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "anchor",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "dot_before"
+						},
+						{
+							"kind": "slot",
+							"name": "anchor"
+						}
+					]
+				}
+			]
+		},
+		{
 			"kind": "seam",
 			"field": "grouping_group_after"
 		}
@@ -338,6 +356,24 @@
 			"field": "named_node_group_anchored_last_before"
 		},
 		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "anchor",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "anchor"
+						},
+						{
+							"kind": "seam",
+							"field": "dot_after"
+						}
+					]
+				}
+			]
+		},
+		{
 			"kind": "slot",
 			"name": "named_node_expressions"
 		},
@@ -362,6 +398,24 @@
 		{
 			"kind": "seam",
 			"field": "named_node_group_children_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "anchor",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "anchor"
+						},
+						{
+							"kind": "seam",
+							"field": "dot_after"
+						}
+					]
+				}
+			]
 		},
 		{
 			"kind": "slot",

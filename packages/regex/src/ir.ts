@@ -53,6 +53,7 @@ export const ir: {
 	readonly endAssertion: typeof F.buildEndAssertion;
 	readonly boundaryAssertion: typeof F.buildBoundaryAssertion;
 	readonly nonBoundaryAssertion: typeof F.buildNonBoundaryAssertion;
+	readonly negation: typeof F.buildNegation;
 	readonly patternCharacter: typeof F.buildPatternCharacter;
 	readonly posixClassName: typeof F.buildPosixClassName;
 	readonly classCharacter: typeof F.buildClassCharacter;
@@ -99,6 +100,7 @@ export const ir: {
 	endAssertion: F.buildEndAssertion,
 	boundaryAssertion: F.buildBoundaryAssertion,
 	nonBoundaryAssertion: F.buildNonBoundaryAssertion,
+	negation: F.buildNegation,
 
 	// Leaf node factories
 	patternCharacter: F.buildPatternCharacter,

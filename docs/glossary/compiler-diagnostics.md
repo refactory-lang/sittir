@@ -712,3 +712,11 @@ One site `catalogCoverage` reports: the owner kind, the slot and a label for the
 ### `packages/codegen/src/compiler/diagnostics/catalog-coverage.ts::auxTokenKinds`
 
 The catalog's anonymous auxiliary tokens: rows that are both `aux` and `terminal`. After the text-token mint (`dsl/rule-transforms.ts::mintInlineTextTokens`, run by enrich) there should be none, because each inline pattern or non-literal token has a visible kind of its own. The one exemption is structural: when named rules share one identical token body (`isTerminalRootRule`, `tokenBodyKey`), tree-sitter compiles that body to one auxiliary token named `<first rule>_token1`, and each rule keeps a kind id of its own (regex `posix_class_name` and `flags`). Link reports what remains as `aux-token-in-catalog`.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::DroppedTokens`
+
+A kind and the literal tokens its template neither writes nor seats in a slot.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromDroppedTokens`
+
+The blocking `dropped-token` error for one kind: the tokens lost by its render, and the remedy, a named wrapper for the token in patches so it becomes a slot. Generation stops on it unless `dropped-token` is allowed. It is raised once the templates are emitted, because the template is the only place the loss is visible.
