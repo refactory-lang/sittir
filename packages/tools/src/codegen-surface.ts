@@ -50,6 +50,7 @@ const MODULES = {
 	renderModulePaths: '../../codegen/src/emitters/render-module-paths.ts',
 	engineLoader: '../../codegen/src/engine-loader.ts',
 	modelNodeMap: '../../codegen/src/compiler/model/node-map.ts',
+	emittersShared: '../../codegen/src/emitters/shared.ts',
 	generatedManifest: '../../codegen/src/scripts/generated-manifest.ts',
 	indexSnapshot: '../../codegen/src/scripts/index-snapshot.ts',
 	variantStructural: '../../codegen/src/compiler/variant-structural.ts',
@@ -87,6 +88,7 @@ export interface CodegenSurface {
 	renderModulePaths: typeof import('../../codegen/src/emitters/render-module-paths.ts');
 	engineLoader: typeof import('../../codegen/src/engine-loader.ts');
 	modelNodeMap: typeof import('../../codegen/src/compiler/model/node-map.ts');
+	emittersShared: typeof import('../../codegen/src/emitters/shared.ts');
 	generatedManifest: typeof import('../../codegen/src/scripts/generated-manifest.ts');
 	indexSnapshot: typeof import('../../codegen/src/scripts/index-snapshot.ts');
 	variantStructural: typeof import('../../codegen/src/compiler/variant-structural.ts');

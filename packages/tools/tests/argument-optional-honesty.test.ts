@@ -3,12 +3,12 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createEngine } from '@sittir/common';
 import { allGrammars } from '@sittir/codegen/grammars';
-import { AbstractAssembledCompound } from '../../codegen/src/compiler/model/node-map.ts';
-import { buildNodeMap } from '../src/codegen-surface.ts';
+import { buildNodeMap, load } from '../src/codegen-surface.ts';
 
 const root = resolve(import.meta.dirname, '../../..');
 
 const unbuildable = async (grammar: string): Promise<{ covered: number; failures: string[] }> => {
+	const { AbstractAssembledCompound } = await load('modelNodeMap');
 	const nodeMap = await buildNodeMap(grammar);
 	const raw = (await import(pathToFileURL(resolve(root, `packages/${grammar}/src/factories/raw.ts`)).href)) as Record<string, () => unknown>;
 	const language = (await import(pathToFileURL(resolve(root, `packages/${grammar}/src/index.ts`)).href)).default;
@@ -19,8 +19,11 @@ const unbuildable = async (grammar: string): Promise<{ covered: number; failures
 		if (node.rawFactoryName === undefined || !(node instanceof AbstractAssembledCompound) || node.configSlots.length === 0) continue;
 		if (!node.argumentOptional(nodeMap)) continue;
 		const build = raw[node.rawFactoryName];
-		if (build === undefined) continue;
 		covered++;
+		if (build === undefined) {
+			failures.push(`${node.kind}: raw.ts does not export ${node.rawFactoryName}`);
+			continue;
+		}
 		try {
 			const text = engine.render(build()).toString();
 			if (engine.render(engine.parse(text)).toString() !== text) failures.push(`${node.kind}: ${JSON.stringify(text)} does not round-trip`);

@@ -1,9 +1,7 @@
 import { dirname, resolve } from 'node:path';
 import ts from 'typescript6';
 import { allGrammars } from '@sittir/codegen/grammars';
-import { AbstractAssembledCompound, isRequired, slotFilledWhenOmitted } from '../../../codegen/src/compiler/model/node-map.ts';
-import { lexedContentSlot } from '../../../codegen/src/emitters/shared.ts';
-import { buildNodeMap } from '../codegen-surface.ts';
+import { buildNodeMap, load } from '../codegen-surface.ts';
 
 const root = resolve(import.meta.dirname, '../../../..');
 
@@ -11,6 +9,8 @@ const hasUndefined = (type: ts.Type): boolean =>
 	(type.flags & ts.TypeFlags.Undefined) !== 0 || (type.isUnion() && type.types.some((member) => (member.flags & ts.TypeFlags.Undefined) !== 0));
 
 export const admittingSlots = async (grammar: string, includeLoose: boolean): Promise<{ strict: string[]; loose: string[] }> => {
+	const { AbstractAssembledCompound, isRequired, slotFilledWhenOmitted } = await load('modelNodeMap');
+	const { lexedContentSlot } = await load('emittersShared');
 	const nodeMap = await buildNodeMap(grammar);
 	const configPath = resolve(root, `packages/${grammar}/tsconfig.json`);
 	const parsed = ts.parseJsonConfigFileContent(ts.readConfigFile(configPath, ts.sys.readFile).config, ts.sys, dirname(configPath));
@@ -63,7 +63,6 @@ export const admittingSlots = async (grammar: string, includeLoose: boolean): Pr
 		.map((diagnostic) => probeIds[probeFile.getLineAndCharacterOfPosition(diagnostic.start!).line - 1] ?? '?');
 	return { strict, loose };
 };
-
 
 if (import.meta.url === `file://${process.argv[1]}`) {
 	let failed = false;

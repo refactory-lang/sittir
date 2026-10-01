@@ -909,14 +909,13 @@ export function emptyDefaultOf(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	factoryNs = ''
 ): string | null {
-	if (!isRequired(field) || field.values.length !== 1) return null;
-	if (isHiddenInfraSlot(field, nodeMap) || !slotFilledWhenOmitted(field, nodeMap)) return null;
+	if (!isRequired(field) || isHiddenInfraSlot(field, nodeMap) || !slotFilledWhenOmitted(field, nodeMap)) return null;
 	const sole = field.values[0]!;
 	const fixed = kindEntries === undefined ? undefined : fixedTextEntryOf(sole, nodeMap, kindEntries);
 	if (fixed !== undefined) return `${fixed.discriminant} as const`;
-	if (!isNodeRef(sole)) return null;
-	const targetNode = nodeMap.nodes.get(storageKindOfRef(sole.node));
-	return targetNode?.rawFactoryName === undefined || isFixedTextLeaf(targetNode) ? null : `${factoryNs}${targetNode.rawFactoryName}()`;
+	if (!isNodeRef(sole) || sole.storageKindId === undefined) return null;
+	const target = nodeMap.nodeByKindId.get(sole.storageKindId);
+	return target?.rawFactoryName === undefined || isFixedTextLeaf(target) ? null : `${factoryNs}${target.rawFactoryName}()`;
 }
 
 export function registeredSlots(node: {

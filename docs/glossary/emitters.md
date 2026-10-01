@@ -16624,7 +16624,7 @@ The one place a pattern guard's refusal is worded: `<label>: text does not match
 
 ### `packages/codegen/src/emitters/shared.ts::emptyDefaultOf`
 
-The expression that fills a required slot the caller omitted: the fixed text's discriminant, or a call of the target kind's factory. It answers only for a slot `slotFilledWhenOmitted` accepts, so a default is never emitted for a target whose own no-argument build would throw. A hidden infrastructure slot is never defaulted.
+The expression that fills a required slot the caller omitted: the fixed text's discriminant, or a call of the target kind's factory. It answers only for a slot `slotFilledWhenOmitted` accepts, so a default is never emitted for a target whose own no-argument build would throw. A hidden infrastructure slot is never defaulted. The predicate also accepts a slot that holds fixed text, so two cases stay `null` after it accepts: fixed text with no kind entry to name it (no discriminant to write), and a reference to a fixed-text leaf with none either; a leaf of that kind has a factory but no no-argument call to emit.
 
 ### `packages/codegen/src/emitters/factories.ts::requiredUnfilled`
 
