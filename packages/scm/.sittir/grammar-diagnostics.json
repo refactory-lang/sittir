@@ -1,66 +1,6 @@
 [
   {
     "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "grammar": "scm",
-    "ownerKind": "list",
-    "message": "[collect-slots] kind 'list': choice rule:list:members.3 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "grammar": "scm",
-    "ownerKind": "grouping",
-    "message": "[collect-slots] kind 'grouping': choice rule:grouping:members.3 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "grammar": "scm",
-    "ownerKind": "missing_node",
-    "message": "[collect-slots] kind 'missing_node': choice rule:missing_node:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "grammar": "scm",
-    "ownerKind": "anonymous_node",
-    "message": "[collect-slots] kind 'anonymous_node': choice rule:anonymous_node:members.1 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "unclassifiable-shape",
     "severity": "error",
     "grammar": "scm",
@@ -71,36 +11,6 @@
       "bucket": "nested-seq",
       "shape": "field(name):seq[3](choice _immediate_identifier predicate_type)",
       "ruleId": "rule:predicate:members.1"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "grammar": "scm",
-    "ownerKind": "named_node_plain",
-    "message": "[collect-slots] kind 'named_node_plain': choice rule:named_node_plain:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "grammar": "scm",
-    "ownerKind": "named_node_supertyped",
-    "message": "[collect-slots] kind 'named_node_supertyped': choice rule:named_node_supertyped:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
     }
   }
 ]

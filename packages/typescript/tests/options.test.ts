@@ -20,7 +20,7 @@ it('types every site by kind id at its address and rejects a wrong member at com
 		objectTypeContent: {
 			members: { separator: { kind: ts.kinds.Semi, after: ts.kinds.Newline }, delimiter: Delimiter.Trailing }
 		},
-		enumBodyElements: { content: { separator: { comma: { after: ts.kinds.Newline } }, delimiter: Delimiter.Trailing } },
+		enumBodyElements: { element: { separator: { comma: { after: ts.kinds.Newline } }, delimiter: Delimiter.Trailing } },
 		statements: { terminator: ts.kinds.AutomaticSemicolon },
 		quotes: { style: ts.kinds.StringSingle },
 		classBody: { lbrace: { after: ts.kinds.Indent }, rbrace: { before: ts.kinds.Dedent } },

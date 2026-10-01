@@ -24,6 +24,14 @@ Merges the base ref into the current branch and resolves the one conflict class 
 
 The repository's `SyncBaseTarget`: every registered grammar's generated roots (stable or not: regex and scm have manifests too) and a `verify` that is `verifyManifestForGrammar(...).ok` and a `regenerate` that runs `gen --grammar <name> --all` in a fresh process, the way `pnpm run regen:all` does.
 
+### `packages/tools/src/scripts/check-baseline-regression.ts::supertypeExplainsDrop`
+
+Whether a pass-count drop of one validator is a kind leaving and not a failure. It holds when the grammar's `supertypeKindCount` rose, the validator's own fail count (`total - pass`) did not, and the drop is within the validator's bound in `SUPERTYPE_EXPLAINED_DROP`.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::SUPERTYPE_EXPLAINED_DROP`
+
+The validators whose pass count may fall when a kind becomes a supertype, each with the largest drop a given rise in `supertypeKindCount` explains. `coverage` and `factoryRoundtrip` are unbounded: a kind that becomes a supertype has no template and no raw builder, and one parent can remove several cases there. `from` is bounded by the rise: a flattened parent removes exactly one `from` case, its own, so a larger drop is not explained by it. A validator not listed (`roundtrip`) is never exempt.
+
 ### `packages/tools/src/scripts/required-slot-census.ts::admittingSlots`
 
 The census behind the typing rule: every config slot that is required, that no registered option carries and that `slotFilledWhenOmitted` does not accept must be a required key whose type has no `undefined` member, in the strict config, in the builder's direct-value parameter and (with `includeLoose`) in the loose config. A builder whose whole config is optional is held to the same rule. The one exemption class is the literal affix slots of a token-interior kind (everything in a lexed-interior kind that is not its content slot): the coercer fills them from the spelled form, which the model does not declare. The loose check compiles a probe module in memory per grammar, which costs about 25 s for all five, so it runs as `pnpm run type-check:required-slots` (a CI step beside the type-check), and the unit test `strict-required-slot-types.test.ts` runs the strict half only.

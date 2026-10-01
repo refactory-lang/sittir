@@ -4146,44 +4146,6 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 	) as unknown as T.ScopedTypeIdentifier.Bound;
 }
 
-export function buildRangeExpression(
-	value: AdmitBound<
-		T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | TSKindId.RangeExpressionBare,
-		T.AdmittedNodes
-	>
-): T.RangeExpression.Bound {
-	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.RangeExpression['_content']>>(value, [
-			['..', TSKindId.RangeExpressionBare] as const
-		]),
-		'RangeExpression.content',
-		'a built RangeExpressionBinary / RangeExpressionPostfix / RangeExpressionPrefix'
-	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.RangeExpression as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: {
-					content: (
-						value: NonNullable<
-							| T.RangeExpressionBinary
-							| T.RangeExpressionPostfix
-							| T.RangeExpressionPrefix
-							| TSKindId.RangeExpressionBare
-						>
-					) => buildRangeExpression(value)
-				}
-			},
-			{
-				content: () => _content
-			}
-		)
-	) as unknown as T.RangeExpression.Bound;
-}
-
 export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryExpression.Bound {
 	const _operator = coerceKindEnumStorage<NonNullable<T.UnaryExpression['_operator']>>(config.operator, [
 		['-', TSKindId.Dash] as const,
@@ -7909,8 +7871,6 @@ function _buildTupleExpressionElements(
 	) as unknown as T.TupleExpressionElements.Bound;
 }
 
-export const buildRangeExpressionBare: TSKindId.RangeExpressionBare = TSKindId.RangeExpressionBare;
-
 export function buildIntegerLiteralDecimal(
 	config: WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>
 ): T.IntegerLiteralDecimal.Bound {
@@ -9459,6 +9419,31 @@ export function buildRangeExpressionPrefix(
 			}
 		)
 	) as unknown as T.RangeExpressionPrefix.Bound;
+}
+
+export function buildRangeExpressionBare(
+	value?: AdmitBound<TSKindId.DotDot, T.AdmittedNodes>
+): T.RangeExpressionBare.Bound {
+	const _range_expression_bare = coerceKindEnumStorage<NonNullable<T.RangeExpressionBare['_range_expression_bare']>>(
+		value,
+		[['..', TSKindId.DotDot] as const]
+	);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.RangeExpressionBare as const,
+				$source: 2 as const,
+				$named: true as const,
+				_range_expression_bare,
+				$with: {
+					rangeExpressionBare: (value: NonNullable<TSKindId.DotDot>) => buildRangeExpressionBare(value)
+				}
+			},
+			{
+				rangeExpressionBare: () => _range_expression_bare
+			}
+		)
+	) as unknown as T.RangeExpressionBare.Bound;
 }
 
 export function buildExpressionStatementWithSemi(
@@ -11367,7 +11352,6 @@ export type FluentKindMap = {
 	scoped_identifier: T.ScopedIdentifier.Bound;
 	scoped_type_identifier_in_expression_position: T.ScopedTypeIdentifierInExpressionPosition.Bound;
 	scoped_type_identifier: T.ScopedTypeIdentifier.Bound;
-	range_expression: T.RangeExpression.Bound;
 	unary_expression: T.UnaryExpression.Bound;
 	try_expression: T.TryExpression.Bound;
 	binary_expression: T.BinaryExpression.Bound;
@@ -11454,7 +11438,6 @@ export type FluentKindMap = {
 	string_open: T.StringOpen;
 	tuple_type_elements: T.TupleTypeElements.Bound;
 	tuple_expression_elements: T.TupleExpressionElements.Bound;
-	range_expression_bare: T.RangeExpressionBare;
 	integer_literal_decimal: T.IntegerLiteralDecimal.Bound;
 	integer_literal_hex: T.IntegerLiteralHex.Bound;
 	integer_literal_binary: T.IntegerLiteralBinary.Bound;
@@ -11496,6 +11479,7 @@ export type FluentKindMap = {
 	range_expression_binary: T.RangeExpressionBinary.Bound;
 	range_expression_postfix: T.RangeExpressionPostfix.Bound;
 	range_expression_prefix: T.RangeExpressionPrefix.Bound;
+	range_expression_bare: T.RangeExpressionBare.Bound;
 	expression_statement_with_semi: T.ExpressionStatementWithSemi.Bound;
 	foreign_mod_item_semi: T.ForeignModItemSemi.Bound;
 	foreign_mod_item_body: T.ForeignModItemBody.Bound;
@@ -11635,7 +11619,6 @@ export const _factoryMap = {
 	scoped_identifier: buildScopedIdentifier,
 	scoped_type_identifier_in_expression_position: buildScopedTypeIdentifierInExpressionPosition,
 	scoped_type_identifier: buildScopedTypeIdentifier,
-	range_expression: buildRangeExpression,
 	unary_expression: buildUnaryExpression,
 	try_expression: buildTryExpression,
 	binary_expression: buildBinaryExpression,
@@ -11722,7 +11705,6 @@ export const _factoryMap = {
 	string_open: buildStringOpen,
 	tuple_type_elements: buildTupleTypeElements,
 	tuple_expression_elements: buildTupleExpressionElements,
-	range_expression_bare: buildRangeExpressionBare,
 	integer_literal_decimal: buildIntegerLiteralDecimal,
 	integer_literal_hex: buildIntegerLiteralHex,
 	integer_literal_binary: buildIntegerLiteralBinary,
@@ -11764,6 +11746,7 @@ export const _factoryMap = {
 	range_expression_binary: buildRangeExpressionBinary,
 	range_expression_postfix: buildRangeExpressionPostfix,
 	range_expression_prefix: buildRangeExpressionPrefix,
+	range_expression_bare: buildRangeExpressionBare,
 	expression_statement_with_semi: buildExpressionStatementWithSemi,
 	foreign_mod_item_semi: buildForeignModItemSemi,
 	foreign_mod_item_body: buildForeignModItemBody,

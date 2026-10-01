@@ -494,7 +494,7 @@ describe('grammar diagnostics preflight', () => {
 describe('unsupported shapes block unless floor-listed for their own code', () => {
 	const warning = (code: string) => ({ code, ownerKind: 'k', message: 'm', details: {} });
 
-	for (const code of ['unclassifiable-shape', 'union-slot-mixed-row', 'union-slot-unaddressable']) {
+	for (const code of ['unclassifiable-shape', 'union-slot-mixed-row', 'union-slot-unaddressable', 'union-slot-routed-repeated']) {
 		it(`${code} blocks, is accepted when the owner is floor-listed for it, and still blocks when listed for another code`, () => {
 			const records = collectGrammarDiagnostics({ grammar: 'synth', parseKindCollisions: [], assembleWarnings: [warning(code)] })
 				.diagnostics;

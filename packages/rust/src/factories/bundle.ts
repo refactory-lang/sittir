@@ -156,10 +156,6 @@ export const scopedTypeIdentifier = bundle(F.buildScopedTypeIdentifier, C.coerce
 	key: 'scopedTypeIdentifier',
 	max: 1
 });
-export const rangeExpression = bundle(F.buildRangeExpression, C.coerceToRangeExpression, {
-	key: 'rangeExpression',
-	max: 1
-});
 export const unaryExpression = bundle(F.buildUnaryExpression, C.coerceToUnaryExpression, {
 	key: 'unaryExpression',
 	max: 1

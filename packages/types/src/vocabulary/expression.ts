@@ -1026,11 +1026,6 @@ export namespace Expression {
 	export interface Range<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by r
 		readonly kind: 'expression.range';
-		readonly content:
-			| V.Unmapped<'rust:range_expression_binary'>
-			| V.Unmapped<'rust:range_expression_postfix'>
-			| V.Unmapped<'rust:range_expression_prefix'>;
-		// unmapped: <rust:range_expression_binary> <rust:range_expression_postfix> <rust:range_expression_prefix> literal:range_expression_bare
 	}
 	export interface Reference<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression<G>>> {
 		// claimed by r

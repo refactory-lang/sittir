@@ -340,10 +340,14 @@ The assemble-warning codes that block (spec §3):
 - `unclassifiable-shape`, `union-slot-mixed-row` and `union-slot-unaddressable`, shapes collect-slots has no
   model for. It would otherwise fall back to structural recursion or keep the arms distributed, which is a guess
   about the node's shape. Each message names the form that resolves it;
+- `union-slot-routed-repeated`: a repeated list whose elements mix slot topologies (a label-routed arm beside
+  kind-routed arms) cannot be read in order. Enrich gives each label-routed arm of such a list a kind of its
+  own, so a firing means an arm it could not mint; `variant(name)` on that arm resolves it;
 - `kind-shape-mismatch` and `single-literal-choice`, which drop the kind.
 
-`union-slot-routed` is deliberately absent: it reports the union-slot design's supported routing (unnamed
-nonterminal arms, with any label-routed degenerate arms, in one kind-dispatched `content` slot), not a fallback.
+`union-slot-routed` is deliberately absent: for a single value it reports the union-slot design's supported
+routing (unnamed nonterminal arms, with any label-routed degenerate arms, in one kind-dispatched `content`
+slot), not a fallback.
 
 ### `packages/codegen/src/compiler/diagnostics/alias-distributed.ts::diagnoseDistributedAliases`
 
