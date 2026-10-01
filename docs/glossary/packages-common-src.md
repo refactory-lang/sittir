@@ -271,3 +271,54 @@ The wire unit of a position is tree-sitter's: UTF-8 bytes. Converting every span
 
 The guard every generated list setter passes its rest arguments through. A list setter takes its items as arguments; one array in their place is the call shape of an older surface and of most other APIs, so it is the mistake worth a message of its own. The check is `length === 1` and the single argument being an array, which no list element is: elements are nodes, kind ids or text.
 
+### `packages/common/src/utils.ts::renderText`
+
+The text a node renders to in the engine it was built or read in. It takes the engine handle the node captured when it was built, so a node built with no engine in scope refuses with `node has no engine`, and a node whose engine was disposed refuses with its own message.
+
+### `packages/common/src/utils.ts::rebuilt`
+
+What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none) and hands the source node's trivia to the node the rebuild returns. Inner trivia can only travel to a node that is still empty: once the rebuild gives the node a child, the comment would sit beside it, so the call throws and names the kind.
+
+### `packages/common/src/utils.ts::triviaSide`
+
+`node.$trivia.leading(...)` and `.trailing(...)`: with items it sets that position, keeps the other and returns the node; with none it returns the entries the position holds. An item is a trivia node, a whitespace kind id, or text, which is a whitespace kind when spelled exactly so and a comment otherwise. It needs the node's engine for the grammar's trivia facts.
+
+### `packages/common/src/utils.ts::triviaInner`
+
+`node.$trivia.inner(...)`: the first inner gap of a kind that has one. It writes only to an empty node (a comment beside any child has that child to lead or trail), refuses a kind with no inner gap, and detaches the node's coordinate, since the coordinate's span already covers the gap the entries sit in.
+
+### `packages/common/src/utils.ts::triviaInnerAt`
+
+`node.$trivia.innerAt(gap, ...)`: a named inner gap, for a grammar that keys its gaps. It refuses a gap the kind does not have and otherwise behaves as `triviaInner`.
+
+### `packages/common/src/utils.ts::LIST_ITEMS`
+
+The key a list node keeps its frozen items under. The list methods and the iterator read the items from it, so a node holds one array and every list member is shared.
+
+### `packages/common/src/utils.ts::listItems`
+
+The items of a list view: the list's elements, each wrapper that carries only its content read as that content, frozen. A wrapper with a decoration (an attribute on an argument) stays a node.
+
+### `packages/common/src/utils.ts::LIST_METHODS`
+
+The `ReadonlyArray` methods of a list node, written once. Each reads the items the node holds under `LIST_ITEMS`, so a node takes the whole set by spreading this object into its literal.
+
+### `packages/common/src/utils.ts::listIterator`
+
+The `Symbol.iterator` member of a list node: the iterator of the items it holds under `LIST_ITEMS`.
+
+### `packages/common/src/utils.ts::listSlotWith`
+
+A list slot's `$with` setter. With no arguments it clears an optional slot or builds the empty list; one argument that is the list itself (or `undefined`) is set as it is; anything else is the list's items and builds the list, each element group built into its element.
+
+### `packages/common/src/utils.ts::elementsWith`
+
+An elements slot's `$with` setter. Its elements are rest arguments, so one array is refused and told to spread; each element that is a config group is built into its element before the slot is set.
+
+### `packages/common/src/utils.ts::seatWith`
+
+A seated key's `$with` setter. Through a present group it writes the group's own field; with no value it leaves the group absent; with a value it builds an absent group from that field alone when no other field is required, and otherwise throws naming the required fields. A key that spells the seat's slot also takes the whole group.
+
+### `packages/common/src/transport-data.ts::isDataKey`
+
+Whether a key carries node data across the native boundary: a storage key (`_<slot>`, `$other`) or a `$` metadata key that is not a member (`$with`, `$trivia`, `$engine`, `$render`, `$toEdit`, `$replace`). A reader, a list index, `length` and a list option are members and so are not data. The boundary projection and every walker that visits a node's keys select by this, and read only the keys it selects, so a member that throws when read is never read.
