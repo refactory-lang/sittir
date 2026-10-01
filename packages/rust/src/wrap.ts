@@ -9,7 +9,9 @@ import {
 	coerceBooleanKeywordStorage,
 	inTreeEngine,
 	withListView,
-	withListSlots
+	withListSlots,
+	withGroupSeat,
+	withElementsSeat
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
@@ -2505,14 +2507,16 @@ export function wrapUnionItem(data: T.UnionItem, tree: TreeHandle): T.UnionItem.
 					slot: 'typeParameters',
 					kind: TSKindId.TypeParameters as const,
 					optional: true,
-					make: RAW.buildTypeParameters
+					make: RAW.buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
 				{
 					slot: 'body',
 					kind: TSKindId.FieldDeclarationList as const,
 					optional: false,
-					make: RAW.buildFieldDeclarationList
+					make: RAW.buildFieldDeclarationList,
+					element: { keys: ['attributeItem', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration }
 				}
 			]
 		)
@@ -2590,10 +2594,17 @@ export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle): T.EnumItem.Par
 					slot: 'typeParameters',
 					kind: TSKindId.TypeParameters as const,
 					optional: true,
-					make: RAW.buildTypeParameters
+					make: RAW.buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
-				{ slot: 'body', kind: TSKindId.EnumVariantList as const, optional: false, make: RAW.buildEnumVariantList }
+				{
+					slot: 'body',
+					kind: TSKindId.EnumVariantList as const,
+					optional: false,
+					make: RAW.buildEnumVariantList,
+					element: { keys: ['attributeItem', 'enumVariant'], make: RAW.buildAttributedEnumVariant }
+				}
 			]
 		)
 	);
@@ -2629,7 +2640,8 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle): 
 						slot: 'enumVariantListElements',
 						kind: TSKindId.EnumVariantListElements as const,
 						optional: true,
-						make: RAW.buildEnumVariantListElements
+						make: RAW.buildEnumVariantListElements,
+						element: { keys: ['attributeItem', 'enumVariant'], make: RAW.buildAttributedEnumVariant }
 					}
 				]
 			),
@@ -2738,7 +2750,8 @@ export function wrapFieldDeclarationList(
 						slot: 'fieldDeclarationListElements',
 						kind: TSKindId.FieldDeclarationListElements as const,
 						optional: true,
-						make: RAW.buildFieldDeclarationListElements
+						make: RAW.buildFieldDeclarationListElements,
+						element: { keys: ['attributeItem', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration }
 					}
 				]
 			),
@@ -2858,7 +2871,8 @@ export function wrapOrderedFieldDeclarationList(
 						slot: 'attributes',
 						kind: TSKindId.OrderedFieldDeclarationListElements as const,
 						optional: true,
-						make: RAW.buildOrderedFieldDeclarationListElements
+						make: RAW.buildOrderedFieldDeclarationListElements,
+						element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: RAW.buildAttributedOrderedField }
 					}
 				]
 			),
@@ -3242,7 +3256,8 @@ export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle): T.TypeItem.Par
 					slot: 'typeParameters',
 					kind: TSKindId.TypeParameters as const,
 					optional: true,
-					make: RAW.buildTypeParameters
+					make: RAW.buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
 				{ slot: 'trailingWhereClause', kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause }
@@ -3389,9 +3404,16 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle): T.Func
 					slot: 'typeParameters',
 					kind: TSKindId.TypeParameters as const,
 					optional: true,
-					make: RAW.buildTypeParameters
+					make: RAW.buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 				},
-				{ slot: 'parameters', kind: TSKindId.Parameters as const, optional: false, make: RAW.buildParameters },
+				{
+					slot: 'parameters',
+					kind: TSKindId.Parameters as const,
+					optional: false,
+					make: RAW.buildParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause }
 			]
 		)
@@ -3529,9 +3551,16 @@ export function wrapFunctionSignatureItem(
 					slot: 'typeParameters',
 					kind: TSKindId.TypeParameters as const,
 					optional: true,
-					make: RAW.buildTypeParameters
+					make: RAW.buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 				},
-				{ slot: 'parameters', kind: TSKindId.Parameters as const, optional: false, make: RAW.buildParameters },
+				{
+					slot: 'parameters',
+					kind: TSKindId.Parameters as const,
+					optional: false,
+					make: RAW.buildParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause }
 			]
 		)
@@ -3847,7 +3876,8 @@ export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle): T.TraitItem.
 					slot: 'typeParameters',
 					kind: TSKindId.TypeParameters as const,
 					optional: true,
-					make: RAW.buildTypeParameters
+					make: RAW.buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause }
 			]
@@ -3915,7 +3945,8 @@ export function wrapAssociatedType(data: T.AssociatedType, tree: TreeHandle): T.
 					slot: 'typeParameters',
 					kind: TSKindId.TypeParameters as const,
 					optional: true,
-					make: RAW.buildTypeParameters
+					make: RAW.buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause }
 			]
@@ -4041,7 +4072,8 @@ export function wrapHigherRankedTraitBound(
 					slot: 'typeParameters',
 					kind: TSKindId.TypeParameters as const,
 					optional: false,
-					make: RAW.buildTypeParameters
+					make: RAW.buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 				}
 			]
 		)
@@ -4125,7 +4157,8 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 						slot: 'typeParametersElements',
 						kind: TSKindId.TypeParametersElements as const,
 						optional: false,
-						make: RAW.buildTypeParametersElements
+						make: RAW.buildTypeParametersElements,
+						element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 					}
 				]
 			),
@@ -4906,7 +4939,8 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 						slot: 'parametersElements',
 						kind: TSKindId.ParametersElements as const,
 						optional: true,
-						make: RAW.buildParametersElements
+						make: RAW.buildParametersElements,
+						element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
 					}
 				]
 			),
@@ -5567,7 +5601,13 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.Func
 			},
 			[
 				{ slot: 'forLifetimes', kind: TSKindId.ForLifetimes as const, optional: true, make: RAW.buildForLifetimes },
-				{ slot: 'parameters', kind: TSKindId.Parameters as const, optional: false, make: RAW.buildParameters }
+				{
+					slot: 'parameters',
+					kind: TSKindId.Parameters as const,
+					optional: false,
+					make: RAW.buildParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+				}
 			]
 		)
 	);
@@ -5652,7 +5692,15 @@ export function wrapGenericFunction(data: T.GenericFunction, tree: TreeHandle): 
 						wrapGenericFunction({ ...$edited(data), _type_arguments: v }, tree)
 				}
 			},
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: RAW.buildTypeArguments }]
+			[
+				{
+					slot: 'typeArguments',
+					kind: TSKindId.TypeArguments as const,
+					optional: false,
+					make: RAW.buildTypeArguments,
+					element: { keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument }
+				}
+			]
 		)
 	);
 	return _node as unknown as T.GenericFunction.Parsed;
@@ -5701,7 +5749,15 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 						wrapGenericType({ ...$edited(data), _type_arguments: v }, tree)
 				}
 			},
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: RAW.buildTypeArguments }]
+			[
+				{
+					slot: 'typeArguments',
+					kind: TSKindId.TypeArguments as const,
+					optional: false,
+					make: RAW.buildTypeArguments,
+					element: { keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument }
+				}
+			]
 		)
 	);
 	return _node as unknown as T.GenericType.Parsed;
@@ -5743,7 +5799,15 @@ export function wrapGenericTypeWithTurbofish(
 						wrapGenericTypeWithTurbofish({ ...$edited(data), _type_arguments: v }, tree)
 				}
 			},
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: RAW.buildTypeArguments }]
+			[
+				{
+					slot: 'typeArguments',
+					kind: TSKindId.TypeArguments as const,
+					optional: false,
+					make: RAW.buildTypeArguments,
+					element: { keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument }
+				}
+			]
 		)
 	);
 	return _node as unknown as T.GenericTypeWithTurbofish.Parsed;
@@ -5901,7 +5965,8 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 						slot: 'typeArgumentsElements',
 						kind: TSKindId.TypeArgumentsElements as const,
 						optional: false,
-						make: RAW.buildTypeArgumentsElements
+						make: RAW.buildTypeArgumentsElements,
+						element: { keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument }
 					}
 				]
 			),
@@ -5984,7 +6049,15 @@ export function wrapTypeBinding(data: T.TypeBinding, tree: TreeHandle): T.TypeBi
 					type: (v: NonNullable<T.TypeBinding['_type']>) => wrapTypeBinding({ ...$edited(data), _type: v }, tree)
 				}
 			},
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: true, make: RAW.buildTypeArguments }]
+			[
+				{
+					slot: 'typeArguments',
+					kind: TSKindId.TypeArguments as const,
+					optional: true,
+					make: RAW.buildTypeArguments,
+					element: { keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument }
+				}
+			]
 		)
 	);
 	return _node as unknown as T.TypeBinding.Parsed;
@@ -6135,7 +6208,8 @@ export function wrapAbstractType(data: T.AbstractType, tree: TreeHandle): T.Abst
 					slot: 'typeParameters',
 					kind: TSKindId.TypeParameters as const,
 					optional: true,
-					make: RAW.buildTypeParameters
+					make: RAW.buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 				}
 			]
 		)
@@ -7770,7 +7844,15 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle): T.
 						wrapCallExpression({ ...$edited(data), _arguments: v }, tree)
 				}
 			},
-			[{ slot: 'arguments', kind: TSKindId.Arguments as const, optional: false, make: RAW.buildArguments }]
+			[
+				{
+					slot: 'arguments',
+					kind: TSKindId.Arguments as const,
+					optional: false,
+					make: RAW.buildArguments,
+					element: { keys: ['attributeItem', 'expression'], make: RAW.buildAttributedArgument }
+				}
+			]
 		)
 	);
 	return _node as unknown as T.CallExpression.Parsed;
@@ -7805,7 +7887,8 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 						slot: 'argumentsElements',
 						kind: TSKindId.ArgumentsElements as const,
 						optional: true,
-						make: RAW.buildArgumentsElements
+						make: RAW.buildArgumentsElements,
+						element: { keys: ['attributeItem', 'expression'], make: RAW.buildAttributedArgument }
 					}
 				]
 			),
@@ -8624,24 +8707,38 @@ export function wrapMatchExpression(data: T.MatchExpression, tree: TreeHandle): 
 
 export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlock.Parsed {
 	data = _keepModelledSlots(data, ['_match_block_arms']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.MatchBlock as const,
-		_match_block_arms: normalizeSingularWrapSlot(data._match_block_arms, 'match_block_arms', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'match_block_arms',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withGroupSeat(
+			{
+				...data,
+				$type: TSKindId.MatchBlock as const,
+				_match_block_arms: normalizeSingularWrapSlot(data._match_block_arms, 'match_block_arms', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'match_block_arms',
+					span: (data as _NodeData).$span
+				}),
 
-		matchBlockArms() {
-			return drillIn<T.MatchBlockArms | undefined>(this._match_block_arms, tree);
-		},
-		$with: {
-			matchBlockArms: (v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
-				wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree)
-		}
-	});
+				matchBlockArms() {
+					return drillIn<T.MatchBlockArms | undefined>(this._match_block_arms, tree);
+				},
+				$with: {
+					matchBlockArms: (v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
+						wrapMatchBlock({ ...$edited(data), _match_block_arms: v }, tree)
+				}
+			},
+			{
+				slot: 'matchBlockArms',
+				stored: '_match_block_arms',
+				kind: TSKindId.MatchBlockArms as const,
+				make: RAW.buildMatchBlockArms,
+				keys: [
+					{ name: 'matchArms', rest: true },
+					{ name: 'lastArm', rest: false, required: true }
+				]
+			}
+		)
+	);
 	return _node as unknown as T.MatchBlock.Parsed;
 }
 
@@ -8678,65 +8775,79 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 	data = _keepModelledSlots(data, ['_attributes', '_pattern', '_value', '_comma']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.LastMatchArm as const }) as unknown as T.LastMatchArm.Parsed;
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.LastMatchArm as const,
-		_attributes: normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'attributes',
-			span: (data as _NodeData).$span
-		}),
-		_pattern: normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'pattern',
-			span: (data as _NodeData).$span
-		}),
-		_value: projectMixedEnumStorage(
-			normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'value',
-				span: (data as _NodeData).$span
-			}),
-			{ true: 117, false: 118, self: 125 },
-			undefined,
-			[336]
-		),
-		_comma: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._comma, 'comma', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'comma',
-				span: (data as _NodeData).$span
-			})
-		),
+	const _node = withMethods(
+		withGroupSeat(
+			{
+				...data,
+				$type: TSKindId.LastMatchArm as const,
+				_attributes: normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
+					tree,
+					nodeType: data.$type,
+					slotName: 'attributes',
+					span: (data as _NodeData).$span
+				}),
+				_pattern: normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'pattern',
+					span: (data as _NodeData).$span
+				}),
+				_value: projectMixedEnumStorage(
+					normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
+						tree,
+						nodeType: data.$type,
+						slotName: 'value',
+						span: (data as _NodeData).$span
+					}),
+					{ true: 117, false: 118, self: 125 },
+					undefined,
+					[336]
+				),
+				_comma: coerceBooleanKeywordStorage(
+					normalizeSingularWrapSlot(data._comma, 'comma', false, data.$type, {
+						tree,
+						nodeType: data.$type,
+						slotName: 'comma',
+						span: (data as _NodeData).$span
+					})
+				),
 
-		attributes() {
-			return drillInAll<T.AttributeItem | T.InnerAttributeItem>(
-				this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
-				tree
-			);
-		},
-		pattern() {
-			return drillIn<T.MatchPattern>(this._pattern, tree);
-		},
-		value() {
-			return drillIn<T.Expression>(this._value, tree);
-		},
-		comma() {
-			return this._comma;
-		},
-		$with: {
-			attributes: (...v: NonNullable<T.LastMatchArm['_attributes']>[number][]) =>
-				wrapLastMatchArm({ ...$edited(data), _attributes: v }, tree),
-			pattern: (v: NonNullable<T.LastMatchArm['_pattern']>) =>
-				wrapLastMatchArm({ ...$edited(data), _pattern: v }, tree),
-			value: (v: NonNullable<T.LastMatchArm['_value']>) => wrapLastMatchArm({ ...$edited(data), _value: v }, tree),
-			comma: (v: NonNullable<T.LastMatchArm['_comma']>) => wrapLastMatchArm({ ...$edited(data), _comma: v }, tree)
-		}
-	});
+				attributes() {
+					return drillInAll<T.AttributeItem | T.InnerAttributeItem>(
+						this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
+						tree
+					);
+				},
+				pattern() {
+					return drillIn<T.MatchPattern>(this._pattern, tree);
+				},
+				value() {
+					return drillIn<T.Expression>(this._value, tree);
+				},
+				comma() {
+					return this._comma;
+				},
+				$with: {
+					attributes: (...v: NonNullable<T.LastMatchArm['_attributes']>[number][]) =>
+						wrapLastMatchArm({ ...$edited(data), _attributes: v }, tree),
+					pattern: (v: NonNullable<T.LastMatchArm['_pattern']>) =>
+						wrapLastMatchArm({ ...$edited(data), _pattern: v }, tree),
+					value: (v: NonNullable<T.LastMatchArm['_value']>) => wrapLastMatchArm({ ...$edited(data), _value: v }, tree),
+					comma: (v: NonNullable<T.LastMatchArm['_comma']>) => wrapLastMatchArm({ ...$edited(data), _comma: v }, tree)
+				}
+			},
+			{
+				slot: 'pattern',
+				stored: '_pattern',
+				kind: TSKindId.MatchPattern as const,
+				make: RAW.buildMatchPattern,
+				keys: [
+					{ name: 'pattern', rest: false, required: true },
+					{ name: 'condition', rest: false }
+				]
+			}
+		)
+	);
 	return _node as unknown as T.LastMatchArm.Parsed;
 }
 
@@ -9612,7 +9723,15 @@ export function wrapGenericPattern(data: T.GenericPattern, tree: TreeHandle): T.
 						wrapGenericPattern({ ...$edited(data), _type_arguments: v }, tree)
 				}
 			},
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: RAW.buildTypeArguments }]
+			[
+				{
+					slot: 'typeArguments',
+					kind: TSKindId.TypeArguments as const,
+					optional: false,
+					make: RAW.buildTypeArguments,
+					element: { keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument }
+				}
+			]
 		)
 	);
 	return _node as unknown as T.GenericPattern.Parsed;
@@ -10548,22 +10667,25 @@ export function wrapEnumVariantListElements(
 	});
 	return withMethods(
 		withListView(
-			{
-				...data,
-				$type: TSKindId.EnumVariantListElements as const,
-				_element: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+			withElementsSeat(
+				{
+					...data,
+					$type: TSKindId.EnumVariantListElements as const,
+					_element: _content,
+					_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+						? Delimiter.Trailing
+						: Delimiter.None,
 
-				elements() {
-					return drillInAll<T.AttributedEnumVariant>(
-						this._element as readonly T.AttributedEnumVariant[] | undefined,
-						tree
-					);
+					elements() {
+						return drillInAll<T.AttributedEnumVariant>(
+							this._element as readonly T.AttributedEnumVariant[] | undefined,
+							tree
+						);
+					},
+					$with: {}
 				},
-				$with: {}
-			},
+				{ slot: 'elements', keys: ['attributeItem', 'enumVariant'], make: RAW.buildAttributedEnumVariant }
+			),
 			{
 				elements: 'elements',
 				count: '_element',
@@ -10591,22 +10713,25 @@ export function wrapFieldDeclarationListElements(
 	});
 	return withMethods(
 		withListView(
-			{
-				...data,
-				$type: TSKindId.FieldDeclarationListElements as const,
-				_element: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+			withElementsSeat(
+				{
+					...data,
+					$type: TSKindId.FieldDeclarationListElements as const,
+					_element: _content,
+					_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+						? Delimiter.Trailing
+						: Delimiter.None,
 
-				elements() {
-					return drillInAll<T.AttributedFieldDeclaration>(
-						this._element as readonly T.AttributedFieldDeclaration[] | undefined,
-						tree
-					);
+					elements() {
+						return drillInAll<T.AttributedFieldDeclaration>(
+							this._element as readonly T.AttributedFieldDeclaration[] | undefined,
+							tree
+						);
+					},
+					$with: {}
 				},
-				$with: {}
-			},
+				{ slot: 'elements', keys: ['attributeItem', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration }
+			),
 			{
 				elements: 'elements',
 				count: '_element',
@@ -10638,22 +10763,29 @@ export function wrapOrderedFieldDeclarationListElements(
 	});
 	return withMethods(
 		withListView(
-			{
-				...data,
-				$type: TSKindId.OrderedFieldDeclarationListElements as const,
-				_element: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+			withElementsSeat(
+				{
+					...data,
+					$type: TSKindId.OrderedFieldDeclarationListElements as const,
+					_element: _content,
+					_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+						? Delimiter.Trailing
+						: Delimiter.None,
 
-				elements() {
-					return drillInAll<T.AttributedOrderedField>(
-						this._element as readonly T.AttributedOrderedField[] | undefined,
-						tree
-					);
+					elements() {
+						return drillInAll<T.AttributedOrderedField>(
+							this._element as readonly T.AttributedOrderedField[] | undefined,
+							tree
+						);
+					},
+					$with: {}
 				},
-				$with: {}
-			},
+				{
+					slot: 'elements',
+					keys: ['attributeItem', 'visibilityModifier', 'type'],
+					make: RAW.buildAttributedOrderedField
+				}
+			),
 			{
 				elements: 'elements',
 				count: '_element',
@@ -10721,22 +10853,25 @@ export function wrapTypeParametersElements(
 	});
 	return withMethods(
 		withListView(
-			{
-				...data,
-				$type: TSKindId.TypeParametersElements as const,
-				_element: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+			withElementsSeat(
+				{
+					...data,
+					$type: TSKindId.TypeParametersElements as const,
+					_element: _content,
+					_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+						? Delimiter.Trailing
+						: Delimiter.None,
 
-				elements() {
-					return drillInAll<T.AttributedTypeParameter>(
-						this._element as readonly T.AttributedTypeParameter[] | undefined,
-						tree
-					);
+					elements() {
+						return drillInAll<T.AttributedTypeParameter>(
+							this._element as readonly T.AttributedTypeParameter[] | undefined,
+							tree
+						);
+					},
+					$with: {}
 				},
-				$with: {}
-			},
+				{ slot: 'elements', keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
+			),
 			{
 				elements: 'elements',
 				count: '_element',
@@ -10865,19 +11000,25 @@ export function wrapParametersElements(
 	});
 	return withMethods(
 		withListView(
-			{
-				...data,
-				$type: TSKindId.ParametersElements as const,
-				_element: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+			withElementsSeat(
+				{
+					...data,
+					$type: TSKindId.ParametersElements as const,
+					_element: _content,
+					_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+						? Delimiter.Trailing
+						: Delimiter.None,
 
-				elements() {
-					return drillInAll<T.AttributedParameter>(this._element as readonly T.AttributedParameter[] | undefined, tree);
+					elements() {
+						return drillInAll<T.AttributedParameter>(
+							this._element as readonly T.AttributedParameter[] | undefined,
+							tree
+						);
+					},
+					$with: {}
 				},
-				$with: {}
-			},
+				{ slot: 'elements', keys: ['attributeItem', 'content'], make: RAW.buildAttributedParameter }
+			),
 			{
 				elements: 'elements',
 				count: '_element',
@@ -10975,19 +11116,22 @@ export function wrapTypeArgumentsElements(
 	});
 	return withMethods(
 		withListView(
-			{
-				...data,
-				$type: TSKindId.TypeArgumentsElements as const,
-				_element: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+			withElementsSeat(
+				{
+					...data,
+					$type: TSKindId.TypeArgumentsElements as const,
+					_element: _content,
+					_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+						? Delimiter.Trailing
+						: Delimiter.None,
 
-				elements() {
-					return drillInAll<T.TypeArgument>(this._element as readonly T.TypeArgument[] | undefined, tree);
+					elements() {
+						return drillInAll<T.TypeArgument>(this._element as readonly T.TypeArgument[] | undefined, tree);
+					},
+					$with: {}
 				},
-				$with: {}
-			},
+				{ slot: 'elements', keys: ['content', 'traitBounds'], make: RAW.buildTypeArgument }
+			),
 			{
 				elements: 'elements',
 				count: '_element',
@@ -11015,19 +11159,22 @@ export function wrapArgumentsElements(
 	});
 	return withMethods(
 		withListView(
-			{
-				...data,
-				$type: TSKindId.ArgumentsElements as const,
-				_element: _content,
-				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
-					? Delimiter.Trailing
-					: Delimiter.None,
+			withElementsSeat(
+				{
+					...data,
+					$type: TSKindId.ArgumentsElements as const,
+					_element: _content,
+					_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
+						? Delimiter.Trailing
+						: Delimiter.None,
 
-				elements() {
-					return drillInAll<T.AttributedArgument>(this._element as readonly T.AttributedArgument[] | undefined, tree);
+					elements() {
+						return drillInAll<T.AttributedArgument>(this._element as readonly T.AttributedArgument[] | undefined, tree);
+					},
+					$with: {}
 				},
-				$with: {}
-			},
+				{ slot: 'elements', keys: ['attributeItem', 'expression'], make: RAW.buildAttributedArgument }
+			),
 			{
 				elements: 'elements',
 				count: '_element',
@@ -12041,7 +12188,8 @@ export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeH
 					slot: 'argumentsElements',
 					kind: TSKindId.ArgumentsElements as const,
 					optional: true,
-					make: RAW.buildArgumentsElements
+					make: RAW.buildArgumentsElements,
+					element: { keys: ['attributeItem', 'expression'], make: RAW.buildAttributedArgument }
 				}
 			]
 		)
@@ -12588,7 +12736,8 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 					slot: 'typeParameters',
 					kind: TSKindId.TypeParameters as const,
 					optional: true,
-					make: RAW.buildTypeParameters
+					make: RAW.buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause }
 			]
@@ -12695,7 +12844,8 @@ export function wrapImplItemSemi(data: T.ImplItemSemi, tree: TreeHandle): T.Impl
 					slot: 'typeParameters',
 					kind: TSKindId.TypeParameters as const,
 					optional: true,
-					make: RAW.buildTypeParameters
+					make: RAW.buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause }
 			]
@@ -13441,114 +13591,142 @@ export function wrapForeignModItemBody(data: T.ForeignModItemBody, tree: TreeHan
 
 export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandle): T.MatchArmWithComma.Parsed {
 	data = _keepModelledSlots(data, ['_attributes', '_pattern', '_value']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.MatchArmWithComma as const,
-		_attributes: normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'attributes',
-			span: (data as _NodeData).$span
-		}),
-		_pattern: normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'pattern',
-			span: (data as _NodeData).$span
-		}),
-		_value: projectMixedEnumStorage(
-			normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'value',
-				span: (data as _NodeData).$span
-			}),
-			{ true: 117, false: 118, self: 125 },
-			undefined,
-			[336]
-		),
+	const _node = withMethods(
+		withGroupSeat(
+			{
+				...data,
+				$type: TSKindId.MatchArmWithComma as const,
+				_attributes: normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
+					tree,
+					nodeType: data.$type,
+					slotName: 'attributes',
+					span: (data as _NodeData).$span
+				}),
+				_pattern: normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'pattern',
+					span: (data as _NodeData).$span
+				}),
+				_value: projectMixedEnumStorage(
+					normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
+						tree,
+						nodeType: data.$type,
+						slotName: 'value',
+						span: (data as _NodeData).$span
+					}),
+					{ true: 117, false: 118, self: 125 },
+					undefined,
+					[336]
+				),
 
-		attributes() {
-			return drillInAll<T.AttributeItem | T.InnerAttributeItem>(
-				this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
-				tree
-			);
-		},
-		pattern() {
-			return drillIn<T.MatchPattern>(this._pattern, tree);
-		},
-		value() {
-			return drillIn<T.Expression>(this._value, tree);
-		},
-		$with: {
-			attributes: (...v: NonNullable<T.MatchArmWithComma['_attributes']>[number][]) =>
-				wrapMatchArmWithComma({ ...$edited(data), _attributes: v }, tree),
-			pattern: (v: NonNullable<T.MatchArmWithComma['_pattern']>) =>
-				wrapMatchArmWithComma({ ...$edited(data), _pattern: v }, tree),
-			value: (v: NonNullable<T.MatchArmWithComma['_value']>) =>
-				wrapMatchArmWithComma({ ...$edited(data), _value: v }, tree)
-		}
-	});
+				attributes() {
+					return drillInAll<T.AttributeItem | T.InnerAttributeItem>(
+						this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
+						tree
+					);
+				},
+				pattern() {
+					return drillIn<T.MatchPattern>(this._pattern, tree);
+				},
+				value() {
+					return drillIn<T.Expression>(this._value, tree);
+				},
+				$with: {
+					attributes: (...v: NonNullable<T.MatchArmWithComma['_attributes']>[number][]) =>
+						wrapMatchArmWithComma({ ...$edited(data), _attributes: v }, tree),
+					pattern: (v: NonNullable<T.MatchArmWithComma['_pattern']>) =>
+						wrapMatchArmWithComma({ ...$edited(data), _pattern: v }, tree),
+					value: (v: NonNullable<T.MatchArmWithComma['_value']>) =>
+						wrapMatchArmWithComma({ ...$edited(data), _value: v }, tree)
+				}
+			},
+			{
+				slot: 'pattern',
+				stored: '_pattern',
+				kind: TSKindId.MatchPattern as const,
+				make: RAW.buildMatchPattern,
+				keys: [
+					{ name: 'pattern', rest: false, required: true },
+					{ name: 'condition', rest: false }
+				]
+			}
+		)
+	);
 	return _node as unknown as T.MatchArmWithComma.Parsed;
 }
 
 export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeHandle): T.MatchArmBlockEnding.Parsed {
 	data = _keepModelledSlots(data, ['_attributes', '_pattern', '_value']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.MatchArmBlockEnding as const,
-		_attributes: normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'attributes',
-			span: (data as _NodeData).$span
-		}),
-		_pattern: normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'pattern',
-			span: (data as _NodeData).$span
-		}),
-		_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'value',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withGroupSeat(
+			{
+				...data,
+				$type: TSKindId.MatchArmBlockEnding as const,
+				_attributes: normalizeRepeatedWrapSlot(data._attributes, false, 'attributes', {
+					tree,
+					nodeType: data.$type,
+					slotName: 'attributes',
+					span: (data as _NodeData).$span
+				}),
+				_pattern: normalizeSingularWrapSlot(data._pattern, 'pattern', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'pattern',
+					span: (data as _NodeData).$span
+				}),
+				_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'value',
+					span: (data as _NodeData).$span
+				}),
 
-		attributes() {
-			return drillInAll<T.AttributeItem | T.InnerAttributeItem>(
-				this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
-				tree
-			);
-		},
-		pattern() {
-			return drillIn<T.MatchPattern>(this._pattern, tree);
-		},
-		value() {
-			return drillIn<
-				| T.UnsafeBlock
-				| T.AsyncBlock
-				| T.GenBlock
-				| T.TryBlock
-				| T.Block
-				| T.IfExpression
-				| T.MatchExpression
-				| T.WhileExpression
-				| T.LoopExpression
-				| T.ForExpression
-				| T.ConstBlock
-			>(this._value, tree);
-		},
-		$with: {
-			attributes: (...v: NonNullable<T.MatchArmBlockEnding['_attributes']>[number][]) =>
-				wrapMatchArmBlockEnding({ ...$edited(data), _attributes: v }, tree),
-			pattern: (v: NonNullable<T.MatchArmBlockEnding['_pattern']>) =>
-				wrapMatchArmBlockEnding({ ...$edited(data), _pattern: v }, tree),
-			value: (v: NonNullable<T.MatchArmBlockEnding['_value']>) =>
-				wrapMatchArmBlockEnding({ ...$edited(data), _value: v }, tree)
-		}
-	});
+				attributes() {
+					return drillInAll<T.AttributeItem | T.InnerAttributeItem>(
+						this._attributes as readonly (T.AttributeItem | T.InnerAttributeItem)[] | undefined,
+						tree
+					);
+				},
+				pattern() {
+					return drillIn<T.MatchPattern>(this._pattern, tree);
+				},
+				value() {
+					return drillIn<
+						| T.UnsafeBlock
+						| T.AsyncBlock
+						| T.GenBlock
+						| T.TryBlock
+						| T.Block
+						| T.IfExpression
+						| T.MatchExpression
+						| T.WhileExpression
+						| T.LoopExpression
+						| T.ForExpression
+						| T.ConstBlock
+					>(this._value, tree);
+				},
+				$with: {
+					attributes: (...v: NonNullable<T.MatchArmBlockEnding['_attributes']>[number][]) =>
+						wrapMatchArmBlockEnding({ ...$edited(data), _attributes: v }, tree),
+					pattern: (v: NonNullable<T.MatchArmBlockEnding['_pattern']>) =>
+						wrapMatchArmBlockEnding({ ...$edited(data), _pattern: v }, tree),
+					value: (v: NonNullable<T.MatchArmBlockEnding['_value']>) =>
+						wrapMatchArmBlockEnding({ ...$edited(data), _value: v }, tree)
+				}
+			},
+			{
+				slot: 'pattern',
+				stored: '_pattern',
+				kind: TSKindId.MatchPattern as const,
+				make: RAW.buildMatchPattern,
+				keys: [
+					{ name: 'pattern', rest: false, required: true },
+					{ name: 'condition', rest: false }
+				]
+			}
+		)
+	);
 	return _node as unknown as T.MatchArmBlockEnding.Parsed;
 }
 
@@ -14625,14 +14803,16 @@ export function wrapStructItemBrace(data: T.StructItemBrace, tree: TreeHandle): 
 					slot: 'typeParameters',
 					kind: TSKindId.TypeParameters as const,
 					optional: true,
-					make: RAW.buildTypeParameters
+					make: RAW.buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause },
 				{
 					slot: 'body',
 					kind: TSKindId.FieldDeclarationList as const,
 					optional: false,
-					make: RAW.buildFieldDeclarationList
+					make: RAW.buildFieldDeclarationList,
+					element: { keys: ['attributeItem', 'fieldDeclaration'], make: RAW.buildAttributedFieldDeclaration }
 				}
 			]
 		)
@@ -14712,13 +14892,15 @@ export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle): 
 					slot: 'typeParameters',
 					kind: TSKindId.TypeParameters as const,
 					optional: true,
-					make: RAW.buildTypeParameters
+					make: RAW.buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 				},
 				{
 					slot: 'body',
 					kind: TSKindId.OrderedFieldDeclarationList as const,
 					optional: false,
-					make: RAW.buildOrderedFieldDeclarationList
+					make: RAW.buildOrderedFieldDeclarationList,
+					element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: RAW.buildAttributedOrderedField }
 				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: RAW.buildWhereClause }
 			]
@@ -14776,7 +14958,8 @@ export function wrapStructItemUnit(data: T.StructItemUnit, tree: TreeHandle): T.
 					slot: 'typeParameters',
 					kind: TSKindId.TypeParameters as const,
 					optional: true,
-					make: RAW.buildTypeParameters
+					make: RAW.buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: RAW.buildAttributedTypeParameter }
 				}
 			]
 		)

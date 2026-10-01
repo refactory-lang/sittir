@@ -5,6 +5,7 @@ import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
 import type { ArgsOf, ElementsOf, OmitEach, OptionsArg } from '@sittir/types';
 import { TSKindId } from '../../types.js';
+import { isGroupConfig } from '@sittir/common/utils';
 import type * as T from '../../types.js';
 export * from './refines.js';
 
@@ -29,9 +30,11 @@ const _fwd = <R>(f: unknown, arg: unknown, options: unknown): R =>
 type ListOptions = { readonly separator?: unknown; readonly delimiter?: unknown };
 type ListElement<P> = Exclude<P, ListOptions>;
 type ListOptionsOf<P> = Extract<P, ListOptions>;
-// A flattened group is present as a whole or absent as a whole: the second
-// overload forbids every one of its keys.
+// A flattened group is present as a whole or absent as a whole: a config
+// that seats the group by its slot names none of its keys, and one that
+// flattens it names the whole group or none of it.
 type NoneOf<T> = { [K in keyof T]?: never };
+type WithoutGroup<P, G> = P extends undefined ? P : P & NoneOf<G>;
 
 const expressionStatement$withSemi =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -594,7 +597,7 @@ export const rangeExpression = Object.freeze({
 	};
 };
 
-const matchBlock$flatten =
+const matchBlock$flatten$matchBlockArms =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: ArgsOf<PF>[0] | ArgsOf<CF>[0], options?: unknown): ReturnType<PF> =>
 		config === undefined || _built(config)
@@ -607,7 +610,7 @@ function matchBlock$seated(
 function matchBlock$seated(
 	...args: [config?: ArgsOf<typeof F.buildMatchBlock>[0] | ArgsOf<typeof F.buildMatchBlockArms>[0]]
 ): ReturnType<typeof F.buildMatchBlock> {
-	return matchBlock$flatten(F.buildMatchBlock, F.buildMatchBlockArms)(...args);
+	return matchBlock$flatten$matchBlockArms(F.buildMatchBlock, F.buildMatchBlockArms)(...args);
 }
 function matchBlock$seatedCoerce(): T.EmptyMatchBlock;
 function matchBlock$seatedCoerce(
@@ -616,7 +619,7 @@ function matchBlock$seatedCoerce(
 function matchBlock$seatedCoerce(
 	...args: [config?: ArgsOf<typeof C.coerceToMatchBlock>[0] | ArgsOf<typeof C.coerceToMatchBlockArms>[0]]
 ): ReturnType<typeof C.coerceToMatchBlock> {
-	return matchBlock$flatten(C.coerceToMatchBlock, C.coerceToMatchBlockArms)(...args);
+	return matchBlock$flatten$matchBlockArms(C.coerceToMatchBlock, C.coerceToMatchBlockArms)(...args);
 }
 export const matchBlock = Object.freeze({
 	...B.matchBlock,
@@ -626,14 +629,16 @@ export const matchBlock = Object.freeze({
 	coerce: typeof matchBlock$seatedCoerce;
 };
 
-const lastMatchArm$flatten =
+const lastMatchArm$flatten$pattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 		parent: PF,
 		child: CF,
 		wrapperId: number
 	) =>
 	(
-		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'pattern'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>)),
+		config:
+			| WithoutGroup<ArgsOf<PF>[0], OmitEach<NonNullable<ArgsOf<CF>[0]>, 'pattern'>>
+			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'pattern'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>)),
 		options?: unknown
 	): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
@@ -658,20 +663,26 @@ const lastMatchArm$flatten =
 	};
 const lastMatchArm$seated: (
 	config:
-		| ArgsOf<typeof F.buildLastMatchArm>[0]
+		| WithoutGroup<
+				ArgsOf<typeof F.buildLastMatchArm>[0],
+				OmitEach<NonNullable<ArgsOf<typeof F.buildMatchPattern>[0]>, 'pattern'>
+		  >
 		| (OmitEach<NonNullable<ArgsOf<typeof F.buildLastMatchArm>[0]>, 'pattern'> &
 				(ArgsOf<typeof F.buildMatchPattern>[0] | NoneOf<ArgsOf<typeof F.buildMatchPattern>[0]>))
-) => ReturnType<typeof F.buildLastMatchArm> = lastMatchArm$flatten(
+) => ReturnType<typeof F.buildLastMatchArm> = lastMatchArm$flatten$pattern(
 	F.buildLastMatchArm,
 	F.buildMatchPattern,
 	TSKindId.MatchPattern
 );
 const lastMatchArm$seatedCoerce: (
 	config:
-		| ArgsOf<typeof C.coerceToLastMatchArm>[0]
+		| WithoutGroup<
+				ArgsOf<typeof C.coerceToLastMatchArm>[0],
+				OmitEach<NonNullable<ArgsOf<typeof C.coerceToMatchPattern>[0]>, 'pattern'>
+		  >
 		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToLastMatchArm>[0]>, 'pattern'> &
 				(ArgsOf<typeof C.coerceToMatchPattern>[0] | NoneOf<ArgsOf<typeof C.coerceToMatchPattern>[0]>))
-) => ReturnType<typeof C.coerceToLastMatchArm> = lastMatchArm$flatten(
+) => ReturnType<typeof C.coerceToLastMatchArm> = lastMatchArm$flatten$pattern(
 	C.coerceToLastMatchArm,
 	C.coerceToMatchPattern,
 	TSKindId.MatchPattern
@@ -868,11 +879,7 @@ const enumVariantListElements$element = <
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'attributeItem' || key === 'enumVariant');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'enumVariant']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -941,11 +948,7 @@ const fieldDeclarationListElements$element = <
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'attributeItem' || key === 'fieldDeclaration');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'fieldDeclaration']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -1014,11 +1017,7 @@ const orderedFieldDeclarationListElements$element = <
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'attributeItem' || key === 'visibilityModifier' || key === 'type');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'visibilityModifier', 'type']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -1087,11 +1086,7 @@ const typeParametersElements$element = <
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'attributeItem' || key === 'content');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'content']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -1157,11 +1152,7 @@ const parametersElements$element = <PF extends (...args: never[]) => unknown, CF
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'attributeItem' || key === 'content');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'content']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -1226,11 +1217,7 @@ const typeArgumentsElements$element = <
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'content' || key === 'traitBounds');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['content', 'traitBounds']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -1292,11 +1279,7 @@ const argumentsElements$element = <PF extends (...args: never[]) => unknown, CF 
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'attributeItem' || key === 'expression');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'expression']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -1566,14 +1549,16 @@ const implItemSemi: {
 	})
 });
 
-const matchArmWithComma$flatten =
+const matchArmWithComma$flatten$pattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 		parent: PF,
 		child: CF,
 		wrapperId: number
 	) =>
 	(
-		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'pattern'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>)),
+		config:
+			| WithoutGroup<ArgsOf<PF>[0], OmitEach<NonNullable<ArgsOf<CF>[0]>, 'pattern'>>
+			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'pattern'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>)),
 		options?: unknown
 	): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
@@ -1598,20 +1583,26 @@ const matchArmWithComma$flatten =
 	};
 const matchArmWithComma$seated: (
 	config:
-		| ArgsOf<typeof F.buildMatchArmWithComma>[0]
+		| WithoutGroup<
+				ArgsOf<typeof F.buildMatchArmWithComma>[0],
+				OmitEach<NonNullable<ArgsOf<typeof F.buildMatchPattern>[0]>, 'pattern'>
+		  >
 		| (OmitEach<NonNullable<ArgsOf<typeof F.buildMatchArmWithComma>[0]>, 'pattern'> &
 				(ArgsOf<typeof F.buildMatchPattern>[0] | NoneOf<ArgsOf<typeof F.buildMatchPattern>[0]>))
-) => ReturnType<typeof F.buildMatchArmWithComma> = matchArmWithComma$flatten(
+) => ReturnType<typeof F.buildMatchArmWithComma> = matchArmWithComma$flatten$pattern(
 	F.buildMatchArmWithComma,
 	F.buildMatchPattern,
 	TSKindId.MatchPattern
 );
 const matchArmWithComma$seatedCoerce: (
 	config:
-		| ArgsOf<typeof C.coerceToMatchArmWithComma>[0]
+		| WithoutGroup<
+				ArgsOf<typeof C.coerceToMatchArmWithComma>[0],
+				OmitEach<NonNullable<ArgsOf<typeof C.coerceToMatchPattern>[0]>, 'pattern'>
+		  >
 		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToMatchArmWithComma>[0]>, 'pattern'> &
 				(ArgsOf<typeof C.coerceToMatchPattern>[0] | NoneOf<ArgsOf<typeof C.coerceToMatchPattern>[0]>))
-) => ReturnType<typeof C.coerceToMatchArmWithComma> = matchArmWithComma$flatten(
+) => ReturnType<typeof C.coerceToMatchArmWithComma> = matchArmWithComma$flatten$pattern(
 	C.coerceToMatchArmWithComma,
 	C.coerceToMatchPattern,
 	TSKindId.MatchPattern
@@ -1623,14 +1614,16 @@ const matchArmWithComma: {
 	...bundle(matchArmWithComma$seated, matchArmWithComma$seatedCoerce, { key: 'matchArmWithComma', max: 1 })
 });
 
-const matchArmBlockEnding$flatten =
+const matchArmBlockEnding$flatten$pattern =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 		parent: PF,
 		child: CF,
 		wrapperId: number
 	) =>
 	(
-		config: ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'pattern'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>)),
+		config:
+			| WithoutGroup<ArgsOf<PF>[0], OmitEach<NonNullable<ArgsOf<CF>[0]>, 'pattern'>>
+			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'pattern'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>)),
 		options?: unknown
 	): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
@@ -1655,20 +1648,26 @@ const matchArmBlockEnding$flatten =
 	};
 const matchArmBlockEnding$seated: (
 	config:
-		| ArgsOf<typeof F.buildMatchArmBlockEnding>[0]
+		| WithoutGroup<
+				ArgsOf<typeof F.buildMatchArmBlockEnding>[0],
+				OmitEach<NonNullable<ArgsOf<typeof F.buildMatchPattern>[0]>, 'pattern'>
+		  >
 		| (OmitEach<NonNullable<ArgsOf<typeof F.buildMatchArmBlockEnding>[0]>, 'pattern'> &
 				(ArgsOf<typeof F.buildMatchPattern>[0] | NoneOf<ArgsOf<typeof F.buildMatchPattern>[0]>))
-) => ReturnType<typeof F.buildMatchArmBlockEnding> = matchArmBlockEnding$flatten(
+) => ReturnType<typeof F.buildMatchArmBlockEnding> = matchArmBlockEnding$flatten$pattern(
 	F.buildMatchArmBlockEnding,
 	F.buildMatchPattern,
 	TSKindId.MatchPattern
 );
 const matchArmBlockEnding$seatedCoerce: (
 	config:
-		| ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0]
+		| WithoutGroup<
+				ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0],
+				OmitEach<NonNullable<ArgsOf<typeof C.coerceToMatchPattern>[0]>, 'pattern'>
+		  >
 		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToMatchArmBlockEnding>[0]>, 'pattern'> &
 				(ArgsOf<typeof C.coerceToMatchPattern>[0] | NoneOf<ArgsOf<typeof C.coerceToMatchPattern>[0]>))
-) => ReturnType<typeof C.coerceToMatchArmBlockEnding> = matchArmBlockEnding$flatten(
+) => ReturnType<typeof C.coerceToMatchArmBlockEnding> = matchArmBlockEnding$flatten$pattern(
 	C.coerceToMatchArmBlockEnding,
 	C.coerceToMatchPattern,
 	TSKindId.MatchPattern

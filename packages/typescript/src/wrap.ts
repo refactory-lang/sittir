@@ -9,7 +9,8 @@ import {
 	coerceBooleanKeywordStorage,
 	inTreeEngine,
 	withListView,
-	withListSlots
+	withListSlots,
+	withGroupSeat
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
@@ -2806,34 +2807,49 @@ export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle): T.Sw
 
 export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle): T.CatchClause.Parsed {
 	data = _keepModelledSlots(data, ['_catch_clause_group', '_body']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.CatchClause as const,
-		_catch_clause_group: normalizeSingularWrapSlot(data._catch_clause_group, 'catch_clause_group', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'catch_clause_group',
-			span: (data as _NodeData).$span
-		}),
-		_body: normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'body',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withGroupSeat(
+			{
+				...data,
+				$type: TSKindId.CatchClause as const,
+				_catch_clause_group: normalizeSingularWrapSlot(
+					data._catch_clause_group,
+					'catch_clause_group',
+					false,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'catch_clause_group', span: (data as _NodeData).$span }
+				),
+				_body: normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'body',
+					span: (data as _NodeData).$span
+				}),
 
-		catchClauseGroup() {
-			return drillIn<T.CatchClauseGroup | undefined>(this._catch_clause_group, tree);
-		},
-		body() {
-			return drillIn<T.StatementBlock>(this._body, tree);
-		},
-		$with: {
-			catchClauseGroup: (v: NonNullable<T.CatchClause['_catch_clause_group']>) =>
-				wrapCatchClause({ ...$edited(data), _catch_clause_group: v }, tree),
-			body: (v: NonNullable<T.CatchClause['_body']>) => wrapCatchClause({ ...$edited(data), _body: v }, tree)
-		}
-	});
+				catchClauseGroup() {
+					return drillIn<T.CatchClauseGroup | undefined>(this._catch_clause_group, tree);
+				},
+				body() {
+					return drillIn<T.StatementBlock>(this._body, tree);
+				},
+				$with: {
+					catchClauseGroup: (v: NonNullable<T.CatchClause['_catch_clause_group']>) =>
+						wrapCatchClause({ ...$edited(data), _catch_clause_group: v }, tree),
+					body: (v: NonNullable<T.CatchClause['_body']>) => wrapCatchClause({ ...$edited(data), _body: v }, tree)
+				}
+			},
+			{
+				slot: 'catchClauseGroup',
+				stored: '_catch_clause_group',
+				kind: TSKindId.CatchClauseGroup as const,
+				make: RAW.buildCatchClauseGroup,
+				keys: [
+					{ name: 'parameter', rest: false, required: true },
+					{ name: 'type', rest: false }
+				]
+			}
+		)
+	);
 	return _node as unknown as T.CatchClause.Parsed;
 }
 

@@ -15,6 +15,7 @@ import {
 	orDefault,
 	rejectBareText,
 	rejectKeywordText,
+	withGroupSeat,
 	withListSlots,
 	withListView
 } from '@sittir/common/utils';
@@ -1328,21 +1329,33 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 		'a built StatementBlock'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.CatchClause as const,
-				$source: 2 as const,
-				$named: true as const,
-				_catch_clause_group,
-				_body,
-				$with: {
-					catchClauseGroup: (value?: T.CatchClauseGroup) => buildCatchClause({ ...config, catchClauseGroup: value }),
-					body: (value: T.StatementBlock) => buildCatchClause({ ...config, body: value })
+		withGroupSeat(
+			withAccessors(
+				{
+					$type: TSKindId.CatchClause as const,
+					$source: 2 as const,
+					$named: true as const,
+					_catch_clause_group,
+					_body,
+					$with: {
+						catchClauseGroup: (value?: T.CatchClauseGroup) => buildCatchClause({ ...config, catchClauseGroup: value }),
+						body: (value: T.StatementBlock) => buildCatchClause({ ...config, body: value })
+					}
+				},
+				{
+					catchClauseGroup: () => _catch_clause_group,
+					body: () => _body
 				}
-			},
+			),
 			{
-				catchClauseGroup: () => _catch_clause_group,
-				body: () => _body
+				slot: 'catchClauseGroup',
+				stored: '_catch_clause_group',
+				kind: TSKindId.CatchClauseGroup as const,
+				make: buildCatchClauseGroup,
+				keys: [
+					{ name: 'parameter', rest: false, required: true },
+					{ name: 'type', rest: false }
+				]
 			}
 		)
 	) as unknown as T.CatchClause.Bound;

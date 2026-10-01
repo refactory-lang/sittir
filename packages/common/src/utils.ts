@@ -214,11 +214,17 @@ interface ListViewSpec {
 	readonly wrapper?: ListViewWrapper;
 }
 
+interface ElementConfig {
+	readonly keys: readonly string[];
+	readonly make: (config: never) => unknown;
+}
+
 interface ListSlotSpec {
 	readonly slot: string;
 	readonly kind: number;
 	readonly optional: boolean;
 	readonly make: (...args: never[]) => unknown;
+	readonly element?: ElementConfig;
 }
 
 type Members = Record<string, (...args: unknown[]) => unknown>;
@@ -276,6 +282,29 @@ const defineHidden = (node: object, key: PropertyKey, descriptor: PropertyDescri
 };
 
 const LIST_ITEMS = Symbol('sittir.listItems');
+
+export const isGroupConfig = (value: unknown, keys: readonly string[]): boolean =>
+	typeof value === 'object' &&
+	value !== null &&
+	!('$type' in value) &&
+	Object.keys(value).length > 0 &&
+	Object.keys(value).every((key) => keys.includes(key));
+
+const convertElements = (args: readonly unknown[], element: ElementConfig | undefined): readonly unknown[] => {
+	if (element === undefined) return args;
+	const make = element.make as (config: unknown) => unknown;
+	const convert = (item: unknown): unknown => (isGroupConfig(item, element.keys) ? make(item) : item);
+	return args.length === 1 && Array.isArray(args[0]) ? [args[0].map(convert)] : args.map(convert);
+};
+
+const STORED_SLOT_READERS = Symbol('sittir.storedSlotReaders');
+
+type StoredSlotReaders = Readonly<Record<string, (this: object) => unknown>>;
+
+export function storedSlotReader(node: object, accessor: string): unknown {
+	const readers = (node as { readonly [STORED_SLOT_READERS]?: StoredSlotReaders })[STORED_SLOT_READERS];
+	return readers?.[accessor] ?? (node as Record<string, unknown>)[accessor];
+}
 
 const storedElementsOf = (node: object, spec: ListViewSpec, tree: TreeHandle | undefined): readonly unknown[] | undefined => {
 	const list = (spec.list === undefined ? node : (node as Record<string, unknown>)[spec.list.storage]) as
@@ -357,7 +386,90 @@ export function withListSlots<T extends object>(node: T, specs: readonly ListSlo
 		setters[spec.slot] = (...args) => {
 			if (args.length === 0) return spec.optional ? set() : set(make());
 			const whole = args.length === 1 && (args[0] === undefined || (args[0] as { $type?: unknown } | null)?.$type === spec.kind);
-			return set(whole ? args[0] : make(...args));
+			return set(whole ? args[0] : make(...convertElements(args, spec.element)));
+		};
+	}
+	return node;
+}
+
+interface ElementsSeatSpec extends ElementConfig {
+	readonly slot: string;
+}
+
+export function withElementsSeat<T extends object>(node: T, spec: ElementsSeatSpec): T {
+	const setters = Object.getOwnPropertyDescriptor(node, '$with')?.value as Members | undefined;
+	const set = setters?.[spec.slot];
+	if (setters === undefined || set === undefined) return node;
+	setters[spec.slot] = (...args) => {
+		if (args.some(Array.isArray)) {
+			throw new TypeError(
+				`$with.${spec.slot} takes its elements as rest arguments, $with.${spec.slot}(a, b), not an array; spread it: $with.${spec.slot}(...items)`
+			);
+		}
+		return set(...convertElements(args, spec));
+	};
+	return node;
+}
+
+interface GroupSeatKey {
+	readonly name: string;
+	readonly field?: string;
+	readonly rest: boolean;
+	readonly required?: boolean;
+}
+
+interface GroupSeatSpec {
+	readonly slot: string;
+	readonly stored: string;
+	readonly kind: number;
+	readonly make: (config: never) => unknown;
+	readonly keys: readonly GroupSeatKey[];
+}
+
+function seatedReader(node: object, stored: string, read: (this: object) => unknown): (() => unknown) | undefined {
+	return (node as Record<string, unknown>)[stored] === undefined ? undefined : () => read.call(node);
+}
+
+export function withGroupSeat<T extends object>(node: T, spec: GroupSeatSpec): T {
+	const own = Object.getOwnPropertyDescriptor(node, spec.slot);
+	const readGroup = (own?.value ?? (node as unknown as Members)[spec.slot]) as (this: object) => Members | undefined;
+	const known = (node as { readonly [STORED_SLOT_READERS]?: StoredSlotReaders })[STORED_SLOT_READERS];
+	defineHidden(node, STORED_SLOT_READERS, { value: { ...known, [spec.slot]: readGroup } });
+	const fieldOf = (key: GroupSeatKey): string => key.field ?? key.name;
+	for (const key of spec.keys) {
+		const read = function (this: object): unknown {
+			const group = readGroup.call(this);
+			return group?.[fieldOf(key)]?.call(group);
+		};
+		defineHidden(node, key.name, {
+			enumerable: key.name === spec.slot ? (own?.enumerable ?? false) : false,
+			get(this: object) {
+				return seatedReader(this, spec.stored, read);
+			}
+		});
+	}
+	const setters = Object.getOwnPropertyDescriptor(node, '$with')?.value as Members | undefined;
+	const seat = setters?.[spec.slot];
+	if (setters === undefined || seat === undefined) return node;
+	const make = spec.make as (config: unknown) => unknown;
+	for (const key of spec.keys) {
+		setters[key.name] = (...args: unknown[]): unknown => {
+			if (key.name === spec.slot && args.length === 1 && (args[0] as { $type?: unknown } | null)?.$type === spec.kind) {
+				return seat(args[0]);
+			}
+			const group = readGroup.call(node);
+			if (group !== undefined) {
+				return seat(((group.$with as unknown as Members)[fieldOf(key)] as (...values: unknown[]) => unknown)(...args));
+			}
+			const value = key.rest ? args : args[0];
+			if (key.rest ? args.length === 0 : value === undefined) return seat();
+			const missing = spec.keys.filter((other) => other !== key && other.required === true).map((other) => other.name);
+			if (missing.length > 0) {
+				throw new TypeError(
+					`$with.${key.name} cannot build the absent '${spec.slot}' group without its required ${missing.join(', ')}; set ${missing.length === 1 ? 'it' : 'them'} first, or pass the whole group to $with.${spec.slot}`
+				);
+			}
+			return seat(make({ [fieldOf(key)]: value }));
 		};
 	}
 	return node;
