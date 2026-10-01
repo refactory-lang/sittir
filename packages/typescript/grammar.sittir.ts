@@ -49,8 +49,8 @@ export default sittirGrammar(base, {
 		statements: { terminator: preference(';') },
 		quotes: { style: preference('double') },
 		enum_body_elements: {
-			'content:/separator/","/after': preference('newline'),
-			'content:/delimiter': preference('Delimiter.Trailing')
+			'element:/separator/","/after': preference('newline'),
+			'element:/delimiter': preference('Delimiter.Trailing')
 		},
 		program: { 'statements:/separator': preference('tight'), 'statements:/(_)/after': preference('blankline') },
 
@@ -147,7 +147,7 @@ export default sittirGrammar(base, {
 			'switch_case/body:/end': 'case_body/end',
 			'switch_default/body:/start': 'case_body/start',
 			'switch_default/body:/end': 'case_body/end',
-			'class_body/content:/separator': 'gap/separator',
+			'class_body/members:/separator': 'gap/separator',
 			'statement_block/statements:/separator': 'gap/separator',
 			'switch_body/cases:/separator': 'gap/separator',
 			'switch_case/body:/separator': 'gap/separator',
@@ -221,8 +221,8 @@ export default sittirGrammar(base, {
 		// AFTER the arm-level paths of the first resolve against the
 		// un-fielded shape: with the stray `';'` arm minted as its own kind
 		// `empty_member`, every element — members and stray semicolons
-		// alike — keys into one ordered `_content` array. The third's
-		// variant paths then traverse the `content` field the second added.
+		// alike — keys into one ordered `_members` array. The third's
+		// variant paths then traverse the `members` field the second added.
 		class_body: [
 			{
 				'1/0/4': alias('empty_member'),
@@ -231,11 +231,11 @@ export default sittirGrammar(base, {
 				'1/0/3/0': field('member'),
 				'1/0/3/1': field('terminator')
 			},
-			{ 1: field('content') },
+			{ 1: field('members') },
 			{
-				'1/content:/0/0': variant('method'),
-				'1/content:/0/1': variant('method_sig'),
-				'1/content:/0/3': variant('member')
+				'1/members:/0/0': variant('method'),
+				'1/members:/0/1': variant('method_sig'),
+				'1/members:/0/3': variant('declaration')
 			}
 		],
 

@@ -1,5 +1,45 @@
 [
   {
+    "type": "_class_body_member",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "class_body_member_declaration",
+        "named": true
+      },
+      {
+        "type": "class_body_member_method",
+        "named": true
+      },
+      {
+        "type": "class_body_member_method_sig",
+        "named": true
+      },
+      {
+        "type": "class_static_block",
+        "named": true
+      },
+      {
+        "type": "empty_member",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "_enum_body_element",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "enum_assignment",
+        "named": true
+      },
+      {
+        "type": "enum_body_element_name",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "_for_header",
     "named": true,
     "subtypes": [
@@ -1834,28 +1874,12 @@
     "type": "class_body",
     "named": true,
     "fields": {
-      "content": {
+      "members": {
         "multiple": true,
         "required": false,
         "types": [
           {
-            "type": "class_body_member",
-            "named": true
-          },
-          {
-            "type": "class_body_method",
-            "named": true
-          },
-          {
-            "type": "class_body_method_sig",
-            "named": true
-          },
-          {
-            "type": "class_static_block",
-            "named": true
-          },
-          {
-            "type": "empty_member",
+            "type": "_class_body_member",
             "named": true
           }
         ]
@@ -1863,7 +1887,7 @@
     }
   },
   {
-    "type": "class_body_member",
+    "type": "class_body_member_declaration",
     "named": true,
     "fields": {
       "member": {
@@ -1909,7 +1933,7 @@
     }
   },
   {
-    "type": "class_body_method",
+    "type": "class_body_member_method",
     "named": true,
     "fields": {
       "decorator": {
@@ -1949,7 +1973,7 @@
     }
   },
   {
-    "type": "class_body_method_sig",
+    "type": "class_body_member_method_sig",
     "named": true,
     "fields": {
       "terminator": {
@@ -2597,12 +2621,12 @@
     }
   },
   {
-    "type": "enum_body_elements",
+    "type": "enum_body_element_name",
     "named": true,
     "fields": {
       "name": {
-        "multiple": true,
-        "required": false,
+        "multiple": false,
+        "required": true,
         "types": [
           {
             "type": "computed_property_name",
@@ -2626,16 +2650,22 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "enum_assignment",
-          "named": true
-        }
-      ]
+    }
+  },
+  {
+    "type": "enum_body_elements",
+    "named": true,
+    "fields": {
+      "element": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "_enum_body_element",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

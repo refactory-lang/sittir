@@ -304,28 +304,6 @@ function projectMixedEnumStorage<T>(
 	}
 	return value;
 }
-// readTerminalFromOther — reclaim a model-designated terminal (operator /
-// keyword discriminant) that read_untyped_node forwarded to `$other` because it is
-// an anonymous, unfielded token. The model knows the slot accepts these
-// kinds; match an `$other` entry by kind-name and return it for the slot
-// storage. Non-mutating (idempotent): the entry stays in `$other`, but the
-// per-kind template renders the discriminant from its slot, not via $other,
-// so there is no double-render. A final `?? readTerminalFromOther(...)` only
-// fires when the nominal storage keys are all empty (the unfielded case);
-// when the token IS field-tagged the chain short-circuits before reaching it.
-function readTerminalFromOther<T = _UntypedNode | number>(
-	data: _UntypedNode,
-	allowedKindIds: readonly number[]
-): T | undefined {
-	const other = (data as { $other?: readonly unknown[] }).$other;
-	if (!Array.isArray(other)) return undefined;
-	for (const e of other) {
-		const id =
-			typeof e === 'number' ? e : typeof e === 'object' && e !== null ? (e as { $type?: unknown }).$type : undefined;
-		if (typeof id === 'number' && allowedKindIds.includes(id)) return e as T;
-	}
-	return undefined;
-}
 const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	definition: new Set([
 		'named_node',
@@ -367,6 +345,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	]),
 	_node_identifier: new Set(['identifier']),
 	named_node: new Set(['named_node_plain', 'named_node_supertyped']),
+	_list_element: new Set(['capture', 'list_element_quantifier']),
 	named_node_group: new Set(['named_node_group_children', 'named_node_group_anchored_last']),
 	_whitespace: new Set([
 		'_tight',
@@ -946,8 +925,7 @@ export function wrapComment(data: T.Comment, tree: TreeHandle): T.Comment.Parsed
 }
 
 export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
-	data = _keepModelledSlots(data, ['_definitions', '_content']);
-	if (_isReadTextLeaf(data)) return withMethods({ ...data, $type: TSKindId.List as const }) as unknown as T.List.Parsed;
+	data = _keepModelledSlots(data, ['_definitions', '_elements']);
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.List as const,
@@ -960,49 +938,34 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 			}),
 			tree
 		),
-		_content: storeExpanded(
-			projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(
-					data._content ??
-						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
-							TSKindId.Star,
-							TSKindId.Plus,
-							TSKindId.Qmark
-						]),
-					false,
-					'content',
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
-				),
-				{ '*': 2, '+': 3, '?': 4 },
-				undefined,
-				[36]
-			),
+		_elements: storeExpanded(
+			normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _UntypedNode).$span
+			}),
 			tree
 		),
 
 		definitions() {
 			return hydrateChildren<T.Definition>(this._definitions as readonly T.Definition[] | undefined, tree);
 		},
-		contents() {
-			return hydrateChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
-				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
-				tree
-			);
+		elements() {
+			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
 		},
 		$with: {
 			definitions: (...v: NonEmptyArray<NonNullable<T.List['_definitions']>[number]>) =>
 				wrapList({ ...$edited(data), _definitions: restItems('definitions', v) }, tree),
-			contents: (...v: NonNullable<T.List['_content']>[number][]) =>
-				wrapList({ ...$edited(data), _content: restItems('contents', v) }, tree)
+			elements: (...v: NonNullable<T.List['_elements']>[number][]) =>
+				wrapList({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.List.Parsed;
 }
 
 export function wrapGrouping(data: T.Grouping, tree: TreeHandle): T.Grouping.Parsed {
-	data = _keepModelledSlots(data, ['_grouping_group', '_content']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.Grouping as const }) as unknown as T.Grouping.Parsed;
+	data = _keepModelledSlots(data, ['_grouping_group', '_elements']);
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.Grouping as const,
@@ -1015,49 +978,34 @@ export function wrapGrouping(data: T.Grouping, tree: TreeHandle): T.Grouping.Par
 			}),
 			tree
 		),
-		_content: storeExpanded(
-			projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(
-					data._content ??
-						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
-							TSKindId.Star,
-							TSKindId.Plus,
-							TSKindId.Qmark
-						]),
-					false,
-					'content',
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
-				),
-				{ '*': 2, '+': 3, '?': 4 },
-				undefined,
-				[36]
-			),
+		_elements: storeExpanded(
+			normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _UntypedNode).$span
+			}),
 			tree
 		),
 
 		groupingGroups() {
 			return hydrateChildren<T.GroupingGroup>(this._grouping_group as readonly T.GroupingGroup[] | undefined, tree);
 		},
-		contents() {
-			return hydrateChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
-				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
-				tree
-			);
+		elements() {
+			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
 		},
 		$with: {
 			groupingGroups: (...v: NonEmptyArray<NonNullable<T.Grouping['_grouping_group']>[number]>) =>
 				wrapGrouping({ ...$edited(data), _grouping_group: restItems('groupingGroups', v) }, tree),
-			contents: (...v: NonNullable<T.Grouping['_content']>[number][]) =>
-				wrapGrouping({ ...$edited(data), _content: restItems('contents', v) }, tree)
+			elements: (...v: NonNullable<T.Grouping['_elements']>[number][]) =>
+				wrapGrouping({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.Grouping.Parsed;
 }
 
 export function wrapMissingNode(data: T.MissingNode, tree: TreeHandle): T.MissingNode.Parsed {
-	data = _keepModelledSlots(data, ['_name', '_content']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.MissingNode as const }) as unknown as T.MissingNode.Parsed;
+	data = _keepModelledSlots(data, ['_name', '_elements']);
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.MissingNode as const,
@@ -1070,46 +1018,33 @@ export function wrapMissingNode(data: T.MissingNode, tree: TreeHandle): T.Missin
 			}),
 			tree
 		),
-		_content: storeExpanded(
-			projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(
-					data._content ??
-						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
-							TSKindId.Star,
-							TSKindId.Plus,
-							TSKindId.Qmark
-						]),
-					false,
-					'content',
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
-				),
-				{ '*': 2, '+': 3, '?': 4 },
-				undefined,
-				[36]
-			),
+		_elements: storeExpanded(
+			normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _UntypedNode).$span
+			}),
 			tree
 		),
 
 		name() {
 			return hydrateChild<T.Identifier | T.String | undefined>(this._name, tree);
 		},
-		contents() {
-			return hydrateChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
-				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
-				tree
-			);
+		elements() {
+			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.MissingNode['_name']>) => wrapMissingNode({ ...$edited(data), _name: v }, tree),
-			contents: (...v: NonNullable<T.MissingNode['_content']>[number][]) =>
-				wrapMissingNode({ ...$edited(data), _content: restItems('contents', v) }, tree)
+			elements: (...v: NonNullable<T.MissingNode['_elements']>[number][]) =>
+				wrapMissingNode({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.MissingNode.Parsed;
 }
 
 export function wrapAnonymousNode(data: T.AnonymousNode, tree: TreeHandle): T.AnonymousNode.Parsed {
-	data = _keepModelledSlots(data, ['_name', '_content']);
+	data = _keepModelledSlots(data, ['_name', '_elements']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.AnonymousNode as const }) as unknown as T.AnonymousNode.Parsed;
 	const _node = withMethods({
@@ -1127,39 +1062,26 @@ export function wrapAnonymousNode(data: T.AnonymousNode, tree: TreeHandle): T.An
 			),
 			tree
 		),
-		_content: storeExpanded(
-			projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(
-					data._content ??
-						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
-							TSKindId.Star,
-							TSKindId.Plus,
-							TSKindId.Qmark
-						]),
-					false,
-					'content',
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
-				),
-				{ '*': 2, '+': 3, '?': 4 },
-				undefined,
-				[36]
-			),
+		_elements: storeExpanded(
+			normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _UntypedNode).$span
+			}),
 			tree
 		),
 
 		name() {
 			return hydrateChild<T.String | TSKindId.Underscore>(this._name, tree);
 		},
-		contents() {
-			return hydrateChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
-				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
-				tree
-			);
+		elements() {
+			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.AnonymousNode['_name']>) => wrapAnonymousNode({ ...$edited(data), _name: v }, tree),
-			contents: (...v: NonNullable<T.AnonymousNode['_content']>[number][]) =>
-				wrapAnonymousNode({ ...$edited(data), _content: restItems('contents', v) }, tree)
+			elements: (...v: NonNullable<T.AnonymousNode['_elements']>[number][]) =>
+				wrapAnonymousNode({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.AnonymousNode.Parsed;
@@ -1328,6 +1250,68 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 	return _node as unknown as T.Predicate.Parsed;
 }
 
+export function wrapListElementQuantifier(
+	data: T.ListElementQuantifier,
+	tree: TreeHandle
+): T.ListElementQuantifier.Parsed {
+	data = _keepModelledSlots(data, ['_quantifier']);
+	if (_isReadTextLeaf(data))
+		return withMethods({
+			...data,
+			$type: TSKindId.ListElementQuantifier as const
+		}) as unknown as T.ListElementQuantifier.Parsed;
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.ListElementQuantifier as const,
+		_quantifier: projectKindEnumStorage(
+			normalizeSingularWrapSlot(data._quantifier, 'quantifier', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'quantifier',
+				span: (data as _UntypedNode).$span
+			}),
+			{ '*': 2, '+': 3, '?': 4 }
+		),
+
+		quantifier() {
+			return this._quantifier;
+		},
+		$with: {
+			quantifier: (v: NonNullable<T.ListElementQuantifier['_quantifier']>) =>
+				wrapListElementQuantifier({ ...$edited(data), _quantifier: v }, tree)
+		}
+	});
+	return _node as unknown as T.ListElementQuantifier.Parsed;
+}
+
+export function wrapListElement(
+	data: T.ListElement & { readonly $other?: T.ListElement | readonly T.ListElement[] },
+	tree: TreeHandle
+): T.ListElement.Parsed {
+	if (typeof data === 'number') return data as unknown as T.ListElement.Parsed;
+	const node = _keepModelledSlots(data, ['_capture', '_list_element_quantifier']);
+	const kindKeyed = _firstKindKeyedWrapChild(node, ['capture', 'list_element_quantifier']) as
+		| T.ListElement
+		| readonly T.ListElement[]
+		| undefined;
+	const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['capture', 'list_element_quantifier']);
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
+		return hydrateSelf<T.ListElement>(node as T.ListElement, tree) as unknown as T.ListElement.Parsed;
+	}
+	return hydrateChild<T.ListElement>(
+		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
+			tree,
+			nodeType: node.$type,
+			slotName: 'children',
+			span: (node as _UntypedNode).$span
+		}),
+		tree
+	);
+}
+
 export function wrapGroupExpressionArm(data: T.GroupExpressionArm, tree: TreeHandle): T.GroupExpressionArm.Parsed {
 	data = _keepModelledSlots(data, ['_left', '_right']);
 	const _node = withMethods({
@@ -1482,7 +1466,7 @@ export function wrapNamedNodeGroup(
 }
 
 export function wrapNamedNodePlain(data: T.NamedNodePlain, tree: TreeHandle): T.NamedNodePlain.Parsed {
-	data = _keepModelledSlots(data, ['_name', '_named_node_group', '_content']);
+	data = _keepModelledSlots(data, ['_name', '_named_node_group', '_elements']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.NamedNodePlain as const }) as unknown as T.NamedNodePlain.Parsed;
 	const _node = withMethods({
@@ -1509,23 +1493,13 @@ export function wrapNamedNodePlain(data: T.NamedNodePlain, tree: TreeHandle): T.
 			}),
 			tree
 		),
-		_content: storeExpanded(
-			projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(
-					data._content ??
-						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
-							TSKindId.Star,
-							TSKindId.Plus,
-							TSKindId.Qmark
-						]),
-					false,
-					'content',
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
-				),
-				{ '*': 2, '+': 3, '?': 4 },
-				undefined,
-				[36]
-			),
+		_elements: storeExpanded(
+			normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _UntypedNode).$span
+			}),
 			tree
 		),
 
@@ -1535,30 +1509,22 @@ export function wrapNamedNodePlain(data: T.NamedNodePlain, tree: TreeHandle): T.
 		namedNodeGroup() {
 			return hydrateChild<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
 		},
-		contents() {
-			return hydrateChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
-				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
-				tree
-			);
+		elements() {
+			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.NamedNodePlain['_name']>) => wrapNamedNodePlain({ ...$edited(data), _name: v }, tree),
 			namedNodeGroup: (v: NonNullable<T.NamedNodePlain['_named_node_group']>) =>
 				wrapNamedNodePlain({ ...$edited(data), _named_node_group: v }, tree),
-			contents: (...v: NonNullable<T.NamedNodePlain['_content']>[number][]) =>
-				wrapNamedNodePlain({ ...$edited(data), _content: restItems('contents', v) }, tree)
+			elements: (...v: NonNullable<T.NamedNodePlain['_elements']>[number][]) =>
+				wrapNamedNodePlain({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.NamedNodePlain.Parsed;
 }
 
 export function wrapNamedNodeSupertyped(data: T.NamedNodeSupertyped, tree: TreeHandle): T.NamedNodeSupertyped.Parsed {
-	data = _keepModelledSlots(data, ['_supertype', '_name', '_named_node_group', '_content']);
-	if (_isReadTextLeaf(data))
-		return withMethods({
-			...data,
-			$type: TSKindId.NamedNodeSupertyped as const
-		}) as unknown as T.NamedNodeSupertyped.Parsed;
+	data = _keepModelledSlots(data, ['_supertype', '_name', '_named_node_group', '_elements']);
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.NamedNodeSupertyped as const,
@@ -1589,23 +1555,13 @@ export function wrapNamedNodeSupertyped(data: T.NamedNodeSupertyped, tree: TreeH
 			}),
 			tree
 		),
-		_content: storeExpanded(
-			projectMixedEnumStorage(
-				normalizeRepeatedWrapSlot(
-					data._content ??
-						readTerminalFromOther<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(data, [
-							TSKindId.Star,
-							TSKindId.Plus,
-							TSKindId.Qmark
-						]),
-					false,
-					'content',
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
-				),
-				{ '*': 2, '+': 3, '?': 4 },
-				undefined,
-				[36]
-			),
+		_elements: storeExpanded(
+			normalizeRepeatedWrapSlot(data._elements, false, 'elements', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'elements',
+				span: (data as _UntypedNode).$span
+			}),
 			tree
 		),
 
@@ -1618,11 +1574,8 @@ export function wrapNamedNodeSupertyped(data: T.NamedNodeSupertyped, tree: TreeH
 		namedNodeGroup() {
 			return hydrateChild<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
 		},
-		contents() {
-			return hydrateChildren<T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
-				this._content as readonly (T.Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[] | undefined,
-				tree
-			);
+		elements() {
+			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
 		},
 		$with: {
 			supertype: (v: NonNullable<T.NamedNodeSupertyped['_supertype']>) =>
@@ -1631,8 +1584,8 @@ export function wrapNamedNodeSupertyped(data: T.NamedNodeSupertyped, tree: TreeH
 				wrapNamedNodeSupertyped({ ...$edited(data), _name: v }, tree),
 			namedNodeGroup: (v: NonNullable<T.NamedNodeSupertyped['_named_node_group']>) =>
 				wrapNamedNodeSupertyped({ ...$edited(data), _named_node_group: v }, tree),
-			contents: (...v: NonNullable<T.NamedNodeSupertyped['_content']>[number][]) =>
-				wrapNamedNodeSupertyped({ ...$edited(data), _content: restItems('contents', v) }, tree)
+			elements: (...v: NonNullable<T.NamedNodeSupertyped['_elements']>[number][]) =>
+				wrapNamedNodeSupertyped({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.NamedNodeSupertyped.Parsed;
@@ -1789,6 +1742,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.NegatedField]: (d, t) => wrapNegatedField(d as unknown as T.NegatedField, t),
 	[TSKindId.Predicate]: (d, t) => wrapPredicate(d as unknown as T.Predicate, t),
 	[TSKindId.PredicateType]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.PredicateType as const }),
+	[TSKindId.ListElementQuantifier]: (d, t) => wrapListElementQuantifier(d as unknown as T.ListElementQuantifier, t),
+	[TSKindId.ListElement]: (d, t) => wrapListElement(d as unknown as T.ListElement, t),
 	[TSKindId.GroupExpressionArm]: (d, t) => wrapGroupExpressionArm(d as unknown as T.GroupExpressionArm, t),
 	[TSKindId.NamedNodeExpressionArm]: (d, t) => wrapNamedNodeExpressionArm(d as unknown as T.NamedNodeExpressionArm, t),
 	[TSKindId.GroupingGroup]: (d, t) => wrapGroupingGroup(d as unknown as T.GroupingGroup, t),
@@ -1850,7 +1805,7 @@ function _withoutDisplay(data: _UntypedNode): _UntypedNode {
 	return node as _UntypedNode;
 }
 
-const _RECLAIMS_ANONYMOUS: ReadonlySet<_UntypedNode['$type']> = new Set([43, 44, 45, 46, 57, 58]);
+const _RECLAIMS_ANONYMOUS: ReadonlySet<_UntypedNode['$type']> = new Set([]);
 function _spellingTokens(data: _UntypedNode): readonly _UntypedNode[] | undefined {
 	const { $other, ...node } = data;
 	if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return undefined;

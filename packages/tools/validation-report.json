@@ -617,7 +617,7 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [import_list, parenthesized_import_list] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import] (PR 1.5)",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root routes 2 unnamed-nonterminal arm(s) [import_list, parenthesized_import_list] into one union slot alongside 1 label-routed arm(s) [field(wildcard_import):wildcard_import]",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -1152,78 +1152,6 @@
     "grammar": "scm",
     "backend": "native",
     "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "list",
-    "message": "[collect-slots] kind 'list': choice rule:list:members.3 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    },
-    "location": "list"
-  },
-  {
-    "source": "grammar",
-    "grammar": "scm",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "grouping",
-    "message": "[collect-slots] kind 'grouping': choice rule:grouping:members.3 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    },
-    "location": "grouping"
-  },
-  {
-    "source": "grammar",
-    "grammar": "scm",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "missing_node",
-    "message": "[collect-slots] kind 'missing_node': choice rule:missing_node:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    },
-    "location": "missing_node"
-  },
-  {
-    "source": "grammar",
-    "grammar": "scm",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "anonymous_node",
-    "message": "[collect-slots] kind 'anonymous_node': choice rule:anonymous_node:members.1 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    },
-    "location": "anonymous_node"
-  },
-  {
-    "source": "grammar",
-    "grammar": "scm",
-    "backend": "native",
-    "scope": "grammar",
     "code": "unclassifiable-shape",
     "severity": "error",
     "ownerKind": "predicate",
@@ -1235,42 +1163,6 @@
       "ruleId": "rule:predicate:members.1"
     },
     "location": "predicate"
-  },
-  {
-    "source": "grammar",
-    "grammar": "scm",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "named_node_plain",
-    "message": "[collect-slots] kind 'named_node_plain': choice rule:named_node_plain:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    },
-    "location": "named_node_plain"
-  },
-  {
-    "source": "grammar",
-    "grammar": "scm",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "ownerKind": "named_node_supertyped",
-    "message": "[collect-slots] kind 'named_node_supertyped': choice rule:named_node_supertyped:members.4 routes 1 unnamed-nonterminal arm(s) [capture] into one union slot alongside 1 label-routed arm(s) [field(quantifier):quantifier] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "quantifier"
-      ]
-    },
-    "location": "named_node_supertyped"
   },
   {
     "source": "grammar",
@@ -2275,20 +2167,20 @@
     "scope": "grammar",
     "code": "conflict-resolution",
     "severity": "info",
-    "message": "conflict between class_body_method on ';' resolved by AddConflict (default)",
+    "message": "conflict between class_body_member_method on ';' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
-          "class_body_method"
+          "class_body_member_method"
         ]
       },
       "step": "default",
       "sourceChains": [
         [
-          "class_body_method",
-          "class_body"
+          "class_body_member_method",
+          "_class_body_member"
         ]
       ],
       "conflict": {
@@ -2299,8 +2191,8 @@
         ],
         "lookahead": "';'",
         "interpretations": [
-          "class_body_method",
-          "class_body_method"
+          "class_body_member_method",
+          "class_body_member_method"
         ]
       }
     }
@@ -3014,25 +2906,25 @@
     "scope": "grammar",
     "code": "conflict-resolution",
     "severity": "info",
-    "message": "conflict between class_body_method_sig, class_body_member on '*' resolved by AddConflict (default)",
+    "message": "conflict between class_body_member_method_sig, class_body_member_declaration on '*' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
-          "class_body_method_sig",
-          "class_body_member"
+          "class_body_member_method_sig",
+          "class_body_member_declaration"
         ]
       },
       "step": "default",
       "sourceChains": [
         [
-          "class_body_method_sig",
-          "class_body"
+          "class_body_member_method_sig",
+          "_class_body_member"
         ],
         [
-          "class_body_member",
-          "class_body"
+          "class_body_member_declaration",
+          "_class_body_member"
         ]
       ],
       "conflict": {
@@ -3044,8 +2936,8 @@
         ],
         "lookahead": "'*'",
         "interpretations": [
-          "class_body_method_sig",
-          "class_body_member"
+          "class_body_member_method_sig",
+          "class_body_member_declaration"
         ]
       }
     }
@@ -3995,54 +3887,8 @@
     "scope": "grammar",
     "code": "union-slot-routed",
     "severity": "warning",
-    "ownerKind": "enum_body_elements",
-    "message": "[collect-slots] kind 'enum_body_elements': choice rule:enum_body_elements:root routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 29 label-routed arm(s) [field(name):identifier, field(name):declare_keyword, field(name):namespace_keyword, field(name):type_keyword, field(name):public_keyword, field(name):private_keyword, field(name):protected_keyword, field(name):override_keyword, field(name):readonly_keyword, field(name):module_keyword, field(name):any_keyword, field(name):number_keyword, field(name):boolean_keyword, field(name):string_keyword, field(name):symbol_keyword, field(name):export_keyword, field(name):object_keyword, field(name):new_keyword, field(name):readonly_keyword, field(name):get_keyword, field(name):set_keyword, field(name):async_keyword, field(name):static_keyword, field(name):export_keyword, field(name):let_keyword, field(name):private_property_identifier, field(name):string, field(name):number, field(name):computed_property_name] (PR 1.5)",
-    "canProceed": true,
-    "details": {
-      "unionSlot": "content",
-      "degenerateFields": [
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name",
-        "name"
-      ]
-    },
-    "location": "enum_body_elements"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
     "ownerKind": "export_statement_default_declaration",
-    "message": "[collect-slots] kind 'export_statement_default_declaration': choice rule:export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "message": "[collect-slots] kind 'export_statement_default_declaration': choice rule:export_statement_default_declaration:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration]",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -4060,7 +3906,7 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "ownerKind": "export_statement_default_declaration_default_kw",
-    "message": "[collect-slots] kind 'export_statement_default_declaration_default_kw': choice rule:export_statement_default_declaration_default_kw:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "message": "[collect-slots] kind 'export_statement_default_declaration_default_kw': choice rule:export_statement_default_declaration_default_kw:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_declaration_default_kw_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration]",
     "canProceed": true,
     "details": {
       "unionSlot": "content",
@@ -11937,53 +11783,6 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "range_expression_binary",
-    "count": 11,
-    "entries": [
-      "For expressions",
-      "Inline const or Const blocks as expression",
-      "Range expressions"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "range_expression_binary"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "range_expression_postfix",
-    "count": 2,
-    "entries": [
-      "Range expressions"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "range_expression_postfix"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "range_expression_prefix",
-    "count": 1,
-    "entries": [
-      "Range expressions"
-    ],
-    "stage": "read-render-parse-excluded",
-    "code": "read-render-parse-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "range_expression_prefix"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
     "kind": "field_initializer_list",
     "count": 6,
     "entries": [
@@ -13998,53 +13797,6 @@
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
-    "kind": "range_expression_binary",
-    "count": 11,
-    "entries": [
-      "For expressions",
-      "Inline const or Const blocks as expression",
-      "Range expressions"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "range_expression_binary"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "range_expression_postfix",
-    "count": 2,
-    "entries": [
-      "Range expressions"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "range_expression_postfix"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
-    "kind": "range_expression_prefix",
-    "count": 1,
-    "entries": [
-      "Range expressions"
-    ],
-    "stage": "read-render-parse-shallow-excluded",
-    "code": "read-render-parse-shallow-excluded",
-    "severity": "info",
-    "message": "no-reparse-wrapper",
-    "label": "range_expression_prefix"
-  },
-  {
-    "source": "validator",
-    "grammar": "rust",
-    "backend": "native",
     "kind": "field_initializer_list",
     "count": 6,
     "entries": [
@@ -14758,6 +14510,25 @@
     "source": "validator",
     "grammar": "scm",
     "backend": "native",
+    "kind": "list_element_quantifier",
+    "count": 6,
+    "entries": [
+      "Lists",
+      "Quantifiers (*)",
+      "Quantifiers (+)",
+      "Quantifiers (?)",
+      "Quantifiers (complex)"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "list_element_quantifier"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
     "kind": "predicate",
     "count": 8,
     "entries": [
@@ -15137,6 +14908,25 @@
     "source": "validator",
     "grammar": "scm",
     "backend": "native",
+    "kind": "list_element_quantifier",
+    "count": 6,
+    "entries": [
+      "Lists",
+      "Quantifiers (*)",
+      "Quantifiers (+)",
+      "Quantifiers (?)",
+      "Quantifiers (complex)"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "list_element_quantifier"
+  },
+  {
+    "source": "validator",
+    "grammar": "scm",
+    "backend": "native",
     "kind": "predicate",
     "count": 8,
     "entries": [
@@ -15392,7 +15182,7 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "class_body_member",
+    "kind": "class_body_member_declaration",
     "count": 31,
     "entries": [
       "Abstract classes",
@@ -15411,7 +15201,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "class_body_member"
+    "label": "class_body_member_declaration"
   },
   {
     "source": "validator",
@@ -15740,7 +15530,7 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "class_body_method_sig",
+    "kind": "class_body_member_method_sig",
     "count": 2,
     "entries": [
       "Flow-style ambient class declarations with commas"
@@ -15749,7 +15539,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "class_body_method_sig"
+    "label": "class_body_member_method_sig"
   },
   {
     "source": "validator",
@@ -16016,7 +15806,24 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "class_body_method",
+    "kind": "enum_body_element_name",
+    "count": 8,
+    "entries": [
+      "Ambient type alias declarations in namespaces",
+      "Enum declarations",
+      "Enum with trailing comma"
+    ],
+    "stage": "read-render-parse-excluded",
+    "code": "read-render-parse-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "enum_body_element_name"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "class_body_member_method",
     "count": 15,
     "entries": [
       "Abstract classes",
@@ -16034,7 +15841,7 @@
     "code": "read-render-parse-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "class_body_method"
+    "label": "class_body_member_method"
   },
   {
     "source": "validator",
@@ -16858,7 +16665,7 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "class_body_member",
+    "kind": "class_body_member_declaration",
     "count": 31,
     "entries": [
       "Abstract classes",
@@ -16877,7 +16684,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "class_body_member"
+    "label": "class_body_member_declaration"
   },
   {
     "source": "validator",
@@ -17206,7 +17013,7 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "class_body_method_sig",
+    "kind": "class_body_member_method_sig",
     "count": 2,
     "entries": [
       "Flow-style ambient class declarations with commas"
@@ -17215,7 +17022,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "class_body_method_sig"
+    "label": "class_body_member_method_sig"
   },
   {
     "source": "validator",
@@ -17482,7 +17289,24 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "kind": "class_body_method",
+    "kind": "enum_body_element_name",
+    "count": 8,
+    "entries": [
+      "Ambient type alias declarations in namespaces",
+      "Enum declarations",
+      "Enum with trailing comma"
+    ],
+    "stage": "read-render-parse-shallow-excluded",
+    "code": "read-render-parse-shallow-excluded",
+    "severity": "info",
+    "message": "no-reparse-wrapper",
+    "label": "enum_body_element_name"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "class_body_member_method",
     "count": 15,
     "entries": [
       "Abstract classes",
@@ -17500,7 +17324,7 @@
     "code": "read-render-parse-shallow-excluded",
     "severity": "info",
     "message": "no-reparse-wrapper",
-    "label": "class_body_method"
+    "label": "class_body_member_method"
   },
   {
     "source": "validator",

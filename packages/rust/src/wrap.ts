@@ -760,7 +760,11 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'loop_expression',
 		'for_expression',
 		'const_block',
-		'range_expression'
+		'range_expression',
+		'range_expression_binary',
+		'range_expression_postfix',
+		'range_expression_prefix',
+		'range_expression_bare'
 	]),
 	_expression_ending_with_block: new Set([
 		'unsafe_block',
@@ -785,6 +789,12 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'delim_token_tree_brace'
 	]),
 	_non_delim_token: new Set(['non_special_token', 'dollar']),
+	range_expression: new Set([
+		'range_expression_binary',
+		'range_expression_postfix',
+		'range_expression_prefix',
+		'range_expression_bare'
+	]),
 	reference_expression: new Set([
 		'reference_expression_raw_const',
 		'reference_expression_raw_mut',
@@ -883,6 +893,10 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'for_expression',
 		'const_block',
 		'range_expression',
+		'range_expression_binary',
+		'range_expression_postfix',
+		'range_expression_prefix',
+		'range_expression_bare',
 		'let_condition',
 		'_let_chain',
 		'let_chain'
@@ -4668,7 +4682,7 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.
 					slotName: 'pattern',
 					span: (data as _UntypedNode).$span
 				}),
-				{ true: 117, false: 118, '..': 321, _: 425 },
+				{ true: 117, false: 118, '..': 321, _: 426 },
 				undefined,
 				[336]
 			),
@@ -5372,7 +5386,7 @@ export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandl
 					slotName: 'pattern',
 					span: (data as _UntypedNode).$span
 				}),
-				{ true: 117, false: 118, '..': 321, _: 425 },
+				{ true: 117, false: 118, '..': 321, _: 426 },
 				undefined,
 				[336]
 			),
@@ -5418,7 +5432,7 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.
 					slotName: 'name',
 					span: (data as _UntypedNode).$span
 				}),
-				{ true: 117, false: 118, '..': 321, _: 425, self: 125 },
+				{ true: 117, false: 118, '..': 321, _: 426, self: 125 },
 				undefined,
 				[336]
 			),
@@ -7054,7 +7068,11 @@ export function wrapExpression(
 		'_array_expression_semi',
 		'_array_expression_list',
 		'_closure_expression_block',
-		'_closure_expression_expr'
+		'_closure_expression_expr',
+		'_range_expression_binary',
+		'_range_expression_postfix',
+		'_range_expression_prefix',
+		'_range_expression_bare'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'unary_expression',
@@ -7139,7 +7157,11 @@ export function wrapExpression(
 		'array_expression_semi',
 		'array_expression_list',
 		'closure_expression_block',
-		'closure_expression_expr'
+		'closure_expression_expr',
+		'range_expression_binary',
+		'range_expression_postfix',
+		'range_expression_prefix',
+		'range_expression_bare'
 	]) as T.Expression | readonly T.Expression[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -7226,7 +7248,11 @@ export function wrapExpression(
 			'array_expression_semi',
 			'array_expression_list',
 			'closure_expression_block',
-			'closure_expression_expr'
+			'closure_expression_expr',
+			'range_expression_binary',
+			'range_expression_postfix',
+			'range_expression_prefix',
+			'range_expression_bare'
 		]);
 	if (
 		filtered === undefined &&
@@ -7723,45 +7749,46 @@ export function wrapScopedTypeIdentifier(
 	return _node as unknown as T.ScopedTypeIdentifier.Parsed;
 }
 
-export function wrapRangeExpression(data: T.RangeExpression, tree: TreeHandle): T.RangeExpression.Parsed {
-	data = _keepModelledSlots(data, ['_content']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.RangeExpression as const }) as unknown as T.RangeExpression.Parsed;
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.RangeExpression as const,
-		_content: storeExpanded(
-			projectMixedEnumStorage(
-				normalizeSingularWrapSlot(
-					data._content ??
-						readTerminalFromOther<
-							| T.RangeExpressionBinary
-							| T.RangeExpressionPostfix
-							| T.RangeExpressionPrefix
-							| TSKindId.RangeExpressionBare
-						>(data, [TSKindId.RangeExpressionBare]),
-					'content',
-					true,
-					data.$type,
-					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
-				),
-				{ '..': 363 },
-				{ 100: 363 }
-			),
-			tree
-		),
-
-		content() {
-			return hydrateChild<
-				T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | TSKindId.RangeExpressionBare
-			>(this._content, tree);
-		},
-		$with: {
-			content: (v: NonNullable<T.RangeExpression['_content']>) =>
-				wrapRangeExpression({ ...$edited(data), _content: v }, tree)
-		}
-	});
-	return _node as unknown as T.RangeExpression.Parsed;
+export function wrapRangeExpression(
+	data: T.RangeExpression & { readonly $other?: T.RangeExpression | readonly T.RangeExpression[] },
+	tree: TreeHandle
+): T.RangeExpression.Parsed {
+	if (typeof data === 'number') return data as unknown as T.RangeExpression.Parsed;
+	const node = _keepModelledSlots(data, [
+		'_range_expression_binary',
+		'_range_expression_postfix',
+		'_range_expression_prefix',
+		'_range_expression_bare'
+	]);
+	const kindKeyed = _firstKindKeyedWrapChild(node, [
+		'range_expression_binary',
+		'range_expression_postfix',
+		'range_expression_prefix',
+		'range_expression_bare'
+	]) as T.RangeExpression | readonly T.RangeExpression[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(node.$other, [
+			'range_expression_binary',
+			'range_expression_postfix',
+			'range_expression_prefix',
+			'range_expression_bare'
+		]);
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
+		return hydrateSelf<T.RangeExpression>(node as T.RangeExpression, tree) as unknown as T.RangeExpression.Parsed;
+	}
+	return hydrateChild<T.RangeExpression>(
+		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
+			tree,
+			nodeType: node.$type,
+			slotName: 'children',
+			span: (node as _UntypedNode).$span
+		}),
+		tree
+	);
 }
 
 export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle): T.UnaryExpression.Parsed {
@@ -8847,7 +8874,7 @@ export function wrapLetCondition(data: T.LetCondition, tree: TreeHandle): T.LetC
 					slotName: 'pattern',
 					span: (data as _UntypedNode).$span
 				}),
-				{ true: 117, false: 118, '..': 321, _: 425 },
+				{ true: 117, false: 118, '..': 321, _: 426 },
 				undefined,
 				[336]
 			),
@@ -9024,7 +9051,10 @@ export function wrapCondition(
 		'_loop_expression',
 		'_for_expression',
 		'_const_block',
-		'_range_expression'
+		'_range_expression_binary',
+		'_range_expression_postfix',
+		'_range_expression_prefix',
+		'_range_expression_bare'
 	]);
 	const kindKeyed = _firstKindKeyedWrapChild(node, [
 		'_expression',
@@ -9108,7 +9138,10 @@ export function wrapCondition(
 		'loop_expression',
 		'for_expression',
 		'const_block',
-		'range_expression'
+		'range_expression_binary',
+		'range_expression_postfix',
+		'range_expression_prefix',
+		'range_expression_bare'
 	]) as T.Condition | readonly T.Condition[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -9194,7 +9227,10 @@ export function wrapCondition(
 			'loop_expression',
 			'for_expression',
 			'const_block',
-			'range_expression'
+			'range_expression_binary',
+			'range_expression_postfix',
+			'range_expression_prefix',
+			'range_expression_bare'
 		]);
 	if (
 		filtered === undefined &&
@@ -9456,7 +9492,7 @@ export function wrapMatchPattern(data: T.MatchPattern, tree: TreeHandle): T.Matc
 					slotName: 'pattern',
 					span: (data as _UntypedNode).$span
 				}),
-				{ true: 117, false: 118, '..': 321, _: 425 },
+				{ true: 117, false: 118, '..': 321, _: 426 },
 				undefined,
 				[336]
 			),
@@ -9611,7 +9647,7 @@ export function wrapForExpression(data: T.ForExpression, tree: TreeHandle): T.Fo
 					slotName: 'pattern',
 					span: (data as _UntypedNode).$span
 				}),
-				{ true: 117, false: 118, '..': 321, _: 425 },
+				{ true: 117, false: 118, '..': 321, _: 426 },
 				undefined,
 				[336]
 			),
@@ -9732,7 +9768,7 @@ export function wrapClosureParameters(data: T.ClosureParameters, tree: TreeHandl
 					'parameters',
 					{ tree, nodeType: data.$type, slotName: 'parameters', span: (data as _UntypedNode).$span }
 				),
-				{ true: 117, false: 118, '..': 321, _: 425 },
+				{ true: 117, false: 118, '..': 321, _: 426 },
 				undefined,
 				[336]
 			),
@@ -10648,7 +10684,7 @@ export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle): T.MutPatte
 					slotName: 'pattern',
 					span: (data as _UntypedNode).$span
 				}),
-				{ true: 117, false: 118, '..': 321, _: 425 },
+				{ true: 117, false: 118, '..': 321, _: 426 },
 				undefined,
 				[336]
 			),
@@ -10707,7 +10743,7 @@ export function wrapRefPattern(data: T.RefPattern, tree: TreeHandle): T.RefPatte
 					slotName: 'pattern',
 					span: (data as _UntypedNode).$span
 				}),
-				{ true: 117, false: 118, '..': 321, _: 425 },
+				{ true: 117, false: 118, '..': 321, _: 426 },
 				undefined,
 				[336]
 			),
@@ -10746,7 +10782,7 @@ export function wrapCapturedPattern(data: T.CapturedPattern, tree: TreeHandle): 
 					slotName: 'pattern',
 					span: (data as _UntypedNode).$span
 				}),
-				{ true: 117, false: 118, '..': 321, _: 425 },
+				{ true: 117, false: 118, '..': 321, _: 426 },
 				undefined,
 				[336]
 			),
@@ -10791,7 +10827,7 @@ export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle)
 					slotName: 'pattern',
 					span: (data as _UntypedNode).$span
 				}),
-				{ true: 117, false: 118, '..': 321, _: 425 },
+				{ true: 117, false: 118, '..': 321, _: 426 },
 				undefined,
 				[336]
 			),
@@ -14178,7 +14214,7 @@ export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle): 
 					slotName: 'left',
 					span: (data as _UntypedNode).$span
 				}),
-				{ true: 117, false: 118, '..': 321, _: 425 },
+				{ true: 117, false: 118, '..': 321, _: 426 },
 				undefined,
 				[336]
 			),
@@ -14192,7 +14228,7 @@ export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle): 
 					slotName: 'right',
 					span: (data as _UntypedNode).$span
 				}),
-				{ true: 117, false: 118, '..': 321, _: 425 },
+				{ true: 117, false: 118, '..': 321, _: 426 },
 				undefined,
 				[336]
 			),
@@ -14226,7 +14262,7 @@ export function wrapOrPatternPrefix(data: T.OrPatternPrefix, tree: TreeHandle): 
 					slotName: 'right',
 					span: (data as _UntypedNode).$span
 				}),
-				{ true: 117, false: 118, '..': 321, _: 425 },
+				{ true: 117, false: 118, '..': 321, _: 426 },
 				undefined,
 				[336]
 			),
@@ -14479,6 +14515,39 @@ export function wrapRangeExpressionPrefix(
 		}
 	});
 	return _node as unknown as T.RangeExpressionPrefix.Parsed;
+}
+
+export function wrapRangeExpressionBare(data: T.RangeExpressionBare, tree: TreeHandle): T.RangeExpressionBare.Parsed {
+	data = _keepModelledSlots(data, ['_range_expression_bare']);
+	if (_isReadTextLeaf(data))
+		return withMethods({
+			...data,
+			$type: TSKindId.RangeExpressionBare as const
+		}) as unknown as T.RangeExpressionBare.Parsed;
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.RangeExpressionBare as const,
+		_range_expression_bare: projectKindEnumStorage(
+			normalizeSingularWrapSlot(
+				data._range_expression_bare ?? readTerminalFromOther<TSKindId.DotDot>(data, [TSKindId.DotDot]),
+				'range_expression_bare',
+				true,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'range_expression_bare', span: (data as _UntypedNode).$span }
+			),
+			{ '..': 100 },
+			{ 363: 100 }
+		),
+
+		rangeExpressionBare() {
+			return this._range_expression_bare;
+		},
+		$with: {
+			rangeExpressionBare: (v: NonNullable<T.RangeExpressionBare['_range_expression_bare']>) =>
+				wrapRangeExpressionBare({ ...$edited(data), _range_expression_bare: v }, tree)
+		}
+	});
+	return _node as unknown as T.RangeExpressionBare.Parsed;
 }
 
 export function wrapExpressionStatementWithSemi(
@@ -15308,7 +15377,7 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
 					slotName: 'pattern',
 					span: (data as _UntypedNode).$span
 				}),
-				{ true: 117, false: 118, '..': 321, _: 425 },
+				{ true: 117, false: 118, '..': 321, _: 426 },
 				undefined,
 				[336]
 			),
@@ -15797,8 +15866,8 @@ export function wrapRangePatternWithLeft(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 				),
-				{ '..': 420 },
-				{ 100: 420 }
+				{ '..': 421 },
+				{ 100: 421 }
 			),
 			tree
 		),
@@ -16903,7 +16972,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 		wrapTupleExpressionElements(d as unknown as T.TupleExpressionElements, t),
 	[TSKindId.TokenTreePunctuation]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.TokenTreePunctuation as const }),
 	[TSKindId.TokenKeywords]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.TokenKeywords as const }),
-	[TSKindId.RangeExpressionBare]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.RangeExpressionBare as const }),
 	[TSKindId.ImplItemUnsafeMarker]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.ImplItemUnsafeMarker as const }),
 	[TSKindId.IntegerLiteralDecimal]: (d, t) => wrapIntegerLiteralDecimal(d as unknown as T.IntegerLiteralDecimal, t),
 	[TSKindId.IntegerLiteralHex]: (d, t) => wrapIntegerLiteralHex(d as unknown as T.IntegerLiteralHex, t),
@@ -16957,6 +17025,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.RangeExpressionBinary]: (d, t) => wrapRangeExpressionBinary(d as unknown as T.RangeExpressionBinary, t),
 	[TSKindId.RangeExpressionPostfix]: (d, t) => wrapRangeExpressionPostfix(d as unknown as T.RangeExpressionPostfix, t),
 	[TSKindId.RangeExpressionPrefix]: (d, t) => wrapRangeExpressionPrefix(d as unknown as T.RangeExpressionPrefix, t),
+	[TSKindId.RangeExpressionBare]: (d, t) => wrapRangeExpressionBare(d as unknown as T.RangeExpressionBare, t),
 	[TSKindId.ExpressionStatementWithSemi]: (d, t) =>
 		wrapExpressionStatementWithSemi(d as unknown as T.ExpressionStatementWithSemi, t),
 	[TSKindId.ForeignModItemSemi]: (d, t) => wrapForeignModItemSemi(d as unknown as T.ForeignModItemSemi, t),
@@ -17092,12 +17161,12 @@ function _wrapTrivia(trivia: _UntypedNode['$_trivia'], tree: TreeHandle): _Untyp
 	);
 }
 
-const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([464, 466, 467]);
+const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([465, 467, 468]);
 const _HIDDEN_KINDS: ReadonlySet<_UntypedNode['$type']> = new Set([
 	165, 167, 168, 169, 170, 171, 172, 173, 174, 175, 177, 180, 182, 183, 187, 193, 194, 196, 213, 225, 236, 253, 257,
-	258, 260, 261, 262, 269, 278, 289, 290, 294, 301, 314, 320, 323, 327, 328, 329, 331, 334, 335, 362, 364, 365, 434,
-	435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457,
-	458, 459, 460, 461, 462, 463
+	258, 260, 261, 262, 266, 269, 278, 289, 290, 294, 301, 314, 320, 323, 327, 328, 329, 331, 334, 335, 362, 363, 364,
+	365, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456,
+	457, 458, 459, 460, 461, 462, 463, 464
 ]);
 function _displayOf(entry: _UntypedNode): _UntypedNode['$type'] {
 	return (entry as { readonly $displayType?: _UntypedNode['$type'] }).$displayType ?? entry.$type;
@@ -17112,7 +17181,7 @@ function _withoutDisplay(data: _UntypedNode): _UntypedNode {
 }
 
 const _RECLAIMS_ANONYMOUS: ReadonlySet<_UntypedNode['$type']> = new Set([
-	189, 235, 266, 304, 379, 380, 418, 419, 421, 428, 430, 432
+	189, 235, 304, 379, 380, 393, 419, 420, 422, 429, 431, 433
 ]);
 function _spellingTokens(data: _UntypedNode): readonly _UntypedNode[] | undefined {
 	const { $other, ...node } = data;

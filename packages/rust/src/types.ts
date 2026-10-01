@@ -163,7 +163,6 @@ export type LeafStringMap = {
 		| 'use'
 		| 'where'
 		| 'while';
-	[TSKindId.RangeExpressionBare]: '..';
 	[TSKindId.ImplItemUnsafeMarker]: 'unsafe';
 	[TSKindId.RangePatternWithLeftBare]: '..';
 	[TSKindId.WildcardPattern]: '_';
@@ -613,7 +612,7 @@ export enum TSKindId {
 	TupleExpressionElements = 360,
 	TokenTreePunctuation = 361,
 	TokenKeywords = 362,
-	RangeExpressionBare = 363,
+	_RangeExpressionBare = 363,
 	ImplItemUnsafeMarker = 364,
 	CharLiteralEscaped = 365,
 	ArrayExpressionSemi = 366,
@@ -643,80 +642,81 @@ export enum TSKindId {
 	RangeExpressionBinary = 390,
 	RangeExpressionPostfix = 391,
 	RangeExpressionPrefix = 392,
-	ExpressionStatementWithSemi = 393,
-	ForeignModItemSemi = 394,
-	ForeignModItemBody = 395,
-	MatchArmWithComma = 396,
-	MatchArmBlockEnding = 397,
-	LineCommentExtraSlashes = 398,
-	LineCommentDocOuter = 399,
-	LineCommentDocInner = 400,
-	BlockCommentDocOuter = 401,
-	BlockCommentDocInner = 402,
-	BlockCommentRegular = 403,
-	TokenTreePatternParen = 404,
-	TokenTreePatternBracket = 405,
-	TokenTreePatternBrace = 406,
-	TokenTreeParen = 407,
-	TokenTreeBracket = 408,
-	TokenTreeBrace = 409,
-	DelimTokenTreeParen = 410,
-	DelimTokenTreeBracket = 411,
-	DelimTokenTreeBrace = 412,
-	FieldPatternShorthand = 413,
-	FieldPatternNamed = 414,
-	MacroDefinitionParen = 415,
-	MacroDefinitionBracket = 416,
-	MacroDefinitionBrace = 417,
-	RangePatternPrefix = 418,
-	RangePatternWithLeftWithRight = 419,
-	RangePatternWithLeftBare = 420,
-	RangePatternWithLeft = 421,
-	StructItemBrace = 422,
-	StructItemTuple = 423,
-	StructItemUnit = 424,
-	WildcardPattern = 425,
-	AttributedFieldDeclaration = 426,
-	AttributedEnumVariant = 427,
-	AttributedParameter = 428,
-	AttributedTypeParameter = 429,
-	AttributedArgument = 430,
-	AttributedOrderedField = 431,
-	TypeArgument = 432,
-	MatchBlockArms = 433,
-	SourceFileRepeat1 = 434,
-	TokenRepetitionPatternRepeat1 = 435,
-	TokenRepetitionRepeat1 = 436,
-	DeclarationListRepeat1 = 437,
-	FunctionModifiersRepeat1 = 438,
-	TraitBoundsRepeat1 = 439,
-	TupleExpressionRepeat1 = 440,
-	LastMatchArmRepeat1 = 441,
-	StringLiteralRepeat1 = 442,
-	MacroRulesRepeat1 = 443,
-	EnumVariantListElementsRepeat1 = 444,
-	FieldDeclarationListElementsRepeat1 = 445,
-	OrderedFieldDeclarationListElementsRepeat1 = 446,
-	WherePredicatesRepeat1 = 447,
-	TypeParametersElementsRepeat1 = 448,
-	UseClausesRepeat1 = 449,
-	ParametersElementsRepeat1 = 450,
-	LifetimesRepeat1 = 451,
-	UseBoundsElementsRepeat1 = 452,
-	TypeArgumentsElementsRepeat1 = 453,
-	ArgumentsElementsRepeat1 = 454,
-	FieldInitializerListElementsRepeat1 = 455,
-	_ClosureParametersOptional1Repeat1 = 456,
-	TuplePatternElementsRepeat1 = 457,
-	PatternsRepeat1 = 458,
-	StructPatternElementsRepeat1 = 459,
-	_TupleTypeElementsRepeat1 = 460,
-	_TupleExpressionElementsRepeat1 = 461,
-	DelimTokenTreeParenRepeat1 = 462,
-	_MatchBlockArmsRepeat1 = 463,
-	FieldIdentifier = 464,
-	ShorthandFieldIdentifier = 466,
-	TypeIdentifier = 467,
+	RangeExpressionBare = 393,
+	ExpressionStatementWithSemi = 394,
+	ForeignModItemSemi = 395,
+	ForeignModItemBody = 396,
+	MatchArmWithComma = 397,
+	MatchArmBlockEnding = 398,
+	LineCommentExtraSlashes = 399,
+	LineCommentDocOuter = 400,
+	LineCommentDocInner = 401,
+	BlockCommentDocOuter = 402,
+	BlockCommentDocInner = 403,
+	BlockCommentRegular = 404,
+	TokenTreePatternParen = 405,
+	TokenTreePatternBracket = 406,
+	TokenTreePatternBrace = 407,
+	TokenTreeParen = 408,
+	TokenTreeBracket = 409,
+	TokenTreeBrace = 410,
+	DelimTokenTreeParen = 411,
+	DelimTokenTreeBracket = 412,
+	DelimTokenTreeBrace = 413,
+	FieldPatternShorthand = 414,
+	FieldPatternNamed = 415,
+	MacroDefinitionParen = 416,
+	MacroDefinitionBracket = 417,
+	MacroDefinitionBrace = 418,
+	RangePatternPrefix = 419,
+	RangePatternWithLeftWithRight = 420,
+	RangePatternWithLeftBare = 421,
+	RangePatternWithLeft = 422,
+	StructItemBrace = 423,
+	StructItemTuple = 424,
+	StructItemUnit = 425,
+	WildcardPattern = 426,
+	AttributedFieldDeclaration = 427,
+	AttributedEnumVariant = 428,
+	AttributedParameter = 429,
+	AttributedTypeParameter = 430,
+	AttributedArgument = 431,
+	AttributedOrderedField = 432,
+	TypeArgument = 433,
+	MatchBlockArms = 434,
+	SourceFileRepeat1 = 435,
+	TokenRepetitionPatternRepeat1 = 436,
+	TokenRepetitionRepeat1 = 437,
+	DeclarationListRepeat1 = 438,
+	FunctionModifiersRepeat1 = 439,
+	TraitBoundsRepeat1 = 440,
+	TupleExpressionRepeat1 = 441,
+	LastMatchArmRepeat1 = 442,
+	StringLiteralRepeat1 = 443,
+	MacroRulesRepeat1 = 444,
+	EnumVariantListElementsRepeat1 = 445,
+	FieldDeclarationListElementsRepeat1 = 446,
+	OrderedFieldDeclarationListElementsRepeat1 = 447,
+	WherePredicatesRepeat1 = 448,
+	TypeParametersElementsRepeat1 = 449,
+	UseClausesRepeat1 = 450,
+	ParametersElementsRepeat1 = 451,
+	LifetimesRepeat1 = 452,
+	UseBoundsElementsRepeat1 = 453,
+	TypeArgumentsElementsRepeat1 = 454,
+	ArgumentsElementsRepeat1 = 455,
+	FieldInitializerListElementsRepeat1 = 456,
+	_ClosureParametersOptional1Repeat1 = 457,
+	TuplePatternElementsRepeat1 = 458,
+	PatternsRepeat1 = 459,
+	StructPatternElementsRepeat1 = 460,
+	_TupleTypeElementsRepeat1 = 461,
+	_TupleExpressionElementsRepeat1 = 462,
+	DelimTokenTreeParenRepeat1 = 463,
+	_MatchBlockArmsRepeat1 = 464,
+	FieldIdentifier = 465,
+	ShorthandFieldIdentifier = 467,
+	TypeIdentifier = 468,
 	Error = 65535
 }
 Object.freeze(TSKindId);
@@ -1013,7 +1013,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[287, 'if_expression'],
 	[288, 'let_condition'],
 	[289, '_let_chain'],
-	[465, '_let_chain'],
+	[466, '_let_chain'],
 	[290, '_condition'],
 	[291, 'else_clause'],
 	[292, 'match_expression'],
@@ -1087,7 +1087,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[360, 'tuple_expression_elements'],
 	[361, 'token_tree_punctuation'],
 	[362, '_token_keywords'],
-	[363, 'range_expression_bare'],
+	[363, '_range_expression_bare'],
 	[364, '_impl_item_unsafe_marker'],
 	[365, 'char_literal_escaped'],
 	[366, 'array_expression_semi'],
@@ -1117,80 +1117,81 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[390, 'range_expression_binary'],
 	[391, 'range_expression_postfix'],
 	[392, 'range_expression_prefix'],
-	[393, 'expression_statement_with_semi'],
-	[394, 'foreign_mod_item_semi'],
-	[395, 'foreign_mod_item_body'],
-	[396, 'match_arm_with_comma'],
-	[397, 'match_arm_block_ending'],
-	[398, 'line_comment_extra_slashes'],
-	[399, 'line_comment_doc_outer'],
-	[400, 'line_comment_doc_inner'],
-	[401, 'block_comment_doc_outer'],
-	[402, 'block_comment_doc_inner'],
-	[403, 'block_comment_regular'],
-	[404, 'token_tree_pattern_paren'],
-	[405, 'token_tree_pattern_bracket'],
-	[406, 'token_tree_pattern_brace'],
-	[407, 'token_tree_paren'],
-	[408, 'token_tree_bracket'],
-	[409, 'token_tree_brace'],
-	[410, 'delim_token_tree_paren'],
-	[411, 'delim_token_tree_bracket'],
-	[412, 'delim_token_tree_brace'],
-	[413, 'field_pattern_shorthand'],
-	[414, 'field_pattern_named'],
-	[415, 'macro_definition_paren'],
-	[416, 'macro_definition_bracket'],
-	[417, 'macro_definition_brace'],
-	[418, 'range_pattern_prefix'],
-	[419, 'range_pattern_with_left_with_right'],
-	[420, 'range_pattern_with_left_bare'],
-	[421, 'range_pattern_with_left'],
-	[422, 'struct_item_brace'],
-	[423, 'struct_item_tuple'],
-	[424, 'struct_item_unit'],
-	[425, 'wildcard_pattern'],
-	[426, 'attributed_field_declaration'],
-	[427, 'attributed_enum_variant'],
-	[428, 'attributed_parameter'],
-	[429, 'attributed_type_parameter'],
-	[430, 'attributed_argument'],
-	[431, 'attributed_ordered_field'],
-	[432, 'type_argument'],
-	[433, 'match_block_arms'],
-	[434, 'source_file_repeat1'],
-	[435, 'token_repetition_pattern_repeat1'],
-	[436, 'token_repetition_repeat1'],
-	[437, 'declaration_list_repeat1'],
-	[438, 'function_modifiers_repeat1'],
-	[439, 'trait_bounds_repeat1'],
-	[440, 'tuple_expression_repeat1'],
-	[441, 'last_match_arm_repeat1'],
-	[442, 'string_literal_repeat1'],
-	[443, 'macro_rules_repeat1'],
-	[444, 'enum_variant_list_elements_repeat1'],
-	[445, 'field_declaration_list_elements_repeat1'],
-	[446, 'ordered_field_declaration_list_elements_repeat1'],
-	[447, 'where_predicates_repeat1'],
-	[448, 'type_parameters_elements_repeat1'],
-	[449, 'use_clauses_repeat1'],
-	[450, 'parameters_elements_repeat1'],
-	[451, 'lifetimes_repeat1'],
-	[452, 'use_bounds_elements_repeat1'],
-	[453, 'type_arguments_elements_repeat1'],
-	[454, 'arguments_elements_repeat1'],
-	[455, 'field_initializer_list_elements_repeat1'],
-	[456, '_closure_parameters_optional1_repeat1'],
-	[457, 'tuple_pattern_elements_repeat1'],
-	[458, 'patterns_repeat1'],
-	[459, 'struct_pattern_elements_repeat1'],
-	[460, '_tuple_type_elements_repeat1'],
-	[461, '_tuple_expression_elements_repeat1'],
-	[462, 'delim_token_tree_paren_repeat1'],
-	[463, '_match_block_arms_repeat1'],
-	[464, 'field_identifier'],
-	[466, 'shorthand_field_identifier'],
-	[467, 'type_identifier'],
+	[393, 'range_expression_bare'],
+	[394, 'expression_statement_with_semi'],
+	[395, 'foreign_mod_item_semi'],
+	[396, 'foreign_mod_item_body'],
+	[397, 'match_arm_with_comma'],
+	[398, 'match_arm_block_ending'],
+	[399, 'line_comment_extra_slashes'],
+	[400, 'line_comment_doc_outer'],
+	[401, 'line_comment_doc_inner'],
+	[402, 'block_comment_doc_outer'],
+	[403, 'block_comment_doc_inner'],
+	[404, 'block_comment_regular'],
+	[405, 'token_tree_pattern_paren'],
+	[406, 'token_tree_pattern_bracket'],
+	[407, 'token_tree_pattern_brace'],
+	[408, 'token_tree_paren'],
+	[409, 'token_tree_bracket'],
+	[410, 'token_tree_brace'],
+	[411, 'delim_token_tree_paren'],
+	[412, 'delim_token_tree_bracket'],
+	[413, 'delim_token_tree_brace'],
+	[414, 'field_pattern_shorthand'],
+	[415, 'field_pattern_named'],
+	[416, 'macro_definition_paren'],
+	[417, 'macro_definition_bracket'],
+	[418, 'macro_definition_brace'],
+	[419, 'range_pattern_prefix'],
+	[420, 'range_pattern_with_left_with_right'],
+	[421, 'range_pattern_with_left_bare'],
+	[422, 'range_pattern_with_left'],
+	[423, 'struct_item_brace'],
+	[424, 'struct_item_tuple'],
+	[425, 'struct_item_unit'],
+	[426, 'wildcard_pattern'],
+	[427, 'attributed_field_declaration'],
+	[428, 'attributed_enum_variant'],
+	[429, 'attributed_parameter'],
+	[430, 'attributed_type_parameter'],
+	[431, 'attributed_argument'],
+	[432, 'attributed_ordered_field'],
+	[433, 'type_argument'],
+	[434, 'match_block_arms'],
+	[435, 'source_file_repeat1'],
+	[436, 'token_repetition_pattern_repeat1'],
+	[437, 'token_repetition_repeat1'],
+	[438, 'declaration_list_repeat1'],
+	[439, 'function_modifiers_repeat1'],
+	[440, 'trait_bounds_repeat1'],
+	[441, 'tuple_expression_repeat1'],
+	[442, 'last_match_arm_repeat1'],
+	[443, 'string_literal_repeat1'],
+	[444, 'macro_rules_repeat1'],
+	[445, 'enum_variant_list_elements_repeat1'],
+	[446, 'field_declaration_list_elements_repeat1'],
+	[447, 'ordered_field_declaration_list_elements_repeat1'],
+	[448, 'where_predicates_repeat1'],
+	[449, 'type_parameters_elements_repeat1'],
+	[450, 'use_clauses_repeat1'],
+	[451, 'parameters_elements_repeat1'],
+	[452, 'lifetimes_repeat1'],
+	[453, 'use_bounds_elements_repeat1'],
+	[454, 'type_arguments_elements_repeat1'],
+	[455, 'arguments_elements_repeat1'],
+	[456, 'field_initializer_list_elements_repeat1'],
+	[457, '_closure_parameters_optional1_repeat1'],
+	[458, 'tuple_pattern_elements_repeat1'],
+	[459, 'patterns_repeat1'],
+	[460, 'struct_pattern_elements_repeat1'],
+	[461, '_tuple_type_elements_repeat1'],
+	[462, '_tuple_expression_elements_repeat1'],
+	[463, 'delim_token_tree_paren_repeat1'],
+	[464, '_match_block_arms_repeat1'],
+	[465, 'field_identifier'],
+	[467, 'shorthand_field_identifier'],
+	[468, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -1485,7 +1486,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[287, 'if_expression'],
 	[288, 'let_condition'],
 	[289, '_let_chain'],
-	[465, 'let_chain'],
+	[466, 'let_chain'],
 	[290, '_condition'],
 	[291, 'else_clause'],
 	[292, 'match_expression'],
@@ -1559,7 +1560,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[360, 'tuple_expression_elements'],
 	[361, 'token_tree_punctuation'],
 	[362, '_token_keywords'],
-	[363, 'range_expression_bare'],
+	[363, '_range_expression_bare'],
 	[364, '_impl_item_unsafe_marker'],
 	[365, 'char_literal_escaped'],
 	[366, 'array_expression_semi'],
@@ -1589,80 +1590,81 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[390, 'range_expression_binary'],
 	[391, 'range_expression_postfix'],
 	[392, 'range_expression_prefix'],
-	[393, 'expression_statement_with_semi'],
-	[394, 'foreign_mod_item_semi'],
-	[395, 'foreign_mod_item_body'],
-	[396, 'match_arm_with_comma'],
-	[397, 'match_arm_block_ending'],
-	[398, 'line_comment_extra_slashes'],
-	[399, 'line_comment_doc_outer'],
-	[400, 'line_comment_doc_inner'],
-	[401, 'block_comment_doc_outer'],
-	[402, 'block_comment_doc_inner'],
-	[403, 'block_comment_regular'],
-	[404, 'token_tree_pattern_paren'],
-	[405, 'token_tree_pattern_bracket'],
-	[406, 'token_tree_pattern_brace'],
-	[407, 'token_tree_paren'],
-	[408, 'token_tree_bracket'],
-	[409, 'token_tree_brace'],
-	[410, 'delim_token_tree_paren'],
-	[411, 'delim_token_tree_bracket'],
-	[412, 'delim_token_tree_brace'],
-	[413, 'field_pattern_shorthand'],
-	[414, 'field_pattern_named'],
-	[415, 'macro_definition_paren'],
-	[416, 'macro_definition_bracket'],
-	[417, 'macro_definition_brace'],
-	[418, 'range_pattern_prefix'],
-	[419, 'range_pattern_with_left_with_right'],
-	[420, 'range_pattern_with_left_bare'],
-	[421, 'range_pattern_with_left'],
-	[422, 'struct_item_brace'],
-	[423, 'struct_item_tuple'],
-	[424, 'struct_item_unit'],
-	[425, 'wildcard_pattern'],
-	[426, 'attributed_field_declaration'],
-	[427, 'attributed_enum_variant'],
-	[428, 'attributed_parameter'],
-	[429, 'attributed_type_parameter'],
-	[430, 'attributed_argument'],
-	[431, 'attributed_ordered_field'],
-	[432, 'type_argument'],
-	[433, 'match_block_arms'],
-	[434, 'source_file_repeat1'],
-	[435, 'token_repetition_pattern_repeat1'],
-	[436, 'token_repetition_repeat1'],
-	[437, 'declaration_list_repeat1'],
-	[438, 'function_modifiers_repeat1'],
-	[439, 'trait_bounds_repeat1'],
-	[440, 'tuple_expression_repeat1'],
-	[441, 'last_match_arm_repeat1'],
-	[442, 'string_literal_repeat1'],
-	[443, 'macro_rules_repeat1'],
-	[444, 'enum_variant_list_elements_repeat1'],
-	[445, 'field_declaration_list_elements_repeat1'],
-	[446, 'ordered_field_declaration_list_elements_repeat1'],
-	[447, 'where_predicates_repeat1'],
-	[448, 'type_parameters_elements_repeat1'],
-	[449, 'use_clauses_repeat1'],
-	[450, 'parameters_elements_repeat1'],
-	[451, 'lifetimes_repeat1'],
-	[452, 'use_bounds_elements_repeat1'],
-	[453, 'type_arguments_elements_repeat1'],
-	[454, 'arguments_elements_repeat1'],
-	[455, 'field_initializer_list_elements_repeat1'],
-	[456, '_closure_parameters_optional1_repeat1'],
-	[457, 'tuple_pattern_elements_repeat1'],
-	[458, 'patterns_repeat1'],
-	[459, 'struct_pattern_elements_repeat1'],
-	[460, '_tuple_type_elements_repeat1'],
-	[461, '_tuple_expression_elements_repeat1'],
-	[462, 'delim_token_tree_paren_repeat1'],
-	[463, '_match_block_arms_repeat1'],
-	[464, 'field_identifier'],
-	[466, 'shorthand_field_identifier'],
-	[467, 'type_identifier'],
+	[393, 'range_expression_bare'],
+	[394, 'expression_statement_with_semi'],
+	[395, 'foreign_mod_item_semi'],
+	[396, 'foreign_mod_item_body'],
+	[397, 'match_arm_with_comma'],
+	[398, 'match_arm_block_ending'],
+	[399, 'line_comment_extra_slashes'],
+	[400, 'line_comment_doc_outer'],
+	[401, 'line_comment_doc_inner'],
+	[402, 'block_comment_doc_outer'],
+	[403, 'block_comment_doc_inner'],
+	[404, 'block_comment_regular'],
+	[405, 'token_tree_pattern_paren'],
+	[406, 'token_tree_pattern_bracket'],
+	[407, 'token_tree_pattern_brace'],
+	[408, 'token_tree_paren'],
+	[409, 'token_tree_bracket'],
+	[410, 'token_tree_brace'],
+	[411, 'delim_token_tree_paren'],
+	[412, 'delim_token_tree_bracket'],
+	[413, 'delim_token_tree_brace'],
+	[414, 'field_pattern_shorthand'],
+	[415, 'field_pattern_named'],
+	[416, 'macro_definition_paren'],
+	[417, 'macro_definition_bracket'],
+	[418, 'macro_definition_brace'],
+	[419, 'range_pattern_prefix'],
+	[420, 'range_pattern_with_left_with_right'],
+	[421, 'range_pattern_with_left_bare'],
+	[422, 'range_pattern_with_left'],
+	[423, 'struct_item_brace'],
+	[424, 'struct_item_tuple'],
+	[425, 'struct_item_unit'],
+	[426, 'wildcard_pattern'],
+	[427, 'attributed_field_declaration'],
+	[428, 'attributed_enum_variant'],
+	[429, 'attributed_parameter'],
+	[430, 'attributed_type_parameter'],
+	[431, 'attributed_argument'],
+	[432, 'attributed_ordered_field'],
+	[433, 'type_argument'],
+	[434, 'match_block_arms'],
+	[435, 'source_file_repeat1'],
+	[436, 'token_repetition_pattern_repeat1'],
+	[437, 'token_repetition_repeat1'],
+	[438, 'declaration_list_repeat1'],
+	[439, 'function_modifiers_repeat1'],
+	[440, 'trait_bounds_repeat1'],
+	[441, 'tuple_expression_repeat1'],
+	[442, 'last_match_arm_repeat1'],
+	[443, 'string_literal_repeat1'],
+	[444, 'macro_rules_repeat1'],
+	[445, 'enum_variant_list_elements_repeat1'],
+	[446, 'field_declaration_list_elements_repeat1'],
+	[447, 'ordered_field_declaration_list_elements_repeat1'],
+	[448, 'where_predicates_repeat1'],
+	[449, 'type_parameters_elements_repeat1'],
+	[450, 'use_clauses_repeat1'],
+	[451, 'parameters_elements_repeat1'],
+	[452, 'lifetimes_repeat1'],
+	[453, 'use_bounds_elements_repeat1'],
+	[454, 'type_arguments_elements_repeat1'],
+	[455, 'arguments_elements_repeat1'],
+	[456, 'field_initializer_list_elements_repeat1'],
+	[457, '_closure_parameters_optional1_repeat1'],
+	[458, 'tuple_pattern_elements_repeat1'],
+	[459, 'patterns_repeat1'],
+	[460, 'struct_pattern_elements_repeat1'],
+	[461, '_tuple_type_elements_repeat1'],
+	[462, '_tuple_expression_elements_repeat1'],
+	[463, 'delim_token_tree_paren_repeat1'],
+	[464, '_match_block_arms_repeat1'],
+	[465, 'field_identifier'],
+	[467, 'shorthand_field_identifier'],
+	[468, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -2395,8 +2397,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TokenTreePunctuation;
 		case '_token_keywords':
 			return TSKindId.TokenKeywords;
-		case 'range_expression_bare':
-			return TSKindId.RangeExpressionBare;
+		case '_range_expression_bare':
+			return TSKindId._RangeExpressionBare;
 		case '_impl_item_unsafe_marker':
 			return TSKindId.ImplItemUnsafeMarker;
 		case 'char_literal_escaped':
@@ -2455,6 +2457,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.RangeExpressionPostfix;
 		case 'range_expression_prefix':
 			return TSKindId.RangeExpressionPrefix;
+		case 'range_expression_bare':
+			return TSKindId.RangeExpressionBare;
 		case 'expression_statement_with_semi':
 			return TSKindId.ExpressionStatementWithSemi;
 		case 'foreign_mod_item_semi':
@@ -3198,6 +3202,13 @@ export enum DelimTokensKind {
 export enum NonDelimTokenKind {
 	NonSpecialToken = 'non_special_token',
 	Dollar = 'dollar'
+}
+
+export enum RangeExpressionKind {
+	RangeExpressionBinary = 'range_expression_binary',
+	RangeExpressionPostfix = 'range_expression_postfix',
+	RangeExpressionPrefix = 'range_expression_prefix',
+	RangeExpressionBare = 'range_expression_bare'
 }
 
 export enum ReferenceExpressionKind {
@@ -7433,30 +7444,6 @@ export interface ScopedTypeIdentifier {
 	name(): TypeIdentifier;
 }
 
-export interface RangeExpression {
-	readonly $type: TSKindId.RangeExpression;
-	readonly _content:
-		| RangeExpressionBinary
-		| RangeExpressionPostfix
-		| RangeExpressionPrefix
-		| TSKindId.RangeExpressionBare;
-	readonly __inputHints__?: {
-		readonly content:
-			| KindEnum<'..', TSKindId.RangeExpressionBare | TSKindId.DotDot>
-			| RangeExpressionBinary
-			| RangeExpressionPostfix
-			| RangeExpressionPrefix;
-	};
-	readonly __slotHints__?: {
-		readonly content: SlotHint<
-			NonNullable<
-				T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | TSKindId.RangeExpressionBare
-			>
-		>;
-	};
-	content(): RangeExpressionBinary | RangeExpressionPostfix | RangeExpressionPrefix | TSKindId.RangeExpressionBare;
-}
-
 export interface UnaryExpression {
 	readonly $type: TSKindId.UnaryExpression;
 	readonly _operator: number;
@@ -10439,6 +10426,18 @@ export interface RangeExpressionPrefix {
 	end(): Expression;
 }
 
+export interface RangeExpressionBare {
+	readonly $type: TSKindId.RangeExpressionBare;
+	readonly _range_expression_bare: number;
+	readonly __inputHints__?: {
+		readonly range_expression_bare: KindEnum<'..', TSKindId.DotDot>;
+	};
+	readonly __slotHints__?: {
+		readonly rangeExpressionBare: SlotHint<NonNullable<TSKindId.DotDot>>;
+	};
+	rangeExpressionBare(): number;
+}
+
 export interface ExpressionStatementWithSemi {
 	readonly $type: TSKindId.ExpressionStatementWithSemi;
 	readonly _expression: Expression;
@@ -11793,7 +11792,6 @@ export type TokenKeywords =
 	| TSKindId.UseKeyword
 	| TSKindId.WhereKeyword
 	| TSKindId.WhileKeyword;
-export type RangeExpressionBare = TSKindId.RangeExpressionBare;
 export type ImplItemUnsafeMarker = TSKindId.ImplItemUnsafeMarker;
 export type CharLiteralEmpty = Terminal<TSKindId.CharLiteralEmpty, string>;
 export type LineCommentExtraSlashes = Terminal<TSKindId.LineCommentExtraSlashes, string>;
@@ -11988,6 +11986,12 @@ export type Expression =
 
 export type DelimTokenTree = DelimTokenTreeParen | DelimTokenTreeBracket | DelimTokenTreeBrace;
 
+export type RangeExpression =
+	| RangeExpressionBinary
+	| RangeExpressionPostfix
+	| RangeExpressionPrefix
+	| RangeExpressionBare;
+
 export type ReferenceExpression =
 	| ReferenceExpressionRawConst
 	| ReferenceExpressionRawMut
@@ -12155,6 +12159,12 @@ export namespace DelimTokenTree {
 	export type Parsed = SupertypeSurface<DelimTokenTree, ParsedByKindId>;
 }
 
+export namespace RangeExpression {
+	export type Kind = 'range_expression';
+	export type Bound = SupertypeSurface<RangeExpression, BoundByKindId>;
+	export type Parsed = SupertypeSurface<RangeExpression, ParsedByKindId>;
+}
+
 export namespace ReferenceExpression {
 	export type Kind = 'reference_expression';
 	export type Bound = SupertypeSurface<ReferenceExpression, BoundByKindId>;
@@ -12252,6 +12262,7 @@ export namespace CharLiteralEscaped {
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
+export type _RangeExpressionBare = TSKindId._RangeExpressionBare;
 export type Dollar = TSKindId.Dollar;
 
 export type RustNode = NodeOfNamespaces<NamespaceMap>;
@@ -16167,19 +16178,6 @@ export interface ScopedTypeIdentifierNs extends NodeNs<
 	ScopedTypeIdentifier.Parsed,
 	never
 > {}
-export interface RangeExpressionNs extends NodeNs<
-	RangeExpression,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	RangeExpression.Bound,
-	RangeExpression.BuildArgs,
-	RangeExpression.LooseArgs,
-	'content',
-	TSKindId.RangeExpression,
-	RangeExpression.Parsed,
-	never
-> {}
 export interface UnaryExpressionNs extends NodeNs<
 	UnaryExpression,
 	LeafScalarMap,
@@ -17688,6 +17686,19 @@ export interface RangeExpressionPrefixNs extends NodeNs<
 	RangeExpressionPrefix.Parsed,
 	never
 > {}
+export interface RangeExpressionBareNs extends NodeNs<
+	RangeExpressionBare,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	RangeExpressionBare.Bound,
+	RangeExpressionBare.BuildArgs,
+	RangeExpressionBare.LooseArgs,
+	'range_expression_bare',
+	TSKindId.RangeExpressionBare,
+	RangeExpressionBare.Parsed,
+	never
+> {}
 export interface ExpressionStatementWithSemiNs extends NodeNs<
 	ExpressionStatementWithSemi,
 	LeafScalarMap,
@@ -18231,11 +18242,6 @@ export interface OuterLineDocCommentMarkerNs extends KeywordNs<
 export interface SelfNs extends KeywordNs<TSKindId.Self, 'self', TSKindId.Self> {}
 export interface SuperNs extends KeywordNs<TSKindId.Super, 'super', TSKindId.Super> {}
 export interface CrateNs extends KeywordNs<TSKindId.Crate, 'crate', TSKindId.Crate> {}
-export interface RangeExpressionBareNs extends KeywordNs<
-	TSKindId.RangeExpressionBare,
-	'..',
-	TSKindId.RangeExpressionBare
-> {}
 export interface ImplItemUnsafeMarkerNs extends KeywordNs<
 	TSKindId.ImplItemUnsafeMarker,
 	'unsafe',
@@ -18421,7 +18427,6 @@ export interface NamespaceMap {
 	[TSKindId.ScopedIdentifier]: ScopedIdentifierNs;
 	[TSKindId.ScopedTypeIdentifierInExpressionPosition]: ScopedTypeIdentifierInExpressionPositionNs;
 	[TSKindId.ScopedTypeIdentifier]: ScopedTypeIdentifierNs;
-	[TSKindId.RangeExpression]: RangeExpressionNs;
 	[TSKindId.UnaryExpression]: UnaryExpressionNs;
 	[TSKindId.TryExpression]: TryExpressionNs;
 	[TSKindId.BinaryExpression]: BinaryExpressionNs;
@@ -18538,6 +18543,7 @@ export interface NamespaceMap {
 	[TSKindId.RangeExpressionBinary]: RangeExpressionBinaryNs;
 	[TSKindId.RangeExpressionPostfix]: RangeExpressionPostfixNs;
 	[TSKindId.RangeExpressionPrefix]: RangeExpressionPrefixNs;
+	[TSKindId.RangeExpressionBare]: RangeExpressionBareNs;
 	[TSKindId.ExpressionStatementWithSemi]: ExpressionStatementWithSemiNs;
 	[TSKindId.ForeignModItemSemi]: ForeignModItemSemiNs;
 	[TSKindId.ForeignModItemBody]: ForeignModItemBodyNs;
@@ -18589,7 +18595,6 @@ export interface NamespaceMap {
 	[TSKindId.Self]: SelfNs;
 	[TSKindId.Super]: SuperNs;
 	[TSKindId.Crate]: CrateNs;
-	[TSKindId.RangeExpressionBare]: RangeExpressionBareNs;
 	[TSKindId.ImplItemUnsafeMarker]: ImplItemUnsafeMarkerNs;
 	[TSKindId.RangePatternWithLeftBare]: RangePatternWithLeftBareNs;
 	[TSKindId.WildcardPattern]: WildcardPatternNs;
@@ -18710,7 +18715,6 @@ export interface BoundByKindId {
 	[TSKindId.ScopedIdentifier]: ScopedIdentifier.Bound;
 	[TSKindId.ScopedTypeIdentifierInExpressionPosition]: ScopedTypeIdentifierInExpressionPosition.Bound;
 	[TSKindId.ScopedTypeIdentifier]: ScopedTypeIdentifier.Bound;
-	[TSKindId.RangeExpression]: RangeExpression.Bound;
 	[TSKindId.UnaryExpression]: UnaryExpression.Bound;
 	[TSKindId.TryExpression]: TryExpression.Bound;
 	[TSKindId.BinaryExpression]: BinaryExpression.Bound;
@@ -18827,6 +18831,7 @@ export interface BoundByKindId {
 	[TSKindId.RangeExpressionBinary]: RangeExpressionBinary.Bound;
 	[TSKindId.RangeExpressionPostfix]: RangeExpressionPostfix.Bound;
 	[TSKindId.RangeExpressionPrefix]: RangeExpressionPrefix.Bound;
+	[TSKindId.RangeExpressionBare]: RangeExpressionBare.Bound;
 	[TSKindId.ExpressionStatementWithSemi]: ExpressionStatementWithSemi.Bound;
 	[TSKindId.ForeignModItemSemi]: ForeignModItemSemi.Bound;
 	[TSKindId.ForeignModItemBody]: ForeignModItemBody.Bound;
@@ -18954,7 +18959,6 @@ export interface ParsedByKindId {
 	[TSKindId.ScopedIdentifier]: ScopedIdentifier.Parsed;
 	[TSKindId.ScopedTypeIdentifierInExpressionPosition]: ScopedTypeIdentifierInExpressionPosition.Parsed;
 	[TSKindId.ScopedTypeIdentifier]: ScopedTypeIdentifier.Parsed;
-	[TSKindId.RangeExpression]: RangeExpression.Parsed;
 	[TSKindId.UnaryExpression]: UnaryExpression.Parsed;
 	[TSKindId.TryExpression]: TryExpression.Parsed;
 	[TSKindId.BinaryExpression]: BinaryExpression.Parsed;
@@ -19071,6 +19075,7 @@ export interface ParsedByKindId {
 	[TSKindId.RangeExpressionBinary]: RangeExpressionBinary.Parsed;
 	[TSKindId.RangeExpressionPostfix]: RangeExpressionPostfix.Parsed;
 	[TSKindId.RangeExpressionPrefix]: RangeExpressionPrefix.Parsed;
+	[TSKindId.RangeExpressionBare]: RangeExpressionBare.Parsed;
 	[TSKindId.ExpressionStatementWithSemi]: ExpressionStatementWithSemi.Parsed;
 	[TSKindId.ForeignModItemSemi]: ForeignModItemSemi.Parsed;
 	[TSKindId.ForeignModItemBody]: ForeignModItemBody.Parsed;
@@ -19170,7 +19175,7 @@ export type FixedTextKindId =
 	| TSKindId.Self
 	| TSKindId.Super
 	| TSKindId.Crate
-	| TSKindId.RangeExpressionBare
+	| TSKindId._RangeExpressionBare
 	| TSKindId.ImplItemUnsafeMarker
 	| TSKindId.RangePatternWithLeftBare
 	| TSKindId.WildcardPattern
@@ -19380,7 +19385,6 @@ export interface IrKeyOf {
 	[TSKindId.ScopedIdentifier]: 'scopedIdentifier';
 	[TSKindId.ScopedTypeIdentifierInExpressionPosition]: 'scopedTypeIdentifierInExpressionPosition';
 	[TSKindId.ScopedTypeIdentifier]: 'scopedTypeIdentifier';
-	[TSKindId.RangeExpression]: 'rangeExpression';
 	[TSKindId.UnaryExpression]: 'unaryExpression';
 	[TSKindId.TryExpression]: 'tryExpression';
 	[TSKindId.BinaryExpression]: 'binaryExpression';
@@ -19497,6 +19501,7 @@ export interface IrKeyOf {
 	[TSKindId.RangeExpressionBinary]: 'rangeExpressionBinary';
 	[TSKindId.RangeExpressionPostfix]: 'rangeExpressionPostfix';
 	[TSKindId.RangeExpressionPrefix]: 'rangeExpressionPrefix';
+	[TSKindId.RangeExpressionBare]: 'rangeExpressionBare';
 	[TSKindId.ExpressionStatementWithSemi]: 'expressionStatementWithSemi';
 	[TSKindId.ForeignModItemSemi]: 'foreignModItemSemi';
 	[TSKindId.ForeignModItemBody]: 'foreignModItemBody';
@@ -19548,7 +19553,6 @@ export interface IrKeyOf {
 	[TSKindId.Self]: 'self';
 	[TSKindId.Super]: 'super';
 	[TSKindId.Crate]: 'crate';
-	[TSKindId.RangeExpressionBare]: 'rangeExpressionBare';
 	[TSKindId.ImplItemUnsafeMarker]: 'implItemUnsafeMarker';
 	[TSKindId.RangePatternWithLeftBare]: 'rangePatternWithLeftBare';
 	[TSKindId.WildcardPattern]: 'wildcardPattern';
@@ -21230,34 +21234,6 @@ export namespace ScopedTypeIdentifier {
 			| AdmitBound<T.ScopedTypeIdentifier, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ScopedTypeIdentifier;
-}
-export namespace RangeExpression {
-	export type Config = ConfigFor<TSKindId.RangeExpression>;
-	export interface Bound extends BoundOf<T.RangeExpression, BoundByKindId>, NodeMethodsOf {
-		readonly $type: T.RangeExpression['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
-	}
-	export interface Parsed extends ParsedOf<T.RangeExpression, ParsedByKindId>, NodeMethodsOf {
-		readonly $type: T.RangeExpression['$type'];
-		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
-	}
-	export type Loose = LooseFor<TSKindId.RangeExpression>;
-	export type LooseConfig = LooseConfigFor<TSKindId.RangeExpression>;
-	export type BuildArgs = [
-		value: AdmitBound<
-			T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | TSKindId.RangeExpressionBare,
-			T.AdmittedNodes
-		>
-	];
-	export type LooseArgs = [
-		value: LooseValue<
-			T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | TSKindId.RangeExpressionBare,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
-	export type Kind = TSKindId.RangeExpression;
 }
 export namespace UnaryExpression {
 	export type Config = ConfigFor<TSKindId.UnaryExpression>;
@@ -23982,6 +23958,22 @@ export namespace RangeExpressionPrefix {
 	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
 	export type Kind = TSKindId.RangeExpressionPrefix;
 }
+export namespace RangeExpressionBare {
+	export type Config = ConfigFor<TSKindId.RangeExpressionBare>;
+	export interface Bound extends BoundOf<T.RangeExpressionBare, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.RangeExpressionBare['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.RangeExpressionBare, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.RangeExpressionBare['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export type Loose = LooseFor<TSKindId.RangeExpressionBare>;
+	export type LooseConfig = LooseConfigFor<TSKindId.RangeExpressionBare>;
+	export type BuildArgs = [value?: AdmitBound<TSKindId.DotDot, T.AdmittedNodes>];
+	export type LooseArgs = [value?: LooseValue<TSKindId.DotDot, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Kind = TSKindId.RangeExpressionBare;
+}
 export namespace ExpressionStatementWithSemi {
 	export type Config = ConfigFor<TSKindId.ExpressionStatementWithSemi>;
 	export interface Bound extends BoundOf<T.ExpressionStatementWithSemi, BoundByKindId>, NodeMethodsOf {
@@ -24924,16 +24916,6 @@ export namespace Crate {
 	export type BuildArgs = CrateNs['BuildArgs'];
 	export type LooseArgs = CrateNs['LooseArgs'];
 	export type Kind = TSKindId.Crate;
-}
-export namespace RangeExpressionBare {
-	export type Config = RangeExpressionBareNs['Config'];
-	export type Bound = RangeExpressionBareNs['Bound'];
-	export type Parsed = RangeExpressionBareNs['Bound'];
-	export type Loose = RangeExpressionBareNs['Loose'];
-	export type LooseConfig = RangeExpressionBareNs['LooseConfig'];
-	export type BuildArgs = RangeExpressionBareNs['BuildArgs'];
-	export type LooseArgs = RangeExpressionBareNs['LooseArgs'];
-	export type Kind = TSKindId.RangeExpressionBare;
 }
 export namespace ImplItemUnsafeMarker {
 	export type Config = ImplItemUnsafeMarkerNs['Config'];

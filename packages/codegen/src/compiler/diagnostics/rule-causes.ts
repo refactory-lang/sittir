@@ -10,6 +10,7 @@ export const PROVOKING_CODES: Readonly<Record<RuleCause, readonly string[]>> = {
 		'display-union-mixed',
 		'unclassifiable-shape',
 		'union-slot-routed',
+		'union-slot-routed-repeated',
 		'union-slot-mixed-row',
 		'multi-slot-nested-seq'
 	],

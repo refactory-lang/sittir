@@ -137,6 +137,7 @@ const BLOCKING_SHAPE_CODES: ReadonlySet<string> = new Set([
 	'single-literal-choice',
 	'union-slot-mixed-row',
 	'union-slot-unaddressable',
+	'union-slot-routed-repeated',
 	'separator-pattern'
 ]);
 

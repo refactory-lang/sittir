@@ -377,7 +377,6 @@ export const ir: {
 	readonly scopedIdentifier: typeof F.scopedIdentifier;
 	readonly scopedTypeIdentifierInExpressionPosition: typeof F.scopedTypeIdentifierInExpressionPosition;
 	readonly scopedTypeIdentifier: typeof F.scopedTypeIdentifier;
-	readonly rangeExpression: typeof F.rangeExpression;
 	readonly unaryExpression: typeof F.unaryExpression;
 	readonly tryExpression: typeof F.tryExpression;
 	readonly binaryExpression: typeof F.binaryExpression;
@@ -463,6 +462,7 @@ export const ir: {
 	readonly implItem: typeof F.implItem;
 	readonly pointerType: typeof F.pointerType;
 	readonly delimTokenTree: typeof F.delimTokenTree;
+	readonly rangeExpression: typeof F.rangeExpression;
 	readonly referenceExpression: typeof F.referenceExpression;
 	readonly arrayExpression: typeof F.arrayExpression;
 	readonly matchArm: typeof F.matchArm;
@@ -485,7 +485,6 @@ export const ir: {
 	readonly self: typeof F.buildSelf;
 	readonly super: typeof F.buildSuper;
 	readonly crate: typeof F.buildCrate;
-	readonly rangeExpressionBare: typeof F.buildRangeExpressionBare;
 	readonly rangePatternWithLeftBare: typeof F.buildRangePatternWithLeftBare;
 	readonly wildcardPattern: typeof F.buildWildcardPattern;
 	readonly outerDocCommentMarker: typeof F.buildOuterDocCommentMarker;
@@ -584,7 +583,6 @@ export const ir: {
 	scopedIdentifier: F.scopedIdentifier,
 	scopedTypeIdentifierInExpressionPosition: F.scopedTypeIdentifierInExpressionPosition,
 	scopedTypeIdentifier: F.scopedTypeIdentifier,
-	rangeExpression: F.rangeExpression,
 	unaryExpression: F.unaryExpression,
 	tryExpression: F.tryExpression,
 	binaryExpression: F.binaryExpression,
@@ -670,6 +668,7 @@ export const ir: {
 	implItem: F.implItem,
 	pointerType: F.pointerType,
 	delimTokenTree: F.delimTokenTree,
+	rangeExpression: F.rangeExpression,
 	referenceExpression: F.referenceExpression,
 	arrayExpression: F.arrayExpression,
 	matchArm: F.matchArm,
@@ -694,7 +693,6 @@ export const ir: {
 	self: F.buildSelf,
 	super: F.buildSuper,
 	crate: F.buildCrate,
-	rangeExpressionBare: F.buildRangeExpressionBare,
 	rangePatternWithLeftBare: F.buildRangePatternWithLeftBare,
 	wildcardPattern: F.buildWildcardPattern,
 	outerDocCommentMarker: F.buildOuterDocCommentMarker,
