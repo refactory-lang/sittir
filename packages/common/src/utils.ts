@@ -40,6 +40,11 @@ type Scoped = <R>(fn: () => R) => R;
 
 const NO_ENGINE = 'node has no engine; render it with engine.render(node)';
 
+/** Whether `node` is typed: it carries the methods `withMethods` attaches, so a wrap or a builder produced it. */
+export function isTypedNode(node: object): boolean {
+	return typeof (node as { readonly $render?: unknown }).$render === 'function';
+}
+
 export function withMethods<T extends AnyUntypedNode>(node: T): T & WithMethodsRuntime<T> {
 	const handle = currentHandle();
 	const scoped: Scoped = handle === undefined ? (fn) => fn() : (fn) => inEngine(handle, fn);
@@ -620,7 +625,7 @@ export { hydrateStub, isStub, readUntypedNode, type Stub, type TreeHandle } from
 export { toEditAt } from './edit.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toTransportData, markEdited, treeHandleOf } from './transport-data.ts';
+export { toTransportData, markEdited, treeHandleOf, isStorageKey, holdsSlots } from './transport-data.ts';
 export {
 	projectInterior,
 	lexedConfig,
