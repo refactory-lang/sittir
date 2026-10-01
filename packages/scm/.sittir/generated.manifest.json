@@ -1,6 +1,6 @@
 {
   "grammar": "scm",
-  "source_hash": "a43d75bb7785f975e7aa17ad2d7490a8e911912798d448aeda2ddc0650011bd4",
+  "source_hash": "41afb857dd1b66fc33017436671b27398c992f7918f3696dfe837622b9dcc100",
   "files": {
     "packages/scm/.sittir/grammar-diagnostics.json": "90639655c429bfe36ef2a36aaa2a31c5fabb65229200218dcf431681dad38f0a",
     "packages/scm/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -25,7 +25,7 @@
     "packages/scm/src/factories/overlays/polymorphs.ts": "464e48894e42ab4d365578f24f826258fbd6ae24a6e19e52b3c2442358c80f24",
     "packages/scm/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/scm/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
-    "packages/scm/src/factories/raw.ts": "f74a6190ff0d4060e2b9552b14ec9d740f589e642932e978ed56298432107578",
+    "packages/scm/src/factories/raw.ts": "5717f6ed19a0becbb84da6f0f24d9bcf6e67d148433e651ee6e58fb93522f290",
     "packages/scm/src/hash.ts": "8c2d921bceb2e4b18da527ddbf753f7ab4d608fec06e43ddebbe98cd92ef4aa3",
     "packages/scm/src/index.ts": "2a2a93fe499c766abb7657ae362b02e13c99453346df1ee555451dc91f6cb204",
     "packages/scm/src/ir.ts": "55c38e9931901c36e327e8bf04b1f49c1f0997e9e16cc18bc46b9d7a41f7bfd0",

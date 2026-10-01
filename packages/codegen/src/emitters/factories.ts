@@ -1295,7 +1295,7 @@ function emitFieldCarryingFactory(
 				wrapper.push(`  if (args.length === 0) {`, `    return _${fn}(${targetEmpty} as ${directParamType});`, `  }`);
 			}
 			wrapper.push(
-				`  if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {`,
+				`  if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')) {`,
 				`    return _${fn}(args[0] as ${directParamType});`,
 				`  }`,
 				`  const prebuilt =`,

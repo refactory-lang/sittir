@@ -139,7 +139,10 @@ export function buildSimpleStatements(
 	...elements: NonEmptyArray<AdmitBound<T.SimpleStatement, T.AdmittedNodes>>
 ): ReturnType<typeof _buildSimpleStatements>;
 export function buildSimpleStatements(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildSimpleStatements(args[0] as T.SimpleStatementsElements);
 	}
 	const prebuilt =
@@ -204,7 +207,10 @@ export function buildImportStatement(
 	value: AdmitBound<T.ImportList, T.AdmittedNodes>
 ): ReturnType<typeof _buildImportStatement>;
 export function buildImportStatement(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildImportStatement(args[0] as T.Names | T.Names.Types);
 	}
 	const prebuilt =
@@ -1112,7 +1118,10 @@ export function buildParameters(
 	...elements: NonEmptyArray<AdmitBound<T.Parameter, T.AdmittedNodes>>
 ): ReturnType<typeof _buildParameters>;
 export function buildParameters(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildParameters(args[0] as T.ParametersElements);
 	}
 	const prebuilt =
@@ -1173,7 +1182,10 @@ export function buildLambdaParameters(
 	...elements: NonEmptyArray<AdmitBound<T.Parameter, T.AdmittedNodes>>
 ): ReturnType<typeof _buildLambdaParameters>;
 export function buildLambdaParameters(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildLambdaParameters(args[0] as T.ParametersElements);
 	}
 	const prebuilt =
@@ -1423,7 +1435,10 @@ export function buildTypeParameter(
 	...elements: NonEmptyArray<AdmitBound<T.Type, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTypeParameter>;
 export function buildTypeParameter(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildTypeParameter(args[0] as T.Types);
 	}
 	const prebuilt =
@@ -1514,7 +1529,10 @@ export function buildArgumentList(
 	>
 ): ReturnType<typeof _buildArgumentList>;
 export function buildArgumentList(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildArgumentList(args[0] as T.ArgumentListElements);
 	}
 	const prebuilt =
@@ -1896,7 +1914,10 @@ export function buildDictPattern(
 	...elements: NonEmptyArray<AdmitBound<T.KeyValuePattern | T.SplatPattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildDictPattern>;
 export function buildDictPattern(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildDictPattern(args[0] as T.DictPatternElements);
 	}
 	const prebuilt =
@@ -2248,7 +2269,10 @@ export function buildTuplePattern(
 	...elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildTuplePattern(args[0] as T.Patterns);
 	}
 	const prebuilt =
@@ -2301,7 +2325,10 @@ export function buildListPattern(
 	...elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildListPattern>;
 export function buildListPattern(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildListPattern(args[0] as T.Patterns);
 	}
 	const prebuilt =
@@ -3322,7 +3349,10 @@ export function buildList(
 	>
 ): ReturnType<typeof _buildList>;
 export function buildList(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildList(args[0] as T.CollectionElements);
 	}
 	const prebuilt =
@@ -3385,7 +3415,10 @@ export function buildSet(
 	>
 ): ReturnType<typeof _buildSet>;
 export function buildSet(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildSet(args[0] as T.CollectionElements);
 	}
 	const prebuilt =
@@ -3449,7 +3482,10 @@ export function buildTuple(
 	>
 ): ReturnType<typeof _buildTuple>;
 export function buildTuple(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildTuple(args[0] as T.CollectionElements);
 	}
 	const prebuilt =
@@ -3511,7 +3547,10 @@ export function buildDictionary(
 	...elements: NonEmptyArray<AdmitBound<T.Pair | T.DictionarySplat, T.AdmittedNodes>>
 ): ReturnType<typeof _buildDictionary>;
 export function buildDictionary(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildDictionary(args[0] as T.DictionaryElements);
 	}
 	const prebuilt =
@@ -4926,7 +4965,10 @@ export function buildCaseTuplePattern(
 	...elements: NonEmptyArray<AdmitBound<T.CasePattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildCaseTuplePattern>;
 export function buildCaseTuplePattern(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildCaseTuplePattern(args[0] as T.ListPatternCasePatterns);
 	}
 	const prebuilt =
@@ -4996,7 +5038,10 @@ export function buildCaseListPattern(
 	...elements: NonEmptyArray<AdmitBound<T.CasePattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildCaseListPattern>;
 export function buildCaseListPattern(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildCaseListPattern(args[0] as T.ListPatternCasePatterns);
 	}
 	const prebuilt =
@@ -5215,7 +5260,10 @@ export function buildPrintStatementPlain(
 	...elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
 ): ReturnType<typeof _buildPrintStatementPlain>;
 export function buildPrintStatementPlain(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildPrintStatementPlain(args[0] as T.PrintArguments);
 	}
 	const prebuilt =
@@ -5271,7 +5319,10 @@ export function buildParenthesizedImportList(
 	...elements: NonEmptyArray<AdmitBound<T.DottedName | T.AliasedImport, T.AdmittedNodes>>
 ): ReturnType<typeof _buildParenthesizedImportList>;
 export function buildParenthesizedImportList(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildParenthesizedImportList(args[0] as T.ImportList);
 	}
 	const prebuilt =
@@ -6062,7 +6113,10 @@ export function buildWithClauseParen(
 	...elements: NonEmptyArray<AdmitBound<T.WithItem, T.AdmittedNodes>>
 ): ReturnType<typeof _buildWithClauseParen>;
 export function buildWithClauseParen(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildWithClauseParen(args[0] as T.WithClauseWithItems);
 	}
 	const prebuilt =
@@ -6145,7 +6199,10 @@ export function buildMatchBlockEmpty(
 	value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>
 ): ReturnType<typeof _buildMatchBlockEmpty>;
 export function buildMatchBlockEmpty(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildMatchBlockEmpty(args[0] as TSKindId.Newline);
 	}
 	const prebuilt =
@@ -6191,7 +6248,10 @@ export function buildSuiteInline(
 	...elements: NonEmptyArray<AdmitBound<T.SimpleStatement, T.AdmittedNodes>>
 ): ReturnType<typeof _buildSuiteInline>;
 export function buildSuiteInline(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildSuiteInline(args[0] as T.SimpleStatementsElements);
 	}
 	const prebuilt =
@@ -6255,7 +6315,10 @@ export function buildSuiteBlock(...args: unknown[]) {
 	if (args.length === 0) {
 		return _buildSuiteBlock(buildBlock() as T.Block);
 	}
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildSuiteBlock(args[0] as T.Block);
 	}
 	const prebuilt =
@@ -6292,7 +6355,10 @@ export function buildSuiteEmpty(
 	value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>
 ): ReturnType<typeof _buildSuiteEmpty>;
 export function buildSuiteEmpty(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildSuiteEmpty(args[0] as TSKindId.Newline);
 	}
 	const prebuilt =

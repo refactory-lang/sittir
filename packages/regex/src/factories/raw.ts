@@ -251,7 +251,10 @@ export function buildPosixCharacterClass(
 ): ReturnType<typeof _buildPosixCharacterClass>;
 export function buildPosixCharacterClass(text: string): ReturnType<typeof _buildPosixCharacterClass>;
 export function buildPosixCharacterClass(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildPosixCharacterClass(args[0] as T.PosixClassName);
 	}
 	const prebuilt =
@@ -346,7 +349,10 @@ export function buildAnonymousCapturingGroup(
 	value: AdmitBound<T.Alternation | T.Term, T.AdmittedNodes>
 ): ReturnType<typeof _buildAnonymousCapturingGroup>;
 export function buildAnonymousCapturingGroup(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildAnonymousCapturingGroup(args[0] as T.Pattern);
 	}
 	const prebuilt =
@@ -417,7 +423,10 @@ export function buildNonCapturingGroup(
 	value: AdmitBound<T.Alternation | T.Term, T.AdmittedNodes>
 ): ReturnType<typeof _buildNonCapturingGroup>;
 export function buildNonCapturingGroup(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildNonCapturingGroup(args[0] as T.Pattern);
 	}
 	const prebuilt =
@@ -527,7 +536,10 @@ export function buildBackreferenceEscape(
 ): ReturnType<typeof _buildBackreferenceEscape>;
 export function buildBackreferenceEscape(text: string): ReturnType<typeof _buildBackreferenceEscape>;
 export function buildBackreferenceEscape(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildBackreferenceEscape(args[0] as T.GroupName);
 	}
 	const prebuilt =
@@ -564,7 +576,10 @@ export function buildNamedGroupBackreference(
 ): ReturnType<typeof _buildNamedGroupBackreference>;
 export function buildNamedGroupBackreference(text: string): ReturnType<typeof _buildNamedGroupBackreference>;
 export function buildNamedGroupBackreference(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildNamedGroupBackreference(args[0] as T.GroupName);
 	}
 	const prebuilt =
@@ -814,7 +829,10 @@ export function buildCountQuantifierGroup(
 	text: string | number | bigint
 ): ReturnType<typeof _buildCountQuantifierGroup>;
 export function buildCountQuantifierGroup(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildCountQuantifierGroup(args[0] as T.DecimalDigits);
 	}
 	const prebuilt =
@@ -924,7 +942,10 @@ export function buildUnicodePropertyValueExpressionGroup(
 	value: AdmitBound<T.UnicodePropertyValue, T.AdmittedNodes>
 ): ReturnType<typeof _buildUnicodePropertyValueExpressionGroup>;
 export function buildUnicodePropertyValueExpressionGroup(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildUnicodePropertyValueExpressionGroup(args[0] as T.UnicodePropertyName | T.UnicodePropertyName.Types);
 	}
 	const prebuilt =

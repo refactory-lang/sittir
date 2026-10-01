@@ -691,7 +691,10 @@ export function buildAttributeItem(
 ): ReturnType<typeof _buildAttributeItem>;
 export function buildAttributeItem(_config: T.Attribute.Config): ReturnType<typeof _buildAttributeItem>;
 export function buildAttributeItem(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildAttributeItem(args[0] as T.Attribute);
 	}
 	const prebuilt =
@@ -728,7 +731,10 @@ export function buildInnerAttributeItem(
 ): ReturnType<typeof _buildInnerAttributeItem>;
 export function buildInnerAttributeItem(_config: T.Attribute.Config): ReturnType<typeof _buildInnerAttributeItem>;
 export function buildInnerAttributeItem(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildInnerAttributeItem(args[0] as T.Attribute);
 	}
 	const prebuilt =
@@ -1011,7 +1017,10 @@ export function buildEnumVariantList(
 	...elements: NonEmptyArray<AdmitBound<T.AttributedEnumVariant | T.EnumVariant, T.AdmittedNodes>>
 ): ReturnType<typeof _buildEnumVariantList>;
 export function buildEnumVariantList(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildEnumVariantList(args[0] as T.EnumVariantListElements);
 	}
 	const prebuilt =
@@ -1129,7 +1138,10 @@ export function buildFieldDeclarationList(
 	...elements: NonEmptyArray<AdmitBound<T.AttributedFieldDeclaration | T.FieldDeclaration, T.AdmittedNodes>>
 ): ReturnType<typeof _buildFieldDeclarationList>;
 export function buildFieldDeclarationList(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildFieldDeclarationList(args[0] as T.FieldDeclarationListElements);
 	}
 	const prebuilt =
@@ -1250,7 +1262,10 @@ export function buildOrderedFieldDeclarationList(
 	...elements: NonEmptyArray<AdmitBound<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildOrderedFieldDeclarationList>;
 export function buildOrderedFieldDeclarationList(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildOrderedFieldDeclarationList(args[0] as T.OrderedFieldDeclarationListElements);
 	}
 	const prebuilt =
@@ -1765,7 +1780,10 @@ export function buildWhereClause(
 	...elements: NonEmptyArray<AdmitBound<T.WherePredicate, T.AdmittedNodes>>
 ): ReturnType<typeof _buildWhereClause>;
 export function buildWhereClause(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildWhereClause(args[0] as T.WherePredicates);
 	}
 	const prebuilt =
@@ -2117,7 +2135,10 @@ export function buildTypeParameters(
 	>
 ): ReturnType<typeof _buildTypeParameters>;
 export function buildTypeParameters(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildTypeParameters(args[0] as T.TypeParametersElements);
 	}
 	const prebuilt =
@@ -2588,7 +2609,10 @@ export function buildUseList(
 	>
 ): ReturnType<typeof _buildUseList>;
 export function buildUseList(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildUseList(args[0] as T.UseClauses);
 	}
 	const prebuilt =
@@ -2747,7 +2771,10 @@ export function buildUseWildcard(
 	>
 ): ReturnType<typeof _buildUseWildcard>;
 export function buildUseWildcard(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildUseWildcard(args[0] as T.UseWildcardGroup);
 	}
 	const prebuilt =
@@ -2813,7 +2840,10 @@ export function buildParameters(
 	>
 ): ReturnType<typeof _buildParameters>;
 export function buildParameters(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildParameters(args[0] as T.ParametersElements);
 	}
 	const prebuilt =
@@ -2970,7 +3000,10 @@ export function buildExternModifier(
 ): ReturnType<typeof _buildExternModifier>;
 export function buildExternModifier(_config: T.StringLiteral.Config): ReturnType<typeof _buildExternModifier>;
 export function buildExternModifier(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildExternModifier(args[0] as T.StringLiteral);
 	}
 	const prebuilt =
@@ -3099,7 +3132,10 @@ export function buildQualifiedType(config: T.QualifiedType.Config): T.QualifiedT
 export function buildLifetime(value: AdmitBound<T.Identifier, T.AdmittedNodes>): ReturnType<typeof _buildLifetime>;
 export function buildLifetime(text: string): ReturnType<typeof _buildLifetime>;
 export function buildLifetime(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildLifetime(args[0] as T.Identifier);
 	}
 	const prebuilt =
@@ -3177,7 +3213,10 @@ export function buildForLifetimes(
 	...elements: NonEmptyArray<AdmitBound<T.Lifetime, T.AdmittedNodes>>
 ): ReturnType<typeof _buildForLifetimes>;
 export function buildForLifetimes(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildForLifetimes(args[0] as T.Lifetimes);
 	}
 	const prebuilt =
@@ -3292,7 +3331,10 @@ export function buildTupleType(
 	...elements: NonEmptyArray<AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTupleType>;
 export function buildTupleType(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildTupleType(args[0] as T.TupleTypeElements);
 	}
 	const prebuilt =
@@ -3526,7 +3568,10 @@ export function buildUseBounds(
 	...elements: NonEmptyArray<AdmitBound<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>>
 ): ReturnType<typeof _buildUseBounds>;
 export function buildUseBounds(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildUseBounds(args[0] as T.UseBoundsElements);
 	}
 	const prebuilt =
@@ -3590,7 +3635,10 @@ export function buildTypeArguments(
 	>
 ): ReturnType<typeof _buildTypeArguments>;
 export function buildTypeArguments(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildTypeArguments(args[0] as T.TypeArgumentsElements);
 	}
 	const prebuilt =
@@ -4541,7 +4589,10 @@ export function buildArguments(
 	...elements: NonEmptyArray<AdmitBound<T.AttributedArgument | T.Expression, T.AdmittedNodes>>
 ): ReturnType<typeof _buildArguments>;
 export function buildArguments(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildArguments(args[0] as T.ArgumentsElements);
 	}
 	const prebuilt =
@@ -4720,7 +4771,10 @@ export function buildFieldInitializerList(
 	>
 ): ReturnType<typeof _buildFieldInitializerList>;
 export function buildFieldInitializerList(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildFieldInitializerList(args[0] as T.FieldInitializerListElements);
 	}
 	const prebuilt =
@@ -5271,7 +5325,10 @@ export function buildConstBlock(...args: unknown[]) {
 	if (args.length === 0) {
 		return _buildConstBlock(buildBlock() as T.Block);
 	}
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildConstBlock(args[0] as T.Block);
 	}
 	const prebuilt =
@@ -5330,7 +5387,10 @@ export function buildClosureParameters(
 export function buildLabel(value: AdmitBound<T.Identifier, T.AdmittedNodes>): ReturnType<typeof _buildLabel>;
 export function buildLabel(text: string): ReturnType<typeof _buildLabel>;
 export function buildLabel(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildLabel(args[0] as T.Identifier);
 	}
 	const prebuilt =
@@ -5396,7 +5456,10 @@ export function buildContinueExpression(
 ): ReturnType<typeof _buildContinueExpression>;
 export function buildContinueExpression(text: string): ReturnType<typeof _buildContinueExpression>;
 export function buildContinueExpression(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildContinueExpression(args[0] as T.Label);
 	}
 	const prebuilt =
@@ -5525,7 +5588,10 @@ export function buildUnsafeBlock(...args: unknown[]) {
 	if (args.length === 0) {
 		return _buildUnsafeBlock(buildBlock() as T.Block);
 	}
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildUnsafeBlock(args[0] as T.Block);
 	}
 	const prebuilt =
@@ -5621,7 +5687,10 @@ export function buildTryBlock(...args: unknown[]) {
 	if (args.length === 0) {
 		return _buildTryBlock(buildBlock() as T.Block);
 	}
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildTryBlock(args[0] as T.Block);
 	}
 	const prebuilt =
@@ -5740,7 +5809,10 @@ export function buildTuplePattern(
 	...elements: NonEmptyArray<AdmitBound<T.Pattern | T.ClosureExpression, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildTuplePattern(args[0] as T.TuplePatternElements);
 	}
 	const prebuilt =
@@ -5804,7 +5876,10 @@ export function buildSlicePattern(
 	...elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildSlicePattern>;
 export function buildSlicePattern(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildSlicePattern(args[0] as T.Patterns);
 	}
 	const prebuilt =
@@ -9024,7 +9099,10 @@ export function buildVisibilityModifierPub(
 	>
 ): ReturnType<typeof _buildVisibilityModifierPub>;
 export function buildVisibilityModifierPub(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildVisibilityModifierPub(args[0] as T.VisibilityModifierPubScope);
 	}
 	const prebuilt =
@@ -9106,7 +9184,10 @@ export function buildFunctionTypeFnForm(
 	>
 ): ReturnType<typeof _buildFunctionTypeFnForm>;
 export function buildFunctionTypeFnForm(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildFunctionTypeFnForm(args[0] as T.FunctionModifiers);
 	}
 	const prebuilt =
@@ -9677,7 +9758,10 @@ export function buildLineCommentDocOuter(
 ): ReturnType<typeof _buildLineCommentDocOuter>;
 export function buildLineCommentDocOuter(text: string): ReturnType<typeof _buildLineCommentDocOuter>;
 export function buildLineCommentDocOuter(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildLineCommentDocOuter(args[0] as T.DocComment);
 	}
 	const prebuilt =
@@ -9714,7 +9798,10 @@ export function buildLineCommentDocInner(
 ): ReturnType<typeof _buildLineCommentDocInner>;
 export function buildLineCommentDocInner(text: string): ReturnType<typeof _buildLineCommentDocInner>;
 export function buildLineCommentDocInner(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildLineCommentDocInner(args[0] as T.DocComment);
 	}
 	const prebuilt =
@@ -9762,7 +9849,10 @@ export function buildBlockCommentDocOuter(
 ): ReturnType<typeof _buildBlockCommentDocOuter>;
 export function buildBlockCommentDocOuter(text: string): ReturnType<typeof _buildBlockCommentDocOuter>;
 export function buildBlockCommentDocOuter(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildBlockCommentDocOuter(args[0] as T.BlockCommentContent);
 	}
 	const prebuilt =
@@ -9803,7 +9893,10 @@ export function buildBlockCommentDocInner(
 ): ReturnType<typeof _buildBlockCommentDocInner>;
 export function buildBlockCommentDocInner(text: string): ReturnType<typeof _buildBlockCommentDocInner>;
 export function buildBlockCommentDocInner(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
+	if (
+		args.length === 0 ||
+		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
+	) {
 		return _buildBlockCommentDocInner(args[0] as T.BlockCommentContent);
 	}
 	const prebuilt =
