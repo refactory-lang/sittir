@@ -949,20 +949,20 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between class_body_method on ';' resolved by AddConflict (default)",
+    "message": "conflict between class_body_member_method on ';' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
-          "class_body_method"
+          "class_body_member_method"
         ]
       },
       "step": "default",
       "sourceChains": [
         [
-          "class_body_method",
-          "class_body"
+          "class_body_member_method",
+          "_class_body_member"
         ]
       ],
       "conflict": {
@@ -973,8 +973,8 @@
         ],
         "lookahead": "';'",
         "interpretations": [
-          "class_body_method",
-          "class_body_method"
+          "class_body_member_method",
+          "class_body_member_method"
         ]
       }
     }
@@ -1652,25 +1652,25 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
-    "message": "conflict between class_body_method_sig, class_body_member on '*' resolved by AddConflict (default)",
+    "message": "conflict between class_body_member_method_sig, class_body_member_declaration on '*' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
       "resolution": {
         "kind": "AddConflict",
         "symbols": [
-          "class_body_method_sig",
-          "class_body_member"
+          "class_body_member_method_sig",
+          "class_body_member_declaration"
         ]
       },
       "step": "default",
       "sourceChains": [
         [
-          "class_body_method_sig",
-          "class_body"
+          "class_body_member_method_sig",
+          "_class_body_member"
         ],
         [
-          "class_body_member",
-          "class_body"
+          "class_body_member_declaration",
+          "_class_body_member"
         ]
       ],
       "conflict": {
@@ -1682,8 +1682,8 @@
         ],
         "lookahead": "'*'",
         "interpretations": [
-          "class_body_method_sig",
-          "class_body_member"
+          "class_body_member_method_sig",
+          "class_body_member_declaration"
         ]
       }
     }

@@ -891,6 +891,14 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'union_type'
 	]),
 	index_signature: new Set(['index_signature_colon', 'index_signature_mapped_type_clause']),
+	_class_body_member: new Set([
+		'class_body_member_method',
+		'class_body_member_method_sig',
+		'class_static_block',
+		'class_body_member_declaration',
+		'empty_member'
+	]),
+	_enum_body_element: new Set(['enum_body_element_name', 'enum_assignment']),
 	_whitespace: new Set([
 		'_tight',
 		'tight',
@@ -5926,42 +5934,26 @@ export function wrapDecoratorCallExpression(
 }
 
 export function wrapClassBody(data: T.ClassBody, tree: TreeHandle): T.ClassBody.Parsed {
-	data = _keepModelledSlots(data, ['_content']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.ClassBody as const }) as unknown as T.ClassBody.Parsed;
+	data = _keepModelledSlots(data, ['_members']);
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.ClassBody as const,
-		_content: projectMixedEnumStorage(
-			normalizeRepeatedWrapSlot(data._content, false, 'content', {
+		_members: projectMixedEnumStorage(
+			normalizeRepeatedWrapSlot(data._members, false, 'members', {
 				tree,
 				nodeType: data.$type,
-				slotName: 'content',
+				slotName: 'members',
 				span: (data as _UntypedNode).$span
 			}),
-			{ ';': 396 },
-			{ 20: 396 }
+			{ ';': 398 }
 		),
 
-		contents() {
-			return hydrateChildren<
-				T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.EmptyMember
-			>(
-				this._content as
-					| readonly (
-							| T.ClassBodyMethod
-							| T.ClassBodyMethodSig
-							| T.ClassStaticBlock
-							| T.ClassBodyMember
-							| TSKindId.EmptyMember
-					  )[]
-					| undefined,
-				tree
-			);
+		members() {
+			return hydrateChildren<T.ClassBodyMember>(this._members as readonly T.ClassBodyMember[] | undefined, tree);
 		},
 		$with: {
-			contents: (...v: NonNullable<T.ClassBody['_content']>[number][]) =>
-				wrapClassBody({ ...$edited(data), _content: v }, tree)
+			members: (...v: NonNullable<T.ClassBody['_members']>[number][]) =>
+				wrapClassBody({ ...$edited(data), _members: v }, tree)
 		}
 	});
 	return _node as unknown as T.ClassBody.Parsed;
@@ -11791,6 +11783,51 @@ export function wrapImportSpecifiers(
 	) as unknown as T.ImportSpecifiers.Parsed;
 }
 
+export function wrapClassBodyMember(
+	data: T.ClassBodyMember & { readonly $other?: T.ClassBodyMember | readonly T.ClassBodyMember[] },
+	tree: TreeHandle
+): T.ClassBodyMember.Parsed {
+	if (typeof data === 'number') return data as unknown as T.ClassBodyMember.Parsed;
+	const node = _keepModelledSlots(data, [
+		'_class_body_member_method',
+		'_class_body_member_method_sig',
+		'_class_static_block',
+		'_class_body_member_declaration',
+		'_empty_member'
+	]);
+	const kindKeyed = _firstKindKeyedWrapChild(node, [
+		'class_body_member_method',
+		'class_body_member_method_sig',
+		'class_static_block',
+		'class_body_member_declaration',
+		'empty_member'
+	]) as T.ClassBodyMember | readonly T.ClassBodyMember[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(node.$other, [
+			'class_body_member_method',
+			'class_body_member_method_sig',
+			'class_static_block',
+			'class_body_member_declaration',
+			'empty_member'
+		]);
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
+		return hydrateSelf<T.ClassBodyMember>(node as T.ClassBodyMember, tree) as unknown as T.ClassBodyMember.Parsed;
+	}
+	return hydrateChild<T.ClassBodyMember>(
+		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
+			tree,
+			nodeType: node.$type,
+			slotName: 'children',
+			span: (node as _UntypedNode).$span
+		}),
+		tree
+	);
+}
+
 export function wrapFormalParametersElements(
 	data: T.FormalParametersElements & {
 		readonly $other?: _UntypedNode['$other'];
@@ -11833,6 +11870,116 @@ export function wrapFormalParametersElements(
 	) as unknown as T.FormalParametersElements.Parsed;
 }
 
+export function wrapEnumBodyElementName(data: T.EnumBodyElementName, tree: TreeHandle): T.EnumBodyElementName.Parsed {
+	data = _keepModelledSlots(data, ['_name']);
+	if (_isReadTextLeaf(data))
+		return withMethods({
+			...data,
+			$type: TSKindId.EnumBodyElementName as const
+		}) as unknown as T.EnumBodyElementName.Parsed;
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.EnumBodyElementName as const,
+		_name: projectMixedEnumStorage(
+			normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'name',
+				span: (data as _UntypedNode).$span
+			}),
+			{
+				declare: 30,
+				namespace: 31,
+				type: 7,
+				public: 32,
+				private: 33,
+				protected: 34,
+				override: 35,
+				readonly: 36,
+				module: 37,
+				any: 38,
+				number: 39,
+				boolean: 40,
+				string: 41,
+				symbol: 42,
+				export: 43,
+				object: 44,
+				new: 45,
+				get: 46,
+				set: 47,
+				async: 48,
+				static: 49,
+				let: 50
+			}
+		),
+
+		name() {
+			return hydrateChild<
+				| T.PropertyIdentifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+				| T.PrivatePropertyIdentifier
+				| T.String
+				| T.Number
+				| T.ComputedPropertyName
+			>(this._name, tree);
+		},
+		$with: {
+			name: (v: NonNullable<T.EnumBodyElementName['_name']>) =>
+				wrapEnumBodyElementName({ ...$edited(data), _name: v }, tree)
+		}
+	});
+	return _node as unknown as T.EnumBodyElementName.Parsed;
+}
+
+export function wrapEnumBodyElement(
+	data: T.EnumBodyElement & { readonly $other?: T.EnumBodyElement | readonly T.EnumBodyElement[] },
+	tree: TreeHandle
+): T.EnumBodyElement.Parsed {
+	if (typeof data === 'number') return data as unknown as T.EnumBodyElement.Parsed;
+	const node = _keepModelledSlots(data, ['_enum_body_element_name', '_enum_assignment']);
+	const kindKeyed = _firstKindKeyedWrapChild(node, ['enum_body_element_name', 'enum_assignment']) as
+		| T.EnumBodyElement
+		| readonly T.EnumBodyElement[]
+		| undefined;
+	const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['enum_body_element_name', 'enum_assignment']);
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
+		return hydrateSelf<T.EnumBodyElement>(node as T.EnumBodyElement, tree) as unknown as T.EnumBodyElement.Parsed;
+	}
+	return hydrateChild<T.EnumBodyElement>(
+		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
+			tree,
+			nodeType: node.$type,
+			slotName: 'children',
+			span: (node as _UntypedNode).$span
+		}),
+		tree
+	);
+}
+
 export function wrapEnumBodyElements(
 	data: T.EnumBodyElements & {
 		readonly $other?: _UntypedNode['$other'];
@@ -11858,10 +12005,7 @@ export function wrapEnumBodyElements(
 					: Delimiter.None,
 
 				elements() {
-					return hydrateChildren<T.EnumBodyMember | T.EnumAssignment>(
-						this._element as readonly (T.EnumBodyMember | T.EnumAssignment)[] | undefined,
-						tree
-					);
+					return hydrateChildren<T.EnumBodyElement>(this._element as readonly T.EnumBodyElement[] | undefined, tree);
 				},
 				$with: {}
 			},
@@ -12968,91 +13112,19 @@ export function wrapBinaryExpressionIn(data: T.BinaryExpressionIn, tree: TreeHan
 	return _node as unknown as T.BinaryExpressionIn.Parsed;
 }
 
-export function wrapEnumBodyMember(data: T.EnumBodyMember, tree: TreeHandle): T.EnumBodyMember.Parsed {
-	data = _keepModelledSlots(data, ['_name']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.EnumBodyMember as const }) as unknown as T.EnumBodyMember.Parsed;
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.EnumBodyMember as const,
-		_name: projectMixedEnumStorage(
-			normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'name',
-				span: (data as _UntypedNode).$span
-			}),
-			{
-				declare: 30,
-				namespace: 31,
-				type: 7,
-				public: 32,
-				private: 33,
-				protected: 34,
-				override: 35,
-				readonly: 36,
-				module: 37,
-				any: 38,
-				number: 39,
-				boolean: 40,
-				string: 41,
-				symbol: 42,
-				export: 43,
-				object: 44,
-				new: 45,
-				get: 46,
-				set: 47,
-				async: 48,
-				static: 49,
-				let: 50
-			}
-		),
-
-		name() {
-			return hydrateChild<
-				| T.PropertyIdentifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-			>(this._name, tree);
-		},
-		$with: {
-			name: (v: NonNullable<T.EnumBodyMember['_name']>) => wrapEnumBodyMember({ ...$edited(data), _name: v }, tree)
-		}
-	});
-	return _node as unknown as T.EnumBodyMember.Parsed;
-}
-
-export function wrapClassBodyMethod(data: T.ClassBodyMethod, tree: TreeHandle): T.ClassBodyMethod.Parsed {
+export function wrapClassBodyMemberMethod(
+	data: T.ClassBodyMemberMethod,
+	tree: TreeHandle
+): T.ClassBodyMemberMethod.Parsed {
 	data = _keepModelledSlots(data, ['_decorator', '_method_definition', '_terminator']);
 	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.ClassBodyMethod as const }) as unknown as T.ClassBodyMethod.Parsed;
+		return withMethods({
+			...data,
+			$type: TSKindId.ClassBodyMemberMethod as const
+		}) as unknown as T.ClassBodyMemberMethod.Parsed;
 	const _node = withMethods({
 		...data,
-		$type: TSKindId.ClassBodyMethod as const,
+		$type: TSKindId.ClassBodyMemberMethod as const,
 		_decorator: normalizeRepeatedWrapSlot(data._decorator, false, 'decorator', {
 			tree,
 			nodeType: data.$type,
@@ -13085,27 +13157,30 @@ export function wrapClassBodyMethod(data: T.ClassBodyMethod, tree: TreeHandle): 
 			return this._terminator;
 		},
 		$with: {
-			decorators: (...v: NonNullable<T.ClassBodyMethod['_decorator']>[number][]) =>
-				wrapClassBodyMethod({ ...$edited(data), _decorator: v }, tree),
-			methodDefinition: (v: NonNullable<T.ClassBodyMethod['_method_definition']>) =>
-				wrapClassBodyMethod({ ...$edited(data), _method_definition: v }, tree),
-			terminator: (v: NonNullable<T.ClassBodyMethod['_terminator']>) =>
-				wrapClassBodyMethod({ ...$edited(data), _terminator: v }, tree)
+			decorators: (...v: NonNullable<T.ClassBodyMemberMethod['_decorator']>[number][]) =>
+				wrapClassBodyMemberMethod({ ...$edited(data), _decorator: v }, tree),
+			methodDefinition: (v: NonNullable<T.ClassBodyMemberMethod['_method_definition']>) =>
+				wrapClassBodyMemberMethod({ ...$edited(data), _method_definition: v }, tree),
+			terminator: (v: NonNullable<T.ClassBodyMemberMethod['_terminator']>) =>
+				wrapClassBodyMemberMethod({ ...$edited(data), _terminator: v }, tree)
 		}
 	});
-	return _node as unknown as T.ClassBodyMethod.Parsed;
+	return _node as unknown as T.ClassBodyMemberMethod.Parsed;
 }
 
-export function wrapClassBodyMethodSig(data: T.ClassBodyMethodSig, tree: TreeHandle): T.ClassBodyMethodSig.Parsed {
+export function wrapClassBodyMemberMethodSig(
+	data: T.ClassBodyMemberMethodSig,
+	tree: TreeHandle
+): T.ClassBodyMemberMethodSig.Parsed {
 	data = _keepModelledSlots(data, ['_method_signature', '_terminator']);
 	if (_isReadTextLeaf(data))
 		return withMethods({
 			...data,
-			$type: TSKindId.ClassBodyMethodSig as const
-		}) as unknown as T.ClassBodyMethodSig.Parsed;
+			$type: TSKindId.ClassBodyMemberMethodSig as const
+		}) as unknown as T.ClassBodyMemberMethodSig.Parsed;
 	const _node = withMethods({
 		...data,
-		$type: TSKindId.ClassBodyMethodSig as const,
+		$type: TSKindId.ClassBodyMemberMethodSig as const,
 		_method_signature: normalizeSingularWrapSlot(data._method_signature, 'method_signature', true, data.$type, {
 			tree,
 			nodeType: data.$type,
@@ -13129,22 +13204,28 @@ export function wrapClassBodyMethodSig(data: T.ClassBodyMethodSig, tree: TreeHan
 			return this._terminator;
 		},
 		$with: {
-			methodSignature: (v: NonNullable<T.ClassBodyMethodSig['_method_signature']>) =>
-				wrapClassBodyMethodSig({ ...$edited(data), _method_signature: v }, tree),
-			terminator: (v: NonNullable<T.ClassBodyMethodSig['_terminator']>) =>
-				wrapClassBodyMethodSig({ ...$edited(data), _terminator: v }, tree)
+			methodSignature: (v: NonNullable<T.ClassBodyMemberMethodSig['_method_signature']>) =>
+				wrapClassBodyMemberMethodSig({ ...$edited(data), _method_signature: v }, tree),
+			terminator: (v: NonNullable<T.ClassBodyMemberMethodSig['_terminator']>) =>
+				wrapClassBodyMemberMethodSig({ ...$edited(data), _terminator: v }, tree)
 		}
 	});
-	return _node as unknown as T.ClassBodyMethodSig.Parsed;
+	return _node as unknown as T.ClassBodyMemberMethodSig.Parsed;
 }
 
-export function wrapClassBodyMember(data: T.ClassBodyMember, tree: TreeHandle): T.ClassBodyMember.Parsed {
+export function wrapClassBodyMemberDeclaration(
+	data: T.ClassBodyMemberDeclaration,
+	tree: TreeHandle
+): T.ClassBodyMemberDeclaration.Parsed {
 	data = _keepModelledSlots(data, ['_member', '_terminator']);
 	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.ClassBodyMember as const }) as unknown as T.ClassBodyMember.Parsed;
+		return withMethods({
+			...data,
+			$type: TSKindId.ClassBodyMemberDeclaration as const
+		}) as unknown as T.ClassBodyMemberDeclaration.Parsed;
 	const _node = withMethods({
 		...data,
-		$type: TSKindId.ClassBodyMember as const,
+		$type: TSKindId.ClassBodyMemberDeclaration as const,
 		_member: normalizeSingularWrapSlot(data._member, 'member', true, data.$type, {
 			tree,
 			nodeType: data.$type,
@@ -13171,13 +13252,13 @@ export function wrapClassBodyMember(data: T.ClassBodyMember, tree: TreeHandle): 
 			return this._terminator;
 		},
 		$with: {
-			member: (v: NonNullable<T.ClassBodyMember['_member']>) =>
-				wrapClassBodyMember({ ...$edited(data), _member: v }, tree),
-			terminator: (v: NonNullable<T.ClassBodyMember['_terminator']>) =>
-				wrapClassBodyMember({ ...$edited(data), _terminator: v }, tree)
+			member: (v: NonNullable<T.ClassBodyMemberDeclaration['_member']>) =>
+				wrapClassBodyMemberDeclaration({ ...$edited(data), _member: v }, tree),
+			terminator: (v: NonNullable<T.ClassBodyMemberDeclaration['_terminator']>) =>
+				wrapClassBodyMemberDeclaration({ ...$edited(data), _terminator: v }, tree)
 		}
 	});
-	return _node as unknown as T.ClassBodyMember.Parsed;
+	return _node as unknown as T.ClassBodyMemberDeclaration.Parsed;
 }
 
 export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeHandle): T.IndexSignatureColon.Parsed {
@@ -15274,8 +15355,11 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.FunctionType]: (d, t) => wrapFunctionType(d as unknown as T.FunctionType, t),
 	[TSKindId.ExportSpecifiers]: (d, t) => wrapExportSpecifiers(d as unknown as T.ExportSpecifiers, t),
 	[TSKindId.ImportSpecifiers]: (d, t) => wrapImportSpecifiers(d as unknown as T.ImportSpecifiers, t),
+	[TSKindId.ClassBodyMember]: (d, t) => wrapClassBodyMember(d as unknown as T.ClassBodyMember, t),
 	[TSKindId.FormalParametersElements]: (d, t) =>
 		wrapFormalParametersElements(d as unknown as T.FormalParametersElements, t),
+	[TSKindId.EnumBodyElementName]: (d, t) => wrapEnumBodyElementName(d as unknown as T.EnumBodyElementName, t),
+	[TSKindId.EnumBodyElement]: (d, t) => wrapEnumBodyElement(d as unknown as T.EnumBodyElement, t),
 	[TSKindId.EnumBodyElements]: (d, t) => wrapEnumBodyElements(d as unknown as T.EnumBodyElements, t),
 	[TSKindId.Types]: (d, t) => wrapTypes(d as unknown as T.Types, t),
 	[TSKindId.TypeParametersElements]: (d, t) => wrapTypeParametersElements(d as unknown as T.TypeParametersElements, t),
@@ -15312,11 +15396,12 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.NumberBigintOctal]: (d, t) => wrapNumberBigintOctal(d as unknown as T.NumberBigintOctal, t),
 	[TSKindId.NumberBigintDecimal]: (d, t) => wrapNumberBigintDecimal(d as unknown as T.NumberBigintDecimal, t),
 	[TSKindId.BinaryExpressionIn]: (d, t) => wrapBinaryExpressionIn(d as unknown as T.BinaryExpressionIn, t),
-	[TSKindId.EnumBodyMember]: (d, t) => wrapEnumBodyMember(d as unknown as T.EnumBodyMember, t),
 	[TSKindId.EmptyMember]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.EmptyMember as const }),
-	[TSKindId.ClassBodyMethod]: (d, t) => wrapClassBodyMethod(d as unknown as T.ClassBodyMethod, t),
-	[TSKindId.ClassBodyMethodSig]: (d, t) => wrapClassBodyMethodSig(d as unknown as T.ClassBodyMethodSig, t),
-	[TSKindId.ClassBodyMember]: (d, t) => wrapClassBodyMember(d as unknown as T.ClassBodyMember, t),
+	[TSKindId.ClassBodyMemberMethod]: (d, t) => wrapClassBodyMemberMethod(d as unknown as T.ClassBodyMemberMethod, t),
+	[TSKindId.ClassBodyMemberMethodSig]: (d, t) =>
+		wrapClassBodyMemberMethodSig(d as unknown as T.ClassBodyMemberMethodSig, t),
+	[TSKindId.ClassBodyMemberDeclaration]: (d, t) =>
+		wrapClassBodyMemberDeclaration(d as unknown as T.ClassBodyMemberDeclaration, t),
 	[TSKindId.IndexSignatureColon]: (d, t) => wrapIndexSignatureColon(d as unknown as T.IndexSignatureColon, t),
 	[TSKindId.IndexSignatureMappedTypeClause]: (d, t) =>
 		wrapIndexSignatureMappedTypeClause(d as unknown as T.IndexSignatureMappedTypeClause, t),
@@ -15456,11 +15541,11 @@ function _wrapTrivia(trivia: _UntypedNode['$_trivia'], tree: TreeHandle): _Untyp
 	return trivia && mapTriviaEntries(trivia, (entries) => hydrateChildren(entries, tree) as unknown as typeof entries);
 }
 
-const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([457, 459, 460, 461, 462, 464]);
+const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([459, 461, 462, 463, 464, 466]);
 const _HIDDEN_KINDS: ReadonlySet<_UntypedNode['$type']> = new Set([
 	179, 180, 181, 182, 183, 184, 185, 186, 187, 189, 193, 194, 198, 201, 203, 207, 214, 231, 232, 233, 250, 251, 253,
-	258, 260, 262, 263, 268, 270, 274, 275, 283, 288, 291, 309, 322, 331, 336, 338, 355, 369, 388, 393, 433, 434, 435,
-	436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456
+	258, 260, 262, 263, 268, 270, 274, 275, 283, 288, 291, 309, 322, 331, 336, 338, 355, 369, 378, 381, 391, 396, 435,
+	436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458
 ]);
 function _displayOf(entry: _UntypedNode): _UntypedNode['$type'] {
 	return (entry as { readonly $displayType?: _UntypedNode['$type'] }).$displayType ?? entry.$type;
@@ -15475,7 +15560,7 @@ function _withoutDisplay(data: _UntypedNode): _UntypedNode {
 }
 
 const _RECLAIMS_ANONYMOUS: ReadonlySet<_UntypedNode['$type']> = new Set([
-	258, 284, 320, 321, 346, 354, 367, 403, 407, 418, 419, 425
+	258, 284, 320, 321, 346, 354, 367, 405, 409, 420, 421, 427
 ]);
 function _spellingTokens(data: _UntypedNode): readonly _UntypedNode[] | undefined {
 	const { $other, ...node } = data;

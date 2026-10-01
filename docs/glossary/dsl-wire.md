@@ -924,7 +924,7 @@ body-pattern substitution.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::authoredFieldSites`
 
-The index paths each kind's authored patches mark with `field()`, read from `patches:` (every patch map of an entry, in order). Only all-index paths count; a path with a field-name or kind-match segment addresses no fixed position. Enrich receives the map as `fieldSites`, so the token-form hoist knows which choices are fields' values before any patch is applied.
+The sites each kind's authored patches mark with `field()`, each an index path and the field's name, read from `patches:` (every patch map of an entry, in order). Only all-index paths count; a path with a field-name or kind-match segment addresses no fixed position. Enrich receives the map as `fieldSites`, so the token-form hoist knows which choices are fields' values, and an element supertype knows its slot's authored name, before any patch is applied.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::baseSupertypeNamesOf`
 
@@ -991,6 +991,22 @@ A lift's current body: the overlay's patched body, else the base body.
 
 Records a patched lift body in the active wire context's overlay, and credits the lift to the patch sites
 applying (`recordLiftClaim`).
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireWithLiftScope`
+
+Runs a patch descent inside a lift. For an element supertype the supertype becomes the current rule kind for the descent, so a `variant()` reached through it is named `<supertype without the underscore>_<variant>` by the same `polymorphVisibleName` call as any other variant and is labelled a variant of the supertype. Any other lift runs the descent unchanged.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireElementSlotOf`
+
+The slot name of an element supertype (`getEnrichElementSupertypes`), or `undefined` for any other name.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireLiftRenamedTo`
+
+The lift a name was given to by `wireRenameLift`, or `undefined`. A shared supertype has one body, so a second owner's patch reaches an arm the first owner already renamed; resolving the name back to its lift keeps the one-kind-one-name check on that path.
+
+### `packages/codegen/src/dsl/wire/wire.ts::elementSupertypesOf`
+
+The element supertypes a kind's enriched body references. `injectPlaceholderHiddenRules` declares a `variant()` patch's rule name under the kind and under each of them, because the rule callbacks have not run when names are declared and the patch may resolve under either parent.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRenameLift`
 

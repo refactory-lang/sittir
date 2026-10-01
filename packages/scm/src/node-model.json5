@@ -1,10 +1,11 @@
 {
   "name": "scm",
   "root": "program",
-  "nodeCount": 60,
+  "nodeCount": 61,
   "word": null,
   "supertypes": [
     "_group_expression",
+    "_list_element",
     "_named_node_expression",
     "_node_identifier",
     "_whitespace",
@@ -62,15 +63,10 @@
       "childKind": {
         "escape_sequence": "escape_sequence"
       }
-    },
-    "list": {
-      "definedBy": "override",
-      "childKind": {
-        "list_quantifier": "quantifier"
-      }
     }
   },
   "variantRoutes": {
+    "list_element_quantifier": "listElement.quantifier",
     "named_node_group_anchored_last": "namedNodeGroup.anchoredLast",
     "named_node_group_children": "namedNodeGroup.children",
     "named_node_plain": "namedNode.plain",
@@ -279,7 +275,7 @@
         "nonEmpty": false
       }
     },
-    "list_quantifier": {
+    "list_element_quantifier": {
       "quantifier": {
         "unnamed": false,
         "slotCount": 1,
@@ -514,6 +510,18 @@
       "factoryShape": "constant"
     },
     {
+      "kind": "_list_element",
+      "modelType": "supertype",
+      "typeName": "ListElement",
+      "irKey": "listElement",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "capture",
+        "list_element_quantifier"
+      ]
+    },
+    {
       "kind": "_named_node_expression",
       "modelType": "supertype",
       "typeName": "NamedNodeExpression",
@@ -658,21 +666,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "capture",
-            "list_quantifier"
+            "_list_element"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "capture",
-              "parseKind": "capture"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "list_quantifier",
-              "parseKind": "list_quantifier"
+              "name": "_list_element",
+              "parseKind": "_list_element"
             }
           ]
         }
@@ -1081,21 +1082,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "capture",
-            "list_quantifier"
+            "_list_element"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "capture",
-              "parseKind": "capture"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "list_quantifier",
-              "parseKind": "list_quantifier"
+              "name": "_list_element",
+              "parseKind": "_list_element"
             }
           ]
         }
@@ -1264,21 +1258,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "capture",
-            "list_quantifier"
+            "_list_element"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "capture",
-              "parseKind": "capture"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "list_quantifier",
-              "parseKind": "list_quantifier"
+              "name": "_list_element",
+              "parseKind": "_list_element"
             }
           ]
         }
@@ -1290,11 +1277,11 @@
       ]
     },
     {
-      "kind": "list_quantifier",
+      "kind": "list_element_quantifier",
       "modelType": "envelope",
-      "typeName": "ListQuantifier",
-      "factoryName": "listQuantifier",
-      "irKey": "listQuantifier",
+      "typeName": "ListElementQuantifier",
+      "factoryName": "listElementQuantifier",
+      "irKey": "listElementQuantifier",
       "hidden": false,
       "annotations": {
         "hoisted": true
@@ -1321,7 +1308,7 @@
           ]
         }
       ],
-      "name": "list_quantifier",
+      "name": "list_element_quantifier",
       "factoryShape": "direct",
       "factoryFields": [
         "quantifier"
@@ -1387,21 +1374,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "capture",
-            "list_quantifier"
+            "_list_element"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "capture",
-              "parseKind": "capture"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "list_quantifier",
-              "parseKind": "list_quantifier"
+              "name": "_list_element",
+              "parseKind": "_list_element"
             }
           ]
         }
@@ -1766,21 +1746,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "capture",
-            "list_quantifier"
+            "_list_element"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "capture",
-              "parseKind": "capture"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "list_quantifier",
-              "parseKind": "list_quantifier"
+              "name": "_list_element",
+              "parseKind": "_list_element"
             }
           ]
         }
@@ -1880,21 +1853,14 @@
           "nonEmpty": false,
           "storage": "verbatim",
           "kinds": [
-            "capture",
-            "list_quantifier"
+            "_list_element"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "capture",
-              "parseKind": "capture"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "list_quantifier",
-              "parseKind": "list_quantifier"
+              "name": "_list_element",
+              "parseKind": "_list_element"
             }
           ]
         }

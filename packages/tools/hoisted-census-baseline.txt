@@ -1,6 +1,7 @@
-rust: hoisted=66 seated=66 unseated=0
-typescript: hoisted=37 seated=34 unseated=3
-  class_body_member
-  class_body_method
-  class_body_method_sig
-python: hoisted=14 seated=14 unseated=0
+rust: hoisted=79 seated=79 unseated=0
+typescript: hoisted=53 seated=53 unseated=0
+python: hoisted=33 seated=33 unseated=0
+scm: hoisted=5 seated=5 unseated=0
+regex: hoisted=7 seated=5 unseated=2
+  count_quantifier_group
+  unicode_property_value_expression_group

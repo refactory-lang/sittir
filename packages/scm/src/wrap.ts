@@ -325,6 +325,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	]),
 	_node_identifier: new Set(['identifier']),
 	named_node: new Set(['named_node_plain', 'named_node_supertyped']),
+	_list_element: new Set(['capture', 'list_element_quantifier']),
 	named_node_group: new Set(['named_node_group_children', 'named_node_group_anchored_last']),
 	_whitespace: new Set([
 		'_tight',
@@ -901,10 +902,7 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 			return hydrateChildren<T.Definition>(this._definitions as readonly T.Definition[] | undefined, tree);
 		},
 		elements() {
-			return hydrateChildren<T.Capture | T.ListQuantifier>(
-				this._elements as readonly (T.Capture | T.ListQuantifier)[] | undefined,
-				tree
-			);
+			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
 		},
 		$with: {
 			definitions: (...v: NonEmptyArray<NonNullable<T.List['_definitions']>[number]>) =>
@@ -937,10 +935,7 @@ export function wrapGrouping(data: T.Grouping, tree: TreeHandle): T.Grouping.Par
 			return hydrateChildren<T.GroupingGroup>(this._grouping_group as readonly T.GroupingGroup[] | undefined, tree);
 		},
 		elements() {
-			return hydrateChildren<T.Capture | T.ListQuantifier>(
-				this._elements as readonly (T.Capture | T.ListQuantifier)[] | undefined,
-				tree
-			);
+			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
 		},
 		$with: {
 			groupingGroups: (...v: NonEmptyArray<NonNullable<T.Grouping['_grouping_group']>[number]>) =>
@@ -974,10 +969,7 @@ export function wrapMissingNode(data: T.MissingNode, tree: TreeHandle): T.Missin
 			return hydrateChild<T.Identifier | T.String | undefined>(this._name, tree);
 		},
 		elements() {
-			return hydrateChildren<T.Capture | T.ListQuantifier>(
-				this._elements as readonly (T.Capture | T.ListQuantifier)[] | undefined,
-				tree
-			);
+			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.MissingNode['_name']>) => wrapMissingNode({ ...$edited(data), _name: v }, tree),
@@ -1015,10 +1007,7 @@ export function wrapAnonymousNode(data: T.AnonymousNode, tree: TreeHandle): T.An
 			return hydrateChild<T.String | TSKindId.Underscore>(this._name, tree);
 		},
 		elements() {
-			return hydrateChildren<T.Capture | T.ListQuantifier>(
-				this._elements as readonly (T.Capture | T.ListQuantifier)[] | undefined,
-				tree
-			);
+			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.AnonymousNode['_name']>) => wrapAnonymousNode({ ...$edited(data), _name: v }, tree),
@@ -1177,13 +1166,19 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 	return _node as unknown as T.Predicate.Parsed;
 }
 
-export function wrapListQuantifier(data: T.ListQuantifier, tree: TreeHandle): T.ListQuantifier.Parsed {
+export function wrapListElementQuantifier(
+	data: T.ListElementQuantifier,
+	tree: TreeHandle
+): T.ListElementQuantifier.Parsed {
 	data = _keepModelledSlots(data, ['_quantifier']);
 	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.ListQuantifier as const }) as unknown as T.ListQuantifier.Parsed;
+		return withMethods({
+			...data,
+			$type: TSKindId.ListElementQuantifier as const
+		}) as unknown as T.ListElementQuantifier.Parsed;
 	const _node = withMethods({
 		...data,
-		$type: TSKindId.ListQuantifier as const,
+		$type: TSKindId.ListElementQuantifier as const,
 		_quantifier: projectKindEnumStorage(
 			normalizeSingularWrapSlot(data._quantifier, 'quantifier', true, data.$type, {
 				tree,
@@ -1198,11 +1193,39 @@ export function wrapListQuantifier(data: T.ListQuantifier, tree: TreeHandle): T.
 			return this._quantifier;
 		},
 		$with: {
-			quantifier: (v: NonNullable<T.ListQuantifier['_quantifier']>) =>
-				wrapListQuantifier({ ...$edited(data), _quantifier: v }, tree)
+			quantifier: (v: NonNullable<T.ListElementQuantifier['_quantifier']>) =>
+				wrapListElementQuantifier({ ...$edited(data), _quantifier: v }, tree)
 		}
 	});
-	return _node as unknown as T.ListQuantifier.Parsed;
+	return _node as unknown as T.ListElementQuantifier.Parsed;
+}
+
+export function wrapListElement(
+	data: T.ListElement & { readonly $other?: T.ListElement | readonly T.ListElement[] },
+	tree: TreeHandle
+): T.ListElement.Parsed {
+	if (typeof data === 'number') return data as unknown as T.ListElement.Parsed;
+	const node = _keepModelledSlots(data, ['_capture', '_list_element_quantifier']);
+	const kindKeyed = _firstKindKeyedWrapChild(node, ['capture', 'list_element_quantifier']) as
+		| T.ListElement
+		| readonly T.ListElement[]
+		| undefined;
+	const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['capture', 'list_element_quantifier']);
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
+		return hydrateSelf<T.ListElement>(node as T.ListElement, tree) as unknown as T.ListElement.Parsed;
+	}
+	return hydrateChild<T.ListElement>(
+		normalizeSingularWrapSlot(filtered, 'children', true, node.$type, {
+			tree,
+			nodeType: node.$type,
+			slotName: 'children',
+			span: (node as _UntypedNode).$span
+		}),
+		tree
+	);
 }
 
 export function wrapGroupExpressionArm(data: T.GroupExpressionArm, tree: TreeHandle): T.GroupExpressionArm.Parsed {
@@ -1379,10 +1402,7 @@ export function wrapNamedNodePlain(data: T.NamedNodePlain, tree: TreeHandle): T.
 			return hydrateChild<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
 		},
 		elements() {
-			return hydrateChildren<T.Capture | T.ListQuantifier>(
-				this._elements as readonly (T.Capture | T.ListQuantifier)[] | undefined,
-				tree
-			);
+			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.NamedNodePlain['_name']>) => wrapNamedNodePlain({ ...$edited(data), _name: v }, tree),
@@ -1435,10 +1455,7 @@ export function wrapNamedNodeSupertyped(data: T.NamedNodeSupertyped, tree: TreeH
 			return hydrateChild<T.NamedNodeGroup | undefined>(this._named_node_group, tree);
 		},
 		elements() {
-			return hydrateChildren<T.Capture | T.ListQuantifier>(
-				this._elements as readonly (T.Capture | T.ListQuantifier)[] | undefined,
-				tree
-			);
+			return hydrateChildren<T.ListElement>(this._elements as readonly T.ListElement[] | undefined, tree);
 		},
 		$with: {
 			supertype: (v: NonNullable<T.NamedNodeSupertyped['_supertype']>) =>
@@ -1589,7 +1606,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.NegatedField]: (d, t) => wrapNegatedField(d as unknown as T.NegatedField, t),
 	[TSKindId.Predicate]: (d, t) => wrapPredicate(d as unknown as T.Predicate, t),
 	[TSKindId.PredicateType]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.PredicateType as const }),
-	[TSKindId.ListQuantifier]: (d, t) => wrapListQuantifier(d as unknown as T.ListQuantifier, t),
+	[TSKindId.ListElementQuantifier]: (d, t) => wrapListElementQuantifier(d as unknown as T.ListElementQuantifier, t),
+	[TSKindId.ListElement]: (d, t) => wrapListElement(d as unknown as T.ListElement, t),
 	[TSKindId.GroupExpressionArm]: (d, t) => wrapGroupExpressionArm(d as unknown as T.GroupExpressionArm, t),
 	[TSKindId.NamedNodeExpressionArm]: (d, t) => wrapNamedNodeExpressionArm(d as unknown as T.NamedNodeExpressionArm, t),
 	[TSKindId.GroupingGroup]: (d, t) => wrapGroupingGroup(d as unknown as T.GroupingGroup, t),

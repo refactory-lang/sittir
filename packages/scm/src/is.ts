@@ -74,6 +74,9 @@ export interface IsGuards {
 	namedNode<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.NamedNodePlain | TSKindId.NamedNodeSupertyped>;
+	listElement<T extends { readonly $type: string | number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.Capture | TSKindId.ListElementQuantifier>;
 	namedNodeGroup<T extends { readonly $type: string | number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.NamedNodeGroupChildren | TSKindId.NamedNodeGroupAnchoredLast>;
@@ -101,8 +104,9 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 }
 
 const _supertype_definition_ids = new Set<number>([46, 45, 44, 51, 43, 49]);
-const _supertype_namedNode_ids = new Set<number>([58, 59]);
-const _supertype_namedNodeGroup_ids = new Set<number>([60, 61]);
+const _supertype_namedNode_ids = new Set<number>([59, 60]);
+const _supertype_listElement_ids = new Set<number>([38, 52]);
+const _supertype_namedNodeGroup_ids = new Set<number>([61, 62]);
 const _supertype_whitespace_ids = new Set<number>([24, 25, 26, 27, 28, 29, 30, 31]);
 
 export const is = Object.freeze({
@@ -126,6 +130,7 @@ export const is = Object.freeze({
 	kind: (v: { readonly $type: number }, k: number): boolean => v.$type === k,
 	definition: _sg(_supertype_definition_ids),
 	namedNode: _sg(_supertype_namedNode_ids),
+	listElement: _sg(_supertype_listElement_ids),
 	namedNodeGroup: _sg(_supertype_namedNodeGroup_ids),
 	whitespace: _sg(_supertype_whitespace_ids)
 }) as unknown as IsGuards;

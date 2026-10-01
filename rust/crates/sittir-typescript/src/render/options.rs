@@ -209,32 +209,32 @@ pub const SITE_CLASS_CLASS_KEYWORD_BEFORE: usize = 200;
 pub const SITE_CLASS_CLASS_KEYWORD_AFTER: usize = 201;
 pub const SITE_CLASS_CLASS_BEFORE: usize = 202;
 pub const SITE_CLASS_CLASS_AFTER: usize = 203;
-pub const SITE_CLASS_BODY_CONTENT_CLASS_BODY_MEMBER_AFTER: usize = 204;
-pub const SITE_CLASS_BODY_CONTENT_CLASS_BODY_METHOD_AFTER: usize = 205;
-pub const SITE_CLASS_BODY_CONTENT_CLASS_BODY_METHOD_SIG_AFTER: usize = 206;
-pub const SITE_CLASS_BODY_CONTENT_CLASS_STATIC_BLOCK_AFTER: usize = 207;
-pub const SITE_CLASS_BODY_CONTENT_END: usize = 208;
-pub const SITE_CLASS_BODY_CONTENT_START: usize = 209;
-pub const SITE_CLASS_BODY_CONTENT_SEPARATOR_SPACE: usize = 210;
+pub const SITE_CLASS_BODY_MEMBERS_CLASS_BODY_MEMBER_DECLARATION_AFTER: usize = 204;
+pub const SITE_CLASS_BODY_MEMBERS_CLASS_BODY_MEMBER_METHOD_AFTER: usize = 205;
+pub const SITE_CLASS_BODY_MEMBERS_CLASS_BODY_MEMBER_METHOD_SIG_AFTER: usize = 206;
+pub const SITE_CLASS_BODY_MEMBERS_CLASS_STATIC_BLOCK_AFTER: usize = 207;
+pub const SITE_CLASS_BODY_MEMBERS_END: usize = 208;
+pub const SITE_CLASS_BODY_MEMBERS_START: usize = 209;
+pub const SITE_CLASS_BODY_MEMBERS_SEPARATOR_SPACE: usize = 210;
 pub const SITE_CLASS_BODY_LBRACE_AFTER: usize = 211;
 pub const SITE_CLASS_BODY_RBRACE_BEFORE: usize = 212;
 pub const SITE_CLASS_BODY_CLASS_BODY_BEFORE: usize = 213;
 pub const SITE_CLASS_BODY_CLASS_BODY_AFTER: usize = 214;
-pub const SITE_CLASS_BODY_MEMBER_TERMINATOR: usize = 215;
-pub const SITE_CLASS_BODY_MEMBER_COMMA_BEFORE: usize = 216;
-pub const SITE_CLASS_BODY_MEMBER_CLASS_BODY_MEMBER_BEFORE: usize = 217;
-pub const SITE_CLASS_BODY_MEMBER_CLASS_BODY_MEMBER_AFTER: usize = 218;
-pub const SITE_CLASS_BODY_METHOD_DECORATOR_DECORATOR_AFTER: usize = 219;
-pub const SITE_CLASS_BODY_METHOD_DECORATOR_END: usize = 220;
-pub const SITE_CLASS_BODY_METHOD_DECORATOR_START: usize = 221;
-pub const SITE_CLASS_BODY_METHOD_DECORATOR_SEPARATOR_SPACE: usize = 222;
-pub const SITE_CLASS_BODY_METHOD_TERMINATOR: usize = 223;
-pub const SITE_CLASS_BODY_METHOD_SEMI_BEFORE: usize = 224;
-pub const SITE_CLASS_BODY_METHOD_CLASS_BODY_METHOD_BEFORE: usize = 225;
-pub const SITE_CLASS_BODY_METHOD_CLASS_BODY_METHOD_AFTER: usize = 226;
-pub const SITE_CLASS_BODY_METHOD_SIG_COMMA_BEFORE: usize = 227;
-pub const SITE_CLASS_BODY_METHOD_SIG_CLASS_BODY_METHOD_SIG_BEFORE: usize = 228;
-pub const SITE_CLASS_BODY_METHOD_SIG_CLASS_BODY_METHOD_SIG_AFTER: usize = 229;
+pub const SITE_CLASS_BODY_MEMBER_DECLARATION_TERMINATOR: usize = 215;
+pub const SITE_CLASS_BODY_MEMBER_DECLARATION_COMMA_BEFORE: usize = 216;
+pub const SITE_CLASS_BODY_MEMBER_DECLARATION_CLASS_BODY_MEMBER_DECLARATION_BEFORE: usize = 217;
+pub const SITE_CLASS_BODY_MEMBER_DECLARATION_CLASS_BODY_MEMBER_DECLARATION_AFTER: usize = 218;
+pub const SITE_CLASS_BODY_MEMBER_METHOD_DECORATOR_DECORATOR_AFTER: usize = 219;
+pub const SITE_CLASS_BODY_MEMBER_METHOD_DECORATOR_END: usize = 220;
+pub const SITE_CLASS_BODY_MEMBER_METHOD_DECORATOR_START: usize = 221;
+pub const SITE_CLASS_BODY_MEMBER_METHOD_DECORATOR_SEPARATOR_SPACE: usize = 222;
+pub const SITE_CLASS_BODY_MEMBER_METHOD_TERMINATOR: usize = 223;
+pub const SITE_CLASS_BODY_MEMBER_METHOD_SEMI_BEFORE: usize = 224;
+pub const SITE_CLASS_BODY_MEMBER_METHOD_CLASS_BODY_MEMBER_METHOD_BEFORE: usize = 225;
+pub const SITE_CLASS_BODY_MEMBER_METHOD_CLASS_BODY_MEMBER_METHOD_AFTER: usize = 226;
+pub const SITE_CLASS_BODY_MEMBER_METHOD_SIG_COMMA_BEFORE: usize = 227;
+pub const SITE_CLASS_BODY_MEMBER_METHOD_SIG_CLASS_BODY_MEMBER_METHOD_SIG_BEFORE: usize = 228;
+pub const SITE_CLASS_BODY_MEMBER_METHOD_SIG_CLASS_BODY_MEMBER_METHOD_SIG_AFTER: usize = 229;
 pub const SITE_CLASS_DECLARATION_DECORATOR_DECORATOR_AFTER: usize = 230;
 pub const SITE_CLASS_DECLARATION_DECORATOR_END: usize = 231;
 pub const SITE_CLASS_DECLARATION_DECORATOR_START: usize = 232;
@@ -1576,32 +1576,32 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("class", "class_keyword_after", "class_keyword_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("class", "class_before", "class_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("class", "class_after", "class_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body", "content_class_body_member_after", "class_body_member_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body", "content_class_body_method_after", "class_body_method_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body", "content_class_body_method_sig_after", "class_body_method_sig_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body", "content_class_static_block_after", "class_static_block_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body", "members_class_body_member_declaration_after", "class_body_member_declaration_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body", "members_class_body_member_method_after", "class_body_member_method_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body", "members_class_body_member_method_sig_after", "class_body_member_method_sig_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body", "members_class_static_block_after", "class_static_block_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("class_body", "class_body_end", "class_body_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("class_body", "class_body_start", "class_body_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body", "content_separator_space", "empty_separator_space", &[180, 181, 182, 183, 184, 185]),
+    ("class_body", "members_separator_space", "empty_separator_space", &[180, 181, 182, 183, 184, 185]),
     ("class_body", "lbrace_after", "lbrace_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("class_body", "rbrace_before", "rbrace_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("class_body", "class_body_before", "class_body_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("class_body", "class_body_after", "class_body_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body_member", "terminator", "terminator", &[173, 20, 14]),
-    ("class_body_member", "comma_before", "comma_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body_member", "class_body_member_before", "class_body_member_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body_member", "class_body_member_after", "class_body_member_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body_method", "decorator_decorator_after", "decorator_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body_method", "class_body_method_end", "class_body_method_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body_method", "class_body_method_start", "class_body_method_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body_method", "decorator_separator_space", "empty_separator_space", &[180, 181, 182, 183, 184, 185]),
-    ("class_body_method", "terminator", "terminator", &[173, 20]),
-    ("class_body_method", "semi_before", "semi_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body_method", "class_body_method_before", "class_body_method_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body_method", "class_body_method_after", "class_body_method_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body_method_sig", "comma_before", "comma_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body_method_sig", "class_body_method_sig_before", "class_body_method_sig_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("class_body_method_sig", "class_body_method_sig_after", "class_body_method_sig_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body_member_declaration", "terminator", "terminator", &[173, 20, 14]),
+    ("class_body_member_declaration", "comma_before", "comma_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body_member_declaration", "class_body_member_declaration_before", "class_body_member_declaration_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body_member_declaration", "class_body_member_declaration_after", "class_body_member_declaration_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body_member_method", "decorator_decorator_after", "decorator_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body_member_method", "class_body_member_method_end", "class_body_member_method_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body_member_method", "class_body_member_method_start", "class_body_member_method_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body_member_method", "decorator_separator_space", "empty_separator_space", &[180, 181, 182, 183, 184, 185]),
+    ("class_body_member_method", "terminator", "terminator", &[173, 20]),
+    ("class_body_member_method", "semi_before", "semi_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body_member_method", "class_body_member_method_before", "class_body_member_method_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body_member_method", "class_body_member_method_after", "class_body_member_method_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body_member_method_sig", "comma_before", "comma_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body_member_method_sig", "class_body_member_method_sig_before", "class_body_member_method_sig_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
+    ("class_body_member_method_sig", "class_body_member_method_sig_after", "class_body_member_method_sig_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("class_declaration", "decorator_decorator_after", "decorator_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("class_declaration", "class_declaration_end", "class_declaration_end", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("class_declaration", "class_declaration_start", "class_declaration_start", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -2417,7 +2417,7 @@ pub static SPACING_SITES: &[(&str, &str, &str, &[u16])] = &[
     ("statement_block", "rbrace_after", "rbrace_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("statement_block", "statement_block_before", "statement_block_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("statement_block", "statement_block_after", "statement_block_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
-    ("string", "variant", "variant", &[412, 413]),
+    ("string", "variant", "variant", &[414, 415]),
     ("string_double", "string_double_before", "string_double_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("string_double", "string_double_after", "string_double_after", &[180, 181, 182, 183, 184, 185, 186, 187]),
     ("string_single", "string_single_before", "string_single_before", &[180, 181, 182, 183, 184, 185, 186, 187]),
@@ -2953,11 +2953,11 @@ pub static EDGE_ROWS: &[u16] = &[
     98, 99, NO_SITE, 100, 101, 102, 103, 104, 105, 106, 107, NO_SITE, 108, 109, 110, 111,
     NO_SITE, 112, NO_SITE, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125,
     126, 127, NO_SITE, NO_SITE, NO_SITE, 128, 129, NO_SITE, 130, 131, 132, 133, 134, 135, 136, 137,
-    138, NO_SITE, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152,
-    153, 154, 155, 156, NO_SITE, 157, 158, 159, 160, NO_SITE, 161, NO_SITE, NO_SITE, 162, 163, 164,
-    165, 166, 167, 168, NO_SITE, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179,
-    NO_SITE, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, NO_SITE, NO_SITE, 191, 192,
-    193,
+    138, NO_SITE, 139, 140, 141, 142, 143, 144, 145, 146, NO_SITE, 147, NO_SITE, NO_SITE, 148, 149,
+    150, 151, 152, 153, 154, 155, 156, NO_SITE, 157, 158, 159, 160, NO_SITE, 161, NO_SITE, 162,
+    163, 164, 165, 166, 167, 168, NO_SITE, 169, 170, 171, 172, 173, 174, 175, 176, 177,
+    178, 179, NO_SITE, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, NO_SITE, NO_SITE,
+    191, 192, 193,
 ];
 
 /// Per kind id, its flags: KIND_ANON (the parser's anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED, KIND_ROOT.
@@ -2975,8 +2975,8 @@ pub static KIND_FLAGS: &[u8] = &[
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 ];
 
 /// (kind, `<slot>_delimiter` key, allowed bitflag union, default bitflag), in site order.
@@ -3025,9 +3025,9 @@ pub static DEPTH_SITES: &[(&str, &[usize])] = &[
     ("catch_clause_group", &[194, 192, 193, 195]),
     ("class", &[202, 198, 197, 200, 201, 203, 196]),
     ("class_body", &[213, 211, 209, 208, 212, 214, 204, 205, 206, 207]),
-    ("class_body_member", &[217, 216, 218]),
-    ("class_body_method", &[225, 221, 220, 224, 226, 219]),
-    ("class_body_method_sig", &[228, 227, 229]),
+    ("class_body_member_declaration", &[217, 216, 218]),
+    ("class_body_member_method", &[225, 221, 220, 224, 226, 219]),
+    ("class_body_member_method_sig", &[228, 227, 229]),
     ("class_declaration", &[236, 232, 231, 234, 235, 237, 230]),
     ("class_heritage_extends_clause", &[238, 239]),
     ("class_static_block", &[241, 240, 242]),
@@ -4264,7 +4264,7 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 412, strength: 2 },
+    ::sittir_core::options::SiteSpec { default_arm: 414, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 181, strength: 0 },
@@ -4626,7 +4626,8 @@ pub static SEATS_ARGUMENTS_ELEMENTS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 58, 57, 45, 47, 46, 62, 63, 69, 70,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 58, 57, 45, 47, 46, 62, 63,
+    69, 70,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -4656,7 +4657,8 @@ pub static SEATS_ARRAY_ELEMENTS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 99, 98, 86, 88, 87, 103, 104, 110, 111,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 99, 98, 86, 88, 87, 103, 104,
+    110, 111,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -4704,7 +4706,7 @@ pub static SEATS_CLASS_DECORATOR: &[u16] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_CLASS_BODY_CONTENT: &[u16] = &[
+pub static SEATS_CLASS_BODY_MEMBERS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -4729,11 +4731,12 @@ pub static SEATS_CLASS_BODY_CONTENT: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 205, 206, 204,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 205,
+    206, 204,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_CLASS_BODY_METHOD_DECORATOR: &[u16] = &[
+pub static SEATS_CLASS_BODY_MEMBER_METHOD_DECORATOR: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
@@ -4939,8 +4942,8 @@ pub static SEATS_IMPLEMENTS_CLAUSE_TYPE: &[u16] = &[
     NO_SITE, 522, NO_SITE, NO_SITE, 537, 527, 521, 525, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 539, 526,
     530, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 523, 533, NO_SITE, NO_SITE, 532, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, 520, 538, 534, 542, 528, 524, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 529, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 535, 536,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 529, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 535, 536,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -4970,7 +4973,7 @@ pub static SEATS_IMPORT_SPECIFIERS_IMPORT_SPECIFIER: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 585, 584,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 585, 584,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -5001,7 +5004,7 @@ pub static SEATS_LEXICAL_DECLARATION_DECLARATORS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 650, 649,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 650, 649,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -5074,9 +5077,9 @@ pub static SEATS_OBJECT_TYPE_CONTENT_MEMBERS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 779, 789, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     780, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 784, 785, 783, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    786, 787, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, 782, 781,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 784, 785, 783, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, 786, 787, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 782, 781,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -5127,9 +5130,9 @@ pub static SEATS_PROGRAM_STATEMENTS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 873, 874, 872, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 873, 874, 872, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, 871, 870,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 871, 870,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -5203,7 +5206,8 @@ pub static SEATS_SEQUENCE_EXPRESSION_EXPRESSION: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 979, 978, 966, 968, 967, 982, 983, 989, 990,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 979, 978, 966, 968, 967, 982, 983,
+    989, 990,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -5232,9 +5236,9 @@ pub static SEATS_STATEMENT_BLOCK_STATEMENTS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1012, 1013, 1011, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1012, 1013, 1011, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, 1010, 1009,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1010, 1009,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -5282,9 +5286,9 @@ pub static SEATS_SWITCH_CASE_BODY: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1077, 1078, 1076, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1077, 1078, 1076, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, 1075, 1074,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1075, 1074,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -5313,9 +5317,9 @@ pub static SEATS_SWITCH_DEFAULT_BODY: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1121, 1122, 1120, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1121, 1122, 1120, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, 1119, 1118,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1119, 1118,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -5344,8 +5348,8 @@ pub static SEATS_TUPLE_TYPE_MEMBERS_TUPLE_TYPE_MEMBER: &[u16] = &[
     NO_SITE, 1189, NO_SITE, NO_SITE, 1207, 1194, 1188, 1192, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1210, 1193,
     1197, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1190, 1202, NO_SITE, NO_SITE, 1199, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, 1187, 1209, 1203, 1213, 1195, 1191, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1196, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1205, 1206,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1196, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1205, 1206,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -5401,8 +5405,8 @@ pub static SEATS_TYPES_TYPE: &[u16] = &[
     NO_SITE, 1285, NO_SITE, NO_SITE, 1300, 1290, 1284, 1288, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1302, 1289,
     1293, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1286, 1296, NO_SITE, NO_SITE, 1295, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, 1283, 1301, 1297, 1305, 1291, 1287, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1292, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1298, 1299,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1292, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1298, 1299,
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
@@ -5433,7 +5437,7 @@ pub static SEATS_VARIABLE_DECLARATION_DECLARATORS: &[u16] = &[
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
     NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE,
-    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1326, 1325,
+    NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, NO_SITE, 1326, 1325,
 ];
 
 pub fn defaults() -> ResolvedOptions {
@@ -5971,59 +5975,59 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
     ::sittir_core::options::AddressNode::Branch { key: "classBody", path: "(class_body)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_CLASS_BODY_AFTER, path: "(class_body)/after" }] },
         ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_CLASS_BODY_BEFORE, path: "(class_body)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "content", path: "(class_body)/content:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "classBodyMember", path: "(class_body)/content:/(class_body_member)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_CONTENT_CLASS_BODY_MEMBER_AFTER, path: "(class_body)/content:/(class_body_member)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "classBodyMethod", path: "(class_body)/content:/(class_body_method)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_CONTENT_CLASS_BODY_METHOD_AFTER, path: "(class_body)/content:/(class_body_method)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "classBodyMethodSig", path: "(class_body)/content:/(class_body_method_sig)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_CONTENT_CLASS_BODY_METHOD_SIG_AFTER, path: "(class_body)/content:/(class_body_method_sig)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Branch { key: "classStaticBlock", path: "(class_body)/content:/(class_static_block)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_CONTENT_CLASS_STATIC_BLOCK_AFTER, path: "(class_body)/content:/(class_static_block)/after" }] },
-            ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_CONTENT_END, path: "(class_body)/content:/end" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_CONTENT_SEPARATOR_SPACE, path: "(class_body)/content:/separator" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_CONTENT_START, path: "(class_body)/content:/start" }] },
-        ] },
         ::sittir_core::options::AddressNode::Branch { key: "lbrace", path: "(class_body)/\"{\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_LBRACE_AFTER, path: "(class_body)/\"{\"/after" }] },
+        ] },
+        ::sittir_core::options::AddressNode::Branch { key: "members", path: "(class_body)/members:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "classBodyMemberDeclaration", path: "(class_body)/members:/(class_body_member_declaration)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBERS_CLASS_BODY_MEMBER_DECLARATION_AFTER, path: "(class_body)/members:/(class_body_member_declaration)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "classBodyMemberMethod", path: "(class_body)/members:/(class_body_member_method)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBERS_CLASS_BODY_MEMBER_METHOD_AFTER, path: "(class_body)/members:/(class_body_member_method)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "classBodyMemberMethodSig", path: "(class_body)/members:/(class_body_member_method_sig)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBERS_CLASS_BODY_MEMBER_METHOD_SIG_AFTER, path: "(class_body)/members:/(class_body_member_method_sig)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Branch { key: "classStaticBlock", path: "(class_body)/members:/(class_static_block)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBERS_CLASS_STATIC_BLOCK_AFTER, path: "(class_body)/members:/(class_static_block)/after" }] },
+            ] },
+            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBERS_END, path: "(class_body)/members:/end" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBERS_SEPARATOR_SPACE, path: "(class_body)/members:/separator" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBERS_START, path: "(class_body)/members:/start" }] },
         ] },
         ::sittir_core::options::AddressNode::Branch { key: "rbrace", path: "(class_body)/\"}\"", children: &[
             ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_RBRACE_BEFORE, path: "(class_body)/\"}\"/before" }] },
         ] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "classBodyMember", path: "(class_body_member)", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_CLASS_BODY_MEMBER_AFTER, path: "(class_body_member)/after" }] },
-        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_CLASS_BODY_MEMBER_BEFORE, path: "(class_body_member)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(class_body_member)/\",\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_COMMA_BEFORE, path: "(class_body_member)/\",\"/before" }] },
+    ::sittir_core::options::AddressNode::Branch { key: "classBodyMemberDeclaration", path: "(class_body_member_declaration)", children: &[
+        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_DECLARATION_CLASS_BODY_MEMBER_DECLARATION_AFTER, path: "(class_body_member_declaration)/after" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_DECLARATION_CLASS_BODY_MEMBER_DECLARATION_BEFORE, path: "(class_body_member_declaration)/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(class_body_member_declaration)/\",\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_DECLARATION_COMMA_BEFORE, path: "(class_body_member_declaration)/\",\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Spacing { key: "terminator", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_TERMINATOR, path: "(class_body_member)/terminator:" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "terminator", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_DECLARATION_TERMINATOR, path: "(class_body_member_declaration)/terminator:" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "classBodyMethod", path: "(class_body_method)", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_METHOD_CLASS_BODY_METHOD_AFTER, path: "(class_body_method)/after" }] },
-        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_METHOD_CLASS_BODY_METHOD_BEFORE, path: "(class_body_method)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "decorator", path: "(class_body_method)/decorator:", children: &[
-            ::sittir_core::options::AddressNode::Branch { key: "decorator", path: "(class_body_method)/decorator:/(decorator)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_METHOD_DECORATOR_DECORATOR_AFTER, path: "(class_body_method)/decorator:/(decorator)/after" }] },
+    ::sittir_core::options::AddressNode::Branch { key: "classBodyMemberMethod", path: "(class_body_member_method)", children: &[
+        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_METHOD_CLASS_BODY_MEMBER_METHOD_AFTER, path: "(class_body_member_method)/after" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_METHOD_CLASS_BODY_MEMBER_METHOD_BEFORE, path: "(class_body_member_method)/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "decorator", path: "(class_body_member_method)/decorator:", children: &[
+            ::sittir_core::options::AddressNode::Branch { key: "decorator", path: "(class_body_member_method)/decorator:/(decorator)", children: &[
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_METHOD_DECORATOR_DECORATOR_AFTER, path: "(class_body_member_method)/decorator:/(decorator)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_METHOD_DECORATOR_END, path: "(class_body_method)/decorator:/end" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_METHOD_DECORATOR_SEPARATOR_SPACE, path: "(class_body_method)/decorator:/separator" }] },
-            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_METHOD_DECORATOR_START, path: "(class_body_method)/decorator:/start" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "end", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_METHOD_DECORATOR_END, path: "(class_body_member_method)/decorator:/end" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_METHOD_DECORATOR_SEPARATOR_SPACE, path: "(class_body_member_method)/decorator:/separator" }] },
+            ::sittir_core::options::AddressNode::Spacing { key: "start", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_METHOD_DECORATOR_START, path: "(class_body_member_method)/decorator:/start" }] },
         ] },
-        ::sittir_core::options::AddressNode::Branch { key: "semi", path: "(class_body_method)/\";\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_METHOD_SEMI_BEFORE, path: "(class_body_method)/\";\"/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "semi", path: "(class_body_member_method)/\";\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_METHOD_SEMI_BEFORE, path: "(class_body_member_method)/\";\"/before" }] },
         ] },
-        ::sittir_core::options::AddressNode::Spacing { key: "terminator", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_METHOD_TERMINATOR, path: "(class_body_method)/terminator:" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "terminator", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_METHOD_TERMINATOR, path: "(class_body_member_method)/terminator:" }] },
     ] },
-    ::sittir_core::options::AddressNode::Branch { key: "classBodyMethodSig", path: "(class_body_method_sig)", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_METHOD_SIG_CLASS_BODY_METHOD_SIG_AFTER, path: "(class_body_method_sig)/after" }] },
-        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_METHOD_SIG_CLASS_BODY_METHOD_SIG_BEFORE, path: "(class_body_method_sig)/before" }] },
-        ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(class_body_method_sig)/\",\"", children: &[
-            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_METHOD_SIG_COMMA_BEFORE, path: "(class_body_method_sig)/\",\"/before" }] },
+    ::sittir_core::options::AddressNode::Branch { key: "classBodyMemberMethodSig", path: "(class_body_member_method_sig)", children: &[
+        ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_METHOD_SIG_CLASS_BODY_MEMBER_METHOD_SIG_AFTER, path: "(class_body_member_method_sig)/after" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_METHOD_SIG_CLASS_BODY_MEMBER_METHOD_SIG_BEFORE, path: "(class_body_member_method_sig)/before" }] },
+        ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(class_body_member_method_sig)/\",\"", children: &[
+            ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_METHOD_SIG_COMMA_BEFORE, path: "(class_body_member_method_sig)/\",\"/before" }] },
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "classDeclaration", path: "(class_declaration)", children: &[
@@ -6633,7 +6637,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "gap", path: "gap", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_CONTENT_SEPARATOR_SPACE, path: "(class_body)/content:/separator" }, ::sittir_core::options::SiteRef { site: SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE, path: "(statement_block)/statements:/separator" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_BODY_CASES_SEPARATOR_SPACE, path: "(switch_body)/cases:/separator" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE, path: "(switch_case)/body:/separator" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE, path: "(switch_default)/body:/separator" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "separator", sites: &[::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBERS_SEPARATOR_SPACE, path: "(class_body)/members:/separator" }, ::sittir_core::options::SiteRef { site: SITE_STATEMENT_BLOCK_STATEMENTS_SEPARATOR_SPACE, path: "(statement_block)/statements:/separator" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_BODY_CASES_SEPARATOR_SPACE, path: "(switch_body)/cases:/separator" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_CASE_BODY_SEPARATOR_SPACE, path: "(switch_case)/body:/separator" }, ::sittir_core::options::SiteRef { site: SITE_SWITCH_DEFAULT_BODY_SEPARATOR_SPACE, path: "(switch_default)/body:/separator" }] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "generatorFunction", path: "(generator_function)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_GENERATOR_FUNCTION_GENERATOR_FUNCTION_AFTER, path: "(generator_function)/after" }] },
@@ -7953,7 +7957,7 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
         ] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "statements", path: "statements", children: &[
-        ::sittir_core::options::AddressNode::Spacing { key: "terminator", sites: &[::sittir_core::options::SiteRef { site: SITE_AMBIENT_DECLARATION_MODULE_TERMINATOR, path: "(ambient_declaration_module)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_BREAK_STATEMENT_TERMINATOR, path: "(break_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_TERMINATOR, path: "(class_body_member)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_METHOD_TERMINATOR, path: "(class_body_method)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_CONTINUE_STATEMENT_TERMINATOR, path: "(continue_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_DEBUGGER_STATEMENT_TERMINATOR, path: "(debugger_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_DO_STATEMENT_TERMINATOR, path: "(do_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_EXPORT_STATEMENT_EQUALS_EXPORT_TERMINATOR, path: "(export_statement_equals_export)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_TERMINATOR, path: "(export_statement_namespace_export)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_EXPORT_STATEMENT_TYPE_EXPORT_TERMINATOR, path: "(export_statement_type_export)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_EXPRESSION_STATEMENT_TERMINATOR, path: "(expression_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_FUNCTION_SIGNATURE_TERMINATOR, path: "(function_signature)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_IMPORT_ALIAS_TERMINATOR, path: "(import_alias)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_IMPORT_STATEMENT_TERMINATOR, path: "(import_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_LEXICAL_DECLARATION_TERMINATOR, path: "(lexical_declaration)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_RETURN_STATEMENT_TERMINATOR, path: "(return_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_THROW_STATEMENT_TERMINATOR, path: "(throw_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_TYPE_ALIAS_DECLARATION_TERMINATOR, path: "(type_alias_declaration)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_VARIABLE_DECLARATION_TERMINATOR, path: "(variable_declaration)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_AUTOMATIC_SEMICOLON, path: "(export_statement_default_declaration_default_kw_value)/automatic_semicolon:" }, ::sittir_core::options::SiteRef { site: SITE_EXPORT_STATEMENT_DEFAULT_FROM_AUTOMATIC_SEMICOLON, path: "(export_statement_default_from)/automatic_semicolon:" }] },
+        ::sittir_core::options::AddressNode::Spacing { key: "terminator", sites: &[::sittir_core::options::SiteRef { site: SITE_AMBIENT_DECLARATION_MODULE_TERMINATOR, path: "(ambient_declaration_module)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_BREAK_STATEMENT_TERMINATOR, path: "(break_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_DECLARATION_TERMINATOR, path: "(class_body_member_declaration)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_CLASS_BODY_MEMBER_METHOD_TERMINATOR, path: "(class_body_member_method)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_CONTINUE_STATEMENT_TERMINATOR, path: "(continue_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_DEBUGGER_STATEMENT_TERMINATOR, path: "(debugger_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_DO_STATEMENT_TERMINATOR, path: "(do_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_EXPORT_STATEMENT_EQUALS_EXPORT_TERMINATOR, path: "(export_statement_equals_export)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_EXPORT_STATEMENT_NAMESPACE_EXPORT_TERMINATOR, path: "(export_statement_namespace_export)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_EXPORT_STATEMENT_TYPE_EXPORT_TERMINATOR, path: "(export_statement_type_export)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_EXPRESSION_STATEMENT_TERMINATOR, path: "(expression_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_FUNCTION_SIGNATURE_TERMINATOR, path: "(function_signature)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_IMPORT_ALIAS_TERMINATOR, path: "(import_alias)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_IMPORT_STATEMENT_TERMINATOR, path: "(import_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_LEXICAL_DECLARATION_TERMINATOR, path: "(lexical_declaration)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_RETURN_STATEMENT_TERMINATOR, path: "(return_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_THROW_STATEMENT_TERMINATOR, path: "(throw_statement)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_TYPE_ALIAS_DECLARATION_TERMINATOR, path: "(type_alias_declaration)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_VARIABLE_DECLARATION_TERMINATOR, path: "(variable_declaration)/terminator:" }, ::sittir_core::options::SiteRef { site: SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_AUTOMATIC_SEMICOLON, path: "(export_statement_default_declaration_default_kw_value)/automatic_semicolon:" }, ::sittir_core::options::SiteRef { site: SITE_EXPORT_STATEMENT_DEFAULT_FROM_AUTOMATIC_SEMICOLON, path: "(export_statement_default_from)/automatic_semicolon:" }] },
     ] },
     ::sittir_core::options::AddressNode::Branch { key: "string", path: "(string)", children: &[
         ::sittir_core::options::AddressNode::Spacing { key: "variant", sites: &[::sittir_core::options::SiteRef { site: SITE_STRING_VARIANT, path: "(string)/variant" }] },

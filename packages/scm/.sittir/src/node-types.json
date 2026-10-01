@@ -1,5 +1,19 @@
 [
   {
+    "type": "_list_element",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "capture",
+        "named": true
+      },
+      {
+        "type": "list_element_quantifier",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "definition",
     "named": true,
     "subtypes": [
@@ -75,11 +89,7 @@
         "required": false,
         "types": [
           {
-            "type": "capture",
-            "named": true
-          },
-          {
-            "type": "list_quantifier",
+            "type": "_list_element",
             "named": true
           }
         ]
@@ -189,11 +199,7 @@
         "required": false,
         "types": [
           {
-            "type": "capture",
-            "named": true
-          },
-          {
-            "type": "list_quantifier",
+            "type": "_list_element",
             "named": true
           }
         ]
@@ -267,11 +273,7 @@
         "required": false,
         "types": [
           {
-            "type": "capture",
-            "named": true
-          },
-          {
-            "type": "list_quantifier",
+            "type": "_list_element",
             "named": true
           }
         ]
@@ -279,7 +281,7 @@
     }
   },
   {
-    "type": "list_quantifier",
+    "type": "list_element_quantifier",
     "named": true,
     "fields": {
       "quantifier": {
@@ -303,11 +305,7 @@
         "required": false,
         "types": [
           {
-            "type": "capture",
-            "named": true
-          },
-          {
-            "type": "list_quantifier",
+            "type": "_list_element",
             "named": true
           }
         ]
@@ -465,11 +463,7 @@
         "required": false,
         "types": [
           {
-            "type": "capture",
-            "named": true
-          },
-          {
-            "type": "list_quantifier",
+            "type": "_list_element",
             "named": true
           }
         ]
@@ -509,11 +503,7 @@
         "required": false,
         "types": [
           {
-            "type": "capture",
-            "named": true
-          },
-          {
-            "type": "list_quantifier",
+            "type": "_list_element",
             "named": true
           }
         ]

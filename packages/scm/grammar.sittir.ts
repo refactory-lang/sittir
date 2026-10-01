@@ -14,7 +14,6 @@ export default sittirGrammar(base, {
 	name: 'scm',
 	patches: {
 		grouping: { '1/0/1/0': alias('anchor') },
-		list: { '3/0/0/1': variant('quantifier') },
 		_group_expression: { '1/0': field('left'), '1/2': field('right') },
 		_named_node_expression: { '2/0': field('left'), '2/2': field('right') },
 		named_node: { '1/0': variant('plain'), '1/1': variant('supertyped') },

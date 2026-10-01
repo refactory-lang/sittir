@@ -166,14 +166,6 @@ describe('list', () => {
 	});
 });
 
-describe('list sub-factories', () => {
-	it('quantifier builds the list_quantifier form', () => {
-		const node = ir.list.quantifier({ quantifier: '*' });
-		expect(node.$type).toBe(TSKindId.ListQuantifier);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
 describe('grouping', () => {
 	it('factory produces correct type', () => {
 		const node = ir.grouping({

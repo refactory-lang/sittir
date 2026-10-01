@@ -35,6 +35,8 @@ export const whitespace: {
 	dedent: F.buildDedent
 };
 
+export const listElement: typeof F.listElement = F.listElement;
+
 export const definition: typeof F.definition = F.definition;
 
 export const ir: {
@@ -63,6 +65,7 @@ export const ir: {
 	readonly immediateIdentifier: typeof F.buildImmediateIdentifier;
 	readonly stringContentText: typeof F.buildStringContentText;
 	readonly whitespace: typeof whitespace;
+	readonly listElement: typeof listElement;
 	readonly definition: typeof definition;
 } = Object.freeze({
 	// Node factories
@@ -97,5 +100,6 @@ export const ir: {
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	whitespace,
+	listElement,
 	definition
 });

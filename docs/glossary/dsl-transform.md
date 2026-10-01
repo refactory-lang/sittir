@@ -773,6 +773,10 @@ A reference to a hidden terminal (`isHiddenTerminal`) counts as a token, not a n
 
 Whether a referenced name is a terminal the parser hides (`SymbolSource.isTerminal` and `isHidden` from `wireSymbols`). It is the same predicate pair link's `spliceTextLeaves` uses to splice such a terminal into an all-text parent.
 
+### `packages/codegen/src/dsl/transform/transform.ts::assertElementSlotName`
+
+Throws when a `field()` patch lands on a repeat whose elements are an element supertype minted for a different slot name. Enrich takes the slot name from the authored site, so the two can only differ when the patch addresses the repeat by a path enrich does not read as a site; that is an error and not a rename.
+
 ### `packages/codegen/src/dsl/transform/transform.ts::enrichLiftArmOf`
 
 ```text

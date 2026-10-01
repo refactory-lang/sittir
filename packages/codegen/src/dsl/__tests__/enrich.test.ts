@@ -212,7 +212,7 @@ describe('enrich()', () => {
 			});
 		});
 
-		it('mints the fielded element arm of a separated list as its own kind, so the list fields uniformly', () => {
+		it('mints the element choice of a separated list as a supertype with the fielded arm as its own kind, so the list fields uniformly', () => {
 			const element = (): Rule<'evaluate'> =>
 				({
 					type: CHOICE,
@@ -236,9 +236,9 @@ describe('enrich()', () => {
 			const rules = runEnrich(input).grammar.rules;
 			const body = JSON.stringify(rules._elems);
 			expect(body).toContain('"name":"element"');
-			expect(body).toContain('"name":"elems_name"');
+			expect(body).toContain('"name":"_elems_element"');
 			expect(body).not.toContain('"name":"name"');
-			expect(rules.elems_name).toMatchObject({ type: FIELD, name: 'name', content: { type: SYMBOL, name: '_name' } });
+			expect(rules.elems_element_name).toMatchObject({ type: FIELD, name: 'name', content: { type: SYMBOL, name: '_name' } });
 		});
 
 		it('leaves a separated list alone when its element may be absent, so the span field keeps the holes', () => {

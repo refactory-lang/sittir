@@ -45,6 +45,8 @@ import {
 	wireAutomaticVariants,
 	wireRecordPatchSite,
 	wireGetLiftBody,
+	wireElementSlotOf,
+	wireLiftRenamedTo,
 	wireSetLiftBody,
 	makeSimpleDollarProxy,
 	type PatchSite
@@ -498,8 +500,9 @@ function enrichLiftArmOf(
 	if (symbol?.type !== 'SYMBOL' || typeof symbol.name !== 'string' || !isEnrichGroupLiftSymbol(symbol as RuntimeRule)) {
 		return null;
 	}
-	const body = wireGetLiftBody(symbol.name);
-	return body === undefined ? null : { body, liftName: symbol.name, symbol };
+	const liftName = wireLiftRenamedTo(symbol.name) ?? symbol.name;
+	const body = wireGetLiftBody(liftName);
+	return body === undefined ? null : { body, liftName, symbol };
 }
 
 function renameEnrichLift(
@@ -643,6 +646,17 @@ function rewritesText(patch: PatchValue): boolean {
 	);
 }
 
+function assertElementSlotName(fieldName: string, member: RuntimeRule): void {
+	let node = member as { type?: string; name?: string; content?: RuntimeRule };
+	while (node.content !== undefined && node.type !== 'ALIAS' && node.type !== 'TOKEN' && node.type !== 'IMMEDIATE_TOKEN') {
+		node = node.content as typeof node;
+	}
+	const slot = node.type === 'SYMBOL' && node.name !== undefined ? wireElementSlotOf(node.name) : undefined;
+	if (slot !== undefined && slot !== fieldName) {
+		throw new Error(`field('${fieldName}'): the elements of this repeat are '${node.name}', minted for the slot '${slot}'`);
+	}
+}
+
 function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: string, precStack?: readonly RuntimeRule[]): RuntimeRule {
 	const textToken = wireTextTokenOf(originalMember);
 	if (textToken !== undefined && rewritesText(patch)) {
@@ -653,6 +667,7 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 		return resolveRulePlaceholder(patch, key);
 	}
 	if (isFieldPlaceholder(patch)) {
+		assertElementSlotName(patch.name, originalMember);
 		return resolveFieldPlaceholder(patch, originalMember, precStack);
 	}
 	if (isFieldLike(patch)) {

@@ -4476,7 +4476,7 @@ evaluated `groups:` body patterns (`authoredGroupBodies`), and `extras`, the
 config's `extras:` callback, which decides the extras the final grammar
 lexes (`effectiveExtras`).
 
-`fieldSites` maps each kind to the index paths its authored patches mark with `field()` (`authoredFieldSites`); the token-form hoist leaves a choice at one of those paths unsplit.
+`fieldSites` maps each kind to the sites its authored patches mark with `field()` (`authoredFieldSites`): index path and field name. The token-form hoist leaves a choice at one of those paths unsplit, and an element choice under a fielded repeat takes the site's name as its slot (`elementChoiceSlots`).
 
 ### `packages/codegen/src/dsl/enrich.ts::coveredByAuthoredGroup`
 
@@ -6217,7 +6217,7 @@ A mint is a rule enrich adds, so a name the base grammar already has is never on
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichRuleOrigin`
 
-Why enrich records a rule name: either a mint (`kind` is an `EnrichMintKind`), or `promoted-group`, an upstream hidden rule enrich exposes through an alias; the rule itself is unchanged. A `promoted-group` entry carries `visibleName`, the name the parent's arm aliases the rule to, so no reader re-derives the pairing from the underscore convention. It is the only origin that is not a mint. A `text` entry is a text token `mintInlineTextTokens` minted, and it carries `owners`, the rules that reference it.
+Why enrich records a rule name: either a mint (`kind` is an `EnrichMintKind`), or `promoted-group`, an upstream hidden rule enrich exposes through an alias; the rule itself is unchanged. A `promoted-group` entry carries `visibleName`, the name the parent's arm aliases the rule to, so no reader re-derives the pairing from the underscore convention. It is the only origin that is not a mint. A `text` entry is a text token `mintInlineTextTokens` minted, and it carries `owners`, the rules that reference it. An `element-supertype` entry is the hidden supertype minted for the element choice of a list (`registerElementSupertype`); it carries `slot`, the name of the slot its elements fill, and `authoredSlot`, whether an authored `field()` patch gave that name.
 
 ### `packages/codegen/src/dsl/enrich-ctx.ts::EnrichCtx`
 
@@ -6987,17 +6987,57 @@ The set of topologies a partition's arms produce.
 
 True iff the arms produce more than one slot topology. Kinds, supertype expansion and variant kinds never enter it: two arms routed by different field names are the same topology, and so are two union arms of different kinds.
 
-### `packages/codegen/src/dsl/enrich.ts::ClauseHoistCounter.mixedRepeatChoices`
+### `packages/codegen/src/dsl/enrich.ts::ClauseHoistCounter.elementChoices`
 
-The `ruleKey`s of the owner's repeated topology-mixed choices (`mixedRepeatChoiceKeys`), computed on the rule before the clause hoist rewrites it.
+The owner's element choices (`elementChoiceSlots`), computed on the rule before the clause hoist rewrites it: `ruleKey` of the choice → the slot its elements fill.
 
-### `packages/codegen/src/dsl/enrich.ts::mixedRepeatChoiceKeys`
+### `packages/codegen/src/dsl/enrich.ts::ElementSlot`
 
-The choices under a `REPEAT`/`REPEAT1` whose arms produce more than one slot topology (`isTopologyMixed` at the DSL stage), keyed by `ruleKey`. The key also matches the same choice outside the repeat, which is the head element of a separated list. Tokens and aliases are not entered.
+The slot an element choice fills: `slot` is its name, `authoredSlot` says the name came from an authored `field()` patch on the repeat. An authored slot is fielded by that patch; enrich only reads the name and adds no field of its own.
+
+### `packages/codegen/src/dsl/enrich.ts::AuthoredFieldSite`
+
+One authored `field()` patch on a kind: the index path it addresses and the field name it gives. Enrich receives them before any patch is applied, so a name it derives from a site is the name the patch will write.
+
+### `packages/codegen/src/dsl/enrich.ts::elementChoiceSlots`
+
+The choices under a `REPEAT`/`REPEAT1` whose arms produce more than one slot topology (`isTopologyMixed` at the DSL stage), keyed by `ruleKey`, each with the slot its elements fill. The key also matches the same choice outside the repeat, which is the head element of a separated list. Tokens and aliases are not entered.
+
+The slot name has one derivation. An authored `field()` at the repeat's index path (or on the repeat's content) gives it. Otherwise it is `elementSlotName`: `elements` for a choice that is the repeat's whole content, the separated-list element name for a choice inside a sequence. One choice found under two different slot names in one rule throws.
+
+### `packages/codegen/src/dsl/enrich.ts::elementSupertypeName`
+
+`_<owner>_<singular of the slot name>`: the hidden supertype minted for an element choice. `singularFieldName` is the inverse of `pluralizeFieldName` for the names enrich produces.
+
+### `packages/codegen/src/dsl/enrich.ts::singularFieldName`
+
+The singular of a slot name (`members` → `member`, `entries` → `entry`).
+
+### `packages/codegen/src/dsl/enrich.ts::registerElementSupertype`
+
+Registers an element choice, with its lifted arms already replaced by references, as a hidden rule under its supertype name and records the origin `element-supertype` with its slot. `groupDedupeMap` shares one supertype across owners of an identical choice, so the first owner names it and its arm kinds. A shared choice reached under a different slot name, or a supertype name that is already a rule, throws.
+
+The supertype is not hoisted and not inlined. Enrich appends it to the grammar's `supertypes` and passes it to `stampAutomaticVariants` as a supertype owner, so every arm (lifted or already a kind) is labelled a variant of the supertype and none of the list's owner.
+
+### `packages/codegen/src/dsl/enrich.ts::elementSupertypeOrigin`
+
+The `element-supertype` origin of a list element that is a reference to an element supertype (through the transparent element wrappers), or `undefined`.
+
+### `packages/codegen/src/dsl/enrich.ts::elementSlotName`
+
+The one slot-name function for a list element: the stamped slot of an element supertype, else `deriveElementFieldName` for a separated-list element and `elements` for a repeat's content. `applyNodeChoiceFieldWrap` and `fieldSeparatedListElements` field through it, so the name on the supertype and the name of the field are the same fact.
+
+### `packages/codegen/src/dsl/enrich.ts::listKindElementPlural`
+
+The pluralized element name a separated list's kind is named from, or `null` when the element has no name of its own. An element supertype is a choice, so it has none and the list keeps the `<owner>_elements` name.
+
+### `packages/codegen/src/dsl/enrich.ts::getEnrichElementSupertypes`
+
+Element supertype name → slot name, read from the rule origins. Wire reads it to name variants reached through a supertype and to check an authored field name against the slot.
 
 ### `packages/codegen/src/dsl/enrich.ts::mintFieldRoutedArm`
 
-Mints a bare `field(name, ref)` arm of a repeated topology-mixed choice as its own visible kind, named `<owner>_<field>` through `visibleGroupSynthName`, and references it by a group-lift symbol. With its structured arms already minted by `mintStructuredChoiceArm`, every element of the list is then a kind: one ordered union slot, and the field lives one level down on the minted kind. `groupDedupeMap` shares one kind across owners of an identical arm. An authored `variant()` on the arm names the kind (`wireRenameLift`). An arm that matches the empty string is left alone.
+Mints a bare `field(name, ref)` arm of an element choice as its own visible kind and references it by a group-lift symbol. The naming parent is the element supertype, so the kind is `<supertype without the underscore>_<field>` through `visibleGroupSynthName`. With the structured arms minted by `mintStructuredChoiceArm` under the same parent, every element of the list is then a kind: one ordered union slot, and the field lives one level down on the minted kind. An authored `variant()` on the arm names the kind (`wireRenameLift`). An arm that matches the empty string is left alone.
 
 ### `packages/codegen/src/dsl/choice-arm-partition.ts::unwrapPrecAndOptional`
 

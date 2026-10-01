@@ -267,7 +267,7 @@ export function buildComment(value: AdmitBound<string, T.AdmittedNodes>): T.Comm
 
 export function buildList(config: T.List.Config): T.List.Bound {
 	const _definitions = rejectBareText(config.definitions ?? [], 'List.definitions', 'a built Definition');
-	const _elements = rejectBareText(config.elements ?? [], 'List.elements', 'a built Capture / ListQuantifier');
+	const _elements = rejectBareText(config.elements ?? [], 'List.elements', 'a built ListElement');
 	return withMethods(
 		withAccessors(
 			{
@@ -278,7 +278,7 @@ export function buildList(config: T.List.Config): T.List.Bound {
 				_elements,
 				$with: {
 					definitions: (...values: NonEmptyArray<T.Definition>) => buildList({ ...config, definitions: values }),
-					elements: (...values: (T.Capture | T.ListQuantifier)[]) => buildList({ ...config, elements: values })
+					elements: (...values: T.ListElement[]) => buildList({ ...config, elements: values })
 				}
 			},
 			{
@@ -291,7 +291,7 @@ export function buildList(config: T.List.Config): T.List.Bound {
 
 export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 	const _grouping_group = rejectBareText(config.groupingGroup ?? [], 'Grouping.groupingGroup', 'a built GroupingGroup');
-	const _elements = rejectBareText(config.elements ?? [], 'Grouping.elements', 'a built Capture / ListQuantifier');
+	const _elements = rejectBareText(config.elements ?? [], 'Grouping.elements', 'a built ListElement');
 	return withMethods(
 		withAccessors(
 			{
@@ -303,7 +303,7 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 				$with: {
 					groupingGroups: (...values: NonEmptyArray<T.GroupingGroup>) =>
 						buildGrouping({ ...config, groupingGroup: values }),
-					elements: (...values: (T.Capture | T.ListQuantifier)[]) => buildGrouping({ ...config, elements: values })
+					elements: (...values: T.ListElement[]) => buildGrouping({ ...config, elements: values })
 				}
 			},
 			{
@@ -318,7 +318,7 @@ export function buildMissingNode(): T.EmptyMissingNode;
 export function buildMissingNode(config?: Partial<T.MissingNode.Config>): T.MissingNode.Bound;
 export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.MissingNode.Bound {
 	const _name = rejectBareText(config.name, 'MissingNode.name', 'buildIdentifier(…)');
-	const _elements = rejectBareText(config.elements ?? [], 'MissingNode.elements', 'a built Capture / ListQuantifier');
+	const _elements = rejectBareText(config.elements ?? [], 'MissingNode.elements', 'a built ListElement');
 	return withMethods(
 		withAccessors(
 			{
@@ -329,7 +329,7 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 				_elements,
 				$with: {
 					name: (value?: T.Identifier | T.String) => buildMissingNode({ ...config, name: value }),
-					elements: (...values: (T.Capture | T.ListQuantifier)[]) => buildMissingNode({ ...config, elements: values })
+					elements: (...values: T.ListElement[]) => buildMissingNode({ ...config, elements: values })
 				}
 			},
 			{
@@ -346,7 +346,7 @@ export function buildAnonymousNode(config: Partial<T.AnonymousNode.Config> = {})
 		'AnonymousNode.name',
 		'a built String'
 	);
-	const _elements = rejectBareText(config.elements ?? [], 'AnonymousNode.elements', 'a built Capture / ListQuantifier');
+	const _elements = rejectBareText(config.elements ?? [], 'AnonymousNode.elements', 'a built ListElement');
 	return withMethods(
 		withAccessors(
 			{
@@ -357,7 +357,7 @@ export function buildAnonymousNode(config: Partial<T.AnonymousNode.Config> = {})
 				_elements,
 				$with: {
 					name: (value: NonNullable<T.AnonymousNode.Config>['name']) => buildAnonymousNode({ ...config, name: value }),
-					elements: (...values: (T.Capture | T.ListQuantifier)[]) => buildAnonymousNode({ ...config, elements: values })
+					elements: (...values: T.ListElement[]) => buildAnonymousNode({ ...config, elements: values })
 				}
 			},
 			{
@@ -467,10 +467,10 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 	) as unknown as T.Predicate.Bound;
 }
 
-export function buildListQuantifier(
+export function buildListElementQuantifier(
 	value: AdmitBound<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark, T.AdmittedNodes>
-): T.ListQuantifier.Bound {
-	const _quantifier = coerceKindEnumStorage<NonNullable<T.ListQuantifier['_quantifier']>>(value, [
+): T.ListElementQuantifier.Bound {
+	const _quantifier = coerceKindEnumStorage<NonNullable<T.ListElementQuantifier['_quantifier']>>(value, [
 		['*', TSKindId.Star] as const,
 		['+', TSKindId.Plus] as const,
 		['?', TSKindId.Qmark] as const
@@ -478,19 +478,20 @@ export function buildListQuantifier(
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ListQuantifier as const,
+				$type: TSKindId.ListElementQuantifier as const,
 				$source: 2 as const,
 				$named: true as const,
 				_quantifier,
 				$with: {
-					quantifier: (value: NonNullable<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>) => buildListQuantifier(value)
+					quantifier: (value: NonNullable<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>) =>
+						buildListElementQuantifier(value)
 				}
 			},
 			{
 				quantifier: () => _quantifier
 			}
 		)
-	) as unknown as T.ListQuantifier.Bound;
+	) as unknown as T.ListElementQuantifier.Bound;
 }
 
 export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.GroupExpressionArm.Bound {
@@ -606,11 +607,7 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 		'NamedNodePlain.namedNodeGroup',
 		'a built NamedNodeGroup'
 	);
-	const _elements = rejectBareText(
-		config.elements ?? [],
-		'NamedNodePlain.elements',
-		'a built Capture / ListQuantifier'
-	);
+	const _elements = rejectBareText(config.elements ?? [], 'NamedNodePlain.elements', 'a built ListElement');
 	return withMethods(
 		withAccessors(
 			{
@@ -624,8 +621,7 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 					name: (value: NonNullable<T.NamedNodePlain.Config>['name']) =>
 						buildNamedNodePlain({ ...config, name: value }),
 					namedNodeGroup: (value?: T.NamedNodeGroup) => buildNamedNodePlain({ ...config, namedNodeGroup: value }),
-					elements: (...values: (T.Capture | T.ListQuantifier)[]) =>
-						buildNamedNodePlain({ ...config, elements: values })
+					elements: (...values: T.ListElement[]) => buildNamedNodePlain({ ...config, elements: values })
 				}
 			},
 			{
@@ -645,11 +641,7 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 		'NamedNodeSupertyped.namedNodeGroup',
 		'a built NamedNodeGroup'
 	);
-	const _elements = rejectBareText(
-		config.elements ?? [],
-		'NamedNodeSupertyped.elements',
-		'a built Capture / ListQuantifier'
-	);
+	const _elements = rejectBareText(config.elements ?? [], 'NamedNodeSupertyped.elements', 'a built ListElement');
 	return withMethods(
 		withAccessors(
 			{
@@ -665,8 +657,7 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 					name: (value: T.ImmediateIdentifier | T.ImmediateString) =>
 						buildNamedNodeSupertyped({ ...config, name: value }),
 					namedNodeGroup: (value?: T.NamedNodeGroup) => buildNamedNodeSupertyped({ ...config, namedNodeGroup: value }),
-					elements: (...values: (T.Capture | T.ListQuantifier)[]) =>
-						buildNamedNodeSupertyped({ ...config, elements: values })
+					elements: (...values: T.ListElement[]) => buildNamedNodeSupertyped({ ...config, elements: values })
 				}
 			},
 			{
@@ -784,7 +775,7 @@ export type FluentKindMap = {
 	field_definition: T.FieldDefinition.Bound;
 	negated_field: T.NegatedField.Bound;
 	predicate: T.Predicate.Bound;
-	list_quantifier: T.ListQuantifier.Bound;
+	list_element_quantifier: T.ListElementQuantifier.Bound;
 	group_expression_arm: T.GroupExpressionArm.Bound;
 	named_node_expression_arm: T.NamedNodeExpressionArm.Bound;
 	grouping_group: T.GroupingGroup.Bound;
@@ -822,7 +813,7 @@ export const _factoryMap = {
 	field_definition: buildFieldDefinition,
 	negated_field: buildNegatedField,
 	predicate: buildPredicate,
-	list_quantifier: buildListQuantifier,
+	list_element_quantifier: buildListElementQuantifier,
 	group_expression_arm: buildGroupExpressionArm,
 	named_node_expression_arm: buildNamedNodeExpressionArm,
 	grouping_group: buildGroupingGroup,

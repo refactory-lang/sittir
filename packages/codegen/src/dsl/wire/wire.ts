@@ -26,11 +26,12 @@ import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { rulesEqual, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
-import { getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type GrammarResult } from '../enrich.ts';
+import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
 import { extrasClosure } from '../extras.ts';
+import { collectSymbolRefs } from '../../util/reachable-rules.ts';
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { IsPath, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
 import { ruleCauseOf, type RuleCauseDeclaration } from '../primitives/rule-cause.ts';
@@ -95,6 +96,7 @@ export interface WireContext {
 	readonly baseSupertypeNames: ReadonlySet<string>;
 	readonly liftBodies: Map<string, RuntimeRule>;
 	readonly liftClaims: Map<string, Set<string>>;
+	readonly elementSupertypes: ReadonlyMap<string, string>;
 	activePatchSites: readonly string[];
 	readonly source: unknown;
 }
@@ -164,6 +166,13 @@ export function wireRegisterFlattenedParent(name: string): boolean {
 
 export function wireIsPrecedenceRankedRule(name: string): boolean {
 	return currentContext?.precedenceRankedNames.has(name) ?? false;
+}
+
+export function wireLiftRenamedTo(name: string): string | undefined {
+	for (const [liftName, named] of currentContext?.liftNames ?? []) {
+		if (named.name === name) return liftName;
+	}
+	return undefined;
 }
 
 export function wireRenameLift(liftName: string, newName: string, hoisted: boolean = false): void {
@@ -239,6 +248,22 @@ export function wireGetLiftBody(name: string): RuntimeRule | undefined {
 	return currentContext?.liftBodies.get(name) ?? currentContext?.baseRuleBodies[name];
 }
 
+export function wireElementSlotOf(liftName: string): string | undefined {
+	return currentContext?.elementSupertypes.get(liftName);
+}
+
+export function wireWithLiftScope<T>(liftName: string, fn: () => T): T {
+	const context = currentContext;
+	if (!context?.elementSupertypes.has(liftName)) return fn();
+	const owner = context.currentRuleKind;
+	context.currentRuleKind = liftName;
+	try {
+		return fn();
+	} finally {
+		context.currentRuleKind = owner;
+	}
+}
+
 export function wireSetLiftBody(name: string, body: RuntimeRule): void {
 	recordLiftClaim(name);
 	currentContext?.liftBodies.set(name, body);
@@ -306,6 +331,7 @@ export function withWireContext<T>(
 		baseSupertypeNames: baseSupertypeNamesOf(base as BaseArg | undefined),
 		liftBodies: new Map(),
 		liftClaims: new Map(),
+		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
 		source: base
 	};
@@ -519,6 +545,7 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		baseSupertypeNames: baseSupertypeNamesOf(baseArg),
 		liftBodies: new Map(),
 		liftClaims: new Map(),
+		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
 		source
 	};
@@ -673,8 +700,8 @@ function assertNoDeclaredGroupPatches(patches: PatchesConfig, groups: GroupsConf
 	}
 }
 
-export function authoredFieldSites(patches: PatchesConfig | undefined): ReadonlyMap<string, readonly (readonly number[])[]> {
-	const sites = new Map<string, (readonly number[])[]>();
+export function authoredFieldSites(patches: PatchesConfig | undefined): ReadonlyMap<string, readonly AuthoredFieldSite[]> {
+	const sites = new Map<string, AuthoredFieldSite[]>();
 	for (const [kind, entry] of Object.entries(patches ?? {})) {
 		if (!entry) continue;
 		for (const set of patchSetsOf(entry)) {
@@ -682,7 +709,7 @@ export function authoredFieldSites(patches: PatchesConfig | undefined): Readonly
 				if (!isFieldPlaceholder(value)) continue;
 				const path = parsePath(key);
 				const indices = path.flatMap((segment) => (segment.kind === 'index' ? [segment.value] : []));
-				if (indices.length === path.length) sites.set(kind, [...(sites.get(kind) ?? []), indices]);
+				if (indices.length === path.length) sites.set(kind, [...(sites.get(kind) ?? []), { path: indices, name: value.name }]);
 			}
 		}
 	}
@@ -758,6 +785,14 @@ function buildPatchedParentFn(
 		if (patchSets.length === 0) return base;
 		return transformFn(base as RuntimeRule, ...(patchSets as readonly Parameters<typeof transformFn>[1][]));
 	};
+}
+
+function elementSupertypesOf(kind: string, context: WireContext): string[] {
+	const body = context.baseRuleBodies[kind];
+	if (body === undefined || context.elementSupertypes.size === 0) return [];
+	const refs = new Set<string>();
+	collectSymbolRefs(body, refs);
+	return [...refs].filter((ref) => context.elementSupertypes.has(ref));
 }
 
 function placeholderHiddenName(value: unknown, parentKind: string): string | undefined {
@@ -886,7 +921,10 @@ function injectPlaceholderHiddenRules(
 				}
 				declared.add(value.name);
 			}
-			const mints = Object.values(patchMap).map((value) => ({ value, hiddenName: placeholderHiddenName(value, kind) }));
+			const parents = [kind, ...elementSupertypesOf(kind, context)];
+			const mints = Object.values(patchMap).flatMap((value) =>
+				(isVariantPlaceholder(value) ? parents : [kind]).map((parent) => ({ value, hiddenName: placeholderHiddenName(value, parent) }))
+			);
 			const defaultAbsent = defaultAbsentVariantName(kind, patchMap);
 			if (defaultAbsent !== undefined) mints.push({ value: undefined, hiddenName: defaultAbsent });
 			for (const { value, hiddenName } of mints) {

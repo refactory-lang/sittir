@@ -3260,44 +3260,20 @@ export function buildDecoratorCallExpression(
 }
 
 export function buildClassBody(): T.EmptyClassBody;
-export function buildClassBody(
-	...children: AdmitBound<
-		(T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.EmptyMember)[],
-		T.AdmittedNodes
-	>
-): T.ClassBody.Bound;
-export function buildClassBody(
-	...children: AdmitBound<
-		(T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | TSKindId.EmptyMember)[],
-		T.AdmittedNodes
-	>
-): T.ClassBody.Bound {
-	const _content = rejectBareText(
-		children,
-		'ClassBody.content',
-		'a built ClassBodyMethod / ClassBodyMethodSig / ClassStaticBlock / ClassBodyMember'
-	);
+export function buildClassBody(...children: AdmitBound<T.ClassBodyMember[], T.AdmittedNodes>): T.ClassBody.Bound;
+export function buildClassBody(...children: AdmitBound<T.ClassBodyMember[], T.AdmittedNodes>): T.ClassBody.Bound {
+	const _members = rejectBareText(children, 'ClassBody.members', 'a built ClassBodyMember');
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ClassBody as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
-				$with: {
-					contents: (
-						...vs: (
-							| T.ClassBodyMethod
-							| T.ClassBodyMethodSig
-							| T.ClassStaticBlock
-							| T.ClassBodyMember
-							| TSKindId.EmptyMember
-						)[]
-					) => buildClassBody(...vs)
-				}
+				_members,
+				$with: { members: (...vs: T.ClassBodyMember[]) => buildClassBody(...vs) }
 			},
 			{
-				contents: () => _content
+				members: () => _members
 			}
 		)
 	) as unknown as T.ClassBody.Bound;
@@ -4865,10 +4841,10 @@ export function buildEnumBody(
 ): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>>
+	...elements: NonEmptyArray<AdmitBound<T.EnumBodyElement, T.AdmittedNodes>>
 ): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(
-	...elements: NonEmptyArray<AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>>
+	...elements: NonEmptyArray<AdmitBound<T.EnumBodyElement, T.AdmittedNodes>>
 ): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -7309,18 +7285,132 @@ function _buildFormalParametersElements(
 	) as unknown as T.FormalParametersElements.Bound;
 }
 
+export function buildEnumBodyElementName(
+	value: AdmitBound<
+		| (
+				| T.PropertyIdentifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+				| T.PrivatePropertyIdentifier
+				| T.String
+				| T.Number
+				| T.ComputedPropertyName
+		  )
+		| T.PropertyIdentifier.Types,
+		T.AdmittedNodes
+	>
+): T.EnumBodyElementName.Bound {
+	const _name = admitAliasContent<NonNullable<T.EnumBodyElementName['_name']>>(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.EnumBodyElementName['_name']>>(value, [
+				['declare', TSKindId.DeclareKeyword] as const,
+				['namespace', TSKindId.NamespaceKeyword] as const,
+				['type', TSKindId.TypeKeyword] as const,
+				['public', TSKindId.PublicKeyword] as const,
+				['private', TSKindId.PrivateKeyword] as const,
+				['protected', TSKindId.ProtectedKeyword] as const,
+				['override', TSKindId.OverrideKeyword] as const,
+				['readonly', TSKindId.ReadonlyKeyword] as const,
+				['module', TSKindId.ModuleKeyword] as const,
+				['any', TSKindId.AnyKeyword] as const,
+				['number', TSKindId.NumberKeyword] as const,
+				['boolean', TSKindId.BooleanKeyword] as const,
+				['string', TSKindId.StringKeyword] as const,
+				['symbol', TSKindId.SymbolKeyword] as const,
+				['export', TSKindId.ExportKeyword] as const,
+				['object', TSKindId.ObjectKeyword] as const,
+				['new', TSKindId.NewKeyword] as const,
+				['get', TSKindId.GetKeyword] as const,
+				['set', TSKindId.SetKeyword] as const,
+				['async', TSKindId.AsyncKeyword] as const,
+				['static', TSKindId.StaticKeyword] as const,
+				['let', TSKindId.LetKeyword] as const
+			]),
+			'EnumBodyElementName.name',
+			'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+		),
+		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+	);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EnumBodyElementName as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				$with: {
+					name: (
+						value: NonNullable<
+							| (
+									| T.PropertyIdentifier
+									| TSKindId.DeclareKeyword
+									| TSKindId.NamespaceKeyword
+									| TSKindId.TypeKeyword
+									| TSKindId.PublicKeyword
+									| TSKindId.PrivateKeyword
+									| TSKindId.ProtectedKeyword
+									| TSKindId.OverrideKeyword
+									| TSKindId.ReadonlyKeyword
+									| TSKindId.ModuleKeyword
+									| TSKindId.AnyKeyword
+									| TSKindId.NumberKeyword
+									| TSKindId.BooleanKeyword
+									| TSKindId.StringKeyword
+									| TSKindId.SymbolKeyword
+									| TSKindId.ExportKeyword
+									| TSKindId.ObjectKeyword
+									| TSKindId.NewKeyword
+									| TSKindId.GetKeyword
+									| TSKindId.SetKeyword
+									| TSKindId.AsyncKeyword
+									| TSKindId.StaticKeyword
+									| TSKindId.LetKeyword
+									| T.PrivatePropertyIdentifier
+									| T.String
+									| T.Number
+									| T.ComputedPropertyName
+							  )
+							| T.PropertyIdentifier.Types
+						>
+					) => buildEnumBodyElementName(value)
+				}
+			},
+			{
+				name: () => _name
+			}
+		)
+	) as unknown as T.EnumBodyElementName.Bound;
+}
+
 export function buildEnumBodyElements(
-	...elements: NonEmptyArray<AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>>
+	...elements: NonEmptyArray<AdmitBound<T.EnumBodyElement, T.AdmittedNodes>>
 ): ReturnType<typeof _buildEnumBodyElements>;
 export function buildEnumBodyElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>>
+	...elements: NonEmptyArray<AdmitBound<T.EnumBodyElement, T.AdmittedNodes>>
 ): ReturnType<typeof _buildEnumBodyElements>;
 export function buildEnumBodyElements(
-	...args: (
-		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>
-	)[]
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | AdmitBound<T.EnumBodyElement, T.AdmittedNodes>)[]
 ) {
 	const _optsFirst =
 		typeof args[0] === 'object' &&
@@ -7330,12 +7420,12 @@ export function buildEnumBodyElements(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>
+		AdmitBound<T.EnumBodyElement, T.AdmittedNodes>
 	>;
 	return _buildEnumBodyElements(elements, options);
 }
 function _buildEnumBodyElements(
-	elements: NonEmptyArray<AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>>,
+	elements: NonEmptyArray<AdmitBound<T.EnumBodyElement, T.AdmittedNodes>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.EnumBodyElements.Bound {
 	_assertNonEmpty(elements, 'enum_body_elements.elements');
@@ -7351,7 +7441,7 @@ function _buildEnumBodyElements(
 					_element,
 					_delimiter,
 					$with: {
-						elements: (...vs: NonEmptyArray<AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>>) =>
+						elements: (...vs: NonEmptyArray<AdmitBound<T.EnumBodyElement, T.AdmittedNodes>>) =>
 							buildEnumBodyElements(options, ...vs),
 						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 							buildEnumBodyElements({ ...options, delimiter: v }, ...elements)
@@ -8465,154 +8555,38 @@ export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): T.
 	) as unknown as T.BinaryExpressionIn.Bound;
 }
 
-export function buildEnumBodyMember(
-	value: AdmitBound<
-		| (
-				| T.PropertyIdentifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-		  )
-		| T.PropertyIdentifier.Types,
-		T.AdmittedNodes
-	>
-): T.EnumBodyMember.Bound {
-	const _name = admitAliasContent<NonNullable<T.EnumBodyMember['_name']>>(
-		rejectBareText(
-			coerceMixedEnumStorage<NonNullable<T.EnumBodyMember['_name']>>(value, [
-				['declare', TSKindId.DeclareKeyword] as const,
-				['namespace', TSKindId.NamespaceKeyword] as const,
-				['type', TSKindId.TypeKeyword] as const,
-				['public', TSKindId.PublicKeyword] as const,
-				['private', TSKindId.PrivateKeyword] as const,
-				['protected', TSKindId.ProtectedKeyword] as const,
-				['override', TSKindId.OverrideKeyword] as const,
-				['readonly', TSKindId.ReadonlyKeyword] as const,
-				['module', TSKindId.ModuleKeyword] as const,
-				['any', TSKindId.AnyKeyword] as const,
-				['number', TSKindId.NumberKeyword] as const,
-				['boolean', TSKindId.BooleanKeyword] as const,
-				['string', TSKindId.StringKeyword] as const,
-				['symbol', TSKindId.SymbolKeyword] as const,
-				['export', TSKindId.ExportKeyword] as const,
-				['object', TSKindId.ObjectKeyword] as const,
-				['new', TSKindId.NewKeyword] as const,
-				['get', TSKindId.GetKeyword] as const,
-				['set', TSKindId.SetKeyword] as const,
-				['async', TSKindId.AsyncKeyword] as const,
-				['static', TSKindId.StaticKeyword] as const,
-				['let', TSKindId.LetKeyword] as const
-			]),
-			'EnumBodyMember.name',
-			'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
-		),
-		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
-	);
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.EnumBodyMember as const,
-				$source: 2 as const,
-				$named: true as const,
-				_name,
-				$with: {
-					name: (
-						value: NonNullable<
-							| (
-									| T.PropertyIdentifier
-									| TSKindId.DeclareKeyword
-									| TSKindId.NamespaceKeyword
-									| TSKindId.TypeKeyword
-									| TSKindId.PublicKeyword
-									| TSKindId.PrivateKeyword
-									| TSKindId.ProtectedKeyword
-									| TSKindId.OverrideKeyword
-									| TSKindId.ReadonlyKeyword
-									| TSKindId.ModuleKeyword
-									| TSKindId.AnyKeyword
-									| TSKindId.NumberKeyword
-									| TSKindId.BooleanKeyword
-									| TSKindId.StringKeyword
-									| TSKindId.SymbolKeyword
-									| TSKindId.ExportKeyword
-									| TSKindId.ObjectKeyword
-									| TSKindId.NewKeyword
-									| TSKindId.GetKeyword
-									| TSKindId.SetKeyword
-									| TSKindId.AsyncKeyword
-									| TSKindId.StaticKeyword
-									| TSKindId.LetKeyword
-									| T.PrivatePropertyIdentifier
-									| T.String
-									| T.Number
-									| T.ComputedPropertyName
-							  )
-							| T.PropertyIdentifier.Types
-						>
-					) => buildEnumBodyMember(value)
-				}
-			},
-			{
-				name: () => _name
-			}
-		)
-	) as unknown as T.EnumBodyMember.Bound;
-}
-
 export const buildEmptyMember: TSKindId.EmptyMember = TSKindId.EmptyMember;
 
-export function buildClassBodyMethod(
-	config: T.ClassBodyMethod.Config,
-	options?: T.ClassBodyMethod.Options
-): T.ClassBodyMethod.Bound {
-	const _decorator = rejectBareText(config.decorator ?? [], 'ClassBodyMethod.decorator', 'a built Decorator');
+export function buildClassBodyMemberMethod(
+	config: T.ClassBodyMemberMethod.Config,
+	options?: T.ClassBodyMemberMethod.Options
+): T.ClassBodyMemberMethod.Bound {
+	const _decorator = rejectBareText(config.decorator ?? [], 'ClassBodyMemberMethod.decorator', 'a built Decorator');
 	const _method_definition = rejectBareText(
 		config.methodDefinition,
-		'ClassBodyMethod.methodDefinition',
+		'ClassBodyMemberMethod.methodDefinition',
 		'a built MethodDefinition'
 	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMethod['_terminator']>>(options?.terminator, [
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethod['_terminator']>>(options?.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const
 	]);
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ClassBodyMethod as const,
+				$type: TSKindId.ClassBodyMemberMethod as const,
 				$source: 2 as const,
 				$named: true as const,
 				_decorator,
 				_method_definition,
 				_terminator,
 				$with: {
-					decorators: (...values: T.Decorator[]) => buildClassBodyMethod({ ...config, decorator: values }, options),
+					decorators: (...values: T.Decorator[]) =>
+						buildClassBodyMemberMethod({ ...config, decorator: values }, options),
 					methodDefinition: (value: T.MethodDefinition) =>
-						buildClassBodyMethod({ ...config, methodDefinition: value }, options),
+						buildClassBodyMemberMethod({ ...config, methodDefinition: value }, options),
 					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
-						buildClassBodyMethod(config, { ...options, terminator: spelling })
+						buildClassBodyMemberMethod(config, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -8621,31 +8595,34 @@ export function buildClassBodyMethod(
 				terminator: () => _terminator
 			}
 		)
-	) as unknown as T.ClassBodyMethod.Bound;
+	) as unknown as T.ClassBodyMemberMethod.Bound;
 }
 
-export function buildClassBodyMethodSig(config: T.ClassBodyMethodSig.Config): T.ClassBodyMethodSig.Bound {
+export function buildClassBodyMemberMethodSig(
+	config: T.ClassBodyMemberMethodSig.Config
+): T.ClassBodyMemberMethodSig.Bound {
 	const _method_signature = rejectBareText(
 		config.methodSignature,
-		'ClassBodyMethodSig.methodSignature',
+		'ClassBodyMemberMethodSig.methodSignature',
 		'a built MethodSignature'
 	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMethodSig['_terminator']>>(config.terminator, [
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethodSig['_terminator']>>(config.terminator, [
 		['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const,
 		[',', TSKindId.Comma] as const
 	]);
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ClassBodyMethodSig as const,
+				$type: TSKindId.ClassBodyMemberMethodSig as const,
 				$source: 2 as const,
 				$named: true as const,
 				_method_signature,
 				_terminator,
 				$with: {
-					methodSignature: (value: T.MethodSignature) => buildClassBodyMethodSig({ ...config, methodSignature: value }),
-					terminator: (value: NonNullable<T.ClassBodyMethodSig.Config>['terminator']) =>
-						buildClassBodyMethodSig({ ...config, terminator: value })
+					methodSignature: (value: T.MethodSignature) =>
+						buildClassBodyMemberMethodSig({ ...config, methodSignature: value }),
+					terminator: (value: NonNullable<T.ClassBodyMemberMethodSig.Config>['terminator']) =>
+						buildClassBodyMemberMethodSig({ ...config, terminator: value })
 				}
 			},
 			{
@@ -8653,39 +8630,38 @@ export function buildClassBodyMethodSig(config: T.ClassBodyMethodSig.Config): T.
 				terminator: () => _terminator
 			}
 		)
-	) as unknown as T.ClassBodyMethodSig.Bound;
+	) as unknown as T.ClassBodyMemberMethodSig.Bound;
 }
 
-export function buildClassBodyMember(
+export function buildClassBodyMemberDeclaration(
 	value: AdmitBound<
 		T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition,
 		T.AdmittedNodes
 	>,
-	options?: T.ClassBodyMember.Options
-): T.ClassBodyMember.Bound {
+	options?: T.ClassBodyMemberDeclaration.Options
+): T.ClassBodyMemberDeclaration.Bound {
 	const _member = rejectBareText(
 		value,
-		'ClassBodyMember.member',
+		'ClassBodyMemberDeclaration.member',
 		'a built AbstractMethodSignature / IndexSignature / MethodSignature / PublicFieldDefinition'
 	);
-	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMember['_terminator']>>(options?.terminator, [
-		['\n', TSKindId.AutomaticSemicolon] as const,
-		[';', TSKindId.Semi] as const,
-		[',', TSKindId.Comma] as const
-	]);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberDeclaration['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const, [',', TSKindId.Comma] as const]
+	);
 	return withMethods(
 		withAccessors(
 			{
-				$type: TSKindId.ClassBodyMember as const,
+				$type: TSKindId.ClassBodyMemberDeclaration as const,
 				$source: 2 as const,
 				$named: true as const,
 				_member,
 				_terminator,
 				$with: {
 					member: (value: T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition) =>
-						buildClassBodyMember(value, options),
+						buildClassBodyMemberDeclaration(value, options),
 					terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma) =>
-						buildClassBodyMember(value, { ...options, terminator: spelling })
+						buildClassBodyMemberDeclaration(value, { ...options, terminator: spelling })
 				}
 			},
 			{
@@ -8693,7 +8669,7 @@ export function buildClassBodyMember(
 				terminator: () => _terminator
 			}
 		)
-	) as unknown as T.ClassBodyMember.Bound;
+	) as unknown as T.ClassBodyMemberDeclaration.Bound;
 }
 
 export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): T.IndexSignatureColon.Bound {
@@ -10760,6 +10736,7 @@ export type FluentKindMap = {
 	export_specifiers: T.ExportSpecifiers.Bound;
 	import_specifiers: T.ImportSpecifiers.Bound;
 	formal_parameters_elements: T.FormalParametersElements.Bound;
+	enum_body_element_name: T.EnumBodyElementName.Bound;
 	enum_body_elements: T.EnumBodyElements.Bound;
 	types: T.Types.Bound;
 	type_parameters_elements: T.TypeParametersElements.Bound;
@@ -10787,11 +10764,10 @@ export type FluentKindMap = {
 	number_bigint_octal: T.NumberBigintOctal.Bound;
 	number_bigint_decimal: T.NumberBigintDecimal.Bound;
 	binary_expression_in: T.BinaryExpressionIn.Bound;
-	enum_body_member: T.EnumBodyMember.Bound;
 	empty_member: T.EmptyMember;
-	class_body_method: T.ClassBodyMethod.Bound;
-	class_body_method_sig: T.ClassBodyMethodSig.Bound;
-	class_body_member: T.ClassBodyMember.Bound;
+	class_body_member_method: T.ClassBodyMemberMethod.Bound;
+	class_body_member_method_sig: T.ClassBodyMemberMethodSig.Bound;
+	class_body_member_declaration: T.ClassBodyMemberDeclaration.Bound;
 	index_signature_colon: T.IndexSignatureColon.Bound;
 	index_signature_mapped_type_clause: T.IndexSignatureMappedTypeClause.Bound;
 	import_statement_clause_from: T.ImportStatementClauseFrom.Bound;
@@ -11021,6 +10997,7 @@ export const _factoryMap = {
 	export_specifiers: buildExportSpecifiers,
 	import_specifiers: buildImportSpecifiers,
 	formal_parameters_elements: buildFormalParametersElements,
+	enum_body_element_name: buildEnumBodyElementName,
 	enum_body_elements: buildEnumBodyElements,
 	types: buildTypes,
 	type_parameters_elements: buildTypeParametersElements,
@@ -11048,11 +11025,10 @@ export const _factoryMap = {
 	number_bigint_octal: buildNumberBigintOctal,
 	number_bigint_decimal: buildNumberBigintDecimal,
 	binary_expression_in: buildBinaryExpressionIn,
-	enum_body_member: buildEnumBodyMember,
 	empty_member: buildEmptyMember,
-	class_body_method: buildClassBodyMethod,
-	class_body_method_sig: buildClassBodyMethodSig,
-	class_body_member: buildClassBodyMember,
+	class_body_member_method: buildClassBodyMemberMethod,
+	class_body_member_method_sig: buildClassBodyMemberMethodSig,
+	class_body_member_declaration: buildClassBodyMemberDeclaration,
 	index_signature_colon: buildIndexSignatureColon,
 	index_signature_mapped_type_clause: buildIndexSignatureMappedTypeClause,
 	import_statement_clause_from: buildImportStatementClauseFrom,

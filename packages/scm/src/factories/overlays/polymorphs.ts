@@ -14,13 +14,6 @@ export const stringContent = Object.freeze({
 	escapeSequence: typeof B.escapeSequence;
 };
 
-export const list = Object.freeze({
-	...B.list,
-	quantifier: bundle(F.buildListQuantifier, C.coerceToListQuantifier, { key: 'list.quantifier', max: 1 })
-}) as unknown as typeof B.list & {
-	quantifier: { strict: typeof F.buildListQuantifier; coerce: typeof C.coerceToListQuantifier };
-};
-
 // Erased applications, centralized: TS cannot infer a Cfg type parameter
 // constrained by another inference variable in a contravariant position,
 // so the pair below carries the one sanctioned dsl-bridging double cast;
@@ -308,6 +301,17 @@ export const namedNode: {
 	})
 });
 
+export const listElement: {
+	readonly capture: typeof B.capture;
+	readonly quantifier: { strict: typeof F.buildListElementQuantifier; coerce: typeof C.coerceToListElementQuantifier };
+} = Object.freeze({
+	capture: B.capture,
+	quantifier: bundle(F.buildListElementQuantifier, C.coerceToListElementQuantifier, {
+		key: 'listElement.quantifier',
+		max: 1
+	})
+});
+
 export const namedNodeGroup: {
 	readonly children: { strict: typeof F.buildNamedNodeGroupChildren; coerce: typeof C.coerceToNamedNodeGroupChildren };
 	readonly anchoredLast: {
@@ -331,7 +335,7 @@ export const definition: {
 	readonly missingNode: typeof B.missingNode;
 	readonly grouping: typeof B.grouping;
 	readonly predicate: typeof B.predicate;
-	readonly list: typeof list;
+	readonly list: typeof B.list;
 	readonly field: typeof B.fieldDefinition;
 } = Object.freeze({
 	namedNode: namedNode,
@@ -339,6 +343,6 @@ export const definition: {
 	missingNode: B.missingNode,
 	grouping: B.grouping,
 	predicate: B.predicate,
-	list: list,
+	list: B.list,
 	field: B.fieldDefinition
 });
