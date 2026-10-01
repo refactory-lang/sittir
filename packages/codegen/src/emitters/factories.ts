@@ -75,6 +75,7 @@ import {
 	expandAndDedupeContentTypes,
 	registeredSlots,
 	withEmptyOverload,
+	listRestParamType,
 	pruneUnusedImports
 } from './shared.ts';
 import {
@@ -85,7 +86,7 @@ import {
 	type RefineFormInfo
 } from './refine-emit.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
-import { configKeysOf, elementsSeatOf, flattenSeatsOf, prefixedKey } from './overlays/sub-factories.ts';
+import { configKeysOf, elementsSeatOf, emittedElementsSeats, flattenSeatsOf, prefixedKey } from './overlays/sub-factories.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
 export interface EmitFactoriesConfig {
@@ -1504,11 +1505,6 @@ function elementsTypeOf(nonEmpty: boolean, elemType: string): string {
 	return nonEmpty ? `NonEmptyArray<${elemType}>` : `${parenthesizeUnion(elemType)}[]`;
 }
 
-function elementsTuple(nonEmpty: boolean, elemType: string): string {
-	const rest = `...elements: ${parenthesizeUnion(elemType)}[]`;
-	return nonEmpty ? `[element: ${elemType}, ${rest}]` : `[${rest}]`;
-}
-
 function hasTopLevelUnion(type: string): boolean {
 	let depth = 0;
 	for (let i = 0; i < type.length; i++) {
@@ -1928,6 +1924,9 @@ function listBuiltTypeSurface(
 			: []),
 		...(surface.hasDelimiterOption ? [{ name: 'delimiter', input: delimiterUnionFor(node), optional: true, rest: false }] : [])
 	];
+	const seated = emittedElementsSeats(node, nodeMap, kindEntries);
+	const element = (own: string, row: 'BuildArgs' | 'LooseArgs'): string =>
+		`(${[own, ...seated.map((seat) => `T.${seat.group.typeName}.${row}[0]`)].join(' | ')})`;
 	const extraMembers = [
 		...(surface.hasSeparatorKindOption ? ['  readonly _separator: number | undefined;'] : []),
 		...(surface.hasDelimiterOption ? ['  readonly _delimiter: Delimiter;'] : [])
@@ -1936,8 +1935,8 @@ function listBuiltTypeSurface(
 		mainType: `T.${node.typeName}`,
 		members: extraMembers,
 		setters,
-		buildArgs: elementsTuple(node.nonEmpty, surface.strictElemType),
-		looseArgs: elementsTuple(node.nonEmpty, looseValueOf(surface.looseElemTypeForArray)),
+		buildArgs: listRestParamType(node.nonEmpty, element(surface.strictElemType, 'BuildArgs'), surface.optionsType, surface.separatorRequired),
+		looseArgs: listRestParamType(node.nonEmpty, element(looseValueOf(surface.looseElemTypeForArray), 'LooseArgs'), surface.optionsType, surface.separatorRequired),
 		maxArgs: undefined
 	};
 }

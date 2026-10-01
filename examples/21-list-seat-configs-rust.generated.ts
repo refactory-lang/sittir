@@ -12,13 +12,13 @@ export function rebuildListSeatConfigsRustGenerated() {
 			body: rs.build.block.strict({
 				statements: [rs.build.expressionStatement.withSemi.strict(rs.build.callExpression.strict({
 					function: rs.build.identifier("call"),
-					arguments: rs.build.arguments.strict(rs.build.argumentsElements.strict({
+					arguments: rs.build.arguments.strict({
 						attributeItem: [rs.build.attributeItem.strict(rs.build.attribute.input.strict({
 							path: rs.build.identifier("cfg"),
 							arguments: rs.build.delimTokenTree.paren.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("a"))),
 						}))],
 						expression: rs.build.identifier("x"),
-					}, rs.build.identifier("y"))),
+					}, rs.build.identifier("y")),
 				}))],
 			}),
 		})],

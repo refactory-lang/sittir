@@ -23,7 +23,7 @@ export function rebuildSpliceLoose() {
 			name: "SpliceError",
 			body: rs.build.enumVariantListElements(rs.build.enumVariant({
 				name: "InvalidRange",
-				body: rs.build.fieldDeclarationListElements({ delimiter: Delimiter.None }, rs.build.fieldDeclaration({
+				body: rs.build.fieldDeclarationList({ delimiter: Delimiter.None }, rs.build.fieldDeclaration({
 					name: "start",
 					type: rs.kinds.U32Keyword,
 				}), rs.build.fieldDeclaration({
@@ -32,7 +32,7 @@ export function rebuildSpliceLoose() {
 				})),
 			}), rs.build.enumVariant({
 				name: "OutOfBounds",
-				body: rs.build.fieldDeclarationListElements({ delimiter: Delimiter.None }, rs.build.fieldDeclaration({
+				body: rs.build.fieldDeclarationList({ delimiter: Delimiter.None }, rs.build.fieldDeclaration({
 					name: "end",
 					type: rs.kinds.U32Keyword,
 				}), rs.build.fieldDeclaration({
@@ -41,7 +41,7 @@ export function rebuildSpliceLoose() {
 				})),
 			}).$trivia.leading(rs.build.lineComment.docOuter(" `end_pos > source.len()` — edit reaches past end of source.\n")), rs.build.enumVariant({
 				name: "NonCharBoundary",
-				body: rs.build.fieldDeclarationListElements({ delimiter: Delimiter.None }, rs.build.fieldDeclaration({
+				body: rs.build.fieldDeclarationList({ delimiter: Delimiter.None }, rs.build.fieldDeclaration({
 					name: "start",
 					type: rs.kinds.U32Keyword,
 				}), rs.build.fieldDeclaration({
@@ -219,7 +219,7 @@ export function rebuildSpliceLoose() {
 											path: "SpliceError",
 											name: "InvalidRange",
 										}),
-										body: rs.build.fieldInitializerListElements({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
+										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
 											field: "start",
 											value: rs.build.fieldExpression({
 												value: "e",
@@ -255,7 +255,7 @@ export function rebuildSpliceLoose() {
 											path: "SpliceError",
 											name: "OutOfBounds",
 										}),
-										body: rs.build.fieldInitializerListElements({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
+										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
 											field: "end",
 											value: rs.build.fieldExpression({
 												value: "e",
@@ -311,7 +311,7 @@ export function rebuildSpliceLoose() {
 											path: "SpliceError",
 											name: "NonCharBoundary",
 										}),
-										body: rs.build.fieldInitializerListElements({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
+										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
 											field: "start",
 											value: rs.build.fieldExpression({
 												value: "e",
