@@ -305,3 +305,7 @@ A strict builder with no coercer beside it, as one pair (a refine form); `bundle
 ### `packages/types/src/core-types.ts::AnyUntypedNode.$textOnly`
 
 Marks a node whose coordinate (`$treeHandle` with `$span`) addresses its text only: the bytes it spans, not the layout around them. A native deep read stamps it on a leaf's coordinate, and `detachCoordinates` stamps every coordinate it leaves in place. Edge and gap readers on the render side skip such a coordinate, so a root's leading and trailing flank and a list's source gaps are inferred only from a tree-addressed coordinate. It is dropped with the other coordinate keys when a node is edited or made self-contained.
+
+### `packages/types/src/index.ts::UndefinedIfOptional`
+
+`undefined` for a key the node declares optional, `never` for a required one. `ConfigOf` appends it to the three keyword-presence arms (boolean keyword, bitflag, kind enum), so an explicit `undefined` is accepted exactly where the key itself may be omitted. The optional key keeps it spelled out because the types are published, and a consumer compiling with `exactOptionalPropertyTypes` must still be able to pass `{ key: undefined }` for an optional slot.
