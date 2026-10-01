@@ -699,7 +699,7 @@ export function emitIsModule(grammar: GrammarModel): string {
 - [ ] `snippets.*.from({})` — template fill with coercion
 - [ ] `template('...').fill({}).read()` / `.render()` — inline templates
 - [ ] Composition: `.read()` output as slot input for another template
-- [x] `engine.parse()` with depth control, `$nodeHandle` / `$childIndex` drill-in
+- [x] `engine.parse()` with depth control, `$parentHandle` / `$childIndex` expansion
 - [ ] `engine.readNode(handle, childIndex)` for lazy expansion
 - [ ] `engine.findAndRead()` with pattern matching
 - [ ] `engine.applyEdits()` for source modification

@@ -94,8 +94,12 @@ export interface AnyNodeData {
 	$text?: string;
 	/** Byte offset span in source. */
 	$span?: { start: number; end: number };
-	/** Index into engine's node-handle table for O(1) drill-in. */
-	$nodeHandle?: number;
+	/** This node's own handle, on a node a read returns: re-reading it reads this node. */
+	$handle?: number;
+	/** The parent's handle, beside `$childIndex`: the coordinate a stub is expanded at. */
+	$parentHandle?: number;
+	/** Any handle of this node's tree, on a node nothing re-reads (a deep read's leaf, a trivia entry, a folded coordinate): it names only the tree `$span` slices. */
+	$treeHandle?: number;
 	/** Position in parent's child array for child(i) access. */
 	$childIndex?: number;
 	/** Set by a deep read on a leaf: the coordinate addresses the node's text only, never the layout around it. */

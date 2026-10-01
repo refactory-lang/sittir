@@ -346,15 +346,15 @@ source ──▶ tree-sitter parse ──▶ TreeHandle ──▶ readNode(tree)
                                                               wrapNode(node, tree)
                                                                        ▼
                                                        NodeData + fluent getters
-                                                       + lazy drill-in via $nodeHandle
+                                                       + lazy expansion via $parentHandle
 ```
 
 `readNode` is the shared parse-tree reader: it maps field children into
 `_<field>` slots and unfielded children into `$children`, recurses to a
 configurable depth, and produces the same `NodeData` shape whether the
 parse tree came from `web-tree-sitter` or `@ast-grep/napi`. `wrapNode`
-attaches the typed accessor surface and resolves lazy `$nodeHandle`
-references back through the engine's reader on demand.
+attaches the typed accessor surface and expands each lazy stub (`$parentHandle`
++ `$childIndex`) back through the engine's reader on demand.
 
 #### Edit pipeline
 

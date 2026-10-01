@@ -132,7 +132,9 @@ function assertNativeNodeDataInternal(value: unknown, path: string): asserts val
 	if (value.$other !== undefined) assertNativeChildren(value.$other, `${path}.$other`);
 	if (value.$text !== undefined) assertString(value.$text, `${path}.$text`);
 	if (value.$span !== undefined) assertNativeSpan(value.$span, `${path}.$span`);
-	if (value.$nodeHandle !== undefined) assertFiniteNumber(value.$nodeHandle, `${path}.$nodeHandle`);
+	for (const key of ['$handle', '$parentHandle', '$treeHandle'] as const) {
+		if (value[key] !== undefined) assertFiniteNumber(value[key], `${path}.${key}`);
+	}
 	if (value.$childIndex !== undefined) assertFiniteNumber(value.$childIndex, `${path}.$childIndex`);
 	if (value.$textOnly !== undefined && typeof value.$textOnly !== 'boolean') {
 		throw new TypeError(`${path}.$textOnly must be a boolean, got ${describe(value.$textOnly)}`);

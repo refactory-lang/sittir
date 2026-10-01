@@ -10,7 +10,8 @@
 //! Invariants (enforced by struct + serde helpers):
 //! - `$type`, `$source`, `$named` are required on the wire.
 //! - Named slots serialize as top-level `_<slot>` keys.
-//! - `$other`, `$text`, `$span`, `$nodeHandle`, `$childIndex`, `$slotOrder`
+//! - `$other`, `$text`, `$span`, `$handle`, `$parentHandle`, `$treeHandle`,
+//!   `$childIndex`, `$slotOrder`
 //!   are elided when `None` (`serde skip_serializing_if`).
 //! - No other top-level `$`-prefixed keys are emitted — enrichment
 //!   fields (`$variant`, `$raw`, supertype labels) live on the TS side.
@@ -105,6 +106,40 @@ pub struct NodeTrivia {
     pub inner: Option<BTreeMap<String, Vec<NodeData>>>,
 }
 
+/// A handle a read stamps on a node, by what it names. Every handle is
+/// tagged: the owning tree's id in the high bits, an index into that tree's
+/// `nodes` vec in the low 32, minted by `ParsedTree`.
+///
+/// The tag is what makes a handle self-identifying. Indices are dense and
+/// restart at 0 for every parse, so an untagged handle from one tree is
+/// silently in range in the next one — it would resolve against the wrong
+/// tree and return an unrelated node rather than failing. Serialized as a
+/// JSON number and read back as a JS double, so the split is sized to stay
+/// inside the 53-bit exact-integer range (see `handle` in `engine.rs`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NodeHandle {
+    /// `$handle`: the node's own handle, on a node a read returns. Re-reading
+    /// it reads this node.
+    Own(u64),
+    /// `$parentHandle`: the parent's handle, beside the node's `child_index`.
+    /// The pair is the coordinate a stub is expanded at.
+    Parent(u64),
+    /// `$treeHandle`: any handle of the node's tree, on a node nothing
+    /// re-reads (a deep read's leaf, a trivia entry). It names only the tree
+    /// the node's span slices.
+    Tree(u64),
+}
+
+impl NodeHandle {
+    /// The tagged handle itself, whatever it names: every handle identifies
+    /// its tree.
+    pub fn raw(self) -> u64 {
+        match self {
+            Self::Own(h) | Self::Parent(h) | Self::Tree(h) => h,
+        }
+    }
+}
+
 /// Primitive NodeData — the wire shape. Fixed `$`-metadata plus dynamic
 /// `_<slot>` storage keys (and optional `$other`) matching the
 /// de-hoisted JS read/factory surface. Enrichment (`$variant`,
@@ -140,19 +175,10 @@ pub struct NodeData {
 
     pub span: Option<Span>,
 
-    /// Tagged handle for the tree-sitter `Node` that produced this
-    /// `NodeData`: the owning tree's id in the high bits, an index into that
-    /// tree's `nodes` vec in the low 32. Stamped by `ParsedTree` as it mints
-    /// coordinates. `None` on factory-constructed nodes and on nodes that
-    /// haven't been registered in a node table yet.
-    ///
-    /// The tag is what makes a handle self-identifying. Indices are dense and
-    /// restart at 0 for every parse, so an untagged handle from one tree is
-    /// silently in range in the next one — it would resolve against the wrong
-    /// tree and return an unrelated node rather than failing. Serialized as a
-    /// JSON number and read back as a JS double, so the split is sized to stay
-    /// inside the 53-bit exact-integer range (see `handle` in `engine.rs`).
-    pub node_handle: Option<u64>,
+    /// The coordinate a read stamps on this node, by what its handle names.
+    /// `None` on factory-constructed nodes and on a node expanded inside a
+    /// read, which is reached through its parent and never re-read itself.
+    pub handle: Option<NodeHandle>,
 
     /// Position of this node within its parent's children array.
     /// Set during `read_children` traversal. Enables O(1) child-index
@@ -227,12 +253,20 @@ struct NodeDataSer<'a> {
     text: &'a Option<String>,
     #[serde(rename = "$span", default, skip_serializing_if = "Option::is_none")]
     span: &'a Option<Span>,
+    #[serde(rename = "$handle", default, skip_serializing_if = "Option::is_none")]
+    handle: Option<u64>,
     #[serde(
-        rename = "$nodeHandle",
+        rename = "$parentHandle",
         default,
         skip_serializing_if = "Option::is_none"
     )]
-    node_handle: &'a Option<u64>,
+    parent_handle: Option<u64>,
+    #[serde(
+        rename = "$treeHandle",
+        default,
+        skip_serializing_if = "Option::is_none"
+    )]
+    tree_handle: Option<u64>,
     #[serde(
         rename = "$childIndex",
         default,
@@ -275,8 +309,12 @@ struct NodeDataDe {
     text: Option<String>,
     #[serde(rename = "$span", default)]
     span: Option<Span>,
-    #[serde(rename = "$nodeHandle", default)]
-    node_handle: Option<u64>,
+    #[serde(rename = "$handle", default)]
+    handle: Option<u64>,
+    #[serde(rename = "$parentHandle", default)]
+    parent_handle: Option<u64>,
+    #[serde(rename = "$treeHandle", default)]
+    tree_handle: Option<u64>,
     #[serde(rename = "$childIndex", default)]
     child_index: Option<u16>,
     #[serde(rename = "$_trivia", default)]
@@ -388,7 +426,18 @@ impl Serialize for NodeData {
             children: &self.children,
             text: &self.text,
             span: &self.span,
-            node_handle: &self.node_handle,
+            handle: match self.handle {
+                Some(NodeHandle::Own(h)) => Some(h),
+                _ => None,
+            },
+            parent_handle: match self.handle {
+                Some(NodeHandle::Parent(h)) => Some(h),
+                _ => None,
+            },
+            tree_handle: match self.handle {
+                Some(NodeHandle::Tree(h)) => Some(h),
+                _ => None,
+            },
             child_index: &self.child_index,
             trivia_data: &self.trivia_data,
             slot_order: &self.slot_order,
@@ -411,6 +460,17 @@ impl<'de> Deserialize<'de> for NodeData {
                 )));
             }
         }
+        let handle = match (wire.handle, wire.parent_handle, wire.tree_handle) {
+            (None, None, None) => None,
+            (Some(h), None, None) => Some(NodeHandle::Own(h)),
+            (None, Some(h), None) => Some(NodeHandle::Parent(h)),
+            (None, None, Some(h)) => Some(NodeHandle::Tree(h)),
+            _ => {
+                return Err(serde::de::Error::custom(
+                    "NodeData carries more than one of $handle, $parentHandle, $treeHandle",
+                ))
+            }
+        };
         let fields = if fields.is_empty() {
             None
         } else {
@@ -425,7 +485,7 @@ impl<'de> Deserialize<'de> for NodeData {
             children: wire.children,
             text: wire.text,
             span: wire.span,
-            node_handle: wire.node_handle,
+            handle,
             child_index: wire.child_index,
             trivia_data: wire.trivia_data,
             slot_order: wire.slot_order,
@@ -631,7 +691,7 @@ fn scalar_leaf_value(node: &NodeData) -> Option<FieldScalar<'_>> {
     if node.fields.is_some() || node.children.is_some() {
         return None;
     }
-    if node.node_handle.is_some() || node.child_index.is_some() {
+    if node.handle.is_some() || node.child_index.is_some() {
         return None;
     }
     if node.named {
@@ -653,7 +713,7 @@ fn scalar_child_value(node: &NodeData) -> Option<FieldScalar<'_>> {
     if node.fields.is_some() || node.children.is_some() {
         return None;
     }
-    if node.node_handle.is_some() || node.child_index.is_some() {
+    if node.handle.is_some() || node.child_index.is_some() {
         return None;
     }
     if node.named {
@@ -672,7 +732,7 @@ fn scalar_text_leaf(text: String) -> NodeData {
         children: None,
         text: Some(text),
         span: None,
-        node_handle: None,
+        handle: None,
         child_index: None,
         trivia_data: None,
         slot_order: None,
@@ -692,7 +752,7 @@ fn scalar_kind_leaf(kind: KindId) -> NodeData {
         children: None,
         text: Some(kind.to_string()),
         span: None,
-        node_handle: None,
+        handle: None,
         child_index: None,
         trivia_data: None,
         slot_order: None,

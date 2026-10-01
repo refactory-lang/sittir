@@ -13,7 +13,7 @@
 
 use serde_json::Value;
 use sittir_core::read_node::{read_node, HandleMint, NoHandles, ReadDepth, ReadModel};
-use sittir_core::types::{FieldValue, KindId, NodeData, Source};
+use sittir_core::types::{FieldValue, KindId, NodeData, NodeHandle, Source};
 use std::num::NonZeroU32;
 
 /// A model with no grammar facts: the reader's own rules only.
@@ -86,8 +86,8 @@ fn rust_top_level_node_has_allowed_keys_only() {
     assert_shape(&json, "rust.root");
     assert_eq!(node.source, Source::Ts, "source must be ts");
     assert_eq!(
-        node.node_handle,
-        Some(0),
+        node.handle,
+        Some(NodeHandle::Own(0)),
         "root carries its reserved handle"
     );
     assert!(node.child_index.is_none(), "root has no child_index");
@@ -152,7 +152,7 @@ fn child_index_set_on_non_root_nodes() {
         node.child_index.is_none(),
         "root must not have a childIndex"
     );
-    assert_eq!(node.node_handle, Some(0));
+    assert_eq!(node.handle, Some(NodeHandle::Own(0)));
 }
 
 /// Records every handle a read asks for and mints them from 100 up.
@@ -184,11 +184,11 @@ fn a_two_level_read_expands_each_child_and_leaves_its_children_as_stubs_under_a_
     assert_eq!(mint.0, vec![(0, 0)]);
     let statement = sole_slot(&root);
     assert!(statement.fields.is_some(), "the child is expanded");
-    assert_eq!(statement.node_handle, None, "an expanded child names no coordinate of its own");
+    assert_eq!(statement.handle, None, "an expanded child names no coordinate of its own");
     assert_eq!(statement.child_index, Some(0));
     let assignment = sole_slot(statement);
     assert!(assignment.fields.is_none(), "the grandchild is a stub");
-    assert_eq!(assignment.node_handle, Some(100));
+    assert_eq!(assignment.handle, Some(NodeHandle::Parent(100)));
     assert_eq!(assignment.child_index, Some(0));
 }
 
@@ -200,7 +200,61 @@ fn a_one_level_read_mints_nothing() {
     let mut mint = RecordingMint(Vec::new());
     let root = read_node(&tree, source, None, Some(0), ReadDepth::SHALLOW, &Plain, &mut mint);
     assert!(mint.0.is_empty());
-    assert_eq!(sole_slot(&root).node_handle, Some(0));
+    assert_eq!(sole_slot(&root).handle, Some(NodeHandle::Parent(0)));
+}
+
+#[test]
+fn a_deep_read_tags_its_leaves_and_trivia_with_the_tree_and_names_no_other_coordinate() {
+    let lang: tree_sitter::Language = tree_sitter_rust::LANGUAGE.into();
+    let source = "fn f() { g(x); } // c\n";
+    let tree = parse_tree(lang, source);
+    let root = read_node(&tree, source, None, Some(7), ReadDepth::Deep, &Plain, &mut NoHandles);
+    assert_eq!(root.handle, Some(NodeHandle::Own(7)));
+
+    fn walk(v: &Value, keys: &mut Vec<(bool, bool, Option<u64>, bool)>) {
+        match v {
+            Value::Object(map) => {
+                if map.contains_key("$type") {
+                    keys.push((
+                        map.contains_key("$handle"),
+                        map.contains_key("$parentHandle"),
+                        map.get("$treeHandle").and_then(Value::as_u64),
+                        map.contains_key("$childIndex"),
+                    ));
+                }
+                for child in map.values() {
+                    walk(child, keys);
+                }
+            }
+            Value::Array(arr) => arr.iter().for_each(|c| walk(c, keys)),
+            _ => {}
+        }
+    }
+    let json = serde_json::to_value(&root).expect("serialize");
+    let mut keys = Vec::new();
+    walk(&json, &mut keys);
+    let (root_keys, below) = keys.split_first().expect("the root");
+    assert_eq!(*root_keys, (true, false, None, false));
+    assert!(below.iter().all(|(own, parent, _, _)| !own && !parent), "{keys:?}");
+    let tagged: Vec<_> = below.iter().filter(|(_, _, tree, _)| tree.is_some()).collect();
+    assert!(!tagged.is_empty(), "{keys:?}");
+    assert!(tagged.iter().all(|(_, _, tree, index)| *tree == Some(7) && !index), "{keys:?}");
+    fn trivia_entries<'a>(v: &'a Value, out: &mut Vec<&'a Value>) {
+        match v {
+            Value::Object(map) => {
+                if let Some(Value::Object(trivia)) = map.get("$_trivia") {
+                    out.extend(trivia.values().filter_map(Value::as_array).flatten());
+                }
+                map.values().for_each(|c| trivia_entries(c, out));
+            }
+            Value::Array(arr) => arr.iter().for_each(|c| trivia_entries(c, out)),
+            _ => {}
+        }
+    }
+    let mut entries = Vec::new();
+    trivia_entries(&json, &mut entries);
+    assert!(!entries.is_empty(), "the comment is some node's trivia");
+    assert!(entries.iter().all(|e| e.get("$treeHandle").and_then(Value::as_u64) == Some(7)), "{entries:?}");
 }
 
 #[test]
@@ -344,14 +398,14 @@ fn raw_native_children_payload_stays_array_shaped() {
 }
 
 /// Pre-order walk over the JSON NodeData tree, collecting child stub
-/// `(childIndex, nodeHandle)` pairs. Recurses through `_<slot>` values
+/// `(childIndex, parentHandle)` pairs. Recurses through `_<slot>` values
 /// and `$other`.
 fn collect_child_meta(value: &Value, out: &mut Vec<(u16, u32)>, is_child: bool) {
     match value {
         Value::Object(map) => {
             if is_child {
                 if let (Some(Value::Number(idx)), Some(Value::Number(handle))) =
-                    (map.get("$childIndex"), map.get("$nodeHandle"))
+                    (map.get("$childIndex"), map.get("$parentHandle"))
                 {
                     if let (Some(idx), Some(handle)) = (idx.as_u64(), handle.as_u64()) {
                         out.push((idx as u16, handle as u32));
@@ -387,7 +441,9 @@ fn is_allowed_node_key(key: &str) -> bool {
             | "$other"
             | "$text"
             | "$span"
-            | "$nodeHandle"
+            | "$handle"
+            | "$parentHandle"
+            | "$treeHandle"
             | "$childIndex"
             | "$_trivia"
             | "$slotOrder"

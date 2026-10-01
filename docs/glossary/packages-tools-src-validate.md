@@ -326,12 +326,10 @@ Every trivia side is walked (leading, trailing and inner), and a node found in a
 #### body
 
 ```text
-// A trivia entry's own `$nodeHandle` differs from its containing
-// sibling's (`d`) — it was read as a child of the ENCLOSING node,
-// not `d` — so prefer the child's own handle when present. For
-// ordinary field/children-tree entries this is always equal to
-// `d.$nodeHandle` (both were read via the same `read_children`
-// call), so the preference is a no-op there.
+// A stub names its own coordinate: its parent's handle
+// (`$parentHandle`) beside its `$childIndex`. A child expanded inside
+// the read carries no handle, so its coordinate is its index under the
+// handle of the node it was read with (`d.$handle`).
 ```
 
 ### `packages/tools/src/validate/common.ts::NativeCandidateCoords`
@@ -379,8 +377,8 @@ Every trivia side is walked (leading, trailing and inner), and a node found in a
 #### body
 
 ```text
-// See findNativeNodeId's walk() for why the child's own
-// `$nodeHandle` is preferred over `d`'s.
+// See findNativeNodeId's walk() for why the child's
+// `$parentHandle` comes before `d.$handle`.
 ```
 
 #### body
@@ -880,7 +878,7 @@ and is read with `readFileSync` on the path.
 #### body
 
 ```text
-// $nodeHandle + $childIndex form the composite dedup key: a handle can
+// $parentHandle + $childIndex form the composite dedup key: a handle can
 // repeat across child positions, so neither part suffices alone.
 ```
 
@@ -1194,7 +1192,7 @@ and is read with `readFileSync` on the path.
 
 ### `packages/tools/src/validate/common.ts::ReadNodeLike`
 
-The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$text`, `$span`, `$nodeHandle`, `$childIndex`, `$named`), its unnamed children under `$other`, and its `$_trivia`. It is the one read-node type in tools; the exercise roundtrip and the factory-source printer import it rather than declaring narrower copies.
+The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$text`, `$span`, `$parentHandle`, `$childIndex`, `$named`), its unnamed children under `$other`, and its `$_trivia`. It is the one read-node type in tools; the exercise roundtrip and the factory-source printer import it rather than declaring narrower copies.
 
 ### `packages/tools/src/validate/common.ts::ReadNodeLike.$type`
 
@@ -1327,7 +1325,7 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 
 ```text
 /**
- * Materialize a lazily read child (`$nodeHandle` + `$childIndex`) into its
+ * Materialize a lazily read child (`$parentHandle` + `$childIndex`) into its
  * own `_<name>` keys / `$children`. Native handles read via napi
  * (`tree.read`); wasm handles fall through to the JS walker, so validators
  * stay backend-agnostic. A handle that lacks the node (a factory-built

@@ -4,7 +4,7 @@
 // Nothing was rebuilt under either, so both fold back to the root's
 // coordinate and render the source byte for byte.
 import { describe, expect, it } from 'vitest';
-import { createEngine } from '@sittir/common';
+import { createEngine, treeHandleOf } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import rust from '../src/index.ts';
 
@@ -22,14 +22,14 @@ function countStubs(value: unknown): number {
 	if (Array.isArray(value)) return value.reduce<number>((total, entry) => total + countStubs(entry), 0);
 	if (value === null || typeof value !== 'object') return 0;
 	const record = value as Record<string, unknown>;
-	let total = record.$nodeHandle != null && record.$childIndex != null ? 1 : 0;
+	let total = record.$parentHandle != null && record.$childIndex != null ? 1 : 0;
 	for (const [key, child] of Object.entries(record)) {
 		if (key.startsWith('_') || key === '$other') total += countStubs(child);
 	}
 	return total;
 }
 
-type Stub = Record<string, unknown> & { readonly $type: number; readonly $nodeHandle: number; readonly $childIndex: number };
+type Stub = Record<string, unknown> & { readonly $type: number; readonly $parentHandle: number; readonly $childIndex: number };
 
 /** The unexpanded read stubs directly under `value`'s slots, in slot order. */
 function stubsOf(value: Record<string, unknown>): Stub[] {
@@ -38,7 +38,7 @@ function stubsOf(value: Record<string, unknown>): Stub[] {
 		.flatMap(([, child]) => (Array.isArray(child) ? child : [child]));
 	return children.filter(
 		(child): child is Stub =>
-			typeof child === 'object' && child !== null && (child as Stub).$nodeHandle != null && countStubs(child) === 1
+			typeof child === 'object' && child !== null && (child as Stub).$parentHandle != null && countStubs(child) === 1
 	);
 }
 
@@ -60,17 +60,17 @@ describe('read depth', () => {
 		const { root, tree } = native.parseAndRead(SOURCE);
 		const read = (tree as TreeHandle).read!;
 		const [item] = stubsOf(root as unknown as Record<string, unknown>);
-		const two = read(item!.$nodeHandle, item!.$childIndex, 2) as unknown as Record<string, unknown>;
+		const two = read(item!.$parentHandle, item!.$childIndex, 2) as unknown as Record<string, unknown>;
 		const expanded = Object.entries(two)
 			.filter(([key]) => key.startsWith('_'))
 			.map(([, child]) => child as Record<string, unknown>)
 			.filter((child) => Object.keys(child).some((key) => key.startsWith('_')));
 		expect(expanded.length).toBeGreaterThan(0);
-		for (const child of expanded) expect(child.$nodeHandle).toBeUndefined();
+		for (const child of expanded) expect(treeHandleOf(child)).toBeUndefined();
 		const grandchildren = expanded.flatMap(stubsOf);
 		expect(grandchildren.length).toBeGreaterThan(0);
 		for (const stub of grandchildren) {
-			const reread = read(stub.$nodeHandle, stub.$childIndex);
+			const reread = read(stub.$parentHandle, stub.$childIndex);
 			expect([reread.$type, reread.$span]).toEqual([stub.$type, stub.$span]);
 		}
 	});
@@ -80,7 +80,7 @@ describe('read depth', () => {
 		const { root, tree } = native.parseAndRead(SOURCE);
 		const read = (tree as TreeHandle).read!;
 		const [item] = stubsOf(root as unknown as Record<string, unknown>);
-		expect(() => read(item!.$nodeHandle, item!.$childIndex, 0)).toThrow(/whole number of levels/);
+		expect(() => read(item!.$parentHandle, item!.$childIndex, 0)).toThrow(/whole number of levels/);
 	});
 
 	it('gives a deep-parsed root the same accessor surface as a shallow one', async () => {

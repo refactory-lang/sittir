@@ -9,7 +9,7 @@ function leaf(handle: number, text: string): WrappedNodeData {
 		$source: 0,
 		$named: true,
 		$text: text,
-		$nodeHandle: handle,
+		$parentHandle: handle,
 		$childIndex: 0
 	};
 }

@@ -183,7 +183,7 @@ function hasKindTag(value: unknown): value is AnyNodeData {
 	return value !== null && typeof value === 'object' && '$type' in value;
 }
 
-const TREE_PROVENANCE_KEYS = new Set(['$span', '$nodeHandle', '$childIndex', '$source']);
+const TREE_PROVENANCE_KEYS = new Set(['$span', '$handle', '$parentHandle', '$treeHandle', '$childIndex', '$source']);
 
 function toRenderableNode(value: unknown, seen = new WeakMap<object, unknown>()): unknown {
 	if (Array.isArray(value)) {

@@ -23,16 +23,19 @@
 //! - `$text`       — non-empty source text for anonymous tokens, error nodes
 //!   and childless nodes; a node with children is addressed by its span.
 //! - `$span`       — `{start, end}` from `node.byte_range()`.
-//! - `$nodeHandle` — current node handle on the returned node; parent
-//!   handle on every child at the read's last level (stubs and leaves
-//!   alike), so an untouched child is a coordinate into its tree; a child
-//!   expanded above that level carries none of its own; on a deep read only
-//!   the leaves carry one, the tree's tag, since nothing is re-read.
+//! - `$handle`       — the returned node's own handle.
+//! - `$parentHandle` — the parent's handle, on every child at a bounded
+//!   read's last level (stubs and leaves alike): with `$childIndex` it is
+//!   the coordinate the child is expanded at.
+//! - `$treeHandle`   — the tree's tag, on a deep read's leaves and on every
+//!   trivia entry: nothing re-reads them, so it names only the tree their
+//!   span slices.
+//! - A child expanded inside a read carries none of the three.
 //! - `$childIndex` — position within parent's children array on every
 //!   child a bounded read returns and a deep read's expanded children.
 //!   `None` on the returned node itself and on a deep read's leaves.
 
-use crate::types::{FieldValue, KindId, NodeData, NodeTrivia, Source, Span};
+use crate::types::{FieldValue, KindId, NodeData, NodeHandle, NodeTrivia, Source, Span};
 use indexmap::IndexMap;
 use std::collections::BTreeMap;
 use std::num::NonZeroU32;
@@ -46,14 +49,13 @@ use std::num::NonZeroU32;
 /// the lazy path. `Deep` expands everything in one pass instead.
 ///
 /// A child expanded above the last level gets a handle minted for it, so the
-/// stubs under it can be re-read, but carries no `$nodeHandle` of its own: a
-/// stub is the only node that names a coordinate to re-read, and one on an
-/// expanded node would make the wrap layer's drill-in read it again.
+/// stubs under it can be re-read, but carries no handle of its own: a stub
+/// is the only node that names a coordinate to re-read, and one on an
+/// expanded node would make the wrap layer's expansion read it again.
 ///
-/// A deep descendant keeps its `$childIndex` but gets NO `$nodeHandle`:
-/// nothing needs to re-read it, and a handle would invite exactly that —
-/// the wrap layer's drill-in would go back to the tree and replace the
-/// expansion it already has with a fresh shallow read.
+/// A deep descendant keeps its `$childIndex` but gets no handle: nothing
+/// needs to re-read it. A deep read's leaf carries only `$treeHandle`, which
+/// names its tree and no coordinate to re-read.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ReadDepth {
     Levels(NonZeroU32),
@@ -214,7 +216,8 @@ fn identity(node: &tree_sitter::Node<'_>) -> (KindId, Option<KindId>) {
 /// `tree_handle` is any handle this tree minted — the tag a trivia entry's
 /// coordinate carries, since a comment is never addressed on its own and so
 /// never gets a handle of its own. `node_handle` is this node's own handle
-/// when it has one.
+/// when it has one, stamped as `$handle` and passed to its children as their
+/// `$parentHandle`.
 fn read_ts_node(
     node: tree_sitter::Node<'_>,
     source: &str,
@@ -254,7 +257,7 @@ fn read_ts_node(
         children,
         text,
         span: Some(span),
-        node_handle,
+        handle: node_handle.map(NodeHandle::Own),
         child_index: None,
         trivia_data: node_trivia(node, source, tree_handle, model),
         slot_order,
@@ -295,7 +298,7 @@ fn read_ts_node(
 /// `read_ts_node`, not shallow stubs) since they are not independently
 /// addressable through the normal `_<slot>`/`$other` handle+child-index
 /// navigation -- nothing would ever drill in to hydrate a stub left here.
-/// Each entry still carries a coordinate — the tree's tag in `$nodeHandle`
+/// Each entry still carries a coordinate — the tree's tag in `$treeHandle`
 /// and its own `$span` — so an untouched comment renders as the bytes it
 /// spans, whatever its kind's transport would otherwise need.
 /// An entry read with no fields and no children (rust's regular `/* a */`,
@@ -311,15 +314,10 @@ fn node_trivia(
         return None;
     }
     let entry = |extra: tree_sitter::Node<'_>, same_line: bool, tokens_between: u16| {
-        let data = read_ts_node(
-            extra,
-            source,
-            tree_handle,
-            tree_handle,
-            ReadDepth::Deep,
-            model,
-            &mut NoHandles,
-        );
+        let data = NodeData {
+            handle: tree_handle.map(NodeHandle::Tree),
+            ..read_ts_node(extra, source, None, tree_handle, ReadDepth::Deep, model, &mut NoHandles)
+        };
         let childless = data.fields.is_none()
             && data
                 .children
@@ -537,9 +535,9 @@ fn read_children(
             // same holds for its trivia: a shallow leaf's is read when the
             // wrap layer re-reads it, a deep leaf's is read here.
             let (handle, child_index, trivia_data) = match depth {
-                ReadDepth::Levels(_) => (node_handle, Some(i as u16), None),
+                ReadDepth::Levels(_) => (node_handle.map(NodeHandle::Parent), Some(i as u16), None),
                 ReadDepth::Deep => (
-                    tree_handle,
+                    tree_handle.map(NodeHandle::Tree),
                     None,
                     node_trivia(child, source, tree_handle, model),
                 ),
@@ -559,7 +557,7 @@ fn read_children(
                 Some(below) => {
                     let handle = node_handle.and_then(|parent| mint.mint(parent, i as u16));
                     NodeData {
-                        node_handle: None,
+                        handle: None,
                         child_index: Some(i as u16),
                         ..read_ts_node(child, source, handle, tree_handle, below, model, mint)
                     }
@@ -661,7 +659,7 @@ fn read_child_stub(
             start: byte_range.start as u32,
             end: byte_range.end as u32,
         }),
-        node_handle: parent_handle,
+        handle: parent_handle.map(NodeHandle::Parent),
         child_index: Some(child_index),
         trivia_data: None,
         slot_order: None,
@@ -682,7 +680,7 @@ fn read_materialized_leaf(
     child: tree_sitter::Node<'_>,
     source: &str,
     model: &dyn ReadModel,
-    handle: Option<u64>,
+    handle: Option<NodeHandle>,
     child_index: Option<u16>,
     tree_handle: Option<u64>,
 ) -> NodeData {
@@ -705,7 +703,7 @@ fn read_materialized_leaf(
             start: byte_range.start as u32,
             end: byte_range.end as u32,
         }),
-        node_handle: handle,
+        handle,
         child_index,
         trivia_data: None,
         slot_order,

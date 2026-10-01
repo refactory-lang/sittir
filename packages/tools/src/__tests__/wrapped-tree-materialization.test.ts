@@ -22,7 +22,7 @@ function leaf(handle: number, text: string): WrappedNodeData {
 		$source: 0,
 		$named: true,
 		$text: text,
-		$nodeHandle: handle,
+		$parentHandle: handle,
 		$childIndex: 0
 	};
 }
@@ -80,7 +80,7 @@ describe('wrapped tree materialization', () => {
 			$type: 1,
 			$source: 0,
 			$named: true,
-			$nodeHandle: 1,
+			$parentHandle: 1,
 			$childIndex: 0,
 			_value: leaf(10, 'raw-field'),
 			$other: leaf(20, 'raw-child'),
@@ -112,7 +112,7 @@ describe('wrapped tree materialization', () => {
 			$type: 1,
 			$source: 0,
 			$named: true,
-			$nodeHandle: 1,
+			$parentHandle: 1,
 			$childIndex: 0,
 			_value: rawFieldChild,
 			$other: [rawChildrenChild],
@@ -149,7 +149,7 @@ describe('wrapped tree materialization', () => {
 			$type: 1,
 			$source: 0,
 			$named: true,
-			$nodeHandle: 1,
+			$parentHandle: 1,
 			$childIndex: 0,
 			_value: leaf(10, 'raw-field'),
 			$other: leaf(20, 'raw-child'),
@@ -178,7 +178,7 @@ describe('wrapped tree materialization', () => {
 			$source: 0,
 			$named: true,
 			$text: 'child',
-			$nodeHandle: 21,
+			$parentHandle: 21,
 			$childIndex: 0
 		});
 		expect(materialized).not.toHaveProperty('value');

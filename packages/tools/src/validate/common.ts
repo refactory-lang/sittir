@@ -386,7 +386,7 @@ export function findNativeNodeId(
 			if (found !== null) return found;
 		}
 		for (const child of collectNativeChildNodes(d)) {
-			const handleForChild = child.$nodeHandle ?? d.$nodeHandle;
+			const handleForChild = child.$parentHandle ?? d.$handle;
 			if (isKind(child) && handleForChild !== undefined && child.$childIndex !== undefined) {
 				return { handle: handleForChild, childIndex: child.$childIndex };
 			}
@@ -430,7 +430,7 @@ export function walkNativeForKind(
 
 	function walk(d: AnyNodeData): void {
 		for (const child of collectNativeChildNodes(d)) {
-			const handleForChild = child.$nodeHandle ?? d.$nodeHandle;
+			const handleForChild = child.$parentHandle ?? d.$handle;
 			if (isKind(child) && handleForChild !== undefined && child.$childIndex !== undefined) {
 				results.push({
 					coords: { handle: handleForChild, childIndex: child.$childIndex },
@@ -895,7 +895,7 @@ export function walkWrappedTree(
 	const seen = new Set<string>();
 	const recurse = (w: unknown): void => {
 		if (!isWrappedNodeData(w)) return;
-		const handle = w.$nodeHandle;
+		const handle = w.$parentHandle;
 		const childIdx = w.$childIndex;
 		if (handle != null && childIdx != null) {
 			const key = `${handle}:${childIdx}`;
@@ -1002,7 +1002,7 @@ function accessorCandidatesForStorageKey(storageKey: string): readonly string[] 
 
 export interface WrappedNodeData {
 	readonly $type: number;
-	readonly $nodeHandle?: number;
+	readonly $parentHandle?: number;
 	readonly $childIndex?: number;
 	readonly [k: string]: unknown;
 }
@@ -1154,7 +1154,7 @@ export interface ReadNodeLike {
 	readonly $type?: string | number;
 	readonly $text?: string;
 	readonly $span?: { readonly start: number; readonly end: number };
-	readonly $nodeHandle?: number;
+	readonly $parentHandle?: number;
 	readonly $childIndex?: number;
 	readonly $other?: unknown | readonly unknown[];
 	readonly $named?: boolean;
@@ -1247,11 +1247,11 @@ function carriesOwnContents(c: ReadNodeLike): boolean {
 
 function drillReadNode(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {
 	const { tree } = opts;
-	if (c.$nodeHandle == null || c.$childIndex == null || !tree) return c;
+	if (c.$parentHandle == null || c.$childIndex == null || !tree) return c;
 	if (carriesOwnContents(c)) return c;
 	try {
 		return (
-			tree.read ? tree.read(c.$nodeHandle, c.$childIndex) : readNodeFn(tree, c.$nodeHandle, c.$childIndex)
+			tree.read ? tree.read(c.$parentHandle, c.$childIndex) : readNodeFn(tree, c.$parentHandle, c.$childIndex)
 		) as ReadNodeLike;
 	} catch {
 		return c;

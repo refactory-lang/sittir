@@ -347,7 +347,7 @@ export function leadingTriviaRenderedWidth(data: AnyNodeData, render: (node: Any
 /**
  * A render fixture's input, detached from the engine that read it. A
  * coordinate names the tree its engine still holds, so it means nothing
- * in another process: every `$nodeHandle`/`$childIndex` is dropped. A
+ * in another process: every handle and `$childIndex` is dropped. A
  * storage-less leaf kind (`isLeafKind`) keeps its identity with its own
  * bytes as `$text` (sliced from `source` when the reader captured none);
  * a storage-less compound keeps only its identity and rebuilds from its
@@ -385,7 +385,7 @@ export function selfContainedRenderInput(
 		const record = value as Record<string, unknown>;
 		const out: Record<string, unknown> = {};
 		for (const [key, raw] of Object.entries(record)) {
-			if (key === '$nodeHandle' || key === '$childIndex' || key === '$textOnly') continue;
+			if (key === '$handle' || key === '$parentHandle' || key === '$treeHandle' || key === '$childIndex' || key === '$textOnly') continue;
 			if (key === '$_trivia' && raw != null) {
 				out[key] = mapTriviaEntries(raw as TriviaSides<unknown>, walkTrivia);
 			} else {
@@ -702,7 +702,7 @@ export async function validateReadRenderParse(
 					// (display) drives the post-reparse node lookup.
 					//
 					// Shallow mode (`recursive !== true`): read the node's one-level
-					// native data via its coords instead — children stay `$nodeHandle`
+					// native data via its coords instead — children stay `$parentHandle`
 					// stubs. This preserves the read-render-parse-shallow metric's
 					// meaning (render() fed stub-bearing data, the shape lazy callers
 					// send) as distinct from the deep run's full materialization.
@@ -718,8 +718,8 @@ export async function validateReadRenderParse(
 						// child mislabeled as the parent). Root candidates take the
 						// deep-materialization path instead of guessing an index.
 						data =
-							recursive !== true && cand.node.$nodeHandle != null && cand.node.$childIndex != null && handle.read
-								? (handle.read(cand.node.$nodeHandle, cand.node.$childIndex) as unknown as AnyNodeData)
+							recursive !== true && cand.node.$parentHandle != null && cand.node.$childIndex != null && handle.read
+								? (handle.read(cand.node.$parentHandle, cand.node.$childIndex) as unknown as AnyNodeData)
 								: (stripStructuralProvenance(materializeWrappedNodeData(cand.node, onAccessorThrow)) as AnyNodeData);
 					} catch (e) {
 						kindErrors.push({

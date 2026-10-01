@@ -4,6 +4,7 @@
 import {
 	readNode as readNodeJs,
 	markEdited as $edited,
+	treeHandleOf,
 	mapTriviaEntries,
 	projectInterior,
 	coerceBooleanKeywordStorage,
@@ -238,10 +239,10 @@ const _LIST_OWNER_KINDS: ReadonlySet<number> = new Set([
 function drillInSelf<T>(entry: T, tree: TreeHandle): T {
 	if (entry == null) return undefined as unknown as T;
 	const e = entry as unknown as _NodeData;
-	if (e.$nodeHandle != null && e.$childIndex != null)
+	if (e.$parentHandle != null && e.$childIndex != null)
 		return readTreeNode(
 			tree,
-			e.$nodeHandle,
+			e.$parentHandle,
 			e.$childIndex,
 			_LIST_OWNER_KINDS.has(e.$type as number) ? 2 : undefined
 		) as unknown as T;
@@ -1054,10 +1055,7 @@ export function wrapStatement(
 			'decorated_definition',
 			'match_statement'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.Statement>(node as T.Statement, tree) as unknown as T.Statement.Parsed;
 	}
 	return drillIn<T.Statement>(
@@ -1502,10 +1500,7 @@ export function wrapNamedExpressionLhs(
 			'type_keyword',
 			'match_keyword'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.NamedExpressionLhs>(node as T.NamedExpressionLhs, tree) as unknown as SupertypeSurface<
 			T.NamedExpressionLhs,
 			T.ParsedByKindId
@@ -2155,10 +2150,7 @@ export function wrapWithClause(
 		| readonly T.WithClause[]
 		| undefined;
 	const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['with_clause_bare', 'with_clause_paren']);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.WithClause>(node as T.WithClause, tree) as unknown as T.WithClause.Parsed;
 	}
 	return drillIn<T.WithClause>(
@@ -3498,10 +3490,7 @@ export function wrapParameter(
 			'positional_separator',
 			'dictionary_splat_pattern'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.Parameter>(node as T.Parameter, tree) as unknown as T.Parameter.Parsed;
 	}
 	return drillIn<T.Parameter>(
@@ -3564,10 +3553,7 @@ export function wrapPattern(
 			'tuple_pattern',
 			'list_pattern'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.Pattern>(node as T.Pattern, tree) as unknown as T.Pattern.Parsed;
 	}
 	return drillIn<T.Pattern>(
@@ -4014,10 +4000,7 @@ export function wrapExpressionWithinForInClause(
 			'named_expression',
 			'as_pattern'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.ExpressionWithinForInClause>(
 			node as T.ExpressionWithinForInClause,
 			tree
@@ -4182,10 +4165,7 @@ export function wrapExpression(
 			'ellipsis',
 			'list_splat_pattern'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.Expression>(node as T.Expression, tree) as unknown as T.Expression.Parsed;
 	}
 	return drillIn<T.Expression>(
@@ -4332,10 +4312,7 @@ export function wrapPrimaryExpression(
 			'float_leading_point',
 			'float_scientific'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.PrimaryExpression>(node as T.PrimaryExpression, tree) as unknown as T.PrimaryExpression.Parsed;
 	}
 	return drillIn<T.PrimaryExpression>(
@@ -4696,10 +4673,7 @@ export function wrapAssignment(
 		| undefined;
 	const filtered =
 		kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['assignment_eq', 'assignment_type', 'assignment_typed']);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.Assignment>(node as T.Assignment, tree) as unknown as T.Assignment.Parsed;
 	}
 	return drillIn<T.Assignment>(
@@ -5008,10 +4982,7 @@ export function wrapRightHandSide(
 			'assignment_type',
 			'assignment_typed'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.RightHandSide>(node as T.RightHandSide, tree) as unknown as SupertypeSurface<
 			T.RightHandSide,
 			T.ParsedByKindId
@@ -6432,10 +6403,7 @@ export function wrapFExpression(
 			'named_expression',
 			'as_pattern'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.FExpression>(node as T.FExpression, tree) as unknown as SupertypeSurface<
 			T.FExpression,
 			T.ParsedByKindId
@@ -6486,10 +6454,7 @@ export function wrapEscapeSequence(
 			'escape_sequence_simple',
 			'escape_sequence_named'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.EscapeSequence>(node as T.EscapeSequence, tree) as unknown as T.EscapeSequence.Parsed;
 	}
 	return drillIn<T.EscapeSequence>(
@@ -6563,10 +6528,7 @@ export function wrapInteger(
 			'integer_decimal_imaginary',
 			'integer_decimal_plain'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.Integer>(node as T.Integer, tree) as unknown as T.Integer.Parsed;
 	}
 	return drillIn<T.Integer>(
@@ -6592,10 +6554,7 @@ export function wrapFloat(
 		| undefined;
 	const filtered =
 		kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['float_point', 'float_leading_point', 'float_scientific']);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.Float>(node as T.Float, tree) as unknown as T.Float.Parsed;
 	}
 	return drillIn<T.Float>(
@@ -7622,10 +7581,7 @@ export function wrapIntegerDecimal(
 			'integer_decimal_imaginary',
 			'integer_decimal_plain'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.IntegerDecimal>(node as T.IntegerDecimal, tree) as unknown as T.IntegerDecimal.Parsed;
 	}
 	return drillIn<T.IntegerDecimal>(
@@ -8889,7 +8845,9 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
 	type Wire = _NodeData & {
 		readonly $displayType?: number;
-		readonly $nodeHandle?: number;
+		readonly $handle?: number;
+		readonly $parentHandle?: number;
+		readonly $treeHandle?: number;
 		readonly $childIndex?: number;
 		readonly $span?: unknown;
 	};
@@ -8903,8 +8861,8 @@ function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
 		return { ...container, $type: envelope, _content: child } as unknown as _NodeData;
 	}
 	const full = (
-		shown.$nodeHandle != null && shown.$childIndex != null
-			? readNode(tree, shown.$nodeHandle, shown.$childIndex)
+		shown.$parentHandle != null && shown.$childIndex != null
+			? readNode(tree, shown.$parentHandle, shown.$childIndex)
 			: shown
 	) as Wire;
 	const { $displayType: _display, $_trivia, $childIndex: _childIndex, ...storage } = full;
@@ -8913,7 +8871,9 @@ function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
 		$source: shown.$source,
 		$named: shown.$named,
 		$span: shown.$span,
-		$nodeHandle: shown.$nodeHandle,
+		$handle: shown.$handle,
+		$parentHandle: shown.$parentHandle,
+		$treeHandle: shown.$treeHandle,
 		$childIndex: shown.$childIndex,
 		$_trivia: shown.$_trivia ?? _wrapTrivia($_trivia, tree),
 		_content: storage

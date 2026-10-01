@@ -28,7 +28,7 @@ interface AccessorThrowRecord {
 
 interface WalkNode {
 	readonly $type: string | number;
-	readonly $nodeHandle?: number;
+	readonly $parentHandle?: number;
 	readonly $childIndex?: number;
 	readonly [key: string]: unknown;
 }
@@ -93,8 +93,8 @@ function walkTree(root: unknown, visit: (node: WalkNode) => void): void {
 		const ref = value as object;
 		if (seenRefs.has(ref)) return;
 		const coordKey =
-			value.$nodeHandle !== undefined && value.$childIndex !== undefined
-				? `${value.$nodeHandle}:${value.$childIndex}`
+			value.$parentHandle !== undefined && value.$childIndex !== undefined
+				? `${value.$parentHandle}:${value.$childIndex}`
 				: undefined;
 		if (coordKey !== undefined && seenCoords.has(coordKey)) return;
 		seenRefs.add(ref);

@@ -4,6 +4,7 @@
 import {
 	readNode as readNodeJs,
 	markEdited as $edited,
+	treeHandleOf,
 	mapTriviaEntries,
 	projectInterior,
 	coerceBooleanKeywordStorage,
@@ -210,8 +211,8 @@ function normalizeRepeatedWrapSlot<T>(
 function drillInSelf<T>(entry: T, tree: TreeHandle): T {
 	if (entry == null) return undefined as unknown as T;
 	const e = entry as unknown as _NodeData;
-	if (e.$nodeHandle != null && e.$childIndex != null)
-		return readTreeNode(tree, e.$nodeHandle, e.$childIndex) as unknown as T;
+	if (e.$parentHandle != null && e.$childIndex != null)
+		return readTreeNode(tree, e.$parentHandle, e.$childIndex) as unknown as T;
 	return entry;
 }
 // Resolve a CHILD position. Beyond the stub read, node data a deep
@@ -931,10 +932,7 @@ export function wrapInlineFlagsGroup(
 			'inline_flags_group_toggle',
 			'inline_flags_group_disable'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.InlineFlagsGroup>(node as T.InlineFlagsGroup, tree) as unknown as T.InlineFlagsGroup.Parsed;
 	}
 	return drillIn<T.InlineFlagsGroup>(
@@ -1597,7 +1595,9 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
 	type Wire = _NodeData & {
 		readonly $displayType?: number;
-		readonly $nodeHandle?: number;
+		readonly $handle?: number;
+		readonly $parentHandle?: number;
+		readonly $treeHandle?: number;
 		readonly $childIndex?: number;
 		readonly $span?: unknown;
 	};
@@ -1611,8 +1611,8 @@ function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
 		return { ...container, $type: envelope, _content: child } as unknown as _NodeData;
 	}
 	const full = (
-		shown.$nodeHandle != null && shown.$childIndex != null
-			? readNode(tree, shown.$nodeHandle, shown.$childIndex)
+		shown.$parentHandle != null && shown.$childIndex != null
+			? readNode(tree, shown.$parentHandle, shown.$childIndex)
 			: shown
 	) as Wire;
 	const { $displayType: _display, $_trivia, $childIndex: _childIndex, ...storage } = full;
@@ -1621,7 +1621,9 @@ function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
 		$source: shown.$source,
 		$named: shown.$named,
 		$span: shown.$span,
-		$nodeHandle: shown.$nodeHandle,
+		$handle: shown.$handle,
+		$parentHandle: shown.$parentHandle,
+		$treeHandle: shown.$treeHandle,
 		$childIndex: shown.$childIndex,
 		$_trivia: shown.$_trivia ?? _wrapTrivia($_trivia, tree),
 		_content: storage

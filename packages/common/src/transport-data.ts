@@ -4,7 +4,19 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-const COORDINATE_KEYS = ['$nodeHandle', '$span', '$childIndex', '$textOnly'] as const;
+const HANDLE_KEYS = ['$handle', '$parentHandle', '$treeHandle'] as const;
+
+const COORDINATE_KEYS = [...HANDLE_KEYS, '$span', '$childIndex', '$textOnly'] as const;
+
+/**
+ * The tree a node's handle names, whichever handle it carries: every handle is
+ * tagged with its tree, so each one identifies it.
+ */
+export function treeHandleOf(node: object): number | undefined {
+	const record = node as Partial<Record<(typeof HANDLE_KEYS)[number], unknown>>;
+	const handle = record.$handle ?? record.$parentHandle ?? record.$treeHandle;
+	return typeof handle === 'number' ? handle : undefined;
+}
 
 function isStorageKey(key: string): boolean {
 	return key.startsWith('_') || key === '$other';
@@ -63,7 +75,7 @@ function isUntouchedBelow(value: unknown): boolean {
  * only thing that says which tree the span indexes into.
  */
 function foldsToCoordinate(record: Record<string, unknown>): boolean {
-	if (typeof record.$nodeHandle !== 'number' || !isRecord(record.$span)) return false;
+	if (treeHandleOf(record) === undefined || !isRecord(record.$span)) return false;
 	if (hasOutsideTrivia(record.$_trivia)) return false;
 	return isUntouchedBelow(record);
 }
@@ -78,10 +90,17 @@ function hasOutsideTrivia(trivia: unknown): boolean {
 	return trivia.leading != null || trivia.trailing != null;
 }
 
-/** The coordinate projection of a folded node: identity and provenance, no storage. */
+/**
+ * The coordinate projection of a folded node: identity, its span and the tree
+ * that span slices, no storage.
+ */
 function asCoordinate(record: Record<string, unknown>): Record<string, unknown> {
 	const out: Record<string, unknown> = { $type: record.$type };
-	for (const key of ['$source', '$named', '$span', '$nodeHandle', '$childIndex', '$textOnly', '$format']) {
+	for (const key of ['$source', '$named', '$span']) {
+		if (record[key] !== undefined) out[key] = record[key];
+	}
+	out.$treeHandle = treeHandleOf(record);
+	for (const key of ['$textOnly', '$format']) {
 		if (record[key] !== undefined) out[key] = record[key];
 	}
 	return out;
@@ -96,7 +115,9 @@ function asCoordinate(record: Record<string, unknown>): Record<string, unknown> 
  */
 export function markEdited<T extends object>(data: T): Omit<T, (typeof COORDINATE_KEYS)[number]> {
 	const {
-		$nodeHandle: _handle,
+		$handle: _handle,
+		$parentHandle: _parentHandle,
+		$treeHandle: _treeHandle,
 		$span: _span,
 		$childIndex: _index,
 		$textOnly: _textOnly,
@@ -136,12 +157,13 @@ export type NormalizeNodeStorage = (node: AnyNodeData) => unknown;
  * The wrap surface carries accessor methods and `$with`; only data crosses
  * to napi. This copies the storage (`_`-keys and `$other`) through, drops
  * everything callable, and strips `$text` and the coordinate keys
- * (`$nodeHandle`, `$span`, `$childIndex`) from every node that carries
+ * (the handles, `$span`, `$childIndex`) from every node that carries
  * storage — that node rebuilds from its slots, so neither its pre-edit
  * text nor the coordinate that would slice that text may cross.
  *
  * A node that still names its tree and was not rebuilt below crosses as its
- * coordinate alone (`foldsToCoordinate`), which the transport's slot carrier
+ * coordinate alone (`foldsToCoordinate`), its `$span` and the `$treeHandle`
+ * that span slices, which the transport's slot carrier
  * slices from the source the engine still holds. That is what keeps an
  * untouched subtree's original bytes while its rebuilt siblings render
  * canonically.
@@ -168,7 +190,7 @@ function projectValue(value: unknown, normalize: NormalizeNodeStorage | undefine
 	// Past the fold, nothing is a coordinate: a leaf that kept its trivia
 	// crosses as itself, and a storage-bearing node rebuilds from its slots
 	// with neither its pre-edit text nor the span that would slice it.
-	delete out.$nodeHandle;
+	for (const key of HANDLE_KEYS) delete out[key];
 	delete out.$childIndex;
 	delete out.$textOnly;
 	if (hasStructure(out)) {
@@ -183,8 +205,8 @@ function projectValue(value: unknown, normalize: NormalizeNodeStorage | undefine
  * every node that carries storage, in place, and return `root`. For
  * already-projected data that came through a path other than
  * {@link toTransportData}. A coordinate that survives addresses its node's
- * text only, and is stamped `$textOnly` so no edge or gap reader takes layout
- * evidence from it.
+ * text only: it crosses as the `$treeHandle` its span slices, stamped
+ * `$textOnly` so no edge or gap reader takes layout evidence from it.
  */
 export function stripStructuralProvenance<T>(root: T): T {
 	const seen = new WeakSet<object>();
@@ -196,7 +218,13 @@ export function stripStructuralProvenance<T>(root: T): T {
 			delete value.$text;
 			for (const key of COORDINATE_KEYS) delete value[key];
 		}
-		if (value.$nodeHandle !== undefined) value.$textOnly = true;
+		const tree = treeHandleOf(value);
+		if (tree !== undefined) {
+			delete value.$handle;
+			delete value.$parentHandle;
+			value.$treeHandle = tree;
+			value.$textOnly = true;
+		}
 		for (const [key, child] of Object.entries(value)) {
 			if (!isStorageKey(key)) continue;
 			if (Array.isArray(child)) for (const entry of child) recurse(entry);

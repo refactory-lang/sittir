@@ -315,8 +315,8 @@ const storedElementsOf = (node: object, spec: ListViewSpec, tree: TreeHandle | u
 		const elements = (source as Record<string, unknown>)[spec.count];
 		return Array.isArray(elements) ? elements : elements == null ? [] : [elements];
 	};
-	if (spec.count in list || list.$nodeHandle == null || list.$childIndex == null) return elementsIn(list);
-	return tree === undefined ? undefined : elementsIn(readNode(tree, list.$nodeHandle, list.$childIndex));
+	if (spec.count in list || list.$parentHandle == null || list.$childIndex == null) return elementsIn(list);
+	return tree === undefined ? undefined : elementsIn(readNode(tree, list.$parentHandle, list.$childIndex));
 };
 
 export function withListView<T extends object>(node: T, spec: ListViewSpec, tree?: TreeHandle): T {
@@ -611,7 +611,7 @@ export { readNode, type TreeHandle } from './readNode.ts';
 export { toEditAt } from './edit.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toTransportData, markEdited } from './transport-data.ts';
+export { toTransportData, markEdited, treeHandleOf } from './transport-data.ts';
 export {
 	projectInterior,
 	lexedConfig,

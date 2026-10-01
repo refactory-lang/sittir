@@ -4202,7 +4202,7 @@ struct. Two cfg-gated `FromNapiValue` variants are emitted:
   entry by its `jsName`.
 
 A coordinate never reaches these impls: the slot's `SlotValue` carrier
-takes an object carrying `$nodeHandle` before the leaf type is asked.
+takes an object carrying `$treeHandle` before the leaf type is asked.
 
 `ToNapiValue` is a no-op stub in both modes. Transport is receive-only
 (JS→Rust); the stub satisfies `#[napi(object)]` field bounds on parent
@@ -13330,7 +13330,7 @@ The kinds the wrapper accepts as a child are the supertype's direct subtypes plu
 // transport side already accepts for such members — so treat the
 // node itself as the resolved member instead of requiring a named
 // child that will never surface. The same holds for an occurrence
-// that arrived as a coordinate (`$nodeHandle`, no storage): the
+// that arrived as a coordinate (a handle, no storage): the
 // transport slices its bytes from the tree, so it is its own member.
 ```
 
@@ -13609,7 +13609,7 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 // wrap function to drill into their own children.
 // `read_node.rs`'s one-level read (`read_children` / `read_child_stub`)
 // leaves an unlabeled named child with sub-structure as a shallow stub
-// (`$nodeHandle`/`$childIndex`, no fields of its own) — normally a
+// (`$parentHandle`/`$childIndex`, no fields of its own) — normally a
 // generated wrap function's `drillIn` call materializes it fully via
 // `readTreeNode`. With no such function for the PARENT kind, nothing
 // ever calls `drillIn` on the stub, so it reaches the native
@@ -16527,7 +16527,7 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 ### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
 
-The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present), and the read calls' arguments (a read takes a level count). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
+The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries), and the read calls' arguments (a read takes a level count). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 

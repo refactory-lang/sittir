@@ -4,6 +4,7 @@
 import {
 	readNode as readNodeJs,
 	markEdited as $edited,
+	treeHandleOf,
 	mapTriviaEntries,
 	projectInterior,
 	coerceBooleanKeywordStorage,
@@ -210,8 +211,8 @@ function normalizeRepeatedWrapSlot<T>(
 function drillInSelf<T>(entry: T, tree: TreeHandle): T {
 	if (entry == null) return undefined as unknown as T;
 	const e = entry as unknown as _NodeData;
-	if (e.$nodeHandle != null && e.$childIndex != null)
-		return readTreeNode(tree, e.$nodeHandle, e.$childIndex) as unknown as T;
+	if (e.$parentHandle != null && e.$childIndex != null)
+		return readTreeNode(tree, e.$parentHandle, e.$childIndex) as unknown as T;
 	return entry;
 }
 // Resolve a CHILD position. Beyond the stub read, node data a deep
@@ -558,10 +559,7 @@ export function wrapDefinition(
 			'named_node_plain',
 			'named_node_supertyped'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.Definition>(node as T.Definition, tree) as unknown as T.Definition.Parsed;
 	}
 	return drillIn<T.Definition>(
@@ -618,10 +616,7 @@ export function wrapGroupExpression(
 			'list',
 			'field_definition'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.GroupExpression>(node as T.GroupExpression, tree) as unknown as SupertypeSurface<
 			T.GroupExpression,
 			T.ParsedByKindId
@@ -684,10 +679,7 @@ export function wrapNamedNodeExpression(
 			'list',
 			'field_definition'
 		]);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.NamedNodeExpression>(node as T.NamedNodeExpression, tree) as unknown as SupertypeSurface<
 			T.NamedNodeExpression,
 			T.ParsedByKindId
@@ -739,10 +731,7 @@ export function wrapNodeIdentifier(
 		| readonly T.NodeIdentifier[]
 		| undefined;
 	const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['identifier']);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.NodeIdentifier>(node as T.NodeIdentifier, tree) as unknown as SupertypeSurface<
 			T.NodeIdentifier,
 			T.ParsedByKindId
@@ -1106,10 +1095,7 @@ export function wrapNamedNode(
 		| readonly T.NamedNode[]
 		| undefined;
 	const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['named_node_plain', 'named_node_supertyped']);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.NamedNode>(node as T.NamedNode, tree) as unknown as T.NamedNode.Parsed;
 	}
 	return drillIn<T.NamedNode>(
@@ -1364,10 +1350,7 @@ export function wrapNamedNodeGroup(
 	const filtered =
 		kindKeyed ??
 		_filterWrapChildrenByKind(node.$other, ['named_node_group_children', 'named_node_group_anchored_last']);
-	if (
-		filtered === undefined &&
-		(typeof (node as _NodeData).$text === 'string' || (node as _NodeData).$nodeHandle != null)
-	) {
+	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
 		return drillInSelf<T.NamedNodeGroup>(node as T.NamedNodeGroup, tree) as unknown as T.NamedNodeGroup.Parsed;
 	}
 	return drillIn<T.NamedNodeGroup>(

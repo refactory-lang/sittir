@@ -581,7 +581,7 @@ export async function probe(
 				throw new Error(`probe-kind: --engine native: no node match in NodeData tree`);
 			}
 			// `$nodeId` is ADR-0017's retired field name (replaced by
-			// `$nodeHandle`+`$childIndex`) — kept as a defensive optional
+			// `$parentHandle`+`$childIndex`) — kept as a defensive optional
 			// check, not a live path: current NodeData shapes never carry
 			// it, so this is always `undefined` and `target` (the wrap-read
 			// match from `root` above, already fully materialized) is what
@@ -617,7 +617,7 @@ export async function probe(
 			: undefined;
 		const handle = treeHandle(tree, source, kindIdFromName);
 		// targetNode.id is tree-sitter wasm's own internal id, not a
-		// $nodeHandle/$childIndex pair (ADR-0017 replaced $nodeId with that
+		// $parentHandle/$childIndex pair (ADR-0017 replaced $nodeId with that
 		// pair; readNode/readTreeNode navigate ONLY via handle+childIndex —
 		// see readNode.ts: `if (handle != null && childIndex != null...)`,
 		// else it falls back to reading `tree.rootNode`). Passing just
@@ -866,19 +866,19 @@ async function deepReadProbeNode(
 ): Promise<unknown> {
 	const { readNode, isNode } = await import('@sittir/common/utils');
 	const data = readNode(handle, nodeHandle, childIndex);
-	const shouldDrill = (entry: unknown): entry is AnyNodeData & { $nodeHandle: number; $childIndex: number } =>
-		isNode(entry) && entry.$named === true && typeof entry.$nodeHandle === 'number' && typeof entry.$childIndex === 'number';
+	const shouldDrill = (entry: unknown): entry is AnyNodeData & { $parentHandle: number; $childIndex: number } =>
+		isNode(entry) && entry.$named === true && typeof entry.$parentHandle === 'number' && typeof entry.$childIndex === 'number';
 	const record = data as unknown as Record<string, unknown>;
 	for (const rawKey of Object.keys(record).filter((key) => key.startsWith('_'))) {
 		const value = record[rawKey];
 		if (Array.isArray(value)) {
 			record[rawKey] = await Promise.all(
 				value.map(async (entry) =>
-					shouldDrill(entry) ? deepReadProbeNode(handle, entry.$nodeHandle, entry.$childIndex) : entry
+					shouldDrill(entry) ? deepReadProbeNode(handle, entry.$parentHandle, entry.$childIndex) : entry
 				)
 			);
 		} else if (shouldDrill(value)) {
-			record[rawKey] = await deepReadProbeNode(handle, value.$nodeHandle, value.$childIndex);
+			record[rawKey] = await deepReadProbeNode(handle, value.$parentHandle, value.$childIndex);
 		}
 	}
 	return data;
@@ -1007,8 +1007,8 @@ async function deepReadSelectedNode(
 function getTargetHandle(target: unknown): { handle: number; childIndex: number } | null {
 	if (!target || typeof target !== 'object') return null;
 	const record = target as Record<string, unknown>;
-	return typeof record.$nodeHandle === 'number' && typeof record.$childIndex === 'number'
-		? { handle: record.$nodeHandle, childIndex: record.$childIndex }
+	return typeof record.$parentHandle === 'number' && typeof record.$childIndex === 'number'
+		? { handle: record.$parentHandle, childIndex: record.$childIndex }
 		: null;
 }
 

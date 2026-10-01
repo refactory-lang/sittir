@@ -2,7 +2,7 @@
  * readNode — one-level-deep tree reading, grammar-agnostic.
  *
  * Returns ALL children including anonymous tokens (named: false for operators,
- * delimiters, keywords). Every entry carries `$nodeHandle` + `$childIndex` for
+ * delimiters, keywords). Every entry carries `$parentHandle` + `$childIndex` for
  * O(1) drill-in via `tree.nodes[handle].children()[childIndex]`.
  *
  * Field placement comes from tree-sitter's own `fieldNameForChild(i)` —
@@ -22,7 +22,7 @@ import type { AnyNodeData, AnyTreeNode, FormatRecord } from '@sittir/types';
  * Structurally compatible with ast-grep SgRoot and tree-sitter Tree.
  *
  * Replaces nodeById(id) with a nodes[] array. Child entries carry
- * $nodeHandle (parent index into nodes[]) + $childIndex (position in parent's
+ * $parentHandle (parent index into nodes[]) + $childIndex (position in parent's
  * child array). O(1) drill-in via nodes[handle].children()[childIndex].
  */
 export interface TreeHandle {
@@ -57,7 +57,7 @@ export interface TreeHandle {
 	/**
 	 * Per-handle node array. Each entry is a tree-sitter node
 	 * stored at construction time by pushNode(). Child entries reference
-	 * their parent via $nodeHandle (index into this array) + $childIndex
+	 * their parent via $parentHandle (index into this array) + $childIndex
 	 * (position in parent's children()). Lazily created on first pushNode().
 	 */
 	nodes?: AnyTreeNode[];
@@ -65,7 +65,7 @@ export interface TreeHandle {
 
 /**
  * Push a tree-sitter node into the handle's nodes[] array and return its index.
- * The returned index is stored as `$nodeHandle` on child entries so drill-in
+ * The returned index is stored as `$parentHandle` on child entries so drill-in
  * can navigate back to this node and access its children by index.
  */
 function pushNode(tree: TreeHandle, node: AnyTreeNode): number {
@@ -104,7 +104,7 @@ function promoteAnonymousKeyword(
  * Read a single tree node one level deep.
  *
  * - Returns ALL children (named + anonymous)
- * - Every child carries `$nodeHandle` + `$childIndex` for lazy drill-in
+ * - Every child carries `$parentHandle` + `$childIndex` for lazy drill-in
  * - No recursion — wrap.ts provides lazy getters
  * - Field placement uses tree-sitter's native `fieldNameForChild`
  *
@@ -177,7 +177,7 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 	}
 
 	// Push parent node ONCE before iterating children so all child
-	// entries can reference it via $nodeHandle.
+	// entries can reference it via $parentHandle.
 	const parentHandle = pushNode(tree, node);
 
 	const allChildren = node.children();
@@ -189,7 +189,7 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 			$source: 0,
 			$text: child.text(),
 			$span: { start: child.range().start.index, end: child.range().end.index },
-			$nodeHandle: parentHandle,
+			$parentHandle: parentHandle,
 			$childIndex: i,
 			$named: child.isNamed()
 		};
@@ -240,7 +240,7 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 		$text: !hasStructure ? node.text() : undefined,
 		$other: children.length > 0 ? children : undefined,
 		$span: { start: node.range().start.index, end: node.range().end.index },
-		$nodeHandle: parentHandle,
+		$handle: parentHandle,
 		$named: node.isNamed()
 	} as AnyNodeData;
 

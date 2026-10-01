@@ -101,14 +101,14 @@ describe('engine', () => {
 									$source: 0,
 									$named: true,
 									$span: { start: 0, end: 10 },
-									$nodeHandle: 0,
+									$handle: 0,
 									_name: {
 										$type: TSKindId.Identifier,
 										$source: 0,
 										$named: true,
 										$text: 'main',
 										$span: { start: 3, end: 7 },
-										$nodeHandle: 0,
+										$parentHandle: 0,
 										$childIndex: 1
 									},
 									_pub: {
@@ -117,7 +117,7 @@ describe('engine', () => {
 										$named: false,
 										$text: 'pub',
 										$span: { start: 0, end: 3 },
-										$nodeHandle: 0,
+										$parentHandle: 0,
 										$childIndex: 0
 									}
 								}
@@ -129,14 +129,14 @@ describe('engine', () => {
 								$source: 0,
 								$named: true,
 								$span: { start: 0, end: 10 },
-								$nodeHandle: 7,
+								$handle: 7,
 								_name: {
 									$type: TSKindId.Identifier,
 									$source: 0,
 									$named: true,
 									$text: 'main',
 									$span: { start: 3, end: 7 },
-									$nodeHandle: 7,
+									$parentHandle: 7,
 									$childIndex: 1
 								},
 								_pub: {
@@ -145,7 +145,7 @@ describe('engine', () => {
 									$named: false,
 									$text: 'pub',
 									$span: { start: 0, end: 3 },
-									$nodeHandle: 7,
+									$parentHandle: 7,
 									$childIndex: 0
 								}
 							});
@@ -161,13 +161,13 @@ describe('engine', () => {
 		expect((parsed.root as unknown as Record<string, unknown>).$fields).toBeUndefined();
 		expect((parsed.root as unknown as Record<string, unknown>)._name).toMatchObject({
 			$text: 'main',
-			$nodeHandle: 0,
+			$parentHandle: 0,
 			$childIndex: 1
 		});
 		expect((parsed.root as unknown as Record<string, unknown>).$children).toBeUndefined();
 		expect((parsed.root as unknown as Record<string, unknown>)._pub).toMatchObject({
 			$text: 'pub',
-			$nodeHandle: 0,
+			$parentHandle: 0,
 			$childIndex: 0,
 			$named: false
 		});
@@ -177,7 +177,7 @@ describe('engine', () => {
 		expect((child as unknown as Record<string, unknown>).$fields).toBeUndefined();
 		expect((child as unknown as Record<string, unknown>)._name).toMatchObject({
 			$text: 'main',
-			$nodeHandle: 7,
+			$parentHandle: 7,
 			$childIndex: 1
 		});
 	});

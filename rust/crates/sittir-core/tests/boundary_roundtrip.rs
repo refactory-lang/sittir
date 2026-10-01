@@ -3,7 +3,7 @@
 //! the invariants in data-model.md §1.
 
 use indexmap::IndexMap;
-use sittir_core::types::{Edit, FieldValue, KindId, NodeData, Source, Span};
+use sittir_core::types::{Edit, FieldValue, KindId, NodeData, NodeHandle, Source, Span};
 
 // KindId fixtures — values match the Rust grammar's parser.c symbol ids.
 const K_IDENTIFIER: KindId = KindId(1);
@@ -27,7 +27,7 @@ fn sample_leaf() -> NodeData {
         children: None,
         text: Some("foo".to_string()),
         span: Some(Span { start: 42, end: 45 }),
-        node_handle: Some(7),
+        handle: Some(NodeHandle::Own(7)),
         child_index: None,
         trivia_data: None,
         slot_order: None,
@@ -39,7 +39,7 @@ fn sample_leaf() -> NodeData {
 
 fn sample_slot_leaf() -> NodeData {
     NodeData {
-        node_handle: None,
+        handle: None,
         child_index: None,
         ..sample_leaf()
     }
@@ -62,7 +62,7 @@ fn sample_branch() -> NodeData {
         children: Some(vec![sample_leaf()]),
         text: None,
         span: None,
-        node_handle: None,
+        handle: None,
         child_index: None,
         trivia_data: None,
         slot_order: None,
@@ -101,8 +101,8 @@ fn absent_optionals_stay_absent_on_the_wire() {
     assert!(!obj.contains_key("$text"), "absent $text must be elided");
     assert!(!obj.contains_key("$span"), "absent $span must be elided");
     assert!(
-        !obj.contains_key("$nodeHandle"),
-        "absent $nodeHandle must be elided"
+        !["$handle", "$parentHandle", "$treeHandle"].iter().any(|k| obj.contains_key(*k)),
+        "an absent handle must be elided"
     );
     assert!(
         !obj.contains_key("$childIndex"),
@@ -123,7 +123,34 @@ fn present_optionals_appear_on_the_wire() {
     let span = obj.get("$span").expect("$span");
     assert_eq!(span["start"].as_u64(), Some(42));
     assert_eq!(span["end"].as_u64(), Some(45));
-    assert_eq!(obj.get("$nodeHandle").and_then(|x| x.as_u64()), Some(7));
+    assert_eq!(obj.get("$handle").and_then(|x| x.as_u64()), Some(7));
+}
+
+#[test]
+fn each_handle_travels_under_the_key_that_names_what_it_is() {
+    for (handle, key) in [
+        (NodeHandle::Own(7), "$handle"),
+        (NodeHandle::Parent(7), "$parentHandle"),
+        (NodeHandle::Tree(7), "$treeHandle"),
+    ] {
+        let node = NodeData { handle: Some(handle), ..sample_leaf() };
+        let v = serde_json::to_value(&node).unwrap();
+        let keys: Vec<_> = ["$handle", "$parentHandle", "$treeHandle"]
+            .into_iter()
+            .filter(|k| v.get(k).is_some())
+            .collect();
+        assert_eq!(keys, vec![key]);
+        assert_eq!(v[key].as_u64(), Some(7));
+        let back: NodeData = serde_json::from_value(v).unwrap();
+        assert_eq!(back.handle, Some(handle));
+    }
+}
+
+#[test]
+fn deserialization_refuses_a_node_naming_two_handles() {
+    let both = r#"{"$type":1,"$source":0,"$named":true,"$handle":1,"$parentHandle":2,"$childIndex":0}"#;
+    let err = serde_json::from_str::<NodeData>(both).unwrap_err();
+    assert!(err.to_string().contains("more than one of $handle, $parentHandle, $treeHandle"), "{err}");
 }
 
 #[test]
@@ -244,7 +271,7 @@ fn anonymous_leaf_children_scalarize_on_the_wire() {
             children: None,
             text: Some("|".to_string()),
             span: Some(Span { start: 0, end: 1 }),
-            node_handle: None,
+            handle: None,
             child_index: None,
             trivia_data: None,
             slot_order: None,
@@ -254,7 +281,7 @@ fn anonymous_leaf_children_scalarize_on_the_wire() {
         }]),
         text: None,
         span: None,
-        node_handle: None,
+        handle: None,
         child_index: None,
         trivia_data: None,
         slot_order: None,
@@ -305,7 +332,7 @@ fn deserialization_accepts_missing_optionals() {
     assert!(parsed.children.is_none());
     assert!(parsed.text.is_none());
     assert!(parsed.span.is_none());
-    assert!(parsed.node_handle.is_none());
+    assert!(parsed.handle.is_none());
     assert!(parsed.child_index.is_none());
 }
 
@@ -328,7 +355,9 @@ fn is_allowed_node_key(key: &str) -> bool {
             | "$other"
             | "$text"
             | "$span"
-            | "$nodeHandle"
+            | "$handle"
+            | "$parentHandle"
+            | "$treeHandle"
             | "$childIndex"
             | "$_trivia"
             | "$slotOrder"

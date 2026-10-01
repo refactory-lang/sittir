@@ -550,7 +550,7 @@ mod tests {
             children: None,
             text: Some("x".to_string()),
             span: None,
-            node_handle: None,
+            handle: None,
             child_index: None,
             trivia_data: None,
             slot_order: None,

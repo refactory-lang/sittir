@@ -86,7 +86,7 @@ export async function extractParityFixtures(grammar: string): Promise<ExtractRes
 
 	const engine = await loadNativeEngine(grammar);
 	const reproduces = (fx: RenderFixture): boolean => {
-		if (JSON.stringify(fx.input).includes('"$nodeHandle"')) {
+		if (/"\$(handle|parentHandle|treeHandle)"/.test(JSON.stringify(fx.input))) {
 			throw new Error(`parity-fixtures[${grammar}]: a render fixture input still carries a coordinate`);
 		}
 		try {

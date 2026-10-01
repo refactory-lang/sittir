@@ -38,7 +38,7 @@ fn complex_node() -> NodeData {
             children: None,
             text: Some("foo".to_string()),
             span: Some(Span { start: 0, end: 3 }),
-            node_handle: None,
+            handle: None,
             child_index: None,
             trivia_data: None,
             slot_order: None,
@@ -58,7 +58,7 @@ fn complex_node() -> NodeData {
             children: None,
             text: Some("1".to_string()),
             span: Some(Span { start: 5, end: 6 }),
-            node_handle: None,
+            handle: None,
             child_index: None,
             trivia_data: None,
             slot_order: None,
@@ -83,7 +83,7 @@ fn complex_node() -> NodeData {
             children: Some(vec![]),
             text: None,
             span: Some(Span { start: 7, end: 9 }),
-            node_handle: None,
+            handle: None,
             child_index: Some(2),
             trivia_data: None,
             slot_order: None,
@@ -93,7 +93,7 @@ fn complex_node() -> NodeData {
         }]),
         text: None,
         span: Some(Span { start: 0, end: 9 }),
-        node_handle: None,
+        handle: None,
         child_index: None,
         trivia_data: None,
         slot_order: None,
@@ -185,7 +185,9 @@ fn is_allowed_node_key(key: &str) -> bool {
             | "$other"
             | "$text"
             | "$span"
-            | "$nodeHandle"
+            | "$handle"
+            | "$parentHandle"
+            | "$treeHandle"
             | "$childIndex"
             | "$_trivia"
     ) || key.starts_with('_')
