@@ -903,7 +903,7 @@ export function walkWrappedTree(
 ): void {
 	const seen = new Set<string>();
 	const recurse = (w: unknown): void => {
-		if (!isTypedNode(w)) return;
+		if (!hasNumericType(w)) return;
 		if (isStub(w)) {
 			const key = `${w.$parentHandle}:${w.$childIndex}`;
 			if (seen.has(key)) return;
@@ -913,8 +913,8 @@ export function walkWrappedTree(
 		for (const k of Object.keys(w)) {
 			if (k !== '$other' && !k.startsWith('_')) continue;
 			const v = resolveWrappedStorageValue(w, k, onAccessorThrow);
-			if (isTypedNode(v)) recurse(v);
-			else if (Array.isArray(v)) for (const x of v) if (isTypedNode(x)) recurse(x);
+			if (hasNumericType(v)) recurse(v);
+			else if (Array.isArray(v)) for (const x of v) if (hasNumericType(x)) recurse(x);
 		}
 	};
 	recurse(root);
@@ -952,7 +952,7 @@ function materializeValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowR
 	if (Array.isArray(value)) {
 		return value.map((entry) => materializeValue(entry, onAccessorThrow));
 	}
-	if (!isTypedNode(value)) return value;
+	if (!hasNumericType(value)) return value;
 	const materialized: Record<string, unknown> = {};
 	for (const [key, raw] of Object.entries(value)) {
 		if (key === '$with' || typeof raw === 'function') continue;
@@ -1020,7 +1020,7 @@ export interface TypedNode {
 	readonly $childIndex?: number;
 	readonly [k: string]: unknown;
 }
-function isTypedNode(v: unknown): v is TypedNode {
+function hasNumericType(v: unknown): v is TypedNode {
 	return !!v && typeof v === 'object' && typeof (v as { $type?: unknown }).$type === 'number';
 }
 
