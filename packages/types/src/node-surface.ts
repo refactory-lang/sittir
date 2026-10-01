@@ -43,17 +43,13 @@ export type Remap<T, K extends PropertyKey> = { [P in keyof T as P extends K ? n
 type HintsOf<Self> = Self extends { readonly __slotHints__?: infer H } ? NonNullable<H> : never;
 export type SlotHintsOf<Self> = Remap<HintsOf<Self>, '$listView' | '$listSlots' | '$flat'>;
 type FlatOf<Self> = HintsOf<Self> extends { readonly $flat: infer F } ? F : never;
-type FlatSlotOf<Self> = [FlatOf<Self>] extends [never]
-	? never
-	: FlatOf<Self> extends FlatHint<infer S, unknown, { readonly [Name: string]: string }, boolean>
-		? S
-		: never;
-type FlatKeyNames<Self> = [FlatOf<Self>] extends [never]
-	? never
-	: FlatOf<Self> extends FlatHint<string, unknown, infer Keys, boolean>
-		? keyof Keys & string
-		: never;
-type FlatKeysOf<Self, K extends PropertyKey> = [K] extends [FlatSlotOf<Self>] ? FlatKeyNames<Self> : never;
+type FlatNames<F> = F extends FlatHint<string, unknown, infer Keys, boolean> ? keyof Keys & string : never;
+type FlatAt<F, K extends PropertyKey> =
+	F extends FlatHint<infer S, unknown, { readonly [Name: string]: string }, boolean> ? ([K] extends [S] ? F : never) : never;
+type FlatNamed<F, N extends string> =
+	F extends FlatHint<string, unknown, infer Keys, boolean> ? (N extends keyof Keys ? F : never) : never;
+type FlatKeyNames<Self> = FlatNames<FlatOf<Self>>;
+type FlatKeysOf<Self, K extends PropertyKey> = FlatNames<FlatAt<FlatOf<Self>, K>>;
 export type ListViewOf<Self> = HintsOf<Self> extends { readonly $listView: infer L } ? L : never;
 type ListSlotsOf<Self> = HintsOf<Self> extends { readonly $listSlots: infer L } ? L : {};
 type SlotInput<Self, K extends keyof SlotHintsOf<Self>> =
@@ -148,21 +144,18 @@ type FlatSetter<Self, S extends string, G, K extends keyof SlotHintsOf<G>, ByBou
 					(() => SetResult<Self, S, G, ByBound, Lookup, Reflect>)
 			: (value: AdmitBound<SlotInput<G, K>, Lookup>) => SetResult<Self, S, G, ByBound, Lookup, Reflect>;
 
-type FlatSetters<Self, ByBound, Lookup, Reflect extends boolean> = [FlatOf<Self>] extends [never]
-	? {}
-	: FlatOf<Self> extends FlatHint<infer S, infer G, infer Keys, boolean>
-		? {
-				[N in keyof Keys & string as Keys[N] extends keyof SlotHintsOf<G> ? N : never]: FlatSetter<
-					Self,
-					S,
-					G,
-					Keys[N] & keyof SlotHintsOf<G>,
-					ByBound,
-					Lookup,
-					Reflect
-				>;
-			}
-		: {};
+type FlatSetterNamed<F, Self, N extends string, ByBound, Lookup, Reflect extends boolean> =
+	F extends FlatHint<infer S, infer G, infer Keys, boolean>
+		? Keys[N & keyof Keys] extends infer K extends keyof SlotHintsOf<G>
+			? FlatSetter<Self, S, G, K, ByBound, Lookup, Reflect>
+			: never
+		: never;
+
+type FlatSetters<Self, ByBound, Lookup, Reflect extends boolean> = {
+	[N in FlatKeyNames<Self> as [FlatSetterNamed<FlatNamed<FlatOf<Self>, N>, Self, N, ByBound, Lookup, Reflect>] extends [never]
+		? never
+		: N]: FlatSetterNamed<FlatNamed<FlatOf<Self>, N>, Self, N, ByBound, Lookup, Reflect>;
+};
 
 export type Setters<Self, ByBound, Lookup, Reflect extends boolean = false> = {
 	[K in keyof SlotHintsOf<Self>]: SlotSetterOf<Self, K, ByBound, Lookup, Reflect>;
@@ -178,7 +171,7 @@ type ResolveInput<V, ByBound> =
 		: never;
 type FlatRead<Self, K extends PropertyKey, V, ByBound> = [FlatKeysOf<Self, K>] extends [never]
 	? {}
-	: FlatOf<Self> extends FlatHint<string, infer G, infer Keys, boolean>
+	: FlatAt<FlatOf<Self>, K> extends FlatHint<string, infer G, infer Keys, boolean>
 		? {
 				[N in keyof Keys & string as Keys[N] extends keyof G ? (G[Keys[N]] extends () => unknown ? N : never) : never]: G[Keys[N] &
 					keyof G] extends () => infer R
@@ -206,19 +199,18 @@ type ListPart<N, ByKindId> = [ListViewOf<N>] extends [never]
 		? ListView<Resolve<E, ByKindId>, O>
 		: {};
 
-type FlatAccessors<N, ByChild> = [FlatOf<N>] extends [never]
-	? {}
-	: FlatOf<N> extends FlatHint<string, infer G, infer Keys, infer O>
-		? {
-				[P in keyof Keys & string as Keys[P] extends keyof G
-					? G[Keys[P]] extends () => unknown
-						? P
-						: never
-					: never]: G[Keys[P] & keyof G] extends () => infer R
-					? () => Resolve<O extends true ? R | undefined : R, ByChild>
-					: never;
-			}
-		: {};
+type FlatAccessorNamed<F, P extends string, ByChild> =
+	F extends FlatHint<string, infer G, infer Keys, infer O>
+		? G[Keys[P & keyof Keys] & keyof G] extends () => infer R
+			? () => Resolve<O extends true ? R | undefined : R, ByChild>
+			: never
+		: never;
+
+type FlatAccessors<N, ByChild> = {
+	[P in FlatKeyNames<N> as [FlatAccessorNamed<FlatNamed<FlatOf<N>, P>, P, ByChild>] extends [never]
+		? never
+		: P]: FlatAccessorNamed<FlatNamed<FlatOf<N>, P>, P, ByChild>;
+};
 
 type SurfaceOf<N, ByChild> = Storage<N> &
 	Accessors<N, ByChild> &

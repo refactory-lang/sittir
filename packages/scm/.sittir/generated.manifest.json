@@ -1,6 +1,6 @@
 {
   "grammar": "scm",
-  "source_hash": "2aa9f0fc020ac9c8f9d7636166dad92ed76f528ca2911958a02368f2c5659a99",
+  "source_hash": "766d4b10102da9c2c5382f753edba9087a7630de4c23aaf3ebd899407df6b4f7",
   "files": {
     "packages/scm/.sittir/grammar-diagnostics.json": "75994c5f3d295950e127de18849925e9084e0757c715bcaad81bb31be7052ba6",
     "packages/scm/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",

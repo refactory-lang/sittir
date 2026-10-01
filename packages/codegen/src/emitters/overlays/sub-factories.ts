@@ -297,10 +297,10 @@ export function prefixedKey(seat: string, field: string): string {
 	return `${seat}${field.charAt(0).toUpperCase()}${field.slice(1)}`;
 }
 
-export function flattenSeatOf(node: AssembledNode, nodeMap: NodeMap): FlattenedSeat | undefined {
-	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return undefined;
-	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return undefined;
-	const seats: FlattenedSeat[] = [];
+export function flattenSeatsOf(node: AssembledNode, nodeMap: NodeMap): readonly FlattenedSeat[] {
+	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return [];
+	if (node.rawFactoryName === undefined || nodeMap.refineForms?.has(node.kind)) return [];
+	const found: (FlattenSeat & { readonly fields: readonly string[] })[] = [];
 	for (const slot of node.slots) {
 		if (isMultiple(slot) || slot.values.length !== 1) continue;
 		const value = slot.values[0]!;
@@ -311,26 +311,30 @@ export function flattenSeatOf(node: AssembledNode, nodeMap: NodeMap): FlattenedS
 		if (group.rawFactoryName === undefined) continue;
 		const shape = classifyFactoryShape(group, nodeMap);
 		const direct = shape === 'direct' ? resolveDirectFactorySlot(group, nodeMap) : undefined;
-		const keys = shape === 'config' ? configKeysOf(group) : direct === undefined ? undefined : [direct.configKey];
-		if (keys === undefined) continue;
-		const own = new Set(node.slots.filter((f) => f !== slot).map((f) => f.configKey));
-		const flattened = keys.map((field) => ({ key: own.has(field) ? prefixedKey(slot.configKey, field) : field, field }));
-		const clash = flattened.find((k) => k.key !== k.field && own.has(k.key));
-		if (clash !== undefined) {
-			throw new Error(
-				`flattenSeatOf: '${node.kind}' seats '${group.kind}' in '${slot.propertyName}', and the group's key '${clash.field}' collides with another slot of the parent even as '${clash.key}'`
-			);
+		const fields = shape === 'config' ? configKeysOf(group) : direct === undefined ? undefined : [direct.configKey];
+		if (fields === undefined) continue;
+		found.push(direct === undefined ? { slot, group, fields } : { slot, group, directKey: direct.configKey, fields });
+	}
+	const seats = found.map(({ fields, ...seat }) => {
+		const taken = new Set([
+			...node.slots.filter((other) => other !== seat.slot).map((other) => other.configKey),
+			...found.filter((other) => other.slot !== seat.slot).flatMap((other) => other.fields)
+		]);
+		return { ...seat, keys: fields.map((field) => ({ key: taken.has(field) ? prefixedKey(seat.slot.configKey, field) : field, field })) };
+	});
+	const claimed = new Map<string, FlattenedSeat>();
+	for (const seat of seats) {
+		for (const { key, field } of seat.keys) {
+			const holder = claimed.get(key);
+			if (holder !== undefined || node.slots.some((slot) => slot !== seat.slot && slot.configKey === key)) {
+				throw new Error(
+					`flattenSeatsOf: '${node.kind}' seats '${seat.group.kind}' in '${seat.slot.propertyName}', and the group's key '${field}' collides with ${holder === undefined ? 'another slot of the parent' : `a key of '${holder.group.kind}'`} even as '${key}'`
+				);
+			}
+			claimed.set(key, seat);
 		}
-		seats.push(
-			direct === undefined ? { slot, group, keys: flattened } : { slot, group, directKey: direct.configKey, keys: flattened }
-		);
 	}
-	if (seats.length > 1) {
-		throw new Error(
-			`flattenSeatOf: '${node.kind}' seats more than one flattenable group (${seats.map((seat) => `'${seat.group.kind}' in '${seat.slot.propertyName}'`).join(', ')})`
-		);
-	}
-	return seats[0];
+	return seats;
 }
 
 export function elementsSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly FlattenSeat[] {
@@ -380,7 +384,7 @@ export interface Seat {
 
 export interface SeatSource {
 	readonly subs: readonly SubFactory[];
-	readonly flatten?: FlattenSeat;
+	readonly flattens?: readonly FlattenSeat[];
 	readonly elements?: readonly FlattenSeat[];
 	readonly tuples?: readonly FlattenSeat[];
 }
@@ -408,7 +412,7 @@ export function seatOf(
 			? { kind: child.kind, shape: 'arm', mount: arm.name, seated: true }
 			: { kind: child.kind, shape: 'arm', mount: arm.name };
 	}
-	if (source.flatten !== undefined && source.flatten.slot === slot && source.flatten.group === child) {
+	if ((source.flattens ?? []).some((e) => e.slot === slot && e.group === child)) {
 		return { kind: child.kind, shape: 'flatten' };
 	}
 	if ((source.elements ?? []).some((e) => e.slot === slot && e.group === child)) {

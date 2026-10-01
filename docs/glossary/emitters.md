@@ -9930,7 +9930,7 @@ A kind with setters, or that owns a list, stamps `__slotHints__` (`emitSlotHints
 
 ### `packages/codegen/src/emitters/types.ts::emitSlotHints`
 
-Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` per setter of the kind's built surface, keyed by the setter name that its accessor and `$with` share, `$listView` when `listViewHint` is defined, `$flat` when `groupSeatHint` is defined, and `$listSlots` with one `ListSlotHint` per slot `listSlotHints` names, carrying the element config only for a list whose element group has one. The node surface types read these hints and never re-derive a slot's input, or whether a kind or a slot holds a list, from storage keys.
+Prints the type-only `__slotHints__` member of a kind interface: one `SlotHint` per setter of the kind's built surface, keyed by the setter name that its accessor and `$with` share, `$listView` when `listViewHint` is defined, `$flat` (the union of one `FlatHint` per entry of `groupSeatHints`) when the node seats a group, and `$listSlots` with one `ListSlotHint` per slot `listSlotHints` names, carrying the element config only for a list whose element group has one. The node surface types read these hints and never re-derive a slot's input, or whether a kind or a slot holds a list, from storage keys.
 
 ### `packages/codegen/src/emitters/types.ts::enumStorageDiscriminantExpr`
 
@@ -14700,9 +14700,12 @@ caller's keys into the group's (`configKeysOf`) and the rest; when any group
 key carries a value, build the group from them and seat it under the slot
 key, otherwise pass the rest through — the type is the parent's own input
 (the direct spelling with the built group under the seat key, and
-`undefined` where the parent's argument is optional) or `OmitEach<parent
+`undefined` where the parent's argument is optional), which names none of the
+group's flattened keys beside the seat (`WithoutGroup`), or `OmitEach<parent
 config, seat> & (group config | NoneOf<group config>)`, so the flattened keys
-come together or not at all. The wrapped `strict` must satisfy the bundle's
+come together or not at all. The parent's own input must forbid the group keys
+itself: an object literal is checked for excess keys against the whole union,
+so a partial group would otherwise pass as the parent's own input. The wrapped `strict` must satisfy the bundle's
 signature too, which is why the parent's own input stays accepted. For a positional parent (a forwarded wrapper such as
 `match_block`) there is nothing to partition: a built value or `undefined`
 passes straight to the parent, anything else is the group's config and is
@@ -14780,7 +14783,7 @@ A spread seat on a list types its parameter with `listRestParamType`, from the s
 
 One seat's method, its application, and its parameter-type transform.
 Seats compose: `emitPolymorphsOverlay` threads the parent's `strict` (and
-`coerce`) through the flatten seat then each elements seat, so a parent with
+`coerce`) through each flatten seat then each elements seat, so a parent with
 both gets `m2(m1(F.parent, F.g1), F.g2)`, and threads the parameter TYPE the
 same way — each `paramFor` takes the type expression the previous seat
 produced rather than a `typeof` reference, which is why `SeatShape.paramFor`
@@ -14818,8 +14821,8 @@ arm (`visibilityModifier.inPath` two hops down through the hoisted `pub`
 form) has a decorated child const to reference. Without it every arm routed
 through a hoisted kind was dropped as a context mismatch.
 
-A wire set also carries the parent's flatten seat (`flattenSeatOf`) when the
-group's factory is emitted; a parent with a seat and no subs still enters
+A wire set also carries the parent's flatten seats (`flattenSeatsOf`) whose
+group factory is emitted; a parent with a seat and no subs still enters
 the map, because the seat rewrites its `strict`.
 
 A wire set also carries the parent's elements seats (`elementsSeatOf`) whose
@@ -15110,9 +15113,9 @@ Each chain it builds is recorded by the outer arm's name, so a parent that mount
 
 The name a flattened group field takes on the parent when its own name collides with another of the parent's slots: the seat's name followed by the field's, capitalised (`binaryIn` + `left` = `binaryInLeft`). The config key and the node-surface member are both named by it, from the seat's config key and accessor respectively.
 
-### `packages/codegen/src/emitters/overlays/sub-factories.ts::flattenSeatOf`
+### `packages/codegen/src/emitters/overlays/sub-factories.ts::flattenSeatsOf`
 
-The shape-2 seat: the parent's one non-multiple slot whose value set is
+The shape-2 seats: each non-multiple slot of the parent whose value set is
 exactly one hoisted, config-shaped kind — excluding a labelled value
 (`value.variant !== undefined`), since a labelled value already mounts as
 an arm elsewhere (`ir.exceptClause.exception.as`, `…exception.list`);
@@ -15120,8 +15123,7 @@ splicing it too would flatten its one key onto the parent and leave the
 arm with no spelling to reach it by. Such an (unlabelled) group is not an
 arm — there is nothing to choose between — and has no name a caller would
 type; its keys are flattened onto the parent's `strict` by the overlay
-(`flattenShape`), present as a whole or absent as a whole. A parent with two such seats fails the emit with a diagnostic naming both groups, since flattening one would
-hide the other. The seat lists its keys, each as the parent's config key (`key`) for a group field (`field`). A group field that collides with another slot of the parent is flattened under `prefixedKey` of the seat's config key and the field (the group's `left` in seat `binaryIn` is `binaryInLeft`), so the parent's `left` and the group's stay apart; a prefixed key that still collides fails the emit, naming both. A key that spells the seat's own slot is not a collision, since the group's value is what that slot reads. A direct-shaped group (one slot, taken positionally by its factory) is a
+(`flattenShape`), present as a whole or absent as a whole. A parent may seat several such groups, and every one flattens. The seat lists its keys, each as the parent's config key (`key`) for a group field (`field`). A group field that collides with another slot of the parent, or with a field of another group the parent seats, is flattened under `prefixedKey` of its own seat's config key and the field (the group's `left` in seat `binaryIn` is `binaryInLeft`; two groups that both have `step` flatten it once per seat, each under its own seat's prefix), so no two keys meet; a prefixed key that still collides fails the emit, naming both. A key that spells the seat's own slot is not a collision, since the group's value is what that slot reads. A direct-shaped group (one slot, taken positionally by its factory) is a
 flatten with one key: the seat records `directKey` and `flattenShape` builds
 the group from that key's value alone (python `slice.step`, `except_clause.exception`,
 typescript `_import_clause_default_import.import_clause_group`). A forwarded
@@ -15170,7 +15172,7 @@ text — marked `seated` when the arm's child is config-shaped but the
 wrapper takes its config whole under the slot key rather than merging its
 keys (`seatsConfigChild`), which is how the validator knows to spell the
 call), `flatten` when the slot
-is the wire set's flatten seat, `elements` when the slot is one of its
+is one of the wire set's flatten seats, `elements` when the slot is one of its
 elements seats; `undefined` for a value that is not a hoisted kind, or
 whose parent has no wire set, or that no seating reaches. The validators' `ir-render-parse` and the example emitter consume
 the stamp rather than re-deriving it; the census reports every hoisted kind
@@ -16494,13 +16496,13 @@ The nodes that own a list: those `listViewTarget` finds an owner slot for. The w
 
 The separated list a node reads as: the node itself when it is an `AssembledList`, or, for a list owner, the list it forwards to together with its sole slot (`owner`). `undefined` when the node reads as neither.
 
-### `packages/codegen/src/emitters/factories.ts::groupSeatHint`
+### `packages/codegen/src/emitters/factories.ts::groupSeatHints`
 
-The facts a node's flattened group needs for its node surface: the slot that seats the group, the group's type and kind, its raw factory, whether the seat is optional, and the keys it flattens. Each key has the name the parent reads and sets it by (`name`), the group field it stands for (`field`) and whether its setter takes rest arguments. Defined exactly when `flattenSeatOf` names a seat, and the keys come from that seat's own keys, so the config surface and the node surface agree on which kinds flatten a group and on every key's name. A key the seat prefixed is named with `prefixedKey` from the seat's accessor and the field's, the same rule the config key follows. A key that spells the seat's own slot reads the group's inner value, and its setter takes the inner value or the whole group.
+The facts each flattened group of a node needs for its node surface, one per seat: the slot that seats the group, the group's type and kind, its raw factory, whether the seat is optional, and the keys it flattens. Each key has the name the parent reads and sets it by (`name`), the group field it stands for (`field`) and whether its setter takes rest arguments. There is one for each seat `flattenSeatsOf` names, and its keys come from that seat's own keys, so the config surface and the node surface agree on which kinds flatten a group and on every key's name. A key the seat prefixed is named with `prefixedKey` from the seat's accessor and the field's, the same rule the config key follows. A key that spells the seat's own slot reads the group's inner value, and its setter takes the inner value or the whole group.
 
-### `packages/codegen/src/emitters/factories.ts::groupSeatRuntimeSpec`
+### `packages/codegen/src/emitters/factories.ts::groupSeatRuntimeSpecs`
 
-The object literal a node's builder and wrap pass to `withGroupSeat`: the seat's accessor (`slot`), the group's kind id (`kind`), the group's raw factory (`make`) and its keys (`keys`), each with its rest mark and, for a prefixed key, the group field it names. It shares `groupSeatHint` with the type-level `$flat` stamp, so the flattened members exist at runtime exactly when the interface declares them.
+The object literals a node's builder and wrap pass to `withGroupSeat`, one per seat, each applied in turn: the seat's accessor (`slot`), the group's kind id (`kind`), the group's raw factory (`make`) and its keys (`keys`), each with its rest mark and, for a prefixed key, the group field it names. It shares `groupSeatHints` with the type-level `$flat` stamp, so the flattened members exist at runtime exactly when the interface declares them.
 
 ### `packages/codegen/src/emitters/factories.ts::elementConfigsOf`
 

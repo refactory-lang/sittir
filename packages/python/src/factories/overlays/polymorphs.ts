@@ -24,9 +24,11 @@ const _built = (v: unknown): boolean => typeof v === 'object' && v !== null && '
 // bare-text call must keep its one-argument arity.
 const _fwd = <R>(f: unknown, arg: unknown, options: unknown): R =>
 	options === undefined ? _s<R>(f)(arg) : _s<R>(f)(arg, options);
-// A flattened group is present as a whole or absent as a whole: the second
-// overload forbids every one of its keys.
+// A flattened group is present as a whole or absent as a whole: a config
+// that seats the group by its slot names none of its keys, and one that
+// flattens it names the whole group or none of it.
 type NoneOf<T> = { [K in keyof T]?: never };
+type WithoutGroup<P, G> = P extends undefined ? P : P & NoneOf<G>;
 
 const futureImportStatement$importList =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -1665,11 +1667,11 @@ export const subscript = Object.freeze({
 	coerce: typeof subscript$seatedCoerce;
 };
 
-const slice$flatten =
+const slice$flatten$step =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
 		config:
-			| ArgsOf<PF>[0]
+			| WithoutGroup<ArgsOf<PF>[0], OmitEach<NonNullable<{ expression: ArgsOf<CF>[0] }>, 'step'>>
 			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'step'> &
 					({ expression: ArgsOf<CF>[0] } | NoneOf<{ expression: ArgsOf<CF>[0] }>)),
 		options?: unknown
@@ -1688,22 +1690,28 @@ const slice$flatten =
 	};
 const slice$seated: (
 	config:
-		| ArgsOf<typeof F.buildSlice>[0]
+		| WithoutGroup<
+				ArgsOf<typeof F.buildSlice>[0],
+				OmitEach<NonNullable<{ expression: ArgsOf<typeof F.buildSliceGroup>[0] }>, 'step'>
+		  >
 		| (OmitEach<NonNullable<ArgsOf<typeof F.buildSlice>[0]>, 'step'> &
 				(
 					| { expression: ArgsOf<typeof F.buildSliceGroup>[0] }
 					| NoneOf<{ expression: ArgsOf<typeof F.buildSliceGroup>[0] }>
 				))
-) => ReturnType<typeof F.buildSlice> = slice$flatten(F.buildSlice, F.buildSliceGroup);
+) => ReturnType<typeof F.buildSlice> = slice$flatten$step(F.buildSlice, F.buildSliceGroup);
 const slice$seatedCoerce: (
 	config:
-		| ArgsOf<typeof C.coerceToSlice>[0]
+		| WithoutGroup<
+				ArgsOf<typeof C.coerceToSlice>[0],
+				OmitEach<NonNullable<{ expression: ArgsOf<typeof C.coerceToSliceGroup>[0] }>, 'step'>
+		  >
 		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToSlice>[0]>, 'step'> &
 				(
 					| { expression: ArgsOf<typeof C.coerceToSliceGroup>[0] }
 					| NoneOf<{ expression: ArgsOf<typeof C.coerceToSliceGroup>[0] }>
 				))
-) => ReturnType<typeof C.coerceToSlice> = slice$flatten(C.coerceToSlice, C.coerceToSliceGroup);
+) => ReturnType<typeof C.coerceToSlice> = slice$flatten$step(C.coerceToSlice, C.coerceToSliceGroup);
 export const slice = Object.freeze({
 	...B.slice,
 	strict: slice$seated,

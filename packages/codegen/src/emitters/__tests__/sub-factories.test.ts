@@ -9,7 +9,7 @@ import type { NodeMap } from '../../compiler/types.ts';
 import {
 	armConfigKeys,
 	elementsSeatOf,
-	flattenSeatOf,
+	flattenSeatsOf,
 	subFactoriesOf,
 	type NodeArm,
 	type SubFactory
@@ -369,17 +369,18 @@ export function clauseNodeMap(): NodeMap {
 	});
 }
 
-describe('flattenSeatOf', () => {
+describe('flattenSeatsOf', () => {
 	it('finds the single hoisted config-shaped group in an optional seat', () => {
 		const nodeMap = clauseNodeMap();
-		const seat = flattenSeatOf(nodeMap.nodes.get('clause')!, nodeMap);
+		const [seat, ...more] = flattenSeatsOf(nodeMap.nodes.get('clause')!, nodeMap);
+		expect(more).toEqual([]);
 		expect(seat?.group.kind).toBe('clause_group');
 		expect(seat?.slot.values.length).toBe(1);
 		expect(subFactoriesOf(nodeMap.nodes.get('clause')!, nodeMap).entries).toEqual([]);
 	});
 	it('returns nothing for a choice of arms', () => {
 		const nodeMap = twoChoiceSlotsNodeMap();
-		expect(flattenSeatOf(nodeMap.nodes.get('header')!, nodeMap)).toBeUndefined();
+		expect(flattenSeatsOf(nodeMap.nodes.get('header')!, nodeMap)).toEqual([]);
 	});
 });
 
@@ -413,7 +414,7 @@ describe('elementsSeatOf', () => {
 		const nodeMap = comparisonNodeMap();
 		const seats = elementsSeatOf(nodeMap.nodes.get('comparison')!, nodeMap);
 		expect(seats.map((s) => [s.slot.name, s.group.kind])).toEqual([['comparators', 'comparison_comparator']]);
-		expect(flattenSeatOf(nodeMap.nodes.get('comparison')!, nodeMap)).toBeUndefined();
+		expect(flattenSeatsOf(nodeMap.nodes.get('comparison')!, nodeMap)).toEqual([]);
 	});
 	it('returns nothing for a single-valued seat', () => {
 		const nodeMap = clauseNodeMap();
@@ -421,7 +422,7 @@ describe('elementsSeatOf', () => {
 	});
 });
 
-describe('flattenSeatOf on a direct-shaped group', () => {
+describe('flattenSeatsOf on a direct-shaped group', () => {
 	it('names the one key of the group so the flatten calls it positionally', () => {
 		const nodeMap = buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'slice' }] },
@@ -438,13 +439,13 @@ describe('flattenSeatOf on a direct-shaped group', () => {
 				annotations: { hoisted: true }
 			}
 		});
-		const seat = flattenSeatOf(nodeMap.nodes.get('slice')!, nodeMap);
+		const [seat] = flattenSeatsOf(nodeMap.nodes.get('slice')!, nodeMap);
 		expect(seat?.group.kind).toBe('slice_step');
 		expect(seat?.directKey).toBe('step');
 	});
 });
 
-describe('flattenSeatOf prefixes a group key that collides with the parent', () => {
+describe('flattenSeatsOf prefixes a group key that collides with the parent', () => {
 	it('names the colliding key after its seat, and keeps the others as they are', () => {
 		const nodeMap = buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'binary' }] },
@@ -465,11 +466,50 @@ describe('flattenSeatOf prefixes a group key that collides with the parent', () 
 				annotations: { hoisted: true }
 			}
 		});
-		const seat = flattenSeatOf(nodeMap.nodes.get('binary')!, nodeMap)!;
+		const [seat] = flattenSeatsOf(nodeMap.nodes.get('binary')!, nodeMap) as [ReturnType<typeof flattenSeatsOf>[number]];
 		expect(seat.group.kind).toBe('binary_in');
 		expect(seat.keys).toEqual([
 			{ key: `${seat.slot.configKey}Left`, field: 'left' },
 			{ key: 'right', field: 'right' }
+		]);
+	});
+});
+
+describe('flattenSeatsOf flattens every group a node seats', () => {
+	it('prefixes a key two groups share, in each group, after its own seat', () => {
+		const group = (name: string, key: string): Rule<'evaluate'> => ({
+			type: SEQ,
+			members: [
+				{ type: STRING, value: name },
+				{ type: FIELD, name: key, content: { type: PATTERN, value: '[0-9]+' } },
+				{ type: STRING, value: ':' },
+				{ type: FIELD, name: 'step', content: { type: PATTERN, value: '[0-9]+' } }
+			],
+			annotations: { hoisted: true }
+		});
+		const nodeMap = buildNodeMap({
+			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'range' }] },
+			range: {
+				type: SEQ,
+				members: [
+					{ type: OPTIONAL, content: { type: SYMBOL, name: 'range_from' } },
+					{ type: STRING, value: '..' },
+					{ type: OPTIONAL, content: { type: SYMBOL, name: 'range_to' } }
+				]
+			},
+			range_from: group('from', 'start'),
+			range_to: group('to', 'end')
+		});
+		const seats = flattenSeatsOf(nodeMap.nodes.get('range')!, nodeMap);
+		expect(seats.map((seat) => seat.group.kind)).toEqual(['range_from', 'range_to']);
+		const [from, to] = seats as [(typeof seats)[number], (typeof seats)[number]];
+		expect(from.keys).toEqual([
+			{ key: 'start', field: 'start' },
+			{ key: `${from.slot.configKey}Step`, field: 'step' }
+		]);
+		expect(to.keys).toEqual([
+			{ key: 'end', field: 'end' },
+			{ key: `${to.slot.configKey}Step`, field: 'step' }
 		]);
 	});
 });
@@ -506,8 +546,8 @@ describe('a hoisted token the factories do not emit mounts as a value arm', () =
 	});
 });
 
-describe('flattenSeatOf fails a parent that seats two flattenable groups', () => {
-	it('names both groups instead of flattening neither', () => {
+describe('flattenSeatsOf flattens two groups whose keys do not collide', () => {
+	it('flattens both, each key as it is', () => {
 		const nodeMap = buildNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'x' }, { type: SYMBOL, name: 'clause' }] },
 			clause: {
@@ -528,8 +568,10 @@ describe('flattenSeatOf fails a parent that seats two flattenable groups', () =>
 				annotations: { hoisted: true }
 			}
 		});
-		expect(() => flattenSeatOf(nodeMap.nodes.get('clause')!, nodeMap)).toThrow(
-			/'clause' seats more than one flattenable group \('first_group' in '\w+', 'second_group' in '\w+'\)/
-		);
+		const seats = flattenSeatsOf(nodeMap.nodes.get('clause')!, nodeMap);
+		expect(seats.map((seat) => [seat.group.kind, seat.keys.map((k) => k.key)])).toEqual([
+			['first_group', ['parameter', 'label']],
+			['second_group', ['size', 'unit']]
+		]);
 	});
 });

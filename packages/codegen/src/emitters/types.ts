@@ -94,7 +94,7 @@ import {
 	listViewHint,
 	elementConfigsOf,
 	listSlotHints,
-	groupSeatHint,
+	groupSeatHints,
 	omitRegistered,
 	spellingTypeOf,
 	refineFormBuiltTypeSurfaceOf,
@@ -987,7 +987,7 @@ function emitSlotHints(
 	const setters = builtTypeSurfaceOf(node, nodeMap, kindEntries)?.setters ?? [];
 	const view = listViewHint(node, nodeMap, kindEntries);
 	const listSlots = listSlotHints(node, nodeMap, kindEntries);
-	const groupSeat = groupSeatHint(node, nodeMap, kindEntries);
+	const groupSeats = groupSeatHints(node, nodeMap, kindEntries);
 	if (setters.length === 0 && view === undefined) return;
 	lines.push('  readonly __slotHints__?: {');
 	const elementConfigs = new Map(elementConfigsOf(node, nodeMap).map((fact) => [fact.slot, fact.config]));
@@ -1004,11 +1004,12 @@ function emitSlotHints(
 		lines.push(`    readonly ${setter.name}: SlotHint<${setter.input}${flags}>;`);
 	}
 	if (view !== undefined) lines.push(`    readonly $listView: ListViewHint<${view.element}, ${view.options}>;`);
-	if (groupSeat !== undefined) {
-		const keys = groupSeat.keys.map((key) => `readonly ${JSON.stringify(key.name)}: ${JSON.stringify(key.field)}`).join('; ');
-		lines.push(
-			`    readonly $flat: FlatHint<${JSON.stringify(groupSeat.slot)}, T.${groupSeat.group}, { ${keys} }, ${groupSeat.optional}>;`
-		);
+	if (groupSeats.length > 0) {
+		const flat = groupSeats.map((seat) => {
+			const keys = seat.keys.map((key) => `readonly ${JSON.stringify(key.name)}: ${JSON.stringify(key.field)}`).join('; ');
+			return `FlatHint<${JSON.stringify(seat.slot)}, T.${seat.group}, { ${keys} }, ${seat.optional}>`;
+		});
+		lines.push(`    readonly $flat: ${flat.join(' | ')};`);
 	}
 	if (listSlots.length > 0) {
 		lines.push('    readonly $listSlots: {');

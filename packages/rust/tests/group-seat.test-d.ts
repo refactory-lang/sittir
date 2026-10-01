@@ -40,3 +40,17 @@ export function flattenedListSeatReadsItsAccessors(block: T.MatchBlock.Parsed): 
 	block.matchArms();
 	block.lastArm();
 }
+
+export function wholeGroupBySlotOrFlattenedKeysCompile(): void {
+	const value = engine.build.identifier('v');
+	const whole = engine.build.matchPattern({ pattern: engine.build.identifier('p') });
+	engine.build.lastMatchArm({ pattern: whole, value });
+	engine.build.lastMatchArm({ pattern: engine.build.identifier('p'), condition: engine.build.identifier('c'), value });
+}
+
+export function flattenedKeyBesideTheWholeGroupIsAnError(): void {
+	const value = engine.build.identifier('v');
+	const whole = engine.build.matchPattern({ pattern: engine.build.identifier('p') });
+	// @ts-expect-error a group seated by its slot takes none of its keys beside it
+	engine.build.lastMatchArm({ pattern: whole, condition: engine.build.identifier('c'), value });
+}

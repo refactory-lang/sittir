@@ -208,7 +208,7 @@ Marks one slot that holds a list: the item type and the options of the list kind
 
 ### `packages/types/src/node-surface.ts::FlatHint`
 
-Marks a kind that seats a flattened group: the slot that holds the group (`Slot`), the group's type, the keys that flatten it (`Keys`, a map from the name the parent reads and sets each key by to the group field it stands for; the two differ only for a key the seat prefixed) and whether the seat is optional. Stamped under the reserved `$flat` key of `__slotHints__`, from the fact that gives the strict factory its flattened config keys. Each key is an accessor and a `$with` setter on the parent with the shape the group's own accessor and setter have for its field (an optional seat reads each field as possibly absent); the seat's own accessor stays, except where a key spells it.
+Marks a kind that seats a flattened group: the slot that holds the group (`Slot`), the group's type, the keys that flatten it (`Keys`, a map from the name the parent reads and sets each key by to the group field it stands for; the two differ only for a key the seat prefixed) and whether the seat is optional. Stamped under the reserved `$flat` key of `__slotHints__`, from the fact that gives the strict factory its flattened config keys; a kind that seats several groups stamps the union of their hints, and the surface types read each key, accessor and setter from the hint that names it. Each key is an accessor and a `$with` setter on the parent with the shape the group's own accessor and setter have for its field (an optional seat reads each field as possibly absent); the seat's own accessor stays, except where a key spells it.
 
 ### `packages/types/src/node-surface.ts::NarrowTo`
 

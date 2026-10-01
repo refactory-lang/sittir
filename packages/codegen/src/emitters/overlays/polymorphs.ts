@@ -19,7 +19,7 @@ import {
 	seatsConfigChild,
 	configKeysOf,
 	elementsSeatOf,
-	flattenSeatOf,
+	flattenSeatsOf,
 	tupleSeatOf,
 	subFactoriesOf,
 	variantArmsOf,
@@ -116,7 +116,7 @@ export interface PolymorphWireSet {
 	readonly node: AssembledNode;
 	readonly subs: readonly SubFactory[];
 	readonly aliases: readonly AliasWire[];
-	readonly flatten?: FlattenedSeat;
+	readonly flattens?: readonly FlattenedSeat[];
 	readonly elements?: readonly FlattenSeat[];
 	readonly tuples?: readonly FlattenSeat[];
 }
@@ -200,23 +200,22 @@ export function collectPolymorphWires(
 			return childRefs(sub, keyByKind, coerceEmitted) !== undefined;
 		});
 		const aliases = variantAliasWires(node, nodeMap, isEmitted, subs);
-		const seat = flattenSeatOf(node, nodeMap);
-		const flatten = seat !== undefined && isEmitted(seat.group.kind) ? seat : undefined;
+		const flattens = flattenSeatsOf(node, nodeMap).filter((seat) => isEmitted(seat.group.kind));
 		const elements = elementsSeatOf(node, nodeMap).filter((e) => isEmitted(e.group.kind));
 		const claimed = new Set(subs.map((sub) => sub.slot));
 		const tuples = tupleSeatOf(node, nodeMap).filter((e) => isEmitted(e.group.kind) && !claimed.has(e.slot));
 		visiting.add(node.kind);
-		for (const s of [...(flatten ? [flatten] : []), ...elements, ...tuples]) visit(s.group);
+		for (const s of [...flattens, ...elements, ...tuples]) visit(s.group);
 		for (const alias of aliases) visit(alias.child);
 		visiting.delete(node.kind);
-		if (subs.length > 0 || aliases.length > 0 || flatten !== undefined || elements.length > 0 || tuples.length > 0) {
+		if (subs.length > 0 || aliases.length > 0 || flattens.length > 0 || elements.length > 0 || tuples.length > 0) {
 			order.push(node.kind);
 			byKind.set(node.kind, {
 				parentKey,
 				node,
 				subs,
 				aliases,
-				...(flatten ? { flatten } : {}),
+				...(flattens.length > 0 ? { flattens } : {}),
 				...(elements.length > 0 ? { elements } : {}),
 				...(tuples.length > 0 ? { tuples } : {})
 			});
@@ -263,7 +262,7 @@ function inDependencyOrder(chunks: readonly OverlayChunk[]): OverlayChunk[] {
 function seatBearing(wires: PolymorphWires, kind: string, parentKind: string): boolean {
 	const set = wires.byKind.get(kind);
 	if (set === undefined) return false;
-	if (set.flatten === undefined && (set.elements ?? []).length === 0 && (set.tuples ?? []).length === 0) return false;
+	if ((set.flattens ?? []).length === 0 && (set.elements ?? []).length === 0 && (set.tuples ?? []).length === 0) return false;
 	const at = wires.order.indexOf(kind);
 	return at !== -1 && at < wires.order.indexOf(parentKind);
 }
@@ -503,9 +502,11 @@ const LIST_HELPER = [
 ];
 
 const FLATTEN_HELPER = [
-	'// A flattened group is present as a whole or absent as a whole: the second',
-	'// overload forbids every one of its keys.',
-	'type NoneOf<T> = { [K in keyof T]?: never };'
+	'// A flattened group is present as a whole or absent as a whole: a config',
+	'// that seats the group by its slot names none of its keys, and one that',
+	'// flattens it names the whole group or none of it.',
+	'type NoneOf<T> = { [K in keyof T]?: never };',
+	'type WithoutGroup<P, G> = P extends undefined ? P : P & NoneOf<G>;'
 ];
 
 interface WireShape {
@@ -681,7 +682,7 @@ function flattenShape(
 		? `(${JSON.stringify(Object.fromEntries(keys.map(({ key, field }) => [key, field])))} as Record<string, string>)[key]!`
 		: 'key';
 	const flattened = (p: string, c: string): string =>
-		`${p} | (OmitEach<NonNullable<${p}>, '${k}'> & (${groupConfig(c)} | NoneOf<${groupConfig(c)}>))`;
+		`WithoutGroup<${p}, OmitEach<NonNullable<${groupConfig(c)}>, '${k}'>> | (OmitEach<NonNullable<${p}>, '${k}'> & (${groupConfig(c)} | NoneOf<${groupConfig(c)}>))`;
 	const buildGroup = directKey === undefined ? `${CALL_C}(inner)` : `${CALL_C}(inner[${JSON.stringify(directKey)}])`;
 	return {
 		method: [
@@ -801,7 +802,7 @@ function seatEmission(
 	wires: PolymorphWires,
 	nodeMap: NodeMap
 ): SeatEmission {
-	const m = methodName(parentKey, kind === 'flatten' ? 'flatten' : seat.slot.configKey);
+	const m = methodName(parentKey, kind === 'flatten' ? `flatten$${seat.slot.configKey}` : seat.slot.configKey);
 	const direct = resolveDirectFactorySlot(parent, nodeMap) !== undefined;
 	const wrapperSeat = kind === 'flatten' && !direct && configKeysOf(seat.group).includes(seat.slot.configKey);
 	const wrapperId = wrapperSeat ? kindDiscriminantExpr(seat.group.kind, nodeMap, wires.kindEntries) : undefined;
@@ -909,7 +910,7 @@ export function emitPolymorphsOverlay(config: { nodeMap: NodeMap; generatedIdTab
 		const wireTypes: string[] = [];
 		const methods: string[] = [];
 		const seats: SeatEmission[] = [
-			...(wireSet.flatten ? [seatEmission(wireSet.node, wireSet.parentKey, wireSet.flatten, 'flatten', wires, nodeMap)] : []),
+			...(wireSet.flattens ?? []).map((e) => seatEmission(wireSet.node, wireSet.parentKey, e, 'flatten', wires, nodeMap)),
 			...(wireSet.elements ?? []).map((e) => seatEmission(wireSet.node, wireSet.parentKey, e, 'elements', wires, nodeMap)),
 			...(wireSet.tuples ?? []).map((e) => seatEmission(wireSet.node, wireSet.parentKey, e, 'tuple', wires, nodeMap))
 		];

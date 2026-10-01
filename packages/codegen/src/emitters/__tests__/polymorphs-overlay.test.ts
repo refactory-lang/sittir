@@ -252,12 +252,12 @@ describe('a single hoisted group flattens onto its parent', () => {
 		});
 		const seatKey = nodeMap.nodes.get('clause')!.slots.find((s) => s.values.length === 1)!.configKey;
 		const out = emitPolymorphsOverlay({ nodeMap });
-		expect(out).toContain('const clause$flatten =');
+		expect(out).toContain(`const clause$flatten$${seatKey} =`);
 		expect(out).toContain(
-			`ArgsOf<PF>[0] | (OmitEach<NonNullable<ArgsOf<PF>[0]>, '${seatKey}'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>))`
+			`WithoutGroup<ArgsOf<PF>[0], OmitEach<NonNullable<ArgsOf<CF>[0]>, '${seatKey}'>> | (OmitEach<NonNullable<ArgsOf<PF>[0]>, '${seatKey}'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>))`
 		);
 		expect(out).toContain('export const clause = Object.freeze({');
-		expect(out).toContain('= clause$flatten(F.buildClause, F.buildClauseGroup);');
+		expect(out).toContain(`= clause$flatten$${seatKey}(F.buildClause, F.buildClauseGroup);`);
 		expect(out).toContain('strict: clause$seated,');
 		expect(out.indexOf('...B.clause,')).toBeLessThan(out.indexOf('strict: clause$seated,'));
 	});
@@ -407,11 +407,11 @@ describe('a visible wrapper declared flattened seats on its parent', () => {
 			nodeMap: wrapperGrammar(),
 			generatedIdTables: { kindIds: { root: 1, arm: 2, wrapper: 3 }, sourceArtifact: 'test' }
 		});
-		expect(out).toContain('const arm$flatten =');
+		expect(out).toContain('const arm$flatten$pattern =');
 		expect(out).toContain('(parent: PF, child: CF, wrapperId: number) =>');
 		expect(out).toContain('const own = _o(config)["pattern"];');
 		expect(out).toContain('(own as { $type?: unknown }).$type === wrapperId');
-		expect(out).toMatch(/= arm\$flatten\(F\.buildArm, F\.buildWrapper, TSKindId\.Wrapper\);/);
+		expect(out).toMatch(/= arm\$flatten\$pattern\(F\.buildArm, F\.buildWrapper, TSKindId\.Wrapper\);/);
 		expect(out).toContain("import { TSKindId } from '../../types.js';");
 	});
 });
