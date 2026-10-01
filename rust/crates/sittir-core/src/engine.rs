@@ -9,7 +9,7 @@
 //!
 //! `Engine<G>` is stateless (parser + grammar config). Parsing returns a
 //! `ParsedTree<G>` that owns the tree, source, format, and a node coordinate
-//! table for drill-in navigation. Coordinates are stable child-index paths
+//! table for expansion navigation. Coordinates are stable child-index paths
 //! from the root, re-resolved on each access — no lifetime-erasure needed.
 
 use crate::format::{apply_format, extract_format};
@@ -115,7 +115,7 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// parse, so a handle names the tree it belongs to and cannot be spent
     /// against another one.
     tree_id: u32,
-    /// Node coordinate table for drill-in navigation. Each entry back-links
+    /// Node coordinate table for expansion navigation. Each entry back-links
     /// to its parent handle; the root entry has `parent: None`.
     nodes: Vec<NodeCoord>,
 }

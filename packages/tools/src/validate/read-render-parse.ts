@@ -713,7 +713,7 @@ export async function validateReadRenderParse(
 					try {
 						// `$childIndex` is undefined for a candidate that IS the tree
 						// root (nothing above it to index into) — defaulting it to 0
-						// would make `handle.read(handle, 0)` drill into the root's
+						// would make `handle.read(handle, 0)` expand into the root's
 						// FIRST CHILD, silently round-tripping the wrong node (the
 						// child mislabeled as the parent). Root candidates take the
 						// deep-materialization path instead of guessing an index.

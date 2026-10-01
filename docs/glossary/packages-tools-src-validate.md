@@ -219,7 +219,7 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
  * between the wasm/JS handle (default) and a native-engine handle
  * (when `SITTIR_BACKEND=native` is set). A native handle is the grammar
  * engine's own parse (`readNativeTree`): every read — root and
- * drill-in alike — goes through the engine that also renders, so the
+ * expansion alike — goes through the engine that also renders, so the
  * coordinates it hands out resolve at render time.
  *
  * The wasm `tree` is still required: validators use it for kind
@@ -254,7 +254,7 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
 
 ```text
 /**
- * Navigation coordinates for a native drill-in.
+ * Navigation coordinates for a native expansion.
  * `handle` is the parent's index in the tree's nodes[], `childIndex` is
  * the position in parent's child array.
  */
@@ -319,7 +319,7 @@ Every trivia side is walked (leading, trailing and inner), and a node found in a
 // No handle+child-index exists for this entry (see
 // `NativeNodeCoords.embeddedData`) — return the already-
 // materialized data directly instead of falling through to
-// the coordinate-based match/drill logic below, which can
+// the coordinate-based match/expand logic below, which can
 // never succeed for it.
 ```
 
@@ -384,7 +384,7 @@ Every trivia side is walked (leading, trailing and inner), and a node found in a
 #### body
 
 ```text
-// Drill when the child doesn't already carry its own sub-children.
+// Expand when the child doesn't already carry its own sub-children.
 ```
 
 ### `packages/tools/src/validate/common.ts::findFirst`
@@ -866,7 +866,7 @@ and is read with `readFileSync` on the path.
  * encountered wrapped node. Enumeration uses `Object.keys` + accessor
  * invocation — accessors defined via `{get foo() {}}` appear as
  * enumerable keys and fire on read, so each child materializes through
- * the wrap layer's drill-in ($type on every node is the grammar-symbol
+ * the wrap layer's expansion ($type on every node is the grammar-symbol
  * wire identity stamped by the read).
  *
  * `$`-prefixed keys are spread NodeData metadata (not child getters)
@@ -1081,7 +1081,7 @@ and is read with `readFileSync` on the path.
 //   - `children` in place of $children
 //   - leaf values as bare strings (factory leaf signatures are `(text: string)`)
 //   - branch values as NodeData produced by THAT kind's factory — when
-//     `tree` + `factoryMap` are supplied, children are drilled via
+//     `tree` + `factoryMap` are supplied, children are expanded via
 //     `readNode` and reconstructed through their own factory before
 //     being installed under the parent's config. This is what makes the
 //     factory layer actually exercise construction instead of passing
@@ -1226,7 +1226,7 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 ```text
 /**
  * Guard the recursion depth and availability of tree/factory context before
- * drilling into a child node.
+ * expanding a child node.
  *
  * @remarks
  * Depth cap: recursive construction shouldn't run away even on pathologically
@@ -1268,7 +1268,7 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 
 ```text
 /**
- * Drill into a shallow child NodeData via the tree handle, then convert
+ * Expand a shallow child NodeData via the tree handle, then convert
  * recursively and route through its kind's factory. Falls back to the
  * passed-in shallow NodeData when `tree` isn't available OR the child
  * lacks a $nodeId (factory-built children don't carry one).

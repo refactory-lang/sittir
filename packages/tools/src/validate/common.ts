@@ -390,11 +390,11 @@ export function findNativeNodeId(
 			if (isKind(child) && handleForChild !== undefined && child.$childIndex !== undefined) {
 				return { handle: handleForChild, childIndex: child.$childIndex };
 			}
-			let drilled = child;
-			if (!hasEmbeddedNativeChildren(drilled) && handleForChild !== undefined && drilled.$childIndex !== undefined) {
-				drilled = read(handleForChild, drilled.$childIndex) as AnyNodeData;
+			let expanded = child;
+			if (!hasEmbeddedNativeChildren(expanded) && handleForChild !== undefined && expanded.$childIndex !== undefined) {
+				expanded = read(handleForChild, expanded.$childIndex) as AnyNodeData;
 			}
-			const found = walk(drilled);
+			const found = walk(expanded);
 			if (found !== null) return found;
 		}
 		return null;
@@ -437,11 +437,11 @@ export function walkNativeForKind(
 					span: spanOf(child)
 				});
 			}
-			let drilled = child;
-			if (!hasEmbeddedNativeChildren(drilled) && handleForChild !== undefined && drilled.$childIndex !== undefined) {
-				drilled = read(handleForChild, drilled.$childIndex) as AnyNodeData;
+			let expanded = child;
+			if (!hasEmbeddedNativeChildren(expanded) && handleForChild !== undefined && expanded.$childIndex !== undefined) {
+				expanded = read(handleForChild, expanded.$childIndex) as AnyNodeData;
 			}
-			walk(drilled);
+			walk(expanded);
 		}
 	}
 
@@ -652,7 +652,7 @@ export function upstreamWasmPath(grammar: string): string | undefined {
 
 export async function loadProjectNode(
 	grammar: string
-): Promise<((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null> {
+): Promise<((handle: TreeHandle, parentHandle?: number, childIndex?: number) => unknown) | null> {
 	try {
 		const mod = await importGrammarModule(grammar, 'wrap.ts');
 		if (!mod) return null;
@@ -1200,15 +1200,15 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	if (isAnonTokenPassthrough(c)) return child;
 	const { tree, factoryMap, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
 	if (shouldHaltRecursion(_depth, tree, factoryMap)) return child;
-	const drilled = expandForConfig(c, opts);
-	const rawTypeId = drilled.$type ?? c.$type;
+	const expanded = expandForConfig(c, opts);
+	const rawTypeId = expanded.$type ?? c.$type;
 	const rawKind =
 		rawTypeId !== undefined
 			? typeof rawTypeId === 'number'
 				? (opts.kindNameFromId?.(rawTypeId) ?? String(rawTypeId))
 				: rawTypeId
 			: undefined;
-	if (!rawKind) return drilled;
+	if (!rawKind) return expanded;
 	let kind = resolveAliasedKind(rawKind, _parentKind, _fieldName, fieldAliasMap);
 	let factory = factoryMap![kind];
 	if (!factory && kind.startsWith('_')) {
@@ -1220,14 +1220,14 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		}
 	}
 	if (!factory) {
-		const inner = soleWrappedNode(drilled, opts);
-		return inner === undefined ? drilled : resolveChild(inner, { ...opts, _depth: _depth + 1 });
+		const inner = soleWrappedNode(expanded, opts);
+		return inner === undefined ? expanded : resolveChild(inner, { ...opts, _depth: _depth + 1 });
 	}
-	return buildWithFactory(drilled, kind, factory, { ...opts, _depth: _depth + 1 });
+	return buildWithFactory(expanded, kind, factory, { ...opts, _depth: _depth + 1 });
 }
 
-function soleWrappedNode(drilled: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike | undefined {
-	const rec = drilled as unknown as Record<string, unknown>;
+function soleWrappedNode(expanded: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike | undefined {
+	const rec = expanded as unknown as Record<string, unknown>;
 	const keys = Object.keys(rec).filter((k) => k.startsWith('_') && rec[k] !== undefined);
 	if (keys.length !== 1) return undefined;
 	const value = rec[keys[0]!];

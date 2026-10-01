@@ -147,13 +147,13 @@ with the comma in `$other`, and `nodeToConfig` handles that shape correctly.
 The example emitter did not use it — it re-read each child raw through
 `handle.read`, which hands the separator back as an element.
 
-The emitter now builds from `materializeWrappedNodeData`, the same input
+The emitter now builds from `materialize`, the same input
 `factory-render-parse` builds from, and applies the seat key-move as a plain
 walker over the result. Four defects had to fall with it, and the first is why
 an earlier attempt at the switch alone fixed typescript while regressing rust:
 
 - **`resolveChild` re-read every materialized child.** Materialized nodes keep
-  `$nodeHandle` and `$childIndex`, and `drillReadNode` re-reads on those two
+  `$parentHandle` and `$childIndex`, and `expandForConfig` re-reads on those two
   keys alone, so the raw parse node came back one level down and the slot
   filter was discarded again. A node that carries its own contents — text, slot
   keys, `$children` or `$other` — is no longer re-read. The emitter is the only

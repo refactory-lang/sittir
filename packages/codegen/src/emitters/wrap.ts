@@ -1760,7 +1760,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('');
 		lines.push('/**');
 		lines.push(' * Read a parsed tree node into a lazily-wrapped NodeData.');
-		lines.push(' * One level deep — getters drill into subtrees on demand by');
+		lines.push(' * One level deep — getters expand into subtrees on demand by');
 		lines.push(' * recursing back through this same function. The wire `$type` is');
 		lines.push(' * the grammar symbol (stamped by the read), so no per-site alias');
 		lines.push(' * rewriting exists between the read and the wrap.');

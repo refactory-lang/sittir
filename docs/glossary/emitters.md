@@ -4832,7 +4832,7 @@ the literal component, for `literalArmSeamSites`.
 /**
  * Compute the shared {@link TypeComponent} list for a children slot.
  *
- * Child slots intentionally project only constructible / drillable node refs.
+ * Child slots intentionally project only constructible / expandable node refs.
  * Inline terminal values in the grammar (separator commas, keywords like
  * `"from"`, etc.) are filtered out by the wrap layer and never appear in the
  * public children accessor surface, so the type projection must ignore them too.
@@ -7460,7 +7460,7 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
 // union) rename the emitted property/accessor to the model's real slot
 // name. Multi-field kinds (e.g. a dict-pattern-shaped 'list' kind whose
 // elements route to more than one real slot by kind) route EACH field
-// through the exact same per-field drilling logic
+// through the exact same per-field expansion logic
 // `emitFieldCarryingWrap` uses (`emitFieldStorageLines`/
 // `emitFieldAccessorLines`) instead of one shared bucket.
 ```
@@ -7516,11 +7516,11 @@ Collision guard for the `$other` reclaim. Across a kind's reclaiming slots (`rec
 /**
  * Emit per-field `_<name>: <storeExpr>,` storage assignments for `fields`,
  * reusing the exact same per-field kindEnum/verbatim/alias/candidate-
- * storage-key drilling logic regardless of which caller's kind classifies as
+ * storage-key expansion logic regardless of which caller's kind classifies as
  * (`'branch'`/`'envelope'`/`'polymorph'` via `emitFieldCarryingWrap`, or a
  * MULTI-field `'list'` via `emitSeparatedListWrap` — e.g. a `'list'` kind
  * whose elements route to more than one real slot by kind, not one shared
- * bucket). Extracted so both callers share ONE source for this drilling
+ * bucket). Extracted so both callers share ONE source for this expansion
  * decision tree instead of two copies drifting apart.
  */
 ```
@@ -7561,7 +7561,7 @@ Collision guard for the `$other` reclaim. Across a kind's reclaiming slots (`rec
  * Emit per-field `<propName>() { ... },` inline accessor methods for
  * `fields` — the accessor-side counterpart to `emitFieldStorageLines`,
  * shared for the same reason (branch/group AND multi-field separatedList
- * both need identical per-field drilling for their accessors).
+ * both need identical per-field expansion for their accessors).
  */
 ```
 
@@ -7627,7 +7627,7 @@ A repeated slot's setter takes its values as rest arguments only when the slot's
 ```text
 // Field-carrying: $with setters spread `data` + patch the target
 // `_<name>` key, then re-wrap — producing another fluent wrapped node
-// with drill-in support (not a raw factory node). Typed params align
+// with expansion support (not a raw factory node). Typed params align
 // with the factory version's setter signatures.
 ```
 
@@ -8450,12 +8450,12 @@ seat the child into a config or tuple take the value arguments only.
 
 ```text
 /**
- * Resolve the drill-in expression for a field storage assignment.
+ * Resolve the expansion expression for a field storage assignment.
  * Returns the raw-field read expression AND the inline accessor body.
  *
  * @param f - The assembled nonterminal field descriptor.
  * @param nodeMap - The assembled node map, needed to derive the per-field
- *   element type for generic type arguments on drill helpers.
+ *   element type for generic type arguments on expand helpers.
  * @returns An object with `storeExpr` (storage init from `data` via
  *   `readRawField` — bridges the `AnyNodeData` type which doesn't
  *   declare per-kind `_<name>` properties) and `accessorBody` (reads
@@ -13118,7 +13118,7 @@ A mixed-enum slot resolves a bare string by keyword extraction first, then lexic
  *
  * Mirrors the factory emitter (factories.ts) shape A one-for-one:
  *   - `_<name>` storage keys (enumerable, serializable stubs from readNode de-hoisted output)
- *   - Inline method shorthand `name()` accessors that perform lazy drill-in
+ *   - Inline method shorthand `name()` accessors that perform lazy expansion
  *   - Inline `$with` property that calls the factory for updates
  *   - `withMethods<T>` from per-grammar `./utils.js` wraps the literal
  *   - No `Object.defineProperty`, no `freezeNodeData`, no `Record<string,unknown>` casts
@@ -13191,7 +13191,7 @@ The wrap header's type from a wrapped datum to its declared `Parsed` node: a dat
 ```
 
 ```text
-// A wrap body with nothing to drill never reads `tree` — rename the param
+// A wrap body with nothing to expand never reads `tree` — rename the param
 // so the generated package lints clean.
 ```
 
@@ -13294,7 +13294,7 @@ The kinds the wrapper accepts as a child are the supertype's direct subtypes plu
 
 ```text
 // A member stored as its kind id (a keyword member of the union) has no
-// children to filter and nothing to drill: it is already the value the
+// children to filter and nothing to expand: it is already the value the
 // wrapper would return, so it passes through before any `$other` probe.
 ```
 
@@ -13325,7 +13325,7 @@ The kinds the wrapper accepts as a child are the supertype's direct subtypes plu
 // anonymous tokens (no named member — e.g. this supertype's visible
 // occurrence wrapping a bare punctuation/lifetime token like `'`)
 // into a text-only leaf: no kind-keyed child, no `$other` bucket to
-// drill into. The occurrence itself already carries the leaf's own
+// expand into. The occurrence itself already carries the leaf's own
 // `$text`/`$span`/`$type` — exactly the bare-leaf shape the
 // transport side already accepts for such members — so treat the
 // node itself as the resolved member instead of requiring a named
@@ -13334,7 +13334,7 @@ The kinds the wrapper accepts as a child are the supertype's direct subtypes plu
 // transport slices its bytes from the tree, so it is its own member.
 ```
 
-After the kind-id pass-through the node is read through a typed local (`_NodeData` plus a `$other` typed as the member union), never the narrowed parameter: a supertype whose members are all kind-id valued would otherwise narrow the parameter to `never`. A supertype whose subtypes are all tokens or keywords has nothing to drill into at all, and its wrap returns the value unchanged.
+After the kind-id pass-through the node is read through a typed local (`_NodeData` plus a `$other` typed as the member union), never the narrowed parameter: a supertype whose members are all kind-id valued would otherwise narrow the parameter to `never`. A supertype whose subtypes are all tokens or keywords has nothing to expand into at all, and its wrap returns the value unchanged.
 
 ### `packages/codegen/src/emitters/wrap.ts::separatorIdsExprOf`
 
@@ -13363,7 +13363,7 @@ After the kind-id pass-through the node is read through a typed local (`_NodeDat
 // verbatim `$text` carries). For every other kind an all-anon-children
 // occurrence is genuinely EMPTY structure (an empty `{}` block, `()`
 // arguments) whose declared slot keys are a load-bearing wrap contract —
-// pass-through there breaks required-slot drills and from() field
+// pass-through there breaks required-slot expansions and from() field
 // comparison.
 ```
 
@@ -13414,7 +13414,7 @@ After the kind-id pass-through the node is read through a typed local (`_NodeDat
 #### body
 
 ```text
-// Unnamed children slot -- pass through from data (stubs; drilled lazily by consumer).
+// Unnamed children slot -- pass through from data (stubs; expanded lazily by consumer).
 // $other is a $-prefixed metadata key, not a _<name> storage key, so
 // $other doesn't have the `_` prefix convention — access via data.$other
 // which AnyNodeData declares as `readonly NodeMemberValue[] | undefined`.
@@ -13423,7 +13423,7 @@ After the kind-id pass-through the node is read through a typed local (`_NodeDat
 #### body
 
 ```text
-// Inline method shorthand accessors: `name()` returns drilled value via `this._<name>`.
+// Inline method shorthand accessors: `name()` returns expanded value via `this._<name>`.
 ```
 
 #### body
@@ -13606,7 +13606,7 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 // Kinds absent from the NodeMap entirely (no `_wrapTable` entry — e.g.
 // python's `case_pattern_group1`, a hidden alias-mint wrapper the
 // grammar produces but our model doesn't represent) have no dedicated
-// wrap function to drill into their own children.
+// wrap function to expand into their own children.
 // `read_node.rs`'s one-level read (`read_slots` / `stub_of`)
 // leaves an unlabeled named child with sub-structure as a shallow stub
 // (`$parentHandle`/`$childIndex`, no fields of its own) — normally a
@@ -13618,7 +13618,7 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 // (confirmed via `tool probe-kind`: python's `case_pattern` → `content`
 // → `_dotted_name` arrives as `{$type, $text, $span, ...}` only, no
 // `_identifier`, because `case_pattern_group1` triggers exactly this
-// fallback). Drill in every `_`-prefixed property here, whatever key the
+// fallback). Expand every `_`-prefixed property here, whatever key the
 // reader stored it under: a slot name, or the child's kind where the
 // parent has no slot for it.
 ```
@@ -13628,7 +13628,7 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 ```text
 // `_wrapTrivia` — a read node's trivia entries (leading, trailing, and
 // each inner gap's, walked by `mapTriviaEntries`) are children like any
-// slot child, so each drills in through `expandChildren` and dispatches
+// slot child, so each expands through `expandChildren` and dispatches
 // through `wrapNode` by its own `$type`: a comment entry exposes its
 // kind's accessors. `wrapNode`
 // wraps the trivia before dispatch, once per node; `_aliasEnvelope`

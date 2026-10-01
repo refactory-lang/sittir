@@ -78,7 +78,7 @@ expression.binary(config);
 - **Factory input** — `Config` uses camelCase ergonomic keys.
 - **Factory output** — NodeData with pure getters, `$with` setters, and `withMethods<T>` helpers.
 - **From input/output** — same shape as factory output, with loose resolution layered on top.
-- **readNode / readTreeNode** — raw tree input mapped into NodeData with no ergonomic translation.
+- **readNode / projectNode** — raw tree input mapped into NodeData with no ergonomic translation (`readNode` plain, `projectNode` wrapped).
 - **Render input** — runtime reads `_raw_name` fields and `$children` directly.
 
 ## Design decisions to preserve

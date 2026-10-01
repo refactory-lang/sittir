@@ -1772,7 +1772,7 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 
 /**
  * Read a parsed tree node into a lazily-wrapped NodeData.
- * One level deep — getters drill into subtrees on demand by
+ * One level deep — getters expand into subtrees on demand by
  * recursing back through this same function. The wire `$type` is
  * the grammar symbol (stamped by the read), so no per-site alias
  * rewriting exists between the read and the wrap.

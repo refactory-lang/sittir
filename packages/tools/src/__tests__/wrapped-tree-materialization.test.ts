@@ -55,7 +55,7 @@ async function loadFreshWrapWitnessModule(): Promise<{
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	const source = emitWrap({ grammar: 'synth', nodeMap: makeNodeMapWith(nodes) });
 	const stubbedSource = [
-		'const readNodeJs = () => { throw new Error("unused"); };',
+		'const readNode = () => { throw new Error("unused"); };',
 		'const withMethods = (node) => node;',
 		'const methodsEngine = {};',
 		'const _factories = new Proxy({}, { get: () => () => { throw new Error("unused"); } });',

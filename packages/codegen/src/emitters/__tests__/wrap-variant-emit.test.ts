@@ -112,7 +112,7 @@ describe('wrap emitter — polymorph variant stamping', () => {
 
 		expect(wrapEmitterSource).not.toContain('function resolveChildrenStoreExpr');
 		expect(wrapEmitterSource).not.toContain('function resolveChildrenAccessorBody');
-		// Named-field storage/accessor drilling was extracted into
+		// Named-field storage/accessor expansion was extracted into
 		// emitFieldStorageLines/emitFieldAccessorLines (separator-as-slot Bug B
 		// follow-up — shared with emitSeparatedListWrap's multi-field case), so
 		// emitFieldCarryingWrap's OWN body now calls resolveSlotDrillExprs only

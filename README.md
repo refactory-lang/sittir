@@ -380,7 +380,7 @@ lives in `packages/<lang>/grammar.sittir.ts`.
 | `types.ts`                                    | Per-kind interfaces, `TSKindId` const enum, `KIND_NAMES`, `ConfigFor<K>`, `NamespaceMap`, supertype unions |
 | `factories.ts`                                | One factory per kind: `kind.strict(config)` and the coercing `kind(input)` with shared output          |
 | `from.ts`                                     | Closed-form coercion resolver — no runtime inference                                          |
-| `wrap.ts`                                     | `wrapNode(node, tree)` / `projectNode(node)` — typed accessors with lazy drill-in             |
+| `wrap.ts`                                     | `wrapNode(node, tree)` / `projectNode(node)` — typed accessors with lazy expansion             |
 | `ir.ts`                                       | `ir.*` namespace + grouped supertype namespaces (`expression`, `statement`, ...)               |
 | `is.ts`                                       | Kind guards (`is.*`)                                                                           |
 | `consts.ts`                                   | Discoverable arrays/maps: kind names, keywords, operators                                      |

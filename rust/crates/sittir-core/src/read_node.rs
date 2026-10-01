@@ -297,7 +297,7 @@ fn read_ts_node(
 /// Trivia entries are fully materialized (recursively read via
 /// `read_ts_node`, not shallow stubs) since they are not independently
 /// addressable through the normal `_<slot>`/`$other` handle+child-index
-/// navigation -- nothing would ever drill in to hydrate a stub left here.
+/// navigation -- nothing would ever expand to hydrate a stub left here.
 /// Each entry still carries a coordinate — the tree's tag in `$treeHandle`
 /// and its own `$span` — so an untouched comment renders as the bytes it
 /// spans, whatever its kind's transport would otherwise need.

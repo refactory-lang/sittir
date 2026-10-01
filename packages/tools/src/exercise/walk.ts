@@ -4,7 +4,7 @@ import { isStub } from '@sittir/common/utils';
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
 import { nativeShownKindId } from '../validate/shown-kind.ts';
 
-type ProjectNode = (handle: unknown, nodeHandle?: number, childIndex?: number) => unknown;
+type ProjectNode = (handle: unknown, parentHandle?: number, childIndex?: number) => unknown;
 
 interface CommonModule {
 	loadLanguageForGrammar(grammar: string): Promise<{
@@ -75,7 +75,7 @@ function collectChildren(node: WalkNode): unknown[] {
 		try {
 			children.push(value.call(node));
 		} catch {
-			// Ignore drill-in failures; traversal is best-effort diagnostic output.
+			// Ignore expansion failures; traversal is best-effort diagnostic output.
 		}
 	}
 	return children;

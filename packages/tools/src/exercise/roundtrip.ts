@@ -19,7 +19,7 @@ interface ExerciseCase {
 }
 
 interface ReadHandle {
-	readonly read?: (nodeHandle?: number, childIndex?: number) => unknown;
+	readonly read?: (parentHandle?: number, childIndex?: number) => unknown;
 }
 
 interface NativeCoords {

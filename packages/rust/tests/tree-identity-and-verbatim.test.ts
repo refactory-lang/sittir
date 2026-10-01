@@ -6,7 +6,7 @@
 // one tree is in range in every later tree; without a tree tag, descending into
 // an earlier root resolves against the newest parse and returns unrelated nodes
 // with no error raised. The root itself hides this: its own `$render()` replays
-// the captured `$text` and never touches a handle, so only a drill-in shows it.
+// the captured `$text` and never touches a handle, so only an expansion shows it.
 //
 // VERBATIM SOURCE — an untouched parse renders back byte for byte. Two things
 // have to hold for that: the root's captured text has to span the whole file
@@ -20,7 +20,7 @@ import { createEngine } from '@sittir/common';
 import rust from '../src/index.ts';
 
 /** A statement's rendered text — undefined for a keyword statement stored as
- *  its kind id, which has nothing to drill into. */
+ *  its kind id, which has nothing to expand into. */
 const render = (statement: unknown): string | undefined =>
 	typeof statement === 'object' && statement !== null && '$render' in statement
 		? (statement as { $render(): string }).$render()
@@ -32,7 +32,7 @@ describe('tree identity across parses', () => {
 		const first = engine.parse('fn alpha_one() { let x = 1; }');
 		const second = engine.parse('mod beta_two { struct S; }');
 
-		// Drill in — the root's own $render() replays captured text and would
+		// Expand — the root's own $render() replays captured text and would
 		// pass even against a hijacked tree.
 		const firstStatements = first.statements();
 		const secondStatements = second.statements();
