@@ -8119,7 +8119,7 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "optional_chain",
+					"test": "optional_chain_marker",
 					"body": [
 						{
 							"kind": "seam",
@@ -8127,7 +8127,7 @@
 						},
 						{
 							"kind": "slot",
-							"name": "optional_chain"
+							"name": "optional_chain_marker"
 						},
 						{
 							"kind": "seam",

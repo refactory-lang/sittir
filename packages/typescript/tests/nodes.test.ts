@@ -1541,7 +1541,7 @@ describe('arrow_function sub-factories', () => {
 
 describe('optional_chain', () => {
 	it('is the kind id', () => {
-		expect(ir.optionalChain2).toBe(TSKindId.OptionalChain2);
+		expect(ir.optionalChain).toBe(TSKindId.OptionalChain);
 	});
 });
 
@@ -4696,9 +4696,9 @@ describe('index_signature_mapped_type_clause sub-factories', () => {
 	});
 });
 
-describe('_optional_chain', () => {
+describe('optional_chain_marker', () => {
 	it('is the kind id', () => {
-		expect(ir.optionalChain).toBe(TSKindId.OptionalChain);
+		expect(ir.optionalChainMarker).toBe(TSKindId.OptionalChainMarker);
 	});
 });
 

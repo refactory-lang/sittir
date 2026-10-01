@@ -316,9 +316,6 @@
     "template_literal_type.elements": {
       "string_fragment": "_template_chars"
     },
-    "type_query_subscript_expression.optional_chain": {
-      "optional_chain": "_optional_chain"
-    },
     "index_type_query.type": {
       "type_identifier": "identifier",
       "this_type": "this"
@@ -2824,7 +2821,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "optional_chain": {
+      "optional_chain_marker": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4819,18 +4816,6 @@
       "isParameterless": true,
       "stampExpression": "\"\\n\" as const",
       "text": "\n",
-      "factoryShape": "constant"
-    },
-    {
-      "kind": "_optional_chain",
-      "modelType": "punctuation",
-      "typeName": "OptionalChain",
-      "factoryName": "optionalChain",
-      "irKey": "optionalChain",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"?.\" as const",
-      "text": "?.",
       "factoryShape": "constant"
     },
     {
@@ -20578,9 +20563,21 @@
     {
       "kind": "optional_chain",
       "modelType": "punctuation",
-      "typeName": "OptionalChain2",
-      "factoryName": "optionalChain2",
-      "irKey": "optionalChain2",
+      "typeName": "OptionalChain",
+      "factoryName": "optionalChain",
+      "irKey": "optionalChain",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"?.\" as const",
+      "text": "?.",
+      "factoryShape": "constant"
+    },
+    {
+      "kind": "optional_chain_marker",
+      "modelType": "punctuation",
+      "typeName": "OptionalChainMarker",
+      "factoryName": "optionalChainMarker",
+      "irKey": "optionalChainMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"?.\" as const",
@@ -27344,22 +27341,22 @@
           ]
         },
         {
-          "name": "optional_chain",
-          "propertyName": "optionalChain",
-          "paramName": "optionalChain",
+          "name": "optional_chain_marker",
+          "propertyName": "optionalChainMarker",
+          "paramName": "optionalChainMarker",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
           "storage": "boolean",
           "kinds": [
-            "_optional_chain"
+            "optional_chain_marker"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_optional_chain",
-              "parseKind": "optional_chain"
+              "name": "optional_chain_marker",
+              "parseKind": "optional_chain_marker"
             }
           ]
         },
@@ -27401,7 +27398,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "object",
-        "optional_chain",
+        "optional_chain_marker",
         "index"
       ]
     },

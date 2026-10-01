@@ -10173,7 +10173,7 @@ export function wrapTypeQuerySubscriptExpression(
 	data: T.TypeQuerySubscriptExpression,
 	tree: TreeHandle
 ): T.TypeQuerySubscriptExpression.Parsed {
-	data = _keepModelledSlots(data, ['_object', '_optional_chain', '_index']);
+	data = _keepModelledSlots(data, ['_object', '_optional_chain_marker', '_index']);
 	if (_isReadTextLeaf(data))
 		return withMethods({
 			...data,
@@ -10191,11 +10191,11 @@ export function wrapTypeQuerySubscriptExpression(
 			}),
 			{ this: 119 }
 		),
-		_optional_chain: coerceBooleanKeywordStorage(
-			normalizeSingularWrapSlot(data._optional_chain, 'optional_chain', false, data.$type, {
+		_optional_chain_marker: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._optional_chain_marker, 'optional_chain_marker', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'optional_chain',
+				slotName: 'optional_chain_marker',
 				span: (data as _NodeData).$span
 			})
 		),
@@ -10231,8 +10231,8 @@ export function wrapTypeQuerySubscriptExpression(
 				| T.TypeQueryCallExpression
 			>(this._object, tree);
 		},
-		optionalChain() {
-			return this._optional_chain;
+		optionalChainMarker() {
+			return this._optional_chain_marker;
 		},
 		index() {
 			return drillIn<
@@ -10253,8 +10253,8 @@ export function wrapTypeQuerySubscriptExpression(
 		$with: {
 			object: (v: NonNullable<T.TypeQuerySubscriptExpression['_object']>) =>
 				wrapTypeQuerySubscriptExpression({ ...$edited(data), _object: v }, tree),
-			optionalChain: (v: NonNullable<T.TypeQuerySubscriptExpression['_optional_chain']>) =>
-				wrapTypeQuerySubscriptExpression({ ...$edited(data), _optional_chain: v }, tree),
+			optionalChainMarker: (v: NonNullable<T.TypeQuerySubscriptExpression['_optional_chain_marker']>) =>
+				wrapTypeQuerySubscriptExpression({ ...$edited(data), _optional_chain_marker: v }, tree),
 			index: (v: NonNullable<T.TypeQuerySubscriptExpression['_index']>) =>
 				wrapTypeQuerySubscriptExpression({ ...$edited(data), _index: v }, tree)
 		}
@@ -15069,7 +15069,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 		wrapGeneratorFunctionDeclaration(d as unknown as T.GeneratorFunctionDeclaration, t),
 	[TSKindId.ArrowFunction]: (d, t) => wrapArrowFunction(d as unknown as T.ArrowFunction, t),
 	[TSKindId.FormalParameter]: (d, t) => wrapFormalParameter(d as unknown as T.FormalParameter, t),
-	[TSKindId.OptionalChain2]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.OptionalChain2 as const }),
+	[TSKindId.OptionalChain]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.OptionalChain as const }),
 	[TSKindId.CallExpression]: (d, t) => wrapCallExpression(d as unknown as T.CallExpression, t),
 	[TSKindId.NewExpression]: (d, t) => wrapNewExpression(d as unknown as T.NewExpression, t),
 	[TSKindId.AwaitExpression]: (d, t) => wrapAwaitExpression(d as unknown as T.AwaitExpression, t),
@@ -15274,7 +15274,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 		wrapImportStatementClauseFrom(d as unknown as T.ImportStatementClauseFrom, t),
 	[TSKindId.YieldExpressionDelegate]: (d, t) =>
 		wrapYieldExpressionDelegate(d as unknown as T.YieldExpressionDelegate, t),
-	[TSKindId.OptionalChain]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.OptionalChain as const }),
+	[TSKindId.OptionalChainMarker]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.OptionalChainMarker as const }),
 	[TSKindId.ImportSpecifierName]: (d, t) => wrapImportSpecifierName(d as unknown as T.ImportSpecifierName, t),
 	[TSKindId.ImportSpecifierAs]: (d, t) => wrapImportSpecifierAs(d as unknown as T.ImportSpecifierAs, t),
 	[TSKindId.ParenthesizedExpressionTyped]: (d, t) =>

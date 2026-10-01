@@ -365,7 +365,7 @@ export default sittirGrammar(base, {
 		},
 
 		yield_expression: [{ '1/0': variant('delegate') }, { 1: field('expression') }],
-		_type_query_subscript_expression: { '1/0': alias('optional_chain') },
+		_type_query_subscript_expression: { '1/0': alias('optional_chain_marker') },
 
 		expression_statement: {
 			0: field('expression'),

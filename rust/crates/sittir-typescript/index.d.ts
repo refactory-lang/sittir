@@ -1475,7 +1475,7 @@ export interface SubscriptExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _object: SlotValue<Box<SubscriptExpressionObjectTransportSlot>>
-  _optional_chain?: SlotValue<OptionalChain2Transport>
+  _optional_chain?: SlotValue<OptionalChainTransport>
   _index: SlotValue<Box<SubscriptExpressionIndexTransportSlot>>
 }
 
@@ -1689,7 +1689,7 @@ export interface TypeQuerySubscriptExpressionTransport {
   '$_edges'?: Edges
   _object: SlotValue<Box<TypeQuerySubscriptExpressionObjectTransportSlot>>
   _index: SlotValue<TypeQuerySubscriptExpressionIndexTransportSlot>
-  _optional_chain?: SlotValue<OptionalChainTransport>
+  _optional_chain_marker?: SlotValue<OptionalChainMarkerTransport>
 }
 
 export interface TypeQueryTransport {

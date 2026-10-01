@@ -5757,6 +5757,11 @@
     "fields": {}
   },
   {
+    "type": "optional_chain_marker",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "optional_parameter",
     "named": true,
     "fields": {
@@ -7533,7 +7538,7 @@
       "required": false,
       "types": [
         {
-          "type": "optional_chain",
+          "type": "optional_chain_marker",
           "named": true
         }
       ]

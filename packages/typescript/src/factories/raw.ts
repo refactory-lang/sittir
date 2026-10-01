@@ -2283,7 +2283,7 @@ export function buildArrowFunction(config: T.ArrowFunction.Config): T.ArrowFunct
 	) as unknown as T.ArrowFunction.Bound;
 }
 
-export const buildOptionalChain2: TSKindId.OptionalChain2 = TSKindId.OptionalChain2;
+export const buildOptionalChain: TSKindId.OptionalChain = TSKindId.OptionalChain;
 
 export function buildNewExpression(config: T.NewExpression.Config): T.NewExpression.Bound {
 	const _constructor = rejectBareText(
@@ -2355,7 +2355,7 @@ export function buildMemberExpression(config: T.MemberExpression.Config): T.Memb
 	);
 	const _separator = coerceKindEnumStorage<NonNullable<T.MemberExpression['_separator']>>(config.separator, [
 		['.', TSKindId.Dot] as const,
-		['?.', TSKindId.OptionalChain2] as const
+		['?.', TSKindId.OptionalChain] as const
 	]);
 	const _property = admitAliasContent<NonNullable<T.MemberExpression['_property']>>(
 		rejectBareText(
@@ -6001,7 +6001,7 @@ export function buildTypeQuerySubscriptExpression(
 		TSKindId.Identifier,
 		['this']
 	);
-	const _optional_chain = coerceBooleanKeywordStorage(config.optionalChain);
+	const _optional_chain_marker = coerceBooleanKeywordStorage(config.optionalChainMarker);
 	const _index = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.TypeQuerySubscriptExpression['_index']>>(config.index, [
 			['any', TSKindId.AnyKeyword] as const,
@@ -6025,20 +6025,20 @@ export function buildTypeQuerySubscriptExpression(
 				$source: 2 as const,
 				$named: true as const,
 				_object,
-				_optional_chain,
+				_optional_chain_marker,
 				_index,
 				$with: {
 					object: (value: NonNullable<T.TypeQuerySubscriptExpression.Config>['object']) =>
 						buildTypeQuerySubscriptExpression({ ...config, object: value }),
-					optionalChain: (value?: NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChain']) =>
-						buildTypeQuerySubscriptExpression({ ...config, optionalChain: value }),
+					optionalChainMarker: (value?: NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChainMarker']) =>
+						buildTypeQuerySubscriptExpression({ ...config, optionalChainMarker: value }),
 					index: (value: NonNullable<T.TypeQuerySubscriptExpression.Config>['index']) =>
 						buildTypeQuerySubscriptExpression({ ...config, index: value })
 				}
 			},
 			{
 				object: () => _object,
-				optionalChain: () => _optional_chain,
+				optionalChainMarker: () => _optional_chain_marker,
 				index: () => _index
 			}
 		)
@@ -9075,7 +9075,7 @@ export function buildYieldExpressionDelegate(
 	) as unknown as T.YieldExpressionDelegate.Bound;
 }
 
-export const buildOptionalChain: TSKindId.OptionalChain = TSKindId.OptionalChain;
+export const buildOptionalChainMarker: TSKindId.OptionalChainMarker = TSKindId.OptionalChainMarker;
 
 export function buildImportSpecifierName(config: T.ImportSpecifierName.Config): T.ImportSpecifierName.Bound {
 	const _import_kind = coerceKindEnumStorage<NonNullable<T.ImportSpecifierName['_import_kind']>>(config.importKind, [
@@ -10802,7 +10802,7 @@ export type FluentKindMap = {
 	generator_function: T.GeneratorFunction.Bound;
 	generator_function_declaration: T.GeneratorFunctionDeclaration.Bound;
 	arrow_function: T.ArrowFunction.Bound;
-	optional_chain: T.OptionalChain2;
+	optional_chain: T.OptionalChain;
 	new_expression: T.NewExpression.Bound;
 	await_expression: T.AwaitExpression.Bound;
 	member_expression: T.MemberExpression.Bound;
@@ -10957,7 +10957,7 @@ export type FluentKindMap = {
 	index_signature_mapped_type_clause: T.IndexSignatureMappedTypeClause.Bound;
 	import_statement_clause_from: T.ImportStatementClauseFrom.Bound;
 	yield_expression_delegate: T.YieldExpressionDelegate.Bound;
-	_optional_chain: T.OptionalChain;
+	optional_chain_marker: T.OptionalChainMarker;
 	import_specifier_name: T.ImportSpecifierName.Bound;
 	import_specifier_as: T.ImportSpecifierAs.Bound;
 	parenthesized_expression_typed: T.ParenthesizedExpressionTyped.Bound;
@@ -11062,7 +11062,7 @@ export const _factoryMap = {
 	generator_function: buildGeneratorFunction,
 	generator_function_declaration: buildGeneratorFunctionDeclaration,
 	arrow_function: buildArrowFunction,
-	optional_chain: buildOptionalChain2,
+	optional_chain: buildOptionalChain,
 	new_expression: buildNewExpression,
 	await_expression: buildAwaitExpression,
 	member_expression: buildMemberExpression,
@@ -11217,7 +11217,7 @@ export const _factoryMap = {
 	index_signature_mapped_type_clause: buildIndexSignatureMappedTypeClause,
 	import_statement_clause_from: buildImportStatementClauseFrom,
 	yield_expression_delegate: buildYieldExpressionDelegate,
-	_optional_chain: buildOptionalChain,
+	optional_chain_marker: buildOptionalChainMarker,
 	import_specifier_name: buildImportSpecifierName,
 	import_specifier_as: buildImportSpecifierAs,
 	parenthesized_expression_typed: buildParenthesizedExpressionTyped,

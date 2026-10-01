@@ -74,7 +74,7 @@ pub enum AnyTransport {
     GeneratorFunction(GeneratorFunctionTransport),
     GeneratorFunctionDeclaration(GeneratorFunctionDeclarationTransport),
     ArrowFunction(ArrowFunctionTransport),
-    OptionalChain2(OptionalChain2Transport),
+    OptionalChain(OptionalChainTransport),
     NewExpression(NewExpressionTransport),
     AwaitExpression(AwaitExpressionTransport),
     MemberExpression(MemberExpressionTransport),
@@ -231,7 +231,7 @@ pub enum AnyTransport {
     IndexSignatureMappedTypeClause(IndexSignatureMappedTypeClauseTransport),
     ImportStatementClauseFrom(ImportStatementClauseFromTransport),
     YieldExpressionDelegate(YieldExpressionDelegateTransport),
-    OptionalChain(OptionalChainTransport),
+    OptionalChainMarker(OptionalChainMarkerTransport),
     ImportSpecifierName(ImportSpecifierNameTransport),
     ImportSpecifierAs(ImportSpecifierAsTransport),
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedTransport),
@@ -511,7 +511,7 @@ pub enum AnyTransport {
     Literal86_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64,
     Literal87_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64,
     Literal88_71_6d_61_72_6b_5f_64_6f_74,
-    Literal89_5f_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e,
+    Literal89_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e_5f_6d_61_72_6b_65_72,
     Literal90_74_72_75_65,
     Literal91_66_61_6c_73_65,
     Literal92_6e_75_6c_6c,
@@ -594,7 +594,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::GeneratorFunction(t) => t.prepare(ctx),
             AnyTransport::GeneratorFunctionDeclaration(t) => t.prepare(ctx),
             AnyTransport::ArrowFunction(t) => t.prepare(ctx),
-            AnyTransport::OptionalChain2(t) => t.prepare(ctx),
+            AnyTransport::OptionalChain(t) => t.prepare(ctx),
             AnyTransport::NewExpression(t) => t.prepare(ctx),
             AnyTransport::AwaitExpression(t) => t.prepare(ctx),
             AnyTransport::MemberExpression(t) => t.prepare(ctx),
@@ -751,7 +751,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::IndexSignatureMappedTypeClause(t) => t.prepare(ctx),
             AnyTransport::ImportStatementClauseFrom(t) => t.prepare(ctx),
             AnyTransport::YieldExpressionDelegate(t) => t.prepare(ctx),
-            AnyTransport::OptionalChain(t) => t.prepare(ctx),
+            AnyTransport::OptionalChainMarker(t) => t.prepare(ctx),
             AnyTransport::ImportSpecifierName(t) => t.prepare(ctx),
             AnyTransport::ImportSpecifierAs(t) => t.prepare(ctx),
             AnyTransport::ParenthesizedExpressionTyped(t) => t.prepare(ctx),
@@ -1031,7 +1031,7 @@ impl ::sittir_core::prepare::Prepare for AnyTransport {
             AnyTransport::Literal86_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64 => Ok(()),
             AnyTransport::Literal87_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64 => Ok(()),
             AnyTransport::Literal88_71_6d_61_72_6b_5f_64_6f_74 => Ok(()),
-            AnyTransport::Literal89_5f_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => Ok(()),
+            AnyTransport::Literal89_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e_5f_6d_61_72_6b_65_72 => Ok(()),
             AnyTransport::Literal90_74_72_75_65 => Ok(()),
             AnyTransport::Literal91_66_61_6c_73_65 => Ok(()),
             AnyTransport::Literal92_6e_75_6c_6c => Ok(()),
@@ -1284,9 +1284,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 249 => Ok(AnyTransport::ArrowFunction(
                     ArrowFunctionTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: optional_chain (OPTIONAL_CHAIN2)
-                252 => Ok(AnyTransport::OptionalChain2(
-                    OptionalChain2Transport::from_napi_value(env, napi_val)?
+                // kind: optional_chain (OPTIONAL_CHAIN)
+                252 => Ok(AnyTransport::OptionalChain(
+                    OptionalChainTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: new_expression (NEW_EXPRESSION)
                 254 => Ok(AnyTransport::NewExpression(
@@ -1912,9 +1912,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 402 => Ok(AnyTransport::YieldExpressionDelegate(
                     YieldExpressionDelegateTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _optional_chain (_OPTIONAL_CHAIN)
-                403 => Ok(AnyTransport::OptionalChain(
-                    OptionalChainTransport::from_napi_value(env, napi_val)?
+                // kind: optional_chain_marker (OPTIONAL_CHAIN_MARKER)
+                403 => Ok(AnyTransport::OptionalChainMarker(
+                    OptionalChainMarkerTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: import_specifier_name (IMPORT_SPECIFIER_NAME)
                 404 => Ok(AnyTransport::ImportSpecifierName(
@@ -44604,28 +44604,28 @@ impl ::sittir_core::render::Render for TypeQuerySubscriptExpressionIndexTranspor
 }
 
 #[derive(Debug, Clone)]
-pub enum TypeQuerySubscriptExpressionOptionalChainTransportSlot {
-    Literal89_5f_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e,
+pub enum TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot {
+    Literal89_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e_5f_6d_61_72_6b_65_72,
 }
 
-impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionOptionalChainTransportSlot {
+impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            TypeQuerySubscriptExpressionOptionalChainTransportSlot::Literal89_5f_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => Ok(()),
+            TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot::Literal89_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e_5f_6d_61_72_6b_65_72 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for TypeQuerySubscriptExpressionOptionalChainTransportSlot {
+impl ::sittir_core::view::KindOf for TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Literal89_5f_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => [::sittir_core::types::KindId(252)].iter().any(|k| kinds.contains(k)),
+            Self::Literal89_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e_5f_6d_61_72_6b_65_72 => [::sittir_core::types::KindId(403)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionOptionalChainTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -44633,69 +44633,69 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionOpti
         match ::sittir_core::slot::transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    252 => Ok(Self::Literal89_5f_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e),
+                    403 => Ok(Self::Literal89_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TypeQuerySubscriptExpressionOptionalChainTransportSlot",
+                        "unknown kind id {other} in TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in TypeQuerySubscriptExpressionOptionalChainTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    252 => Ok(Self::Literal89_5f_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e),
+                    403 => Ok(Self::Literal89_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in TypeQuerySubscriptExpressionOptionalChainTransportSlot",
+                        "unknown kind id {other} in TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("TypeQuerySubscriptExpressionOptionalChainTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TypeQuerySubscriptExpressionOptionalChainTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TypeQuerySubscriptExpressionOptionalChainTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TypeQuerySubscriptExpressionOptionalChainTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TypeQuerySubscriptExpressionOptionalChainTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeQuerySubscriptExpressionOptionalChainTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TypeQuerySubscriptExpressionOptionalChainTransportSlot::to_napi_value(env, *val)
+        TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn type_query_subscript_expression_optional_chain_transport_slot_to_any(t: TypeQuerySubscriptExpressionOptionalChainTransportSlot) -> AnyTransport {
+fn type_query_subscript_expression_optional_chain_marker_transport_slot_to_any(t: TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot) -> AnyTransport {
     match t {
-        TypeQuerySubscriptExpressionOptionalChainTransportSlot::Literal89_5f_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => AnyTransport::Literal89_5f_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e,
+        TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot::Literal89_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e_5f_6d_61_72_6b_65_72 => AnyTransport::Literal89_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e_5f_6d_61_72_6b_65_72,
     }
 }
 
-impl ::sittir_core::render::Render for TypeQuerySubscriptExpressionOptionalChainTransportSlot {
+impl ::sittir_core::render::Render for TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            TypeQuerySubscriptExpressionOptionalChainTransportSlot::Literal89_5f_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => {
+            TypeQuerySubscriptExpressionOptionalChainMarkerTransportSlot::Literal89_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e_5f_6d_61_72_6b_65_72 => {
                 w.site_at(options::SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_QMARK_DOT_BEFORE);
                 let written = w.text("?.");
                 written?;
@@ -66589,31 +66589,31 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ArrowFunctionTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct OptionalChain2Transport {
+pub struct OptionalChainTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for OptionalChain2Transport {
+impl ::sittir_core::view::KindOf for OptionalChainTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(252)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for OptionalChain2Transport {
+impl ::sittir_core::options::Edged for OptionalChainTransport {
     fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(252) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
-impl ::sittir_core::render::Render for OptionalChain2Transport {
+impl ::sittir_core::render::Render for OptionalChainTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, Some(::sittir_core::types::KindId(252)), w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for OptionalChain2Transport {
+impl ::sittir_core::prepare::Prepare for OptionalChainTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
@@ -66621,7 +66621,7 @@ impl ::sittir_core::prepare::Prepare for OptionalChain2Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for OptionalChain2Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -66632,7 +66632,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChain2Transport {
             ::napi::ValueType::Number => "?.".to_string(),
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("OptionalChain2Transport received false; omit the field instead of sending false"));
+                    return Err(::napi::Error::from_reason("OptionalChainTransport received false; omit the field instead of sending false"));
                 }
                 "?.".to_string()
             }
@@ -66651,7 +66651,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChain2Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for OptionalChain2Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -66667,7 +66667,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChain2Transport {
             }
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("OptionalChain2Transport received false; omit the field instead of sending false"));
+                    return Err(::napi::Error::from_reason("OptionalChainTransport received false; omit the field instead of sending false"));
                 }
                 return Ok(Self {
                     transport_trivia_data: None,
@@ -66690,7 +66690,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChain2Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for OptionalChain2Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for OptionalChainTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -66700,22 +66700,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for OptionalChain2Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<OptionalChain2Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<OptionalChainTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        OptionalChain2Transport::from_napi_value(env, napi_val).map(Box::new)
+        OptionalChainTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<OptionalChain2Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<OptionalChainTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        OptionalChain2Transport::to_napi_value(env, *val)
+        OptionalChainTransport::to_napi_value(env, *val)
     }
 }
 
@@ -66915,7 +66915,7 @@ pub struct SubscriptExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_object"))]
     pub object: ::sittir_core::SlotValue<Box<SubscriptExpressionObjectTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_chain"))]
-    pub optional_chain: Option<::sittir_core::SlotValue<OptionalChain2Transport>>,
+    pub optional_chain: Option<::sittir_core::SlotValue<OptionalChainTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index"))]
     pub index: ::sittir_core::SlotValue<Box<SubscriptExpressionIndexTransportSlot>>,
 }
@@ -73133,8 +73133,8 @@ pub struct TypeQuerySubscriptExpressionTransport {
     pub object: ::sittir_core::SlotValue<Box<TypeQuerySubscriptExpressionObjectTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_index"))]
     pub index: ::sittir_core::SlotValue<TypeQuerySubscriptExpressionIndexTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_chain"))]
-    pub optional_chain: Option<::sittir_core::SlotValue<OptionalChainTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optional_chain_marker"))]
+    pub optional_chain_marker: Option<::sittir_core::SlotValue<OptionalChainMarkerTransport>>,
 }
 
 impl ::sittir_core::view::KindOf for TypeQuerySubscriptExpressionTransport {
@@ -73161,7 +73161,7 @@ impl ::sittir_core::prepare::Prepare for TypeQuerySubscriptExpressionTransport {
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.object.prepare(ctx)?;
         self.index.prepare(ctx)?;
-        self.optional_chain.prepare(ctx)?;
+        self.optional_chain_marker.prepare(ctx)?;
         Ok(())
     }
 }
@@ -77451,31 +77451,31 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<YieldExpressionDelegateTranspo
 }
 
 #[derive(Debug, Clone)]
-pub struct OptionalChainTransport {
+pub struct OptionalChainMarkerTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     pub edges: Option<::sittir_core::options::Edges>,
     pub text: String,
 }
 
-impl ::sittir_core::view::KindOf for OptionalChainTransport {
+impl ::sittir_core::view::KindOf for OptionalChainMarkerTransport {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         [::sittir_core::types::KindId(403)].iter().any(|k| kinds.contains(k))
     }
 }
 
-impl ::sittir_core::options::Edged for OptionalChainTransport {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(252) }
+impl ::sittir_core::options::Edged for OptionalChainMarkerTransport {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(403) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.edges.as_ref().unwrap_or(&::sittir_core::options::Edges::NONE) }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.edges.get_or_insert_with(Default::default) }
 }
 
-impl ::sittir_core::render::Render for OptionalChainTransport {
+impl ::sittir_core::render::Render for OptionalChainMarkerTransport {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_with_trivia!(self, w, Some(::sittir_core::types::KindId(403)), w.text(&self.text))
     }
 }
 
-impl ::sittir_core::prepare::Prepare for OptionalChainTransport {
+impl ::sittir_core::prepare::Prepare for OptionalChainMarkerTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         Ok(())
@@ -77483,7 +77483,7 @@ impl ::sittir_core::prepare::Prepare for OptionalChainTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainMarkerTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -77494,7 +77494,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
             ::napi::ValueType::Number => "?.".to_string(),
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("OptionalChainTransport received false; omit the field instead of sending false"));
+                    return Err(::napi::Error::from_reason("OptionalChainMarkerTransport received false; omit the field instead of sending false"));
                 }
                 "?.".to_string()
             }
@@ -77513,7 +77513,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainMarkerTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -77529,7 +77529,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
             }
             ::napi::ValueType::Boolean => {
                 if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("OptionalChainTransport received false; omit the field instead of sending false"));
+                    return Err(::napi::Error::from_reason("OptionalChainMarkerTransport received false; omit the field instead of sending false"));
                 }
                 return Ok(Self {
                     transport_trivia_data: None,
@@ -77552,7 +77552,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OptionalChainTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for OptionalChainTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for OptionalChainMarkerTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -77562,22 +77562,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for OptionalChainTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<OptionalChainTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<OptionalChainMarkerTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        OptionalChainTransport::from_napi_value(env, napi_val).map(Box::new)
+        OptionalChainMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<OptionalChainTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<OptionalChainMarkerTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        OptionalChainTransport::to_napi_value(env, *val)
+        OptionalChainMarkerTransport::to_napi_value(env, *val)
     }
 }
 
@@ -99922,7 +99922,7 @@ fn render_arrow_function(node: &ArrowFunctionTransport, w: &mut dyn ::sittir_cor
     Ok(())
 }
 
-fn render_optional_chain2(t: &OptionalChain2Transport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_optional_chain(t: &OptionalChainTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -101316,12 +101316,12 @@ fn render_type_query_member_expression(node: &TypeQueryMemberExpressionTransport
 fn render_type_query_subscript_expression(node: &TypeQuerySubscriptExpressionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let index = &node.index;
     let object = &node.object;
-    let optional_chain = View::new(&node.optional_chain, "{}");
+    let optional_chain_marker = View::new(&node.optional_chain_marker, "{}");
     w.edge(::sittir_core::types::KindId(347), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     object.render(w)?;
-    if optional_chain.is_present() {
+    if optional_chain_marker.is_present() {
         w.site_at(options::SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_QMARK_DOT_BEFORE);
-        optional_chain.render(w)?;
+        optional_chain_marker.render(w)?;
         w.site_at(options::SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_QMARK_DOT_AFTER);
     }
     w.site_at(options::SITE_TYPE_QUERY_SUBSCRIPT_EXPRESSION_LBRACK_BEFORE);
@@ -102232,7 +102232,7 @@ fn render_yield_expression_delegate(node: &YieldExpressionDelegateTransport, w: 
     Ok(())
 }
 
-fn render_optional_chain(t: &OptionalChainTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+fn render_optional_chain_marker(t: &OptionalChainMarkerTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     w.text(&t.text)
 }
 
@@ -103607,7 +103607,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::GeneratorFunction(inner) => inner.kind_in(kinds),
             Self::GeneratorFunctionDeclaration(inner) => inner.kind_in(kinds),
             Self::ArrowFunction(inner) => inner.kind_in(kinds),
-            Self::OptionalChain2(inner) => inner.kind_in(kinds),
+            Self::OptionalChain(inner) => inner.kind_in(kinds),
             Self::NewExpression(inner) => inner.kind_in(kinds),
             Self::AwaitExpression(inner) => inner.kind_in(kinds),
             Self::MemberExpression(inner) => inner.kind_in(kinds),
@@ -103764,7 +103764,7 @@ impl ::sittir_core::view::KindOf for AnyTransport {
             Self::IndexSignatureMappedTypeClause(inner) => inner.kind_in(kinds),
             Self::ImportStatementClauseFrom(inner) => inner.kind_in(kinds),
             Self::YieldExpressionDelegate(inner) => inner.kind_in(kinds),
-            Self::OptionalChain(inner) => inner.kind_in(kinds),
+            Self::OptionalChainMarker(inner) => inner.kind_in(kinds),
             Self::ImportSpecifierName(inner) => inner.kind_in(kinds),
             Self::ImportSpecifierAs(inner) => inner.kind_in(kinds),
             Self::ParenthesizedExpressionTyped(inner) => inner.kind_in(kinds),
@@ -104015,7 +104015,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::GeneratorFunction(t) => t.render(w),
             AnyTransport::GeneratorFunctionDeclaration(t) => t.render(w),
             AnyTransport::ArrowFunction(t) => t.render(w),
-            AnyTransport::OptionalChain2(t) => t.render(w),
+            AnyTransport::OptionalChain(t) => t.render(w),
             AnyTransport::NewExpression(t) => t.render(w),
             AnyTransport::AwaitExpression(t) => t.render(w),
             AnyTransport::MemberExpression(t) => t.render(w),
@@ -104172,7 +104172,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::IndexSignatureMappedTypeClause(t) => t.render(w),
             AnyTransport::ImportStatementClauseFrom(t) => t.render(w),
             AnyTransport::YieldExpressionDelegate(t) => t.render(w),
-            AnyTransport::OptionalChain(t) => t.render(w),
+            AnyTransport::OptionalChainMarker(t) => t.render(w),
             AnyTransport::ImportSpecifierName(t) => t.render(w),
             AnyTransport::ImportSpecifierAs(t) => t.render(w),
             AnyTransport::ParenthesizedExpressionTyped(t) => t.render(w),
@@ -104452,7 +104452,7 @@ impl ::sittir_core::render::Render for AnyTransport {
             AnyTransport::Literal86_75_6e_6b_6e_6f_77_6e_5f_6b_65_79_77_6f_72_64 => w.text("unknown"),
             AnyTransport::Literal87_6e_65_76_65_72_5f_6b_65_79_77_6f_72_64 => w.text("never"),
             AnyTransport::Literal88_71_6d_61_72_6b_5f_64_6f_74 => w.text("?."),
-            AnyTransport::Literal89_5f_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e => w.text("?."),
+            AnyTransport::Literal89_6f_70_74_69_6f_6e_61_6c_5f_63_68_61_69_6e_5f_6d_61_72_6b_65_72 => w.text("?."),
             AnyTransport::Literal90_74_72_75_65 => w.text("true"),
             AnyTransport::Literal91_66_61_6c_73_65 => w.text("false"),
             AnyTransport::Literal92_6e_75_6c_6c => w.text("null"),

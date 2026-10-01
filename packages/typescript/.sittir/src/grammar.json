@@ -11759,10 +11759,10 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_optional_chain"
+                "name": "_optional_chain_marker"
               },
               "named": true,
-              "value": "optional_chain"
+              "value": "optional_chain_marker"
             },
             {
               "type": "BLANK"
@@ -15451,7 +15451,7 @@
         }
       }
     },
-    "_optional_chain": {
+    "_optional_chain_marker": {
       "type": "STRING",
       "value": "?."
     },

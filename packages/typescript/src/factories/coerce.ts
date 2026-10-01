@@ -66,7 +66,7 @@ export const _fromMap = {
 	generator_function: coerceToGeneratorFunction,
 	generator_function_declaration: coerceToGeneratorFunctionDeclaration,
 	arrow_function: coerceToArrowFunction,
-	optional_chain: coerceToOptionalChain2,
+	optional_chain: coerceToOptionalChain,
 	new_expression: coerceToNewExpression,
 	await_expression: coerceToAwaitExpression,
 	member_expression: coerceToMemberExpression,
@@ -221,7 +221,7 @@ export const _fromMap = {
 	index_signature_mapped_type_clause: coerceToIndexSignatureMappedTypeClause,
 	import_statement_clause_from: coerceToImportStatementClauseFrom,
 	yield_expression_delegate: coerceToYieldExpressionDelegate,
-	_optional_chain: coerceToOptionalChain,
+	optional_chain_marker: coerceToOptionalChainMarker,
 	import_specifier_name: coerceToImportSpecifierName,
 	import_specifier_as: coerceToImportSpecifierAs,
 	parenthesized_expression_typed: coerceToParenthesizedExpressionTyped,
@@ -282,7 +282,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	hash_bang_line: { factory: (content: string) => _resolveByKind('hash_bang_line', content) },
 	import: { values: ['import'], factory: () => F.buildImport },
 	empty_statement: { values: [';'], factory: () => F.buildEmptyStatement },
-	optional_chain: { values: ['?.'], factory: () => F.buildOptionalChain2 },
+	optional_chain: { values: ['?.'], factory: () => F.buildOptionalChain },
 	unescaped_double_string_fragment: {
 		pattern: /^(?:(?:[^"\\\r\n]+))$/u,
 		factory: F.buildUnescapedDoubleStringFragment
@@ -361,7 +361,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	number_bigint_octal: { factory: (content: string) => _resolveByKind('number_bigint_octal', content) },
 	number_bigint_decimal: { factory: (content: string) => _resolveByKind('number_bigint_decimal', content) },
 	empty_member: { values: [';'], factory: () => F.buildEmptyMember },
-	_optional_chain: { values: ['?.'], factory: () => F.buildOptionalChain },
+	optional_chain_marker: { values: ['?.'], factory: () => F.buildOptionalChainMarker },
 	meta_property_new_target: { values: ['new.target'], factory: () => F.buildMetaPropertyNewTarget },
 	meta_property_import_meta: { values: ['import.meta'], factory: () => F.buildMetaPropertyImportMeta },
 	html_comment: { pattern: /^(?:(?:<!--[\s\S]*?-->))$/u, factory: F.buildHtmlComment },
@@ -458,7 +458,7 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'override_modifier',
 	'existential_type',
 	'empty_member',
-	'_optional_chain',
+	'optional_chain_marker',
 	'regex_flags',
 	'number_hex',
 	'number_float_point',
@@ -4747,8 +4747,8 @@ export function coerceToArrowFunction(input: T.ArrowFunction.Loose): ReturnType<
 	});
 }
 
-export function coerceToOptionalChain2(_input?: T.OptionalChain2.Loose): typeof F.buildOptionalChain2 {
-	return F.buildOptionalChain2;
+export function coerceToOptionalChain(_input?: T.OptionalChain.Loose): typeof F.buildOptionalChain {
+	return F.buildOptionalChain;
 }
 
 export function resolveNewExpression_constructor_(
@@ -4834,7 +4834,7 @@ export function resolveMemberExpression_separator(
 ): T.MemberExpression['_separator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'.' | '?.'>(value, 'optional_chain')),
-		[['.', TSKindId.Dot] as const, ['?.', TSKindId.OptionalChain2] as const]
+		[['.', TSKindId.Dot] as const, ['?.', TSKindId.OptionalChain] as const]
 	);
 }
 
@@ -8728,9 +8728,9 @@ export function resolveTypeQuerySubscriptExpression_object(
 	);
 }
 
-export function resolveTypeQuerySubscriptExpression_optionalChain(
-	value: T.TypeQuerySubscriptExpression.LooseConfig['optionalChain']
-): T.TypeQuerySubscriptExpression['_optional_chain'] {
+export function resolveTypeQuerySubscriptExpression_optionalChainMarker(
+	value: T.TypeQuerySubscriptExpression.LooseConfig['optionalChainMarker']
+): T.TypeQuerySubscriptExpression['_optional_chain_marker'] {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -8795,7 +8795,7 @@ export function coerceToTypeQuerySubscriptExpression(
 			'object',
 			resolveTypeQuerySubscriptExpression_object(input.object)
 		),
-		optionalChain: resolveTypeQuerySubscriptExpression_optionalChain(input.optionalChain),
+		optionalChainMarker: resolveTypeQuerySubscriptExpression_optionalChainMarker(input.optionalChainMarker),
 		index: _requireField(
 			'type_query_subscript_expression',
 			'index',
@@ -11502,8 +11502,8 @@ export function coerceToYieldExpressionDelegate(
 	);
 }
 
-export function coerceToOptionalChain(_input?: T.OptionalChain.Loose): typeof F.buildOptionalChain {
-	return F.buildOptionalChain;
+export function coerceToOptionalChainMarker(_input?: T.OptionalChainMarker.Loose): typeof F.buildOptionalChainMarker {
+	return F.buildOptionalChainMarker;
 }
 
 export function resolveImportSpecifierName_importKind(

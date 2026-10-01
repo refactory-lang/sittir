@@ -280,14 +280,15 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 }
 
 function templateTexts(body: Body, out: Set<string>): Set<string> {
-	for (const node of body as readonly { kind: string; text?: string; arms?: readonly { body: Body }[] }[]) {
+	for (const node of body as readonly { kind: string; text?: string; arms?: readonly { body: Body }[]; fallback?: Body }[]) {
 		if (node.kind === 'text' && node.text !== undefined) out.add(node.text);
 		for (const arm of node.arms ?? []) templateTexts(arm.body, out);
+		if (node.fallback !== undefined) templateTexts(node.fallback, out);
 	}
 	return out;
 }
 
-function droppedLiteralTexts(rule: RenderRule, body: Body, node: AbstractAssembledCompound): string[] {
+export function droppedLiteralTexts(rule: RenderRule, body: Body, node: AbstractAssembledCompound): string[] {
 	const present = templateTexts(body, new Set());
 	for (const slot of node.slots) for (const value of slot.values) if (isTerminalValue(value)) present.add(value.value);
 	const dropped = new Set<string>();

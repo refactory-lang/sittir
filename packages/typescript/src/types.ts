@@ -45,7 +45,7 @@ export type LeafScalarMap = {
 export type LeafStringMap = {
 	[TSKindId.Import]: 'import';
 	[TSKindId.EmptyStatement]: ';';
-	[TSKindId.OptionalChain2]: '?.';
+	[TSKindId.OptionalChain]: '?.';
 	[TSKindId.This]: 'this';
 	[TSKindId.Super]: 'super';
 	[TSKindId.True]: 'true';
@@ -67,7 +67,7 @@ export type LeafStringMap = {
 		| 'never'
 		| 'object';
 	[TSKindId.EmptyMember]: ';';
-	[TSKindId.OptionalChain]: '?.';
+	[TSKindId.OptionalChainMarker]: '?.';
 	[TSKindId.MetaPropertyNewTarget]: 'new.target';
 	[TSKindId.MetaPropertyImportMeta]: 'import.meta';
 	[TSKindId.AutomaticSemicolon]: '\n';
@@ -406,7 +406,7 @@ export enum TSKindId {
 	ArrowFunction = 249,
 	_CallSignature = 250,
 	FormalParameter = 251,
-	OptionalChain2 = 252,
+	OptionalChain = 252,
 	CallExpression = 253,
 	NewExpression = 254,
 	AwaitExpression = 255,
@@ -557,7 +557,7 @@ export enum TSKindId {
 	IndexSignatureMappedTypeClause = 400,
 	ImportStatementClauseFrom = 401,
 	YieldExpressionDelegate = 402,
-	OptionalChain = 403,
+	OptionalChainMarker = 403,
 	ImportSpecifierName = 404,
 	ImportSpecifierAs = 405,
 	ParenthesizedExpressionTyped = 406,
@@ -1027,7 +1027,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[400, 'index_signature_mapped_type_clause'],
 	[401, 'import_statement_clause_from'],
 	[402, 'yield_expression_delegate'],
-	[403, '_optional_chain'],
+	[403, 'optional_chain_marker'],
 	[404, 'import_specifier_name'],
 	[405, 'import_specifier_as'],
 	[406, 'parenthesized_expression_typed'],
@@ -1495,7 +1495,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[400, 'index_signature_mapped_type_clause'],
 	[401, 'import_statement_clause_from'],
 	[402, 'yield_expression_delegate'],
-	[403, 'optional_chain'],
+	[403, 'optional_chain_marker'],
 	[404, 'import_specifier_name'],
 	[405, 'import_specifier_as'],
 	[406, 'parenthesized_expression_typed'],
@@ -2069,7 +2069,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '_formal_parameter':
 			return TSKindId.FormalParameter;
 		case 'optional_chain':
-			return TSKindId.OptionalChain2;
+			return TSKindId.OptionalChain;
 		case 'call_expression':
 			return TSKindId.CallExpression;
 		case 'new_expression':
@@ -2370,8 +2370,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ImportStatementClauseFrom;
 		case 'yield_expression_delegate':
 			return TSKindId.YieldExpressionDelegate;
-		case '_optional_chain':
-			return TSKindId.OptionalChain;
+		case 'optional_chain_marker':
+			return TSKindId.OptionalChainMarker;
 		case 'import_specifier_name':
 			return TSKindId.ImportSpecifierName;
 		case 'import_specifier_as':
@@ -4767,7 +4767,7 @@ export interface MemberExpression {
 			  >
 			| Expression
 			| PrimaryExpression;
-		readonly separator: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.OptionalChain2 | TSKindId.QmarkDot>;
+		readonly separator: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.OptionalChain | TSKindId.QmarkDot>;
 	};
 	readonly __slotHints__?: {
 		readonly object: SlotHint<NonNullable<T.MemberExpression.Config>['object']>;
@@ -8322,7 +8322,7 @@ export interface TypeQuerySubscriptExpression {
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
-	readonly _optional_chain?: boolean;
+	readonly _optional_chain_marker?: boolean;
 	readonly _index:
 		| TSKindId.AnyKeyword
 		| TSKindId.NumberKeyword
@@ -8343,7 +8343,7 @@ export interface TypeQuerySubscriptExpression {
 			| TypeQuerySubscriptExpression
 			| TypeQueryMemberExpression
 			| TypeQueryCallExpression;
-		readonly optional_chain?: BaseBooleanKeyword<'?.'>;
+		readonly optional_chain_marker?: BaseBooleanKeyword<'?.'>;
 		readonly index:
 			| KindEnum<
 					| 'any'
@@ -8372,7 +8372,10 @@ export interface TypeQuerySubscriptExpression {
 	};
 	readonly __slotHints__?: {
 		readonly object: SlotHint<NonNullable<T.TypeQuerySubscriptExpression.Config>['object']>;
-		readonly optionalChain: SlotHint<NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChain'], true>;
+		readonly optionalChainMarker: SlotHint<
+			NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChainMarker'],
+			true
+		>;
 		readonly index: SlotHint<NonNullable<T.TypeQuerySubscriptExpression.Config>['index']>;
 	};
 	object():
@@ -8381,7 +8384,7 @@ export interface TypeQuerySubscriptExpression {
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
-	optionalChain(): boolean | undefined;
+	optionalChainMarker(): boolean | undefined;
 	index():
 		| TSKindId.AnyKeyword
 		| TSKindId.NumberKeyword
@@ -11539,7 +11542,7 @@ export interface InterfaceBody {
 // Leaf node types
 export type Import = TSKindId.Import;
 export type EmptyStatement = TSKindId.EmptyStatement;
-export type OptionalChain2 = TSKindId.OptionalChain2;
+export type OptionalChain = TSKindId.OptionalChain;
 export type UnescapedDoubleStringFragment = Terminal<TSKindId.UnescapedDoubleStringFragment, string>;
 export type UnescapedSingleStringFragment = Terminal<TSKindId.UnescapedSingleStringFragment, string>;
 export type RegexPattern = Terminal<TSKindId.RegexPattern, string>;
@@ -11567,7 +11570,7 @@ export type PredefinedType =
 	| TSKindId.ObjectKeyword;
 export type NumberDecimal = Terminal<TSKindId.NumberDecimal, string>;
 export type EmptyMember = TSKindId.EmptyMember;
-export type OptionalChain = TSKindId.OptionalChain;
+export type OptionalChainMarker = TSKindId.OptionalChainMarker;
 export type MetaPropertyNewTarget = TSKindId.MetaPropertyNewTarget;
 export type MetaPropertyImportMeta = TSKindId.MetaPropertyImportMeta;
 export type HtmlComment = Terminal<TSKindId.HtmlComment, string>;
@@ -17615,7 +17618,7 @@ export interface InterfaceBodyNs extends NodeNs<
 > {}
 export interface ImportNs extends KeywordNs<TSKindId.Import, 'import', TSKindId.Import> {}
 export interface EmptyStatementNs extends KeywordNs<TSKindId.EmptyStatement, ';', TSKindId.EmptyStatement> {}
-export interface OptionalChain2Ns extends KeywordNs<TSKindId.OptionalChain2, '?.', TSKindId.OptionalChain2> {}
+export interface OptionalChainNs extends KeywordNs<TSKindId.OptionalChain, '?.', TSKindId.OptionalChain> {}
 export interface ThisNs extends KeywordNs<TSKindId.This, 'this', TSKindId.This> {}
 export interface SuperNs extends KeywordNs<TSKindId.Super, 'super', TSKindId.Super> {}
 export interface TrueNs extends KeywordNs<TSKindId.True, 'true', TSKindId.True> {}
@@ -17629,7 +17632,11 @@ export interface OverrideModifierNs extends KeywordNs<
 > {}
 export interface ExistentialTypeNs extends KeywordNs<TSKindId.ExistentialType, '*', TSKindId.ExistentialType> {}
 export interface EmptyMemberNs extends KeywordNs<TSKindId.EmptyMember, ';', TSKindId.EmptyMember> {}
-export interface OptionalChainNs extends KeywordNs<TSKindId.OptionalChain, '?.', TSKindId.OptionalChain> {}
+export interface OptionalChainMarkerNs extends KeywordNs<
+	TSKindId.OptionalChainMarker,
+	'?.',
+	TSKindId.OptionalChainMarker
+> {}
 export interface MetaPropertyNewTargetNs extends KeywordNs<
 	TSKindId.MetaPropertyNewTarget,
 	'new.target',
@@ -17939,7 +17946,7 @@ export interface NamespaceMap {
 	[TSKindId.InterfaceBody]: InterfaceBodyNs;
 	[TSKindId.Import]: ImportNs;
 	[TSKindId.EmptyStatement]: EmptyStatementNs;
-	[TSKindId.OptionalChain2]: OptionalChain2Ns;
+	[TSKindId.OptionalChain]: OptionalChainNs;
 	[TSKindId.This]: ThisNs;
 	[TSKindId.Super]: SuperNs;
 	[TSKindId.True]: TrueNs;
@@ -17949,7 +17956,7 @@ export interface NamespaceMap {
 	[TSKindId.OverrideModifier]: OverrideModifierNs;
 	[TSKindId.ExistentialType]: ExistentialTypeNs;
 	[TSKindId.EmptyMember]: EmptyMemberNs;
-	[TSKindId.OptionalChain]: OptionalChainNs;
+	[TSKindId.OptionalChainMarker]: OptionalChainMarkerNs;
 	[TSKindId.MetaPropertyNewTarget]: MetaPropertyNewTargetNs;
 	[TSKindId.MetaPropertyImportMeta]: MetaPropertyImportMetaNs;
 	[TSKindId.AutomaticSemicolon]: AutomaticSemicolonNs;
@@ -18489,7 +18496,7 @@ export type AdmittedNodes = AdmitLookup<BoundByKindId, ParsedByKindId, EmptyByKi
 export type FixedTextKindId =
 	| TSKindId.Import
 	| TSKindId.EmptyStatement
-	| TSKindId.OptionalChain2
+	| TSKindId.OptionalChain
 	| TSKindId.This
 	| TSKindId.Super
 	| TSKindId.True
@@ -18499,7 +18506,7 @@ export type FixedTextKindId =
 	| TSKindId.OverrideModifier
 	| TSKindId.ExistentialType
 	| TSKindId.EmptyMember
-	| TSKindId.OptionalChain
+	| TSKindId.OptionalChainMarker
 	| TSKindId.MetaPropertyNewTarget
 	| TSKindId.MetaPropertyImportMeta
 	| TSKindId.AutomaticSemicolon
@@ -18875,7 +18882,7 @@ export interface IrKeyOf {
 	[TSKindId.InterfaceBody]: 'interfaceBody';
 	[TSKindId.Import]: 'import';
 	[TSKindId.EmptyStatement]: 'emptyStatement';
-	[TSKindId.OptionalChain2]: 'optionalChain2';
+	[TSKindId.OptionalChain]: 'optionalChain';
 	[TSKindId.This]: 'this';
 	[TSKindId.Super]: 'super';
 	[TSKindId.True]: 'true';
@@ -18885,7 +18892,7 @@ export interface IrKeyOf {
 	[TSKindId.OverrideModifier]: 'overrideModifier';
 	[TSKindId.ExistentialType]: 'existentialType';
 	[TSKindId.EmptyMember]: 'emptyMember';
-	[TSKindId.OptionalChain]: 'optionalChain';
+	[TSKindId.OptionalChainMarker]: 'optionalChainMarker';
 	[TSKindId.MetaPropertyNewTarget]: 'metaPropertyNewTarget';
 	[TSKindId.MetaPropertyImportMeta]: 'metaPropertyImportMeta';
 	[TSKindId.AutomaticSemicolon]: 'automaticSemicolon';
@@ -24470,15 +24477,15 @@ export namespace EmptyStatement {
 	export type LooseArgs = EmptyStatementNs['LooseArgs'];
 	export type Kind = TSKindId.EmptyStatement;
 }
-export namespace OptionalChain2 {
-	export type Config = OptionalChain2Ns['Config'];
-	export type Bound = OptionalChain2Ns['Bound'];
-	export type Parsed = OptionalChain2Ns['Bound'];
-	export type Loose = OptionalChain2Ns['Loose'];
-	export type LooseConfig = OptionalChain2Ns['LooseConfig'];
-	export type BuildArgs = OptionalChain2Ns['BuildArgs'];
-	export type LooseArgs = OptionalChain2Ns['LooseArgs'];
-	export type Kind = TSKindId.OptionalChain2;
+export namespace OptionalChain {
+	export type Config = OptionalChainNs['Config'];
+	export type Bound = OptionalChainNs['Bound'];
+	export type Parsed = OptionalChainNs['Bound'];
+	export type Loose = OptionalChainNs['Loose'];
+	export type LooseConfig = OptionalChainNs['LooseConfig'];
+	export type BuildArgs = OptionalChainNs['BuildArgs'];
+	export type LooseArgs = OptionalChainNs['LooseArgs'];
+	export type Kind = TSKindId.OptionalChain;
 }
 export namespace This {
 	export type Config = ThisNs['Config'];
@@ -24570,15 +24577,15 @@ export namespace EmptyMember {
 	export type LooseArgs = EmptyMemberNs['LooseArgs'];
 	export type Kind = TSKindId.EmptyMember;
 }
-export namespace OptionalChain {
-	export type Config = OptionalChainNs['Config'];
-	export type Bound = OptionalChainNs['Bound'];
-	export type Parsed = OptionalChainNs['Bound'];
-	export type Loose = OptionalChainNs['Loose'];
-	export type LooseConfig = OptionalChainNs['LooseConfig'];
-	export type BuildArgs = OptionalChainNs['BuildArgs'];
-	export type LooseArgs = OptionalChainNs['LooseArgs'];
-	export type Kind = TSKindId.OptionalChain;
+export namespace OptionalChainMarker {
+	export type Config = OptionalChainMarkerNs['Config'];
+	export type Bound = OptionalChainMarkerNs['Bound'];
+	export type Parsed = OptionalChainMarkerNs['Bound'];
+	export type Loose = OptionalChainMarkerNs['Loose'];
+	export type LooseConfig = OptionalChainMarkerNs['LooseConfig'];
+	export type BuildArgs = OptionalChainMarkerNs['BuildArgs'];
+	export type LooseArgs = OptionalChainMarkerNs['LooseArgs'];
+	export type Kind = TSKindId.OptionalChainMarker;
 }
 export namespace MetaPropertyNewTarget {
 	export type Config = MetaPropertyNewTargetNs['Config'];
