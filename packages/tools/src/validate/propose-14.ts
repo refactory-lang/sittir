@@ -17,6 +17,7 @@
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import ts from 'typescript6';
+import { invoke } from '../codegen-surface.ts';
 
 /** The pipeline modules under the ratchet (proposal §1 gap table). */
 export const PIPELINE_MODULES: readonly string[] = [
@@ -216,6 +217,8 @@ export interface Propose14Options {
 	baseline?: string;
 	/** repo root override (default: cwd) */
 	root?: string;
+	/** evaluate the index (what the commit will contain) instead of the working tree */
+	staged?: boolean;
 }
 
 function listTsFiles(dir: string): string[] {
@@ -268,6 +271,12 @@ function formatTable(records: FnRecord[]): string {
 
 export async function run(opts: Propose14Options = {}): Promise<number> {
 	const root = resolve(opts.root ?? process.cwd());
+	if (opts.staged) {
+		const baseline = opts.baseline ?? 'packages/codegen/.principle14-baseline.json';
+		return invoke('indexSnapshot', 'withIndexSnapshot', root, [':(glob)packages/**/*.ts', baseline], (snapshot) =>
+			run({ ...opts, staged: false, root: snapshot.root, baseline: resolve(snapshot.root, baseline) })
+		) as Promise<number>;
+	}
 	const baselinePath = resolve(root, opts.baseline ?? 'packages/codegen/.principle14-baseline.json');
 	const { records, counts } = classifyPipeline(root);
 

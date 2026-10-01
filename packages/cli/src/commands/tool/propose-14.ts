@@ -8,14 +8,16 @@ export const propose14: CommandModule = {
 			.option('--update', 'Rewrite the committed baseline to the current counts')
 			.option('--table', 'Print the per-function classification table (drives R1-R4 + R8)')
 			.option('--json', 'Machine-readable JSON output')
+			.option('--staged', 'Evaluate the index (the commit snapshot) instead of the working tree')
 			.option('--baseline <path>', 'Baseline path (default: packages/codegen/.principle14-baseline.json)')
-			.action(async (opts: { update?: boolean; table?: boolean; json?: boolean; baseline?: string }) => {
+			.action(async (opts: { update?: boolean; table?: boolean; json?: boolean; baseline?: string; staged?: boolean }) => {
 				const { propose14: runPropose14 } = await import('@sittir/tools');
 				const code = await runPropose14({
 					update: opts.update ?? false,
 					table: opts.table ?? false,
 					json: opts.json ?? false,
-					baseline: opts.baseline
+					baseline: opts.baseline,
+					staged: opts.staged ?? false
 				});
 				if (code !== 0) process.exitCode = code;
 			});

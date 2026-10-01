@@ -24,16 +24,29 @@ function pathsFor(grammar: GrammarName): string[] {
 	return generatedRootsFor(grammar);
 }
 
-function hostFilesFor(grammar: GrammarName): string[] {
-	const crateDir = join(REPO_ROOT, nativeCrateRelDir(grammar));
+export interface ManifestSource {
+	readonly root: string;
+	readonly visible: ReadonlySet<string>;
+	readonly hostBinaries: boolean;
+}
+
+let cachedWorktreeSource: ManifestSource | null = null;
+
+export function worktreeSource(): ManifestSource {
+	cachedWorktreeSource ??= { root: REPO_ROOT, visible: gitVisiblePaths(REPO_ROOT), hostBinaries: true };
+	return cachedWorktreeSource;
+}
+
+function hostFilesFor(grammar: GrammarName, src: ManifestSource): string[] {
+	const crateDir = join(src.root, nativeCrateRelDir(grammar));
 	if (!existsSync(crateDir)) return [];
 	return readdirSync(crateDir)
 		.filter((name) => name.endsWith('.node'))
 		.map((name) => `${nativeCrateRelDir(grammar)}/${name}`);
 }
 
-function manifestPath(grammar: GrammarName): string {
-	return join(REPO_ROOT, `packages/${grammar}/.sittir/${MANIFEST_FILENAME}`);
+function manifestPath(grammar: GrammarName, src: ManifestSource): string {
+	return join(src.root, `packages/${grammar}/.sittir/${MANIFEST_FILENAME}`);
 }
 
 function isJunkFile(name: string): boolean {
@@ -57,8 +70,6 @@ function sha256(file: string): string {
 	return createHash('sha256').update(readFileSync(file)).digest('hex');
 }
 
-let cachedTrackedPaths: ReadonlySet<string> | null = null;
-
 export function gitVisiblePaths(root: string): ReadonlySet<string> {
 	let stdout: string;
 	try {
@@ -77,23 +88,18 @@ export function gitVisiblePaths(root: string): ReadonlySet<string> {
 	return new Set(stdout.split('\0').filter((p) => p.length > 0));
 }
 
-function trackedPaths(): ReadonlySet<string> {
-	cachedTrackedPaths ??= gitVisiblePaths(REPO_ROOT);
-	return cachedTrackedPaths;
-}
-
-function isManifestExcluded(relPath: string): boolean {
-	if (!trackedPaths().has(relPath)) return true;
+function isManifestExcluded(relPath: string, src: ManifestSource): boolean {
+	if (!src.visible.has(relPath)) return true;
 	return relPath.endsWith('/test-fixtures.json') || relPath.endsWith('/test-fixtures.left-out.json');
 }
 
-function collectFiles(grammar: GrammarName): string[] {
+function collectFiles(grammar: GrammarName, src: ManifestSource): string[] {
 	const all: string[] = [];
-	for (const root of pathsFor(grammar)) walk(join(REPO_ROOT, root), all);
-	const manifestAbs = manifestPath(grammar);
+	for (const root of pathsFor(grammar)) walk(join(src.root, root), all);
+	const manifestAbs = manifestPath(grammar, src);
 	return all
 		.filter((f) => f !== manifestAbs)
-		.filter((f) => !isManifestExcluded(relative(REPO_ROOT, f)))
+		.filter((f) => !isManifestExcluded(relative(src.root, f), src))
 		.sort();
 }
 
@@ -106,19 +112,18 @@ interface Manifest {
 
 const HOST_BINARY_SENTINEL = 'freshness-checked';
 
-function sourceInputsFor(grammar: GrammarName): string[] {
-	return [
-		join(grammarPackageDir(grammar), GRAMMAR_ENTRY),
-		join(grammarPackageDir(grammar), 'package.json')
-	];
+function sourceInputsFor(grammar: GrammarName, src: ManifestSource): string[] {
+	const dir = join(src.root, relative(REPO_ROOT, grammarPackageDir(grammar)));
+	return [join(dir, GRAMMAR_ENTRY), join(dir, 'package.json')];
 }
 
-let cachedCodegenHash: string | null = null;
+const codegenHashByRoot = new Map<string, string>();
 
-function codegenSourceHash(): string {
-	if (cachedCodegenHash !== null) return cachedCodegenHash;
+function codegenSourceHash(src: ManifestSource): string {
+	const cached = codegenHashByRoot.get(src.root);
+	if (cached !== undefined) return cached;
 	const hash = createHash('sha256');
-	const codegenSrc = join(REPO_ROOT, 'packages/codegen/src');
+	const codegenSrc = join(src.root, 'packages/codegen/src');
 	const files: string[] = [];
 	walk(codegenSrc, files);
 	for (const f of files.sort()) {
@@ -126,55 +131,57 @@ function codegenSourceHash(): string {
 		if (f.includes('/__tests__/')) continue;
 		if (f.includes('/src/validate/')) continue;
 		if (!f.endsWith('.ts')) continue;
-		hash.update(`${relative(REPO_ROOT, f)}\0`);
+		hash.update(`${relative(src.root, f)}\0`);
 		hash.update(readFileSync(f));
 		hash.update('\0');
 	}
-	cachedCodegenHash = hash.digest('hex');
-	return cachedCodegenHash;
+	const digest = hash.digest('hex');
+	codegenHashByRoot.set(src.root, digest);
+	return digest;
 }
 
-export function computeSourceHash(grammar: GrammarName): string {
+export function computeSourceHash(grammar: GrammarName, src: ManifestSource = worktreeSource()): string {
 	const hash = createHash('sha256');
-	for (const input of sourceInputsFor(grammar)) {
+	for (const input of sourceInputsFor(grammar, src)) {
 		if (existsSync(input)) {
-			hash.update(`${relative(REPO_ROOT, input)}\0`);
+			hash.update(`${relative(src.root, input)}\0`);
 			hash.update(readFileSync(input));
 			hash.update('\0');
 		}
 	}
 	hash.update('codegen\0');
-	hash.update(codegenSourceHash());
+	hash.update(codegenSourceHash(src));
 	hash.update('\0');
 	return hash.digest('hex');
 }
 
 export function writeManifestForGrammar(grammar: GrammarName): void {
+	const src = worktreeSource();
 	const files: Record<string, string> = {};
-	for (const f of collectFiles(grammar)) {
-		const rel = relative(REPO_ROOT, f);
+	for (const f of collectFiles(grammar, src)) {
+		const rel = relative(src.root, f);
 		files[rel] = sha256(f);
 	}
 
-	const existing = readExistingManifest(grammar);
+	const existing = readExistingManifest(grammar, src);
 	const host_files: Record<string, string> = { ...existing?.host_files };
-	for (const rel of hostFilesFor(grammar)) {
+	for (const rel of hostFilesFor(grammar, src)) {
 		host_files[rel] = HOST_BINARY_SENTINEL;
 	}
 
 	const manifest: Manifest = {
 		grammar,
-		source_hash: computeSourceHash(grammar),
+		source_hash: computeSourceHash(grammar, src),
 		files,
 		...(Object.keys(host_files).length > 0 ? { host_files } : {})
 	};
-	const path = manifestPath(grammar);
+	const path = manifestPath(grammar, src);
 	mkdirSync(dirname(path), { recursive: true });
 	writeFileSync(path, JSON.stringify(manifest, null, 2) + '\n');
 }
 
-function readExistingManifest(grammar: GrammarName): Manifest | null {
-	const path = manifestPath(grammar);
+function readExistingManifest(grammar: GrammarName, src: ManifestSource): Manifest | null {
+	const path = manifestPath(grammar, src);
 	if (!existsSync(path)) return null;
 	try {
 		return JSON.parse(readFileSync(path, 'utf-8')) as Manifest;
@@ -194,7 +201,7 @@ export interface VerifyResult {
 	stale: string[];
 }
 
-export function verifyManifestForGrammar(grammar: GrammarName): VerifyResult {
+export function verifyManifestForGrammar(grammar: GrammarName, src: ManifestSource = worktreeSource()): VerifyResult {
 	const result: VerifyResult = {
 		grammar,
 		ok: false,
@@ -205,19 +212,19 @@ export function verifyManifestForGrammar(grammar: GrammarName): VerifyResult {
 		extra: [],
 		stale: []
 	};
-	const path = manifestPath(grammar);
+	const path = manifestPath(grammar, src);
 	if (!existsSync(path)) return result;
 	result.manifestPresent = true;
 	const manifest = JSON.parse(readFileSync(path, 'utf-8')) as Manifest;
 
-	if (manifest.source_hash !== computeSourceHash(grammar)) {
+	if (manifest.source_hash !== computeSourceHash(grammar, src)) {
 		result.sourceHashMismatch = true;
 	}
 
 	const expectedFiles = new Set(Object.keys(manifest.files));
-	const actualFiles = new Set(collectFiles(grammar).map((f) => relative(REPO_ROOT, f)));
+	const actualFiles = new Set(collectFiles(grammar, src).map((f) => relative(src.root, f)));
 	for (const [rel, expectedHash] of Object.entries(manifest.files)) {
-		const full = join(REPO_ROOT, rel);
+		const full = join(src.root, rel);
 		if (!existsSync(full)) {
 			result.missing.push(rel);
 			continue;
@@ -228,8 +235,10 @@ export function verifyManifestForGrammar(grammar: GrammarName): VerifyResult {
 		if (!expectedFiles.has(rel)) result.extra.push(rel);
 	}
 
-	for (const b of hostBinaryFreshnessFor(REPO_ROOT, grammar)) {
-		if (b.stale) result.stale.push(`${b.rel} (older than ${b.newestInputRel})`);
+	if (src.hostBinaries) {
+		for (const b of hostBinaryFreshnessFor(REPO_ROOT, grammar)) {
+			if (b.stale) result.stale.push(`${b.rel} (older than ${b.newestInputRel})`);
+		}
 	}
 
 	result.ok =
@@ -241,10 +250,13 @@ export function verifyManifestForGrammar(grammar: GrammarName): VerifyResult {
 	return result;
 }
 
-export function assertGeneratedManifestsClean(grammars?: readonly GrammarName[]): void {
+export function assertGeneratedManifestsClean(
+	grammars?: readonly GrammarName[],
+	src: ManifestSource = worktreeSource()
+): void {
 	if (process.env.SITTIR_INTERNAL_CODEGEN_RUN === '1') return;
 	const targets = grammars ?? stableGrammars();
-	const results = targets.map((g) => verifyManifestForGrammar(g));
+	const results = targets.map((g) => verifyManifestForGrammar(g, src));
 	const failed = results.filter((r) => !r.ok);
 	if (failed.length === 0) return;
 	const lines: string[] = ['Generated manifest verification failed:'];
