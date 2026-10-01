@@ -4934,20 +4934,8 @@
             }
           },
           {
-            "type": "FIELD",
-            "name": "operator",
-            "content": {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_range_expression_bare"
-              },
-              "named": true,
-              "value": "range_expression_bare"
-            },
-            "metadata": {
-              "fieldSource": "override"
-            },
+            "type": "SYMBOL",
+            "name": "range_expression_bare",
             "annotations": {
               "variant": "bare",
               "variantOf": "range_expression"
@@ -12753,6 +12741,13 @@
         }
       }
     },
+    "range_expression_bare": {
+      "type": "SYMBOL",
+      "name": "_range_expression_bare",
+      "annotations": {
+        "hoisted": true
+      }
+    },
     "_kw_reference": {
       "type": "STRING",
       "value": "&"
@@ -14664,6 +14659,7 @@
     "mod_item",
     "or_pattern",
     "pointer_type",
+    "range_expression",
     "foreign_mod_item",
     "match_arm",
     "token_tree_pattern",

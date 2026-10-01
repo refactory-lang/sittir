@@ -15,11 +15,12 @@
  *      factoryRoundtrip}.pass`, `validators.{roundtrip,factoryRoundtrip}.
  *      astMatchPass`, `parityFixtures.pass`, per grammar. This is what
  *      actually guards regressions; rule 2 below is a coarser tripwire on
- *      top of it. `coverage`/`factoryRoundtrip` specifically are exempt
+ *      top of it. `coverage`/`factoryRoundtrip`/`from` are exempt
  *      from this floor when the drop is explained by `supertypeKindCount`
  *      rising for that grammar (a kind losing its own direct render/
  *      factory path by becoming a supertype) AND that validator's own
- *      fail count did not rise — see `supertypeExplainsDrop`. The
+ *      fail count did not rise; a `from` drop may be no larger than the
+ *      rise — see `supertypeExplainsDrop`. The
  *      aggregate `totals.pass`/`totals.fail`/`totals.total` relationship
  *      is rule 2/3's job, not re-checked here.
  *   2. Total drop — `totals.total` decreased AND `totals.fail` changed
@@ -411,7 +412,7 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 // ---------------------------------------------------------------------------
 
 /**
- * `coverage` and `factoryRoundtrip` are the two validators whose
+ * `coverage` and `factoryRoundtrip` are validators whose
  * denominator is tied to how many kinds have their own direct render
  * path: `validate-template-coverage`'s own `subtypes.length > 0` guard
  * skips a supertype (no template of its own to check), and a supertype
@@ -419,7 +420,11 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
  * crossing into that guard shrinks the denominator without touching the
  * pass RATE — it isn't a new failure.
  */
-const SUPERTYPE_EXPLAINED_VALIDATORS: readonly ValidatorName[] = ['coverage', 'factoryRoundtrip'];
+const SUPERTYPE_EXPLAINED_DROP: Partial<Record<ValidatorName, (supertypeRise: number) => number>> = {
+	coverage: () => Infinity,
+	factoryRoundtrip: () => Infinity,
+	from: (supertypeRise) => supertypeRise
+};
 
 /**
  * Whether a drop in one metric (`pass` or, for a roundtrip validator,
@@ -437,10 +442,13 @@ function supertypeExplainsDrop(
 	vName: ValidatorName,
 	metric: 'pass' | 'astMatchPass'
 ): boolean {
-	if (!SUPERTYPE_EXPLAINED_VALIDATORS.includes(vName)) return false;
-	if ((headGrammar.supertypeKindCount ?? 0) <= (baseGrammar.supertypeKindCount ?? 0)) return false;
+	const largestExplainedDrop = SUPERTYPE_EXPLAINED_DROP[vName];
+	if (largestExplainedDrop === undefined) return false;
+	const supertypeRise = (headGrammar.supertypeKindCount ?? 0) - (baseGrammar.supertypeKindCount ?? 0);
+	if (supertypeRise <= 0) return false;
 	const b = baseGrammar.validators[vName] as RoundtripResult;
 	const h = headGrammar.validators[vName] as RoundtripResult;
+	if (b[metric] - h[metric] > largestExplainedDrop(supertypeRise)) return false;
 	return h.total - h[metric] <= b.total - b[metric];
 }
 

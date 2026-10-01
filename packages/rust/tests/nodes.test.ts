@@ -1879,72 +1879,6 @@ describe('scoped_type_identifier', () => {
 	});
 });
 
-describe('range_expression', () => {
-	it('factory produces correct type', () => {
-		const node = ir.rangeExpression({
-			$type: TSKindId.RangeExpressionBare,
-			$text: '..',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$type).toBe(TSKindId.RangeExpression);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.rangeExpression({
-			$type: TSKindId.RangeExpressionBare,
-			$text: '..',
-			$source: 2,
-			$named: true
-		} as any);
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-		expect(rendered).toContain('..');
-	});
-});
-
-describe('range_expression sub-factories', () => {
-	it('binary builds the parent', () => {
-		const node = ir.rangeExpression.binary({
-			start: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			operator: '..',
-			end: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		});
-		expect(node.$type).toBe(TSKindId.RangeExpression);
-		expect((node as any).content()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('postfix builds the parent', () => {
-		const node = ir.rangeExpression.postfix({
-			$type: TSKindId.Identifier,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$type).toBe(TSKindId.RangeExpression);
-		expect((node as any).content()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('prefix builds the parent', () => {
-		const node = ir.rangeExpression.prefix({
-			$type: TSKindId.Identifier,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$type).toBe(TSKindId.RangeExpression);
-		expect((node as any).content()).toBeDefined();
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('bare builds the parent', () => {
-		const node = ir.rangeExpression.bare();
-		expect(node.$type).toBe(TSKindId.RangeExpression);
-		const seated = (node as any).content();
-		expect(seated?.$text ?? seated).toBe(TSKindId.RangeExpressionBare);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
 describe('unary_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.unaryExpression({
@@ -3752,12 +3686,6 @@ describe('tuple_expression_elements', () => {
 			...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
 		);
 		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('range_expression_bare', () => {
-	it('is the kind id', () => {
-		expect(ir.rangeExpressionBare).toBe(TSKindId.RangeExpressionBare);
 	});
 });
 

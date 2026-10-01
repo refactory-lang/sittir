@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "af5ae89",
+    "commit": "21a3c20",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -91,26 +91,26 @@
                 "pass": 2036,
                 "total": 2036
             },
-            "supertypeKindCount": 27,
+            "supertypeKindCount": 28,
             "validators": {
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 208,
-                    "total": 208
+                    "pass": 207,
+                    "total": 207
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1672,
+                    "astMatchPass": 1670,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1672,
-                    "total": 1672
+                    "pass": 1670,
+                    "total": 1670
                 },
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 245,
-                    "total": 245
+                    "pass": 244,
+                    "total": 244
                 },
                 "roundtrip": {
                     "astMatchPass": 148,
@@ -129,26 +129,26 @@
                 "pass": 19,
                 "total": 19
             },
-            "supertypeKindCount": 3,
+            "supertypeKindCount": 4,
             "validators": {
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 20,
-                    "total": 20
+                    "pass": 21,
+                    "total": 21
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 118,
+                    "astMatchPass": 123,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 118,
-                    "total": 118
+                    "pass": 123,
+                    "total": 123
                 },
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 25,
-                    "total": 25
+                    "pass": 26,
+                    "total": 26
                 },
                 "roundtrip": {
                     "astMatchPass": 19,
@@ -167,26 +167,26 @@
                 "pass": 2079,
                 "total": 2079
             },
-            "supertypeKindCount": 20,
+            "supertypeKindCount": 22,
             "validators": {
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 201,
-                    "total": 201
+                    "pass": 202,
+                    "total": 202
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 1300,
+                    "astMatchPass": 1303,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1300,
-                    "total": 1300
+                    "pass": 1303,
+                    "total": 1303
                 },
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 185,
-                    "total": 185
+                    "pass": 186,
+                    "total": 186
                 },
                 "roundtrip": {
                     "astMatchPass": 113,
@@ -200,7 +200,7 @@
     },
     "totals": {
         "fail": 3,
-        "pass": 11984,
-        "total": 11987
+        "pass": 11992,
+        "total": 11995
     }
 }

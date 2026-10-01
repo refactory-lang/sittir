@@ -732,6 +732,28 @@
     ]
   },
   {
+    "type": "range_expression",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "range_expression_bare",
+        "named": true
+      },
+      {
+        "type": "range_expression_binary",
+        "named": true
+      },
+      {
+        "type": "range_expression_postfix",
+        "named": true
+      },
+      {
+        "type": "range_expression_prefix",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "range_pattern",
     "named": true,
     "subtypes": [
@@ -4914,40 +4936,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "range_expression",
-    "named": true,
-    "fields": {
-      "operator": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "range_expression_bare",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "range_expression_binary",
-          "named": true
-        },
-        {
-          "type": "range_expression_postfix",
-          "named": true
-        },
-        {
-          "type": "range_expression_prefix",
-          "named": true
-        }
-      ]
     }
   },
   {
