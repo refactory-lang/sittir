@@ -55,7 +55,7 @@ async function loadFreshWrapWitnessModule(): Promise<{
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	const source = emitWrap({ grammar: 'synth', nodeMap: makeNodeMapWith(nodes) });
 	const stubbedSource = [
-		'const readNode = () => { throw new Error("unused"); };',
+		'const readUntypedNode = () => { throw new Error("unused"); };',
 		'const withMethods = (node) => node;',
 		'const methodsEngine = {};',
 		'const _factories = new Proxy({}, { get: () => () => { throw new Error("unused"); } });',
@@ -250,10 +250,10 @@ describe('wrapped tree materialization', () => {
 			const tree = parser.parse(source)!;
 			const handle = await buildReadHandle('typescript', tree, source, 'native');
 			const wrapModulePath = new URL('../../../typescript/src/wrap.ts', import.meta.url).pathname;
-			const { projectNode } = (await import(wrapModulePath)) as {
-				projectNode: (tree: TreeHandle, handle?: number, childIndex?: number) => unknown;
+			const { readNode } = (await import(wrapModulePath)) as {
+				readNode: (tree: TreeHandle, handle?: number, childIndex?: number) => unknown;
 			};
-			const root = projectNode(handle) as {
+			const root = readNode(handle) as {
 				statements: () => Array<{ content: () => unknown }>;
 			};
 			// export_statement and export_statement_default are flattened into

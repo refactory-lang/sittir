@@ -503,7 +503,7 @@ pnpm exec tsx packages/cli/src/cli.ts tool phantom-kinds [grammars] [options]
 
 ### `tool probe-kind`
 
-Structured diagnostics for parse → readNode → render cycle
+Structured diagnostics for parse → readUntypedNode → render cycle
 
 **Options**
 
@@ -513,7 +513,7 @@ Structured diagnostics for parse → readNode → render cycle
 - `-k, --kind <kind>` — Find first node of this kind and probe it
 - `--range <start,end>` — Probe node at byte range start,end
 - `--no-render` — Skip the render pass
-- `--no-wrap` — Use core readNode directly (skip grammar projectNode)
+- `--no-wrap` — Use core readUntypedNode directly (skip grammar readNode)
 - `--reparse` — Render → re-parse → include reparsed CST
 - `--validator-reparse` — Render → reparse using the validator's own wrapForReparse + offset lookup → include the selected wrapper, offset, located node, and structural diff
 - `--pretty` — Pretty-print JSON output (2-space indent)
@@ -581,7 +581,7 @@ Probe a corpus entry through read → wrap → render pipeline
 - `--trace` — Emit full multi-lane trace
 - `--pretty` — Pretty-print JSON output
 - `--no-render` — Skip the render pass
-- `--no-wrap` — Use core readNode directly (skip grammar projectNode)
+- `--no-wrap` — Use core readUntypedNode directly (skip grammar readNode)
 
 **Example**
 

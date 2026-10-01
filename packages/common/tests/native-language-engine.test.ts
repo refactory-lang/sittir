@@ -20,7 +20,7 @@ function fakeSittirEngine() {
 				reads++;
 				return { root: { $type: 1, $span: { start: 0, end: source.length } }, tree: { source, read: reads } };
 			},
-			readNode: () => ({ $type: 1 })
+			readUntypedNode: () => ({ $type: 1 })
 		}
 	};
 	return { engine: engine as unknown as SittirEngine, calls };

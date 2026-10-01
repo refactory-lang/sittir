@@ -5,7 +5,7 @@ Use this file when the task touches generated packages, runtime data shapes, or 
 ## Package layers
 
 - `@sittir/types` — zero-runtime TypeScript types such as `AnyNodeData`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>`, `ByteRange`, `Edit`, and `RenderContext`.
-- `@sittir/common` — backend-neutral runtime: `readNode`, `applyEdits`, the native boundary, and `createNativeEngine` behind the shared engine interface.
+- `@sittir/common` — backend-neutral runtime: `readUntypedNode`, `applyEdits`, the native boundary, and `createNativeEngine` behind the shared engine interface.
 - `@sittir/codegen` — the compiler (evaluate → link → normalize → simplify → assemble → emit) and emitters producing the grammar-specific packages.
 - `@sittir/cli` — the unified `sittir` binary (`gen`, `tool *`, `validate *`).
 - `@sittir/tools` — validator + diagnostic implementations the CLI dispatches to.
@@ -78,7 +78,7 @@ expression.binary(config);
 - **Factory input** — `Config` uses camelCase ergonomic keys.
 - **Factory output** — NodeData with pure getters, `$with` setters, and `withMethods<T>` helpers.
 - **From input/output** — same shape as factory output, with loose resolution layered on top.
-- **readNode / projectNode** — raw tree input mapped into NodeData with no ergonomic translation (`readNode` plain, `projectNode` wrapped).
+- **readUntypedNode / readNode** — raw tree input mapped into NodeData with no ergonomic translation (`readUntypedNode` plain, `readNode` wrapped).
 - **Render input** — runtime reads `_raw_name` fields and `$children` directly.
 
 ## Design decisions to preserve

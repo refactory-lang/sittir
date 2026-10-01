@@ -3,7 +3,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine, detachCoordinates, dumpMetrics, sliceSpan } from '@sittir/common';
-import { expandStub, isStub, readNode as readNodeFn, metricsEnabled, mapTriviaEntries, storedSlotReader } from '@sittir/common/utils';
+import { expandStub, isStub, readUntypedNode, metricsEnabled, mapTriviaEntries, storedSlotReader } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
@@ -261,7 +261,7 @@ export async function buildReadHandle(
 	return treeHandle(tree, source, kindIdFromName);
 }
 
-export function readNodeAt(handle: TreeHandle, node: AnyTreeNode, nativeCoords: NativeNodeCoords | null): AnyNodeData {
+export function readUntypedNodeAt(handle: TreeHandle, node: AnyTreeNode, nativeCoords: NativeNodeCoords | null): AnyNodeData {
 	if (nativeCoords && handle.read) {
 		if (nativeCoords.embeddedData !== undefined) {
 			return nativeCoords.embeddedData;
@@ -274,7 +274,7 @@ export function readNodeAt(handle: TreeHandle, node: AnyTreeNode, nativeCoords: 
 	const prev = handle.rootNode;
 	(handle as { rootNode: AnyTreeNode }).rootNode = node;
 	try {
-		return readNodeFn(handle);
+		return readUntypedNode(handle);
 	} finally {
 		(handle as { rootNode: AnyTreeNode }).rootNode = prev;
 	}
@@ -650,13 +650,13 @@ export function upstreamWasmPath(grammar: string): string | undefined {
 	}
 }
 
-export async function loadProjectNode(
+export async function readNodeOf(
 	grammar: string
 ): Promise<((handle: TreeHandle, parentHandle?: number, childIndex?: number) => unknown) | null> {
 	try {
 		const mod = await importGrammarModule(grammar, 'wrap.ts');
 		if (!mod) return null;
-		return mod.projectNode ?? null;
+		return mod.readNode ?? null;
 	} catch (e) {
 		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
 		return null;

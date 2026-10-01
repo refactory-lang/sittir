@@ -75,6 +75,17 @@ describe('read depth', () => {
 		}
 	});
 
+	it('reads the root again at the depth asked for, not the depth the parse read it at', async () => {
+		const native = (await rust.load()).createNative();
+		const { root, tree } = native.parseAndRead(SOURCE);
+		const read = (tree as TreeHandle).read!;
+		const shallow = read(undefined);
+		expect(shallow).toBe(root);
+		const deep = read(undefined, undefined, Infinity);
+		expect(countStubs(deep)).toBe(0);
+		expect([deep.$type, deep.$span]).toEqual([shallow.$type, shallow.$span]);
+	});
+
 	it('refuses a depth that is not a whole number of levels', async () => {
 		const native = (await rust.load()).createNative();
 		const { root, tree } = native.parseAndRead(SOURCE);

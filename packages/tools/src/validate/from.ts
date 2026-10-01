@@ -22,7 +22,7 @@ import {
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
-	readNodeAt,
+	readUntypedNodeAt,
 	adaptNode,
 	collectKinds,
 	emitValidatorMetrics,
@@ -88,7 +88,7 @@ function findUndefined(node: AnyNodeData, path = ''): string[] {
  * The factory output `b` is the ground truth for "what fields this kind
  * declares." Any field in `from()` output `a` that isn't in `b` is
  * acceptable runtime metadata (promoted anonymous keywords like `fn`,
- * `{`, `;` from `readNode.promoteAnonymousKeyword`, tree-sitter
+ * `{`, `;` from `readUntypedNode.promoteAnonymousKeyword`, tree-sitter
  * punctuation, etc.) — those don't count as divergence. Only mismatches
  * on keys the factory actually declared are real bugs.
  *
@@ -199,7 +199,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	// kindIdFromName (name→id): for treeHandle JS-side reads and findNativeNodeId's kindId variant.
 	// kindNameFromId (id→name): for findNativeNodeId's id-to-kind comparison.
 	// The generated kindIdFromName throws on missing entries; wrap it so
-	// readNode's resolveKindId falls back to the zero sentinel instead of
+	// readUntypedNode's resolveKindId falls back to the zero sentinel instead of
 	// propagating a TypeError for form kinds not in the numeric catalog.
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
 	const kindIdFromName = rawKindIdFromName
@@ -215,9 +215,9 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	const storageKindNameFromId = await loadStorageKindNameFromId(grammar);
 
 	// Import from() + factory + wrap modules. `.from()` expects a fluent
-	// NodeData (from factory output OR projectNode wrap) OR a camelCase
-	// loose bag — per spec 008 US3, bare `readNode` output isn't a
-	// supported input. projectNode wraps readNode output via the per-kind
+	// NodeData (from factory output OR readNode wrap) OR a camelCase
+	// loose bag — per spec 008 US3, bare `readUntypedNode` output isn't a
+	// supported input. readNode wraps readUntypedNode output via the per-kind
 	// wrap function, producing a fluent NodeData that `.from()` accepts.
 	let fromMap: Record<string, (input: object) => unknown> = {};
 	let factoryMap: Record<string, FactoryEntry> = {};
@@ -225,7 +225,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
-	let projectNode: ((tree: unknown, handle?: number, childIndex?: number) => unknown) | undefined;
+	let readNode: ((tree: unknown, handle?: number, childIndex?: number) => unknown) | undefined;
 	let wrapNode: ((data: AnyNodeData, tree: unknown) => unknown) | undefined;
 	const errors: FromValidationError[] = [];
 	try {
@@ -257,10 +257,10 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	}
 	try {
 		const wrapModule = await importGenerated(grammar, 'wrap.ts');
-		projectNode = wrapModule.projectNode;
+		readNode = wrapModule.readNode;
 		wrapNode = wrapModule.wrapNode;
 	} catch {
-		/* wrap module unavailable — projectNode falls back to raw readNode below */
+		/* wrap module unavailable — readNode falls back to raw readUntypedNode below */
 	}
 
 	// Without fromMap/factoryMap, every kind fails `kind in fromMap && kind
@@ -390,31 +390,31 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					});
 					continue;
 				}
-				// Use projectNode (wrapped via per-kind dispatch) when available,
+				// Use readNode (wrapped via per-kind dispatch) when available,
 				// so `.from()` sees a fluent NodeData — the supported input shape
-				// per spec 008 US3. Fall back to raw readNode if the wrap module
+				// per spec 008 US3. Fall back to raw readUntypedNode if the wrap module
 				// isn't loaded (bootstrap scenarios).
 				// For the WASM/JS path, temporarily swap rootNode to target then
 				// call with no navigation coords (reads rootNode).
 				if (nativeCoords?.embeddedData !== undefined) {
 					// A trivia entry — already fully materialized, no
 					// handle+child-index to read through. Apply the same
-					// fluent-view wrap projectNode would, so `.from()` sees
+					// fluent-view wrap readNode would, so `.from()` sees
 					// the same input shape as every other candidate.
 					readData = wrapNode
 						? (wrapNode(nativeCoords.embeddedData, handle) as AnyNodeData)
 						: nativeCoords.embeddedData;
 				} else if (nativeCoords && handle.read) {
-					readData = projectNode
-						? (projectNode(handle, nativeCoords.handle, nativeCoords.childIndex) as AnyNodeData)
-						: readNodeAt(handle, adaptNode(node1), nativeCoords);
+					readData = readNode
+						? (readNode(handle, nativeCoords.handle, nativeCoords.childIndex) as AnyNodeData)
+						: readUntypedNodeAt(handle, adaptNode(node1), nativeCoords);
 				} else {
 					const prev = handle.rootNode;
 					(handle as { rootNode: typeof prev }).rootNode = adaptNode(node1);
 					try {
-						readData = projectNode
-							? (projectNode(handle) as AnyNodeData)
-							: readNodeAt(handle, adaptNode(node1), null);
+						readData = readNode
+							? (readNode(handle) as AnyNodeData)
+							: readUntypedNodeAt(handle, adaptNode(node1), null);
 					} finally {
 						(handle as { rootNode: typeof prev }).rootNode = prev;
 					}

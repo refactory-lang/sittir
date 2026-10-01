@@ -501,7 +501,7 @@ impl<'de> Deserialize<'de> for NodeData {
     }
 }
 
-/// Where a `NodeData` originated. `Ts` = `readNode` over a tree-sitter
+/// Where a `NodeData` originated. `Ts` = `readUntypedNode` over a tree-sitter
 /// tree; `Sg` = ast-grep path; `Factory` = constructed on the TS side.
 ///
 /// Wire shape is a numeric u8: 0 = Ts, 1 = Sg, 2 = Factory.
@@ -770,7 +770,7 @@ fn scalar_kind_leaf(kind: KindId) -> NodeData {
 /// A transport field that accepts either a single value or an array of values
 /// from JS.
 ///
-/// The JS `readNode` path stores single-element `multiple:true` fields as
+/// The JS `readUntypedNode` path stores single-element `multiple:true` fields as
 /// scalars rather than length-1 arrays. Using `Vec<T>` for such fields causes
 /// napi-rs to fail with "Given napi value is not an array". `OneOrMany<T>`
 /// accepts both shapes in its `FromNapiValue` impl and always presents a

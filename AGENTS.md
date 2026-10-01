@@ -26,9 +26,9 @@ Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) cont
 ## Key Design Decisions
 
 - **NodeData** — plain objects, not ES classes. Branches: `{ $type, $source, $named, $fields }`. Leaves: `{ $type, $source, $named, $text }`. Fields stored under **raw** (snake_case) names inside `$fields`. `$`-prefix on metadata (spec 008 US7) eliminates collisions with user-facing field names like `type` (python's `type_alias_statement`).
-- **`$source` provenance** — every NodeData carries `$source: 'ts' | 'sg' | 'factory'` at construction. `projectNode` sets `'ts'`; factories set `'factory'`. `.from()` dispatch can branch on it instead of structural probing.
+- **`$source` provenance** — every NodeData carries `$source: 'ts' | 'sg' | 'factory'` at construction. `readNode` sets `'ts'`; factories set `'factory'`. `.from()` dispatch can branch on it instead of structural probing.
 - **Concrete interfaces** — `interface FunctionItem { $type: 'function_item'; $fields: { ... }; $children?: [...] }` — the source of truth for each node's shape. Config/Tree/FromInput derived via type transformations. Consumer bags (Config, Loose) still use unprefixed `children` for the child-slot key.
-- **Tree-sitter nodes keep unprefixed API** — `AnyTreeNode`, `TreeNodeOf<T>`, `projectNode` output all use `.type` / `.text()` / `.children()` (tree-sitter convention). Only the data / factory surface uses `$`-prefix.
+- **Tree-sitter nodes keep unprefixed API** — `AnyTreeNode` and `TreeNodeOf<T>` use `.type` / `.text()` / `.children()` (tree-sitter convention). The data / factory surface uses the `$`-prefix, and so does `readNode`'s result: a typed node that keeps the `$type` and `_<slot>` storage of the data it wraps and adds the kind's slot accessors.
 - **S-expression templates** — tree-sitter query syntax for render rules. Field references use raw names.
 - **Grammar-aligned terminology** — kind, field, named, anonymous, supertype (tree-sitter/ast-grep terms)
 - **Supertype unions** — `_expression` → `Expression`, `ExpressionTree`
@@ -83,15 +83,15 @@ Seven surfaces, one common shape (`NodeData`):
 | Factory output  | `NodeData` + fluent getters/setters + methods  | Raw `$`-prefix metadata, `$fields` snake_case, fluent methods camelCase |
 | From input      | `FromInput` (loose: strings, numbers, objects) | Adds resolution on top of factory                                       |
 | From output     | Same as factory output                         | Calls factory internally                                                |
-| readNode input  | `SgNode` / `TreeNode` (raw field names)        | **ast-grep / tree-sitter owns this shape**                              |
-| readNode output | `NodeData` with `$source: 'ts'`                | Direct mapping, no translation                                          |
+| readUntypedNode input  | `SgNode` / `TreeNode` (raw field names)        | **ast-grep / tree-sitter owns this shape**                              |
+| readUntypedNode output | `NodeData` with `$source: 'ts'`                | Direct mapping, no translation                                          |
 | Render input    | `AnyNodeData` — reads `node.$fields[rawName]`  | Zero-cost from any producer                                             |
 
 Design targets per tier:
 
 - **Factory** — zero-cost translation + compile-time constraints + client-side validation of text inputs. Config uses camelCase keys; factory maps to raw `$fields` internally and stamps `$source: 'factory'`. Fluent getters/setters provide camelCase access (setters named `value` / `values`): no-arg = getter, with-arg = setter (returns new node).
 - **FromInput** — adds resolution (string → leaf, object → branch inference, supertype expansion) on top of factory. Exposed getters/setters same as factory.
-- **Wrap / readNode** — strips all protections and translations. `projectNode(target)` is the typed public entry point (dispatches to per-kind `wrapXxx()` via `_wrapTable[data.$type]`); `readNode(tree, id?)` is the grammar-agnostic raw reader that emits `$source: 'ts'`. Override field promotion heuristics are inlined.
+- **Wrap / readUntypedNode** — strips all protections and translations. `readNode(target)` is the typed public entry point (dispatches to per-kind `wrapXxx()` via `_wrapTable[data.$type]`); `readUntypedNode(tree, id?)` is the grammar-agnostic raw reader that emits `$source: 'ts'`. Override field promotion heuristics are inlined.
 - **Render** — reads `node.$fields[rawName]` and `node.$children`. Zero-cost consumption from any producer.
 
 ## Commands
@@ -319,7 +319,7 @@ extraction that doesn't fit the shape.
 
 ### Use `probe-kind.ts` before ad-hoc probes
 
-When debugging parse → `readNode` → render gaps, use
+When debugging parse → `readUntypedNode` → render gaps, use
 `packages/codegen/src/scripts/probe-kind.ts` before writing any
 throwaway `/tmp/probe-*.ts` script. Extend `probe-kind.ts` if a flag is
 missing; don't fork one-off diagnostics. This is the standard debugging
@@ -430,7 +430,7 @@ Aggregate totals can hide kinds falling out of the validation universe.
 - File system — per-grammar generated output under `packages/{rust,typescript,python}/src/` (008-factory-ergonomic-cleanup)
 - N/A — the engine is a pure transformation over in-memory strings and parse trees. No persistence layer. (012-rust-core-port)
 - Rust 1.88+, sittir-core, askama 0.15, napi-rs 3, per-grammar render crates at `rust/crates/sittir-{lang}/src/render/` (012-rust-core-port)
-- TypeScript 6.0.2 (ESM, `.ts` extensions in imports), Rust 1.88+ for native render path (already shipped on 012). + `@sittir/codegen` (walker / emitter / link / assemble / evaluate pipeline), `@sittir/core` (render, readNode, edit), `@sittir/types` (NodeData, ConfigOf, FromInput type projections), per-grammar packages (`@sittir/{rust,typescript,python}`), per-grammar napi crates (`sittir-{rust,typescript,python}-napi` for native render). Vitest for the test suite that defines the baseline. (016-parity-regressions)
+- TypeScript 6.0.2 (ESM, `.ts` extensions in imports), Rust 1.88+ for native render path (already shipped on 012). + `@sittir/codegen` (walker / emitter / link / assemble / evaluate pipeline), `@sittir/core` (render, readUntypedNode, edit), `@sittir/types` (NodeData, ConfigOf, FromInput type projections), per-grammar packages (`@sittir/{rust,typescript,python}`), per-grammar napi crates (`sittir-{rust,typescript,python}-napi` for native render). Vitest for the test suite that defines the baseline. (016-parity-regressions)
 - File system — `packages/tools/baselines/native.json` is the durable contract; generated TS/templates under `packages/{lang}/src/` and `packages/{lang}/templates/*.jinja` are codegen output (never hand-edited). (016-parity-regressions)
 
 ## Recent Changes

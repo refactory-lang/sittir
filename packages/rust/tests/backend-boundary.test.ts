@@ -100,12 +100,12 @@ describe('engine render boundary', () => {
 		);
 	});
 
-	it('passes readNode-shaped children straight through to native render (no normalization step)', async () => {
+	it('passes readUntypedNode-shaped children straight through to native render (no normalization step)', async () => {
 		// engine.render() is a pure pass-through to the native engine — no $children-to-named-field
 		// normalization logic exists there or anywhere else on the JS side.
-		// That's correct: readNode.ts itself emits the de-hoisted `_<name>`
+		// That's correct: readUntypedNode.ts itself emits the de-hoisted `_<name>`
 		// storage shape directly (specs/022-binding-simplify-assemble/
-		// IMPLEMENTATION-STATUS.md: "`@sittir/core/readNode.ts` emits `_<name>`
+		// IMPLEMENTATION-STATUS.md: "`@sittir/core/readUntypedNode.ts` emits `_<name>`
 		// directly (no shim)"), matching source_file's real named `statements`
 		// field (`_statements`, per types.ts's `SourceFile` interface) — a
 		// generic `$children` intermediate shape is never actually produced,
@@ -252,7 +252,7 @@ describe('engine render boundary', () => {
 				parseAndRead(_source: string): string {
 					return JSON.stringify({ nodeData: identifier });
 				}
-				readNode(_nodeId: number): string {
+				readUntypedNode(_nodeId: number): string {
 					return JSON.stringify(identifier);
 				}
 				dispose(): void {}

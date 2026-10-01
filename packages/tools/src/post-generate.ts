@@ -118,7 +118,7 @@ export async function runRoundtripProbes(grammar: string): Promise<number> {
 	const { validateFrom, formatFromReport } = await import('./validate/from.ts');
 
 	// read projection (structural) — upstream of render/factory. A regression
-	// here means readNode is losing content between tree-sitter's parse tree and
+	// here means readUntypedNode is losing content between tree-sitter's parse tree and
 	// the NodeData shape, so every downstream validator will mis-report.
 	const readProjectionResult = await validateReadProjection(grammar);
 	console.log(formatReadProjectionReport(readProjectionResult));
@@ -128,7 +128,7 @@ export async function runRoundtripProbes(grammar: string): Promise<number> {
 	});
 	console.log(formatReadRenderParseReport(readRenderParseResult));
 
-	// Factory render-parse (corpus → readNode → factory() → render → re-parse)
+	// Factory render-parse (corpus → readUntypedNode → factory() → render → re-parse)
 	const factoryRenderParseResult = await validateFactoryRenderParse(grammar, 'native');
 	console.log(formatFactoryRenderParseReport(factoryRenderParseResult));
 

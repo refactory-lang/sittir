@@ -91,7 +91,7 @@ function assertNativeChildValue(value: unknown, path: string): asserts value is 
  *  - `$format` is absent (must be passed separately via TreeHandle.format)
  *  - no function-valued properties (methods like `render()` cannot cross napi)
  *  - nested `_<name>` storage keys and `$other` satisfy the same constraints
- *    Recursively (`$fields` wrapper no longer emitted by readNode)
+ *    Recursively (`$fields` wrapper no longer emitted by readUntypedNode)
  *  - finite numeric `_<name>` storage is allowed for kind-enum projection
  */
 function assertNativeNodeDataInternal(value: unknown, path: string): asserts value is AnyNodeData {

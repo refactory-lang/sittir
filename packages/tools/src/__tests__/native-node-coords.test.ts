@@ -8,7 +8,7 @@ import {
 	loadCorpusEntries,
 	loadKindNameFromId,
 	loadLanguageForGrammar,
-	readNodeAt
+	readUntypedNodeAt
 } from '../validate/common.ts';
 
 describe('native node coords', () => {
@@ -43,7 +43,7 @@ describe('native node coords', () => {
 			expect(treeNode).not.toBeNull();
 			if (!coords || !treeNode) continue;
 
-			const data = readNodeAt(handle, adaptNode(treeNode), coords);
+			const data = readUntypedNodeAt(handle, adaptNode(treeNode), coords);
 			const dataKind = typeof data.$type === 'number' ? kindNameFromId(data.$type) : data.$type;
 			expect(dataKind).toBe(kind);
 		}
@@ -76,7 +76,7 @@ describe('native node coords', () => {
 			expect(treeNode).not.toBeNull();
 			if (!coords || !treeNode) continue;
 
-			const data = readNodeAt(handle, adaptNode(treeNode), coords);
+			const data = readUntypedNodeAt(handle, adaptNode(treeNode), coords);
 			const dataKind = typeof data.$type === 'number' ? kindNameFromId(data.$type) : data.$type;
 			expect(dataKind).toBe(kind);
 		}
@@ -102,7 +102,7 @@ describe('native node coords', () => {
 		expect(treeNode).not.toBeNull();
 		if (!coords || !treeNode) return;
 
-		const data = readNodeAt(handle, adaptNode(treeNode), coords);
+		const data = readUntypedNodeAt(handle, adaptNode(treeNode), coords);
 		const dataKind = typeof data.$type === 'number' ? kindNameFromId(data.$type) : data.$type;
 		expect(dataKind).toBe('module');
 	}, 30000);

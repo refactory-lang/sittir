@@ -447,7 +447,7 @@ impl<G: EngineGrammar> Engine<G> {
 
 /// Resolve the effective format from source provenance alone — no NodeData
 /// required. Engine-level format takes priority; tree-level format applies
-/// only to non-factory nodes (readNode output). Factory-constructed nodes
+/// only to non-factory nodes (readUntypedNode output). Factory-constructed nodes
 /// get no tree format (they had no original source to preserve).
 fn resolve_render_format_from_source<'a>(
     source: Source,
@@ -466,7 +466,7 @@ fn resolve_render_format_from_source<'a>(
 /// Apply format to a pre-rendered canonical string using scalar parameters
 /// instead of `&NodeData`. This is the public standalone API for format
 /// application — callers that have KindId + Source + Span from any source
-/// (transport structs, readNode output, etc.) can apply format without
+/// (transport structs, readUntypedNode output, etc.) can apply format without
 /// constructing a full `NodeData`.
 ///
 /// Parameters:

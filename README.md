@@ -233,7 +233,7 @@ falling back.
                                       ▼
                           ┌────────────────────────────┐
                           │  @sittir/common             │
-                          │  readNode, applyEdits,      │
+                          │  readUntypedNode, applyEdits,      │
                           │  NodeData,                  │
                           │  TreeHandle, native boundary│
                           └─────────────────────────────┘
@@ -251,15 +251,20 @@ falling back.
   `AnyNodeData`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>`, `Edit`,
   `ByteRange`, `RenderContext`.
 - **`@sittir/common`** — backend-neutral runtime. Implements
-  `readNode(tree, handle?, childIndex?)` (parse-tree → `NodeData`),
+  `readUntypedNode(tree, handle?, childIndex?)` (parse-tree → `NodeData`),
   `applyEdits(source, edits)`, the native boundary
   invariant (`assertRenderableNodeData`), and
   `createNativeEngine()`, which the native backend implements against the
   shared `SittirEngineLike`/tree-handle interfaces.
-- **Generated `@sittir/<grammar>` packages** — per-grammar surface. Each
-  one exposes `createEngine()` (native-only), an `ir.*` namespace of coercing
-  constructors, `wrapNode`, `projectNode`, the `is.*` guards, kind
-  constants, and the native template-bundle hash.
+- **Generated `@sittir/<grammar>` packages** — per-grammar surface. The
+  package root's default export is the language descriptor (`name`,
+  `fileTypes`, and a lazy `load()`), which `createEngine(descriptor)` from
+  `@sittir/common` turns into a native-only engine; beside it the root
+  exports only types (the node interfaces, render options, `IsGuards`).
+  `load()` resolves the grammar's API: the `ir.*` namespace of coercing
+  constructors, the `is.*` guards, kind constants, trivia facts, and the
+  native template-bundle hash. Reading and wrapping a parse stay internal
+  to the engine.
 
 #### NodeData shape
 
@@ -341,7 +346,7 @@ path); `SITTIR_BACKEND=native|js|wasm` forces that status for testing, and
 #### Read pipeline
 
 ```
-source ──▶ tree-sitter parse ──▶ TreeHandle ──▶ readNode(tree) ──▶ NodeData
+source ──▶ tree-sitter parse ──▶ TreeHandle ──▶ readUntypedNode(tree) ──▶ NodeData
                                                                        │
                                                               wrapNode(node, tree)
                                                                        ▼
@@ -349,7 +354,7 @@ source ──▶ tree-sitter parse ──▶ TreeHandle ──▶ readNode(tree)
                                                        + lazy expansion via $parentHandle
 ```
 
-`readNode` is the shared parse-tree reader: it maps field children into
+`readUntypedNode` is the shared parse-tree reader: it maps field children into
 `_<field>` slots and unfielded children into `$children`, recurses to a
 configurable depth, and produces the same `NodeData` shape whether the
 parse tree came from `web-tree-sitter` or `@ast-grep/napi`. `wrapNode`
@@ -380,7 +385,7 @@ lives in `packages/<lang>/grammar.sittir.ts`.
 | `types.ts`                                    | Per-kind interfaces, `TSKindId` const enum, `KIND_NAMES`, `ConfigFor<K>`, `NamespaceMap`, supertype unions |
 | `factories.ts`                                | One factory per kind: `kind.strict(config)` and the coercing `kind(input)` with shared output          |
 | `from.ts`                                     | Closed-form coercion resolver — no runtime inference                                          |
-| `wrap.ts`                                     | `wrapNode(node, tree)` / `projectNode(node)` — typed accessors with lazy expansion             |
+| `wrap.ts`                                     | `wrapNode(node, tree)` / `readNode(node)` — typed accessors with lazy expansion             |
 | `ir.ts`                                       | `ir.*` namespace + grouped supertype namespaces (`expression`, `statement`, ...)               |
 | `is.ts`                                       | Kind guards (`is.*`)                                                                           |
 | `consts.ts`                                   | Discoverable arrays/maps: kind names, keywords, operators                                      |
@@ -482,7 +487,7 @@ target API in flight.
 | Package                                     | Purpose                                                                              |
 | ------------------------------------------- | ------------------------------------------------------------------------------------ |
 | [`@sittir/types`](packages/types)           | Pure TypeScript types — zero runtime                                                 |
-| [`@sittir/common`](packages/common)         | Backend-neutral runtime: `readNode`, `applyEdits`, native boundary, engine interface |
+| [`@sittir/common`](packages/common)         | Backend-neutral runtime: `readUntypedNode`, `applyEdits`, native boundary, engine interface |
 | [`@sittir/codegen`](packages/codegen)       | The compiler (enrich → evaluate → link → normalize → simplify → assemble → emit) and emitters |
 | [`@sittir/cli`](packages/cli)               | Unified `sittir` binary: `gen`, `tool *`, `validate *` (see [docs/cli-command-glossary.md](docs/cli-command-glossary.md)) |
 | [`@sittir/tools`](packages/tools)           | Diagnostics + validation implementations: `probe-*`, `walk`, `exercise`, `inspect-*`, validator counts/history (run APIs behind the CLI) |

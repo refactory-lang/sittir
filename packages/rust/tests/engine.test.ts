@@ -55,7 +55,7 @@ describe('engine', () => {
 								format: undefined
 							});
 						}
-						readNode(_nodeId: number): string {
+						readUntypedNode(_nodeId: number): string {
 							// $type is numeric (TSKindId).
 							return JSON.stringify({
 								$type: TSKindId.Identifier,
@@ -81,7 +81,7 @@ describe('engine', () => {
 		expect(typeof native.parseAndRead).toBe('function');
 	});
 
-	it('passes through native read payloads already in JS readNode shape', async () => {
+	it('passes through native read payloads already in JS readUntypedNode shape', async () => {
 		vi.doMock('../src/backend.js', () => ({
 			getActiveBackend: () => ({
 				name: 'native',
@@ -123,7 +123,7 @@ describe('engine', () => {
 								}
 							});
 						}
-						readNode(_handle: number, _childIndex: number): string {
+						readUntypedNode(_handle: number, _childIndex: number): string {
 							return JSON.stringify({
 								$type: TSKindId.FunctionItem,
 								$source: 0,

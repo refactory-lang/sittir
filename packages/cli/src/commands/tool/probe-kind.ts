@@ -3,7 +3,7 @@ import { withGrammar } from '../../framework/options.ts';
 
 export const probeKind: CommandModule = {
 	name: 'probe-kind',
-	describe: 'Structured diagnostics for parse → readNode → render cycle',
+	describe: 'Structured diagnostics for parse → readUntypedNode → render cycle',
 	register: (program) => {
 		withGrammar(defineCommand(program, probeKind))
 			.option('-s, --source <text>', 'Source text to probe')
@@ -11,7 +11,7 @@ export const probeKind: CommandModule = {
 			.option('-k, --kind <kind>', 'Find first node of this kind and probe it')
 			.option('--range <start,end>', 'Probe node at byte range start,end')
 			.option('--no-render', 'Skip the render pass')
-			.option('--no-wrap', 'Use core readNode directly (skip grammar projectNode)')
+			.option('--no-wrap', 'Use core readUntypedNode directly (skip grammar readNode)')
 			.option('--reparse', 'Render → re-parse → include reparsed CST')
 			.option(
 				'--validator-reparse',

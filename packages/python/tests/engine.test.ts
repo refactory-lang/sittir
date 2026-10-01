@@ -54,7 +54,7 @@ describe('engine', () => {
 								format: undefined
 							});
 						}
-						readNode(_nodeId: number): string {
+						readUntypedNode(_nodeId: number): string {
 							return JSON.stringify({
 								$type: TSKindId.Identifier,
 								$source: 0,

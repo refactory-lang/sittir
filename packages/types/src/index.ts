@@ -841,7 +841,7 @@ type WidenValue<
 
 /** @internal — the keyword-presence brand members (boolean keyword, bitflag,
  *  kind enum), each projected to its Config surface with the branded value
- *  still accepted for readNode round-trips. A brand is a branded primitive,
+ *  still accepted for readUntypedNode round-trips. A brand is a branded primitive,
  *  so it is classified here and nowhere else: `BareKindId` excludes branded
  *  numbers and `OtherMembers` excludes every brand. */
 type WidenBrandMembers<T> = T extends { readonly __booleanKeyword__?: unknown }

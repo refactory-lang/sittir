@@ -700,7 +700,7 @@ export function emitIsModule(grammar: GrammarModel): string {
 - [ ] `template('...').fill({}).read()` / `.render()` — inline templates
 - [ ] Composition: `.read()` output as slot input for another template
 - [x] `engine.parse()` with depth control, `$parentHandle` / `$childIndex` expansion
-- [ ] `engine.readNode(handle, childIndex)` for lazy expansion
+- [ ] `engine.readUntypedNode(handle, childIndex)` for lazy expansion
 - [ ] `engine.findAndRead()` with pattern matching
 - [ ] `engine.applyEdits()` for source modification
 - [ ] `wrap(node, tree)` — getter methods with `expandChild` for lazy expansion

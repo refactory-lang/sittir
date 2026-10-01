@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { AnyNodeData } from '@sittir/types';
-import { loadNativeEngine, loadProjectNode, materializeDetached, readNativeTree } from '../common.ts';
+import { loadNativeEngine, readNodeOf, materializeDetached, readNativeTree } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 
 describe('read trivia layout, rendered detached', () => {
@@ -33,9 +33,9 @@ describe('read trivia layout, rendered detached', () => {
 
 	it('seats a same-line trailing entry after an anonymous token kept as a source coordinate', async () => {
 		const engine = await loadNativeEngine('rust');
-		const read = (await loadProjectNode('rust'))!;
+		const readNode = (await readNodeOf('rust'))!;
 		const source = 'fn f() { x = a + /* x */ b; }';
-		const data = materializeDetached(read(readNativeTree(engine, source).tree)) as never as {
+		const data = materializeDetached(readNode(readNativeTree(engine, source).tree)) as never as {
 			_statements: [{ _body: { _statements: [{ _content: { _expression: { _right: Record<string, any> } } }] } }];
 		};
 		const binary = data._statements[0]._body._statements[0]._content._expression._right;

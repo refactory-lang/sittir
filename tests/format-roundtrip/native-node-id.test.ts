@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { tryLoadNativeEngine } from './helpers.ts';
 
 /**
- * `readNode` takes (handle, childIndex), both arriving as JavaScript numbers.
+ * `readUntypedNode` takes (handle, childIndex), both arriving as JavaScript numbers.
  * Neither may be quietly rounded into something valid: Rust's `as` cast
  * saturates, so `NaN` and every negative become 0 — and handle 0 is a real
  * handle naming the first tree's root. A nonsense argument that reached the
@@ -33,7 +33,7 @@ const invalidInputs = [
 ] as const;
 
 for (const grammar of ['rust', 'typescript', 'python'] as const) {
-	describe(`${grammar} native readNode validation`, () => {
+	describe(`${grammar} native readUntypedNode validation`, () => {
 		for (const testCase of invalidInputs) {
 			it(`rejects ${testCase.label}`, () => {
 				const engine = tryLoadNativeEngine(grammar);
@@ -43,7 +43,7 @@ for (const grammar of ['rust', 'typescript', 'python'] as const) {
 				// — the argument itself has to be what is refused.
 				engine.parseAndRead('');
 
-				expect(() => engine.readNode(testCase.handle as number, testCase.childIndex as number)).toThrow(
+				expect(() => engine.readUntypedNode(testCase.handle as number, testCase.childIndex as number)).toThrow(
 					testCase.expected
 				);
 			});
@@ -56,7 +56,7 @@ for (const grammar of ['rust', 'typescript', 'python'] as const) {
 			// Well-formed, but names tree 1 — nothing has been parsed, so no
 			// tree by that name exists. Distinct from a malformed argument.
 			const handleIntoTreeOne = 2 ** 32;
-			expect(() => engine.readNode(handleIntoTreeOne, 0)).toThrow(/names tree 1, which is not live/);
+			expect(() => engine.readUntypedNode(handleIntoTreeOne, 0)).toThrow(/names tree 1, which is not live/);
 		});
 	});
 }

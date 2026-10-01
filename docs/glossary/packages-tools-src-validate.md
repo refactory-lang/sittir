@@ -149,10 +149,10 @@ would otherwise report a passing 0/0 run.
 #### body
 
 ```text
-// NodeById removed. JS-side readNode now navigates via
+// NodeById removed. JS-side readUntypedNode now navigates via
 // nodes[handle].children()[childIndex]. The nodes[] array is populated
-// lazily by pushNode() inside readNode as it walks the tree.
-// Phase D: kindIdFromName is required for JS-side reads (readNode emits
+// lazily by pushNode() inside readUntypedNode as it walks the tree.
+// Phase D: kindIdFromName is required for JS-side reads (readUntypedNode emits
 // numeric $type). Supply it from the grammar's types module.
 ```
 
@@ -229,7 +229,7 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
  */
 ```
 
-### `packages/tools/src/validate/common.ts::readNodeAt`
+### `packages/tools/src/validate/common.ts::readUntypedNodeAt`
 
 ```text
 /**
@@ -237,7 +237,7 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
  *
  * ReadNode no longer accepts a nodeId. For the WASM/JS path,
  * validators use this helper to push the target node into the handle's
- * nodes[] array and call readNode with the resulting handle + childIndex=0.
+ * nodes[] array and call readUntypedNode with the resulting handle + childIndex=0.
  * For native handles (handle.read present), uses the native coords from
  * findNativeNodeId.
  */
@@ -247,7 +247,7 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
 
 ```text
 // WASM/JS path: temporarily set rootNode to the target node and read
-// with no navigation coords (readNode reads rootNode when handle is undefined).
+// with no navigation coords (readUntypedNode reads rootNode when handle is undefined).
 ```
 
 ### `packages/tools/src/validate/common.ts::NativeNodeCoords`
@@ -302,7 +302,7 @@ The kind a node from the native read is shown as: its `$displayType` when the re
  * first node whose `$type` equals `kind`. Native engine handles and
  * WASM/JS engine handles occupy different navigation spaces, so WASM
  * coordinates must never be passed to a native handle's
- * `readNode(handle, childIndex)`.
+ * `readUntypedNode(handle, childIndex)`.
  *
  * Returns null when `handle` is a WASM handle (no `handle.read`) —
  * callers fall back to the JS tree's `node.id` in that case.
@@ -775,11 +775,11 @@ keeps its own missing-module behaviour. The only way the validators and
 `emit-factory-source` import generated modules; `node-model.json5` is data
 and is read with `readFileSync` on the path.
 
-### `packages/tools/src/validate/common.ts::loadProjectNode`
+### `packages/tools/src/validate/common.ts::readNodeOf`
 
 ```text
 /**
- * Dynamic import of a grammar's `projectNode` entry point. Used by
+ * Dynamic import of a grammar's `readNode` entry point. Used by
  * validators to build source-typed wrapped views — the wire `$type` is
  * the grammar symbol, so nodes arrive under their source kind and the
  * validator render dispatches through the source template directly.
@@ -791,10 +791,10 @@ and is read with `readFileSync` on the path.
 ```text
 /**
  * Dynamic import of a grammar's `wrapNode` entry point — the fluent-view
- * wrapper `projectNode` applies after reading. Used to produce the same
+ * wrapper `readNode` applies after reading. Used to produce the same
  * wrapped shape for already-materialized data (e.g. a trivia entry's
  * `NativeNodeCoords.embeddedData`) that has no handle+child-index to read
- * through `projectNode` itself.
+ * through `readNode` itself.
  */
 ```
 
@@ -1075,14 +1075,14 @@ and is read with `readFileSync` on the path.
 // nodeToConfig — NodeData → factory Config-shape conversion
 // ---------------------------------------------------------------------------
 //
-// Validators read tree-sitter output via `readNode` (snake_case `_<name>`
+// Validators read tree-sitter output via `readUntypedNode` (snake_case `_<name>`
 // keys, $-prefixed metadata). The factory signatures take `ConfigOf<T>`:
 //   - top-level keys in camelCase (snake→camel on each `_<name>` entry)
 //   - `children` in place of $children
 //   - leaf values as bare strings (factory leaf signatures are `(text: string)`)
 //   - branch values as NodeData produced by THAT kind's factory — when
 //     `tree` + `factoryMap` are supplied, children are expanded via
-//     `readNode` and reconstructed through their own factory before
+//     `readUntypedNode` and reconstructed through their own factory before
 //     being installed under the parent's config. This is what makes the
 //     factory layer actually exercise construction instead of passing
 //     data through verbatim; a declared-type mismatch (e.g. a
@@ -1140,7 +1140,7 @@ and is read with `readFileSync` on the path.
 
 ```text
 /** Validator-supplied CST node-kind fallback for override polymorphs whose
-	 * readNode shape collapsed the discriminating wrapper before factory dispatch. */
+	 * readUntypedNode shape collapsed the discriminating wrapper before factory dispatch. */
 ```
 
 ### `packages/tools/src/validate/common.ts::NodeToConfigOpts.firstNamedChildKindHint`
@@ -1180,7 +1180,7 @@ and is read with `readFileSync` on the path.
 
 ```text
 /** Phase D: resolver for numeric $type → string kind name. Required when
-	 * input nodes carry numeric $type (readNode output post-Phase-D). */
+	 * input nodes carry numeric $type (readUntypedNode output post-Phase-D). */
 ```
 
 ### `packages/tools/src/validate/common.ts::NodeToConfigOpts.surface`
@@ -1210,7 +1210,7 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
  *
  * @remarks
  * Anonymous tokens (separators, delimiters, keywords promoted to `_<name>` by
- * readNode) must stay as NodeData. Render's `$named !== false` filter drops
+ * readUntypedNode) must stay as NodeData. Render's `$named !== false` filter drops
  * them from `$$$CHILDREN`, and flankSep probes their span/text to reconstruct
  * trailing separators. Converting them to bare strings bypasses those filters
  * and double-emits (e.g. struct_pattern's trailing `,` showed up twice in the

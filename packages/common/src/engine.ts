@@ -13,7 +13,7 @@ import type {
 	RenderCallOptions,
 	Rendered
 } from '@sittir/types';
-import type { TreeHandle } from './readNode.ts';
+import type { TreeHandle } from './readUntypedNode.ts';
 import { toTransportData } from './transport-data.ts';
 
 /** The options object a grammar package types as its `Options`. */
@@ -63,7 +63,8 @@ function depthOf(options: ParseOptions | undefined): number | undefined {
 
 export interface NativeEngineLike<TTransport = unknown> {
 	parseAndRead(source: string, depth?: number): string;
-	readNode(handle: number, childIndex: number, depth?: number): string;
+	readUntypedNode(handle: number, childIndex: number, depth?: number): string;
+	readRoot(treeId: number, depth?: number): string;
 	render(node: TTransport, treeId?: number, options?: object): string;
 	renderToFile?(node: TTransport, path: string, treeId?: number, options?: object): void;
 	applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
@@ -125,7 +126,7 @@ export type { ParseOptions };
  */
 export interface NativeEngineDiagnostics<TRoot extends AnyNodeData = AnyNodeData>
 	extends EngineDiagnostics<TRoot & ParsedRoot, TreeHandle> {
-	readNode(handle: number, childIndex?: number, options?: ParseOptions): AnyNodeData;
+	readUntypedNode(handle: number, childIndex?: number, options?: ParseOptions): AnyNodeData;
 }
 
 /**
@@ -293,6 +294,9 @@ export function createNativeEngine<
 						// root kind for a whole-source parse, stamped with its span and
 						// the captured source text.
 						const root = parsed.nodeData as TRoot & ParsedRoot;
+						// One root per depth: the parse's own read seeds it, and a
+						// root asked for at another depth is read natively once.
+						const roots = new Map<number, AnyNodeData>([[depthOf(parseOptions) ?? 1, root]]);
 						// Captured by `read` below and by nothing else, so it stays
 						// reachable exactly as long as something can still read from
 						// this tree. Its collection is what releases the tree.
@@ -309,13 +313,21 @@ export function createNativeEngine<
 								},
 								source,
 								read: (handle, childIndex, depth) => {
-									if (handle === undefined) return root;
 									// Handles name their own tree, so this needs no tree
 									// argument — but it must keep `liveToken` reachable,
 									// or the tree behind those handles can be collected
 									// while they are still in use.
 									void liveToken;
-									const nodeJson = engine.readNode(handle, childIndex ?? 0, depth);
+									if (handle === undefined) {
+										const levels = depth ?? 1;
+										let cached = roots.get(levels);
+										if (cached === undefined) {
+											cached = JSON.parse(engine.readRoot(parsed.treeId, depth)) as AnyNodeData;
+											roots.set(levels, cached);
+										}
+										return cached;
+									}
+									const nodeJson = engine.readUntypedNode(handle, childIndex ?? 0, depth);
 									return JSON.parse(nodeJson) as AnyNodeData;
 								},
 								format: parsed.format
@@ -323,8 +335,8 @@ export function createNativeEngine<
 						};
 					},
 
-					readNode(handle: number, childIndex = 0, parseOptions?: ParseOptions) {
-						const json = engine.readNode(handle, childIndex, depthOf(parseOptions));
+					readUntypedNode(handle: number, childIndex = 0, parseOptions?: ParseOptions) {
+						const json = engine.readUntypedNode(handle, childIndex, depthOf(parseOptions));
 						return JSON.parse(json) as AnyNodeData;
 					}
 				}

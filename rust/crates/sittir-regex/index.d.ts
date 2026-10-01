@@ -82,7 +82,14 @@ export declare class SittirEngine {
    * than answered out of whichever tree happens to be present.
    * `depth` counts the levels read, as for `parse_and_read`.
    */
-  readNode(handle: number, childIndex: number, depth?: number | undefined | null): string
+  readUntypedNode(handle: number, childIndex: number, depth?: number | undefined | null): string
+  /**
+   * Read the root of a live tree again, `depth` levels down, so a
+   * caller holding a shallow root can ask for a deeper one without
+   * re-parsing. Refuses a tree that is not live, as
+   * `read_untyped_node` does.
+   */
+  readRoot(treeId: number, depth?: number | undefined | null): string
   /**
    * Render a typed transport object (napi-native, numeric `$type`).
    *

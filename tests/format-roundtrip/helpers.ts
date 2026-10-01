@@ -19,7 +19,7 @@ const NATIVE_ENGINE_PATH_BY_GRAMMAR = {
 
 export type NativeEngine = {
 	parseAndRead(src: string): string;
-	readNode(handle: number, childIndex: number): string;
+	readUntypedNode(handle: number, childIndex: number): string;
 	dispose(): void;
 };
 

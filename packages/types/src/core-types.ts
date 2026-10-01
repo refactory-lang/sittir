@@ -76,7 +76,7 @@ export interface AnyNodeData {
 	$type: number | string;
 	/** Which producer emitted this node. 0=ts, 1=sg, 2=factory. */
 	$source?: 0 | 1 | 2;
-	/** Variant subtype name — set by factory, absent on readNode output. */
+	/** Variant subtype name — set by factory, absent on readUntypedNode output. */
 	$variant?: string;
 	$other?: NodeChildren;
 	/**
@@ -118,13 +118,13 @@ export interface AnyNodeData {
 	$named?: boolean;
 	/** Per-node format override. Set by callers to override the tree-level format
 	 *  (ctx.format) for this specific node. Never set by inference — inferred format
-	 *  lives on TreeHandle.format. Absent on all factory and readNode output. */
+	 *  lives on TreeHandle.format. Absent on all factory and readUntypedNode output. */
 	$format?: FormatRecord;
 
 	// -------------------------------------------------------------------------
 	// $-prefixed methods — present on factory/wrap output only.
 	// Attached via per-grammar withMethods<T> (non-enumerable defineProperty).
-	// Absent on readNode / native JSON transport.
+	// Absent on readUntypedNode / native JSON transport.
 	// -------------------------------------------------------------------------
 
 	/** Render this node to source text. Non-enumerable on factory/wrap output. */

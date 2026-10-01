@@ -6,7 +6,7 @@ import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { toEditAt } from './edit.ts';
 import { Delimiter } from './delimiter.ts';
-import { expandStub, isStub, readNode, type TreeHandle } from './readNode.ts';
+import { expandStub, isStub, readUntypedNode, type TreeHandle } from './readUntypedNode.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { Source };
@@ -607,7 +607,7 @@ function carryTriviaThroughWith(node: AnyNodeData, handle: EngineHandle | undefi
 }
 
 export { numberText, type NumberBase } from './number.ts';
-export { expandStub, isStub, readNode, type Stub, type TreeHandle } from './readNode.ts';
+export { expandStub, isStub, readUntypedNode, type Stub, type TreeHandle } from './readUntypedNode.ts';
 export { toEditAt } from './edit.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';

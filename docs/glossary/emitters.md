@@ -895,14 +895,14 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
  * Config minus the fields stamped by this form), stamps the form's
  * selected literals directly into `$fields` alongside user-supplied
  * fields, and returns a NodeData shape structurally identical to the
- * base factory's output (and to what `readNode` produces from a parsed
+ * base factory's output (and to what `readUntypedNode` produces from a parsed
  * tree). No `$variant` tag — the selected literals live in `$fields`
  * exactly as they do when parsed, so the round-trip contract is
  * preserved.
  *
  * The fluent method suffix (render/toEdit/replace) mirrors the base
  * factory so the output shape is interchangeable; callers switching
- * between `ir.interfaceBody.curly(...)` and `readNode(...)` get the
+ * between `ir.interfaceBody.curly(...)` and `readUntypedNode(...)` get the
  * same surface.
  */
 ```
@@ -1708,7 +1708,7 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
  * tuple" through ConfigOf without pushing casts downstream.
  *
  * Empty collections (e.g. python `()` / `[]`) have no named children —
- * readNode promotes `(` / `)` / `[` / `]` into fields and produces no
+ * readUntypedNode promotes `(` / `)` / `[` / `]` into fields and produces no
  * `children`. Calling `factory(undefined)` rebuilds the empty form;
  * indexing `children[0]` in that case throws "Cannot read properties of
  * undefined (reading '0')".
@@ -4681,7 +4681,7 @@ machines.
  * @remarks Phase 1: omit auto-stamp-eligible fields from Config input and
  * stamp the constant directly in factory output. The field stays in the
  * `$fields` block of the concrete TypeScript interface so NodeData output
- * shape is unchanged and round-trips with readNode remain identical.
+ * shape is unchanged and round-trips with readUntypedNode remain identical.
  */
 ```
 
@@ -8410,7 +8410,7 @@ seat the child into a config or tuple take the value arguments only.
 /**
 	 * Parser-symbol ID tables (from `loadGeneratedIdTables`). When present,
 	 * per-kind wrap functions stamp `$type: TSKindId.X` to convert the string
-	 * from core's readNode to the numeric runtime discriminant. When absent,
+	 * from core's readUntypedNode to the numeric runtime discriminant. When absent,
 	 * $type is inherited from data (string passthrough — legacy mode).
 	 */
 ```
@@ -13114,10 +13114,10 @@ A mixed-enum slot resolves a bare string by keyword extraction first, then lexic
 
 ```text
 /**
- * Emits wrap.ts — de-hoisted lazy view layer over readNode output.
+ * Emits wrap.ts — de-hoisted lazy view layer over readUntypedNode output.
  *
  * Mirrors the factory emitter (factories.ts) shape A one-for-one:
- *   - `_<name>` storage keys (enumerable, serializable stubs from readNode de-hoisted output)
+ *   - `_<name>` storage keys (enumerable, serializable stubs from readUntypedNode de-hoisted output)
  *   - Inline method shorthand `name()` accessors that perform lazy expansion
  *   - Inline `$with` property that calls the factory for updates
  *   - `withMethods<T>` from per-grammar `./utils.js` wraps the literal
@@ -13510,7 +13510,7 @@ Kinds with a `reclaimsAnonymousChild` slot keep `$other`, because their wrap rea
 
 Assembles the wrap module. `wrapNode`, the one function every wrapped node passes through (the parsed root, each child expanded on demand, trivia entries), runs its per-kind wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached.
 
-`readNode` and `projectNode` take an optional level count, which reaches the native read. `expandStub` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
+`readUntypedNode` and `readNode` take an optional level count, which reaches the native read. `expandStub` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
 
 #### body
 
@@ -13611,7 +13611,7 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 // leaves an unlabeled named child with sub-structure as a shallow stub
 // (`$parentHandle`/`$childIndex`, no fields of its own) — normally a
 // generated wrap function's `expandChild` call materializes it fully via
-// `projectNode`. With no such function for the PARENT kind, nothing
+// `readNode`. With no such function for the PARENT kind, nothing
 // ever calls `expandChild` on the stub, so it reaches the native
 // transport deserializer still shallow — and the child's OWN
 // transport struct then fails, missing every one of its real fields
@@ -16527,7 +16527,7 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 ### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
 
-The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries), and the read calls' arguments (a read takes a level count). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
+The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries), and the read calls' names and arguments (a read takes a level count). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 

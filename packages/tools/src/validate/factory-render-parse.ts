@@ -35,7 +35,7 @@ import {
 	buildReadHandle,
 	walkWrappedTree,
 	materialize,
-	loadProjectNode,
+	readNodeOf,
 	emitValidatorMetrics,
 	loadNodeModel,
 	dedupeMismatchesByContainment,
@@ -536,7 +536,7 @@ export async function validateFactoryRenderParse(
 		importFailure
 	} = await loadFactoryModuleForGrammar(grammar);
 
-	const projectNodeFn = await loadProjectNode(grammar);
+	const readNode = await readNodeOf(grammar);
 	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
 
 	const entries = loadCorpusEntries(grammar);
@@ -582,12 +582,12 @@ export async function validateFactoryRenderParse(
 	}
 
 	// This validator's storage comparison only has meaning against the
-	// wrapped NATIVE read path (projectNodeFn + handle.read). Without it,
+	// wrapped NATIVE read path (readNode + handle.read). Without it,
 	// every candidate below would be silently rejected and the run would
 	// report a misleading "0/0 pass" instead of a real failure. Probe
 	// availability up front and fail loudly instead of skipping.
 	let readPathFailure: string | undefined;
-	if (!projectNodeFn) {
+	if (!readNode) {
 		readPathFailure = `wrap module unavailable for '${grammar}' — no wrapped-tree read function`;
 	} else {
 		try {
@@ -600,7 +600,7 @@ export async function validateFactoryRenderParse(
 			readPathFailure = `failed to build native read handle: ${(e as Error)?.message ?? e}`;
 		}
 	}
-	if (readPathFailure || !projectNodeFn) {
+	if (readPathFailure || !readNode) {
 		const message = `[validate-factory-roundtrip] ${readPathFailure ?? 'wrap module unavailable — no wrapped-tree read function'}`;
 		errors.push({ kind: '(read-tree-unavailable)', message });
 		return {
@@ -627,13 +627,13 @@ export async function validateFactoryRenderParse(
 		// Same read path as read-render-parse: build the native read handle,
 		// then walk the WRAPPED tree once. Every node arrives as its true
 		// source kind, so no separate wrapper/effective-kind reconciliation
-		// dance is needed (the old readNodeAt-based single-node read here
+		// dance is needed (the old readUntypedNodeAt-based single-node read here
 		// required exactly that, and its non-recursive nodeToConfig call
 		// left child fields as unresolved stubs — the root cause of the
 		// native transport's "Missing field" errors once render was fixed
 		// to use the native engine).
 		const handle = await buildReadHandle(grammar, tree1, entry.source, backend, undefined);
-		const wrappedRoot = projectNodeFn(handle) as WrappedNodeData;
+		const wrappedRoot = readNode(handle) as WrappedNodeData;
 		const candidatesByKind = new Map<string, { start: number; end: number; node: WrappedNodeData }[]>();
 		const seen = new Set<string>();
 		walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {

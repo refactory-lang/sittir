@@ -171,7 +171,7 @@ macro_rules! napi_engine {
             /// than answered out of whichever tree happens to be present.
             /// `depth` counts the levels read, as for `parse_and_read`.
             #[::napi_derive::napi]
-            pub fn read_node(
+            pub fn read_untyped_node(
                 &mut self,
                 handle: f64,
                 child_index: f64,
@@ -194,6 +194,33 @@ macro_rules! napi_engine {
                 parsed
                     .read_at(handle, child_index, $crate::napi_engine::depth_from_wire(depth)?)
                     .map_err(::napi::Error::from_reason)
+            }
+
+            /// Read the root of a live tree again, `depth` levels down, so a
+            /// caller holding a shallow root can ask for a deeper one without
+            /// re-parsing. Refuses a tree that is not live, as
+            /// `read_untyped_node` does.
+            #[::napi_derive::napi]
+            pub fn read_root(&mut self, tree_id: f64, depth: Option<f64>) -> ::napi::Result<String> {
+                let tree_id = $crate::napi_engine::checked_index(tree_id, "treeId")?;
+                let tree_id = u32::try_from(tree_id).map_err(|_| {
+                    ::napi::Error::from_reason(format!("treeId {tree_id} names no tree"))
+                })?;
+                let depth = $crate::napi_engine::depth_from_wire(depth)?;
+                let parsed = self.trees.get_mut(&tree_id).ok_or_else(|| {
+                    ::napi::Error::from_reason(format!(
+                        "tree {tree_id} is not live (never parsed, or already disposed)"
+                    ))
+                })?;
+                let data = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| {
+                    parsed.read_root(depth)
+                }))
+                .map_err(|payload| {
+                    ::napi::Error::from_reason($crate::panic_msg(payload, "read_root panicked"))
+                })?;
+                ::serde_json::to_string(&data).map_err(|e| {
+                    ::napi::Error::from_reason(format!("serialize root failed: {e}"))
+                })
             }
 
             /// Render a typed transport object (napi-native, numeric `$type`).
@@ -274,7 +301,7 @@ macro_rules! napi_engine {
             /// and the registry has no way to know whether it already was.
             #[::napi_derive::napi]
             pub fn dispose_tree(&mut self, tree_id: f64) {
-                // Checked for the same reason `read_node` checks its handle:
+                // Checked for the same reason `read_untyped_node` checks its handle:
                 // `as` saturates, so `NaN` and every negative arrive as 0 —
                 // and 0 is the first tree, so an unchecked cast would let a
                 // nonsense id drop a live tree. Invalid input is a no-op

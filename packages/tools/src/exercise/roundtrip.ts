@@ -56,7 +56,7 @@ interface CommonModule {
 	): NativeCoords | null;
 	adaptNode(node: TreeSitterNode): unknown;
 	findFirst(node: TreeSitterNode, kind: string): TreeSitterNode | null;
-	readNodeAt(handle: ReadHandle, node: unknown, nativeCoords: NativeCoords | null): ReadNodeLike;
+	readUntypedNodeAt(handle: ReadHandle, node: unknown, nativeCoords: NativeCoords | null): ReadNodeLike;
 	nodeToConfig(
 		data: ReadNodeLike,
 		opts?: {
@@ -348,7 +348,7 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 		}
 		const handle = await common.buildReadHandle(grammar, tree, exercise.source, undefined, kindIdFromName);
 		const nativeCoords = common.findNativeNodeId(handle, exercise.find, kindNameFromId);
-		const readData = common.readNodeAt(handle, common.adaptNode(node), nativeCoords);
+		const readData = common.readUntypedNodeAt(handle, common.adaptNode(node), nativeCoords);
 		let rendered: string;
 		try {
 			const factoryNode = buildFactoryNode(

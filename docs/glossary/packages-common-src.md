@@ -88,11 +88,11 @@ A lazily rendered text: the render runs on first use and its text is cached. `sa
 
 ### `packages/common/src/engine.ts::NativeEngineDiagnostics`
 
-The public `EngineDiagnostics` fixed to the native engine's types (a root that carries the whole-file span, a `TreeHandle`), plus `readNode`, the expansion read only the native engine has. Reached through `SittirEngine.diagnostics` rather than the engine's own surface, because it returns raw node data with reader stubs for children; the public entry point is `parse`, which wraps what these produce.
+The public `EngineDiagnostics` fixed to the native engine's types (a root that carries the whole-file span, a `TreeHandle`), plus `readUntypedNode`, the expansion read only the native engine has. Reached through `SittirEngine.diagnostics` rather than the engine's own surface, because it returns raw node data with reader stubs for children; the public entry point is `parse`, which wraps what these produce.
 
 ### `packages/common/src/engine.ts::depthOf`
 
-The level count a native read takes for a set of parse options: absent (one level) by default, `Infinity` (the whole tree) under `deep`. `parseAndRead` and the diagnostics `readNode` both pass through it, so `deep` has one meaning at the boundary.
+The level count a native read takes for a set of parse options: absent (one level) by default, `Infinity` (the whole tree) under `deep`. `parseAndRead` and the diagnostics `readUntypedNode` both pass through it, so `deep` has one meaning at the boundary.
 
 ### `packages/common/src/engine.ts::nativeLanguageEngine`
 
@@ -231,13 +231,13 @@ Makes the `$with` setter of an elements-seat slot take the group config objects 
 
 Whether a value is a group's config object rather than a node: a non-empty plain object without a `$type` whose keys are all among the group's config keys. The overlay factories, the setters `withElementsSeat` builds and the list-slot setters share it, so a config object means the same thing on every surface.
 
-### `packages/common/src/readNode.ts::isStub`
+### `packages/common/src/readUntypedNode.ts::isStub`
 
 Whether a node is a stub: a child a read left at its coordinate, `$parentHandle` beside `$childIndex`. A read stamps `$parentHandle` only with its index, so the pair is the whole test; every consumer that asks "is this unexpanded" asks this.
 
-### `packages/common/src/readNode.ts::expandStub`
+### `packages/common/src/readUntypedNode.ts::expandStub`
 
-The node a stub names, read `depth` levels (one when absent) and left unwrapped; anything that is not a stub comes back as it is. The list view sizes a stubbed list with it and the tools expand read nodes with it. The generated wrap module's own `expandStub` is the projected form: it reads the same coordinate through `projectNode`, so the result is wrapped.
+The node a stub names, read `depth` levels (one when absent) and left unwrapped; anything that is not a stub comes back as it is. The list view sizes a stubbed list with it and the tools expand read nodes with it. The generated wrap module's own `expandStub` projects instead: it reads the same coordinate through `readNode`, so its result is wrapped.
 
 ### `packages/common/src/transport-data.ts::treeHandleOf`
 

@@ -169,11 +169,11 @@ export type NormalizeNodeStorage = (node: AnyNodeData) => unknown;
  * canonically.
  */
 export function toTransportData(node: AnyNodeData, normalize?: NormalizeNodeStorage): AnyNodeData {
-	return transportValue(node, normalize) as AnyNodeData;
+	return toTransportValue(node, normalize) as AnyNodeData;
 }
 
-function transportValue(value: unknown, normalize: NormalizeNodeStorage | undefined): unknown {
-	if (Array.isArray(value)) return value.map((entry) => transportValue(entry, normalize));
+function toTransportValue(value: unknown, normalize: NormalizeNodeStorage | undefined): unknown {
+	if (Array.isArray(value)) return value.map((entry) => toTransportValue(entry, normalize));
 	if (!isRecord(value)) return value;
 	const normalized =
 		normalize !== undefined && hasStructure(value) ? normalize(value as unknown as AnyNodeData) : value;
@@ -185,7 +185,7 @@ function transportValue(value: unknown, normalize: NormalizeNodeStorage | undefi
 	const out: Record<string, unknown> = {};
 	for (const [key, raw] of Object.entries(normalized)) {
 		if (key === '$with' || typeof raw === 'function') continue;
-		out[key] = key.startsWith('_') || key === '$other' ? transportValue(raw, normalize) : raw;
+		out[key] = key.startsWith('_') || key === '$other' ? toTransportValue(raw, normalize) : raw;
 	}
 	// Past the fold, nothing is a coordinate: a leaf that kept its trivia
 	// crosses as itself, and a storage-bearing node rebuilds from its slots

@@ -18,7 +18,7 @@ You diagnose sittir codegen/render bugs to a precise root cause + fix location. 
   - `.cst` — raw tree-sitter parse (does the parser even emit the expected `field`/kind, e.g. `('elements','identifier')`?).
   - `.raw` — raw native read (`rawNodeData`), pre-materialization.
   - `.wrapped` — the materialized wrap (= what render consumes) = GROUND TRUTH.
-  - `.legacyWrapped` — old recursive `readNode` walker; **populated here but EMPTY in `.wrapped` = a wrap-materialization gap** (a common empty-render bug class).
+  - `.legacyWrapped` — old recursive `readUntypedNode` walker; **populated here but EMPTY in `.wrapped` = a wrap-materialization gap** (a common empty-render bug class).
   - `.transport` — the `FromNapiValue` payload (empty here = transport-enum / accepted-kinds gap).
   - `.rendered` / `.renderError` — native render. NOTE: `rendered` is whole-source best-effort, so it can carry an **outer-construct** error (`Missing field _expressions on ProgramTransport._statements`) even when the kind's own stages are fine — **read the stages, not just `rendered`**.
   - Extract with `python3 - /tmp/pk.json <<'EOF' … json.load(...)['wrapped'] … EOF`, or `rg '"rendered"|renderError'` for a quick verdict.
@@ -39,7 +39,7 @@ You diagnose sittir codegen/render bugs to a precise root cause + fix location. 
 
 - **Native render path is the TYPED-TRANSPORT path.** `bridge.rs` (`render_nodedata_into`) and `dispatch.rs` (`render_dispatch`) are **`#[deprecated]` LEGACY** — the normal flow is `transport.rs`: `FromNapiValue` builds per-kind transport structs (`AnyTransport`) → `render_transport_dispatch` runs the generated per-kind render bodies (`write_body_<kind>`). `lib.rs` uses `render_transport_parts`. **Do not root-cause in bridge.rs.**
 - **Three layers where a slot can lose children** — localize WHICH:
-  1. **wrap / read** — `packages/common/src/readNode.ts` + the grammar's generated `wrap.ts` build the napi node value (`nodeData`). A slot short here = wrap drop. (Less likely for a real grammar-defined field; more likely for a synthesized children-collection / merged-choice slot.)
+  1. **wrap / read** — `packages/common/src/readUntypedNode.ts` + the grammar's generated `wrap.ts` build the napi node value (`nodeData`). A slot short here = wrap drop. (Less likely for a real grammar-defined field; more likely for a synthesized children-collection / merged-choice slot.)
   2. **transport** — `transport.rs`: the per-kind struct field (e.g. `content: Option<Vec<XContentTransportSlot>>`) + the per-slot enum's `FromNapiValue` (the accepted kind-id set). A child dropped here = its kind id isn't accepted (check the enum + supertype expansion).
   3. **render** — the kind's generated body (`write_body_<kind>` in `transport.rs`, or its IR in `packages/<g>/.sittir/render-bodies.json`: does it reference the right slot name?) + the `RenderableTransport::render_into`.
 - **Codegen sources** (where fixes land — for the impl agent, not you): slot model = `packages/codegen/src/compiler/collect-slots.ts` + `node-map.ts`; transport/dispatch/bridge gen = `packages/codegen/src/emitters/render-module.ts` (+ `transport-projection.ts`, `transport-common.ts` incl `buildSupertypeTransportSet`/`acceptedTransportKinds`); templates = `emitters/templates.ts`; wrap = the wrap emitter. Slot resolution in templates is `slotByRuleId` (canonical) with fieldName/symbol-name fallbacks (`feedback_ruleid_backpointer`).

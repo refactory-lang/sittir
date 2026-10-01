@@ -1,5 +1,5 @@
 /**
- * readNode — one-level-deep tree reading, grammar-agnostic.
+ * readUntypedNode — one-level-deep tree reading, grammar-agnostic.
  *
  * Returns ALL children including anonymous tokens (named: false for operators,
  * delimiters, keywords). Every entry carries `$parentHandle` + `$childIndex` for
@@ -12,7 +12,7 @@
  * the compiled grammar at codegen time (grammar.sittir.ts → .sittir/grammar.js
  * → compiled parser), so tree-sitter itself surfaces those fields.
  *
- * No recursion — lazy getters in wrap.ts call readNode again when needed.
+ * No recursion — lazy getters in wrap.ts call readUntypedNode again when needed.
  */
 
 import type { AnyNodeData, AnyTreeNode, FormatRecord } from '@sittir/types';
@@ -32,17 +32,17 @@ export interface TreeHandle {
 	source?: string;
 	/**
 	 * Per-handle read dispatch. When present, the wrap layer reads
-	 * through this method instead of running `readNode(handle, childIndex)`
+	 * through this method instead of running `readUntypedNode(handle, childIndex)`
 	 * directly. Native-engine handles set this to a closure that
 	 * calls `engine.diagnostics.parseAndRead(source)` (root) /
-	 * `engine.diagnostics.readNode(handle, childIndex)` (expansion) so reads
+	 * `engine.diagnostics.readUntypedNode(handle, childIndex)` (expansion) so reads
 	 * stay inside the engine that owns the tree. `depth` counts the levels
 	 * the read expands: absent is one, `Infinity` is the whole subtree.
 	 */
 	read?(handle?: number, childIndex?: number, depth?: number): AnyNodeData;
 	/**
 	 * Format record inferred from the source file by the native Rust reader.
-	 * Absent on trees produced by the JS reader (readNode never sets this).
+	 * Absent on trees produced by the JS reader (readUntypedNode never sets this).
 	 * Callers can also set this manually to apply a house-style config.
 	 */
 	format?: FormatRecord;
@@ -50,7 +50,7 @@ export interface TreeHandle {
 	 * Phase D: convert a tree-sitter string kind name to the numeric
 	 * `TSKindId` value used as `$type` in `AnyNodeData`. Required for
 	 * JS-side (WASM) reads — the native (napi) path produces numeric IDs
-	 * directly via `tree.read`. If absent on a JS-side handle, `readNode`
+	 * directly via `tree.read`. If absent on a JS-side handle, `readUntypedNode`
 	 * throws to surface the misconfiguration immediately.
 	 */
 	kindIdFromName?: (kind: string) => number | undefined;
@@ -112,7 +112,7 @@ function promoteAnonymousKeyword(
  * `fieldNameForChild`. That walker is kept only for those handles; fix
  * read-shape gaps in the rust reader, not here.
  */
-export function readNode(tree: TreeHandle, handle?: number, childIndex?: number, depth?: number): AnyNodeData {
+export function readUntypedNode(tree: TreeHandle, handle?: number, childIndex?: number, depth?: number): AnyNodeData {
 	// Native-handle dispatch: when `tree.read` is present the handle owns a
 	// Rust/napi engine that produces `AnyNodeData` directly (no JS-side tree
 	// walk needed). TS handles do NOT set `tree.read` so this branch is
@@ -120,7 +120,7 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number,
 	if (tree.read) return tree.read(handle, childIndex, depth);
 
 	// Phase D: capture optional kindIdFromName resolver. When absent (e.g. in
-	// unit-test handles with no real grammar), readNode falls back to the string
+	// unit-test handles with no real grammar), readUntypedNode falls back to the string
 	// kind name as $type. This is valid because AnyNodeData.$type is `string |
 	// number`: numeric for parser.c-derived kinds (the normal production path),
 	// string for hidden/synthetic kinds (e.g. "_suite") and test fixtures.
@@ -265,5 +265,5 @@ export function isStub(node: unknown): node is Stub {
  * anything that is not a stub comes back as it is.
  */
 export function expandStub<T>(entry: T, tree: TreeHandle, depth?: number): T | AnyNodeData {
-	return isStub(entry) ? readNode(tree, entry.$parentHandle, entry.$childIndex, depth) : entry;
+	return isStub(entry) ? readUntypedNode(tree, entry.$parentHandle, entry.$childIndex, depth) : entry;
 }

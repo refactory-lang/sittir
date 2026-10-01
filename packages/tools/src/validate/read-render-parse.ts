@@ -1,5 +1,5 @@
 /**
- * Read-render-parse validation (Checks 6 & 7) — parse → readNode → render → parse.
+ * Read-render-parse validation (Checks 6 & 7) — parse → readUntypedNode → render → parse.
  *
  * Uses tree-sitter test corpus files (downloaded from grammar repos) as
  * source fixtures. Each corpus entry is parsed'd, rendered, and
@@ -26,7 +26,7 @@ import {
 	buildReadHandle,
 	buildKindToSupertypes,
 	wrapForReparse,
-	loadProjectNode,
+	readNodeOf,
 	walkWrappedTree,
 	materializeDetached,
 	emitValidatorMetrics,
@@ -452,7 +452,7 @@ export interface RenderFixture {
 	grammar: string;
 	/** The kind the fixture renders, by name. */
 	pattern: string;
-	/** NodeData input — the deep-read result from projectNode, made
+	/** NodeData input — the deep-read result from readNode, made
 	 *  self-contained by `selfContainedRenderInput` so the engine's render
 	 *  can take it in any process. Serialized to JSON verbatim. */
 	input: unknown;
@@ -548,7 +548,7 @@ export async function validateReadRenderParse(
 	const ruleKinds = deriveRuleKinds(grammar);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
-	const projectNodeFn = await loadProjectNode(grammar);
+	const readNode = await readNodeOf(grammar);
 	const isLeafKind = await loadIsLeafKind(grammar);
 	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
@@ -556,7 +556,7 @@ export async function validateReadRenderParse(
 	const variantChildKinds = await loadVariantChildKindsByOwner(grammar);
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
 	// Wrap so unknown kind names return undefined (instead of throwing).
-	// The generated kindIdFromName throws on missing entries; readNode's
+	// The generated kindIdFromName throws on missing entries; readUntypedNode's
 	// resolveKindId falls back to the string kind only when the function
 	// returns undefined, not when it throws.
 	const kindIdFromName = rawKindIdFromName
@@ -624,8 +624,8 @@ export async function validateReadRenderParse(
 				string,
 				{ start: number; end: number; node: WrappedNodeData; displayKind: string }[]
 			>();
-			if (projectNodeFn && handle.read) {
-				const wrappedRoot = projectNodeFn(handle) as WrappedNodeData;
+			if (readNode && handle.read) {
+				const wrappedRoot = readNode(handle) as WrappedNodeData;
 				const seen = new Set<string>();
 				walkWrappedTree(
 					wrappedRoot,

@@ -4,8 +4,6 @@ import { isStub } from '@sittir/common/utils';
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
 import { nativeShownKindId } from '../validate/shown-kind.ts';
 
-type ProjectNode = (handle: unknown, parentHandle?: number, childIndex?: number) => unknown;
-
 interface CommonModule {
 	loadLanguageForGrammar(grammar: string): Promise<{
 		Parser: new () => { setLanguage(language: unknown): void; parse(source: string): { rootNode: unknown } | null };
@@ -13,7 +11,7 @@ interface CommonModule {
 	}>;
 	treeHandle(tree: unknown, source?: string, kindIdFromName?: (kind: string) => number | undefined): unknown;
 	loadNativeRender(grammar: string): Promise<(node: AnyNodeData) => string>;
-	loadProjectNode(grammar: string): Promise<ProjectNode | null>;
+	readNodeOf(grammar: string): Promise<((handle: unknown, parentHandle?: number, childIndex?: number) => unknown) | null>;
 	loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined>;
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
 	loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined>;
@@ -112,8 +110,8 @@ export async function run(opts: WalkOptions): Promise<number> {
 	const render = opts.render;
 
 	const common = await loadCommon();
-	const projectNode = await common.loadProjectNode(grammar);
-	if (projectNode === null) {
+	const readNode = await common.readNodeOf(grammar);
+	if (readNode === null) {
 		process.stderr.write(`walk: no wrap module available for grammar '${grammar}'\n`);
 		return 1;
 	}
@@ -144,7 +142,7 @@ export async function run(opts: WalkOptions): Promise<number> {
 	}
 
 	const handle = common.treeHandle(tree, source, kindIdFromName);
-	const root = projectNode(handle);
+	const root = readNode(handle);
 	const counts = new Map<string, number>();
 	let total = 0;
 	let renderFailures = 0;
