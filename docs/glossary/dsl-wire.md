@@ -547,18 +547,6 @@ patched a reference to it in.
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::hasBodyPatternGroups`
-
-```text
-/** True when any value in `groups` is a function (body-pattern entry). */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// Wire-phase pattern find-and-replace
-// ---------------------------------------------------------------------------
-```
-
 ### `packages/codegen/src/dsl/wire/wire.ts::makeSimpleDollarProxy`
 
 ```text
@@ -1040,16 +1028,6 @@ grammar wired without `sittirGrammar` ran no enrich. Evaluate reads it as the ra
 
 The rules of a `wire()` base, wrapped or bare; an empty record without one.
 
-### `packages/codegen/src/dsl/wire/wire.ts::enrichLiftNames`
-
-Every rule enrich lifted out of a parent body: its clause groups and its
-visible-group sources. `wire()` gives each one still in the base a
-`passthroughBaseRuleFn`, inserted after the
-authored and patched-parent rule fns. Both tree-sitter's `grammar()` and
-sittir's `grammarFn` run rule fns in key insertion order, so a lift's fn
-runs after every fn whose patch can descend into it and returns the patched
-body in both pipelines.
-
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRecordPatchSite`
 
 Records a `PatchSite` on the active wire context; a no-op outside one.
@@ -1062,13 +1040,13 @@ Records a `PatchSite` on the active wire context; a no-op outside one.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext.liftNames`
 
-The one record of an enrich lift's final name: lift name → `LiftName`. `wireRenameLift` is its only writer. Wire's list callbacks read it through `liftRenames`, `resolveLiftNames` resolves every reference through it, and the conflict-derivation records follow it back to the lift.
+The one record of an enrich lift's final name: lift name → `LiftName`. `wireRenameLift` is its only writer. The rule hook's drain resolves every rule body through it (`resolveLiftNames`), wire's list and `word` callbacks read it through `liftRenames`, and the conflict-derivation records follow it back to the lift.
 
-### `packages/codegen/src/dsl/wire/wire.ts::LiftName`
+### `packages/codegen/src/dsl/wire/lift-names.ts::LiftName`
 
 A lift's final name, and `hoisted`: true when the variant registered under that name is the lift's body hoisted into its parent's scaffolding, so the two rules do not match the same text.
 
-### `packages/codegen/src/dsl/wire/wire.ts::liftRenames`
+### `packages/codegen/src/dsl/wire/lift-names.ts::liftRenames`
 
 The lift name → final name view of `liftNames`, in the shape `renameRule` and `renameNameList` take.
 
@@ -1633,6 +1611,56 @@ Whether the base grammar (the enriched base, with or without its `grammar` wrapp
 
 `wire` with no config but the grammar's name, over a runtime `grammar()` result: how an evaluation stage is
 evaluated (`evaluateStage`), so the stage sees exactly what enrich hands wire, such as the minted whitespace bodies.
+`authorsNothing` is the stage's own fact, set on the wire context: true for a stage whose base no pass has touched,
+whose rules are therefore all the base's.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.authorsNothing`
+
+True when this wire call authors no rule: a config-less call over the untouched upstream base (the `raw` stage).
+Wire gives every base rule a callback, so the presence of a callback says nothing about authorship; `evaluate`
+reads this fact instead and records no provenance for such a call's rules.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wrapRuleHook`
+
+The outermost wrap of every rule callback, applied after wire's other wraps. Every base rule has a callback (a
+`passthroughBaseRuleFn` when nothing else authors it), so the hook sees the whole grammar.
+
+The first hook call runs the top-level stage once: it calls every wrapped callback with that call's `$` and the
+base body wire holds, memoizes the bodies, and runs the queued whole-grammar operations over them. After that
+each hook returns its finished body, so a callback runs once however often the runtime calls its rule. The stage
+has to start inside a callback because the runtime's `$` only arrives as a callback argument; both runtimes pass
+every rule the same builder, so the first caller's `$` serves all.
+
+A whole-grammar operation sees every body at once, so its result does not depend on the order the runtime calls
+the rules in. The lift rename is one (`resolveLiftNames`). Rule order is not the hook's concern: each body is
+returned by its own callback, so the runtime's rule order is the order of `opts.rules` as before.
+
+The hook checks that the base body the runtime passes is the one wire holds and throws otherwise: the stage
+evaluates callbacks against wire's base bodies, and a runtime handing a different body would be evaluated
+against the wrong one.
+
+### `packages/codegen/src/dsl/wire/wire.ts::recordingExternals`
+
+The `externals` callback wire hands the runtime. It calls the config's callback (or passes the base list through), records the names it returned on `WireContext.evaluatedExternals`, and returns the list unchanged: an external is never renamed, because a renamed lift among the externals is an error. The names are recorded from the one call the runtime makes; wire never calls the callback itself. It also checks the names against the lift names known at that moment, so a runtime that read `externals` after the rules would still throw.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.evaluatedExternals`
+
+The names the grammar's `externals` callback returned, empty until the runtime calls it. The rule hook's drain checks renamed lifts against it.
+
+### `packages/codegen/src/dsl/wire/lift-names.ts::assertNoRenamedExternal`
+
+Throws when a name among the externals carries a lift rename, naming the lift.
+
+### `packages/codegen/src/dsl/wire/wire.ts::renamingWord`
+
+The `word` callback wire hands the runtime, so `word` goes through the same lift renames as the name lists. A
+config `word` callback is wrapped in `renamingCallback`. When only the base declares a word (`baseWordOf`), wire
+supplies a callback that returns the reference to the renamed base word. Both runtimes evaluate `word` after
+the rules, so `liftNames` is complete when it runs.
+
+### `packages/codegen/src/dsl/wire/wire.ts::baseWordOf`
+
+The base grammar's `word`, when it declares one.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireImpl`
 
@@ -1976,10 +2004,7 @@ not exist.
 
 ### `packages/codegen/src/dsl/wire/lift-names.ts::resolveLiftNames`
 
-Resolves every reference to a renamed enrich lift through `liftNames`, over the finished grammar: `sittirGrammar` runs it after `grammar()` has called every rule callback and before `blankDeadEnrichMints`. A patch names a lift at one site, but a shared lift is referenced from owners no patch reaches, and from rules evaluated before the renaming site; resolving here is independent of that order, and both the tree-sitter run and sittir's evaluate see the final name. It rewrites references only (`renameRule` on each rule, `renameNameList` on `inline`, `supertypes`, `conflicts`, `precedences`, `extras`, `externals`, and `word`); the site registered the rule under its final name, and the old lift rule, now unreferenced, is blanked as a dead mint. The rule order is unchanged.
+Resolves every reference to a renamed enrich lift through `liftNames`, over the bodies of every rule: it is a whole-grammar operation of the rule hook (`wrapRuleHook`), run once after every rule callback has been called. A patch names a lift at one site, but a shared lift is referenced from owners no patch reaches, and from rules evaluated before the renaming site; resolving over all bodies is independent of that order, and both the tree-sitter run and sittir's evaluate see the final name. It rewrites references in rule bodies only (`renameRule`); the site registered the rule under its final name. The name lists and `word` are renamed by wire's own callbacks (`renamingCallback`, `renamingWord`), which both runtimes call after the rules.
 
-Every `liftNames` key must be a rule enrich minted, else it throws. A reference is matched by name alone, so a reference that lost its lift metadata is still resolved. A lift whose variant was hoisted (`LiftName.hoisted`) is not a pure rename: a rule that still references it throws, naming the lift and the rule, because giving that reference the variant's name would change what the rule matches.
+Every `liftNames` key must be a rule enrich minted, else it throws. A renamed lift that is an external throws, naming the lift (`assertNoRenamedExternal`): both runtimes read `externals` before any rule runs, so that list cannot follow the rename. The externals checked are the effective list, the names the grammar's `externals` callback returned (`WireContext.evaluatedExternals`), not the base's: a config may add an external or remove one. A reference is matched by name alone, so a reference that lost its lift metadata is still resolved. A lift whose variant was hoisted (`LiftName.hoisted`) is not a pure rename: a rule that still references it throws, naming the lift and the rule, because giving that reference the variant's name would change what the rule matches.
 
-### `packages/codegen/src/dsl/wire/lift-names.ts::NAME_LISTS`
-
-The grammar lists that name rules, each rewritten with `renameNameList`.

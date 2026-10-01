@@ -2284,7 +2284,7 @@ export function coerceToAliasedImport(input: T.AliasedImport.Loose): ReturnType<
 	if (!_isLooseConfig<T.AliasedImport.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAliasedImport>;
 	return F.buildAliasedImport({
-		name: resolveAliasedImport_name(input.name) ?? F.buildDottedName(),
+		name: _requireField('aliased_import', 'name', resolveAliasedImport_name(input.name)),
 		alias: _requireField('aliased_import', 'alias', resolveAliasedImport_alias(input.alias))
 	});
 }
@@ -3843,7 +3843,7 @@ export function coerceToClassPattern(input: T.ClassPattern.Loose): ReturnType<ty
 	if (!_isLooseConfig<T.ClassPattern.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildClassPattern>;
 	return F.buildClassPattern({
-		name: resolveClassPattern_name(input.name) ?? F.buildDottedName(),
+		name: _requireField('class_pattern', 'name', resolveClassPattern_name(input.name)),
 		arguments: resolveClassPattern_arguments(input.arguments)
 	});
 }

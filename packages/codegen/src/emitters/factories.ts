@@ -2,7 +2,7 @@ import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { findOwnKindEntry, reservedWordset } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired } from '../compiler/model/node-map.ts';
+import { holdsFixedText, isBuilderTextLeaf, isPatternValue, isHiddenPresenceMarker, separatorRequired, slotFilledWhenOmitted } from '../compiler/model/node-map.ts';
 import {
 	interiorSlotGuards,
 	numberInputType,
@@ -1227,9 +1227,10 @@ function emitFieldCarryingFactory(
 					: `numberText(${numberTextArgs(shape)}, ${valueSourceFor(f)})`;
 		lines.push(`  const ${f.storageKey} = ${source};`);
 		const guard = leafReConsts.get(slotGuardKey(node.kind, f.name));
+		const requiredUnfilled = isRequired(f) && !registeredSet.has(f) && !slotFilledWhenOmitted(f, nodeMap);
 		if (guard !== undefined) {
 			lines.push(
-				`  if (${f.storageKey} !== undefined && !${guard}.test(${f.storageKey})) ${patternMismatchThrow(`${node.kind}.${f.name}`, f.storageKey)}`
+				`  if (${requiredUnfilled ? '' : `${f.storageKey} !== undefined && `}!${guard}.test(${f.storageKey})) ${patternMismatchThrow(`${node.kind}.${f.name}`, f.storageKey)}`
 			);
 		}
 	}
