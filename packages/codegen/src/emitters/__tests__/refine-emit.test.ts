@@ -68,6 +68,7 @@ function makeRefineRaw(forms: RefineForm[]): RawGrammar {
 			iface_body: ifaceBodyRule
 		},
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
+		evaluateSynthesized: new Set<string>(),
 		extras: [],
 		externals: [],
 		supertypes: [],
@@ -147,6 +148,7 @@ function makeStringRefineRaw(forms: RefineForm[]): RawGrammar {
 			escape_sequence: { type: PATTERN, value: '\\\\.' }
 		},
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
+		evaluateSynthesized: new Set<string>(),
 		extras: [],
 		externals: [],
 		supertypes: [],
@@ -198,6 +200,7 @@ function makeRefineSymbolRaw(forms: RefineForm[], wrapOptional = false): RawGram
 			}
 		},
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
+		evaluateSynthesized: new Set<string>(),
 		extras: [],
 		externals: [],
 		supertypes: [],

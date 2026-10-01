@@ -14,6 +14,7 @@ function buildNodeMap(rules: Record<string, unknown>) {
 		fileTypes: [],
 		rules: catalogRules,
 		ruleCatalog,
+		evaluateSynthesized: new Set<string>(),
 		extras: [],
 		externals: [],
 		supertypes: [],

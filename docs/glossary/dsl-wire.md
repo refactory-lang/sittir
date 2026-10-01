@@ -1611,14 +1611,6 @@ Whether the base grammar (the enriched base, with or without its `grammar` wrapp
 
 `wire` with no config but the grammar's name, over a runtime `grammar()` result: how an evaluation stage is
 evaluated (`evaluateStage`), so the stage sees exactly what enrich hands wire, such as the minted whitespace bodies.
-`authorsNothing` is the stage's own fact, set on the wire context: true for a stage whose base no pass has touched,
-whose rules are therefore all the base's.
-
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext.authorsNothing`
-
-True when this wire call authors no rule: a config-less call over the untouched upstream base (the `raw` stage).
-Wire gives every base rule a callback, so the presence of a callback says nothing about authorship; `evaluate`
-reads this fact instead and records no provenance for such a call's rules.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wrapRuleHook`
 

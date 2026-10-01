@@ -28,6 +28,7 @@ function buildNodeMap(rules: Record<string, Rule<'evaluate'>>): NodeMap {
 		fileTypes: [],
 		rules: labelArms(rules),
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
+		evaluateSynthesized: new Set<string>(),
 		extras: [],
 		externals: [],
 		supertypes: [],
