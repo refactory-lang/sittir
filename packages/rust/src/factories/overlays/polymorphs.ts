@@ -108,20 +108,20 @@ const enumVariantListElements$element = <
 const enumVariantListElements$seated: (
 	...args:
 		| [
-				first:
+				element:
 					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
 					| ArgsOf<typeof F.buildAttributedEnumVariant>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
 					| ArgsOf<typeof F.buildAttributedEnumVariant>[0]
 				)[]
 		  ]
 		| [
 				options: ListOptionsOf<ElementsOf<typeof F.buildEnumVariantListElements>>,
-				first:
+				element:
 					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
 					| ArgsOf<typeof F.buildAttributedEnumVariant>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
 					| ArgsOf<typeof F.buildAttributedEnumVariant>[0]
 				)[]
@@ -133,20 +133,20 @@ const enumVariantListElements$seated: (
 const enumVariantListElements$seatedCoerce: (
 	...args:
 		| [
-				first:
+				element:
 					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
 					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
 					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0]
 				)[]
 		  ]
 		| [
 				options: ListOptionsOf<ElementsOf<typeof C.coerceToEnumVariantListElements>>,
-				first:
+				element:
 					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
 					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
 					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0]
 				)[]
@@ -207,20 +207,20 @@ const fieldDeclarationListElements$element = <
 const fieldDeclarationListElements$seated: (
 	...args:
 		| [
-				first:
+				element:
 					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
 					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
 					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0]
 				)[]
 		  ]
 		| [
 				options: ListOptionsOf<ElementsOf<typeof F.buildFieldDeclarationListElements>>,
-				first:
+				element:
 					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
 					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
 					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0]
 				)[]
@@ -232,20 +232,20 @@ const fieldDeclarationListElements$seated: (
 const fieldDeclarationListElements$seatedCoerce: (
 	...args:
 		| [
-				first:
+				element:
 					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
 					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
 					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0]
 				)[]
 		  ]
 		| [
 				options: ListOptionsOf<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>,
-				first:
+				element:
 					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
 					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
 					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0]
 				)[]
@@ -313,20 +313,20 @@ const orderedFieldDeclarationListElements$element = <
 const orderedFieldDeclarationListElements$seated: (
 	...args:
 		| [
-				first:
+				element:
 					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
 					| ArgsOf<typeof F.buildAttributedOrderedField>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
 					| ArgsOf<typeof F.buildAttributedOrderedField>[0]
 				)[]
 		  ]
 		| [
 				options: ListOptionsOf<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>,
-				first:
+				element:
 					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
 					| ArgsOf<typeof F.buildAttributedOrderedField>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
 					| ArgsOf<typeof F.buildAttributedOrderedField>[0]
 				)[]
@@ -338,20 +338,20 @@ const orderedFieldDeclarationListElements$seated: (
 const orderedFieldDeclarationListElements$seatedCoerce: (
 	...args:
 		| [
-				first:
+				element:
 					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
 					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
 					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0]
 				)[]
 		  ]
 		| [
 				options: ListOptionsOf<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>,
-				first:
+				element:
 					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
 					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
 					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0]
 				)[]
@@ -425,20 +425,20 @@ const typeParametersElements$element = <
 const typeParametersElements$seated: (
 	...args:
 		| [
-				first:
+				element:
 					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
 					| ArgsOf<typeof F.buildAttributedTypeParameter>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
 					| ArgsOf<typeof F.buildAttributedTypeParameter>[0]
 				)[]
 		  ]
 		| [
 				options: ListOptionsOf<ElementsOf<typeof F.buildTypeParametersElements>>,
-				first:
+				element:
 					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
 					| ArgsOf<typeof F.buildAttributedTypeParameter>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
 					| ArgsOf<typeof F.buildAttributedTypeParameter>[0]
 				)[]
@@ -450,20 +450,20 @@ const typeParametersElements$seated: (
 const typeParametersElements$seatedCoerce: (
 	...args:
 		| [
-				first:
+				element:
 					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
 					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
 					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0]
 				)[]
 		  ]
 		| [
 				options: ListOptionsOf<ElementsOf<typeof C.coerceToTypeParametersElements>>,
-				first:
+				element:
 					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
 					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
 					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0]
 				)[]
@@ -572,16 +572,20 @@ const parametersElements$element = <PF extends (...args: never[]) => unknown, CF
 const parametersElements$seated: (
 	...args:
 		| [
-				first: ListElement<ElementsOf<typeof F.buildParametersElements>> | ArgsOf<typeof F.buildAttributedParameter>[0],
-				...rest: (
+				element:
+					| ListElement<ElementsOf<typeof F.buildParametersElements>>
+					| ArgsOf<typeof F.buildAttributedParameter>[0],
+				...elements: (
 					| ListElement<ElementsOf<typeof F.buildParametersElements>>
 					| ArgsOf<typeof F.buildAttributedParameter>[0]
 				)[]
 		  ]
 		| [
 				options: ListOptionsOf<ElementsOf<typeof F.buildParametersElements>>,
-				first: ListElement<ElementsOf<typeof F.buildParametersElements>> | ArgsOf<typeof F.buildAttributedParameter>[0],
-				...rest: (
+				element:
+					| ListElement<ElementsOf<typeof F.buildParametersElements>>
+					| ArgsOf<typeof F.buildAttributedParameter>[0],
+				...elements: (
 					| ListElement<ElementsOf<typeof F.buildParametersElements>>
 					| ArgsOf<typeof F.buildAttributedParameter>[0]
 				)[]
@@ -593,20 +597,20 @@ const parametersElements$seated: (
 const parametersElements$seatedCoerce: (
 	...args:
 		| [
-				first:
+				element:
 					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
 					| ArgsOf<typeof C.coerceToAttributedParameter>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
 					| ArgsOf<typeof C.coerceToAttributedParameter>[0]
 				)[]
 		  ]
 		| [
 				options: ListOptionsOf<ElementsOf<typeof C.coerceToParametersElements>>,
-				first:
+				element:
 					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
 					| ArgsOf<typeof C.coerceToAttributedParameter>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
 					| ArgsOf<typeof C.coerceToAttributedParameter>[0]
 				)[]
@@ -1052,16 +1056,16 @@ const typeArgumentsElements$element = <
 const typeArgumentsElements$seated: (
 	...args:
 		| [
-				first: ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>> | ArgsOf<typeof F.buildTypeArgument>[0],
-				...rest: (
+				element: ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>> | ArgsOf<typeof F.buildTypeArgument>[0],
+				...elements: (
 					| ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>>
 					| ArgsOf<typeof F.buildTypeArgument>[0]
 				)[]
 		  ]
 		| [
 				options: ListOptionsOf<ElementsOf<typeof F.buildTypeArgumentsElements>>,
-				first: ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>> | ArgsOf<typeof F.buildTypeArgument>[0],
-				...rest: (
+				element: ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>> | ArgsOf<typeof F.buildTypeArgument>[0],
+				...elements: (
 					| ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>>
 					| ArgsOf<typeof F.buildTypeArgument>[0]
 				)[]
@@ -1073,20 +1077,20 @@ const typeArgumentsElements$seated: (
 const typeArgumentsElements$seatedCoerce: (
 	...args:
 		| [
-				first:
+				element:
 					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
 					| ArgsOf<typeof C.coerceToTypeArgument>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
 					| ArgsOf<typeof C.coerceToTypeArgument>[0]
 				)[]
 		  ]
 		| [
 				options: ListOptionsOf<ElementsOf<typeof C.coerceToTypeArgumentsElements>>,
-				first:
+				element:
 					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
 					| ArgsOf<typeof C.coerceToTypeArgument>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
 					| ArgsOf<typeof C.coerceToTypeArgument>[0]
 				)[]
@@ -1138,16 +1142,16 @@ const argumentsElements$element = <PF extends (...args: never[]) => unknown, CF 
 const argumentsElements$seated: (
 	...args:
 		| [
-				first: ListElement<ElementsOf<typeof F.buildArgumentsElements>> | ArgsOf<typeof F.buildAttributedArgument>[0],
-				...rest: (
+				element: ListElement<ElementsOf<typeof F.buildArgumentsElements>> | ArgsOf<typeof F.buildAttributedArgument>[0],
+				...elements: (
 					| ListElement<ElementsOf<typeof F.buildArgumentsElements>>
 					| ArgsOf<typeof F.buildAttributedArgument>[0]
 				)[]
 		  ]
 		| [
 				options: ListOptionsOf<ElementsOf<typeof F.buildArgumentsElements>>,
-				first: ListElement<ElementsOf<typeof F.buildArgumentsElements>> | ArgsOf<typeof F.buildAttributedArgument>[0],
-				...rest: (
+				element: ListElement<ElementsOf<typeof F.buildArgumentsElements>> | ArgsOf<typeof F.buildAttributedArgument>[0],
+				...elements: (
 					| ListElement<ElementsOf<typeof F.buildArgumentsElements>>
 					| ArgsOf<typeof F.buildAttributedArgument>[0]
 				)[]
@@ -1159,20 +1163,20 @@ const argumentsElements$seated: (
 const argumentsElements$seatedCoerce: (
 	...args:
 		| [
-				first:
+				element:
 					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
 					| ArgsOf<typeof C.coerceToAttributedArgument>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
 					| ArgsOf<typeof C.coerceToAttributedArgument>[0]
 				)[]
 		  ]
 		| [
 				options: ListOptionsOf<ElementsOf<typeof C.coerceToArgumentsElements>>,
-				first:
+				element:
 					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
 					| ArgsOf<typeof C.coerceToAttributedArgument>[0],
-				...rest: (
+				...elements: (
 					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
 					| ArgsOf<typeof C.coerceToAttributedArgument>[0]
 				)[]

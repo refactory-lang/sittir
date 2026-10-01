@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "de8389ea1728be892409c5ab6a01416b13acf9118e482089139c43c5bd614a5a",
+  "source_hash": "a1a429c878e6320d2e5211ca48c191957a03901f4195c63a808699f547480534",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "acad5cd6981a84e11fd8dd678598285ca53f14f63456b0e7bc6132feaa762af9",
     "packages/typescript/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -21,7 +21,7 @@
     "packages/typescript/src/backend.ts": "fe43c2aca1dfa7c93a784213a6531b11518e7259b85126742b7621185b05ec26",
     "packages/typescript/src/consts.ts": "4eddd5f2ba3016aed3e994e9ce39d5c785437f144a5bc74440c726d45fcb14b0",
     "packages/typescript/src/factories/bundle.ts": "a151349349326c2ffe8af27044eb1276728ce5f9c169ab48ab3495efdc006cbd",
-    "packages/typescript/src/factories/coerce.ts": "e4b32bd5531d0a245efbb545642502047e7f9d2e277baa7b41670cf32469be13",
+    "packages/typescript/src/factories/coerce.ts": "50bb3a9516bdfa53a459c638d19fd10a4ad14a1ab3fee9057dc103ce2ce01615",
     "packages/typescript/src/factories/index.ts": "93e75dfea21bbb1f6655dd1654aeb9f7394a611862748c1de544c3a08655e8ce",
     "packages/typescript/src/factories/overlays/polymorphs.ts": "149a67ce07c2f9c151fb7185b538f1109a9571a51ea172ba860e211e5901f65e",
     "packages/typescript/src/factories/overlays/refines.ts": "121edf03c79b298f5538cf8ada0dab00301ba4ea7df771772441bd83ca2d84fa",
@@ -35,7 +35,7 @@
     "packages/typescript/src/options.ts": "3349821d8f25f026619053fddf55927c2fdd1f88910d74441d64c77b75d15a62",
     "packages/typescript/src/render-engine.ts": "61f3cb3cae417dff81d18bb00e1ceef461e80a75ffab4b41a1593e48e4ca9d68",
     "packages/typescript/src/types-internal.ts": "c6bcb67616b5568e09bf9644fb11352449401580f127ba25f657781c628ffb94",
-    "packages/typescript/src/types.ts": "19a362038554b6236b1df58ed8633ee322c19b8b106d8f8cf3eac77a8063b975",
+    "packages/typescript/src/types.ts": "df42b06d8cda0d128001594c0583e1ef009e8bca94df71922716396612713f28",
     "packages/typescript/src/utils.ts": "3693d01ddd0ea269f2e109785811ddfc74424bfe7cf7ab97ef1cd84317cbcabb",
     "packages/typescript/src/wrap.ts": "c481027e216fd6d947ce166c50b9838b2bbfc9d26a8d9ec28abd05a44f84e092",
     "rust/crates/sittir-typescript/index.d.ts": "d0856076707514183fea22201cec53b7d985f3429d70733e710f6e351be740ac",

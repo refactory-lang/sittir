@@ -25,6 +25,8 @@ The elements seats a forwarding owner takes from its list (`forwardedSeatsOf`): 
 
 An owner with a registered slot is not a list spread target (`listSpreadTarget`), so it has none.
 
+The owner's raw builder does not refuse a seat config: it is not exported from the package, and the public `build.<owner>` is this entry.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatCount`
 
 How many seats an entry carries, of every kind: flatten, elements, tuple and forwarded. `seatBearing` reads it, so a forwarding owner with forwarded seats is itself reached through its entry by its parents.

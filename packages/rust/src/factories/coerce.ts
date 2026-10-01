@@ -3578,16 +3578,20 @@ export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F
 
 export function coerceToDeclarationList(): T.EmptyDeclarationList;
 export function coerceToDeclarationList(
-	...input: readonly (
-		| T.DeclarationList.Loose
-		| LooseValue<T.DeclarationStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: [
+		...elements: (
+			| T.DeclarationList.Loose
+			| LooseValue<T.DeclarationStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
+	]
 ): ReturnType<typeof F.buildDeclarationList>;
 export function coerceToDeclarationList(
-	...input: readonly (
-		| T.DeclarationList.Loose
-		| LooseValue<T.DeclarationStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: [
+		...elements: (
+			| T.DeclarationList.Loose
+			| LooseValue<T.DeclarationStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
+	]
 ): ReturnType<typeof F.buildDeclarationList> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DeclarationList)) {
 		const data = input[0];
@@ -4134,15 +4138,17 @@ export function coerceToFunctionSignatureItem(
 }
 
 export function coerceToFunctionModifiers(
-	...input: readonly (
-		| T.FunctionModifiers.Loose
-		| LooseValue<
-				'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
+	...input: [
+		...elements: (
+			| T.FunctionModifiers.Loose
+			| LooseValue<
+					'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
+	]
 ): ReturnType<typeof F.buildFunctionModifiers> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FunctionModifiers)) {
 		const data = input[0];
@@ -4415,10 +4421,12 @@ export function coerceToAssociatedType(input: T.AssociatedType.Loose): ReturnTyp
 }
 
 export function coerceToTraitBounds(
-	...input: readonly (
-		| T.TraitBounds.Loose
-		| LooseValue<T.Type | T.Lifetime | T.HigherRankedTraitBound, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: [
+		...elements: (
+			| T.TraitBounds.Loose
+			| LooseValue<T.Type | T.Lifetime | T.HigherRankedTraitBound, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
+	]
 ): ReturnType<typeof F.buildTraitBounds> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TraitBounds)) {
 		const data = input[0];
@@ -6999,16 +7007,20 @@ export function coerceToConstBlock(input?: T.ConstBlock.Loose): ReturnType<typeo
 
 export function coerceToClosureParameters(): T.EmptyClosureParameters;
 export function coerceToClosureParameters(
-	...input: readonly (
-		| T.ClosureParameters.Loose
-		| LooseValue<T.Pattern | T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: [
+		...elements: (
+			| T.ClosureParameters.Loose
+			| LooseValue<T.Pattern | T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
+	]
 ): ReturnType<typeof F.buildClosureParameters>;
 export function coerceToClosureParameters(
-	...input: readonly (
-		| T.ClosureParameters.Loose
-		| LooseValue<T.Pattern | T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: [
+		...elements: (
+			| T.ClosureParameters.Loose
+			| LooseValue<T.Pattern | T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
+	]
 ): ReturnType<typeof F.buildClosureParameters> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ClosureParameters)) {
 		const data = input[0];
@@ -7727,13 +7739,13 @@ export function coerceToMetavariable(input: T.Metavariable.Loose): ReturnType<ty
 export function coerceToMacroRules(
 	...input:
 		| [
-				first: T.MacroRules.Loose | LooseValue<T.MacroRule, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (T.MacroRules.Loose | LooseValue<T.MacroRule, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+				element: T.MacroRules.Loose | LooseValue<T.MacroRule, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (T.MacroRules.Loose | LooseValue<T.MacroRule, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: T.MacroRules.Loose | LooseValue<T.MacroRule, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (T.MacroRules.Loose | LooseValue<T.MacroRule, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+				element: T.MacroRules.Loose | LooseValue<T.MacroRule, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (T.MacroRules.Loose | LooseValue<T.MacroRule, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 ): ReturnType<typeof F.buildMacroRules> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.MacroRules)) {
@@ -7760,20 +7772,20 @@ export function coerceToMacroRules(
 export function coerceToEnumVariantListElements(
 	...input:
 		| [
-				first:
+				element:
 					| T.EnumVariantListElements.Loose
 					| LooseValue<T.AttributedEnumVariant | T.EnumVariant, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (
+				...elements: (
 					| T.EnumVariantListElements.Loose
 					| LooseValue<T.AttributedEnumVariant | T.EnumVariant, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first:
+				element:
 					| T.EnumVariantListElements.Loose
 					| LooseValue<T.AttributedEnumVariant | T.EnumVariant, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (
+				...elements: (
 					| T.EnumVariantListElements.Loose
 					| LooseValue<T.AttributedEnumVariant | T.EnumVariant, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
@@ -7808,7 +7820,7 @@ export function coerceToEnumVariantListElements(
 export function coerceToFieldDeclarationListElements(
 	...input:
 		| [
-				first:
+				element:
 					| T.FieldDeclarationListElements.Loose
 					| LooseValue<
 							T.AttributedFieldDeclaration | T.FieldDeclaration,
@@ -7816,7 +7828,7 @@ export function coerceToFieldDeclarationListElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.FieldDeclarationListElements.Loose
 					| LooseValue<
 							T.AttributedFieldDeclaration | T.FieldDeclaration,
@@ -7828,7 +7840,7 @@ export function coerceToFieldDeclarationListElements(
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first:
+				element:
 					| T.FieldDeclarationListElements.Loose
 					| LooseValue<
 							T.AttributedFieldDeclaration | T.FieldDeclaration,
@@ -7836,7 +7848,7 @@ export function coerceToFieldDeclarationListElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.FieldDeclarationListElements.Loose
 					| LooseValue<
 							T.AttributedFieldDeclaration | T.FieldDeclaration,
@@ -7876,7 +7888,7 @@ export function coerceToFieldDeclarationListElements(
 export function coerceToOrderedFieldDeclarationListElements(
 	...input:
 		| [
-				first:
+				element:
 					| T.OrderedFieldDeclarationListElements.Loose
 					| LooseValue<
 							T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
@@ -7884,7 +7896,7 @@ export function coerceToOrderedFieldDeclarationListElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.OrderedFieldDeclarationListElements.Loose
 					| LooseValue<
 							T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
@@ -7896,7 +7908,7 @@ export function coerceToOrderedFieldDeclarationListElements(
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first:
+				element:
 					| T.OrderedFieldDeclarationListElements.Loose
 					| LooseValue<
 							T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
@@ -7904,7 +7916,7 @@ export function coerceToOrderedFieldDeclarationListElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.OrderedFieldDeclarationListElements.Loose
 					| LooseValue<
 							T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
@@ -7987,16 +7999,20 @@ export function coerceToOrderedFieldDeclarationListElements(
 export function coerceToWherePredicates(
 	...input:
 		| [
-				first: T.WherePredicates.Loose | LooseValue<T.WherePredicate, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (
+				element:
+					| T.WherePredicates.Loose
+					| LooseValue<T.WherePredicate, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
 					| T.WherePredicates.Loose
 					| LooseValue<T.WherePredicate, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: T.WherePredicates.Loose | LooseValue<T.WherePredicate, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (
+				element:
+					| T.WherePredicates.Loose
+					| LooseValue<T.WherePredicate, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
 					| T.WherePredicates.Loose
 					| LooseValue<T.WherePredicate, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
@@ -8030,7 +8046,7 @@ export function coerceToWherePredicates(
 export function coerceToTypeParametersElements(
 	...input:
 		| [
-				first:
+				element:
 					| T.TypeParametersElements.Loose
 					| LooseValue<
 							T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
@@ -8038,7 +8054,7 @@ export function coerceToTypeParametersElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.TypeParametersElements.Loose
 					| LooseValue<
 							T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
@@ -8050,7 +8066,7 @@ export function coerceToTypeParametersElements(
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first:
+				element:
 					| T.TypeParametersElements.Loose
 					| LooseValue<
 							T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
@@ -8058,7 +8074,7 @@ export function coerceToTypeParametersElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.TypeParametersElements.Loose
 					| LooseValue<
 							T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
@@ -8105,7 +8121,7 @@ export function coerceToTypeParametersElements(
 export function coerceToUseClauses(
 	...input:
 		| [
-				first:
+				element:
 					| T.UseClauses.Loose
 					| LooseValue<
 							| TSKindId.Self
@@ -8142,7 +8158,7 @@ export function coerceToUseClauses(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.UseClauses.Loose
 					| LooseValue<
 							| TSKindId.Self
@@ -8183,7 +8199,7 @@ export function coerceToUseClauses(
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first:
+				element:
 					| T.UseClauses.Loose
 					| LooseValue<
 							| TSKindId.Self
@@ -8220,7 +8236,7 @@ export function coerceToUseClauses(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.UseClauses.Loose
 					| LooseValue<
 							| TSKindId.Self
@@ -8355,7 +8371,7 @@ export function coerceToUseClauses(
 export function coerceToParametersElements(
 	...input:
 		| [
-				first:
+				element:
 					| T.ParametersElements.Loose
 					| LooseValue<
 							| T.AttributedParameter
@@ -8369,7 +8385,7 @@ export function coerceToParametersElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.ParametersElements.Loose
 					| LooseValue<
 							| T.AttributedParameter
@@ -8387,7 +8403,7 @@ export function coerceToParametersElements(
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first:
+				element:
 					| T.ParametersElements.Loose
 					| LooseValue<
 							| T.AttributedParameter
@@ -8401,7 +8417,7 @@ export function coerceToParametersElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.ParametersElements.Loose
 					| LooseValue<
 							| T.AttributedParameter
@@ -8506,13 +8522,13 @@ export function coerceToParametersElements(
 export function coerceToLifetimes(
 	...input:
 		| [
-				first: T.Lifetimes.Loose | LooseValue<T.Lifetime, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (T.Lifetimes.Loose | LooseValue<T.Lifetime, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+				element: T.Lifetimes.Loose | LooseValue<T.Lifetime, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (T.Lifetimes.Loose | LooseValue<T.Lifetime, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: T.Lifetimes.Loose | LooseValue<T.Lifetime, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (T.Lifetimes.Loose | LooseValue<T.Lifetime, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+				element: T.Lifetimes.Loose | LooseValue<T.Lifetime, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (T.Lifetimes.Loose | LooseValue<T.Lifetime, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 ): ReturnType<typeof F.buildLifetimes> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Lifetimes)) {
@@ -8539,7 +8555,7 @@ export function coerceToLifetimes(
 export function coerceToUseBoundsElements(
 	...input:
 		| [
-				first:
+				element:
 					| T.UseBoundsElements.Loose
 					| LooseValue<
 							T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
@@ -8547,7 +8563,7 @@ export function coerceToUseBoundsElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.UseBoundsElements.Loose
 					| LooseValue<
 							T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
@@ -8559,7 +8575,7 @@ export function coerceToUseBoundsElements(
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first:
+				element:
 					| T.UseBoundsElements.Loose
 					| LooseValue<
 							T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
@@ -8567,7 +8583,7 @@ export function coerceToUseBoundsElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.UseBoundsElements.Loose
 					| LooseValue<
 							T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
@@ -8606,7 +8622,7 @@ export function coerceToUseBoundsElements(
 export function coerceToTypeArgumentsElements(
 	...input:
 		| [
-				first:
+				element:
 					| T.TypeArgumentsElements.Loose
 					| LooseValue<
 							T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
@@ -8614,7 +8630,7 @@ export function coerceToTypeArgumentsElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.TypeArgumentsElements.Loose
 					| LooseValue<
 							T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
@@ -8626,7 +8642,7 @@ export function coerceToTypeArgumentsElements(
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first:
+				element:
 					| T.TypeArgumentsElements.Loose
 					| LooseValue<
 							T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
@@ -8634,7 +8650,7 @@ export function coerceToTypeArgumentsElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.TypeArgumentsElements.Loose
 					| LooseValue<
 							T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
@@ -8754,20 +8770,20 @@ export function coerceToTypeArgumentsElements(
 export function coerceToArgumentsElements(
 	...input:
 		| [
-				first:
+				element:
 					| T.ArgumentsElements.Loose
 					| LooseValue<T.AttributedArgument | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (
+				...elements: (
 					| T.ArgumentsElements.Loose
 					| LooseValue<T.AttributedArgument | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first:
+				element:
 					| T.ArgumentsElements.Loose
 					| LooseValue<T.AttributedArgument | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (
+				...elements: (
 					| T.ArgumentsElements.Loose
 					| LooseValue<T.AttributedArgument | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
@@ -8966,7 +8982,7 @@ export function coerceToArgumentsElements(
 export function coerceToFieldInitializerListElements(
 	...input:
 		| [
-				first:
+				element:
 					| T.FieldInitializerListElements.Loose
 					| LooseValue<
 							T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer,
@@ -8974,7 +8990,7 @@ export function coerceToFieldInitializerListElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.FieldInitializerListElements.Loose
 					| LooseValue<
 							T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer,
@@ -8986,7 +9002,7 @@ export function coerceToFieldInitializerListElements(
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first:
+				element:
 					| T.FieldInitializerListElements.Loose
 					| LooseValue<
 							T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer,
@@ -8994,7 +9010,7 @@ export function coerceToFieldInitializerListElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.FieldInitializerListElements.Loose
 					| LooseValue<
 							T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer,
@@ -9035,20 +9051,20 @@ export function coerceToFieldInitializerListElements(
 export function coerceToTuplePatternElements(
 	...input:
 		| [
-				first:
+				element:
 					| T.TuplePatternElements.Loose
 					| LooseValue<T.Pattern | T.ClosureExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (
+				...elements: (
 					| T.TuplePatternElements.Loose
 					| LooseValue<T.Pattern | T.ClosureExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first:
+				element:
 					| T.TuplePatternElements.Loose
 					| LooseValue<T.Pattern | T.ClosureExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (
+				...elements: (
 					| T.TuplePatternElements.Loose
 					| LooseValue<T.Pattern | T.ClosureExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
@@ -9143,13 +9159,13 @@ export function coerceToTuplePatternElements(
 export function coerceToPatterns(
 	...input:
 		| [
-				first: T.Patterns.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (T.Patterns.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+				element: T.Patterns.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (T.Patterns.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: T.Patterns.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (T.Patterns.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+				element: T.Patterns.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (T.Patterns.Loose | LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 ): ReturnType<typeof F.buildPatterns> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Patterns)) {
@@ -9239,7 +9255,7 @@ export function coerceToPatterns(
 export function coerceToStructPatternElements(
 	...input:
 		| [
-				first:
+				element:
 					| T.StructPatternElements.Loose
 					| LooseValue<
 							T.FieldPattern | TSKindId.RemainingFieldPattern,
@@ -9247,7 +9263,7 @@ export function coerceToStructPatternElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.StructPatternElements.Loose
 					| LooseValue<
 							T.FieldPattern | TSKindId.RemainingFieldPattern,
@@ -9259,7 +9275,7 @@ export function coerceToStructPatternElements(
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first:
+				element:
 					| T.StructPatternElements.Loose
 					| LooseValue<
 							T.FieldPattern | TSKindId.RemainingFieldPattern,
@@ -9267,7 +9283,7 @@ export function coerceToStructPatternElements(
 							T.LeafStringMap,
 							T.NamespaceMap
 					  >,
-				...rest: (
+				...elements: (
 					| T.StructPatternElements.Loose
 					| LooseValue<
 							T.FieldPattern | TSKindId.RemainingFieldPattern,
@@ -9514,20 +9530,20 @@ export function coerceToStringOpen(input: T.StringOpen.Loose): ReturnType<typeof
 export function coerceToTupleTypeElements(
 	...input:
 		| [
-				first:
+				element:
 					| T.TupleTypeElements.Loose
 					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (
+				...elements: (
 					| T.TupleTypeElements.Loose
 					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first:
+				element:
 					| T.TupleTypeElements.Loose
 					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (
+				...elements: (
 					| T.TupleTypeElements.Loose
 					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
@@ -9584,20 +9600,20 @@ export function coerceToTupleTypeElements(
 export function coerceToTupleExpressionElements(
 	...input:
 		| [
-				first:
+				element:
 					| T.TupleExpressionElements.Loose
 					| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (
+				...elements: (
 					| T.TupleExpressionElements.Loose
 					| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first:
+				element:
 					| T.TupleExpressionElements.Loose
 					| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: (
+				...elements: (
 					| T.TupleExpressionElements.Loose
 					| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
@@ -11433,26 +11449,30 @@ export function coerceToBlockCommentRegular(
 
 export function coerceToTokenTreePatternParen(): T.EmptyTokenTreePatternParen;
 export function coerceToTokenTreePatternParen(
-	...input: readonly (
-		| T.TokenTreePatternParen.Loose
-		| LooseValue<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
+	...input: [
+		...elements: (
+			| T.TokenTreePatternParen.Loose
+			| LooseValue<
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
+	]
 ): ReturnType<typeof F.buildTokenTreePatternParen>;
 export function coerceToTokenTreePatternParen(
-	...input: readonly (
-		| T.TokenTreePatternParen.Loose
-		| LooseValue<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
+	...input: [
+		...elements: (
+			| T.TokenTreePatternParen.Loose
+			| LooseValue<
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
+	]
 ): ReturnType<typeof F.buildTokenTreePatternParen> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TokenTreePatternParen)) {
 		const data = input[0];
@@ -11480,26 +11500,30 @@ export function coerceToTokenTreePatternParen(
 
 export function coerceToTokenTreePatternBracket(): T.EmptyTokenTreePatternBracket;
 export function coerceToTokenTreePatternBracket(
-	...input: readonly (
-		| T.TokenTreePatternBracket.Loose
-		| LooseValue<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
+	...input: [
+		...elements: (
+			| T.TokenTreePatternBracket.Loose
+			| LooseValue<
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
+	]
 ): ReturnType<typeof F.buildTokenTreePatternBracket>;
 export function coerceToTokenTreePatternBracket(
-	...input: readonly (
-		| T.TokenTreePatternBracket.Loose
-		| LooseValue<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
+	...input: [
+		...elements: (
+			| T.TokenTreePatternBracket.Loose
+			| LooseValue<
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
+	]
 ): ReturnType<typeof F.buildTokenTreePatternBracket> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TokenTreePatternBracket)) {
 		const data = input[0];
@@ -11527,26 +11551,30 @@ export function coerceToTokenTreePatternBracket(
 
 export function coerceToTokenTreePatternBrace(): T.EmptyTokenTreePatternBrace;
 export function coerceToTokenTreePatternBrace(
-	...input: readonly (
-		| T.TokenTreePatternBrace.Loose
-		| LooseValue<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
+	...input: [
+		...elements: (
+			| T.TokenTreePatternBrace.Loose
+			| LooseValue<
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
+	]
 ): ReturnType<typeof F.buildTokenTreePatternBrace>;
 export function coerceToTokenTreePatternBrace(
-	...input: readonly (
-		| T.TokenTreePatternBrace.Loose
-		| LooseValue<
-				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
+	...input: [
+		...elements: (
+			| T.TokenTreePatternBrace.Loose
+			| LooseValue<
+					T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
+	]
 ): ReturnType<typeof F.buildTokenTreePatternBrace> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TokenTreePatternBrace)) {
 		const data = input[0];
@@ -11574,26 +11602,30 @@ export function coerceToTokenTreePatternBrace(
 
 export function coerceToTokenTreeParen(): T.EmptyTokenTreeParen;
 export function coerceToTokenTreeParen(
-	...input: readonly (
-		| T.TokenTreeParen.Loose
-		| LooseValue<
-				T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
+	...input: [
+		...elements: (
+			| T.TokenTreeParen.Loose
+			| LooseValue<
+					T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
+	]
 ): ReturnType<typeof F.buildTokenTreeParen>;
 export function coerceToTokenTreeParen(
-	...input: readonly (
-		| T.TokenTreeParen.Loose
-		| LooseValue<
-				T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
+	...input: [
+		...elements: (
+			| T.TokenTreeParen.Loose
+			| LooseValue<
+					T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
+	]
 ): ReturnType<typeof F.buildTokenTreeParen> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TokenTreeParen)) {
 		const data = input[0];
@@ -11625,26 +11657,30 @@ export function coerceToTokenTreeParen(
 
 export function coerceToTokenTreeBracket(): T.EmptyTokenTreeBracket;
 export function coerceToTokenTreeBracket(
-	...input: readonly (
-		| T.TokenTreeBracket.Loose
-		| LooseValue<
-				T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
+	...input: [
+		...elements: (
+			| T.TokenTreeBracket.Loose
+			| LooseValue<
+					T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
+	]
 ): ReturnType<typeof F.buildTokenTreeBracket>;
 export function coerceToTokenTreeBracket(
-	...input: readonly (
-		| T.TokenTreeBracket.Loose
-		| LooseValue<
-				T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
+	...input: [
+		...elements: (
+			| T.TokenTreeBracket.Loose
+			| LooseValue<
+					T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
+	]
 ): ReturnType<typeof F.buildTokenTreeBracket> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TokenTreeBracket)) {
 		const data = input[0];
@@ -11676,26 +11712,30 @@ export function coerceToTokenTreeBracket(
 
 export function coerceToTokenTreeBrace(): T.EmptyTokenTreeBrace;
 export function coerceToTokenTreeBrace(
-	...input: readonly (
-		| T.TokenTreeBrace.Loose
-		| LooseValue<
-				T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
+	...input: [
+		...elements: (
+			| T.TokenTreeBrace.Loose
+			| LooseValue<
+					T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
+	]
 ): ReturnType<typeof F.buildTokenTreeBrace>;
 export function coerceToTokenTreeBrace(
-	...input: readonly (
-		| T.TokenTreeBrace.Loose
-		| LooseValue<
-				T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
-				T.LeafScalarMap,
-				T.LeafStringMap,
-				T.NamespaceMap
-		  >
-	)[]
+	...input: [
+		...elements: (
+			| T.TokenTreeBrace.Loose
+			| LooseValue<
+					T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
+	]
 ): ReturnType<typeof F.buildTokenTreeBrace> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TokenTreeBrace)) {
 		const data = input[0];
@@ -11727,16 +11767,20 @@ export function coerceToTokenTreeBrace(
 
 export function coerceToDelimTokenTreeParen(): T.EmptyDelimTokenTreeParen;
 export function coerceToDelimTokenTreeParen(
-	...input: readonly (
-		| T.DelimTokenTreeParen.Loose
-		| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: [
+		...elements: (
+			| T.DelimTokenTreeParen.Loose
+			| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
+	]
 ): ReturnType<typeof F.buildDelimTokenTreeParen>;
 export function coerceToDelimTokenTreeParen(
-	...input: readonly (
-		| T.DelimTokenTreeParen.Loose
-		| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: [
+		...elements: (
+			| T.DelimTokenTreeParen.Loose
+			| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
+	]
 ): ReturnType<typeof F.buildDelimTokenTreeParen> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DelimTokenTreeParen)) {
 		const data = input[0];
@@ -11766,16 +11810,20 @@ export function coerceToDelimTokenTreeParen(
 
 export function coerceToDelimTokenTreeBracket(): T.EmptyDelimTokenTreeBracket;
 export function coerceToDelimTokenTreeBracket(
-	...input: readonly (
-		| T.DelimTokenTreeBracket.Loose
-		| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: [
+		...elements: (
+			| T.DelimTokenTreeBracket.Loose
+			| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
+	]
 ): ReturnType<typeof F.buildDelimTokenTreeBracket>;
 export function coerceToDelimTokenTreeBracket(
-	...input: readonly (
-		| T.DelimTokenTreeBracket.Loose
-		| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: [
+		...elements: (
+			| T.DelimTokenTreeBracket.Loose
+			| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
+	]
 ): ReturnType<typeof F.buildDelimTokenTreeBracket> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DelimTokenTreeBracket)) {
 		const data = input[0];
@@ -11805,16 +11853,20 @@ export function coerceToDelimTokenTreeBracket(
 
 export function coerceToDelimTokenTreeBrace(): T.EmptyDelimTokenTreeBrace;
 export function coerceToDelimTokenTreeBrace(
-	...input: readonly (
-		| T.DelimTokenTreeBrace.Loose
-		| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: [
+		...elements: (
+			| T.DelimTokenTreeBrace.Loose
+			| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
+	]
 ): ReturnType<typeof F.buildDelimTokenTreeBrace>;
 export function coerceToDelimTokenTreeBrace(
-	...input: readonly (
-		| T.DelimTokenTreeBrace.Loose
-		| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: [
+		...elements: (
+			| T.DelimTokenTreeBrace.Loose
+			| LooseValue<T.NonSpecialToken | '$' | T.DelimTokenTree, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
+	]
 ): ReturnType<typeof F.buildDelimTokenTreeBrace> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DelimTokenTreeBrace)) {
 		const data = input[0];

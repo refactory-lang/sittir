@@ -11823,7 +11823,7 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
  * row. The setter record's `T.<Kind>.Bound` is also what keeps declaration
  * emit finite: an inferred recursive `$with` closure blows the serializer
  * (TS7056) and the package cannot publish types. And a separated list's
- * tuples spell a non-empty element list as `[first: E, ...rest: E[]]`
+ * tuples spell a non-empty element list as `[element: E, ...elements: E[]]`
  * (`listRestParamType`), never as `[...elements: NonEmptyArray<E>]`: a variadic
  * spread of an alias makes the whole tuple alias resolve eagerly, and the
  * loose element's widening walks each element kind's bare slot straight back
@@ -11850,7 +11850,6 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
 
 The construction surface of a separated list. Its `BuildArgs` / `LooseArgs` are every argument list the list's public call takes, spelled by `listRestParamType` exactly as the coercer and the overlay spell it: the elements alone, and the options bag first when the list has options. An element is the list's own element type or, when the list seats a hoisted group (`emittedElementsSeats`), that group's config (`T.<Group>.BuildArgs[0]` / `.LooseArgs[0]`), by name. A kind that forwards to the list unions these rows into its own (`fieldCarryingBuiltTypeSurface`), so an owner's row takes whatever its list's row takes without a second spelling.
 
-A non-empty element list is spelled `[first: E, ...rest: E[]]`, never as a variadic spread of an alias: a rest element that is an array type keeps the tuple alias deferred (see the cycle rules on `BuiltTypeSurface`).
 
 ### `packages/codegen/src/emitters/factories.ts::builtTypeSurfaceOf`
 
@@ -16338,7 +16337,9 @@ disagree on what counts as an options object.
 
 ### `packages/codegen/src/emitters/shared.ts::listRestParamType`
 
-The rest parameter of a separated list's loose coercer and seated overlay, from one place. A non-empty list requires an element: `[first: E, ...rest: E[]]`, and with options also `[options: O, first: E, ...rest: E[]]`, so the empty call and an options-only call are type errors, matching the non-empty guard the raw builder runs. An empty-capable list takes any number: `readonly E[]`, or `[first?: E | O, ...rest: E[]]` with options, where the options object alone is a valid call. When the options are required (`separatorRequired`: a separator site with no declared default), the options object always comes first and there is no elements-only form: `[options: O, first: E, ...rest: E[]]`, or `[options: O, ...rest: E[]]` for an empty-capable list, so an elements-only call is a type error, matching the raw builder's throw.
+The argument tuples of a separated list, from one place: its `BuildArgs` / `LooseArgs` rows, its loose coercer's rest parameter and its seated overlay all spell them here. It is a union of labelled tuples, one per call form. The elements-only form is `[...elements: E[]]`, or `[element: E, ...elements: E[]]` for a non-empty list, so the empty call is a type error, matching the non-empty guard the raw builder runs. With options there is also the options-first form, `[options: O, ...]` followed by the same elements; on an empty-capable list the options object alone is a valid call, on a non-empty list it is a type error. When the options are required (`separatorRequired`: a separator site with no declared default), only the options-first form exists, so an elements-only call is a type error, matching the raw builder's throw.
+
+A non-empty element list is never spelled as a variadic spread of an alias: a rest element that is an array type keeps the tuple alias deferred (see the cycle rules on `BuiltTypeSurface`).
 
 ### `packages/codegen/src/emitters/shared.ts::withEmptyOverload`
 

@@ -1,6 +1,6 @@
 {
   "grammar": "scm",
-  "source_hash": "2eaec49b19c83efbc7e469c10c59dec976c4a94f3d7bfd62609f702d73ef83e2",
+  "source_hash": "5360f581aa4da3f39156d34d63dee60c1857920d52897fd8e9f627d6ae088463",
   "files": {
     "packages/scm/.sittir/grammar-diagnostics.json": "90639655c429bfe36ef2a36aaa2a31c5fabb65229200218dcf431681dad38f0a",
     "packages/scm/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -20,7 +20,7 @@
     "packages/scm/src/backend.ts": "6a8d154cb5fb978a7217fa4c0014b48680834789f2819f149d00ad67c0699ac8",
     "packages/scm/src/consts.ts": "741705fcb9424c942d868f505e95ceb4b2e469863a9d01c7dbee6f1f886671b6",
     "packages/scm/src/factories/bundle.ts": "ae5dee9aa728d5d59fe51d6a1a04f514458ec16420821e6af4e34b3de9f2f4d3",
-    "packages/scm/src/factories/coerce.ts": "dfe0e266acb3ddef8ada857b3cfc58b007191bcd18d60b04376aa94f9035052e",
+    "packages/scm/src/factories/coerce.ts": "1b19d5cb15efd30ebac840ecab6bf7d7e64023aaef225199796f88ceff49c8ee",
     "packages/scm/src/factories/index.ts": "cd7dddd9b1d58f7a70230420d2edee4d03b1037e994e8dee9d4ea12d7c2de82f",
     "packages/scm/src/factories/overlays/polymorphs.ts": "464e48894e42ab4d365578f24f826258fbd6ae24a6e19e52b3c2442358c80f24",
     "packages/scm/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",

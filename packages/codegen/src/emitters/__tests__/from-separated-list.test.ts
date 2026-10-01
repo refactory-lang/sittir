@@ -140,9 +140,9 @@ describe('from emitter — separatedList', () => {
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
 		expect(emitted).toMatch(
-			/export function coerceToMemberList\(\.\.\.input: \[first: [^]*?\.\.\.rest: [^]*?\] \| \[options: \{ delimiter\?: [^}]*\}, first: /
+			/export function coerceToMemberList\(\.\.\.input: \[element: [^]*?\.\.\.elements: [^]*?\] \| \[options: \{ delimiter\?: [^}]*\}, element: /
 		);
-		expect(emitted).not.toContain('first?:');
+		expect(emitted).not.toContain('element?:');
 	});
 
 	it('lets an empty-capable list with options take the options object as its only argument', () => {
@@ -155,7 +155,7 @@ describe('from emitter — separatedList', () => {
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
 		expect(emitted).toMatch(
-			/export function coerceToMemberList\(\.\.\.input: \[first\?: [^]*\{ delimiter\?: [^}]*\}, \.\.\.rest: /
+			/export function coerceToMemberList\(\.\.\.input: \[\.\.\.elements: [^]*?\] \| \[options: \{ delimiter\?: [^}]*\}, \.\.\.elements: /
 		);
 	});
 
@@ -176,9 +176,9 @@ describe('from emitter — separatedList', () => {
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }));
 
 		expect(emitted).toContain(
-			'export function coerceToMemberList(...input: [options: { separator: TSKindId.Comma | TSKindId.Semi; delimiter?: Delimiter.None | Delimiter.Trailing }, first: '
+			'export function coerceToMemberList(...input: [options: { separator: TSKindId.Comma | TSKindId.Semi; delimiter?: Delimiter.None | Delimiter.Trailing }, element: '
 		);
-		expect(emitted).not.toMatch(/export function coerceToMemberList\(\.\.\.input: \[first: /);
+		expect(emitted).not.toMatch(/export function coerceToMemberList\(\.\.\.input: \[element: /);
 	});
 
 	it('types a non-empty list with no options as at least one element, and an empty-capable one as any number', () => {
@@ -189,10 +189,10 @@ describe('from emitter — separatedList', () => {
 			separator: { value: { type: STRING, value: ',' } }
 		});
 		expect(emit(makeMemberNodeMap(rule('nonEmptyArray'), { separatorRule: undefined }))).toMatch(
-			/export function coerceToMemberList\(\.\.\.input: \[first: /
+			/export function coerceToMemberList\(\.\.\.input: \[element: /
 		);
 		expect(emit(makeMemberNodeMap(rule('array'), { separatorRule: undefined }))).toMatch(
-			/export function coerceToMemberList\(\.\.\.input: readonly/
+			/export function coerceToMemberList\(\.\.\.input: \[\.\.\.elements: /
 		);
 	});
 });

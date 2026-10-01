@@ -22277,23 +22277,23 @@ export namespace ExportSpecifiers {
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportSpecifiers>;
 	export type BuildArgs =
 		| [
-				first: AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>,
-				...rest: AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>[]
+				element: AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>,
+				...elements: AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>,
-				...rest: AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>[]
+				element: AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>,
+				...elements: AdmitBound<T.ExportSpecifier | T.Identifier | T.String, T.AdmittedNodes>[]
 		  ];
 	export type LooseArgs =
 		| [
-				first: LooseValue<
+				element: LooseValue<
 					T.ExportSpecifier | T.Identifier | T.String,
 					T.LeafScalarMap,
 					T.LeafStringMap,
 					T.NamespaceMap
 				>,
-				...rest: LooseValue<
+				...elements: LooseValue<
 					T.ExportSpecifier | T.Identifier | T.String,
 					T.LeafScalarMap,
 					T.LeafStringMap,
@@ -22302,13 +22302,13 @@ export namespace ExportSpecifiers {
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: LooseValue<
+				element: LooseValue<
 					T.ExportSpecifier | T.Identifier | T.String,
 					T.LeafScalarMap,
 					T.LeafStringMap,
 					T.NamespaceMap
 				>,
-				...rest: LooseValue<
+				...elements: LooseValue<
 					T.ExportSpecifier | T.Identifier | T.String,
 					T.LeafScalarMap,
 					T.LeafStringMap,
@@ -22332,21 +22332,24 @@ export namespace ImportSpecifiers {
 	export type Loose = LooseFor<TSKindId.ImportSpecifiers>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportSpecifiers>;
 	export type BuildArgs =
-		| [first: AdmitBound<T.ImportSpecifier, T.AdmittedNodes>, ...rest: AdmitBound<T.ImportSpecifier, T.AdmittedNodes>[]]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: AdmitBound<T.ImportSpecifier, T.AdmittedNodes>,
-				...rest: AdmitBound<T.ImportSpecifier, T.AdmittedNodes>[]
-		  ];
-	export type LooseArgs =
-		| [
-				first: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				element: AdmitBound<T.ImportSpecifier, T.AdmittedNodes>,
+				...elements: AdmitBound<T.ImportSpecifier, T.AdmittedNodes>[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				element: AdmitBound<T.ImportSpecifier, T.AdmittedNodes>,
+				...elements: AdmitBound<T.ImportSpecifier, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				element: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				element: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 		  ];
 	export type Kind = TSKindId.ImportSpecifiers;
 }
@@ -22366,18 +22369,23 @@ export namespace FormalParametersElements {
 	export type LooseConfig = LooseConfigFor<TSKindId.FormalParametersElements>;
 	export type BuildArgs =
 		| [
-				first: AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>,
-				...rest: AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>[]
+				element: AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>,
+				...elements: AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>,
-				...rest: AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>[]
+				element: AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>,
+				...elements: AdmitBound<T.RequiredParameter | T.OptionalParameter, T.AdmittedNodes>[]
 		  ];
 	export type LooseArgs =
 		| [
-				first: LooseValue<T.RequiredParameter | T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: LooseValue<
+				element: LooseValue<
+					T.RequiredParameter | T.OptionalParameter,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+				>,
+				...elements: LooseValue<
 					T.RequiredParameter | T.OptionalParameter,
 					T.LeafScalarMap,
 					T.LeafStringMap,
@@ -22386,8 +22394,13 @@ export namespace FormalParametersElements {
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: LooseValue<T.RequiredParameter | T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: LooseValue<
+				element: LooseValue<
+					T.RequiredParameter | T.OptionalParameter,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+				>,
+				...elements: LooseValue<
 					T.RequiredParameter | T.OptionalParameter,
 					T.LeafScalarMap,
 					T.LeafStringMap,
@@ -22497,21 +22510,24 @@ export namespace EnumBodyElements {
 	export type Loose = LooseFor<TSKindId.EnumBodyElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumBodyElements>;
 	export type BuildArgs =
-		| [first: AdmitBound<T.EnumBodyElement, T.AdmittedNodes>, ...rest: AdmitBound<T.EnumBodyElement, T.AdmittedNodes>[]]
 		| [
-				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: AdmitBound<T.EnumBodyElement, T.AdmittedNodes>,
-				...rest: AdmitBound<T.EnumBodyElement, T.AdmittedNodes>[]
-		  ];
-	export type LooseArgs =
-		| [
-				first: LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				element: AdmitBound<T.EnumBodyElement, T.AdmittedNodes>,
+				...elements: AdmitBound<T.EnumBodyElement, T.AdmittedNodes>[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				element: AdmitBound<T.EnumBodyElement, T.AdmittedNodes>,
+				...elements: AdmitBound<T.EnumBodyElement, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				element: LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				element: LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 		  ];
 	export type Kind = TSKindId.EnumBodyElements;
 }
@@ -22531,23 +22547,23 @@ export namespace Types {
 	export type LooseConfig = LooseConfigFor<TSKindId.Types>;
 	export type BuildArgs =
 		| [
-				first: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>,
-				...rest: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>[]
+				element: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>,
+				...elements: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>,
-				...rest: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>[]
+				element: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>,
+				...elements: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>[]
 		  ];
 	export type LooseArgs =
 		| [
-				first: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				element: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...rest: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				element: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 		  ];
 	export type Kind = TSKindId.Types;
 }
@@ -22567,23 +22583,23 @@ export namespace TypeParametersElements {
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeParametersElements>;
 	export type BuildArgs =
 		| [
-				first: AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>,
-				...rest: AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>[]
+				element: AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>,
+				...elements: AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>,
-				...rest: AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>[]
+				element: AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>,
+				...elements: AdmitBound<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types, T.AdmittedNodes>[]
 		  ];
 	export type LooseArgs =
 		| [
-				first: LooseValue<
+				element: LooseValue<
 					T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 					T.LeafScalarMap,
 					T.LeafStringMap,
 					T.NamespaceMap
 				>,
-				...rest: LooseValue<
+				...elements: LooseValue<
 					T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 					T.LeafScalarMap,
 					T.LeafStringMap,
@@ -22592,13 +22608,13 @@ export namespace TypeParametersElements {
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: LooseValue<
+				element: LooseValue<
 					T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 					T.LeafScalarMap,
 					T.LeafStringMap,
 					T.NamespaceMap
 				>,
-				...rest: LooseValue<
+				...elements: LooseValue<
 					T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
 					T.LeafScalarMap,
 					T.LeafStringMap,
@@ -22623,35 +22639,35 @@ export namespace TupleTypeMembers {
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleTypeMembers>;
 	export type BuildArgs =
 		| [
-				first: AdmitBound<
+				element: AdmitBound<
 					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
 					T.AdmittedNodes
 				>,
-				...rest: AdmitBound<
+				...elements: AdmitBound<
 					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
 					T.AdmittedNodes
 				>[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: AdmitBound<
+				element: AdmitBound<
 					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
 					T.AdmittedNodes
 				>,
-				...rest: AdmitBound<
+				...elements: AdmitBound<
 					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
 					T.AdmittedNodes
 				>[]
 		  ];
 	export type LooseArgs =
 		| [
-				first: LooseValue<
+				element: LooseValue<
 					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
 					T.LeafScalarMap,
 					T.LeafStringMap,
 					T.NamespaceMap
 				>,
-				...rest: LooseValue<
+				...elements: LooseValue<
 					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
 					T.LeafScalarMap,
 					T.LeafStringMap,
@@ -22660,13 +22676,13 @@ export namespace TupleTypeMembers {
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				first: LooseValue<
+				element: LooseValue<
 					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
 					T.LeafScalarMap,
 					T.LeafStringMap,
 					T.NamespaceMap
 				>,
-				...rest: LooseValue<
+				...elements: LooseValue<
 					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
 					T.LeafScalarMap,
 					T.LeafStringMap,
@@ -22775,7 +22791,7 @@ export namespace ObjectTypeContent {
 	export type LooseConfig = LooseConfigFor<TSKindId.ObjectTypeContent>;
 	export type BuildArgs =
 		| [
-				first: AdmitBound<
+				element: AdmitBound<
 					| T.ExportStatement
 					| T.PropertySignature
 					| T.CallSignature
@@ -22784,7 +22800,7 @@ export namespace ObjectTypeContent {
 					| T.MethodSignature,
 					T.AdmittedNodes
 				>,
-				...rest: AdmitBound<
+				...elements: AdmitBound<
 					| T.ExportStatement
 					| T.PropertySignature
 					| T.CallSignature
@@ -22799,7 +22815,7 @@ export namespace ObjectTypeContent {
 					separator?: TSKindId.Comma | TSKindId.Semi;
 					delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 				},
-				first: AdmitBound<
+				element: AdmitBound<
 					| T.ExportStatement
 					| T.PropertySignature
 					| T.CallSignature
@@ -22808,7 +22824,7 @@ export namespace ObjectTypeContent {
 					| T.MethodSignature,
 					T.AdmittedNodes
 				>,
-				...rest: AdmitBound<
+				...elements: AdmitBound<
 					| T.ExportStatement
 					| T.PropertySignature
 					| T.CallSignature
@@ -22820,7 +22836,7 @@ export namespace ObjectTypeContent {
 		  ];
 	export type LooseArgs =
 		| [
-				first: LooseValue<
+				element: LooseValue<
 					| T.ExportStatement
 					| T.PropertySignature
 					| T.CallSignature
@@ -22831,7 +22847,7 @@ export namespace ObjectTypeContent {
 					T.LeafStringMap,
 					T.NamespaceMap
 				>,
-				...rest: LooseValue<
+				...elements: LooseValue<
 					| T.ExportStatement
 					| T.PropertySignature
 					| T.CallSignature
@@ -22848,7 +22864,7 @@ export namespace ObjectTypeContent {
 					separator?: TSKindId.Comma | TSKindId.Semi;
 					delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 				},
-				first: LooseValue<
+				element: LooseValue<
 					| T.ExportStatement
 					| T.PropertySignature
 					| T.CallSignature
@@ -22859,7 +22875,7 @@ export namespace ObjectTypeContent {
 					T.LeafStringMap,
 					T.NamespaceMap
 				>,
-				...rest: LooseValue<
+				...elements: LooseValue<
 					| T.ExportStatement
 					| T.PropertySignature
 					| T.CallSignature
