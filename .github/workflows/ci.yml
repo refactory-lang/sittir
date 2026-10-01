@@ -109,10 +109,10 @@ jobs:
   # collects the head baseline, and diffs against the base SHA's
   # committed `native.json`.
   #
-  # The `rust-parity` and `napi-build` jobs above run the parity test
-  # suite under `--ignored` with `continue-on-error: true` — they do
-  # NOT read the baseline JSONs, so a native-count drop would slip
-  # through them. This job is the durable gate.
+  # The `napi-build` job runs the parity test suite under `--ignored`
+  # with `continue-on-error: true` — it does NOT read the baseline
+  # JSONs, so a native-count drop would slip through it. This job is
+  # the durable gate.
   #
   # Skipped on direct pushes (no base ref to diff against). Only runs
   # on `pull_request` events.
@@ -293,7 +293,7 @@ jobs:
   # nothing more: the fix is a pull request that regenerates, and CI never
   # commits. It needs no other job's output, so it runs alongside them. The
   # parity test itself runs in `napi-build` on each native target.
-  rust-parity:
+  generated-output-drift:
     name: generated output drift
     # ubuntu-latest (not ubuntu-22.04, unlike the other rust-* jobs — this
     # one doesn't produce a distributable artifact so there's no glibc-
@@ -322,7 +322,7 @@ jobs:
         # `gen --all` rebuilds each grammar's release binding before it
         # extracts fixtures. The workspace cargo check is the `rust` job's.
         run: |
-          grammars=$(npx tsx packages/tools/src/scripts/all-grammars.ts)
+          grammars=$(npx tsx packages/tools/src/scripts/list-grammars.ts all)
           for grammar in $grammars; do
             npx tsx packages/cli/src/cli.ts gen --grammar "$grammar" --all --no-workspace-check --output "packages/$grammar/src"
           done
@@ -415,7 +415,7 @@ jobs:
       - name: napi build — grammar-owned native packages
         shell: bash
         run: |
-          grammars=$(npx tsx packages/tools/src/scripts/stable-grammars.ts)
+          grammars=$(npx tsx packages/tools/src/scripts/list-grammars.ts stable)
           for crate in $grammars; do
             npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
           done

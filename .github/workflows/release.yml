@@ -192,7 +192,7 @@ jobs:
       - name: napi build (release) — grammar-owned native packages
         shell: bash
         run: |
-          grammars=$(npx tsx packages/tools/src/scripts/stable-grammars.ts)
+          grammars=$(npx tsx packages/tools/src/scripts/list-grammars.ts stable)
           for crate in $grammars; do
             pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
           done
@@ -232,13 +232,13 @@ jobs:
           merge-multiple: false
       - name: napi artifacts — repack into platform subpackages
         run: |
-          grammars=$(npx tsx packages/tools/src/scripts/stable-grammars.ts)
+          grammars=$(npx tsx packages/tools/src/scripts/list-grammars.ts stable)
           for crate in $grammars; do
             (cd "rust/crates/sittir-${crate}" && pnpm exec napi artifacts --dir ../../../artifacts)
           done
       - name: Publish platform subpackages to npm
         run: |
-          grammars=$(npx tsx packages/tools/src/scripts/stable-grammars.ts)
+          grammars=$(npx tsx packages/tools/src/scripts/list-grammars.ts stable)
           for crate in $grammars; do
             (cd "rust/crates/sittir-${crate}" && pnpm exec napi prepublish --tag latest --skip-gh-release)
           done
