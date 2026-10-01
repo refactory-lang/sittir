@@ -57,4 +57,45 @@ describe('applyEdits', () => {
 		];
 		expect(() => applyEdits(greek, edits)).toThrow(/overlap/);
 	});
+
+	it('applies an insertion before a replacement that starts at the same position, in either order', () => {
+		const insertion = { startPos: 1, endPos: 1, insertedText: '<' };
+		const replacement = { startPos: 1, endPos: 4, insertedText: 'a' };
+		expect(applyEdits(greek, [insertion, replacement]).source).toBe('\n<a = β_γ + Ψ_5\n\n');
+		expect(applyEdits(greek, [replacement, insertion]).source).toBe('\n<a = β_γ + Ψ_5\n\n');
+	});
+
+	it('rejects two insertions at the same position as ambiguous', () => {
+		const edits = [
+			{ startPos: 1, endPos: 1, insertedText: 'a' },
+			{ startPos: 1, endPos: 1, insertedText: 'b' }
+		];
+		expect(() => applyEdits(greek, edits)).toThrow(/ambiguous/);
+	});
+
+	it('rejects two replacements that start at the same position as ambiguous', () => {
+		const edits = [
+			{ startPos: 1, endPos: 4, insertedText: 'a' },
+			{ startPos: 1, endPos: 3, insertedText: 'b' }
+		];
+		expect(() => applyEdits(greek, edits)).toThrow(/ambiguous/);
+	});
+
+	it('keeps a leading byte order mark', () => {
+		expect(applyEdits('\uFEFFx', [{ startPos: 3, endPos: 4, insertedText: 'y' }]).source).toBe('\uFEFFy');
+	});
+});
+
+describe('sourceSpans on a source with a byte order mark', () => {
+	const spans = sourceSpans('\uFEFFx');
+
+	it('slices the mark as text', () => {
+		expect(spans.slice({ start: 0, end: 3 })).toBe('\uFEFF');
+		expect(spans.slice({ start: 0, end: 4 })).toBe('\uFEFFx');
+	});
+
+	it('counts the mark as one string index', () => {
+		expect(spans.toIndices({ start: 3, end: 4 })).toEqual({ start: 1, end: 2 });
+		expect(spans.toSpan({ start: 1, end: 2 })).toEqual({ start: 3, end: 4 });
+	});
 });

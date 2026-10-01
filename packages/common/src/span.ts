@@ -36,7 +36,7 @@ export interface SourceSpans {
  */
 export function sourceSpans(source: string): SourceSpans {
 	const bytes = new TextEncoder().encode(source);
-	const decoder = new TextDecoder();
+	const decoder = new TextDecoder('utf-8', { ignoreBOM: true });
 	const ascii = bytes.length === source.length;
 	const indexOf = (offset: number): number => (ascii ? offset : decoder.decode(bytes.subarray(0, offset)).length);
 	const offsetOf = (index: number): number => (ascii ? index : new TextEncoder().encode(source.slice(0, index)).length);

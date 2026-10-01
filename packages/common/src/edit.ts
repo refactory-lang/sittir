@@ -70,11 +70,15 @@ export function replace(target: ReplaceTarget, replacement: AnyUntypedNode & Ren
  * characters precede it.
  *
  * @param source - The original source string.
- * @param edits - The edits to apply, in any order. They must not overlap.
+ * @param edits - The edits to apply, in any order: the result does not depend
+ * on it. They must not overlap. At one position, an insertion (an empty
+ * range) applies before an edit that replaces text starting there.
  * @param format - A format record to rebase alongside the text edits.
  * @returns The edited source and the rebased format record.
  * @throws When an edit's range lies outside the source (counted in bytes),
- * ends before it starts, or overlaps another edit.
+ * ends before it starts, or overlaps another edit; and when two edits start
+ * at the same position and are both insertions or both replacements, since
+ * their order would be the caller's and the result ambiguous.
  */
 export function applyEdits(
 	source: string,
@@ -84,7 +88,17 @@ export function applyEdits(
 	if (edits.length === 0) return { source, format };
 
 	const spans = sourceSpans(source);
-	const ascending = [...edits].sort((a, b) => a.startPos - b.startPos);
+	const isInsertion = (edit: Edit): boolean => edit.endPos === edit.startPos;
+	const ascending = [...edits].sort(
+		(a, b) => a.startPos - b.startPos || Number(isInsertion(b)) - Number(isInsertion(a))
+	);
+	ascending.forEach((edit, i) => {
+		const next = ascending[i + 1];
+		if (next !== undefined && next.startPos === edit.startPos && isInsertion(next) === isInsertion(edit))
+			throw new Error(
+				`applyEdits: two ${isInsertion(edit) ? 'insertions' : 'replacements'} start at ${edit.startPos}; their order is ambiguous`
+			);
+	});
 	let result = '';
 	let cursor = 0;
 	for (const edit of ascending) {
