@@ -1,7 +1,8 @@
 import { RuleWalker } from '../rule-walker.ts';
 import type { AnyRule } from '../../types/rule.ts';
 import type { GrammarResult } from '../enrich.ts';
-import { liftRenames, upstreamConflictSets, upstreamSymbolNames, type WiredOpts } from './wire.ts';
+import { upstreamConflictSets, upstreamSymbolNames, type WiredOpts } from './wire.ts';
+import { liftRenames } from './lift-names.ts';
 import type { ConflictResolutionRecord } from '../conflict-resolutions.ts';
 import { baseRulesOf } from '../shared.ts';
 
@@ -48,7 +49,7 @@ function dynamicPrecedenceOf(rules: Readonly<Record<string, AnyRule>>): Record<s
 export function attachDerivationRecords(grammar: WiredGrammar, base: unknown, opts: WiredOpts, conflicts: ConflictConfig): void {
 	const upstreamSymbols = upstreamSymbolNames(base);
 	const edges = new Map<string, string>();
-	for (const [oldName, newName] of liftRenames(opts.__wireContext__)) {
+	for (const [oldName, newName] of liftRenames(opts.__wireContext__?.liftNames)) {
 		if (oldName !== newName && !upstreamSymbols.has(newName)) edges.set(newName, oldName);
 	}
 	for (const [name, owner] of variantEdgesOf(grammar.rules)) {

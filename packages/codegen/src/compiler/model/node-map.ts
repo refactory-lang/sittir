@@ -1791,20 +1791,23 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	override argumentOptional(ctx: ArgumentOptionalCtx): boolean {
 		const seen = ctx.seen ?? EMPTY_SEEN;
 		if (seen.has(this.kind)) return false;
-		const requiredSlots = this.configSlots.filter((slot) => isRequired(slot) && !holdsFixedText(slot));
-		if (requiredSlots.length === 0) return true;
-		if (requiredSlots.length > 1) return false;
-		const slot = requiredSlots[0]!;
-		if (isMultiple(slot)) return false;
-		const refs = slot.values.filter(isNodeRef);
-		const kindId = refs.length === 1 ? refs[0]!.storageKindId : undefined;
-		const target = kindId === undefined ? undefined : ctx.nodeByKindId.get(kindId);
-		return target !== undefined && target.argumentOptional({ ...ctx, seen: new Set([...seen, this.kind]) });
+		const walking = { ...ctx, seen: new Set([...seen, this.kind]) };
+		return this.configSlots.every((slot) => slotFilledWhenOmitted(slot, walking));
 	}
 }
 
 function soleRequiredValue(slot: { values: readonly NodeOrTerminal[] }): NodeOrTerminal | undefined {
 	return isRequired(slot) && !isMultiple(slot) && slot.values.length === 1 ? slot.values[0] : undefined;
+}
+
+export function slotFilledWhenOmitted(slot: { values: readonly NodeOrTerminal[] }, ctx: ArgumentOptionalCtx): boolean {
+	if (!isRequired(slot) || holdsFixedText(slot)) return true;
+	const value = soleRequiredValue(slot);
+	if (value === undefined || !isNodeRef(value)) return false;
+	if (value.storageKindId === undefined) return false;
+	const target = ctx.nodeByKindId.get(value.storageKindId);
+	if (target === undefined) return false;
+	return target.rawFactoryName !== undefined && target.argumentOptional(ctx);
 }
 
 export function holdsFixedText(slot: { values: readonly NodeOrTerminal[] }): boolean {
@@ -2305,6 +2308,10 @@ export class AssembledList extends AssembledEnvelope<SeparatedListElementRule, '
 
 	get nonEmpty(): boolean {
 		return this.rule.multiplicity === 'nonEmptyArray';
+	}
+
+	override argumentOptional(ctx: ArgumentOptionalCtx): boolean {
+		return !this.nonEmpty && super.argumentOptional(ctx);
 	}
 
 	get terminatedSeparator(): boolean {

@@ -1,7 +1,6 @@
 import { attachTextTokens, enrich, getEnrichTextTokens, type EnrichedGrammar, type GrammarResult } from './enrich.ts';
 import { authoredFieldSites, authoredGroupBodies, wire, type OptionsCheck, type PatchesCheck, type PatchesConfig, type WireConfig, type WiredOpts } from './wire/wire.ts';
 import { blankDeadEnrichMints, getDeadEnrichMints } from './wire/dead-mints.ts';
-import { resolveLiftNames } from './wire/lift-names.ts';
 import { attachDerivationRecords } from './wire/derivation-records.ts';
 import { applyConflictResolutions, type ConflictResolutionsInput } from './conflict-resolutions.ts';
 import type { OptionsConfig } from './wire/options-block.ts';
@@ -22,7 +21,6 @@ export function sittirGrammar<B extends GrammarJson, const P = PatchesConfig<Enr
 	const grammar = (globalThis as unknown as { grammar: GrammarFn }).grammar;
 	const opts = wire<EnrichedGrammar<B>, P, O>(wireConfig, enriched, base);
 	const result = grammar(enriched, opts);
-	resolveLiftNames(result.grammar, enriched, opts);
 	blankDeadEnrichMints(result.grammar, enriched, opts);
 	const dead = getDeadEnrichMints(result.grammar);
 	attachTextTokens(result.grammar, [...getEnrichTextTokens(enriched).keys()].filter((name) => !dead.has(name)));
