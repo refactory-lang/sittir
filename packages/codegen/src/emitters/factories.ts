@@ -656,23 +656,29 @@ export interface BuiltTypeSurface {
 	readonly maxArgs: number | undefined;
 }
 
+export function restSetterType(
+	f: AssembledNonterminal,
+	configType: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | undefined {
+	if (!isMultiple(f)) return undefined;
+	const elemType =
+		resolveFieldStorageInfo(f, nodeMap, kindEntries).kind === 'verbatim'
+			? constructionFieldElementType(f, nodeMap, kindEntries)
+			: `NonNullable<NonNullable<${configType}>['${f.configKey}']>[number]`;
+	if (isNonEmpty(f)) return `NonEmptyArray<${elemType}>`;
+	return `${elemType.includes(' | ') ? `(${elemType})` : elemType}[]`;
+}
+
 export function slotSetter(
 	f: AssembledNonterminal,
 	configType: string,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): SlotSetter {
-	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-	if (isMultiple(f) && storageInfo.kind === 'verbatim') {
-		const elemType = constructionFieldElementType(f, nodeMap, kindEntries);
-		const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
-		return {
-			name: f.propertyName,
-			input: isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`,
-			optional: !isRequired(f),
-			rest: true
-		};
-	}
+	const restType = restSetterType(f, configType, nodeMap, kindEntries);
+	if (restType !== undefined) return { name: f.propertyName, input: restType, optional: !isRequired(f), rest: true };
 	const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
 	return { name: f.propertyName, input: elemType, optional: !isRequired(f), rest: false };
 }
@@ -1168,7 +1174,7 @@ function emitFieldCarryingFactory(
 		const elementType = surface.elementType!;
 		const setter = spreadFacts.slot.propertyName;
 		valueSourceFor = (f) => (f === spreadFacts.slot ? admittedSlotInput(f, 'children', nodeMap, kindEntries, node.typeName) : '');
-		withLines = [`    $with: { ${setter}: (...vs: ${elementType}[]) => ${fn}(...vs) },`];
+		withLines = [`    $with: { ${setter}: (...vs: ${elementType}[]) => ${fn}(...restItems(${JSON.stringify(setter)}, vs)) },`];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
 		valueSourceFor = (f) =>
@@ -1190,13 +1196,10 @@ function emitFieldCarryingFactory(
 		for (const f of slots) {
 			if (registeredSet.has(f)) continue;
 			const method = f.propertyName;
-			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-			if (isMultiple(f) && storageInfo.kind === 'verbatim') {
-				const elemType = constructionFieldElementType(f, nodeMap, kindEntries);
-				const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
-				const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
+			const restType = restSetterType(f, configType, nodeMap, kindEntries);
+			if (restType !== undefined) {
 				withLines.push(
-					`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }${optionsArg}),`
+					`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: restItems(${JSON.stringify(method)}, values) }${optionsArg}),`
 				);
 			} else {
 				const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
@@ -1417,12 +1420,11 @@ function emitRefineFormFactory(
 	for (const f of slots) {
 		if (narrowed.has(f.name)) continue;
 		const method = f.propertyName;
-		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-		if (isMultiple(f) && storageInfo.kind === 'verbatim') {
-			const elemType = constructionFieldElementType(f, nodeMap);
-			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
-			const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
-			lines.push(`      ${method}: (...values: ${restType}) => ${formFn}({ ...config, ${f.configKey}: values }${optionsArg}),`);
+		const restType = restSetterType(f, formConfigType, nodeMap, kindEntries);
+		if (restType !== undefined) {
+			lines.push(
+				`      ${method}: (...values: ${restType}) => ${formFn}({ ...config, ${f.configKey}: restItems(${JSON.stringify(method)}, values) }${optionsArg}),`
+			);
 		} else {
 			const elemType = setterElemType(
 				f,
@@ -2141,7 +2143,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		lines.push(
-			`import { ${['withAccessors', 'describeValue', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
+			`import { ${['withAccessors', 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
 		);
 		lines.push(`import { withMethods } from '../utils.js';`);
 		lines.push('');

@@ -6,6 +6,7 @@ import type { AdmitBound, NonEmptyArray } from '@sittir/types';
 import {
 	withAccessors,
 	describeValue,
+	restItems,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
@@ -36,7 +37,7 @@ export function buildProgram(...children: AdmitBound<T.Definition[], T.AdmittedN
 				$source: 2 as const,
 				$named: true as const,
 				_definitions,
-				$with: { definitions: (...vs: T.Definition[]) => buildProgram(...vs) }
+				$with: { definitions: (...vs: T.Definition[]) => buildProgram(...restItems('definitions', vs)) }
 			},
 			{
 				definitions: () => _definitions
@@ -215,7 +216,10 @@ export function buildStringContent(
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { contents: (...vs: (T.StringContentText | T.EscapeSequence)[]) => buildStringContent(...vs) }
+				$with: {
+					contents: (...vs: (T.StringContentText | T.EscapeSequence)[]) =>
+						buildStringContent(...restItems('contents', vs))
+				}
 			},
 			{
 				contents: () => _content
@@ -236,7 +240,9 @@ export function buildParameters(
 				$source: 2 as const,
 				$named: true as const,
 				_elements,
-				$with: { elements: (...vs: (T.Capture | T.String | T.Identifier)[]) => buildParameters(...vs) }
+				$with: {
+					elements: (...vs: (T.Capture | T.String | T.Identifier)[]) => buildParameters(...restItems('elements', vs))
+				}
 			},
 			{
 				elements: () => _elements
@@ -287,8 +293,10 @@ export function buildList(config: T.List.Config): T.List.Bound {
 				_definitions,
 				_content,
 				$with: {
-					definitions: (...values: NonEmptyArray<T.Definition>) => buildList({ ...config, definitions: values }),
-					contents: (value?: NonNullable<T.List.Config>['content']) => buildList({ ...config, content: value })
+					definitions: (...values: NonEmptyArray<T.Definition>) =>
+						buildList({ ...config, definitions: restItems('definitions', values) }),
+					contents: (...values: NonNullable<NonNullable<T.List.Config>['content']>[number][]) =>
+						buildList({ ...config, content: restItems('contents', values) })
 				}
 			},
 			{
@@ -320,8 +328,9 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 				_content,
 				$with: {
 					groupingGroups: (...values: NonEmptyArray<T.GroupingGroup>) =>
-						buildGrouping({ ...config, groupingGroup: values }),
-					contents: (value?: NonNullable<T.Grouping.Config>['content']) => buildGrouping({ ...config, content: value })
+						buildGrouping({ ...config, groupingGroup: restItems('groupingGroups', values) }),
+					contents: (...values: NonNullable<NonNullable<T.Grouping.Config>['content']>[number][]) =>
+						buildGrouping({ ...config, content: restItems('contents', values) })
 				}
 			},
 			{
@@ -355,8 +364,8 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 				_content,
 				$with: {
 					name: (value?: T.Identifier | T.String) => buildMissingNode({ ...config, name: value }),
-					contents: (value?: NonNullable<T.MissingNode.Config>['content']) =>
-						buildMissingNode({ ...config, content: value })
+					contents: (...values: NonNullable<NonNullable<T.MissingNode.Config>['content']>[number][]) =>
+						buildMissingNode({ ...config, content: restItems('contents', values) })
 				}
 			},
 			{
@@ -392,8 +401,8 @@ export function buildAnonymousNode(config: Partial<T.AnonymousNode.Config> = {})
 				_content,
 				$with: {
 					name: (value: NonNullable<T.AnonymousNode.Config>['name']) => buildAnonymousNode({ ...config, name: value }),
-					contents: (value?: NonNullable<T.AnonymousNode.Config>['content']) =>
-						buildAnonymousNode({ ...config, content: value })
+					contents: (...values: NonNullable<NonNullable<T.AnonymousNode.Config>['content']>[number][]) =>
+						buildAnonymousNode({ ...config, content: restItems('contents', values) })
 				}
 			},
 			{
@@ -638,8 +647,8 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 					name: (value: NonNullable<T.NamedNodePlain.Config>['name']) =>
 						buildNamedNodePlain({ ...config, name: value }),
 					namedNodeGroup: (value?: T.NamedNodeGroup) => buildNamedNodePlain({ ...config, namedNodeGroup: value }),
-					contents: (value?: NonNullable<T.NamedNodePlain.Config>['content']) =>
-						buildNamedNodePlain({ ...config, content: value })
+					contents: (...values: NonNullable<NonNullable<T.NamedNodePlain.Config>['content']>[number][]) =>
+						buildNamedNodePlain({ ...config, content: restItems('contents', values) })
 				}
 			},
 			{
@@ -683,8 +692,8 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 					name: (value: T.ImmediateIdentifier | T.ImmediateString) =>
 						buildNamedNodeSupertyped({ ...config, name: value }),
 					namedNodeGroup: (value?: T.NamedNodeGroup) => buildNamedNodeSupertyped({ ...config, namedNodeGroup: value }),
-					contents: (value?: NonNullable<T.NamedNodeSupertyped.Config>['content']) =>
-						buildNamedNodeSupertyped({ ...config, content: value })
+					contents: (...values: NonNullable<NonNullable<T.NamedNodeSupertyped.Config>['content']>[number][]) =>
+						buildNamedNodeSupertyped({ ...config, content: restItems('contents', values) })
 				}
 			},
 			{
@@ -716,7 +725,7 @@ export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Con
 					anchor: (value?: NonNullable<T.NamedNodeGroupChildren.Config>['anchor']) =>
 						buildNamedNodeGroupChildren({ ...config, anchor: value }),
 					namedNodeExpressions: (...values: NonEmptyArray<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
-						buildNamedNodeGroupChildren({ ...config, namedNodeExpressions: values })
+						buildNamedNodeGroupChildren({ ...config, namedNodeExpressions: restItems('namedNodeExpressions', values) })
 				}
 			},
 			{
@@ -754,7 +763,10 @@ export function buildNamedNodeGroupAnchoredLast(
 					anchor: (value?: NonNullable<T.NamedNodeGroupAnchoredLast.Config>['anchor']) =>
 						buildNamedNodeGroupAnchoredLast({ ...config, anchor: value }),
 					namedNodeExpressions: (...values: (T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]) =>
-						buildNamedNodeGroupAnchoredLast({ ...config, namedNodeExpressions: values }),
+						buildNamedNodeGroupAnchoredLast({
+							...config,
+							namedNodeExpressions: restItems('namedNodeExpressions', values)
+						}),
 					last: (value: T.Definition | T.NegatedField | T.NamedNodeExpressionArm) =>
 						buildNamedNodeGroupAnchoredLast({ ...config, last: value })
 				}

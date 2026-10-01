@@ -254,3 +254,8 @@ Drops the pre-edit spelling and the coordinate that would slice it from every no
 ### `packages/common/src/utils.ts::describeValue`
 
 A value as the text of a refusal message: a string as itself, anything else as JSON (a bigint as `<n>n`), falling back to `String` when it cannot be serialised. Generated pattern guards use it so a node or object that reached a text slot prints as what it was, not `[object Object]`.
+
+### `packages/common/src/utils.ts::restItems`
+
+The guard every generated list setter passes its rest arguments through. A list setter takes its items as arguments; one array in their place is the call shape of an older surface and of most other APIs, so it is the mistake worth a message of its own. The check is `length === 1` and the single argument being an array, which no list element is: elements are nodes, kind ids or text.
+

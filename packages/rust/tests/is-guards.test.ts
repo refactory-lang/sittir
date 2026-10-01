@@ -44,9 +44,9 @@ describe('rust node provenance', () => {
 	it('a parsed node stays parsed through an edit', () => {
 		const root = rs.parse('fn f() {}\n');
 		expect(isParsedNode(root)).toBe(true);
-		const edited = root.$with.statements([
+		const edited = root.$with.statements(
 			rs.build.functionItem({ name: 'g', parameters: rs.build.parameters(), body: rs.build.block() })
-		]);
+		);
 		expect(isParsedNode(edited)).toBe(true);
 		expect(isFactoryNode(edited)).toBe(false);
 	});

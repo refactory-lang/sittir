@@ -40,6 +40,21 @@ type Scoped = <R>(fn: () => R) => R;
 
 const NO_ENGINE = 'node has no engine; render it with engine.render(node)';
 
+/**
+ * The items a list setter was called with.
+ *
+ * @param slot - The setter's name, for the message.
+ * @param items - The setter's rest arguments.
+ * @returns `items`, unchanged.
+ * @throws When the setter was called with one array in place of its items.
+ */
+export function restItems<A extends readonly unknown[]>(slot: string, items: A): A {
+	if (items.length === 1 && Array.isArray(items[0])) {
+		throw new TypeError(`${slot} takes its items as arguments, not one array: call ${slot}(...items)`);
+	}
+	return items;
+}
+
 /** Whether `node` is typed: it carries the methods `withMethods` attaches, so a wrap or a builder produced it. */
 export function isTypedNode(node: object): boolean {
 	return typeof (node as { readonly $render?: unknown }).$render === 'function';
