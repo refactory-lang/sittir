@@ -22,6 +22,7 @@ import type {
 	ListViewHint,
 	ListSlotHint,
 	FlatHint,
+	FlatShapesOf,
 	BoundOf,
 	ParsedOf,
 	AdmitBound,
@@ -3865,7 +3866,8 @@ export interface CatchClause {
 			'catchClauseGroup',
 			T.CatchClauseGroup,
 			{ readonly parameter: 'parameter'; readonly type: 'type' },
-			true
+			true,
+			'_catch_clause_group'
 		>;
 	};
 	catchClauseGroup(): CatchClauseGroup | undefined;
@@ -19551,10 +19553,11 @@ export namespace SwitchDefault {
 }
 export namespace CatchClause {
 	export type Config = ConfigFor<TSKindId.CatchClause>;
-	export interface Bound extends BoundOf<T.CatchClause, BoundByKindId>, NodeMethodsOf {
+	interface BoundSurface extends BoundOf<T.CatchClause, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.CatchClause['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId>;
 	}
+	export type Bound = BoundSurface & FlatShapesOf<T.CatchClause, BoundByKindId>;
 	export interface Parsed extends ParsedOf<T.CatchClause, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.CatchClause['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;

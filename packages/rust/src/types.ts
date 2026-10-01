@@ -21,6 +21,7 @@ import type {
 	ListViewHint,
 	ListSlotHint,
 	FlatHint,
+	FlatShapesOf,
 	BoundOf,
 	ParsedOf,
 	AdmitBound,
@@ -8162,7 +8163,8 @@ export interface MatchBlock {
 			'matchBlockArms',
 			T.MatchBlockArms,
 			{ readonly matchArms: 'matchArms'; readonly lastArm: 'lastArm' },
-			true
+			true,
+			'_match_block_arms'
 		>;
 	};
 	matchBlockArms(): MatchBlockArms | undefined;
@@ -8189,7 +8191,8 @@ export interface LastMatchArm {
 			'pattern',
 			T.MatchPattern,
 			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
-			false
+			false,
+			'_pattern'
 		>;
 	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
@@ -10504,7 +10507,8 @@ export interface MatchArmWithComma {
 			'pattern',
 			T.MatchPattern,
 			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
-			false
+			false,
+			'_pattern'
 		>;
 	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
@@ -10548,7 +10552,8 @@ export interface MatchArmBlockEnding {
 			'pattern',
 			T.MatchPattern,
 			{ readonly pattern: 'pattern'; readonly condition: 'condition' },
-			false
+			false,
+			'_pattern'
 		>;
 	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
@@ -21646,10 +21651,11 @@ export namespace MatchExpression {
 }
 export namespace MatchBlock {
 	export type Config = ConfigFor<TSKindId.MatchBlock>;
-	export interface Bound extends BoundOf<T.MatchBlock, BoundByKindId>, NodeMethodsOf {
+	interface BoundSurface extends BoundOf<T.MatchBlock, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchBlock['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId>;
 	}
+	export type Bound = BoundSurface & FlatShapesOf<T.MatchBlock, BoundByKindId>;
 	export interface Parsed extends ParsedOf<T.MatchBlock, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchBlock['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
@@ -21662,10 +21668,11 @@ export namespace MatchBlock {
 }
 export namespace LastMatchArm {
 	export type Config = ConfigFor<TSKindId.LastMatchArm>;
-	export interface Bound extends BoundOf<T.LastMatchArm, BoundByKindId>, NodeMethodsOf {
+	interface BoundSurface extends BoundOf<T.LastMatchArm, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.LastMatchArm['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId>;
 	}
+	export type Bound = BoundSurface & FlatShapesOf<T.LastMatchArm, BoundByKindId>;
 	export interface Parsed extends ParsedOf<T.LastMatchArm, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.LastMatchArm['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
@@ -23997,10 +24004,11 @@ export namespace ForeignModItemBody {
 }
 export namespace MatchArmWithComma {
 	export type Config = ConfigFor<TSKindId.MatchArmWithComma>;
-	export interface Bound extends BoundOf<T.MatchArmWithComma, BoundByKindId>, NodeMethodsOf {
+	interface BoundSurface extends BoundOf<T.MatchArmWithComma, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchArmWithComma['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId>;
 	}
+	export type Bound = BoundSurface & FlatShapesOf<T.MatchArmWithComma, BoundByKindId>;
 	export interface Parsed extends ParsedOf<T.MatchArmWithComma, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchArmWithComma['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
@@ -24017,10 +24025,11 @@ export namespace MatchArmWithComma {
 }
 export namespace MatchArmBlockEnding {
 	export type Config = ConfigFor<TSKindId.MatchArmBlockEnding>;
-	export interface Bound extends BoundOf<T.MatchArmBlockEnding, BoundByKindId>, NodeMethodsOf {
+	interface BoundSurface extends BoundOf<T.MatchArmBlockEnding, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchArmBlockEnding['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId>;
 	}
+	export type Bound = BoundSurface & FlatShapesOf<T.MatchArmBlockEnding, BoundByKindId>;
 	export interface Parsed extends ParsedOf<T.MatchArmBlockEnding, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchArmBlockEnding['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
@@ -25505,9 +25514,9 @@ export interface EmptyArguments extends Arguments.Bound {
 export interface EmptyFieldInitializerList extends FieldInitializerList.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }
-export interface EmptyMatchBlock extends MatchBlock.Bound {
-	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
-}
+export type EmptyMatchBlock = MatchBlock.Bound & {
+	readonly $trivia: TriviaSetterOf<EmptyMatchBlock> & InnerTrivia<EmptyMatchBlock>;
+};
 export interface EmptyClosureParameters extends ClosureParameters.Bound {
 	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
 }

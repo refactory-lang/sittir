@@ -22,6 +22,7 @@ import type {
 	ListViewHint,
 	ListSlotHint,
 	FlatHint,
+	FlatShapesOf,
 	BoundOf,
 	ParsedOf,
 	AdmitBound,
@@ -3938,7 +3939,7 @@ export interface Slice {
 		readonly start: SlotHint<NonNullable<T.Slice.Config>['start'], true>;
 		readonly stop: SlotHint<NonNullable<T.Slice.Config>['stop'], true>;
 		readonly step: SlotHint<T.SliceGroup, true>;
-		readonly $flat: FlatHint<'step', T.SliceGroup, { readonly expression: 'expression' }, true>;
+		readonly $flat: FlatHint<'step', T.SliceGroup, { readonly expression: 'expression' }, true, '_step'>;
 	};
 	start(): Expression | undefined;
 	stop(): Expression | undefined;
@@ -12275,10 +12276,11 @@ export namespace Subscript {
 }
 export namespace Slice {
 	export type Config = ConfigFor<TSKindId.Slice>;
-	export interface Bound extends BoundOf<T.Slice, BoundByKindId>, NodeMethodsOf {
+	interface BoundSurface extends BoundOf<T.Slice, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.Slice['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId>;
 	}
+	export type Bound = BoundSurface & FlatShapesOf<T.Slice, BoundByKindId>;
 	export interface Parsed extends ParsedOf<T.Slice, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.Slice['$type'];
 		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;

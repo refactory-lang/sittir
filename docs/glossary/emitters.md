@@ -16434,7 +16434,7 @@ The version of the wire between the JS packages and a native build: the render t
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 
-Emits a kind's `Bound` and `Parsed` interfaces. Each declares `$type` first, then `$with` over `this`, then its own members. The order matters: the checker compares a target's properties in declaration order, and a mismatched kind must fail on the `$type` discriminant before it reaches the deep `$with` and accessor members; without it every non-matching arm of a wide union is compared structurally to the checker's depth limit.
+Emits a kind's `Bound` and `Parsed` interfaces. Each declares `$type` first, then `$with` over `this`, then its own members. A kind that seats a flattened group gets its `Bound` as a type alias instead, `BoundSurface & FlatShapesOf<…>`, because an interface cannot extend the present-or-absent union; the unexported `BoundSurface` interface carries the members and its `$with` returns the alias `Bound`, so a rebuilt node keeps the union. The kind's empty form is then an alias too, whose `$trivia` names the alias where an interface would use `this`. The order matters: the checker compares a target's properties in declaration order, and a mismatched kind must fail on the `$type` discriminant before it reaches the deep `$with` and accessor members; without it every non-matching arm of a wide union is compared structurally to the checker's depth limit.
 
 ### `packages/codegen/src/emitters/types.ts::AdmittedNodes`
 
@@ -16498,7 +16498,7 @@ The separated list a node reads as: the node itself when it is an `AssembledList
 
 ### `packages/codegen/src/emitters/factories.ts::groupSeatHints`
 
-The facts each flattened group of a node needs for its node surface, one per seat: the slot that seats the group, the group's type and kind, its raw factory, whether the seat is optional, and the keys it flattens. Each key has the name the parent reads and sets it by (`name`), the group field it stands for (`field`) and whether its setter takes rest arguments. There is one for each seat `flattenSeatsOf` names, and its keys come from that seat's own keys, so the config surface and the node surface agree on which kinds flatten a group and on every key's name. A key the seat prefixed is named with `prefixedKey` from the seat's accessor and the field's, the same rule the config key follows. A key that spells the seat's own slot reads the group's inner value, and its setter takes the inner value or the whole group.
+The facts each flattened group of a node needs for its node surface, one per seat: the slot that seats the group and the parent's storage property that holds it (`stored`), the group's type and kind, its raw factory, whether the seat is optional, and the keys it flattens. Each key has the name the parent reads and sets it by (`name`), the group field it stands for (`field`) and whether its setter takes rest arguments. There is one for each seat `flattenSeatsOf` names, and its keys come from that seat's own keys, so the config surface and the node surface agree on which kinds flatten a group and on every key's name. A key the seat prefixed is named with `prefixedKey` from the seat's accessor and the field's, the same rule the config key follows. A key that spells the seat's own slot reads the group's inner value, and its setter takes the inner value or the whole group.
 
 ### `packages/codegen/src/emitters/factories.ts::groupSeatRuntimeSpecs`
 

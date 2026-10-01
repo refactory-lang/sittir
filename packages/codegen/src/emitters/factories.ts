@@ -1575,6 +1575,7 @@ export interface GroupSeatKey {
 
 export interface GroupSeatHint {
 	readonly slot: string;
+	readonly stored: string;
 	readonly group: string;
 	readonly groupKind: string;
 	readonly factory: string;
@@ -1605,6 +1606,7 @@ export function groupSeatHints(
 		return [
 			{
 				slot: seat.slot.propertyName,
+				stored: `_${seat.slot.storageName}`,
 				group: seat.group.typeName,
 				groupKind: seat.group.kind,
 				factory: seat.group.rawFactoryName!,

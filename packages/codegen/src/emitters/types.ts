@@ -402,9 +402,17 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 		const node = nodeMap.nodes.get(kind)!;
 		const gaps = keyed ? `, ${empty.gaps.map((gap) => JSON.stringify(gap)).join(' | ')}` : '';
 		lines.push(
-			`export interface ${empty.typeName} extends ${node.typeName}.Bound {`,
-			`  readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this${gaps}>;`,
-			'}'
+			...(groupSeatHints(node, nodeMap, kindEntries).length > 0
+				? [
+						`export type ${empty.typeName} = ${node.typeName}.Bound & {`,
+						`  readonly $trivia: TriviaSetterOf<${empty.typeName}> & InnerTrivia<${empty.typeName}${gaps}>;`,
+						'};'
+					]
+				: [
+						`export interface ${empty.typeName} extends ${node.typeName}.Bound {`,
+						`  readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this${gaps}>;`,
+						'}'
+					])
 		);
 	}
 	lines.push('');
@@ -477,6 +485,7 @@ const VOCABULARY_IMPORTS = [
 	'ListViewHint',
 	'ListSlotHint',
 	'FlatHint',
+	'FlatShapesOf',
 	'BoundOf',
 	'ParsedOf',
 	'AdmitBound',
@@ -900,12 +909,12 @@ function emitNamespaceInterfaceLine(
 	);
 }
 
-function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, indent: string): void {
-	const emit = (name: string, extendsList: string, withNode: boolean): void => {
-		lines.push(`${indent}export interface ${name} extends ${extendsList} {`);
+function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, indent: string, seated = false): void {
+	const emit = (name: string, extendsList: string, withNode: boolean, self = 'this', exported = true): void => {
+		lines.push(`${indent}${exported ? 'export ' : ''}interface ${name} extends ${extendsList} {`);
 		if (withNode) lines.push(`${indent}  readonly $type: ${surface.mainType}['$type'];`);
 		if (withNode)
-			lines.push(`${indent}  readonly $with: ${name === 'Bound' ? 'BoundWithNode' : 'WithNode'}<this, BoundByKindId, ParsedByKindId>;`);
+			lines.push(`${indent}  readonly $with: ${name.startsWith('Bound') ? 'BoundWithNode' : 'WithNode'}<${self}, BoundByKindId, ParsedByKindId>;`);
 		for (const member of surface.members) lines.push(`${indent}${member}`);
 		lines.push(`${indent}}`);
 	};
@@ -914,7 +923,12 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 		lines.push(`${indent}export interface Parsed extends Bound {}`);
 		return;
 	}
-	emit('Bound', `BoundOf<${surface.mainType}, BoundByKindId>, NodeMethodsOf`, true);
+	if (seated) {
+		emit('BoundSurface', `BoundOf<${surface.mainType}, BoundByKindId>, NodeMethodsOf`, true, 'Bound', false);
+		lines.push(`${indent}export type Bound = BoundSurface & FlatShapesOf<${surface.mainType}, BoundByKindId>;`);
+	} else {
+		emit('Bound', `BoundOf<${surface.mainType}, BoundByKindId>, NodeMethodsOf`, true);
+	}
 	emit('Parsed', `ParsedOf<${surface.mainType}, ParsedByKindId>, NodeMethodsOf`, true);
 }
 
@@ -1007,7 +1021,7 @@ function emitSlotHints(
 	if (groupSeats.length > 0) {
 		const flat = groupSeats.map((seat) => {
 			const keys = seat.keys.map((key) => `readonly ${JSON.stringify(key.name)}: ${JSON.stringify(key.field)}`).join('; ');
-			return `FlatHint<${JSON.stringify(seat.slot)}, T.${seat.group}, { ${keys} }, ${seat.optional}>`;
+			return `FlatHint<${JSON.stringify(seat.slot)}, T.${seat.group}, { ${keys} }, ${seat.optional}, ${JSON.stringify(seat.stored)}>`;
 		});
 		lines.push(`    readonly $flat: ${flat.join(' | ')};`);
 	}
@@ -1294,7 +1308,7 @@ function emitNamespaceSugarBlock(
 	const surface = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
 		? builtTypeSurfaceOf(node, nodeMap, kindEntries)
 		: undefined;
-	if (surface !== undefined) emitNodeSurfaceInterfaces(lines, surface, '  ');
+	if (surface !== undefined) emitNodeSurfaceInterfaces(lines, surface, '  ', groupSeatHints(node, nodeMap, kindEntries).length > 0);
 	else {
 		lines.push(`  export type Bound = BoundFor<${nsKey}>;`);
 		lines.push(`  export type Parsed = BoundFor<${nsKey}>;`);

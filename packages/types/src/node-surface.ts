@@ -19,12 +19,14 @@ export interface FlatHint<
 	Slot extends string,
 	Group,
 	Keys extends { readonly [Name: string]: string },
-	Optional extends boolean
+	Optional extends boolean,
+	Stored extends string = string
 > {
 	readonly slot: Slot;
 	readonly group: Group;
 	readonly keys: Keys;
 	readonly optional: Optional;
+	readonly stored: Stored;
 }
 type IsBroadNumber<X> = (<Y>() => Y extends number ? 1 : 2) extends <Y>() => Y extends X ? 1 : 2 ? true : false;
 export type NarrowTo<T, D extends number> = T extends number
@@ -48,6 +50,7 @@ type FlatAt<F, K extends PropertyKey> =
 	F extends FlatHint<infer S, unknown, { readonly [Name: string]: string }, boolean> ? ([K] extends [S] ? F : never) : never;
 type FlatNamed<F, N extends string> =
 	F extends FlatHint<string, unknown, infer Keys, boolean> ? (N extends keyof Keys ? F : never) : never;
+type FlatSeatSlots<F> = F extends FlatHint<infer S, unknown, { readonly [Name: string]: string }, boolean> ? S : never;
 type FlatKeyNames<Self> = FlatNames<FlatOf<Self>>;
 type FlatKeysOf<Self, K extends PropertyKey> = FlatNames<FlatAt<FlatOf<Self>, K>>;
 export type ListViewOf<Self> = HintsOf<Self> extends { readonly $listView: infer L } ? L : never;
@@ -78,7 +81,7 @@ export type ListView<E, O> = ReadonlyArray<E> & Readonly<O>;
 
 type MethodKeys<N> = keyof { [P in keyof N as N[P] extends () => unknown ? P : never]: 1 };
 type Accessors<N, ByKindId> = {
-	[P in MethodKeys<N> as P extends FlatKeyNames<N> ? never : P]: N[P] extends () => infer R
+	[P in MethodKeys<N> as P extends FlatKeyNames<N> | FlatSeatSlots<FlatOf<N>> ? never : P]: N[P] extends () => infer R
 		? () => Resolve<R, ByKindId>
 		: never;
 };
@@ -199,27 +202,61 @@ type ListPart<N, ByKindId> = [ListViewOf<N>] extends [never]
 		? ListView<Resolve<E, ByKindId>, O>
 		: {};
 
-type FlatAccessorNamed<F, P extends string, ByChild> =
+type FlatAccessorNamed<F, P extends string, ByChild, Absent extends boolean> =
 	F extends FlatHint<string, infer G, infer Keys, infer O>
 		? G[Keys[P & keyof Keys] & keyof G] extends () => infer R
-			? () => Resolve<O extends true ? R | undefined : R, ByChild>
+			? () => Absent extends true ? undefined : Resolve<O extends true ? R | undefined : R, ByChild>
 			: never
 		: never;
 
-type FlatAccessors<N, ByChild> = {
-	[P in FlatKeyNames<N> as [FlatAccessorNamed<FlatNamed<FlatOf<N>, P>, P, ByChild>] extends [never]
+type FlatAccessorsOf<N, F, ByChild, Absent extends boolean> = {
+	[P in FlatNames<F> as [FlatAccessorNamed<FlatNamed<F, P>, P, ByChild, Absent>] extends [never]
 		? never
-		: P]: FlatAccessorNamed<FlatNamed<FlatOf<N>, P>, P, ByChild>;
+		: P]: FlatAccessorNamed<FlatNamed<F, P>, P, ByChild, Absent>;
+} & {
+	[S in FlatSeatSlots<F> & MethodKeys<N> as S extends FlatNames<F> ? never : S]: N[S] extends () => infer R
+		? () => Absent extends true
+				? undefined
+				: Resolve<FlatAt<F, S> extends FlatHint<string, unknown, { readonly [Name: string]: string }, true> ? R : NonNullable<R>, ByChild>
+		: never;
 };
+
+type PresentShape<N, F, ByChild> =
+	F extends FlatHint<string, unknown, { readonly [Name: string]: string }, boolean, infer Stored>
+		? { readonly [K in Stored]: NonNullable<N[K & keyof N]> } & FlatAccessorsOf<N, NotOptional<F>, ByChild, false>
+		: never;
+
+type AbsentShape<N, F, ByChild> =
+	F extends FlatHint<string, unknown, { readonly [Name: string]: string }, boolean, infer Stored>
+		? { readonly [K in Stored]?: undefined } & FlatAccessorsOf<N, F, ByChild, true>
+		: never;
+
+type NotOptional<F> = F extends FlatHint<infer S, infer G, infer Keys, boolean, infer Stored> ? FlatHint<S, G, Keys, false, Stored> : never;
+
+type FlatShape<N, F, ByChild> =
+	F extends FlatHint<string, unknown, { readonly [Name: string]: string }, infer O>
+		? O extends true
+			? PresentShape<N, F, ByChild> | AbsentShape<N, F, ByChild>
+			: FlatAccessorsOf<N, F, ByChild, false>
+		: never;
+
+type IntersectionOf<U> = (U extends unknown ? (u: U) => void : never) extends (i: infer I) => void ? I : never;
+
+export type FlatShapesOf<N, ByBound> = [FlatOf<N>] extends [never]
+	? {}
+	: IntersectionOf<FlatOf<N> extends infer F ? (F extends unknown ? { readonly shape: FlatShape<N, F, ByBound> } : never) : never> extends {
+				readonly shape: infer S;
+		  }
+		? S
+		: {};
 
 type SurfaceOf<N, ByChild> = Storage<N> &
 	Accessors<N, ByChild> &
-	FlatAccessors<N, ByChild> &
 	ListPart<N, ByChild> & {
 		readonly $source?: AnyNodeData['$source'];
 		readonly __slotHints__?: HintsOf<N>;
 	};
 export type BoundOf<N, ByBound> = SurfaceOf<N, ByBound>;
-export type ParsedOf<N, ByParsed> = SurfaceOf<N, ByParsed>;
+export type ParsedOf<N, ByParsed> = SurfaceOf<N, ByParsed> & FlatAccessorsOf<N, FlatOf<N>, ByParsed, false>;
 export type WithNode<Self, ByBound, ByParsed> = WithOf<Self, ByBound, AdmitLookup<ByBound, ByParsed>>;
 export type BoundWithNode<Self, ByBound, ByParsed> = Setters<Self, ByBound, AdmitLookup<ByBound, ByParsed>, true>;

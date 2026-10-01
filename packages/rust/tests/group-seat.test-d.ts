@@ -54,3 +54,17 @@ export function flattenedKeyBesideTheWholeGroupIsAnError(): void {
 	// @ts-expect-error a group seated by its slot takes none of its keys beside it
 	engine.build.lastMatchArm({ pattern: whole, condition: engine.build.identifier('c'), value });
 }
+
+export function aRequiredSeatHasOneShape(arm: T.LastMatchArm.Bound): void {
+	expectTrue<Equals<undefined extends ReturnType<typeof arm.pattern> ? true : false, false>>();
+	expectTrue<Equals<undefined extends ReturnType<typeof arm.condition> ? true : false, true>>();
+	expectTrue<Equals<Extract<ReturnType<typeof arm.pattern>, { readonly $type: T.MatchPattern['$type'] }>, never>>();
+}
+
+export function anOptionalSeatNarrowsOnItsStoredProperty(block: T.MatchBlock.Bound): void {
+	if (block._match_block_arms !== undefined) {
+		expectTrue<Equals<undefined extends ReturnType<typeof block.matchBlockArms> ? true : false, false>>();
+	} else {
+		expectTrue<Equals<ReturnType<typeof block.lastArm>, undefined>>();
+	}
+}
