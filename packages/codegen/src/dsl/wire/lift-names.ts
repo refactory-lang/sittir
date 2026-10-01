@@ -10,6 +10,12 @@ export function liftRenames(liftNames: ReadonlyMap<string, LiftName> | undefined
 	return new Map([...(liftNames ?? [])].map(([liftName, named]) => [liftName, named.name]));
 }
 
+export function assertNoRenamedExternal(externals: Iterable<string>, liftNames: ReadonlyMap<string, LiftName>): void {
+	for (const name of externals) {
+		if (liftNames.has(name)) throw new Error(`resolveLiftNames: the renamed lift '${name}' is an external, whose name is read before any rule runs`);
+	}
+}
+
 export function resolveLiftNames(
 	bodies: Map<string, unknown>,
 	liftNames: ReadonlyMap<string, LiftName>,
@@ -19,8 +25,8 @@ export function resolveLiftNames(
 	if (liftNames.size === 0) return;
 	for (const liftName of liftNames.keys()) {
 		if (!mints.has(liftName)) throw new Error(`resolveLiftNames: '${liftName}' carries a variant name but is not a rule enrich minted`);
-		if (externals.has(liftName)) throw new Error(`resolveLiftNames: the renamed lift '${liftName}' is an external, whose name is read before any rule runs`);
 	}
+	assertNoRenamedExternal(externals, liftNames);
 	for (const [ruleName, body] of bodies) {
 		const refs = new Set<string>();
 		collectSymbolRefs(body, refs);

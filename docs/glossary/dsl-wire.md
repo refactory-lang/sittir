@@ -1639,6 +1639,18 @@ The hook checks that the base body the runtime passes is the one wire holds and 
 evaluates callbacks against wire's base bodies, and a runtime handing a different body would be evaluated
 against the wrong one.
 
+### `packages/codegen/src/dsl/wire/wire.ts::recordingExternals`
+
+The `externals` callback wire hands the runtime. It calls the config's callback (or passes the base list through), records the names it returned on `WireContext.evaluatedExternals`, and returns the list unchanged: an external is never renamed, because a renamed lift among the externals is an error. The names are recorded from the one call the runtime makes; wire never calls the callback itself. It also checks the names against the lift names known at that moment, so a runtime that read `externals` after the rules would still throw.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.evaluatedExternals`
+
+The names the grammar's `externals` callback returned, empty until the runtime calls it. The rule hook's drain checks renamed lifts against it.
+
+### `packages/codegen/src/dsl/wire/lift-names.ts::assertNoRenamedExternal`
+
+Throws when a name among the externals carries a lift rename, naming the lift.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::renamingWord`
 
 The `word` callback wire hands the runtime, so `word` goes through the same lift renames as the name lists. A
@@ -1994,5 +2006,5 @@ not exist.
 
 Resolves every reference to a renamed enrich lift through `liftNames`, over the bodies of every rule: it is a whole-grammar operation of the rule hook (`wrapRuleHook`), run once after every rule callback has been called. A patch names a lift at one site, but a shared lift is referenced from owners no patch reaches, and from rules evaluated before the renaming site; resolving over all bodies is independent of that order, and both the tree-sitter run and sittir's evaluate see the final name. It rewrites references in rule bodies only (`renameRule`); the site registered the rule under its final name. The name lists and `word` are renamed by wire's own callbacks (`renamingCallback`, `renamingWord`), which both runtimes call after the rules.
 
-Every `liftNames` key must be a rule enrich minted, else it throws. A renamed lift that is an external throws, naming the lift: both runtimes read `externals` before any rule runs, so that list cannot follow the rename. A reference is matched by name alone, so a reference that lost its lift metadata is still resolved. A lift whose variant was hoisted (`LiftName.hoisted`) is not a pure rename: a rule that still references it throws, naming the lift and the rule, because giving that reference the variant's name would change what the rule matches.
+Every `liftNames` key must be a rule enrich minted, else it throws. A renamed lift that is an external throws, naming the lift (`assertNoRenamedExternal`): both runtimes read `externals` before any rule runs, so that list cannot follow the rename. The externals checked are the effective list, the names the grammar's `externals` callback returned (`WireContext.evaluatedExternals`), not the base's: a config may add an external or remove one. A reference is matched by name alone, so a reference that lost its lift metadata is still resolved. A lift whose variant was hoisted (`LiftName.hoisted`) is not a pure rename: a rule that still references it throws, naming the lift and the rule, because giving that reference the variant's name would change what the rule matches.
 

@@ -24,7 +24,7 @@ import {
 } from '../primitives/variant.ts';
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
-import { liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
+import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
 import { rulesEqual, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichMints, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
@@ -96,6 +96,7 @@ export interface WireContext {
 	activePatchSites: readonly string[];
 	readonly source: unknown;
 	readonly authorsNothing: boolean;
+	evaluatedExternals: ReadonlySet<string>;
 }
 
 export interface RefineForm {
@@ -327,7 +328,8 @@ export function withWireContext<T>(
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
 		source: base,
-		authorsNothing: false
+		authorsNothing: false,
+		evaluatedExternals: new Set()
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -542,7 +544,8 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, authorsN
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
 		source,
-		authorsNothing
+		authorsNothing,
+		evaluatedExternals: new Set()
 	};
 
 	const patches = cfg.patches ?? {};
@@ -572,22 +575,27 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, authorsN
 	}
 	recordAliasTargets(outRules, context);
 	wrapRuleHook(outRules, context, [
-		(bodies) => resolveLiftNames(bodies, context.liftNames, getEnrichMints(base), baseExternalNames(baseArg))
+		(bodies) => resolveLiftNames(bodies, context.liftNames, getEnrichMints(base), context.evaluatedExternals)
 	]);
 
 	const inline = wrapInlineCallback(cfg.inline as DollarFn<unknown[]> | undefined, context);
 	const supertypes = wrapSupertypesCallback(cfg.supertypes as DollarFn<unknown[]> | undefined, context);
 
 	const renamedCallbacks = Object.fromEntries(
-		(['extras', 'externals', 'precedences'] as const)
+		(['extras', 'precedences'] as const)
 			.filter((key) => key in cfg || baseDeclares(baseArg, key))
 			.map((key) => [key, renamingCallback(cfg[key as keyof typeof cfg] as (() => unknown) | undefined, renameNameList, context)])
 	);
+	const externals =
+		'externals' in cfg || baseDeclares(baseArg, 'externals')
+			? { externals: recordingExternals(cfg.externals as DollarFn<unknown> | undefined, context) }
+			: {};
 
 	const wired = {
 		...cfg,
 		rules: outRules,
 		...renamedCallbacks,
+		...externals,
 		...(cfg.reserved === undefined ? {} : { reserved: renamingReserved(cfg.reserved, context) }),
 		...renamingWord(cfg.word as DollarFn<unknown> | undefined, baseWordOf(baseArg), context),
 		conflicts: undefined,
@@ -652,6 +660,15 @@ function renamingReserved(reserved: unknown, context: WireContext): unknown {
 function baseDeclares(base: BaseArg | undefined, key: string): boolean {
 	const grammar = (base?.grammar ?? base) as Record<string, unknown> | undefined;
 	return grammar?.[key] !== undefined;
+}
+
+function recordingExternals(user: DollarFn<unknown> | undefined, context: WireContext): DollarFn<unknown> {
+	return function recordedExternals(this: unknown, $: unknown, previous?: unknown) {
+		const value = user === undefined ? previous : user.call(this, $, previous);
+		context.evaluatedExternals = symbolNamesOf(value);
+		assertNoRenamedExternal(context.evaluatedExternals, context.liftNames);
+		return value;
+	};
 }
 
 function renamingCallback<F extends (...args: never[]) => unknown>(

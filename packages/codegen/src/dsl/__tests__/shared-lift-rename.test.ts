@@ -30,7 +30,7 @@ function enrichedBase(mints: readonly string[], externals: readonly Rule[] = [],
 
 const $ = new Proxy({}, { get: (_target, name: string) => symbol(name) });
 
-function wiredWith(base: GrammarJson, hoisted: boolean, calls: string[] = []) {
+function wiredWith(base: GrammarJson, hoisted: boolean, calls: string[] = [], externals?: (d: unknown, previous: unknown) => unknown) {
 	return wire<GrammarJson>(
 		{
 			name: 'sample',
@@ -40,8 +40,9 @@ function wiredWith(base: GrammarJson, hoisted: boolean, calls: string[] = []) {
 					wireRenameLift('list_quantifier', 'suffix', hoisted);
 					return seq(literal('['), symbol('suffix'));
 				}
-			}
-		},
+			},
+			...(externals === undefined ? {} : { externals })
+		} as never,
 		base
 	);
 }
@@ -101,8 +102,36 @@ describe('lift names resolve over every rule on the first rule callback', () => 
 		expect((wired as unknown as { word: (d: unknown) => unknown }).word($)).toEqual(symbol('suffix'));
 	});
 
-	it('rejects a renamed lift that is an external', () => {
-		const wired = wiredWith(enrichedBase(['list_quantifier'], [symbol('list_quantifier')]), false);
+	type Externals = (d: unknown, previous: unknown) => unknown;
+	const externalsOf = (wired: unknown): Externals => (wired as { externals: Externals }).externals;
+	const lift = [symbol('list_quantifier')];
+
+	it('rejects a renamed lift that is a base external, when the runtime reads externals before the rules', () => {
+		const wired = wiredWith(enrichedBase(['list_quantifier'], lift), false);
+		externalsOf(wired)($, lift);
 		expect(() => wired.rules['grouping']!($, undefined)).toThrow(/list_quantifier.*external/);
+	});
+
+	it('rejects it when the runtime reads externals after the rules', () => {
+		const wired = wiredWith(enrichedBase(['list_quantifier'], lift), false);
+		wired.rules['grouping']!($, undefined);
+		expect(() => externalsOf(wired)($, lift)).toThrow(/list_quantifier.*external/);
+	});
+
+	it('rejects a renamed lift the config adds to externals, in either order', () => {
+		const adds: Externals = (d, previous) => [...(previous as Rule[]), (d as Record<string, Rule>).list_quantifier!];
+		const first = wiredWith(enrichedBase(['list_quantifier']), false, [], adds);
+		externalsOf(first)($, []);
+		expect(() => first.rules['grouping']!($, undefined)).toThrow(/list_quantifier.*external/);
+		const second = wiredWith(enrichedBase(['list_quantifier']), false, [], adds);
+		second.rules['grouping']!($, undefined);
+		expect(() => externalsOf(second)($, [])).toThrow(/list_quantifier.*external/);
+	});
+
+	it('accepts a renamed lift the config removes from the base externals', () => {
+		const removes: Externals = () => [];
+		const wired = wiredWith(enrichedBase(['list_quantifier'], lift), false, [], removes);
+		expect(externalsOf(wired)($, lift)).toEqual([]);
+		expect(wired.rules['grouping']!($, undefined)).toEqual(seq(literal('('), symbol('suffix')));
 	});
 });
