@@ -1,19 +1,15 @@
 import {
-	ALIAS,
 	CHOICE,
 	FIELD,
 	OPTIONAL,
 	PATTERN,
-	REPEAT,
-	REPEAT1,
 	SEQ,
 	STRING,
 	SUPERTYPE,
 	SYMBOL,
-	TOKEN,
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, ChoiceRule, RuleBase, Multiplicity, SeqRule, SimplifiedRule } from '../types/rule.ts';
-import { isLiteralChoiceContent, isNonterminalRuleType } from '../dsl/rule-patterns.ts';
+import { isLiteralChoiceContent } from '../dsl/rule-patterns.ts';
 import { sharedArmAttrs } from '../dsl/rule-attrs.ts';
 import {
 	AssembledNonterminal,
@@ -29,6 +25,13 @@ import {
 	stampListFactsOnValues
 } from './model/node-map.ts';
 import { findRepeatFlag } from '../dsl/rule-transforms.ts';
+import {
+	carriesNamedField,
+	degenerateArmFieldName,
+	partitionChoiceArms,
+	simplifyArmStage,
+	unionRoutingGateB
+} from '../dsl/choice-arm-partition.ts';
 
 function findNestedSeparator(rule: AnyRule): RuleBase<'normalize'>['separator'] {
 	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
@@ -82,87 +85,9 @@ function strongestArmMultiplicity(rule: AnyRule): Multiplicity | undefined {
 	return sharedArmAttrs(rule).strongestMultiplicity;
 }
 
-function carriesNamedField(rule: AnyRule): boolean {
-	if ((rule as { fieldName?: string }).fieldName !== undefined) return true;
-	switch (rule.type) {
-		case SEQ:
-		case CHOICE:
-			return rule.members.some(carriesNamedField);
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case FIELD:
-		case TOKEN:
-		case ALIAS:
-			return carriesNamedField((rule as { content: AnyRule }).content);
-		default:
-			return false;
-	}
-}
-
 export function isStructuralChoice(rule: ChoiceRule<'simplify'>): boolean {
 	if (sharedArmFieldName(rule) !== undefined) return false;
-	return rule.members.some((m) => (m.type === SEQ && m.members.length > 1) || carriesNamedField(m));
-}
-
-export interface ChoiceArmPartition {
-	degenerateNamedArms: SimplifiedRule[];
-	structuredNamedArms: SimplifiedRule[];
-	unionArms: SimplifiedRule[];
-	literalArms: SimplifiedRule[];
-	structuredArms: SimplifiedRule[];
-}
-
-function isDegenerateFieldArm(m: SimplifiedRule): boolean {
-	let node = m;
-	while (node.type === SEQ && node.members.length === 1) node = node.members[0]!;
-	if (node.type === SEQ || node.type === CHOICE) return false;
-	return (node as { fieldName?: string }).fieldName !== undefined && isSlotNode(node);
-}
-
-function degenerateArmFieldName(m: SimplifiedRule): string | undefined {
-	let node = m;
-	while (node.type === SEQ && node.members.length === 1) node = node.members[0]!;
-	return (node as { fieldName?: string }).fieldName;
-}
-
-export function partitionChoiceArms(rule: ChoiceRule<'simplify'>): ChoiceArmPartition {
-	const out: ChoiceArmPartition = {
-		degenerateNamedArms: [],
-		structuredNamedArms: [],
-		unionArms: [],
-		literalArms: [],
-		structuredArms: []
-	};
-	const classify = (m: SimplifiedRule): void => {
-		if (carriesNamedField(m)) {
-			(isDegenerateFieldArm(m) ? out.degenerateNamedArms : out.structuredNamedArms).push(m);
-			return;
-		}
-		if (m.type === SEQ) {
-			if (m.members.length === 1) {
-				classify(m.members[0]!);
-				return;
-			}
-			out.structuredArms.push(m);
-			return;
-		}
-		if (m.type === CHOICE) {
-			out.structuredArms.push(m);
-			return;
-		}
-		if (isSlotNode(m)) {
-			out.unionArms.push(m);
-			return;
-		}
-		out.literalArms.push(m);
-	};
-	for (const m of rule.members) classify(m);
-	return out;
-}
-
-export function unionRoutingGateB(partition: ChoiceArmPartition): boolean {
-	return partition.unionArms.length > 0 && partition.structuredArms.length === 0 && partition.literalArms.length === 0;
+	return rule.members.some((m) => (m.type === SEQ && m.members.length > 1) || carriesNamedField(m, simplifyArmStage));
 }
 
 let unionSlotRouting = process.env['SITTIR_UNION_SLOT_ROUTING'] !== '0';
@@ -282,11 +207,6 @@ function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
 					: v
 		)
 	});
-}
-
-function isSlotNode(rule: SimplifiedRule): boolean {
-	if (rule.nonterminal !== undefined) return rule.nonterminal;
-	return isNonterminalRuleType(rule);
 }
 
 export type SlotDeriveCtx = Pick<DeriveCtx, 'kindEntries' | 'simplifiedRules' | 'lexical'>;
@@ -430,7 +350,7 @@ function withFieldNamedChild(rule: SeqRule<'simplify'>): SeqRule<'simplify'> {
 	const fieldName = (rule as { fieldName?: string }).fieldName;
 	if (fieldName === undefined) return rule;
 	const named = rule.members.filter(
-		(m) => (m as { fieldName?: string }).fieldName === undefined && isSlotNode(m) && !isLiteralChoiceContent(m)
+		(m) => (m as { fieldName?: string }).fieldName === undefined && simplifyArmStage.isSlotNode(m) && !isLiteralChoiceContent(m)
 	);
 	if (named.length !== 1) return rule;
 	return { ...rule, members: rule.members.map((m) => (m === named[0] ? { ...m, fieldName } : m)) };
@@ -474,7 +394,7 @@ function resolveMember(
 			if ((rule as { fieldName?: string }).fieldName === undefined && isStructuralChoice(rule)) {
 				const armMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
 				const choiceSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
-				const partition = partitionChoiceArms(rule);
+				const partition = partitionChoiceArms<SimplifiedRule>(rule, simplifyArmStage);
 				if (partition.structuredArms.length > 0 || partition.structuredNamedArms.length > 0) {
 					recordUnclassifiableShape(kindForName, rule, 'choice-with-structured-arms', diagnostics);
 				}
@@ -513,7 +433,7 @@ function resolveMember(
 						});
 					} else if (unionRoutingGateB(partition)) {
 						diagnostics?.assembleWarnings.record({
-							code: 'union-slot-routed',
+							code: repeated ? 'union-slot-routed-repeated' : 'union-slot-routed',
 							ownerKind: kindForName,
 							message:
 								`[collect-slots] kind '${kindForName ?? '(unknown)'}': ${site} routes ` +
@@ -521,12 +441,16 @@ function resolveMember(
 								`[${partition.unionArms.map(describeArmShape).join(', ')}] into one union slot` +
 								(partition.degenerateNamedArms.length > 0
 									? ` alongside ${partition.degenerateNamedArms.length} label-routed arm(s) ` +
-										`[${partition.degenerateNamedArms.map(describeArmShape).join(', ')}] (PR 1.5)`
+										`[${partition.degenerateNamedArms.map(describeArmShape).join(', ')}]` +
+										(repeated
+											? `. The list mixes slot topologies, so its elements cannot be read in order: give each ` +
+												`label-routed arm a kind of its own (variant(name) in patches:)`
+											: '')
 									: ' (pure union)'),
 							details: {
 								unionSlot: 'content',
 								degenerateFields: partition.degenerateNamedArms
-									.map((m) => degenerateArmFieldName(m))
+									.map((m) => degenerateArmFieldName(m, simplifyArmStage))
 									.filter((n): n is string => n !== undefined)
 							}
 						});
@@ -563,8 +487,7 @@ function resolveMember(
 									...partition.structuredArms.map((m) => `structured ${describeArmShape(m)}`),
 									...partition.literalArms.map((m) => `literal ${describeArmShape(m)}`)
 								].join(', ') +
-								`. Restructure via variant() / a real rule / field() in overrides, or await the ` +
-								`PR 3 group-mint widening.`
+								`. Restructure via variant() / a real rule / field() in overrides.`
 						});
 					}
 				}
@@ -573,13 +496,13 @@ function resolveMember(
 				);
 				return mergeChoiceArms(armSlots);
 			}
-			if (!isSlotNode(rule)) return [];
+			if (!simplifyArmStage.isSlotNode(rule)) return [];
 			const slot = buildSlot(rule, kindForName, deriveCtx, inherited, inheritedSeparator, undefined, diagnostics);
 			return slot ? [slot] : [];
 		}
 
 		default: {
-			if (!isSlotNode(rule)) return [];
+			if (!simplifyArmStage.isSlotNode(rule)) return [];
 			const slot = buildSlot(rule, kindForName, deriveCtx, inherited, inheritedSeparator, undefined, diagnostics);
 			return slot ? [slot] : [];
 		}

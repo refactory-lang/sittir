@@ -21,7 +21,7 @@ function listSetters(grammar: string): ListSetter[] {
 		if (withAt < 0) continue;
 		const setters = body
 			.slice(withAt)
-			.matchAll(/(\w+): \((\.\.\.)?\w+: [^=]*?\) =>\s*wrap\w+\(\{ \.\.\.\$edited\(data\), (_\w+):/gs);
+			.matchAll(/(\w+): \((\.\.\.)?\w+: [^=]*?\) =>\s*wrap\w+\(\s*\{\s*\.\.\.\$edited\(data\),\s*(_\w+):/gs);
 		for (const [, setter, rest, key] of setters) {
 			const stored = new RegExp(`\\b${key}: storeExpanded\\(\\s*([^.]{0,200})data\\.`, 's').exec(body)?.[1] ?? '';
 			if (rest !== undefined || /normalizeRepeatedWrapSlot|splitElidedWrapSlot/.test(stored)) {
@@ -32,10 +32,15 @@ function listSetters(grammar: string): ListSetter[] {
 	return found;
 }
 
+// How many list setters the census must find in each grammar. A count that
+// moves means the grammar's surface changed, or the matcher stopped seeing
+// some setters; either way the census is no longer what it claims to cover.
+const LIST_SETTER_COUNTS: Readonly<Record<string, number>> = { python: 20, regex: 3, rust: 33, scm: 12, typescript: 29 };
+
 describe('list-valued $with setters', () => {
 	it.each(stableGrammars().map((grammar) => [grammar]))('%s: every one takes rest arguments', (grammar) => {
 		const setters = listSetters(grammar);
-		expect(setters.length).toBeGreaterThan(0);
+		expect(setters.length).toBe(LIST_SETTER_COUNTS[grammar]);
 		expect(setters.filter((setter) => !setter.rest).map((setter) => `${setter.node}.${setter.setter}`)).toEqual([]);
 	});
 });

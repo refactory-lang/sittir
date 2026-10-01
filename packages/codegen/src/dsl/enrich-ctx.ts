@@ -34,6 +34,7 @@ export type EnrichMintKind = 'keyword' | 'hidden-subsequence' | 'visible-subsequ
 export type EnrichRuleOrigin =
 	| { readonly kind: EnrichMintKind }
 	| { readonly kind: 'promoted-group'; readonly visibleName: string }
+	| { readonly kind: 'element-supertype'; readonly slot: string; readonly authoredSlot: boolean }
 	| { readonly kind: 'text'; readonly owners: readonly string[] };
 
 export interface ClauseHoistState {

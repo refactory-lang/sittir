@@ -2029,53 +2029,6 @@ describe('class_body', () => {
 	});
 });
 
-describe('class_body sub-factories', () => {
-	it('method builds the class_body_method form', () => {
-		const node = ir.classBody.method({
-			methodDefinition: {
-				$type: TSKindId.MethodDefinition,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
-				_parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any,
-				_body: { $type: TSKindId.StatementBlock, $text: 'test', $source: 2, $named: true } as any
-			} as any
-		});
-		expect(node.$type).toBe(TSKindId.ClassBodyMethod);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('methodSig builds the class_body_method_sig form', () => {
-		const node = ir.classBody.methodSig({
-			methodSignature: {
-				$type: TSKindId.MethodSignature,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
-				_parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
-			} as any,
-			terminator: '\n'
-		});
-		expect(node.$type).toBe(TSKindId.ClassBodyMethodSig);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-	it('member builds the class_body_member form', () => {
-		const node = ir.classBody
-			.member({
-				$type: TSKindId.AbstractMethodSignature,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any,
-				_parameters: { $type: TSKindId.FormalParameters, $text: 'test', $source: 2, $named: true } as any
-			} as any)
-			.$with.terminator(TSKindId.AutomaticSemicolon);
-		expect(node.$type).toBe(TSKindId.ClassBodyMember);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
 describe('formal_parameters', () => {
 	it('factory produces correct type', () => {
 		const node = ir.formalParameters();
@@ -3097,10 +3050,11 @@ describe('enum_body', () => {
 describe('enum_body sub-factories', () => {
 	it('elements builds the parent', () => {
 		const node = ir.enumBody.elements({
-			$type: TSKindId.NumberDecimal,
+			$type: TSKindId.EnumBodyElementName,
 			$text: 'test',
 			$source: 2,
-			$named: true
+			$named: true,
+			_name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
 		} as any);
 		expect(node.$type).toBe(TSKindId.EnumBody);
 		expect((node as any).enumBodyElements()?.$type).toBe(TSKindId.EnumBodyElements);
@@ -4434,14 +4388,30 @@ describe('formal_parameters_elements', () => {
 describe('enum_body_elements', () => {
 	it('factory produces correct type', () => {
 		const node = ir.enumBodyElements(
-			...[{ $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any]
+			...[
+				{
+					$type: TSKindId.EnumBodyElementName,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
 		);
 		expect(node.$type).toBe(TSKindId.EnumBodyElements);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.enumBodyElements(
-			...[{ $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any]
+			...[
+				{
+					$type: TSKindId.EnumBodyElementName,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
 		);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});

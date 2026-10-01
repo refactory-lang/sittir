@@ -58,18 +58,6 @@ exists only for the agreement check.
  */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::wireRegisterSymbolRename`
-
-```text
-/**
- * Record that a rule symbol was renamed during transform resolution
- * (a variant() rename of an existing SYMBOL member, or a group-lift
- * deposit replacing an alias's content symbol). Wire's list callbacks
- * (`extras`, `externals`, `precedences`, `inline`, `supertypes`) rewrite
- * the old name to the new one, and the conflict-derivation records map
- * the new name back to the old (`derivation-records.ts`).
- */
-```
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireHasAuthoredRule`
 
@@ -341,9 +329,9 @@ The variant records: every SYMBOL reference that carries `annotations.variantOf`
 
 ### `packages/codegen/src/dsl/wire/derivation-records.ts::attachDerivationRecords`
 
-Builds the records once, in `sittirGrammar`, after the `grammar()` call has run every rule callback, so wire's rename map is complete. One edge per rule, set from two records in order, the later winning:
+Builds the records once, in `sittirGrammar`, after the `grammar()` call has run every rule callback, so `liftNames` is complete. One edge per rule, set from two records in order, the later winning:
 
-1. a symbol rename (a lift renamed onto its hoisted name is recorded as a rename, `wireRenameLift`) maps the new name to the old one;
+1. a lift rename (`liftNames`, written by `wireRenameLift`) maps the new name to the lift's;
 2. a variant maps to its `variantOf` owner. It wins over a rename: a hoisted variant made from a lift is both renamed from the lift's mint name and a variant of its parent, and the parent is the upstream rule, while the lift name is a mint with no upstream source.
 
 A name the upstream grammar defines (a rule or an external) never gets an edge; it is its own source. Automatic arm labels put `variantOf` on references to existing upstream rules too, and an upstream rule is not reshaped by being labelled. A promoted group gets no edge: it is an upstream rule unchanged, and its visible name is an alias, which a conflict report never names. Any other enrich mint has no record here and so no source.
@@ -936,7 +924,7 @@ body-pattern substitution.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::authoredFieldSites`
 
-The index paths each kind's authored patches mark with `field()`, read from `patches:` (every patch map of an entry, in order). Only all-index paths count; a path with a field-name or kind-match segment addresses no fixed position. Enrich receives the map as `fieldSites`, so the token-form hoist knows which choices are fields' values before any patch is applied.
+The sites each kind's authored patches mark with `field()`, each an index path and the field's name, read from `patches:` (every patch map of an entry, in order). Only all-index paths count; a path with a field-name or kind-match segment addresses no fixed position. Enrich receives the map as `fieldSites`, so the token-form hoist knows which choices are fields' values, and an element supertype knows its slot's authored name, before any patch is applied.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::baseSupertypeNamesOf`
 
@@ -1004,11 +992,25 @@ A lift's current body: the overlay's patched body, else the base body.
 Records a patched lift body in the active wire context's overlay, and credits the lift to the patch sites
 applying (`recordLiftClaim`).
 
+### `packages/codegen/src/dsl/wire/wire.ts::wireWithLiftScope`
+
+Runs a patch descent inside a lift. For an element supertype the supertype becomes the current rule kind for the descent, so a `variant()` reached through it is named `<supertype without the underscore>_<variant>` by the same `polymorphVisibleName` call as any other variant and is labelled a variant of the supertype. Any other lift runs the descent unchanged.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireElementSlotOf`
+
+The slot name of an element supertype (`getEnrichElementSupertypes`), or `undefined` for any other name.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireLiftRenamedTo`
+
+The lift a name was given to by `wireRenameLift`, or `undefined`. A shared supertype has one body, so a second owner's patch reaches an arm the first owner already renamed; resolving the name back to its lift keeps the one-kind-one-name check on that path.
+
+### `packages/codegen/src/dsl/wire/wire.ts::elementSupertypesOf`
+
+The element supertypes a kind's enriched body references. `injectPlaceholderHiddenRules` declares a `variant()` patch's rule name under the kind and under each of them, because the rule callbacks have not run when names are declared and the patch may resolve under either parent.
+
 ### `packages/codegen/src/dsl/wire/wire.ts::wireRenameLift`
 
-Renames an enrich lift to a patch-chosen name (`wireRegisterSymbolRename`) and credits the lift to the patch
-sites applying. With `wireSetLiftBody` it is the only writer of a lift, so every lift a patch touches is recorded
-as evidence where the patch touches it.
+Records a patch-chosen name on an enrich lift (`liftNames`) and credits the lift to the patch sites applying. A lift is one kind, so the name is a fact about the lift and not about the site that reached it: a second owner giving the same lift a different name throws. `hoisted` marks a variant whose body is not the lift's own (`buildHoistedVariants`). With `wireSetLiftBody` it is the only writer of a lift, so every lift a patch touches is recorded as evidence where the patch touches it.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireWithPatchSites`
 
@@ -1058,13 +1060,17 @@ Records a `PatchSite` on the active wire context; a no-op outside one.
 /** Hidden-rule name → captured content body. */
 ```
 
-### `packages/codegen/src/dsl/wire/wire.ts::symbolRenames`
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext.liftNames`
 
-```text
-/** Old rule-symbol name → the name transform resolution renamed it to;
- *  consumed by wire's list-callback renames and by the conflict-derivation
- *  records, which follow it back to the upstream name. */
-```
+The one record of an enrich lift's final name: lift name → `LiftName`. `wireRenameLift` is its only writer. Wire's list callbacks read it through `liftRenames`, `resolveLiftNames` resolves every reference through it, and the conflict-derivation records follow it back to the lift.
+
+### `packages/codegen/src/dsl/wire/wire.ts::LiftName`
+
+A lift's final name, and `hoisted`: true when the variant registered under that name is the lift's body hoisted into its parent's scaffolding, so the two rules do not match the same text.
+
+### `packages/codegen/src/dsl/wire/wire.ts::liftRenames`
+
+The lift name → final name view of `liftNames`, in the shape `renameRule` and `renameNameList` take.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::syntheticInline`
 
@@ -1967,3 +1973,13 @@ were how a default reached every site sharing a label before `options:` could
 address a site by its path; a key that parses as one and names no rule says so
 here rather than falling through to the patch machinery as a rule that does
 not exist.
+
+### `packages/codegen/src/dsl/wire/lift-names.ts::resolveLiftNames`
+
+Resolves every reference to a renamed enrich lift through `liftNames`, over the finished grammar: `sittirGrammar` runs it after `grammar()` has called every rule callback and before `blankDeadEnrichMints`. A patch names a lift at one site, but a shared lift is referenced from owners no patch reaches, and from rules evaluated before the renaming site; resolving here is independent of that order, and both the tree-sitter run and sittir's evaluate see the final name. It rewrites references only (`renameRule` on each rule, `renameNameList` on `inline`, `supertypes`, `conflicts`, `precedences`, `extras`, `externals`, and `word`); the site registered the rule under its final name, and the old lift rule, now unreferenced, is blanked as a dead mint. The rule order is unchanged.
+
+Every `liftNames` key must be a rule enrich minted, else it throws. A reference is matched by name alone, so a reference that lost its lift metadata is still resolved. A lift whose variant was hoisted (`LiftName.hoisted`) is not a pure rename: a rule that still references it throws, naming the lift and the rule, because giving that reference the variant's name would change what the rule matches.
+
+### `packages/codegen/src/dsl/wire/lift-names.ts::NAME_LISTS`
+
+The grammar lists that name rules, each rewritten with `renameNameList`.

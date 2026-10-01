@@ -110,7 +110,6 @@ export const scopedTypeIdentifierInExpressionPosition: Hoisted<typeof O.scopedTy
 export const scopedTypeIdentifier: Hoisted<typeof O.scopedTypeIdentifier> = hoistAs<typeof O.scopedTypeIdentifier>(
 	O.scopedTypeIdentifier
 );
-export const rangeExpression: Hoisted<typeof O.rangeExpression> = hoistAs<typeof O.rangeExpression>(O.rangeExpression);
 export const unaryExpression: Hoisted<typeof O.unaryExpression> = hoistAs<typeof O.unaryExpression>(O.unaryExpression);
 export const tryExpression: Hoisted<typeof O.tryExpression> = hoistAs<typeof O.tryExpression>(O.tryExpression);
 export const binaryExpression: Hoisted<typeof O.binaryExpression> = hoistAs<typeof O.binaryExpression>(
@@ -258,6 +257,7 @@ export const structItem: Hoisted<typeof O.structItem> = hoistAs<typeof O.structI
 export const implItem: Hoisted<typeof O.implItem> = hoistAs<typeof O.implItem>(O.implItem);
 export const pointerType: Hoisted<typeof O.pointerType> = hoistAs<typeof O.pointerType>(O.pointerType);
 export const delimTokenTree: Hoisted<typeof O.delimTokenTree> = hoistAs<typeof O.delimTokenTree>(O.delimTokenTree);
+export const rangeExpression: Hoisted<typeof O.rangeExpression> = hoistAs<typeof O.rangeExpression>(O.rangeExpression);
 export const referenceExpression: Hoisted<typeof O.referenceExpression> = hoistAs<typeof O.referenceExpression>(
 	O.referenceExpression
 );

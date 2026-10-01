@@ -225,6 +225,10 @@ export const declaration: typeof F.declaration = F.declaration;
 
 export const pattern: typeof F.pattern = F.pattern;
 
+export const classBodyMember: typeof F.classBodyMember = F.classBodyMember;
+
+export const enumBodyElement: typeof F.enumBodyElement = F.enumBodyElement;
+
 export const statement: typeof F.statement = F.statement;
 
 export const ir: {
@@ -440,6 +444,8 @@ export const ir: {
 	readonly whitespace: typeof whitespace;
 	readonly declaration: typeof declaration;
 	readonly pattern: typeof pattern;
+	readonly classBodyMember: typeof classBodyMember;
+	readonly enumBodyElement: typeof enumBodyElement;
 	readonly statement: typeof statement;
 	readonly synonym: typeof synonym;
 } = Object.freeze({
@@ -662,6 +668,8 @@ export const ir: {
 	whitespace,
 	declaration,
 	pattern,
+	classBodyMember,
+	enumBodyElement,
 	statement,
 	synonym
 });

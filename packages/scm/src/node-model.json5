@@ -1,10 +1,11 @@
 {
   "name": "scm",
   "root": "program",
-  "nodeCount": 59,
+  "nodeCount": 61,
   "word": null,
   "supertypes": [
     "_group_expression",
+    "_list_element",
     "_named_node_expression",
     "_node_identifier",
     "_whitespace",
@@ -62,33 +63,10 @@
       "childKind": {
         "escape_sequence": "escape_sequence"
       }
-    },
-    "list": {
-      "definedBy": "enrich",
-      "childKind": {
-        "capture": "capture"
-      }
-    },
-    "grouping": {
-      "definedBy": "enrich",
-      "childKind": {
-        "capture": "capture"
-      }
-    },
-    "missing_node": {
-      "definedBy": "enrich",
-      "childKind": {
-        "capture": "capture"
-      }
-    },
-    "anonymous_node": {
-      "definedBy": "enrich",
-      "childKind": {
-        "capture": "capture"
-      }
     }
   },
   "variantRoutes": {
+    "list_element_quantifier": "listElement.quantifier",
     "named_node_group_anchored_last": "namedNodeGroup.anchoredLast",
     "named_node_group_children": "namedNodeGroup.children",
     "named_node_plain": "namedNode.plain",
@@ -186,7 +164,7 @@
         "multiple": true,
         "nonEmpty": true
       },
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -202,7 +180,7 @@
         "multiple": true,
         "nonEmpty": true
       },
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -218,7 +196,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -234,7 +212,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -293,6 +271,15 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "list_element_quantifier": {
+      "quantifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -360,7 +347,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -390,7 +377,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -521,6 +508,18 @@
       "stampExpression": "\"﷐\\n\" as const",
       "text": "﷐\n",
       "factoryShape": "constant"
+    },
+    {
+      "kind": "_list_element",
+      "modelType": "supertype",
+      "typeName": "ListElement",
+      "irKey": "listElement",
+      "hidden": true,
+      "transparent": true,
+      "subtypes": [
+        "capture",
+        "list_element_quantifier"
+      ]
     },
     {
       "kind": "_named_node_expression",
@@ -659,29 +658,22 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
-            "capture",
-            "quantifier"
+            "_list_element"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "capture",
-              "parseKind": "capture"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "quantifier",
-              "parseKind": "quantifier"
+              "name": "_list_element",
+              "parseKind": "_list_element"
             }
           ]
         }
@@ -689,7 +681,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "name",
-        "content"
+        "elements"
       ]
     },
     {
@@ -1082,29 +1074,22 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
-            "capture",
-            "quantifier"
+            "_list_element"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "capture",
-              "parseKind": "capture"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "quantifier",
-              "parseKind": "quantifier"
+              "name": "_list_element",
+              "parseKind": "_list_element"
             }
           ]
         }
@@ -1112,7 +1097,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "grouping_group",
-        "content"
+        "elements"
       ]
     },
     {
@@ -1265,29 +1250,22 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
-            "capture",
-            "quantifier"
+            "_list_element"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "capture",
-              "parseKind": "capture"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "quantifier",
-              "parseKind": "quantifier"
+              "name": "_list_element",
+              "parseKind": "_list_element"
             }
           ]
         }
@@ -1295,7 +1273,51 @@
       "factoryShape": "config",
       "factoryFields": [
         "definitions",
-        "content"
+        "elements"
+      ]
+    },
+    {
+      "kind": "list_element_quantifier",
+      "modelType": "envelope",
+      "typeName": "ListElementQuantifier",
+      "factoryName": "listElementQuantifier",
+      "irKey": "listElementQuantifier",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "quantifier",
+          "propertyName": "quantifier",
+          "paramName": "quantifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [
+            "quantifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "quantifier",
+              "parseKind": "quantifier"
+            }
+          ]
+        }
+      ],
+      "name": "list_element_quantifier",
+      "factoryShape": "direct",
+      "factoryFields": [
+        "quantifier"
+      ],
+      "bareAccepts": [
+        "plus",
+        "qmark",
+        "quantifier",
+        "star"
       ]
     },
     {
@@ -1344,29 +1366,22 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
-            "capture",
-            "quantifier"
+            "_list_element"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "capture",
-              "parseKind": "capture"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "quantifier",
-              "parseKind": "quantifier"
+              "name": "_list_element",
+              "parseKind": "_list_element"
             }
           ]
         }
@@ -1374,7 +1389,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "name",
-        "content"
+        "elements"
       ]
     },
     {
@@ -1723,29 +1738,22 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
-            "capture",
-            "quantifier"
+            "_list_element"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "capture",
-              "parseKind": "capture"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "quantifier",
-              "parseKind": "quantifier"
+              "name": "_list_element",
+              "parseKind": "_list_element"
             }
           ]
         }
@@ -1755,7 +1763,7 @@
       "factoryFields": [
         "name",
         "named_node_group",
-        "content"
+        "elements"
       ]
     },
     {
@@ -1837,29 +1845,22 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
-            "capture",
-            "quantifier"
+            "_list_element"
           ],
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "capture",
-              "parseKind": "capture"
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "quantifier",
-              "parseKind": "quantifier"
+              "name": "_list_element",
+              "parseKind": "_list_element"
             }
           ]
         }
@@ -1870,7 +1871,7 @@
         "supertype",
         "name",
         "named_node_group",
-        "content"
+        "elements"
       ]
     },
     {
