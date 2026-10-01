@@ -2615,6 +2615,10 @@ It takes the grammar's file types and stamps them on the raw grammar it builds, 
  */
 ```
 
+### `packages/codegen/src/compiler/evaluate.ts::evaluateExternalsCallback`
+
+Calls the grammar's `externals` callback and fills the externals sink, before any rule callback runs. tree-sitter's `grammar()` evaluates `externals` first, so sittir does the same: whatever an `externals` callback can observe of the rule callbacks is then the same in both runtimes (nothing has run yet). Every other list and `word` is evaluated after the rules in both (`evaluateMetadataCallbacks`).
+
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateRuleFunctions`
 
 ```text

@@ -244,6 +244,7 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 	};
 
 	const { roles: collectedRoles } = withRoleScope(() => {
+		evaluateExternalsCallback(opts, ctx);
 		evaluateRulesAndInjectSynthetics(rules, ctx);
 		evaluateMetadataCallbacksInScope(opts, ctx);
 	});
@@ -801,6 +802,17 @@ function appendCallbackMetadataNames(sink: string[], result: unknown): void {
 	}
 }
 
+function evaluateExternalsCallback(opts: GrammarOptions, ctx: EvaluateCtx): void {
+	if (!opts.externals) return;
+	const $ = createProxy();
+	const baseExternals = (ctx.baseGrammar as { externals?: RuleListEntry[] } | null)?.externals ?? [];
+	appendMetadataRules(opts.externals.call($, $, baseExternals), {
+		list: 'externals',
+		accepts: [SYMBOL, STRING],
+		sink: ctx.sinks.externals
+	});
+}
+
 function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void {
 	const { sinks, setWord } = ctx;
 	const baseGrammar = ctx.baseGrammar as {
@@ -820,15 +832,6 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 			list: 'extras',
 			accepts: [SYMBOL, STRING, PATTERN],
 			sink: sinks.extras
-		});
-	}
-
-	if (opts.externals) {
-		const $ = createProxy();
-		appendMetadataRules(opts.externals.call($, $, baseGrammar?.externals ?? []), {
-			list: 'externals',
-			accepts: [SYMBOL, STRING],
-			sink: sinks.externals
 		});
 	}
 

@@ -77,7 +77,7 @@ describe('tree-sitter generate runs the grammar entry itself', () => {
 	}, 60_000);
 });
 
-describe('both grammar runtimes evaluate the name lists and word after the rules', () => {
+describe('both grammar runtimes evaluate externals before the rules, and the other name lists and word after them', () => {
 	const entry = `let ran = false;
 const pick = (after: unknown, before: unknown): unknown => (ran ? after : before);
 export default grammar({
@@ -118,7 +118,7 @@ export default grammar({
 		expect(names(g.reserved)).toContain('extra_after');
 	}
 
-	it('holds for tree-sitter and for sittir; tree-sitter reads externals before any rule', async () => {
+	it('holds for tree-sitter and for sittir', async () => {
 		const dir = mkdtempSync(join(tmpdir(), 'sittir-list-order-'));
 		try {
 			const upstream = join(dir, 'node_modules', 'tree-sitter-probe');
@@ -135,8 +135,7 @@ export default grammar({
 			expectOrder(ts);
 			expectOrder(st);
 			expect(names(ts.externals)).toContain('ext_before');
-			// sittir differs from tree-sitter here: it evaluates externals after the rules.
-			expect(names(st.externals)).toContain('ext_after');
+			expect(names(st.externals)).toContain('ext_before');
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
 		}
