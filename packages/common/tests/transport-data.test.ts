@@ -16,12 +16,13 @@ const stub = (start: number, end: number, childIndex: number) => ({
 	$parentHandle: 0,
 	$childIndex: childIndex
 });
-/** A deep-read node: its own span and storage, and no handle of its own. */
+/** A child a read expanded: its own span and storage, and the tag of its tree. */
 const deep = (start: number, end: number, storage: Record<string, unknown>) => ({
 	$type: 4,
 	$source: 0,
 	$named: true,
 	$span: { start, end },
+	$treeHandle: 0,
 	...storage
 });
 
@@ -45,7 +46,7 @@ describe('toTransportData', () => {
 		});
 	});
 
-	it('folds a deep read, whose descendants carry a span and no handle of their own', () => {
+	it('folds a deep read by its root, whatever handles its descendants carry', () => {
 		const node = {
 			$type: 3,
 			$source: 0,
@@ -90,6 +91,18 @@ describe('toTransportData', () => {
 		};
 		const out = toTransportData(parent as never) as unknown as Record<string, unknown>;
 		expect(out._a).toEqual({ $type: 2, $source: 0, $named: true, $span: { start: 0, end: 4 }, $treeHandle: 0 });
+	});
+
+	it('folds an expanded child of an edited parent by its own span', () => {
+		const parent = {
+			$type: 3,
+			$source: 0,
+			$named: true,
+			_name: { $type: 9, $source: 2, $named: true, $text: 'g' },
+			_body: deep(8, 20, { _statements: [deep(10, 18, { _name: leaf('x', 10) })] })
+		};
+		const out = toTransportData(parent as never) as unknown as Record<string, unknown>;
+		expect(out._body).toEqual({ $type: 4, $source: 0, $named: true, $span: { start: 8, end: 20 }, $treeHandle: 0 });
 	});
 
 	it('does not fold a node whose own trivia sits outside its span, but folds over a child that carries some', () => {

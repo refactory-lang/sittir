@@ -241,7 +241,11 @@ The node a stub names, read `depth` levels (one when absent) and left unwrapped;
 
 ### `packages/common/src/transport-data.ts::treeHandleOf`
 
-The tree a node's handle names, whichever of `$handle` (its own), `$parentHandle` (a stub's coordinate, beside `$childIndex`) or `$treeHandle` (a node nothing re-reads) it carries. Every handle is tagged with its tree, so each identifies it; this is the TypeScript side of the Rust `NodeHandle::raw`. The fold uses it to decide a node still names its tree and emits it as the coordinate's `$treeHandle`; the generated wrap uses it to recognize a node that arrived as a coordinate.
+The tree a node's handle names, whichever of `$handle` (its own), `$parentHandle` (a stub's coordinate, beside `$childIndex`) or `$treeHandle` (a node nothing re-reads: a child a read expanded, a deep read's leaf, a trivia entry) it carries. Every handle is tagged with its tree, so each identifies it; this is the TypeScript side of the Rust `NodeHandle::raw`. The fold uses it to decide a node still names its tree and emits it as the coordinate's `$treeHandle`; the generated wrap uses it to recognize a node that arrived as a coordinate.
+
+### `packages/common/src/transport-data.ts::canFold`
+
+Whether a node crosses to the render as its coordinate (its span and the tree that span slices) in place of its storage: it names its tree, carries no trivia outside its span, and nothing below it was rebuilt. Read depth plays no part: an untouched node renders its source bytes however it was read. That holds because every node a read hands back names its tree: the read's root by its own handle, a stub by its parent's, and a child the read expanded by the tree's tag. An edit detaches the coordinate of the node it rebuilds, so each untouched child below it is then the node that folds, and it must be able to name the tree itself. Below the node that folds a span is the whole requirement, since its bytes carry everything under it. A node that cannot fold (it was rebuilt, or it owns leading or trailing trivia) crosses as its stored slots, which the generated wrap keeps in model shape at every level (`storeExpanded`).
 
 ### `packages/common/src/transport-data.ts::detachCoordinates`
 
