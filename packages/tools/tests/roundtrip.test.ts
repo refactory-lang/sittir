@@ -100,7 +100,11 @@ describe('exercise roundtrip helpers', () => {
 		expect(stderr).not.toHaveBeenCalled();
 	});
 
-	it.each(['rust', 'python', 'typescript'])('rebuilds every built-in %s case from an engine parse', async (grammar) => {
+	it.each([
+		['rust', 2],
+		['python', 10],
+		['typescript', 2]
+	])('rebuilds every built-in %s case from an engine parse', async (grammar, cases) => {
 		const lines: string[] = [];
 		vi.spyOn(process.stdout, 'write').mockImplementation((chunk) => {
 			lines.push(String(chunk));
@@ -109,6 +113,6 @@ describe('exercise roundtrip helpers', () => {
 
 		await expect(run({ grammar, kinds: [] })).resolves.toBe(0);
 
-		expect(lines.join('')).toMatch(/\n[1-9]\d* pass, 0 fail, 0 skip\n$/);
+		expect(lines.join('')).toMatch(new RegExp(`\\n${cases} pass, 0 fail, 0 skip\\n$`));
 	});
 });

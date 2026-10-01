@@ -188,13 +188,7 @@ function resolveCorpusCase(
 	kindNameFromId: KindNameFromId
 ): ExerciseCase | null {
 	for (const entry of common.loadCorpusEntries(grammar)) {
-		let root: unknown;
-		try {
-			root = engine.parse(entry.source);
-		} catch {
-			continue;
-		}
-		if (findFirstOfKind(root, kind, common, kindNameFromId) !== undefined) {
+		if (findFirstOfKind(engine.parse(entry.source), kind, common, kindNameFromId) !== undefined) {
 			return { kind, find: kind, source: entry.source, label: entry.name };
 		}
 	}
