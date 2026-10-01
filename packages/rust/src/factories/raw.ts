@@ -7,6 +7,7 @@ import type { AdmitBound, NonEmptyArray, WidenNumeric } from '@sittir/types';
 import {
 	withAccessors,
 	describeValue,
+	restItems,
 	isNodeOfKind,
 	admitAliasContent,
 	coerceBooleanKeywordStorage,
@@ -87,8 +88,8 @@ export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.So
 				_statements,
 				$with: {
 					shebang: (value?: T.Shebang) => buildSourceFile({ ...config, shebang: value }),
-					statements: (value?: NonNullable<T.SourceFile.Config>['statements']) =>
-						buildSourceFile({ ...config, statements: value })
+					statements: (...values: NonNullable<NonNullable<T.SourceFile.Config>['statements']>[number][]) =>
+						buildSourceFile({ ...config, statements: restItems('statements', values) })
 				}
 			},
 			{
@@ -254,7 +255,7 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 							| T.Metavariable
 							| T.NonSpecialToken
 						)[]
-					) => buildTokenRepetitionPattern({ ...config, tokenPatterns: values }),
+					) => buildTokenRepetitionPattern({ ...config, tokenPatterns: restItems('tokenPatterns', values) }),
 					separator: (value?: T.TokenRepetitionPatternText) =>
 						buildTokenRepetitionPattern({ ...config, separator: value }),
 					operator: (value: NonNullable<T.TokenRepetitionPattern.Config>['operator']) =>
@@ -297,7 +298,7 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenR
 				_operator,
 				$with: {
 					tokens: (...values: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
-						buildTokenRepetition({ ...config, tokens: values }),
+						buildTokenRepetition({ ...config, tokens: restItems('tokens', values) }),
 					separator: (value?: T.TokenRepetitionPatternText) => buildTokenRepetition({ ...config, separator: value }),
 					operator: (value: NonNullable<T.TokenRepetition.Config>['operator']) =>
 						buildTokenRepetition({ ...config, operator: value })
@@ -856,7 +857,9 @@ export function buildDeclarationList(
 				$source: 2 as const,
 				$named: true as const,
 				_declarations,
-				$with: { declarations: (...vs: T.DeclarationStatement[]) => buildDeclarationList(...vs) }
+				$with: {
+					declarations: (...vs: T.DeclarationStatement[]) => buildDeclarationList(...restItems('declarations', vs))
+				}
 			},
 			{
 				declarations: () => _declarations
@@ -1744,7 +1747,7 @@ export function buildFunctionModifiers(
 							| TSKindId.UnsafeKeyword
 							| T.ExternModifier
 						)[]
-					) => buildFunctionModifiers(...vs)
+					) => buildFunctionModifiers(...restItems('modifiers', vs))
 				}
 			},
 			{
@@ -2009,7 +2012,7 @@ export function buildTraitBounds(
 				_bounds,
 				$with: {
 					bounds: (...vs: ((T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types)[]) =>
-						buildTraitBounds(...vs)
+						buildTraitBounds(...restItems('bounds', vs))
 				}
 			},
 			{
@@ -4636,7 +4639,8 @@ export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleE
 					_attributes,
 					_tuple_expression_elements,
 					$with: {
-						attributes: (...values: T.AttributeItem[]) => buildTupleExpression({ ...config, attributes: values }),
+						attributes: (...values: T.AttributeItem[]) =>
+							buildTupleExpression({ ...config, attributes: restItems('attributes', values) }),
 						tupleExpressionElements: (value: T.TupleExpressionElements) =>
 							buildTupleExpression({ ...config, tupleExpressionElements: value })
 					}
@@ -4797,7 +4801,7 @@ export function buildShorthandFieldInitializer(
 				_name,
 				$with: {
 					attributes: (...values: T.AttributeItem[]) =>
-						buildShorthandFieldInitializer({ ...config, attributes: values }),
+						buildShorthandFieldInitializer({ ...config, attributes: restItems('attributes', values) }),
 					name: (value: T.Identifier) => buildShorthandFieldInitializer({ ...config, name: value })
 				}
 			},
@@ -4834,7 +4838,8 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): T.Fiel
 				_field,
 				_value,
 				$with: {
-					attributeItems: (...values: T.AttributeItem[]) => buildFieldInitializer({ ...config, attributeItem: values }),
+					attributeItems: (...values: T.AttributeItem[]) =>
+						buildFieldInitializer({ ...config, attributeItem: restItems('attributeItems', values) }),
 					field: (value: T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types) =>
 						buildFieldInitializer({ ...config, field: value }),
 					value: (value: NonNullable<T.FieldInitializer.Config>['value']) =>
@@ -4967,7 +4972,8 @@ export function buildLetChain(config: T.LetChain.Config): T.LetChain.Bound {
 				_right,
 				$with: {
 					left: (value: NonNullable<T.LetChain.Config>['left']) => buildLetChain({ ...config, left: value }),
-					rights: (value?: NonNullable<T.LetChain.Config>['right']) => buildLetChain({ ...config, right: value })
+					rights: (...values: NonNullable<NonNullable<T.LetChain.Config>['right']>[number][]) =>
+						buildLetChain({ ...config, right: restItems('rights', values) })
 				}
 			},
 			{
@@ -5091,7 +5097,7 @@ export function buildLastMatchArm(config: T.LastMatchArm.Config): T.LastMatchArm
 					_comma,
 					$with: {
 						attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
-							buildLastMatchArm({ ...config, attributes: values }),
+							buildLastMatchArm({ ...config, attributes: restItems('attributes', values) }),
 						pattern: (value: T.MatchPattern) => buildLastMatchArm({ ...config, pattern: value }),
 						value: (value: NonNullable<T.LastMatchArm.Config>['value']) =>
 							buildLastMatchArm({ ...config, value: value }),
@@ -5318,7 +5324,9 @@ export function buildClosureParameters(
 				$source: 2 as const,
 				$named: true as const,
 				_parameters,
-				$with: { parameters: (...vs: (T.Pattern | T.Parameter)[]) => buildClosureParameters(...vs) }
+				$with: {
+					parameters: (...vs: (T.Pattern | T.Parameter)[]) => buildClosureParameters(...restItems('parameters', vs))
+				}
 			},
 			{
 				parameters: () => _parameters
@@ -5678,8 +5686,8 @@ export function buildBlock(config: Partial<T.Block.Config> = {}): T.Block.Bound 
 				_trailing_expression,
 				$with: {
 					label: (value?: T.Label) => buildBlock({ ...config, label: value }),
-					statements: (value?: NonNullable<T.Block.Config>['statements']) =>
-						buildBlock({ ...config, statements: value }),
+					statements: (...values: NonNullable<NonNullable<T.Block.Config>['statements']>[number][]) =>
+						buildBlock({ ...config, statements: restItems('statements', values) }),
 					trailingExpression: (value?: NonNullable<T.Block.Config>['trailingExpression']) =>
 						buildBlock({ ...config, trailingExpression: value })
 				}
@@ -6058,7 +6066,7 @@ export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLite
 				$with: {
 					stringOpen: (value: T.StringOpen) => buildStringLiteral({ ...config, stringOpen: value }),
 					elements: (...values: (T.EscapeSequence | T.StringContent)[]) =>
-						buildStringLiteral({ ...config, elements: values })
+						buildStringLiteral({ ...config, elements: restItems('elements', values) })
 				}
 			},
 			{
@@ -8333,7 +8341,8 @@ export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config): 
 				_element,
 				_length,
 				$with: {
-					attributes: (...values: T.AttributeItem[]) => buildArrayExpressionSemi({ ...config, attributes: values }),
+					attributes: (...values: T.AttributeItem[]) =>
+						buildArrayExpressionSemi({ ...config, attributes: restItems('attributes', values) }),
 					element: (value: NonNullable<T.ArrayExpressionSemi.Config>['element']) =>
 						buildArrayExpressionSemi({ ...config, element: value }),
 					length: (value: NonNullable<T.ArrayExpressionSemi.Config>['length']) =>
@@ -8374,7 +8383,8 @@ export function buildArrayExpressionList(
 					_attributes,
 					_arguments_elements,
 					$with: {
-						attributes: (...values: T.AttributeItem[]) => buildArrayExpressionList({ ...config, attributes: values }),
+						attributes: (...values: T.AttributeItem[]) =>
+							buildArrayExpressionList({ ...config, attributes: restItems('attributes', values) }),
 						argumentsElements: (value?: T.ArgumentsElements) =>
 							buildArrayExpressionList({ ...config, argumentsElements: value })
 					}
@@ -9572,7 +9582,7 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 					_value,
 					$with: {
 						attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
-							buildMatchArmWithComma({ ...config, attributes: values }),
+							buildMatchArmWithComma({ ...config, attributes: restItems('attributes', values) }),
 						pattern: (value: T.MatchPattern) => buildMatchArmWithComma({ ...config, pattern: value }),
 						value: (value: NonNullable<T.MatchArmWithComma.Config>['value']) =>
 							buildMatchArmWithComma({ ...config, value: value })
@@ -9622,7 +9632,7 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 					_value,
 					$with: {
 						attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
-							buildMatchArmBlockEnding({ ...config, attributes: values }),
+							buildMatchArmBlockEnding({ ...config, attributes: restItems('attributes', values) }),
 						pattern: (value: T.MatchPattern) => buildMatchArmBlockEnding({ ...config, pattern: value }),
 						value: (
 							value:
@@ -9884,7 +9894,7 @@ export function buildTokenTreePatternParen(
 							| T.Metavariable
 							| T.NonSpecialToken
 						)[]
-					) => buildTokenTreePatternParen(...vs)
+					) => buildTokenTreePatternParen(...restItems('tokenPatterns', vs))
 				}
 			},
 			{
@@ -9928,7 +9938,7 @@ export function buildTokenTreePatternBracket(
 							| T.Metavariable
 							| T.NonSpecialToken
 						)[]
-					) => buildTokenTreePatternBracket(...vs)
+					) => buildTokenTreePatternBracket(...restItems('tokenPatterns', vs))
 				}
 			},
 			{
@@ -9972,7 +9982,7 @@ export function buildTokenTreePatternBrace(
 							| T.Metavariable
 							| T.NonSpecialToken
 						)[]
-					) => buildTokenTreePatternBrace(...vs)
+					) => buildTokenTreePatternBrace(...restItems('tokenPatterns', vs))
 				}
 			},
 			{
@@ -10003,7 +10013,7 @@ export function buildTokenTreeParen(
 				_tokens,
 				$with: {
 					tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
-						buildTokenTreeParen(...vs)
+						buildTokenTreeParen(...restItems('tokens', vs))
 				}
 			},
 			{
@@ -10034,7 +10044,7 @@ export function buildTokenTreeBracket(
 				_tokens,
 				$with: {
 					tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
-						buildTokenTreeBracket(...vs)
+						buildTokenTreeBracket(...restItems('tokens', vs))
 				}
 			},
 			{
@@ -10065,7 +10075,7 @@ export function buildTokenTreeBrace(
 				_tokens,
 				$with: {
 					tokens: (...vs: (T.TokenTree | T.TokenRepetition | T.Metavariable | T.NonSpecialToken)[]) =>
-						buildTokenTreeBrace(...vs)
+						buildTokenTreeBrace(...restItems('tokens', vs))
 				}
 			},
 			{
@@ -10096,7 +10106,7 @@ export function buildDelimTokenTreeParen(
 				_delim_tokens,
 				$with: {
 					delimTokens: (...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
-						buildDelimTokenTreeParen(...vs)
+						buildDelimTokenTreeParen(...restItems('delimTokens', vs))
 				}
 			},
 			{
@@ -10127,7 +10137,7 @@ export function buildDelimTokenTreeBracket(
 				_delim_tokens,
 				$with: {
 					delimTokens: (...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
-						buildDelimTokenTreeBracket(...vs)
+						buildDelimTokenTreeBracket(...restItems('delimTokens', vs))
 				}
 			},
 			{
@@ -10158,7 +10168,7 @@ export function buildDelimTokenTreeBrace(
 				_delim_tokens,
 				$with: {
 					delimTokens: (...vs: (T.NonSpecialToken | TSKindId.Dollar | T.DelimTokenTree)[]) =>
-						buildDelimTokenTreeBrace(...vs)
+						buildDelimTokenTreeBrace(...restItems('delimTokens', vs))
 				}
 			},
 			{
@@ -10854,7 +10864,7 @@ export function buildAttributedFieldDeclaration(
 				_field_declaration,
 				$with: {
 					attributeItems: (...values: T.AttributeItem[]) =>
-						buildAttributedFieldDeclaration({ ...config, attributeItem: values }),
+						buildAttributedFieldDeclaration({ ...config, attributeItem: restItems('attributeItems', values) }),
 					fieldDeclaration: (value: T.FieldDeclaration) =>
 						buildAttributedFieldDeclaration({ ...config, fieldDeclaration: value })
 				}
@@ -10884,7 +10894,7 @@ export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Confi
 				_enum_variant,
 				$with: {
 					attributeItems: (...values: T.AttributeItem[]) =>
-						buildAttributedEnumVariant({ ...config, attributeItem: values }),
+						buildAttributedEnumVariant({ ...config, attributeItem: restItems('attributeItems', values) }),
 					enumVariant: (value: T.EnumVariant) => buildAttributedEnumVariant({ ...config, enumVariant: value })
 				}
 			},
@@ -10957,7 +10967,7 @@ export function buildAttributedTypeParameter(
 				_content,
 				$with: {
 					attributeItems: (...values: T.AttributeItem[]) =>
-						buildAttributedTypeParameter({ ...config, attributeItem: values }),
+						buildAttributedTypeParameter({ ...config, attributeItem: restItems('attributeItems', values) }),
 					content: (value: T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter) =>
 						buildAttributedTypeParameter({ ...config, content: value })
 				}
@@ -10991,7 +11001,7 @@ export function buildAttributedArgument(config: T.AttributedArgument.Config): T.
 				_expression,
 				$with: {
 					attributeItems: (...values: T.AttributeItem[]) =>
-						buildAttributedArgument({ ...config, attributeItem: values }),
+						buildAttributedArgument({ ...config, attributeItem: restItems('attributeItems', values) }),
 					expression: (value: NonNullable<T.AttributedArgument.Config>['expression']) =>
 						buildAttributedArgument({ ...config, expression: value })
 				}
@@ -11034,7 +11044,7 @@ export function buildAttributedOrderedField(config: T.AttributedOrderedField.Con
 				_type,
 				$with: {
 					attributeItems: (...values: T.AttributeItem[]) =>
-						buildAttributedOrderedField({ ...config, attributeItem: values }),
+						buildAttributedOrderedField({ ...config, attributeItem: restItems('attributeItems', values) }),
 					visibilityModifier: (value?: T.VisibilityModifier) =>
 						buildAttributedOrderedField({ ...config, visibilityModifier: value }),
 					type: (value: NonNullable<T.AttributedOrderedField.Config>['type']) =>
@@ -11094,7 +11104,8 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 				_match_arm,
 				_last_arm,
 				$with: {
-					matchArms: (...values: T.MatchArm[]) => buildMatchBlockArms({ ...config, matchArm: values }),
+					matchArms: (...values: T.MatchArm[]) =>
+						buildMatchBlockArms({ ...config, matchArm: restItems('matchArms', values) }),
 					lastArm: (value: T.LastMatchArm) => buildMatchBlockArms({ ...config, lastArm: value })
 				}
 			},

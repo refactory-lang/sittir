@@ -3,6 +3,7 @@
 
 import {
 	readUntypedNode,
+	restItems,
 	isNode,
 	isStub,
 	isTypedNode,
@@ -1148,7 +1149,8 @@ export function wrapProgram(data: T.Program, tree: TreeHandle): T.Program.Parsed
 		$with: {
 			hashBangLine: (v: NonNullable<T.Program['_hash_bang_line']>) =>
 				wrapProgram({ ...$edited(data), _hash_bang_line: v }, tree),
-			statements: (v: NonNullable<T.Program['_statements']>) => wrapProgram({ ...$edited(data), _statements: v }, tree)
+			statements: (...v: NonNullable<T.Program['_statements']>[number][]) =>
+				wrapProgram({ ...$edited(data), _statements: restItems('statements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.Program.Parsed;
@@ -1935,7 +1937,7 @@ export function wrapVariableDeclaration(data: T.VariableDeclaration, tree: TreeH
 		},
 		$with: {
 			declarators: (...v: NonEmptyArray<NonNullable<T.VariableDeclaration['_declarators']>[number]>) =>
-				wrapVariableDeclaration({ ...$edited(data), _declarators: v }, tree),
+				wrapVariableDeclaration({ ...$edited(data), _declarators: restItems('declarators', v) }, tree),
 			terminator: (v: NonNullable<T.VariableDeclaration['_terminator']>) =>
 				wrapVariableDeclaration({ ...$edited(data), _terminator: v }, tree)
 		}
@@ -1999,7 +2001,7 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
 			kind: (v: NonNullable<T.LexicalDeclaration['_kind']>) =>
 				wrapLexicalDeclaration({ ...$edited(data), _kind: v }, tree),
 			declarators: (...v: NonEmptyArray<NonNullable<T.LexicalDeclaration['_declarators']>[number]>) =>
-				wrapLexicalDeclaration({ ...$edited(data), _declarators: v }, tree),
+				wrapLexicalDeclaration({ ...$edited(data), _declarators: restItems('declarators', v) }, tree),
 			terminator: (v: NonNullable<T.LexicalDeclaration['_terminator']>) =>
 				wrapLexicalDeclaration({ ...$edited(data), _terminator: v }, tree)
 		}
@@ -2074,8 +2076,8 @@ export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle): T.
 			return this._automatic_semicolon;
 		},
 		$with: {
-			statements: (v: NonNullable<T.StatementBlock['_statements']>) =>
-				wrapStatementBlock({ ...$edited(data), _statements: v }, tree),
+			statements: (...v: NonNullable<T.StatementBlock['_statements']>[number][]) =>
+				wrapStatementBlock({ ...$edited(data), _statements: restItems('statements', v) }, tree),
 			automaticSemicolon: (v: NonNullable<T.StatementBlock['_automatic_semicolon']>) =>
 				wrapStatementBlock({ ...$edited(data), _automatic_semicolon: v }, tree)
 		}
@@ -2901,7 +2903,7 @@ export function wrapSwitchBody(data: T.SwitchBody, tree: TreeHandle): T.SwitchBo
 		},
 		$with: {
 			cases: (...v: NonNullable<T.SwitchBody['_cases']>[number][]) =>
-				wrapSwitchBody({ ...$edited(data), _cases: v }, tree)
+				wrapSwitchBody({ ...$edited(data), _cases: restItems('cases', v) }, tree)
 		}
 	});
 	return _node as unknown as T.SwitchBody.Parsed;
@@ -2945,7 +2947,8 @@ export function wrapSwitchCase(data: T.SwitchCase, tree: TreeHandle): T.SwitchCa
 		},
 		$with: {
 			value: (v: NonNullable<T.SwitchCase['_value']>) => wrapSwitchCase({ ...$edited(data), _value: v }, tree),
-			bodies: (v: NonNullable<T.SwitchCase['_body']>) => wrapSwitchCase({ ...$edited(data), _body: v }, tree)
+			bodies: (...v: NonNullable<T.SwitchCase['_body']>[number][]) =>
+				wrapSwitchCase({ ...$edited(data), _body: restItems('bodies', v) }, tree)
 		}
 	});
 	return _node as unknown as T.SwitchCase.Parsed;
@@ -2974,7 +2977,7 @@ export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle): T.Sw
 		},
 		$with: {
 			bodies: (...v: NonNullable<T.SwitchDefault['_body']>[number][]) =>
-				wrapSwitchDefault({ ...$edited(data), _body: v }, tree)
+				wrapSwitchDefault({ ...$edited(data), _body: restItems('bodies', v) }, tree)
 		}
 	});
 	return _node as unknown as T.SwitchDefault.Parsed;
@@ -3685,7 +3688,7 @@ export function wrapObject(data: T.Object, tree: TreeHandle): T.Object.Parsed {
 		},
 		$with: {
 			properties: (...v: NonNullable<T.Object['_properties']>[number][]) =>
-				wrapObject({ ...$edited(data), _properties: v }, tree)
+				wrapObject({ ...$edited(data), _properties: restItems('properties', v) }, tree)
 		}
 	});
 	return _node as unknown as T.Object.Parsed;
@@ -3771,7 +3774,7 @@ export function wrapObjectPattern(data: T.ObjectPattern, tree: TreeHandle): T.Ob
 		},
 		$with: {
 			properties: (...v: NonNullable<T.ObjectPattern['_properties']>[number][]) =>
-				wrapObjectPattern({ ...$edited(data), _properties: v }, tree)
+				wrapObjectPattern({ ...$edited(data), _properties: restItems('properties', v) }, tree)
 		}
 	});
 	return _node as unknown as T.ObjectPattern.Parsed;
@@ -3943,7 +3946,7 @@ export function wrapArray(data: T.Array, tree: TreeHandle): T.Array.Parsed {
 		},
 		$with: {
 			elements: (...v: NonNullable<T.Array['_elements']>[number][]) =>
-				wrapArray({ ...$edited(data), _elements: v }, tree)
+				wrapArray({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.Array.Parsed;
@@ -3969,7 +3972,7 @@ export function wrapArrayPattern(data: T.ArrayPattern, tree: TreeHandle): T.Arra
 		},
 		$with: {
 			elements: (...v: NonNullable<T.ArrayPattern['_elements']>[number][]) =>
-				wrapArrayPattern({ ...$edited(data), _elements: v }, tree)
+				wrapArrayPattern({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.ArrayPattern.Parsed;
@@ -4085,7 +4088,7 @@ export function wrapClass(data: T.Class, tree: TreeHandle): T.Class.Parsed {
 				},
 				$with: {
 					decorators: (...v: NonNullable<T.Class['_decorator']>[number][]) =>
-						wrapClass({ ...$edited(data), _decorator: v }, tree),
+						wrapClass({ ...$edited(data), _decorator: restItems('decorators', v) }, tree),
 					name: (v: NonNullable<T.Class['_name']>) => wrapClass({ ...$edited(data), _name: v }, tree),
 					typeParameters: (v: NonNullable<T.Class['_type_parameters']>) =>
 						wrapClass({ ...$edited(data), _type_parameters: v }, tree),
@@ -4196,7 +4199,7 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 				},
 				$with: {
 					decorators: (...v: NonNullable<T.ClassDeclaration['_decorator']>[number][]) =>
-						wrapClassDeclaration({ ...$edited(data), _decorator: v }, tree),
+						wrapClassDeclaration({ ...$edited(data), _decorator: restItems('decorators', v) }, tree),
 					name: (v: NonNullable<T.ClassDeclaration['_name']>) =>
 						wrapClassDeclaration({ ...$edited(data), _name: v }, tree),
 					typeParameters: (v: NonNullable<T.ClassDeclaration['_type_parameters']>) =>
@@ -5916,7 +5919,7 @@ export function wrapSequenceExpression(data: T.SequenceExpression, tree: TreeHan
 		},
 		$with: {
 			expressions: (...v: NonEmptyArray<NonNullable<T.SequenceExpression['_expression']>[number]>) =>
-				wrapSequenceExpression({ ...$edited(data), _expression: v }, tree)
+				wrapSequenceExpression({ ...$edited(data), _expression: restItems('expressions', v) }, tree)
 		}
 	});
 	return _node as unknown as T.SequenceExpression.Parsed;
@@ -6000,7 +6003,7 @@ export function wrapTemplateString(data: T.TemplateString, tree: TreeHandle): T.
 		},
 		$with: {
 			elements: (...v: NonNullable<T.TemplateString['_elements']>[number][]) =>
-				wrapTemplateString({ ...$edited(data), _elements: v }, tree)
+				wrapTemplateString({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.TemplateString.Parsed;
@@ -6199,7 +6202,7 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 		},
 		$with: {
 			elements: (...v: NonNullable<T.Arguments['_elements']>[number][]) =>
-				wrapArguments({ ...$edited(data), _elements: v }, tree)
+				wrapArguments({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.Arguments.Parsed;
@@ -6361,7 +6364,7 @@ export function wrapClassBody(data: T.ClassBody, tree: TreeHandle): T.ClassBody.
 		},
 		$with: {
 			members: (...v: NonNullable<T.ClassBody['_members']>[number][]) =>
-				wrapClassBody({ ...$edited(data), _members: v }, tree)
+				wrapClassBody({ ...$edited(data), _members: restItems('members', v) }, tree)
 		}
 	});
 	return _node as unknown as T.ClassBody.Parsed;
@@ -7426,7 +7429,7 @@ export function wrapPublicFieldDefinition(
 		},
 		$with: {
 			decorators: (...v: NonNullable<T.PublicFieldDefinition['_decorator']>[number][]) =>
-				wrapPublicFieldDefinition({ ...$edited(data), _decorator: v }, tree),
+				wrapPublicFieldDefinition({ ...$edited(data), _decorator: restItems('decorators', v) }, tree),
 			declareMarker: (v: NonNullable<T.PublicFieldDefinition['_declare_marker']>) =>
 				wrapPublicFieldDefinition({ ...$edited(data), _declare_marker: v }, tree),
 			accessibilityModifier: (v: NonNullable<T.PublicFieldDefinition['_accessibility_modifier']>) =>
@@ -8425,7 +8428,7 @@ export function wrapExtendsClause(data: T.ExtendsClause, tree: TreeHandle): T.Ex
 		},
 		$with: {
 			extendsClauseSingles: (...v: NonEmptyArray<NonNullable<T.ExtendsClause['_extends_clause_single']>[number]>) =>
-				wrapExtendsClause({ ...$edited(data), _extends_clause_single: v }, tree)
+				wrapExtendsClause({ ...$edited(data), _extends_clause_single: restItems('extendsClauseSingles', v) }, tree)
 		}
 	});
 	return _node as unknown as T.ExtendsClause.Parsed;
@@ -8518,7 +8521,7 @@ export function wrapImplementsClause(data: T.ImplementsClause, tree: TreeHandle)
 		},
 		$with: {
 			types: (...v: NonEmptyArray<NonNullable<T.ImplementsClause['_type']>[number]>) =>
-				wrapImplementsClause({ ...$edited(data), _type: v }, tree)
+				wrapImplementsClause({ ...$edited(data), _type: restItems('types', v) }, tree)
 		}
 	});
 	return _node as unknown as T.ImplementsClause.Parsed;
@@ -8623,7 +8626,7 @@ export function wrapAbstractClassDeclaration(
 				},
 				$with: {
 					decorators: (...v: NonNullable<T.AbstractClassDeclaration['_decorator']>[number][]) =>
-						wrapAbstractClassDeclaration({ ...$edited(data), _decorator: v }, tree),
+						wrapAbstractClassDeclaration({ ...$edited(data), _decorator: restItems('decorators', v) }, tree),
 					name: (v: NonNullable<T.AbstractClassDeclaration['_name']>) =>
 						wrapAbstractClassDeclaration({ ...$edited(data), _name: v }, tree),
 					typeParameters: (v: NonNullable<T.AbstractClassDeclaration['_type_parameters']>) =>
@@ -8928,7 +8931,7 @@ export function wrapExtendsTypeClause(data: T.ExtendsTypeClause, tree: TreeHandl
 		},
 		$with: {
 			types: (...v: NonEmptyArray<NonNullable<T.ExtendsTypeClause['_type']>[number]>) =>
-				wrapExtendsTypeClause({ ...$edited(data), _type: v }, tree)
+				wrapExtendsTypeClause({ ...$edited(data), _type: restItems('types', v) }, tree)
 		}
 	});
 	return _node as unknown as T.ExtendsTypeClause.Parsed;
@@ -9358,7 +9361,7 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 		},
 		$with: {
 			decorators: (...v: NonNullable<T.RequiredParameter['_decorator']>[number][]) =>
-				wrapRequiredParameter({ ...$edited(data), _decorator: v }, tree),
+				wrapRequiredParameter({ ...$edited(data), _decorator: restItems('decorators', v) }, tree),
 			accessibilityModifier: (v: NonNullable<T.RequiredParameter['_accessibility_modifier']>) =>
 				wrapRequiredParameter({ ...$edited(data), _accessibility_modifier: v }, tree),
 			overrideModifier: (v: NonNullable<T.RequiredParameter['_override_modifier']>) =>
@@ -9491,7 +9494,7 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 		},
 		$with: {
 			decorators: (...v: NonNullable<T.OptionalParameter['_decorator']>[number][]) =>
-				wrapOptionalParameter({ ...$edited(data), _decorator: v }, tree),
+				wrapOptionalParameter({ ...$edited(data), _decorator: restItems('decorators', v) }, tree),
 			accessibilityModifier: (v: NonNullable<T.OptionalParameter['_accessibility_modifier']>) =>
 				wrapOptionalParameter({ ...$edited(data), _accessibility_modifier: v }, tree),
 			overrideModifier: (v: NonNullable<T.OptionalParameter['_override_modifier']>) =>
@@ -10506,7 +10509,7 @@ export function wrapTemplateLiteralType(data: T.TemplateLiteralType, tree: TreeH
 		},
 		$with: {
 			elements: (...v: NonNullable<T.TemplateLiteralType['_elements']>[number][]) =>
-				wrapTemplateLiteralType({ ...$edited(data), _elements: v }, tree)
+				wrapTemplateLiteralType({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.TemplateLiteralType.Parsed;
@@ -14177,7 +14180,7 @@ export function wrapClassBodyMemberMethod(
 		},
 		$with: {
 			decorators: (...v: NonNullable<T.ClassBodyMemberMethod['_decorator']>[number][]) =>
-				wrapClassBodyMemberMethod({ ...$edited(data), _decorator: v }, tree),
+				wrapClassBodyMemberMethod({ ...$edited(data), _decorator: restItems('decorators', v) }, tree),
 			methodDefinition: (v: NonNullable<T.ClassBodyMemberMethod['_method_definition']>) =>
 				wrapClassBodyMemberMethod({ ...$edited(data), _method_definition: v }, tree),
 			terminator: (v: NonNullable<T.ClassBodyMemberMethod['_terminator']>) =>
@@ -15001,7 +15004,7 @@ export function wrapStringDouble(data: T.StringDouble, tree: TreeHandle): T.Stri
 		},
 		$with: {
 			elements: (...v: NonNullable<T.StringDouble['_elements']>[number][]) =>
-				wrapStringDouble({ ...$edited(data), _elements: v }, tree)
+				wrapStringDouble({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.StringDouble.Parsed;
@@ -15030,7 +15033,7 @@ export function wrapStringSingle(data: T.StringSingle, tree: TreeHandle): T.Stri
 		},
 		$with: {
 			elements: (...v: NonNullable<T.StringSingle['_elements']>[number][]) =>
-				wrapStringSingle({ ...$edited(data), _elements: v }, tree)
+				wrapStringSingle({ ...$edited(data), _elements: restItems('elements', v) }, tree)
 		}
 	});
 	return _node as unknown as T.StringSingle.Parsed;
@@ -15410,7 +15413,7 @@ export function wrapExportStatementDefaultDeclaration(
 		},
 		$with: {
 			decorators: (...v: NonNullable<T.ExportStatementDefaultDeclaration['_decorator']>[number][]) =>
-				wrapExportStatementDefaultDeclaration({ ...$edited(data), _decorator: v }, tree),
+				wrapExportStatementDefaultDeclaration({ ...$edited(data), _decorator: restItems('decorators', v) }, tree),
 			content: (v: NonNullable<T.ExportStatementDefaultDeclaration['_content']>) =>
 				wrapExportStatementDefaultDeclaration({ ...$edited(data), _content: v }, tree)
 		}

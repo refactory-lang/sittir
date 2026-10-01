@@ -3,6 +3,7 @@
 
 import {
 	readUntypedNode,
+	restItems,
 	isNode,
 	isStub,
 	isTypedNode,
@@ -536,7 +537,7 @@ export function wrapAlternation(data: T.Alternation, tree: TreeHandle): T.Altern
 		},
 		$with: {
 			terms: (...v: NonEmptyArray<NonNullable<T.Alternation['_terms']>[number]>) =>
-				wrapAlternation({ ...$edited(data), _terms: v }, tree)
+				wrapAlternation({ ...$edited(data), _terms: restItems('terms', v) }, tree)
 		}
 	});
 	return _node as unknown as T.Alternation.Parsed;
@@ -562,7 +563,7 @@ export function wrapTerm(data: T.Term, tree: TreeHandle): T.Term.Parsed {
 		},
 		$with: {
 			termGroups: (...v: NonEmptyArray<NonNullable<T.Term['_term_group']>[number]>) =>
-				wrapTerm({ ...$edited(data), _term_group: v }, tree)
+				wrapTerm({ ...$edited(data), _term_group: restItems('termGroups', v) }, tree)
 		}
 	});
 	return _node as unknown as T.Term.Parsed;
@@ -770,8 +771,8 @@ export function wrapCharacterClass(data: T.CharacterClass, tree: TreeHandle): T.
 				wrapCharacterClass({ ...$edited(data), _negation: v }, tree),
 			leading: (v: NonNullable<T.CharacterClass['_leading']>) =>
 				wrapCharacterClass({ ...$edited(data), _leading: v }, tree),
-			classAtoms: (v: NonNullable<T.CharacterClass['_class_atoms']>) =>
-				wrapCharacterClass({ ...$edited(data), _class_atoms: v }, tree),
+			classAtoms: (...v: NonNullable<T.CharacterClass['_class_atoms']>[number][]) =>
+				wrapCharacterClass({ ...$edited(data), _class_atoms: restItems('classAtoms', v) }, tree),
 			trailing: (v: NonNullable<T.CharacterClass['_trailing']>) =>
 				wrapCharacterClass({ ...$edited(data), _trailing: v }, tree)
 		}
