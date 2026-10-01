@@ -624,7 +624,7 @@ function statementIr(s: Statement, base: boolean): ExportIr {
 				)
 			});
 		case 'namespace': {
-			const body: StatementBlock.Bound = ir.statementBlock().$with.statements(s.statements.map((x) => statementIr(x, base)));
+			const body: StatementBlock.Bound = ir.statementBlock().$with.statements(...s.statements.map((x) => statementIr(x, base)));
 			const module: InternalModule.Bound = ir.internalModule({ name: ir.identifier(s.name), body });
 			return ir.exportStatement.default.declaration({ content: module });
 		}
