@@ -66,7 +66,11 @@ describe('read depth', () => {
 			.map(([, child]) => child as Record<string, unknown>)
 			.filter((child) => Object.keys(child).some((key) => key.startsWith('_')));
 		expect(expanded.length).toBeGreaterThan(0);
-		for (const child of expanded) expect(treeHandleOf(child)).toBeUndefined();
+		const treeOf = (handle: unknown): number => Math.floor((handle as number) / 2 ** 32);
+		for (const child of expanded) {
+			expect(treeOf(child.$treeHandle)).toBe(treeOf(treeHandleOf(root as unknown as Record<string, unknown>)));
+			expect([child.$handle, child.$parentHandle]).toEqual([undefined, undefined]);
+		}
 		const grandchildren = expanded.flatMap(stubsOf);
 		expect(grandchildren.length).toBeGreaterThan(0);
 		for (const stub of grandchildren) {
@@ -122,5 +126,36 @@ describe('read depth', () => {
 		const kinds = (text: string) => engine.parse(text).statements().map(kindOf);
 		expect(kinds(engine.parse(SOURCE, { deep: true }).$render())).toEqual(kinds(SOURCE));
 		expect(kinds(engine.parse(SOURCE).$render())).toEqual(kinds(SOURCE));
+	});
+});
+
+describe('a rebuilt deep-read node', () => {
+	/** The first item of `source`, read at the given depth, renamed to `g` and rendered. */
+	async function renamed(source: string, deep: boolean): Promise<string> {
+		const engine = await createEngine(rust);
+		const item = engine.parse(source, { deep }).statements()[0];
+		if (item === undefined || typeof item === 'number' || !engine.is.functionItem(item))
+			throw new Error('expected a function item');
+		return String(engine.render(item.$with.name(engine.build.identifier('g'))));
+	}
+
+	it('keeps the source bytes of its untouched children, as a shallow read does', async () => {
+		const source = 'fn  f( a: i32 ) { a; }\n';
+		const shallow = await renamed(source, false);
+		expect(shallow).toContain('( a: i32 ) { a; }');
+		expect(await renamed(source, true)).toBe(shallow);
+	});
+
+	it.each([
+		['one parameter and one statement', 'fn f(a: i32) { a; }\n'],
+		['two parameters', 'fn f(a: i32, b: i32) { a; }\n'],
+		['two statements', 'fn f(a: i32) { a; b; }\n']
+	])('renders %s like a shallow read', async (_shape, source) => {
+		expect(await renamed(source, true)).toBe(await renamed(source, false));
+	});
+
+	it('renders a deep child that owns a comment with its content intact (canonical gaps around it until relative coordinates land)', async () => {
+		const rendered = await renamed('fn f(a: i32) /* c */ { a; }\n', true);
+		expect(rendered.replace(/\s+/g, '')).toBe('fng(a:i32)/*c*/{a;}');
 	});
 });

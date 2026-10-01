@@ -18,12 +18,15 @@ export function treeHandleOf(node: object): number | undefined {
 	return typeof handle === 'number' ? handle : undefined;
 }
 
-function isStorageKey(key: string): boolean {
-	return key.startsWith('_') || key === '$other';
+/** Whether `key` names storage on a node: a slot (`_<name>`) or its unslotted children (`$other`). */
+export function isStorageKey(key: string): boolean {
+	return key.charCodeAt(0) === 95 || key === '$other';
 }
 
-function hasStructure(record: Record<string, unknown>): boolean {
-	return record.$other != null || Object.keys(record).some((key) => key.startsWith('_'));
+/** Whether `node` holds storage: a slot, or unslotted children. A text leaf and a token hold none. */
+export function holdsSlots(node: object): boolean {
+	for (const key in node) if (key.charCodeAt(0) === 95) return true;
+	return (node as { readonly $other?: unknown }).$other != null;
 }
 
 function isInert(value: unknown): boolean {
@@ -49,9 +52,9 @@ function isDerivedFromText(record: Record<string, unknown>): boolean {
  * places it, and an edit that put it there detached that coordinate at the
  * setter.
  *
- * A span is the whole requirement because a deep read hands its descendants
- * a span and no handle: only the node that emits the coordinate needs to
- * name the tree. A descendant's attached comments do not keep an ancestor
+ * A span is the whole requirement below the node that folds: that node names
+ * the tree, and what lies below it is carried by its bytes, whatever handles
+ * it holds. A descendant's attached comments do not keep an ancestor
  * from folding: they lie inside the ancestor's span, so its bytes carry
  * them — only a node's OWN trivia sits outside its span, which is why
  * `canFold` refuses that node and no other.
@@ -71,8 +74,11 @@ function isUntouchedBelow(value: unknown): boolean {
 /**
  * Whether this node can cross as a coordinate: it still names its tree and
  * its span, carries no trivia outside that span, and nothing below it was
- * rebuilt. The handle is required here and nowhere below, because it is the
- * only thing that says which tree the span indexes into.
+ * rebuilt. The handle says which tree the span indexes into. Every node a
+ * read hands back names its tree (its own handle, its parent's, or the
+ * tree's tag on a child the read expanded), because an edit detaches the
+ * coordinate of the node it rebuilds and each untouched child below then
+ * folds on its own.
  */
 function canFold(record: Record<string, unknown>): boolean {
 	if (treeHandleOf(record) === undefined || !isRecord(record.$span)) return false;
@@ -137,21 +143,6 @@ export function detachCoordinate(data: object): void {
 }
 
 /**
- * Reshape one node's own storage into what the transport declares.
- *
- * The reader is grammar-agnostic: it spells an untagged named child by its
- * kind (`_visibility_modifier_pub`, not the model's `_content`) and hands
- * back a lone repeated child as a bare value rather than a one-element
- * array. The per-kind wrap functions already reconcile both, so the
- * transport walk routes every level that carries storage through them.
- *
- * The result is not always a node: a supertype's wrap resolves the node to
- * the member it stands for, and a text-collapsed member is that member's
- * bare text.
- */
-export type NormalizeNodeStorage = (node: AnyUntypedNode) => unknown;
-
-/**
  * Turn a node into the plain data the native boundary accepts.
  *
  * The wrap surface carries accessor methods and `$with`; only data crosses
@@ -168,24 +159,18 @@ export type NormalizeNodeStorage = (node: AnyUntypedNode) => unknown;
  * untouched subtree's original bytes while its rebuilt siblings render
  * canonically.
  */
-export function toTransportData(node: AnyUntypedNode, normalize?: NormalizeNodeStorage): AnyUntypedNode {
-	return toTransportValue(node, normalize) as AnyUntypedNode;
+export function toTransportData(node: AnyUntypedNode): AnyUntypedNode {
+	return toTransportValue(node) as AnyUntypedNode;
 }
 
-function toTransportValue(value: unknown, normalize: NormalizeNodeStorage | undefined): unknown {
-	if (Array.isArray(value)) return value.map((entry) => toTransportValue(entry, normalize));
+function toTransportValue(value: unknown): unknown {
+	if (Array.isArray(value)) return value.map(toTransportValue);
 	if (!isRecord(value)) return value;
-	const normalized =
-		normalize !== undefined && hasStructure(value) ? normalize(value as unknown as AnyUntypedNode) : value;
-	// A supertype resolves to the member it stands for, which for a
-	// text-collapsed member is that member's bare text — already the value the
-	// slot carries, with no storage of its own left to walk.
-	if (!isRecord(normalized)) return normalized;
-	if (canFold(normalized)) return foldToCoordinate(normalized);
+	if (canFold(value)) return foldToCoordinate(value);
 	const out: Record<string, unknown> = {};
-	for (const [key, raw] of Object.entries(normalized)) {
+	for (const [key, raw] of Object.entries(value)) {
 		if (key === '$with' || typeof raw === 'function') continue;
-		out[key] = key.startsWith('_') || key === '$other' ? toTransportValue(raw, normalize) : raw;
+		out[key] = isStorageKey(key) ? toTransportValue(raw) : raw;
 	}
 	// Past the fold, nothing is a coordinate: a leaf that kept its trivia
 	// crosses as itself, and a storage-bearing node rebuilds from its slots
@@ -193,7 +178,7 @@ function toTransportValue(value: unknown, normalize: NormalizeNodeStorage | unde
 	for (const key of HANDLE_KEYS) delete out[key];
 	delete out.$childIndex;
 	delete out.$textOnly;
-	if (hasStructure(out)) {
+	if (holdsSlots(out)) {
 		delete out.$text;
 		delete out.$span;
 	}
@@ -214,7 +199,7 @@ export function detachCoordinates<T>(root: T): T {
 		if (!isRecord(value) || typeof value.$type !== 'number') return;
 		if (seen.has(value)) return;
 		seen.add(value);
-		if (hasStructure(value) && !isDerivedFromText(value)) {
+		if (holdsSlots(value) && !isDerivedFromText(value)) {
 			delete value.$text;
 			for (const key of COORDINATE_KEYS) delete value[key];
 		}
