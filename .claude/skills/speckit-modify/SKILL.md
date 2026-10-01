@@ -1,7 +1,6 @@
 ---
 name: speckit-modify
-description: Modify an existing feature with impact analysis and backward compatibility
-  tracking.
+description: Modify an existing feature with impact analysis and backward compatibility tracking.
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit

@@ -1,9 +1,6 @@
 ---
 name: speckit-superb-respond
-description: Code review response protocol. Bridges an installed obra/superpowers
-  receiving-code-review skill. Enforces technical verification before implementing
-  review feedback — no performative agreement, no blind fixes. Pairs with speckit.superb.critique
-  as the implementer counterpart.
+description: Code review response protocol. Bridges an installed obra/superpowers receiving-code-review skill. Enforces technical verification before implementing review feedback — no performative agreement, no blind fixes. Pairs with speckit.superb.critique as the implementer counterpart.
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
@@ -15,6 +12,17 @@ metadata:
 > **Type:** Superpowers-adapted command
 > **Skill origin:** [obra/superpowers `receiving-code-review`](https://github.com/obra/superpowers)
 > **Invocation:** Standalone command. Call after receiving output from `speckit.superb.critique` or any external code review.
+
+---
+
+## Role Boundary
+
+`respond` is not a reviewer. `critique` or an external reviewer produces findings;
+`respond` receives those findings, checks them against the codebase and
+`spec.md`, then accepts, rejects, clarifies, or implements them.
+
+Do not use this command to create the original review. Use
+`/speckit.superb.critique` when review findings do not already exist.
 
 ---
 
@@ -64,14 +72,13 @@ For each review item, classify and verify:
 ```markdown
 ## Review Response
 
-| #   | Item      | Severity                 | Verdict               | Reasoning          |
-| --- | --------- | ------------------------ | --------------------- | ------------------ |
-| 1   | [summary] | Critical/Important/Minor | Accept/Reject/Clarify | [technical reason] |
-| 2   | [summary] | ...                      | ...                   | ...                |
+| # | Item | Severity | Verdict | Reasoning |
+|---|------|----------|---------|-----------|
+| 1 | [summary] | Critical/Important/Minor | Accept/Reject/Clarify | [technical reason] |
+| 2 | [summary] | ... | ... | ... |
 ```
 
 **Verdict rules:**
-
 - **Accept** — item is technically correct for this codebase and aligns with spec.
 - **Reject** — item is wrong, breaks existing behavior, violates YAGNI, or
   conflicts with spec. Push back with technical reasoning.
@@ -88,7 +95,6 @@ Follow this strict order:
 3. **Minor issues** (naming, style, minor improvements)
 
 For each accepted item:
-
 - Make ONE change
 - Run the full test suite
 - Verify no regressions
@@ -108,11 +114,9 @@ After all accepted items are implemented:
 **Pending clarification:** [K] items
 
 ### Rejections
-
 - Item [#]: [one-line technical reason]
 
 ### Test Evidence
-
 [Full test suite output — N tests, N passing, 0 failing]
 ```
 

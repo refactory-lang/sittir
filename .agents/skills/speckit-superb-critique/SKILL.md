@@ -1,11 +1,8 @@
 ---
 name: speckit-superb-critique
-description: "Spec-aligned code review agent. Acts as a dedicated independent reviewer:
-  loads spec.md, plan.md, and tasks.md, then reviews every code change against declared
-  requirements, reporting issues by severity. Use after any significant implementation
-  to catch spec divergence before it compounds.
+description: 'Spec-aligned code review agent. Acts as a dedicated independent reviewer: loads spec.md, plan.md, and tasks.md, then reviews every code change against declared requirements, reporting issues by severity. Use after any significant implementation to catch spec divergence before it compounds.
 
-  "
+  '
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
@@ -39,7 +36,6 @@ Invoke with the argument context:
 ```
 
 User Context:
-
 ```
 $ARGUMENTS
 ```
@@ -120,23 +116,59 @@ git diff HEAD [files]
 
 ---
 
-### Phase 2 — Spec Compliance Review
+### Optional Review Handoff Packaging
 
-For each requirement in `spec.md`:
+This command covers the main intent of Superpowers `requesting-code-review`
+without adding a separate `/speckit.superb.request-review` command.
 
-1. Find the corresponding task(s) in `tasks.md`
-2. Find the corresponding code change(s) in the diff
-3. Evaluate: does the implementation match the requirement?
+### Role Boundary
+
+- `critique` is the reviewer: it evaluates implementation against Spec Kit
+  artifacts and reports findings.
+- `requesting-code-review` is a handoff pattern: it packages context for
+  another reviewer or subagent when such a reviewer is explicitly requested.
+- `respond` is the feedback receiver: it handles review findings after they
+  exist and decides whether to accept, reject, clarify, or implement them.
+
+If the user asks for external review, subagent review, or a reviewer handoff,
+package the loaded context into a concise reviewer prompt before or after your
+own findings:
+
+```markdown
+## External/Subagent Review Handoff
+
+**What was implemented:** [short summary]
+**Spec authority:** [spec.md path and relevant sections]
+**Plan/task authority:** [plan.md/tasks.md paths and relevant tasks]
+**Diff range:** [BASE_SHA]..[HEAD_SHA]
+**Verification evidence:** [test/build command and result]
+**Reviewer focus:** correctness regressions, missing tests, security issues,
+breaking API behavior, performance-sensitive paths
+**Expected output:** Critical / Important / Minor findings with file references
+```
+
+Do not dispatch another reviewer unless the current environment has an explicit
+subagent mechanism and the user or workflow requested it. `respond` remains the
+command for accepting, rejecting, or clarifying returned review feedback.
+
+---
+
+### Phase 2 — Spec Compliance & Requirement Mapping Review
+
+Evaluate every code change in the git diff against the requirements and plan:
+
+1. **Requirement Mapping**: Every modified or added line of code must be directly linked to a specific requirement in `spec.md` or a technical task in `tasks.md`. Identify any code changes that do not map to any requirement.
+2. **Side-Effect Analysis**: Inspect the diff for unintended changes, "hidden" side effects, or undocumented additions (e.g. debugging code left behind, commented-out logic, accidental modification of unrelated files, or implementation of unrequested features).
+3. **Spec Alignment Check**: For each requirement in `spec.md`, evaluate whether the implementation matches it fully and without drift.
 
 Compliance table:
 
 ```markdown
-| Req | Requirement   | Task | Status    | Notes            |
-| --- | ------------- | ---- | --------- | ---------------- |
-| R01 | [description] | T3   | ✓ Met     |                  |
-| R02 | [description] | T4   | ✗ Not met | [why]            |
-| R03 | [description] | —    | ✗ Missing | No task, no code |
-| R04 | [description] | T6   | ~ Partial | [what's missing] |
+| Req/File | Requirement / Code Change Description | Task | Status      | Notes / Mapping / Side-Effects |
+|----------|---------------------------------------|------|-------------|--------------------------------|
+| R01      | [description]                         | T3   | ✓ Met       | Mapped to [file]:[line]        |
+| R02      | [description]                         | T4   | ✗ Not met   | [why]                          |
+| [file]   | [unmapped code change or side-effect] | —    | ✗ Drift     | Unintended side-effect: [why]   |
 ```
 
 ---
@@ -145,14 +177,14 @@ Compliance table:
 
 Evaluate the implementation against the plan's architecture:
 
-| Dimension               | Checks                                                                                       |
-| ----------------------- | -------------------------------------------------------------------------------------------- |
-| **Architecture**        | Does the structure match `plan.md`? Are boundary violations present?                         |
-| **Interface contracts** | Do method signatures match `contracts/`? Are types correct?                                  |
-| **Data model**          | Does persistence match `data-model.md`? Any schema drift?                                    |
-| **Test quality**        | Are tests testing real behavior or just mocking everything? Tests written before code (TDD)? |
-| **Error handling**      | Are error paths tested? Do they surface useful messages?                                     |
-| **Security**            | Any input validation gaps? Injection risks? Privilege escalation?                            |
+| Dimension | Checks |
+|---|---|
+| **Architecture** | Does the structure match `plan.md`? Are boundary violations present? |
+| **Interface contracts** | Do method signatures match `contracts/`? Are types correct? |
+| **Data model** | Does persistence match `data-model.md`? Any schema drift? |
+| **Test quality** | Are tests testing real behavior or just mocking everything? Tests written before code (TDD)? |
+| **Error handling** | Are error paths tested? Do they surface useful messages? |
+| **Security** | Any input validation gaps? Injection risks? Privilege escalation? |
 
 ---
 
@@ -224,21 +256,34 @@ correct work is noise.
 ```
 
 If Critical issues exist:
-
 ```
 🔴 BLOCKED: Fix all Critical issues above before continuing.
 Do not write new code or start new tasks until resolved.
 ```
 
-If no Critical issues, Important issues exist:
+Then include a draft remediation plan in the response:
 
+```markdown
+## Fix Plan Draft
+
+- [Issue]: [required correction]
+- [Files likely involved]: [paths]
+- [Verification]: [test/build command that should prove the fix]
+```
+
+### Reviewer Boundary
+
+Do not write planning artifacts from this command. `critique` may report
+findings and draft remediation steps, but it must not modify `plan.md`,
+`tasks.md`, or create auxiliary planning files. If the fix requires changing
+planning artifacts, hand that work back to the Spec Kit planning/task flow or
+wait for explicit user authorization.
+
+If no Critical issues, but Important issues exist:
 ```
 🟠 FIX BEFORE MERGE: Address Important issues before creating PR.
 You may continue to the next task but must return to fix these.
 ```
-
-If only Minor issues:
-
 ```
 ✓ CLEAR TO PROCEED: Implementation meets spec requirements.
 Minor issues tracked. Safe to continue to next task or create PR.
@@ -261,10 +306,10 @@ Push-back is valid. Ignoring the review is not.
 
 ## Integration with Spec-Kit Workflow
 
-| Workflow Stage            | Review Scope                                            |
-| ------------------------- | ------------------------------------------------------- |
-| After `speckit.tasks`     | Use `speckit.superb.review` instead (task coverage)     |
-| After each major task     | Run Critique on the task's scope                        |
-| After `speckit.implement` | Full implementation review                              |
-| Before PR creation        | Full review, all Critical and Important issues resolved |
-| After subagent work       | Verify agent claims are real, not assumed               |
+| Workflow Stage | Review Scope |
+|---|---|
+| After `speckit.tasks` | Use `speckit.superb.review` instead (task coverage) |
+| After each major task | Run Critique on the task's scope |
+| After `speckit.implement` | Full implementation review |
+| Before PR creation | Full review, all Critical and Important issues resolved |
+| After subagent work | Verify agent claims are real, not assumed |

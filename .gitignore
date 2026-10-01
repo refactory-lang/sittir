@@ -100,3 +100,6 @@ packages/tools/src/**/*.d.ts.map
 .cargo/config.toml
 **/.DS_Store
 .infigraph-corrupt-backup-20260722-082016/
+handoff.md
+.codex/
+packages/*/.vitest-report.json

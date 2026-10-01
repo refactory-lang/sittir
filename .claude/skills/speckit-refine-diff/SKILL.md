@@ -5,8 +5,12 @@ description: Show what changed in spec.md and predict downstream impact on plan 
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: refine:commands/speckit.refine.diff.md
+  source: extension:refine
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Refine Diff Skill
 
 # Diff Spec Changes
 

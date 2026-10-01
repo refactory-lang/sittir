@@ -1,7 +1,6 @@
 ---
 name: speckit-baseline
-description: Create baseline documentation for the project, establishing context for
-  all future specs.
+description: Create baseline documentation for the project, establishing context for all future specs.
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit

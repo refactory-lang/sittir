@@ -5,8 +5,12 @@ description: Analyze drift between specs and implementation. Compares requiremen
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: sync:commands/analyze.md
+  source: extension:sync
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Sync Analyze Skill
 
 # Spec Sync: Analyze Drift
 

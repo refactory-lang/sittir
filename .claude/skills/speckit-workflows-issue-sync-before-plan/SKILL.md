@@ -4,8 +4,12 @@ description: Sync linked issue status for before_plan hook.
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: workflows:commands/issue-sync-before-plan.md
+  source: extension:workflows
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Workflows Issue Sync Before Plan Skill
 
 Run:
 

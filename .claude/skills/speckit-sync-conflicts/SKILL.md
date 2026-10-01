@@ -5,8 +5,12 @@ description: Detect and surface conflicts between specs or between specs and des
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
-  source: sync:commands/conflicts.md
+  source: extension:sync
+user-invocable: true
+disable-model-invocation: false
 ---
+
+# Sync Conflicts Skill
 
 # Spec Sync: Detect Conflicts
 

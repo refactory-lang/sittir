@@ -4,34 +4,10 @@
 Infigraph MCP is indexed. Use Infigraph tools FIRST for all code tasks. Read non-code files directly. If an Infigraph tool is unavailable or errors, tell the user rather than working around the enforcement hook.
 
 ### Rules
-1. Check `list_projects` before indexing — don't re-index
-2. **`search`** for ALL code search — ranked symbols plus every line containing the text, in one call; **`regex=true`** lists every occurrence (e.g. all call sites) rather than the top `limit`. Constants: `get_symbols_in_file`. Full routing, and what to do when a tool is unavailable: the `infigraph-tool-routing` skill (inlined below where skills aren't supported)
-3. **`get_doc_context`** before editing any function — returns source+callers+callees in one call
-4. **`trace_callers`** / **`find_all_references`** before refactoring — never grep for callers
-5. **`trace_callees`** / **`transitive_impact`** for blast radius — never manually trace call chains
-6. Read files directly only for non-code files (configs, docs, manifests) or Edit tool line-number context
-
-### Workflows
-- **Find code:** `search` → if need symbol detail: `get_code_snippet` or `symbol_context`
-- **Before editing:** `get_doc_context`
-- **Before refactoring:** `find_all_references` → `transitive_impact` → edit
-- **Onboarding:** `index_project` → `get_architecture` → `get_stats`
-- **Multi-repo:** `group_create` → `group_add` × N → `group_index` → `group_sync` → `group_link`
-
-### Subagents — infigraph-indexed projects
-Do NOT spawn these agent types for code tasks — they lack MCP access and will fall back to grep/glob:
-- **Explore** → use `search` (with `regex=true` to enumerate) and `get_symbols_in_file` directly instead
-- **Plan** → use `get_architecture`, `get_skeleton`, `get_stats` directly instead
-- **code-reviewer** → use `get_doc_context`, `get_code_snippet`, `review` directly instead
-
-For tasks requiring a subagent, use **general-purpose** — it has full MCP/infigraph access.
-
-### Verbose tools — delegate to subagent
-`get_architecture`, `transitive_impact`, `detect_dead_code`, `detect_clusters`, `detect_clones`, `export_graph`, `query_graph`, `trace_callers`/`trace_callees` (deep), `group_query`, `group_index`
-
-> All other Infigraph tools are safe to call inline. Each tool description says what it replaces — check descriptions when unsure which tool to use.
-
-**Reindex:** use the `infigraph-reindex` skill directly (`/infigraph-reindex [path]` in tools with slash-command support) — runs inline, not via subagent, to save tokens.
+1. **`search`** for ALL code search — ranked symbols plus every line containing the text, in one call; **`regex=true`** lists every occurrence (e.g. all call sites) rather than the top `limit`. Constants: `get_symbols_in_file`.
+2. **`get_doc_context`** before editing any function; **`find_all_references`** / **`transitive_impact`** before refactoring. Never grep for callers or trace call chains by hand.
+3. Read files directly only for non-code files (configs, docs, manifests) or Edit tool line-number context.
+4. Which tool answers which question, every tool's parameters, subagent and verbose-tool rules: the `infigraph-tool-routing` skill (inlined below where skills aren't supported).
 
 ### Session Continuity — MANDATORY
 - **On session start:** MUST call `get_latest_session` to resume prior context
@@ -65,7 +41,7 @@ For tasks requiring a subagent, use **general-purpose** — it has full MCP/infi
 | A symbol's source, callers or callees | `get_code_snippet` / `get_doc_context` / `find_all_references` |
 | Files matching a glob | `list_files` with `glob` (e.g. `glob="src/**/*.rs"`) |
 | Exact lines for an edit | `Read` with `offset` |
-| A file that is not indexed (config, lockfile, log) | `Read`. Markdown **is** indexed: pass `offset`, or use `search` |
+| A file that is not source code (docs, config, lockfile, log, markup) | `Read` it directly. To find text across many docs, `search` with `scope="docs"` |
 
 **Text.** `search` returns ranked symbols *and* every line containing the query under "Text matches", each naming the symbol it sits in; symbols holding a match rank first. With `regex=true` the query is a regex and every matching line is listed, not just the top `limit` — that is how to enumerate. `search` does not surface constants; `get_symbols_in_file` lists them with line numbers.
 

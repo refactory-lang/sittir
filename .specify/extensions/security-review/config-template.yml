@@ -1,16 +1,20 @@
-# Security Review Extension - Configuration Template
+# Security Review - Configuration Template
 #
-# Copy this file to your project root as 'speckit-security.yml'
+# Copy this file to your project root as 'security-review.yml'
 # if you want a reusable review brief for the command.
 #
-# All settings are optional - the extension works with defaults.
+# Note: the toolkit is prompt-driven and reads configuration or conventions.
+# Use it as a human-readable team brief, and include the relevant settings in
+# the slash-command input when you want the agent to follow them.
+#
+# All settings are optional - the toolkit works with defaults.
 
 security-review:
   # ============================================================
   # EXCLUSION PATTERNS
   # ============================================================
 
-  # Directories to exclude from analysis
+  # Directories to exclude from analysis when your workflow applies this brief
   # Default: Common build, dependency, and test directories
   exclude:
     - node_modules/
@@ -28,18 +32,18 @@ security-review:
     - coverage/
     - .nyc_output/
 
-  # File patterns to exclude from analysis
+  # File patterns to exclude from analysis when your workflow applies this brief
   # Default: Minified and bundled files
   exclude-files:
-    - "*.min.js"
-    - "*.min.css"
-    - "*.bundle.js"
-    - "*.chunk.js"
-    - "*.map"
-    - "*.lock"
-    - "package-lock.json"
-    - "yarn.lock"
-    - "pnpm-lock.yaml"
+    - '*.min.js'
+    - '*.min.css'
+    - '*.bundle.js'
+    - '*.chunk.js'
+    - '*.map'
+    - '*.lock'
+    - 'package-lock.json'
+    - 'yarn.lock'
+    - 'pnpm-lock.yaml'
 
   # ============================================================
   # FOCUS AREAS
@@ -92,7 +96,7 @@ security-review:
     # Default: true
     include-stride: true
 
-    # Include Spec-Kit task generation
+    # Include security task generation
     # Default: true
     include-tasks: true
 
@@ -107,7 +111,7 @@ security-review:
 
     # OWASP version to use
     # Default: 2025
-    version: "2025"
+    version: '2025'
 
     # Specific OWASP categories to focus on
     # Leave empty to check all categories
@@ -153,12 +157,12 @@ security-review:
     # File patterns to ignore for secrets scanning
     # Default: Example and sample files
     ignore-patterns:
-      - "*.example"
-      - "*.sample"
-      - ".env.example"
-      - ".env.sample"
-      - "test/**"
-      - "spec/**"
+      - '*.example'
+      - '*.sample'
+      - '.env.example'
+      - '.env.sample'
+      - 'test/**'
+      - 'spec/**'
 
   # ============================================================
   # ARCHITECTURE SETTINGS
@@ -219,6 +223,46 @@ security-review:
     cicd-security: true
 
   # ============================================================
+  # MEMORY CONTEXT
+  # ============================================================
+
+  # Keep these paths in the team brief when you want the review to
+  # respect repository-native memory. Treat these as conventions for prompt input.
+  memory:
+    # Durable memory folder used by Flash-Mem or repository memory
+    # Default: docs/memory
+    memory-root: docs/memory
+
+    # Per-feature memory file used while a spec is active
+    # Default: specs/<feature>/memory.md
+    feature-memory-path: specs/<feature>/memory.md
+
+    # Compact working summary for the current feature
+    # Default: specs/<feature>/memory-synthesis.md
+    feature-memory-synthesis-path: specs/<feature>/memory-synthesis.md
+
+    # Project-wide security rules and standards
+    # Default: security_constitution.md
+    security-constitution-path: security_constitution.md
+
+    # Feature-specific security rules
+    # Default: specs/<feature>/security-constraints.md
+    security-constraints-path: specs/<feature>/security-constraints.md
+
+    # Copilot instructions file maintained by the memory hub
+    # Default: .github/copilot-instructions.md
+    copilot-instructions-path: .github/copilot-instructions.md
+
+    # Additional memory or architecture notes to consider
+    additional-context:
+      - docs/memory/
+      - security_constitution.md
+      - specs/**/memory.md
+      - specs/**/memory-synthesis.md
+      - specs/**/security-constraints.md
+      - .github/copilot-instructions.md
+
+  # ============================================================
   # REPORTING SETTINGS
   # ============================================================
 
@@ -234,7 +278,7 @@ security-review:
     # Report filename pattern
     # Use {date} for timestamp, {project} for project name
     # Default: security-report-{date}.md
-    filename-pattern: "security-report-{date}.md"
+    filename-pattern: 'security-report-{date}.md'
 
     # Include executive summary
     # Default: true

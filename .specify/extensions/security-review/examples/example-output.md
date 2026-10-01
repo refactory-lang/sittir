@@ -1,6 +1,45 @@
+---
+document_type: security-review
+review_type: audit
+assessment_date: "2026-04-02"
+codebase_analyzed: example-nodejs-api
+total_files_analyzed: 47
+total_findings: 18
+overall_risk: MEDIUM
+critical_count: 2
+high_count: 4
+medium_count: 6
+low_count: 4
+informational_count: 2
+owasp_categories: [A01, A02, A03, A04, A05, A07, A09]
+cwe_ids: [CWE-89, CWE-798, CWE-22, CWE-79, CWE-326, CWE-862]
+field_summaries:
+  document_type: "Always 'security-review'. Allows indexers to skip non-review documents."
+  review_type: "Which command generated this document: audit, branch, staged, plan, tasks, followup, or export."
+  assessment_date: "ISO 8601 date the review was performed (YYYY-MM-DD)."
+  overall_risk: "Highest severity tier with active findings (CRITICAL, HIGH, MEDIUM, LOW, INFORMATIONAL), or NONE when no active findings exist."
+  critical_count: "Number of Critical findings (CVSS 9.0-10.0)."
+  high_count: "Number of High findings (CVSS 7.0-8.9)."
+  medium_count: "Number of Medium findings (CVSS 4.0-6.9)."
+  low_count: "Number of Low findings (CVSS 0.1-3.9)."
+  informational_count: "Number of Informational findings."
+  owasp_categories: "OWASP Top 10 2025 categories (A01-A10) that have at least one finding."
+  cwe_ids: "CWE identifiers referenced in this document."
+  finding_id: "Unique finding identifier (SEC-NNN) for cross-referencing and task linkage."
+  location: "File path and line number of the vulnerable code (path/to/file.ext:line)."
+  owasp_category: "OWASP Top 10 2025 category for this finding (AXX:2025-Name)."
+  cwe: "Common Weakness Enumeration identifier with short name (CWE-NNN: Name)."
+  cvss_score: "CVSS v3.1 base score (0.0-10.0). 9.0+=Critical, 7.0-8.9=High, 4.0-6.9=Medium, 0.1-3.9=Low."
+  spec_kit_task: "Spec-Kit task ID for backlog tracking and remediation follow-up (TASK-SEC-NNN)."
+---
+
 # Example Security Review Report
 
 This document demonstrates the output format of the `/speckit.security-review.audit` command.
+
+It is the full-project review mode: the agent reviews the current codebase and uses repository-native memory artifacts as design input when those artifacts exist. In a flash-mem project, that usually means `docs/memory/`, `specs/<feature>/memory.md`, `specs/<feature>/memory-synthesis.md`, and `.github/copilot-instructions.md`. If flash-mem is unavailable, the same prompt can fall back to the `spec-kit-memory-hub` compatibility surface. The command does not automatically update plan or task files unless the prompt explicitly asks it to.
+
+For plan review, use `/speckit.security-review.plan`. For task review, use `/speckit.security-review.tasks`. For staged-only reviews, use `/speckit.security-review.staged`. For branch, pull request, or merge request reviews, use `/speckit.security-review.branch`. For turning findings into tasks or technical debt, use `/speckit.security-review.followup`.
 
 ---
 
@@ -8,7 +47,7 @@ This document demonstrates the output format of the `/speckit.security-review.au
 
 ## Executive Summary
 
-**Overall Security Posture:** MODERATE RISK  
+**Overall Security Posture:** MEDIUM RISK  
 **Assessment Date:** 2026-04-02  
 **Codebase Analyzed:** example-nodejs-api  
 **Total Files Analyzed:** 47  
@@ -53,11 +92,15 @@ User-supplied credentials are concatenated directly into SQL queries without par
 ```javascript
 // src/auth/login.js:42-48
 async function authenticateUser(username, password) {
-	const query =
-		"SELECT * FROM users WHERE username = '" + username + "' AND password = '" + password + "'";
+  const query =
+    "SELECT * FROM users WHERE username = '" +
+    username +
+    "' AND password = '" +
+    password +
+    "'";
 
-	const result = await db.query(query);
-	return result.rows[0];
+  const result = await db.query(query);
+  return result.rows[0];
 }
 ```
 
@@ -93,19 +136,19 @@ Alternative data exfiltration:
 ```javascript
 // src/auth/login.js:42-52
 async function authenticateUser(username, password) {
-	// Input validation
-	if (!username || !password) {
-		throw new ValidationError("Username and password required");
-	}
+  // Input validation
+  if (!username || !password) {
+    throw new ValidationError('Username and password required');
+  }
 
-	// Parameterized query prevents SQL injection
-	const query = {
-		text: "SELECT * FROM users WHERE username = $1 AND password = $2",
-		values: [username, password],
-	};
+  // Parameterized query prevents SQL injection
+  const query = {
+    text: 'SELECT * FROM users WHERE username = $1 AND password = $2',
+    values: [username, password],
+  };
 
-	const result = await db.query(query);
-	return result.rows[0];
+  const result = await db.query(query);
+  return result.rows[0];
 }
 ```
 
@@ -135,11 +178,11 @@ Production API credentials for the payment processor are hardcoded directly in s
 
 ```javascript
 // src/services/payment.js:10-15
-const stripe = require("stripe");
+const stripe = require('stripe');
 
 // TODO: Move to environment variables
-const STRIPE_SECRET_KEY = "this-is-dummy-secret-value";
-const STRIPE_WEBHOOK_SECRET = "this-is-dummy-webhook-secret";
+const STRIPE_SECRET_KEY = 'this-is-dummy-secret-value';
+const STRIPE_WEBHOOK_SECRET = 'this-is-dummy-webhook-secret';
 
 const client = stripe(STRIPE_SECRET_KEY);
 ```
@@ -174,14 +217,14 @@ const client = stripe(STRIPE_SECRET_KEY);
 
 ```javascript
 // src/services/payment.js:10-18
-const stripe = require("stripe");
+const stripe = require('stripe');
 
 // Credentials loaded from environment or secrets manager
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
 if (!STRIPE_SECRET_KEY) {
-	throw new ConfigurationError("STRIPE_SECRET_KEY not configured");
+  throw new ConfigurationError('STRIPE_SECRET_KEY not configured');
 }
 
 const client = stripe(STRIPE_SECRET_KEY);
@@ -212,18 +255,18 @@ Administrative API endpoints for user management do not require authentication o
 
 ```javascript
 // src/api/admin/routes.js:20-35
-router.get("/admin/users", async (req, res) => {
-	// Missing: authentication check
-	// Missing: authorization check (admin role)
-	const users = await User.findAll();
-	res.json(users);
+router.get('/admin/users', async (req, res) => {
+  // Missing: authentication check
+  // Missing: authorization check (admin role)
+  const users = await User.findAll();
+  res.json(users);
 });
 
-router.delete("/admin/users/:id", async (req, res) => {
-	// Missing: authentication check
-	// Missing: authorization check
-	await User.destroy({ where: { id: req.params.id } });
-	res.sendStatus(204);
+router.delete('/admin/users/:id', async (req, res) => {
+  // Missing: authentication check
+  // Missing: authorization check
+  await User.destroy({ where: { id: req.params.id } });
+  res.sendStatus(204);
 });
 ```
 
@@ -268,13 +311,13 @@ User profile endpoint uses user-supplied ID without verifying the requester owns
 
 ```javascript
 // src/api/users/profile.js:25-32
-router.get("/profile/:userId", async (req, res) => {
-	const userId = req.params.userId;
+router.get('/profile/:userId', async (req, res) => {
+  const userId = req.params.userId;
 
-	// Missing: verify req.user.id === userId
-	const profile = await UserProfile.findByUserId(userId);
+  // Missing: verify req.user.id === userId
+  const profile = await UserProfile.findByUserId(userId);
 
-	res.json(profile);
+  res.json(profile);
 });
 ```
 
@@ -295,17 +338,17 @@ router.get("/profile/:userId", async (req, res) => {
 #### Remediation
 
 ```javascript
-router.get("/profile/:userId", async (req, res) => {
-	const requestedUserId = parseInt(req.params.userId);
-	const authenticatedUserId = req.user.id;
+router.get('/profile/:userId', async (req, res) => {
+  const requestedUserId = parseInt(req.params.userId);
+  const authenticatedUserId = req.user.id;
 
-	// Authorization check
-	if (requestedUserId !== authenticatedUserId) {
-		return res.status(403).json({ error: "Access denied" });
-	}
+  // Authorization check
+  if (requestedUserId !== authenticatedUserId) {
+    return res.status(403).json({ error: 'Access denied' });
+  }
 
-	const profile = await UserProfile.findByUserId(requestedUserId);
-	res.json(profile);
+  const profile = await UserProfile.findByUserId(requestedUserId);
+  res.json(profile);
 });
 ```
 
@@ -342,11 +385,11 @@ Update package.json:
 
 ```json
 {
-	"dependencies": {
-		"lodash": "^4.17.21",
-		"express": "^4.18.2",
-		"jsonwebtoken": "^9.0.0"
-	}
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0"
+  }
 }
 ```
 
@@ -371,17 +414,17 @@ The application does not set Content-Security-Policy (CSP) headers, leaving user
 ```javascript
 // src/middleware/headers.js
 app.use((req, res, next) => {
-	res.setHeader(
-		"Content-Security-Policy",
-		"default-src 'self'; " +
-			"script-src 'self'; " +
-			"style-src 'self' 'unsafe-inline'; " +
-			"img-src 'self' data: https:; " +
-			"font-src 'self'; " +
-			"connect-src 'self'; " +
-			"frame-ancestors 'none';",
-	);
-	next();
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; " +
+      "script-src 'self'; " +
+      "style-src 'self' 'unsafe-inline'; " +
+      "img-src 'self' data: https:; " +
+      "font-src 'self'; " +
+      "connect-src 'self'; " +
+      "frame-ancestors 'none';",
+  );
+  next();
 });
 ```
 
@@ -589,7 +632,16 @@ The application exposes 15 public API endpoints, 3 of which lack rate limiting, 
 
 This security review was conducted using automated static analysis combined with manual code review following OWASP testing guidelines. The assessment covered all source files, configuration files, and dependency manifests in the repository.
 
-### B. Tools and References
+### B. Review Modes
+
+- Full-project audit: `/speckit.security-review.audit`
+- Plan review: `/speckit.security-review.plan`
+- Task review: `/speckit.security-review.tasks`
+- Staged-diff review: `/speckit.security-review.staged`
+- Branch / PR / MR review: `/speckit.security-review.branch`
+- Follow-up planning: `/speckit.security-review.followup`
+
+### C. Tools and References
 
 - OWASP Top 10 2025
 - OWASP Application Security Verification Standard (ASVS)
@@ -598,7 +650,7 @@ This security review was conducted using automated static analysis combined with
 - STRIDE Threat Model (Microsoft)
 - NIST Cybersecurity Framework
 
-### C. Limitations
+### D. Limitations
 
 - This assessment is based on static code analysis only
 - Runtime behavior and configuration not assessed
@@ -606,7 +658,7 @@ This security review was conducted using automated static analysis combined with
 - Network-level security not evaluated
 - Social engineering and physical security out of scope
 
-### D. Next Steps
+### E. Next Steps
 
 1. **Immediate:** Review critical and high findings with development team
 2. **This Sprint:** Prioritize and begin remediation of critical findings
@@ -616,4 +668,14 @@ This security review was conducted using automated static analysis combined with
 
 ---
 
-_Report generated by Spec-Kit Security Review Extension v1.1.0_
+_Report generated by Spec-Kit Security Review Extension v1.3.1_
+
+---
+
+## Memory Hub INDEX.md Row
+
+Proposed routing row — paste into your `docs/memory/INDEX.md` Security Reviews table:
+
+```text
+| docs/security-reviews/2026-04-02-example-nodejs-api.md | audit | 2026-04-02 | MEDIUM | C:2 H:4 M:6 L:4 | A01,A02,A03,A04,A05,A07,A09 |
+```

@@ -1,11 +1,8 @@
 ---
 name: speckit-superb-finish
-description: "Development branch completion protocol. Bridges an installed obra/superpowers
-  finishing-a-development-branch skill. Guides the user through structured options
-  (merge, PR, keep, discard) after verification passes. Call manually after speckit.superb.verify
-  succeeds.
+description: 'Development branch completion protocol. Bridges an installed obra/superpowers finishing-a-development-branch skill. Guides the user through structured options (merge, PR, keep, discard) after verification passes. Call manually after speckit.superb.verify succeeds.
 
-  "
+  '
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
   author: github-spec-kit
@@ -29,7 +26,6 @@ Before executing this command, confirm:
 3. All `spec.md` requirements are covered (spec-coverage checklist complete).
 
 If any of the above is not met, **STOP**:
-
 ```
 Cannot finish: verification has not passed yet.
 Run /speckit.superb.verify first.
@@ -90,7 +86,6 @@ Apply the resolved installed skill with these spec-kit additions:
 
 1. **Final test verification** — run the full test suite one more time (the skill requires this).
 2. **Present structured options** — exactly 4 choices, no open-ended questions:
-
    ```
    Implementation verified complete. What would you like to do?
 
@@ -101,7 +96,6 @@ Apply the resolved installed skill with these spec-kit additions:
 
    Which option?
    ```
-
 3. **Execute the chosen option** — follow the skill's procedures for each option.
 4. **Cleanup** — handle worktree cleanup per the skill's rules.
 
@@ -116,7 +110,7 @@ Synchronize `spec.md` only for outcomes this command can directly observe.
 Update the spec by running:
 
 ```bash
-.specify/scripts/bash/sync-spec-status.sh --status "In Review"
+.specify/extensions/superb/scripts/bash/sync-spec-status.sh --status "In Review"
 ```
 
 Only do this after PR creation succeeds.
@@ -133,7 +127,7 @@ After explicit confirmation and only after discard succeeds, update the spec by
 running:
 
 ```bash
-.specify/scripts/bash/sync-spec-status.sh --status "Abandoned"
+.specify/extensions/superb/scripts/bash/sync-spec-status.sh --status "Abandoned"
 ```
 
 If discard fails, preserve the previous status.
@@ -163,19 +157,15 @@ spec-kit context:
 
 ```markdown
 ## Summary
-
 [Feature name from spec.md]
 
 ## Spec Coverage
-
 [Paste the spec-coverage checklist from the verify run]
 
 ## Verification Evidence
-
 - Test suite: [N] tests, [N] passing, 0 failing
 - Spec coverage: [N/N] requirements verified
 
 ## Review
-
 Consider running `/speckit.superb.critique` for spec-aligned review.
 ```
