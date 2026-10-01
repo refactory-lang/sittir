@@ -432,8 +432,10 @@ function emitBranchFrom(
 	const cfg = bareContent === undefined && bareInterior === undefined ? 'input' : '_cfg';
 	if (slots.length > 0) {
 		if (canDirectFactoryCall) {
+			const interiorSole = interiorSlotGuards(node.kind, node).some((guard) => guard.slot === soleField.name);
+			const isNodeTest = interiorSole ? 'isNode(input)' : `isNodeOfKind(input, ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)})`;
 			lines.push(
-				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeOfKind(input, ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)})) return input as unknown as ${spelledType ?? returnType};`
+				`  if (${inputOptional ? 'input !== undefined && ' : ''}${isNodeTest}) return input as unknown as ${spelledType ?? returnType};`
 			);
 		} else {
 			const bareKind =

@@ -1765,3 +1765,17 @@ The trimmed, non-empty text runs of a node's span that no descendant span covers
 ### `packages/tools/src/validate/uncovered-content.ts::run`
 
 `sittir tool uncovered-content`: prints the census per grammar (one line per kind, then each distinct uncovered text with its count), or the census as JSON with `--json`. Exits 1 when any grammar has an uncovered node.
+
+### `packages/tools/src/validate/from.ts::structuralDiff`
+
+Shallow comparison of a `from()` result against the factory's: `$type`, the slots the factory declares, the stored value of every `_<slot>` text slot on either side, and the count of named children. A text slot that differs, or that only one side holds, is a divergence; read metadata such as `$text` is not compared, because `from` on a node of its own kind returns the read node itself.
+
+### `packages/tools/src/validate/from.ts::validateFrom`
+
+A read leaf whose stored kind differs from the kind the corpus shows (an in-place leaf alias reads as the shared anonymous token) is validated by its text: `from(node.$text)` is compared with `factory(nodeToConfig(node))`, and `from(node)` must return the same object. Either the read identity is kept or the row is an error. The scalarized text and constant leaves, which have no node, keep comparing `from(text)` with `factory(text)` through the same closure.
+
+### `packages/tools/src/validate/common.ts::nodeToConfig`
+
+#### interior projection
+
+A read leaf that carries `$text`, whose shown kind has a token interior and whose stored slots do not yet hold it, is projected through `projectInterior`, the one projection the wrap and the coercer share, and read under the shown kind. A leaf already wrapped as its own kind has its slots and takes the unchanged path.

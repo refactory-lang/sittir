@@ -567,7 +567,7 @@ export function resolveEscapeSequence_content(
 }
 
 export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnType<typeof F.buildEscapeSequence> {
-	if (isNodeOfKind(input, TSKindId.EscapeSequence)) return input as unknown as ReturnType<typeof F.buildEscapeSequence>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequence>;
 	return F.buildEscapeSequence(
 		_requireField(
 			'escape_sequence',
@@ -716,7 +716,7 @@ export function resolveComment_content(value: T.Comment.LooseConfig['content']):
 }
 
 export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.buildComment> {
-	if (isNodeOfKind(input, TSKindId.Comment)) return input as unknown as ReturnType<typeof F.buildComment>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildComment>;
 	return F.buildComment(
 		_requireField(
 			'comment',

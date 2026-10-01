@@ -5571,7 +5571,7 @@ export function resolveComment_content(value: T.Comment.LooseConfig['content']):
 }
 
 export function coerceToComment(input: T.Comment.Loose): ReturnType<typeof F.buildComment> {
-	if (isNodeOfKind(input, TSKindId.Comment)) return input as unknown as ReturnType<typeof F.buildComment>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildComment>;
 	return F.buildComment(
 		_requireField(
 			'comment',
@@ -6818,7 +6818,7 @@ export function coerceToIntegerHex<const I extends T.IntegerHex.Loose, const O e
 	'prefix',
 	O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
 > {
-	if (isNodeOfKind(input, TSKindId.IntegerHex))
+	if (isNode(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildIntegerHex>,
 			'prefix',
@@ -6854,7 +6854,7 @@ export function coerceToIntegerOctal<const I extends T.IntegerOctal.Loose, const
 	'prefix',
 	O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
 > {
-	if (isNodeOfKind(input, TSKindId.IntegerOctal))
+	if (isNode(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildIntegerOctal>,
 			'prefix',
@@ -6895,7 +6895,7 @@ export function coerceToIntegerBinary<
 	'prefix',
 	O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
 > {
-	if (isNodeOfKind(input, TSKindId.IntegerBinary))
+	if (isNode(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildIntegerBinary>,
 			'prefix',
@@ -7090,8 +7090,7 @@ export function resolveEscapeSequenceUnicodeFixed_content(
 export function coerceToEscapeSequenceUnicodeFixed(
 	input: T.EscapeSequenceUnicodeFixed.Loose
 ): ReturnType<typeof F.buildEscapeSequenceUnicodeFixed> {
-	if (isNodeOfKind(input, TSKindId.EscapeSequenceUnicodeFixed))
-		return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeFixed>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeFixed>;
 	return F.buildEscapeSequenceUnicodeFixed(
 		_requireField(
 			'escape_sequence_unicode_fixed',
@@ -7118,8 +7117,7 @@ export function resolveEscapeSequenceUnicodeWide_content(
 export function coerceToEscapeSequenceUnicodeWide(
 	input: T.EscapeSequenceUnicodeWide.Loose
 ): ReturnType<typeof F.buildEscapeSequenceUnicodeWide> {
-	if (isNodeOfKind(input, TSKindId.EscapeSequenceUnicodeWide))
-		return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeWide>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeWide>;
 	return F.buildEscapeSequenceUnicodeWide(
 		_requireField(
 			'escape_sequence_unicode_wide',
@@ -7146,8 +7144,7 @@ export function resolveEscapeSequenceHex_content(
 export function coerceToEscapeSequenceHex(
 	input: T.EscapeSequenceHex.Loose
 ): ReturnType<typeof F.buildEscapeSequenceHex> {
-	if (isNodeOfKind(input, TSKindId.EscapeSequenceHex))
-		return input as unknown as ReturnType<typeof F.buildEscapeSequenceHex>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceHex>;
 	return F.buildEscapeSequenceHex(
 		_requireField(
 			'escape_sequence_hex',
@@ -7174,8 +7171,7 @@ export function resolveEscapeSequenceOctal_content(
 export function coerceToEscapeSequenceOctal(
 	input: T.EscapeSequenceOctal.Loose
 ): ReturnType<typeof F.buildEscapeSequenceOctal> {
-	if (isNodeOfKind(input, TSKindId.EscapeSequenceOctal))
-		return input as unknown as ReturnType<typeof F.buildEscapeSequenceOctal>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceOctal>;
 	const _value = configFieldOr(input, 'content', () =>
 		typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceOctal_content) : input
 	);
@@ -7197,8 +7193,7 @@ export function resolveEscapeSequenceLineBreak_content(
 export function coerceToEscapeSequenceLineBreak(
 	input: T.EscapeSequenceLineBreak.Loose
 ): ReturnType<typeof F.buildEscapeSequenceLineBreak> {
-	if (isNodeOfKind(input, TSKindId.EscapeSequenceLineBreak))
-		return input as unknown as ReturnType<typeof F.buildEscapeSequenceLineBreak>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceLineBreak>;
 	return F.buildEscapeSequenceLineBreak(
 		_requireField(
 			'escape_sequence_line_break',
@@ -7225,8 +7220,7 @@ export function resolveEscapeSequenceSimple_content(
 export function coerceToEscapeSequenceSimple(
 	input: T.EscapeSequenceSimple.Loose
 ): ReturnType<typeof F.buildEscapeSequenceSimple> {
-	if (isNodeOfKind(input, TSKindId.EscapeSequenceSimple))
-		return input as unknown as ReturnType<typeof F.buildEscapeSequenceSimple>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceSimple>;
 	return F.buildEscapeSequenceSimple(
 		_requireField(
 			'escape_sequence_simple',
@@ -7253,8 +7247,7 @@ export function resolveEscapeSequenceNamed_content(
 export function coerceToEscapeSequenceNamed(
 	input: T.EscapeSequenceNamed.Loose
 ): ReturnType<typeof F.buildEscapeSequenceNamed> {
-	if (isNodeOfKind(input, TSKindId.EscapeSequenceNamed))
-		return input as unknown as ReturnType<typeof F.buildEscapeSequenceNamed>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceNamed>;
 	return F.buildEscapeSequenceNamed(
 		_requireField(
 			'escape_sequence_named',

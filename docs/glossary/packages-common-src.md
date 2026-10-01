@@ -246,3 +246,7 @@ The tree a node's handle names, whichever of `$handle` (its own), `$parentHandle
 ### `packages/common/src/transport-data.ts::detachCoordinates`
 
 Drops the pre-edit spelling and the coordinate that would slice it from every node that holds storage, in place, for data that reached a render by a path other than `toTransportData`. A coordinate that survives (a leaf whose slots are projected from its text) addresses that text and nothing of the layout around it, so it is stamped `$textOnly`, and whichever handle it carries is re-keyed to `$treeHandle`, the only coordinate key the render side reads. The root's edge flanks and a list's source gaps are read from tree bytes, and only a coordinate that names its tree position is evidence for them; a text-only one is not, so a render of such data takes the grammar's defaults where a tree-bound render keeps the source's layout.
+
+### `packages/common/src/utils.ts::describeValue`
+
+A value as the text of a refusal message: a string as itself, anything else as JSON (a bigint as `<n>n`), falling back to `String` when it cannot be serialised. Generated pattern guards use it so a node or object that reached a text slot prints as what it was, not `[object Object]`.

@@ -11,6 +11,7 @@
 
 import type { AnyUntypedNode } from '@sittir/types';
 import { sliceSpan } from '@sittir/common';
+import type { TokenInterior } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import {
 	loadStorageKindNameFromId,
@@ -96,7 +97,7 @@ function findUndefined(node: AnyUntypedNode, path = ''): string[] {
  * access can't distinguish `{a: undefined}` from `{}`, so the structural
  * comparison shouldn't either.
  */
-function structuralDiff(
+export function structuralDiff(
 	a: AnyUntypedNode,
 	b: AnyUntypedNode,
 	kindNameFromId?: ((id: number) => string | undefined) | undefined
@@ -117,6 +118,16 @@ function structuralDiff(
 	// One-way check: fields factory declared that from() didn't fill in.
 	const missingInA = [...bKeys].filter((k) => !aKeysMatchingB.includes(k)).sort();
 	if (missingInA.length) diffs.push(`from() missing declared fields: ${missingInA.join(', ')}`);
+
+	const ra = a as unknown as Record<string, unknown>;
+	const rb = b as unknown as Record<string, unknown>;
+	for (const key of new Set([...Object.keys(ra), ...Object.keys(rb)])) {
+		if (!key.startsWith('_')) continue;
+		const [va, vb] = [ra[key], rb[key]];
+		if ((typeof va === 'string' || typeof vb === 'string') && va !== vb) {
+			diffs.push(`${key}: ${JSON.stringify(va)} vs ${JSON.stringify(vb)}`);
+		}
+	}
 
 	// Compare only named children — anonymous tokens (delimiters, separators)
 	// are reconstructed from templates, not carried in factory output.
@@ -202,6 +213,10 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	// readUntypedNode's resolveKindId falls back to the zero sentinel instead of
 	// propagating a TypeError for form kinds not in the numeric catalog.
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
+	const tokenInteriors = (await importGrammarModule(grammar, 'consts.ts'))?.TOKEN_INTERIORS as
+		| Readonly<Record<string, TokenInterior>>
+		| undefined;
+	const interiorOf = (kind: string): TokenInterior | undefined => tokenInteriors?.[kind];
 	const kindIdFromName = rawKindIdFromName
 		? (name: string): number | undefined => {
 				try {
@@ -301,6 +316,33 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 			continue;
 		}
 
+		const validateLeafByText = (kind: string, text: string, leafShape: 'text' | 'constant'): void => {
+			try {
+				const fromResult = fromMap[kind]!(text as never) as AnyUntypedNode;
+				const factoryResult =
+					leafShape === 'constant'
+						? (factoryMap[kind] as AnyUntypedNode)
+						: (factoryMap[kind]! as (t: string) => AnyUntypedNode)(text);
+				const diffs = kindIdDiffs(fromResult, factoryResult) ?? structuralDiff(fromResult, factoryResult, kindNameFromId);
+				if (diffs.length > 0) {
+					divergentCount++;
+					errors.push({
+						kind,
+						severity: 'warning',
+						message: `from() diverges: ${diffs.join('; ')}`
+					});
+				} else {
+					pass++;
+				}
+			} catch (e) {
+				errors.push({
+					kind,
+					severity: 'error',
+					message: `leaf text route throws: ${(e as Error).message}`
+				});
+			}
+		};
+
 		for (const kind of collectKinds(tree1.rootNode)) {
 			if (!(kind in fromMap) || !(kind in factoryMap)) {
 				if (!excludedKinds.has(kind)) {
@@ -344,31 +386,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					// guards included) and the factory, and compare the results.
 					const leafShape = factoryShapes[kind] ?? 'config';
 					if (leafShape === 'text' || leafShape === 'constant') {
-						try {
-							const text = node1.text;
-							const fromResult = fromMap[kind]!(text as never) as AnyUntypedNode;
-							const factoryResult =
-								leafShape === 'constant'
-									? (factoryMap[kind] as AnyUntypedNode)
-									: (factoryMap[kind]! as (t: string) => AnyUntypedNode)(text);
-							const diffs = kindIdDiffs(fromResult, factoryResult) ?? structuralDiff(fromResult, factoryResult, kindNameFromId);
-							if (diffs.length > 0) {
-								divergentCount++;
-								errors.push({
-									kind,
-									severity: 'warning',
-									message: `from() diverges: ${diffs.join('; ')}`
-								});
-							} else {
-								pass++;
-							}
-						} catch (e) {
-							errors.push({
-								kind,
-								severity: 'error',
-								message: `leaf text route throws: ${(e as Error).message}`
-							});
-						}
+						validateLeafByText(kind, node1.text, leafShape);
 						continue;
 					}
 					if (insideExtra(node1)) {
@@ -436,8 +454,19 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 			const readTypeName = typeof readData.$type === 'number' ? storageKindNameFromId?.(readData.$type) : undefined;
 			const readKind =
 				readTypeName !== undefined && readTypeName in fromMap && readTypeName in factoryMap ? readTypeName : kind;
+			const readKindId = kindIdFromName?.(readKind);
+			const aliasRead =
+				typeof readData.$text === 'string' && typeof readData.$type === 'number' && readKindId !== undefined && readData.$type !== readKindId;
 			try {
-				const fromResult = fromMap[readKind]!(readData) as AnyUntypedNode;
+				if (aliasRead && fromMap[readKind]!(readData) !== readData) {
+					errors.push({
+						kind,
+						severity: 'error',
+						message: `from() rebuilt a read leaf of another kind instead of returning it`
+					});
+					continue;
+				}
+				const fromResult = fromMap[readKind]!(aliasRead ? (readData.$text as never) : readData) as AnyUntypedNode;
 				let factoryResult: AnyUntypedNode;
 				try {
 					// Route by the shape declared at codegen time — same
@@ -453,6 +482,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						// `$fields`. Use `nodeToConfig` which handles both shapes
 						// and recursively resolves children through factories.
 						const config = nodeToConfig(readData, {
+							shownKind: readKind,
+							interiorOf,
 							factoryMap,
 							factoryShapes,
 							factoryFields,
@@ -491,6 +522,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						// convention from 'spread's plain rest-param factories (see
 						// classifyFactoryShape's separatedList case).
 						const config = nodeToConfig(readData, {
+							shownKind: readKind,
+							interiorOf,
 							factoryMap,
 							factoryShapes,
 							factoryFields,
@@ -504,6 +537,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						factoryResult = options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
 					} else {
 						const config = nodeToConfig(readData, {
+							shownKind: readKind,
+							interiorOf,
 							factoryMap,
 							factoryShapes,
 							factoryFields,
