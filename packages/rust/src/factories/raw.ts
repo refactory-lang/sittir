@@ -15,6 +15,8 @@ import {
 	orDefault,
 	rejectBareText,
 	rejectKeywordText,
+	withElementsSeat,
+	withGroupSeat,
 	withListSlots,
 	withListView
 } from '@sittir/common/utils';
@@ -909,9 +911,21 @@ export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Bound {
 				}
 			),
 			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{
+					slot: 'typeParameters',
+					kind: TSKindId.TypeParameters as const,
+					optional: true,
+					make: buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-				{ slot: 'body', kind: TSKindId.FieldDeclarationList as const, optional: false, make: buildFieldDeclarationList }
+				{
+					slot: 'body',
+					kind: TSKindId.FieldDeclarationList as const,
+					optional: false,
+					make: buildFieldDeclarationList,
+					element: { keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
+				}
 			]
 		)
 	) as unknown as T.UnionItem.Bound;
@@ -964,9 +978,21 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Bound {
 				}
 			),
 			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{
+					slot: 'typeParameters',
+					kind: TSKindId.TypeParameters as const,
+					optional: true,
+					make: buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-				{ slot: 'body', kind: TSKindId.EnumVariantList as const, optional: false, make: buildEnumVariantList }
+				{
+					slot: 'body',
+					kind: TSKindId.EnumVariantList as const,
+					optional: false,
+					make: buildEnumVariantList,
+					element: { keys: ['attributeItem', 'enumVariant'], make: buildAttributedEnumVariant }
+				}
 			]
 		)
 	) as unknown as T.EnumItem.Bound;
@@ -1028,7 +1054,8 @@ function _buildEnumVariantList(
 						slot: 'enumVariantListElements',
 						kind: TSKindId.EnumVariantListElements as const,
 						optional: true,
-						make: buildEnumVariantListElements
+						make: buildEnumVariantListElements,
+						element: { keys: ['attributeItem', 'enumVariant'], make: buildAttributedEnumVariant }
 					}
 				]
 			),
@@ -1145,7 +1172,8 @@ function _buildFieldDeclarationList(
 						slot: 'fieldDeclarationListElements',
 						kind: TSKindId.FieldDeclarationListElements as const,
 						optional: true,
-						make: buildFieldDeclarationListElements
+						make: buildFieldDeclarationListElements,
+						element: { keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
 					}
 				]
 			),
@@ -1267,7 +1295,8 @@ function _buildOrderedFieldDeclarationList(
 						slot: 'attributes',
 						kind: TSKindId.OrderedFieldDeclarationListElements as const,
 						optional: true,
-						make: buildOrderedFieldDeclarationListElements
+						make: buildOrderedFieldDeclarationListElements,
+						element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
 					}
 				]
 			),
@@ -1483,7 +1512,13 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 				}
 			),
 			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{
+					slot: 'typeParameters',
+					kind: TSKindId.TypeParameters as const,
+					optional: true,
+					make: buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
 				{ slot: 'trailingWhereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
 			]
@@ -1568,8 +1603,20 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 				}
 			),
 			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-				{ slot: 'parameters', kind: TSKindId.Parameters as const, optional: false, make: buildParameters },
+				{
+					slot: 'typeParameters',
+					kind: TSKindId.TypeParameters as const,
+					optional: true,
+					make: buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+				},
+				{
+					slot: 'parameters',
+					kind: TSKindId.Parameters as const,
+					optional: false,
+					make: buildParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
 			]
 		)
@@ -1646,8 +1693,20 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 				}
 			),
 			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
-				{ slot: 'parameters', kind: TSKindId.Parameters as const, optional: false, make: buildParameters },
+				{
+					slot: 'typeParameters',
+					kind: TSKindId.TypeParameters as const,
+					optional: true,
+					make: buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+				},
+				{
+					slot: 'parameters',
+					kind: TSKindId.Parameters as const,
+					optional: false,
+					make: buildParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
 			]
 		)
@@ -1865,7 +1924,13 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 				}
 			),
 			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{
+					slot: 'typeParameters',
+					kind: TSKindId.TypeParameters as const,
+					optional: true,
+					make: buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
 			]
 		)
@@ -1910,7 +1975,13 @@ export function buildAssociatedType(config: T.AssociatedType.Config): T.Associat
 				}
 			),
 			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{
+					slot: 'typeParameters',
+					kind: TSKindId.TypeParameters as const,
+					optional: true,
+					make: buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
 			]
 		)
@@ -1982,7 +2053,15 @@ export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Con
 					type: () => _type
 				}
 			),
-			[{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: false, make: buildTypeParameters }]
+			[
+				{
+					slot: 'typeParameters',
+					kind: TSKindId.TypeParameters as const,
+					optional: false,
+					make: buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+				}
+			]
 		)
 	) as unknown as T.HigherRankedTraitBound.Bound;
 }
@@ -2079,7 +2158,8 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 						slot: 'typeParametersElements',
 						kind: TSKindId.TypeParametersElements as const,
 						optional: false,
-						make: buildTypeParametersElements
+						make: buildTypeParametersElements,
+						element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
 					}
 				]
 			),
@@ -2768,7 +2848,8 @@ function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNod
 						slot: 'parametersElements',
 						kind: TSKindId.ParametersElements as const,
 						optional: true,
-						make: buildParametersElements
+						make: buildParametersElements,
+						element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
 					}
 				]
 			),
@@ -3187,7 +3268,13 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 			),
 			[
 				{ slot: 'forLifetimes', kind: TSKindId.ForLifetimes as const, optional: true, make: buildForLifetimes },
-				{ slot: 'parameters', kind: TSKindId.Parameters as const, optional: false, make: buildParameters }
+				{
+					slot: 'parameters',
+					kind: TSKindId.Parameters as const,
+					optional: false,
+					make: buildParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+				}
 			]
 		)
 	) as unknown as T.FunctionType.Bound;
@@ -3283,7 +3370,15 @@ export function buildGenericFunction(config: T.GenericFunction.Config): T.Generi
 					typeArguments: () => _type_arguments
 				}
 			),
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments }]
+			[
+				{
+					slot: 'typeArguments',
+					kind: TSKindId.TypeArguments as const,
+					optional: false,
+					make: buildTypeArguments,
+					element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+				}
+			]
 		)
 	) as unknown as T.GenericFunction.Bound;
 }
@@ -3321,7 +3416,15 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 					typeArguments: () => _type_arguments
 				}
 			),
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments }]
+			[
+				{
+					slot: 'typeArguments',
+					kind: TSKindId.TypeArguments as const,
+					optional: false,
+					make: buildTypeArguments,
+					element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+				}
+			]
 		)
 	) as unknown as T.GenericType.Bound;
 }
@@ -3359,7 +3462,15 @@ export function buildGenericTypeWithTurbofish(
 					typeArguments: () => _type_arguments
 				}
 			),
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments }]
+			[
+				{
+					slot: 'typeArguments',
+					kind: TSKindId.TypeArguments as const,
+					optional: false,
+					make: buildTypeArguments,
+					element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+				}
+			]
 		)
 	) as unknown as T.GenericTypeWithTurbofish.Bound;
 }
@@ -3520,7 +3631,8 @@ function _buildTypeArguments(value: AdmitBound<T.TypeArgumentsElements, T.Admitt
 						slot: 'typeArgumentsElements',
 						kind: TSKindId.TypeArgumentsElements as const,
 						optional: false,
-						make: buildTypeArgumentsElements
+						make: buildTypeArgumentsElements,
+						element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
 					}
 				]
 			),
@@ -3571,7 +3683,15 @@ export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Bo
 					type: () => _type
 				}
 			),
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: true, make: buildTypeArguments }]
+			[
+				{
+					slot: 'typeArguments',
+					kind: TSKindId.TypeArguments as const,
+					optional: true,
+					make: buildTypeArguments,
+					element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+				}
+			]
 		)
 	) as unknown as T.TypeBinding.Bound;
 }
@@ -3657,7 +3777,15 @@ export function buildAbstractType(config: T.AbstractType.Config): T.AbstractType
 					trait: () => _trait
 				}
 			),
-			[{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters }]
+			[
+				{
+					slot: 'typeParameters',
+					kind: TSKindId.TypeParameters as const,
+					optional: true,
+					make: buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+				}
+			]
 		)
 	) as unknown as T.AbstractType.Bound;
 }
@@ -4425,7 +4553,15 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 					arguments: () => _arguments
 				}
 			),
-			[{ slot: 'arguments', kind: TSKindId.Arguments as const, optional: false, make: buildArguments }]
+			[
+				{
+					slot: 'arguments',
+					kind: TSKindId.Arguments as const,
+					optional: false,
+					make: buildArguments,
+					element: { keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
+				}
+			]
 		)
 	) as unknown as T.CallExpression.Bound;
 }
@@ -4478,7 +4614,8 @@ function _buildArguments(value?: AdmitBound<T.ArgumentsElements, T.AdmittedNodes
 						slot: 'argumentsElements',
 						kind: TSKindId.ArgumentsElements as const,
 						optional: true,
-						make: buildArgumentsElements
+						make: buildArgumentsElements,
+						element: { keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
 					}
 				]
 			),
@@ -4936,18 +5073,30 @@ export function buildMatchBlock(value?: AdmitBound<T.MatchBlockArms, T.AdmittedN
 export function buildMatchBlock(value?: AdmitBound<T.MatchBlockArms, T.AdmittedNodes>): T.MatchBlock.Bound {
 	const _match_block_arms = rejectBareText(value, 'MatchBlock.matchBlockArms', 'a built MatchBlockArms');
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MatchBlock as const,
-				$source: 2 as const,
-				$named: true as const,
-				_match_block_arms,
-				$with: {
-					matchBlockArms: (value?: T.MatchBlockArms) => buildMatchBlock(value)
+		withGroupSeat(
+			withAccessors(
+				{
+					$type: TSKindId.MatchBlock as const,
+					$source: 2 as const,
+					$named: true as const,
+					_match_block_arms,
+					$with: {
+						matchBlockArms: (value?: T.MatchBlockArms) => buildMatchBlock(value)
+					}
+				},
+				{
+					matchBlockArms: () => _match_block_arms
 				}
-			},
+			),
 			{
-				matchBlockArms: () => _match_block_arms
+				slot: 'matchBlockArms',
+				stored: '_match_block_arms',
+				kind: TSKindId.MatchBlockArms as const,
+				make: buildMatchBlockArms,
+				keys: [
+					{ name: 'matchArms', rest: true },
+					{ name: 'lastArm', rest: false, required: true }
+				]
 			}
 		)
 	) as unknown as T.MatchBlock.Bound;
@@ -4967,28 +5116,42 @@ export function buildLastMatchArm(config: T.LastMatchArm.Config): T.LastMatchArm
 	);
 	const _comma = coerceBooleanKeywordStorage(config.comma);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.LastMatchArm as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attributes,
-				_pattern,
-				_value,
-				_comma,
-				$with: {
-					attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
-						buildLastMatchArm({ ...config, attributes: values }),
-					pattern: (value: T.MatchPattern) => buildLastMatchArm({ ...config, pattern: value }),
-					value: (value: NonNullable<T.LastMatchArm.Config>['value']) => buildLastMatchArm({ ...config, value: value }),
-					comma: (value?: NonNullable<T.LastMatchArm.Config>['comma']) => buildLastMatchArm({ ...config, comma: value })
+		withGroupSeat(
+			withAccessors(
+				{
+					$type: TSKindId.LastMatchArm as const,
+					$source: 2 as const,
+					$named: true as const,
+					_attributes,
+					_pattern,
+					_value,
+					_comma,
+					$with: {
+						attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
+							buildLastMatchArm({ ...config, attributes: values }),
+						pattern: (value: T.MatchPattern) => buildLastMatchArm({ ...config, pattern: value }),
+						value: (value: NonNullable<T.LastMatchArm.Config>['value']) =>
+							buildLastMatchArm({ ...config, value: value }),
+						comma: (value?: NonNullable<T.LastMatchArm.Config>['comma']) =>
+							buildLastMatchArm({ ...config, comma: value })
+					}
+				},
+				{
+					attributes: () => _attributes,
+					pattern: () => _pattern,
+					value: () => _value,
+					comma: () => _comma
 				}
-			},
+			),
 			{
-				attributes: () => _attributes,
-				pattern: () => _pattern,
-				value: () => _value,
-				comma: () => _comma
+				slot: 'pattern',
+				stored: '_pattern',
+				kind: TSKindId.MatchPattern as const,
+				make: buildMatchPattern,
+				keys: [
+					{ name: 'pattern', rest: false, required: true },
+					{ name: 'condition', rest: false }
+				]
 			}
 		)
 	) as unknown as T.LastMatchArm.Bound;
@@ -5589,7 +5752,15 @@ export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericP
 					typeArguments: () => _type_arguments
 				}
 			),
-			[{ slot: 'typeArguments', kind: TSKindId.TypeArguments as const, optional: false, make: buildTypeArguments }]
+			[
+				{
+					slot: 'typeArguments',
+					kind: TSKindId.TypeArguments as const,
+					optional: false,
+					make: buildTypeArguments,
+					element: { keys: ['content', 'traitBounds'], make: buildTypeArgument }
+				}
+			]
 		)
 	) as unknown as T.GenericPattern.Bound;
 }
@@ -6194,23 +6365,26 @@ function _buildEnumVariantListElements(
 	const _delimiter = options.delimiter ?? Delimiter.Trailing;
 	return withMethods(
 		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.EnumVariantListElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (...vs: NonEmptyArray<AdmitBound<T.AttributedEnumVariant | T.EnumVariant, T.AdmittedNodes>>) =>
-							buildEnumVariantListElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildEnumVariantListElements({ ...options, delimiter: v }, ...elements)
+			withElementsSeat(
+				withAccessors(
+					{
+						$type: TSKindId.EnumVariantListElements as const,
+						$source: 2 as const,
+						$named: true as const,
+						_element,
+						_delimiter,
+						$with: {
+							elements: (...vs: NonEmptyArray<AdmitBound<T.AttributedEnumVariant | T.EnumVariant, T.AdmittedNodes>>) =>
+								buildEnumVariantListElements(options, ...vs),
+							delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+								buildEnumVariantListElements({ ...options, delimiter: v }, ...elements)
+						}
+					},
+					{
+						elements: () => _element
 					}
-				},
-				{
-					elements: () => _element
-				}
+				),
+				{ slot: 'elements', keys: ['attributeItem', 'enumVariant'], make: buildAttributedEnumVariant }
 			),
 			{
 				elements: 'elements',
@@ -6265,24 +6439,27 @@ function _buildFieldDeclarationListElements(
 	const _delimiter = options.delimiter ?? Delimiter.Trailing;
 	return withMethods(
 		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.FieldDeclarationListElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (
-							...vs: NonEmptyArray<AdmitBound<T.AttributedFieldDeclaration | T.FieldDeclaration, T.AdmittedNodes>>
-						) => buildFieldDeclarationListElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
+			withElementsSeat(
+				withAccessors(
+					{
+						$type: TSKindId.FieldDeclarationListElements as const,
+						$source: 2 as const,
+						$named: true as const,
+						_element,
+						_delimiter,
+						$with: {
+							elements: (
+								...vs: NonEmptyArray<AdmitBound<T.AttributedFieldDeclaration | T.FieldDeclaration, T.AdmittedNodes>>
+							) => buildFieldDeclarationListElements(options, ...vs),
+							delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+								buildFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
+						}
+					},
+					{
+						elements: () => _element
 					}
-				},
-				{
-					elements: () => _element
-				}
+				),
+				{ slot: 'elements', keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
 			),
 			{
 				elements: 'elements',
@@ -6341,26 +6518,29 @@ function _buildOrderedFieldDeclarationListElements(
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.OrderedFieldDeclarationListElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (
-							...vs: NonEmptyArray<
-								AdmitBound<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
-							>
-						) => buildOrderedFieldDeclarationListElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildOrderedFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
+			withElementsSeat(
+				withAccessors(
+					{
+						$type: TSKindId.OrderedFieldDeclarationListElements as const,
+						$source: 2 as const,
+						$named: true as const,
+						_element,
+						_delimiter,
+						$with: {
+							elements: (
+								...vs: NonEmptyArray<
+									AdmitBound<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>
+								>
+							) => buildOrderedFieldDeclarationListElements(options, ...vs),
+							delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+								buildOrderedFieldDeclarationListElements({ ...options, delimiter: v }, ...elements)
+						}
+					},
+					{
+						elements: () => _element
 					}
-				},
-				{
-					elements: () => _element
-				}
+				),
+				{ slot: 'elements', keys: ['attributeItem', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
 			),
 			{
 				elements: 'elements',
@@ -6498,29 +6678,36 @@ function _buildTypeParametersElements(
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.TypeParametersElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (
-							...vs: NonEmptyArray<
-								AdmitBound<
-									T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
-									T.AdmittedNodes
+			withElementsSeat(
+				withAccessors(
+					{
+						$type: TSKindId.TypeParametersElements as const,
+						$source: 2 as const,
+						$named: true as const,
+						_element,
+						_delimiter,
+						$with: {
+							elements: (
+								...vs: NonEmptyArray<
+									AdmitBound<
+										| T.AttributedTypeParameter
+										| T.Metavariable
+										| T.TypeParameter
+										| T.LifetimeParameter
+										| T.ConstParameter,
+										T.AdmittedNodes
+									>
 								>
-							>
-						) => buildTypeParametersElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildTypeParametersElements({ ...options, delimiter: v }, ...elements)
+							) => buildTypeParametersElements(options, ...vs),
+							delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+								buildTypeParametersElements({ ...options, delimiter: v }, ...elements)
+						}
+					},
+					{
+						elements: () => _element
 					}
-				},
-				{
-					elements: () => _element
-				}
+				),
+				{ slot: 'elements', keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
 			),
 			{
 				elements: 'elements',
@@ -6884,35 +7071,38 @@ function _buildParametersElements(
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.ParametersElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (
-							...vs: NonEmptyArray<
-								AdmitBound<
-									| T.AttributedParameter
-									| T.Parameter
-									| T.SelfParameter
-									| T.VariadicParameter
-									| TSKindId.Underscore
-									| T.Type
-									| T.TypeIdentifier.Types,
-									T.AdmittedNodes
+			withElementsSeat(
+				withAccessors(
+					{
+						$type: TSKindId.ParametersElements as const,
+						$source: 2 as const,
+						$named: true as const,
+						_element,
+						_delimiter,
+						$with: {
+							elements: (
+								...vs: NonEmptyArray<
+									AdmitBound<
+										| T.AttributedParameter
+										| T.Parameter
+										| T.SelfParameter
+										| T.VariadicParameter
+										| TSKindId.Underscore
+										| T.Type
+										| T.TypeIdentifier.Types,
+										T.AdmittedNodes
+									>
 								>
-							>
-						) => buildParametersElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildParametersElements({ ...options, delimiter: v }, ...elements)
+							) => buildParametersElements(options, ...vs),
+							delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+								buildParametersElements({ ...options, delimiter: v }, ...elements)
+						}
+					},
+					{
+						elements: () => _element
 					}
-				},
-				{
-					elements: () => _element
-				}
+				),
+				{ slot: 'elements', keys: ['attributeItem', 'content'], make: buildAttributedParameter }
 			),
 			{
 				elements: 'elements',
@@ -7100,29 +7290,32 @@ function _buildTypeArgumentsElements(
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.TypeArgumentsElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (
-							...vs: NonEmptyArray<
-								AdmitBound<
-									T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
-									T.AdmittedNodes
+			withElementsSeat(
+				withAccessors(
+					{
+						$type: TSKindId.TypeArgumentsElements as const,
+						$source: 2 as const,
+						$named: true as const,
+						_element,
+						_delimiter,
+						$with: {
+							elements: (
+								...vs: NonEmptyArray<
+									AdmitBound<
+										T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+										T.AdmittedNodes
+									>
 								>
-							>
-						) => buildTypeArgumentsElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildTypeArgumentsElements({ ...options, delimiter: v }, ...elements)
+							) => buildTypeArgumentsElements(options, ...vs),
+							delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+								buildTypeArgumentsElements({ ...options, delimiter: v }, ...elements)
+						}
+					},
+					{
+						elements: () => _element
 					}
-				},
-				{
-					elements: () => _element
-				}
+				),
+				{ slot: 'elements', keys: ['content', 'traitBounds'], make: buildTypeArgument }
 			),
 			{
 				elements: 'elements',
@@ -7177,23 +7370,26 @@ function _buildArgumentsElements(
 	const _delimiter = options.delimiter ?? Delimiter.None;
 	return withMethods(
 		withListView(
-			withAccessors(
-				{
-					$type: TSKindId.ArgumentsElements as const,
-					$source: 2 as const,
-					$named: true as const,
-					_element,
-					_delimiter,
-					$with: {
-						elements: (...vs: NonEmptyArray<AdmitBound<T.AttributedArgument | T.Expression, T.AdmittedNodes>>) =>
-							buildArgumentsElements(options, ...vs),
-						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-							buildArgumentsElements({ ...options, delimiter: v }, ...elements)
+			withElementsSeat(
+				withAccessors(
+					{
+						$type: TSKindId.ArgumentsElements as const,
+						$source: 2 as const,
+						$named: true as const,
+						_element,
+						_delimiter,
+						$with: {
+							elements: (...vs: NonEmptyArray<AdmitBound<T.AttributedArgument | T.Expression, T.AdmittedNodes>>) =>
+								buildArgumentsElements(options, ...vs),
+							delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+								buildArgumentsElements({ ...options, delimiter: v }, ...elements)
+						}
+					},
+					{
+						elements: () => _element
 					}
-				},
-				{
-					elements: () => _element
-				}
+				),
+				{ slot: 'elements', keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
 			),
 			{
 				elements: 'elements',
@@ -8226,7 +8422,8 @@ export function buildArrayExpressionList(
 					slot: 'argumentsElements',
 					kind: TSKindId.ArgumentsElements as const,
 					optional: true,
-					make: buildArgumentsElements
+					make: buildArgumentsElements,
+					element: { keys: ['attributeItem', 'expression'], make: buildAttributedArgument }
 				}
 			]
 		)
@@ -8601,7 +8798,13 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 				}
 			),
 			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{
+					slot: 'typeParameters',
+					kind: TSKindId.TypeParameters as const,
+					optional: true,
+					make: buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
 			]
 		)
@@ -8660,7 +8863,13 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 				}
 			),
 			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{
+					slot: 'typeParameters',
+					kind: TSKindId.TypeParameters as const,
+					optional: true,
+					make: buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
 			]
 		)
@@ -9360,26 +9569,38 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 		'a built Expression'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MatchArmWithComma as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attributes,
-				_pattern,
-				_value,
-				$with: {
-					attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
-						buildMatchArmWithComma({ ...config, attributes: values }),
-					pattern: (value: T.MatchPattern) => buildMatchArmWithComma({ ...config, pattern: value }),
-					value: (value: NonNullable<T.MatchArmWithComma.Config>['value']) =>
-						buildMatchArmWithComma({ ...config, value: value })
+		withGroupSeat(
+			withAccessors(
+				{
+					$type: TSKindId.MatchArmWithComma as const,
+					$source: 2 as const,
+					$named: true as const,
+					_attributes,
+					_pattern,
+					_value,
+					$with: {
+						attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
+							buildMatchArmWithComma({ ...config, attributes: values }),
+						pattern: (value: T.MatchPattern) => buildMatchArmWithComma({ ...config, pattern: value }),
+						value: (value: NonNullable<T.MatchArmWithComma.Config>['value']) =>
+							buildMatchArmWithComma({ ...config, value: value })
+					}
+				},
+				{
+					attributes: () => _attributes,
+					pattern: () => _pattern,
+					value: () => _value
 				}
-			},
+			),
 			{
-				attributes: () => _attributes,
-				pattern: () => _pattern,
-				value: () => _value
+				slot: 'pattern',
+				stored: '_pattern',
+				kind: TSKindId.MatchPattern as const,
+				make: buildMatchPattern,
+				keys: [
+					{ name: 'pattern', rest: false, required: true },
+					{ name: 'condition', rest: false }
+				]
 			}
 		)
 	) as unknown as T.MatchArmWithComma.Bound;
@@ -9398,38 +9619,50 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 		'a built UnsafeBlock / AsyncBlock / GenBlock / TryBlock / Block / IfExpression / MatchExpression / WhileExpression / LoopExpression / ForExpression / ConstBlock'
 	);
 	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.MatchArmBlockEnding as const,
-				$source: 2 as const,
-				$named: true as const,
-				_attributes,
-				_pattern,
-				_value,
-				$with: {
-					attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
-						buildMatchArmBlockEnding({ ...config, attributes: values }),
-					pattern: (value: T.MatchPattern) => buildMatchArmBlockEnding({ ...config, pattern: value }),
-					value: (
-						value:
-							| T.UnsafeBlock
-							| T.AsyncBlock
-							| T.GenBlock
-							| T.TryBlock
-							| T.Block
-							| T.IfExpression
-							| T.MatchExpression
-							| T.WhileExpression
-							| T.LoopExpression
-							| T.ForExpression
-							| T.ConstBlock
-					) => buildMatchArmBlockEnding({ ...config, value: value })
+		withGroupSeat(
+			withAccessors(
+				{
+					$type: TSKindId.MatchArmBlockEnding as const,
+					$source: 2 as const,
+					$named: true as const,
+					_attributes,
+					_pattern,
+					_value,
+					$with: {
+						attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
+							buildMatchArmBlockEnding({ ...config, attributes: values }),
+						pattern: (value: T.MatchPattern) => buildMatchArmBlockEnding({ ...config, pattern: value }),
+						value: (
+							value:
+								| T.UnsafeBlock
+								| T.AsyncBlock
+								| T.GenBlock
+								| T.TryBlock
+								| T.Block
+								| T.IfExpression
+								| T.MatchExpression
+								| T.WhileExpression
+								| T.LoopExpression
+								| T.ForExpression
+								| T.ConstBlock
+						) => buildMatchArmBlockEnding({ ...config, value: value })
+					}
+				},
+				{
+					attributes: () => _attributes,
+					pattern: () => _pattern,
+					value: () => _value
 				}
-			},
+			),
 			{
-				attributes: () => _attributes,
-				pattern: () => _pattern,
-				value: () => _value
+				slot: 'pattern',
+				stored: '_pattern',
+				kind: TSKindId.MatchPattern as const,
+				make: buildMatchPattern,
+				keys: [
+					{ name: 'pattern', rest: false, required: true },
+					{ name: 'condition', rest: false }
+				]
 			}
 		)
 	) as unknown as T.MatchArmBlockEnding.Bound;
@@ -10461,9 +10694,21 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 				}
 			),
 			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{
+					slot: 'typeParameters',
+					kind: TSKindId.TypeParameters as const,
+					optional: true,
+					make: buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
-				{ slot: 'body', kind: TSKindId.FieldDeclarationList as const, optional: false, make: buildFieldDeclarationList }
+				{
+					slot: 'body',
+					kind: TSKindId.FieldDeclarationList as const,
+					optional: false,
+					make: buildFieldDeclarationList,
+					element: { keys: ['attributeItem', 'fieldDeclaration'], make: buildAttributedFieldDeclaration }
+				}
 			]
 		)
 	) as unknown as T.StructItemBrace.Bound;
@@ -10521,12 +10766,19 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): T.Struct
 				}
 			),
 			[
-				{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters },
+				{
+					slot: 'typeParameters',
+					kind: TSKindId.TypeParameters as const,
+					optional: true,
+					make: buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+				},
 				{
 					slot: 'body',
 					kind: TSKindId.OrderedFieldDeclarationList as const,
 					optional: false,
-					make: buildOrderedFieldDeclarationList
+					make: buildOrderedFieldDeclarationList,
+					element: { keys: ['attributeItem', 'visibilityModifier', 'type'], make: buildAttributedOrderedField }
 				},
 				{ slot: 'whereClause', kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause }
 			]
@@ -10572,7 +10824,15 @@ export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructIt
 					typeParameters: () => _type_parameters
 				}
 			),
-			[{ slot: 'typeParameters', kind: TSKindId.TypeParameters as const, optional: true, make: buildTypeParameters }]
+			[
+				{
+					slot: 'typeParameters',
+					kind: TSKindId.TypeParameters as const,
+					optional: true,
+					make: buildTypeParameters,
+					element: { keys: ['attributeItem', 'content'], make: buildAttributedTypeParameter }
+				}
+			]
 		)
 	) as unknown as T.StructItemUnit.Bound;
 }

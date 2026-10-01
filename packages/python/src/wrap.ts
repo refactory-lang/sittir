@@ -9,7 +9,9 @@ import {
 	coerceBooleanKeywordStorage,
 	inTreeEngine,
 	withListView,
-	withListSlots
+	withListSlots,
+	withGroupSeat,
+	withElementsSeat
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
@@ -3021,66 +3023,71 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.Unio
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.UnionPattern as const }) as unknown as T.UnionPattern.Parsed;
 	const _order = (data as _NodeData).$slotOrder?.slice();
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.UnionPattern as const,
-		_patterns: projectMixedEnumStorage(
-			normalizeRepeatedWrapSlot(
-				dropWireDelimiters(data._patterns, [TSKindId.Pipe], _order, 'patterns'),
-				true,
-				'patterns',
-				{ tree, nodeType: data.$type, slotName: 'patterns', span: (data as _NodeData).$span }
-			),
-			{ True: 70, False: 71, None: 72, _: 279 },
-			{ 48: 279 }
-		),
-		...(_order && { $slotOrder: _order }),
+	const _node = withMethods(
+		withElementsSeat(
+			{
+				...data,
+				$type: TSKindId.UnionPattern as const,
+				_patterns: projectMixedEnumStorage(
+					normalizeRepeatedWrapSlot(
+						dropWireDelimiters(data._patterns, [TSKindId.Pipe], _order, 'patterns'),
+						true,
+						'patterns',
+						{ tree, nodeType: data.$type, slotName: 'patterns', span: (data as _NodeData).$span }
+					),
+					{ True: 70, False: 71, None: 72, _: 279 },
+					{ 48: 279 }
+				),
+				...(_order && { $slotOrder: _order }),
 
-		patterns() {
-			return drillInAll<
-				| T.ClassPattern
-				| T.SplatPattern
-				| T.UnionPattern
-				| T.CaseListPattern
-				| T.CaseTuplePattern
-				| T.DictPattern
-				| T.String
-				| T.ConcatenatedString
-				| TSKindId.True
-				| TSKindId.False
-				| TSKindId.None
-				| T.SimplePatternNegative
-				| T.ComplexPattern
-				| T.DottedName
-				| TSKindId.WildcardPattern
-			>(
-				this._patterns as
-					| readonly (
-							| T.ClassPattern
-							| T.SplatPattern
-							| T.UnionPattern
-							| T.CaseListPattern
-							| T.CaseTuplePattern
-							| T.DictPattern
-							| T.String
-							| T.ConcatenatedString
-							| TSKindId.True
-							| TSKindId.False
-							| TSKindId.None
-							| T.SimplePatternNegative
-							| T.ComplexPattern
-							| T.DottedName
-							| TSKindId.WildcardPattern
-					  )[]
-					| undefined,
-				tree
-			);
-		},
-		$with: {
-			patterns: (...v: NonEmptyArray<NonNullable<T.UnionPattern['_patterns']>[number]>) =>
-				wrapUnionPattern({ ...$edited(data), _patterns: v }, tree)
-		}
-	});
+				patterns() {
+					return drillInAll<
+						| T.ClassPattern
+						| T.SplatPattern
+						| T.UnionPattern
+						| T.CaseListPattern
+						| T.CaseTuplePattern
+						| T.DictPattern
+						| T.String
+						| T.ConcatenatedString
+						| TSKindId.True
+						| TSKindId.False
+						| TSKindId.None
+						| T.SimplePatternNegative
+						| T.ComplexPattern
+						| T.DottedName
+						| TSKindId.WildcardPattern
+					>(
+						this._patterns as
+							| readonly (
+									| T.ClassPattern
+									| T.SplatPattern
+									| T.UnionPattern
+									| T.CaseListPattern
+									| T.CaseTuplePattern
+									| T.DictPattern
+									| T.String
+									| T.ConcatenatedString
+									| TSKindId.True
+									| TSKindId.False
+									| TSKindId.None
+									| T.SimplePatternNegative
+									| T.ComplexPattern
+									| T.DottedName
+									| TSKindId.WildcardPattern
+							  )[]
+							| undefined,
+						tree
+					);
+				},
+				$with: {
+					patterns: (...v: NonEmptyArray<NonNullable<T.UnionPattern['_patterns']>[number]>) =>
+						wrapUnionPattern({ ...$edited(data), _patterns: v }, tree)
+				}
+			},
+			{ slot: 'patterns', keys: ['sign', 'value'], make: RAW.buildSimplePatternNegative }
+		)
+	);
 	return _node as unknown as T.UnionPattern.Parsed;
 }
 
@@ -4534,41 +4541,46 @@ export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle): T.Un
 
 export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHandle): T.ComparisonOperator.Parsed {
 	data = _keepModelledSlots(data, ['_left', '_comparators']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.ComparisonOperator as const,
-		_left: projectMixedEnumStorage(
-			normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'left',
-				span: (data as _NodeData).$span
-			}),
-			{ True: 70, False: 71, None: 72, '...': 64 }
-		),
-		_comparators: normalizeRepeatedWrapSlot(data._comparators, true, 'comparators', {
-			tree,
-			nodeType: data.$type,
-			slotName: 'comparators',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withElementsSeat(
+			{
+				...data,
+				$type: TSKindId.ComparisonOperator as const,
+				_left: projectMixedEnumStorage(
+					normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
+						tree,
+						nodeType: data.$type,
+						slotName: 'left',
+						span: (data as _NodeData).$span
+					}),
+					{ True: 70, False: 71, None: 72, '...': 64 }
+				),
+				_comparators: normalizeRepeatedWrapSlot(data._comparators, true, 'comparators', {
+					tree,
+					nodeType: data.$type,
+					slotName: 'comparators',
+					span: (data as _NodeData).$span
+				}),
 
-		left() {
-			return drillIn<T.PrimaryExpression>(this._left, tree);
-		},
-		comparators() {
-			return drillInAll<T.ComparisonOperatorComparator>(
-				this._comparators as readonly T.ComparisonOperatorComparator[] | undefined,
-				tree
-			);
-		},
-		$with: {
-			left: (v: NonNullable<T.ComparisonOperator['_left']>) =>
-				wrapComparisonOperator({ ...$edited(data), _left: v }, tree),
-			comparators: (...v: NonEmptyArray<NonNullable<T.ComparisonOperator['_comparators']>[number]>) =>
-				wrapComparisonOperator({ ...$edited(data), _comparators: v }, tree)
-		}
-	});
+				left() {
+					return drillIn<T.PrimaryExpression>(this._left, tree);
+				},
+				comparators() {
+					return drillInAll<T.ComparisonOperatorComparator>(
+						this._comparators as readonly T.ComparisonOperatorComparator[] | undefined,
+						tree
+					);
+				},
+				$with: {
+					left: (v: NonNullable<T.ComparisonOperator['_left']>) =>
+						wrapComparisonOperator({ ...$edited(data), _left: v }, tree),
+					comparators: (...v: NonEmptyArray<NonNullable<T.ComparisonOperator['_comparators']>[number]>) =>
+						wrapComparisonOperator({ ...$edited(data), _comparators: v }, tree)
+				}
+			},
+			{ slot: 'comparators', keys: ['operators', 'primaryExpression'], make: RAW.buildComparisonOperatorComparator }
+		)
+	);
 	return _node as unknown as T.ComparisonOperator.Parsed;
 }
 
@@ -5126,49 +5138,60 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle): T.Subscript.
 
 export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 	data = _keepModelledSlots(data, ['_start', '_stop', '_step']);
-	const _node = withMethods({
-		...data,
-		$type: TSKindId.Slice as const,
-		_start: projectMixedEnumStorage(
-			normalizeSingularWrapSlot(data._start, 'start', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'start',
-				span: (data as _NodeData).$span
-			}),
-			{ True: 70, False: 71, None: 72, '...': 64 }
-		),
-		_stop: projectMixedEnumStorage(
-			normalizeSingularWrapSlot(data._stop, 'stop', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'stop',
-				span: (data as _NodeData).$span
-			}),
-			{ True: 70, False: 71, None: 72, '...': 64 }
-		),
-		_step: normalizeSingularWrapSlot(data._step, 'step', false, data.$type, {
-			tree,
-			nodeType: data.$type,
-			slotName: 'step',
-			span: (data as _NodeData).$span
-		}),
+	const _node = withMethods(
+		withGroupSeat(
+			{
+				...data,
+				$type: TSKindId.Slice as const,
+				_start: projectMixedEnumStorage(
+					normalizeSingularWrapSlot(data._start, 'start', false, data.$type, {
+						tree,
+						nodeType: data.$type,
+						slotName: 'start',
+						span: (data as _NodeData).$span
+					}),
+					{ True: 70, False: 71, None: 72, '...': 64 }
+				),
+				_stop: projectMixedEnumStorage(
+					normalizeSingularWrapSlot(data._stop, 'stop', false, data.$type, {
+						tree,
+						nodeType: data.$type,
+						slotName: 'stop',
+						span: (data as _NodeData).$span
+					}),
+					{ True: 70, False: 71, None: 72, '...': 64 }
+				),
+				_step: normalizeSingularWrapSlot(data._step, 'step', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'step',
+					span: (data as _NodeData).$span
+				}),
 
-		start() {
-			return drillIn<T.Expression | undefined>(this._start, tree);
-		},
-		stop() {
-			return drillIn<T.Expression | undefined>(this._stop, tree);
-		},
-		step() {
-			return drillIn<T.SliceGroup | undefined>(this._step, tree);
-		},
-		$with: {
-			start: (v: NonNullable<T.Slice['_start']>) => wrapSlice({ ...$edited(data), _start: v }, tree),
-			stop: (v: NonNullable<T.Slice['_stop']>) => wrapSlice({ ...$edited(data), _stop: v }, tree),
-			step: (v: NonNullable<T.Slice['_step']>) => wrapSlice({ ...$edited(data), _step: v }, tree)
-		}
-	});
+				start() {
+					return drillIn<T.Expression | undefined>(this._start, tree);
+				},
+				stop() {
+					return drillIn<T.Expression | undefined>(this._stop, tree);
+				},
+				step() {
+					return drillIn<T.SliceGroup | undefined>(this._step, tree);
+				},
+				$with: {
+					start: (v: NonNullable<T.Slice['_start']>) => wrapSlice({ ...$edited(data), _start: v }, tree),
+					stop: (v: NonNullable<T.Slice['_stop']>) => wrapSlice({ ...$edited(data), _stop: v }, tree),
+					step: (v: NonNullable<T.Slice['_step']>) => wrapSlice({ ...$edited(data), _step: v }, tree)
+				}
+			},
+			{
+				slot: 'step',
+				stored: '_step',
+				kind: TSKindId.SliceGroup as const,
+				make: RAW.buildSliceGroup,
+				keys: [{ name: 'expression', rest: false }]
+			}
+		)
+	);
 	return _node as unknown as T.Slice.Parsed;
 }
 

@@ -92,7 +92,9 @@ import {
 	constructorTargetKind,
 	builtTypeSurfaceOf,
 	listViewHint,
+	elementConfigsOf,
 	listSlotHints,
+	groupSeatHints,
 	omitRegistered,
 	spellingTypeOf,
 	refineFormBuiltTypeSurfaceOf,
@@ -400,9 +402,17 @@ export function emitTypesModules(config: EmitTypesConfig): TypesModules {
 		const node = nodeMap.nodes.get(kind)!;
 		const gaps = keyed ? `, ${empty.gaps.map((gap) => JSON.stringify(gap)).join(' | ')}` : '';
 		lines.push(
-			`export interface ${empty.typeName} extends ${node.typeName}.Bound {`,
-			`  readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this${gaps}>;`,
-			'}'
+			...(groupSeatHints(node, nodeMap, kindEntries).length > 0
+				? [
+						`export type ${empty.typeName} = ${node.typeName}.Bound & {`,
+						`  readonly $trivia: TriviaSetterOf<${empty.typeName}> & InnerTrivia<${empty.typeName}${gaps}>;`,
+						'};'
+					]
+				: [
+						`export interface ${empty.typeName} extends ${node.typeName}.Bound {`,
+						`  readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this${gaps}>;`,
+						'}'
+					])
 		);
 	}
 	lines.push('');
@@ -474,6 +484,8 @@ const VOCABULARY_IMPORTS = [
 	'SlotHint',
 	'ListViewHint',
 	'ListSlotHint',
+	'FlatHint',
+	'FlatShapesOf',
 	'BoundOf',
 	'ParsedOf',
 	'AdmitBound',
@@ -897,12 +909,14 @@ function emitNamespaceInterfaceLine(
 	);
 }
 
-function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, indent: string): void {
-	const emit = (name: string, extendsList: string, withNode: boolean): void => {
-		lines.push(`${indent}export interface ${name} extends ${extendsList} {`);
+function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, indent: string, seated = false): void {
+	const emit = (name: string, extendsList: string, withNode: boolean, self = 'this', exported = true): void => {
+		lines.push(`${indent}${exported ? 'export ' : ''}interface ${name} extends ${extendsList} {`);
 		if (withNode) lines.push(`${indent}  readonly $type: ${surface.mainType}['$type'];`);
 		if (withNode)
-			lines.push(`${indent}  readonly $with: ${name === 'Bound' ? 'BoundWithNode' : 'WithNode'}<this, BoundByKindId, ParsedByKindId>;`);
+			lines.push(
+				`${indent}  readonly $with: ${name.startsWith('Bound') ? 'BoundWithNode' : 'WithNode'}<${self}, BoundByKindId, ParsedByKindId${self === 'this' ? '' : `, ${name}`}>;`
+			);
 		for (const member of surface.members) lines.push(`${indent}${member}`);
 		lines.push(`${indent}}`);
 	};
@@ -911,8 +925,20 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 		lines.push(`${indent}export interface Parsed extends Bound {}`);
 		return;
 	}
-	emit('Bound', `BoundOf<${surface.mainType}, BoundByKindId>, NodeMethodsOf`, true);
-	emit('Parsed', `ParsedOf<${surface.mainType}, ParsedByKindId>, NodeMethodsOf`, true);
+	const lookup = 'AdmitLookup<BoundByKindId, ParsedByKindId>';
+	for (const [name, of, byKindId] of [
+		['Bound', 'BoundOf', 'BoundByKindId'],
+		['Parsed', 'ParsedOf', 'ParsedByKindId']
+	] as const) {
+		if (!seated) {
+			emit(name, `${of}<${surface.mainType}, ${byKindId}>, NodeMethodsOf`, true);
+			continue;
+		}
+		emit(`${name}Surface`, `${of}<${surface.mainType}, ${byKindId}>, NodeMethodsOf`, true, name, false);
+		lines.push(
+			`${indent}export type ${name} = ${name}Surface & FlatShapesOf<${name}Surface, ${surface.mainType}, ${byKindId}, ${lookup}>;`
+		);
+	}
 }
 
 type LookupUnion = (parts: readonly string[]) => string | undefined;
@@ -984,16 +1010,33 @@ function emitSlotHints(
 	const setters = builtTypeSurfaceOf(node, nodeMap, kindEntries)?.setters ?? [];
 	const view = listViewHint(node, nodeMap, kindEntries);
 	const listSlots = listSlotHints(node, nodeMap, kindEntries);
+	const groupSeats = groupSeatHints(node, nodeMap, kindEntries);
 	if (setters.length === 0 && view === undefined) return;
 	lines.push('  readonly __slotHints__?: {');
+	const elementConfigs = new Map(elementConfigsOf(node, nodeMap).map((fact) => [fact.slot, fact.config]));
 	for (const setter of setters) {
-		const flags = setter.rest ? `, ${setter.optional}, true` : setter.optional ? ', true' : '';
+		const config = elementConfigs.get(setter.name);
+		const flags =
+			config !== undefined
+				? `, ${setter.optional}, ${setter.rest}, ${config}`
+				: setter.rest
+					? `, ${setter.optional}, true`
+					: setter.optional
+						? ', true'
+						: '';
 		lines.push(`    readonly ${setter.name}: SlotHint<${setter.input}${flags}>;`);
 	}
 	if (view !== undefined) lines.push(`    readonly $listView: ListViewHint<${view.element}, ${view.options}>;`);
+	if (groupSeats.length > 0) {
+		const flat = groupSeats.map((seat) => {
+			const keys = seat.keys.map((key) => `readonly ${JSON.stringify(key.name)}: ${JSON.stringify(key.field)}`).join('; ');
+			return `FlatHint<${JSON.stringify(seat.slot)}, T.${seat.group}, { ${keys} }, ${seat.optional}, ${JSON.stringify(seat.stored)}>`;
+		});
+		lines.push(`    readonly $flat: ${flat.join(' | ')};`);
+	}
 	if (listSlots.length > 0) {
 		lines.push('    readonly $listSlots: {');
-		for (const hint of listSlots) lines.push(`      readonly ${hint.slot}: ListSlotHint<${hint.element}, ${hint.options}>;`);
+		for (const hint of listSlots) lines.push(`      readonly ${hint.slot}: ListSlotHint<${hint.element}, ${hint.options}${hint.config === 'never' ? '' : `, ${hint.config}`}>;`);
 		lines.push('    };');
 	}
 	lines.push('  };');
@@ -1274,7 +1317,7 @@ function emitNamespaceSugarBlock(
 	const surface = emitsPlainBuiltAlias(kind, node, { nodeMap, kindEntries })
 		? builtTypeSurfaceOf(node, nodeMap, kindEntries)
 		: undefined;
-	if (surface !== undefined) emitNodeSurfaceInterfaces(lines, surface, '  ');
+	if (surface !== undefined) emitNodeSurfaceInterfaces(lines, surface, '  ', groupSeatHints(node, nodeMap, kindEntries).length > 0);
 	else {
 		lines.push(`  export type Bound = BoundFor<${nsKey}>;`);
 		lines.push(`  export type Parsed = BoundFor<${nsKey}>;`);
