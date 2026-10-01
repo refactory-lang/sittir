@@ -135,7 +135,7 @@ export function stampAutomaticVariants(
 	rules: Record<string, Rule>,
 	supertypeNames: ReadonlySet<string>,
 	inlineNames: ReadonlySet<string>,
-	elementChoices: ReadonlySet<string> = new Set()
+	elementChoices: ReadonlySet<string>
 ): AutomaticVariants {
 	const supertypeOwners = new Set(Object.keys(rules).filter((owner) => isSupertypeOwner(owner, rules, supertypeNames, inlineNames)));
 	const automatic: AutomaticVariants = { keys: new Set(), supertypeOwners };
