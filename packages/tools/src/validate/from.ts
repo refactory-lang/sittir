@@ -454,8 +454,9 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 			const readTypeName = typeof readData.$type === 'number' ? storageKindNameFromId?.(readData.$type) : undefined;
 			const readKind =
 				readTypeName !== undefined && readTypeName in fromMap && readTypeName in factoryMap ? readTypeName : kind;
+			const readKindId = kindIdFromName?.(readKind);
 			const aliasRead =
-				typeof readData.$text === 'string' && typeof readData.$type === 'number' && readData.$type !== kindIdFromName?.(readKind);
+				typeof readData.$text === 'string' && typeof readData.$type === 'number' && readKindId !== undefined && readData.$type !== readKindId;
 			try {
 				if (aliasRead && fromMap[readKind]!(readData) !== readData) {
 					errors.push({
