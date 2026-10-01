@@ -50,6 +50,7 @@ const MODULES = {
 	renderModulePaths: '../../codegen/src/emitters/render-module-paths.ts',
 	engineLoader: '../../codegen/src/engine-loader.ts',
 	modelNodeMap: '../../codegen/src/compiler/model/node-map.ts',
+	emittersShared: '../../codegen/src/emitters/shared.ts',
 	generatedManifest: '../../codegen/src/scripts/generated-manifest.ts',
 	indexSnapshot: '../../codegen/src/scripts/index-snapshot.ts',
 	variantStructural: '../../codegen/src/compiler/variant-structural.ts',
@@ -87,6 +88,7 @@ export interface CodegenSurface {
 	renderModulePaths: typeof import('../../codegen/src/emitters/render-module-paths.ts');
 	engineLoader: typeof import('../../codegen/src/engine-loader.ts');
 	modelNodeMap: typeof import('../../codegen/src/compiler/model/node-map.ts');
+	emittersShared: typeof import('../../codegen/src/emitters/shared.ts');
 	generatedManifest: typeof import('../../codegen/src/scripts/generated-manifest.ts');
 	indexSnapshot: typeof import('../../codegen/src/scripts/index-snapshot.ts');
 	variantStructural: typeof import('../../codegen/src/compiler/variant-structural.ts');
@@ -197,4 +199,14 @@ export async function buildNodeMap(grammar: string): Promise<AssembledNodeMap> {
 	const { assemble, AssembleCtx } = await load('assemble');
 	const generatedIdTables = await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar);
 	return assemble(AssembleCtx.from(normalized, generatedIdTables));
+}
+
+/** The node map the emitters see: `compileGrammar`'s, with every slot reference hydrated. */
+export async function compileNodeMap(grammar: string): Promise<AssembledNodeMap> {
+	const { compileGrammar } = await load('compile');
+	const { nodeMap } = await compileGrammar({
+		package: await invoke('grammars', 'grammarPackage', grammar),
+		generatedIdTables: await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar)
+	});
+	return nodeMap;
 }

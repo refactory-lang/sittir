@@ -1,6 +1,6 @@
 {
   "grammar": "regex",
-  "source_hash": "c8e7a19a1e7352e3002581a4edc145633dc09711d346a8f0997363ecd4742429",
+  "source_hash": "2eaf3220195384375392a5557b96632f1cc53947cb84ba397e754a7660ed51aa",
   "files": {
     "packages/regex/.sittir/grammar-diagnostics.json": "6d151bfbe0d649cedbe98e1cb9e21414dfb4cac174b28277a7d6c0da779f692f",
     "packages/regex/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -27,7 +27,7 @@
     "packages/regex/src/factories/overlays/polymorphs.ts": "2e5a611f8d4d68770b691c9ac80c263a5b4035ee78cc044419aacff28505d9df",
     "packages/regex/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/regex/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
-    "packages/regex/src/factories/raw.ts": "518da5d8a63c67611bc8a42914cce6297820b39c0a07a4e384beeacd6b91b947",
+    "packages/regex/src/factories/raw.ts": "70c5aae1ac30486e07c709f69e03073703c2f26411b55a8dd0208e4a15d47e56",
     "packages/regex/src/hash.ts": "dc4a5c70d2c892b716c9beeb915800aa497ab0745633e6980577bad382c20eba",
     "packages/regex/src/index.ts": "4333f9b0100c48785207f723fa1b22ff1ae2fc1d2cc4398eaf2b874880afef36",
     "packages/regex/src/ir.ts": "ccf075fea640d12ad63986812a979ce988b8374ffd13b380d7917cf9e4e7d5bc",

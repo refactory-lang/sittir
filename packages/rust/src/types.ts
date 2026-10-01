@@ -23441,9 +23441,9 @@ export namespace ClosureExpressionBlock {
 	}
 	export type Loose = LooseFor<TSKindId.ClosureExpressionBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClosureExpressionBlock>;
-	export type BuildArgs = [config: ConfigOf<T.ClosureExpressionBlock, T.NamespaceMap>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.ClosureExpressionBlock, T.NamespaceMap>>];
 	export type LooseArgs = [
-		config:
+		config?:
 			| LooseConfigOf<T.ClosureExpressionBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.ClosureExpressionBlock, T.AdmittedNodes>
 	];
@@ -24022,9 +24022,9 @@ export namespace ForeignModItemBody {
 	}
 	export type Loose = LooseFor<TSKindId.ForeignModItemBody>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForeignModItemBody>;
-	export type BuildArgs = [config: ConfigOf<T.ForeignModItemBody, T.NamespaceMap>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.ForeignModItemBody, T.NamespaceMap>>];
 	export type LooseArgs = [
-		config:
+		config?:
 			| LooseConfigOf<T.ForeignModItemBody, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.ForeignModItemBody, T.AdmittedNodes>
 	];
