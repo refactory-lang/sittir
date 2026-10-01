@@ -4,6 +4,7 @@
 // of the addon.
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { Worker } from 'node:worker_threads';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { getActiveBackend } from '../src/backend.js';
@@ -122,5 +123,39 @@ describe('rendering parts parsed by other engines of the language', () => {
 		expect(String(a.render(item as never))).toBe('fn real() {}');
 		expect(() => item.$render()).toThrow(/engine disposed.*engine\.render\(node\)/);
 	});
+});
+
+describe('the tree table across threads', () => {
+	const fixture = (name: string): string =>
+		fileURLToPath(new URL(`../../common/tests/fixtures/${name}`, import.meta.url));
+	const reply = <T>(worker: Worker): Promise<T> =>
+		new Promise((resolve, reject) => {
+			worker.once('message', resolve);
+			worker.once('error', reject);
+		});
+
+	it('gives each worker thread its own table and its own tree ids', async () => {
+		const native = addon();
+		const mine = treeIdOf(new native.SittirEngine().parseAndRead('fn main_thread() {}'));
+		const held = native.liveTreeCount();
+		const worker = new Worker(fixture('tree-worker.mjs'), {
+			workerData: { addon: fileURLToPath(new URL('../native/index.cjs', import.meta.url)) }
+		});
+		expect(await reply(worker)).toEqual({ before: 0, after: 1, treeId: 0 });
+		expect(native.liveTreeCount()).toBe(held);
+		native.disposeTree(mine);
+	});
+
+	it('refuses read data cloned in from another thread', async () => {
+		const engine = await createEngine(rust);
+		const leaf = (engine.parse('fn f() {}\n').statements()[0] as unknown as { name(): object }).name();
+		const worker = new Worker(fixture('tree-clone-worker.mts'), {
+			workerData: { leaf: { ...leaf } },
+			execArgv: ['--import', 'tsx']
+		});
+		const message = await reply<{ rendered?: string; error?: string }>(worker);
+		expect(message.rendered).toBeUndefined();
+		expect(message.error).toMatch(/another thread's tree table.*parse the source on this thread/);
+	}, 60_000);
 });
 

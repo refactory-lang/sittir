@@ -15,6 +15,7 @@ import type {
 } from '@sittir/types';
 import type { TreeHandle } from './readUntypedNode.ts';
 import { isStorageKey, toTransportData, TREE_KEY } from './transport-data.ts';
+import { mintTreeToken, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 
 /** The options object a grammar package types as its `Options`. */
@@ -205,11 +206,6 @@ const treeDisposalRegistry = new FinalizationRegistry<{
 	readonly treeId: number;
 }>(({ release, treeId }) => release(treeId));
 
-/** What a parsed object holds to keep its tree live: one per tree, shared by every object read from it. */
-export interface TreeToken {
-	readonly treeId: number;
-}
-
 /**
  * Give every parsed object under `value` the tree's token. A coordinate is a
  * number, which keeps nothing alive: a leaf is plain data, and once a built
@@ -327,7 +323,7 @@ export function createNativeEngine<
 						// returns, so it stays reachable exactly as long as
 						// something can still read from this tree or names it.
 						// Its collection is what releases the tree.
-						const liveToken: TreeToken = Object.freeze({ treeId: parsed.treeId });
+						const liveToken = mintTreeToken(parsed.treeId);
 						holdTree(root, liveToken);
 						treeDisposalRegistry.register(liveToken, {
 							release: status.native.disposeTree,

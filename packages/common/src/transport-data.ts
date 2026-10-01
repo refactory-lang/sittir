@@ -1,4 +1,5 @@
 import type { AnyUntypedNode } from '@sittir/types';
+import { assertOwnThreadToken } from './tree-token.ts';
 import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -168,10 +169,19 @@ export function toTransportData(node: AnyUntypedNode): AnyUntypedNode {
 	return toTransportValue(node) as AnyUntypedNode;
 }
 
+function assertOwnThreadTrivia(entries: readonly unknown[]): void {
+	for (const entry of entries) if (isRecord(entry)) assertOwnThreadToken(entry[TREE_KEY]);
+}
+
 function toTransportValue(value: unknown): unknown {
 	if (Array.isArray(value)) return value.map(toTransportValue);
 	if (!isRecord(value)) return value;
-	if (canFold(value)) return foldToCoordinate(value);
+	if (canFold(value)) {
+		assertOwnThreadToken(value[TREE_KEY]);
+		return foldToCoordinate(value);
+	}
+	// Trivia entries cross as they are, coordinates included.
+	if (value.$_trivia != null) forEachTriviaList(value.$_trivia as TriviaSides<unknown>, assertOwnThreadTrivia);
 	const out: Record<string, unknown> = {};
 	for (const [key, raw] of Object.entries(value)) {
 		if (key === '$with' || typeof raw === 'function') continue;

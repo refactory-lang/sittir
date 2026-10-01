@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { markEdited, detachCoordinates, toTransportData, treeHandleOf } from '../src/transport-data.ts';
+import { mintTreeToken } from '../src/tree-token.ts';
 
 const leaf = (text: string, start: number) => ({
 	$type: 1,
@@ -250,7 +251,7 @@ describe('detachCoordinates', () => {
 });
 
 describe('the tree token a parsed object holds', () => {
-	const token = Object.freeze({ treeId: 4 });
+	const token = mintTreeToken(4);
 
 	it('does not cross: a folded coordinate, a rebuilt node and a kept leaf all drop it', () => {
 		const folded = { $type: 5, $span: { start: 1, end: 2 }, $handle: 9, $tree: token };
@@ -291,5 +292,22 @@ describe('the tree token a parsed object holds', () => {
 			_a: 1,
 			$_trivia: { leading: [bare], trailing: [bare], inner: { gap: [bare] } }
 		});
+	});
+
+	it('is refused at the projection when another thread minted it, on a coordinate and on a trivia entry', () => {
+		const foreign = { ...token, thread: token.thread + 1 };
+		const refusal = /another thread's tree table.*parse the source on this thread/;
+		const coordinate = { $type: 5, $span: { start: 1, end: 2 }, $handle: 9, $tree: foreign };
+		expect(() => toTransportData(coordinate as never)).toThrow(refusal);
+		expect(() => toTransportData({ $type: 1, _child: coordinate } as never)).toThrow(refusal);
+		const comment = { $type: 7, $span: { start: 0, end: 1 }, $treeHandle: 9, $tree: foreign };
+		expect(() => toTransportData({ $type: 1, _a: 1, $_trivia: { inner: { gap: [comment] } } } as never)).toThrow(refusal);
+	});
+
+	it('is not required, and a copy made on this thread passes', () => {
+		const coordinate = { $type: 5, $span: { start: 1, end: 2 }, $handle: 9 };
+		const crossed = { $type: 5, $span: { start: 1, end: 2 }, $treeHandle: 9 };
+		expect(toTransportData(coordinate as never)).toEqual(crossed);
+		expect(toTransportData(structuredClone({ ...coordinate, $tree: token }) as never)).toEqual(crossed);
 	});
 });
