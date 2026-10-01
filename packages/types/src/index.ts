@@ -485,6 +485,10 @@ export type LooseValue<V, Scalars = {}, Strings = {}, NsMap = {}> = AdmitBound<
  * ConfigOf<T> — factory input shape. CamelCase keys at top level for ergonomics,
  * field values are the raw interface types (already snake_case internally).
  *
+ * A keyword-presence slot (boolean keyword, bitflag, kind enum) admits an
+ * explicit `undefined` only on a key the node declares optional; a required
+ * key rejects it.
+ *
  * Three shapes it produces:
  *
  * 1. **Plain branch / container** — mapped fields ∪ `Partial<{ children }>`.
@@ -506,11 +510,11 @@ export type ConfigOf<T, NsMap = {}> = T extends unknown
 				[K in keyof FieldsOf<T> as EscapeReservedAccessor<CamelCase<K & string>>]: IsBooleanKeywordSlot<
 					FieldInputType<T, K>
 				> extends true
-					? boolean | BooleanKeywordSlotText<FieldInputType<T, K>> | undefined
+					? boolean | BooleanKeywordSlotText<FieldInputType<T, K>> | UndefinedIfOptional<FieldsOf<T>, K>
 					: IsBitflagSlot<FieldInputType<T, K>> extends true
-						? BitflagSlotEnum<FieldInputType<T, K>> | undefined
+						? BitflagSlotEnum<FieldInputType<T, K>> | UndefinedIfOptional<FieldsOf<T>, K>
 						: IsKindEnumSlot<FieldInputType<T, K>> extends true
-							? AdmitBound<KindEnumSlotInput<FieldInputType<T, K>>, NodeLookup<NsMap>> | undefined
+							? AdmitBound<KindEnumSlotInput<FieldInputType<T, K>>, NodeLookup<NsMap>> | UndefinedIfOptional<FieldsOf<T>, K>
 							: AdmitBound<AdmitSlotInput<FieldInputType<T, K>>, NodeLookup<NsMap>>;
 			} &
 				// Child surface: polymorph variants with a single-child slot hoist
@@ -707,6 +711,9 @@ type WidenSlotValue<T, Scalars, Strings, Depth extends number[], NsMap, Visited 
 			: IsKindEnumSlot<T> extends true
 				? KindEnumSlotInput<T>
 				: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
+
+/** @internal — `undefined` for a key the node declares optional, never for a required one. */
+type UndefinedIfOptional<F, K extends keyof F> = K extends RequiredKeys<F> ? never : undefined;
 
 /** Keys of T that are required (not optional). */
 type RequiredKeys<T> = {

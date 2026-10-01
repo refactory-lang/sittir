@@ -23,3 +23,7 @@ Merges the base ref into the current branch and resolves the one conflict class 
 ### `packages/tools/src/sync-base.ts::repoSyncTarget`
 
 The repository's `SyncBaseTarget`: every registered grammar's generated roots (stable or not: regex and scm have manifests too) and a `verify` that is `verifyManifestForGrammar(...).ok` and a `regenerate` that runs `gen --grammar <name> --all` in a fresh process, the way `pnpm run regen:all` does.
+
+### `packages/tools/tests/strict-required-slot-types.test.ts`
+
+The census behind the typing rule: for every raw builder, each slot the model marks required, that no registered option carries and that the builder does not default itself, must be a required key of the strict config whose type has no `undefined` member. The model facts come from the assembled node map (`configKey`, the registered-option set, `isRequired`), the signature from the TypeScript checker over the grammar's `raw.ts`. A builder whose whole config is `Partial` (an argument-optional form) is outside it.
