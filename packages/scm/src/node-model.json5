@@ -1,7 +1,7 @@
 {
   "name": "scm",
   "root": "program",
-  "nodeCount": 59,
+  "nodeCount": 60,
   "word": null,
   "supertypes": [
     "_group_expression",
@@ -64,27 +64,9 @@
       }
     },
     "list": {
-      "definedBy": "enrich",
+      "definedBy": "override",
       "childKind": {
-        "capture": "capture"
-      }
-    },
-    "grouping": {
-      "definedBy": "enrich",
-      "childKind": {
-        "capture": "capture"
-      }
-    },
-    "missing_node": {
-      "definedBy": "enrich",
-      "childKind": {
-        "capture": "capture"
-      }
-    },
-    "anonymous_node": {
-      "definedBy": "enrich",
-      "childKind": {
-        "capture": "capture"
+        "list_quantifier": "quantifier"
       }
     }
   },
@@ -186,7 +168,7 @@
         "multiple": true,
         "nonEmpty": true
       },
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -202,7 +184,7 @@
         "multiple": true,
         "nonEmpty": true
       },
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -218,7 +200,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -234,7 +216,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -293,6 +275,15 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "list_quantifier": {
+      "quantifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -360,7 +351,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -390,7 +381,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "content": {
+      "elements": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -659,16 +650,16 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "capture",
-            "quantifier"
+            "list_quantifier"
           ],
           "values": [
             {
@@ -680,8 +671,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "quantifier",
-              "parseKind": "quantifier"
+              "name": "list_quantifier",
+              "parseKind": "list_quantifier"
             }
           ]
         }
@@ -689,7 +680,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "name",
-        "content"
+        "elements"
       ]
     },
     {
@@ -1082,16 +1073,16 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "capture",
-            "quantifier"
+            "list_quantifier"
           ],
           "values": [
             {
@@ -1103,8 +1094,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "quantifier",
-              "parseKind": "quantifier"
+              "name": "list_quantifier",
+              "parseKind": "list_quantifier"
             }
           ]
         }
@@ -1112,7 +1103,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "grouping_group",
-        "content"
+        "elements"
       ]
     },
     {
@@ -1265,16 +1256,16 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "capture",
-            "quantifier"
+            "list_quantifier"
           ],
           "values": [
             {
@@ -1286,8 +1277,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "quantifier",
-              "parseKind": "quantifier"
+              "name": "list_quantifier",
+              "parseKind": "list_quantifier"
             }
           ]
         }
@@ -1295,7 +1286,51 @@
       "factoryShape": "config",
       "factoryFields": [
         "definitions",
-        "content"
+        "elements"
+      ]
+    },
+    {
+      "kind": "list_quantifier",
+      "modelType": "envelope",
+      "typeName": "ListQuantifier",
+      "factoryName": "listQuantifier",
+      "irKey": "listQuantifier",
+      "hidden": false,
+      "annotations": {
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "quantifier",
+          "propertyName": "quantifier",
+          "paramName": "quantifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "kindEnum",
+          "kinds": [
+            "quantifier"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "quantifier",
+              "parseKind": "quantifier"
+            }
+          ]
+        }
+      ],
+      "name": "list_quantifier",
+      "factoryShape": "direct",
+      "factoryFields": [
+        "quantifier"
+      ],
+      "bareAccepts": [
+        "plus",
+        "qmark",
+        "quantifier",
+        "star"
       ]
     },
     {
@@ -1344,16 +1379,16 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "capture",
-            "quantifier"
+            "list_quantifier"
           ],
           "values": [
             {
@@ -1365,8 +1400,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "quantifier",
-              "parseKind": "quantifier"
+              "name": "list_quantifier",
+              "parseKind": "list_quantifier"
             }
           ]
         }
@@ -1374,7 +1409,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "name",
-        "content"
+        "elements"
       ]
     },
     {
@@ -1723,16 +1758,16 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "capture",
-            "quantifier"
+            "list_quantifier"
           ],
           "values": [
             {
@@ -1744,8 +1779,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "quantifier",
-              "parseKind": "quantifier"
+              "name": "list_quantifier",
+              "parseKind": "list_quantifier"
             }
           ]
         }
@@ -1755,7 +1790,7 @@
       "factoryFields": [
         "name",
         "named_node_group",
-        "content"
+        "elements"
       ]
     },
     {
@@ -1837,16 +1872,16 @@
           ]
         },
         {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
+          "name": "elements",
+          "propertyName": "elements",
+          "paramName": "elements",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
-          "storage": "mixedEnum",
+          "storage": "verbatim",
           "kinds": [
             "capture",
-            "quantifier"
+            "list_quantifier"
           ],
           "values": [
             {
@@ -1858,8 +1893,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "quantifier",
-              "parseKind": "quantifier"
+              "name": "list_quantifier",
+              "parseKind": "list_quantifier"
             }
           ]
         }
@@ -1870,7 +1905,7 @@
         "supertype",
         "name",
         "named_node_group",
-        "content"
+        "elements"
       ]
     },
     {

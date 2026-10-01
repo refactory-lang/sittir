@@ -16,30 +16,9 @@ export const stringContent = Object.freeze({
 
 export const list = Object.freeze({
 	...B.list,
-	capture: B.capture
+	quantifier: bundle(F.buildListQuantifier, C.coerceToListQuantifier, { key: 'list.quantifier', max: 1 })
 }) as unknown as typeof B.list & {
-	capture: typeof B.capture;
-};
-
-export const grouping = Object.freeze({
-	...B.grouping,
-	capture: B.capture
-}) as unknown as typeof B.grouping & {
-	capture: typeof B.capture;
-};
-
-export const missingNode = Object.freeze({
-	...B.missingNode,
-	capture: B.capture
-}) as unknown as typeof B.missingNode & {
-	capture: typeof B.capture;
-};
-
-export const anonymousNode = Object.freeze({
-	...B.anonymousNode,
-	capture: B.capture
-}) as unknown as typeof B.anonymousNode & {
-	capture: typeof B.capture;
+	quantifier: { strict: typeof F.buildListQuantifier; coerce: typeof C.coerceToListQuantifier };
 };
 
 // Erased applications, centralized: TS cannot infer a Cfg type parameter
@@ -348,17 +327,17 @@ export const namedNodeGroup: {
 
 export const definition: {
 	readonly namedNode: typeof namedNode;
-	readonly anonymousNode: typeof anonymousNode;
-	readonly missingNode: typeof missingNode;
-	readonly grouping: typeof grouping;
+	readonly anonymousNode: typeof B.anonymousNode;
+	readonly missingNode: typeof B.missingNode;
+	readonly grouping: typeof B.grouping;
 	readonly predicate: typeof B.predicate;
 	readonly list: typeof list;
 	readonly field: typeof B.fieldDefinition;
 } = Object.freeze({
 	namedNode: namedNode,
-	anonymousNode: anonymousNode,
-	missingNode: missingNode,
-	grouping: grouping,
+	anonymousNode: B.anonymousNode,
+	missingNode: B.missingNode,
+	grouping: B.grouping,
 	predicate: B.predicate,
 	list: list,
 	field: B.fieldDefinition

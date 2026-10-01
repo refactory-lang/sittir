@@ -433,7 +433,7 @@ function resolveMember(
 						});
 					} else if (unionRoutingGateB(partition)) {
 						diagnostics?.assembleWarnings.record({
-							code: 'union-slot-routed',
+							code: repeated ? 'union-slot-routed-repeated' : 'union-slot-routed',
 							ownerKind: kindForName,
 							message:
 								`[collect-slots] kind '${kindForName ?? '(unknown)'}': ${site} routes ` +
@@ -441,7 +441,11 @@ function resolveMember(
 								`[${partition.unionArms.map(describeArmShape).join(', ')}] into one union slot` +
 								(partition.degenerateNamedArms.length > 0
 									? ` alongside ${partition.degenerateNamedArms.length} label-routed arm(s) ` +
-										`[${partition.degenerateNamedArms.map(describeArmShape).join(', ')}] (PR 1.5)`
+										`[${partition.degenerateNamedArms.map(describeArmShape).join(', ')}]` +
+										(repeated
+											? `. The list mixes slot topologies, so its elements cannot be read in order: give each ` +
+												`label-routed arm a kind of its own (variant(name) in patches:)`
+											: '')
 									: ' (pure union)'),
 							details: {
 								unionSlot: 'content',
@@ -483,8 +487,7 @@ function resolveMember(
 									...partition.structuredArms.map((m) => `structured ${describeArmShape(m)}`),
 									...partition.literalArms.map((m) => `literal ${describeArmShape(m)}`)
 								].join(', ') +
-								`. Restructure via variant() / a real rule / field() in overrides, or await the ` +
-								`PR 3 group-mint widening.`
+								`. Restructure via variant() / a real rule / field() in overrides.`
 						});
 					}
 				}

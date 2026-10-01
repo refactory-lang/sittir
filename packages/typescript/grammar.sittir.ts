@@ -49,8 +49,8 @@ export default sittirGrammar(base, {
 		statements: { terminator: preference(';') },
 		quotes: { style: preference('double') },
 		enum_body_elements: {
-			'content:/separator/","/after': preference('newline'),
-			'content:/delimiter': preference('Delimiter.Trailing')
+			'element:/separator/","/after': preference('newline'),
+			'element:/delimiter': preference('Delimiter.Trailing')
 		},
 		program: { 'statements:/separator': preference('tight'), 'statements:/(_)/after': preference('blankline') },
 
@@ -211,7 +211,7 @@ export default sittirGrammar(base, {
 			1: field('cases')
 		},
 		object_type: {},
-		enum_body: {},
+		enum_body: { '1/0/0/0/0': variant('member') },
 
 		jsx_expression: {
 			1: field('expression')

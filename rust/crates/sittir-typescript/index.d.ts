@@ -531,10 +531,16 @@ export interface EnumAssignmentTransport {
 export interface EnumBodyElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content?: Array<SlotValue<EnumBodyElementsContentTransportSlot>>
+  _element: Array<SlotValue<EnumBodyElementsElementTransportSlot>>
   _delimiter?: number
-  _content_separator_space_before?: number
-  _content_separator_space_after?: number
+  _element_separator_space_before?: number
+  _element_separator_space_after?: number
+}
+
+export interface EnumBodyMemberTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _name: SlotValue<EnumBodyMemberNameTransportSlot>
 }
 
 export interface EnumBodyTransport {

@@ -24,7 +24,8 @@ import {
 	typeEq
 } from '../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
-import { SYMBOL } from '../types/rule-types.ts';
+import { CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
+import { dslArmStage, isTopologyMixed, partitionChoiceArms } from './choice-arm-partition.ts';
 
 function withContent(node: object, content: Rule): Rule {
 	return { ...(node as { type: string }), content } as Rule;
@@ -172,7 +173,13 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
 		if (!rule) continue;
-		enrichedRules[name] = applyClauseHoist(name, rule, hoistCtx, { opt: 0, grp: 0, arm: 0, supertypeNames });
+		enrichedRules[name] = applyClauseHoist(name, rule, hoistCtx, {
+			opt: 0,
+			grp: 0,
+			arm: 0,
+			supertypeNames,
+			mixedRepeatChoices: mixedRepeatChoiceKeys(rule)
+		});
 	}
 	for (const groupName of Object.keys(clauseGroupRules)) {
 		const groupBody = clauseGroupRules[groupName];
@@ -1597,6 +1604,7 @@ interface ClauseHoistCounter {
 	grp: number;
 	arm: number;
 	readonly supertypeNames?: ReadonlySet<string>;
+	readonly mixedRepeatChoices?: ReadonlySet<string>;
 }
 
 function appendTrailingMemberToOptionalSeq(optSeqRule: Rule, trailingOptional: Rule): Rule {
@@ -1846,13 +1854,17 @@ function applyClauseHoist(
 			if (count >= 2) collidingLeadingNames.add(name);
 		}
 		let changed = false;
+		const fieldRoutedArms = counter.mixedRepeatChoices?.has(ruleKey(choiceRule as RuntimeRule))
+			? partitionChoiceArms<Rule>({ members }, dslArmStage).degenerateNamedArms
+			: [];
 		const newMembers = members.map((m) => {
 			const out = applyClauseHoist(parentKind, m, ctx, counter, ambientPrec);
 			const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
 			const promoted =
 				permutationChoice || literalOnlySplit || selfFold
 					? null
-					: mintStructuredChoiceArm(out, parentKind, ctx, counter, collidingLeadingNames, ambientPrec);
+					: (mintStructuredChoiceArm(out, parentKind, ctx, counter, collidingLeadingNames, ambientPrec) ??
+						(fieldRoutedArms.includes(m) ? mintFieldRoutedArm(out, parentKind, ctx, counter, ambientPrec) : null));
 			const final = promoteHiddenListRef(promoted ?? out, ctx);
 			if (final !== m) changed = true;
 			return final;
@@ -2153,6 +2165,56 @@ function mintStructuredChoiceArm(
 	}
 
 	return null;
+}
+
+function mixedRepeatChoiceKeys(rule: Rule): ReadonlySet<string> {
+	const keys = new Set<string>();
+	const walk = (node: AnyRule, inRepeat: boolean): void => {
+		switch (node.type) {
+			case CHOICE:
+				if (inRepeat && isTopologyMixed(partitionChoiceArms(node, dslArmStage))) keys.add(ruleKey(node as RuntimeRule));
+				for (const m of node.members) walk(m, inRepeat);
+				return;
+			case SEQ:
+				for (const m of node.members) walk(m, inRepeat);
+				return;
+			case REPEAT:
+			case REPEAT1:
+				walk(node.content, true);
+				return;
+			case OPTIONAL:
+			case FIELD:
+			case 'PREC':
+			case 'PREC_LEFT':
+			case 'PREC_RIGHT':
+			case 'PREC_DYNAMIC':
+				walk((node as { content: AnyRule }).content, inRepeat);
+				return;
+			default:
+				return;
+		}
+	};
+	walk(rule as AnyRule, false);
+	return keys;
+}
+
+function mintFieldRoutedArm(
+	arm: Rule,
+	parentKind: string,
+	ctx: EnrichCtx,
+	counter: ClauseHoistCounter,
+	ambientPrec?: Rule
+): Rule | null {
+	if (isPrecWrapper(arm as { type: string })) {
+		const content = (arm as { content?: Rule }).content;
+		if (!content) return null;
+		const minted = mintFieldRoutedArm(content, parentKind, ctx, counter, arm);
+		return minted && withContent(arm, minted);
+	}
+	const fieldName = dslArmStage.fieldName(arm as AnyRule);
+	if (fieldName === undefined || matchesEmpty(arm)) return null;
+	const minted = visibleGroupSynthName(arm, parentKind, ctx, counter, ambientPrec, fieldName, 'arm');
+	return minted === null ? null : makeGroupLiftSymbol(arm, minted);
 }
 
 function coveredByAuthoredGroup(body: Rule, ctx: EnrichCtx): boolean {

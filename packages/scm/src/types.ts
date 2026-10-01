@@ -97,21 +97,22 @@ export enum TSKindId {
 	FieldDefinition = 49,
 	NegatedField = 50,
 	Predicate = 51,
-	GroupExpressionArm = 52,
-	NamedNodeExpressionArm = 53,
-	GroupingGroup = 54,
-	NamedNodeGroup = 55,
-	Anchor = 56,
-	NamedNodePlain = 57,
-	NamedNodeSupertyped = 58,
-	NamedNodeGroupChildren = 59,
-	NamedNodeGroupAnchoredLast = 60,
-	ProgramRepeat1 = 61,
-	StringContentRepeat1 = 62,
-	ParametersRepeat1 = 63,
-	ListRepeat1 = 64,
-	GroupingRepeat1 = 65,
-	NamedNodeGroupChildrenRepeat1 = 66,
+	ListQuantifier = 52,
+	GroupExpressionArm = 53,
+	NamedNodeExpressionArm = 54,
+	GroupingGroup = 55,
+	NamedNodeGroup = 56,
+	Anchor = 57,
+	NamedNodePlain = 58,
+	NamedNodeSupertyped = 59,
+	NamedNodeGroupChildren = 60,
+	NamedNodeGroupAnchoredLast = 61,
+	ProgramRepeat1 = 62,
+	StringContentRepeat1 = 63,
+	ParametersRepeat1 = 64,
+	ListRepeat1 = 65,
+	GroupingRepeat1 = 66,
+	NamedNodeGroupChildrenRepeat1 = 67,
 	Error = 65535
 }
 Object.freeze(TSKindId);
@@ -170,21 +171,22 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[49, 'field_definition'],
 	[50, 'negated_field'],
 	[51, 'predicate'],
-	[52, 'group_expression_arm'],
-	[53, 'named_node_expression_arm'],
-	[54, 'grouping_group'],
-	[55, 'named_node_group'],
-	[56, 'anchor'],
-	[57, 'named_node_plain'],
-	[58, 'named_node_supertyped'],
-	[59, 'named_node_group_children'],
-	[60, 'named_node_group_anchored_last'],
-	[61, 'program_repeat1'],
-	[62, 'string_content_repeat1'],
-	[63, 'parameters_repeat1'],
-	[64, 'list_repeat1'],
-	[65, 'grouping_repeat1'],
-	[66, 'named_node_group_children_repeat1'],
+	[52, 'list_quantifier'],
+	[53, 'group_expression_arm'],
+	[54, 'named_node_expression_arm'],
+	[55, 'grouping_group'],
+	[56, 'named_node_group'],
+	[57, 'anchor'],
+	[58, 'named_node_plain'],
+	[59, 'named_node_supertyped'],
+	[60, 'named_node_group_children'],
+	[61, 'named_node_group_anchored_last'],
+	[62, 'program_repeat1'],
+	[63, 'string_content_repeat1'],
+	[64, 'parameters_repeat1'],
+	[65, 'list_repeat1'],
+	[66, 'grouping_repeat1'],
+	[67, 'named_node_group_children_repeat1'],
 	[65535, 'ERROR']
 ]);
 
@@ -241,21 +243,22 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[49, 'field_definition'],
 	[50, 'negated_field'],
 	[51, 'predicate'],
-	[52, 'group_expression_arm'],
-	[53, 'named_node_expression_arm'],
-	[54, 'grouping_group'],
-	[55, 'named_node_group'],
-	[56, 'anchor'],
-	[57, 'named_node_plain'],
-	[58, 'named_node_supertyped'],
-	[59, 'named_node_group_children'],
-	[60, 'named_node_group_anchored_last'],
-	[61, 'program_repeat1'],
-	[62, 'string_content_repeat1'],
-	[63, 'parameters_repeat1'],
-	[64, 'list_repeat1'],
-	[65, 'grouping_repeat1'],
-	[66, 'named_node_group_children_repeat1'],
+	[52, 'list_quantifier'],
+	[53, 'group_expression_arm'],
+	[54, 'named_node_expression_arm'],
+	[55, 'grouping_group'],
+	[56, 'named_node_group'],
+	[57, 'anchor'],
+	[58, 'named_node_plain'],
+	[59, 'named_node_supertyped'],
+	[60, 'named_node_group_children'],
+	[61, 'named_node_group_anchored_last'],
+	[62, 'program_repeat1'],
+	[63, 'string_content_repeat1'],
+	[64, 'parameters_repeat1'],
+	[65, 'list_repeat1'],
+	[66, 'grouping_repeat1'],
+	[67, 'named_node_group_children_repeat1'],
 	[65535, 'ERROR']
 ]);
 
@@ -366,6 +369,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.NegatedField;
 		case 'predicate':
 			return TSKindId.Predicate;
+		case 'list_quantifier':
+			return TSKindId.ListQuantifier;
 		case 'group_expression_arm':
 			return TSKindId.GroupExpressionArm;
 		case 'named_node_expression_arm':
@@ -581,65 +586,55 @@ export interface Comment {
 export interface List {
 	readonly $type: TSKindId.List;
 	readonly _definitions: NonEmptyArray<Definition>;
-	readonly _content?: readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
-	readonly __inputHints__?: {
-		readonly content?: readonly (KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark> | Capture)[];
-	};
+	readonly _elements?: readonly (Capture | ListQuantifier)[];
 	readonly __slotHints__?: {
 		readonly definitions: SlotHint<NonEmptyArray<T.Definition>, false, true>;
-		readonly contents: SlotHint<NonNullable<T.List.Config>['content'], true>;
+		readonly elements: SlotHint<(T.Capture | T.ListQuantifier)[], true, true>;
 	};
 	definitions(): NonEmptyArray<Definition>;
-	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
+	elements(): readonly (Capture | ListQuantifier)[];
 }
 
 export interface Grouping {
 	readonly $type: TSKindId.Grouping;
 	readonly _grouping_group: NonEmptyArray<GroupingGroup>;
-	readonly _content?: readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
-	readonly __inputHints__?: {
-		readonly content?: readonly (KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark> | Capture)[];
-	};
+	readonly _elements?: readonly (Capture | ListQuantifier)[];
 	readonly __slotHints__?: {
 		readonly groupingGroups: SlotHint<NonEmptyArray<T.GroupingGroup>, false, true>;
-		readonly contents: SlotHint<NonNullable<T.Grouping.Config>['content'], true>;
+		readonly elements: SlotHint<(T.Capture | T.ListQuantifier)[], true, true>;
 	};
 	groupingGroups(): NonEmptyArray<GroupingGroup>;
-	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
+	elements(): readonly (Capture | ListQuantifier)[];
 }
 
 export interface MissingNode {
 	readonly $type: TSKindId.MissingNode;
 	readonly _name?: Identifier | String;
-	readonly _content?: readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
-	readonly __inputHints__?: {
-		readonly content?: readonly (KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark> | Capture)[];
-	};
+	readonly _elements?: readonly (Capture | ListQuantifier)[];
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Identifier | T.String, true>;
-		readonly contents: SlotHint<NonNullable<T.MissingNode.Config>['content'], true>;
+		readonly elements: SlotHint<(T.Capture | T.ListQuantifier)[], true, true>;
 	};
 	name(): Identifier | String | undefined;
-	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
+	elements(): readonly (Capture | ListQuantifier)[];
 }
 
 export interface AnonymousNode {
 	readonly $type: TSKindId.AnonymousNode;
 	readonly _name: String | TSKindId.Underscore;
-	readonly _content?: readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
+	readonly _elements?: readonly (Capture | ListQuantifier)[];
 	readonly __inputHints__?: {
 		readonly name: KindEnum<'_', TSKindId.Underscore> | String;
-		readonly content?: readonly (KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark> | Capture)[];
 	};
 	readonly __looseHints__?: {
 		readonly name: readonly (StringContentText | EscapeSequence)[];
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<NonNullable<T.AnonymousNode.Config>['name']>;
-		readonly contents: SlotHint<NonNullable<T.AnonymousNode.Config>['content'], true>;
+		readonly elements: SlotHint<(T.Capture | T.ListQuantifier)[], true, true>;
 	};
 	name(): String | TSKindId.Underscore;
-	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
+	elements(): readonly (Capture | ListQuantifier)[];
 }
 
 export interface FieldDefinition {
@@ -688,6 +683,18 @@ export interface Predicate {
 	parameters(): Parameters | undefined;
 }
 
+export interface ListQuantifier {
+	readonly $type: TSKindId.ListQuantifier;
+	readonly _quantifier: number;
+	readonly __inputHints__?: {
+		readonly quantifier: KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>;
+	};
+	readonly __slotHints__?: {
+		readonly quantifier: SlotHint<NonNullable<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>>;
+	};
+	quantifier(): number;
+}
+
 export interface GroupExpressionArm {
 	readonly $type: TSKindId.GroupExpressionArm;
 	readonly _left: Definition | GroupExpressionArm;
@@ -731,19 +738,18 @@ export interface NamedNodePlain {
 	readonly $type: TSKindId.NamedNodePlain;
 	readonly _name: Identifier | TSKindId.Underscore;
 	readonly _named_node_group?: NamedNodeGroup;
-	readonly _content?: readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
+	readonly _elements?: readonly (Capture | ListQuantifier)[];
 	readonly __inputHints__?: {
 		readonly name: KindEnum<'_', TSKindId.Underscore> | Identifier;
-		readonly content?: readonly (KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark> | Capture)[];
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<NonNullable<T.NamedNodePlain.Config>['name']>;
 		readonly namedNodeGroup: SlotHint<T.NamedNodeGroup, true>;
-		readonly contents: SlotHint<NonNullable<T.NamedNodePlain.Config>['content'], true>;
+		readonly elements: SlotHint<(T.Capture | T.ListQuantifier)[], true, true>;
 	};
 	name(): Identifier | TSKindId.Underscore;
 	namedNodeGroup(): NamedNodeGroup | undefined;
-	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
+	elements(): readonly (Capture | ListQuantifier)[];
 }
 
 export interface NamedNodeSupertyped {
@@ -751,20 +757,17 @@ export interface NamedNodeSupertyped {
 	readonly _supertype: Identifier;
 	readonly _name: ImmediateIdentifier | ImmediateString;
 	readonly _named_node_group?: NamedNodeGroup;
-	readonly _content?: readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
-	readonly __inputHints__?: {
-		readonly content?: readonly (KindEnum<'*' | '+' | '?', TSKindId.Star | TSKindId.Plus | TSKindId.Qmark> | Capture)[];
-	};
+	readonly _elements?: readonly (Capture | ListQuantifier)[];
 	readonly __slotHints__?: {
 		readonly supertype: SlotHint<T.Identifier>;
 		readonly name: SlotHint<T.ImmediateIdentifier | T.ImmediateString>;
 		readonly namedNodeGroup: SlotHint<T.NamedNodeGroup, true>;
-		readonly contents: SlotHint<NonNullable<T.NamedNodeSupertyped.Config>['content'], true>;
+		readonly elements: SlotHint<(T.Capture | T.ListQuantifier)[], true, true>;
 	};
 	supertype(): Identifier;
 	name(): ImmediateIdentifier | ImmediateString;
 	namedNodeGroup(): NamedNodeGroup | undefined;
-	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
+	elements(): readonly (Capture | ListQuantifier)[];
 }
 
 export interface NamedNodeGroupChildren {
@@ -942,7 +945,6 @@ export namespace List {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly content?: { readonly capture?: { readonly after?: WhitespaceArm }; readonly separator?: SpacingArm };
 			readonly definitions?: {
 				readonly anonymousNode?: { readonly after?: WhitespaceArm };
 				readonly fieldDefinition?: { readonly after?: WhitespaceArm };
@@ -954,6 +956,7 @@ export namespace List {
 				readonly predicate?: { readonly after?: WhitespaceArm };
 				readonly separator?: SpacingArm;
 			};
+			readonly elements?: { readonly capture?: { readonly after?: WhitespaceArm }; readonly separator?: SpacingArm };
 			readonly lbrack?: { readonly after?: WhitespaceArm };
 			readonly rbrack?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 		};
@@ -965,7 +968,7 @@ export namespace Grouping {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly content?: { readonly capture?: { readonly after?: WhitespaceArm }; readonly separator?: SpacingArm };
+			readonly elements?: { readonly capture?: { readonly after?: WhitespaceArm }; readonly separator?: SpacingArm };
 			readonly groupingGroup?: {
 				readonly groupingGroup?: { readonly after?: WhitespaceArm };
 				readonly separator?: SpacingArm;
@@ -982,7 +985,7 @@ export namespace MissingNode {
 			readonly MISSINGKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly content?: {
+			readonly elements?: {
 				readonly capture?: { readonly after?: WhitespaceArm };
 				readonly end?: WhitespaceArm;
 				readonly separator?: SpacingArm;
@@ -999,7 +1002,7 @@ export namespace AnonymousNode {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly content?: {
+			readonly elements?: {
 				readonly capture?: { readonly after?: WhitespaceArm };
 				readonly end?: WhitespaceArm;
 				readonly separator?: SpacingArm;
@@ -1077,7 +1080,7 @@ export namespace NamedNodePlain {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly content?: {
+			readonly elements?: {
 				readonly capture?: { readonly after?: WhitespaceArm };
 				readonly end?: WhitespaceArm;
 				readonly separator?: SpacingArm;
@@ -1095,7 +1098,7 @@ export namespace NamedNodeSupertyped {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly content?: {
+			readonly elements?: {
 				readonly capture?: { readonly after?: WhitespaceArm };
 				readonly end?: WhitespaceArm;
 				readonly separator?: SpacingArm;
@@ -1372,6 +1375,19 @@ export interface PredicateNs extends NodeNs<
 	Predicate.Parsed,
 	never
 > {}
+export interface ListQuantifierNs extends NodeNs<
+	ListQuantifier,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ListQuantifier.Bound,
+	ListQuantifier.BuildArgs,
+	ListQuantifier.LooseArgs,
+	'quantifier',
+	TSKindId.ListQuantifier,
+	ListQuantifier.Parsed,
+	never
+> {}
 export interface GroupExpressionArmNs extends NodeNs<
 	GroupExpressionArm,
 	LeafScalarMap,
@@ -1502,6 +1518,7 @@ export interface NamespaceMap {
 	[TSKindId.FieldDefinition]: FieldDefinitionNs;
 	[TSKindId.NegatedField]: NegatedFieldNs;
 	[TSKindId.Predicate]: PredicateNs;
+	[TSKindId.ListQuantifier]: ListQuantifierNs;
 	[TSKindId.GroupExpressionArm]: GroupExpressionArmNs;
 	[TSKindId.NamedNodeExpressionArm]: NamedNodeExpressionArmNs;
 	[TSKindId.GroupingGroup]: GroupingGroupNs;
@@ -1539,6 +1556,7 @@ export interface BoundByKindId {
 	[TSKindId.FieldDefinition]: FieldDefinition.Bound;
 	[TSKindId.NegatedField]: NegatedField.Bound;
 	[TSKindId.Predicate]: Predicate.Bound;
+	[TSKindId.ListQuantifier]: ListQuantifier.Bound;
 	[TSKindId.GroupExpressionArm]: GroupExpressionArm.Bound;
 	[TSKindId.NamedNodeExpressionArm]: NamedNodeExpressionArm.Bound;
 	[TSKindId.GroupingGroup]: GroupingGroup.Bound;
@@ -1567,6 +1585,7 @@ export interface ParsedByKindId {
 	[TSKindId.FieldDefinition]: FieldDefinition.Parsed;
 	[TSKindId.NegatedField]: NegatedField.Parsed;
 	[TSKindId.Predicate]: Predicate.Parsed;
+	[TSKindId.ListQuantifier]: ListQuantifier.Parsed;
 	[TSKindId.GroupExpressionArm]: GroupExpressionArm.Parsed;
 	[TSKindId.NamedNodeExpressionArm]: NamedNodeExpressionArm.Parsed;
 	[TSKindId.GroupingGroup]: GroupingGroup.Parsed;
@@ -1626,6 +1645,7 @@ export interface IrKeyOf {
 	[TSKindId.FieldDefinition]: 'fieldDefinition';
 	[TSKindId.NegatedField]: 'negatedField';
 	[TSKindId.Predicate]: 'predicate';
+	[TSKindId.ListQuantifier]: 'listQuantifier';
 	[TSKindId.GroupExpressionArm]: 'groupExpressionArm';
 	[TSKindId.NamedNodeExpressionArm]: 'namedNodeExpressionArm';
 	[TSKindId.GroupingGroup]: 'groupingGroup';
@@ -1923,6 +1943,24 @@ export namespace Predicate {
 			| AdmitBound<T.Predicate, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.Predicate;
+}
+export namespace ListQuantifier {
+	export type Config = ConfigFor<TSKindId.ListQuantifier>;
+	export interface Bound extends BoundOf<T.ListQuantifier, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.ListQuantifier['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ListQuantifier, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.ListQuantifier['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export type Loose = LooseFor<TSKindId.ListQuantifier>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ListQuantifier>;
+	export type BuildArgs = [value: AdmitBound<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark, T.AdmittedNodes>];
+	export type LooseArgs = [
+		value: LooseValue<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
+	export type Kind = TSKindId.ListQuantifier;
 }
 export namespace GroupExpressionArm {
 	export type Config = ConfigFor<TSKindId.GroupExpressionArm>;

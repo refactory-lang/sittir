@@ -59,21 +59,22 @@ pub const _FIELD_NAME: KindId = KindId(48);
 pub const FIELD_DEFINITION: KindId = KindId(49);
 pub const NEGATED_FIELD: KindId = KindId(50);
 pub const PREDICATE: KindId = KindId(51);
-pub const GROUP_EXPRESSION_ARM: KindId = KindId(52);
-pub const NAMED_NODE_EXPRESSION_ARM: KindId = KindId(53);
-pub const GROUPING_GROUP: KindId = KindId(54);
-pub const NAMED_NODE_GROUP: KindId = KindId(55);
-pub const _ANCHOR: KindId = KindId(56);
-pub const NAMED_NODE_PLAIN: KindId = KindId(57);
-pub const NAMED_NODE_SUPERTYPED: KindId = KindId(58);
-pub const NAMED_NODE_GROUP_CHILDREN: KindId = KindId(59);
-pub const NAMED_NODE_GROUP_ANCHORED_LAST: KindId = KindId(60);
-pub const PROGRAM_REPEAT1: KindId = KindId(61);
-pub const STRING_CONTENT_REPEAT1: KindId = KindId(62);
-pub const PARAMETERS_REPEAT1: KindId = KindId(63);
-pub const LIST_REPEAT1: KindId = KindId(64);
-pub const GROUPING_REPEAT1: KindId = KindId(65);
-pub const NAMED_NODE_GROUP_CHILDREN_REPEAT1: KindId = KindId(66);
+pub const LIST_QUANTIFIER: KindId = KindId(52);
+pub const GROUP_EXPRESSION_ARM: KindId = KindId(53);
+pub const NAMED_NODE_EXPRESSION_ARM: KindId = KindId(54);
+pub const GROUPING_GROUP: KindId = KindId(55);
+pub const NAMED_NODE_GROUP: KindId = KindId(56);
+pub const _ANCHOR: KindId = KindId(57);
+pub const NAMED_NODE_PLAIN: KindId = KindId(58);
+pub const NAMED_NODE_SUPERTYPED: KindId = KindId(59);
+pub const NAMED_NODE_GROUP_CHILDREN: KindId = KindId(60);
+pub const NAMED_NODE_GROUP_ANCHORED_LAST: KindId = KindId(61);
+pub const PROGRAM_REPEAT1: KindId = KindId(62);
+pub const STRING_CONTENT_REPEAT1: KindId = KindId(63);
+pub const PARAMETERS_REPEAT1: KindId = KindId(64);
+pub const LIST_REPEAT1: KindId = KindId(65);
+pub const GROUPING_REPEAT1: KindId = KindId(66);
+pub const NAMED_NODE_GROUP_CHILDREN_REPEAT1: KindId = KindId(67);
 pub const ERROR: KindId = KindId(65535);
 const _: () = assert!(ERROR.0 == KindId::ERROR.0);
 
@@ -132,21 +133,22 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         49 => "field_definition", // "field_definition"
         50 => "negated_field", // "negated_field"
         51 => "predicate", // "predicate"
-        52 => "group_expression_arm", // "group_expression_arm"
-        53 => "named_node_expression_arm", // "named_node_expression_arm"
-        54 => "grouping_group", // "grouping_group"
-        55 => "named_node_group", // "named_node_group"
-        56 => "anchor", // "_anchor"
-        57 => "named_node_plain", // "named_node_plain"
-        58 => "named_node_supertyped", // "named_node_supertyped"
-        59 => "named_node_group_children", // "named_node_group_children"
-        60 => "named_node_group_anchored_last", // "named_node_group_anchored_last"
-        61 => "program_repeat1", // "program_repeat1"
-        62 => "string_content_repeat1", // "string_content_repeat1"
-        63 => "parameters_repeat1", // "parameters_repeat1"
-        64 => "list_repeat1", // "list_repeat1"
-        65 => "grouping_repeat1", // "grouping_repeat1"
-        66 => "named_node_group_children_repeat1", // "named_node_group_children_repeat1"
+        52 => "list_quantifier", // "list_quantifier"
+        53 => "group_expression_arm", // "group_expression_arm"
+        54 => "named_node_expression_arm", // "named_node_expression_arm"
+        55 => "grouping_group", // "grouping_group"
+        56 => "named_node_group", // "named_node_group"
+        57 => "anchor", // "_anchor"
+        58 => "named_node_plain", // "named_node_plain"
+        59 => "named_node_supertyped", // "named_node_supertyped"
+        60 => "named_node_group_children", // "named_node_group_children"
+        61 => "named_node_group_anchored_last", // "named_node_group_anchored_last"
+        62 => "program_repeat1", // "program_repeat1"
+        63 => "string_content_repeat1", // "string_content_repeat1"
+        64 => "parameters_repeat1", // "parameters_repeat1"
+        65 => "list_repeat1", // "list_repeat1"
+        66 => "grouping_repeat1", // "grouping_repeat1"
+        67 => "named_node_group_children_repeat1", // "named_node_group_children_repeat1"
         65535 => "ERROR", // "ERROR"
         _ => "<unknown>",
     }
@@ -160,31 +162,19 @@ pub fn wire_slot(parent: KindId, field: Option<&str>, child: &str) -> Option<&'s
     match (parent.0, field, child) {
         (41, None, "escape_sequence") => Some("content"),
         (41, None, "string_content_text") => Some("content"),
-        (43, None, "capture") => Some("content"),
-        (43, Some("quantifier"), _) => Some("content"),
-        (44, None, "capture") => Some("content"),
-        (44, Some("quantifier"), _) => Some("content"),
-        (45, None, "capture") => Some("content"),
-        (45, Some("quantifier"), _) => Some("content"),
-        (46, None, "capture") => Some("content"),
-        (46, Some("quantifier"), _) => Some("content"),
-        (54, None, "anonymous_node") => Some("group_expression"),
-        (54, None, "field_definition") => Some("group_expression"),
-        (54, None, "group_expression_arm") => Some("group_expression"),
-        (54, None, "grouping") => Some("group_expression"),
-        (54, None, "list") => Some("group_expression"),
-        (54, None, "missing_node") => Some("group_expression"),
-        (54, None, "named_node_plain") => Some("group_expression"),
-        (54, None, "named_node_supertyped") => Some("group_expression"),
-        (54, None, "predicate") => Some("group_expression"),
-        (57, None, "capture") => Some("content"),
-        (57, None, "named_node_group_anchored_last") => Some("named_node_group"),
-        (57, None, "named_node_group_children") => Some("named_node_group"),
-        (57, Some("quantifier"), _) => Some("content"),
-        (58, None, "capture") => Some("content"),
+        (55, None, "anonymous_node") => Some("group_expression"),
+        (55, None, "field_definition") => Some("group_expression"),
+        (55, None, "group_expression_arm") => Some("group_expression"),
+        (55, None, "grouping") => Some("group_expression"),
+        (55, None, "list") => Some("group_expression"),
+        (55, None, "missing_node") => Some("group_expression"),
+        (55, None, "named_node_plain") => Some("group_expression"),
+        (55, None, "named_node_supertyped") => Some("group_expression"),
+        (55, None, "predicate") => Some("group_expression"),
         (58, None, "named_node_group_anchored_last") => Some("named_node_group"),
         (58, None, "named_node_group_children") => Some("named_node_group"),
-        (58, Some("quantifier"), _) => Some("content"),
+        (59, None, "named_node_group_anchored_last") => Some("named_node_group"),
+        (59, None, "named_node_group_children") => Some("named_node_group"),
         _ => None,
     }
 }
@@ -205,16 +195,11 @@ pub fn inner_gap_key(kind: KindId, preceding_tokens: u16) -> Option<&'static str
 /// trivia, so the reader never makes it an owner.
 pub fn stores_scalar(parent: KindId, field: Option<&str>, child: KindId) -> bool {
     match (parent.0, field) {
-        (43, None) => matches!(child.0, 2 | 3 | 4),
-        (44, None) => matches!(child.0, 2 | 3 | 4),
-        (45, None) => matches!(child.0, 2 | 3 | 4),
-        (46, None) => matches!(child.0, 2 | 3 | 4),
         (46, Some("name")) => matches!(child.0, 7),
         (51, Some("prefix")) => matches!(child.0, 19 | 20),
         (51, Some("type")) => matches!(child.0, 4 | 18),
-        (57, None) => matches!(child.0, 2 | 3 | 4),
-        (57, Some("name")) => matches!(child.0, 7),
-        (58, None) => matches!(child.0, 2 | 3 | 4),
+        (52, Some("quantifier")) => matches!(child.0, 2 | 3 | 4),
+        (58, Some("name")) => matches!(child.0, 7),
         _ => false,
     }
 }

@@ -5939,8 +5939,8 @@ export function wrapClassBody(data: T.ClassBody, tree: TreeHandle): T.ClassBody.
 				slotName: 'content',
 				span: (data as _UntypedNode).$span
 			}),
-			{ ';': 395 },
-			{ 20: 395 }
+			{ ';': 396 },
+			{ 20: 396 }
 		),
 
 		contents() {
@@ -8432,8 +8432,8 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle): T.EnumBody.Par
 			),
 			{
 				list: { accessor: 'enumBodyElements', storage: '_enum_body_elements' },
-				elements: 'contents',
-				count: '_content',
+				elements: 'elements',
+				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.Trailing }]
 			},
 			tree
@@ -11840,13 +11840,11 @@ export function wrapEnumBodyElements(
 	},
 	tree: TreeHandle
 ): T.EnumBodyElements.Parsed {
-	data = _keepModelledSlots(data, ['_content']);
-	if (_isReadTextLeaf(data))
-		return withMethods({ ...data, $type: TSKindId.EnumBodyElements as const }) as unknown as T.EnumBodyElements.Parsed;
-	const _content = normalizeRepeatedWrapSlot(data._content, true, 'content', {
+	data = _keepModelledSlots(data, ['_element']);
+	const _content = normalizeRepeatedWrapSlot(data._element, true, 'element', {
 		tree,
 		nodeType: data.$type,
-		slotName: 'content',
+		slotName: 'element',
 		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
@@ -11854,80 +11852,20 @@ export function wrapEnumBodyElements(
 			{
 				...data,
 				$type: TSKindId.EnumBodyElements as const,
-				_content: _content,
+				_element: _content,
 				_delimiter: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0)
 					? Delimiter.Trailing
 					: Delimiter.None,
 
-				contents() {
-					return hydrateChildren<
-						| T.PropertyIdentifier
-						| TSKindId.DeclareKeyword
-						| TSKindId.NamespaceKeyword
-						| TSKindId.TypeKeyword
-						| TSKindId.PublicKeyword
-						| TSKindId.PrivateKeyword
-						| TSKindId.ProtectedKeyword
-						| TSKindId.OverrideKeyword
-						| TSKindId.ReadonlyKeyword
-						| TSKindId.ModuleKeyword
-						| TSKindId.AnyKeyword
-						| TSKindId.NumberKeyword
-						| TSKindId.BooleanKeyword
-						| TSKindId.StringKeyword
-						| TSKindId.SymbolKeyword
-						| TSKindId.ExportKeyword
-						| TSKindId.ObjectKeyword
-						| TSKindId.NewKeyword
-						| TSKindId.GetKeyword
-						| TSKindId.SetKeyword
-						| TSKindId.AsyncKeyword
-						| TSKindId.StaticKeyword
-						| TSKindId.LetKeyword
-						| T.PrivatePropertyIdentifier
-						| T.String
-						| T.Number
-						| T.ComputedPropertyName
-						| T.EnumAssignment
-					>(
-						this._content as
-							| readonly (
-									| T.PropertyIdentifier
-									| TSKindId.DeclareKeyword
-									| TSKindId.NamespaceKeyword
-									| TSKindId.TypeKeyword
-									| TSKindId.PublicKeyword
-									| TSKindId.PrivateKeyword
-									| TSKindId.ProtectedKeyword
-									| TSKindId.OverrideKeyword
-									| TSKindId.ReadonlyKeyword
-									| TSKindId.ModuleKeyword
-									| TSKindId.AnyKeyword
-									| TSKindId.NumberKeyword
-									| TSKindId.BooleanKeyword
-									| TSKindId.StringKeyword
-									| TSKindId.SymbolKeyword
-									| TSKindId.ExportKeyword
-									| TSKindId.ObjectKeyword
-									| TSKindId.NewKeyword
-									| TSKindId.GetKeyword
-									| TSKindId.SetKeyword
-									| TSKindId.AsyncKeyword
-									| TSKindId.StaticKeyword
-									| TSKindId.LetKeyword
-									| T.PrivatePropertyIdentifier
-									| T.String
-									| T.Number
-									| T.ComputedPropertyName
-									| T.EnumAssignment
-							  )[]
-							| undefined,
+				elements() {
+					return hydrateChildren<T.EnumBodyMember | T.EnumAssignment>(
+						this._element as readonly (T.EnumBodyMember | T.EnumAssignment)[] | undefined,
 						tree
 					);
 				},
 				$with: {}
 			},
-			{ elements: 'contents', count: '_content', options: [{ key: 'delimiter', default: Delimiter.Trailing }] },
+			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.Trailing }] },
 			tree
 		)
 	) as unknown as T.EnumBodyElements.Parsed;
@@ -13028,6 +12966,84 @@ export function wrapBinaryExpressionIn(data: T.BinaryExpressionIn, tree: TreeHan
 		}
 	});
 	return _node as unknown as T.BinaryExpressionIn.Parsed;
+}
+
+export function wrapEnumBodyMember(data: T.EnumBodyMember, tree: TreeHandle): T.EnumBodyMember.Parsed {
+	data = _keepModelledSlots(data, ['_name']);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.EnumBodyMember as const }) as unknown as T.EnumBodyMember.Parsed;
+	const _node = withMethods({
+		...data,
+		$type: TSKindId.EnumBodyMember as const,
+		_name: projectMixedEnumStorage(
+			normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'name',
+				span: (data as _UntypedNode).$span
+			}),
+			{
+				declare: 30,
+				namespace: 31,
+				type: 7,
+				public: 32,
+				private: 33,
+				protected: 34,
+				override: 35,
+				readonly: 36,
+				module: 37,
+				any: 38,
+				number: 39,
+				boolean: 40,
+				string: 41,
+				symbol: 42,
+				export: 43,
+				object: 44,
+				new: 45,
+				get: 46,
+				set: 47,
+				async: 48,
+				static: 49,
+				let: 50
+			}
+		),
+
+		name() {
+			return hydrateChild<
+				| T.PropertyIdentifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+				| T.PrivatePropertyIdentifier
+				| T.String
+				| T.Number
+				| T.ComputedPropertyName
+			>(this._name, tree);
+		},
+		$with: {
+			name: (v: NonNullable<T.EnumBodyMember['_name']>) => wrapEnumBodyMember({ ...$edited(data), _name: v }, tree)
+		}
+	});
+	return _node as unknown as T.EnumBodyMember.Parsed;
 }
 
 export function wrapClassBodyMethod(data: T.ClassBodyMethod, tree: TreeHandle): T.ClassBodyMethod.Parsed {
@@ -15296,6 +15312,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.NumberBigintOctal]: (d, t) => wrapNumberBigintOctal(d as unknown as T.NumberBigintOctal, t),
 	[TSKindId.NumberBigintDecimal]: (d, t) => wrapNumberBigintDecimal(d as unknown as T.NumberBigintDecimal, t),
 	[TSKindId.BinaryExpressionIn]: (d, t) => wrapBinaryExpressionIn(d as unknown as T.BinaryExpressionIn, t),
+	[TSKindId.EnumBodyMember]: (d, t) => wrapEnumBodyMember(d as unknown as T.EnumBodyMember, t),
 	[TSKindId.EmptyMember]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.EmptyMember as const }),
 	[TSKindId.ClassBodyMethod]: (d, t) => wrapClassBodyMethod(d as unknown as T.ClassBodyMethod, t),
 	[TSKindId.ClassBodyMethodSig]: (d, t) => wrapClassBodyMethodSig(d as unknown as T.ClassBodyMethodSig, t),
@@ -15439,11 +15456,11 @@ function _wrapTrivia(trivia: _UntypedNode['$_trivia'], tree: TreeHandle): _Untyp
 	return trivia && mapTriviaEntries(trivia, (entries) => hydrateChildren(entries, tree) as unknown as typeof entries);
 }
 
-const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([456, 458, 459, 460, 461, 463]);
+const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([457, 459, 460, 461, 462, 464]);
 const _HIDDEN_KINDS: ReadonlySet<_UntypedNode['$type']> = new Set([
 	179, 180, 181, 182, 183, 184, 185, 186, 187, 189, 193, 194, 198, 201, 203, 207, 214, 231, 232, 233, 250, 251, 253,
-	258, 260, 262, 263, 268, 270, 274, 275, 283, 288, 291, 309, 322, 331, 336, 338, 355, 369, 388, 393, 432, 433, 434,
-	435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455
+	258, 260, 262, 263, 268, 270, 274, 275, 283, 288, 291, 309, 322, 331, 336, 338, 355, 369, 388, 393, 433, 434, 435,
+	436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456
 ]);
 function _displayOf(entry: _UntypedNode): _UntypedNode['$type'] {
 	return (entry as { readonly $displayType?: _UntypedNode['$type'] }).$displayType ?? entry.$type;
@@ -15458,7 +15475,7 @@ function _withoutDisplay(data: _UntypedNode): _UntypedNode {
 }
 
 const _RECLAIMS_ANONYMOUS: ReadonlySet<_UntypedNode['$type']> = new Set([
-	258, 284, 320, 321, 346, 354, 367, 379, 402, 406, 417, 418, 424
+	258, 284, 320, 321, 346, 354, 367, 403, 407, 418, 419, 425
 ]);
 function _spellingTokens(data: _UntypedNode): readonly _UntypedNode[] | undefined {
 	const { $other, ...node } = data;

@@ -49,7 +49,6 @@ import {
 	makeSimpleDollarProxy,
 	type PatchSite
 } from '../wire/wire.ts';
-import { renameRule } from '../wire/symbol-renames.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
 import {
 	isFieldLike,
@@ -445,7 +444,7 @@ function buildHoistedVariants(
 		const altMember = choiceMembers[resolvedAlt]!;
 		const name = polymorphVisibleName(parentKind, variantMintName(p.v));
 		const lift = enrichLiftArmOf(altMember);
-		if (lift !== null) wireRenameLift(lift.liftName, name);
+		if (lift !== null) wireRenameLift(lift.liftName, name, true);
 		if (!wireRegisterSyntheticRule(name, hoist(lift === null ? altMember : lift.body))) {
 			throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
 		}
@@ -510,8 +509,7 @@ function renameEnrichLift(
 	nodeName: string
 ): RuntimeRule {
 	if (!wireHasAuthoredRule(ruleName)) {
-		const body = renameRule(lift.body, new Map([[lift.liftName, ruleName]])) as RuntimeRule;
-		wireRegisterSyntheticRule(ruleName, wireIsBaseSupertype(lift.liftName) ? body : withHoistedAnnotation(body));
+		wireRegisterSyntheticRule(ruleName, wireIsBaseSupertype(lift.liftName) ? lift.body : withHoistedAnnotation(lift.body));
 	}
 	wireRenameLift(lift.liftName, ruleName);
 	if (ruleName === nodeName) return { ...lift.symbol, name: nodeName } as unknown as RuntimeRule;

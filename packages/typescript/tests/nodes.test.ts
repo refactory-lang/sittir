@@ -3094,20 +3094,6 @@ describe('enum_body', () => {
 	});
 });
 
-describe('enum_body sub-factories', () => {
-	it('elements builds the parent', () => {
-		const node = ir.enumBody.elements({
-			$type: TSKindId.NumberDecimal,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$type).toBe(TSKindId.EnumBody);
-		expect((node as any).enumBodyElements()?.$type).toBe(TSKindId.EnumBodyElements);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
 describe('enum_assignment', () => {
 	it('factory produces correct type', () => {
 		const node = ir.enumAssignment({
@@ -4434,14 +4420,30 @@ describe('formal_parameters_elements', () => {
 describe('enum_body_elements', () => {
 	it('factory produces correct type', () => {
 		const node = ir.enumBodyElements(
-			...[{ $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any]
+			...[
+				{
+					$type: TSKindId.EnumBodyMember,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
 		);
 		expect(node.$type).toBe(TSKindId.EnumBodyElements);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.enumBodyElements(
-			...[{ $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any]
+			...[
+				{
+					$type: TSKindId.EnumBodyMember,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_name: { $type: TSKindId.NumberDecimal, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
 		);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});

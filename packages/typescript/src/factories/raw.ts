@@ -4865,76 +4865,10 @@ export function buildEnumBody(
 ): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<
-		AdmitBound<
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName
-			| T.EnumAssignment
-			| T.PropertyIdentifier.Types,
-			T.AdmittedNodes
-		>
-	>
+	...elements: NonEmptyArray<AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>>
 ): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(
-	...elements: NonEmptyArray<
-		AdmitBound<
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName
-			| T.EnumAssignment
-			| T.PropertyIdentifier.Types,
-			T.AdmittedNodes
-		>
-	>
+	...elements: NonEmptyArray<AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>>
 ): ReturnType<typeof _buildEnumBody>;
 export function buildEnumBody(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
@@ -4979,8 +4913,8 @@ function _buildEnumBody(value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>)
 			),
 			{
 				list: { accessor: 'enumBodyElements', storage: '_enum_body_elements' },
-				elements: 'contents',
-				count: '_content',
+				elements: 'elements',
+				count: '_element',
 				options: [{ key: 'delimiter', default: Delimiter.Trailing }]
 			}
 		)
@@ -7376,113 +7310,16 @@ function _buildFormalParametersElements(
 }
 
 export function buildEnumBodyElements(
-	...elements: NonEmptyArray<
-		AdmitBound<
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName
-			| T.EnumAssignment
-			| T.PropertyIdentifier.Types,
-			T.AdmittedNodes
-		>
-	>
+	...elements: NonEmptyArray<AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>>
 ): ReturnType<typeof _buildEnumBodyElements>;
 export function buildEnumBodyElements(
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-	...elements: NonEmptyArray<
-		AdmitBound<
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName
-			| T.EnumAssignment
-			| T.PropertyIdentifier.Types,
-			T.AdmittedNodes
-		>
-	>
+	...elements: NonEmptyArray<AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>>
 ): ReturnType<typeof _buildEnumBodyElements>;
 export function buildEnumBodyElements(
 	...args: (
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
-		| AdmitBound<
-				| T.PropertyIdentifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.EnumAssignment
-				| T.PropertyIdentifier.Types,
-				T.AdmittedNodes
-		  >
+		| AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>
 	)[]
 ) {
 	const _optsFirst =
@@ -7493,111 +7330,16 @@ export function buildEnumBodyElements(
 		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
-		AdmitBound<
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName
-			| T.EnumAssignment
-			| T.PropertyIdentifier.Types,
-			T.AdmittedNodes
-		>
+		AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>
 	>;
 	return _buildEnumBodyElements(elements, options);
 }
 function _buildEnumBodyElements(
-	elements: NonEmptyArray<
-		AdmitBound<
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName
-			| T.EnumAssignment
-			| T.PropertyIdentifier.Types,
-			T.AdmittedNodes
-		>
-	>,
+	elements: NonEmptyArray<AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
 ): T.EnumBodyElements.Bound {
 	_assertNonEmpty(elements, 'enum_body_elements.elements');
-	const _content = admitAliasContent<
-		NonEmptyArray<
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName
-			| T.EnumAssignment
-		>
-	>(elements, [[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]);
+	const _element = elements;
 	const _delimiter = options.delimiter ?? Delimiter.Trailing;
 	return withMethods(
 		withListView(
@@ -7606,54 +7348,20 @@ function _buildEnumBodyElements(
 					$type: TSKindId.EnumBodyElements as const,
 					$source: 2 as const,
 					$named: true as const,
-					_content,
+					_element,
 					_delimiter,
 					$with: {
-						contents: (
-							...vs: NonEmptyArray<
-								AdmitBound<
-									| T.PropertyIdentifier
-									| TSKindId.DeclareKeyword
-									| TSKindId.NamespaceKeyword
-									| TSKindId.TypeKeyword
-									| TSKindId.PublicKeyword
-									| TSKindId.PrivateKeyword
-									| TSKindId.ProtectedKeyword
-									| TSKindId.OverrideKeyword
-									| TSKindId.ReadonlyKeyword
-									| TSKindId.ModuleKeyword
-									| TSKindId.AnyKeyword
-									| TSKindId.NumberKeyword
-									| TSKindId.BooleanKeyword
-									| TSKindId.StringKeyword
-									| TSKindId.SymbolKeyword
-									| TSKindId.ExportKeyword
-									| TSKindId.ObjectKeyword
-									| TSKindId.NewKeyword
-									| TSKindId.GetKeyword
-									| TSKindId.SetKeyword
-									| TSKindId.AsyncKeyword
-									| TSKindId.StaticKeyword
-									| TSKindId.LetKeyword
-									| T.PrivatePropertyIdentifier
-									| T.String
-									| T.Number
-									| T.ComputedPropertyName
-									| T.EnumAssignment
-									| T.PropertyIdentifier.Types,
-									T.AdmittedNodes
-								>
-							>
-						) => buildEnumBodyElements(options, ...vs),
+						elements: (...vs: NonEmptyArray<AdmitBound<T.EnumBodyMember | T.EnumAssignment, T.AdmittedNodes>>) =>
+							buildEnumBodyElements(options, ...vs),
 						delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 							buildEnumBodyElements({ ...options, delimiter: v }, ...elements)
 					}
 				},
 				{
-					contents: () => _content
+					elements: () => _element
 				}
 			),
-			{ elements: 'contents', count: '_content', options: [{ key: 'delimiter', default: Delimiter.Trailing }] }
+			{ elements: 'elements', count: '_element', options: [{ key: 'delimiter', default: Delimiter.Trailing }] }
 		)
 	) as unknown as T.EnumBodyElements.Bound;
 }
@@ -8755,6 +8463,123 @@ export function buildBinaryExpressionIn(config: T.BinaryExpressionIn.Config): T.
 			}
 		)
 	) as unknown as T.BinaryExpressionIn.Bound;
+}
+
+export function buildEnumBodyMember(
+	value: AdmitBound<
+		| (
+				| T.PropertyIdentifier
+				| TSKindId.DeclareKeyword
+				| TSKindId.NamespaceKeyword
+				| TSKindId.TypeKeyword
+				| TSKindId.PublicKeyword
+				| TSKindId.PrivateKeyword
+				| TSKindId.ProtectedKeyword
+				| TSKindId.OverrideKeyword
+				| TSKindId.ReadonlyKeyword
+				| TSKindId.ModuleKeyword
+				| TSKindId.AnyKeyword
+				| TSKindId.NumberKeyword
+				| TSKindId.BooleanKeyword
+				| TSKindId.StringKeyword
+				| TSKindId.SymbolKeyword
+				| TSKindId.ExportKeyword
+				| TSKindId.ObjectKeyword
+				| TSKindId.NewKeyword
+				| TSKindId.GetKeyword
+				| TSKindId.SetKeyword
+				| TSKindId.AsyncKeyword
+				| TSKindId.StaticKeyword
+				| TSKindId.LetKeyword
+				| T.PrivatePropertyIdentifier
+				| T.String
+				| T.Number
+				| T.ComputedPropertyName
+		  )
+		| T.PropertyIdentifier.Types,
+		T.AdmittedNodes
+	>
+): T.EnumBodyMember.Bound {
+	const _name = admitAliasContent<NonNullable<T.EnumBodyMember['_name']>>(
+		rejectBareText(
+			coerceMixedEnumStorage<NonNullable<T.EnumBodyMember['_name']>>(value, [
+				['declare', TSKindId.DeclareKeyword] as const,
+				['namespace', TSKindId.NamespaceKeyword] as const,
+				['type', TSKindId.TypeKeyword] as const,
+				['public', TSKindId.PublicKeyword] as const,
+				['private', TSKindId.PrivateKeyword] as const,
+				['protected', TSKindId.ProtectedKeyword] as const,
+				['override', TSKindId.OverrideKeyword] as const,
+				['readonly', TSKindId.ReadonlyKeyword] as const,
+				['module', TSKindId.ModuleKeyword] as const,
+				['any', TSKindId.AnyKeyword] as const,
+				['number', TSKindId.NumberKeyword] as const,
+				['boolean', TSKindId.BooleanKeyword] as const,
+				['string', TSKindId.StringKeyword] as const,
+				['symbol', TSKindId.SymbolKeyword] as const,
+				['export', TSKindId.ExportKeyword] as const,
+				['object', TSKindId.ObjectKeyword] as const,
+				['new', TSKindId.NewKeyword] as const,
+				['get', TSKindId.GetKeyword] as const,
+				['set', TSKindId.SetKeyword] as const,
+				['async', TSKindId.AsyncKeyword] as const,
+				['static', TSKindId.StaticKeyword] as const,
+				['let', TSKindId.LetKeyword] as const
+			]),
+			'EnumBodyMember.name',
+			'a built PropertyIdentifier / PrivatePropertyIdentifier / String / Number / ComputedPropertyName'
+		),
+		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
+	);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.EnumBodyMember as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				$with: {
+					name: (
+						value: NonNullable<
+							| (
+									| T.PropertyIdentifier
+									| TSKindId.DeclareKeyword
+									| TSKindId.NamespaceKeyword
+									| TSKindId.TypeKeyword
+									| TSKindId.PublicKeyword
+									| TSKindId.PrivateKeyword
+									| TSKindId.ProtectedKeyword
+									| TSKindId.OverrideKeyword
+									| TSKindId.ReadonlyKeyword
+									| TSKindId.ModuleKeyword
+									| TSKindId.AnyKeyword
+									| TSKindId.NumberKeyword
+									| TSKindId.BooleanKeyword
+									| TSKindId.StringKeyword
+									| TSKindId.SymbolKeyword
+									| TSKindId.ExportKeyword
+									| TSKindId.ObjectKeyword
+									| TSKindId.NewKeyword
+									| TSKindId.GetKeyword
+									| TSKindId.SetKeyword
+									| TSKindId.AsyncKeyword
+									| TSKindId.StaticKeyword
+									| TSKindId.LetKeyword
+									| T.PrivatePropertyIdentifier
+									| T.String
+									| T.Number
+									| T.ComputedPropertyName
+							  )
+							| T.PropertyIdentifier.Types
+						>
+					) => buildEnumBodyMember(value)
+				}
+			},
+			{
+				name: () => _name
+			}
+		)
+	) as unknown as T.EnumBodyMember.Bound;
 }
 
 export const buildEmptyMember: TSKindId.EmptyMember = TSKindId.EmptyMember;
@@ -10962,6 +10787,7 @@ export type FluentKindMap = {
 	number_bigint_octal: T.NumberBigintOctal.Bound;
 	number_bigint_decimal: T.NumberBigintDecimal.Bound;
 	binary_expression_in: T.BinaryExpressionIn.Bound;
+	enum_body_member: T.EnumBodyMember.Bound;
 	empty_member: T.EmptyMember;
 	class_body_method: T.ClassBodyMethod.Bound;
 	class_body_method_sig: T.ClassBodyMethodSig.Bound;
@@ -11222,6 +11048,7 @@ export const _factoryMap = {
 	number_bigint_octal: buildNumberBigintOctal,
 	number_bigint_decimal: buildNumberBigintDecimal,
 	binary_expression_in: buildBinaryExpressionIn,
+	enum_body_member: buildEnumBodyMember,
 	empty_member: buildEmptyMember,
 	class_body_method: buildClassBodyMethod,
 	class_body_method_sig: buildClassBodyMethodSig,

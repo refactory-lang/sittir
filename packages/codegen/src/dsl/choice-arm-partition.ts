@@ -1,6 +1,6 @@
 import { ALIAS, CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, SimplifiedRule } from '../types/rule.ts';
-import { isNonterminalRuleType } from './rule-patterns.ts';
+import { isNonterminalRuleType, optionalContentOf } from './rule-patterns.ts';
 
 export interface ArmStage {
 	fieldName(rule: AnyRule): string | undefined;
@@ -21,17 +21,24 @@ export const simplifyArmStage: ArmStage = {
 
 const PREC_TYPES: ReadonlySet<string> = new Set(['PREC', 'PREC_LEFT', 'PREC_RIGHT', 'PREC_DYNAMIC']);
 
-function unwrapPrec(rule: AnyRule): AnyRule {
+function unwrapPrecAndOptional(rule: AnyRule): AnyRule {
 	let node = rule;
-	while (PREC_TYPES.has(node.type)) node = (node as { content: AnyRule }).content;
-	return node;
+	for (;;) {
+		if (PREC_TYPES.has(node.type)) {
+			node = (node as { content: AnyRule }).content;
+			continue;
+		}
+		const optional = optionalContentOf(node);
+		if (optional === undefined) return node;
+		node = optional;
+	}
 }
 
 export const dslArmStage: ArmStage = {
 	fieldName: (rule) => (rule.type === FIELD ? rule.name : undefined),
-	fieldBody: (rule) => (rule.type === FIELD ? unwrapPrec(rule.content) : rule),
+	fieldBody: (rule) => (rule.type === FIELD ? unwrapPrecAndOptional(rule.content) : rule),
 	isSlotNode: (rule) => isNonterminalRuleType(rule),
-	unwrap: unwrapPrec
+	unwrap: unwrapPrecAndOptional
 };
 
 export function carriesNamedField(rule: AnyRule, stage: ArmStage): boolean {

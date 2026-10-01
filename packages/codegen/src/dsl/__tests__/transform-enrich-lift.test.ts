@@ -30,7 +30,7 @@ describe('resolvePatch — ALIAS + enrich-lift', () => {
 		}, { grammar: { rules: { _lift1: liftBody } } });
 
 		expect(ctx.deposits.get('hoisted_alias_picked')).toEqual({ ...liftBody, annotations: { hoisted: true } });
-		expect(ctx.symbolRenames.get('_lift1')).toBe('hoisted_alias_picked');
+		expect(ctx.liftNames.get('_lift1')?.name).toBe('hoisted_alias_picked');
 		const pickedArm = patched.members[0].members[0];
 		expect(pickedArm.type).toBe('SYMBOL');
 		expect(pickedArm.name).toBe('hoisted_alias_picked');
@@ -45,8 +45,8 @@ describe('resolvePatch — ALIAS + enrich-lift', () => {
 			const original = { type: 'CHOICE', members: [lift('comment_arm1'), lift('comment_arm2')] } as any;
 			return transform(original, { 0: variant('line'), 1: variant('block') }) as any;
 		}, { grammar: { rules: bodies } });
-		expect(ctx.symbolRenames.get('comment_arm1')).toBe('comment_line');
-		expect(ctx.symbolRenames.get('comment_arm2')).toBe('comment_block');
+		expect(ctx.liftNames.get('comment_arm1')?.name).toBe('comment_line');
+		expect(ctx.liftNames.get('comment_arm2')?.name).toBe('comment_block');
 		expect(ctx.deposits.get('comment_line')).toMatchObject({ type: 'TOKEN' });
 		expect(patched.members.map((m: any) => m.name)).toEqual(['comment_line', 'comment_block']);
 	});

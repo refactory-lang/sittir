@@ -119,8 +119,8 @@ export interface AnonymousNodeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _name: SlotValue<AnonymousNodeNameTransportSlot>
-  _content?: Array<SlotValue<AnonymousNodeContentTransportSlot>>
-  _content_separator_space?: number
+  _elements?: Array<SlotValue<AnonymousNodeElementsTransportSlot>>
+  _elements_separator_space?: number
 }
 
 export interface CaptureTransport {
@@ -176,9 +176,9 @@ export interface GroupingGroupTransport {
 export interface GroupingTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
+  _elements?: Array<SlotValue<GroupingElementsTransportSlot>>
   _grouping_group: Array<SlotValue<GroupingGroupTransport>>
-  _content?: Array<SlotValue<GroupingContentTransportSlot>>
-  _content_separator_space?: number
+  _elements_separator_space?: number
   _grouping_group_separator_space?: number
 }
 
@@ -188,21 +188,27 @@ export interface ImmediateStringTransport {
   _string_content?: SlotValue<StringContentTransport>
 }
 
+export interface ListQuantifierTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _quantifier: SlotValue<QuantifierEnum>
+}
+
 export interface ListTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _definitions: Array<SlotValue<DefinitionTransport>>
-  _content?: Array<SlotValue<ListContentTransportSlot>>
-  _content_separator_space?: number
+  _elements?: Array<SlotValue<ListElementsTransportSlot>>
   _definitions_separator_space?: number
+  _elements_separator_space?: number
 }
 
 export interface MissingNodeTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _name?: SlotValue<MissingNodeNameTransportSlot>
-  _content?: Array<SlotValue<MissingNodeContentTransportSlot>>
-  _content_separator_space?: number
+  _elements?: Array<SlotValue<MissingNodeElementsTransportSlot>>
+  _elements_separator_space?: number
 }
 
 export interface NamedNodeExpressionArmTransport {
@@ -233,9 +239,9 @@ export interface NamedNodePlainTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _name: SlotValue<NamedNodePlainNameTransportSlot>
+  _elements?: Array<SlotValue<NamedNodePlainElementsTransportSlot>>
   _named_node_group?: SlotValue<Box<NamedNodeGroupTransport>>
-  _content?: Array<SlotValue<NamedNodePlainContentTransportSlot>>
-  _content_separator_space?: number
+  _elements_separator_space?: number
 }
 
 export interface NamedNodeSupertypedTransport {
@@ -243,9 +249,9 @@ export interface NamedNodeSupertypedTransport {
   '$_edges'?: Edges
   _supertype: SlotValue<IdentifierTransport>
   _name: SlotValue<NamedNodeSupertypedNameTransportSlot, true>
+  _elements?: Array<SlotValue<NamedNodeSupertypedElementsTransportSlot>>
   _named_node_group?: SlotValue<Box<NamedNodeGroupTransport>>
-  _content?: Array<SlotValue<NamedNodeSupertypedContentTransportSlot>>
-  _content_separator_space?: number
+  _elements_separator_space?: number
 }
 
 export interface NegatedFieldTransport {

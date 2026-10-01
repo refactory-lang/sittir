@@ -392,7 +392,7 @@
     "severity": "warning",
     "grammar": "rust",
     "ownerKind": "range_expression",
-    "message": "[collect-slots] kind 'range_expression': choice rule:range_expression:root routes 3 unnamed-nonterminal arm(s) [range_expression_binary, range_expression_postfix, range_expression_prefix] into one union slot alongside 1 label-routed arm(s) [field(operator):range_expression_bare] (PR 1.5)",
+    "message": "[collect-slots] kind 'range_expression': choice rule:range_expression:root routes 3 unnamed-nonterminal arm(s) [range_expression_binary, range_expression_postfix, range_expression_prefix] into one union slot alongside 1 label-routed arm(s) [field(operator):range_expression_bare]",
     "canProceed": true,
     "details": {
       "unionSlot": "content",

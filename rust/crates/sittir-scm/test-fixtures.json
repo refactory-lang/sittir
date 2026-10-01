@@ -9,7 +9,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -42,7 +42,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -69,7 +69,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -102,7 +102,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         },
         {
           "$type": 46,
@@ -151,7 +151,7 @@
               }
             ]
           },
-          "_content": []
+          "_elements": []
         },
         {
           "$type": 46,
@@ -200,7 +200,7 @@
               }
             ]
           },
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -232,7 +232,7 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
@@ -282,11 +282,11 @@
                     }
                   ]
                 },
-                "_content": []
+                "_elements": []
               }
             },
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
@@ -336,7 +336,7 @@
                     }
                   ]
                 },
-                "_content": []
+                "_elements": []
               }
             }
           ],
@@ -360,7 +360,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -391,7 +391,7 @@
           "$source": 0,
           "$named": true,
           "_name": 7,
-          "_content": [
+          "_elements": [
             {
               "$type": 38,
               "$source": 0,
@@ -421,15 +421,15 @@
           ],
           "$slotOrder": [
             "name",
-            "content"
+            "elements"
           ]
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": 7,
-          "_content": [
+          "_elements": [
             {
               "$type": 38,
               "$source": 0,
@@ -479,11 +479,11 @@
           ],
           "$slotOrder": [
             "name",
-            "content"
+            "elements"
           ]
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -497,7 +497,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -506,7 +506,7 @@
                 "$source": 0,
                 "$named": true,
                 "_name": 7,
-                "_content": [
+                "_elements": [
                   {
                     "$type": 38,
                     "$source": 0,
@@ -536,7 +536,7 @@
                 ],
                 "$slotOrder": [
                   "name",
-                  "content"
+                  "elements"
                 ]
               }
             ]
@@ -565,10 +565,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -582,7 +582,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -601,7 +601,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": 7,
@@ -625,7 +625,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$slotOrder": [
                   "name",
@@ -658,10 +658,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -675,7 +675,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -698,7 +698,7 @@
                   "$source": 0,
                   "$named": true,
                   "_name": 7,
-                  "_content": []
+                  "_elements": []
                 },
                 "$slotOrder": [
                   "name",
@@ -731,7 +731,7 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -744,7 +744,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "_ @wildcard ( _ ) @wildcard ( node _ @wildcard ) ( program name : ( _ ) ) ( program name : _ )\n",
-    "expectedReparseTree": "(program definitions: (anonymous_node (capture name: (identifier))) definitions: (named_node_plain (capture name: (identifier))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (anonymous_node (capture name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain)))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (anonymous_node)))))",
+    "expectedReparseTree": "(program definitions: (anonymous_node elements: (capture name: (identifier))) definitions: (named_node_plain elements: (capture name: (identifier))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (anonymous_node elements: (capture name: (identifier))))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain)))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (anonymous_node)))))",
     "wrappedText": "_ @wildcard ( _ ) @wildcard ( node _ @wildcard ) ( program name : ( _ ) ) ( program name : _ )\n",
     "wrappedOffset": 0
   },
@@ -758,7 +758,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -772,7 +772,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -791,7 +791,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -824,7 +824,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$slotOrder": [
                   "name",
@@ -857,7 +857,7 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
           "$type": 49,
@@ -874,7 +874,7 @@
             }
           },
           "_definition": {
-            "$type": 57,
+            "$type": 58,
             "$source": 0,
             "$named": true,
             "_name": {
@@ -907,7 +907,7 @@
                 }
               }
             ],
-            "_content": []
+            "_elements": []
           },
           "$slotOrder": [
             "name",
@@ -934,7 +934,7 @@
             "$named": true,
             "_definitions": [
               {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -967,10 +967,10 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               },
               {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -1003,7 +1003,7 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               }
             ],
             "$other": [
@@ -1026,7 +1026,7 @@
                 }
               }
             ],
-            "_content": []
+            "_elements": []
           },
           "$slotOrder": [
             "name",
@@ -1058,7 +1058,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -1072,7 +1072,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -1091,7 +1091,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -1104,7 +1104,7 @@
                       "end": 30
                     }
                   },
-                  "_content": [
+                  "_elements": [
                     {
                       "$type": 38,
                       "$source": 0,
@@ -1154,7 +1154,7 @@
                   ],
                   "$slotOrder": [
                     "name",
-                    "content"
+                    "elements"
                   ]
                 },
                 "$slotOrder": [
@@ -1214,10 +1214,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -1231,12 +1231,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -1249,7 +1249,7 @@
                     "end": 82
                   }
                 },
-                "_content": [
+                "_elements": [
                   {
                     "$type": 38,
                     "$source": 0,
@@ -1299,7 +1299,7 @@
                 ],
                 "$slotOrder": [
                   "name",
-                  "content"
+                  "elements"
                 ]
               },
               {
@@ -1354,7 +1354,7 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -1367,7 +1367,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "( program field : ( identifier ) @capture ! negated-field ) ( program ( identifier ) @capture ! negated-field )\n",
-    "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier) (capture name: (identifier)))) named_node_expressions: (negated_field identifier: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) (capture name: (identifier))) named_node_expressions: (negated_field identifier: (identifier)))))",
+    "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier) elements: (capture name: (identifier)))) named_node_expressions: (negated_field identifier: (identifier)))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (capture name: (identifier))) named_node_expressions: (negated_field identifier: (identifier)))))",
     "wrappedText": "( program field : ( identifier ) @capture ! negated-field ) ( program ( identifier ) @capture ! negated-field )\n",
     "wrappedOffset": 0
   },
@@ -1381,7 +1381,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -1395,12 +1395,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -1413,8 +1413,13 @@
                     "end": 23
                   }
                 },
-                "_content": [
-                  3
+                "_elements": [
+                  {
+                    "$type": 52,
+                    "$source": 0,
+                    "$named": true,
+                    "_quantifier": 3
+                  }
                 ],
                 "$other": [
                   {
@@ -1438,7 +1443,7 @@
                 ],
                 "$slotOrder": [
                   "name",
-                  "content"
+                  "elements"
                 ]
               }
             ]
@@ -1467,7 +1472,7 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -1480,7 +1485,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "( program ( identifier ) + )\n",
-    "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) quantifier: (quantifier)))))",
+    "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_quantifier quantifier: (quantifier))))))",
     "wrappedText": "( program ( identifier ) + )\n",
     "wrappedOffset": 0
   },
@@ -1494,7 +1499,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -1508,12 +1513,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -1526,8 +1531,13 @@
                     "end": 23
                   }
                 },
-                "_content": [
-                  4
+                "_elements": [
+                  {
+                    "$type": 52,
+                    "$source": 0,
+                    "$named": true,
+                    "_quantifier": 4
+                  }
                 ],
                 "$other": [
                   {
@@ -1551,7 +1561,7 @@
                 ],
                 "$slotOrder": [
                   "name",
-                  "content"
+                  "elements"
                 ]
               }
             ]
@@ -1580,7 +1590,7 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -1593,7 +1603,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "( program ( identifier ) ? )\n",
-    "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) quantifier: (quantifier)))))",
+    "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_quantifier quantifier: (quantifier))))))",
     "wrappedText": "( program ( identifier ) ? )\n",
     "wrappedOffset": 0
   },
@@ -1607,7 +1617,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -1621,12 +1631,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -1639,8 +1649,13 @@
                     "end": 23
                   }
                 },
-                "_content": [
-                  2
+                "_elements": [
+                  {
+                    "$type": 52,
+                    "$source": 0,
+                    "$named": true,
+                    "_quantifier": 2
+                  }
                 ],
                 "$other": [
                   {
@@ -1664,7 +1679,7 @@
                 ],
                 "$slotOrder": [
                   "name",
-                  "content"
+                  "elements"
                 ]
               }
             ]
@@ -1693,7 +1708,7 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -1706,7 +1721,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "( program ( identifier ) * )\n",
-    "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) quantifier: (quantifier)))))",
+    "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_quantifier quantifier: (quantifier))))))",
     "wrappedText": "( program ( identifier ) * )\n",
     "wrappedOffset": 0
   },
@@ -1720,7 +1735,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -1734,12 +1749,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -1752,8 +1767,13 @@
                     "end": 23
                   }
                 },
-                "_content": [
-                  4,
+                "_elements": [
+                  {
+                    "$type": 52,
+                    "$source": 0,
+                    "$named": true,
+                    "_quantifier": 4
+                  },
                   {
                     "$type": 38,
                     "$source": 0,
@@ -1780,7 +1800,12 @@
                       }
                     ]
                   },
-                  2,
+                  {
+                    "$type": 52,
+                    "$source": 0,
+                    "$named": true,
+                    "_quantifier": 2
+                  },
                   {
                     "$type": 38,
                     "$source": 0,
@@ -1830,10 +1855,10 @@
                 ],
                 "$slotOrder": [
                   "name",
-                  "content",
-                  "content",
-                  "content",
-                  "content"
+                  "elements",
+                  "elements",
+                  "elements",
+                  "elements"
                 ]
               }
             ]
@@ -1862,7 +1887,7 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -1875,7 +1900,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "( program ( identifier ) ? @variable * @spell )\n",
-    "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) quantifier: (quantifier) (capture name: (identifier)) quantifier: (quantifier) (capture name: (identifier))))))",
+    "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) elements: (list_quantifier quantifier: (quantifier)) elements: (capture name: (identifier)) elements: (list_quantifier quantifier: (quantifier)) elements: (capture name: (identifier))))))",
     "wrappedText": "( program ( identifier ) ? @variable * @spell )\n",
     "wrappedOffset": 0
   },
@@ -1894,11 +1919,11 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -1931,15 +1956,15 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               }
             },
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -1972,7 +1997,7 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               }
             }
           ],
@@ -1996,7 +2021,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         },
         {
           "$type": 44,
@@ -2004,11 +2029,11 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -2041,11 +2066,11 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               }
             },
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
@@ -2054,7 +2079,7 @@
                 "$named": true,
                 "_definitions": [
                   {
-                    "$type": 57,
+                    "$type": 58,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -2087,7 +2112,7 @@
                         }
                       }
                     ],
-                    "_content": []
+                    "_elements": []
                   },
                   {
                     "$type": 46,
@@ -2136,7 +2161,7 @@
                         }
                       ]
                     },
-                    "_content": []
+                    "_elements": []
                   }
                 ],
                 "$other": [
@@ -2159,7 +2184,7 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               }
             }
           ],
@@ -2183,7 +2208,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -2210,7 +2235,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -2224,7 +2249,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -2243,7 +2268,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -2256,7 +2281,7 @@
                       "end": 39
                     }
                   },
-                  "_content": [
+                  "_elements": [
                     {
                       "$type": 38,
                       "$source": 0,
@@ -2332,8 +2357,8 @@
                   ],
                   "$slotOrder": [
                     "name",
-                    "content",
-                    "content"
+                    "elements",
+                    "elements"
                   ]
                 },
                 "$slotOrder": [
@@ -2343,7 +2368,7 @@
               }
             ]
           },
-          "_content": [
+          "_elements": [
             {
               "$type": 38,
               "$source": 0,
@@ -2394,7 +2419,7 @@
           "$slotOrder": [
             "name",
             "named_node_group",
-            "content"
+            "elements"
           ]
         }
       ]
@@ -2408,7 +2433,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "( class_declaration body : ( class_body ) @class.body @test ) @blorg\n",
-    "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier) (capture name: (identifier)) (capture name: (identifier))))) (capture name: (identifier))))",
+    "expectedReparseTree": "(program definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (field_definition name: (identifier) definition: (named_node_plain name: (identifier) elements: (capture name: (identifier)) elements: (capture name: (identifier))))) elements: (capture name: (identifier))))",
     "wrappedText": "( class_declaration body : ( class_body ) @class.body @test ) @blorg\n",
     "wrappedOffset": 0
   },
@@ -2473,7 +2498,7 @@
                   }
                 ]
               },
-              "_content": []
+              "_elements": []
             },
             {
               "$type": 46,
@@ -2522,7 +2547,7 @@
                   }
                 ]
               },
-              "_content": []
+              "_elements": []
             },
             {
               "$type": 46,
@@ -2571,10 +2596,10 @@
                   }
                 ]
               },
-              "_content": []
+              "_elements": []
             }
           ],
-          "_content": [
+          "_elements": [
             {
               "$type": 38,
               "$source": 0,
@@ -2626,11 +2651,11 @@
             "definitions",
             "definitions",
             "definitions",
-            "content"
+            "elements"
           ]
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -2644,7 +2669,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -2668,7 +2693,7 @@
                       }
                     },
                     "_definition": {
-                      "$type": 57,
+                      "$type": 58,
                       "$source": 0,
                       "$named": true,
                       "_name": 7,
@@ -2692,7 +2717,7 @@
                           }
                         }
                       ],
-                      "_content": []
+                      "_elements": []
                     },
                     "$slotOrder": [
                       "name",
@@ -2714,7 +2739,7 @@
                       }
                     },
                     "_definition": {
-                      "$type": 57,
+                      "$type": 58,
                       "$source": 0,
                       "$named": true,
                       "_name": 7,
@@ -2738,7 +2763,7 @@
                           }
                         }
                       ],
-                      "_content": []
+                      "_elements": []
                     },
                     "$slotOrder": [
                       "name",
@@ -2760,12 +2785,17 @@
                       }
                     },
                     "_definition": {
-                      "$type": 57,
+                      "$type": 58,
                       "$source": 0,
                       "$named": true,
                       "_name": 7,
-                      "_content": [
-                        4
+                      "_elements": [
+                        {
+                          "$type": 52,
+                          "$source": 0,
+                          "$named": true,
+                          "_quantifier": 4
+                        }
                       ],
                       "$other": [
                         {
@@ -2789,7 +2819,7 @@
                       ],
                       "$slotOrder": [
                         "name",
-                        "content"
+                        "elements"
                       ]
                     },
                     "$slotOrder": [
@@ -2798,7 +2828,7 @@
                     ]
                   }
                 ],
-                "_content": [
+                "_elements": [
                   {
                     "$type": 38,
                     "$source": 0,
@@ -2850,12 +2880,12 @@
                   "definitions",
                   "definitions",
                   "definitions",
-                  "content"
+                  "elements"
                 ]
               }
             ]
           },
-          "_content": [
+          "_elements": [
             {
               "$type": 38,
               "$source": 0,
@@ -2906,7 +2936,7 @@
           "$slotOrder": [
             "name",
             "named_node_group",
-            "content"
+            "elements"
           ]
         }
       ]
@@ -2920,7 +2950,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "[ \"?\" \"+\" \"-\" ] @ops ( if_statement [ condition : ( _ ) consequence : ( _ ) alternative : ( _ ) ? ] @conditional.inner ) @conditional.outer\n",
-    "expectedReparseTree": "(program definitions: (list definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) (capture name: (identifier))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (list definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain quantifier: (quantifier))) (capture name: (identifier)))) (capture name: (identifier))))",
+    "expectedReparseTree": "(program definitions: (list definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) definitions: (anonymous_node name: (string string_content: (string_content (string_content_text)))) elements: (capture name: (identifier))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (list definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain)) definitions: (field_definition name: (identifier) definition: (named_node_plain elements: (list_quantifier quantifier: (quantifier)))) elements: (capture name: (identifier)))) elements: (capture name: (identifier))))",
     "wrappedText": "[ \"?\" \"+\" \"-\" ] @ops ( if_statement [ condition : ( _ ) consequence : ( _ ) alternative : ( _ ) ? ] @conditional.inner ) @conditional.outer\n",
     "wrappedOffset": 0
   },
@@ -2939,11 +2969,11 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -2956,7 +2986,7 @@
                     "end": 13
                   }
                 },
-                "_content": [
+                "_elements": [
                   {
                     "$type": 38,
                     "$source": 0,
@@ -3006,12 +3036,12 @@
                 ],
                 "$slotOrder": [
                   "name",
-                  "content"
+                  "elements"
                 ]
               }
             },
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
@@ -3175,7 +3205,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         },
         {
           "$type": 44,
@@ -3183,11 +3213,11 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -3200,7 +3230,7 @@
                     "end": 59
                   }
                 },
-                "_content": [
+                "_elements": [
                   {
                     "$type": 38,
                     "$source": 0,
@@ -3250,12 +3280,12 @@
                 ],
                 "$slotOrder": [
                   "name",
-                  "content"
+                  "elements"
                 ]
               }
             },
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
@@ -3399,7 +3429,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         },
         {
           "$type": 44,
@@ -3407,11 +3437,11 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -3424,7 +3454,7 @@
                     "end": 100
                   }
                 },
-                "_content": [
+                "_elements": [
                   {
                     "$type": 38,
                     "$source": 0,
@@ -3474,12 +3504,12 @@
                 ],
                 "$slotOrder": [
                   "name",
-                  "content"
+                  "elements"
                 ]
               }
             },
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
@@ -3546,7 +3576,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -3559,7 +3589,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "( ( identifier ) @v ( #eq? @v \"test\" local _ ) ) ( ( identifier ) @v ( .match? @v \"test\" ) ) ( ( identifier ) @v ( #something! ) )\n",
-    "expectedReparseTree": "(program definitions: (grouping (grouping_group (named_node_plain name: (identifier) (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text))) elements: (identifier) elements: (identifier))))) definitions: (grouping (grouping_group (named_node_plain name: (identifier) (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text))))))) definitions: (grouping (grouping_group (named_node_plain name: (identifier) (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type)))))",
+    "expectedReparseTree": "(program definitions: (grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text))) elements: (identifier) elements: (identifier))))) definitions: (grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text))))))) definitions: (grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type)))))",
     "wrappedText": "( ( identifier ) @v ( #eq? @v \"test\" local _ ) ) ( ( identifier ) @v ( .match? @v \"test\" ) ) ( ( identifier ) @v ( #something! ) )\n",
     "wrappedOffset": 0
   },
@@ -3578,15 +3608,15 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 52,
+                "$type": 53,
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -3619,10 +3649,10 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "_right": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -3655,7 +3685,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -3695,7 +3725,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         },
         {
           "$type": 44,
@@ -3703,19 +3733,19 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 52,
+                "$type": 53,
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 52,
+                  "$type": 53,
                   "$source": 0,
                   "$named": true,
                   "_left": {
-                    "$type": 57,
+                    "$type": 58,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -3748,7 +3778,7 @@
                         }
                       }
                     ],
-                    "_content": []
+                    "_elements": []
                   },
                   "_right": {
                     "$type": 46,
@@ -3797,7 +3827,7 @@
                         }
                       ]
                     },
-                    "_content": []
+                    "_elements": []
                   },
                   "$other": [
                     {
@@ -3816,7 +3846,7 @@
                   ]
                 },
                 "_right": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -3849,7 +3879,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -3889,7 +3919,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         },
         {
           "$type": 44,
@@ -3897,11 +3927,11 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 52,
+                "$type": 53,
                 "$source": 0,
                 "$named": true,
                 "_left": {
@@ -3951,7 +3981,7 @@
                       }
                     ]
                   },
-                  "_content": []
+                  "_elements": []
                 },
                 "_right": {
                   "$type": 46,
@@ -4000,7 +4030,7 @@
                       }
                     ]
                   },
-                  "_content": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -4040,7 +4070,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         },
         {
           "$type": 44,
@@ -4048,15 +4078,15 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 52,
+                "$type": 53,
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -4089,7 +4119,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "_right": {
                   "$type": 46,
@@ -4138,7 +4168,7 @@
                       }
                     ]
                   },
-                  "_content": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -4178,7 +4208,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         },
         {
           "$type": 44,
@@ -4186,11 +4216,11 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 52,
+                "$type": 53,
                 "$source": 0,
                 "$named": true,
                 "_left": {
@@ -4240,10 +4270,10 @@
                       }
                     ]
                   },
-                  "_content": []
+                  "_elements": []
                 },
                 "_right": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -4276,7 +4306,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -4316,7 +4346,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         },
         {
           "$type": 44,
@@ -4324,19 +4354,19 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 52,
+                "$type": 53,
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 52,
+                  "$type": 53,
                   "$source": 0,
                   "$named": true,
                   "_left": {
-                    "$type": 57,
+                    "$type": 58,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -4369,7 +4399,7 @@
                         }
                       }
                     ],
-                    "_content": []
+                    "_elements": []
                   },
                   "_right": {
                     "$type": 43,
@@ -4377,7 +4407,7 @@
                     "$named": true,
                     "_definitions": [
                       {
-                        "$type": 57,
+                        "$type": 58,
                         "$source": 0,
                         "$named": true,
                         "_name": {
@@ -4410,7 +4440,7 @@
                             }
                           }
                         ],
-                        "_content": []
+                        "_elements": []
                       },
                       {
                         "$type": 46,
@@ -4459,7 +4489,7 @@
                             }
                           ]
                         },
-                        "_content": []
+                        "_elements": []
                       }
                     ],
                     "$other": [
@@ -4482,7 +4512,7 @@
                         }
                       }
                     ],
-                    "_content": []
+                    "_elements": []
                   },
                   "$other": [
                     {
@@ -4501,7 +4531,7 @@
                   ]
                 },
                 "_right": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -4534,7 +4564,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -4574,7 +4604,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         },
         {
           "$type": 44,
@@ -4582,11 +4612,11 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -4619,15 +4649,15 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               }
             },
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 52,
+                "$type": 53,
                 "$source": 0,
                 "$named": true,
                 "_left": {
@@ -4636,7 +4666,7 @@
                   "$named": true,
                   "_definitions": [
                     {
-                      "$type": 57,
+                      "$type": 58,
                       "$source": 0,
                       "$named": true,
                       "_name": {
@@ -4669,7 +4699,7 @@
                           }
                         }
                       ],
-                      "_content": []
+                      "_elements": []
                     },
                     {
                       "$type": 46,
@@ -4718,7 +4748,7 @@
                           }
                         ]
                       },
-                      "_content": []
+                      "_elements": []
                     }
                   ],
                   "$other": [
@@ -4741,10 +4771,10 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "_right": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -4777,7 +4807,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -4817,7 +4847,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         },
         {
           "$type": 44,
@@ -4825,15 +4855,15 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 52,
+                "$type": 53,
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -4866,7 +4896,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "_right": {
                   "$type": 43,
@@ -4874,7 +4904,7 @@
                   "$named": true,
                   "_definitions": [
                     {
-                      "$type": 57,
+                      "$type": 58,
                       "$source": 0,
                       "$named": true,
                       "_name": {
@@ -4907,7 +4937,7 @@
                           }
                         }
                       ],
-                      "_content": []
+                      "_elements": []
                     },
                     {
                       "$type": 46,
@@ -4956,7 +4986,7 @@
                           }
                         ]
                       },
-                      "_content": []
+                      "_elements": []
                     }
                   ],
                   "$other": [
@@ -4979,7 +5009,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -4999,11 +5029,11 @@
               }
             },
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -5036,7 +5066,7 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               }
             }
           ],
@@ -5060,7 +5090,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         },
         {
           "$type": 44,
@@ -5068,15 +5098,15 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 52,
+                "$type": 53,
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -5109,7 +5139,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "_right": {
                   "$type": 43,
@@ -5117,7 +5147,7 @@
                   "$named": true,
                   "_definitions": [
                     {
-                      "$type": 57,
+                      "$type": 58,
                       "$source": 0,
                       "$named": true,
                       "_name": {
@@ -5150,7 +5180,7 @@
                           }
                         }
                       ],
-                      "_content": []
+                      "_elements": []
                     },
                     {
                       "$type": 46,
@@ -5199,7 +5229,7 @@
                           }
                         ]
                       },
-                      "_content": []
+                      "_elements": []
                     }
                   ],
                   "$other": [
@@ -5222,7 +5252,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -5242,7 +5272,7 @@
               }
             },
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
@@ -5251,7 +5281,7 @@
                 "$named": true,
                 "_definitions": [
                   {
-                    "$type": 57,
+                    "$type": 58,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -5284,7 +5314,7 @@
                         }
                       }
                     ],
-                    "_content": []
+                    "_elements": []
                   }
                 ],
                 "$other": [
@@ -5307,7 +5337,7 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               }
             }
           ],
@@ -5331,7 +5361,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         },
         {
           "$type": 44,
@@ -5339,19 +5369,19 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 52,
+                "$type": 53,
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 52,
+                  "$type": 53,
                   "$source": 0,
                   "$named": true,
                   "_left": {
-                    "$type": 57,
+                    "$type": 58,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -5384,7 +5414,7 @@
                         }
                       }
                     ],
-                    "_content": []
+                    "_elements": []
                   },
                   "_right": {
                     "$type": 43,
@@ -5392,7 +5422,7 @@
                     "$named": true,
                     "_definitions": [
                       {
-                        "$type": 57,
+                        "$type": 58,
                         "$source": 0,
                         "$named": true,
                         "_name": {
@@ -5425,7 +5455,7 @@
                             }
                           }
                         ],
-                        "_content": []
+                        "_elements": []
                       },
                       {
                         "$type": 46,
@@ -5474,7 +5504,7 @@
                             }
                           ]
                         },
-                        "_content": []
+                        "_elements": []
                       }
                     ],
                     "$other": [
@@ -5497,7 +5527,7 @@
                         }
                       }
                     ],
-                    "_content": []
+                    "_elements": []
                   },
                   "$other": [
                     {
@@ -5521,7 +5551,7 @@
                   "$named": true,
                   "_definitions": [
                     {
-                      "$type": 57,
+                      "$type": 58,
                       "$source": 0,
                       "$named": true,
                       "_name": {
@@ -5554,7 +5584,7 @@
                           }
                         }
                       ],
-                      "_content": []
+                      "_elements": []
                     }
                   ],
                   "$other": [
@@ -5577,7 +5607,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -5617,10 +5647,10 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -5634,13 +5664,13 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_anchor": true,
             "_named_node_expressions": [
               {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -5673,7 +5703,7 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               }
             ],
             "$slotOrder": [
@@ -5705,10 +5735,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -5722,11 +5752,11 @@
             }
           },
           "_named_node_group": {
-            "$type": 60,
+            "$type": 61,
             "$source": 0,
             "$named": true,
             "_last": {
-              "$type": 57,
+              "$type": 58,
               "$source": 0,
               "$named": true,
               "_name": {
@@ -5759,7 +5789,7 @@
                   }
                 }
               ],
-              "_content": []
+              "_elements": []
             },
             "$other": [
               {
@@ -5798,10 +5828,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -5815,12 +5845,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 60,
+            "$type": 61,
             "$source": 0,
             "$named": true,
             "_anchor": true,
             "_last": {
-              "$type": 57,
+              "$type": 58,
               "$source": 0,
               "$named": true,
               "_name": {
@@ -5853,7 +5883,7 @@
                   }
                 }
               ],
-              "_content": []
+              "_elements": []
             },
             "$other": [
               {
@@ -5896,10 +5926,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -5913,7 +5943,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_anchor": true,
@@ -5965,7 +5995,7 @@
                     }
                   ]
                 },
-                "_content": []
+                "_elements": []
               }
             ],
             "$slotOrder": [
@@ -5997,10 +6027,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -6014,7 +6044,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 60,
+            "$type": 61,
             "$source": 0,
             "$named": true,
             "_last": {
@@ -6064,7 +6094,7 @@
                   }
                 ]
               },
-              "_content": []
+              "_elements": []
             },
             "$other": [
               {
@@ -6103,10 +6133,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -6120,12 +6150,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 60,
+            "$type": 61,
             "$source": 0,
             "$named": true,
             "_anchor": true,
             "_last": {
-              "$type": 53,
+              "$type": 54,
               "$source": 0,
               "$named": true,
               "_left": {
@@ -6175,7 +6205,7 @@
                     }
                   ]
                 },
-                "_content": []
+                "_elements": []
               },
               "_right": {
                 "$type": 46,
@@ -6224,7 +6254,7 @@
                     }
                   ]
                 },
-                "_content": []
+                "_elements": []
               },
               "$other": [
                 {
@@ -6283,10 +6313,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -6300,20 +6330,20 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 53,
+                "$type": 54,
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 53,
+                  "$type": 54,
                   "$source": 0,
                   "$named": true,
                   "_left": {
-                    "$type": 57,
+                    "$type": 58,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -6346,7 +6376,7 @@
                         }
                       }
                     ],
-                    "_content": []
+                    "_elements": []
                   },
                   "_right": {
                     "$type": 46,
@@ -6395,7 +6425,7 @@
                         }
                       ]
                     },
-                    "_content": []
+                    "_elements": []
                   },
                   "$other": [
                     {
@@ -6414,7 +6444,7 @@
                   ]
                 },
                 "_right": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -6447,7 +6477,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -6491,10 +6521,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -6508,21 +6538,21 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_anchor": true,
             "_named_node_expressions": [
               {
-                "$type": 53,
+                "$type": 54,
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 53,
+                  "$type": 54,
                   "$source": 0,
                   "$named": true,
                   "_left": {
-                    "$type": 57,
+                    "$type": 58,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -6555,7 +6585,7 @@
                         }
                       }
                     ],
-                    "_content": []
+                    "_elements": []
                   },
                   "_right": {
                     "$type": 46,
@@ -6604,7 +6634,7 @@
                         }
                       ]
                     },
-                    "_content": []
+                    "_elements": []
                   },
                   "$other": [
                     {
@@ -6623,7 +6653,7 @@
                   ]
                 },
                 "_right": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -6656,7 +6686,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -6704,10 +6734,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -6721,19 +6751,19 @@
             }
           },
           "_named_node_group": {
-            "$type": 60,
+            "$type": 61,
             "$source": 0,
             "$named": true,
             "_last": {
-              "$type": 53,
+              "$type": 54,
               "$source": 0,
               "$named": true,
               "_left": {
-                "$type": 53,
+                "$type": 54,
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -6766,7 +6796,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "_right": {
                   "$type": 46,
@@ -6815,7 +6845,7 @@
                       }
                     ]
                   },
-                  "_content": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -6834,7 +6864,7 @@
                 ]
               },
               "_right": {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -6867,7 +6897,7 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               },
               "$other": [
                 {
@@ -6922,10 +6952,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -6939,20 +6969,20 @@
             }
           },
           "_named_node_group": {
-            "$type": 60,
+            "$type": 61,
             "$source": 0,
             "$named": true,
             "_anchor": true,
             "_last": {
-              "$type": 53,
+              "$type": 54,
               "$source": 0,
               "$named": true,
               "_left": {
-                "$type": 53,
+                "$type": 54,
                 "$source": 0,
                 "$named": true,
                 "_left": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -6985,7 +7015,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "_right": {
                   "$type": 46,
@@ -7034,7 +7064,7 @@
                       }
                     ]
                   },
-                  "_content": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -7053,7 +7083,7 @@
                 ]
               },
               "_right": {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -7086,7 +7116,7 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               },
               "$other": [
                 {
@@ -7145,10 +7175,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -7162,7 +7192,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_anchor": true,
@@ -7182,7 +7212,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -7215,7 +7245,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$slotOrder": [
                   "name",
@@ -7252,10 +7282,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -7269,7 +7299,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 60,
+            "$type": 61,
             "$source": 0,
             "$named": true,
             "_last": {
@@ -7287,7 +7317,7 @@
                 }
               },
               "_definition": {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -7320,7 +7350,7 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               },
               "$slotOrder": [
                 "name",
@@ -7364,10 +7394,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -7381,7 +7411,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 60,
+            "$type": 61,
             "$source": 0,
             "$named": true,
             "_anchor": true,
@@ -7400,7 +7430,7 @@
                 }
               },
               "_definition": {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -7433,7 +7463,7 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               },
               "$slotOrder": [
                 "name",
@@ -7481,10 +7511,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -7498,7 +7528,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_anchor": true,
@@ -7518,7 +7548,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -7551,7 +7581,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$slotOrder": [
                   "name",
@@ -7559,7 +7589,7 @@
                 ]
               },
               {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -7592,7 +7622,7 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               }
             ],
             "$slotOrder": [
@@ -7625,10 +7655,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -7642,12 +7672,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 53,
+                "$type": 54,
                 "$source": 0,
                 "$named": true,
                 "_left": {
@@ -7665,7 +7695,7 @@
                     }
                   },
                   "_definition": {
-                    "$type": 57,
+                    "$type": 58,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -7698,7 +7728,7 @@
                         }
                       }
                     ],
-                    "_content": []
+                    "_elements": []
                   },
                   "$slotOrder": [
                     "name",
@@ -7706,7 +7736,7 @@
                   ]
                 },
                 "_right": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -7739,7 +7769,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$other": [
                   {
@@ -7783,10 +7813,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -7800,12 +7830,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 60,
+            "$type": 61,
             "$source": 0,
             "$named": true,
             "_anchor": true,
             "_last": {
-              "$type": 53,
+              "$type": 54,
               "$source": 0,
               "$named": true,
               "_left": {
@@ -7823,7 +7853,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -7856,7 +7886,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$slotOrder": [
                   "name",
@@ -7864,7 +7894,7 @@
                 ]
               },
               "_right": {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -7897,7 +7927,7 @@
                     }
                   }
                 ],
-                "_content": []
+                "_elements": []
               },
               "$other": [
                 {
@@ -7956,10 +7986,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -7973,12 +8003,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 60,
+            "$type": 61,
             "$source": 0,
             "$named": true,
             "_anchor": true,
             "_last": {
-              "$type": 53,
+              "$type": 54,
               "$source": 0,
               "$named": true,
               "_left": {
@@ -7996,7 +8026,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -8029,7 +8059,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$slotOrder": [
                   "name",
@@ -8051,7 +8081,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -8084,7 +8114,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$slotOrder": [
                   "name",
@@ -8148,10 +8178,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -8165,13 +8195,13 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_anchor": true,
             "_named_node_expressions": [
               {
-                "$type": 53,
+                "$type": 54,
                 "$source": 0,
                 "$named": true,
                 "_left": {
@@ -8189,7 +8219,7 @@
                     }
                   },
                   "_definition": {
-                    "$type": 57,
+                    "$type": 58,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -8222,7 +8252,7 @@
                         }
                       }
                     ],
-                    "_content": []
+                    "_elements": []
                   },
                   "$slotOrder": [
                     "name",
@@ -8244,7 +8274,7 @@
                     }
                   },
                   "_definition": {
-                    "$type": 57,
+                    "$type": 58,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -8277,7 +8307,7 @@
                         }
                       }
                     ],
-                    "_content": []
+                    "_elements": []
                   },
                   "$slotOrder": [
                     "name",
@@ -8330,10 +8360,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -8347,11 +8377,11 @@
             }
           },
           "_named_node_group": {
-            "$type": 60,
+            "$type": 61,
             "$source": 0,
             "$named": true,
             "_last": {
-              "$type": 53,
+              "$type": 54,
               "$source": 0,
               "$named": true,
               "_left": {
@@ -8369,7 +8399,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -8402,7 +8432,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$slotOrder": [
                   "name",
@@ -8424,7 +8454,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -8457,7 +8487,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$slotOrder": [
                   "name",
@@ -8517,10 +8547,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -8534,12 +8564,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 53,
+                "$type": 54,
                 "$source": 0,
                 "$named": true,
                 "_left": {
@@ -8557,7 +8587,7 @@
                     }
                   },
                   "_definition": {
-                    "$type": 57,
+                    "$type": 58,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -8590,7 +8620,7 @@
                         }
                       }
                     ],
-                    "_content": []
+                    "_elements": []
                   },
                   "$slotOrder": [
                     "name",
@@ -8612,7 +8642,7 @@
                     }
                   },
                   "_definition": {
-                    "$type": 57,
+                    "$type": 58,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -8645,7 +8675,7 @@
                         }
                       }
                     ],
-                    "_content": []
+                    "_elements": []
                   },
                   "$slotOrder": [
                     "name",
@@ -8694,10 +8724,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -8711,7 +8741,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 60,
+            "$type": 61,
             "$source": 0,
             "$named": true,
             "_last": {
@@ -8720,11 +8750,11 @@
               "$named": true,
               "_grouping_group": [
                 {
-                  "$type": 54,
+                  "$type": 55,
                   "$source": 0,
                   "$named": true,
                   "_group_expression": {
-                    "$type": 57,
+                    "$type": 58,
                     "$source": 0,
                     "$named": true,
                     "_name": {
@@ -8757,7 +8787,7 @@
                         }
                       }
                     ],
-                    "_content": []
+                    "_elements": []
                   },
                   "_anchor": true,
                   "$slotOrder": [
@@ -8786,7 +8816,7 @@
                   }
                 }
               ],
-              "_content": []
+              "_elements": []
             },
             "$other": [
               {
@@ -8825,7 +8855,7 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -8857,11 +8887,11 @@
           "$named": true,
           "_grouping_group": [
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -8874,7 +8904,7 @@
                     "end": 13
                   }
                 },
-                "_content": [
+                "_elements": [
                   {
                     "$type": 38,
                     "$source": 0,
@@ -8924,12 +8954,12 @@
                 ],
                 "$slotOrder": [
                   "name",
-                  "content"
+                  "elements"
                 ]
               }
             },
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
@@ -9053,7 +9083,7 @@
               }
             },
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
@@ -9188,7 +9218,7 @@
               }
             },
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
@@ -9344,7 +9374,7 @@
               }
             },
             {
-              "$type": 54,
+              "$type": 55,
               "$source": 0,
               "$named": true,
               "_group_expression": {
@@ -9499,7 +9529,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -9512,7 +9542,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "( ( identifier ) @v ( #eq? @v \"I'm a string; not a comment\" ) ( #eq? @v \"test\\\"\" ) ( #eq? @v \"tes\\\"\\\"ting\" ) ( #eq? @v \"\\\"test\" ) )\n",
-    "expectedReparseTree": "(program definitions: (grouping (grouping_group (named_node_plain name: (identifier) (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text)))))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text) (escape_sequence)))))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text) (escape_sequence) (escape_sequence) (string_content_text)))))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (escape_sequence) (string_content_text))))))))",
+    "expectedReparseTree": "(program definitions: (grouping (grouping_group (named_node_plain name: (identifier) elements: (capture name: (identifier)))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text)))))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text) (escape_sequence)))))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (string_content_text) (escape_sequence) (escape_sequence) (string_content_text)))))) (grouping_group (predicate name: (identifier) type: (predicate_type) parameters: (parameters elements: (capture name: (identifier)) elements: (string string_content: (string_content (escape_sequence) (string_content_text))))))))",
     "wrappedText": "( ( identifier ) @v ( #eq? @v \"I'm a string; not a comment\" ) ( #eq? @v \"test\\\"\" ) ( #eq? @v \"tes\\\"\\\"ting\" ) ( #eq? @v \"\\\"test\" ) )\n",
     "wrappedOffset": 0
   },
@@ -9660,7 +9690,7 @@
           ]
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -9674,7 +9704,7 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
@@ -9693,7 +9723,7 @@
                   }
                 },
                 "_definition": {
-                  "$type": 57,
+                  "$type": 58,
                   "$source": 0,
                   "$named": true,
                   "_name": {
@@ -9726,7 +9756,7 @@
                       }
                     }
                   ],
-                  "_content": []
+                  "_elements": []
                 },
                 "$slotOrder": [
                   "name",
@@ -9774,10 +9804,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -9825,7 +9855,7 @@
               }
             }
           ],
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -9852,7 +9882,7 @@
       "$named": true,
       "_definitions": [
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -9866,12 +9896,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -9885,7 +9915,7 @@
                   }
                 },
                 "_named_node_group": {
-                  "$type": 59,
+                  "$type": 60,
                   "$source": 0,
                   "$named": true,
                   "_named_node_expressions": [
@@ -9904,7 +9934,7 @@
                         }
                       },
                       "_definition": {
-                        "$type": 57,
+                        "$type": 58,
                         "$source": 0,
                         "$named": true,
                         "_name": {
@@ -9937,7 +9967,7 @@
                             }
                           }
                         ],
-                        "_content": []
+                        "_elements": []
                       },
                       "$slotOrder": [
                         "name",
@@ -9945,7 +9975,7 @@
                       ]
                     },
                     {
-                      "$type": 58,
+                      "$type": 59,
                       "$source": 0,
                       "$named": true,
                       "_supertype": {
@@ -10001,7 +10031,7 @@
                         "supertype",
                         "name"
                       ],
-                      "_content": []
+                      "_elements": []
                     }
                   ]
                 },
@@ -10029,7 +10059,7 @@
                   "name",
                   "named_node_group"
                 ],
-                "_content": []
+                "_elements": []
               }
             ]
           },
@@ -10057,10 +10087,10 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -10074,12 +10104,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -10093,7 +10123,7 @@
                   }
                 },
                 "_named_node_group": {
-                  "$type": 59,
+                  "$type": 60,
                   "$source": 0,
                   "$named": true,
                   "_named_node_expressions": [
@@ -10112,7 +10142,7 @@
                         }
                       },
                       "_definition": {
-                        "$type": 57,
+                        "$type": 58,
                         "$source": 0,
                         "$named": true,
                         "_name": {
@@ -10145,7 +10175,7 @@
                             }
                           }
                         ],
-                        "_content": []
+                        "_elements": []
                       },
                       "$slotOrder": [
                         "name",
@@ -10153,7 +10183,7 @@
                       ]
                     },
                     {
-                      "$type": 58,
+                      "$type": 59,
                       "$source": 0,
                       "$named": true,
                       "_supertype": {
@@ -10243,7 +10273,7 @@
                         "supertype",
                         "name"
                       ],
-                      "_content": []
+                      "_elements": []
                     }
                   ]
                 },
@@ -10271,7 +10301,7 @@
                   "name",
                   "named_node_group"
                 ],
-                "_content": []
+                "_elements": []
               }
             ]
           },
@@ -10299,7 +10329,7 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -10339,7 +10369,7 @@
               "end": 17
             }
           },
-          "_content": [
+          "_elements": [
             {
               "$type": 38,
               "$source": 0,
@@ -10398,14 +10428,14 @@
           ],
           "$slotOrder": [
             "name",
-            "content"
+            "elements"
           ]
         },
         {
           "$type": 45,
           "$source": 0,
           "$named": true,
-          "_content": [
+          "_elements": [
             {
               "$type": 38,
               "$source": 0,
@@ -10464,7 +10494,7 @@
           ]
         },
         {
-          "$type": 57,
+          "$type": 58,
           "$source": 0,
           "$named": true,
           "_name": {
@@ -10478,12 +10508,12 @@
             }
           },
           "_named_node_group": {
-            "$type": 59,
+            "$type": 60,
             "$source": 0,
             "$named": true,
             "_named_node_expressions": [
               {
-                "$type": 57,
+                "$type": 58,
                 "$source": 0,
                 "$named": true,
                 "_name": {
@@ -10497,7 +10527,7 @@
                   }
                 },
                 "_named_node_group": {
-                  "$type": 59,
+                  "$type": 60,
                   "$source": 0,
                   "$named": true,
                   "_named_node_expressions": [
@@ -10515,7 +10545,7 @@
                           "end": 86
                         }
                       },
-                      "_content": [
+                      "_elements": [
                         {
                           "$type": 38,
                           "$source": 0,
@@ -10574,7 +10604,7 @@
                       ],
                       "$slotOrder": [
                         "name",
-                        "content"
+                        "elements"
                       ]
                     }
                   ]
@@ -10603,7 +10633,7 @@
                   "name",
                   "named_node_group"
                 ],
-                "_content": []
+                "_elements": []
               }
             ]
           },
@@ -10631,7 +10661,7 @@
             "name",
             "named_node_group"
           ],
-          "_content": []
+          "_elements": []
         }
       ]
     },
@@ -10644,7 +10674,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "( MISSING program ) @prog ( MISSING ) @missing ( program ( named_node ( MISSING identifier ) @cap ) )\n",
-    "expectedReparseTree": "(program definitions: (missing_node name: (identifier) (capture name: (identifier))) definitions: (missing_node (capture name: (identifier))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (missing_node name: (identifier) (capture name: (identifier))))))))",
+    "expectedReparseTree": "(program definitions: (missing_node name: (identifier) elements: (capture name: (identifier))) definitions: (missing_node elements: (capture name: (identifier))) definitions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (named_node_plain name: (identifier) (named_node_group_children named_node_expressions: (missing_node name: (identifier) elements: (capture name: (identifier))))))))",
     "wrappedText": "( MISSING program ) @prog ( MISSING ) @missing ( program ( named_node ( MISSING identifier ) @cap ) )\n",
     "wrappedOffset": 0
   }

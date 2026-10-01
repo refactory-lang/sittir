@@ -212,7 +212,7 @@ describe('enrich()', () => {
 			});
 		});
 
-		it('leaves a separated list alone when an element arm already carries a field, but still flattens it', () => {
+		it('mints the fielded element arm of a separated list as its own kind, so the list fields uniformly', () => {
 			const element = (): Rule<'evaluate'> =>
 				({
 					type: CHOICE,
@@ -233,9 +233,12 @@ describe('enrich()', () => {
 				_name: { type: STRING, value: 'x' } as Rule<'evaluate'>,
 				assignment: { type: STRING, value: 'y' } as Rule<'evaluate'>
 			});
-			const body = JSON.stringify(runEnrich(input).grammar.rules._elems);
-			expect(body).not.toContain('"element"');
-			expect(body).toContain('"name"');
+			const rules = runEnrich(input).grammar.rules;
+			const body = JSON.stringify(rules._elems);
+			expect(body).toContain('"name":"element"');
+			expect(body).toContain('"name":"elems_name"');
+			expect(body).not.toContain('"name":"name"');
+			expect(rules.elems_name).toMatchObject({ type: FIELD, name: 'name', content: { type: SYMBOL, name: '_name' } });
 		});
 
 		it('leaves a separated list alone when its element may be absent, so the span field keeps the holes', () => {

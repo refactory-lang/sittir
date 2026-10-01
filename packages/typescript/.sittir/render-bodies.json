@@ -2111,11 +2111,17 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content"
+			"name": "element"
 		},
 		{
 			"kind": "seam",
 			"field": "enum_body_elements_after"
+		}
+	],
+	"enum_body_member": [
+		{
+			"kind": "slot",
+			"name": "name"
 		}
 	],
 	"enum_declaration": [

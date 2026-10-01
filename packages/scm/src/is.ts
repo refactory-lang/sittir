@@ -101,8 +101,8 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 }
 
 const _supertype_definition_ids = new Set<number>([46, 45, 44, 51, 43, 49]);
-const _supertype_namedNode_ids = new Set<number>([57, 58]);
-const _supertype_namedNodeGroup_ids = new Set<number>([59, 60]);
+const _supertype_namedNode_ids = new Set<number>([58, 59]);
+const _supertype_namedNodeGroup_ids = new Set<number>([60, 61]);
 const _supertype_whitespace_ids = new Set<number>([24, 25, 26, 27, 28, 29, 30, 31]);
 
 export const is = Object.freeze({

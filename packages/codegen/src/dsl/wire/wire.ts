@@ -60,12 +60,17 @@ export interface PatchSite {
 	readonly lifts?: readonly string[];
 }
 
+export interface LiftName {
+	readonly name: string;
+	readonly hoisted: boolean;
+}
+
 export interface WireContext {
 	readonly deposits: Map<string, RuntimeRule>;
 	readonly ruleBodies: Map<string, { readonly text: string; readonly site: string }>;
 	readonly syntheticInline: Set<string>;
 	readonly inlineRemovals: Set<string>;
-	readonly symbolRenames: Map<string, string>;
+	readonly liftNames: Map<string, LiftName>;
 	readonly refineForms: Map<string, RefineForm[]>;
 	readonly groups?: GroupsConfig;
 	readonly renderAs?: RenderAsConfig;
@@ -161,15 +166,18 @@ export function wireIsPrecedenceRankedRule(name: string): boolean {
 	return currentContext?.precedenceRankedNames.has(name) ?? false;
 }
 
-export function wireRegisterSymbolRename(oldName: string, newName: string): boolean {
-	if (!currentContext) return false;
-	currentContext.symbolRenames.set(oldName, newName);
-	return true;
+export function wireRenameLift(liftName: string, newName: string, hoisted: boolean = false): void {
+	if (!currentContext) return;
+	const named = currentContext.liftNames.get(liftName);
+	if (named !== undefined && named.name !== newName) {
+		throw new Error(`variant(): the shared lift '${liftName}' is named '${named.name}' by one owner and '${newName}' by another; one kind has one name`);
+	}
+	currentContext.liftNames.set(liftName, { name: newName, hoisted: hoisted || named?.hoisted === true });
+	recordLiftClaim(liftName);
 }
 
-export function wireRenameLift(liftName: string, newName: string): void {
-	recordLiftClaim(liftName);
-	wireRegisterSymbolRename(liftName, newName);
+export function liftRenames(context: Pick<WireContext, 'liftNames'> | undefined): ReadonlyMap<string, string> {
+	return new Map([...(context?.liftNames ?? [])].map(([liftName, named]) => [liftName, named.name]));
 }
 
 export function wireHasAuthoredRule(name: string): boolean {
@@ -277,7 +285,7 @@ export function withWireContext<T>(
 		ruleBodies: new Map(),
 		syntheticInline: new Set(),
 		inlineRemovals: new Set(),
-		symbolRenames: new Map(),
+		liftNames: new Map(),
 		refineForms: new Map(),
 		groups: undefined,
 		renderAs: undefined,
@@ -487,7 +495,7 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		ruleBodies: new Map(),
 		syntheticInline: new Set(),
 		inlineRemovals: new Set(),
-		symbolRenames: new Map(),
+		liftNames: new Map(),
 		refineForms: new Map(),
 		groups: cfg.groups,
 		renderAs: cfg.renderAs,
@@ -603,7 +611,7 @@ function renamingReserved(reserved: unknown, context: WireContext): unknown {
 			contextName,
 			typeof list === 'function'
 				? renamingCallback(list as () => unknown, renameRule, context)
-				: renameRule(list, context.symbolRenames)
+				: renameRule(list, liftRenames(context))
 		])
 	);
 }
@@ -620,7 +628,7 @@ function renamingCallback<F extends (...args: never[]) => unknown>(
 ): DollarFn<unknown> {
 	return function renamed(this: unknown, $: unknown, previous?: unknown) {
 		const value = user === undefined ? previous : (user as unknown as (d: unknown, p?: unknown) => unknown).call(this, $, previous);
-		return rename(value, context.symbolRenames);
+		return rename(value, liftRenames(context));
 	} as unknown as DollarFn<unknown>;
 }
 

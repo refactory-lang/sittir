@@ -10395,10 +10395,6 @@
               "name": "enum_body_elements",
               "metadata": {
                 "symbolSource": "group-lift"
-              },
-              "annotations": {
-                "variant": "elements",
-                "variantOf": "enum_body"
               }
             },
             {
@@ -13196,28 +13192,31 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "name",
-              "content": {
+          "type": "FIELD",
+          "name": "element",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
                 "type": "SYMBOL",
-                "name": "_property_name"
+                "name": "enum_body_member",
+                "metadata": {
+                  "symbolSource": "group-lift"
+                },
+                "annotations": {
+                  "variant": "member",
+                  "variantOf": "enum_body"
+                }
               },
-              "annotations": {
-                "variantOf": "enum_body_elements"
+              {
+                "type": "SYMBOL",
+                "name": "enum_assignment"
               }
-            },
-            {
-              "type": "SYMBOL",
-              "name": "enum_assignment",
-              "annotations": {
-                "variant": "enum_assignment",
-                "variantOf": "enum_body_elements"
-              }
-            }
-          ]
+            ]
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
           "type": "REPEAT",
@@ -13229,28 +13228,27 @@
                 "value": ","
               },
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "FIELD",
-                    "name": "name",
-                    "content": {
+                "type": "FIELD",
+                "name": "element",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
                       "type": "SYMBOL",
-                      "name": "_property_name"
+                      "name": "enum_body_member",
+                      "metadata": {
+                        "symbolSource": "group-lift"
+                      }
                     },
-                    "annotations": {
-                      "variantOf": "enum_body_elements"
+                    {
+                      "type": "SYMBOL",
+                      "name": "enum_assignment"
                     }
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "enum_assignment",
-                    "annotations": {
-                      "variant": "enum_assignment",
-                      "variantOf": "enum_body_elements"
-                    }
-                  }
-                ]
+                  ]
+                },
+                "metadata": {
+                  "fieldSource": "enriched"
+                }
               }
             ]
           }
@@ -13267,10 +13265,7 @@
             }
           ]
         }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
+      ]
     },
     "_infer_type_optional1": {
       "type": "SEQ",
@@ -14897,6 +14892,17 @@
             }
           }
         ]
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "enum_body_member": {
+      "type": "FIELD",
+      "name": "name",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_property_name"
       },
       "annotations": {
         "hoisted": true

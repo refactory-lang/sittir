@@ -213,6 +213,7 @@ export const _fromMap = {
 	number_bigint_octal: coerceToNumberBigintOctal,
 	number_bigint_decimal: coerceToNumberBigintDecimal,
 	binary_expression_in: coerceToBinaryExpressionIn,
+	enum_body_member: coerceToEnumBodyMember,
 	empty_member: coerceToEmptyMember,
 	class_body_method: coerceToClassBodyMethod,
 	class_body_method_sig: coerceToClassBodyMethodSig,
@@ -598,241 +599,247 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 112, 114, 119, 120, 121, 122, 123, 124,
 	125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147,
 	148, 149, 150, 151, 165, 167, 169, 170, 171, 172, 173, 178, 180, 181, 182, 183, 184, 185, 186, 187, 195, 224, 252,
-	318, 319, 356, 359, 395, 403, 427, 428
+	318, 319, 356, 359, 396, 404, 428, 429
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
-	namespace_export: new Set([1, 411, 412]),
-	export_clause: new Set([1, 192, 376, 411, 412]),
-	import_clause: new Set([1, 199, 200, 377, 404, 405, 417]),
+	namespace_export: new Set([1, 412, 413]),
+	export_clause: new Set([1, 192, 376, 412, 413]),
+	import_clause: new Set([1, 199, 200, 377, 405, 406, 418]),
 	namespace_import: new Set([1]),
-	named_imports: new Set([377, 404, 405]),
+	named_imports: new Set([377, 405, 406]),
 	expression_statement: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 402, 406, 407, 408, 409, 410, 411, 412, 413,
-		414, 427, 428
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 403, 407, 408, 409, 410, 411, 412, 413, 414,
+		415, 428, 429
 	]),
 	else_clause: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 173, 191, 192, 196, 204, 205, 206, 208, 210, 211, 212,
 		213, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 234, 235, 239, 242, 243, 245, 246, 247, 248, 249, 254,
 		255, 256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 295, 297, 298, 299, 300, 305, 306, 307, 308, 310, 312,
-		314, 317, 376, 385, 386, 389, 390, 391, 402, 406, 407, 408, 409, 410, 411, 412, 413, 414, 418, 419, 420, 421, 422,
-		427, 428, 461
+		314, 317, 376, 385, 386, 389, 390, 391, 403, 407, 408, 409, 410, 411, 412, 413, 414, 415, 419, 420, 421, 422, 423,
+		428, 429, 462
 	]),
-	break_statement: new Set([1, 461]),
-	continue_statement: new Set([1, 461]),
+	break_statement: new Set([1, 462]),
+	continue_statement: new Set([1, 462]),
 	debugger_statement: new Set([173]),
 	return_statement: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 402, 406, 407, 408, 409, 410, 411, 412, 413,
-		414, 427, 428
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 403, 407, 408, 409, 410, 411, 412, 413, 414,
+		415, 428, 429
 	]),
 	throw_statement: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 402, 406, 407, 408, 409, 410, 411, 412, 413,
-		414, 427, 428
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 403, 407, 408, 409, 410, 411, 412, 413, 414,
+		415, 428, 429
 	]),
 	finally_clause: new Set([208]),
 	yield_expression: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 402, 406, 407, 408, 409, 410, 411, 412, 413,
-		414, 427, 428
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 403, 407, 408, 409, 410, 411, 412, 413, 414,
+		415, 428, 429
 	]),
-	class_heritage: new Set([304, 416]),
+	class_heritage: new Set([304, 417]),
 	await_expression: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 402, 406, 407, 408, 409, 410, 411, 412, 413,
-		414, 427, 428
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 403, 407, 408, 409, 410, 411, 412, 413, 414,
+		415, 428, 429
 	]),
 	_lhs_expression: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 236, 239, 240, 242, 245, 247, 249, 254, 255,
-		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 402, 406, 407, 408, 409, 410, 411,
-		412, 413, 414, 427, 428
+		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 403, 407, 408, 409, 410, 411, 412,
+		413, 414, 415, 428, 429
 	]),
 	spread_element: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 402, 406, 407, 408, 409, 410, 411, 412, 413,
-		414, 427, 428
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 403, 407, 408, 409, 410, 411, 412, 413, 414,
+		415, 428, 429
 	]),
 	template_substitution: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 402, 406, 407, 408, 409, 410, 411, 412, 413,
-		414, 427, 428
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 403, 407, 408, 409, 410, 411, 412, 413, 414,
+		415, 428, 429
 	]),
 	decorator: new Set([1, 278, 279, 296]),
 	formal_parameters: new Set([320, 321, 378]),
 	rest_pattern: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 236, 239, 240, 242, 245, 247, 249, 254, 255,
-		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 402, 406, 407, 408, 409, 410, 411,
-		412, 413, 414, 427, 428
+		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 403, 407, 408, 409, 410, 411, 412,
+		413, 414, 415, 428, 429
 	]),
 	computed_property_name: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 402, 406, 407, 408, 409, 410, 411, 412, 413,
-		414, 427, 428
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 403, 407, 408, 409, 410, 411, 412, 413, 414,
+		415, 428, 429
 	]),
 	non_null_expression: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 402, 406, 407, 408, 409, 410, 411, 412, 413,
-		414, 427, 428
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 403, 407, 408, 409, 410, 411, 412, 413, 414,
+		415, 428, 429
 	]),
 	decorator_parenthesized_expression: new Set([1, 278, 279]),
 	ambient_declaration: new Set([205, 206, 208, 243, 246, 248, 295, 305, 306, 307, 308, 310, 312, 314, 317, 385, 386]),
 	enum_body: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 118, 119, 120, 121, 122,
 		123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256,
-		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 316, 379, 402, 406, 407, 408, 409,
-		410, 411, 412, 413, 414, 427, 428, 458
+		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 316, 379, 395, 403, 407, 408, 409,
+		410, 411, 412, 413, 414, 415, 428, 429, 459
 	]),
 	omitting_type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
 	adding_type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
 	opting_type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
 	type_annotation: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
 	asserts: new Set([1, 119, 344]),
 	asserts_annotation: new Set([1, 119, 329, 344]),
 	optional_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
 	rest_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
 	template_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
 	type_predicate_annotation: new Set([344]),
 	type_query: new Set([1, 119, 346, 347, 348, 349]),
 	index_type_query: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
-	literal_type: new Set([121, 122, 123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 392, 411, 412]),
+	literal_type: new Set([121, 122, 123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 392, 412, 413]),
 	flow_maybe_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
 	parenthesized_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
 	type_arguments: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 380, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 380, 382, 392, 412, 413, 464
 	]),
-	type_parameters: new Set([1, 365, 381, 463]),
+	type_parameters: new Set([1, 365, 381, 464]),
 	default_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
 	array_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
 	tuple_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
 	readonly_type: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
-	export_specifiers: new Set([1, 192, 411, 412]),
-	import_specifiers: new Set([404, 405]),
+	export_specifiers: new Set([1, 192, 412, 413]),
+	import_specifiers: new Set([405, 406]),
 	formal_parameters_elements: new Set([320, 321]),
 	enum_body_elements: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 118, 119, 120, 121, 122,
 		123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256,
-		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 316, 402, 406, 407, 408, 409, 410,
-		411, 412, 413, 414, 427, 428, 458
+		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 316, 395, 403, 407, 408, 409, 410,
+		411, 412, 413, 414, 415, 428, 429, 459
 	]),
 	types: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
-	type_parameters_elements: new Set([1, 365, 463]),
+	type_parameters_elements: new Set([1, 365, 464]),
 	tuple_type_members: new Set([
 		1, 38, 39, 40, 41, 42, 44, 107, 119, 121, 122, 123, 124, 143, 144, 145, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 		163, 164, 311, 327, 328, 332, 333, 334, 335, 337, 340, 341, 342, 343, 346, 347, 348, 349, 350, 351, 352, 354, 356,
-		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 411, 412, 463
+		357, 358, 359, 361, 370, 371, 372, 373, 374, 375, 382, 392, 412, 413, 464
 	]),
-	import_clause_group: new Set([1, 199, 200, 377, 404, 405]),
+	import_clause_group: new Set([1, 199, 200, 377, 405, 406]),
 	ambient_declaration_global: new Set([208]),
 	object_type_content: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 191, 192, 234, 235, 239, 242, 245, 247, 249, 254, 255,
 		256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 293, 297, 298, 299, 300, 308, 362, 363, 368, 376, 389, 390,
-		391, 399, 400, 402, 406, 407, 408, 409, 410, 411, 412, 413, 414, 418, 419, 420, 421, 422, 427, 428
+		391, 400, 401, 403, 407, 408, 409, 410, 411, 412, 413, 414, 415, 419, 420, 421, 422, 423, 428, 429
 	]),
 	export_statement_namespace_export: new Set([1]),
 	export_statement_equals_export: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 402, 406, 407, 408, 409, 410, 411, 412, 413,
-		414, 427, 428
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 403, 407, 408, 409, 410, 411, 412, 413, 414,
+		415, 428, 429
 	]),
-	class_body_member: new Set([290, 293, 294, 399, 400]),
+	enum_body_member: new Set([
+		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 118, 119, 120, 121, 122,
+		123, 124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256,
+		257, 259, 261, 265, 266, 267, 269, 271, 273, 289, 292, 297, 298, 299, 300, 308, 403, 407, 408, 409, 410, 411, 412,
+		413, 414, 415, 428, 429, 459
+	]),
+	class_body_member: new Set([290, 293, 294, 400, 401]),
 	yield_expression_delegate: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 402, 406, 407, 408, 409, 410, 411, 412, 413,
-		414, 427, 428
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 403, 407, 408, 409, 410, 411, 412, 413, 414,
+		415, 428, 429
 	]),
 	parenthesized_expression_sequence: new Set([269]),
 	arrow_function_parameter: new Set([1]),
-	export_statement_default_from: new Set([1, 191, 192, 376, 411, 412, 420, 421, 422]),
-	export_statement_default_from_star_from: new Set([411, 412]),
+	export_statement_default_from: new Set([1, 191, 192, 376, 412, 413, 421, 422, 423]),
+	export_statement_default_from_star_from: new Set([412, 413]),
 	export_statement_default_declaration_default_kw: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 205, 206, 208, 234, 235, 239, 242, 243, 245, 246, 247,
 		248, 249, 254, 255, 256, 257, 259, 261, 265, 266, 267, 269, 271, 273, 292, 295, 297, 298, 299, 300, 305, 306, 307,
-		308, 310, 312, 314, 317, 385, 386, 402, 406, 407, 408, 409, 410, 411, 412, 413, 414, 424, 427, 428
+		308, 310, 312, 314, 317, 385, 386, 403, 407, 408, 409, 410, 411, 412, 413, 414, 415, 425, 428, 429
 	]),
 	export_statement_default_declaration_default_kw_value: new Set([
 		1, 7, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 119, 120, 121, 122, 123,
 		124, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 234, 235, 239, 242, 245, 247, 249, 254, 255, 256, 257,
-		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 402, 406, 407, 408, 409, 410, 411, 412, 413,
-		414, 427, 428
+		259, 261, 265, 266, 267, 269, 271, 273, 292, 297, 298, 299, 300, 308, 403, 407, 408, 409, 410, 411, 412, 413, 414,
+		415, 428, 429
 	]),
 	statement_identifier: new Set([1]),
 	shorthand_property_identifier: new Set([1]),
@@ -1085,6 +1092,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	object_type_content: TSKindId.ObjectTypeContent,
 	export_statement_namespace_export: TSKindId.ExportStatementNamespaceExport,
 	export_statement_equals_export: TSKindId.ExportStatementEqualsExport,
+	enum_body_member: TSKindId.EnumBodyMember,
 	class_body_member: TSKindId.ClassBodyMember,
 	yield_expression_delegate: TSKindId.YieldExpressionDelegate,
 	parenthesized_expression_sequence: TSKindId.ParenthesizedExpressionSequence,
@@ -1211,6 +1219,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'ambient_declaration_global',
 	'export_statement_namespace_export',
 	'export_statement_equals_export',
+	'enum_body_member',
 	'class_body_member',
 	'yield_expression_delegate',
 	'parenthesized_expression_sequence',
@@ -1395,6 +1404,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildExportStatementEqualsExport(
 				children[0] as Parameters<typeof F.buildExportStatementEqualsExport>[0]
 			);
+		case 'enum_body_member':
+			return F.buildEnumBodyMember(children[0] as Parameters<typeof F.buildEnumBodyMember>[0]);
 		case 'class_body_member':
 			return F.buildClassBodyMember(children[0] as Parameters<typeof F.buildClassBodyMember>[0]);
 		case 'yield_expression_delegate':
@@ -2337,7 +2348,8 @@ const _K63: readonly string[] = [
 	'asserts',
 	'type_predicate'
 ];
-const _K64: readonly string[] = [
+const _K64: readonly string[] = ['enum_body_member', 'enum_assignment'];
+const _K65: readonly string[] = [
 	'tuple_parameter',
 	'optional_tuple_parameter',
 	'optional_type',
@@ -2365,8 +2377,8 @@ const _K64: readonly string[] = [
 	'type_query_member_expression_in_type_annotation',
 	'type_query_call_expression_in_type_annotation'
 ];
-const _K65: readonly string[] = ['namespace_import', 'named_imports'];
-const _K66: readonly string[] = [
+const _K66: readonly string[] = ['namespace_import', 'named_imports'];
+const _K67: readonly string[] = [
 	'export_statement_default_from',
 	'export_statement_default_declaration',
 	'export_statement_type_export',
@@ -2379,7 +2391,7 @@ const _K66: readonly string[] = [
 	'index_signature_mapped_type_clause',
 	'method_signature'
 ];
-const _K67: readonly string[] = [
+const _K68: readonly string[] = [
 	'number_hex',
 	'number_float_point',
 	'number_float_leading_point',
@@ -2391,7 +2403,7 @@ const _K67: readonly string[] = [
 	'number_bigint_octal',
 	'number_bigint_decimal'
 ];
-const _K68: readonly string[] = [
+const _K69: readonly string[] = [
 	'as_expression',
 	'satisfies_expression',
 	'instantiation_expression',
@@ -2459,20 +2471,20 @@ const _K68: readonly string[] = [
 	'yield_expression',
 	'private_property_identifier'
 ];
-const _K69: readonly string[] = [
+const _K70: readonly string[] = [
 	'abstract_method_signature',
 	'index_signature_colon',
 	'index_signature_mapped_type_clause',
 	'method_signature',
 	'public_field_definition'
 ];
-const _K70: readonly string[] = [
+const _K71: readonly string[] = [
 	'type_annotation',
 	'omitting_type_annotation',
 	'adding_type_annotation',
 	'opting_type_annotation'
 ];
-const _K71: readonly string[] = [
+const _K72: readonly string[] = [
 	'subscript_expression',
 	'member_expression',
 	'parenthesized_expression_typed',
@@ -2525,16 +2537,16 @@ const _K71: readonly string[] = [
 	'non_null_expression',
 	'new_expression'
 ];
-const _K72: readonly string[] = ['unescaped_double_string_fragment'];
-const _K73: readonly string[] = ['escape_sequence'];
-const _K74: readonly string[] = ['unescaped_single_string_fragment'];
-const _K75: readonly string[] = [
+const _K73: readonly string[] = ['unescaped_double_string_fragment'];
+const _K74: readonly string[] = ['escape_sequence'];
+const _K75: readonly string[] = ['unescaped_single_string_fragment'];
+const _K76: readonly string[] = [
 	'export_statement_default_from_star_from',
 	'export_statement_default_from_ns_from',
 	'export_statement_default_from_clause_from',
 	'export_clause'
 ];
-const _K76: readonly string[] = [
+const _K77: readonly string[] = [
 	'export_statement_default_declaration_default_kw',
 	'function_declaration',
 	'generator_function_declaration',
@@ -2551,7 +2563,7 @@ const _K76: readonly string[] = [
 	'import_alias',
 	'ambient_declaration'
 ];
-const _K77: readonly string[] = [
+const _K78: readonly string[] = [
 	'export_statement_default_declaration_default_kw_value',
 	'function_declaration',
 	'generator_function_declaration',
@@ -2568,7 +2580,7 @@ const _K77: readonly string[] = [
 	'import_alias',
 	'ambient_declaration'
 ];
-const _K78: readonly string[] = [
+const _K79: readonly string[] = [
 	'_lhs_expression',
 	'parenthesized_expression_typed',
 	'parenthesized_expression_sequence'
@@ -9843,158 +9855,26 @@ export function coerceToEnumBodyElements(
 		| [
 				first:
 					| T.EnumBodyElements.Loose
-					| LooseValue<
-							| T.PropertyIdentifier
-							| TSKindId.DeclareKeyword
-							| TSKindId.NamespaceKeyword
-							| TSKindId.TypeKeyword
-							| TSKindId.PublicKeyword
-							| TSKindId.PrivateKeyword
-							| TSKindId.ProtectedKeyword
-							| TSKindId.OverrideKeyword
-							| TSKindId.ReadonlyKeyword
-							| TSKindId.ModuleKeyword
-							| TSKindId.AnyKeyword
-							| TSKindId.NumberKeyword
-							| TSKindId.BooleanKeyword
-							| TSKindId.StringKeyword
-							| TSKindId.SymbolKeyword
-							| TSKindId.ExportKeyword
-							| TSKindId.ObjectKeyword
-							| TSKindId.NewKeyword
-							| TSKindId.GetKeyword
-							| TSKindId.SetKeyword
-							| TSKindId.AsyncKeyword
-							| TSKindId.StaticKeyword
-							| TSKindId.LetKeyword
-							| T.PrivatePropertyIdentifier
-							| T.String
-							| T.Number
-							| T.ComputedPropertyName
-							| T.EnumAssignment
-							| T.PropertyIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >,
+					| LooseValue<T.EnumBodyMember | T.EnumAssignment, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 				...rest: (
 					| T.EnumBodyElements.Loose
-					| LooseValue<
-							| T.PropertyIdentifier
-							| TSKindId.DeclareKeyword
-							| TSKindId.NamespaceKeyword
-							| TSKindId.TypeKeyword
-							| TSKindId.PublicKeyword
-							| TSKindId.PrivateKeyword
-							| TSKindId.ProtectedKeyword
-							| TSKindId.OverrideKeyword
-							| TSKindId.ReadonlyKeyword
-							| TSKindId.ModuleKeyword
-							| TSKindId.AnyKeyword
-							| TSKindId.NumberKeyword
-							| TSKindId.BooleanKeyword
-							| TSKindId.StringKeyword
-							| TSKindId.SymbolKeyword
-							| TSKindId.ExportKeyword
-							| TSKindId.ObjectKeyword
-							| TSKindId.NewKeyword
-							| TSKindId.GetKeyword
-							| TSKindId.SetKeyword
-							| TSKindId.AsyncKeyword
-							| TSKindId.StaticKeyword
-							| TSKindId.LetKeyword
-							| T.PrivatePropertyIdentifier
-							| T.String
-							| T.Number
-							| T.ComputedPropertyName
-							| T.EnumAssignment
-							| T.PropertyIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
+					| LooseValue<T.EnumBodyMember | T.EnumAssignment, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
 				first:
 					| T.EnumBodyElements.Loose
-					| LooseValue<
-							| T.PropertyIdentifier
-							| TSKindId.DeclareKeyword
-							| TSKindId.NamespaceKeyword
-							| TSKindId.TypeKeyword
-							| TSKindId.PublicKeyword
-							| TSKindId.PrivateKeyword
-							| TSKindId.ProtectedKeyword
-							| TSKindId.OverrideKeyword
-							| TSKindId.ReadonlyKeyword
-							| TSKindId.ModuleKeyword
-							| TSKindId.AnyKeyword
-							| TSKindId.NumberKeyword
-							| TSKindId.BooleanKeyword
-							| TSKindId.StringKeyword
-							| TSKindId.SymbolKeyword
-							| TSKindId.ExportKeyword
-							| TSKindId.ObjectKeyword
-							| TSKindId.NewKeyword
-							| TSKindId.GetKeyword
-							| TSKindId.SetKeyword
-							| TSKindId.AsyncKeyword
-							| TSKindId.StaticKeyword
-							| TSKindId.LetKeyword
-							| T.PrivatePropertyIdentifier
-							| T.String
-							| T.Number
-							| T.ComputedPropertyName
-							| T.EnumAssignment
-							| T.PropertyIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >,
+					| LooseValue<T.EnumBodyMember | T.EnumAssignment, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 				...rest: (
 					| T.EnumBodyElements.Loose
-					| LooseValue<
-							| T.PropertyIdentifier
-							| TSKindId.DeclareKeyword
-							| TSKindId.NamespaceKeyword
-							| TSKindId.TypeKeyword
-							| TSKindId.PublicKeyword
-							| TSKindId.PrivateKeyword
-							| TSKindId.ProtectedKeyword
-							| TSKindId.OverrideKeyword
-							| TSKindId.ReadonlyKeyword
-							| TSKindId.ModuleKeyword
-							| TSKindId.AnyKeyword
-							| TSKindId.NumberKeyword
-							| TSKindId.BooleanKeyword
-							| TSKindId.StringKeyword
-							| TSKindId.SymbolKeyword
-							| TSKindId.ExportKeyword
-							| TSKindId.ObjectKeyword
-							| TSKindId.NewKeyword
-							| TSKindId.GetKeyword
-							| TSKindId.SetKeyword
-							| TSKindId.AsyncKeyword
-							| TSKindId.StaticKeyword
-							| TSKindId.LetKeyword
-							| T.PrivatePropertyIdentifier
-							| T.String
-							| T.Number
-							| T.ComputedPropertyName
-							| T.EnumAssignment
-							| T.PropertyIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
+					| LooseValue<T.EnumBodyMember | T.EnumAssignment, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
 ): ReturnType<typeof F.buildEnumBodyElements> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.EnumBodyElements)) {
 		const data = input[0];
-		const stored = (data as unknown as { _content?: unknown })._content;
+		const stored = (data as unknown as { _element?: unknown })._element;
 		const children: readonly unknown[] = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildEnumBodyElements(
 			{
@@ -10003,89 +9883,17 @@ export function coerceToEnumBodyElements(
 					return d === Delimiter.None || d === Delimiter.Trailing ? d : undefined;
 				})()
 			},
-			...(children as unknown as NonEmptyArray<
-				| T.PropertyIdentifier
-				| TSKindId.DeclareKeyword
-				| TSKindId.NamespaceKeyword
-				| TSKindId.TypeKeyword
-				| TSKindId.PublicKeyword
-				| TSKindId.PrivateKeyword
-				| TSKindId.ProtectedKeyword
-				| TSKindId.OverrideKeyword
-				| TSKindId.ReadonlyKeyword
-				| TSKindId.ModuleKeyword
-				| TSKindId.AnyKeyword
-				| TSKindId.NumberKeyword
-				| TSKindId.BooleanKeyword
-				| TSKindId.StringKeyword
-				| TSKindId.SymbolKeyword
-				| TSKindId.ExportKeyword
-				| TSKindId.ObjectKeyword
-				| TSKindId.NewKeyword
-				| TSKindId.GetKeyword
-				| TSKindId.SetKeyword
-				| TSKindId.AsyncKeyword
-				| TSKindId.StaticKeyword
-				| TSKindId.LetKeyword
-				| T.PrivatePropertyIdentifier
-				| T.String
-				| T.Number
-				| T.ComputedPropertyName
-				| T.EnumAssignment
-				| T.PropertyIdentifier.Types
-			>)
+			...(children as unknown as NonEmptyArray<T.EnumBodyMember | T.EnumAssignment>)
 		);
 	}
 	return F.buildEnumBodyElements(
-		...(_listElements(input, ['delimiter'], undefined, (els) => els, [
-			'number_decimal',
-			'property_identifier',
-			'private_property_identifier',
-			'string_double',
-			'string_single',
-			'number_hex',
-			'number_float_point',
-			'number_float_leading_point',
-			'number_float_scientific',
-			'number_binary',
-			'number_octal',
-			'number_bigint_hex',
-			'number_bigint_binary',
-			'number_bigint_octal',
-			'number_bigint_decimal',
-			'computed_property_name',
-			'enum_assignment'
-		]) as unknown as NonEmptyArray<
-			| T.PropertyIdentifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.PrivatePropertyIdentifier
-			| T.String
-			| T.Number
-			| T.ComputedPropertyName
-			| T.EnumAssignment
-			| T.PropertyIdentifier.Types
-		>)
+		...(_listElements(
+			input,
+			['delimiter'],
+			undefined,
+			(els) => _resolveMany<T.EnumBodyMember | T.EnumAssignment>(els, _K2, _K64),
+			['enum_body_member', 'enum_assignment']
+		) as unknown as NonEmptyArray<T.EnumBodyMember | T.EnumAssignment>)
 	);
 }
 
@@ -10327,7 +10135,7 @@ export function coerceToTupleTypeMembers(
 							| T.RestType
 							| T.Type
 							| T.TypeIdentifier.Types
-						>(els, _K38, _K64)
+						>(els, _K38, _K65)
 					),
 					[]
 				),
@@ -10371,7 +10179,7 @@ export function coerceToTupleTypeMembers(
 export function resolveImportClauseGroup_content(
 	value: T.ImportClauseGroup.LooseConfig['content']
 ): T.ImportClauseGroup['_content'] {
-	return _resolveOne<T.NamespaceImport | T.NamedImports>(value, _K2, _K65);
+	return _resolveOne<T.NamespaceImport | T.NamedImports>(value, _K2, _K66);
 }
 
 export function coerceToImportClauseGroup(
@@ -10386,7 +10194,7 @@ export function coerceToImportClauseGroup(
 			_resolveOne<T.NamespaceImport | T.NamedImports>(
 				configFieldOr(input, 'content', () => input),
 				_K2,
-				_K65
+				_K66
 			)
 		)
 	);
@@ -10564,7 +10372,7 @@ export function coerceToObjectTypeContent(
 					| T.ConstructSignature
 					| T.IndexSignature
 					| T.MethodSignature
-				>(els, _K2, _K66),
+				>(els, _K2, _K67),
 			[
 				'export_statement_default_from',
 				'export_statement_default_declaration',
@@ -10731,7 +10539,7 @@ export function resolveLiteralTypeNegativeNumber_operator(
 export function resolveLiteralTypeNegativeNumber_argument(
 	value: T.LiteralTypeNegativeNumber.LooseConfig['argument']
 ): T.LiteralTypeNegativeNumber['_argument'] {
-	return _resolveOne<T.Number>(value, _K35, _K67);
+	return _resolveOne<T.Number>(value, _K35, _K68);
 }
 
 export function coerceToLiteralTypeNegativeNumber(
@@ -11123,7 +10931,7 @@ export function resolveBinaryExpressionIn_left(
 	value: T.BinaryExpressionIn.LooseConfig['left']
 ): T.BinaryExpressionIn['_left'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.PrivatePropertyIdentifier>(value, _K6, _K68)),
+		_resolveKindEnum(value, () => _resolveOne<T.Expression | T.PrivatePropertyIdentifier>(value, _K6, _K69)),
 		[]
 	);
 }
@@ -11146,6 +10954,196 @@ export function coerceToBinaryExpressionIn(
 		left: _requireField('binary_expression_in', 'left', resolveBinaryExpressionIn_left(input.left)),
 		right: _requireField('binary_expression_in', 'right', resolveBinaryExpressionIn_right(input.right))
 	});
+}
+
+export function resolveEnumBodyMember_name(value: T.EnumBodyMember.LooseConfig['name']): T.EnumBodyMember['_name'] {
+	return _keywordOr(
+		value,
+		[
+			['declare', TSKindId.DeclareKeyword] as const,
+			['namespace', TSKindId.NamespaceKeyword] as const,
+			['type', TSKindId.TypeKeyword] as const,
+			['public', TSKindId.PublicKeyword] as const,
+			['private', TSKindId.PrivateKeyword] as const,
+			['protected', TSKindId.ProtectedKeyword] as const,
+			['override', TSKindId.OverrideKeyword] as const,
+			['readonly', TSKindId.ReadonlyKeyword] as const,
+			['module', TSKindId.ModuleKeyword] as const,
+			['any', TSKindId.AnyKeyword] as const,
+			['number', TSKindId.NumberKeyword] as const,
+			['boolean', TSKindId.BooleanKeyword] as const,
+			['string', TSKindId.StringKeyword] as const,
+			['symbol', TSKindId.SymbolKeyword] as const,
+			['export', TSKindId.ExportKeyword] as const,
+			['object', TSKindId.ObjectKeyword] as const,
+			['new', TSKindId.NewKeyword] as const,
+			['get', TSKindId.GetKeyword] as const,
+			['set', TSKindId.SetKeyword] as const,
+			['async', TSKindId.AsyncKeyword] as const,
+			['static', TSKindId.StaticKeyword] as const,
+			['let', TSKindId.LetKeyword] as const
+		],
+		() =>
+			coerceMixedEnumStorage(
+				_resolveKindEnum(value, () =>
+					_resolveOne<
+						| T.PropertyIdentifier
+						| 'declare'
+						| 'namespace'
+						| 'type'
+						| 'public'
+						| 'private'
+						| 'protected'
+						| 'override'
+						| 'readonly'
+						| 'module'
+						| 'any'
+						| 'number'
+						| 'boolean'
+						| 'string'
+						| 'symbol'
+						| 'export'
+						| 'object'
+						| 'new'
+						| 'get'
+						| 'set'
+						| 'async'
+						| 'static'
+						| 'let'
+						| T.PrivatePropertyIdentifier
+						| T.String
+						| T.Number
+						| T.ComputedPropertyName
+					>(value, _K35, _K36, 'string_double')
+				),
+				[
+					['declare', TSKindId.DeclareKeyword] as const,
+					['namespace', TSKindId.NamespaceKeyword] as const,
+					['type', TSKindId.TypeKeyword] as const,
+					['public', TSKindId.PublicKeyword] as const,
+					['private', TSKindId.PrivateKeyword] as const,
+					['protected', TSKindId.ProtectedKeyword] as const,
+					['override', TSKindId.OverrideKeyword] as const,
+					['readonly', TSKindId.ReadonlyKeyword] as const,
+					['module', TSKindId.ModuleKeyword] as const,
+					['any', TSKindId.AnyKeyword] as const,
+					['number', TSKindId.NumberKeyword] as const,
+					['boolean', TSKindId.BooleanKeyword] as const,
+					['string', TSKindId.StringKeyword] as const,
+					['symbol', TSKindId.SymbolKeyword] as const,
+					['export', TSKindId.ExportKeyword] as const,
+					['object', TSKindId.ObjectKeyword] as const,
+					['new', TSKindId.NewKeyword] as const,
+					['get', TSKindId.GetKeyword] as const,
+					['set', TSKindId.SetKeyword] as const,
+					['async', TSKindId.AsyncKeyword] as const,
+					['static', TSKindId.StaticKeyword] as const,
+					['let', TSKindId.LetKeyword] as const
+				]
+			)
+	);
+}
+
+export function coerceToEnumBodyMember(input: T.EnumBodyMember.Loose): ReturnType<typeof F.buildEnumBodyMember> {
+	if (isNodeOfKind(input, TSKindId.EnumBodyMember)) return input as unknown as ReturnType<typeof F.buildEnumBodyMember>;
+	return F.buildEnumBodyMember(
+		_requireField(
+			'enum_body_member',
+			'name',
+			_keywordOr(
+				configFieldOr(input, 'name', () => input),
+				[
+					['declare', TSKindId.DeclareKeyword] as const,
+					['namespace', TSKindId.NamespaceKeyword] as const,
+					['type', TSKindId.TypeKeyword] as const,
+					['public', TSKindId.PublicKeyword] as const,
+					['private', TSKindId.PrivateKeyword] as const,
+					['protected', TSKindId.ProtectedKeyword] as const,
+					['override', TSKindId.OverrideKeyword] as const,
+					['readonly', TSKindId.ReadonlyKeyword] as const,
+					['module', TSKindId.ModuleKeyword] as const,
+					['any', TSKindId.AnyKeyword] as const,
+					['number', TSKindId.NumberKeyword] as const,
+					['boolean', TSKindId.BooleanKeyword] as const,
+					['string', TSKindId.StringKeyword] as const,
+					['symbol', TSKindId.SymbolKeyword] as const,
+					['export', TSKindId.ExportKeyword] as const,
+					['object', TSKindId.ObjectKeyword] as const,
+					['new', TSKindId.NewKeyword] as const,
+					['get', TSKindId.GetKeyword] as const,
+					['set', TSKindId.SetKeyword] as const,
+					['async', TSKindId.AsyncKeyword] as const,
+					['static', TSKindId.StaticKeyword] as const,
+					['let', TSKindId.LetKeyword] as const
+				],
+				() =>
+					coerceMixedEnumStorage(
+						_resolveKindEnum(
+							configFieldOr(input, 'name', () => input),
+							() =>
+								_resolveOne<
+									| T.PropertyIdentifier
+									| 'declare'
+									| 'namespace'
+									| 'type'
+									| 'public'
+									| 'private'
+									| 'protected'
+									| 'override'
+									| 'readonly'
+									| 'module'
+									| 'any'
+									| 'number'
+									| 'boolean'
+									| 'string'
+									| 'symbol'
+									| 'export'
+									| 'object'
+									| 'new'
+									| 'get'
+									| 'set'
+									| 'async'
+									| 'static'
+									| 'let'
+									| T.PrivatePropertyIdentifier
+									| T.String
+									| T.Number
+									| T.ComputedPropertyName
+								>(
+									configFieldOr(input, 'name', () => input),
+									_K35,
+									_K36,
+									'string_double'
+								)
+						),
+						[
+							['declare', TSKindId.DeclareKeyword] as const,
+							['namespace', TSKindId.NamespaceKeyword] as const,
+							['type', TSKindId.TypeKeyword] as const,
+							['public', TSKindId.PublicKeyword] as const,
+							['private', TSKindId.PrivateKeyword] as const,
+							['protected', TSKindId.ProtectedKeyword] as const,
+							['override', TSKindId.OverrideKeyword] as const,
+							['readonly', TSKindId.ReadonlyKeyword] as const,
+							['module', TSKindId.ModuleKeyword] as const,
+							['any', TSKindId.AnyKeyword] as const,
+							['number', TSKindId.NumberKeyword] as const,
+							['boolean', TSKindId.BooleanKeyword] as const,
+							['string', TSKindId.StringKeyword] as const,
+							['symbol', TSKindId.SymbolKeyword] as const,
+							['export', TSKindId.ExportKeyword] as const,
+							['object', TSKindId.ObjectKeyword] as const,
+							['new', TSKindId.NewKeyword] as const,
+							['get', TSKindId.GetKeyword] as const,
+							['set', TSKindId.SetKeyword] as const,
+							['async', TSKindId.AsyncKeyword] as const,
+							['static', TSKindId.StaticKeyword] as const,
+							['let', TSKindId.LetKeyword] as const
+						]
+					)
+			)
+		)
+	);
 }
 
 export function coerceToEmptyMember(_input?: T.EmptyMember.Loose): typeof F.buildEmptyMember {
@@ -11223,7 +11221,7 @@ export function resolveClassBodyMember_member(
 	return _resolveOne<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>(
 		value,
 		_K2,
-		_K69
+		_K70
 	);
 }
 
@@ -11240,7 +11238,7 @@ export function coerceToClassBodyMember(
 			_resolveOne<T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition>(
 				configFieldOr(input, 'member', () => input),
 				_K2,
-				_K69
+				_K70
 			)
 		),
 		options
@@ -11363,7 +11361,7 @@ export function resolveIndexSignatureColon_type(
 	return _resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(
 		value,
 		_K2,
-		_K70
+		_K71
 	);
 }
 
@@ -11412,7 +11410,7 @@ export function resolveIndexSignatureMappedTypeClause_type(
 	return _resolveOne<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(
 		value,
 		_K2,
-		_K70
+		_K71
 	);
 }
 
@@ -11670,7 +11668,7 @@ export function resolveCallExpressionTemplateCall_function(
 	value: T.CallExpressionTemplateCall.LooseConfig['function']
 ): T.CallExpressionTemplateCall['_function'] {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression | T.NewExpression>(value, _K6, _K71)),
+		_resolveKindEnum(value, () => _resolveOne<T.PrimaryExpression | T.NewExpression>(value, _K6, _K72)),
 		[]
 	);
 }
@@ -11742,8 +11740,8 @@ export function coerceToStringDouble(
 		return F.buildStringDouble(
 			...(_resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence>(
 				children,
-				_K72,
-				_K73
+				_K73,
+				_K74
 			) as unknown as Parameters<typeof F.buildStringDouble>)
 		);
 	}
@@ -11755,7 +11753,7 @@ export function coerceToStringDouble(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildStringDouble(
-		...(_resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence>(_elems, _K72, _K73) as unknown as Parameters<
+		...(_resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence>(_elems, _K73, _K74) as unknown as Parameters<
 			typeof F.buildStringDouble
 		>)
 	);
@@ -11774,8 +11772,8 @@ export function coerceToStringSingle(
 		return F.buildStringSingle(
 			...(_resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(
 				children,
-				_K74,
-				_K73
+				_K75,
+				_K74
 			) as unknown as Parameters<typeof F.buildStringSingle>)
 		);
 	}
@@ -11787,7 +11785,7 @@ export function coerceToStringSingle(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildStringSingle(
-		...(_resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(_elems, _K74, _K73) as unknown as Parameters<
+		...(_resolveMany<T.UnescapedSingleStringFragment | T.EscapeSequence>(_elems, _K75, _K74) as unknown as Parameters<
 			typeof F.buildStringSingle
 		>)
 	);
@@ -12115,7 +12113,7 @@ export function resolveExportStatementDefaultFrom_content(
 		| T.ExportStatementDefaultFromNsFrom
 		| T.ExportStatementDefaultFromClauseFrom
 		| T.ExportClause
-	>(value, _K2, _K75);
+	>(value, _K2, _K76);
 }
 
 export function coerceToExportStatementDefaultFrom(
@@ -12136,7 +12134,7 @@ export function coerceToExportStatementDefaultFrom(
 			>(
 				configFieldOr(input, 'content', () => input),
 				_K2,
-				_K75
+				_K76
 			)
 		),
 		options
@@ -12152,7 +12150,7 @@ export function resolveExportStatementDefaultDeclaration_decorators(
 export function resolveExportStatementDefaultDeclaration_content(
 	value: T.ExportStatementDefaultDeclaration.LooseConfig['content']
 ): T.ExportStatementDefaultDeclaration['_content'] {
-	return _resolveOne<T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration>(value, _K2, _K76);
+	return _resolveOne<T.ExportStatementDefaultDeclarationDefaultKw | T.Declaration>(value, _K2, _K77);
 }
 
 export function coerceToExportStatementDefaultDeclaration(
@@ -12256,7 +12254,7 @@ export function coerceToExportStatementDefaultFromClauseFrom(
 export function resolveExportStatementDefaultDeclarationDefaultKw_content(
 	value: T.ExportStatementDefaultDeclarationDefaultKw.LooseConfig['content']
 ): T.ExportStatementDefaultDeclarationDefaultKw['_content'] {
-	return _resolveOne<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>(value, _K2, _K77);
+	return _resolveOne<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>(value, _K2, _K78);
 }
 
 export function coerceToExportStatementDefaultDeclarationDefaultKw(
@@ -12271,7 +12269,7 @@ export function coerceToExportStatementDefaultDeclarationDefaultKw(
 			_resolveOne<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration>(
 				configFieldOr(input, 'content', () => input),
 				_K2,
-				_K77
+				_K78
 			)
 		)
 	);
@@ -12382,7 +12380,7 @@ export function coerceToMetaPropertyImportMeta(
 }
 
 export function resolveForHeaderLhs_left(value: T.ForHeaderLhs.LooseConfig['left']): T.ForHeaderLhs['_left'] {
-	return _resolveOne<T.LhsExpression | T.ParenthesizedExpression>(value, _K2, _K78);
+	return _resolveOne<T.LhsExpression | T.ParenthesizedExpression>(value, _K2, _K79);
 }
 
 export function resolveForHeaderLhs_operator(

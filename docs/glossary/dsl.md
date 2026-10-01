@@ -6925,7 +6925,7 @@ Simplify-stage reading: a field is the `fieldName` stamp on the node itself, and
 
 ### `packages/codegen/src/dsl/choice-arm-partition.ts::dslArmStage`
 
-DSL-stage reading: a field is a `FIELD` wrapper whose body is its content, slot-ness is `isNonterminalRuleType` (a `SYMBOL`/`ALIAS` reference), and `PREC*` wrappers are transparent.
+DSL-stage reading: a field is a `FIELD` wrapper whose body is its content, slot-ness is `isNonterminalRuleType` (a `SYMBOL`/`ALIAS` reference), and `PREC*` and optional wrappers are transparent. An optional is read through `optionalContentOf`, so tree-sitter's `CHOICE(x, BLANK)` and sittir's `OPTIONAL(x)` classify alike and the two pipelines mint the same kinds.
 
 ### `packages/codegen/src/dsl/choice-arm-partition.ts::carriesNamedField`
 
@@ -6986,3 +6986,29 @@ The set of topologies a partition's arms produce.
 ### `packages/codegen/src/dsl/choice-arm-partition.ts::isTopologyMixed`
 
 True iff the arms produce more than one slot topology. Kinds, supertype expansion and variant kinds never enter it: two arms routed by different field names are the same topology, and so are two union arms of different kinds.
+
+### `packages/codegen/src/dsl/enrich.ts::ClauseHoistCounter.mixedRepeatChoices`
+
+The `ruleKey`s of the owner's repeated topology-mixed choices (`mixedRepeatChoiceKeys`), computed on the rule before the clause hoist rewrites it.
+
+### `packages/codegen/src/dsl/enrich.ts::mixedRepeatChoiceKeys`
+
+The choices under a `REPEAT`/`REPEAT1` whose arms produce more than one slot topology (`isTopologyMixed` at the DSL stage), keyed by `ruleKey`. The key also matches the same choice outside the repeat, which is the head element of a separated list. Tokens and aliases are not entered.
+
+### `packages/codegen/src/dsl/enrich.ts::mintFieldRoutedArm`
+
+Mints a bare `field(name, ref)` arm of a repeated topology-mixed choice as its own visible kind, named `<owner>_<field>` through `visibleGroupSynthName`, and references it by a group-lift symbol. With its structured arms already minted by `mintStructuredChoiceArm`, every element of the list is then a kind: one ordered union slot, and the field lives one level down on the minted kind. `groupDedupeMap` shares one kind across owners of an identical arm. An authored `variant()` on the arm names the kind (`wireRenameLift`). An arm that matches the empty string is left alone.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::unwrapPrecAndOptional`
+
+Strips `PREC*` and optional wrappers down to the node that decides an arm's slot topology.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::isNonterminalRuleType`
+
+#### body
+
+A `BLANK` is never a slot. Tree-sitter's DSL spells an optional as `CHOICE(x, BLANK)`, so a rule read at the DSL stage under tree-sitter's run carries blanks that sittir's own rule union does not name.
+
+### `packages/codegen/src/dsl/choice-arm-partition.ts::PREC_TYPES`
+
+The precedence wrapper types, which carry no slot topology.

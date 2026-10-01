@@ -2600,9 +2600,29 @@
     "type": "enum_body_elements",
     "named": true,
     "fields": {
-      "name": {
+      "element": {
         "multiple": true,
-        "required": false,
+        "required": true,
+        "types": [
+          {
+            "type": "enum_assignment",
+            "named": true
+          },
+          {
+            "type": "enum_body_member",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "enum_body_member",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
         "types": [
           {
             "type": "computed_property_name",
@@ -2626,16 +2646,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "enum_assignment",
-          "named": true
-        }
-      ]
     }
   },
   {

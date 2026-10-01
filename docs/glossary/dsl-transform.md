@@ -804,8 +804,8 @@ Whether a referenced name is a terminal the parser hides (`SymbolSource.isTermin
  * authors a rule of that name — an authored body wins, which is how a
  * shared arm (one lift referenced from two parents, e.g. python's
  * parenthesized import list) gets a parent-neutral kind whose inner list
- * carries the same visible name as the bare arm. The old lift name is
- * registered with wireRegisterSymbolRename so conflict entries follow.
+ * carries the same visible name as the bare arm. The name is recorded
+ * on the lift (wireRenameLift), so every other reference follows.
  * A variant passes the same name for rule and node and gets a plain
  * symbol back; an alias() placeholder passes a hidden rule name and gets
  * an alias — re-faced in place when the arm already was one, built fresh
@@ -816,9 +816,9 @@ Whether a referenced name is a terminal the parser hides (`SymbolSource.isTermin
 
 A lift deposited under the patch-chosen name is stamped `annotations.hoisted`
 on the way in, unless enrich listed the lift as a supertype (`wireIsBaseSupertype`):
-a nested token-form parent is a supertype, and stays one. Its arms' `variantOf` owners
-are renamed from the lift to the new name (`renameRule`), so no label names the lift
-once the lift is pruned. An authored body of that name is left as authored.
+a nested token-form parent is a supertype, and stays one. `resolveLiftNames` renames
+its arms' `variantOf` owners with every other reference to the lift, so no label names
+the lift once the lift is pruned. An authored body of that name is left as authored.
 
 
 ### `packages/codegen/src/dsl/transform/transform.ts::variantBranchIsUnmaterializable`
@@ -1375,8 +1375,7 @@ A patch that lands on a reference to a minted text token (`wireTextTokenOf`) and
 // symbol is an enrich-minted lift (the deposit is how the lift takes the
 // variant's name); a grammar-authored single symbol under an alias is
 // re-faced in place instead, and the old→new name pair is registered via
-// wireRegisterSymbolRename so conflict entries citing the old rule follow
-// the rename. Bare single-symbol arms never mint (see registerAliasedVariant).
+// wireRenameLift, so every reference to the old rule follows the rename. Bare single-symbol arms never mint (see registerAliasedVariant).
 ```
 
 #### body
