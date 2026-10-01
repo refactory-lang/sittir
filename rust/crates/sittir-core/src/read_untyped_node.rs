@@ -147,7 +147,7 @@ pub trait ReadModel {
 /// The caller supplies the `Node` directly (obtained via
 /// `ParsedTree.nodes[handle]` + `parent.child(child_index)`), so no
 /// DFS search is needed.
-pub fn read_node(
+pub fn read_untyped_node(
     tree: &tree_sitter::Tree,
     source: &str,
     target: Option<tree_sitter::Node>,

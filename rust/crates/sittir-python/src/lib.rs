@@ -47,7 +47,7 @@ impl EngineGrammar for PythonGrammar {
     }
 }
 
-impl sittir_core::read_node::ReadModel for PythonGrammar {
+impl sittir_core::read_untyped_node::ReadModel for PythonGrammar {
     fn wire_slot(
         &self,
         parent: sittir_core::types::KindId,

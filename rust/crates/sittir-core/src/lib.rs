@@ -3,7 +3,7 @@
 //! Contract surface:
 //!
 //! - [`types`]    — primitive `UntypedNode` + wire-boundary serde attributes.
-//! - [`read_node`] — `tree_sitter::Tree` → `UntypedNode` traversal.
+//! - [`read_untyped_node`] — `tree_sitter::Tree` → `UntypedNode` traversal.
 //! - [`splice`]   — byte-level `apply_edits` on a source string.
 //! - [`boundary`] — (reserved) cross-FFI shape helpers; serde attrs live
 //!   alongside the structs in `types`.
@@ -19,7 +19,7 @@ pub mod macros;
 pub mod napi_engine;
 pub mod options;
 pub mod prepare;
-pub mod read_node;
+pub mod read_untyped_node;
 pub mod render;
 pub mod slot;
 pub mod spacing;
@@ -45,7 +45,7 @@ pub use prepare::{Prepare, RenderContext};
 pub use slot::{NodeCoordinate, SlotValue};
 // Flat re-export for the read-expansion selector — grammar crates thread
 // it from the napi surface into `ParsedTree`.
-pub use read_node::{HandleMint, NoMint, ReadDepth, ReadModel};
+pub use read_untyped_node::{HandleMint, NoMint, ReadDepth, ReadModel};
 // ParsedTree is the owned parse result; ParseResult is the JSON
 // envelope for parse_and_read. NodeCoords is an internal implementation detail.
 pub use engine::{apply_render_format, decode_handle, panic_msg, ParseResult, ParsedTree};

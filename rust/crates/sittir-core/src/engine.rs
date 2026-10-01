@@ -14,7 +14,7 @@
 
 use crate::format::{apply_format, extract_format};
 use crate::options::ResolvedOptions;
-use crate::read_node::{read_node, HandleMint, ReadDepth, ReadModel};
+use crate::read_untyped_node::{read_untyped_node, HandleMint, ReadDepth, ReadModel};
 use crate::render::SourceTable;
 use crate::splice::apply_edits as splice_apply_edits;
 use crate::slot::NodeCoordinate;
@@ -241,7 +241,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// Read the root node of the parsed tree into an `UntypedNode`.
     pub fn read_root(&mut self, depth: ReadDepth) -> UntypedNode {
         let handle = self.push_coord(NodeCoord::root());
-        read_node(
+        read_untyped_node(
             &self.tree,
             &self.source,
             None,
@@ -300,7 +300,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
             parent: Some(index),
             child_index: child_index as u32,
         });
-        let data = read_node(
+        let data = read_untyped_node(
             &self.tree,
             &self.source,
             Some(child_node),

@@ -154,7 +154,7 @@ function normalizeSingularWrapSlot<T>(
 			return undefined;
 		}
 		if (value.length !== 1) {
-			// read_node concatenates grammar-agnostically; the named/unnamed
+			// read_untyped_node concatenates grammar-agnostically; the named/unnamed
 			// disparity for SINGULAR slots is resolved HERE (the per-kind layer
 			// that knows arity). A structural anonymous token co-occurring on the
 			// same field (e.g. splat_type `field("identifier", seq("*", $.identifier))`)
@@ -316,7 +316,7 @@ function projectMixedEnumStorage<T>(
 	return value;
 }
 // readTerminalFromOther — reclaim a model-designated terminal (operator /
-// keyword discriminant) that read_node forwarded to `$other` because it is
+// keyword discriminant) that read_untyped_node forwarded to `$other` because it is
 // an anonymous, unfielded token. The model knows the slot accepts these
 // kinds; match an `$other` entry by kind-name and return it for the slot
 // storage. Non-mutating (idempotent): the entry stays in `$other`, but the
@@ -1092,7 +1092,7 @@ function _matchesAllowedWrapKind(kind: string, allowedKinds: readonly string[]):
 }
 
 // Kind-keyed child probe: the grammar-agnostic reader stores an
-// unlabeled named child under `_<childKind>` (read_node.rs kind-named
+// unlabeled named child under `_<childKind>` (read_untyped_node.rs kind-named
 // slots). A VISIBLE supertype occurrence (an enrich-minted alias like
 // `alias($._expression_except_range, $.expression_group1)`) therefore
 // carries its single member child as a kind-keyed property, NOT in

@@ -672,11 +672,11 @@ is an anonymous token not routed to any field.
 ```text
 				// tuple_type: seq('(', sepBy1(',', $._type), optional(','), ')').
 				// sepBy1 expands to seq($._type, repeat(seq(',', $._type))).
-				// read_node routes unfielded _type children by concrete kind
+				// read_untyped_node routes unfielded _type children by concrete kind
 				// (primitive_type, type_identifier, …) into separate supertype
 				// buckets — losing CST order and reversing the tuple element list.
 				// Kind-match wraps EVERY $._type occurrence with the same 'type'
-				// field name so read_node collapses them into one ordered slot.
+				// field name so read_untyped_node collapses them into one ordered slot.
 				// Uses transforms: (not rules:) so the parse is unchanged.
 ```
 

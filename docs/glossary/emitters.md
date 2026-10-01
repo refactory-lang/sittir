@@ -2943,7 +2943,7 @@ scalar keeps no trivia, so the reader never makes that child an owner, and an
 extra beside it goes to the next owner outward (typescript `(/* c */ this)`
 reads the comment as the parenthesized expression's leading entry, since
 `this` is stored as a kind id). Keyed by `(parent kind id, tree-sitter field
-name or None, child kind id)`, the three facts `read_node::stored_as_scalar`
+name or None, child kind id)`, the three facts `read_untyped_node::stored_as_scalar`
 has in hand. Rows come from `scalarChildRows`.
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::scalarChildRows`
@@ -3619,7 +3619,7 @@ arms because no grammar kind shares its id.
  * than any of the concrete kinds the hidden rule resolves to. The
  * grammar-agnostic reader stores such a node's single unlabeled child under
  * a kind-keyed slot (`{ $type: <aliasId>, _<childKind>: <child> }` —
- * read_node.rs kind-named-slot routing), so no variant struct can decode the
+ * read_untyped_node.rs kind-named-slot routing), so no variant struct can decode the
  * wrapper directly (decode trials would probe the wrong object). This arm
  * unwraps the kind-keyed slot and re-dispatches `Self` on the concrete
  * child, which carries its own `$type`.
@@ -13251,7 +13251,7 @@ The wrap header's type from a wrapped datum to its declared `Parsed` node: a dat
 ```text
 // $other reclamation (option B): a kindEnum slot's value is a terminal
 // discriminant (operator / keyword). When that token is anonymous and
-// unfielded, read_node forwards it to `$other`, not `_<kind>` storage, so
+// unfielded, read_untyped_node forwards it to `$other`, not `_<kind>` storage, so
 // the nominal `??`-chain comes up empty. Append a final fallback that
 // reclaims it from `$other` by numeric kindId (`config.reclaimKindIdsExpr`,
 // the kindEnum member discriminants). When the token IS field-tagged the
@@ -13550,7 +13550,7 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 // the render-side string branch still accepts those). The bare
 // `$type` id passes through for the direct, already-flattened
 // keyword-literal case. A bare string (not object-wrapped) is
-// read_node\'s raw-read shape for a NAMED fixed-text keyword
+// read_untyped_node\'s raw-read shape for a NAMED fixed-text keyword
 // leaf (e.g. rust\'s mutable_specifier: "mut") — map it the
 // same way before falling through to the object-shaped checks.',
 ```
@@ -13607,7 +13607,7 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 // python's `case_pattern_group1`, a hidden alias-mint wrapper the
 // grammar produces but our model doesn't represent) have no dedicated
 // wrap function to hydrate into their own children.
-// `read_node.rs`'s one-level read (`read_slots` / `stub_of`)
+// `read_untyped_node.rs`'s one-level read (`read_slots` / `stub_of`)
 // leaves an unlabeled named child with sub-structure as a shallow stub
 // (`$parentHandle`/`$childIndex`, no fields of its own) — normally a
 // generated wrap function's `hydrateChild` call materializes it fully via
@@ -14024,7 +14024,7 @@ render helper.
 // arrive under the alias occurrence's own id (`alias_sym_*`). The
 // grammar-agnostic reader stores such a node's single unlabeled
 // child under a kind-keyed slot (`{ $type: <aliasId>,
-// _<childKind>: <child> }` — read_node.rs kind-named-slot routing),
+// _<childKind>: <child> }` — read_untyped_node.rs kind-named-slot routing),
 // so no variant struct can decode the wrapper directly (decode
 // trials would probe the wrong object). Unwrap the kind-keyed slot
 // and re-dispatch Self on the concrete child, which carries its own

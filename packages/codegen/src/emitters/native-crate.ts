@@ -210,7 +210,7 @@ impl EngineGrammar for ${v.Name}Grammar {
     }
 }
 
-impl sittir_core::read_node::ReadModel for ${v.Name}Grammar {
+impl sittir_core::read_untyped_node::ReadModel for ${v.Name}Grammar {
     fn wire_slot(
         &self,
         parent: sittir_core::types::KindId,

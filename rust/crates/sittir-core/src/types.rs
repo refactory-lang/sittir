@@ -188,7 +188,7 @@ pub struct UntypedNode {
 
     /// Trivia this node owns: comments and the other tree-sitter extras
     /// `read_slots` skips because they carry no field name. A read gives
-    /// every extra exactly one owner -- see `read_node::node_trivia` for the
+    /// every extra exactly one owner -- see `read_untyped_node::node_trivia` for the
     /// placement rules. A factory-constructed node gets it from `$trivia()`,
     /// and both a `$with` rebuild and construction from a read carry it onto
     /// the node they return, since trivia is not config.

@@ -47,7 +47,7 @@ impl EngineGrammar for ScmGrammar {
     }
 }
 
-impl sittir_core::read_node::ReadModel for ScmGrammar {
+impl sittir_core::read_untyped_node::ReadModel for ScmGrammar {
     fn wire_slot(
         &self,
         parent: sittir_core::types::KindId,

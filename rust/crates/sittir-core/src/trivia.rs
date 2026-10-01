@@ -1,6 +1,6 @@
 //! `TransportTrivia` — the trivia a transport carries, and where it renders.
 //!
-//! A read gives every extra one owner (`read_node::node_trivia`): leading
+//! A read gives every extra one owner (`read_untyped_node::node_trivia`): leading
 //! entries render before the owner, trailing entries after it, and inner
 //! entries at the gap they occupy inside an owner with no named child. A
 //! trailing entry on its owner's last row renders after the anonymous tokens

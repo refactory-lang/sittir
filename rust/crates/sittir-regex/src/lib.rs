@@ -47,7 +47,7 @@ impl EngineGrammar for RegexGrammar {
     }
 }
 
-impl sittir_core::read_node::ReadModel for RegexGrammar {
+impl sittir_core::read_untyped_node::ReadModel for RegexGrammar {
     fn wire_slot(
         &self,
         parent: sittir_core::types::KindId,

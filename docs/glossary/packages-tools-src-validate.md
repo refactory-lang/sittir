@@ -279,7 +279,7 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
  * Native UntypedNode's addressable child positions: named-slot (`_foo`) and
  * legacy (`$fields`) values, the anonymous-token bucket (`$other`), and
  * attached trivia (`$_trivia.leading`/`.trailing` — comment/extras
- * nodes read_node.rs attaches to a SIBLING rather than re-parenting into
+ * nodes read_untyped_node.rs attaches to a SIBLING rather than re-parenting into
  * the normal field/children tree, so this is the only place they're
  * reachable from).
  */
