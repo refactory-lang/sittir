@@ -3141,7 +3141,7 @@ export interface Program {
 	};
 	readonly __slotHints__?: {
 		readonly hashBangLine: SlotHint<T.HashBangLine, true>;
-		readonly statements: SlotHint<NonNullable<T.Program.Config>['statements'], true>;
+		readonly statements: SlotHint<NonNullable<NonNullable<T.Program.Config>['statements']>[number][], true, true>;
 	};
 	hashBangLine(): HashBangLine | undefined;
 	statements(): readonly Statement[];
@@ -3371,7 +3371,11 @@ export interface StatementBlock {
 		readonly automatic_semicolon?: BaseBooleanKeyword<'\n'>;
 	};
 	readonly __slotHints__?: {
-		readonly statements: SlotHint<NonNullable<T.StatementBlock.Config>['statements'], true>;
+		readonly statements: SlotHint<
+			NonNullable<NonNullable<T.StatementBlock.Config>['statements']>[number][],
+			true,
+			true
+		>;
 		readonly automaticSemicolon: SlotHint<NonNullable<T.StatementBlock.Config>['automaticSemicolon'], true>;
 	};
 	statements(): readonly Statement[];
@@ -3876,7 +3880,7 @@ export interface SwitchCase {
 	};
 	readonly __slotHints__?: {
 		readonly value: SlotHint<NonNullable<T.SwitchCase.Config>['value']>;
-		readonly bodies: SlotHint<NonNullable<T.SwitchCase.Config>['body'], true>;
+		readonly bodies: SlotHint<NonNullable<NonNullable<T.SwitchCase.Config>['body']>[number][], true, true>;
 	};
 	value(): Expression | SequenceExpression;
 	bodies(): readonly Statement[];

@@ -11877,7 +11877,11 @@ Prints one `SlotSetter` as its `$with` type member: a rest signature when the se
 
 ### `packages/codegen/src/emitters/factories.ts::slotSetter`
 
-What one slot's `$with` setter takes, as parts: a verbatim multi-valued slot takes rest arguments typed as the array (`NonEmptyArray` when the slot is non-empty); any other slot takes one value whose type indexes the kind's config type by the slot's config key when the slot's storage is not verbatim. The single derivation of a slot's setter input, used by the built surface and, through it, by `__slotHints__`.
+What one slot's `$with` setter takes, as parts. Every multi-valued slot takes rest arguments (`restSetterType`); any other slot takes one value, typed through `setterElemType`. The factory `$with`, the form `$with` and the wrap `$with` all ask this one derivation whether a setter is rest, so a list setter has the same call shape in every grammar and on parsed and built nodes alike.
+
+### `packages/codegen/src/emitters/factories.ts::restSetterType`
+
+The rest-parameter type of a multi-valued slot's setter, or nothing for a slot that holds one value. The element is the slot's construction element type when its storage is verbatim, and the element of the config field's array otherwise (a list that mixes nodes with terminal tokens, such as statements with `;`, stores a projected form, so its element type is read off the config). A non-empty slot takes `NonEmptyArray`. The emitted setter passes its arguments through `restItems`, which refuses one array given in place of the items: without that, a rest setter called with an array would store a nested array and fail later, in the native transport, with a message that names no slot.
 
 ### `packages/codegen/src/emitters/factories.ts::SlotSetter`
 
@@ -16516,7 +16520,7 @@ Whether a slot takes an anonymous child from `$other`: it is unnamed and stores 
 
 ### `packages/codegen/src/emitters/native-crate.ts::nativeCrateFiles`
 
-The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json`, and `src/lib.rs` (the `LanguageFn`, `EngineGrammar`/`ReadModel` impls over the generated render module, and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
+The scaffold of a grammar's native crate (`rust/crates/sittir-<name>`): `Cargo.toml`, `build.rs` (compiles the generated `.sittir/src/parser.c` and a C `scanner.c` as C11; a C++ `scanner.cc`, which transpile also copies, compiles in its own C++ build so `parser.c` never goes through the C++ compiler), the napi `package.json` (private: the crate is never published; its `build` scripts run `scripts/build-native.mts`, which writes the loader, typings and binary into the grammar package's `native/` directory), and `src/lib.rs` (the `LanguageFn`, `EngineGrammar`/`ReadModel` impls over the generated render module, and `sittir_core::napi_engine!`). `runCodegenInternal` writes these files on every `gen --all`, like the render module beside them, so a crate exists only alongside generated code it can compile and never lags its generator. No grammar edits its crate. A scanner that shares a header outside the generated sources (typescript's `scanner.c` includes `common/scanner.h`) needs no special case: `build.rs` follows each scanner source's quoted `#include`s at build time and has cargo rebuild when any of them changes. A new crate (no `Cargo.toml` yet) also triggers `pnpm install`. Pinned by a test: every grammar's crate files match the emitter.
 
 ### `packages/codegen/src/emitters/native-crate.ts::NativeCrateFile`
 
@@ -16528,7 +16532,7 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 ### `packages/codegen/src/emitters/grammar-runtime.ts::emitBackend`
 
-`backend.ts`: loads the grammar-local native build (`rust/crates/sittir-<name>/index.js`) once per process and checks its render-module hash and transport ABI against the package's generated `RENDER_MODULE_HASH` / `NATIVE_RENDER_TRANSPORT_ABI`. The outcome is `native` or `js`; `js` means "native unavailable" — there is no JS engine behind it, and `createRenderEngine` throws on it. `SITTIR_BACKEND` forces a choice; a forced `native` that fails to load throws.
+`backend.ts`: loads the native build the package ships (`native/index.cjs`, resolved relative to the module, so the same path holds in the workspace and in an installed package) once per process and checks its render-module hash and transport ABI against the package's generated `RENDER_MODULE_HASH` / `NATIVE_RENDER_TRANSPORT_ABI`. The outcome is `native` or `js`; `js` means "native unavailable" — there is no JS engine behind it, and `createRenderEngine` throws on it. `SITTIR_BACKEND` forces a choice; a forced `native` that fails to load throws. A load failure's reason comes from `nativeLoadFailure`, so it names the host platform and what the package ships.
 
 ### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
 

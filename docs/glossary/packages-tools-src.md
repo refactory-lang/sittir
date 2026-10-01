@@ -35,3 +35,11 @@ The validators whose pass count may fall when a kind becomes a supertype, each w
 ### `packages/tools/tests/strict-required-slot-types.test.ts`
 
 The census behind the typing rule: for every raw builder, each slot the model marks required, that no registered option carries and that the builder does not default itself, must be a required key of the strict config whose type has no `undefined` member. The model facts come from the assembled node map (`configKey`, the registered-option set, `isRequired`), the signature from the TypeScript checker over the grammar's `raw.ts`. A builder whose whole config is `Partial` (an argument-optional form) is outside it.
+
+### `packages/tools/src/native-pack.ts::nativePackGaps`
+
+The files a packed grammar package must hold for its native binding and does not: the loader, its typings, and a binary for each required platform suffix. The caller chooses the suffixes — the host's alone for a development pack, every declared target for a release — so one check serves both. `unexpectedNativeBinaries` is the other direction: binaries in the pack outside those suffixes. The binding directory is packed whole and local builds accumulate in it, so a release also has to be free of a binary for a target that is no longer declared; a development pack is not checked for extras.
+
+### `packages/tools/src/scripts/published-shape.ts::module`
+
+Checks a grammar package as a consumer receives it. It packs `@sittir/types`, `@sittir/common` and each grammar with `pnpm pack` (which rewrites `workspace:*` to versions), runs `nativePackGaps` over each grammar tarball, installs the tarballs into a directory under the system temp directory — outside the workspace, so nothing resolves through workspace links or source aliases — and there creates an engine, parses a sample and renders it back. Failures the workspace hides show up here: a binary missing from `files`, a loader path that only resolves in the repo, a dependency that is not declared. `--release` requires a binary for every target in `NATIVE_TARGETS` and no other binary; without it the host's binary is enough. The temp directory is removed when the run ends, pass or fail.

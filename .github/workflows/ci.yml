@@ -138,22 +138,13 @@ jobs:
         with:
           name: bindings-x86_64-unknown-linux-gnu
           path: /tmp/016-bindings
-      - name: Stage `.node` artifacts next to napi crate
-        # The artifact preserves the grammar-owned napi crate subdirs from
-        # the upload step (`rust/crates/sittir-*/*.node`). Copy them
-        # back into the workspace so each grammar loader picks up its native
-        # binary at runtime.
+      - name: Stage `.node` artifacts into the grammar packages
+        # The artifact keeps the upload step's paths
+        # (`packages/<grammar>/native/*.node`). Copy them back into the
+        # workspace so each grammar package's loader finds its binary.
         run: |
-          if [ -d /tmp/016-bindings/rust/crates ]; then
-            cp -R /tmp/016-bindings/rust/crates/. rust/crates/
-          else
-            # Fallback if the artifact was uploaded flat
-            grammars=$(npx tsx packages/tools/src/scripts/stable-grammars.ts)
-            for crate in $grammars; do
-              find /tmp/016-bindings -path "*sittir-${crate}/*.node" -exec cp {} "rust/crates/sittir-${crate}/" \;
-            done
-          fi
-          find rust/crates -name "*.node" -print
+          cp -R /tmp/016-bindings/. packages/
+          find packages -path "*/native/*.node" -print
       - name: Resolve base SHA
         id: base
         run: echo "sha=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
@@ -196,6 +187,38 @@ jobs:
   # for now (the baseline was collected on Apple M4 Pro). Linux baseline
   # collection is a follow-up; until then, the gate is a no-op on linux
   # CI but the metrics artifacts still get uploaded for inspection.
+  # A grammar package ships its native binaries inside itself. This packs the
+  # packages, installs them outside the workspace and runs createEngine, parse
+  # and render there, on the one platform whose binaries this job has.
+  published-shape:
+    name: published package shape
+    runs-on: ubuntu-22.04
+    needs: napi-build
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Download napi `.node` artifacts (linux x86_64-gnu)
+        uses: actions/download-artifact@v4
+        with:
+          name: bindings-x86_64-unknown-linux-gnu
+          path: /tmp/published-bindings
+      - name: Stage `.node` artifacts into the grammar packages
+        run: |
+          cp -R /tmp/published-bindings/. packages/
+          find packages -path "*/native/*.node" -print
+      - name: Build the packages
+        run: pnpm run build
+      - name: Pack, install outside the workspace, createEngine + parse + render
+        run: pnpm run check:published
+
   perf-regression-checker:
     name: perf regression check (warn-only)
     runs-on: ubuntu-22.04
@@ -225,16 +248,10 @@ jobs:
         with:
           name: bindings-x86_64-unknown-linux-gnu
           path: /tmp/054-bindings
-      - name: Stage `.node` artifacts next to napi crates
+      - name: Stage `.node` artifacts into the grammar packages
         run: |
-          if [ -d /tmp/054-bindings/rust/crates ]; then
-            cp -R /tmp/054-bindings/rust/crates/. rust/crates/
-          else
-            grammars=$(npx tsx packages/tools/src/scripts/stable-grammars.ts)
-            for crate in $grammars; do
-              find /tmp/054-bindings -path "*sittir-${crate}/*.node" -exec cp {} "rust/crates/sittir-${crate}/" \;
-            done
-          fi
+          cp -R /tmp/054-bindings/. packages/
+          find packages -path "*/native/*.node" -print
       - name: Collect fresh metrics (native backend)
         run: |
           SITTIR_BACKEND=native SITTIR_METRICS=1 \
@@ -383,7 +400,7 @@ jobs:
         run: |
           grammars=$(npx tsx packages/tools/src/scripts/stable-grammars.ts)
           for crate in $grammars; do
-            pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
+            npx tsx scripts/build-native.mts "${crate}" --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
           done
       # `--no-default-features` is required for a bare `cargo test
       # --workspace`: sittir-{rust,typescript,python} default to
@@ -421,7 +438,7 @@ jobs:
         with:
           name: bindings-${{ matrix.target }}
           path: |
-            rust/crates/sittir-*/*.node
+            packages/*/native/*.node
           if-no-files-found: ignore
 
   # Spec 012 T060 — surface parity counts in PR job summary so review

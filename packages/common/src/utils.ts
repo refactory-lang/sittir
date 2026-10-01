@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, ByteRange, Edit, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, StringIndexRange, Edit, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries, type TriviaSides } from './trivia.ts';
 import { detachCoordinate } from './transport-data.ts';
 import { Source } from './source.ts';
@@ -19,8 +19,8 @@ export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
  */
 interface WithMethodsRuntime<T extends object = AnyUntypedNode> {
 	$render(): string;
-	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
-	$replace(target: { range(): ByteRange }): Edit;
+	$toEdit(startOrRange: number | StringIndexRange, endPos?: number): Edit;
+	$replace(target: { range(): StringIndexRange }): Edit;
 	$trivia: TriviaSetterRuntime<T & WithMethodsRuntime<T>>;
 }
 
@@ -39,6 +39,21 @@ interface TriviaSetterRuntime<Self> {
 type Scoped = <R>(fn: () => R) => R;
 
 const NO_ENGINE = 'node has no engine; render it with engine.render(node)';
+
+/**
+ * The items a list setter was called with.
+ *
+ * @param slot - The setter's name, for the message.
+ * @param items - The setter's rest arguments.
+ * @returns `items`, unchanged.
+ * @throws When the setter was called with one array in place of its items.
+ */
+export function restItems<A extends readonly unknown[]>(slot: string, items: A): A {
+	if (items.length === 1 && Array.isArray(items[0])) {
+		throw new TypeError(`${slot} takes its items as arguments, not one array: call ${slot}(...items)`);
+	}
+	return items;
+}
 
 /** Whether `node` is typed: it carries the methods `withMethods` attaches, so a wrap or a builder produced it. */
 export function isTypedNode(node: object): boolean {
@@ -62,10 +77,10 @@ export function withMethods<T extends AnyUntypedNode>(node: T): T & WithMethodsR
 		$render(this: AnyUntypedNode): string {
 			return renderText(this);
 		},
-		$toEdit(this: AnyUntypedNode, startOrRange: number | ByteRange, endPos?: number): Edit {
+		$toEdit(this: AnyUntypedNode, startOrRange: number | StringIndexRange, endPos?: number): Edit {
 			return toEditAt(renderText(this), startOrRange, endPos);
 		},
-		$replace(this: AnyUntypedNode, target: { range(): ByteRange }): Edit {
+		$replace(this: AnyUntypedNode, target: { range(): StringIndexRange }): Edit {
 			return toEditAt(renderText(this), target.range());
 		}
 	});

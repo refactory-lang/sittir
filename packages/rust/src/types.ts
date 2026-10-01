@@ -3396,7 +3396,7 @@ export interface SourceFile {
 	};
 	readonly __slotHints__?: {
 		readonly shebang: SlotHint<T.Shebang, true>;
-		readonly statements: SlotHint<NonNullable<T.SourceFile.Config>['statements'], true>;
+		readonly statements: SlotHint<NonNullable<NonNullable<T.SourceFile.Config>['statements']>[number][], true, true>;
 	};
 	shebang(): Shebang | undefined;
 	statements(): readonly Statement[];
@@ -8106,7 +8106,7 @@ export interface LetChain {
 	};
 	readonly __slotHints__?: {
 		readonly left: SlotHint<NonNullable<T.LetChain.Config>['left']>;
-		readonly rights: SlotHint<NonNullable<T.LetChain.Config>['right'], true>;
+		readonly rights: SlotHint<NonNullable<NonNullable<T.LetChain.Config>['right']>[number][], true, true>;
 	};
 	left(): LetChain | LetCondition | Expression;
 	rights(): readonly (LetCondition | Expression)[];
@@ -8451,7 +8451,7 @@ export interface Block {
 	};
 	readonly __slotHints__?: {
 		readonly label: SlotHint<T.Label, true>;
-		readonly statements: SlotHint<NonNullable<T.Block.Config>['statements'], true>;
+		readonly statements: SlotHint<NonNullable<NonNullable<T.Block.Config>['statements']>[number][], true, true>;
 		readonly trailingExpression: SlotHint<NonNullable<T.Block.Config>['trailingExpression'], true>;
 	};
 	label(): Label | undefined;

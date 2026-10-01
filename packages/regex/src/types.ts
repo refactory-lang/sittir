@@ -714,7 +714,11 @@ export interface CharacterClass {
 	readonly __slotHints__?: {
 		readonly negation: SlotHint<NonNullable<T.CharacterClass.Config>['negation'], true>;
 		readonly leading: SlotHint<NonNullable<T.CharacterClass.Config>['leading'], true>;
-		readonly classAtoms: SlotHint<NonNullable<T.CharacterClass.Config>['classAtoms'], true>;
+		readonly classAtoms: SlotHint<
+			NonNullable<NonNullable<T.CharacterClass.Config>['classAtoms']>[number][],
+			true,
+			true
+		>;
 		readonly trailing: SlotHint<NonNullable<T.CharacterClass.Config>['trailing'], true>;
 	};
 	negation(): boolean | undefined;

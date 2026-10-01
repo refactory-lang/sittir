@@ -12,7 +12,9 @@
  */
 
 import { createRequire } from 'node:module';
+import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { nativeLoadFailure } from '@sittir/common/engine';
 import type {
 	JsBackendStatusLike,
 	NativeBackendStatusLike,
@@ -68,8 +70,8 @@ let debugEmitted = false;
 /** Package identifier baked into the `SITTIR_BACKEND_DEBUG` log line. */
 const PACKAGE_ID = 'sittir/python';
 
-/** Workspace-local native module path for the grammar-owned binary. */
-const NATIVE_MODULE_PATH = fileURLToPath(new URL('../../../rust/crates/sittir-python/index.js', import.meta.url));
+/** The native loader this package ships beside its binaries, at the same depth from `src/` and `dist/`. */
+const NATIVE_MODULE_PATH = fileURLToPath(new URL('../native/index.cjs', import.meta.url));
 
 function createJsStatus(reason: string, hashMatch?: false): JsBackendStatus {
 	if (hashMatch === false) {
@@ -112,13 +114,12 @@ function tryLoadNative(): NativeModule | { reason: string } {
 		const mod = req(NATIVE_MODULE_PATH) as NativeModule;
 		return mod;
 	} catch (err) {
-		const message = err instanceof Error ? err.message : String(err);
-		// Cannot-find-module surfaces as the common "platform not supported"
-		// case; other errors get the generic native-load-failed phrasing.
-		if (/Cannot find module/i.test(message) || /MODULE_NOT_FOUND/.test(message)) {
-			return { reason: 'native binary not available for this platform' };
-		}
-		return { reason: `native load failed: ${message}` };
+		return {
+			reason: nativeLoadFailure(
+				{ packageName: '@sittir/python', binaryName: 'sittir-python', dir: dirname(NATIVE_MODULE_PATH) },
+				err
+			)
+		};
 	}
 }
 
