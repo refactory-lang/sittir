@@ -1160,15 +1160,16 @@ export namespace Expression {
 			| G['pattern'];
 		// p only
 		// unmapped: <python:yield_from_clause>
-		readonly expression?:
-			| V.Unmapped<'typescript:yield_expression_delegate'>
-			| V.Declaration.Module<G>
-			| G['expression']
-			| G['identifier']
-			| G['literal']
-			| G['statement'];
+		readonly expression?: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'] | G['statement'];
 		// rt only
-		// unmapped: <typescript:yield_expression_delegate>
+	}
+	export namespace Yield {
+		export interface Delegate<G extends GrammarContext> extends Simplify<SubKindOf<V.Expression.Yield<G>>> {
+			// claimed by t
+			readonly kind: 'expression.yield.delegate';
+			readonly expression: V.Declaration.Module<G> | G['expression'] | G['identifier'] | G['literal'];
+		}
+		export type Any<G extends GrammarContext> = V.Expression.Yield<G> | V.Expression.Yield.Delegate<G>;
 	}
 	export type Any<G extends GrammarContext> =
 		| V.Expression.Assignment<G>
@@ -1281,5 +1282,6 @@ export namespace Expression {
 		| V.Expression.Update<G>
 		| V.Expression.Update.Decrement<G>
 		| V.Expression.Update.Increment<G>
-		| V.Expression.Yield<G>;
+		| V.Expression.Yield<G>
+		| V.Expression.Yield.Delegate<G>;
 }

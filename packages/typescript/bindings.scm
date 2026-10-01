@@ -197,6 +197,7 @@
 (generator_function "*" @generator)
 (await_expression) @expression.await
 (yield_expression) @expression.yield
+(yield_expression_delegate (_) @expression) @expression.yield.delegate
 (template_substitution) @expression.interpolation
 (parenthesized_expression) @expression.parenthesized
 (sequence_expression) @expression.sequence
