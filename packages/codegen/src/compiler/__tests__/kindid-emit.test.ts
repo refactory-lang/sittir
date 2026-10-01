@@ -27,6 +27,7 @@ function makeMinimalFixture(): {
 			fileTypes: [],
 			rules,
 			ruleCatalog,
+			evaluateSynthesized: new Set<string>(),
 			extras: [],
 			externals: [],
 			supertypes: [],

@@ -39,4 +39,14 @@ describe('rule ids', () => {
 		expect(collapsed.rules['_match_block']).toBeUndefined();
 		expect(collapsed.ruleCatalog.rootsByKind.get('match_block')).toBe('rule:_match_block:root');
 	}, 60_000);
+
+	it('a synthesized kind the catalog renames is recorded under its new name', async () => {
+		const evaluated = await evaluatePackage(grammarPackage('python'));
+		const raw = { ...evaluated, evaluateSynthesized: new Set([...evaluated.evaluateSynthesized, '_match_block']) };
+		const collapsed = collapseRenamedRules(raw, {
+			kindEntries: kindCatalogOf(stampVisibleExternals(await loadGeneratedIdTables('python'), raw), raw)
+		});
+		expect(collapsed.evaluateSynthesized.has('match_block')).toBe(true);
+		expect(collapsed.evaluateSynthesized.has('_match_block')).toBe(false);
+	}, 60_000);
 });

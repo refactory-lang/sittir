@@ -8,6 +8,8 @@ import { structuralBuilder } from '../../dsl/builders.ts';
 import { canonicalRuleTree } from '../canonical-rules.ts';
 import { installFakeDsl, restoreFakeDsl } from '../../dsl/__tests__/_test-helpers.ts';
 import { evaluate } from '../evaluate.ts';
+import { evaluatePackage } from '../evaluate-package.ts';
+import { grammarPackage } from '../../grammars.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
@@ -516,7 +518,7 @@ describe('Evaluate — evaluate()', () => {
 		expect(serializeCatalog(second.ruleCatalog)).toEqual(serializeCatalog(first.ruleCatalog));
 	});
 
-	it('records grammar and override provenance roots, and synthesizes no rule for inline alias content', async () => {
+	it('records no synthesized rule for a grammar with no wire config, and synthesizes none for inline alias content', async () => {
 		// Inline alias content is left to enrich, which both executions run;
 		// evaluate synthesizing a hidden rule for it would be a sittir-only kind.
 		const dir = mkdtempSync(resolve(tmpdir(), 'sittir-provenance-'));
@@ -549,13 +551,9 @@ module.exports = grammar(base, {
 		try {
 			const base = await evaluate(baseEntry, NO_FILE_TYPES);
 			const override = await evaluate(overrideEntry, NO_FILE_TYPES);
-			const baseContainer = base.ruleCatalog.byId.get(base.ruleCatalog.rootsByKind.get('container')!)!;
-			const overrideContainer = override.ruleCatalog.byId.get(override.ruleCatalog.rootsByKind.get('container')!)!;
-			const overrideOnly = override.ruleCatalog.byId.get(override.ruleCatalog.rootsByKind.get('override_only')!)!;
-
-			expect(baseContainer.provenance).toBe('grammar-authored');
-			expect(overrideContainer.provenance).toBe('override-authored-or-replaced');
-			expect(overrideOnly.provenance).toBe('override-authored-or-replaced');
+			expect(base.evaluateSynthesized).toEqual(new Set());
+			expect(override.evaluateSynthesized).toEqual(new Set());
+			expect(override.ruleCatalog.rootsByKind.has('override_only')).toBe(true);
 			expect(base.ruleCatalog.rootsByKind.has('_primitive_type')).toBe(false);
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
@@ -665,4 +663,21 @@ module.exports = grammar(base, {
 		).toBe(true);
 		expect(raw.ruleCatalog.classificationById.get(repeatEntry.id)!.kind).toBe('nonterminal');
 	});
+});
+
+describe('evaluateSynthesized', () => {
+	it('names the rules evaluate itself adds: visible externals and render-only rules, not the grammar\'s own', async () => {
+		const scm = await evaluatePackage(grammarPackage('scm'));
+		expect([...scm.evaluateSynthesized].filter((kind) => scm.ruleCatalog.rootsByKind.has(kind)).sort()).toEqual([
+			'_blankline',
+			'_dedent',
+			'_double_blankline',
+			'_indent',
+			'_newline',
+			'_space',
+			'_tab',
+			'_tight'
+		]);
+		expect(scm.evaluateSynthesized.has('list')).toBe(false);
+	}, 120_000);
 });
