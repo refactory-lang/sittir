@@ -9,7 +9,18 @@ export interface TriviaFacts {
 	readonly comment?: ((text: string) => AnyUntypedNode) | undefined;
 }
 
+/** Options of one parse. */
 export interface ParseOptions {
+	/**
+	 * Read the whole tree in the parse, in place of one level at a time.
+	 *
+	 * A deep parse materializes and types every node up front, so it is for a
+	 * caller that will read the whole tree. The default (`false`) reads one
+	 * level and hydrates each child when an accessor first reaches it.
+	 *
+	 * The choice changes when the work is done, never the result: an untouched
+	 * node renders its source bytes whichever way it was read.
+	 */
 	readonly deep?: boolean;
 }
 
