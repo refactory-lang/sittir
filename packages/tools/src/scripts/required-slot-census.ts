@@ -41,7 +41,8 @@ export const admittingSlots = async (grammar: string, includeLoose: boolean): Pr
 			const property = checker.getPropertyOfType(checker.getNonNullableType(paramType), slot.configKey);
 			const label = `${node.kind}.${slot.configKey}`;
 			if (property === undefined) {
-				if (node.configSlots.length === 1 && (param.questionToken !== undefined || hasUndefined(paramType))) strict.push(label);
+				const directParameter = node.configSlots.length === 1 && param.name.getText(source) !== 'config';
+				if (!directParameter || param.questionToken !== undefined || hasUndefined(paramType)) strict.push(label);
 				continue;
 			}
 			if ((property.flags & ts.SymbolFlags.Optional) !== 0 || hasUndefined(checker.getTypeOfSymbolAtLocation(property, param))) strict.push(label);
