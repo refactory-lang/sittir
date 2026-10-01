@@ -19950,9 +19950,9 @@ export namespace FunctionExpression {
 	}
 	export type Loose = LooseFor<TSKindId.FunctionExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionExpression>;
-	export type BuildArgs = [config: ConfigOf<T.FunctionExpression, T.NamespaceMap>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.FunctionExpression, T.NamespaceMap>>];
 	export type LooseArgs = [
-		config:
+		config?:
 			| LooseConfigOf<T.FunctionExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.FunctionExpression, T.AdmittedNodes>
 	];
@@ -19990,9 +19990,9 @@ export namespace GeneratorFunction {
 	}
 	export type Loose = LooseFor<TSKindId.GeneratorFunction>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GeneratorFunction>;
-	export type BuildArgs = [config: ConfigOf<T.GeneratorFunction, T.NamespaceMap>];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.GeneratorFunction, T.NamespaceMap>>];
 	export type LooseArgs = [
-		config:
+		config?:
 			| LooseConfigOf<T.GeneratorFunction, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.GeneratorFunction, T.AdmittedNodes>
 	];

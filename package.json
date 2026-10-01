@@ -40,6 +40,7 @@
 		"type-check:cross-language": "tsc -p tests/types/tsconfig.json --noEmit",
 		"type-check:tests": "tsc -p tests/tsconfig.json --noEmit",
 		"type-check:examples": "tsc -p examples/tsconfig.json --noEmit",
+		"type-check:required-slots": "tsx packages/tools/src/scripts/required-slot-census.ts",
 		"type-check:generated-examples": "tsc -p examples/tsconfig.generated.json --noEmit",
 		"gen:examples": "tsx packages/tools/src/scripts/gen-examples.ts",
 		"changeset": "changeset",
