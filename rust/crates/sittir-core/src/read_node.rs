@@ -549,7 +549,7 @@ fn read_slots(
             }
         } else {
             match depth.below() {
-                None => read_child_stub(child, source, node_handle, i as u16),
+                None => stub_of(child, source, node_handle, i as u16),
                 Some(ReadDepth::Deep) => NodeData {
                     child_index: Some(i as u16),
                     ..read_ts_node(child, source, None, tree_handle, ReadDepth::Deep, model, mint)
@@ -639,7 +639,7 @@ fn node_text(node: tree_sitter::Node<'_>, source: &str) -> Option<String> {
     Some(text.to_string())
 }
 
-fn read_child_stub(
+fn stub_of(
     child: tree_sitter::Node<'_>,
     source: &str,
     parent_handle: Option<u64>,
