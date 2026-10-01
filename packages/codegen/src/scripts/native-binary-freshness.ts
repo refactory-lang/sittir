@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { nativeCrateRelDir } from '../grammars.ts';
+import { nativeBindingRelDir, nativeCrateRelDir } from '../grammars.ts';
 
 export interface HostBinaryFreshness {
 	rel: string;
@@ -27,8 +27,9 @@ function walkMtimes(root: string, repoRoot: string, newest: { mtimeMs: number; r
 
 export function hostBinaryFreshnessFor(repoRoot: string, grammar: string): HostBinaryFreshness[] {
 	const crateDir = join(repoRoot, nativeCrateRelDir(grammar));
-	if (!existsSync(crateDir)) return [];
-	const binaries = readdirSync(crateDir).filter((name) => name.endsWith('.node'));
+	const bindingDir = join(repoRoot, nativeBindingRelDir(grammar));
+	if (!existsSync(bindingDir)) return [];
+	const binaries = readdirSync(bindingDir).filter((name) => name.endsWith('.node'));
 	if (binaries.length === 0) return [];
 
 	const newest = { mtimeMs: 0, rel: '' };
@@ -36,9 +37,9 @@ export function hostBinaryFreshnessFor(repoRoot: string, grammar: string): HostB
 	walkMtimes(join(crateDir, 'templates'), repoRoot, newest);
 
 	return binaries.map((name) => {
-		const binaryMtimeMs = statSync(join(crateDir, name)).mtimeMs;
+		const binaryMtimeMs = statSync(join(bindingDir, name)).mtimeMs;
 		return {
-			rel: `${nativeCrateRelDir(grammar)}/${name}`,
+			rel: `${nativeBindingRelDir(grammar)}/${name}`,
 			binaryMtimeMs,
 			newestInputMtimeMs: newest.mtimeMs,
 			newestInputRel: newest.rel,

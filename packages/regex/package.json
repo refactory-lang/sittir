@@ -17,7 +17,8 @@
 		"directory": "packages/regex"
 	},
 	"files": [
-		"dist"
+		"dist",
+		"native"
 	],
 	"type": "module",
 	"main": "./dist/index.js",
@@ -50,7 +51,7 @@
 		"tree-sitter-regex": "^0.25.0",
 		"type-fest": "^5.6.0"
 	},
-	"//native": "Native artifacts are grammar-local implementation details for @sittir/regex, built from rust/crates/sittir-regex.",
+	"//native": "Native artifacts are grammar-local implementation details for @sittir/regex, shipped in native/ and built from rust/crates/sittir-regex.",
 	"sittir": {
 		"stable": true
 	}

@@ -250,3 +250,11 @@ Drops the pre-edit spelling and the coordinate that would slice it from every no
 ### `packages/common/src/utils.ts::describeValue`
 
 A value as the text of a refusal message: a string as itself, anything else as JSON (a bigint as `<n>n`), falling back to `String` when it cannot be serialised. Generated pattern guards use it so a node or object that reached a text slot prints as what it was, not `[object Object]`.
+
+### `packages/common/src/native-binding.ts::nativeLoadFailure`
+
+A grammar package holds one binary per platform and napi's loader picks the host's. When that fails the loader's own error is a list of every candidate it tried, which says nothing a consumer can act on, so the generated `backend.ts` asks here instead. Two cases are told apart by reading the binding directory, not the error text: the host's binary is absent (the package was not built for this platform — the message names the file and lists the platforms that are there), or it is present and the dynamic loader refused it (the message carries that reason, taken from the first error in the cause chain that names the file). Directory contents decide the case because the loader reports both the same way.
+
+### `packages/common/src/native-binding.ts::platformSuffix`
+
+The one spelling of a platform in a binary's file name. It must agree with what `napi build --platform` writes; `targetSuffix` maps a Rust target triple onto the same spelling, so the release pack check and the load-failure message name files identically.

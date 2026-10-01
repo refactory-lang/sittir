@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { FormatRecord } from '@sittir/types';
+import { NATIVE_LOADER, nativeBindingDir } from '../../packages/codegen/src/grammars.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, '../..');
@@ -10,12 +11,6 @@ const FIXTURES_DIR = resolve(repoRoot, 'tests/format-roundtrip/fixtures');
 const CORPUS_PATH = resolve(repoRoot, 'tests/format-roundtrip/format-corpus.json');
 
 type Grammar = 'python' | 'rust' | 'typescript';
-
-const NATIVE_ENGINE_PATH_BY_GRAMMAR = {
-	python: 'rust/crates/sittir-python',
-	rust: 'rust/crates/sittir-rust',
-	typescript: 'rust/crates/sittir-typescript'
-} as const;
 
 export type NativeEngine = {
 	parseAndRead(src: string): string;
@@ -45,7 +40,7 @@ export function loadFixtureSource(fixture: string): string {
 export function tryLoadNativeEngine(grammar: Grammar): NativeEngine | null {
 	try {
 		const req = createRequire(import.meta.url);
-		const mod = req(resolve(repoRoot, NATIVE_ENGINE_PATH_BY_GRAMMAR[grammar])) as {
+		const mod = req(resolve(nativeBindingDir(grammar), NATIVE_LOADER)) as {
 			SittirEngine: new () => NativeEngine;
 		};
 

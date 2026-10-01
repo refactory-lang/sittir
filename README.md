@@ -225,9 +225,9 @@ falling back.
                  └────────────────────┼──────────────┘
                                       ▼
                        ┌────────────────────────────────┐
-                       │  @sittir/<grammar>-native       │
+                       │  @sittir/<grammar>/native       │
                        │  N-API binding (generated render)│
-                       │  rust/crates/sittir-<grammar>/  │
+                       │  built from rust/crates/sittir-* │
                        └──────────────┬───────────────────┘
                                       │  implements SittirEngineLike
                                       ▼

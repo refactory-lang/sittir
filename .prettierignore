@@ -25,8 +25,8 @@ specs/*/perf/**
 
 # napi-rs native binding build output (rebuilt via `napi build`, not
 # hand-written or codegen-emitted TS/JS in the usual sense).
-rust/crates/sittir-*/index.d.ts
-rust/crates/sittir-*/index.js
+packages/*/native/index.d.ts
+packages/*/native/index.cjs
 
 # Validator-run output — regenerated on every validate:native / test run,
 # lands in dedicated chore(validator) commits per generated-manifest.ts's
