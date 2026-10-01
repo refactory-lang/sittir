@@ -1,4 +1,5 @@
 import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
+import { innerPositionsOf, nodeMemberLines, triviaInnerImports, type SetterEntry } from './node-members.ts';
 import { findOwnKindEntry, reservedWordset } from '../dsl/symbol-table.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -1168,15 +1169,20 @@ function emitFieldCarryingFactory(
 	const registered = registeredSlots(node);
 	const registeredSet = new Set(registered);
 	const forwardTarget = forwardedConstructorTarget(node, nodeMap, kindEntries);
-	const spellingWith = (rebuild: (patch: string) => string): string[] =>
-		registered.map((f) => `      ${f.propertyName}: (spelling: ${constructionFieldElementType(f, nodeMap, kindEntries)}) => ${rebuild(`{ ...options, ${f.configKey}: spelling }`)},`);
+	const spellingWith = (rebuild: (patch: string) => string): SetterEntry[] =>
+		registered.map((f) => ({
+			name: f.propertyName,
+			params: `spelling: ${constructionFieldElementType(f, nodeMap, kindEntries)}`,
+			body: rebuild(`{ ...options, ${f.configKey}: spelling }`)
+		}));
+	let setters: SetterEntry[];
 
 	if (spreadFacts) {
 		slotsToEmit = [spreadFacts.slot];
 		const elementType = surface.elementType!;
 		const setter = spreadFacts.slot.propertyName;
 		valueSourceFor = (f) => (f === spreadFacts.slot ? admittedSlotInput(f, 'children', nodeMap, kindEntries, node.typeName) : '');
-		withLines = [`    $with: { ${setter}: (...vs: ${elementType}[]) => ${fn}(...restItems(${JSON.stringify(setter)}, vs)) },`];
+		setters = [{ name: setter, params: `...vs: ${elementType}[]`, body: `${fn}(...restItems(${JSON.stringify(setter)}, vs))` }];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
 		valueSourceFor = (f) =>
@@ -1185,33 +1191,34 @@ function emitFieldCarryingFactory(
 		const setterSig = setterValueSignature(singleField, setterType);
 		const direct = forwardTarget === null ? fn : `_${fn}`;
 		const rebuildDirect = (options: string): string => `${direct}(value, ${options})`;
-		withLines = [
-			'    $with: {',
-			`      ${singleField.propertyName}: (${setterSig}) => ${registered.length === 0 ? `${direct}(value)` : `${direct}(value, options)`},`,
-			...spellingWith(rebuildDirect),
-			'    },'
+		setters = [
+			{ name: singleField.propertyName, params: setterSig, body: registered.length === 0 ? `${direct}(value)` : `${direct}(value, options)` },
+			...spellingWith(rebuildDirect)
 		];
 	} else {
 		const configAccess = 'config';
 		valueSourceFor = (f) => slotStorageExpr(f, configAccess, nodeMap, kindEntries, node.typeName);
-		withLines = ['    $with: {'];
+		setters = [];
 		const optionsArg = registered.length === 0 ? '' : ', options';
 		for (const f of slots) {
 			if (registeredSet.has(f)) continue;
 			const method = f.propertyName;
 			const restType = restSetterType(f, configType, nodeMap, kindEntries);
 			if (restType !== undefined) {
-				withLines.push(
-					`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: restItems(${JSON.stringify(method)}, values) }${optionsArg}),`
-				);
+				setters.push({
+					name: method,
+					params: `...values: ${restType}`,
+					body: `${fn}({ ...${configAccess}, ${f.configKey}: restItems(${JSON.stringify(method)}, values) }${optionsArg})`
+				});
 			} else {
 				const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
 				const setterSig = setterValueSignature(f, elemType);
-				withLines.push(`      ${method}: (${setterSig}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }${optionsArg}),`);
+				setters.push({ name: method, params: setterSig, body: `${fn}({ ...${configAccess}, ${f.configKey}: value }${optionsArg})` });
 			}
 		}
-		withLines.push(...spellingWith((patch) => `${fn}(${configAccess}, ${patch})`), '    },');
+		setters.push(...spellingWith((patch) => `${fn}(${configAccess}, ${patch})`));
 	}
+	withLines = ['    $with: {', ...setters.map((entry) => `      ${entry.name}: (${entry.params}) => ${entry.body},`), '    },'];
 
 	const lines: string[] = [signature];
 	if (spreadFacts?.multiple && spreadFacts.nonEmpty) {
@@ -1235,20 +1242,40 @@ function emitFieldCarryingFactory(
 		}
 	}
 	const seats = seatRuntimes(node, nodeMap, kindEntries);
-	lines.push(`  return withMethods(${seatOpening(seats)}withAccessors({`);
-	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
-	lines.push(`    $source: 2 as const,`);
-	lines.push('    $named: true as const,');
-	for (const f of slotsToEmit) {
-		lines.push(`    ${f.storageKey},`);
+	if (seats.length === 0) {
+		lines.push('  const handle = currentHandle();');
+		lines.push('  const node = {');
+		lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
+		lines.push(`    $source: 2 as const,`);
+		lines.push('    $named: true as const,');
+		for (const f of slotsToEmit) {
+			lines.push(`    ${f.storageKey},`);
+		}
+		lines.push(
+			...nodeMemberLines({
+				setters,
+				accessors: slotsToEmit.map((f) => ({ name: f.propertyName, read: f.storageKey })),
+				inner: innerPositionsOf(typeKind, nodeMap)
+			})
+		);
+		lines.push('  };');
+		lines.push(`  return node as unknown as ${builtName};`);
+	} else {
+		lines.push(`  return withMethods(${seatOpening(seats)}withAccessors({`);
+		lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
+		lines.push(`    $source: 2 as const,`);
+		lines.push('    $named: true as const,');
+		for (const f of slotsToEmit) {
+			lines.push(`    ${f.storageKey},`);
+		}
+		lines.push(...withLines);
+		lines.push('  }, {');
+		for (const f of slotsToEmit) {
+			const propName = f.propertyName;
+			lines.push(`    ${propName}: () => ${f.storageKey},`);
+		}
+		lines.push(`  })${seatClosing(seats)}) as unknown as ${builtName};`);
 	}
-	lines.push(...withLines);
-	lines.push('  }, {');
-	for (const f of slotsToEmit) {
-		const propName = f.propertyName;
-		lines.push(`    ${propName}: () => ${f.storageKey},`);
-	}
-	lines.push(`  })${seatClosing(seats)}) as unknown as ${builtName};`);
 	lines.push('}');
 
 	const { directParamType, directParamOptional } = surface;
@@ -1409,46 +1436,48 @@ function emitRefineFormFactory(
 		}
 		lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries, info.typeName)};`);
 	}
-	lines.push('  return withMethods(withAccessors({');
+	const formSetters: SetterEntry[] = [];
+	for (const f of slots) {
+		if (narrowed.has(f.name)) continue;
+		const method = f.propertyName;
+		const restType = restSetterType(f, formConfigType, nodeMap, kindEntries);
+		if (restType !== undefined) {
+			formSetters.push({
+				name: method,
+				params: `...values: ${restType}`,
+				body: `${formFn}({ ...config, ${f.configKey}: restItems(${JSON.stringify(method)}, values) }${optionsArg})`
+			});
+		} else {
+			const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), formConfigType, nodeMap);
+			const setterSig = setterValueSignature(f, elemType);
+			formSetters.push({ name: method, params: setterSig, body: `${formFn}({ ...config, ${f.configKey}: value }${optionsArg})` });
+		}
+	}
+	for (const f of registered) {
+		if (narrowed.has(f.name)) continue;
+		formSetters.push({
+			name: f.propertyName,
+			params: `spelling: ${constructionFieldElementType(f, nodeMap, kindEntries)}`,
+			body: `${formFn}(config, { ...options, ${f.configKey}: spelling })`
+		});
+	}
+	lines.push('  const handle = currentHandle();');
+	lines.push('  const node = {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	for (const f of allSlots) {
 		lines.push(`    ${f.storageKey},`);
 	}
-	lines.push('    $with: {');
-	for (const f of slots) {
-		if (narrowed.has(f.name)) continue;
-		const method = f.propertyName;
-		const restType = restSetterType(f, formConfigType, nodeMap, kindEntries);
-		if (restType !== undefined) {
-			lines.push(
-				`      ${method}: (...values: ${restType}) => ${formFn}({ ...config, ${f.configKey}: restItems(${JSON.stringify(method)}, values) }${optionsArg}),`
-			);
-		} else {
-			const elemType = setterElemType(
-				f,
-				constructionFieldElementType(f, nodeMap, kindEntries),
-				formConfigType,
-				nodeMap
-			);
-			const setterSig = setterValueSignature(f, elemType);
-			lines.push(`      ${method}: (${setterSig}) => ${formFn}({ ...config, ${f.configKey}: value }${optionsArg}),`);
-		}
-	}
-	for (const f of registered) {
-		if (narrowed.has(f.name)) continue;
-		lines.push(
-			`      ${f.propertyName}: (spelling: ${constructionFieldElementType(f, nodeMap, kindEntries)}) => ${formFn}(config, { ...options, ${f.configKey}: spelling }),`
-		);
-	}
-	lines.push('    },');
-	lines.push('  }, {');
-	for (const f of allSlots) {
-		const propName = f.propertyName;
-		lines.push(`    ${propName}: () => ${f.storageKey},`);
-	}
-	lines.push(`  })) as unknown as ${formBuiltName};`);
+	lines.push(
+		...nodeMemberLines({
+			setters: formSetters,
+			accessors: allSlots.map((f) => ({ name: f.propertyName, read: f.storageKey })),
+			inner: innerPositionsOf(node.kind, nodeMap)
+		})
+	);
+	lines.push('  };');
+	lines.push(`  return node as unknown as ${formBuiltName};`);
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
 }
@@ -2089,12 +2118,15 @@ function emitTextFactory(
 	const body: string[] = [`export function ${fn}${typeParams}(${params}): T.${node.typeName}.Bound {`];
 	if (guard) body.push(`  ${guard}`);
 	body.push(
-		'  return withMethods({',
+		'  const handle = currentHandle();',
+		'  const node = {',
 		`    $type: ${typeExpr},`,
 		`    $source: 2 as const,`,
 		'    $named: true as const,',
 		`    $text: ${textExpr},`,
-		'  });',
+		...nodeMemberLines({ accessors: [], inner: nodeMap === undefined ? { inner: false, keyed: false } : innerPositionsOf(node.kind, nodeMap) }),
+		'  };',
+		`  return node as unknown as T.${node.typeName}.Bound;`,
 		'}'
 	);
 	return body.join('\n');
@@ -2138,12 +2170,13 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const usesElementWrap = [...nodeMap.nodes.values()].some(
 			(n) => n instanceof AssembledList && separatedListSurface(n, nodeMap, kindEntries).wrapper !== undefined
 		);
+		const usesAttachedMembers = [...nodeMap.nodes.values()].some((n) => seatRuntimes(n, nodeMap, kindEntries).length > 0);
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		lines.push(
-			`import { ${['withAccessors', 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
+			`import { ${[...(usesAttachedMembers ? ['withAccessors'] : []), 'currentHandle', 'rebuilt', 'renderText', 'toEditAt', 'triviaSide', ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
 		);
-		lines.push(`import { withMethods } from '../utils.js';`);
+		if (usesAttachedMembers) lines.push(`import { withMethods } from '../utils.js';`);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
 		lines.push(...emitNonEmptyAssertHelper());

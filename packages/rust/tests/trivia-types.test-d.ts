@@ -31,3 +31,6 @@ rs.isEmptyNode(rs.build.functionItem({ name: 'f', parameters: rs.build.parameter
 
 // @ts-expect-error $trivia is its positions; the node is not callable
 rs.build.identifier('a').$trivia(rs.build.lineComment(' c'));
+
+// @ts-expect-error a kind with no inner gap has no inner position
+rs.build.identifier('a').$trivia.inner();

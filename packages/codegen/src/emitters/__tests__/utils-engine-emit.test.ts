@@ -33,8 +33,8 @@ describe('utils runtime binding emission', () => {
 		const factoriesSrc = emitFactories({ grammar: 'synth', nodeMap });
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap });
 
-		expect(factoriesSrc).toContain("import { withMethods } from '../utils.js';");
-		expect(factoriesSrc).toMatch(/import \{ withAccessors[^}]*\} from '@sittir\/common\/utils';/);
+		expect(factoriesSrc).not.toContain('withMethods');
+		expect(factoriesSrc).toMatch(/import \{ currentHandle[^}]*\} from '@sittir\/common\/utils';/);
 		expect(factoriesSrc).not.toContain('methodsEngine');
 		expect(wrapSrc).toContain("import { withMethods } from './utils.js';");
 		expect(wrapSrc).not.toContain('_treeEngine');

@@ -4,6 +4,7 @@ import { createEngine } from '@sittir/common';
 import rust from '../../rust/src/index.ts';
 import typescript from '../../typescript/src/index.ts';
 import python from '../../python/src/index.ts';
+import { buildIdentifier } from '../../rust/src/factories/raw.ts';
 
 v8.setFlagsFromString('--allow-natives-syntax');
 const hasFastProperties = new Function('o', 'return %HasFastProperties(o)') as (o: object) => boolean;
@@ -38,13 +39,35 @@ const classes: Record<string, () => object> = {
 	'python group seat': () => py.build.slice({})
 };
 
-const pending = new Set([...Object.keys(classes), 'parsed']);
+const pending = new Set([
+	'rust group seat, group present',
+	'rust group seat, group absent',
+	'rust list owner',
+	'typescript group seat',
+	'python group seat',
+	'parsed'
+]);
 
 describe('a built node keeps fast properties', () => {
 	for (const [label, make] of Object.entries(classes)) {
 		const run = () => expect(fastCount(make)).toBe(COUNT);
 		(pending.has(label) ? it.fails : it)(label, run);
 	}
+});
+
+describe('a built node without an engine, or with trivia, keeps fast properties', () => {
+	it('has no engine and refuses to render, as one shape', () => {
+		const node = buildIdentifier('x');
+		expect(() => node.$render()).toThrow('node has no engine');
+		expect(() => node.$trivia.leading()).toThrow('node has no engine');
+		expect((node as unknown as { $engine?: unknown }).$engine).toBeUndefined();
+		expect(fastCount(() => buildIdentifier('x'))).toBe(COUNT);
+	});
+
+	it('a node that gets trivia attached stays fast', () => {
+		const comment = rs.build.comment(' c');
+		expect(fastCount(() => rs.build.identifier('x').$trivia.leading(comment))).toBe(COUNT);
+	});
 });
 
 const typedNodesOf = (root: unknown): object[] => {

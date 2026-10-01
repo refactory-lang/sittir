@@ -16596,3 +16596,23 @@ The expression that fills a required slot the caller omitted: the fixed text's d
 ### `packages/codegen/src/emitters/factories.ts::requiredUnfilled`
 
 A text slot's pattern guard in the raw builder skips `undefined` only where `undefined` is legal. A slot that is required, carried by no registered option and not filled when omitted is tested directly, so an untyped `undefined` fails the guard instead of building an empty node; the skip stays on every other guarded slot. A pattern that accepts the text `undefined` (a free-text comment, a shebang) still accepts it: the guard tests the value as text and adds no required-slot check of its own.
+
+### `packages/codegen/src/emitters/node-members.ts::SetterEntry`
+
+One `$with` setter of a node literal: its name, its parameter list and the rebuild expression it runs. The factory emitters collect these, so the literal path and the helper-nesting path write the same setters.
+
+### `packages/codegen/src/emitters/node-members.ts::nodeMemberLines`
+
+The member lines of a node's literal after its storage keys: the `$with` block, a reader per slot, the `$render`/`$toEdit`/`$replace` closures, the `$trivia` positions and `$engine`. Every closure reads the `handle` the builder captured with `currentHandle()` and the `node` the literal is assigned to, so the node needs no helper after it is built and every node of a kind has one shape. `extra` carries the lines a group seat or a list owner adds. One function writes these lines for the factories and the wraps.
+
+### `packages/codegen/src/emitters/node-members.ts::innerPositionsOf`
+
+Whether a kind's `$trivia` carries `inner`, and `innerAt`. `inner` is present exactly for the kinds in `emptyForms` (the kinds with an inner gap, which the type surface offers `inner` on as their empty form), and `innerAt` only when the grammar keys its gaps (`innerGapsKeyed`). The types and the literal read the same fact, so they cannot drift.
+
+### `packages/codegen/src/emitters/node-members.ts::triviaInnerImports`
+
+The inner-trivia functions a grammar's builder module imports: none when no kind has an inner gap, `triviaInner` when some does, and `triviaInnerAt` as well when the gaps are keyed. Unused imports would fail the lint of the generated file.
+
+### `packages/codegen/src/emitters/node-members.ts::withEntry`
+
+One `$with` setter line: the entry runs its rebuild through `rebuilt`, which scopes the rebuild in the node's engine and hands the node's trivia on to the result.

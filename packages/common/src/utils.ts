@@ -86,10 +86,10 @@ export function withMethods<T extends AnyUntypedNode>(node: T): T & WithMethodsR
 }
 
 /** The text `node` renders to in the engine it was built or read in. */
-export function renderText(handle: EngineHandle | undefined, node: AnyUntypedNode): string {
+export function renderText(handle: EngineHandle | undefined, node: object): string {
 	if (handle === undefined) throw new Error(NO_ENGINE);
 	if (!isLive(handle.current)) throw new Error('engine disposed; render it with engine.render(node)');
-	return handle.current.render(node).toString();
+	return handle.current.render(node as AnyUntypedNode).toString();
 }
 
 /**
@@ -97,7 +97,8 @@ export function renderText(handle: EngineHandle | undefined, node: AnyUntypedNod
  * node it returns. Inner entries can only travel to a node that is still empty: once the
  * rebuild gives the node a child, the comment would sit beside it, so the rebuild refuses.
  */
-export function rebuilt<R>(node: AnyUntypedNode, handle: EngineHandle | undefined, build: () => R): R {
+export function rebuilt<R>(source: object, handle: EngineHandle | undefined, build: () => R): R {
+	const node = source as AnyUntypedNode;
 	const result = handle === undefined ? build() : inEngine(handle, build);
 	const trivia = node.$_trivia;
 	if (trivia === undefined || !isNode(result)) return result;
@@ -141,7 +142,8 @@ const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undef
  * (`' note'`). `inner` and `innerAt` write only to an empty node of a kind with inner gaps,
  * and a write detaches the node's coordinate.
  */
-function triviaWriter(node: AnyUntypedNode, handle: EngineHandle | undefined) {
+function triviaWriter(target: object, handle: EngineHandle | undefined) {
+	const node = target as AnyUntypedNode;
 	if (handle === undefined) throw new Error(NO_ENGINE);
 	const facts: TriviaFacts = handle.current.trivia;
 	const scoped = scopedBy(handle);
@@ -181,7 +183,7 @@ function triviaWriter(node: AnyUntypedNode, handle: EngineHandle | undefined) {
 
 /** `node.$trivia.leading(...)` and `.trailing(...)`: set the position and return the node, or read it with no items. */
 export function triviaSide(
-	node: AnyUntypedNode,
+	node: object,
 	handle: EngineHandle | undefined,
 	position: 'leading' | 'trailing',
 	items: readonly unknown[]
@@ -191,7 +193,7 @@ export function triviaSide(
 
 /** `node.$trivia.inner(...)`: the first inner gap of a kind that has one. */
 export function triviaInner(
-	node: AnyUntypedNode,
+	node: object,
 	handle: EngineHandle | undefined,
 	items: readonly unknown[]
 ): AnyUntypedNode | readonly TriviaEntry[] {
@@ -200,7 +202,7 @@ export function triviaInner(
 
 /** `node.$trivia.innerAt(gap, ...)`: a named inner gap of a kind that keys its gaps. */
 export function triviaInnerAt(
-	node: AnyUntypedNode,
+	node: object,
 	handle: EngineHandle | undefined,
 	gap: string,
 	items: readonly unknown[]
