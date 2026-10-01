@@ -16,3 +16,11 @@
 # validation both add lines at the end. `union` keeps both sides' rows
 # instead of conflicting; `readHistory` orders runs by their `ts`.
 packages/tools/validation-history.jsonl merge=union
+
+# Regenerated outputs: a merge keeps this branch's copy instead of
+# conflicting, because the only correct resolution is to regenerate after
+# the merge (`pnpm run regen:all`; `pnpm run validate` for the report).
+# A stale manifest still fails verify-manifests in the pre-commit hook and
+# CI. The `regenerated` driver is defined by `pnpm run hooks:install`.
+packages/*/.sittir/generated.manifest.json merge=regenerated
+packages/tools/validation-report.json merge=regenerated
