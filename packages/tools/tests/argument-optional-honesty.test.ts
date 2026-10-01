@@ -3,13 +3,13 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createEngine } from '@sittir/common';
 import { allGrammars } from '@sittir/codegen/grammars';
-import { buildNodeMap, load } from '../src/codegen-surface.ts';
+import { compileNodeMap, load } from '../src/codegen-surface.ts';
 
 const root = resolve(import.meta.dirname, '../../..');
 
 const unbuildable = async (grammar: string): Promise<{ covered: number; failures: string[] }> => {
 	const { AbstractAssembledCompound } = await load('modelNodeMap');
-	const nodeMap = await buildNodeMap(grammar);
+	const nodeMap = await compileNodeMap(grammar);
 	const raw = (await import(pathToFileURL(resolve(root, `packages/${grammar}/src/factories/raw.ts`)).href)) as Record<string, () => unknown>;
 	const language = (await import(pathToFileURL(resolve(root, `packages/${grammar}/src/index.ts`)).href)).default;
 	const engine = (await createEngine(language)) as unknown as { parse(text: string): unknown; render(node: unknown): { toString(): string } };
@@ -37,6 +37,7 @@ const unbuildable = async (grammar: string): Promise<{ covered: number; failures
 describe.each(allGrammars())('%s: a kind that can be built with no argument builds, renders and re-parses', (grammar) => {
 	it('every argument-optional kind with slots', async () => {
 		const result = await unbuildable(grammar);
+		console.log(`covered ${grammar} ${result.covered}`);
 		expect(result.covered).toBeGreaterThan(0);
 		expect(result.failures).toEqual([]);
 	}, 240000);

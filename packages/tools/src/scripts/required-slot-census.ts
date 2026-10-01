@@ -1,7 +1,7 @@
 import { dirname, resolve } from 'node:path';
 import ts from 'typescript6';
 import { allGrammars } from '@sittir/codegen/grammars';
-import { buildNodeMap, load } from '../codegen-surface.ts';
+import { compileNodeMap, load } from '../codegen-surface.ts';
 
 const root = resolve(import.meta.dirname, '../../../..');
 
@@ -11,7 +11,7 @@ const hasUndefined = (type: ts.Type): boolean =>
 export const admittingSlots = async (grammar: string, includeLoose: boolean): Promise<{ strict: string[]; loose: string[] }> => {
 	const { AbstractAssembledCompound, isRequired, slotFilledWhenOmitted } = await load('modelNodeMap');
 	const { lexedContentSlot } = await load('emittersShared');
-	const nodeMap = await buildNodeMap(grammar);
+	const nodeMap = await compileNodeMap(grammar);
 	const configPath = resolve(root, `packages/${grammar}/tsconfig.json`);
 	const parsed = ts.parseJsonConfigFileContent(ts.readConfigFile(configPath, ts.sys.readFile).config, ts.sys, dirname(configPath));
 	const rawPath = resolve(root, `packages/${grammar}/src/factories/raw.ts`);

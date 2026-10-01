@@ -200,3 +200,13 @@ export async function buildNodeMap(grammar: string): Promise<AssembledNodeMap> {
 	const generatedIdTables = await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar);
 	return assemble(AssembleCtx.from(normalized, generatedIdTables));
 }
+
+/** The node map the emitters see: `compileGrammar`'s, with every slot reference hydrated. */
+export async function compileNodeMap(grammar: string): Promise<AssembledNodeMap> {
+	const { compileGrammar } = await load('compile');
+	const { nodeMap } = await compileGrammar({
+		package: await invoke('grammars', 'grammarPackage', grammar),
+		generatedIdTables: await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar)
+	});
+	return nodeMap;
+}
