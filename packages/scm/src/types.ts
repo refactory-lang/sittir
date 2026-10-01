@@ -587,7 +587,7 @@ export interface List {
 	};
 	readonly __slotHints__?: {
 		readonly definitions: SlotHint<NonEmptyArray<T.Definition>, false, true>;
-		readonly contents: SlotHint<NonNullable<T.List.Config>['content'], true>;
+		readonly contents: SlotHint<NonNullable<NonNullable<T.List.Config>['content']>[number][], true, true>;
 	};
 	definitions(): NonEmptyArray<Definition>;
 	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
@@ -602,7 +602,7 @@ export interface Grouping {
 	};
 	readonly __slotHints__?: {
 		readonly groupingGroups: SlotHint<NonEmptyArray<T.GroupingGroup>, false, true>;
-		readonly contents: SlotHint<NonNullable<T.Grouping.Config>['content'], true>;
+		readonly contents: SlotHint<NonNullable<NonNullable<T.Grouping.Config>['content']>[number][], true, true>;
 	};
 	groupingGroups(): NonEmptyArray<GroupingGroup>;
 	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
@@ -617,7 +617,7 @@ export interface MissingNode {
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Identifier | T.String, true>;
-		readonly contents: SlotHint<NonNullable<T.MissingNode.Config>['content'], true>;
+		readonly contents: SlotHint<NonNullable<NonNullable<T.MissingNode.Config>['content']>[number][], true, true>;
 	};
 	name(): Identifier | String | undefined;
 	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
@@ -636,7 +636,7 @@ export interface AnonymousNode {
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<NonNullable<T.AnonymousNode.Config>['name']>;
-		readonly contents: SlotHint<NonNullable<T.AnonymousNode.Config>['content'], true>;
+		readonly contents: SlotHint<NonNullable<NonNullable<T.AnonymousNode.Config>['content']>[number][], true, true>;
 	};
 	name(): String | TSKindId.Underscore;
 	contents(): readonly (Capture | TSKindId.Star | TSKindId.Plus | TSKindId.Qmark)[];
@@ -739,7 +739,7 @@ export interface NamedNodePlain {
 	readonly __slotHints__?: {
 		readonly name: SlotHint<NonNullable<T.NamedNodePlain.Config>['name']>;
 		readonly namedNodeGroup: SlotHint<T.NamedNodeGroup, true>;
-		readonly contents: SlotHint<NonNullable<T.NamedNodePlain.Config>['content'], true>;
+		readonly contents: SlotHint<NonNullable<NonNullable<T.NamedNodePlain.Config>['content']>[number][], true, true>;
 	};
 	name(): Identifier | TSKindId.Underscore;
 	namedNodeGroup(): NamedNodeGroup | undefined;
@@ -759,7 +759,11 @@ export interface NamedNodeSupertyped {
 		readonly supertype: SlotHint<T.Identifier>;
 		readonly name: SlotHint<T.ImmediateIdentifier | T.ImmediateString>;
 		readonly namedNodeGroup: SlotHint<T.NamedNodeGroup, true>;
-		readonly contents: SlotHint<NonNullable<T.NamedNodeSupertyped.Config>['content'], true>;
+		readonly contents: SlotHint<
+			NonNullable<NonNullable<T.NamedNodeSupertyped.Config>['content']>[number][],
+			true,
+			true
+		>;
 	};
 	supertype(): Identifier;
 	name(): ImmediateIdentifier | ImmediateString;

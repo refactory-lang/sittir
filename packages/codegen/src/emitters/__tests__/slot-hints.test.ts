@@ -25,9 +25,9 @@ describe('__slotHints__', () => {
 			/readonly elements: SlotHint<\s*NonEmptyArray<[^;]*>,\s*false,\s*true,\s*T\.AttributedParameter\.Config\s*>;/
 		);
 	});
-	it('a multiple slot whose storage is not verbatim is set with one array value', () => {
-		expect(interfaceBlock(rustTypes(), 'Block')).toContain(
-			"readonly statements: SlotHint<NonNullable<T.Block.Config>['statements'], true>;"
+	it('a multiple slot whose storage is not verbatim is set with rest arguments too, typed off its config field', () => {
+		expect(interfaceBlock(rustTypes(), 'Block').replace(/\s+/g, ' ')).toContain(
+			"readonly statements: SlotHint<NonNullable<NonNullable<T.Block.Config>['statements']>[number][], true, true>;"
 		);
 	});
 	it('a list owner stamps the items its list factory takes and the options it takes', () => {

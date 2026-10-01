@@ -36,7 +36,7 @@ describe('setters do not coerce', () => {
 
 	it('takes one array for a repeated slot, as the factory setter does', () => {
 		const file = rs.parse('fn a() { }\nfn b() { }\n');
-		const rebuilt = file.$with.statements(file.statements());
+		const rebuilt = file.$with.statements(...file.statements());
 		expect(rebuilt.$render()).toContain('fn a()');
 	});
 });

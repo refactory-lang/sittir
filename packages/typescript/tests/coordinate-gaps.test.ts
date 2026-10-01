@@ -13,13 +13,13 @@ describe('gaps between coordinates', () => {
 		const fn = ts.parse(source).statements()[0]!;
 		if (!ts.is.functionDeclaration(fn)) throw new Error('expected a function declaration');
 		const body = fn.body();
-		const rebuilt = body.$with.statements([
+		const rebuilt = body.$with.statements(
 			...body.statements(),
 			ts.build.expressionStatement.strict(
 				ts.build.callExpression.call.strict({ function: ts.build.identifier('d'), arguments: ts.build.arguments.strict() }),
 				{ terminator: ts.kinds.Semi }
 			)
-		]);
+		);
 		// The blank lines are the claim; the indent width is the format's.
 		const text = rebuilt.$render().replace(/\n[ \t]+/g, '\n');
 		expect(text).toContain('a();\n\nb();\n\nc();\n\nd();');
