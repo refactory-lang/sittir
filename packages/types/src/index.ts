@@ -21,7 +21,7 @@ export type {
 	TemplateRuleObject,
 	RulesConfig,
 	Edit,
-	ByteRange,
+	StringIndexRange,
 	Position,
 	CSTNode,
 	FormatBoundary,
@@ -282,7 +282,7 @@ type MaxDepth = 3;
  *  wrapper. */
 type MaxBareHops = 3;
 
-import type { ByteRange } from './core-types.ts';
+import type { StringIndexRange } from './core-types.ts';
 
 // ---------------------------------------------------------------------------
 // KindOf<T> — extract type string from a typed node
@@ -609,7 +609,7 @@ export interface AnyTreeNodeOf {
 	field(name: string): AnyTreeNodeOf | null;
 	text(): string;
 	children(): AnyTreeNodeOf[];
-	range(): ByteRange;
+	range(): StringIndexRange;
 	isNamed(): boolean;
 }
 

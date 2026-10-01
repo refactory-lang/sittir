@@ -2250,4 +2250,4 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	}
 }
 
-const SITTIR_TYPES_IMPORT_CANDIDATES = ['AdmitBound', 'AnyUntypedNode', 'ByteRange', 'ConfigOf', 'Edit', 'LooseValue', 'NonEmptyArray', 'WidenNumeric'];
+const SITTIR_TYPES_IMPORT_CANDIDATES = ['AdmitBound', 'AnyUntypedNode', 'StringIndexRange', 'ConfigOf', 'Edit', 'LooseValue', 'NonEmptyArray', 'WidenNumeric'];

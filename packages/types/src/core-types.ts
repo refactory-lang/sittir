@@ -136,10 +136,16 @@ export interface AnyUntypedNode {
 
 	/** Render this node to source text. Non-enumerable on factory/wrap output. */
 	$render?: () => string;
-	/** Create an Edit replacing a byte range with this node's rendered text. */
-	$toEdit?: (startOrRange: number | ByteRange, endPos?: number) => Edit;
-	/** Create an Edit replacing the target tree node's range with this node's rendered text. */
-	$replace?: (target: { range(): ByteRange }) => Edit;
+	/**
+	 * Create an Edit replacing a range with this node's rendered text: byte
+	 * offsets as two numbers, or a range. A range's `index` is a string index (UTF-16 code units, as ast-grep reports it) while an `Edit` counts bytes, so the edit lands in the wrong place when non-ASCII text precedes the range.
+	 */
+	$toEdit?: (startOrRange: number | StringIndexRange, endPos?: number) => Edit;
+	/**
+	 * Create an Edit replacing the target tree node's range with this node's
+	 * rendered text. A range's `index` is a string index (UTF-16 code units, as ast-grep reports it) while an `Edit` counts bytes, so the edit lands in the wrong place when non-ASCII text precedes the range.
+	 */
+	$replace?: (target: { range(): StringIndexRange }) => Edit;
 	/** Trivia metadata (leading / trailing comments) attached via `$trivia()`. */
 	$_trivia?: NodeTrivia;
 	/** Attach trivia to this node. Rest args → leading; object form → as-is. Returns `this`.
@@ -248,10 +254,11 @@ export interface Edit {
 }
 
 /**
- * A range with byte offsets — compatible with ast-grep's Range.
- * Accepts any object with start.index and end.index (SgNode.range() shape).
+ * A range whose positions are string indices (UTF-16 code units), the shape
+ * ast-grep's `SgNode.range()` returns: any object with `start.index` and
+ * `end.index`. These are not the byte offsets an `Edit` and a `$span` count.
  */
-export interface ByteRange {
+export interface StringIndexRange {
 	start: { index: number };
 	end: { index: number };
 }
@@ -361,7 +368,7 @@ export interface FormatRecord {
 
 export interface ReplaceTarget<T extends string = string> {
 	readonly type: T;
-	range(): ByteRange;
+	range(): StringIndexRange;
 }
 
 /**

@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, ByteRange, Edit, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, StringIndexRange, Edit, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries, type TriviaSides } from './trivia.ts';
 import { detachCoordinate } from './transport-data.ts';
 import { Source } from './source.ts';
@@ -19,8 +19,8 @@ export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
  */
 interface WithMethodsRuntime<T extends object = AnyUntypedNode> {
 	$render(): string;
-	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
-	$replace(target: { range(): ByteRange }): Edit;
+	$toEdit(startOrRange: number | StringIndexRange, endPos?: number): Edit;
+	$replace(target: { range(): StringIndexRange }): Edit;
 	$trivia: TriviaSetterRuntime<T & WithMethodsRuntime<T>>;
 }
 
@@ -62,10 +62,10 @@ export function withMethods<T extends AnyUntypedNode>(node: T): T & WithMethodsR
 		$render(this: AnyUntypedNode): string {
 			return renderText(this);
 		},
-		$toEdit(this: AnyUntypedNode, startOrRange: number | ByteRange, endPos?: number): Edit {
+		$toEdit(this: AnyUntypedNode, startOrRange: number | StringIndexRange, endPos?: number): Edit {
 			return toEditAt(renderText(this), startOrRange, endPos);
 		},
-		$replace(this: AnyUntypedNode, target: { range(): ByteRange }): Edit {
+		$replace(this: AnyUntypedNode, target: { range(): StringIndexRange }): Edit {
 			return toEditAt(renderText(this), target.range());
 		}
 	});

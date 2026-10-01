@@ -1,5 +1,5 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type { AnyUntypedNode, AnyTreeNode, ByteRange, Edit, FormatRecord, KindOf, Renderable, ReplaceTarget } from '@sittir/types';
+import type { AnyUntypedNode, AnyTreeNode, StringIndexRange, Edit, FormatRecord, KindOf, Renderable, ReplaceTarget } from '@sittir/types';
 import { rebaseTrivia } from './format.ts';
 import { byteLength, sourceSpans } from './span.ts';
 
@@ -10,11 +10,13 @@ export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
 // ---------------------------------------------------------------------------
 
 /**
- * The Edit that replaces `startOrRange` (a `ByteRange`, or a start with
- * `end`) with `insertedText`. Positions are validated here, once, for every
- * caller that turns a rendered node into an edit.
+ * The Edit that replaces `startOrRange` (a `StringIndexRange`, or a byte start
+ * with a byte `end`) with `insertedText`. Positions are validated here, once,
+ * for every caller that turns a rendered node into an edit.
+ *
+ * A range's `index` is a string index (UTF-16 code units, as ast-grep reports it) while an `Edit` counts bytes, so the edit lands in the wrong place when non-ASCII text precedes the range.
  */
-export function toEditAt(insertedText: string, startOrRange: number | ByteRange, end?: number): Edit {
+export function toEditAt(insertedText: string, startOrRange: number | StringIndexRange, end?: number): Edit {
 	if (typeof startOrRange === 'number') {
 		if (typeof end !== 'number') {
 			throw new Error('endPos is required when startPos is a number');
@@ -41,6 +43,10 @@ export function toEditAt(insertedText: string, startOrRange: number | ByteRange,
 /**
  * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
  * $replace method. Not yet wired into generated output; scaffolding only.
+ *
+ * A range's `index` is a string index (UTF-16 code units, as ast-grep reports
+ * it) while an `Edit` counts bytes, so the edit lands in the wrong place when
+ * non-ASCII text precedes the range.
  */
 export function replace(target: ReplaceTarget, replacement: AnyUntypedNode & Renderable): Edit {
 	const range = target.range();
