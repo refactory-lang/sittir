@@ -185,7 +185,7 @@ function resolveSlotHydrateExprs(
 		const allowedArg =
 			config.allowedKinds && config.allowedKinds.length > 0 ? JSON.stringify(config.allowedKinds) : 'undefined';
 		return {
-			storeExpr: `splitElidedWrapSlot(${rawStoreExpr}, ${config.separatorIdsExpr}, ${allowedArg}, _order, ${JSON.stringify(slotOrderName(slot))})`,
+			storeExpr: `storeExpanded(splitElidedWrapSlot(${rawStoreExpr}, ${config.separatorIdsExpr}, ${allowedArg}, _order, ${JSON.stringify(slotOrderName(slot))}), tree)`,
 			accessorBody: resolveSlotAccessorBody(slot, `${config.elemType} | undefined`)
 		};
 	}
@@ -248,7 +248,7 @@ function resolveSlotHydrateExprs(
 			? `, ${textIdMapExpr ?? 'undefined'}, ${altIdMapExpr ?? 'undefined'}, ${ownSymbolsExpr}`
 			: projectionArgs;
 		return {
-			storeExpr: mixedArgs ? `projectMixedEnumStorage(${normalizedStoreExpr}${mixedArgs})` : normalizedStoreExpr,
+			storeExpr: `storeExpanded(${mixedArgs ? `projectMixedEnumStorage(${normalizedStoreExpr}${mixedArgs})` : normalizedStoreExpr}, tree)`,
 			accessorBody: resolveSlotAccessorBody(
 				slot,
 				slot.arity === 'many' ? config.elemType : config.required ? config.elemType : `${config.elemType} | undefined`
@@ -256,7 +256,7 @@ function resolveSlotHydrateExprs(
 		};
 	}
 	return {
-		storeExpr: normalizedStoreExpr,
+		storeExpr: `storeExpanded(${normalizedStoreExpr}, tree)`,
 		accessorBody: resolveSlotAccessorBody(
 			slot,
 			slot.arity === 'many' ? config.elemType : config.required ? config.elemType : `${config.elemType} | undefined`
@@ -1227,10 +1227,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				: '  if (isStub(e)) return readNode(tree, e.$parentHandle, e.$childIndex, _LIST_OWNER_KINDS.has(e.$type as number) ? 2 : undefined) as unknown as T;',
 			'  return entry;',
 			'}',
-			'// Resolve a CHILD position. Beyond the stub read, node data a deep',
-			'// read already expanded carries no coordinates to re-read by (and',
-			'// re-reading would replace the expansion with a shallow one), so the',
-			'// wrap layer adds its methods in place instead.',
+			'// Resolve a CHILD position. A stub reads one more level. A child a',
+			'// read already expanded was typed when its parent was wrapped',
+			'// (`storeExpanded`), so it is returned as stored.',
 			...(this.#kindEntries
 				? [
 						'type ParsedOfData<D> = D extends { readonly $type: infer Id }',
@@ -1243,8 +1242,27 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'function hydrateChild<T>(entry: T, tree: TreeHandle): ParsedOfData<T> {',
 			'  const resolved = hydrateSelf(entry, tree);',
 			'  const e = resolved as unknown as _UntypedNode;',
-			'  if (resolved === entry && typeof e?.$type === "number") return wrapNode(e, tree) as unknown as ParsedOfData<T>;',
+			'  if (resolved === entry && typeof e?.$type === "number" && !_isTyped(e)) return wrapNode(e, tree) as unknown as ParsedOfData<T>;',
 			'  return resolved as unknown as ParsedOfData<T>;',
+			'}',
+			'function _isTyped(node: _UntypedNode): boolean {',
+			'  return typeof (node as { readonly $render?: unknown }).$render === "function";',
+			'}',
+			'// Store a slot value in model shape: a child a read already expanded',
+			'// is typed here, with its parent, so storage has one shape at every',
+			'// level a node can be reached from. A stub stays a stub, typed when',
+			'// it is hydrated; a node with no slots is stored as read, which',
+			'// already is its model shape.',
+			'function storeExpanded<T>(value: T, tree: TreeHandle): T {',
+			'  if (Array.isArray(value)) return value.map(entry => storeExpanded(entry, tree)) as unknown as T;',
+			'  const e = value as unknown as _UntypedNode | null | undefined;',
+			'  if (e === null || typeof e !== "object" || typeof e.$type !== "number") return value;',
+			'  if (isStub(e) || _isTyped(e) || !_holdsSlots(e)) return value;',
+			'  return wrapNode(e, tree) as unknown as T;',
+			'}',
+			'function _holdsSlots(node: _UntypedNode): boolean {',
+			'  for (const key in node) if (key.charCodeAt(0) === 95 || key === "$other") return true;',
+			'  return false;',
 			'}',
 			'function hydrateChildren<T>(entries: readonly T[] | undefined, tree: TreeHandle): ParsedOfData<T>[] {',
 			'  if (!entries) return [];',

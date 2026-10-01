@@ -13517,6 +13517,8 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 
 `readUntypedNode` and `readNode` take an optional level count, which reaches the native read. `hydrateSelf` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
 
+Every per-kind wrap function stores its node-valued slots through `storeExpanded` (the store expression `resolveSlotHydrateExprs` builds): a child the read already expanded is typed there, with its parent; a stub stays a stub until an accessor hydrates it, and a node with no slots (a text leaf, a token) is stored as read, since that already is its model shape. Stored data therefore has one shape, the model's, at every level a node can be reached from, whatever depth it was read at: a lone repeated child is a one-element array and an untagged child sits under its model slot all the way down, so a node that crosses to the render as its slots needs no reshaping on the way. `hydrateChild` returns a stored typed child as it is (`_isTyped`: it carries the methods `withMethods` attaches) and types only a child that reached it untyped.
+
 #### body
 
 ```text
