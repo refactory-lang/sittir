@@ -1,6 +1,6 @@
 {
   "grammar": "regex",
-  "source_hash": "7683e97244087fd38637c0ca64110b64f97fd7041a5d9e4032aa93be01b0e595",
+  "source_hash": "5ab2d6860d753592eadd8e89355a0b85444b951b44207c1752aadf1ff0d40474",
   "files": {
     "packages/regex/.sittir/grammar-diagnostics.json": "6d151bfbe0d649cedbe98e1cb9e21414dfb4cac174b28277a7d6c0da779f692f",
     "packages/regex/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -45,9 +45,5 @@
     "rust/crates/sittir-regex/src/render/mod.rs": "522bb214e1012dc3fe9e8cf30819170956eeb97452c5694fbf7b07d199f13eed",
     "rust/crates/sittir-regex/src/render/options.rs": "915f39f70bc4a8719f8743ea16880d0cc90341e77e3e82de7440d927566f7434",
     "rust/crates/sittir-regex/src/render/transport.rs": "2224c5fba811e2e62e4139fc4042ae4c2364bcfe7d63271ad8e46fff4009d844"
-  },
-  "host_files": {
-    "rust/crates/sittir-regex/sittir-regex.darwin-arm64.node": "freshness-checked",
-    "packages/regex/native/sittir-regex.darwin-arm64.node": "freshness-checked"
   }
 }

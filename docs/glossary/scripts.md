@@ -275,21 +275,6 @@ The repo-relative paths git tracks or would track: `git ls-files --cached --othe
 	 */
 ```
 
-### `packages/codegen/src/scripts/generated-manifest.ts::host_files`
-
-```text
-/**
-	 * Per-platform napi binaries (`*.node`), recorded as the
-	 * {@link HOST_BINARY_SENTINEL} sentinel — NOT content-hashed. Binary
-	 * bytes vary per rebuild (and per machine), so content hashes produced
-	 * false MODIFIED positives on every locally rebuilt binary. Verification
-	 * instead checks FRESHNESS on the current host: the binary must be newer
-	 * than the crate's generated `src/**` + `templates/**` inputs (see
-	 * `native-binary-freshness.ts`). Missing-locally is still tolerated
-	 * (binaries are per-platform).
-	 */
-```
-
 ### `packages/codegen/src/scripts/generated-manifest.ts::stale`
 
 ```text
@@ -334,12 +319,6 @@ The repo-relative paths git tracks or would track: `git ls-files --cached --othe
 
 ```text
 /** Emitter buckets, in display order. */
-```
-
-### `packages/codegen/src/scripts/generated-manifest.ts::HOST_BINARY_SENTINEL`
-
-```text
-/** Sentinel value for `host_files` entries — see {@link Manifest.host_files}. */
 ```
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::cachedCodegenHash`
@@ -448,20 +427,6 @@ reconciliation gate. Three clusters, one per root cause:
  */
 ```
 
-### `packages/codegen/src/scripts/generated-manifest.ts::hostFilesFor`
-
-#### body
-
-```text
-// Platform-specific build artifacts (napi-emitted compiled binaries).
-// Tracked in the `host_files` section: hashed and verified, but
-// missing-locally is tolerated because different developers / CI runners
-// produce different per-platform binaries (`*.darwin-arm64.node`,
-// `*.linux-x64.node`, etc.). The manifest will accumulate every binary
-// every developer commits; verification only enforces matches for the
-// binaries that exist on the current host.
-```
-
 ### `packages/codegen/src/scripts/generated-manifest.ts::codegenSourceHash`
 
 #### body
@@ -481,15 +446,7 @@ reconciliation gate. Three clusters, one per root cause:
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::writeManifestForGrammar`
 
-#### body
-
-```text
-// Preserve previously-recorded host_files entries from other platforms,
-// then overwrite/add this host's binaries. This way commits from a
-// darwin-arm64 dev don't wipe a linux-x64 binary previously committed
-// by another dev. Entries carry the freshness sentinel, not a content
-// hash — see the Manifest.host_files docs.
-```
+Writes a grammar's manifest: its name, the source hash, and a content hash per generated file git tracks or would track. Nothing in it depends on the machine that ran `gen`: native bindings (`*.node`) are ignored by git and so are not listed, and their staleness is a local check against the crate's sources (`native-binary-freshness.ts`), not a manifest entry. The same sources therefore produce the same manifest on every platform.
 
 ### `packages/codegen/src/scripts/generated-manifest.ts::verifyManifestForGrammar`
 
@@ -505,11 +462,10 @@ reconciliation gate. Three clusters, one per root cause:
 #### body
 
 ```text
-// Platform-specific `host_files`: FRESHNESS check, not content hashes
-// (see Manifest.host_files docs). Missing binaries are silently
-// tolerated (per-platform); present-but-stale binaries fail — they
-// would validate stale code. Checks ALL binaries on this host, not just
-// manifest-listed ones, so a never-committed local build is gated too.
+// Native bindings on this host: a FRESHNESS check, not content hashes.
+// Missing binaries are silently tolerated (per-platform); present-but-stale
+// binaries fail — they would validate stale code. Checks every binding on
+// this host, read from the directory, so a local build is gated too.
 ```
 
 ### `packages/codegen/src/scripts/native-binary-freshness.ts::module`

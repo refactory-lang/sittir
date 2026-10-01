@@ -46,14 +46,6 @@ export function worktreeSource(): ManifestSource {
 	return cachedWorktreeSource;
 }
 
-function hostFilesFor(grammar: GrammarName, src: ManifestSource): string[] {
-	const bindingDir = join(src.root, nativeBindingRelDir(grammar));
-	if (!existsSync(bindingDir)) return [];
-	return readdirSync(bindingDir)
-		.filter((name) => name.endsWith('.node'))
-		.map((name) => `${nativeBindingRelDir(grammar)}/${name}`);
-}
-
 function manifestPath(grammar: GrammarName, src: ManifestSource): string {
 	return join(src.root, `packages/${grammar}/.sittir/${MANIFEST_FILENAME}`);
 }
@@ -116,10 +108,7 @@ interface Manifest {
 	grammar: GrammarName;
 	source_hash: string;
 	files: Record<string, string>;
-	host_files?: Record<string, string>;
 }
-
-const HOST_BINARY_SENTINEL = 'freshness-checked';
 
 function sourceInputsFor(grammar: GrammarName, src: ManifestSource): string[] {
 	const dir = join(src.root, relative(REPO_ROOT, grammarPackageDir(grammar)));
@@ -172,31 +161,14 @@ export function writeManifestForGrammar(grammar: GrammarName): void {
 		files[rel] = sha256(f);
 	}
 
-	const existing = readExistingManifest(grammar, src);
-	const host_files: Record<string, string> = { ...existing?.host_files };
-	for (const rel of hostFilesFor(grammar, src)) {
-		host_files[rel] = HOST_BINARY_SENTINEL;
-	}
-
 	const manifest: Manifest = {
 		grammar,
 		source_hash: computeSourceHash(grammar, src),
-		files,
-		...(Object.keys(host_files).length > 0 ? { host_files } : {})
+		files
 	};
 	const path = manifestPath(grammar, src);
 	mkdirSync(dirname(path), { recursive: true });
 	writeFileSync(path, JSON.stringify(manifest, null, 2) + '\n');
-}
-
-function readExistingManifest(grammar: GrammarName, src: ManifestSource): Manifest | null {
-	const path = manifestPath(grammar, src);
-	if (!existsSync(path)) return null;
-	try {
-		return JSON.parse(readFileSync(path, 'utf-8')) as Manifest;
-	} catch {
-		return null;
-	}
 }
 
 export interface VerifyResult {
