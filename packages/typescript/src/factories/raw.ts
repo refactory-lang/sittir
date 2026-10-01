@@ -6,6 +6,7 @@ import { TSKindId } from '../types.js';
 import type { AdmitBound, ConfigOf, NonEmptyArray, WidenNumeric } from '@sittir/types';
 import {
 	withAccessors,
+	describeValue,
 	isNodeOfKind,
 	admitAliasContent,
 	coerceBooleanKeywordStorage,
@@ -102,7 +103,7 @@ export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.
 export function buildHashBangLine(value: AdmitBound<string, T.AdmittedNodes>): T.HashBangLine.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildHashBangLine_content.test(_content))
-		throw new Error(`hash_bang_line.content: text does not match pattern: ${_content}`);
+		throw new Error(`hash_bang_line.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -2940,7 +2941,7 @@ export function buildSequenceExpression(
 export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDoubleStringFragment.Bound {
 	if (text.length === 0) throw new Error(`unescaped_double_string_fragment: text must be non-empty`);
 	if (!_leafRe_buildUnescapedDoubleStringFragment.test(text))
-		throw new Error(`unescaped_double_string_fragment: text does not match pattern: ${text}`);
+		throw new Error(`unescaped_double_string_fragment: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.UnescapedDoubleStringFragment as const,
 		$source: 2 as const,
@@ -2952,7 +2953,7 @@ export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDou
 export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSingleStringFragment.Bound {
 	if (text.length === 0) throw new Error(`unescaped_single_string_fragment: text must be non-empty`);
 	if (!_leafRe_buildUnescapedSingleStringFragment.test(text))
-		throw new Error(`unescaped_single_string_fragment: text does not match pattern: ${text}`);
+		throw new Error(`unescaped_single_string_fragment: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.UnescapedSingleStringFragment as const,
 		$source: 2 as const,
@@ -2964,7 +2965,7 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 export function buildEscapeSequence(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequence.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildEscapeSequence_content.test(_content))
-		throw new Error(`escape_sequence.content: text does not match pattern: ${_content}`);
+		throw new Error(`escape_sequence.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -3058,7 +3059,8 @@ export function buildRegex(config: T.Regex.Config): T.Regex.Bound {
 
 export function buildRegexPattern(text: string): T.RegexPattern.Bound {
 	if (text.length === 0) throw new Error(`regex_pattern: text must be non-empty`);
-	if (!_leafRe_buildRegexPattern.test(text)) throw new Error(`regex_pattern: text does not match pattern: ${text}`);
+	if (!_leafRe_buildRegexPattern.test(text))
+		throw new Error(`regex_pattern: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.RegexPattern as const,
 		$source: 2 as const,
@@ -3069,7 +3071,8 @@ export function buildRegexPattern(text: string): T.RegexPattern.Bound {
 
 export function buildRegexFlags(text: string): T.RegexFlags.Bound {
 	if (text.length === 0) throw new Error(`regex_flags: text must be non-empty`);
-	if (!_leafRe_buildRegexFlags.test(text)) throw new Error(`regex_flags: text does not match pattern: ${text}`);
+	if (!_leafRe_buildRegexFlags.test(text))
+		throw new Error(`regex_flags: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.RegexFlags as const,
 		$source: 2 as const,
@@ -3080,7 +3083,8 @@ export function buildRegexFlags(text: string): T.RegexFlags.Bound {
 
 export function buildIdentifier(text: string): T.Identifier.Bound {
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
-	if (!_leafRe_buildIdentifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
+	if (!_leafRe_buildIdentifier.test(text))
+		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.Identifier as const,
 		$source: 2 as const,
@@ -3094,7 +3098,7 @@ export function buildPrivatePropertyIdentifier(
 ): T.PrivatePropertyIdentifier.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildPrivatePropertyIdentifier_content.test(_content))
-		throw new Error(`private_property_identifier.content: text does not match pattern: ${_content}`);
+		throw new Error(`private_property_identifier.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8105,7 +8109,7 @@ export function buildExportStatementEqualsExport(
 export function buildCommentLine(value: AdmitBound<string, T.AdmittedNodes>): T.CommentLine.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildCommentLine_content.test(_content))
-		throw new Error(`comment_line.content: text does not match pattern: ${_content}`);
+		throw new Error(`comment_line.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8127,7 +8131,7 @@ export function buildCommentLine(value: AdmitBound<string, T.AdmittedNodes>): T.
 export function buildCommentBlock(value: AdmitBound<string, T.AdmittedNodes>): T.CommentBlock.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildCommentBlock_content.test(_content))
-		throw new Error(`comment_block.content: text does not match pattern: ${_content}`);
+		throw new Error(`comment_block.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8182,10 +8186,10 @@ export function buildNumberHex(
 ): T.NumberHex.Bound {
 	const _prefix = options?.prefix ?? '0x';
 	if (_prefix !== undefined && !_slotRe_buildNumberHex_prefix.test(_prefix))
-		throw new Error(`number_hex.prefix: text does not match pattern: ${_prefix}`);
+		throw new Error(`number_hex.prefix: text does not match pattern: ${describeValue(_prefix)}`);
 	const _content = numberText(16, '', value);
 	if (_content !== undefined && !_slotRe_buildNumberHex_content.test(_content))
-		throw new Error(`number_hex.content: text does not match pattern: ${_content}`);
+		throw new Error(`number_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8216,19 +8220,19 @@ export function buildNumberFloatPoint(
 ): T.NumberFloatPoint.Bound {
 	const _integer = numberText(10, '', config.integer);
 	if (_integer !== undefined && !_slotRe_buildNumberFloatPoint_integer.test(_integer))
-		throw new Error(`number_float_point.integer: text does not match pattern: ${_integer}`);
+		throw new Error(`number_float_point.integer: text does not match pattern: ${describeValue(_integer)}`);
 	const _fraction = numberText(10, '', config.fraction);
 	if (_fraction !== undefined && !_slotRe_buildNumberFloatPoint_fraction.test(_fraction))
-		throw new Error(`number_float_point.fraction: text does not match pattern: ${_fraction}`);
+		throw new Error(`number_float_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
 	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && !_slotRe_buildNumberFloatPoint_marker.test(_marker))
-		throw new Error(`number_float_point.marker: text does not match pattern: ${_marker}`);
+		throw new Error(`number_float_point.marker: text does not match pattern: ${describeValue(_marker)}`);
 	const _sign = config.sign;
 	if (_sign !== undefined && !_slotRe_buildNumberFloatPoint_sign.test(_sign))
-		throw new Error(`number_float_point.sign: text does not match pattern: ${_sign}`);
+		throw new Error(`number_float_point.sign: text does not match pattern: ${describeValue(_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && !_slotRe_buildNumberFloatPoint_exponent.test(_exponent))
-		throw new Error(`number_float_point.exponent: text does not match pattern: ${_exponent}`);
+		throw new Error(`number_float_point.exponent: text does not match pattern: ${describeValue(_exponent)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8267,16 +8271,16 @@ export function buildNumberFloatLeadingPoint(
 ): T.NumberFloatLeadingPoint.Bound {
 	const _fraction = numberText(10, '', config.fraction);
 	if (_fraction !== undefined && !_slotRe_buildNumberFloatLeadingPoint_fraction.test(_fraction))
-		throw new Error(`number_float_leading_point.fraction: text does not match pattern: ${_fraction}`);
+		throw new Error(`number_float_leading_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
 	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && !_slotRe_buildNumberFloatLeadingPoint_marker.test(_marker))
-		throw new Error(`number_float_leading_point.marker: text does not match pattern: ${_marker}`);
+		throw new Error(`number_float_leading_point.marker: text does not match pattern: ${describeValue(_marker)}`);
 	const _sign = config.sign;
 	if (_sign !== undefined && !_slotRe_buildNumberFloatLeadingPoint_sign.test(_sign))
-		throw new Error(`number_float_leading_point.sign: text does not match pattern: ${_sign}`);
+		throw new Error(`number_float_leading_point.sign: text does not match pattern: ${describeValue(_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && !_slotRe_buildNumberFloatLeadingPoint_exponent.test(_exponent))
-		throw new Error(`number_float_leading_point.exponent: text does not match pattern: ${_exponent}`);
+		throw new Error(`number_float_leading_point.exponent: text does not match pattern: ${describeValue(_exponent)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8312,16 +8316,16 @@ export function buildNumberFloatScientific(
 ): T.NumberFloatScientific.Bound {
 	const _integer = numberText(10, '', config.integer);
 	if (_integer !== undefined && !_slotRe_buildNumberFloatScientific_integer.test(_integer))
-		throw new Error(`number_float_scientific.integer: text does not match pattern: ${_integer}`);
+		throw new Error(`number_float_scientific.integer: text does not match pattern: ${describeValue(_integer)}`);
 	const _marker = options?.marker ?? 'e';
 	if (_marker !== undefined && !_slotRe_buildNumberFloatScientific_marker.test(_marker))
-		throw new Error(`number_float_scientific.marker: text does not match pattern: ${_marker}`);
+		throw new Error(`number_float_scientific.marker: text does not match pattern: ${describeValue(_marker)}`);
 	const _sign = config.sign;
 	if (_sign !== undefined && !_slotRe_buildNumberFloatScientific_sign.test(_sign))
-		throw new Error(`number_float_scientific.sign: text does not match pattern: ${_sign}`);
+		throw new Error(`number_float_scientific.sign: text does not match pattern: ${describeValue(_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
 	if (_exponent !== undefined && !_slotRe_buildNumberFloatScientific_exponent.test(_exponent))
-		throw new Error(`number_float_scientific.exponent: text does not match pattern: ${_exponent}`);
+		throw new Error(`number_float_scientific.exponent: text does not match pattern: ${describeValue(_exponent)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8354,7 +8358,8 @@ export function buildNumberFloatScientific(
 export function buildNumberDecimal(text: string | number | bigint): T.NumberDecimal.Bound {
 	text = numberText(10, '', text);
 	if (text.length === 0) throw new Error(`number_decimal: text must be non-empty`);
-	if (!_leafRe_buildNumberDecimal.test(text)) throw new Error(`number_decimal: text does not match pattern: ${text}`);
+	if (!_leafRe_buildNumberDecimal.test(text))
+		throw new Error(`number_decimal: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.NumberDecimal as const,
 		$source: 2 as const,
@@ -8369,10 +8374,10 @@ export function buildNumberBinary(
 ): T.NumberBinary.Bound {
 	const _prefix = options?.prefix ?? '0b';
 	if (_prefix !== undefined && !_slotRe_buildNumberBinary_prefix.test(_prefix))
-		throw new Error(`number_binary.prefix: text does not match pattern: ${_prefix}`);
+		throw new Error(`number_binary.prefix: text does not match pattern: ${describeValue(_prefix)}`);
 	const _content = numberText(2, '', value);
 	if (_content !== undefined && !_slotRe_buildNumberBinary_content.test(_content))
-		throw new Error(`number_binary.content: text does not match pattern: ${_content}`);
+		throw new Error(`number_binary.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8400,10 +8405,10 @@ export function buildNumberOctal(
 ): T.NumberOctal.Bound {
 	const _prefix = options?.prefix ?? '0o';
 	if (_prefix !== undefined && !_slotRe_buildNumberOctal_prefix.test(_prefix))
-		throw new Error(`number_octal.prefix: text does not match pattern: ${_prefix}`);
+		throw new Error(`number_octal.prefix: text does not match pattern: ${describeValue(_prefix)}`);
 	const _content = numberText(8, '', value);
 	if (_content !== undefined && !_slotRe_buildNumberOctal_content.test(_content))
-		throw new Error(`number_octal.content: text does not match pattern: ${_content}`);
+		throw new Error(`number_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8430,7 +8435,7 @@ export function buildNumberBigintHex(
 ): T.NumberBigintHex.Bound {
 	const _content = numberText(16, '0x', value);
 	if (_content !== undefined && !_slotRe_buildNumberBigintHex_content.test(_content))
-		throw new Error(`number_bigint_hex.content: text does not match pattern: ${_content}`);
+		throw new Error(`number_bigint_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8454,7 +8459,7 @@ export function buildNumberBigintBinary(
 ): T.NumberBigintBinary.Bound {
 	const _content = numberText(2, '0b', value);
 	if (_content !== undefined && !_slotRe_buildNumberBigintBinary_content.test(_content))
-		throw new Error(`number_bigint_binary.content: text does not match pattern: ${_content}`);
+		throw new Error(`number_bigint_binary.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8478,7 +8483,7 @@ export function buildNumberBigintOctal(
 ): T.NumberBigintOctal.Bound {
 	const _content = numberText(8, '0o', value);
 	if (_content !== undefined && !_slotRe_buildNumberBigintOctal_content.test(_content))
-		throw new Error(`number_bigint_octal.content: text does not match pattern: ${_content}`);
+		throw new Error(`number_bigint_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8502,7 +8507,7 @@ export function buildNumberBigintDecimal(
 ): T.NumberBigintDecimal.Bound {
 	const _content = numberText(10, '', value);
 	if (_content !== undefined && !_slotRe_buildNumberBigintDecimal_content.test(_content))
-		throw new Error(`number_bigint_decimal.content: text does not match pattern: ${_content}`);
+		throw new Error(`number_bigint_decimal.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -9939,7 +9944,8 @@ export function buildForHeaderLetConstKind(config: T.ForHeaderLetConstKind.Confi
 
 export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 	if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
-	if (!_leafRe_buildHtmlComment.test(text)) throw new Error(`html_comment: text does not match pattern: ${text}`);
+	if (!_leafRe_buildHtmlComment.test(text))
+		throw new Error(`html_comment: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.HtmlComment as const,
 		$source: 2 as const,
@@ -9950,7 +9956,8 @@ export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 
 export function buildJsxText(text: string): T.JsxText.Bound {
 	if (text.length === 0) throw new Error(`jsx_text: text must be non-empty`);
-	if (!_leafRe_buildJsxText.test(text)) throw new Error(`jsx_text: text does not match pattern: ${text}`);
+	if (!_leafRe_buildJsxText.test(text))
+		throw new Error(`jsx_text: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.JsxText as const,
 		$source: 2 as const,
@@ -9961,7 +9968,8 @@ export function buildJsxText(text: string): T.JsxText.Bound {
 
 export function buildTemplateChars(text: string): T.TemplateChars.Bound {
 	if (text.length === 0) throw new Error(`_template_chars: text must be non-empty`);
-	if (!_leafRe_buildTemplateChars.test(text)) throw new Error(`_template_chars: text does not match pattern: ${text}`);
+	if (!_leafRe_buildTemplateChars.test(text))
+		throw new Error(`_template_chars: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.TemplateChars as const,
 		$source: 2 as const,

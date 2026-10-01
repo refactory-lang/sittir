@@ -5,6 +5,7 @@ import { TSKindId } from '../types.js';
 import type { AdmitBound } from '@sittir/types';
 import {
 	withAccessors,
+	describeValue,
 	admitAliasContent,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
@@ -192,7 +193,7 @@ export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): 
 export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
 	if (text.length === 0) throw new Error(`pattern_character: text must be non-empty`);
 	if (!_leafRe_buildPatternCharacter.test(text))
-		throw new Error(`pattern_character: text does not match pattern: ${text}`);
+		throw new Error(`pattern_character: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.PatternCharacter as const,
 		$source: 2 as const,
@@ -285,7 +286,7 @@ function _buildPosixCharacterClass(value: AdmitBound<T.PosixClassName, T.Admitte
 export function buildPosixClassName(text: string): T.PosixClassName.Bound {
 	if (text.length === 0) throw new Error(`posix_class_name: text must be non-empty`);
 	if (!_leafRe_buildPosixClassName.test(text))
-		throw new Error(`posix_class_name: text does not match pattern: ${text}`);
+		throw new Error(`posix_class_name: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.PosixClassName as const,
 		$source: 2 as const,
@@ -328,7 +329,8 @@ export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound
 
 export function buildClassCharacter(text: string): T.ClassCharacter.Bound {
 	if (text.length === 0) throw new Error(`class_character: text must be non-empty`);
-	if (!_leafRe_buildClassCharacter.test(text)) throw new Error(`class_character: text does not match pattern: ${text}`);
+	if (!_leafRe_buildClassCharacter.test(text))
+		throw new Error(`class_character: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.ClassCharacter as const,
 		$source: 2 as const,
@@ -449,7 +451,7 @@ function _buildNonCapturingGroup(value: AdmitBound<T.Pattern, T.AdmittedNodes>):
 
 export function buildFlags(text: string): T.Flags.Bound {
 	if (text.length === 0) throw new Error(`flags: text must be non-empty`);
-	if (!_leafRe_buildFlags.test(text)) throw new Error(`flags: text does not match pattern: ${text}`);
+	if (!_leafRe_buildFlags.test(text)) throw new Error(`flags: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.Flags as const,
 		$source: 2 as const,
@@ -460,7 +462,8 @@ export function buildFlags(text: string): T.Flags.Bound {
 
 export function buildZeroOrMore(text: string): T.ZeroOrMore.Bound {
 	if (text.length === 0) throw new Error(`zero_or_more: text must be non-empty`);
-	if (!_leafRe_buildZeroOrMore.test(text)) throw new Error(`zero_or_more: text does not match pattern: ${text}`);
+	if (!_leafRe_buildZeroOrMore.test(text))
+		throw new Error(`zero_or_more: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.ZeroOrMore as const,
 		$source: 2 as const,
@@ -471,7 +474,8 @@ export function buildZeroOrMore(text: string): T.ZeroOrMore.Bound {
 
 export function buildOneOrMore(text: string): T.OneOrMore.Bound {
 	if (text.length === 0) throw new Error(`one_or_more: text must be non-empty`);
-	if (!_leafRe_buildOneOrMore.test(text)) throw new Error(`one_or_more: text does not match pattern: ${text}`);
+	if (!_leafRe_buildOneOrMore.test(text))
+		throw new Error(`one_or_more: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.OneOrMore as const,
 		$source: 2 as const,
@@ -482,7 +486,8 @@ export function buildOneOrMore(text: string): T.OneOrMore.Bound {
 
 export function buildOptional(text: string): T.Optional.Bound {
 	if (text.length === 0) throw new Error(`optional: text must be non-empty`);
-	if (!_leafRe_buildOptional.test(text)) throw new Error(`optional: text does not match pattern: ${text}`);
+	if (!_leafRe_buildOptional.test(text))
+		throw new Error(`optional: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.Optional as const,
 		$source: 2 as const,
@@ -595,7 +600,8 @@ function _buildNamedGroupBackreference(
 
 export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
 	if (text.length === 0) throw new Error(`decimal_escape: text must be non-empty`);
-	if (!_leafRe_buildDecimalEscape.test(text)) throw new Error(`decimal_escape: text does not match pattern: ${text}`);
+	if (!_leafRe_buildDecimalEscape.test(text))
+		throw new Error(`decimal_escape: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.DecimalEscape as const,
 		$source: 2 as const,
@@ -634,7 +640,7 @@ export function buildCharacterClassEscape(
 export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEscape.Bound {
 	if (text.length === 0) throw new Error(`unicode_character_escape: text must be non-empty`);
 	if (!_leafRe_buildUnicodeCharacterEscape.test(text))
-		throw new Error(`unicode_character_escape: text does not match pattern: ${text}`);
+		throw new Error(`unicode_character_escape: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.UnicodeCharacterEscape as const,
 		$source: 2 as const,
@@ -682,7 +688,7 @@ export function buildUnicodePropertyValueExpression(
 export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.Bound {
 	if (text.length === 0) throw new Error(`unicode_property_value: text must be non-empty`);
 	if (!_leafRe_buildUnicodePropertyValue.test(text))
-		throw new Error(`unicode_property_value: text does not match pattern: ${text}`);
+		throw new Error(`unicode_property_value: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.UnicodePropertyValue as const,
 		$source: 2 as const,
@@ -693,7 +699,8 @@ export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.
 
 export function buildControlEscape(text: string): T.ControlEscape.Bound {
 	if (text.length === 0) throw new Error(`control_escape: text must be non-empty`);
-	if (!_leafRe_buildControlEscape.test(text)) throw new Error(`control_escape: text does not match pattern: ${text}`);
+	if (!_leafRe_buildControlEscape.test(text))
+		throw new Error(`control_escape: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.ControlEscape as const,
 		$source: 2 as const,
@@ -705,7 +712,7 @@ export function buildControlEscape(text: string): T.ControlEscape.Bound {
 export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bound {
 	if (text.length === 0) throw new Error(`control_letter_escape: text must be non-empty`);
 	if (!_leafRe_buildControlLetterEscape.test(text))
-		throw new Error(`control_letter_escape: text does not match pattern: ${text}`);
+		throw new Error(`control_letter_escape: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.ControlLetterEscape as const,
 		$source: 2 as const,
@@ -717,7 +724,7 @@ export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bo
 export function buildIdentityEscape(value: AdmitBound<string, T.AdmittedNodes>): T.IdentityEscape.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildIdentityEscape_content.test(_content))
-		throw new Error(`identity_escape.content: text does not match pattern: ${_content}`);
+		throw new Error(`identity_escape.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -738,7 +745,8 @@ export function buildIdentityEscape(value: AdmitBound<string, T.AdmittedNodes>):
 
 export function buildGroupName(text: string): T.GroupName.Bound {
 	if (text.length === 0) throw new Error(`group_name: text must be non-empty`);
-	if (!_leafRe_buildGroupName.test(text)) throw new Error(`group_name: text does not match pattern: ${text}`);
+	if (!_leafRe_buildGroupName.test(text))
+		throw new Error(`group_name: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.GroupName as const,
 		$source: 2 as const,
@@ -750,7 +758,8 @@ export function buildGroupName(text: string): T.GroupName.Bound {
 export function buildDecimalDigits(text: string | number | bigint): T.DecimalDigits.Bound {
 	text = numberText(10, '', text);
 	if (text.length === 0) throw new Error(`decimal_digits: text must be non-empty`);
-	if (!_leafRe_buildDecimalDigits.test(text)) throw new Error(`decimal_digits: text does not match pattern: ${text}`);
+	if (!_leafRe_buildDecimalDigits.test(text))
+		throw new Error(`decimal_digits: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.DecimalDigits as const,
 		$source: 2 as const,
@@ -961,7 +970,7 @@ function _buildUnicodePropertyValueExpressionGroup(
 export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEscapeText1.Bound {
 	if (text.length === 0) throw new Error(`character_class_escape_text1: text must be non-empty`);
 	if (!_leafRe_buildCharacterClassEscapeText1.test(text))
-		throw new Error(`character_class_escape_text1: text does not match pattern: ${text}`);
+		throw new Error(`character_class_escape_text1: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.CharacterClassEscapeText1 as const,
 		$source: 2 as const,
@@ -973,7 +982,7 @@ export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEs
 export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEscapeText2.Bound {
 	if (text.length === 0) throw new Error(`character_class_escape_text2: text must be non-empty`);
 	if (!_leafRe_buildCharacterClassEscapeText2.test(text))
-		throw new Error(`character_class_escape_text2: text does not match pattern: ${text}`);
+		throw new Error(`character_class_escape_text2: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.CharacterClassEscapeText2 as const,
 		$source: 2 as const,

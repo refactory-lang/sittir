@@ -3,7 +3,16 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine, detachCoordinates, dumpMetrics, sliceSpan } from '@sittir/common';
-import { hydrateStub, isStub, readUntypedNode, metricsEnabled, mapTriviaEntries, storedSlotReader } from '@sittir/common/utils';
+import {
+	hydrateStub,
+	isStub,
+	readUntypedNode,
+	metricsEnabled,
+	mapTriviaEntries,
+	projectInterior,
+	storedSlotReader,
+	type TokenInterior
+} from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
@@ -1139,6 +1148,8 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 export type FactoryEntry = ((...args: any[]) => unknown) | number | object;
 
 export interface NodeToConfigOpts {
+	readonly shownKind?: string;
+	readonly interiorOf?: (kind: string) => TokenInterior | undefined;
 	readonly tree?: TreeHandle;
 	readonly factoryMap?: Record<string, FactoryEntry>;
 	readonly factoryShapes?: Record<string, FactoryShape>;
@@ -1925,17 +1936,28 @@ function promoteAnonymousChildrenToMissingFields(
 
 export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): Record<string, unknown> {
 	const out: Record<string, unknown> = {};
-	const parentKind =
-		data.$type !== undefined
+	const rec = data as unknown as Record<string, unknown>;
+	const interior = opts.shownKind === undefined ? undefined : opts.interiorOf?.(opts.shownKind);
+	const unprojected =
+		interior !== undefined &&
+		typeof data.$text === 'string' &&
+		!interior.slots.some((slot) => rec[`_${slot.name}`] !== undefined);
+	const parentKind = unprojected
+		? opts.shownKind
+		: data.$type !== undefined
 			? typeof data.$type === 'number'
 				? (opts.kindNameFromId?.(data.$type) ?? String(data.$type))
 				: data.$type
 			: undefined;
-	const rec = data as unknown as Record<string, unknown>;
 	const namedSlotEntries: [string, unknown][] = [];
 	for (const key of Object.keys(rec)) {
 		if (key.startsWith('_')) {
 			namedSlotEntries.push([key.slice(1), rec[key]]);
+		}
+	}
+	if (unprojected) {
+		for (const [name, value] of Object.entries(projectInterior(data.$text as string, interior, opts.shownKind!))) {
+			if (value !== undefined && value !== false) namedSlotEntries.push([name, value]);
 		}
 	}
 	for (const [k, v] of namedSlotEntries) {

@@ -387,12 +387,16 @@ function leafTextParams(node: AssembledNode): string {
 	return shape === undefined ? 'text: string' : `text: string | ${numberInputType(shape)}`;
 }
 
+function patternMismatchThrow(label: string, valueExpr: string): string {
+	return `throw new Error(\`${label}: text does not match pattern: \${describeValue(${valueExpr})}\`);`;
+}
+
 function buildLeafGuards(node: { kind: string; textPattern?: string }, leafReConsts: Map<string, string>): string[] {
 	const guards: string[] = [];
 	const reConst = leafReConsts.get(node.kind);
 	if (reConst) {
 		guards.push(
-			`if (!${reConst}.test(text)) throw new Error(\`${node.kind}: text does not match pattern: \${text}\`);`
+			`if (!${reConst}.test(text)) ${patternMismatchThrow(node.kind, 'text')}`
 		);
 	}
 	const reservedConst = leafReConsts.get(reservedGuardKey(node.kind));
@@ -1219,7 +1223,7 @@ function emitFieldCarryingFactory(
 		const guard = leafReConsts.get(slotGuardKey(node.kind, f.name));
 		if (guard !== undefined) {
 			lines.push(
-				`  if (${f.storageKey} !== undefined && !${guard}.test(${f.storageKey})) throw new Error(\`${node.kind}.${f.name}: text does not match pattern: \${${f.storageKey}}\`);`
+				`  if (${f.storageKey} !== undefined && !${guard}.test(${f.storageKey})) ${patternMismatchThrow(`${node.kind}.${f.name}`, f.storageKey)}`
 			);
 		}
 	}
@@ -2137,7 +2141,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		lines.push(
-			`import { ${['withAccessors', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
+			`import { ${['withAccessors', 'describeValue', ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports].join(', ')} } from '@sittir/common/utils';`
 		);
 		lines.push(`import { withMethods } from '../utils.js';`);
 		lines.push('');
@@ -2242,7 +2246,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(...emitFactoryMapConst(mapEntries));
 		lines.push('');
 
-		return pruneUnusedImports(lines, ['Delimiter', ...SITTIR_TYPES_IMPORT_CANDIDATES]).join('\n');
+		return pruneUnusedImports(lines, ['Delimiter', 'describeValue', ...SITTIR_TYPES_IMPORT_CANDIDATES]).join('\n');
 	}
 }
 

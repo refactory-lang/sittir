@@ -5,6 +5,7 @@ import { TSKindId } from '../types.js';
 import type { AdmitBound, NonEmptyArray } from '@sittir/types';
 import {
 	withAccessors,
+	describeValue,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
@@ -47,7 +48,7 @@ export function buildProgram(...children: AdmitBound<T.Definition[], T.AdmittedN
 export function buildEscapeSequence(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequence.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildEscapeSequence_content.test(_content))
-		throw new Error(`escape_sequence.content: text does not match pattern: ${_content}`);
+		throw new Error(`escape_sequence.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -68,7 +69,8 @@ export function buildEscapeSequence(value: AdmitBound<string, T.AdmittedNodes>):
 
 export function buildIdentifier(text: string): T.Identifier.Bound {
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
-	if (!_leafRe_buildIdentifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
+	if (!_leafRe_buildIdentifier.test(text))
+		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.Identifier as const,
 		$source: 2 as const,
@@ -80,7 +82,7 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bound {
 	if (text.length === 0) throw new Error(`_immediate_identifier: text must be non-empty`);
 	if (!_leafRe_buildImmediateIdentifier.test(text))
-		throw new Error(`_immediate_identifier: text does not match pattern: ${text}`);
+		throw new Error(`_immediate_identifier: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.ImmediateIdentifier as const,
 		$source: 2 as const,
@@ -246,7 +248,7 @@ export function buildParameters(
 export function buildComment(value: AdmitBound<string, T.AdmittedNodes>): T.Comment.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildComment_content.test(_content))
-		throw new Error(`comment.content: text does not match pattern: ${_content}`);
+		throw new Error(`comment.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -585,7 +587,7 @@ export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGr
 export function buildStringContentText(text: string): T.StringContentText.Bound {
 	if (text.length === 0) throw new Error(`string_content_text: text must be non-empty`);
 	if (!_leafRe_buildStringContentText.test(text))
-		throw new Error(`string_content_text: text does not match pattern: ${text}`);
+		throw new Error(`string_content_text: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.StringContentText as const,
 		$source: 2 as const,
