@@ -11830,13 +11830,17 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
  * into the list's own row while that row's base types are still resolving
  * (TS2310). A rest element that is an array type keeps the alias deferred.
  *
- * `buildArgs` names the argument lists the kind's public call takes, as a
+ * `buildArgs` names the argument lists the kind is built through, as a
  * tuple or a union of tuples. For most kinds that is one signature. A
- * separated list's is the elements alone or the options bag first, and a
- * kind that forwards to a list unions the list's tuples into its own, so
- * neither needs a second spelling of the other's arguments. The tuples are
- * derived from the factory shape, never from the function:
- * `Parameters<typeof build<Kind>>` resolves to the last overload only.
+ * separated list's is every form its call takes: the elements alone or the
+ * options bag first. A kind that forwards to a list (`listSpreadTarget`)
+ * unions the list's tuples into its own, so neither needs a second spelling
+ * of the other's arguments. One overload is still outside the tuples: a
+ * wrapper that forwards to a kind that is not a list also accepts that
+ * target's constructor arguments (text for a leaf target, a keyword kind),
+ * and its row names the direct form only. The tuples are derived from the
+ * factory shape, never from the function: `Parameters<typeof build<Kind>>`
+ * resolves to the last overload only.
  * `looseArgs` is the same arity and the same labels with every parameter
  * widened to what a coercing caller may pass.
  */
