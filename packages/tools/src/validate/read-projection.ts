@@ -1,19 +1,19 @@
 /**
- * validate-read-projection — pure structural check on readNode output.
+ * validate-read-projection — pure structural check on readUntypedNode output.
  *
- * The other round-trip validators render the NodeData and reparse it to
+ * The other round-trip validators render the UntypedNode and reparse it to
  * catch template bugs. This one is upstream of that: it verifies that
- * readNode's projection of a tree-sitter parse tree into NodeData is
+ * readUntypedNode's projection of a tree-sitter parse tree into UntypedNode is
  * itself well-formed, without ever touching templates.
  *
  * For every named node kind that appears in the corpus fixtures, we:
  *
  *   1. Parse the corpus source with tree-sitter.
  *   2. Walk to the first instance of the kind.
- *   3. readNode it.
+ *   3. readUntypedNode it.
  *   4. Compare against tree-sitter's own view:
  *      - `.type` matches the node kind.
- *      - Every tree-sitter field name is represented in NodeData (either
+ *      - Every tree-sitter field name is represented in UntypedNode (either
  *        under `.fields` or — when routing promoted it — still under
  *        `.fields` with the override name).
  *      - Named children that are NOT tree-sitter fields (and not promoted
@@ -21,12 +21,12 @@
  *      - Child counts agree after the field/override projection.
  *
  * A pass means: no field or named child went missing between the parse
- * tree and the NodeData. A fail means readNode (or the routing map) is
+ * tree and the UntypedNode. A fail means readUntypedNode (or the routing map) is
  * silently dropping content, and every downstream consumer (factory
  * render-parse, from(), render) will be working on a corrupted view.
  */
 
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 import { load } from '../codegen-surface.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
@@ -37,7 +37,7 @@ import {
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
-	readNodeAt,
+	readUntypedNodeAt,
 	adaptNode,
 	collectKinds,
 	emitValidatorMetrics,
@@ -56,7 +56,7 @@ import {
 
 /**
  * Build `kind → Set<fieldName>` from node-types.json. Used as the ground
- * truth for "what fields should readNode surface for this kind".
+ * truth for "what fields should readUntypedNode surface for this kind".
  */
 function buildKindFieldMap(
 	rawEntries: {
@@ -107,7 +107,7 @@ function collectLiveFieldNames(node: TSNode): Set<string> {
 
 /**
  * Count how many named children of `node` are NOT assigned to any tree-sitter
- * field, i.e. the un-fielded named children that must land in NodeData's
+ * field, i.e. the un-fielded named children that must land in UntypedNode's
  * `$children` array (or be promoted into an override field).
  *
  * @remarks
@@ -129,17 +129,17 @@ function countUnfieldedNamedChildren(node: TSNode): number {
 }
 
 /**
- * Extract named-slot field names from a NodeData object.
+ * Extract named-slot field names from an UntypedNode object.
  *
  * ReadNode emits named slots as `_<name>` top-level keys
  * (de-hoisted storage). The legacy `$fields` wrapper is no longer emitted.
  * This helper reads both shapes for backward compatibility with test fixtures
  * that still use `$fields`.
  *
- * @param data - The NodeData to inspect.
+ * @param data - The UntypedNode to inspect.
  * @returns An iterable of `[fieldName, value]` pairs for all named slots.
  */
-function* iterNamedSlots(data: AnyNodeData): Iterable<[string, unknown]> {
+function* iterNamedSlots(data: AnyUntypedNode): Iterable<[string, unknown]> {
 	const rec = data as unknown as Record<string, unknown>;
 	// De-hoisted `_<name>` keys.
 	for (const key of Object.keys(rec)) {
@@ -157,7 +157,7 @@ function* iterNamedSlots(data: AnyNodeData): Iterable<[string, unknown]> {
 }
 
 /**
- * Count how many NodeData named-slot entries represent children promoted into
+ * Count how many UntypedNode named-slot entries represent children promoted into
  * override fields rather than arriving via tree-sitter's own field routing.
  *
  * @remarks
@@ -165,13 +165,13 @@ function* iterNamedSlots(data: AnyNodeData): Iterable<[string, unknown]> {
  * as `array.length` promoted children. Only entries that are NOT in the live
  * tree-sitter field set AND ARE in the override field set are counted.
  *
- * @param data - The NodeData whose named slots to inspect.
+ * @param data - The UntypedNode whose named slots to inspect.
  * @param liveFieldNames - Field names that tree-sitter itself assigned (excluded from counting).
  * @param overrideFields - Field names introduced by override routing (included in counting).
  * @returns The total count of children routed into override fields.
  */
 function countPromotedOverrideChildren(
-	data: AnyNodeData,
+	data: AnyUntypedNode,
 	liveFieldNames: Set<string>,
 	overrideFields: Set<string>
 ): number {
@@ -185,10 +185,10 @@ function countPromotedOverrideChildren(
 	return count;
 }
 
-function checkNodeData(
+function checkUntypedNode(
 	kind: string,
 	node: TSNode,
-	data: AnyNodeData,
+	data: AnyUntypedNode,
 	expectedFields: Set<string>,
 	overrideFields: Set<string>,
 	kindNameFromId?: (id: number) => string | undefined,
@@ -227,7 +227,7 @@ function checkNodeData(
 
 	for (const fname of liveFieldNames) {
 		if (!dataFields.has(fname)) {
-			return `missing field '${fname}' — tree-sitter surfaced it, readNode did not`;
+			return `missing field '${fname}' — tree-sitter surfaced it, readUntypedNode did not`;
 		}
 	}
 
@@ -271,7 +271,7 @@ export async function validateReadProjection(grammar: string): Promise<ReadProje
 	const kindNameFromId = await loadKindNameFromId(grammar);
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
 	// Wrap so unknown kind names return undefined (instead of throwing).
-	// The generated kindIdFromName throws on missing entries; readNode's
+	// The generated kindIdFromName throws on missing entries; readUntypedNode's
 	// resolveKindId falls back to the string kind only when the function
 	// returns undefined, not when it throws.
 	const kindIdFromName = rawKindIdFromName
@@ -319,20 +319,20 @@ export async function validateReadProjection(grammar: string): Promise<ReadProje
 				skip++;
 				continue;
 			}
-			let data: AnyNodeData;
+			let data: AnyUntypedNode;
 			try {
-				data = readNodeAt(handle, adaptNode(node), nativeCoords);
+				data = readUntypedNodeAt(handle, adaptNode(node), nativeCoords);
 			} catch (e) {
 				issues.push({
 					kind,
 					instance: entry.name,
-					message: `readNode threw: ${(e as Error).message}`
+					message: `readUntypedNode threw: ${(e as Error).message}`
 				});
 				continue;
 			}
 
 			const expected = kindFields.get(kind) ?? new Set();
-			const error = checkNodeData(kind, node, data, expected, new Set(), kindNameFromId, kindIdFromName);
+			const error = checkUntypedNode(kind, node, data, expected, new Set(), kindNameFromId, kindIdFromName);
 			if (error) {
 				issues.push({ kind, instance: entry.name, message: error });
 			} else {

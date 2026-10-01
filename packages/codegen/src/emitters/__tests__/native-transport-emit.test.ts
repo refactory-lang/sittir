@@ -405,7 +405,7 @@ describe('native transport emission', () => {
 		expect(emitted.transportRs.contents).toContain('pub fn render_transport_dispatch');
 		expect(emitted.transportRs.contents).toContain('pub fn render_transport_parts');
 		expect(emitted.transportRs.contents).not.toContain('renderable native transport bridge pending');
-		// Legacy NodeData render shim (render_dispatch / render_nodedata_into) is
+		// Legacy UntypedNode render shim (render_dispatch / render_nodedata_into) is
 		// retired (PR-E2 retired bridge.rs/dispatch.rs; the emitter shim is now
 		// deleted too). lib.rs uses the transport path only.
 		expect(emitted.libRs.contents).not.toContain('render_dispatch');
@@ -413,7 +413,7 @@ describe('native transport emission', () => {
 		expect(emitted.libRs.contents).toContain(
 			'pub use transport::{render_transport_dispatch, render_transport_parts, AnyTransport, RenderRoot};'
 		);
-		expect(emitted.transportRs.contents).not.toContain('AnyTransport::NodeData');
+		expect(emitted.transportRs.contents).not.toContain('AnyTransport::UntypedNode');
 		expect(emitted.transportRs.contents).not.toContain('node_json');
 		// (No blanket "JSON" ban — a legitimate `JSON.stringify` mention now
 		// appears in an unrelated FromNapiValue error-message doc comment. The

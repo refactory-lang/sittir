@@ -204,7 +204,7 @@ pub unsafe fn transport_value_type(
 impl<T: ::napi::bindgen_prelude::FromNapiValue, const ADJACENT: bool>
     ::napi::bindgen_prelude::FromNapiValue for SlotValue<T, ADJACENT>
 {
-    /// Dispatch on the wire shape: an object carrying `$nodeHandle` is a
+    /// Dispatch on the wire shape: an object carrying `$treeHandle` is a
     /// coordinate (its `$span` is required), anything else is the slot's own
     /// transport type, which decides for itself what it accepts. There is no
     /// attempt-then-fallback.
@@ -215,11 +215,11 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue, const ADJACENT: bool>
         let value_type = unsafe { transport_value_type(env, napi_val)? };
         if value_type == ::napi::ValueType::Object {
             let obj = unsafe { ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)? };
-            if let Some(handle) = obj.get::<f64>("$nodeHandle")? {
-                let handle = crate::napi_engine::checked_index(handle, "$nodeHandle")?;
+            if let Some(handle) = obj.get::<f64>("$treeHandle")? {
+                let handle = crate::napi_engine::checked_index(handle, "$treeHandle")?;
                 let span: Span = obj.get("$span")?.ok_or_else(|| {
                     ::napi::Error::from_reason(format!(
-                        "coordinate with $nodeHandle {handle} carries no $span"
+                        "coordinate with $treeHandle {handle} carries no $span"
                     ))
                 })?;
                 let kind = obj.get::<u32>("$type")?.map(|id| crate::types::KindId(id as u16));

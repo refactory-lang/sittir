@@ -1,5 +1,5 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type { AnyNodeData, AnyTreeNode, ByteRange, Edit, FormatRecord, KindOf, Renderable, ReplaceTarget } from '@sittir/types';
+import type { AnyUntypedNode, AnyTreeNode, ByteRange, Edit, FormatRecord, KindOf, Renderable, ReplaceTarget } from '@sittir/types';
 import { rebaseTrivia } from './format.ts';
 
 export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
@@ -34,14 +34,14 @@ export function toEditAt(insertedText: string, startOrRange: number | ByteRange,
 }
 
 // ---------------------------------------------------------------------------
-// replace — loosely typed, any AnyNodeData
+// replace — loosely typed, any AnyUntypedNode
 // ---------------------------------------------------------------------------
 
 /**
  * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
  * $replace method. Not yet wired into generated output; scaffolding only.
  */
-export function replace(target: ReplaceTarget, replacement: AnyNodeData & Renderable): Edit {
+export function replace(target: ReplaceTarget, replacement: AnyUntypedNode & Renderable): Edit {
 	const range = target.range();
 	return {
 		startPos: range.start.index,

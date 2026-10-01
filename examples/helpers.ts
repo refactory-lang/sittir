@@ -37,7 +37,7 @@ export function replaceAtSpan(
 
 /**
  * The kind tree of a wrapped node — `$type` plus each `_<slot>` storage
- * value, drilled through the wrap accessors — with source positions and
+ * value, hydrated through the wrap accessors — with source positions and
  * text dropped, so two parses of differently-formatted equivalent source
  * compare equal.
  */

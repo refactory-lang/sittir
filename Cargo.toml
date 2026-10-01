@@ -43,7 +43,7 @@ tree-sitter = "0.26"
 tree-sitter-language = "0.1.7"
 sha2 = "0.10"
 cc = "1"
-# Insertion-order-preserving map for NodeData.fields (sittir-core) —
+# Insertion-order-preserving map for UntypedNode.fields (sittir-core) —
 # std::collections::HashMap's per-instance random iteration order made
 # native slot-key serialization order (and therefore "first node of
 # kind K" candidate selection during validation) nondeterministic

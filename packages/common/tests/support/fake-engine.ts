@@ -1,7 +1,7 @@
-import type { AnyNodeData, EngineIdentity, Rendered, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, EngineIdentity, Rendered, TriviaFacts } from '@sittir/types';
 import type { EngineHandle, LiveEngine } from '../../src/engine-scope.ts';
 
-export function triviaFacts(comment?: (text: string) => AnyNodeData): TriviaFacts {
+export function triviaFacts(comment?: (text: string) => AnyUntypedNode): TriviaFacts {
 	return {
 		kindName: (type) => (type === 9 ? 'comment' : undefined),
 		kinds: new Set(['comment']),
@@ -11,7 +11,7 @@ export function triviaFacts(comment?: (text: string) => AnyNodeData): TriviaFact
 }
 
 export function liveHandle(
-	options: { readonly render?: (node: AnyNodeData | number) => string; readonly trivia?: TriviaFacts } = {}
+	options: { readonly render?: (node: AnyUntypedNode | number) => string; readonly trivia?: TriviaFacts } = {}
 ): EngineHandle {
 	const live: LiveEngine = {
 		language: { name: 'fake', fileTypes: [], load: () => Promise.reject(new Error('type-only')) },

@@ -112,20 +112,20 @@ describe('wrap emitter — polymorph variant stamping', () => {
 
 		expect(wrapEmitterSource).not.toContain('function resolveChildrenStoreExpr');
 		expect(wrapEmitterSource).not.toContain('function resolveChildrenAccessorBody');
-		// Named-field storage/accessor drilling was extracted into
+		// Named-field storage/accessor expansion was extracted into
 		// emitFieldStorageLines/emitFieldAccessorLines (separator-as-slot Bug B
 		// follow-up — shared with emitSeparatedListWrap's multi-field case), so
-		// emitFieldCarryingWrap's OWN body now calls resolveSlotDrillExprs only
+		// emitFieldCarryingWrap's OWN body now calls resolveSlotHydrateExprs only
 		// for the unnamed-children slot (storage + accessor = 2), while the two
 		// extracted helpers each make their own single shared-resolver call —
-		// still ONE entrypoint (resolveSlotDrillExprs) for every slot, just
+		// still ONE entrypoint (resolveSlotHydrateExprs) for every slot, just
 		// spread across the 3 functions that now share it instead of 1.
-		expect(emitFieldCarryingWrapBody.match(/resolveSlotDrillExprs\(/g)?.length).toBe(2);
+		expect(emitFieldCarryingWrapBody.match(/resolveSlotHydrateExprs\(/g)?.length).toBe(2);
 		expect(emitFieldCarryingWrapBody).not.toMatch(/resolve[A-Za-z0-9_]*Children[A-Za-z0-9_]*\(/);
 		const emitFieldStorageLinesBody = extractFunctionBody(wrapEmitterSource, 'emitFieldStorageLines');
 		const emitFieldAccessorLinesBody = extractFunctionBody(wrapEmitterSource, 'emitFieldAccessorLines');
-		expect(emitFieldStorageLinesBody.match(/resolveSlotDrillExprs\(/g)?.length).toBe(1);
-		expect(emitFieldAccessorLinesBody.match(/resolveSlotDrillExprs\(/g)?.length).toBe(1);
+		expect(emitFieldStorageLinesBody.match(/resolveSlotHydrateExprs\(/g)?.length).toBe(1);
+		expect(emitFieldAccessorLinesBody.match(/resolveSlotHydrateExprs\(/g)?.length).toBe(1);
 	});
 
 	it('wrap-kind filtering matches storage kinds without an alias remap', () => {
@@ -144,7 +144,7 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap: makeHiddenGroupNodeMap() });
 
 		expect(wrapSrc).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {');
-		expect(wrapSrc).toContain('right() { return drillIn<');
+		expect(wrapSrc).toContain('right() { return hydrateChild<');
 		expect(wrapSrc).toContain("'_assignment_eq': (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),");
 		// A hidden helper visible only through its own alias name is MERGED
 		// into that alias symbol by tree-sitter — one id serves both
@@ -184,7 +184,7 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		expect(wrapSrc).toContain(
 			'export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {'
 		);
-		expect(wrapSrc).toContain('return drillIn<T.Identifier>(');
+		expect(wrapSrc).toContain('return hydrateChild<T.Identifier>(');
 		expect(wrapSrc).toContain(
 			"'_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),"
 		);
@@ -214,7 +214,7 @@ describe('wrap emitter — polymorph variant stamping', () => {
 		expect(wrapSrc).toContain(
 			'export function wrapExportStatementDefault(data: T.ExportStatementDefault & { readonly $other?: T.ExportStatementDefault | readonly T.ExportStatementDefault[]; }, tree: TreeHandle): SupertypeSurface<T.ExportStatementDefault, T.ParsedByKindId> {'
 		);
-		expect(wrapSrc).toContain('return drillIn<T.ExportStatementDefault>(');
+		expect(wrapSrc).toContain('return hydrateChild<T.ExportStatementDefault>(');
 		expect(wrapSrc).toContain(
 			"'_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),"
 		);

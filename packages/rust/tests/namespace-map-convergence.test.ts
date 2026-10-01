@@ -105,7 +105,7 @@ describe('rust NamespaceMap access-path convergence', () => {
 		expectTrue<Equals<FunctionItem.BuildArgs, [FunctionItem.Config]>>();
 	});
 
-	it('Loose decomposes into LooseConfig plus the NodeData passthrough', () => {
+	it('Loose decomposes into LooseConfig plus the UntypedNode passthrough', () => {
 		// `LooseConfig` is the config arm named at the source rather than
 		// recovered downstream as `Exclude<Loose, T>`. This pin is what makes
 		// the split provably semantics-free: `Loose` still admits exactly what

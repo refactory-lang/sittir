@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 import { inEngine } from '../src/engine-scope.ts';
 import { liveHandle } from './support/fake-engine.ts';
 import {
@@ -26,7 +26,7 @@ describe('@sittir/common/utils runtime surface', () => {
 
 	it('attaches render/edit helpers from the engine in scope', () => {
 		const render = vi.fn(() => 'rendered');
-		const trivia = { kindName: (type: AnyNodeData['$type']) => `k${type}`, kinds: new Set(['k1', 'k2', 'k3']), innerGaps: {} };
+		const trivia = { kindName: (type: AnyUntypedNode['$type']) => `k${type}`, kinds: new Set(['k1', 'k2', 'k3']), innerGaps: {} };
 		const node = inEngine(liveHandle({ render, trivia }), () => withMethods({ $type: 1, $source: 2, _name: 'x' }));
 
 		expect(node.$render()).toBe('rendered');
@@ -46,8 +46,8 @@ describe('@sittir/common/utils runtime surface', () => {
 		});
 		expect(node.$trivia({ trailing: [node] })).toBe(node);
 		expect((node as unknown as Record<string, unknown>).$_trivia).toEqual({ trailing: [node] });
-		const triviaNodeA: AnyNodeData = { $type: 2, $source: 2, $text: 'a' };
-		const triviaNodeB: AnyNodeData = { $type: 3, $source: 2, $text: 'b' };
+		const triviaNodeA: AnyUntypedNode = { $type: 2, $source: 2, $text: 'a' };
+		const triviaNodeB: AnyUntypedNode = { $type: 3, $source: 2, $text: 'b' };
 		expect(node.$trivia(triviaNodeA, triviaNodeB)).toBe(node);
 		expect((node as unknown as Record<string, unknown>).$_trivia).toEqual({ leading: [triviaNodeA, triviaNodeB] });
 		expect(render).toHaveBeenCalledTimes(3);

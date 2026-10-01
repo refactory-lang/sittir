@@ -21,7 +21,7 @@
  *   `_delimiter` to the factory's defaults (comma, no
  *   flanks) instead of preserving the original instance's own facts —
  *   found via external code review, fixed by threading them through as
- *   factory options on the self-NodeData-unwrap path.
+ *   factory options on the self-UntypedNode-unwrap path.
  */
 import { describe, expect, it } from 'vitest';
 import { probeTrace } from '../../src/probe/kind.ts';
@@ -35,7 +35,7 @@ describe('separatedList wrap capture — real typescript grammar integration', (
 			engine: 'native'
 		});
 
-		expect(trace.trace.native?.deep?.nodeData).toMatchObject({
+		expect(trace.trace.native?.deep?.untypedNode).toMatchObject({
 			_delimiter: 2
 		});
 	});
@@ -46,7 +46,7 @@ describe('separatedList wrap capture — real typescript grammar integration', (
 			engine: 'native'
 		});
 
-		expect(trace.trace.native?.deep?.nodeData).toMatchObject({
+		expect(trace.trace.native?.deep?.untypedNode).toMatchObject({
 			_delimiter: 0
 		});
 	});
@@ -95,7 +95,7 @@ describe('separatedList from() reconstruction — preserves original separator f
 			engine: 'native'
 		});
 
-		const wrapped = trace.trace.native?.deep?.nodeData as { _delimiter?: number; _separator?: number };
+		const wrapped = trace.trace.native?.deep?.untypedNode as { _delimiter?: number; _separator?: number };
 		expect(((wrapped._delimiter ?? 0) & 2) !== 0).toBe(true);
 		expect(wrapped._separator).toBeDefined();
 

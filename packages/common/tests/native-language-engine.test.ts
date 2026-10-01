@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 import { createRenderHandle, nativeLanguageEngine, type SittirEngine } from '../src/engine.ts';
 
 function fakeSittirEngine() {
 	const calls: { render: unknown[]; disposed: number } = { render: [], disposed: 0 };
 	let reads = 0;
 	const engine = {
-		render(node: AnyNodeData, options?: unknown) {
+		render(node: AnyUntypedNode, options?: unknown) {
 			calls.render.push(options);
 			return createRenderHandle(() => `rendered:${String(node.$type)}`);
 		},
@@ -20,7 +20,7 @@ function fakeSittirEngine() {
 				reads++;
 				return { root: { $type: 1, $span: { start: 0, end: source.length } }, tree: { source, read: reads } };
 			},
-			readNode: () => ({ $type: 1 })
+			readUntypedNode: () => ({ $type: 1 })
 		}
 	};
 	return { engine: engine as unknown as SittirEngine, calls };

@@ -3,7 +3,7 @@
 //! the invariants in data-model.md §1.
 
 use indexmap::IndexMap;
-use sittir_core::types::{Edit, FieldValue, KindId, NodeData, Source, Span};
+use sittir_core::types::{Edit, FieldValue, KindId, UntypedNode, NodeHandle, Source, Span};
 
 // KindId fixtures — values match the Rust grammar's parser.c symbol ids.
 const K_IDENTIFIER: KindId = KindId(1);
@@ -15,10 +15,10 @@ fn wire(s: &str) -> serde_json::Value {
     serde_json::from_str(s).expect("valid JSON")
 }
 
-/// Build a leaf NodeData (like an `identifier`) with every optional
+/// Build a leaf UntypedNode (like an `identifier`) with every optional
 /// field present except `children` + `fields` (leaves have no kids).
-fn sample_leaf() -> NodeData {
-    NodeData {
+fn sample_leaf() -> UntypedNode {
+    UntypedNode {
         type_: K_IDENTIFIER,
         display_type: None,
         source: Source::Ts,
@@ -27,7 +27,7 @@ fn sample_leaf() -> NodeData {
         children: None,
         text: Some("foo".to_string()),
         span: Some(Span { start: 42, end: 45 }),
-        node_handle: Some(7),
+        handle: Some(NodeHandle::Own(7)),
         child_index: None,
         trivia_data: None,
         slot_order: None,
@@ -37,23 +37,23 @@ fn sample_leaf() -> NodeData {
     }
 }
 
-fn sample_slot_leaf() -> NodeData {
-    NodeData {
-        node_handle: None,
+fn sample_slot_leaf() -> UntypedNode {
+    UntypedNode {
+        handle: None,
         child_index: None,
         ..sample_leaf()
     }
 }
 
-/// Build a branch NodeData with one field (single) + one children
+/// Build a branch UntypedNode with one field (single) + one children
 /// entry + no span/nodeId/text — exercises both elision modes.
-fn sample_branch() -> NodeData {
+fn sample_branch() -> UntypedNode {
     let mut fields = IndexMap::new();
     fields.insert(
         "name".to_string(),
         FieldValue::Single(Box::new(sample_slot_leaf())),
     );
-    NodeData {
+    UntypedNode {
         type_: K_FUNCTION_ITEM,
         display_type: None,
         source: Source::Ts,
@@ -62,7 +62,7 @@ fn sample_branch() -> NodeData {
         children: Some(vec![sample_leaf()]),
         text: None,
         span: None,
-        node_handle: None,
+        handle: None,
         child_index: None,
         trivia_data: None,
         slot_order: None,
@@ -76,14 +76,14 @@ fn sample_branch() -> NodeData {
 fn roundtrip_leaf_preserves_all_present_fields() {
     let original = sample_leaf();
     let json = serde_json::to_string(&original).unwrap();
-    let parsed: NodeData = serde_json::from_str(&json).unwrap();
+    let parsed: UntypedNode = serde_json::from_str(&json).unwrap();
     assert_eq!(original, parsed, "leaf round trip must be identity");
 }
 
 #[test]
 fn roundtrip_branch_normalizes_leaf_field_slots() {
     let json = serde_json::to_string(&sample_branch()).unwrap();
-    let parsed: NodeData = serde_json::from_str(&json).unwrap();
+    let parsed: UntypedNode = serde_json::from_str(&json).unwrap();
     let field = parsed
         .fields
         .as_ref()
@@ -101,8 +101,8 @@ fn absent_optionals_stay_absent_on_the_wire() {
     assert!(!obj.contains_key("$text"), "absent $text must be elided");
     assert!(!obj.contains_key("$span"), "absent $span must be elided");
     assert!(
-        !obj.contains_key("$nodeHandle"),
-        "absent $nodeHandle must be elided"
+        !["$handle", "$parentHandle", "$treeHandle"].iter().any(|k| obj.contains_key(*k)),
+        "an absent handle must be elided"
     );
     assert!(
         !obj.contains_key("$childIndex"),
@@ -123,7 +123,42 @@ fn present_optionals_appear_on_the_wire() {
     let span = obj.get("$span").expect("$span");
     assert_eq!(span["start"].as_u64(), Some(42));
     assert_eq!(span["end"].as_u64(), Some(45));
-    assert_eq!(obj.get("$nodeHandle").and_then(|x| x.as_u64()), Some(7));
+    assert_eq!(obj.get("$handle").and_then(|x| x.as_u64()), Some(7));
+}
+
+#[test]
+fn each_handle_travels_under_the_key_that_names_what_it_is() {
+    for (handle, key) in [
+        (NodeHandle::Own(7), "$handle"),
+        (NodeHandle::Parent(7), "$parentHandle"),
+        (NodeHandle::Tree(7), "$treeHandle"),
+    ] {
+        let child_index = matches!(handle, NodeHandle::Parent(_)).then_some(0);
+        let node = UntypedNode { handle: Some(handle), child_index, ..sample_leaf() };
+        let v = serde_json::to_value(&node).unwrap();
+        let keys: Vec<_> = ["$handle", "$parentHandle", "$treeHandle"]
+            .into_iter()
+            .filter(|k| v.get(k).is_some())
+            .collect();
+        assert_eq!(keys, vec![key]);
+        assert_eq!(v[key].as_u64(), Some(7));
+        let back: UntypedNode = serde_json::from_value(v).unwrap();
+        assert_eq!(back.handle, Some(handle));
+    }
+}
+
+#[test]
+fn deserialization_refuses_a_parent_handle_without_its_child_index() {
+    let lone = r#"{"$type":1,"$source":0,"$named":true,"$parentHandle":2}"#;
+    let err = serde_json::from_str::<UntypedNode>(lone).unwrap_err();
+    assert!(err.to_string().contains("$parentHandle without $childIndex"), "{err}");
+}
+
+#[test]
+fn deserialization_refuses_a_node_naming_two_handles() {
+    let both = r#"{"$type":1,"$source":0,"$named":true,"$handle":1,"$parentHandle":2,"$childIndex":0}"#;
+    let err = serde_json::from_str::<UntypedNode>(both).unwrap_err();
+    assert!(err.to_string().contains("more than one of $handle, $parentHandle, $treeHandle"), "{err}");
 }
 
 #[test]
@@ -188,7 +223,7 @@ fn slot_order_roundtrips_and_elides_when_absent() {
     // Multi-bucket parents stamp `$slotOrder` (cross-bucket interleave);
     // it must survive a wire roundtrip and stay absent everywhere else.
     let json = r#"{"$type":372,"$source":0,"$named":true,"_name":["A"],"_enum_assignment":["B"],"$slotOrder":["name","enum_assignment"]}"#;
-    let node: NodeData = serde_json::from_str(json).unwrap();
+    let node: UntypedNode = serde_json::from_str(json).unwrap();
     assert_eq!(
         node.slot_order.as_deref(),
         Some(&["name".to_string(), "enum_assignment".to_string()][..])
@@ -221,7 +256,7 @@ fn field_value_boolean_slot_roundtrips() {
     assert_eq!(serde_json::to_string(&val).unwrap(), "false");
 
     let json = r#"{"$type":237,"$source":0,"$named":true,"_trailing_sep":false}"#;
-    let node: NodeData = serde_json::from_str(json).unwrap();
+    let node: UntypedNode = serde_json::from_str(json).unwrap();
     let field = node.fields.as_ref().unwrap().get("trailing_sep").unwrap();
     assert!(matches!(field, FieldValue::Bool(false)));
     assert_eq!(serde_json::to_string(&node).unwrap(), json);
@@ -229,13 +264,13 @@ fn field_value_boolean_slot_roundtrips() {
 
 #[test]
 fn anonymous_leaf_children_scalarize_on_the_wire() {
-    let node = NodeData {
+    let node = UntypedNode {
         type_: K_FUNCTION_ITEM,
         display_type: None,
         source: Source::Ts,
         named: true,
         fields: None,
-        children: Some(vec![NodeData {
+        children: Some(vec![UntypedNode {
             type_: KindId(55),
             display_type: None,
             source: Source::Ts,
@@ -244,7 +279,7 @@ fn anonymous_leaf_children_scalarize_on_the_wire() {
             children: None,
             text: Some("|".to_string()),
             span: Some(Span { start: 0, end: 1 }),
-            node_handle: None,
+            handle: None,
             child_index: None,
             trivia_data: None,
             slot_order: None,
@@ -254,7 +289,7 @@ fn anonymous_leaf_children_scalarize_on_the_wire() {
         }]),
         text: None,
         span: None,
-        node_handle: None,
+        handle: None,
         child_index: None,
         trivia_data: None,
         slot_order: None,
@@ -266,7 +301,7 @@ fn anonymous_leaf_children_scalarize_on_the_wire() {
     let v = wire(&json);
     assert_eq!(v["$other"][0].as_u64(), Some(55));
 
-    let parsed: NodeData = serde_json::from_str(&json).unwrap();
+    let parsed: UntypedNode = serde_json::from_str(&json).unwrap();
     let child = parsed
         .children
         .as_ref()
@@ -297,7 +332,7 @@ fn deserialization_accepts_missing_optionals() {
     // Minimal shape — required trio only, everything else defaulted.
     // $type is now a numeric KindId on the wire (Phase B-inverse).
     let minimal = r#"{"$type":1,"$source":0,"$named":true}"#;
-    let parsed: NodeData = serde_json::from_str(minimal).unwrap();
+    let parsed: UntypedNode = serde_json::from_str(minimal).unwrap();
     assert_eq!(parsed.type_, K_IDENTIFIER);
     assert_eq!(parsed.source, Source::Ts);
     assert!(parsed.named);
@@ -305,14 +340,14 @@ fn deserialization_accepts_missing_optionals() {
     assert!(parsed.children.is_none());
     assert!(parsed.text.is_none());
     assert!(parsed.span.is_none());
-    assert!(parsed.node_handle.is_none());
+    assert!(parsed.handle.is_none());
     assert!(parsed.child_index.is_none());
 }
 
 #[test]
 fn deserialization_accepts_legacy_fields_wrapper_for_compatibility() {
     let legacy = r#"{"$type":188,"$source":0,"$named":true,"$fields":{"name":{"$type":1,"$source":0,"$named":true,"$text":"foo"}}}"#;
-    let parsed: NodeData = serde_json::from_str(legacy).unwrap();
+    let parsed: UntypedNode = serde_json::from_str(legacy).unwrap();
     assert!(parsed
         .fields
         .as_ref()
@@ -328,7 +363,9 @@ fn is_allowed_node_key(key: &str) -> bool {
             | "$other"
             | "$text"
             | "$span"
-            | "$nodeHandle"
+            | "$handle"
+            | "$parentHandle"
+            | "$treeHandle"
             | "$childIndex"
             | "$_trivia"
             | "$slotOrder"

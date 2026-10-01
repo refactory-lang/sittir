@@ -88,7 +88,7 @@ describe('$trivia() integration', () => {
 	}
 
 	// `$trivia()` mutates and returns the SAME node (asserted above), but its
-	// declared return type is the type-erased AnyNodeData — so these render
+	// declared return type is the type-erased AnyUntypedNode — so these render
 	// cases keep the typed reference and call `$trivia` as the mutation it is.
 	it('leading trivia renders before the node', () => {
 		const fn = makeFn('main');

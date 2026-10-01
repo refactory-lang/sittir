@@ -81,7 +81,7 @@ describe('examples/02 render round trip', () => {
 		expect(roundTrip(source).reparsesEqual).toBe(true);
 	});
 
-	// A freshly parsed root has nothing expanded below it, so nothing is
+	// A freshly parsed root has nothing hydrated below it, so nothing is
 	// rebuilt and nothing is re-spelled — the source comes back byte for byte.
 	it('reproduces an untouched parse byte-for-byte', () => {
 		const source = 'pub fn main() { }\n';

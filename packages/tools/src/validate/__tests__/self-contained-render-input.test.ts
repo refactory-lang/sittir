@@ -11,9 +11,9 @@ describe('selfContainedRenderInput', () => {
 		const out = selfContainedRenderInput(
 			{
 				$type: COMPOUND,
-				$nodeHandle: 4,
+				$handle: 4,
 				$span: { start: 0, end: 4 },
-				_name: { $type: LEAF, $nodeHandle: 4, $childIndex: 0, $span: { start: 0, end: 2 } }
+				_name: { $type: LEAF, $parentHandle: 4, $childIndex: 0, $span: { start: 0, end: 2 } }
 			},
 			source,
 			isLeafKind
@@ -35,7 +35,7 @@ describe('selfContainedRenderInput', () => {
 
 	it('keeps a storage-less compound as its identity, never as text', () => {
 		expect(
-			selfContainedRenderInput({ $type: COMPOUND, $nodeHandle: 1, $span: { start: 2, end: 4 } }, source, isLeafKind)
+			selfContainedRenderInput({ $type: COMPOUND, $handle: 1, $span: { start: 2, end: 4 } }, source, isLeafKind)
 		).toEqual({ $type: COMPOUND, $span: { start: 2, end: 4 } });
 	});
 
@@ -45,8 +45,8 @@ describe('selfContainedRenderInput', () => {
 				$type: COMPOUND,
 				_x: [],
 				$_trivia: {
-					leading: [{ $type: 3, $nodeHandle: 1, $span: { start: 4, end: 8 } }],
-					trailing: [{ $type: 3, $text: '// d', $nodeHandle: 1 }]
+					leading: [{ $type: 3, $treeHandle: 1, $span: { start: 4, end: 8 } }],
+					trailing: [{ $type: 3, $text: '// d', $treeHandle: 1 }]
 				}
 			},
 			source,
@@ -61,8 +61,8 @@ describe('selfContainedRenderInput', () => {
 				$type: COMPOUND,
 				_x: [],
 				$_trivia: {
-					trailing: [{ $type: 3, $nodeHandle: 1, $span: { start: 4, end: 8 }, $sameLine: true, $tokensBetween: 1 }],
-					inner: { x: [{ $type: 3, $nodeHandle: 1, $span: { start: 4, end: 8 } }] }
+					trailing: [{ $type: 3, $treeHandle: 1, $span: { start: 4, end: 8 }, $sameLine: true, $tokensBetween: 1 }],
+					inner: { x: [{ $type: 3, $treeHandle: 1, $span: { start: 4, end: 8 } }] }
 				}
 			},
 			source,

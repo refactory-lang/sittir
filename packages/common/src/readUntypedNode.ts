@@ -1,9 +1,9 @@
 /**
- * readNode — one-level-deep tree reading, grammar-agnostic.
+ * readUntypedNode — one-level-deep tree reading, grammar-agnostic.
  *
  * Returns ALL children including anonymous tokens (named: false for operators,
- * delimiters, keywords). Every entry carries `$nodeHandle` + `$childIndex` for
- * O(1) drill-in via `tree.nodes[handle].children()[childIndex]`.
+ * delimiters, keywords). Every entry carries `$parentHandle` + `$childIndex` for
+ * O(1) hydration via `tree.nodes[handle].children()[childIndex]`.
  *
  * Field placement comes from tree-sitter's own `fieldNameForChild(i)` —
  * the grammar-author-declared field names. Anonymous identifier-shaped
@@ -12,18 +12,18 @@
  * the compiled grammar at codegen time (grammar.sittir.ts → .sittir/grammar.js
  * → compiled parser), so tree-sitter itself surfaces those fields.
  *
- * No recursion — lazy getters in wrap.ts call readNode again when needed.
+ * No recursion — lazy getters in wrap.ts call readUntypedNode again when needed.
  */
 
-import type { AnyNodeData, AnyTreeNode, FormatRecord } from '@sittir/types';
+import type { AnyUntypedNode, AnyTreeNode, FormatRecord } from '@sittir/types';
 
 /**
  * A handle to the parsed tree, providing node navigation via handle + childIndex.
  * Structurally compatible with ast-grep SgRoot and tree-sitter Tree.
  *
  * Replaces nodeById(id) with a nodes[] array. Child entries carry
- * $nodeHandle (parent index into nodes[]) + $childIndex (position in parent's
- * child array). O(1) drill-in via nodes[handle].children()[childIndex].
+ * $parentHandle (parent index into nodes[]) + $childIndex (position in parent's
+ * child array). O(1) hydration via nodes[handle].children()[childIndex].
  */
 export interface TreeHandle {
 	/** The root node of the tree. */
@@ -32,32 +32,32 @@ export interface TreeHandle {
 	source?: string;
 	/**
 	 * Per-handle read dispatch. When present, the wrap layer reads
-	 * through this method instead of running `readNode(handle, childIndex)`
+	 * through this method instead of running `readUntypedNode(handle, childIndex)`
 	 * directly. Native-engine handles set this to a closure that
 	 * calls `engine.diagnostics.parseAndRead(source)` (root) /
-	 * `engine.diagnostics.readNode(handle, childIndex)` (drill-in) so reads
+	 * `engine.diagnostics.readUntypedNode(handle, childIndex)` (hydration) so reads
 	 * stay inside the engine that owns the tree. `depth` counts the levels
 	 * the read expands: absent is one, `Infinity` is the whole subtree.
 	 */
-	read?(handle?: number, childIndex?: number, depth?: number): AnyNodeData;
+	read?(handle?: number, childIndex?: number, depth?: number): AnyUntypedNode;
 	/**
 	 * Format record inferred from the source file by the native Rust reader.
-	 * Absent on trees produced by the JS reader (readNode never sets this).
+	 * Absent on trees produced by the JS reader (readUntypedNode never sets this).
 	 * Callers can also set this manually to apply a house-style config.
 	 */
 	format?: FormatRecord;
 	/**
 	 * Phase D: convert a tree-sitter string kind name to the numeric
-	 * `TSKindId` value used as `$type` in `AnyNodeData`. Required for
+	 * `TSKindId` value used as `$type` in `AnyUntypedNode`. Required for
 	 * JS-side (WASM) reads — the native (napi) path produces numeric IDs
-	 * directly via `tree.read`. If absent on a JS-side handle, `readNode`
+	 * directly via `tree.read`. If absent on a JS-side handle, `readUntypedNode`
 	 * throws to surface the misconfiguration immediately.
 	 */
 	kindIdFromName?: (kind: string) => number | undefined;
 	/**
 	 * Per-handle node array. Each entry is a tree-sitter node
 	 * stored at construction time by pushNode(). Child entries reference
-	 * their parent via $nodeHandle (index into this array) + $childIndex
+	 * their parent via $parentHandle (index into this array) + $childIndex
 	 * (position in parent's children()). Lazily created on first pushNode().
 	 */
 	nodes?: AnyTreeNode[];
@@ -65,7 +65,7 @@ export interface TreeHandle {
 
 /**
  * Push a tree-sitter node into the handle's nodes[] array and return its index.
- * The returned index is stored as `$nodeHandle` on child entries so drill-in
+ * The returned index is stored as `$parentHandle` on child entries so hydration
  * can navigate back to this node and access its children by index.
  */
 function pushNode(tree: TreeHandle, node: AnyTreeNode): number {
@@ -89,8 +89,8 @@ function pushNode(tree: TreeHandle, node: AnyTreeNode): number {
  */
 function promoteAnonymousKeyword(
 	child: AnyTreeNode,
-	entry: AnyNodeData,
-	fields: Record<string, AnyNodeData | AnyNodeData[]>
+	entry: AnyUntypedNode,
+	fields: Record<string, AnyUntypedNode | AnyUntypedNode[]>
 ): boolean {
 	if (child.isNamed()) return false;
 	const text = entry.$text ?? '';
@@ -101,38 +101,27 @@ function promoteAnonymousKeyword(
 }
 
 /**
- * Read a single tree node one level deep.
+ * Read the node at a coordinate, unwrapped: the root when no handle is given,
+ * otherwise child `childIndex` of the node `handle` names.
  *
- * - Returns ALL children (named + anonymous)
- * - Every child carries `$nodeHandle` + `$childIndex` for lazy drill-in
- * - No recursion — wrap.ts provides lazy getters
- * - Field placement uses tree-sitter's native `fieldNameForChild`
- *
- * Navigation uses handle + childIndex instead of nodeId.
- *
- * @param tree - The tree handle for node lookup
- * @param handle - If provided with childIndex, navigate via nodes[handle].children()[childIndex]
- * @param childIndex - Position in parent's child array (requires handle)
- *
- * @deprecated The JS/TS-side read path is being phased out. Production
- * validators and probes use `--backend native` which goes through the
- * rust napi-rs crate's read function via `tree.read(handle, childIndex)`
- * — see the native dispatch on the first line below. This function's
- * non-native branch (TS handles where `tree.read` is undefined) is kept
- * only for unit tests with synthetic handles and any legacy callers we
- * haven't migrated. Don't invest in fixing slot-lift / field-routing
- * gaps here; fix them in the rust reader if they show up there.
+ * A native handle reads through `tree.read`, which expands `depth` levels
+ * (absent is one, `Infinity` the whole subtree). A handle with no `read` is
+ * a test handle over an in-process tree: the JS walker below reads it one
+ * level deep whatever `depth` asks, with every child carrying
+ * `$parentHandle` + `$childIndex` and field placement from tree-sitter's
+ * `fieldNameForChild`. That walker is kept only for those handles; fix
+ * read-shape gaps in the rust reader, not here.
  */
-export function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNodeData {
+export function readUntypedNode(tree: TreeHandle, handle?: number, childIndex?: number, depth?: number): AnyUntypedNode {
 	// Native-handle dispatch: when `tree.read` is present the handle owns a
-	// Rust/napi engine that produces `AnyNodeData` directly (no JS-side tree
+	// Rust/napi engine that produces `AnyUntypedNode` directly (no JS-side tree
 	// walk needed). TS handles do NOT set `tree.read` so this branch is
 	// native-only — no circular recursion risk.
-	if (tree.read) return tree.read(handle, childIndex);
+	if (tree.read) return tree.read(handle, childIndex, depth);
 
 	// Phase D: capture optional kindIdFromName resolver. When absent (e.g. in
-	// unit-test handles with no real grammar), readNode falls back to the string
-	// kind name as $type. This is valid because AnyNodeData.$type is `string |
+	// unit-test handles with no real grammar), readUntypedNode falls back to the string
+	// kind name as $type. This is valid because AnyUntypedNode.$type is `string |
 	// number`: numeric for parser.c-derived kinds (the normal production path),
 	// string for hidden/synthetic kinds (e.g. "_suite") and test fixtures.
 	const kindIdFromName = tree.kindIdFromName;
@@ -156,8 +145,8 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 	// `hasOwnProperty`, `valueOf`, `__proto__`.
 	// Named slots are stored as `_<name>` top-level keys
 	// directly on the returned object (de-hoisted storage). No `$fields` wrapper.
-	const namedSlots: Record<string, AnyNodeData | AnyNodeData[]> = Object.create(null);
-	const children: AnyNodeData[] = [];
+	const namedSlots: Record<string, AnyUntypedNode | AnyUntypedNode[]> = Object.create(null);
+	const children: AnyUntypedNode[] = [];
 
 	/**
 	 * Resolve a tree-sitter kind string to its numeric TSKindId, falling back
@@ -177,19 +166,19 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 	}
 
 	// Push parent node ONCE before iterating children so all child
-	// entries can reference it via $nodeHandle.
+	// entries can reference it via $parentHandle.
 	const parentHandle = pushNode(tree, node);
 
 	const allChildren = node.children();
 	for (let i = 0; i < allChildren.length; i++) {
 		const child = allChildren[i]!;
 
-		const entry: AnyNodeData = {
+		const entry: AnyUntypedNode = {
 			$type: resolveKindId(child.type),
 			$source: 0,
 			$text: child.text(),
 			$span: { start: child.range().start.index, end: child.range().end.index },
-			$nodeHandle: parentHandle,
+			$parentHandle: parentHandle,
 			$childIndex: i,
 			$named: child.isNamed()
 		};
@@ -232,7 +221,7 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 	// Build the result with `_<name>` top-level keys directly.
 	// No `$fields` wrapper — de-hoisted storage shape per FR-001.
 	// Consumers (wrap.ts accessors, transport projection) read `_<name>` directly.
-	const result: AnyNodeData = {
+	const result: AnyUntypedNode = {
 		$type: resolveKindId(node.type),
 		$source: 0,
 		// A leaf (no named slots, no `$other`) carries its text; a structural
@@ -240,9 +229,9 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 		$text: !hasStructure ? node.text() : undefined,
 		$other: children.length > 0 ? children : undefined,
 		$span: { start: node.range().start.index, end: node.range().end.index },
-		$nodeHandle: parentHandle,
+		$handle: parentHandle,
 		$named: node.isNamed()
-	} as AnyNodeData;
+	} as AnyUntypedNode;
 
 	// Stamp `_<name>` storage keys onto the result object directly.
 	// These are enumerable (serializable data) per ADR-0018 §Three namespaces.
@@ -253,4 +242,28 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 	}
 
 	return result;
+}
+
+/** A child a read left at its coordinate: its parent's handle and its index under that parent. */
+export interface Stub {
+	readonly $parentHandle: number;
+	readonly $childIndex: number;
+}
+
+/**
+ * Whether `node` is a stub: it carries the coordinate a later read hydrates it at. A
+ * read stamps `$parentHandle` only beside `$childIndex`, so the pair is the test.
+ */
+export function isStub(node: unknown): node is Stub {
+	if (node === null || typeof node !== 'object') return false;
+	const record = node as Partial<Record<keyof Stub, unknown>>;
+	return typeof record.$parentHandle === 'number' && typeof record.$childIndex === 'number';
+}
+
+/**
+ * The node a stub names, read `depth` levels (one when absent) and unwrapped;
+ * anything that is not a stub comes back as it is.
+ */
+export function hydrateStub<T>(entry: T, tree: TreeHandle, depth?: number): T | AnyUntypedNode {
+	return isStub(entry) ? readUntypedNode(tree, entry.$parentHandle, entry.$childIndex, depth) : entry;
 }

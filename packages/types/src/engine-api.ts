@@ -1,12 +1,12 @@
-import type { AnyNodeData, ByteRange, Edit, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaSetter } from './core-types.ts';
+import type { AnyUntypedNode, ByteRange, Edit, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 
 export interface TriviaFacts {
-	readonly kindName: (type: AnyNodeData['$type']) => string | undefined;
+	readonly kindName: (type: AnyUntypedNode['$type']) => string | undefined;
 	readonly kinds: ReadonlySet<string>;
 	readonly innerGaps: { readonly [kind: string]: readonly string[] };
 	readonly whitespace?: { readonly run: RegExp; readonly kindIdByText: { readonly [text: string]: number } };
-	readonly comment?: ((text: string) => AnyNodeData) | undefined;
+	readonly comment?: ((text: string) => AnyUntypedNode) | undefined;
 }
 
 export interface ParseOptions {
@@ -49,8 +49,8 @@ export interface LanguageAPI {
 	readonly is: object;
 	readonly kinds: object;
 	readonly types: object;
-	readonly root: AnyNodeData;
-	readonly node: AnyNodeData;
+	readonly root: AnyUntypedNode;
+	readonly node: AnyUntypedNode;
 	readonly fixedTextKindId: number;
 	readonly options: object;
 	readonly indentChar: string;
@@ -81,7 +81,7 @@ export interface LanguageHooks<API extends LanguageAPI> {
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {
-	render(node: AnyNodeData | number, options?: API['options'] & RenderCallOptions): Rendered;
+	render(node: AnyUntypedNode | number, options?: API['options'] & RenderCallOptions): Rendered;
 	applyEdits(source: string, edits: readonly Edit[]): string;
 	parseAndRead: EngineDiagnostics['parseAndRead'];
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];

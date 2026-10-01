@@ -54,7 +54,7 @@ describe('real repo files round-trip through parse -> render -> parse', () => {
 			const root = engine.parse(source) as unknown as Rendered;
 			const rendered = root.$render();
 
-			// Nothing was expanded below the root and nothing was rebuilt, so
+			// Nothing was hydrated below the root and nothing was rebuilt, so
 			// nothing is re-spelled — the file comes back as it went in.
 			expect(rendered).toBe(source);
 			expect(shapeOf(engine.parse(rendered))).toBe(shapeOf(root));

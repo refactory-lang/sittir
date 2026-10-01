@@ -64,7 +64,7 @@ describe.each(Object.keys(FLOORS) as GrammarName[])('deep read-render-parse floo
 	}, 120000);
 });
 
-// Kinds with known readNode discrepancies when the override-compiled
+// Kinds with known readUntypedNode discrepancies when the override-compiled
 // parser is active. These kinds have fields in the override parser
 // that the generated routing map doesn't know about yet. Will be
 // removed when T023 switches node-types.json to the override version.
@@ -198,7 +198,7 @@ describe('read projection — structural', () => {
 					.slice(0, 10)
 					.map((i) => `  - ${i.kind} [${i.instance}]: ${i.message}`)
 					.join('\n');
-				throw new Error(`readNode lost content on ${unexpected.length} kind(s) in ${grammar}:\n${lines}`);
+				throw new Error(`readUntypedNode lost content on ${unexpected.length} kind(s) in ${grammar}:\n${lines}`);
 			}
 			expect(result.pass + known.size).toBeGreaterThanOrEqual(result.total);
 			expect(result.total).toBeGreaterThan(0);

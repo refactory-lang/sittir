@@ -400,7 +400,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.libRs.contents).not.toContain('pub mod dispatch');
 		expect(emitted.libRs.contents).not.toContain('render_nodedata_into');
 		expect(emitted.libRs.contents).not.toContain('render_dispatch');
-		// render_transport itself was retired (R5 — dead transport→NodeData
+		// render_transport itself was retired (R5 — dead transport→UntypedNode
 		// inverse bridge deleted); only the dispatch/parts helpers remain.
 		expect(emitted.libRs.contents).toContain(
 			'pub use transport::{render_transport_dispatch, render_transport_parts, AnyTransport, RenderRoot};'
@@ -476,7 +476,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.transportRs.contents).toContain('render_required_child_parent(');
 	});
 
-	it('renders through the transport path only, with no NodeData render bridge', () => {
+	it('renders through the transport path only, with no UntypedNode render bridge', () => {
 		const rustNapi = readFileSync(resolve(repoRoot, 'rust/crates/sittir-rust/src/lib.rs'), 'utf8');
 
 		expect(rustNapi).not.toContain('render_nodedata_into');

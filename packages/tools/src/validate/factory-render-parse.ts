@@ -23,7 +23,7 @@
  * mis-shaped field X" signal instead of an opaque re-parsed-AST diff.
  */
 
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
 import { deriveRuleKinds } from './render-bodies.ts';
@@ -34,14 +34,14 @@ import {
 	loadLanguageForGrammar,
 	buildReadHandle,
 	walkWrappedTree,
-	materializeWrappedNodeData,
-	loadReadTreeNode,
+	materialize,
+	readNodeOf,
 	emitValidatorMetrics,
 	loadNodeModel,
 	dedupeMismatchesByContainment,
 	type TSNode,
 	type TSTree,
-	type WrappedNodeData,
+	type TypedNode,
 	type IrSurface,
 	type ValidatorSkip,
 	loadIrSurface,
@@ -113,7 +113,7 @@ function namedChildKinds(node: TSNode): string[] {
  * independently-constructed factory node and the node a real parse+read
  * produced. Never part of the structural comparison.
  */
-const IGNORED_NODE_KEYS = new Set(['$nodeHandle', '$childIndex', '$span', '$source', '$named', '$with', '$variant']);
+const IGNORED_NODE_KEYS = new Set(['$handle', '$parentHandle', '$treeHandle', '$childIndex', '$span', '$source', '$named', '$with', '$variant']);
 
 function isComparableNode(v: unknown): v is Record<string, unknown> {
 	return typeof v === 'object' && v !== null && '$type' in (v as Record<string, unknown>);
@@ -449,13 +449,13 @@ function recordFactoryModuleLoadFailure(
 
 /**
  * Dispatch `referenceData` through the appropriate factory call convention
- * and return the resulting `NodeData`. Factory lookup uses the walked
+ * and return the resulting `UntypedNode`. Factory lookup uses the walked
  * (source) kind so that alias-source factories are preferred over
  * alias-target factories, keeping the output `$type` aligned with our
  * declared interfaces. Errors thrown by the factory are pushed to `errors`
  * and `null` is returned so the caller can skip the comparison step.
  *
- * @param referenceData - Fully materialized NodeData from the wrapped read tree.
+ * @param referenceData - Fully materialized UntypedNode from the wrapped read tree.
  * @param renderedKind - The walked (source) kind — used for factory + shape lookup.
  * @param cstNodeKindHint - CST node-kind fallback when the wrapper node itself discriminates the variant.
  * @param firstNamedChildKindHint - First CST named-child fallback for legacy callers.
@@ -469,10 +469,10 @@ function recordFactoryModuleLoadFailure(
  * @param entryName - Corpus entry name, used when recording errors.
  * @param inputSource - Original source text, used when recording errors.
  * @param errors - Mutable error list to append to on factory throw.
- * @returns The factory-produced `AnyNodeData`, or `null` if the factory threw.
+ * @returns The factory-produced `AnyUntypedNode`, or `null` if the factory threw.
  */
-function buildFactoryNodeData(
-	referenceData: AnyNodeData,
+function buildFactoryUntypedNode(
+	referenceData: AnyUntypedNode,
 	renderedKind: string,
 	cstNodeKindHint: string | undefined,
 	firstNamedChildKindHint: string | undefined,
@@ -493,7 +493,7 @@ function buildFactoryNodeData(
 		rendered?: string;
 	}[],
 	kindNameFromId?: (id: number) => string | undefined
-): AnyNodeData | null {
+): AnyUntypedNode | null {
 	const factory = factoryMap[renderedKind];
 	if (!factory) return null;
 	try {
@@ -502,7 +502,7 @@ function buildFactoryNodeData(
 			renderedKind,
 			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface },
 			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId }
-		) as AnyNodeData | null;
+		) as AnyUntypedNode | null;
 	} catch (e) {
 		errors.push({
 			kind: renderedKind,
@@ -536,7 +536,7 @@ export async function validateFactoryRenderParse(
 		importFailure
 	} = await loadFactoryModuleForGrammar(grammar);
 
-	const readTreeNodeFn = await loadReadTreeNode(grammar);
+	const readNode = await readNodeOf(grammar);
 	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
 
 	const entries = loadCorpusEntries(grammar);
@@ -582,12 +582,12 @@ export async function validateFactoryRenderParse(
 	}
 
 	// This validator's storage comparison only has meaning against the
-	// wrapped NATIVE read path (readTreeNodeFn + handle.read). Without it,
+	// wrapped NATIVE read path (readNode + handle.read). Without it,
 	// every candidate below would be silently rejected and the run would
 	// report a misleading "0/0 pass" instead of a real failure. Probe
 	// availability up front and fail loudly instead of skipping.
 	let readPathFailure: string | undefined;
-	if (!readTreeNodeFn) {
+	if (!readNode) {
 		readPathFailure = `wrap module unavailable for '${grammar}' — no wrapped-tree read function`;
 	} else {
 		try {
@@ -600,7 +600,7 @@ export async function validateFactoryRenderParse(
 			readPathFailure = `failed to build native read handle: ${(e as Error)?.message ?? e}`;
 		}
 	}
-	if (readPathFailure || !readTreeNodeFn) {
+	if (readPathFailure || !readNode) {
 		const message = `[validate-factory-roundtrip] ${readPathFailure ?? 'wrap module unavailable — no wrapped-tree read function'}`;
 		errors.push({ kind: '(read-tree-unavailable)', message });
 		return {
@@ -627,16 +627,16 @@ export async function validateFactoryRenderParse(
 		// Same read path as read-render-parse: build the native read handle,
 		// then walk the WRAPPED tree once. Every node arrives as its true
 		// source kind, so no separate wrapper/effective-kind reconciliation
-		// dance is needed (the old readNodeAt-based single-node read here
+		// dance is needed (the old readUntypedNodeAt-based single-node read here
 		// required exactly that, and its non-recursive nodeToConfig call
 		// left child fields as unresolved stubs — the root cause of the
 		// native transport's "Missing field" errors once render was fixed
 		// to use the native engine).
 		const handle = await buildReadHandle(grammar, tree1, entry.source, backend, undefined);
-		const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
-		const candidatesByKind = new Map<string, { start: number; end: number; node: WrappedNodeData }[]>();
+		const wrappedRoot = readNode(handle) as TypedNode;
+		const candidatesByKind = new Map<string, { start: number; end: number; node: TypedNode }[]>();
 		const seen = new Set<string>();
-		walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
+		walkWrappedTree(wrappedRoot, (w: TypedNode) => {
 			if (w.$named === false) return;
 			const sourceKind = kindNameFromId ? kindNameFromId(nativeShownKindId(w)) : undefined;
 			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
@@ -664,14 +664,14 @@ export async function validateFactoryRenderParse(
 				const inputSource = node1 ? node1.text : entry.source.slice(cand.start, cand.end);
 
 				// Canonical reference: what a real parse+read produces for
-				// this node, fully materialized (no lazy $nodeHandle stubs).
+				// this node, fully materialized (no lazy stubs).
 				// $text is handled per-node by the comparator itself (see
 				// isTextShapeNode) rather than stripped here.
-				const referenceData = materializeWrappedNodeData(cand.node);
+				const referenceData = materialize(cand.node);
 
 				const cstNamedChildKinds = node1 ? namedChildKinds(node1) : [];
 
-				const factoryData = buildFactoryNodeData(
+				const factoryData = buildFactoryUntypedNode(
 					referenceData,
 					kind,
 					node1?.type,

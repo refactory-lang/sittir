@@ -48,7 +48,7 @@ The options a single render takes beside the language's render options: `ignoreF
 
 ### `packages/types/src/engine-api.ts::ParseOptions`
 
-How far one read expands. The default is lazy: a read returns one level, and a child with substructure comes back as a stub the accessors expand on demand. `deep` expands the whole subtree in one pass instead: one crossing instead of one per level, at the cost of reading what you may not touch.
+How far one read expands. The default is lazy: a read returns one level, and a child with substructure comes back as a stub the accessors hydrate on demand. `deep` expands the whole subtree in one pass instead: one crossing instead of one per level, at the cost of reading what you may not touch.
 
 ### `packages/types/src/engine-api.ts::EngineIdentity`
 
@@ -72,7 +72,7 @@ A trivia entry as input: one of the grammar's trivia kinds or a string. A string
 
 ### `packages/types/src/core-types.ts::TriviaSetter`
 
-`$trivia` over a grammar's trivia union: called with entries (rest arguments are leading, or one `{ leading, trailing }` object) or through `leading`/`trailing`, it rebuilds the node; called with no arguments, `leading`/`trailing` read the stored entries. With its defaults (`Self = AnyNodeData`, `Trivia = any`) it is the loose `$trivia` every `AnyNodeData` may carry, so a grammar's narrower setter is assignable to it.
+`$trivia` over a grammar's trivia union: called with entries (rest arguments are leading, or one `{ leading, trailing }` object) or through `leading`/`trailing`, it rebuilds the node; called with no arguments, `leading`/`trailing` read the stored entries. With its defaults (`Self = AnyUntypedNode`, `Trivia = any`) it is the loose `$trivia` every `AnyUntypedNode` may carry, so a grammar's narrower setter is assignable to it.
 
 ### `packages/types/src/engine-api.ts::NodeMethods`
 
@@ -302,6 +302,6 @@ A flavor pair's arity stamp: the route key, for the refusal message, and `max`, 
 
 A strict builder with no coercer beside it, as one pair (a refine form); `bundle(strict, undefined, stamp)` builds it and hoisting calls `strict`.
 
-### `packages/types/src/core-types.ts::AnyNodeData.$textOnly`
+### `packages/types/src/core-types.ts::AnyUntypedNode.$textOnly`
 
-Marks a node whose coordinate (`$nodeHandle` with `$span`) addresses its text only: the bytes it spans, not the layout around them. A native deep read stamps it on a leaf's coordinate, and `stripStructuralProvenance` stamps every coordinate it leaves in place. Edge and gap readers on the render side skip such a coordinate, so a root's leading and trailing flank and a list's source gaps are inferred only from a tree-addressed coordinate. It is dropped with the other coordinate keys when a node is edited or made self-contained.
+Marks a node whose coordinate (`$treeHandle` with `$span`) addresses its text only: the bytes it spans, not the layout around them. A native deep read stamps it on a leaf's coordinate, and `detachCoordinates` stamps every coordinate it leaves in place. Edge and gap readers on the render side skip such a coordinate, so a root's leading and trailing flank and a list's source gaps are inferred only from a tree-addressed coordinate. It is dropped with the other coordinate keys when a node is edited or made self-contained.

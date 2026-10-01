@@ -44,7 +44,7 @@ describe('factory-roundtrip harness', () => {
 		const content = readFileSync(resolve(import.meta.dirname, '../src/validate/from.ts'), 'utf-8');
 		expect(content).toMatch(/const childArgs = getChildFactoryArgs\(readKind, config, factorySlots, factoryFields\);/);
 		expect(content).toMatch(
-			/factoryResult = \(factory as \(\.\.\.args: unknown\[\]\) => AnyNodeData\)\(\.\.\.childArgs\);/
+			/factoryResult = \(factory as \(\.\.\.args: unknown\[\]\) => AnyUntypedNode\)\(\.\.\.childArgs\);/
 		);
 		expect(content).not.toMatch(/const namedChildren = \(readData\.\$children \?\? \[\]\)\.filter/);
 	});

@@ -163,7 +163,7 @@ const ARGS_HELPER = [
 	'    : never;'
 ].join('\n');
 
-const TYPES_IMPORT_ALWAYS = 'AnyNodeData';
+const TYPES_IMPORT_ALWAYS = 'AnyUntypedNode';
 const TYPES_IMPORT_OPTIONAL = ['LooseValue', 'NonEmptyArray', 'WidenNumeric', 'SiblingLeadRefusal', 'SpelledAffix', 'WithSpelling'] as const;
 
 function emitFromFieldInputType(lines: string[]): void {
@@ -261,7 +261,7 @@ function factoryReturnTypeExpr(factory: string): string {
 	return `ReturnType<typeof ${factory}>`;
 }
 
-function emitBranchNodeDataPassthrough(
+function emitBranchUntypedNodePassthrough(
 	lines: string[],
 	inputOptional: boolean,
 	returnType: string,
@@ -442,7 +442,7 @@ function emitBranchFrom(
 					: bareContent === undefined
 						? false
 						: (numericSlotShape(bareContent) ?? 'text');
-			emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName, bareKind);
+			emitBranchUntypedNodePassthrough(lines, inputOptional, returnType, typeName, bareKind);
 		}
 		if (bareInterior !== undefined) {
 			const shape = bareInterior.number;
@@ -528,7 +528,7 @@ function emitBranchFrom(
 			lines.push(`  }${optionsArg});`);
 		}
 	} else {
-		emitBranchNodeDataPassthrough(lines, inputOptional, returnType, typeName);
+		emitBranchUntypedNodePassthrough(lines, inputOptional, returnType, typeName);
 		lines.push(`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`);
 	}
 	lines.push('}');
@@ -955,7 +955,7 @@ function altKindDiscriminants(
  * `defaultArm()` placeholder stamping `annotations.default` on the arm
  * itself. `_resolveOne` hoists a bare, kindless value straight into this
  * arm when the field admits more than one; it is never a candidate the
- * kind/NodeData route re-targets, since that route is never ambiguous
+ * kind/UntypedNode route re-targets, since that route is never ambiguous
  * about a value's own kind.
  */
 function defaultArmKindOf(
@@ -1333,7 +1333,7 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push(
 		'  const kindId = isNode(v) ? v.$type : typeof v === "number" && _KIND_ID_STORED.has(v) ? v : undefined;'
 	);
-	// A value that already names its own kind (NodeData, or a stored kind-id)
+	// A value that already names its own kind (UntypedNode, or a stored kind-id)
 	// is never re-targeted by a declared default — there is nothing ambiguous
 	// about what it is, only whether the arm it names is one this field
 	// admits. Genuine ambiguity here (the same kind-id fits more than one
@@ -1434,9 +1434,9 @@ function emitAssertNonEmptyHelper(lines: string[]): void {
 
 function emitLooseConfigGuard(lines: string[]): void {
 	lines.push('/** Narrows a coercer input to its config arm. A bare `isNode` check');
-	lines.push(' *  cannot: the NodeData arm is not a strict subtype of the config arm, so');
+	lines.push(' *  cannot: the UntypedNode arm is not a strict subtype of the config arm, so');
 	lines.push(' *  negative narrowing leaves it in place. */');
-	lines.push('function _isLooseConfig<C>(v: C | AnyNodeData): v is C {');
+	lines.push('function _isLooseConfig<C>(v: C | AnyUntypedNode): v is C {');
 	lines.push('  return !isNode(v);');
 	lines.push('}');
 }
@@ -1598,7 +1598,7 @@ function emitResolverHelpers(
 	lines.push('interface _LeafEntry {');
 	lines.push('  readonly values?: readonly string[];');
 	lines.push('  readonly pattern?: RegExp;');
-	lines.push('  readonly factory: (text: string) => AnyNodeData | number;');
+	lines.push('  readonly factory: (text: string) => AnyUntypedNode | number;');
 	lines.push('}');
 	lines.push('const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {');
 	for (const entry of registryEntries) lines.push(entry);
@@ -1607,7 +1607,7 @@ function emitResolverHelpers(
 	lines.push(`const _AFFIXED_KINDS: ReadonlySet<string> = new Set(${JSON.stringify(affixed)});`);
 	lines.push('');
 
-	lines.push('function _buildGuardedText(v: string, kind: string): AnyNodeData | number {');
+	lines.push('function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {');
 	lines.push('  const entry = _leafRegistry[kind]!;');
 	lines.push('  if (entry.values !== undefined && !entry.values.includes(v)) {');
 	lines.push('    throw new Error(`${JSON.stringify(v)} is not the text of ${kind}: expected one of ${JSON.stringify(entry.values)}`);');
@@ -1627,7 +1627,7 @@ function emitResolverHelpers(
 	for (const [kind, leaves] of envelopeTextLeaves) lines.push(`  ${JSON.stringify(kind)}: ${JSON.stringify(leaves)},`);
 	lines.push('};');
 	lines.push('');
-	lines.push('function _resolveBareText(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {');
+	lines.push('function _resolveBareText(v: string, kinds: readonly string[]): AnyUntypedNode | number | undefined {');
 	lines.push('  for (const kind of _TEXT_KINDS_BY_RANK) {');
 	lines.push('    const direct = kinds.includes(kind);');
 	lines.push('    const envelope = direct ? undefined : kinds.find((k) => _ENVELOPE_TEXT_LEAVES[k]?.includes(kind) === true && _isFromKind(k));');
@@ -1673,7 +1673,7 @@ function emitResolverHelpers(
 		scalars.boolean !== undefined && kindEntries !== undefined,
 		numeric.length > 0
 	);
-	lines.push(`function _resolveScalar(${scalarParam}: boolean | number | bigint): AnyNodeData | number | undefined {`);
+	lines.push(`function _resolveScalar(${scalarParam}: boolean | number | bigint): AnyUntypedNode | number | undefined {`);
 	const booleanMember = (kind: string): string | undefined =>
 		kindEntries === undefined ? undefined : findKindEntry(kindEntries, kind)?.member;
 	const trueMember = scalars.boolean === undefined ? undefined : booleanMember(scalars.boolean.trueKind);
@@ -1719,7 +1719,7 @@ function emitResolverHelpers(
 	lines.push('const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {');
 	for (const [text, k] of byText) lines.push(`  ${JSON.stringify(text)}: ${JSON.stringify(k)},`);
 	lines.push('};');
-	lines.push('const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undefined> = {');
+	lines.push('const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyUntypedNode | number) | undefined> = {');
 	for (const [k, factory] of buildByKind) lines.push(`  ${JSON.stringify(k)}: () => F.${factory}(),`);
 	lines.push('};');
 	lines.push(`const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(${JSON.stringify(stringCapable)});`);
@@ -1795,7 +1795,7 @@ function emitResolverHelpers(
 	lines.push('  if (optionalSlot === true && Array.isArray(v) && v.length === 0) return undefined as T;');
 	// A `kind:` config naming a DIFFERENT concrete kind than this branch is
 	// itself the value a wrap-children kind's sole slot admits (rule 5): build
-	// it eagerly and run it through the SAME NodeData wrap-or-passthrough
+	// it eagerly and run it through the SAME UntypedNode wrap-or-passthrough
 	// check below, rather than duplicating that check against a reassigned
 	// `v` (reassignment would widen every later narrowing of `v` in this
 	// function back to its declared type).

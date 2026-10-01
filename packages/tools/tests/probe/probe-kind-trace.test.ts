@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { type WrappedNodeData } from '../../src/validate/common.ts';
-import { stripStructuralProvenance } from '@sittir/common';
-import { materializeProbeWrappedNodeData, probeTrace, resolveNativeTraceNodeData } from '../../src/probe/kind.ts';
+import { materializeDetached, type TypedNode } from '../../src/validate/common.ts';
+import { detachCoordinates } from '@sittir/common';
+import { probeTrace, resolveNativeTraceUntypedNode } from '../../src/probe/kind.ts';
 
-function leaf(handle: number, text: string): WrappedNodeData {
+function leaf(handle: number, text: string): TypedNode {
 	return {
 		$type: handle,
 		$source: 0,
 		$named: true,
 		$text: text,
-		$nodeHandle: handle,
+		$parentHandle: handle,
 		$childIndex: 0
 	};
 }
@@ -29,9 +29,9 @@ describe('probe-kind native trace helpers', () => {
 			statements() {
 				return [leaf(11, 'let a = 1;'), leaf(12, 'let b = 2;')];
 			}
-		} satisfies WrappedNodeData;
+		} satisfies TypedNode;
 
-		const materialized = asRecord(materializeProbeWrappedNodeData(wrapped));
+		const materialized = asRecord(materializeDetached(wrapped));
 
 		expect(materialized).not.toHaveProperty('$text');
 		expect(materialized._statements).toEqual([
@@ -41,7 +41,7 @@ describe('probe-kind native trace helpers', () => {
 	});
 
 	it('strips root $text when structure is children-only', () => {
-		const nodeData = {
+		const untypedNode = {
 			$type: 1,
 			$source: 0,
 			$named: true,
@@ -49,7 +49,7 @@ describe('probe-kind native trace helpers', () => {
 			_children: []
 		};
 
-		const stripped = asRecord(stripStructuralProvenance(nodeData));
+		const stripped = asRecord(detachCoordinates(untypedNode));
 
 		expect(stripped).not.toHaveProperty('$text');
 		expect(stripped._children).toEqual([]);
@@ -62,9 +62,9 @@ describe('probe-kind native trace helpers', () => {
 			children() {
 				return [];
 			}
-		} satisfies WrappedNodeData;
+		} satisfies TypedNode;
 
-		const materialized = asRecord(materializeProbeWrappedNodeData(wrapped));
+		const materialized = asRecord(materializeDetached(wrapped));
 
 		expect(materialized).not.toHaveProperty('$text');
 		expect(materialized._children).toEqual([]);
@@ -77,14 +77,14 @@ describe('probe-kind native trace helpers', () => {
 			statements() {
 				return [leaf(11, 'let a = 1;'), leaf(12, 'let b = 2;')];
 			}
-		} satisfies WrappedNodeData;
+		} satisfies TypedNode;
 		const legacy = {
 			$type: 1,
 			$text: 'let a = 1; let b = 2;',
 			_statements: { $type: 10, $text: 'collapsed' }
 		};
 
-		const resolved = asRecord(resolveNativeTraceNodeData(wrapped, legacy));
+		const resolved = asRecord(resolveNativeTraceUntypedNode(wrapped, legacy));
 
 		expect(resolved).not.toHaveProperty('$text');
 		expect(resolved._statements).toEqual([
@@ -100,7 +100,7 @@ describe('probe-kind native trace helpers', () => {
 			_statements: { $type: 10, $text: 'collapsed' }
 		};
 
-		expect(resolveNativeTraceNodeData(undefined, legacy)).toBe(legacy);
+		expect(resolveNativeTraceUntypedNode(undefined, legacy)).toBe(legacy);
 	});
 
 	it('defaults omitted trace engine selection to the full js/native matrix', async () => {
