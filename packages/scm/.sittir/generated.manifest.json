@@ -1,6 +1,6 @@
 {
   "grammar": "scm",
-  "source_hash": "12c6698ad180a777e65192e5a7f91cecfb1c25c4149f6d5ee0ae6c0d4fdfedb8",
+  "source_hash": "912c05ebf9379ba08523bb985c539c55dc706e0d6372802b368607549431288f",
   "files": {
     "packages/scm/.sittir/grammar-diagnostics.json": "75994c5f3d295950e127de18849925e9084e0757c715bcaad81bb31be7052ba6",
     "packages/scm/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -36,7 +36,7 @@
     "packages/scm/src/types-internal.ts": "471c667850e9cc3518a7eedbcd78dca22e6b8537172fd3ab1d3c4b1949829faa",
     "packages/scm/src/types.ts": "e5e50d696de9da2f82da3a40262d7d07637e672149c4704804e0cd0480166645",
     "packages/scm/src/utils.ts": "661bde5d04b33251f095d1ef580cc04eaba033b184f6b2e4a7ae80f42a6d868b",
-    "packages/scm/src/wrap.ts": "5218c0f646d9ffd5a27bebe8c20f4476adf84cba4e7f0030d0930fbe6fb1418e",
+    "packages/scm/src/wrap.ts": "50c85b1b529934c29fe2984405e8c3aa97cce1ba7d1d9d2956f32fd8e5a22645",
     "rust/crates/sittir-scm/index.d.ts": "02f58d3f6a8a44eda20e1d89d122c9345ef4fba98e94dd96db312958c6fc8554",
     "rust/crates/sittir-scm/index.js": "8205a0432859ea6b53a39948debc97e3851ad4bda59e0409542ed9a243567a6c",
     "rust/crates/sittir-scm/src/lib.rs": "be499be87247674d99d9b8d9f8bea667e4148508e05e1324015fdbc433fa9849",

@@ -1035,8 +1035,6 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			"import type { TreeHandle, TokenInterior } from '@sittir/common/utils';",
 			"import { TOKEN_INTERIORS } from './consts.js';",
 			"import type { ParsedRoot } from '@sittir/common/engine';",
-			'// Import _NodeData (== AnyNodeData) from @sittir/types',
-			'// instead of re-declaring locally. Single source of truth.',
 			"import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray, SupertypeSurface } from '@sittir/types';",
 			...(this.#kindEntries ? ["import { TSKindId, KIND_NAMES, KIND_DISPLAY_NAMES } from './types.js';"] : []),
 			DELIMITER_IMPORT,
@@ -1778,6 +1776,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('');
 
 		return pruneUnusedImports(lines, [
+			'AnyNodeData',
 			'Delimiter',
 			'projectInterior',
 			'TokenInterior',
