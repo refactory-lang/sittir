@@ -1,30 +1,16 @@
 {
     "backend": "native",
-    "commit": "f9c1a84",
+    "commit": "cfcbf49",
     "grammars": {
         "python": {
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
-                "leftOutByKind": {
-                    "argument_list": 2,
-                    "assignment_eq": 1,
-                    "call": 2,
-                    "conditional_expression": 1,
-                    "expression_statement": 4,
-                    "function_definition": 3,
-                    "list": 3,
-                    "list_comprehension": 1,
-                    "module": 5,
-                    "parameters": 1,
-                    "parameters_elements": 1,
-                    "tuple": 2,
-                    "tuple_pattern": 1
-                },
-                "pass": 1368,
-                "total": 1368
+                "leftOutByKind": {},
+                "pass": 1395,
+                "total": 1395
             },
-            "supertypeKindCount": 13,
+            "supertypeKindCount": 15,
             "validators": {
                 "coverage": {
                     "failingKinds": [],
@@ -42,8 +28,8 @@
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 180,
-                    "total": 180
+                    "pass": 181,
+                    "total": 181
                 },
                 "roundtrip": {
                     "astMatchPass": 115,
@@ -54,21 +40,60 @@
                 }
             }
         },
+        "regex": {
+            "parityFixtures": {
+                "failingByKind": {},
+                "formatDeferredByKind": {},
+                "leftOutByKind": {},
+                "pass": 54,
+                "total": 54
+            },
+            "supertypeKindCount": 1,
+            "validators": {
+                "coverage": {
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 25,
+                    "total": 25
+                },
+                "factoryRoundtrip": {
+                    "astMatchPass": 175,
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 175,
+                    "total": 175
+                },
+                "from": {
+                    "failingKinds": [
+                        "identity_escape"
+                    ],
+                    "formatDeferredKinds": [],
+                    "pass": 49,
+                    "total": 50
+                },
+                "roundtrip": {
+                    "astMatchPass": 37,
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 37,
+                    "total": 37
+                }
+            }
+        },
         "rust": {
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
                 "leftOutByKind": {
-                    "if_expression": 1,
-                    "source_file": 4,
+                    "source_file": 3,
                     "struct_expression": 1,
                     "struct_item_tuple": 1,
-                    "use_declaration": 2
+                    "use_declaration": 1
                 },
-                "pass": 2033,
-                "total": 2033
+                "pass": 2036,
+                "total": 2036
             },
-            "supertypeKindCount": 26,
+            "supertypeKindCount": 27,
             "validators": {
                 "coverage": {
                     "failingKinds": [],
@@ -86,8 +111,8 @@
                 "from": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 243,
-                    "total": 243
+                    "pass": 245,
+                    "total": 245
                 },
                 "roundtrip": {
                     "astMatchPass": 148,
@@ -95,6 +120,44 @@
                     "formatDeferredKinds": [],
                     "pass": 148,
                     "total": 148
+                }
+            }
+        },
+        "scm": {
+            "parityFixtures": {
+                "failingByKind": {},
+                "formatDeferredByKind": {},
+                "leftOutByKind": {},
+                "pass": 19,
+                "total": 19
+            },
+            "supertypeKindCount": 3,
+            "validators": {
+                "coverage": {
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 20,
+                    "total": 20
+                },
+                "factoryRoundtrip": {
+                    "astMatchPass": 118,
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 118,
+                    "total": 118
+                },
+                "from": {
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 25,
+                    "total": 25
+                },
+                "roundtrip": {
+                    "astMatchPass": 19,
+                    "failingKinds": [],
+                    "formatDeferredKinds": [],
+                    "pass": 19,
+                    "total": 19
                 }
             }
         },
@@ -111,8 +174,8 @@
                 "coverage": {
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 200,
-                    "total": 200
+                    "pass": 201,
+                    "total": 201
                 },
                 "factoryRoundtrip": {
                     "astMatchPass": 1300,
@@ -138,8 +201,8 @@
         }
     },
     "totals": {
-        "fail": 3,
-        "pass": 11408,
-        "total": 11411
+        "fail": 4,
+        "pass": 11983,
+        "total": 11987
     }
 }
