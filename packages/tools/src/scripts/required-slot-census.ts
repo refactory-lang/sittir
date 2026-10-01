@@ -29,19 +29,23 @@ export const admittingSlots = async (grammar: string, includeLoose: boolean): Pr
 	const source = checkProgram.getSourceFile(rawPath)!;
 	const builders = new Map<string, ts.FunctionDeclaration>();
 	for (const statement of source.statements) {
-		if (ts.isFunctionDeclaration(statement) && statement.name?.text.startsWith('build')) builders.set(statement.name.text, statement);
+		if (ts.isFunctionDeclaration(statement) && statement.name?.text.startsWith('build') && !builders.has(statement.name.text)) builders.set(statement.name.text, statement);
 	}
 	for (const node of nodeMap.nodes.values()) {
 		const builder = node.rawFactoryName === undefined ? undefined : builders.get(node.rawFactoryName);
 		const param = builder?.parameters[0];
 		if (builder === undefined || param === undefined || !(node instanceof AbstractAssembledCompound)) continue;
 		const paramType = checker.getTypeAtLocation(param);
-		for (const slot of node.configSlots) {
+		const optionsParam = builder.parameters.find((candidate) => candidate.name.getText(source) === 'options');
+		const optionsType = optionsParam === undefined ? undefined : checker.getNonNullableType(checker.getTypeAtLocation(optionsParam));
+		const carriedByOptions = (key: string): boolean => optionsType?.getProperty(key) !== undefined;
+		const callerSlots = node.configSlots.filter((slot) => !carriedByOptions(slot.configKey));
+		for (const slot of callerSlots) {
 			if (!isRequired(slot) || slotFilledWhenOmitted(slot, nodeMap)) continue;
 			const property = checker.getPropertyOfType(checker.getNonNullableType(paramType), slot.configKey);
 			const label = `${node.kind}.${slot.configKey}`;
 			if (property === undefined) {
-				const directParameter = node.configSlots.length === 1 && param.name.getText(source) !== 'config';
+				const directParameter = callerSlots.length === 1 && param.name.getText(source) !== 'config';
 				if (!directParameter || param.questionToken !== undefined || hasUndefined(paramType)) strict.push(label);
 				continue;
 			}
