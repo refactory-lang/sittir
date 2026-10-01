@@ -96,10 +96,7 @@ export function buildCapture(
 ): ReturnType<typeof _buildCapture>;
 export function buildCapture(text: string): ReturnType<typeof _buildCapture>;
 export function buildCapture(...args: unknown[]) {
-	if (
-		args.length === 0 ||
-		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
-	) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildCapture(args[0] as T.ImmediateIdentifier);
 	}
 	const prebuilt =
@@ -121,7 +118,7 @@ function _buildCapture(value: AdmitBound<T.ImmediateIdentifier, T.AdmittedNodes>
 				$named: true as const,
 				_name,
 				$with: {
-					name: (value: T.ImmediateIdentifier) => buildCapture(value)
+					name: (value: T.ImmediateIdentifier) => _buildCapture(value)
 				}
 			},
 			{
@@ -136,10 +133,7 @@ export function buildString(
 	...children: AdmitBound<(T.StringContentText | T.EscapeSequence)[], T.AdmittedNodes>
 ): ReturnType<typeof _buildString>;
 export function buildString(...args: unknown[]) {
-	if (
-		args.length === 0 ||
-		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
-	) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildString(args[0] as T.StringContent);
 	}
 	const prebuilt =
@@ -161,7 +155,7 @@ function _buildString(value?: AdmitBound<T.StringContent, T.AdmittedNodes>): T.S
 				$named: true as const,
 				_string_content,
 				$with: {
-					stringContent: (value?: T.StringContent) => buildString(value)
+					stringContent: (value?: T.StringContent) => _buildString(value)
 				}
 			},
 			{
@@ -178,10 +172,7 @@ export function buildImmediateString(
 	...children: AdmitBound<(T.StringContentText | T.EscapeSequence)[], T.AdmittedNodes>
 ): ReturnType<typeof _buildImmediateString>;
 export function buildImmediateString(...args: unknown[]) {
-	if (
-		args.length === 0 ||
-		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
-	) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildImmediateString(args[0] as T.StringContent);
 	}
 	const prebuilt =
@@ -203,7 +194,7 @@ function _buildImmediateString(value?: AdmitBound<T.StringContent, T.AdmittedNod
 				$named: true as const,
 				_string_content,
 				$with: {
-					stringContent: (value?: T.StringContent) => buildImmediateString(value)
+					stringContent: (value?: T.StringContent) => _buildImmediateString(value)
 				}
 			},
 			{
@@ -408,10 +399,7 @@ export function buildNegatedField(
 ): ReturnType<typeof _buildNegatedField>;
 export function buildNegatedField(text: string): ReturnType<typeof _buildNegatedField>;
 export function buildNegatedField(...args: unknown[]) {
-	if (
-		args.length === 0 ||
-		(args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')
-	) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildNegatedField(args[0] as T.Identifier);
 	}
 	const prebuilt =
@@ -433,7 +421,7 @@ function _buildNegatedField(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T
 				$named: true as const,
 				_identifier,
 				$with: {
-					identifier: (value: T.Identifier) => buildNegatedField(value)
+					identifier: (value: T.Identifier) => _buildNegatedField(value)
 				}
 			},
 			{

@@ -1160,6 +1160,7 @@ function emitFieldCarryingFactory(
 	let slotsToEmit: readonly AssembledNonterminal[] = slots;
 	const registered = registeredSlots(node);
 	const registeredSet = new Set(registered);
+	const forwardTarget = forwardedConstructorTarget(node, nodeMap, kindEntries);
 	const spellingWith = (rebuild: (patch: string) => string): string[] =>
 		registered.map((f) => `      ${f.propertyName}: (spelling: ${constructionFieldElementType(f, nodeMap, kindEntries)}) => ${rebuild(`{ ...options, ${f.configKey}: spelling }`)},`);
 
@@ -1175,10 +1176,11 @@ function emitFieldCarryingFactory(
 			slotStorageFromValueExpr(f, holdsFixedText(f) ? defaultedValueExpr(f, 'value', nodeMap, kindEntries) : 'value', nodeMap, kindEntries, node.typeName);
 		const setterType = setterElemType(singleField, elemType, elemType, nodeMap, true);
 		const setterSig = setterValueSignature(singleField, setterType);
-		const rebuildDirect = (options: string): string => `${fn}(value, ${options})`;
+		const direct = forwardTarget === null ? fn : `_${fn}`;
+		const rebuildDirect = (options: string): string => `${direct}(value, ${options})`;
 		withLines = [
 			'    $with: {',
-			`      ${singleField.propertyName}: (${setterSig}) => ${registered.length === 0 ? `${fn}(value)` : `${fn}(value, options)`},`,
+			`      ${singleField.propertyName}: (${setterSig}) => ${registered.length === 0 ? `${direct}(value)` : `${direct}(value, options)`},`,
 			...spellingWith(rebuildDirect),
 			'    },'
 		];
@@ -1245,7 +1247,6 @@ function emitFieldCarryingFactory(
 	lines.push('}');
 
 	const { directParamType, directParamOptional } = surface;
-	const forwardTarget = forwardedConstructorTarget(node, nodeMap, kindEntries);
 	if (forwardTarget !== null) {
 		const targetFn = nodeMap.nodes.get(forwardTarget)!.rawFactoryName!;
 		lines[0] = lines[0]!.replace(`${exportKw}function ${fn}(`, `function _${fn}(`);
@@ -1276,9 +1277,6 @@ function emitFieldCarryingFactory(
 				);
 			}
 			wrapper.push(
-				`  if (args.length === 1 && typeof args[0] !== 'object') {`,
-				`    return _${fn}(args[0] as ${directParamType});`,
-				`  }`,
 				`  if (args[0] === undefined) {`,
 				`    return _${fn}(args[0] as unknown as ${directParamType}, args[1] as never);`,
 				`  }`,
@@ -1295,7 +1293,7 @@ function emitFieldCarryingFactory(
 				wrapper.push(`  if (args.length === 0) {`, `    return _${fn}(${targetEmpty} as ${directParamType});`, `  }`);
 			}
 			wrapper.push(
-				`  if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number' && typeof args[0] !== 'bigint')) {`,
+				`  if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {`,
 				`    return _${fn}(args[0] as ${directParamType});`,
 				`  }`,
 				`  const prebuilt =`,

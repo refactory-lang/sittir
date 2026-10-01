@@ -791,13 +791,18 @@ A pattern value contributes `string`; a slot holding only pattern values never t
 #### body
 
 ```text
-// A single non-object argument (undefined = optional-empty; string
-// = text-collapsed scalar storage; number = scalarized kind-enum
-// storage; boolean = keyword-presence storage) keeps the direct
-// pass-through semantics — read-side storage scalar-collapses such
-// children, so constructing a node here would diverge from what a
-// real parse stores. Only structured forwarded args (config
-// objects, node spreads) construct the child.
+// The wrapper's dispatch has three outcomes. No argument, or a lone
+// `undefined`, is the absent child and goes to the direct builder as
+// is. A lone object whose `$type` is the target kind is the pre-built
+// child. Everything else is the target's own argument list — text or a
+// number for a leaf target, a keyword kind, elements for a list — and
+// the target's factory builds the child from it. No primitive is ever
+// a pre-built child, so the test names the target node and never
+// enumerates argument types.
+//
+// The node's `$with` setters call the private direct builder, not this
+// wrapper: a setter takes the slot's own type and stores it, so it must
+// not inherit the wrapper's building of the target from text.
 ```
 
 #### body
@@ -825,13 +830,10 @@ tested against a slot value.
 #### body
 
 ```text
-// This node's own registered slot (e.g. terminator) gave the public
-// wrapper a trailing options argument that the count-only dispatch
-// below never accounted for — args.length alone can no longer tell
-// the plain-value call `(value?, options?)` apart from the bare-text
-// shorthand call `(text)`, so the shorthand branch is narrowed to
-// its one unambiguous shape (a single non-object argument) and every
-// other branch threads args[1] through as options.
+// A node with a registered slot (e.g. terminator) takes a trailing
+// options argument, so its wrapper reads the child from args[0] alone
+// and threads args[1] through as options on every branch; the target
+// is built from args[0], never from the whole argument list.
 ```
 
 #### overload order
