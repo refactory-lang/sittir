@@ -626,3 +626,19 @@ reconciliation gate. Three clusters, one per root cause:
  * test-fixtures.json) can't be committed. Fast: hash comparison only, no cargo.
  */
 ```
+
+### `packages/codegen/src/scripts/generated-manifest.ts::ManifestSource`
+
+Where a manifest verification reads from: the root directory holding the grammar packages, the set of repo-relative paths git would track there, and whether host binaries (untracked `.node` files) take part in the freshness check. The working tree is the default; a snapshot of the index passes its scratch root and drops the binary check, since binaries are never part of a commit.
+
+### `packages/codegen/src/scripts/generated-manifest.ts::worktreeSource`
+
+The live checkout as a `ManifestSource`, computed once per process.
+
+### `packages/codegen/src/scripts/index-snapshot.ts::withIndexSnapshot`
+
+Materializes the files of the index under the given pathspecs into a scratch directory, runs the callback against it, and removes the directory when the callback settles. The index honours `GIT_INDEX_FILE`, so inside a pre-commit hook for `git commit -- <paths>` the snapshot is the temporary index that commit will record. Unstaged edits and untracked files are absent by construction.
+
+### `packages/codegen/src/scripts/verify-manifests-cli.ts::module`
+
+`--staged` verifies the index snapshot of every grammar package and the codegen sources, so the pre-commit hook rejects only what the commit would contain.

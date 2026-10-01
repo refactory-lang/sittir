@@ -74,7 +74,6 @@
  * follow-up note in this file's docstring at the bottom of the diff.
  */
 
-import { fileURLToPath } from 'node:url';
 import {
 	loadLanguageForGrammar,
 	loadKindIdFromName,
@@ -91,7 +90,8 @@ import {
 	walkNativeForKind,
 	buildKindToSupertypes,
 	wrapForReparse,
-	WASM_PATHS,
+	upstreamWasmPath,
+	nativeNodeIsKind,
 	type TSNode,
 	type TSTree,
 	type AccessorThrowRecord,
@@ -575,7 +575,7 @@ export async function probe(
 			// native `$nodeId` so drill-in fires under napi.
 			const root = readTreeNodeFn ? readTreeNodeFn(handle) : handle.read?.();
 			const target = opts.kind
-				? findInNodeData(root, opts.kind)
+				? findInNodeData(root, opts.kind, await loadKindNameFromId(grammar))
 				: findInNodeDataByRange(root, opts.range!.start, opts.range!.end);
 			if (!target) {
 				throw new Error(`probe-kind: --engine native: no node match in NodeData tree`);
@@ -708,9 +708,8 @@ async function probeShipped(
 	source: string,
 	target: { kind?: string; range?: { start: number; end: number } }
 ): Promise<ProbeShippedReport | undefined> {
-	const wasmSpecifier = WASM_PATHS[grammar];
-	if (!wasmSpecifier) return undefined;
-	const wasmPath = fileURLToPath(import.meta.resolve(wasmSpecifier));
+	const wasmPath = upstreamWasmPath(grammar);
+	if (wasmPath === undefined) return undefined;
 	const { Parser, lang } = await loadLanguageFromPath(wasmPath);
 	const parser = new Parser();
 	parser.setLanguage(lang);
@@ -1235,26 +1234,30 @@ function shapeOf(node: CstNode): string {
  *  subtree whose `$type` matches `kind`. Used by the native-engine
  *  path to find a kind-specific subtree once `parse_and_read` has
  *  returned the whole-tree NodeData. */
-function findInNodeData(node: unknown, kind: string): unknown | null {
+export function findInNodeData(
+	node: unknown,
+	kind: string,
+	kindNameFromId: ((id: number) => string | undefined) | undefined
+): unknown | null {
 	if (!node || typeof node !== 'object') return null;
+	if (nativeNodeIsKind(node as AnyNodeData, kind, kindNameFromId)) return node;
 	const n = node as Record<string, unknown>;
-	if (n.$type === kind) return node;
 	for (const key of Object.keys(n)) {
 		if (!key.startsWith('_')) continue;
 		const v = n[key];
 		if (Array.isArray(v)) {
 			for (const item of v) {
-				const found = findInNodeData(item, kind);
+				const found = findInNodeData(item, kind, kindNameFromId);
 				if (found) return found;
 			}
 		} else {
-			const found = findInNodeData(v, kind);
+			const found = findInNodeData(v, kind, kindNameFromId);
 			if (found) return found;
 		}
 	}
 	if (Array.isArray(n.$other)) {
 		for (const c of n.$other as unknown[]) {
-			const found = findInNodeData(c, kind);
+			const found = findInNodeData(c, kind, kindNameFromId);
 			if (found) return found;
 		}
 	}

@@ -51,6 +51,7 @@ const MODULES = {
 	engineLoader: '../../codegen/src/engine-loader.ts',
 	modelNodeMap: '../../codegen/src/compiler/model/node-map.ts',
 	generatedManifest: '../../codegen/src/scripts/generated-manifest.ts',
+	indexSnapshot: '../../codegen/src/scripts/index-snapshot.ts',
 	variantStructural: '../../codegen/src/compiler/variant-structural.ts',
 	generate: '../../codegen/src/compiler/generate.ts',
 	generatedMetadata: '../../codegen/src/compiler/generated-metadata.ts',
@@ -87,6 +88,7 @@ export interface CodegenSurface {
 	engineLoader: typeof import('../../codegen/src/engine-loader.ts');
 	modelNodeMap: typeof import('../../codegen/src/compiler/model/node-map.ts');
 	generatedManifest: typeof import('../../codegen/src/scripts/generated-manifest.ts');
+	indexSnapshot: typeof import('../../codegen/src/scripts/index-snapshot.ts');
 	variantStructural: typeof import('../../codegen/src/compiler/variant-structural.ts');
 	generate: typeof import('../../codegen/src/compiler/generate.ts');
 	generatedMetadata: typeof import('../../codegen/src/compiler/generated-metadata.ts');

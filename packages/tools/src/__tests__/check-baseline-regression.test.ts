@@ -12,6 +12,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
+import { stableGrammars } from '@sittir/codegen/grammars';
 import { checkRegression, type RegressionVerdict } from '../scripts/check-baseline-regression.ts';
 import type {
 	BackendBaseline,
@@ -79,12 +80,8 @@ function baseline(backend: 'native' = 'native'): BackendBaseline {
 	return {
 		backend,
 		commit: '0000000',
-		grammars: {
-			python: entry(),
-			rust: entry(),
-			typescript: entry()
-		},
-		totals: { pass: 150, fail: 0, total: 150 }
+		grammars: Object.fromEntries(stableGrammars().map((grammar) => [grammar, entry()])),
+		totals: { pass: 50 * stableGrammars().length, fail: 0, total: 50 * stableGrammars().length }
 	};
 }
 
@@ -119,7 +116,7 @@ describe('checkRegression', () => {
 		const head = baseline();
 		const base = clone(head);
 		delete (base.grammars as Record<string, GrammarEntry>).typescript;
-		base.totals = { pass: 100, fail: 0, total: 100 };
+		base.totals = { pass: 50 * (stableGrammars().length - 1), fail: 0, total: 50 * (stableGrammars().length - 1) };
 		const verdict = checkRegression(base, head);
 		expect(verdict.ok).toBe(true);
 	});
@@ -135,18 +132,15 @@ describe('checkRegression', () => {
 
 	it('a baselined grammar missing from head fails as grammar-dropped, even when it is not stable', () => {
 		const base = baseline();
-		(base.grammars as Record<string, GrammarEntry>) = {
-			python: entry(),
-			rust: entry(),
-			scm: entry(),
-			typescript: entry()
-		};
-		base.totals = { pass: 200, fail: 0, total: 200 };
+		base.grammars = Object.fromEntries(
+			Object.entries({ ...base.grammars, retired: entry() }).sort(([a], [b]) => a.localeCompare(b))
+		) as typeof base.grammars;
+		base.totals = { pass: base.totals.pass + 50, fail: 0, total: base.totals.total + 50 };
 		const head = baseline();
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.reason).toBe('grammar-dropped');
-		expect(verdict.summary).toContain('scm');
+		expect(verdict.summary).toContain('retired');
 	});
 
 	it('left-out rise detected — an uncompensated per-grammar sum rise names the grammar path', () => {
