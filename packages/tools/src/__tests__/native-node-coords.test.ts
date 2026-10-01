@@ -31,8 +31,8 @@ describe('native node coords', () => {
 
 		// NOTE: 'identifier' was dropped from this list — under the
 		// VerbatimTransport design, text-only kinds degrade to bare strings
-		// in the native NodeData snapshot (function_item reads as
-		// `_name: "abc"`, not a nested identifier NodeData), so there is no
+		// in the native UntypedNode snapshot (function_item reads as
+		// `_name: "abc"`, not a nested identifier UntypedNode), so there is no
 		// identifier node to find. 'parameters' replaces it as a nested
 		// compound that survives transport.
 		for (const kind of ['function_item', 'block', 'parameters'] as const) {
@@ -54,7 +54,7 @@ describe('native node coords', () => {
 		// NOTE: source was 'x = 1' with a hydration target of 'identifier'.
 		// Under the VerbatimTransport design, text-only kinds degrade to
 		// bare strings in the native snapshot (assignment reads as
-		// `_left: "x"`, not a nested identifier NodeData), so 'identifier'
+		// `_left: "x"`, not a nested identifier UntypedNode), so 'identifier'
 		// is unfindable by design. Use a call expression instead — 'call'
 		// (depth 3) and 'argument_list' (depth 4) survive transport and
 		// exercise a deeper hydration than the original.

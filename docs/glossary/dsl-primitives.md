@@ -320,7 +320,7 @@ tree-sitter's CLI.
  * comes first.
  *
  * Round-trip: readUntypedNode output and refine-factory output produce
- * identical NodeData shapes — no `$variant` tag, no discriminator.
+ * identical UntypedNode shapes — no `$variant` tag, no discriminator.
  * Consumers that need "which form is this?" inspect
  * `$fields.opening` (or any refined position) directly.
  *

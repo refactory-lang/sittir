@@ -7,7 +7,7 @@ import { hydrateStub, isStub, readUntypedNode, metricsEnabled, mapTriviaEntries,
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
-import type { AnyNodeData, AnyTreeNode, Engine, LanguageAPI, NodeTrivia, ParseOptions } from '@sittir/types';
+import type { AnyUntypedNode, AnyTreeNode, Engine, LanguageAPI, NodeTrivia, ParseOptions } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { load } from '../codegen-surface.ts';
@@ -229,7 +229,7 @@ export function loadNativeEngine(grammar: string): Promise<NativeEngine> {
 	return engine;
 }
 
-export async function loadNativeRender(grammar: string): Promise<(node: AnyNodeData) => string> {
+export async function loadNativeRender(grammar: string): Promise<(node: AnyUntypedNode) => string> {
 	const engine = await loadNativeEngine(grammar);
 	return (node) => engine.render(node).toString();
 }
@@ -242,8 +242,8 @@ export function readNativeTree(
 	engine: NativeEngine,
 	source: string,
 	options?: ParseOptions
-): { root: AnyNodeData; tree: TreeHandle } {
-	return engine.diagnostics.parseAndRead(source, options) as { root: AnyNodeData; tree: TreeHandle };
+): { root: AnyUntypedNode; tree: TreeHandle } {
+	return engine.diagnostics.parseAndRead(source, options) as { root: AnyUntypedNode; tree: TreeHandle };
 }
 
 export async function buildReadHandle(
@@ -261,7 +261,7 @@ export async function buildReadHandle(
 	return treeHandle(tree, source, kindIdFromName);
 }
 
-export function readUntypedNodeAt(handle: TreeHandle, node: AnyTreeNode, nativeCoords: NativeNodeCoords | null): AnyNodeData {
+export function readUntypedNodeAt(handle: TreeHandle, node: AnyTreeNode, nativeCoords: NativeNodeCoords | null): AnyUntypedNode {
 	if (nativeCoords && handle.read) {
 		if (nativeCoords.embeddedData !== undefined) {
 			return nativeCoords.embeddedData;
@@ -283,7 +283,7 @@ export function readUntypedNodeAt(handle: TreeHandle, node: AnyTreeNode, nativeC
 export interface NativeNodeCoords {
 	handle?: number;
 	childIndex?: number;
-	embeddedData?: AnyNodeData;
+	embeddedData?: AnyUntypedNode;
 }
 
 function childEntries(value: unknown | readonly unknown[] | undefined): readonly unknown[] {
@@ -291,18 +291,18 @@ function childEntries(value: unknown | readonly unknown[] | undefined): readonly
 	return Array.isArray(value) ? value : [value];
 }
 
-function isNativeNodeData(value: unknown): value is AnyNodeData {
+function isNativeUntypedNode(value: unknown): value is AnyUntypedNode {
 	return value != null && typeof value === 'object' && '$type' in value;
 }
 
-function pushNativeCandidates(value: unknown, out: AnyNodeData[]): void {
+function pushNativeCandidates(value: unknown, out: AnyUntypedNode[]): void {
 	for (const entry of childEntries(value)) {
-		if (isNativeNodeData(entry)) out.push(entry);
+		if (isNativeUntypedNode(entry)) out.push(entry);
 	}
 }
 
-function collectNativeChildNodes(d: AnyNodeData): AnyNodeData[] {
-	const out: AnyNodeData[] = [];
+function collectNativeChildNodes(d: AnyUntypedNode): AnyUntypedNode[] {
+	const out: AnyUntypedNode[] = [];
 	const rec = d as unknown as Record<string, unknown>;
 	for (const key of Object.keys(rec)) {
 		if (key.startsWith('_')) pushNativeCandidates(rec[key], out);
@@ -317,8 +317,8 @@ function collectNativeChildNodes(d: AnyNodeData): AnyNodeData[] {
 	return out;
 }
 
-function nativeTriviaEntries(d: AnyNodeData): AnyNodeData[] {
-	const out: AnyNodeData[] = [];
+function nativeTriviaEntries(d: AnyUntypedNode): AnyUntypedNode[] {
+	const out: AnyUntypedNode[] = [];
 	const trivia = d.$_trivia;
 	if (trivia) {
 		pushNativeCandidates(trivia.leading, out);
@@ -328,7 +328,7 @@ function nativeTriviaEntries(d: AnyNodeData): AnyNodeData[] {
 	return out;
 }
 
-function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
+function hasEmbeddedNativeChildren(d: AnyUntypedNode): boolean {
 	if (d.$other !== undefined) return true;
 	const rec = d as unknown as Record<string, unknown>;
 	for (const key of Object.keys(rec)) {
@@ -342,11 +342,11 @@ function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
 }
 
 export function nativeNodeIsKind(
-	d: AnyNodeData,
+	d: AnyUntypedNode,
 	kind: string,
 	kindNameFromId: ((id: number) => string | undefined) | undefined
 ): boolean {
-	const nameOf = (type: AnyNodeData['$type']): string =>
+	const nameOf = (type: AnyUntypedNode['$type']): string =>
 		typeof type === 'number' ? (kindNameFromId?.(type) ?? String(type)) : type;
 	return nameOf(d.$type) === kind || nameOf(nativeShownKindId(d)) === kind;
 }
@@ -361,17 +361,17 @@ export function findNativeNodeId(
 	const read = handle.read;
 	const root = handle.read();
 
-	const isKind = (d: AnyNodeData): boolean => nativeNodeIsKind(d, kind, kindNameFromId);
+	const isKind = (d: AnyUntypedNode): boolean => nativeNodeIsKind(d, kind, kindNameFromId);
 
 	if (isKind(root)) {
 		return {};
 	}
 
-	function spanMatches(d: AnyNodeData): boolean {
+	function spanMatches(d: AnyUntypedNode): boolean {
 		return span === undefined || (d.$span?.start === span.start && d.$span?.end === span.end);
 	}
 
-	function findEmbedded(d: AnyNodeData): NativeNodeCoords | null {
+	function findEmbedded(d: AnyUntypedNode): NativeNodeCoords | null {
 		if (isKind(d) && spanMatches(d)) return { embeddedData: d };
 		for (const child of collectNativeChildNodes(d)) {
 			const found = findEmbedded(child);
@@ -380,7 +380,7 @@ export function findNativeNodeId(
 		return null;
 	}
 
-	function walk(d: AnyNodeData): NativeNodeCoords | null {
+	function walk(d: AnyUntypedNode): NativeNodeCoords | null {
 		for (const entry of nativeTriviaEntries(d)) {
 			const found = findEmbedded(entry);
 			if (found !== null) return found;
@@ -392,7 +392,7 @@ export function findNativeNodeId(
 			}
 			let hydrated = child;
 			if (!hasEmbeddedNativeChildren(hydrated) && handleForChild !== undefined && hydrated.$childIndex !== undefined) {
-				hydrated = read(handleForChild, hydrated.$childIndex) as AnyNodeData;
+				hydrated = read(handleForChild, hydrated.$childIndex) as AnyUntypedNode;
 			}
 			const found = walk(hydrated);
 			if (found !== null) return found;
@@ -418,9 +418,9 @@ export function walkNativeForKind(
 	const root = read();
 	const results: NativeCandidateCoords[] = [];
 
-	const isKind = (d: AnyNodeData): boolean => nativeNodeIsKind(d, kind, kindNameFromId);
+	const isKind = (d: AnyUntypedNode): boolean => nativeNodeIsKind(d, kind, kindNameFromId);
 
-	function spanOf(d: AnyNodeData): { start: number; end: number } | undefined {
+	function spanOf(d: AnyUntypedNode): { start: number; end: number } | undefined {
 		return (d as unknown as Record<string, unknown>).$span as { start: number; end: number } | undefined;
 	}
 
@@ -428,7 +428,7 @@ export function walkNativeForKind(
 		results.push({ coords: {}, span: spanOf(root) });
 	}
 
-	function walk(d: AnyNodeData): void {
+	function walk(d: AnyUntypedNode): void {
 		for (const child of collectNativeChildNodes(d)) {
 			const handleForChild = child.$parentHandle ?? d.$handle;
 			if (isKind(child) && handleForChild !== undefined && child.$childIndex !== undefined) {
@@ -439,7 +439,7 @@ export function walkNativeForKind(
 			}
 			let hydrated = child;
 			if (!hasEmbeddedNativeChildren(hydrated) && handleForChild !== undefined && hydrated.$childIndex !== undefined) {
-				hydrated = read(handleForChild, hydrated.$childIndex) as AnyNodeData;
+				hydrated = read(handleForChild, hydrated.$childIndex) as AnyUntypedNode;
 			}
 			walk(hydrated);
 		}
@@ -665,7 +665,7 @@ export async function readNodeOf(
 
 export async function loadWrapNode(
 	grammar: string
-): Promise<((data: AnyNodeData, tree: TreeHandle) => unknown) | null> {
+): Promise<((data: AnyUntypedNode, tree: TreeHandle) => unknown) | null> {
 	try {
 		const mod = await importGrammarModule(grammar, 'wrap.ts');
 		if (!mod) return null;
@@ -889,12 +889,12 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
 
 export function walkWrappedTree(
 	root: unknown,
-	visit: (w: WrappedNodeData) => void,
+	visit: (w: TypedNode) => void,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): void {
 	const seen = new Set<string>();
 	const recurse = (w: unknown): void => {
-		if (!isWrappedNodeData(w)) return;
+		if (!isTypedNode(w)) return;
 		if (isStub(w)) {
 			const key = `${w.$parentHandle}:${w.$childIndex}`;
 			if (seen.has(key)) return;
@@ -904,8 +904,8 @@ export function walkWrappedTree(
 		for (const k of Object.keys(w)) {
 			if (k !== '$other' && !k.startsWith('_')) continue;
 			const v = resolveWrappedStorageValue(w, k, onAccessorThrow);
-			if (isWrappedNodeData(v)) recurse(v);
-			else if (Array.isArray(v)) for (const x of v) if (isWrappedNodeData(x)) recurse(x);
+			if (isTypedNode(v)) recurse(v);
+			else if (Array.isArray(v)) for (const x of v) if (isTypedNode(x)) recurse(x);
 		}
 	};
 	recurse(root);
@@ -914,14 +914,14 @@ export function walkWrappedTree(
 export function materialize(
 	root: unknown,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
-): AnyNodeData {
-	return materializeValue(root, onAccessorThrow) as AnyNodeData;
+): AnyUntypedNode {
+	return materializeValue(root, onAccessorThrow) as AnyUntypedNode;
 }
 
 export function materializeDetached(
 	root: unknown,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
-): AnyNodeData {
+): AnyUntypedNode {
 	return detachCoordinates(materialize(root, onAccessorThrow));
 }
 
@@ -943,7 +943,7 @@ function materializeValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowR
 	if (Array.isArray(value)) {
 		return value.map((entry) => materializeValue(entry, onAccessorThrow));
 	}
-	if (!isWrappedNodeData(value)) return value;
+	if (!isTypedNode(value)) return value;
 	const materialized: Record<string, unknown> = {};
 	for (const [key, raw] of Object.entries(value)) {
 		if (key === '$with' || typeof raw === 'function') continue;
@@ -971,7 +971,7 @@ function materializeValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowR
 }
 
 function resolveWrappedStorageValue(
-	node: WrappedNodeData,
+	node: TypedNode,
 	storageKey: string,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): unknown {
@@ -1005,13 +1005,13 @@ function accessorCandidatesForStorageKey(storageKey: string): readonly string[] 
 	return plural === base ? [base] : [base, plural];
 }
 
-export interface WrappedNodeData {
+export interface TypedNode {
 	readonly $type: number;
 	readonly $parentHandle?: number;
 	readonly $childIndex?: number;
 	readonly [k: string]: unknown;
 }
-function isWrappedNodeData(v: unknown): v is WrappedNodeData {
+function isTypedNode(v: unknown): v is TypedNode {
 	return !!v && typeof v === 'object' && typeof (v as { $type?: unknown }).$type === 'number';
 }
 

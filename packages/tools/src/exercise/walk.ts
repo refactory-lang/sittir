@@ -1,4 +1,4 @@
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 import { isStub } from '@sittir/common/utils';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
@@ -10,12 +10,12 @@ interface CommonModule {
 		lang: unknown;
 	}>;
 	treeHandle(tree: unknown, source?: string, kindIdFromName?: (kind: string) => number | undefined): unknown;
-	loadNativeRender(grammar: string): Promise<(node: AnyNodeData) => string>;
+	loadNativeRender(grammar: string): Promise<(node: AnyUntypedNode) => string>;
 	readNodeOf(grammar: string): Promise<((handle: unknown, parentHandle?: number, childIndex?: number) => unknown) | null>;
 	loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined>;
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
 	loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined>;
-	materialize(root: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyNodeData;
+	materialize(root: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyUntypedNode;
 }
 
 interface AccessorThrowRecord {

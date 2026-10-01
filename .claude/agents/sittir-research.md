@@ -19,7 +19,7 @@ You diagnose sittir codegen/render bugs to a precise root cause + fix location. 
   ```
   The output is a flat object showing the slot at EVERY native stage — read them in order to localize WHICH stage drops it:
   - `.cst` — raw tree-sitter parse (does the parser even emit the expected `field`/kind, e.g. `('elements','identifier')`?).
-  - `.raw` — raw native read (`rawNodeData`), pre-materialization.
+  - `.raw` — raw native read (`rawUntypedNode`), pre-materialization.
   - `.wrapped` — the materialized wrap (= what render consumes) = GROUND TRUTH.
   - `.legacyWrapped` — old recursive `readUntypedNode` walker; **populated here but EMPTY in `.wrapped` = a wrap-materialization gap** (a common empty-render bug class).
   - `.transport` — the `FromNapiValue` payload (empty here = transport-enum / accepted-kinds gap).
@@ -45,7 +45,7 @@ You diagnose sittir codegen/render bugs to a precise root cause + fix location. 
 
 - **Native render path is the TYPED-TRANSPORT path, and the bodies are generated Rust.** `rust/crates/sittir-<g>/src/render/transport.rs`: `FromNapiValue` builds per-kind transport structs (`AnyTransport`, the per-slot enums, the `SlotValue` carrier) → the napi `render` resolves options and calls `render_transport_parts` → the fill walk sets every unset spacing/flank field → `render_transport_dispatch` wraps the root once in `SpacingWriter` → one `render_<kind>` function per kind writes its body. There is no template engine, no askama, no `.jinja`; the body of a kind comes from `packages/codegen/src/emitters/render-body.ts` (a body IR over the spaced render rules) printed by `render-module.ts`, and the validators read the same bodies from `packages/<g>/.sittir/render-bodies.json`. `bridge.rs`/`dispatch.rs` no longer exist.
 - **Three layers where a slot can lose children** — localize WHICH:
-  1. **wrap / read** — `packages/common/src/readUntypedNode.ts` + the grammar's generated `wrap.ts` build the napi node value (`nodeData`). A slot short here = wrap drop. (Less likely for a real grammar-defined field; more likely for a synthesized children-collection / merged-choice slot.)
+  1. **wrap / read** — `packages/common/src/readUntypedNode.ts` + the grammar's generated `wrap.ts` build the napi node value (`untypedNode`). A slot short here = wrap drop. (Less likely for a real grammar-defined field; more likely for a synthesized children-collection / merged-choice slot.)
   2. **transport** — `transport.rs`: the per-kind struct field (e.g. `content: Option<Vec<XContentTransportSlot>>`) + the per-slot enum's `FromNapiValue` (the accepted kind-id set). A child dropped here = its kind id isn't accepted (check the enum + supertype expansion).
   3. **render** — the kind's `render_<kind>` function in `transport.rs` (does its body name the right slot, and is the slot's view built from the right transport field?), cross-checked against `.sittir/render-bodies.json`.
 - **Codegen sources** (where fixes land — for the impl agent, not you): slot model = `packages/codegen/src/compiler/collect-slots.ts` + `node-map.ts`; transport/dispatch/bridge gen = `packages/codegen/src/emitters/render-module.ts` (+ `transport-projection.ts`, `transport-common.ts` incl `buildSupertypeTransportSet`/`acceptedTransportKinds`); templates = `emitters/templates.ts`; wrap = the wrap emitter. Slot resolution in templates is `slotByRuleId` (canonical) with fieldName/symbol-name fallbacks (`feedback_ruleid_backpointer`).
@@ -54,9 +54,9 @@ You diagnose sittir codegen/render bugs to a precise root cause + fix location. 
 ## Method
 0. A function's rationale is not in the source: it is its `### \`<file>::<qualified name>\`` entry in `docs/glossary/<dir>.md` (`docs/glossary/README.md`; infigraph `search` with the name, `scope: docs`). Read it before concluding a function is dead, redundant, or mis-designed.
 1. Reproduce: `dump-ast-mismatches --grammar <g> --verbose` → find the kind's exact dropped children.
-2. `probe-kind --grammar <g> --source '<minimal repro>' --trace --pretty` → read `cst` (what tree-sitter emits) vs `native.deep.nodeData` (what wrap produced) vs `rendered`. The layer where the child-count first drops is the culprit:
-   - present in cst, missing in nodeData → **wrap/read**.
-   - present in nodeData, missing in rendered → **transport or render** (check the transport enum's accepted kinds + the slot the `render_<kind>` body names).
+2. `probe-kind --grammar <g> --source '<minimal repro>' --trace --pretty` → read `cst` (what tree-sitter emits) vs `native.deep.untypedNode` (what wrap produced) vs `rendered`. The layer where the child-count first drops is the culprit:
+   - present in cst, missing in untypedNode → **wrap/read**.
+   - present in untypedNode, missing in rendered → **transport or render** (check the transport enum's accepted kinds + the slot the `render_<kind>` body names).
 3. Confirm against the codegen source that would produce that layer's output. Quote file:line.
 
 ## Fix-direction judgment: generalize the auto-pass vs. hand-author an override
@@ -84,7 +84,7 @@ unambiguous (see `feedback_prefer_overrides_over_inference` in project memory).
 
 ## Report (your final message)
 - The kind + minimal repro + the dropped children (from dump-ast-mismatches).
-- The LAYER (wrap / transport / render) with probe-kind evidence (cst vs nodeData vs rendered child counts).
+- The LAYER (wrap / transport / render) with probe-kind evidence (cst vs untypedNode vs rendered child counts).
 - The CODEGEN SOURCE responsible (file:line) and the precise fix direction.
 - Confidence + anything you ruled out. Do NOT edit or regen.
 - **Your broader-scope findings are the work list, not color** (coding-standards rule 7): if the defect class you diagnosed has sibling sites, census them — the fix's scope is all of them.

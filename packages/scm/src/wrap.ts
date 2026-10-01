@@ -14,7 +14,7 @@ import {
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
 import type { ParsedRoot } from '@sittir/common/engine';
-import type { AnyNodeData as _NodeData, NonEmptyArray, SupertypeSurface } from '@sittir/types';
+import type { AnyUntypedNode as _UntypedNode, NonEmptyArray, SupertypeSurface } from '@sittir/types';
 import { TSKindId, KIND_NAMES, KIND_DISPLAY_NAMES } from './types.js';
 import type * as T from './types-internal.js';
 import { withMethods } from './utils.js';
@@ -95,7 +95,7 @@ function handleWrapViolation<T>(message: string, fallback: T, context: WrapDiagn
 function describeWrapSlotItem(value: unknown): string {
 	if (value == null) return String(value);
 	if (typeof value !== 'object') return `${typeof value}(${JSON.stringify(value)})`;
-	const node = value as Partial<_NodeData>;
+	const node = value as Partial<_UntypedNode>;
 	if (typeof node.$type === 'string' || typeof node.$type === 'number') {
 		const text = typeof node.$text === 'string' ? `, $text=${JSON.stringify(node.$text)}` : '';
 		return `node($type=${JSON.stringify(node.$type)}${text})`;
@@ -209,7 +209,7 @@ function normalizeRepeatedWrapSlot<T>(
 // this, with the same data.
 function hydrateSelf<T>(entry: T, tree: TreeHandle): T {
 	if (entry == null) return undefined as unknown as T;
-	const e = entry as unknown as _NodeData;
+	const e = entry as unknown as _UntypedNode;
 	if (isStub(e)) return readNode(tree, e.$parentHandle, e.$childIndex) as unknown as T;
 	return entry;
 }
@@ -224,7 +224,7 @@ type ParsedOfData<D> = D extends { readonly $type: infer Id }
 	: D;
 function hydrateChild<T>(entry: T, tree: TreeHandle): ParsedOfData<T> {
 	const resolved = hydrateSelf(entry, tree);
-	const e = resolved as unknown as _NodeData;
+	const e = resolved as unknown as _UntypedNode;
 	if (resolved === entry && typeof e?.$type === 'number') return wrapNode(e, tree) as unknown as ParsedOfData<T>;
 	return resolved as unknown as ParsedOfData<T>;
 }
@@ -240,7 +240,7 @@ function projectKindEnumStorage<T>(
 ): T {
 	if (!value) return value;
 	if (Array.isArray(value)) return value.map((entry) => projectKindEnumStorage(entry, textIds, altIds)) as unknown as T;
-	const entry = value as unknown as _NodeData;
+	const entry = value as unknown as _UntypedNode;
 	if (typeof value === 'string') {
 		const mappedId = textIds?.[value];
 		return typeof mappedId === 'number' ? (mappedId as unknown as T) : value;
@@ -265,7 +265,7 @@ function projectMixedEnumStorage<T>(
 	if (!value) return value;
 	if (Array.isArray(value))
 		return value.map((entry) => projectMixedEnumStorage(entry, textIds, altIds, ownSymbols)) as unknown as T;
-	const entry = value as unknown as _NodeData;
+	const entry = value as unknown as _UntypedNode;
 	if (typeof value === 'string') {
 		const mappedId = textIds?.[value];
 		return typeof mappedId === 'number' ? (mappedId as unknown as T) : value;
@@ -293,8 +293,8 @@ function projectMixedEnumStorage<T>(
 // so there is no double-render. A final `?? readTerminalFromOther(...)` only
 // fires when the nominal storage keys are all empty (the unfielded case);
 // when the token IS field-tagged the chain short-circuits before reaching it.
-function readTerminalFromOther<T = _NodeData | number>(
-	data: _NodeData,
+function readTerminalFromOther<T = _UntypedNode | number>(
+	data: _UntypedNode,
 	allowedKindIds: readonly number[]
 ): T | undefined {
 	const other = (data as { $other?: readonly unknown[] }).$other;
@@ -370,7 +370,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 
 function _wrapKindNameOf(entry: unknown): string | undefined {
 	if (!entry || typeof entry !== 'object') return undefined;
-	const raw: unknown = _kindOf(entry as _NodeData);
+	const raw: unknown = _kindOf(entry as _UntypedNode);
 	if (raw === undefined) return undefined;
 	if (typeof raw === 'number') return KIND_NAMES.get(raw as never) ?? String(raw);
 	return typeof raw === 'string' ? raw : undefined;
@@ -503,7 +503,7 @@ export function wrapProgram(data: T.Program, tree: TreeHandle): T.Program.Parsed
 			tree,
 			nodeType: data.$type,
 			slotName: 'definitions',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		definitions() {
@@ -557,7 +557,10 @@ export function wrapDefinition(
 			'named_node_plain',
 			'named_node_supertyped'
 		]);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.Definition>(node as T.Definition, tree) as unknown as T.Definition.Parsed;
 	}
 	return hydrateChild<T.Definition>(
@@ -565,7 +568,7 @@ export function wrapDefinition(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -614,7 +617,10 @@ export function wrapGroupExpression(
 			'list',
 			'field_definition'
 		]);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.GroupExpression>(node as T.GroupExpression, tree) as unknown as SupertypeSurface<
 			T.GroupExpression,
 			T.ParsedByKindId
@@ -625,7 +631,7 @@ export function wrapGroupExpression(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -677,7 +683,10 @@ export function wrapNamedNodeExpression(
 			'list',
 			'field_definition'
 		]);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.NamedNodeExpression>(node as T.NamedNodeExpression, tree) as unknown as SupertypeSurface<
 			T.NamedNodeExpression,
 			T.ParsedByKindId
@@ -688,7 +697,7 @@ export function wrapNamedNodeExpression(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -704,7 +713,7 @@ export function wrapEscapeSequence(data: T.EscapeSequence, tree: TreeHandle): T.
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -729,7 +738,10 @@ export function wrapNodeIdentifier(
 		| readonly T.NodeIdentifier[]
 		| undefined;
 	const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['identifier']);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.NodeIdentifier>(node as T.NodeIdentifier, tree) as unknown as SupertypeSurface<
 			T.NodeIdentifier,
 			T.ParsedByKindId
@@ -740,7 +752,7 @@ export function wrapNodeIdentifier(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -755,7 +767,7 @@ export function wrapCapture(data: T.Capture, tree: TreeHandle): T.Capture.Parsed
 			tree,
 			nodeType: data.$type,
 			slotName: 'name',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		name() {
@@ -777,7 +789,7 @@ export function wrapString(data: T.String, tree: TreeHandle): T.String.Parsed {
 			tree,
 			nodeType: data.$type,
 			slotName: 'string_content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		stringContent() {
@@ -800,7 +812,7 @@ export function wrapImmediateString(data: T.ImmediateString, tree: TreeHandle): 
 			tree,
 			nodeType: data.$type,
 			slotName: 'string_content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		stringContent() {
@@ -823,7 +835,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		contents() {
@@ -849,7 +861,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 			tree,
 			nodeType: data.$type,
 			slotName: 'elements',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		elements() {
@@ -876,7 +888,7 @@ export function wrapComment(data: T.Comment, tree: TreeHandle): T.Comment.Parsed
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -899,7 +911,7 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 			tree,
 			nodeType: data.$type,
 			slotName: 'definitions',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_content: projectMixedEnumStorage(
 			normalizeRepeatedWrapSlot(
@@ -911,7 +923,7 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 					]),
 				false,
 				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 			),
 			{ '*': 2, '+': 3, '?': 4 },
 			undefined,
@@ -947,7 +959,7 @@ export function wrapGrouping(data: T.Grouping, tree: TreeHandle): T.Grouping.Par
 			tree,
 			nodeType: data.$type,
 			slotName: 'grouping_group',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_content: projectMixedEnumStorage(
 			normalizeRepeatedWrapSlot(
@@ -959,7 +971,7 @@ export function wrapGrouping(data: T.Grouping, tree: TreeHandle): T.Grouping.Par
 					]),
 				false,
 				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 			),
 			{ '*': 2, '+': 3, '?': 4 },
 			undefined,
@@ -995,7 +1007,7 @@ export function wrapMissingNode(data: T.MissingNode, tree: TreeHandle): T.Missin
 			tree,
 			nodeType: data.$type,
 			slotName: 'name',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_content: projectMixedEnumStorage(
 			normalizeRepeatedWrapSlot(
@@ -1007,7 +1019,7 @@ export function wrapMissingNode(data: T.MissingNode, tree: TreeHandle): T.Missin
 					]),
 				false,
 				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 			),
 			{ '*': 2, '+': 3, '?': 4 },
 			undefined,
@@ -1043,7 +1055,7 @@ export function wrapAnonymousNode(data: T.AnonymousNode, tree: TreeHandle): T.An
 				tree,
 				nodeType: data.$type,
 				slotName: 'name',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ _: 7 }
 		),
@@ -1057,7 +1069,7 @@ export function wrapAnonymousNode(data: T.AnonymousNode, tree: TreeHandle): T.An
 					]),
 				false,
 				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 			),
 			{ '*': 2, '+': 3, '?': 4 },
 			undefined,
@@ -1093,7 +1105,10 @@ export function wrapNamedNode(
 		| readonly T.NamedNode[]
 		| undefined;
 	const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['named_node_plain', 'named_node_supertyped']);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.NamedNode>(node as T.NamedNode, tree) as unknown as T.NamedNode.Parsed;
 	}
 	return hydrateChild<T.NamedNode>(
@@ -1101,7 +1116,7 @@ export function wrapNamedNode(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -1109,7 +1124,7 @@ export function wrapNamedNode(
 
 export function wrapFieldDefinition(data: T.FieldDefinition, tree: TreeHandle): T.FieldDefinition.Parsed {
 	data = _keepModelledSlots(data, ['_name', '_definition']);
-	const _order = (data as _NodeData).$slotOrder?.slice();
+	const _order = (data as _UntypedNode).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.FieldDefinition as const,
@@ -1118,13 +1133,13 @@ export function wrapFieldDefinition(data: T.FieldDefinition, tree: TreeHandle): 
 			'name',
 			true,
 			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'name', span: (data as _NodeData).$span }
+			{ tree, nodeType: data.$type, slotName: 'name', span: (data as _UntypedNode).$span }
 		),
 		_definition: normalizeSingularWrapSlot(data._definition, 'definition', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'definition',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		...(_order && { $slotOrder: _order }),
 
@@ -1152,7 +1167,7 @@ export function wrapNegatedField(data: T.NegatedField, tree: TreeHandle): T.Nega
 			tree,
 			nodeType: data.$type,
 			slotName: 'identifier',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		identifier() {
@@ -1178,7 +1193,7 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 				tree,
 				nodeType: data.$type,
 				slotName: 'prefix',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ '#': 19, '.': 20 }
 		),
@@ -1186,14 +1201,14 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 			tree,
 			nodeType: data.$type,
 			slotName: 'name',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_type: projectKindEnumStorage(
 			normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'type',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ '?': 4, '!': 18 }
 		),
@@ -1201,7 +1216,7 @@ export function wrapPredicate(data: T.Predicate, tree: TreeHandle): T.Predicate.
 			tree,
 			nodeType: data.$type,
 			slotName: 'parameters',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		prefix() {
@@ -1236,13 +1251,13 @@ export function wrapGroupExpressionArm(data: T.GroupExpressionArm, tree: TreeHan
 			tree,
 			nodeType: data.$type,
 			slotName: 'left',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'right',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		left() {
@@ -1273,13 +1288,13 @@ export function wrapNamedNodeExpressionArm(
 			tree,
 			nodeType: data.$type,
 			slotName: 'left',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'right',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		left() {
@@ -1309,14 +1324,14 @@ export function wrapGroupingGroup(data: T.GroupingGroup, tree: TreeHandle): T.Gr
 			tree,
 			nodeType: data.$type,
 			slotName: 'group_expression',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_anchor: coerceBooleanKeywordStorage(
 			normalizeSingularWrapSlot(data._anchor, 'anchor', false, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'anchor',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			})
 		),
 
@@ -1348,7 +1363,10 @@ export function wrapNamedNodeGroup(
 	const filtered =
 		kindKeyed ??
 		_filterWrapChildrenByKind(node.$other, ['named_node_group_children', 'named_node_group_anchored_last']);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.NamedNodeGroup>(node as T.NamedNodeGroup, tree) as unknown as T.NamedNodeGroup.Parsed;
 	}
 	return hydrateChild<T.NamedNodeGroup>(
@@ -1356,7 +1374,7 @@ export function wrapNamedNodeGroup(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -1374,7 +1392,7 @@ export function wrapNamedNodePlain(data: T.NamedNodePlain, tree: TreeHandle): T.
 				tree,
 				nodeType: data.$type,
 				slotName: 'name',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ _: 7 }
 		),
@@ -1382,7 +1400,7 @@ export function wrapNamedNodePlain(data: T.NamedNodePlain, tree: TreeHandle): T.
 			tree,
 			nodeType: data.$type,
 			slotName: 'named_node_group',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_content: projectMixedEnumStorage(
 			normalizeRepeatedWrapSlot(
@@ -1394,7 +1412,7 @@ export function wrapNamedNodePlain(data: T.NamedNodePlain, tree: TreeHandle): T.
 					]),
 				false,
 				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 			),
 			{ '*': 2, '+': 3, '?': 4 },
 			undefined,
@@ -1438,19 +1456,19 @@ export function wrapNamedNodeSupertyped(data: T.NamedNodeSupertyped, tree: TreeH
 			tree,
 			nodeType: data.$type,
 			slotName: 'supertype',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'name',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_named_node_group: normalizeSingularWrapSlot(data._named_node_group, 'named_node_group', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'named_node_group',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_content: projectMixedEnumStorage(
 			normalizeRepeatedWrapSlot(
@@ -1462,7 +1480,7 @@ export function wrapNamedNodeSupertyped(data: T.NamedNodeSupertyped, tree: TreeH
 					]),
 				false,
 				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 			),
 			{ '*': 2, '+': 3, '?': 4 },
 			undefined,
@@ -1516,14 +1534,14 @@ export function wrapNamedNodeGroupChildren(
 				tree,
 				nodeType: data.$type,
 				slotName: 'anchor',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			})
 		),
 		_named_node_expressions: normalizeRepeatedWrapSlot(data._named_node_expressions, true, 'named_node_expressions', {
 			tree,
 			nodeType: data.$type,
 			slotName: 'named_node_expressions',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		anchor() {
@@ -1566,20 +1584,20 @@ export function wrapNamedNodeGroupAnchoredLast(
 				tree,
 				nodeType: data.$type,
 				slotName: 'anchor',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			})
 		),
 		_named_node_expressions: normalizeRepeatedWrapSlot(data._named_node_expressions, false, 'named_node_expressions', {
 			tree,
 			nodeType: data.$type,
 			slotName: 'named_node_expressions',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_last: normalizeSingularWrapSlot(data._last, 'last', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'last',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		anchor() {
@@ -1608,7 +1626,7 @@ export function wrapNamedNodeGroupAnchoredLast(
 	return _node as unknown as T.NamedNodeGroupAnchoredLast.Parsed;
 }
 
-const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown> = {
+const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unknown> = {
 	[TSKindId.Program]: (d, t) => wrapProgram(d as unknown as T.Program, t),
 	[TSKindId.Definition]: (d, t) => wrapDefinition(d as unknown as T.Definition, t),
 	[TSKindId.GroupExpression]: (d, t) => wrapGroupExpression(d as unknown as T.GroupExpression, t),
@@ -1657,7 +1675,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
 export type ProgramTree = T.ParsedByKindId[TSKindId.Program] & ParsedRoot;
 
-function _hydrateUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {
+function _hydrateUnknownKindChildren(data: _UntypedNode, tree: TreeHandle): _UntypedNode {
 	const out: Record<string, unknown> = { ...(data as unknown as Record<string, unknown>) };
 	for (const key of Object.keys(out)) {
 		if (key.charCodeAt(0) !== 95 /* `_` */) continue;
@@ -1668,54 +1686,54 @@ function _hydrateUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeDa
 			out[key] = hydrateChild(value, tree);
 		}
 	}
-	return out as unknown as _NodeData;
+	return out as unknown as _UntypedNode;
 }
 
-function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData['$_trivia'] {
+function _wrapTrivia(trivia: _UntypedNode['$_trivia'], tree: TreeHandle): _UntypedNode['$_trivia'] {
 	return trivia && mapTriviaEntries(trivia, (entries) => hydrateChildren(entries, tree) as unknown as typeof entries);
 }
 
-const _ALIAS_ENVELOPES: ReadonlySet<_NodeData['$type']> = new Set([]);
-function _displayOf(entry: _NodeData): _NodeData['$type'] {
-	return (entry as { readonly $displayType?: _NodeData['$type'] }).$displayType ?? entry.$type;
+const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([]);
+function _displayOf(entry: _UntypedNode): _UntypedNode['$type'] {
+	return (entry as { readonly $displayType?: _UntypedNode['$type'] }).$displayType ?? entry.$type;
 }
-function _kindOf(entry: _NodeData): _NodeData['$type'] {
+function _kindOf(entry: _UntypedNode): _UntypedNode['$type'] {
 	const display = _displayOf(entry);
 	return _ALIAS_ENVELOPES.has(display) ? display : entry.$type;
 }
-function _withoutDisplay(data: _NodeData): _NodeData {
-	const { $displayType: _display, ...node } = data as _NodeData & { readonly $displayType?: number };
-	return node as _NodeData;
+function _withoutDisplay(data: _UntypedNode): _UntypedNode {
+	const { $displayType: _display, ...node } = data as _UntypedNode & { readonly $displayType?: number };
+	return node as _UntypedNode;
 }
 
-const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData['$type']> = new Set([43, 44, 45, 46, 57, 58]);
-function _spellingTokens(data: _NodeData): readonly _NodeData[] | undefined {
+const _RECLAIMS_ANONYMOUS: ReadonlySet<_UntypedNode['$type']> = new Set([43, 44, 45, 46, 57, 58]);
+function _spellingTokens(data: _UntypedNode): readonly _UntypedNode[] | undefined {
 	const { $other, ...node } = data;
 	if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return undefined;
 	if (Object.keys(node).some((key) => key.charCodeAt(0) === 95)) return undefined;
 	const tokens = (Array.isArray($other) ? $other : [$other]) as readonly unknown[];
-	if (tokens.some((token) => typeof token !== 'object' || token === null || (token as _NodeData).$named !== false))
+	if (tokens.some((token) => typeof token !== 'object' || token === null || (token as _UntypedNode).$named !== false))
 		return undefined;
-	return tokens as readonly _NodeData[];
+	return tokens as readonly _UntypedNode[];
 }
-function _spelledText(data: _NodeData): string | undefined {
+function _spelledText(data: _UntypedNode): string | undefined {
 	if (data.$text !== undefined) return data.$text;
 	const tokens = _spellingTokens(data);
 	return tokens === undefined ? undefined : _tiledSpelling(data.$span, tokens);
 }
-function _dropSpelling(data: _NodeData): _NodeData {
+function _dropSpelling(data: _UntypedNode): _UntypedNode {
 	if (_spellingTokens(data) === undefined) return data;
 	const { $other: _tokens, ...node } = data;
 	const $text = _spelledText(data);
-	return ($text === undefined ? node : { ...node, $text }) as _NodeData;
+	return ($text === undefined ? node : { ...node, $text }) as _UntypedNode;
 }
-function _spellingOf(entry: _NodeData): string | undefined {
+function _spellingOf(entry: _UntypedNode): string | undefined {
 	const text = _spelledText(entry);
 	if (text !== undefined || entry.$named !== false) return text;
 	const shown = _displayOf(entry);
 	return typeof shown === 'number' ? KIND_DISPLAY_NAMES.get(shown) : shown;
 }
-function _tiledSpelling(span: _NodeData['$span'], children: readonly _NodeData[]): string | undefined {
+function _tiledSpelling(span: _UntypedNode['$span'], children: readonly _UntypedNode[]): string | undefined {
 	if (span === undefined) return undefined;
 	let at = span.start;
 	let text = '';
@@ -1727,19 +1745,19 @@ function _tiledSpelling(span: _NodeData['$span'], children: readonly _NodeData[]
 	}
 	return at === span.end ? text : undefined;
 }
-function _readChildren(data: _NodeData): readonly _NodeData[] | undefined {
-	const children: _NodeData[] = [];
+function _readChildren(data: _UntypedNode): readonly _UntypedNode[] | undefined {
+	const children: _UntypedNode[] = [];
 	for (const [key, value] of Object.entries(data)) {
 		if (key.charCodeAt(0) !== 95 && key !== '$other') continue;
 		for (const child of (Array.isArray(value) ? value : [value]) as readonly unknown[]) {
 			if (child === undefined) continue;
 			if (typeof child !== 'object' || child === null) return undefined;
-			children.push(child as _NodeData);
+			children.push(child as _UntypedNode);
 		}
 	}
 	return children.sort((a, b) => (a.$span?.start ?? 0) - (b.$span?.start ?? 0));
 }
-function _spelledLeaf(data: _NodeData): _NodeData {
+function _spelledLeaf(data: _UntypedNode): _UntypedNode {
 	if (data.$text !== undefined) return data;
 	const children = _readChildren(data);
 	if (children === undefined || children.length === 0) return data;
@@ -1749,16 +1767,16 @@ function _spelledLeaf(data: _NodeData): _NodeData {
 	for (const [key, value] of Object.entries(data)) {
 		if (key.charCodeAt(0) !== 95 && key !== '$other' && key !== '$slotOrder') leaf[key] = value;
 	}
-	return { ...leaf, $text } as _NodeData;
+	return { ...leaf, $text } as _UntypedNode;
 }
 
-/** Wrap a NodeData into its lazy read-only view. */
-export function wrapNode<D extends _NodeData & { readonly $type: keyof T.ParsedByKindId }>(
+/** Wrap an UntypedNode into its lazy read-only view. */
+export function wrapNode<D extends _UntypedNode & { readonly $type: keyof T.ParsedByKindId }>(
 	data: D,
 	tree: TreeHandle
 ): T.ParsedByKindId[D['$type'] & keyof T.ParsedByKindId] & Pick<D, Extract<keyof D, keyof ParsedRoot>>;
-export function wrapNode(data: _NodeData, tree: TreeHandle): unknown;
-export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
+export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown;
+export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown {
 	// The wire `$type` is the numeric grammar-symbol KindId — dispatch
 	// is a direct id-keyed lookup. A non-numeric `$type` can only be a
 	// catalog-less kind (the deprecated JS diagnostic lane stamps those
@@ -1771,7 +1789,7 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 }
 
 /**
- * Read a parsed tree node into a lazily-wrapped NodeData.
+ * Read a parsed tree node into a lazily-wrapped UntypedNode.
  * One level deep — getters hydrate subtrees on demand by
  * recursing back through this same function. The wire `$type` is
  * the grammar symbol (stamped by the read), so no per-site alias

@@ -39,7 +39,7 @@ export interface Edit {
 }
 
 /**
- * Byte-range for a `NodeData` within its source string. `start`/`end`
+ * Byte-range for an `UntypedNode` within its source string. `start`/`end`
  * are UTF-8 byte offsets (ast-grep / tree-sitter convention).
  * `#[napi(object)]` (gated on napi-bindings feature) adds
  * `FromNapiValue` / `ToNapiValue` so transport structs can include

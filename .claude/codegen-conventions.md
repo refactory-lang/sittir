@@ -38,7 +38,7 @@ When touching emitters or generated-TS-facing helpers:
 2. Do not use `Record<string, unknown>` bridges when a typed property access or generic preserves the shape.
 3. Grammar-specific shared helpers belong in per-grammar `utils.ts`, not `@sittir/legacy-core`.
 4. Shared helpers must preserve caller types with generics; do not widen public helper inputs to `object`.
-5. Avoid `AnyNodeData` in factory/wrap/from code except in genuinely generic shared infrastructure.
+5. Avoid `AnyUntypedNode` in factory/wrap/from code except in genuinely generic shared infrastructure.
 6. Do not spread shared method objects into factory literals; use `withMethods<T>(literal)` instead.
 
 ## TypeScript rules
@@ -85,7 +85,7 @@ the ADR by file path, not by bare number, so the reference stays resolvable):
 
 ```ts
 /**
- * @forFutureUse dehoisted NodeData surface (docs/adr/0018-dehoist-nodedata-surface.md, accepted) — $with
+ * @forFutureUse dehoisted UntypedNode surface (docs/adr/0018-dehoist-nodedata-surface.md, accepted) — $with
  * update namespace. Not yet wired into generated output; scaffolding only.
  */
 ```

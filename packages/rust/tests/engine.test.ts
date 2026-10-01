@@ -46,7 +46,7 @@ describe('engine', () => {
 						parseAndRead(_source: string): string {
 							// $type is numeric (TSKindId).
 							return JSON.stringify({
-								nodeData: {
+								untypedNode: {
 									$type: TSKindId.Identifier,
 									$source: 0,
 									$named: true,
@@ -96,7 +96,7 @@ describe('engine', () => {
 						}
 						parseAndRead(_source: string): string {
 							return JSON.stringify({
-								nodeData: {
+								untypedNode: {
 									$type: TSKindId.FunctionItem,
 									$source: 0,
 									$named: true,
@@ -235,8 +235,8 @@ describe('engine', () => {
 						render(node: Record<string, unknown>): string {
 							return render(node);
 						}
-						renderToFile(nodeData: Record<string, unknown>, path: string): void {
-							renderToFile(nodeData, path);
+						renderToFile(untypedNode: Record<string, unknown>, path: string): void {
+							renderToFile(untypedNode, path);
 						}
 						applyEdits(
 							source: string,

@@ -1,6 +1,6 @@
 import { writeFileSync } from 'node:fs';
 import type {
-	AnyNodeData,
+	AnyUntypedNode,
 	Edit,
 	EngineDiagnostics,
 	FormatRecord,
@@ -124,9 +124,9 @@ export type { ParseOptions };
  * `ParseEngine.parse`, which wraps what these produce. Reach for these only
  * from inside the wrap layer or from validator/diagnostic tooling.
  */
-export interface NativeEngineDiagnostics<TRoot extends AnyNodeData = AnyNodeData>
+export interface NativeEngineDiagnostics<TRoot extends AnyUntypedNode = AnyUntypedNode>
 	extends EngineDiagnostics<TRoot & ParsedRoot, TreeHandle> {
-	readUntypedNode(handle: number, childIndex?: number, options?: ParseOptions): AnyNodeData;
+	readUntypedNode(handle: number, childIndex?: number, options?: ParseOptions): AnyUntypedNode;
 }
 
 /**
@@ -138,7 +138,7 @@ export interface NativeEngineDiagnostics<TRoot extends AnyNodeData = AnyNodeData
  * rendering from dragging in the parse surface, and the module graph acyclic.
  */
 export interface RenderEngine<O extends object = RenderOptionValues, IndentChar extends string = never> {
-	render<const I extends string = string>(node: AnyNodeData | number, options?: RenderOptions<O & IndentOption<I, IndentChar>>): Rendered;
+	render<const I extends string = string>(node: AnyUntypedNode | number, options?: RenderOptions<O & IndentOption<I, IndentChar>>): Rendered;
 	applyEdits(source: string, edits: readonly Edit[]): string;
 	dispose(): void;
 }
@@ -159,7 +159,7 @@ export interface ParseEngine<TTree> {
  * `ParseEngine<TTree>` to add the public `parse`.
  */
 export interface SittirEngine<
-	TRoot extends AnyNodeData = AnyNodeData,
+	TRoot extends AnyUntypedNode = AnyUntypedNode,
 	O extends object = RenderOptionValues,
 	IndentChar extends string = never
 > extends RenderEngine<O, IndentChar> {
@@ -175,10 +175,10 @@ export interface ParsedRoot {
 	readonly $span: { start: number; end: number };
 }
 
-export type ParseAndReadResult<TRoot extends AnyNodeData = AnyNodeData> = ParsedRead<TRoot & ParsedRoot, TreeHandle>;
+export type ParseAndReadResult<TRoot extends AnyUntypedNode = AnyUntypedNode> = ParsedRead<TRoot & ParsedRoot, TreeHandle>;
 
 interface NativeParseResultShape {
-	readonly nodeData: AnyNodeData;
+	readonly untypedNode: AnyUntypedNode;
 	readonly format?: FormatRecord;
 	readonly treeId: number;
 }
@@ -213,7 +213,7 @@ const treeDisposalRegistry = new FinalizationRegistry<{
  * `reason` string (the real failure cause) instead of discarding it.
  */
 export type CreateNativeEngineResult<
-	TRoot extends AnyNodeData = AnyNodeData,
+	TRoot extends AnyUntypedNode = AnyUntypedNode,
 	O extends object = RenderOptionValues,
 	IndentChar extends string = never
 > =
@@ -221,7 +221,7 @@ export type CreateNativeEngineResult<
 	| { readonly engine: null; readonly reason: string };
 
 export function createNativeEngine<
-	TRoot extends AnyNodeData = AnyNodeData,
+	TRoot extends AnyUntypedNode = AnyUntypedNode,
 	O extends object = RenderOptionValues,
 	IndentChar extends string = never,
 	TTransport = unknown,
@@ -242,7 +242,7 @@ export function createNativeEngine<
 		};
 		const engine = new status.native.SittirEngine(Object.keys(nativeOptions).length > 0 ? nativeOptions : undefined);
 
-		function renderNativeNode(node: AnyNodeData | number, opts?: RenderOptions<O>): Rendered {
+		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
 			if (opts?.ignoreFormat === true) {
 				throw new Error(
@@ -293,10 +293,10 @@ export function createNativeEngine<
 						// Boundary assertion: the native reader returns the grammar's
 						// root kind for a whole-source parse, stamped with its span and
 						// the captured source text.
-						const root = parsed.nodeData as TRoot & ParsedRoot;
+						const root = parsed.untypedNode as TRoot & ParsedRoot;
 						// One root per depth: the parse's own read seeds it, and a
 						// root asked for at another depth is read natively once.
-						const roots = new Map<number, AnyNodeData>([[depthOf(parseOptions) ?? 1, root]]);
+						const roots = new Map<number, AnyUntypedNode>([[depthOf(parseOptions) ?? 1, root]]);
 						// Captured by `read` below and by nothing else, so it stays
 						// reachable exactly as long as something can still read from
 						// this tree. Its collection is what releases the tree.
@@ -322,13 +322,13 @@ export function createNativeEngine<
 										const levels = depth ?? 1;
 										let cached = roots.get(levels);
 										if (cached === undefined) {
-											cached = JSON.parse(engine.readRoot(parsed.treeId, depth)) as AnyNodeData;
+											cached = JSON.parse(engine.readRoot(parsed.treeId, depth)) as AnyUntypedNode;
 											roots.set(levels, cached);
 										}
 										return cached;
 									}
 									const nodeJson = engine.readUntypedNode(handle, childIndex ?? 0, depth);
-									return JSON.parse(nodeJson) as AnyNodeData;
+									return JSON.parse(nodeJson) as AnyUntypedNode;
 								},
 								format: parsed.format
 							} satisfies TreeHandle
@@ -337,7 +337,7 @@ export function createNativeEngine<
 
 					readUntypedNode(handle: number, childIndex = 0, parseOptions?: ParseOptions) {
 						const json = engine.readUntypedNode(handle, childIndex, depthOf(parseOptions));
-						return JSON.parse(json) as AnyNodeData;
+						return JSON.parse(json) as AnyUntypedNode;
 					}
 				}
 			}
@@ -348,7 +348,7 @@ export function createNativeEngine<
 }
 
 export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends string = never>(
-	engine: SittirEngine<AnyNodeData, API['options'], IndentChar>
+	engine: SittirEngine<AnyUntypedNode, API['options'], IndentChar>
 ): NativeLanguageEngine<API> {
 	return {
 		render(node, options) {

@@ -1,4 +1,4 @@
-import type { AnyNodeData, NodeMethods, GrammarTypeMap, NodeNs } from '@sittir/types';
+import type { AnyUntypedNode, NodeMethods, GrammarTypeMap, NodeNs } from '@sittir/types';
 import { bindRuntime } from '../../packages/common/src/utils.ts';
 
 interface List {
@@ -30,7 +30,7 @@ const runtime = bindRuntime<FakeTypeMap>();
 declare const leaf: Leaf;
 
 declare const value: unknown;
-if (runtime.isNode(value)) value satisfies AnyNodeData;
+if (runtime.isNode(value)) value satisfies AnyUntypedNode;
 
 const built = runtime.withMethods(leaf);
 // @ts-expect-error methods attach to a node, and an object without a $type is not one

@@ -1,10 +1,10 @@
 //! readNode shape-gate tests. Spec 012 T025.
 //!
 //! For each of the three in-scope grammars (rust / typescript / python),
-//! we parse a small source and assert the emitted `NodeData` has the
+//! we parse a small source and assert the emitted `UntypedNode` has the
 //! fixed allowed `$`-metadata keys plus de-hoisted `_<slot>` storage and
 //! no others — SC-007 shape gate. Walks the entire read payload to check
-//! every emitted NodeData (not just the root), so enrichment fields that
+//! every emitted UntypedNode (not just the root), so enrichment fields that
 //! might slip in on leaves vs branches are both covered.
 //!
 //! Also sanity-checks that `$source` is always `"ts"` from this code
@@ -13,7 +13,7 @@
 
 use serde_json::Value;
 use sittir_core::read_node::{read_node, HandleMint, NoMint, ReadDepth, ReadModel};
-use sittir_core::types::{FieldValue, KindId, NodeData, NodeHandle, Source};
+use sittir_core::types::{FieldValue, KindId, UntypedNode, NodeHandle, Source};
 use std::num::NonZeroU32;
 
 /// A model with no grammar facts: the reader's own rules only.
@@ -21,13 +21,13 @@ struct Plain;
 impl ReadModel for Plain {}
 
 /// Recursively assert that every object-shaped JSON node in `value`
-/// (matching the NodeData wire shape) has only keys in
-/// the de-hoisted NodeData contract. Descends into `_<slot>` values and
+/// (matching the UntypedNode wire shape) has only keys in
+/// the de-hoisted UntypedNode contract. Descends into `_<slot>` values and
 /// `$other` array entries.
 fn assert_shape(value: &Value, path: &str) {
     match value {
         Value::Object(map) => {
-            // If the object has "$type", it's a NodeData — gate the keys.
+            // If the object has "$type", it's an UntypedNode — gate the keys.
             // Otherwise (e.g. `$span` = {start, end}), just recurse.
             if map.contains_key("$type") {
                 for key in map.keys() {
@@ -54,7 +54,7 @@ fn assert_shape(value: &Value, path: &str) {
             }
         }
         Value::Array(arr) => {
-            // FieldValue::Multiple surfaces as an array of NodeData.
+            // FieldValue::Multiple surfaces as an array of UntypedNode.
             for (i, v) in arr.iter().enumerate() {
                 assert_shape(v, &format!("{path}[{i}]"));
             }
@@ -63,8 +63,8 @@ fn assert_shape(value: &Value, path: &str) {
     }
 }
 
-/// Parse `source` with `language` and return the root NodeData.
-fn parse_and_read(language: tree_sitter::Language, source: &str) -> NodeData {
+/// Parse `source` with `language` and return the root UntypedNode.
+fn parse_and_read(language: tree_sitter::Language, source: &str) -> UntypedNode {
     let mut parser = tree_sitter::Parser::new();
     parser.set_language(&language).expect("set language");
     let tree = parser.parse(source, None).expect("parse succeeds");
@@ -164,7 +164,7 @@ impl HandleMint for RecordingMint {
     }
 }
 
-fn sole_slot(node: &NodeData) -> &NodeData {
+fn sole_slot(node: &UntypedNode) -> &UntypedNode {
     let fields = node.fields.as_ref().expect("node has a slot");
     match fields.values().next().expect("one slot") {
         FieldValue::Single(child) => child,
@@ -397,7 +397,7 @@ fn raw_native_children_payload_stays_array_shaped() {
     );
 }
 
-/// Pre-order walk over the JSON NodeData tree, collecting child stub
+/// Pre-order walk over the JSON UntypedNode tree, collecting child stub
 /// `(childIndex, parentHandle)` pairs. Recurses through `_<slot>` values
 /// and `$other`.
 fn collect_child_meta(value: &Value, out: &mut Vec<(u16, u32)>, is_child: bool) {
@@ -558,7 +558,7 @@ impl ReadModel for BlockGap {
 }
 
 /// Every node of `kind` in `source`, each read on its own by its tree node.
-fn read_rust_kind(source: &str, kind: &str) -> Vec<NodeData> {
+fn read_rust_kind(source: &str, kind: &str) -> Vec<UntypedNode> {
     let tree = parse_tree(tree_sitter_rust::LANGUAGE.into(), source);
     let block = tree.language().id_for_node_kind("block", true);
     let mut found = Vec::new();

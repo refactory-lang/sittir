@@ -48,7 +48,7 @@ ast-grep sits one step above tree-sitter as the matching layer — typed
 patterns with metavariables (`$NAME`, `$$$ARGS`), language-aware queries,
 and a stable selection model. sittir doesn't replace ast-grep; it
 complements it. ast-grep finds the nodes, sittir reads the matches into
-typed `NodeData`, the typed factories let you compose replacements
+typed `UntypedNode`, the typed factories let you compose replacements
 without string-mashing, and the render pipeline puts the result back into
 source text.
 
@@ -56,7 +56,7 @@ source text.
 
 **A single typed platform for source manipulation.** TypeScript + ast-grep
 + sittir is one toolchain covering the whole lifecycle — parse, query,
-read into typed `NodeData`, construct or modify with typed factories,
+read into typed `UntypedNode`, construct or modify with typed factories,
 render back to source, emit byte-range edits — under one set of types
 and one mental model. The same `is.functionItem` guard narrows both an
 ast-grep match and a constructed node, and the same `wrapNode` produces
@@ -68,7 +68,7 @@ already powerful, but at the application layer their outputs are
 string-typed: `node.type === 'function_item'`, `match.kind() === 'block'`,
 metavariable bindings handed back as opaque `SgNode` references.
 sittir's generated package types each kind exhaustively from the
-grammar — so a tree-sitter parse becomes a discriminated `NodeData`
+grammar — so a tree-sitter parse becomes a discriminated `UntypedNode`
 union, an ast-grep match wraps into a `wrapNode(match, tree)` accessor
 with field-typed getters, and a metavariable replacement composes
 through typed factories instead of template-string concatenation.
@@ -103,8 +103,8 @@ shipped them yet but they are in scope:
 
 - **Construction templates.** Authoring replacement source as a
   template string with metavariable slots — `pub fn $NAME($...PARAMS)
-  -> $RET { $BODY }` — and filling it with typed `NodeData` to produce
-  either another `NodeData` or rendered text. The same override
+  -> $RET { $BODY }` — and filling it with typed `UntypedNode` to produce
+  either another `UntypedNode` or rendered text. The same override
   pipeline that produces the production parser also produces a
   template-mode parser per grammar (a tiny patch injects a metavariable
   rule and merges it into the relevant nominal rules), so templates
@@ -116,12 +116,12 @@ shipped them yet but they are in scope:
   Stubbed in `examples/04-precompiled-templates.ts` and
   `examples/05-inline-templates.ts`.
 - **Type-aware structural query API.** Pattern matching directly over
-  `NodeData` trees with the same kind/field types the rest of the
+  `UntypedNode` trees with the same kind/field types the rest of the
   surface uses, so the same tree you constructed (or modified, or read)
   can be queried without re-rendering and handing it back to ast-grep.
 - **Typed node traversal.** Parent / child / sibling / ancestor walks
   with TypeScript narrowing on the result. ast-grep already covers
-  traversal over parse trees; the gap is over `NodeData` trees that
+  traversal over parse trees; the gap is over `UntypedNode` trees that
   exist only in memory (constructed factories, modified copies after
   `$with`).
 - **More grammars.** Adding a language is a workspace package, a
@@ -141,7 +141,7 @@ shipped them yet but they are in scope:
   each grammar before any ergonomic surface is layered on top. Render lives
   on the canonical rule tree; coercion, `$with` immutability,
   fluent getters, and `.$trivia()` are projections over the same
-  `NodeData`.
+  `UntypedNode`.
 - **One engine, one contract.** A native engine with generated Rust render bodies sits behind a
   single `SittirEngineLike` interface. `createEngine()` throws if the
   native binding for the grammar isn't loadable rather than silently
@@ -234,26 +234,26 @@ falling back.
                           ┌────────────────────────────┐
                           │  @sittir/common             │
                           │  readUntypedNode, applyEdits,      │
-                          │  NodeData,                  │
+                          │  UntypedNode,                  │
                           │  TreeHandle, native boundary│
                           └─────────────────────────────┘
                                       │
                                       ▼
                           ┌────────────────────────────┐
                           │  @sittir/types              │
-                          │  AnyNodeData, ConfigOf<T>,  │
+                          │  AnyUntypedNode, ConfigOf<T>,  │
                           │  TreeNodeOf<T>, Edit, ...   │
                           │  (zero runtime)             │
                           └─────────────────────────────┘
 ```
 
 - **`@sittir/types`** — pure TypeScript types. Zero runtime. Owns
-  `AnyNodeData`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>`, `Edit`,
+  `AnyUntypedNode`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>`, `Edit`,
   `ByteRange`, `RenderContext`.
 - **`@sittir/common`** — backend-neutral runtime. Implements
-  `readUntypedNode(tree, handle?, childIndex?)` (parse-tree → `NodeData`),
+  `readUntypedNode(tree, handle?, childIndex?)` (parse-tree → `UntypedNode`),
   `applyEdits(source, edits)`, the native boundary
-  invariant (`assertRenderableNodeData`), and
+  invariant (`assertRenderableUntypedNode`), and
   `createNativeEngine()`, which the native backend implements against the
   shared `SittirEngineLike`/tree-handle interfaces.
 - **Generated `@sittir/<grammar>` packages** — per-grammar surface. The
@@ -266,9 +266,9 @@ falling back.
   native template-bundle hash. Reading and wrapping a parse stay internal
   to the engine.
 
-#### NodeData shape
+#### UntypedNode shape
 
-`NodeData` is plain frozen data — not an ES class. Every node carries
+`UntypedNode` is plain frozen data — not an ES class. Every node carries
 `$type` (numeric `TSKindId`), `$source` (`0=ts`, `1=sg`, `2=factory`),
 `$named`, plus either `_<field>` storage and `$children` (branch) or
 `$text` (leaf). Field storage is enumerable and lower-cased
@@ -303,7 +303,7 @@ empty form when omitted.
 #### Cursor / value duality
 
 The generated surface separates the cursor (a handle into the rule tree)
-from the resolved value (the underlying NodeData):
+from the resolved value (the underlying UntypedNode):
 
 <!-- snippet: illustrative -->
 ```ts
@@ -322,11 +322,11 @@ update namespace; for kinds with a single unnamed slot it exposes
 #### Render pipeline
 
 ```
-NodeData ──▶ render rule ──▶ Jinja template ──▶ source text
+UntypedNode ──▶ render rule ──▶ Jinja template ──▶ source text
               (wrapper-free)   (per kind)
 ```
 
-Render reads `_<field>` and `$children` directly off `NodeData`. Templates
+Render reads `_<field>` and `$children` directly off `UntypedNode`. Templates
 are emitted from the wrapper-free post-Normalize render rule, deliberately
 ahead of Simplify, so anonymous delimiters and separator placement survive.
 Slot derivation reads the simplified rule; templates and derivation are two
@@ -346,17 +346,17 @@ path); `SITTIR_BACKEND=native|js|wasm` forces that status for testing, and
 #### Read pipeline
 
 ```
-source ──▶ tree-sitter parse ──▶ TreeHandle ──▶ readUntypedNode(tree) ──▶ NodeData
+source ──▶ tree-sitter parse ──▶ TreeHandle ──▶ readUntypedNode(tree) ──▶ UntypedNode
                                                                        │
                                                               wrapNode(node, tree)
                                                                        ▼
-                                                       NodeData + fluent getters
+                                                       UntypedNode + fluent getters
                                                        + lazy hydration via $parentHandle
 ```
 
 `readUntypedNode` is the shared parse-tree reader: it maps field children into
 `_<field>` slots and unfielded children into `$children`, recurses to a
-configurable depth, and produces the same `NodeData` shape whether the
+configurable depth, and produces the same `UntypedNode` shape whether the
 parse tree came from `web-tree-sitter` or `@ast-grep/napi`. `wrapNode`
 attaches the typed accessor surface and hydrates each lazy stub (`$parentHandle`
 + `$childIndex`) back through the engine's reader on demand.
@@ -364,7 +364,7 @@ attaches the typed accessor surface and hydrates each lazy stub (`$parentHandle`
 #### Edit pipeline
 
 ```
-TreeNode + replacement NodeData ──▶ replace(target, replacement) ──▶ Edit { startPos, endPos, insertedText }
+TreeNode + replacement UntypedNode ──▶ replace(target, replacement) ──▶ Edit { startPos, endPos, insertedText }
 [Edit] + source ──▶ engine.applyEdits(source, edits) ──▶ new source
 ```
 
@@ -445,7 +445,7 @@ const fn = engine.build.statement.function({
 fn.$render();      // "pub fn greet(name: String) {}"
 ```
 
-### Read source into NodeData
+### Read source into UntypedNode
 
 ```ts
 import { createEngine } from '@sittir/common';

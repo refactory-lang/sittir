@@ -1,4 +1,4 @@
-import type { AnyNodeData } from './core-types.ts';
+import type { AnyUntypedNode } from './core-types.ts';
 
 export interface SlotHint<Input, Optional extends boolean = false, Rest extends boolean = false, Config = never> {
 	readonly input: Input;
@@ -254,7 +254,7 @@ export type FlatShapesOf<Surface, N, ByChild, Lookup> = ShapesOf<Surface, N, Fla
 type SurfaceOf<N, ByChild> = Storage<N> &
 	Accessors<N, ByChild> &
 	ListPart<N, ByChild> & {
-		readonly $source?: AnyNodeData['$source'];
+		readonly $source?: AnyUntypedNode['$source'];
 		readonly __slotHints__?: HintsOf<N>;
 	};
 export type BoundOf<N, ByBound> = SurfaceOf<N, ByBound>;

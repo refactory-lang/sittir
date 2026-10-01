@@ -1,5 +1,5 @@
 import type {
-	AnyNodeData,
+	AnyUntypedNode,
 	FlavorPair,
 	HoistArity,
 	NodeMethods,
@@ -19,15 +19,15 @@ type NamespacePart<M extends GrammarTypeMap, K, P extends 'Node' | 'Loose'> = K 
 export interface GrammarRuntime<M extends GrammarTypeMap> {
 	isNode<K extends keyof M['namespaces']>(
 		v: NamespacePart<M, K, 'Node'> | NamespacePart<M, K, 'Loose'>
-	): v is Extract<NamespacePart<M, K, 'Node'>, AnyNodeData>;
-	isNode(v: unknown): v is AnyNodeData;
-	withMethods<T extends AnyNodeData>(node: T): T & NodeMethods<M['trivia']>;
+	): v is Extract<NamespacePart<M, K, 'Node'>, AnyUntypedNode>;
+	isNode(v: unknown): v is AnyUntypedNode;
+	withMethods<T extends AnyUntypedNode>(node: T): T & NodeMethods<M['trivia']>;
 }
 
 export function bindRuntime<M extends GrammarTypeMap>(): GrammarRuntime<M> {
 	return {
 		isNode: isAnyNode,
-		withMethods<T extends AnyNodeData>(node: T) {
+		withMethods<T extends AnyUntypedNode>(node: T) {
 			return withAnyMethods(node) as unknown as T & NodeMethods<M['trivia']>;
 		}
 	} as GrammarRuntime<M>;

@@ -119,7 +119,7 @@ export async function runRoundtripProbes(grammar: string): Promise<number> {
 
 	// read projection (structural) — upstream of render/factory. A regression
 	// here means readUntypedNode is losing content between tree-sitter's parse tree and
-	// the NodeData shape, so every downstream validator will mis-report.
+	// the UntypedNode shape, so every downstream validator will mis-report.
 	const readProjectionResult = await validateReadProjection(grammar);
 	console.log(formatReadProjectionReport(readProjectionResult));
 

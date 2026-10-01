@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 import { inEngine, type EngineHandle } from '../src/engine-scope.ts';
 import { withMethods } from '../src/utils.ts';
 import { detach, liveHandle, triviaFacts } from './support/fake-engine.ts';
@@ -9,12 +9,12 @@ const COMMENT = 9;
 function engineHandle(label: string): EngineHandle {
 	return liveHandle({
 		render: () => label,
-		trivia: triviaFacts((text) => withMethods({ $type: COMMENT, $text: text } as AnyNodeData))
+		trivia: triviaFacts((text) => withMethods({ $type: COMMENT, $text: text } as AnyUntypedNode))
 	});
 }
 
-function builtIn(handle: EngineHandle, node: Record<string, unknown> = { $type: 1, $text: 'x' }): AnyNodeData {
-	return inEngine(handle, () => withMethods(node as unknown as AnyNodeData));
+function builtIn(handle: EngineHandle, node: Record<string, unknown> = { $type: 1, $text: 'x' }): AnyUntypedNode {
+	return inEngine(handle, () => withMethods(node as unknown as AnyUntypedNode));
 }
 
 type Methods = {
@@ -22,10 +22,10 @@ type Methods = {
 	$render(): string;
 	$toEdit(start: number, end: number): unknown;
 	$replace(target: { range(): unknown }): unknown;
-	$with: { x(): AnyNodeData & Methods };
-	$trivia: { leading(...items: unknown[]): AnyNodeData & Methods; leading(): readonly unknown[] };
+	$with: { x(): AnyUntypedNode & Methods };
+	$trivia: { leading(...items: unknown[]): AnyUntypedNode & Methods; leading(): readonly unknown[] };
 };
-const methods = (node: AnyNodeData): AnyNodeData & Methods => node as AnyNodeData & Methods;
+const methods = (node: AnyUntypedNode): AnyUntypedNode & Methods => node as AnyUntypedNode & Methods;
 
 describe('a node and its engine', () => {
 	it('is stamped with the handle in scope, as a non-enumerable method', () => {
@@ -36,7 +36,7 @@ describe('a node and its engine', () => {
 	});
 
 	it('carries no engine outside a scope, so it cannot render, edit or take trivia', () => {
-		const node = methods(withMethods({ $type: 1, $text: 'x' } as AnyNodeData));
+		const node = methods(withMethods({ $type: 1, $text: 'x' } as AnyUntypedNode));
 		expect(node.$engine).toBeUndefined();
 		expect(() => node.$render()).toThrow(/no engine.*engine\.render\(node\)/);
 		expect(() => node.$toEdit(0, 1)).toThrow(/no engine/);
@@ -70,7 +70,7 @@ describe('a node and its engine', () => {
 			builtIn(a, {
 				$type: 1,
 				$text: 'x',
-				$with: { x: () => withMethods({ $type: 2, $text: 'y' } as AnyNodeData) }
+				$with: { x: () => withMethods({ $type: 2, $text: 'y' } as AnyUntypedNode) }
 			})
 		);
 		const rebuilt = inEngine(b, () => node.$with.x());
@@ -82,7 +82,7 @@ describe('a node and its engine', () => {
 		const b = engineHandle('b');
 		const node = methods(builtIn(a));
 		inEngine(b, () => node.$trivia.leading('// x'));
-		const [entry] = node.$trivia.leading() as (AnyNodeData & Methods)[];
+		const [entry] = node.$trivia.leading() as (AnyUntypedNode & Methods)[];
 		expect(entry?.$engine?.()).toBe(a.current);
 	});
 
@@ -91,7 +91,7 @@ describe('a node and its engine', () => {
 		const node = methods(builtIn(a));
 		const identity = detach(a);
 		node.$trivia.leading('// x');
-		const [entry] = node.$trivia.leading() as (AnyNodeData & Methods)[];
+		const [entry] = node.$trivia.leading() as (AnyUntypedNode & Methods)[];
 		expect(entry?.$engine?.()).toBe(identity);
 		expect(() => entry?.$render()).toThrow(/engine disposed/);
 	});

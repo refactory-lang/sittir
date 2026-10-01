@@ -1,15 +1,15 @@
 /**
  * from() correctness validation — structural comparison of from() vs factory output.
  *
- * Tests that from() resolvers produce correct NodeData by comparing
- * from(readNodeData) against factory(readNodeFields). Detects:
+ * Tests that from() resolvers produce correct UntypedNode by comparing
+ * from(readUntypedNode) against factory(readNodeFields). Detects:
  * - undefined nodes (from() resolver failed to resolve a child)
  * - structural divergence (different fields or children)
  *
  * No tree-sitter re-parsing needed — pure structural comparison.
  */
 
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 import { sliceSpan } from '@sittir/common';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import {
@@ -40,13 +40,13 @@ import {
 // Structural analysis
 // ---------------------------------------------------------------------------
 
-/** Find paths to malformed nodes (missing $type) in a NodeData tree.
+/** Find paths to malformed nodes (missing $type) in an UntypedNode tree.
  * Historically this checked `node.$type === 'undefined'`, which was a
  * footgun in typescript — the grammar has a kind literally named
  * `undefined` (the `undefined` keyword), and every valid Undefined
  * node tripped the check. Narrow to the actual intent: a node whose
  * `$type` is the JS undefined value (malformed construction). */
-function findUndefined(node: AnyNodeData, path = ''): string[] {
+function findUndefined(node: AnyUntypedNode, path = ''): string[] {
 	const results: string[] = [];
 	if (node.$type === undefined) results.push(path || 'root');
 
@@ -61,11 +61,11 @@ function findUndefined(node: AnyNodeData, path = ''): string[] {
 		if (Array.isArray(value)) {
 			value.forEach((v, i) => {
 				if (typeof v === 'object' && v !== null && '$type' in v) {
-					results.push(...findUndefined(v as AnyNodeData, `${path}.${key}[${i}]`));
+					results.push(...findUndefined(v as AnyUntypedNode, `${path}.${key}[${i}]`));
 				}
 			});
 		} else if (typeof value === 'object' && value !== null && '$type' in value) {
-			results.push(...findUndefined(value as AnyNodeData, `${path}.${key}`));
+			results.push(...findUndefined(value as AnyUntypedNode, `${path}.${key}`));
 		}
 	}
 
@@ -97,14 +97,14 @@ function findUndefined(node: AnyNodeData, path = ''): string[] {
  * comparison shouldn't either.
  */
 function structuralDiff(
-	a: AnyNodeData,
-	b: AnyNodeData,
+	a: AnyUntypedNode,
+	b: AnyUntypedNode,
 	kindNameFromId?: ((id: number) => string | undefined) | undefined
 ): string[] {
 	const diffs: string[] = [];
 	if (a.$type !== b.$type) diffs.push(`$type: ${a.$type} vs ${b.$type}`);
 
-	const extractSlotKeys = (node: AnyNodeData): string[] => {
+	const extractSlotKeys = (node: AnyUntypedNode): string[] => {
 		const rec = node as unknown as Record<string, unknown>;
 		return Object.keys(rec)
 			.filter((k) => k.startsWith('_') && rec[k] !== undefined)
@@ -215,10 +215,10 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	const storageKindNameFromId = await loadStorageKindNameFromId(grammar);
 
 	// Import from() + factory + wrap modules. `.from()` expects a fluent
-	// NodeData (from factory output OR readNode wrap) OR a camelCase
+	// UntypedNode (from factory output OR readNode wrap) OR a camelCase
 	// loose bag — per spec 008 US3, bare `readUntypedNode` output isn't a
 	// supported input. readNode wraps readUntypedNode output via the per-kind
-	// wrap function, producing a fluent NodeData that `.from()` accepts.
+	// wrap function, producing a fluent UntypedNode that `.from()` accepts.
 	let fromMap: Record<string, (input: object) => unknown> = {};
 	let factoryMap: Record<string, FactoryEntry> = {};
 	let factoryShapes: Record<string, FactoryShape> = {};
@@ -226,7 +226,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let readNode: ((tree: unknown, handle?: number, childIndex?: number) => unknown) | undefined;
-	let wrapNode: ((data: AnyNodeData, tree: unknown) => unknown) | undefined;
+	let wrapNode: ((data: AnyUntypedNode, tree: unknown) => unknown) | undefined;
 	const errors: FromValidationError[] = [];
 	try {
 		const fromModule = await importGenerated(grammar, 'factories/coerce.ts');
@@ -323,7 +323,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 				continue;
 			}
 
-			let readData: AnyNodeData;
+			let readData: AnyUntypedNode;
 			try {
 				const handle = await buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
 				// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
@@ -346,11 +346,11 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					if (leafShape === 'text' || leafShape === 'constant') {
 						try {
 							const text = node1.text;
-							const fromResult = fromMap[kind]!(text as never) as AnyNodeData;
+							const fromResult = fromMap[kind]!(text as never) as AnyUntypedNode;
 							const factoryResult =
 								leafShape === 'constant'
-									? (factoryMap[kind] as AnyNodeData)
-									: (factoryMap[kind]! as (t: string) => AnyNodeData)(text);
+									? (factoryMap[kind] as AnyUntypedNode)
+									: (factoryMap[kind]! as (t: string) => AnyUntypedNode)(text);
 							const diffs = kindIdDiffs(fromResult, factoryResult) ?? structuralDiff(fromResult, factoryResult, kindNameFromId);
 							if (diffs.length > 0) {
 								divergentCount++;
@@ -391,7 +391,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					continue;
 				}
 				// Use readNode (wrapped via per-kind dispatch) when available,
-				// so `.from()` sees a fluent NodeData — the supported input shape
+				// so `.from()` sees a fluent UntypedNode — the supported input shape
 				// per spec 008 US3. Fall back to raw readUntypedNode if the wrap module
 				// isn't loaded (bootstrap scenarios).
 				// For the WASM/JS path, temporarily swap rootNode to target then
@@ -402,18 +402,18 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					// fluent-view wrap readNode would, so `.from()` sees
 					// the same input shape as every other candidate.
 					readData = wrapNode
-						? (wrapNode(nativeCoords.embeddedData, handle) as AnyNodeData)
+						? (wrapNode(nativeCoords.embeddedData, handle) as AnyUntypedNode)
 						: nativeCoords.embeddedData;
 				} else if (nativeCoords && handle.read) {
 					readData = readNode
-						? (readNode(handle, nativeCoords.handle, nativeCoords.childIndex) as AnyNodeData)
+						? (readNode(handle, nativeCoords.handle, nativeCoords.childIndex) as AnyUntypedNode)
 						: readUntypedNodeAt(handle, adaptNode(node1), nativeCoords);
 				} else {
 					const prev = handle.rootNode;
 					(handle as { rootNode: typeof prev }).rootNode = adaptNode(node1);
 					try {
 						readData = readNode
-							? (readNode(handle) as AnyNodeData)
+							? (readNode(handle) as AnyUntypedNode)
 							: readUntypedNodeAt(handle, adaptNode(node1), null);
 					} finally {
 						(handle as { rootNode: typeof prev }).rootNode = prev;
@@ -437,8 +437,8 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 			const readKind =
 				readTypeName !== undefined && readTypeName in fromMap && readTypeName in factoryMap ? readTypeName : kind;
 			try {
-				const fromResult = fromMap[readKind]!(readData) as AnyNodeData;
-				let factoryResult: AnyNodeData;
+				const fromResult = fromMap[readKind]!(readData) as AnyUntypedNode;
+				let factoryResult: AnyUntypedNode;
 				try {
 					// Route by the shape declared at codegen time — same
 					// pattern as validate-factory-roundtrip.ts. Guessing
@@ -468,22 +468,22 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
 							const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
 							const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
-							factoryResult = (factory as (v: unknown) => AnyNodeData)(value);
+							factoryResult = (factory as (v: unknown) => AnyUntypedNode)(value);
 						} else {
 							// Config-shaped factories with flank capture take `(config,
 							// options)` — factories without options ignore the extra argument.
-							factoryResult = (factory as (c: unknown, o?: unknown) => AnyNodeData)(
+							factoryResult = (factory as (c: unknown, o?: unknown) => AnyUntypedNode)(
 								config,
 								separatedListFactoryOptions(readData)
 							);
 						}
 					} else if (shape === 'constant') {
-						factoryResult = factory as AnyNodeData;
+						factoryResult = factory as AnyUntypedNode;
 					} else if (shape === 'text') {
 						// A text-shaped factory takes the node's bytes, which its span
 						// addresses whether or not the reader captured them as `$text`.
 						const textForFactory = readData.$span ? sliceSpan(entry.source, readData.$span) : (readData.$text ?? '');
-						factoryResult = (factory as (text: string) => AnyNodeData)(textForFactory);
+						factoryResult = (factory as (text: string) => AnyUntypedNode)(textForFactory);
 					} else if (shape === 'elements') {
 						// separatedList factory: spread with a LEADING optional
 						// options bag — `(...elements)` / `({separatorKind?,
@@ -500,7 +500,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 						});
 						const elements = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
 						const options = separatedListFactoryOptions(readData);
-						const listFactory = factory as (...args: unknown[]) => AnyNodeData;
+						const listFactory = factory as (...args: unknown[]) => AnyUntypedNode;
 						factoryResult = options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
 					} else {
 						const config = nodeToConfig(readData, {
@@ -512,7 +512,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							kindNameFromId
 						});
 						const childArgs = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
-						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(...childArgs);
+						factoryResult = (factory as (...args: unknown[]) => AnyUntypedNode)(...childArgs);
 					}
 				} catch (e) {
 					errors.push({

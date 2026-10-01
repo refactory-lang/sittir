@@ -23,7 +23,7 @@
  * mis-shaped field X" signal instead of an opaque re-parsed-AST diff.
  */
 
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
 import { deriveRuleKinds } from './render-bodies.ts';
@@ -41,7 +41,7 @@ import {
 	dedupeMismatchesByContainment,
 	type TSNode,
 	type TSTree,
-	type WrappedNodeData,
+	type TypedNode,
 	type IrSurface,
 	type ValidatorSkip,
 	loadIrSurface,
@@ -449,13 +449,13 @@ function recordFactoryModuleLoadFailure(
 
 /**
  * Dispatch `referenceData` through the appropriate factory call convention
- * and return the resulting `NodeData`. Factory lookup uses the walked
+ * and return the resulting `UntypedNode`. Factory lookup uses the walked
  * (source) kind so that alias-source factories are preferred over
  * alias-target factories, keeping the output `$type` aligned with our
  * declared interfaces. Errors thrown by the factory are pushed to `errors`
  * and `null` is returned so the caller can skip the comparison step.
  *
- * @param referenceData - Fully materialized NodeData from the wrapped read tree.
+ * @param referenceData - Fully materialized UntypedNode from the wrapped read tree.
  * @param renderedKind - The walked (source) kind — used for factory + shape lookup.
  * @param cstNodeKindHint - CST node-kind fallback when the wrapper node itself discriminates the variant.
  * @param firstNamedChildKindHint - First CST named-child fallback for legacy callers.
@@ -469,10 +469,10 @@ function recordFactoryModuleLoadFailure(
  * @param entryName - Corpus entry name, used when recording errors.
  * @param inputSource - Original source text, used when recording errors.
  * @param errors - Mutable error list to append to on factory throw.
- * @returns The factory-produced `AnyNodeData`, or `null` if the factory threw.
+ * @returns The factory-produced `AnyUntypedNode`, or `null` if the factory threw.
  */
-function buildFactoryNodeData(
-	referenceData: AnyNodeData,
+function buildFactoryUntypedNode(
+	referenceData: AnyUntypedNode,
 	renderedKind: string,
 	cstNodeKindHint: string | undefined,
 	firstNamedChildKindHint: string | undefined,
@@ -493,7 +493,7 @@ function buildFactoryNodeData(
 		rendered?: string;
 	}[],
 	kindNameFromId?: (id: number) => string | undefined
-): AnyNodeData | null {
+): AnyUntypedNode | null {
 	const factory = factoryMap[renderedKind];
 	if (!factory) return null;
 	try {
@@ -502,7 +502,7 @@ function buildFactoryNodeData(
 			renderedKind,
 			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface },
 			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId }
-		) as AnyNodeData | null;
+		) as AnyUntypedNode | null;
 	} catch (e) {
 		errors.push({
 			kind: renderedKind,
@@ -633,10 +633,10 @@ export async function validateFactoryRenderParse(
 		// native transport's "Missing field" errors once render was fixed
 		// to use the native engine).
 		const handle = await buildReadHandle(grammar, tree1, entry.source, backend, undefined);
-		const wrappedRoot = readNode(handle) as WrappedNodeData;
-		const candidatesByKind = new Map<string, { start: number; end: number; node: WrappedNodeData }[]>();
+		const wrappedRoot = readNode(handle) as TypedNode;
+		const candidatesByKind = new Map<string, { start: number; end: number; node: TypedNode }[]>();
 		const seen = new Set<string>();
-		walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
+		walkWrappedTree(wrappedRoot, (w: TypedNode) => {
 			if (w.$named === false) return;
 			const sourceKind = kindNameFromId ? kindNameFromId(nativeShownKindId(w)) : undefined;
 			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
@@ -671,7 +671,7 @@ export async function validateFactoryRenderParse(
 
 				const cstNamedChildKinds = node1 ? namedChildKinds(node1) : [];
 
-				const factoryData = buildFactoryNodeData(
+				const factoryData = buildFactoryUntypedNode(
 					referenceData,
 					kind,
 					node1?.type,

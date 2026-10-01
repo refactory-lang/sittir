@@ -4,7 +4,7 @@
 // read by one could slice the other's unrelated tree. A node read by one
 // grammar's engine is refused by another grammar's, naming both languages.
 import { describe, expect, it } from 'vitest';
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../src/languages.ts';
 
@@ -13,7 +13,7 @@ describe('a coordinate names its tree across grammars', () => {
 		const typescript = await createEngine(await languageByName('typescript'));
 		typescript.parse('let decoy = 1;\n');
 		const rust = await createEngine(await languageByName('rust'));
-		const item = (rust.parse('fn real() {}\n') as unknown as { statements(): AnyNodeData[] }).statements()[0]!;
+		const item = (rust.parse('fn real() {}\n') as unknown as { statements(): AnyUntypedNode[] }).statements()[0]!;
 		// @ts-expect-error a rust node is not a typescript node; the engine refuses it at runtime as well
 		expect(() => typescript.render(item).toString()).toThrow('cannot render a rust node through a typescript engine');
 	});

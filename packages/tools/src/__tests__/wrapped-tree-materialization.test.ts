@@ -12,11 +12,11 @@ import {
 	loadWebTreeSitter,
 	materialize,
 	walkWrappedTree,
-	type WrappedNodeData
+	type TypedNode
 } from '../validate/common.ts';
 import { makeNodeMapWith } from '../../../codegen/src/__tests__/helpers/node-map-fixtures.ts';
 
-function leaf(handle: number, text: string): WrappedNodeData {
+function leaf(handle: number, text: string): TypedNode {
 	return {
 		$type: handle,
 		$source: 0,
@@ -95,7 +95,7 @@ describe('wrapped tree materialization', () => {
 					return undefined;
 				}
 			}
-		} satisfies WrappedNodeData;
+		} satisfies TypedNode;
 
 		const visited: number[] = [];
 		walkWrappedTree(root, (node) => {
@@ -122,7 +122,7 @@ describe('wrapped tree materialization', () => {
 			children() {
 				throw new Error('boom');
 			}
-		} satisfies WrappedNodeData;
+		} satisfies TypedNode;
 
 		const visited: number[] = [];
 		walkWrappedTree(root, (node) => {
@@ -167,7 +167,7 @@ describe('wrapped tree materialization', () => {
 					return undefined;
 				}
 			}
-		} satisfies WrappedNodeData;
+		} satisfies TypedNode;
 
 		const materialized = asRecord(materialize(root));
 

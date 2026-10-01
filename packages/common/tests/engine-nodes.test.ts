@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { AnyNodeData, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, TriviaFacts } from '@sittir/types';
 import { createEngine } from '../src/create-engine.ts';
 import { createRenderHandle } from '../src/engine.ts';
 import { inTreeEngine } from '../src/engine-scope.ts';
@@ -18,7 +18,7 @@ const trivia: TriviaFacts = {
 	innerGaps: { group: ['inner'] }
 };
 
-const node = (data: Record<string, unknown>): AnyNodeData => withMethods(data as unknown as AnyNodeData);
+const node = (data: Record<string, unknown>): AnyUntypedNode => withMethods(data as unknown as AnyUntypedNode);
 
 function fakeLanguage(name: string) {
 	const trees: object[] = [];
@@ -34,16 +34,16 @@ function fakeLanguage(name: string) {
 			number: { bigint: (v: bigint) => node({ $type: 2, $text: String(v), $source: Source.Factory }) }
 		},
 		is: {
-			leaf: (v: AnyNodeData) => v.$type === 1,
-			kind: (v: AnyNodeData, k: number) => v.$type === k,
-			expression: (v: AnyNodeData) => new Set([1, 3]).has(v.$type as number)
+			leaf: (v: AnyUntypedNode) => v.$type === 1,
+			kind: (v: AnyUntypedNode, k: number) => v.$type === k,
+			expression: (v: AnyUntypedNode) => new Set([1, 3]).has(v.$type as number)
 		},
 		kinds: {},
 		trivia,
 		createNative: (opts?: { options?: Options }) => {
 			const label = String.fromCharCode(65 + engines++);
 			return {
-				render: (n: AnyNodeData, call?: Options) =>
+				render: (n: AnyUntypedNode, call?: Options) =>
 					createRenderHandle(() => `${label}:${call?.indent ?? opts?.options?.indent ?? ''}:${n.$type}`),
 				applyEdits: (s: string) => s,
 				parseAndRead: () => {
@@ -255,7 +255,7 @@ describe('the node guards of an engine', () => {
 
 	it('reject every value that carries no engine', async () => {
 		const engine = await engineOf(fakeLanguage('fake'));
-		const unstamped = withMethods({ $type: 1, $text: 'x', $source: Source.Factory } as unknown as AnyNodeData);
+		const unstamped = withMethods({ $type: 1, $text: 'x', $source: Source.Factory } as unknown as AnyUntypedNode);
 		for (const value of [unstamped, { $type: 1, $source: Source.Factory }, 'x', 1, null, undefined]) {
 			expect(engine.isNode(value)).toBe(false);
 			expect(engine.isFactoryNode(value)).toBe(false);
@@ -318,7 +318,7 @@ describe('the kind guards of an engine', () => {
 
 	it('reject every value that carries no engine', async () => {
 		const engine = await engineOf(fakeLanguage('fake'));
-		const unstamped = withMethods({ $type: 1, $text: 'x', $source: Source.Factory } as unknown as AnyNodeData);
+		const unstamped = withMethods({ $type: 1, $text: 'x', $source: Source.Factory } as unknown as AnyUntypedNode);
 		for (const value of [unstamped, { $type: 1 }, 'x', 1, null, undefined]) {
 			expect(engine.is.leaf(value)).toBe(false);
 		}

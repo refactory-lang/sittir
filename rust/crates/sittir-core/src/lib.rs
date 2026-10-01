@@ -2,8 +2,8 @@
 //!
 //! Contract surface:
 //!
-//! - [`types`]    — primitive `NodeData` + wire-boundary serde attributes.
-//! - [`read_node`] — `tree_sitter::Tree` → `NodeData` traversal.
+//! - [`types`]    — primitive `UntypedNode` + wire-boundary serde attributes.
+//! - [`read_node`] — `tree_sitter::Tree` → `UntypedNode` traversal.
 //! - [`splice`]   — byte-level `apply_edits` on a source string.
 //! - [`boundary`] — (reserved) cross-FFI shape helpers; serde attrs live
 //!   alongside the structs in `types`.

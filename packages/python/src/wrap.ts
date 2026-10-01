@@ -18,7 +18,7 @@ import {
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
 import type { ParsedRoot } from '@sittir/common/engine';
-import type { AnyNodeData as _NodeData, NonEmptyArray, SupertypeSurface } from '@sittir/types';
+import type { AnyUntypedNode as _UntypedNode, NonEmptyArray, SupertypeSurface } from '@sittir/types';
 import { TSKindId, KIND_NAMES, KIND_DISPLAY_NAMES } from './types.js';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types-internal.js';
@@ -101,7 +101,7 @@ function handleWrapViolation<T>(message: string, fallback: T, context: WrapDiagn
 function describeWrapSlotItem(value: unknown): string {
 	if (value == null) return String(value);
 	if (typeof value !== 'object') return `${typeof value}(${JSON.stringify(value)})`;
-	const node = value as Partial<_NodeData>;
+	const node = value as Partial<_UntypedNode>;
 	if (typeof node.$type === 'string' || typeof node.$type === 'number') {
 		const text = typeof node.$text === 'string' ? `, $text=${JSON.stringify(node.$text)}` : '';
 		return `node($type=${JSON.stringify(node.$type)}${text})`;
@@ -237,7 +237,7 @@ const _LIST_OWNER_KINDS: ReadonlySet<number> = new Set([
 ]);
 function hydrateSelf<T>(entry: T, tree: TreeHandle): T {
 	if (entry == null) return undefined as unknown as T;
-	const e = entry as unknown as _NodeData;
+	const e = entry as unknown as _UntypedNode;
 	if (isStub(e))
 		return readNode(
 			tree,
@@ -258,7 +258,7 @@ type ParsedOfData<D> = D extends { readonly $type: infer Id }
 	: D;
 function hydrateChild<T>(entry: T, tree: TreeHandle): ParsedOfData<T> {
 	const resolved = hydrateSelf(entry, tree);
-	const e = resolved as unknown as _NodeData;
+	const e = resolved as unknown as _UntypedNode;
 	if (resolved === entry && typeof e?.$type === 'number') return wrapNode(e, tree) as unknown as ParsedOfData<T>;
 	return resolved as unknown as ParsedOfData<T>;
 }
@@ -274,7 +274,7 @@ function projectKindEnumStorage<T>(
 ): T {
 	if (!value) return value;
 	if (Array.isArray(value)) return value.map((entry) => projectKindEnumStorage(entry, textIds, altIds)) as unknown as T;
-	const entry = value as unknown as _NodeData;
+	const entry = value as unknown as _UntypedNode;
 	if (typeof value === 'string') {
 		const mappedId = textIds?.[value];
 		return typeof mappedId === 'number' ? (mappedId as unknown as T) : value;
@@ -299,7 +299,7 @@ function projectMixedEnumStorage<T>(
 	if (!value) return value;
 	if (Array.isArray(value))
 		return value.map((entry) => projectMixedEnumStorage(entry, textIds, altIds, ownSymbols)) as unknown as T;
-	const entry = value as unknown as _NodeData;
+	const entry = value as unknown as _UntypedNode;
 	if (typeof value === 'string') {
 		const mappedId = textIds?.[value];
 		return typeof mappedId === 'number' ? (mappedId as unknown as T) : value;
@@ -327,8 +327,8 @@ function projectMixedEnumStorage<T>(
 // so there is no double-render. A final `?? readTerminalFromOther(...)` only
 // fires when the nominal storage keys are all empty (the unfielded case);
 // when the token IS field-tagged the chain short-circuits before reaching it.
-function readTerminalFromOther<T = _NodeData | number>(
-	data: _NodeData,
+function readTerminalFromOther<T = _UntypedNode | number>(
+	data: _UntypedNode,
 	allowedKindIds: readonly number[]
 ): T | undefined {
 	const other = (data as { $other?: readonly unknown[] }).$other;
@@ -855,7 +855,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 
 function _wrapKindNameOf(entry: unknown): string | undefined {
 	if (!entry || typeof entry !== 'object') return undefined;
-	const raw: unknown = _kindOf(entry as _NodeData);
+	const raw: unknown = _kindOf(entry as _UntypedNode);
 	if (raw === undefined) return undefined;
 	if (typeof raw === 'number') return KIND_NAMES.get(raw as never) ?? String(raw);
 	return typeof raw === 'string' ? raw : undefined;
@@ -988,7 +988,7 @@ export function wrapModule(data: T.Module, tree: TreeHandle): T.Module.Parsed {
 			tree,
 			nodeType: data.$type,
 			slotName: 'statements',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		statements() {
@@ -1054,7 +1054,10 @@ export function wrapStatement(
 			'decorated_definition',
 			'match_statement'
 		]);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.Statement>(node as T.Statement, tree) as unknown as T.Statement.Parsed;
 	}
 	return hydrateChild<T.Statement>(
@@ -1062,7 +1065,7 @@ export function wrapStatement(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -1081,7 +1084,7 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
 						'simple_statements_elements',
 						true,
 						data.$type,
-						{ tree, nodeType: data.$type, slotName: 'simple_statements_elements', span: (data as _NodeData).$span }
+						{ tree, nodeType: data.$type, slotName: 'simple_statements_elements', span: (data as _UntypedNode).$span }
 					),
 
 					simpleStatementsElements() {
@@ -1122,7 +1125,7 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle): 
 			tree,
 			nodeType: data.$type,
 			slotName: 'names',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		names() {
@@ -1144,13 +1147,13 @@ export function wrapRelativeImport(data: T.RelativeImport, tree: TreeHandle): T.
 			tree,
 			nodeType: data.$type,
 			slotName: 'prefix',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_name: normalizeSingularWrapSlot(data._name, 'name', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'name',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		prefix() {
@@ -1180,7 +1183,7 @@ export function wrapFutureImportStatement(
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -1208,7 +1211,7 @@ export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeH
 			tree,
 			nodeType: data.$type,
 			slotName: 'module_name',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_content: projectMixedEnumStorage(
 			normalizeSingularWrapSlot(
@@ -1219,7 +1222,7 @@ export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeH
 				'content',
 				true,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 			),
 			{ '*': 137 },
 			{ 8: 137 }
@@ -1242,7 +1245,7 @@ export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeH
 }
 
 export function wrapImportList(
-	data: T.ImportList & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+	data: T.ImportList & { readonly $other?: _UntypedNode['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ): T.ImportList.Parsed {
 	data = _keepModelledSlots(data, ['_name']);
@@ -1250,7 +1253,7 @@ export function wrapImportList(
 		tree,
 		nodeType: data.$type,
 		slotName: 'name',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -1285,13 +1288,13 @@ export function wrapAliasedImport(data: T.AliasedImport, tree: TreeHandle): T.Al
 			tree,
 			nodeType: data.$type,
 			slotName: 'name',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_alias: normalizeSingularWrapSlot(data._alias, 'alias', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'alias',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		name() {
@@ -1317,7 +1320,7 @@ export function wrapPrintStatement(data: T.PrintStatement, tree: TreeHandle): T.
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -1341,7 +1344,7 @@ export function wrapChevron(data: T.Chevron, tree: TreeHandle): T.Chevron.Parsed
 				tree,
 				nodeType: data.$type,
 				slotName: 'expression',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -1358,7 +1361,7 @@ export function wrapChevron(data: T.Chevron, tree: TreeHandle): T.Chevron.Parsed
 
 export function wrapAssertStatement(data: T.AssertStatement, tree: TreeHandle): T.AssertStatement.Parsed {
 	data = _keepModelledSlots(data, ['_expression']);
-	const _order = (data as _NodeData).$slotOrder?.slice();
+	const _order = (data as _UntypedNode).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.AssertStatement as const,
@@ -1367,7 +1370,7 @@ export function wrapAssertStatement(data: T.AssertStatement, tree: TreeHandle): 
 				dropWireDelimiters(data._expression, [TSKindId.Comma], _order, 'expression'),
 				true,
 				'expression',
-				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _UntypedNode).$span }
 			),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -1398,7 +1401,7 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
 				'content',
 				true,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 			),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -1429,7 +1432,7 @@ export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle): 
 				tree,
 				nodeType: data.$type,
 				slotName: 'name',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ print: 67, exec: 38, async: 68, await: 69, type: 39, match: 22 }
 		),
@@ -1438,7 +1441,7 @@ export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle): 
 				tree,
 				nodeType: data.$type,
 				slotName: 'value',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -1499,7 +1502,10 @@ export function wrapNamedExpressionLhs(
 			'type_keyword',
 			'match_keyword'
 		]);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.NamedExpressionLhs>(node as T.NamedExpressionLhs, tree) as unknown as SupertypeSurface<
 			T.NamedExpressionLhs,
 			T.ParsedByKindId
@@ -1510,7 +1516,7 @@ export function wrapNamedExpressionLhs(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -1533,7 +1539,7 @@ export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle): 
 				'expressions',
 				false,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'expressions', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'expressions', span: (data as _UntypedNode).$span }
 			),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -1566,7 +1572,7 @@ export function wrapDeleteStatement(data: T.DeleteStatement, tree: TreeHandle): 
 				'expressions',
 				true,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'expressions', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'expressions', span: (data as _UntypedNode).$span }
 			),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -1599,7 +1605,7 @@ export function wrapRaiseStatement(data: T.RaiseStatement, tree: TreeHandle): T.
 				'expressions',
 				false,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'expressions', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'expressions', span: (data as _UntypedNode).$span }
 			),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -1608,7 +1614,7 @@ export function wrapRaiseStatement(data: T.RaiseStatement, tree: TreeHandle): T.
 				tree,
 				nodeType: data.$type,
 				slotName: 'cause',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -1638,7 +1644,7 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle): T.IfStat
 				tree,
 				nodeType: data.$type,
 				slotName: 'condition',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -1646,13 +1652,13 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle): T.IfStat
 			tree,
 			nodeType: data.$type,
 			slotName: 'consequence',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_alternative: normalizeRepeatedWrapSlot(data._alternative, false, 'alternative', {
 			tree,
 			nodeType: data.$type,
 			slotName: 'alternative',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		condition() {
@@ -1689,7 +1695,7 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle): T.ElifClau
 				tree,
 				nodeType: data.$type,
 				slotName: 'condition',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -1697,7 +1703,7 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle): T.ElifClau
 			tree,
 			nodeType: data.$type,
 			slotName: 'consequence',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		condition() {
@@ -1725,7 +1731,7 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle): T.ElseClau
 			tree,
 			nodeType: data.$type,
 			slotName: 'body',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		body() {
@@ -1749,13 +1755,13 @@ export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle): T.
 					tree,
 					nodeType: data.$type,
 					slotName: 'subjects',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 				_body: normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
 					tree,
 					nodeType: data.$type,
 					slotName: 'body',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 
 				subjects() {
@@ -1785,7 +1791,7 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -1809,19 +1815,19 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle): T.CaseClau
 					tree,
 					nodeType: data.$type,
 					slotName: 'case_patterns',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 				_guard: normalizeSingularWrapSlot(data._guard, 'guard', false, data.$type, {
 					tree,
 					nodeType: data.$type,
 					slotName: 'guard',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 				_consequence: normalizeSingularWrapSlot(data._consequence, 'consequence', true, data.$type, {
 					tree,
 					nodeType: data.$type,
 					slotName: 'consequence',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 
 				casePatterns() {
@@ -1859,21 +1865,21 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 				tree,
 				nodeType: data.$type,
 				slotName: 'async_marker',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			})
 		),
 		_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'left',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_right: projectMixedEnumStorage(
 			normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'right',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -1881,13 +1887,13 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 			tree,
 			nodeType: data.$type,
 			slotName: 'body',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_alternative: normalizeSingularWrapSlot(data._alternative, 'alternative', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'alternative',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		asyncMarker() {
@@ -1928,7 +1934,7 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle): T.
 				tree,
 				nodeType: data.$type,
 				slotName: 'condition',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -1936,13 +1942,13 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle): T.
 			tree,
 			nodeType: data.$type,
 			slotName: 'body',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_alternative: normalizeSingularWrapSlot(data._alternative, 'alternative', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'alternative',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		condition() {
@@ -1974,25 +1980,25 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle): T.TryS
 			tree,
 			nodeType: data.$type,
 			slotName: 'body',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_except_clauses: normalizeRepeatedWrapSlot(data._except_clauses, false, 'except_clauses', {
 			tree,
 			nodeType: data.$type,
 			slotName: 'except_clauses',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_else_clause: normalizeSingularWrapSlot(data._else_clause, 'else_clause', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'else_clause',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_finally_clause: normalizeSingularWrapSlot(data._finally_clause, 'finally_clause', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'finally_clause',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		body() {
@@ -2032,20 +2038,20 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle): T.Exce
 				tree,
 				nodeType: data.$type,
 				slotName: 'star_marker',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			})
 		),
 		_exception: normalizeSingularWrapSlot(data._exception, 'exception', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'exception',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_suite: normalizeSingularWrapSlot(data._suite, 'suite', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'suite',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		starMarker() {
@@ -2077,7 +2083,7 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle): T.Fi
 			tree,
 			nodeType: data.$type,
 			slotName: 'block',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		block() {
@@ -2102,20 +2108,20 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle): T.Wi
 				tree,
 				nodeType: data.$type,
 				slotName: 'async_marker',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			})
 		),
 		_with_clause: normalizeSingularWrapSlot(data._with_clause, 'with_clause', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'with_clause',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_body: normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'body',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		asyncMarker() {
@@ -2149,7 +2155,10 @@ export function wrapWithClause(
 		| readonly T.WithClause[]
 		| undefined;
 	const filtered = kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['with_clause_bare', 'with_clause_paren']);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.WithClause>(node as T.WithClause, tree) as unknown as T.WithClause.Parsed;
 	}
 	return hydrateChild<T.WithClause>(
@@ -2157,7 +2166,7 @@ export function wrapWithClause(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -2173,7 +2182,7 @@ export function wrapWithItem(data: T.WithItem, tree: TreeHandle): T.WithItem.Par
 				tree,
 				nodeType: data.$type,
 				slotName: 'value',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -2212,38 +2221,38 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
 						tree,
 						nodeType: data.$type,
 						slotName: 'async_marker',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					})
 				),
 				_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 					tree,
 					nodeType: data.$type,
 					slotName: 'name',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 				_type_parameters: normalizeSingularWrapSlot(data._type_parameters, 'type_parameters', false, data.$type, {
 					tree,
 					nodeType: data.$type,
 					slotName: 'type_parameters',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 				_parameters: normalizeSingularWrapSlot(data._parameters, 'parameters', true, data.$type, {
 					tree,
 					nodeType: data.$type,
 					slotName: 'parameters',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 				_return_type: normalizeSingularWrapSlot(data._return_type, 'return_type', false, data.$type, {
 					tree,
 					nodeType: data.$type,
 					slotName: 'return_type',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 				_body: normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
 					tree,
 					nodeType: data.$type,
 					slotName: 'body',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 
 				asyncMarker() {
@@ -2300,7 +2309,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 						tree,
 						nodeType: data.$type,
 						slotName: 'elements',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 
 					elements() {
@@ -2345,7 +2354,7 @@ export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle)
 						'parameters_elements',
 						true,
 						data.$type,
-						{ tree, nodeType: data.$type, slotName: 'parameters_elements', span: (data as _NodeData).$span }
+						{ tree, nodeType: data.$type, slotName: 'parameters_elements', span: (data as _UntypedNode).$span }
 					),
 
 					parametersElements() {
@@ -2387,7 +2396,7 @@ export function wrapListSplat(data: T.ListSplat, tree: TreeHandle): T.ListSplat.
 				tree,
 				nodeType: data.$type,
 				slotName: 'expression',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -2413,7 +2422,7 @@ export function wrapDictionarySplat(data: T.DictionarySplat, tree: TreeHandle): 
 				tree,
 				nodeType: data.$type,
 				slotName: 'expression',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -2431,7 +2440,7 @@ export function wrapDictionarySplat(data: T.DictionarySplat, tree: TreeHandle): 
 
 export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle): T.GlobalStatement.Parsed {
 	data = _keepModelledSlots(data, ['_names']);
-	const _order = (data as _NodeData).$slotOrder?.slice();
+	const _order = (data as _UntypedNode).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.GlobalStatement as const,
@@ -2439,7 +2448,7 @@ export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle): 
 			dropWireDelimiters(data._names, [TSKindId.Comma], _order, 'names'),
 			true,
 			'names',
-			{ tree, nodeType: data.$type, slotName: 'names', span: (data as _NodeData).$span }
+			{ tree, nodeType: data.$type, slotName: 'names', span: (data as _UntypedNode).$span }
 		),
 		...(_order && { $slotOrder: _order }),
 
@@ -2456,7 +2465,7 @@ export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle): 
 
 export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandle): T.NonlocalStatement.Parsed {
 	data = _keepModelledSlots(data, ['_names']);
-	const _order = (data as _NodeData).$slotOrder?.slice();
+	const _order = (data as _UntypedNode).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.NonlocalStatement as const,
@@ -2464,7 +2473,7 @@ export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandl
 			dropWireDelimiters(data._names, [TSKindId.Comma], _order, 'names'),
 			true,
 			'names',
-			{ tree, nodeType: data.$type, slotName: 'names', span: (data as _NodeData).$span }
+			{ tree, nodeType: data.$type, slotName: 'names', span: (data as _UntypedNode).$span }
 		),
 		...(_order && { $slotOrder: _order }),
 
@@ -2481,7 +2490,7 @@ export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandl
 
 export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle): T.ExecStatement.Parsed {
 	data = _keepModelledSlots(data, ['_code', '_in_clause']);
-	const _order = (data as _NodeData).$slotOrder?.slice();
+	const _order = (data as _UntypedNode).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.ExecStatement as const,
@@ -2489,14 +2498,14 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle): T.Ex
 			tree,
 			nodeType: data.$type,
 			slotName: 'code',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_in_clause: projectMixedEnumStorage(
 			normalizeRepeatedWrapSlot(
 				dropWireDelimiters(data._in_clause, [TSKindId.Comma], _order, 'in_clause'),
 				false,
 				'in_clause',
-				{ tree, nodeType: data.$type, slotName: 'in_clause', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'in_clause', span: (data as _UntypedNode).$span }
 			),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -2526,13 +2535,13 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 			tree,
 			nodeType: data.$type,
 			slotName: 'left',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'right',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		left() {
@@ -2562,25 +2571,25 @@ export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle): 
 					tree,
 					nodeType: data.$type,
 					slotName: 'name',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 				_type_parameters: normalizeSingularWrapSlot(data._type_parameters, 'type_parameters', false, data.$type, {
 					tree,
 					nodeType: data.$type,
 					slotName: 'type_parameters',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 				_superclasses: normalizeSingularWrapSlot(data._superclasses, 'superclasses', false, data.$type, {
 					tree,
 					nodeType: data.$type,
 					slotName: 'superclasses',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 				_body: normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
 					tree,
 					nodeType: data.$type,
 					slotName: 'body',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 
 				name() {
@@ -2627,7 +2636,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 						tree,
 						nodeType: data.$type,
 						slotName: 'types',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 
 					types() {
@@ -2664,7 +2673,7 @@ export function wrapParenthesizedListSplat(
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -2690,7 +2699,7 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle): T.Argu
 						tree,
 						nodeType: data.$type,
 						slotName: 'arguments',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 
 					arguments() {
@@ -2731,13 +2740,13 @@ export function wrapDecoratedDefinition(data: T.DecoratedDefinition, tree: TreeH
 			tree,
 			nodeType: data.$type,
 			slotName: 'decorator',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_definition: normalizeSingularWrapSlot(data._definition, 'definition', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'definition',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		decorators() {
@@ -2766,7 +2775,7 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle): T.Decorator.
 				tree,
 				nodeType: data.$type,
 				slotName: 'expression',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -2791,7 +2800,7 @@ export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
 			tree,
 			nodeType: data.$type,
 			slotName: 'statements',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		statements() {
@@ -2826,7 +2835,7 @@ export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle): T.
 						'expression',
 						true,
 						data.$type,
-						{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
+						{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _UntypedNode).$span }
 					),
 					{ True: 70, False: 71, None: 72, '...': 64 }
 				),
@@ -2835,7 +2844,7 @@ export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle): T.
 						tree,
 						nodeType: data.$type,
 						slotName: 'tail',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 					{ ',': 6 }
 				),
@@ -2867,7 +2876,7 @@ export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle): T.
 
 export function wrapDottedName(data: T.DottedName, tree: TreeHandle): T.DottedName.Parsed {
 	data = _keepModelledSlots(data, ['_names']);
-	const _order = (data as _NodeData).$slotOrder?.slice();
+	const _order = (data as _UntypedNode).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.DottedName as const,
@@ -2875,7 +2884,7 @@ export function wrapDottedName(data: T.DottedName, tree: TreeHandle): T.DottedNa
 			tree,
 			nodeType: data.$type,
 			slotName: 'names',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		...(_order && { $slotOrder: _order }),
 
@@ -2899,7 +2908,7 @@ export function wrapCasePattern(data: T.CasePattern, tree: TreeHandle): T.CasePa
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -2942,7 +2951,7 @@ export function wrapSimplePattern(data: T.SimplePattern, tree: TreeHandle): T.Si
 				'content',
 				true,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 			),
 			{ True: 70, False: 71, None: 72, _: 279 },
 			{ 48: 279 }
@@ -2984,13 +2993,13 @@ export function wrapCaseAsPattern(data: T.CaseAsPattern, tree: TreeHandle): T.Ca
 			tree,
 			nodeType: data.$type,
 			slotName: 'case_pattern',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_identifier: normalizeSingularWrapSlot(data._identifier, 'identifier', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'identifier',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		casePattern() {
@@ -3013,7 +3022,7 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.Unio
 	data = _keepModelledSlots(data, ['_patterns']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.UnionPattern as const }) as unknown as T.UnionPattern.Parsed;
-	const _order = (data as _NodeData).$slotOrder?.slice();
+	const _order = (data as _UntypedNode).$slotOrder?.slice();
 	const _node = withMethods(
 		withElementsSeat(
 			{
@@ -3024,7 +3033,7 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.Unio
 						dropWireDelimiters(data._patterns, [TSKindId.Pipe], _order, 'patterns'),
 						true,
 						'patterns',
-						{ tree, nodeType: data.$type, slotName: 'patterns', span: (data as _NodeData).$span }
+						{ tree, nodeType: data.$type, slotName: 'patterns', span: (data as _UntypedNode).$span }
 					),
 					{ True: 70, False: 71, None: 72, _: 279 },
 					{ 48: 279 }
@@ -3095,7 +3104,7 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle): T.DictPa
 						'dict_pattern_elements',
 						false,
 						data.$type,
-						{ tree, nodeType: data.$type, slotName: 'dict_pattern_elements', span: (data as _NodeData).$span }
+						{ tree, nodeType: data.$type, slotName: 'dict_pattern_elements', span: (data as _UntypedNode).$span }
 					),
 
 					dictPatternElements() {
@@ -3139,7 +3148,7 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle): 
 				tree,
 				nodeType: data.$type,
 				slotName: 'key',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, _: 279 },
 			{ 48: 279 }
@@ -3148,7 +3157,7 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle): 
 			tree,
 			nodeType: data.$type,
 			slotName: 'value',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		key() {
@@ -3192,14 +3201,14 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 			tree,
 			nodeType: data.$type,
 			slotName: 'name',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_value: projectMixedEnumStorage(
 			normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'value',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, _: 279 },
 			{ 48: 279 }
@@ -3247,7 +3256,7 @@ export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle): T.Spla
 				tree,
 				nodeType: data.$type,
 				slotName: 'operator',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ '*': 8, '**': 35 }
 		),
@@ -3256,7 +3265,7 @@ export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle): T.Spla
 				tree,
 				nodeType: data.$type,
 				slotName: 'name',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ _: 48 }
 		),
@@ -3287,13 +3296,13 @@ export function wrapClassPattern(data: T.ClassPattern, tree: TreeHandle): T.Clas
 					tree,
 					nodeType: data.$type,
 					slotName: 'name',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 				_arguments: normalizeSingularWrapSlot(data._arguments, 'arguments', false, data.$type, {
 					tree,
 					nodeType: data.$type,
 					slotName: 'arguments',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 
 				name() {
@@ -3333,21 +3342,21 @@ export function wrapComplexPattern(data: T.ComplexPattern, tree: TreeHandle): T.
 				tree,
 				nodeType: data.$type,
 				slotName: 'sign',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			})
 		),
 		_real: normalizeSingularWrapSlot(data._real, 'real', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'real',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_operator: projectKindEnumStorage(
 			normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'operator',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ '+': 49, '-': 50 }
 		),
@@ -3355,7 +3364,7 @@ export function wrapComplexPattern(data: T.ComplexPattern, tree: TreeHandle): T.
 			tree,
 			nodeType: data.$type,
 			slotName: 'imaginary',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		sign() {
@@ -3384,7 +3393,7 @@ export function wrapComplexPattern(data: T.ComplexPattern, tree: TreeHandle): T.
 
 export function wrapParametersElements(
 	data: T.ParametersElements & {
-		readonly $other?: _NodeData['$other'];
+		readonly $other?: _UntypedNode['$other'];
 		readonly $span?: { start: number; end: number };
 	},
 	tree: TreeHandle
@@ -3394,7 +3403,7 @@ export function wrapParametersElements(
 		tree,
 		nodeType: data.$type,
 		slotName: 'parameter',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -3418,7 +3427,7 @@ export function wrapParametersElements(
 }
 
 export function wrapPatterns(
-	data: T.Patterns & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+	data: T.Patterns & { readonly $other?: _UntypedNode['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ): T.Patterns.Parsed {
 	data = _keepModelledSlots(data, ['_pattern']);
@@ -3426,7 +3435,7 @@ export function wrapPatterns(
 		tree,
 		nodeType: data.$type,
 		slotName: 'pattern',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -3489,7 +3498,10 @@ export function wrapParameter(
 			'positional_separator',
 			'dictionary_splat_pattern'
 		]);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.Parameter>(node as T.Parameter, tree) as unknown as T.Parameter.Parsed;
 	}
 	return hydrateChild<T.Parameter>(
@@ -3497,7 +3509,7 @@ export function wrapParameter(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -3552,7 +3564,10 @@ export function wrapPattern(
 			'tuple_pattern',
 			'list_pattern'
 		]);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.Pattern>(node as T.Pattern, tree) as unknown as T.Pattern.Parsed;
 	}
 	return hydrateChild<T.Pattern>(
@@ -3560,7 +3575,7 @@ export function wrapPattern(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -3578,7 +3593,7 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 						tree,
 						nodeType: data.$type,
 						slotName: 'patterns',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 
 					patterns() {
@@ -3615,7 +3630,7 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle): T.ListPa
 						tree,
 						nodeType: data.$type,
 						slotName: 'patterns',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 
 					patterns() {
@@ -3649,14 +3664,14 @@ export function wrapDefaultParameter(data: T.DefaultParameter, tree: TreeHandle)
 			tree,
 			nodeType: data.$type,
 			slotName: 'name',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_value: projectMixedEnumStorage(
 			normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'value',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -3688,20 +3703,20 @@ export function wrapTypedDefaultParameter(
 			tree,
 			nodeType: data.$type,
 			slotName: 'name',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_type: normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'type',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_value: projectMixedEnumStorage(
 			normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'value',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -3739,7 +3754,7 @@ export function wrapListSplatPattern(data: T.ListSplatPattern, tree: TreeHandle)
 				tree,
 				nodeType: data.$type,
 				slotName: 'target',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ print: 67, exec: 38, async: 68, await: 69, type: 39, match: 22 }
 		),
@@ -3783,7 +3798,7 @@ export function wrapDictionarySplatPattern(
 				tree,
 				nodeType: data.$type,
 				slotName: 'target',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ print: 67, exec: 38, async: 68, await: 69, type: 39, match: 22 }
 		),
@@ -3819,7 +3834,7 @@ export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle): T.AsPattern.
 				tree,
 				nodeType: data.$type,
 				slotName: 'expression',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -3827,7 +3842,7 @@ export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle): T.AsPattern.
 			tree,
 			nodeType: data.$type,
 			slotName: 'alias',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		expression() {
@@ -3999,7 +4014,10 @@ export function wrapExpressionWithinForInClause(
 			'named_expression',
 			'as_pattern'
 		]);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.ExpressionWithinForInClause>(
 			node as T.ExpressionWithinForInClause,
 			tree
@@ -4010,7 +4028,7 @@ export function wrapExpressionWithinForInClause(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -4164,7 +4182,10 @@ export function wrapExpression(
 			'ellipsis',
 			'list_splat_pattern'
 		]);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.Expression>(node as T.Expression, tree) as unknown as T.Expression.Parsed;
 	}
 	return hydrateChild<T.Expression>(
@@ -4172,7 +4193,7 @@ export function wrapExpression(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -4311,7 +4332,10 @@ export function wrapPrimaryExpression(
 			'float_leading_point',
 			'float_scientific'
 		]);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.PrimaryExpression>(node as T.PrimaryExpression, tree) as unknown as T.PrimaryExpression.Parsed;
 	}
 	return hydrateChild<T.PrimaryExpression>(
@@ -4319,7 +4343,7 @@ export function wrapPrimaryExpression(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -4335,7 +4359,7 @@ export function wrapNotOperator(data: T.NotOperator, tree: TreeHandle): T.NotOpe
 				tree,
 				nodeType: data.$type,
 				slotName: 'argument',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -4363,7 +4387,7 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle): 
 				tree,
 				nodeType: data.$type,
 				slotName: 'left',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -4372,7 +4396,7 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle): 
 				tree,
 				nodeType: data.$type,
 				slotName: 'operator',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ and: 52, or: 53 }
 		),
@@ -4381,7 +4405,7 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle): 
 				tree,
 				nodeType: data.$type,
 				slotName: 'right',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -4417,7 +4441,7 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle): T.
 				tree,
 				nodeType: data.$type,
 				slotName: 'left',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -4426,7 +4450,7 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle): T.
 				tree,
 				nodeType: data.$type,
 				slotName: 'operator',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{
 				'+': 49,
@@ -4449,7 +4473,7 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle): T.
 				tree,
 				nodeType: data.$type,
 				slotName: 'right',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -4485,7 +4509,7 @@ export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle): T.Un
 				tree,
 				nodeType: data.$type,
 				slotName: 'operator',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ '+': 49, '-': 50, '~': 60 }
 		),
@@ -4494,7 +4518,7 @@ export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle): T.Un
 				tree,
 				nodeType: data.$type,
 				slotName: 'argument',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -4527,7 +4551,7 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
 						tree,
 						nodeType: data.$type,
 						slotName: 'left',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 					{ True: 70, False: 71, None: 72, '...': 64 }
 				),
@@ -4535,7 +4559,7 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
 					tree,
 					nodeType: data.$type,
 					slotName: 'comparators',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 
 				left() {
@@ -4571,14 +4595,14 @@ export function wrapLambda(data: T.Lambda, tree: TreeHandle): T.Lambda.Parsed {
 					tree,
 					nodeType: data.$type,
 					slotName: 'parameters',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 				_body: projectMixedEnumStorage(
 					normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
 						tree,
 						nodeType: data.$type,
 						slotName: 'body',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 					{ True: 70, False: 71, None: 72, '...': 64 }
 				),
@@ -4622,14 +4646,14 @@ export function wrapLambdaWithinForInClause(
 					tree,
 					nodeType: data.$type,
 					slotName: 'parameters',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 				_body: projectMixedEnumStorage(
 					normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
 						tree,
 						nodeType: data.$type,
 						slotName: 'body',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 					{ True: 70, False: 71, None: 72, '...': 64 }
 				),
@@ -4672,7 +4696,10 @@ export function wrapAssignment(
 		| undefined;
 	const filtered =
 		kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['assignment_eq', 'assignment_type', 'assignment_typed']);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.Assignment>(node as T.Assignment, tree) as unknown as T.Assignment.Parsed;
 	}
 	return hydrateChild<T.Assignment>(
@@ -4680,7 +4707,7 @@ export function wrapAssignment(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -4700,14 +4727,14 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 			tree,
 			nodeType: data.$type,
 			slotName: 'left',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_operator: projectKindEnumStorage(
 			normalizeSingularWrapSlot(data._operator, 'operator', true, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'operator',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{
 				'+=': 76,
@@ -4730,7 +4757,7 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 				tree,
 				nodeType: data.$type,
 				slotName: 'right',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -4771,14 +4798,14 @@ export function wrapPatternList(data: T.PatternList, tree: TreeHandle): T.Patter
 					tree,
 					nodeType: data.$type,
 					slotName: 'pattern',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 				_tail: projectMixedEnumStorage(
 					normalizeSingularWrapSlot(data._tail, 'tail', true, data.$type, {
 						tree,
 						nodeType: data.$type,
 						slotName: 'tail',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 					{ ',': 6 }
 				),
@@ -4980,7 +5007,10 @@ export function wrapRightHandSide(
 			'assignment_type',
 			'assignment_typed'
 		]);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.RightHandSide>(node as T.RightHandSide, tree) as unknown as SupertypeSurface<
 			T.RightHandSide,
 			T.ParsedByKindId
@@ -4991,7 +5021,7 @@ export function wrapRightHandSide(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -5014,7 +5044,7 @@ export function wrapYield(data: T.Yield, tree: TreeHandle): T.Yield.Parsed {
 				'content',
 				false,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 			),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -5039,7 +5069,7 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.
 				tree,
 				nodeType: data.$type,
 				slotName: 'object',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -5047,7 +5077,7 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.
 			tree,
 			nodeType: data.$type,
 			slotName: 'attribute',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		object() {
@@ -5076,7 +5106,7 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle): T.Subscript.
 						tree,
 						nodeType: data.$type,
 						slotName: 'value',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 					{ True: 70, False: 71, None: 72, '...': 64 }
 				),
@@ -5084,7 +5114,7 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle): T.Subscript.
 					tree,
 					nodeType: data.$type,
 					slotName: 'subscripts',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 
 				value() {
@@ -5117,7 +5147,7 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 						tree,
 						nodeType: data.$type,
 						slotName: 'start',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 					{ True: 70, False: 71, None: 72, '...': 64 }
 				),
@@ -5126,7 +5156,7 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 						tree,
 						nodeType: data.$type,
 						slotName: 'stop',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 					{ True: 70, False: 71, None: 72, '...': 64 }
 				),
@@ -5134,7 +5164,7 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle): T.Slice.Parsed {
 					tree,
 					nodeType: data.$type,
 					slotName: 'step',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 
 				start() {
@@ -5174,7 +5204,7 @@ export function wrapCall(data: T.Call, tree: TreeHandle): T.Call.Parsed {
 				tree,
 				nodeType: data.$type,
 				slotName: 'function',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -5182,7 +5212,7 @@ export function wrapCall(data: T.Call, tree: TreeHandle): T.Call.Parsed {
 			tree,
 			nodeType: data.$type,
 			slotName: 'arguments',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		function() {
@@ -5208,13 +5238,13 @@ export function wrapTypedParameter(data: T.TypedParameter, tree: TreeHandle): T.
 			tree,
 			nodeType: data.$type,
 			slotName: 'name',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_type: normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'type',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		name() {
@@ -5245,7 +5275,7 @@ export function wrapType(data: T.Type, tree: TreeHandle): T.Type.Parsed {
 				'content',
 				true,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 			),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -5275,7 +5305,7 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle): T.SplatType.
 				tree,
 				nodeType: data.$type,
 				slotName: 'operator',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ '*': 8, '**': 35 }
 		),
@@ -5283,7 +5313,7 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle): T.SplatType.
 			tree,
 			nodeType: data.$type,
 			slotName: 'name',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		operator() {
@@ -5314,7 +5344,7 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 						tree,
 						nodeType: data.$type,
 						slotName: 'name',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 					{ type: 39 }
 				),
@@ -5322,7 +5352,7 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 					tree,
 					nodeType: data.$type,
 					slotName: 'type_parameter',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 
 				name() {
@@ -5352,13 +5382,13 @@ export function wrapUnionType(data: T.UnionType, tree: TreeHandle): T.UnionType.
 			tree,
 			nodeType: data.$type,
 			slotName: 'left',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'right',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		left() {
@@ -5384,13 +5414,13 @@ export function wrapConstrainedType(data: T.ConstrainedType, tree: TreeHandle): 
 			tree,
 			nodeType: data.$type,
 			slotName: 'base_type',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_constraint: normalizeSingularWrapSlot(data._constraint, 'constraint', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'constraint',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		baseType() {
@@ -5418,13 +5448,13 @@ export function wrapMemberType(data: T.MemberType, tree: TreeHandle): T.MemberTy
 			tree,
 			nodeType: data.$type,
 			slotName: 'base_type',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'name',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		baseType() {
@@ -5454,7 +5484,7 @@ export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle): 
 				tree,
 				nodeType: data.$type,
 				slotName: 'name',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ print: 67, exec: 38, async: 68, await: 69, type: 39, match: 22 }
 		),
@@ -5463,7 +5493,7 @@ export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle): 
 				tree,
 				nodeType: data.$type,
 				slotName: 'value',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -5503,7 +5533,7 @@ export function wrapList(data: T.List, tree: TreeHandle): T.List.Parsed {
 						'collection_elements',
 						false,
 						data.$type,
-						{ tree, nodeType: data.$type, slotName: 'collection_elements', span: (data as _NodeData).$span }
+						{ tree, nodeType: data.$type, slotName: 'collection_elements', span: (data as _UntypedNode).$span }
 					),
 
 					collectionElements() {
@@ -5548,7 +5578,7 @@ export function wrapSet(data: T.Set, tree: TreeHandle): T.Set.Parsed {
 						'collection_elements',
 						true,
 						data.$type,
-						{ tree, nodeType: data.$type, slotName: 'collection_elements', span: (data as _NodeData).$span }
+						{ tree, nodeType: data.$type, slotName: 'collection_elements', span: (data as _UntypedNode).$span }
 					),
 
 					collectionElements() {
@@ -5593,7 +5623,7 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle): T.Tuple.Parsed {
 						'collection_elements',
 						false,
 						data.$type,
-						{ tree, nodeType: data.$type, slotName: 'collection_elements', span: (data as _NodeData).$span }
+						{ tree, nodeType: data.$type, slotName: 'collection_elements', span: (data as _UntypedNode).$span }
 					),
 
 					collectionElements() {
@@ -5637,7 +5667,7 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle): T.Dictiona
 						tree,
 						nodeType: data.$type,
 						slotName: 'elements',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 
 					elements() {
@@ -5679,7 +5709,7 @@ export function wrapPair(data: T.Pair, tree: TreeHandle): T.Pair.Parsed {
 				tree,
 				nodeType: data.$type,
 				slotName: 'key',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -5688,7 +5718,7 @@ export function wrapPair(data: T.Pair, tree: TreeHandle): T.Pair.Parsed {
 				tree,
 				nodeType: data.$type,
 				slotName: 'value',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -5717,7 +5747,7 @@ export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandl
 				tree,
 				nodeType: data.$type,
 				slotName: 'body',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -5726,7 +5756,7 @@ export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandl
 			'comprehension_clauses',
 			true,
 			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'comprehension_clauses', span: (data as _NodeData).$span }
+			{ tree, nodeType: data.$type, slotName: 'comprehension_clauses', span: (data as _UntypedNode).$span }
 		),
 
 		body() {
@@ -5757,14 +5787,14 @@ export function wrapDictionaryComprehension(
 			tree,
 			nodeType: data.$type,
 			slotName: 'body',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_comprehension_clauses: normalizeSingularWrapSlot(
 			data._comprehension_clauses,
 			'comprehension_clauses',
 			true,
 			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'comprehension_clauses', span: (data as _NodeData).$span }
+			{ tree, nodeType: data.$type, slotName: 'comprehension_clauses', span: (data as _UntypedNode).$span }
 		),
 
 		body() {
@@ -5793,7 +5823,7 @@ export function wrapSetComprehension(data: T.SetComprehension, tree: TreeHandle)
 				tree,
 				nodeType: data.$type,
 				slotName: 'body',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -5802,7 +5832,7 @@ export function wrapSetComprehension(data: T.SetComprehension, tree: TreeHandle)
 			'comprehension_clauses',
 			true,
 			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'comprehension_clauses', span: (data as _NodeData).$span }
+			{ tree, nodeType: data.$type, slotName: 'comprehension_clauses', span: (data as _UntypedNode).$span }
 		),
 
 		body() {
@@ -5830,7 +5860,7 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
 				tree,
 				nodeType: data.$type,
 				slotName: 'body',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -5839,7 +5869,7 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
 			'comprehension_clauses',
 			true,
 			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'comprehension_clauses', span: (data as _NodeData).$span }
+			{ tree, nodeType: data.$type, slotName: 'comprehension_clauses', span: (data as _UntypedNode).$span }
 		),
 
 		body() {
@@ -5871,7 +5901,7 @@ export function wrapParenthesizedExpression(
 				tree,
 				nodeType: data.$type,
 				slotName: 'expression',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -5889,7 +5919,7 @@ export function wrapParenthesizedExpression(
 
 export function wrapCollectionElements(
 	data: T.CollectionElements & {
-		readonly $other?: _NodeData['$other'];
+		readonly $other?: _UntypedNode['$other'];
 		readonly $span?: { start: number; end: number };
 	},
 	tree: TreeHandle
@@ -5899,7 +5929,7 @@ export function wrapCollectionElements(
 		tree,
 		nodeType: data.$type,
 		slotName: 'element',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -5929,7 +5959,7 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 	data = _keepModelledSlots(data, ['_async_marker', '_left', '_right', '_comma']);
 	if (_isReadTextLeaf(data))
 		return withMethods({ ...data, $type: TSKindId.ForInClause as const }) as unknown as T.ForInClause.Parsed;
-	const _order = (data as _NodeData).$slotOrder?.slice();
+	const _order = (data as _UntypedNode).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.ForInClause as const,
@@ -5938,21 +5968,21 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 				tree,
 				nodeType: data.$type,
 				slotName: 'async_marker',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			})
 		),
 		_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'left',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_right: projectMixedEnumStorage(
 			normalizeRepeatedWrapSlot(dropWireDelimiters(data._right, [TSKindId.Comma], _order, 'right'), true, 'right', {
 				tree,
 				nodeType: data.$type,
 				slotName: 'right',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -5961,7 +5991,7 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle): T.ForInC
 				tree,
 				nodeType: data.$type,
 				slotName: 'comma',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			})
 		),
 		...(_order && { $slotOrder: _order }),
@@ -6002,7 +6032,7 @@ export function wrapIfClause(data: T.IfClause, tree: TreeHandle): T.IfClause.Par
 				tree,
 				nodeType: data.$type,
 				slotName: 'condition',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -6030,7 +6060,7 @@ export function wrapConditionalExpression(
 				tree,
 				nodeType: data.$type,
 				slotName: 'body',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -6039,7 +6069,7 @@ export function wrapConditionalExpression(
 				tree,
 				nodeType: data.$type,
 				slotName: 'condition',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -6048,7 +6078,7 @@ export function wrapConditionalExpression(
 				tree,
 				nodeType: data.$type,
 				slotName: 'alternative',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -6083,7 +6113,7 @@ export function wrapConcatenatedString(data: T.ConcatenatedString, tree: TreeHan
 			tree,
 			nodeType: data.$type,
 			slotName: 'string',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		strings() {
@@ -6106,19 +6136,19 @@ export function wrapString(data: T.String, tree: TreeHandle): T.String.Parsed {
 			tree,
 			nodeType: data.$type,
 			slotName: 'string_start',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_content: normalizeRepeatedWrapSlot(data._content, false, 'content', {
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_string_end: normalizeSingularWrapSlot(data._string_end, 'string_end', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'string_end',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		stringStart() {
@@ -6159,7 +6189,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle): T.St
 					>(data, [TSKindId.NotEscapeSequence]),
 				false,
 				'content',
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _UntypedNode).$span }
 			),
 			{ '\\': 252 },
 			{ 65: 252 }
@@ -6193,7 +6223,7 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle): T.In
 				tree,
 				nodeType: data.$type,
 				slotName: 'expression',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -6202,20 +6232,20 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle): T.In
 				tree,
 				nodeType: data.$type,
 				slotName: 'eq_marker',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			})
 		),
 		_type_conversion: normalizeSingularWrapSlot(data._type_conversion, 'type_conversion', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'type_conversion',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_format_specifier: normalizeSingularWrapSlot(data._format_specifier, 'format_specifier', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'format_specifier',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		expression() {
@@ -6401,7 +6431,10 @@ export function wrapFExpression(
 			'named_expression',
 			'as_pattern'
 		]);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.FExpression>(node as T.FExpression, tree) as unknown as SupertypeSurface<
 			T.FExpression,
 			T.ParsedByKindId
@@ -6412,7 +6445,7 @@ export function wrapFExpression(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -6452,7 +6485,10 @@ export function wrapEscapeSequence(
 			'escape_sequence_simple',
 			'escape_sequence_named'
 		]);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.EscapeSequence>(node as T.EscapeSequence, tree) as unknown as T.EscapeSequence.Parsed;
 	}
 	return hydrateChild<T.EscapeSequence>(
@@ -6460,7 +6496,7 @@ export function wrapEscapeSequence(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -6475,7 +6511,7 @@ export function wrapFormatSpecifier(data: T.FormatSpecifier, tree: TreeHandle): 
 			tree,
 			nodeType: data.$type,
 			slotName: 'elements',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		elements() {
@@ -6526,7 +6562,10 @@ export function wrapInteger(
 			'integer_decimal_imaginary',
 			'integer_decimal_plain'
 		]);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.Integer>(node as T.Integer, tree) as unknown as T.Integer.Parsed;
 	}
 	return hydrateChild<T.Integer>(
@@ -6534,7 +6573,7 @@ export function wrapInteger(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -6552,7 +6591,10 @@ export function wrapFloat(
 		| undefined;
 	const filtered =
 		kindKeyed ?? _filterWrapChildrenByKind(node.$other, ['float_point', 'float_leading_point', 'float_scientific']);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.Float>(node as T.Float, tree) as unknown as T.Float.Parsed;
 	}
 	return hydrateChild<T.Float>(
@@ -6560,7 +6602,7 @@ export function wrapFloat(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -6576,7 +6618,7 @@ export function wrapAwait(data: T.Await, tree: TreeHandle): T.Await.Parsed {
 				tree,
 				nodeType: data.$type,
 				slotName: 'expression',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -6601,7 +6643,7 @@ export function wrapComment(data: T.Comment, tree: TreeHandle): T.Comment.Parsed
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -6616,7 +6658,7 @@ export function wrapComment(data: T.Comment, tree: TreeHandle): T.Comment.Parsed
 
 export function wrapSimpleStatementsElements(
 	data: T.SimpleStatementsElements & {
-		readonly $other?: _NodeData['$other'];
+		readonly $other?: _UntypedNode['$other'];
 		readonly $span?: { start: number; end: number };
 	},
 	tree: TreeHandle
@@ -6626,7 +6668,7 @@ export function wrapSimpleStatementsElements(
 		tree,
 		nodeType: data.$type,
 		slotName: 'simple_statement',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -6657,7 +6699,7 @@ export function wrapSimpleStatementsElements(
 }
 
 export function wrapSubjects(
-	data: T.Subjects & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+	data: T.Subjects & { readonly $other?: _UntypedNode['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ): T.Subjects.Parsed {
 	data = _keepModelledSlots(data, ['_subject']);
@@ -6665,7 +6707,7 @@ export function wrapSubjects(
 		tree,
 		nodeType: data.$type,
 		slotName: 'subject',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -6689,7 +6731,7 @@ export function wrapSubjects(
 }
 
 export function wrapCasePatterns(
-	data: T.CasePatterns & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+	data: T.CasePatterns & { readonly $other?: _UntypedNode['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ): T.CasePatterns.Parsed {
 	data = _keepModelledSlots(data, ['_case_pattern']);
@@ -6697,7 +6739,7 @@ export function wrapCasePatterns(
 		tree,
 		nodeType: data.$type,
 		slotName: 'case_pattern',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -6722,7 +6764,7 @@ export function wrapCasePatterns(
 
 export function wrapWithClauseWithItems(
 	data: T.WithClauseWithItems & {
-		readonly $other?: _NodeData['$other'];
+		readonly $other?: _UntypedNode['$other'];
 		readonly $span?: { start: number; end: number };
 	},
 	tree: TreeHandle
@@ -6732,7 +6774,7 @@ export function wrapWithClauseWithItems(
 		tree,
 		nodeType: data.$type,
 		slotName: 'with_item',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -6756,7 +6798,7 @@ export function wrapWithClauseWithItems(
 }
 
 export function wrapTypes(
-	data: T.Types & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+	data: T.Types & { readonly $other?: _UntypedNode['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ): T.Types.Parsed {
 	data = _keepModelledSlots(data, ['_type']);
@@ -6764,7 +6806,7 @@ export function wrapTypes(
 		tree,
 		nodeType: data.$type,
 		slotName: 'type',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -6789,7 +6831,7 @@ export function wrapTypes(
 
 export function wrapArgumentListElements(
 	data: T.ArgumentListElements & {
-		readonly $other?: _NodeData['$other'];
+		readonly $other?: _UntypedNode['$other'];
 		readonly $span?: { start: number; end: number };
 	},
 	tree: TreeHandle
@@ -6799,7 +6841,7 @@ export function wrapArgumentListElements(
 		tree,
 		nodeType: data.$type,
 		slotName: 'element',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -6837,7 +6879,7 @@ export function wrapArgumentListElements(
 
 export function wrapExpressionListExpressions(
 	data: T.ExpressionListExpressions & {
-		readonly $other?: _NodeData['$other'];
+		readonly $other?: _UntypedNode['$other'];
 		readonly $span?: { start: number; end: number };
 	},
 	tree: TreeHandle
@@ -6847,7 +6889,7 @@ export function wrapExpressionListExpressions(
 		tree,
 		nodeType: data.$type,
 		slotName: 'expression',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -6872,7 +6914,7 @@ export function wrapExpressionListExpressions(
 
 export function wrapListPatternCasePatterns(
 	data: T.ListPatternCasePatterns & {
-		readonly $other?: _NodeData['$other'];
+		readonly $other?: _UntypedNode['$other'];
 		readonly $span?: { start: number; end: number };
 	},
 	tree: TreeHandle
@@ -6882,7 +6924,7 @@ export function wrapListPatternCasePatterns(
 		tree,
 		nodeType: data.$type,
 		slotName: 'case_pattern',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -6907,7 +6949,7 @@ export function wrapListPatternCasePatterns(
 
 export function wrapDictPatternElements(
 	data: T.DictPatternElements & {
-		readonly $other?: _NodeData['$other'];
+		readonly $other?: _UntypedNode['$other'];
 		readonly $span?: { start: number; end: number };
 	},
 	tree: TreeHandle
@@ -6917,7 +6959,7 @@ export function wrapDictPatternElements(
 		tree,
 		nodeType: data.$type,
 		slotName: 'element',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -6945,7 +6987,7 @@ export function wrapDictPatternElements(
 
 export function wrapPatternListPatterns(
 	data: T.PatternListPatterns & {
-		readonly $other?: _NodeData['$other'];
+		readonly $other?: _UntypedNode['$other'];
 		readonly $span?: { start: number; end: number };
 	},
 	tree: TreeHandle
@@ -6955,7 +6997,7 @@ export function wrapPatternListPatterns(
 		tree,
 		nodeType: data.$type,
 		slotName: 'pattern',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -6979,7 +7021,7 @@ export function wrapPatternListPatterns(
 }
 
 export function wrapSubscripts(
-	data: T.Subscripts & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+	data: T.Subscripts & { readonly $other?: _UntypedNode['$other']; readonly $span?: { start: number; end: number } },
 	tree: TreeHandle
 ): T.Subscripts.Parsed {
 	data = _keepModelledSlots(data, ['_subscript']);
@@ -6987,7 +7029,7 @@ export function wrapSubscripts(
 		tree,
 		nodeType: data.$type,
 		slotName: 'subscript',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -7015,7 +7057,7 @@ export function wrapSubscripts(
 
 export function wrapDictionaryElements(
 	data: T.DictionaryElements & {
-		readonly $other?: _NodeData['$other'];
+		readonly $other?: _UntypedNode['$other'];
 		readonly $span?: { start: number; end: number };
 	},
 	tree: TreeHandle
@@ -7025,7 +7067,7 @@ export function wrapDictionaryElements(
 		tree,
 		nodeType: data.$type,
 		slotName: 'element',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -7063,7 +7105,7 @@ export function wrapSliceGroup(data: T.SliceGroup, tree: TreeHandle): T.SliceGro
 				'expression',
 				false,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _UntypedNode).$span }
 			),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -7092,7 +7134,7 @@ export function wrapExceptClauseExceptionAs(
 				tree,
 				nodeType: data.$type,
 				slotName: 'value',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -7101,7 +7143,7 @@ export function wrapExceptClauseExceptionAs(
 				tree,
 				nodeType: data.$type,
 				slotName: 'alias',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -7135,7 +7177,7 @@ export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle)
 						'list_pattern_case_patterns',
 						false,
 						data.$type,
-						{ tree, nodeType: data.$type, slotName: 'list_pattern_case_patterns', span: (data as _NodeData).$span }
+						{ tree, nodeType: data.$type, slotName: 'list_pattern_case_patterns', span: (data as _UntypedNode).$span }
 					),
 
 					listPatternCasePatterns() {
@@ -7180,7 +7222,7 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): 
 						'list_pattern_case_patterns',
 						false,
 						data.$type,
-						{ tree, nodeType: data.$type, slotName: 'list_pattern_case_patterns', span: (data as _NodeData).$span }
+						{ tree, nodeType: data.$type, slotName: 'list_pattern_case_patterns', span: (data as _UntypedNode).$span }
 					),
 
 					listPatternCasePatterns() {
@@ -7213,7 +7255,10 @@ export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle): 
 }
 
 export function wrapPrintArguments(
-	data: T.PrintArguments & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+	data: T.PrintArguments & {
+		readonly $other?: _UntypedNode['$other'];
+		readonly $span?: { start: number; end: number };
+	},
 	tree: TreeHandle
 ): T.PrintArguments.Parsed {
 	data = _keepModelledSlots(data, ['_argument']);
@@ -7221,7 +7266,7 @@ export function wrapPrintArguments(
 		tree,
 		nodeType: data.$type,
 		slotName: 'argument',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -7246,7 +7291,7 @@ export function wrapPrintArguments(
 
 export function wrapPrintChevronArguments(
 	data: T.PrintChevronArguments & {
-		readonly $other?: _NodeData['$other'];
+		readonly $other?: _UntypedNode['$other'];
 		readonly $span?: { start: number; end: number };
 	},
 	tree: TreeHandle
@@ -7256,7 +7301,7 @@ export function wrapPrintChevronArguments(
 		tree,
 		nodeType: data.$type,
 		slotName: 'argument',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -7298,7 +7343,7 @@ export function wrapPrintStatementChevron(
 					tree,
 					nodeType: data.$type,
 					slotName: 'chevron',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 				_print_chevron_arguments: projectMixedEnumStorage(
 					normalizeSingularWrapSlot(
@@ -7307,7 +7352,7 @@ export function wrapPrintStatementChevron(
 						'print_chevron_arguments',
 						false,
 						data.$type,
-						{ tree, nodeType: data.$type, slotName: 'print_chevron_arguments', span: (data as _NodeData).$span }
+						{ tree, nodeType: data.$type, slotName: 'print_chevron_arguments', span: (data as _UntypedNode).$span }
 					),
 					{ ',': 6 }
 				),
@@ -7353,7 +7398,7 @@ export function wrapPrintStatementPlain(data: T.PrintStatementPlain, tree: TreeH
 						tree,
 						nodeType: data.$type,
 						slotName: 'print_arguments',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 
 					printArguments() {
@@ -7400,7 +7445,7 @@ export function wrapParenthesizedImportList(
 						tree,
 						nodeType: data.$type,
 						slotName: 'import_list',
-						span: (data as _NodeData).$span
+						span: (data as _UntypedNode).$span
 					}),
 
 					importList() {
@@ -7437,7 +7482,7 @@ export function wrapComprehensionClauses(
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		contents() {
@@ -7466,13 +7511,13 @@ export function wrapIntegerHex(data: T.IntegerHex, tree: TreeHandle): T.IntegerH
 			tree,
 			nodeType: data.$type,
 			slotName: 'prefix',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		prefix() {
@@ -7501,13 +7546,13 @@ export function wrapIntegerOctal(data: T.IntegerOctal, tree: TreeHandle): T.Inte
 			tree,
 			nodeType: data.$type,
 			slotName: 'prefix',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		prefix() {
@@ -7536,13 +7581,13 @@ export function wrapIntegerBinary(data: T.IntegerBinary, tree: TreeHandle): T.In
 			tree,
 			nodeType: data.$type,
 			slotName: 'prefix',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_content: normalizeSingularWrapSlot(data._content, 'content', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		prefix() {
@@ -7582,7 +7627,10 @@ export function wrapIntegerDecimal(
 			'integer_decimal_imaginary',
 			'integer_decimal_plain'
 		]);
-	if (filtered === undefined && (typeof (node as _NodeData).$text === 'string' || treeHandleOf(node) !== undefined)) {
+	if (
+		filtered === undefined &&
+		(typeof (node as _UntypedNode).$text === 'string' || treeHandleOf(node) !== undefined)
+	) {
 		return hydrateSelf<T.IntegerDecimal>(node as T.IntegerDecimal, tree) as unknown as T.IntegerDecimal.Parsed;
 	}
 	return hydrateChild<T.IntegerDecimal>(
@@ -7590,7 +7638,7 @@ export function wrapIntegerDecimal(
 			tree,
 			nodeType: node.$type,
 			slotName: 'children',
-			span: (node as _NodeData).$span
+			span: (node as _UntypedNode).$span
 		}),
 		tree
 	);
@@ -7606,31 +7654,31 @@ export function wrapFloatPoint(data: T.FloatPoint, tree: TreeHandle): T.FloatPoi
 			tree,
 			nodeType: data.$type,
 			slotName: 'integer',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_fraction: normalizeSingularWrapSlot(data._fraction, 'fraction', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'fraction',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_marker: normalizeSingularWrapSlot(data._marker, 'marker', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'marker',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_exponent: normalizeSingularWrapSlot(data._exponent, 'exponent', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'exponent',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_imaginary: normalizeSingularWrapSlot(data._imaginary, 'imaginary', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'imaginary',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		integer() {
@@ -7670,31 +7718,31 @@ export function wrapFloatLeadingPoint(data: T.FloatLeadingPoint, tree: TreeHandl
 			tree,
 			nodeType: data.$type,
 			slotName: 'integer',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_fraction: normalizeSingularWrapSlot(data._fraction, 'fraction', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'fraction',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_marker: normalizeSingularWrapSlot(data._marker, 'marker', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'marker',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_exponent: normalizeSingularWrapSlot(data._exponent, 'exponent', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'exponent',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_imaginary: normalizeSingularWrapSlot(data._imaginary, 'imaginary', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'imaginary',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		integer() {
@@ -7738,25 +7786,25 @@ export function wrapFloatScientific(data: T.FloatScientific, tree: TreeHandle): 
 			tree,
 			nodeType: data.$type,
 			slotName: 'integer',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_marker: normalizeSingularWrapSlot(data._marker, 'marker', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'marker',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_exponent: normalizeSingularWrapSlot(data._exponent, 'exponent', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'exponent',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_imaginary: normalizeSingularWrapSlot(data._imaginary, 'imaginary', false, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'imaginary',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		integer() {
@@ -7798,7 +7846,7 @@ export function wrapEscapeSequenceUnicodeFixed(
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -7825,7 +7873,7 @@ export function wrapEscapeSequenceUnicodeWide(
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -7849,7 +7897,7 @@ export function wrapEscapeSequenceHex(data: T.EscapeSequenceHex, tree: TreeHandl
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -7873,7 +7921,7 @@ export function wrapEscapeSequenceOctal(data: T.EscapeSequenceOctal, tree: TreeH
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -7900,7 +7948,7 @@ export function wrapEscapeSequenceLineBreak(
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -7927,7 +7975,7 @@ export function wrapEscapeSequenceSimple(
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -7951,7 +7999,7 @@ export function wrapEscapeSequenceNamed(data: T.EscapeSequenceNamed, tree: TreeH
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -7983,14 +8031,14 @@ export function wrapSimplePatternNegative(
 				tree,
 				nodeType: data.$type,
 				slotName: 'sign',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			})
 		),
 		_value: normalizeSingularWrapSlot(data._value, 'value', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'value',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		sign() {
@@ -8014,7 +8062,7 @@ export function wrapExceptClauseExceptionList(
 	tree: TreeHandle
 ): T.ExceptClauseExceptionList.Parsed {
 	data = _keepModelledSlots(data, ['_value']);
-	const _order = (data as _NodeData).$slotOrder?.slice();
+	const _order = (data as _UntypedNode).$slotOrder?.slice();
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.ExceptClauseExceptionList as const,
@@ -8023,7 +8071,7 @@ export function wrapExceptClauseExceptionList(
 				tree,
 				nodeType: data.$type,
 				slotName: 'value',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -8052,7 +8100,7 @@ export function wrapExceptClauseException(
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -8075,14 +8123,14 @@ export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle): T.Assi
 			tree,
 			nodeType: data.$type,
 			slotName: 'left',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_right: projectMixedEnumStorage(
 			normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'right',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -8112,13 +8160,13 @@ export function wrapAssignmentType(data: T.AssignmentType, tree: TreeHandle): T.
 			tree,
 			nodeType: data.$type,
 			slotName: 'left',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_type: normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'type',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		left() {
@@ -8144,20 +8192,20 @@ export function wrapAssignmentTyped(data: T.AssignmentTyped, tree: TreeHandle): 
 			tree,
 			nodeType: data.$type,
 			slotName: 'left',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_type: normalizeSingularWrapSlot(data._type, 'type', true, data.$type, {
 			tree,
 			nodeType: data.$type,
 			slotName: 'type',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 		_right: projectMixedEnumStorage(
 			normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'right',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -8184,7 +8232,7 @@ export function wrapAssignmentTyped(data: T.AssignmentTyped, tree: TreeHandle): 
 
 export function wrapExpressionStatementTuple(
 	data: T.ExpressionStatementTuple & {
-		readonly $other?: _NodeData['$other'];
+		readonly $other?: _UntypedNode['$other'];
 		readonly $span?: { start: number; end: number };
 	},
 	tree: TreeHandle
@@ -8194,7 +8242,7 @@ export function wrapExpressionStatementTuple(
 		tree,
 		nodeType: data.$type,
 		slotName: 'expression',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -8218,7 +8266,10 @@ export function wrapExpressionStatementTuple(
 }
 
 export function wrapWithClauseBare(
-	data: T.WithClauseBare & { readonly $other?: _NodeData['$other']; readonly $span?: { start: number; end: number } },
+	data: T.WithClauseBare & {
+		readonly $other?: _UntypedNode['$other'];
+		readonly $span?: { start: number; end: number };
+	},
 	tree: TreeHandle
 ): T.WithClauseBare.Parsed {
 	data = _keepModelledSlots(data, ['_with_item']);
@@ -8226,7 +8277,7 @@ export function wrapWithClauseBare(
 		tree,
 		nodeType: data.$type,
 		slotName: 'with_item',
-		span: (data as _NodeData).$span
+		span: (data as _UntypedNode).$span
 	});
 	return withMethods(
 		withListView(
@@ -8262,7 +8313,7 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle): 
 						'with_clause_with_items',
 						true,
 						data.$type,
-						{ tree, nodeType: data.$type, slotName: 'with_clause_with_items', span: (data as _NodeData).$span }
+						{ tree, nodeType: data.$type, slotName: 'with_clause_with_items', span: (data as _UntypedNode).$span }
 					),
 
 					withClauseWithItems() {
@@ -8303,7 +8354,7 @@ export function wrapMatchBlockBlock(data: T.MatchBlockBlock, tree: TreeHandle): 
 			tree,
 			nodeType: data.$type,
 			slotName: 'alternative',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		alternatives() {
@@ -8330,7 +8381,7 @@ export function wrapMatchBlockEmpty(data: T.MatchBlockEmpty, tree: TreeHandle): 
 				'newline',
 				true,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'newline', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'newline', span: (data as _UntypedNode).$span }
 			),
 			{ '\n': 115 }
 		),
@@ -8359,7 +8410,7 @@ export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteI
 						'simple_statements_elements',
 						true,
 						data.$type,
-						{ tree, nodeType: data.$type, slotName: 'simple_statements_elements', span: (data as _NodeData).$span }
+						{ tree, nodeType: data.$type, slotName: 'simple_statements_elements', span: (data as _UntypedNode).$span }
 					),
 
 					simpleStatementsElements() {
@@ -8400,7 +8451,7 @@ export function wrapSuiteBlock(data: T.SuiteBlock, tree: TreeHandle): T.SuiteBlo
 			tree,
 			nodeType: data.$type,
 			slotName: 'block',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		block() {
@@ -8426,7 +8477,7 @@ export function wrapSuiteEmpty(data: T.SuiteEmpty, tree: TreeHandle): T.SuiteEmp
 				'newline',
 				true,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'newline', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'newline', span: (data as _UntypedNode).$span }
 			),
 			{ '\n': 115 }
 		),
@@ -8459,7 +8510,7 @@ export function wrapComparisonOperatorComparator(
 				tree,
 				nodeType: data.$type,
 				slotName: 'operators',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{
 				'<': 108,
@@ -8487,7 +8538,7 @@ export function wrapComparisonOperatorComparator(
 				'primary_expression',
 				true,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'primary_expression', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'primary_expression', span: (data as _UntypedNode).$span }
 			),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -8520,7 +8571,7 @@ export function wrapYieldFromClause(data: T.YieldFromClause, tree: TreeHandle): 
 				'expression',
 				true,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _UntypedNode).$span }
 			),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -8547,7 +8598,7 @@ export function wrapNames(data: T.Names, tree: TreeHandle): T.Names.Parsed {
 					tree,
 					nodeType: data.$type,
 					slotName: 'content',
-					span: (data as _NodeData).$span
+					span: (data as _UntypedNode).$span
 				}),
 
 				content() {
@@ -8573,7 +8624,7 @@ export function wrapAsPatternTarget(data: T.AsPatternTarget, tree: TreeHandle): 
 				tree,
 				nodeType: data.$type,
 				slotName: 'content',
-				span: (data as _NodeData).$span
+				span: (data as _UntypedNode).$span
 			}),
 			{ True: 70, False: 71, None: 72, '...': 64 }
 		),
@@ -8598,7 +8649,7 @@ export function wrapFormatExpression(data: T.FormatExpression, tree: TreeHandle)
 			tree,
 			nodeType: data.$type,
 			slotName: 'content',
-			span: (data as _NodeData).$span
+			span: (data as _UntypedNode).$span
 		}),
 
 		content() {
@@ -8612,7 +8663,7 @@ export function wrapFormatExpression(data: T.FormatExpression, tree: TreeHandle)
 	return _node as unknown as T.FormatExpression.Parsed;
 }
 
-const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown> = {
+const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unknown> = {
 	[TSKindId.Module]: (d, t) => wrapModule(d as unknown as T.Module, t),
 	[TSKindId.Statement]: (d, t) => wrapStatement(d as unknown as T.Statement, t),
 	[TSKindId.SimpleStatements]: (d, t) => wrapSimpleStatements(d as unknown as T.SimpleStatements, t),
@@ -8841,8 +8892,8 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.FormatExpression]: (d, t) => wrapFormatExpression(_aliasEnvelope(d, t) as unknown as T.FormatExpression, t)
 };
 
-function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
-	type Wire = _NodeData & {
+function _aliasEnvelope(data: _UntypedNode, tree: TreeHandle): _UntypedNode {
+	type Wire = _UntypedNode & {
 		readonly $displayType?: number;
 		readonly $handle?: number;
 		readonly $parentHandle?: number;
@@ -8852,12 +8903,12 @@ function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
 	};
 	const { $displayType, ...shown } = data as Wire;
 	if ($displayType === undefined) return data;
-	const envelope = $displayType as _NodeData['$type'];
+	const envelope = $displayType as _UntypedNode['$type'];
 	if (_HIDDEN_KINDS.has(shown.$type)) {
 		const slots = Object.keys(shown).filter((key) => key.charCodeAt(0) === 95);
-		if (slots.length !== 1 || slots[0] === '_content') return { ...shown, $type: envelope } as _NodeData;
+		if (slots.length !== 1 || slots[0] === '_content') return { ...shown, $type: envelope } as _UntypedNode;
 		const { [slots[0]!]: child, ...container } = shown as unknown as Record<string, unknown>;
-		return { ...container, $type: envelope, _content: child } as unknown as _NodeData;
+		return { ...container, $type: envelope, _content: child } as unknown as _UntypedNode;
 	}
 	const full = (isStub(shown) ? readUntypedNode(tree, shown.$parentHandle, shown.$childIndex) : shown) as Wire;
 	const { $displayType: _display, $_trivia, $childIndex: _childIndex, ...storage } = full;
@@ -8872,13 +8923,13 @@ function _aliasEnvelope(data: _NodeData, tree: TreeHandle): _NodeData {
 		$childIndex: shown.$childIndex,
 		$_trivia: shown.$_trivia ?? _wrapTrivia($_trivia, tree),
 		_content: storage
-	} as unknown as _NodeData;
+	} as unknown as _UntypedNode;
 }
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
 export type ModuleTree = T.ParsedByKindId[TSKindId.Module] & ParsedRoot;
 
-function _hydrateUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {
+function _hydrateUnknownKindChildren(data: _UntypedNode, tree: TreeHandle): _UntypedNode {
 	const out: Record<string, unknown> = { ...(data as unknown as Record<string, unknown>) };
 	for (const key of Object.keys(out)) {
 		if (key.charCodeAt(0) !== 95 /* `_` */) continue;
@@ -8889,61 +8940,61 @@ function _hydrateUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeDa
 			out[key] = hydrateChild(value, tree);
 		}
 	}
-	return out as unknown as _NodeData;
+	return out as unknown as _UntypedNode;
 }
 
-function _wrapTrivia(trivia: _NodeData['$_trivia'], tree: TreeHandle): _NodeData['$_trivia'] {
+function _wrapTrivia(trivia: _UntypedNode['$_trivia'], tree: TreeHandle): _UntypedNode['$_trivia'] {
 	return trivia && mapTriviaEntries(trivia, (entries) => hydrateChildren(entries, tree) as unknown as typeof entries);
 }
 
-const _ALIAS_ENVELOPES: ReadonlySet<_NodeData['$type']> = new Set([334, 335, 336]);
-const _HIDDEN_KINDS: ReadonlySet<_NodeData['$type']> = new Set([
+const _ALIAS_ENVELOPES: ReadonlySet<_UntypedNode['$type']> = new Set([334, 335, 336]);
+const _HIDDEN_KINDS: ReadonlySet<_UntypedNode['$type']> = new Set([
 	116, 117, 122, 123, 124, 125, 126, 128, 129, 143, 162, 183, 194, 195, 203, 204, 205, 215, 218, 250, 251, 254, 255,
 	282, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320,
 	321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333
 ]);
-function _displayOf(entry: _NodeData): _NodeData['$type'] {
-	return (entry as { readonly $displayType?: _NodeData['$type'] }).$displayType ?? entry.$type;
+function _displayOf(entry: _UntypedNode): _UntypedNode['$type'] {
+	return (entry as { readonly $displayType?: _UntypedNode['$type'] }).$displayType ?? entry.$type;
 }
-function _kindOf(entry: _NodeData): _NodeData['$type'] {
+function _kindOf(entry: _UntypedNode): _UntypedNode['$type'] {
 	const display = _displayOf(entry);
 	return _ALIAS_ENVELOPES.has(display) ? display : entry.$type;
 }
-function _withoutDisplay(data: _NodeData): _NodeData {
-	const { $displayType: _display, ...node } = data as _NodeData & { readonly $displayType?: number };
-	return node as _NodeData;
+function _withoutDisplay(data: _UntypedNode): _UntypedNode {
+	const { $displayType: _display, ...node } = data as _UntypedNode & { readonly $displayType?: number };
+	return node as _UntypedNode;
 }
 
-const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData['$type']> = new Set([
+const _RECLAIMS_ANONYMOUS: ReadonlySet<_UntypedNode['$type']> = new Set([
 	134, 141, 144, 145, 146, 180, 183, 219, 225, 248, 265, 271, 277, 293, 296, 297, 298
 ]);
-function _spellingTokens(data: _NodeData): readonly _NodeData[] | undefined {
+function _spellingTokens(data: _UntypedNode): readonly _UntypedNode[] | undefined {
 	const { $other, ...node } = data;
 	if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return undefined;
 	if (Object.keys(node).some((key) => key.charCodeAt(0) === 95)) return undefined;
 	const tokens = (Array.isArray($other) ? $other : [$other]) as readonly unknown[];
-	if (tokens.some((token) => typeof token !== 'object' || token === null || (token as _NodeData).$named !== false))
+	if (tokens.some((token) => typeof token !== 'object' || token === null || (token as _UntypedNode).$named !== false))
 		return undefined;
-	return tokens as readonly _NodeData[];
+	return tokens as readonly _UntypedNode[];
 }
-function _spelledText(data: _NodeData): string | undefined {
+function _spelledText(data: _UntypedNode): string | undefined {
 	if (data.$text !== undefined) return data.$text;
 	const tokens = _spellingTokens(data);
 	return tokens === undefined ? undefined : _tiledSpelling(data.$span, tokens);
 }
-function _dropSpelling(data: _NodeData): _NodeData {
+function _dropSpelling(data: _UntypedNode): _UntypedNode {
 	if (_spellingTokens(data) === undefined) return data;
 	const { $other: _tokens, ...node } = data;
 	const $text = _spelledText(data);
-	return ($text === undefined ? node : { ...node, $text }) as _NodeData;
+	return ($text === undefined ? node : { ...node, $text }) as _UntypedNode;
 }
-function _spellingOf(entry: _NodeData): string | undefined {
+function _spellingOf(entry: _UntypedNode): string | undefined {
 	const text = _spelledText(entry);
 	if (text !== undefined || entry.$named !== false) return text;
 	const shown = _displayOf(entry);
 	return typeof shown === 'number' ? KIND_DISPLAY_NAMES.get(shown) : shown;
 }
-function _tiledSpelling(span: _NodeData['$span'], children: readonly _NodeData[]): string | undefined {
+function _tiledSpelling(span: _UntypedNode['$span'], children: readonly _UntypedNode[]): string | undefined {
 	if (span === undefined) return undefined;
 	let at = span.start;
 	let text = '';
@@ -8955,19 +9006,19 @@ function _tiledSpelling(span: _NodeData['$span'], children: readonly _NodeData[]
 	}
 	return at === span.end ? text : undefined;
 }
-function _readChildren(data: _NodeData): readonly _NodeData[] | undefined {
-	const children: _NodeData[] = [];
+function _readChildren(data: _UntypedNode): readonly _UntypedNode[] | undefined {
+	const children: _UntypedNode[] = [];
 	for (const [key, value] of Object.entries(data)) {
 		if (key.charCodeAt(0) !== 95 && key !== '$other') continue;
 		for (const child of (Array.isArray(value) ? value : [value]) as readonly unknown[]) {
 			if (child === undefined) continue;
 			if (typeof child !== 'object' || child === null) return undefined;
-			children.push(child as _NodeData);
+			children.push(child as _UntypedNode);
 		}
 	}
 	return children.sort((a, b) => (a.$span?.start ?? 0) - (b.$span?.start ?? 0));
 }
-function _spelledLeaf(data: _NodeData): _NodeData {
+function _spelledLeaf(data: _UntypedNode): _UntypedNode {
 	if (data.$text !== undefined) return data;
 	const children = _readChildren(data);
 	if (children === undefined || children.length === 0) return data;
@@ -8977,16 +9028,16 @@ function _spelledLeaf(data: _NodeData): _NodeData {
 	for (const [key, value] of Object.entries(data)) {
 		if (key.charCodeAt(0) !== 95 && key !== '$other' && key !== '$slotOrder') leaf[key] = value;
 	}
-	return { ...leaf, $text } as _NodeData;
+	return { ...leaf, $text } as _UntypedNode;
 }
 
-/** Wrap a NodeData into its lazy read-only view. */
-export function wrapNode<D extends _NodeData & { readonly $type: keyof T.ParsedByKindId }>(
+/** Wrap an UntypedNode into its lazy read-only view. */
+export function wrapNode<D extends _UntypedNode & { readonly $type: keyof T.ParsedByKindId }>(
 	data: D,
 	tree: TreeHandle
 ): T.ParsedByKindId[D['$type'] & keyof T.ParsedByKindId] & Pick<D, Extract<keyof D, keyof ParsedRoot>>;
-export function wrapNode(data: _NodeData, tree: TreeHandle): unknown;
-export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
+export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown;
+export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown {
 	// The wire `$type` is the numeric grammar-symbol KindId — dispatch
 	// is a direct id-keyed lookup. A non-numeric `$type` can only be a
 	// catalog-less kind (the deprecated JS diagnostic lane stamps those
@@ -8999,7 +9050,7 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 }
 
 /**
- * Read a parsed tree node into a lazily-wrapped NodeData.
+ * Read a parsed tree node into a lazily-wrapped UntypedNode.
  * One level deep — getters hydrate subtrees on demand by
  * recursing back through this same function. The wire `$type` is
  * the grammar symbol (stamped by the read), so no per-site alias

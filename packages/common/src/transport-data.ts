@@ -1,4 +1,4 @@
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -149,7 +149,7 @@ export function detachCoordinate(data: object): void {
  * the member it stands for, and a text-collapsed member is that member's
  * bare text.
  */
-export type NormalizeNodeStorage = (node: AnyNodeData) => unknown;
+export type NormalizeNodeStorage = (node: AnyUntypedNode) => unknown;
 
 /**
  * Turn a node into the plain data the native boundary accepts.
@@ -168,15 +168,15 @@ export type NormalizeNodeStorage = (node: AnyNodeData) => unknown;
  * untouched subtree's original bytes while its rebuilt siblings render
  * canonically.
  */
-export function toTransportData(node: AnyNodeData, normalize?: NormalizeNodeStorage): AnyNodeData {
-	return toTransportValue(node, normalize) as AnyNodeData;
+export function toTransportData(node: AnyUntypedNode, normalize?: NormalizeNodeStorage): AnyUntypedNode {
+	return toTransportValue(node, normalize) as AnyUntypedNode;
 }
 
 function toTransportValue(value: unknown, normalize: NormalizeNodeStorage | undefined): unknown {
 	if (Array.isArray(value)) return value.map((entry) => toTransportValue(entry, normalize));
 	if (!isRecord(value)) return value;
 	const normalized =
-		normalize !== undefined && hasStructure(value) ? normalize(value as unknown as AnyNodeData) : value;
+		normalize !== undefined && hasStructure(value) ? normalize(value as unknown as AnyUntypedNode) : value;
 	// A supertype resolves to the member it stands for, which for a
 	// text-collapsed member is that member's bare text — already the value the
 	// slot carries, with no storage of its own left to walk.

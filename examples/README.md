@@ -24,11 +24,11 @@ that takes an argument needs a sample input in that test.
 | File | Guide section |
 | ---- | ------------- |
 | `01-construct-nodes.ts` | Construct nodes with factories |
-| `02-render-round-trip.ts` | Render NodeData to source |
+| `02-render-round-trip.ts` | Render UntypedNode to source |
 | `03-trivia.ts` | Attach comments with `.$trivia()` *(pending wrapper ergonomics refresh)* |
 | `04-precompiled-templates.ts` | Construction templates — pre-compiled *(pending `snippets.*`)* |
 | `05-inline-templates.ts` | Construction templates — inline *(pending `template(...)`)* |
-| `07-read-source.ts` | Read source into NodeData |
+| `07-read-source.ts` | Read source into UntypedNode |
 | `09-type-guards.ts` | Type guards |
 | `12-cross-language-migration.ts` | Cross-language migration |
 | `14-format-preserving-transform.ts` | Format-preserving transforms *(parked, not type-checked: the parse → `$with` → `$render` rewrite is blocked by #419, #420, #421)* |

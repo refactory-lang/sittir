@@ -45,7 +45,7 @@ describe('engine', () => {
 						}
 						parseAndRead(_source: string): string {
 							return JSON.stringify({
-								nodeData: {
+								untypedNode: {
 									$type: TSKindId.Identifier,
 									$source: 0,
 									$named: true,

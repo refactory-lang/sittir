@@ -471,7 +471,7 @@ A required slot that holds fixed text (`holdsFixedText`) needs no argument: its 
 	 *   (`readonly op: "break"`) and the render pipeline's acceptance
 	 *   of plain string values in `$fields`.
 	 * - **Parameterless compound**: factory-call string
-	 *   (e.g. `"breakExpression()"`). Returns the full NodeData.
+	 *   (e.g. `"breakExpression()"`). Returns the full UntypedNode.
 	 *
 	 * Overridden by `AssembledKeyword`, `AssembledPunctuation` (constructors set
 	 * a backing field); compounds derive from `rawFactoryName`.
@@ -485,13 +485,13 @@ A required slot that holds fixed text (`holdsFixedText`) needs no argument: its 
 	 * Stamp expression for this kind in **child context** — used when a
 	 * parent stamps this kind into its `$children` slot. Defaults to
 	 * `stampExpression`, but terminal classes override to return the
-	 * full NodeData literal (`{ $type, $text, $source, $named }`)
-	 * because child interfaces expose the NodeData shape
+	 * full UntypedNode literal (`{ $type, $text, $source, $named }`)
+	 * because child interfaces expose the UntypedNode shape
 	 * (`$children: readonly [Crate]` where `Crate` is
 	 * `Terminal<"crate", "crate">`), not the plain string.
 	 *
 	 * Compounds' `stampExpression` is already a factory call that
-	 * returns NodeData, so they share the default.
+	 * returns UntypedNode, so they share the default.
 	 */
 ```
 
@@ -1103,7 +1103,7 @@ flatten and simplify joins use.
 
 ```text
 /**
-	 * Child-context stamp: wrap the literal in a NodeData object so
+	 * Child-context stamp: wrap the literal in an UntypedNode object so
 	 * the parent's `$children` slot matches the `Terminal<kind, text>`
 	 * interface shape. `$named: true` because keywords are named
 	 * (`_kw_async` / `async` etc. surface as named nodes in tree-
@@ -1175,7 +1175,7 @@ flatten and simplify joins use.
 
 ```text
 /**
-	 * Child-context stamp: wrap the single-literal text in a NodeData
+	 * Child-context stamp: wrap the single-literal text in an UntypedNode
 	 * object. `$named: false` — tokens are anonymous in tree-sitter's
 	 * output (non-word literals like `..` / `=>` never have a named
 	 * entry in `node-types.json`).
@@ -1505,7 +1505,7 @@ The regex source the kind's whole text must match: the pattern composed from the
 
 ```text
 /**
-	 * Child-context stamp: wrap the single-literal text in a NodeData
+	 * Child-context stamp: wrap the single-literal text in an UntypedNode
 	 * object. `$named: false` — tokens are anonymous in tree-sitter's
 	 * output (non-word literals like `..` / `=>` never have a named
 	 * entry in `node-types.json`).

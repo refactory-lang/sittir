@@ -12,7 +12,7 @@
 import { createNativeEngine, type SittirEngine } from '@sittir/common/engine';
 import { KIND_NAMES, type Pattern } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import type { IndentOption, NativeEngineOptions, NodeDataOf } from '@sittir/types';
+import type { IndentOption, NativeEngineOptions, UntypedNodeOf } from '@sittir/types';
 import { getActiveBackend } from './backend.js';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -21,7 +21,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /** The reader's raw root: the root kind's DATA projection — its `$type`
  *  and `_<slot>` storage, whose children are reader stubs. */
-export type PatternRoot = NodeDataOf<Pattern>;
+export type PatternRoot = UntypedNodeOf<Pattern>;
 
 /**
  * Create the render / edit half of the engine.

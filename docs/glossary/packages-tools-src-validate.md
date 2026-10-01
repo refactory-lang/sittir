@@ -87,7 +87,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 // Validator-local slot model. validate/common.ts has no AssembledNonterminal
-// instances (it walks already-read napi NodeData), so slot descriptors are
+// instances (it walks already-read napi UntypedNode), so slot descriptors are
 // built from bare name strings + locally-derived arity.
 // The validator is the ONLY allowed reader of the opaque `origin` fact
 // (feedback_metadata_not_behavior.md); the compiler never sees this type.
@@ -276,7 +276,7 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
 
 ```text
 /**
- * Native NodeData's addressable child positions: named-slot (`_foo`) and
+ * Native UntypedNode's addressable child positions: named-slot (`_foo`) and
  * legacy (`$fields`) values, the anonymous-token bucket (`$other`), and
  * attached trivia (`$_trivia.leading`/`.trailing` — comment/extras
  * nodes read_node.rs attaches to a SIBLING rather than re-parenting into
@@ -298,7 +298,7 @@ The kind a node from the native read is shown as: its `$displayType` when the re
 ```text
 /**
  * For a native TreeHandle (`handle.read` is present), walk the native
- * NodeData tree to find the parent-handle + child-index pair for the
+ * UntypedNode tree to find the parent-handle + child-index pair for the
  * first node whose `$type` equals `kind`. Native engine handles and
  * WASM/JS engine handles occupy different navigation spaces, so WASM
  * coordinates must never be passed to a native handle's
@@ -337,7 +337,7 @@ Every trivia side is walked (leading, trailing and inner), and a node found in a
 ```text
 /**
  * A native candidate: navigation coordinates plus the node's byte span
- * (when available from the native AnyNodeData's `$span`).
+ * (when available from the native AnyUntypedNode's `$span`).
  */
 ```
 
@@ -345,7 +345,7 @@ Every trivia side is walked (leading, trailing and inner), and a node found in a
 
 ```text
 /**
- * Walk the native AnyNodeData tree rooted at `handle` and collect ALL nodes
+ * Walk the native AnyUntypedNode tree rooted at `handle` and collect ALL nodes
  * whose kind matches `kind`, in DFS order. Returns one entry per matching
  * node with its navigation coordinates (`handle` + `childIndex`) and byte
  * span (when present in the native data, so callers can slice the source).
@@ -869,7 +869,7 @@ and is read with `readFileSync` on the path.
  * the wrap layer's hydration ($type on every node is the grammar-symbol
  * wire identity stamped by the read).
  *
- * `$`-prefixed keys are spread NodeData metadata (not child getters)
+ * `$`-prefixed keys are spread UntypedNode metadata (not child getters)
  * and get skipped. Leaves short-circuit when accessing a getter that
  * doesn't return a wrapped-shape value.
  */
@@ -1072,7 +1072,7 @@ and is read with `readFileSync` on the path.
 
 ```text
 // ---------------------------------------------------------------------------
-// nodeToConfig — NodeData → factory Config-shape conversion
+// nodeToConfig — UntypedNode → factory Config-shape conversion
 // ---------------------------------------------------------------------------
 //
 // Validators read tree-sitter output via `readUntypedNode` (snake_case `_<name>`
@@ -1080,7 +1080,7 @@ and is read with `readFileSync` on the path.
 //   - top-level keys in camelCase (snake→camel on each `_<name>` entry)
 //   - `children` in place of $children
 //   - leaf values as bare strings (factory leaf signatures are `(text: string)`)
-//   - branch values as NodeData produced by THAT kind's factory — when
+//   - branch values as UntypedNode produced by THAT kind's factory — when
 //     `tree` + `factoryMap` are supplied, children are hydrated via
 //     `readUntypedNode` and reconstructed through their own factory before
 //     being installed under the parent's config. This is what makes the
@@ -1205,18 +1205,18 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 
 ```text
 /**
- * Determine whether an anonymous NodeData token should pass through
+ * Determine whether an anonymous UntypedNode token should pass through
  * `resolveChild` unchanged.
  *
  * @remarks
  * Anonymous tokens (separators, delimiters, keywords promoted to `_<name>` by
- * readUntypedNode) must stay as NodeData. Render's `$named !== false` filter drops
+ * readUntypedNode) must stay as UntypedNode. Render's `$named !== false` filter drops
  * them from `$$$CHILDREN`, and flankSep probes their span/text to reconstruct
  * trailing separators. Converting them to bare strings bypasses those filters
  * and double-emits (e.g. struct_pattern's trailing `,` showed up twice in the
  * rendered output).
  *
- * @param c - The candidate child NodeData.
+ * @param c - The candidate child UntypedNode.
  * @returns `true` if the child is an anonymous token and should be returned as-is.
  */
 ```
@@ -1268,9 +1268,9 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 
 ```text
 /**
- * Hydrate a shallow child NodeData via the tree handle, then convert
+ * Hydrate a shallow child UntypedNode via the tree handle, then convert
  * recursively and route through its kind's factory. Falls back to the
- * passed-in shallow NodeData when `tree` isn't available OR the child
+ * passed-in shallow UntypedNode when `tree` isn't available OR the child
  * lacks a $nodeId (factory-built children don't carry one).
  */
 ```
@@ -1599,7 +1599,7 @@ One entry of a factory map: the factory function of a kind, or, for a `constant`
 
 ```text
 // Named slots are stored as `_<name>` top-level keys
-// directly on the NodeData object (de-hoisted storage). Fall back to the
+// directly on the UntypedNode object (de-hoisted storage). Fall back to the
 // legacy `$fields` wrapper for backward compatibility with old fixtures.
 ```
 

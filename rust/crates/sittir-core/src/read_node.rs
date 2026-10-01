@@ -1,4 +1,4 @@
-//! tree-sitter `Tree` → primitive `NodeData` traversal.
+//! tree-sitter `Tree` → primitive `UntypedNode` traversal.
 //!
 //! Produces the exact one-level-deep read shape that crosses the boundary:
 //! de-hoisted `_<slot>` storage at the boundary, child stubs carrying
@@ -35,7 +35,7 @@
 //!   child a bounded read returns and a deep read's expanded children.
 //!   `None` on the returned node itself and on a deep read's leaves.
 
-use crate::types::{FieldValue, KindId, NodeData, NodeHandle, NodeTrivia, Source, Span};
+use crate::types::{FieldValue, KindId, UntypedNode, NodeHandle, NodeTrivia, Source, Span};
 use indexmap::IndexMap;
 use std::collections::BTreeMap;
 use std::num::NonZeroU32;
@@ -131,7 +131,7 @@ pub trait ReadModel {
 }
 
 /// Read a tree-sitter node (or the whole tree's root) into a primitive
-/// `NodeData`. See module docs for the shape contract.
+/// `UntypedNode`. See module docs for the shape contract.
 ///
 /// # Arguments
 ///
@@ -155,7 +155,7 @@ pub fn read_node(
     depth: ReadDepth,
     model: &dyn ReadModel,
     mint: &mut dyn HandleMint,
-) -> NodeData {
+) -> UntypedNode {
     match target {
         Some(node) => read_ts_node(node, source, node_handle, node_handle, depth, model, mint),
         None => {
@@ -182,7 +182,7 @@ pub fn read_node(
 /// stands for the whole file, and its span is what the coordinate render
 /// slices, so anything outside that range would be dropped on the way back
 /// out.
-fn widen_to_whole_source(root: &mut NodeData, source: &str) {
+fn widen_to_whole_source(root: &mut UntypedNode, source: &str) {
     root.span = Some(Span {
         start: 0,
         end: source.len() as u32,
@@ -211,7 +211,7 @@ fn identity(node: &tree_sitter::Node<'_>) -> (KindId, Option<KindId>) {
     (grammar, (display != grammar).then_some(display))
 }
 
-/// Read core — converts a tree-sitter `Node` into `NodeData`.
+/// Read core — converts a tree-sitter `Node` into `UntypedNode`.
 ///
 /// `tree_handle` is any handle this tree minted — the tag a trivia entry's
 /// coordinate carries, since a comment is never addressed on its own and so
@@ -226,9 +226,9 @@ fn read_ts_node(
     depth: ReadDepth,
     model: &dyn ReadModel,
     mint: &mut dyn HandleMint,
-) -> NodeData {
+) -> UntypedNode {
     // Phase B-inverse: numeric ids directly instead of the string kind()
-    // so NodeData.type_: KindId flows end-to-end without a heap-allocated
+    // so UntypedNode.type_: KindId flows end-to-end without a heap-allocated
     // String per node; identity comes from the grammar symbol (see
     // `stamped_kind`).
     let (kind, display_type) = identity(&node);
@@ -248,7 +248,7 @@ fn read_ts_node(
 
     let text = node_text(node, source);
 
-    NodeData {
+    UntypedNode {
         type_: kind,
         display_type,
         source: Source::Ts,
@@ -314,7 +314,7 @@ fn node_trivia(
         return None;
     }
     let entry = |extra: tree_sitter::Node<'_>, same_line: bool, tokens_between: u16| {
-        let data = NodeData {
+        let data = UntypedNode {
             handle: tree_handle.map(NodeHandle::Tree),
             ..read_ts_node(extra, source, None, tree_handle, ReadDepth::Deep, model, &mut NoMint)
         };
@@ -328,7 +328,7 @@ fn node_trivia(
                 .then(|| source.get(extra.byte_range()).map(str::to_string))
                 .flatten()
         });
-        NodeData {
+        UntypedNode {
             same_line,
             tokens_between,
             text,
@@ -362,7 +362,7 @@ fn node_trivia(
         }
     }
 
-    let mut inner: BTreeMap<String, Vec<NodeData>> = BTreeMap::new();
+    let mut inner: BTreeMap<String, Vec<UntypedNode>> = BTreeMap::new();
     let mut cursor = node.walk();
     let children: Vec<_> = node.children(&mut cursor).collect();
     if !children.iter().any(|child| is_owner(child, model)) {
@@ -387,7 +387,7 @@ fn node_trivia(
         }
     }
 
-    let some = |entries: Vec<NodeData>| (!entries.is_empty()).then_some(entries);
+    let some = |entries: Vec<UntypedNode>| (!entries.is_empty()).then_some(entries);
     let inner = (!inner.is_empty()).then_some(inner);
     if leading.is_empty() && trailing.is_empty() && inner.is_none() {
         return None;
@@ -482,8 +482,8 @@ fn extras_run<'t>(
 
 /// Walk a node's children once, partitioning by whether the child
 /// occupies a field slot. Returns `(fields, children, slot_order)` ready
-/// to drop into `NodeData` — `slot_order` is the cross-bucket interleave
-/// stamp (see `NodeData::slot_order`), present only on multi-bucket
+/// to drop into `UntypedNode` — `slot_order` is the cross-bucket interleave
+/// stamp (see `UntypedNode::slot_order`), present only on multi-bucket
 /// parents.
 ///
 /// Field-slot arity: multiple children on the same field name are
@@ -508,11 +508,11 @@ fn read_slots(
     mint: &mut dyn HandleMint,
 ) -> (
     Option<IndexMap<String, FieldValue>>,
-    Option<Vec<NodeData>>,
+    Option<Vec<UntypedNode>>,
     Option<Vec<String>>,
 ) {
-    let mut fields_acc: IndexMap<String, Vec<NodeData>> = IndexMap::new();
-    let mut children_acc: Vec<NodeData> = Vec::new();
+    let mut fields_acc: IndexMap<String, Vec<UntypedNode>> = IndexMap::new();
+    let mut children_acc: Vec<UntypedNode> = Vec::new();
     let mut slot_order_acc: Vec<String> = Vec::new();
     let parent_kind = stamped_kind(&node);
 
@@ -542,7 +542,7 @@ fn read_slots(
                     node_trivia(child, source, tree_handle, model),
                 ),
             };
-            NodeData {
+            UntypedNode {
                 trivia_data,
                 text_only: depth == ReadDepth::Deep,
                 ..read_leaf(child, source, model, handle, child_index, tree_handle)
@@ -550,13 +550,13 @@ fn read_slots(
         } else {
             match depth.below() {
                 None => stub_of(child, source, node_handle, i as u16),
-                Some(ReadDepth::Deep) => NodeData {
+                Some(ReadDepth::Deep) => UntypedNode {
                     child_index: Some(i as u16),
                     ..read_ts_node(child, source, None, tree_handle, ReadDepth::Deep, model, mint)
                 },
                 Some(below) => {
                     let handle = node_handle.and_then(|parent| mint.mint(parent, i as u16));
-                    NodeData {
+                    UntypedNode {
                         handle: None,
                         child_index: Some(i as u16),
                         ..read_ts_node(child, source, handle, tree_handle, below, model, mint)
@@ -644,10 +644,10 @@ fn stub_of(
     source: &str,
     parent_handle: Option<u64>,
     child_index: u16,
-) -> NodeData {
+) -> UntypedNode {
     let byte_range = child.byte_range();
     let (type_, display_type) = identity(&child);
-    NodeData {
+    UntypedNode {
         type_,
         display_type,
         source: Source::Ts,
@@ -683,7 +683,7 @@ fn read_leaf(
     handle: Option<NodeHandle>,
     child_index: Option<u16>,
     tree_handle: Option<u64>,
-) -> NodeData {
+) -> UntypedNode {
     let byte_range = child.byte_range();
     let (type_, display_type) = identity(&child);
     let (fields, children, slot_order) = if child.is_error() || child.child_count() == 0 {
@@ -691,7 +691,7 @@ fn read_leaf(
     } else {
         read_slots(child, source, None, tree_handle, ReadDepth::Deep, model, &mut NoMint)
     };
-    NodeData {
+    UntypedNode {
         type_,
         display_type,
         source: Source::Ts,
@@ -714,9 +714,9 @@ fn read_leaf(
 }
 
 fn assign_named_slot(
-    fields_acc: &mut IndexMap<String, Vec<NodeData>>,
+    fields_acc: &mut IndexMap<String, Vec<UntypedNode>>,
     field_name: &str,
-    data: NodeData,
+    data: UntypedNode,
 ) {
     // Grammar-agnostic: always concatenate. The reader does not know slot
     // arity, so it must NOT resolve a named/unnamed disparity here. Previously

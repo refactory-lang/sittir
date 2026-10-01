@@ -1,4 +1,4 @@
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 import type { FactoryEntry, ReadNodeLike } from '../validate/common.ts';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
@@ -37,7 +37,7 @@ interface CommonModule {
 		};
 		lang: unknown;
 	}>;
-	loadNativeRender(grammar: string): Promise<(node: AnyNodeData) => string>;
+	loadNativeRender(grammar: string): Promise<(node: AnyUntypedNode) => string>;
 	loadCorpusEntries(grammar: string): readonly { name: string; source: string }[];
 	loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined>;
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
@@ -179,7 +179,7 @@ function normalize(text: string): string {
 	return text.replace(/\s+/g, ' ').trim();
 }
 
-function hasKindTag(value: unknown): value is AnyNodeData {
+function hasKindTag(value: unknown): value is AnyUntypedNode {
 	return value !== null && typeof value === 'object' && '$type' in value;
 }
 
@@ -361,7 +361,7 @@ export async function run(opts: ExerciseOptions): Promise<number> {
 			);
 			const renderable = toRenderableNode(factoryNode);
 			if (!hasKindTag(renderable)) {
-				throw new Error('factory result did not materialize to NodeData');
+				throw new Error('factory result did not materialize to UntypedNode');
 			}
 			rendered = render(renderable);
 		} catch (error) {

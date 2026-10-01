@@ -329,7 +329,7 @@ function admitsDirectly(kinds: readonly string[], node: Printed, loose: LooseFac
 	return typeof node.$type === 'number' && kinds.some((k) => loose.kindIdOfName(k) === node.$type);
 }
 
-function buildsNodeData(kind: string, loose: LooseFacts): boolean {
+function buildsUntypedNode(kind: string, loose: LooseFacts): boolean {
 	const modelType = loose.modelTypes[kind];
 	return modelType !== 'enum' && modelType !== 'keyword' && modelType !== 'punctuation';
 }
@@ -474,7 +474,7 @@ function loosenValue(
 		inner instanceof Printed &&
 		inner.kind !== undefined &&
 		!admitsDirectly(kinds, inner, loose) &&
-		(buildsNodeData(inner.kind, loose) || !kinds.some((k) => ctx.enumKinds?.has(k)))
+		(buildsUntypedNode(inner.kind, loose) || !kinds.some((k) => ctx.enumKinds?.has(k)))
 	) {
 		const arms = branch.filter((b) => loose.bareAccepts[b]?.includes(inner.kind!));
 		if (arms.length === 1 && arms[0] === value.kind) return loosenValue(inner, kinds, defaultArm, ctx);

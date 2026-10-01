@@ -51,7 +51,7 @@ const fn = ir.functionItem({
 
 // Access via getter methods.
 fn.name(); // returns the name value (terminal-hoisted: string "main")
-fn.body(); // returns the Block NodeData
+fn.body(); // returns the Block UntypedNode
 fn.$render(); // "pub fn main() {}"
 ```
 
@@ -196,7 +196,7 @@ const sFrom = ir.structItem({
 });
 ```
 
-## 2. Render NodeData to source
+## 2. Render UntypedNode to source
 
 ```ts
 import { createEngine } from '@sittir/common';
@@ -338,7 +338,7 @@ const source = letBinding
 
 ## 6. Composition
 
-`.read()` returns NodeData, so its output is valid as a slot for another template.
+`.read()` returns UntypedNode, so its output is valid as a slot for another template.
 
 ```ts
 import { snippets, template, ir } from '@sittir/rust';
@@ -364,7 +364,7 @@ const source = snippets.implBlock
 	.render();
 ```
 
-## 7. Read source into NodeData
+## 7. Read source into UntypedNode
 
 ```ts
 import { createEngine } from '@sittir/rust';

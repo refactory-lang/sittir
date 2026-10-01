@@ -250,7 +250,7 @@ describe('engine render boundary', () => {
 					return source;
 				}
 				parseAndRead(_source: string): string {
-					return JSON.stringify({ nodeData: identifier });
+					return JSON.stringify({ untypedNode: identifier });
 				}
 				readUntypedNode(_nodeId: number): string {
 					return JSON.stringify(identifier);

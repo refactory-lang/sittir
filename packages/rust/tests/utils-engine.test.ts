@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import type { AnyNodeData, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, TriviaFacts } from '@sittir/types';
 import { createEngine } from '@sittir/common';
 import rust from '../src/index.ts';
 import { TSKindId } from '../src/types.ts';
@@ -20,7 +20,7 @@ describe('utils facade surface', () => {
 
 	it('attaches the method handles to a node made outside an engine, which cannot render', () => {
 		const plain = { $type: TSKindId.Identifier, $source: 2 as const, $named: true, $text: 'main' };
-		const node = withMethods(plain as unknown as AnyNodeData) as unknown as {
+		const node = withMethods(plain as unknown as AnyUntypedNode) as unknown as {
 			$render(): string;
 			$toEdit(start: number, end: number): unknown;
 			$replace(target: unknown): unknown;

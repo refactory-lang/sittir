@@ -105,7 +105,7 @@ The bitflag encoding of a separated list's optional flanks: the wire's `_delimit
 
 ### `packages/common/src/source.ts::Source`
 
-Where a node came from, the value of its `$source` stamp: `Ts` for a node read from a tree-sitter parse, `Sg` for the ast-grep read path, `Factory` for a node a builder made. The reader and the factories stamp it once, and an edit keeps it (`$with` and `detachCoordinate` drop only coordinates), so it records the node's origin, not whether it still holds a live tree handle. Rust's `enum Source` in sittir-core is the mirror the native renderer branches on: any non-`Factory` node renders with its tree's format. The object `satisfies` `AnyNodeData['$source']`, so the type-level `0 | 1 | 2` union stays the one declaration of the values.
+Where a node came from, the value of its `$source` stamp: `Ts` for a node read from a tree-sitter parse, `Sg` for the ast-grep read path, `Factory` for a node a builder made. The reader and the factories stamp it once, and an edit keeps it (`$with` and `detachCoordinate` drop only coordinates), so it records the node's origin, not whether it still holds a live tree handle. Rust's `enum Source` in sittir-core is the mirror the native renderer branches on: any non-`Factory` node renders with its tree's format. The object `satisfies` `AnyUntypedNode['$source']`, so the type-level `0 | 1 | 2` union stays the one declaration of the values.
 
 ### `packages/common/src/utils.ts::withMethods`
 
@@ -134,7 +134,7 @@ One member (`Node` or `Loose`) of kind `K`'s namespace in a grammar type map; `n
 ### `packages/common/src/runtime.ts::GrammarRuntime`
 
 The runtime a grammar binds, one generic signature per guard over its type map:
-- `isNode`'s kind-parameterised overload narrows to `Extract<Node, AnyNodeData>`, not `Node`: the namespaces carry keyword kinds whose `Node` is the bare id, and an id is never node data, so with the plain `Node` the predicate would contain numbers and stop narrowing ids away in every `coerceTo*` `isNode(input)` check.
+- `isNode`'s kind-parameterised overload narrows to `Extract<Node, AnyUntypedNode>`, not `Node`: the namespaces carry keyword kinds whose `Node` is the bare id, and an id is never node data, so with the plain `Node` the predicate would contain numbers and stop narrowing ids away in every `coerceTo*` `isNode(input)` check.
 - `withMethods` attaches the node methods, typed by the map's trivia union. A node built inside an engine's scope renders, edits and takes trivia through that engine; one built outside any scope carries no engine and refuses each of those.
 
 ### `packages/common/src/runtime.ts::bindRuntime`

@@ -146,7 +146,7 @@ macro_rules! napi_engine {
                     Ok(data) => {
                         let format = parsed.format().cloned();
                         let json = ::serde_json::to_string(&$crate::ParseResult {
-                            node_data: &data,
+                            untyped_node: &data,
                             format,
                             tree_id,
                         })

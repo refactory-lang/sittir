@@ -10,7 +10,7 @@
 
 import { writeSync } from 'node:fs';
 
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 import { spanSlicer, type TriviaSides } from '@sittir/common';
 import { hydrateStub, isStub, mapTriviaEntries } from '@sittir/common/utils';
 import { deriveRuleKinds } from './render-bodies.ts';
@@ -35,7 +35,7 @@ import {
 	dedupeMismatchesByContainment,
 	type TSNode,
 	type TSTree,
-	type WrappedNodeData,
+	type TypedNode,
 	type AccessorThrowRecord,
 	type ValidatorSkip,
 	loadNativeRender
@@ -337,10 +337,10 @@ export interface ReadRenderParseResult {
  * fallback for that raw shape — a standalone root render of the same entry
  * hard-fails decoding (`Missing field _content`).
  */
-export function leadingTriviaRenderedWidth(data: AnyNodeData, render: (node: AnyNodeData) => string): number {
+export function leadingTriviaRenderedWidth(data: AnyUntypedNode, render: (node: AnyUntypedNode) => string): number {
 	const leading = data.$_trivia?.leading;
 	if (!leading || leading.length === 0) return 0;
-	const stripped = { ...data, $_trivia: { ...data.$_trivia, leading: undefined } } as AnyNodeData;
+	const stripped = { ...data, $_trivia: { ...data.$_trivia, leading: undefined } } as AnyUntypedNode;
 	return render(data).length - render(stripped).length;
 }
 
@@ -452,7 +452,7 @@ export interface RenderFixture {
 	grammar: string;
 	/** The kind the fixture renders, by name. */
 	pattern: string;
-	/** NodeData input — the deep-read result from readNode, made
+	/** UntypedNode input — the deep-read result from readNode, made
 	 *  self-contained by `selfContainedRenderInput` so the engine's render
 	 *  can take it in any process. Serialized to JSON verbatim. */
 	input: unknown;
@@ -622,14 +622,14 @@ export async function validateReadRenderParse(
 			const handle = await buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
 			const candidatesByKind = new Map<
 				string,
-				{ start: number; end: number; node: WrappedNodeData; displayKind: string }[]
+				{ start: number; end: number; node: TypedNode; displayKind: string }[]
 			>();
 			if (readNode && handle.read) {
-				const wrappedRoot = readNode(handle) as WrappedNodeData;
+				const wrappedRoot = readNode(handle) as TypedNode;
 				const seen = new Set<string>();
 				walkWrappedTree(
 					wrappedRoot,
-					(w: WrappedNodeData) => {
+					(w: TypedNode) => {
 						if (w.$named === false) return;
 						const displayKind = kindNameFromId?.(w.$type);
 						const sourceKind = canonicalKindNameFromId?.(w.$type);
@@ -709,7 +709,7 @@ export async function validateReadRenderParse(
 					// Falls back to deep materialization when the wrapped node carries
 					// no native coords.
 					const treeRoot = cand.displayKind === tree1.rootNode.type;
-					let data: AnyNodeData;
+					let data: AnyUntypedNode;
 					try {
 						// `$childIndex` is undefined for a candidate that IS the tree
 						// root (nothing above it to index into) — defaulting it to 0
@@ -719,8 +719,8 @@ export async function validateReadRenderParse(
 						// deep-materialization path instead of guessing an index.
 						data =
 							recursive !== true && isStub(cand.node) && handle.read
-								? (hydrateStub(cand.node, handle) as AnyNodeData)
-								: (materializeDetached(cand.node, onAccessorThrow) as AnyNodeData);
+								? (hydrateStub(cand.node, handle) as AnyUntypedNode)
+								: (materializeDetached(cand.node, onAccessorThrow) as AnyUntypedNode);
 					} catch (e) {
 						kindErrors.push({
 							name: `${entry.name} [${kind}]`,
@@ -882,7 +882,7 @@ export async function validateReadRenderParse(
 							kindAstMatch = true;
 							if (options.onFixture) {
 								// Success path (both re-parse OK + AST match OK) —
-								// emit a render fixture (NodeData → rendered) and a
+								// emit a render fixture (UntypedNode → rendered) and a
 								// round-trip fixture (source → reparse s-exp). The
 								// data we have matches both shapes; only the shape
 								// type tag differs.
