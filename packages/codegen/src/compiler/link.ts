@@ -58,8 +58,7 @@ import type {
 	LinkedRefineForm,
 	NarrowedField,
 	DisplayUnionMember,
-	DisplayUnions,
-	RuleProvenance
+	DisplayUnions
 } from './types.ts';
 import { buildRuleCatalog, collectReferences } from './rule-catalog.ts';
 import { structureTokenInterior } from './token-interior.ts';
@@ -825,13 +824,8 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 
 	const rules: Record<string, Rule<'evaluate'>> = {};
 	for (const [name, rule] of Object.entries(raw.rules)) rules[rename(name)] = renameRule(rule);
-	const provenanceByKind = new Map<string, RuleProvenance>();
-	for (const [kind, id] of raw.ruleCatalog.rootsByKind) {
-		const provenance = raw.ruleCatalog.byId.get(id)?.provenance;
-		if (provenance !== undefined) provenanceByKind.set(rename(kind), provenance);
-	}
 	const supertypes = raw.supertypes.map(rename);
-	const identified = buildRuleCatalog(rules, { provenanceByKind, roots: supertypes, sourceKindOf: targets });
+	const identified = buildRuleCatalog(rules, { roots: supertypes, sourceKindOf: targets });
 	const renameEntry = (entry: RuleListEntry): RuleListEntry =>
 		entry.type === SYMBOL ? { ...entry, name: rename(entry.name) } : entry;
 	const references = collectReferences(identified.rules, { ruleCatalog: identified.ruleCatalog });

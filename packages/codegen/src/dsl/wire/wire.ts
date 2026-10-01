@@ -95,7 +95,6 @@ export interface WireContext {
 	readonly elementSupertypes: ReadonlyMap<string, string>;
 	activePatchSites: readonly string[];
 	readonly source: unknown;
-	readonly authorsNothing: boolean;
 	evaluatedExternals: ReadonlySet<string>;
 }
 
@@ -328,7 +327,6 @@ export function withWireContext<T>(
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
 		source: base,
-		authorsNothing: false,
 		evaluatedExternals: new Set()
 	};
 	const prev = currentContext;
@@ -500,14 +498,14 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 	base: B,
 	source: unknown = base
 ): WiredOpts {
-	return wireImpl(config as unknown as WireConfig<any>, base, source, false);
+	return wireImpl(config as unknown as WireConfig<any>, base, source);
 }
 
-export function wireWithoutConfig(name: string, base: GrammarResult, authorsNothing: boolean): WiredOpts {
-	return wireImpl({ name }, base, base, authorsNothing);
+export function wireWithoutConfig(name: string, base: GrammarResult): WiredOpts {
+	return wireImpl({ name }, base, base);
 }
 
-function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, authorsNothing: boolean): WiredOpts {
+function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOpts {
 	const baseArg = base as BaseArg | undefined;
 	const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(cfg.visibleExternals, base);
 	assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
@@ -544,7 +542,6 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, authorsN
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
 		source,
-		authorsNothing,
 		evaluatedExternals: new Set()
 	};
 

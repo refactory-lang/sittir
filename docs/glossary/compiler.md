@@ -1787,7 +1787,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  * `mutable_specifier` = `'mut'`), the target rule's literals are collected
  * and a new enum kind is synthesized in the same way.
  *
- * Synthesized rules carry provenance `'evaluate-synthesized'` so emitters
+ * Synthesized rules are recorded in `evaluateSynthesized` so emitters
  * recognize them as intentional codegen artifacts with no parser symbol.
  *
  * Deduplication: fields with identical member sets (across different parent
@@ -1798,7 +1798,6 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  *   3. Fall back: `_<firstParentKind>_<fieldName>` for the first occurrence.
  *
  * @param rules - Mutable rules map; synthesized rules are added in place.
- * @param provenanceByKind - Provenance map; entries are added for each new kind.
  */
 ```
 
@@ -1821,12 +1820,11 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  * - Its sorted member set maps to a DIFFERENT canonical name in
  *   `memberKeyToCanonicalName` (i.e., this name is not the canonical one).
  *
- * We do NOT require the rule to be in the current pass's `provenanceByKind`
+ * We do NOT require the rule to be in the current pass's `evaluateSynthesized`
  * because it may have been synthesized in an earlier pass (base grammar) and
  * carried forward through the rules-merge path.
  *
  * @param rules - Mutable rules map; superseded entries are deleted in place.
- * @param provenanceByKind - Provenance map; entries for deleted kinds are removed.
  * @param memberKeyToCanonicalName - The current pass's canonical name map.
  */
 ```
@@ -2186,9 +2184,6 @@ The two stages a departing grammar is judged against: `raw`, the upstream base b
 are evaluated with no wire config, inside the same DSL-globals scope, so the upstream is never located by package
 path.
 
-The stages differ in one fact stated here: `raw` authors nothing (`wireWithoutConfig`'s `authorsNothing`), since it
-is the upstream base with no config; `enriched` does not carry that fact.
-
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateStage`
 
 Evaluates one base a second time through `wire` with no config (only the grammar's name), and records every rule
@@ -2226,8 +2221,8 @@ grammar not built by `sittirGrammar`.
 
 A grammar as sittir's `grammar()` returns it: rules exactly as the DSL built
 them, without a rule catalog or reference list. It carries what the compile
-boundary needs to finish the grammar — `provenanceByKind` for the rule
-catalog and `protectedRuleNames` for the orphan pass — and nothing reads it as
+boundary needs to finish the grammar — `evaluateSynthesized` for kind
+prediction and `protectedRuleNames` for the orphan pass — and nothing reads it as
 compiler input except `canonicalGrammar`. It is also what an extending grammar
 receives as its base.
 
@@ -2274,7 +2269,7 @@ The grammar's `rules:` entries with a bare body, sorted.
 ```text
 /**
  * Evaluate the `renderAs:` fn from the wire context and inject the
- * resulting rule bodies into the rules map as 'evaluate-synthesized' entries.
+ * resulting rule bodies into the rules map, recording each in `evaluateSynthesized`.
  *
  * @remarks
  * Called AFTER `evaluateRulesAndInjectSynthetics` so the DSL globals are
@@ -2640,10 +2635,8 @@ Calls the grammar's `externals` callback and fills the externals sink, before an
  */
 ```
 
-Provenance: every callback's rule is recorded as an override when the grammar extends a base, and as
-grammar-authored otherwise. A wire call that authors nothing (`WireContext.authorsNothing`, the `raw` stage)
-records none: its callbacks are wire's pass-throughs over the base, so the rules keep the provenance they have
-without a callback.
+It records nothing about who authored a rule: every base rule has a wire callback, so a callback says nothing
+about authorship. That question belongs to the stages (`RuleProvenanceStage`) and to wire's own records.
 
 ### `packages/codegen/src/compiler/evaluate.ts::injectSyntheticRules`
 
@@ -3126,8 +3119,8 @@ fallback an unstamped list reports.
  * so they exist only in the codegen rule map.
  *
  * @remarks
- * The provenance is set to `'evaluate-synthesized'` on the root
- * `RuleCatalogEntry` for each synthesized rule. Emitters treat these the same
+ * Each synthesized rule's name is in `raw.evaluateSynthesized`; the result is
+ * that set limited to kinds with a catalog root. Emitters treat these the same
  * as inline-list kinds: warn and skip, never throw.
  *
  * @param raw - The evaluated grammar, which carries the rule catalog.
@@ -5659,11 +5652,9 @@ collector parameter.
 /** The rule record under evaluation (mutated by passes). */
 ```
 
-### `packages/codegen/src/compiler/evaluate.ts::provenanceByKind`
+### `packages/codegen/src/compiler/evaluate.ts::evaluateSynthesized`
 
-```text
-/** Per-kind provenance (mutated as synthetic rules are injected). */
-```
+The names of the rules this evaluation added itself, filled as each is injected.
 
 ### `packages/codegen/src/compiler/evaluate.ts::refs`
 
@@ -6231,19 +6222,13 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
  */
 ```
 
-### `packages/codegen/src/compiler/types.ts::RuleProvenance`
+### `packages/codegen/src/compiler/types.ts::RawGrammar.evaluateSynthesized`
 
-Where a rule in the catalog came from: the base grammar
-(`'grammar-authored'`), a grammar.sittir.ts override that authored or replaced
-it (`'override-authored-or-replaced'`), or evaluate's own synthesis
-(`'evaluate-synthesized'`). Set once when the rule catalog is built.
-`compiler/generate.ts`'s `collectEvaluateSynthesizedKinds` reads it to skip
-factory and wrap emission for evaluate-synthesized kinds. It is a catalog
-field, not rule metadata, so compiler code reads it directly. For a grammar
-extension (`grammar.sittir.ts`), `evaluateRuleFunctions` gives every rule the
-callback returns `'override-authored-or-replaced'` — base rules, enrich's
-mints and overridden rules alike — so in practice the value only separates
-evaluate's synthesized kinds from the rest.
+The names of the rules sittir's evaluate added itself, which tree-sitter's run of the grammar never registers: render-only rules (`renderAs:`), visible externals, wire deposits no rule callback declared, and the body-pattern-group fallback. They have no parser symbol. `canonical-rules.ts::predictKinds` leaves them out of kind prediction, and `generate.ts::collectEvaluateSynthesizedKinds` hands the ones with a catalog root to the emitters, which skip factory and wrap emission for them.
+
+It is the only authorship fact evaluate records. Who authored any other rule is answered elsewhere: `RuleProvenanceStage` (`compiler/diagnostics/diagnostic-records.ts`) says which stage first declares a rule (upstream, enrich or wire), and wire holds the authored rule names and patch sites.
+
+It is a different fact from link's `synthesizedKinds` (`link.ts`), the kinds link itself synthesizes later. The two sets answer "who synthesized this kind" for different phases and are not to be merged.
 
 ### `packages/codegen/src/compiler/types.ts::KindParserMetadata`
 

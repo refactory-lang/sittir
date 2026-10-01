@@ -14,6 +14,7 @@ function buildNodeMap(rules: Record<string, Rule<'evaluate'>>) {
 		fileTypes: [],
 		rules,
 		ruleCatalog: { byId: new Map(), rootsByKind: new Map(), classificationById: new Map() },
+		evaluateSynthesized: new Set<string>(),
 		extras: [],
 		externals: [],
 		supertypes: [],
