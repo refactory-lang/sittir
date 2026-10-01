@@ -395,11 +395,7 @@ function _buildImportList(
 }
 
 export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImport.Bound {
-	const _name = rejectBareText(
-		orDefault(config.name, () => buildDottedName()),
-		'AliasedImport.name',
-		'a built DottedName'
-	);
+	const _name = rejectBareText(config.name, 'AliasedImport.name', 'a built DottedName');
 	const _alias = rejectBareText(config.alias, 'AliasedImport.alias', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
@@ -2055,11 +2051,7 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 }
 
 export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern.Bound {
-	const _name = rejectBareText(
-		orDefault(config.name, () => buildDottedName()),
-		'ClassPattern.name',
-		'a built DottedName'
-	);
+	const _name = rejectBareText(config.name, 'ClassPattern.name', 'a built DottedName');
 	const _arguments = rejectBareText(config.arguments, 'ClassPattern.arguments', 'a built ListPatternCasePatterns');
 	return withMethods(
 		withListSlots(
@@ -4133,7 +4125,7 @@ export function buildAwait(value: AdmitBound<T.PrimaryExpression, T.AdmittedNode
 
 export function buildComment(value: AdmitBound<string, T.AdmittedNodes>): T.Comment.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildComment_content.test(_content))
+	if (!_slotRe_buildComment_content.test(_content))
 		throw new Error(`comment.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -5344,7 +5336,7 @@ export function buildIntegerHex(
 	if (_prefix !== undefined && !_slotRe_buildIntegerHex_prefix.test(_prefix))
 		throw new Error(`integer_hex.prefix: text does not match pattern: ${describeValue(_prefix)}`);
 	const _content = numberText(16, '', value);
-	if (_content !== undefined && !_slotRe_buildIntegerHex_content.test(_content))
+	if (!_slotRe_buildIntegerHex_content.test(_content))
 		throw new Error(`integer_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -5375,7 +5367,7 @@ export function buildIntegerOctal(
 	if (_prefix !== undefined && !_slotRe_buildIntegerOctal_prefix.test(_prefix))
 		throw new Error(`integer_octal.prefix: text does not match pattern: ${describeValue(_prefix)}`);
 	const _content = numberText(8, '', value);
-	if (_content !== undefined && !_slotRe_buildIntegerOctal_content.test(_content))
+	if (!_slotRe_buildIntegerOctal_content.test(_content))
 		throw new Error(`integer_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -5406,7 +5398,7 @@ export function buildIntegerBinary(
 	if (_prefix !== undefined && !_slotRe_buildIntegerBinary_prefix.test(_prefix))
 		throw new Error(`integer_binary.prefix: text does not match pattern: ${describeValue(_prefix)}`);
 	const _content = numberText(2, '', value);
-	if (_content !== undefined && !_slotRe_buildIntegerBinary_content.test(_content))
+	if (!_slotRe_buildIntegerBinary_content.test(_content))
 		throw new Error(`integer_binary.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -5473,7 +5465,7 @@ export function buildFloatPoint(
 	>
 ): T.FloatPoint.Bound {
 	const _integer = numberText(10, '', config.integer);
-	if (_integer !== undefined && !_slotRe_buildFloatPoint_integer.test(_integer))
+	if (!_slotRe_buildFloatPoint_integer.test(_integer))
 		throw new Error(`float_point.integer: text does not match pattern: ${describeValue(_integer)}`);
 	const _fraction = numberText(10, '', config.fraction);
 	if (_fraction !== undefined && !_slotRe_buildFloatPoint_fraction.test(_fraction))
@@ -5527,7 +5519,7 @@ export function buildFloatLeadingPoint(
 	if (_integer !== undefined && !_slotRe_buildFloatLeadingPoint_integer.test(_integer))
 		throw new Error(`float_leading_point.integer: text does not match pattern: ${describeValue(_integer)}`);
 	const _fraction = numberText(10, '', config.fraction);
-	if (_fraction !== undefined && !_slotRe_buildFloatLeadingPoint_fraction.test(_fraction))
+	if (!_slotRe_buildFloatLeadingPoint_fraction.test(_fraction))
 		throw new Error(`float_leading_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
 	const _marker = config.marker;
 	if (_marker !== undefined && !_slotRe_buildFloatLeadingPoint_marker.test(_marker))
@@ -5572,13 +5564,13 @@ export function buildFloatScientific(
 	config: WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
 ): T.FloatScientific.Bound {
 	const _integer = numberText(10, '', config.integer);
-	if (_integer !== undefined && !_slotRe_buildFloatScientific_integer.test(_integer))
+	if (!_slotRe_buildFloatScientific_integer.test(_integer))
 		throw new Error(`float_scientific.integer: text does not match pattern: ${describeValue(_integer)}`);
 	const _marker = config.marker;
-	if (_marker !== undefined && !_slotRe_buildFloatScientific_marker.test(_marker))
+	if (!_slotRe_buildFloatScientific_marker.test(_marker))
 		throw new Error(`float_scientific.marker: text does not match pattern: ${describeValue(_marker)}`);
 	const _exponent = numberText(10, '', config.exponent);
-	if (_exponent !== undefined && !_slotRe_buildFloatScientific_exponent.test(_exponent))
+	if (!_slotRe_buildFloatScientific_exponent.test(_exponent))
 		throw new Error(`float_scientific.exponent: text does not match pattern: ${describeValue(_exponent)}`);
 	const _imaginary = config.imaginary;
 	if (_imaginary !== undefined && !_slotRe_buildFloatScientific_imaginary.test(_imaginary))
@@ -5614,7 +5606,7 @@ export function buildEscapeSequenceUnicodeFixed(
 	value: AdmitBound<string, T.AdmittedNodes>
 ): T.EscapeSequenceUnicodeFixed.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
+	if (!_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
 		throw new Error(`escape_sequence_unicode_fixed.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -5638,7 +5630,7 @@ export function buildEscapeSequenceUnicodeWide(
 	value: AdmitBound<string, T.AdmittedNodes>
 ): T.EscapeSequenceUnicodeWide.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildEscapeSequenceUnicodeWide_content.test(_content))
+	if (!_slotRe_buildEscapeSequenceUnicodeWide_content.test(_content))
 		throw new Error(`escape_sequence_unicode_wide.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -5660,7 +5652,7 @@ export function buildEscapeSequenceUnicodeWide(
 
 export function buildEscapeSequenceHex(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequenceHex.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildEscapeSequenceHex_content.test(_content))
+	if (!_slotRe_buildEscapeSequenceHex_content.test(_content))
 		throw new Error(`escape_sequence_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -5684,7 +5676,7 @@ export function buildEscapeSequenceOctal(
 	value: AdmitBound<string | number | bigint, T.AdmittedNodes>
 ): T.EscapeSequenceOctal.Bound {
 	const _content = numberText(10, '', value);
-	if (_content !== undefined && !_slotRe_buildEscapeSequenceOctal_content.test(_content))
+	if (!_slotRe_buildEscapeSequenceOctal_content.test(_content))
 		throw new Error(`escape_sequence_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -5708,7 +5700,7 @@ export function buildEscapeSequenceLineBreak(
 	value: AdmitBound<string, T.AdmittedNodes>
 ): T.EscapeSequenceLineBreak.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildEscapeSequenceLineBreak_content.test(_content))
+	if (!_slotRe_buildEscapeSequenceLineBreak_content.test(_content))
 		throw new Error(`escape_sequence_line_break.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -5730,7 +5722,7 @@ export function buildEscapeSequenceLineBreak(
 
 export function buildEscapeSequenceSimple(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequenceSimple.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildEscapeSequenceSimple_content.test(_content))
+	if (!_slotRe_buildEscapeSequenceSimple_content.test(_content))
 		throw new Error(`escape_sequence_simple.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -5752,7 +5744,7 @@ export function buildEscapeSequenceSimple(value: AdmitBound<string, T.AdmittedNo
 
 export function buildEscapeSequenceNamed(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequenceNamed.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildEscapeSequenceNamed_content.test(_content))
+	if (!_slotRe_buildEscapeSequenceNamed_content.test(_content))
 		throw new Error(`escape_sequence_named.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(

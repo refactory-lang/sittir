@@ -47,7 +47,7 @@ export function buildProgram(...children: AdmitBound<T.Definition[], T.AdmittedN
 
 export function buildEscapeSequence(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequence.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildEscapeSequence_content.test(_content))
+	if (!_slotRe_buildEscapeSequence_content.test(_content))
 		throw new Error(`escape_sequence.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -247,7 +247,7 @@ export function buildParameters(
 
 export function buildComment(value: AdmitBound<string, T.AdmittedNodes>): T.Comment.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildComment_content.test(_content))
+	if (!_slotRe_buildComment_content.test(_content))
 		throw new Error(`comment.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -342,7 +342,7 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 	) as unknown as T.MissingNode.Bound;
 }
 
-export function buildAnonymousNode(config: Partial<T.AnonymousNode.Config> = {}): T.AnonymousNode.Bound {
+export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousNode.Bound {
 	const _name = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.AnonymousNode['_name']>>(config.name, [['_', TSKindId.Underscore] as const]),
 		'AnonymousNode.name',

@@ -624,6 +624,8 @@ type OptionalKeys<T> = {
  * from a concrete node interface. Accepts UntypedNode passthroughs, strings for
  * leaves, objects for branches. Required fields stay required; optional
  * fields stay optional. Auto-stamped fields are excluded (same as ConfigOf).
+ * A required key never admits `undefined`, even when a member kind of its slot
+ * can be built with no argument.
  *
  * @param Scalars - Map of leaf `$type` discriminant → scalar type the leaf is
  *   built from (e.g. `{ [TSKindId.IntegerLiteral]: number }`), keyed by the
@@ -688,7 +690,7 @@ type LooseConfigBody<
 	: {}) & {
 	readonly [K in keyof FieldsOf<T> as K extends RequiredKeys<FieldsOf<T>>
 		? EscapeReservedAccessor<CamelCase<K & string>>
-		: never]: WidenLooseFieldValue<T, K, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
+		: never]: Exclude<WidenLooseFieldValue<T, K, Scalars, Strings, [...Depth, 0], NsMap, Visited>, undefined>;
 } & {
 	readonly [K in keyof FieldsOf<T> as K extends OptionalKeys<FieldsOf<T>>
 		? EscapeReservedAccessor<CamelCase<K & string>>
