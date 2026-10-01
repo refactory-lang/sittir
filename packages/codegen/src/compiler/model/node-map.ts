@@ -1804,8 +1804,10 @@ export function slotFilledWhenOmitted(slot: { values: readonly NodeOrTerminal[] 
 	if (!isRequired(slot) || holdsFixedText(slot)) return true;
 	const value = soleRequiredValue(slot);
 	if (value === undefined || !isNodeRef(value)) return false;
-	const target = value.storageKindId === undefined ? undefined : ctx.nodeByKindId.get(value.storageKindId);
-	return target?.rawFactoryName !== undefined && target.argumentOptional(ctx);
+	if (value.storageKindId === undefined) return false;
+	const target = ctx.nodeByKindId.get(value.storageKindId);
+	if (target === undefined) return false;
+	return target.rawFactoryName !== undefined && target.argumentOptional(ctx);
 }
 
 export function holdsFixedText(slot: { values: readonly NodeOrTerminal[] }): boolean {

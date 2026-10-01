@@ -723,7 +723,7 @@ export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bo
 
 export function buildIdentityEscape(value: AdmitBound<string, T.AdmittedNodes>): T.IdentityEscape.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildIdentityEscape_content.test(_content))
+	if (!_slotRe_buildIdentityEscape_content.test(_content))
 		throw new Error(`identity_escape.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(

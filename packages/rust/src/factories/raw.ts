@@ -6218,7 +6218,7 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 
 export function buildShebang(value: AdmitBound<string, T.AdmittedNodes>): T.Shebang.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildShebang_content.test(_content))
+	if (!_slotRe_buildShebang_content.test(_content))
 		throw new Error(`shebang.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -6246,7 +6246,7 @@ export const buildCrate: TSKindId.Crate = TSKindId.Crate;
 
 export function buildMetavariable(value: AdmitBound<string, T.AdmittedNodes>): T.Metavariable.Bound {
 	const _name = value;
-	if (_name !== undefined && !_slotRe_buildMetavariable_name.test(_name))
+	if (!_slotRe_buildMetavariable_name.test(_name))
 		throw new Error(`metavariable.name: text does not match pattern: ${describeValue(_name)}`);
 	return withMethods(
 		withAccessors(
@@ -7915,7 +7915,7 @@ export function buildIntegerLiteralDecimal(
 	config: WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>
 ): T.IntegerLiteralDecimal.Bound {
 	const _content = numberText(10, '', config.content);
-	if (_content !== undefined && !_slotRe_buildIntegerLiteralDecimal_content.test(_content))
+	if (!_slotRe_buildIntegerLiteralDecimal_content.test(_content))
 		throw new Error(`integer_literal_decimal.content: text does not match pattern: ${describeValue(_content)}`);
 	const _suffix = config.suffix;
 	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralDecimal_suffix.test(_suffix))
@@ -7961,7 +7961,7 @@ export function buildIntegerLiteralHex(
 	config: WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>
 ): T.IntegerLiteralHex.Bound {
 	const _content = numberText(16, '0x', config.content);
-	if (_content !== undefined && !_slotRe_buildIntegerLiteralHex_content.test(_content))
+	if (!_slotRe_buildIntegerLiteralHex_content.test(_content))
 		throw new Error(`integer_literal_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const _suffix = config.suffix;
 	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralHex_suffix.test(_suffix))
@@ -8007,7 +8007,7 @@ export function buildIntegerLiteralBinary(
 	config: WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>
 ): T.IntegerLiteralBinary.Bound {
 	const _content = numberText(2, '0b', config.content);
-	if (_content !== undefined && !_slotRe_buildIntegerLiteralBinary_content.test(_content))
+	if (!_slotRe_buildIntegerLiteralBinary_content.test(_content))
 		throw new Error(`integer_literal_binary.content: text does not match pattern: ${describeValue(_content)}`);
 	const _suffix = config.suffix;
 	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralBinary_suffix.test(_suffix))
@@ -8053,7 +8053,7 @@ export function buildIntegerLiteralOctal(
 	config: WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>
 ): T.IntegerLiteralOctal.Bound {
 	const _content = numberText(8, '0o', config.content);
-	if (_content !== undefined && !_slotRe_buildIntegerLiteralOctal_content.test(_content))
+	if (!_slotRe_buildIntegerLiteralOctal_content.test(_content))
 		throw new Error(`integer_literal_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	const _suffix = config.suffix;
 	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralOctal_suffix.test(_suffix))
@@ -8098,7 +8098,7 @@ export function buildIntegerLiteralOctal(
 export function buildCharLiteralPlain(config: T.CharLiteralPlain.Config): T.CharLiteralPlain.Bound {
 	const _b = coerceBooleanKeywordStorage(config.b);
 	const _content = config.content;
-	if (_content !== undefined && !_slotRe_buildCharLiteralPlain_content.test(_content))
+	if (!_slotRe_buildCharLiteralPlain_content.test(_content))
 		throw new Error(`char_literal_plain.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -8138,7 +8138,7 @@ export function buildCharLiteralEscapedSimple(
 ): T.CharLiteralEscapedSimple.Bound {
 	const _b = coerceBooleanKeywordStorage(config.b);
 	const _content = config.content;
-	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedSimple_content.test(_content))
+	if (!_slotRe_buildCharLiteralEscapedSimple_content.test(_content))
 		throw new Error(`char_literal_escaped_simple.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -8167,7 +8167,7 @@ export function buildCharLiteralEscapedUnicodeFixed(
 ): T.CharLiteralEscapedUnicodeFixed.Bound {
 	const _b = coerceBooleanKeywordStorage(config.b);
 	const _content = config.content;
-	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedUnicodeFixed_content.test(_content))
+	if (!_slotRe_buildCharLiteralEscapedUnicodeFixed_content.test(_content))
 		throw new Error(
 			`char_literal_escaped_unicode_fixed.content: text does not match pattern: ${describeValue(_content)}`
 		);
@@ -8198,7 +8198,7 @@ export function buildCharLiteralEscapedUnicodeBraced(
 ): T.CharLiteralEscapedUnicodeBraced.Bound {
 	const _b = coerceBooleanKeywordStorage(config.b);
 	const _content = config.content;
-	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedUnicodeBraced_content.test(_content))
+	if (!_slotRe_buildCharLiteralEscapedUnicodeBraced_content.test(_content))
 		throw new Error(
 			`char_literal_escaped_unicode_braced.content: text does not match pattern: ${describeValue(_content)}`
 		);
@@ -8227,7 +8227,7 @@ export function buildCharLiteralEscapedUnicodeBraced(
 export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Config): T.CharLiteralEscapedHex.Bound {
 	const _b = coerceBooleanKeywordStorage(config.b);
 	const _content = config.content;
-	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedHex_content.test(_content))
+	if (!_slotRe_buildCharLiteralEscapedHex_content.test(_content))
 		throw new Error(`char_literal_escaped_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -8253,7 +8253,7 @@ export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Confi
 
 export function buildEscapeSequenceSimple(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequenceSimple.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildEscapeSequenceSimple_content.test(_content))
+	if (!_slotRe_buildEscapeSequenceSimple_content.test(_content))
 		throw new Error(`escape_sequence_simple.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -8277,7 +8277,7 @@ export function buildEscapeSequenceUnicodeFixed(
 	value: AdmitBound<string, T.AdmittedNodes>
 ): T.EscapeSequenceUnicodeFixed.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
+	if (!_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
 		throw new Error(`escape_sequence_unicode_fixed.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -8301,7 +8301,7 @@ export function buildEscapeSequenceUnicodeBraced(
 	value: AdmitBound<string, T.AdmittedNodes>
 ): T.EscapeSequenceUnicodeBraced.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildEscapeSequenceUnicodeBraced_content.test(_content))
+	if (!_slotRe_buildEscapeSequenceUnicodeBraced_content.test(_content))
 		throw new Error(`escape_sequence_unicode_braced.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -8323,7 +8323,7 @@ export function buildEscapeSequenceUnicodeBraced(
 
 export function buildEscapeSequenceHex(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequenceHex.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildEscapeSequenceHex_content.test(_content))
+	if (!_slotRe_buildEscapeSequenceHex_content.test(_content))
 		throw new Error(`escape_sequence_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(

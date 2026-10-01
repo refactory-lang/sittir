@@ -16625,3 +16625,7 @@ The one place a pattern guard's refusal is worded: `<label>: text does not match
 ### `packages/codegen/src/emitters/shared.ts::emptyDefaultOf`
 
 The expression that fills a required slot the caller omitted: the fixed text's discriminant, or a call of the target kind's factory. It answers only for a slot `slotFilledWhenOmitted` accepts, so a default is never emitted for a target whose own no-argument build would throw. A hidden infrastructure slot is never defaulted.
+
+### `packages/codegen/src/emitters/factories.ts::requiredUnfilled`
+
+A text slot's pattern guard in the raw builder skips `undefined` only where `undefined` is legal. A slot that is required, carried by no registered option and not filled when omitted is tested directly, so an untyped `undefined` fails the guard instead of building an empty node; the skip stays on every other guarded slot. A pattern that accepts the text `undefined` (a free-text comment, a shebang) still accepts it: the guard tests the value as text and adds no required-slot check of its own.

@@ -24,9 +24,9 @@ Merges the base ref into the current branch and resolves the one conflict class 
 
 The repository's `SyncBaseTarget`: every registered grammar's generated roots (stable or not: regex and scm have manifests too) and a `verify` that is `verifyManifestForGrammar(...).ok` and a `regenerate` that runs `gen --grammar <name> --all` in a fresh process, the way `pnpm run regen:all` does.
 
-### `packages/tools/tests/strict-required-slot-types.test.ts`
+### `packages/tools/src/scripts/required-slot-census.ts::admittingSlots`
 
-The census behind the typing rule: every config slot that is required, that no registered option carries and that `slotFilledWhenOmitted` does not accept must be a required key whose type has no `undefined` member, in the strict config, in the builder's direct-value parameter and in the loose config. A builder whose whole config is optional is held to the same rule. The one exemption class is the literal affix slots of a token-interior kind (everything in a lexed-interior kind that is not its content slot): the coercer fills them from the spelled form, which the model does not declare. The loose check compiles a probe module in memory per grammar; the model facts come from the assembled node map and the signatures from the TypeScript checker.
+The census behind the typing rule: every config slot that is required, that no registered option carries and that `slotFilledWhenOmitted` does not accept must be a required key whose type has no `undefined` member, in the strict config, in the builder's direct-value parameter and (with `includeLoose`) in the loose config. A builder whose whole config is optional is held to the same rule. The one exemption class is the literal affix slots of a token-interior kind (everything in a lexed-interior kind that is not its content slot): the coercer fills them from the spelled form, which the model does not declare. The loose check compiles a probe module in memory per grammar, which costs about 25 s for all five, so it runs as `pnpm run type-check:required-slots` (a CI step beside the type-check), and the unit test `strict-required-slot-types.test.ts` runs the strict half only.
 
 ### `packages/tools/tests/argument-optional-honesty.test.ts`
 

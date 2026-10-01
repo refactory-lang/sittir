@@ -53,6 +53,8 @@ jobs:
 
       - name: Type check
         run: pnpm run type-check
+      - name: Required-slot census (strict and loose config)
+        run: pnpm run type-check:required-slots
 
       - name: Lint generated packages (strict — zero warnings)
         run: npx oxlint -c oxlint.config.ts --deny-warnings packages/rust/src packages/typescript/src packages/python/src
