@@ -78,7 +78,7 @@ export declare class SittirEngine {
    * Hydrate one child of the node named by `handle`.
    *
    * The handle names its own tree, so a handle from a tree that has
-   * been disposed — or one never minted here — is refused rather
+   * been released — or one never minted on this thread — is refused rather
    * than answered out of whichever tree happens to be present.
    * `depth` counts the levels read, as for `parse_and_read`.
    */
@@ -100,18 +100,9 @@ export declare class SittirEngine {
   renderToFile(transport: RenderRoot, path: string, treeId?: number | undefined | null, options?: Options | undefined | null): void
   applyEdits(source: string, edits: Array<Edit>): string
   /**
-   * Drop one tree. Called from the boundary's `FinalizationRegistry`
-   * once JavaScript has collected the last node reading from it.
-   * Unknown ids are not an error — a tree can only be dropped once,
-   * and the registry has no way to know whether it already was.
+   * Free this engine's own state. The trees it parsed stay in the
+   * addon's table: they belong to whoever still names them.
    */
-  disposeTree(treeId: number): void
-  /**
-   * Number of trees still held. Diagnostics only — the boundary's
-   * disposal is driven by GC, so this is the way a test can observe
-   * that trees are actually being released.
-   */
-  get liveTreeCount(): number
   dispose(): void
 }
 
@@ -495,6 +486,14 @@ export interface DefaultTypeTransport {
   '$_edges'?: Edges
   _type: SlotValue<TypeTransport>
 }
+
+/**
+ * Drop one tree. Called from the boundary's `FinalizationRegistry`
+ * once JavaScript has collected the last object naming it.
+ * Unknown ids are not an error — a tree can only be dropped once,
+ * and the registry has no way to know whether it already was.
+ */
+export declare function disposeTree(treeId: number): void
 
 export interface DoStatementTransport {
   '$_trivia'?: TransportTrivia
@@ -1035,6 +1034,13 @@ export interface LiteralTypeTransport {
   '$_edges'?: Edges
   _content: SlotValue<LiteralTypeContentTransportSlot>
 }
+
+/**
+ * Number of trees still held on this thread. Diagnostics only — the
+ * boundary's disposal is driven by GC, so this is the way a test can
+ * observe that trees are actually being released.
+ */
+export declare function liveTreeCount(): number
 
 export interface LookupTypeTransport {
   '$_trivia'?: TransportTrivia

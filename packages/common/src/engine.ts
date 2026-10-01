@@ -68,10 +68,6 @@ export interface NativeEngineLike<TTransport = unknown> {
 	render(node: TTransport, treeId?: number, options?: object): string;
 	renderToFile?(node: TTransport, path: string, treeId?: number, options?: object): void;
 	applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
-	/** Drop one parsed tree. Driven by GC — see `treeDisposalRegistry`. */
-	disposeTree(treeId: number): void;
-	/** Trees the native engine still holds. Diagnostics only. */
-	readonly liveTreeCount: number;
 	/** The binary's compile profile (`debug` | `release`); absent on a binary that predates the getter. */
 	readonly buildProfile?: string;
 	dispose(): void;
@@ -82,6 +78,10 @@ export interface NativeModuleLike<
 	TEngine extends NativeEngineLike<TTransport> = NativeEngineLike<TTransport>
 > {
 	SittirEngine: new (options?: { format?: string; options?: object }) => TEngine;
+	/** Release one parsed tree of this language. Driven by GC — see `treeDisposalRegistry`. An id that names no tree is ignored. */
+	disposeTree(treeId: number): void;
+	/** Trees of this language still held on this thread. Diagnostics only. */
+	liveTreeCount(): number;
 }
 
 export type NativeBackendStatusLike<TModule extends NativeModuleLike = NativeModuleLike> = {
@@ -194,17 +194,14 @@ interface NativeParseResultShape {
  * the tree handle or any node wrapped against it; when the token is
  * collected, the tree is dropped.
  *
- * The engine is held weakly. A registry entry outlives its tree by
- * definition, and a strong reference here would keep the whole engine —
- * parser included — alive for as long as any entry remained unswept.
+ * No engine is held, weakly or strongly. The live trees of a language belong
+ * to its addon, so the entry carries the addon's release function: a tree is
+ * released whether the engine that parsed it is alive, disposed or collected.
  */
 const treeDisposalRegistry = new FinalizationRegistry<{
-	readonly engineRef: WeakRef<NativeEngineLike<never>>;
+	readonly release: (treeId: number) => void;
 	readonly treeId: number;
-}>(({ engineRef, treeId }) => {
-	// A collected engine has already dropped every tree it owned.
-	engineRef.deref()?.disposeTree(treeId);
-});
+}>(({ release, treeId }) => release(treeId));
 
 /**
  * Tagged-union result for `createNativeEngine` — mirrors the
@@ -302,7 +299,7 @@ export function createNativeEngine<
 						// this tree. Its collection is what releases the tree.
 						const liveToken = { treeId: parsed.treeId };
 						treeDisposalRegistry.register(liveToken, {
-							engineRef: new WeakRef(engine as NativeEngineLike<never>),
+							release: status.native.disposeTree,
 							treeId: parsed.treeId
 						});
 						return {

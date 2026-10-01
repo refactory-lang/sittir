@@ -94,7 +94,7 @@ impl fmt::Display for CoordinateError {
         match self {
             Self::UnknownTree { handle, tree_id } => write!(
                 f,
-                "handle {handle} names tree {tree_id}, which this engine does not hold (never parsed, disposed, or read by another engine)"
+                "handle {handle} names tree {tree_id}, which is not live in this language's table (never parsed on this thread, or already released)"
             ),
             Self::BadSpan { handle, detail } => write!(f, "handle {handle}: {detail}"),
         }
