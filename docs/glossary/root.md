@@ -784,6 +784,18 @@ package's `dir`, so a package outside the repo (a bootstrap in a temp directory)
 A grammar package's `.sittir/` directory: the transpiled grammar, tree-sitter's output and the persisted
 diagnostics.
 
+### `packages/codegen/src/grammars.ts::nativeBindingDir`
+
+Where a grammar's native binding is built and loaded from: `packages/<name>/native`, inside the grammar package, because that package is what ships the binaries. It holds the napi loader (`NATIVE_LOADER`), its typings (`NATIVE_TYPINGS`) and one `<nativeBinaryName>.<platform suffix>.node` per built target. The crate (`nativeCrateDir`) holds only Rust sources and the private manifest napi reads its settings from. `nativeBindingRelDir` is the same path relative to the repo root, for messages and manifests. Every reader of the binding — the build script, the emitted `backend.ts`, the generated-file manifest, the freshness and staleness checks, the pack check — takes the location from here.
+
+### `packages/codegen/src/grammars.ts::NATIVE_LOADER`
+
+The loader's file name. It is CommonJS (`.cjs`) because the grammar package is an ES module package and napi's loader is written with `require`; `backend.ts` loads it through `createRequire`.
+
+### `packages/codegen/src/grammars.ts::NATIVE_TARGETS`
+
+The targets a release ships a binary for. One list feeds the crate manifest's `napi.targets` and the release pack check, so a target cannot be declared in one and forgotten in the other.
+
 ### `packages/codegen/src/grammars.ts::sourceAliases`
 
 Vite/vitest aliases mapping each workspace package's `exports` entries (`@sittir/<pkg>` and `@sittir/<pkg>/<subpath>`) to the matching `src/` file, derived by rewriting the `import` target's `./dist/…js` to `src/…ts`. Entries whose source file does not exist are dropped. Sorted longest-first because a string alias also matches `find + '/'` prefixes.

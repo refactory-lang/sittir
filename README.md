@@ -225,9 +225,9 @@ falling back.
                  └────────────────────┼──────────────┘
                                       ▼
                        ┌────────────────────────────────┐
-                       │  @sittir/<grammar>-native       │
+                       │  @sittir/<grammar>/native       │
                        │  N-API binding (generated render)│
-                       │  rust/crates/sittir-<grammar>/  │
+                       │  built from rust/crates/sittir-* │
                        └──────────────┬───────────────────┘
                                       │  implements SittirEngineLike
                                       ▼
@@ -249,7 +249,7 @@ falling back.
 
 - **`@sittir/types`** — pure TypeScript types. Zero runtime. Owns
   `AnyUntypedNode`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>`, `Edit`,
-  `ByteRange`, `RenderContext`.
+  `StringIndexRange`, `RenderContext`.
 - **`@sittir/common`** — backend-neutral runtime. Implements
   `readUntypedNode(tree, handle?, childIndex?)` (parse-tree → `UntypedNode`),
   `applyEdits(source, edits)`, the native boundary

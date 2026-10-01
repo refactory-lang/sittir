@@ -6,6 +6,7 @@ import type { AdmitBound } from '@sittir/types';
 import {
 	withAccessors,
 	describeValue,
+	restItems,
 	admitAliasContent,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
@@ -70,7 +71,7 @@ export function buildAlternation(...children: AdmitBound<T.Term[], T.AdmittedNod
 				$source: 2 as const,
 				$named: true as const,
 				_terms,
-				$with: { terms: (...vs: T.Term[]) => buildAlternation(...vs) }
+				$with: { terms: (...vs: T.Term[]) => buildAlternation(...restItems('terms', vs)) }
 			},
 			{
 				terms: () => _terms
@@ -89,7 +90,7 @@ export function buildTerm(...children: AdmitBound<T.TermGroup[], T.AdmittedNodes
 				$source: 2 as const,
 				$named: true as const,
 				_term_group,
-				$with: { termGroups: (...vs: T.TermGroup[]) => buildTerm(...vs) }
+				$with: { termGroups: (...vs: T.TermGroup[]) => buildTerm(...restItems('termGroups', vs)) }
 			},
 			{
 				termGroups: () => _term_group
@@ -230,8 +231,8 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 						buildCharacterClass({ ...config, negation: value }),
 					leading: (value?: NonNullable<T.CharacterClass.Config>['leading']) =>
 						buildCharacterClass({ ...config, leading: value }),
-					classAtoms: (value?: NonNullable<T.CharacterClass.Config>['classAtoms']) =>
-						buildCharacterClass({ ...config, classAtoms: value }),
+					classAtoms: (...values: NonNullable<NonNullable<T.CharacterClass.Config>['classAtoms']>[number][]) =>
+						buildCharacterClass({ ...config, classAtoms: restItems('classAtoms', values) }),
 					trailing: (value?: NonNullable<T.CharacterClass.Config>['trailing']) =>
 						buildCharacterClass({ ...config, trailing: value })
 				}

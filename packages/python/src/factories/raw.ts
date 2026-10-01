@@ -7,6 +7,7 @@ import type { AdmitBound, NonEmptyArray, WidenNumeric } from '@sittir/types';
 import {
 	withAccessors,
 	describeValue,
+	restItems,
 	admitAliasContent,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
@@ -119,7 +120,7 @@ export function buildModule(...children: AdmitBound<T.Statement[], T.AdmittedNod
 				$source: 2 as const,
 				$named: true as const,
 				_statements,
-				$with: { statements: (...vs: T.Statement[]) => buildModule(...vs) }
+				$with: { statements: (...vs: T.Statement[]) => buildModule(...restItems('statements', vs)) }
 			},
 			{
 				statements: () => _statements
@@ -486,7 +487,7 @@ export function buildAssertStatement(
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				$with: { expressions: (...vs: T.Expression[]) => buildAssertStatement(...vs) }
+				$with: { expressions: (...vs: T.Expression[]) => buildAssertStatement(...restItems('expressions', vs)) }
 			},
 			{
 				expressions: () => _expression
@@ -692,7 +693,7 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 						buildIfStatement({ ...config, condition: value }),
 					consequence: (value: T.Suite) => buildIfStatement({ ...config, consequence: value }),
 					alternatives: (...values: (T.ElifClause | T.ElseClause)[]) =>
-						buildIfStatement({ ...config, alternative: values })
+						buildIfStatement({ ...config, alternative: restItems('alternatives', values) })
 				}
 			},
 			{
@@ -928,7 +929,8 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 				_finally_clause,
 				$with: {
 					body: (value: T.Suite) => buildTryStatement({ ...config, body: value }),
-					exceptClauses: (...values: T.ExceptClause[]) => buildTryStatement({ ...config, exceptClauses: values }),
+					exceptClauses: (...values: T.ExceptClause[]) =>
+						buildTryStatement({ ...config, exceptClauses: restItems('exceptClauses', values) }),
 					elseClause: (value?: T.ElseClause) => buildTryStatement({ ...config, elseClause: value }),
 					finallyClause: (value?: T.FinallyClause) => buildTryStatement({ ...config, finallyClause: value })
 				}
@@ -1289,7 +1291,7 @@ export function buildGlobalStatement(
 				$source: 2 as const,
 				$named: true as const,
 				_names,
-				$with: { names: (...vs: T.Identifier[]) => buildGlobalStatement(...vs) }
+				$with: { names: (...vs: T.Identifier[]) => buildGlobalStatement(...restItems('names', vs)) }
 			},
 			{
 				names: () => _names
@@ -1310,7 +1312,7 @@ export function buildNonlocalStatement(
 				$source: 2 as const,
 				$named: true as const,
 				_names,
-				$with: { names: (...vs: T.Identifier[]) => buildNonlocalStatement(...vs) }
+				$with: { names: (...vs: T.Identifier[]) => buildNonlocalStatement(...restItems('names', vs)) }
 			},
 			{
 				names: () => _names
@@ -1336,8 +1338,8 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 				_in_clause,
 				$with: {
 					code: (value: T.String | T.Identifier) => buildExecStatement({ ...config, code: value }),
-					inClauses: (value?: NonNullable<T.ExecStatement.Config>['inClause']) =>
-						buildExecStatement({ ...config, inClause: value })
+					inClauses: (...values: NonNullable<NonNullable<T.ExecStatement.Config>['inClause']>[number][]) =>
+						buildExecStatement({ ...config, inClause: restItems('inClauses', values) })
 				}
 			},
 			{
@@ -1583,7 +1585,7 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 				_definition,
 				$with: {
 					decorators: (...values: NonEmptyArray<T.Decorator>) =>
-						buildDecoratedDefinition({ ...config, decorator: values }),
+						buildDecoratedDefinition({ ...config, decorator: restItems('decorators', values) }),
 					definition: (value: T.ClassDefinition | T.FunctionDefinition) =>
 						buildDecoratedDefinition({ ...config, definition: value })
 				}
@@ -1629,7 +1631,7 @@ export function buildBlock(...children: AdmitBound<T.Statement[], T.AdmittedNode
 				$source: 2 as const,
 				$named: true as const,
 				_statements,
-				$with: { statements: (...vs: T.Statement[]) => buildBlock(...vs) }
+				$with: { statements: (...vs: T.Statement[]) => buildBlock(...restItems('statements', vs)) }
 			},
 			{
 				statements: () => _statements
@@ -1692,7 +1694,7 @@ export function buildDottedName(...children: AdmitBound<T.Identifier[], T.Admitt
 				$source: 2 as const,
 				$named: true as const,
 				_names,
-				$with: { names: (...vs: T.Identifier[]) => buildDottedName(...vs) }
+				$with: { names: (...vs: T.Identifier[]) => buildDottedName(...restItems('names', vs)) }
 			},
 			{
 				names: () => _names
@@ -1872,7 +1874,7 @@ export function buildUnionPattern(
 								| T.DottedName
 								| TSKindId.WildcardPattern
 							)[]
-						) => buildUnionPattern(...vs)
+						) => buildUnionPattern(...restItems('patterns', vs))
 					}
 				},
 				{
@@ -2745,7 +2747,7 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 						left: (value: NonNullable<T.ComparisonOperator.Config>['left']) =>
 							buildComparisonOperator({ ...config, left: value }),
 						comparators: (...values: NonEmptyArray<T.ComparisonOperatorComparator>) =>
-							buildComparisonOperator({ ...config, comparators: values })
+							buildComparisonOperator({ ...config, comparators: restItems('comparators', values) })
 					}
 				},
 				{
@@ -3839,7 +3841,8 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bo
 					asyncMarker: (value?: NonNullable<T.ForInClause.Config>['asyncMarker']) =>
 						buildForInClause({ ...config, asyncMarker: value }),
 					left: (value: T.Pattern | T.PatternList) => buildForInClause({ ...config, left: value }),
-					rights: (value: NonNullable<T.ForInClause.Config>['right']) => buildForInClause({ ...config, right: value }),
+					rights: (...values: NonEmptyArray<NonNullable<NonNullable<T.ForInClause.Config>['right']>[number]>) =>
+						buildForInClause({ ...config, right: restItems('rights', values) }),
 					comma: (value?: NonNullable<T.ForInClause.Config>['comma']) => buildForInClause({ ...config, comma: value })
 				}
 			},
@@ -3932,7 +3935,7 @@ export function buildConcatenatedString(
 				$source: 2 as const,
 				$named: true as const,
 				_string,
-				$with: { strings: (...vs: T.String[]) => buildConcatenatedString(...vs) }
+				$with: { strings: (...vs: T.String[]) => buildConcatenatedString(...restItems('strings', vs)) }
 			},
 			{
 				strings: () => _string
@@ -3956,7 +3959,8 @@ export function buildString(config: T.String.Config): T.String.Bound {
 				_string_end,
 				$with: {
 					stringStart: (value: T.StringStart) => buildString({ ...config, stringStart: value }),
-					contents: (...values: (T.Interpolation | T.StringContent)[]) => buildString({ ...config, content: values }),
+					contents: (...values: (T.Interpolation | T.StringContent)[]) =>
+						buildString({ ...config, content: restItems('contents', values) }),
 					stringEnd: (value: T.StringEnd) => buildString({ ...config, stringEnd: value })
 				}
 			},
@@ -3990,7 +3994,7 @@ export function buildStringContent(
 				$with: {
 					contents: (
 						...vs: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment)[]
-					) => buildStringContent(...vs)
+					) => buildStringContent(...restItems('contents', vs))
 				}
 			},
 			{
@@ -4064,7 +4068,7 @@ export function buildFormatSpecifier(
 				_elements,
 				$with: {
 					elements: (...vs: ((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[]) =>
-						buildFormatSpecifier(...vs)
+						buildFormatSpecifier(...restItems('elements', vs))
 				}
 			},
 			{
@@ -5327,7 +5331,9 @@ export function buildComprehensionClauses(
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { contents: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...vs) }
+				$with: {
+					contents: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...restItems('contents', vs))
+				}
 			},
 			{
 				contents: () => _content
@@ -5823,7 +5829,7 @@ export function buildExceptClauseExceptionList(
 				$source: 2 as const,
 				$named: true as const,
 				_value,
-				$with: { values: (...vs: T.Expression[]) => buildExceptClauseExceptionList(...vs) }
+				$with: { values: (...vs: T.Expression[]) => buildExceptClauseExceptionList(...restItems('values', vs)) }
 			},
 			{
 				values: () => _value
@@ -6131,7 +6137,7 @@ export function buildMatchBlockBlock(
 				$source: 2 as const,
 				$named: true as const,
 				_alternative,
-				$with: { alternatives: (...vs: T.CaseClause[]) => buildMatchBlockBlock(...vs) }
+				$with: { alternatives: (...vs: T.CaseClause[]) => buildMatchBlockBlock(...restItems('alternatives', vs)) }
 			},
 			{
 				alternatives: () => _alternative
