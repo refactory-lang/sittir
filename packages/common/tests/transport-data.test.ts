@@ -248,3 +248,32 @@ describe('detachCoordinates', () => {
 		expect(detachCoordinates(edited)).toEqual({ $type: 118, _content: 'b' });
 	});
 });
+
+describe('the tree token a parsed object holds', () => {
+	const token = Object.freeze({ treeId: 4 });
+
+	it('does not cross: a folded coordinate, a rebuilt node and a kept leaf all drop it', () => {
+		const folded = { $type: 5, $span: { start: 1, end: 2 }, $handle: 9, $tree: token };
+		expect(toTransportData(folded as never)).toEqual({ $type: 5, $span: { start: 1, end: 2 }, $treeHandle: 9 });
+		const rebuilt = { $type: 1, $tree: token, _child: { $type: 5, $text: 'x', $tree: token } };
+		expect(toTransportData(rebuilt as never)).toEqual({ $type: 1, _child: { $type: 5, $text: 'x' } });
+	});
+
+	it('is detached with the coordinate by an edit', () => {
+		expect(markEdited({ $type: 1, $handle: 2, $span: { start: 0, end: 1 }, $tree: token, _a: 1 })).toEqual({
+			$type: 1,
+			_a: 1
+		});
+	});
+
+	it('is removed from transport data detached in place', () => {
+		const leaf = { $type: 5, $text: 'x', $span: { start: 1, end: 2 }, $treeHandle: 9, $tree: token };
+		expect(detachCoordinates({ ...leaf })).toEqual({
+			$type: 5,
+			$text: 'x',
+			$span: { start: 1, end: 2 },
+			$treeHandle: 9,
+			$textOnly: true
+		});
+	});
+});

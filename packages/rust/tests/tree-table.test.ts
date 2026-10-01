@@ -2,6 +2,8 @@
 // addon and not by an engine: every engine of the language resolves every
 // tree, a tree outlives the engine that parsed it, and release is a function
 // of the addon.
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { getActiveBackend } from '../src/backend.js';
 
@@ -54,4 +56,23 @@ describe('the live tree table of a language', () => {
 		native.disposeTree(id);
 		expect(native.liveTreeCount()).toBe(held - 1);
 	});
+
+	it('keeps a tree while a parsed object names it and releases it after', () => {
+		// A collection can only be forced under `--expose-gc`, so the cases
+		// run in a child process that reports what the addon still holds.
+		const fixture = fileURLToPath(new URL('../../common/tests/fixtures/tree-release.mts', import.meta.url));
+		const out = execFileSync(process.execPath, ['--expose-gc', '--import', 'tsx', fixture], {
+			cwd: fileURLToPath(new URL('..', import.meta.url)),
+			encoding: 'utf8',
+			env: { ...process.env, SITTIR_BACKEND: 'native' }
+		});
+		expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({
+			before: 'g + y',
+			heldCount: 1,
+			after: 'g + y',
+			droppedCount: 1,
+			orphanCount: 2,
+			afterOrphanCount: 1
+		});
+	}, 60_000);
 });

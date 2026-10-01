@@ -6,7 +6,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 export const HANDLE_KEYS = ['$handle', '$parentHandle', '$treeHandle'] as const;
 
-const COORDINATE_KEYS = [...HANDLE_KEYS, '$span', '$childIndex', '$textOnly'] as const;
+/** The member a parsed object holds its tree's token under, which keeps the tree its handle names live. */
+export const TREE_KEY = '$tree';
+
+const COORDINATE_KEYS = [...HANDLE_KEYS, '$span', '$childIndex', '$textOnly', TREE_KEY] as const;
 
 /**
  * The tree a node's handle names, whichever handle it carries: every handle is
@@ -127,6 +130,7 @@ export function markEdited<T extends object>(data: T): Omit<T, (typeof COORDINAT
 		$span: _span,
 		$childIndex: _index,
 		$textOnly: _textOnly,
+		$tree: _tree,
 		...rest
 	} = data as T & Record<(typeof COORDINATE_KEYS)[number], unknown>;
 	return rest;
@@ -178,6 +182,7 @@ function toTransportValue(value: unknown): unknown {
 	for (const key of HANDLE_KEYS) delete out[key];
 	delete out.$childIndex;
 	delete out.$textOnly;
+	delete out[TREE_KEY];
 	if (holdsSlots(out)) {
 		delete out.$text;
 		delete out.$span;
@@ -203,6 +208,7 @@ export function detachCoordinates<T>(root: T): T {
 			delete value.$text;
 			for (const key of COORDINATE_KEYS) delete value[key];
 		}
+		delete value[TREE_KEY];
 		const tree = treeHandleOf(value);
 		if (tree !== undefined) {
 			delete value.$handle;

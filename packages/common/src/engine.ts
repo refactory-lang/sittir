@@ -14,7 +14,7 @@ import type {
 	Rendered
 } from '@sittir/types';
 import type { TreeHandle } from './readUntypedNode.ts';
-import { toTransportData } from './transport-data.ts';
+import { isStorageKey, toTransportData, TREE_KEY } from './transport-data.ts';
 
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
@@ -190,9 +190,10 @@ interface NativeParseResultShape {
  * unhydrated child holds a handle the native side must still be able to
  * answer. Nothing on the JS side knows when the last of those handles is
  * gone — but the garbage collector does. Each tree gets a token that its
- * `read` closure captures, so the token stays reachable exactly as long as
- * the tree handle or any node wrapped against it; when the token is
- * collected, the tree is dropped.
+ * `read` closure captures and that every parsed object a read returns holds
+ * (`holdTree`), so the token stays reachable exactly as long as the tree
+ * handle or any object naming the tree; when the token is collected, the
+ * tree is dropped.
  *
  * No engine is held, weakly or strongly. The live trees of a language belong
  * to its addon, so the entry carries the addon's release function: a tree is
@@ -202,6 +203,35 @@ const treeDisposalRegistry = new FinalizationRegistry<{
 	readonly release: (treeId: number) => void;
 	readonly treeId: number;
 }>(({ release, treeId }) => release(treeId));
+
+/** What a parsed object holds to keep its tree live: one per tree, shared by every object read from it. */
+export interface TreeToken {
+	readonly treeId: number;
+}
+
+/**
+ * Give every parsed object under `value` the tree's token. A coordinate is a
+ * number, which keeps nothing alive: a leaf is plain data, and once a built
+ * node is all that holds it, nothing else of its tree is reachable. The
+ * token is an ordinary enumerable member, so a spread copy of the object
+ * keeps the tree as well.
+ */
+function holdTree(value: unknown, token: TreeToken): void {
+	if (Array.isArray(value)) {
+		for (const entry of value) holdTree(entry, token);
+		return;
+	}
+	if (value === null || typeof value !== 'object') return;
+	const record = value as Record<string, unknown>;
+	if (typeof record.$type === 'number') record[TREE_KEY] = token;
+	for (const key in record) {
+		if (isStorageKey(key)) holdTree(record[key], token);
+	}
+	const trivia = record.$_trivia;
+	if (trivia !== null && typeof trivia === 'object') {
+		for (const entries of Object.values(trivia)) holdTree(entries, token);
+	}
+}
 
 /**
  * Tagged-union result for `createNativeEngine` — mirrors the
@@ -294,10 +324,12 @@ export function createNativeEngine<
 						// One root per depth: the parse's own read seeds it, and a
 						// root asked for at another depth is read natively once.
 						const roots = new Map<number, AnyUntypedNode>([[depthOf(parseOptions) ?? 1, root]]);
-						// Captured by `read` below and by nothing else, so it stays
-						// reachable exactly as long as something can still read from
-						// this tree. Its collection is what releases the tree.
-						const liveToken = { treeId: parsed.treeId };
+						// Held by `read` below and by every parsed object a read
+						// returns, so it stays reachable exactly as long as
+						// something can still read from this tree or names it.
+						// Its collection is what releases the tree.
+						const liveToken: TreeToken = Object.freeze({ treeId: parsed.treeId });
+						holdTree(root, liveToken);
 						treeDisposalRegistry.register(liveToken, {
 							release: status.native.disposeTree,
 							treeId: parsed.treeId
@@ -310,22 +342,19 @@ export function createNativeEngine<
 								},
 								source,
 								read: (handle, childIndex, depth) => {
-									// Handles name their own tree, so this needs no tree
-									// argument — but it must keep `liveToken` reachable,
-									// or the tree behind those handles can be collected
-									// while they are still in use.
-									void liveToken;
 									if (handle === undefined) {
 										const levels = depth ?? 1;
 										let cached = roots.get(levels);
 										if (cached === undefined) {
 											cached = JSON.parse(engine.readRoot(parsed.treeId, depth)) as AnyUntypedNode;
+											holdTree(cached, liveToken);
 											roots.set(levels, cached);
 										}
 										return cached;
 									}
-									const nodeJson = engine.readUntypedNode(handle, childIndex ?? 0, depth);
-									return JSON.parse(nodeJson) as AnyUntypedNode;
+									const node = JSON.parse(engine.readUntypedNode(handle, childIndex ?? 0, depth)) as AnyUntypedNode;
+									holdTree(node, liveToken);
+									return node;
 								},
 								format: parsed.format
 							} satisfies TreeHandle

@@ -114,7 +114,7 @@ function namedChildKinds(node: TSNode): string[] {
  * independently-constructed factory node and the node a real parse+read
  * produced. Never part of the structural comparison.
  */
-const IGNORED_NODE_KEYS = new Set(['$handle', '$parentHandle', '$treeHandle', '$childIndex', '$span', '$source', '$named', '$with', '$variant']);
+const IGNORED_NODE_KEYS = new Set(['$handle', '$parentHandle', '$treeHandle', '$childIndex', '$span', '$source', '$named', '$with', '$variant', '$tree']);
 
 function isComparableNode(v: unknown): v is Record<string, unknown> {
 	return typeof v === 'object' && v !== null && '$type' in (v as Record<string, unknown>);

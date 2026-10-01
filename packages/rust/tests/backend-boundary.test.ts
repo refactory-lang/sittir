@@ -269,7 +269,8 @@ describe('engine render boundary', () => {
 
 		// The native engine behind the descriptor reads raw node data
 		const { root } = (await descriptor.load()).createNative().parseAndRead('x');
-		expect(root).toEqual(identifier);
+		// plus the token that keeps the root's tree live while the root is held.
+		expect(root).toEqual({ ...identifier, $tree: expect.any(Object) });
 	});
 
 	it('falls back when native render transport ABI is stale', async () => {
