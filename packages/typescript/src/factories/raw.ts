@@ -103,7 +103,7 @@ export function buildProgram(config: Partial<T.Program.Config> = {}): T.Program.
 
 export function buildHashBangLine(value: AdmitBound<string, T.AdmittedNodes>): T.HashBangLine.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildHashBangLine_content.test(_content))
+	if (!_slotRe_buildHashBangLine_content.test(_content))
 		throw new Error(`hash_bang_line.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -1994,7 +1994,7 @@ export function buildClassHeritage(
 	) as unknown as T.ClassHeritage.Bound;
 }
 
-export function buildFunctionExpression(config: T.FunctionExpression.Config): T.FunctionExpression.Bound {
+export function buildFunctionExpression(config: Partial<T.FunctionExpression.Config> = {}): T.FunctionExpression.Bound {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _name = rejectBareText(config.name, 'FunctionExpression.name', 'buildIdentifier(…)');
 	const _type_parameters = rejectBareText(
@@ -2128,7 +2128,7 @@ export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): 
 	) as unknown as T.FunctionDeclaration.Bound;
 }
 
-export function buildGeneratorFunction(config: T.GeneratorFunction.Config): T.GeneratorFunction.Bound {
+export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Config> = {}): T.GeneratorFunction.Bound {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _name = rejectBareText(config.name, 'GeneratorFunction.name', 'buildIdentifier(…)');
 	const _type_parameters = rejectBareText(
@@ -2970,7 +2970,7 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 
 export function buildEscapeSequence(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequence.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildEscapeSequence_content.test(_content))
+	if (!_slotRe_buildEscapeSequence_content.test(_content))
 		throw new Error(`escape_sequence.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -3103,7 +3103,7 @@ export function buildPrivatePropertyIdentifier(
 	value: AdmitBound<string, T.AdmittedNodes>
 ): T.PrivatePropertyIdentifier.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildPrivatePropertyIdentifier_content.test(_content))
+	if (!_slotRe_buildPrivatePropertyIdentifier_content.test(_content))
 		throw new Error(`private_property_identifier.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -8126,7 +8126,7 @@ export function buildExportStatementEqualsExport(
 
 export function buildCommentLine(value: AdmitBound<string, T.AdmittedNodes>): T.CommentLine.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildCommentLine_content.test(_content))
+	if (!_slotRe_buildCommentLine_content.test(_content))
 		throw new Error(`comment_line.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -8148,7 +8148,7 @@ export function buildCommentLine(value: AdmitBound<string, T.AdmittedNodes>): T.
 
 export function buildCommentBlock(value: AdmitBound<string, T.AdmittedNodes>): T.CommentBlock.Bound {
 	const _content = value;
-	if (_content !== undefined && !_slotRe_buildCommentBlock_content.test(_content))
+	if (!_slotRe_buildCommentBlock_content.test(_content))
 		throw new Error(`comment_block.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -8206,7 +8206,7 @@ export function buildNumberHex(
 	if (_prefix !== undefined && !_slotRe_buildNumberHex_prefix.test(_prefix))
 		throw new Error(`number_hex.prefix: text does not match pattern: ${describeValue(_prefix)}`);
 	const _content = numberText(16, '', value);
-	if (_content !== undefined && !_slotRe_buildNumberHex_content.test(_content))
+	if (!_slotRe_buildNumberHex_content.test(_content))
 		throw new Error(`number_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -8237,7 +8237,7 @@ export function buildNumberFloatPoint(
 	options?: T.NumberFloatPoint.Options
 ): T.NumberFloatPoint.Bound {
 	const _integer = numberText(10, '', config.integer);
-	if (_integer !== undefined && !_slotRe_buildNumberFloatPoint_integer.test(_integer))
+	if (!_slotRe_buildNumberFloatPoint_integer.test(_integer))
 		throw new Error(`number_float_point.integer: text does not match pattern: ${describeValue(_integer)}`);
 	const _fraction = numberText(10, '', config.fraction);
 	if (_fraction !== undefined && !_slotRe_buildNumberFloatPoint_fraction.test(_fraction))
@@ -8288,7 +8288,7 @@ export function buildNumberFloatLeadingPoint(
 	options?: T.NumberFloatLeadingPoint.Options
 ): T.NumberFloatLeadingPoint.Bound {
 	const _fraction = numberText(10, '', config.fraction);
-	if (_fraction !== undefined && !_slotRe_buildNumberFloatLeadingPoint_fraction.test(_fraction))
+	if (!_slotRe_buildNumberFloatLeadingPoint_fraction.test(_fraction))
 		throw new Error(`number_float_leading_point.fraction: text does not match pattern: ${describeValue(_fraction)}`);
 	const _marker = config.sign !== undefined || config.exponent !== undefined ? (options?.marker ?? 'e') : undefined;
 	if (_marker !== undefined && !_slotRe_buildNumberFloatLeadingPoint_marker.test(_marker))
@@ -8333,7 +8333,7 @@ export function buildNumberFloatScientific(
 	options?: T.NumberFloatScientific.Options
 ): T.NumberFloatScientific.Bound {
 	const _integer = numberText(10, '', config.integer);
-	if (_integer !== undefined && !_slotRe_buildNumberFloatScientific_integer.test(_integer))
+	if (!_slotRe_buildNumberFloatScientific_integer.test(_integer))
 		throw new Error(`number_float_scientific.integer: text does not match pattern: ${describeValue(_integer)}`);
 	const _marker = options?.marker ?? 'e';
 	if (_marker !== undefined && !_slotRe_buildNumberFloatScientific_marker.test(_marker))
@@ -8342,7 +8342,7 @@ export function buildNumberFloatScientific(
 	if (_sign !== undefined && !_slotRe_buildNumberFloatScientific_sign.test(_sign))
 		throw new Error(`number_float_scientific.sign: text does not match pattern: ${describeValue(_sign)}`);
 	const _exponent = numberText(10, '', config.exponent);
-	if (_exponent !== undefined && !_slotRe_buildNumberFloatScientific_exponent.test(_exponent))
+	if (!_slotRe_buildNumberFloatScientific_exponent.test(_exponent))
 		throw new Error(`number_float_scientific.exponent: text does not match pattern: ${describeValue(_exponent)}`);
 	return withMethods(
 		withAccessors(
@@ -8394,7 +8394,7 @@ export function buildNumberBinary(
 	if (_prefix !== undefined && !_slotRe_buildNumberBinary_prefix.test(_prefix))
 		throw new Error(`number_binary.prefix: text does not match pattern: ${describeValue(_prefix)}`);
 	const _content = numberText(2, '', value);
-	if (_content !== undefined && !_slotRe_buildNumberBinary_content.test(_content))
+	if (!_slotRe_buildNumberBinary_content.test(_content))
 		throw new Error(`number_binary.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -8425,7 +8425,7 @@ export function buildNumberOctal(
 	if (_prefix !== undefined && !_slotRe_buildNumberOctal_prefix.test(_prefix))
 		throw new Error(`number_octal.prefix: text does not match pattern: ${describeValue(_prefix)}`);
 	const _content = numberText(8, '', value);
-	if (_content !== undefined && !_slotRe_buildNumberOctal_content.test(_content))
+	if (!_slotRe_buildNumberOctal_content.test(_content))
 		throw new Error(`number_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -8452,7 +8452,7 @@ export function buildNumberBigintHex(
 	value: AdmitBound<string | number | bigint, T.AdmittedNodes>
 ): T.NumberBigintHex.Bound {
 	const _content = numberText(16, '0x', value);
-	if (_content !== undefined && !_slotRe_buildNumberBigintHex_content.test(_content))
+	if (!_slotRe_buildNumberBigintHex_content.test(_content))
 		throw new Error(`number_bigint_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -8476,7 +8476,7 @@ export function buildNumberBigintBinary(
 	value: AdmitBound<string | number | bigint, T.AdmittedNodes>
 ): T.NumberBigintBinary.Bound {
 	const _content = numberText(2, '0b', value);
-	if (_content !== undefined && !_slotRe_buildNumberBigintBinary_content.test(_content))
+	if (!_slotRe_buildNumberBigintBinary_content.test(_content))
 		throw new Error(`number_bigint_binary.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -8500,7 +8500,7 @@ export function buildNumberBigintOctal(
 	value: AdmitBound<string | number | bigint, T.AdmittedNodes>
 ): T.NumberBigintOctal.Bound {
 	const _content = numberText(8, '0o', value);
-	if (_content !== undefined && !_slotRe_buildNumberBigintOctal_content.test(_content))
+	if (!_slotRe_buildNumberBigintOctal_content.test(_content))
 		throw new Error(`number_bigint_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -8524,7 +8524,7 @@ export function buildNumberBigintDecimal(
 	value: AdmitBound<string | number | bigint, T.AdmittedNodes>
 ): T.NumberBigintDecimal.Bound {
 	const _content = numberText(10, '', value);
-	if (_content !== undefined && !_slotRe_buildNumberBigintDecimal_content.test(_content))
+	if (!_slotRe_buildNumberBigintDecimal_content.test(_content))
 		throw new Error(`number_bigint_decimal.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
@@ -9459,7 +9459,7 @@ export function buildClassHeritageExtendsClause(
 	config: T.ClassHeritageExtendsClause.Config
 ): T.ClassHeritageExtendsClause.Bound {
 	const _extends_clause = rejectBareText(
-		orDefault(config.extendsClause, () => buildExtendsClause()),
+		config.extendsClause,
 		'ClassHeritageExtendsClause.extendsClause',
 		'a built ExtendsClause'
 	);

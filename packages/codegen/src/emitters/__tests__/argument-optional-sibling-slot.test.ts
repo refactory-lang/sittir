@@ -52,7 +52,7 @@ function makeNodeMap() {
 		['async_block', asyncBlock]
 	]);
 	const nodeMap = makeNodeMapWith(nodes);
-	return { ...nodeMap, nodeByKindId: new Map([[1, block]]) };
+	return { ...nodeMap, nodeByKindId: new Map<number, AssembledNode>([[1, block], [2, asyncBlock]]) };
 }
 
 describe('an optional sibling slot does not block a required forwarding slot from taking no argument', () => {
