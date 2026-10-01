@@ -17,12 +17,21 @@ rust-version = "1.88"
 license = "MIT"
 repository = "https://github.com/refactory-lang/sittir"
 
-# A cdylib built with cargo's release default `strip = "debuginfo"` and the
-# explicit `--target` that `napi build --platform` passes comes out with a
-# "mis-aligned LINKEDIT string pool" on current macOS, and dyld refuses to load
-# it. Keeping symbols costs ~4% binary size and loads everywhere.
+# A cdylib built with cargo's own stripping (`strip = "debuginfo"` or
+# `"symbols"`) and the explicit `--target` that `napi build --platform` passes
+# comes out with a "mis-aligned LINKEDIT string pool" on current macOS, and
+# dyld refuses to load it. So cargo strips nothing here and
+# `scripts/build-native.mts` strips a release binding after the build: on
+# macOS with `strip -x` and an ad-hoc re-sign, elsewhere by turning cargo's
+# symbol stripping on for that one build.
+#
+# Fat LTO over a single codegen unit is for size: the bindings ship inside the
+# grammar packages, and whole-program optimization drops what the per-crate
+# units keep. It costs build time, not render speed.
 [profile.release]
 strip = "none"
+lto = "fat"
+codegen-units = 1
 
 # Centralise common dependency versions so core + render + napi stay
 # aligned. Per-crate `Cargo.toml` files pull these via

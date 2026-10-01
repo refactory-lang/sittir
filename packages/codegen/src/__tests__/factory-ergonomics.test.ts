@@ -77,13 +77,12 @@ describe('factory ergonomics', () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/raw.ts'), 'utf-8');
-			// $with.identifier setter should call buildLabel(value) not buildLabel({...config, identifier: value})
-			// Find the label factory implementation and check its $with block
+			// The setter of a forwarding factory calls the direct builder with the value, so it stores the
+			// slot type only: neither the config-spread form nor the dispatcher that builds the target.
 			const labelMatch = content.match(/function _buildLabel\(value[\s\S]*?\n\}/);
 			expect(labelMatch).not.toBeNull();
 			const labelBody = labelMatch![0];
-			// The setter calls buildLabel(value) directly
-			expect(labelBody).toMatch(/=> buildLabel\(value\)/);
+			expect(labelBody).toMatch(/=> _buildLabel\(value\)/);
 			// Not the config-spread form
 			expect(labelBody).not.toMatch(/\.\.\.\s*config/);
 		});

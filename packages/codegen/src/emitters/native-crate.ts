@@ -1,4 +1,4 @@
-import { grammarDisplayName, type GrammarName } from '../grammars.ts';
+import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, type GrammarName } from '../grammars.ts';
 
 export const NATIVE_RENDER_TRANSPORT_ABI = 7;
 
@@ -121,6 +121,7 @@ fn rerun_if_changed_with_includes(
 			path: 'package.json',
 			contents: json({
 				name: `sittir-${v.name}`,
+				private: true,
 				version: '0.1.0',
 				description: `Grammar-local Rust / napi-rs engine for @sittir/${v.name}.`,
 				keywords: ['n-api', 'napi', 'native', v.name, 'sittir', 'tree-sitter'].sort(),
@@ -132,29 +133,15 @@ fn rerun_if_changed_with_includes(
 					url: 'https://github.com/refactory-lang/sittir.git',
 					directory: `rust/crates/sittir-${v.name}`
 				},
-				files: ['index.js', 'index.d.ts'],
-				main: 'index.js',
-				types: 'index.d.ts',
 				scripts: {
-					artifacts: 'napi artifacts',
-					build: 'napi build --platform --release',
-					'build:debug': 'napi build --platform',
-					prepublishOnly: 'napi prepublish -t npm'
+					build: `tsx ../../../scripts/build-native.mts ${v.name} --release`,
+					'build:debug': `tsx ../../../scripts/build-native.mts ${v.name}`
 				},
 				devDependencies: { '@napi-rs/cli': '^3.0.0' },
 				napi: {
-					binaryName: `sittir-${v.name}`,
+					binaryName: nativeBinaryName(v.name),
 					packageName: `sittir-${v.name}`,
-					targets: [
-						'x86_64-apple-darwin',
-						'aarch64-apple-darwin',
-						'x86_64-unknown-linux-gnu',
-						'x86_64-unknown-linux-musl',
-						'aarch64-unknown-linux-gnu',
-						'aarch64-unknown-linux-musl',
-						'x86_64-pc-windows-msvc',
-						'aarch64-pc-windows-msvc'
-					]
+					targets: [...NATIVE_TARGETS]
 				},
 				engines: { node: '>=20.0.0' }
 			})

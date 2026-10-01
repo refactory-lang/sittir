@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, ByteRange, Edit, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaSetter } from './core-types.ts';
+import type { AnyUntypedNode, StringIndexRange, Edit, FormatRecord, GrammarTriviaEntry, RenderCallOptions, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 
 export interface TriviaFacts {
@@ -40,8 +40,16 @@ export interface GrammarTypeMap {
 
 export interface NodeMethods<Trivia = any> {
 	$render(): string;
-	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
-	$replace(target: { range(): ByteRange }): Edit;
+	/**
+	 * An Edit replacing a range with this node's rendered text: byte offsets as
+	 * two numbers, or a range. A range's `index` is a string index (UTF-16 code units, as ast-grep reports it) while an `Edit` counts bytes, so the edit lands in the wrong place when non-ASCII text precedes the range.
+	 */
+	$toEdit(startOrRange: number | StringIndexRange, endPos?: number): Edit;
+	/**
+	 * An Edit replacing the target's range with this node's rendered text.
+	 * A range's `index` is a string index (UTF-16 code units, as ast-grep reports it) while an `Edit` counts bytes, so the edit lands in the wrong place when non-ASCII text precedes the range.
+	 */
+	$replace(target: { range(): StringIndexRange }): Edit;
 	$trivia: TriviaSetter<this, Trivia>;
 }
 

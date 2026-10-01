@@ -23,7 +23,7 @@
  */
 import { existsSync, readdirSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { nativeCrateDir, nativeCrateRelDir } from '@sittir/codegen/grammars';
+import { nativeBindingDir, nativeBindingRelDir, nativeCrateDir, nativeCrateRelDir } from '@sittir/codegen/grammars';
 
 /** Newest mtime (ms) among files in `dir` ending with `ext`, or undefined if none/missing. */
 function newestMtimeMs(dir: string, ext: string): number | undefined {
@@ -48,10 +48,10 @@ export function warnIfNativeBinaryStale(grammar: string): void {
 	const crateDir = nativeCrateDir(grammar);
 	if (!existsSync(crateDir)) return; // no native crate for this grammar — nothing to guard
 
-	const nodeMtime = newestMtimeMs(crateDir, '.node');
+	const nodeMtime = newestMtimeMs(nativeBindingDir(grammar), '.node');
 	if (nodeMtime === undefined) {
 		console.warn(
-			`⚠ [${grammar}] no native binding (.node) in ${nativeCrateRelDir(grammar)}/ — ` +
+			`⚠ [${grammar}] no native binding (.node) in ${nativeBindingRelDir(grammar)}/ — ` +
 				`\`--backend native\` will throw (there is no JS backend to fall back to). Build it: \`pnpm validate:native\` ` +
 				`or \`pnpm -C ${nativeCrateRelDir(grammar)} run build\`.`
 		);

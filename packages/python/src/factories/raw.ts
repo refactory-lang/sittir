@@ -7,6 +7,7 @@ import type { AdmitBound, NonEmptyArray, WidenNumeric } from '@sittir/types';
 import {
 	withAccessors,
 	describeValue,
+	restItems,
 	admitAliasContent,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
@@ -119,7 +120,7 @@ export function buildModule(...children: AdmitBound<T.Statement[], T.AdmittedNod
 				$source: 2 as const,
 				$named: true as const,
 				_statements,
-				$with: { statements: (...vs: T.Statement[]) => buildModule(...vs) }
+				$with: { statements: (...vs: T.Statement[]) => buildModule(...restItems('statements', vs)) }
 			},
 			{
 				statements: () => _statements
@@ -139,7 +140,7 @@ export function buildSimpleStatements(
 	...elements: NonEmptyArray<AdmitBound<T.SimpleStatement, T.AdmittedNodes>>
 ): ReturnType<typeof _buildSimpleStatements>;
 export function buildSimpleStatements(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildSimpleStatements(args[0] as T.SimpleStatementsElements);
 	}
 	const prebuilt =
@@ -171,7 +172,7 @@ function _buildSimpleStatements(
 						$named: true as const,
 						_simple_statements_elements,
 						$with: {
-							simpleStatementsElements: (value: T.SimpleStatementsElements) => buildSimpleStatements(value)
+							simpleStatementsElements: (value: T.SimpleStatementsElements) => _buildSimpleStatements(value)
 						}
 					},
 					{
@@ -204,7 +205,7 @@ export function buildImportStatement(
 	value: AdmitBound<T.ImportList, T.AdmittedNodes>
 ): ReturnType<typeof _buildImportStatement>;
 export function buildImportStatement(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildImportStatement(args[0] as T.Names | T.Names.Types);
 	}
 	const prebuilt =
@@ -229,7 +230,7 @@ function _buildImportStatement(value: AdmitBound<T.Names | T.Names.Types, T.Admi
 				$named: true as const,
 				_names,
 				$with: {
-					names: (value: T.Names | T.Names.Types) => buildImportStatement(value)
+					names: (value: T.Names | T.Names.Types) => _buildImportStatement(value)
 				}
 			},
 			{
@@ -482,7 +483,7 @@ export function buildAssertStatement(
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				$with: { expressions: (...vs: T.Expression[]) => buildAssertStatement(...vs) }
+				$with: { expressions: (...vs: T.Expression[]) => buildAssertStatement(...restItems('expressions', vs)) }
 			},
 			{
 				expressions: () => _expression
@@ -688,7 +689,7 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 						buildIfStatement({ ...config, condition: value }),
 					consequence: (value: T.Suite) => buildIfStatement({ ...config, consequence: value }),
 					alternatives: (...values: (T.ElifClause | T.ElseClause)[]) =>
-						buildIfStatement({ ...config, alternative: values })
+						buildIfStatement({ ...config, alternative: restItems('alternatives', values) })
 				}
 			},
 			{
@@ -924,7 +925,8 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 				_finally_clause,
 				$with: {
 					body: (value: T.Suite) => buildTryStatement({ ...config, body: value }),
-					exceptClauses: (...values: T.ExceptClause[]) => buildTryStatement({ ...config, exceptClauses: values }),
+					exceptClauses: (...values: T.ExceptClause[]) =>
+						buildTryStatement({ ...config, exceptClauses: restItems('exceptClauses', values) }),
 					elseClause: (value?: T.ElseClause) => buildTryStatement({ ...config, elseClause: value }),
 					finallyClause: (value?: T.FinallyClause) => buildTryStatement({ ...config, finallyClause: value })
 				}
@@ -1108,7 +1110,7 @@ export function buildParameters(
 	...elements: NonEmptyArray<AdmitBound<T.Parameter, T.AdmittedNodes>>
 ): ReturnType<typeof _buildParameters>;
 export function buildParameters(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildParameters(args[0] as T.ParametersElements);
 	}
 	const prebuilt =
@@ -1132,7 +1134,7 @@ function _buildParameters(value?: AdmitBound<T.ParametersElements, T.AdmittedNod
 						$named: true as const,
 						_elements,
 						$with: {
-							elements: (value?: T.ParametersElements) => buildParameters(value)
+							elements: (value?: T.ParametersElements) => _buildParameters(value)
 						}
 					},
 					{
@@ -1169,7 +1171,7 @@ export function buildLambdaParameters(
 	...elements: NonEmptyArray<AdmitBound<T.Parameter, T.AdmittedNodes>>
 ): ReturnType<typeof _buildLambdaParameters>;
 export function buildLambdaParameters(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildLambdaParameters(args[0] as T.ParametersElements);
 	}
 	const prebuilt =
@@ -1199,7 +1201,7 @@ function _buildLambdaParameters(value: AdmitBound<T.ParametersElements, T.Admitt
 						$named: true as const,
 						_parameters_elements,
 						$with: {
-							parametersElements: (value: T.ParametersElements) => buildLambdaParameters(value)
+							parametersElements: (value: T.ParametersElements) => _buildLambdaParameters(value)
 						}
 					},
 					{
@@ -1285,7 +1287,7 @@ export function buildGlobalStatement(
 				$source: 2 as const,
 				$named: true as const,
 				_names,
-				$with: { names: (...vs: T.Identifier[]) => buildGlobalStatement(...vs) }
+				$with: { names: (...vs: T.Identifier[]) => buildGlobalStatement(...restItems('names', vs)) }
 			},
 			{
 				names: () => _names
@@ -1306,7 +1308,7 @@ export function buildNonlocalStatement(
 				$source: 2 as const,
 				$named: true as const,
 				_names,
-				$with: { names: (...vs: T.Identifier[]) => buildNonlocalStatement(...vs) }
+				$with: { names: (...vs: T.Identifier[]) => buildNonlocalStatement(...restItems('names', vs)) }
 			},
 			{
 				names: () => _names
@@ -1332,8 +1334,8 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 				_in_clause,
 				$with: {
 					code: (value: T.String | T.Identifier) => buildExecStatement({ ...config, code: value }),
-					inClauses: (value?: NonNullable<T.ExecStatement.Config>['inClause']) =>
-						buildExecStatement({ ...config, inClause: value })
+					inClauses: (...values: NonNullable<NonNullable<T.ExecStatement.Config>['inClause']>[number][]) =>
+						buildExecStatement({ ...config, inClause: restItems('inClauses', values) })
 				}
 			},
 			{
@@ -1419,7 +1421,7 @@ export function buildTypeParameter(
 	...elements: NonEmptyArray<AdmitBound<T.Type, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTypeParameter>;
 export function buildTypeParameter(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTypeParameter(args[0] as T.Types);
 	}
 	const prebuilt =
@@ -1443,7 +1445,7 @@ function _buildTypeParameter(value: AdmitBound<T.Types, T.AdmittedNodes>): T.Typ
 						$named: true as const,
 						_types,
 						$with: {
-							types: (value: T.Types) => buildTypeParameter(value)
+							types: (value: T.Types) => _buildTypeParameter(value)
 						}
 					},
 					{
@@ -1510,7 +1512,7 @@ export function buildArgumentList(
 	>
 ): ReturnType<typeof _buildArgumentList>;
 export function buildArgumentList(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildArgumentList(args[0] as T.ArgumentListElements);
 	}
 	const prebuilt =
@@ -1536,7 +1538,7 @@ function _buildArgumentList(value?: AdmitBound<T.ArgumentListElements, T.Admitte
 						$named: true as const,
 						_arguments,
 						$with: {
-							arguments: (value?: T.ArgumentListElements) => buildArgumentList(value)
+							arguments: (value?: T.ArgumentListElements) => _buildArgumentList(value)
 						}
 					},
 					{
@@ -1579,7 +1581,7 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 				_definition,
 				$with: {
 					decorators: (...values: NonEmptyArray<T.Decorator>) =>
-						buildDecoratedDefinition({ ...config, decorator: values }),
+						buildDecoratedDefinition({ ...config, decorator: restItems('decorators', values) }),
 					definition: (value: T.ClassDefinition | T.FunctionDefinition) =>
 						buildDecoratedDefinition({ ...config, definition: value })
 				}
@@ -1625,7 +1627,7 @@ export function buildBlock(...children: AdmitBound<T.Statement[], T.AdmittedNode
 				$source: 2 as const,
 				$named: true as const,
 				_statements,
-				$with: { statements: (...vs: T.Statement[]) => buildBlock(...vs) }
+				$with: { statements: (...vs: T.Statement[]) => buildBlock(...restItems('statements', vs)) }
 			},
 			{
 				statements: () => _statements
@@ -1688,7 +1690,7 @@ export function buildDottedName(...children: AdmitBound<T.Identifier[], T.Admitt
 				$source: 2 as const,
 				$named: true as const,
 				_names,
-				$with: { names: (...vs: T.Identifier[]) => buildDottedName(...vs) }
+				$with: { names: (...vs: T.Identifier[]) => buildDottedName(...restItems('names', vs)) }
 			},
 			{
 				names: () => _names
@@ -1868,7 +1870,7 @@ export function buildUnionPattern(
 								| T.DottedName
 								| TSKindId.WildcardPattern
 							)[]
-						) => buildUnionPattern(...vs)
+						) => buildUnionPattern(...restItems('patterns', vs))
 					}
 				},
 				{
@@ -1892,7 +1894,7 @@ export function buildDictPattern(
 	...elements: NonEmptyArray<AdmitBound<T.KeyValuePattern | T.SplatPattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildDictPattern>;
 export function buildDictPattern(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildDictPattern(args[0] as T.DictPatternElements);
 	}
 	const prebuilt =
@@ -1920,7 +1922,7 @@ function _buildDictPattern(value?: AdmitBound<T.DictPatternElements, T.AdmittedN
 						$named: true as const,
 						_dict_pattern_elements,
 						$with: {
-							dictPatternElements: (value?: T.DictPatternElements) => buildDictPattern(value)
+							dictPatternElements: (value?: T.DictPatternElements) => _buildDictPattern(value)
 						}
 					},
 					{
@@ -2240,7 +2242,7 @@ export function buildTuplePattern(
 	...elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildTuplePattern>;
 export function buildTuplePattern(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTuplePattern(args[0] as T.Patterns);
 	}
 	const prebuilt =
@@ -2264,7 +2266,7 @@ function _buildTuplePattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.
 						$named: true as const,
 						_patterns,
 						$with: {
-							patterns: (value?: T.Patterns) => buildTuplePattern(value)
+							patterns: (value?: T.Patterns) => _buildTuplePattern(value)
 						}
 					},
 					{
@@ -2293,7 +2295,7 @@ export function buildListPattern(
 	...elements: NonEmptyArray<AdmitBound<T.Pattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildListPattern>;
 export function buildListPattern(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildListPattern(args[0] as T.Patterns);
 	}
 	const prebuilt =
@@ -2317,7 +2319,7 @@ function _buildListPattern(value?: AdmitBound<T.Patterns, T.AdmittedNodes>): T.L
 						$named: true as const,
 						_patterns,
 						$with: {
-							patterns: (value?: T.Patterns) => buildListPattern(value)
+							patterns: (value?: T.Patterns) => _buildListPattern(value)
 						}
 					},
 					{
@@ -2737,7 +2739,7 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 						left: (value: NonNullable<T.ComparisonOperator.Config>['left']) =>
 							buildComparisonOperator({ ...config, left: value }),
 						comparators: (...values: NonEmptyArray<T.ComparisonOperatorComparator>) =>
-							buildComparisonOperator({ ...config, comparators: values })
+							buildComparisonOperator({ ...config, comparators: restItems('comparators', values) })
 					}
 				},
 				{
@@ -3314,7 +3316,7 @@ export function buildList(
 	>
 ): ReturnType<typeof _buildList>;
 export function buildList(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildList(args[0] as T.CollectionElements);
 	}
 	const prebuilt =
@@ -3338,7 +3340,7 @@ function _buildList(value?: AdmitBound<T.CollectionElements, T.AdmittedNodes>): 
 						$named: true as const,
 						_collection_elements,
 						$with: {
-							collectionElements: (value?: T.CollectionElements) => buildList(value)
+							collectionElements: (value?: T.CollectionElements) => _buildList(value)
 						}
 					},
 					{
@@ -3377,7 +3379,7 @@ export function buildSet(
 	>
 ): ReturnType<typeof _buildSet>;
 export function buildSet(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildSet(args[0] as T.CollectionElements);
 	}
 	const prebuilt =
@@ -3401,7 +3403,7 @@ function _buildSet(value: AdmitBound<T.CollectionElements, T.AdmittedNodes>): T.
 						$named: true as const,
 						_collection_elements,
 						$with: {
-							collectionElements: (value: T.CollectionElements) => buildSet(value)
+							collectionElements: (value: T.CollectionElements) => _buildSet(value)
 						}
 					},
 					{
@@ -3441,7 +3443,7 @@ export function buildTuple(
 	>
 ): ReturnType<typeof _buildTuple>;
 export function buildTuple(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTuple(args[0] as T.CollectionElements);
 	}
 	const prebuilt =
@@ -3465,7 +3467,7 @@ function _buildTuple(value?: AdmitBound<T.CollectionElements, T.AdmittedNodes>):
 						$named: true as const,
 						_collection_elements,
 						$with: {
-							collectionElements: (value?: T.CollectionElements) => buildTuple(value)
+							collectionElements: (value?: T.CollectionElements) => _buildTuple(value)
 						}
 					},
 					{
@@ -3503,7 +3505,7 @@ export function buildDictionary(
 	...elements: NonEmptyArray<AdmitBound<T.Pair | T.DictionarySplat, T.AdmittedNodes>>
 ): ReturnType<typeof _buildDictionary>;
 export function buildDictionary(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildDictionary(args[0] as T.DictionaryElements);
 	}
 	const prebuilt =
@@ -3527,7 +3529,7 @@ function _buildDictionary(value?: AdmitBound<T.DictionaryElements, T.AdmittedNod
 						$named: true as const,
 						_elements,
 						$with: {
-							elements: (value?: T.DictionaryElements) => buildDictionary(value)
+							elements: (value?: T.DictionaryElements) => _buildDictionary(value)
 						}
 					},
 					{
@@ -3831,7 +3833,8 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bo
 					asyncMarker: (value?: NonNullable<T.ForInClause.Config>['asyncMarker']) =>
 						buildForInClause({ ...config, asyncMarker: value }),
 					left: (value: T.Pattern | T.PatternList) => buildForInClause({ ...config, left: value }),
-					rights: (value: NonNullable<T.ForInClause.Config>['right']) => buildForInClause({ ...config, right: value }),
+					rights: (...values: NonEmptyArray<NonNullable<NonNullable<T.ForInClause.Config>['right']>[number]>) =>
+						buildForInClause({ ...config, right: restItems('rights', values) }),
 					comma: (value?: NonNullable<T.ForInClause.Config>['comma']) => buildForInClause({ ...config, comma: value })
 				}
 			},
@@ -3924,7 +3927,7 @@ export function buildConcatenatedString(
 				$source: 2 as const,
 				$named: true as const,
 				_string,
-				$with: { strings: (...vs: T.String[]) => buildConcatenatedString(...vs) }
+				$with: { strings: (...vs: T.String[]) => buildConcatenatedString(...restItems('strings', vs)) }
 			},
 			{
 				strings: () => _string
@@ -3948,7 +3951,8 @@ export function buildString(config: T.String.Config): T.String.Bound {
 				_string_end,
 				$with: {
 					stringStart: (value: T.StringStart) => buildString({ ...config, stringStart: value }),
-					contents: (...values: (T.Interpolation | T.StringContent)[]) => buildString({ ...config, content: values }),
+					contents: (...values: (T.Interpolation | T.StringContent)[]) =>
+						buildString({ ...config, content: restItems('contents', values) }),
 					stringEnd: (value: T.StringEnd) => buildString({ ...config, stringEnd: value })
 				}
 			},
@@ -3982,7 +3986,7 @@ export function buildStringContent(
 				$with: {
 					contents: (
 						...vs: (T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment)[]
-					) => buildStringContent(...vs)
+					) => buildStringContent(...restItems('contents', vs))
 				}
 			},
 			{
@@ -4056,7 +4060,7 @@ export function buildFormatSpecifier(
 				_elements,
 				$with: {
 					elements: (...vs: ((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[]) =>
-						buildFormatSpecifier(...vs)
+						buildFormatSpecifier(...restItems('elements', vs))
 				}
 			},
 			{
@@ -4918,7 +4922,7 @@ export function buildCaseTuplePattern(
 	...elements: NonEmptyArray<AdmitBound<T.CasePattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildCaseTuplePattern>;
 export function buildCaseTuplePattern(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildCaseTuplePattern(args[0] as T.ListPatternCasePatterns);
 	}
 	const prebuilt =
@@ -4950,7 +4954,7 @@ function _buildCaseTuplePattern(
 						$named: true as const,
 						_list_pattern_case_patterns,
 						$with: {
-							listPatternCasePatterns: (value?: T.ListPatternCasePatterns) => buildCaseTuplePattern(value)
+							listPatternCasePatterns: (value?: T.ListPatternCasePatterns) => _buildCaseTuplePattern(value)
 						}
 					},
 					{
@@ -4988,7 +4992,7 @@ export function buildCaseListPattern(
 	...elements: NonEmptyArray<AdmitBound<T.CasePattern, T.AdmittedNodes>>
 ): ReturnType<typeof _buildCaseListPattern>;
 export function buildCaseListPattern(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildCaseListPattern(args[0] as T.ListPatternCasePatterns);
 	}
 	const prebuilt =
@@ -5020,7 +5024,7 @@ function _buildCaseListPattern(
 						$named: true as const,
 						_list_pattern_case_patterns,
 						$with: {
-							listPatternCasePatterns: (value?: T.ListPatternCasePatterns) => buildCaseListPattern(value)
+							listPatternCasePatterns: (value?: T.ListPatternCasePatterns) => _buildCaseListPattern(value)
 						}
 					},
 					{
@@ -5207,7 +5211,7 @@ export function buildPrintStatementPlain(
 	...elements: NonEmptyArray<AdmitBound<T.Expression, T.AdmittedNodes>>
 ): ReturnType<typeof _buildPrintStatementPlain>;
 export function buildPrintStatementPlain(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildPrintStatementPlain(args[0] as T.PrintArguments);
 	}
 	const prebuilt =
@@ -5231,7 +5235,7 @@ function _buildPrintStatementPlain(value: AdmitBound<T.PrintArguments, T.Admitte
 						$named: true as const,
 						_print_arguments,
 						$with: {
-							printArguments: (value: T.PrintArguments) => buildPrintStatementPlain(value)
+							printArguments: (value: T.PrintArguments) => _buildPrintStatementPlain(value)
 						}
 					},
 					{
@@ -5263,7 +5267,7 @@ export function buildParenthesizedImportList(
 	...elements: NonEmptyArray<AdmitBound<T.DottedName | T.AliasedImport, T.AdmittedNodes>>
 ): ReturnType<typeof _buildParenthesizedImportList>;
 export function buildParenthesizedImportList(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildParenthesizedImportList(args[0] as T.ImportList);
 	}
 	const prebuilt =
@@ -5289,7 +5293,7 @@ function _buildParenthesizedImportList(
 						$named: true as const,
 						_import_list,
 						$with: {
-							importList: (value: T.ImportList) => buildParenthesizedImportList(value)
+							importList: (value: T.ImportList) => _buildParenthesizedImportList(value)
 						}
 					},
 					{
@@ -5319,7 +5323,9 @@ export function buildComprehensionClauses(
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { contents: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...vs) }
+				$with: {
+					contents: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...restItems('contents', vs))
+				}
 			},
 			{
 				contents: () => _content
@@ -5815,7 +5821,7 @@ export function buildExceptClauseExceptionList(
 				$source: 2 as const,
 				$named: true as const,
 				_value,
-				$with: { values: (...vs: T.Expression[]) => buildExceptClauseExceptionList(...vs) }
+				$with: { values: (...vs: T.Expression[]) => buildExceptClauseExceptionList(...restItems('values', vs)) }
 			},
 			{
 				values: () => _value
@@ -6054,7 +6060,7 @@ export function buildWithClauseParen(
 	...elements: NonEmptyArray<AdmitBound<T.WithItem, T.AdmittedNodes>>
 ): ReturnType<typeof _buildWithClauseParen>;
 export function buildWithClauseParen(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildWithClauseParen(args[0] as T.WithClauseWithItems);
 	}
 	const prebuilt =
@@ -6084,7 +6090,7 @@ function _buildWithClauseParen(value: AdmitBound<T.WithClauseWithItems, T.Admitt
 						$named: true as const,
 						_with_clause_with_items,
 						$with: {
-							withClauseWithItems: (value: T.WithClauseWithItems) => buildWithClauseParen(value)
+							withClauseWithItems: (value: T.WithClauseWithItems) => _buildWithClauseParen(value)
 						}
 					},
 					{
@@ -6123,7 +6129,7 @@ export function buildMatchBlockBlock(
 				$source: 2 as const,
 				$named: true as const,
 				_alternative,
-				$with: { alternatives: (...vs: T.CaseClause[]) => buildMatchBlockBlock(...vs) }
+				$with: { alternatives: (...vs: T.CaseClause[]) => buildMatchBlockBlock(...restItems('alternatives', vs)) }
 			},
 			{
 				alternatives: () => _alternative
@@ -6137,7 +6143,7 @@ export function buildMatchBlockEmpty(
 	value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>
 ): ReturnType<typeof _buildMatchBlockEmpty>;
 export function buildMatchBlockEmpty(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildMatchBlockEmpty(args[0] as TSKindId.Newline);
 	}
 	const prebuilt =
@@ -6162,7 +6168,7 @@ function _buildMatchBlockEmpty(value?: AdmitBound<TSKindId.Newline, T.AdmittedNo
 				$named: true as const,
 				_newline,
 				$with: {
-					newline: (value: NonNullable<TSKindId.Newline>) => buildMatchBlockEmpty(value)
+					newline: (value: NonNullable<TSKindId.Newline>) => _buildMatchBlockEmpty(value)
 				}
 			},
 			{
@@ -6183,7 +6189,7 @@ export function buildSuiteInline(
 	...elements: NonEmptyArray<AdmitBound<T.SimpleStatement, T.AdmittedNodes>>
 ): ReturnType<typeof _buildSuiteInline>;
 export function buildSuiteInline(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildSuiteInline(args[0] as T.SimpleStatementsElements);
 	}
 	const prebuilt =
@@ -6213,7 +6219,7 @@ function _buildSuiteInline(value: AdmitBound<T.SimpleStatementsElements, T.Admit
 						$named: true as const,
 						_simple_statements_elements,
 						$with: {
-							simpleStatementsElements: (value: T.SimpleStatementsElements) => buildSuiteInline(value)
+							simpleStatementsElements: (value: T.SimpleStatementsElements) => _buildSuiteInline(value)
 						}
 					},
 					{
@@ -6247,7 +6253,7 @@ export function buildSuiteBlock(...args: unknown[]) {
 	if (args.length === 0) {
 		return _buildSuiteBlock(buildBlock() as T.Block);
 	}
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildSuiteBlock(args[0] as T.Block);
 	}
 	const prebuilt =
@@ -6269,7 +6275,7 @@ function _buildSuiteBlock(value: AdmitBound<T.Block, T.AdmittedNodes>): T.SuiteB
 				$named: true as const,
 				_block,
 				$with: {
-					block: (value: T.Block) => buildSuiteBlock(value)
+					block: (value: T.Block) => _buildSuiteBlock(value)
 				}
 			},
 			{
@@ -6284,7 +6290,7 @@ export function buildSuiteEmpty(
 	value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>
 ): ReturnType<typeof _buildSuiteEmpty>;
 export function buildSuiteEmpty(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildSuiteEmpty(args[0] as TSKindId.Newline);
 	}
 	const prebuilt =
@@ -6307,7 +6313,7 @@ function _buildSuiteEmpty(value?: AdmitBound<TSKindId.Newline, T.AdmittedNodes>)
 				$named: true as const,
 				_newline,
 				$with: {
-					newline: (value: NonNullable<TSKindId.Newline>) => buildSuiteEmpty(value)
+					newline: (value: NonNullable<TSKindId.Newline>) => _buildSuiteEmpty(value)
 				}
 			},
 			{

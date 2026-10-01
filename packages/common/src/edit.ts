@@ -1,6 +1,7 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type { AnyUntypedNode, AnyTreeNode, ByteRange, Edit, FormatRecord, KindOf, Renderable, ReplaceTarget } from '@sittir/types';
+import type { AnyUntypedNode, AnyTreeNode, StringIndexRange, Edit, FormatRecord, KindOf, Renderable, ReplaceTarget } from '@sittir/types';
 import { rebaseTrivia } from './format.ts';
+import { byteLength, sourceSpans } from './span.ts';
 
 export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
 
@@ -9,11 +10,13 @@ export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
 // ---------------------------------------------------------------------------
 
 /**
- * The Edit that replaces `startOrRange` (a `ByteRange`, or a start with
- * `end`) with `insertedText`. Positions are validated here, once, for every
- * caller that turns a rendered node into an edit.
+ * The Edit that replaces `startOrRange` (a `StringIndexRange`, or a byte start
+ * with a byte `end`) with `insertedText`. Positions are validated here, once,
+ * for every caller that turns a rendered node into an edit.
+ *
+ * A range's `index` is a string index (UTF-16 code units, as ast-grep reports it) while an `Edit` counts bytes, so the edit lands in the wrong place when non-ASCII text precedes the range.
  */
-export function toEditAt(insertedText: string, startOrRange: number | ByteRange, end?: number): Edit {
+export function toEditAt(insertedText: string, startOrRange: number | StringIndexRange, end?: number): Edit {
 	if (typeof startOrRange === 'number') {
 		if (typeof end !== 'number') {
 			throw new Error('endPos is required when startPos is a number');
@@ -40,6 +43,10 @@ export function toEditAt(insertedText: string, startOrRange: number | ByteRange,
 /**
  * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
  * $replace method. Not yet wired into generated output; scaffolding only.
+ *
+ * A range's `index` is a string index (UTF-16 code units, as ast-grep reports
+ * it) while an `Edit` counts bytes, so the edit lands in the wrong place when
+ * non-ASCII text precedes the range.
  */
 export function replace(target: ReplaceTarget, replacement: AnyUntypedNode & Renderable): Edit {
 	const range = target.range();
@@ -55,26 +62,23 @@ export function replace(target: ReplaceTarget, replacement: AnyUntypedNode & Ren
 // ---------------------------------------------------------------------------
 
 /**
- * Apply a batch of edits to `source`, returning the mutated source string
- * and a rebased format record (if one was supplied).
+ * Apply a batch of edits to `source`, returning the edited source and a
+ * rebased format record (if one was supplied).
+ *
+ * An edit's `startPos` and `endPos` are byte offsets, the unit a read node's
+ * `$span` counts in, so an edit built from a span lands on that node whatever
+ * characters precede it.
  *
  * @param source - The original source string.
- * @param edits - Array of edits to apply (may be empty, may be unsorted).
- * @param format - Optional FormatRecord to rebase alongside the text edits.
- * @returns `{ source: string; format: FormatRecord | undefined }`
- *
- * @remarks
- * Edits are applied in descending `startPos` order so earlier byte
- * positions are not invalidated by later insertions/deletions.
- * For each edit, `rebaseTrivia` is called with
- * `editStart = edit.startPos` and
- * `delta = edit.insertedText.length - (edit.endPos - edit.startPos)`.
- * FR-004: this is the single call-site for format rebasing after batched edits.
- *
- * **Overlapping edits produce undefined behavior.** Callers must ensure edits
- * are non-overlapping. No validation is performed at runtime; passing edits
- * whose ranges intersect may produce incorrect output or throw from the bounds
- * check in `applyOneEdit`.
+ * @param edits - The edits to apply, in any order: the result does not depend
+ * on it. They must not overlap. At one position, an insertion (an empty
+ * range) applies before an edit that replaces text starting there.
+ * @param format - A format record to rebase alongside the text edits.
+ * @returns The edited source and the rebased format record.
+ * @throws When an edit's range lies outside the source (counted in bytes),
+ * ends before it starts, or overlaps another edit; and when two edits start
+ * at the same position and are both insertions or both replacements, since
+ * their order would be the caller's and the result ambiguous.
  */
 export function applyEdits(
 	source: string,
@@ -83,32 +87,43 @@ export function applyEdits(
 ): { source: string; format: FormatRecord | undefined } {
 	if (edits.length === 0) return { source, format };
 
-	const sorted = [...edits].sort((a, b) => b.startPos - a.startPos);
-	let result = source;
-	let fmt = format;
-
-	for (const edit of sorted) {
-		result = applyOneEdit(result, edit);
-		fmt = rebaseOneEdit(fmt, edit);
+	const spans = sourceSpans(source);
+	const isInsertion = (edit: Edit): boolean => edit.endPos === edit.startPos;
+	const ascending = [...edits].sort(
+		(a, b) => a.startPos - b.startPos || Number(isInsertion(b)) - Number(isInsertion(a))
+	);
+	ascending.forEach((edit, i) => {
+		const next = ascending[i + 1];
+		if (next !== undefined && next.startPos === edit.startPos && isInsertion(next) === isInsertion(edit))
+			throw new Error(
+				`applyEdits: two ${isInsertion(edit) ? 'insertions' : 'replacements'} start at ${edit.startPos}; their order is ambiguous`
+			);
+	});
+	let result = '';
+	let cursor = 0;
+	for (const edit of ascending) {
+		if (edit.startPos < 0 || edit.startPos > spans.byteLength)
+			throw new Error(`applyEdits: startPos ${edit.startPos} out of bounds (source is ${spans.byteLength} bytes)`);
+		if (edit.endPos < edit.startPos || edit.endPos > spans.byteLength)
+			throw new Error(
+				`applyEdits: endPos ${edit.endPos} out of bounds (startPos ${edit.startPos}, source is ${spans.byteLength} bytes)`
+			);
+		if (edit.startPos < cursor)
+			throw new Error(`applyEdits: the edit at ${edit.startPos} overlaps the edit ending at ${cursor}`);
+		result += spans.slice({ start: cursor, end: edit.startPos }) + edit.insertedText;
+		cursor = edit.endPos;
 	}
+	result += spans.slice({ start: cursor, end: spans.byteLength });
+
+	let fmt = format;
+	for (const edit of ascending.reverse()) fmt = rebaseOneEdit(fmt, edit);
 
 	return { source: result, format: fmt };
-}
-
-/** Splice a single edit into the source string. */
-function applyOneEdit(source: string, edit: Edit): string {
-	if (edit.startPos < 0 || edit.startPos > source.length)
-		throw new Error(`applyEdits: startPos ${edit.startPos} out of bounds (source length ${source.length})`);
-	if (edit.endPos < edit.startPos || edit.endPos > source.length)
-		throw new Error(
-			`applyEdits: endPos ${edit.endPos} out of bounds (startPos ${edit.startPos}, source length ${source.length})`
-		);
-	return source.slice(0, edit.startPos) + edit.insertedText + source.slice(edit.endPos);
 }
 
 /** Rebase the format record for a single edit, returning undefined if absent. */
 function rebaseOneEdit(format: FormatRecord | undefined, edit: Edit): FormatRecord | undefined {
 	if (!format) return undefined;
-	const delta = edit.insertedText.length - (edit.endPos - edit.startPos);
+	const delta = byteLength(edit.insertedText) - (edit.endPos - edit.startPos);
 	return rebaseTrivia(format, edit.startPos, delta);
 }

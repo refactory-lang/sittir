@@ -24,7 +24,7 @@ describe('hash_bang_line', () => {
 
 	it('breaks the line after a read hash-bang when the statement after it is rebuilt', () => {
 		const program = ts.parse('#!/usr/bin/env node\nlet x = 1;\n');
-		const rebuilt = program.$with.statements([letX('2')]);
+		const rebuilt = program.$with.statements(letX('2'));
 		expect(rebuilt.$render()).toBe('#!/usr/bin/env node\nlet x = 2;\n');
 		expect(ts.render(rebuilt).toString()).toBe(rebuilt.$render());
 	});

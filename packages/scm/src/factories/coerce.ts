@@ -536,10 +536,14 @@ const _K9: readonly string[] = ['immediate_string'];
 
 export function coerceToProgram(): T.EmptyProgram;
 export function coerceToProgram(
-	...input: readonly (T.Program.Loose | LooseValue<T.Definition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+	...input: [
+		...elements: (T.Program.Loose | LooseValue<T.Definition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+	]
 ): ReturnType<typeof F.buildProgram>;
 export function coerceToProgram(
-	...input: readonly (T.Program.Loose | LooseValue<T.Definition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+	...input: [
+		...elements: (T.Program.Loose | LooseValue<T.Definition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+	]
 ): ReturnType<typeof F.buildProgram> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Program)) {
 		const data = input[0];
@@ -651,10 +655,12 @@ export function coerceToImmediateString(input?: T.ImmediateString.Loose): Return
 }
 
 export function coerceToStringContent(
-	...input: readonly (
-		| T.StringContent.Loose
-		| LooseValue<T.StringContentText | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: [
+		...elements: (
+			| T.StringContent.Loose
+			| LooseValue<T.StringContentText | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
+	]
 ): ReturnType<typeof F.buildStringContent> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringContent)) {
 		const data = input[0];
@@ -681,10 +687,12 @@ export function coerceToStringContent(
 }
 
 export function coerceToParameters(
-	...input: readonly (
-		| T.Parameters.Loose
-		| LooseValue<T.Capture | T.String | T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	)[]
+	...input: [
+		...elements: (
+			| T.Parameters.Loose
+			| LooseValue<T.Capture | T.String | T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
+	]
 ): ReturnType<typeof F.buildParameters> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Parameters)) {
 		const data = input[0];

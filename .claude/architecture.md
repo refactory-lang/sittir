@@ -4,7 +4,7 @@ Use this file when the task touches generated packages, runtime data shapes, or 
 
 ## Package layers
 
-- `@sittir/types` — zero-runtime TypeScript types such as `AnyUntypedNode`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>`, `ByteRange`, `Edit`, and `RenderContext`.
+- `@sittir/types` — zero-runtime TypeScript types such as `AnyUntypedNode`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>`, `StringIndexRange`, `Edit`, and `RenderContext`.
 - `@sittir/common` — backend-neutral runtime: `readUntypedNode`, `applyEdits`, the native boundary, and `createNativeEngine` behind the shared engine interface.
 - `@sittir/codegen` — the compiler (evaluate → link → normalize → simplify → assemble → emit) and emitters producing the grammar-specific packages.
 - `@sittir/cli` — the unified `sittir` binary (`gen`, `tool *`, `validate *`).

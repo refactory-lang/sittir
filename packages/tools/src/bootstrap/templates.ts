@@ -30,7 +30,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 					url: 'https://github.com/refactory-lang/sittir.git',
 					directory: `packages/${v.name}`
 				},
-				files: ['dist'],
+				files: ['dist', 'native'],
 				type: 'module',
 				main: './dist/index.js',
 				types: './dist/index.d.ts',
@@ -56,7 +56,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 					[v.upstreamDependency]: v.upstreamRange,
 					'type-fest': '^5.6.0'
 				},
-				'//native': `Native artifacts are grammar-local implementation details for @sittir/${v.name}, built from rust/crates/sittir-${v.name}.`
+				'//native': `Native artifacts are grammar-local implementation details for @sittir/${v.name}, shipped in native/ and built from rust/crates/sittir-${v.name}.`
 			})
 		},
 		{

@@ -6,6 +6,7 @@ import type { AdmitBound, NonEmptyArray } from '@sittir/types';
 import {
 	withAccessors,
 	describeValue,
+	restItems,
 	coerceBooleanKeywordStorage,
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
@@ -36,7 +37,7 @@ export function buildProgram(...children: AdmitBound<T.Definition[], T.AdmittedN
 				$source: 2 as const,
 				$named: true as const,
 				_definitions,
-				$with: { definitions: (...vs: T.Definition[]) => buildProgram(...vs) }
+				$with: { definitions: (...vs: T.Definition[]) => buildProgram(...restItems('definitions', vs)) }
 			},
 			{
 				definitions: () => _definitions
@@ -96,7 +97,7 @@ export function buildCapture(
 ): ReturnType<typeof _buildCapture>;
 export function buildCapture(text: string): ReturnType<typeof _buildCapture>;
 export function buildCapture(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildCapture(args[0] as T.ImmediateIdentifier);
 	}
 	const prebuilt =
@@ -118,7 +119,7 @@ function _buildCapture(value: AdmitBound<T.ImmediateIdentifier, T.AdmittedNodes>
 				$named: true as const,
 				_name,
 				$with: {
-					name: (value: T.ImmediateIdentifier) => buildCapture(value)
+					name: (value: T.ImmediateIdentifier) => _buildCapture(value)
 				}
 			},
 			{
@@ -133,7 +134,7 @@ export function buildString(
 	...children: AdmitBound<(T.StringContentText | T.EscapeSequence)[], T.AdmittedNodes>
 ): ReturnType<typeof _buildString>;
 export function buildString(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildString(args[0] as T.StringContent);
 	}
 	const prebuilt =
@@ -155,7 +156,7 @@ function _buildString(value?: AdmitBound<T.StringContent, T.AdmittedNodes>): T.S
 				$named: true as const,
 				_string_content,
 				$with: {
-					stringContent: (value?: T.StringContent) => buildString(value)
+					stringContent: (value?: T.StringContent) => _buildString(value)
 				}
 			},
 			{
@@ -172,7 +173,7 @@ export function buildImmediateString(
 	...children: AdmitBound<(T.StringContentText | T.EscapeSequence)[], T.AdmittedNodes>
 ): ReturnType<typeof _buildImmediateString>;
 export function buildImmediateString(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildImmediateString(args[0] as T.StringContent);
 	}
 	const prebuilt =
@@ -194,7 +195,7 @@ function _buildImmediateString(value?: AdmitBound<T.StringContent, T.AdmittedNod
 				$named: true as const,
 				_string_content,
 				$with: {
-					stringContent: (value?: T.StringContent) => buildImmediateString(value)
+					stringContent: (value?: T.StringContent) => _buildImmediateString(value)
 				}
 			},
 			{
@@ -215,7 +216,10 @@ export function buildStringContent(
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { contents: (...vs: (T.StringContentText | T.EscapeSequence)[]) => buildStringContent(...vs) }
+				$with: {
+					contents: (...vs: (T.StringContentText | T.EscapeSequence)[]) =>
+						buildStringContent(...restItems('contents', vs))
+				}
 			},
 			{
 				contents: () => _content
@@ -236,7 +240,9 @@ export function buildParameters(
 				$source: 2 as const,
 				$named: true as const,
 				_elements,
-				$with: { elements: (...vs: (T.Capture | T.String | T.Identifier)[]) => buildParameters(...vs) }
+				$with: {
+					elements: (...vs: (T.Capture | T.String | T.Identifier)[]) => buildParameters(...restItems('elements', vs))
+				}
 			},
 			{
 				elements: () => _elements
@@ -279,8 +285,9 @@ export function buildList(config: T.List.Config): T.List.Bound {
 				_definitions,
 				_elements,
 				$with: {
-					definitions: (...values: NonEmptyArray<T.Definition>) => buildList({ ...config, definitions: values }),
-					elements: (...values: T.ListElement[]) => buildList({ ...config, elements: values })
+					definitions: (...values: NonEmptyArray<T.Definition>) =>
+						buildList({ ...config, definitions: restItems('definitions', values) }),
+					elements: (...values: T.ListElement[]) => buildList({ ...config, elements: restItems('elements', values) })
 				}
 			},
 			{
@@ -304,8 +311,9 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 				_elements,
 				$with: {
 					groupingGroups: (...values: NonEmptyArray<T.GroupingGroup>) =>
-						buildGrouping({ ...config, groupingGroup: values }),
-					elements: (...values: T.ListElement[]) => buildGrouping({ ...config, elements: values })
+						buildGrouping({ ...config, groupingGroup: restItems('groupingGroups', values) }),
+					elements: (...values: T.ListElement[]) =>
+						buildGrouping({ ...config, elements: restItems('elements', values) })
 				}
 			},
 			{
@@ -331,7 +339,8 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 				_elements,
 				$with: {
 					name: (value?: T.Identifier | T.String) => buildMissingNode({ ...config, name: value }),
-					elements: (...values: T.ListElement[]) => buildMissingNode({ ...config, elements: values })
+					elements: (...values: T.ListElement[]) =>
+						buildMissingNode({ ...config, elements: restItems('elements', values) })
 				}
 			},
 			{
@@ -359,7 +368,8 @@ export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousN
 				_elements,
 				$with: {
 					name: (value: NonNullable<T.AnonymousNode.Config>['name']) => buildAnonymousNode({ ...config, name: value }),
-					elements: (...values: T.ListElement[]) => buildAnonymousNode({ ...config, elements: values })
+					elements: (...values: T.ListElement[]) =>
+						buildAnonymousNode({ ...config, elements: restItems('elements', values) })
 				}
 			},
 			{
@@ -399,7 +409,7 @@ export function buildNegatedField(
 ): ReturnType<typeof _buildNegatedField>;
 export function buildNegatedField(text: string): ReturnType<typeof _buildNegatedField>;
 export function buildNegatedField(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildNegatedField(args[0] as T.Identifier);
 	}
 	const prebuilt =
@@ -421,7 +431,7 @@ function _buildNegatedField(value: AdmitBound<T.Identifier, T.AdmittedNodes>): T
 				$named: true as const,
 				_identifier,
 				$with: {
-					identifier: (value: T.Identifier) => buildNegatedField(value)
+					identifier: (value: T.Identifier) => _buildNegatedField(value)
 				}
 			},
 			{
@@ -623,7 +633,8 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 					name: (value: NonNullable<T.NamedNodePlain.Config>['name']) =>
 						buildNamedNodePlain({ ...config, name: value }),
 					namedNodeGroup: (value?: T.NamedNodeGroup) => buildNamedNodePlain({ ...config, namedNodeGroup: value }),
-					elements: (...values: T.ListElement[]) => buildNamedNodePlain({ ...config, elements: values })
+					elements: (...values: T.ListElement[]) =>
+						buildNamedNodePlain({ ...config, elements: restItems('elements', values) })
 				}
 			},
 			{
@@ -659,7 +670,8 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 					name: (value: T.ImmediateIdentifier | T.ImmediateString) =>
 						buildNamedNodeSupertyped({ ...config, name: value }),
 					namedNodeGroup: (value?: T.NamedNodeGroup) => buildNamedNodeSupertyped({ ...config, namedNodeGroup: value }),
-					elements: (...values: T.ListElement[]) => buildNamedNodeSupertyped({ ...config, elements: values })
+					elements: (...values: T.ListElement[]) =>
+						buildNamedNodeSupertyped({ ...config, elements: restItems('elements', values) })
 				}
 			},
 			{
@@ -691,7 +703,7 @@ export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Con
 					anchor: (value?: NonNullable<T.NamedNodeGroupChildren.Config>['anchor']) =>
 						buildNamedNodeGroupChildren({ ...config, anchor: value }),
 					namedNodeExpressions: (...values: NonEmptyArray<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
-						buildNamedNodeGroupChildren({ ...config, namedNodeExpressions: values })
+						buildNamedNodeGroupChildren({ ...config, namedNodeExpressions: restItems('namedNodeExpressions', values) })
 				}
 			},
 			{
@@ -729,7 +741,10 @@ export function buildNamedNodeGroupAnchoredLast(
 					anchor: (value?: NonNullable<T.NamedNodeGroupAnchoredLast.Config>['anchor']) =>
 						buildNamedNodeGroupAnchoredLast({ ...config, anchor: value }),
 					namedNodeExpressions: (...values: (T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]) =>
-						buildNamedNodeGroupAnchoredLast({ ...config, namedNodeExpressions: values }),
+						buildNamedNodeGroupAnchoredLast({
+							...config,
+							namedNodeExpressions: restItems('namedNodeExpressions', values)
+						}),
 					last: (value: T.Definition | T.NegatedField | T.NamedNodeExpressionArm) =>
 						buildNamedNodeGroupAnchoredLast({ ...config, last: value })
 				}

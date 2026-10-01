@@ -17,11 +17,13 @@ import {
 	forwardedTargetKind,
 	isSlotBearingCompound,
 	isTextLeaf,
+	classifyFactoryEmission,
 	classifyFactoryShape,
 	resolveDirectFactorySlot,
 	valueStorageOf
 } from '../shared.ts';
 import { lowerCamelCase } from '../../compiler/model/casing.ts';
+import type { KindEnumEntry } from '../kind-discriminant.ts';
 
 export interface ValueArm {
 	readonly via: 'value';
@@ -335,6 +337,16 @@ export function flattenSeatsOf(node: AssembledNode, nodeMap: NodeMap): readonly 
 		}
 	}
 	return seats;
+}
+
+export function emittedElementsSeats(
+	node: AssembledNode,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): readonly FlattenSeat[] {
+	return elementsSeatOf(node, nodeMap).filter(
+		(seat) => classifyFactoryEmission(seat.group.kind, seat.group, { nodeMap, kindEntries }) === 'emit'
+	);
 }
 
 export function elementsSeatOf(node: AssembledNode, nodeMap: NodeMap): readonly FlattenSeat[] {

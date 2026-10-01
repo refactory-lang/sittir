@@ -3,7 +3,16 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { basename, join, relative, dirname } from 'node:path';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
-import { GRAMMAR_ENTRY, REPO_ROOT, grammarPackageDir, nativeCrateRelDir, stableGrammars, type GrammarName } from '../grammars.ts';
+import {
+	GRAMMAR_ENTRY,
+	NATIVE_LOADER,
+	REPO_ROOT,
+	grammarPackageDir,
+	nativeBindingRelDir,
+	nativeCrateRelDir,
+	stableGrammars,
+	type GrammarName
+} from '../grammars.ts';
 
 export { REPO_ROOT };
 
@@ -15,8 +24,8 @@ export function generatedRootsFor(grammar: GrammarName): string[] {
 		`packages/${grammar}/.sittir`,
 		`${nativeCrateRelDir(grammar)}/src`,
 		`${nativeCrateRelDir(grammar)}/test-fixtures.json`,
-		`${nativeCrateRelDir(grammar)}/index.d.ts`,
-		`${nativeCrateRelDir(grammar)}/index.js`
+		`${nativeBindingRelDir(grammar)}/index.d.ts`,
+		`${nativeBindingRelDir(grammar)}/${NATIVE_LOADER}`
 	];
 }
 
@@ -38,11 +47,11 @@ export function worktreeSource(): ManifestSource {
 }
 
 function hostFilesFor(grammar: GrammarName, src: ManifestSource): string[] {
-	const crateDir = join(src.root, nativeCrateRelDir(grammar));
-	if (!existsSync(crateDir)) return [];
-	return readdirSync(crateDir)
+	const bindingDir = join(src.root, nativeBindingRelDir(grammar));
+	if (!existsSync(bindingDir)) return [];
+	return readdirSync(bindingDir)
 		.filter((name) => name.endsWith('.node'))
-		.map((name) => `${nativeCrateRelDir(grammar)}/${name}`);
+		.map((name) => `${nativeBindingRelDir(grammar)}/${name}`);
 }
 
 function manifestPath(grammar: GrammarName, src: ManifestSource): string {
