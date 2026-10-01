@@ -914,7 +914,9 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 		lines.push(`${indent}${exported ? 'export ' : ''}interface ${name} extends ${extendsList} {`);
 		if (withNode) lines.push(`${indent}  readonly $type: ${surface.mainType}['$type'];`);
 		if (withNode)
-			lines.push(`${indent}  readonly $with: ${name.startsWith('Bound') ? 'BoundWithNode' : 'WithNode'}<${self}, BoundByKindId, ParsedByKindId>;`);
+			lines.push(
+				`${indent}  readonly $with: ${name.startsWith('Bound') ? 'BoundWithNode' : 'WithNode'}<${self}, BoundByKindId, ParsedByKindId${self === 'this' ? '' : `, ${name}`}>;`
+			);
 		for (const member of surface.members) lines.push(`${indent}${member}`);
 		lines.push(`${indent}}`);
 	};
@@ -923,13 +925,20 @@ function emitNodeSurfaceInterfaces(lines: string[], surface: BuiltTypeSurface, i
 		lines.push(`${indent}export interface Parsed extends Bound {}`);
 		return;
 	}
-	if (seated) {
-		emit('BoundSurface', `BoundOf<${surface.mainType}, BoundByKindId>, NodeMethodsOf`, true, 'Bound', false);
-		lines.push(`${indent}export type Bound = BoundSurface & FlatShapesOf<${surface.mainType}, BoundByKindId>;`);
-	} else {
-		emit('Bound', `BoundOf<${surface.mainType}, BoundByKindId>, NodeMethodsOf`, true);
+	const lookup = 'AdmitLookup<BoundByKindId, ParsedByKindId>';
+	for (const [name, of, byKindId] of [
+		['Bound', 'BoundOf', 'BoundByKindId'],
+		['Parsed', 'ParsedOf', 'ParsedByKindId']
+	] as const) {
+		if (!seated) {
+			emit(name, `${of}<${surface.mainType}, ${byKindId}>, NodeMethodsOf`, true);
+			continue;
+		}
+		emit(`${name}Surface`, `${of}<${surface.mainType}, ${byKindId}>, NodeMethodsOf`, true, name, false);
+		lines.push(
+			`${indent}export type ${name} = ${name}Surface & FlatShapesOf<${name}Surface, ${surface.mainType}, ${byKindId}, ${lookup}>;`
+		);
 	}
-	emit('Parsed', `ParsedOf<${surface.mainType}, ParsedByKindId>, NodeMethodsOf`, true);
 }
 
 type LookupUnion = (parts: readonly string[]) => string | undefined;

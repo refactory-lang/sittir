@@ -17,6 +17,7 @@ const sliceOf = (source: string) => {
 	if (!py.is.subscript(subscript)) throw new Error('not a subscript');
 	const [slice] = subscript.subscripts();
 	if (slice === undefined || typeof slice === 'number' || !py.is.slice(slice)) throw new Error('not a slice');
+	if (slice._step === undefined) throw new Error('no step group');
 	return slice;
 };
 
@@ -32,6 +33,7 @@ describe('a group seat flattens its group fields onto the parent', () => {
 
 	it('takes the flattened expression key through $with', () => {
 		const rebuilt = sliceOf('a[1:2:3]\n').$with.expression(py.build.integer('9'));
+		expect(rebuilt._step).toBeDefined();
 		expect(String(py.render(present(rebuilt.expression())))).toBe('9');
 		expect(String(py.render(present(rebuilt.stop())))).toBe('2');
 	});

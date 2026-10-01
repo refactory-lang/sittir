@@ -12278,13 +12278,16 @@ export namespace Slice {
 	export type Config = ConfigFor<TSKindId.Slice>;
 	interface BoundSurface extends BoundOf<T.Slice, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.Slice['$type'];
-		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId, BoundSurface>;
 	}
-	export type Bound = BoundSurface & FlatShapesOf<T.Slice, BoundByKindId>;
-	export interface Parsed extends ParsedOf<T.Slice, ParsedByKindId>, NodeMethodsOf {
+	export type Bound = BoundSurface &
+		FlatShapesOf<BoundSurface, T.Slice, BoundByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
+	interface ParsedSurface extends ParsedOf<T.Slice, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.Slice['$type'];
-		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedByKindId, ParsedSurface>;
 	}
+	export type Parsed = ParsedSurface &
+		FlatShapesOf<ParsedSurface, T.Slice, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.Slice>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Slice>;
 	export type BuildArgs = [config?: Partial<ConfigOf<T.Slice, T.NamespaceMap>>];

@@ -21653,13 +21653,16 @@ export namespace MatchBlock {
 	export type Config = ConfigFor<TSKindId.MatchBlock>;
 	interface BoundSurface extends BoundOf<T.MatchBlock, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchBlock['$type'];
-		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId, BoundSurface>;
 	}
-	export type Bound = BoundSurface & FlatShapesOf<T.MatchBlock, BoundByKindId>;
-	export interface Parsed extends ParsedOf<T.MatchBlock, ParsedByKindId>, NodeMethodsOf {
+	export type Bound = BoundSurface &
+		FlatShapesOf<BoundSurface, T.MatchBlock, BoundByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
+	interface ParsedSurface extends ParsedOf<T.MatchBlock, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchBlock['$type'];
-		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedByKindId, ParsedSurface>;
 	}
+	export type Parsed = ParsedSurface &
+		FlatShapesOf<ParsedSurface, T.MatchBlock, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.MatchBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchBlock>;
 	export type BuildArgs = [value?: AdmitBound<T.MatchBlockArms, T.AdmittedNodes>];
@@ -21670,13 +21673,16 @@ export namespace LastMatchArm {
 	export type Config = ConfigFor<TSKindId.LastMatchArm>;
 	interface BoundSurface extends BoundOf<T.LastMatchArm, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.LastMatchArm['$type'];
-		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId, BoundSurface>;
 	}
-	export type Bound = BoundSurface & FlatShapesOf<T.LastMatchArm, BoundByKindId>;
-	export interface Parsed extends ParsedOf<T.LastMatchArm, ParsedByKindId>, NodeMethodsOf {
+	export type Bound = BoundSurface &
+		FlatShapesOf<BoundSurface, T.LastMatchArm, BoundByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
+	interface ParsedSurface extends ParsedOf<T.LastMatchArm, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.LastMatchArm['$type'];
-		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedByKindId, ParsedSurface>;
 	}
+	export type Parsed = ParsedSurface &
+		FlatShapesOf<ParsedSurface, T.LastMatchArm, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.LastMatchArm>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LastMatchArm>;
 	export type BuildArgs = [config: ConfigOf<T.LastMatchArm, T.NamespaceMap>];
@@ -24006,13 +24012,16 @@ export namespace MatchArmWithComma {
 	export type Config = ConfigFor<TSKindId.MatchArmWithComma>;
 	interface BoundSurface extends BoundOf<T.MatchArmWithComma, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchArmWithComma['$type'];
-		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId, BoundSurface>;
 	}
-	export type Bound = BoundSurface & FlatShapesOf<T.MatchArmWithComma, BoundByKindId>;
-	export interface Parsed extends ParsedOf<T.MatchArmWithComma, ParsedByKindId>, NodeMethodsOf {
+	export type Bound = BoundSurface &
+		FlatShapesOf<BoundSurface, T.MatchArmWithComma, BoundByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
+	interface ParsedSurface extends ParsedOf<T.MatchArmWithComma, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchArmWithComma['$type'];
-		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedByKindId, ParsedSurface>;
 	}
+	export type Parsed = ParsedSurface &
+		FlatShapesOf<ParsedSurface, T.MatchArmWithComma, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.MatchArmWithComma>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchArmWithComma>;
 	export type BuildArgs = [config: ConfigOf<T.MatchArmWithComma, T.NamespaceMap>];
@@ -24027,13 +24036,16 @@ export namespace MatchArmBlockEnding {
 	export type Config = ConfigFor<TSKindId.MatchArmBlockEnding>;
 	interface BoundSurface extends BoundOf<T.MatchArmBlockEnding, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchArmBlockEnding['$type'];
-		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId, BoundSurface>;
 	}
-	export type Bound = BoundSurface & FlatShapesOf<T.MatchArmBlockEnding, BoundByKindId>;
-	export interface Parsed extends ParsedOf<T.MatchArmBlockEnding, ParsedByKindId>, NodeMethodsOf {
+	export type Bound = BoundSurface &
+		FlatShapesOf<BoundSurface, T.MatchArmBlockEnding, BoundByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
+	interface ParsedSurface extends ParsedOf<T.MatchArmBlockEnding, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.MatchArmBlockEnding['$type'];
-		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedByKindId, ParsedSurface>;
 	}
+	export type Parsed = ParsedSurface &
+		FlatShapesOf<ParsedSurface, T.MatchArmBlockEnding, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.MatchArmBlockEnding>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MatchArmBlockEnding>;
 	export type BuildArgs = [config: ConfigOf<T.MatchArmBlockEnding, T.NamespaceMap>];

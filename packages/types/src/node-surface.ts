@@ -46,13 +46,8 @@ type HintsOf<Self> = Self extends { readonly __slotHints__?: infer H } ? NonNull
 export type SlotHintsOf<Self> = Remap<HintsOf<Self>, '$listView' | '$listSlots' | '$flat'>;
 type FlatOf<Self> = HintsOf<Self> extends { readonly $flat: infer F } ? F : never;
 type FlatNames<F> = F extends FlatHint<string, unknown, infer Keys, boolean> ? keyof Keys & string : never;
-type FlatAt<F, K extends PropertyKey> =
-	F extends FlatHint<infer S, unknown, { readonly [Name: string]: string }, boolean> ? ([K] extends [S] ? F : never) : never;
-type FlatNamed<F, N extends string> =
-	F extends FlatHint<string, unknown, infer Keys, boolean> ? (N extends keyof Keys ? F : never) : never;
 type FlatSeatSlots<F> = F extends FlatHint<infer S, unknown, { readonly [Name: string]: string }, boolean> ? S : never;
 type FlatKeyNames<Self> = FlatNames<FlatOf<Self>>;
-type FlatKeysOf<Self, K extends PropertyKey> = FlatNames<FlatAt<FlatOf<Self>, K>>;
 export type ListViewOf<Self> = HintsOf<Self> extends { readonly $listView: infer L } ? L : never;
 type ListSlotsOf<Self> = HintsOf<Self> extends { readonly $listSlots: infer L } ? L : {};
 type SlotInput<Self, K extends keyof SlotHintsOf<Self>> =
@@ -107,63 +102,36 @@ type SetResult<Self, K extends PropertyKey, V, ByBound, Lookup, Reflect extends 
 	? Self
 	: WithSlot<Self, K, V, ByBound, Lookup>;
 
-type SlotSetter<Self, K extends keyof SlotHintsOf<Self>, ByBound, Lookup, Reflect extends boolean> =
-	SlotRest<Self, K> extends true
-		? SlotInput<Self, K> extends infer Rest extends readonly unknown[]
-			? AdmitBound<WidenElements<Rest, SlotConfig<Self, K>>, Lookup> extends infer Admitted extends readonly unknown[]
+type SlotSetter<Self, Of, K extends keyof SlotHintsOf<Of>, ByBound, Lookup, Reflect extends boolean> =
+	SlotRest<Of, K> extends true
+		? SlotInput<Of, K> extends infer Rest extends readonly unknown[]
+			? AdmitBound<WidenElements<Rest, SlotConfig<Of, K>>, Lookup> extends infer Admitted extends readonly unknown[]
 				? (...values: Admitted) => SetResult<Self, K, Rest, ByBound, Lookup, Reflect>
 				: never
 			: never
-		: SlotOptional<Self, K> extends true
-			? ((
-					value: AdmitBound<SlotInput<Self, K>, Lookup>
-				) => SetResult<Self, K, SlotInput<Self, K>, ByBound, Lookup, Reflect>) &
+		: SlotOptional<Of, K> extends true
+			? ((value: AdmitBound<SlotInput<Of, K>, Lookup>) => SetResult<Self, K, SlotInput<Of, K>, ByBound, Lookup, Reflect>) &
 					(() => SetResult<Self, K, undefined, ByBound, Lookup, Reflect>)
-			: (
-					value: AdmitBound<SlotInput<Self, K>, Lookup>
-				) => SetResult<Self, K, SlotInput<Self, K>, ByBound, Lookup, Reflect>;
+			: (value: AdmitBound<SlotInput<Of, K>, Lookup>) => SetResult<Self, K, SlotInput<Of, K>, ByBound, Lookup, Reflect>;
 
-type ListItems<Self, K extends keyof SlotHintsOf<Self>, E, O, ByBound, Lookup, Reflect extends boolean> = {
-	(options: O, ...items: readonly AdmitBound<E, Lookup>[]): SetResult<Self, K, SlotInput<Self, K>, ByBound, Lookup, Reflect>;
-	(...items: readonly AdmitBound<E, Lookup>[]): SetResult<Self, K, SlotInput<Self, K>, ByBound, Lookup, Reflect>;
+type ListItems<Self, Of, K extends keyof SlotHintsOf<Of>, E, O, ByBound, Lookup, Reflect extends boolean> = {
+	(options: O, ...items: readonly AdmitBound<E, Lookup>[]): SetResult<Self, K, SlotInput<Of, K>, ByBound, Lookup, Reflect>;
+	(...items: readonly AdmitBound<E, Lookup>[]): SetResult<Self, K, SlotInput<Of, K>, ByBound, Lookup, Reflect>;
 };
 
-type SlotSetterOf<Self, K extends keyof SlotHintsOf<Self>, ByBound, Lookup, Reflect extends boolean> =
-	K extends keyof ListSlotsOf<Self>
-		? ListSlotsOf<Self>[K] extends ListSlotHint<infer E, infer O, infer C>
-			? SlotSetter<Self, K, ByBound, Lookup, Reflect> & ListItems<Self, K, E | C, O, ByBound, Lookup, Reflect>
-			: SlotSetter<Self, K, ByBound, Lookup, Reflect>
-		: SlotSetter<Self, K, ByBound, Lookup, Reflect>;
+type SlotSetterOf<Self, Of, K extends keyof SlotHintsOf<Of>, ByBound, Lookup, Reflect extends boolean> =
+	K extends keyof ListSlotsOf<Of>
+		? ListSlotsOf<Of>[K] extends ListSlotHint<infer E, infer O, infer C>
+			? SlotSetter<Self, Of, K, ByBound, Lookup, Reflect> & ListItems<Self, Of, K, E | C, O, ByBound, Lookup, Reflect>
+			: SlotSetter<Self, Of, K, ByBound, Lookup, Reflect>
+		: SlotSetter<Self, Of, K, ByBound, Lookup, Reflect>;
 
-type FlatSetter<Self, S extends string, G, K extends keyof SlotHintsOf<G>, Optional extends boolean, ByBound, Lookup, Reflect extends boolean> =
-	SlotRest<G, K> extends true
-		? SlotInput<G, K> extends infer Rest extends readonly unknown[]
-			? AdmitBound<Rest, Lookup> extends infer Admitted extends readonly unknown[]
-				? (...values: Admitted) => SetResult<Self, S, G, ByBound, Lookup, Reflect>
-				: never
-			: never
-		: SlotOptional<G, K> extends true
-			? ((value: AdmitBound<SlotInput<G, K>, Lookup>) => SetResult<Self, S, G, ByBound, Lookup, Reflect>) &
-					(() => SetResult<Self, S, Optional extends true ? G | undefined : G, ByBound, Lookup, Reflect>)
-			: (value: AdmitBound<SlotInput<G, K>, Lookup>) => SetResult<Self, S, G, ByBound, Lookup, Reflect>;
+type FlatOwned<Of> = FlatKeyNames<Of> | FlatSeatSlots<FlatOf<Of>>;
 
-type FlatSetterNamed<F, Self, N extends string, ByBound, Lookup, Reflect extends boolean> =
-	F extends FlatHint<infer S, infer G, infer Keys, infer O>
-		? Keys[N & keyof Keys] extends infer K extends keyof SlotHintsOf<G>
-			? FlatSetter<Self, S, G, K, O, ByBound, Lookup, Reflect>
-			: never
-		: never;
-
-type FlatSetters<Self, ByBound, Lookup, Reflect extends boolean> = {
-	[N in FlatKeyNames<Self> as [FlatSetterNamed<FlatNamed<FlatOf<Self>, N>, Self, N, ByBound, Lookup, Reflect>] extends [never]
-		? never
-		: N]: FlatSetterNamed<FlatNamed<FlatOf<Self>, N>, Self, N, ByBound, Lookup, Reflect>;
+export type Setters<Self, ByBound, Lookup, Reflect extends boolean = false, Of = Self> = {
+	[K in keyof SlotHintsOf<Of> as K extends FlatOwned<Of> ? never : K]: SlotSetterOf<Self, Of, K, ByBound, Lookup, Reflect>;
 };
-
-export type Setters<Self, ByBound, Lookup, Reflect extends boolean = false> = {
-	[K in keyof SlotHintsOf<Self>]: SlotSetterOf<Self, K, ByBound, Lookup, Reflect>;
-} & FlatSetters<Self, ByBound, Lookup, Reflect>;
-export type WithOf<Self, ByBound, Lookup> = Setters<Self, ByBound, Lookup>;
+export type WithOf<Self, ByBound, Lookup, Of = Self> = Setters<Self, ByBound, Lookup, false, Of>;
 type ResolveInput<V, ByBound> =
 	Resolve<V, ByBound> extends infer R
 		? R extends { readonly $type: unknown }
@@ -172,31 +140,11 @@ type ResolveInput<V, ByBound> =
 				? Readonly<R>
 				: R
 		: never;
-type FlatRead<Self, K extends PropertyKey, V, ByBound> = [FlatKeysOf<Self, K>] extends [never]
-	? {}
-	: FlatAt<FlatOf<Self>, K> extends FlatHint<string, infer G, infer Keys, boolean>
-		? {
-				[N in keyof Keys & string as Keys[N] extends keyof G ? (G[Keys[N]] extends () => unknown ? N : never) : never]: G[Keys[N] &
-					keyof G] extends () => infer R
-					? () => [V] extends [undefined]
-						? undefined
-						: undefined extends V
-							? Resolve<R, ByBound> | undefined
-							: Resolve<R, ByBound>
-					: never;
-			}
-		: {};
-export type WithSlot<Self, K extends PropertyKey, V, ByBound, Lookup> = [FlatKeysOf<Self, K>] extends [never]
-	? Remap<Self, K | '$with'> & {
-			[P in K]: () => ResolveInput<V, ByBound>;
-		} & {
-			readonly $with: WithOf<WithSlot<Self, K, V, ByBound, Lookup>, ByBound, Lookup>;
-		}
-	: Remap<Self, K | '$with' | FlatKeysOf<Self, K>> & {
-			[P in Exclude<K, FlatKeysOf<Self, K>>]: () => ResolveInput<V, ByBound>;
-		} & FlatRead<Self, K, V, ByBound> & {
-			readonly $with: WithOf<WithSlot<Self, K, V, ByBound, Lookup>, ByBound, Lookup>;
-		};
+export type WithSlot<Self, K extends PropertyKey, V, ByBound, Lookup> = Remap<Self, K | '$with'> & {
+	[P in K]: () => ResolveInput<V, ByBound>;
+} & {
+	readonly $with: WithOf<WithSlot<Self, K, V, ByBound, Lookup>, ByBound, Lookup>;
+};
 
 type ListPart<N, ByKindId> = [ListViewOf<N>] extends [never]
 	? {}
@@ -204,53 +152,99 @@ type ListPart<N, ByKindId> = [ListViewOf<N>] extends [never]
 		? ListView<Resolve<E, ByKindId>, O>
 		: {};
 
-type FlatAccessorNamed<F, P extends string, ByChild, Absent extends boolean> =
-	F extends FlatHint<string, infer G, infer Keys, infer O>
-		? G[Keys[P & keyof Keys] & keyof G] extends () => infer R
-			? () => Absent extends true ? undefined : Resolve<O extends true ? R | undefined : R, ByChild>
+type AnyKeys = { readonly [Name: string]: string };
+
+type FlatGetters<N, F, ByChild> =
+	F extends FlatHint<infer S, infer G, infer Keys, boolean>
+		? {
+				[P in keyof Keys & string as G[Keys[P] & keyof G] extends () => unknown ? P : never]: G[Keys[P] & keyof G] extends () => infer R
+					? () => Resolve<R, ByChild>
+					: never;
+			} & {
+				[P in S & MethodKeys<N> as P extends keyof Keys ? never : P]: N[P] extends () => infer R ? () => Resolve<NonNullable<R>, ByChild> : never;
+			}
+		: never;
+
+type SeatInput<N, S extends string, Lookup> = S extends keyof SlotHintsOf<N> ? AdmitBound<NonNullable<SlotInput<N, S>>, Lookup> : never;
+
+type KeySetter<G, K, Lookup, Result> = K extends keyof SlotHintsOf<G>
+	? SlotRest<G, K> extends true
+		? SlotInput<G, K> extends infer Rest extends readonly unknown[]
+			? AdmitBound<Rest, Lookup> extends infer Admitted extends readonly unknown[]
+				? (...values: Admitted) => Result
+				: never
 			: never
+		: SlotOptional<G, K> extends true
+			? ((value: AdmitBound<SlotInput<G, K>, Lookup>) => Result) & (() => Result)
+			: (value: AdmitBound<SlotInput<G, K>, Lookup>) => Result
+	: never;
+
+type RequiredFlatKeys<F> =
+	F extends FlatHint<string, infer G, infer Keys, boolean>
+		? {
+				[P in keyof Keys & string]: Keys[P] extends keyof SlotHintsOf<G>
+					? SlotOptional<G, Keys[P]> extends true
+						? never
+						: SlotRest<G, Keys[P]> extends true
+							? never
+							: P
+					: never;
+			}[keyof Keys & string]
 		: never;
 
-type FlatAccessorsOf<N, F, ByChild, Absent extends boolean> = {
-	[P in FlatNames<F> as [FlatAccessorNamed<FlatNamed<F, P>, P, ByChild, Absent>] extends [never]
-		? never
-		: P]: FlatAccessorNamed<FlatNamed<F, P>, P, ByChild, Absent>;
-} & {
-	[S in FlatSeatSlots<F> & MethodKeys<N> as S extends FlatNames<F> ? never : S]: N[S] extends () => infer R
-		? () => Absent extends true
-				? undefined
-				: Resolve<FlatAt<F, S> extends FlatHint<string, unknown, { readonly [Name: string]: string }, true> ? R : NonNullable<R>, ByChild>
-		: never;
-};
+type SoleKey<U> = [U] extends [never] ? never : [IntersectionOf<U>] extends [never] ? never : U;
 
-type PresentShape<N, F, ByChild> =
-	F extends FlatHint<string, unknown, { readonly [Name: string]: string }, boolean, infer Stored>
-		? { readonly [K in Stored]: NonNullable<N[K & keyof N]> } & FlatAccessorsOf<N, NotOptional<F>, ByChild, false>
+type ShapeNode<Surface, N, H, F, Present extends boolean, ByChild, Lookup> = Surface &
+	ShapesOf<Surface, N, H, Exclude<H, F>, ByChild, Lookup> &
+	(Present extends true ? PresentMembers<Surface, N, H, F, ByChild, Lookup> : AbsentMembers<Surface, N, H, F, ByChild, Lookup>);
+
+type SeatSetter<Surface, N, H, F, ByChild, Lookup> =
+	F extends FlatHint<infer S, unknown, AnyKeys, infer O>
+		? ((value: SeatInput<N, S, Lookup>) => ShapeNode<Surface, N, H, F, true, ByChild, Lookup>) &
+				(O extends true ? () => ShapeNode<Surface, N, H, F, false, ByChild, Lookup> : unknown)
 		: never;
 
-type AbsentShape<N, F, ByChild> =
-	F extends FlatHint<string, unknown, { readonly [Name: string]: string }, boolean, infer Stored>
-		? { readonly [K in Stored]?: undefined } & FlatAccessorsOf<N, F, ByChild, true>
+type PresentMembers<Surface, N, H, F, ByChild, Lookup> =
+	F extends FlatHint<infer S, infer G, infer Keys, boolean, infer Stored>
+		? { readonly [K in Stored]: NonNullable<N[K & keyof N]> } & FlatGetters<N, F, ByChild> & {
+				readonly $with: {
+					[P in keyof Keys & string]: P extends S
+						? SeatSetter<Surface, N, H, F, ByChild, Lookup> &
+								((value: AdmitBound<SlotInput<G, Keys[P] & keyof SlotHintsOf<G>>, Lookup>) => ShapeNode<Surface, N, H, F, true, ByChild, Lookup>)
+						: KeySetter<G, Keys[P], Lookup, ShapeNode<Surface, N, H, F, true, ByChild, Lookup>>;
+				} & { [P in S as P extends keyof Keys ? never : P]: SeatSetter<Surface, N, H, F, ByChild, Lookup> };
+			}
 		: never;
 
-type NotOptional<F> = F extends FlatHint<infer S, infer G, infer Keys, boolean, infer Stored> ? FlatHint<S, G, Keys, false, Stored> : never;
+type AbsentMembers<Surface, N, H, F, ByChild, Lookup> =
+	F extends FlatHint<infer S, infer G, infer Keys, boolean, infer Stored>
+		? { readonly [K in Stored]?: undefined } & { [P in S & MethodKeys<N> as P extends keyof Keys ? never : P]: () => undefined } & {
+				readonly $with: {
+					[P in SoleKey<RequiredFlatKeys<F>>]: (
+						value: AdmitBound<SlotInput<G, Keys[P] & keyof SlotHintsOf<G>>, Lookup>
+					) => ShapeNode<Surface, N, H, F, true, ByChild, Lookup>;
+				} & { [P in S as P extends keyof Keys ? never : P]: SeatSetter<Surface, N, H, F, ByChild, Lookup> };
+			}
+		: never;
 
-type FlatShape<N, F, ByChild> =
-	F extends FlatHint<string, unknown, { readonly [Name: string]: string }, infer O>
+type FlatShape<Surface, N, H, F, ByChild, Lookup> =
+	F extends FlatHint<string, unknown, AnyKeys, infer O>
 		? O extends true
-			? PresentShape<N, F, ByChild> | AbsentShape<N, F, ByChild>
-			: FlatAccessorsOf<N, F, ByChild, false>
+			? PresentMembers<Surface, N, H, F, ByChild, Lookup> | AbsentMembers<Surface, N, H, F, ByChild, Lookup>
+			: PresentMembers<Surface, N, H, F, ByChild, Lookup>
 		: never;
 
 type IntersectionOf<U> = (U extends unknown ? (u: U) => void : never) extends (i: infer I) => void ? I : never;
 
-export type FlatShapesOf<N, ByBound> = [FlatOf<N>] extends [never]
+type ShapesOf<Surface, N, H, Of, ByChild, Lookup> = [Of] extends [never]
 	? {}
-	: IntersectionOf<FlatOf<N> extends infer F ? (F extends unknown ? { readonly shape: FlatShape<N, F, ByBound> } : never) : never> extends {
+	: IntersectionOf<Of extends unknown ? { readonly shape: FlatShape<Surface, N, H, Of, ByChild, Lookup> } : never> extends {
 				readonly shape: infer S;
 		  }
 		? S
 		: {};
+
+export type FlatShapesOf<Surface, N, ByChild, Lookup> = ShapesOf<Surface, N, FlatOf<N>, FlatOf<N>, ByChild, Lookup>;
 
 type SurfaceOf<N, ByChild> = Storage<N> &
 	Accessors<N, ByChild> &
@@ -259,6 +253,6 @@ type SurfaceOf<N, ByChild> = Storage<N> &
 		readonly __slotHints__?: HintsOf<N>;
 	};
 export type BoundOf<N, ByBound> = SurfaceOf<N, ByBound>;
-export type ParsedOf<N, ByParsed> = SurfaceOf<N, ByParsed> & FlatAccessorsOf<N, FlatOf<N>, ByParsed, false>;
-export type WithNode<Self, ByBound, ByParsed> = WithOf<Self, ByBound, AdmitLookup<ByBound, ByParsed>>;
-export type BoundWithNode<Self, ByBound, ByParsed> = Setters<Self, ByBound, AdmitLookup<ByBound, ByParsed>, true>;
+export type ParsedOf<N, ByParsed> = SurfaceOf<N, ByParsed>;
+export type WithNode<Self, ByBound, ByParsed, Of = Self> = WithOf<Self, ByBound, AdmitLookup<ByBound, ByParsed>, Of>;
+export type BoundWithNode<Self, ByBound, ByParsed, Of = Self> = Setters<Self, ByBound, AdmitLookup<ByBound, ByParsed>, true, Of>;

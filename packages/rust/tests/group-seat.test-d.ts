@@ -37,6 +37,7 @@ export function newKeySetterClearsWithNoArgument(arm: T.LastMatchArm.Parsed): st
 }
 
 export function flattenedListSeatReadsItsAccessors(block: T.MatchBlock.Parsed): void {
+	if (block._match_block_arms === undefined) return;
 	block.matchArms();
 	block.lastArm();
 }
@@ -65,6 +66,7 @@ export function anOptionalSeatNarrowsOnItsStoredProperty(block: T.MatchBlock.Bou
 	if (block._match_block_arms !== undefined) {
 		expectTrue<Equals<undefined extends ReturnType<typeof block.matchBlockArms> ? true : false, false>>();
 	} else {
-		expectTrue<Equals<ReturnType<typeof block.lastArm>, undefined>>();
+		// @ts-expect-error an absent group has no flattened getters
+		block.lastArm();
 	}
 }

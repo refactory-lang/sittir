@@ -12,7 +12,9 @@ const matchBlockOf = (source: string) => {
 	if (!rs.is.expressionStatement(statement)) throw new Error('not an expression statement');
 	const expression = statement.content();
 	if (!rs.is.matchExpression(expression)) throw new Error('not a match');
-	return expression.body();
+	const block = expression.body();
+	if (block._match_block_arms === undefined) throw new Error('no arms');
+	return block;
 };
 
 describe('a group seat flattens its group fields onto the parent', () => {
