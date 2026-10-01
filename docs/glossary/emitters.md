@@ -11823,21 +11823,20 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
  * row. The setter record's `T.<Kind>.Bound` is also what keeps declaration
  * emit finite: an inferred recursive `$with` closure blows the serializer
  * (TS7056) and the package cannot publish types. And a separated list's
- * tuples spell a non-empty element list as `[element: E, ...elements: E[]]`
- * (`elementsTuple`), never as `[...elements: NonEmptyArray<E>]`: a variadic
+ * tuples spell a non-empty element list as `[first: E, ...rest: E[]]`
+ * (`listRestParamType`), never as `[...elements: NonEmptyArray<E>]`: a variadic
  * spread of an alias makes the whole tuple alias resolve eagerly, and the
  * loose element's widening walks each element kind's bare slot straight back
  * into the list's own row while that row's base types are still resolving
  * (TS2310). A rest element that is an array type keeps the alias deferred.
  *
- * `buildArgs` names THE CANONICAL CALL SHAPE — the one signature the kind is
- * built through — not the full public overload set, which a tuple cannot
- * represent. Two kinds carry an extra overload the tuple deliberately does
- * not describe: a forwarded wrapper also accepts its target's constructor
- * arguments, and a separated list also accepts a leading options bag. Both
- * are sugar over the canonical shape, and both are what makes
- * `Parameters<typeof build<Kind>>` pick the wrong signature — which is why
- * the tuple is derived from the factory shape, never from the function.
+ * `buildArgs` names the argument lists the kind's public call takes, as a
+ * tuple or a union of tuples. For most kinds that is one signature. A
+ * separated list's is the elements alone or the options bag first, and a
+ * kind that forwards to a list unions the list's tuples into its own, so
+ * neither needs a second spelling of the other's arguments. The tuples are
+ * derived from the factory shape, never from the function:
+ * `Parameters<typeof build<Kind>>` resolves to the last overload only.
  * `looseArgs` is the same arity and the same labels with every parameter
  * widened to what a coercing caller may pass.
  */
@@ -11847,15 +11846,11 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
 
 `maxArgs` is the most arguments the calling convention accepts, beside the tuples it counts: the factory surface's `arity`, 1 for a leaf, 1 or 2 for a refine form (its config, plus its options when it has registered slots), and none for a list or for a kind that forwards a wrapped-list spread, whose tuples end in a rest element. `bundleEntries` reads it to stamp the hoisted builder.
 
-### `packages/codegen/src/emitters/factories.ts::elementsTuple`
+### `packages/codegen/src/emitters/factories.ts::listBuiltTypeSurface`
 
-```text
-/** A separated list's `BuildArgs` / `LooseArgs` tuple for one element type:
- *  a rest of that element, preceded by one required element when the list
- *  is non-empty. The same call shape as the builder's `NonEmptyArray<E>`
- *  rest parameter, spelled so the tuple alias stays a deferred type
- *  reference — see the cycle rules on {@link BuiltTypeSurface}. */
-```
+The construction surface of a separated list. Its `BuildArgs` / `LooseArgs` are every argument list the list's public call takes, spelled by `listRestParamType` exactly as the coercer and the overlay spell it: the elements alone, and the options bag first when the list has options. An element is the list's own element type or, when the list seats a hoisted group (`emittedElementsSeats`), that group's config (`T.<Group>.BuildArgs[0]` / `.LooseArgs[0]`), by name. A kind that forwards to the list unions these rows into its own (`fieldCarryingBuiltTypeSurface`), so an owner's row takes whatever its list's row takes without a second spelling.
+
+A non-empty element list is spelled `[first: E, ...rest: E[]]`, never as a variadic spread of an alias: a rest element that is an array type keeps the tuple alias deferred (see the cycle rules on `BuiltTypeSurface`).
 
 ### `packages/codegen/src/emitters/factories.ts::builtTypeSurfaceOf`
 

@@ -587,8 +587,6 @@ function ownedListArgs(owner: string, value: unknown, ctx: PrintContext): string
 	if (!(value instanceof Printed) || value.kind === undefined || value.$_trivia !== undefined) return undefined;
 	const elements = value.facts?.elements;
 	if (elements === undefined || ctx.facts.forwardsTo[owner] !== value.kind) return undefined;
-	if (elements.items.some(isPlainObject)) return undefined;
-	if (isLoose(ctx) && !listOptionsAreDefault(value.kind, elements.options, ctx)) return undefined;
 	return value.argsSource;
 }
 
@@ -624,11 +622,11 @@ export function printingFactoryMap(
 				case 'forwarded': {
 					const placed = placeDirectArg(kind, args[0], ctx);
 					const value = placed.loose;
+					const ownedList = ownedListArgs(kind, value, ctx);
 					const absorbed =
-						value instanceof Printed && value.kind !== undefined && ctx.absorbedKinds?.has(value.kind)
+						ownedList === undefined && value instanceof Printed && value.kind !== undefined && ctx.absorbedKinds?.has(value.kind)
 							? value.argsSource
 							: undefined;
-					const ownedList = absorbed === undefined ? ownedListArgs(kind, value, ctx) : undefined;
 					const valueSource =
 						ownedList !== undefined
 							? ownedList

@@ -10792,14 +10792,26 @@ export namespace ImportList {
 	}
 	export type Loose = LooseFor<TSKindId.ImportList>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportList>;
-	export type BuildArgs = [
-		element: AdmitBound<T.DottedName | T.AliasedImport, T.AdmittedNodes>,
-		...elements: AdmitBound<T.DottedName | T.AliasedImport, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [
+				first: AdmitBound<T.DottedName | T.AliasedImport, T.AdmittedNodes>,
+				...rest: AdmitBound<T.DottedName | T.AliasedImport, T.AdmittedNodes>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.DottedName | T.AliasedImport, T.AdmittedNodes>,
+				...rest: AdmitBound<T.DottedName | T.AliasedImport, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.ImportList;
 }
 export namespace AliasedImport {
@@ -11837,14 +11849,23 @@ export namespace ParametersElements {
 	}
 	export type Loose = LooseFor<TSKindId.ParametersElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParametersElements>;
-	export type BuildArgs = [
-		element: AdmitBound<T.Parameter, T.AdmittedNodes>,
-		...elements: AdmitBound<T.Parameter, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [first: AdmitBound<T.Parameter, T.AdmittedNodes>, ...rest: AdmitBound<T.Parameter, T.AdmittedNodes>[]]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.Parameter, T.AdmittedNodes>,
+				...rest: AdmitBound<T.Parameter, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.ParametersElements;
 }
 export namespace Patterns {
@@ -11861,14 +11882,23 @@ export namespace Patterns {
 	}
 	export type Loose = LooseFor<TSKindId.Patterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Patterns>;
-	export type BuildArgs = [
-		element: AdmitBound<T.Pattern, T.AdmittedNodes>,
-		...elements: AdmitBound<T.Pattern, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [first: AdmitBound<T.Pattern, T.AdmittedNodes>, ...rest: AdmitBound<T.Pattern, T.AdmittedNodes>[]]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.Pattern, T.AdmittedNodes>,
+				...rest: AdmitBound<T.Pattern, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.Patterns;
 }
 export namespace TuplePattern {
@@ -12708,24 +12738,46 @@ export namespace CollectionElements {
 	}
 	export type Loose = LooseFor<TSKindId.CollectionElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CollectionElements>;
-	export type BuildArgs = [
-		element: AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>,
-		...elements: AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<
-			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>,
-		...elements: LooseValue<
-			T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
-	];
+	export type BuildArgs =
+		| [
+				first: AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>,
+				...rest: AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>,
+				...rest: AdmitBound<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<
+					T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+				>,
+				...rest: LooseValue<
+					T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+				>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<
+					T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+				>,
+				...rest: LooseValue<
+					T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+				>[]
+		  ];
 	export type Kind = TSKindId.CollectionElements;
 }
 export namespace ForInClause {
@@ -12942,14 +12994,23 @@ export namespace SimpleStatementsElements {
 	}
 	export type Loose = LooseFor<TSKindId.SimpleStatementsElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SimpleStatementsElements>;
-	export type BuildArgs = [
-		element: AdmitBound<T.SimpleStatement, T.AdmittedNodes>,
-		...elements: AdmitBound<T.SimpleStatement, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.SimpleStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.SimpleStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [first: AdmitBound<T.SimpleStatement, T.AdmittedNodes>, ...rest: AdmitBound<T.SimpleStatement, T.AdmittedNodes>[]]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.SimpleStatement, T.AdmittedNodes>,
+				...rest: AdmitBound<T.SimpleStatement, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.SimpleStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.SimpleStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.SimpleStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.SimpleStatement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.SimpleStatementsElements;
 }
 export namespace Subjects {
@@ -12966,14 +13027,23 @@ export namespace Subjects {
 	}
 	export type Loose = LooseFor<TSKindId.Subjects>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Subjects>;
-	export type BuildArgs = [
-		element: AdmitBound<T.Expression, T.AdmittedNodes>,
-		...elements: AdmitBound<T.Expression, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [first: AdmitBound<T.Expression, T.AdmittedNodes>, ...rest: AdmitBound<T.Expression, T.AdmittedNodes>[]]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.Expression, T.AdmittedNodes>,
+				...rest: AdmitBound<T.Expression, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.Subjects;
 }
 export namespace CasePatterns {
@@ -12990,14 +13060,23 @@ export namespace CasePatterns {
 	}
 	export type Loose = LooseFor<TSKindId.CasePatterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CasePatterns>;
-	export type BuildArgs = [
-		element: AdmitBound<T.CasePattern, T.AdmittedNodes>,
-		...elements: AdmitBound<T.CasePattern, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [first: AdmitBound<T.CasePattern, T.AdmittedNodes>, ...rest: AdmitBound<T.CasePattern, T.AdmittedNodes>[]]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.CasePattern, T.AdmittedNodes>,
+				...rest: AdmitBound<T.CasePattern, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.CasePatterns;
 }
 export namespace WithClauseWithItems {
@@ -13014,14 +13093,23 @@ export namespace WithClauseWithItems {
 	}
 	export type Loose = LooseFor<TSKindId.WithClauseWithItems>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithClauseWithItems>;
-	export type BuildArgs = [
-		element: AdmitBound<T.WithItem, T.AdmittedNodes>,
-		...elements: AdmitBound<T.WithItem, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [first: AdmitBound<T.WithItem, T.AdmittedNodes>, ...rest: AdmitBound<T.WithItem, T.AdmittedNodes>[]]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.WithItem, T.AdmittedNodes>,
+				...rest: AdmitBound<T.WithItem, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.WithClauseWithItems;
 }
 export namespace Types {
@@ -13038,14 +13126,23 @@ export namespace Types {
 	}
 	export type Loose = LooseFor<TSKindId.Types>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Types>;
-	export type BuildArgs = [
-		element: AdmitBound<T.Type, T.AdmittedNodes>,
-		...elements: AdmitBound<T.Type, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [first: AdmitBound<T.Type, T.AdmittedNodes>, ...rest: AdmitBound<T.Type, T.AdmittedNodes>[]]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.Type, T.AdmittedNodes>,
+				...rest: AdmitBound<T.Type, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.Types;
 }
 export namespace ArgumentListElements {
@@ -13062,30 +13159,58 @@ export namespace ArgumentListElements {
 	}
 	export type Loose = LooseFor<TSKindId.ArgumentListElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArgumentListElements>;
-	export type BuildArgs = [
-		element: AdmitBound<
-			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
-			T.AdmittedNodes
-		>,
-		...elements: AdmitBound<
-			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
-			T.AdmittedNodes
-		>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<
-			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>,
-		...elements: LooseValue<
-			T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
-	];
+	export type BuildArgs =
+		| [
+				first: AdmitBound<
+					T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+					T.AdmittedNodes
+				>,
+				...rest: AdmitBound<
+					T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+					T.AdmittedNodes
+				>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<
+					T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+					T.AdmittedNodes
+				>,
+				...rest: AdmitBound<
+					T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+					T.AdmittedNodes
+				>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<
+					T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+				>,
+				...rest: LooseValue<
+					T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+				>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<
+					T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+				>,
+				...rest: LooseValue<
+					T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+				>[]
+		  ];
 	export type Kind = TSKindId.ArgumentListElements;
 }
 export namespace ExpressionListExpressions {
@@ -13102,14 +13227,23 @@ export namespace ExpressionListExpressions {
 	}
 	export type Loose = LooseFor<TSKindId.ExpressionListExpressions>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionListExpressions>;
-	export type BuildArgs = [
-		element: AdmitBound<T.Expression, T.AdmittedNodes>,
-		...elements: AdmitBound<T.Expression, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [first: AdmitBound<T.Expression, T.AdmittedNodes>, ...rest: AdmitBound<T.Expression, T.AdmittedNodes>[]]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.Expression, T.AdmittedNodes>,
+				...rest: AdmitBound<T.Expression, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.ExpressionListExpressions;
 }
 export namespace ListPatternCasePatterns {
@@ -13126,14 +13260,23 @@ export namespace ListPatternCasePatterns {
 	}
 	export type Loose = LooseFor<TSKindId.ListPatternCasePatterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ListPatternCasePatterns>;
-	export type BuildArgs = [
-		element: AdmitBound<T.CasePattern, T.AdmittedNodes>,
-		...elements: AdmitBound<T.CasePattern, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [first: AdmitBound<T.CasePattern, T.AdmittedNodes>, ...rest: AdmitBound<T.CasePattern, T.AdmittedNodes>[]]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.CasePattern, T.AdmittedNodes>,
+				...rest: AdmitBound<T.CasePattern, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.CasePattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.ListPatternCasePatterns;
 }
 export namespace DictPatternElements {
@@ -13150,14 +13293,26 @@ export namespace DictPatternElements {
 	}
 	export type Loose = LooseFor<TSKindId.DictPatternElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictPatternElements>;
-	export type BuildArgs = [
-		element: AdmitBound<T.KeyValuePattern | T.SplatPattern, T.AdmittedNodes>,
-		...elements: AdmitBound<T.KeyValuePattern | T.SplatPattern, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.KeyValuePattern | T.SplatPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.KeyValuePattern | T.SplatPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [
+				first: AdmitBound<T.KeyValuePattern | T.SplatPattern, T.AdmittedNodes>,
+				...rest: AdmitBound<T.KeyValuePattern | T.SplatPattern, T.AdmittedNodes>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.KeyValuePattern | T.SplatPattern, T.AdmittedNodes>,
+				...rest: AdmitBound<T.KeyValuePattern | T.SplatPattern, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.KeyValuePattern | T.SplatPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.KeyValuePattern | T.SplatPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.KeyValuePattern | T.SplatPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.KeyValuePattern | T.SplatPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.DictPatternElements;
 }
 export namespace PatternListPatterns {
@@ -13174,14 +13329,23 @@ export namespace PatternListPatterns {
 	}
 	export type Loose = LooseFor<TSKindId.PatternListPatterns>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PatternListPatterns>;
-	export type BuildArgs = [
-		element: AdmitBound<T.Pattern, T.AdmittedNodes>,
-		...elements: AdmitBound<T.Pattern, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [first: AdmitBound<T.Pattern, T.AdmittedNodes>, ...rest: AdmitBound<T.Pattern, T.AdmittedNodes>[]]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.Pattern, T.AdmittedNodes>,
+				...rest: AdmitBound<T.Pattern, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Pattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.PatternListPatterns;
 }
 export namespace Subscripts {
@@ -13198,14 +13362,26 @@ export namespace Subscripts {
 	}
 	export type Loose = LooseFor<TSKindId.Subscripts>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Subscripts>;
-	export type BuildArgs = [
-		element: AdmitBound<T.Expression | T.Slice, T.AdmittedNodes>,
-		...elements: AdmitBound<T.Expression | T.Slice, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.Expression | T.Slice, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.Expression | T.Slice, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [
+				first: AdmitBound<T.Expression | T.Slice, T.AdmittedNodes>,
+				...rest: AdmitBound<T.Expression | T.Slice, T.AdmittedNodes>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.Expression | T.Slice, T.AdmittedNodes>,
+				...rest: AdmitBound<T.Expression | T.Slice, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.Expression | T.Slice, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Expression | T.Slice, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.Expression | T.Slice, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Expression | T.Slice, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.Subscripts;
 }
 export namespace DictionaryElements {
@@ -13222,14 +13398,26 @@ export namespace DictionaryElements {
 	}
 	export type Loose = LooseFor<TSKindId.DictionaryElements>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DictionaryElements>;
-	export type BuildArgs = [
-		element: AdmitBound<T.Pair | T.DictionarySplat, T.AdmittedNodes>,
-		...elements: AdmitBound<T.Pair | T.DictionarySplat, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.Pair | T.DictionarySplat, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.Pair | T.DictionarySplat, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [
+				first: AdmitBound<T.Pair | T.DictionarySplat, T.AdmittedNodes>,
+				...rest: AdmitBound<T.Pair | T.DictionarySplat, T.AdmittedNodes>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.Pair | T.DictionarySplat, T.AdmittedNodes>,
+				...rest: AdmitBound<T.Pair | T.DictionarySplat, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.Pair | T.DictionarySplat, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Pair | T.DictionarySplat, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.Pair | T.DictionarySplat, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Pair | T.DictionarySplat, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.DictionaryElements;
 }
 export namespace SliceGroup {
@@ -13322,14 +13510,23 @@ export namespace PrintArguments {
 	}
 	export type Loose = LooseFor<TSKindId.PrintArguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintArguments>;
-	export type BuildArgs = [
-		element: AdmitBound<T.Expression, T.AdmittedNodes>,
-		...elements: AdmitBound<T.Expression, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [first: AdmitBound<T.Expression, T.AdmittedNodes>, ...rest: AdmitBound<T.Expression, T.AdmittedNodes>[]]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.Expression, T.AdmittedNodes>,
+				...rest: AdmitBound<T.Expression, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.PrintArguments;
 }
 export namespace PrintChevronArguments {
@@ -13346,14 +13543,23 @@ export namespace PrintChevronArguments {
 	}
 	export type Loose = LooseFor<TSKindId.PrintChevronArguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrintChevronArguments>;
-	export type BuildArgs = [
-		element: AdmitBound<T.Expression, T.AdmittedNodes>,
-		...elements: AdmitBound<T.Expression, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [first: AdmitBound<T.Expression, T.AdmittedNodes>, ...rest: AdmitBound<T.Expression, T.AdmittedNodes>[]]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.Expression, T.AdmittedNodes>,
+				...rest: AdmitBound<T.Expression, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.PrintChevronArguments;
 }
 export namespace PrintStatementChevron {
@@ -13894,14 +14100,23 @@ export namespace ExpressionStatementTuple {
 	}
 	export type Loose = LooseFor<TSKindId.ExpressionStatementTuple>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExpressionStatementTuple>;
-	export type BuildArgs = [
-		element: AdmitBound<T.Expression, T.AdmittedNodes>,
-		...elements: AdmitBound<T.Expression, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [first: AdmitBound<T.Expression, T.AdmittedNodes>, ...rest: AdmitBound<T.Expression, T.AdmittedNodes>[]]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.Expression, T.AdmittedNodes>,
+				...rest: AdmitBound<T.Expression, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.ExpressionStatementTuple;
 }
 export namespace WithClauseBare {
@@ -13918,14 +14133,23 @@ export namespace WithClauseBare {
 	}
 	export type Loose = LooseFor<TSKindId.WithClauseBare>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithClauseBare>;
-	export type BuildArgs = [
-		element: AdmitBound<T.WithItem, T.AdmittedNodes>,
-		...elements: AdmitBound<T.WithItem, T.AdmittedNodes>[]
-	];
-	export type LooseArgs = [
-		element: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		...elements: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
-	];
+	export type BuildArgs =
+		| [first: AdmitBound<T.WithItem, T.AdmittedNodes>, ...rest: AdmitBound<T.WithItem, T.AdmittedNodes>[]]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: AdmitBound<T.WithItem, T.AdmittedNodes>,
+				...rest: AdmitBound<T.WithItem, T.AdmittedNodes>[]
+		  ];
+	export type LooseArgs =
+		| [
+				first: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ]
+		| [
+				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
+				first: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...rest: LooseValue<T.WithItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		  ];
 	export type Kind = TSKindId.WithClauseBare;
 }
 export namespace WithClauseParen {

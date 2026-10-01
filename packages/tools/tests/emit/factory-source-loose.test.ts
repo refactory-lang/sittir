@@ -321,7 +321,7 @@ describe('hoisted routes, on both surfaces', () => {
 		list.$_trivia = { leading: [{ $type: 3, $text: 'c' }] } as never;
 		expect(expectPrinted(strict.wrapper!(list)).source).toMatch(/^ir\.wrapper\.strict\(ir\.elements\.strict\(/);
 	});
-	it('an owner keeps its list call when an element is a seat config, which the owner signature does not take', () => {
+	it('an owner takes a seat config element of its list', () => {
 		const seated = mapFor({
 			...ctx,
 			surface: 'strict',
@@ -329,11 +329,11 @@ describe('hoisted routes, on both surfaces', () => {
 			facts: owning
 		});
 		const list = seated.elements!(attributed({ attrs: seated.identifier!('a'), expression: seated.identifier!('x') }));
-		expect(expectPrinted(seated.wrapper!(list)).source).toMatch(/^ir\.wrapper\.strict\(ir\.elements\.strict\(\{/);
+		expect(expectPrinted(seated.wrapper!(list)).source).toMatch(/^ir\.wrapper\.strict\(\{/);
 	});
-	it('a loose owner keeps its list call when the list has options to pass, which the loose owner signature does not take', () => {
+	it('a loose owner takes the options its list has to pass', () => {
 		expect(expectPrinted(loose.wrapper!(loose.elements!({ delimiter: 8 }, loose.identifier!('x')))).source).toBe(
-			'ir.wrapper(ir.elements({ delimiter: Delimiter.Trailing }, "x"))'
+			'ir.wrapper({ delimiter: Delimiter.Trailing }, "x")'
 		);
 	});
 	it('an empty list is never spelled as a bare array', () => {

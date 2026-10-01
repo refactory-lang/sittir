@@ -94,6 +94,565 @@ export const attribute = Object.freeze({
 	};
 };
 
+const enumVariantListElements$element = <
+	PF extends (...args: never[]) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'enumVariant']);
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+const enumVariantListElements$seated: (
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
+					| ArgsOf<typeof F.buildAttributedEnumVariant>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
+					| ArgsOf<typeof F.buildAttributedEnumVariant>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof F.buildEnumVariantListElements>>,
+				first:
+					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
+					| ArgsOf<typeof F.buildAttributedEnumVariant>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
+					| ArgsOf<typeof F.buildAttributedEnumVariant>[0]
+				)[]
+		  ]
+) => ReturnType<typeof F.buildEnumVariantListElements> = enumVariantListElements$element(
+	F.buildEnumVariantListElements,
+	F.buildAttributedEnumVariant
+);
+const enumVariantListElements$seatedCoerce: (
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
+					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
+					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof C.coerceToEnumVariantListElements>>,
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
+					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
+					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0]
+				)[]
+		  ]
+) => ReturnType<typeof C.coerceToEnumVariantListElements> = enumVariantListElements$element(
+	C.coerceToEnumVariantListElements,
+	C.coerceToAttributedEnumVariant
+);
+export const enumVariantListElements = Object.freeze({
+	...B.enumVariantListElements,
+	...bundle(enumVariantListElements$seated, enumVariantListElements$seatedCoerce)
+}) as unknown as typeof B.enumVariantListElements & {
+	strict: typeof enumVariantListElements$seated;
+	coerce: typeof enumVariantListElements$seatedCoerce;
+};
+
+const enumVariantList$element = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'enumVariant']);
+	return (...args: readonly unknown[]): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+function enumVariantList$seated(): T.EmptyEnumVariantList;
+function enumVariantList$seated(...args: T.EnumVariantList.BuildArgs): ReturnType<typeof F.buildEnumVariantList>;
+function enumVariantList$seated(...args: T.EnumVariantList.BuildArgs): ReturnType<typeof F.buildEnumVariantList> {
+	return enumVariantList$element(F.buildEnumVariantList, F.buildAttributedEnumVariant)(...args);
+}
+function enumVariantList$seatedCoerce(): T.EmptyEnumVariantList;
+function enumVariantList$seatedCoerce(
+	...args: T.EnumVariantList.LooseArgs | ArgsOf<typeof C.coerceToEnumVariantList>
+): ReturnType<typeof C.coerceToEnumVariantList>;
+function enumVariantList$seatedCoerce(
+	...args: T.EnumVariantList.LooseArgs | ArgsOf<typeof C.coerceToEnumVariantList>
+): ReturnType<typeof C.coerceToEnumVariantList> {
+	return enumVariantList$element(C.coerceToEnumVariantList, C.coerceToAttributedEnumVariant)(...args);
+}
+export const enumVariantList = Object.freeze({
+	...B.enumVariantList,
+	...bundle(enumVariantList$seated, enumVariantList$seatedCoerce)
+}) as unknown as typeof B.enumVariantList & {
+	strict: typeof enumVariantList$seated;
+	coerce: typeof enumVariantList$seatedCoerce;
+};
+
+const fieldDeclarationListElements$element = <
+	PF extends (...args: never[]) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'fieldDeclaration']);
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+const fieldDeclarationListElements$seated: (
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof F.buildFieldDeclarationListElements>>,
+				first:
+					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0]
+				)[]
+		  ]
+) => ReturnType<typeof F.buildFieldDeclarationListElements> = fieldDeclarationListElements$element(
+	F.buildFieldDeclarationListElements,
+	F.buildAttributedFieldDeclaration
+);
+const fieldDeclarationListElements$seatedCoerce: (
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>,
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0]
+				)[]
+		  ]
+) => ReturnType<typeof C.coerceToFieldDeclarationListElements> = fieldDeclarationListElements$element(
+	C.coerceToFieldDeclarationListElements,
+	C.coerceToAttributedFieldDeclaration
+);
+export const fieldDeclarationListElements = Object.freeze({
+	...B.fieldDeclarationListElements,
+	...bundle(fieldDeclarationListElements$seated, fieldDeclarationListElements$seatedCoerce)
+}) as unknown as typeof B.fieldDeclarationListElements & {
+	strict: typeof fieldDeclarationListElements$seated;
+	coerce: typeof fieldDeclarationListElements$seatedCoerce;
+};
+
+const fieldDeclarationList$element = <
+	PF extends (...args: never[]) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'fieldDeclaration']);
+	return (...args: readonly unknown[]): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+function fieldDeclarationList$seated(): T.EmptyFieldDeclarationList;
+function fieldDeclarationList$seated(
+	...args: T.FieldDeclarationList.BuildArgs
+): ReturnType<typeof F.buildFieldDeclarationList>;
+function fieldDeclarationList$seated(
+	...args: T.FieldDeclarationList.BuildArgs
+): ReturnType<typeof F.buildFieldDeclarationList> {
+	return fieldDeclarationList$element(F.buildFieldDeclarationList, F.buildAttributedFieldDeclaration)(...args);
+}
+function fieldDeclarationList$seatedCoerce(): T.EmptyFieldDeclarationList;
+function fieldDeclarationList$seatedCoerce(
+	...args: T.FieldDeclarationList.LooseArgs | ArgsOf<typeof C.coerceToFieldDeclarationList>
+): ReturnType<typeof C.coerceToFieldDeclarationList>;
+function fieldDeclarationList$seatedCoerce(
+	...args: T.FieldDeclarationList.LooseArgs | ArgsOf<typeof C.coerceToFieldDeclarationList>
+): ReturnType<typeof C.coerceToFieldDeclarationList> {
+	return fieldDeclarationList$element(C.coerceToFieldDeclarationList, C.coerceToAttributedFieldDeclaration)(...args);
+}
+export const fieldDeclarationList = Object.freeze({
+	...B.fieldDeclarationList,
+	...bundle(fieldDeclarationList$seated, fieldDeclarationList$seatedCoerce)
+}) as unknown as typeof B.fieldDeclarationList & {
+	strict: typeof fieldDeclarationList$seated;
+	coerce: typeof fieldDeclarationList$seatedCoerce;
+};
+
+const orderedFieldDeclarationListElements$element = <
+	PF extends (...args: never[]) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'visibilityModifier', 'type']);
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+const orderedFieldDeclarationListElements$seated: (
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedOrderedField>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedOrderedField>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>,
+				first:
+					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedOrderedField>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof F.buildAttributedOrderedField>[0]
+				)[]
+		  ]
+) => ReturnType<typeof F.buildOrderedFieldDeclarationListElements> = orderedFieldDeclarationListElements$element(
+	F.buildOrderedFieldDeclarationListElements,
+	F.buildAttributedOrderedField
+);
+const orderedFieldDeclarationListElements$seatedCoerce: (
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>,
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
+					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0]
+				)[]
+		  ]
+) => ReturnType<typeof C.coerceToOrderedFieldDeclarationListElements> = orderedFieldDeclarationListElements$element(
+	C.coerceToOrderedFieldDeclarationListElements,
+	C.coerceToAttributedOrderedField
+);
+export const orderedFieldDeclarationListElements = Object.freeze({
+	...B.orderedFieldDeclarationListElements,
+	...bundle(orderedFieldDeclarationListElements$seated, orderedFieldDeclarationListElements$seatedCoerce)
+}) as unknown as typeof B.orderedFieldDeclarationListElements & {
+	strict: typeof orderedFieldDeclarationListElements$seated;
+	coerce: typeof orderedFieldDeclarationListElements$seatedCoerce;
+};
+
+const orderedFieldDeclarationList$element = <
+	PF extends (...args: never[]) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'visibilityModifier', 'type']);
+	return (...args: readonly unknown[]): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+function orderedFieldDeclarationList$seated(): T.EmptyOrderedFieldDeclarationList;
+function orderedFieldDeclarationList$seated(
+	...args: T.OrderedFieldDeclarationList.BuildArgs
+): ReturnType<typeof F.buildOrderedFieldDeclarationList>;
+function orderedFieldDeclarationList$seated(
+	...args: T.OrderedFieldDeclarationList.BuildArgs
+): ReturnType<typeof F.buildOrderedFieldDeclarationList> {
+	return orderedFieldDeclarationList$element(
+		F.buildOrderedFieldDeclarationList,
+		F.buildAttributedOrderedField
+	)(...args);
+}
+function orderedFieldDeclarationList$seatedCoerce(): T.EmptyOrderedFieldDeclarationList;
+function orderedFieldDeclarationList$seatedCoerce(
+	...args: T.OrderedFieldDeclarationList.LooseArgs | ArgsOf<typeof C.coerceToOrderedFieldDeclarationList>
+): ReturnType<typeof C.coerceToOrderedFieldDeclarationList>;
+function orderedFieldDeclarationList$seatedCoerce(
+	...args: T.OrderedFieldDeclarationList.LooseArgs | ArgsOf<typeof C.coerceToOrderedFieldDeclarationList>
+): ReturnType<typeof C.coerceToOrderedFieldDeclarationList> {
+	return orderedFieldDeclarationList$element(
+		C.coerceToOrderedFieldDeclarationList,
+		C.coerceToAttributedOrderedField
+	)(...args);
+}
+export const orderedFieldDeclarationList = Object.freeze({
+	...B.orderedFieldDeclarationList,
+	...bundle(orderedFieldDeclarationList$seated, orderedFieldDeclarationList$seatedCoerce)
+}) as unknown as typeof B.orderedFieldDeclarationList & {
+	strict: typeof orderedFieldDeclarationList$seated;
+	coerce: typeof orderedFieldDeclarationList$seatedCoerce;
+};
+
+const typeParametersElements$element = <
+	PF extends (...args: never[]) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'content']);
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+const typeParametersElements$seated: (
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
+					| ArgsOf<typeof F.buildAttributedTypeParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
+					| ArgsOf<typeof F.buildAttributedTypeParameter>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof F.buildTypeParametersElements>>,
+				first:
+					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
+					| ArgsOf<typeof F.buildAttributedTypeParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
+					| ArgsOf<typeof F.buildAttributedTypeParameter>[0]
+				)[]
+		  ]
+) => ReturnType<typeof F.buildTypeParametersElements> = typeParametersElements$element(
+	F.buildTypeParametersElements,
+	F.buildAttributedTypeParameter
+);
+const typeParametersElements$seatedCoerce: (
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof C.coerceToTypeParametersElements>>,
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0]
+				)[]
+		  ]
+) => ReturnType<typeof C.coerceToTypeParametersElements> = typeParametersElements$element(
+	C.coerceToTypeParametersElements,
+	C.coerceToAttributedTypeParameter
+);
+export const typeParametersElements = Object.freeze({
+	...B.typeParametersElements,
+	...bundle(typeParametersElements$seated, typeParametersElements$seatedCoerce)
+}) as unknown as typeof B.typeParametersElements & {
+	strict: typeof typeParametersElements$seated;
+	coerce: typeof typeParametersElements$seatedCoerce;
+};
+
+const typeParameters$element = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'content']);
+	return (...args: readonly unknown[]): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+const typeParameters$seated: (...args: T.TypeParameters.BuildArgs) => ReturnType<typeof F.buildTypeParameters> =
+	typeParameters$element(F.buildTypeParameters, F.buildAttributedTypeParameter);
+const typeParameters$seatedCoerce: (
+	...args: T.TypeParameters.LooseArgs | ArgsOf<typeof C.coerceToTypeParameters>
+) => ReturnType<typeof C.coerceToTypeParameters> = typeParameters$element(
+	C.coerceToTypeParameters,
+	C.coerceToAttributedTypeParameter
+);
+export const typeParameters = Object.freeze({
+	...B.typeParameters,
+	...bundle(typeParameters$seated, typeParameters$seatedCoerce)
+}) as unknown as typeof B.typeParameters & {
+	strict: typeof typeParameters$seated;
+	coerce: typeof typeParameters$seatedCoerce;
+};
+
+const functionType$traitForm =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF>[0] },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
+	};
+const functionType$traitForm$strict = functionType$traitForm(F.buildFunctionType, F.buildFunctionTypeTraitForm);
+const functionType$traitForm$coerce = functionType$traitForm(C.coerceToFunctionType, C.coerceToFunctionTypeTraitForm);
+const functionType$fnForm =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { content: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	};
+const functionType$fnForm$strict = functionType$fnForm(F.buildFunctionType, F.buildFunctionTypeFnForm);
+const functionType$fnForm$coerce = functionType$fnForm(C.coerceToFunctionType, C.coerceToFunctionTypeFnForm);
+export const functionType = Object.freeze({
+	...B.functionType,
+	traitForm: bundle(functionType$traitForm$strict, functionType$traitForm$coerce, {
+		key: 'functionType.traitForm',
+		max: 2
+	}),
+	fnForm: bundle(functionType$fnForm$strict, functionType$fnForm$coerce, { key: 'functionType.fnForm', max: 2 })
+}) as unknown as typeof B.functionType & {
+	traitForm: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildFunctionTypeTraitForm>[0];
+			},
+			options?: OptionsArg<typeof F.buildFunctionType>
+		) => ReturnType<typeof F.buildFunctionType>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToFunctionTypeTraitForm>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToFunctionType>
+		) => ReturnType<typeof C.coerceToFunctionType>;
+	};
+	fnForm: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
+				content: ArgsOf<typeof F.buildFunctionTypeFnForm>;
+			},
+			options?: OptionsArg<typeof F.buildFunctionType>
+		) => ReturnType<typeof F.buildFunctionType>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
+				content: ArgsOf<typeof C.coerceToFunctionTypeFnForm>;
+			},
+			options?: OptionsArg<typeof C.coerceToFunctionType>
+		) => ReturnType<typeof C.coerceToFunctionType>;
+	};
+};
+
+const parametersElements$element = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'content']);
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+const parametersElements$seated: (
+	...args:
+		| [
+				first: ListElement<ElementsOf<typeof F.buildParametersElements>> | ArgsOf<typeof F.buildAttributedParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildParametersElements>>
+					| ArgsOf<typeof F.buildAttributedParameter>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof F.buildParametersElements>>,
+				first: ListElement<ElementsOf<typeof F.buildParametersElements>> | ArgsOf<typeof F.buildAttributedParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildParametersElements>>
+					| ArgsOf<typeof F.buildAttributedParameter>[0]
+				)[]
+		  ]
+) => ReturnType<typeof F.buildParametersElements> = parametersElements$element(
+	F.buildParametersElements,
+	F.buildAttributedParameter
+);
+const parametersElements$seatedCoerce: (
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedParameter>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof C.coerceToParametersElements>>,
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedParameter>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
+					| ArgsOf<typeof C.coerceToAttributedParameter>[0]
+				)[]
+		  ]
+) => ReturnType<typeof C.coerceToParametersElements> = parametersElements$element(
+	C.coerceToParametersElements,
+	C.coerceToAttributedParameter
+);
+export const parametersElements = Object.freeze({
+	...B.parametersElements,
+	...bundle(parametersElements$seated, parametersElements$seatedCoerce)
+}) as unknown as typeof B.parametersElements & {
+	strict: typeof parametersElements$seated;
+	coerce: typeof parametersElements$seatedCoerce;
+};
+
+const parameters$element = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'content']);
+	return (...args: readonly unknown[]): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+function parameters$seated(): T.EmptyParameters;
+function parameters$seated(...args: T.Parameters.BuildArgs): ReturnType<typeof F.buildParameters>;
+function parameters$seated(...args: T.Parameters.BuildArgs): ReturnType<typeof F.buildParameters> {
+	return parameters$element(F.buildParameters, F.buildAttributedParameter)(...args);
+}
+function parameters$seatedCoerce(): T.EmptyParameters;
+function parameters$seatedCoerce(
+	...args: T.Parameters.LooseArgs | ArgsOf<typeof C.coerceToParameters>
+): ReturnType<typeof C.coerceToParameters>;
+function parameters$seatedCoerce(
+	...args: T.Parameters.LooseArgs | ArgsOf<typeof C.coerceToParameters>
+): ReturnType<typeof C.coerceToParameters> {
+	return parameters$element(C.coerceToParameters, C.coerceToAttributedParameter)(...args);
+}
+export const parameters = Object.freeze({
+	...B.parameters,
+	...bundle(parameters$seated, parameters$seatedCoerce)
+}) as unknown as typeof B.parameters & {
+	strict: typeof parameters$seated;
+	coerce: typeof parameters$seatedCoerce;
+};
+
 const visibilityModifierPubScope$self =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(options?: OptionsArg<PF>): ReturnType<PF> =>
@@ -479,61 +1038,185 @@ export const visibilityModifier = Object.freeze({
 	};
 };
 
-const functionType$traitForm =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
-	};
-const functionType$traitForm$strict = functionType$traitForm(F.buildFunctionType, F.buildFunctionTypeTraitForm);
-const functionType$traitForm$coerce = functionType$traitForm(C.coerceToFunctionType, C.coerceToFunctionTypeTraitForm);
-const functionType$fnForm =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
-	};
-const functionType$fnForm$strict = functionType$fnForm(F.buildFunctionType, F.buildFunctionTypeFnForm);
-const functionType$fnForm$coerce = functionType$fnForm(C.coerceToFunctionType, C.coerceToFunctionTypeFnForm);
-export const functionType = Object.freeze({
-	...B.functionType,
-	traitForm: bundle(functionType$traitForm$strict, functionType$traitForm$coerce, {
-		key: 'functionType.traitForm',
-		max: 2
-	}),
-	fnForm: bundle(functionType$fnForm$strict, functionType$fnForm$coerce, { key: 'functionType.fnForm', max: 2 })
-}) as unknown as typeof B.functionType & {
-	traitForm: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildFunctionTypeTraitForm>[0];
-			},
-			options?: OptionsArg<typeof F.buildFunctionType>
-		) => ReturnType<typeof F.buildFunctionType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToFunctionTypeTraitForm>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToFunctionType>
-		) => ReturnType<typeof C.coerceToFunctionType>;
-	};
-	fnForm: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildFunctionType>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildFunctionTypeFnForm>;
-			},
-			options?: OptionsArg<typeof F.buildFunctionType>
-		) => ReturnType<typeof F.buildFunctionType>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToFunctionType>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToFunctionTypeFnForm>;
-			},
-			options?: OptionsArg<typeof C.coerceToFunctionType>
-		) => ReturnType<typeof C.coerceToFunctionType>;
-	};
+const typeArgumentsElements$element = <
+	PF extends (...args: never[]) => unknown,
+	CF extends (...args: never[]) => unknown
+>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['content', 'traitBounds']);
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+const typeArgumentsElements$seated: (
+	...args:
+		| [
+				first: ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>> | ArgsOf<typeof F.buildTypeArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>>
+					| ArgsOf<typeof F.buildTypeArgument>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof F.buildTypeArgumentsElements>>,
+				first: ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>> | ArgsOf<typeof F.buildTypeArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>>
+					| ArgsOf<typeof F.buildTypeArgument>[0]
+				)[]
+		  ]
+) => ReturnType<typeof F.buildTypeArgumentsElements> = typeArgumentsElements$element(
+	F.buildTypeArgumentsElements,
+	F.buildTypeArgument
+);
+const typeArgumentsElements$seatedCoerce: (
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
+					| ArgsOf<typeof C.coerceToTypeArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
+					| ArgsOf<typeof C.coerceToTypeArgument>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof C.coerceToTypeArgumentsElements>>,
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
+					| ArgsOf<typeof C.coerceToTypeArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
+					| ArgsOf<typeof C.coerceToTypeArgument>[0]
+				)[]
+		  ]
+) => ReturnType<typeof C.coerceToTypeArgumentsElements> = typeArgumentsElements$element(
+	C.coerceToTypeArgumentsElements,
+	C.coerceToTypeArgument
+);
+export const typeArgumentsElements = Object.freeze({
+	...B.typeArgumentsElements,
+	...bundle(typeArgumentsElements$seated, typeArgumentsElements$seatedCoerce)
+}) as unknown as typeof B.typeArgumentsElements & {
+	strict: typeof typeArgumentsElements$seated;
+	coerce: typeof typeArgumentsElements$seatedCoerce;
+};
+
+const typeArguments$element = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['content', 'traitBounds']);
+	return (...args: readonly unknown[]): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+const typeArguments$seated: (...args: T.TypeArguments.BuildArgs) => ReturnType<typeof F.buildTypeArguments> =
+	typeArguments$element(F.buildTypeArguments, F.buildTypeArgument);
+const typeArguments$seatedCoerce: (
+	...args: T.TypeArguments.LooseArgs | ArgsOf<typeof C.coerceToTypeArguments>
+) => ReturnType<typeof C.coerceToTypeArguments> = typeArguments$element(
+	C.coerceToTypeArguments,
+	C.coerceToTypeArgument
+);
+export const typeArguments = Object.freeze({
+	...B.typeArguments,
+	...bundle(typeArguments$seated, typeArguments$seatedCoerce)
+}) as unknown as typeof B.typeArguments & {
+	strict: typeof typeArguments$seated;
+	coerce: typeof typeArguments$seatedCoerce;
+};
+
+const argumentsElements$element = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'expression']);
+	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+const argumentsElements$seated: (
+	...args:
+		| [
+				first: ListElement<ElementsOf<typeof F.buildArgumentsElements>> | ArgsOf<typeof F.buildAttributedArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildArgumentsElements>>
+					| ArgsOf<typeof F.buildAttributedArgument>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof F.buildArgumentsElements>>,
+				first: ListElement<ElementsOf<typeof F.buildArgumentsElements>> | ArgsOf<typeof F.buildAttributedArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof F.buildArgumentsElements>>
+					| ArgsOf<typeof F.buildAttributedArgument>[0]
+				)[]
+		  ]
+) => ReturnType<typeof F.buildArgumentsElements> = argumentsElements$element(
+	F.buildArgumentsElements,
+	F.buildAttributedArgument
+);
+const argumentsElements$seatedCoerce: (
+	...args:
+		| [
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
+					| ArgsOf<typeof C.coerceToAttributedArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
+					| ArgsOf<typeof C.coerceToAttributedArgument>[0]
+				)[]
+		  ]
+		| [
+				options: ListOptionsOf<ElementsOf<typeof C.coerceToArgumentsElements>>,
+				first:
+					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
+					| ArgsOf<typeof C.coerceToAttributedArgument>[0],
+				...rest: (
+					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
+					| ArgsOf<typeof C.coerceToAttributedArgument>[0]
+				)[]
+		  ]
+) => ReturnType<typeof C.coerceToArgumentsElements> = argumentsElements$element(
+	C.coerceToArgumentsElements,
+	C.coerceToAttributedArgument
+);
+export const argumentsElements = Object.freeze({
+	...B.argumentsElements,
+	...bundle(argumentsElements$seated, argumentsElements$seatedCoerce)
+}) as unknown as typeof B.argumentsElements & {
+	strict: typeof argumentsElements$seated;
+	coerce: typeof argumentsElements$seatedCoerce;
+};
+
+const arguments_$element = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
+	parent: PF,
+	child: CF
+) => {
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'expression']);
+	return (...args: readonly unknown[]): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
+};
+function arguments_$seated(): T.EmptyArguments;
+function arguments_$seated(...args: T.Arguments.BuildArgs): ReturnType<typeof F.buildArguments>;
+function arguments_$seated(...args: T.Arguments.BuildArgs): ReturnType<typeof F.buildArguments> {
+	return arguments_$element(F.buildArguments, F.buildAttributedArgument)(...args);
+}
+function arguments_$seatedCoerce(): T.EmptyArguments;
+function arguments_$seatedCoerce(
+	...args: T.Arguments.LooseArgs | ArgsOf<typeof C.coerceToArguments>
+): ReturnType<typeof C.coerceToArguments>;
+function arguments_$seatedCoerce(
+	...args: T.Arguments.LooseArgs | ArgsOf<typeof C.coerceToArguments>
+): ReturnType<typeof C.coerceToArguments> {
+	return arguments_$element(C.coerceToArguments, C.coerceToAttributedArgument)(...args);
+}
+export const arguments_ = Object.freeze({
+	...B.arguments_,
+	...bundle(arguments_$seated, arguments_$seatedCoerce)
+}) as unknown as typeof B.arguments_ & {
+	strict: typeof arguments_$seated;
+	coerce: typeof arguments_$seatedCoerce;
 };
 
 const matchBlock$flatten$matchBlockArms =
@@ -809,471 +1492,6 @@ export const blockComment = Object.freeze({
 		strict: (...args: ArgsOf<typeof F.buildBlockCommentRegular>) => ReturnType<typeof F.buildBlockComment>;
 		coerce: (...args: ArgsOf<typeof C.coerceToBlockCommentRegular>) => ReturnType<typeof F.buildBlockComment>;
 	};
-};
-
-const enumVariantListElements$element = <
-	PF extends (...args: never[]) => unknown,
-	CF extends (...args: never[]) => unknown
->(
-	parent: PF,
-	child: CF
-) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'enumVariant']);
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
-};
-const enumVariantListElements$seated: (
-	...args:
-		| [
-				first:
-					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
-					| ArgsOf<typeof F.buildAttributedEnumVariant>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
-					| ArgsOf<typeof F.buildAttributedEnumVariant>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof F.buildEnumVariantListElements>>,
-				first:
-					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
-					| ArgsOf<typeof F.buildAttributedEnumVariant>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildEnumVariantListElements>>
-					| ArgsOf<typeof F.buildAttributedEnumVariant>[0]
-				)[]
-		  ]
-) => ReturnType<typeof F.buildEnumVariantListElements> = enumVariantListElements$element(
-	F.buildEnumVariantListElements,
-	F.buildAttributedEnumVariant
-);
-const enumVariantListElements$seatedCoerce: (
-	...args:
-		| [
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
-					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
-					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof C.coerceToEnumVariantListElements>>,
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
-					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToEnumVariantListElements>>
-					| ArgsOf<typeof C.coerceToAttributedEnumVariant>[0]
-				)[]
-		  ]
-) => ReturnType<typeof C.coerceToEnumVariantListElements> = enumVariantListElements$element(
-	C.coerceToEnumVariantListElements,
-	C.coerceToAttributedEnumVariant
-);
-export const enumVariantListElements = Object.freeze({
-	...B.enumVariantListElements,
-	...bundle(enumVariantListElements$seated, enumVariantListElements$seatedCoerce)
-}) as unknown as typeof B.enumVariantListElements & {
-	strict: typeof enumVariantListElements$seated;
-	coerce: typeof enumVariantListElements$seatedCoerce;
-};
-
-const fieldDeclarationListElements$element = <
-	PF extends (...args: never[]) => unknown,
-	CF extends (...args: never[]) => unknown
->(
-	parent: PF,
-	child: CF
-) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'fieldDeclaration']);
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
-};
-const fieldDeclarationListElements$seated: (
-	...args:
-		| [
-				first:
-					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
-					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
-					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof F.buildFieldDeclarationListElements>>,
-				first:
-					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
-					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildFieldDeclarationListElements>>
-					| ArgsOf<typeof F.buildAttributedFieldDeclaration>[0]
-				)[]
-		  ]
-) => ReturnType<typeof F.buildFieldDeclarationListElements> = fieldDeclarationListElements$element(
-	F.buildFieldDeclarationListElements,
-	F.buildAttributedFieldDeclaration
-);
-const fieldDeclarationListElements$seatedCoerce: (
-	...args:
-		| [
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
-					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
-					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>,
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
-					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToFieldDeclarationListElements>>
-					| ArgsOf<typeof C.coerceToAttributedFieldDeclaration>[0]
-				)[]
-		  ]
-) => ReturnType<typeof C.coerceToFieldDeclarationListElements> = fieldDeclarationListElements$element(
-	C.coerceToFieldDeclarationListElements,
-	C.coerceToAttributedFieldDeclaration
-);
-export const fieldDeclarationListElements = Object.freeze({
-	...B.fieldDeclarationListElements,
-	...bundle(fieldDeclarationListElements$seated, fieldDeclarationListElements$seatedCoerce)
-}) as unknown as typeof B.fieldDeclarationListElements & {
-	strict: typeof fieldDeclarationListElements$seated;
-	coerce: typeof fieldDeclarationListElements$seatedCoerce;
-};
-
-const orderedFieldDeclarationListElements$element = <
-	PF extends (...args: never[]) => unknown,
-	CF extends (...args: never[]) => unknown
->(
-	parent: PF,
-	child: CF
-) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'visibilityModifier', 'type']);
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
-};
-const orderedFieldDeclarationListElements$seated: (
-	...args:
-		| [
-				first:
-					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
-					| ArgsOf<typeof F.buildAttributedOrderedField>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
-					| ArgsOf<typeof F.buildAttributedOrderedField>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>,
-				first:
-					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
-					| ArgsOf<typeof F.buildAttributedOrderedField>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildOrderedFieldDeclarationListElements>>
-					| ArgsOf<typeof F.buildAttributedOrderedField>[0]
-				)[]
-		  ]
-) => ReturnType<typeof F.buildOrderedFieldDeclarationListElements> = orderedFieldDeclarationListElements$element(
-	F.buildOrderedFieldDeclarationListElements,
-	F.buildAttributedOrderedField
-);
-const orderedFieldDeclarationListElements$seatedCoerce: (
-	...args:
-		| [
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
-					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
-					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>,
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
-					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToOrderedFieldDeclarationListElements>>
-					| ArgsOf<typeof C.coerceToAttributedOrderedField>[0]
-				)[]
-		  ]
-) => ReturnType<typeof C.coerceToOrderedFieldDeclarationListElements> = orderedFieldDeclarationListElements$element(
-	C.coerceToOrderedFieldDeclarationListElements,
-	C.coerceToAttributedOrderedField
-);
-export const orderedFieldDeclarationListElements = Object.freeze({
-	...B.orderedFieldDeclarationListElements,
-	...bundle(orderedFieldDeclarationListElements$seated, orderedFieldDeclarationListElements$seatedCoerce)
-}) as unknown as typeof B.orderedFieldDeclarationListElements & {
-	strict: typeof orderedFieldDeclarationListElements$seated;
-	coerce: typeof orderedFieldDeclarationListElements$seatedCoerce;
-};
-
-const typeParametersElements$element = <
-	PF extends (...args: never[]) => unknown,
-	CF extends (...args: never[]) => unknown
->(
-	parent: PF,
-	child: CF
-) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'content']);
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
-};
-const typeParametersElements$seated: (
-	...args:
-		| [
-				first:
-					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
-					| ArgsOf<typeof F.buildAttributedTypeParameter>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
-					| ArgsOf<typeof F.buildAttributedTypeParameter>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof F.buildTypeParametersElements>>,
-				first:
-					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
-					| ArgsOf<typeof F.buildAttributedTypeParameter>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildTypeParametersElements>>
-					| ArgsOf<typeof F.buildAttributedTypeParameter>[0]
-				)[]
-		  ]
-) => ReturnType<typeof F.buildTypeParametersElements> = typeParametersElements$element(
-	F.buildTypeParametersElements,
-	F.buildAttributedTypeParameter
-);
-const typeParametersElements$seatedCoerce: (
-	...args:
-		| [
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
-					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
-					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof C.coerceToTypeParametersElements>>,
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
-					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToTypeParametersElements>>
-					| ArgsOf<typeof C.coerceToAttributedTypeParameter>[0]
-				)[]
-		  ]
-) => ReturnType<typeof C.coerceToTypeParametersElements> = typeParametersElements$element(
-	C.coerceToTypeParametersElements,
-	C.coerceToAttributedTypeParameter
-);
-export const typeParametersElements = Object.freeze({
-	...B.typeParametersElements,
-	...bundle(typeParametersElements$seated, typeParametersElements$seatedCoerce)
-}) as unknown as typeof B.typeParametersElements & {
-	strict: typeof typeParametersElements$seated;
-	coerce: typeof typeParametersElements$seatedCoerce;
-};
-
-const parametersElements$element = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
-	parent: PF,
-	child: CF
-) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'content']);
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
-};
-const parametersElements$seated: (
-	...args:
-		| [
-				first: ListElement<ElementsOf<typeof F.buildParametersElements>> | ArgsOf<typeof F.buildAttributedParameter>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildParametersElements>>
-					| ArgsOf<typeof F.buildAttributedParameter>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof F.buildParametersElements>>,
-				first: ListElement<ElementsOf<typeof F.buildParametersElements>> | ArgsOf<typeof F.buildAttributedParameter>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildParametersElements>>
-					| ArgsOf<typeof F.buildAttributedParameter>[0]
-				)[]
-		  ]
-) => ReturnType<typeof F.buildParametersElements> = parametersElements$element(
-	F.buildParametersElements,
-	F.buildAttributedParameter
-);
-const parametersElements$seatedCoerce: (
-	...args:
-		| [
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
-					| ArgsOf<typeof C.coerceToAttributedParameter>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
-					| ArgsOf<typeof C.coerceToAttributedParameter>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof C.coerceToParametersElements>>,
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
-					| ArgsOf<typeof C.coerceToAttributedParameter>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToParametersElements>>
-					| ArgsOf<typeof C.coerceToAttributedParameter>[0]
-				)[]
-		  ]
-) => ReturnType<typeof C.coerceToParametersElements> = parametersElements$element(
-	C.coerceToParametersElements,
-	C.coerceToAttributedParameter
-);
-export const parametersElements = Object.freeze({
-	...B.parametersElements,
-	...bundle(parametersElements$seated, parametersElements$seatedCoerce)
-}) as unknown as typeof B.parametersElements & {
-	strict: typeof parametersElements$seated;
-	coerce: typeof parametersElements$seatedCoerce;
-};
-
-const typeArgumentsElements$element = <
-	PF extends (...args: never[]) => unknown,
-	CF extends (...args: never[]) => unknown
->(
-	parent: PF,
-	child: CF
-) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['content', 'traitBounds']);
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
-};
-const typeArgumentsElements$seated: (
-	...args:
-		| [
-				first: ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>> | ArgsOf<typeof F.buildTypeArgument>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>>
-					| ArgsOf<typeof F.buildTypeArgument>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof F.buildTypeArgumentsElements>>,
-				first: ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>> | ArgsOf<typeof F.buildTypeArgument>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildTypeArgumentsElements>>
-					| ArgsOf<typeof F.buildTypeArgument>[0]
-				)[]
-		  ]
-) => ReturnType<typeof F.buildTypeArgumentsElements> = typeArgumentsElements$element(
-	F.buildTypeArgumentsElements,
-	F.buildTypeArgument
-);
-const typeArgumentsElements$seatedCoerce: (
-	...args:
-		| [
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
-					| ArgsOf<typeof C.coerceToTypeArgument>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
-					| ArgsOf<typeof C.coerceToTypeArgument>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof C.coerceToTypeArgumentsElements>>,
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
-					| ArgsOf<typeof C.coerceToTypeArgument>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToTypeArgumentsElements>>
-					| ArgsOf<typeof C.coerceToTypeArgument>[0]
-				)[]
-		  ]
-) => ReturnType<typeof C.coerceToTypeArgumentsElements> = typeArgumentsElements$element(
-	C.coerceToTypeArgumentsElements,
-	C.coerceToTypeArgument
-);
-export const typeArgumentsElements = Object.freeze({
-	...B.typeArgumentsElements,
-	...bundle(typeArgumentsElements$seated, typeArgumentsElements$seatedCoerce)
-}) as unknown as typeof B.typeArgumentsElements & {
-	strict: typeof typeArgumentsElements$seated;
-	coerce: typeof typeArgumentsElements$seatedCoerce;
-};
-
-const argumentsElements$element = <PF extends (...args: never[]) => unknown, CF extends (...args: never[]) => unknown>(
-	parent: PF,
-	child: CF
-) => {
-	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['attributeItem', 'expression']);
-	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
-};
-const argumentsElements$seated: (
-	...args:
-		| [
-				first: ListElement<ElementsOf<typeof F.buildArgumentsElements>> | ArgsOf<typeof F.buildAttributedArgument>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildArgumentsElements>>
-					| ArgsOf<typeof F.buildAttributedArgument>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof F.buildArgumentsElements>>,
-				first: ListElement<ElementsOf<typeof F.buildArgumentsElements>> | ArgsOf<typeof F.buildAttributedArgument>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof F.buildArgumentsElements>>
-					| ArgsOf<typeof F.buildAttributedArgument>[0]
-				)[]
-		  ]
-) => ReturnType<typeof F.buildArgumentsElements> = argumentsElements$element(
-	F.buildArgumentsElements,
-	F.buildAttributedArgument
-);
-const argumentsElements$seatedCoerce: (
-	...args:
-		| [
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
-					| ArgsOf<typeof C.coerceToAttributedArgument>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
-					| ArgsOf<typeof C.coerceToAttributedArgument>[0]
-				)[]
-		  ]
-		| [
-				options: ListOptionsOf<ElementsOf<typeof C.coerceToArgumentsElements>>,
-				first:
-					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
-					| ArgsOf<typeof C.coerceToAttributedArgument>[0],
-				...rest: (
-					| ListElement<ElementsOf<typeof C.coerceToArgumentsElements>>
-					| ArgsOf<typeof C.coerceToAttributedArgument>[0]
-				)[]
-		  ]
-) => ReturnType<typeof C.coerceToArgumentsElements> = argumentsElements$element(
-	C.coerceToArgumentsElements,
-	C.coerceToAttributedArgument
-);
-export const argumentsElements = Object.freeze({
-	...B.argumentsElements,
-	...bundle(argumentsElements$seated, argumentsElements$seatedCoerce)
-}) as unknown as typeof B.argumentsElements & {
-	strict: typeof argumentsElements$seated;
-	coerce: typeof argumentsElements$seatedCoerce;
 };
 
 const arrayExpressionList$argumentsElements = <

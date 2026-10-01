@@ -611,7 +611,9 @@ The factory map handed to the dispatch holds, for a `constant`-shaped kind, the 
 
 ### `packages/tools/src/emit/factory-source.ts::ownedListArgs`
 
-The arguments an owner prints in place of its list's call: an owner is a kind that forwards to a list (`forwardsTo`), and its factory takes the list's own arguments, so `owner(list(a, b))` is spelled `owner(a, b)`. Three cases keep the list's call. The list carries trivia of its own, which the owner's call would have nowhere to hold. An element is a seat config object: the owner's argument types take built elements and not the config form the list's own call takes. On the loose surface, the list has an options bag to pass: the loose owner's argument types have no options-first form. The last two are gaps in the owners' generated argument types, not routes the model lacks; when the owner's types take what its list takes, those two conditions go.
+The arguments an owner prints in place of its list's call: an owner is a kind that forwards to a list (`forwardsTo`), and its factory takes the list's own arguments, so `owner(list(a, b))` is spelled `owner(a, b)`. One case keeps the list's call: the list carries trivia of its own, which the owner's call would have nowhere to hold. Seat config elements and an options bag go to the owner as they would to the list.
+
+The owner route is tried before the absorbed-list form, so a hoisted list with no seats is also spelled through its owner's arguments, options included.
 
 On the loose surface a slot whose kind is the owner keeps the owner's call (`PrintedFacts.ownsList`) where `loosenValue` would otherwise drop the owner as a single-slot wrapper and leave the list's call.
 
