@@ -10,7 +10,9 @@ import type {
 	Type,
 	NestedTypeIdentifier,
 	Identifier,
-	PropertySignature
+	InternalModule,
+	PropertySignature,
+	StatementBlock
 } from '@sittir/typescript';
 import { type Derivation, type MemberFacts, camel, childrenOf, commonPrefix, levelMembers, tsname } from './derive.ts';
 
@@ -436,7 +438,7 @@ export function vocabularyFiles(d: Derivation): VocabularyFile[] {
 
 const ESCAPED_CONTENT: Record<string, string> = { '\\': '\\', "'": "'", '\n': 'n', '\r': 'r', '\t': 't' };
 const str = (text: string) =>
-	ir.string.single.strict(
+	ir.string.single(
 		...text
 			.split(/([\\'\n\r\t])/)
 			.filter((piece) => piece !== '')
@@ -445,33 +447,32 @@ const str = (text: string) =>
 			)
 	);
 
-function nestedName(path: readonly string[]): Identifier.Bound | ReturnType<typeof ir.nestedIdentifier.strict> {
+function nestedName(path: readonly string[]): Identifier.Bound | ReturnType<typeof ir.nestedIdentifier> {
 	const [head, ...rest] = path;
-	let acc: Identifier.Bound | ReturnType<typeof ir.nestedIdentifier.strict> = ir.identifier(head ?? '');
-	for (const seg of rest) acc = ir.nestedIdentifier.strict({ object: acc, property: ir.identifier(seg) });
+	let acc: Identifier.Bound | ReturnType<typeof ir.nestedIdentifier> = ir.identifier(head ?? '');
+	for (const seg of rest) acc = ir.nestedIdentifier({ object: acc, property: ir.identifier(seg) });
 	return acc;
 }
 
 function extendsIr(
 	t: TypeExpr,
 	base: boolean
-): Identifier.Bound | NestedTypeIdentifier.Bound | ReturnType<typeof ir.genericType.strict> {
+): Identifier.Bound | NestedTypeIdentifier.Bound | ReturnType<typeof ir.genericType> {
 	if (t.k === 'ident') return ir.identifier(t.name);
 	if (t.k === 'subkind') {
 		const applied = (name: string, arg: ReturnType<typeof extendsIr>) =>
-			ir.genericType.strict({
+			ir.genericType({
 				name: ir.identifier(name),
-				typeArguments: ir.typeArguments.strict({ delimiter: Delimiter.None }, arg)
+				typeArguments: ir.typeArguments(arg)
 			});
 		return applied('Simplify', applied('SubKindOf', extendsIr(t.of, base)));
 	}
 	if (t.k === 'ref') {
 		const name = typeName(['V', ...t.path]);
 		return t.generic
-			? ir.genericType.strict({
+			? ir.genericType({
 					name,
-					typeArguments: ir.typeArguments.strict(
-						{ delimiter: Delimiter.None },
+					typeArguments: ir.typeArguments(
 						ir.identifier(base ? 'BaseContext' : 'G')
 					)
 				})
@@ -485,7 +486,7 @@ function typeName(path: readonly string[]): Identifier.Bound | NestedTypeIdentif
 	const module = path.slice(0, -1);
 	return module.length === 0
 		? ir.identifier(last)
-		: ir.nestedTypeIdentifier.strict({ module: nestedName(module), name: ir.identifier(last) });
+		: ir.nestedTypeIdentifier({ module: nestedName(module), name: ir.identifier(last) });
 }
 
 const KEYWORDS = {
@@ -501,40 +502,40 @@ function toPrimary(t: TypeExpr, base: boolean): PrimaryType.Bound | TypeIdentifi
 		case 'ident':
 			return ir.identifier(t.name);
 		case 'kw':
-			return ir.parenthesizedType.strict(KEYWORDS[t.name]);
+			return ir.parenthesizedType(KEYWORDS[t.name]);
 		case 'lit':
-			return ir.literalType.strict(str(t.text));
+			return ir.literalType(str(t.text));
 		case 'lookup':
-			return ir.lookupType.strict({ type: ir.identifier('G'), indexType: ir.literalType.strict(str(t.ns)) });
+			return ir.lookupType({ type: ir.identifier('G'), indexType: ir.literalType(str(t.ns)) });
 		case 'unmapped':
-			return ir.genericType.strict({
-				name: ir.nestedTypeIdentifier.strict({ module: ir.identifier('V'), name: ir.identifier('Unmapped') }),
-				typeArguments: ir.typeArguments.strict({ delimiter: Delimiter.None }, ir.literalType.strict(str(t.name)))
+			return ir.genericType({
+				name: ir.nestedTypeIdentifier({ module: ir.identifier('V'), name: ir.identifier('Unmapped') }),
+				typeArguments: ir.typeArguments(ir.literalType(str(t.name)))
 			});
 		case 'ref': {
 			const name = typeName(['V', ...t.path]);
 			if (!t.generic) return name;
-			return ir.genericType.strict({
+			return ir.genericType({
 				name,
-				typeArguments: ir.typeArguments.strict({ delimiter: Delimiter.None }, ir.identifier(base ? 'BaseContext' : 'G'))
+				typeArguments: ir.typeArguments(ir.identifier(base ? 'BaseContext' : 'G'))
 			});
 		}
 		case 'subkind':
 			return extendsIr(t, base);
 		case 'array':
-			return ir.arrayType.strict(
-				t.of.k === 'union' ? ir.parenthesizedType.strict(toIr(t.of, base)) : toPrimary(t.of, base)
+			return ir.arrayType(
+				t.of.k === 'union' ? ir.parenthesizedType(toIr(t.of, base)) : toPrimary(t.of, base)
 			);
 		case 'union':
-			return ir.parenthesizedType.strict(toIr(t, base));
+			return ir.parenthesizedType(toIr(t, base));
 		case 'template': {
 			const chunks = t.text.split('${string}');
 			const parts: (TemplateChars.Bound | TemplateType.Bound)[] = [];
 			chunks.forEach((c, i) => {
 				if (c !== '') parts.push(ir.templateChars(c));
-				if (i < chunks.length - 1) parts.push(ir.templateType.strict(TSKindId.StringKeyword));
+				if (i < chunks.length - 1) parts.push(ir.templateType(TSKindId.StringKeyword));
 			});
-			return ir.templateLiteralType.strict(...parts);
+			return ir.templateLiteralType(...parts);
 		}
 	}
 }
@@ -544,24 +545,22 @@ function toIr(t: TypeExpr, base: boolean): Type.Bound | TypeIdentifier.Types {
 	if (t.k !== 'union') return toPrimary(t, base);
 	const parts = t.of.map((p) => toIr(p, base));
 	let acc: Type.Bound | TypeIdentifier.Types = parts[0] ?? KEYWORDS.never;
-	for (const p of parts.slice(1)) acc = ir.unionType.strict({ left: acc, right: p });
+	for (const p of parts.slice(1)) acc = ir.unionType({ left: acc, right: p });
 	return acc;
 }
 
 const typeParams = () =>
-	ir.typeParameters.strict(
-		{ delimiter: Delimiter.None },
+	ir.typeParameters(
 		ir.typeParameter({
 			name: 'G',
 			constraint: { type: 'GrammarContext', content: TSKindId.ExtendsKeyword }
 		})
 	);
 const keyParams = () =>
-	ir.typeParameters.strict(
-		{ delimiter: Delimiter.None },
-		ir.typeParameter.strict({
+	ir.typeParameters(
+		ir.typeParameter({
 			name: ir.identifier('K'),
-			constraint: ir.constraint.strict({ type: TSKindId.StringKeyword, content: TSKindId.ExtendsKeyword })
+			constraint: ir.constraint({ type: TSKindId.StringKeyword, content: TSKindId.ExtendsKeyword })
 		})
 	);
 
@@ -583,37 +582,39 @@ function memberIr(m: Member, base: boolean, leading: readonly Comment[]): Proper
 		readonlyMarker: true,
 		name: m.name,
 		...(m.optional ? { optionalMarker: true } : {}),
-		type: ir.typeAnnotation.strict(toIr(m.type, base))
+		type: ir.typeAnnotation(toIr(m.type, base))
 	});
 	return withTrivia(built, leading, m.trailing);
 }
 
-function interfaceIr(s: Interface, base: boolean): TsStatement.Bound {
+type ExportIr = ReturnType<typeof ir.exportStatement.default.declaration>;
+
+function interfaceIr(s: Interface, base: boolean): ExportIr {
 	const [first, ...rest] = s.members;
 	const members = first
-		? ir.objectTypeContent.strict(
+		? ir.objectTypeContent(
 				{ delimiter: Delimiter.Trailing, separator: TSKindId.Semi },
 				memberIr(first, base, s.bodyLeading),
 				...rest.map((m) => memberIr(m, base, []))
 			)
 		: undefined;
-	const decl = ir.interfaceDeclaration.strict({
+	const decl = ir.interfaceDeclaration({
 		name: ir.identifier(s.name),
 		...(s.generic ? { typeParameters: typeParams() } : s.keyParam ? { typeParameters: keyParams() } : {}),
-		...(s.extendsType ? { extendsTypeClause: ir.extendsTypeClause.strict(extendsIr(s.extendsType, base)) } : {}),
-		body: ir.objectType.strict({ opening: TSKindId.Lbrace, ...(members ? { members } : {}), closing: TSKindId.Rbrace })
+		...(s.extendsType ? { extendsTypeClause: ir.extendsTypeClause(extendsIr(s.extendsType, base)) } : {}),
+		body: ir.objectType({ opening: TSKindId.Lbrace, ...(members ? { members } : {}), closing: TSKindId.Rbrace })
 	});
-	const built = ir.exportStatement.default.declaration.strict({ content: decl });
+	const built = ir.exportStatement.default.declaration({ content: decl });
 	return withTrivia(built, s.leading, s.trailing);
 }
 
-function statementIr(s: Statement, base: boolean): TsStatement.Bound {
+function statementIr(s: Statement, base: boolean): ExportIr {
 	switch (s.k) {
 		case 'interface':
 			return interfaceIr(s, base);
 		case 'alias':
-			return ir.exportStatement.default.declaration.strict({
-				content: ir.typeAliasDeclaration.strict(
+			return ir.exportStatement.default.declaration({
+				content: ir.typeAliasDeclaration(
 					{
 						name: ir.identifier(s.name),
 						typeParameters: typeParams(),
@@ -622,26 +623,24 @@ function statementIr(s: Statement, base: boolean): TsStatement.Bound {
 					{ terminator: TSKindId.Semi }
 				)
 			});
-		case 'namespace':
-			return ir.exportStatement.default.declaration.strict({
-				content: ir.internalModule.strict({
-					name: ir.identifier(s.name),
-					body: ir.statementBlock.strict({ statements: s.statements.map((x) => statementIr(x, base)) })
-				})
-			});
+		case 'namespace': {
+			const body: StatementBlock.Bound = ir.statementBlock().$with.statements(s.statements.map((x) => statementIr(x, base)));
+			const module: InternalModule.Bound = ir.internalModule({ name: ir.identifier(s.name), body });
+			return ir.exportStatement.default.declaration({ content: module });
+		}
 	}
 }
 
 function importIr(imp: VocabularyFile['imports'][number], leading: readonly Comment[]): TsStatement.Bound {
-	const [first, ...rest] = (imp.names ?? []).map((n) => ir.importSpecifier.name.strict({ name: ir.identifier(n) }));
+	const [first, ...rest] = (imp.names ?? []).map((n) => ir.importSpecifier.name({ name: ir.identifier(n) }));
 	const clause =
 		imp.namespace !== null
 			? ir.importClause.namespaceImport(imp.namespace)
-			: ir.importClause.strict(
-					first ? ir.namedImports.strict({ delimiter: Delimiter.None }, first, ...rest) : ir.namedImports.strict()
+			: ir.importClause(
+					first ? ir.namedImports(first, ...rest) : ir.namedImports()
 				);
-	const built = ir.importStatement.clauseFrom
-		.strict({
+	const built = ir.importStatement
+		.clauseFrom({
 			importClause: TSKindId.TypeKeyword,
 			fromClause: { importClause: clause, source: str(imp.from) }
 		})
@@ -655,7 +654,7 @@ export async function renderVocabularyFile(file: VocabularyFile): Promise<string
 		...file.imports.map((imp, i) => importIr(imp, i === 0 ? file.leading : [])),
 		...file.statements.map((s) => statementIr(s, base))
 	];
-	const program = ir.program.strict({ statements });
+	const program = ir.program({ statements });
 	return engine.render(program).toString();
 }
 

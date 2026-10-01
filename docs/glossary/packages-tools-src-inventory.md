@@ -125,14 +125,22 @@ its interfaces extends that way.
 ### `packages/tools/src/inventory/emit.ts::renderVocabularyFile`
 
 ```text
-The dogfood step: builds the file's statements through the strict
-factories of one typescript engine, created when the module loads
+The dogfood step: builds the file's statements through the loose
+`build` of one typescript engine (no `.strict` call anywhere in the
+module: input is loose and the factories resolve arms by lexical rank, so
+a member named like a keyword, such as `object`, takes the keyword arm
+instead of tripping a strict slot guard), created when the module loads
 (`ir` and `TSKindId` are that engine's `build` and `kinds`:
 `ir.interfaceDeclaration`, `ir.internalModule`, `ir.unionType`,
 `ir.lookupType`, `ir.templateLiteralType`, ...), and renders the program
 with the same engine. Comments ride as trivia. The caller
 formats the result; a render defect that survives formatting is a finding
 about the typescript package, never something the emitter works around.
+A namespace's block is built empty and given its statements through
+`$with.statements`, because the loose `statementBlock({ statements })`
+input type does not terminate on a list of export statements that
+themselves hold statement blocks (the checker reports excessive stack
+depth); the built node is the same.
 ```
 
 ### `packages/tools/src/inventory/index.ts::run`

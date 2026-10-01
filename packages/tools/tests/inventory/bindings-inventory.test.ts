@@ -156,6 +156,10 @@ describe('the committed vocabulary', () => {
 });
 
 describe('vocabularyFiles', () => {
+	it('builds through the loose surface only', () => {
+		const emitter = readFileSync(fileURLToPath(new URL('../../src/inventory/emit.ts', import.meta.url)), 'utf8');
+		expect(emitter).not.toContain('.strict');
+	});
 	it('renders a namespace through the typescript factories', async () => {
 		const files = vocabularyFiles(await deriveVocabulary());
 		expect(files.map((f) => f.name)).toContain('context');
