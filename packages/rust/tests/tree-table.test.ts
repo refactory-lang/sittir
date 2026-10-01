@@ -5,7 +5,9 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { createEngine } from '@sittir/common';
 import { getActiveBackend } from '../src/backend.js';
+import rust from '../src/index.ts';
 
 function addon() {
 	const status = getActiveBackend();
@@ -76,3 +78,49 @@ describe('the live tree table of a language', () => {
 		});
 	}, 60_000);
 });
+
+describe('rendering parts parsed by other engines of the language', () => {
+	type Named = { name(): never; $with: { name(value: unknown): never }; $render(): string };
+	const itemOf = (engine: { parse(source: string): { statements(): readonly unknown[] } }, source: string) =>
+		engine.parse(source).statements()[0] as Named;
+
+	it('renders a node built around a part another engine parsed, through either engine', async () => {
+		const a = await createEngine(rust);
+		const b = await createEngine(rust);
+		const mixed = a.build.binaryExpression({
+			left: itemOf(b, 'fn f() {}\n').name(),
+			operator: '+',
+			right: a.build.identifier('y')
+		});
+		expect(String(a.render(mixed))).toBe('f + y');
+		expect(String(b.render(mixed))).toBe('f + y');
+	});
+
+	it('renders a parsed node edited to hold a part another engine parsed', async () => {
+		const a = await createEngine(rust);
+		const b = await createEngine(rust);
+		const edited = itemOf(a, 'fn g() {}\n').$with.name(itemOf(b, 'fn f() {}\n').name());
+		expect(String(a.render(edited))).toBe('fn f() {}');
+	});
+
+	it('renders parts of several engines in one node', async () => {
+		const [a, b, c] = await Promise.all([createEngine(rust), createEngine(rust), createEngine(rust)]);
+		const both = a.build.binaryExpression({
+			left: itemOf(b, 'fn f() {}\n').name(),
+			operator: '+',
+			right: itemOf(c, 'fn g() {}\n').name()
+		});
+		expect(String(a.render(both))).toBe('f + g');
+		expect(both.$render()).toBe('f + g');
+	});
+
+	it('renders a node whose parsing engine is disposed, while its own $render still refuses', async () => {
+		const a = await createEngine(rust);
+		const b = await createEngine(rust);
+		const item = itemOf(b, 'fn real() {}');
+		b.dispose();
+		expect(String(a.render(item as never))).toBe('fn real() {}');
+		expect(() => item.$render()).toThrow(/engine disposed.*engine\.render\(node\)/);
+	});
+});
+
