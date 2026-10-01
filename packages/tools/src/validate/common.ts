@@ -12,7 +12,7 @@ import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { load } from '../codegen-surface.ts';
 import { languageByName } from '../languages.ts';
-import { grammarPackageDir, isGrammar } from '@sittir/codegen/grammars';
+import { grammarPackageDir, grammarRequire, isGrammar, upstreamPackage } from '@sittir/codegen/grammars';
 import { CORPUS_ROOT, localCorpusPath, upstreamCorpusDir } from '../corpus/layout.ts';
 import type {
 	CodegenSurface,
@@ -341,7 +341,7 @@ function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
 	return false;
 }
 
-function nativeNodeIsKind(
+export function nativeNodeIsKind(
 	d: AnyNodeData,
 	kind: string,
 	kindNameFromId: ((id: number) => string | undefined) | undefined
@@ -640,11 +640,15 @@ export function wrapForReparse(
 	return null;
 }
 
-export const WASM_PATHS: Record<string, string> = {
-	rust: 'tree-sitter-rust/tree-sitter-rust.wasm',
-	typescript: 'tree-sitter-typescript/tree-sitter-typescript.wasm',
-	python: 'tree-sitter-python/tree-sitter-python.wasm'
-};
+export function upstreamWasmPath(grammar: string): string | undefined {
+	if (!isGrammar(grammar)) return undefined;
+	const upstream = upstreamPackage(grammar);
+	try {
+		return grammarRequire(grammar).resolve(`${upstream}/${upstream}.wasm`);
+	} catch {
+		return undefined;
+	}
+}
 
 export async function loadReadTreeNode(
 	grammar: string
@@ -1115,14 +1119,14 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 	if (isGrammar(grammar)) assertGeneratedManifestsClean([grammar]);
 	const { Parser, Language } = await loadWebTreeSitter();
 
-	const thisDir = fileURLToPath(new URL('.', import.meta.url));
-	const overrideWasm = join(thisDir, '..', '..', '..', grammar, '.sittir', 'parser.wasm');
+	const overrideWasm = join(grammarPackageDir(grammar), '.sittir', 'parser.wasm');
 	if (existsSync(overrideWasm)) {
 		const lang = await Language.load(overrideWasm);
 		return { Parser, Language, lang, isOverride: true };
 	}
 
-	const baseWasm = fileURLToPath(import.meta.resolve(WASM_PATHS[grammar]!));
+	const baseWasm = upstreamWasmPath(grammar);
+	if (baseWasm === undefined) throw new Error(`no parser wasm for grammar '${grammar}': neither .sittir/parser.wasm nor an upstream package`);
 	const lang = await Language.load(baseWasm);
 	return { Parser, Language, lang, isOverride: false };
 }

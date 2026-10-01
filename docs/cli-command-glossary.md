@@ -628,6 +628,7 @@ Principle #14 signature-conformance ratchet (classify pipeline fns; fail on base
 - `--update` — Rewrite the committed baseline to the current counts
 - `--table` — Print the per-function classification table (drives R1-R4 + R8)
 - `--json` — Machine-readable JSON output
+- `--staged` — Evaluate the index (the commit snapshot) instead of the working tree
 - `--baseline <path>` — Baseline path (default: packages/codegen/.principle14-baseline.json)
 
 **Example**

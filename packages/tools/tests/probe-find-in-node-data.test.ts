@@ -1,0 +1,28 @@
+import { describe, expect, it } from 'vitest';
+import { findInNodeData } from '../src/probe/kind.ts';
+
+const names = new Map<number, string>([
+	[1, 'program'],
+	[2, 'identifier'],
+	[3, 'shown_alias']
+]);
+const kindNameFromId = (id: number): string | undefined => names.get(id);
+
+describe('findInNodeData', () => {
+	it('matches a numeric $type through the catalog id, not by comparing a name to a number', () => {
+		const leaf = { $type: 2 };
+		const root = { $type: 1, _body: [{ $type: 3 }, leaf] };
+		expect(findInNodeData(root, 'identifier', kindNameFromId)).toBe(leaf);
+	});
+
+	it('matches the displayed kind when it differs from the parse kind', () => {
+		const aliased = { $type: 2, $displayType: 3 };
+		expect(findInNodeData({ $type: 1, _body: aliased }, 'shown_alias', kindNameFromId)).toBe(aliased);
+	});
+
+	it('still matches string $type and finds nothing for an absent kind', () => {
+		const leaf = { $type: 'identifier' };
+		expect(findInNodeData({ $type: 'program', _x: leaf }, 'identifier', undefined)).toBe(leaf);
+		expect(findInNodeData({ $type: 1 }, 'identifier', kindNameFromId)).toBeNull();
+	});
+});

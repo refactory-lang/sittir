@@ -751,13 +751,13 @@ The grammar's root kind reparses as written, with no wrapper: `opts.root` names 
 
 A grammar's reparse wrappers: an identity wrapper for the node model's root kind, then the grammar's own `REPARSE_WRAPPERS` entries. The root entry comes from the model for every grammar, so `REPARSE_WRAPPERS` holds only the context wrappers a grammar needs beyond its root, and a new grammar reparses its root kind with no table of its own.
 
-### `packages/tools/src/validate/common.ts::WASM_PATHS`
+### `packages/tools/src/validate/common.ts::upstreamWasmPath`
 
-```text
-// ---------------------------------------------------------------------------
-// Well-known WASM module paths
-// ---------------------------------------------------------------------------
-```
+The upstream `tree-sitter-<grammar>` package's own wasm, resolved from the grammar package's directory. A grammar with no upstream wasm (an unknown name, or a grammar that ships none) yields `undefined`; the compiled `.sittir/parser.wasm` is the other source and is preferred.
+
+### `packages/tools/src/validate/common.ts::nativeNodeIsKind`
+
+A native node is a kind when its `$type` or its shown kind id (`$displayType` when present) names it; numeric ids resolve through the grammar's `kindNameFromId`.
 
 ### `packages/tools/src/validate/common.ts::grammarModulePath`
 
