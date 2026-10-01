@@ -41,7 +41,7 @@ describe('$trivia getters, inner and refusals', () => {
 
 	it('refuses adding a child to a node that holds inner comments', () => {
 		const block = innerOf(rs.build.block()).inner(rs.build.comment(' TODO'));
-		expect(() => block.$with.statements([rs.build.expressionStatement(rs.build.identifier('a'))])).toThrow(/leading\/trailing/);
+		expect(() => block.$with.statements(rs.build.expressionStatement(rs.build.identifier('a')))).toThrow(/leading\/trailing/);
 	});
 
 	it('detaches the coordinate of a read node that gains an inner comment', () => {

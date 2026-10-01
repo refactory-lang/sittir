@@ -2,21 +2,21 @@
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const { build, kinds } = await createEngine(rust);
+const rs = await createEngine(rust);
 
 export function rebuildListSeatConfigsRustLoose() {
-	return build.sourceFile({
-		statements: [build.functionItem({
+	return rs.build.sourceFile({
+		statements: [rs.build.functionItem({
 			name: "main",
-			parameters: build.parameters(),
-			body: build.block({
-				statements: [build.expressionStatement.withSemi(build.callExpression({
+			parameters: rs.build.parameters(),
+			body: rs.build.block({
+				statements: [rs.build.expressionStatement.withSemi(rs.build.callExpression({
 					function: "call",
 					arguments: [{
-						$type: kinds.AttributedArgument,
-						attributeItem: [build.attribute.input({
+						$type: rs.kinds.AttributedArgument,
+						attributeItem: [rs.build.attribute.input({
 							path: "cfg",
-							arguments: build.delimTokenTree.paren(build.identifier("a")),
+							arguments: rs.build.delimTokenTree.paren(rs.build.identifier("a")),
 						})],
 						expression: "x",
 					}, "y"],

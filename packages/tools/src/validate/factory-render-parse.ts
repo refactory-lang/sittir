@@ -49,6 +49,7 @@ import {
 	importGrammarModule
 } from './common.ts';
 import { nativeShownKindId } from './shown-kind.ts';
+import { sourceSpans } from '@sittir/common';
 
 /**
  * Which factory surface a run builds through: `raw` calls each kind's raw
@@ -619,6 +620,7 @@ export async function validateFactoryRenderParse(
 
 	for (const entry of entries) {
 		const tree1 = parser.parse(entry.source) as TSTree;
+		const spans = sourceSpans(entry.source);
 		if (tree1.rootNode.hasError) {
 			excluded.push({ entry: entry.name, reason: 'parse-error', input: entry.source });
 			continue;
@@ -658,10 +660,11 @@ export async function validateFactoryRenderParse(
 				testedPairs.add(pairKey);
 				total++;
 
+				const indices = spans.toIndices(cand);
 				const node1 =
-					findNodeBySpanOfKind(tree1.rootNode, cand.start, cand.end, kind) ??
-					findNodeBySpan(tree1.rootNode, cand.start, cand.end);
-				const inputSource = node1 ? node1.text : entry.source.slice(cand.start, cand.end);
+					findNodeBySpanOfKind(tree1.rootNode, indices.start, indices.end, kind) ??
+					findNodeBySpan(tree1.rootNode, indices.start, indices.end);
+				const inputSource = node1 ? node1.text : spans.slice(cand);
 
 				// Canonical reference: what a real parse+read produces for
 				// this node, fully materialized (no lazy stubs).

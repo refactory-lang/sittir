@@ -3,7 +3,7 @@ import {
 	Printed,
 	printingFactoryMap,
 	printValue,
-	type LooseFacts,
+	type ModelFacts,
 	type PrintContext
 } from '../../src/emit/factory-source.ts';
 import { withSeatKind } from '../../src/validate/common.ts';
@@ -55,8 +55,7 @@ const shapes = {
 	sized: 'config'
 } as const;
 
-const loose: LooseFacts = {
-	nested: 'calls',
+const facts: ModelFacts = {
 	modelTypes: {
 		identifier: 'pattern',
 		comma: 'punctuation',
@@ -98,6 +97,9 @@ const loose: LooseFacts = {
 
 const ctx: PrintContext = {
 	grammar: 'test',
+	engine: 'rs',
+	surface: 'loose',
+	nested: 'calls',
 	kindNameFromId: (id) => names[id],
 	memberNameOfId: (id) => (names[id] === undefined ? undefined : pascal(names[id]!)),
 	irPathOfKind: (kind) => `ir.${camel(kind)}`,
@@ -119,7 +121,7 @@ const ctx: PrintContext = {
 	leafPatterns: { identifier: /^[a-z]+$/, field_identifier: /^[a-z]+$/ },
 	enumKinds: new Set(['size']),
 	seats: { args: { '*': { attributed: { kind: 'attributed', shape: 'elements' } } } },
-	loose
+	facts
 };
 
 const mapFor = (context: PrintContext) => printingFactoryMap(shapes, (k) => ids[k], context);
@@ -175,9 +177,9 @@ describe('loose surface printing', () => {
 		const aliased = mapFor({
 			...ctx,
 			slotKinds: { ...ctx.slotKinds, holder: { item: ['wrapper', 'alias'] } },
-			loose: {
-				...loose,
-				modelTypes: { ...loose.modelTypes, alias: 'pattern' },
+			facts: {
+				...facts,
+				modelTypes: { ...facts.modelTypes, alias: 'pattern' },
 				kindIdOfName: (k) => (k === 'alias' ? 3 : ids[k])
 			}
 		});
@@ -186,8 +188,8 @@ describe('loose surface printing', () => {
 		);
 	});
 	it('drops a wrapper around a kind-id leaf when the wrapper alone takes it, and keeps it beside an enum the slot admits', () => {
-		expect(expectPrinted(map.holder!({ item: map.wrapper!(4) })).source).toBe('ir.holder({\n\titem: kinds.Comma,\n})');
-		expect(expectPrinted(map.sized!({ item: map.wrapper!(4) })).source).toBe('ir.sized({\n\titem: ir.wrapper(kinds.Comma),\n})');
+		expect(expectPrinted(map.holder!({ item: map.wrapper!(4) })).source).toBe('ir.holder({\n\titem: rs.kinds.Comma,\n})');
+		expect(expectPrinted(map.sized!({ item: map.wrapper!(4) })).source).toBe('ir.sized({\n\titem: ir.wrapper(rs.kinds.Comma),\n})');
 	});
 	it("loosens the elements of a bare array against the list's element slot", () => {
 		expect(expectPrinted(map.holder2!({ args: map.args!(attributed({ expression: map.identifier!('x') })) })).source).toBe(
@@ -204,7 +206,7 @@ describe('loose surface printing', () => {
 	it("loosens the slots of a seat config that sets more than its required slot, and names its kind where the element slot also takes the hoisted value bare", () => {
 		expect(
 			expectPrinted(map.holder2!({ args: map.args!(attributed({ attrs: map.identifier!('a'), expression: map.identifier!('x') })) })).source
-		).toBe('ir.holder2({\n\targs: [{\n\t\t$type: kinds.Attributed,\n\t\tattrs: "a",\n\t\texpression: "x",\n\t}],\n})');
+		).toBe('ir.holder2({\n\targs: [{\n\t\t$type: rs.kinds.Attributed,\n\t\tattrs: "a",\n\t\texpression: "x",\n\t}],\n})');
 	});
 	it("names the seat's kind on a config that sits beside a hoisted bare element", () => {
 		expect(
@@ -213,10 +215,10 @@ describe('loose surface printing', () => {
 					args: map.args!(attributed({ attrs: map.identifier!('a'), expression: map.identifier!('x') }), attributed({ expression: map.identifier!('y') }))
 				})
 			).source
-		).toBe('ir.holder2({\n\targs: [{\n\t\t$type: kinds.Attributed,\n\t\tattrs: "a",\n\t\texpression: "x",\n\t}, "y"],\n})');
+		).toBe('ir.holder2({\n\targs: [{\n\t\t$type: rs.kinds.Attributed,\n\t\tattrs: "a",\n\t\texpression: "x",\n\t}, "y"],\n})');
 	});
 	it("leaves a seat config untagged where its seat has no required slot to hoist", () => {
-		const unhoisted = mapFor({ ...ctx, loose: { ...loose, slotRequired: { attributed: { attrs: false, expression: false } } } });
+		const unhoisted = mapFor({ ...ctx, facts: { ...facts, slotRequired: { attributed: { attrs: false, expression: false } } } });
 		expect(
 			expectPrinted(unhoisted.holder2!({ args: unhoisted.args!(attributed({ attrs: unhoisted.identifier!('a'), expression: unhoisted.identifier!('x') })) }))
 				.source
@@ -245,11 +247,11 @@ describe('loose surface printing', () => {
 		const seated = mapFor({
 			...ctx,
 			seats: { arguments: { '*': { holder: { kind: 'holder', shape: 'elements' } } } },
-			loose: { ...loose, slotRequired: { holder: { item: true } } }
+			facts: { ...facts, slotRequired: { holder: { item: true } } }
 		});
 		expect(expectPrinted(seated.arguments!(holder({ item: map.identifier!('x') }))).source).toBe('ir.arguments(ir.identifier("x"))');
 		expect(expectPrinted(seated.arguments!(holder({ item: map.identifier!('x'), other: true }))).source).toBe(
-			'ir.arguments({\n\t$type: kinds.Holder,\n\titem: "x",\n\tother: true,\n})'
+			'ir.arguments({\n\t$type: rs.kinds.Holder,\n\titem: "x",\n\tother: true,\n})'
 		);
 	});
 	it("spells an absorbed spread child as the loose wrapper's array argument", () => {
@@ -266,7 +268,7 @@ describe('loose surface printing', () => {
 });
 
 describe('loose surface printing with nested configs', () => {
-	const map = mapFor({ ...ctx, loose: { ...loose, nested: 'configs' } });
+	const map = mapFor({ ...ctx, nested: 'configs' });
 	it('prints a nested compound as a keyless config at a one-kind slot and a keyed one elsewhere', () => {
 		expect(expectPrinted(map.function_item!({ body: map.block!({ statements: [map.identifier!('x')] }) })).source).toBe(
 			'ir.functionItem({\n\tbody: {\n\t\tstatements: [ir.identifier("x")],\n\t},\n})'
@@ -276,8 +278,67 @@ describe('loose surface printing with nested configs', () => {
 			'ir.callExpression({\n\tfunction: {\n\t\tfunction: "f",\n\t},\n})'
 		);
 		expect(expectPrinted(map.block!({ statements: [map.call_expression!({ function: map.identifier!('f') })] })).source).toBe(
-			'ir.block({\n\tstatements: [{\n\t\t$type: kinds.CallExpression,\n\t\tfunction: "f",\n\t}],\n})'
+			'ir.block({\n\tstatements: [{\n\t\t$type: rs.kinds.CallExpression,\n\t\tfunction: "f",\n\t}],\n})'
 		);
 		expect(expectPrinted(map.function_item!({ body: map.block!({}) })).source).toBe('ir.functionItem({\n\tbody: {},\n})');
 	});
 });
+
+describe('hoisted routes, on both surfaces', () => {
+	const owning = { ...facts, forwardsTo: { ...facts.forwardsTo, wrapper: 'elements' } };
+	const strict = mapFor({ ...ctx, surface: 'strict', facts: owning });
+	const loose = mapFor({ ...ctx, facts: owning });
+
+	it('an owner takes the arguments of the list it forwards to', () => {
+		expect(expectPrinted(strict.wrapper!(strict.elements!(strict.identifier!('x'), strict.identifier!('y')))).source).toBe(
+			'ir.wrapper.strict(ir.identifier("x"), ir.identifier("y"))'
+		);
+		expect(expectPrinted(loose.wrapper!(loose.elements!(loose.identifier!('x'), loose.identifier!('y')))).source).toBe(
+			'ir.wrapper("x", "y")'
+		);
+	});
+	it("a list's options bag that restates its default delimiter is dropped", () => {
+		expect(expectPrinted(strict.elements!({ delimiter: 7 }, strict.identifier!('x'))).source).toBe(
+			'ir.elements.strict(ir.identifier("x"))'
+		);
+		expect(expectPrinted(strict.elements!({ delimiter: 8 }, strict.identifier!('x'))).source).toBe(
+			'ir.elements.strict({ delimiter: Delimiter.Trailing }, ir.identifier("x"))'
+		);
+	});
+	it("a seated element that sets only the seat's required slot is that slot's value, on the strict surface too", () => {
+		const seated = mapFor({
+			...ctx,
+			surface: 'strict',
+			seats: { arguments: { '*': { holder: { kind: 'holder', shape: 'elements' } } } },
+			facts: { ...facts, slotRequired: { holder: { item: true } } }
+		});
+		expect(expectPrinted(seated.arguments!(holder({ item: seated.identifier!('x') }))).source).toBe(
+			'ir.arguments.strict(ir.identifier("x"))'
+		);
+	});
+	it('an owner keeps its list call when the list carries trivia of its own', () => {
+		const list = expectPrinted(strict.elements!(strict.identifier!('x')));
+		list.$_trivia = { leading: [{ $type: 3, $text: 'c' }] } as never;
+		expect(expectPrinted(strict.wrapper!(list)).source).toMatch(/^ir\.wrapper\.strict\(ir\.elements\.strict\(/);
+	});
+	it('an owner takes a seat config element of its list', () => {
+		const seated = mapFor({
+			...ctx,
+			surface: 'strict',
+			seats: { elements: { '*': { attributed: { kind: 'attributed', shape: 'elements' } } } },
+			facts: owning
+		});
+		const list = seated.elements!(attributed({ attrs: seated.identifier!('a'), expression: seated.identifier!('x') }));
+		expect(expectPrinted(seated.wrapper!(list)).source).toMatch(/^ir\.wrapper\.strict\(\{/);
+	});
+	it('a loose owner takes the options its list has to pass', () => {
+		expect(expectPrinted(loose.wrapper!(loose.elements!({ delimiter: 8 }, loose.identifier!('x')))).source).toBe(
+			'ir.wrapper({ delimiter: Delimiter.Trailing }, "x")'
+		);
+	});
+	it('an empty list is never spelled as a bare array', () => {
+		const built = loose.choice!({ value: loose.arguments!() });
+		expect(expectPrinted(built).source).toBe('ir.choice({\n\tvalue: ir.arguments(),\n})');
+	});
+});
+

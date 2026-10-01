@@ -17,7 +17,8 @@
 		"directory": "packages/python"
 	},
 	"files": [
-		"dist"
+		"dist",
+		"native"
 	],
 	"type": "module",
 	"main": "./dist/index.js",
@@ -50,7 +51,7 @@
 		"tree-sitter-python": "^0.25.0",
 		"type-fest": "^5.6.0"
 	},
-	"//native": "Native artifacts are grammar-local implementation details for @sittir/python, built from rust/crates/sittir-python.",
+	"//native": "Native artifacts are grammar-local implementation details for @sittir/python, shipped in native/ and built from rust/crates/sittir-python.",
 	"sittir": {
 		"stable": true
 	}

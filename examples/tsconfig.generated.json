@@ -13,7 +13,12 @@
 		"./21-list-seat-configs-rust.generated.ts",
 		"./21-list-seat-configs-rust-loose.generated.ts",
 		"./22-trivia-rust.generated.ts",
-		"./22-trivia-typescript.generated.ts"
+		"./22-trivia-typescript.generated.ts",
+		"./20-keyword-openers-python-loose.generated.ts",
+		"./20-keyword-openers-rust-loose.generated.ts",
+		"./20-keyword-openers-typescript-loose.generated.ts",
+		"./22-trivia-rust-loose.generated.ts",
+		"./22-trivia-typescript-loose.generated.ts"
 	],
 	"exclude": []
 }
