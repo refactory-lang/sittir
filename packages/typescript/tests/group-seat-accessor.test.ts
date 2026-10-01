@@ -22,3 +22,23 @@ describe('a group seat flattens its group fields onto the parent', () => {
 		expect(handler.$with.parameter(ts.build.identifier('z')).$render()).toBe('catch (z) { b }');
 	});
 });
+
+describe('a flattened key on an absent group', () => {
+	it('clears the seat when given no value, leaving the group absent', () => {
+		const handler = catchOf('try { a } catch { b }\n');
+		const cleared = handler.$with.type();
+		expect(cleared.$render()).toBe('catch { b }');
+		expect(cleared.catchClauseGroup()).toBeUndefined();
+	});
+
+	it('refuses to build the group without its required parameter', () => {
+		const handler = catchOf('try { a } catch { b }\n');
+		const typed = catchOf('try { a } catch (e: E) { b }\n').type();
+		if (typed === undefined) throw new Error('no type');
+		expect(() => handler.$with.type(typed)).toThrow(/cannot build the absent 'catchClauseGroup' group without its required parameter/);
+	});
+
+	it('builds the group from its one required field', () => {
+		expect(catchOf('try { a } catch { b }\n').$with.parameter(ts.build.identifier('z')).$render()).toBe('catch (z) { b }');
+	});
+});

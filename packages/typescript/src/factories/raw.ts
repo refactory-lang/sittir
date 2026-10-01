@@ -1352,7 +1352,7 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 				kind: TSKindId.CatchClauseGroup as const,
 				make: buildCatchClauseGroup,
 				keys: [
-					{ name: 'parameter', rest: false },
+					{ name: 'parameter', rest: false, required: true },
 					{ name: 'type', rest: false }
 				]
 			}

@@ -4,9 +4,9 @@ import { withElementsSeat } from '../src/utils.ts';
 const seat = () => {
 	const seated: unknown[][] = [];
 	const node = withElementsSeat(
-		{ $type: 1, $with: { comparators: (...items: unknown[]) => (seated.push(items), 'rebuilt') } } as Record<string, unknown>,
+		{ $type: 1, $with: { comparators: (...items: unknown[]) => (seated.push(items), 'rebuilt') } },
 		{ slot: 'comparators', keys: ['operators', 'primaryExpression'], make: ((config: unknown) => ({ $type: 9, config })) as (config: never) => unknown }
-	) as any;
+	);
 	return { node, seated };
 };
 

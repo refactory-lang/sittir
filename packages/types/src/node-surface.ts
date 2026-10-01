@@ -135,7 +135,7 @@ type SlotSetterOf<Self, K extends keyof SlotHintsOf<Self>, ByBound, Lookup, Refl
 			: SlotSetter<Self, K, ByBound, Lookup, Reflect>
 		: SlotSetter<Self, K, ByBound, Lookup, Reflect>;
 
-type FlatSetter<Self, S extends string, G, K extends keyof SlotHintsOf<G>, ByBound, Lookup, Reflect extends boolean> =
+type FlatSetter<Self, S extends string, G, K extends keyof SlotHintsOf<G>, Optional extends boolean, ByBound, Lookup, Reflect extends boolean> =
 	SlotRest<G, K> extends true
 		? SlotInput<G, K> extends infer Rest extends readonly unknown[]
 			? AdmitBound<Rest, Lookup> extends infer Admitted extends readonly unknown[]
@@ -144,13 +144,13 @@ type FlatSetter<Self, S extends string, G, K extends keyof SlotHintsOf<G>, ByBou
 			: never
 		: SlotOptional<G, K> extends true
 			? ((value: AdmitBound<SlotInput<G, K>, Lookup>) => SetResult<Self, S, G, ByBound, Lookup, Reflect>) &
-					(() => SetResult<Self, S, G, ByBound, Lookup, Reflect>)
+					(() => SetResult<Self, S, Optional extends true ? G | undefined : G, ByBound, Lookup, Reflect>)
 			: (value: AdmitBound<SlotInput<G, K>, Lookup>) => SetResult<Self, S, G, ByBound, Lookup, Reflect>;
 
 type FlatSetterNamed<F, Self, N extends string, ByBound, Lookup, Reflect extends boolean> =
-	F extends FlatHint<infer S, infer G, infer Keys, boolean>
+	F extends FlatHint<infer S, infer G, infer Keys, infer O>
 		? Keys[N & keyof Keys] extends infer K extends keyof SlotHintsOf<G>
-			? FlatSetter<Self, S, G, K, ByBound, Lookup, Reflect>
+			? FlatSetter<Self, S, G, K, O, ByBound, Lookup, Reflect>
 			: never
 		: never;
 
@@ -180,7 +180,9 @@ type FlatRead<Self, K extends PropertyKey, V, ByBound> = [FlatKeysOf<Self, K>] e
 					keyof G] extends () => infer R
 					? () => [V] extends [undefined]
 						? undefined
-						: Resolve<R, ByBound>
+						: undefined extends V
+							? Resolve<R, ByBound> | undefined
+							: Resolve<R, ByBound>
 					: never;
 			}
 		: {};

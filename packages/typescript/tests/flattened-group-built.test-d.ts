@@ -37,3 +37,16 @@ export function aBuiltNodeNarrowsTheSameWay(): void {
 export function theParsedNodeKeepsItsOptionalReads(c: T.CatchClause.Parsed): void {
 	expectTrue<Equals<undefined extends ReturnType<typeof c.parameter> ? true : false, true>>();
 }
+
+export function clearingAnOptionalFieldKeepsTheSeatState(c: T.CatchClause.Parsed): void {
+	const cleared = c.$with.type();
+	expectTrue<Equals<undefined extends ReturnType<typeof cleared.parameter> ? true : false, true>>();
+	expectTrue<Equals<undefined extends ReturnType<typeof cleared.catchClauseGroup> ? true : false, true>>();
+}
+
+export function clearingOnAnAbsentBuiltNodeYieldsNoPresentShapeWithoutItsParameter(c: T.CatchClause.Bound): void {
+	if (c._catch_clause_group === undefined) {
+		const cleared = c.$with.type();
+		expectTrue<Equals<undefined extends ReturnType<typeof cleared.parameter> ? true : false, true>>();
+	}
+}

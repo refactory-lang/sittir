@@ -1571,6 +1571,7 @@ export interface GroupSeatKey {
 	readonly name: string;
 	readonly field: string;
 	readonly rest: boolean;
+	readonly required: boolean;
 }
 
 export interface GroupSeatHint {
@@ -1600,7 +1601,8 @@ export function groupSeatHints(
 			return {
 				name: key === field ? slot.propertyName : prefixedKey(seat.slot.propertyName, slot.propertyName),
 				field: slot.propertyName,
-				rest: restKeys.has(slot.propertyName)
+				rest: restKeys.has(slot.propertyName),
+				required: isRequired(slot)
 			};
 		});
 		return [
@@ -1624,7 +1626,12 @@ function groupSeatRuntimeSpecs(
 	factoryScope = ''
 ): readonly string[] {
 	return groupSeatHints(node, nodeMap, kindEntries).map((hint) => {
-		const keys = hint.keys.map(({ name, field, rest }) => (name === field ? { name, rest } : { name, field, rest }));
+		const keys = hint.keys.map(({ name, field, rest, required }) => ({
+			name,
+			...(name === field ? {} : { field }),
+			rest,
+			...(required ? { required } : {})
+		}));
 		return `{ slot: ${JSON.stringify(hint.slot)}, kind: ${factoryTypeDiscriminant(hint.groupKind, nodeMap, kindEntries)}, make: ${factoryScope}${hint.factory}, keys: ${JSON.stringify(keys)} }`;
 	});
 }

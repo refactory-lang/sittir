@@ -415,6 +415,7 @@ interface GroupSeatKey {
 	readonly name: string;
 	readonly field?: string;
 	readonly rest: boolean;
+	readonly required?: boolean;
 }
 
 interface GroupSeatSpec {
@@ -449,12 +450,18 @@ export function withGroupSeat<T extends object>(node: T, spec: GroupSeatSpec): T
 				return seat(args[0]);
 			}
 			const group = readGroup.call(node);
+			if (group !== undefined) {
+				return seat(((group.$with as unknown as Members)[fieldOf(key)] as (...values: unknown[]) => unknown)(...args));
+			}
 			const value = key.rest ? args : args[0];
-			const next =
-				group === undefined
-					? make({ [fieldOf(key)]: value })
-					: ((group.$with as unknown as Members)[fieldOf(key)] as (...values: unknown[]) => unknown)(...args);
-			return seat(next);
+			if (key.rest ? args.length === 0 : value === undefined) return seat();
+			const missing = spec.keys.filter((other) => other !== key && other.required === true).map((other) => other.name);
+			if (missing.length > 0) {
+				throw new TypeError(
+					`$with.${key.name} cannot build the absent '${spec.slot}' group without its required ${missing.join(', ')}; set ${missing.length === 1 ? 'it' : 'them'} first, or pass the whole group to $with.${spec.slot}`
+				);
+			}
+			return seat(make({ [fieldOf(key)]: value }));
 		};
 	}
 	return node;

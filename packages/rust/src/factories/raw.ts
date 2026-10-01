@@ -5094,7 +5094,7 @@ export function buildMatchBlock(value?: AdmitBound<T.MatchBlockArms, T.AdmittedN
 				make: buildMatchBlockArms,
 				keys: [
 					{ name: 'matchArms', rest: true },
-					{ name: 'lastArm', rest: false }
+					{ name: 'lastArm', rest: false, required: true }
 				]
 			}
 		)
@@ -5147,7 +5147,7 @@ export function buildLastMatchArm(config: T.LastMatchArm.Config): T.LastMatchArm
 				kind: TSKindId.MatchPattern as const,
 				make: buildMatchPattern,
 				keys: [
-					{ name: 'pattern', rest: false },
+					{ name: 'pattern', rest: false, required: true },
 					{ name: 'condition', rest: false }
 				]
 			}
@@ -9595,7 +9595,7 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 				kind: TSKindId.MatchPattern as const,
 				make: buildMatchPattern,
 				keys: [
-					{ name: 'pattern', rest: false },
+					{ name: 'pattern', rest: false, required: true },
 					{ name: 'condition', rest: false }
 				]
 			}
@@ -9656,7 +9656,7 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 				kind: TSKindId.MatchPattern as const,
 				make: buildMatchPattern,
 				keys: [
-					{ name: 'pattern', rest: false },
+					{ name: 'pattern', rest: false, required: true },
 					{ name: 'condition', rest: false }
 				]
 			}

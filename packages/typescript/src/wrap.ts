@@ -2843,7 +2843,7 @@ export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle): T.CatchC
 				kind: TSKindId.CatchClauseGroup as const,
 				make: RAW.buildCatchClauseGroup,
 				keys: [
-					{ name: 'parameter', rest: false },
+					{ name: 'parameter', rest: false, required: true },
 					{ name: 'type', rest: false }
 				]
 			}

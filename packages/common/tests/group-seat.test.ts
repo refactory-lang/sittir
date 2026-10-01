@@ -1,36 +1,55 @@
 import { describe, expect, it } from 'vitest';
 import { storedSlotReader, withGroupSeat } from '../src/utils.ts';
 
-type Group = { $type: 7; left(): string; right(): string; $with: { left(v: string): Group; right(v: string): Group } };
+interface Group {
+	readonly $type: 7;
+	left(): string;
+	right(): string | undefined;
+	readonly $with: { left(v: string): Group; right(v?: string): Group };
+}
 
-const group = (left: string, right: string): Group => ({
+const group = (left: string, right?: string): Group => ({
 	$type: 7,
 	left: () => left,
 	right: () => right,
 	$with: { left: (v) => group(v, right), right: (v) => group(left, v) }
 });
 
-const seated: unknown[] = [];
+interface Parent {
+	readonly $type: 1;
+	left(): string;
+	seat(): Group | undefined;
+	readonly $with: { seat(value?: Group): string };
+}
+
+interface Seated extends Parent {
+	seatLeft(): string | undefined;
+	right(): string | undefined;
+	readonly $with: Parent['$with'] & { seatLeft(v?: string): string; right(v?: string): string };
+}
+
+const seated: (Group | undefined)[] = [];
 const made: unknown[] = [];
 
-const parent = (inner: Group | undefined) =>
-	withGroupSeat(
-		{
-			$type: 1,
-			left: () => 'own',
-			seat: () => inner,
-			$with: { seat: (value: unknown) => (seated.push(value), 'rebuilt') }
-		} as Record<string, unknown>,
-		{
-			slot: 'seat',
-			kind: 7,
-			make: ((config: unknown) => (made.push(config), group('m', 'm'))) as (config: never) => unknown,
-			keys: [
-				{ name: 'seatLeft', field: 'left', rest: false },
-				{ name: 'right', rest: false }
-			]
-		}
-	) as any;
+const parent = (inner: Group | undefined): Seated => {
+	const base: Parent = {
+		$type: 1,
+		left: () => 'own',
+		seat: () => inner,
+		$with: { seat: (value) => (seated.push(value), 'rebuilt') }
+	};
+	return withGroupSeat(base, {
+		slot: 'seat',
+		kind: 7,
+		make: ((config: { left?: string; right?: string }) => (made.push(config), group(config.left ?? 'm', config.right))) as (
+			config: never
+		) => unknown,
+		keys: [
+			{ name: 'seatLeft', field: 'left', rest: false, required: true },
+			{ name: 'right', rest: false }
+		]
+	}) as Seated;
+};
 
 describe('withGroupSeat', () => {
 	it('reads a prefixed key from the group field it names, and leaves the parent slot of that name alone', () => {
@@ -44,14 +63,31 @@ describe('withGroupSeat', () => {
 		seated.length = 0;
 		const node = parent(group('a', 'b'));
 		expect(node.$with.seatLeft('z')).toBe('rebuilt');
-		expect((seated[0] as Group).left()).toBe('z');
-		expect((seated[0] as Group).right()).toBe('b');
+		expect(seated[0]?.left()).toBe('z');
+		expect(seated[0]?.right()).toBe('b');
 	});
 
-	it('builds an absent group from the field a prefixed key names', () => {
+	it('builds an absent group from the one required field a key names', () => {
 		made.length = 0;
 		parent(undefined).$with.seatLeft('z');
 		expect(made).toEqual([{ left: 'z' }]);
+	});
+
+	it('clears an absent seat when a key is given no value, instead of seating an empty group', () => {
+		seated.length = 0;
+		made.length = 0;
+		parent(undefined).$with.right();
+		parent(undefined).$with.seatLeft(undefined);
+		expect(made).toEqual([]);
+		expect(seated).toEqual([undefined, undefined]);
+	});
+
+	it('refuses to build an absent group without its required fields', () => {
+		made.length = 0;
+		expect(() => parent(undefined).$with.right('b')).toThrow(
+			"$with.right cannot build the absent 'seat' group without its required seatLeft; set it first, or pass the whole group to $with.seat"
+		);
+		expect(made).toEqual([]);
 	});
 
 	it('keeps the group reader for the seat slot', () => {
