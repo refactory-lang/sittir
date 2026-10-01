@@ -6,6 +6,7 @@ import { TSKindId } from '../types.js';
 import type { AdmitBound, NonEmptyArray, WidenNumeric } from '@sittir/types';
 import {
 	withAccessors,
+	describeValue,
 	isNodeOfKind,
 	admitAliasContent,
 	coerceBooleanKeywordStorage,
@@ -6209,7 +6210,8 @@ export function buildBlockComment(
 
 export function buildIdentifier(text: string): T.Identifier.Bound {
 	if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
-	if (!_leafRe_buildIdentifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
+	if (!_leafRe_buildIdentifier.test(text))
+		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.Identifier as const,
 		$source: 2 as const,
@@ -6221,7 +6223,7 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 export function buildShebang(value: AdmitBound<string, T.AdmittedNodes>): T.Shebang.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildShebang_content.test(_content))
-		throw new Error(`shebang.content: text does not match pattern: ${_content}`);
+		throw new Error(`shebang.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -6249,7 +6251,7 @@ export const buildCrate: TSKindId.Crate = TSKindId.Crate;
 export function buildMetavariable(value: AdmitBound<string, T.AdmittedNodes>): T.Metavariable.Bound {
 	const _name = value;
 	if (_name !== undefined && !_slotRe_buildMetavariable_name.test(_name))
-		throw new Error(`metavariable.name: text does not match pattern: ${_name}`);
+		throw new Error(`metavariable.name: text does not match pattern: ${describeValue(_name)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -7774,7 +7776,7 @@ export function buildUseWildcardGroup(
 export function buildTokenRepetitionPatternText(text: string): T.TokenRepetitionPatternText.Bound {
 	if (text.length === 0) throw new Error(`token_repetition_pattern_text: text must be non-empty`);
 	if (!_leafRe_buildTokenRepetitionPatternText.test(text))
-		throw new Error(`token_repetition_pattern_text: text does not match pattern: ${text}`);
+		throw new Error(`token_repetition_pattern_text: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.TokenRepetitionPatternText as const,
 		$source: 2 as const,
@@ -7785,7 +7787,8 @@ export function buildTokenRepetitionPatternText(text: string): T.TokenRepetition
 
 export function buildStringOpen(text: string): T.StringOpen.Bound {
 	if (text.length === 0) throw new Error(`string_open: text must be non-empty`);
-	if (!_leafRe_buildStringOpen.test(text)) throw new Error(`string_open: text does not match pattern: ${text}`);
+	if (!_leafRe_buildStringOpen.test(text))
+		throw new Error(`string_open: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.StringOpen as const,
 		$source: 2 as const,
@@ -7917,10 +7920,10 @@ export function buildIntegerLiteralDecimal(
 ): T.IntegerLiteralDecimal.Bound {
 	const _content = numberText(10, '', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralDecimal_content.test(_content))
-		throw new Error(`integer_literal_decimal.content: text does not match pattern: ${_content}`);
+		throw new Error(`integer_literal_decimal.content: text does not match pattern: ${describeValue(_content)}`);
 	const _suffix = config.suffix;
 	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralDecimal_suffix.test(_suffix))
-		throw new Error(`integer_literal_decimal.suffix: text does not match pattern: ${_suffix}`);
+		throw new Error(`integer_literal_decimal.suffix: text does not match pattern: ${describeValue(_suffix)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -7963,10 +7966,10 @@ export function buildIntegerLiteralHex(
 ): T.IntegerLiteralHex.Bound {
 	const _content = numberText(16, '0x', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralHex_content.test(_content))
-		throw new Error(`integer_literal_hex.content: text does not match pattern: ${_content}`);
+		throw new Error(`integer_literal_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	const _suffix = config.suffix;
 	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralHex_suffix.test(_suffix))
-		throw new Error(`integer_literal_hex.suffix: text does not match pattern: ${_suffix}`);
+		throw new Error(`integer_literal_hex.suffix: text does not match pattern: ${describeValue(_suffix)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8009,10 +8012,10 @@ export function buildIntegerLiteralBinary(
 ): T.IntegerLiteralBinary.Bound {
 	const _content = numberText(2, '0b', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralBinary_content.test(_content))
-		throw new Error(`integer_literal_binary.content: text does not match pattern: ${_content}`);
+		throw new Error(`integer_literal_binary.content: text does not match pattern: ${describeValue(_content)}`);
 	const _suffix = config.suffix;
 	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralBinary_suffix.test(_suffix))
-		throw new Error(`integer_literal_binary.suffix: text does not match pattern: ${_suffix}`);
+		throw new Error(`integer_literal_binary.suffix: text does not match pattern: ${describeValue(_suffix)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8055,10 +8058,10 @@ export function buildIntegerLiteralOctal(
 ): T.IntegerLiteralOctal.Bound {
 	const _content = numberText(8, '0o', config.content);
 	if (_content !== undefined && !_slotRe_buildIntegerLiteralOctal_content.test(_content))
-		throw new Error(`integer_literal_octal.content: text does not match pattern: ${_content}`);
+		throw new Error(`integer_literal_octal.content: text does not match pattern: ${describeValue(_content)}`);
 	const _suffix = config.suffix;
 	if (_suffix !== undefined && !_slotRe_buildIntegerLiteralOctal_suffix.test(_suffix))
-		throw new Error(`integer_literal_octal.suffix: text does not match pattern: ${_suffix}`);
+		throw new Error(`integer_literal_octal.suffix: text does not match pattern: ${describeValue(_suffix)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8100,7 +8103,7 @@ export function buildCharLiteralPlain(config: T.CharLiteralPlain.Config): T.Char
 	const _b = coerceBooleanKeywordStorage(config.b);
 	const _content = config.content;
 	if (_content !== undefined && !_slotRe_buildCharLiteralPlain_content.test(_content))
-		throw new Error(`char_literal_plain.content: text does not match pattern: ${_content}`);
+		throw new Error(`char_literal_plain.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8125,7 +8128,7 @@ export function buildCharLiteralPlain(config: T.CharLiteralPlain.Config): T.Char
 export function buildCharLiteralEmpty(text: string): T.CharLiteralEmpty.Bound {
 	if (text.length === 0) throw new Error(`char_literal_empty: text must be non-empty`);
 	if (!_leafRe_buildCharLiteralEmpty.test(text))
-		throw new Error(`char_literal_empty: text does not match pattern: ${text}`);
+		throw new Error(`char_literal_empty: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.CharLiteralEmpty as const,
 		$source: 2 as const,
@@ -8140,7 +8143,7 @@ export function buildCharLiteralEscapedSimple(
 	const _b = coerceBooleanKeywordStorage(config.b);
 	const _content = config.content;
 	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedSimple_content.test(_content))
-		throw new Error(`char_literal_escaped_simple.content: text does not match pattern: ${_content}`);
+		throw new Error(`char_literal_escaped_simple.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8169,7 +8172,9 @@ export function buildCharLiteralEscapedUnicodeFixed(
 	const _b = coerceBooleanKeywordStorage(config.b);
 	const _content = config.content;
 	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedUnicodeFixed_content.test(_content))
-		throw new Error(`char_literal_escaped_unicode_fixed.content: text does not match pattern: ${_content}`);
+		throw new Error(
+			`char_literal_escaped_unicode_fixed.content: text does not match pattern: ${describeValue(_content)}`
+		);
 	return withMethods(
 		withAccessors(
 			{
@@ -8198,7 +8203,9 @@ export function buildCharLiteralEscapedUnicodeBraced(
 	const _b = coerceBooleanKeywordStorage(config.b);
 	const _content = config.content;
 	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedUnicodeBraced_content.test(_content))
-		throw new Error(`char_literal_escaped_unicode_braced.content: text does not match pattern: ${_content}`);
+		throw new Error(
+			`char_literal_escaped_unicode_braced.content: text does not match pattern: ${describeValue(_content)}`
+		);
 	return withMethods(
 		withAccessors(
 			{
@@ -8225,7 +8232,7 @@ export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Confi
 	const _b = coerceBooleanKeywordStorage(config.b);
 	const _content = config.content;
 	if (_content !== undefined && !_slotRe_buildCharLiteralEscapedHex_content.test(_content))
-		throw new Error(`char_literal_escaped_hex.content: text does not match pattern: ${_content}`);
+		throw new Error(`char_literal_escaped_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8251,7 +8258,7 @@ export function buildCharLiteralEscapedHex(config: T.CharLiteralEscapedHex.Confi
 export function buildEscapeSequenceSimple(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequenceSimple.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildEscapeSequenceSimple_content.test(_content))
-		throw new Error(`escape_sequence_simple.content: text does not match pattern: ${_content}`);
+		throw new Error(`escape_sequence_simple.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8275,7 +8282,7 @@ export function buildEscapeSequenceUnicodeFixed(
 ): T.EscapeSequenceUnicodeFixed.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildEscapeSequenceUnicodeFixed_content.test(_content))
-		throw new Error(`escape_sequence_unicode_fixed.content: text does not match pattern: ${_content}`);
+		throw new Error(`escape_sequence_unicode_fixed.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8299,7 +8306,7 @@ export function buildEscapeSequenceUnicodeBraced(
 ): T.EscapeSequenceUnicodeBraced.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildEscapeSequenceUnicodeBraced_content.test(_content))
-		throw new Error(`escape_sequence_unicode_braced.content: text does not match pattern: ${_content}`);
+		throw new Error(`escape_sequence_unicode_braced.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -8321,7 +8328,7 @@ export function buildEscapeSequenceUnicodeBraced(
 export function buildEscapeSequenceHex(value: AdmitBound<string, T.AdmittedNodes>): T.EscapeSequenceHex.Bound {
 	const _content = value;
 	if (_content !== undefined && !_slotRe_buildEscapeSequenceHex_content.test(_content))
-		throw new Error(`escape_sequence_hex.content: text does not match pattern: ${_content}`);
+		throw new Error(`escape_sequence_hex.content: text does not match pattern: ${describeValue(_content)}`);
 	return withMethods(
 		withAccessors(
 			{
@@ -9671,7 +9678,7 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSlashes.Bound {
 	if (text.length === 0) throw new Error(`line_comment_extra_slashes: text must be non-empty`);
 	if (!_leafRe_buildLineCommentExtraSlashes.test(text))
-		throw new Error(`line_comment_extra_slashes: text does not match pattern: ${text}`);
+		throw new Error(`line_comment_extra_slashes: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.LineCommentExtraSlashes as const,
 		$source: 2 as const,
@@ -9756,7 +9763,7 @@ function _buildLineCommentDocInner(value: AdmitBound<T.DocComment, T.AdmittedNod
 
 export function buildLineCommentRegular(text: string): T.LineCommentRegular.Bound {
 	if (!_leafRe_buildLineCommentRegular.test(text))
-		throw new Error(`line_comment_regular: text does not match pattern: ${text}`);
+		throw new Error(`line_comment_regular: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.LineCommentRegular as const,
 		$source: 2 as const,
@@ -9849,7 +9856,7 @@ function _buildBlockCommentDocInner(
 
 export function buildBlockCommentRegular(text: string): T.BlockCommentRegular.Bound {
 	if (!_leafRe_buildBlockCommentRegular.test(text))
-		throw new Error(`block_comment_regular: text does not match pattern: ${text}`);
+		throw new Error(`block_comment_regular: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.BlockCommentRegular as const,
 		$source: 2 as const,
@@ -11117,7 +11124,8 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 export function buildFloatLiteral(text: string | number): T.FloatLiteral.Bound {
 	text = numberText('float', '.0', text);
 	if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
-	if (!_leafRe_buildFloatLiteral.test(text)) throw new Error(`float_literal: text does not match pattern: ${text}`);
+	if (!_leafRe_buildFloatLiteral.test(text))
+		throw new Error(`float_literal: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.FloatLiteral as const,
 		$source: 2 as const,
@@ -11128,7 +11136,8 @@ export function buildFloatLiteral(text: string | number): T.FloatLiteral.Bound {
 
 export function buildStringContent(text: string): T.StringContent.Bound {
 	if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
-	if (!_leafRe_buildStringContent.test(text)) throw new Error(`string_content: text does not match pattern: ${text}`);
+	if (!_leafRe_buildStringContent.test(text))
+		throw new Error(`string_content: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.StringContent as const,
 		$source: 2 as const,
@@ -11139,7 +11148,7 @@ export function buildStringContent(text: string): T.StringContent.Bound {
 
 export function buildRawStringLiteralContent(text: string): T.RawStringLiteralContent.Bound {
 	if (!_leafRe_buildRawStringLiteralContent.test(text))
-		throw new Error(`raw_string_literal_content: text does not match pattern: ${text}`);
+		throw new Error(`raw_string_literal_content: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.RawStringLiteralContent as const,
 		$source: 2 as const,
@@ -11155,7 +11164,7 @@ export const buildInnerDocCommentMarker: TSKindId.InnerDocCommentMarker = TSKind
 export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStart.Bound {
 	if (text.length === 0) throw new Error(`raw_string_literal_start: text must be non-empty`);
 	if (!_leafRe_buildRawStringLiteralStart.test(text))
-		throw new Error(`raw_string_literal_start: text does not match pattern: ${text}`);
+		throw new Error(`raw_string_literal_start: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.RawStringLiteralStart as const,
 		$source: 2 as const,
@@ -11167,7 +11176,7 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bound {
 	if (text.length === 0) throw new Error(`raw_string_literal_end: text must be non-empty`);
 	if (!_leafRe_buildRawStringLiteralEnd.test(text))
-		throw new Error(`raw_string_literal_end: text does not match pattern: ${text}`);
+		throw new Error(`raw_string_literal_end: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.RawStringLiteralEnd as const,
 		$source: 2 as const,
@@ -11177,7 +11186,8 @@ export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bo
 }
 
 export function buildDocComment(text: string): T.DocComment.Bound {
-	if (!_leafRe_buildDocComment.test(text)) throw new Error(`doc_comment: text does not match pattern: ${text}`);
+	if (!_leafRe_buildDocComment.test(text))
+		throw new Error(`doc_comment: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.DocComment as const,
 		$source: 2 as const,
@@ -11188,7 +11198,7 @@ export function buildDocComment(text: string): T.DocComment.Bound {
 
 export function buildBlockCommentContent(text: string): T.BlockCommentContent.Bound {
 	if (!_leafRe_buildBlockCommentContent.test(text))
-		throw new Error(`_block_comment_content: text does not match pattern: ${text}`);
+		throw new Error(`_block_comment_content: text does not match pattern: ${describeValue(text)}`);
 	return withMethods({
 		$type: TSKindId.BlockCommentContent as const,
 		$source: 2 as const,

@@ -1527,6 +1527,11 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
 
 A direct-value coercer whose kind has a `listSpreadTarget` also takes the list's spread: beside its single-value signature it declares `(...input: T.<Target>.LooseArgs)`, and a call with more than one argument hands every argument to the target's own coercer and wraps the result. `parameters(a, b, c)` is `parameters([a, b, c])`, each element resolved as the list resolves it. A spelled or sibling-refusing signature cannot also spread, and the emitter throws if one would.
 
+
+#### interior passthrough
+
+A direct coercer whose sole slot is an interior text slot (it has an `interiorSlotGuards` entry) returns any read node as it is (`isNode`), where every other direct coercer returns only a node of its own kind. A text slot cannot hold a node, so a node reaching it can only be a read leaf of another stored kind: an in-place leaf alias reads as the shared anonymous token, and `from` on that read must not rebuild it and lose its handle. This is the same scope as the text-shaped leaf coercers, which pass any non-string through. A config object `{ content }` and a string still reach the slot, spelled through `spelledInterior` and checked by the slot guard.
+
 ### `packages/codegen/src/emitters/from.ts::refuseSiblingLeadExpr`
 
 An interior expression wrapped in `refuseSiblingLead` with each sibling's leading regex literal and builder, or the expression itself when there are none.
@@ -16612,3 +16617,7 @@ The render-only literals of a node's rule that its template does not write and n
 ### `packages/codegen/src/emitters/templates.ts::templateTexts`
 
 The text nodes of a template body, descending into the arms of its conditionals.
+
+### `packages/codegen/src/emitters/factories.ts::patternMismatchThrow`
+
+The one place a pattern guard's refusal is worded: `<label>: text does not match pattern: <value>`, with the value written through `describeValue` so a non-text value shows what it was. The leaf-text guard and the per-slot interior guard both emit it, so the message cannot differ between them.

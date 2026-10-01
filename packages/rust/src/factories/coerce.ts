@@ -7711,7 +7711,7 @@ export function resolveShebang_content(value: T.Shebang.LooseConfig['content']):
 }
 
 export function coerceToShebang(input: T.Shebang.Loose): ReturnType<typeof F.buildShebang> {
-	if (isNodeOfKind(input, TSKindId.Shebang)) return input as unknown as ReturnType<typeof F.buildShebang>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildShebang>;
 	return F.buildShebang(
 		_requireField(
 			'shebang',
@@ -7744,7 +7744,7 @@ export function resolveMetavariable_name(value: T.Metavariable.LooseConfig['name
 }
 
 export function coerceToMetavariable(input: T.Metavariable.Loose): ReturnType<typeof F.buildMetavariable> {
-	if (isNodeOfKind(input, TSKindId.Metavariable)) return input as unknown as ReturnType<typeof F.buildMetavariable>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildMetavariable>;
 	return F.buildMetavariable(
 		_requireField(
 			'metavariable',
@@ -10009,8 +10009,7 @@ export function resolveEscapeSequenceSimple_content(
 export function coerceToEscapeSequenceSimple(
 	input: T.EscapeSequenceSimple.Loose
 ): ReturnType<typeof F.buildEscapeSequenceSimple> {
-	if (isNodeOfKind(input, TSKindId.EscapeSequenceSimple))
-		return input as unknown as ReturnType<typeof F.buildEscapeSequenceSimple>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceSimple>;
 	return F.buildEscapeSequenceSimple(
 		_requireField(
 			'escape_sequence_simple',
@@ -10037,8 +10036,7 @@ export function resolveEscapeSequenceUnicodeFixed_content(
 export function coerceToEscapeSequenceUnicodeFixed(
 	input: T.EscapeSequenceUnicodeFixed.Loose
 ): ReturnType<typeof F.buildEscapeSequenceUnicodeFixed> {
-	if (isNodeOfKind(input, TSKindId.EscapeSequenceUnicodeFixed))
-		return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeFixed>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeFixed>;
 	return F.buildEscapeSequenceUnicodeFixed(
 		_requireField(
 			'escape_sequence_unicode_fixed',
@@ -10065,8 +10063,7 @@ export function resolveEscapeSequenceUnicodeBraced_content(
 export function coerceToEscapeSequenceUnicodeBraced(
 	input: T.EscapeSequenceUnicodeBraced.Loose
 ): ReturnType<typeof F.buildEscapeSequenceUnicodeBraced> {
-	if (isNodeOfKind(input, TSKindId.EscapeSequenceUnicodeBraced))
-		return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeBraced>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceUnicodeBraced>;
 	return F.buildEscapeSequenceUnicodeBraced(
 		_requireField(
 			'escape_sequence_unicode_braced',
@@ -10093,8 +10090,7 @@ export function resolveEscapeSequenceHex_content(
 export function coerceToEscapeSequenceHex(
 	input: T.EscapeSequenceHex.Loose
 ): ReturnType<typeof F.buildEscapeSequenceHex> {
-	if (isNodeOfKind(input, TSKindId.EscapeSequenceHex))
-		return input as unknown as ReturnType<typeof F.buildEscapeSequenceHex>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceHex>;
 	return F.buildEscapeSequenceHex(
 		_requireField(
 			'escape_sequence_hex',

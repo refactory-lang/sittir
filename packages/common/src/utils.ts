@@ -490,6 +490,15 @@ export function isNode(v: unknown): v is AnyUntypedNode {
 	);
 }
 
+export function describeValue(v: unknown): string {
+	if (typeof v === 'string') return v;
+	try {
+		return JSON.stringify(v, (_key, value) => (typeof value === 'bigint' ? `${value}n` : value)) ?? String(v);
+	} catch {
+		return String(v);
+	}
+}
+
 export function isNodeOfKind(v: unknown, kind: number): boolean {
 	return isNode(v) && v.$type === kind;
 }

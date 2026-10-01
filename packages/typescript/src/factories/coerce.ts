@@ -2603,7 +2603,7 @@ export function resolveHashBangLine_content(value: T.HashBangLine.LooseConfig['c
 }
 
 export function coerceToHashBangLine(input: T.HashBangLine.Loose): ReturnType<typeof F.buildHashBangLine> {
-	if (isNodeOfKind(input, TSKindId.HashBangLine)) return input as unknown as ReturnType<typeof F.buildHashBangLine>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildHashBangLine>;
 	return F.buildHashBangLine(
 		_requireField(
 			'hash_bang_line',
@@ -5538,7 +5538,7 @@ export function resolveEscapeSequence_content(
 }
 
 export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnType<typeof F.buildEscapeSequence> {
-	if (isNodeOfKind(input, TSKindId.EscapeSequence)) return input as unknown as ReturnType<typeof F.buildEscapeSequence>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequence>;
 	return F.buildEscapeSequence(
 		_requireField(
 			'escape_sequence',
@@ -5667,8 +5667,7 @@ export function resolvePrivatePropertyIdentifier_content(
 export function coerceToPrivatePropertyIdentifier(
 	input: T.PrivatePropertyIdentifier.Loose
 ): ReturnType<typeof F.buildPrivatePropertyIdentifier> {
-	if (isNodeOfKind(input, TSKindId.PrivatePropertyIdentifier))
-		return input as unknown as ReturnType<typeof F.buildPrivatePropertyIdentifier>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildPrivatePropertyIdentifier>;
 	return F.buildPrivatePropertyIdentifier(
 		_requireField(
 			'private_property_identifier',
@@ -10682,7 +10681,7 @@ export function resolveCommentLine_content(value: T.CommentLine.LooseConfig['con
 }
 
 export function coerceToCommentLine(input: T.CommentLine.Loose): ReturnType<typeof F.buildCommentLine> {
-	if (isNodeOfKind(input, TSKindId.CommentLine)) return input as unknown as ReturnType<typeof F.buildCommentLine>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildCommentLine>;
 	return F.buildCommentLine(
 		_requireField(
 			'comment_line',
@@ -10703,7 +10702,7 @@ export function resolveCommentBlock_content(value: T.CommentBlock.LooseConfig['c
 }
 
 export function coerceToCommentBlock(input: T.CommentBlock.Loose): ReturnType<typeof F.buildCommentBlock> {
-	if (isNodeOfKind(input, TSKindId.CommentBlock)) return input as unknown as ReturnType<typeof F.buildCommentBlock>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildCommentBlock>;
 	return F.buildCommentBlock(
 		_requireField(
 			'comment_block',
@@ -10767,7 +10766,7 @@ export function coerceToNumberHex<const I extends T.NumberHex.Loose, const O ext
 	'prefix',
 	O extends { prefix: infer P } ? P : SpelledAffix<I, '0x' | '0X', '0x'>
 > {
-	if (isNodeOfKind(input, TSKindId.NumberHex))
+	if (isNode(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildNumberHex>,
 			'prefix',
@@ -10963,7 +10962,7 @@ export function coerceToNumberBinary<const I extends T.NumberBinary.Loose, const
 	'prefix',
 	O extends { prefix: infer P } ? P : SpelledAffix<I, '0b' | '0B', '0b'>
 > {
-	if (isNodeOfKind(input, TSKindId.NumberBinary))
+	if (isNode(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildNumberBinary>,
 			'prefix',
@@ -10999,7 +10998,7 @@ export function coerceToNumberOctal<const I extends T.NumberOctal.Loose, const O
 	'prefix',
 	O extends { prefix: infer P } ? P : SpelledAffix<I, '0o' | '0O', '0o'>
 > {
-	if (isNodeOfKind(input, TSKindId.NumberOctal))
+	if (isNode(input))
 		return input as unknown as WithSpelling<
 			ReturnType<typeof F.buildNumberOctal>,
 			'prefix',
@@ -11030,8 +11029,7 @@ export function resolveNumberBigintHex_content(
 }
 
 export function coerceToNumberBigintHex(input: T.NumberBigintHex.Loose): ReturnType<typeof F.buildNumberBigintHex> {
-	if (isNodeOfKind(input, TSKindId.NumberBigintHex))
-		return input as unknown as ReturnType<typeof F.buildNumberBigintHex>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildNumberBigintHex>;
 	const _value = configFieldOr(input, 'content', () =>
 		typeof input === 'string' ? spelledInterior(input, '', 'n', F._slotRe_buildNumberBigintHex_content) : input
 	);
@@ -11055,8 +11053,7 @@ export function resolveNumberBigintBinary_content(
 export function coerceToNumberBigintBinary(
 	input: T.NumberBigintBinary.Loose
 ): ReturnType<typeof F.buildNumberBigintBinary> {
-	if (isNodeOfKind(input, TSKindId.NumberBigintBinary))
-		return input as unknown as ReturnType<typeof F.buildNumberBigintBinary>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildNumberBigintBinary>;
 	const _value = configFieldOr(input, 'content', () =>
 		typeof input === 'string' ? spelledInterior(input, '', 'n', F._slotRe_buildNumberBigintBinary_content) : input
 	);
@@ -11080,8 +11077,7 @@ export function resolveNumberBigintOctal_content(
 export function coerceToNumberBigintOctal(
 	input: T.NumberBigintOctal.Loose
 ): ReturnType<typeof F.buildNumberBigintOctal> {
-	if (isNodeOfKind(input, TSKindId.NumberBigintOctal))
-		return input as unknown as ReturnType<typeof F.buildNumberBigintOctal>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildNumberBigintOctal>;
 	const _value = configFieldOr(input, 'content', () =>
 		typeof input === 'string' ? spelledInterior(input, '', 'n', F._slotRe_buildNumberBigintOctal_content) : input
 	);
@@ -11105,8 +11101,7 @@ export function resolveNumberBigintDecimal_content(
 export function coerceToNumberBigintDecimal(
 	input: T.NumberBigintDecimal.Loose
 ): ReturnType<typeof F.buildNumberBigintDecimal> {
-	if (isNodeOfKind(input, TSKindId.NumberBigintDecimal))
-		return input as unknown as ReturnType<typeof F.buildNumberBigintDecimal>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildNumberBigintDecimal>;
 	const _value = configFieldOr(input, 'content', () =>
 		typeof input === 'string' ? spelledInterior(input, '', 'n', F._slotRe_buildNumberBigintDecimal_content) : input
 	);

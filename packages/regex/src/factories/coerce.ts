@@ -1189,7 +1189,7 @@ export function resolveIdentityEscape_content(
 }
 
 export function coerceToIdentityEscape(input: T.IdentityEscape.Loose): ReturnType<typeof F.buildIdentityEscape> {
-	if (isNodeOfKind(input, TSKindId.IdentityEscape)) return input as unknown as ReturnType<typeof F.buildIdentityEscape>;
+	if (isNode(input)) return input as unknown as ReturnType<typeof F.buildIdentityEscape>;
 	return F.buildIdentityEscape(
 		_requireField(
 			'identity_escape',

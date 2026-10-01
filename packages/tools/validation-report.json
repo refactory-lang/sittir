@@ -9107,17 +9107,6 @@
     "source": "validator",
     "grammar": "regex",
     "backend": "native",
-    "kind": "identity_escape",
-    "severity": "error",
-    "message": "from() throws: identity_escape.content: text does not match pattern: [object Object]",
-    "stage": "from",
-    "code": "from-error",
-    "label": "identity_escape"
-  },
-  {
-    "source": "validator",
-    "grammar": "regex",
-    "backend": "native",
     "kind": "control_escape_text1",
     "count": 1,
     "entries": [
