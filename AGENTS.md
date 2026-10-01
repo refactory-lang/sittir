@@ -6,7 +6,7 @@ Generate typed factory functions and S-expression render templates from tree-sit
 
 Three-layer architecture:
 
-- **`@sittir/types`** — Pure TypeScript types (zero runtime). `AnyUntypedNode`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>` transformation types. `ByteRange`, `Edit`, `RenderContext`.
+- **`@sittir/types`** — Pure TypeScript types (zero runtime). `AnyUntypedNode`, `ConfigOf<T>`, `TreeNodeOf<T>`, `FromInputOf<T>` transformation types. `StringIndexRange`, `Edit`, `RenderContext`.
 - **`@sittir/codegen`** — Reads grammar.json + node-types.json, emits: YAML render templates, unified factory functions, ir namespace, const enums, navigation types, wrap/readNode functions, `.from()` resolution, tests.
 
 Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) contain:

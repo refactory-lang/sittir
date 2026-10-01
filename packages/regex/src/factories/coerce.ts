@@ -657,7 +657,9 @@ export function coerceToPattern(input: T.Pattern.Loose): ReturnType<typeof F.bui
 }
 
 export function coerceToAlternation(
-	...input: readonly (T.Alternation.Loose | LooseValue<T.Term, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+	...input: [
+		...elements: (T.Alternation.Loose | LooseValue<T.Term, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+	]
 ): ReturnType<typeof F.buildAlternation> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Alternation)) {
 		const data = input[0];
@@ -680,7 +682,7 @@ export function coerceToAlternation(
 }
 
 export function coerceToTerm(
-	...input: readonly (T.Term.Loose | LooseValue<T.TermGroup, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+	...input: [...elements: (T.Term.Loose | LooseValue<T.TermGroup, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]]
 ): ReturnType<typeof F.buildTerm> {
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Term)) {
 		const data = input[0];

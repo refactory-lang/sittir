@@ -2,25 +2,25 @@
 import { createEngine } from '@sittir/common';
 import rust from '@sittir/rust';
 
-const { build } = await createEngine(rust);
+const rs = await createEngine(rust);
 
 export function rebuildTriviaRustGenerated() {
-	return build.sourceFile.strict({
-		statements: [build.functionItem.strict({
-			name: build.identifier("f"),
-			parameters: build.parameters.strict(),
-			body: build.block.strict().$trivia.inner(build.lineComment.strict(build.lineCommentRegular(" TODO"))),
-		}).$trivia.leading(build.blockComment.strict(build.blockCommentRegular(" a "))), build.functionItem.strict({
-			name: build.identifier("g"),
-			parameters: build.parameters.strict(),
-			body: build.block.strict({}),
-		}).$trivia.trailing(build.blockComment.strict(build.blockCommentRegular(" t "))), build.functionItem.strict({
-			name: build.identifier("h"),
-			parameters: build.parameters.strict(),
-			body: build.block.strict({
-				statements: [build.expressionStatement.withSemi.strict(build.callExpression.strict({
-					function: build.identifier("f"),
-					arguments: build.arguments.strict().$trivia.inner(build.blockComment.strict(build.blockCommentRegular(" a "))),
+	return rs.build.sourceFile.strict({
+		statements: [rs.build.functionItem.strict({
+			name: rs.build.identifier("f"),
+			parameters: rs.build.parameters.strict(),
+			body: rs.build.block.strict().$trivia.inner(rs.build.lineComment.strict(rs.build.lineCommentRegular(" TODO"))),
+		}).$trivia.leading(rs.build.blockComment.strict(rs.build.blockCommentRegular(" a "))), rs.build.functionItem.strict({
+			name: rs.build.identifier("g"),
+			parameters: rs.build.parameters.strict(),
+			body: rs.build.block.strict({}),
+		}).$trivia.trailing(rs.build.blockComment.strict(rs.build.blockCommentRegular(" t "))), rs.build.functionItem.strict({
+			name: rs.build.identifier("h"),
+			parameters: rs.build.parameters.strict(),
+			body: rs.build.block.strict({
+				statements: [rs.build.expressionStatement.withSemi.strict(rs.build.callExpression.strict({
+					function: rs.build.identifier("f"),
+					arguments: rs.build.arguments.strict().$trivia.inner(rs.build.blockComment.strict(rs.build.blockCommentRegular(" a "))),
 				}))],
 			}),
 		})],

@@ -5,12 +5,29 @@ import {
 	printingFactoryMap,
 	printingIrSurface,
 	printFactorySource,
+	engineBinding,
 	type PrintContext
 } from '../../src/emit/factory-source.ts';
 import { expectPrinted } from './expect-printed.ts';
 
 const ctx: PrintContext = {
 	grammar: 'test',
+	engine: 'rs',
+	surface: 'strict',
+	facts: {
+		modelTypes: {},
+		subtypes: {},
+		slotRequired: {},
+		slotMultiple: {},
+		slotDefaults: {},
+		bareAccepts: {},
+		textLeavesThrough: {},
+		forwardsTo: {},
+		listDefaults: {},
+		listElementKinds: {},
+		hoistedKinds: new Set(),
+		kindIdOfName: () => undefined
+	},
 	kindNameFromId: (id) =>
 		({ 1: 'source_file', 2: 'function_item', 3: 'identifier', 4: 'comma', 5: 'arguments' })[id],
 	memberNameOfId: (id) => ({ 1: 'SourceFile', 2: 'FunctionItem', 3: 'Identifier', 4: 'Comma', 5: 'Arguments' })[id],
@@ -22,13 +39,13 @@ const ctx: PrintContext = {
 };
 
 describe('printValue', () => {
-	it('prints a catalog kind id as a member of the destructured kinds', () => {
-		expect(printValue(4, ctx, 0)).toBe('kinds.Comma');
+	it('prints a catalog kind id as a member of the engine kinds', () => {
+		expect(printValue(4, ctx, 0)).toBe('rs.kinds.Comma');
 	});
 	it('prints strings, booleans and arrays', () => {
 		expect(printValue('a"b', ctx, 0)).toBe('"a\\"b"');
 		expect(printValue(true, ctx, 0)).toBe('true');
-		expect(printValue([4, 'x'], ctx, 0)).toBe('[kinds.Comma, "x"]');
+		expect(printValue([4, 'x'], ctx, 0)).toBe('[rs.kinds.Comma, "x"]');
 	});
 	it('prints a printed marker as its source', () => {
 		expect(printValue(new Printed(3, 'ir.identifier("f")'), ctx, 0)).toBe('ir.identifier("f")');
@@ -67,7 +84,7 @@ describe('printValue', () => {
 				keywordKinds: new Set(['pass_statement'])
 			}
 		);
-		expect(expectPrinted(map.pass_statement!('pass')).source).toBe('kinds.PassStatement');
+		expect(expectPrinted(map.pass_statement!('pass')).source).toBe('rs.kinds.PassStatement');
 		expect(expectPrinted(map.identifier!('x')).source).toBe('ir.identifier("x")');
 	});
 	it('prints a constant-shaped kind as its build entry, with no call', () => {
@@ -125,5 +142,18 @@ describe('printFactorySource', () => {
 			ctx
 		);
 		expect(source).toBe('ir.identifier("main")');
+	});
+});
+
+describe('engineBinding', () => {
+	it("names the engine after the grammar's first file type and keeps the grammar name for the descriptor", () => {
+		expect(engineBinding('rust', ['rs'])).toEqual({ engine: 'rs', descriptor: 'rust' });
+		expect(engineBinding('typescript', ['ts', 'tsx'])).toEqual({ engine: 'ts', descriptor: 'typescript' });
+	});
+	it('names the engine after the grammar when it declares no file type, and moves the descriptor aside', () => {
+		expect(engineBinding('regex', [])).toEqual({ engine: 'regex', descriptor: 'regexLanguage' });
+	});
+	it('moves the descriptor aside when the file type is the grammar name', () => {
+		expect(engineBinding('scm', ['scm'])).toEqual({ engine: 'scm', descriptor: 'scmLanguage' });
 	});
 });
