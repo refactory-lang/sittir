@@ -1,6 +1,6 @@
 {
   "grammar": "regex",
-  "source_hash": "031245deb36ad76e32f0251a75818ddd2e0f466fdc773ecb54858b13c40a48dd",
+  "source_hash": "656f72bf5b7d9daff7b710f3b0f340fc1004a193da85e72039ee7d097d052b9b",
   "files": {
     "packages/regex/.sittir/grammar-diagnostics.json": "6d151bfbe0d649cedbe98e1cb9e21414dfb4cac174b28277a7d6c0da779f692f",
     "packages/regex/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -20,12 +20,12 @@
     "packages/regex/src/backend.ts": "9fe4ba55581cb893746548a0e92e8f6de2762bff0fbcf4a641a8e623a83b2aa8",
     "packages/regex/src/consts.ts": "ac29fac2b303c09dc353aa35ef2ebcbb8eddbb9027e1b8f0593828a5e057c95d",
     "packages/regex/src/factories/bundle.ts": "7c52904bbce627738a4b7c3864c4a0de361fa32ae2cbba4a1efe044bc172be67",
-    "packages/regex/src/factories/coerce.ts": "4010cb57e701057b1b420f8ef665fcfb5405ad31a95cde86d59aa32ee61306da",
+    "packages/regex/src/factories/coerce.ts": "7cfaaba837b6b6b9628358c7bddd60182f3f3918d90227a2b8d1fb7dc20e523a",
     "packages/regex/src/factories/index.ts": "9e3e9533028ebadc462e6d85c9cd53132a984fb043af1aae4d3b53bfcbbf625d",
     "packages/regex/src/factories/overlays/polymorphs.ts": "2e5a611f8d4d68770b691c9ac80c263a5b4035ee78cc044419aacff28505d9df",
     "packages/regex/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/regex/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
-    "packages/regex/src/factories/raw.ts": "483a4caca6536e4347d6b553206931ec760f5a59b78d8d65be04e3b99cb96e32",
+    "packages/regex/src/factories/raw.ts": "480e1898cdd7cee947dc835215a9ab61ebb154f9ec1b0bb8bdc65e35cfa6c76a",
     "packages/regex/src/hash.ts": "dc4a5c70d2c892b716c9beeb915800aa497ab0745633e6980577bad382c20eba",
     "packages/regex/src/index.ts": "4333f9b0100c48785207f723fa1b22ff1ae2fc1d2cc4398eaf2b874880afef36",
     "packages/regex/src/ir.ts": "ccf075fea640d12ad63986812a979ce988b8374ffd13b380d7917cf9e4e7d5bc",

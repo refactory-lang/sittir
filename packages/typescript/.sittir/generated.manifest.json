@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "8e378d8bb0873ac042f15253f786d2722d000d71e625370997da550bea23e61b",
+  "source_hash": "d4c78cfa0f78fd4df5d5e98c04b0413d4124ba1b1dee9086662a1a08be9b8ee8",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "acad5cd6981a84e11fd8dd678598285ca53f14f63456b0e7bc6132feaa762af9",
     "packages/typescript/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -21,12 +21,12 @@
     "packages/typescript/src/backend.ts": "346503886194ceb50b0b8b09d0cb78b7a034ae880bacee6502832fbdbd7596ed",
     "packages/typescript/src/consts.ts": "4eddd5f2ba3016aed3e994e9ce39d5c785437f144a5bc74440c726d45fcb14b0",
     "packages/typescript/src/factories/bundle.ts": "a151349349326c2ffe8af27044eb1276728ce5f9c169ab48ab3495efdc006cbd",
-    "packages/typescript/src/factories/coerce.ts": "5b9068ce3f26e7007a4b759929a54ea826ccabe3e15656896155e67f13c4d36e",
+    "packages/typescript/src/factories/coerce.ts": "e4b32bd5531d0a245efbb545642502047e7f9d2e277baa7b41670cf32469be13",
     "packages/typescript/src/factories/index.ts": "93e75dfea21bbb1f6655dd1654aeb9f7394a611862748c1de544c3a08655e8ce",
     "packages/typescript/src/factories/overlays/polymorphs.ts": "545cbfd653acfabb994899ce43068c9f809cd84cadea6b23a559e7302258a6f6",
     "packages/typescript/src/factories/overlays/refines.ts": "121edf03c79b298f5538cf8ada0dab00301ba4ea7df771772441bd83ca2d84fa",
     "packages/typescript/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
-    "packages/typescript/src/factories/raw.ts": "421b88e27de3bfbd6239c0a47044c123dba1cf6e4d809bec178bcfeb6f1e920c",
+    "packages/typescript/src/factories/raw.ts": "98cb54325044833ce6d7a9a1ca11a58988bc5a243ca58b31fd08f9a1c2a6da7a",
     "packages/typescript/src/hash.ts": "e616bc058b1fb77757e32a3c561b072a7561187fc67dc5295fbd23e2b82f5c6b",
     "packages/typescript/src/index.ts": "840b667abbe4750eabbc3abb77c5d5a21bd467dcdd50469cfe7365694f56aee1",
     "packages/typescript/src/ir.ts": "0c97fa8dc3af6796608a14381ba215221b502bc74d30958c1567f7b515a12fef",

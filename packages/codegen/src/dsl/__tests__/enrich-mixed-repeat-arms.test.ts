@@ -4,6 +4,9 @@ import { readRuleMetadata } from '../rule-metadata.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { evaluatePackage } from '../../compiler/evaluate-package.ts';
+import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
+import { collectCatalogKinds } from '../../emitters/kind-discriminant.ts';
+import { readFileSync } from 'node:fs';
 
 beforeAll(() => installFakeDsl());
 afterAll(() => restoreFakeDsl());
@@ -112,5 +115,29 @@ describe('the scm suffix element', () => {
 			'_list_element',
 			'list_element_quantifier'
 		]);
+	}, 120_000);
+});
+
+describe('a variant() name declared under both the owner and its element supertype', () => {
+	it('reaches neither pipeline under the parent that did not resolve it', async () => {
+		const unused = ['class_body_method', 'class_body_method_sig', 'class_body_declaration'];
+		const resolved = ['class_body_member_method', 'class_body_member_method_sig', 'class_body_member_declaration'];
+		const parserRules = Object.keys(
+			(JSON.parse(readFileSync(new URL('../../../../typescript/.sittir/src/grammar.json', import.meta.url), 'utf8')) as { rules: object }).rules
+		);
+		const { rules } = await evaluatePackage(grammarPackage('typescript'));
+		const tables = await loadGeneratedIdTables('typescript');
+		if (tables === undefined) throw new Error('no generated id tables for typescript');
+		const catalog = JSON.stringify(collectCatalogKinds(tables));
+		for (const name of unused) {
+			expect(parserRules).not.toContain(name);
+			expect(Object.keys(rules)).not.toContain(name);
+			expect(catalog).not.toContain(`"${name}"`);
+		}
+		for (const name of resolved) {
+			expect(parserRules).toContain(name);
+			expect(Object.keys(rules)).toContain(name);
+			expect(catalog).toContain(`"${name}"`);
+		}
 	}, 120_000);
 });
