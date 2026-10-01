@@ -3113,14 +3113,15 @@ fallback an unstamped list reports.
 
 ```text
 /**
- * Collect kinds whose root rule evaluate synthesized on the sittir side only
- * (the body-pattern-group fallback, synthetic rule injection). These have no
- * parser symbol: tree-sitter's execution of the grammar never registers them,
- * so they exist only in the codegen rule map.
+ * Collect kinds whose root rule body evaluate injected (render-only rules,
+ * visible externals, the body-pattern-group fallback, synthetic rule
+ * injection). Most have no parser symbol; a visible external does.
  *
  * @remarks
  * Each synthesized rule's name is in `raw.evaluateSynthesized`; the result is
- * that set limited to kinds with a catalog root. Emitters treat these the same
+ * that set limited to kinds with a catalog root. An emitter first looks the
+ * kind up in the parser catalog and emits it when it is there; only a kind
+ * missing from the parser catalog is classified by this set, the same
  * as inline-list kinds: warn and skip, never throw.
  *
  * @param raw - The evaluated grammar, which carries the rule catalog.
@@ -6224,7 +6225,7 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
 
 ### `packages/codegen/src/compiler/types.ts::RawGrammar.evaluateSynthesized`
 
-The names of the rules sittir's evaluate added itself, which tree-sitter's run of the grammar never registers: render-only rules (`renderAs:`), visible externals, wire deposits no rule callback declared, and the body-pattern-group fallback. They have no parser symbol. `canonical-rules.ts::predictKinds` leaves them out of kind prediction, and `generate.ts::collectEvaluateSynthesizedKinds` hands the ones with a catalog root to the emitters, which skip factory and wrap emission for them.
+The names of the rules whose bodies sittir's evaluate injected itself: render-only rules (`renderAs:`), visible externals, wire deposits no rule callback declared, and the body-pattern-group fallback. It says who supplied the rule body, not whether the parser has a symbol for the kind: most of these have none, but a visible external does. `canonical-rules.ts::predictKinds` leaves them out of kind prediction. `generate.ts::collectEvaluateSynthesizedKinds` hands the ones with a catalog root to the emitters, where `emitters/shared.ts::classifyParserSymbolEmission` looks a kind up in the parser catalog first and emits it when it is there; the set only classifies a kind that is missing from the parser catalog as intentionally synthesized, so it is skipped with a warning instead of being an error. link's rename carries the set to the parser-facing names (`renameRules`).
 
 It is the only authorship fact evaluate records. Who authored any other rule is answered elsewhere: `RuleProvenanceStage` (`compiler/diagnostics/diagnostic-records.ts`) says which stage first declares a rule (upstream, enrich or wire), and wire holds the authored rule names and patch sites.
 

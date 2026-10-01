@@ -833,6 +833,7 @@ function renameRules(raw: RawGrammar, renames: ReadonlyMap<string, string>): Raw
 		...raw,
 		rules: identified.rules,
 		ruleCatalog: identified.ruleCatalog,
+		evaluateSynthesized: new Set([...raw.evaluateSynthesized].map(rename)),
 		references,
 		extras: raw.extras.map(renameEntry),
 		externals: raw.externals.map(renameEntry),
