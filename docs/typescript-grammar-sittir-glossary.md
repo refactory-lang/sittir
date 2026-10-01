@@ -15,7 +15,7 @@ the convention this glossary exists to serve — long rationale comments in
 ### `base` import (`packages/typescript/grammar.sittir.ts:11`)
 
 The import points at the **typescript** (non-tsx) grammar so the codegen
-surface matches the reparse target — `WASM_PATHS.typescript` loads the non-tsx
+surface matches the reparse target — the upstream typescript wasm is the non-tsx
 wasm. Pointing it at `tsx/grammar.js` is harmless for a non-JSX corpus but a
 latent mismatch: anything JSX-shaped would reparse-fail. One grammar,
 end-to-end.
