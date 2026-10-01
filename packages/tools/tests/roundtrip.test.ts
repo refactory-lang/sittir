@@ -47,7 +47,6 @@ describe('exercise roundtrip helpers', () => {
 		const result = buildFactoryNode(
 			'direct_child',
 			{ $type: 'direct_child', $other: [leaf] },
-			{},
 			artifacts,
 			common,
 			undefined
@@ -83,7 +82,6 @@ describe('exercise roundtrip helpers', () => {
 		const result = buildFactoryNode(
 			'spread_child',
 			{ $type: 'spread_child', $other: [left, right] },
-			{},
 			artifacts,
 			common,
 			undefined
@@ -100,5 +98,17 @@ describe('exercise roundtrip helpers', () => {
 
 		expect(stdout).toHaveBeenCalled();
 		expect(stderr).not.toHaveBeenCalled();
+	});
+
+	it.each(['rust', 'python', 'typescript'])('rebuilds every built-in %s case from an engine parse', async (grammar) => {
+		const lines: string[] = [];
+		vi.spyOn(process.stdout, 'write').mockImplementation((chunk) => {
+			lines.push(String(chunk));
+			return true;
+		});
+
+		await expect(run({ grammar, kinds: [] })).resolves.toBe(0);
+
+		expect(lines.join('')).toMatch(/\n[1-9]\d* pass, 0 fail, 0 skip\n$/);
 	});
 });
