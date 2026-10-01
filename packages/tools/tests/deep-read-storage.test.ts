@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { isStub } from '@sittir/common/utils';
+import { isStorageKey, isStub, isTypedNode } from '@sittir/common/utils';
 import { allGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { languageByName } from '../src/languages.ts';
 import { loadCorpusEntries } from '../src/validate/common.ts';
@@ -15,8 +15,8 @@ function untypedBelow(value: unknown, path: string, out: string[]): string[] {
 	if (value === null || typeof value !== 'object') return out;
 	const node = value as Record<string, unknown>;
 	if (typeof node.$type !== 'number' || isStub(node)) return out;
-	const slots = Object.entries(node).filter(([key]) => key.startsWith('_') || key === '$other');
-	if (slots.length > 0 && typeof node.$render !== 'function') out.push(path);
+	const slots = Object.entries(node).filter(([key]) => isStorageKey(key));
+	if (slots.length > 0 && !isTypedNode(node)) out.push(path);
 	for (const [key, child] of slots) untypedBelow(child, `${path}.${key}`, out);
 	return out;
 }

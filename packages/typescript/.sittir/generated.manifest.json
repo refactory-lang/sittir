@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "45ee9814e963da0e205dd4d6438c437fe3e34aa70a8356810f1fb77d6aac982b",
+  "source_hash": "e4934ed29113757af4f6a765abb0fb480b3a4b9336c1dd072a33e19f88b0decc",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "76b19be2bad78562e89ae5ce416ed513db3343186481ec946d963443b11f6b0f",
     "packages/typescript/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -37,7 +37,7 @@
     "packages/typescript/src/types-internal.ts": "c6bcb67616b5568e09bf9644fb11352449401580f127ba25f657781c628ffb94",
     "packages/typescript/src/types.ts": "379d3cccfcfa55c0f2efbb7c2d016a9565a61f15246e9e5a5539b3c2e56e307a",
     "packages/typescript/src/utils.ts": "3693d01ddd0ea269f2e109785811ddfc74424bfe7cf7ab97ef1cd84317cbcabb",
-    "packages/typescript/src/wrap.ts": "9a7529b205c043d4aee9f78a1ea1580bc2bd96da4ccdc8082226f311ec67cd79",
+    "packages/typescript/src/wrap.ts": "66a6abc1d6c3c472aa6face1078c8ad708b4618c6e57cb68a753ac69af6a50e3",
     "rust/crates/sittir-typescript/index.d.ts": "63df820beb83badc037d89259138d7117b87fa34fffa9849a3c094d3be354d2d",
     "rust/crates/sittir-typescript/index.js": "81302159cbccdd486f6a9e17d7103b77d1d0fd14788a674a6a1f43a67b7fbbc9",
     "rust/crates/sittir-typescript/src/lib.rs": "a820c7f45fef68ab1fef9159a58d3a141ea237377b6db1e0263b9758f3af8672",

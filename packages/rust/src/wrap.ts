@@ -4,6 +4,8 @@
 import {
 	readUntypedNode,
 	isStub,
+	isTypedNode,
+	holdsSlots,
 	markEdited as $edited,
 	treeHandleOf,
 	mapTriviaEntries,
@@ -255,12 +257,9 @@ type ParsedOfData<D> = D extends { readonly $type: infer Id }
 function hydrateChild<T>(entry: T, tree: TreeHandle): ParsedOfData<T> {
 	const resolved = hydrateSelf(entry, tree);
 	const e = resolved as unknown as _UntypedNode;
-	if (resolved === entry && typeof e?.$type === 'number' && !_isTyped(e))
+	if (resolved === entry && typeof e?.$type === 'number' && !isTypedNode(e))
 		return wrapNode(e, tree) as unknown as ParsedOfData<T>;
 	return resolved as unknown as ParsedOfData<T>;
-}
-function _isTyped(node: _UntypedNode): boolean {
-	return typeof (node as { readonly $render?: unknown }).$render === 'function';
 }
 // Store a slot value in model shape: a child a read already expanded
 // is typed here, with its parent, so storage has one shape at every
@@ -271,12 +270,8 @@ function storeExpanded<T>(value: T, tree: TreeHandle): T {
 	if (Array.isArray(value)) return value.map((entry) => storeExpanded(entry, tree)) as unknown as T;
 	const e = value as unknown as _UntypedNode | null | undefined;
 	if (e === null || typeof e !== 'object' || typeof e.$type !== 'number') return value;
-	if (isStub(e) || _isTyped(e) || !_holdsSlots(e)) return value;
+	if (isStub(e) || isTypedNode(e) || !holdsSlots(e)) return value;
 	return wrapNode(e, tree) as unknown as T;
-}
-function _holdsSlots(node: _UntypedNode): boolean {
-	for (const key in node) if (key.charCodeAt(0) === 95 || key === '$other') return true;
-	return false;
 }
 function hydrateChildren<T>(entries: readonly T[] | undefined, tree: TreeHandle): ParsedOfData<T>[] {
 	if (!entries) return [];

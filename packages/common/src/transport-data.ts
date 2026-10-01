@@ -18,12 +18,15 @@ export function treeHandleOf(node: object): number | undefined {
 	return typeof handle === 'number' ? handle : undefined;
 }
 
-function isStorageKey(key: string): boolean {
-	return key.startsWith('_') || key === '$other';
+/** Whether `key` names storage on a node: a slot (`_<name>`) or its unslotted children (`$other`). */
+export function isStorageKey(key: string): boolean {
+	return key.charCodeAt(0) === 95 || key === '$other';
 }
 
-function hasStructure(record: Record<string, unknown>): boolean {
-	return record.$other != null || Object.keys(record).some((key) => key.startsWith('_'));
+/** Whether `node` holds storage: a slot, or unslotted children. A text leaf and a token hold none. */
+export function holdsSlots(node: object): boolean {
+	for (const key in node) if (key.charCodeAt(0) === 95) return true;
+	return (node as { readonly $other?: unknown }).$other != null;
 }
 
 function isInert(value: unknown): boolean {
@@ -167,7 +170,7 @@ function toTransportValue(value: unknown): unknown {
 	const out: Record<string, unknown> = {};
 	for (const [key, raw] of Object.entries(value)) {
 		if (key === '$with' || typeof raw === 'function') continue;
-		out[key] = key.startsWith('_') || key === '$other' ? toTransportValue(raw) : raw;
+		out[key] = isStorageKey(key) ? toTransportValue(raw) : raw;
 	}
 	// Past the fold, nothing is a coordinate: a leaf that kept its trivia
 	// crosses as itself, and a storage-bearing node rebuilds from its slots
@@ -175,7 +178,7 @@ function toTransportValue(value: unknown): unknown {
 	for (const key of HANDLE_KEYS) delete out[key];
 	delete out.$childIndex;
 	delete out.$textOnly;
-	if (hasStructure(out)) {
+	if (holdsSlots(out)) {
 		delete out.$text;
 		delete out.$span;
 	}
@@ -196,7 +199,7 @@ export function detachCoordinates<T>(root: T): T {
 		if (!isRecord(value) || typeof value.$type !== 'number') return;
 		if (seen.has(value)) return;
 		seen.add(value);
-		if (hasStructure(value) && !isDerivedFromText(value)) {
+		if (holdsSlots(value) && !isDerivedFromText(value)) {
 			delete value.$text;
 			for (const key of COORDINATE_KEYS) delete value[key];
 		}
