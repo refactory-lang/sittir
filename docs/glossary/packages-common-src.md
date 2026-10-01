@@ -209,11 +209,27 @@ It defines a getter per index up to the element count, the length of the list's 
 
 ### `packages/common/src/utils.ts::withListSlots`
 
-Makes the `$with` setter of each slot that holds a list take the builder arguments of the kind it holds: `(...items)` or `(options, ...items)`, built through that kind's raw factory, or the whole node of that kind, seated as it is. No arguments clear an optional slot and build an empty list for a required one. A whole node is recognised as a single argument whose kind is the slot's kind (or `undefined`); anything else is passed to the factory.
+Makes the `$with` setter of each slot that holds a list take the builder arguments of the kind it holds: `(...items)` or `(options, ...items)`, built through that kind's raw factory, or the whole node of that kind, seated as it is. When the list's element is a config-shaped group (`element`), an item that is that group's config object is built through the group's factory first. No arguments clear an optional slot and build an empty list for a required one. A whole node is recognised as a single argument whose kind is the slot's kind (or `undefined`); anything else is passed to the factory.
 
 ### `packages/common/src/utils.ts::LIST_VIEW_MEMBERS`
 
 The names `withListView` defines on a node from `ReadonlyArray`: its non-mutating methods and `length`. `toString` and `toLocaleString` are not among them; every object already has them. A compile-time check keeps the method list equal to `ReadonlyArray`'s own, so the runtime cannot miss a method the type promises. The emitter refuses a list whose accessors or options take one of these names.
+
+### `packages/common/src/utils.ts::withGroupSeat`
+
+Flattens a group onto the parent that seats it. The group stays stored in its slot and the slot's own accessor stays, but the group's fields are readable on the parent under the names the spec gives them, each a property whose getter returns the field's reader while the seat's stored property (`stored`) holds a group and `undefined` while it does not, so a reader exists only when it has a value, and each name's `$with` setter rebuilds the group with that one field replaced and re-seats it. The types offer no such setter for an optional field of an absent group; for an untyped caller, on an absent group a setter given no value clears the seat, so the group stays absent, as an `undefined` flattened key does in the strict config; a value builds the group from that field alone when it is the group's only required field, and otherwise throws naming the required fields, so no partial group is ever seated. A name the seat prefixed carries the group field it stands for (`field`), so `seatLeft` reads and sets the group's `left` while the parent's own `left` is untouched. A name that spells the seat's slot reads the group's inner value; its setter takes that value, or the whole group when the argument's kind is the group's. The group's own accessor stays reachable through `storedSlotReader`. A node that seats several groups applies it once per seat.
+
+### `packages/common/src/utils.ts::storedSlotReader`
+
+The accessor that reads a slot's stored value as a node, for a caller that walks storage by accessor name (the validator's materialization). It is the node's own accessor unless a seat replaced it: a flattened key that spells the seat's slot reads the group's inner value, and the seat records the group's reader here.
+
+### `packages/common/src/utils.ts::withElementsSeat`
+
+Makes the `$with` setter of an elements-seat slot take the group config objects its config surface takes: an argument that is a plain object naming only the group's config keys is built through the group's factory, and every other argument is passed as it was. The setter takes its elements as rest arguments only: an array argument, which only an untyped caller can pass, throws a `TypeError` naming the slot and the spread form, instead of reaching the transport as a malformed element.
+
+### `packages/common/src/utils.ts::isGroupConfig`
+
+Whether a value is a group's config object rather than a node: a non-empty plain object without a `$type` whose keys are all among the group's config keys. The overlay factories, the setters `withElementsSeat` builds and the list-slot setters share it, so a config object means the same thing on every surface.
 
 ### `packages/common/src/transport-data.ts::stripStructuralProvenance`
 

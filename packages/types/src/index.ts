@@ -212,6 +212,9 @@ export type ElementsOf<F> = F extends (...args: infer A extends readonly unknown
 		: never;
 
 export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+export type RenameKeys<T, M extends { readonly [From: string]: string }> = T extends unknown
+	? { [K in keyof T as K extends keyof M ? M[K] : K]: T[K] }
+	: never;
 
 /** The most arguments a flavor pair's hoisted call accepts, and the route key its refusal names. */
 export interface HoistArity<Max extends number = number> {

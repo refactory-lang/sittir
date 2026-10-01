@@ -21,6 +21,8 @@ import type {
 	SlotHint,
 	ListViewHint,
 	ListSlotHint,
+	FlatHint,
+	FlatShapesOf,
 	BoundOf,
 	ParsedOf,
 	AdmitBound,
@@ -3871,6 +3873,13 @@ export interface CatchClause {
 	readonly __slotHints__?: {
 		readonly catchClauseGroup: SlotHint<T.CatchClauseGroup, true>;
 		readonly body: SlotHint<T.StatementBlock>;
+		readonly $flat: FlatHint<
+			'catchClauseGroup',
+			T.CatchClauseGroup,
+			{ readonly parameter: 'parameter'; readonly type: 'type' },
+			true,
+			'_catch_clause_group'
+		>;
 	};
 	catchClauseGroup(): CatchClauseGroup | undefined;
 	body(): StatementBlock;
@@ -19621,14 +19630,18 @@ export namespace SwitchDefault {
 }
 export namespace CatchClause {
 	export type Config = ConfigFor<TSKindId.CatchClause>;
-	export interface Bound extends BoundOf<T.CatchClause, BoundByKindId>, NodeMethodsOf {
+	interface BoundSurface extends BoundOf<T.CatchClause, BoundByKindId>, NodeMethodsOf {
 		readonly $type: T.CatchClause['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, ParsedByKindId, BoundSurface>;
 	}
-	export interface Parsed extends ParsedOf<T.CatchClause, ParsedByKindId>, NodeMethodsOf {
+	export type Bound = BoundSurface &
+		FlatShapesOf<BoundSurface, T.CatchClause, BoundByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
+	interface ParsedSurface extends ParsedOf<T.CatchClause, ParsedByKindId>, NodeMethodsOf {
 		readonly $type: T.CatchClause['$type'];
-		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedByKindId, ParsedSurface>;
 	}
+	export type Parsed = ParsedSurface &
+		FlatShapesOf<ParsedSurface, T.CatchClause, ParsedByKindId, AdmitLookup<BoundByKindId, ParsedByKindId>>;
 	export type Loose = LooseFor<TSKindId.CatchClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CatchClause>;
 	export type BuildArgs = [config?: Partial<ConfigOf<T.CatchClause, T.NamespaceMap>>];

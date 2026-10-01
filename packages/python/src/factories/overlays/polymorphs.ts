@@ -4,6 +4,7 @@ import * as F from '../raw.js';
 import * as C from '../coerce.js';
 import { bundle } from '@sittir/common/utils';
 import type { ArgsOf, ElementsOf, OmitEach, OptionsArg } from '@sittir/types';
+import { isGroupConfig } from '@sittir/common/utils';
 export * from './refines.js';
 
 // Erased applications, centralized: TS cannot infer a Cfg type parameter
@@ -24,9 +25,11 @@ const _built = (v: unknown): boolean => typeof v === 'object' && v !== null && '
 // bare-text call must keep its one-argument arity.
 const _fwd = <R>(f: unknown, arg: unknown, options: unknown): R =>
 	options === undefined ? _s<R>(f)(arg) : _s<R>(f)(arg, options);
-// A flattened group is present as a whole or absent as a whole: the second
-// overload forbids every one of its keys.
+// A flattened group is present as a whole or absent as a whole: a config
+// that seats the group by its slot names none of its keys, and one that
+// flattens it names the whole group or none of it.
 type NoneOf<T> = { [K in keyof T]?: never };
+type WithoutGroup<P, G> = P extends undefined ? P : P & NoneOf<G>;
 
 const futureImportStatement$importList =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -152,11 +155,7 @@ const comparisonOperator$comparators = <
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'operators' || key === 'primaryExpression');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['operators', 'primaryExpression']);
 	return (
 		config:
 			| ArgsOf<PF>[0]
@@ -1839,11 +1838,7 @@ const unionPattern$patterns = <PF extends (...args: never[]) => unknown, CF exte
 	parent: PF,
 	child: CF
 ) => {
-	const isConfig = (e: unknown): boolean =>
-		typeof e === 'object' &&
-		e !== null &&
-		!('$type' in e) &&
-		Object.keys(e).every((key) => key === 'sign' || key === 'value');
+	const isConfig = (e: unknown): boolean => isGroupConfig(e, ['sign', 'value']);
 	return (...args: ReadonlyArray<ArgsOf<PF>[number] | ArgsOf<CF>[0] | undefined>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)));
 };
@@ -1976,11 +1971,11 @@ export const subscript = Object.freeze({
 	coerce: typeof subscript$seatedCoerce;
 };
 
-const slice$flatten =
+const slice$flatten$step =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
 		config:
-			| ArgsOf<PF>[0]
+			| WithoutGroup<ArgsOf<PF>[0], OmitEach<NonNullable<{ expression: ArgsOf<CF>[0] }>, 'step'>>
 			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'step'> &
 					({ expression: ArgsOf<CF>[0] } | NoneOf<{ expression: ArgsOf<CF>[0] }>)),
 		options?: unknown
@@ -1999,22 +1994,28 @@ const slice$flatten =
 	};
 const slice$seated: (
 	config:
-		| ArgsOf<typeof F.buildSlice>[0]
+		| WithoutGroup<
+				ArgsOf<typeof F.buildSlice>[0],
+				OmitEach<NonNullable<{ expression: ArgsOf<typeof F.buildSliceGroup>[0] }>, 'step'>
+		  >
 		| (OmitEach<NonNullable<ArgsOf<typeof F.buildSlice>[0]>, 'step'> &
 				(
 					| { expression: ArgsOf<typeof F.buildSliceGroup>[0] }
 					| NoneOf<{ expression: ArgsOf<typeof F.buildSliceGroup>[0] }>
 				))
-) => ReturnType<typeof F.buildSlice> = slice$flatten(F.buildSlice, F.buildSliceGroup);
+) => ReturnType<typeof F.buildSlice> = slice$flatten$step(F.buildSlice, F.buildSliceGroup);
 const slice$seatedCoerce: (
 	config:
-		| ArgsOf<typeof C.coerceToSlice>[0]
+		| WithoutGroup<
+				ArgsOf<typeof C.coerceToSlice>[0],
+				OmitEach<NonNullable<{ expression: ArgsOf<typeof C.coerceToSliceGroup>[0] }>, 'step'>
+		  >
 		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToSlice>[0]>, 'step'> &
 				(
 					| { expression: ArgsOf<typeof C.coerceToSliceGroup>[0] }
 					| NoneOf<{ expression: ArgsOf<typeof C.coerceToSliceGroup>[0] }>
 				))
-) => ReturnType<typeof C.coerceToSlice> = slice$flatten(C.coerceToSlice, C.coerceToSliceGroup);
+) => ReturnType<typeof C.coerceToSlice> = slice$flatten$step(C.coerceToSlice, C.coerceToSliceGroup);
 export const slice = Object.freeze({
 	...B.slice,
 	...bundle(slice$seated, slice$seatedCoerce, { key: 'slice', max: 1 })

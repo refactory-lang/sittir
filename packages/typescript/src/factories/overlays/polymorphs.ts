@@ -25,9 +25,11 @@ const _built = (v: unknown): boolean => typeof v === 'object' && v !== null && '
 // bare-text call must keep its one-argument arity.
 const _fwd = <R>(f: unknown, arg: unknown, options: unknown): R =>
 	options === undefined ? _s<R>(f)(arg) : _s<R>(f)(arg, options);
-// A flattened group is present as a whole or absent as a whole: the second
-// overload forbids every one of its keys.
+// A flattened group is present as a whole or absent as a whole: a config
+// that seats the group by its slot names none of its keys, and one that
+// flattens it names the whole group or none of it.
 type NoneOf<T> = { [K in keyof T]?: never };
+type WithoutGroup<P, G> = P extends undefined ? P : P & NoneOf<G>;
 
 const importStatement$clauseFrom =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -458,11 +460,11 @@ export const forInStatement = Object.freeze({
 	};
 };
 
-const catchClause$flatten =
+const catchClause$flatten$catchClauseGroup =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
 		config:
-			| ArgsOf<PF>[0]
+			| WithoutGroup<ArgsOf<PF>[0], OmitEach<NonNullable<ArgsOf<CF>[0]>, 'catchClauseGroup'>>
 			| (OmitEach<NonNullable<ArgsOf<PF>[0]>, 'catchClauseGroup'> & (ArgsOf<CF>[0] | NoneOf<ArgsOf<CF>[0]>)),
 		options?: unknown
 	): ReturnType<PF> => {
@@ -480,16 +482,28 @@ const catchClause$flatten =
 	};
 const catchClause$seated: (
 	config:
-		| ArgsOf<typeof F.buildCatchClause>[0]
+		| WithoutGroup<
+				ArgsOf<typeof F.buildCatchClause>[0],
+				OmitEach<NonNullable<ArgsOf<typeof F.buildCatchClauseGroup>[0]>, 'catchClauseGroup'>
+		  >
 		| (OmitEach<NonNullable<ArgsOf<typeof F.buildCatchClause>[0]>, 'catchClauseGroup'> &
 				(ArgsOf<typeof F.buildCatchClauseGroup>[0] | NoneOf<ArgsOf<typeof F.buildCatchClauseGroup>[0]>))
-) => ReturnType<typeof F.buildCatchClause> = catchClause$flatten(F.buildCatchClause, F.buildCatchClauseGroup);
+) => ReturnType<typeof F.buildCatchClause> = catchClause$flatten$catchClauseGroup(
+	F.buildCatchClause,
+	F.buildCatchClauseGroup
+);
 const catchClause$seatedCoerce: (
 	config:
-		| ArgsOf<typeof C.coerceToCatchClause>[0]
+		| WithoutGroup<
+				ArgsOf<typeof C.coerceToCatchClause>[0],
+				OmitEach<NonNullable<ArgsOf<typeof C.coerceToCatchClauseGroup>[0]>, 'catchClauseGroup'>
+		  >
 		| (OmitEach<NonNullable<ArgsOf<typeof C.coerceToCatchClause>[0]>, 'catchClauseGroup'> &
 				(ArgsOf<typeof C.coerceToCatchClauseGroup>[0] | NoneOf<ArgsOf<typeof C.coerceToCatchClauseGroup>[0]>))
-) => ReturnType<typeof C.coerceToCatchClause> = catchClause$flatten(C.coerceToCatchClause, C.coerceToCatchClauseGroup);
+) => ReturnType<typeof C.coerceToCatchClause> = catchClause$flatten$catchClauseGroup(
+	C.coerceToCatchClause,
+	C.coerceToCatchClauseGroup
+);
 export const catchClause = Object.freeze({
 	...B.catchClause,
 	...bundle(catchClause$seated, catchClause$seatedCoerce, { key: 'catchClause', max: 1 })
