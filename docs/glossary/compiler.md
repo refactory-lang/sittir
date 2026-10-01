@@ -2186,6 +2186,9 @@ The two stages a departing grammar is judged against: `raw`, the upstream base b
 are evaluated with no wire config, inside the same DSL-globals scope, so the upstream is never located by package
 path.
 
+The stages differ in one fact stated here: `raw` authors nothing (`wireWithoutConfig`'s `authorsNothing`), since it
+is the upstream base with no config; `enriched` does not carry that fact.
+
 ### `packages/codegen/src/compiler/evaluate.ts::evaluateStage`
 
 Evaluates one base a second time through `wire` with no config (only the grammar's name), and records every rule
@@ -2632,6 +2635,11 @@ It takes the grammar's file types and stamps them on the raw grammar it builds, 
  * (currentRuleKind) per invocation — no try/finally needed here.
  */
 ```
+
+Provenance: every callback's rule is recorded as an override when the grammar extends a base, and as
+grammar-authored otherwise. A wire call that authors nothing (`WireContext.authorsNothing`, the `raw` stage)
+records none: its callbacks are wire's pass-throughs over the base, so the rules keep the provenance they have
+without a callback.
 
 ### `packages/codegen/src/compiler/evaluate.ts::injectSyntheticRules`
 

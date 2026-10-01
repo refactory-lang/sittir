@@ -24,9 +24,10 @@ import {
 } from '../primitives/variant.ts';
 import { parsePath } from '../transform/transform-path.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
+import { liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
 import { rulesEqual, type SymbolSource } from '../rule-patterns.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
-import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
+import { getEnrichElementSupertypes, getEnrichFieldBackings, getEnrichHiddenSubsequences, getEnrichMints, getEnrichTextTokens, getEnrichVisibleSubsequenceSources, getEnrichWhitespace, type AuthoredFieldSite, type GrammarResult } from '../enrich.ts';
 import type { WhitespaceCollision } from '../whitespace.ts';
 import { relabelledArm, seedAutomaticVariants, withoutLabel, type AutomaticVariants } from '../automatic-variants.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
@@ -59,11 +60,6 @@ export interface PatchSite {
 	readonly form: PatchForm;
 	readonly name?: string;
 	readonly lifts?: readonly string[];
-}
-
-export interface LiftName {
-	readonly name: string;
-	readonly hoisted: boolean;
 }
 
 export interface WireContext {
@@ -99,6 +95,7 @@ export interface WireContext {
 	readonly elementSupertypes: ReadonlyMap<string, string>;
 	activePatchSites: readonly string[];
 	readonly source: unknown;
+	readonly authorsNothing: boolean;
 }
 
 export interface RefineForm {
@@ -183,10 +180,6 @@ export function wireRenameLift(liftName: string, newName: string, hoisted: boole
 	}
 	currentContext.liftNames.set(liftName, { name: newName, hoisted: hoisted || named?.hoisted === true });
 	recordLiftClaim(liftName);
-}
-
-export function liftRenames(context: Pick<WireContext, 'liftNames'> | undefined): ReadonlyMap<string, string> {
-	return new Map([...(context?.liftNames ?? [])].map(([liftName, named]) => [liftName, named.name]));
 }
 
 export function wireHasAuthoredRule(name: string): boolean {
@@ -333,7 +326,8 @@ export function withWireContext<T>(
 		liftClaims: new Map(),
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
-		source: base
+		source: base,
+		authorsNothing: false
 	};
 	const prev = currentContext;
 	currentContext = ctx;
@@ -504,14 +498,14 @@ export function wire<B extends GrammarJson = any, const P = PatchesConfig<B>, co
 	base: B,
 	source: unknown = base
 ): WiredOpts {
-	return wireImpl(config as unknown as WireConfig<any>, base, source);
+	return wireImpl(config as unknown as WireConfig<any>, base, source, false);
 }
 
-export function wireWithoutConfig(name: string, base: GrammarResult): WiredOpts {
-	return wireImpl({ name }, base, base);
+export function wireWithoutConfig(name: string, base: GrammarResult, authorsNothing: boolean): WiredOpts {
+	return wireImpl({ name }, base, base, authorsNothing);
 }
 
-function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOpts {
+function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown, authorsNothing: boolean): WiredOpts {
 	const baseArg = base as BaseArg | undefined;
 	const { visibleExternals, whitespaceCollisions } = withEnrichedWhitespace(cfg.visibleExternals, base);
 	assertNoSpacingAddressPatches(cfg.patches ?? {}, knownRuleNames(cfg, baseArg));
@@ -547,7 +541,8 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		liftClaims: new Map(),
 		elementSupertypes: getEnrichElementSupertypes(base),
 		activePatchSites: [],
-		source
+		source,
+		authorsNothing
 	};
 
 	const patches = cfg.patches ?? {};
@@ -556,16 +551,8 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 	composeOrSynthesizePatchedParents(outRules, patches, context);
 	injectPlaceholderHiddenRules(outRules, patches, context, baseExternalNames(baseArg), knownRuleNames(cfg, baseArg));
 	for (const name of context.textTokens.keys()) outRules[name] ??= makeDeferredContentFn(context, name);
-	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.injects || visibleExternals)) {
-		const baseRules = baseRulesOf<RuleFn>(baseArg) ?? {};
-		for (const baseName of Object.keys(baseRules)) {
-			if (baseName in outRules) continue;
-			outRules[baseName] = passthroughBaseRuleFn;
-		}
-	}
-	for (const liftName of enrichLiftNames(base)) {
-		if (liftName in outRules || !(liftName in context.baseRuleBodies)) continue;
-		outRules[liftName] = passthroughBaseRuleFn;
+	for (const baseName of Object.keys(context.baseRuleBodies)) {
+		if (!(baseName in outRules)) outRules[baseName] = passthroughBaseRuleFn;
 	}
 	wrapAllRuleFns(outRules, context);
 	applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
@@ -584,6 +571,9 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context, cfg.injects);
 	}
 	recordAliasTargets(outRules, context);
+	wrapRuleHook(outRules, context, [
+		(bodies) => resolveLiftNames(bodies, context.liftNames, getEnrichMints(base), baseExternalNames(baseArg))
+	]);
 
 	const inline = wrapInlineCallback(cfg.inline as DollarFn<unknown[]> | undefined, context);
 	const supertypes = wrapSupertypesCallback(cfg.supertypes as DollarFn<unknown[]> | undefined, context);
@@ -599,6 +589,7 @@ function wireImpl(cfg: WireConfig<any>, base: unknown, source: unknown): WiredOp
 		rules: outRules,
 		...renamedCallbacks,
 		...(cfg.reserved === undefined ? {} : { reserved: renamingReserved(cfg.reserved, context) }),
+		...renamingWord(cfg.word as DollarFn<unknown> | undefined, baseWordOf(baseArg), context),
 		conflicts: undefined,
 		inline: renamingCallback(inline, renameNameList, context),
 		supertypes: renamingCallback(supertypes, renameNameList, context)
@@ -631,6 +622,21 @@ function declaredRuleCauses(rules: Record<string, RuleFn>): Pick<WireContext, 'r
 	return { ruleCauses, undeclaredRules };
 }
 
+function baseWordOf(base: BaseArg | undefined): string | undefined {
+	const word = ((base?.grammar ?? base) as { word?: unknown } | undefined)?.word;
+	return typeof word === 'string' ? word : undefined;
+}
+
+function renamingWord(user: DollarFn<unknown> | undefined, baseWord: string | undefined, context: WireContext): { word?: DollarFn<unknown> } {
+	if (user !== undefined) return { word: renamingCallback(user, renameNameList, context) };
+	if (baseWord === undefined) return {};
+	return {
+		word: function renamedBaseWord(this: unknown, $: unknown) {
+			return ($ as Record<string, unknown>)[renameNameList(baseWord, liftRenames(context.liftNames)) as string];
+		}
+	};
+}
+
 function renamingReserved(reserved: unknown, context: WireContext): unknown {
 	if (reserved === null || typeof reserved !== 'object' || Array.isArray(reserved)) return reserved;
 	return Object.fromEntries(
@@ -638,7 +644,7 @@ function renamingReserved(reserved: unknown, context: WireContext): unknown {
 			contextName,
 			typeof list === 'function'
 				? renamingCallback(list as () => unknown, renameRule, context)
-				: renameRule(list, liftRenames(context))
+				: renameRule(list, liftRenames(context.liftNames))
 		])
 	);
 }
@@ -655,7 +661,7 @@ function renamingCallback<F extends (...args: never[]) => unknown>(
 ): DollarFn<unknown> {
 	return function renamed(this: unknown, $: unknown, previous?: unknown) {
 		const value = user === undefined ? previous : (user as unknown as (d: unknown, p?: unknown) => unknown).call(this, $, previous);
-		return rename(value, liftRenames(context));
+		return rename(value, liftRenames(context.liftNames));
 	} as unknown as DollarFn<unknown>;
 }
 
@@ -961,6 +967,29 @@ function makeDeferredContentFn(context: WireContext, hiddenName: string): Sittir
 	};
 }
 
+function wrapRuleHook(
+	rules: Record<string, RuleFn>,
+	context: WireContext,
+	operations: readonly ((bodies: Map<string, unknown>) => void)[]
+): void {
+	const callbacks = Object.entries(rules);
+	let finished: ReadonlyMap<string, unknown> | undefined;
+	for (const [name] of callbacks) {
+		rules[name] = function ruleHook($, previous) {
+			if (previous !== undefined && previous !== context.baseRuleBodies[name]) {
+				throw new Error(`wire: the base body the grammar runtime passes for '${name}' is not the one wire holds`);
+			}
+			if (finished === undefined) {
+				const bodies = new Map<string, unknown>();
+				for (const [ruleName, callback] of callbacks) bodies.set(ruleName, callback($, context.baseRuleBodies[ruleName]));
+				for (const operation of operations) operation(bodies);
+				finished = bodies;
+			}
+			return finished.get(name);
+		};
+	}
+}
+
 function wrapAllRuleFns(rules: Record<string, RuleFn>, context: WireContext): void {
 	for (const [name, fn] of Object.entries(rules)) {
 		rules[name] = wrapOneRuleFn(name, fn, context);
@@ -1062,21 +1091,10 @@ function symbolizeRef(_$: unknown, name: string): unknown {
 	return { type: 'SYMBOL', name };
 }
 
-function hasBodyPatternGroups(groups: GroupsConfig): boolean {
-	for (const value of Object.values(groups)) {
-		if (typeof value === 'function') return true;
-	}
-	return false;
-}
-
 const passthroughBaseRuleFn: SittirRuleFn = function passthroughBaseRuleFn(_$, previous) {
 	const name = currentContext?.currentRuleKind;
 	return (name === null || name === undefined ? undefined : currentContext?.liftBodies.get(name)) ?? previous;
 };
-
-function enrichLiftNames(base: unknown): Set<string> {
-	return new Set([...getEnrichHiddenSubsequences(base), ...getEnrichVisibleSubsequenceSources(base)]);
-}
 
 interface WirePatternCandidate {
 	readonly name: string;

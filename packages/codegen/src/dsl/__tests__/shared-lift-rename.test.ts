@@ -1,42 +1,49 @@
 import { describe, expect, it } from 'vitest';
-import { PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
+import { SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { Rule } from '../../types/rule.ts';
-import { ENRICH_RULE_ORIGINS_KEY, type GrammarResult } from '../enrich.ts';
+import { ENRICH_RULE_ORIGINS_KEY } from '../enrich.ts';
 import type { EnrichRuleOrigin } from '../enrich-ctx.ts';
-import { resolveLiftNames } from '../wire/lift-names.ts';
-import { withWireContext, wireRenameLift, type LiftName, type WiredOpts } from '../wire/wire.ts';
+import type { GrammarJson } from '../../grammar-shapes/grammar-json.ts';
+import { wire, withWireContext, wireRenameLift } from '../wire/wire.ts';
 
 const symbol = (name: string): Rule => ({ type: SYMBOL, name }) as Rule;
 const literal = (value: string): Rule => ({ type: STRING, value }) as Rule;
 const seq = (...members: Rule[]): Rule => ({ type: SEQ, members }) as Rule;
 
-function enrichedWithMints(names: readonly string[]): unknown {
-	const origins = new Map<string, EnrichRuleOrigin>(names.map((name) => [name, { kind: 'visible-subsequence' }]));
-	return Object.defineProperty({}, ENRICH_RULE_ORIGINS_KEY, { value: origins, enumerable: false });
-}
-
-function optsWith(liftNames: Record<string, LiftName>): WiredOpts {
-	return { name: 'sample', rules: {}, __wireContext__: { liftNames: new Map(Object.entries(liftNames)) } } as unknown as WiredOpts;
-}
-
-function sampleGrammar(): GrammarResult['grammar'] {
-	return {
-		name: 'sample',
-		rules: {
-			source_file: seq(symbol('list'), symbol('grouping')),
-			list: seq(literal('['), symbol('suffix')),
-			grouping: seq(literal('('), symbol('list_quantifier')),
-			list_quantifier: literal('*'),
-			suffix: literal('*')
-		},
-		extras: [{ type: PATTERN, value: '\\s' }, symbol('list_quantifier')],
-		externals: [symbol('list_quantifier')],
-		supertypes: ['list_quantifier'],
-		inline: ['list_quantifier'],
-		conflicts: [['grouping', 'list_quantifier']],
-		precedences: [[symbol('list_quantifier'), 'x']],
-		word: 'list_quantifier'
+function enrichedBase(mints: readonly string[], externals: readonly Rule[] = [], word?: string): GrammarJson {
+	const base = {
+		grammar: {
+			name: 'sample',
+			rules: {
+				source_file: seq(symbol('list'), symbol('grouping')),
+				grouping: seq(literal('('), symbol('list_quantifier')),
+				list: seq(literal('['), symbol('list_quantifier')),
+				list_quantifier: literal('*')
+			},
+			externals,
+			...(word === undefined ? {} : { word })
+		}
 	};
+	const origins = new Map<string, EnrichRuleOrigin>(mints.map((name) => [name, { kind: 'visible-subsequence' }]));
+	return Object.defineProperty(base, ENRICH_RULE_ORIGINS_KEY, { value: origins, enumerable: false }) as unknown as GrammarJson;
+}
+
+const $ = new Proxy({}, { get: (_target, name: string) => symbol(name) });
+
+function wiredWith(base: GrammarJson, hoisted: boolean, calls: string[] = []) {
+	return wire<GrammarJson>(
+		{
+			name: 'sample',
+			rules: {
+				list: () => {
+					calls.push('list');
+					wireRenameLift('list_quantifier', 'suffix', hoisted);
+					return seq(literal('['), symbol('suffix'));
+				}
+			}
+		},
+		base
+	);
 }
 
 describe('wireRenameLift', () => {
@@ -58,45 +65,44 @@ describe('wireRenameLift', () => {
 	});
 });
 
-describe('resolveLiftNames', () => {
-	const renamed = { list_quantifier: { name: 'suffix', hoisted: false } };
-
-	it('rewrites the reference in an owner the renaming patch never reached, keeping the rule order', () => {
-		const grammar = sampleGrammar();
-		const order = Object.keys(grammar.rules);
-		resolveLiftNames(grammar, enrichedWithMints(['list_quantifier']), optsWith(renamed));
-		expect(grammar.rules['grouping']).toEqual(seq(literal('('), symbol('suffix')));
-		expect(grammar.rules['list']).toEqual(seq(literal('['), symbol('suffix')));
-		expect(Object.keys(grammar.rules)).toEqual(order);
+describe('lift names resolve over every rule on the first rule callback', () => {
+	it('names the reference in an owner no patch reached, even when that owner is evaluated first', () => {
+		const wired = wiredWith(enrichedBase(['list_quantifier']), false);
+		expect(wired.rules['grouping']!($, undefined)).toEqual(seq(literal('('), symbol('suffix')));
+		expect(wired.rules['list']!($, undefined)).toEqual(seq(literal('['), symbol('suffix')));
 	});
 
-	it('rewrites the name in every list and in word', () => {
-		const grammar = sampleGrammar();
-		resolveLiftNames(grammar, enrichedWithMints(['list_quantifier']), optsWith(renamed));
-		expect(grammar.extras).toEqual([{ type: PATTERN, value: '\\s' }, symbol('suffix')]);
-		expect(grammar.externals).toEqual([symbol('suffix')]);
-		expect(grammar.supertypes).toEqual(['suffix']);
-		expect(grammar.inline).toEqual(['suffix']);
-		expect(grammar.conflicts).toEqual([['grouping', 'suffix']]);
-		expect(grammar.precedences).toEqual([[symbol('suffix'), 'x']]);
-		expect(grammar.word).toBe('suffix');
+	it('wraps every base rule and keeps the authored rules first', () => {
+		const wired = wiredWith(enrichedBase(['list_quantifier']), false);
+		expect(Object.keys(wired.rules)).toEqual(['list', 'source_file', 'grouping', 'list_quantifier']);
+	});
+
+	it('runs each rule callback once', () => {
+		const calls: string[] = [];
+		const wired = wiredWith(enrichedBase(['list_quantifier']), false, calls);
+		for (const name of Object.keys(wired.rules)) wired.rules[name]!($, undefined);
+		wired.rules['list']!($, undefined);
+		expect(calls).toEqual(['list']);
 	});
 
 	it('rejects a name recorded for a rule enrich did not mint', () => {
-		expect(() => resolveLiftNames(sampleGrammar(), enrichedWithMints([]), optsWith(renamed))).toThrow(/list_quantifier/);
+		const wired = wiredWith(enrichedBase([]), false);
+		expect(() => wired.rules['grouping']!($, undefined)).toThrow(/list_quantifier/);
 	});
 
 	it('rejects a remaining reference to a lift whose variant was hoisted', () => {
-		const hoisted = { list_quantifier: { name: 'suffix', hoisted: true } };
-		expect(() => resolveLiftNames(sampleGrammar(), enrichedWithMints(['list_quantifier']), optsWith(hoisted))).toThrow(
-			/list_quantifier.*grouping/
-		);
+		const wired = wiredWith(enrichedBase(['list_quantifier']), true);
+		expect(() => wired.rules['grouping']!($, undefined)).toThrow(/list_quantifier.*grouping/);
 	});
 
-	it('leaves the grammar alone when no lift was renamed', () => {
-		const grammar = sampleGrammar();
-		const before = JSON.stringify(grammar);
-		resolveLiftNames(grammar, enrichedWithMints(['list_quantifier']), optsWith({}));
-		expect(JSON.stringify(grammar)).toBe(before);
+	it('names the base word through the same renames once the rules have run', () => {
+		const wired = wiredWith(enrichedBase(['list_quantifier'], [], 'list_quantifier'), false);
+		wired.rules['grouping']!($, undefined);
+		expect((wired as unknown as { word: (d: unknown) => unknown }).word($)).toEqual(symbol('suffix'));
+	});
+
+	it('rejects a renamed lift that is an external', () => {
+		const wired = wiredWith(enrichedBase(['list_quantifier'], [symbol('list_quantifier')]), false);
+		expect(() => wired.rules['grouping']!($, undefined)).toThrow(/list_quantifier.*external/);
 	});
 });

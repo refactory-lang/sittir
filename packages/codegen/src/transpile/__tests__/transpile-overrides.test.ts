@@ -6,6 +6,7 @@ import { transpileOverrides } from '../transpile-overrides.ts';
 import { runTreeSitterCliCapturing } from '../tree-sitter-cli.ts';
 import { grammarPackage, sittirDirOf } from '../../grammars.ts';
 import { packageEntryPath } from '../../compiler/resolve-grammar.ts';
+import { evaluateDsl } from '../../compiler/evaluate.ts';
 
 describe('transpileOverrides', () => {
 	const GRAMMAR = 'python';
@@ -70,6 +71,72 @@ describe('tree-sitter generate runs the grammar entry itself', () => {
 			expect(generatedRule()).toEqual({ type: 'STRING', value: 'first' });
 			writeFileSync(packageEntryPath(pkg), entryOf('second'));
 			expect(generatedRule()).toEqual({ type: 'STRING', value: 'second' });
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	}, 60_000);
+});
+
+describe('both grammar runtimes evaluate the name lists and word after the rules', () => {
+	const entry = `let ran = false;
+const pick = (after: unknown, before: unknown): unknown => (ran ? after : before);
+export default grammar({
+	name: 'probe',
+	externals: ($: any) => [pick($.ext_after, $.ext_before)],
+	extras: ($: any) => [pick($.extra_after, $.extra_before)],
+	word: ($: any) => pick($.word_after, $.word_before),
+	inline: ($: any) => [pick($._inline_after, $._inline_before)],
+	supertypes: ($: any) => [pick($._super_after, $._super_before)],
+	conflicts: ($: any) => [[pick($.word_after, $.word_before), $.source_file]],
+	precedences: () => [[pick('after', 'before'), 'other']],
+	reserved: { global: ($: any) => [pick($.extra_after, $.extra_before)] },
+	rules: {
+		source_file: ($: any) => {
+			ran = true;
+			return seq($.word_after, $.word_before, $._inline_after, $._inline_before, $._super_after, $._super_before);
+		},
+		word_after: () => /[a-z]+/,
+		word_before: () => /[A-Z]+/,
+		extra_after: () => '#',
+		extra_before: () => '%',
+		_inline_after: ($: any) => seq('a', $.word_after),
+		_inline_before: ($: any) => seq('b', $.word_after),
+		_super_after: ($: any) => choice($.word_after, $.word_before),
+		_super_before: ($: any) => choice($.word_before, $.word_after)
+	}
+} as never);
+`;
+	const names = (list: unknown): string => JSON.stringify(list);
+
+	function expectOrder(g: Record<string, unknown>): void {
+		expect(names(g.extras)).toContain('extra_after');
+		expect(names(g.word)).toContain('word_after');
+		expect(names(g.inline)).toContain('_inline_after');
+		expect(names(g.supertypes)).toContain('_super_after');
+		expect(names(g.conflicts)).toContain('word_after');
+		expect(names(g.precedences)).toContain('after');
+		expect(names(g.reserved)).toContain('extra_after');
+	}
+
+	it('holds for tree-sitter and for sittir; tree-sitter reads externals before any rule', async () => {
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-list-order-'));
+		try {
+			const upstream = join(dir, 'node_modules', 'tree-sitter-probe');
+			mkdirSync(upstream, { recursive: true });
+			writeFileSync(join(upstream, 'package.json'), '{"name":"tree-sitter-probe","version":"0.0.0"}');
+			writeFileSync(join(upstream, 'tree-sitter.json'), '{"grammars":[{"name":"probe","file-types":["probe"]}]}');
+			const pkg = grammarPackage('probe', dir);
+			writeFileSync(packageEntryPath(pkg), entry);
+			transpileOverrides({ package: pkg });
+			const run = runTreeSitterCliCapturing(['generate', '--no-parser'], sittirDirOf(pkg));
+			expect(run.status, run.stderr).toBe(0);
+			const ts: Record<string, unknown> = JSON.parse(readFileSync(join(sittirDirOf(pkg), 'src', 'grammar.json'), 'utf8'));
+			const st = (await evaluateDsl(packageEntryPath(pkg))) as unknown as Record<string, unknown>;
+			expectOrder(ts);
+			expectOrder(st);
+			expect(names(ts.externals)).toContain('ext_before');
+			// sittir differs from tree-sitter here: it evaluates externals after the rules.
+			expect(names(st.externals)).toContain('ext_after');
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
 		}

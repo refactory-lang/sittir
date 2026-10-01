@@ -3,7 +3,7 @@ import { rule } from '../primitives/rule.ts';
 import { applyTransformForTest, installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import { wire } from '../wire/wire.ts';
 import type { GrammarJson } from '../../grammar-shapes/grammar-json.ts';
-import { emptyBase } from '../../__tests__/helpers/empty-base.ts';
+import { baseOf } from '../../__tests__/helpers/empty-base.ts';
 
 const S = (value: string) => ({ type: 'STRING', value });
 const sym = (name: string) => ({ type: 'SYMBOL', name });
@@ -37,12 +37,13 @@ describe('rule() declares a real rule at a path', () => {
 });
 
 describe('wire() installs a rule() name as a rule of the grammar', () => {
-	const dollarOf = (owner: string) => new Proxy({}, { get: (_t, name: string) => ({ type: 'SYMBOL', name, owner }) });
+	const $ = new Proxy({}, { get: (_t, name: string) => ({ type: 'SYMBOL', name }) });
 	const run = (patches: Record<string, Record<string, unknown>>, rules: Record<string, (...a: never[]) => unknown> = {}) => {
-		const wired = wire<GrammarJson>({ name: 'test', rules: rules as never, patches: patches as never }, emptyBase);
+		const wired = wire<GrammarJson>({ name: 'test', rules: rules as never, patches: patches as never }, baseOf(bases));
 		const out: Record<string, unknown> = {};
-		for (const [name, fn] of Object.entries(wired.rules)) out[name] = (fn as (d: unknown, p?: unknown) => unknown)(dollarOf(name), bases[name]);
-		return { names: Object.keys(wired.rules), out };
+		for (const [name, fn] of Object.entries(wired.rules)) out[name] = (fn as (d: unknown, p?: unknown) => unknown)($, bases[name]);
+		const { deposits } = (wired as unknown as { __wireContext__: { deposits: Map<string, unknown> } }).__wireContext__;
+		return { names: Object.keys(wired.rules), out, deposits };
 	};
 	const bases: Record<string, unknown> = {
 		list_comprehension: { type: 'SEQ', members: [S('['), sym('expression'), sym('_comprehension_clauses'), S(']')] },
@@ -60,13 +61,13 @@ describe('wire() installs a rule() name as a rule of the grammar', () => {
 		expect((out.set_comprehension as { members: unknown[] }).members[2]).toMatchObject(sym('comprehension_clauses'));
 	});
 
-	it("builds the body from the declared rule's own $, so its references belong to it and not to a patching parent", () => {
-		const { out } = run({
+	it('builds the body in the declared rule\'s own callback: no patching parent deposits it', () => {
+		const { out, deposits } = run({
 			list_comprehension: { 2: rule('comprehension_clauses', clauses) },
 			set_comprehension: { 2: rule('comprehension_clauses', clauses) }
 		});
-		const arms = (out.comprehension_clauses as { content: { members: { owner: string }[] } }).content.members;
-		expect(arms.map((arm) => arm.owner)).toEqual(['comprehension_clauses', 'comprehension_clauses']);
+		expect((out.comprehension_clauses as { content: { members: unknown[] } }).content.members).toEqual([sym('for_in_clause'), sym('if_clause')]);
+		expect(deposits.has('comprehension_clauses')).toBe(false);
 	});
 
 	it('carries no hoisted annotation and is not wrapped in the precedence of the path it replaces', () => {

@@ -360,11 +360,11 @@ function departsFromBase(ctx: EvaluateCtx): boolean {
 function evaluateStages(enriched: GrammarResult, ctx: EvaluateCtx): EvaluationStages<EvaluatedGrammar> {
 	const wireCtx = getWireContext(ctx.opts);
 	if (!wireCtx) throw new Error(`evaluateStages('${ctx.opts.name}'): the grammar departs from its base but carries no wire context`);
-	return { raw: evaluateStage(wireCtx.source as GrammarResult, ctx), enriched: evaluateStage(enriched, ctx) };
+	return { raw: evaluateStage(wireCtx.source as GrammarResult, ctx, true), enriched: evaluateStage(enriched, ctx, false) };
 }
 
-function evaluateStage(base: GrammarResult, ctx: EvaluateCtx): StageEvaluation<EvaluatedGrammar> {
-	const stageOpts = wireWithoutConfig(ctx.opts.name, base);
+function evaluateStage(base: GrammarResult, ctx: EvaluateCtx, authorsNothing: boolean): StageEvaluation<EvaluatedGrammar> {
+	const stageOpts = wireWithoutConfig(ctx.opts.name, base, authorsNothing);
 	const { grammar } = grammarFn(base, stageOpts);
 	const baseRules = ('grammar' in base ? baseRulesOf<Rule<'evaluate'>>(base.grammar) : undefined) ?? {};
 	const ruleNames = [...new Set([...Object.keys(baseRules), ...Object.keys(stageOpts.rules)])].sort();
@@ -709,12 +709,13 @@ function evaluateMetadataCallbacksInScope(opts: GrammarOptions, ctx: EvaluateCtx
 
 function evaluateRuleFunctions(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
 	const { opts, baseRules, provenanceByKind, isExtension } = ctx;
+	const authorsNothing = getWireContext(opts)?.authorsNothing === true;
 	for (const [name, ruleFn] of Object.entries(opts.rules)) {
 		const $ = createProxy();
 		const baseRule = baseRules[name];
 		const result = ruleFn.call($, $, baseRule);
 		rules[name] = coerceToRule(result);
-		provenanceByKind.set(name, isExtension ? 'override-authored-or-replaced' : 'grammar-authored');
+		if (!authorsNothing) provenanceByKind.set(name, isExtension ? 'override-authored-or-replaced' : 'grammar-authored');
 	}
 }
 
