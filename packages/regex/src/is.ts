@@ -79,7 +79,7 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number } | number)
 	return (v) => ids.has(typeof v === 'number' ? v : v.$type);
 }
 
-const _supertype_inlineFlagsGroup_ids = new Set<number>([82, 83, 84]);
+const _supertype_inlineFlagsGroup_ids = new Set<number>([83, 84, 85]);
 const _supertype_whitespace_ids = new Set<number>([47, 48, 49, 50]);
 
 export const is = Object.freeze({

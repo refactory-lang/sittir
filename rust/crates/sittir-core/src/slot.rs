@@ -24,6 +24,10 @@ pub struct NodeCoordinate {
     /// The edge seams of the kind this coordinate names, filled by the prepare
     /// walk so a verbatim slice meets its neighbours like a rendered node does.
     pub edges: Option<CoordinateEdges>,
+    /// Set where a deep read mints the coordinate: it addresses the node's
+    /// text and nothing of the layout around it, so no edge or gap reader
+    /// takes evidence from it (`is_layout_evidence`).
+    pub text_only: bool,
 }
 
 /// One edge seam's resolved arm and the strength it carries into the writer.
@@ -47,7 +51,15 @@ impl NodeCoordinate {
             span,
             kind: None,
             edges: None,
+            text_only: false,
         }
+    }
+
+    /// Whether the source around this coordinate can be read as the layout of
+    /// the tree it names: true for a tree-addressed coordinate, false for a
+    /// deep read's leaf, which addresses its text only.
+    pub fn is_layout_evidence(&self) -> bool {
+        !self.text_only
     }
 
     /// The kind this coordinate names: the reader's stamp when it carries one,
@@ -213,7 +225,8 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue, const ADJACENT: bool>
                     ))
                 })?;
                 let kind = obj.get::<u32>("$type")?.map(|id| crate::types::KindId(id as u16));
-                return Ok(Self::Coord(NodeCoordinate { kind, ..NodeCoordinate::new(handle, span) }));
+                let text_only = obj.get::<bool>("$textOnly")?.unwrap_or(false);
+                return Ok(Self::Coord(NodeCoordinate { kind, text_only, ..NodeCoordinate::new(handle, span) }));
             }
         }
         Ok(Self::Transport(unsafe {

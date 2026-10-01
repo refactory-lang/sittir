@@ -1,7 +1,7 @@
 {
   "name": "typescript",
   "root": "program",
-  "nodeCount": 429,
+  "nodeCount": 431,
   "word": "identifier",
   "supertypes": [
     "_augmented_assignment_lhs",
@@ -141,6 +141,12 @@
         "namespace_import": "namespace_import",
         "named_imports": "named_imports",
         "import_clause_default_import": "default_import"
+      }
+    },
+    "yield_expression": {
+      "definedBy": "override",
+      "childKind": {
+        "yield_expression_delegate": "delegate"
       }
     },
     "class_heritage": {
@@ -2815,6 +2821,13 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "optional_chain_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "index": {
         "unnamed": false,
         "slotCount": 1,
@@ -3779,6 +3792,15 @@
         "nonEmpty": false
       },
       "source": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "yield_expression_delegate": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -4764,7 +4786,8 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ],
       "textLeavesThrough": [
         "undefined",
@@ -7012,7 +7035,8 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -8984,7 +9008,8 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -10216,7 +10241,8 @@
         "variable_declaration",
         "while_statement",
         "with_statement",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -10589,7 +10615,8 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -10699,7 +10726,8 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -11316,7 +11344,8 @@
         "update_expression_postfix",
         "update_expression_prefix",
         "variable_declaration",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -11458,7 +11487,8 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -11868,7 +11898,8 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -12183,7 +12214,8 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -18431,7 +18463,8 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -20314,7 +20347,8 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -20532,6 +20566,18 @@
       "typeName": "OptionalChain",
       "factoryName": "optionalChain",
       "irKey": "optionalChain",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"?.\" as const",
+      "text": "?.",
+      "factoryShape": "constant"
+    },
+    {
+      "kind": "optional_chain_marker",
+      "modelType": "punctuation",
+      "typeName": "OptionalChainMarker",
+      "factoryName": "optionalChainMarker",
+      "irKey": "optionalChainMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"?.\" as const",
@@ -23523,7 +23569,8 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -23778,7 +23825,8 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -24379,7 +24427,8 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -25342,7 +25391,8 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -25692,7 +25742,8 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {
@@ -27290,6 +27341,26 @@
           ]
         },
         {
+          "name": "optional_chain_marker",
+          "propertyName": "optionalChainMarker",
+          "paramName": "optionalChainMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "optional_chain_marker"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "optional_chain_marker",
+              "parseKind": "optional_chain_marker"
+            }
+          ]
+        },
+        {
           "name": "index",
           "propertyName": "index",
           "paramName": "index",
@@ -27327,6 +27398,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "object",
+        "optional_chain_marker",
         "index"
       ]
     },
@@ -28158,7 +28230,7 @@
     },
     {
       "kind": "yield_expression",
-      "modelType": "branch",
+      "modelType": "polymorph",
       "typeName": "YieldExpression",
       "factoryName": "yieldExpression",
       "irKey": "yieldExpression",
@@ -28173,9 +28245,22 @@
           "nonEmpty": false,
           "storage": "mixedEnum",
           "kinds": [
+            "yield_expression_delegate",
             "expression"
           ],
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "yield_expression_delegate",
+              "parseKind": "yield_expression_delegate",
+              "seat": {
+                "kind": "yield_expression_delegate",
+                "shape": "arm",
+                "mount": "delegate",
+                "seated": true
+              }
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -28265,7 +28350,126 @@
         "undefined",
         "update_expression_postfix",
         "update_expression_prefix",
-        "yield_expression"
+        "yield_expression",
+        "yield_expression_delegate"
+      ]
+    },
+    {
+      "kind": "yield_expression_delegate",
+      "modelType": "envelope",
+      "typeName": "YieldExpressionDelegate",
+      "factoryName": "yieldExpressionDelegate",
+      "irKey": "yieldExpressionDelegate",
+      "hidden": false,
+      "annotations": {
+        "variantOf": "yield_expression",
+        "hoisted": true
+      },
+      "slots": [
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "paramName": "expression",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "mixedEnum",
+          "kinds": [
+            "expression"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "expression",
+              "parseKind": "expression"
+            }
+          ]
+        }
+      ],
+      "name": "yield_expression_delegate",
+      "factoryShape": "direct",
+      "factoryFields": [
+        "expression"
+      ],
+      "bareAccepts": [
+        "any_keyword",
+        "array",
+        "arrow_function",
+        "as_expression",
+        "assignment_expression",
+        "async_keyword",
+        "augmented_assignment_expression",
+        "await_expression",
+        "binary_expression",
+        "boolean_keyword",
+        "call_expression_call",
+        "call_expression_member",
+        "call_expression_template_call",
+        "class",
+        "declare_keyword",
+        "export_keyword",
+        "false",
+        "function_expression",
+        "generator_function",
+        "get_keyword",
+        "identifier",
+        "instantiation_expression",
+        "internal_module",
+        "let_keyword",
+        "member_expression",
+        "meta_property_import_meta",
+        "meta_property_new_target",
+        "module_keyword",
+        "namespace_keyword",
+        "new_expression",
+        "new_keyword",
+        "non_null_expression",
+        "null",
+        "number_bigint_binary",
+        "number_bigint_decimal",
+        "number_bigint_hex",
+        "number_bigint_octal",
+        "number_binary",
+        "number_decimal",
+        "number_float_leading_point",
+        "number_float_point",
+        "number_float_scientific",
+        "number_hex",
+        "number_keyword",
+        "number_octal",
+        "object",
+        "object_keyword",
+        "override_keyword",
+        "parenthesized_expression_sequence",
+        "parenthesized_expression_typed",
+        "private_keyword",
+        "protected_keyword",
+        "public_keyword",
+        "readonly_keyword",
+        "regex",
+        "satisfies_expression",
+        "sequence_expression",
+        "set_keyword",
+        "static_keyword",
+        "string_double",
+        "string_keyword",
+        "string_single",
+        "subscript_expression",
+        "super",
+        "symbol_keyword",
+        "template_string",
+        "ternary_expression",
+        "this",
+        "true",
+        "type_assertion",
+        "type_keyword",
+        "unary_expression",
+        "undefined",
+        "update_expression_postfix",
+        "update_expression_prefix",
+        "yield_expression",
+        "yield_expression_delegate"
       ]
     },
     {

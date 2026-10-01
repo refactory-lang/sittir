@@ -3279,14 +3279,14 @@ pub static EDGE_ROWS: &[u16] = &[
     195, 196,
 ];
 
-/// Per kind id, its flags: KIND_ANON (the parser's anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED.
+/// Per kind id, its flags: KIND_ANON (the parser's anonymous token), KIND_LINE_TERMINATED, KIND_LINE_BREAK_TERMINATED, KIND_ROOT.
 pub static KIND_FLAGS: &[u8] = &[
     0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
     0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -4461,8 +4461,8 @@ pub static SITE_SPECS: &[::sittir_core::options::SiteSpec] = &[
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 168, strength: 2 },
-    ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
-    ::sittir_core::options::SiteSpec { default_arm: 169, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 168, strength: 0 },
+    ::sittir_core::options::SiteSpec { default_arm: 171, strength: 0 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },
     ::sittir_core::options::SiteSpec { default_arm: 169, strength: 2 },

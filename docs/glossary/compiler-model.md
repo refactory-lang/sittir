@@ -2325,6 +2325,10 @@ a kind ask it; they read the grammar, so a builder never changes them.
 
 A surface-hidden keyword: the `_kw_*` presence markers, whose builders exist but are stored as a flag on their parent, so no top-level factory is emitted for them.
 
+### `packages/codegen/src/compiler/model/node-map.ts::isTerminalNode`
+
+Whether a kind is a terminal of the model: a pattern leaf, or a kind stored as its kind id (a keyword, a punctuation or an enum). A terminal has text but no children; every other model type (branch, envelope, polymorph, alias, supertype, list) holds child items. The render module's leaf transports and the grammar-root check read it.
+
 ### `packages/codegen/src/compiler/model/node-map.ts::isFixedTextLeaf`
 
 ```text
@@ -3645,6 +3649,8 @@ grammar-wide face as well as to `<kind>_before`/`_after` (see
 own; a kind row still overrides it, and a kind whose edge is a slot cascades
 nothing.
 
+The grammar root always owns its edges, whatever its rule's shape: a root rule that is not a seq (python's `module`, regex's `pattern`) is wrapped in one to hold them. Its edges are the render's own flanks, not seams between neighbours, so their defaults come from `rootEdgeArms` and the writer writes them at the start and the end of a render instead of dropping them there (`KIND_ROOT` in the grammar's `KIND_FLAGS`). A parsed root keeps its source flanks: rendered untouched, its slice already holds them; rebuilt through `$with`, its prepare classifies the tree bytes before its first and after its last coordinate item into these sites (`rootEdgeStamp`), and an item that was rebuilt leaves the edge to the options and the default.
+
 The after edge of a line-terminated kind (`lineTerminatedKinds`) is the exception to the `space` fallback: its arms are `lineBreakingArms` and its default is the first of them, so `line_comment_after` is `newline`. A kind with no seq rule, such as python's pattern-leaf `comment` or typescript's lexed `hash_bang_line`, owns no edges; the runtime still breaks after it, from the line-terminated fact itself, which reaches the runtime as `KIND_LINE_TERMINATED` in the grammar's `KIND_FLAGS` table.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::ownsKindEdges`
@@ -4291,6 +4297,14 @@ always a member; a supertype listing neither is an error.
 
 `whitespaceArmsOf` less the depth movers (`DEPTH_ARMS`): the arms a
 separator gap admits, where moving depth has no meaning.
+
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::RootEdgeArms`
+
+The default arms of the grammar root's two edges.
+
+### `packages/codegen/src/compiler/model/whitespace-arms.ts::rootEdgeArms`
+
+The grammar root's edge defaults: `tight` before; after, a line break when the grammar declares file types (`NodeMap.fileTypes`), else `tight`. A grammar with file types has a file surface, and a file ends in a line break; a grammar without them (regex) has no file surface, so its root's render ends where its content does. rust, typescript, python and scm end in a line break; regex does not. A grammar that declares file types but whose whitespace vocabulary lists no line break is a compile error. The sites still admit every arm the vocabulary does, so options can set either edge (force or strip a final newline), and a parsed tree's own flanks outrank the default (`withKindEdges`).
 
 ### `packages/codegen/src/compiler/model/whitespace-arms.ts::lineBreakingArms`
 

@@ -163,6 +163,7 @@ export interface GroupingGroupTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _group_expression: SlotValue<GroupingGroupGroupExpressionTransportSlot>
+  _anchor?: SlotValue<AnchorTransport>
 }
 
 export interface GroupingTransport {
@@ -209,6 +210,7 @@ export interface NamedNodeGroupAnchoredLastTransport {
   '$_edges'?: Edges
   _named_node_expressions?: Array<SlotValue<NamedNodeGroupAnchoredLastNamedNodeExpressionsTransportSlot>>
   _last: SlotValue<Box<NamedNodeGroupAnchoredLastLastTransportSlot>>
+  _anchor?: SlotValue<AnchorTransport>
   _named_node_expressions_separator_space?: number
 }
 
@@ -216,6 +218,7 @@ export interface NamedNodeGroupChildrenTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _named_node_expressions: Array<SlotValue<NamedNodeGroupChildrenNamedNodeExpressionsTransportSlot>>
+  _anchor?: SlotValue<AnchorTransport>
   _named_node_expressions_separator_space?: number
 }
 

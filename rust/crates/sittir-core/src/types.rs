@@ -193,6 +193,11 @@ pub struct NodeData {
     /// and the entry, all on that row: the render seats the entry after them.
     /// `0` everywhere else.
     pub tokens_between: u16,
+
+    /// The coordinate this node carries addresses its text only: a deep
+    /// read's leaf names the bytes it spans and nothing of the layout around
+    /// them, so no edge or gap reader takes evidence from it.
+    pub text_only: bool,
 }
 
 #[derive(Serialize)]
@@ -246,6 +251,8 @@ struct NodeDataSer<'a> {
     same_line: bool,
     #[serde(rename = "$tokensBetween", default, skip_serializing_if = "is_zero")]
     tokens_between: u16,
+    #[serde(rename = "$textOnly", default, skip_serializing_if = "is_false")]
+    text_only: bool,
 }
 
 #[derive(Deserialize)]
@@ -280,6 +287,8 @@ struct NodeDataDe {
     same_line: bool,
     #[serde(rename = "$tokensBetween", default)]
     tokens_between: u16,
+    #[serde(rename = "$textOnly", default)]
+    text_only: bool,
 }
 
 fn serialize_slot_fields<S>(
@@ -385,6 +394,7 @@ impl Serialize for NodeData {
             slot_order: &self.slot_order,
             same_line: self.same_line,
             tokens_between: self.tokens_between,
+            text_only: self.text_only,
         }
         .serialize(serializer)
     }
@@ -421,6 +431,7 @@ impl<'de> Deserialize<'de> for NodeData {
             slot_order: wire.slot_order,
             same_line: wire.same_line,
             tokens_between: wire.tokens_between,
+            text_only: wire.text_only,
         })
     }
 }
@@ -667,6 +678,7 @@ fn scalar_text_leaf(text: String) -> NodeData {
         slot_order: None,
         same_line: false,
         tokens_between: 0,
+        text_only: false,
     }
 }
 
@@ -686,6 +698,7 @@ fn scalar_kind_leaf(kind: KindId) -> NodeData {
         slot_order: None,
         same_line: false,
         tokens_between: 0,
+        text_only: false,
     }
 }
 

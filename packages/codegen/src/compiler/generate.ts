@@ -20,6 +20,7 @@ import { addUnnamedChoiceListener } from './collect-slots.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
+import type { DroppedTokens } from './diagnostics/grammar-diagnostics.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 import type { OverlayName } from '../emitters/overlays/module.ts';
@@ -52,6 +53,7 @@ export interface GeneratedFiles {
 	generatedIdTables?: GeneratedIdTables;
 	renderModule?: RenderModuleBundle;
 	slotGroupingDiagnostics: readonly SlotGroupingDiagnostic[];
+	droppedTokens: readonly DroppedTokens[];
 }
 
 export interface GenerateConfig {
@@ -173,7 +175,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			nodeMap,
 			generatedIdTables,
 			renderModule: emitted.renderModule,
-			slotGroupingDiagnostics: compilation.slotGroupingDiagnostics
+			slotGroupingDiagnostics: compilation.slotGroupingDiagnostics,
+			droppedTokens: emitted.templates.droppedTokens
 		};
 		return result;
 	} finally {

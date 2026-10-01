@@ -20,16 +20,21 @@
   {
     "type": "alternation",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "term",
-          "named": true
-        }
-      ]
+    "fields": {
+      "terms": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "term",
+            "named": true
+          },
+          {
+            "type": "|",
+            "named": false
+          }
+        ]
+      }
     }
   },
   {
@@ -101,14 +106,34 @@
             "named": true
           }
         ]
+      },
+      "leading": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "class_character",
+            "named": true
+          }
+        ]
+      },
+      "trailing": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "class_character",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
         {
-          "type": "class_character",
+          "type": "negation",
           "named": true
         }
       ]
@@ -464,6 +489,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "negation",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "non_capturing_group",

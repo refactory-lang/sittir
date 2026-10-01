@@ -1504,6 +1504,8 @@ supertype only by shape has none.
 
 ### `packages/codegen/src/types/rule.ts::StringRule`
 
+A literal aliased to a named symbol carries `aliasedTo` and `aliasedToId`, the parser's name and kind id for the node it reads as.
+
 ```text
 // ---------------------------------------------------------------------------
 // Terminals

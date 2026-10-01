@@ -418,6 +418,10 @@ One `reserved-member-not-literal` warning per reserved-wordset member that `rese
 
 One blocking `trivia-line-end-undetermined` error per trivia kind whose `lineTerminated` is undetermined: an arm ends in an external token with no render rule. The remedy is to author the external's render-only rule in `grammar.sittir.ts` (the text it scans), which `lineTerminated` then reads like any token body. No grammar has one today.
 
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::terminalRootDiagnostics`
+
+One blocking `grammar-root-terminal` error when the grammar root is a terminal of the model (`isTerminalNode`): a choice of literals, a keyword or a single pattern. The root owns the edges around its items (its before and after sites, written at the two ends of a render), so it needs children for those edges to sit around; a terminal has only its text. The record names the root and its model type. The parser cannot flag this: tree-sitter always gives the start rule a non-terminal symbol, so the classification read is the model's. No grammar has a terminal root today.
+
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::collectGrammarDiagnosticsForGrammar`
 
 The front half of a compile over one evaluated stage: link, normalize and assemble, and the grammar diagnostics
@@ -708,3 +712,11 @@ One site `catalogCoverage` reports: the owner kind, the slot and a label for the
 ### `packages/codegen/src/compiler/diagnostics/catalog-coverage.ts::auxTokenKinds`
 
 The catalog's anonymous auxiliary tokens: rows that are both `aux` and `terminal`. After the text-token mint (`dsl/rule-transforms.ts::mintInlineTextTokens`, run by enrich) there should be none, because each inline pattern or non-literal token has a visible kind of its own. The one exemption is structural: when named rules share one identical token body (`isTerminalRootRule`, `tokenBodyKey`), tree-sitter compiles that body to one auxiliary token named `<first rule>_token1`, and each rule keeps a kind id of its own (regex `posix_class_name` and `flags`). Link reports what remains as `aux-token-in-catalog`.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::DroppedTokens`
+
+A kind and the literal tokens its template neither writes nor seats in a slot.
+
+### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromDroppedTokens`
+
+The blocking `dropped-token` error for one kind: the tokens lost by its render, and the remedy, a named wrapper for the token in patches so it becomes a slot. Generation stops on it unless `dropped-token` is allowed. It is raised once the templates are emitted, because the template is the only place the loss is visible.

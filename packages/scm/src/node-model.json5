@@ -1,7 +1,7 @@
 {
   "name": "scm",
   "root": "program",
-  "nodeCount": 58,
+  "nodeCount": 59,
   "word": null,
   "supertypes": [
     "_group_expression",
@@ -336,6 +336,13 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
+      },
+      "anchor": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "named_node_plain": {
@@ -392,6 +399,13 @@
       }
     },
     "named_node_group_children": {
+      "anchor": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "named_node_expressions": {
         "unnamed": false,
         "slotCount": 1,
@@ -401,6 +415,13 @@
       }
     },
     "named_node_group_anchored_last": {
+      "anchor": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "named_node_expressions": {
         "unnamed": false,
         "slotCount": 1,
@@ -590,6 +611,18 @@
         "_tab",
         "_tight"
       ]
+    },
+    {
+      "kind": "anchor",
+      "modelType": "punctuation",
+      "typeName": "Anchor",
+      "factoryName": "anchor",
+      "irKey": "anchor",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\".\" as const",
+      "text": ".",
+      "factoryShape": "constant"
     },
     {
       "kind": "anonymous_node",
@@ -1084,14 +1117,11 @@
     },
     {
       "kind": "grouping_group",
-      "modelType": "polymorph",
+      "modelType": "branch",
       "typeName": "GroupingGroup",
       "factoryName": "groupingGroup",
       "irKey": "groupingGroup",
       "hidden": false,
-      "annotations": {
-        "hoisted": true
-      },
       "slots": [
         {
           "name": "group_expression",
@@ -1119,23 +1149,32 @@
               "parseKind": "group_expression_arm"
             }
           ]
+        },
+        {
+          "name": "anchor",
+          "propertyName": "anchor",
+          "paramName": "anchor",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "anchor"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "anchor",
+              "parseKind": "anchor"
+            }
+          ]
         }
       ],
-      "name": "grouping_group",
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
-        "group_expression"
-      ],
-      "bareAccepts": [
-        "anonymous_node",
-        "field_definition",
-        "group_expression_arm",
-        "grouping",
-        "list",
-        "missing_node",
-        "named_node_plain",
-        "named_node_supertyped",
-        "predicate"
+        "group_expression",
+        "anchor"
       ]
     },
     {
@@ -1457,6 +1496,26 @@
       },
       "slots": [
         {
+          "name": "anchor",
+          "propertyName": "anchor",
+          "paramName": "anchor",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "anchor"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "anchor",
+              "parseKind": "anchor"
+            }
+          ]
+        },
+        {
           "name": "named_node_expressions",
           "propertyName": "namedNodeExpressions",
           "paramName": "namedNodeExpressions",
@@ -1528,13 +1587,14 @@
       "name": "named_node_group_anchored_last",
       "factoryShape": "config",
       "factoryFields": [
+        "anchor",
         "named_node_expressions",
         "last"
       ]
     },
     {
       "kind": "named_node_group_children",
-      "modelType": "envelope",
+      "modelType": "branch",
       "typeName": "NamedNodeGroupChildren",
       "factoryName": "namedNodeGroupChildren",
       "irKey": "namedNodeGroupChildren",
@@ -1543,6 +1603,26 @@
         "hoisted": true
       },
       "slots": [
+        {
+          "name": "anchor",
+          "propertyName": "anchor",
+          "paramName": "anchor",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "storage": "boolean",
+          "kinds": [
+            "anchor"
+          ],
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "anchor",
+              "parseKind": "anchor"
+            }
+          ]
+        },
         {
           "name": "named_node_expressions",
           "propertyName": "namedNodeExpressions",
@@ -1579,8 +1659,9 @@
         }
       ],
       "name": "named_node_group_children",
-      "factoryShape": "spread",
+      "factoryShape": "config",
       "factoryFields": [
+        "anchor",
         "named_node_expressions"
       ]
     },

@@ -531,3 +531,31 @@ describe('unsupported shapes block unless floor-listed for their own code', () =
 		expect(blockedRecords(records, { 'content-collision': ['k'] })).toHaveLength(1);
 	});
 });
+
+describe('the grammar root must be a non-terminal', () => {
+	const rootRecords = (rules: Record<string, unknown>) =>
+		collectGrammarDiagnosticsForGrammar({ rawGrammar: withPredictedKinds(buildRawGrammar(rules)) }).diagnostics.filter(
+			(d) => d.code === 'grammar-root-terminal'
+		);
+
+	it('a choice-of-literals root is a blocking record naming the root', () => {
+		expect(rootRecords({ mode: { type: 'CHOICE', members: [{ type: 'STRING', value: 'on' }, { type: 'STRING', value: 'off' }] } })).toEqual([
+			expect.objectContaining({ ownerKind: 'mode', severity: 'error', canProceed: false })
+		]);
+	});
+
+	it('a single-pattern root is a blocking record naming the root', () => {
+		expect(rootRecords({ word: { type: 'PATTERN', value: '[a-z]+' } })).toEqual([
+			expect.objectContaining({ ownerKind: 'word', severity: 'error', canProceed: false })
+		]);
+	});
+
+	it('a root with children compiles without the record', () => {
+		expect(
+			rootRecords({
+				program: { type: 'REPEAT', content: { type: 'SYMBOL', name: 'word' } },
+				word: { type: 'PATTERN', value: '[a-z]+' }
+			})
+		).toEqual([]);
+	});
+});

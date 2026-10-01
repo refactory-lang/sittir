@@ -4,7 +4,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-const COORDINATE_KEYS = ['$nodeHandle', '$span', '$childIndex'] as const;
+const COORDINATE_KEYS = ['$nodeHandle', '$span', '$childIndex', '$textOnly'] as const;
 
 function isStorageKey(key: string): boolean {
 	return key.startsWith('_') || key === '$other';
@@ -81,7 +81,7 @@ function hasOutsideTrivia(trivia: unknown): boolean {
 /** The coordinate projection of a folded node: identity and provenance, no storage. */
 function asCoordinate(record: Record<string, unknown>): Record<string, unknown> {
 	const out: Record<string, unknown> = { $type: record.$type };
-	for (const key of ['$source', '$named', '$span', '$nodeHandle', '$childIndex', '$format']) {
+	for (const key of ['$source', '$named', '$span', '$nodeHandle', '$childIndex', '$textOnly', '$format']) {
 		if (record[key] !== undefined) out[key] = record[key];
 	}
 	return out;
@@ -99,6 +99,7 @@ export function markEdited<T extends object>(data: T): Omit<T, (typeof COORDINAT
 		$nodeHandle: _handle,
 		$span: _span,
 		$childIndex: _index,
+		$textOnly: _textOnly,
 		...rest
 	} = data as T & Record<(typeof COORDINATE_KEYS)[number], unknown>;
 	return rest;
@@ -169,6 +170,7 @@ function projectValue(value: unknown, normalize: NormalizeNodeStorage | undefine
 	// with neither its pre-edit text nor the span that would slice it.
 	delete out.$nodeHandle;
 	delete out.$childIndex;
+	delete out.$textOnly;
 	if (hasStructure(out)) {
 		delete out.$text;
 		delete out.$span;
@@ -180,7 +182,9 @@ function projectValue(value: unknown, normalize: NormalizeNodeStorage | undefine
  * Drop the pre-edit spelling and the coordinate that would slice it from
  * every node that carries storage, in place, and return `root`. For
  * already-projected data that came through a path other than
- * {@link toTransportData}.
+ * {@link toTransportData}. A coordinate that survives addresses its node's
+ * text only, and is stamped `$textOnly` so no edge or gap reader takes layout
+ * evidence from it.
  */
 export function stripStructuralProvenance<T>(root: T): T {
 	const seen = new WeakSet<object>();
@@ -192,6 +196,7 @@ export function stripStructuralProvenance<T>(root: T): T {
 			delete value.$text;
 			for (const key of COORDINATE_KEYS) delete value[key];
 		}
+		if (value.$nodeHandle !== undefined) value.$textOnly = true;
 		for (const [key, child] of Object.entries(value)) {
 			if (!isStorageKey(key)) continue;
 			if (Array.isArray(child)) for (const entry of child) recurse(entry);

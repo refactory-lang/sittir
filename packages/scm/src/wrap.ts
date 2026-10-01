@@ -6,6 +6,7 @@ import {
 	markEdited as $edited,
 	mapTriviaEntries,
 	projectInterior,
+	coerceBooleanKeywordStorage,
 	inTreeEngine
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
@@ -1314,7 +1315,9 @@ export function wrapNamedNodeExpressionArm(
 }
 
 export function wrapGroupingGroup(data: T.GroupingGroup, tree: TreeHandle): T.GroupingGroup.Parsed {
-	data = _keepModelledSlots(data, ['_group_expression']);
+	data = _keepModelledSlots(data, ['_group_expression', '_anchor']);
+	if (_isReadTextLeaf(data))
+		return withMethods({ ...data, $type: TSKindId.GroupingGroup as const }) as unknown as T.GroupingGroup.Parsed;
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.GroupingGroup as const,
@@ -1324,13 +1327,25 @@ export function wrapGroupingGroup(data: T.GroupingGroup, tree: TreeHandle): T.Gr
 			slotName: 'group_expression',
 			span: (data as _NodeData).$span
 		}),
+		_anchor: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._anchor, 'anchor', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'anchor',
+				span: (data as _NodeData).$span
+			})
+		),
 
 		groupExpression() {
 			return drillIn<T.Definition | T.GroupExpressionArm>(this._group_expression, tree);
 		},
+		anchor() {
+			return this._anchor;
+		},
 		$with: {
 			groupExpression: (v: NonNullable<T.GroupingGroup['_group_expression']>) =>
-				wrapGroupingGroup({ ...$edited(data), _group_expression: v }, tree)
+				wrapGroupingGroup({ ...$edited(data), _group_expression: v }, tree),
+			anchor: (v: NonNullable<T.GroupingGroup['_anchor']>) => wrapGroupingGroup({ ...$edited(data), _anchor: v }, tree)
 		}
 	});
 	return _node as unknown as T.GroupingGroup.Parsed;
@@ -1506,10 +1521,23 @@ export function wrapNamedNodeGroupChildren(
 	data: T.NamedNodeGroupChildren,
 	tree: TreeHandle
 ): T.NamedNodeGroupChildren.Parsed {
-	data = _keepModelledSlots(data, ['_named_node_expressions']);
+	data = _keepModelledSlots(data, ['_anchor', '_named_node_expressions']);
+	if (_isReadTextLeaf(data))
+		return withMethods({
+			...data,
+			$type: TSKindId.NamedNodeGroupChildren as const
+		}) as unknown as T.NamedNodeGroupChildren.Parsed;
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.NamedNodeGroupChildren as const,
+		_anchor: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._anchor, 'anchor', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'anchor',
+				span: (data as _NodeData).$span
+			})
+		),
 		_named_node_expressions: normalizeRepeatedWrapSlot(data._named_node_expressions, true, 'named_node_expressions', {
 			tree,
 			nodeType: data.$type,
@@ -1517,6 +1545,9 @@ export function wrapNamedNodeGroupChildren(
 			span: (data as _NodeData).$span
 		}),
 
+		anchor() {
+			return this._anchor;
+		},
 		namedNodeExpressions() {
 			return drillInAll<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
 				this._named_node_expressions as
@@ -1526,6 +1557,8 @@ export function wrapNamedNodeGroupChildren(
 			);
 		},
 		$with: {
+			anchor: (v: NonNullable<T.NamedNodeGroupChildren['_anchor']>) =>
+				wrapNamedNodeGroupChildren({ ...$edited(data), _anchor: v }, tree),
 			namedNodeExpressions: (
 				...v: NonEmptyArray<NonNullable<T.NamedNodeGroupChildren['_named_node_expressions']>[number]>
 			) => wrapNamedNodeGroupChildren({ ...$edited(data), _named_node_expressions: v }, tree)
@@ -1538,10 +1571,23 @@ export function wrapNamedNodeGroupAnchoredLast(
 	data: T.NamedNodeGroupAnchoredLast,
 	tree: TreeHandle
 ): T.NamedNodeGroupAnchoredLast.Parsed {
-	data = _keepModelledSlots(data, ['_named_node_expressions', '_last']);
+	data = _keepModelledSlots(data, ['_anchor', '_named_node_expressions', '_last']);
+	if (_isReadTextLeaf(data))
+		return withMethods({
+			...data,
+			$type: TSKindId.NamedNodeGroupAnchoredLast as const
+		}) as unknown as T.NamedNodeGroupAnchoredLast.Parsed;
 	const _node = withMethods({
 		...data,
 		$type: TSKindId.NamedNodeGroupAnchoredLast as const,
+		_anchor: coerceBooleanKeywordStorage(
+			normalizeSingularWrapSlot(data._anchor, 'anchor', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'anchor',
+				span: (data as _NodeData).$span
+			})
+		),
 		_named_node_expressions: normalizeRepeatedWrapSlot(data._named_node_expressions, false, 'named_node_expressions', {
 			tree,
 			nodeType: data.$type,
@@ -1555,6 +1601,9 @@ export function wrapNamedNodeGroupAnchoredLast(
 			span: (data as _NodeData).$span
 		}),
 
+		anchor() {
+			return this._anchor;
+		},
 		namedNodeExpressions() {
 			return drillInAll<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(
 				this._named_node_expressions as
@@ -1567,6 +1616,8 @@ export function wrapNamedNodeGroupAnchoredLast(
 			return drillIn<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(this._last, tree);
 		},
 		$with: {
+			anchor: (v: NonNullable<T.NamedNodeGroupAnchoredLast['_anchor']>) =>
+				wrapNamedNodeGroupAnchoredLast({ ...$edited(data), _anchor: v }, tree),
 			namedNodeExpressions: (...v: NonNullable<T.NamedNodeGroupAnchoredLast['_named_node_expressions']>[number][]) =>
 				wrapNamedNodeGroupAnchoredLast({ ...$edited(data), _named_node_expressions: v }, tree),
 			last: (v: NonNullable<T.NamedNodeGroupAnchoredLast['_last']>) =>
@@ -1606,6 +1657,7 @@ const _wrapTable: Record<number, (data: _NodeData, tree: TreeHandle) => unknown>
 	[TSKindId.GroupingGroup]: (d, t) => wrapGroupingGroup(d as unknown as T.GroupingGroup, t),
 	[TSKindId.NamedNodeGroup]: (d, t) => wrapNamedNodeGroup(d as unknown as T.NamedNodeGroup, t),
 	[TSKindId.StringContentText]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.StringContentText as const }),
+	[TSKindId.Anchor]: (d) => ({ ..._spelledLeaf(d), $type: TSKindId.Anchor as const }),
 	[TSKindId.NamedNodePlain]: (d, t) => wrapNamedNodePlain(d as unknown as T.NamedNodePlain, t),
 	[TSKindId.NamedNodeSupertyped]: (d, t) => wrapNamedNodeSupertyped(d as unknown as T.NamedNodeSupertyped, t),
 	[TSKindId.NamedNodeGroupChildren]: (d, t) => wrapNamedNodeGroupChildren(d as unknown as T.NamedNodeGroupChildren, t),
@@ -1655,7 +1707,7 @@ function _withoutDisplay(data: _NodeData): _NodeData {
 	return node as _NodeData;
 }
 
-const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData['$type']> = new Set([43, 44, 45, 46, 56, 57]);
+const _RECLAIMS_ANONYMOUS: ReadonlySet<_NodeData['$type']> = new Set([43, 44, 45, 46, 57, 58]);
 function _spellingTokens(data: _NodeData): readonly _NodeData[] | undefined {
 	const { $other, ...node } = data;
 	if ($other === undefined || _RECLAIMS_ANONYMOUS.has(data.$type)) return undefined;

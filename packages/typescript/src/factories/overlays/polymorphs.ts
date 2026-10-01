@@ -2,6 +2,7 @@
 import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
+import { bundle } from '@sittir/common/utils';
 import type { ArgsOf, OmitEach, OptionsArg } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 export * from './refines.js';
@@ -39,12 +40,20 @@ const importStatement$clauseFrom =
 		const { fromClause: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, fromClause: _c(child)(seated) } as never, options as never);
 	};
+const importStatement$clauseFrom$strict = importStatement$clauseFrom(
+	F.buildImportStatement,
+	F.buildImportStatementClauseFrom
+);
+const importStatement$clauseFrom$coerce = importStatement$clauseFrom(
+	C.coerceToImportStatement,
+	C.coerceToImportStatementClauseFrom
+);
 export const importStatement = Object.freeze({
 	...B.importStatement,
-	clauseFrom: {
-		strict: importStatement$clauseFrom(F.buildImportStatement, F.buildImportStatementClauseFrom),
-		coerce: importStatement$clauseFrom(C.coerceToImportStatement, C.coerceToImportStatementClauseFrom)
-	}
+	clauseFrom: bundle(importStatement$clauseFrom$strict, importStatement$clauseFrom$coerce, {
+		key: 'importStatement.clauseFrom',
+		max: 2
+	})
 }) as unknown as typeof B.importStatement & {
 	clauseFrom: {
 		strict: (
@@ -66,10 +75,26 @@ const importClauseGroup$namespaceImport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const importClauseGroup$namespaceImport$strict = importClauseGroup$namespaceImport(
+	F.buildImportClauseGroup,
+	F.buildNamespaceImport
+);
+const importClauseGroup$namespaceImport$coerce = importClauseGroup$namespaceImport(
+	F.buildImportClauseGroup,
+	C.coerceToNamespaceImport
+);
 const importClauseGroup$namedImports =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const importClauseGroup$namedImports$strict = importClauseGroup$namedImports(
+	F.buildImportClauseGroup,
+	F.buildNamedImports
+);
+const importClauseGroup$namedImports$coerce = importClauseGroup$namedImports(
+	F.buildImportClauseGroup,
+	C.coerceToNamedImports
+);
 const importClauseGroup: {
 	namespaceImport: {
 		strict: (...args: ArgsOf<typeof F.buildNamespaceImport>) => ReturnType<typeof F.buildImportClauseGroup>;
@@ -80,14 +105,11 @@ const importClauseGroup: {
 		coerce: (...args: ArgsOf<typeof C.coerceToNamedImports>) => ReturnType<typeof F.buildImportClauseGroup>;
 	};
 } = Object.freeze({
-	namespaceImport: {
-		strict: importClauseGroup$namespaceImport(F.buildImportClauseGroup, F.buildNamespaceImport),
-		coerce: importClauseGroup$namespaceImport(F.buildImportClauseGroup, C.coerceToNamespaceImport)
-	},
-	namedImports: {
-		strict: importClauseGroup$namedImports(F.buildImportClauseGroup, F.buildNamedImports),
-		coerce: importClauseGroup$namedImports(F.buildImportClauseGroup, C.coerceToNamedImports)
-	}
+	namespaceImport: bundle(importClauseGroup$namespaceImport$strict, importClauseGroup$namespaceImport$coerce, {
+		key: 'importClauseGroup.namespaceImport',
+		max: 1
+	}),
+	namedImports: bundle(importClauseGroup$namedImports$strict, importClauseGroup$namedImports$coerce)
 });
 
 const importClauseDefaultImport$importClauseGroup =
@@ -99,6 +121,14 @@ const importClauseDefaultImport$importClauseGroup =
 		const { importClauseGroup: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, importClauseGroup: _c(child)(seated) } as never, options as never);
 	};
+const importClauseDefaultImport$importClauseGroup$strict = importClauseDefaultImport$importClauseGroup(
+	F.buildImportClauseDefaultImport,
+	F.buildImportClauseGroup
+);
+const importClauseDefaultImport$importClauseGroup$coerce = importClauseDefaultImport$importClauseGroup(
+	C.coerceToImportClauseDefaultImport,
+	C.coerceToImportClauseGroup
+);
 const importClauseDefaultImport$importClauseGroup$namespaceImport =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -108,6 +138,16 @@ const importClauseDefaultImport$importClauseGroup$namespaceImport =
 		const { importClauseGroup: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, importClauseGroup: _c(child)(...seated) } as never, options as never);
 	};
+const importClauseDefaultImport$importClauseGroup$namespaceImport$strict =
+	importClauseDefaultImport$importClauseGroup$namespaceImport(
+		F.buildImportClauseDefaultImport,
+		importClauseGroup.namespaceImport.strict
+	);
+const importClauseDefaultImport$importClauseGroup$namespaceImport$coerce =
+	importClauseDefaultImport$importClauseGroup$namespaceImport(
+		C.coerceToImportClauseDefaultImport,
+		importClauseGroup.namespaceImport.coerce
+	);
 const importClauseDefaultImport$importClauseGroup$namedImports =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -117,6 +157,16 @@ const importClauseDefaultImport$importClauseGroup$namedImports =
 		const { importClauseGroup: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, importClauseGroup: _c(child)(...seated) } as never, options as never);
 	};
+const importClauseDefaultImport$importClauseGroup$namedImports$strict =
+	importClauseDefaultImport$importClauseGroup$namedImports(
+		F.buildImportClauseDefaultImport,
+		importClauseGroup.namedImports.strict
+	);
+const importClauseDefaultImport$importClauseGroup$namedImports$coerce =
+	importClauseDefaultImport$importClauseGroup$namedImports(
+		C.coerceToImportClauseDefaultImport,
+		importClauseGroup.namedImports.coerce
+	);
 const importClauseDefaultImport: {
 	importClauseGroup: {
 		strict: (
@@ -162,31 +212,20 @@ const importClauseDefaultImport: {
 	};
 } = Object.freeze({
 	importClauseGroup: {
-		strict: importClauseDefaultImport$importClauseGroup(F.buildImportClauseDefaultImport, F.buildImportClauseGroup),
-		coerce: importClauseDefaultImport$importClauseGroup(
-			C.coerceToImportClauseDefaultImport,
-			C.coerceToImportClauseGroup
+		...bundle(importClauseDefaultImport$importClauseGroup$strict, importClauseDefaultImport$importClauseGroup$coerce, {
+			key: 'importClauseDefaultImport.importClauseGroup',
+			max: 2
+		}),
+		namespaceImport: bundle(
+			importClauseDefaultImport$importClauseGroup$namespaceImport$strict,
+			importClauseDefaultImport$importClauseGroup$namespaceImport$coerce,
+			{ key: 'importClauseDefaultImport.importClauseGroup.namespaceImport', max: 2 }
 		),
-		namespaceImport: {
-			strict: importClauseDefaultImport$importClauseGroup$namespaceImport(
-				F.buildImportClauseDefaultImport,
-				importClauseGroup.namespaceImport.strict
-			),
-			coerce: importClauseDefaultImport$importClauseGroup$namespaceImport(
-				C.coerceToImportClauseDefaultImport,
-				importClauseGroup.namespaceImport.coerce
-			)
-		},
-		namedImports: {
-			strict: importClauseDefaultImport$importClauseGroup$namedImports(
-				F.buildImportClauseDefaultImport,
-				importClauseGroup.namedImports.strict
-			),
-			coerce: importClauseDefaultImport$importClauseGroup$namedImports(
-				C.coerceToImportClauseDefaultImport,
-				importClauseGroup.namedImports.coerce
-			)
-		}
+		namedImports: bundle(
+			importClauseDefaultImport$importClauseGroup$namedImports$strict,
+			importClauseDefaultImport$importClauseGroup$namedImports$coerce,
+			{ key: 'importClauseDefaultImport.importClauseGroup.namedImports', max: 2 }
+		)
 	}
 });
 
@@ -194,68 +233,97 @@ const importClause$namespaceImport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const importClause$namespaceImport$strict = importClause$namespaceImport(F.buildImportClause, F.buildNamespaceImport);
+const importClause$namespaceImport$coerce = importClause$namespaceImport(
+	F.buildImportClause,
+	C.coerceToNamespaceImport
+);
 const importClause$namedImports =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const importClause$namedImports$strict = importClause$namedImports(F.buildImportClause, F.buildNamedImports);
+const importClause$namedImports$coerce = importClause$namedImports(F.buildImportClause, C.coerceToNamedImports);
 const importClause$defaultImport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const importClause$defaultImport$strict = importClause$defaultImport(
+	F.buildImportClause,
+	F.buildImportClauseDefaultImport
+);
+const importClause$defaultImport$coerce = importClause$defaultImport(
+	F.buildImportClause,
+	C.coerceToImportClauseDefaultImport
+);
 const importClause$defaultImport$importClauseGroup =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const importClause$defaultImport$importClauseGroup$strict = importClause$defaultImport$importClauseGroup(
+	F.buildImportClause,
+	importClauseDefaultImport.importClauseGroup.strict
+);
+const importClause$defaultImport$importClauseGroup$coerce = importClause$defaultImport$importClauseGroup(
+	F.buildImportClause,
+	importClauseDefaultImport.importClauseGroup.coerce
+);
 const importClause$defaultImport$importClauseGroup$namespaceImport =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const importClause$defaultImport$importClauseGroup$namespaceImport$strict =
+	importClause$defaultImport$importClauseGroup$namespaceImport(
+		F.buildImportClause,
+		importClauseDefaultImport.importClauseGroup.namespaceImport.strict
+	);
+const importClause$defaultImport$importClauseGroup$namespaceImport$coerce =
+	importClause$defaultImport$importClauseGroup$namespaceImport(
+		F.buildImportClause,
+		importClauseDefaultImport.importClauseGroup.namespaceImport.coerce
+	);
 const importClause$defaultImport$importClauseGroup$namedImports =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const importClause$defaultImport$importClauseGroup$namedImports$strict =
+	importClause$defaultImport$importClauseGroup$namedImports(
+		F.buildImportClause,
+		importClauseDefaultImport.importClauseGroup.namedImports.strict
+	);
+const importClause$defaultImport$importClauseGroup$namedImports$coerce =
+	importClause$defaultImport$importClauseGroup$namedImports(
+		F.buildImportClause,
+		importClauseDefaultImport.importClauseGroup.namedImports.coerce
+	);
 export const importClause = Object.freeze({
 	...B.importClause,
-	namespaceImport: {
-		strict: importClause$namespaceImport(F.buildImportClause, F.buildNamespaceImport),
-		coerce: importClause$namespaceImport(F.buildImportClause, C.coerceToNamespaceImport)
-	},
-	namedImports: {
-		strict: importClause$namedImports(F.buildImportClause, F.buildNamedImports),
-		coerce: importClause$namedImports(F.buildImportClause, C.coerceToNamedImports)
-	},
+	namespaceImport: bundle(importClause$namespaceImport$strict, importClause$namespaceImport$coerce, {
+		key: 'importClause.namespaceImport',
+		max: 1
+	}),
+	namedImports: bundle(importClause$namedImports$strict, importClause$namedImports$coerce),
 	defaultImport: {
-		strict: importClause$defaultImport(F.buildImportClause, F.buildImportClauseDefaultImport),
-		coerce: importClause$defaultImport(F.buildImportClause, C.coerceToImportClauseDefaultImport),
+		...bundle(importClause$defaultImport$strict, importClause$defaultImport$coerce, {
+			key: 'importClause.defaultImport',
+			max: 1
+		}),
 		importClauseGroup: {
-			strict: importClause$defaultImport$importClauseGroup(
-				F.buildImportClause,
-				importClauseDefaultImport.importClauseGroup.strict
+			...bundle(
+				importClause$defaultImport$importClauseGroup$strict,
+				importClause$defaultImport$importClauseGroup$coerce,
+				{ key: 'importClause.defaultImport.importClauseGroup', max: 2 }
 			),
-			coerce: importClause$defaultImport$importClauseGroup(
-				F.buildImportClause,
-				importClauseDefaultImport.importClauseGroup.coerce
+			namespaceImport: bundle(
+				importClause$defaultImport$importClauseGroup$namespaceImport$strict,
+				importClause$defaultImport$importClauseGroup$namespaceImport$coerce,
+				{ key: 'importClause.defaultImport.importClauseGroup.namespaceImport', max: 2 }
 			),
-			namespaceImport: {
-				strict: importClause$defaultImport$importClauseGroup$namespaceImport(
-					F.buildImportClause,
-					importClauseDefaultImport.importClauseGroup.namespaceImport.strict
-				),
-				coerce: importClause$defaultImport$importClauseGroup$namespaceImport(
-					F.buildImportClause,
-					importClauseDefaultImport.importClauseGroup.namespaceImport.coerce
-				)
-			},
-			namedImports: {
-				strict: importClause$defaultImport$importClauseGroup$namedImports(
-					F.buildImportClause,
-					importClauseDefaultImport.importClauseGroup.namedImports.strict
-				),
-				coerce: importClause$defaultImport$importClauseGroup$namedImports(
-					F.buildImportClause,
-					importClauseDefaultImport.importClauseGroup.namedImports.coerce
-				)
-			}
+			namedImports: bundle(
+				importClause$defaultImport$importClauseGroup$namedImports$strict,
+				importClause$defaultImport$importClauseGroup$namedImports$coerce,
+				{ key: 'importClause.defaultImport.importClauseGroup.namedImports', max: 2 }
+			)
 		}
 	}
 }) as unknown as typeof B.importClause & {
@@ -308,6 +376,8 @@ const forInStatement$lhs =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, forHeader: _c(child)(inner) } as never, options as never);
 	};
+const forInStatement$lhs$strict = forInStatement$lhs(F.buildForInStatement, F.buildForHeaderLhs);
+const forInStatement$lhs$coerce = forInStatement$lhs(C.coerceToForInStatement, C.coerceToForHeaderLhs);
 const forInStatement$varKind =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'forHeader'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -319,6 +389,8 @@ const forInStatement$varKind =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, forHeader: _c(child)(inner) } as never, options as never);
 	};
+const forInStatement$varKind$strict = forInStatement$varKind(F.buildForInStatement, F.buildForHeaderVarKind);
+const forInStatement$varKind$coerce = forInStatement$varKind(C.coerceToForInStatement, C.coerceToForHeaderVarKind);
 const forInStatement$letConstKind =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'forHeader'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -331,20 +403,25 @@ const forInStatement$letConstKind =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, forHeader: _c(child)(inner) } as never, options as never);
 	};
+const forInStatement$letConstKind$strict = forInStatement$letConstKind(
+	F.buildForInStatement,
+	F.buildForHeaderLetConstKind
+);
+const forInStatement$letConstKind$coerce = forInStatement$letConstKind(
+	C.coerceToForInStatement,
+	C.coerceToForHeaderLetConstKind
+);
 export const forInStatement = Object.freeze({
 	...B.forInStatement,
-	lhs: {
-		strict: forInStatement$lhs(F.buildForInStatement, F.buildForHeaderLhs),
-		coerce: forInStatement$lhs(C.coerceToForInStatement, C.coerceToForHeaderLhs)
-	},
-	varKind: {
-		strict: forInStatement$varKind(F.buildForInStatement, F.buildForHeaderVarKind),
-		coerce: forInStatement$varKind(C.coerceToForInStatement, C.coerceToForHeaderVarKind)
-	},
-	letConstKind: {
-		strict: forInStatement$letConstKind(F.buildForInStatement, F.buildForHeaderLetConstKind),
-		coerce: forInStatement$letConstKind(C.coerceToForInStatement, C.coerceToForHeaderLetConstKind)
-	}
+	lhs: bundle(forInStatement$lhs$strict, forInStatement$lhs$coerce, { key: 'forInStatement.lhs', max: 2 }),
+	varKind: bundle(forInStatement$varKind$strict, forInStatement$varKind$coerce, {
+		key: 'forInStatement.varKind',
+		max: 2
+	}),
+	letConstKind: bundle(forInStatement$letConstKind$strict, forInStatement$letConstKind$coerce, {
+		key: 'forInStatement.letConstKind',
+		max: 2
+	})
 }) as unknown as typeof B.forInStatement & {
 	lhs: {
 		strict: (
@@ -429,31 +506,74 @@ const catchClause$seatedCoerce: (
 );
 export const catchClause = Object.freeze({
 	...B.catchClause,
-	strict: catchClause$seated,
-	coerce: catchClause$seatedCoerce
+	...bundle(catchClause$seated, catchClause$seatedCoerce, { key: 'catchClause', max: 1 })
 }) as unknown as typeof B.catchClause & {
 	strict: typeof catchClause$seated;
 	coerce: typeof catchClause$seatedCoerce;
+};
+
+const binaryExpression$in =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { binaryExpressionIn: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) } as never, options as never);
+	};
+const binaryExpression$in$strict = binaryExpression$in(F.buildBinaryExpression, F.buildBinaryExpressionIn);
+const binaryExpression$in$coerce = binaryExpression$in(C.coerceToBinaryExpression, C.coerceToBinaryExpressionIn);
+export const binaryExpression = Object.freeze({
+	...B.binaryExpression,
+	in: bundle(binaryExpression$in$strict, binaryExpression$in$coerce, { key: 'binaryExpression.in', max: 2 })
+}) as unknown as typeof B.binaryExpression & {
+	in: {
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'binaryExpressionIn'> & {
+				binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
+			},
+			options?: OptionsArg<typeof F.buildBinaryExpression>
+		) => ReturnType<typeof F.buildBinaryExpression>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'binaryExpressionIn'> & {
+				binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
+			},
+			options?: OptionsArg<typeof C.coerceToBinaryExpression>
+		) => ReturnType<typeof C.coerceToBinaryExpression>;
+	};
 };
 
 const classHeritage$extendsClause =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const classHeritage$extendsClause$strict = classHeritage$extendsClause(
+	F.buildClassHeritage,
+	F.buildClassHeritageExtendsClause
+);
+const classHeritage$extendsClause$coerce = classHeritage$extendsClause(
+	F.buildClassHeritage,
+	C.coerceToClassHeritageExtendsClause
+);
 const classHeritage$implementsClause =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const classHeritage$implementsClause$strict = classHeritage$implementsClause(
+	F.buildClassHeritage,
+	F.buildImplementsClause
+);
+const classHeritage$implementsClause$coerce = classHeritage$implementsClause(
+	F.buildClassHeritage,
+	C.coerceToImplementsClause
+);
 export const classHeritage = Object.freeze({
 	...B.classHeritage,
-	extendsClause: {
-		strict: classHeritage$extendsClause(F.buildClassHeritage, F.buildClassHeritageExtendsClause),
-		coerce: classHeritage$extendsClause(F.buildClassHeritage, C.coerceToClassHeritageExtendsClause)
-	},
-	implementsClause: {
-		strict: classHeritage$implementsClause(F.buildClassHeritage, F.buildImplementsClause),
-		coerce: classHeritage$implementsClause(F.buildClassHeritage, C.coerceToImplementsClause)
-	}
+	extendsClause: bundle(classHeritage$extendsClause$strict, classHeritage$extendsClause$coerce, {
+		key: 'classHeritage.extendsClause',
+		max: 1
+	}),
+	implementsClause: bundle(classHeritage$implementsClause$strict, classHeritage$implementsClause$coerce)
 }) as unknown as typeof B.classHeritage & {
 	extendsClause: {
 		strict: (...args: ArgsOf<typeof F.buildClassHeritageExtendsClause>) => ReturnType<typeof F.buildClassHeritage>;
@@ -474,12 +594,17 @@ const arrowFunction$parameter =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
+const arrowFunction$parameter$strict = arrowFunction$parameter(F.buildArrowFunction, F.buildArrowFunctionParameter);
+const arrowFunction$parameter$coerce = arrowFunction$parameter(
+	C.coerceToArrowFunction,
+	C.coerceToArrowFunctionParameter
+);
 export const arrowFunction = Object.freeze({
 	...B.arrowFunction,
-	parameter: {
-		strict: arrowFunction$parameter(F.buildArrowFunction, F.buildArrowFunctionParameter),
-		coerce: arrowFunction$parameter(C.coerceToArrowFunction, C.coerceToArrowFunctionParameter)
-	}
+	parameter: bundle(arrowFunction$parameter$strict, arrowFunction$parameter$coerce, {
+		key: 'arrowFunction.parameter',
+		max: 2
+	})
 }) as unknown as typeof B.arrowFunction & {
 	parameter: {
 		strict: (
@@ -501,28 +626,52 @@ const lhsExpression$memberExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lhsExpression$memberExpression$strict = lhsExpression$memberExpression(
+	F.buildLhsExpression,
+	F.buildMemberExpression
+);
+const lhsExpression$memberExpression$coerce = lhsExpression$memberExpression(
+	F.buildLhsExpression,
+	C.coerceToMemberExpression
+);
 const lhsExpression$subscriptExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lhsExpression$subscriptExpression$strict = lhsExpression$subscriptExpression(
+	F.buildLhsExpression,
+	F.buildSubscriptExpression
+);
+const lhsExpression$subscriptExpression$coerce = lhsExpression$subscriptExpression(
+	F.buildLhsExpression,
+	C.coerceToSubscriptExpression
+);
 const lhsExpression$nonNullExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lhsExpression$nonNullExpression$strict = lhsExpression$nonNullExpression(
+	F.buildLhsExpression,
+	F.buildNonNullExpression
+);
+const lhsExpression$nonNullExpression$coerce = lhsExpression$nonNullExpression(
+	F.buildLhsExpression,
+	C.coerceToNonNullExpression
+);
 export const lhsExpression = Object.freeze({
 	...B.lhsExpression,
-	memberExpression: {
-		strict: lhsExpression$memberExpression(F.buildLhsExpression, F.buildMemberExpression),
-		coerce: lhsExpression$memberExpression(F.buildLhsExpression, C.coerceToMemberExpression)
-	},
-	subscriptExpression: {
-		strict: lhsExpression$subscriptExpression(F.buildLhsExpression, F.buildSubscriptExpression),
-		coerce: lhsExpression$subscriptExpression(F.buildLhsExpression, C.coerceToSubscriptExpression)
-	},
-	nonNullExpression: {
-		strict: lhsExpression$nonNullExpression(F.buildLhsExpression, F.buildNonNullExpression),
-		coerce: lhsExpression$nonNullExpression(F.buildLhsExpression, C.coerceToNonNullExpression)
-	}
+	memberExpression: bundle(lhsExpression$memberExpression$strict, lhsExpression$memberExpression$coerce, {
+		key: 'lhsExpression.memberExpression',
+		max: 1
+	}),
+	subscriptExpression: bundle(lhsExpression$subscriptExpression$strict, lhsExpression$subscriptExpression$coerce, {
+		key: 'lhsExpression.subscriptExpression',
+		max: 1
+	}),
+	nonNullExpression: bundle(lhsExpression$nonNullExpression$strict, lhsExpression$nonNullExpression$coerce, {
+		key: 'lhsExpression.nonNullExpression',
+		max: 1
+	})
 }) as unknown as typeof B.lhsExpression & {
 	memberExpression: {
 		strict: (...args: ArgsOf<typeof F.buildMemberExpression>) => ReturnType<typeof F.buildLhsExpression>;
@@ -538,43 +687,11 @@ export const lhsExpression = Object.freeze({
 	};
 };
 
-const binaryExpression$in =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'binaryExpressionIn'> & { binaryExpressionIn: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { binaryExpressionIn: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, binaryExpressionIn: _c(child)(seated) } as never, options as never);
-	};
-export const binaryExpression = Object.freeze({
-	...B.binaryExpression,
-	in: {
-		strict: binaryExpression$in(F.buildBinaryExpression, F.buildBinaryExpressionIn),
-		coerce: binaryExpression$in(C.coerceToBinaryExpression, C.coerceToBinaryExpressionIn)
-	}
-}) as unknown as typeof B.binaryExpression & {
-	in: {
-		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildBinaryExpression>[0], 'binaryExpressionIn'> & {
-				binaryExpressionIn: ArgsOf<typeof F.buildBinaryExpressionIn>[0];
-			},
-			options?: OptionsArg<typeof F.buildBinaryExpression>
-		) => ReturnType<typeof F.buildBinaryExpression>;
-		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToBinaryExpression>[0], 'binaryExpressionIn'> & {
-				binaryExpressionIn: ArgsOf<typeof C.coerceToBinaryExpressionIn>[0];
-			},
-			options?: OptionsArg<typeof C.coerceToBinaryExpression>
-		) => ReturnType<typeof C.coerceToBinaryExpression>;
-	};
-};
-
 export const classBody = Object.freeze({
 	...B.classBody,
-	method: Object.freeze({ strict: F.buildClassBodyMethod, coerce: C.coerceToClassBodyMethod }),
-	methodSig: Object.freeze({ strict: F.buildClassBodyMethodSig, coerce: C.coerceToClassBodyMethodSig }),
-	member: Object.freeze({ strict: F.buildClassBodyMember, coerce: C.coerceToClassBodyMember })
+	method: bundle(F.buildClassBodyMethod, C.coerceToClassBodyMethod, { key: 'classBody.method', max: 2 }),
+	methodSig: bundle(F.buildClassBodyMethodSig, C.coerceToClassBodyMethodSig, { key: 'classBody.methodSig', max: 1 }),
+	member: bundle(F.buildClassBodyMember, C.coerceToClassBodyMember, { key: 'classBody.member', max: 2 })
 }) as unknown as typeof B.classBody & {
 	method: { strict: typeof F.buildClassBodyMethod; coerce: typeof C.coerceToClassBodyMethod };
 	methodSig: { strict: typeof F.buildClassBodyMethodSig; coerce: typeof C.coerceToClassBodyMethodSig };
@@ -585,28 +702,49 @@ const restPattern$memberExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const restPattern$memberExpression$strict = restPattern$memberExpression(F.buildRestPattern, F.buildMemberExpression);
+const restPattern$memberExpression$coerce = restPattern$memberExpression(
+	F.buildRestPattern,
+	C.coerceToMemberExpression
+);
 const restPattern$subscriptExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const restPattern$subscriptExpression$strict = restPattern$subscriptExpression(
+	F.buildRestPattern,
+	F.buildSubscriptExpression
+);
+const restPattern$subscriptExpression$coerce = restPattern$subscriptExpression(
+	F.buildRestPattern,
+	C.coerceToSubscriptExpression
+);
 const restPattern$nonNullExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const restPattern$nonNullExpression$strict = restPattern$nonNullExpression(
+	F.buildRestPattern,
+	F.buildNonNullExpression
+);
+const restPattern$nonNullExpression$coerce = restPattern$nonNullExpression(
+	F.buildRestPattern,
+	C.coerceToNonNullExpression
+);
 export const restPattern = Object.freeze({
 	...B.restPattern,
-	memberExpression: {
-		strict: restPattern$memberExpression(F.buildRestPattern, F.buildMemberExpression),
-		coerce: restPattern$memberExpression(F.buildRestPattern, C.coerceToMemberExpression)
-	},
-	subscriptExpression: {
-		strict: restPattern$subscriptExpression(F.buildRestPattern, F.buildSubscriptExpression),
-		coerce: restPattern$subscriptExpression(F.buildRestPattern, C.coerceToSubscriptExpression)
-	},
-	nonNullExpression: {
-		strict: restPattern$nonNullExpression(F.buildRestPattern, F.buildNonNullExpression),
-		coerce: restPattern$nonNullExpression(F.buildRestPattern, C.coerceToNonNullExpression)
-	}
+	memberExpression: bundle(restPattern$memberExpression$strict, restPattern$memberExpression$coerce, {
+		key: 'restPattern.memberExpression',
+		max: 1
+	}),
+	subscriptExpression: bundle(restPattern$subscriptExpression$strict, restPattern$subscriptExpression$coerce, {
+		key: 'restPattern.subscriptExpression',
+		max: 1
+	}),
+	nonNullExpression: bundle(restPattern$nonNullExpression$strict, restPattern$nonNullExpression$coerce, {
+		key: 'restPattern.nonNullExpression',
+		max: 1
+	})
 }) as unknown as typeof B.restPattern & {
 	memberExpression: {
 		strict: (...args: ArgsOf<typeof F.buildMemberExpression>) => ReturnType<typeof F.buildRestPattern>;
@@ -626,116 +764,216 @@ const ambientDeclaration$function =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$function$strict = ambientDeclaration$function(
+	F.buildAmbientDeclaration,
+	F.buildFunctionDeclaration
+);
+const ambientDeclaration$function$coerce = ambientDeclaration$function(
+	F.buildAmbientDeclaration,
+	C.coerceToFunctionDeclaration
+);
 const ambientDeclaration$generatorFunction =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$generatorFunction$strict = ambientDeclaration$generatorFunction(
+	F.buildAmbientDeclaration,
+	F.buildGeneratorFunctionDeclaration
+);
+const ambientDeclaration$generatorFunction$coerce = ambientDeclaration$generatorFunction(
+	F.buildAmbientDeclaration,
+	C.coerceToGeneratorFunctionDeclaration
+);
 const ambientDeclaration$class =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$class$strict = ambientDeclaration$class(F.buildAmbientDeclaration, F.buildClassDeclaration);
+const ambientDeclaration$class$coerce = ambientDeclaration$class(F.buildAmbientDeclaration, C.coerceToClassDeclaration);
 const ambientDeclaration$lexical =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$lexical$strict = ambientDeclaration$lexical(
+	F.buildAmbientDeclaration,
+	F.buildLexicalDeclaration
+);
+const ambientDeclaration$lexical$coerce = ambientDeclaration$lexical(
+	F.buildAmbientDeclaration,
+	C.coerceToLexicalDeclaration
+);
 const ambientDeclaration$variable =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$variable$strict = ambientDeclaration$variable(
+	F.buildAmbientDeclaration,
+	F.buildVariableDeclaration
+);
+const ambientDeclaration$variable$coerce = ambientDeclaration$variable(
+	F.buildAmbientDeclaration,
+	C.coerceToVariableDeclaration
+);
 const ambientDeclaration$functionSignature =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$functionSignature$strict = ambientDeclaration$functionSignature(
+	F.buildAmbientDeclaration,
+	F.buildFunctionSignature
+);
+const ambientDeclaration$functionSignature$coerce = ambientDeclaration$functionSignature(
+	F.buildAmbientDeclaration,
+	C.coerceToFunctionSignature
+);
 const ambientDeclaration$abstractClass =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$abstractClass$strict = ambientDeclaration$abstractClass(
+	F.buildAmbientDeclaration,
+	F.buildAbstractClassDeclaration
+);
+const ambientDeclaration$abstractClass$coerce = ambientDeclaration$abstractClass(
+	F.buildAmbientDeclaration,
+	C.coerceToAbstractClassDeclaration
+);
 const ambientDeclaration$internalModule =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$internalModule$strict = ambientDeclaration$internalModule(
+	F.buildAmbientDeclaration,
+	F.buildInternalModule
+);
+const ambientDeclaration$internalModule$coerce = ambientDeclaration$internalModule(
+	F.buildAmbientDeclaration,
+	C.coerceToInternalModule
+);
 const ambientDeclaration$typeAlias =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$typeAlias$strict = ambientDeclaration$typeAlias(
+	F.buildAmbientDeclaration,
+	F.buildTypeAliasDeclaration
+);
+const ambientDeclaration$typeAlias$coerce = ambientDeclaration$typeAlias(
+	F.buildAmbientDeclaration,
+	C.coerceToTypeAliasDeclaration
+);
 const ambientDeclaration$enum =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$enum$strict = ambientDeclaration$enum(F.buildAmbientDeclaration, F.buildEnumDeclaration);
+const ambientDeclaration$enum$coerce = ambientDeclaration$enum(F.buildAmbientDeclaration, C.coerceToEnumDeclaration);
 const ambientDeclaration$interface =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$interface$strict = ambientDeclaration$interface(
+	F.buildAmbientDeclaration,
+	F.buildInterfaceDeclaration
+);
+const ambientDeclaration$interface$coerce = ambientDeclaration$interface(
+	F.buildAmbientDeclaration,
+	C.coerceToInterfaceDeclaration
+);
 const ambientDeclaration$importAlias =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$importAlias$strict = ambientDeclaration$importAlias(
+	F.buildAmbientDeclaration,
+	F.buildImportAlias
+);
+const ambientDeclaration$importAlias$coerce = ambientDeclaration$importAlias(
+	F.buildAmbientDeclaration,
+	C.coerceToImportAlias
+);
 const ambientDeclaration$ambient =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$ambient$strict = ambientDeclaration$ambient(
+	F.buildAmbientDeclaration,
+	F.buildAmbientDeclaration
+);
+const ambientDeclaration$ambient$coerce = ambientDeclaration$ambient(
+	F.buildAmbientDeclaration,
+	C.coerceToAmbientDeclaration
+);
 const ambientDeclaration$global =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const ambientDeclaration$global$strict = ambientDeclaration$global(
+	F.buildAmbientDeclaration,
+	F.buildAmbientDeclarationGlobal
+);
+const ambientDeclaration$global$coerce = ambientDeclaration$global(
+	F.buildAmbientDeclaration,
+	C.coerceToAmbientDeclarationGlobal
+);
 export const ambientDeclaration = Object.freeze({
 	...B.ambientDeclaration,
-	function: {
-		strict: ambientDeclaration$function(F.buildAmbientDeclaration, F.buildFunctionDeclaration),
-		coerce: ambientDeclaration$function(F.buildAmbientDeclaration, C.coerceToFunctionDeclaration)
-	},
-	generatorFunction: {
-		strict: ambientDeclaration$generatorFunction(F.buildAmbientDeclaration, F.buildGeneratorFunctionDeclaration),
-		coerce: ambientDeclaration$generatorFunction(F.buildAmbientDeclaration, C.coerceToGeneratorFunctionDeclaration)
-	},
-	class: {
-		strict: ambientDeclaration$class(F.buildAmbientDeclaration, F.buildClassDeclaration),
-		coerce: ambientDeclaration$class(F.buildAmbientDeclaration, C.coerceToClassDeclaration)
-	},
-	lexical: {
-		strict: ambientDeclaration$lexical(F.buildAmbientDeclaration, F.buildLexicalDeclaration),
-		coerce: ambientDeclaration$lexical(F.buildAmbientDeclaration, C.coerceToLexicalDeclaration)
-	},
-	variable: {
-		strict: ambientDeclaration$variable(F.buildAmbientDeclaration, F.buildVariableDeclaration),
-		coerce: ambientDeclaration$variable(F.buildAmbientDeclaration, C.coerceToVariableDeclaration)
-	},
-	functionSignature: {
-		strict: ambientDeclaration$functionSignature(F.buildAmbientDeclaration, F.buildFunctionSignature),
-		coerce: ambientDeclaration$functionSignature(F.buildAmbientDeclaration, C.coerceToFunctionSignature)
-	},
-	abstractClass: {
-		strict: ambientDeclaration$abstractClass(F.buildAmbientDeclaration, F.buildAbstractClassDeclaration),
-		coerce: ambientDeclaration$abstractClass(F.buildAmbientDeclaration, C.coerceToAbstractClassDeclaration)
-	},
-	internalModule: {
-		strict: ambientDeclaration$internalModule(F.buildAmbientDeclaration, F.buildInternalModule),
-		coerce: ambientDeclaration$internalModule(F.buildAmbientDeclaration, C.coerceToInternalModule)
-	},
-	typeAlias: {
-		strict: ambientDeclaration$typeAlias(F.buildAmbientDeclaration, F.buildTypeAliasDeclaration),
-		coerce: ambientDeclaration$typeAlias(F.buildAmbientDeclaration, C.coerceToTypeAliasDeclaration)
-	},
-	enum: {
-		strict: ambientDeclaration$enum(F.buildAmbientDeclaration, F.buildEnumDeclaration),
-		coerce: ambientDeclaration$enum(F.buildAmbientDeclaration, C.coerceToEnumDeclaration)
-	},
-	interface: {
-		strict: ambientDeclaration$interface(F.buildAmbientDeclaration, F.buildInterfaceDeclaration),
-		coerce: ambientDeclaration$interface(F.buildAmbientDeclaration, C.coerceToInterfaceDeclaration)
-	},
-	importAlias: {
-		strict: ambientDeclaration$importAlias(F.buildAmbientDeclaration, F.buildImportAlias),
-		coerce: ambientDeclaration$importAlias(F.buildAmbientDeclaration, C.coerceToImportAlias)
-	},
-	ambient: {
-		strict: ambientDeclaration$ambient(F.buildAmbientDeclaration, F.buildAmbientDeclaration),
-		coerce: ambientDeclaration$ambient(F.buildAmbientDeclaration, C.coerceToAmbientDeclaration)
-	},
-	global: {
-		strict: ambientDeclaration$global(F.buildAmbientDeclaration, F.buildAmbientDeclarationGlobal),
-		coerce: ambientDeclaration$global(F.buildAmbientDeclaration, C.coerceToAmbientDeclarationGlobal)
-	},
+	function: bundle(ambientDeclaration$function$strict, ambientDeclaration$function$coerce, {
+		key: 'ambientDeclaration.function',
+		max: 1
+	}),
+	generatorFunction: bundle(ambientDeclaration$generatorFunction$strict, ambientDeclaration$generatorFunction$coerce, {
+		key: 'ambientDeclaration.generatorFunction',
+		max: 1
+	}),
+	class: bundle(ambientDeclaration$class$strict, ambientDeclaration$class$coerce, {
+		key: 'ambientDeclaration.class',
+		max: 1
+	}),
+	lexical: bundle(ambientDeclaration$lexical$strict, ambientDeclaration$lexical$coerce, {
+		key: 'ambientDeclaration.lexical',
+		max: 2
+	}),
+	variable: bundle(ambientDeclaration$variable$strict, ambientDeclaration$variable$coerce, {
+		key: 'ambientDeclaration.variable',
+		max: 2
+	}),
+	functionSignature: bundle(ambientDeclaration$functionSignature$strict, ambientDeclaration$functionSignature$coerce, {
+		key: 'ambientDeclaration.functionSignature',
+		max: 2
+	}),
+	abstractClass: bundle(ambientDeclaration$abstractClass$strict, ambientDeclaration$abstractClass$coerce, {
+		key: 'ambientDeclaration.abstractClass',
+		max: 1
+	}),
+	internalModule: bundle(ambientDeclaration$internalModule$strict, ambientDeclaration$internalModule$coerce, {
+		key: 'ambientDeclaration.internalModule',
+		max: 1
+	}),
+	typeAlias: bundle(ambientDeclaration$typeAlias$strict, ambientDeclaration$typeAlias$coerce, {
+		key: 'ambientDeclaration.typeAlias',
+		max: 2
+	}),
+	enum: bundle(ambientDeclaration$enum$strict, ambientDeclaration$enum$coerce, {
+		key: 'ambientDeclaration.enum',
+		max: 1
+	}),
+	interface: bundle(ambientDeclaration$interface$strict, ambientDeclaration$interface$coerce, {
+		key: 'ambientDeclaration.interface',
+		max: 1
+	}),
+	importAlias: bundle(ambientDeclaration$importAlias$strict, ambientDeclaration$importAlias$coerce, {
+		key: 'ambientDeclaration.importAlias',
+		max: 2
+	}),
+	ambient: bundle(ambientDeclaration$ambient$strict, ambientDeclaration$ambient$coerce, {
+		key: 'ambientDeclaration.ambient',
+		max: 1
+	}),
+	global: bundle(ambientDeclaration$global$strict, ambientDeclaration$global$coerce, {
+		key: 'ambientDeclaration.global',
+		max: 1
+	}),
 	module: B.ambientDeclarationModule
 }) as unknown as typeof B.ambientDeclaration & {
 	function: {
@@ -809,12 +1047,11 @@ const enumBody$elements =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const enumBody$elements$strict = enumBody$elements(F.buildEnumBody, F.buildEnumBodyElements);
+const enumBody$elements$coerce = enumBody$elements(F.buildEnumBody, C.coerceToEnumBodyElements);
 export const enumBody = Object.freeze({
 	...B.enumBody,
-	elements: {
-		strict: enumBody$elements(F.buildEnumBody, F.buildEnumBodyElements),
-		coerce: enumBody$elements(F.buildEnumBody, C.coerceToEnumBodyElements)
-	}
+	elements: bundle(enumBody$elements$strict, enumBody$elements$coerce)
 }) as unknown as typeof B.enumBody & {
 	elements: {
 		strict: (...args: ArgsOf<typeof F.buildEnumBodyElements>) => ReturnType<typeof F.buildEnumBody>;
@@ -826,20 +1063,36 @@ const typeQueryMemberExpression$dot =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const typeQueryMemberExpression$dot$strict = typeQueryMemberExpression$dot(
+	F.buildTypeQueryMemberExpression,
+	TSKindId.Dot
+);
+const typeQueryMemberExpression$dot$coerce = typeQueryMemberExpression$dot(
+	C.coerceToTypeQueryMemberExpression,
+	TSKindId.Dot
+);
 const typeQueryMemberExpression$qmarkDot =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const typeQueryMemberExpression$qmarkDot$strict = typeQueryMemberExpression$qmarkDot(
+	F.buildTypeQueryMemberExpression,
+	TSKindId.QmarkDot
+);
+const typeQueryMemberExpression$qmarkDot$coerce = typeQueryMemberExpression$qmarkDot(
+	C.coerceToTypeQueryMemberExpression,
+	TSKindId.QmarkDot
+);
 export const typeQueryMemberExpression = Object.freeze({
 	...B.typeQueryMemberExpression,
-	dot: {
-		strict: typeQueryMemberExpression$dot(F.buildTypeQueryMemberExpression, TSKindId.Dot),
-		coerce: typeQueryMemberExpression$dot(C.coerceToTypeQueryMemberExpression, TSKindId.Dot)
-	},
-	qmarkDot: {
-		strict: typeQueryMemberExpression$qmarkDot(F.buildTypeQueryMemberExpression, TSKindId.QmarkDot),
-		coerce: typeQueryMemberExpression$qmarkDot(C.coerceToTypeQueryMemberExpression, TSKindId.QmarkDot)
-	}
+	dot: bundle(typeQueryMemberExpression$dot$strict, typeQueryMemberExpression$dot$coerce, {
+		key: 'typeQueryMemberExpression.dot',
+		max: 2
+	}),
+	qmarkDot: bundle(typeQueryMemberExpression$qmarkDot$strict, typeQueryMemberExpression$qmarkDot$coerce, {
+		key: 'typeQueryMemberExpression.qmarkDot',
+		max: 2
+	})
 }) as unknown as typeof B.typeQueryMemberExpression & {
 	dot: {
 		strict: (
@@ -867,20 +1120,18 @@ const constraint$extends =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const constraint$extends$strict = constraint$extends(F.buildConstraint, TSKindId.ExtendsKeyword);
+const constraint$extends$coerce = constraint$extends(C.coerceToConstraint, TSKindId.ExtendsKeyword);
 const constraint$colon =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const constraint$colon$strict = constraint$colon(F.buildConstraint, TSKindId.Colon);
+const constraint$colon$coerce = constraint$colon(C.coerceToConstraint, TSKindId.Colon);
 export const constraint = Object.freeze({
 	...B.constraint,
-	extends: {
-		strict: constraint$extends(F.buildConstraint, TSKindId.ExtendsKeyword),
-		coerce: constraint$extends(C.coerceToConstraint, TSKindId.ExtendsKeyword)
-	},
-	colon: {
-		strict: constraint$colon(F.buildConstraint, TSKindId.Colon),
-		coerce: constraint$colon(C.coerceToConstraint, TSKindId.Colon)
-	}
+	extends: bundle(constraint$extends$strict, constraint$extends$coerce, { key: 'constraint.extends', max: 2 }),
+	colon: bundle(constraint$colon$strict, constraint$colon$coerce, { key: 'constraint.colon', max: 2 })
 }) as unknown as typeof B.constraint & {
 	extends: {
 		strict: (
@@ -913,6 +1164,14 @@ const indexSignatureMappedTypeClause$mappedTypeClause =
 		const { mappedTypeClause: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, mappedTypeClause: _c(child)(seated) } as never, options as never);
 	};
+const indexSignatureMappedTypeClause$mappedTypeClause$strict = indexSignatureMappedTypeClause$mappedTypeClause(
+	F.buildIndexSignatureMappedTypeClause,
+	F.buildMappedTypeClause
+);
+const indexSignatureMappedTypeClause$mappedTypeClause$coerce = indexSignatureMappedTypeClause$mappedTypeClause(
+	C.coerceToIndexSignatureMappedTypeClause,
+	C.coerceToMappedTypeClause
+);
 const indexSignatureMappedTypeClause: {
 	mappedTypeClause: {
 		strict: (
@@ -929,22 +1188,25 @@ const indexSignatureMappedTypeClause: {
 		) => ReturnType<typeof C.coerceToIndexSignatureMappedTypeClause>;
 	};
 } = Object.freeze({
-	mappedTypeClause: {
-		strict: indexSignatureMappedTypeClause$mappedTypeClause(
-			F.buildIndexSignatureMappedTypeClause,
-			F.buildMappedTypeClause
-		),
-		coerce: indexSignatureMappedTypeClause$mappedTypeClause(
-			C.coerceToIndexSignatureMappedTypeClause,
-			C.coerceToMappedTypeClause
-		)
-	}
+	mappedTypeClause: bundle(
+		indexSignatureMappedTypeClause$mappedTypeClause$strict,
+		indexSignatureMappedTypeClause$mappedTypeClause$coerce,
+		{ key: 'indexSignatureMappedTypeClause.mappedTypeClause', max: 2 }
+	)
 });
 
 const parenthesizedExpressionSequence$sequenceExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const parenthesizedExpressionSequence$sequenceExpression$strict = parenthesizedExpressionSequence$sequenceExpression(
+	F.buildParenthesizedExpressionSequence,
+	F.buildSequenceExpression
+);
+const parenthesizedExpressionSequence$sequenceExpression$coerce = parenthesizedExpressionSequence$sequenceExpression(
+	F.buildParenthesizedExpressionSequence,
+	C.coerceToSequenceExpression
+);
 const parenthesizedExpressionSequence: {
 	sequenceExpression: {
 		strict: (
@@ -955,42 +1217,84 @@ const parenthesizedExpressionSequence: {
 		) => ReturnType<typeof F.buildParenthesizedExpressionSequence>;
 	};
 } = Object.freeze({
-	sequenceExpression: {
-		strict: parenthesizedExpressionSequence$sequenceExpression(
-			F.buildParenthesizedExpressionSequence,
-			F.buildSequenceExpression
-		),
-		coerce: parenthesizedExpressionSequence$sequenceExpression(
-			F.buildParenthesizedExpressionSequence,
-			C.coerceToSequenceExpression
-		)
-	}
+	sequenceExpression: bundle(
+		parenthesizedExpressionSequence$sequenceExpression$strict,
+		parenthesizedExpressionSequence$sequenceExpression$coerce
+	)
 });
 
 const exportStatementDefaultFrom$starFrom =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultFrom$starFrom$strict = exportStatementDefaultFrom$starFrom(
+	F.buildExportStatementDefaultFrom,
+	F.buildExportStatementDefaultFromStarFrom
+);
+const exportStatementDefaultFrom$starFrom$coerce = exportStatementDefaultFrom$starFrom(
+	F.buildExportStatementDefaultFrom,
+	C.coerceToExportStatementDefaultFromStarFrom
+);
 const exportStatementDefaultFrom$nsFrom =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultFrom$nsFrom$strict = exportStatementDefaultFrom$nsFrom(
+	F.buildExportStatementDefaultFrom,
+	F.buildExportStatementDefaultFromNsFrom
+);
+const exportStatementDefaultFrom$nsFrom$coerce = exportStatementDefaultFrom$nsFrom(
+	F.buildExportStatementDefaultFrom,
+	C.coerceToExportStatementDefaultFromNsFrom
+);
 const exportStatementDefaultFrom$clauseFrom =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultFrom$clauseFrom$strict = exportStatementDefaultFrom$clauseFrom(
+	F.buildExportStatementDefaultFrom,
+	F.buildExportStatementDefaultFromClauseFrom
+);
+const exportStatementDefaultFrom$clauseFrom$coerce = exportStatementDefaultFrom$clauseFrom(
+	F.buildExportStatementDefaultFrom,
+	C.coerceToExportStatementDefaultFromClauseFrom
+);
 const exportStatementDefaultFrom$exportClause =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultFrom$exportClause$strict = exportStatementDefaultFrom$exportClause(
+	F.buildExportStatementDefaultFrom,
+	F.buildExportClause
+);
+const exportStatementDefaultFrom$exportClause$coerce = exportStatementDefaultFrom$exportClause(
+	F.buildExportStatementDefaultFrom,
+	C.coerceToExportClause
+);
 const exportStatementDefaultFrom$automaticSemicolon =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
 	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
+const exportStatementDefaultFrom$automaticSemicolon$strict = exportStatementDefaultFrom$automaticSemicolon(
+	F.buildExportStatementDefaultFrom,
+	TSKindId.AutomaticSemicolon
+);
+const exportStatementDefaultFrom$automaticSemicolon$coerce = exportStatementDefaultFrom$automaticSemicolon(
+	C.coerceToExportStatementDefaultFrom,
+	TSKindId.AutomaticSemicolon
+);
 const exportStatementDefaultFrom$semi =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
 	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
+const exportStatementDefaultFrom$semi$strict = exportStatementDefaultFrom$semi(
+	F.buildExportStatementDefaultFrom,
+	TSKindId.Semi
+);
+const exportStatementDefaultFrom$semi$coerce = exportStatementDefaultFrom$semi(
+	C.coerceToExportStatementDefaultFrom,
+	TSKindId.Semi
+);
 const exportStatementDefaultFrom$starFrom$applied: (
 	...args: ArgsOf<typeof F.buildExportStatementDefaultFromStarFrom>
 ) => ReturnType<typeof F.buildExportStatementDefaultFrom> = exportStatementDefaultFrom$starFrom(
@@ -1007,10 +1311,28 @@ const exportStatementDefaultFrom$starFrom$automaticSemicolon =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
 	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
+const exportStatementDefaultFrom$starFrom$automaticSemicolon$strict =
+	exportStatementDefaultFrom$starFrom$automaticSemicolon(
+		exportStatementDefaultFrom$starFrom$applied,
+		TSKindId.AutomaticSemicolon
+	);
+const exportStatementDefaultFrom$starFrom$automaticSemicolon$coerce =
+	exportStatementDefaultFrom$starFrom$automaticSemicolon(
+		exportStatementDefaultFrom$starFrom$appliedCoerce,
+		TSKindId.AutomaticSemicolon
+	);
 const exportStatementDefaultFrom$starFrom$semi =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
 	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
+const exportStatementDefaultFrom$starFrom$semi$strict = exportStatementDefaultFrom$starFrom$semi(
+	exportStatementDefaultFrom$starFrom$applied,
+	TSKindId.Semi
+);
+const exportStatementDefaultFrom$starFrom$semi$coerce = exportStatementDefaultFrom$starFrom$semi(
+	exportStatementDefaultFrom$starFrom$appliedCoerce,
+	TSKindId.Semi
+);
 const exportStatementDefaultFrom$nsFrom$applied: (
 	...args: ArgsOf<typeof F.buildExportStatementDefaultFromNsFrom>
 ) => ReturnType<typeof F.buildExportStatementDefaultFrom> = exportStatementDefaultFrom$nsFrom(
@@ -1027,10 +1349,28 @@ const exportStatementDefaultFrom$nsFrom$automaticSemicolon =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
 	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
+const exportStatementDefaultFrom$nsFrom$automaticSemicolon$strict =
+	exportStatementDefaultFrom$nsFrom$automaticSemicolon(
+		exportStatementDefaultFrom$nsFrom$applied,
+		TSKindId.AutomaticSemicolon
+	);
+const exportStatementDefaultFrom$nsFrom$automaticSemicolon$coerce =
+	exportStatementDefaultFrom$nsFrom$automaticSemicolon(
+		exportStatementDefaultFrom$nsFrom$appliedCoerce,
+		TSKindId.AutomaticSemicolon
+	);
 const exportStatementDefaultFrom$nsFrom$semi =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
 	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
+const exportStatementDefaultFrom$nsFrom$semi$strict = exportStatementDefaultFrom$nsFrom$semi(
+	exportStatementDefaultFrom$nsFrom$applied,
+	TSKindId.Semi
+);
+const exportStatementDefaultFrom$nsFrom$semi$coerce = exportStatementDefaultFrom$nsFrom$semi(
+	exportStatementDefaultFrom$nsFrom$appliedCoerce,
+	TSKindId.Semi
+);
 const exportStatementDefaultFrom$clauseFrom$applied: (
 	...args: ArgsOf<typeof F.buildExportStatementDefaultFromClauseFrom>
 ) => ReturnType<typeof F.buildExportStatementDefaultFrom> = exportStatementDefaultFrom$clauseFrom(
@@ -1047,10 +1387,28 @@ const exportStatementDefaultFrom$clauseFrom$automaticSemicolon =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
 	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
+const exportStatementDefaultFrom$clauseFrom$automaticSemicolon$strict =
+	exportStatementDefaultFrom$clauseFrom$automaticSemicolon(
+		exportStatementDefaultFrom$clauseFrom$applied,
+		TSKindId.AutomaticSemicolon
+	);
+const exportStatementDefaultFrom$clauseFrom$automaticSemicolon$coerce =
+	exportStatementDefaultFrom$clauseFrom$automaticSemicolon(
+		exportStatementDefaultFrom$clauseFrom$appliedCoerce,
+		TSKindId.AutomaticSemicolon
+	);
 const exportStatementDefaultFrom$clauseFrom$semi =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
 	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
+const exportStatementDefaultFrom$clauseFrom$semi$strict = exportStatementDefaultFrom$clauseFrom$semi(
+	exportStatementDefaultFrom$clauseFrom$applied,
+	TSKindId.Semi
+);
+const exportStatementDefaultFrom$clauseFrom$semi$coerce = exportStatementDefaultFrom$clauseFrom$semi(
+	exportStatementDefaultFrom$clauseFrom$appliedCoerce,
+	TSKindId.Semi
+);
 const exportStatementDefaultFrom$exportClause$applied: (
 	...args: ArgsOf<typeof F.buildExportClause>
 ) => ReturnType<typeof F.buildExportStatementDefaultFrom> = exportStatementDefaultFrom$exportClause(
@@ -1067,10 +1425,28 @@ const exportStatementDefaultFrom$exportClause$automaticSemicolon =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
 	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
+const exportStatementDefaultFrom$exportClause$automaticSemicolon$strict =
+	exportStatementDefaultFrom$exportClause$automaticSemicolon(
+		exportStatementDefaultFrom$exportClause$applied,
+		TSKindId.AutomaticSemicolon
+	);
+const exportStatementDefaultFrom$exportClause$automaticSemicolon$coerce =
+	exportStatementDefaultFrom$exportClause$automaticSemicolon(
+		exportStatementDefaultFrom$exportClause$appliedCoerce,
+		TSKindId.AutomaticSemicolon
+	);
 const exportStatementDefaultFrom$exportClause$semi =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
 	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
+const exportStatementDefaultFrom$exportClause$semi$strict = exportStatementDefaultFrom$exportClause$semi(
+	exportStatementDefaultFrom$exportClause$applied,
+	TSKindId.Semi
+);
+const exportStatementDefaultFrom$exportClause$semi$coerce = exportStatementDefaultFrom$exportClause$semi(
+	exportStatementDefaultFrom$exportClause$appliedCoerce,
+	TSKindId.Semi
+);
 const exportStatementDefaultFrom: {
 	starFrom: {
 		strict: (
@@ -1202,128 +1578,102 @@ const exportStatementDefaultFrom: {
 	};
 } = Object.freeze({
 	starFrom: {
-		strict: exportStatementDefaultFrom$starFrom(
-			F.buildExportStatementDefaultFrom,
-			F.buildExportStatementDefaultFromStarFrom
+		...bundle(exportStatementDefaultFrom$starFrom$strict, exportStatementDefaultFrom$starFrom$coerce, {
+			key: 'exportStatementDefaultFrom.starFrom',
+			max: 1
+		}),
+		automaticSemicolon: bundle(
+			exportStatementDefaultFrom$starFrom$automaticSemicolon$strict,
+			exportStatementDefaultFrom$starFrom$automaticSemicolon$coerce,
+			{ key: 'exportStatementDefaultFrom.starFrom.automaticSemicolon', max: 2 }
 		),
-		coerce: exportStatementDefaultFrom$starFrom(
-			F.buildExportStatementDefaultFrom,
-			C.coerceToExportStatementDefaultFromStarFrom
-		),
-		automaticSemicolon: {
-			strict: exportStatementDefaultFrom$starFrom$automaticSemicolon(
-				exportStatementDefaultFrom$starFrom$applied,
-				TSKindId.AutomaticSemicolon
-			),
-			coerce: exportStatementDefaultFrom$starFrom$automaticSemicolon(
-				exportStatementDefaultFrom$starFrom$appliedCoerce,
-				TSKindId.AutomaticSemicolon
-			)
-		},
-		semi: {
-			strict: exportStatementDefaultFrom$starFrom$semi(exportStatementDefaultFrom$starFrom$applied, TSKindId.Semi),
-			coerce: exportStatementDefaultFrom$starFrom$semi(exportStatementDefaultFrom$starFrom$appliedCoerce, TSKindId.Semi)
-		}
+		semi: bundle(exportStatementDefaultFrom$starFrom$semi$strict, exportStatementDefaultFrom$starFrom$semi$coerce, {
+			key: 'exportStatementDefaultFrom.starFrom.semi',
+			max: 2
+		})
 	},
 	nsFrom: {
-		strict: exportStatementDefaultFrom$nsFrom(
-			F.buildExportStatementDefaultFrom,
-			F.buildExportStatementDefaultFromNsFrom
+		...bundle(exportStatementDefaultFrom$nsFrom$strict, exportStatementDefaultFrom$nsFrom$coerce, {
+			key: 'exportStatementDefaultFrom.nsFrom',
+			max: 1
+		}),
+		automaticSemicolon: bundle(
+			exportStatementDefaultFrom$nsFrom$automaticSemicolon$strict,
+			exportStatementDefaultFrom$nsFrom$automaticSemicolon$coerce,
+			{ key: 'exportStatementDefaultFrom.nsFrom.automaticSemicolon', max: 2 }
 		),
-		coerce: exportStatementDefaultFrom$nsFrom(
-			F.buildExportStatementDefaultFrom,
-			C.coerceToExportStatementDefaultFromNsFrom
-		),
-		automaticSemicolon: {
-			strict: exportStatementDefaultFrom$nsFrom$automaticSemicolon(
-				exportStatementDefaultFrom$nsFrom$applied,
-				TSKindId.AutomaticSemicolon
-			),
-			coerce: exportStatementDefaultFrom$nsFrom$automaticSemicolon(
-				exportStatementDefaultFrom$nsFrom$appliedCoerce,
-				TSKindId.AutomaticSemicolon
-			)
-		},
-		semi: {
-			strict: exportStatementDefaultFrom$nsFrom$semi(exportStatementDefaultFrom$nsFrom$applied, TSKindId.Semi),
-			coerce: exportStatementDefaultFrom$nsFrom$semi(exportStatementDefaultFrom$nsFrom$appliedCoerce, TSKindId.Semi)
-		}
+		semi: bundle(exportStatementDefaultFrom$nsFrom$semi$strict, exportStatementDefaultFrom$nsFrom$semi$coerce, {
+			key: 'exportStatementDefaultFrom.nsFrom.semi',
+			max: 2
+		})
 	},
 	clauseFrom: {
-		strict: exportStatementDefaultFrom$clauseFrom(
-			F.buildExportStatementDefaultFrom,
-			F.buildExportStatementDefaultFromClauseFrom
+		...bundle(exportStatementDefaultFrom$clauseFrom$strict, exportStatementDefaultFrom$clauseFrom$coerce, {
+			key: 'exportStatementDefaultFrom.clauseFrom',
+			max: 1
+		}),
+		automaticSemicolon: bundle(
+			exportStatementDefaultFrom$clauseFrom$automaticSemicolon$strict,
+			exportStatementDefaultFrom$clauseFrom$automaticSemicolon$coerce,
+			{ key: 'exportStatementDefaultFrom.clauseFrom.automaticSemicolon', max: 2 }
 		),
-		coerce: exportStatementDefaultFrom$clauseFrom(
-			F.buildExportStatementDefaultFrom,
-			C.coerceToExportStatementDefaultFromClauseFrom
-		),
-		automaticSemicolon: {
-			strict: exportStatementDefaultFrom$clauseFrom$automaticSemicolon(
-				exportStatementDefaultFrom$clauseFrom$applied,
-				TSKindId.AutomaticSemicolon
-			),
-			coerce: exportStatementDefaultFrom$clauseFrom$automaticSemicolon(
-				exportStatementDefaultFrom$clauseFrom$appliedCoerce,
-				TSKindId.AutomaticSemicolon
-			)
-		},
-		semi: {
-			strict: exportStatementDefaultFrom$clauseFrom$semi(exportStatementDefaultFrom$clauseFrom$applied, TSKindId.Semi),
-			coerce: exportStatementDefaultFrom$clauseFrom$semi(
-				exportStatementDefaultFrom$clauseFrom$appliedCoerce,
-				TSKindId.Semi
-			)
-		}
+		semi: bundle(exportStatementDefaultFrom$clauseFrom$semi$strict, exportStatementDefaultFrom$clauseFrom$semi$coerce, {
+			key: 'exportStatementDefaultFrom.clauseFrom.semi',
+			max: 2
+		})
 	},
 	exportClause: {
-		strict: exportStatementDefaultFrom$exportClause(F.buildExportStatementDefaultFrom, F.buildExportClause),
-		coerce: exportStatementDefaultFrom$exportClause(F.buildExportStatementDefaultFrom, C.coerceToExportClause),
-		automaticSemicolon: {
-			strict: exportStatementDefaultFrom$exportClause$automaticSemicolon(
-				exportStatementDefaultFrom$exportClause$applied,
-				TSKindId.AutomaticSemicolon
-			),
-			coerce: exportStatementDefaultFrom$exportClause$automaticSemicolon(
-				exportStatementDefaultFrom$exportClause$appliedCoerce,
-				TSKindId.AutomaticSemicolon
-			)
-		},
-		semi: {
-			strict: exportStatementDefaultFrom$exportClause$semi(
-				exportStatementDefaultFrom$exportClause$applied,
-				TSKindId.Semi
-			),
-			coerce: exportStatementDefaultFrom$exportClause$semi(
-				exportStatementDefaultFrom$exportClause$appliedCoerce,
-				TSKindId.Semi
-			)
-		}
-	},
-	automaticSemicolon: {
-		strict: exportStatementDefaultFrom$automaticSemicolon(
-			F.buildExportStatementDefaultFrom,
-			TSKindId.AutomaticSemicolon
+		...bundle(exportStatementDefaultFrom$exportClause$strict, exportStatementDefaultFrom$exportClause$coerce),
+		automaticSemicolon: bundle(
+			exportStatementDefaultFrom$exportClause$automaticSemicolon$strict,
+			exportStatementDefaultFrom$exportClause$automaticSemicolon$coerce,
+			{ key: 'exportStatementDefaultFrom.exportClause.automaticSemicolon', max: 2 }
 		),
-		coerce: exportStatementDefaultFrom$automaticSemicolon(
-			C.coerceToExportStatementDefaultFrom,
-			TSKindId.AutomaticSemicolon
+		semi: bundle(
+			exportStatementDefaultFrom$exportClause$semi$strict,
+			exportStatementDefaultFrom$exportClause$semi$coerce,
+			{ key: 'exportStatementDefaultFrom.exportClause.semi', max: 2 }
 		)
 	},
-	semi: {
-		strict: exportStatementDefaultFrom$semi(F.buildExportStatementDefaultFrom, TSKindId.Semi),
-		coerce: exportStatementDefaultFrom$semi(C.coerceToExportStatementDefaultFrom, TSKindId.Semi)
-	}
+	automaticSemicolon: bundle(
+		exportStatementDefaultFrom$automaticSemicolon$strict,
+		exportStatementDefaultFrom$automaticSemicolon$coerce,
+		{ key: 'exportStatementDefaultFrom.automaticSemicolon', max: 2 }
+	),
+	semi: bundle(exportStatementDefaultFrom$semi$strict, exportStatementDefaultFrom$semi$coerce, {
+		key: 'exportStatementDefaultFrom.semi',
+		max: 2
+	})
 });
 
 const exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
 	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
+const exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon$strict =
+	exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon(
+		F.buildExportStatementDefaultDeclarationDefaultKwValue,
+		TSKindId.AutomaticSemicolon
+	);
+const exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon$coerce =
+	exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon(
+		C.coerceToExportStatementDefaultDeclarationDefaultKwValue,
+		TSKindId.AutomaticSemicolon
+	);
 const exportStatementDefaultDeclarationDefaultKwValue$semi =
 	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
 	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { automaticSemicolon: value }) as never);
+const exportStatementDefaultDeclarationDefaultKwValue$semi$strict =
+	exportStatementDefaultDeclarationDefaultKwValue$semi(
+		F.buildExportStatementDefaultDeclarationDefaultKwValue,
+		TSKindId.Semi
+	);
+const exportStatementDefaultDeclarationDefaultKwValue$semi$coerce =
+	exportStatementDefaultDeclarationDefaultKwValue$semi(
+		C.coerceToExportStatementDefaultDeclarationDefaultKwValue,
+		TSKindId.Semi
+	);
 const exportStatementDefaultDeclarationDefaultKwValue: {
 	automaticSemicolon: {
 		strict: (
@@ -1346,152 +1696,436 @@ const exportStatementDefaultDeclarationDefaultKwValue: {
 		) => ReturnType<typeof C.coerceToExportStatementDefaultDeclarationDefaultKwValue>;
 	};
 } = Object.freeze({
-	automaticSemicolon: {
-		strict: exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon(
-			F.buildExportStatementDefaultDeclarationDefaultKwValue,
-			TSKindId.AutomaticSemicolon
-		),
-		coerce: exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon(
-			C.coerceToExportStatementDefaultDeclarationDefaultKwValue,
-			TSKindId.AutomaticSemicolon
-		)
-	},
-	semi: {
-		strict: exportStatementDefaultDeclarationDefaultKwValue$semi(
-			F.buildExportStatementDefaultDeclarationDefaultKwValue,
-			TSKindId.Semi
-		),
-		coerce: exportStatementDefaultDeclarationDefaultKwValue$semi(
-			C.coerceToExportStatementDefaultDeclarationDefaultKwValue,
-			TSKindId.Semi
-		)
-	}
+	automaticSemicolon: bundle(
+		exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon$strict,
+		exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon$coerce,
+		{ key: 'exportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon', max: 2 }
+	),
+	semi: bundle(
+		exportStatementDefaultDeclarationDefaultKwValue$semi$strict,
+		exportStatementDefaultDeclarationDefaultKwValue$semi$coerce,
+		{ key: 'exportStatementDefaultDeclarationDefaultKwValue.semi', max: 2 }
+	)
 });
 
 const exportStatementDefaultDeclarationDefaultKw$value =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$value$strict = exportStatementDefaultDeclarationDefaultKw$value(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	F.buildExportStatementDefaultDeclarationDefaultKwValue
+);
+const exportStatementDefaultDeclarationDefaultKw$value$coerce = exportStatementDefaultDeclarationDefaultKw$value(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	C.coerceToExportStatementDefaultDeclarationDefaultKwValue
+);
 const exportStatementDefaultDeclarationDefaultKw$function =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$function$strict = exportStatementDefaultDeclarationDefaultKw$function(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	F.buildFunctionDeclaration
+);
+const exportStatementDefaultDeclarationDefaultKw$function$coerce = exportStatementDefaultDeclarationDefaultKw$function(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	C.coerceToFunctionDeclaration
+);
 const exportStatementDefaultDeclarationDefaultKw$generatorFunction =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$generatorFunction$strict =
+	exportStatementDefaultDeclarationDefaultKw$generatorFunction(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		F.buildGeneratorFunctionDeclaration
+	);
+const exportStatementDefaultDeclarationDefaultKw$generatorFunction$coerce =
+	exportStatementDefaultDeclarationDefaultKw$generatorFunction(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		C.coerceToGeneratorFunctionDeclaration
+	);
 const exportStatementDefaultDeclarationDefaultKw$class =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$class$strict = exportStatementDefaultDeclarationDefaultKw$class(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	F.buildClassDeclaration
+);
+const exportStatementDefaultDeclarationDefaultKw$class$coerce = exportStatementDefaultDeclarationDefaultKw$class(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	C.coerceToClassDeclaration
+);
 const exportStatementDefaultDeclarationDefaultKw$lexical =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$lexical$strict = exportStatementDefaultDeclarationDefaultKw$lexical(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	F.buildLexicalDeclaration
+);
+const exportStatementDefaultDeclarationDefaultKw$lexical$coerce = exportStatementDefaultDeclarationDefaultKw$lexical(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	C.coerceToLexicalDeclaration
+);
 const exportStatementDefaultDeclarationDefaultKw$variable =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$variable$strict = exportStatementDefaultDeclarationDefaultKw$variable(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	F.buildVariableDeclaration
+);
+const exportStatementDefaultDeclarationDefaultKw$variable$coerce = exportStatementDefaultDeclarationDefaultKw$variable(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	C.coerceToVariableDeclaration
+);
 const exportStatementDefaultDeclarationDefaultKw$functionSignature =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$functionSignature$strict =
+	exportStatementDefaultDeclarationDefaultKw$functionSignature(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		F.buildFunctionSignature
+	);
+const exportStatementDefaultDeclarationDefaultKw$functionSignature$coerce =
+	exportStatementDefaultDeclarationDefaultKw$functionSignature(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		C.coerceToFunctionSignature
+	);
 const exportStatementDefaultDeclarationDefaultKw$abstractClass =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$abstractClass$strict =
+	exportStatementDefaultDeclarationDefaultKw$abstractClass(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		F.buildAbstractClassDeclaration
+	);
+const exportStatementDefaultDeclarationDefaultKw$abstractClass$coerce =
+	exportStatementDefaultDeclarationDefaultKw$abstractClass(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		C.coerceToAbstractClassDeclaration
+	);
 const exportStatementDefaultDeclarationDefaultKw$module =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$module$strict = exportStatementDefaultDeclarationDefaultKw$module(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	F.buildModule
+);
+const exportStatementDefaultDeclarationDefaultKw$module$coerce = exportStatementDefaultDeclarationDefaultKw$module(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	C.coerceToModule
+);
 const exportStatementDefaultDeclarationDefaultKw$internalModule =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$internalModule$strict =
+	exportStatementDefaultDeclarationDefaultKw$internalModule(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		F.buildInternalModule
+	);
+const exportStatementDefaultDeclarationDefaultKw$internalModule$coerce =
+	exportStatementDefaultDeclarationDefaultKw$internalModule(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		C.coerceToInternalModule
+	);
 const exportStatementDefaultDeclarationDefaultKw$typeAlias =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$typeAlias$strict =
+	exportStatementDefaultDeclarationDefaultKw$typeAlias(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		F.buildTypeAliasDeclaration
+	);
+const exportStatementDefaultDeclarationDefaultKw$typeAlias$coerce =
+	exportStatementDefaultDeclarationDefaultKw$typeAlias(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		C.coerceToTypeAliasDeclaration
+	);
 const exportStatementDefaultDeclarationDefaultKw$enum =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$enum$strict = exportStatementDefaultDeclarationDefaultKw$enum(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	F.buildEnumDeclaration
+);
+const exportStatementDefaultDeclarationDefaultKw$enum$coerce = exportStatementDefaultDeclarationDefaultKw$enum(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	C.coerceToEnumDeclaration
+);
 const exportStatementDefaultDeclarationDefaultKw$interface =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$interface$strict =
+	exportStatementDefaultDeclarationDefaultKw$interface(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		F.buildInterfaceDeclaration
+	);
+const exportStatementDefaultDeclarationDefaultKw$interface$coerce =
+	exportStatementDefaultDeclarationDefaultKw$interface(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		C.coerceToInterfaceDeclaration
+	);
 const exportStatementDefaultDeclarationDefaultKw$importAlias =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$importAlias$strict =
+	exportStatementDefaultDeclarationDefaultKw$importAlias(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		F.buildImportAlias
+	);
+const exportStatementDefaultDeclarationDefaultKw$importAlias$coerce =
+	exportStatementDefaultDeclarationDefaultKw$importAlias(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		C.coerceToImportAlias
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$strict = exportStatementDefaultDeclarationDefaultKw$ambient(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	F.buildAmbientDeclaration
+);
+const exportStatementDefaultDeclarationDefaultKw$ambient$coerce = exportStatementDefaultDeclarationDefaultKw$ambient(
+	F.buildExportStatementDefaultDeclarationDefaultKw,
+	C.coerceToAmbientDeclaration
+);
 const exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon$strict =
+	exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		exportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon$coerce =
+	exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		exportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$value$semi =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$value$semi$strict =
+	exportStatementDefaultDeclarationDefaultKw$value$semi(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		exportStatementDefaultDeclarationDefaultKwValue.semi.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$value$semi$coerce =
+	exportStatementDefaultDeclarationDefaultKw$value$semi(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		exportStatementDefaultDeclarationDefaultKwValue.semi.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$function =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$function$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$function(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.function.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$function$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$function(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.function.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$generatorFunction =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$generatorFunction$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$generatorFunction(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.generatorFunction.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$generatorFunction$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$generatorFunction(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.generatorFunction.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$class =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$class$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$class(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.class.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$class$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$class(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.class.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$lexical =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$lexical$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$lexical(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.lexical.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$lexical$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$lexical(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.lexical.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$variable =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$variable$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$variable(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.variable.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$variable$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$variable(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.variable.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.functionSignature.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.functionSignature.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$abstractClass =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$abstractClass$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$abstractClass(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.abstractClass.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$abstractClass$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$abstractClass(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.abstractClass.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$internalModule =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$internalModule$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$internalModule(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.internalModule.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$internalModule$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$internalModule(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.internalModule.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$typeAlias =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$typeAlias$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$typeAlias(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.typeAlias.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$typeAlias$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$typeAlias(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.typeAlias.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$enum =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$enum$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$enum(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.enum.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$enum$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$enum(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.enum.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$interface =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$interface$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$interface(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.interface.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$interface$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$interface(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.interface.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$importAlias =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$importAlias$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$importAlias(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.importAlias.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$importAlias$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$importAlias(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.importAlias.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$ambient =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$ambient$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$ambient(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.ambient.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$ambient$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$ambient(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.ambient.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw$ambient$global =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const exportStatementDefaultDeclarationDefaultKw$ambient$global$strict =
+	exportStatementDefaultDeclarationDefaultKw$ambient$global(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.global.strict
+	);
+const exportStatementDefaultDeclarationDefaultKw$ambient$global$coerce =
+	exportStatementDefaultDeclarationDefaultKw$ambient$global(
+		F.buildExportStatementDefaultDeclarationDefaultKw,
+		ambientDeclaration.global.coerce
+	);
 const exportStatementDefaultDeclarationDefaultKw: {
 	value: {
 		strict: (
@@ -1743,314 +2377,163 @@ const exportStatementDefaultDeclarationDefaultKw: {
 	};
 } = Object.freeze({
 	value: {
-		strict: exportStatementDefaultDeclarationDefaultKw$value(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			F.buildExportStatementDefaultDeclarationDefaultKwValue
+		...bundle(
+			exportStatementDefaultDeclarationDefaultKw$value$strict,
+			exportStatementDefaultDeclarationDefaultKw$value$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.value', max: 2 }
 		),
-		coerce: exportStatementDefaultDeclarationDefaultKw$value(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			C.coerceToExportStatementDefaultDeclarationDefaultKwValue
+		automaticSemicolon: bundle(
+			exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon$strict,
+			exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.value.automaticSemicolon', max: 2 }
 		),
-		automaticSemicolon: {
-			strict: exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				exportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				exportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon.coerce
-			)
-		},
-		semi: {
-			strict: exportStatementDefaultDeclarationDefaultKw$value$semi(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				exportStatementDefaultDeclarationDefaultKwValue.semi.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$value$semi(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				exportStatementDefaultDeclarationDefaultKwValue.semi.coerce
-			)
-		}
-	},
-	function: {
-		strict: exportStatementDefaultDeclarationDefaultKw$function(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			F.buildFunctionDeclaration
-		),
-		coerce: exportStatementDefaultDeclarationDefaultKw$function(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			C.coerceToFunctionDeclaration
+		semi: bundle(
+			exportStatementDefaultDeclarationDefaultKw$value$semi$strict,
+			exportStatementDefaultDeclarationDefaultKw$value$semi$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.value.semi', max: 2 }
 		)
 	},
-	generatorFunction: {
-		strict: exportStatementDefaultDeclarationDefaultKw$generatorFunction(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			F.buildGeneratorFunctionDeclaration
-		),
-		coerce: exportStatementDefaultDeclarationDefaultKw$generatorFunction(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			C.coerceToGeneratorFunctionDeclaration
-		)
-	},
-	class: {
-		strict: exportStatementDefaultDeclarationDefaultKw$class(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			F.buildClassDeclaration
-		),
-		coerce: exportStatementDefaultDeclarationDefaultKw$class(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			C.coerceToClassDeclaration
-		)
-	},
-	lexical: {
-		strict: exportStatementDefaultDeclarationDefaultKw$lexical(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			F.buildLexicalDeclaration
-		),
-		coerce: exportStatementDefaultDeclarationDefaultKw$lexical(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			C.coerceToLexicalDeclaration
-		)
-	},
-	variable: {
-		strict: exportStatementDefaultDeclarationDefaultKw$variable(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			F.buildVariableDeclaration
-		),
-		coerce: exportStatementDefaultDeclarationDefaultKw$variable(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			C.coerceToVariableDeclaration
-		)
-	},
-	functionSignature: {
-		strict: exportStatementDefaultDeclarationDefaultKw$functionSignature(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			F.buildFunctionSignature
-		),
-		coerce: exportStatementDefaultDeclarationDefaultKw$functionSignature(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			C.coerceToFunctionSignature
-		)
-	},
-	abstractClass: {
-		strict: exportStatementDefaultDeclarationDefaultKw$abstractClass(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			F.buildAbstractClassDeclaration
-		),
-		coerce: exportStatementDefaultDeclarationDefaultKw$abstractClass(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			C.coerceToAbstractClassDeclaration
-		)
-	},
-	module: {
-		strict: exportStatementDefaultDeclarationDefaultKw$module(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			F.buildModule
-		),
-		coerce: exportStatementDefaultDeclarationDefaultKw$module(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			C.coerceToModule
-		)
-	},
-	internalModule: {
-		strict: exportStatementDefaultDeclarationDefaultKw$internalModule(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			F.buildInternalModule
-		),
-		coerce: exportStatementDefaultDeclarationDefaultKw$internalModule(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			C.coerceToInternalModule
-		)
-	},
-	typeAlias: {
-		strict: exportStatementDefaultDeclarationDefaultKw$typeAlias(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			F.buildTypeAliasDeclaration
-		),
-		coerce: exportStatementDefaultDeclarationDefaultKw$typeAlias(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			C.coerceToTypeAliasDeclaration
-		)
-	},
-	enum: {
-		strict: exportStatementDefaultDeclarationDefaultKw$enum(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			F.buildEnumDeclaration
-		),
-		coerce: exportStatementDefaultDeclarationDefaultKw$enum(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			C.coerceToEnumDeclaration
-		)
-	},
-	interface: {
-		strict: exportStatementDefaultDeclarationDefaultKw$interface(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			F.buildInterfaceDeclaration
-		),
-		coerce: exportStatementDefaultDeclarationDefaultKw$interface(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			C.coerceToInterfaceDeclaration
-		)
-	},
-	importAlias: {
-		strict: exportStatementDefaultDeclarationDefaultKw$importAlias(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			F.buildImportAlias
-		),
-		coerce: exportStatementDefaultDeclarationDefaultKw$importAlias(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			C.coerceToImportAlias
-		)
-	},
+	function: bundle(
+		exportStatementDefaultDeclarationDefaultKw$function$strict,
+		exportStatementDefaultDeclarationDefaultKw$function$coerce,
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.function', max: 1 }
+	),
+	generatorFunction: bundle(
+		exportStatementDefaultDeclarationDefaultKw$generatorFunction$strict,
+		exportStatementDefaultDeclarationDefaultKw$generatorFunction$coerce,
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.generatorFunction', max: 1 }
+	),
+	class: bundle(
+		exportStatementDefaultDeclarationDefaultKw$class$strict,
+		exportStatementDefaultDeclarationDefaultKw$class$coerce,
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.class', max: 1 }
+	),
+	lexical: bundle(
+		exportStatementDefaultDeclarationDefaultKw$lexical$strict,
+		exportStatementDefaultDeclarationDefaultKw$lexical$coerce,
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.lexical', max: 2 }
+	),
+	variable: bundle(
+		exportStatementDefaultDeclarationDefaultKw$variable$strict,
+		exportStatementDefaultDeclarationDefaultKw$variable$coerce,
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.variable', max: 2 }
+	),
+	functionSignature: bundle(
+		exportStatementDefaultDeclarationDefaultKw$functionSignature$strict,
+		exportStatementDefaultDeclarationDefaultKw$functionSignature$coerce,
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.functionSignature', max: 2 }
+	),
+	abstractClass: bundle(
+		exportStatementDefaultDeclarationDefaultKw$abstractClass$strict,
+		exportStatementDefaultDeclarationDefaultKw$abstractClass$coerce,
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.abstractClass', max: 1 }
+	),
+	module: bundle(
+		exportStatementDefaultDeclarationDefaultKw$module$strict,
+		exportStatementDefaultDeclarationDefaultKw$module$coerce,
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.module', max: 1 }
+	),
+	internalModule: bundle(
+		exportStatementDefaultDeclarationDefaultKw$internalModule$strict,
+		exportStatementDefaultDeclarationDefaultKw$internalModule$coerce,
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.internalModule', max: 1 }
+	),
+	typeAlias: bundle(
+		exportStatementDefaultDeclarationDefaultKw$typeAlias$strict,
+		exportStatementDefaultDeclarationDefaultKw$typeAlias$coerce,
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.typeAlias', max: 2 }
+	),
+	enum: bundle(
+		exportStatementDefaultDeclarationDefaultKw$enum$strict,
+		exportStatementDefaultDeclarationDefaultKw$enum$coerce,
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.enum', max: 1 }
+	),
+	interface: bundle(
+		exportStatementDefaultDeclarationDefaultKw$interface$strict,
+		exportStatementDefaultDeclarationDefaultKw$interface$coerce,
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.interface', max: 1 }
+	),
+	importAlias: bundle(
+		exportStatementDefaultDeclarationDefaultKw$importAlias$strict,
+		exportStatementDefaultDeclarationDefaultKw$importAlias$coerce,
+		{ key: 'exportStatementDefaultDeclarationDefaultKw.importAlias', max: 2 }
+	),
 	ambient: {
-		strict: exportStatementDefaultDeclarationDefaultKw$ambient(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			F.buildAmbientDeclaration
+		...bundle(
+			exportStatementDefaultDeclarationDefaultKw$ambient$strict,
+			exportStatementDefaultDeclarationDefaultKw$ambient$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient', max: 1 }
 		),
-		coerce: exportStatementDefaultDeclarationDefaultKw$ambient(
-			F.buildExportStatementDefaultDeclarationDefaultKw,
-			C.coerceToAmbientDeclaration
+		function: bundle(
+			exportStatementDefaultDeclarationDefaultKw$ambient$function$strict,
+			exportStatementDefaultDeclarationDefaultKw$ambient$function$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.function', max: 1 }
 		),
-		function: {
-			strict: exportStatementDefaultDeclarationDefaultKw$ambient$function(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.function.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$ambient$function(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.function.coerce
-			)
-		},
-		generatorFunction: {
-			strict: exportStatementDefaultDeclarationDefaultKw$ambient$generatorFunction(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.generatorFunction.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$ambient$generatorFunction(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.generatorFunction.coerce
-			)
-		},
-		class: {
-			strict: exportStatementDefaultDeclarationDefaultKw$ambient$class(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.class.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$ambient$class(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.class.coerce
-			)
-		},
-		lexical: {
-			strict: exportStatementDefaultDeclarationDefaultKw$ambient$lexical(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.lexical.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$ambient$lexical(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.lexical.coerce
-			)
-		},
-		variable: {
-			strict: exportStatementDefaultDeclarationDefaultKw$ambient$variable(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.variable.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$ambient$variable(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.variable.coerce
-			)
-		},
-		functionSignature: {
-			strict: exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.functionSignature.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.functionSignature.coerce
-			)
-		},
-		abstractClass: {
-			strict: exportStatementDefaultDeclarationDefaultKw$ambient$abstractClass(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.abstractClass.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$ambient$abstractClass(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.abstractClass.coerce
-			)
-		},
-		internalModule: {
-			strict: exportStatementDefaultDeclarationDefaultKw$ambient$internalModule(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.internalModule.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$ambient$internalModule(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.internalModule.coerce
-			)
-		},
-		typeAlias: {
-			strict: exportStatementDefaultDeclarationDefaultKw$ambient$typeAlias(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.typeAlias.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$ambient$typeAlias(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.typeAlias.coerce
-			)
-		},
-		enum: {
-			strict: exportStatementDefaultDeclarationDefaultKw$ambient$enum(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.enum.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$ambient$enum(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.enum.coerce
-			)
-		},
-		interface: {
-			strict: exportStatementDefaultDeclarationDefaultKw$ambient$interface(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.interface.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$ambient$interface(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.interface.coerce
-			)
-		},
-		importAlias: {
-			strict: exportStatementDefaultDeclarationDefaultKw$ambient$importAlias(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.importAlias.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$ambient$importAlias(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.importAlias.coerce
-			)
-		},
-		ambient: {
-			strict: exportStatementDefaultDeclarationDefaultKw$ambient$ambient(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.ambient.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$ambient$ambient(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.ambient.coerce
-			)
-		},
-		global: {
-			strict: exportStatementDefaultDeclarationDefaultKw$ambient$global(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.global.strict
-			),
-			coerce: exportStatementDefaultDeclarationDefaultKw$ambient$global(
-				F.buildExportStatementDefaultDeclarationDefaultKw,
-				ambientDeclaration.global.coerce
-			)
-		}
+		generatorFunction: bundle(
+			exportStatementDefaultDeclarationDefaultKw$ambient$generatorFunction$strict,
+			exportStatementDefaultDeclarationDefaultKw$ambient$generatorFunction$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.generatorFunction', max: 1 }
+		),
+		class: bundle(
+			exportStatementDefaultDeclarationDefaultKw$ambient$class$strict,
+			exportStatementDefaultDeclarationDefaultKw$ambient$class$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.class', max: 1 }
+		),
+		lexical: bundle(
+			exportStatementDefaultDeclarationDefaultKw$ambient$lexical$strict,
+			exportStatementDefaultDeclarationDefaultKw$ambient$lexical$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.lexical', max: 2 }
+		),
+		variable: bundle(
+			exportStatementDefaultDeclarationDefaultKw$ambient$variable$strict,
+			exportStatementDefaultDeclarationDefaultKw$ambient$variable$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.variable', max: 2 }
+		),
+		functionSignature: bundle(
+			exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature$strict,
+			exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.functionSignature', max: 2 }
+		),
+		abstractClass: bundle(
+			exportStatementDefaultDeclarationDefaultKw$ambient$abstractClass$strict,
+			exportStatementDefaultDeclarationDefaultKw$ambient$abstractClass$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.abstractClass', max: 1 }
+		),
+		internalModule: bundle(
+			exportStatementDefaultDeclarationDefaultKw$ambient$internalModule$strict,
+			exportStatementDefaultDeclarationDefaultKw$ambient$internalModule$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.internalModule', max: 1 }
+		),
+		typeAlias: bundle(
+			exportStatementDefaultDeclarationDefaultKw$ambient$typeAlias$strict,
+			exportStatementDefaultDeclarationDefaultKw$ambient$typeAlias$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.typeAlias', max: 2 }
+		),
+		enum: bundle(
+			exportStatementDefaultDeclarationDefaultKw$ambient$enum$strict,
+			exportStatementDefaultDeclarationDefaultKw$ambient$enum$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.enum', max: 1 }
+		),
+		interface: bundle(
+			exportStatementDefaultDeclarationDefaultKw$ambient$interface$strict,
+			exportStatementDefaultDeclarationDefaultKw$ambient$interface$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.interface', max: 1 }
+		),
+		importAlias: bundle(
+			exportStatementDefaultDeclarationDefaultKw$ambient$importAlias$strict,
+			exportStatementDefaultDeclarationDefaultKw$ambient$importAlias$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.importAlias', max: 2 }
+		),
+		ambient: bundle(
+			exportStatementDefaultDeclarationDefaultKw$ambient$ambient$strict,
+			exportStatementDefaultDeclarationDefaultKw$ambient$ambient$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.ambient', max: 1 }
+		),
+		global: bundle(
+			exportStatementDefaultDeclarationDefaultKw$ambient$global$strict,
+			exportStatementDefaultDeclarationDefaultKw$ambient$global$coerce,
+			{ key: 'exportStatementDefaultDeclarationDefaultKw.ambient.global', max: 1 }
+		)
 	}
 });
 
@@ -2063,6 +2546,14 @@ const exportStatementDefaultDeclaration$defaultKw =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$strict = exportStatementDefaultDeclaration$defaultKw(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildExportStatementDefaultDeclarationDefaultKw
+);
+const exportStatementDefaultDeclaration$defaultKw$coerce = exportStatementDefaultDeclaration$defaultKw(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToExportStatementDefaultDeclarationDefaultKw
+);
 const exportStatementDefaultDeclaration$function =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2083,6 +2574,14 @@ const exportStatementDefaultDeclaration$function =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$function$strict = exportStatementDefaultDeclaration$function(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildFunctionDeclaration
+);
+const exportStatementDefaultDeclaration$function$coerce = exportStatementDefaultDeclaration$function(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToFunctionDeclaration
+);
 const exportStatementDefaultDeclaration$generatorFunction =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2103,6 +2602,14 @@ const exportStatementDefaultDeclaration$generatorFunction =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$generatorFunction$strict = exportStatementDefaultDeclaration$generatorFunction(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildGeneratorFunctionDeclaration
+);
+const exportStatementDefaultDeclaration$generatorFunction$coerce = exportStatementDefaultDeclaration$generatorFunction(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToGeneratorFunctionDeclaration
+);
 const exportStatementDefaultDeclaration$class =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -2112,6 +2619,14 @@ const exportStatementDefaultDeclaration$class =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$class$strict = exportStatementDefaultDeclaration$class(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildClassDeclaration
+);
+const exportStatementDefaultDeclaration$class$coerce = exportStatementDefaultDeclaration$class(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToClassDeclaration
+);
 const exportStatementDefaultDeclaration$lexical =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2123,6 +2638,14 @@ const exportStatementDefaultDeclaration$lexical =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$lexical$strict = exportStatementDefaultDeclaration$lexical(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildLexicalDeclaration
+);
+const exportStatementDefaultDeclaration$lexical$coerce = exportStatementDefaultDeclaration$lexical(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToLexicalDeclaration
+);
 const exportStatementDefaultDeclaration$variable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2134,6 +2657,14 @@ const exportStatementDefaultDeclaration$variable =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$variable$strict = exportStatementDefaultDeclaration$variable(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildVariableDeclaration
+);
+const exportStatementDefaultDeclaration$variable$coerce = exportStatementDefaultDeclaration$variable(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToVariableDeclaration
+);
 const exportStatementDefaultDeclaration$functionSignature =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2153,6 +2684,14 @@ const exportStatementDefaultDeclaration$functionSignature =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$functionSignature$strict = exportStatementDefaultDeclaration$functionSignature(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildFunctionSignature
+);
+const exportStatementDefaultDeclaration$functionSignature$coerce = exportStatementDefaultDeclaration$functionSignature(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToFunctionSignature
+);
 const exportStatementDefaultDeclaration$abstractClass =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -2162,6 +2701,14 @@ const exportStatementDefaultDeclaration$abstractClass =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$abstractClass$strict = exportStatementDefaultDeclaration$abstractClass(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildAbstractClassDeclaration
+);
+const exportStatementDefaultDeclaration$abstractClass$coerce = exportStatementDefaultDeclaration$abstractClass(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToAbstractClassDeclaration
+);
 const exportStatementDefaultDeclaration$module =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2173,6 +2720,14 @@ const exportStatementDefaultDeclaration$module =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$module$strict = exportStatementDefaultDeclaration$module(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildModule
+);
+const exportStatementDefaultDeclaration$module$coerce = exportStatementDefaultDeclaration$module(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToModule
+);
 const exportStatementDefaultDeclaration$internalModule =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2184,6 +2739,14 @@ const exportStatementDefaultDeclaration$internalModule =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$internalModule$strict = exportStatementDefaultDeclaration$internalModule(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildInternalModule
+);
+const exportStatementDefaultDeclaration$internalModule$coerce = exportStatementDefaultDeclaration$internalModule(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToInternalModule
+);
 const exportStatementDefaultDeclaration$typeAlias =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2195,6 +2758,14 @@ const exportStatementDefaultDeclaration$typeAlias =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$typeAlias$strict = exportStatementDefaultDeclaration$typeAlias(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildTypeAliasDeclaration
+);
+const exportStatementDefaultDeclaration$typeAlias$coerce = exportStatementDefaultDeclaration$typeAlias(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToTypeAliasDeclaration
+);
 const exportStatementDefaultDeclaration$enum =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2206,6 +2777,14 @@ const exportStatementDefaultDeclaration$enum =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$enum$strict = exportStatementDefaultDeclaration$enum(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildEnumDeclaration
+);
+const exportStatementDefaultDeclaration$enum$coerce = exportStatementDefaultDeclaration$enum(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToEnumDeclaration
+);
 const exportStatementDefaultDeclaration$interface =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2218,6 +2797,14 @@ const exportStatementDefaultDeclaration$interface =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$interface$strict = exportStatementDefaultDeclaration$interface(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildInterfaceDeclaration
+);
+const exportStatementDefaultDeclaration$interface$coerce = exportStatementDefaultDeclaration$interface(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToInterfaceDeclaration
+);
 const exportStatementDefaultDeclaration$importAlias =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -2229,6 +2816,14 @@ const exportStatementDefaultDeclaration$importAlias =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$importAlias$strict = exportStatementDefaultDeclaration$importAlias(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildImportAlias
+);
+const exportStatementDefaultDeclaration$importAlias$coerce = exportStatementDefaultDeclaration$importAlias(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToImportAlias
+);
 const exportStatementDefaultDeclaration$ambient =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -2238,276 +2833,704 @@ const exportStatementDefaultDeclaration$ambient =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$ambient$strict = exportStatementDefaultDeclaration$ambient(
+	F.buildExportStatementDefaultDeclaration,
+	F.buildAmbientDeclaration
+);
+const exportStatementDefaultDeclaration$ambient$coerce = exportStatementDefaultDeclaration$ambient(
+	C.coerceToExportStatementDefaultDeclaration,
+	C.coerceToAmbientDeclaration
+);
 const exportStatementDefaultDeclaration$defaultKw$value =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$value$strict = exportStatementDefaultDeclaration$defaultKw$value(
+	F.buildExportStatementDefaultDeclaration,
+	exportStatementDefaultDeclarationDefaultKw.value.strict
+);
+const exportStatementDefaultDeclaration$defaultKw$value$coerce = exportStatementDefaultDeclaration$defaultKw$value(
+	C.coerceToExportStatementDefaultDeclaration,
+	exportStatementDefaultDeclarationDefaultKw.value.coerce
+);
 const exportStatementDefaultDeclaration$defaultKw$function =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$function$strict =
+	exportStatementDefaultDeclaration$defaultKw$function(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.function.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$function$coerce =
+	exportStatementDefaultDeclaration$defaultKw$function(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.function.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$generatorFunction =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$generatorFunction$strict =
+	exportStatementDefaultDeclaration$defaultKw$generatorFunction(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.generatorFunction.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$generatorFunction$coerce =
+	exportStatementDefaultDeclaration$defaultKw$generatorFunction(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.generatorFunction.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$class =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$class$strict = exportStatementDefaultDeclaration$defaultKw$class(
+	F.buildExportStatementDefaultDeclaration,
+	exportStatementDefaultDeclarationDefaultKw.class.strict
+);
+const exportStatementDefaultDeclaration$defaultKw$class$coerce = exportStatementDefaultDeclaration$defaultKw$class(
+	C.coerceToExportStatementDefaultDeclaration,
+	exportStatementDefaultDeclarationDefaultKw.class.coerce
+);
 const exportStatementDefaultDeclaration$defaultKw$lexical =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$lexical$strict = exportStatementDefaultDeclaration$defaultKw$lexical(
+	F.buildExportStatementDefaultDeclaration,
+	exportStatementDefaultDeclarationDefaultKw.lexical.strict
+);
+const exportStatementDefaultDeclaration$defaultKw$lexical$coerce = exportStatementDefaultDeclaration$defaultKw$lexical(
+	C.coerceToExportStatementDefaultDeclaration,
+	exportStatementDefaultDeclarationDefaultKw.lexical.coerce
+);
 const exportStatementDefaultDeclaration$defaultKw$variable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$variable$strict =
+	exportStatementDefaultDeclaration$defaultKw$variable(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.variable.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$variable$coerce =
+	exportStatementDefaultDeclaration$defaultKw$variable(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.variable.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$functionSignature =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$functionSignature$strict =
+	exportStatementDefaultDeclaration$defaultKw$functionSignature(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.functionSignature.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$functionSignature$coerce =
+	exportStatementDefaultDeclaration$defaultKw$functionSignature(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.functionSignature.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$abstractClass =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$abstractClass$strict =
+	exportStatementDefaultDeclaration$defaultKw$abstractClass(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.abstractClass.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$abstractClass$coerce =
+	exportStatementDefaultDeclaration$defaultKw$abstractClass(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.abstractClass.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$module =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$module$strict = exportStatementDefaultDeclaration$defaultKw$module(
+	F.buildExportStatementDefaultDeclaration,
+	exportStatementDefaultDeclarationDefaultKw.module.strict
+);
+const exportStatementDefaultDeclaration$defaultKw$module$coerce = exportStatementDefaultDeclaration$defaultKw$module(
+	C.coerceToExportStatementDefaultDeclaration,
+	exportStatementDefaultDeclarationDefaultKw.module.coerce
+);
 const exportStatementDefaultDeclaration$defaultKw$internalModule =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$internalModule$strict =
+	exportStatementDefaultDeclaration$defaultKw$internalModule(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.internalModule.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$internalModule$coerce =
+	exportStatementDefaultDeclaration$defaultKw$internalModule(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.internalModule.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$typeAlias =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$typeAlias$strict =
+	exportStatementDefaultDeclaration$defaultKw$typeAlias(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.typeAlias.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$typeAlias$coerce =
+	exportStatementDefaultDeclaration$defaultKw$typeAlias(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.typeAlias.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$enum =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$enum$strict = exportStatementDefaultDeclaration$defaultKw$enum(
+	F.buildExportStatementDefaultDeclaration,
+	exportStatementDefaultDeclarationDefaultKw.enum.strict
+);
+const exportStatementDefaultDeclaration$defaultKw$enum$coerce = exportStatementDefaultDeclaration$defaultKw$enum(
+	C.coerceToExportStatementDefaultDeclaration,
+	exportStatementDefaultDeclarationDefaultKw.enum.coerce
+);
 const exportStatementDefaultDeclaration$defaultKw$interface =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$interface$strict =
+	exportStatementDefaultDeclaration$defaultKw$interface(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.interface.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$interface$coerce =
+	exportStatementDefaultDeclaration$defaultKw$interface(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.interface.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$importAlias =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$importAlias$strict =
+	exportStatementDefaultDeclaration$defaultKw$importAlias(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.importAlias.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$importAlias$coerce =
+	exportStatementDefaultDeclaration$defaultKw$importAlias(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.importAlias.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$strict = exportStatementDefaultDeclaration$defaultKw$ambient(
+	F.buildExportStatementDefaultDeclaration,
+	exportStatementDefaultDeclarationDefaultKw.ambient.strict
+);
+const exportStatementDefaultDeclaration$defaultKw$ambient$coerce = exportStatementDefaultDeclaration$defaultKw$ambient(
+	C.coerceToExportStatementDefaultDeclaration,
+	exportStatementDefaultDeclarationDefaultKw.ambient.coerce
+);
 const exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon$strict =
+	exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.value.automaticSemicolon.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon$coerce =
+	exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.value.automaticSemicolon.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$value$semi =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$value$semi$strict =
+	exportStatementDefaultDeclaration$defaultKw$value$semi(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.value.semi.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$value$semi$coerce =
+	exportStatementDefaultDeclaration$defaultKw$value$semi(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.value.semi.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$function =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$function$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$function(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.function.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$function$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$function(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.function.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$generatorFunction =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$generatorFunction$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$generatorFunction(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.generatorFunction.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$generatorFunction$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$generatorFunction(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.generatorFunction.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$class =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$class$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$class(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.class.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$class$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$class(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.class.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$lexical =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$lexical$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$lexical(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.lexical.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$lexical$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$lexical(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.lexical.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$variable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$variable$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$variable(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.variable.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$variable$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$variable(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.variable.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.functionSignature.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.functionSignature.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$abstractClass =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$abstractClass$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$abstractClass(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.abstractClass.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$abstractClass$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$abstractClass(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.abstractClass.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$internalModule =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$internalModule$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$internalModule(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.internalModule.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$internalModule$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$internalModule(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.internalModule.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$typeAlias =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$typeAlias$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$typeAlias(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.typeAlias.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$typeAlias$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$typeAlias(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.typeAlias.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$enum =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$enum$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$enum(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.enum.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$enum$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$enum(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.enum.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$interface =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$interface$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$interface(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.interface.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$interface$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$interface(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.interface.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$importAlias =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$importAlias$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$importAlias(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.importAlias.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$importAlias$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$importAlias(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.importAlias.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$ambient =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$ambient$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$ambient(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.ambient.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$ambient$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$ambient(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.ambient.coerce
+	);
 const exportStatementDefaultDeclaration$defaultKw$ambient$global =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$defaultKw$ambient$global$strict =
+	exportStatementDefaultDeclaration$defaultKw$ambient$global(
+		F.buildExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.global.strict
+	);
+const exportStatementDefaultDeclaration$defaultKw$ambient$global$coerce =
+	exportStatementDefaultDeclaration$defaultKw$ambient$global(
+		C.coerceToExportStatementDefaultDeclaration,
+		exportStatementDefaultDeclarationDefaultKw.ambient.global.coerce
+	);
 const exportStatementDefaultDeclaration$ambient$function =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$ambient$function$strict = exportStatementDefaultDeclaration$ambient$function(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.function.strict
+);
+const exportStatementDefaultDeclaration$ambient$function$coerce = exportStatementDefaultDeclaration$ambient$function(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.function.coerce
+);
 const exportStatementDefaultDeclaration$ambient$generatorFunction =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$ambient$generatorFunction$strict =
+	exportStatementDefaultDeclaration$ambient$generatorFunction(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.generatorFunction.strict
+	);
+const exportStatementDefaultDeclaration$ambient$generatorFunction$coerce =
+	exportStatementDefaultDeclaration$ambient$generatorFunction(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.generatorFunction.coerce
+	);
 const exportStatementDefaultDeclaration$ambient$class =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$ambient$class$strict = exportStatementDefaultDeclaration$ambient$class(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.class.strict
+);
+const exportStatementDefaultDeclaration$ambient$class$coerce = exportStatementDefaultDeclaration$ambient$class(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.class.coerce
+);
 const exportStatementDefaultDeclaration$ambient$lexical =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$ambient$lexical$strict = exportStatementDefaultDeclaration$ambient$lexical(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.lexical.strict
+);
+const exportStatementDefaultDeclaration$ambient$lexical$coerce = exportStatementDefaultDeclaration$ambient$lexical(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.lexical.coerce
+);
 const exportStatementDefaultDeclaration$ambient$variable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$ambient$variable$strict = exportStatementDefaultDeclaration$ambient$variable(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.variable.strict
+);
+const exportStatementDefaultDeclaration$ambient$variable$coerce = exportStatementDefaultDeclaration$ambient$variable(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.variable.coerce
+);
 const exportStatementDefaultDeclaration$ambient$functionSignature =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$ambient$functionSignature$strict =
+	exportStatementDefaultDeclaration$ambient$functionSignature(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.functionSignature.strict
+	);
+const exportStatementDefaultDeclaration$ambient$functionSignature$coerce =
+	exportStatementDefaultDeclaration$ambient$functionSignature(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.functionSignature.coerce
+	);
 const exportStatementDefaultDeclaration$ambient$abstractClass =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$ambient$abstractClass$strict =
+	exportStatementDefaultDeclaration$ambient$abstractClass(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.abstractClass.strict
+	);
+const exportStatementDefaultDeclaration$ambient$abstractClass$coerce =
+	exportStatementDefaultDeclaration$ambient$abstractClass(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.abstractClass.coerce
+	);
 const exportStatementDefaultDeclaration$ambient$internalModule =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$ambient$internalModule$strict =
+	exportStatementDefaultDeclaration$ambient$internalModule(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.internalModule.strict
+	);
+const exportStatementDefaultDeclaration$ambient$internalModule$coerce =
+	exportStatementDefaultDeclaration$ambient$internalModule(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.internalModule.coerce
+	);
 const exportStatementDefaultDeclaration$ambient$typeAlias =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$ambient$typeAlias$strict = exportStatementDefaultDeclaration$ambient$typeAlias(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.typeAlias.strict
+);
+const exportStatementDefaultDeclaration$ambient$typeAlias$coerce = exportStatementDefaultDeclaration$ambient$typeAlias(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.typeAlias.coerce
+);
 const exportStatementDefaultDeclaration$ambient$enum =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$ambient$enum$strict = exportStatementDefaultDeclaration$ambient$enum(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.enum.strict
+);
+const exportStatementDefaultDeclaration$ambient$enum$coerce = exportStatementDefaultDeclaration$ambient$enum(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.enum.coerce
+);
 const exportStatementDefaultDeclaration$ambient$interface =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$ambient$interface$strict = exportStatementDefaultDeclaration$ambient$interface(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.interface.strict
+);
+const exportStatementDefaultDeclaration$ambient$interface$coerce = exportStatementDefaultDeclaration$ambient$interface(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.interface.coerce
+);
 const exportStatementDefaultDeclaration$ambient$importAlias =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$ambient$importAlias$strict =
+	exportStatementDefaultDeclaration$ambient$importAlias(
+		F.buildExportStatementDefaultDeclaration,
+		ambientDeclaration.importAlias.strict
+	);
+const exportStatementDefaultDeclaration$ambient$importAlias$coerce =
+	exportStatementDefaultDeclaration$ambient$importAlias(
+		C.coerceToExportStatementDefaultDeclaration,
+		ambientDeclaration.importAlias.coerce
+	);
 const exportStatementDefaultDeclaration$ambient$ambient =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$ambient$ambient$strict = exportStatementDefaultDeclaration$ambient$ambient(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.ambient.strict
+);
+const exportStatementDefaultDeclaration$ambient$ambient$coerce = exportStatementDefaultDeclaration$ambient$ambient(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.ambient.coerce
+);
 const exportStatementDefaultDeclaration$ambient$global =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const exportStatementDefaultDeclaration$ambient$global$strict = exportStatementDefaultDeclaration$ambient$global(
+	F.buildExportStatementDefaultDeclaration,
+	ambientDeclaration.global.strict
+);
+const exportStatementDefaultDeclaration$ambient$global$coerce = exportStatementDefaultDeclaration$ambient$global(
+	C.coerceToExportStatementDefaultDeclaration,
+	ambientDeclaration.global.coerce
+);
 const exportStatementDefaultDeclaration: {
 	defaultKw: {
 		strict: (
@@ -3329,589 +4352,306 @@ const exportStatementDefaultDeclaration: {
 	};
 } = Object.freeze({
 	defaultKw: {
-		strict: exportStatementDefaultDeclaration$defaultKw(
-			F.buildExportStatementDefaultDeclaration,
-			F.buildExportStatementDefaultDeclarationDefaultKw
-		),
-		coerce: exportStatementDefaultDeclaration$defaultKw(
-			C.coerceToExportStatementDefaultDeclaration,
-			C.coerceToExportStatementDefaultDeclarationDefaultKw
-		),
+		...bundle(exportStatementDefaultDeclaration$defaultKw$strict, exportStatementDefaultDeclaration$defaultKw$coerce, {
+			key: 'exportStatementDefaultDeclaration.defaultKw',
+			max: 2
+		}),
 		value: {
-			strict: exportStatementDefaultDeclaration$defaultKw$value(
-				F.buildExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.value.strict
+			...bundle(
+				exportStatementDefaultDeclaration$defaultKw$value$strict,
+				exportStatementDefaultDeclaration$defaultKw$value$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.value', max: 2 }
 			),
-			coerce: exportStatementDefaultDeclaration$defaultKw$value(
-				C.coerceToExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.value.coerce
+			automaticSemicolon: bundle(
+				exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon$strict,
+				exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.value.automaticSemicolon', max: 2 }
 			),
-			automaticSemicolon: {
-				strict: exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.value.automaticSemicolon.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$value$automaticSemicolon(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.value.automaticSemicolon.coerce
-				)
-			},
-			semi: {
-				strict: exportStatementDefaultDeclaration$defaultKw$value$semi(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.value.semi.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$value$semi(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.value.semi.coerce
-				)
-			}
-		},
-		function: {
-			strict: exportStatementDefaultDeclaration$defaultKw$function(
-				F.buildExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.function.strict
-			),
-			coerce: exportStatementDefaultDeclaration$defaultKw$function(
-				C.coerceToExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.function.coerce
+			semi: bundle(
+				exportStatementDefaultDeclaration$defaultKw$value$semi$strict,
+				exportStatementDefaultDeclaration$defaultKw$value$semi$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.value.semi', max: 2 }
 			)
 		},
-		generatorFunction: {
-			strict: exportStatementDefaultDeclaration$defaultKw$generatorFunction(
-				F.buildExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.generatorFunction.strict
-			),
-			coerce: exportStatementDefaultDeclaration$defaultKw$generatorFunction(
-				C.coerceToExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.generatorFunction.coerce
-			)
-		},
-		class: {
-			strict: exportStatementDefaultDeclaration$defaultKw$class(
-				F.buildExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.class.strict
-			),
-			coerce: exportStatementDefaultDeclaration$defaultKw$class(
-				C.coerceToExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.class.coerce
-			)
-		},
-		lexical: {
-			strict: exportStatementDefaultDeclaration$defaultKw$lexical(
-				F.buildExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.lexical.strict
-			),
-			coerce: exportStatementDefaultDeclaration$defaultKw$lexical(
-				C.coerceToExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.lexical.coerce
-			)
-		},
-		variable: {
-			strict: exportStatementDefaultDeclaration$defaultKw$variable(
-				F.buildExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.variable.strict
-			),
-			coerce: exportStatementDefaultDeclaration$defaultKw$variable(
-				C.coerceToExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.variable.coerce
-			)
-		},
-		functionSignature: {
-			strict: exportStatementDefaultDeclaration$defaultKw$functionSignature(
-				F.buildExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.functionSignature.strict
-			),
-			coerce: exportStatementDefaultDeclaration$defaultKw$functionSignature(
-				C.coerceToExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.functionSignature.coerce
-			)
-		},
-		abstractClass: {
-			strict: exportStatementDefaultDeclaration$defaultKw$abstractClass(
-				F.buildExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.abstractClass.strict
-			),
-			coerce: exportStatementDefaultDeclaration$defaultKw$abstractClass(
-				C.coerceToExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.abstractClass.coerce
-			)
-		},
-		module: {
-			strict: exportStatementDefaultDeclaration$defaultKw$module(
-				F.buildExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.module.strict
-			),
-			coerce: exportStatementDefaultDeclaration$defaultKw$module(
-				C.coerceToExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.module.coerce
-			)
-		},
-		internalModule: {
-			strict: exportStatementDefaultDeclaration$defaultKw$internalModule(
-				F.buildExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.internalModule.strict
-			),
-			coerce: exportStatementDefaultDeclaration$defaultKw$internalModule(
-				C.coerceToExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.internalModule.coerce
-			)
-		},
-		typeAlias: {
-			strict: exportStatementDefaultDeclaration$defaultKw$typeAlias(
-				F.buildExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.typeAlias.strict
-			),
-			coerce: exportStatementDefaultDeclaration$defaultKw$typeAlias(
-				C.coerceToExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.typeAlias.coerce
-			)
-		},
-		enum: {
-			strict: exportStatementDefaultDeclaration$defaultKw$enum(
-				F.buildExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.enum.strict
-			),
-			coerce: exportStatementDefaultDeclaration$defaultKw$enum(
-				C.coerceToExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.enum.coerce
-			)
-		},
-		interface: {
-			strict: exportStatementDefaultDeclaration$defaultKw$interface(
-				F.buildExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.interface.strict
-			),
-			coerce: exportStatementDefaultDeclaration$defaultKw$interface(
-				C.coerceToExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.interface.coerce
-			)
-		},
-		importAlias: {
-			strict: exportStatementDefaultDeclaration$defaultKw$importAlias(
-				F.buildExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.importAlias.strict
-			),
-			coerce: exportStatementDefaultDeclaration$defaultKw$importAlias(
-				C.coerceToExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.importAlias.coerce
-			)
-		},
+		function: bundle(
+			exportStatementDefaultDeclaration$defaultKw$function$strict,
+			exportStatementDefaultDeclaration$defaultKw$function$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.function', max: 2 }
+		),
+		generatorFunction: bundle(
+			exportStatementDefaultDeclaration$defaultKw$generatorFunction$strict,
+			exportStatementDefaultDeclaration$defaultKw$generatorFunction$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.generatorFunction', max: 2 }
+		),
+		class: bundle(
+			exportStatementDefaultDeclaration$defaultKw$class$strict,
+			exportStatementDefaultDeclaration$defaultKw$class$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.class', max: 2 }
+		),
+		lexical: bundle(
+			exportStatementDefaultDeclaration$defaultKw$lexical$strict,
+			exportStatementDefaultDeclaration$defaultKw$lexical$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.lexical', max: 2 }
+		),
+		variable: bundle(
+			exportStatementDefaultDeclaration$defaultKw$variable$strict,
+			exportStatementDefaultDeclaration$defaultKw$variable$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.variable', max: 2 }
+		),
+		functionSignature: bundle(
+			exportStatementDefaultDeclaration$defaultKw$functionSignature$strict,
+			exportStatementDefaultDeclaration$defaultKw$functionSignature$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.functionSignature', max: 2 }
+		),
+		abstractClass: bundle(
+			exportStatementDefaultDeclaration$defaultKw$abstractClass$strict,
+			exportStatementDefaultDeclaration$defaultKw$abstractClass$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.abstractClass', max: 2 }
+		),
+		module: bundle(
+			exportStatementDefaultDeclaration$defaultKw$module$strict,
+			exportStatementDefaultDeclaration$defaultKw$module$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.module', max: 2 }
+		),
+		internalModule: bundle(
+			exportStatementDefaultDeclaration$defaultKw$internalModule$strict,
+			exportStatementDefaultDeclaration$defaultKw$internalModule$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.internalModule', max: 2 }
+		),
+		typeAlias: bundle(
+			exportStatementDefaultDeclaration$defaultKw$typeAlias$strict,
+			exportStatementDefaultDeclaration$defaultKw$typeAlias$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.typeAlias', max: 2 }
+		),
+		enum: bundle(
+			exportStatementDefaultDeclaration$defaultKw$enum$strict,
+			exportStatementDefaultDeclaration$defaultKw$enum$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.enum', max: 2 }
+		),
+		interface: bundle(
+			exportStatementDefaultDeclaration$defaultKw$interface$strict,
+			exportStatementDefaultDeclaration$defaultKw$interface$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.interface', max: 2 }
+		),
+		importAlias: bundle(
+			exportStatementDefaultDeclaration$defaultKw$importAlias$strict,
+			exportStatementDefaultDeclaration$defaultKw$importAlias$coerce,
+			{ key: 'exportStatementDefaultDeclaration.defaultKw.importAlias', max: 2 }
+		),
 		ambient: {
-			strict: exportStatementDefaultDeclaration$defaultKw$ambient(
-				F.buildExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.ambient.strict
+			...bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient', max: 2 }
 			),
-			coerce: exportStatementDefaultDeclaration$defaultKw$ambient(
-				C.coerceToExportStatementDefaultDeclaration,
-				exportStatementDefaultDeclarationDefaultKw.ambient.coerce
+			function: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$function$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$function$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.function', max: 2 }
 			),
-			function: {
-				strict: exportStatementDefaultDeclaration$defaultKw$ambient$function(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.function.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$ambient$function(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.function.coerce
-				)
-			},
-			generatorFunction: {
-				strict: exportStatementDefaultDeclaration$defaultKw$ambient$generatorFunction(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.generatorFunction.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$ambient$generatorFunction(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.generatorFunction.coerce
-				)
-			},
-			class: {
-				strict: exportStatementDefaultDeclaration$defaultKw$ambient$class(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.class.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$ambient$class(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.class.coerce
-				)
-			},
-			lexical: {
-				strict: exportStatementDefaultDeclaration$defaultKw$ambient$lexical(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.lexical.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$ambient$lexical(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.lexical.coerce
-				)
-			},
-			variable: {
-				strict: exportStatementDefaultDeclaration$defaultKw$ambient$variable(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.variable.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$ambient$variable(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.variable.coerce
-				)
-			},
-			functionSignature: {
-				strict: exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.functionSignature.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.functionSignature.coerce
-				)
-			},
-			abstractClass: {
-				strict: exportStatementDefaultDeclaration$defaultKw$ambient$abstractClass(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.abstractClass.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$ambient$abstractClass(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.abstractClass.coerce
-				)
-			},
-			internalModule: {
-				strict: exportStatementDefaultDeclaration$defaultKw$ambient$internalModule(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.internalModule.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$ambient$internalModule(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.internalModule.coerce
-				)
-			},
-			typeAlias: {
-				strict: exportStatementDefaultDeclaration$defaultKw$ambient$typeAlias(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.typeAlias.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$ambient$typeAlias(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.typeAlias.coerce
-				)
-			},
-			enum: {
-				strict: exportStatementDefaultDeclaration$defaultKw$ambient$enum(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.enum.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$ambient$enum(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.enum.coerce
-				)
-			},
-			interface: {
-				strict: exportStatementDefaultDeclaration$defaultKw$ambient$interface(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.interface.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$ambient$interface(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.interface.coerce
-				)
-			},
-			importAlias: {
-				strict: exportStatementDefaultDeclaration$defaultKw$ambient$importAlias(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.importAlias.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$ambient$importAlias(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.importAlias.coerce
-				)
-			},
-			ambient: {
-				strict: exportStatementDefaultDeclaration$defaultKw$ambient$ambient(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.ambient.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$ambient$ambient(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.ambient.coerce
-				)
-			},
-			global: {
-				strict: exportStatementDefaultDeclaration$defaultKw$ambient$global(
-					F.buildExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.global.strict
-				),
-				coerce: exportStatementDefaultDeclaration$defaultKw$ambient$global(
-					C.coerceToExportStatementDefaultDeclaration,
-					exportStatementDefaultDeclarationDefaultKw.ambient.global.coerce
-				)
-			}
+			generatorFunction: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$generatorFunction$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$generatorFunction$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.generatorFunction', max: 2 }
+			),
+			class: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$class$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$class$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.class', max: 2 }
+			),
+			lexical: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$lexical$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$lexical$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.lexical', max: 2 }
+			),
+			variable: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$variable$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$variable$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.variable', max: 2 }
+			),
+			functionSignature: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$functionSignature$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.functionSignature', max: 2 }
+			),
+			abstractClass: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$abstractClass$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$abstractClass$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.abstractClass', max: 2 }
+			),
+			internalModule: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$internalModule$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$internalModule$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.internalModule', max: 2 }
+			),
+			typeAlias: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$typeAlias$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$typeAlias$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.typeAlias', max: 2 }
+			),
+			enum: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$enum$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$enum$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.enum', max: 2 }
+			),
+			interface: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$interface$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$interface$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.interface', max: 2 }
+			),
+			importAlias: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$importAlias$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$importAlias$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.importAlias', max: 2 }
+			),
+			ambient: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$ambient$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$ambient$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.ambient', max: 2 }
+			),
+			global: bundle(
+				exportStatementDefaultDeclaration$defaultKw$ambient$global$strict,
+				exportStatementDefaultDeclaration$defaultKw$ambient$global$coerce,
+				{ key: 'exportStatementDefaultDeclaration.defaultKw.ambient.global', max: 2 }
+			)
 		}
 	},
-	function: {
-		strict: exportStatementDefaultDeclaration$function(
-			F.buildExportStatementDefaultDeclaration,
-			F.buildFunctionDeclaration
-		),
-		coerce: exportStatementDefaultDeclaration$function(
-			C.coerceToExportStatementDefaultDeclaration,
-			C.coerceToFunctionDeclaration
-		)
-	},
-	generatorFunction: {
-		strict: exportStatementDefaultDeclaration$generatorFunction(
-			F.buildExportStatementDefaultDeclaration,
-			F.buildGeneratorFunctionDeclaration
-		),
-		coerce: exportStatementDefaultDeclaration$generatorFunction(
-			C.coerceToExportStatementDefaultDeclaration,
-			C.coerceToGeneratorFunctionDeclaration
-		)
-	},
-	class: {
-		strict: exportStatementDefaultDeclaration$class(F.buildExportStatementDefaultDeclaration, F.buildClassDeclaration),
-		coerce: exportStatementDefaultDeclaration$class(
-			C.coerceToExportStatementDefaultDeclaration,
-			C.coerceToClassDeclaration
-		)
-	},
-	lexical: {
-		strict: exportStatementDefaultDeclaration$lexical(
-			F.buildExportStatementDefaultDeclaration,
-			F.buildLexicalDeclaration
-		),
-		coerce: exportStatementDefaultDeclaration$lexical(
-			C.coerceToExportStatementDefaultDeclaration,
-			C.coerceToLexicalDeclaration
-		)
-	},
-	variable: {
-		strict: exportStatementDefaultDeclaration$variable(
-			F.buildExportStatementDefaultDeclaration,
-			F.buildVariableDeclaration
-		),
-		coerce: exportStatementDefaultDeclaration$variable(
-			C.coerceToExportStatementDefaultDeclaration,
-			C.coerceToVariableDeclaration
-		)
-	},
-	functionSignature: {
-		strict: exportStatementDefaultDeclaration$functionSignature(
-			F.buildExportStatementDefaultDeclaration,
-			F.buildFunctionSignature
-		),
-		coerce: exportStatementDefaultDeclaration$functionSignature(
-			C.coerceToExportStatementDefaultDeclaration,
-			C.coerceToFunctionSignature
-		)
-	},
-	abstractClass: {
-		strict: exportStatementDefaultDeclaration$abstractClass(
-			F.buildExportStatementDefaultDeclaration,
-			F.buildAbstractClassDeclaration
-		),
-		coerce: exportStatementDefaultDeclaration$abstractClass(
-			C.coerceToExportStatementDefaultDeclaration,
-			C.coerceToAbstractClassDeclaration
-		)
-	},
-	module: {
-		strict: exportStatementDefaultDeclaration$module(F.buildExportStatementDefaultDeclaration, F.buildModule),
-		coerce: exportStatementDefaultDeclaration$module(C.coerceToExportStatementDefaultDeclaration, C.coerceToModule)
-	},
-	internalModule: {
-		strict: exportStatementDefaultDeclaration$internalModule(
-			F.buildExportStatementDefaultDeclaration,
-			F.buildInternalModule
-		),
-		coerce: exportStatementDefaultDeclaration$internalModule(
-			C.coerceToExportStatementDefaultDeclaration,
-			C.coerceToInternalModule
-		)
-	},
-	typeAlias: {
-		strict: exportStatementDefaultDeclaration$typeAlias(
-			F.buildExportStatementDefaultDeclaration,
-			F.buildTypeAliasDeclaration
-		),
-		coerce: exportStatementDefaultDeclaration$typeAlias(
-			C.coerceToExportStatementDefaultDeclaration,
-			C.coerceToTypeAliasDeclaration
-		)
-	},
-	enum: {
-		strict: exportStatementDefaultDeclaration$enum(F.buildExportStatementDefaultDeclaration, F.buildEnumDeclaration),
-		coerce: exportStatementDefaultDeclaration$enum(
-			C.coerceToExportStatementDefaultDeclaration,
-			C.coerceToEnumDeclaration
-		)
-	},
-	interface: {
-		strict: exportStatementDefaultDeclaration$interface(
-			F.buildExportStatementDefaultDeclaration,
-			F.buildInterfaceDeclaration
-		),
-		coerce: exportStatementDefaultDeclaration$interface(
-			C.coerceToExportStatementDefaultDeclaration,
-			C.coerceToInterfaceDeclaration
-		)
-	},
-	importAlias: {
-		strict: exportStatementDefaultDeclaration$importAlias(F.buildExportStatementDefaultDeclaration, F.buildImportAlias),
-		coerce: exportStatementDefaultDeclaration$importAlias(
-			C.coerceToExportStatementDefaultDeclaration,
-			C.coerceToImportAlias
-		)
-	},
+	function: bundle(
+		exportStatementDefaultDeclaration$function$strict,
+		exportStatementDefaultDeclaration$function$coerce,
+		{ key: 'exportStatementDefaultDeclaration.function', max: 2 }
+	),
+	generatorFunction: bundle(
+		exportStatementDefaultDeclaration$generatorFunction$strict,
+		exportStatementDefaultDeclaration$generatorFunction$coerce,
+		{ key: 'exportStatementDefaultDeclaration.generatorFunction', max: 2 }
+	),
+	class: bundle(exportStatementDefaultDeclaration$class$strict, exportStatementDefaultDeclaration$class$coerce, {
+		key: 'exportStatementDefaultDeclaration.class',
+		max: 2
+	}),
+	lexical: bundle(exportStatementDefaultDeclaration$lexical$strict, exportStatementDefaultDeclaration$lexical$coerce, {
+		key: 'exportStatementDefaultDeclaration.lexical',
+		max: 2
+	}),
+	variable: bundle(
+		exportStatementDefaultDeclaration$variable$strict,
+		exportStatementDefaultDeclaration$variable$coerce,
+		{ key: 'exportStatementDefaultDeclaration.variable', max: 2 }
+	),
+	functionSignature: bundle(
+		exportStatementDefaultDeclaration$functionSignature$strict,
+		exportStatementDefaultDeclaration$functionSignature$coerce,
+		{ key: 'exportStatementDefaultDeclaration.functionSignature', max: 2 }
+	),
+	abstractClass: bundle(
+		exportStatementDefaultDeclaration$abstractClass$strict,
+		exportStatementDefaultDeclaration$abstractClass$coerce,
+		{ key: 'exportStatementDefaultDeclaration.abstractClass', max: 2 }
+	),
+	module: bundle(exportStatementDefaultDeclaration$module$strict, exportStatementDefaultDeclaration$module$coerce, {
+		key: 'exportStatementDefaultDeclaration.module',
+		max: 2
+	}),
+	internalModule: bundle(
+		exportStatementDefaultDeclaration$internalModule$strict,
+		exportStatementDefaultDeclaration$internalModule$coerce,
+		{ key: 'exportStatementDefaultDeclaration.internalModule', max: 2 }
+	),
+	typeAlias: bundle(
+		exportStatementDefaultDeclaration$typeAlias$strict,
+		exportStatementDefaultDeclaration$typeAlias$coerce,
+		{ key: 'exportStatementDefaultDeclaration.typeAlias', max: 2 }
+	),
+	enum: bundle(exportStatementDefaultDeclaration$enum$strict, exportStatementDefaultDeclaration$enum$coerce, {
+		key: 'exportStatementDefaultDeclaration.enum',
+		max: 2
+	}),
+	interface: bundle(
+		exportStatementDefaultDeclaration$interface$strict,
+		exportStatementDefaultDeclaration$interface$coerce,
+		{ key: 'exportStatementDefaultDeclaration.interface', max: 2 }
+	),
+	importAlias: bundle(
+		exportStatementDefaultDeclaration$importAlias$strict,
+		exportStatementDefaultDeclaration$importAlias$coerce,
+		{ key: 'exportStatementDefaultDeclaration.importAlias', max: 2 }
+	),
 	ambient: {
-		strict: exportStatementDefaultDeclaration$ambient(
-			F.buildExportStatementDefaultDeclaration,
-			F.buildAmbientDeclaration
+		...bundle(exportStatementDefaultDeclaration$ambient$strict, exportStatementDefaultDeclaration$ambient$coerce, {
+			key: 'exportStatementDefaultDeclaration.ambient',
+			max: 2
+		}),
+		function: bundle(
+			exportStatementDefaultDeclaration$ambient$function$strict,
+			exportStatementDefaultDeclaration$ambient$function$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.function', max: 2 }
 		),
-		coerce: exportStatementDefaultDeclaration$ambient(
-			C.coerceToExportStatementDefaultDeclaration,
-			C.coerceToAmbientDeclaration
+		generatorFunction: bundle(
+			exportStatementDefaultDeclaration$ambient$generatorFunction$strict,
+			exportStatementDefaultDeclaration$ambient$generatorFunction$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.generatorFunction', max: 2 }
 		),
-		function: {
-			strict: exportStatementDefaultDeclaration$ambient$function(
-				F.buildExportStatementDefaultDeclaration,
-				ambientDeclaration.function.strict
-			),
-			coerce: exportStatementDefaultDeclaration$ambient$function(
-				C.coerceToExportStatementDefaultDeclaration,
-				ambientDeclaration.function.coerce
-			)
-		},
-		generatorFunction: {
-			strict: exportStatementDefaultDeclaration$ambient$generatorFunction(
-				F.buildExportStatementDefaultDeclaration,
-				ambientDeclaration.generatorFunction.strict
-			),
-			coerce: exportStatementDefaultDeclaration$ambient$generatorFunction(
-				C.coerceToExportStatementDefaultDeclaration,
-				ambientDeclaration.generatorFunction.coerce
-			)
-		},
-		class: {
-			strict: exportStatementDefaultDeclaration$ambient$class(
-				F.buildExportStatementDefaultDeclaration,
-				ambientDeclaration.class.strict
-			),
-			coerce: exportStatementDefaultDeclaration$ambient$class(
-				C.coerceToExportStatementDefaultDeclaration,
-				ambientDeclaration.class.coerce
-			)
-		},
-		lexical: {
-			strict: exportStatementDefaultDeclaration$ambient$lexical(
-				F.buildExportStatementDefaultDeclaration,
-				ambientDeclaration.lexical.strict
-			),
-			coerce: exportStatementDefaultDeclaration$ambient$lexical(
-				C.coerceToExportStatementDefaultDeclaration,
-				ambientDeclaration.lexical.coerce
-			)
-		},
-		variable: {
-			strict: exportStatementDefaultDeclaration$ambient$variable(
-				F.buildExportStatementDefaultDeclaration,
-				ambientDeclaration.variable.strict
-			),
-			coerce: exportStatementDefaultDeclaration$ambient$variable(
-				C.coerceToExportStatementDefaultDeclaration,
-				ambientDeclaration.variable.coerce
-			)
-		},
-		functionSignature: {
-			strict: exportStatementDefaultDeclaration$ambient$functionSignature(
-				F.buildExportStatementDefaultDeclaration,
-				ambientDeclaration.functionSignature.strict
-			),
-			coerce: exportStatementDefaultDeclaration$ambient$functionSignature(
-				C.coerceToExportStatementDefaultDeclaration,
-				ambientDeclaration.functionSignature.coerce
-			)
-		},
-		abstractClass: {
-			strict: exportStatementDefaultDeclaration$ambient$abstractClass(
-				F.buildExportStatementDefaultDeclaration,
-				ambientDeclaration.abstractClass.strict
-			),
-			coerce: exportStatementDefaultDeclaration$ambient$abstractClass(
-				C.coerceToExportStatementDefaultDeclaration,
-				ambientDeclaration.abstractClass.coerce
-			)
-		},
-		internalModule: {
-			strict: exportStatementDefaultDeclaration$ambient$internalModule(
-				F.buildExportStatementDefaultDeclaration,
-				ambientDeclaration.internalModule.strict
-			),
-			coerce: exportStatementDefaultDeclaration$ambient$internalModule(
-				C.coerceToExportStatementDefaultDeclaration,
-				ambientDeclaration.internalModule.coerce
-			)
-		},
-		typeAlias: {
-			strict: exportStatementDefaultDeclaration$ambient$typeAlias(
-				F.buildExportStatementDefaultDeclaration,
-				ambientDeclaration.typeAlias.strict
-			),
-			coerce: exportStatementDefaultDeclaration$ambient$typeAlias(
-				C.coerceToExportStatementDefaultDeclaration,
-				ambientDeclaration.typeAlias.coerce
-			)
-		},
-		enum: {
-			strict: exportStatementDefaultDeclaration$ambient$enum(
-				F.buildExportStatementDefaultDeclaration,
-				ambientDeclaration.enum.strict
-			),
-			coerce: exportStatementDefaultDeclaration$ambient$enum(
-				C.coerceToExportStatementDefaultDeclaration,
-				ambientDeclaration.enum.coerce
-			)
-		},
-		interface: {
-			strict: exportStatementDefaultDeclaration$ambient$interface(
-				F.buildExportStatementDefaultDeclaration,
-				ambientDeclaration.interface.strict
-			),
-			coerce: exportStatementDefaultDeclaration$ambient$interface(
-				C.coerceToExportStatementDefaultDeclaration,
-				ambientDeclaration.interface.coerce
-			)
-		},
-		importAlias: {
-			strict: exportStatementDefaultDeclaration$ambient$importAlias(
-				F.buildExportStatementDefaultDeclaration,
-				ambientDeclaration.importAlias.strict
-			),
-			coerce: exportStatementDefaultDeclaration$ambient$importAlias(
-				C.coerceToExportStatementDefaultDeclaration,
-				ambientDeclaration.importAlias.coerce
-			)
-		},
-		ambient: {
-			strict: exportStatementDefaultDeclaration$ambient$ambient(
-				F.buildExportStatementDefaultDeclaration,
-				ambientDeclaration.ambient.strict
-			),
-			coerce: exportStatementDefaultDeclaration$ambient$ambient(
-				C.coerceToExportStatementDefaultDeclaration,
-				ambientDeclaration.ambient.coerce
-			)
-		},
-		global: {
-			strict: exportStatementDefaultDeclaration$ambient$global(
-				F.buildExportStatementDefaultDeclaration,
-				ambientDeclaration.global.strict
-			),
-			coerce: exportStatementDefaultDeclaration$ambient$global(
-				C.coerceToExportStatementDefaultDeclaration,
-				ambientDeclaration.global.coerce
-			)
-		}
+		class: bundle(
+			exportStatementDefaultDeclaration$ambient$class$strict,
+			exportStatementDefaultDeclaration$ambient$class$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.class', max: 2 }
+		),
+		lexical: bundle(
+			exportStatementDefaultDeclaration$ambient$lexical$strict,
+			exportStatementDefaultDeclaration$ambient$lexical$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.lexical', max: 2 }
+		),
+		variable: bundle(
+			exportStatementDefaultDeclaration$ambient$variable$strict,
+			exportStatementDefaultDeclaration$ambient$variable$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.variable', max: 2 }
+		),
+		functionSignature: bundle(
+			exportStatementDefaultDeclaration$ambient$functionSignature$strict,
+			exportStatementDefaultDeclaration$ambient$functionSignature$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.functionSignature', max: 2 }
+		),
+		abstractClass: bundle(
+			exportStatementDefaultDeclaration$ambient$abstractClass$strict,
+			exportStatementDefaultDeclaration$ambient$abstractClass$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.abstractClass', max: 2 }
+		),
+		internalModule: bundle(
+			exportStatementDefaultDeclaration$ambient$internalModule$strict,
+			exportStatementDefaultDeclaration$ambient$internalModule$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.internalModule', max: 2 }
+		),
+		typeAlias: bundle(
+			exportStatementDefaultDeclaration$ambient$typeAlias$strict,
+			exportStatementDefaultDeclaration$ambient$typeAlias$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.typeAlias', max: 2 }
+		),
+		enum: bundle(
+			exportStatementDefaultDeclaration$ambient$enum$strict,
+			exportStatementDefaultDeclaration$ambient$enum$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.enum', max: 2 }
+		),
+		interface: bundle(
+			exportStatementDefaultDeclaration$ambient$interface$strict,
+			exportStatementDefaultDeclaration$ambient$interface$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.interface', max: 2 }
+		),
+		importAlias: bundle(
+			exportStatementDefaultDeclaration$ambient$importAlias$strict,
+			exportStatementDefaultDeclaration$ambient$importAlias$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.importAlias', max: 2 }
+		),
+		ambient: bundle(
+			exportStatementDefaultDeclaration$ambient$ambient$strict,
+			exportStatementDefaultDeclaration$ambient$ambient$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.ambient', max: 2 }
+		),
+		global: bundle(
+			exportStatementDefaultDeclaration$ambient$global$strict,
+			exportStatementDefaultDeclaration$ambient$global$coerce,
+			{ key: 'exportStatementDefaultDeclaration.ambient.global', max: 2 }
+		)
 	}
 });
 
@@ -3951,8 +4691,8 @@ export const importSpecifier: {
 	readonly name: { strict: typeof F.buildImportSpecifierName; coerce: typeof C.coerceToImportSpecifierName };
 	readonly as: { strict: typeof F.buildImportSpecifierAs; coerce: typeof C.coerceToImportSpecifierAs };
 } = Object.freeze({
-	name: Object.freeze({ strict: F.buildImportSpecifierName, coerce: C.coerceToImportSpecifierName }),
-	as: Object.freeze({ strict: F.buildImportSpecifierAs, coerce: C.coerceToImportSpecifierAs })
+	name: bundle(F.buildImportSpecifierName, C.coerceToImportSpecifierName, { key: 'importSpecifier.name', max: 1 }),
+	as: bundle(F.buildImportSpecifierAs, C.coerceToImportSpecifierAs, { key: 'importSpecifier.as', max: 1 })
 });
 
 export const variableDeclarator: {
@@ -3962,8 +4702,14 @@ export const variableDeclarator: {
 		coerce: typeof C.coerceToVariableDeclaratorDefinite;
 	};
 } = Object.freeze({
-	plain: Object.freeze({ strict: F.buildVariableDeclaratorPlain, coerce: C.coerceToVariableDeclaratorPlain }),
-	definite: Object.freeze({ strict: F.buildVariableDeclaratorDefinite, coerce: C.coerceToVariableDeclaratorDefinite })
+	plain: bundle(F.buildVariableDeclaratorPlain, C.coerceToVariableDeclaratorPlain, {
+		key: 'variableDeclarator.plain',
+		max: 1
+	}),
+	definite: bundle(F.buildVariableDeclaratorDefinite, C.coerceToVariableDeclaratorDefinite, {
+		key: 'variableDeclarator.definite',
+		max: 1
+	})
 });
 
 export const forHeader: {
@@ -3974,9 +4720,12 @@ export const forHeader: {
 		coerce: typeof C.coerceToForHeaderLetConstKind;
 	};
 } = Object.freeze({
-	lhs: Object.freeze({ strict: F.buildForHeaderLhs, coerce: C.coerceToForHeaderLhs }),
-	varKind: Object.freeze({ strict: F.buildForHeaderVarKind, coerce: C.coerceToForHeaderVarKind }),
-	letConstKind: Object.freeze({ strict: F.buildForHeaderLetConstKind, coerce: C.coerceToForHeaderLetConstKind })
+	lhs: bundle(F.buildForHeaderLhs, C.coerceToForHeaderLhs, { key: 'forHeader.lhs', max: 1 }),
+	varKind: bundle(F.buildForHeaderVarKind, C.coerceToForHeaderVarKind, { key: 'forHeader.varKind', max: 1 }),
+	letConstKind: bundle(F.buildForHeaderLetConstKind, C.coerceToForHeaderLetConstKind, {
+		key: 'forHeader.letConstKind',
+		max: 1
+	})
 });
 
 export const callExpression: {
@@ -3987,12 +4736,12 @@ export const callExpression: {
 	};
 	readonly member: { strict: typeof F.buildCallExpressionMember; coerce: typeof C.coerceToCallExpressionMember };
 } = Object.freeze({
-	call: Object.freeze({ strict: F.buildCallExpressionCall, coerce: C.coerceToCallExpressionCall }),
-	templateCall: Object.freeze({
-		strict: F.buildCallExpressionTemplateCall,
-		coerce: C.coerceToCallExpressionTemplateCall
+	call: bundle(F.buildCallExpressionCall, C.coerceToCallExpressionCall, { key: 'callExpression.call', max: 1 }),
+	templateCall: bundle(F.buildCallExpressionTemplateCall, C.coerceToCallExpressionTemplateCall, {
+		key: 'callExpression.templateCall',
+		max: 1
 	}),
-	member: Object.freeze({ strict: F.buildCallExpressionMember, coerce: C.coerceToCallExpressionMember })
+	member: bundle(F.buildCallExpressionMember, C.coerceToCallExpressionMember, { key: 'callExpression.member', max: 1 })
 });
 
 export const updateExpression: {
@@ -4001,11 +4750,820 @@ export const updateExpression: {
 	readonly postfix: { strict: typeof F.buildUpdateExpressionPostfix; coerce: typeof C.coerceToUpdateExpressionPostfix };
 	readonly prefix: { strict: typeof F.buildUpdateExpressionPrefix; coerce: typeof C.coerceToUpdateExpressionPrefix };
 } = Object.freeze({
-	strict: F.buildUpdateExpressionPostfix,
-	coerce: C.coerceToUpdateExpressionPostfix,
-	postfix: Object.freeze({ strict: F.buildUpdateExpressionPostfix, coerce: C.coerceToUpdateExpressionPostfix }),
-	prefix: Object.freeze({ strict: F.buildUpdateExpressionPrefix, coerce: C.coerceToUpdateExpressionPrefix })
+	...bundle(F.buildUpdateExpressionPostfix, C.coerceToUpdateExpressionPostfix, { key: 'updateExpression', max: 1 }),
+	postfix: bundle(F.buildUpdateExpressionPostfix, C.coerceToUpdateExpressionPostfix, {
+		key: 'updateExpression.postfix',
+		max: 1
+	}),
+	prefix: bundle(F.buildUpdateExpressionPrefix, C.coerceToUpdateExpressionPrefix, {
+		key: 'updateExpression.prefix',
+		max: 1
+	})
 });
+
+const yieldExpressionDelegate$as =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$as$strict = yieldExpressionDelegate$as(
+	F.buildYieldExpressionDelegate,
+	F.buildAsExpression
+);
+const yieldExpressionDelegate$as$coerce = yieldExpressionDelegate$as(
+	F.buildYieldExpressionDelegate,
+	C.coerceToAsExpression
+);
+const yieldExpressionDelegate$satisfies =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$satisfies$strict = yieldExpressionDelegate$satisfies(
+	F.buildYieldExpressionDelegate,
+	F.buildSatisfiesExpression
+);
+const yieldExpressionDelegate$satisfies$coerce = yieldExpressionDelegate$satisfies(
+	F.buildYieldExpressionDelegate,
+	C.coerceToSatisfiesExpression
+);
+const yieldExpressionDelegate$instantiation =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$instantiation$strict = yieldExpressionDelegate$instantiation(
+	F.buildYieldExpressionDelegate,
+	F.buildInstantiationExpression
+);
+const yieldExpressionDelegate$instantiation$coerce = yieldExpressionDelegate$instantiation(
+	F.buildYieldExpressionDelegate,
+	C.coerceToInstantiationExpression
+);
+const yieldExpressionDelegate$internalModule =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$internalModule$strict = yieldExpressionDelegate$internalModule(
+	F.buildYieldExpressionDelegate,
+	F.buildInternalModule
+);
+const yieldExpressionDelegate$internalModule$coerce = yieldExpressionDelegate$internalModule(
+	F.buildYieldExpressionDelegate,
+	C.coerceToInternalModule
+);
+const yieldExpressionDelegate$typeAssertion =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$typeAssertion$strict = yieldExpressionDelegate$typeAssertion(
+	F.buildYieldExpressionDelegate,
+	F.buildTypeAssertion
+);
+const yieldExpressionDelegate$typeAssertion$coerce = yieldExpressionDelegate$typeAssertion(
+	F.buildYieldExpressionDelegate,
+	C.coerceToTypeAssertion
+);
+const yieldExpressionDelegate$assignment =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$assignment$strict = yieldExpressionDelegate$assignment(
+	F.buildYieldExpressionDelegate,
+	F.buildAssignmentExpression
+);
+const yieldExpressionDelegate$assignment$coerce = yieldExpressionDelegate$assignment(
+	F.buildYieldExpressionDelegate,
+	C.coerceToAssignmentExpression
+);
+const yieldExpressionDelegate$augmentedAssignment =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$augmentedAssignment$strict = yieldExpressionDelegate$augmentedAssignment(
+	F.buildYieldExpressionDelegate,
+	F.buildAugmentedAssignmentExpression
+);
+const yieldExpressionDelegate$augmentedAssignment$coerce = yieldExpressionDelegate$augmentedAssignment(
+	F.buildYieldExpressionDelegate,
+	C.coerceToAugmentedAssignmentExpression
+);
+const yieldExpressionDelegate$await =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$await$strict = yieldExpressionDelegate$await(
+	F.buildYieldExpressionDelegate,
+	F.buildAwaitExpression
+);
+const yieldExpressionDelegate$await$coerce = yieldExpressionDelegate$await(
+	F.buildYieldExpressionDelegate,
+	C.coerceToAwaitExpression
+);
+const yieldExpressionDelegate$unary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$unary$strict = yieldExpressionDelegate$unary(
+	F.buildYieldExpressionDelegate,
+	F.buildUnaryExpression
+);
+const yieldExpressionDelegate$unary$coerce = yieldExpressionDelegate$unary(
+	F.buildYieldExpressionDelegate,
+	C.coerceToUnaryExpression
+);
+const yieldExpressionDelegate$binary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$binary$strict = yieldExpressionDelegate$binary(
+	F.buildYieldExpressionDelegate,
+	F.buildBinaryExpression
+);
+const yieldExpressionDelegate$binary$coerce = yieldExpressionDelegate$binary(
+	F.buildYieldExpressionDelegate,
+	C.coerceToBinaryExpression
+);
+const yieldExpressionDelegate$ternary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$ternary$strict = yieldExpressionDelegate$ternary(
+	F.buildYieldExpressionDelegate,
+	F.buildTernaryExpression
+);
+const yieldExpressionDelegate$ternary$coerce = yieldExpressionDelegate$ternary(
+	F.buildYieldExpressionDelegate,
+	C.coerceToTernaryExpression
+);
+const yieldExpressionDelegate$update =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$update$strict = yieldExpressionDelegate$update(
+	F.buildYieldExpressionDelegate,
+	updateExpression.strict
+);
+const yieldExpressionDelegate$update$coerce = yieldExpressionDelegate$update(
+	F.buildYieldExpressionDelegate,
+	updateExpression.coerce
+);
+const yieldExpressionDelegate$new =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$new$strict = yieldExpressionDelegate$new(
+	F.buildYieldExpressionDelegate,
+	F.buildNewExpression
+);
+const yieldExpressionDelegate$new$coerce = yieldExpressionDelegate$new(
+	F.buildYieldExpressionDelegate,
+	C.coerceToNewExpression
+);
+const yieldExpressionDelegate$yield =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$yield$strict = yieldExpressionDelegate$yield(
+	F.buildYieldExpressionDelegate,
+	F.buildYieldExpression
+);
+const yieldExpressionDelegate$yield$coerce = yieldExpressionDelegate$yield(
+	F.buildYieldExpressionDelegate,
+	C.coerceToYieldExpression
+);
+const yieldExpressionDelegate$binary$in =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$binary$in$strict = yieldExpressionDelegate$binary$in(
+	F.buildYieldExpressionDelegate,
+	binaryExpression.in.strict
+);
+const yieldExpressionDelegate$binary$in$coerce = yieldExpressionDelegate$binary$in(
+	F.buildYieldExpressionDelegate,
+	binaryExpression.in.coerce
+);
+const yieldExpressionDelegate$update$postfix =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$update$postfix$strict = yieldExpressionDelegate$update$postfix(
+	F.buildYieldExpressionDelegate,
+	updateExpression.postfix.strict
+);
+const yieldExpressionDelegate$update$postfix$coerce = yieldExpressionDelegate$update$postfix(
+	F.buildYieldExpressionDelegate,
+	updateExpression.postfix.coerce
+);
+const yieldExpressionDelegate$update$prefix =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpressionDelegate$update$prefix$strict = yieldExpressionDelegate$update$prefix(
+	F.buildYieldExpressionDelegate,
+	updateExpression.prefix.strict
+);
+const yieldExpressionDelegate$update$prefix$coerce = yieldExpressionDelegate$update$prefix(
+	F.buildYieldExpressionDelegate,
+	updateExpression.prefix.coerce
+);
+const yieldExpressionDelegate: {
+	as: {
+		strict: (...args: ArgsOf<typeof F.buildAsExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToAsExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	satisfies: {
+		strict: (...args: ArgsOf<typeof F.buildSatisfiesExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (
+			...args: ArgsOf<typeof C.coerceToSatisfiesExpression>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	instantiation: {
+		strict: (
+			...args: ArgsOf<typeof F.buildInstantiationExpression>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (
+			...args: ArgsOf<typeof C.coerceToInstantiationExpression>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	internalModule: {
+		strict: (...args: ArgsOf<typeof F.buildInternalModule>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToInternalModule>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	typeAssertion: {
+		strict: (...args: ArgsOf<typeof F.buildTypeAssertion>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTypeAssertion>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	assignment: {
+		strict: (...args: ArgsOf<typeof F.buildAssignmentExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (
+			...args: ArgsOf<typeof C.coerceToAssignmentExpression>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	augmentedAssignment: {
+		strict: (
+			...args: ArgsOf<typeof F.buildAugmentedAssignmentExpression>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (
+			...args: ArgsOf<typeof C.coerceToAugmentedAssignmentExpression>
+		) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	await: {
+		strict: (...args: ArgsOf<typeof F.buildAwaitExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToAwaitExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	unary: {
+		strict: (...args: ArgsOf<typeof F.buildUnaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToUnaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	binary: {
+		strict: (...args: ArgsOf<typeof F.buildBinaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToBinaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		in: {
+			strict: (...args: ArgsOf<typeof binaryExpression.in.strict>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+			coerce: (...args: ArgsOf<typeof binaryExpression.in.coerce>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		};
+	};
+	ternary: {
+		strict: (...args: ArgsOf<typeof F.buildTernaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToTernaryExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	update: {
+		strict: (...args: ArgsOf<typeof updateExpression.strict>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof updateExpression.coerce>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		postfix: {
+			strict: (
+				...args: ArgsOf<typeof updateExpression.postfix.strict>
+			) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+			coerce: (
+				...args: ArgsOf<typeof updateExpression.postfix.coerce>
+			) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		};
+		prefix: {
+			strict: (
+				...args: ArgsOf<typeof updateExpression.prefix.strict>
+			) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+			coerce: (
+				...args: ArgsOf<typeof updateExpression.prefix.coerce>
+			) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		};
+	};
+	new: {
+		strict: (...args: ArgsOf<typeof F.buildNewExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToNewExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+	yield: {
+		strict: (...args: ArgsOf<typeof F.buildYieldExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+		coerce: (...args: ArgsOf<typeof C.coerceToYieldExpression>) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	};
+} = Object.freeze({
+	as: bundle(yieldExpressionDelegate$as$strict, yieldExpressionDelegate$as$coerce, {
+		key: 'yieldExpressionDelegate.as',
+		max: 1
+	}),
+	satisfies: bundle(yieldExpressionDelegate$satisfies$strict, yieldExpressionDelegate$satisfies$coerce, {
+		key: 'yieldExpressionDelegate.satisfies',
+		max: 1
+	}),
+	instantiation: bundle(yieldExpressionDelegate$instantiation$strict, yieldExpressionDelegate$instantiation$coerce, {
+		key: 'yieldExpressionDelegate.instantiation',
+		max: 1
+	}),
+	internalModule: bundle(yieldExpressionDelegate$internalModule$strict, yieldExpressionDelegate$internalModule$coerce, {
+		key: 'yieldExpressionDelegate.internalModule',
+		max: 1
+	}),
+	typeAssertion: bundle(yieldExpressionDelegate$typeAssertion$strict, yieldExpressionDelegate$typeAssertion$coerce, {
+		key: 'yieldExpressionDelegate.typeAssertion',
+		max: 1
+	}),
+	assignment: bundle(yieldExpressionDelegate$assignment$strict, yieldExpressionDelegate$assignment$coerce, {
+		key: 'yieldExpressionDelegate.assignment',
+		max: 1
+	}),
+	augmentedAssignment: bundle(
+		yieldExpressionDelegate$augmentedAssignment$strict,
+		yieldExpressionDelegate$augmentedAssignment$coerce,
+		{ key: 'yieldExpressionDelegate.augmentedAssignment', max: 1 }
+	),
+	await: bundle(yieldExpressionDelegate$await$strict, yieldExpressionDelegate$await$coerce, {
+		key: 'yieldExpressionDelegate.await',
+		max: 1
+	}),
+	unary: bundle(yieldExpressionDelegate$unary$strict, yieldExpressionDelegate$unary$coerce, {
+		key: 'yieldExpressionDelegate.unary',
+		max: 1
+	}),
+	binary: {
+		...bundle(yieldExpressionDelegate$binary$strict, yieldExpressionDelegate$binary$coerce, {
+			key: 'yieldExpressionDelegate.binary',
+			max: 1
+		}),
+		in: bundle(yieldExpressionDelegate$binary$in$strict, yieldExpressionDelegate$binary$in$coerce, {
+			key: 'yieldExpressionDelegate.binary.in',
+			max: 2
+		})
+	},
+	ternary: bundle(yieldExpressionDelegate$ternary$strict, yieldExpressionDelegate$ternary$coerce, {
+		key: 'yieldExpressionDelegate.ternary',
+		max: 1
+	}),
+	update: {
+		...bundle(yieldExpressionDelegate$update$strict, yieldExpressionDelegate$update$coerce, {
+			key: 'yieldExpressionDelegate.update',
+			max: 1
+		}),
+		postfix: bundle(yieldExpressionDelegate$update$postfix$strict, yieldExpressionDelegate$update$postfix$coerce, {
+			key: 'yieldExpressionDelegate.update.postfix',
+			max: 1
+		}),
+		prefix: bundle(yieldExpressionDelegate$update$prefix$strict, yieldExpressionDelegate$update$prefix$coerce, {
+			key: 'yieldExpressionDelegate.update.prefix',
+			max: 1
+		})
+	},
+	new: bundle(yieldExpressionDelegate$new$strict, yieldExpressionDelegate$new$coerce, {
+		key: 'yieldExpressionDelegate.new',
+		max: 1
+	}),
+	yield: bundle(yieldExpressionDelegate$yield$strict, yieldExpressionDelegate$yield$coerce, {
+		key: 'yieldExpressionDelegate.yield',
+		max: 1
+	})
+});
+
+const yieldExpression$delegate =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$strict = yieldExpression$delegate(
+	F.buildYieldExpression,
+	F.buildYieldExpressionDelegate
+);
+const yieldExpression$delegate$coerce = yieldExpression$delegate(
+	F.buildYieldExpression,
+	C.coerceToYieldExpressionDelegate
+);
+const yieldExpression$delegate$as =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$as$strict = yieldExpression$delegate$as(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.as.strict
+);
+const yieldExpression$delegate$as$coerce = yieldExpression$delegate$as(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.as.coerce
+);
+const yieldExpression$delegate$satisfies =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$satisfies$strict = yieldExpression$delegate$satisfies(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.satisfies.strict
+);
+const yieldExpression$delegate$satisfies$coerce = yieldExpression$delegate$satisfies(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.satisfies.coerce
+);
+const yieldExpression$delegate$instantiation =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$instantiation$strict = yieldExpression$delegate$instantiation(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.instantiation.strict
+);
+const yieldExpression$delegate$instantiation$coerce = yieldExpression$delegate$instantiation(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.instantiation.coerce
+);
+const yieldExpression$delegate$internalModule =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$internalModule$strict = yieldExpression$delegate$internalModule(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.internalModule.strict
+);
+const yieldExpression$delegate$internalModule$coerce = yieldExpression$delegate$internalModule(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.internalModule.coerce
+);
+const yieldExpression$delegate$typeAssertion =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$typeAssertion$strict = yieldExpression$delegate$typeAssertion(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.typeAssertion.strict
+);
+const yieldExpression$delegate$typeAssertion$coerce = yieldExpression$delegate$typeAssertion(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.typeAssertion.coerce
+);
+const yieldExpression$delegate$assignment =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$assignment$strict = yieldExpression$delegate$assignment(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.assignment.strict
+);
+const yieldExpression$delegate$assignment$coerce = yieldExpression$delegate$assignment(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.assignment.coerce
+);
+const yieldExpression$delegate$augmentedAssignment =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$augmentedAssignment$strict = yieldExpression$delegate$augmentedAssignment(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.augmentedAssignment.strict
+);
+const yieldExpression$delegate$augmentedAssignment$coerce = yieldExpression$delegate$augmentedAssignment(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.augmentedAssignment.coerce
+);
+const yieldExpression$delegate$await =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$await$strict = yieldExpression$delegate$await(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.await.strict
+);
+const yieldExpression$delegate$await$coerce = yieldExpression$delegate$await(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.await.coerce
+);
+const yieldExpression$delegate$unary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$unary$strict = yieldExpression$delegate$unary(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.unary.strict
+);
+const yieldExpression$delegate$unary$coerce = yieldExpression$delegate$unary(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.unary.coerce
+);
+const yieldExpression$delegate$binary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$binary$strict = yieldExpression$delegate$binary(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.binary.strict
+);
+const yieldExpression$delegate$binary$coerce = yieldExpression$delegate$binary(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.binary.coerce
+);
+const yieldExpression$delegate$ternary =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$ternary$strict = yieldExpression$delegate$ternary(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.ternary.strict
+);
+const yieldExpression$delegate$ternary$coerce = yieldExpression$delegate$ternary(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.ternary.coerce
+);
+const yieldExpression$delegate$update =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$update$strict = yieldExpression$delegate$update(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.update.strict
+);
+const yieldExpression$delegate$update$coerce = yieldExpression$delegate$update(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.update.coerce
+);
+const yieldExpression$delegate$new =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$new$strict = yieldExpression$delegate$new(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.new.strict
+);
+const yieldExpression$delegate$new$coerce = yieldExpression$delegate$new(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.new.coerce
+);
+const yieldExpression$delegate$yield =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$yield$strict = yieldExpression$delegate$yield(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.yield.strict
+);
+const yieldExpression$delegate$yield$coerce = yieldExpression$delegate$yield(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.yield.coerce
+);
+const yieldExpression$delegate$binary$in =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$binary$in$strict = yieldExpression$delegate$binary$in(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.binary.in.strict
+);
+const yieldExpression$delegate$binary$in$coerce = yieldExpression$delegate$binary$in(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.binary.in.coerce
+);
+const yieldExpression$delegate$update$postfix =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$update$postfix$strict = yieldExpression$delegate$update$postfix(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.update.postfix.strict
+);
+const yieldExpression$delegate$update$postfix$coerce = yieldExpression$delegate$update$postfix(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.update.postfix.coerce
+);
+const yieldExpression$delegate$update$prefix =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const yieldExpression$delegate$update$prefix$strict = yieldExpression$delegate$update$prefix(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.update.prefix.strict
+);
+const yieldExpression$delegate$update$prefix$coerce = yieldExpression$delegate$update$prefix(
+	F.buildYieldExpression,
+	yieldExpressionDelegate.update.prefix.coerce
+);
+export const yieldExpression = Object.freeze({
+	...B.yieldExpression,
+	delegate: {
+		...bundle(yieldExpression$delegate$strict, yieldExpression$delegate$coerce, {
+			key: 'yieldExpression.delegate',
+			max: 1
+		}),
+		as: bundle(yieldExpression$delegate$as$strict, yieldExpression$delegate$as$coerce, {
+			key: 'yieldExpression.delegate.as',
+			max: 1
+		}),
+		satisfies: bundle(yieldExpression$delegate$satisfies$strict, yieldExpression$delegate$satisfies$coerce, {
+			key: 'yieldExpression.delegate.satisfies',
+			max: 1
+		}),
+		instantiation: bundle(
+			yieldExpression$delegate$instantiation$strict,
+			yieldExpression$delegate$instantiation$coerce,
+			{ key: 'yieldExpression.delegate.instantiation', max: 1 }
+		),
+		internalModule: bundle(
+			yieldExpression$delegate$internalModule$strict,
+			yieldExpression$delegate$internalModule$coerce,
+			{ key: 'yieldExpression.delegate.internalModule', max: 1 }
+		),
+		typeAssertion: bundle(
+			yieldExpression$delegate$typeAssertion$strict,
+			yieldExpression$delegate$typeAssertion$coerce,
+			{ key: 'yieldExpression.delegate.typeAssertion', max: 1 }
+		),
+		assignment: bundle(yieldExpression$delegate$assignment$strict, yieldExpression$delegate$assignment$coerce, {
+			key: 'yieldExpression.delegate.assignment',
+			max: 1
+		}),
+		augmentedAssignment: bundle(
+			yieldExpression$delegate$augmentedAssignment$strict,
+			yieldExpression$delegate$augmentedAssignment$coerce,
+			{ key: 'yieldExpression.delegate.augmentedAssignment', max: 1 }
+		),
+		await: bundle(yieldExpression$delegate$await$strict, yieldExpression$delegate$await$coerce, {
+			key: 'yieldExpression.delegate.await',
+			max: 1
+		}),
+		unary: bundle(yieldExpression$delegate$unary$strict, yieldExpression$delegate$unary$coerce, {
+			key: 'yieldExpression.delegate.unary',
+			max: 1
+		}),
+		binary: {
+			...bundle(yieldExpression$delegate$binary$strict, yieldExpression$delegate$binary$coerce, {
+				key: 'yieldExpression.delegate.binary',
+				max: 1
+			}),
+			in: bundle(yieldExpression$delegate$binary$in$strict, yieldExpression$delegate$binary$in$coerce, {
+				key: 'yieldExpression.delegate.binary.in',
+				max: 2
+			})
+		},
+		ternary: bundle(yieldExpression$delegate$ternary$strict, yieldExpression$delegate$ternary$coerce, {
+			key: 'yieldExpression.delegate.ternary',
+			max: 1
+		}),
+		update: {
+			...bundle(yieldExpression$delegate$update$strict, yieldExpression$delegate$update$coerce, {
+				key: 'yieldExpression.delegate.update',
+				max: 1
+			}),
+			postfix: bundle(yieldExpression$delegate$update$postfix$strict, yieldExpression$delegate$update$postfix$coerce, {
+				key: 'yieldExpression.delegate.update.postfix',
+				max: 1
+			}),
+			prefix: bundle(yieldExpression$delegate$update$prefix$strict, yieldExpression$delegate$update$prefix$coerce, {
+				key: 'yieldExpression.delegate.update.prefix',
+				max: 1
+			})
+		},
+		new: bundle(yieldExpression$delegate$new$strict, yieldExpression$delegate$new$coerce, {
+			key: 'yieldExpression.delegate.new',
+			max: 1
+		}),
+		yield: bundle(yieldExpression$delegate$yield$strict, yieldExpression$delegate$yield$coerce, {
+			key: 'yieldExpression.delegate.yield',
+			max: 1
+		})
+	}
+}) as unknown as typeof B.yieldExpression & {
+	delegate: {
+		strict: (...args: ArgsOf<typeof F.buildYieldExpressionDelegate>) => ReturnType<typeof F.buildYieldExpression>;
+		coerce: (...args: ArgsOf<typeof C.coerceToYieldExpressionDelegate>) => ReturnType<typeof F.buildYieldExpression>;
+		as: {
+			strict: (...args: ArgsOf<typeof yieldExpressionDelegate.as.strict>) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (...args: ArgsOf<typeof yieldExpressionDelegate.as.coerce>) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		satisfies: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.satisfies.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.satisfies.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		instantiation: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.instantiation.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.instantiation.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		internalModule: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.internalModule.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.internalModule.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		typeAssertion: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.typeAssertion.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.typeAssertion.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		assignment: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.assignment.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.assignment.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		augmentedAssignment: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.augmentedAssignment.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.augmentedAssignment.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		await: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.await.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.await.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		unary: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.unary.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.unary.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		binary: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.binary.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.binary.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			in: {
+				strict: (
+					...args: ArgsOf<typeof yieldExpressionDelegate.binary.in.strict>
+				) => ReturnType<typeof F.buildYieldExpression>;
+				coerce: (
+					...args: ArgsOf<typeof yieldExpressionDelegate.binary.in.coerce>
+				) => ReturnType<typeof F.buildYieldExpression>;
+			};
+		};
+		ternary: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.ternary.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.ternary.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		update: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.update.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.update.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			postfix: {
+				strict: (
+					...args: ArgsOf<typeof yieldExpressionDelegate.update.postfix.strict>
+				) => ReturnType<typeof F.buildYieldExpression>;
+				coerce: (
+					...args: ArgsOf<typeof yieldExpressionDelegate.update.postfix.coerce>
+				) => ReturnType<typeof F.buildYieldExpression>;
+			};
+			prefix: {
+				strict: (
+					...args: ArgsOf<typeof yieldExpressionDelegate.update.prefix.strict>
+				) => ReturnType<typeof F.buildYieldExpression>;
+				coerce: (
+					...args: ArgsOf<typeof yieldExpressionDelegate.update.prefix.coerce>
+				) => ReturnType<typeof F.buildYieldExpression>;
+			};
+		};
+		new: {
+			strict: (...args: ArgsOf<typeof yieldExpressionDelegate.new.strict>) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (...args: ArgsOf<typeof yieldExpressionDelegate.new.coerce>) => ReturnType<typeof F.buildYieldExpression>;
+		};
+		yield: {
+			strict: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.yield.strict>
+			) => ReturnType<typeof F.buildYieldExpression>;
+			coerce: (
+				...args: ArgsOf<typeof yieldExpressionDelegate.yield.coerce>
+			) => ReturnType<typeof F.buildYieldExpression>;
+		};
+	};
+};
 
 const parenthesizedExpressionTyped$as =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -4018,6 +5576,14 @@ const parenthesizedExpressionTyped$as =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$as$strict = parenthesizedExpressionTyped$as(
+	F.buildParenthesizedExpressionTyped,
+	F.buildAsExpression
+);
+const parenthesizedExpressionTyped$as$coerce = parenthesizedExpressionTyped$as(
+	C.coerceToParenthesizedExpressionTyped,
+	C.coerceToAsExpression
+);
 const parenthesizedExpressionTyped$satisfies =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -4029,6 +5595,14 @@ const parenthesizedExpressionTyped$satisfies =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$satisfies$strict = parenthesizedExpressionTyped$satisfies(
+	F.buildParenthesizedExpressionTyped,
+	F.buildSatisfiesExpression
+);
+const parenthesizedExpressionTyped$satisfies$coerce = parenthesizedExpressionTyped$satisfies(
+	C.coerceToParenthesizedExpressionTyped,
+	C.coerceToSatisfiesExpression
+);
 const parenthesizedExpressionTyped$instantiation =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -4040,6 +5614,14 @@ const parenthesizedExpressionTyped$instantiation =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$instantiation$strict = parenthesizedExpressionTyped$instantiation(
+	F.buildParenthesizedExpressionTyped,
+	F.buildInstantiationExpression
+);
+const parenthesizedExpressionTyped$instantiation$coerce = parenthesizedExpressionTyped$instantiation(
+	C.coerceToParenthesizedExpressionTyped,
+	C.coerceToInstantiationExpression
+);
 const parenthesizedExpressionTyped$internalModule =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -4051,6 +5633,14 @@ const parenthesizedExpressionTyped$internalModule =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$internalModule$strict = parenthesizedExpressionTyped$internalModule(
+	F.buildParenthesizedExpressionTyped,
+	F.buildInternalModule
+);
+const parenthesizedExpressionTyped$internalModule$coerce = parenthesizedExpressionTyped$internalModule(
+	C.coerceToParenthesizedExpressionTyped,
+	C.coerceToInternalModule
+);
 const parenthesizedExpressionTyped$typeAssertion =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -4062,6 +5652,14 @@ const parenthesizedExpressionTyped$typeAssertion =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$typeAssertion$strict = parenthesizedExpressionTyped$typeAssertion(
+	F.buildParenthesizedExpressionTyped,
+	F.buildTypeAssertion
+);
+const parenthesizedExpressionTyped$typeAssertion$coerce = parenthesizedExpressionTyped$typeAssertion(
+	C.coerceToParenthesizedExpressionTyped,
+	C.coerceToTypeAssertion
+);
 const parenthesizedExpressionTyped$assignment =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -4073,6 +5671,14 @@ const parenthesizedExpressionTyped$assignment =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$assignment$strict = parenthesizedExpressionTyped$assignment(
+	F.buildParenthesizedExpressionTyped,
+	F.buildAssignmentExpression
+);
+const parenthesizedExpressionTyped$assignment$coerce = parenthesizedExpressionTyped$assignment(
+	C.coerceToParenthesizedExpressionTyped,
+	C.coerceToAssignmentExpression
+);
 const parenthesizedExpressionTyped$augmentedAssignment =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -4084,6 +5690,14 @@ const parenthesizedExpressionTyped$augmentedAssignment =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$augmentedAssignment$strict = parenthesizedExpressionTyped$augmentedAssignment(
+	F.buildParenthesizedExpressionTyped,
+	F.buildAugmentedAssignmentExpression
+);
+const parenthesizedExpressionTyped$augmentedAssignment$coerce = parenthesizedExpressionTyped$augmentedAssignment(
+	C.coerceToParenthesizedExpressionTyped,
+	C.coerceToAugmentedAssignmentExpression
+);
 const parenthesizedExpressionTyped$await =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -4093,6 +5707,14 @@ const parenthesizedExpressionTyped$await =
 		const { expression: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(seated) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$await$strict = parenthesizedExpressionTyped$await(
+	F.buildParenthesizedExpressionTyped,
+	F.buildAwaitExpression
+);
+const parenthesizedExpressionTyped$await$coerce = parenthesizedExpressionTyped$await(
+	C.coerceToParenthesizedExpressionTyped,
+	C.coerceToAwaitExpression
+);
 const parenthesizedExpressionTyped$unary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -4104,6 +5726,14 @@ const parenthesizedExpressionTyped$unary =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$unary$strict = parenthesizedExpressionTyped$unary(
+	F.buildParenthesizedExpressionTyped,
+	F.buildUnaryExpression
+);
+const parenthesizedExpressionTyped$unary$coerce = parenthesizedExpressionTyped$unary(
+	C.coerceToParenthesizedExpressionTyped,
+	C.coerceToUnaryExpression
+);
 const parenthesizedExpressionTyped$binary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -4115,6 +5745,14 @@ const parenthesizedExpressionTyped$binary =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$binary$strict = parenthesizedExpressionTyped$binary(
+	F.buildParenthesizedExpressionTyped,
+	F.buildBinaryExpression
+);
+const parenthesizedExpressionTyped$binary$coerce = parenthesizedExpressionTyped$binary(
+	C.coerceToParenthesizedExpressionTyped,
+	C.coerceToBinaryExpression
+);
 const parenthesizedExpressionTyped$ternary =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -4126,6 +5764,14 @@ const parenthesizedExpressionTyped$ternary =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$ternary$strict = parenthesizedExpressionTyped$ternary(
+	F.buildParenthesizedExpressionTyped,
+	F.buildTernaryExpression
+);
+const parenthesizedExpressionTyped$ternary$coerce = parenthesizedExpressionTyped$ternary(
+	C.coerceToParenthesizedExpressionTyped,
+	C.coerceToTernaryExpression
+);
 const parenthesizedExpressionTyped$update =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -4135,6 +5781,14 @@ const parenthesizedExpressionTyped$update =
 		const { expression: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$update$strict = parenthesizedExpressionTyped$update(
+	F.buildParenthesizedExpressionTyped,
+	updateExpression.strict
+);
+const parenthesizedExpressionTyped$update$coerce = parenthesizedExpressionTyped$update(
+	C.coerceToParenthesizedExpressionTyped,
+	updateExpression.coerce
+);
 const parenthesizedExpressionTyped$new =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'expression'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -4146,6 +5800,14 @@ const parenthesizedExpressionTyped$new =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(inner) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$new$strict = parenthesizedExpressionTyped$new(
+	F.buildParenthesizedExpressionTyped,
+	F.buildNewExpression
+);
+const parenthesizedExpressionTyped$new$coerce = parenthesizedExpressionTyped$new(
+	C.coerceToParenthesizedExpressionTyped,
+	C.coerceToNewExpression
+);
 const parenthesizedExpressionTyped$yield =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -4155,6 +5817,14 @@ const parenthesizedExpressionTyped$yield =
 		const { expression: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(seated) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$yield$strict = parenthesizedExpressionTyped$yield(
+	F.buildParenthesizedExpressionTyped,
+	F.buildYieldExpression
+);
+const parenthesizedExpressionTyped$yield$coerce = parenthesizedExpressionTyped$yield(
+	C.coerceToParenthesizedExpressionTyped,
+	C.coerceToYieldExpression
+);
 const parenthesizedExpressionTyped$binary$in =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -4164,6 +5834,14 @@ const parenthesizedExpressionTyped$binary$in =
 		const { expression: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$binary$in$strict = parenthesizedExpressionTyped$binary$in(
+	F.buildParenthesizedExpressionTyped,
+	binaryExpression.in.strict
+);
+const parenthesizedExpressionTyped$binary$in$coerce = parenthesizedExpressionTyped$binary$in(
+	C.coerceToParenthesizedExpressionTyped,
+	binaryExpression.in.coerce
+);
 const parenthesizedExpressionTyped$update$postfix =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -4173,6 +5851,14 @@ const parenthesizedExpressionTyped$update$postfix =
 		const { expression: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$update$postfix$strict = parenthesizedExpressionTyped$update$postfix(
+	F.buildParenthesizedExpressionTyped,
+	updateExpression.postfix.strict
+);
+const parenthesizedExpressionTyped$update$postfix$coerce = parenthesizedExpressionTyped$update$postfix(
+	C.coerceToParenthesizedExpressionTyped,
+	updateExpression.postfix.coerce
+);
 const parenthesizedExpressionTyped$update$prefix =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -4182,6 +5868,338 @@ const parenthesizedExpressionTyped$update$prefix =
 		const { expression: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
 	};
+const parenthesizedExpressionTyped$update$prefix$strict = parenthesizedExpressionTyped$update$prefix(
+	F.buildParenthesizedExpressionTyped,
+	updateExpression.prefix.strict
+);
+const parenthesizedExpressionTyped$update$prefix$coerce = parenthesizedExpressionTyped$update$prefix(
+	C.coerceToParenthesizedExpressionTyped,
+	updateExpression.prefix.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$strict = parenthesizedExpressionTyped$yield$delegate(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$coerce = parenthesizedExpressionTyped$yield$delegate(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$as =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$as$strict = parenthesizedExpressionTyped$yield$delegate$as(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.as.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$as$coerce = parenthesizedExpressionTyped$yield$delegate$as(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.as.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$satisfies =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$satisfies$strict =
+	parenthesizedExpressionTyped$yield$delegate$satisfies(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.satisfies.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$satisfies$coerce =
+	parenthesizedExpressionTyped$yield$delegate$satisfies(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.satisfies.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$instantiation =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$instantiation$strict =
+	parenthesizedExpressionTyped$yield$delegate$instantiation(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.instantiation.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$instantiation$coerce =
+	parenthesizedExpressionTyped$yield$delegate$instantiation(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.instantiation.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$internalModule =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$internalModule$strict =
+	parenthesizedExpressionTyped$yield$delegate$internalModule(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.internalModule.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$internalModule$coerce =
+	parenthesizedExpressionTyped$yield$delegate$internalModule(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.internalModule.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$typeAssertion =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$typeAssertion$strict =
+	parenthesizedExpressionTyped$yield$delegate$typeAssertion(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.typeAssertion.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$typeAssertion$coerce =
+	parenthesizedExpressionTyped$yield$delegate$typeAssertion(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.typeAssertion.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$assignment =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$assignment$strict =
+	parenthesizedExpressionTyped$yield$delegate$assignment(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.assignment.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$assignment$coerce =
+	parenthesizedExpressionTyped$yield$delegate$assignment(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.assignment.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$augmentedAssignment =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$strict =
+	parenthesizedExpressionTyped$yield$delegate$augmentedAssignment(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.augmentedAssignment.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$coerce =
+	parenthesizedExpressionTyped$yield$delegate$augmentedAssignment(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.augmentedAssignment.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$await =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$await$strict = parenthesizedExpressionTyped$yield$delegate$await(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.await.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$await$coerce = parenthesizedExpressionTyped$yield$delegate$await(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.await.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$unary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$unary$strict = parenthesizedExpressionTyped$yield$delegate$unary(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.unary.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$unary$coerce = parenthesizedExpressionTyped$yield$delegate$unary(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.unary.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$binary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$binary$strict = parenthesizedExpressionTyped$yield$delegate$binary(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.binary.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$binary$coerce = parenthesizedExpressionTyped$yield$delegate$binary(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.binary.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$ternary =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$ternary$strict = parenthesizedExpressionTyped$yield$delegate$ternary(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.ternary.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$ternary$coerce = parenthesizedExpressionTyped$yield$delegate$ternary(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.ternary.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$update =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$update$strict = parenthesizedExpressionTyped$yield$delegate$update(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.update.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$update$coerce = parenthesizedExpressionTyped$yield$delegate$update(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.update.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$new =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$new$strict = parenthesizedExpressionTyped$yield$delegate$new(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.new.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$new$coerce = parenthesizedExpressionTyped$yield$delegate$new(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.new.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$yield =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$yield$strict = parenthesizedExpressionTyped$yield$delegate$yield(
+	F.buildParenthesizedExpressionTyped,
+	yieldExpression.delegate.yield.strict
+);
+const parenthesizedExpressionTyped$yield$delegate$yield$coerce = parenthesizedExpressionTyped$yield$delegate$yield(
+	C.coerceToParenthesizedExpressionTyped,
+	yieldExpression.delegate.yield.coerce
+);
+const parenthesizedExpressionTyped$yield$delegate$binary$in =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$binary$in$strict =
+	parenthesizedExpressionTyped$yield$delegate$binary$in(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.binary.in.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$binary$in$coerce =
+	parenthesizedExpressionTyped$yield$delegate$binary$in(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.binary.in.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$update$postfix =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$update$postfix$strict =
+	parenthesizedExpressionTyped$yield$delegate$update$postfix(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.update.postfix.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$update$postfix$coerce =
+	parenthesizedExpressionTyped$yield$delegate$update$postfix(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.update.postfix.coerce
+	);
+const parenthesizedExpressionTyped$yield$delegate$update$prefix =
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'expression'> & { expression: ArgsOf<CF> },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
+		const { expression: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, expression: _c(child)(...seated) } as never, options as never);
+	};
+const parenthesizedExpressionTyped$yield$delegate$update$prefix$strict =
+	parenthesizedExpressionTyped$yield$delegate$update$prefix(
+		F.buildParenthesizedExpressionTyped,
+		yieldExpression.delegate.update.prefix.strict
+	);
+const parenthesizedExpressionTyped$yield$delegate$update$prefix$coerce =
+	parenthesizedExpressionTyped$yield$delegate$update$prefix(
+		C.coerceToParenthesizedExpressionTyped,
+		yieldExpression.delegate.update.prefix.coerce
+	);
 const parenthesizedExpressionTyped: {
 	as: {
 		strict: (
@@ -4398,108 +6416,435 @@ const parenthesizedExpressionTyped: {
 			},
 			options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
 		) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+		delegate: {
+			strict: (
+				config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+					expression: ArgsOf<typeof yieldExpression.delegate.strict>;
+				},
+				options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+			) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+			coerce: (
+				config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+					expression: ArgsOf<typeof yieldExpression.delegate.coerce>;
+				},
+				options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+			) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			as: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.as.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.as.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			satisfies: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.satisfies.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.satisfies.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			instantiation: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.instantiation.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.instantiation.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			internalModule: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.internalModule.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.internalModule.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			typeAssertion: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.typeAssertion.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.typeAssertion.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			assignment: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.assignment.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.assignment.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			augmentedAssignment: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.augmentedAssignment.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.augmentedAssignment.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			await: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.await.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.await.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			unary: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.unary.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.unary.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			binary: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.binary.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.binary.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+				in: {
+					strict: (
+						config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+							expression: ArgsOf<typeof yieldExpression.delegate.binary.in.strict>;
+						},
+						options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+					) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+					coerce: (
+						config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+							expression: ArgsOf<typeof yieldExpression.delegate.binary.in.coerce>;
+						},
+						options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+					) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+				};
+			};
+			ternary: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.ternary.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.ternary.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			update: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.update.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.update.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+				postfix: {
+					strict: (
+						config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+							expression: ArgsOf<typeof yieldExpression.delegate.update.postfix.strict>;
+						},
+						options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+					) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+					coerce: (
+						config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+							expression: ArgsOf<typeof yieldExpression.delegate.update.postfix.coerce>;
+						},
+						options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+					) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+				};
+				prefix: {
+					strict: (
+						config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+							expression: ArgsOf<typeof yieldExpression.delegate.update.prefix.strict>;
+						},
+						options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+					) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+					coerce: (
+						config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+							expression: ArgsOf<typeof yieldExpression.delegate.update.prefix.coerce>;
+						},
+						options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+					) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+				};
+			};
+			new: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.new.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.new.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+			yield: {
+				strict: (
+					config: OmitEach<ArgsOf<typeof F.buildParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.yield.strict>;
+					},
+					options?: OptionsArg<typeof F.buildParenthesizedExpressionTyped>
+				) => ReturnType<typeof F.buildParenthesizedExpressionTyped>;
+				coerce: (
+					config: OmitEach<ArgsOf<typeof C.coerceToParenthesizedExpressionTyped>[0], 'expression'> & {
+						expression: ArgsOf<typeof yieldExpression.delegate.yield.coerce>;
+					},
+					options?: OptionsArg<typeof C.coerceToParenthesizedExpressionTyped>
+				) => ReturnType<typeof C.coerceToParenthesizedExpressionTyped>;
+			};
+		};
 	};
 } = Object.freeze({
-	as: {
-		strict: parenthesizedExpressionTyped$as(F.buildParenthesizedExpressionTyped, F.buildAsExpression),
-		coerce: parenthesizedExpressionTyped$as(C.coerceToParenthesizedExpressionTyped, C.coerceToAsExpression)
-	},
-	satisfies: {
-		strict: parenthesizedExpressionTyped$satisfies(F.buildParenthesizedExpressionTyped, F.buildSatisfiesExpression),
-		coerce: parenthesizedExpressionTyped$satisfies(
-			C.coerceToParenthesizedExpressionTyped,
-			C.coerceToSatisfiesExpression
-		)
-	},
-	instantiation: {
-		strict: parenthesizedExpressionTyped$instantiation(
-			F.buildParenthesizedExpressionTyped,
-			F.buildInstantiationExpression
-		),
-		coerce: parenthesizedExpressionTyped$instantiation(
-			C.coerceToParenthesizedExpressionTyped,
-			C.coerceToInstantiationExpression
-		)
-	},
-	internalModule: {
-		strict: parenthesizedExpressionTyped$internalModule(F.buildParenthesizedExpressionTyped, F.buildInternalModule),
-		coerce: parenthesizedExpressionTyped$internalModule(
-			C.coerceToParenthesizedExpressionTyped,
-			C.coerceToInternalModule
-		)
-	},
-	typeAssertion: {
-		strict: parenthesizedExpressionTyped$typeAssertion(F.buildParenthesizedExpressionTyped, F.buildTypeAssertion),
-		coerce: parenthesizedExpressionTyped$typeAssertion(C.coerceToParenthesizedExpressionTyped, C.coerceToTypeAssertion)
-	},
-	assignment: {
-		strict: parenthesizedExpressionTyped$assignment(F.buildParenthesizedExpressionTyped, F.buildAssignmentExpression),
-		coerce: parenthesizedExpressionTyped$assignment(
-			C.coerceToParenthesizedExpressionTyped,
-			C.coerceToAssignmentExpression
-		)
-	},
-	augmentedAssignment: {
-		strict: parenthesizedExpressionTyped$augmentedAssignment(
-			F.buildParenthesizedExpressionTyped,
-			F.buildAugmentedAssignmentExpression
-		),
-		coerce: parenthesizedExpressionTyped$augmentedAssignment(
-			C.coerceToParenthesizedExpressionTyped,
-			C.coerceToAugmentedAssignmentExpression
-		)
-	},
-	await: {
-		strict: parenthesizedExpressionTyped$await(F.buildParenthesizedExpressionTyped, F.buildAwaitExpression),
-		coerce: parenthesizedExpressionTyped$await(C.coerceToParenthesizedExpressionTyped, C.coerceToAwaitExpression)
-	},
-	unary: {
-		strict: parenthesizedExpressionTyped$unary(F.buildParenthesizedExpressionTyped, F.buildUnaryExpression),
-		coerce: parenthesizedExpressionTyped$unary(C.coerceToParenthesizedExpressionTyped, C.coerceToUnaryExpression)
-	},
+	as: bundle(parenthesizedExpressionTyped$as$strict, parenthesizedExpressionTyped$as$coerce, {
+		key: 'parenthesizedExpressionTyped.as',
+		max: 2
+	}),
+	satisfies: bundle(parenthesizedExpressionTyped$satisfies$strict, parenthesizedExpressionTyped$satisfies$coerce, {
+		key: 'parenthesizedExpressionTyped.satisfies',
+		max: 2
+	}),
+	instantiation: bundle(
+		parenthesizedExpressionTyped$instantiation$strict,
+		parenthesizedExpressionTyped$instantiation$coerce,
+		{ key: 'parenthesizedExpressionTyped.instantiation', max: 2 }
+	),
+	internalModule: bundle(
+		parenthesizedExpressionTyped$internalModule$strict,
+		parenthesizedExpressionTyped$internalModule$coerce,
+		{ key: 'parenthesizedExpressionTyped.internalModule', max: 2 }
+	),
+	typeAssertion: bundle(
+		parenthesizedExpressionTyped$typeAssertion$strict,
+		parenthesizedExpressionTyped$typeAssertion$coerce,
+		{ key: 'parenthesizedExpressionTyped.typeAssertion', max: 2 }
+	),
+	assignment: bundle(parenthesizedExpressionTyped$assignment$strict, parenthesizedExpressionTyped$assignment$coerce, {
+		key: 'parenthesizedExpressionTyped.assignment',
+		max: 2
+	}),
+	augmentedAssignment: bundle(
+		parenthesizedExpressionTyped$augmentedAssignment$strict,
+		parenthesizedExpressionTyped$augmentedAssignment$coerce,
+		{ key: 'parenthesizedExpressionTyped.augmentedAssignment', max: 2 }
+	),
+	await: bundle(parenthesizedExpressionTyped$await$strict, parenthesizedExpressionTyped$await$coerce, {
+		key: 'parenthesizedExpressionTyped.await',
+		max: 2
+	}),
+	unary: bundle(parenthesizedExpressionTyped$unary$strict, parenthesizedExpressionTyped$unary$coerce, {
+		key: 'parenthesizedExpressionTyped.unary',
+		max: 2
+	}),
 	binary: {
-		strict: parenthesizedExpressionTyped$binary(F.buildParenthesizedExpressionTyped, F.buildBinaryExpression),
-		coerce: parenthesizedExpressionTyped$binary(C.coerceToParenthesizedExpressionTyped, C.coerceToBinaryExpression),
-		in: {
-			strict: parenthesizedExpressionTyped$binary$in(F.buildParenthesizedExpressionTyped, binaryExpression.in.strict),
-			coerce: parenthesizedExpressionTyped$binary$in(C.coerceToParenthesizedExpressionTyped, binaryExpression.in.coerce)
-		}
+		...bundle(parenthesizedExpressionTyped$binary$strict, parenthesizedExpressionTyped$binary$coerce, {
+			key: 'parenthesizedExpressionTyped.binary',
+			max: 2
+		}),
+		in: bundle(parenthesizedExpressionTyped$binary$in$strict, parenthesizedExpressionTyped$binary$in$coerce, {
+			key: 'parenthesizedExpressionTyped.binary.in',
+			max: 2
+		})
 	},
-	ternary: {
-		strict: parenthesizedExpressionTyped$ternary(F.buildParenthesizedExpressionTyped, F.buildTernaryExpression),
-		coerce: parenthesizedExpressionTyped$ternary(C.coerceToParenthesizedExpressionTyped, C.coerceToTernaryExpression)
-	},
+	ternary: bundle(parenthesizedExpressionTyped$ternary$strict, parenthesizedExpressionTyped$ternary$coerce, {
+		key: 'parenthesizedExpressionTyped.ternary',
+		max: 2
+	}),
 	update: {
-		strict: parenthesizedExpressionTyped$update(F.buildParenthesizedExpressionTyped, updateExpression.strict),
-		coerce: parenthesizedExpressionTyped$update(C.coerceToParenthesizedExpressionTyped, updateExpression.coerce),
-		postfix: {
-			strict: parenthesizedExpressionTyped$update$postfix(
-				F.buildParenthesizedExpressionTyped,
-				updateExpression.postfix.strict
+		...bundle(parenthesizedExpressionTyped$update$strict, parenthesizedExpressionTyped$update$coerce, {
+			key: 'parenthesizedExpressionTyped.update',
+			max: 2
+		}),
+		postfix: bundle(
+			parenthesizedExpressionTyped$update$postfix$strict,
+			parenthesizedExpressionTyped$update$postfix$coerce,
+			{ key: 'parenthesizedExpressionTyped.update.postfix', max: 2 }
+		),
+		prefix: bundle(
+			parenthesizedExpressionTyped$update$prefix$strict,
+			parenthesizedExpressionTyped$update$prefix$coerce,
+			{ key: 'parenthesizedExpressionTyped.update.prefix', max: 2 }
+		)
+	},
+	new: bundle(parenthesizedExpressionTyped$new$strict, parenthesizedExpressionTyped$new$coerce, {
+		key: 'parenthesizedExpressionTyped.new',
+		max: 2
+	}),
+	yield: {
+		...bundle(parenthesizedExpressionTyped$yield$strict, parenthesizedExpressionTyped$yield$coerce, {
+			key: 'parenthesizedExpressionTyped.yield',
+			max: 2
+		}),
+		delegate: {
+			...bundle(
+				parenthesizedExpressionTyped$yield$delegate$strict,
+				parenthesizedExpressionTyped$yield$delegate$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate', max: 2 }
 			),
-			coerce: parenthesizedExpressionTyped$update$postfix(
-				C.coerceToParenthesizedExpressionTyped,
-				updateExpression.postfix.coerce
-			)
-		},
-		prefix: {
-			strict: parenthesizedExpressionTyped$update$prefix(
-				F.buildParenthesizedExpressionTyped,
-				updateExpression.prefix.strict
+			as: bundle(
+				parenthesizedExpressionTyped$yield$delegate$as$strict,
+				parenthesizedExpressionTyped$yield$delegate$as$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.as', max: 2 }
 			),
-			coerce: parenthesizedExpressionTyped$update$prefix(
-				C.coerceToParenthesizedExpressionTyped,
-				updateExpression.prefix.coerce
+			satisfies: bundle(
+				parenthesizedExpressionTyped$yield$delegate$satisfies$strict,
+				parenthesizedExpressionTyped$yield$delegate$satisfies$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.satisfies', max: 2 }
+			),
+			instantiation: bundle(
+				parenthesizedExpressionTyped$yield$delegate$instantiation$strict,
+				parenthesizedExpressionTyped$yield$delegate$instantiation$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.instantiation', max: 2 }
+			),
+			internalModule: bundle(
+				parenthesizedExpressionTyped$yield$delegate$internalModule$strict,
+				parenthesizedExpressionTyped$yield$delegate$internalModule$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.internalModule', max: 2 }
+			),
+			typeAssertion: bundle(
+				parenthesizedExpressionTyped$yield$delegate$typeAssertion$strict,
+				parenthesizedExpressionTyped$yield$delegate$typeAssertion$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.typeAssertion', max: 2 }
+			),
+			assignment: bundle(
+				parenthesizedExpressionTyped$yield$delegate$assignment$strict,
+				parenthesizedExpressionTyped$yield$delegate$assignment$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.assignment', max: 2 }
+			),
+			augmentedAssignment: bundle(
+				parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$strict,
+				parenthesizedExpressionTyped$yield$delegate$augmentedAssignment$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.augmentedAssignment', max: 2 }
+			),
+			await: bundle(
+				parenthesizedExpressionTyped$yield$delegate$await$strict,
+				parenthesizedExpressionTyped$yield$delegate$await$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.await', max: 2 }
+			),
+			unary: bundle(
+				parenthesizedExpressionTyped$yield$delegate$unary$strict,
+				parenthesizedExpressionTyped$yield$delegate$unary$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.unary', max: 2 }
+			),
+			binary: {
+				...bundle(
+					parenthesizedExpressionTyped$yield$delegate$binary$strict,
+					parenthesizedExpressionTyped$yield$delegate$binary$coerce,
+					{ key: 'parenthesizedExpressionTyped.yield.delegate.binary', max: 2 }
+				),
+				in: bundle(
+					parenthesizedExpressionTyped$yield$delegate$binary$in$strict,
+					parenthesizedExpressionTyped$yield$delegate$binary$in$coerce,
+					{ key: 'parenthesizedExpressionTyped.yield.delegate.binary.in', max: 2 }
+				)
+			},
+			ternary: bundle(
+				parenthesizedExpressionTyped$yield$delegate$ternary$strict,
+				parenthesizedExpressionTyped$yield$delegate$ternary$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.ternary', max: 2 }
+			),
+			update: {
+				...bundle(
+					parenthesizedExpressionTyped$yield$delegate$update$strict,
+					parenthesizedExpressionTyped$yield$delegate$update$coerce,
+					{ key: 'parenthesizedExpressionTyped.yield.delegate.update', max: 2 }
+				),
+				postfix: bundle(
+					parenthesizedExpressionTyped$yield$delegate$update$postfix$strict,
+					parenthesizedExpressionTyped$yield$delegate$update$postfix$coerce,
+					{ key: 'parenthesizedExpressionTyped.yield.delegate.update.postfix', max: 2 }
+				),
+				prefix: bundle(
+					parenthesizedExpressionTyped$yield$delegate$update$prefix$strict,
+					parenthesizedExpressionTyped$yield$delegate$update$prefix$coerce,
+					{ key: 'parenthesizedExpressionTyped.yield.delegate.update.prefix', max: 2 }
+				)
+			},
+			new: bundle(
+				parenthesizedExpressionTyped$yield$delegate$new$strict,
+				parenthesizedExpressionTyped$yield$delegate$new$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.new', max: 2 }
+			),
+			yield: bundle(
+				parenthesizedExpressionTyped$yield$delegate$yield$strict,
+				parenthesizedExpressionTyped$yield$delegate$yield$coerce,
+				{ key: 'parenthesizedExpressionTyped.yield.delegate.yield', max: 2 }
 			)
 		}
-	},
-	new: {
-		strict: parenthesizedExpressionTyped$new(F.buildParenthesizedExpressionTyped, F.buildNewExpression),
-		coerce: parenthesizedExpressionTyped$new(C.coerceToParenthesizedExpressionTyped, C.coerceToNewExpression)
-	},
-	yield: {
-		strict: parenthesizedExpressionTyped$yield(F.buildParenthesizedExpressionTyped, F.buildYieldExpression),
-		coerce: parenthesizedExpressionTyped$yield(C.coerceToParenthesizedExpressionTyped, C.coerceToYieldExpression)
 	}
 });
 
@@ -4514,13 +6859,17 @@ export const parenthesizedExpression: {
 	} & typeof parenthesizedExpressionSequence;
 } = Object.freeze({
 	typed: Object.freeze({
-		strict: F.buildParenthesizedExpressionTyped,
-		coerce: C.coerceToParenthesizedExpressionTyped,
+		...bundle(F.buildParenthesizedExpressionTyped, C.coerceToParenthesizedExpressionTyped, {
+			key: 'parenthesizedExpression.typed',
+			max: 1
+		}),
 		...parenthesizedExpressionTyped
 	}),
 	sequence: Object.freeze({
-		strict: F.buildParenthesizedExpressionSequence,
-		coerce: C.coerceToParenthesizedExpressionSequence,
+		...bundle(F.buildParenthesizedExpressionSequence, C.coerceToParenthesizedExpressionSequence, {
+			key: 'parenthesizedExpression.sequence',
+			max: 1
+		}),
 		...parenthesizedExpressionSequence
 	})
 });
@@ -4529,8 +6878,8 @@ export const string: {
 	readonly double: { strict: typeof F.buildStringDouble; coerce: typeof C.coerceToStringDouble };
 	readonly single: { strict: typeof F.buildStringSingle; coerce: typeof C.coerceToStringSingle };
 } = Object.freeze({
-	double: Object.freeze({ strict: F.buildStringDouble, coerce: C.coerceToStringDouble }),
-	single: Object.freeze({ strict: F.buildStringSingle, coerce: C.coerceToStringSingle })
+	double: bundle(F.buildStringDouble, C.coerceToStringDouble),
+	single: bundle(F.buildStringSingle, C.coerceToStringSingle)
 });
 
 export const comment: {
@@ -4539,10 +6888,9 @@ export const comment: {
 	readonly line: { strict: typeof F.buildCommentLine; coerce: typeof C.coerceToCommentLine };
 	readonly block: { strict: typeof F.buildCommentBlock; coerce: typeof C.coerceToCommentBlock };
 } = Object.freeze({
-	strict: F.buildCommentLine,
-	coerce: C.coerceToCommentLine,
-	line: Object.freeze({ strict: F.buildCommentLine, coerce: C.coerceToCommentLine }),
-	block: Object.freeze({ strict: F.buildCommentBlock, coerce: C.coerceToCommentBlock })
+	...bundle(F.buildCommentLine, C.coerceToCommentLine, { key: 'comment', max: 1 }),
+	line: bundle(F.buildCommentLine, C.coerceToCommentLine, { key: 'comment.line', max: 1 }),
+	block: bundle(F.buildCommentBlock, C.coerceToCommentBlock, { key: 'comment.block', max: 1 })
 });
 
 export const metaProperty: {
@@ -4552,8 +6900,14 @@ export const metaProperty: {
 		coerce: typeof C.coerceToMetaPropertyImportMeta;
 	};
 } = Object.freeze({
-	newTarget: Object.freeze({ strict: F.buildMetaPropertyNewTarget, coerce: C.coerceToMetaPropertyNewTarget }),
-	importMeta: Object.freeze({ strict: F.buildMetaPropertyImportMeta, coerce: C.coerceToMetaPropertyImportMeta })
+	newTarget: bundle(F.buildMetaPropertyNewTarget, C.coerceToMetaPropertyNewTarget, {
+		key: 'metaProperty.newTarget',
+		max: 1
+	}),
+	importMeta: bundle(F.buildMetaPropertyImportMeta, C.coerceToMetaPropertyImportMeta, {
+		key: 'metaProperty.importMeta',
+		max: 1
+	})
 });
 
 export const pattern: {
@@ -4571,10 +6925,12 @@ export const indexSignature: {
 		coerce: typeof C.coerceToIndexSignatureMappedTypeClause;
 	} & typeof indexSignatureMappedTypeClause;
 } = Object.freeze({
-	colon: Object.freeze({ strict: F.buildIndexSignatureColon, coerce: C.coerceToIndexSignatureColon }),
+	colon: bundle(F.buildIndexSignatureColon, C.coerceToIndexSignatureColon, { key: 'indexSignature.colon', max: 1 }),
 	mappedTypeClause: Object.freeze({
-		strict: F.buildIndexSignatureMappedTypeClause,
-		coerce: C.coerceToIndexSignatureMappedTypeClause,
+		...bundle(F.buildIndexSignatureMappedTypeClause, C.coerceToIndexSignatureMappedTypeClause, {
+			key: 'indexSignature.mappedTypeClause',
+			max: 1
+		}),
 		...indexSignatureMappedTypeClause
 	})
 });
@@ -4590,13 +6946,17 @@ export const exportStatementDefault: {
 	} & typeof exportStatementDefaultDeclaration;
 } = Object.freeze({
 	from: Object.freeze({
-		strict: F.buildExportStatementDefaultFrom,
-		coerce: C.coerceToExportStatementDefaultFrom,
+		...bundle(F.buildExportStatementDefaultFrom, C.coerceToExportStatementDefaultFrom, {
+			key: 'exportStatementDefault.from',
+			max: 2
+		}),
 		...exportStatementDefaultFrom
 	}),
 	declaration: Object.freeze({
-		strict: F.buildExportStatementDefaultDeclaration,
-		coerce: C.coerceToExportStatementDefaultDeclaration,
+		...bundle(F.buildExportStatementDefaultDeclaration, C.coerceToExportStatementDefaultDeclaration, {
+			key: 'exportStatementDefault.declaration',
+			max: 1
+		}),
 		...exportStatementDefaultDeclaration
 	})
 });
@@ -4609,168 +6969,195 @@ export const numberBigint: {
 	readonly octal: { strict: typeof F.buildNumberBigintOctal; coerce: typeof C.coerceToNumberBigintOctal };
 	readonly decimal: { strict: typeof F.buildNumberBigintDecimal; coerce: typeof C.coerceToNumberBigintDecimal };
 } = Object.freeze({
-	strict: F.buildNumberBigintDecimal,
-	coerce: C.coerceToNumberBigintDecimal,
-	hex: Object.freeze({ strict: F.buildNumberBigintHex, coerce: C.coerceToNumberBigintHex }),
-	binary: Object.freeze({ strict: F.buildNumberBigintBinary, coerce: C.coerceToNumberBigintBinary }),
-	octal: Object.freeze({ strict: F.buildNumberBigintOctal, coerce: C.coerceToNumberBigintOctal }),
-	decimal: Object.freeze({ strict: F.buildNumberBigintDecimal, coerce: C.coerceToNumberBigintDecimal })
+	...bundle(F.buildNumberBigintDecimal, C.coerceToNumberBigintDecimal, { key: 'numberBigint', max: 1 }),
+	hex: bundle(F.buildNumberBigintHex, C.coerceToNumberBigintHex, { key: 'numberBigint.hex', max: 1 }),
+	binary: bundle(F.buildNumberBigintBinary, C.coerceToNumberBigintBinary, { key: 'numberBigint.binary', max: 1 }),
+	octal: bundle(F.buildNumberBigintOctal, C.coerceToNumberBigintOctal, { key: 'numberBigint.octal', max: 1 }),
+	decimal: bundle(F.buildNumberBigintDecimal, C.coerceToNumberBigintDecimal, { key: 'numberBigint.decimal', max: 1 })
 });
 
 const literalType$negativeNumber =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$negativeNumber$strict = literalType$negativeNumber(
+	F.buildLiteralType,
+	F.buildLiteralTypeNegativeNumber
+);
+const literalType$negativeNumber$coerce = literalType$negativeNumber(
+	F.buildLiteralType,
+	C.coerceToLiteralTypeNegativeNumber
+);
 const literalType$hex =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$hex$strict = literalType$hex(F.buildLiteralType, F.buildNumberHex);
+const literalType$hex$coerce = literalType$hex(F.buildLiteralType, C.coerceToNumberHex);
 const literalType$floatPoint =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$floatPoint$strict = literalType$floatPoint(F.buildLiteralType, F.buildNumberFloatPoint);
+const literalType$floatPoint$coerce = literalType$floatPoint(F.buildLiteralType, C.coerceToNumberFloatPoint);
 const literalType$floatLeadingPoint =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$floatLeadingPoint$strict = literalType$floatLeadingPoint(
+	F.buildLiteralType,
+	F.buildNumberFloatLeadingPoint
+);
+const literalType$floatLeadingPoint$coerce = literalType$floatLeadingPoint(
+	F.buildLiteralType,
+	C.coerceToNumberFloatLeadingPoint
+);
 const literalType$floatScientific =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$floatScientific$strict = literalType$floatScientific(
+	F.buildLiteralType,
+	F.buildNumberFloatScientific
+);
+const literalType$floatScientific$coerce = literalType$floatScientific(
+	F.buildLiteralType,
+	C.coerceToNumberFloatScientific
+);
 const literalType$decimal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$decimal$strict = literalType$decimal(F.buildLiteralType, F.buildNumberDecimal);
+const literalType$decimal$coerce = literalType$decimal(F.buildLiteralType, C.coerceToNumberDecimal);
 const literalType$binary =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$binary$strict = literalType$binary(F.buildLiteralType, F.buildNumberBinary);
+const literalType$binary$coerce = literalType$binary(F.buildLiteralType, C.coerceToNumberBinary);
 const literalType$octal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$octal$strict = literalType$octal(F.buildLiteralType, F.buildNumberOctal);
+const literalType$octal$coerce = literalType$octal(F.buildLiteralType, C.coerceToNumberOctal);
 const literalType$bigint =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$bigint$strict = literalType$bigint(F.buildLiteralType, numberBigint.strict);
+const literalType$bigint$coerce = literalType$bigint(F.buildLiteralType, numberBigint.coerce);
 const literalType$double =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$double$strict = literalType$double(F.buildLiteralType, F.buildStringDouble);
+const literalType$double$coerce = literalType$double(F.buildLiteralType, C.coerceToStringDouble);
 const literalType$single =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$single$strict = literalType$single(F.buildLiteralType, F.buildStringSingle);
+const literalType$single$coerce = literalType$single(F.buildLiteralType, C.coerceToStringSingle);
 const literalType$true =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const literalType$true$strict = literalType$true(F.buildLiteralType, TSKindId.True);
+const literalType$true$coerce = literalType$true(C.coerceToLiteralType, TSKindId.True);
 const literalType$false =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const literalType$false$strict = literalType$false(F.buildLiteralType, TSKindId.False);
+const literalType$false$coerce = literalType$false(C.coerceToLiteralType, TSKindId.False);
 const literalType$null =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const literalType$null$strict = literalType$null(F.buildLiteralType, TSKindId.Null);
+const literalType$null$coerce = literalType$null(C.coerceToLiteralType, TSKindId.Null);
 const literalType$undefined =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
 	(options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)(value as never, options as never);
+const literalType$undefined$strict = literalType$undefined(F.buildLiteralType, TSKindId.Undefined);
+const literalType$undefined$coerce = literalType$undefined(C.coerceToLiteralType, TSKindId.Undefined);
 const literalType$bigint$hex =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$bigint$hex$strict = literalType$bigint$hex(F.buildLiteralType, numberBigint.hex.strict);
+const literalType$bigint$hex$coerce = literalType$bigint$hex(F.buildLiteralType, numberBigint.hex.coerce);
 const literalType$bigint$binary =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$bigint$binary$strict = literalType$bigint$binary(F.buildLiteralType, numberBigint.binary.strict);
+const literalType$bigint$binary$coerce = literalType$bigint$binary(F.buildLiteralType, numberBigint.binary.coerce);
 const literalType$bigint$octal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$bigint$octal$strict = literalType$bigint$octal(F.buildLiteralType, numberBigint.octal.strict);
+const literalType$bigint$octal$coerce = literalType$bigint$octal(F.buildLiteralType, numberBigint.octal.coerce);
 const literalType$bigint$decimal =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const literalType$bigint$decimal$strict = literalType$bigint$decimal(F.buildLiteralType, numberBigint.decimal.strict);
+const literalType$bigint$decimal$coerce = literalType$bigint$decimal(F.buildLiteralType, numberBigint.decimal.coerce);
 export const literalType = Object.freeze({
 	...B.literalType,
-	negativeNumber: {
-		strict: literalType$negativeNumber(F.buildLiteralType, F.buildLiteralTypeNegativeNumber),
-		coerce: literalType$negativeNumber(F.buildLiteralType, C.coerceToLiteralTypeNegativeNumber)
-	},
-	hex: {
-		strict: literalType$hex(F.buildLiteralType, F.buildNumberHex),
-		coerce: literalType$hex(F.buildLiteralType, C.coerceToNumberHex)
-	},
-	floatPoint: {
-		strict: literalType$floatPoint(F.buildLiteralType, F.buildNumberFloatPoint),
-		coerce: literalType$floatPoint(F.buildLiteralType, C.coerceToNumberFloatPoint)
-	},
-	floatLeadingPoint: {
-		strict: literalType$floatLeadingPoint(F.buildLiteralType, F.buildNumberFloatLeadingPoint),
-		coerce: literalType$floatLeadingPoint(F.buildLiteralType, C.coerceToNumberFloatLeadingPoint)
-	},
-	floatScientific: {
-		strict: literalType$floatScientific(F.buildLiteralType, F.buildNumberFloatScientific),
-		coerce: literalType$floatScientific(F.buildLiteralType, C.coerceToNumberFloatScientific)
-	},
-	decimal: {
-		strict: literalType$decimal(F.buildLiteralType, F.buildNumberDecimal),
-		coerce: literalType$decimal(F.buildLiteralType, C.coerceToNumberDecimal)
-	},
-	binary: {
-		strict: literalType$binary(F.buildLiteralType, F.buildNumberBinary),
-		coerce: literalType$binary(F.buildLiteralType, C.coerceToNumberBinary)
-	},
-	octal: {
-		strict: literalType$octal(F.buildLiteralType, F.buildNumberOctal),
-		coerce: literalType$octal(F.buildLiteralType, C.coerceToNumberOctal)
-	},
+	negativeNumber: bundle(literalType$negativeNumber$strict, literalType$negativeNumber$coerce, {
+		key: 'literalType.negativeNumber',
+		max: 1
+	}),
+	hex: bundle(literalType$hex$strict, literalType$hex$coerce, { key: 'literalType.hex', max: 2 }),
+	floatPoint: bundle(literalType$floatPoint$strict, literalType$floatPoint$coerce, {
+		key: 'literalType.floatPoint',
+		max: 2
+	}),
+	floatLeadingPoint: bundle(literalType$floatLeadingPoint$strict, literalType$floatLeadingPoint$coerce, {
+		key: 'literalType.floatLeadingPoint',
+		max: 2
+	}),
+	floatScientific: bundle(literalType$floatScientific$strict, literalType$floatScientific$coerce, {
+		key: 'literalType.floatScientific',
+		max: 2
+	}),
+	decimal: bundle(literalType$decimal$strict, literalType$decimal$coerce, { key: 'literalType.decimal', max: 1 }),
+	binary: bundle(literalType$binary$strict, literalType$binary$coerce, { key: 'literalType.binary', max: 2 }),
+	octal: bundle(literalType$octal$strict, literalType$octal$coerce, { key: 'literalType.octal', max: 2 }),
 	bigint: {
-		strict: literalType$bigint(F.buildLiteralType, numberBigint.strict),
-		coerce: literalType$bigint(F.buildLiteralType, numberBigint.coerce),
-		hex: {
-			strict: literalType$bigint$hex(F.buildLiteralType, numberBigint.hex.strict),
-			coerce: literalType$bigint$hex(F.buildLiteralType, numberBigint.hex.coerce)
-		},
-		binary: {
-			strict: literalType$bigint$binary(F.buildLiteralType, numberBigint.binary.strict),
-			coerce: literalType$bigint$binary(F.buildLiteralType, numberBigint.binary.coerce)
-		},
-		octal: {
-			strict: literalType$bigint$octal(F.buildLiteralType, numberBigint.octal.strict),
-			coerce: literalType$bigint$octal(F.buildLiteralType, numberBigint.octal.coerce)
-		},
-		decimal: {
-			strict: literalType$bigint$decimal(F.buildLiteralType, numberBigint.decimal.strict),
-			coerce: literalType$bigint$decimal(F.buildLiteralType, numberBigint.decimal.coerce)
-		}
+		...bundle(literalType$bigint$strict, literalType$bigint$coerce, { key: 'literalType.bigint', max: 1 }),
+		hex: bundle(literalType$bigint$hex$strict, literalType$bigint$hex$coerce, {
+			key: 'literalType.bigint.hex',
+			max: 1
+		}),
+		binary: bundle(literalType$bigint$binary$strict, literalType$bigint$binary$coerce, {
+			key: 'literalType.bigint.binary',
+			max: 1
+		}),
+		octal: bundle(literalType$bigint$octal$strict, literalType$bigint$octal$coerce, {
+			key: 'literalType.bigint.octal',
+			max: 1
+		}),
+		decimal: bundle(literalType$bigint$decimal$strict, literalType$bigint$decimal$coerce, {
+			key: 'literalType.bigint.decimal',
+			max: 1
+		})
 	},
-	double: {
-		strict: literalType$double(F.buildLiteralType, F.buildStringDouble),
-		coerce: literalType$double(F.buildLiteralType, C.coerceToStringDouble)
-	},
-	single: {
-		strict: literalType$single(F.buildLiteralType, F.buildStringSingle),
-		coerce: literalType$single(F.buildLiteralType, C.coerceToStringSingle)
-	},
-	true: {
-		strict: literalType$true(F.buildLiteralType, TSKindId.True),
-		coerce: literalType$true(C.coerceToLiteralType, TSKindId.True)
-	},
-	false: {
-		strict: literalType$false(F.buildLiteralType, TSKindId.False),
-		coerce: literalType$false(C.coerceToLiteralType, TSKindId.False)
-	},
-	null: {
-		strict: literalType$null(F.buildLiteralType, TSKindId.Null),
-		coerce: literalType$null(C.coerceToLiteralType, TSKindId.Null)
-	},
-	undefined: {
-		strict: literalType$undefined(F.buildLiteralType, TSKindId.Undefined),
-		coerce: literalType$undefined(C.coerceToLiteralType, TSKindId.Undefined)
-	}
+	double: bundle(literalType$double$strict, literalType$double$coerce),
+	single: bundle(literalType$single$strict, literalType$single$coerce),
+	true: bundle(literalType$true$strict, literalType$true$coerce, { key: 'literalType.true', max: 1 }),
+	false: bundle(literalType$false$strict, literalType$false$coerce, { key: 'literalType.false', max: 1 }),
+	null: bundle(literalType$null$strict, literalType$null$coerce, { key: 'literalType.null', max: 1 }),
+	undefined: bundle(literalType$undefined$strict, literalType$undefined$coerce, {
+		key: 'literalType.undefined',
+		max: 1
+	})
 }) as unknown as typeof B.literalType & {
 	negativeNumber: {
 		strict: (...args: ArgsOf<typeof F.buildLiteralTypeNegativeNumber>) => ReturnType<typeof F.buildLiteralType>;
@@ -4902,7 +7289,7 @@ export const statement: {
 	continue: B.continueStatement,
 	return: B.returnStatement,
 	throw: B.throwStatement,
-	empty: Object.freeze({ strict: F.buildEmptyStatement, coerce: C.coerceToEmptyStatement }),
+	empty: bundle(F.buildEmptyStatement, C.coerceToEmptyStatement, { key: 'statement.empty', max: 1 }),
 	labeled: B.labeledStatement
 });
 
@@ -4924,17 +7311,19 @@ export const number: {
 	readonly octal: { strict: typeof F.buildNumberOctal; coerce: typeof C.coerceToNumberOctal };
 	readonly bigint: typeof numberBigint;
 } = Object.freeze({
-	strict: F.buildNumberDecimal,
-	coerce: C.coerceToNumberDecimal,
-	hex: Object.freeze({ strict: F.buildNumberHex, coerce: C.coerceToNumberHex }),
-	floatPoint: Object.freeze({ strict: F.buildNumberFloatPoint, coerce: C.coerceToNumberFloatPoint }),
-	floatLeadingPoint: Object.freeze({
-		strict: F.buildNumberFloatLeadingPoint,
-		coerce: C.coerceToNumberFloatLeadingPoint
+	...bundle(F.buildNumberDecimal, C.coerceToNumberDecimal, { key: 'number', max: 1 }),
+	hex: bundle(F.buildNumberHex, C.coerceToNumberHex, { key: 'number.hex', max: 2 }),
+	floatPoint: bundle(F.buildNumberFloatPoint, C.coerceToNumberFloatPoint, { key: 'number.floatPoint', max: 2 }),
+	floatLeadingPoint: bundle(F.buildNumberFloatLeadingPoint, C.coerceToNumberFloatLeadingPoint, {
+		key: 'number.floatLeadingPoint',
+		max: 2
 	}),
-	floatScientific: Object.freeze({ strict: F.buildNumberFloatScientific, coerce: C.coerceToNumberFloatScientific }),
-	decimal: Object.freeze({ strict: F.buildNumberDecimal, coerce: C.coerceToNumberDecimal }),
-	binary: Object.freeze({ strict: F.buildNumberBinary, coerce: C.coerceToNumberBinary }),
-	octal: Object.freeze({ strict: F.buildNumberOctal, coerce: C.coerceToNumberOctal }),
+	floatScientific: bundle(F.buildNumberFloatScientific, C.coerceToNumberFloatScientific, {
+		key: 'number.floatScientific',
+		max: 2
+	}),
+	decimal: bundle(F.buildNumberDecimal, C.coerceToNumberDecimal, { key: 'number.decimal', max: 1 }),
+	binary: bundle(F.buildNumberBinary, C.coerceToNumberBinary, { key: 'number.binary', max: 2 }),
+	octal: bundle(F.buildNumberOctal, C.coerceToNumberOctal, { key: 'number.octal', max: 2 }),
 	bigint: numberBigint
 });

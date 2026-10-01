@@ -25,45 +25,52 @@
       ]
     },
     "alternation": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "term"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "REPEAT1",
-          "content": {
-            "type": "SEQ",
+      "type": "FIELD",
+      "name": "terms",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
             "members": [
               {
-                "type": "STRING",
-                "value": "|"
+                "type": "SYMBOL",
+                "name": "term"
               },
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "term"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
+                "type": "BLANK"
               }
             ]
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "|"
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "term"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                }
+              ]
+            }
           }
-        }
-      ]
+        ]
+      },
+      "metadata": {
+        "fieldSource": "enriched"
+      }
     },
     "term": {
       "type": "REPEAT1",
@@ -223,8 +230,13 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "^"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_negation"
+              },
+              "named": true,
+              "value": "negation"
             },
             {
               "type": "BLANK"
@@ -232,21 +244,28 @@
           ]
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "STRING",
-                "value": "-"
+          "type": "FIELD",
+          "name": "leading",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "STRING",
+                  "value": "-"
+                },
+                "named": true,
+                "value": "class_character"
               },
-              "named": true,
-              "value": "class_character"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "FIELD",
@@ -263,21 +282,28 @@
           }
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "STRING",
-                "value": "-"
+          "type": "FIELD",
+          "name": "trailing",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "STRING",
+                  "value": "-"
+                },
+                "named": true,
+                "value": "class_character"
               },
-              "named": true,
-              "value": "class_character"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
@@ -1326,6 +1352,10 @@
         }
       ]
     },
+    "_negation": {
+      "type": "STRING",
+      "value": "^"
+    },
     "inline_flags_group_enable": {
       "type": "SEQ",
       "members": [
@@ -1498,6 +1528,9 @@
     [
       "character_class",
       "class_range"
+    ],
+    [
+      "character_class"
     ]
   ],
   "precedences": [],

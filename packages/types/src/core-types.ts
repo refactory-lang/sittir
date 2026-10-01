@@ -98,6 +98,8 @@ export interface AnyNodeData {
 	$nodeHandle?: number;
 	/** Position in parent's child array for child(i) access. */
 	$childIndex?: number;
+	/** Set by a deep read on a leaf: the coordinate addresses the node's text only, never the layout around it. */
+	$textOnly?: boolean;
 	/** Document-order route names (field or kind) of this node's named-slot
 	 * children, stamped by the native reader on multi-bucket parents. The
 	 * per-slot `_<name>` buckets each preserve document order internally,

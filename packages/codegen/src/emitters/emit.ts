@@ -189,7 +189,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const utils = emitClientUtils({ grammar, nodeMap, triviaKinds });
 
 	const overlays: Record<OverlayName, string> = {
-		refines: emitRefinesOverlay({ nodeMap }),
+		refines: emitRefinesOverlay({ nodeMap, generatedIdTables }),
 		polymorphs: emitPolymorphsOverlay({ nodeMap, generatedIdTables }),
 		supertypes: overlayFrame(overlayImportPath(2), []).join('\n')
 	};

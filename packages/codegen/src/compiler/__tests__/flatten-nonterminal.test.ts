@@ -74,7 +74,14 @@ describe('wrapper nonterminal push-down', () => {
 			aliasedTo: 't',
 			nonterminal: true
 		});
-		expect(flatten({ type: ALIAS, named: true, value: 't', content: str(',') }).nonterminal).toBe(false);
+		expect(flatten({ type: ALIAS, named: false, value: 't', content: str(',') }).nonterminal).toBe(false);
+	});
+
+	it('a literal aliased to a named symbol is a slot: the parser produces a node for it', () => {
+		expect(flatten({ type: ALIAS, named: true, value: 't', content: str(',') })).toMatchObject({
+			aliasedTo: 't',
+			nonterminal: true
+		});
 	});
 });
 

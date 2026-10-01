@@ -2,6 +2,7 @@
 import * as B from './refines.js';
 import * as F from '../raw.js';
 import * as C from '../coerce.js';
+import { bundle } from '@sittir/common/utils';
 import type { ArgsOf, OmitEach, OptionsArg } from '@sittir/types';
 import { TSKindId } from '../../types.js';
 export * from './refines.js';
@@ -29,20 +30,21 @@ const lookaheadAssertion$eq =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const lookaheadAssertion$eq$strict = lookaheadAssertion$eq(F.buildLookaheadAssertion, TSKindId.Eq);
+const lookaheadAssertion$eq$coerce = lookaheadAssertion$eq(C.coerceToLookaheadAssertion, TSKindId.Eq);
 const lookaheadAssertion$bang =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const lookaheadAssertion$bang$strict = lookaheadAssertion$bang(F.buildLookaheadAssertion, TSKindId.Bang);
+const lookaheadAssertion$bang$coerce = lookaheadAssertion$bang(C.coerceToLookaheadAssertion, TSKindId.Bang);
 export const lookaheadAssertion = Object.freeze({
 	...B.lookaheadAssertion,
-	eq: {
-		strict: lookaheadAssertion$eq(F.buildLookaheadAssertion, TSKindId.Eq),
-		coerce: lookaheadAssertion$eq(C.coerceToLookaheadAssertion, TSKindId.Eq)
-	},
-	bang: {
-		strict: lookaheadAssertion$bang(F.buildLookaheadAssertion, TSKindId.Bang),
-		coerce: lookaheadAssertion$bang(C.coerceToLookaheadAssertion, TSKindId.Bang)
-	}
+	eq: bundle(lookaheadAssertion$eq$strict, lookaheadAssertion$eq$coerce, { key: 'lookaheadAssertion.eq', max: 2 }),
+	bang: bundle(lookaheadAssertion$bang$strict, lookaheadAssertion$bang$coerce, {
+		key: 'lookaheadAssertion.bang',
+		max: 2
+	})
 }) as unknown as typeof B.lookaheadAssertion & {
 	eq: {
 		strict: (
@@ -70,20 +72,21 @@ const lookbehindAssertion$eq =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const lookbehindAssertion$eq$strict = lookbehindAssertion$eq(F.buildLookbehindAssertion, TSKindId.Eq);
+const lookbehindAssertion$eq$coerce = lookbehindAssertion$eq(C.coerceToLookbehindAssertion, TSKindId.Eq);
 const lookbehindAssertion$bang =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const lookbehindAssertion$bang$strict = lookbehindAssertion$bang(F.buildLookbehindAssertion, TSKindId.Bang);
+const lookbehindAssertion$bang$coerce = lookbehindAssertion$bang(C.coerceToLookbehindAssertion, TSKindId.Bang);
 export const lookbehindAssertion = Object.freeze({
 	...B.lookbehindAssertion,
-	eq: {
-		strict: lookbehindAssertion$eq(F.buildLookbehindAssertion, TSKindId.Eq),
-		coerce: lookbehindAssertion$eq(C.coerceToLookbehindAssertion, TSKindId.Eq)
-	},
-	bang: {
-		strict: lookbehindAssertion$bang(F.buildLookbehindAssertion, TSKindId.Bang),
-		coerce: lookbehindAssertion$bang(C.coerceToLookbehindAssertion, TSKindId.Bang)
-	}
+	eq: bundle(lookbehindAssertion$eq$strict, lookbehindAssertion$eq$coerce, { key: 'lookbehindAssertion.eq', max: 2 }),
+	bang: bundle(lookbehindAssertion$bang$strict, lookbehindAssertion$bang$coerce, {
+		key: 'lookbehindAssertion.bang',
+		max: 2
+	})
 }) as unknown as typeof B.lookbehindAssertion & {
 	eq: {
 		strict: (
@@ -111,51 +114,105 @@ const lookaroundAssertion$lookaheadAssertion =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lookaroundAssertion$lookaheadAssertion$strict = lookaroundAssertion$lookaheadAssertion(
+	F.buildLookaroundAssertion,
+	F.buildLookaheadAssertion
+);
+const lookaroundAssertion$lookaheadAssertion$coerce = lookaroundAssertion$lookaheadAssertion(
+	F.buildLookaroundAssertion,
+	C.coerceToLookaheadAssertion
+);
 const lookaroundAssertion$lookbehindAssertion =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lookaroundAssertion$lookbehindAssertion$strict = lookaroundAssertion$lookbehindAssertion(
+	F.buildLookaroundAssertion,
+	F.buildLookbehindAssertion
+);
+const lookaroundAssertion$lookbehindAssertion$coerce = lookaroundAssertion$lookbehindAssertion(
+	F.buildLookaroundAssertion,
+	C.coerceToLookbehindAssertion
+);
 const lookaroundAssertion$lookaheadAssertion$eq =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lookaroundAssertion$lookaheadAssertion$eq$strict = lookaroundAssertion$lookaheadAssertion$eq(
+	F.buildLookaroundAssertion,
+	lookaheadAssertion.eq.strict
+);
+const lookaroundAssertion$lookaheadAssertion$eq$coerce = lookaroundAssertion$lookaheadAssertion$eq(
+	F.buildLookaroundAssertion,
+	lookaheadAssertion.eq.coerce
+);
 const lookaroundAssertion$lookaheadAssertion$bang =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lookaroundAssertion$lookaheadAssertion$bang$strict = lookaroundAssertion$lookaheadAssertion$bang(
+	F.buildLookaroundAssertion,
+	lookaheadAssertion.bang.strict
+);
+const lookaroundAssertion$lookaheadAssertion$bang$coerce = lookaroundAssertion$lookaheadAssertion$bang(
+	F.buildLookaroundAssertion,
+	lookaheadAssertion.bang.coerce
+);
 const lookaroundAssertion$lookbehindAssertion$eq =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lookaroundAssertion$lookbehindAssertion$eq$strict = lookaroundAssertion$lookbehindAssertion$eq(
+	F.buildLookaroundAssertion,
+	lookbehindAssertion.eq.strict
+);
+const lookaroundAssertion$lookbehindAssertion$eq$coerce = lookaroundAssertion$lookbehindAssertion$eq(
+	F.buildLookaroundAssertion,
+	lookbehindAssertion.eq.coerce
+);
 const lookaroundAssertion$lookbehindAssertion$bang =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const lookaroundAssertion$lookbehindAssertion$bang$strict = lookaroundAssertion$lookbehindAssertion$bang(
+	F.buildLookaroundAssertion,
+	lookbehindAssertion.bang.strict
+);
+const lookaroundAssertion$lookbehindAssertion$bang$coerce = lookaroundAssertion$lookbehindAssertion$bang(
+	F.buildLookaroundAssertion,
+	lookbehindAssertion.bang.coerce
+);
 export const lookaroundAssertion = Object.freeze({
 	...B.lookaroundAssertion,
 	lookaheadAssertion: {
-		strict: lookaroundAssertion$lookaheadAssertion(F.buildLookaroundAssertion, F.buildLookaheadAssertion),
-		coerce: lookaroundAssertion$lookaheadAssertion(F.buildLookaroundAssertion, C.coerceToLookaheadAssertion),
-		eq: {
-			strict: lookaroundAssertion$lookaheadAssertion$eq(F.buildLookaroundAssertion, lookaheadAssertion.eq.strict),
-			coerce: lookaroundAssertion$lookaheadAssertion$eq(F.buildLookaroundAssertion, lookaheadAssertion.eq.coerce)
-		},
-		bang: {
-			strict: lookaroundAssertion$lookaheadAssertion$bang(F.buildLookaroundAssertion, lookaheadAssertion.bang.strict),
-			coerce: lookaroundAssertion$lookaheadAssertion$bang(F.buildLookaroundAssertion, lookaheadAssertion.bang.coerce)
-		}
+		...bundle(lookaroundAssertion$lookaheadAssertion$strict, lookaroundAssertion$lookaheadAssertion$coerce, {
+			key: 'lookaroundAssertion.lookaheadAssertion',
+			max: 1
+		}),
+		eq: bundle(lookaroundAssertion$lookaheadAssertion$eq$strict, lookaroundAssertion$lookaheadAssertion$eq$coerce, {
+			key: 'lookaroundAssertion.lookaheadAssertion.eq',
+			max: 2
+		}),
+		bang: bundle(
+			lookaroundAssertion$lookaheadAssertion$bang$strict,
+			lookaroundAssertion$lookaheadAssertion$bang$coerce,
+			{ key: 'lookaroundAssertion.lookaheadAssertion.bang', max: 2 }
+		)
 	},
 	lookbehindAssertion: {
-		strict: lookaroundAssertion$lookbehindAssertion(F.buildLookaroundAssertion, F.buildLookbehindAssertion),
-		coerce: lookaroundAssertion$lookbehindAssertion(F.buildLookaroundAssertion, C.coerceToLookbehindAssertion),
-		eq: {
-			strict: lookaroundAssertion$lookbehindAssertion$eq(F.buildLookaroundAssertion, lookbehindAssertion.eq.strict),
-			coerce: lookaroundAssertion$lookbehindAssertion$eq(F.buildLookaroundAssertion, lookbehindAssertion.eq.coerce)
-		},
-		bang: {
-			strict: lookaroundAssertion$lookbehindAssertion$bang(F.buildLookaroundAssertion, lookbehindAssertion.bang.strict),
-			coerce: lookaroundAssertion$lookbehindAssertion$bang(F.buildLookaroundAssertion, lookbehindAssertion.bang.coerce)
-		}
+		...bundle(lookaroundAssertion$lookbehindAssertion$strict, lookaroundAssertion$lookbehindAssertion$coerce, {
+			key: 'lookaroundAssertion.lookbehindAssertion',
+			max: 1
+		}),
+		eq: bundle(lookaroundAssertion$lookbehindAssertion$eq$strict, lookaroundAssertion$lookbehindAssertion$eq$coerce, {
+			key: 'lookaroundAssertion.lookbehindAssertion.eq',
+			max: 2
+		}),
+		bang: bundle(
+			lookaroundAssertion$lookbehindAssertion$bang$strict,
+			lookaroundAssertion$lookbehindAssertion$bang$coerce,
+			{ key: 'lookaroundAssertion.lookbehindAssertion.bang', max: 2 }
+		)
 	}
 }) as unknown as typeof B.lookaroundAssertion & {
 	lookaheadAssertion: {
@@ -192,20 +249,37 @@ const characterClassEscape$arm =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const characterClassEscape$arm$strict = characterClassEscape$arm(
+	F.buildCharacterClassEscape,
+	F.buildCharacterClassEscapeArm
+);
+const characterClassEscape$arm$coerce = characterClassEscape$arm(
+	F.buildCharacterClassEscape,
+	C.coerceToCharacterClassEscapeArm
+);
 const characterClassEscape$unicodeCharacterEscape =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const characterClassEscape$unicodeCharacterEscape$strict = characterClassEscape$unicodeCharacterEscape(
+	F.buildCharacterClassEscape,
+	F.buildUnicodeCharacterEscape
+);
+const characterClassEscape$unicodeCharacterEscape$coerce = characterClassEscape$unicodeCharacterEscape(
+	F.buildCharacterClassEscape,
+	C.coerceToUnicodeCharacterEscape
+);
 export const characterClassEscape = Object.freeze({
 	...B.characterClassEscape,
-	arm: {
-		strict: characterClassEscape$arm(F.buildCharacterClassEscape, F.buildCharacterClassEscapeArm),
-		coerce: characterClassEscape$arm(F.buildCharacterClassEscape, C.coerceToCharacterClassEscapeArm)
-	},
-	unicodeCharacterEscape: {
-		strict: characterClassEscape$unicodeCharacterEscape(F.buildCharacterClassEscape, F.buildUnicodeCharacterEscape),
-		coerce: characterClassEscape$unicodeCharacterEscape(F.buildCharacterClassEscape, C.coerceToUnicodeCharacterEscape)
-	}
+	arm: bundle(characterClassEscape$arm$strict, characterClassEscape$arm$coerce, {
+		key: 'characterClassEscape.arm',
+		max: 1
+	}),
+	unicodeCharacterEscape: bundle(
+		characterClassEscape$unicodeCharacterEscape$strict,
+		characterClassEscape$unicodeCharacterEscape$coerce,
+		{ key: 'characterClassEscape.unicodeCharacterEscape', max: 1 }
+	)
 }) as unknown as typeof B.characterClassEscape & {
 	arm: {
 		strict: (...args: ArgsOf<typeof F.buildCharacterClassEscapeArm>) => ReturnType<typeof F.buildCharacterClassEscape>;
@@ -225,20 +299,36 @@ const namedCapturingGroup$lparenQmarkLt =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const namedCapturingGroup$lparenQmarkLt$strict = namedCapturingGroup$lparenQmarkLt(
+	F.buildNamedCapturingGroup,
+	TSKindId.LparenQmarkLt
+);
+const namedCapturingGroup$lparenQmarkLt$coerce = namedCapturingGroup$lparenQmarkLt(
+	C.coerceToNamedCapturingGroup,
+	TSKindId.LparenQmarkLt
+);
 const namedCapturingGroup$lparenQmarkPLt =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const namedCapturingGroup$lparenQmarkPLt$strict = namedCapturingGroup$lparenQmarkPLt(
+	F.buildNamedCapturingGroup,
+	TSKindId.LparenQmarkPLt
+);
+const namedCapturingGroup$lparenQmarkPLt$coerce = namedCapturingGroup$lparenQmarkPLt(
+	C.coerceToNamedCapturingGroup,
+	TSKindId.LparenQmarkPLt
+);
 export const namedCapturingGroup = Object.freeze({
 	...B.namedCapturingGroup,
-	lparenQmarkLt: {
-		strict: namedCapturingGroup$lparenQmarkLt(F.buildNamedCapturingGroup, TSKindId.LparenQmarkLt),
-		coerce: namedCapturingGroup$lparenQmarkLt(C.coerceToNamedCapturingGroup, TSKindId.LparenQmarkLt)
-	},
-	lparenQmarkPLt: {
-		strict: namedCapturingGroup$lparenQmarkPLt(F.buildNamedCapturingGroup, TSKindId.LparenQmarkPLt),
-		coerce: namedCapturingGroup$lparenQmarkPLt(C.coerceToNamedCapturingGroup, TSKindId.LparenQmarkPLt)
-	}
+	lparenQmarkLt: bundle(namedCapturingGroup$lparenQmarkLt$strict, namedCapturingGroup$lparenQmarkLt$coerce, {
+		key: 'namedCapturingGroup.lparenQmarkLt',
+		max: 2
+	}),
+	lparenQmarkPLt: bundle(namedCapturingGroup$lparenQmarkPLt$strict, namedCapturingGroup$lparenQmarkPLt$coerce, {
+		key: 'namedCapturingGroup.lparenQmarkPLt',
+		max: 2
+	})
 }) as unknown as typeof B.namedCapturingGroup & {
 	lparenQmarkLt: {
 		strict: (
@@ -266,18 +356,32 @@ const termGroup$startAssertion =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const termGroup$startAssertion$strict = termGroup$startAssertion(F.buildTermGroup, TSKindId.StartAssertion);
+const termGroup$startAssertion$coerce = termGroup$startAssertion(C.coerceToTermGroup, TSKindId.StartAssertion);
 const termGroup$endAssertion =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const termGroup$endAssertion$strict = termGroup$endAssertion(F.buildTermGroup, TSKindId.EndAssertion);
+const termGroup$endAssertion$coerce = termGroup$endAssertion(C.coerceToTermGroup, TSKindId.EndAssertion);
 const termGroup$boundaryAssertion =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const termGroup$boundaryAssertion$strict = termGroup$boundaryAssertion(F.buildTermGroup, TSKindId.BoundaryAssertion);
+const termGroup$boundaryAssertion$coerce = termGroup$boundaryAssertion(C.coerceToTermGroup, TSKindId.BoundaryAssertion);
 const termGroup$nonBoundaryAssertion =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const termGroup$nonBoundaryAssertion$strict = termGroup$nonBoundaryAssertion(
+	F.buildTermGroup,
+	TSKindId.NonBoundaryAssertion
+);
+const termGroup$nonBoundaryAssertion$coerce = termGroup$nonBoundaryAssertion(
+	C.coerceToTermGroup,
+	TSKindId.NonBoundaryAssertion
+);
 const termGroup$lookaroundAssertion =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -287,18 +391,35 @@ const termGroup$lookaroundAssertion =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
+const termGroup$lookaroundAssertion$strict = termGroup$lookaroundAssertion(
+	F.buildTermGroup,
+	F.buildLookaroundAssertion
+);
+const termGroup$lookaroundAssertion$coerce = termGroup$lookaroundAssertion(
+	C.coerceToTermGroup,
+	C.coerceToLookaroundAssertion
+);
 const termGroup$patternCharacter =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const termGroup$patternCharacter$strict = termGroup$patternCharacter(F.buildTermGroup, F.buildPatternCharacter);
+const termGroup$patternCharacter$coerce = termGroup$patternCharacter(C.coerceToTermGroup, C.coerceToPatternCharacter);
 const termGroup$characterClass =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'negation' || key === 'leading' || key === 'classAtoms' || key === 'trailing') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const termGroup$characterClass$strict = termGroup$characterClass(F.buildTermGroup, F.buildCharacterClass);
+const termGroup$characterClass$coerce = termGroup$characterClass(C.coerceToTermGroup, C.coerceToCharacterClass);
 const termGroup$posixCharacterClass =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -308,16 +429,28 @@ const termGroup$posixCharacterClass =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
+const termGroup$posixCharacterClass$strict = termGroup$posixCharacterClass(
+	F.buildTermGroup,
+	F.buildPosixCharacterClass
+);
+const termGroup$posixCharacterClass$coerce = termGroup$posixCharacterClass(
+	C.coerceToTermGroup,
+	C.coerceToPosixCharacterClass
+);
 const termGroup$anyCharacter =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+const termGroup$anyCharacter$strict = termGroup$anyCharacter(F.buildTermGroup, TSKindId.AnyCharacter);
+const termGroup$anyCharacter$coerce = termGroup$anyCharacter(C.coerceToTermGroup, TSKindId.AnyCharacter);
 const termGroup$decimalEscape =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const termGroup$decimalEscape$strict = termGroup$decimalEscape(F.buildTermGroup, F.buildDecimalEscape);
+const termGroup$decimalEscape$coerce = termGroup$decimalEscape(C.coerceToTermGroup, C.coerceToDecimalEscape);
 const termGroup$characterClassEscape =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -327,6 +460,14 @@ const termGroup$characterClassEscape =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
+const termGroup$characterClassEscape$strict = termGroup$characterClassEscape(
+	F.buildTermGroup,
+	F.buildCharacterClassEscape
+);
+const termGroup$characterClassEscape$coerce = termGroup$characterClassEscape(
+	C.coerceToTermGroup,
+	C.coerceToCharacterClassEscape
+);
 const termGroup$backreferenceEscape =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -336,6 +477,14 @@ const termGroup$backreferenceEscape =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
+const termGroup$backreferenceEscape$strict = termGroup$backreferenceEscape(
+	F.buildTermGroup,
+	F.buildBackreferenceEscape
+);
+const termGroup$backreferenceEscape$coerce = termGroup$backreferenceEscape(
+	C.coerceToTermGroup,
+	C.coerceToBackreferenceEscape
+);
 const termGroup$namedGroupBackreference =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -345,6 +494,14 @@ const termGroup$namedGroupBackreference =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
+const termGroup$namedGroupBackreference$strict = termGroup$namedGroupBackreference(
+	F.buildTermGroup,
+	F.buildNamedGroupBackreference
+);
+const termGroup$namedGroupBackreference$coerce = termGroup$namedGroupBackreference(
+	C.coerceToTermGroup,
+	C.coerceToNamedGroupBackreference
+);
 const termGroup$anonymousCapturingGroup =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -354,6 +511,14 @@ const termGroup$anonymousCapturingGroup =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
+const termGroup$anonymousCapturingGroup$strict = termGroup$anonymousCapturingGroup(
+	F.buildTermGroup,
+	F.buildAnonymousCapturingGroup
+);
+const termGroup$anonymousCapturingGroup$coerce = termGroup$anonymousCapturingGroup(
+	C.coerceToTermGroup,
+	C.coerceToAnonymousCapturingGroup
+);
 const termGroup$namedCapturingGroup =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -365,6 +530,14 @@ const termGroup$namedCapturingGroup =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const termGroup$namedCapturingGroup$strict = termGroup$namedCapturingGroup(
+	F.buildTermGroup,
+	F.buildNamedCapturingGroup
+);
+const termGroup$namedCapturingGroup$coerce = termGroup$namedCapturingGroup(
+	C.coerceToTermGroup,
+	C.coerceToNamedCapturingGroup
+);
 const termGroup$nonCapturingGroup =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -374,6 +547,11 @@ const termGroup$nonCapturingGroup =
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
 	};
+const termGroup$nonCapturingGroup$strict = termGroup$nonCapturingGroup(F.buildTermGroup, F.buildNonCapturingGroup);
+const termGroup$nonCapturingGroup$coerce = termGroup$nonCapturingGroup(
+	C.coerceToTermGroup,
+	C.coerceToNonCapturingGroup
+);
 const termGroup$enable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -385,6 +563,8 @@ const termGroup$enable =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const termGroup$enable$strict = termGroup$enable(F.buildTermGroup, F.buildInlineFlagsGroupEnable);
+const termGroup$enable$coerce = termGroup$enable(C.coerceToTermGroup, C.coerceToInlineFlagsGroupEnable);
 const termGroup$toggle =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -396,6 +576,8 @@ const termGroup$toggle =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const termGroup$toggle$strict = termGroup$toggle(F.buildTermGroup, F.buildInlineFlagsGroupToggle);
+const termGroup$toggle$coerce = termGroup$toggle(C.coerceToTermGroup, C.coerceToInlineFlagsGroupToggle);
 const termGroup$disable =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -407,229 +589,284 @@ const termGroup$disable =
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
+const termGroup$disable$strict = termGroup$disable(F.buildTermGroup, F.buildInlineFlagsGroupDisable);
+const termGroup$disable$coerce = termGroup$disable(C.coerceToTermGroup, C.coerceToInlineFlagsGroupDisable);
 const termGroup$lookaroundAssertion$lookaheadAssertion =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const termGroup$lookaroundAssertion$lookaheadAssertion$strict = termGroup$lookaroundAssertion$lookaheadAssertion(
+	F.buildTermGroup,
+	lookaroundAssertion.lookaheadAssertion.strict
+);
+const termGroup$lookaroundAssertion$lookaheadAssertion$coerce = termGroup$lookaroundAssertion$lookaheadAssertion(
+	C.coerceToTermGroup,
+	lookaroundAssertion.lookaheadAssertion.coerce
+);
 const termGroup$lookaroundAssertion$lookbehindAssertion =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const termGroup$lookaroundAssertion$lookbehindAssertion$strict = termGroup$lookaroundAssertion$lookbehindAssertion(
+	F.buildTermGroup,
+	lookaroundAssertion.lookbehindAssertion.strict
+);
+const termGroup$lookaroundAssertion$lookbehindAssertion$coerce = termGroup$lookaroundAssertion$lookbehindAssertion(
+	C.coerceToTermGroup,
+	lookaroundAssertion.lookbehindAssertion.coerce
+);
 const termGroup$lookaroundAssertion$lookaheadAssertion$eq =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const termGroup$lookaroundAssertion$lookaheadAssertion$eq$strict = termGroup$lookaroundAssertion$lookaheadAssertion$eq(
+	F.buildTermGroup,
+	lookaroundAssertion.lookaheadAssertion.eq.strict
+);
+const termGroup$lookaroundAssertion$lookaheadAssertion$eq$coerce = termGroup$lookaroundAssertion$lookaheadAssertion$eq(
+	C.coerceToTermGroup,
+	lookaroundAssertion.lookaheadAssertion.eq.coerce
+);
 const termGroup$lookaroundAssertion$lookaheadAssertion$bang =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const termGroup$lookaroundAssertion$lookaheadAssertion$bang$strict =
+	termGroup$lookaroundAssertion$lookaheadAssertion$bang(
+		F.buildTermGroup,
+		lookaroundAssertion.lookaheadAssertion.bang.strict
+	);
+const termGroup$lookaroundAssertion$lookaheadAssertion$bang$coerce =
+	termGroup$lookaroundAssertion$lookaheadAssertion$bang(
+		C.coerceToTermGroup,
+		lookaroundAssertion.lookaheadAssertion.bang.coerce
+	);
 const termGroup$lookaroundAssertion$lookbehindAssertion$eq =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const termGroup$lookaroundAssertion$lookbehindAssertion$eq$strict =
+	termGroup$lookaroundAssertion$lookbehindAssertion$eq(
+		F.buildTermGroup,
+		lookaroundAssertion.lookbehindAssertion.eq.strict
+	);
+const termGroup$lookaroundAssertion$lookbehindAssertion$eq$coerce =
+	termGroup$lookaroundAssertion$lookbehindAssertion$eq(
+		C.coerceToTermGroup,
+		lookaroundAssertion.lookbehindAssertion.eq.coerce
+	);
 const termGroup$lookaroundAssertion$lookbehindAssertion$bang =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const termGroup$lookaroundAssertion$lookbehindAssertion$bang$strict =
+	termGroup$lookaroundAssertion$lookbehindAssertion$bang(
+		F.buildTermGroup,
+		lookaroundAssertion.lookbehindAssertion.bang.strict
+	);
+const termGroup$lookaroundAssertion$lookbehindAssertion$bang$coerce =
+	termGroup$lookaroundAssertion$lookbehindAssertion$bang(
+		C.coerceToTermGroup,
+		lookaroundAssertion.lookbehindAssertion.bang.coerce
+	);
 const termGroup$characterClassEscape$arm =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const termGroup$characterClassEscape$arm$strict = termGroup$characterClassEscape$arm(
+	F.buildTermGroup,
+	characterClassEscape.arm.strict
+);
+const termGroup$characterClassEscape$arm$coerce = termGroup$characterClassEscape$arm(
+	C.coerceToTermGroup,
+	characterClassEscape.arm.coerce
+);
 const termGroup$characterClassEscape$unicodeCharacterEscape =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const termGroup$characterClassEscape$unicodeCharacterEscape$strict =
+	termGroup$characterClassEscape$unicodeCharacterEscape(
+		F.buildTermGroup,
+		characterClassEscape.unicodeCharacterEscape.strict
+	);
+const termGroup$characterClassEscape$unicodeCharacterEscape$coerce =
+	termGroup$characterClassEscape$unicodeCharacterEscape(
+		C.coerceToTermGroup,
+		characterClassEscape.unicodeCharacterEscape.coerce
+	);
 const termGroup$namedCapturingGroup$lparenQmarkLt =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const termGroup$namedCapturingGroup$lparenQmarkLt$strict = termGroup$namedCapturingGroup$lparenQmarkLt(
+	F.buildTermGroup,
+	namedCapturingGroup.lparenQmarkLt.strict
+);
+const termGroup$namedCapturingGroup$lparenQmarkLt$coerce = termGroup$namedCapturingGroup$lparenQmarkLt(
+	C.coerceToTermGroup,
+	namedCapturingGroup.lparenQmarkLt.coerce
+);
 const termGroup$namedCapturingGroup$lparenQmarkPLt =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { content: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(...seated) } as never, options as never);
 	};
+const termGroup$namedCapturingGroup$lparenQmarkPLt$strict = termGroup$namedCapturingGroup$lparenQmarkPLt(
+	F.buildTermGroup,
+	namedCapturingGroup.lparenQmarkPLt.strict
+);
+const termGroup$namedCapturingGroup$lparenQmarkPLt$coerce = termGroup$namedCapturingGroup$lparenQmarkPLt(
+	C.coerceToTermGroup,
+	namedCapturingGroup.lparenQmarkPLt.coerce
+);
 export const termGroup = Object.freeze({
 	...B.termGroup,
-	startAssertion: {
-		strict: termGroup$startAssertion(F.buildTermGroup, TSKindId.StartAssertion),
-		coerce: termGroup$startAssertion(C.coerceToTermGroup, TSKindId.StartAssertion)
-	},
-	endAssertion: {
-		strict: termGroup$endAssertion(F.buildTermGroup, TSKindId.EndAssertion),
-		coerce: termGroup$endAssertion(C.coerceToTermGroup, TSKindId.EndAssertion)
-	},
-	boundaryAssertion: {
-		strict: termGroup$boundaryAssertion(F.buildTermGroup, TSKindId.BoundaryAssertion),
-		coerce: termGroup$boundaryAssertion(C.coerceToTermGroup, TSKindId.BoundaryAssertion)
-	},
-	nonBoundaryAssertion: {
-		strict: termGroup$nonBoundaryAssertion(F.buildTermGroup, TSKindId.NonBoundaryAssertion),
-		coerce: termGroup$nonBoundaryAssertion(C.coerceToTermGroup, TSKindId.NonBoundaryAssertion)
-	},
+	startAssertion: bundle(termGroup$startAssertion$strict, termGroup$startAssertion$coerce, {
+		key: 'termGroup.startAssertion',
+		max: 2
+	}),
+	endAssertion: bundle(termGroup$endAssertion$strict, termGroup$endAssertion$coerce, {
+		key: 'termGroup.endAssertion',
+		max: 2
+	}),
+	boundaryAssertion: bundle(termGroup$boundaryAssertion$strict, termGroup$boundaryAssertion$coerce, {
+		key: 'termGroup.boundaryAssertion',
+		max: 2
+	}),
+	nonBoundaryAssertion: bundle(termGroup$nonBoundaryAssertion$strict, termGroup$nonBoundaryAssertion$coerce, {
+		key: 'termGroup.nonBoundaryAssertion',
+		max: 2
+	}),
 	lookaroundAssertion: {
-		strict: termGroup$lookaroundAssertion(F.buildTermGroup, F.buildLookaroundAssertion),
-		coerce: termGroup$lookaroundAssertion(C.coerceToTermGroup, C.coerceToLookaroundAssertion),
+		...bundle(termGroup$lookaroundAssertion$strict, termGroup$lookaroundAssertion$coerce, {
+			key: 'termGroup.lookaroundAssertion',
+			max: 2
+		}),
 		lookaheadAssertion: {
-			strict: termGroup$lookaroundAssertion$lookaheadAssertion(
-				F.buildTermGroup,
-				lookaroundAssertion.lookaheadAssertion.strict
+			...bundle(
+				termGroup$lookaroundAssertion$lookaheadAssertion$strict,
+				termGroup$lookaroundAssertion$lookaheadAssertion$coerce,
+				{ key: 'termGroup.lookaroundAssertion.lookaheadAssertion', max: 2 }
 			),
-			coerce: termGroup$lookaroundAssertion$lookaheadAssertion(
-				C.coerceToTermGroup,
-				lookaroundAssertion.lookaheadAssertion.coerce
+			eq: bundle(
+				termGroup$lookaroundAssertion$lookaheadAssertion$eq$strict,
+				termGroup$lookaroundAssertion$lookaheadAssertion$eq$coerce,
+				{ key: 'termGroup.lookaroundAssertion.lookaheadAssertion.eq', max: 2 }
 			),
-			eq: {
-				strict: termGroup$lookaroundAssertion$lookaheadAssertion$eq(
-					F.buildTermGroup,
-					lookaroundAssertion.lookaheadAssertion.eq.strict
-				),
-				coerce: termGroup$lookaroundAssertion$lookaheadAssertion$eq(
-					C.coerceToTermGroup,
-					lookaroundAssertion.lookaheadAssertion.eq.coerce
-				)
-			},
-			bang: {
-				strict: termGroup$lookaroundAssertion$lookaheadAssertion$bang(
-					F.buildTermGroup,
-					lookaroundAssertion.lookaheadAssertion.bang.strict
-				),
-				coerce: termGroup$lookaroundAssertion$lookaheadAssertion$bang(
-					C.coerceToTermGroup,
-					lookaroundAssertion.lookaheadAssertion.bang.coerce
-				)
-			}
+			bang: bundle(
+				termGroup$lookaroundAssertion$lookaheadAssertion$bang$strict,
+				termGroup$lookaroundAssertion$lookaheadAssertion$bang$coerce,
+				{ key: 'termGroup.lookaroundAssertion.lookaheadAssertion.bang', max: 2 }
+			)
 		},
 		lookbehindAssertion: {
-			strict: termGroup$lookaroundAssertion$lookbehindAssertion(
-				F.buildTermGroup,
-				lookaroundAssertion.lookbehindAssertion.strict
+			...bundle(
+				termGroup$lookaroundAssertion$lookbehindAssertion$strict,
+				termGroup$lookaroundAssertion$lookbehindAssertion$coerce,
+				{ key: 'termGroup.lookaroundAssertion.lookbehindAssertion', max: 2 }
 			),
-			coerce: termGroup$lookaroundAssertion$lookbehindAssertion(
-				C.coerceToTermGroup,
-				lookaroundAssertion.lookbehindAssertion.coerce
+			eq: bundle(
+				termGroup$lookaroundAssertion$lookbehindAssertion$eq$strict,
+				termGroup$lookaroundAssertion$lookbehindAssertion$eq$coerce,
+				{ key: 'termGroup.lookaroundAssertion.lookbehindAssertion.eq', max: 2 }
 			),
-			eq: {
-				strict: termGroup$lookaroundAssertion$lookbehindAssertion$eq(
-					F.buildTermGroup,
-					lookaroundAssertion.lookbehindAssertion.eq.strict
-				),
-				coerce: termGroup$lookaroundAssertion$lookbehindAssertion$eq(
-					C.coerceToTermGroup,
-					lookaroundAssertion.lookbehindAssertion.eq.coerce
-				)
-			},
-			bang: {
-				strict: termGroup$lookaroundAssertion$lookbehindAssertion$bang(
-					F.buildTermGroup,
-					lookaroundAssertion.lookbehindAssertion.bang.strict
-				),
-				coerce: termGroup$lookaroundAssertion$lookbehindAssertion$bang(
-					C.coerceToTermGroup,
-					lookaroundAssertion.lookbehindAssertion.bang.coerce
-				)
-			}
+			bang: bundle(
+				termGroup$lookaroundAssertion$lookbehindAssertion$bang$strict,
+				termGroup$lookaroundAssertion$lookbehindAssertion$bang$coerce,
+				{ key: 'termGroup.lookaroundAssertion.lookbehindAssertion.bang', max: 2 }
+			)
 		}
 	},
-	patternCharacter: {
-		strict: termGroup$patternCharacter(F.buildTermGroup, F.buildPatternCharacter),
-		coerce: termGroup$patternCharacter(C.coerceToTermGroup, C.coerceToPatternCharacter)
-	},
-	characterClass: {
-		strict: termGroup$characterClass(F.buildTermGroup, F.buildCharacterClass),
-		coerce: termGroup$characterClass(C.coerceToTermGroup, C.coerceToCharacterClass)
-	},
-	posixCharacterClass: {
-		strict: termGroup$posixCharacterClass(F.buildTermGroup, F.buildPosixCharacterClass),
-		coerce: termGroup$posixCharacterClass(C.coerceToTermGroup, C.coerceToPosixCharacterClass)
-	},
-	anyCharacter: {
-		strict: termGroup$anyCharacter(F.buildTermGroup, TSKindId.AnyCharacter),
-		coerce: termGroup$anyCharacter(C.coerceToTermGroup, TSKindId.AnyCharacter)
-	},
-	decimalEscape: {
-		strict: termGroup$decimalEscape(F.buildTermGroup, F.buildDecimalEscape),
-		coerce: termGroup$decimalEscape(C.coerceToTermGroup, C.coerceToDecimalEscape)
-	},
+	patternCharacter: bundle(termGroup$patternCharacter$strict, termGroup$patternCharacter$coerce, {
+		key: 'termGroup.patternCharacter',
+		max: 2
+	}),
+	characterClass: bundle(termGroup$characterClass$strict, termGroup$characterClass$coerce, {
+		key: 'termGroup.characterClass',
+		max: 2
+	}),
+	posixCharacterClass: bundle(termGroup$posixCharacterClass$strict, termGroup$posixCharacterClass$coerce, {
+		key: 'termGroup.posixCharacterClass',
+		max: 2
+	}),
+	anyCharacter: bundle(termGroup$anyCharacter$strict, termGroup$anyCharacter$coerce, {
+		key: 'termGroup.anyCharacter',
+		max: 2
+	}),
+	decimalEscape: bundle(termGroup$decimalEscape$strict, termGroup$decimalEscape$coerce, {
+		key: 'termGroup.decimalEscape',
+		max: 2
+	}),
 	characterClassEscape: {
-		strict: termGroup$characterClassEscape(F.buildTermGroup, F.buildCharacterClassEscape),
-		coerce: termGroup$characterClassEscape(C.coerceToTermGroup, C.coerceToCharacterClassEscape),
-		arm: {
-			strict: termGroup$characterClassEscape$arm(F.buildTermGroup, characterClassEscape.arm.strict),
-			coerce: termGroup$characterClassEscape$arm(C.coerceToTermGroup, characterClassEscape.arm.coerce)
-		},
-		unicodeCharacterEscape: {
-			strict: termGroup$characterClassEscape$unicodeCharacterEscape(
-				F.buildTermGroup,
-				characterClassEscape.unicodeCharacterEscape.strict
-			),
-			coerce: termGroup$characterClassEscape$unicodeCharacterEscape(
-				C.coerceToTermGroup,
-				characterClassEscape.unicodeCharacterEscape.coerce
-			)
-		}
+		...bundle(termGroup$characterClassEscape$strict, termGroup$characterClassEscape$coerce, {
+			key: 'termGroup.characterClassEscape',
+			max: 2
+		}),
+		arm: bundle(termGroup$characterClassEscape$arm$strict, termGroup$characterClassEscape$arm$coerce, {
+			key: 'termGroup.characterClassEscape.arm',
+			max: 2
+		}),
+		unicodeCharacterEscape: bundle(
+			termGroup$characterClassEscape$unicodeCharacterEscape$strict,
+			termGroup$characterClassEscape$unicodeCharacterEscape$coerce,
+			{ key: 'termGroup.characterClassEscape.unicodeCharacterEscape', max: 2 }
+		)
 	},
-	backreferenceEscape: {
-		strict: termGroup$backreferenceEscape(F.buildTermGroup, F.buildBackreferenceEscape),
-		coerce: termGroup$backreferenceEscape(C.coerceToTermGroup, C.coerceToBackreferenceEscape)
-	},
-	namedGroupBackreference: {
-		strict: termGroup$namedGroupBackreference(F.buildTermGroup, F.buildNamedGroupBackreference),
-		coerce: termGroup$namedGroupBackreference(C.coerceToTermGroup, C.coerceToNamedGroupBackreference)
-	},
-	anonymousCapturingGroup: {
-		strict: termGroup$anonymousCapturingGroup(F.buildTermGroup, F.buildAnonymousCapturingGroup),
-		coerce: termGroup$anonymousCapturingGroup(C.coerceToTermGroup, C.coerceToAnonymousCapturingGroup)
-	},
+	backreferenceEscape: bundle(termGroup$backreferenceEscape$strict, termGroup$backreferenceEscape$coerce, {
+		key: 'termGroup.backreferenceEscape',
+		max: 2
+	}),
+	namedGroupBackreference: bundle(termGroup$namedGroupBackreference$strict, termGroup$namedGroupBackreference$coerce, {
+		key: 'termGroup.namedGroupBackreference',
+		max: 2
+	}),
+	anonymousCapturingGroup: bundle(termGroup$anonymousCapturingGroup$strict, termGroup$anonymousCapturingGroup$coerce, {
+		key: 'termGroup.anonymousCapturingGroup',
+		max: 2
+	}),
 	namedCapturingGroup: {
-		strict: termGroup$namedCapturingGroup(F.buildTermGroup, F.buildNamedCapturingGroup),
-		coerce: termGroup$namedCapturingGroup(C.coerceToTermGroup, C.coerceToNamedCapturingGroup),
-		lparenQmarkLt: {
-			strict: termGroup$namedCapturingGroup$lparenQmarkLt(F.buildTermGroup, namedCapturingGroup.lparenQmarkLt.strict),
-			coerce: termGroup$namedCapturingGroup$lparenQmarkLt(C.coerceToTermGroup, namedCapturingGroup.lparenQmarkLt.coerce)
-		},
-		lparenQmarkPLt: {
-			strict: termGroup$namedCapturingGroup$lparenQmarkPLt(F.buildTermGroup, namedCapturingGroup.lparenQmarkPLt.strict),
-			coerce: termGroup$namedCapturingGroup$lparenQmarkPLt(
-				C.coerceToTermGroup,
-				namedCapturingGroup.lparenQmarkPLt.coerce
-			)
-		}
+		...bundle(termGroup$namedCapturingGroup$strict, termGroup$namedCapturingGroup$coerce, {
+			key: 'termGroup.namedCapturingGroup',
+			max: 2
+		}),
+		lparenQmarkLt: bundle(
+			termGroup$namedCapturingGroup$lparenQmarkLt$strict,
+			termGroup$namedCapturingGroup$lparenQmarkLt$coerce,
+			{ key: 'termGroup.namedCapturingGroup.lparenQmarkLt', max: 2 }
+		),
+		lparenQmarkPLt: bundle(
+			termGroup$namedCapturingGroup$lparenQmarkPLt$strict,
+			termGroup$namedCapturingGroup$lparenQmarkPLt$coerce,
+			{ key: 'termGroup.namedCapturingGroup.lparenQmarkPLt', max: 2 }
+		)
 	},
-	nonCapturingGroup: {
-		strict: termGroup$nonCapturingGroup(F.buildTermGroup, F.buildNonCapturingGroup),
-		coerce: termGroup$nonCapturingGroup(C.coerceToTermGroup, C.coerceToNonCapturingGroup)
-	},
-	enable: {
-		strict: termGroup$enable(F.buildTermGroup, F.buildInlineFlagsGroupEnable),
-		coerce: termGroup$enable(C.coerceToTermGroup, C.coerceToInlineFlagsGroupEnable)
-	},
-	toggle: {
-		strict: termGroup$toggle(F.buildTermGroup, F.buildInlineFlagsGroupToggle),
-		coerce: termGroup$toggle(C.coerceToTermGroup, C.coerceToInlineFlagsGroupToggle)
-	},
-	disable: {
-		strict: termGroup$disable(F.buildTermGroup, F.buildInlineFlagsGroupDisable),
-		coerce: termGroup$disable(C.coerceToTermGroup, C.coerceToInlineFlagsGroupDisable)
-	}
+	nonCapturingGroup: bundle(termGroup$nonCapturingGroup$strict, termGroup$nonCapturingGroup$coerce, {
+		key: 'termGroup.nonCapturingGroup',
+		max: 2
+	}),
+	enable: bundle(termGroup$enable$strict, termGroup$enable$coerce, { key: 'termGroup.enable', max: 2 }),
+	toggle: bundle(termGroup$toggle$strict, termGroup$toggle$coerce, { key: 'termGroup.toggle', max: 2 }),
+	disable: bundle(termGroup$disable$strict, termGroup$disable$coerce, { key: 'termGroup.disable', max: 2 })
 }) as unknown as typeof B.termGroup & {
 	startAssertion: {
 		strict: (
@@ -785,15 +1022,11 @@ export const termGroup = Object.freeze({
 	};
 	characterClass: {
 		strict: (
-			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & {
-				content: ArgsOf<typeof F.buildCharacterClass>;
-			},
+			config: OmitEach<ArgsOf<typeof F.buildTermGroup>[0], 'content'> & ArgsOf<typeof F.buildCharacterClass>[0],
 			options?: OptionsArg<typeof F.buildTermGroup>
 		) => ReturnType<typeof F.buildTermGroup>;
 		coerce: (
-			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & {
-				content: ArgsOf<typeof C.coerceToCharacterClass>;
-			},
+			config: OmitEach<ArgsOf<typeof C.coerceToTermGroup>[0], 'content'> & ArgsOf<typeof C.coerceToCharacterClass>[0],
 			options?: OptionsArg<typeof C.coerceToTermGroup>
 		) => ReturnType<typeof C.coerceToTermGroup>;
 	};
@@ -1019,17 +1252,18 @@ const pattern$alternation =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const pattern$alternation$strict = pattern$alternation(F.buildPattern, F.buildAlternation);
+const pattern$alternation$coerce = pattern$alternation(F.buildPattern, C.coerceToAlternation);
 const pattern$term =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const pattern$term$strict = pattern$term(F.buildPattern, F.buildTerm);
+const pattern$term$coerce = pattern$term(F.buildPattern, C.coerceToTerm);
 export const pattern = Object.freeze({
 	...B.pattern,
-	alternation: {
-		strict: pattern$alternation(F.buildPattern, F.buildAlternation),
-		coerce: pattern$alternation(F.buildPattern, C.coerceToAlternation)
-	},
-	term: { strict: pattern$term(F.buildPattern, F.buildTerm), coerce: pattern$term(F.buildPattern, C.coerceToTerm) }
+	alternation: bundle(pattern$alternation$strict, pattern$alternation$coerce),
+	term: bundle(pattern$term$strict, pattern$term$coerce)
 }) as unknown as typeof B.pattern & {
 	alternation: {
 		strict: (...args: ArgsOf<typeof F.buildAlternation>) => ReturnType<typeof F.buildPattern>;
@@ -1042,19 +1276,33 @@ export const pattern = Object.freeze({
 };
 
 const countQuantifier$arm =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'decimalDigits' || key === 'countQuantifierGroup') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
+	};
+const countQuantifier$arm$strict = countQuantifier$arm(F.buildCountQuantifier, F.buildCountQuantifierArm);
+const countQuantifier$arm$coerce = countQuantifier$arm(C.coerceToCountQuantifier, C.coerceToCountQuantifierArm);
 export const countQuantifier = Object.freeze({
 	...B.countQuantifier,
-	arm: {
-		strict: countQuantifier$arm(F.buildCountQuantifier, F.buildCountQuantifierArm),
-		coerce: countQuantifier$arm(F.buildCountQuantifier, C.coerceToCountQuantifierArm)
-	}
+	arm: bundle(countQuantifier$arm$strict, countQuantifier$arm$coerce, { key: 'countQuantifier.arm', max: 2 })
 }) as unknown as typeof B.countQuantifier & {
 	arm: {
-		strict: (...args: ArgsOf<typeof F.buildCountQuantifierArm>) => ReturnType<typeof F.buildCountQuantifier>;
-		coerce: (...args: ArgsOf<typeof C.coerceToCountQuantifierArm>) => ReturnType<typeof F.buildCountQuantifier>;
+		strict: (
+			config: OmitEach<ArgsOf<typeof F.buildCountQuantifier>[0], 'content'> &
+				ArgsOf<typeof F.buildCountQuantifierArm>[0],
+			options?: OptionsArg<typeof F.buildCountQuantifier>
+		) => ReturnType<typeof F.buildCountQuantifier>;
+		coerce: (
+			config: OmitEach<ArgsOf<typeof C.coerceToCountQuantifier>[0], 'content'> &
+				ArgsOf<typeof C.coerceToCountQuantifierArm>[0],
+			options?: OptionsArg<typeof C.coerceToCountQuantifier>
+		) => ReturnType<typeof C.coerceToCountQuantifier>;
 	};
 };
 
@@ -1063,7 +1311,16 @@ export const inlineFlagsGroup: {
 	readonly toggle: { strict: typeof F.buildInlineFlagsGroupToggle; coerce: typeof C.coerceToInlineFlagsGroupToggle };
 	readonly disable: { strict: typeof F.buildInlineFlagsGroupDisable; coerce: typeof C.coerceToInlineFlagsGroupDisable };
 } = Object.freeze({
-	enable: Object.freeze({ strict: F.buildInlineFlagsGroupEnable, coerce: C.coerceToInlineFlagsGroupEnable }),
-	toggle: Object.freeze({ strict: F.buildInlineFlagsGroupToggle, coerce: C.coerceToInlineFlagsGroupToggle }),
-	disable: Object.freeze({ strict: F.buildInlineFlagsGroupDisable, coerce: C.coerceToInlineFlagsGroupDisable })
+	enable: bundle(F.buildInlineFlagsGroupEnable, C.coerceToInlineFlagsGroupEnable, {
+		key: 'inlineFlagsGroup.enable',
+		max: 1
+	}),
+	toggle: bundle(F.buildInlineFlagsGroupToggle, C.coerceToInlineFlagsGroupToggle, {
+		key: 'inlineFlagsGroup.toggle',
+		max: 1
+	}),
+	disable: bundle(F.buildInlineFlagsGroupDisable, C.coerceToInlineFlagsGroupDisable, {
+		key: 'inlineFlagsGroup.disable',
+		max: 1
+	})
 });

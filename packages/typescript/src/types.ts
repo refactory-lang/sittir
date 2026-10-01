@@ -69,6 +69,7 @@ export type LeafStringMap = {
 		| 'never'
 		| 'object';
 	[TSKindId.EmptyMember]: ';';
+	[TSKindId.OptionalChainMarker]: '?.';
 	[TSKindId.MetaPropertyNewTarget]: 'new.target';
 	[TSKindId.MetaPropertyImportMeta]: 'import.meta';
 	[TSKindId.AutomaticSemicolon]: '\n';
@@ -557,65 +558,67 @@ export enum TSKindId {
 	IndexSignatureColon = 399,
 	IndexSignatureMappedTypeClause = 400,
 	ImportStatementClauseFrom = 401,
-	ImportSpecifierName = 402,
-	ImportSpecifierAs = 403,
-	ParenthesizedExpressionTyped = 404,
-	ParenthesizedExpressionSequence = 405,
-	CallExpressionCall = 406,
-	CallExpressionTemplateCall = 407,
-	CallExpressionMember = 408,
-	StringDouble = 409,
-	StringSingle = 410,
-	UpdateExpressionPostfix = 411,
-	UpdateExpressionPrefix = 412,
-	ArrowFunctionParameter = 413,
-	ClassHeritageExtendsClause = 414,
-	ImportClauseDefaultImport = 415,
-	ExportStatementDefaultFrom = 416,
-	ExportStatementDefaultDeclaration = 417,
-	ExportStatementDefaultFromStarFrom = 418,
-	ExportStatementDefaultFromNsFrom = 419,
-	ExportStatementDefaultFromClauseFrom = 420,
-	ExportStatementDefaultDeclarationDefaultKw = 421,
-	ExportStatementDefaultDeclarationDefaultKwValue = 422,
-	VariableDeclaratorPlain = 423,
-	VariableDeclaratorDefinite = 424,
-	MetaPropertyNewTarget = 425,
-	MetaPropertyImportMeta = 426,
-	ForHeaderLhs = 427,
-	ForHeaderVarKind = 428,
-	ForHeaderLetConstKind = 429,
-	ProgramRepeat1 = 430,
-	VariableDeclarationRepeat1 = 431,
-	SwitchBodyRepeat1 = 432,
-	ObjectRepeat1 = 433,
-	ObjectPatternRepeat1 = 434,
-	ArrayRepeat1 = 435,
-	ArrayPatternRepeat1 = 436,
-	ClassRepeat1 = 437,
-	SequenceExpressionRepeat1 = 438,
-	TemplateStringRepeat1 = 439,
-	ClassBodyRepeat1 = 440,
-	ExtendsClauseRepeat1 = 441,
-	ImplementsClauseRepeat1 = 442,
-	ExtendsTypeClauseRepeat1 = 443,
-	TemplateLiteralTypeRepeat1 = 444,
-	ExportSpecifiersRepeat1 = 445,
-	ImportSpecifiersRepeat1 = 446,
-	FormalParametersElementsRepeat1 = 447,
-	EnumBodyElementsRepeat1 = 448,
-	TypeParametersElementsRepeat1 = 449,
-	TupleTypeMembersRepeat1 = 450,
-	ObjectTypeContentRepeat1 = 451,
-	StringDoubleRepeat1 = 452,
-	StringSingleRepeat1 = 453,
-	InterfaceBody = 454,
-	PropertyIdentifier = 456,
-	ShorthandPropertyIdentifier = 457,
-	ShorthandPropertyIdentifierPattern = 458,
-	StatementIdentifier = 459,
-	ThisType = 460,
-	TypeIdentifier = 461,
+	YieldExpressionDelegate = 402,
+	OptionalChainMarker = 403,
+	ImportSpecifierName = 404,
+	ImportSpecifierAs = 405,
+	ParenthesizedExpressionTyped = 406,
+	ParenthesizedExpressionSequence = 407,
+	CallExpressionCall = 408,
+	CallExpressionTemplateCall = 409,
+	CallExpressionMember = 410,
+	StringDouble = 411,
+	StringSingle = 412,
+	UpdateExpressionPostfix = 413,
+	UpdateExpressionPrefix = 414,
+	ArrowFunctionParameter = 415,
+	ClassHeritageExtendsClause = 416,
+	ImportClauseDefaultImport = 417,
+	ExportStatementDefaultFrom = 418,
+	ExportStatementDefaultDeclaration = 419,
+	ExportStatementDefaultFromStarFrom = 420,
+	ExportStatementDefaultFromNsFrom = 421,
+	ExportStatementDefaultFromClauseFrom = 422,
+	ExportStatementDefaultDeclarationDefaultKw = 423,
+	ExportStatementDefaultDeclarationDefaultKwValue = 424,
+	VariableDeclaratorPlain = 425,
+	VariableDeclaratorDefinite = 426,
+	MetaPropertyNewTarget = 427,
+	MetaPropertyImportMeta = 428,
+	ForHeaderLhs = 429,
+	ForHeaderVarKind = 430,
+	ForHeaderLetConstKind = 431,
+	ProgramRepeat1 = 432,
+	VariableDeclarationRepeat1 = 433,
+	SwitchBodyRepeat1 = 434,
+	ObjectRepeat1 = 435,
+	ObjectPatternRepeat1 = 436,
+	ArrayRepeat1 = 437,
+	ArrayPatternRepeat1 = 438,
+	ClassRepeat1 = 439,
+	SequenceExpressionRepeat1 = 440,
+	TemplateStringRepeat1 = 441,
+	ClassBodyRepeat1 = 442,
+	ExtendsClauseRepeat1 = 443,
+	ImplementsClauseRepeat1 = 444,
+	ExtendsTypeClauseRepeat1 = 445,
+	TemplateLiteralTypeRepeat1 = 446,
+	ExportSpecifiersRepeat1 = 447,
+	ImportSpecifiersRepeat1 = 448,
+	FormalParametersElementsRepeat1 = 449,
+	EnumBodyElementsRepeat1 = 450,
+	TypeParametersElementsRepeat1 = 451,
+	TupleTypeMembersRepeat1 = 452,
+	ObjectTypeContentRepeat1 = 453,
+	StringDoubleRepeat1 = 454,
+	StringSingleRepeat1 = 455,
+	InterfaceBody = 456,
+	PropertyIdentifier = 458,
+	ShorthandPropertyIdentifier = 459,
+	ShorthandPropertyIdentifierPattern = 460,
+	StatementIdentifier = 461,
+	ThisType = 462,
+	TypeIdentifier = 463,
 	Error = 65535
 }
 Object.freeze(TSKindId);
@@ -881,7 +884,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[256, 'member_expression'],
 	[257, 'subscript_expression'],
 	[258, '_lhs_expression'],
-	[455, '_lhs_expression'],
+	[457, '_lhs_expression'],
 	[259, 'assignment_expression'],
 	[260, '_augmented_assignment_lhs'],
 	[261, 'augmented_assignment_expression'],
@@ -1025,65 +1028,67 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[399, 'index_signature_colon'],
 	[400, 'index_signature_mapped_type_clause'],
 	[401, 'import_statement_clause_from'],
-	[402, 'import_specifier_name'],
-	[403, 'import_specifier_as'],
-	[404, 'parenthesized_expression_typed'],
-	[405, 'parenthesized_expression_sequence'],
-	[406, 'call_expression_call'],
-	[407, 'call_expression_template_call'],
-	[408, 'call_expression_member'],
-	[409, 'string_double'],
-	[410, 'string_single'],
-	[411, 'update_expression_postfix'],
-	[412, 'update_expression_prefix'],
-	[413, 'arrow_function_parameter'],
-	[414, 'class_heritage_extends_clause'],
-	[415, 'import_clause_default_import'],
-	[416, 'export_statement_default_from'],
-	[417, 'export_statement_default_declaration'],
-	[418, 'export_statement_default_from_star_from'],
-	[419, 'export_statement_default_from_ns_from'],
-	[420, 'export_statement_default_from_clause_from'],
-	[421, 'export_statement_default_declaration_default_kw'],
-	[422, 'export_statement_default_declaration_default_kw_value'],
-	[423, 'variable_declarator_plain'],
-	[424, 'variable_declarator_definite'],
-	[425, 'meta_property_new_target'],
-	[426, 'meta_property_import_meta'],
-	[427, 'for_header_lhs'],
-	[428, 'for_header_var_kind'],
-	[429, 'for_header_let_const_kind'],
-	[430, 'program_repeat1'],
-	[431, 'variable_declaration_repeat1'],
-	[432, 'switch_body_repeat1'],
-	[433, 'object_repeat1'],
-	[434, 'object_pattern_repeat1'],
-	[435, 'array_repeat1'],
-	[436, 'array_pattern_repeat1'],
-	[437, 'class_repeat1'],
-	[438, 'sequence_expression_repeat1'],
-	[439, 'template_string_repeat1'],
-	[440, 'class_body_repeat1'],
-	[441, 'extends_clause_repeat1'],
-	[442, 'implements_clause_repeat1'],
-	[443, 'extends_type_clause_repeat1'],
-	[444, 'template_literal_type_repeat1'],
-	[445, 'export_specifiers_repeat1'],
-	[446, 'import_specifiers_repeat1'],
-	[447, 'formal_parameters_elements_repeat1'],
-	[448, 'enum_body_elements_repeat1'],
-	[449, 'type_parameters_elements_repeat1'],
-	[450, 'tuple_type_members_repeat1'],
-	[451, 'object_type_content_repeat1'],
-	[452, 'string_double_repeat1'],
-	[453, 'string_single_repeat1'],
-	[454, 'interface_body'],
-	[456, 'property_identifier'],
-	[457, 'shorthand_property_identifier'],
-	[458, 'shorthand_property_identifier_pattern'],
-	[459, 'statement_identifier'],
-	[460, 'this_type'],
-	[461, 'type_identifier'],
+	[402, 'yield_expression_delegate'],
+	[403, 'optional_chain_marker'],
+	[404, 'import_specifier_name'],
+	[405, 'import_specifier_as'],
+	[406, 'parenthesized_expression_typed'],
+	[407, 'parenthesized_expression_sequence'],
+	[408, 'call_expression_call'],
+	[409, 'call_expression_template_call'],
+	[410, 'call_expression_member'],
+	[411, 'string_double'],
+	[412, 'string_single'],
+	[413, 'update_expression_postfix'],
+	[414, 'update_expression_prefix'],
+	[415, 'arrow_function_parameter'],
+	[416, 'class_heritage_extends_clause'],
+	[417, 'import_clause_default_import'],
+	[418, 'export_statement_default_from'],
+	[419, 'export_statement_default_declaration'],
+	[420, 'export_statement_default_from_star_from'],
+	[421, 'export_statement_default_from_ns_from'],
+	[422, 'export_statement_default_from_clause_from'],
+	[423, 'export_statement_default_declaration_default_kw'],
+	[424, 'export_statement_default_declaration_default_kw_value'],
+	[425, 'variable_declarator_plain'],
+	[426, 'variable_declarator_definite'],
+	[427, 'meta_property_new_target'],
+	[428, 'meta_property_import_meta'],
+	[429, 'for_header_lhs'],
+	[430, 'for_header_var_kind'],
+	[431, 'for_header_let_const_kind'],
+	[432, 'program_repeat1'],
+	[433, 'variable_declaration_repeat1'],
+	[434, 'switch_body_repeat1'],
+	[435, 'object_repeat1'],
+	[436, 'object_pattern_repeat1'],
+	[437, 'array_repeat1'],
+	[438, 'array_pattern_repeat1'],
+	[439, 'class_repeat1'],
+	[440, 'sequence_expression_repeat1'],
+	[441, 'template_string_repeat1'],
+	[442, 'class_body_repeat1'],
+	[443, 'extends_clause_repeat1'],
+	[444, 'implements_clause_repeat1'],
+	[445, 'extends_type_clause_repeat1'],
+	[446, 'template_literal_type_repeat1'],
+	[447, 'export_specifiers_repeat1'],
+	[448, 'import_specifiers_repeat1'],
+	[449, 'formal_parameters_elements_repeat1'],
+	[450, 'enum_body_elements_repeat1'],
+	[451, 'type_parameters_elements_repeat1'],
+	[452, 'tuple_type_members_repeat1'],
+	[453, 'object_type_content_repeat1'],
+	[454, 'string_double_repeat1'],
+	[455, 'string_single_repeat1'],
+	[456, 'interface_body'],
+	[458, 'property_identifier'],
+	[459, 'shorthand_property_identifier'],
+	[460, 'shorthand_property_identifier_pattern'],
+	[461, 'statement_identifier'],
+	[462, 'this_type'],
+	[463, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -1347,7 +1352,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[256, 'member_expression'],
 	[257, 'subscript_expression'],
 	[258, '_lhs_expression'],
-	[455, 'lhs_expression'],
+	[457, 'lhs_expression'],
 	[259, 'assignment_expression'],
 	[260, '_augmented_assignment_lhs'],
 	[261, 'augmented_assignment_expression'],
@@ -1491,65 +1496,67 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[399, 'index_signature_colon'],
 	[400, 'index_signature_mapped_type_clause'],
 	[401, 'import_statement_clause_from'],
-	[402, 'import_specifier_name'],
-	[403, 'import_specifier_as'],
-	[404, 'parenthesized_expression_typed'],
-	[405, 'parenthesized_expression_sequence'],
-	[406, 'call_expression_call'],
-	[407, 'call_expression_template_call'],
-	[408, 'call_expression_member'],
-	[409, 'string_double'],
-	[410, 'string_single'],
-	[411, 'update_expression_postfix'],
-	[412, 'update_expression_prefix'],
-	[413, 'arrow_function_parameter'],
-	[414, 'class_heritage_extends_clause'],
-	[415, 'import_clause_default_import'],
-	[416, 'export_statement_default_from'],
-	[417, 'export_statement_default_declaration'],
-	[418, 'export_statement_default_from_star_from'],
-	[419, 'export_statement_default_from_ns_from'],
-	[420, 'export_statement_default_from_clause_from'],
-	[421, 'export_statement_default_declaration_default_kw'],
-	[422, 'export_statement_default_declaration_default_kw_value'],
-	[423, 'variable_declarator_plain'],
-	[424, 'variable_declarator_definite'],
-	[425, 'meta_property_new_target'],
-	[426, 'meta_property_import_meta'],
-	[427, 'for_header_lhs'],
-	[428, 'for_header_var_kind'],
-	[429, 'for_header_let_const_kind'],
-	[430, 'program_repeat1'],
-	[431, 'variable_declaration_repeat1'],
-	[432, 'switch_body_repeat1'],
-	[433, 'object_repeat1'],
-	[434, 'object_pattern_repeat1'],
-	[435, 'array_repeat1'],
-	[436, 'array_pattern_repeat1'],
-	[437, 'class_repeat1'],
-	[438, 'sequence_expression_repeat1'],
-	[439, 'template_string_repeat1'],
-	[440, 'class_body_repeat1'],
-	[441, 'extends_clause_repeat1'],
-	[442, 'implements_clause_repeat1'],
-	[443, 'extends_type_clause_repeat1'],
-	[444, 'template_literal_type_repeat1'],
-	[445, 'export_specifiers_repeat1'],
-	[446, 'import_specifiers_repeat1'],
-	[447, 'formal_parameters_elements_repeat1'],
-	[448, 'enum_body_elements_repeat1'],
-	[449, 'type_parameters_elements_repeat1'],
-	[450, 'tuple_type_members_repeat1'],
-	[451, 'object_type_content_repeat1'],
-	[452, 'string_double_repeat1'],
-	[453, 'string_single_repeat1'],
-	[454, 'interface_body'],
-	[456, 'property_identifier'],
-	[457, 'shorthand_property_identifier'],
-	[458, 'shorthand_property_identifier_pattern'],
-	[459, 'statement_identifier'],
-	[460, 'this_type'],
-	[461, 'type_identifier'],
+	[402, 'yield_expression_delegate'],
+	[403, 'optional_chain_marker'],
+	[404, 'import_specifier_name'],
+	[405, 'import_specifier_as'],
+	[406, 'parenthesized_expression_typed'],
+	[407, 'parenthesized_expression_sequence'],
+	[408, 'call_expression_call'],
+	[409, 'call_expression_template_call'],
+	[410, 'call_expression_member'],
+	[411, 'string_double'],
+	[412, 'string_single'],
+	[413, 'update_expression_postfix'],
+	[414, 'update_expression_prefix'],
+	[415, 'arrow_function_parameter'],
+	[416, 'class_heritage_extends_clause'],
+	[417, 'import_clause_default_import'],
+	[418, 'export_statement_default_from'],
+	[419, 'export_statement_default_declaration'],
+	[420, 'export_statement_default_from_star_from'],
+	[421, 'export_statement_default_from_ns_from'],
+	[422, 'export_statement_default_from_clause_from'],
+	[423, 'export_statement_default_declaration_default_kw'],
+	[424, 'export_statement_default_declaration_default_kw_value'],
+	[425, 'variable_declarator_plain'],
+	[426, 'variable_declarator_definite'],
+	[427, 'meta_property_new_target'],
+	[428, 'meta_property_import_meta'],
+	[429, 'for_header_lhs'],
+	[430, 'for_header_var_kind'],
+	[431, 'for_header_let_const_kind'],
+	[432, 'program_repeat1'],
+	[433, 'variable_declaration_repeat1'],
+	[434, 'switch_body_repeat1'],
+	[435, 'object_repeat1'],
+	[436, 'object_pattern_repeat1'],
+	[437, 'array_repeat1'],
+	[438, 'array_pattern_repeat1'],
+	[439, 'class_repeat1'],
+	[440, 'sequence_expression_repeat1'],
+	[441, 'template_string_repeat1'],
+	[442, 'class_body_repeat1'],
+	[443, 'extends_clause_repeat1'],
+	[444, 'implements_clause_repeat1'],
+	[445, 'extends_type_clause_repeat1'],
+	[446, 'template_literal_type_repeat1'],
+	[447, 'export_specifiers_repeat1'],
+	[448, 'import_specifiers_repeat1'],
+	[449, 'formal_parameters_elements_repeat1'],
+	[450, 'enum_body_elements_repeat1'],
+	[451, 'type_parameters_elements_repeat1'],
+	[452, 'tuple_type_members_repeat1'],
+	[453, 'object_type_content_repeat1'],
+	[454, 'string_double_repeat1'],
+	[455, 'string_single_repeat1'],
+	[456, 'interface_body'],
+	[458, 'property_identifier'],
+	[459, 'shorthand_property_identifier'],
+	[460, 'shorthand_property_identifier_pattern'],
+	[461, 'statement_identifier'],
+	[462, 'this_type'],
+	[463, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -2363,6 +2370,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.IndexSignatureMappedTypeClause;
 		case 'import_statement_clause_from':
 			return TSKindId.ImportStatementClauseFrom;
+		case 'yield_expression_delegate':
+			return TSKindId.YieldExpressionDelegate;
+		case 'optional_chain_marker':
+			return TSKindId.OptionalChainMarker;
 		case 'import_specifier_name':
 			return TSKindId.ImportSpecifierName;
 		case 'import_specifier_as':
@@ -3885,19 +3896,20 @@ export interface FinallyClause {
 
 export interface YieldExpression {
 	readonly $type: TSKindId.YieldExpression;
-	readonly _expression?: Expression;
+	readonly _expression?: YieldExpressionDelegate | Expression;
 	readonly __inputHints__?: {
 		readonly expression?:
 			| KindEnum<
 					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
 					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
 			  >
+			| YieldExpressionDelegate
 			| Expression;
 	};
 	readonly __slotHints__?: {
-		readonly expression: SlotHint<NonNullable<T.Expression>, true>;
+		readonly expression: SlotHint<NonNullable<T.YieldExpressionDelegate | T.Expression>, true>;
 	};
-	expression(): Expression | undefined;
+	expression(): YieldExpressionDelegate | Expression | undefined;
 }
 
 export interface Object {
@@ -8319,6 +8331,7 @@ export interface TypeQuerySubscriptExpression {
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
+	readonly _optional_chain_marker?: boolean;
 	readonly _index:
 		| TSKindId.AnyKeyword
 		| TSKindId.NumberKeyword
@@ -8339,6 +8352,7 @@ export interface TypeQuerySubscriptExpression {
 			| TypeQuerySubscriptExpression
 			| TypeQueryMemberExpression
 			| TypeQueryCallExpression;
+		readonly optional_chain_marker?: BaseBooleanKeyword<'?.'>;
 		readonly index:
 			| KindEnum<
 					| 'any'
@@ -8367,6 +8381,10 @@ export interface TypeQuerySubscriptExpression {
 	};
 	readonly __slotHints__?: {
 		readonly object: SlotHint<NonNullable<T.TypeQuerySubscriptExpression.Config>['object']>;
+		readonly optionalChainMarker: SlotHint<
+			NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChainMarker'],
+			true
+		>;
 		readonly index: SlotHint<NonNullable<T.TypeQuerySubscriptExpression.Config>['index']>;
 	};
 	object():
@@ -8375,6 +8393,7 @@ export interface TypeQuerySubscriptExpression {
 		| TypeQuerySubscriptExpression
 		| TypeQueryMemberExpression
 		| TypeQueryCallExpression;
+	optionalChainMarker(): boolean | undefined;
 	index():
 		| TSKindId.AnyKeyword
 		| TSKindId.NumberKeyword
@@ -10321,6 +10340,23 @@ export interface ImportStatementClauseFrom {
 	source(): String;
 }
 
+export interface YieldExpressionDelegate {
+	readonly $type: TSKindId.YieldExpressionDelegate;
+	readonly _expression: Expression;
+	readonly __inputHints__?: {
+		readonly expression:
+			| KindEnum<
+					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
+					TSKindId.Undefined | TSKindId.This | TSKindId.Super | TSKindId.True | TSKindId.False | TSKindId.Null
+			  >
+			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<T.Expression>>;
+	};
+	expression(): Expression;
+}
+
 export interface ImportSpecifierName {
 	readonly $type: TSKindId.ImportSpecifierName;
 	readonly _import_kind?: number;
@@ -11543,6 +11579,7 @@ export type PredefinedType =
 	| TSKindId.ObjectKeyword;
 export type NumberDecimal = Terminal<TSKindId.NumberDecimal, string>;
 export type EmptyMember = TSKindId.EmptyMember;
+export type OptionalChainMarker = TSKindId.OptionalChainMarker;
 export type MetaPropertyNewTarget = TSKindId.MetaPropertyNewTarget;
 export type MetaPropertyImportMeta = TSKindId.MetaPropertyImportMeta;
 export type HtmlComment = Terminal<TSKindId.HtmlComment, string>;
@@ -12066,6 +12103,7 @@ export interface OptionsHintMap {
 	indexSignatureColon: IndexSignatureColon.Hints;
 	indexSignatureMappedTypeClause: IndexSignatureMappedTypeClause.Hints;
 	importStatementClauseFrom: ImportStatementClauseFrom.Hints;
+	yieldExpressionDelegate: YieldExpressionDelegate.Hints;
 	importSpecifierName: ImportSpecifierName.Hints;
 	importSpecifierAs: ImportSpecifierAs.Hints;
 	parenthesizedExpressionTyped: ParenthesizedExpressionTyped.Hints;
@@ -12643,7 +12681,6 @@ export namespace YieldExpression {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
-			readonly star?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly yieldKeyword?: { readonly after?: WhitespaceArm };
 		};
 	}
@@ -13788,6 +13825,7 @@ export namespace TypeQuerySubscriptExpression {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
 			readonly lbrack?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+			readonly qmarkDot?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
 			readonly rbrack?: { readonly before?: WhitespaceArm };
 		};
 	}
@@ -14397,6 +14435,16 @@ export namespace ImportStatementClauseFrom {
 			readonly after?: WhitespaceArm;
 			readonly before?: WhitespaceArm;
 			readonly fromKeyword?: { readonly after?: WhitespaceArm; readonly before?: WhitespaceArm };
+		};
+	}
+}
+
+export namespace YieldExpressionDelegate {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceArm;
+			readonly before?: WhitespaceArm;
+			readonly star?: { readonly after?: WhitespaceArm };
 		};
 	}
 }
@@ -17148,6 +17196,19 @@ export interface ImportStatementClauseFromNs extends NodeNs<
 	ImportStatementClauseFrom.Parsed,
 	never
 > {}
+export interface YieldExpressionDelegateNs extends NodeNs<
+	YieldExpressionDelegate,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	YieldExpressionDelegate.Bound,
+	YieldExpressionDelegate.BuildArgs,
+	YieldExpressionDelegate.LooseArgs,
+	'expression',
+	TSKindId.YieldExpressionDelegate,
+	YieldExpressionDelegate.Parsed,
+	never
+> {}
 export interface ImportSpecifierNameNs extends NodeNs<
 	ImportSpecifierName,
 	LeafScalarMap,
@@ -17580,6 +17641,11 @@ export interface OverrideModifierNs extends KeywordNs<
 > {}
 export interface ExistentialTypeNs extends KeywordNs<TSKindId.ExistentialType, '*', TSKindId.ExistentialType> {}
 export interface EmptyMemberNs extends KeywordNs<TSKindId.EmptyMember, ';', TSKindId.EmptyMember> {}
+export interface OptionalChainMarkerNs extends KeywordNs<
+	TSKindId.OptionalChainMarker,
+	'?.',
+	TSKindId.OptionalChainMarker
+> {}
 export interface MetaPropertyNewTargetNs extends KeywordNs<
 	TSKindId.MetaPropertyNewTarget,
 	'new.target',
@@ -17854,6 +17920,7 @@ export interface NamespaceMap {
 	[TSKindId.IndexSignatureColon]: IndexSignatureColonNs;
 	[TSKindId.IndexSignatureMappedTypeClause]: IndexSignatureMappedTypeClauseNs;
 	[TSKindId.ImportStatementClauseFrom]: ImportStatementClauseFromNs;
+	[TSKindId.YieldExpressionDelegate]: YieldExpressionDelegateNs;
 	[TSKindId.ImportSpecifierName]: ImportSpecifierNameNs;
 	[TSKindId.ImportSpecifierAs]: ImportSpecifierAsNs;
 	[TSKindId.ParenthesizedExpressionTyped]: ParenthesizedExpressionTypedNs;
@@ -17898,6 +17965,7 @@ export interface NamespaceMap {
 	[TSKindId.OverrideModifier]: OverrideModifierNs;
 	[TSKindId.ExistentialType]: ExistentialTypeNs;
 	[TSKindId.EmptyMember]: EmptyMemberNs;
+	[TSKindId.OptionalChainMarker]: OptionalChainMarkerNs;
 	[TSKindId.MetaPropertyNewTarget]: MetaPropertyNewTargetNs;
 	[TSKindId.MetaPropertyImportMeta]: MetaPropertyImportMetaNs;
 	[TSKindId.AutomaticSemicolon]: AutomaticSemicolonNs;
@@ -18134,6 +18202,7 @@ export interface BoundByKindId {
 	[TSKindId.IndexSignatureColon]: IndexSignatureColon.Bound;
 	[TSKindId.IndexSignatureMappedTypeClause]: IndexSignatureMappedTypeClause.Bound;
 	[TSKindId.ImportStatementClauseFrom]: ImportStatementClauseFrom.Bound;
+	[TSKindId.YieldExpressionDelegate]: YieldExpressionDelegate.Bound;
 	[TSKindId.ImportSpecifierName]: ImportSpecifierName.Bound;
 	[TSKindId.ImportSpecifierAs]: ImportSpecifierAs.Bound;
 	[TSKindId.ParenthesizedExpressionTyped]: ParenthesizedExpressionTyped.Bound;
@@ -18368,6 +18437,7 @@ export interface ParsedByKindId {
 	[TSKindId.IndexSignatureColon]: IndexSignatureColon.Parsed;
 	[TSKindId.IndexSignatureMappedTypeClause]: IndexSignatureMappedTypeClause.Parsed;
 	[TSKindId.ImportStatementClauseFrom]: ImportStatementClauseFrom.Parsed;
+	[TSKindId.YieldExpressionDelegate]: YieldExpressionDelegate.Parsed;
 	[TSKindId.ImportSpecifierName]: ImportSpecifierName.Parsed;
 	[TSKindId.ImportSpecifierAs]: ImportSpecifierAs.Parsed;
 	[TSKindId.ParenthesizedExpressionTyped]: ParenthesizedExpressionTyped.Parsed;
@@ -18445,6 +18515,7 @@ export type FixedTextKindId =
 	| TSKindId.OverrideModifier
 	| TSKindId.ExistentialType
 	| TSKindId.EmptyMember
+	| TSKindId.OptionalChainMarker
 	| TSKindId.MetaPropertyNewTarget
 	| TSKindId.MetaPropertyImportMeta
 	| TSKindId.AutomaticSemicolon
@@ -18785,6 +18856,7 @@ export interface IrKeyOf {
 	[TSKindId.IndexSignatureColon]: 'indexSignatureColon';
 	[TSKindId.IndexSignatureMappedTypeClause]: 'indexSignatureMappedTypeClause';
 	[TSKindId.ImportStatementClauseFrom]: 'importStatementClauseFrom';
+	[TSKindId.YieldExpressionDelegate]: 'yieldExpressionDelegate';
 	[TSKindId.ImportSpecifierName]: 'importSpecifierName';
 	[TSKindId.ImportSpecifierAs]: 'importSpecifierAs';
 	[TSKindId.ParenthesizedExpressionTyped]: 'parenthesizedExpressionTyped';
@@ -18829,6 +18901,7 @@ export interface IrKeyOf {
 	[TSKindId.OverrideModifier]: 'overrideModifier';
 	[TSKindId.ExistentialType]: 'existentialType';
 	[TSKindId.EmptyMember]: 'emptyMember';
+	[TSKindId.OptionalChainMarker]: 'optionalChainMarker';
 	[TSKindId.MetaPropertyNewTarget]: 'metaPropertyNewTarget';
 	[TSKindId.MetaPropertyImportMeta]: 'metaPropertyImportMeta';
 	[TSKindId.AutomaticSemicolon]: 'automaticSemicolon';
@@ -18951,8 +19024,10 @@ export namespace ExportClause {
 	}
 	export type Loose = LooseFor<TSKindId.ExportClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportClause>;
-	export type BuildArgs = [value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNodes>];
-	export type LooseArgs = [value?: LooseValue<T.ExportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNodes>] | T.ExportSpecifiers.BuildArgs;
+	export type LooseArgs =
+		| [value?: LooseValue<T.ExportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
+		| T.ExportSpecifiers.LooseArgs;
 	export type Kind = TSKindId.ExportClause;
 }
 export namespace ExportSpecifier {
@@ -19053,8 +19128,10 @@ export namespace NamedImports {
 	}
 	export type Loose = LooseFor<TSKindId.NamedImports>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedImports>;
-	export type BuildArgs = [value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNodes>];
-	export type LooseArgs = [value?: LooseValue<T.ImportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNodes>] | T.ImportSpecifiers.BuildArgs;
+	export type LooseArgs =
+		| [value?: LooseValue<T.ImportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
+		| T.ImportSpecifiers.LooseArgs;
 	export type Kind = TSKindId.NamedImports;
 }
 export namespace ImportAttribute {
@@ -19603,8 +19680,10 @@ export namespace YieldExpression {
 	}
 	export type Loose = LooseFor<TSKindId.YieldExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.YieldExpression>;
-	export type BuildArgs = [value?: AdmitBound<T.Expression, T.AdmittedNodes>];
-	export type LooseArgs = [value?: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value?: AdmitBound<T.YieldExpressionDelegate | T.Expression, T.AdmittedNodes>];
+	export type LooseArgs = [
+		value?: LooseValue<T.YieldExpressionDelegate | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+	];
 	export type Kind = TSKindId.YieldExpression;
 }
 export namespace Object {
@@ -20551,10 +20630,12 @@ export namespace FormalParameters {
 	}
 	export type Loose = LooseFor<TSKindId.FormalParameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormalParameters>;
-	export type BuildArgs = [value?: AdmitBound<T.FormalParametersElements, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value?: LooseValue<T.FormalParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs =
+		| [value?: AdmitBound<T.FormalParametersElements, T.AdmittedNodes>]
+		| T.FormalParametersElements.BuildArgs;
+	export type LooseArgs =
+		| [value?: LooseValue<T.FormalParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
+		| T.FormalParametersElements.LooseArgs;
 	export type Kind = TSKindId.FormalParameters;
 }
 export namespace ClassStaticBlock {
@@ -21231,8 +21312,10 @@ export namespace EnumBody {
 	}
 	export type Loose = LooseFor<TSKindId.EnumBody>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumBody>;
-	export type BuildArgs = [value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>];
-	export type LooseArgs = [value?: LooseValue<T.EnumBodyElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>] | T.EnumBodyElements.BuildArgs;
+	export type LooseArgs =
+		| [value?: LooseValue<T.EnumBodyElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
+		| T.EnumBodyElements.LooseArgs;
 	export type Kind = TSKindId.EnumBody;
 }
 export namespace EnumAssignment {
@@ -21966,8 +22049,10 @@ export namespace TypeArguments {
 	}
 	export type Loose = LooseFor<TSKindId.TypeArguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeArguments>;
-	export type BuildArgs = [value: AdmitBound<T.Types, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value: AdmitBound<T.Types, T.AdmittedNodes>] | T.Types.BuildArgs;
+	export type LooseArgs =
+		| [value: LooseValue<T.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
+		| T.Types.LooseArgs;
 	export type Kind = TSKindId.TypeArguments;
 }
 export namespace ObjectType {
@@ -22069,10 +22154,12 @@ export namespace TypeParameters {
 	}
 	export type Loose = LooseFor<TSKindId.TypeParameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeParameters>;
-	export type BuildArgs = [value: AdmitBound<T.TypeParametersElements, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.TypeParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type BuildArgs =
+		| [value: AdmitBound<T.TypeParametersElements, T.AdmittedNodes>]
+		| T.TypeParametersElements.BuildArgs;
+	export type LooseArgs =
+		| [value: LooseValue<T.TypeParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
+		| T.TypeParametersElements.LooseArgs;
 	export type Kind = TSKindId.TypeParameters;
 }
 export namespace TypeParameter {
@@ -22183,8 +22270,10 @@ export namespace TupleType {
 	}
 	export type Loose = LooseFor<TSKindId.TupleType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleType>;
-	export type BuildArgs = [value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>];
-	export type LooseArgs = [value?: LooseValue<T.TupleTypeMembers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type BuildArgs = [value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>] | T.TupleTypeMembers.BuildArgs;
+	export type LooseArgs =
+		| [value?: LooseValue<T.TupleTypeMembers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
+		| T.TupleTypeMembers.LooseArgs;
 	export type Kind = TSKindId.TupleType;
 }
 export namespace ReadonlyType {
@@ -22778,7 +22867,8 @@ export namespace ExportStatementTypeExport {
 	export type Loose = OmitEach<LooseFor<TSKindId.ExportStatementTypeExport>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExportStatementTypeExport>, 'terminator'>;
 	export type BuildArgs = [
-		config?: Partial<OmitEach<ConfigOf<T.ExportStatementTypeExport, T.NamespaceMap>, 'terminator'>>
+		config?: Partial<OmitEach<ConfigOf<T.ExportStatementTypeExport, T.NamespaceMap>, 'terminator'>>,
+		options?: T.ExportStatementTypeExport.Options
 	];
 	export type LooseArgs = [
 		config?:
@@ -22786,7 +22876,8 @@ export namespace ExportStatementTypeExport {
 					LooseConfigOf<T.ExportStatementTypeExport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
 					'terminator'
 			  >
-			| AdmitBound<T.ExportStatementTypeExport, T.AdmittedNodes>
+			| AdmitBound<T.ExportStatementTypeExport, T.AdmittedNodes>,
+		options?: T.ExportStatementTypeExport.Options
 	];
 	export type Kind = TSKindId.ExportStatementTypeExport;
 }
@@ -23333,6 +23424,22 @@ export namespace ImportStatementClauseFrom {
 			| AdmitBound<T.ImportStatementClauseFrom, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.ImportStatementClauseFrom;
+}
+export namespace YieldExpressionDelegate {
+	export type Config = ConfigFor<TSKindId.YieldExpressionDelegate>;
+	export interface Bound extends BoundOf<T.YieldExpressionDelegate, BoundByKindId>, NodeMethodsOf {
+		readonly $type: T.YieldExpressionDelegate['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.YieldExpressionDelegate, ParsedByKindId>, NodeMethodsOf {
+		readonly $type: T.YieldExpressionDelegate['$type'];
+		readonly $with: WithNode<this, BoundByKindId, ParsedByKindId>;
+	}
+	export type Loose = LooseFor<TSKindId.YieldExpressionDelegate>;
+	export type LooseConfig = LooseConfigFor<TSKindId.YieldExpressionDelegate>;
+	export type BuildArgs = [value: AdmitBound<T.Expression, T.AdmittedNodes>];
+	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type Kind = TSKindId.YieldExpressionDelegate;
 }
 export namespace ImportSpecifierName {
 	export type Config = ConfigFor<TSKindId.ImportSpecifierName>;
@@ -24482,6 +24589,16 @@ export namespace EmptyMember {
 	export type BuildArgs = EmptyMemberNs['BuildArgs'];
 	export type LooseArgs = EmptyMemberNs['LooseArgs'];
 	export type Kind = TSKindId.EmptyMember;
+}
+export namespace OptionalChainMarker {
+	export type Config = OptionalChainMarkerNs['Config'];
+	export type Bound = OptionalChainMarkerNs['Bound'];
+	export type Parsed = OptionalChainMarkerNs['Bound'];
+	export type Loose = OptionalChainMarkerNs['Loose'];
+	export type LooseConfig = OptionalChainMarkerNs['LooseConfig'];
+	export type BuildArgs = OptionalChainMarkerNs['BuildArgs'];
+	export type LooseArgs = OptionalChainMarkerNs['LooseArgs'];
+	export type Kind = TSKindId.OptionalChainMarker;
 }
 export namespace MetaPropertyNewTarget {
 	export type Config = MetaPropertyNewTargetNs['Config'];

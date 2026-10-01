@@ -1,6 +1,6 @@
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { parseSeamLabel, isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
-import { isFixedTextLeaf, kindIdText } from '../compiler/model/node-map.ts';
+import { isFixedTextLeaf, isTerminalNode, kindIdText } from '../compiler/model/node-map.ts';
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import { isBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -1401,14 +1401,14 @@ function isTransportRequired(slot: AssembledNonterminal): boolean {
 }
 
 function nodeTransportHasRequiredField(node: AssembledNode): boolean {
-	if (node.modelType === 'pattern' || isFixedTextLeaf(node) || node.modelType === 'enum') {
+	if (isTerminalNode(node)) {
 		return true;
 	}
 	return node.slots.some((slot) => isTransportRequired(slot));
 }
 
 function isLeafLikeNode(n: AssembledNode): boolean {
-	return n.modelType === 'pattern' || isFixedTextLeaf(n) || n.modelType === 'enum';
+	return isTerminalNode(n);
 }
 
 function boxedInEnum(
@@ -3062,6 +3062,27 @@ function optionDefaultFills(plan: RenderPlan, node: AssembledNode): string[] {
 		});
 }
 
+function rootEdgeStamp(plan: RenderPlan, node: AssembledNode, fillFields: readonly string[]): string[] {
+	if (!node.grammarRoot || fillFields.length === 0) return [];
+	const sites = new Map<'before' | 'after', SpacingSite>();
+	for (const site of synthesizedSpacingSites(plan, node)) {
+		if (site.side === 'seam' && isKindEdge(site)) sites.set(parseSeamLabel(site.address)!.side, site);
+	}
+	const allowedOf = (side: 'before' | 'after'): string => {
+		const site = sites.get(side);
+		if (site === undefined) throw new Error(`render: the grammar root '${node.kind}' has no ${side} edge site`);
+		return `options::allowed(options::${site.constName})`;
+	};
+	const items = (end: 'first' | 'last'): string =>
+		`[${(end === 'first' ? fillFields : [...fillFields].reverse()).map((f) => `::sittir_core::prepare::EdgeItems::${end}_item(&self.${f})`).join(', ')}].into_iter().flatten().next()`;
+	return [
+		`        let first = ${items('first')};`,
+		`        let last = ${items('last')};`,
+		`        let flanks = ::sittir_core::prepare::root_flanks(first, last, ${allowedOf('before')}, ${allowedOf('after')}, &options::WHITESPACE, ctx);`,
+		`        ::sittir_core::prepare::fill_edges(self, flanks);`
+	];
+}
+
 function prepareStructImpl(
 	structName: string,
 	node: AssembledNode,
@@ -3072,6 +3093,7 @@ function prepareStructImpl(
 ): string[] {
 	const body: string[] = ['        self.transport_trivia_data.prepare(ctx)?;'];
 	if (isCompound) {
+		body.push(...rootEdgeStamp(plan, node, fillFields));
 		if (kindEdgeSidesOf(plan, node).size > 0) body.push('        ::sittir_core::prepare::prepare_edges(self, ctx);');
 		const classified = new Set<string>();
 		body.push(...listGapClassification(plan, node, seatedListFields(plan, node, nodeMap), classified));
@@ -3240,7 +3262,7 @@ function renderTransportDataStruct(
 				);
 			}
 		}
-	} else if (node.modelType === 'pattern' || isFixedTextLeaf(node) || node.modelType === 'enum') {
+	} else if (isTerminalNode(node)) {
 		lines.push(...renderLeafTransportPlainFields());
 	}
 	lines.push('}');

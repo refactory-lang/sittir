@@ -1743,6 +1743,10 @@ The grammar's root kind as the node model records it; `undefined` when no model 
 
 Whether the grammar's emitted `InnerTrivia` takes a gap key, as the node model stamps it.
 
+### `packages/tools/src/validate/read-render-parse.ts::validateReadRenderParse`
+
+Reads each corpus candidate, renders it, reparses the render inside its supertype wrapper and compares the reparsed node's AST with the source's. The reparsed node is found at the wrapper's splice offset (`findReparsedNodeAtOffset`), past the candidate's own leading trivia. A candidate that is the tree's root (its kind is the first parse's root node type) is compared against the reparsed tree's root node directly: the root's render carries its source flanks, and a leading whitespace flank is padding tree-sitter starts no node at, so no offset names it. Every other candidate keeps the offset lookup, so a non-root render that starts with whitespace still fails it as `kind not found at rendered offset`.
+
 ### `packages/tools/src/validate/uncovered-content.ts::computeUncoveredContentCensus`
 
 The census of corpus nodes that hold text no child of theirs covers, read the way the native reader reads them (a deep `readNativeTree` over every validate corpus entry). A node counts when some descendant span intersects its own, and any non-whitespace bytes of its span lie outside every descendant span. Trivia attached anywhere inside counts as covering. Rows group by the kind the node reads as (`$displayType` when present, else `$type`), with the node and entry counts, every distinct uncovered text, and the grammar producers `hiddenProducers` names for the grammar symbol that parsed it.

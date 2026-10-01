@@ -1401,11 +1401,13 @@ function _buildFinallyClause(value: AdmitBound<T.StatementBlock, T.AdmittedNodes
 	) as unknown as T.FinallyClause.Bound;
 }
 
-export function buildYieldExpression(value?: AdmitBound<T.Expression, T.AdmittedNodes>): T.YieldExpression.Bound {
+export function buildYieldExpression(
+	value?: AdmitBound<T.YieldExpressionDelegate | T.Expression, T.AdmittedNodes>
+): T.YieldExpression.Bound {
 	const _expression = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.YieldExpression['_expression']>>(value, []),
 		'YieldExpression.expression',
-		'a built Expression'
+		'a built YieldExpressionDelegate / Expression'
 	);
 	return withMethods(
 		withAccessors(
@@ -1415,7 +1417,7 @@ export function buildYieldExpression(value?: AdmitBound<T.Expression, T.Admitted
 				$named: true as const,
 				_expression,
 				$with: {
-					expression: (value?: NonNullable<T.Expression>) => buildYieldExpression(value)
+					expression: (value?: NonNullable<T.YieldExpressionDelegate | T.Expression>) => buildYieldExpression(value)
 				}
 			},
 			{
@@ -6012,6 +6014,7 @@ export function buildTypeQuerySubscriptExpression(
 		TSKindId.Identifier,
 		['this']
 	);
+	const _optional_chain_marker = coerceBooleanKeywordStorage(config.optionalChainMarker);
 	const _index = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.TypeQuerySubscriptExpression['_index']>>(config.index, [
 			['any', TSKindId.AnyKeyword] as const,
@@ -6035,16 +6038,20 @@ export function buildTypeQuerySubscriptExpression(
 				$source: 2 as const,
 				$named: true as const,
 				_object,
+				_optional_chain_marker,
 				_index,
 				$with: {
 					object: (value: NonNullable<T.TypeQuerySubscriptExpression.Config>['object']) =>
 						buildTypeQuerySubscriptExpression({ ...config, object: value }),
+					optionalChainMarker: (value?: NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChainMarker']) =>
+						buildTypeQuerySubscriptExpression({ ...config, optionalChainMarker: value }),
 					index: (value: NonNullable<T.TypeQuerySubscriptExpression.Config>['index']) =>
 						buildTypeQuerySubscriptExpression({ ...config, index: value })
 				}
 			},
 			{
 				object: () => _object,
+				optionalChainMarker: () => _optional_chain_marker,
 				index: () => _index
 			}
 		)
@@ -9055,6 +9062,34 @@ export function buildImportStatementClauseFrom(
 	) as unknown as T.ImportStatementClauseFrom.Bound;
 }
 
+export function buildYieldExpressionDelegate(
+	value: AdmitBound<T.Expression, T.AdmittedNodes>
+): T.YieldExpressionDelegate.Bound {
+	const _expression = rejectBareText(
+		coerceMixedEnumStorage<NonNullable<T.YieldExpressionDelegate['_expression']>>(value, []),
+		'YieldExpressionDelegate.expression',
+		'a built Expression'
+	);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.YieldExpressionDelegate as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				$with: {
+					expression: (value: NonNullable<T.Expression>) => buildYieldExpressionDelegate(value)
+				}
+			},
+			{
+				expression: () => _expression
+			}
+		)
+	) as unknown as T.YieldExpressionDelegate.Bound;
+}
+
+export const buildOptionalChainMarker: TSKindId.OptionalChainMarker = TSKindId.OptionalChainMarker;
+
 export function buildImportSpecifierName(config: T.ImportSpecifierName.Config): T.ImportSpecifierName.Bound {
 	const _import_kind = coerceKindEnumStorage<NonNullable<T.ImportSpecifierName['_import_kind']>>(config.importKind, [
 		['type', TSKindId.TypeKeyword] as const,
@@ -10934,6 +10969,8 @@ export type FluentKindMap = {
 	index_signature_colon: T.IndexSignatureColon.Bound;
 	index_signature_mapped_type_clause: T.IndexSignatureMappedTypeClause.Bound;
 	import_statement_clause_from: T.ImportStatementClauseFrom.Bound;
+	yield_expression_delegate: T.YieldExpressionDelegate.Bound;
+	optional_chain_marker: T.OptionalChainMarker;
 	import_specifier_name: T.ImportSpecifierName.Bound;
 	import_specifier_as: T.ImportSpecifierAs.Bound;
 	parenthesized_expression_typed: T.ParenthesizedExpressionTyped.Bound;
@@ -11192,6 +11229,8 @@ export const _factoryMap = {
 	index_signature_colon: buildIndexSignatureColon,
 	index_signature_mapped_type_clause: buildIndexSignatureMappedTypeClause,
 	import_statement_clause_from: buildImportStatementClauseFrom,
+	yield_expression_delegate: buildYieldExpressionDelegate,
+	optional_chain_marker: buildOptionalChainMarker,
 	import_specifier_name: buildImportSpecifierName,
 	import_specifier_as: buildImportSpecifierAs,
 	parenthesized_expression_typed: buildParenthesizedExpressionTyped,

@@ -420,6 +420,7 @@ export const ir: {
 	readonly overrideModifier: typeof F.buildOverrideModifier;
 	readonly existentialType: typeof F.buildExistentialType;
 	readonly emptyMember: typeof F.buildEmptyMember;
+	readonly optionalChainMarker: typeof F.buildOptionalChainMarker;
 	readonly metaPropertyNewTarget: typeof F.buildMetaPropertyNewTarget;
 	readonly metaPropertyImportMeta: typeof F.buildMetaPropertyImportMeta;
 	readonly automaticSemicolon: typeof F.buildAutomaticSemicolon;
@@ -637,6 +638,7 @@ export const ir: {
 	overrideModifier: F.buildOverrideModifier,
 	existentialType: F.buildExistentialType,
 	emptyMember: F.buildEmptyMember,
+	optionalChainMarker: F.buildOptionalChainMarker,
 	metaPropertyNewTarget: F.buildMetaPropertyNewTarget,
 	metaPropertyImportMeta: F.buildMetaPropertyImportMeta,
 	automaticSemicolon: F.buildAutomaticSemicolon,

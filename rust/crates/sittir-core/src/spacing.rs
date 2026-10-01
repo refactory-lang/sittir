@@ -153,6 +153,7 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     seam_text: String,
     seam_is_token: bool,
     seam_is_flank: bool,
+    seam_is_root: bool,
     sources: Option<&'a dyn crate::render::SourceTable>,
     options: Option<&'a crate::options::ResolvedOptions>,
     deferring: Option<String>,
@@ -181,6 +182,7 @@ struct HeldContext {
     seam_text: String,
     seam_is_token: bool,
     seam_is_flank: bool,
+    seam_is_root: bool,
     line_end_held: Option<crate::render::LineHold>,
 }
 
@@ -201,6 +203,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             seam_text: String::new(),
             seam_is_token: false,
             seam_is_flank: false,
+            seam_is_root: false,
             sources: None,
             options: None,
             deferring: None,
@@ -289,6 +292,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             seam_text: std::mem::take(&mut self.seam_text),
             seam_is_token: std::mem::replace(&mut self.seam_is_token, false),
             seam_is_flank: std::mem::replace(&mut self.seam_is_flank, false),
+            seam_is_root: std::mem::replace(&mut self.seam_is_root, false),
             line_end_held: self.line_end_held.take(),
         }
     }
@@ -303,6 +307,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.seam_text = held.seam_text;
         self.seam_is_token = held.seam_is_token;
         self.seam_is_flank = held.seam_is_flank;
+        self.seam_is_root = held.seam_is_root;
         self.line_end_held = held.line_end_held;
     }
 
@@ -379,6 +384,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             return Ok(());
         };
         let token = std::mem::replace(&mut self.seam_is_token, false);
+        let root = std::mem::replace(&mut self.seam_is_root, false);
         self.seam_is_flank = false;
         // A synthesized (non-token) space is redundant at the very start of
         // output and right after a literal newline the prior text already
@@ -387,7 +393,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         // is untouched (`literal_whitespace_is_never_coalesced`) because
         // this only ever drops a *seam's own* payload, never text.
         let redundant = self.last.is_none() || (rank == 1 && self.last == Some('\n'));
-        if !token && redundant {
+        if !token && !root && redundant {
             self.seam_text.clear();
             return Ok(());
         }
@@ -448,7 +454,35 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.merge_mark(text, strength, flank);
     }
 
+    /// The grammar root's edge: the render's own flank at its start or its
+    /// end, which decides its gap outright instead of merging with the node
+    /// edges it meets there, and which a later mark never replaces. Only a
+    /// line-terminated entry's break still floors it, since without that
+    /// break what follows would read as the entry's text; a break the line
+    /// already ended satisfies one line break of the edge.
+    fn root_edge(&mut self, arm: u16, strength: u8) {
+        let Some(table) = self.table else {
+            return;
+        };
+        let mut text = (table.text_of)(arm).to_string();
+        if self.last == Some('\n') && text.starts_with('\n') {
+            text.remove(0);
+        }
+        let floor = self.line_end_held == Some(crate::render::LineHold::Terminated) && self.seam.is_some() && self.seam_text.contains('\n');
+        if !(floor && self.seam.is_some_and(|held| held >= seam_rank(&text))) {
+            self.seam = Some(seam_rank(&text));
+            self.seam_strength = strength;
+            self.seam_is_flank = false;
+            self.seam_is_token = false;
+            self.seam_text = text;
+        }
+        self.seam_is_root = true;
+    }
+
     fn merge_mark(&mut self, text: &str, strength: u8, flank: bool) {
+        if self.seam_is_root {
+            return;
+        }
         let rank = seam_rank(text);
         if let Some(current) = self.seam {
             let keeps = match strength.cmp(&self.seam_strength) {
@@ -489,19 +523,23 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// Ends the render: a seam payload still held has nothing after it, so
     /// it is dropped, as a payload held before the first text is. A seam
     /// lies between two things; a node rendered on its own carries no edge
-    /// whitespace. A payload a whitespace token contributed is written out
-    /// instead: the token is part of the node. So is the break a
-    /// line-terminated trivia entry left: without it, what follows the render
-    /// would read as that entry's text. The root render calls this
-    /// once, after the last `write_str`.
+    /// whitespace. The grammar root is the exception: its edges are the
+    /// render's own flanks, so a seam its after edge marked is written here,
+    /// as its before edge is written at the start. A payload a whitespace
+    /// token contributed is written out too: the token is part of the node.
+    /// So is the break a line-terminated trivia entry left: without it, what
+    /// follows the render would read as that entry's text. The root render
+    /// calls this once, after the last `write_str`.
     pub fn finish(&mut self) -> std::fmt::Result {
         self.write_deferred("")?;
         if self.seam_is_token
+            || self.seam_is_root
             || (self.line_end_held == Some(crate::render::LineHold::Terminated) && self.seam.is_some() && self.seam_text.contains('\n'))
         {
             self.flush_seam()?;
         }
         self.seam = None;
+        self.seam_is_root = false;
         self.seam_text.clear();
         debug_assert_eq!(self.depth, 0, "a render must dedent every indent it opens");
         Ok(())
@@ -535,7 +573,12 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let Some(options) = self.options else {
             return;
         };
-        if let Some(crate::slot::SeamArm { arm, strength }) = options.edge_arm(kind, side, stamped) {
+        let Some(crate::slot::SeamArm { arm, strength }) = options.edge_arm(kind, side, stamped) else {
+            return;
+        };
+        if options.kind_has(kind, crate::options::KIND_ROOT) {
+            self.root_edge(arm, strength);
+        } else {
             self.site_with(arm, strength);
         }
     }
@@ -645,6 +688,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             strength: std::mem::replace(&mut self.seam_strength, SEAM_FALLBACK),
             token: std::mem::replace(&mut self.seam_is_token, false),
             flank: std::mem::replace(&mut self.seam_is_flank, false),
+            root: std::mem::replace(&mut self.seam_is_root, false),
         })
     }
 
@@ -663,6 +707,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
                 self.seam_is_flank = held.flank;
             }
             self.seam_strength = self.seam_strength.max(held.strength);
+            self.seam_is_root |= held.root;
             return;
         }
         let was = (self.seam, self.seam_strength);
@@ -670,6 +715,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         if held.token && (self.seam, self.seam_strength) != was {
             self.seam_is_token = true;
         }
+        self.seam_is_root |= held.root && self.seam.is_some();
     }
 
     fn defer_trailing(

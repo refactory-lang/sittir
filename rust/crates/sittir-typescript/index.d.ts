@@ -1689,6 +1689,7 @@ export interface TypeQuerySubscriptExpressionTransport {
   '$_edges'?: Edges
   _object: SlotValue<Box<TypeQuerySubscriptExpressionObjectTransportSlot>>
   _index: SlotValue<TypeQuerySubscriptExpressionIndexTransportSlot>
+  _optional_chain_marker?: SlotValue<OptionalChainMarkerTransport>
 }
 
 export interface TypeQueryTransport {
@@ -1772,8 +1773,14 @@ export interface WithStatementTransport {
   _body: SlotValue<Box<StatementTransport>>
 }
 
+export interface YieldExpressionDelegateTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _expression: SlotValue<Box<ExpressionTransport>>
+}
+
 export interface YieldExpressionTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _expression?: SlotValue<Box<ExpressionTransport>>
+  _expression?: SlotValue<Box<YieldExpressionExpressionTransportSlot>>
 }

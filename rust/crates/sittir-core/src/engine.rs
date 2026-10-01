@@ -556,6 +556,7 @@ mod tests {
             slot_order: None,
             same_line: false,
             tokens_between: 0,
+            text_only: false,
         }
     }
 

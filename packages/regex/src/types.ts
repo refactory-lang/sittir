@@ -9,6 +9,7 @@ import type {
 	LeafNs,
 	Terminal,
 	NonEmptyArray,
+	BooleanKeyword as BaseBooleanKeyword,
 	KindEnum,
 	NodeOfNamespaces,
 	GrammarTypeMap,
@@ -37,6 +38,7 @@ export type LeafStringMap = {
 	[TSKindId.EndAssertion]: '$';
 	[TSKindId.BoundaryAssertion]: '\\b';
 	[TSKindId.NonBoundaryAssertion]: '\\B';
+	[TSKindId.Negation]: '^';
 	[TSKindId.Newline]: '\n';
 	[TSKindId.Blankline]: '\n\n';
 	[TSKindId.DoubleBlankline]: '\n\n\n';
@@ -124,14 +126,15 @@ export enum TSKindId {
 	CountQuantifierArm = 79,
 	CharacterClassEscapeArm = 80,
 	UnicodePropertyValueExpressionGroup = 81,
-	InlineFlagsGroupEnable = 82,
-	InlineFlagsGroupToggle = 83,
-	InlineFlagsGroupDisable = 84,
-	AlternationRepeat1 = 85,
-	TermRepeat1 = 86,
-	CharacterClassRepeat1 = 87,
-	Lazy = 88,
-	UnicodePropertyName = 89,
+	Negation = 82,
+	InlineFlagsGroupEnable = 83,
+	InlineFlagsGroupToggle = 84,
+	InlineFlagsGroupDisable = 85,
+	AlternationRepeat1 = 86,
+	TermRepeat1 = 87,
+	CharacterClassRepeat1 = 88,
+	Lazy = 89,
+	UnicodePropertyName = 90,
 	Error = 65535
 }
 Object.freeze(TSKindId);
@@ -220,14 +223,15 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[79, 'count_quantifier_arm'],
 	[80, 'character_class_escape_arm'],
 	[81, 'unicode_property_value_expression_group'],
-	[82, 'inline_flags_group_enable'],
-	[83, 'inline_flags_group_toggle'],
-	[84, 'inline_flags_group_disable'],
-	[85, 'alternation_repeat1'],
-	[86, 'term_repeat1'],
-	[87, 'character_class_repeat1'],
-	[88, 'lazy'],
-	[89, 'unicode_property_name'],
+	[82, 'negation'],
+	[83, 'inline_flags_group_enable'],
+	[84, 'inline_flags_group_toggle'],
+	[85, 'inline_flags_group_disable'],
+	[86, 'alternation_repeat1'],
+	[87, 'term_repeat1'],
+	[88, 'character_class_repeat1'],
+	[89, 'lazy'],
+	[90, 'unicode_property_name'],
 	[65535, 'ERROR']
 ]);
 
@@ -314,14 +318,15 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[79, 'count_quantifier_arm'],
 	[80, 'character_class_escape_arm'],
 	[81, 'unicode_property_value_expression_group'],
-	[82, 'inline_flags_group_enable'],
-	[83, 'inline_flags_group_toggle'],
-	[84, 'inline_flags_group_disable'],
-	[85, 'alternation_repeat1'],
-	[86, 'term_repeat1'],
-	[87, 'character_class_repeat1'],
-	[88, 'lazy'],
-	[89, 'unicode_property_name'],
+	[82, 'negation'],
+	[83, 'inline_flags_group_enable'],
+	[84, 'inline_flags_group_toggle'],
+	[85, 'inline_flags_group_disable'],
+	[86, 'alternation_repeat1'],
+	[87, 'term_repeat1'],
+	[88, 'character_class_repeat1'],
+	[89, 'lazy'],
+	[90, 'unicode_property_name'],
 	[65535, 'ERROR']
 ]);
 
@@ -492,6 +497,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.CharacterClassEscapeArm;
 		case 'unicode_property_value_expression_group':
 			return TSKindId.UnicodePropertyValueExpressionGroup;
+		case 'negation':
+			return TSKindId.Negation;
 		case 'inline_flags_group_enable':
 			return TSKindId.InlineFlagsGroupEnable;
 		case 'inline_flags_group_toggle':
@@ -613,7 +620,7 @@ export interface Pattern {
 
 export interface Alternation {
 	readonly $type: TSKindId.Alternation;
-	readonly _term: NonEmptyArray<Term | undefined>;
+	readonly _terms: NonEmptyArray<Term | undefined>;
 	readonly __slotHints__?: {
 		readonly terms: SlotHint<T.Term[], false, true>;
 	};
@@ -676,6 +683,8 @@ export interface LookbehindAssertion {
 
 export interface CharacterClass {
 	readonly $type: TSKindId.CharacterClass;
+	readonly _negation?: boolean;
+	readonly _leading?: boolean;
 	readonly _class_atoms?: readonly (
 		| ClassCharacter
 		| TSKindId.BslashDash
@@ -686,7 +695,10 @@ export interface CharacterClass {
 		| PosixCharacterClass
 		| ClassRange
 	)[];
+	readonly _trailing?: boolean;
 	readonly __inputHints__?: {
+		readonly negation?: BaseBooleanKeyword<'^'>;
+		readonly leading?: BaseBooleanKeyword<'-'>;
 		readonly class_atoms?: readonly (
 			| KindEnum<'\\-', TSKindId.BslashDash>
 			| ClassCharacter
@@ -697,23 +709,16 @@ export interface CharacterClass {
 			| PosixCharacterClass
 			| ClassRange
 		)[];
+		readonly trailing?: BaseBooleanKeyword<'-'>;
 	};
 	readonly __slotHints__?: {
-		readonly classAtoms: SlotHint<
-			(
-				| T.ClassCharacter
-				| TSKindId.BslashDash
-				| T.CharacterClassEscape
-				| T.ControlEscape
-				| T.ControlLetterEscape
-				| T.IdentityEscape
-				| T.PosixCharacterClass
-				| T.ClassRange
-			)[],
-			false,
-			true
-		>;
+		readonly negation: SlotHint<NonNullable<T.CharacterClass.Config>['negation'], true>;
+		readonly leading: SlotHint<NonNullable<T.CharacterClass.Config>['leading'], true>;
+		readonly classAtoms: SlotHint<NonNullable<T.CharacterClass.Config>['classAtoms'], true>;
+		readonly trailing: SlotHint<NonNullable<T.CharacterClass.Config>['trailing'], true>;
 	};
+	negation(): boolean | undefined;
+	leading(): boolean | undefined;
 	classAtoms(): readonly (
 		| ClassCharacter
 		| TSKindId.BslashDash
@@ -724,6 +729,7 @@ export interface CharacterClass {
 		| PosixCharacterClass
 		| ClassRange
 	)[];
+	trailing(): boolean | undefined;
 }
 
 export interface PosixCharacterClass {
@@ -799,10 +805,16 @@ export interface NonCapturingGroup {
 export interface CountQuantifier {
 	readonly $type: TSKindId.CountQuantifier;
 	readonly _content: CountQuantifierArm | DecimalDigits;
+	readonly _lazy?: boolean;
+	readonly __inputHints__?: {
+		readonly lazy?: BaseBooleanKeyword<'?'>;
+	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<T.CountQuantifierArm | T.DecimalDigits>;
+		readonly lazy: SlotHint<NonNullable<T.CountQuantifier.Config>['lazy'], true>;
 	};
 	content(): CountQuantifierArm | DecimalDigits;
+	lazy(): boolean | undefined;
 }
 
 export interface BackreferenceEscape {
@@ -1073,6 +1085,7 @@ export type GroupName = Terminal<TSKindId.GroupName, string>;
 export type DecimalDigits = Terminal<TSKindId.DecimalDigits, string>;
 export type CharacterClassEscapeText1 = Terminal<TSKindId.CharacterClassEscapeText1, string>;
 export type CharacterClassEscapeText2 = Terminal<TSKindId.CharacterClassEscapeText2, string>;
+export type Negation = TSKindId.Negation;
 export type Tight = TSKindId.Tight;
 export type Newline = TSKindId.Newline;
 export type Blankline = TSKindId.Blankline;
@@ -1101,6 +1114,7 @@ export type BslashDash = TSKindId.BslashDash;
 export type RegexNode = NodeOfNamespaces<NamespaceMap>;
 
 export interface OptionsHintMap {
+	pattern: Pattern.Hints;
 	alternation: Alternation.Hints;
 	term: Term.Hints;
 	lookaheadAssertion: LookaheadAssertion.Hints;
@@ -1128,10 +1142,16 @@ export interface OptionsHintMap {
 	optional: Optional.Hints;
 }
 
+export namespace Pattern {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
+	}
+}
+
 export namespace Alternation {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly term?: {
+			readonly terms?: {
 				readonly separator?: { readonly pipe?: { readonly after?: SpacingArm; readonly before?: SpacingArm } };
 			};
 		};
@@ -1177,8 +1197,11 @@ export namespace CharacterClass {
 		readonly __optionsHint__?: {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
+			readonly caret?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly lbrack?: { readonly after?: SpacingArm };
+			readonly leading?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly rbrack?: { readonly before?: SpacingArm };
+			readonly trailing?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 		};
 	}
 }
@@ -1244,7 +1267,6 @@ export namespace CountQuantifier {
 		readonly __optionsHint__?: {
 			readonly after?: SpacingArm;
 			readonly before?: SpacingArm;
-			readonly comma?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 			readonly lbrace?: { readonly after?: SpacingArm };
 			readonly rbrace?: { readonly after?: SpacingArm; readonly before?: SpacingArm };
 		};
@@ -1552,7 +1574,7 @@ export interface CountQuantifierNs extends NodeNs<
 	CountQuantifier.Bound,
 	CountQuantifier.BuildArgs,
 	CountQuantifier.LooseArgs,
-	'content',
+	never,
 	TSKindId.CountQuantifier,
 	CountQuantifier.Parsed,
 	never
@@ -1761,6 +1783,7 @@ export interface NonBoundaryAssertionNs extends KeywordNs<
 	'\\B',
 	TSKindId.NonBoundaryAssertion
 > {}
+export interface NegationNs extends KeywordNs<TSKindId.Negation, '^', TSKindId.Negation> {}
 export interface TightNs extends KeywordNs<TSKindId.Tight, '', TSKindId.Tight> {}
 export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', TSKindId.Newline> {}
 export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', TSKindId.Blankline> {}
@@ -1861,6 +1884,7 @@ export interface NamespaceMap {
 	[TSKindId.EndAssertion]: EndAssertionNs;
 	[TSKindId.BoundaryAssertion]: BoundaryAssertionNs;
 	[TSKindId.NonBoundaryAssertion]: NonBoundaryAssertionNs;
+	[TSKindId.Negation]: NegationNs;
 	[TSKindId.Tight]: TightNs;
 	[TSKindId.Newline]: NewlineNs;
 	[TSKindId.Blankline]: BlanklineNs;
@@ -1989,6 +2013,7 @@ export type FixedTextKindId =
 	| TSKindId.EndAssertion
 	| TSKindId.BoundaryAssertion
 	| TSKindId.NonBoundaryAssertion
+	| TSKindId.Negation
 	| TSKindId.Newline
 	| TSKindId.Blankline
 	| TSKindId.DoubleBlankline
@@ -2013,10 +2038,10 @@ export type FixedTextKindId =
 	| TSKindId.Plus
 	| TSKindId.Lbrace
 	| TSKindId.Rbrace
-	| TSKindId.Comma
 	| TSKindId.Bslashk
 	| TSKindId.Lt
 	| TSKindId.LparenQmarkPEq
+	| TSKindId.Comma
 	| TSKindId.Colon;
 
 export interface IrKeyOf {
@@ -2053,6 +2078,7 @@ export interface IrKeyOf {
 	[TSKindId.EndAssertion]: 'endAssertion';
 	[TSKindId.BoundaryAssertion]: 'boundaryAssertion';
 	[TSKindId.NonBoundaryAssertion]: 'nonBoundaryAssertion';
+	[TSKindId.Negation]: 'negation';
 	[TSKindId.Tight]: 'tight';
 	[TSKindId.Newline]: 'newline';
 	[TSKindId.Blankline]: 'blankline';
@@ -2202,35 +2228,11 @@ export namespace CharacterClass {
 	}
 	export type Loose = LooseFor<TSKindId.CharacterClass>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CharacterClass>;
-	export type BuildArgs = [
-		...children: AdmitBound<
-			(
-				| T.ClassCharacter
-				| TSKindId.BslashDash
-				| T.CharacterClassEscape
-				| T.ControlEscape
-				| T.ControlLetterEscape
-				| T.IdentityEscape
-				| T.PosixCharacterClass
-				| T.ClassRange
-			)[],
-			T.AdmittedNodes
-		>
-	];
+	export type BuildArgs = [config?: Partial<ConfigOf<T.CharacterClass, T.NamespaceMap>>];
 	export type LooseArgs = [
-		...children: LooseValue<
-			| T.ClassCharacter
-			| TSKindId.BslashDash
-			| T.CharacterClassEscape
-			| T.ControlEscape
-			| T.ControlLetterEscape
-			| T.IdentityEscape
-			| T.PosixCharacterClass
-			| T.ClassRange,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
+		config?:
+			| LooseConfigOf<T.CharacterClass, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.CharacterClass, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.CharacterClass;
 }
@@ -2334,9 +2336,11 @@ export namespace CountQuantifier {
 	}
 	export type Loose = LooseFor<TSKindId.CountQuantifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CountQuantifier>;
-	export type BuildArgs = [value: AdmitBound<T.CountQuantifierArm | T.DecimalDigits, T.AdmittedNodes>];
+	export type BuildArgs = [config: ConfigOf<T.CountQuantifier, T.NamespaceMap>];
 	export type LooseArgs = [
-		value: LooseValue<T.CountQuantifierArm | T.DecimalDigits, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		config:
+			| LooseConfigOf<T.CountQuantifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
+			| AdmitBound<T.CountQuantifier, T.AdmittedNodes>
 	];
 	export type Kind = TSKindId.CountQuantifier;
 }
@@ -2678,6 +2682,16 @@ export namespace NonBoundaryAssertion {
 	export type BuildArgs = NonBoundaryAssertionNs['BuildArgs'];
 	export type LooseArgs = NonBoundaryAssertionNs['LooseArgs'];
 	export type Kind = TSKindId.NonBoundaryAssertion;
+}
+export namespace Negation {
+	export type Config = NegationNs['Config'];
+	export type Bound = NegationNs['Bound'];
+	export type Parsed = NegationNs['Bound'];
+	export type Loose = NegationNs['Loose'];
+	export type LooseConfig = NegationNs['LooseConfig'];
+	export type BuildArgs = NegationNs['BuildArgs'];
+	export type LooseArgs = NegationNs['LooseArgs'];
+	export type Kind = TSKindId.Negation;
 }
 export namespace Tight {
 	export type Config = TightNs['Config'];

@@ -1525,6 +1525,8 @@ The coercer's signature carries the same facts as types. With a spelled delimite
 
 A kind with an empty form gets the zero-argument overload returning `T.Empty<TypeName>` ahead of its signature (`withEmptyOverload`), whichever of the three signatures it takes.
 
+A direct-value coercer whose kind has a `listSpreadTarget` also takes the list's spread: beside its single-value signature it declares `(...input: T.<Target>.LooseArgs)`, and a call with more than one argument hands every argument to the target's own coercer and wraps the result. `parameters(a, b, c)` is `parameters([a, b, c])`, each element resolved as the list resolves it. A spelled or sibling-refusing signature cannot also spread, and the emitter throws if one would.
+
 ### `packages/codegen/src/emitters/from.ts::refuseSiblingLeadExpr`
 
 An interior expression wrapped in `refuseSiblingLead` with each sibling's leading regex literal and builder, or the expression itself when there are none.
@@ -11586,6 +11588,8 @@ A parameter that holds a node (`admitsNodes`) is typed through `AdmitBound` over
  *  (`constructorSurface`) that never passed through a `FactoryParam`. */
 ```
 
+The rewrite consumes only the initializer (`= {}`), never what follows it: a defaulted `config` followed by a spelling `options?` keeps both parameters, so an all-optional kind with a registered option declares `[config?, options?]` in its `BuildArgs` / `LooseArgs` as its builder does.
+
 ### `packages/codegen/src/emitters/factories.ts::paramText`
 
 ```text
@@ -11600,6 +11604,8 @@ A parameter that holds a node (`admitsNodes`) is typed through `AdmitBound` over
 /** The strict and loose renderings of one parameter — the only place either
  *  string is composed. */
 ```
+
+It also answers the parameter's arity: 1, or none (unbounded) for a rest parameter. `resolveFactorySurface` adds 1 when it appends the spelling `options?`, so the count and the text come from the same parameter list.
 
 ### `packages/codegen/src/emitters/factories.ts::paramsToTuple`
 
@@ -11707,6 +11713,18 @@ The direct-value parameter is optional when its slot is optional or holds fixed 
  * arguments straight through, transitively.
  */
 ```
+
+### `packages/codegen/src/emitters/factories.ts::forwardedConstructorTarget`
+
+The kind a field-carrying factory forwards its argument to, when its strict builder is a forwarding wrapper: the node takes a direct value (`directParamType`), `forwardedTargetKind` names a target, the target has a catalog entry, and the target is not a hoisted config-shaped group (which splices through its seat instead). `emitFieldCarryingFactory` emits the forwarding overloads exactly when this answers a kind; `listSpreadTarget` reads the same answer.
+
+### `packages/codegen/src/emitters/factories.ts::listSpreadTarget`
+
+The forward target of a kind whose strict builder accepts the spread of a list it wraps (`parameters(a, b)` for `parameters` → `parameters_elements`): `forwardedConstructorTarget` names a target whose constructor resolves (`constructorTargetKind`) to a list, and the kind registers no spelling slot (a spelling wrapper forwards only its first argument). The strict wrapper, the loose coercer's spread overload (`emitBranchFrom`), and the `BuildArgs` / `LooseArgs` tuples (`fieldCarryingBuiltTypeSurface`) all read this one answer, so the loose surface accepts at least what the strict one does.
+
+### `packages/codegen/src/emitters/factories.ts::fieldCarryingBuiltTypeSurface`
+
+The construction surface of a field-carrying kind, from its factory surface: the `$with` setters, and the `BuildArgs` / `LooseArgs` tuples from the surface's row parameters. A kind with a `listSpreadTarget` unions its tuples with the target's own (`… | T.<Target>.BuildArgs`), by name, so the spread form is the list's derivation rather than a copy; its `maxArgs` is then unbounded.
 
 ### `packages/codegen/src/emitters/factories.ts::constructorSurface`
 
@@ -11819,6 +11837,8 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
 ```
 
 `setters` is the surface's slot setters as parts (`SlotSetter`): the one derivation of what each `$with` setter takes. The interface's `$with` record prints them, and the types emitter stamps the same parts as `__slotHints__`, so the two cannot disagree. A leaf has none.
+
+`maxArgs` is the most arguments the calling convention accepts, beside the tuples it counts: the factory surface's `arity`, 1 for a leaf, 1 or 2 for a refine form (its config, plus its options when it has registered slots), and none for a list or for a kind that forwards a wrapped-list spread, whose tuples end in a rest element. `bundleEntries` reads it to stamp the hoisted builder.
 
 ### `packages/codegen/src/emitters/factories.ts::elementsTuple`
 
@@ -12782,6 +12802,14 @@ admits). A slot of literals only passes its input through; the raw factory's lit
 // build constant, the id. The parameter exists only to type the surface.
 // ---------------------------------------------------------------------------
 ```
+
+### `packages/codegen/src/emitters/from.ts::leafFromForm`
+
+Which coercer a leaf kind gets: `string` for a pattern leaf (its text), `keyword` for a builder text leaf (a zero-argument factory), none otherwise. `from.leaf` dispatches on it and `keywordLeafArity` reads it.
+
+### `packages/codegen/src/emitters/from.ts::keywordLeafArity`
+
+The arity of a keyword leaf's pair: its coercer takes one optional `<Kind>.Loose` input. Its strict entry is its kind id, a constant, so the pair's hoisted call is always the coercer. Undefined for any other leaf, whose arity its built-type surface states.
 
 ### `packages/codegen/src/emitters/from.ts::resolveFieldCall`
 
@@ -14555,6 +14583,8 @@ Emits `factories/index.ts`, the dynamic final chain step: re-exports the top ove
 
 Every flattened parent is exported the same way through `hoistRoutes(O.<key>)`, so `ir.<parent>.<variant>(…)` is the coerce flavor and `.strict` stays reachable, just as for a bundled kind.
 
+The arity bound comes from the pair itself: `emitBundleModule` stamps each entry, and every overlay builds its pairs through `bundle`, so the index passes no stamp.
+
 ### `packages/codegen/src/emitters/overlays/module.ts::overlayFrame`
 
 Shared header for a static overlay module: imports the previous layer as `B`, any extra imports, and re-exports the previous layer; a layer shadows only the bundles it decorates.
@@ -14562,6 +14592,8 @@ Shared header for a static overlay module: imports the previous layer as `B`, an
 ### `packages/codegen/src/emitters/overlays/module.ts::BundleEntry`
 
 One bundled kind: `key` is the ir property key (irKey, falling back to camelCase(kind)); `exportName` is the module-level export identifier — `key` suffixed with `_` when the key is a reserved identifier (e.g. `arguments`), since a reserved word is legal as an object property but not as a top-level export.
+
+`maxArgs` is the kind's `BuiltTypeSurface.maxArgs`: the stamp `emitBundleModule` gives the entry's pair, absent for an unbounded (rest) calling convention.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::bundleEntries`
 
@@ -14629,7 +14661,11 @@ child is itself a flattened parent — that parent's route key.
 
 ### `packages/codegen/src/emitters/overlays/module.ts::emitBundleModule`
 
-Emits `factories/bundle.ts`: re-exports raw and coerce, then one line per entry — `export const <exportName> = bundle(F.<build>, C.<coerceTo>);`. The pairing is the one dynamic stage below the index.
+Emits `factories/bundle.ts`: re-exports raw and coerce, then one line per entry — `export const <exportName> = bundle(F.<build>, C.<coerceTo>, { key, max });`, stamped with the entry's `maxArgs` (`bundleExpr`). The pairing is the one dynamic stage below the index.
+
+### `packages/codegen/src/emitters/overlays/module.ts::bundleExpr`
+
+The one spelling of a pair construction in generated code: `bundle(<strict>, <coerce> | undefined, { key, max })`, the stamp omitted when `max` is undefined. `key` is the route's dotted path from its `ir` key, which the refusal message names.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::parentRefs`
 
@@ -14638,6 +14674,8 @@ The strict/coerce expression pair for a parent builder; `coerce` is absent when 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::childRefs`
 
 The strict/coerce expression pair for an arm: a direct child uses its own factories (strict builder doubling as the coerce seat when no coercer exists); a flattened arm references the decorated child const emitted above (`<childKey>.<path>.strict` / `.coerce`).
+
+Given the wires, the refs also carry the child's arity, `max`: a route reference reads `routeArity`, a supertype or seated child's key reads `entryArity`, and a direct child reads `surfaceArity`. An arm that forwards the child's arguments takes this `max` as its own.
 
 A flattened arm through a hoisted child references that child's private
 wiring const under the same `<childKey>.<path>` spelling. Whenever the refs
@@ -14672,7 +14710,51 @@ Whether a direct arm is a namespace with no call of its own: its child is a vari
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::renderArm`
 
-Renders an arm entry and its nested children as one object literal and its type. An entry with an empty line (a namespace arm) contributes only its children.
+Renders an arm entry and its nested children as one object literal and its type, the arm's pair through `bundleExpr` under its dotted route path: `name: bundle(…)` for a leaf arm, `name: { ...bundle(…), child: … }` when it has children. A namespace arm (no pair) contributes only its children. Each rendered pair records its path's arity in `PolymorphWires.routes`, which a later arm referencing the route reads through `routeArity`.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::ArmPair`
+
+An arm's pair as named flavor consts plus its arity stamp; the renderer spells it through `bundleExpr` once the arm's route path is known.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::armPair`
+
+Names an emission's composed flavors as consts, `<method>$strict` and `<method>$coerce`, pushes them among the overlay's methods, and returns the pair over those names. Every composed flavor is named before its `bundle` call because an inline generic composer call inside `bundle`'s arguments leaves TypeScript (7.0.2) unable to infer the flavor type while the stamp parameter depends on it: the flavor falls back to its constraint, `MaxArity` reads `number`, and every correct stamp is refused. A named const has a settled type, so the stamp is checked against the flavor exactly. Do not inline the composer calls back into `bundle`.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::armType`
+
+The declared `strict`/`coerce` member types of an emitted arm, `coerce` omitted for a strict-only route.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::pairExpr`
+
+Spells an arm pair at its route path and records the path's arity for later references.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::maxOf`
+
+A spreadable `{ max }` that is empty when the arity is unbounded.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::surfaceArity`
+
+The most arguments a kind's own factory flavor takes: its `BuiltTypeSurface.maxArgs`, or, for a keyword leaf with no surface, its coercer's (`keywordLeafArity`).
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::entryArity`
+
+The arity of the pair at a kind's own entry, the call `<childKey>(…)` makes. A flattened parent's entry is its default variant's entry. A seated kind's entry is the seated pair (`seatedArity`) when that pair is the hoisted target: it has a coercer, or the entry is a private hoisted-compound const with no bundle beneath it; otherwise the bundle's coercer is the target and the kind's surface arity holds.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::routeArity`
+
+The arity of a route referenced by its dotted path. A wire arm's path is read from `PolymorphWires.routes`, filled as each arm renders; children render before their parents. A flattened parent's variant routes render after the wire chunks, so their paths are resolved structurally: the variant's entry arity, or, for a deeper path, the same lookup under the variant's own entry key. A path that resolves to neither throws, since a reference to an unstamped route is a codegen defect.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatsOf`
+
+A wire set's seat emissions, flatten first, then element seats, then tuple seats; `composeSeats` folds them and `seatedArity` reads them.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatedOptionsType`
+
+The trailing options type a non-spread seated pair declares, present when the kind has a spelling option.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatedArity`
+
+The seated pair's arity and whether it has a coerce flavor. A spread seat makes it unbounded; otherwise it takes its config, plus the options argument when `seatedOptionsType` is present. It is coercible when the parent has a coercer and every seat's child has one.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::shape`
 
@@ -14692,6 +14774,8 @@ argument seats it under the slot key. Every other node arm takes the slot's
 key as the child's argument tuple and spreads it. The arity is the model's
 `parameterless` stamp, the fact the factories emitter reads for a
 zero-argument factory; the overlay never re-derives it.
+
+Each shape also states the arity of the call it declares, `max`: 1 for a value arm that takes only options, 2 for every shape that takes its config (or positional argument) plus options, and `'child'` for a node arm that forwards the child's own arguments, whose bound is the child route's.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::flattenShape`
 
@@ -14835,15 +14919,19 @@ bare `{ strict, coerce }` pair and its own entry unreferenced.
 
 `keyByKind` also maps each flattened variant parent to its const's key, so a sub-factory arm whose child is a variant-bearing supertype resolves to that const. A nested arm through such a child is present when the supertype has a variant of that name (`variantArmsOf`), since the child has no wire set of its own.
 
+The wires also carry the node map, the flattened variant parents by kind, and `routes`, the arity of every rendered arm path, which the emitter fills in chunk order and `routeArity` reads.
+
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::emitSub`
 
 A positional parent (one direct slot) wraps with the raw builder in both flavors. The wrapping step's input is always the built child, and the parent's coercer would hand that child back unbuilt when it is of the parent's own kind (a self-recursive arm such as python's `parenthesized_list_splat.parenthesizedListSplat`), collapsing one level of nesting. A config-shaped parent keeps its coercer, since its residual slots arrive loose. Whether a route has a coerce flavor at all is unchanged: it still requires both the parent's and the child's coercer to exist.
 
 Renders one sub-factory's transformation method and its two applications. Methods are generic over the function types themselves (`PF` for the parent, `CF` for the child) with parameter and return types indexed off them (`Parameters<PF>[0]`, `ReturnType<PF>`), because a type parameter constrained by another inference variable and appearing only in a contravariant function-parameter position makes TypeScript fall back to the constraint instead of inferring — any parent with a residual field would then fail to apply. The two internal calls are made through erased views (`parent as (arg: unknown) => ReturnType<PF>`); the external signature and the emitted per-wire type annotations stay exact. Shapes: literal fix (with/without residual, positional/keyed), positional/keyed seat, config merge (path-empty arms only; keys split by a baked owner list), config seat (a path-empty config-shaped arm that does not merge, `seatsConfigChild`: the child's config object sits whole under the slot key, `{ function: { macro, arguments }, arguments }`), and tuple-spread for every other residual arm — flattened arms always tuple-spread, since their seated value is the sub-factory's own argument tuple.
 
+The emission carries its method's name, which `armPair` builds the flavor const names from, and its arity: the shape's own `max`, or the child refs' `max` for a shape that forwards the child's arguments.
+
 ### `packages/codegen/src/emitters/overlays/refines.ts::emitRefinesOverlay`
 
-Static wiring for refine forms over bundles: for each kind with refine forms, spreads the bundle (`...B.<key>`) and wires each form as `{ strict: F.<refineFormFactory> }` under its camelCase key (plus the raw form name when it differs). Refine forms have no emitted coercers, so the pair carries only `strict`.
+Static wiring for refine forms over bundles: for each kind with refine forms, spreads the bundle (`...B.<key>`) and wires each form as `bundle(F.<refineFormFactory>, undefined, { key, max })` under its camelCase key (plus the raw form name when it differs), stamped with the form's `refineFormBuiltTypeSurfaceOf` arity. Refine forms have no emitted coercers, so the pair carries only `strict`.
 
 The overlay table and each form's pair are frozen.
 
@@ -15039,6 +15127,8 @@ parent has a registered spelling (`spellingTypeOf`), the same fact the raw
 factory's trailing parameter comes from. `OptionsArg<typeof parent>` cannot
 serve: a raw factory with a bare-text overload contributes that overload's
 tuple to `ArgsOf`'s union, and the bare-text tuple has no options parameter.
+
+The seated pair is spread onto the entry through `bundle`, stamped with `seatedArity`, so it replaces the bundle's own stamp together with its flavors. A public entry whose seated pair has no coerce flavor keeps a bare `strict` line instead: the bundle's coercer stays the hoisted target, and the bundle's stamp is its bound.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatedParent`
 
@@ -15331,6 +15421,8 @@ Flattened parents emit last as plain route objects (`export const <parent> = { <
 It imports the grammar types as `T` when any emitted block names `T.`.
 
 Every table the overlay emits (a wired parent, a private set, a flattened variant parent) is frozen where it is built, and so is a route pair it builds for a variant child; the pairs a sub-factory method emits are consumed by hoisting, which builds a frozen callable from them.
+
+Alias routes, variant routes and a flattened parent's default pair are built through `bundle` with the variant child's `entryArity` as their stamp, keyed by their dotted route path; alias paths are recorded in `routes` like arm paths.
 
 ### `packages/codegen/src/emitters/options.ts::kindIdArmType`
 
@@ -15819,7 +15911,7 @@ array read instead of a search.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::kindFlagsOf`
 
-Per kind id, the OR of its flags over every kind entry that carries that id: `KIND_ANON` when the entry is the parser's anonymous token (`anon`), `KIND_LINE_TERMINATED` when it is an outermost line-terminated kind (`lineTerminatedKinds`), `KIND_LINE_BREAK_TERMINATED` when it is an outermost kind ending in the declared newline token (`lineBreakTerminatedKinds`). The bit values match `sittir_core::options`. The sink reads them by kind id. A coordinate onto an anonymous token is a token, not an owner, so the writer seats no held trailing entries before it. A node of a line-terminated kind, whether a transport, a coordinate or detached trivia text, holds its line end (`RenderSink::end_line_after`) as a `LineHold::Terminated`; a node of a kind ending in the declared newline token holds it as a `LineHold::Break`, which the end of a render drops.
+Per kind id, the OR of its flags over every kind entry that carries that id: `KIND_ANON` when the entry is the parser's anonymous token (`anon`), `KIND_LINE_TERMINATED` when it is an outermost line-terminated kind (`lineTerminatedKinds`), `KIND_LINE_BREAK_TERMINATED` when it is an outermost kind ending in the declared newline token (`lineBreakTerminatedKinds`), `KIND_ROOT` for the grammar root (`grammarRoot`), whose edges the writer writes at a render's two ends. The bit values match `sittir_core::options`. The sink reads them by kind id. A coordinate onto an anonymous token is a token, not an owner, so the writer seats no held trailing entries before it. A node of a line-terminated kind, whether a transport, a coordinate or detached trivia text, holds its line end (`RenderSink::end_line_after`) as a `LineHold::Terminated`; a node of a kind ending in the declared newline token holds it as a `LineHold::Break`, which the end of a render drops.
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::EdgeSiteRow`
 
@@ -15907,10 +15999,15 @@ enums, `VerbatimTransport`): `Ok(())`.
  *  never a token seam site; absent means the view writes nothing there. */
 ```
 
+### `packages/codegen/src/emitters/render-module.ts::rootEdgeStamp`
+
+The grammar root's prepare lines that give an edited root its source flanks, ahead of `prepare_edges`: the first and last present item across its child fields (`EdgeItems`, fields in declaration order), whose coordinates `root_flanks` reads the tree bytes around, classified into the root's before and after sites exactly as a list gap is; `fill_edges` sets only the sides the wire left unset. A field order that put a non-edge item first only costs evidence: the bytes before it are not whitespace and classify to nothing. Empty for every other kind.
+
 ### `packages/codegen/src/emitters/render-module.ts::prepareStructImpl`
 
 A transport struct's `Prepare` impl. A compound kind first fills its own
-base edges from its edge row (`prepare_edges`, only for a kind that owns
+base edges (for the grammar root, from its source flanks, `rootEdgeStamp`;
+then from its edge row, `prepare_edges`, only for a kind that owns
 kind-edge sites), then lets the source speak for its repeated slots
 (`listGapClassification`: the gaps between items that are still coordinates
 become the site value when the wire left it empty), then fills this kind's
@@ -16508,3 +16605,10 @@ The object literals a node's builder and wrap pass to `withGroupSeat`, one per s
 
 The elements seats of a node: each multiple slot whose elements include exactly one hoisted config-shaped group, as the slot's accessor name, the group's type and raw factory, its config keys and the type of its config object. A separated list's element slot is one when its element is such a group. The config surface takes the group's config objects in these slots and builds each through the group's factory; the node surface takes them the same way in every `$with` setter for the slot, including the setter of a slot that holds the list. The type stamp (`config` of a slot hint or a list-slot hint) and the runtime spec (`element` of a list-slot spec, or a `withElementsSeat` call) come from this one function.
 
+### `packages/codegen/src/emitters/templates.ts::droppedLiteralTexts`
+
+The render-only literals of a node's rule that its template does not write and no slot carries. A literal counts as written when some template text contains it or a slot holds it as a terminal value; indent and dedent markers and literals inside a token are not counted. Each result is a token a parse of the source reads but the render loses.
+
+### `packages/codegen/src/emitters/templates.ts::templateTexts`
+
+The text nodes of a template body, descending into the arms of its conditionals.

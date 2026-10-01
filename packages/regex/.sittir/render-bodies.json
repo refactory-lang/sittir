@@ -2,7 +2,7 @@
 	"alternation": [
 		{
 			"kind": "slot",
-			"name": "term"
+			"name": "terms"
 		}
 	],
 	"anonymous_capturing_group": [
@@ -94,8 +94,74 @@
 			"field": "lbrack_after"
 		},
 		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "negation",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "caret_before"
+						},
+						{
+							"kind": "slot",
+							"name": "negation"
+						},
+						{
+							"kind": "seam",
+							"field": "caret_after"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "leading",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "leading_before"
+						},
+						{
+							"kind": "slot",
+							"name": "leading"
+						},
+						{
+							"kind": "seam",
+							"field": "leading_after"
+						}
+					]
+				}
+			]
+		},
+		{
 			"kind": "slot",
 			"name": "class_atoms"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "trailing",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "trailing_before"
+						},
+						{
+							"kind": "slot",
+							"name": "trailing"
+						},
+						{
+							"kind": "seam",
+							"field": "trailing_after"
+						}
+					]
+				}
+			]
 		},
 		{
 			"kind": "seam",
@@ -190,8 +256,52 @@
 			"field": "count_quantifier_before"
 		},
 		{
-			"kind": "slot",
-			"name": "content"
+			"kind": "text",
+			"text": "{"
+		},
+		{
+			"kind": "seam",
+			"field": "lbrace_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "content",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "content"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_before"
+		},
+		{
+			"kind": "text",
+			"text": "}"
+		},
+		{
+			"kind": "seam",
+			"field": "rbrace_after"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "lazy",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "lazy"
+						}
+					]
+				}
+			]
 		},
 		{
 			"kind": "seam",
@@ -705,8 +815,16 @@
 	],
 	"pattern": [
 		{
+			"kind": "seam",
+			"field": "pattern_before"
+		},
+		{
 			"kind": "slot",
 			"name": "content"
+		},
+		{
+			"kind": "seam",
+			"field": "pattern_after"
 		}
 	],
 	"posix_character_class": [
