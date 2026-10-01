@@ -125,8 +125,8 @@ pub enum NodeHandle {
     /// The pair is the coordinate a stub is hydrated at.
     Parent(u64),
     /// `$treeHandle`: any handle of the node's tree, on a node nothing
-    /// re-reads (a deep read's leaf, a trivia entry). It names only the tree
-    /// the node's span slices.
+    /// re-reads (a child a read expands, a deep read's leaf, a trivia
+    /// entry). It names only the tree the node's span slices.
     Tree(u64),
 }
 
