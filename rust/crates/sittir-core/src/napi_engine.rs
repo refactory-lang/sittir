@@ -192,7 +192,7 @@ macro_rules! napi_engine {
                     ))
                 })?;
                 parsed
-                    .read_child(handle, child_index, $crate::napi_engine::read_depth(depth)?)
+                    .read_at(handle, child_index, $crate::napi_engine::read_depth(depth)?)
                     .map_err(::napi::Error::from_reason)
             }
 

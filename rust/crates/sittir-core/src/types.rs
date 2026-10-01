@@ -181,13 +181,13 @@ pub struct NodeData {
     pub handle: Option<NodeHandle>,
 
     /// Position of this node within its parent's children array.
-    /// Set during `read_children` traversal. Enables O(1) child-index
+    /// Set during `read_slots` traversal. Enables O(1) child-index
     /// navigation: `parent.child(child_index)` instead of DFS by id.
     /// `None` on root nodes and factory-constructed nodes.
     pub child_index: Option<u16>,
 
     /// Trivia this node owns: comments and the other tree-sitter extras
-    /// `read_children` skips because they carry no field name. A read gives
+    /// `read_slots` skips because they carry no field name. A read gives
     /// every extra exactly one owner -- see `read_node::node_trivia` for the
     /// placement rules. A factory-constructed node gets it from `$trivia()`,
     /// and both a `$with` rebuild and construction from a read carry it onto
@@ -199,7 +199,7 @@ pub struct NodeData {
     pub trivia_data: Option<NodeTrivia>,
 
     /// Document-order route names (field or kind) of this node's named
-    /// slot children, one entry per child, stamped by `read_children`
+    /// slot children, one entry per child, stamped by `read_slots`
     /// when the node has two or more named slot buckets. The per-bucket
     /// `_<slot>` arrays each preserve document order internally, but the
     /// wire cannot express CROSS-bucket interleave — and scalar-collapsed

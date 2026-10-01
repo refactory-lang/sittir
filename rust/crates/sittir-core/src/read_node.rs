@@ -44,7 +44,7 @@ use std::num::NonZeroU32;
 ///
 /// `Levels(n)` expands the children within `n - 1` levels below the node
 /// read and leaves every child with substructure at level `n` as a stub
-/// carrying its parent handle and child index, which a later `read_child`
+/// carrying its parent handle and child index, which a later `read_at`
 /// expands on demand. [`ReadDepth::SHALLOW`] (one level) is the default and
 /// the lazy path. `Deep` expands everything in one pass instead.
 ///
@@ -243,7 +243,7 @@ fn read_ts_node(
     let (fields, children, slot_order) = if node.is_error() {
         (None, None, None)
     } else {
-        read_children(node, source, node_handle, tree_handle, depth, model, mint)
+        read_slots(node, source, node_handle, tree_handle, depth, model, mint)
     };
 
     let text = node_text(node, source);
@@ -271,11 +271,11 @@ fn read_ts_node(
 /// contained -- it depends only on `node`'s siblings and children, not on
 /// how `node` was reached -- because this crate's handle+child-index
 /// re-resolution can read `node` directly (bypassing its parent's
-/// `read_children` pass entirely), and trivia attached only as a side
+/// `read_slots` pass entirely), and trivia attached only as a side
 /// effect of that pass would silently vanish on such a direct read.
 ///
 /// Extras (tree-sitter's grammar-`extras`-matched nodes -- comments, line
-/// continuations, etc.) never carry a field name, so `read_children` skips
+/// continuations, etc.) never carry a field name, so `read_slots` skips
 /// them; they are recovered here. Only a named non-extra node -- an owner --
 /// holds trivia, and every extra has exactly one owner, the first rule that
 /// applies among the owners around it (anonymous non-extra siblings, e.g.
@@ -498,7 +498,7 @@ fn extras_run<'t>(
 /// bucket. They are skipped entirely
 /// here; `node_trivia` recovers them as trivia of the owner the
 /// placement rules pick.
-fn read_children(
+fn read_slots(
     node: tree_sitter::Node<'_>,
     source: &str,
     node_handle: Option<u64>,
@@ -545,7 +545,7 @@ fn read_children(
             NodeData {
                 trivia_data,
                 text_only: depth == ReadDepth::Deep,
-                ..read_materialized_leaf(child, source, model, handle, child_index, tree_handle)
+                ..read_leaf(child, source, model, handle, child_index, tree_handle)
             }
         } else {
             match depth.below() {
@@ -676,7 +676,7 @@ fn is_leaf(node: &tree_sitter::Node<'_>) -> bool {
     node.named_child_count() == 0
 }
 
-fn read_materialized_leaf(
+fn read_leaf(
     child: tree_sitter::Node<'_>,
     source: &str,
     model: &dyn ReadModel,
@@ -689,7 +689,7 @@ fn read_materialized_leaf(
     let (fields, children, slot_order) = if child.is_error() || child.child_count() == 0 {
         (None, None, None)
     } else {
-        read_children(child, source, None, tree_handle, ReadDepth::Deep, model, &mut NoHandles)
+        read_slots(child, source, None, tree_handle, ReadDepth::Deep, model, &mut NoHandles)
     };
     NodeData {
         type_,

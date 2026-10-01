@@ -34,7 +34,7 @@ pub trait EngineGrammar: Copy + ReadModel {
 /// child index taken from that parent.
 ///
 /// This replaces the earlier `Vec<u32>` root-relative path. Storing a full
-/// path meant every `read_child` cloned the parent's O(depth) `Vec` to append
+/// path meant every `read_at` cloned the parent's O(depth) `Vec` to append
 /// one index — O(depth) alloc+copy per node-handle creation. A parent-link
 /// pair is `Copy`, so pushing a coordinate is O(1) with zero allocation; the
 /// node table itself encodes the tree spine, and resolution re-walks parent
@@ -266,7 +266,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// back-links), takes `parent.child(child_index)` to confirm the child
     /// exists, records an O(1) `(handle, child_index)` coordinate, and reads
     /// the (already resolved) child into a `NodeData`.
-    pub fn read_child(
+    pub fn read_at(
         &mut self,
         handle: u64,
         child_index: u16,

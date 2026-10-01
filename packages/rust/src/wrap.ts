@@ -2,7 +2,7 @@
 // Lazy view layer over readNode output — shape A surface.
 
 import {
-	readNode as readNodeJs,
+	readNode,
 	markEdited as $edited,
 	treeHandleOf,
 	mapTriviaEntries,
@@ -15882,29 +15882,6 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	const own = _dropSpelling(type === data.$type ? _withoutDisplay(data) : data);
 	const shown = own.$_trivia == null ? own : { ...own, $_trivia: _wrapTrivia(own.$_trivia, tree) };
 	return inTreeEngine(tree, () => (fn ? fn(shown, tree) : _drillUnknownKindChildren(shown, tree)));
-}
-
-/**
- * Per-handle dispatching `readNode` — the architectural seam where
- * the engine choice (JS vs native) lives. `readTreeNode`,
- * and `drillIn` read through THIS function so the
- * wrap layer is engine-agnostic. tree-sitter `Node::id()` is
- * documented as "unique within a given syntax tree" and is a
- * raw pointer cast — different parses yield different ids — so
- * the engine that parsed the tree is the only thing that can
- * dereference its ids. Native handles set `tree.read` to a
- * closure that routes through napi; wasm/JS handles (used by
- * retained diagnostic tooling — `tool walk`, `tool probe-kind
- * --engine js`) leave it absent and fall back to `readNodeJs`
- * (the in-process walker).
- */
-function readNode(tree: TreeHandle, handle?: number, childIndex?: number, depth?: number): AnyNodeData {
-	// Per-handle dispatch: native-engine handles carry a `read`
-	// closure that routes through napi (engine owns the tree;
-	// navigation via handle + childIndex replaces nodeId).
-	// Wasm/JS handles (retained diagnostic tooling) leave `read`
-	// absent and fall back to the in-process JS walker.
-	return tree.read ? tree.read(handle, childIndex, depth) : readNodeJs(tree, handle, childIndex);
 }
 
 /**

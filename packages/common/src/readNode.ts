@@ -101,34 +101,23 @@ function promoteAnonymousKeyword(
 }
 
 /**
- * Read a single tree node one level deep.
+ * Read the node at a coordinate, unwrapped: the root when no handle is given,
+ * otherwise child `childIndex` of the node `handle` names.
  *
- * - Returns ALL children (named + anonymous)
- * - Every child carries `$parentHandle` + `$childIndex` for lazy drill-in
- * - No recursion — wrap.ts provides lazy getters
- * - Field placement uses tree-sitter's native `fieldNameForChild`
- *
- * Navigation uses handle + childIndex instead of nodeId.
- *
- * @param tree - The tree handle for node lookup
- * @param handle - If provided with childIndex, navigate via nodes[handle].children()[childIndex]
- * @param childIndex - Position in parent's child array (requires handle)
- *
- * @deprecated The JS/TS-side read path is being phased out. Production
- * validators and probes use `--backend native` which goes through the
- * rust napi-rs crate's read function via `tree.read(handle, childIndex)`
- * — see the native dispatch on the first line below. This function's
- * non-native branch (TS handles where `tree.read` is undefined) is kept
- * only for unit tests with synthetic handles and any legacy callers we
- * haven't migrated. Don't invest in fixing slot-lift / field-routing
- * gaps here; fix them in the rust reader if they show up there.
+ * A native handle reads through `tree.read`, which expands `depth` levels
+ * (absent is one, `Infinity` the whole subtree). A handle with no `read` is
+ * a test handle over an in-process tree: the JS walker below reads it one
+ * level deep whatever `depth` asks, with every child carrying
+ * `$parentHandle` + `$childIndex` and field placement from tree-sitter's
+ * `fieldNameForChild`. That walker is kept only for those handles; fix
+ * read-shape gaps in the rust reader, not here.
  */
-export function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNodeData {
+export function readNode(tree: TreeHandle, handle?: number, childIndex?: number, depth?: number): AnyNodeData {
 	// Native-handle dispatch: when `tree.read` is present the handle owns a
 	// Rust/napi engine that produces `AnyNodeData` directly (no JS-side tree
 	// walk needed). TS handles do NOT set `tree.read` so this branch is
 	// native-only — no circular recursion risk.
-	if (tree.read) return tree.read(handle, childIndex);
+	if (tree.read) return tree.read(handle, childIndex, depth);
 
 	// Phase D: capture optional kindIdFromName resolver. When absent (e.g. in
 	// unit-test handles with no real grammar), readNode falls back to the string

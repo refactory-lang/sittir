@@ -2891,7 +2891,7 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
 
 The reader↔model naming contract: the reader keys every modelled child by
 its model slot, so a slot has one spelling from the read to the wrap.
-`read_children` asks `wire_slot(parent, field, child)` for every child it
+`read_slots` asks `wire_slot(parent, field, child)` for every child it
 seats. A field-tagged child routes by its field (`Some(field)`); a named child
 without a field routes by its kind name (`None`); a row exists only where the
 slot's name differs from that key. The field wins over the kind: a
@@ -13607,7 +13607,7 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 // python's `case_pattern_group1`, a hidden alias-mint wrapper the
 // grammar produces but our model doesn't represent) have no dedicated
 // wrap function to drill into their own children.
-// `read_node.rs`'s one-level read (`read_children` / `read_child_stub`)
+// `read_node.rs`'s one-level read (`read_slots` / `read_child_stub`)
 // leaves an unlabeled named child with sub-structure as a shallow stub
 // (`$parentHandle`/`$childIndex`, no fields of its own) — normally a
 // generated wrap function's `drillIn` call materializes it fully via
