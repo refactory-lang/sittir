@@ -276,4 +276,20 @@ describe('the tree token a parsed object holds', () => {
 			$textOnly: true
 		});
 	});
+
+	it('is removed from the trivia a detached node owns, at every side and depth', () => {
+		const comment = () => ({ $type: 7, $span: { start: 0, end: 1 }, $tree: token, $other: [{ $type: 8, $tree: token }] });
+		const node = {
+			$type: 1,
+			_a: 1,
+			$tree: token,
+			$_trivia: { leading: [comment()], trailing: [comment()], inner: { gap: [comment()] } }
+		};
+		const bare = { $type: 7, $span: { start: 0, end: 1 }, $other: [{ $type: 8 }] };
+		expect(detachCoordinates(node)).toEqual({
+			$type: 1,
+			_a: 1,
+			$_trivia: { leading: [bare], trailing: [bare], inner: { gap: [bare] } }
+		});
+	});
 });

@@ -1,4 +1,5 @@
 import type { AnyUntypedNode } from '@sittir/types';
+import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -190,6 +191,22 @@ function toTransportValue(value: unknown): unknown {
 	return out;
 }
 
+/** Remove the tree token from everything under `value`, through slots and trivia: transport data holds no tree. */
+function dropTreeTokens(value: unknown): void {
+	if (Array.isArray(value)) {
+		for (const entry of value) dropTreeTokens(entry);
+		return;
+	}
+	if (!isRecord(value)) return;
+	delete value[TREE_KEY];
+	for (const key in value) if (isStorageKey(key)) dropTreeTokens(value[key]);
+	dropTriviaTreeTokens(value);
+}
+
+function dropTriviaTreeTokens(node: Record<string, unknown>): void {
+	if (node.$_trivia != null) forEachTriviaList(node.$_trivia as TriviaSides<unknown>, dropTreeTokens);
+}
+
 /**
  * Drop the pre-edit spelling and the coordinate that would slice it from
  * every node that carries storage, in place, and return `root`. For
@@ -209,6 +226,7 @@ export function detachCoordinates<T>(root: T): T {
 			for (const key of COORDINATE_KEYS) delete value[key];
 		}
 		delete value[TREE_KEY];
+		dropTriviaTreeTokens(value);
 		const tree = treeHandleOf(value);
 		if (tree !== undefined) {
 			delete value.$handle;

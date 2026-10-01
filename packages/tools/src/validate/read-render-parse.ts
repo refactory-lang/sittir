@@ -385,7 +385,7 @@ export function selfContainedRenderInput(
 		const record = value as Record<string, unknown>;
 		const out: Record<string, unknown> = {};
 		for (const [key, raw] of Object.entries(record)) {
-			if (key === '$handle' || key === '$parentHandle' || key === '$treeHandle' || key === '$childIndex' || key === '$textOnly') continue;
+			if (key === '$handle' || key === '$parentHandle' || key === '$treeHandle' || key === '$childIndex' || key === '$textOnly' || key === '$tree') continue;
 			if (key === '$_trivia' && raw != null) {
 				out[key] = mapTriviaEntries(raw as TriviaSides<unknown>, walkTrivia);
 			} else {

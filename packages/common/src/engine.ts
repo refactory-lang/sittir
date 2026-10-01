@@ -15,6 +15,7 @@ import type {
 } from '@sittir/types';
 import type { TreeHandle } from './readUntypedNode.ts';
 import { isStorageKey, toTransportData, TREE_KEY } from './transport-data.ts';
+import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
@@ -228,9 +229,7 @@ function holdTree(value: unknown, token: TreeToken): void {
 		if (isStorageKey(key)) holdTree(record[key], token);
 	}
 	const trivia = record.$_trivia;
-	if (trivia !== null && typeof trivia === 'object') {
-		for (const entries of Object.values(trivia)) holdTree(entries, token);
-	}
+	if (trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => holdTree(entries, token));
 }
 
 /**
