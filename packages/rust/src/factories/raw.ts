@@ -9425,7 +9425,7 @@ export function buildRangeExpressionBare(
 	value?: AdmitBound<TSKindId.DotDot, T.AdmittedNodes>
 ): T.RangeExpressionBare.Bound {
 	const _range_expression_bare = coerceKindEnumStorage<NonNullable<T.RangeExpressionBare['_range_expression_bare']>>(
-		value,
+		orDefault(value, () => TSKindId.DotDot as const),
 		[['..', TSKindId.DotDot] as const]
 	);
 	return withMethods(

@@ -37,7 +37,6 @@ const unbuildable = async (grammar: string): Promise<{ covered: number; failures
 describe.each(allGrammars())('%s: a kind that can be built with no argument builds, renders and re-parses', (grammar) => {
 	it('every argument-optional kind with slots', async () => {
 		const result = await unbuildable(grammar);
-		console.log(`covered ${grammar} ${result.covered}`);
 		expect(result.covered).toBeGreaterThan(0);
 		expect(result.failures).toEqual([]);
 	}, 240000);

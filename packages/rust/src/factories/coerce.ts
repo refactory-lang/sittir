@@ -11145,22 +11145,18 @@ export function coerceToRangeExpressionBare(
 	if (input !== undefined && isNodeOfKind(input, TSKindId.RangeExpressionBare))
 		return input as unknown as ReturnType<typeof F.buildRangeExpressionBare>;
 	return F.buildRangeExpressionBare(
-		_requireField(
-			'range_expression_bare',
-			'rangeExpressionBare',
-			coerceKindEnumStorage(
-				_resolveKindEnumScalar(
-					configFieldOr(input, 'rangeExpressionBare', () => input),
-					() =>
-						_resolveOne<'..'>(
-							configFieldOr(input, 'rangeExpressionBare', () => input),
-							_K2,
-							_K2
-						)
-				),
-				[['..', TSKindId.DotDot] as const]
-			)
-		)
+		coerceKindEnumStorage(
+			_resolveKindEnumScalar(
+				configFieldOr(input, 'rangeExpressionBare', () => input),
+				() =>
+					_resolveOne<'..'>(
+						configFieldOr(input, 'rangeExpressionBare', () => input),
+						_K2,
+						_K2
+					)
+			),
+			[['..', TSKindId.DotDot] as const]
+		) ?? (TSKindId.DotDot as const)
 	);
 }
 

@@ -174,26 +174,6 @@ export function resolveHiddenKeywordLeaf(
 	return isFixedTextLeaf(target) ? target : undefined;
 }
 
-export function resolveHiddenKeywordLiteral(kindName: string, nodeMap: NodeMap): string | undefined {
-	return resolveHiddenKeywordLeaf(kindName, nodeMap)?.text;
-}
-
-export function isHiddenInfraSlot(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
-	const kinds = slotKindNames(slot);
-	if (kinds.length === 0) return false;
-	return kinds.every((kind) => isHiddenInfraKind(kind, nodeMap));
-}
-
-function isHiddenInfraKind(kindName: string, nodeMap: NodeMap): boolean {
-	if (!isSurfaceHiddenIn(kindName, nodeMap)) return false;
-	const literal = resolveHiddenKeywordLiteral(kindName, nodeMap);
-	if (literal !== undefined) return true;
-	const node = nodeMap.nodes.get(kindName);
-	if (!(node instanceof AssembledSupertype)) return false;
-	if (node.subtypeNames.length === 0) return false;
-	return node.subtypeNames.every((subtype) => isHiddenInfraKind(subtype, nodeMap));
-}
-
 export type TypeComponent =
 	| { kind: 'nodeKind'; value: string; rawKind: string }
 	| {
@@ -909,7 +889,7 @@ export function emptyDefaultOf(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	factoryNs = ''
 ): string | null {
-	if (!isRequired(field) || isHiddenInfraSlot(field, nodeMap) || !slotFilledWhenOmitted(field, nodeMap)) return null;
+	if (!isRequired(field) || !slotFilledWhenOmitted(field, nodeMap)) return null;
 	const sole = field.values[0]!;
 	const fixed = kindEntries === undefined ? undefined : fixedTextEntryOf(sole, nodeMap, kindEntries);
 	if (fixed !== undefined) return `${fixed.discriminant} as const`;

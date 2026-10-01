@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "b0bbb3acd4479198ec1eb4ffedacdfc28ba6707c15757629f7c3db82f155e3d8",
+  "source_hash": "5f1b5761210ea10054fe70f74b3e091e06c39c6b130bfd0cb126743618f3402b",
   "files": {
     "packages/rust/.sittir/grammar-diagnostics.json": "4f2eae23a0cd0db71d1991ea88120a426881fdbb2609eeab9cad6033ae64ef26",
     "packages/rust/.sittir/grammar.js": "30bdcb057c6206eee26112d0300cacfc7bfb83203c72c1d45807ca41011b6641",
@@ -21,12 +21,12 @@
     "packages/rust/src/backend.ts": "c6a297dfe427a718cfe83dba69aec533a35eb84c756ea788768efc787adc642d",
     "packages/rust/src/consts.ts": "66686f523e433b8c82acf229ef2f1a3b21fcba8e37aab80cc3978096437e9d28",
     "packages/rust/src/factories/bundle.ts": "9a7548503fccbef883ea0f46febb7437e86ba529e9becdc5056061136885d3a5",
-    "packages/rust/src/factories/coerce.ts": "d2eac10790b63173db2dbf69ee7db647f85eaf03f32ed607ff32f6f2e4fc8e76",
+    "packages/rust/src/factories/coerce.ts": "3c4b906837e17546e7d5fa09c56b36e87b950d5569693c5f4f7f03b94bd5d5d6",
     "packages/rust/src/factories/index.ts": "93e7436d2e34ad65cdb86595889d050bc157d4c1759f584376f9e7fe3e8e8e31",
     "packages/rust/src/factories/overlays/polymorphs.ts": "e22a30602740946456567e4ec946e0d372385da7cc94b5ddffdaa4da457d4110",
     "packages/rust/src/factories/overlays/refines.ts": "37f8a0f79f435a13a3261d39196ce8132ef459b4934501fbd452d65e7b9abdf0",
     "packages/rust/src/factories/overlays/supertypes.ts": "e694fb389cdf76b0013d681dcbcdde437e0554ba1dc78db9277e4a31846e4e3e",
-    "packages/rust/src/factories/raw.ts": "d476aa70497a2f0130dbe50d58ab64ce82f34cf65cbf5239f9dcaf9eb29cfbb8",
+    "packages/rust/src/factories/raw.ts": "879f74c9f4df6ffaf5f324ad86399caa86f7bb68bd5ef2062a07de84b3f7ed72",
     "packages/rust/src/hash.ts": "c6c1d699f5849e21c1e73e3c7a40519c55a149651a580e151a20212f931b28e9",
     "packages/rust/src/index.ts": "15a94caf126342bb3123b5f4fb46473fb02b4ed777a062799346988cd600165f",
     "packages/rust/src/ir.ts": "ecdc19e498ff96ae23f82036ca7b17885ce30a3a807f5e965ac824bce8eeff0b",
