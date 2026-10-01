@@ -6,7 +6,7 @@ import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
 import { toEditAt } from './edit.ts';
 import { Delimiter } from './delimiter.ts';
-import { readNode, type TreeHandle } from './readNode.ts';
+import { expandStub, isStub, readNode, type TreeHandle } from './readNode.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { Source };
@@ -315,8 +315,8 @@ const storedElementsOf = (node: object, spec: ListViewSpec, tree: TreeHandle | u
 		const elements = (source as Record<string, unknown>)[spec.count];
 		return Array.isArray(elements) ? elements : elements == null ? [] : [elements];
 	};
-	if (spec.count in list || list.$parentHandle == null || list.$childIndex == null) return elementsIn(list);
-	return tree === undefined ? undefined : elementsIn(readNode(tree, list.$parentHandle, list.$childIndex));
+	if (spec.count in list || !isStub(list)) return elementsIn(list);
+	return tree === undefined ? undefined : elementsIn(expandStub(list, tree));
 };
 
 export function withListView<T extends object>(node: T, spec: ListViewSpec, tree?: TreeHandle): T {
@@ -607,7 +607,7 @@ function carryTriviaThroughWith(node: AnyNodeData, handle: EngineHandle | undefi
 }
 
 export { numberText, type NumberBase } from './number.ts';
-export { readNode, type TreeHandle } from './readNode.ts';
+export { expandStub, isStub, readNode, type Stub, type TreeHandle } from './readNode.ts';
 export { toEditAt } from './edit.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';

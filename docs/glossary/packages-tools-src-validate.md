@@ -1321,15 +1321,14 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
  */
 ```
 
-### `packages/tools/src/validate/common.ts::drillReadNode`
+### `packages/tools/src/validate/common.ts::expandForConfig`
 
 ```text
 /**
- * Materialize a lazily read child (`$parentHandle` + `$childIndex`) into its
- * own `_<name>` keys / `$children`. Native handles read via napi
- * (`tree.read`); wasm handles fall through to the JS walker, so validators
- * stay backend-agnostic. A handle that lacks the node (a factory-built
- * subtree) leaves the shallow entry as is.
+ * Expand a stub through @sittir/common's expandStub before it becomes factory
+ * config: a native handle reads through `tree.read`, a wasm handle through
+ * the JS walker, so validators stay backend-agnostic. A handle that lacks the
+ * node (a factory-built subtree) leaves the stub as is.
  *
  * A child that already carries its own contents is left alone. Re-reading it
  * would return the raw parse node and discard the wrap layer's per-slot kind
@@ -1337,6 +1336,10 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
  * rather than handing them back as elements.
  */
 ```
+
+### `packages/tools/src/validate/common.ts::materializeDetached`
+
+A wrapped tree as plain data with no coordinates: `materialize` resolves every accessor, then `detachCoordinates` drops what would tie the data to the tree it was read from. It is the input for a render that must not slice that tree: the probe's trace, read-render-parse's deep mode and the detached-render tests.
 
 ### `packages/tools/src/validate/common.ts::armRouteOf`
 

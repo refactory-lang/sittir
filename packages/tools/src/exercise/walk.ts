@@ -1,4 +1,5 @@
 import type { AnyNodeData } from '@sittir/types';
+import { isStub } from '@sittir/common/utils';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
 import { nativeShownKindId } from '../validate/shown-kind.ts';
@@ -92,10 +93,7 @@ function walkTree(root: unknown, visit: (node: WalkNode) => void): void {
 		if (!isWalkNode(value)) return;
 		const ref = value as object;
 		if (seenRefs.has(ref)) return;
-		const coordKey =
-			value.$parentHandle !== undefined && value.$childIndex !== undefined
-				? `${value.$parentHandle}:${value.$childIndex}`
-				: undefined;
+		const coordKey = isStub(value) ? `${value.$parentHandle}:${value.$childIndex}` : undefined;
 		if (coordKey !== undefined && seenCoords.has(coordKey)) return;
 		seenRefs.add(ref);
 		if (coordKey !== undefined) seenCoords.add(coordKey);

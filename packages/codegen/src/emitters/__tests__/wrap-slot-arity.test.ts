@@ -155,12 +155,12 @@ describe('wrap emitter slot arity', () => {
 			'return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T, context);'
 		);
 		// A node standing in for ITSELF (a supertype occurrence the reader
-		// collapsed to a text leaf) resolves through `drillInSelf`, which never
+		// collapsed to a text leaf) resolves through `expandStub`, which never
 		// re-wraps — `wrapNode` would dispatch straight back into the same wrap
 		// function with the same data and blow the stack. Child positions do
 		// wrap deep data in place, so the ban is on the self-return path only.
-		expect(source).toContain('function drillInSelf<T>(entry: T, tree: TreeHandle): T {');
-		expect(source).not.toMatch(/return drillIn<[^>]*>\(data as /);
+		expect(source).toContain('function expandStub<T>(entry: T, tree: TreeHandle): T {');
+		expect(source).not.toMatch(/return expandChild<[^>]*>\(data as /);
 	});
 
 	it('emits location-aware wrap diagnostics for helper violations', () => {

@@ -108,7 +108,7 @@ import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyNodeData, AnyTreeNode } from '@sittir/types';
 import { detachCoordinates } from '@sittir/common';
-import { toTransportData, type TreeHandle } from '@sittir/common/utils';
+import { isStub, readNode, toTransportData } from '@sittir/common/utils';
 // ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------
@@ -626,12 +626,12 @@ export async function probe(
 		// the selected node. Swap the handle's rootNode instead, matching
 		// readSelectedNode's already-correct pattern elsewhere in this file.
 		if (isRoot) {
-			nodeData = projectNodeFn ? projectNodeFn(handle) : await fallbackReadNode(handle);
+			nodeData = projectNodeFn ? projectNodeFn(handle) : readNode(handle);
 		} else {
 			const prev = handle.rootNode;
 			(handle as { rootNode: typeof prev }).rootNode = adaptNode(targetNode);
 			try {
-				nodeData = projectNodeFn ? projectNodeFn(handle) : await fallbackReadNode(handle);
+				nodeData = projectNodeFn ? projectNodeFn(handle) : readNode(handle);
 			} finally {
 				(handle as { rootNode: typeof prev }).rootNode = prev;
 			}
@@ -854,36 +854,6 @@ function dumpCst(node: TSNode, fieldName: string | null): CstNode {
 	return out;
 }
 
-async function fallbackReadNode(handle: ReturnType<typeof treeHandle>): Promise<unknown> {
-	const { readNode } = await import('@sittir/common/utils');
-	return readNode(handle);
-}
-
-async function deepReadProbeNode(
-	handle: TreeHandle,
-	nodeHandle: number | undefined,
-	childIndex: number | undefined
-): Promise<unknown> {
-	const { readNode, isNode } = await import('@sittir/common/utils');
-	const data = readNode(handle, nodeHandle, childIndex);
-	const shouldDrill = (entry: unknown): entry is AnyNodeData & { $parentHandle: number; $childIndex: number } =>
-		isNode(entry) && entry.$named === true && typeof entry.$parentHandle === 'number' && typeof entry.$childIndex === 'number';
-	const record = data as unknown as Record<string, unknown>;
-	for (const rawKey of Object.keys(record).filter((key) => key.startsWith('_'))) {
-		const value = record[rawKey];
-		if (Array.isArray(value)) {
-			record[rawKey] = await Promise.all(
-				value.map(async (entry) =>
-					shouldDrill(entry) ? deepReadProbeNode(handle, entry.$parentHandle, entry.$childIndex) : entry
-				)
-			);
-		} else if (shouldDrill(value)) {
-			record[rawKey] = await deepReadProbeNode(handle, value.$parentHandle, value.$childIndex);
-		}
-	}
-	return data;
-}
-
 export function resolveNativeTraceNodeData(
 	projectNodeRaw: unknown | undefined,
 	legacyDeepNodeData: unknown,
@@ -910,7 +880,7 @@ async function readProbeNodeData(
 		const handle = readNativeTree(nativeEngine, source).tree;
 		if (isRoot) {
 			const shallow = stripBigInts(handle.read?.());
-			const legacyDeepNodeData = detachCoordinates(await deepReadProbeNode(handle, undefined, undefined));
+			const legacyDeepNodeData = detachCoordinates(readNode(handle, undefined, undefined, Infinity));
 			const deepProjectNodeRaw = projectNodeFn ? projectNodeFn(handle) : undefined;
 			const deep = resolveNativeTraceNodeData(deepProjectNodeRaw, legacyDeepNodeData, onAccessorThrow);
 			return { shallow, deep, deepProjectNodeRaw, legacyDeepNodeData };
@@ -924,7 +894,7 @@ async function readProbeNodeData(
 			if (targetCandidate?.coords.handle !== undefined && targetCandidate.coords.childIndex !== undefined) {
 				const shallow = handle.read?.(targetCandidate.coords.handle, targetCandidate.coords.childIndex);
 				const legacyDeepNodeData = detachCoordinates(
-					await deepReadProbeNode(handle, targetCandidate.coords.handle, targetCandidate.coords.childIndex)
+					readNode(handle, targetCandidate.coords.handle, targetCandidate.coords.childIndex, Infinity)
 				);
 				const deepProjectNodeRaw = projectNodeFn
 					? projectNodeFn(handle, targetCandidate.coords.handle, targetCandidate.coords.childIndex)
@@ -935,13 +905,13 @@ async function readProbeNodeData(
 		}
 		const root = projectNodeFn
 			? materializeDetached(projectNodeFn(handle), onAccessorThrow)
-			: await deepReadProbeNode(handle, undefined, undefined);
+			: readNode(handle, undefined, undefined, Infinity);
 		const target = findInNodeDataByRange(root, targetNode.startIndex, targetNode.endIndex);
 		if (!target) throw new Error('probe-kind: no native node match in NodeData tree');
 		const targetHandle = getTargetHandle(target);
 		const shallow = targetHandle ? handle.read?.(targetHandle.handle, targetHandle.childIndex) : target;
 		const legacyDeepNodeData = detachCoordinates(
-			targetHandle ? await deepReadProbeNode(handle, targetHandle.handle, targetHandle.childIndex) : target
+			targetHandle ? readNode(handle, targetHandle.handle, targetHandle.childIndex, Infinity) : target
 		);
 		const deepProjectNodeRaw =
 			targetHandle && projectNodeFn ? projectNodeFn(handle, targetHandle.handle, targetHandle.childIndex) : undefined;
@@ -962,7 +932,7 @@ async function readProbeNodeData(
 			}
 		: undefined;
 	const handle = treeHandle(tree, source, kindIdFromName);
-	const shallow = isRoot ? await fallbackReadNode(handle) : await readSelectedNode(handle, targetNode);
+	const shallow = isRoot ? readNode(handle) : await readSelectedNode(handle, targetNode);
 	const deepProjectNodeRaw = await deepReadSelectedNode(grammar, handle, targetNode, isRoot, shallow);
 	const deep = deepProjectNodeRaw;
 	return { shallow, deep, deepProjectNodeRaw };
@@ -972,7 +942,7 @@ async function readSelectedNode(handle: ReturnType<typeof treeHandle>, targetNod
 	const prev = handle.rootNode;
 	(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(targetNode);
 	try {
-		return await fallbackReadNode(handle);
+		return readNode(handle);
 	} finally {
 		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
 	}
@@ -1000,9 +970,7 @@ async function deepReadSelectedNode(
 function getTargetHandle(target: unknown): { handle: number; childIndex: number } | null {
 	if (!target || typeof target !== 'object') return null;
 	const record = target as Record<string, unknown>;
-	return typeof record.$parentHandle === 'number' && typeof record.$childIndex === 'number'
-		? { handle: record.$parentHandle, childIndex: record.$childIndex }
-		: null;
+	return isStub(record) ? { handle: record.$parentHandle, childIndex: record.$childIndex } : null;
 }
 
 async function buildTraceLane(

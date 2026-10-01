@@ -12,7 +12,7 @@ import { writeSync } from 'node:fs';
 
 import type { AnyNodeData } from '@sittir/types';
 import { spanSlicer, type TriviaSides } from '@sittir/common';
-import { mapTriviaEntries } from '@sittir/common/utils';
+import { expandStub, isStub, mapTriviaEntries } from '@sittir/common/utils';
 import { deriveRuleKinds } from './render-bodies.ts';
 import { load } from '../codegen-surface.ts';
 
@@ -718,8 +718,8 @@ export async function validateReadRenderParse(
 						// child mislabeled as the parent). Root candidates take the
 						// deep-materialization path instead of guessing an index.
 						data =
-							recursive !== true && cand.node.$parentHandle != null && cand.node.$childIndex != null && handle.read
-								? (handle.read(cand.node.$parentHandle, cand.node.$childIndex) as unknown as AnyNodeData)
+							recursive !== true && isStub(cand.node) && handle.read
+								? (expandStub(cand.node, handle) as AnyNodeData)
 								: (materializeDetached(cand.node, onAccessorThrow) as AnyNodeData);
 					} catch (e) {
 						kindErrors.push({

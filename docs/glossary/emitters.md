@@ -13180,7 +13180,7 @@ The `: T.<Kind>.Parsed` annotation on a wrap's signature, or an empty string whe
 
 ### `packages/codegen/src/emitters/wrap.ts::ParsedOfData`
 
-The wrap header's type from a wrapped datum to its declared `Parsed` node: a datum whose `$type` is a kind id in the parsed-by-kind-id map becomes that map's row, anything else stays as it is. `drillIn` and `drillInAll` return through it, so an accessor's return type is the child's declared surface and never an inference through the tree's recursion.
+The wrap header's type from a wrapped datum to its declared `Parsed` node: a datum whose `$type` is a kind id in the parsed-by-kind-id map becomes that map's row, anything else stays as it is. `expandChild` and `expandChildren` return through it, so an accessor's return type is the child's declared surface and never an inference through the tree's recursion.
 
 ### `packages/codegen/src/emitters/wrap.ts::renameUnusedTreeParam`
 
@@ -13303,7 +13303,7 @@ The kinds the wrapper accepts as a child are the supertype's direct subtypes plu
 ```text
 // `data.$other` flows through the generic `_filterWrapChildrenByKind<T>` /
 // `normalizeSingularWrapSlot<T>` helpers into an explicit
-// `drillIn<T.${typeName}>(...)` check below — the inferred `T` must stay
+// `expandChild<T.${typeName}>(...)` check below — the inferred `T` must stay
 // exactly `T.${typeName}` (the supertype's own member union), or the
 // explicit generic argument mismatches. Array-inclusive: the wire may
 // deliver the single member wrapped in a 1-element array.
@@ -13510,7 +13510,7 @@ Kinds with a `reclaimsAnonymousChild` slot keep `$other`, because their wrap rea
 
 Assembles the wrap module. `wrapNode`, the one function every wrapped node passes through (the parsed root, each child expanded on demand, trivia entries), runs its per-kind wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached.
 
-`readNode` and `projectNode` take an optional level count, which reaches the native read. `drillInSelf` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
+`readNode` and `projectNode` take an optional level count, which reaches the native read. `expandStub` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
 
 #### body
 
@@ -13610,9 +13610,9 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 // `read_node.rs`'s one-level read (`read_slots` / `stub_of`)
 // leaves an unlabeled named child with sub-structure as a shallow stub
 // (`$parentHandle`/`$childIndex`, no fields of its own) — normally a
-// generated wrap function's `drillIn` call materializes it fully via
+// generated wrap function's `expandChild` call materializes it fully via
 // `projectNode`. With no such function for the PARENT kind, nothing
-// ever calls `drillIn` on the stub, so it reaches the native
+// ever calls `expandChild` on the stub, so it reaches the native
 // transport deserializer still shallow — and the child's OWN
 // transport struct then fails, missing every one of its real fields
 // (confirmed via `tool probe-kind`: python's `case_pattern` → `content`
@@ -13628,7 +13628,7 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 ```text
 // `_wrapTrivia` — a read node's trivia entries (leading, trailing, and
 // each inner gap's, walked by `mapTriviaEntries`) are children like any
-// slot child, so each drills in through `drillInAll` and dispatches
+// slot child, so each drills in through `expandChildren` and dispatches
 // through `wrapNode` by its own `$type`: a comment entry exposes its
 // kind's accessors. `wrapNode`
 // wraps the trivia before dispatch, once per node; `_aliasEnvelope`

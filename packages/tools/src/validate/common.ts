@@ -3,7 +3,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createEngine, detachCoordinates, dumpMetrics, sliceSpan } from '@sittir/common';
-import { readNode as readNodeFn, metricsEnabled, mapTriviaEntries, storedSlotReader } from '@sittir/common/utils';
+import { expandStub, isStub, readNode as readNodeFn, metricsEnabled, mapTriviaEntries, storedSlotReader } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
@@ -895,10 +895,8 @@ export function walkWrappedTree(
 	const seen = new Set<string>();
 	const recurse = (w: unknown): void => {
 		if (!isWrappedNodeData(w)) return;
-		const handle = w.$parentHandle;
-		const childIdx = w.$childIndex;
-		if (handle != null && childIdx != null) {
-			const key = `${handle}:${childIdx}`;
+		if (isStub(w)) {
+			const key = `${w.$parentHandle}:${w.$childIndex}`;
 			if (seen.has(key)) return;
 			seen.add(key);
 		}
@@ -1202,7 +1200,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	if (isAnonTokenPassthrough(c)) return child;
 	const { tree, factoryMap, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
 	if (shouldHaltRecursion(_depth, tree, factoryMap)) return child;
-	const drilled = drillReadNode(c, opts);
+	const drilled = expandForConfig(c, opts);
 	const rawTypeId = drilled.$type ?? c.$type;
 	const rawKind =
 		rawTypeId !== undefined
@@ -1252,14 +1250,11 @@ function carriesOwnContents(c: ReadNodeLike): boolean {
 	return Object.keys(rec).some((k) => k.startsWith('_') || k === '$children');
 }
 
-function drillReadNode(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {
+function expandForConfig(c: ReadNodeLike, opts: NodeToConfigOpts): ReadNodeLike {
 	const { tree } = opts;
-	if (c.$parentHandle == null || c.$childIndex == null || !tree) return c;
-	if (carriesOwnContents(c)) return c;
+	if (!tree || carriesOwnContents(c)) return c;
 	try {
-		return (
-			tree.read ? tree.read(c.$parentHandle, c.$childIndex) : readNodeFn(tree, c.$parentHandle, c.$childIndex)
-		) as ReadNodeLike;
+		return expandStub(c, tree) as ReadNodeLike;
 	} catch {
 		return c;
 	}
@@ -1347,7 +1342,7 @@ function projectElements(
 		if (readValueKind(item, opts) !== seat.kind) {
 			return resolveChild(item, memberValueOpts(opts, parentKind, slotName));
 		}
-		const element = drillReadNode(item as ReadNodeLike, opts);
+		const element = expandForConfig(item as ReadNodeLike, opts);
 		const config = carryElementTrivia(element, nodeToConfig(element, childOpts(opts)), opts);
 		return withSeatKind(config, seat.kind);
 	});
@@ -1388,11 +1383,11 @@ function projectArmSlot(
 		return setRoute(seat.mount, undefined);
 	const childShape = opts.factoryShapes?.[seat.kind] ?? 'config';
 	if (typeof value === 'string' || modelType === 'pattern' || childShape === 'text') {
-		const args = [typeof value === 'string' ? value : readNodeText(drillReadNode(value as ReadNodeLike, opts), opts)];
+		const args = [typeof value === 'string' ? value : readNodeText(expandForConfig(value as ReadNodeLike, opts), opts)];
 		out[key] = args;
 		return setRoute(seat.mount, args);
 	}
-	const child = drillReadNode(value as ReadNodeLike, opts);
+	const child = expandForConfig(value as ReadNodeLike, opts);
 	const inner = childOpts(opts);
 	const config = nodeToConfig(child, inner);
 	const nested = armRouteOf(config);
@@ -1428,7 +1423,7 @@ function projectSeatedSlot(
 	const key = slotConfigKey(slot);
 	switch (seat.shape) {
 		case 'flatten': {
-			const group = nodeToConfig(drillReadNode(value as ReadNodeLike, opts), childOpts(opts));
+			const group = nodeToConfig(expandForConfig(value as ReadNodeLike, opts), childOpts(opts));
 			const nested = armRouteOf(group);
 			if (nested !== undefined) {
 				throw new Error(
@@ -1443,7 +1438,7 @@ function projectSeatedSlot(
 			out[key] = projectElements(childEntries(value), seat, parentKind, slot.name, opts);
 			return;
 		case 'tuple': {
-			const child = drillReadNode(value as ReadNodeLike, opts);
+			const child = expandForConfig(value as ReadNodeLike, opts);
 			const inner = childOpts(opts);
 			const childShape = opts.factoryShapes?.[seat.kind] ?? 'config';
 			const args = factoryArgs(seat.kind, childShape, nodeToConfig(child, inner), child, inner);

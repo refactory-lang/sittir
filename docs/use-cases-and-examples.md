@@ -411,8 +411,8 @@ import rust from '@sittir/rust';
 
 const engine = await createEngine(rust);
 const fn = engine.parse(source).statements()[0];
-fn.name(); // drillIn: lazy expand if needed
-fn.body(); // drillIn: returns Block
+fn.name(); // expandChild: lazy expand if needed
+fn.body(); // expandChild: returns Block
 fn.body().statements(); // statements array
 ```
 
@@ -703,6 +703,6 @@ export function emitIsModule(grammar: GrammarModel): string {
 - [ ] `engine.readNode(handle, childIndex)` for lazy expansion
 - [ ] `engine.findAndRead()` with pattern matching
 - [ ] `engine.applyEdits()` for source modification
-- [ ] `wrap(node, tree)` — getter methods with `drillIn` for lazy expansion
+- [ ] `wrap(node, tree)` — getter methods with `expandChild` for lazy expansion
 - [ ] Format-preserving transforms
 - [ ] Native backend: one crossing per terminal

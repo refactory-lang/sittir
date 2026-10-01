@@ -5,7 +5,7 @@
 // coordinate and render the source byte for byte.
 import { describe, expect, it } from 'vitest';
 import { createEngine, treeHandleOf } from '@sittir/common';
-import type { TreeHandle } from '@sittir/common/utils';
+import { isStub, type TreeHandle } from '@sittir/common/utils';
 import rust from '../src/index.ts';
 
 const SOURCE = 'pub fn main() { let x = 1; }\nstruct S { a: u8 }\n';
@@ -22,7 +22,7 @@ function countStubs(value: unknown): number {
 	if (Array.isArray(value)) return value.reduce<number>((total, entry) => total + countStubs(entry), 0);
 	if (value === null || typeof value !== 'object') return 0;
 	const record = value as Record<string, unknown>;
-	let total = record.$parentHandle != null && record.$childIndex != null ? 1 : 0;
+	let total = isStub(record) ? 1 : 0;
 	for (const [key, child] of Object.entries(record)) {
 		if (key.startsWith('_') || key === '$other') total += countStubs(child);
 	}

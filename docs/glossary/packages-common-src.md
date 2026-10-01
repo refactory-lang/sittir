@@ -231,6 +231,14 @@ Makes the `$with` setter of an elements-seat slot take the group config objects 
 
 Whether a value is a group's config object rather than a node: a non-empty plain object without a `$type` whose keys are all among the group's config keys. The overlay factories, the setters `withElementsSeat` builds and the list-slot setters share it, so a config object means the same thing on every surface.
 
+### `packages/common/src/readNode.ts::isStub`
+
+Whether a node is a stub: a child a read left at its coordinate, `$parentHandle` beside `$childIndex`. A read stamps `$parentHandle` only with its index, so the pair is the whole test; every consumer that asks "is this unexpanded" asks this.
+
+### `packages/common/src/readNode.ts::expandStub`
+
+The node a stub names, read `depth` levels (one when absent) and left unwrapped; anything that is not a stub comes back as it is. The list view sizes a stubbed list with it and the tools expand read nodes with it. The generated wrap module's own `expandStub` is the projected form: it reads the same coordinate through `projectNode`, so the result is wrapped.
+
 ### `packages/common/src/transport-data.ts::treeHandleOf`
 
 The tree a node's handle names, whichever of `$handle` (its own), `$parentHandle` (a stub's coordinate, beside `$childIndex`) or `$treeHandle` (a node nothing re-reads) it carries. Every handle is tagged with its tree, so each identifies it; this is the TypeScript side of the Rust `NodeHandle::raw`. The fold uses it to decide a node still names its tree and emits it as the coordinate's `$treeHandle`; the generated wrap uses it to recognize a node that arrived as a coordinate.

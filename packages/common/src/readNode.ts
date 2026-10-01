@@ -243,3 +243,27 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number,
 
 	return result;
 }
+
+/** A child a read left at its coordinate: its parent's handle and its index under that parent. */
+export interface Stub {
+	readonly $parentHandle: number;
+	readonly $childIndex: number;
+}
+
+/**
+ * Whether `node` is a stub: it carries the coordinate a later read expands it at. A
+ * read stamps `$parentHandle` only beside `$childIndex`, so the pair is the test.
+ */
+export function isStub(node: unknown): node is Stub {
+	if (node === null || typeof node !== 'object') return false;
+	const record = node as Partial<Record<keyof Stub, unknown>>;
+	return typeof record.$parentHandle === 'number' && typeof record.$childIndex === 'number';
+}
+
+/**
+ * The node a stub names, read `depth` levels (one when absent) and unwrapped;
+ * anything that is not a stub comes back as it is.
+ */
+export function expandStub<T>(entry: T, tree: TreeHandle, depth?: number): T | AnyNodeData {
+	return isStub(entry) ? readNode(tree, entry.$parentHandle, entry.$childIndex, depth) : entry;
+}
