@@ -282,16 +282,22 @@ jobs:
       - name: cargo check --workspace
         run: cargo check --workspace
 
-  # Fixture drift: regenerating every grammar must reproduce the committed
-  # `test-fixtures.json` files, so a codegen change that shifts the capture
-  # fails here unless its regen output is committed with it. It needs no
-  # other job's output, so it runs alongside them. The parity test itself
-  # runs in `napi-build` on each native target.
+  # Generated output drift: regenerating every grammar must reproduce every
+  # committed generated file (parser, TypeScript and Rust outputs, manifests,
+  # `test-fixtures.json`) and leave no untracked one. A change to codegen
+  # source or a grammar whose regenerated output is not committed with it
+  # fails here. It runs on pull requests, where GitHub tests the merge
+  # result, and on master after each merge, because two pull requests that
+  # each change generated output can merge cleanly and leave master's output
+  # stale for the combined source. A failure on master is a red run and
+  # nothing more: the fix is a pull request that regenerates, and CI never
+  # commits. It needs no other job's output, so it runs alongside them. The
+  # parity test itself runs in `napi-build` on each native target.
   rust-parity:
-    name: parity fixture drift
+    name: generated output drift
     # ubuntu-latest (not ubuntu-22.04, unlike the other rust-* jobs — this
     # one doesn't produce a distributable artifact so there's no glibc-
-    # compat target to pin to): the "Regenerate fixtures" step's `npx tsx
+    # compat target to pin to): the "Regenerate every grammar" step's `npx tsx
     # ... gen --all` runs `tree-sitter generate`, and the locked
     # tree-sitter-cli@0.26.9 prebuilt binary requires GLIBC 2.39, which
     # ubuntu-22.04's 2.35 doesn't have. `CI (24.x)` already runs the same
@@ -301,7 +307,7 @@ jobs:
       - uses: actions/checkout@v6
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-      - name: Install Node (for codegen + fixture regen)
+      - name: Install Node (for codegen + regen)
         uses: actions/setup-node@v5
         with:
           node-version: 22.x
@@ -312,16 +318,25 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
-      - name: Regenerate fixtures
+      - name: Regenerate every grammar
         # `gen --all` rebuilds each grammar's release binding before it
         # extracts fixtures. The workspace cargo check is the `rust` job's.
         run: |
-          grammars=$(npx tsx packages/tools/src/scripts/stable-grammars.ts)
+          grammars=$(npx tsx packages/tools/src/scripts/all-grammars.ts)
           for grammar in $grammars; do
             npx tsx packages/cli/src/cli.ts gen --grammar "$grammar" --all --no-workspace-check --output "packages/$grammar/src"
           done
-      - name: Fixture check — no drift from committed
-        run: git diff --exit-code rust/crates/sittir-*/test-fixtures.json
+      - name: Drift check — the regenerated tree equals the committed one
+        run: |
+          drift=$(git status --porcelain)
+          if [ -n "$drift" ]; then
+            echo "Regenerating changed these files, or left them untracked:"
+            echo "$drift"
+            git diff --stat
+            echo "Regenerate locally and commit the result:"
+            echo "  pnpm exec tsx packages/cli/src/cli.ts gen --grammar <name> --all --output packages/<name>/src"
+            exit 1
+          fi
 
   # Spec 012 Phase 4 — platform matrix for napi `.node` artifact builds
   # (T053 macOS arm64/x64, T054 Linux x64 glibc/musl, T055 Linux arm64
