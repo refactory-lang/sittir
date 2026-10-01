@@ -13,14 +13,14 @@
  *
  * Leading trivia renders before the node's own text, trailing trivia after
  * it, and inner trivia inside an empty node, at the gap it is keyed by. An
- * entry is the NodeData of one of the grammar's trivia kinds (e.g. a
+ * entry is the UntypedNode of one of the grammar's trivia kinds (e.g. a
  * `line_comment`), rendered through its own kind, or the kind id of a
  * whitespace kind the grammar's extras match (e.g. `blankline`), which
  * replaces the spacing of the gap it sits in. A loose string given to
  * `$trivia` is the whitespace kind spelled exactly so, or else is built into
  * a comment through the grammar's `ir.comment`.
  */
-export type TriviaEntry = AnyNodeData | number;
+export type TriviaEntry = AnyUntypedNode | number;
 
 export interface NodeTrivia {
 	leading?: readonly TriviaEntry[];
@@ -42,13 +42,13 @@ export interface NodeTrivia {
  * on generated interfaces carry those modifiers directly (optional `?`
  * for absent, `readonly T[]` for repeated).
  */
-export type NodeMemberValue = AnyNodeData | string | number | boolean;
+export type NodeMemberValue = AnyUntypedNode | string | number | boolean;
 
 /**
  * Anonymous-child value type — like {@link NodeMemberValue} but without
  * `boolean`: children carry nodes and scalar text/number leaves only.
  */
-export type NodeChildValue = AnyNodeData | string | number;
+export type NodeChildValue = AnyUntypedNode | string | number;
 
 /**
  * Anonymous-child storage shape.
@@ -68,7 +68,7 @@ export type NodeChildren = NodeChildValue | readonly NodeChildValue[];
  * provenance tag lets `.from()` dispatch with a clean equality check
  * instead of structural `isNode` probing.
  */
-export interface AnyNodeData {
+export interface AnyUntypedNode {
 	/**
 	 * Kind discriminant. Numeric (TSKindId) for parser.c-derived kinds.
 	 * String for synthesized kinds pending numeric ID assignment.
@@ -76,7 +76,7 @@ export interface AnyNodeData {
 	$type: number | string;
 	/** Which producer emitted this node. 0=ts, 1=sg, 2=factory. */
 	$source?: 0 | 1 | 2;
-	/** Variant subtype name — set by factory, absent on readNode output. */
+	/** Variant subtype name — set by factory, absent on readUntypedNode output. */
 	$variant?: string;
 	$other?: NodeChildren;
 	/**
@@ -96,7 +96,7 @@ export interface AnyNodeData {
 	$span?: { start: number; end: number };
 	/** This node's own handle, on a node a read returns: re-reading it reads this node. */
 	$handle?: number;
-	/** The parent's handle, beside `$childIndex`: the coordinate a stub is expanded at. */
+	/** The parent's handle, beside `$childIndex`: the coordinate a stub is hydrated at. */
 	$parentHandle?: number;
 	/** Any handle of this node's tree, on a node nothing re-reads (a deep read's leaf, a trivia entry, a folded coordinate): it names only the tree `$span` slices. */
 	$treeHandle?: number;
@@ -118,13 +118,13 @@ export interface AnyNodeData {
 	$named?: boolean;
 	/** Per-node format override. Set by callers to override the tree-level format
 	 *  (ctx.format) for this specific node. Never set by inference — inferred format
-	 *  lives on TreeHandle.format. Absent on all factory and readNode output. */
+	 *  lives on TreeHandle.format. Absent on all factory and readUntypedNode output. */
 	$format?: FormatRecord;
 
 	// -------------------------------------------------------------------------
 	// $-prefixed methods — present on factory/wrap output only.
 	// Attached via per-grammar withMethods<T> (non-enumerable defineProperty).
-	// Absent on readNode / native JSON transport.
+	// Absent on readUntypedNode / native JSON transport.
 	// -------------------------------------------------------------------------
 
 	/** Render this node to source text. Non-enumerable on factory/wrap output. */
@@ -146,7 +146,7 @@ export interface AnyNodeData {
 
 export type GrammarTriviaEntry<Trivia> = Trivia | string;
 
-export interface TriviaSetter<Self = AnyNodeData, Trivia = any> {
+export interface TriviaSetter<Self = AnyUntypedNode, Trivia = any> {
 	(
 		...args: (
 			| GrammarTriviaEntry<Trivia>
@@ -391,7 +391,7 @@ export type KindOf<T> = T extends { readonly type: infer K extends string } ? K 
  */
 export interface NativeParseResult {
 	/** Hydrated root node data produced by the native parser. */
-	nodeData: AnyNodeData;
+	untypedNode: AnyUntypedNode;
 	/** Format inferred from source layout, if inference succeeded. */
 	format?: FormatRecord;
 }
@@ -410,9 +410,9 @@ export interface EngineTreeHandle {
 	readonly render: (options?: RenderCallOptions) => string;
 }
 
-/** Return value of engine parseAndRead — carries both NodeData and inferred format. */
+/** Return value of engine parseAndRead — carries both UntypedNode and inferred format. */
 export interface ParseAndReadResult {
-	readonly nodeData: AnyNodeData;
+	readonly untypedNode: AnyUntypedNode;
 	readonly format?: FormatRecord;
 }
 
@@ -422,4 +422,4 @@ export interface ParseAndReadResult {
  * surface installs. This is the shape the reader returns and the render
  * transport accepts.
  */
-export type NodeDataOf<T> = Pick<T, Extract<keyof T, '$type' | `_${string}`>> & AnyNodeData;
+export type UntypedNodeOf<T> = Pick<T, Extract<keyof T, '$type' | `_${string}`>> & AnyUntypedNode;

@@ -23,9 +23,9 @@ describe('emitRenderEngine', () => {
 	});
 
 	it('types the diagnostics root as the data projection of the root kind', () => {
-		expect(output).toContain('export type SourceFileRoot = NodeDataOf<SourceFile>;');
-		expect(output).toContain("import type { IndentOption, NativeEngineOptions, NodeDataOf } from '@sittir/types';");
-		expect(output).not.toContain('AnyNodeData &');
+		expect(output).toContain('export type SourceFileRoot = UntypedNodeOf<SourceFile>;');
+		expect(output).toContain("import type { IndentOption, NativeEngineOptions, UntypedNodeOf } from '@sittir/types';");
+		expect(output).not.toContain('AnyUntypedNode &');
 	});
 
 	// Constructed nodes carry `$render()`, so `factories -> utils -> boundary`

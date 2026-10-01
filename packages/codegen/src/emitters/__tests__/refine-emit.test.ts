@@ -469,7 +469,7 @@ describe('factories emitter — per-form factory emission', () => {
 		);
 	});
 
-	it('does not emit a $variant tag (NodeData round-trips through readNode)', () => {
+	it('does not emit a $variant tag (UntypedNode round-trips through readUntypedNode)', () => {
 		const { factoriesSrc } = runPipeline([{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } }]);
 		// Pull out just the curly function body and assert no $variant.
 		const match = factoriesSrc.match(/export function buildIfaceBodyCurly[\s\S]*?\n\}/);

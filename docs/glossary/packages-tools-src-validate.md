@@ -87,7 +87,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 // Validator-local slot model. validate/common.ts has no AssembledNonterminal
-// instances (it walks already-read napi NodeData), so slot descriptors are
+// instances (it walks already-read napi UntypedNode), so slot descriptors are
 // built from bare name strings + locally-derived arity.
 // The validator is the ONLY allowed reader of the opaque `origin` fact
 // (feedback_metadata_not_behavior.md); the compiler never sees this type.
@@ -149,10 +149,10 @@ would otherwise report a passing 0/0 run.
 #### body
 
 ```text
-// NodeById removed. JS-side readNode now navigates via
+// NodeById removed. JS-side readUntypedNode now navigates via
 // nodes[handle].children()[childIndex]. The nodes[] array is populated
-// lazily by pushNode() inside readNode as it walks the tree.
-// Phase D: kindIdFromName is required for JS-side reads (readNode emits
+// lazily by pushNode() inside readUntypedNode as it walks the tree.
+// Phase D: kindIdFromName is required for JS-side reads (readUntypedNode emits
 // numeric $type). Supply it from the grammar's types module.
 ```
 
@@ -219,7 +219,7 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
  * between the wasm/JS handle (default) and a native-engine handle
  * (when `SITTIR_BACKEND=native` is set). A native handle is the grammar
  * engine's own parse (`readNativeTree`): every read — root and
- * drill-in alike — goes through the engine that also renders, so the
+ * hydration alike — goes through the engine that also renders, so the
  * coordinates it hands out resolve at render time.
  *
  * The wasm `tree` is still required: validators use it for kind
@@ -229,7 +229,7 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
  */
 ```
 
-### `packages/tools/src/validate/common.ts::readNodeAt`
+### `packages/tools/src/validate/common.ts::readUntypedNodeAt`
 
 ```text
 /**
@@ -237,7 +237,7 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
  *
  * ReadNode no longer accepts a nodeId. For the WASM/JS path,
  * validators use this helper to push the target node into the handle's
- * nodes[] array and call readNode with the resulting handle + childIndex=0.
+ * nodes[] array and call readUntypedNode with the resulting handle + childIndex=0.
  * For native handles (handle.read present), uses the native coords from
  * findNativeNodeId.
  */
@@ -247,14 +247,14 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
 
 ```text
 // WASM/JS path: temporarily set rootNode to the target node and read
-// with no navigation coords (readNode reads rootNode when handle is undefined).
+// with no navigation coords (readUntypedNode reads rootNode when handle is undefined).
 ```
 
 ### `packages/tools/src/validate/common.ts::NativeNodeCoords`
 
 ```text
 /**
- * Navigation coordinates for a native drill-in.
+ * Navigation coordinates for a native hydration.
  * `handle` is the parent's index in the tree's nodes[], `childIndex` is
  * the position in parent's child array.
  */
@@ -276,10 +276,10 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
 
 ```text
 /**
- * Native NodeData's addressable child positions: named-slot (`_foo`) and
+ * Native UntypedNode's addressable child positions: named-slot (`_foo`) and
  * legacy (`$fields`) values, the anonymous-token bucket (`$other`), and
  * attached trivia (`$_trivia.leading`/`.trailing` — comment/extras
- * nodes read_node.rs attaches to a SIBLING rather than re-parenting into
+ * nodes read_untyped_node.rs attaches to a SIBLING rather than re-parenting into
  * the normal field/children tree, so this is the only place they're
  * reachable from).
  */
@@ -298,11 +298,11 @@ The kind a node from the native read is shown as: its `$displayType` when the re
 ```text
 /**
  * For a native TreeHandle (`handle.read` is present), walk the native
- * NodeData tree to find the parent-handle + child-index pair for the
+ * UntypedNode tree to find the parent-handle + child-index pair for the
  * first node whose `$type` equals `kind`. Native engine handles and
  * WASM/JS engine handles occupy different navigation spaces, so WASM
  * coordinates must never be passed to a native handle's
- * `readNode(handle, childIndex)`.
+ * `readUntypedNode(handle, childIndex)`.
  *
  * Returns null when `handle` is a WASM handle (no `handle.read`) —
  * callers fall back to the JS tree's `node.id` in that case.
@@ -319,7 +319,7 @@ Every trivia side is walked (leading, trailing and inner), and a node found in a
 // No handle+child-index exists for this entry (see
 // `NativeNodeCoords.embeddedData`) — return the already-
 // materialized data directly instead of falling through to
-// the coordinate-based match/drill logic below, which can
+// the coordinate-based match/hydrate logic below, which can
 // never succeed for it.
 ```
 
@@ -337,7 +337,7 @@ Every trivia side is walked (leading, trailing and inner), and a node found in a
 ```text
 /**
  * A native candidate: navigation coordinates plus the node's byte span
- * (when available from the native AnyNodeData's `$span`).
+ * (when available from the native AnyUntypedNode's `$span`).
  */
 ```
 
@@ -345,7 +345,7 @@ Every trivia side is walked (leading, trailing and inner), and a node found in a
 
 ```text
 /**
- * Walk the native AnyNodeData tree rooted at `handle` and collect ALL nodes
+ * Walk the native AnyUntypedNode tree rooted at `handle` and collect ALL nodes
  * whose kind matches `kind`, in DFS order. Returns one entry per matching
  * node with its navigation coordinates (`handle` + `childIndex`) and byte
  * span (when present in the native data, so callers can slice the source).
@@ -384,7 +384,7 @@ Every trivia side is walked (leading, trailing and inner), and a node found in a
 #### body
 
 ```text
-// Drill when the child doesn't already carry its own sub-children.
+// Hydrate when the child doesn't already carry its own sub-children.
 ```
 
 ### `packages/tools/src/validate/common.ts::findFirst`
@@ -775,11 +775,11 @@ keeps its own missing-module behaviour. The only way the validators and
 `emit-factory-source` import generated modules; `node-model.json5` is data
 and is read with `readFileSync` on the path.
 
-### `packages/tools/src/validate/common.ts::loadReadTreeNode`
+### `packages/tools/src/validate/common.ts::readNodeOf`
 
 ```text
 /**
- * Dynamic import of a grammar's `readTreeNode` entry point. Used by
+ * Dynamic import of a grammar's `readNode` entry point. Used by
  * validators to build source-typed wrapped views — the wire `$type` is
  * the grammar symbol, so nodes arrive under their source kind and the
  * validator render dispatches through the source template directly.
@@ -791,10 +791,10 @@ and is read with `readFileSync` on the path.
 ```text
 /**
  * Dynamic import of a grammar's `wrapNode` entry point — the fluent-view
- * wrapper `readTreeNode` applies after reading. Used to produce the same
+ * wrapper `readNode` applies after reading. Used to produce the same
  * wrapped shape for already-materialized data (e.g. a trivia entry's
  * `NativeNodeCoords.embeddedData`) that has no handle+child-index to read
- * through `readTreeNode` itself.
+ * through `readNode` itself.
  */
 ```
 
@@ -866,10 +866,10 @@ and is read with `readFileSync` on the path.
  * encountered wrapped node. Enumeration uses `Object.keys` + accessor
  * invocation — accessors defined via `{get foo() {}}` appear as
  * enumerable keys and fire on read, so each child materializes through
- * the wrap layer's drill-in ($type on every node is the grammar-symbol
+ * the wrap layer's hydration ($type on every node is the grammar-symbol
  * wire identity stamped by the read).
  *
- * `$`-prefixed keys are spread NodeData metadata (not child getters)
+ * `$`-prefixed keys are spread UntypedNode metadata (not child getters)
  * and get skipped. Leaves short-circuit when accessing a getter that
  * doesn't return a wrapped-shape value.
  */
@@ -1072,17 +1072,17 @@ and is read with `readFileSync` on the path.
 
 ```text
 // ---------------------------------------------------------------------------
-// nodeToConfig — NodeData → factory Config-shape conversion
+// nodeToConfig — UntypedNode → factory Config-shape conversion
 // ---------------------------------------------------------------------------
 //
-// Validators read tree-sitter output via `readNode` (snake_case `_<name>`
+// Validators read tree-sitter output via `readUntypedNode` (snake_case `_<name>`
 // keys, $-prefixed metadata). The factory signatures take `ConfigOf<T>`:
 //   - top-level keys in camelCase (snake→camel on each `_<name>` entry)
 //   - `children` in place of $children
 //   - leaf values as bare strings (factory leaf signatures are `(text: string)`)
-//   - branch values as NodeData produced by THAT kind's factory — when
-//     `tree` + `factoryMap` are supplied, children are drilled via
-//     `readNode` and reconstructed through their own factory before
+//   - branch values as UntypedNode produced by THAT kind's factory — when
+//     `tree` + `factoryMap` are supplied, children are hydrated via
+//     `readUntypedNode` and reconstructed through their own factory before
 //     being installed under the parent's config. This is what makes the
 //     factory layer actually exercise construction instead of passing
 //     data through verbatim; a declared-type mismatch (e.g. a
@@ -1140,7 +1140,7 @@ and is read with `readFileSync` on the path.
 
 ```text
 /** Validator-supplied CST node-kind fallback for override polymorphs whose
-	 * readNode shape collapsed the discriminating wrapper before factory dispatch. */
+	 * readUntypedNode shape collapsed the discriminating wrapper before factory dispatch. */
 ```
 
 ### `packages/tools/src/validate/common.ts::NodeToConfigOpts.firstNamedChildKindHint`
@@ -1180,7 +1180,7 @@ and is read with `readFileSync` on the path.
 
 ```text
 /** Phase D: resolver for numeric $type → string kind name. Required when
-	 * input nodes carry numeric $type (readNode output post-Phase-D). */
+	 * input nodes carry numeric $type (readUntypedNode output post-Phase-D). */
 ```
 
 ### `packages/tools/src/validate/common.ts::NodeToConfigOpts.surface`
@@ -1205,18 +1205,18 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 
 ```text
 /**
- * Determine whether an anonymous NodeData token should pass through
+ * Determine whether an anonymous UntypedNode token should pass through
  * `resolveChild` unchanged.
  *
  * @remarks
  * Anonymous tokens (separators, delimiters, keywords promoted to `_<name>` by
- * readNode) must stay as NodeData. Render's `$named !== false` filter drops
+ * readUntypedNode) must stay as UntypedNode. Render's `$named !== false` filter drops
  * them from `$$$CHILDREN`, and flankSep probes their span/text to reconstruct
  * trailing separators. Converting them to bare strings bypasses those filters
  * and double-emits (e.g. struct_pattern's trailing `,` showed up twice in the
  * rendered output).
  *
- * @param c - The candidate child NodeData.
+ * @param c - The candidate child UntypedNode.
  * @returns `true` if the child is an anonymous token and should be returned as-is.
  */
 ```
@@ -1226,7 +1226,7 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 ```text
 /**
  * Guard the recursion depth and availability of tree/factory context before
- * drilling into a child node.
+ * hydrating a child node.
  *
  * @remarks
  * Depth cap: recursive construction shouldn't run away even on pathologically
@@ -1268,9 +1268,9 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
 
 ```text
 /**
- * Drill into a shallow child NodeData via the tree handle, then convert
+ * Hydrate a shallow child UntypedNode via the tree handle, then convert
  * recursively and route through its kind's factory. Falls back to the
- * passed-in shallow NodeData when `tree` isn't available OR the child
+ * passed-in shallow UntypedNode when `tree` isn't available OR the child
  * lacks a $nodeId (factory-built children don't carry one).
  */
 ```
@@ -1321,15 +1321,14 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
  */
 ```
 
-### `packages/tools/src/validate/common.ts::drillReadNode`
+### `packages/tools/src/validate/common.ts::hydrateForConfig`
 
 ```text
 /**
- * Materialize a lazily read child (`$parentHandle` + `$childIndex`) into its
- * own `_<name>` keys / `$children`. Native handles read via napi
- * (`tree.read`); wasm handles fall through to the JS walker, so validators
- * stay backend-agnostic. A handle that lacks the node (a factory-built
- * subtree) leaves the shallow entry as is.
+ * Hydrate a stub through @sittir/common's hydrateStub before it becomes factory
+ * config: a native handle reads through `tree.read`, a wasm handle through
+ * the JS walker, so validators stay backend-agnostic. A handle that lacks the
+ * node (a factory-built subtree) leaves the stub as is.
  *
  * A child that already carries its own contents is left alone. Re-reading it
  * would return the raw parse node and discard the wrap layer's per-slot kind
@@ -1337,6 +1336,10 @@ The shape of a read node as the tools consume it: its `$`-metadata (`$type`, `$t
  * rather than handing them back as elements.
  */
 ```
+
+### `packages/tools/src/validate/common.ts::materializeDetached`
+
+A wrapped tree as plain data with no coordinates: `materialize` resolves every accessor, then `detachCoordinates` drops what would tie the data to the tree it was read from. It is the input for a render that must not slice that tree: the probe's trace, read-render-parse's deep mode and the detached-render tests.
 
 ### `packages/tools/src/validate/common.ts::armRouteOf`
 
@@ -1596,7 +1599,7 @@ One entry of a factory map: the factory function of a kind, or, for a `constant`
 
 ```text
 // Named slots are stored as `_<name>` top-level keys
-// directly on the NodeData object (de-hoisted storage). Fall back to the
+// directly on the UntypedNode object (de-hoisted storage). Fall back to the
 // legacy `$fields` wrapper for backward compatibility with old fixtures.
 ```
 

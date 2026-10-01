@@ -92,7 +92,7 @@ Identical to ast-grep conventions:
 
 Everything else in the template is literal output — keywords, operators, delimiters, spaces, newlines. What you see is what renders.
 
-Field resolution: variables map to `NodeData.fields` by lowercasing: `$NAME` → `fields.name`, `$RETURN_TYPE` → `fields.return_type`, `$$$PARAMETERS` → `fields.parameters` (array).
+Field resolution: variables map to `UntypedNode.fields` by lowercasing: `$NAME` → `fields.name`, `$RETURN_TYPE` → `fields.return_type`, `$$$PARAMETERS` → `fields.parameters` (array).
 
 Absent fields render as empty string — same as ast-grep's fix behavior for unmatched meta variables.
 
@@ -124,10 +124,10 @@ No quantifier syntax on the variable. The YAML structure is the signal.
 
 |                        | Example                                              | Where it lives      | Why                                                                  |
 | ---------------------- | ---------------------------------------------------- | ------------------- | -------------------------------------------------------------------- |
-| **Grammar node**       | `where_clause`, `else_clause`, `type_arguments`      | Top-level rule      | Real node kind — has its own `NodeData`                              |
+| **Grammar node**       | `where_clause`, `else_clause`, `type_arguments`      | Top-level rule      | Real node kind — has its own `UntypedNode`                              |
 | **Synthesized clause** | `return_type_clause`, `value_clause`, `alias_clause` | Nested under parent | Not a grammar node — anonymous token bundled with non-required field |
 
-A grammar node like `$WHERE_CLAUSE` is a `NodeData` in `fields` — the engine looks it up and renders it with its own top-level template. A synthesized clause like `$RETURN_TYPE_CLAUSE` is a YAML key under the parent rule — the engine checks the underlying field's presence and renders the sub-template.
+A grammar node like `$WHERE_CLAUSE` is an `UntypedNode` in `fields` — the engine looks it up and renders it with its own top-level template. A synthesized clause like `$RETURN_TYPE_CLAUSE` is a YAML key under the parent rule — the engine checks the underlying field's presence and renders the sub-template.
 
 ### Codegen clause generation
 
@@ -529,7 +529,7 @@ render(node, templates):
 
     $NAME →
       value = fields[lowercase(NAME)]
-      if value is NodeData → render(value), interpolate
+      if value is UntypedNode → render(value), interpolate
       if absent → empty string
 
     $$$NAME →
@@ -924,7 +924,7 @@ rules:
 
   # ── Leaves ───────────────────────────────────────────────────
   # Leaf nodes (identifiers, literals, keywords) render via
-  # NodeData.text — no template needed. Not listed here.
+  # UntypedNode.text — no template needed. Not listed here.
 ```
 
 ## Per-grammar files (before → after)
@@ -1026,7 +1026,7 @@ Add:
 
 ### What doesn't change
 
-- `AnyNodeData` / `NodeData<G,K>` — the node shape is unchanged
+- `AnyUntypedNode` / `UntypedNode<G,K>` — the node shape is unchanged
 - `NodeModel` / `EnrichedRule` — the pipeline feeding the codegen is unchanged
 - `factories.ts` — factory functions don't depend on render format
 - `from.ts` / `wrap.ts` — resolver/hydration logic is independent

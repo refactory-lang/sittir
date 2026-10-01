@@ -19,7 +19,7 @@ const NATIVE_ENGINE_PATH_BY_GRAMMAR = {
 
 export type NativeEngine = {
 	parseAndRead(src: string): string;
-	readNode(handle: number, childIndex: number): string;
+	readUntypedNode(handle: number, childIndex: number): string;
 	dispose(): void;
 };
 
@@ -55,9 +55,9 @@ export function tryLoadNativeEngine(grammar: Grammar): NativeEngine | null {
 	}
 }
 
-export function parseNativeFixture(engine: NativeEngine, source: string): { nodeData: object; format?: FormatRecord } {
+export function parseNativeFixture(engine: NativeEngine, source: string): { untypedNode: object; format?: FormatRecord } {
 	return JSON.parse(engine.parseAndRead(source)) as {
-		nodeData: object;
+		untypedNode: object;
 		format?: FormatRecord;
 	};
 }

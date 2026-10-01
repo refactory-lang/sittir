@@ -1,4 +1,4 @@
-import type { AnyNodeData, NodeChildValue, NodeMemberValue } from '@sittir/types';
+import type { AnyUntypedNode, NodeChildValue, NodeMemberValue } from '@sittir/types';
 import { HANDLE_KEYS } from './transport-data.ts';
 
 const ASSERT_ENABLED = typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production';
@@ -54,11 +54,11 @@ function assertNativeFieldValue(value: unknown, path: string): asserts value is 
 	}
 	if (Array.isArray(value)) {
 		for (const [index, item] of value.entries()) {
-			assertNativeNodeDataInternal(item, `${path}[${index}]`);
+			assertNativeUntypedNodeInternal(item, `${path}[${index}]`);
 		}
 		return;
 	}
-	assertNativeNodeDataInternal(value, path);
+	assertNativeUntypedNodeInternal(value, path);
 }
 
 function assertNativeChildren(value: unknown, path: string): void {
@@ -77,13 +77,13 @@ function assertNativeChildValue(value: unknown, path: string): asserts value is 
 		assertFiniteNumber(value, path);
 		return;
 	}
-	assertNativeNodeDataInternal(value, path);
+	assertNativeUntypedNodeInternal(value, path);
 }
 
 /**
  * Internal recursive validator for the native render boundary.
  *
- * Checks all runtime invariants required before passing a NodeData tree to the
+ * Checks all runtime invariants required before passing an UntypedNode tree to the
  * native (napi) render engine:
  *  - `$type` is a finite number (parser.c-derived numeric KindId, Phase D)
  *  - `$source` is one of `0 | 1 | 2` (ts, sg, factory)
@@ -91,10 +91,10 @@ function assertNativeChildValue(value: unknown, path: string): asserts value is 
  *  - `$format` is absent (must be passed separately via TreeHandle.format)
  *  - no function-valued properties (methods like `render()` cannot cross napi)
  *  - nested `_<name>` storage keys and `$other` satisfy the same constraints
- *    Recursively (`$fields` wrapper no longer emitted by readNode)
+ *    Recursively (`$fields` wrapper no longer emitted by readUntypedNode)
  *  - finite numeric `_<name>` storage is allowed for kind-enum projection
  */
-function assertNativeNodeDataInternal(value: unknown, path: string): asserts value is AnyNodeData {
+function assertNativeUntypedNodeInternal(value: unknown, path: string): asserts value is AnyUntypedNode {
 	if (!isRecord(value)) {
 		throw new TypeError(`${path} must be an object, got ${describe(value)}`);
 	}
@@ -161,7 +161,7 @@ function assertNativeNodeDataInternal(value: unknown, path: string): asserts val
  *  - no function-valued properties
  *  - `_<name>` storage keys and `$other` satisfy the same constraints recursively
  */
-export function assertRenderableNodeData(node: AnyNodeData): asserts node is AnyNodeData {
+export function assertRenderableUntypedNode(node: AnyUntypedNode): asserts node is AnyUntypedNode {
 	if (!ASSERT_ENABLED) return;
-	assertNativeNodeDataInternal(node, 'node');
+	assertNativeUntypedNodeInternal(node, 'node');
 }

@@ -39,7 +39,7 @@ export interface Edit {
 }
 
 /**
- * Byte-range for a `NodeData` within its source string. `start`/`end`
+ * Byte-range for an `UntypedNode` within its source string. `start`/`end`
  * are UTF-8 byte offsets (ast-grep / tree-sitter convention).
  * `#[napi(object)]` (gated on napi-bindings feature) adds
  * `FromNapiValue` / `ToNapiValue` so transport structs can include
@@ -66,7 +66,7 @@ export declare class SittirEngine {
    * Parse `source` and read its root.
    *
    * `depth` is the number of levels the read expands (see
-   * [`read_depth`]): absent is the lazy one-level read, `Infinity`
+   * [`depth_from_wire`]): absent is the lazy one-level read, `Infinity`
    * expands the whole tree in one pass.
    *
    * The tree is retained under a fresh id so the handles this read
@@ -75,14 +75,21 @@ export declare class SittirEngine {
    */
   parseAndRead(source: string, depth?: number | undefined | null): string
   /**
-   * Expand one child of the node named by `handle`.
+   * Hydrate one child of the node named by `handle`.
    *
    * The handle names its own tree, so a handle from a tree that has
    * been disposed — or one never minted here — is refused rather
    * than answered out of whichever tree happens to be present.
    * `depth` counts the levels read, as for `parse_and_read`.
    */
-  readNode(handle: number, childIndex: number, depth?: number | undefined | null): string
+  readUntypedNode(handle: number, childIndex: number, depth?: number | undefined | null): string
+  /**
+   * Read the root of a live tree again, `depth` levels down, so a
+   * caller holding a shallow root can ask for a deeper one without
+   * re-parsing. Refuses a tree that is not live, as
+   * `read_untyped_node` does.
+   */
+  readRoot(treeId: number, depth?: number | undefined | null): string
   /**
    * Render a typed transport object (napi-native, numeric `$type`).
    *

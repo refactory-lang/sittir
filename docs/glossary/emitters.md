@@ -260,7 +260,7 @@ by kind and slot (interiorSlotGuards); the raw builder tests a slot value agains
 // (e.g. `TSKindId.RangeExpressionBinary`), keeping `$type` discriminable
 // for kind-narrowing in consumers — `is.functionItem(node)` etc. all
 // match against the const-enum value, not the widened `number` type.
-// Factory output remains structurally compatible with `AnyNodeData`
+// Factory output remains structurally compatible with `AnyUntypedNode`
 // because const-enum members ARE numeric at runtime; the $type read
 // path doesn't widen.
 ```
@@ -475,7 +475,7 @@ Whether a kind gets a top-level factory, and the skip reason when it does not. A
  * @returns Array of source lines for the type declaration.
  * @remarks
  *   Only branches / containers / polymorphs get a `<TypeName>.Bound` entry; leaves /
- *   keywords / enums produce raw `NodeData` instead and are keyed to their own
+ *   keywords / enums produce raw `UntypedNode` instead and are keyed to their own
  *   interface.
  */
 ```
@@ -604,7 +604,7 @@ A pattern value contributes `string`; a slot holding only pattern values never t
  * - **Source B** (`field.contentTypes.length === 1` and the referenced kind is
  *   an `AssembledKeyword`): the field content is a hidden-rule terminal with a
  *   single word-like text value (e.g. `_kw_async`). Stamp a minimal leaf
- *   NodeData object whose shape matches `Terminal<kind, text>`:
+ *   UntypedNode object whose shape matches `Terminal<kind, text>`:
  *   `{ $type: '_kw_async', $text: 'async', $source: 2, $named: true }`.
  *
  * Returns `undefined` when the field is NOT auto-stamp-eligible.
@@ -894,15 +894,15 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
  * The per-form factory accepts the form's narrowed Config (base kind's
  * Config minus the fields stamped by this form), stamps the form's
  * selected literals directly into `$fields` alongside user-supplied
- * fields, and returns a NodeData shape structurally identical to the
- * base factory's output (and to what `readNode` produces from a parsed
+ * fields, and returns an UntypedNode shape structurally identical to the
+ * base factory's output (and to what `readUntypedNode` produces from a parsed
  * tree). No `$variant` tag — the selected literals live in `$fields`
  * exactly as they do when parsed, so the round-trip contract is
  * preserved.
  *
  * The fluent method suffix (render/toEdit/replace) mirrors the base
  * factory so the output shape is interchangeable; callers switching
- * between `ir.interfaceBody.curly(...)` and `readNode(...)` get the
+ * between `ir.interfaceBody.curly(...)` and `readUntypedNode(...)` get the
  * same surface.
  */
 ```
@@ -1261,7 +1261,7 @@ so no kind-to-text table is needed here.
  *
  * @remarks
  * Every loose-from() caller can hand us:
- *   - a fully-built NodeData     (passthrough path)
+ *   - a fully-built UntypedNode     (passthrough path)
  *   - a primitive                (leaf-factory dispatch)
  *   - a { kind, ...rest } object (kind-tagged dispatch)
  *   - an array of any of above   (multi-field slot)
@@ -1512,7 +1512,7 @@ The expression a required single-value slot defaults to when its value is omitte
 
 ```text
 A lexed kind's coercer accepts a bare string for its content slot: the string is rebound to a config object
-(`_cfg`) after the NodeData passthrough, and every slot resolver reads that binding.
+(`_cfg`) after the UntypedNode passthrough, and every slot resolver reads that binding.
 ```
 
 #### loose trivia
@@ -1573,12 +1573,12 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
 /**
  * Shared body for a rest-param (`...input`) from() resolver that reconstructs
  * either from a flat list of already-resolved elements or by unwrapping an
- * existing self-NodeData value's storage. Both `emitRepeatedChildrenFrom`
+ * existing self-UntypedNode value's storage. Both `emitRepeatedChildrenFrom`
  * (container-shape branches — spreads the resolved elements into the
  * factory's `(...children: T[])` rest param) and `emitSeparatedListFrom`
  * (`'list'` kinds — passes the resolved elements as the single `elements: T[]
  * | NonEmptyArray<T>` array argument) share this exact three-shape structure
- * (numeric-discriminant gate, self-NodeData unwrap, fresh-input fallback);
+ * (numeric-discriminant gate, self-UntypedNode unwrap, fresh-input fallback);
  * they differ ONLY in how the final call expression is built from a resolved
  * variable name, which `buildCallExpr` parameterizes.
  *
@@ -1594,15 +1594,15 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
  * @param factory - The `F.<factoryName>` reference string.
  * @param tName - The `T.<TypeName>` reference string.
  * @param elementType - The child element type union string.
- * @param kind - The grammar kind string for the self-NodeData check.
+ * @param kind - The grammar kind string for the self-UntypedNode check.
  * @param kindEntries - Collected kind-enum entries for numeric $type comparison.
  * @param nodeMap - The assembled node map (used for member-name derivation).
- * @param storageKey - The wire storage key to unwrap on the self-NodeData path.
+ * @param storageKey - The wire storage key to unwrap on the self-UntypedNode path.
  * @param buildCallExpr - Builds the final `factory(...)` call expression from
  *   a resolved variable name (`'input'` or `'children'`) — spread-via-unknown
  *   for container-shape factories, direct array cast for `'list'`.
  * @param childrenTypeAnnotation - Optional explicit type annotation for the
- *   self-NodeData-unwrap `children` local (e.g. `': readonly unknown[]'`) —
+ *   self-UntypedNode-unwrap `children` local (e.g. `': readonly unknown[]'`) —
  *   `emitSeparatedListFrom` needs this so its direct (non-`unknown`-laundered)
  *   cast type-checks; the local's inferred type otherwise widens to `any[]`
  *   via the `Array.isArray` ternary, which a direct cast rejects even though
@@ -1617,14 +1617,14 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
 ```text
 // The slot's config key, when the resolver should ALSO accept the
 // legacy named-field object shape (`from({ identifier: [...] })`) — a
-// single non-NodeData object carrying the key unwraps to its elements.
+// single non-UntypedNode object carrying the key unwraps to its elements.
 ```
 
 #### body
 
 ```text
 // `isSelfUnwrap` distinguishes the two call sites below: `true` inside
-// the self-NodeData-unwrap branch (a `data` local naming the original
+// the self-UntypedNode-unwrap branch (a `data` local naming the original
 // wrapped node is in scope, so a caller like `emitSeparatedListFrom` can
 // read per-instance facts off it — e.g. preserving `_separator`/
 // `_delimiter` when reconstructing an already-wrapped
@@ -1644,10 +1644,10 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
 
 ```text
 // The accepted-input union allows callers to hand back an existing
-// <kind> NodeData OR a flat list of element children. The single-arg
-// self-NodeData path unwraps the storage key; otherwise every item must
+// <kind> UntypedNode OR a flat list of element children. The single-arg
+// self-UntypedNode path unwraps the storage key; otherwise every item must
 // already be an element. The storage value is typed as singular-or-array
-// on the loose `AnyNodeData` shape; normalize to an array before the
+// on the loose `AnyUntypedNode` shape; normalize to an array before the
 // boundary cast.
 ```
 
@@ -1673,7 +1673,7 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
  * @param factory - The `F.<factoryName>` reference string.
  * @param tName - The `T.<TypeName>` reference string.
  * @param elementType - The child element type union string.
- * @param kind - The grammar kind string for the self-NodeData check.
+ * @param kind - The grammar kind string for the self-UntypedNode check.
  * @param kindEntries - Collected kind-enum entries for numeric $type comparison.
  * @param nodeMap - The assembled node map (used for member-name derivation).
  * @returns The emitted function source string.
@@ -1708,7 +1708,7 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
  * tuple" through ConfigOf without pushing casts downstream.
  *
  * Empty collections (e.g. python `()` / `[]`) have no named children —
- * readNode promotes `(` / `)` / `[` / `]` into fields and produces no
+ * readUntypedNode promotes `(` / `)` / `[` / `]` into fields and produces no
  * `children`. Calling `factory(undefined)` rebuilds the empty form;
  * indexing `children[0]` in that case throws "Cannot read properties of
  * undefined (reading '0')".
@@ -1717,7 +1717,7 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
  * @param factory - The `F.<factoryName>` reference string.
  * @param tName - The `T.<TypeName>` reference string.
  * @param elementType - The child element type union string.
- * @param kind - The grammar kind string for the self-NodeData check.
+ * @param kind - The grammar kind string for the self-UntypedNode check.
  * @param kindEntries - Collected kind-enum entries for numeric $type comparison.
  * @param nodeMap - The assembled node map (used for member-name derivation).
  * @returns The emitted function source string.
@@ -1789,11 +1789,11 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
  * array type to the tuple-shaped `NonEmptyArray<T>` target IS accepted as
  * "sufficiently overlapping" (tsgo TS2352's own comparability rule), for
  * both the rest-param `input` (already `readonly (...)[]`-typed) and the
- * self-NodeData-unwrap `children` local, PROVIDED that local carries an
+ * self-UntypedNode-unwrap `children` local, PROVIDED that local carries an
  * explicit `readonly unknown[]` annotation — its inferred type otherwise
  * widens to `any[]` (via the `Array.isArray` ternary), which tsgo does
  * reject directly. A narrower cast means a genuinely wrong shape at one of
- * these two remaining opaque-`unknown`-origin sites (the self-NodeData
+ * these two remaining opaque-`unknown`-origin sites (the self-UntypedNode
  * unwrap's `stored` read, and `_wrapWithChildren`'s own `children` param)
  * would now surface as a real tsgo error instead of silently laundering
  * through `unknown`, closing the exact gap that let this bug ship
@@ -1801,7 +1801,7 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
  *
  * `options` is omitted on the fresh-input path (no source node exists there
  * to read per-instance facts from — the factory's own defaults apply, same
- * as before this fix). On the self-NodeData-unwrap path, `options` IS built
+ * as before this fix). On the self-UntypedNode-unwrap path, `options` IS built
  * from the original wrapped node's own `_separator_kind`/`_leading_sep`/
  * `_trailing_sep` — calling `from()` on an already-wrapped separatedList
  * node used to silently reconstruct it with the factory's DEFAULTS (comma,
@@ -1829,7 +1829,7 @@ A kind with an empty form gets the zero-argument overload returning `T.Empty<Typ
 
 ```text
 // Same single-field-storage rule as `emitSeparatedListFactory`
-// (factories.ts): the self-NodeData-unwrap path must read the SAME wire
+// (factories.ts): the self-UntypedNode-unwrap path must read the SAME wire
 // storage key the factory actually wrote. Multi-field kinds keep the
 // generic `_content` bucket (see factories.ts's doc comment).
 ```
@@ -1974,7 +1974,7 @@ The supertype expansion `from.ts` documents under the same name, shared so the f
 // Anonymous tokens have no factory binding — no resolver
 // dispatch, but they are still VALID union members: report
 // them so the single-kind fast path can pass an already-built
-// token NodeData through instead of auto-wrapping it into the
+// token UntypedNode through instead of auto-wrapping it into the
 // primary branch's container (#128).
 ```
 
@@ -2017,7 +2017,7 @@ The supertype expansion `from.ts` documents under the same name, shared so the f
 // Branch fast path with anonymous-token union siblings (e.g.
 // mod_item.content's `';' | DeclarationList`): pass the token kinds'
 // discriminants so the resolver recognizes an already-valid
-// alternate-branch NodeData instead of auto-wrapping it into the
+// alternate-branch UntypedNode instead of auto-wrapping it into the
 // primary container (#128). Leaf resolvers never wrap, so they need
 // no alternate list. PR-K3d: the discriminants are baked at codegen
 // (`altKindDiscriminants`) — no runtime `kindIdFromName` re-resolution.
@@ -2178,7 +2178,7 @@ Whether a bare string reaches a leaf through a chain of single-kind bare slots. 
  * @remarks
  * Generic over the kind literal so the return type is the precise
  * `ReturnType<_FromMap[K]>` — each per-kind factory's output flows through,
- * not a widened `AnyNodeData` union. Callers pass a narrow kind (string-
+ * not a widened `AnyUntypedNode` union. Callers pass a narrow kind (string-
  * literal from the field's content types or narrowed via an `in`-check
  * against `_fromMap`) to get the specific return shape back. The internal
  * sideways cast routes around per-slot parameter variance without going
@@ -2244,7 +2244,7 @@ lifted into that arm.
  * Resolvers are emitted with a `<T>` type parameter so the call site can
  * name the expected slot shape (`_resolveOne<FunctionItem>`); no `extends`
  * constraint because the factory-emitted node interfaces don't all
- * structurally satisfy `AnyNodeData` (they omit the `named` property), and
+ * structurally satisfy `AnyUntypedNode` (they omit the `named` property), and
  * adding such a constraint would force every call site to re-widen. The
  * input is the closed `_FromFieldInput` union so no caller has to cast
  * anything loose.
@@ -2260,7 +2260,7 @@ lifted into that arm.
 // produce either a factory output, a scalar leaf, a resolved branch,
 // or pass the input through unchanged. Each branch tail asserts to T —
 // the runtime guarantees agree with the assertion: factory outputs
-// satisfy the slot's NodeData shape; scalar/leaf factories produce
+// satisfy the slot's UntypedNode shape; scalar/leaf factories produce
 // Terminal<kind, text> matching the leaf interface; resolveByKind
 // dispatches through `_FromMap` whose return type is the slot's
 // factory output. Single-site cast keeps the helper readable; per-call
@@ -2425,7 +2425,7 @@ supplied by `emitSeparatedListFrom`.
  * array is forwarded to the factory via `_wrapWithChildren`.
  *
  * Gap 4 (single-value auto-wrap): when `_resolveOneBranch` receives a
- * NodeData whose `$type` differs from the target kind, it wraps the value
+ * UntypedNode whose `$type` differs from the target kind, it wraps the value
  * as a single child if the target kind accepts children.
  *
  * @param lines - Output lines array to push into.
@@ -2554,7 +2554,7 @@ A lexed kind with a bare content slot is a leaf factory for the role synonyms; i
 ```text
 /**
  * Emit the `from` const — canonical factories that accept native JS values
- * and resolve to grammar-specific NodeData kinds.
+ * and resolve to grammar-specific UntypedNode kinds.
  *
  * Emitted as `export const from = { ... } as const` for tree-shakeable
  * standalone access (`from.boolean(...)`) and also referenced inside the
@@ -2870,7 +2870,7 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
 // Emit kind_name_from_id diagnostic helper — maps a KindId back to its
 // grammar kind string. Sourced from the same `entries` list as the constants
 // above (DRY: one source, one derivation). Used for error messages in
-// render_dispatch where NodeData.type_: KindId shows a numeric id.
+// render_dispatch where UntypedNode.type_: KindId shows a numeric id.
 ```
 
 #### body
@@ -2891,7 +2891,7 @@ A row's member is named from its model kind (`modelKindOfEntry`, so a renamed ro
 
 The reader↔model naming contract: the reader keys every modelled child by
 its model slot, so a slot has one spelling from the read to the wrap.
-`read_children` asks `wire_slot(parent, field, child)` for every child it
+`read_slots` asks `wire_slot(parent, field, child)` for every child it
 seats. A field-tagged child routes by its field (`Some(field)`); a named child
 without a field routes by its kind name (`None`); a row exists only where the
 slot's name differs from that key. The field wins over the kind: a
@@ -2943,7 +2943,7 @@ scalar keeps no trivia, so the reader never makes that child an owner, and an
 extra beside it goes to the next owner outward (typescript `(/* c */ this)`
 reads the comment as the parenthesized expression's leading entry, since
 `this` is stored as a kind id). Keyed by `(parent kind id, tree-sitter field
-name or None, child kind id)`, the three facts `read_node::stored_as_scalar`
+name or None, child kind id)`, the three facts `read_untyped_node::stored_as_scalar`
 has in hand. Rows come from `scalarChildRows`.
 
 ### `packages/codegen/src/emitters/kind-id-rust.ts::scalarChildRows`
@@ -3401,7 +3401,7 @@ numeric kind-id tables.
  * the assembled transport.rs references. The file-top `#![allow(dead_code)]`
  * means rustc will never flag an unreferenced bridge, so without this prune
  * a dead bridge survives silently (exactly how the deleted
- * transport→NodeData island hid). Reachability is computed against the FINAL
+ * transport→UntypedNode island hid). Reachability is computed against the FINAL
  * assembled text — by construction, every emitted bridge has a live caller.
  */
 ```
@@ -3619,7 +3619,7 @@ arms because no grammar kind shares its id.
  * than any of the concrete kinds the hidden rule resolves to. The
  * grammar-agnostic reader stores such a node's single unlabeled child under
  * a kind-keyed slot (`{ $type: <aliasId>, _<childKind>: <child> }` —
- * read_node.rs kind-named-slot routing), so no variant struct can decode the
+ * read_untyped_node.rs kind-named-slot routing), so no variant struct can decode the
  * wrapper directly (decode trials would probe the wrong object). This arm
  * unwraps the kind-keyed slot and re-dispatches `Self` on the concrete
  * child, which carries its own `$type`.
@@ -3906,7 +3906,7 @@ did when the enum was its own arm.
 #### body
 
 ```text
-// Bridge helper: converts per-slot enum → AnyTransport for the NodeData bridge
+// Bridge helper: converts per-slot enum → AnyTransport for the UntypedNode bridge
 // (used by the typed render dispatch). AnyTransport is a sized enum — no Box
 // needed. Both named-slot and unnamed `$children` bridge fns are load-bearing
 // after that change (named field type became the per-slot enum, so the bridge MUST
@@ -4480,7 +4480,7 @@ sides use. An arm missing either side is left out.
 #### body
 
 ```text
-// Enum-valued fields cross the native boundary as NodeData-shaped objects.
+// Enum-valued fields cross the native boundary as UntypedNode-shaped objects.
 // Some grammars send the resolved leaf kind in `$type` (primitive_type),
 // while others keep the parent enum kind and expose the chosen literal
 // under `$text` or `_<literal>` child fields (fragment_specifier).
@@ -4680,8 +4680,8 @@ machines.
  *
  * @remarks Phase 1: omit auto-stamp-eligible fields from Config input and
  * stamp the constant directly in factory output. The field stays in the
- * `$fields` block of the concrete TypeScript interface so NodeData output
- * shape is unchanged and round-trips with readNode remain identical.
+ * `$fields` block of the concrete TypeScript interface so UntypedNode output
+ * shape is unchanged and round-trips with readUntypedNode remain identical.
  */
 ```
 
@@ -4738,7 +4738,7 @@ machines.
  *
  * Two expression shapes:
  * - **Inline literal** (TerminalValue): `JSON.stringify(value) + " as const"`
- * - **Referenced keyword** (hidden AssembledKeyword NodeRef): NodeData object literal
+ * - **Referenced keyword** (hidden AssembledKeyword NodeRef): UntypedNode object literal
  *   `{ $type: '...', $text: '...', $source: 2 as const, $named: true as const }`
  * - **Referenced parameterless compound**: factory call expression from
  *   `ref.stampExpression` — e.g. `"breakExpression()"`.
@@ -4832,7 +4832,7 @@ the literal component, for `literalArmSeamSites`.
 /**
  * Compute the shared {@link TypeComponent} list for a children slot.
  *
- * Child slots intentionally project only constructible / drillable node refs.
+ * Child slots intentionally project only constructible / hydratable node refs.
  * Inline terminal values in the grammar (separator commas, keywords like
  * `"from"`, etc.) are filtered out by the wrap layer and never appear in the
  * public children accessor surface, so the type projection must ignore them too.
@@ -6477,7 +6477,7 @@ The kinds a field's dummy must build a stub from: none when `dummyValueForField`
 
 ```text
 // Nested stubs are raw object literals passed directly as
-// `NodeData` — NOT routed through the field's factory (which is
+// `UntypedNode` — NOT routed through the field's factory (which is
 // what translates a Config's `configKey` into `_<storageKey>` at
 // runtime). Native's transport `FromNapiValue` reads the storage
 // key straight off the object (`napi(js_name = "_pattern")`), so
@@ -7280,7 +7280,7 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
 /**
  * Collects the set of concrete interface type names that need to be imported.
  *
- * Wrap functions return `AnyNodeData` (not `WrappedNode<T>`), so no
+ * Wrap functions return `AnyUntypedNode` (not `WrappedNode<T>`), so no
  * per-kind type imports are needed. Returns an empty set.
  *
  * @param _nodeMap - The fully assembled node map for the grammar (unused).
@@ -7297,7 +7297,7 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
 #### body
 
 ```text
-// Wrap functions return AnyNodeData; no WrappedNode<T> per-kind type
+// Wrap functions return AnyUntypedNode; no WrappedNode<T> per-kind type
 // imports required.
 ```
 
@@ -7414,7 +7414,7 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
  *
  * - `_content`: the elements array, read from the list's slot key, where
  *   the reader stores the elements (`kind-id-rust.ts::wireSlotRows`).
- *   Populated via the same `resolveSlotDrillExprs` a real repeated field
+ *   Populated via the same `resolveSlotHydrateExprs` a real repeated field
  *   uses.
  *
  * - `_leading_sep` / `_trailing_sep`: whether an optional flank separator
@@ -7460,7 +7460,7 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
 // union) rename the emitted property/accessor to the model's real slot
 // name. Multi-field kinds (e.g. a dict-pattern-shaped 'list' kind whose
 // elements route to more than one real slot by kind) route EACH field
-// through the exact same per-field drilling logic
+// through the exact same per-field hydration logic
 // `emitFieldCarryingWrap` uses (`emitFieldStorageLines`/
 // `emitFieldAccessorLines`) instead of one shared bucket.
 ```
@@ -7495,7 +7495,7 @@ The content type of an AssembledAlias with one slot: the slot's storage type, ex
 // under that raw name is invisible to consumers that derive the
 // expected accessor name via camelCase projection (e.g. the validator's
 // `accessorCandidatesForStorageKey`), which then silently falls back to
-// the raw, undrilled `_<kind>` storage value instead of calling this
+// the raw, unhydrated `_<kind>` storage value instead of calling this
 // method — a materialization gap for `'list'`-classified content accessors.
 ```
 
@@ -7516,11 +7516,11 @@ Collision guard for the `$other` reclaim. Across a kind's reclaiming slots (`rec
 /**
  * Emit per-field `_<name>: <storeExpr>,` storage assignments for `fields`,
  * reusing the exact same per-field kindEnum/verbatim/alias/candidate-
- * storage-key drilling logic regardless of which caller's kind classifies as
+ * storage-key hydration logic regardless of which caller's kind classifies as
  * (`'branch'`/`'envelope'`/`'polymorph'` via `emitFieldCarryingWrap`, or a
  * MULTI-field `'list'` via `emitSeparatedListWrap` — e.g. a `'list'` kind
  * whose elements route to more than one real slot by kind, not one shared
- * bucket). Extracted so both callers share ONE source for this drilling
+ * bucket). Extracted so both callers share ONE source for this hydration
  * decision tree instead of two copies drifting apart.
  */
 ```
@@ -7561,7 +7561,7 @@ Collision guard for the `$other` reclaim. Across a kind's reclaiming slots (`rec
  * Emit per-field `<propName>() { ... },` inline accessor methods for
  * `fields` — the accessor-side counterpart to `emitFieldStorageLines`,
  * shared for the same reason (branch/group AND multi-field separatedList
- * both need identical per-field drilling for their accessors).
+ * both need identical per-field hydration for their accessors).
  */
 ```
 
@@ -7627,7 +7627,7 @@ A repeated slot's setter takes its values as rest arguments only when the slot's
 ```text
 // Field-carrying: $with setters spread `data` + patch the target
 // `_<name>` key, then re-wrap — producing another fluent wrapped node
-// with drill-in support (not a raw factory node). Typed params align
+// with hydration support (not a raw factory node). Typed params align
 // with the factory version's setter signatures.
 ```
 
@@ -8410,7 +8410,7 @@ seat the child into a config or tuple take the value arguments only.
 /**
 	 * Parser-symbol ID tables (from `loadGeneratedIdTables`). When present,
 	 * per-kind wrap functions stamp `$type: TSKindId.X` to convert the string
-	 * from core's readNode to the numeric runtime discriminant. When absent,
+	 * from core's readUntypedNode to the numeric runtime discriminant. When absent,
 	 * $type is inherited from data (string passthrough — legacy mode).
 	 */
 ```
@@ -8446,18 +8446,18 @@ seat the child into a config or tuple take the value arguments only.
 /** Child-factory surface when the node exposes positional child factories. */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::ResolveSlotDrillConfig`
+### `packages/codegen/src/emitters/wrap.ts::ResolveSlotHydrateConfig`
 
 ```text
 /**
- * Resolve the drill-in expression for a field storage assignment.
+ * Resolve the hydration expression for a field storage assignment.
  * Returns the raw-field read expression AND the inline accessor body.
  *
  * @param f - The assembled nonterminal field descriptor.
  * @param nodeMap - The assembled node map, needed to derive the per-field
- *   element type for generic type arguments on drill helpers.
+ *   element type for generic type arguments on hydrate helpers.
  * @returns An object with `storeExpr` (storage init from `data` via
- *   `readRawField` — bridges the `AnyNodeData` type which doesn't
+ *   `readRawField` — bridges the `AnyUntypedNode` type which doesn't
  *   declare per-kind `_<name>` properties) and `accessorBody` (reads
  *   `this._<name>` directly — the literal declares the property so
  *   TS resolves it from the inferred literal type).
@@ -8513,7 +8513,7 @@ seat the child into a config or tuple take the value arguments only.
  * inline object literal with `_<name>` storage, method shorthand accessors,
  * inline `$with` property, wrapped by `withMethods<T>`.
  *
- * No `Object.defineProperty`, no `freezeNodeData`, no `Record<string,unknown>` casts.
+ * No `Object.defineProperty`, no `freezeUntypedNode`, no `Record<string,unknown>` casts.
  *
  * @param node - The assembled node descriptor (kind, typeName, rawFactoryName).
  * @param fields - Named field slots for this node.
@@ -10970,7 +10970,7 @@ that kind was left alone.
 
 ### `packages/codegen/src/emitters/client-utils.ts::buildTriviaNodeType`
 
-The union of the grammar's trivia kind types, `AnyNodeData` when it has none: what a stored trivia entry is, and so what the `$trivia` getters return. It is the `trivia` member of the grammar's type map (`emitGrammarTypeMap`).
+The union of the grammar's trivia kind types, `AnyUntypedNode` when it has none: what a stored trivia entry is, and so what the `$trivia` getters return. It is the `trivia` member of the grammar's type map (`emitGrammarTypeMap`).
 
 ### `packages/codegen/src/emitters/client-utils.ts::module`
 
@@ -11676,7 +11676,7 @@ The direct-value parameter is optional when its slot is optional or holds fixed 
 
 ```text
 // The field's own value, widened. Indexing `Loose` instead
-// (`T.X.Loose['key']`) would reach through its NodeData passthrough
+// (`T.X.Loose['key']`) would reach through its UntypedNode passthrough
 // arm and re-admit the interface's accessor signature as a config
 // value — the leak the `Loose` projection already suffers.
 ```
@@ -12063,7 +12063,7 @@ Throws when one of the node's accessors or options has the name of a `ReadonlyAr
 
 ```text
 // Emit numeric TSKindId discriminant for leaf / keyword /
-// enum nodes, matching the AnyNodeData.$type: number contract. Falls back to
+// enum nodes, matching the AnyUntypedNode.$type: number contract. Falls back to
 // string literal for kinds not yet in kindEntries (TSGrammar-only or no
 // parser.c available).
 ```
@@ -12192,7 +12192,7 @@ True when a kind's render writes non-whitespace text for the arguments the dummy
 // from emitters use for the calling convention — a marker-carrying kind
 // (e.g. class_static_block's automatic_semicolon) is config-shaped, and
 // a direct-value call against its config coercion would hit the
-// NodeData passthrough and return the child unchanged.
+// UntypedNode passthrough and return the child unchanged.
 //
 // Excludes a sole field backed by a KindEnum (e.g. debugger_statement's
 // `semicolon`, coerced via coerceKindEnumStorage in the emitted
@@ -12265,7 +12265,7 @@ The owner's own kind is the path handed to `resolveConcreteKind`, so a slot that
 ```text
 // A recursively-built dummy (populating the child's own required fields,
 // not just its type discriminant) rather than a bare `{ type: X }` —
-// the factory's real signature expects full NodeData for this slot, not
+// the factory's real signature expects full UntypedNode for this slot, not
 // a type tag.
 ```
 
@@ -12351,7 +12351,7 @@ The placeholder seats the optional single-valued slots of the top-level stub as 
 
 ```text
 // Keyword-presence brands (boolean / bitflag) take a number / scalar at
-// the Config surface, not a NodeData / array. Pre-empt the generic
+// the Config surface, not an UntypedNode / array. Pre-empt the generic
 // structural fallback below.
 ```
 
@@ -12646,7 +12646,7 @@ leaf's factory instead of shadowing it (`attachProps(<leaf>, F.<key>)`).
 
 ```text
 /** The `@sittir/types` names the generated from-module may reference.
- *  `AnyNodeData` is unconditional (every leaf-registry entry names it); the
+ *  `AnyUntypedNode` is unconditional (every leaf-registry entry names it); the
  *  rest depend on per-kind emission decisions made long after the preamble
  *  is written, so the preamble names them all and `pruneUnusedImports`
  *  drops whichever the body never mentions. */
@@ -12677,7 +12677,7 @@ leaf's factory instead of shadowing it (`attachProps(<leaf>, F.<key>)`).
 // comment (shared.ts).
 ```
 
-### `packages/codegen/src/emitters/from.ts::emitBranchNodeDataPassthrough`
+### `packages/codegen/src/emitters/from.ts::emitBranchUntypedNodePassthrough`
 
 #### body
 
@@ -12686,7 +12686,7 @@ leaf's factory instead of shadowing it (`attachProps(<leaf>, F.<key>)`).
 // so the checker narrows the REMAINDER of the body to the config arm.
 // A plain `isNode` early-return does not: negative narrowing drops a
 // union constituent only when it is a strict subtype of the guard type,
-// and `AnyNodeData`'s optional members defeat that for every generated
+// and `AnyUntypedNode`'s optional members defeat that for every generated
 // kind interface — leaving the interface's accessor signatures in the
 // type of every `input.<field>` read below.
 ```
@@ -12701,7 +12701,7 @@ The config type the passthrough narrows to gains `string` when the kind accepts 
 
 ```text
 // ---------------------------------------------------------------------------
-// Container from() — accepts element args OR a self NodeData
+// Container from() — accepts element args OR a self UntypedNode
 // ---------------------------------------------------------------------------
 ```
 
@@ -12762,7 +12762,7 @@ admits). A slot of literals only passes its input through; the raw factory's lit
 
 ```text
 // ---------------------------------------------------------------------------
-// Leaf / enum from() — `string | NodeData` passthrough
+// Leaf / enum from() — `string | UntypedNode` passthrough
 // ---------------------------------------------------------------------------
 ```
 
@@ -13047,11 +13047,11 @@ In `_resolveOne`, a value that is neither a config object nor kinded data hoists
 #### body
 
 ```text
-// Gap 4: NodeData pass-through if $type matches; wrap as single child
+// Gap 4: UntypedNode pass-through if $type matches; wrap as single child
 // when it doesn't and target kind supports children. `altKinds` carries
 // the slot's OTHER union members (anonymous tokens the resolver
 // classification has no factory dispatch for, e.g. mod_item.content's
-// `';'` external form) — a NodeData already matching one is a VALID
+// `';'` external form) — an UntypedNode already matching one is a VALID
 // alternate branch and must pass through, not get auto-wrapped into the
 // primary branch's container (#128).
 ```
@@ -13075,7 +13075,7 @@ In `_resolveOne`, a value that is neither a config object nor kinded data hoists
 // Keyword-presence resolvers — pass-through. For scalar /
 // repeat-of-one booleans the factory inlines
 // `config.x ? '<literal>' : undefined` (no runtime helper); for
-// bitflags the `_bf` helper stamps the NodeData container. The
+// bitflags the `_bf` helper stamps the UntypedNode container. The
 // resolver layer only has to refuse the leaf-registry path so a
 // `true` input doesn't get misrouted through `_resolveScalar` into
 // a `boolean_literal` factory call.
@@ -13114,14 +13114,14 @@ A mixed-enum slot resolves a bare string by keyword extraction first, then lexic
 
 ```text
 /**
- * Emits wrap.ts — de-hoisted lazy view layer over readNode output.
+ * Emits wrap.ts — de-hoisted lazy view layer over readUntypedNode output.
  *
  * Mirrors the factory emitter (factories.ts) shape A one-for-one:
- *   - `_<name>` storage keys (enumerable, serializable stubs from readNode de-hoisted output)
- *   - Inline method shorthand `name()` accessors that perform lazy drill-in
+ *   - `_<name>` storage keys (enumerable, serializable stubs from readUntypedNode de-hoisted output)
+ *   - Inline method shorthand `name()` accessors that perform lazy hydration
  *   - Inline `$with` property that calls the factory for updates
  *   - `withMethods<T>` from per-grammar `./utils.js` wraps the literal
- *   - No `Object.defineProperty`, no `freezeNodeData`, no `Record<string,unknown>` casts
+ *   - No `Object.defineProperty`, no `freezeUntypedNode`, no `Record<string,unknown>` casts
  *
  * Consumes NodeMap directly. No routing-map / override-field-promotion
  * emission — the compiled override grammar bakes all field() placements
@@ -13180,7 +13180,7 @@ The `: T.<Kind>.Parsed` annotation on a wrap's signature, or an empty string whe
 
 ### `packages/codegen/src/emitters/wrap.ts::ParsedOfData`
 
-The wrap header's type from a wrapped datum to its declared `Parsed` node: a datum whose `$type` is a kind id in the parsed-by-kind-id map becomes that map's row, anything else stays as it is. `drillIn` and `drillInAll` return through it, so an accessor's return type is the child's declared surface and never an inference through the tree's recursion.
+The wrap header's type from a wrapped datum to its declared `Parsed` node: a datum whose `$type` is a kind id in the parsed-by-kind-id map becomes that map's row, anything else stays as it is. `hydrateChild` and `hydrateChildren` return through it, so an accessor's return type is the child's declared surface and never an inference through the tree's recursion.
 
 ### `packages/codegen/src/emitters/wrap.ts::renameUnusedTreeParam`
 
@@ -13191,7 +13191,7 @@ The wrap header's type from a wrapped datum to its declared `Parsed` node: a dat
 ```
 
 ```text
-// A wrap body with nothing to drill never reads `tree` — rename the param
+// A wrap body with nothing to hydrate never reads `tree` — rename the param
 // so the generated package lints clean.
 ```
 
@@ -13203,7 +13203,7 @@ The wrap header's type from a wrapped datum to its declared `Parsed` node: a dat
 // ---------------------------------------------------------------------------
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::ResolveSlotDrillConfig.elidedSeparatorIdsExpr`
+### `packages/codegen/src/emitters/wrap.ts::ResolveSlotHydrateConfig.elidedSeparatorIdsExpr`
 
 ```text
 // Elidable separated-list slot (`hasOptionalElements`): emitted expression
@@ -13211,7 +13211,7 @@ The wrap header's type from a wrapped datum to its declared `Parsed` node: a dat
 // position-splitting store path over filter+normalize.
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::resolveSlotDrillExprs`
+### `packages/codegen/src/emitters/wrap.ts::resolveSlotHydrateExprs`
 
 #### body
 
@@ -13251,7 +13251,7 @@ The wrap header's type from a wrapped datum to its declared `Parsed` node: a dat
 ```text
 // $other reclamation (option B): a kindEnum slot's value is a terminal
 // discriminant (operator / keyword). When that token is anonymous and
-// unfielded, read_node forwards it to `$other`, not `_<kind>` storage, so
+// unfielded, read_untyped_node forwards it to `$other`, not `_<kind>` storage, so
 // the nominal `??`-chain comes up empty. Append a final fallback that
 // reclaims it from `$other` by numeric kindId (`config.reclaimKindIdsExpr`,
 // the kindEnum member discriminants). When the token IS field-tagged the
@@ -13294,7 +13294,7 @@ The kinds the wrapper accepts as a child are the supertype's direct subtypes plu
 
 ```text
 // A member stored as its kind id (a keyword member of the union) has no
-// children to filter and nothing to drill: it is already the value the
+// children to filter and nothing to hydrate: it is already the value the
 // wrapper would return, so it passes through before any `$other` probe.
 ```
 
@@ -13303,7 +13303,7 @@ The kinds the wrapper accepts as a child are the supertype's direct subtypes plu
 ```text
 // `data.$other` flows through the generic `_filterWrapChildrenByKind<T>` /
 // `normalizeSingularWrapSlot<T>` helpers into an explicit
-// `drillIn<T.${typeName}>(...)` check below — the inferred `T` must stay
+// `hydrateChild<T.${typeName}>(...)` check below — the inferred `T` must stay
 // exactly `T.${typeName}` (the supertype's own member union), or the
 // explicit generic argument mismatches. Array-inclusive: the wire may
 // deliver the single member wrapped in a 1-element array.
@@ -13325,7 +13325,7 @@ The kinds the wrapper accepts as a child are the supertype's direct subtypes plu
 // anonymous tokens (no named member — e.g. this supertype's visible
 // occurrence wrapping a bare punctuation/lifetime token like `'`)
 // into a text-only leaf: no kind-keyed child, no `$other` bucket to
-// drill into. The occurrence itself already carries the leaf's own
+// hydrate into. The occurrence itself already carries the leaf's own
 // `$text`/`$span`/`$type` — exactly the bare-leaf shape the
 // transport side already accepts for such members — so treat the
 // node itself as the resolved member instead of requiring a named
@@ -13334,7 +13334,7 @@ The kinds the wrapper accepts as a child are the supertype's direct subtypes plu
 // transport slices its bytes from the tree, so it is its own member.
 ```
 
-After the kind-id pass-through the node is read through a typed local (`_NodeData` plus a `$other` typed as the member union), never the narrowed parameter: a supertype whose members are all kind-id valued would otherwise narrow the parameter to `never`. A supertype whose subtypes are all tokens or keywords has nothing to drill into at all, and its wrap returns the value unchanged.
+After the kind-id pass-through the node is read through a typed local (`_UntypedNode` plus a `$other` typed as the member union), never the narrowed parameter: a supertype whose members are all kind-id valued would otherwise narrow the parameter to `never`. A supertype whose subtypes are all tokens or keywords has nothing to expand into at all, and its wrap returns the value unchanged.
 
 ### `packages/codegen/src/emitters/wrap.ts::separatorIdsExprOf`
 
@@ -13363,7 +13363,7 @@ After the kind-id pass-through the node is read through a typed local (`_NodeDat
 // verbatim `$text` carries). For every other kind an all-anon-children
 // occurrence is genuinely EMPTY structure (an empty `{}` block, `()`
 // arguments) whose declared slot keys are a load-bearing wrap contract —
-// pass-through there breaks required-slot drills and from() field
+// pass-through there breaks required-slot hydrations and from() field
 // comparison.
 ```
 
@@ -13392,7 +13392,7 @@ After the kind-id pass-through the node is read through a typed local (`_NodeDat
 
 ```text
 // Shape A: inline object literal wrapped by withMethods<T>. No
-// Object.defineProperty, no freezeNodeData, no Record<string,unknown> cast.
+// Object.defineProperty, no freezeUntypedNode, no Record<string,unknown> cast.
 //
 // When $with setters are present, we hoist the literal to `const _node`
 // so the closures inside $with can reference it (arrow functions capture
@@ -13414,16 +13414,16 @@ After the kind-id pass-through the node is read through a typed local (`_NodeDat
 #### body
 
 ```text
-// Unnamed children slot -- pass through from data (stubs; drilled lazily by consumer).
+// Unnamed children slot -- pass through from data (stubs; hydrated lazily by consumer).
 // $other is a $-prefixed metadata key, not a _<name> storage key, so
 // $other doesn't have the `_` prefix convention — access via data.$other
-// which AnyNodeData declares as `readonly NodeMemberValue[] | undefined`.
+// which AnyUntypedNode declares as `readonly NodeMemberValue[] | undefined`.
 ```
 
 #### body
 
 ```text
-// Inline method shorthand accessors: `name()` returns drilled value via `this._<name>`.
+// Inline method shorthand accessors: `name()` returns hydrated value via `this._<name>`.
 ```
 
 #### body
@@ -13466,7 +13466,7 @@ Whether any of a node's slots has a delimiter set (`separatorIdsExprOf` returns 
 
 ### `packages/codegen/src/emitters/wrap.ts::emitSlotOrderDraftLine`
 
-Emits `const _order = (data as _NodeData).$slotOrder?.slice();` ahead of a wrap function's object literal when `dropsDelimiters` holds. `dropWireDelimiters` and `splitElidedWrapSlot` remove a dropped delimiter's entry from this working copy as they drop it. `emitFieldStorageLines` then spreads `...(_order && { $slotOrder: _order })` after the slot lines, so `$slotOrder` names exactly the entries the slots store. The draft is declared before the literal because a literal's own properties cannot hold a variable the later properties share.
+Emits `const _order = (data as _UntypedNode).$slotOrder?.slice();` ahead of a wrap function's object literal when `dropsDelimiters` holds. `dropWireDelimiters` and `splitElidedWrapSlot` remove a dropped delimiter's entry from this working copy as they drop it. `emitFieldStorageLines` then spreads `...(_order && { $slotOrder: _order })` after the slot lines, so `$slotOrder` names exactly the entries the slots store. The draft is declared before the literal because a literal's own properties cannot hold a variable the later properties share.
 
 ### `packages/codegen/src/emitters/wrap.ts::slotOrderName`
 
@@ -13508,15 +13508,15 @@ Kinds with a `reclaimsAnonymousChild` slot keep `$other`, because their wrap rea
 
 ### `packages/codegen/src/emitters/wrap.ts::WrapEmitter.finalize`
 
-Assembles the wrap module. `wrapNode`, the one function every wrapped node passes through (the parsed root, each child expanded on demand, trivia entries), runs its per-kind wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached.
+Assembles the wrap module. `wrapNode`, the one function every wrapped node passes through (the parsed root, each child hydrated on demand, trivia entries), runs its per-kind wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached.
 
-`readNode` and `readTreeNode` take an optional level count, which reaches the native read. `drillInSelf` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
+`readUntypedNode` and `readNode` take an optional level count, which reaches the native read. `hydrateSelf` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
 
 #### body
 
 ```text
 // `wrapNode`'s unknown-kind fallback (below) always calls
-// `_drillUnknownKindChildren`, which unconditionally uses both — so
+// `_hydrateUnknownKindChildren`, which unconditionally uses both — so
 // these must be `true` regardless of what `bodySource` (the per-kind
 // wrap functions) itself references.
 ```
@@ -13550,7 +13550,7 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 // the render-side string branch still accepts those). The bare
 // `$type` id passes through for the direct, already-flattened
 // keyword-literal case. A bare string (not object-wrapped) is
-// read_node\'s raw-read shape for a NAMED fixed-text keyword
+// read_untyped_node\'s raw-read shape for a NAMED fixed-text keyword
 // leaf (e.g. rust\'s mutable_specifier: "mut") — map it the
 // same way before falling through to the object-shaped checks.',
 ```
@@ -13606,19 +13606,19 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 // Kinds absent from the NodeMap entirely (no `_wrapTable` entry — e.g.
 // python's `case_pattern_group1`, a hidden alias-mint wrapper the
 // grammar produces but our model doesn't represent) have no dedicated
-// wrap function to drill into their own children.
-// `read_node.rs`'s one-level read (`read_children` / `read_child_stub`)
+// wrap function to hydrate into their own children.
+// `read_untyped_node.rs`'s one-level read (`read_slots` / `stub_of`)
 // leaves an unlabeled named child with sub-structure as a shallow stub
 // (`$parentHandle`/`$childIndex`, no fields of its own) — normally a
-// generated wrap function's `drillIn` call materializes it fully via
-// `readTreeNode`. With no such function for the PARENT kind, nothing
-// ever calls `drillIn` on the stub, so it reaches the native
+// generated wrap function's `hydrateChild` call materializes it fully via
+// `readNode`. With no such function for the PARENT kind, nothing
+// ever calls `hydrateChild` on the stub, so it reaches the native
 // transport deserializer still shallow — and the child's OWN
 // transport struct then fails, missing every one of its real fields
 // (confirmed via `tool probe-kind`: python's `case_pattern` → `content`
 // → `_dotted_name` arrives as `{$type, $text, $span, ...}` only, no
 // `_identifier`, because `case_pattern_group1` triggers exactly this
-// fallback). Drill in every `_`-prefixed property here, whatever key the
+// fallback). Hydrate every `_`-prefixed property here, whatever key the
 // reader stored it under: a slot name, or the child's kind where the
 // parent has no slot for it.
 ```
@@ -13628,7 +13628,7 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 ```text
 // `_wrapTrivia` — a read node's trivia entries (leading, trailing, and
 // each inner gap's, walked by `mapTriviaEntries`) are children like any
-// slot child, so each drills in through `drillInAll` and dispatches
+// slot child, so each hydrates through `hydrateChildren` and dispatches
 // through `wrapNode` by its own `$type`: a comment entry exposes its
 // kind's accessors. `wrapNode`
 // wraps the trivia before dispatch, once per node; `_aliasEnvelope`
@@ -14024,7 +14024,7 @@ render helper.
 // arrive under the alias occurrence's own id (`alias_sym_*`). The
 // grammar-agnostic reader stores such a node's single unlabeled
 // child under a kind-keyed slot (`{ $type: <aliasId>,
-// _<childKind>: <child> }` — read_node.rs kind-named-slot routing),
+// _<childKind>: <child> }` — read_untyped_node.rs kind-named-slot routing),
 // so no variant struct can decode the wrapper directly (decode
 // trials would probe the wrong object). Unwrap the kind-keyed slot
 // and re-dispatch Self on the concrete child, which carries its own
@@ -14282,7 +14282,7 @@ keeps that id on the `Identifier` member, where a read identifier belongs.
  * True when every SCALAR-capable source of this slot is grammar-immediate —
  * the `ADJACENT` const on the slot's `SlotValue` carrier. Verbatim text on
  * the wire erases kind identity (a text-collapsed leaf, an inline terminal
- * and an unexpanded read stub all arrive as text), so the carrier can only
+ * and an unhydrated read stub all arrive as text), so the carrier can only
  * suppress the seam space when ALL sources that can produce one forbid
  * preceding whitespace: inline `TerminalValue`s via their own `immediate`
  * stamp, leaf kind refs via the referenced node's stamp. Non-leaf refs
@@ -14507,7 +14507,7 @@ optional.
 #### body
 
 ```text
-// Generator-owned NodeData stores raw fields as `_<storageName>` top-level
+// Generator-owned UntypedNode stores raw fields as `_<storageName>` top-level
 // keys. Keep the JS/native render boundary dumb by teaching the generated
 // napi structs to read the same storage keys directly. Symmetric for named
 // and unnamed slots (cleanup-rules §E1).
@@ -14543,7 +14543,7 @@ optional.
 ```text
 /**
  * The `SlotValue` carrier every slot position holds — one uniform tolerance
- * for values the position's own type cannot represent (an unexpanded read
+ * for values the position's own type cannot represent (an unhydrated read
  * stub, or free text where no text kind is admitted). `ADJACENT` rides on
  * the type because it is a grammar fact about the position, not about the
  * value that arrives there.
@@ -16527,7 +16527,7 @@ The per-grammar runtime glue shared by every grammar package, emitted into `pack
 
 ### `packages/codegen/src/emitters/native-crate.ts::NATIVE_RENDER_TRANSPORT_ABI`
 
-The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries), and the read calls' arguments (a read takes a level count). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
+The version of the wire between the JS packages and a native build: the render transport shape JS sends, the read shape the native reader sends back (`$type` / `$displayType`, which children and tokens arrive, when `$text` is present, which of `$handle` / `$parentHandle` / `$treeHandle` a node carries), and the read calls' names and arguments (a read takes a level count). It is the one source for both sides of the handshake: `emitBackend` bakes it into each package's `backend.ts`, and `nativeCrateFiles` into each crate's generated `lib.rs` (passed to `napi_engine!`, reported by the native engine). `backend.ts` refuses a native build reporting a different value. The render-module hash covers only the render templates, so a reader change with unchanged templates passes the hash check; bump this whenever any of these changes, and regenerate every grammar.
 
 ### `packages/codegen/src/emitters/types.ts::emitNodeSurfaceInterfaces`
 

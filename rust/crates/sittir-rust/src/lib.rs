@@ -28,7 +28,7 @@ use sittir_core::engine::EngineGrammar;
 use render::{render_transport_parts, RenderRoot, RENDER_MODULE_HASH};
 
 #[cfg(feature = "napi-bindings")]
-const NATIVE_RENDER_TRANSPORT_ABI: u32 = 5;
+const NATIVE_RENDER_TRANSPORT_ABI: u32 = 6;
 
 #[derive(Clone, Copy, Default)]
 pub struct RustGrammar;
@@ -47,7 +47,7 @@ impl EngineGrammar for RustGrammar {
     }
 }
 
-impl sittir_core::read_node::ReadModel for RustGrammar {
+impl sittir_core::read_untyped_node::ReadModel for RustGrammar {
     fn wire_slot(
         &self,
         parent: sittir_core::types::KindId,

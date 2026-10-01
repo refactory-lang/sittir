@@ -19,7 +19,7 @@ export function renderMainFunction() {
  * byte for byte.
  *
  * Reading expands one level at a time, so a freshly parsed root has nothing
- * expanded below it. Nothing was rebuilt, so nothing is re-spelled: the
+ * hydrated below it. Nothing was rebuilt, so nothing is re-spelled: the
  * whole file comes back as its own captured text, comments and blank lines
  * and indentation included. Edit any part of it and only what you rebuilt
  * renders canonically; everything you left alone still comes back verbatim.

@@ -1,9 +1,8 @@
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
+import { isStub } from '@sittir/common/utils';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
 import { nativeShownKindId } from '../validate/shown-kind.ts';
-
-type ReadTreeNode = (handle: unknown, nodeHandle?: number, childIndex?: number) => unknown;
 
 interface CommonModule {
 	loadLanguageForGrammar(grammar: string): Promise<{
@@ -11,12 +10,12 @@ interface CommonModule {
 		lang: unknown;
 	}>;
 	treeHandle(tree: unknown, source?: string, kindIdFromName?: (kind: string) => number | undefined): unknown;
-	loadNativeRender(grammar: string): Promise<(node: AnyNodeData) => string>;
-	loadReadTreeNode(grammar: string): Promise<ReadTreeNode | null>;
+	loadNativeRender(grammar: string): Promise<(node: AnyUntypedNode) => string>;
+	readNodeOf(grammar: string): Promise<((handle: unknown, parentHandle?: number, childIndex?: number) => unknown) | null>;
 	loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined>;
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
 	loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined>;
-	materializeWrappedNodeData(root: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyNodeData;
+	materialize(root: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyUntypedNode;
 }
 
 interface AccessorThrowRecord {
@@ -74,7 +73,7 @@ function collectChildren(node: WalkNode): unknown[] {
 		try {
 			children.push(value.call(node));
 		} catch {
-			// Ignore drill-in failures; traversal is best-effort diagnostic output.
+			// Ignore hydration failures; traversal is best-effort diagnostic output.
 		}
 	}
 	return children;
@@ -92,10 +91,7 @@ function walkTree(root: unknown, visit: (node: WalkNode) => void): void {
 		if (!isWalkNode(value)) return;
 		const ref = value as object;
 		if (seenRefs.has(ref)) return;
-		const coordKey =
-			value.$parentHandle !== undefined && value.$childIndex !== undefined
-				? `${value.$parentHandle}:${value.$childIndex}`
-				: undefined;
+		const coordKey = isStub(value) ? `${value.$parentHandle}:${value.$childIndex}` : undefined;
 		if (coordKey !== undefined && seenCoords.has(coordKey)) return;
 		seenRefs.add(ref);
 		if (coordKey !== undefined) seenCoords.add(coordKey);
@@ -114,8 +110,8 @@ export async function run(opts: WalkOptions): Promise<number> {
 	const render = opts.render;
 
 	const common = await loadCommon();
-	const readTreeNode = await common.loadReadTreeNode(grammar);
-	if (readTreeNode === null) {
+	const readNode = await common.readNodeOf(grammar);
+	if (readNode === null) {
 		process.stderr.write(`walk: no wrap module available for grammar '${grammar}'\n`);
 		return 1;
 	}
@@ -146,7 +142,7 @@ export async function run(opts: WalkOptions): Promise<number> {
 	}
 
 	const handle = common.treeHandle(tree, source, kindIdFromName);
-	const root = readTreeNode(handle);
+	const root = readNode(handle);
 	const counts = new Map<string, number>();
 	let total = 0;
 	let renderFailures = 0;
@@ -161,7 +157,7 @@ export async function run(opts: WalkOptions): Promise<number> {
 		total += 1;
 		if (!render) return;
 		try {
-			const renderable = common.materializeWrappedNodeData(node, onAccessorThrow);
+			const renderable = common.materialize(node, onAccessorThrow);
 			const rendered = renderNode(renderable);
 			process.stdout.write(`${kind}: ${JSON.stringify(rendered)}\n`);
 		} catch (error) {

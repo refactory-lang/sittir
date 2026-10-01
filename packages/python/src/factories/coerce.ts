@@ -6,7 +6,7 @@ import { lexedConfig, numberText, spelledForm, spelledInterior } from '@sittir/c
 import type * as T from '../types-internal.js';
 import { TSKindId, KIND_NAMES } from '../types.js';
 import { Delimiter } from '@sittir/common/utils';
-import type { AnyNodeData, LooseValue, NonEmptyArray, SpelledAffix, WithSpelling } from '@sittir/types';
+import type { AnyUntypedNode, LooseValue, NonEmptyArray, SpelledAffix, WithSpelling } from '@sittir/types';
 import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, isNodeOfKind } from '@sittir/common/utils';
 import { isNode } from '../utils.js';
 
@@ -215,7 +215,7 @@ export type _FromMap = typeof _fromMap;
 interface _LeafEntry {
 	readonly values?: readonly string[];
 	readonly pattern?: RegExp;
-	readonly factory: (text: string) => AnyNodeData | number;
+	readonly factory: (text: string) => AnyUntypedNode | number;
 }
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	import_prefix: { pattern: /^(?:(?:\.)+)$/u, factory: F.buildImportPrefix },
@@ -315,7 +315,7 @@ const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'escape_sequence_named'
 ]);
 
-function _buildGuardedText(v: string, kind: string): AnyNodeData | number {
+function _buildGuardedText(v: string, kind: string): AnyUntypedNode | number {
 	const entry = _leafRegistry[kind]!;
 	if (entry.values !== undefined && !entry.values.includes(v)) {
 		throw new Error(`${JSON.stringify(v)} is not the text of ${kind}: expected one of ${JSON.stringify(entry.values)}`);
@@ -370,7 +370,7 @@ const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {
 	_simple_pattern: ['true', 'false', 'none', 'wildcard_pattern']
 };
 
-function _resolveBareText(v: string, kinds: readonly string[]): AnyNodeData | number | undefined {
+function _resolveBareText(v: string, kinds: readonly string[]): AnyUntypedNode | number | undefined {
 	for (const kind of _TEXT_KINDS_BY_RANK) {
 		const direct = kinds.includes(kind);
 		const envelope = direct
@@ -437,7 +437,7 @@ function _resolveKindEnumScalar<T>(v: _LooseFieldInput, resolve: () => T): T {
 	return typeof v === 'number' || typeof v === 'string' ? (v as T) : resolve();
 }
 
-function _resolveScalar(v: boolean | number | bigint): AnyNodeData | number | undefined {
+function _resolveScalar(v: boolean | number | bigint): AnyUntypedNode | number | undefined {
 	if (typeof v === 'boolean') return v ? TSKindId.True : TSKindId.False;
 	if (typeof v === 'number' || typeof v === 'bigint') {
 		const text = String(v);
@@ -454,7 +454,7 @@ const _KEYWORD_BRANCH_BY_TEXT: Record<string, string | undefined> = {
 	raise: 'raise_statement',
 	yield: 'yield'
 };
-const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyNodeData | number) | undefined> = {
+const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyUntypedNode | number) | undefined> = {
 	return_statement: () => F.buildReturnStatement(),
 	raise_statement: () => F.buildRaiseStatement(),
 	yield: () => F.buildYield()
@@ -1382,9 +1382,9 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 }
 
 /** Narrows a coercer input to its config arm. A bare `isNode` check
- *  cannot: the NodeData arm is not a strict subtype of the config arm, so
+ *  cannot: the UntypedNode arm is not a strict subtype of the config arm, so
  *  negative narrowing leaves it in place. */
-function _isLooseConfig<C>(v: C | AnyNodeData): v is C {
+function _isLooseConfig<C>(v: C | AnyUntypedNode): v is C {
 	return !isNode(v);
 }
 function _requireField<T>(kind: string, slot: string, v: T | undefined | null): T {

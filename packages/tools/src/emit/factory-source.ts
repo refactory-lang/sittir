@@ -329,7 +329,7 @@ function admitsDirectly(kinds: readonly string[], node: Printed, loose: LooseFac
 	return typeof node.$type === 'number' && kinds.some((k) => loose.kindIdOfName(k) === node.$type);
 }
 
-function buildsNodeData(kind: string, loose: LooseFacts): boolean {
+function buildsUntypedNode(kind: string, loose: LooseFacts): boolean {
 	const modelType = loose.modelTypes[kind];
 	return modelType !== 'enum' && modelType !== 'keyword' && modelType !== 'punctuation';
 }
@@ -474,7 +474,7 @@ function loosenValue(
 		inner instanceof Printed &&
 		inner.kind !== undefined &&
 		!admitsDirectly(kinds, inner, loose) &&
-		(buildsNodeData(inner.kind, loose) || !kinds.some((k) => ctx.enumKinds?.has(k)))
+		(buildsUntypedNode(inner.kind, loose) || !kinds.some((k) => ctx.enumKinds?.has(k)))
 	) {
 		const arms = branch.filter((b) => loose.bareAccepts[b]?.includes(inner.kind!));
 		if (arms.length === 1 && arms[0] === value.kind) return loosenValue(inner, kinds, defaultArm, ctx);
@@ -745,8 +745,8 @@ import {
 	loadKindNameFromId,
 	loadLanguageForGrammar,
 	loadNodeModel,
-	loadReadTreeNode,
-	materializeWrappedNodeData,
+	readNodeOf,
+	materialize,
 	type ModelFullForm
 } from '../validate/common.ts';
 import { Delimiter } from '@sittir/common/utils';
@@ -965,8 +965,8 @@ export async function emitFactorySourceText(
 	parser.setLanguage(lang);
 	const tree = parser.parse(source);
 	if (!tree || tree.rootNode.hasError) throw new Error(`emit-factory-source: the ${grammar} parse has errors`);
-	const readTreeNode = await loadReadTreeNode(grammar);
-	if (!readTreeNode) throw new Error(`emit-factory-source: no wrap module for ${grammar}`);
+	const readNode = await readNodeOf(grammar);
+	if (!readNode) throw new Error(`emit-factory-source: no wrap module for ${grammar}`);
 	const kindIdFromName = await loadKindIdFromName(grammar);
 	const handle = await buildReadHandle(grammar, tree, source, options.backend ?? 'native', kindIdFromName);
 	const model = await loadNodeModel(grammar);
@@ -984,7 +984,7 @@ export async function emitFactorySourceText(
 		typeof table[id] === 'string' ? (table[id] as string) : undefined;
 	const catalog = catalogEntriesOf(await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
 	const { findEntryForLiteralText } = await load('symbolTable');
-	const root = materializeWrappedNodeData(readTreeNode(handle)) as ReadNodeLike;
+	const root = materialize(readNode(handle)) as ReadNodeLike;
 	seatFormTree(root, { kindNameFromId, seats: model.seats });
 	const textLeafKinds = new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'pattern'));
 	spellTriviaTree(root, {

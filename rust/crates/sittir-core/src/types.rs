@@ -1,4 +1,4 @@
-//! Primitive `NodeData` + `FieldValue` + `Span` + `Source` + `Edit` +
+//! Primitive `UntypedNode` + `FieldValue` + `Span` + `Source` + `Edit` +
 //! `KindId` — the de-hoisted boundary shape that crosses JS↔Rust, plus
 //! the numeric kind discriminant for the KindID runtime migration. See
 //! data-model.md §1 for the authoritative contract.
@@ -84,26 +84,26 @@ impl From<KindId> for u16 {
     }
 }
 
-/// Leading, trailing and inner trivia (comments) for a `NodeData`. A read computes
+/// Leading, trailing and inner trivia (comments) for an `UntypedNode`. A read computes
 /// it from the node's siblings; `$trivia()` attaches it on the TS side.
 /// Carried across the wire for native render support. Mirrors
 /// `NodeTrivia` in `@sittir/types`.
 ///
-/// Each entry is a fully-formed `NodeData` (e.g. a `line_comment` or
+/// Each entry is a fully-formed `UntypedNode` (e.g. a `line_comment` or
 /// `block_comment` factory node) that renders independently via its own
 /// template.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct NodeTrivia {
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub leading: Option<Vec<NodeData>>,
+    pub leading: Option<Vec<UntypedNode>>,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub trailing: Option<Vec<NodeData>>,
+    pub trailing: Option<Vec<UntypedNode>>,
 
     /// Extras inside a node with no named child to own them, keyed by the
     /// gap they sit in: the model slot whose position the gap holds.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub inner: Option<BTreeMap<String, Vec<NodeData>>>,
+    pub inner: Option<BTreeMap<String, Vec<UntypedNode>>>,
 }
 
 /// A handle a read stamps on a node, by what it names. Every handle is
@@ -122,7 +122,7 @@ pub enum NodeHandle {
     /// it reads this node.
     Own(u64),
     /// `$parentHandle`: the parent's handle, beside the node's `child_index`.
-    /// The pair is the coordinate a stub is expanded at.
+    /// The pair is the coordinate a stub is hydrated at.
     Parent(u64),
     /// `$treeHandle`: any handle of the node's tree, on a node nothing
     /// re-reads (a deep read's leaf, a trivia entry). It names only the tree
@@ -140,7 +140,7 @@ impl NodeHandle {
     }
 }
 
-/// Primitive NodeData — the wire shape. Fixed `$`-metadata plus dynamic
+/// Primitive UntypedNode — the wire shape. Fixed `$`-metadata plus dynamic
 /// `_<slot>` storage keys (and optional `$other`) matching the
 /// de-hoisted JS read/factory surface. Enrichment (`$variant`,
 /// etc.) is TS-side only.
@@ -151,7 +151,7 @@ impl NodeHandle {
 /// without an explicit custom impl. Phase B-inverse of the KindID runtime
 /// migration (2026-04-30).
 #[derive(Debug, Clone, PartialEq)]
-pub struct NodeData {
+pub struct UntypedNode {
     pub type_: KindId,
 
     /// The kind the parser shows the node as (`Node::kind_id`), stamped
@@ -169,7 +169,7 @@ pub struct NodeData {
     /// properties (de-hoisted storage).
     pub fields: Option<IndexMap<String, FieldValue>>,
 
-    pub children: Option<Vec<NodeData>>,
+    pub children: Option<Vec<UntypedNode>>,
 
     pub text: Option<String>,
 
@@ -181,25 +181,25 @@ pub struct NodeData {
     pub handle: Option<NodeHandle>,
 
     /// Position of this node within its parent's children array.
-    /// Set during `read_children` traversal. Enables O(1) child-index
+    /// Set during `read_slots` traversal. Enables O(1) child-index
     /// navigation: `parent.child(child_index)` instead of DFS by id.
     /// `None` on root nodes and factory-constructed nodes.
     pub child_index: Option<u16>,
 
     /// Trivia this node owns: comments and the other tree-sitter extras
-    /// `read_children` skips because they carry no field name. A read gives
-    /// every extra exactly one owner -- see `read_node::node_trivia` for the
+    /// `read_slots` skips because they carry no field name. A read gives
+    /// every extra exactly one owner -- see `read_untyped_node::node_trivia` for the
     /// placement rules. A factory-constructed node gets it from `$trivia()`,
     /// and both a `$with` rebuild and construction from a read carry it onto
     /// the node they return, since trivia is not config.
     ///
-    /// Each entry is a fully-formed `NodeData` (e.g. a `line_comment`) that
+    /// Each entry is a fully-formed `UntypedNode` (e.g. a `line_comment`) that
     /// renders independently via its own template. Mirrors `NodeTrivia` in
     /// `@sittir/types`.
     pub trivia_data: Option<NodeTrivia>,
 
     /// Document-order route names (field or kind) of this node's named
-    /// slot children, one entry per child, stamped by `read_children`
+    /// slot children, one entry per child, stamped by `read_slots`
     /// when the node has two or more named slot buckets. The per-bucket
     /// `_<slot>` arrays each preserve document order internally, but the
     /// wire cannot express CROSS-bucket interleave — and scalar-collapsed
@@ -227,7 +227,7 @@ pub struct NodeData {
 }
 
 #[derive(Serialize)]
-struct NodeDataSer<'a> {
+struct UntypedNodeSer<'a> {
     #[serde(rename = "$type")]
     type_: KindId,
     #[serde(
@@ -248,7 +248,7 @@ struct NodeDataSer<'a> {
         skip_serializing_if = "Option::is_none",
         serialize_with = "serialize_children"
     )]
-    children: &'a Option<Vec<NodeData>>,
+    children: &'a Option<Vec<UntypedNode>>,
     #[serde(rename = "$text", default, skip_serializing_if = "Option::is_none")]
     text: &'a Option<String>,
     #[serde(rename = "$span", default, skip_serializing_if = "Option::is_none")]
@@ -290,7 +290,7 @@ struct NodeDataSer<'a> {
 }
 
 #[derive(Deserialize)]
-struct NodeDataDe {
+struct UntypedNodeDe {
     #[serde(rename = "$type")]
     type_: KindId,
     #[serde(rename = "$displayType", default)]
@@ -304,7 +304,7 @@ struct NodeDataDe {
     #[serde(flatten, deserialize_with = "deserialize_slot_fields", default)]
     fields: Option<IndexMap<String, FieldValue>>,
     #[serde(rename = "$other", deserialize_with = "deserialize_children", default)]
-    children: Option<Vec<NodeData>>,
+    children: Option<Vec<UntypedNode>>,
     #[serde(rename = "$text", default)]
     text: Option<String>,
     #[serde(rename = "$span", default)]
@@ -367,18 +367,18 @@ where
     for (key, value) in raw {
         let Some(name) = key.strip_prefix('_') else {
             return Err(serde::de::Error::custom(format!(
-                "unexpected NodeData slot key {key:?}; expected _<slot>"
+                "unexpected UntypedNode slot key {key:?}; expected _<slot>"
             )));
         };
         if name.is_empty() {
-            return Err(serde::de::Error::custom("NodeData slot key '_' is invalid"));
+            return Err(serde::de::Error::custom("UntypedNode slot key '_' is invalid"));
         }
         fields.insert(name.to_string(), value);
     }
     Ok(Some(fields))
 }
 
-fn serialize_children<S>(children: &Option<Vec<NodeData>>, serializer: S) -> Result<S::Ok, S::Error>
+fn serialize_children<S>(children: &Option<Vec<UntypedNode>>, serializer: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
 {
@@ -396,7 +396,7 @@ where
     seq.end()
 }
 
-fn deserialize_children<'de, D>(deserializer: D) -> Result<Option<Vec<NodeData>>, D::Error>
+fn deserialize_children<'de, D>(deserializer: D) -> Result<Option<Vec<UntypedNode>>, D::Error>
 where
     D: Deserializer<'de>,
 {
@@ -415,9 +415,9 @@ where
     Ok(Some(children))
 }
 
-impl Serialize for NodeData {
+impl Serialize for UntypedNode {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        NodeDataSer {
+        UntypedNodeSer {
             type_: self.type_,
             display_type: &self.display_type,
             source: self.source,
@@ -449,14 +449,14 @@ impl Serialize for NodeData {
     }
 }
 
-impl<'de> Deserialize<'de> for NodeData {
+impl<'de> Deserialize<'de> for UntypedNode {
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        let wire = NodeDataDe::deserialize(deserializer)?;
+        let wire = UntypedNodeDe::deserialize(deserializer)?;
         let mut fields = wire.fields.unwrap_or_default();
         for (name, value) in wire.legacy_fields {
             if fields.insert(name.clone(), value).is_some() {
                 return Err(serde::de::Error::custom(format!(
-                    "duplicate NodeData slot provided via both $fields and _{name}"
+                    "duplicate UntypedNode slot provided via both $fields and _{name}"
                 )));
             }
         }
@@ -465,14 +465,14 @@ impl<'de> Deserialize<'de> for NodeData {
             (Some(h), None, None) => Some(NodeHandle::Own(h)),
             (None, Some(_), None) if wire.child_index.is_none() => {
                 return Err(serde::de::Error::custom(
-                    "NodeData carries $parentHandle without $childIndex: a stub is addressed by the pair",
+                    "UntypedNode carries $parentHandle without $childIndex: a stub is addressed by the pair",
                 ))
             }
             (None, Some(h), None) => Some(NodeHandle::Parent(h)),
             (None, None, Some(h)) => Some(NodeHandle::Tree(h)),
             _ => {
                 return Err(serde::de::Error::custom(
-                    "NodeData carries more than one of $handle, $parentHandle, $treeHandle",
+                    "UntypedNode carries more than one of $handle, $parentHandle, $treeHandle",
                 ))
             }
         };
@@ -501,7 +501,7 @@ impl<'de> Deserialize<'de> for NodeData {
     }
 }
 
-/// Where a `NodeData` originated. `Ts` = `readNode` over a tree-sitter
+/// Where an `UntypedNode` originated. `Ts` = `readUntypedNode` over a tree-sitter
 /// tree; `Sg` = ast-grep path; `Factory` = constructed on the TS side.
 ///
 /// Wire shape is a numeric u8: 0 = Ts, 1 = Sg, 2 = Factory.
@@ -576,7 +576,7 @@ impl napi::bindgen_prelude::TypeName for Source {
     }
 }
 
-/// Value stored in a `NodeData` named slot map. Untagged so the wire
+/// Value stored in an `UntypedNode` named slot map. Untagged so the wire
 /// shape is simply the value (object | array | string | boolean) at each
 /// `_<slot>` property, matching the JS de-hoisted layout. `Bool` carries
 /// presence flags (e.g. a separated list's `_trailing_sep`) — slots only,
@@ -586,8 +586,8 @@ impl napi::bindgen_prelude::TypeName for Source {
 /// `Vec<Option<...>>`.
 #[derive(Debug, Clone, PartialEq)]
 pub enum FieldValue {
-    Single(Box<NodeData>),
-    Multiple(Vec<Option<NodeData>>),
+    Single(Box<UntypedNode>),
+    Multiple(Vec<Option<UntypedNode>>),
     Text(String),
     Bool(bool),
 }
@@ -604,7 +604,7 @@ impl Serialize for FieldValue {
                 let mut seq = serializer.serialize_seq(Some(items.len()))?;
                 for item in items {
                     match item {
-                        None => seq.serialize_element(&None::<NodeData>)?,
+                        None => seq.serialize_element(&None::<UntypedNode>)?,
                         Some(node) => match scalar_leaf_value(node) {
                             Some(FieldScalar::Text(text)) => seq.serialize_element(text)?,
                             Some(FieldScalar::KindId(kind)) => {
@@ -644,7 +644,7 @@ impl<'de> Deserialize<'de> for FieldValue {
                 map: A,
             ) -> Result<Self::Value, A::Error> {
                 let node =
-                    NodeData::deserialize(serde::de::value::MapAccessDeserializer::new(map))?;
+                    UntypedNode::deserialize(serde::de::value::MapAccessDeserializer::new(map))?;
                 Ok(FieldValue::Single(Box::new(node)))
             }
 
@@ -682,7 +682,7 @@ impl<'de> Deserialize<'de> for FieldValue {
 #[derive(Deserialize)]
 #[serde(untagged)]
 enum FieldValueItem {
-    Node(NodeData),
+    Node(UntypedNode),
     Text(String),
     KindId(KindId),
 }
@@ -692,7 +692,7 @@ enum FieldScalar<'a> {
     KindId(KindId),
 }
 
-fn scalar_leaf_value(node: &NodeData) -> Option<FieldScalar<'_>> {
+fn scalar_leaf_value(node: &UntypedNode) -> Option<FieldScalar<'_>> {
     if node.fields.is_some() || node.children.is_some() {
         return None;
     }
@@ -714,7 +714,7 @@ fn scalar_leaf_value(node: &NodeData) -> Option<FieldScalar<'_>> {
     Some(FieldScalar::KindId(node.type_))
 }
 
-fn scalar_child_value(node: &NodeData) -> Option<FieldScalar<'_>> {
+fn scalar_child_value(node: &UntypedNode) -> Option<FieldScalar<'_>> {
     if node.fields.is_some() || node.children.is_some() {
         return None;
     }
@@ -727,8 +727,8 @@ fn scalar_child_value(node: &NodeData) -> Option<FieldScalar<'_>> {
     Some(FieldScalar::KindId(node.type_))
 }
 
-fn scalar_text_leaf(text: String) -> NodeData {
-    NodeData {
+fn scalar_text_leaf(text: String) -> UntypedNode {
+    UntypedNode {
         type_: KindId(0),
         display_type: None,
         source: Source::Ts,
@@ -747,8 +747,8 @@ fn scalar_text_leaf(text: String) -> NodeData {
     }
 }
 
-fn scalar_kind_leaf(kind: KindId) -> NodeData {
-    NodeData {
+fn scalar_kind_leaf(kind: KindId) -> UntypedNode {
+    UntypedNode {
         type_: kind,
         display_type: None,
         source: Source::Ts,
@@ -770,7 +770,7 @@ fn scalar_kind_leaf(kind: KindId) -> NodeData {
 /// A transport field that accepts either a single value or an array of values
 /// from JS.
 ///
-/// The JS `readNode` path stores single-element `multiple:true` fields as
+/// The JS `readUntypedNode` path stores single-element `multiple:true` fields as
 /// scalars rather than length-1 arrays. Using `Vec<T>` for such fields causes
 /// napi-rs to fail with "Given napi value is not an array". `OneOrMany<T>`
 /// accepts both shapes in its `FromNapiValue` impl and always presents a
@@ -847,7 +847,7 @@ impl<T> napi::bindgen_prelude::TypeName for OneOrMany<T> {
     }
 }
 
-/// Byte-range for a `NodeData` within its source string. `start`/`end`
+/// Byte-range for an `UntypedNode` within its source string. `start`/`end`
 /// are UTF-8 byte offsets (ast-grep / tree-sitter convention).
 /// `#[napi(object)]` (gated on napi-bindings feature) adds
 /// `FromNapiValue` / `ToNapiValue` so transport structs can include

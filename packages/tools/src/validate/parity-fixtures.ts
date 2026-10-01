@@ -6,7 +6,7 @@
  * Each successful kind probe that the RT validator verifies (render OK,
  * re-parse OK, AST-match OK) emits two paired fixtures:
  *
- *   - `RenderFixture`    — {NodeData input → expected rendered string}.
+ *   - `RenderFixture`    — {UntypedNode input → expected rendered string}.
  *                          The Rust engine must reproduce `expectedOutput`
  *                          byte-for-byte (SC-001a).
  *   - `RoundTripFixture` — {source + reparse s-exp}. The Rust engine
@@ -30,7 +30,7 @@ import {
 } from './read-render-parse.ts';
 import { load } from '../codegen-surface.ts';
 import { loadNativeEngine } from './common.ts';
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 
 const { renderModuleFixturesPath, renderModuleLeftOutPath } = await load('renderModulePaths');
 
@@ -90,7 +90,7 @@ export async function extractParityFixtures(grammar: string): Promise<ExtractRes
 			throw new Error(`parity-fixtures[${grammar}]: a render fixture input still carries a coordinate`);
 		}
 		try {
-			return engine.render(fx.input as AnyNodeData).toString() === fx.expectedOutput;
+			return engine.render(fx.input as AnyUntypedNode).toString() === fx.expectedOutput;
 		} catch {
 			return false;
 		}

@@ -1,5 +1,5 @@
 import type {
-	AnyNodeData,
+	AnyUntypedNode,
 	ApiSurface,
 	Engine,
 	EngineIdentity,
@@ -18,7 +18,7 @@ import type {
 import { bindTree, engineOf, inEngine, isLive, sameLanguage, type EngineHandle } from './engine-scope.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import {
-	isEmptyNode as isEmptyNodeData,
+	isEmptyNode as isEmptyUntypedNode,
 	isErrorNode,
 	isFactoryNode,
 	isNode,
@@ -173,13 +173,13 @@ function assembleEngine<API extends LanguageAPI>(
 		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),
 		isFactoryNode: (value): value is API['node'] => isFactoryNode(value) && inLanguage(value),
 		isErrorNode: (value): value is API['node'] => isErrorNode(value) && inLanguage(value),
-		isEmptyNode: ((node: AnyNodeData): boolean => {
+		isEmptyNode: ((node: AnyUntypedNode): boolean => {
 			const kind = hooks.trivia.kindName(node.$type);
 			return (
 				engine.isNode(node) &&
 				kind !== undefined &&
 				hooks.trivia.innerGaps[kind] !== undefined &&
-				isEmptyNodeData(node)
+				isEmptyUntypedNode(node)
 			);
 		}) as Engine<API>['isEmptyNode'],
 		parse(source, parseOptions) {

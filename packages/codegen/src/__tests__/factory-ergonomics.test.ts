@@ -32,7 +32,7 @@ describe('factory ergonomics', () => {
 	});
 
 	describe('Gap 4: single value at wrapper position auto-wraps', () => {
-		it('_resolveOneBranch wraps non-matching NodeData as single child', async () => {
+		it('_resolveOneBranch wraps non-matching UntypedNode as single child', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/coerce.ts'), 'utf-8');

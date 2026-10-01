@@ -1,6 +1,6 @@
 import { grammarDisplayName, type GrammarName } from '../grammars.ts';
 
-export const NATIVE_RENDER_TRANSPORT_ABI = 5;
+export const NATIVE_RENDER_TRANSPORT_ABI = 6;
 
 export interface NativeCrateFile {
 	readonly path: string;
@@ -210,7 +210,7 @@ impl EngineGrammar for ${v.Name}Grammar {
     }
 }
 
-impl sittir_core::read_node::ReadModel for ${v.Name}Grammar {
+impl sittir_core::read_untyped_node::ReadModel for ${v.Name}Grammar {
     fn wire_slot(
         &self,
         parent: sittir_core::types::KindId,

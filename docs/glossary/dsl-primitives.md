@@ -319,8 +319,8 @@ tree-sitter's CLI.
  * **first-declared** form. Authors order entries so the common case
  * comes first.
  *
- * Round-trip: readNode output and refine-factory output produce
- * identical NodeData shapes — no `$variant` tag, no discriminator.
+ * Round-trip: readUntypedNode output and refine-factory output produce
+ * identical UntypedNode shapes — no `$variant` tag, no discriminator.
  * Consumers that need "which form is this?" inspect
  * `$fields.opening` (or any refined position) directly.
  *

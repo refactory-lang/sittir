@@ -394,7 +394,7 @@ overlap with `_type` is a derived conflict).
 				// so enrich's modifications don't reach the synthesized `_kw_*`
 				// hidden rules / FIELD wrappers in grammar.json. Removing this
 				// override leaves the parser emitting bare anon `static`/`async`/
-				// `move` tokens; readNode promotes them to `$fields.<bare-text>`
+				// `move` tokens; readUntypedNode promotes them to `$fields.<bare-text>`
 				// (not `$fields.<text>_marker`), the generated `.jinja` template
 				// references the `_marker` keys → render drops them → round-trip
 				// regresses. Keep this entry until enrich runs on tree-sitter-cli's
@@ -565,7 +565,7 @@ context that accepts a turbofish.
 				// pointer_type: position 1 is `choice('const', $.mutable_specifier)`.
 				// Wrapping the choice as `field('mutable_specifier')` makes BOTH
 				// the `const` string and the `mutable_specifier` symbol route to
-				// the named slot at readNode time, so the template can emit the
+				// the named slot at readUntypedNode time, so the template can emit the
 				// actual qualifier text instead of hardcoding "const".
 ```
 
@@ -672,11 +672,11 @@ is an anonymous token not routed to any field.
 ```text
 				// tuple_type: seq('(', sepBy1(',', $._type), optional(','), ')').
 				// sepBy1 expands to seq($._type, repeat(seq(',', $._type))).
-				// read_node routes unfielded _type children by concrete kind
+				// read_untyped_node routes unfielded _type children by concrete kind
 				// (primitive_type, type_identifier, …) into separate supertype
 				// buckets — losing CST order and reversing the tuple element list.
 				// Kind-match wraps EVERY $._type occurrence with the same 'type'
-				// field name so read_node collapses them into one ordered slot.
+				// field name so read_untyped_node collapses them into one ordered slot.
 				// Uses transforms: (not rules:) so the parse is unchanged.
 ```
 
@@ -691,7 +691,7 @@ is an anonymous token not routed to any field.
 ```text
 				// unary_expression — label both the operator token (pos 0) and
 				// the operand expression (pos 1). overrides.json promotes both
-				// to fields at readNode time; the walker needs matching IR
+				// to fields at readUntypedNode time; the walker needs matching IR
 				// fields so the template emits `$OPERATOR$OPERAND` instead of
 				// `$OPERATOR $$$CHILDREN` (which reads empty after field promotion).
 ```

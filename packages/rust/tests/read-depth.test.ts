@@ -1,11 +1,11 @@
 // Read depth: `engine.parse(source)` expands one level and leaves each child
-// with substructure as a stub the accessors expand on demand;
+// with substructure as a stub the accessors hydrate on demand;
 // `engine.parse(source, { deep: true })` expands the whole tree up front.
 // Nothing was rebuilt under either, so both fold back to the root's
 // coordinate and render the source byte for byte.
 import { describe, expect, it } from 'vitest';
 import { createEngine, treeHandleOf } from '@sittir/common';
-import type { TreeHandle } from '@sittir/common/utils';
+import { isStub, type TreeHandle } from '@sittir/common/utils';
 import rust from '../src/index.ts';
 
 const SOURCE = 'pub fn main() { let x = 1; }\nstruct S { a: u8 }\n';
@@ -15,14 +15,14 @@ const SOURCE = 'pub fn main() { let x = 1; }\nstruct S { a: u8 }\n';
 const kindOf = (statement: { readonly $type: number } | number): number =>
 	typeof statement === 'number' ? statement : statement.$type;
 
-/** Every node in `value` that is still an unexpanded read stub: it carries the
+/** Every node in `value` that is still an unhydrated read stub: it carries the
  *  coordinates to read one more level and none of the storage that read would
  *  produce. */
 function countStubs(value: unknown): number {
 	if (Array.isArray(value)) return value.reduce<number>((total, entry) => total + countStubs(entry), 0);
 	if (value === null || typeof value !== 'object') return 0;
 	const record = value as Record<string, unknown>;
-	let total = record.$parentHandle != null && record.$childIndex != null ? 1 : 0;
+	let total = isStub(record) ? 1 : 0;
 	for (const [key, child] of Object.entries(record)) {
 		if (key.startsWith('_') || key === '$other') total += countStubs(child);
 	}
@@ -31,7 +31,7 @@ function countStubs(value: unknown): number {
 
 type Stub = Record<string, unknown> & { readonly $type: number; readonly $parentHandle: number; readonly $childIndex: number };
 
-/** The unexpanded read stubs directly under `value`'s slots, in slot order. */
+/** The unhydrated read stubs directly under `value`'s slots, in slot order. */
 function stubsOf(value: Record<string, unknown>): Stub[] {
 	const children = Object.entries(value)
 		.filter(([key]) => key.startsWith('_'))
@@ -73,6 +73,17 @@ describe('read depth', () => {
 			const reread = read(stub.$parentHandle, stub.$childIndex);
 			expect([reread.$type, reread.$span]).toEqual([stub.$type, stub.$span]);
 		}
+	});
+
+	it('reads the root again at the depth asked for, not the depth the parse read it at', async () => {
+		const native = (await rust.load()).createNative();
+		const { root, tree } = native.parseAndRead(SOURCE);
+		const read = (tree as TreeHandle).read!;
+		const shallow = read(undefined);
+		expect(shallow).toBe(root);
+		const deep = read(undefined, undefined, Infinity);
+		expect(countStubs(deep)).toBe(0);
+		expect([deep.$type, deep.$span]).toEqual([shallow.$type, shallow.$span]);
 	});
 
 	it('refuses a depth that is not a whole number of levels', async () => {

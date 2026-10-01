@@ -1,4 +1,4 @@
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -54,7 +54,7 @@ function isDerivedFromText(record: Record<string, unknown>): boolean {
  * name the tree. A descendant's attached comments do not keep an ancestor
  * from folding: they lie inside the ancestor's span, so its bytes carry
  * them — only a node's OWN trivia sits outside its span, which is why
- * `foldsToCoordinate` refuses that node and no other.
+ * `canFold` refuses that node and no other.
  */
 function isUntouchedBelow(value: unknown): boolean {
 	if (Array.isArray(value)) return value.every(isUntouchedBelow);
@@ -74,7 +74,7 @@ function isUntouchedBelow(value: unknown): boolean {
  * rebuilt. The handle is required here and nowhere below, because it is the
  * only thing that says which tree the span indexes into.
  */
-function foldsToCoordinate(record: Record<string, unknown>): boolean {
+function canFold(record: Record<string, unknown>): boolean {
 	if (treeHandleOf(record) === undefined || !isRecord(record.$span)) return false;
 	if (hasOutsideTrivia(record.$_trivia)) return false;
 	return isUntouchedBelow(record);
@@ -91,10 +91,10 @@ function hasOutsideTrivia(trivia: unknown): boolean {
 }
 
 /**
- * The coordinate projection of a folded node: identity, its span and the tree
+ * The coordinate a folded node crosses as: identity, its span and the tree
  * that span slices, no storage.
  */
-function asCoordinate(record: Record<string, unknown>): Record<string, unknown> {
+function foldToCoordinate(record: Record<string, unknown>): Record<string, unknown> {
 	const out: Record<string, unknown> = { $type: record.$type };
 	for (const key of ['$source', '$named', '$span']) {
 		if (record[key] !== undefined) out[key] = record[key];
@@ -143,16 +143,16 @@ export function detachCoordinate(data: object): void {
  * kind (`_visibility_modifier_pub`, not the model's `_content`) and hands
  * back a lone repeated child as a bare value rather than a one-element
  * array. The per-kind wrap functions already reconcile both, so the
- * projection routes every level that carries storage through them.
+ * transport walk routes every level that carries storage through them.
  *
  * The result is not always a node: a supertype's wrap resolves the node to
  * the member it stands for, and a text-collapsed member is that member's
  * bare text.
  */
-export type NormalizeNodeStorage = (node: AnyNodeData) => unknown;
+export type NormalizeNodeStorage = (node: AnyUntypedNode) => unknown;
 
 /**
- * Project a node down to the plain data the native boundary accepts.
+ * Turn a node into the plain data the native boundary accepts.
  *
  * The wrap surface carries accessor methods and `$with`; only data crosses
  * to napi. This copies the storage (`_`-keys and `$other`) through, drops
@@ -162,30 +162,30 @@ export type NormalizeNodeStorage = (node: AnyNodeData) => unknown;
  * text nor the coordinate that would slice that text may cross.
  *
  * A node that still names its tree and was not rebuilt below crosses as its
- * coordinate alone (`foldsToCoordinate`), its `$span` and the `$treeHandle`
+ * coordinate alone (`canFold`), its `$span` and the `$treeHandle`
  * that span slices, which the transport's slot carrier
  * slices from the source the engine still holds. That is what keeps an
  * untouched subtree's original bytes while its rebuilt siblings render
  * canonically.
  */
-export function toTransportData(node: AnyNodeData, normalize?: NormalizeNodeStorage): AnyNodeData {
-	return projectValue(node, normalize) as AnyNodeData;
+export function toTransportData(node: AnyUntypedNode, normalize?: NormalizeNodeStorage): AnyUntypedNode {
+	return toTransportValue(node, normalize) as AnyUntypedNode;
 }
 
-function projectValue(value: unknown, normalize: NormalizeNodeStorage | undefined): unknown {
-	if (Array.isArray(value)) return value.map((entry) => projectValue(entry, normalize));
+function toTransportValue(value: unknown, normalize: NormalizeNodeStorage | undefined): unknown {
+	if (Array.isArray(value)) return value.map((entry) => toTransportValue(entry, normalize));
 	if (!isRecord(value)) return value;
 	const normalized =
-		normalize !== undefined && hasStructure(value) ? normalize(value as unknown as AnyNodeData) : value;
+		normalize !== undefined && hasStructure(value) ? normalize(value as unknown as AnyUntypedNode) : value;
 	// A supertype resolves to the member it stands for, which for a
 	// text-collapsed member is that member's bare text — already the value the
 	// slot carries, with no storage of its own left to walk.
 	if (!isRecord(normalized)) return normalized;
-	if (foldsToCoordinate(normalized)) return asCoordinate(normalized);
+	if (canFold(normalized)) return foldToCoordinate(normalized);
 	const out: Record<string, unknown> = {};
 	for (const [key, raw] of Object.entries(normalized)) {
 		if (key === '$with' || typeof raw === 'function') continue;
-		out[key] = key.startsWith('_') || key === '$other' ? projectValue(raw, normalize) : raw;
+		out[key] = key.startsWith('_') || key === '$other' ? toTransportValue(raw, normalize) : raw;
 	}
 	// Past the fold, nothing is a coordinate: a leaf that kept its trivia
 	// crosses as itself, and a storage-bearing node rebuilds from its slots
@@ -203,12 +203,12 @@ function projectValue(value: unknown, normalize: NormalizeNodeStorage | undefine
 /**
  * Drop the pre-edit spelling and the coordinate that would slice it from
  * every node that carries storage, in place, and return `root`. For
- * already-projected data that came through a path other than
+ * transport data that came through a path other than
  * {@link toTransportData}. A coordinate that survives addresses its node's
  * text only: it crosses as the `$treeHandle` its span slices, stamped
  * `$textOnly` so no edge or gap reader takes layout evidence from it.
  */
-export function stripStructuralProvenance<T>(root: T): T {
+export function detachCoordinates<T>(root: T): T {
 	const seen = new WeakSet<object>();
 	const recurse = (value: unknown): void => {
 		if (!isRecord(value) || typeof value.$type !== 'number') return;

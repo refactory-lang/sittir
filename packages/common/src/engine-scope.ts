@@ -1,7 +1,7 @@
-import type { AnyNodeData, EngineIdentity, Rendered } from '@sittir/types';
+import type { AnyUntypedNode, EngineIdentity, Rendered } from '@sittir/types';
 
 export interface LiveEngine extends EngineIdentity {
-	render(node: AnyNodeData | number, options?: object): Rendered;
+	render(node: AnyUntypedNode | number, options?: object): Rendered;
 }
 
 export interface EngineHandle {

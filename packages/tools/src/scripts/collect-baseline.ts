@@ -31,7 +31,7 @@ import { execSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import type { AnyNodeData } from '@sittir/types';
+import type { AnyUntypedNode } from '@sittir/types';
 
 import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 import { validateFrom } from '../validate/from.ts';
@@ -165,7 +165,7 @@ function loadRenderFixtures(grammar: GrammarName): RenderFixture[] {
 }
 
 /** Resolves the render function a parity collection scores fixtures with; tests inject a stub. */
-export type NativeRenderLoader = (grammar: GrammarName) => Promise<(node: AnyNodeData) => string>;
+export type NativeRenderLoader = (grammar: GrammarName) => Promise<(node: AnyUntypedNode) => string>;
 
 export async function collectParityFixtures(
 	grammar: GrammarName,
@@ -184,7 +184,7 @@ export async function collectParityFixtures(
 	fixtures.forEach((fx, idx) => {
 		let actual: string;
 		try {
-			actual = render(fx.input as AnyNodeData);
+			actual = render(fx.input as AnyUntypedNode);
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
 			// The deprecated JS/Nunjucks backend (createRenderer) resolves a

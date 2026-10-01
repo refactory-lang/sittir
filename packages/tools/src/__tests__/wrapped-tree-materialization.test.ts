@@ -10,13 +10,13 @@ import { verifyManifestForGrammar } from '../../../codegen/src/scripts/generated
 import {
 	buildReadHandle,
 	loadWebTreeSitter,
-	materializeWrappedNodeData,
+	materialize,
 	walkWrappedTree,
-	type WrappedNodeData
+	type TypedNode
 } from '../validate/common.ts';
 import { makeNodeMapWith } from '../../../codegen/src/__tests__/helpers/node-map-fixtures.ts';
 
-function leaf(handle: number, text: string): WrappedNodeData {
+function leaf(handle: number, text: string): TypedNode {
 	return {
 		$type: handle,
 		$source: 0,
@@ -55,7 +55,7 @@ async function loadFreshWrapWitnessModule(): Promise<{
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	const source = emitWrap({ grammar: 'synth', nodeMap: makeNodeMapWith(nodes) });
 	const stubbedSource = [
-		'const readNodeJs = () => { throw new Error("unused"); };',
+		'const readUntypedNode = () => { throw new Error("unused"); };',
 		'const withMethods = (node) => node;',
 		'const methodsEngine = {};',
 		'const _factories = new Proxy({}, { get: () => () => { throw new Error("unused"); } });',
@@ -95,7 +95,7 @@ describe('wrapped tree materialization', () => {
 					return undefined;
 				}
 			}
-		} satisfies WrappedNodeData;
+		} satisfies TypedNode;
 
 		const visited: number[] = [];
 		walkWrappedTree(root, (node) => {
@@ -122,7 +122,7 @@ describe('wrapped tree materialization', () => {
 			children() {
 				throw new Error('boom');
 			}
-		} satisfies WrappedNodeData;
+		} satisfies TypedNode;
 
 		const visited: number[] = [];
 		walkWrappedTree(root, (node) => {
@@ -167,9 +167,9 @@ describe('wrapped tree materialization', () => {
 					return undefined;
 				}
 			}
-		} satisfies WrappedNodeData;
+		} satisfies TypedNode;
 
-		const materialized = asRecord(materializeWrappedNodeData(root));
+		const materialized = asRecord(materialize(root));
 
 		expect(materialized.$type).toBe(1);
 		expect(materialized._value).toMatchObject({ $type: 11, $text: 'field' });
@@ -225,7 +225,7 @@ describe('wrapped tree materialization', () => {
 			tree
 		);
 
-		const materialized = asRecord(materializeWrappedNodeData(wrapped));
+		const materialized = asRecord(materialize(wrapped));
 
 		// A nested child with no reader coordinates to re-read by still goes
 		// through its own wrap function, which reconciles the reader's shape
@@ -250,10 +250,10 @@ describe('wrapped tree materialization', () => {
 			const tree = parser.parse(source)!;
 			const handle = await buildReadHandle('typescript', tree, source, 'native');
 			const wrapModulePath = new URL('../../../typescript/src/wrap.ts', import.meta.url).pathname;
-			const { readTreeNode } = (await import(wrapModulePath)) as {
-				readTreeNode: (tree: TreeHandle, handle?: number, childIndex?: number) => unknown;
+			const { readNode } = (await import(wrapModulePath)) as {
+				readNode: (tree: TreeHandle, handle?: number, childIndex?: number) => unknown;
 			};
-			const root = readTreeNode(handle) as {
+			const root = readNode(handle) as {
 				statements: () => Array<{ content: () => unknown }>;
 			};
 			// export_statement and export_statement_default are flattened into
@@ -273,7 +273,7 @@ describe('wrapped tree materialization', () => {
 
 			// A read leaf materializes as itself — its text and the coordinate
 			// it was read at — not as bare text.
-			const declaration = asRecord(materializeWrappedNodeData(declarationArm.content()));
+			const declaration = asRecord(materialize(declarationArm.content()));
 			expect(asRecord(declaration._name).$text).toBe('readFile');
 		}
 	);

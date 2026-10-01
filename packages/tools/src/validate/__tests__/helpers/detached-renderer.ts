@@ -1,15 +1,14 @@
-import { stripStructuralProvenance } from '@sittir/common';
-import type { AnyNodeData } from '@sittir/types';
-import { loadIsLeafKind, loadNativeEngine, loadReadTreeNode, materializeWrappedNodeData, readNativeTree } from '../../common.ts';
+import type { AnyUntypedNode } from '@sittir/types';
+import { loadIsLeafKind, loadNativeEngine, readNodeOf, materializeDetached, readNativeTree } from '../../common.ts';
 import { selfContainedRenderInput } from '../../read-render-parse.ts';
 
 export async function detachedRenderer(grammar: string): Promise<(source: string) => string> {
 	const engine = await loadNativeEngine(grammar);
-	const read = await loadReadTreeNode(grammar);
+	const readNode = await readNodeOf(grammar);
 	const isLeafKind = await loadIsLeafKind(grammar);
-	if (read === null) throw new Error(`no readTreeNode for ${grammar}`);
+	if (readNode === null) throw new Error(`no readNode for ${grammar}`);
 	return (source) => {
-		const data = stripStructuralProvenance(materializeWrappedNodeData(read(readNativeTree(engine, source).tree)));
-		return engine.render(selfContainedRenderInput(data, source, isLeafKind) as AnyNodeData).toString();
+		const data = materializeDetached(readNode(readNativeTree(engine, source).tree));
+		return engine.render(selfContainedRenderInput(data, source, isLeafKind) as AnyUntypedNode).toString();
 	};
 }
