@@ -687,17 +687,6 @@ export const lhsExpression = Object.freeze({
 	};
 };
 
-export const classBody = Object.freeze({
-	...B.classBody,
-	method: bundle(F.buildClassBodyMethod, C.coerceToClassBodyMethod, { key: 'classBody.method', max: 2 }),
-	methodSig: bundle(F.buildClassBodyMethodSig, C.coerceToClassBodyMethodSig, { key: 'classBody.methodSig', max: 1 }),
-	member: bundle(F.buildClassBodyMember, C.coerceToClassBodyMember, { key: 'classBody.member', max: 2 })
-}) as unknown as typeof B.classBody & {
-	method: { strict: typeof F.buildClassBodyMethod; coerce: typeof C.coerceToClassBodyMethod };
-	methodSig: { strict: typeof F.buildClassBodyMethodSig; coerce: typeof C.coerceToClassBodyMethodSig };
-	member: { strict: typeof F.buildClassBodyMember; coerce: typeof C.coerceToClassBodyMember };
-};
-
 const restPattern$memberExpression =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
@@ -6933,6 +6922,43 @@ export const indexSignature: {
 		}),
 		...indexSignatureMappedTypeClause
 	})
+});
+
+export const classBodyMember: {
+	readonly method: { strict: typeof F.buildClassBodyMemberMethod; coerce: typeof C.coerceToClassBodyMemberMethod };
+	readonly methodSig: {
+		strict: typeof F.buildClassBodyMemberMethodSig;
+		coerce: typeof C.coerceToClassBodyMemberMethodSig;
+	};
+	readonly staticBlock: typeof B.classStaticBlock;
+	readonly declaration: {
+		strict: typeof F.buildClassBodyMemberDeclaration;
+		coerce: typeof C.coerceToClassBodyMemberDeclaration;
+	};
+	readonly empty: { strict: typeof F.buildEmptyMember; coerce: typeof C.coerceToEmptyMember };
+} = Object.freeze({
+	method: bundle(F.buildClassBodyMemberMethod, C.coerceToClassBodyMemberMethod, {
+		key: 'classBodyMember.method',
+		max: 2
+	}),
+	methodSig: bundle(F.buildClassBodyMemberMethodSig, C.coerceToClassBodyMemberMethodSig, {
+		key: 'classBodyMember.methodSig',
+		max: 1
+	}),
+	staticBlock: B.classStaticBlock,
+	declaration: bundle(F.buildClassBodyMemberDeclaration, C.coerceToClassBodyMemberDeclaration, {
+		key: 'classBodyMember.declaration',
+		max: 2
+	}),
+	empty: bundle(F.buildEmptyMember, C.coerceToEmptyMember, { key: 'classBodyMember.empty', max: 1 })
+});
+
+export const enumBodyElement: {
+	readonly name: { strict: typeof F.buildEnumBodyElementName; coerce: typeof C.coerceToEnumBodyElementName };
+	readonly assignment: typeof B.enumAssignment;
+} = Object.freeze({
+	name: bundle(F.buildEnumBodyElementName, C.coerceToEnumBodyElementName, { key: 'enumBodyElement.name', max: 1 }),
+	assignment: B.enumAssignment
 });
 
 export const exportStatementDefault: {

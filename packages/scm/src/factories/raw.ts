@@ -269,15 +269,7 @@ export function buildComment(value: AdmitBound<string, T.AdmittedNodes>): T.Comm
 
 export function buildList(config: T.List.Config): T.List.Bound {
 	const _definitions = rejectBareText(config.definitions ?? [], 'List.definitions', 'a built Definition');
-	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.List['_content']>>(config.content ?? [], [
-			['*', TSKindId.Star] as const,
-			['+', TSKindId.Plus] as const,
-			['?', TSKindId.Qmark] as const
-		]),
-		'List.content',
-		'a built Capture'
-	);
+	const _elements = rejectBareText(config.elements ?? [], 'List.elements', 'a built ListElement');
 	return withMethods(
 		withAccessors(
 			{
@@ -285,15 +277,15 @@ export function buildList(config: T.List.Config): T.List.Bound {
 				$source: 2 as const,
 				$named: true as const,
 				_definitions,
-				_content,
+				_elements,
 				$with: {
 					definitions: (...values: NonEmptyArray<T.Definition>) => buildList({ ...config, definitions: values }),
-					contents: (value?: NonNullable<T.List.Config>['content']) => buildList({ ...config, content: value })
+					elements: (...values: T.ListElement[]) => buildList({ ...config, elements: values })
 				}
 			},
 			{
 				definitions: () => _definitions,
-				contents: () => _content
+				elements: () => _elements
 			}
 		)
 	) as unknown as T.List.Bound;
@@ -301,15 +293,7 @@ export function buildList(config: T.List.Config): T.List.Bound {
 
 export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 	const _grouping_group = rejectBareText(config.groupingGroup ?? [], 'Grouping.groupingGroup', 'a built GroupingGroup');
-	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.Grouping['_content']>>(config.content ?? [], [
-			['*', TSKindId.Star] as const,
-			['+', TSKindId.Plus] as const,
-			['?', TSKindId.Qmark] as const
-		]),
-		'Grouping.content',
-		'a built Capture'
-	);
+	const _elements = rejectBareText(config.elements ?? [], 'Grouping.elements', 'a built ListElement');
 	return withMethods(
 		withAccessors(
 			{
@@ -317,16 +301,16 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 				$source: 2 as const,
 				$named: true as const,
 				_grouping_group,
-				_content,
+				_elements,
 				$with: {
 					groupingGroups: (...values: NonEmptyArray<T.GroupingGroup>) =>
 						buildGrouping({ ...config, groupingGroup: values }),
-					contents: (value?: NonNullable<T.Grouping.Config>['content']) => buildGrouping({ ...config, content: value })
+					elements: (...values: T.ListElement[]) => buildGrouping({ ...config, elements: values })
 				}
 			},
 			{
 				groupingGroups: () => _grouping_group,
-				contents: () => _content
+				elements: () => _elements
 			}
 		)
 	) as unknown as T.Grouping.Bound;
@@ -336,15 +320,7 @@ export function buildMissingNode(): T.EmptyMissingNode;
 export function buildMissingNode(config?: Partial<T.MissingNode.Config>): T.MissingNode.Bound;
 export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.MissingNode.Bound {
 	const _name = rejectBareText(config.name, 'MissingNode.name', 'buildIdentifier(…)');
-	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.MissingNode['_content']>>(config.content ?? [], [
-			['*', TSKindId.Star] as const,
-			['+', TSKindId.Plus] as const,
-			['?', TSKindId.Qmark] as const
-		]),
-		'MissingNode.content',
-		'a built Capture'
-	);
+	const _elements = rejectBareText(config.elements ?? [], 'MissingNode.elements', 'a built ListElement');
 	return withMethods(
 		withAccessors(
 			{
@@ -352,16 +328,15 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 				$source: 2 as const,
 				$named: true as const,
 				_name,
-				_content,
+				_elements,
 				$with: {
 					name: (value?: T.Identifier | T.String) => buildMissingNode({ ...config, name: value }),
-					contents: (value?: NonNullable<T.MissingNode.Config>['content']) =>
-						buildMissingNode({ ...config, content: value })
+					elements: (...values: T.ListElement[]) => buildMissingNode({ ...config, elements: values })
 				}
 			},
 			{
 				name: () => _name,
-				contents: () => _content
+				elements: () => _elements
 			}
 		)
 	) as unknown as T.MissingNode.Bound;
@@ -373,15 +348,7 @@ export function buildAnonymousNode(config: Partial<T.AnonymousNode.Config> = {})
 		'AnonymousNode.name',
 		'a built String'
 	);
-	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.AnonymousNode['_content']>>(config.content ?? [], [
-			['*', TSKindId.Star] as const,
-			['+', TSKindId.Plus] as const,
-			['?', TSKindId.Qmark] as const
-		]),
-		'AnonymousNode.content',
-		'a built Capture'
-	);
+	const _elements = rejectBareText(config.elements ?? [], 'AnonymousNode.elements', 'a built ListElement');
 	return withMethods(
 		withAccessors(
 			{
@@ -389,16 +356,15 @@ export function buildAnonymousNode(config: Partial<T.AnonymousNode.Config> = {})
 				$source: 2 as const,
 				$named: true as const,
 				_name,
-				_content,
+				_elements,
 				$with: {
 					name: (value: NonNullable<T.AnonymousNode.Config>['name']) => buildAnonymousNode({ ...config, name: value }),
-					contents: (value?: NonNullable<T.AnonymousNode.Config>['content']) =>
-						buildAnonymousNode({ ...config, content: value })
+					elements: (...values: T.ListElement[]) => buildAnonymousNode({ ...config, elements: values })
 				}
 			},
 			{
 				name: () => _name,
-				contents: () => _content
+				elements: () => _elements
 			}
 		)
 	) as unknown as T.AnonymousNode.Bound;
@@ -501,6 +467,33 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 			}
 		)
 	) as unknown as T.Predicate.Bound;
+}
+
+export function buildListElementQuantifier(
+	value: AdmitBound<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark, T.AdmittedNodes>
+): T.ListElementQuantifier.Bound {
+	const _quantifier = coerceKindEnumStorage<NonNullable<T.ListElementQuantifier['_quantifier']>>(value, [
+		['*', TSKindId.Star] as const,
+		['+', TSKindId.Plus] as const,
+		['?', TSKindId.Qmark] as const
+	]);
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ListElementQuantifier as const,
+				$source: 2 as const,
+				$named: true as const,
+				_quantifier,
+				$with: {
+					quantifier: (value: NonNullable<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>) =>
+						buildListElementQuantifier(value)
+				}
+			},
+			{
+				quantifier: () => _quantifier
+			}
+		)
+	) as unknown as T.ListElementQuantifier.Bound;
 }
 
 export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.GroupExpressionArm.Bound {
@@ -616,15 +609,7 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 		'NamedNodePlain.namedNodeGroup',
 		'a built NamedNodeGroup'
 	);
-	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.NamedNodePlain['_content']>>(config.content ?? [], [
-			['*', TSKindId.Star] as const,
-			['+', TSKindId.Plus] as const,
-			['?', TSKindId.Qmark] as const
-		]),
-		'NamedNodePlain.content',
-		'a built Capture'
-	);
+	const _elements = rejectBareText(config.elements ?? [], 'NamedNodePlain.elements', 'a built ListElement');
 	return withMethods(
 		withAccessors(
 			{
@@ -633,19 +618,18 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 				$named: true as const,
 				_name,
 				_named_node_group,
-				_content,
+				_elements,
 				$with: {
 					name: (value: NonNullable<T.NamedNodePlain.Config>['name']) =>
 						buildNamedNodePlain({ ...config, name: value }),
 					namedNodeGroup: (value?: T.NamedNodeGroup) => buildNamedNodePlain({ ...config, namedNodeGroup: value }),
-					contents: (value?: NonNullable<T.NamedNodePlain.Config>['content']) =>
-						buildNamedNodePlain({ ...config, content: value })
+					elements: (...values: T.ListElement[]) => buildNamedNodePlain({ ...config, elements: values })
 				}
 			},
 			{
 				name: () => _name,
 				namedNodeGroup: () => _named_node_group,
-				contents: () => _content
+				elements: () => _elements
 			}
 		)
 	) as unknown as T.NamedNodePlain.Bound;
@@ -659,15 +643,7 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 		'NamedNodeSupertyped.namedNodeGroup',
 		'a built NamedNodeGroup'
 	);
-	const _content = rejectBareText(
-		coerceMixedEnumStorage<NonNullable<T.NamedNodeSupertyped['_content']>>(config.content ?? [], [
-			['*', TSKindId.Star] as const,
-			['+', TSKindId.Plus] as const,
-			['?', TSKindId.Qmark] as const
-		]),
-		'NamedNodeSupertyped.content',
-		'a built Capture'
-	);
+	const _elements = rejectBareText(config.elements ?? [], 'NamedNodeSupertyped.elements', 'a built ListElement');
 	return withMethods(
 		withAccessors(
 			{
@@ -677,21 +653,20 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 				_supertype,
 				_name,
 				_named_node_group,
-				_content,
+				_elements,
 				$with: {
 					supertype: (value: T.Identifier) => buildNamedNodeSupertyped({ ...config, supertype: value }),
 					name: (value: T.ImmediateIdentifier | T.ImmediateString) =>
 						buildNamedNodeSupertyped({ ...config, name: value }),
 					namedNodeGroup: (value?: T.NamedNodeGroup) => buildNamedNodeSupertyped({ ...config, namedNodeGroup: value }),
-					contents: (value?: NonNullable<T.NamedNodeSupertyped.Config>['content']) =>
-						buildNamedNodeSupertyped({ ...config, content: value })
+					elements: (...values: T.ListElement[]) => buildNamedNodeSupertyped({ ...config, elements: values })
 				}
 			},
 			{
 				supertype: () => _supertype,
 				name: () => _name,
 				namedNodeGroup: () => _named_node_group,
-				contents: () => _content
+				elements: () => _elements
 			}
 		)
 	) as unknown as T.NamedNodeSupertyped.Bound;
@@ -802,6 +777,7 @@ export type FluentKindMap = {
 	field_definition: T.FieldDefinition.Bound;
 	negated_field: T.NegatedField.Bound;
 	predicate: T.Predicate.Bound;
+	list_element_quantifier: T.ListElementQuantifier.Bound;
 	group_expression_arm: T.GroupExpressionArm.Bound;
 	named_node_expression_arm: T.NamedNodeExpressionArm.Bound;
 	grouping_group: T.GroupingGroup.Bound;
@@ -839,6 +815,7 @@ export const _factoryMap = {
 	field_definition: buildFieldDefinition,
 	negated_field: buildNegatedField,
 	predicate: buildPredicate,
+	list_element_quantifier: buildListElementQuantifier,
 	group_expression_arm: buildGroupExpressionArm,
 	named_node_expression_arm: buildNamedNodeExpressionArm,
 	grouping_group: buildGroupingGroup,

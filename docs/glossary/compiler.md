@@ -1094,16 +1094,6 @@ The classification left after every structural check: an all-text subtree is `'p
  */
 ```
 
-### `packages/codegen/src/compiler/collect-slots.ts::carriesNamedField`
-
-```text
-/**
- * True iff this rule (anywhere in its tree, not crossing into a nested
- * nonterminal slot boundary) carries a `fieldName`. Used to decide whether a
- * choice arm is "structural" (contributes named fields) vs a bare union member.
- */
-```
-
 ### `packages/codegen/src/compiler/collect-slots.ts::isStructuralChoice`
 
 ```text
@@ -1120,45 +1110,6 @@ The classification left after every structural check: an all-text subtree is `'p
 ```text
 // All arms field-named with the SAME name → operator-enum style; that is a
 // single slot recovered by `sharedArmFieldName`, NOT structural.
-```
-
-### `packages/codegen/src/compiler/collect-slots.ts::isDegenerateFieldArm`
-
-```text
-/**
- * True iff a named arm reduces (through a single-member seq unwrap) to
- * exactly one field-named slot node — no ambient literals, no additional
- * fields alongside it. Union-slot design §5: only a DEGENERATE named arm is
- * eligible for label-routing into the union; a multi-member seq or a nested
- * choice stays a `structuredNamedArms` gate (b)/(c) violation until PR 3's
- * group mint gives it a group kind instead.
- */
-```
-
-### `packages/codegen/src/compiler/collect-slots.ts::partitionChoiceArms`
-
-```text
-/**
- * Partition a choice's arms per the union-slot model. An arm is classified in
- * priority order: field-named (degenerate → union-by-label, else structured
- * → distribute) → nested choice / multi-member seq (structured, gate (b)
- * violation) → single-nonterminal reference (union member) → bare literal. A
- * single-member seq classifies as its sole member (simplify normally
- * collapses these; tolerate stragglers).
- */
-```
-
-### `packages/codegen/src/compiler/collect-slots.ts::unionRoutingGateB`
-
-```text
-/**
- * Gate (b) of the union-slot design: a fieldless structural choice qualifies
- * for union routing iff it has ≥1 unnamed-nonterminal arm and every arm is
- * either field-named or an unnamed single-nonterminal reference. Gate (a)
- * (the union slot's projected storageName free in the owning rule) needs
- * whole-rule visibility and is checked at the `deriveSlots` boundary
- * (`_deriveSlotsInternal`, node-map.ts), not here.
- */
 ```
 
 ### `packages/codegen/src/compiler/collect-slots.ts::setUnionSlotRouting`
@@ -1232,25 +1183,6 @@ The classification left after every structural check: an all-text subtree is `'p
 
 ```text
 /** Relax a slot's singular/required values to optional (cross-arm absence). */
-```
-
-### `packages/codegen/src/compiler/collect-slots.ts::isSlotNode`
-
-```text
-/** True iff this node is a slot. An explicit `nonterminal` stamp decides
- *  (`flatten.ts::stampTerminality`); an unstamped node falls back to its
- *  intrinsic shape (`isNonterminalRuleType`). */
-```
-
-#### body
-
-```text
-// isNonterminalRuleType classifies purely by `.type` + child shape — phase-
-// agnostic in practice (evaluate/link/normalize rules share the type tags
-// it switches on); widen structurally rather than narrow the caller's
-// AnyRule param. (Post-PR-S, RepeatRule<'evaluate'>/<'link'> genuinely
-// diverge in shape, so this cast is no longer a structural coincidence —
-// it's an explicit phase-widening read, same pattern as `findRepeatFlag`.)
 ```
 
 ### `packages/codegen/src/compiler/collect-slots.ts::slotMultiplicity`
@@ -5659,58 +5591,6 @@ collector parameter.
 	 */
 ```
 
-### `packages/codegen/src/compiler/collect-slots.ts::ChoiceArmPartition`
-
-```text
-/** Per-arm partition of a fieldless structural choice (union-slot design §2). */
-```
-
-### `packages/codegen/src/compiler/collect-slots.ts::degenerateNamedArms`
-
-```text
-/**
-	 * Degenerate fielded arms — a bare `field(x, ref)`, one slot, NO ambient
-	 * literals (enum_body's `field('name', _property_name)`, the export arms'
-	 * `field('declaration', declaration)`). PR 1.5 (2026-07-21 design §5):
-	 * these join the union slot, routed by FIELD LABEL instead of by kind —
-	 * tree-sitter already labels these children, so no mint/grammar change.
-	 */
-```
-
-### `packages/codegen/src/compiler/collect-slots.ts::structuredNamedArms`
-
-```text
-/**
-	 * Structured named arms — fields plus ambient literals, or more than one
-	 * field (dict_pattern's kv `field(key) ":" field(value)`,
-	 * arrow_function's signature arm). Still a gate (b)/(c) violation
-	 * (`union-slot-mixed-row` / `union-slot-nondegenerate-arm`) until PR 3's
-	 * group mint gives them a group kind to join the union by.
-	 */
-```
-
-### `packages/codegen/src/compiler/collect-slots.ts::unionArms`
-
-```text
-/** Unnamed single-nonterminal reference arms — union-member kind identity. */
-```
-
-### `packages/codegen/src/compiler/collect-slots.ts::literalArms`
-
-```text
-/** Bare terminal arms (literal string/token) — no slot or kind identity. */
-```
-
-### `packages/codegen/src/compiler/collect-slots.ts::structuredArms`
-
-```text
-/**
-	 * Unnamed structured arms (multi-member seq with ambient literals, nested
-	 * choice) — gate (b) violations until PR 3's group-mint widening gives them
-	 * a group kind to join the union by.
-	 */
-```
-
 ### `packages/codegen/src/compiler/ctx.ts::BaseCtxInit`
 
 ```text
@@ -7295,18 +7175,6 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
  */
 ```
 
-### `ChoiceArmPartition` / union-slot routing predicate (`packages/codegen/src/compiler/collect-slots.ts`)
-
-Slot identity has exactly two sources, with disjoint parse routing:
-
-- `field()` is slot identity — named per-arm slots, routed by field label.
-- An unnamed single-nonterminal arm is union-member kind identity — all such
-  arms map into ONE `'content'` union slot, routed by kind.
-
-The partition is the SINGLE predicate behind both the census tool
-(`sittir tool union-slot-census`) and the CHOICE-case routing decision: one
-source, one derivation.
-
 ### `packages/codegen/src/compiler/link.ts::stampLiteral`
 
 ```text
@@ -7795,12 +7663,6 @@ carried through a side channel.
 // Extra listeners registered via addUnnamedChoiceListener (e.g. the DiagnosticSink
 // forwarder in generate.ts). These run IN ADDITION to the primary warner, so
 // drainUnnamedChoiceSlots() still returns the accumulated kinds correctly.
-```
-
-### `packages/codegen/src/compiler/collect-slots.ts::degenerateArmFieldName`
-
-```text
-/** The field name a degenerate arm (per `isDegenerateFieldArm`) carries, unwrapping the same single-member seq nesting. */
 ```
 
 ### `packages/codegen/src/compiler/ctx.ts::module`

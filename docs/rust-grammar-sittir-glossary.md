@@ -582,13 +582,23 @@ because the names are base externals (`baseExternalNames`).
 
 ### `range_expression` (`packages/rust/grammar.sittir.ts`, `patches`)
 
-Three patch sets in order: `{ '-1': alias('range_expression_bare') }` first,
-so the bare `..` arm (RangeFull, `let x = ..;` — the only arm that is not a
-seq, and as a bare literal an anonymous token the wrap layer's `content`
-accessor never finds) becomes `alias($._range_expression_bare,
-$.range_expression_bare)` with `_range_expression_bare` authored in `rules:`;
-then the field labels, which land on the base-shape choice arms; then the
-`variant()` splits `'0'..'3'`.
+`range_expression` is a flattened parent: its four arms are the variant
+kinds `range_expression_binary`, `_postfix`, `_prefix` and `_bare`, and the
+parent itself is a supertype with no node of its own.
+
+Three patch sets in order. `{ '-1': alias('range_expression_bare') }` first:
+the bare `..` arm (RangeFull, `let x = ..;`) is a lone literal, so it becomes
+`alias($._range_expression_bare, $.range_expression_bare)` with
+`_range_expression_bare` authored in `rules:`. Then the field labels of the
+three sequence arms (`start`, `operator`, `end`), which land on the
+base-shape choice arms; the bare arm is left unfielded. Then the `variant()`
+splits `'0'..'3'`.
+
+The bare arm must stay unfielded. A `variant()` keeps the field of a field
+arm, so a fielded bare arm would stay a label-routed arm of the parent beside
+three union arms, and the parent would not flatten. The alias must stay too:
+a `variant()` on the plain literal makes the bare kind a token with no slot,
+which is a different kind class from its three siblings.
 
 ### `reference_pattern` (`packages/rust/grammar.sittir.ts:681`)
 

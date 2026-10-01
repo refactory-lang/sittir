@@ -8,9 +8,9 @@ type Member = { accessibilityModifier(): unknown };
 
 function firstMemberOf(source: string): Member {
 	const declaration = ts.parse(source).statements()[0] as unknown as {
-		body(): { contents(): readonly { member(): Member }[] };
+		body(): { members(): readonly { member(): Member }[] };
 	};
-	return declaration.body().contents()[0]!.member();
+	return declaration.body().members()[0]!.member();
 }
 
 describe('an enum node spelled only by its keyword token', () => {

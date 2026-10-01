@@ -24,6 +24,14 @@ Merges the base ref into the current branch and resolves the one conflict class 
 
 The repository's `SyncBaseTarget`: every registered grammar's generated roots (stable or not: regex and scm have manifests too) and a `verify` that is `verifyManifestForGrammar(...).ok` and a `regenerate` that runs `gen --grammar <name> --all` in a fresh process, the way `pnpm run regen:all` does.
 
+### `packages/tools/src/scripts/check-baseline-regression.ts::supertypeExplainsDrop`
+
+Whether a pass-count drop of one validator is a kind leaving and not a failure. It holds when the grammar's `supertypeKindCount` rose, the validator's own fail count (`total - pass`) did not, and the drop is within the validator's bound in `SUPERTYPE_EXPLAINED_DROP`.
+
+### `packages/tools/src/scripts/check-baseline-regression.ts::SUPERTYPE_EXPLAINED_DROP`
+
+The validators whose pass count may fall when a kind becomes a supertype, each with the largest drop a given rise in `supertypeKindCount` explains. `coverage` and `factoryRoundtrip` are unbounded: a kind that becomes a supertype has no template and no raw builder, and one parent can remove several cases there. `from` is bounded by the rise: a flattened parent removes exactly one `from` case, its own, so a larger drop is not explained by it. A validator not listed (`roundtrip`) is never exempt.
+
 ### `packages/tools/tests/strict-required-slot-types.test.ts`
 
 The census behind the typing rule: for every raw builder, each slot the model marks required, that no registered option carries and that the builder does not default itself, must be a required key of the strict config whose type has no `undefined` member. The model facts come from the assembled node map (`configKey`, the registered-option set, `isRequired`), the signature from the TypeScript checker over the grammar's `raw.ts`. A builder whose whole config is `Partial` (an argument-optional form) is outside it.

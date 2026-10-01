@@ -45,11 +45,12 @@ import {
 	wireAutomaticVariants,
 	wireRecordPatchSite,
 	wireGetLiftBody,
+	wireElementSlotOf,
+	wireLiftRenamedTo,
 	wireSetLiftBody,
 	makeSimpleDollarProxy,
 	type PatchSite
 } from '../wire/wire.ts';
-import { renameRule } from '../wire/symbol-renames.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
 import {
 	isFieldLike,
@@ -445,7 +446,7 @@ function buildHoistedVariants(
 		const altMember = choiceMembers[resolvedAlt]!;
 		const name = polymorphVisibleName(parentKind, variantMintName(p.v));
 		const lift = enrichLiftArmOf(altMember);
-		if (lift !== null) wireRenameLift(lift.liftName, name);
+		if (lift !== null) wireRenameLift(lift.liftName, name, true);
 		if (!wireRegisterSyntheticRule(name, hoist(lift === null ? altMember : lift.body))) {
 			throw new Error(`registerSyntheticRule('${name}'): no active wire() context`);
 		}
@@ -499,8 +500,9 @@ function enrichLiftArmOf(
 	if (symbol?.type !== 'SYMBOL' || typeof symbol.name !== 'string' || !isEnrichGroupLiftSymbol(symbol as RuntimeRule)) {
 		return null;
 	}
-	const body = wireGetLiftBody(symbol.name);
-	return body === undefined ? null : { body, liftName: symbol.name, symbol };
+	const liftName = wireLiftRenamedTo(symbol.name) ?? symbol.name;
+	const body = wireGetLiftBody(liftName);
+	return body === undefined ? null : { body, liftName, symbol };
 }
 
 function renameEnrichLift(
@@ -510,8 +512,7 @@ function renameEnrichLift(
 	nodeName: string
 ): RuntimeRule {
 	if (!wireHasAuthoredRule(ruleName)) {
-		const body = renameRule(lift.body, new Map([[lift.liftName, ruleName]])) as RuntimeRule;
-		wireRegisterSyntheticRule(ruleName, wireIsBaseSupertype(lift.liftName) ? body : withHoistedAnnotation(body));
+		wireRegisterSyntheticRule(ruleName, wireIsBaseSupertype(lift.liftName) ? lift.body : withHoistedAnnotation(lift.body));
 	}
 	wireRenameLift(lift.liftName, ruleName);
 	if (ruleName === nodeName) return { ...lift.symbol, name: nodeName } as unknown as RuntimeRule;
@@ -645,6 +646,17 @@ function rewritesText(patch: PatchValue): boolean {
 	);
 }
 
+function assertElementSlotName(fieldName: string, member: RuntimeRule): void {
+	let node = member as { type?: string; name?: string; content?: RuntimeRule };
+	while (node.content !== undefined && node.type !== 'ALIAS' && node.type !== 'TOKEN' && node.type !== 'IMMEDIATE_TOKEN') {
+		node = node.content as typeof node;
+	}
+	const slot = node.type === 'SYMBOL' && node.name !== undefined ? wireElementSlotOf(node.name) : undefined;
+	if (slot !== undefined && slot !== fieldName) {
+		throw new Error(`field('${fieldName}'): the elements of this repeat are '${node.name}', minted for the slot '${slot}'`);
+	}
+}
+
 function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: string, precStack?: readonly RuntimeRule[]): RuntimeRule {
 	const textToken = wireTextTokenOf(originalMember);
 	if (textToken !== undefined && rewritesText(patch)) {
@@ -655,6 +667,7 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 		return resolveRulePlaceholder(patch, key);
 	}
 	if (isFieldPlaceholder(patch)) {
+		assertElementSlotName(patch.name, originalMember);
 		return resolveFieldPlaceholder(patch, originalMember, precStack);
 	}
 	if (isFieldLike(patch)) {
@@ -700,6 +713,7 @@ function resolvePatch(patch: PatchValue, originalMember: RuntimeRule, key: strin
 			return annotated({ ...(originalMember as object), value: name });
 		}
 		if (variantBranchIsUnmaterializable(originalMember)) {
+			if (isFieldLike(originalMember)) return annotated(originalMember);
 			return annotated({
 				...(deField(originalMember) as object),
 				metadata: makeRuleMetadata({ fieldSource: 'override' })
