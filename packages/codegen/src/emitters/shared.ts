@@ -43,6 +43,7 @@ import {
 	AssembledPattern,
 	AssembledList,
 	isFixedTextLeaf,
+	slotFilledWhenOmitted,
 	isTextStorage,
 	textStoragesOf,
 	valueParseKindsOf,
@@ -909,25 +910,13 @@ export function emptyDefaultOf(
 	factoryNs = ''
 ): string | null {
 	if (!isRequired(field) || field.values.length !== 1) return null;
-	if (isHiddenInfraSlot(field, nodeMap)) return null;
+	if (isHiddenInfraSlot(field, nodeMap) || !slotFilledWhenOmitted(field, nodeMap)) return null;
 	const sole = field.values[0]!;
 	const fixed = kindEntries === undefined ? undefined : fixedTextEntryOf(sole, nodeMap, kindEntries);
 	if (fixed !== undefined) return `${fixed.discriminant} as const`;
 	if (!isNodeRef(sole)) return null;
 	const targetNode = nodeMap.nodes.get(storageKindOfRef(sole.node));
-	if (!targetNode?.rawFactoryName || isFixedTextLeaf(targetNode)) return null;
-	const call = `${factoryNs}${targetNode.rawFactoryName}()`;
-
-	if (targetNode instanceof AssembledList) {
-		return targetNode.argumentOptional(nodeMap) ? call : null;
-	}
-
-	if (!(targetNode instanceof AbstractAssembledCompound)) return null;
-	if (fromForwardsToChildFactory(targetNode, nodeMap)) {
-		const facts = soleSlotFacts(targetNode, nodeMap);
-		return facts !== null && (facts.multiple || !facts.required) ? call : null;
-	}
-	return targetNode.argumentOptional(nodeMap) ? call : null;
+	return targetNode?.rawFactoryName === undefined || isFixedTextLeaf(targetNode) ? null : `${factoryNs}${targetNode.rawFactoryName}()`;
 }
 
 export function registeredSlots(node: {

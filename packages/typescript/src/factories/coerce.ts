@@ -3260,7 +3260,7 @@ export function coerceToContinueStatement(
 }
 
 export function resolveDebuggerStatement_terminator(
-	value: T.DebuggerStatement.LooseConfig['terminator'] | undefined
+	value: T.DebuggerStatement.LooseConfig['terminator']
 ): T.DebuggerStatement['_terminator'] {
 	return coerceKindEnumStorage(
 		_resolveKindEnumScalar(value, () => _resolveOneLeaf<'\n' | ';'>(value, '_automatic_semicolon')),
@@ -3269,9 +3269,9 @@ export function resolveDebuggerStatement_terminator(
 }
 
 export function coerceToDebuggerStatement(
-	input?: T.DebuggerStatement.Loose
+	input: T.DebuggerStatement.Loose
 ): ReturnType<typeof F.buildDebuggerStatement> {
-	if (input !== undefined && isNodeOfKind(input, TSKindId.DebuggerStatement))
+	if (isNodeOfKind(input, TSKindId.DebuggerStatement))
 		return input as unknown as ReturnType<typeof F.buildDebuggerStatement>;
 	return F.buildDebuggerStatement(
 		_requireField(
@@ -4519,7 +4519,7 @@ export function resolveFunctionExpression_typeParameters(
 }
 
 export function resolveFunctionExpression_parameters(
-	value: T.FunctionExpression.LooseConfig['parameters']
+	value: T.FunctionExpression.LooseConfig['parameters'] | undefined
 ): T.FunctionExpression['_parameters'] {
 	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
 }
@@ -4531,23 +4531,23 @@ export function resolveFunctionExpression_returnType(
 }
 
 export function resolveFunctionExpression_body(
-	value: T.FunctionExpression.LooseConfig['body']
+	value: T.FunctionExpression.LooseConfig['body'] | undefined
 ): T.FunctionExpression['_body'] {
 	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
 }
 
 export function coerceToFunctionExpression(
-	input: T.FunctionExpression.Loose
+	input?: T.FunctionExpression.Loose
 ): ReturnType<typeof F.buildFunctionExpression> {
-	if (!_isLooseConfig<T.FunctionExpression.LooseConfig>(input))
+	if (!_isLooseConfig<T.FunctionExpression.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildFunctionExpression>;
 	return F.buildFunctionExpression({
-		asyncMarker: resolveFunctionExpression_asyncMarker(input.asyncMarker),
-		name: resolveFunctionExpression_name(input.name),
-		typeParameters: resolveFunctionExpression_typeParameters(input.typeParameters),
-		parameters: resolveFunctionExpression_parameters(input.parameters) ?? F.buildFormalParameters(),
-		returnType: resolveFunctionExpression_returnType(input.returnType),
-		body: resolveFunctionExpression_body(input.body) ?? F.buildStatementBlock()
+		asyncMarker: resolveFunctionExpression_asyncMarker(input?.asyncMarker),
+		name: resolveFunctionExpression_name(input?.name),
+		typeParameters: resolveFunctionExpression_typeParameters(input?.typeParameters),
+		parameters: resolveFunctionExpression_parameters(input?.parameters) ?? F.buildFormalParameters(),
+		returnType: resolveFunctionExpression_returnType(input?.returnType),
+		body: resolveFunctionExpression_body(input?.body) ?? F.buildStatementBlock()
 	});
 }
 
@@ -4628,7 +4628,7 @@ export function resolveGeneratorFunction_typeParameters(
 }
 
 export function resolveGeneratorFunction_parameters(
-	value: T.GeneratorFunction.LooseConfig['parameters']
+	value: T.GeneratorFunction.LooseConfig['parameters'] | undefined
 ): T.GeneratorFunction['_parameters'] {
 	return _resolveOneBranch<T.FormalParameters>(value, 'formal_parameters');
 }
@@ -4640,23 +4640,23 @@ export function resolveGeneratorFunction_returnType(
 }
 
 export function resolveGeneratorFunction_body(
-	value: T.GeneratorFunction.LooseConfig['body']
+	value: T.GeneratorFunction.LooseConfig['body'] | undefined
 ): T.GeneratorFunction['_body'] {
 	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
 }
 
 export function coerceToGeneratorFunction(
-	input: T.GeneratorFunction.Loose
+	input?: T.GeneratorFunction.Loose
 ): ReturnType<typeof F.buildGeneratorFunction> {
-	if (!_isLooseConfig<T.GeneratorFunction.LooseConfig>(input))
+	if (!_isLooseConfig<T.GeneratorFunction.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildGeneratorFunction>;
 	return F.buildGeneratorFunction({
-		asyncMarker: resolveGeneratorFunction_asyncMarker(input.asyncMarker),
-		name: resolveGeneratorFunction_name(input.name),
-		typeParameters: resolveGeneratorFunction_typeParameters(input.typeParameters),
-		parameters: resolveGeneratorFunction_parameters(input.parameters) ?? F.buildFormalParameters(),
-		returnType: resolveGeneratorFunction_returnType(input.returnType),
-		body: resolveGeneratorFunction_body(input.body) ?? F.buildStatementBlock()
+		asyncMarker: resolveGeneratorFunction_asyncMarker(input?.asyncMarker),
+		name: resolveGeneratorFunction_name(input?.name),
+		typeParameters: resolveGeneratorFunction_typeParameters(input?.typeParameters),
+		parameters: resolveGeneratorFunction_parameters(input?.parameters) ?? F.buildFormalParameters(),
+		returnType: resolveGeneratorFunction_returnType(input?.returnType),
+		body: resolveGeneratorFunction_body(input?.body) ?? F.buildStatementBlock()
 	});
 }
 
@@ -11619,10 +11619,14 @@ export function coerceToParenthesizedExpressionSequence(
 	if (isNodeOfKind(input, TSKindId.ParenthesizedExpressionSequence))
 		return input as unknown as ReturnType<typeof F.buildParenthesizedExpressionSequence>;
 	return F.buildParenthesizedExpressionSequence(
-		_resolveOneBranch<T.SequenceExpression>(
-			configFieldOr(input, 'sequenceExpression', () => input),
-			'sequence_expression'
-		) ?? F.buildSequenceExpression()
+		_requireField(
+			'parenthesized_expression_sequence',
+			'sequenceExpression',
+			_resolveOneBranch<T.SequenceExpression>(
+				configFieldOr(input, 'sequenceExpression', () => input),
+				'sequence_expression'
+			)
+		)
 	);
 }
 
@@ -12065,7 +12069,11 @@ export function coerceToClassHeritageExtendsClause(
 	if (!_isLooseConfig<T.ClassHeritageExtendsClause.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildClassHeritageExtendsClause>;
 	return F.buildClassHeritageExtendsClause({
-		extendsClause: resolveClassHeritageExtendsClause_extendsClause(input.extendsClause) ?? F.buildExtendsClause(),
+		extendsClause: _requireField(
+			'class_heritage_extends_clause',
+			'extendsClause',
+			resolveClassHeritageExtendsClause_extendsClause(input.extendsClause)
+		),
 		implementsClause: resolveClassHeritageExtendsClause_implementsClause(input.implementsClause)
 	});
 }

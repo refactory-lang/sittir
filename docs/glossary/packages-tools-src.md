@@ -26,4 +26,8 @@ The repository's `SyncBaseTarget`: every registered grammar's generated roots (s
 
 ### `packages/tools/tests/strict-required-slot-types.test.ts`
 
-The census behind the typing rule: for every raw builder, each slot the model marks required, that no registered option carries and that the builder does not default itself, must be a required key of the strict config whose type has no `undefined` member. The model facts come from the assembled node map (`configKey`, the registered-option set, `isRequired`), the signature from the TypeScript checker over the grammar's `raw.ts`. A builder whose whole config is `Partial` (an argument-optional form) is outside it.
+The census behind the typing rule: every config slot that is required, that no registered option carries and that `slotFilledWhenOmitted` does not accept must be a required key whose type has no `undefined` member, in the strict config, in the builder's direct-value parameter and in the loose config. A builder whose whole config is optional is held to the same rule. The one exemption class is the literal affix slots of a token-interior kind (everything in a lexed-interior kind that is not its content slot): the coercer fills them from the spelled form, which the model does not declare. The loose check compiles a probe module in memory per grammar; the model facts come from the assembled node map and the signatures from the TypeScript checker.
+
+### `packages/tools/tests/argument-optional-honesty.test.ts`
+
+Every kind `argumentOptional` says can be built with no argument is built with none, rendered through the engine, and re-parsed: the render must round-trip. The model's claim that a slot is filled when omitted is thereby tested against the real factory, not only derived.

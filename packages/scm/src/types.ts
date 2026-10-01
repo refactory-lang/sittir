@@ -1860,9 +1860,9 @@ export namespace AnonymousNode {
 	}
 	export type Loose = LooseFor<TSKindId.AnonymousNode>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AnonymousNode>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.AnonymousNode, T.NamespaceMap>>];
+	export type BuildArgs = [config: ConfigOf<T.AnonymousNode, T.NamespaceMap>];
 	export type LooseArgs = [
-		config?:
+		config:
 			| LooseConfigOf<T.AnonymousNode, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
 			| AdmitBound<T.AnonymousNode, T.AdmittedNodes>
 	];

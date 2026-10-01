@@ -1842,11 +1842,7 @@ export function buildWherePredicate(config: T.WherePredicate.Config): T.WherePre
 		),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	const _bounds = rejectBareText(
-		orDefault(config.bounds, () => buildTraitBounds()),
-		'WherePredicate.bounds',
-		'a built TraitBounds'
-	);
+	const _bounds = rejectBareText(config.bounds, 'WherePredicate.bounds', 'a built TraitBounds');
 	return withMethods(
 		withAccessors(
 			{
@@ -8466,7 +8462,9 @@ export function buildAttributeInput(config: Partial<T.AttributeInput.Config> = {
 	) as unknown as T.AttributeInput.Bound;
 }
 
-export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Config): T.ClosureExpressionBlock.Bound {
+export function buildClosureExpressionBlock(
+	config: Partial<T.ClosureExpressionBlock.Config> = {}
+): T.ClosureExpressionBlock.Bound {
 	const _static_marker = coerceBooleanKeywordStorage(config.staticMarker);
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
@@ -9522,7 +9520,7 @@ export function buildForeignModItemSemi(config: Partial<T.ForeignModItemSemi.Con
 	) as unknown as T.ForeignModItemSemi.Bound;
 }
 
-export function buildForeignModItemBody(config: T.ForeignModItemBody.Config): T.ForeignModItemBody.Bound {
+export function buildForeignModItemBody(config: Partial<T.ForeignModItemBody.Config> = {}): T.ForeignModItemBody.Bound {
 	const _visibility_modifier = rejectBareText(
 		config.visibilityModifier,
 		'ForeignModItemBody.visibilityModifier',

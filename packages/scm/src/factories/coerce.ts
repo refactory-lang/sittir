@@ -801,9 +801,7 @@ export function coerceToMissingNode(input?: T.MissingNode.Loose): ReturnType<typ
 	});
 }
 
-export function resolveAnonymousNode_name(
-	value: T.AnonymousNode.LooseConfig['name'] | undefined
-): T.AnonymousNode['_name'] {
+export function resolveAnonymousNode_name(value: T.AnonymousNode.LooseConfig['name']): T.AnonymousNode['_name'] {
 	return _keywordOr(value, [['_', TSKindId.Underscore] as const], () =>
 		coerceMixedEnumStorage(
 			_resolveKindEnum(value, () => _resolveOneBranch<T.String | '_'>(value, 'string', [TSKindId.Underscore])),
@@ -821,12 +819,12 @@ export function resolveAnonymousNode_contents(
 	);
 }
 
-export function coerceToAnonymousNode(input?: T.AnonymousNode.Loose): ReturnType<typeof F.buildAnonymousNode> {
-	if (!_isLooseConfig<T.AnonymousNode.LooseConfig | undefined>(input))
+export function coerceToAnonymousNode(input: T.AnonymousNode.Loose): ReturnType<typeof F.buildAnonymousNode> {
+	if (!_isLooseConfig<T.AnonymousNode.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAnonymousNode>;
 	return F.buildAnonymousNode({
-		name: _requireField('anonymous_node', 'name', resolveAnonymousNode_name(input?.name)),
-		content: resolveAnonymousNode_contents(input?.content)
+		name: _requireField('anonymous_node', 'name', resolveAnonymousNode_name(input.name)),
+		content: resolveAnonymousNode_contents(input.content)
 	});
 }
 

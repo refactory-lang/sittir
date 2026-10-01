@@ -1988,7 +1988,7 @@ export function buildClassHeritage(
 	) as unknown as T.ClassHeritage.Bound;
 }
 
-export function buildFunctionExpression(config: T.FunctionExpression.Config): T.FunctionExpression.Bound {
+export function buildFunctionExpression(config: Partial<T.FunctionExpression.Config> = {}): T.FunctionExpression.Bound {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _name = rejectBareText(config.name, 'FunctionExpression.name', 'buildIdentifier(…)');
 	const _type_parameters = rejectBareText(
@@ -2122,7 +2122,7 @@ export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): 
 	) as unknown as T.FunctionDeclaration.Bound;
 }
 
-export function buildGeneratorFunction(config: T.GeneratorFunction.Config): T.GeneratorFunction.Bound {
+export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Config> = {}): T.GeneratorFunction.Bound {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _name = rejectBareText(config.name, 'GeneratorFunction.name', 'buildIdentifier(…)');
 	const _type_parameters = rejectBareText(
@@ -9634,7 +9634,7 @@ export function buildClassHeritageExtendsClause(
 	config: T.ClassHeritageExtendsClause.Config
 ): T.ClassHeritageExtendsClause.Bound {
 	const _extends_clause = rejectBareText(
-		orDefault(config.extendsClause, () => buildExtendsClause()),
+		config.extendsClause,
 		'ClassHeritageExtendsClause.extendsClause',
 		'a built ExtendsClause'
 	);

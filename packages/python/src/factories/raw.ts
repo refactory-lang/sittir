@@ -395,11 +395,7 @@ function _buildImportList(
 }
 
 export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImport.Bound {
-	const _name = rejectBareText(
-		orDefault(config.name, () => buildDottedName()),
-		'AliasedImport.name',
-		'a built DottedName'
-	);
+	const _name = rejectBareText(config.name, 'AliasedImport.name', 'a built DottedName');
 	const _alias = rejectBareText(config.alias, 'AliasedImport.alias', 'buildIdentifier(…)');
 	return withMethods(
 		withAccessors(
@@ -2055,11 +2051,7 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 }
 
 export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern.Bound {
-	const _name = rejectBareText(
-		orDefault(config.name, () => buildDottedName()),
-		'ClassPattern.name',
-		'a built DottedName'
-	);
+	const _name = rejectBareText(config.name, 'ClassPattern.name', 'a built DottedName');
 	const _arguments = rejectBareText(config.arguments, 'ClassPattern.arguments', 'a built ListPatternCasePatterns');
 	return withMethods(
 		withListSlots(

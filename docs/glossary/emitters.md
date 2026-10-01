@@ -16621,3 +16621,7 @@ The text nodes of a template body, descending into the arms of its conditionals.
 ### `packages/codegen/src/emitters/factories.ts::patternMismatchThrow`
 
 The one place a pattern guard's refusal is worded: `<label>: text does not match pattern: <value>`, with the value written through `describeValue` so a non-text value shows what it was. The leaf-text guard and the per-slot interior guard both emit it, so the message cannot differ between them.
+
+### `packages/codegen/src/emitters/shared.ts::emptyDefaultOf`
+
+The expression that fills a required slot the caller omitted: the fixed text's discriminant, or a call of the target kind's factory. It answers only for a slot `slotFilledWhenOmitted` accepts, so a default is never emitted for a target whose own no-argument build would throw. A hidden infrastructure slot is never defaulted.

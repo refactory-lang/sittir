@@ -4326,7 +4326,7 @@ export function coerceToWherePredicate(input: T.WherePredicate.Loose): ReturnTyp
 		return input as unknown as ReturnType<typeof F.buildWherePredicate>;
 	return F.buildWherePredicate({
 		left: _requireField('where_predicate', 'left', resolveWherePredicate_left(input.left)),
-		bounds: resolveWherePredicate_bounds(input.bounds) ?? F.buildTraitBounds()
+		bounds: _requireField('where_predicate', 'bounds', resolveWherePredicate_bounds(input.bounds))
 	});
 }
 
@@ -10210,7 +10210,7 @@ export function resolveClosureExpressionBlock_moveMarker(
 }
 
 export function resolveClosureExpressionBlock_parameters(
-	value: T.ClosureExpressionBlock.LooseConfig['parameters']
+	value: T.ClosureExpressionBlock.LooseConfig['parameters'] | undefined
 ): T.ClosureExpressionBlock['_parameters'] {
 	return _resolveOneBranch<T.ClosureParameters>(value, 'closure_parameters');
 }
@@ -10225,23 +10225,23 @@ export function resolveClosureExpressionBlock_returnType(
 }
 
 export function resolveClosureExpressionBlock_body(
-	value: T.ClosureExpressionBlock.LooseConfig['body']
+	value: T.ClosureExpressionBlock.LooseConfig['body'] | undefined
 ): T.ClosureExpressionBlock['_body'] {
 	return _resolveOneBranch<T.Block>(value, 'block');
 }
 
 export function coerceToClosureExpressionBlock(
-	input: T.ClosureExpressionBlock.Loose
+	input?: T.ClosureExpressionBlock.Loose
 ): ReturnType<typeof F.buildClosureExpressionBlock> {
-	if (!_isLooseConfig<T.ClosureExpressionBlock.LooseConfig>(input))
+	if (!_isLooseConfig<T.ClosureExpressionBlock.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildClosureExpressionBlock>;
 	return F.buildClosureExpressionBlock({
-		staticMarker: resolveClosureExpressionBlock_staticMarker(input.staticMarker),
-		asyncMarker: resolveClosureExpressionBlock_asyncMarker(input.asyncMarker),
-		moveMarker: resolveClosureExpressionBlock_moveMarker(input.moveMarker),
-		parameters: resolveClosureExpressionBlock_parameters(input.parameters) ?? F.buildClosureParameters(),
-		returnType: resolveClosureExpressionBlock_returnType(input.returnType),
-		body: resolveClosureExpressionBlock_body(input.body) ?? F.buildBlock()
+		staticMarker: resolveClosureExpressionBlock_staticMarker(input?.staticMarker),
+		asyncMarker: resolveClosureExpressionBlock_asyncMarker(input?.asyncMarker),
+		moveMarker: resolveClosureExpressionBlock_moveMarker(input?.moveMarker),
+		parameters: resolveClosureExpressionBlock_parameters(input?.parameters) ?? F.buildClosureParameters(),
+		returnType: resolveClosureExpressionBlock_returnType(input?.returnType),
+		body: resolveClosureExpressionBlock_body(input?.body) ?? F.buildBlock()
 	});
 }
 
@@ -11225,26 +11225,26 @@ export function resolveForeignModItemBody_visibilityModifier(
 }
 
 export function resolveForeignModItemBody_externModifier(
-	value: T.ForeignModItemBody.LooseConfig['externModifier']
+	value: T.ForeignModItemBody.LooseConfig['externModifier'] | undefined
 ): T.ForeignModItemBody['_extern_modifier'] {
 	return _resolveOneBranch<T.ExternModifier>(value, 'extern_modifier');
 }
 
 export function resolveForeignModItemBody_body(
-	value: T.ForeignModItemBody.LooseConfig['body']
+	value: T.ForeignModItemBody.LooseConfig['body'] | undefined
 ): T.ForeignModItemBody['_body'] {
 	return _resolveOneBranch<T.DeclarationList>(value, 'declaration_list');
 }
 
 export function coerceToForeignModItemBody(
-	input: T.ForeignModItemBody.Loose
+	input?: T.ForeignModItemBody.Loose
 ): ReturnType<typeof F.buildForeignModItemBody> {
-	if (!_isLooseConfig<T.ForeignModItemBody.LooseConfig>(input))
+	if (!_isLooseConfig<T.ForeignModItemBody.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildForeignModItemBody>;
 	return F.buildForeignModItemBody({
-		visibilityModifier: resolveForeignModItemBody_visibilityModifier(input.visibilityModifier),
-		externModifier: resolveForeignModItemBody_externModifier(input.externModifier) ?? F.buildExternModifier(),
-		body: resolveForeignModItemBody_body(input.body) ?? F.buildDeclarationList()
+		visibilityModifier: resolveForeignModItemBody_visibilityModifier(input?.visibilityModifier),
+		externModifier: resolveForeignModItemBody_externModifier(input?.externModifier) ?? F.buildExternModifier(),
+		body: resolveForeignModItemBody_body(input?.body) ?? F.buildDeclarationList()
 	});
 }
 

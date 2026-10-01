@@ -367,7 +367,7 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 	) as unknown as T.MissingNode.Bound;
 }
 
-export function buildAnonymousNode(config: Partial<T.AnonymousNode.Config> = {}): T.AnonymousNode.Bound {
+export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousNode.Bound {
 	const _name = rejectBareText(
 		coerceMixedEnumStorage<NonNullable<T.AnonymousNode['_name']>>(config.name, [['_', TSKindId.Underscore] as const]),
 		'AnonymousNode.name',
