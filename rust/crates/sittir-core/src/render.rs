@@ -164,10 +164,11 @@ pub trait RenderSink {
         let _ = coord;
         None
     }
-    /// The kinds a coordinate's text ends in, visited own kind first.
-    fn for_each_kind_ending_with(&self, coord: &crate::slot::NodeCoordinate, f: &mut dyn FnMut(KindId)) {
+    /// A coordinate's text has just been written: hold the line end of each
+    /// kind the text ends in, its own kind first.
+    fn end_lines_after(&mut self, coord: &crate::slot::NodeCoordinate) {
         if let Some(kind) = self.kind_of(coord) {
-            f(kind);
+            self.end_line_after(kind);
         }
     }
     fn indent(&mut self);
