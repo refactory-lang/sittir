@@ -580,7 +580,7 @@ export async function probe(
 			if (!target) {
 				throw new Error(`probe-kind: --engine native: no node match in NodeData tree`);
 			}
-			// `$nodeId` is ADR-0017's retired field name (replaced by
+			// `$nodeId` is a retired field name (replaced by
 			// `$parentHandle`+`$childIndex`) — kept as a defensive optional
 			// check, not a live path: current NodeData shapes never carry
 			// it, so this is always `undefined` and `target` (the wrap-read
@@ -617,8 +617,8 @@ export async function probe(
 			: undefined;
 		const handle = treeHandle(tree, source, kindIdFromName);
 		// targetNode.id is tree-sitter wasm's own internal id, not a
-		// $parentHandle/$childIndex pair (ADR-0017 replaced $nodeId with that
-		// pair; readUntypedNode/readNode navigate ONLY via handle+childIndex —
+		// $parentHandle/$childIndex pair (that pair replaced $nodeId;
+		// readUntypedNode/readNode navigate ONLY via handle+childIndex —
 		// see readUntypedNode.ts: `if (handle != null && childIndex != null...)`,
 		// else it falls back to reading `tree.rootNode`). Passing just
 		// targetNode.id as a single positional arg can never satisfy that
