@@ -58,6 +58,8 @@ function shippedSuffixes(spec: NativeBindingSpec): string[] {
 		.sort();
 }
 
+const LOADER_OVERRIDES = ['NAPI_RS_NATIVE_LIBRARY_PATH', 'NAPI_RS_FORCE_WASI'] as const;
+
 function messagesOf(error: unknown): string[] {
 	const messages: string[] = [];
 	const seen = new Set<unknown>();
@@ -76,11 +78,27 @@ function messagesOf(error: unknown): string[] {
  * @param spec - The package, its binaries' name stem and their directory.
  * @param error - What the loader threw.
  * @param host - The host to explain the failure for; the running process by default.
- * @returns One line naming the platform. When the package holds no binary for
- * the host: the file it looked for and the platforms it does ship. When the
- * binary is there: the reason it would not load.
+ * @param env - The environment the loader ran in; the running process's by default.
+ * @returns One line. When the environment redirected the loader
+ * (`NAPI_RS_NATIVE_LIBRARY_PATH`, `NAPI_RS_FORCE_WASI`), the packaged binary
+ * was never tried: the override and the loader's own error. Otherwise, when
+ * the package holds no binary for the host: the file it looked for and the
+ * platforms it does ship. When the binary is there: the reason it would not load.
  */
-export function nativeLoadFailure(spec: NativeBindingSpec, error: unknown, host: HostPlatform = hostPlatform()): string {
+export function nativeLoadFailure(
+	spec: NativeBindingSpec,
+	error: unknown,
+	host: HostPlatform = hostPlatform(),
+	env: Readonly<Record<string, string | undefined>> = process.env
+): string {
+	const messages = messagesOf(error);
+	const override = LOADER_OVERRIDES.find((name) => env[name]);
+	if (override !== undefined) {
+		return (
+			`${spec.packageName}: the native loader was redirected by ${override}=${env[override]} ` +
+			`and did not try the packaged binary: ${messages.at(-1)!}`
+		);
+	}
 	const suffix = platformSuffix(host);
 	const file = `${spec.binaryName}.${suffix}.node`;
 	const shipped = shippedSuffixes(spec);
@@ -90,7 +108,6 @@ export function nativeLoadFailure(spec: NativeBindingSpec, error: unknown, host:
 			`it ships ${shipped.length === 0 ? 'none' : shipped.join(', ')}`
 		);
 	}
-	const messages = messagesOf(error);
 	const reason =
 		messages.find((message) => message.includes(file) && !message.startsWith('Cannot find module')) ?? messages[0]!;
 	return `${spec.packageName}: native/${file} is present and failed to load: ${reason}`;

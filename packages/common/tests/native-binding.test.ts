@@ -72,4 +72,30 @@ describe('nativeLoadFailure', () => {
 		const message = nativeLoadFailure(spec(dir), new Error('boom'), { platform: 'darwin', arch: 'arm64' });
 		expect(message).toBe('@sittir/rust: native/sittir-rust.darwin-arm64.node is present and failed to load: boom');
 	});
+
+	it('reports the override and the loader error when the loader was pointed at another library', () => {
+		const dir = nativeDir('sittir-rust.darwin-arm64.node');
+		const message = nativeLoadFailure(
+			spec(dir),
+			new Error('Cannot find native binding.', { cause: new Error("Cannot find module '/elsewhere/x.node'") }),
+			{ platform: 'darwin', arch: 'arm64' },
+			{ NAPI_RS_NATIVE_LIBRARY_PATH: '/elsewhere/x.node' }
+		);
+		expect(message).toBe(
+			"@sittir/rust: the native loader was redirected by NAPI_RS_NATIVE_LIBRARY_PATH=/elsewhere/x.node and did not try the packaged binary: Cannot find module '/elsewhere/x.node'"
+		);
+	});
+
+	it('reports the override when the loader was forced to WASI', () => {
+		const message = nativeLoadFailure(
+			spec(nativeDir('sittir-rust.darwin-arm64.node')),
+			new Error('no wasi binding'),
+			{ platform: 'darwin', arch: 'arm64' },
+			{ NAPI_RS_FORCE_WASI: '1' }
+		);
+		expect(message).toBe(
+			'@sittir/rust: the native loader was redirected by NAPI_RS_FORCE_WASI=1 and did not try the packaged binary: no wasi binding'
+		);
+	});
 });
+

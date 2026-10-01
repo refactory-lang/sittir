@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
@@ -13,7 +13,7 @@ import {
 	stableGrammars
 } from '@sittir/codegen/grammars';
 import { hostPlatform, platformSuffix, targetSuffix } from '@sittir/common/engine';
-import { nativePackGaps } from '../native-pack.ts';
+import { nativePackGaps, unexpectedNativeBinaries } from '../native-pack.ts';
 
 const SAMPLE_SOURCE: Readonly<Record<string, string>> = {
 	python: 'def  f( x ):\n    return x\n',
@@ -56,32 +56,38 @@ const grammars = named.length === 0 ? stableGrammars() : named.map(assertGrammar
 const suffixes = release ? NATIVE_TARGETS.map(targetSuffix) : [platformSuffix(hostPlatform())];
 
 const root = mkdtempSync(join(tmpdir(), 'sittir-published-'));
-const tarballs = join(root, 'tarballs');
-const consumer = join(root, 'consumer');
-mkdirSync(tarballs);
-mkdirSync(consumer);
+try {
+	const tarballs = join(root, 'tarballs');
+	const consumer = join(root, 'consumer');
+	mkdirSync(tarballs);
+	mkdirSync(consumer);
 
-const dependencies: Record<string, string> = {};
-for (const name of ['types', 'common']) dependencies[`@sittir/${name}`] = `file:${pack(join(PACKAGES_DIR, name), tarballs)}`;
+	const dependencies: Record<string, string> = {};
+	for (const name of ['types', 'common']) dependencies[`@sittir/${name}`] = `file:${pack(join(PACKAGES_DIR, name), tarballs)}`;
 
-const gaps: string[] = [];
-for (const grammar of grammars) {
-	const tarball = pack(grammarPackageDir(grammar), tarballs);
-	const entries = run('tar', ['-tzf', tarball], root).split('\n');
-	const binding = { binaryName: nativeBinaryName(grammar), loader: NATIVE_LOADER, typings: NATIVE_TYPINGS };
-	gaps.push(...nativePackGaps(entries, binding, suffixes).map((file) => `@sittir/${grammar}: ${file}`));
-	dependencies[`@sittir/${grammar}`] = `file:${tarball}`;
-}
-if (gaps.length > 0) {
-	console.error(`${release ? 'release' : 'host'} pack check: the packed packages lack\n  ${gaps.join('\n  ')}`);
-	process.exit(1);
-}
+	const gaps: string[] = [];
+	for (const grammar of grammars) {
+		const tarball = pack(grammarPackageDir(grammar), tarballs);
+		const entries = run('tar', ['-tzf', tarball], root).split('\n');
+		const binding = { binaryName: nativeBinaryName(grammar), loader: NATIVE_LOADER, typings: NATIVE_TYPINGS };
+		gaps.push(...nativePackGaps(entries, binding, suffixes).map((file) => `@sittir/${grammar}: lacks ${file}`));
+		if (release) {
+			gaps.push(...unexpectedNativeBinaries(entries, binding, suffixes).map((file) => `@sittir/${grammar}: holds ${file}, which is not a declared target`));
+		}
+		dependencies[`@sittir/${grammar}`] = `file:${tarball}`;
+	}
+	if (gaps.length > 0) {
+		throw new Error(`${release ? 'release' : 'host'} pack check failed:\n  ${gaps.join('\n  ')}`);
+	}
 
-writeFileSync(join(consumer, 'package.json'), JSON.stringify({ name: 'consumer', private: true, type: 'module', dependencies }));
-writeFileSync(join(consumer, 'smoke.mjs'), SMOKE);
-run('npm', ['install', '--no-audit', '--no-fund'], consumer);
-for (const grammar of grammars) {
-	const source = SAMPLE_SOURCE[grammar];
-	if (source === undefined) throw new Error(`no sample source for grammar '${grammar}'`);
-	process.stdout.write(run('node', ['smoke.mjs', grammar, source], consumer));
+	writeFileSync(join(consumer, 'package.json'), JSON.stringify({ name: 'consumer', private: true, type: 'module', dependencies }));
+	writeFileSync(join(consumer, 'smoke.mjs'), SMOKE);
+	run('npm', ['install', '--no-audit', '--no-fund'], consumer);
+	for (const grammar of grammars) {
+		const source = SAMPLE_SOURCE[grammar];
+		if (source === undefined) throw new Error(`no sample source for grammar '${grammar}'`);
+		process.stdout.write(run('node', ['smoke.mjs', grammar, source], consumer));
+	}
+} finally {
+	rmSync(root, { recursive: true, force: true });
 }
