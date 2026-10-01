@@ -11,6 +11,7 @@ import {
 	mapTriviaEntries,
 	projectInterior,
 	storedSlotReader,
+	isDataKey,
 	type TokenInterior
 } from '@sittir/common/utils';
 import type * as TS from 'web-tree-sitter';
@@ -954,8 +955,10 @@ function materializeValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowR
 	}
 	if (!hasNumericType(value)) return value;
 	const materialized: Record<string, unknown> = {};
-	for (const [key, raw] of Object.entries(value)) {
-		if (key === '$with' || typeof raw === 'function') continue;
+	for (const key of Object.keys(value)) {
+		if (!isDataKey(key)) continue;
+		const raw = (value as Record<string, unknown>)[key];
+		if (typeof raw === 'function') continue;
 		if (key === '$_trivia' && raw != null) {
 			materialized.$_trivia = mapTriviaEntries(raw as TriviaSides<unknown>, (entries) =>
 				entries.map((entry) => materializeValue(entry, onAccessorThrow))
@@ -1006,7 +1009,7 @@ function resolveWrappedStorageValue(
 	return node[storageKey];
 }
 
-function accessorCandidatesForStorageKey(storageKey: string): readonly string[] {
+export function accessorCandidatesForStorageKey(storageKey: string): readonly string[] {
 	if (storageKey === '$other') return ['children'];
 	if (!storageKey.startsWith('_')) return [];
 	const base = snakeToCamel(storageKey.slice(1));

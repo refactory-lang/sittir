@@ -1,4 +1,5 @@
 import type { AnyUntypedNode } from '@sittir/types';
+import { isDataKey } from '@sittir/common/utils';
 import type { FactoryEntry, ReadNodeLike } from '../validate/common.ts';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
@@ -185,7 +186,7 @@ function hasKindTag(value: unknown): value is AnyUntypedNode {
 
 const TREE_PROVENANCE_KEYS = new Set(['$span', '$handle', '$parentHandle', '$treeHandle', '$childIndex', '$source']);
 
-function toRenderableNode(value: unknown, seen = new WeakMap<object, unknown>()): unknown {
+export function toRenderableNode(value: unknown, seen = new WeakMap<object, unknown>()): unknown {
 	if (Array.isArray(value)) {
 		return value.map((entry) => toRenderableNode(entry, seen));
 	}
@@ -199,13 +200,15 @@ function toRenderableNode(value: unknown, seen = new WeakMap<object, unknown>())
 	}
 	const out: Record<string, unknown> = {};
 	seen.set(ref, out);
-	for (const [key, entry] of Object.entries(ref)) {
-		if (!key.startsWith('$') || TREE_PROVENANCE_KEYS.has(key)) continue;
+	for (const key of Object.keys(ref)) {
+		if (!key.startsWith('$') || !isDataKey(key) || TREE_PROVENANCE_KEYS.has(key)) continue;
+		const entry = ref[key];
 		if (typeof entry === 'function') continue;
 		out[key] = toRenderableNode(entry, seen);
 	}
-	for (const [key, entry] of Object.entries(ref)) {
+	for (const key of Object.keys(ref)) {
 		if (!key.startsWith('_')) continue;
+		const entry = ref[key];
 		const getterName = key.slice(1).replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
 		const getter = ref[getterName];
 		const fieldValue = typeof getter === 'function' && getter.length === 0 ? getter.call(ref) : entry;

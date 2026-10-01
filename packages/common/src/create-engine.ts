@@ -111,8 +111,8 @@ function collectReaders(value: unknown, readers: Set<EngineHandle['current']>): 
 			if (reader !== undefined) readers.add(reader);
 			return;
 		}
-		for (const [key, item] of Object.entries(value)) {
-			if (key.startsWith('_') || key === '$other' || key === '$_trivia') collectReaders(item, readers);
+		for (const key of Object.keys(value)) {
+			if (key.startsWith('_') || key === '$other' || key === '$_trivia') collectReaders(value[key], readers);
 		}
 	}
 }

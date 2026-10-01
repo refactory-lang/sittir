@@ -23,6 +23,17 @@ export function isStorageKey(key: string): boolean {
 	return key.charCodeAt(0) === 95 || key === '$other';
 }
 
+const MEMBER_KEYS: ReadonlySet<string> = new Set(['$with', '$trivia', '$engine', '$render', '$toEdit', '$replace']);
+
+/**
+ * Whether `key` carries node data across the boundary: a storage key, or a `$` metadata key that
+ * is not one of the node's members. A reader, a list index, `length` and a list option are
+ * members, so none of them is data.
+ */
+export function isDataKey(key: string): boolean {
+	return isStorageKey(key) || (key.charCodeAt(0) === 36 && !MEMBER_KEYS.has(key));
+}
+
 /** Whether `node` holds storage: a slot, or unslotted children. A text leaf and a token hold none. */
 export function holdsSlots(node: object): boolean {
 	for (const key in node) if (key.charCodeAt(0) === 95) return true;
@@ -42,7 +53,8 @@ function isInert(value: unknown): boolean {
  */
 function isDerivedFromText(record: Record<string, unknown>): boolean {
 	if (typeof record.$text !== 'string' || !isRecord(record.$span) || record.$other != null) return false;
-	return Object.entries(record).every(([key, value]) => !key.startsWith('_') || isInert(value));
+	for (const key of Object.keys(record)) if (key.charCodeAt(0) === 95 && !isInert(record[key])) return false;
+	return true;
 }
 
 /**
@@ -64,9 +76,8 @@ function isUntouchedBelow(value: unknown): boolean {
 	if (value === undefined || value === null || typeof value !== 'object') return true;
 	const record = value as Record<string, unknown>;
 	if (!isRecord(record.$span)) return false;
-	for (const [key, child] of Object.entries(record)) {
-		if (!isStorageKey(key)) continue;
-		if (!isUntouchedBelow(child)) return false;
+	for (const key of Object.keys(record)) {
+		if (isStorageKey(key) && !isUntouchedBelow(record[key])) return false;
 	}
 	return true;
 }
@@ -168,8 +179,10 @@ function toTransportValue(value: unknown): unknown {
 	if (!isRecord(value)) return value;
 	if (canFold(value)) return foldToCoordinate(value);
 	const out: Record<string, unknown> = {};
-	for (const [key, raw] of Object.entries(value)) {
-		if (key === '$with' || typeof raw === 'function') continue;
+	for (const key of Object.keys(value)) {
+		if (!isDataKey(key)) continue;
+		const raw = value[key];
+		if (typeof raw === 'function') continue;
 		out[key] = isStorageKey(key) ? toTransportValue(raw) : raw;
 	}
 	// Past the fold, nothing is a coordinate: a leaf that kept its trivia
@@ -210,8 +223,9 @@ export function detachCoordinates<T>(root: T): T {
 			value.$treeHandle = tree;
 			value.$textOnly = true;
 		}
-		for (const [key, child] of Object.entries(value)) {
+		for (const key of Object.keys(value)) {
 			if (!isStorageKey(key)) continue;
+			const child = value[key];
 			if (Array.isArray(child)) for (const entry of child) recurse(entry);
 			else recurse(child);
 		}

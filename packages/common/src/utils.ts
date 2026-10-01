@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, StringIndexRange, Edit, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { detachCoordinate } from './transport-data.ts';
+import { detachCoordinate, holdsSlots } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { currentHandle, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -109,9 +109,13 @@ function bindEngine(node: object, handle: EngineHandle): void {
  * comment beside any child has that child to lead or trail.
  */
 export function isEmptyNode(node: AnyUntypedNode): boolean {
-	return Object.entries(node).every(
-		([key, value]) => !key.startsWith('_') || value == null || (Array.isArray(value) && value.length === 0)
-	);
+	const record = node as unknown as Record<string, unknown>;
+	for (const key of Object.keys(record)) {
+		if (key.charCodeAt(0) !== 95) continue;
+		const value = record[key];
+		if (value != null && !(Array.isArray(value) && value.length === 0)) return false;
+	}
+	return true;
 }
 
 /**
@@ -491,9 +495,8 @@ export function isNode(v: unknown): v is AnyUntypedNode {
 	if (v === null || typeof v !== 'object') return false;
 	const o = v as Record<string, unknown>;
 	if (typeof o.$type !== 'number') return false;
-	const hasStoredFields = Object.keys(o).some((k) => k.startsWith('_'));
 	return (
-		hasStoredFields ||
+		holdsSlots(o) ||
 		typeof o.$text === 'string' ||
 		o.$other !== undefined ||
 		o.$source === Source.Ts ||
@@ -628,7 +631,7 @@ export { hydrateStub, isStub, readUntypedNode, type Stub, type TreeHandle } from
 export { toEditAt } from './edit.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toTransportData, markEdited, treeHandleOf, isStorageKey, holdsSlots } from './transport-data.ts';
+export { toTransportData, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots } from './transport-data.ts';
 export {
 	projectInterior,
 	lexedConfig,
