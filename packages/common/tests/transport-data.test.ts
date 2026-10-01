@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { markEdited, stripStructuralProvenance, toTransportData, treeHandleOf } from '../src/transport-data.ts';
+import { markEdited, detachCoordinates, toTransportData, treeHandleOf } from '../src/transport-data.ts';
 
 const leaf = (text: string, start: number) => ({
 	$type: 1,
@@ -195,10 +195,10 @@ describe('markEdited', () => {
 	});
 });
 
-describe('stripStructuralProvenance', () => {
+describe('detachCoordinates', () => {
 	it('keeps the coordinate of an unedited node whose slots are projected from its text', () => {
 		const node = { $type: 118, $text: "'a'", $span: { start: 3, end: 6 }, $handle: 17, _content: 'a', _b: true };
-		expect(stripStructuralProvenance(node)).toEqual({
+		expect(detachCoordinates(node)).toEqual({
 			$type: 118,
 			$text: "'a'",
 			$span: { start: 3, end: 6 },
@@ -211,14 +211,14 @@ describe('stripStructuralProvenance', () => {
 
 	it('stamps a surviving coordinate text-only, and a stripped node carries none to stamp', () => {
 		const leaf = { $type: 5, $text: 'x', $span: { start: 1, end: 2 }, $treeHandle: 9 };
-		expect(stripStructuralProvenance({ ...leaf })).toEqual({ ...leaf, $textOnly: true });
+		expect(detachCoordinates({ ...leaf })).toEqual({ ...leaf, $textOnly: true });
 		const parent = { $type: 1, $span: { start: 0, end: 2 }, $handle: 2, _child: { ...leaf } };
-		expect(stripStructuralProvenance(parent)).toEqual({ $type: 1, _child: { ...leaf, $textOnly: true } });
+		expect(detachCoordinates(parent)).toEqual({ $type: 1, _child: { ...leaf, $textOnly: true } });
 	});
 
 	it('re-keys a surviving stub coordinate to the tree its span slices', () => {
 		const stubLeaf = { $type: 5, $text: 'x', $span: { start: 1, end: 2 }, $parentHandle: 9, $childIndex: 0 };
-		expect(stripStructuralProvenance({ ...stubLeaf })).toEqual({
+		expect(detachCoordinates({ ...stubLeaf })).toEqual({
 			$type: 5,
 			$text: 'x',
 			$span: { start: 1, end: 2 },
@@ -230,8 +230,8 @@ describe('stripStructuralProvenance', () => {
 
 	it('strips a node that holds child nodes, and a node an edit detached from its span', () => {
 		const parent = { $type: 1, $text: 'x', $span: { start: 0, end: 1 }, $handle: 2, _child: { $type: 3, $span: { start: 0, end: 1 } } };
-		expect(stripStructuralProvenance(parent)).toEqual({ $type: 1, _child: { $type: 3, $span: { start: 0, end: 1 } } });
+		expect(detachCoordinates(parent)).toEqual({ $type: 1, _child: { $type: 3, $span: { start: 0, end: 1 } } });
 		const edited = { $type: 118, $text: "'a'", _content: 'b' };
-		expect(stripStructuralProvenance(edited)).toEqual({ $type: 118, _content: 'b' });
+		expect(detachCoordinates(edited)).toEqual({ $type: 118, _content: 'b' });
 	});
 });

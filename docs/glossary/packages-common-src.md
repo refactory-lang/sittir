@@ -235,6 +235,6 @@ Whether a value is a group's config object rather than a node: a non-empty plain
 
 The tree a node's handle names, whichever of `$handle` (its own), `$parentHandle` (a stub's coordinate, beside `$childIndex`) or `$treeHandle` (a node nothing re-reads) it carries. Every handle is tagged with its tree, so each identifies it; this is the TypeScript side of the Rust `NodeHandle::raw`. The fold uses it to decide a node still names its tree and emits it as the coordinate's `$treeHandle`; the generated wrap uses it to recognize a node that arrived as a coordinate.
 
-### `packages/common/src/transport-data.ts::stripStructuralProvenance`
+### `packages/common/src/transport-data.ts::detachCoordinates`
 
 Drops the pre-edit spelling and the coordinate that would slice it from every node that holds storage, in place, for data that reached a render by a path other than `toTransportData`. A coordinate that survives (a leaf whose slots are projected from its text) addresses that text and nothing of the layout around it, so it is stamped `$textOnly`, and whichever handle it carries is re-keyed to `$treeHandle`, the only coordinate key the render side reads. The root's edge flanks and a list's source gaps are read from tree bytes, and only a coordinate that names its tree position is evidence for them; a text-only one is not, so a render of such data takes the grammar's defaults where a tree-bound render keeps the source's layout.

@@ -107,7 +107,7 @@ import {
 import { load } from '../codegen-surface.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyNodeData, AnyTreeNode } from '@sittir/types';
-import { stripStructuralProvenance } from '@sittir/common';
+import { detachCoordinates } from '@sittir/common';
 import { toTransportData, type TreeHandle } from '@sittir/common/utils';
 // ---------------------------------------------------------------------------
 // CLI
@@ -888,7 +888,7 @@ export function materializeProbeWrappedNodeData(
 	root: unknown,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): unknown {
-	return stripStructuralProvenance(materializeWrappedNodeData(root, onAccessorThrow));
+	return detachCoordinates(materializeWrappedNodeData(root, onAccessorThrow));
 }
 
 export function resolveNativeTraceNodeData(
@@ -917,7 +917,7 @@ async function readProbeNodeData(
 		const handle = readNativeTree(nativeEngine, source).tree;
 		if (isRoot) {
 			const shallow = stripBigInts(handle.read?.());
-			const legacyDeepNodeData = stripStructuralProvenance(await deepReadProbeNode(handle, undefined, undefined));
+			const legacyDeepNodeData = detachCoordinates(await deepReadProbeNode(handle, undefined, undefined));
 			const deepReadTreeNodeRaw = readTreeNodeFn ? readTreeNodeFn(handle) : undefined;
 			const deep = resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData, onAccessorThrow);
 			return { shallow, deep, deepReadTreeNodeRaw, legacyDeepNodeData };
@@ -930,7 +930,7 @@ async function readProbeNodeData(
 				) ?? null;
 			if (targetCandidate?.coords.handle !== undefined && targetCandidate.coords.childIndex !== undefined) {
 				const shallow = handle.read?.(targetCandidate.coords.handle, targetCandidate.coords.childIndex);
-				const legacyDeepNodeData = stripStructuralProvenance(
+				const legacyDeepNodeData = detachCoordinates(
 					await deepReadProbeNode(handle, targetCandidate.coords.handle, targetCandidate.coords.childIndex)
 				);
 				const deepReadTreeNodeRaw = readTreeNodeFn
@@ -947,7 +947,7 @@ async function readProbeNodeData(
 		if (!target) throw new Error('probe-kind: no native node match in NodeData tree');
 		const targetHandle = getTargetHandle(target);
 		const shallow = targetHandle ? handle.read?.(targetHandle.handle, targetHandle.childIndex) : target;
-		const legacyDeepNodeData = stripStructuralProvenance(
+		const legacyDeepNodeData = detachCoordinates(
 			targetHandle ? await deepReadProbeNode(handle, targetHandle.handle, targetHandle.childIndex) : target
 		);
 		const deepReadTreeNodeRaw =

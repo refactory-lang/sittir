@@ -208,7 +208,7 @@ function transportValue(value: unknown, normalize: NormalizeNodeStorage | undefi
  * text only: it crosses as the `$treeHandle` its span slices, stamped
  * `$textOnly` so no edge or gap reader takes layout evidence from it.
  */
-export function stripStructuralProvenance<T>(root: T): T {
+export function detachCoordinates<T>(root: T): T {
 	const seen = new WeakSet<object>();
 	const recurse = (value: unknown): void => {
 		if (!isRecord(value) || typeof value.$type !== 'number') return;
