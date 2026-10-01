@@ -609,14 +609,28 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         coord.kind.or_else(|| self.sources.and_then(|sources| sources.kind_of(coord)))
     }
 
-    fn kinds_ending_with(&self, coord: &crate::slot::NodeCoordinate) -> Vec<crate::types::KindId> {
-        let chain = self
-            .sources
-            .map(|sources| sources.kinds_ending_with(coord))
-            .unwrap_or_default();
-        match coord.kind {
-            Some(stamp) => std::iter::once(stamp).chain(chain.into_iter().skip(1)).collect(),
-            None => chain,
+    fn for_each_kind_ending_with(&self, coord: &crate::slot::NodeCoordinate, f: &mut dyn FnMut(crate::types::KindId)) {
+        let Some(sources) = self.sources else {
+            if let Some(stamp) = coord.kind {
+                f(stamp);
+            }
+            return;
+        };
+        let mut first = true;
+        sources.for_each_kind_ending_with(coord, &mut |kind| match (first, coord.kind) {
+            (true, Some(stamp)) => {
+                first = false;
+                f(stamp);
+            }
+            _ => {
+                first = false;
+                f(kind);
+            }
+        });
+        if first {
+            if let Some(stamp) = coord.kind {
+                f(stamp);
+            }
         }
     }
 

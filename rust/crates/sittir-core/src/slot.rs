@@ -85,8 +85,16 @@ impl NodeCoordinate {
         if let Some(SeamArm { arm, strength }) = self.edges.and_then(|e| e.after) {
             w.site_with(arm, strength);
         }
-        for kind in w.kinds_ending_with(self) {
-            w.end_line_after(kind);
+        let mut kinds = [crate::types::KindId(0); 16];
+        let mut count = 0;
+        w.for_each_kind_ending_with(self, &mut |kind| {
+            if count < kinds.len() {
+                kinds[count] = kind;
+                count += 1;
+            }
+        });
+        for kind in &kinds[..count] {
+            w.end_line_after(*kind);
         }
         Ok(())
     }
