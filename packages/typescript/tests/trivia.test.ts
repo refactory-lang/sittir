@@ -12,10 +12,10 @@ function makeFn(name: string) {
 	});
 }
 
-describe('$trivia() on the typescript surface', () => {
+describe('$trivia on the typescript surface', () => {
 	it('takes comment builders, and reads loose text as a line comment, leading and trailing', () => {
 		const fn = makeFn('f');
-		fn.$trivia({ leading: [ts.build.comment.block('* doc '), ts.build.comment.line(' second')], trailing: ['// tail'] });
+		fn.$trivia.leading(ts.build.comment.block('* doc '), ts.build.comment.line(' second')).$trivia.trailing('// tail');
 		expect(fn.$render()).toBe('/** doc */\n// second\nfunction f() {}\n// tail\n');
 	});
 
@@ -27,20 +27,20 @@ describe('$trivia() on the typescript surface', () => {
 	});
 
 	it('reads a loose block spelling as line-comment text, never as a block comment', () => {
-		expect(makeFn('f').$trivia('/* x */').$render()).toBe('///* x */\nfunction f() {}');
+		expect(makeFn('f').$trivia.leading('/* x */').$render()).toBe('///* x */\nfunction f() {}');
 	});
 
 	it('leading rest arguments render before the node', () => {
-		expect(makeFn('f').$trivia('// hi').$render()).toBe('// hi\nfunction f() {}');
+		expect(makeFn('f').$trivia.leading('// hi').$render()).toBe('// hi\nfunction f() {}');
 	});
 
 	it('a program root carries trivia like any node', () => {
-		const program = ts.build.program({ statements: [makeFn('f')] }).$trivia('// top');
+		const program = ts.build.program({ statements: [makeFn('f')] }).$trivia.leading('// top');
 		expect(program.$render().startsWith('// top\n')).toBe(true);
 	});
 
 	it('$with carries trivia to the rebuilt node', () => {
-		const fn = makeFn('f').$trivia('// kept');
+		const fn = makeFn('f').$trivia.leading('// kept');
 		const renamed = fn.$with.name(ts.build.identifier('g'));
 		expect(renamed.$render()).toBe('// kept\nfunction g() {}');
 	});

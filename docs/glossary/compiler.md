@@ -3020,7 +3020,7 @@ fallback an unstamped list reports.
 // Extract all semantic roles from the grammar's highlights.scm + tags.scm,
 // plus the stamped `root` role: the start symbol is the rule record's
 // FIRST rule (tree-sitter convention, preserved through every phase).
-// Trivia kinds are used to type the `$trivia()` signature in utils.ts.
+// Trivia kinds are used to type the `$trivia` positions in utils.ts.
 // The full GrammarRoles are passed to the ir emitter for `ir.synonym.*`.
 ```
 

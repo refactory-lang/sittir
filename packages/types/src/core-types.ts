@@ -9,7 +9,7 @@
 // ---------------------------------------------------------------------------
 
 /**
- * Trivia metadata attached to a node via `$trivia()`.
+ * Trivia metadata attached to a node through its `$trivia` positions.
  *
  * Leading trivia renders before the node's own text, trailing trivia after
  * it, and inner trivia inside an empty node, at the gap it is keyed by. An
@@ -146,9 +146,9 @@ export interface AnyUntypedNode {
 	 * rendered text. A range's `index` is a string index (UTF-16 code units, as ast-grep reports it) while an `Edit` counts bytes, so the edit lands in the wrong place when non-ASCII text precedes the range.
 	 */
 	$replace?: (target: { range(): StringIndexRange }) => Edit;
-	/** Trivia metadata (leading / trailing comments) attached via `$trivia()`. */
+	/** Trivia metadata (leading / trailing comments) attached through `$trivia`. */
 	$_trivia?: NodeTrivia;
-	/** Attach trivia to this node. Rest args → leading; object form → as-is. Returns `this`.
+	/** The node's trivia positions (`leading`, `trailing`); see {@link TriviaSetter}.
 	 *
 	 * `any[]` in the base type so per-grammar narrowed signatures
 	 * (`(LineComment | BlockComment | ...)[]`) remain assignable —
@@ -159,13 +159,13 @@ export interface AnyUntypedNode {
 
 export type GrammarTriviaEntry<Trivia> = Trivia | string;
 
+/**
+ * The trivia positions of a node: `leading` and `trailing`. Called with items, a position
+ * sets its entries, keeps the other position, and returns the node, so calls chain; called
+ * with none, it returns the entries the position holds. An item is a trivia node or the
+ * text of a comment.
+ */
 export interface TriviaSetter<Self = AnyUntypedNode, Trivia = any> {
-	(
-		...args: (
-			| GrammarTriviaEntry<Trivia>
-			| { leading?: GrammarTriviaEntry<Trivia>[]; trailing?: GrammarTriviaEntry<Trivia>[] }
-		)[]
-	): Self;
 	leading(): readonly Trivia[];
 	leading(...items: GrammarTriviaEntry<Trivia>[]): Self;
 	trailing(): readonly Trivia[];

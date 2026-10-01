@@ -1,5 +1,5 @@
 /**
- * $trivia() integration tests — spec 023 Phase 3 (T010).
+ * $trivia integration tests.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -23,7 +23,7 @@ function makeComment(text: string): LineComment {
 	return rs.build.lineComment(rs.build.lineCommentRegular(text));
 }
 
-/** The runtime's trivia storage key — `$trivia()` mutates the node and
+/** The runtime's trivia storage key — a `$trivia` position mutates the node and
  *  stashes entries here; probed structurally because the key is
  *  deliberately not part of the public node type surface. */
 type TriviaData = { leading?: unknown[]; trailing?: unknown[] };
@@ -31,39 +31,39 @@ function triviaDataOf(node: unknown): TriviaData | undefined {
 	return (node as { $_trivia?: TriviaData }).$_trivia;
 }
 
-describe('$trivia() integration', () => {
+describe('$trivia integration', () => {
 	it('attaches leading trivia via rest args', () => {
 		const comment = makeComment('// hello');
 		const fn = makeFn('main');
-		const result = fn.$trivia(comment);
+		const result = fn.$trivia.leading(comment);
 		expect(result).toBe(fn);
 		const td = triviaDataOf(fn);
 		expect(td).toBeDefined();
 		expect(td?.leading).toHaveLength(1);
 	});
 
-	it('attaches trailing trivia via object form', () => {
+	it('attaches trailing trivia through its position', () => {
 		const comment = makeComment('// end');
 		const fn = makeFn('main');
-		fn.$trivia({ trailing: [comment] });
+		fn.$trivia.trailing(comment);
 		const td = triviaDataOf(fn);
 		expect(td).toBeDefined();
 		expect(td?.trailing).toHaveLength(1);
 	});
 
-	it('last $trivia() call wins (overwrite)', () => {
+	it('a position set twice keeps the last call (overwrite)', () => {
 		const c1 = makeComment('// first');
 		const c2 = makeComment('// second');
 		const fn = makeFn('main');
-		fn.$trivia(c1);
-		fn.$trivia(c2);
+		fn.$trivia.leading(c1);
+		fn.$trivia.leading(c2);
 		expect(triviaDataOf(fn)?.leading).toHaveLength(1);
 	});
 
 	it('$with rebuild carries trivia to the rebuilt node', () => {
 		const comment = makeComment('// hello');
 		const fn = makeFn('main');
-		fn.$trivia(comment);
+		fn.$trivia.leading(comment);
 		expect(triviaDataOf(fn)).toBeDefined();
 		const rebuilt = fn.$with.name(rs.build.identifier('other'));
 		expect(rebuilt).not.toBe(fn);
@@ -72,7 +72,7 @@ describe('$trivia() integration', () => {
 
 	it('builds loose text into line comments', () => {
 		const fn = makeFn('main');
-		fn.$trivia('// hello', '// a');
+		fn.$trivia.leading('// hello', '// a');
 		expect((triviaDataOf(fn)?.leading as { $type: unknown }[] | undefined)?.map((entry) => entry.$type)).toEqual([
 			rs.kinds.LineComment,
 			rs.kinds.LineComment
@@ -87,18 +87,18 @@ describe('$trivia() integration', () => {
 		return rs.build.lineComment(rs.build.lineCommentRegular(afterSlashes));
 	}
 
-	// `$trivia()` mutates and returns the SAME node (asserted above), but its
+	// a trivia position mutates and returns the SAME node (asserted above), but its
 	// declared return type is the type-erased AnyUntypedNode — so these render
-	// cases keep the typed reference and call `$trivia` as the mutation it is.
+	// cases keep the typed reference and call the position as the mutation it is.
 	it('leading trivia renders before the node', () => {
 		const fn = makeFn('main');
-		fn.$trivia(buildLineComment(' hello'));
+		fn.$trivia.leading(buildLineComment(' hello'));
 		expect(fn.$render()).toBe('// hello\nfn main() {}');
 	});
 
 	it('trailing trivia renders after the node', () => {
 		const fn = makeFn('main');
-		fn.$trivia({ trailing: [buildLineComment(' bye')] });
+		fn.$trivia.trailing(buildLineComment(' bye'));
 		// A line comment is newline-terminated by the spacing model — the
 		// final `\n` is part of the comment's own rendering, so a trailing
 		// comment leaves the output newline-terminated.
@@ -107,7 +107,7 @@ describe('$trivia() integration', () => {
 
 	it('loose text renders as the comment it spells, before and after the node', () => {
 		const fn = makeFn('main');
-		fn.$trivia({ leading: ['// top'], trailing: ['// bottom'] });
+		fn.$trivia.leading('// top').$trivia.trailing('// bottom');
 		const out = fn.$render();
 		expect(out.startsWith('// top\n')).toBe(true);
 		expect(out.endsWith('// bottom\n')).toBe(true);
@@ -115,7 +115,7 @@ describe('$trivia() integration', () => {
 
 	it('a rebuilt node renders the trivia it inherited', () => {
 		const fn = makeFn('main');
-		fn.$trivia('// kept');
+		fn.$trivia.leading('// kept');
 		const rebuilt = fn.$with.name(rs.build.identifier('other'));
 		expect(rebuilt.$render().startsWith('// kept\n')).toBe(true);
 		expect(rebuilt.$render()).toContain('fn other');
@@ -123,10 +123,7 @@ describe('$trivia() integration', () => {
 
 	it('multiple leading and trailing entries render in order', () => {
 		const fn = makeFn('main');
-		fn.$trivia({
-			leading: [buildLineComment(' top1'), buildLineComment(' top2')],
-			trailing: [buildLineComment(' bottom')]
-		});
+		fn.$trivia.leading(buildLineComment(' top1'), buildLineComment(' top2')).$trivia.trailing(buildLineComment(' bottom'));
 		expect(fn.$render()).toBe('// top1\n// top2\nfn main() {}\n// bottom\n');
 	});
 

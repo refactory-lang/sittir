@@ -4184,7 +4184,7 @@ accepts a bare string, because the root of a render is never free text.
  * A leaf sent as a bare string/number/boolean carries no metadata object to
  * read trivia from, so `__trivia` only gets populated in the object fallback
  * branch (a factory-attached comment on a leaf node always arrives as an
- * object — `$trivia()` forces the trivia-bearing owner off the bare-
+ * object — a `$trivia` write forces the trivia-bearing owner off the bare-
  * primitive fast path).
  */
 ```

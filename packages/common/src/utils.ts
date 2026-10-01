@@ -1,5 +1,5 @@
 import type { AnyUntypedNode, StringIndexRange, Edit, NodeTrivia, TriviaEntry, TriviaFacts } from '@sittir/types';
-import { mapTriviaEntries, type TriviaSides } from './trivia.ts';
+import { mapTriviaEntries } from './trivia.ts';
 import { detachCoordinate } from './transport-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
@@ -25,7 +25,6 @@ interface WithMethodsRuntime<T extends object = AnyUntypedNode> {
 }
 
 interface TriviaSetterRuntime<Self> {
-	(...args: unknown[]): Self;
 	leading(): readonly TriviaEntry[];
 	leading(...items: unknown[]): Self;
 	trailing(): readonly TriviaEntry[];
@@ -162,19 +161,12 @@ function triviaSetterOf<Self extends AnyUntypedNode>(
 		if (items.length === 0) return node.$_trivia?.inner?.[gap] ?? [];
 		return store({ ...node.$_trivia, inner: writeInner({ ...node.$_trivia?.inner, [gap]: entriesOf(items) }) });
 	};
-	return Object.assign(
-		(...args: unknown[]): Self => {
-			const given = args.length === 1 && isTriviaObject(args[0]) ? args[0] : { leading: args };
-			const trivia = mapTriviaEntries(given as TriviaSides<unknown>, entriesOf);
-			return store(trivia.inner === undefined ? trivia : { ...trivia, inner: writeInner(trivia.inner) });
-		},
-		{
-			leading: side('leading'),
-			trailing: side('trailing'),
-			inner: (...items: unknown[]) => innerAt(gapsOf()[0]!, ...items),
-			innerAt
-		}
-	) as TriviaSetterRuntime<Self>;
+	return {
+		leading: side('leading'),
+		trailing: side('trailing'),
+		inner: (...items: unknown[]) => innerAt(gapsOf()[0]!, ...items),
+		innerAt
+	} as TriviaSetterRuntime<Self>;
 }
 
 /** One trivia item as its entry: a trivia node or whitespace kind id as it is, a string by `textEntryOf`. */
@@ -595,10 +587,6 @@ function extractNodeText(value: unknown): string | undefined {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-function isTriviaObject(value: unknown): value is TriviaSides<unknown> {
-	return isRecord(value) && !isNode(value) && ('leading' in value || 'trailing' in value || 'inner' in value);
 }
 
 function setTriviaData(node: AnyUntypedNode, triviaData: NodeTrivia): void {

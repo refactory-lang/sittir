@@ -140,7 +140,7 @@ shipped them yet but they are in scope:
   `read(source) → render` must be byte-identical for well-formed input on
   each grammar before any ergonomic surface is layered on top. Render lives
   on the canonical rule tree; coercion, `$with` immutability,
-  fluent getters, and `.$trivia()` are projections over the same
+  fluent getters, and `.$trivia` are projections over the same
   `UntypedNode`.
 - **One engine, one contract.** A native engine with generated Rust render bodies sits behind a
   single `SittirEngineLike` interface. `createEngine()` throws if the
@@ -476,7 +476,7 @@ const source = 'fn main() {\n    // kept\n    run( 1 );\n}\n';
 engine.parse(source).$render() === source;      // true, for well-formed input
 ```
 
-For the broader target surface — `.$trivia()`, construction templates,
+For the broader target surface — `.$trivia`, construction templates,
 find-and-edit codemods, cross-language migration — see
 [`docs/use-cases-and-examples.md`](docs/use-cases-and-examples.md). Each
 section there is annotated with whether it tracks shipped behavior or a

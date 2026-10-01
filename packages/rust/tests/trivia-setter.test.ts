@@ -13,6 +13,12 @@ type InnerSetter<N> = {
 const innerOf = <N extends { $trivia: object }>(node: N): InnerSetter<N> => node.$trivia as unknown as InnerSetter<N>;
 
 describe('$trivia getters, inner and refusals', () => {
+	it('is its positions: an object whose position returns the node', () => {
+		const node = rs.build.identifier('a');
+		expect(typeof node.$trivia).toBe('object');
+		expect(node.$trivia.leading(rs.build.comment(' lead'))).toBe(node);
+	});
+
 	it('reads back what each position was set to, [] where nothing was', () => {
 		const a = rs.build.identifier('a').$trivia.leading(rs.build.comment(' lead')).$trivia.trailing(rs.build.comment(' tail'));
 		expect(a.$trivia.leading().map((entry) => (typeof entry === 'number' ? entry : entry.$type))).toEqual([rs.kinds.LineComment]);
