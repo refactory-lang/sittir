@@ -1200,12 +1200,12 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'}'
 					]
 				: []),
-			'// Drill-in helpers — call back through `readTreeNode` so the same',
+			'// Drill-in helpers — call back through `projectNode` so the same',
 			'// per-handle dispatch + wrap pipeline runs at every level. Layering:',
-			'//   readTreeNode (public entry)',
+			'//   projectNode (public entry)',
 			'//     → readNode (handle-driven — tree.read for native, JS walker otherwise)',
 			'//       → wrapNode (dispatches on $type)',
-			'//         → drillIn → readTreeNode (recurse)',
+			'//         → drillIn → projectNode (recurse)',
 			'// Resolve a node that IS the value being returned — a supertype',
 			'// occurrence the reader collapsed to a text leaf stands in for its',
 			'// own member. An unexpanded stub reads one more level; anything',
@@ -1223,8 +1223,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'  if (entry == null) return undefined as unknown as T;',
 			'  const e = entry as unknown as _NodeData;',
 			listOwnerMembers.length === 0
-				? '  if (e.$parentHandle != null && e.$childIndex != null) return readTreeNode(tree, e.$parentHandle, e.$childIndex) as unknown as T;'
-				: '  if (e.$parentHandle != null && e.$childIndex != null) return readTreeNode(tree, e.$parentHandle, e.$childIndex, _LIST_OWNER_KINDS.has(e.$type as number) ? 2 : undefined) as unknown as T;',
+				? '  if (e.$parentHandle != null && e.$childIndex != null) return projectNode(tree, e.$parentHandle, e.$childIndex) as unknown as T;'
+				: '  if (e.$parentHandle != null && e.$childIndex != null) return projectNode(tree, e.$parentHandle, e.$childIndex, _LIST_OWNER_KINDS.has(e.$type as number) ? 2 : undefined) as unknown as T;',
 			'  return entry;',
 			'}',
 			'// Resolve a CHILD position. Beyond the stub read, node data a deep',
@@ -1765,7 +1765,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push(' * the grammar symbol (stamped by the read), so no per-site alias');
 		lines.push(' * rewriting exists between the read and the wrap.');
 		lines.push(' */');
-		lines.push('export function readTreeNode(');
+		lines.push('export function projectNode(');
 		lines.push('  tree: TreeHandle,');
 		lines.push('  handle?: number,');
 		lines.push('  childIndex?: number,');

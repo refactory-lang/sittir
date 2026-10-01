@@ -200,12 +200,12 @@ function normalizeRepeatedWrapSlot<T>(
 		return handleWrapViolation(`repeated slot ${JSON.stringify(slotName)} requires at least one value`, items, context);
 	return items;
 }
-// Drill-in helpers — call back through `readTreeNode` so the same
+// Drill-in helpers — call back through `projectNode` so the same
 // per-handle dispatch + wrap pipeline runs at every level. Layering:
-//   readTreeNode (public entry)
+//   projectNode (public entry)
 //     → readNode (handle-driven — tree.read for native, JS walker otherwise)
 //       → wrapNode (dispatches on $type)
-//         → drillIn → readTreeNode (recurse)
+//         → drillIn → projectNode (recurse)
 // Resolve a node that IS the value being returned — a supertype
 // occurrence the reader collapsed to a text leaf stands in for its
 // own member. An unexpanded stub reads one more level; anything
@@ -238,7 +238,7 @@ function drillInSelf<T>(entry: T, tree: TreeHandle): T {
 	if (entry == null) return undefined as unknown as T;
 	const e = entry as unknown as _NodeData;
 	if (e.$parentHandle != null && e.$childIndex != null)
-		return readTreeNode(
+		return projectNode(
 			tree,
 			e.$parentHandle,
 			e.$childIndex,
@@ -9008,6 +9008,6 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
  * the grammar symbol (stamped by the read), so no per-site alias
  * rewriting exists between the read and the wrap.
  */
-export function readTreeNode(tree: TreeHandle, handle?: number, childIndex?: number, depth?: number): unknown {
+export function projectNode(tree: TreeHandle, handle?: number, childIndex?: number, depth?: number): unknown {
 	return wrapNode(readNode(tree, handle, childIndex, depth), tree);
 }

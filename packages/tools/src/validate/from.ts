@@ -215,9 +215,9 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	const storageKindNameFromId = await loadStorageKindNameFromId(grammar);
 
 	// Import from() + factory + wrap modules. `.from()` expects a fluent
-	// NodeData (from factory output OR readTreeNode wrap) OR a camelCase
+	// NodeData (from factory output OR projectNode wrap) OR a camelCase
 	// loose bag — per spec 008 US3, bare `readNode` output isn't a
-	// supported input. readTreeNode wraps readNode output via the per-kind
+	// supported input. projectNode wraps readNode output via the per-kind
 	// wrap function, producing a fluent NodeData that `.from()` accepts.
 	let fromMap: Record<string, (input: object) => unknown> = {};
 	let factoryMap: Record<string, FactoryEntry> = {};
@@ -225,7 +225,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
-	let readTreeNode: ((tree: unknown, handle?: number, childIndex?: number) => unknown) | undefined;
+	let projectNode: ((tree: unknown, handle?: number, childIndex?: number) => unknown) | undefined;
 	let wrapNode: ((data: AnyNodeData, tree: unknown) => unknown) | undefined;
 	const errors: FromValidationError[] = [];
 	try {
@@ -257,10 +257,10 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 	}
 	try {
 		const wrapModule = await importGenerated(grammar, 'wrap.ts');
-		readTreeNode = wrapModule.readTreeNode;
+		projectNode = wrapModule.projectNode;
 		wrapNode = wrapModule.wrapNode;
 	} catch {
-		/* wrap module unavailable — readTreeNode falls back to raw readNode below */
+		/* wrap module unavailable — projectNode falls back to raw readNode below */
 	}
 
 	// Without fromMap/factoryMap, every kind fails `kind in fromMap && kind
@@ -390,7 +390,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 					});
 					continue;
 				}
-				// Use readTreeNode (wrapped via per-kind dispatch) when available,
+				// Use projectNode (wrapped via per-kind dispatch) when available,
 				// so `.from()` sees a fluent NodeData — the supported input shape
 				// per spec 008 US3. Fall back to raw readNode if the wrap module
 				// isn't loaded (bootstrap scenarios).
@@ -399,21 +399,21 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 				if (nativeCoords?.embeddedData !== undefined) {
 					// A trivia entry — already fully materialized, no
 					// handle+child-index to read through. Apply the same
-					// fluent-view wrap readTreeNode would, so `.from()` sees
+					// fluent-view wrap projectNode would, so `.from()` sees
 					// the same input shape as every other candidate.
 					readData = wrapNode
 						? (wrapNode(nativeCoords.embeddedData, handle) as AnyNodeData)
 						: nativeCoords.embeddedData;
 				} else if (nativeCoords && handle.read) {
-					readData = readTreeNode
-						? (readTreeNode(handle, nativeCoords.handle, nativeCoords.childIndex) as AnyNodeData)
+					readData = projectNode
+						? (projectNode(handle, nativeCoords.handle, nativeCoords.childIndex) as AnyNodeData)
 						: readNodeAt(handle, adaptNode(node1), nativeCoords);
 				} else {
 					const prev = handle.rootNode;
 					(handle as { rootNode: typeof prev }).rootNode = adaptNode(node1);
 					try {
-						readData = readTreeNode
-							? (readTreeNode(handle) as AnyNodeData)
+						readData = projectNode
+							? (projectNode(handle) as AnyNodeData)
 							: readNodeAt(handle, adaptNode(node1), null);
 					} finally {
 						(handle as { rootNode: typeof prev }).rootNode = prev;

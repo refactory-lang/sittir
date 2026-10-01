@@ -26,7 +26,7 @@ import {
 	buildReadHandle,
 	buildKindToSupertypes,
 	wrapForReparse,
-	loadReadTreeNode,
+	loadProjectNode,
 	walkWrappedTree,
 	materializeDetached,
 	emitValidatorMetrics,
@@ -452,7 +452,7 @@ export interface RenderFixture {
 	grammar: string;
 	/** The kind the fixture renders, by name. */
 	pattern: string;
-	/** NodeData input — the deep-read result from readTreeNode, made
+	/** NodeData input — the deep-read result from projectNode, made
 	 *  self-contained by `selfContainedRenderInput` so the engine's render
 	 *  can take it in any process. Serialized to JSON verbatim. */
 	input: unknown;
@@ -548,7 +548,7 @@ export async function validateReadRenderParse(
 	const ruleKinds = deriveRuleKinds(grammar);
 	const kindToSupertypes = buildKindToSupertypes(rawEntries);
 
-	const readTreeNodeFn = await loadReadTreeNode(grammar);
+	const projectNodeFn = await loadProjectNode(grammar);
 	const isLeafKind = await loadIsLeafKind(grammar);
 	const canonicalKindNameFromId = await loadCanonicalKindNameFromId(grammar);
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
@@ -624,8 +624,8 @@ export async function validateReadRenderParse(
 				string,
 				{ start: number; end: number; node: WrappedNodeData; displayKind: string }[]
 			>();
-			if (readTreeNodeFn && handle.read) {
-				const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
+			if (projectNodeFn && handle.read) {
+				const wrappedRoot = projectNodeFn(handle) as WrappedNodeData;
 				const seen = new Set<string>();
 				walkWrappedTree(
 					wrappedRoot,

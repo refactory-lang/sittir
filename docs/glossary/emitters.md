@@ -13510,7 +13510,7 @@ Kinds with a `reclaimsAnonymousChild` slot keep `$other`, because their wrap rea
 
 Assembles the wrap module. `wrapNode`, the one function every wrapped node passes through (the parsed root, each child expanded on demand, trivia entries), runs its per-kind wrap function inside `inTreeEngine`, so a node is built under the engine that read its tree however long after the parse it is first reached.
 
-`readNode` and `readTreeNode` take an optional level count, which reaches the native read. `drillInSelf` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
+`readNode` and `projectNode` take an optional level count, which reaches the native read. `drillInSelf` reads a stub of a list owner's kind (`listViewOwners`, emitted as `_LIST_OWNER_KINDS`) two levels at once, and every other stub one level.
 
 #### body
 
@@ -13611,7 +13611,7 @@ Assembles the wrap module. `wrapNode`, the one function every wrapped node passe
 // leaves an unlabeled named child with sub-structure as a shallow stub
 // (`$parentHandle`/`$childIndex`, no fields of its own) — normally a
 // generated wrap function's `drillIn` call materializes it fully via
-// `readTreeNode`. With no such function for the PARENT kind, nothing
+// `projectNode`. With no such function for the PARENT kind, nothing
 // ever calls `drillIn` on the stub, so it reaches the native
 // transport deserializer still shallow — and the child's OWN
 // transport struct then fails, missing every one of its real fields

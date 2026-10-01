@@ -8,7 +8,7 @@
 // coerces its input; `.strict` is the strict factory.
 //
 // Edge case: `readNode()` output has no `$source` provenance. To pass it
-// straight to an entry, use the typed wrapper (`readTreeNode`) so the
+// straight to an entry, use the typed wrapper (`projectNode`) so the
 // entry sees a wrapped node and takes the identity quick-return path.
 
 import * as F from './factories/index.js';

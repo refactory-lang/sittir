@@ -775,11 +775,11 @@ keeps its own missing-module behaviour. The only way the validators and
 `emit-factory-source` import generated modules; `node-model.json5` is data
 and is read with `readFileSync` on the path.
 
-### `packages/tools/src/validate/common.ts::loadReadTreeNode`
+### `packages/tools/src/validate/common.ts::loadProjectNode`
 
 ```text
 /**
- * Dynamic import of a grammar's `readTreeNode` entry point. Used by
+ * Dynamic import of a grammar's `projectNode` entry point. Used by
  * validators to build source-typed wrapped views — the wire `$type` is
  * the grammar symbol, so nodes arrive under their source kind and the
  * validator render dispatches through the source template directly.
@@ -791,10 +791,10 @@ and is read with `readFileSync` on the path.
 ```text
 /**
  * Dynamic import of a grammar's `wrapNode` entry point — the fluent-view
- * wrapper `readTreeNode` applies after reading. Used to produce the same
+ * wrapper `projectNode` applies after reading. Used to produce the same
  * wrapped shape for already-materialized data (e.g. a trivia entry's
  * `NativeNodeCoords.embeddedData`) that has no handle+child-index to read
- * through `readTreeNode` itself.
+ * through `projectNode` itself.
  */
 ```
 

@@ -35,7 +35,7 @@ import {
 	buildReadHandle,
 	walkWrappedTree,
 	materialize,
-	loadReadTreeNode,
+	loadProjectNode,
 	emitValidatorMetrics,
 	loadNodeModel,
 	dedupeMismatchesByContainment,
@@ -536,7 +536,7 @@ export async function validateFactoryRenderParse(
 		importFailure
 	} = await loadFactoryModuleForGrammar(grammar);
 
-	const readTreeNodeFn = await loadReadTreeNode(grammar);
+	const projectNodeFn = await loadProjectNode(grammar);
 	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
 
 	const entries = loadCorpusEntries(grammar);
@@ -582,12 +582,12 @@ export async function validateFactoryRenderParse(
 	}
 
 	// This validator's storage comparison only has meaning against the
-	// wrapped NATIVE read path (readTreeNodeFn + handle.read). Without it,
+	// wrapped NATIVE read path (projectNodeFn + handle.read). Without it,
 	// every candidate below would be silently rejected and the run would
 	// report a misleading "0/0 pass" instead of a real failure. Probe
 	// availability up front and fail loudly instead of skipping.
 	let readPathFailure: string | undefined;
-	if (!readTreeNodeFn) {
+	if (!projectNodeFn) {
 		readPathFailure = `wrap module unavailable for '${grammar}' — no wrapped-tree read function`;
 	} else {
 		try {
@@ -600,7 +600,7 @@ export async function validateFactoryRenderParse(
 			readPathFailure = `failed to build native read handle: ${(e as Error)?.message ?? e}`;
 		}
 	}
-	if (readPathFailure || !readTreeNodeFn) {
+	if (readPathFailure || !projectNodeFn) {
 		const message = `[validate-factory-roundtrip] ${readPathFailure ?? 'wrap module unavailable — no wrapped-tree read function'}`;
 		errors.push({ kind: '(read-tree-unavailable)', message });
 		return {
@@ -633,7 +633,7 @@ export async function validateFactoryRenderParse(
 		// native transport's "Missing field" errors once render was fixed
 		// to use the native engine).
 		const handle = await buildReadHandle(grammar, tree1, entry.source, backend, undefined);
-		const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
+		const wrappedRoot = projectNodeFn(handle) as WrappedNodeData;
 		const candidatesByKind = new Map<string, { start: number; end: number; node: WrappedNodeData }[]>();
 		const seen = new Set<string>();
 		walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {

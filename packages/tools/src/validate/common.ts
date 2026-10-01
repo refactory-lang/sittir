@@ -650,13 +650,13 @@ export function upstreamWasmPath(grammar: string): string | undefined {
 	}
 }
 
-export async function loadReadTreeNode(
+export async function loadProjectNode(
 	grammar: string
 ): Promise<((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null> {
 	try {
 		const mod = await importGrammarModule(grammar, 'wrap.ts');
 		if (!mod) return null;
-		return mod.readTreeNode ?? null;
+		return mod.projectNode ?? null;
 	} catch (e) {
 		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
 		return null;

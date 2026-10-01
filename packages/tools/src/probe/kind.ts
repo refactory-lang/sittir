@@ -24,7 +24,7 @@
  * - `cst`:       tree-sitter parse result as a structured tree (type / named /
  *                text / field-name / children). Shows EXACTLY what tree-sitter
  *                emits, including anonymous tokens and field assignments.
- * - `nodeData`:  output of `readTreeNode(root)` — sittir's NodeData view.
+ * - `nodeData`:  output of `projectNode(root)` — sittir's NodeData view.
  *                Shows `$fields` / `$other` / `$type` (the grammar-symbol
  *                wire identity stamped by the read).
  * - `rendered`:  output of `render(nodeData)` — the text re-emitted by the
@@ -86,7 +86,7 @@ import {
 	readNativeTree,
 	type NativeEngine,
 	materializeDetached,
-	loadReadTreeNode,
+	loadProjectNode,
 	walkNativeForKind,
 	buildKindToSupertypes,
 	wrapForReparse,
@@ -428,7 +428,7 @@ export interface ProbeTraceLane {
 	readMode: 'shallow' | 'deep';
 	engine: 'js' | 'native';
 	rawNodeData?: unknown;
-	readTreeNodeRaw?: unknown;
+	projectNodeRaw?: unknown;
 	/** Native-only legacy recursive readNode walker output. Diagnostic only. */
 	legacyDeepNodeData?: unknown;
 	nodeData: unknown;
@@ -494,7 +494,7 @@ export async function probe(
 		logParse?: boolean;
 		/** Which render engine renders the NodeData:
 		 *    - `js`: parse via web-tree-sitter wasm, read via
-		 *                    `<lang>/src/wrap.ts:readTreeNode`, render
+		 *                    `<lang>/src/wrap.ts:projectNode`, render
 		 *                    rendered through the native engine.
 		 *    - `native`:     parse via `@sittir/<lang>-native`'s
 		 *                    embedded `tree_sitter` Rust crate (no
@@ -553,7 +553,7 @@ export async function probe(
 	// Fully-native path: parse + read via the napi engine end-to-end.
 	// The native engine parses internally via the `tree_sitter` Rust
 	// crate (zero web-tree-sitter). A `nativeTreeHandle` wraps the
-	// engine; the grammar's `readTreeNode` then routes the read +
+	// engine; the grammar's `projectNode` then routes the read +
 	// every drill-in through `tree.read(id)` → napi. tree-
 	// sitter `Node::id()` is per-tree, so the engine that parsed the
 	// tree owns the id space — the per-handle dispatch keeps reads
@@ -563,17 +563,17 @@ export async function probe(
 	let nativeEngine: NativeEngine | undefined;
 	if (opts.engine === 'native' && !opts.noWrap) {
 		nativeEngine = await loadNativeEngine(grammar);
-		const readTreeNodeFn = await loadReadTreeNode(grammar);
+		const projectNodeFn = await loadProjectNode(grammar);
 		const handle = readNativeTree(nativeEngine, source).tree;
 		if (isRoot) {
-			nodeData = readTreeNodeFn ? readTreeNodeFn(handle) : handle.read?.();
+			nodeData = projectNodeFn ? projectNodeFn(handle) : handle.read?.();
 		} else {
 			// For --kind / --range, the wasm `targetNode.id` does not
 			// address the native engine's tree (separate id spaces).
 			// Read root via the native handle, walk its NodeData to
 			// find the matching subtree, then re-read THAT node by its
 			// native `$nodeId` so drill-in fires under napi.
-			const root = readTreeNodeFn ? readTreeNodeFn(handle) : handle.read?.();
+			const root = projectNodeFn ? projectNodeFn(handle) : handle.read?.();
 			const target = opts.kind
 				? findInNodeData(root, opts.kind, await loadKindNameFromId(grammar))
 				: findInNodeDataByRange(root, opts.range!.start, opts.range!.end);
@@ -589,14 +589,14 @@ export async function probe(
 			// earlier in the pipeline regardless (unrelated transport bug),
 			// so this branch isn't independently testable right now.
 			const targetId = (target as { $nodeId?: number }).$nodeId;
-			nodeData = targetId !== undefined && readTreeNodeFn ? readTreeNodeFn(handle, targetId) : target;
+			nodeData = targetId !== undefined && projectNodeFn ? projectNodeFn(handle, targetId) : target;
 		}
 	} else {
-		const readTreeNodeFn = opts.noWrap
+		const projectNodeFn = opts.noWrap
 			? null
 			: opts.baselineDir
-				? await loadReadTreeNodeFromPath(resolveBaselinePath(opts.baselineDir, 'src/wrap.ts'))
-				: await loadReadTreeNode(grammar);
+				? await loadProjectNodeFromPath(resolveBaselinePath(opts.baselineDir, 'src/wrap.ts'))
+				: await loadProjectNode(grammar);
 		// kindIdFromName is required for JS-side reads (readNode emits numeric
 		// $type — see common.ts's treeHandle doc). Wrap so an unknown kind name
 		// returns undefined instead of throwing, matching run()'s own pattern.
@@ -618,7 +618,7 @@ export async function probe(
 		const handle = treeHandle(tree, source, kindIdFromName);
 		// targetNode.id is tree-sitter wasm's own internal id, not a
 		// $parentHandle/$childIndex pair (ADR-0017 replaced $nodeId with that
-		// pair; readNode/readTreeNode navigate ONLY via handle+childIndex —
+		// pair; readNode/projectNode navigate ONLY via handle+childIndex —
 		// see readNode.ts: `if (handle != null && childIndex != null...)`,
 		// else it falls back to reading `tree.rootNode`). Passing just
 		// targetNode.id as a single positional arg can never satisfy that
@@ -626,12 +626,12 @@ export async function probe(
 		// the selected node. Swap the handle's rootNode instead, matching
 		// readSelectedNode's already-correct pattern elsewhere in this file.
 		if (isRoot) {
-			nodeData = readTreeNodeFn ? readTreeNodeFn(handle) : await fallbackReadNode(handle);
+			nodeData = projectNodeFn ? projectNodeFn(handle) : await fallbackReadNode(handle);
 		} else {
 			const prev = handle.rootNode;
 			(handle as { rootNode: typeof prev }).rootNode = adaptNode(targetNode);
 			try {
-				nodeData = readTreeNodeFn ? readTreeNodeFn(handle) : await fallbackReadNode(handle);
+				nodeData = projectNodeFn ? projectNodeFn(handle) : await fallbackReadNode(handle);
 			} finally {
 				(handle as { rootNode: typeof prev }).rootNode = prev;
 			}
@@ -800,13 +800,13 @@ export async function probeTrace(
 				? await buildTraceLane(
 						grammar,
 						read.shallow,
-						read.deepReadTreeNodeRaw,
+						read.deepProjectNodeRaw,
 						read.deep,
 						engine,
 						'deep',
 						read.legacyDeepNodeData
 					)
-				: await buildTraceLane(grammar, read.shallow, read.deepReadTreeNodeRaw ?? read.deep, read.deep, engine, 'deep');
+				: await buildTraceLane(grammar, read.shallow, read.deepProjectNodeRaw ?? read.deep, read.deep, engine, 'deep');
 		return { shallow, deep };
 	};
 	const sexp = targetNode.toString();
@@ -885,13 +885,13 @@ async function deepReadProbeNode(
 }
 
 export function resolveNativeTraceNodeData(
-	readTreeNodeRaw: unknown | undefined,
+	projectNodeRaw: unknown | undefined,
 	legacyDeepNodeData: unknown,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): unknown {
-	return readTreeNodeRaw === undefined
+	return projectNodeRaw === undefined
 		? legacyDeepNodeData
-		: materializeDetached(readTreeNodeRaw, onAccessorThrow);
+		: materializeDetached(projectNodeRaw, onAccessorThrow);
 }
 
 async function readProbeNodeData(
@@ -903,17 +903,17 @@ async function readProbeNodeData(
 	engine: 'js' | 'native',
 	targetKind?: string,
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
-): Promise<{ shallow: unknown; deep: unknown; deepReadTreeNodeRaw?: unknown; legacyDeepNodeData?: unknown }> {
+): Promise<{ shallow: unknown; deep: unknown; deepProjectNodeRaw?: unknown; legacyDeepNodeData?: unknown }> {
 	if (engine === 'native') {
 		const nativeEngine = await loadNativeEngine(grammar);
-		const readTreeNodeFn = await loadReadTreeNode(grammar);
+		const projectNodeFn = await loadProjectNode(grammar);
 		const handle = readNativeTree(nativeEngine, source).tree;
 		if (isRoot) {
 			const shallow = stripBigInts(handle.read?.());
 			const legacyDeepNodeData = detachCoordinates(await deepReadProbeNode(handle, undefined, undefined));
-			const deepReadTreeNodeRaw = readTreeNodeFn ? readTreeNodeFn(handle) : undefined;
-			const deep = resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData, onAccessorThrow);
-			return { shallow, deep, deepReadTreeNodeRaw, legacyDeepNodeData };
+			const deepProjectNodeRaw = projectNodeFn ? projectNodeFn(handle) : undefined;
+			const deep = resolveNativeTraceNodeData(deepProjectNodeRaw, legacyDeepNodeData, onAccessorThrow);
+			return { shallow, deep, deepProjectNodeRaw, legacyDeepNodeData };
 		}
 		if (targetKind) {
 			const kindNameFromId = await loadKindNameFromId(grammar);
@@ -926,15 +926,15 @@ async function readProbeNodeData(
 				const legacyDeepNodeData = detachCoordinates(
 					await deepReadProbeNode(handle, targetCandidate.coords.handle, targetCandidate.coords.childIndex)
 				);
-				const deepReadTreeNodeRaw = readTreeNodeFn
-					? readTreeNodeFn(handle, targetCandidate.coords.handle, targetCandidate.coords.childIndex)
+				const deepProjectNodeRaw = projectNodeFn
+					? projectNodeFn(handle, targetCandidate.coords.handle, targetCandidate.coords.childIndex)
 					: undefined;
-				const deep = resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData, onAccessorThrow);
-				return { shallow, deep, deepReadTreeNodeRaw, legacyDeepNodeData };
+				const deep = resolveNativeTraceNodeData(deepProjectNodeRaw, legacyDeepNodeData, onAccessorThrow);
+				return { shallow, deep, deepProjectNodeRaw, legacyDeepNodeData };
 			}
 		}
-		const root = readTreeNodeFn
-			? materializeDetached(readTreeNodeFn(handle), onAccessorThrow)
+		const root = projectNodeFn
+			? materializeDetached(projectNodeFn(handle), onAccessorThrow)
 			: await deepReadProbeNode(handle, undefined, undefined);
 		const target = findInNodeDataByRange(root, targetNode.startIndex, targetNode.endIndex);
 		if (!target) throw new Error('probe-kind: no native node match in NodeData tree');
@@ -943,13 +943,13 @@ async function readProbeNodeData(
 		const legacyDeepNodeData = detachCoordinates(
 			targetHandle ? await deepReadProbeNode(handle, targetHandle.handle, targetHandle.childIndex) : target
 		);
-		const deepReadTreeNodeRaw =
-			targetHandle && readTreeNodeFn ? readTreeNodeFn(handle, targetHandle.handle, targetHandle.childIndex) : undefined;
+		const deepProjectNodeRaw =
+			targetHandle && projectNodeFn ? projectNodeFn(handle, targetHandle.handle, targetHandle.childIndex) : undefined;
 		const deep =
-			readTreeNodeFn && !targetHandle
+			projectNodeFn && !targetHandle
 				? target
-				: resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData, onAccessorThrow);
-		return { shallow, deep, deepReadTreeNodeRaw, legacyDeepNodeData };
+				: resolveNativeTraceNodeData(deepProjectNodeRaw, legacyDeepNodeData, onAccessorThrow);
+		return { shallow, deep, deepProjectNodeRaw, legacyDeepNodeData };
 	}
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
 	const kindIdFromName = rawKindIdFromName
@@ -963,9 +963,9 @@ async function readProbeNodeData(
 		: undefined;
 	const handle = treeHandle(tree, source, kindIdFromName);
 	const shallow = isRoot ? await fallbackReadNode(handle) : await readSelectedNode(handle, targetNode);
-	const deepReadTreeNodeRaw = await deepReadSelectedNode(grammar, handle, targetNode, isRoot, shallow);
-	const deep = deepReadTreeNodeRaw;
-	return { shallow, deep, deepReadTreeNodeRaw };
+	const deepProjectNodeRaw = await deepReadSelectedNode(grammar, handle, targetNode, isRoot, shallow);
+	const deep = deepProjectNodeRaw;
+	return { shallow, deep, deepProjectNodeRaw };
 }
 
 async function readSelectedNode(handle: ReturnType<typeof treeHandle>, targetNode: TS.Node): Promise<unknown> {
@@ -985,13 +985,13 @@ async function deepReadSelectedNode(
 	isRoot: boolean,
 	fallback: unknown
 ): Promise<unknown> {
-	const readTreeNodeFn = await loadReadTreeNode(grammar);
-	if (!readTreeNodeFn) return fallback;
-	if (isRoot) return readTreeNodeFn(handle);
+	const projectNodeFn = await loadProjectNode(grammar);
+	if (!projectNodeFn) return fallback;
+	if (isRoot) return projectNodeFn(handle);
 	const prev = handle.rootNode;
 	(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = adaptNode(targetNode);
 	try {
-		return readTreeNodeFn(handle);
+		return projectNodeFn(handle);
 	} finally {
 		(handle as { rootNode: ReturnType<typeof adaptNode> }).rootNode = prev;
 	}
@@ -1008,14 +1008,14 @@ function getTargetHandle(target: unknown): { handle: number; childIndex: number 
 async function buildTraceLane(
 	grammar: string,
 	rawNodeData: unknown,
-	readTreeNodeRaw: unknown,
+	projectNodeRaw: unknown,
 	nodeData: unknown,
 	engine: 'js' | 'native',
 	readMode: 'shallow' | 'deep',
 	legacyDeepNodeData?: unknown
 ): Promise<ProbeTraceLane> {
 	const cleanedRawNodeData = stripBigInts(rawNodeData);
-	const cleanedReadTreeNodeRaw = readTreeNodeRaw === undefined ? undefined : stripBigInts(readTreeNodeRaw);
+	const cleanedProjectNodeRaw = projectNodeRaw === undefined ? undefined : stripBigInts(projectNodeRaw);
 	const cleanedNodeData = stripBigInts(nodeData);
 	const cleanedLegacyDeepNodeData = legacyDeepNodeData === undefined ? undefined : stripBigInts(legacyDeepNodeData);
 	if (engine === 'js') {
@@ -1025,7 +1025,7 @@ async function buildTraceLane(
 				engine,
 				readMode,
 				rawNodeData: cleanedRawNodeData,
-				readTreeNodeRaw: cleanedReadTreeNodeRaw,
+				projectNodeRaw: cleanedProjectNodeRaw,
 				nodeData: cleanedNodeData,
 				rendererInput: cleanedNodeData,
 				rendered
@@ -1035,7 +1035,7 @@ async function buildTraceLane(
 				engine,
 				readMode,
 				rawNodeData: cleanedRawNodeData,
-				readTreeNodeRaw: cleanedReadTreeNodeRaw,
+				projectNodeRaw: cleanedProjectNodeRaw,
 				nodeData: cleanedNodeData,
 				rendererInput: cleanedNodeData,
 				renderError: error instanceof Error ? error.message : String(error)
@@ -1049,7 +1049,7 @@ async function buildTraceLane(
 			engine,
 			readMode,
 			rawNodeData: cleanedRawNodeData,
-			readTreeNodeRaw: cleanedReadTreeNodeRaw,
+			projectNodeRaw: cleanedProjectNodeRaw,
 			legacyDeepNodeData: cleanedLegacyDeepNodeData,
 			nodeData: cleanedNodeData,
 			nativeTransport,
@@ -1066,7 +1066,7 @@ async function buildTraceLane(
 			engine,
 			readMode,
 			rawNodeData: cleanedRawNodeData,
-			readTreeNodeRaw: cleanedReadTreeNodeRaw,
+			projectNodeRaw: cleanedProjectNodeRaw,
 			legacyDeepNodeData: cleanedLegacyDeepNodeData,
 			nodeData: cleanedNodeData,
 			nativeTransport,
@@ -1139,15 +1139,15 @@ async function renderNodeDataNative(grammar: string, nodeData: unknown): Promise
 	return engine.render(stripBigInts(nodeData) as AnyNodeData).toString();
 }
 
-/** @internal — load `readTreeNode` from an explicit `src/wrap.ts`
- *  path. Mirrors `loadReadTreeNode` in `validate/common.ts` but
+/** @internal — load `projectNode` from an explicit `src/wrap.ts`
+ *  path. Mirrors `loadProjectNode` in `validate/common.ts` but
  *  without the kind-name registry — caller passes the absolute path. */
-async function loadReadTreeNodeFromPath(
+async function loadProjectNodeFromPath(
 	wrapTsPath: string
 ): Promise<((handle: unknown, nodeId?: number) => unknown) | null> {
 	try {
 		const mod = await import(wrapTsPath);
-		return (mod as { readTreeNode?: (h: unknown, id?: number) => unknown }).readTreeNode ?? null;
+		return (mod as { projectNode?: (h: unknown, id?: number) => unknown }).projectNode ?? null;
 	} catch (e) {
 		process.stderr.write(`probe-kind: failed to load baseline wrap module at ${wrapTsPath}: ${(e as Error).message}\n`);
 		return null;

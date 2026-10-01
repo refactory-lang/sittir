@@ -745,7 +745,7 @@ import {
 	loadKindNameFromId,
 	loadLanguageForGrammar,
 	loadNodeModel,
-	loadReadTreeNode,
+	loadProjectNode,
 	materialize,
 	type ModelFullForm
 } from '../validate/common.ts';
@@ -965,8 +965,8 @@ export async function emitFactorySourceText(
 	parser.setLanguage(lang);
 	const tree = parser.parse(source);
 	if (!tree || tree.rootNode.hasError) throw new Error(`emit-factory-source: the ${grammar} parse has errors`);
-	const readTreeNode = await loadReadTreeNode(grammar);
-	if (!readTreeNode) throw new Error(`emit-factory-source: no wrap module for ${grammar}`);
+	const projectNode = await loadProjectNode(grammar);
+	if (!projectNode) throw new Error(`emit-factory-source: no wrap module for ${grammar}`);
 	const kindIdFromName = await loadKindIdFromName(grammar);
 	const handle = await buildReadHandle(grammar, tree, source, options.backend ?? 'native', kindIdFromName);
 	const model = await loadNodeModel(grammar);
@@ -984,7 +984,7 @@ export async function emitFactorySourceText(
 		typeof table[id] === 'string' ? (table[id] as string) : undefined;
 	const catalog = catalogEntriesOf(await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
 	const { findEntryForLiteralText } = await load('symbolTable');
-	const root = materialize(readTreeNode(handle)) as ReadNodeLike;
+	const root = materialize(projectNode(handle)) as ReadNodeLike;
 	seatFormTree(root, { kindNameFromId, seats: model.seats });
 	const textLeafKinds = new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'pattern'));
 	spellTriviaTree(root, {

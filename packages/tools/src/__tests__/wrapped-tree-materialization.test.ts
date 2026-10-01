@@ -250,10 +250,10 @@ describe('wrapped tree materialization', () => {
 			const tree = parser.parse(source)!;
 			const handle = await buildReadHandle('typescript', tree, source, 'native');
 			const wrapModulePath = new URL('../../../typescript/src/wrap.ts', import.meta.url).pathname;
-			const { readTreeNode } = (await import(wrapModulePath)) as {
-				readTreeNode: (tree: TreeHandle, handle?: number, childIndex?: number) => unknown;
+			const { projectNode } = (await import(wrapModulePath)) as {
+				projectNode: (tree: TreeHandle, handle?: number, childIndex?: number) => unknown;
 			};
-			const root = readTreeNode(handle) as {
+			const root = projectNode(handle) as {
 				statements: () => Array<{ content: () => unknown }>;
 			};
 			// export_statement and export_statement_default are flattened into
