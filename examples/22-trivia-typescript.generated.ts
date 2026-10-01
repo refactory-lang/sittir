@@ -2,23 +2,23 @@
 import { createEngine } from '@sittir/common';
 import typescript from '@sittir/typescript';
 
-const { build, kinds } = await createEngine(typescript);
+const ts = await createEngine(typescript);
 
 export function rebuildTriviaTypescriptGenerated() {
-	return build.program.strict({
-		statements: [build.expressionStatement.strict(build.callExpression.call.strict({
-			function: build.identifier("f"),
-			arguments: build.arguments.strict().$trivia.inner(build.comment.block.strict(" b ")),
+	return ts.build.program.strict({
+		statements: [ts.build.expressionStatement.strict(ts.build.callExpression.call.strict({
+			function: ts.build.identifier("f"),
+			arguments: ts.build.arguments.strict().$trivia.inner(ts.build.comment.block.strict(" b ")),
 		}), {
-			terminator: kinds.Semi,
-		}).$trivia.leading(build.comment.block.strict(" a ")), build.lexicalDeclaration.strict({
-			kind: kinds.LetKeyword,
-			declarators: [build.variableDeclarator.plain.strict({
-				name: build.identifier("x"),
-				value: build.number.decimal("1"),
+			terminator: ts.kinds.Semi,
+		}).$trivia.leading(ts.build.comment.block.strict(" a ")), ts.build.lexicalDeclaration.strict({
+			kind: ts.kinds.LetKeyword,
+			declarators: [ts.build.variableDeclarator.plain.strict({
+				name: ts.build.identifier("x"),
+				value: ts.build.number.decimal("1"),
 			})],
 		}, {
-			terminator: kinds.Semi,
-		}).$trivia.trailing(build.comment.line.strict(" c"))],
+			terminator: ts.kinds.Semi,
+		}).$trivia.trailing(ts.build.comment.line.strict(" c"))],
 	});
 }
