@@ -340,6 +340,8 @@ export const comment: Hoisted<typeof O.comment> = hoistAs<typeof O.comment>(O.co
 export const metaProperty: Hoisted<typeof O.metaProperty> = hoistAs<typeof O.metaProperty>(O.metaProperty);
 export const pattern: Hoisted<typeof O.pattern> = hoistAs<typeof O.pattern>(O.pattern);
 export const indexSignature: Hoisted<typeof O.indexSignature> = hoistAs<typeof O.indexSignature>(O.indexSignature);
+export const classBodyMember: Hoisted<typeof O.classBodyMember> = hoistAs<typeof O.classBodyMember>(O.classBodyMember);
+export const enumBodyElement: Hoisted<typeof O.enumBodyElement> = hoistAs<typeof O.enumBodyElement>(O.enumBodyElement);
 export const exportStatementDefault: Hoisted<typeof O.exportStatementDefault> = hoistAs<
 	typeof O.exportStatementDefault
 >(O.exportStatementDefault);

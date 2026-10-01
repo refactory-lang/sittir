@@ -166,19 +166,6 @@ describe('list', () => {
 	});
 });
 
-describe('list sub-factories', () => {
-	it('capture builds the capture form', () => {
-		const node = ir.list.capture({
-			$type: TSKindId.ImmediateIdentifier,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$type).toBe(TSKindId.Capture);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
 describe('grouping', () => {
 	it('factory produces correct type', () => {
 		const node = ir.grouping({
@@ -250,19 +237,6 @@ describe('grouping', () => {
 	});
 });
 
-describe('grouping sub-factories', () => {
-	it('capture builds the capture form', () => {
-		const node = ir.grouping.capture({
-			$type: TSKindId.ImmediateIdentifier,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$type).toBe(TSKindId.Capture);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
 describe('missing_node', () => {
 	it('factory produces correct type', () => {
 		const node = ir.missingNode({});
@@ -272,19 +246,6 @@ describe('missing_node', () => {
 	it('render does not throw on minimal config', () => {
 		const node = ir.missingNode({});
 		expect(() => node.$render!()).not.toThrow();
-	});
-});
-
-describe('missing_node sub-factories', () => {
-	it('capture builds the capture form', () => {
-		const node = ir.missingNode.capture({
-			$type: TSKindId.ImmediateIdentifier,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$type).toBe(TSKindId.Capture);
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -298,19 +259,6 @@ describe('anonymous_node', () => {
 		const node = ir.anonymousNode({ name: { $type: TSKindId.String, $text: 'test', $source: 2, $named: true } as any });
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('anonymous_node sub-factories', () => {
-	it('capture builds the capture form', () => {
-		const node = ir.anonymousNode.capture({
-			$type: TSKindId.ImmediateIdentifier,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$type).toBe(TSKindId.Capture);
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

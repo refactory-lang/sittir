@@ -325,25 +325,25 @@ export interface CatchClauseTransport {
   _catch_clause_group?: SlotValue<CatchClauseGroupTransport>
 }
 
-export interface ClassBodyMemberTransport {
+export interface ClassBodyMemberDeclarationTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _member: SlotValue<ClassBodyMemberMemberTransportSlot>
-  _terminator?: SlotValue<ClassBodyMemberTerminatorTransportSlot>
+  _member: SlotValue<ClassBodyMemberDeclarationMemberTransportSlot>
+  _terminator?: SlotValue<ClassBodyMemberDeclarationTerminatorTransportSlot>
 }
 
-export interface ClassBodyMethodSigTransport {
+export interface ClassBodyMemberMethodSigTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _terminator: SlotValue<ClassBodyMethodSigTerminatorTransportSlot>
+  _terminator: SlotValue<ClassBodyMemberMethodSigTerminatorTransportSlot>
   _method_signature: SlotValue<MethodSignatureTransport>
 }
 
-export interface ClassBodyMethodTransport {
+export interface ClassBodyMemberMethodTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _decorator?: Array<SlotValue<DecoratorTransport>>
-  _terminator?: SlotValue<ClassBodyMethodTerminatorTransportSlot>
+  _terminator?: SlotValue<ClassBodyMemberMethodTerminatorTransportSlot>
   _method_definition: SlotValue<MethodDefinitionTransport>
   _decorator_separator_space?: number
 }
@@ -351,8 +351,8 @@ export interface ClassBodyMethodTransport {
 export interface ClassBodyTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content?: Array<SlotValue<ClassBodyContentTransportSlot>>
-  _content_separator_space?: number
+  _members?: Array<SlotValue<ClassBodyMemberTransport>>
+  _members_separator_space?: number
 }
 
 export interface ClassDeclarationTransport {
@@ -528,13 +528,19 @@ export interface EnumAssignmentTransport {
   _value: SlotValue<ExpressionTransport>
 }
 
+export interface EnumBodyElementNameTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _name: SlotValue<EnumBodyElementNameNameTransportSlot>
+}
+
 export interface EnumBodyElementsTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
-  _content?: Array<SlotValue<EnumBodyElementsContentTransportSlot>>
+  _element: Array<SlotValue<EnumBodyElementTransport>>
   _delimiter?: number
-  _content_separator_space_before?: number
-  _content_separator_space_after?: number
+  _element_separator_space_before?: number
+  _element_separator_space_after?: number
 }
 
 export interface EnumBodyTransport {

@@ -1156,6 +1156,12 @@ export interface QualifiedTypeTransport {
   _alias: SlotValue<Box<TypeTransport>>
 }
 
+export interface RangeExpressionBareTransport {
+  '$_trivia'?: TransportTrivia
+  '$_edges'?: Edges
+  _range_expression_bare: SlotValue<_RangeExpressionBareTransport>
+}
+
 export interface RangeExpressionBinaryTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
@@ -1174,12 +1180,6 @@ export interface RangeExpressionPrefixTransport {
   '$_trivia'?: TransportTrivia
   '$_edges'?: Edges
   _end: SlotValue<Box<ExpressionTransport>>
-}
-
-export interface RangeExpressionTransport {
-  '$_trivia'?: TransportTrivia
-  '$_edges'?: Edges
-  _content: SlotValue<Box<RangeExpressionContentTransportSlot>>
 }
 
 export interface RangePatternPrefixTransport {

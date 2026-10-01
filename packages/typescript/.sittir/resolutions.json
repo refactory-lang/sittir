@@ -1,5 +1,5 @@
 {
-	"grammarHash": "558713cb8fdf6e2e7339b260c42d6457c5c4d5007cce3e4e12c5145d66e71ed8",
+	"grammarHash": "2f8d121bb68e9fdeb3ee79101262df9743677207143bc7510c6f82a659bc43d1",
 	"resolutions": [
 		{
 			"resolution": {
@@ -746,14 +746,14 @@
 			"resolution": {
 				"kind": "AddConflict",
 				"symbols": [
-					"class_body_method"
+					"class_body_member_method"
 				]
 			},
 			"step": "default",
 			"sourceChains": [
 				[
-					"class_body_method",
-					"class_body"
+					"class_body_member_method",
+					"_class_body_member"
 				]
 			],
 			"conflict": {
@@ -764,8 +764,8 @@
 				],
 				"lookahead": "';'",
 				"interpretations": [
-					"class_body_method",
-					"class_body_method"
+					"class_body_member_method",
+					"class_body_member_method"
 				]
 			}
 		},
@@ -1305,19 +1305,19 @@
 			"resolution": {
 				"kind": "AddConflict",
 				"symbols": [
-					"class_body_method_sig",
-					"class_body_member"
+					"class_body_member_method_sig",
+					"class_body_member_declaration"
 				]
 			},
 			"step": "default",
 			"sourceChains": [
 				[
-					"class_body_method_sig",
-					"class_body"
+					"class_body_member_method_sig",
+					"_class_body_member"
 				],
 				[
-					"class_body_member",
-					"class_body"
+					"class_body_member_declaration",
+					"_class_body_member"
 				]
 			],
 			"conflict": {
@@ -1329,8 +1329,8 @@
 				],
 				"lookahead": "'*'",
 				"interpretations": [
-					"class_body_method_sig",
-					"class_body_member"
+					"class_body_member_method_sig",
+					"class_body_member_declaration"
 				]
 			}
 		},

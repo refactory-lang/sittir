@@ -403,30 +403,20 @@
           "value": "]"
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "elements",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "capture",
-                "annotations": {
-                  "variant": "capture",
-                  "variantOf": "list"
-                }
-              },
-              {
-                "type": "FIELD",
-                "name": "quantifier",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "quantifier"
-                },
-                "annotations": {
-                  "variantOf": "list"
-                }
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_list_element",
+              "metadata": {
+                "symbolSource": "group-lift"
               }
-            ]
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         }
       ]
@@ -453,30 +443,20 @@
           "value": ")"
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "elements",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "capture",
-                "annotations": {
-                  "variant": "capture",
-                  "variantOf": "grouping"
-                }
-              },
-              {
-                "type": "FIELD",
-                "name": "quantifier",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "quantifier"
-                },
-                "annotations": {
-                  "variantOf": "grouping"
-                }
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_list_element",
+              "metadata": {
+                "symbolSource": "group-lift"
               }
-            ]
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         }
       ]
@@ -522,30 +502,20 @@
           "value": ")"
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "elements",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "capture",
-                "annotations": {
-                  "variant": "capture",
-                  "variantOf": "missing_node"
-                }
-              },
-              {
-                "type": "FIELD",
-                "name": "quantifier",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "quantifier"
-                },
-                "annotations": {
-                  "variantOf": "missing_node"
-                }
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_list_element",
+              "metadata": {
+                "symbolSource": "group-lift"
               }
-            ]
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         }
       ]
@@ -571,30 +541,20 @@
           }
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "elements",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "capture",
-                "annotations": {
-                  "variant": "capture",
-                  "variantOf": "anonymous_node"
-                }
-              },
-              {
-                "type": "FIELD",
-                "name": "quantifier",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "quantifier"
-                },
-                "annotations": {
-                  "variantOf": "anonymous_node"
-                }
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_list_element",
+              "metadata": {
+                "symbolSource": "group-lift"
               }
-            ]
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         }
       ]
@@ -767,6 +727,41 @@
           }
         ]
       }
+    },
+    "list_element_quantifier": {
+      "type": "FIELD",
+      "name": "quantifier",
+      "content": {
+        "type": "SYMBOL",
+        "name": "quantifier"
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "_list_element": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "capture",
+          "annotations": {
+            "variant": "capture",
+            "variantOf": "_list_element"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "list_element_quantifier",
+          "metadata": {
+            "symbolSource": "group-lift"
+          },
+          "annotations": {
+            "variant": "quantifier",
+            "variantOf": "_list_element"
+          }
+        }
+      ]
     },
     "group_expression_arm": {
       "type": "PREC_LEFT",
@@ -1019,30 +1014,20 @@
           "value": ")"
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "elements",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "capture",
-                "annotations": {
-                  "variant": "capture",
-                  "variantOf": "named_node"
-                }
-              },
-              {
-                "type": "FIELD",
-                "name": "quantifier",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "quantifier"
-                },
-                "annotations": {
-                  "variantOf": "named_node"
-                }
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_list_element",
+              "metadata": {
+                "symbolSource": "group-lift"
               }
-            ]
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         }
       ],
@@ -1131,30 +1116,20 @@
           "value": ")"
         },
         {
-          "type": "REPEAT",
+          "type": "FIELD",
+          "name": "elements",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "capture",
-                "annotations": {
-                  "variant": "capture",
-                  "variantOf": "named_node"
-                }
-              },
-              {
-                "type": "FIELD",
-                "name": "quantifier",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "quantifier"
-                },
-                "annotations": {
-                  "variantOf": "named_node"
-                }
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_list_element",
+              "metadata": {
+                "symbolSource": "group-lift"
               }
-            ]
+            }
+          },
+          "metadata": {
+            "fieldSource": "enriched"
           }
         }
       ],
@@ -1322,6 +1297,7 @@
   "supertypes": [
     "definition",
     "_whitespace",
+    "_list_element",
     "named_node",
     "named_node_group"
   ],

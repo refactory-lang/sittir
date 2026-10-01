@@ -28,7 +28,7 @@ import { listRestParamType } from '../shared.ts';
 
 function labelArms(rules: Record<string, Rule<'evaluate'>>): Record<string, Rule<'evaluate'>> {
 	const stamped = { ...rules } as Record<string, Rule>;
-	stampAutomaticVariants(stamped, new Set(), new Set());
+	stampAutomaticVariants(stamped, new Set(), new Set(), new Set());
 	return stamped as Record<string, Rule<'evaluate'>>;
 }
 

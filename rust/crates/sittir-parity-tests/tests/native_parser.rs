@@ -45,8 +45,8 @@ fn typescript_lexical_declaration_reads_override_named_fields() {
     }
 }
 
-/// The reader keys every member by its model slot: the `name`-tagged members
-/// and the untagged `enum_assignment` members all land in `content`, one
+/// The reader keys every member by its model slot: the name members and the
+/// `enum_assignment` members all land in `element`, one
 /// bucket in document order, so no `$slotOrder` is needed to interleave them.
 #[test]
 fn typescript_enum_body_elements_reads_members_into_one_slot() {
@@ -72,8 +72,8 @@ fn typescript_enum_body_elements_reads_members_into_one_slot() {
 
     let data = read_untyped_node(&tree, source, Some(elements), Some(0), ReadDepth::SHALLOW, &sittir_typescript::TypeScriptGrammar, &mut NoMint);
     let fields = data.fields.as_ref().expect("named fields");
-    assert_eq!(fields.keys().collect::<Vec<_>>(), vec!["content"]);
-    let members = match &fields["content"] {
+    assert_eq!(fields.keys().collect::<Vec<_>>(), vec!["element"]);
+    let members = match &fields["element"] {
         FieldValue::Multiple(members) => members,
         other => panic!("expected the members as one list, got {other:?}"),
     };

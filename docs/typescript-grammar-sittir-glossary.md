@@ -122,6 +122,15 @@ hidden leaf kind by `'1/0/4': alias('empty_member')`: `_empty_member` over
 grammar symbol is `_empty_member`, not the shared `';'` token) and does not
 collide with upstream's `_semicolon` (the automatic-semicolon rule).
 
+The repeat is fielded `members` by the second patch set. Its element choice
+is the hidden supertype `_class_body_member` (owner plus the singular of the
+slot name). The three sequence arms are its kinds `class_body_member_method`,
+`class_body_member_method_sig` and `class_body_member_declaration`, named by
+the `variant()` patches of the third set; `class_static_block` and
+`empty_member` are members of the supertype as they are. Every arm is a
+variant of the supertype, none of `class_body`. The separator binding
+addresses the slot as `class_body/members:/separator`.
+
 ### `_for_header` (`packages/typescript/grammar.sittir.ts:373`)
 
 ```text
@@ -183,7 +192,7 @@ them once each, in canonical flat order. The former per-arm kinds and their
 ```text
 				// class_body: repeat-choice arm 3 is the upstream inline
 				// `seq(choice(4 sigs), choice(_semicolon | ','))` that sittir extracts
-				// into the hidden `_class_body_member` — both positions unnamed → 2
+				// into `class_body_member_declaration` — both positions unnamed → 2
 				// `content` slots (content-collision). Name the terminator by its path
 				// in the parent (fields are applied before the extraction): pos 0 (the
 				// member) keeps `content`, pos 1 (the `;`/`,` choice) → `terminator`.

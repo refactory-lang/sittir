@@ -252,7 +252,47 @@ describe('checkRegression', () => {
 		expect(verdict.details.path).toBe('grammars.typescript.validators.coverage.pass');
 	});
 
-	it('from pass drop alongside a new supertype — fail (the exemption is coverage/factoryRoundtrip only)', () => {
+	it('from pass drop of one per new supertype with no new fail — passes (a flattened parent loses its own from case)', () => {
+		const base = baseline();
+		base.grammars.rust!.supertypeKindCount = 27;
+		base.grammars.rust!.validators.from = vr(245, 245);
+		const head = clone(base);
+		head.grammars.rust!.supertypeKindCount = 28;
+		head.grammars.rust!.validators.from = vr(244, 244);
+		head.totals.pass = 149 - 1;
+		head.totals.total = 150 - 1;
+		expect(checkRegression(base, head).ok).toBe(true);
+	});
+
+	it('from pass drop larger than the supertype rise — fail (a flattened parent removes one from case, its own)', () => {
+		const base = baseline();
+		base.grammars.rust!.supertypeKindCount = 27;
+		base.grammars.rust!.validators.from = vr(245, 245);
+		const head = clone(base);
+		head.grammars.rust!.supertypeKindCount = 28;
+		head.grammars.rust!.validators.from = vr(243, 243);
+		head.totals.pass = 149 - 2;
+		head.totals.total = 150 - 2;
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('pass-count-drop');
+		expect(verdict.details.path).toBe('grammars.rust.validators.from.pass');
+	});
+
+	it('from pass drop with supertypeKindCount unchanged — fail (nothing structural explains it)', () => {
+		const base = baseline();
+		base.grammars.rust!.validators.from = vr(245, 245);
+		const head = clone(base);
+		head.grammars.rust!.validators.from = vr(244, 244);
+		head.totals.pass = 149 - 1;
+		head.totals.total = 150 - 1;
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('pass-count-drop');
+		expect(verdict.details.path).toBe('grammars.rust.validators.from.pass');
+	});
+
+	it('from pass drop alongside a new supertype and a new fail — fail (a new supertype does not excuse an actual regression)', () => {
 		const base = baseline();
 		base.grammars.typescript!.supertypeKindCount = 5;
 		const head = clone(base);

@@ -24,7 +24,8 @@ import {
 	typeEq
 } from '../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
-import { SYMBOL } from '../types/rule-types.ts';
+import { CHOICE, FIELD, OPTIONAL, REPEAT, REPEAT1, SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
+import { dslArmStage, isTopologyMixed, partitionChoiceArms } from './choice-arm-partition.ts';
 
 function withContent(node: object, content: Rule): Rule {
 	return { ...(node as { type: string }), content } as Rule;
@@ -85,10 +86,15 @@ export type EnrichedGrammar<B> = B extends GrammarJson
 		}
 	: B;
 
+export interface AuthoredFieldSite {
+	readonly path: readonly number[];
+	readonly name: string;
+}
+
 export interface EnrichAuthoredConfig {
 	readonly groupBodies?: readonly RuntimeRule[];
 	readonly extras?: (...args: never[]) => unknown;
-	readonly fieldSites?: ReadonlyMap<string, readonly (readonly number[])[]>;
+	readonly fieldSites?: ReadonlyMap<string, readonly AuthoredFieldSite[]>;
 }
 
 export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthoredConfig = {}): EnrichedGrammar<B> {
@@ -162,7 +168,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		const rule = enrichedRules[name];
 		if (!rule) continue;
 		const counter: ClauseHoistCounter = { opt: 0, grp: 0, arm: 0, supertypeNames };
-		const hoisted = hoistTokenForms(name, rule, ctx, counter, unhoistableNames, tokenFormParents, authored.fieldSites?.get(name) ?? []);
+		const hoisted = hoistTokenForms(name, rule, ctx, counter, unhoistableNames, tokenFormParents, (authored.fieldSites?.get(name) ?? []).map((site) => site.path));
 		if (hoisted !== rule) enrichedRules[name] = hoisted;
 	}
 	const hoistCtx = ctx.withHoist({
@@ -172,11 +178,19 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	for (const name of Object.keys(enrichedRules)) {
 		const rule = enrichedRules[name];
 		if (!rule) continue;
-		enrichedRules[name] = applyClauseHoist(name, rule, hoistCtx, { opt: 0, grp: 0, arm: 0, supertypeNames });
+		enrichedRules[name] = applyClauseHoist(name, rule, hoistCtx, {
+			opt: 0,
+			grp: 0,
+			arm: 0,
+			supertypeNames,
+			elementChoices: elementChoiceSlots(rule, authored.fieldSites?.get(name) ?? [], ruleOrigins)
+		});
 	}
 	for (const groupName of Object.keys(clauseGroupRules)) {
 		const groupBody = clauseGroupRules[groupName];
-		if (groupBody && !tokenFormParents.includes(groupName)) clauseGroupRules[groupName] = withHoistedAnnotation(groupBody);
+		if (groupBody && !tokenFormParents.includes(groupName) && ruleOrigins.get(groupName)?.kind !== 'element-supertype') {
+			clauseGroupRules[groupName] = withHoistedAnnotation(groupBody);
+		}
 	}
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
 	collapseSingletonMintOrdinals(mergedRules, clauseGroupRules, ruleOrigins);
@@ -186,7 +200,8 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		if (rule) mergedRules[name] = applyNodeChoiceFieldWrap(name, rule, mergedRules, ctx);
 	}
 	synthesizeFieldEnumRules(mergedRules, ruleOrigins);
-	const automaticVariants = stampAutomaticVariants(mergedRules, supertypeNames, inlineNames);
+	const elementSupertypes = [...ruleOrigins].flatMap(([name, origin]) => (origin.kind === 'element-supertype' && name in mergedRules ? [name] : []));
+	const automaticVariants = stampAutomaticVariants(mergedRules, new Set([...supertypeNames, ...elementSupertypes]), inlineNames, new Set(elementSupertypes));
 	const textTokens = mintInlineTextTokens(mergedRules, { symbol: nativeRuleFn<(name: string) => Rule>('sym'), namingRules: baseRules });
 	Object.assign(mergedRules, textTokens.rules);
 	for (const name of textTokens.mintedNames) ruleOrigins.set(name, { kind: 'text', owners: textTokens.owners[name]! });
@@ -198,7 +213,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		? { ...base, grammar: { ...base.grammar, rules: mergedRules } }
 		: { ...(base as unknown as object), rules: mergedRules };
 	const resultGrammar = (hasWrapper ? (result as { grammar: Record<string, unknown> }).grammar : result) as Record<string, unknown>;
-	appendGrammarNames(resultGrammar, 'supertypes', [...tokenFormParents, WHITESPACE_SUPERTYPE], (name) => name);
+	appendGrammarNames(resultGrammar, 'supertypes', [...tokenFormParents, WHITESPACE_SUPERTYPE, ...elementSupertypes], (name) => name);
 	appendGrammarNames(resultGrammar, 'externals', whitespace.addedExternals, (name) => ({ type: SYMBOL, name }));
 	replaceExtras(resultGrammar, tokenFormArms(mergedRules, tokenFormParents));
 	Object.defineProperty(result, ENRICH_WHITESPACE_KEY, {
@@ -265,6 +280,10 @@ export function getEnrichWhitespace(grammar: unknown): EnrichWhitespaceSidecar {
 
 export function getEnrichHiddenSubsequences(grammar: unknown): ReadonlySet<string> {
 	return enrichRuleNamesOf(grammar, (origin) => origin.kind === 'hidden-subsequence');
+}
+
+export function getEnrichElementSupertypes(grammar: unknown): ReadonlyMap<string, string> {
+	return new Map([...getEnrichRuleOrigins(grammar)].flatMap(([name, origin]) => (origin.kind === 'element-supertype' ? [[name, origin.slot] as const] : [])));
 }
 
 export function getEnrichFieldBackings(grammar: unknown): ReadonlySet<string> {
@@ -731,7 +750,12 @@ function separatedListTail(members: readonly Rule[], i: number, symbols: SymbolS
 	return { repeatCursor, inner, innerElement, outerPrecStack, innerPrecStack };
 }
 
-function fieldSeparatedListElements(seqRule: Rule, reserve: (base: string) => string, symbols: SymbolSource): Rule | null {
+function fieldSeparatedListElements(
+	seqRule: Rule,
+	reserve: (base: string) => string,
+	symbols: SymbolSource,
+	ruleOrigins: ReadonlyMap<string, EnrichRuleOrigin>
+): Rule | null {
 	const members = (seqRule as unknown as { members?: Rule[] }).members;
 	if (!Array.isArray(members)) return null;
 	for (let i = 0; i < members.length - 1; i++) {
@@ -740,7 +764,7 @@ function fieldSeparatedListElements(seqRule: Rule, reserve: (base: string) => st
 		const tail = separatedListTail(members, i, symbols);
 		if (!tail) continue;
 		const { repeatCursor, inner, innerElement, outerPrecStack, innerPrecStack } = tail;
-		const fieldName = reserve(deriveElementFieldName(leading));
+		const fieldName = reserve(elementSlotName(leading, true, ruleOrigins));
 
 		const innerMembers = (inner as unknown as { members: Rule[] }).members;
 		const newInnerMembers = innerMembers.slice();
@@ -822,6 +846,14 @@ function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Rec
 				}
 				return withContent(r as object, rebuiltInner);
 			};
+			const elementSupertype = elementSupertypeOrigin(inner, ctx.ruleOrigins);
+			if (elementSupertype !== undefined) {
+				if (elementSupertype.authoredSlot) return r;
+				if (scope.has(elementSupertype.slot)) throw new Error(`enrich: '${ruleName}' already has a field '${elementSupertype.slot}', the slot of its element supertype`);
+				changed = true;
+				scope.add(elementSupertype.slot);
+				return makeField(elementSupertype.slot, rebuildRepeat(inner));
+			}
 			if (isSymbolType((inner as { type: string }).type)) {
 				const refName = (inner as unknown as { name: string }).name;
 				if (isEligibleFieldReferent(refName, mergedRules, supertypeNames) && refCounts.get(refName) === 1) {
@@ -841,14 +873,14 @@ function applyNodeChoiceFieldWrap(ruleName: string, rule: Rule, mergedRules: Rec
 			}
 			if (isChoiceType((visitedInner as { type: string }).type) && isAllArmsNodeShaped(visitedInner)) {
 				changed = true;
-				return makeField(reserve('elements', scope), rebuildRepeat(visitedInner));
+				return makeField(reserve(elementSlotName(visitedInner, false, ctx.ruleOrigins), scope), rebuildRepeat(visitedInner));
 			}
 			if (visitedInner === inner) return r;
 			return rebuildRepeat(visitedInner);
 		}
 
 		if (isSeqType((r as { type: string }).type)) {
-			const sepListRewrite = fieldSeparatedListElements(r, (base) => reserve(base, scope), ctx.sourceSymbols);
+			const sepListRewrite = fieldSeparatedListElements(r, (base) => reserve(base, scope), ctx.sourceSymbols, ctx.ruleOrigins);
 			if (sepListRewrite) {
 				changed = true;
 				r = sepListRewrite;
@@ -1592,11 +1624,17 @@ function tryPromoteInnerKeyword(
 	return withOptionalContent(optionalRule, fieldNode);
 }
 
+interface ElementSlot {
+	readonly slot: string;
+	readonly authoredSlot: boolean;
+}
+
 interface ClauseHoistCounter {
 	opt: number;
 	grp: number;
 	arm: number;
 	readonly supertypeNames?: ReadonlySet<string>;
+	readonly elementChoices?: ReadonlyMap<string, ElementSlot>;
 }
 
 function appendTrailingMemberToOptionalSeq(optSeqRule: Rule, trailingOptional: Rule): Rule {
@@ -1704,7 +1742,7 @@ function promoteHiddenListRef(member: Rule, ctx: EnrichCtx): Rule {
 		const info = separatedListBodyInfo(body, ctx.sourceSymbols);
 		if (!info?.flankCarrying || info.form !== 'head') return member;
 		const base = name.replace(/^_+/, '');
-		const bare = info.elementName !== null ? pluralizeFieldName(info.elementName) : null;
+		const bare = listKindElementPlural(info, ctx.ruleOrigins);
 		const candidates: string[] = [];
 		if (bare !== null && separatedListNameCounts.get(bare) === 1) candidates.push(bare);
 		if (bare !== null && base !== bare && !base.endsWith(`_${bare}`)) candidates.push(`${base}_${bare}`);
@@ -1846,18 +1884,28 @@ function applyClauseHoist(
 			if (count >= 2) collidingLeadingNames.add(name);
 		}
 		let changed = false;
+		const elementSlot = counter.elementChoices?.get(ruleKey(choiceRule as RuntimeRule));
+		const supertypeName = elementSlot === undefined ? undefined : elementSupertypeName(parentKind, elementSlot.slot);
+		const armParent = supertypeName ?? parentKind;
+		const armCounter = supertypeName === undefined ? counter : { opt: 0, grp: 0, arm: 0, supertypeNames: counter.supertypeNames };
+		const fieldRoutedArms = elementSlot === undefined ? [] : partitionChoiceArms<Rule>({ members }, dslArmStage).degenerateNamedArms;
+		let lifted = false;
 		const newMembers = members.map((m) => {
 			const out = applyClauseHoist(parentKind, m, ctx, counter, ambientPrec);
 			const literalOnlySplit = members.some((sib) => sib !== m && armsDifferOnlyByLiteralChoice(out, sib));
 			const promoted =
 				permutationChoice || literalOnlySplit || selfFold
 					? null
-					: mintStructuredChoiceArm(out, parentKind, ctx, counter, collidingLeadingNames, ambientPrec);
+					: (mintStructuredChoiceArm(out, armParent, ctx, armCounter, collidingLeadingNames, ambientPrec) ??
+						(fieldRoutedArms.includes(m) ? mintFieldRoutedArm(out, armParent, ctx, armCounter, ambientPrec) : null));
+			if (promoted !== null) lifted = true;
 			const final = promoteHiddenListRef(promoted ?? out, ctx);
 			if (final !== m) changed = true;
 			return final;
 		});
-		return changed || choiceRule !== rule ? ({ ...choiceRule, members: newMembers } as Rule) : rule;
+		const hoistedChoice = changed || choiceRule !== rule ? ({ ...choiceRule, members: newMembers } as Rule) : rule;
+		if (elementSlot === undefined || supertypeName === undefined || !lifted) return hoistedChoice;
+		return makeGroupLiftSymbol(rule, registerElementSupertype(hoistedChoice, supertypeName, elementSlot, ctx));
 	}
 
 	if (isRepeatType(rule.type) || isPrecWrapper(rule as { type: string })) {
@@ -2017,7 +2065,7 @@ function visibleGroupSynthName(
 	if (listInfo?.flankCarrying) {
 		const nameFree = (n: string) =>
 			!(n in rulesBag) && !(`_${n}` in rulesBag) && !(n in clauseGroupRules) && !(`_${n}` in clauseGroupRules);
-		const bare = listInfo.elementName !== null ? pluralizeFieldName(listInfo.elementName) : null;
+		const bare = listKindElementPlural(listInfo, ctx.ruleOrigins);
 		const candidates: string[] = [];
 		if (bare !== null && separatedListNameCounts!.get(bare) === 1) candidates.push(bare);
 		if (bare !== null && base !== bare && !base.endsWith(`_${bare}`)) candidates.push(`${base}_${bare}`);
@@ -2153,6 +2201,114 @@ function mintStructuredChoiceArm(
 	}
 
 	return null;
+}
+
+function singularFieldName(name: string): string {
+	if (name.endsWith('ies')) return `${name.slice(0, -3)}y`;
+	return name.endsWith('s') ? name.slice(0, -1) : name;
+}
+
+function elementSupertypeName(parentKind: string, slot: string): string {
+	return `_${parentKind.replace(/^_+/, '')}_${singularFieldName(slot)}`;
+}
+
+function elementSupertypeOrigin(element: Rule, ruleOrigins: ReadonlyMap<string, EnrichRuleOrigin>): ElementSlot | undefined {
+	const core = peelTransparentElementWrappers(element);
+	if (!isSymbolType((core as { type: string }).type)) return undefined;
+	const origin = ruleOrigins.get((core as unknown as { name: string }).name);
+	return origin?.kind === 'element-supertype' ? origin : undefined;
+}
+
+function listKindElementPlural(info: SeparatedListBodyInfo, ruleOrigins: ReadonlyMap<string, EnrichRuleOrigin>): string | null {
+	if (info.elementName === null || elementSupertypeOrigin(info.element as Rule, ruleOrigins) !== undefined) return null;
+	return pluralizeFieldName(info.elementName);
+}
+
+function elementSlotName(element: Rule, separated: boolean, ruleOrigins: ReadonlyMap<string, EnrichRuleOrigin>): string {
+	return elementSupertypeOrigin(element, ruleOrigins)?.slot ?? (separated ? deriveElementFieldName(element) : 'elements');
+}
+
+function elementChoiceSlots(
+	rule: Rule,
+	authoredSites: readonly AuthoredFieldSite[],
+	ruleOrigins: ReadonlyMap<string, EnrichRuleOrigin>
+): ReadonlyMap<string, ElementSlot> {
+	const slots = new Map<string, ElementSlot>();
+	const authoredAt = (path: readonly number[]): string | undefined =>
+		authoredSites.find((site) => site.path.length === path.length && site.path.every((step, i) => step === path[i]))?.name;
+	const walk = (node: AnyRule, path: readonly number[], repeat: { readonly path: readonly number[]; readonly separated: boolean } | undefined): void => {
+		if (isPrecWrapper(node)) {
+			walk((node as { content: AnyRule }).content, path, repeat);
+			return;
+		}
+		switch (node.type) {
+			case CHOICE:
+				if (repeat !== undefined && isTopologyMixed(partitionChoiceArms(node, dslArmStage))) {
+					const authored = authoredAt(repeat.path) ?? authoredAt([...repeat.path, 0]);
+					const found: ElementSlot = { slot: authored ?? elementSlotName(node as Rule, repeat.separated, ruleOrigins), authoredSlot: authored !== undefined };
+					const key = ruleKey(node as RuntimeRule);
+					const known = slots.get(key);
+					if (known !== undefined && known.slot !== found.slot) {
+						throw new Error(`enrich: one element choice sits in two slots, '${known.slot}' and '${found.slot}'`);
+					}
+					slots.set(key, found);
+				}
+				node.members.forEach((m, i) => walk(m, [...path, i], repeat));
+				return;
+			case SEQ:
+				node.members.forEach((m, i) => walk(m, [...path, i], repeat === undefined ? undefined : { path: repeat.path, separated: true }));
+				return;
+			case REPEAT:
+			case REPEAT1:
+				walk(node.content, [...path, 0], { path, separated: false });
+				return;
+			case OPTIONAL:
+			case FIELD:
+				walk((node as { content: AnyRule }).content, [...path, 0], repeat);
+				return;
+			default:
+				return;
+		}
+	};
+	walk(rule as AnyRule, [], undefined);
+	return slots;
+}
+
+function registerElementSupertype(body: Rule, name: string, slot: ElementSlot, ctx: EnrichCtx): string {
+	const { groupDedupeMap, rulesBag, clauseGroupRules, ruleOrigins } = ctx;
+	const key = ruleKey(body as RuntimeRule);
+	const shared = groupDedupeMap[key];
+	if (shared !== undefined) {
+		const origin = ruleOrigins.get(shared);
+		if (origin?.kind !== 'element-supertype' || origin.slot !== slot.slot) {
+			throw new Error(`enrich: the element choice of '${name}' is already minted as '${shared}' for another slot`);
+		}
+		return shared;
+	}
+	if (name in rulesBag || name in clauseGroupRules) throw new Error(`enrich: element supertype '${name}' collides with an existing rule`);
+	groupDedupeMap[key] = name;
+	clauseGroupRules[name] = body;
+	ruleOrigins.set(name, { kind: 'element-supertype', ...slot });
+	return name;
+}
+
+function mintFieldRoutedArm(
+	arm: Rule,
+	parentKind: string,
+	ctx: EnrichCtx,
+	counter: ClauseHoistCounter,
+	ambientPrec?: Rule
+): Rule | null {
+	if (isPrecWrapper(arm as { type: string })) {
+		const content = (arm as { content?: Rule }).content;
+		if (!content) return null;
+		const minted = mintFieldRoutedArm(content, parentKind, ctx, counter, arm);
+		return minted && withContent(arm, minted);
+	}
+	const fieldName = dslArmStage.fieldName(arm as AnyRule);
+	if (fieldName === undefined || matchesEmpty(arm)) return null;
+	const minted = visibleGroupSynthName(arm, parentKind, ctx, counter, ambientPrec, fieldName, 'arm');
+	return minted === null ? null : makeGroupLiftSymbol(arm, minted);
 }
 
 function coveredByAuthoredGroup(body: Rule, ctx: EnrichCtx): boolean {
