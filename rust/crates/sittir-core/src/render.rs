@@ -59,6 +59,13 @@ pub trait SourceTable {
         let _ = coord;
         None
     }
+
+    /// The kind of the node a coordinate names, then the kind of each last
+    /// descendant that ends at the same byte. A line end the node's text
+    /// owes belongs to whichever of these kinds ends in it.
+    fn kinds_ending_with(&self, coord: &crate::slot::NodeCoordinate) -> Vec<KindId> {
+        self.kind_of(coord).into_iter().collect()
+    }
 }
 
 /// Why a coordinate cannot be turned into bytes. Both arms carry the handle:
@@ -152,6 +159,11 @@ pub trait RenderSink {
     fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
         let _ = coord;
         None
+    }
+    /// The kinds a coordinate's text ends in: its own kind first, then the
+    /// last descendants that share its end byte.
+    fn kinds_ending_with(&self, coord: &crate::slot::NodeCoordinate) -> Vec<KindId> {
+        self.kind_of(coord).into_iter().collect()
     }
     fn indent(&mut self);
     /// Shallows the depth and merges `seam` after it. A dedent that arrives

@@ -609,6 +609,17 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         coord.kind.or_else(|| self.sources.and_then(|sources| sources.kind_of(coord)))
     }
 
+    fn kinds_ending_with(&self, coord: &crate::slot::NodeCoordinate) -> Vec<crate::types::KindId> {
+        let chain = self
+            .sources
+            .map(|sources| sources.kinds_ending_with(coord))
+            .unwrap_or_default();
+        match coord.kind {
+            Some(stamp) => std::iter::once(stamp).chain(chain.into_iter().skip(1)).collect(),
+            None => chain,
+        }
+    }
+
     fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> crate::render::RenderResult {
         let sources = self
             .sources

@@ -85,7 +85,7 @@ impl NodeCoordinate {
         if let Some(SeamArm { arm, strength }) = self.edges.and_then(|e| e.after) {
             w.site_with(arm, strength);
         }
-        if let Some(kind) = w.kind_of(self) {
+        for kind in w.kinds_ending_with(self) {
             w.end_line_after(kind);
         }
         Ok(())
