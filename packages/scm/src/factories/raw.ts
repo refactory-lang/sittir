@@ -96,7 +96,7 @@ export function buildCapture(
 ): ReturnType<typeof _buildCapture>;
 export function buildCapture(text: string): ReturnType<typeof _buildCapture>;
 export function buildCapture(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
 		return _buildCapture(args[0] as T.ImmediateIdentifier);
 	}
 	const prebuilt =
@@ -133,7 +133,7 @@ export function buildString(
 	...children: AdmitBound<(T.StringContentText | T.EscapeSequence)[], T.AdmittedNodes>
 ): ReturnType<typeof _buildString>;
 export function buildString(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
 		return _buildString(args[0] as T.StringContent);
 	}
 	const prebuilt =
@@ -172,7 +172,7 @@ export function buildImmediateString(
 	...children: AdmitBound<(T.StringContentText | T.EscapeSequence)[], T.AdmittedNodes>
 ): ReturnType<typeof _buildImmediateString>;
 export function buildImmediateString(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
 		return _buildImmediateString(args[0] as T.StringContent);
 	}
 	const prebuilt =
@@ -399,7 +399,7 @@ export function buildNegatedField(
 ): ReturnType<typeof _buildNegatedField>;
 export function buildNegatedField(text: string): ReturnType<typeof _buildNegatedField>;
 export function buildNegatedField(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object')) {
+	if (args.length === 0 || (args.length === 1 && typeof args[0] !== 'object' && typeof args[0] !== 'number')) {
 		return _buildNegatedField(args[0] as T.Identifier);
 	}
 	const prebuilt =
