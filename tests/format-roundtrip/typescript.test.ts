@@ -1,13 +1,12 @@
 /**
  * Format roundtrip for the TypeScript fixtures: the native reader records each
- * fixture's inferred format, and a text edit changes only its own byte range.
+ * fixture's inferred format, and an edit with `$with` changes only the slot it replaces.
  */
 
 import { describe, it, expect } from 'vitest';
-import { applyEdits } from '@sittir/common';
-import type { Edit } from '@sittir/types';
+import { createEngine } from '@sittir/common';
+import typescript from '@sittir/typescript';
 import {
-	diffPositions,
 	loadFixtureSource,
 	loadFormatCorpusEntries,
 	parseNativeFixture,
@@ -36,19 +35,17 @@ describe('format-roundtrip typescript fixtures', () => {
 });
 
 describe('US2 — edit isolation (typescript)', () => {
-	it('typescript-4space.ts: rename createUser → buildUser is isolated to the edited byte range', () => {
+	it('typescript-4space.ts: rename createUser → buildUser changes only the name', async () => {
+		const engine = await createEngine(typescript);
 		const source = loadFixtureSource('typescript-4space.ts');
-		const original = 'createUser';
-		const replacement = 'buildUser';
-		const startPos = source.indexOf(original);
-		expect(startPos).toBeGreaterThan(-1);
-		const endPos = startPos + original.length;
-		const edit: Edit = { startPos, endPos, insertedText: replacement };
-		const result = applyEdits(source, [edit]);
-		const diff = diffPositions(source, result.source);
-		expect(diff).not.toBeNull();
-		expect(diff!.start).toBeGreaterThanOrEqual(edit.startPos);
-		expect(diff!.end).toBeLessThan(edit.startPos + edit.insertedText.length);
+		const named = engine
+			.parse(source)
+			.statements()
+			.find((statement) => engine.is.functionDeclaration(statement) && engine.render(statement.name()).toString() === 'createUser');
+		expect(named).toBeDefined();
+		if (named === undefined || !engine.is.functionDeclaration(named)) return;
+		const edited = named.$with.name(engine.build.identifier('buildUser'));
+		// a rebuilt statement renders with a final line break the parsed one lacks
+		expect(edited.$render().trimEnd()).toBe(named.$render().replace('createUser', 'buildUser'));
 	});
 });
-

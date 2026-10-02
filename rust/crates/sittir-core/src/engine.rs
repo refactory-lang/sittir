@@ -16,9 +16,8 @@ use crate::format::{apply_format, extract_format};
 use crate::options::ResolvedOptions;
 use crate::read_untyped_node::{read_untyped_node, HandleMint, ReadDepth, ReadModel};
 use crate::render::SourceTable;
-use crate::splice::apply_edits as splice_apply_edits;
 use crate::slot::NodeCoordinate;
-use crate::types::{Edit, FormatRecord, KindId, UntypedNode, Source};
+use crate::types::{FormatRecord, KindId, UntypedNode, Source};
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -438,10 +437,6 @@ impl<G: EngineGrammar> Engine<G> {
             self.engine_format.as_ref(),
             tree_format,
         ))
-    }
-
-    pub fn apply_edits(&self, source: String, edits: Vec<Edit>) -> Result<String, String> {
-        splice_apply_edits(&source, edits).map_err(|e| format!("{e}"))
     }
 }
 

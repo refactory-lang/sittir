@@ -25,7 +25,6 @@ describe('engine render boundary', () => {
 	function mockNativeBackend(
 		SittirEngine: new (options?: { format?: string }) => {
 			render(node: Record<string, unknown>): string;
-			applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
 		}
 	): void {
 		vi.resetModules();
@@ -45,9 +44,6 @@ describe('engine render boundary', () => {
 					throw new Error('native render boom');
 				}
 
-				applyEdits(_source: string, _edits: { startPos: number; endPos: number; insertedText: string }[]): never {
-					throw new Error('native apply boom');
-				}
 			}
 		);
 	}
@@ -65,22 +61,12 @@ describe('engine render boundary', () => {
 		expect(() => render(identifier)).toThrow(/native render boom/);
 	});
 
-	it('surfaces native applyEdits failures instead of silently retrying on TS', async () => {
-		mockNativeFailureBackend();
-		const engine = await mockedEngine();
-		const applyEdits = engine.applyEdits.bind(engine);
-		expect(() => applyEdits('abc', [])).toThrow(/native apply boom/);
-	});
-
 	it('passes a plain transport object to native render', async () => {
 		const renderSpy = vi.fn((node: Record<string, unknown>) => `ok:${String(node.$type)}`);
 		mockNativeBackend(
 			class {
 				render(node: Record<string, unknown>): string {
 					return renderSpy(node);
-				}
-				applyEdits(source: string): string {
-					return source;
 				}
 			}
 		);
@@ -108,9 +94,6 @@ describe('engine render boundary', () => {
 					return renderSpy(node);
 				}
 
-				applyEdits(_source: string, _edits: { startPos: number; endPos: number; insertedText: string }[]): string {
-					return '';
-				}
 			}
 		);
 		const engine = await mockedEngine();
@@ -132,9 +115,6 @@ describe('engine render boundary', () => {
 				render(node: Record<string, unknown>): string {
 					return renderSpy(node);
 				}
-				applyEdits(source: string): string {
-					return source;
-				}
 			}
 		);
 
@@ -155,9 +135,6 @@ describe('engine render boundary', () => {
 				constructor(_options?: { format?: string }) {}
 				render(node: Record<string, unknown>): string {
 					return renderSpy(node);
-				}
-				applyEdits(source: string): string {
-					return source;
 				}
 			}
 		);

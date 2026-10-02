@@ -256,7 +256,7 @@ implements: each pattern leaf's anchored regex is stamped into the emitted
 before resolving, so a string never lands on the first pattern kind in the
 slot's leaf order by default.
 
-What the three loose rebuilds measure today (rust `splice.rs`, typescript
+What the three loose rebuilds measure today (rust `dogfood-rust.rs`, typescript
 `format.ts`, python `python-4space.py`): all three render, re-parse to the
 target's tree and render the target's bytes, and the type ceiling is zero for
 every generated rebuild, strict and loose alike. The loose list call types its

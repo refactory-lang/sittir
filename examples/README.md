@@ -31,10 +31,10 @@ that takes an argument needs a sample input in that test.
 | `07-read-source.ts` | Read source into UntypedNode |
 | `09-type-guards.ts` | Type guards |
 | `12-cross-language-migration.ts` | Cross-language migration |
-| `14-format-preserving-transform.ts` | Format-preserving transforms *(parked, not type-checked: the parse → `$with` → `$render` rewrite is blocked by #419, #420, #421)* |
+| `14-format-preserving-transform.ts` | Format-preserving transforms: rename a parsed function with `$with` |
 | `15-generate-file.ts` | Generate a file from scratch *(pending richer Rust generation examples)* |
 | `16-dogfooding.ts` | Dogfooding *(pending template/snippet-free rewrite)* |
-| `17-dogfood-rust-strict.ts` | Dogfooding — rebuild `sittir-core/src/splice.rs` through `.strict` alone |
+| `17-dogfood-rust-strict.ts` | Dogfooding — rebuild the `dogfood-rust.rs` fixture through `.strict` alone |
 | `18-dogfood-typescript-strict.ts` | Dogfooding — rebuild `common/src/format.ts` through `.strict` alone |
 | `19-dogfood-python-strict.ts` | Dogfooding — rebuild `tools/scripts/probe-sweep.py` through `.strict` alone |
 | `<n>-dogfood-<g>.generated.ts`, `<n>-dogfood-<g>-loose.generated.ts` | Dogfooding — the strict and loose rebuilds `pnpm run gen:examples` prints from each target; never hand-edited |

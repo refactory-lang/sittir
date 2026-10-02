@@ -860,22 +860,6 @@ pub struct Span {
     pub end: u32,
 }
 
-/// A single replacement against a source string. Napi boundary type.
-///
-/// `#[napi(object)]` (gated on napi-bindings feature) auto-generates
-/// the N-API mapping with camelCase field renaming — TS side sees
-/// `{ startPos, endPos, insertedText }` per contracts/napi-api.md.
-/// `serde` mirrors that with camelCase so `apply_edits` can accept
-/// JSON payloads in the TS-forced-backend round-trip path.
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[serde(rename_all = "camelCase")]
-pub struct Edit {
-    pub start_pos: u32,
-    pub end_pos: u32,
-    pub inserted_text: String,
-}
-
 /// Leading / trailing delimiters for a format region. Mirrors
 /// `FormatBoundary` in `@sittir/types`.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

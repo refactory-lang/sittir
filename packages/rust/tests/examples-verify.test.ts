@@ -243,11 +243,11 @@ describe('examples/17 dogfood rust — strict factory surface', () => {
 	});
 });
 
-// The generated rebuild: `sittir tool emit-factory-source` over splice.rs. It
+// The generated rebuild: `sittir tool emit-factory-source` over the dogfood-rust.rs fixture. It
 // is checked in so the strict surface's gaps are a diff, not a description;
 // its type errors are counted under examples/generated-typecheck-ceiling.json.
 describe('examples/17 generated rebuild (splice.rs)', () => {
-	const target = new URL('../../../rust/crates/sittir-core/src/splice.rs', import.meta.url).pathname;
+	const target = new URL('../../tools/tests/emit/__fixtures__/dogfood-rust.rs', import.meta.url).pathname;
 	it('renders — every token-tree child now builds', async () => {
 		expect((await rebuildSpliceGenerated()).$render()).toContain('pub enum SpliceError');
 	});
@@ -262,7 +262,7 @@ describe('examples/17 generated rebuild (splice.rs)', () => {
 // coercion the loose contract admits spelled bare, so a coercion the runtime
 // refuses is a diff here rather than a description.
 describe('examples/17 loose rebuild (splice.rs)', () => {
-	const target = new URL('../../../rust/crates/sittir-core/src/splice.rs', import.meta.url).pathname;
+	const target = new URL('../../tools/tests/emit/__fixtures__/dogfood-rust.rs', import.meta.url).pathname;
 	it('renders', async () => {
 		expect((await rebuildSpliceLoose()).$render()).toContain('pub enum SpliceError');
 	});

@@ -23,33 +23,19 @@ describe('@sittir/common/utils runtime surface', () => {
 		expect(typeof coerceBitflagStorage).toBe('function');
 	});
 
-	it('attaches render/edit helpers from the engine in scope', () => {
+	it('renders through the engine in scope', () => {
 		const render = vi.fn(() => 'rendered');
 		const trivia = { kindName: (type: AnyUntypedNode['$type']) => `k${type}`, kinds: new Set(['k1', 'k2', 'k3']), innerGaps: {} };
 		const node = inEngine(liveHandle({ render, trivia }), () => withMethods({ $type: 1, $source: 2, _name: 'x' }));
 
 		expect(node.$render()).toBe('rendered');
-		expect(node.$toEdit({ start: { index: 0 }, end: { index: 3 } })).toEqual({
-			startPos: 0,
-			endPos: 3,
-			insertedText: 'rendered'
-		});
-		expect(
-			node.$replace({
-				range: () => ({ start: { index: 4 }, end: { index: 7 } })
-			})
-		).toEqual({
-			startPos: 4,
-			endPos: 7,
-			insertedText: 'rendered'
-		});
 		expect(node.$trivia.trailing(node)).toBe(node);
 		expect((node as unknown as Record<string, unknown>).$_trivia).toEqual({ trailing: [node] });
 		const triviaNodeA: AnyUntypedNode = { $type: 2, $source: 2, $text: 'a' };
 		const triviaNodeB: AnyUntypedNode = { $type: 3, $source: 2, $text: 'b' };
 		expect(node.$trivia.leading(triviaNodeA, triviaNodeB)).toBe(node);
 		expect((node as unknown as Record<string, unknown>).$_trivia).toEqual({ trailing: [node], leading: [triviaNodeA, triviaNodeB] });
-		expect(render).toHaveBeenCalledTimes(3);
+		expect(render).toHaveBeenCalledTimes(1);
 		expect(render).toHaveBeenCalledWith(node);
 	});
 

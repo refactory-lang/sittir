@@ -1,5 +1,4 @@
-import type { StringIndexRange } from '@sittir/types';
-import { currentHandle, toEditAt, renderText, triviaInner, triviaInnerAt, triviaSide } from '../../src/utils.ts';
+import { currentHandle, renderText, triviaInner, triviaInnerAt, triviaSide } from '../../src/utils.ts';
 
 /** A node written the way the emitters write one: the data and its members in one literal, bound to the engine in scope. */
 export function withMembers<T extends object>(data: T): T & Record<string, any> {
@@ -7,8 +6,6 @@ export function withMembers<T extends object>(data: T): T & Record<string, any> 
 	const node: Record<string, any> = {
 		...data,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) => toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),

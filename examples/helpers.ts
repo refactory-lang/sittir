@@ -1,5 +1,5 @@
 import type { TreeHandle } from '@sittir/common/utils';
-import type { Edit, NodeTrivia } from '@sittir/types';
+import type { NodeTrivia } from '@sittir/types';
 import { readFileSync } from 'node:fs';
 export type { TreeHandle };
 
@@ -19,20 +19,6 @@ export function renderText(value: unknown): string {
 		if (typeof render === 'function') return render.call(value) as string;
 	}
 	return nodeText(value);
-}
-
-export function replaceAtSpan(
-	target: { $span?: { start: number; end: number } },
-	replacement: { $render(): string },
-): Edit {
-	if (!target.$span) {
-		throw new Error('Cannot create an edit for a node without byte-span metadata.');
-	}
-	return {
-		startPos: target.$span.start,
-		endPos: target.$span.end,
-		insertedText: replacement.$render(),
-	};
 }
 
 /**

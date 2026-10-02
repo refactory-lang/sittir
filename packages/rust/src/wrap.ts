@@ -32,14 +32,13 @@ import {
 	defineListIndices,
 	rebuilt,
 	renderText,
-	toEditAt,
 	triviaSide,
 	triviaInner
 } from '@sittir/common/utils';
 import type { TreeHandle, TokenInterior } from '@sittir/common/utils';
 import { TOKEN_INTERIORS } from './consts.js';
 import type { ParsedRoot } from '@sittir/common/engine';
-import type { AnyUntypedNode as _UntypedNode, NonEmptyArray, StringIndexRange, SupertypeSurface } from '@sittir/types';
+import type { AnyUntypedNode as _UntypedNode, NonEmptyArray, SupertypeSurface } from '@sittir/types';
 import { TSKindId, KIND_NAMES, KIND_DISPLAY_NAMES } from './types.js';
 import { Delimiter } from '@sittir/common/utils';
 import type * as T from './types-internal.js';
@@ -1272,9 +1271,6 @@ export function wrapSourceFile(data: T.SourceFile, tree: TreeHandle): T.SourceFi
 				rebuilt(node, handle, () => wrapSourceFile({ ...$edited(data), _statements: restItems('statements', v) }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -1460,9 +1456,6 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
 				rebuilt(node, handle, () => wrapExpressionStatement({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1549,9 +1542,6 @@ export function wrapMacroRule(data: T.MacroRule, tree: TreeHandle): T.MacroRule.
 				rebuilt(node, handle, () => wrapMacroRule({ ...$edited(data), _right: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1665,9 +1655,6 @@ export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeH
 			...data,
 			$type: TSKindId.TokenBindingPattern as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1727,9 +1714,6 @@ export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeH
 				rebuilt(node, handle, () => wrapTokenBindingPattern({ ...$edited(data), _type: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1750,9 +1734,6 @@ export function wrapTokenRepetitionPattern(
 			...data,
 			$type: TSKindId.TokenRepetitionPattern as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1825,9 +1806,6 @@ export function wrapTokenRepetitionPattern(
 				rebuilt(node, handle, () => wrapTokenRepetitionPattern({ ...$edited(data), _operator: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1874,9 +1852,6 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle): 
 			...data,
 			$type: TSKindId.TokenRepetition as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1937,9 +1912,6 @@ export function wrapTokenRepetition(data: T.TokenRepetition, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapTokenRepetition({ ...$edited(data), _operator: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -1957,9 +1929,6 @@ export function wrapNonSpecialToken(data: T.NonSpecialToken, tree: TreeHandle): 
 			...data,
 			$type: TSKindId.NonSpecialToken as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2384,9 +2353,6 @@ export function wrapNonSpecialToken(data: T.NonSpecialToken, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapNonSpecialToken({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2420,9 +2386,6 @@ export function wrapAttributeItem(data: T.AttributeItem, tree: TreeHandle): T.At
 				rebuilt(node, handle, () => wrapAttributeItem({ ...$edited(data), _attribute: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2456,9 +2419,6 @@ export function wrapInnerAttributeItem(data: T.InnerAttributeItem, tree: TreeHan
 				rebuilt(node, handle, () => wrapInnerAttributeItem({ ...$edited(data), _attribute: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2476,9 +2436,6 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.
 			...data,
 			$type: TSKindId.Attribute as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2576,9 +2533,6 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.
 				rebuilt(node, handle, () => wrapAttribute({ ...$edited(data), _input: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2677,9 +2631,6 @@ export function wrapDeclarationList(data: T.DeclarationList, tree: TreeHandle): 
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -2829,9 +2780,6 @@ export function wrapUnionItem(data: T.UnionItem, tree: TreeHandle): T.UnionItem.
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -2950,9 +2898,6 @@ export function wrapEnumItem(data: T.EnumItem, tree: TreeHandle): T.EnumItem.Par
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3013,9 +2958,6 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle): 
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', Delimiter.Trailing),
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -3098,9 +3040,6 @@ export function wrapEnumVariant(data: T.EnumVariant, tree: TreeHandle): T.EnumVa
 				rebuilt(node, handle, () => wrapEnumVariant({ ...$edited(data), _value: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3165,9 +3104,6 @@ export function wrapFieldDeclarationList(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', Delimiter.Trailing),
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -3255,9 +3191,6 @@ export function wrapFieldDeclaration(data: T.FieldDeclaration, tree: TreeHandle)
 				rebuilt(node, handle, () => wrapFieldDeclaration({ ...$edited(data), _type: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3321,9 +3254,6 @@ export function wrapOrderedFieldDeclarationList(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -3390,9 +3320,6 @@ export function wrapExternCrateDeclaration(
 				rebuilt(node, handle, () => wrapExternCrateDeclaration({ ...$edited(data), _alias: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3497,9 +3424,6 @@ export function wrapConstItem(data: T.ConstItem, tree: TreeHandle): T.ConstItem.
 				rebuilt(node, handle, () => wrapConstItem({ ...$edited(data), _value: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3524,9 +3448,6 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle): T.StaticIt
 			...data,
 			$type: TSKindId.StaticItem as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3653,9 +3574,6 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle): T.StaticIt
 				rebuilt(node, handle, () => wrapStaticItem({ ...$edited(data), _value: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -3815,9 +3733,6 @@ export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle): T.TypeItem.Par
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4013,9 +3928,6 @@ export function wrapFunctionItem(data: T.FunctionItem, tree: TreeHandle): T.Func
 				rebuilt(node, handle, () => wrapFunctionItem({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4199,9 +4111,6 @@ export function wrapFunctionSignatureItem(
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4219,9 +4128,6 @@ export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandl
 			...data,
 			$type: TSKindId.FunctionModifiers as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4273,9 +4179,6 @@ export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandl
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4326,9 +4229,6 @@ export function wrapWhereClause(data: T.WhereClause, tree: TreeHandle): T.WhereC
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4347,9 +4247,6 @@ export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle): T.
 			...data,
 			$type: TSKindId.WherePredicate as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4443,9 +4340,6 @@ export function wrapWherePredicate(data: T.WherePredicate, tree: TreeHandle): T.
 				rebuilt(node, handle, () => wrapWherePredicate({ ...$edited(data), _bounds: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4499,9 +4393,6 @@ export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle): T.TraitItem.
 			...data,
 			$type: TSKindId.TraitItem as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4633,9 +4524,6 @@ export function wrapTraitItem(data: T.TraitItem, tree: TreeHandle): T.TraitItem.
 				rebuilt(node, handle, () => wrapTraitItem({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4730,9 +4618,6 @@ export function wrapAssociatedType(data: T.AssociatedType, tree: TreeHandle): T.
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4795,9 +4680,6 @@ export function wrapTraitBounds(data: T.TraitBounds, tree: TreeHandle): T.TraitB
 				rebuilt(node, handle, () => wrapTraitBounds({ ...$edited(data), _bounds: restItems('bounds', v) }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4884,9 +4766,6 @@ export function wrapHigherRankedTraitBound(
 				rebuilt(node, handle, () => wrapHigherRankedTraitBound({ ...$edited(data), _type: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -4944,9 +4823,6 @@ export function wrapRemovedTraitBound(data: T.RemovedTraitBound, tree: TreeHandl
 				rebuilt(node, handle, () => wrapRemovedTraitBound({ ...$edited(data), _type: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5007,9 +4883,6 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle): T.
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5101,9 +4974,6 @@ export function wrapConstParameter(data: T.ConstParameter, tree: TreeHandle): T.
 				rebuilt(node, handle, () => wrapConstParameter({ ...$edited(data), _value: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5189,9 +5059,6 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle): T.Ty
 				rebuilt(node, handle, () => wrapTypeParameter({ ...$edited(data), _default_type: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5239,9 +5106,6 @@ export function wrapLifetimeParameter(data: T.LifetimeParameter, tree: TreeHandl
 				rebuilt(node, handle, () => wrapLifetimeParameter({ ...$edited(data), _bounds: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5259,9 +5123,6 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.
 			...data,
 			$type: TSKindId.LetDeclaration as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5380,9 +5241,6 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle): T.
 				rebuilt(node, handle, () => wrapLetDeclaration({ ...$edited(data), _alternative: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5400,9 +5258,6 @@ export function wrapUseDeclaration(data: T.UseDeclaration, tree: TreeHandle): T.
 			...data,
 			$type: TSKindId.UseDeclaration as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5504,9 +5359,6 @@ export function wrapUseDeclaration(data: T.UseDeclaration, tree: TreeHandle): T.
 				rebuilt(node, handle, () => wrapUseDeclaration({ ...$edited(data), _argument: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5647,9 +5499,6 @@ export function wrapScopedUseList(data: T.ScopedUseList, tree: TreeHandle): T.Sc
 			...data,
 			$type: TSKindId.ScopedUseList as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5754,9 +5603,6 @@ export function wrapScopedUseList(data: T.ScopedUseList, tree: TreeHandle): T.Sc
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5806,9 +5652,6 @@ export function wrapUseList(data: T.UseList, tree: TreeHandle): T.UseList.Parsed
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -5828,9 +5671,6 @@ export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsC
 			...data,
 			$type: TSKindId.UseAsClause as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5928,9 +5768,6 @@ export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsC
 				rebuilt(node, handle, () => wrapUseAsClause({ ...$edited(data), _alias: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -5964,9 +5801,6 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWil
 				rebuilt(node, handle, () => wrapUseWildcard({ ...$edited(data), _use_wildcard_group: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6027,9 +5861,6 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle): T.Paramete
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -6049,9 +5880,6 @@ export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle): T.Se
 			...data,
 			$type: TSKindId.SelfParameter as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6107,9 +5935,6 @@ export function wrapSelfParameter(data: T.SelfParameter, tree: TreeHandle): T.Se
 				rebuilt(node, handle, () => wrapSelfParameter({ ...$edited(data), _mutable_specifier: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6127,9 +5952,6 @@ export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandl
 			...data,
 			$type: TSKindId.VariadicParameter as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6177,9 +5999,6 @@ export function wrapVariadicParameter(data: T.VariadicParameter, tree: TreeHandl
 				rebuilt(node, handle, () => wrapVariadicParameter({ ...$edited(data), _pattern: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6197,9 +6016,6 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.
 			...data,
 			$type: TSKindId.Parameter as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6285,9 +6101,6 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.
 				rebuilt(node, handle, () => wrapParameter({ ...$edited(data), _type: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6321,9 +6134,6 @@ export function wrapExternModifier(data: T.ExternModifier, tree: TreeHandle): T.
 				rebuilt(node, handle, () => wrapExternModifier({ ...$edited(data), _abi: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6341,9 +6151,6 @@ export function wrapVisibilityModifier(data: T.VisibilityModifier, tree: TreeHan
 			...data,
 			$type: TSKindId.VisibilityModifier as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6377,9 +6184,6 @@ export function wrapVisibilityModifier(data: T.VisibilityModifier, tree: TreeHan
 				rebuilt(node, handle, () => wrapVisibilityModifier({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6527,9 +6331,6 @@ export function wrapBracketedType(data: T.BracketedType, tree: TreeHandle): T.Br
 				rebuilt(node, handle, () => wrapBracketedType({ ...$edited(data), _type: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6625,9 +6426,6 @@ export function wrapQualifiedType(data: T.QualifiedType, tree: TreeHandle): T.Qu
 				rebuilt(node, handle, () => wrapQualifiedType({ ...$edited(data), _alias: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6661,9 +6459,6 @@ export function wrapLifetime(data: T.Lifetime, tree: TreeHandle): T.Lifetime.Par
 				rebuilt(node, handle, () => wrapLifetime({ ...$edited(data), _name: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6740,9 +6535,6 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle): T.ArrayType.
 				rebuilt(node, handle, () => wrapArrayType({ ...$edited(data), _length: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6793,9 +6585,6 @@ export function wrapForLifetimes(data: T.ForLifetimes, tree: TreeHandle): T.ForL
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6915,9 +6704,6 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle): T.Func
 				rebuilt(node, handle, () => wrapFunctionType({ ...$edited(data), _return_type: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -6968,9 +6754,6 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle): T.TupleType.
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -7031,9 +6814,6 @@ export function wrapGenericFunction(data: T.GenericFunction, tree: TreeHandle): 
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -7051,9 +6831,6 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 			...data,
 			$type: TSKindId.GenericType as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -7118,9 +6895,6 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle): T.Generi
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -7183,9 +6957,6 @@ export function wrapGenericTypeWithTurbofish(
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -7281,9 +7052,6 @@ export function wrapBoundedType(data: T.BoundedType, tree: TreeHandle): T.Bounde
 				rebuilt(node, handle, () => wrapBoundedType({ ...$edited(data), _right: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -7333,9 +7101,6 @@ export function wrapUseBounds(data: T.UseBounds, tree: TreeHandle): T.UseBounds.
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -7398,9 +7163,6 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle): T.Ty
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -7499,9 +7261,6 @@ export function wrapTypeBinding(data: T.TypeBinding, tree: TreeHandle): T.TypeBi
 				rebuilt(node, handle, () => wrapTypeBinding({ ...$edited(data), _type: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -7519,9 +7278,6 @@ export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle): T.Re
 			...data,
 			$type: TSKindId.ReferenceType as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -7602,9 +7358,6 @@ export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle): T.Re
 				rebuilt(node, handle, () => wrapReferenceType({ ...$edited(data), _type: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -7700,9 +7453,6 @@ export function wrapAbstractType(data: T.AbstractType, tree: TreeHandle): T.Abst
 				rebuilt(node, handle, () => wrapAbstractType({ ...$edited(data), _trait: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -7743,9 +7493,6 @@ export function wrapDynamicType(data: T.DynamicType, tree: TreeHandle): T.Dynami
 				rebuilt(node, handle, () => wrapDynamicType({ ...$edited(data), _trait: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -8333,9 +8080,6 @@ export function wrapMacroInvocation(data: T.MacroInvocation, tree: TreeHandle): 
 			...data,
 			$type: TSKindId.MacroInvocation as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -8384,9 +8128,6 @@ export function wrapMacroInvocation(data: T.MacroInvocation, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapMacroInvocation({ ...$edited(data), _arguments: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -8525,9 +8266,6 @@ export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle)
 			...data,
 			$type: TSKindId.ScopedIdentifier as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -8631,9 +8369,6 @@ export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle)
 				rebuilt(node, handle, () => wrapScopedIdentifier({ ...$edited(data), _name: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -8654,9 +8389,6 @@ export function wrapScopedTypeIdentifierInExpressionPosition(
 			...data,
 			$type: TSKindId.ScopedTypeIdentifierInExpressionPosition as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -8756,9 +8488,6 @@ export function wrapScopedTypeIdentifierInExpressionPosition(
 				rebuilt(node, handle, () => wrapScopedTypeIdentifierInExpressionPosition({ ...$edited(data), _name: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -8779,9 +8508,6 @@ export function wrapScopedTypeIdentifier(
 			...data,
 			$type: TSKindId.ScopedTypeIdentifier as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -8883,9 +8609,6 @@ export function wrapScopedTypeIdentifier(
 				rebuilt(node, handle, () => wrapScopedTypeIdentifier({ ...$edited(data), _name: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -8945,9 +8668,6 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle): 
 			...data,
 			$type: TSKindId.UnaryExpression as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -8996,9 +8716,6 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapUnaryExpression({ ...$edited(data), _operand: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -9037,9 +8754,6 @@ export function wrapTryExpression(data: T.TryExpression, tree: TreeHandle): T.Tr
 				rebuilt(node, handle, () => wrapTryExpression({ ...$edited(data), _value: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -9102,9 +8816,6 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 			...data,
 			$type: TSKindId.BinaryExpression as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -9191,9 +8902,6 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 				rebuilt(node, handle, () => wrapBinaryExpression({ ...$edited(data), _right: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -9254,9 +8962,6 @@ export function wrapAssignmentExpression(
 				rebuilt(node, handle, () => wrapAssignmentExpression({ ...$edited(data), _right: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -9277,9 +8982,6 @@ export function wrapCompoundAssignmentExpr(
 			...data,
 			$type: TSKindId.CompoundAssignmentExpr as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -9347,9 +9049,6 @@ export function wrapCompoundAssignmentExpr(
 				rebuilt(node, handle, () => wrapCompoundAssignmentExpr({ ...$edited(data), _right: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -9426,9 +9125,6 @@ export function wrapTypeCastExpression(data: T.TypeCastExpression, tree: TreeHan
 				rebuilt(node, handle, () => wrapTypeCastExpression({ ...$edited(data), _type: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -9467,9 +9163,6 @@ export function wrapReturnExpression(data: T.ReturnExpression, tree: TreeHandle)
 				rebuilt(node, handle, () => wrapReturnExpression({ ...$edited(data), _expression: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -9508,9 +9201,6 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapYieldExpression({ ...$edited(data), _expression: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -9528,9 +9218,6 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle): T.
 			...data,
 			$type: TSKindId.CallExpression as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -9676,9 +9363,6 @@ export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle): T.
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -9739,9 +9423,6 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle): T.Arguments.
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -9814,9 +9495,6 @@ export function wrapParenthesizedExpression(
 				rebuilt(node, handle, () => wrapParenthesizedExpression({ ...$edited(data), _expression: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -9877,9 +9555,6 @@ export function wrapTupleExpression(data: T.TupleExpression, tree: TreeHandle): 
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -9936,9 +9611,6 @@ export function wrapStructExpression(data: T.StructExpression, tree: TreeHandle)
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -9996,9 +9668,6 @@ export function wrapFieldInitializerList(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -10053,9 +9722,6 @@ export function wrapShorthandFieldInitializer(
 				rebuilt(node, handle, () => wrapShorthandFieldInitializer({ ...$edited(data), _name: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -10124,9 +9790,6 @@ export function wrapFieldInitializer(data: T.FieldInitializer, tree: TreeHandle)
 				rebuilt(node, handle, () => wrapFieldInitializer({ ...$edited(data), _value: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -10168,9 +9831,6 @@ export function wrapBaseFieldInitializer(
 				rebuilt(node, handle, () => wrapBaseFieldInitializer({ ...$edited(data), _value: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -10237,9 +9897,6 @@ export function wrapIfExpression(data: T.IfExpression, tree: TreeHandle): T.IfEx
 				rebuilt(node, handle, () => wrapIfExpression({ ...$edited(data), _alternative: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -10297,9 +9954,6 @@ export function wrapLetCondition(data: T.LetCondition, tree: TreeHandle): T.LetC
 				rebuilt(node, handle, () => wrapLetCondition({ ...$edited(data), _value: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -10362,9 +10016,6 @@ export function wrapLetChain(data: T.LetChain, tree: TreeHandle): T.LetChain.Par
 				rebuilt(node, handle, () => wrapLetChain({ ...$edited(data), _right: restItems('rights', v) }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -10686,9 +10337,6 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle): T.ElseClau
 				rebuilt(node, handle, () => wrapElseClause({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -10741,9 +10389,6 @@ export function wrapMatchExpression(data: T.MatchExpression, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapMatchExpression({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -10824,9 +10469,6 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle): T.MatchBlo
 			_match_block_arms === undefined ? undefined : () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
 		[STORED_SLOT_READERS]: { matchBlockArms: readGroup_matchBlockArms },
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -10874,9 +10516,6 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 			...data,
 			$type: TSKindId.LastMatchArm as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -10995,9 +10634,6 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
 		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11055,9 +10691,6 @@ export function wrapMatchPattern(data: T.MatchPattern, tree: TreeHandle): T.Matc
 				rebuilt(node, handle, () => wrapMatchPattern({ ...$edited(data), _condition: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11124,9 +10757,6 @@ export function wrapWhileExpression(data: T.WhileExpression, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapWhileExpression({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11174,9 +10804,6 @@ export function wrapLoopExpression(data: T.LoopExpression, tree: TreeHandle): T.
 				rebuilt(node, handle, () => wrapLoopExpression({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11262,9 +10889,6 @@ export function wrapForExpression(data: T.ForExpression, tree: TreeHandle): T.Fo
 				rebuilt(node, handle, () => wrapForExpression({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11298,9 +10922,6 @@ export function wrapConstBlock(data: T.ConstBlock, tree: TreeHandle): T.ConstBlo
 				rebuilt(node, handle, () => wrapConstBlock({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11375,9 +10996,6 @@ export function wrapClosureParameters(data: T.ClosureParameters, tree: TreeHandl
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -11412,9 +11030,6 @@ export function wrapLabel(data: T.Label, tree: TreeHandle): T.Label.Parsed {
 				rebuilt(node, handle, () => wrapLabel({ ...$edited(data), _name: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11469,9 +11084,6 @@ export function wrapBreakExpression(data: T.BreakExpression, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapBreakExpression({ ...$edited(data), _expression: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11505,9 +11117,6 @@ export function wrapContinueExpression(data: T.ContinueExpression, tree: TreeHan
 				rebuilt(node, handle, () => wrapContinueExpression({ ...$edited(data), _label: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11565,9 +11174,6 @@ export function wrapIndexExpression(data: T.IndexExpression, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapIndexExpression({ ...$edited(data), _index: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11606,9 +11212,6 @@ export function wrapAwaitExpression(data: T.AwaitExpression, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapAwaitExpression({ ...$edited(data), _expression: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11661,9 +11264,6 @@ export function wrapFieldExpression(data: T.FieldExpression, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapFieldExpression({ ...$edited(data), _field: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11697,9 +11297,6 @@ export function wrapUnsafeBlock(data: T.UnsafeBlock, tree: TreeHandle): T.Unsafe
 				rebuilt(node, handle, () => wrapUnsafeBlock({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11717,9 +11314,6 @@ export function wrapAsyncBlock(data: T.AsyncBlock, tree: TreeHandle): T.AsyncBlo
 			...data,
 			$type: TSKindId.AsyncBlock as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11762,9 +11356,6 @@ export function wrapAsyncBlock(data: T.AsyncBlock, tree: TreeHandle): T.AsyncBlo
 				rebuilt(node, handle, () => wrapAsyncBlock({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11782,9 +11373,6 @@ export function wrapGenBlock(data: T.GenBlock, tree: TreeHandle): T.GenBlock.Par
 			...data,
 			$type: TSKindId.GenBlock as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11827,9 +11415,6 @@ export function wrapGenBlock(data: T.GenBlock, tree: TreeHandle): T.GenBlock.Par
 				rebuilt(node, handle, () => wrapGenBlock({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11863,9 +11448,6 @@ export function wrapTryBlock(data: T.TryBlock, tree: TreeHandle): T.TryBlock.Par
 				rebuilt(node, handle, () => wrapTryBlock({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -11935,9 +11517,6 @@ export function wrapBlock(data: T.Block, tree: TreeHandle): T.Block.Parsed {
 				rebuilt(node, handle, () => wrapBlock({ ...$edited(data), _trailing_expression: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -12202,9 +11781,6 @@ export function wrapGenericPattern(data: T.GenericPattern, tree: TreeHandle): T.
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -12254,9 +11830,6 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle): T.Tupl
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -12308,9 +11881,6 @@ export function wrapSlicePattern(data: T.SlicePattern, tree: TreeHandle): T.Slic
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: listOption(listView.list, 'delimiter', Delimiter.None),
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -12367,9 +11937,6 @@ export function wrapTupleStructPattern(data: T.TupleStructPattern, tree: TreeHan
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -12423,9 +11990,6 @@ export function wrapStructPattern(data: T.StructPattern, tree: TreeHandle): T.St
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -12493,9 +12057,6 @@ export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle): T.MutPatte
 				rebuilt(node, handle, () => wrapMutPattern({ ...$edited(data), _pattern: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -12563,9 +12124,6 @@ export function wrapRefPattern(data: T.RefPattern, tree: TreeHandle): T.RefPatte
 				rebuilt(node, handle, () => wrapRefPattern({ ...$edited(data), _pattern: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -12618,9 +12176,6 @@ export function wrapCapturedPattern(data: T.CapturedPattern, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapCapturedPattern({ ...$edited(data), _pattern: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -12638,9 +12193,6 @@ export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle)
 			...data,
 			$type: TSKindId.ReferencePattern as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -12688,9 +12240,6 @@ export function wrapReferencePattern(data: T.ReferencePattern, tree: TreeHandle)
 				rebuilt(node, handle, () => wrapReferencePattern({ ...$edited(data), _pattern: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -12911,9 +12460,6 @@ export function wrapNegativeLiteral(data: T.NegativeLiteral, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapNegativeLiteral({ ...$edited(data), _value: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13006,9 +12552,6 @@ export function wrapStringLiteral(data: T.StringLiteral, tree: TreeHandle): T.St
 				rebuilt(node, handle, () => wrapStringLiteral({ ...$edited(data), _elements: restItems('elements', v) }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13070,9 +12613,6 @@ export function wrapRawStringLiteral(data: T.RawStringLiteral, tree: TreeHandle)
 				rebuilt(node, handle, () => wrapRawStringLiteral({ ...$edited(data), _raw_string_literal_end: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13201,9 +12741,6 @@ export function wrapLineComment(data: T.LineComment, tree: TreeHandle): T.LineCo
 				rebuilt(node, handle, () => wrapLineComment({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13240,9 +12777,6 @@ export function wrapBlockComment(data: T.BlockComment, tree: TreeHandle): T.Bloc
 				rebuilt(node, handle, () => wrapBlockComment({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13277,9 +12811,6 @@ export function wrapShebang(data: T.Shebang, tree: TreeHandle): T.Shebang.Parsed
 				rebuilt(node, handle, () => wrapShebang({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13314,9 +12845,6 @@ export function wrapMetavariable(data: T.Metavariable, tree: TreeHandle): T.Meta
 				rebuilt(node, handle, () => wrapMetavariable({ ...$edited(data), _name: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13364,9 +12892,6 @@ export function wrapMacroRules(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13426,9 +12951,6 @@ export function wrapEnumVariantListElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.Trailing,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13488,9 +13010,6 @@ export function wrapFieldDeclarationListElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.Trailing,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13550,9 +13069,6 @@ export function wrapOrderedFieldDeclarationListElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13604,9 +13120,6 @@ export function wrapWherePredicates(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13666,9 +13179,6 @@ export function wrapTypeParametersElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13690,9 +13200,6 @@ export function wrapUseClauses(
 			...data,
 			$type: TSKindId.UseClauses as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13800,9 +13307,6 @@ export function wrapUseClauses(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13862,9 +13366,6 @@ export function wrapParametersElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13913,9 +13414,6 @@ export function wrapLifetimes(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -13970,9 +13468,6 @@ export function wrapUseBoundsElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14029,9 +13524,6 @@ export function wrapTypeArgumentsElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14088,9 +13580,6 @@ export function wrapArgumentsElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14147,9 +13636,6 @@ export function wrapFieldInitializerListElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14204,9 +13690,6 @@ export function wrapTuplePatternElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14255,9 +13738,6 @@ export function wrapPatterns(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14282,9 +13762,6 @@ export function wrapStructPatternElements(
 			...data,
 			$type: TSKindId.StructPatternElements as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14328,9 +13805,6 @@ export function wrapStructPatternElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14349,9 +13823,6 @@ export function wrapUseWildcardGroup(data: T.UseWildcardGroup, tree: TreeHandle)
 			...data,
 			$type: TSKindId.UseWildcardGroup as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14436,9 +13907,6 @@ export function wrapUseWildcardGroup(data: T.UseWildcardGroup, tree: TreeHandle)
 				rebuilt(node, handle, () => wrapUseWildcardGroup({ ...$edited(data), _path: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14489,9 +13957,6 @@ export function wrapTupleTypeElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14543,9 +14008,6 @@ export function wrapTupleExpressionElements(
 		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
 		delimiter: _delimiter ?? Delimiter.None,
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14568,9 +14030,6 @@ export function wrapIntegerLiteralDecimal(
 			...data,
 			$type: TSKindId.IntegerLiteralDecimal as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14630,9 +14089,6 @@ export function wrapIntegerLiteralDecimal(
 				rebuilt(node, handle, () => wrapIntegerLiteralDecimal({ ...$edited(data), _suffix: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14651,9 +14107,6 @@ export function wrapIntegerLiteralHex(data: T.IntegerLiteralHex, tree: TreeHandl
 			...data,
 			$type: TSKindId.IntegerLiteralHex as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14713,9 +14166,6 @@ export function wrapIntegerLiteralHex(data: T.IntegerLiteralHex, tree: TreeHandl
 				rebuilt(node, handle, () => wrapIntegerLiteralHex({ ...$edited(data), _suffix: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14737,9 +14187,6 @@ export function wrapIntegerLiteralBinary(
 			...data,
 			$type: TSKindId.IntegerLiteralBinary as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14799,9 +14246,6 @@ export function wrapIntegerLiteralBinary(
 				rebuilt(node, handle, () => wrapIntegerLiteralBinary({ ...$edited(data), _suffix: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14820,9 +14264,6 @@ export function wrapIntegerLiteralOctal(data: T.IntegerLiteralOctal, tree: TreeH
 			...data,
 			$type: TSKindId.IntegerLiteralOctal as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14882,9 +14323,6 @@ export function wrapIntegerLiteralOctal(data: T.IntegerLiteralOctal, tree: TreeH
 				rebuilt(node, handle, () => wrapIntegerLiteralOctal({ ...$edited(data), _suffix: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14948,9 +14386,6 @@ export function wrapCharLiteralPlain(data: T.CharLiteralPlain, tree: TreeHandle)
 			...data,
 			$type: TSKindId.CharLiteralPlain as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -14993,9 +14428,6 @@ export function wrapCharLiteralPlain(data: T.CharLiteralPlain, tree: TreeHandle)
 				rebuilt(node, handle, () => wrapCharLiteralPlain({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15017,9 +14449,6 @@ export function wrapCharLiteralEscapedSimple(
 			...data,
 			$type: TSKindId.CharLiteralEscapedSimple as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15062,9 +14491,6 @@ export function wrapCharLiteralEscapedSimple(
 				rebuilt(node, handle, () => wrapCharLiteralEscapedSimple({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15090,9 +14516,6 @@ export function wrapCharLiteralEscapedUnicodeFixed(
 			...data,
 			$type: TSKindId.CharLiteralEscapedUnicodeFixed as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15135,9 +14558,6 @@ export function wrapCharLiteralEscapedUnicodeFixed(
 				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeFixed({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15163,9 +14583,6 @@ export function wrapCharLiteralEscapedUnicodeBraced(
 			...data,
 			$type: TSKindId.CharLiteralEscapedUnicodeBraced as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15208,9 +14625,6 @@ export function wrapCharLiteralEscapedUnicodeBraced(
 				rebuilt(node, handle, () => wrapCharLiteralEscapedUnicodeBraced({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15232,9 +14646,6 @@ export function wrapCharLiteralEscapedHex(
 			...data,
 			$type: TSKindId.CharLiteralEscapedHex as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15277,9 +14688,6 @@ export function wrapCharLiteralEscapedHex(
 				rebuilt(node, handle, () => wrapCharLiteralEscapedHex({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15317,9 +14725,6 @@ export function wrapEscapeSequenceSimple(
 				rebuilt(node, handle, () => wrapEscapeSequenceSimple({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15357,9 +14762,6 @@ export function wrapEscapeSequenceUnicodeFixed(
 				rebuilt(node, handle, () => wrapEscapeSequenceUnicodeFixed({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15397,9 +14799,6 @@ export function wrapEscapeSequenceUnicodeBraced(
 				rebuilt(node, handle, () => wrapEscapeSequenceUnicodeBraced({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15434,9 +14833,6 @@ export function wrapEscapeSequenceHex(data: T.EscapeSequenceHex, tree: TreeHandl
 				rebuilt(node, handle, () => wrapEscapeSequenceHex({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15510,9 +14906,6 @@ export function wrapArrayExpressionSemi(data: T.ArrayExpressionSemi, tree: TreeH
 				rebuilt(node, handle, () => wrapArrayExpressionSemi({ ...$edited(data), _length: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15574,9 +14967,6 @@ export function wrapArrayExpressionList(data: T.ArrayExpressionList, tree: TreeH
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -15630,9 +15020,6 @@ export function wrapAttributeInput(data: T.AttributeInput, tree: TreeHandle): T.
 				rebuilt(node, handle, () => wrapAttributeInput({ ...$edited(data), _arguments: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15660,9 +15047,6 @@ export function wrapClosureExpressionBlock(
 			...data,
 			$type: TSKindId.ClosureExpressionBlock as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15783,9 +15167,6 @@ export function wrapClosureExpressionBlock(
 				rebuilt(node, handle, () => wrapClosureExpressionBlock({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15806,9 +15187,6 @@ export function wrapClosureExpressionExpr(
 			...data,
 			$type: TSKindId.ClosureExpressionExpr as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15896,9 +15274,6 @@ export function wrapClosureExpressionExpr(
 				rebuilt(node, handle, () => wrapClosureExpressionExpr({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15940,9 +15315,6 @@ export function wrapReferenceExpressionRawConst(
 				rebuilt(node, handle, () => wrapReferenceExpressionRawConst({ ...$edited(data), _value: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -15984,9 +15356,6 @@ export function wrapReferenceExpressionRawMut(
 				rebuilt(node, handle, () => wrapReferenceExpressionRawMut({ ...$edited(data), _value: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16028,9 +15397,6 @@ export function wrapReferenceExpressionMut(
 				rebuilt(node, handle, () => wrapReferenceExpressionMut({ ...$edited(data), _value: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16072,9 +15438,6 @@ export function wrapReferenceExpressionBare(
 				rebuilt(node, handle, () => wrapReferenceExpressionBare({ ...$edited(data), _value: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16111,9 +15474,6 @@ export function wrapImplItemPositiveClause(
 				rebuilt(node, handle, () => wrapImplItemPositiveClause({ ...$edited(data), _trait: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16150,9 +15510,6 @@ export function wrapImplItemNegativeClause(
 				rebuilt(node, handle, () => wrapImplItemNegativeClause({ ...$edited(data), _trait: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16177,9 +15534,6 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 			...data,
 			$type: TSKindId.ImplItemBody as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16321,9 +15675,6 @@ export function wrapImplItemBody(data: T.ImplItemBody, tree: TreeHandle): T.Impl
 				rebuilt(node, handle, () => wrapImplItemBody({ ...$edited(data), _declaration_list: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16341,9 +15692,6 @@ export function wrapImplItemSemi(data: T.ImplItemSemi, tree: TreeHandle): T.Impl
 			...data,
 			$type: TSKindId.ImplItemSemi as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16471,9 +15819,6 @@ export function wrapImplItemSemi(data: T.ImplItemSemi, tree: TreeHandle): T.Impl
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16494,9 +15839,6 @@ export function wrapVisibilityModifierPubScopeInPath(
 			...data,
 			$type: TSKindId.VisibilityModifierPubScopeInPath as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16633,9 +15975,6 @@ export function wrapVisibilityModifierPubScopeInPath(
 				rebuilt(node, handle, () => wrapVisibilityModifierPubScopeInPath({ ...$edited(data), _path: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16656,9 +15995,6 @@ export function wrapVisibilityModifierPubScope(
 			...data,
 			$type: TSKindId.VisibilityModifierPubScope as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16699,9 +16035,6 @@ export function wrapVisibilityModifierPubScope(
 				rebuilt(node, handle, () => wrapVisibilityModifierPubScope({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16741,9 +16074,6 @@ export function wrapVisibilityModifierPub(
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16780,9 +16110,6 @@ export function wrapFunctionTypeTraitForm(
 				rebuilt(node, handle, () => wrapFunctionTypeTraitForm({ ...$edited(data), _trait: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16816,9 +16143,6 @@ export function wrapFunctionTypeFnForm(data: T.FunctionTypeFnForm, tree: TreeHan
 				rebuilt(node, handle, () => wrapFunctionTypeFnForm({ ...$edited(data), _function_modifiers: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16866,9 +16190,6 @@ export function wrapModItemExternal(data: T.ModItemExternal, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapModItemExternal({ ...$edited(data), _name: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16930,9 +16251,6 @@ export function wrapModItemInline(data: T.ModItemInline, tree: TreeHandle): T.Mo
 				rebuilt(node, handle, () => wrapModItemInline({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -16990,9 +16308,6 @@ export function wrapOrPatternBinary(data: T.OrPatternBinary, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapOrPatternBinary({ ...$edited(data), _right: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17031,9 +16346,6 @@ export function wrapOrPatternPrefix(data: T.OrPatternPrefix, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapOrPatternPrefix({ ...$edited(data), _right: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17091,9 +16403,6 @@ export function wrapPointerTypeConst(data: T.PointerTypeConst, tree: TreeHandle)
 				rebuilt(node, handle, () => wrapPointerTypeConst({ ...$edited(data), _type: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17151,9 +16460,6 @@ export function wrapPointerTypeMut(data: T.PointerTypeMut, tree: TreeHandle): T.
 				rebuilt(node, handle, () => wrapPointerTypeMut({ ...$edited(data), _type: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17174,9 +16480,6 @@ export function wrapRangeExpressionBinary(
 			...data,
 			$type: TSKindId.RangeExpressionBinary as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17244,9 +16547,6 @@ export function wrapRangeExpressionBinary(
 				rebuilt(node, handle, () => wrapRangeExpressionBinary({ ...$edited(data), _end: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17288,9 +16588,6 @@ export function wrapRangeExpressionPostfix(
 				rebuilt(node, handle, () => wrapRangeExpressionPostfix({ ...$edited(data), _start: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17332,9 +16629,6 @@ export function wrapRangeExpressionPrefix(
 				rebuilt(node, handle, () => wrapRangeExpressionPrefix({ ...$edited(data), _end: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17352,9 +16646,6 @@ export function wrapRangeExpressionBare(data: T.RangeExpressionBare, tree: TreeH
 			...data,
 			$type: TSKindId.RangeExpressionBare as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17386,9 +16677,6 @@ export function wrapRangeExpressionBare(data: T.RangeExpressionBare, tree: TreeH
 				rebuilt(node, handle, () => wrapRangeExpressionBare({ ...$edited(data), _range_expression_bare: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17430,9 +16718,6 @@ export function wrapExpressionStatementWithSemi(
 				rebuilt(node, handle, () => wrapExpressionStatementWithSemi({ ...$edited(data), _expression: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17480,9 +16765,6 @@ export function wrapForeignModItemSemi(data: T.ForeignModItemSemi, tree: TreeHan
 				rebuilt(node, handle, () => wrapForeignModItemSemi({ ...$edited(data), _extern_modifier: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17544,9 +16826,6 @@ export function wrapForeignModItemBody(data: T.ForeignModItemBody, tree: TreeHan
 				rebuilt(node, handle, () => wrapForeignModItemBody({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17658,9 +16937,6 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
 		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17779,9 +17055,6 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 		condition: _pattern === undefined ? undefined : () => groupField(readGroup_pattern.call(node), 'condition'),
 		[STORED_SLOT_READERS]: { pattern: readGroup_pattern },
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17815,9 +17088,6 @@ export function wrapLineCommentDocOuter(data: T.LineCommentDocOuter, tree: TreeH
 				rebuilt(node, handle, () => wrapLineCommentDocOuter({ ...$edited(data), _doc: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17851,9 +17121,6 @@ export function wrapLineCommentDocInner(data: T.LineCommentDocInner, tree: TreeH
 				rebuilt(node, handle, () => wrapLineCommentDocInner({ ...$edited(data), _doc: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17890,9 +17157,6 @@ export function wrapBlockCommentDocOuter(
 				rebuilt(node, handle, () => wrapBlockCommentDocOuter({ ...$edited(data), _doc: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17929,9 +17193,6 @@ export function wrapBlockCommentDocInner(
 				rebuilt(node, handle, () => wrapBlockCommentDocInner({ ...$edited(data), _doc: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -17983,9 +17244,6 @@ export function wrapTokenTreePatternParen(
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -18038,9 +17296,6 @@ export function wrapTokenTreePatternBracket(
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -18093,9 +17348,6 @@ export function wrapTokenTreePatternBrace(
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -18133,9 +17385,6 @@ export function wrapTokenTreeParen(data: T.TokenTreeParen, tree: TreeHandle): T.
 				rebuilt(node, handle, () => wrapTokenTreeParen({ ...$edited(data), _tokens: restItems('tokens', v) }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -18173,9 +17422,6 @@ export function wrapTokenTreeBracket(data: T.TokenTreeBracket, tree: TreeHandle)
 				rebuilt(node, handle, () => wrapTokenTreeBracket({ ...$edited(data), _tokens: restItems('tokens', v) }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -18213,9 +17459,6 @@ export function wrapTokenTreeBrace(data: T.TokenTreeBrace, tree: TreeHandle): T.
 				rebuilt(node, handle, () => wrapTokenTreeBrace({ ...$edited(data), _tokens: restItems('tokens', v) }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -18234,9 +17477,6 @@ export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeH
 			...data,
 			$type: TSKindId.DelimTokenTreeParen as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -18275,9 +17515,6 @@ export function wrapDelimTokenTreeParen(data: T.DelimTokenTreeParen, tree: TreeH
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -18299,9 +17536,6 @@ export function wrapDelimTokenTreeBracket(
 			...data,
 			$type: TSKindId.DelimTokenTreeBracket as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -18340,9 +17574,6 @@ export function wrapDelimTokenTreeBracket(
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -18361,9 +17592,6 @@ export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeH
 			...data,
 			$type: TSKindId.DelimTokenTreeBrace as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -18402,9 +17630,6 @@ export function wrapDelimTokenTreeBrace(data: T.DelimTokenTreeBrace, tree: TreeH
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
@@ -18426,9 +17651,6 @@ export function wrapFieldPatternShorthand(
 			...data,
 			$type: TSKindId.FieldPatternShorthand as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -18484,9 +17706,6 @@ export function wrapFieldPatternShorthand(
 				rebuilt(node, handle, () => wrapFieldPatternShorthand({ ...$edited(data), _name: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -18504,9 +17723,6 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
 			...data,
 			$type: TSKindId.FieldPatternNamed as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -18581,9 +17797,6 @@ export function wrapFieldPatternNamed(data: T.FieldPatternNamed, tree: TreeHandl
 				rebuilt(node, handle, () => wrapFieldPatternNamed({ ...$edited(data), _pattern: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -18604,9 +17817,6 @@ export function wrapMacroDefinitionParen(
 			...data,
 			$type: TSKindId.MacroDefinitionParen as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -18663,9 +17873,6 @@ export function wrapMacroDefinitionParen(
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -18686,9 +17893,6 @@ export function wrapMacroDefinitionBracket(
 			...data,
 			$type: TSKindId.MacroDefinitionBracket as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -18745,9 +17949,6 @@ export function wrapMacroDefinitionBracket(
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -18768,9 +17969,6 @@ export function wrapMacroDefinitionBrace(
 			...data,
 			$type: TSKindId.MacroDefinitionBrace as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -18827,9 +18025,6 @@ export function wrapMacroDefinitionBrace(
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -18847,9 +18042,6 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
 			...data,
 			$type: TSKindId.RangePatternPrefix as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -18953,9 +18145,6 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
 				rebuilt(node, handle, () => wrapRangePatternPrefix({ ...$edited(data), _right: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -18976,9 +18165,6 @@ export function wrapRangePatternWithLeftWithRight(
 			...data,
 			$type: TSKindId.RangePatternWithLeftWithRight as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -19083,9 +18269,6 @@ export function wrapRangePatternWithLeftWithRight(
 				rebuilt(node, handle, () => wrapRangePatternWithLeftWithRight({ ...$edited(data), _right: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -19106,9 +18289,6 @@ export function wrapRangePatternWithLeft(
 			...data,
 			$type: TSKindId.RangePatternWithLeft as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -19219,9 +18399,6 @@ export function wrapRangePatternWithLeft(
 				rebuilt(node, handle, () => wrapRangePatternWithLeft({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -19341,9 +18518,6 @@ export function wrapStructItemBrace(data: T.StructItemBrace, tree: TreeHandle): 
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -19463,9 +18637,6 @@ export function wrapStructItemTuple(data: T.StructItemTuple, tree: TreeHandle): 
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -19539,9 +18710,6 @@ export function wrapStructItemUnit(data: T.StructItemUnit, tree: TreeHandle): T.
 				)
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -19594,9 +18762,6 @@ export function wrapAttributedFieldDeclaration(
 				rebuilt(node, handle, () => wrapAttributedFieldDeclaration({ ...$edited(data), _field_declaration: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -19649,9 +18814,6 @@ export function wrapAttributedEnumVariant(
 				rebuilt(node, handle, () => wrapAttributedEnumVariant({ ...$edited(data), _enum_variant: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -19669,9 +18831,6 @@ export function wrapAttributedParameter(data: T.AttributedParameter, tree: TreeH
 			...data,
 			$type: TSKindId.AttributedParameter as const,
 			$render: () => renderText(handle, node),
-			$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-				toEditAt(renderText(handle, node), startOrRange, endPos),
-			$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 			$trivia: {
 				leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 				trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -19768,9 +18927,6 @@ export function wrapAttributedParameter(data: T.AttributedParameter, tree: TreeH
 				rebuilt(node, handle, () => wrapAttributedParameter({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -19826,9 +18982,6 @@ export function wrapAttributedTypeParameter(
 				rebuilt(node, handle, () => wrapAttributedTypeParameter({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -19885,9 +19038,6 @@ export function wrapAttributedArgument(data: T.AttributedArgument, tree: TreeHan
 				rebuilt(node, handle, () => wrapAttributedArgument({ ...$edited(data), _expression: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -19978,9 +19128,6 @@ export function wrapAttributedOrderedField(
 				rebuilt(node, handle, () => wrapAttributedOrderedField({ ...$edited(data), _type: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -20077,9 +19224,6 @@ export function wrapTypeArgument(data: T.TypeArgument, tree: TreeHandle): T.Type
 				rebuilt(node, handle, () => wrapTypeArgument({ ...$edited(data), _trait_bounds: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -20129,9 +19273,6 @@ export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle): T.
 				rebuilt(node, handle, () => wrapMatchBlockArms({ ...$edited(data), _last_arm: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -20165,9 +19306,6 @@ export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle): T.
 				rebuilt(node, handle, () => wrapTypeIdentifier({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -20201,9 +19339,6 @@ export function wrapFieldIdentifier(data: T.FieldIdentifier, tree: TreeHandle): 
 				rebuilt(node, handle, () => wrapFieldIdentifier({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
@@ -20240,9 +19375,6 @@ export function wrapShorthandFieldIdentifier(
 				rebuilt(node, handle, () => wrapShorthandFieldIdentifier({ ...$edited(data), _content: v }, tree))
 		},
 		$render: () => renderText(handle, node),
-		$toEdit: (startOrRange: number | StringIndexRange, endPos?: number) =>
-			toEditAt(renderText(handle, node), startOrRange, endPos),
-		$replace: (target: { range(): StringIndexRange }) => toEditAt(renderText(handle, node), target.range()),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)

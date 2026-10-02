@@ -21,8 +21,6 @@ const newShapeList = () => {
 		at: () => undefined,
 		[LIST_ITEMS]: items,
 		$render: () => 'x',
-		$toEdit: () => ({}),
-		$replace: () => ({}),
 		$trivia: { leading: () => [], trailing: () => [] },
 		$engine: undefined
 	};
@@ -33,7 +31,7 @@ describe('a node is selected by key', () => {
 		for (const key of ['_elements', '$other', '$type', '$source', '$named', '$text', '$span', '$handle', '$_trivia', '$format']) {
 			expect(isDataKey(key)).toBe(true);
 		}
-		for (const key of ['$with', '$trivia', '$engine', '$render', '$toEdit', '$replace', 'elements', 'length', '0', 'delimiter', 'map']) {
+		for (const key of ['$with', '$trivia', '$engine', '$render', 'elements', 'length', '0', 'delimiter', 'map']) {
 			expect(isDataKey(key)).toBe(false);
 		}
 	});

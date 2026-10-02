@@ -25,7 +25,7 @@ export interface SourceSpans {
 /**
  * The one path from a byte span to text or to string indices.
  *
- * A read node's `$span`, an `Edit`'s positions and a trivia entry's offsets
+ * A read node's `$span` and a trivia entry's offsets
  * count UTF-8 bytes (tree-sitter's byte range). A JS string indexes UTF-16
  * code units, so `source.slice(span.start, span.end)` and a comparison of a
  * span with a string index drift after the first multibyte character.

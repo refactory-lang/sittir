@@ -16,6 +16,7 @@ const SAMPLE_INPUTS: Readonly<Record<string, (scratch: string) => readonly unkno
 	'07-read-source:wrappedLazyAccess': () => [RUST_SOURCE],
 	'09-type-guards:summarizeTopLevelItems': () => [`${RUST_SOURCE}struct Config;\n`],
 	'12-cross-language-migration:interfaceToPythonDataclass': () => ['interface User { name: string; age: number }\n'],
+	'14-format-preserving-transform:renameProcess': () => ['fn process( x:i32 ) {\n\tx\n}\n'],
 	'15-generate-file:saveCacheModule': (scratch) => [join(scratch, 'cache.rs')],
 	'16-dogfooding:emitIsModule': () => [{ kinds: ['identifier', 'call_expression'] }]
 };
