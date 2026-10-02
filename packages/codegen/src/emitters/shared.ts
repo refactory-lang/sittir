@@ -7,7 +7,8 @@ import {
 	isWordOrBuilderTextLeaf,
 	isBuilderTextLeaf,
 	isBuilderlessPunctuationLeaf,
-	isHiddenPresenceMarker
+	isHiddenPresenceMarker,
+	storageKindIdByNameOf
 } from '../compiler/model/node-map.ts';
 import type {
 	AssembledNonterminal,
@@ -1238,4 +1239,44 @@ export function withEmptyOverload(
 	const empty = emptyForms(nodeMap).get(kind);
 	if (empty === undefined) return [...lines];
 	return [`${head}(): T.${empty.typeName};`, ...(general === undefined ? [] : [general]), ...lines];
+}
+
+export function classifyKindsForResolver(
+	expanded: string[],
+	nodeMap: NodeMap
+): { leafKinds: string[]; branchKinds: string[]; tokenKinds: string[] } {
+	const leafKinds: string[] = [];
+	const branchKinds: string[] = [];
+	const tokenKinds: string[] = [];
+	for (const t of expanded) {
+		const n = nodeMap.nodes.get(t);
+		if (!n) {
+			branchKinds.push(t);
+			continue;
+		}
+		if (n instanceof AssembledPattern || n instanceof AssembledEnum || isBuilderTextLeaf(n)) {
+			leafKinds.push(t);
+		} else if (isBuilderlessPunctuationLeaf(n)) {
+			tokenKinds.push(t);
+		} else {
+			branchKinds.push(t);
+		}
+	}
+	return { leafKinds, branchKinds, tokenKinds };
+}
+
+export function resolvesLooseInput(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
+	if (slotLiteralValues(slot).length === 0) return true;
+	const { leafKinds, branchKinds } = classifyKindsForResolver(
+		expandAndDedupeContentTypes(slotKindNames(slot), nodeMap, storageKindIdByNameOf(slot)),
+		nodeMap
+	);
+	return leafKinds.length + branchKinds.length > 0;
+}
+
+export function looseElementType(elementType: string, slot: AssembledNonterminal, nodeMap: NodeMap): string {
+	const expanded = expandAndDedupeContentTypes(slotKindNames(slot), nodeMap, storageKindIdByNameOf(slot));
+	const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap);
+	const admitsText = leafKinds.length === 1 || leafKinds.some((kind) => !isAffixedLeaf(nodeMap.nodes.get(kind)));
+	return admitsText && branchKinds.length === 0 ? `${elementType} | string` : elementType;
 }

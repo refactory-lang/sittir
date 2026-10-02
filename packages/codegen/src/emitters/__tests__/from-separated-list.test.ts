@@ -30,6 +30,7 @@ import {
 } from '../../compiler/model/node-map.ts';
 import type { SimplifiedRule, RenderRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import { builtTypeSurfaceOf } from '../factories.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 
 // A bare SYMBOL rule is structurally identical across compiler phases, but
@@ -63,6 +64,14 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 function emit(nodeMap: ReturnType<typeof makeMemberNodeMap>): string {
 	return emitFrom({ grammar: 'test', nodeMap, kindEntries: KIND_ENTRIES });
 }
+
+function looseRow(nodeMap: ReturnType<typeof makeMemberNodeMap>): string {
+	const surface = builtTypeSurfaceOf(nodeMap.nodes.get('member_list')!, nodeMap, KIND_ENTRIES);
+	if (surface === undefined) throw new Error('member_list has no built type surface');
+	return surface.looseArgs;
+}
+
+const TAKES_ITS_ROW = 'export function coerceToMemberList(...input: T.MemberList.LooseArgs)';
 
 describe('from emitter — separatedList', () => {
 	it('coerceToMemberList spreads the elements into the factory call, preserving captured flank options on self-unwrap', () => {
@@ -137,12 +146,12 @@ describe('from emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
+		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
+		const row = looseRow(nodeMap);
 
-		expect(emitted).toMatch(
-			/export function coerceToMemberList\(\.\.\.input: \[element: [^]*?\.\.\.elements: [^]*?\] \| \[options: \{ delimiter\?: [^}]*\}, element: /
-		);
-		expect(emitted).not.toContain('element?:');
+		expect(emit(nodeMap)).toContain(TAKES_ITS_ROW);
+		expect(row).toMatch(/^\[element: [^]*?\.\.\.elements: [^]*?\] \| \[options: \{ delimiter\?: [^}]*\}, element: /);
+		expect(row).not.toContain('element?:');
 	});
 
 	it('lets an empty-capable list with options take the options object as its only argument', () => {
@@ -152,11 +161,10 @@ describe('from emitter — separatedList', () => {
 			multiplicity: 'array',
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
+		const nodeMap = makeMemberNodeMap(rule, { separatorRule: undefined });
 
-		expect(emitted).toMatch(
-			/export function coerceToMemberList\(\.\.\.input: \[\.\.\.elements: [^]*?\] \| \[options: \{ delimiter\?: [^}]*\}, \.\.\.elements: /
-		);
+		expect(emit(nodeMap)).toContain(TAKES_ITS_ROW);
+		expect(looseRow(nodeMap)).toMatch(/^\[\.\.\.elements: [^]*?\] \| \[options: \{ delimiter\?: [^}]*\}, \.\.\.elements: /);
 	});
 
 	it('takes the options object first, with no elements-only form, when the separator has no declared default', () => {
@@ -173,12 +181,12 @@ describe('from emitter — separatedList', () => {
 			multiplicity: 'nonEmptyArray',
 			separator: { value: sepChoice, trailing: 'optional' }
 		};
-		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }));
+		const nodeMap = makeMemberNodeMap(rule, { separatorRule: sepChoice });
+		const row = looseRow(nodeMap);
 
-		expect(emitted).toContain(
-			'export function coerceToMemberList(...input: [options: { separator: TSKindId.Comma | TSKindId.Semi; delimiter?: Delimiter.None | Delimiter.Trailing }, element: '
-		);
-		expect(emitted).not.toMatch(/export function coerceToMemberList\(\.\.\.input: \[element: /);
+		expect(emit(nodeMap)).toContain(TAKES_ITS_ROW);
+		expect(row.startsWith('[options: { separator: TSKindId.Comma | TSKindId.Semi; delimiter?: Delimiter.None | Delimiter.Trailing }, element: ')).toBe(true);
+		expect(row).not.toMatch(/(^|\| )\[element: /);
 	});
 
 	it('types a non-empty list with no options as at least one element, and an empty-capable one as any number', () => {
@@ -188,11 +196,7 @@ describe('from emitter — separatedList', () => {
 			multiplicity,
 			separator: { value: { type: STRING, value: ',' } }
 		});
-		expect(emit(makeMemberNodeMap(rule('nonEmptyArray'), { separatorRule: undefined }))).toMatch(
-			/export function coerceToMemberList\(\.\.\.input: \[element: /
-		);
-		expect(emit(makeMemberNodeMap(rule('array'), { separatorRule: undefined }))).toMatch(
-			/export function coerceToMemberList\(\.\.\.input: \[\.\.\.elements: /
-		);
+		expect(looseRow(makeMemberNodeMap(rule('nonEmptyArray'), { separatorRule: undefined }))).toMatch(/^\[element: /);
+		expect(looseRow(makeMemberNodeMap(rule('array'), { separatorRule: undefined }))).toMatch(/^\[\.\.\.elements: /);
 	});
 });

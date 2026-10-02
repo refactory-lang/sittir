@@ -2,7 +2,6 @@
 
 import type {
 	ConfigOf,
-	LooseConfigOf,
 	WidenNumeric,
 	LooseValue,
 	NodeNs,
@@ -18892,11 +18891,7 @@ export namespace Program {
 	export type Loose = LooseFor<TSKindId.Program>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Program>;
 	export type BuildArgs = [config?: Partial<ConfigOf<T.Program, T.NamespaceMap>>];
-	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.Program, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.Program, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config?: T.Program.Loose];
 	export type Kind = TSKindId.Program;
 }
 export namespace HashBangLine {
@@ -18912,7 +18907,7 @@ export namespace HashBangLine {
 	export type Loose = LooseFor<TSKindId.HashBangLine>;
 	export type LooseConfig = LooseConfigFor<TSKindId.HashBangLine>;
 	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.HashBangLine.Loose];
 	export type Kind = TSKindId.HashBangLine;
 }
 export namespace NamespaceExport {
@@ -18928,9 +18923,7 @@ export namespace NamespaceExport {
 	export type Loose = LooseFor<TSKindId.NamespaceExport>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamespaceExport>;
 	export type BuildArgs = [value: AdmitBound<T.Identifier | T.String, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.NamespaceExport.Loose];
 	export type Kind = TSKindId.NamespaceExport;
 }
 export namespace ExportClause {
@@ -18946,9 +18939,7 @@ export namespace ExportClause {
 	export type Loose = LooseFor<TSKindId.ExportClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportClause>;
 	export type BuildArgs = [value?: AdmitBound<T.ExportSpecifiers, T.AdmittedNodes>] | T.ExportSpecifiers.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.ExportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.ExportSpecifiers.LooseArgs;
+	export type LooseArgs = [value?: T.ExportClause.Loose] | T.ExportSpecifiers.LooseArgs;
 	export type Kind = TSKindId.ExportClause;
 }
 export namespace ExportSpecifier {
@@ -18964,11 +18955,7 @@ export namespace ExportSpecifier {
 	export type Loose = LooseFor<TSKindId.ExportSpecifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportSpecifier>;
 	export type BuildArgs = [config: ConfigOf<T.ExportSpecifier, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ExportSpecifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ExportSpecifier, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ExportSpecifier.Loose];
 	export type Kind = TSKindId.ExportSpecifier;
 }
 export namespace ImportStatement {
@@ -18988,12 +18975,7 @@ export namespace ImportStatement {
 		config: OmitEach<ConfigOf<T.ImportStatement, T.NamespaceMap>, 'terminator'>,
 		options?: T.ImportStatement.Options
 	];
-	export type LooseArgs = [
-		config:
-			| OmitEach<LooseConfigOf<T.ImportStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'terminator'>
-			| AdmitBound<T.ImportStatement, T.AdmittedNodes>,
-		options?: T.ImportStatement.Options
-	];
+	export type LooseArgs = [config: T.ImportStatement.Loose, options?: T.ImportStatement.Options];
 	export type Kind = TSKindId.ImportStatement;
 }
 export namespace ImportClause {
@@ -19011,14 +18993,7 @@ export namespace ImportClause {
 	export type BuildArgs = [
 		value: AdmitBound<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport, T.AdmittedNodes>
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.ImportClause.Loose];
 	export type Kind = TSKindId.ImportClause;
 }
 export namespace NamespaceImport {
@@ -19034,7 +19009,7 @@ export namespace NamespaceImport {
 	export type Loose = LooseFor<TSKindId.NamespaceImport>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamespaceImport>;
 	export type BuildArgs = [value: AdmitBound<T.Identifier, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.NamespaceImport.Loose];
 	export type Kind = TSKindId.NamespaceImport;
 }
 export namespace NamedImports {
@@ -19050,9 +19025,7 @@ export namespace NamedImports {
 	export type Loose = LooseFor<TSKindId.NamedImports>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NamedImports>;
 	export type BuildArgs = [value?: AdmitBound<T.ImportSpecifiers, T.AdmittedNodes>] | T.ImportSpecifiers.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.ImportSpecifiers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.ImportSpecifiers.LooseArgs;
+	export type LooseArgs = [value?: T.NamedImports.Loose] | T.ImportSpecifiers.LooseArgs;
 	export type Kind = TSKindId.NamedImports;
 }
 export namespace ImportAttribute {
@@ -19068,11 +19041,7 @@ export namespace ImportAttribute {
 	export type Loose = LooseFor<TSKindId.ImportAttribute>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportAttribute>;
 	export type BuildArgs = [config: ConfigOf<T.ImportAttribute, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ImportAttribute, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ImportAttribute, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ImportAttribute.Loose];
 	export type Kind = TSKindId.ImportAttribute;
 }
 export namespace ExpressionStatement {
@@ -19092,10 +19061,7 @@ export namespace ExpressionStatement {
 		value: AdmitBound<T.Expression | T.SequenceExpression, T.AdmittedNodes>,
 		options?: T.ExpressionStatement.Options
 	];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		options?: T.ExpressionStatement.Options
-	];
+	export type LooseArgs = [value: T.ExpressionStatement.Loose, options?: T.ExpressionStatement.Options];
 	export type Kind = TSKindId.ExpressionStatement;
 }
 export namespace VariableDeclaration {
@@ -19115,15 +19081,7 @@ export namespace VariableDeclaration {
 		config: OmitEach<ConfigOf<T.VariableDeclaration, T.NamespaceMap>, 'terminator'>,
 		options?: T.VariableDeclaration.Options
 	];
-	export type LooseArgs = [
-		config:
-			| OmitEach<
-					LooseConfigOf<T.VariableDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
-					'terminator'
-			  >
-			| AdmitBound<T.VariableDeclaration, T.AdmittedNodes>,
-		options?: T.VariableDeclaration.Options
-	];
+	export type LooseArgs = [config: T.VariableDeclaration.Loose, options?: T.VariableDeclaration.Options];
 	export type Kind = TSKindId.VariableDeclaration;
 }
 export namespace LexicalDeclaration {
@@ -19143,15 +19101,7 @@ export namespace LexicalDeclaration {
 		config: OmitEach<ConfigOf<T.LexicalDeclaration, T.NamespaceMap>, 'terminator'>,
 		options?: T.LexicalDeclaration.Options
 	];
-	export type LooseArgs = [
-		config:
-			| OmitEach<
-					LooseConfigOf<T.LexicalDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
-					'terminator'
-			  >
-			| AdmitBound<T.LexicalDeclaration, T.AdmittedNodes>,
-		options?: T.LexicalDeclaration.Options
-	];
+	export type LooseArgs = [config: T.LexicalDeclaration.Loose, options?: T.LexicalDeclaration.Options];
 	export type Kind = TSKindId.LexicalDeclaration;
 }
 export namespace StatementBlock {
@@ -19167,11 +19117,7 @@ export namespace StatementBlock {
 	export type Loose = LooseFor<TSKindId.StatementBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.StatementBlock>;
 	export type BuildArgs = [config?: Partial<ConfigOf<T.StatementBlock, T.NamespaceMap>>];
-	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.StatementBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.StatementBlock, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config?: T.StatementBlock.Loose];
 	export type Kind = TSKindId.StatementBlock;
 }
 export namespace ElseClause {
@@ -19187,7 +19133,7 @@ export namespace ElseClause {
 	export type Loose = LooseFor<TSKindId.ElseClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ElseClause>;
 	export type BuildArgs = [value: AdmitBound<T.Statement, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.ElseClause.Loose];
 	export type Kind = TSKindId.ElseClause;
 }
 export namespace IfStatement {
@@ -19203,11 +19149,7 @@ export namespace IfStatement {
 	export type Loose = LooseFor<TSKindId.IfStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IfStatement>;
 	export type BuildArgs = [config: ConfigOf<T.IfStatement, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.IfStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.IfStatement, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.IfStatement.Loose];
 	export type Kind = TSKindId.IfStatement;
 }
 export namespace SwitchStatement {
@@ -19223,11 +19165,7 @@ export namespace SwitchStatement {
 	export type Loose = LooseFor<TSKindId.SwitchStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SwitchStatement>;
 	export type BuildArgs = [config: ConfigOf<T.SwitchStatement, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.SwitchStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.SwitchStatement, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.SwitchStatement.Loose];
 	export type Kind = TSKindId.SwitchStatement;
 }
 export namespace ForStatement {
@@ -19243,11 +19181,7 @@ export namespace ForStatement {
 	export type Loose = LooseFor<TSKindId.ForStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForStatement>;
 	export type BuildArgs = [config: ConfigOf<T.ForStatement, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ForStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ForStatement, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ForStatement.Loose];
 	export type Kind = TSKindId.ForStatement;
 }
 export namespace ForInStatement {
@@ -19263,11 +19197,7 @@ export namespace ForInStatement {
 	export type Loose = LooseFor<TSKindId.ForInStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForInStatement>;
 	export type BuildArgs = [config: ConfigOf<T.ForInStatement, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ForInStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ForInStatement, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ForInStatement.Loose];
 	export type Kind = TSKindId.ForInStatement;
 }
 export namespace WhileStatement {
@@ -19283,11 +19213,7 @@ export namespace WhileStatement {
 	export type Loose = LooseFor<TSKindId.WhileStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WhileStatement>;
 	export type BuildArgs = [config: ConfigOf<T.WhileStatement, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.WhileStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.WhileStatement, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.WhileStatement.Loose];
 	export type Kind = TSKindId.WhileStatement;
 }
 export namespace DoStatement {
@@ -19307,12 +19233,7 @@ export namespace DoStatement {
 		config: OmitEach<ConfigOf<T.DoStatement, T.NamespaceMap>, 'terminator'>,
 		options?: T.DoStatement.Options
 	];
-	export type LooseArgs = [
-		config:
-			| OmitEach<LooseConfigOf<T.DoStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'terminator'>
-			| AdmitBound<T.DoStatement, T.AdmittedNodes>,
-		options?: T.DoStatement.Options
-	];
+	export type LooseArgs = [config: T.DoStatement.Loose, options?: T.DoStatement.Options];
 	export type Kind = TSKindId.DoStatement;
 }
 export namespace TryStatement {
@@ -19328,11 +19249,7 @@ export namespace TryStatement {
 	export type Loose = LooseFor<TSKindId.TryStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TryStatement>;
 	export type BuildArgs = [config?: Partial<ConfigOf<T.TryStatement, T.NamespaceMap>>];
-	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.TryStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.TryStatement, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config?: T.TryStatement.Loose];
 	export type Kind = TSKindId.TryStatement;
 }
 export namespace WithStatement {
@@ -19348,11 +19265,7 @@ export namespace WithStatement {
 	export type Loose = LooseFor<TSKindId.WithStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.WithStatement>;
 	export type BuildArgs = [config: ConfigOf<T.WithStatement, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.WithStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.WithStatement, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.WithStatement.Loose];
 	export type Kind = TSKindId.WithStatement;
 }
 export namespace BreakStatement {
@@ -19372,15 +19285,7 @@ export namespace BreakStatement {
 		value?: AdmitBound<T.StatementIdentifier | T.StatementIdentifier.Types, T.AdmittedNodes>,
 		options?: T.BreakStatement.Options
 	];
-	export type LooseArgs = [
-		value?: LooseValue<
-			T.StatementIdentifier | T.StatementIdentifier.Types,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>,
-		options?: T.BreakStatement.Options
-	];
+	export type LooseArgs = [value?: T.BreakStatement.Loose, options?: T.BreakStatement.Options];
 	export type Kind = TSKindId.BreakStatement;
 }
 export namespace ContinueStatement {
@@ -19400,15 +19305,7 @@ export namespace ContinueStatement {
 		value?: AdmitBound<T.StatementIdentifier | T.StatementIdentifier.Types, T.AdmittedNodes>,
 		options?: T.ContinueStatement.Options
 	];
-	export type LooseArgs = [
-		value?: LooseValue<
-			T.StatementIdentifier | T.StatementIdentifier.Types,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>,
-		options?: T.ContinueStatement.Options
-	];
+	export type LooseArgs = [value?: T.ContinueStatement.Loose, options?: T.ContinueStatement.Options];
 	export type Kind = TSKindId.ContinueStatement;
 }
 export namespace DebuggerStatement {
@@ -19424,9 +19321,7 @@ export namespace DebuggerStatement {
 	export type Loose = LooseFor<TSKindId.DebuggerStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DebuggerStatement>;
 	export type BuildArgs = [value: AdmitBound<TSKindId.AutomaticSemicolon | TSKindId.Semi, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<TSKindId.AutomaticSemicolon | TSKindId.Semi, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.DebuggerStatement.Loose];
 	export type Kind = TSKindId.DebuggerStatement;
 }
 export namespace ReturnStatement {
@@ -19446,10 +19341,7 @@ export namespace ReturnStatement {
 		value?: AdmitBound<T.Expression | T.SequenceExpression, T.AdmittedNodes>,
 		options?: T.ReturnStatement.Options
 	];
-	export type LooseArgs = [
-		value?: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		options?: T.ReturnStatement.Options
-	];
+	export type LooseArgs = [value?: T.ReturnStatement.Loose, options?: T.ReturnStatement.Options];
 	export type Kind = TSKindId.ReturnStatement;
 }
 export namespace ThrowStatement {
@@ -19469,10 +19361,7 @@ export namespace ThrowStatement {
 		value: AdmitBound<T.Expression | T.SequenceExpression, T.AdmittedNodes>,
 		options?: T.ThrowStatement.Options
 	];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		options?: T.ThrowStatement.Options
-	];
+	export type LooseArgs = [value: T.ThrowStatement.Loose, options?: T.ThrowStatement.Options];
 	export type Kind = TSKindId.ThrowStatement;
 }
 export namespace LabeledStatement {
@@ -19488,11 +19377,7 @@ export namespace LabeledStatement {
 	export type Loose = LooseFor<TSKindId.LabeledStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LabeledStatement>;
 	export type BuildArgs = [config: ConfigOf<T.LabeledStatement, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.LabeledStatement, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.LabeledStatement, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.LabeledStatement.Loose];
 	export type Kind = TSKindId.LabeledStatement;
 }
 export namespace SwitchBody {
@@ -19509,7 +19394,10 @@ export namespace SwitchBody {
 	export type LooseConfig = LooseConfigFor<TSKindId.SwitchBody>;
 	export type BuildArgs = [...children: AdmitBound<(T.SwitchCase | T.SwitchDefault)[], T.AdmittedNodes>];
 	export type LooseArgs = [
-		...children: LooseValue<T.SwitchCase | T.SwitchDefault, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		...children: (
+			| T.SwitchBody.Loose
+			| LooseValue<T.SwitchCase | T.SwitchDefault, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
 	];
 	export type Kind = TSKindId.SwitchBody;
 }
@@ -19526,11 +19414,7 @@ export namespace SwitchCase {
 	export type Loose = LooseFor<TSKindId.SwitchCase>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SwitchCase>;
 	export type BuildArgs = [config: ConfigOf<T.SwitchCase, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.SwitchCase, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.SwitchCase, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.SwitchCase.Loose];
 	export type Kind = TSKindId.SwitchCase;
 }
 export namespace SwitchDefault {
@@ -19546,7 +19430,9 @@ export namespace SwitchDefault {
 	export type Loose = LooseFor<TSKindId.SwitchDefault>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SwitchDefault>;
 	export type BuildArgs = [...children: AdmitBound<T.Statement[], T.AdmittedNodes>];
-	export type LooseArgs = [...children: LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
+	export type LooseArgs = [
+		...children: (T.SwitchDefault.Loose | LooseValue<T.Statement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
+	];
 	export type Kind = TSKindId.SwitchDefault;
 }
 export namespace CatchClause {
@@ -19566,11 +19452,7 @@ export namespace CatchClause {
 	export type Loose = LooseFor<TSKindId.CatchClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CatchClause>;
 	export type BuildArgs = [config?: Partial<ConfigOf<T.CatchClause, T.NamespaceMap>>];
-	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.CatchClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.CatchClause, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config?: T.CatchClause.Loose];
 	export type Kind = TSKindId.CatchClause;
 }
 export namespace FinallyClause {
@@ -19586,7 +19468,7 @@ export namespace FinallyClause {
 	export type Loose = LooseFor<TSKindId.FinallyClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FinallyClause>;
 	export type BuildArgs = [value: AdmitBound<T.StatementBlock, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.StatementBlock, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.FinallyClause.Loose];
 	export type Kind = TSKindId.FinallyClause;
 }
 export namespace YieldExpression {
@@ -19602,9 +19484,7 @@ export namespace YieldExpression {
 	export type Loose = LooseFor<TSKindId.YieldExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.YieldExpression>;
 	export type BuildArgs = [value?: AdmitBound<T.YieldExpressionDelegate | T.Expression, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value?: LooseValue<T.YieldExpressionDelegate | T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value?: T.YieldExpression.Loose];
 	export type Kind = TSKindId.YieldExpression;
 }
 export namespace Object {
@@ -19656,40 +19536,74 @@ export namespace Object {
 		>
 	];
 	export type LooseArgs = [
-		...children: LooseValue<
-			| (
+		...children: (
+			| T.Object.Loose
+			| LooseValue<
+					| (
+							| T.Pair
+							| T.SpreadElement
+							| T.MethodDefinition
+							| T.ShorthandPropertyIdentifier
+							| TSKindId.DeclareKeyword
+							| TSKindId.NamespaceKeyword
+							| TSKindId.TypeKeyword
+							| TSKindId.PublicKeyword
+							| TSKindId.PrivateKeyword
+							| TSKindId.ProtectedKeyword
+							| TSKindId.OverrideKeyword
+							| TSKindId.ReadonlyKeyword
+							| TSKindId.ModuleKeyword
+							| TSKindId.AnyKeyword
+							| TSKindId.NumberKeyword
+							| TSKindId.BooleanKeyword
+							| TSKindId.StringKeyword
+							| TSKindId.SymbolKeyword
+							| TSKindId.ExportKeyword
+							| TSKindId.ObjectKeyword
+							| TSKindId.NewKeyword
+							| TSKindId.GetKeyword
+							| TSKindId.SetKeyword
+							| TSKindId.AsyncKeyword
+							| TSKindId.StaticKeyword
+							| TSKindId.LetKeyword
+					  )
+					| T.ShorthandPropertyIdentifier.Types,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+			| LooseValue<
 					| T.Pair
 					| T.SpreadElement
 					| T.MethodDefinition
 					| T.ShorthandPropertyIdentifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-			  )
-			| T.ShorthandPropertyIdentifier.Types,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
+					| 'declare'
+					| 'namespace'
+					| 'type'
+					| 'public'
+					| 'private'
+					| 'protected'
+					| 'override'
+					| 'readonly'
+					| 'module'
+					| 'any'
+					| 'number'
+					| 'boolean'
+					| 'string'
+					| 'symbol'
+					| 'export'
+					| 'object'
+					| 'new'
+					| 'get'
+					| 'set'
+					| 'async'
+					| 'static'
+					| 'let',
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
 	];
 	export type Kind = TSKindId.Object;
 }
@@ -19742,40 +19656,74 @@ export namespace ObjectPattern {
 		>
 	];
 	export type LooseArgs = [
-		...children: LooseValue<
-			| (
+		...children: (
+			| T.ObjectPattern.Loose
+			| LooseValue<
+					| (
+							| T.PairPattern
+							| T.RestPattern
+							| T.ObjectAssignmentPattern
+							| T.ShorthandPropertyIdentifierPattern
+							| TSKindId.DeclareKeyword
+							| TSKindId.NamespaceKeyword
+							| TSKindId.TypeKeyword
+							| TSKindId.PublicKeyword
+							| TSKindId.PrivateKeyword
+							| TSKindId.ProtectedKeyword
+							| TSKindId.OverrideKeyword
+							| TSKindId.ReadonlyKeyword
+							| TSKindId.ModuleKeyword
+							| TSKindId.AnyKeyword
+							| TSKindId.NumberKeyword
+							| TSKindId.BooleanKeyword
+							| TSKindId.StringKeyword
+							| TSKindId.SymbolKeyword
+							| TSKindId.ExportKeyword
+							| TSKindId.ObjectKeyword
+							| TSKindId.NewKeyword
+							| TSKindId.GetKeyword
+							| TSKindId.SetKeyword
+							| TSKindId.AsyncKeyword
+							| TSKindId.StaticKeyword
+							| TSKindId.LetKeyword
+					  )
+					| T.ShorthandPropertyIdentifierPattern.Types,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+			| LooseValue<
 					| T.PairPattern
 					| T.RestPattern
 					| T.ObjectAssignmentPattern
 					| T.ShorthandPropertyIdentifierPattern
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-			  )
-			| T.ShorthandPropertyIdentifierPattern.Types,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
+					| 'declare'
+					| 'namespace'
+					| 'type'
+					| 'public'
+					| 'private'
+					| 'protected'
+					| 'override'
+					| 'readonly'
+					| 'module'
+					| 'any'
+					| 'number'
+					| 'boolean'
+					| 'string'
+					| 'symbol'
+					| 'export'
+					| 'object'
+					| 'new'
+					| 'get'
+					| 'set'
+					| 'async'
+					| 'static'
+					| 'let',
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
 	];
 	export type Kind = TSKindId.ObjectPattern;
 }
@@ -19792,11 +19740,7 @@ export namespace AssignmentPattern {
 	export type Loose = LooseFor<TSKindId.AssignmentPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssignmentPattern>;
 	export type BuildArgs = [config: ConfigOf<T.AssignmentPattern, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.AssignmentPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.AssignmentPattern, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.AssignmentPattern.Loose];
 	export type Kind = TSKindId.AssignmentPattern;
 }
 export namespace ObjectAssignmentPattern {
@@ -19812,11 +19756,7 @@ export namespace ObjectAssignmentPattern {
 	export type Loose = LooseFor<TSKindId.ObjectAssignmentPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ObjectAssignmentPattern>;
 	export type BuildArgs = [config: ConfigOf<T.ObjectAssignmentPattern, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ObjectAssignmentPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ObjectAssignmentPattern, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ObjectAssignmentPattern.Loose];
 	export type Kind = TSKindId.ObjectAssignmentPattern;
 }
 export namespace Array {
@@ -19833,7 +19773,10 @@ export namespace Array {
 	export type LooseConfig = LooseConfigFor<TSKindId.Array>;
 	export type BuildArgs = [...children: AdmitBound<(T.Expression | T.SpreadElement)[], T.AdmittedNodes>];
 	export type LooseArgs = [
-		...children: LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		...children: (
+			| T.Array.Loose
+			| LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
 	];
 	export type Kind = TSKindId.Array;
 }
@@ -19851,7 +19794,10 @@ export namespace ArrayPattern {
 	export type LooseConfig = LooseConfigFor<TSKindId.ArrayPattern>;
 	export type BuildArgs = [...children: AdmitBound<(T.Pattern | T.AssignmentPattern)[], T.AdmittedNodes>];
 	export type LooseArgs = [
-		...children: LooseValue<T.Pattern | T.AssignmentPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		...children: (
+			| T.ArrayPattern.Loose
+			| LooseValue<T.Pattern | T.AssignmentPattern, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
 	];
 	export type Kind = TSKindId.ArrayPattern;
 }
@@ -19868,11 +19814,7 @@ export namespace NestedIdentifier {
 	export type Loose = LooseFor<TSKindId.NestedIdentifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NestedIdentifier>;
 	export type BuildArgs = [config: ConfigOf<T.NestedIdentifier, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.NestedIdentifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.NestedIdentifier, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.NestedIdentifier.Loose];
 	export type Kind = TSKindId.NestedIdentifier;
 }
 export namespace Class {
@@ -19888,11 +19830,7 @@ export namespace Class {
 	export type Loose = LooseFor<TSKindId.Class>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Class>;
 	export type BuildArgs = [config?: Partial<ConfigOf<T.Class, T.NamespaceMap>>];
-	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.Class, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.Class, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config?: T.Class.Loose];
 	export type Kind = TSKindId.Class;
 }
 export namespace ClassDeclaration {
@@ -19908,11 +19846,7 @@ export namespace ClassDeclaration {
 	export type Loose = LooseFor<TSKindId.ClassDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassDeclaration>;
 	export type BuildArgs = [config: ConfigOf<T.ClassDeclaration, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ClassDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ClassDeclaration, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ClassDeclaration.Loose];
 	export type Kind = TSKindId.ClassDeclaration;
 }
 export namespace ClassHeritage {
@@ -19928,14 +19862,7 @@ export namespace ClassHeritage {
 	export type Loose = LooseFor<TSKindId.ClassHeritage>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassHeritage>;
 	export type BuildArgs = [value: AdmitBound<T.ClassHeritageExtendsClause | T.ImplementsClause, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<
-			T.ClassHeritageExtendsClause | T.ImplementsClause,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.ClassHeritage.Loose];
 	export type Kind = TSKindId.ClassHeritage;
 }
 export namespace FunctionExpression {
@@ -19951,11 +19878,7 @@ export namespace FunctionExpression {
 	export type Loose = LooseFor<TSKindId.FunctionExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionExpression>;
 	export type BuildArgs = [config?: Partial<ConfigOf<T.FunctionExpression, T.NamespaceMap>>];
-	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.FunctionExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.FunctionExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config?: T.FunctionExpression.Loose];
 	export type Kind = TSKindId.FunctionExpression;
 }
 export namespace FunctionDeclaration {
@@ -19971,11 +19894,7 @@ export namespace FunctionDeclaration {
 	export type Loose = LooseFor<TSKindId.FunctionDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionDeclaration>;
 	export type BuildArgs = [config: ConfigOf<T.FunctionDeclaration, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.FunctionDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.FunctionDeclaration, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.FunctionDeclaration.Loose];
 	export type Kind = TSKindId.FunctionDeclaration;
 }
 export namespace GeneratorFunction {
@@ -19991,11 +19910,7 @@ export namespace GeneratorFunction {
 	export type Loose = LooseFor<TSKindId.GeneratorFunction>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GeneratorFunction>;
 	export type BuildArgs = [config?: Partial<ConfigOf<T.GeneratorFunction, T.NamespaceMap>>];
-	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.GeneratorFunction, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.GeneratorFunction, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config?: T.GeneratorFunction.Loose];
 	export type Kind = TSKindId.GeneratorFunction;
 }
 export namespace GeneratorFunctionDeclaration {
@@ -20011,11 +19926,7 @@ export namespace GeneratorFunctionDeclaration {
 	export type Loose = LooseFor<TSKindId.GeneratorFunctionDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GeneratorFunctionDeclaration>;
 	export type BuildArgs = [config: ConfigOf<T.GeneratorFunctionDeclaration, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.GeneratorFunctionDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.GeneratorFunctionDeclaration, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.GeneratorFunctionDeclaration.Loose];
 	export type Kind = TSKindId.GeneratorFunctionDeclaration;
 }
 export namespace ArrowFunction {
@@ -20031,11 +19942,7 @@ export namespace ArrowFunction {
 	export type Loose = LooseFor<TSKindId.ArrowFunction>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArrowFunction>;
 	export type BuildArgs = [config: ConfigOf<T.ArrowFunction, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ArrowFunction, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ArrowFunction, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ArrowFunction.Loose];
 	export type Kind = TSKindId.ArrowFunction;
 }
 export namespace NewExpression {
@@ -20051,11 +19958,7 @@ export namespace NewExpression {
 	export type Loose = LooseFor<TSKindId.NewExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NewExpression>;
 	export type BuildArgs = [config: ConfigOf<T.NewExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.NewExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.NewExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.NewExpression.Loose];
 	export type Kind = TSKindId.NewExpression;
 }
 export namespace AwaitExpression {
@@ -20071,7 +19974,7 @@ export namespace AwaitExpression {
 	export type Loose = LooseFor<TSKindId.AwaitExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AwaitExpression>;
 	export type BuildArgs = [value: AdmitBound<T.Expression, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.AwaitExpression.Loose];
 	export type Kind = TSKindId.AwaitExpression;
 }
 export namespace MemberExpression {
@@ -20087,11 +19990,7 @@ export namespace MemberExpression {
 	export type Loose = LooseFor<TSKindId.MemberExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MemberExpression>;
 	export type BuildArgs = [config: ConfigOf<T.MemberExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.MemberExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.MemberExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.MemberExpression.Loose];
 	export type Kind = TSKindId.MemberExpression;
 }
 export namespace SubscriptExpression {
@@ -20107,11 +20006,7 @@ export namespace SubscriptExpression {
 	export type Loose = LooseFor<TSKindId.SubscriptExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SubscriptExpression>;
 	export type BuildArgs = [config: ConfigOf<T.SubscriptExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.SubscriptExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.SubscriptExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.SubscriptExpression.Loose];
 	export type Kind = TSKindId.SubscriptExpression;
 }
 export namespace LhsExpression {
@@ -20160,42 +20055,7 @@ export namespace LhsExpression {
 			T.AdmittedNodes
 		>
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.LhsExpression.Loose];
 	export type Kind = TSKindId.LhsExpression;
 }
 export namespace AssignmentExpression {
@@ -20211,11 +20071,7 @@ export namespace AssignmentExpression {
 	export type Loose = LooseFor<TSKindId.AssignmentExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssignmentExpression>;
 	export type BuildArgs = [config: ConfigOf<T.AssignmentExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.AssignmentExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.AssignmentExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.AssignmentExpression.Loose];
 	export type Kind = TSKindId.AssignmentExpression;
 }
 export namespace AugmentedAssignmentExpression {
@@ -20231,11 +20087,7 @@ export namespace AugmentedAssignmentExpression {
 	export type Loose = LooseFor<TSKindId.AugmentedAssignmentExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AugmentedAssignmentExpression>;
 	export type BuildArgs = [config: ConfigOf<T.AugmentedAssignmentExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.AugmentedAssignmentExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.AugmentedAssignmentExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.AugmentedAssignmentExpression.Loose];
 	export type Kind = TSKindId.AugmentedAssignmentExpression;
 }
 export namespace SpreadElement {
@@ -20251,7 +20103,7 @@ export namespace SpreadElement {
 	export type Loose = LooseFor<TSKindId.SpreadElement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SpreadElement>;
 	export type BuildArgs = [value: AdmitBound<T.Expression, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.SpreadElement.Loose];
 	export type Kind = TSKindId.SpreadElement;
 }
 export namespace TernaryExpression {
@@ -20267,11 +20119,7 @@ export namespace TernaryExpression {
 	export type Loose = LooseFor<TSKindId.TernaryExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TernaryExpression>;
 	export type BuildArgs = [config: ConfigOf<T.TernaryExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.TernaryExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.TernaryExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.TernaryExpression.Loose];
 	export type Kind = TSKindId.TernaryExpression;
 }
 export namespace BinaryExpression {
@@ -20287,11 +20135,7 @@ export namespace BinaryExpression {
 	export type Loose = LooseFor<TSKindId.BinaryExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BinaryExpression>;
 	export type BuildArgs = [config?: Partial<ConfigOf<T.BinaryExpression, T.NamespaceMap>>];
-	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.BinaryExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.BinaryExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config?: T.BinaryExpression.Loose];
 	export type Kind = TSKindId.BinaryExpression;
 }
 export namespace UnaryExpression {
@@ -20307,11 +20151,7 @@ export namespace UnaryExpression {
 	export type Loose = LooseFor<TSKindId.UnaryExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnaryExpression>;
 	export type BuildArgs = [config: ConfigOf<T.UnaryExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.UnaryExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.UnaryExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.UnaryExpression.Loose];
 	export type Kind = TSKindId.UnaryExpression;
 }
 export namespace SequenceExpression {
@@ -20327,7 +20167,12 @@ export namespace SequenceExpression {
 	export type Loose = LooseFor<TSKindId.SequenceExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SequenceExpression>;
 	export type BuildArgs = [...children: AdmitBound<T.Expression[], T.AdmittedNodes>];
-	export type LooseArgs = [...children: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]];
+	export type LooseArgs = [
+		...children: (
+			| T.SequenceExpression.Loose
+			| LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
+	];
 	export type Kind = TSKindId.SequenceExpression;
 }
 export namespace EscapeSequence {
@@ -20343,7 +20188,7 @@ export namespace EscapeSequence {
 	export type Loose = LooseFor<TSKindId.EscapeSequence>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequence>;
 	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.EscapeSequence.Loose];
 	export type Kind = TSKindId.EscapeSequence;
 }
 export namespace TemplateString {
@@ -20362,12 +20207,15 @@ export namespace TemplateString {
 		...children: AdmitBound<(T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[], T.AdmittedNodes>
 	];
 	export type LooseArgs = [
-		...children: LooseValue<
-			T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
+		...children: (
+			| T.TemplateString.Loose
+			| LooseValue<
+					T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
 	];
 	export type Kind = TSKindId.TemplateString;
 }
@@ -20384,9 +20232,7 @@ export namespace TemplateSubstitution {
 	export type Loose = LooseFor<TSKindId.TemplateSubstitution>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TemplateSubstitution>;
 	export type BuildArgs = [value: AdmitBound<T.Expression | T.SequenceExpression, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression | T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.TemplateSubstitution.Loose];
 	export type Kind = TSKindId.TemplateSubstitution;
 }
 export namespace Regex {
@@ -20402,11 +20248,7 @@ export namespace Regex {
 	export type Loose = LooseFor<TSKindId.Regex>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Regex>;
 	export type BuildArgs = [config: ConfigOf<T.Regex, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.Regex, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.Regex, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.Regex.Loose];
 	export type Kind = TSKindId.Regex;
 }
 export namespace PrivatePropertyIdentifier {
@@ -20422,7 +20264,7 @@ export namespace PrivatePropertyIdentifier {
 	export type Loose = LooseFor<TSKindId.PrivatePropertyIdentifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PrivatePropertyIdentifier>;
 	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.PrivatePropertyIdentifier.Loose];
 	export type Kind = TSKindId.PrivatePropertyIdentifier;
 }
 export namespace Arguments {
@@ -20439,7 +20281,10 @@ export namespace Arguments {
 	export type LooseConfig = LooseConfigFor<TSKindId.Arguments>;
 	export type BuildArgs = [...children: AdmitBound<(T.Expression | T.SpreadElement)[], T.AdmittedNodes>];
 	export type LooseArgs = [
-		...children: LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		...children: (
+			| T.Arguments.Loose
+			| LooseValue<T.Expression | T.SpreadElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
 	];
 	export type Kind = TSKindId.Arguments;
 }
@@ -20461,14 +20306,7 @@ export namespace Decorator {
 			T.AdmittedNodes
 		>
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.Decorator.Loose];
 	export type Kind = TSKindId.Decorator;
 }
 export namespace DecoratorMemberExpression {
@@ -20484,11 +20322,7 @@ export namespace DecoratorMemberExpression {
 	export type Loose = LooseFor<TSKindId.DecoratorMemberExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DecoratorMemberExpression>;
 	export type BuildArgs = [config: ConfigOf<T.DecoratorMemberExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.DecoratorMemberExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.DecoratorMemberExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.DecoratorMemberExpression.Loose];
 	export type Kind = TSKindId.DecoratorMemberExpression;
 }
 export namespace DecoratorCallExpression {
@@ -20504,11 +20338,7 @@ export namespace DecoratorCallExpression {
 	export type Loose = LooseFor<TSKindId.DecoratorCallExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DecoratorCallExpression>;
 	export type BuildArgs = [config: ConfigOf<T.DecoratorCallExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.DecoratorCallExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.DecoratorCallExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.DecoratorCallExpression.Loose];
 	export type Kind = TSKindId.DecoratorCallExpression;
 }
 export namespace ClassBody {
@@ -20525,7 +20355,7 @@ export namespace ClassBody {
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassBody>;
 	export type BuildArgs = [...children: AdmitBound<T.ClassBodyMember[], T.AdmittedNodes>];
 	export type LooseArgs = [
-		...children: LooseValue<T.ClassBodyMember, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		...children: (T.ClassBody.Loose | LooseValue<T.ClassBodyMember, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 	];
 	export type Kind = TSKindId.ClassBody;
 }
@@ -20544,9 +20374,7 @@ export namespace FormalParameters {
 	export type BuildArgs =
 		| [value?: AdmitBound<T.FormalParametersElements, T.AdmittedNodes>]
 		| T.FormalParametersElements.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.FormalParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.FormalParametersElements.LooseArgs;
+	export type LooseArgs = [value?: T.FormalParameters.Loose] | T.FormalParametersElements.LooseArgs;
 	export type Kind = TSKindId.FormalParameters;
 }
 export namespace ClassStaticBlock {
@@ -20562,11 +20390,7 @@ export namespace ClassStaticBlock {
 	export type Loose = LooseFor<TSKindId.ClassStaticBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassStaticBlock>;
 	export type BuildArgs = [config?: Partial<ConfigOf<T.ClassStaticBlock, T.NamespaceMap>>];
-	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.ClassStaticBlock, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ClassStaticBlock, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config?: T.ClassStaticBlock.Loose];
 	export type Kind = TSKindId.ClassStaticBlock;
 }
 export namespace RestPattern {
@@ -20615,42 +20439,7 @@ export namespace RestPattern {
 			T.AdmittedNodes
 		>
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.RestPattern.Loose];
 	export type Kind = TSKindId.RestPattern;
 }
 export namespace MethodDefinition {
@@ -20666,11 +20455,7 @@ export namespace MethodDefinition {
 	export type Loose = LooseFor<TSKindId.MethodDefinition>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MethodDefinition>;
 	export type BuildArgs = [config: ConfigOf<T.MethodDefinition, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.MethodDefinition, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.MethodDefinition, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.MethodDefinition.Loose];
 	export type Kind = TSKindId.MethodDefinition;
 }
 export namespace Pair {
@@ -20686,11 +20471,7 @@ export namespace Pair {
 	export type Loose = LooseFor<TSKindId.Pair>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Pair>;
 	export type BuildArgs = [config: ConfigOf<T.Pair, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.Pair, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.Pair, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.Pair.Loose];
 	export type Kind = TSKindId.Pair;
 }
 export namespace PairPattern {
@@ -20706,11 +20487,7 @@ export namespace PairPattern {
 	export type Loose = LooseFor<TSKindId.PairPattern>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PairPattern>;
 	export type BuildArgs = [config: ConfigOf<T.PairPattern, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.PairPattern, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.PairPattern, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.PairPattern.Loose];
 	export type Kind = TSKindId.PairPattern;
 }
 export namespace ComputedPropertyName {
@@ -20726,7 +20503,7 @@ export namespace ComputedPropertyName {
 	export type Loose = LooseFor<TSKindId.ComputedPropertyName>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ComputedPropertyName>;
 	export type BuildArgs = [value: AdmitBound<T.Expression, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.ComputedPropertyName.Loose];
 	export type Kind = TSKindId.ComputedPropertyName;
 }
 export namespace PublicFieldDefinition {
@@ -20742,11 +20519,7 @@ export namespace PublicFieldDefinition {
 	export type Loose = LooseFor<TSKindId.PublicFieldDefinition>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PublicFieldDefinition>;
 	export type BuildArgs = [config: ConfigOf<T.PublicFieldDefinition, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.PublicFieldDefinition, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.PublicFieldDefinition, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.PublicFieldDefinition.Loose];
 	export type Kind = TSKindId.PublicFieldDefinition;
 }
 export namespace NonNullExpression {
@@ -20762,7 +20535,7 @@ export namespace NonNullExpression {
 	export type Loose = LooseFor<TSKindId.NonNullExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NonNullExpression>;
 	export type BuildArgs = [value: AdmitBound<T.Expression, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.NonNullExpression.Loose];
 	export type Kind = TSKindId.NonNullExpression;
 }
 export namespace MethodSignature {
@@ -20778,11 +20551,7 @@ export namespace MethodSignature {
 	export type Loose = LooseFor<TSKindId.MethodSignature>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MethodSignature>;
 	export type BuildArgs = [config: ConfigOf<T.MethodSignature, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.MethodSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.MethodSignature, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.MethodSignature.Loose];
 	export type Kind = TSKindId.MethodSignature;
 }
 export namespace AbstractMethodSignature {
@@ -20798,11 +20567,7 @@ export namespace AbstractMethodSignature {
 	export type Loose = LooseFor<TSKindId.AbstractMethodSignature>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AbstractMethodSignature>;
 	export type BuildArgs = [config: ConfigOf<T.AbstractMethodSignature, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.AbstractMethodSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.AbstractMethodSignature, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.AbstractMethodSignature.Loose];
 	export type Kind = TSKindId.AbstractMethodSignature;
 }
 export namespace FunctionSignature {
@@ -20824,12 +20589,7 @@ export namespace FunctionSignature {
 		config: OmitEach<ConfigOf<T.FunctionSignature, T.NamespaceMap>, 'terminator'>,
 		options?: T.FunctionSignature.Options
 	];
-	export type LooseArgs = [
-		config:
-			| OmitEach<LooseConfigOf<T.FunctionSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'terminator'>
-			| AdmitBound<T.FunctionSignature, T.AdmittedNodes>,
-		options?: T.FunctionSignature.Options
-	];
+	export type LooseArgs = [config: T.FunctionSignature.Loose, options?: T.FunctionSignature.Options];
 	export type Kind = TSKindId.FunctionSignature;
 }
 export namespace DecoratorParenthesizedExpression {
@@ -20847,14 +20607,7 @@ export namespace DecoratorParenthesizedExpression {
 	export type BuildArgs = [
 		value: AdmitBound<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression, T.AdmittedNodes>
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.DecoratorParenthesizedExpression.Loose];
 	export type Kind = TSKindId.DecoratorParenthesizedExpression;
 }
 export namespace TypeAssertion {
@@ -20870,11 +20623,7 @@ export namespace TypeAssertion {
 	export type Loose = LooseFor<TSKindId.TypeAssertion>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeAssertion>;
 	export type BuildArgs = [config: ConfigOf<T.TypeAssertion, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.TypeAssertion, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.TypeAssertion, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.TypeAssertion.Loose];
 	export type Kind = TSKindId.TypeAssertion;
 }
 export namespace AsExpression {
@@ -20890,11 +20639,7 @@ export namespace AsExpression {
 	export type Loose = LooseFor<TSKindId.AsExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AsExpression>;
 	export type BuildArgs = [config: ConfigOf<T.AsExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.AsExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.AsExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.AsExpression.Loose];
 	export type Kind = TSKindId.AsExpression;
 }
 export namespace SatisfiesExpression {
@@ -20910,11 +20655,7 @@ export namespace SatisfiesExpression {
 	export type Loose = LooseFor<TSKindId.SatisfiesExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SatisfiesExpression>;
 	export type BuildArgs = [config: ConfigOf<T.SatisfiesExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.SatisfiesExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.SatisfiesExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.SatisfiesExpression.Loose];
 	export type Kind = TSKindId.SatisfiesExpression;
 }
 export namespace InstantiationExpression {
@@ -20930,11 +20671,7 @@ export namespace InstantiationExpression {
 	export type Loose = LooseFor<TSKindId.InstantiationExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InstantiationExpression>;
 	export type BuildArgs = [config: ConfigOf<T.InstantiationExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.InstantiationExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.InstantiationExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.InstantiationExpression.Loose];
 	export type Kind = TSKindId.InstantiationExpression;
 }
 export namespace ImportRequireClause {
@@ -20950,11 +20687,7 @@ export namespace ImportRequireClause {
 	export type Loose = LooseFor<TSKindId.ImportRequireClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportRequireClause>;
 	export type BuildArgs = [config: ConfigOf<T.ImportRequireClause, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ImportRequireClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ImportRequireClause, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ImportRequireClause.Loose];
 	export type Kind = TSKindId.ImportRequireClause;
 }
 export namespace ExtendsClause {
@@ -20971,7 +20704,10 @@ export namespace ExtendsClause {
 	export type LooseConfig = LooseConfigFor<TSKindId.ExtendsClause>;
 	export type BuildArgs = [...children: AdmitBound<T.ExtendsClauseSingle[], T.AdmittedNodes>];
 	export type LooseArgs = [
-		...children: LooseValue<T.ExtendsClauseSingle, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		...children: (
+			| T.ExtendsClause.Loose
+			| LooseValue<T.ExtendsClauseSingle, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
 	];
 	export type Kind = TSKindId.ExtendsClause;
 }
@@ -20988,11 +20724,7 @@ export namespace ExtendsClauseSingle {
 	export type Loose = LooseFor<TSKindId.ExtendsClauseSingle>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExtendsClauseSingle>;
 	export type BuildArgs = [config: ConfigOf<T.ExtendsClauseSingle, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ExtendsClauseSingle, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ExtendsClauseSingle, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ExtendsClauseSingle.Loose];
 	export type Kind = TSKindId.ExtendsClauseSingle;
 }
 export namespace ImplementsClause {
@@ -21009,7 +20741,11 @@ export namespace ImplementsClause {
 	export type LooseConfig = LooseConfigFor<TSKindId.ImplementsClause>;
 	export type BuildArgs = [...children: AdmitBound<(T.Type | T.TypeIdentifier.Types)[], T.AdmittedNodes>];
 	export type LooseArgs = [
-		...children: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		...children: (
+			| T.ImplementsClause.Loose
+			| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+			| LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
 	];
 	export type Kind = TSKindId.ImplementsClause;
 }
@@ -21028,14 +20764,7 @@ export namespace AmbientDeclaration {
 	export type BuildArgs = [
 		value: AdmitBound<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule, T.AdmittedNodes>
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.AmbientDeclaration.Loose];
 	export type Kind = TSKindId.AmbientDeclaration;
 }
 export namespace AbstractClassDeclaration {
@@ -21051,11 +20780,7 @@ export namespace AbstractClassDeclaration {
 	export type Loose = LooseFor<TSKindId.AbstractClassDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AbstractClassDeclaration>;
 	export type BuildArgs = [config: ConfigOf<T.AbstractClassDeclaration, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.AbstractClassDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.AbstractClassDeclaration, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.AbstractClassDeclaration.Loose];
 	export type Kind = TSKindId.AbstractClassDeclaration;
 }
 export namespace Module {
@@ -21071,11 +20796,7 @@ export namespace Module {
 	export type Loose = LooseFor<TSKindId.Module>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Module>;
 	export type BuildArgs = [config: ConfigOf<T.Module, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.Module, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.Module, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.Module.Loose];
 	export type Kind = TSKindId.Module;
 }
 export namespace InternalModule {
@@ -21091,11 +20812,7 @@ export namespace InternalModule {
 	export type Loose = LooseFor<TSKindId.InternalModule>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InternalModule>;
 	export type BuildArgs = [config: ConfigOf<T.InternalModule, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.InternalModule, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.InternalModule, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.InternalModule.Loose];
 	export type Kind = TSKindId.InternalModule;
 }
 export namespace ImportAlias {
@@ -21115,12 +20832,7 @@ export namespace ImportAlias {
 		config: OmitEach<ConfigOf<T.ImportAlias, T.NamespaceMap>, 'terminator'>,
 		options?: T.ImportAlias.Options
 	];
-	export type LooseArgs = [
-		config:
-			| OmitEach<LooseConfigOf<T.ImportAlias, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'terminator'>
-			| AdmitBound<T.ImportAlias, T.AdmittedNodes>,
-		options?: T.ImportAlias.Options
-	];
+	export type LooseArgs = [config: T.ImportAlias.Loose, options?: T.ImportAlias.Options];
 	export type Kind = TSKindId.ImportAlias;
 }
 export namespace NestedTypeIdentifier {
@@ -21136,11 +20848,7 @@ export namespace NestedTypeIdentifier {
 	export type Loose = LooseFor<TSKindId.NestedTypeIdentifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.NestedTypeIdentifier>;
 	export type BuildArgs = [config: ConfigOf<T.NestedTypeIdentifier, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.NestedTypeIdentifier, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.NestedTypeIdentifier, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.NestedTypeIdentifier.Loose];
 	export type Kind = TSKindId.NestedTypeIdentifier;
 }
 export namespace InterfaceDeclaration {
@@ -21156,11 +20864,7 @@ export namespace InterfaceDeclaration {
 	export type Loose = LooseFor<TSKindId.InterfaceDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InterfaceDeclaration>;
 	export type BuildArgs = [config: ConfigOf<T.InterfaceDeclaration, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.InterfaceDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.InterfaceDeclaration, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.InterfaceDeclaration.Loose];
 	export type Kind = TSKindId.InterfaceDeclaration;
 }
 export namespace ExtendsTypeClause {
@@ -21182,12 +20886,21 @@ export namespace ExtendsTypeClause {
 		>
 	];
 	export type LooseArgs = [
-		...children: LooseValue<
-			(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
+		...children: (
+			| T.ExtendsTypeClause.Loose
+			| LooseValue<
+					(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+			| LooseValue<
+					T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType,
+					T.LeafScalarMap,
+					T.LeafStringMap,
+					T.NamespaceMap
+			  >
+		)[]
 	];
 	export type Kind = TSKindId.ExtendsTypeClause;
 }
@@ -21204,11 +20917,7 @@ export namespace EnumDeclaration {
 	export type Loose = LooseFor<TSKindId.EnumDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumDeclaration>;
 	export type BuildArgs = [config: ConfigOf<T.EnumDeclaration, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.EnumDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.EnumDeclaration, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.EnumDeclaration.Loose];
 	export type Kind = TSKindId.EnumDeclaration;
 }
 export namespace EnumBody {
@@ -21224,9 +20933,7 @@ export namespace EnumBody {
 	export type Loose = LooseFor<TSKindId.EnumBody>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumBody>;
 	export type BuildArgs = [value?: AdmitBound<T.EnumBodyElements, T.AdmittedNodes>] | T.EnumBodyElements.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.EnumBodyElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.EnumBodyElements.LooseArgs;
+	export type LooseArgs = [value?: T.EnumBody.Loose] | T.EnumBodyElements.LooseArgs;
 	export type Kind = TSKindId.EnumBody;
 }
 export namespace EnumAssignment {
@@ -21242,11 +20949,7 @@ export namespace EnumAssignment {
 	export type Loose = LooseFor<TSKindId.EnumAssignment>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EnumAssignment>;
 	export type BuildArgs = [config: ConfigOf<T.EnumAssignment, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.EnumAssignment, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.EnumAssignment, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.EnumAssignment.Loose];
 	export type Kind = TSKindId.EnumAssignment;
 }
 export namespace TypeAliasDeclaration {
@@ -21266,15 +20969,7 @@ export namespace TypeAliasDeclaration {
 		config: OmitEach<ConfigOf<T.TypeAliasDeclaration, T.NamespaceMap>, 'terminator'>,
 		options?: T.TypeAliasDeclaration.Options
 	];
-	export type LooseArgs = [
-		config:
-			| OmitEach<
-					LooseConfigOf<T.TypeAliasDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
-					'terminator'
-			  >
-			| AdmitBound<T.TypeAliasDeclaration, T.AdmittedNodes>,
-		options?: T.TypeAliasDeclaration.Options
-	];
+	export type LooseArgs = [config: T.TypeAliasDeclaration.Loose, options?: T.TypeAliasDeclaration.Options];
 	export type Kind = TSKindId.TypeAliasDeclaration;
 }
 export namespace RequiredParameter {
@@ -21290,11 +20985,7 @@ export namespace RequiredParameter {
 	export type Loose = LooseFor<TSKindId.RequiredParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RequiredParameter>;
 	export type BuildArgs = [config: ConfigOf<T.RequiredParameter, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.RequiredParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.RequiredParameter, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.RequiredParameter.Loose];
 	export type Kind = TSKindId.RequiredParameter;
 }
 export namespace OptionalParameter {
@@ -21310,11 +21001,7 @@ export namespace OptionalParameter {
 	export type Loose = LooseFor<TSKindId.OptionalParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OptionalParameter>;
 	export type BuildArgs = [config: ConfigOf<T.OptionalParameter, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.OptionalParameter, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.OptionalParameter.Loose];
 	export type Kind = TSKindId.OptionalParameter;
 }
 export namespace OmittingTypeAnnotation {
@@ -21330,9 +21017,7 @@ export namespace OmittingTypeAnnotation {
 	export type Loose = LooseFor<TSKindId.OmittingTypeAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OmittingTypeAnnotation>;
 	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.OmittingTypeAnnotation.Loose];
 	export type Kind = TSKindId.OmittingTypeAnnotation;
 }
 export namespace AddingTypeAnnotation {
@@ -21348,9 +21033,7 @@ export namespace AddingTypeAnnotation {
 	export type Loose = LooseFor<TSKindId.AddingTypeAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AddingTypeAnnotation>;
 	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.AddingTypeAnnotation.Loose];
 	export type Kind = TSKindId.AddingTypeAnnotation;
 }
 export namespace OptingTypeAnnotation {
@@ -21366,9 +21049,7 @@ export namespace OptingTypeAnnotation {
 	export type Loose = LooseFor<TSKindId.OptingTypeAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OptingTypeAnnotation>;
 	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.OptingTypeAnnotation.Loose];
 	export type Kind = TSKindId.OptingTypeAnnotation;
 }
 export namespace TypeAnnotation {
@@ -21384,9 +21065,7 @@ export namespace TypeAnnotation {
 	export type Loose = LooseFor<TSKindId.TypeAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeAnnotation>;
 	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.TypeAnnotation.Loose];
 	export type Kind = TSKindId.TypeAnnotation;
 }
 export namespace TypeQueryMemberExpressionInTypeAnnotation {
@@ -21402,11 +21081,7 @@ export namespace TypeQueryMemberExpressionInTypeAnnotation {
 	export type Loose = LooseFor<TSKindId.TypeQueryMemberExpressionInTypeAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryMemberExpressionInTypeAnnotation>;
 	export type BuildArgs = [config: ConfigOf<T.TypeQueryMemberExpressionInTypeAnnotation, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.TypeQueryMemberExpressionInTypeAnnotation, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.TypeQueryMemberExpressionInTypeAnnotation, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.TypeQueryMemberExpressionInTypeAnnotation.Loose];
 	export type Kind = TSKindId.TypeQueryMemberExpressionInTypeAnnotation;
 }
 export namespace TypeQueryCallExpressionInTypeAnnotation {
@@ -21422,11 +21097,7 @@ export namespace TypeQueryCallExpressionInTypeAnnotation {
 	export type Loose = LooseFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryCallExpressionInTypeAnnotation>;
 	export type BuildArgs = [config: ConfigOf<T.TypeQueryCallExpressionInTypeAnnotation, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.TypeQueryCallExpressionInTypeAnnotation, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.TypeQueryCallExpressionInTypeAnnotation, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.TypeQueryCallExpressionInTypeAnnotation.Loose];
 	export type Kind = TSKindId.TypeQueryCallExpressionInTypeAnnotation;
 }
 export namespace Asserts {
@@ -21442,9 +21113,7 @@ export namespace Asserts {
 	export type Loose = LooseFor<TSKindId.Asserts>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Asserts>;
 	export type BuildArgs = [value: AdmitBound<T.TypePredicate | T.Identifier | TSKindId.This, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.TypePredicate | T.Identifier | TSKindId.This, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.Asserts.Loose];
 	export type Kind = TSKindId.Asserts;
 }
 export namespace AssertsAnnotation {
@@ -21460,7 +21129,7 @@ export namespace AssertsAnnotation {
 	export type Loose = LooseFor<TSKindId.AssertsAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AssertsAnnotation>;
 	export type BuildArgs = [value: AdmitBound<T.Asserts, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.Asserts, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.AssertsAnnotation.Loose];
 	export type Kind = TSKindId.AssertsAnnotation;
 }
 export namespace TupleParameter {
@@ -21476,11 +21145,7 @@ export namespace TupleParameter {
 	export type Loose = LooseFor<TSKindId.TupleParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleParameter>;
 	export type BuildArgs = [config: ConfigOf<T.TupleParameter, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.TupleParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.TupleParameter, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.TupleParameter.Loose];
 	export type Kind = TSKindId.TupleParameter;
 }
 export namespace OptionalTupleParameter {
@@ -21496,11 +21161,7 @@ export namespace OptionalTupleParameter {
 	export type Loose = LooseFor<TSKindId.OptionalTupleParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OptionalTupleParameter>;
 	export type BuildArgs = [config: ConfigOf<T.OptionalTupleParameter, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.OptionalTupleParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.OptionalTupleParameter, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.OptionalTupleParameter.Loose];
 	export type Kind = TSKindId.OptionalTupleParameter;
 }
 export namespace OptionalType {
@@ -21516,9 +21177,7 @@ export namespace OptionalType {
 	export type Loose = LooseFor<TSKindId.OptionalType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OptionalType>;
 	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.OptionalType.Loose];
 	export type Kind = TSKindId.OptionalType;
 }
 export namespace RestType {
@@ -21534,9 +21193,7 @@ export namespace RestType {
 	export type Loose = LooseFor<TSKindId.RestType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.RestType>;
 	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.RestType.Loose];
 	export type Kind = TSKindId.RestType;
 }
 export namespace ConstructorType {
@@ -21552,11 +21209,7 @@ export namespace ConstructorType {
 	export type Loose = LooseFor<TSKindId.ConstructorType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConstructorType>;
 	export type BuildArgs = [config: ConfigOf<T.ConstructorType, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ConstructorType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ConstructorType, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ConstructorType.Loose];
 	export type Kind = TSKindId.ConstructorType;
 }
 export namespace TemplateType {
@@ -21572,14 +21225,7 @@ export namespace TemplateType {
 	export type Loose = LooseFor<TSKindId.TemplateType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TemplateType>;
 	export type BuildArgs = [value: AdmitBound<(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<
-			(T.PrimaryType | T.InferType) | T.TypeIdentifier.Types,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.TemplateType.Loose];
 	export type Kind = TSKindId.TemplateType;
 }
 export namespace TemplateLiteralType {
@@ -21596,7 +21242,10 @@ export namespace TemplateLiteralType {
 	export type LooseConfig = LooseConfigFor<TSKindId.TemplateLiteralType>;
 	export type BuildArgs = [...children: AdmitBound<(T.TemplateChars | T.TemplateType)[], T.AdmittedNodes>];
 	export type LooseArgs = [
-		...children: LooseValue<T.TemplateChars | T.TemplateType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+		...children: (
+			| T.TemplateLiteralType.Loose
+			| LooseValue<T.TemplateChars | T.TemplateType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
 	];
 	export type Kind = TSKindId.TemplateLiteralType;
 }
@@ -21613,11 +21262,7 @@ export namespace InferType {
 	export type Loose = LooseFor<TSKindId.InferType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InferType>;
 	export type BuildArgs = [config: ConfigOf<T.InferType, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.InferType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.InferType, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.InferType.Loose];
 	export type Kind = TSKindId.InferType;
 }
 export namespace ConditionalType {
@@ -21633,11 +21278,7 @@ export namespace ConditionalType {
 	export type Loose = LooseFor<TSKindId.ConditionalType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConditionalType>;
 	export type BuildArgs = [config: ConfigOf<T.ConditionalType, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ConditionalType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ConditionalType, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ConditionalType.Loose];
 	export type Kind = TSKindId.ConditionalType;
 }
 export namespace GenericType {
@@ -21653,11 +21294,7 @@ export namespace GenericType {
 	export type Loose = LooseFor<TSKindId.GenericType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.GenericType>;
 	export type BuildArgs = [config: ConfigOf<T.GenericType, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.GenericType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.GenericType, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.GenericType.Loose];
 	export type Kind = TSKindId.GenericType;
 }
 export namespace TypePredicate {
@@ -21673,11 +21310,7 @@ export namespace TypePredicate {
 	export type Loose = LooseFor<TSKindId.TypePredicate>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypePredicate>;
 	export type BuildArgs = [config: ConfigOf<T.TypePredicate, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.TypePredicate, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.TypePredicate, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.TypePredicate.Loose];
 	export type Kind = TSKindId.TypePredicate;
 }
 export namespace TypePredicateAnnotation {
@@ -21693,7 +21326,7 @@ export namespace TypePredicateAnnotation {
 	export type Loose = LooseFor<TSKindId.TypePredicateAnnotation>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypePredicateAnnotation>;
 	export type BuildArgs = [value: AdmitBound<T.TypePredicate, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.TypePredicate, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.TypePredicateAnnotation.Loose];
 	export type Kind = TSKindId.TypePredicateAnnotation;
 }
 export namespace TypeQueryMemberExpression {
@@ -21709,11 +21342,7 @@ export namespace TypeQueryMemberExpression {
 	export type Loose = LooseFor<TSKindId.TypeQueryMemberExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryMemberExpression>;
 	export type BuildArgs = [config: ConfigOf<T.TypeQueryMemberExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.TypeQueryMemberExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.TypeQueryMemberExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.TypeQueryMemberExpression.Loose];
 	export type Kind = TSKindId.TypeQueryMemberExpression;
 }
 export namespace TypeQuerySubscriptExpression {
@@ -21729,11 +21358,7 @@ export namespace TypeQuerySubscriptExpression {
 	export type Loose = LooseFor<TSKindId.TypeQuerySubscriptExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeQuerySubscriptExpression>;
 	export type BuildArgs = [config: ConfigOf<T.TypeQuerySubscriptExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.TypeQuerySubscriptExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.TypeQuerySubscriptExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.TypeQuerySubscriptExpression.Loose];
 	export type Kind = TSKindId.TypeQuerySubscriptExpression;
 }
 export namespace TypeQueryCallExpression {
@@ -21749,11 +21374,7 @@ export namespace TypeQueryCallExpression {
 	export type Loose = LooseFor<TSKindId.TypeQueryCallExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryCallExpression>;
 	export type BuildArgs = [config: ConfigOf<T.TypeQueryCallExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.TypeQueryCallExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.TypeQueryCallExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.TypeQueryCallExpression.Loose];
 	export type Kind = TSKindId.TypeQueryCallExpression;
 }
 export namespace TypeQueryInstantiationExpression {
@@ -21769,11 +21390,7 @@ export namespace TypeQueryInstantiationExpression {
 	export type Loose = LooseFor<TSKindId.TypeQueryInstantiationExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeQueryInstantiationExpression>;
 	export type BuildArgs = [config: ConfigOf<T.TypeQueryInstantiationExpression, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.TypeQueryInstantiationExpression, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.TypeQueryInstantiationExpression, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.TypeQueryInstantiationExpression.Loose];
 	export type Kind = TSKindId.TypeQueryInstantiationExpression;
 }
 export namespace TypeQuery {
@@ -21799,19 +21416,7 @@ export namespace TypeQuery {
 			T.AdmittedNodes
 		>
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			| T.TypeQuerySubscriptExpression
-			| T.TypeQueryMemberExpression
-			| T.TypeQueryCallExpression
-			| T.TypeQueryInstantiationExpression
-			| T.Identifier
-			| TSKindId.This,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.TypeQuery.Loose];
 	export type Kind = TSKindId.TypeQuery;
 }
 export namespace IndexTypeQuery {
@@ -21827,9 +21432,7 @@ export namespace IndexTypeQuery {
 	export type Loose = LooseFor<TSKindId.IndexTypeQuery>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IndexTypeQuery>;
 	export type BuildArgs = [value: AdmitBound<T.PrimaryType | T.TypeIdentifier.Types, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.PrimaryType | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.IndexTypeQuery.Loose];
 	export type Kind = TSKindId.IndexTypeQuery;
 }
 export namespace LookupType {
@@ -21845,11 +21448,7 @@ export namespace LookupType {
 	export type Loose = LooseFor<TSKindId.LookupType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LookupType>;
 	export type BuildArgs = [config: ConfigOf<T.LookupType, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.LookupType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.LookupType, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.LookupType.Loose];
 	export type Kind = TSKindId.LookupType;
 }
 export namespace MappedTypeClause {
@@ -21865,11 +21464,7 @@ export namespace MappedTypeClause {
 	export type Loose = LooseFor<TSKindId.MappedTypeClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MappedTypeClause>;
 	export type BuildArgs = [config: ConfigOf<T.MappedTypeClause, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.MappedTypeClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.MappedTypeClause, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.MappedTypeClause.Loose];
 	export type Kind = TSKindId.MappedTypeClause;
 }
 export namespace LiteralType {
@@ -21896,20 +21491,7 @@ export namespace LiteralType {
 			T.AdmittedNodes
 		>
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			| T.LiteralTypeNegativeNumber
-			| T.Number
-			| T.String
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.Null
-			| TSKindId.Undefined,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.LiteralType.Loose];
 	export type Kind = TSKindId.LiteralType;
 }
 export namespace FlowMaybeType {
@@ -21925,9 +21507,7 @@ export namespace FlowMaybeType {
 	export type Loose = LooseFor<TSKindId.FlowMaybeType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FlowMaybeType>;
 	export type BuildArgs = [value: AdmitBound<T.PrimaryType | T.TypeIdentifier.Types, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.PrimaryType | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.FlowMaybeType.Loose];
 	export type Kind = TSKindId.FlowMaybeType;
 }
 export namespace ParenthesizedType {
@@ -21943,9 +21523,7 @@ export namespace ParenthesizedType {
 	export type Loose = LooseFor<TSKindId.ParenthesizedType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedType>;
 	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.ParenthesizedType.Loose];
 	export type Kind = TSKindId.ParenthesizedType;
 }
 export namespace TypeArguments {
@@ -21961,9 +21539,7 @@ export namespace TypeArguments {
 	export type Loose = LooseFor<TSKindId.TypeArguments>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeArguments>;
 	export type BuildArgs = [value: AdmitBound<T.Types, T.AdmittedNodes>] | T.Types.BuildArgs;
-	export type LooseArgs =
-		| [value: LooseValue<T.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.Types.LooseArgs;
+	export type LooseArgs = [value: T.TypeArguments.Loose] | T.Types.LooseArgs;
 	export type Kind = TSKindId.TypeArguments;
 }
 export namespace ObjectType {
@@ -22006,11 +21582,7 @@ export namespace ObjectType {
 	export type Loose = LooseFor<TSKindId.ObjectType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ObjectType>;
 	export type BuildArgs = [config: ConfigOf<T.ObjectType, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ObjectType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ObjectType, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ObjectType.Loose];
 	export type Kind = TSKindId.ObjectType;
 }
 export namespace CallSignature {
@@ -22026,11 +21598,7 @@ export namespace CallSignature {
 	export type Loose = LooseFor<TSKindId.CallSignature>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CallSignature>;
 	export type BuildArgs = [config?: Partial<ConfigOf<T.CallSignature, T.NamespaceMap>>];
-	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.CallSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.CallSignature, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config?: T.CallSignature.Loose];
 	export type Kind = TSKindId.CallSignature;
 }
 export namespace PropertySignature {
@@ -22046,11 +21614,7 @@ export namespace PropertySignature {
 	export type Loose = LooseFor<TSKindId.PropertySignature>;
 	export type LooseConfig = LooseConfigFor<TSKindId.PropertySignature>;
 	export type BuildArgs = [config: ConfigOf<T.PropertySignature, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.PropertySignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.PropertySignature, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.PropertySignature.Loose];
 	export type Kind = TSKindId.PropertySignature;
 }
 export namespace TypeParameters {
@@ -22068,9 +21632,7 @@ export namespace TypeParameters {
 	export type BuildArgs =
 		| [value: AdmitBound<T.TypeParametersElements, T.AdmittedNodes>]
 		| T.TypeParametersElements.BuildArgs;
-	export type LooseArgs =
-		| [value: LooseValue<T.TypeParametersElements, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.TypeParametersElements.LooseArgs;
+	export type LooseArgs = [value: T.TypeParameters.Loose] | T.TypeParametersElements.LooseArgs;
 	export type Kind = TSKindId.TypeParameters;
 }
 export namespace TypeParameter {
@@ -22086,11 +21648,7 @@ export namespace TypeParameter {
 	export type Loose = LooseFor<TSKindId.TypeParameter>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeParameter>;
 	export type BuildArgs = [config: ConfigOf<T.TypeParameter, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.TypeParameter, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.TypeParameter, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.TypeParameter.Loose];
 	export type Kind = TSKindId.TypeParameter;
 }
 export namespace DefaultType {
@@ -22106,9 +21664,7 @@ export namespace DefaultType {
 	export type Loose = LooseFor<TSKindId.DefaultType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DefaultType>;
 	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.DefaultType.Loose];
 	export type Kind = TSKindId.DefaultType;
 }
 export namespace Constraint {
@@ -22124,11 +21680,7 @@ export namespace Constraint {
 	export type Loose = LooseFor<TSKindId.Constraint>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Constraint>;
 	export type BuildArgs = [config: ConfigOf<T.Constraint, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.Constraint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.Constraint, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.Constraint.Loose];
 	export type Kind = TSKindId.Constraint;
 }
 export namespace ConstructSignature {
@@ -22144,11 +21696,7 @@ export namespace ConstructSignature {
 	export type Loose = LooseFor<TSKindId.ConstructSignature>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConstructSignature>;
 	export type BuildArgs = [config?: Partial<ConfigOf<T.ConstructSignature, T.NamespaceMap>>];
-	export type LooseArgs = [
-		config?:
-			| LooseConfigOf<T.ConstructSignature, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ConstructSignature, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config?: T.ConstructSignature.Loose];
 	export type Kind = TSKindId.ConstructSignature;
 }
 export namespace ArrayType {
@@ -22164,9 +21712,7 @@ export namespace ArrayType {
 	export type Loose = LooseFor<TSKindId.ArrayType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ArrayType>;
 	export type BuildArgs = [value: AdmitBound<T.PrimaryType | T.TypeIdentifier.Types, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.PrimaryType | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.ArrayType.Loose];
 	export type Kind = TSKindId.ArrayType;
 }
 export namespace TupleType {
@@ -22182,9 +21728,7 @@ export namespace TupleType {
 	export type Loose = LooseFor<TSKindId.TupleType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TupleType>;
 	export type BuildArgs = [value?: AdmitBound<T.TupleTypeMembers, T.AdmittedNodes>] | T.TupleTypeMembers.BuildArgs;
-	export type LooseArgs =
-		| [value?: LooseValue<T.TupleTypeMembers, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>]
-		| T.TupleTypeMembers.LooseArgs;
+	export type LooseArgs = [value?: T.TupleType.Loose] | T.TupleTypeMembers.LooseArgs;
 	export type Kind = TSKindId.TupleType;
 }
 export namespace ReadonlyType {
@@ -22200,9 +21744,7 @@ export namespace ReadonlyType {
 	export type Loose = LooseFor<TSKindId.ReadonlyType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ReadonlyType>;
 	export type BuildArgs = [value: AdmitBound<T.Type | T.TypeIdentifier.Types, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.ReadonlyType.Loose];
 	export type Kind = TSKindId.ReadonlyType;
 }
 export namespace UnionType {
@@ -22218,11 +21760,7 @@ export namespace UnionType {
 	export type Loose = LooseFor<TSKindId.UnionType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UnionType>;
 	export type BuildArgs = [config: ConfigOf<T.UnionType, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.UnionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.UnionType, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.UnionType.Loose];
 	export type Kind = TSKindId.UnionType;
 }
 export namespace IntersectionType {
@@ -22238,11 +21776,7 @@ export namespace IntersectionType {
 	export type Loose = LooseFor<TSKindId.IntersectionType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IntersectionType>;
 	export type BuildArgs = [config: ConfigOf<T.IntersectionType, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.IntersectionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.IntersectionType, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.IntersectionType.Loose];
 	export type Kind = TSKindId.IntersectionType;
 }
 export namespace FunctionType {
@@ -22258,11 +21792,7 @@ export namespace FunctionType {
 	export type Loose = LooseFor<TSKindId.FunctionType>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FunctionType>;
 	export type BuildArgs = [config: ConfigOf<T.FunctionType, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.FunctionType, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.FunctionType, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.FunctionType.Loose];
 	export type Kind = TSKindId.FunctionType;
 }
 export namespace ExportSpecifiers {
@@ -22291,33 +21821,23 @@ export namespace ExportSpecifiers {
 		  ];
 	export type LooseArgs =
 		| [
-				element: LooseValue<
-					T.ExportSpecifier | T.Identifier | T.String,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>,
-				...elements: LooseValue<
-					T.ExportSpecifier | T.Identifier | T.String,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>[]
+				element:
+					| T.ExportSpecifiers.Loose
+					| LooseValue<T.ExportSpecifier | T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.ExportSpecifiers.Loose
+					| LooseValue<T.ExportSpecifier | T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element: LooseValue<
-					T.ExportSpecifier | T.Identifier | T.String,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>,
-				...elements: LooseValue<
-					T.ExportSpecifier | T.Identifier | T.String,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>[]
+				element:
+					| T.ExportSpecifiers.Loose
+					| LooseValue<T.ExportSpecifier | T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.ExportSpecifiers.Loose
+					| LooseValue<T.ExportSpecifier | T.Identifier | T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
 		  ];
 	export type Kind = TSKindId.ExportSpecifiers;
 }
@@ -22347,13 +21867,23 @@ export namespace ImportSpecifiers {
 		  ];
 	export type LooseArgs =
 		| [
-				element: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				element:
+					| T.ImportSpecifiers.Loose
+					| LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.ImportSpecifiers.Loose
+					| LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				element:
+					| T.ImportSpecifiers.Loose
+					| LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.ImportSpecifiers.Loose
+					| LooseValue<T.ImportSpecifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
 		  ];
 	export type Kind = TSKindId.ImportSpecifiers;
 }
@@ -22383,33 +21913,23 @@ export namespace FormalParametersElements {
 		  ];
 	export type LooseArgs =
 		| [
-				element: LooseValue<
-					T.RequiredParameter | T.OptionalParameter,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>,
-				...elements: LooseValue<
-					T.RequiredParameter | T.OptionalParameter,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>[]
+				element:
+					| T.FormalParametersElements.Loose
+					| LooseValue<T.RequiredParameter | T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.FormalParametersElements.Loose
+					| LooseValue<T.RequiredParameter | T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element: LooseValue<
-					T.RequiredParameter | T.OptionalParameter,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>,
-				...elements: LooseValue<
-					T.RequiredParameter | T.OptionalParameter,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>[]
+				element:
+					| T.FormalParametersElements.Loose
+					| LooseValue<T.RequiredParameter | T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.FormalParametersElements.Loose
+					| LooseValue<T.RequiredParameter | T.OptionalParameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
 		  ];
 	export type Kind = TSKindId.FormalParametersElements;
 }
@@ -22460,43 +21980,7 @@ export namespace EnumBodyElementName {
 			T.AdmittedNodes
 		>
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			| (
-					| T.PropertyIdentifier
-					| TSKindId.DeclareKeyword
-					| TSKindId.NamespaceKeyword
-					| TSKindId.TypeKeyword
-					| TSKindId.PublicKeyword
-					| TSKindId.PrivateKeyword
-					| TSKindId.ProtectedKeyword
-					| TSKindId.OverrideKeyword
-					| TSKindId.ReadonlyKeyword
-					| TSKindId.ModuleKeyword
-					| TSKindId.AnyKeyword
-					| TSKindId.NumberKeyword
-					| TSKindId.BooleanKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.SymbolKeyword
-					| TSKindId.ExportKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.NewKeyword
-					| TSKindId.GetKeyword
-					| TSKindId.SetKeyword
-					| TSKindId.AsyncKeyword
-					| TSKindId.StaticKeyword
-					| TSKindId.LetKeyword
-					| T.PrivatePropertyIdentifier
-					| T.String
-					| T.Number
-					| T.ComputedPropertyName
-			  )
-			| T.PropertyIdentifier.Types,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.EnumBodyElementName.Loose];
 	export type Kind = TSKindId.EnumBodyElementName;
 }
 export namespace EnumBodyElements {
@@ -22525,13 +22009,23 @@ export namespace EnumBodyElements {
 		  ];
 	export type LooseArgs =
 		| [
-				element: LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				element:
+					| T.EnumBodyElements.Loose
+					| LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.EnumBodyElements.Loose
+					| LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element: LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				element:
+					| T.EnumBodyElements.Loose
+					| LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.EnumBodyElements.Loose
+					| LooseValue<T.EnumBodyElement, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
 		  ];
 	export type Kind = TSKindId.EnumBodyElements;
 }
@@ -22561,13 +22055,23 @@ export namespace Types {
 		  ];
 	export type LooseArgs =
 		| [
-				element: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				element:
+					| T.Types.Loose
+					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.Types.Loose
+					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				element:
+					| T.Types.Loose
+					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.Types.Loose
+					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
 		  ];
 	export type Kind = TSKindId.Types;
 }
@@ -22597,33 +22101,43 @@ export namespace TypeParametersElements {
 		  ];
 	export type LooseArgs =
 		| [
-				element: LooseValue<
-					T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>,
-				...elements: LooseValue<
-					T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>[]
+				element:
+					| T.TypeParametersElements.Loose
+					| LooseValue<
+							T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >,
+				...elements: (
+					| T.TypeParametersElements.Loose
+					| LooseValue<
+							T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element: LooseValue<
-					T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>,
-				...elements: LooseValue<
-					T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>[]
+				element:
+					| T.TypeParametersElements.Loose
+					| LooseValue<
+							T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >,
+				...elements: (
+					| T.TypeParametersElements.Loose
+					| LooseValue<
+							T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
 		  ];
 	export type Kind = TSKindId.TypeParametersElements;
 }
@@ -22665,33 +22179,63 @@ export namespace TupleTypeMembers {
 		  ];
 	export type LooseArgs =
 		| [
-				element: LooseValue<
-					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>,
-				...elements: LooseValue<
-					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>[]
+				element:
+					| T.TupleTypeMembers.Loose
+					| LooseValue<
+							| T.TupleParameter
+							| T.OptionalTupleParameter
+							| T.OptionalType
+							| T.RestType
+							| T.Type
+							| T.TypeIdentifier.Types,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >,
+				...elements: (
+					| T.TupleTypeMembers.Loose
+					| LooseValue<
+							| T.TupleParameter
+							| T.OptionalTupleParameter
+							| T.OptionalType
+							| T.RestType
+							| T.Type
+							| T.TypeIdentifier.Types,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
 		  ]
 		| [
 				options: { delimiter?: Delimiter.None | Delimiter.Trailing },
-				element: LooseValue<
-					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>,
-				...elements: LooseValue<
-					T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>[]
+				element:
+					| T.TupleTypeMembers.Loose
+					| LooseValue<
+							| T.TupleParameter
+							| T.OptionalTupleParameter
+							| T.OptionalType
+							| T.RestType
+							| T.Type
+							| T.TypeIdentifier.Types,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >,
+				...elements: (
+					| T.TupleTypeMembers.Loose
+					| LooseValue<
+							| T.TupleParameter
+							| T.OptionalTupleParameter
+							| T.OptionalType
+							| T.RestType
+							| T.Type
+							| T.TypeIdentifier.Types,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
 		  ];
 	export type Kind = TSKindId.TupleTypeMembers;
 }
@@ -22708,9 +22252,7 @@ export namespace ImportClauseGroup {
 	export type Loose = LooseFor<TSKindId.ImportClauseGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportClauseGroup>;
 	export type BuildArgs = [value: AdmitBound<T.NamespaceImport | T.NamedImports, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<T.NamespaceImport | T.NamedImports, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.ImportClauseGroup.Loose];
 	export type Kind = TSKindId.ImportClauseGroup;
 }
 export namespace CatchClauseGroup {
@@ -22726,11 +22268,7 @@ export namespace CatchClauseGroup {
 	export type Loose = LooseFor<TSKindId.CatchClauseGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CatchClauseGroup>;
 	export type BuildArgs = [config: ConfigOf<T.CatchClauseGroup, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.CatchClauseGroup, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.CatchClauseGroup, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.CatchClauseGroup.Loose];
 	export type Kind = TSKindId.CatchClauseGroup;
 }
 export namespace AmbientDeclarationGlobal {
@@ -22746,7 +22284,7 @@ export namespace AmbientDeclarationGlobal {
 	export type Loose = LooseFor<TSKindId.AmbientDeclarationGlobal>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AmbientDeclarationGlobal>;
 	export type BuildArgs = [value: AdmitBound<T.StatementBlock, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.StatementBlock, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.AmbientDeclarationGlobal.Loose];
 	export type Kind = TSKindId.AmbientDeclarationGlobal;
 }
 export namespace AmbientDeclarationModule {
@@ -22766,15 +22304,7 @@ export namespace AmbientDeclarationModule {
 		config: OmitEach<ConfigOf<T.AmbientDeclarationModule, T.NamespaceMap>, 'terminator'>,
 		options?: T.AmbientDeclarationModule.Options
 	];
-	export type LooseArgs = [
-		config:
-			| OmitEach<
-					LooseConfigOf<T.AmbientDeclarationModule, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
-					'terminator'
-			  >
-			| AdmitBound<T.AmbientDeclarationModule, T.AdmittedNodes>,
-		options?: T.AmbientDeclarationModule.Options
-	];
+	export type LooseArgs = [config: T.AmbientDeclarationModule.Loose, options?: T.AmbientDeclarationModule.Options];
 	export type Kind = TSKindId.AmbientDeclarationModule;
 }
 export namespace ObjectTypeContent {
@@ -22840,56 +22370,66 @@ export namespace ObjectTypeContent {
 		  ];
 	export type LooseArgs =
 		| [
-				element: LooseValue<
-					| T.ExportStatement
-					| T.PropertySignature
-					| T.CallSignature
-					| T.ConstructSignature
-					| T.IndexSignature
-					| T.MethodSignature,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>,
-				...elements: LooseValue<
-					| T.ExportStatement
-					| T.PropertySignature
-					| T.CallSignature
-					| T.ConstructSignature
-					| T.IndexSignature
-					| T.MethodSignature,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>[]
+				element:
+					| T.ObjectTypeContent.Loose
+					| LooseValue<
+							| T.ExportStatement
+							| T.PropertySignature
+							| T.CallSignature
+							| T.ConstructSignature
+							| T.IndexSignature
+							| T.MethodSignature,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >,
+				...elements: (
+					| T.ObjectTypeContent.Loose
+					| LooseValue<
+							| T.ExportStatement
+							| T.PropertySignature
+							| T.CallSignature
+							| T.ConstructSignature
+							| T.IndexSignature
+							| T.MethodSignature,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
 		  ]
 		| [
 				options: {
 					separator?: TSKindId.Comma | TSKindId.Semi;
 					delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 				},
-				element: LooseValue<
-					| T.ExportStatement
-					| T.PropertySignature
-					| T.CallSignature
-					| T.ConstructSignature
-					| T.IndexSignature
-					| T.MethodSignature,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>,
-				...elements: LooseValue<
-					| T.ExportStatement
-					| T.PropertySignature
-					| T.CallSignature
-					| T.ConstructSignature
-					| T.IndexSignature
-					| T.MethodSignature,
-					T.LeafScalarMap,
-					T.LeafStringMap,
-					T.NamespaceMap
-				>[]
+				element:
+					| T.ObjectTypeContent.Loose
+					| LooseValue<
+							| T.ExportStatement
+							| T.PropertySignature
+							| T.CallSignature
+							| T.ConstructSignature
+							| T.IndexSignature
+							| T.MethodSignature,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >,
+				...elements: (
+					| T.ObjectTypeContent.Loose
+					| LooseValue<
+							| T.ExportStatement
+							| T.PropertySignature
+							| T.CallSignature
+							| T.ConstructSignature
+							| T.IndexSignature
+							| T.MethodSignature,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+					  >
+				)[]
 		  ];
 	export type Kind = TSKindId.ObjectTypeContent;
 }
@@ -22911,7 +22451,7 @@ export namespace ExportStatementNamespaceExport {
 		options?: T.ExportStatementNamespaceExport.Options
 	];
 	export type LooseArgs = [
-		value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		value: T.ExportStatementNamespaceExport.Loose,
 		options?: T.ExportStatementNamespaceExport.Options
 	];
 	export type Kind = TSKindId.ExportStatementNamespaceExport;
@@ -22933,15 +22473,7 @@ export namespace ExportStatementTypeExport {
 		config?: Partial<OmitEach<ConfigOf<T.ExportStatementTypeExport, T.NamespaceMap>, 'terminator'>>,
 		options?: T.ExportStatementTypeExport.Options
 	];
-	export type LooseArgs = [
-		config?:
-			| OmitEach<
-					LooseConfigOf<T.ExportStatementTypeExport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
-					'terminator'
-			  >
-			| AdmitBound<T.ExportStatementTypeExport, T.AdmittedNodes>,
-		options?: T.ExportStatementTypeExport.Options
-	];
+	export type LooseArgs = [config?: T.ExportStatementTypeExport.Loose, options?: T.ExportStatementTypeExport.Options];
 	export type Kind = TSKindId.ExportStatementTypeExport;
 }
 export namespace ExportStatementEqualsExport {
@@ -22961,10 +22493,7 @@ export namespace ExportStatementEqualsExport {
 		value: AdmitBound<T.Expression, T.AdmittedNodes>,
 		options?: T.ExportStatementEqualsExport.Options
 	];
-	export type LooseArgs = [
-		value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		options?: T.ExportStatementEqualsExport.Options
-	];
+	export type LooseArgs = [value: T.ExportStatementEqualsExport.Loose, options?: T.ExportStatementEqualsExport.Options];
 	export type Kind = TSKindId.ExportStatementEqualsExport;
 }
 export namespace CommentLine {
@@ -22980,7 +22509,7 @@ export namespace CommentLine {
 	export type Loose = LooseFor<TSKindId.CommentLine>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CommentLine>;
 	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.CommentLine.Loose];
 	export type Kind = TSKindId.CommentLine;
 }
 export namespace CommentBlock {
@@ -22996,7 +22525,7 @@ export namespace CommentBlock {
 	export type Loose = LooseFor<TSKindId.CommentBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CommentBlock>;
 	export type BuildArgs = [value: AdmitBound<string, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.CommentBlock.Loose];
 	export type Kind = TSKindId.CommentBlock;
 }
 export namespace LiteralTypeNegativeNumber {
@@ -23012,11 +22541,7 @@ export namespace LiteralTypeNegativeNumber {
 	export type Loose = LooseFor<TSKindId.LiteralTypeNegativeNumber>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LiteralTypeNegativeNumber>;
 	export type BuildArgs = [config: ConfigOf<T.LiteralTypeNegativeNumber, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.LiteralTypeNegativeNumber, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.LiteralTypeNegativeNumber, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.LiteralTypeNegativeNumber.Loose];
 	export type Kind = TSKindId.LiteralTypeNegativeNumber;
 }
 export namespace NumberHex {
@@ -23040,10 +22565,7 @@ export namespace NumberHex {
 		{ content: number | bigint }
 	>;
 	export type BuildArgs = [value: AdmitBound<string | number | bigint, T.AdmittedNodes>, options?: T.NumberHex.Options];
-	export type LooseArgs = [
-		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		options?: T.NumberHex.Options
-	];
+	export type LooseArgs = [value: T.NumberHex.Loose, options?: T.NumberHex.Options];
 	export type Kind = TSKindId.NumberHex;
 }
 export namespace NumberFloatPoint {
@@ -23079,15 +22601,7 @@ export namespace NumberFloatPoint {
 		>,
 		options?: T.NumberFloatPoint.Options
 	];
-	export type LooseArgs = [
-		config:
-			| WidenNumeric<
-					OmitEach<LooseConfigOf<T.NumberFloatPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>, 'marker'>,
-					{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
-			  >
-			| AdmitBound<T.NumberFloatPoint, T.AdmittedNodes>,
-		options?: T.NumberFloatPoint.Options
-	];
+	export type LooseArgs = [config: T.NumberFloatPoint.Loose, options?: T.NumberFloatPoint.Options];
 	export type Kind = TSKindId.NumberFloatPoint;
 }
 export namespace NumberFloatLeadingPoint {
@@ -23123,18 +22637,7 @@ export namespace NumberFloatLeadingPoint {
 		>,
 		options?: T.NumberFloatLeadingPoint.Options
 	];
-	export type LooseArgs = [
-		config:
-			| WidenNumeric<
-					OmitEach<
-						LooseConfigOf<T.NumberFloatLeadingPoint, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
-						'marker'
-					>,
-					{ fraction: number | bigint; exponent: number | bigint }
-			  >
-			| AdmitBound<T.NumberFloatLeadingPoint, T.AdmittedNodes>,
-		options?: T.NumberFloatLeadingPoint.Options
-	];
+	export type LooseArgs = [config: T.NumberFloatLeadingPoint.Loose, options?: T.NumberFloatLeadingPoint.Options];
 	export type Kind = TSKindId.NumberFloatLeadingPoint;
 }
 export namespace NumberFloatScientific {
@@ -23170,18 +22673,7 @@ export namespace NumberFloatScientific {
 		>,
 		options?: T.NumberFloatScientific.Options
 	];
-	export type LooseArgs = [
-		config:
-			| WidenNumeric<
-					OmitEach<
-						LooseConfigOf<T.NumberFloatScientific, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
-						'marker'
-					>,
-					{ integer: number | bigint; exponent: number | bigint }
-			  >
-			| AdmitBound<T.NumberFloatScientific, T.AdmittedNodes>,
-		options?: T.NumberFloatScientific.Options
-	];
+	export type LooseArgs = [config: T.NumberFloatScientific.Loose, options?: T.NumberFloatScientific.Options];
 	export type Kind = TSKindId.NumberFloatScientific;
 }
 export namespace NumberBinary {
@@ -23208,10 +22700,7 @@ export namespace NumberBinary {
 		value: AdmitBound<string | number | bigint, T.AdmittedNodes>,
 		options?: T.NumberBinary.Options
 	];
-	export type LooseArgs = [
-		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		options?: T.NumberBinary.Options
-	];
+	export type LooseArgs = [value: T.NumberBinary.Loose, options?: T.NumberBinary.Options];
 	export type Kind = TSKindId.NumberBinary;
 }
 export namespace NumberOctal {
@@ -23238,10 +22727,7 @@ export namespace NumberOctal {
 		value: AdmitBound<string | number | bigint, T.AdmittedNodes>,
 		options?: T.NumberOctal.Options
 	];
-	export type LooseArgs = [
-		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-		options?: T.NumberOctal.Options
-	];
+	export type LooseArgs = [value: T.NumberOctal.Loose, options?: T.NumberOctal.Options];
 	export type Kind = TSKindId.NumberOctal;
 }
 export namespace NumberBigintHex {
@@ -23261,9 +22747,7 @@ export namespace NumberBigintHex {
 		| bigint;
 	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintHex>, { content: number | bigint }>;
 	export type BuildArgs = [value: AdmitBound<string | number | bigint, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.NumberBigintHex.Loose];
 	export type Kind = TSKindId.NumberBigintHex;
 }
 export namespace NumberBigintBinary {
@@ -23283,9 +22767,7 @@ export namespace NumberBigintBinary {
 		| bigint;
 	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintBinary>, { content: number | bigint }>;
 	export type BuildArgs = [value: AdmitBound<string | number | bigint, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.NumberBigintBinary.Loose];
 	export type Kind = TSKindId.NumberBigintBinary;
 }
 export namespace NumberBigintOctal {
@@ -23305,9 +22787,7 @@ export namespace NumberBigintOctal {
 		| bigint;
 	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintOctal>, { content: number | bigint }>;
 	export type BuildArgs = [value: AdmitBound<string | number | bigint, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.NumberBigintOctal.Loose];
 	export type Kind = TSKindId.NumberBigintOctal;
 }
 export namespace NumberBigintDecimal {
@@ -23327,9 +22807,7 @@ export namespace NumberBigintDecimal {
 		| bigint;
 	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintDecimal>, { content: number | bigint }>;
 	export type BuildArgs = [value: AdmitBound<string | number | bigint, T.AdmittedNodes>];
-	export type LooseArgs = [
-		value: LooseValue<string | number | bigint, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-	];
+	export type LooseArgs = [value: T.NumberBigintDecimal.Loose];
 	export type Kind = TSKindId.NumberBigintDecimal;
 }
 export namespace BinaryExpressionIn {
@@ -23345,11 +22823,7 @@ export namespace BinaryExpressionIn {
 	export type Loose = LooseFor<TSKindId.BinaryExpressionIn>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BinaryExpressionIn>;
 	export type BuildArgs = [config: ConfigOf<T.BinaryExpressionIn, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.BinaryExpressionIn, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.BinaryExpressionIn, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.BinaryExpressionIn.Loose];
 	export type Kind = TSKindId.BinaryExpressionIn;
 }
 export namespace ClassBodyMemberMethod {
@@ -23369,15 +22843,7 @@ export namespace ClassBodyMemberMethod {
 		config: OmitEach<ConfigOf<T.ClassBodyMemberMethod, T.NamespaceMap>, 'terminator'>,
 		options?: T.ClassBodyMemberMethod.Options
 	];
-	export type LooseArgs = [
-		config:
-			| OmitEach<
-					LooseConfigOf<T.ClassBodyMemberMethod, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>,
-					'terminator'
-			  >
-			| AdmitBound<T.ClassBodyMemberMethod, T.AdmittedNodes>,
-		options?: T.ClassBodyMemberMethod.Options
-	];
+	export type LooseArgs = [config: T.ClassBodyMemberMethod.Loose, options?: T.ClassBodyMemberMethod.Options];
 	export type Kind = TSKindId.ClassBodyMemberMethod;
 }
 export namespace ClassBodyMemberMethodSig {
@@ -23393,11 +22859,7 @@ export namespace ClassBodyMemberMethodSig {
 	export type Loose = LooseFor<TSKindId.ClassBodyMemberMethodSig>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassBodyMemberMethodSig>;
 	export type BuildArgs = [config: ConfigOf<T.ClassBodyMemberMethodSig, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ClassBodyMemberMethodSig, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ClassBodyMemberMethodSig, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ClassBodyMemberMethodSig.Loose];
 	export type Kind = TSKindId.ClassBodyMemberMethodSig;
 }
 export namespace ClassBodyMemberDeclaration {
@@ -23420,15 +22882,7 @@ export namespace ClassBodyMemberDeclaration {
 		>,
 		options?: T.ClassBodyMemberDeclaration.Options
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>,
-		options?: T.ClassBodyMemberDeclaration.Options
-	];
+	export type LooseArgs = [value: T.ClassBodyMemberDeclaration.Loose, options?: T.ClassBodyMemberDeclaration.Options];
 	export type Kind = TSKindId.ClassBodyMemberDeclaration;
 }
 export namespace IndexSignatureColon {
@@ -23444,11 +22898,7 @@ export namespace IndexSignatureColon {
 	export type Loose = LooseFor<TSKindId.IndexSignatureColon>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IndexSignatureColon>;
 	export type BuildArgs = [config: ConfigOf<T.IndexSignatureColon, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.IndexSignatureColon, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.IndexSignatureColon, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.IndexSignatureColon.Loose];
 	export type Kind = TSKindId.IndexSignatureColon;
 }
 export namespace IndexSignatureMappedTypeClause {
@@ -23464,11 +22914,7 @@ export namespace IndexSignatureMappedTypeClause {
 	export type Loose = LooseFor<TSKindId.IndexSignatureMappedTypeClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.IndexSignatureMappedTypeClause>;
 	export type BuildArgs = [config: ConfigOf<T.IndexSignatureMappedTypeClause, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.IndexSignatureMappedTypeClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.IndexSignatureMappedTypeClause, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.IndexSignatureMappedTypeClause.Loose];
 	export type Kind = TSKindId.IndexSignatureMappedTypeClause;
 }
 export namespace ImportStatementClauseFrom {
@@ -23484,11 +22930,7 @@ export namespace ImportStatementClauseFrom {
 	export type Loose = LooseFor<TSKindId.ImportStatementClauseFrom>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportStatementClauseFrom>;
 	export type BuildArgs = [config: ConfigOf<T.ImportStatementClauseFrom, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ImportStatementClauseFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ImportStatementClauseFrom, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ImportStatementClauseFrom.Loose];
 	export type Kind = TSKindId.ImportStatementClauseFrom;
 }
 export namespace YieldExpressionDelegate {
@@ -23504,7 +22946,7 @@ export namespace YieldExpressionDelegate {
 	export type Loose = LooseFor<TSKindId.YieldExpressionDelegate>;
 	export type LooseConfig = LooseConfigFor<TSKindId.YieldExpressionDelegate>;
 	export type BuildArgs = [value: AdmitBound<T.Expression, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.YieldExpressionDelegate.Loose];
 	export type Kind = TSKindId.YieldExpressionDelegate;
 }
 export namespace ImportSpecifierName {
@@ -23520,11 +22962,7 @@ export namespace ImportSpecifierName {
 	export type Loose = LooseFor<TSKindId.ImportSpecifierName>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportSpecifierName>;
 	export type BuildArgs = [config: ConfigOf<T.ImportSpecifierName, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ImportSpecifierName, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ImportSpecifierName, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ImportSpecifierName.Loose];
 	export type Kind = TSKindId.ImportSpecifierName;
 }
 export namespace ImportSpecifierAs {
@@ -23540,11 +22978,7 @@ export namespace ImportSpecifierAs {
 	export type Loose = LooseFor<TSKindId.ImportSpecifierAs>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportSpecifierAs>;
 	export type BuildArgs = [config: ConfigOf<T.ImportSpecifierAs, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ImportSpecifierAs, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ImportSpecifierAs, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ImportSpecifierAs.Loose];
 	export type Kind = TSKindId.ImportSpecifierAs;
 }
 export namespace ParenthesizedExpressionTyped {
@@ -23560,11 +22994,7 @@ export namespace ParenthesizedExpressionTyped {
 	export type Loose = LooseFor<TSKindId.ParenthesizedExpressionTyped>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedExpressionTyped>;
 	export type BuildArgs = [config: ConfigOf<T.ParenthesizedExpressionTyped, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ParenthesizedExpressionTyped, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ParenthesizedExpressionTyped, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ParenthesizedExpressionTyped.Loose];
 	export type Kind = TSKindId.ParenthesizedExpressionTyped;
 }
 export namespace ParenthesizedExpressionSequence {
@@ -23580,7 +23010,7 @@ export namespace ParenthesizedExpressionSequence {
 	export type Loose = LooseFor<TSKindId.ParenthesizedExpressionSequence>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedExpressionSequence>;
 	export type BuildArgs = [value: AdmitBound<T.SequenceExpression, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.SequenceExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.ParenthesizedExpressionSequence.Loose];
 	export type Kind = TSKindId.ParenthesizedExpressionSequence;
 }
 export namespace CallExpressionCall {
@@ -23596,11 +23026,7 @@ export namespace CallExpressionCall {
 	export type Loose = LooseFor<TSKindId.CallExpressionCall>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CallExpressionCall>;
 	export type BuildArgs = [config: ConfigOf<T.CallExpressionCall, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.CallExpressionCall, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.CallExpressionCall, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.CallExpressionCall.Loose];
 	export type Kind = TSKindId.CallExpressionCall;
 }
 export namespace CallExpressionTemplateCall {
@@ -23616,11 +23042,7 @@ export namespace CallExpressionTemplateCall {
 	export type Loose = LooseFor<TSKindId.CallExpressionTemplateCall>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CallExpressionTemplateCall>;
 	export type BuildArgs = [config: ConfigOf<T.CallExpressionTemplateCall, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.CallExpressionTemplateCall, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.CallExpressionTemplateCall, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.CallExpressionTemplateCall.Loose];
 	export type Kind = TSKindId.CallExpressionTemplateCall;
 }
 export namespace CallExpressionMember {
@@ -23636,11 +23058,7 @@ export namespace CallExpressionMember {
 	export type Loose = LooseFor<TSKindId.CallExpressionMember>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CallExpressionMember>;
 	export type BuildArgs = [config: ConfigOf<T.CallExpressionMember, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.CallExpressionMember, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.CallExpressionMember, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.CallExpressionMember.Loose];
 	export type Kind = TSKindId.CallExpressionMember;
 }
 export namespace StringDouble {
@@ -23659,12 +23077,10 @@ export namespace StringDouble {
 		...children: AdmitBound<(T.UnescapedDoubleStringFragment | T.EscapeSequence)[], T.AdmittedNodes>
 	];
 	export type LooseArgs = [
-		...children: LooseValue<
-			T.UnescapedDoubleStringFragment | T.EscapeSequence,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
+		...children: (
+			| T.StringDouble.Loose
+			| LooseValue<T.UnescapedDoubleStringFragment | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
 	];
 	export type Kind = TSKindId.StringDouble;
 }
@@ -23684,12 +23100,10 @@ export namespace StringSingle {
 		...children: AdmitBound<(T.UnescapedSingleStringFragment | T.EscapeSequence)[], T.AdmittedNodes>
 	];
 	export type LooseArgs = [
-		...children: LooseValue<
-			T.UnescapedSingleStringFragment | T.EscapeSequence,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>[]
+		...children: (
+			| T.StringSingle.Loose
+			| LooseValue<T.UnescapedSingleStringFragment | T.EscapeSequence, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+		)[]
 	];
 	export type Kind = TSKindId.StringSingle;
 }
@@ -23706,11 +23120,7 @@ export namespace UpdateExpressionPostfix {
 	export type Loose = LooseFor<TSKindId.UpdateExpressionPostfix>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UpdateExpressionPostfix>;
 	export type BuildArgs = [config: ConfigOf<T.UpdateExpressionPostfix, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.UpdateExpressionPostfix, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.UpdateExpressionPostfix, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.UpdateExpressionPostfix.Loose];
 	export type Kind = TSKindId.UpdateExpressionPostfix;
 }
 export namespace UpdateExpressionPrefix {
@@ -23726,11 +23136,7 @@ export namespace UpdateExpressionPrefix {
 	export type Loose = LooseFor<TSKindId.UpdateExpressionPrefix>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UpdateExpressionPrefix>;
 	export type BuildArgs = [config: ConfigOf<T.UpdateExpressionPrefix, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.UpdateExpressionPrefix, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.UpdateExpressionPrefix, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.UpdateExpressionPrefix.Loose];
 	export type Kind = TSKindId.UpdateExpressionPrefix;
 }
 export namespace ArrowFunctionParameter {
@@ -23773,36 +23179,7 @@ export namespace ArrowFunctionParameter {
 			T.AdmittedNodes
 		>
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword
-			| T.Identifier,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.ArrowFunctionParameter.Loose];
 	export type Kind = TSKindId.ArrowFunctionParameter;
 }
 export namespace ClassHeritageExtendsClause {
@@ -23818,11 +23195,7 @@ export namespace ClassHeritageExtendsClause {
 	export type Loose = LooseFor<TSKindId.ClassHeritageExtendsClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClassHeritageExtendsClause>;
 	export type BuildArgs = [config: ConfigOf<T.ClassHeritageExtendsClause, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ClassHeritageExtendsClause, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ClassHeritageExtendsClause, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ClassHeritageExtendsClause.Loose];
 	export type Kind = TSKindId.ClassHeritageExtendsClause;
 }
 export namespace ImportClauseDefaultImport {
@@ -23838,11 +23211,7 @@ export namespace ImportClauseDefaultImport {
 	export type Loose = LooseFor<TSKindId.ImportClauseDefaultImport>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportClauseDefaultImport>;
 	export type BuildArgs = [config: ConfigOf<T.ImportClauseDefaultImport, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ImportClauseDefaultImport, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ImportClauseDefaultImport, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ImportClauseDefaultImport.Loose];
 	export type Kind = TSKindId.ImportClauseDefaultImport;
 }
 export namespace ExportStatementDefaultFrom {
@@ -23868,18 +23237,7 @@ export namespace ExportStatementDefaultFrom {
 		>,
 		options?: T.ExportStatementDefaultFrom.Options
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			| T.ExportStatementDefaultFromStarFrom
-			| T.ExportStatementDefaultFromNsFrom
-			| T.ExportStatementDefaultFromClauseFrom
-			| T.ExportClause,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>,
-		options?: T.ExportStatementDefaultFrom.Options
-	];
+	export type LooseArgs = [value: T.ExportStatementDefaultFrom.Loose, options?: T.ExportStatementDefaultFrom.Options];
 	export type Kind = TSKindId.ExportStatementDefaultFrom;
 }
 export namespace ExportStatementDefaultDeclaration {
@@ -23895,11 +23253,7 @@ export namespace ExportStatementDefaultDeclaration {
 	export type Loose = LooseFor<TSKindId.ExportStatementDefaultDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultDeclaration>;
 	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultDeclaration, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ExportStatementDefaultDeclaration, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ExportStatementDefaultDeclaration, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ExportStatementDefaultDeclaration.Loose];
 	export type Kind = TSKindId.ExportStatementDefaultDeclaration;
 }
 export namespace ExportStatementDefaultFromStarFrom {
@@ -23915,7 +23269,7 @@ export namespace ExportStatementDefaultFromStarFrom {
 	export type Loose = LooseFor<TSKindId.ExportStatementDefaultFromStarFrom>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultFromStarFrom>;
 	export type BuildArgs = [value: AdmitBound<T.String, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.String, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.ExportStatementDefaultFromStarFrom.Loose];
 	export type Kind = TSKindId.ExportStatementDefaultFromStarFrom;
 }
 export namespace ExportStatementDefaultFromNsFrom {
@@ -23931,11 +23285,7 @@ export namespace ExportStatementDefaultFromNsFrom {
 	export type Loose = LooseFor<TSKindId.ExportStatementDefaultFromNsFrom>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultFromNsFrom>;
 	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultFromNsFrom, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ExportStatementDefaultFromNsFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ExportStatementDefaultFromNsFrom, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ExportStatementDefaultFromNsFrom.Loose];
 	export type Kind = TSKindId.ExportStatementDefaultFromNsFrom;
 }
 export namespace ExportStatementDefaultFromClauseFrom {
@@ -23951,11 +23301,7 @@ export namespace ExportStatementDefaultFromClauseFrom {
 	export type Loose = LooseFor<TSKindId.ExportStatementDefaultFromClauseFrom>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ExportStatementDefaultFromClauseFrom>;
 	export type BuildArgs = [config: ConfigOf<T.ExportStatementDefaultFromClauseFrom, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ExportStatementDefaultFromClauseFrom, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ExportStatementDefaultFromClauseFrom, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ExportStatementDefaultFromClauseFrom.Loose];
 	export type Kind = TSKindId.ExportStatementDefaultFromClauseFrom;
 }
 export namespace ExportStatementDefaultDeclarationDefaultKw {
@@ -23974,14 +23320,7 @@ export namespace ExportStatementDefaultDeclarationDefaultKw {
 	export type BuildArgs = [
 		value: AdmitBound<T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration, T.AdmittedNodes>
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			T.ExportStatementDefaultDeclarationDefaultKwValue | T.Declaration,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.ExportStatementDefaultDeclarationDefaultKw.Loose];
 	export type Kind = TSKindId.ExportStatementDefaultDeclarationDefaultKw;
 }
 export namespace ExportStatementDefaultDeclarationDefaultKwValue {
@@ -24013,7 +23352,7 @@ export namespace ExportStatementDefaultDeclarationDefaultKwValue {
 		options?: T.ExportStatementDefaultDeclarationDefaultKwValue.Options
 	];
 	export type LooseArgs = [
-		value: LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+		value: T.ExportStatementDefaultDeclarationDefaultKwValue.Loose,
 		options?: T.ExportStatementDefaultDeclarationDefaultKwValue.Options
 	];
 	export type Kind = TSKindId.ExportStatementDefaultDeclarationDefaultKwValue;
@@ -24031,11 +23370,7 @@ export namespace VariableDeclaratorPlain {
 	export type Loose = LooseFor<TSKindId.VariableDeclaratorPlain>;
 	export type LooseConfig = LooseConfigFor<TSKindId.VariableDeclaratorPlain>;
 	export type BuildArgs = [config: ConfigOf<T.VariableDeclaratorPlain, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.VariableDeclaratorPlain, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.VariableDeclaratorPlain, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.VariableDeclaratorPlain.Loose];
 	export type Kind = TSKindId.VariableDeclaratorPlain;
 }
 export namespace VariableDeclaratorDefinite {
@@ -24051,11 +23386,7 @@ export namespace VariableDeclaratorDefinite {
 	export type Loose = LooseFor<TSKindId.VariableDeclaratorDefinite>;
 	export type LooseConfig = LooseConfigFor<TSKindId.VariableDeclaratorDefinite>;
 	export type BuildArgs = [config: ConfigOf<T.VariableDeclaratorDefinite, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.VariableDeclaratorDefinite, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.VariableDeclaratorDefinite, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.VariableDeclaratorDefinite.Loose];
 	export type Kind = TSKindId.VariableDeclaratorDefinite;
 }
 export namespace ForHeaderLhs {
@@ -24071,11 +23402,7 @@ export namespace ForHeaderLhs {
 	export type Loose = LooseFor<TSKindId.ForHeaderLhs>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForHeaderLhs>;
 	export type BuildArgs = [config: ConfigOf<T.ForHeaderLhs, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ForHeaderLhs, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ForHeaderLhs, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ForHeaderLhs.Loose];
 	export type Kind = TSKindId.ForHeaderLhs;
 }
 export namespace ForHeaderVarKind {
@@ -24091,11 +23418,7 @@ export namespace ForHeaderVarKind {
 	export type Loose = LooseFor<TSKindId.ForHeaderVarKind>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForHeaderVarKind>;
 	export type BuildArgs = [config: ConfigOf<T.ForHeaderVarKind, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ForHeaderVarKind, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ForHeaderVarKind, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ForHeaderVarKind.Loose];
 	export type Kind = TSKindId.ForHeaderVarKind;
 }
 export namespace ForHeaderLetConstKind {
@@ -24111,11 +23434,7 @@ export namespace ForHeaderLetConstKind {
 	export type Loose = LooseFor<TSKindId.ForHeaderLetConstKind>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ForHeaderLetConstKind>;
 	export type BuildArgs = [config: ConfigOf<T.ForHeaderLetConstKind, T.NamespaceMap>];
-	export type LooseArgs = [
-		config:
-			| LooseConfigOf<T.ForHeaderLetConstKind, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>
-			| AdmitBound<T.ForHeaderLetConstKind, T.AdmittedNodes>
-	];
+	export type LooseArgs = [config: T.ForHeaderLetConstKind.Loose];
 	export type Kind = TSKindId.ForHeaderLetConstKind;
 }
 export namespace StatementIdentifier {
@@ -24182,36 +23501,7 @@ export namespace StatementIdentifier {
 			T.AdmittedNodes
 		>
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.StatementIdentifier.Loose];
 	export type Kind = TSKindId.StatementIdentifier;
 }
 export namespace ShorthandPropertyIdentifier {
@@ -24278,36 +23568,7 @@ export namespace ShorthandPropertyIdentifier {
 			T.AdmittedNodes
 		>
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.ShorthandPropertyIdentifier.Loose];
 	export type Kind = TSKindId.ShorthandPropertyIdentifier;
 }
 export namespace ShorthandPropertyIdentifierPattern {
@@ -24374,36 +23635,7 @@ export namespace ShorthandPropertyIdentifierPattern {
 			T.AdmittedNodes
 		>
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.ShorthandPropertyIdentifierPattern.Loose];
 	export type Kind = TSKindId.ShorthandPropertyIdentifierPattern;
 }
 export namespace PropertyIdentifier {
@@ -24470,36 +23702,7 @@ export namespace PropertyIdentifier {
 			T.AdmittedNodes
 		>
 	];
-	export type LooseArgs = [
-		value: LooseValue<
-			| T.Identifier
-			| TSKindId.DeclareKeyword
-			| TSKindId.NamespaceKeyword
-			| TSKindId.TypeKeyword
-			| TSKindId.PublicKeyword
-			| TSKindId.PrivateKeyword
-			| TSKindId.ProtectedKeyword
-			| TSKindId.OverrideKeyword
-			| TSKindId.ReadonlyKeyword
-			| TSKindId.ModuleKeyword
-			| TSKindId.AnyKeyword
-			| TSKindId.NumberKeyword
-			| TSKindId.BooleanKeyword
-			| TSKindId.StringKeyword
-			| TSKindId.SymbolKeyword
-			| TSKindId.ExportKeyword
-			| TSKindId.ObjectKeyword
-			| TSKindId.NewKeyword
-			| TSKindId.GetKeyword
-			| TSKindId.SetKeyword
-			| TSKindId.AsyncKeyword
-			| TSKindId.StaticKeyword
-			| TSKindId.LetKeyword,
-			T.LeafScalarMap,
-			T.LeafStringMap,
-			T.NamespaceMap
-		>
-	];
+	export type LooseArgs = [value: T.PropertyIdentifier.Loose];
 	export type Kind = TSKindId.PropertyIdentifier;
 }
 export namespace TypeIdentifier {
@@ -24516,7 +23719,7 @@ export namespace TypeIdentifier {
 	export type Loose = LooseFor<TSKindId.TypeIdentifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.TypeIdentifier>;
 	export type BuildArgs = [value: AdmitBound<T.Identifier, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.TypeIdentifier.Loose];
 	export type Kind = TSKindId.TypeIdentifier;
 }
 export namespace InterfaceBody {
@@ -24533,7 +23736,7 @@ export namespace InterfaceBody {
 	export type Loose = LooseFor<TSKindId.InterfaceBody>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InterfaceBody>;
 	export type BuildArgs = [value: AdmitBound<T.ObjectType, T.AdmittedNodes>];
-	export type LooseArgs = [value: LooseValue<T.ObjectType, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>];
+	export type LooseArgs = [value: T.InterfaceBody.Loose];
 	export type Kind = TSKindId.InterfaceBody;
 }
 export namespace Import {

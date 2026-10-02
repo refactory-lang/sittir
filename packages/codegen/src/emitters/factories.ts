@@ -76,6 +76,8 @@ import {
 	registeredSlots,
 	withEmptyOverload,
 	listRestParamType,
+	resolvesLooseInput,
+	looseElementType,
 	pruneUnusedImports
 } from './shared.ts';
 import {
@@ -876,6 +878,11 @@ function renderSurfaceParams(param: FactoryParam): {
 	};
 }
 
+function coercedChildElementType(slot: AssembledNonterminal, nodeMap: NodeMap): string {
+	const elementType = childElementType({ children: [slot] }, nodeMap);
+	return resolvesLooseInput(slot, nodeMap) ? looseElementType(elementType, slot, nodeMap) : elementType;
+}
+
 function paramsToTuple(params: string): string {
 	return `[${declarationParams(params)}]`;
 }
@@ -956,6 +963,7 @@ function resolveConfigFactorySurface(
 				rest: true,
 				strictType: `${elementType}[]`,
 				looseType: `${looseValueOf(elementType)}[]`,
+				rowLooseType: `(${[`T.${node.typeName}.Loose`, ...new Set([elementType, coercedChildElementType(spreadFacts.slot, nodeMap)].map(looseValueOf))].join(' | ')})[]`,
 				admitsNodes: true
 			};
 			return {
@@ -975,6 +983,7 @@ function resolveConfigFactorySurface(
 			rest: false,
 			strictType: elementType,
 			looseType: looseValueOf(elementType),
+			rowLooseType: `T.${node.typeName}.Loose`,
 			admitsNodes: true
 		};
 		return {
@@ -1000,6 +1009,7 @@ function resolveConfigFactorySurface(
 			rest: false,
 			strictType: elemType,
 			looseType: looseValueOf(elemType),
+			rowLooseType: `T.${node.typeName}.Loose`,
 			admitsNodes: true
 		};
 		return {
@@ -1026,7 +1036,6 @@ function resolveConfigFactorySurface(
 		strictType: allOptional ? `Partial<${widen(configType)}>` : widen(configType),
 		looseType: `T.${node.typeName}.Loose`,
 		rowStrictType: allOptional ? `Partial<${widen(omitRegistered(`ConfigOf<T.${node.typeName}, T.NamespaceMap>`, node))}>` : widen(omitRegistered(`ConfigOf<T.${node.typeName}, T.NamespaceMap>`, node)),
-		rowLooseType: `${widen(omitRegistered(`LooseConfigOf<T.${node.typeName}, T.LeafScalarMap, T.LeafStringMap, [], T.NamespaceMap>`, node))} | AdmitBound<T.${node.typeName}, T.AdmittedNodes>`,
 		...(allOptional ? { defaultValue: '{}' } : {})
 	};
 	return {
@@ -1936,7 +1945,7 @@ function listBuiltTypeSurface(
 		members: extraMembers,
 		setters,
 		buildArgs: listRestParamType(node.nonEmpty, element(surface.strictElemType, 'BuildArgs'), surface.optionsType, surface.separatorRequired),
-		looseArgs: listRestParamType(node.nonEmpty, element(looseValueOf(surface.looseElemTypeForArray), 'LooseArgs'), surface.optionsType, surface.separatorRequired),
+		looseArgs: listRestParamType(node.nonEmpty, element(`T.${node.typeName}.Loose | ${looseValueOf(surface.looseElemTypeForArray)}`, 'LooseArgs'), surface.optionsType, surface.separatorRequired),
 		maxArgs: undefined
 	};
 }

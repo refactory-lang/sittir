@@ -1589,9 +1589,10 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
  * they differ ONLY in how the final call expression is built from a resolved
  * variable name, which `buildCallExpr` parameterizes.
  *
- * The rest element is typed `T.<Kind>.Loose | LooseValue<Element>` — the kind's
- * own loose forms (its config bag, itself, a list's bare elements) plus what a
- * slot holding one element admits. Nothing is spelled by hand here: the body
+ * The rest parameter is the kind's `LooseArgs` row, by name. The row is where
+ * the element is spelled (`listBuiltTypeSurface`, `resolveConfigFactorySurface`):
+ * the kind's own loose forms (its config bag, itself, a list's bare elements)
+ * plus what a slot holding one element admits. Nothing is spelled here: the body
  * resolves every element through `_resolveMany`, so the parameter must admit
  * exactly what the slot-level widening admits, tagged bags and bare arms
  * included — a hand-written `Element | Kind | { key: … }` union kept lagging
@@ -1660,7 +1661,7 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
 
 #### options-first list coercer
 
-A separated list types its rest parameter with `listRestParamType` from the list's own cardinality (`AssembledList.nonEmpty`, the same fact the raw builder's non-empty guard reads) and its options. The options object is a spelling only as the first argument, so a later one is a type error. Runtime is unchanged because the list builder already sniffs an options-shaped first argument.
+A separated list's rest parameter is its `LooseArgs` row, which `listBuiltTypeSurface` spells with `listRestParamType` from the list's own cardinality (`AssembledList.nonEmpty`, the same fact the raw builder's non-empty guard reads) and its options. The options object is a spelling only as the first argument, so a later one is a type error. Runtime is unchanged because the list builder already sniffs an options-shaped first argument.
 
 A kind with an empty form gets the zero-argument overload returning `T.Empty<TypeName>` ahead of the rest-parameter signature (`withEmptyOverload`).
 
@@ -1951,7 +1952,7 @@ through untouched and only the elements resolve.
 
 The supertype expansion `from.ts` documents under the same name, shared so the factory emitter's alias admission (`slotAliases`, `slotStoredIds`) expands a slot's kinds exactly as the loose resolver does.
 
-### `packages/codegen/src/emitters/from.ts::classifyKindsForResolver`
+### `packages/codegen/src/emitters/shared.ts::classifyKindsForResolver`
 
 ```text
 /**
@@ -11811,7 +11812,7 @@ last. The arity is a type-level contract only; `_assertNonEmpty` stays behind
 
 ### `packages/codegen/src/emitters/factories.ts::listBuiltTypeSurface`
 
-The construction surface of a separated list. Its `BuildArgs` / `LooseArgs` are every argument list the list's public call takes, spelled by `listRestParamType` exactly as the coercer and the overlay spell it: the elements alone, and the options bag first when the list has options. An element is the list's own element type or, when the list seats a hoisted group (`emittedElementsSeats`), that group's config (`T.<Group>.BuildArgs[0]` / `.LooseArgs[0]`), by name. A kind that forwards to the list unions these rows into its own (`fieldCarryingBuiltTypeSurface`), so an owner's row takes whatever its list's row takes without a second spelling.
+The construction surface of a separated list. Its `BuildArgs` / `LooseArgs` are every argument list the list's public call takes, spelled once here by `listRestParamType`; the coercer takes the `LooseArgs` row by name. The forms are the elements alone, and the options bag first when the list has options. An element is the list's own element type, on the loose row also the list's own `Loose` (the list itself or its config, which the coercer unwraps), or, when the list seats a hoisted group (`emittedElementsSeats`), that group's config (`T.<Group>.BuildArgs[0]` / `.LooseArgs[0]`), by name. A kind that forwards to the list unions these rows into its own (`fieldCarryingBuiltTypeSurface`), so an owner's row takes whatever its list's row takes without a second spelling.
 
 
 ### `packages/codegen/src/emitters/factories.ts::builtTypeSurfaceOf`
@@ -12681,7 +12682,7 @@ The config type the passthrough narrows to gains `string` when the kind accepts 
 // by the caller from the full node; not derivable from `slots` alone.
 ```
 
-### `packages/codegen/src/emitters/from.ts::looseElementType`
+### `packages/codegen/src/emitters/shared.ts::looseElementType`
 
 ```text
 /**
@@ -12692,7 +12693,11 @@ The config type the passthrough narrows to gains `string` when the kind accepts 
  */
 ```
 
-### `packages/codegen/src/emitters/from.ts::resolvesLooseInput`
+### `packages/codegen/src/emitters/factories.ts::coercedChildElementType`
+
+The element a spread kind's coercer resolves for its sole slot: the slot's element type with literal texts where the strict builder takes kind ids, and `string` as well when every kind the slot accepts is a leaf (`looseElementType`). The row reads it so the coercer's accepted elements are in the row; the coercer reads the row.
+
+### `packages/codegen/src/emitters/shared.ts::resolvesLooseInput`
 
 Whether a slot's `from()` coercer resolves loose input rather than passing it to the raw factory as it stands: always
 when the slot has no literal values, and also when it mixes literals with leaf or branch kinds, so a bare string
@@ -16455,6 +16460,8 @@ The call arguments for one sub-factory case, following the arm shapes `shape` em
 ```
 
 ### `packages/codegen/src/emitters/factories.ts::resolveConfigFactorySurface`
+
+The loose row of a kind that takes one argument is that kind's own `Loose`, by name: a config kind's, a single-slot kind's and a single-child kind's alike. `Loose` is what the coercer accepts (the config, the built or parsed node itself, and the bare value of the kind's sole slot), so the row and the coercer's parameter are one type and a wrapper's row takes its target's config with no second spelling. A child of a supertype given as a config must carry its `$type`, because nothing else says which kind it is; the row does not admit an untagged one. A kind that spreads its children takes, per element, its own `Loose`, the strict element widened through `LooseValue`, and the element the coercer resolves (`coercedChildElementType`).
 
 #### body
 
