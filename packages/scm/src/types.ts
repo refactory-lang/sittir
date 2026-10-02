@@ -578,7 +578,7 @@ export interface Parameters {
 	readonly $type: TSKindId.Parameters;
 	readonly _elements: NonEmptyArray<Capture | String | Identifier>;
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<(T.Capture | T.String | T.Identifier)[], false, true>;
+		readonly elements: SlotHint<NonEmptyArray<T.Capture | T.String | T.Identifier>, false, true>;
 	};
 	elements(): NonEmptyArray<Capture | String | Identifier>;
 }

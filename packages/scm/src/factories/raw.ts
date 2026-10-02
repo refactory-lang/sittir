@@ -302,7 +302,7 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 }
 
 export function buildList(config: T.List.Config): T.List.Bound {
-	const _definitions = rejectBareText(config.definitions ?? [], 'List.definitions', 'a built Definition');
+	const _definitions = rejectBareText(config.definitions, 'List.definitions', 'a built Definition');
 	const _elements = rejectBareText(config.elements ?? [], 'List.elements', 'a built ListElement');
 	const handle = currentHandle();
 	const node = {
@@ -330,7 +330,7 @@ export function buildList(config: T.List.Config): T.List.Bound {
 }
 
 export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
-	const _grouping_group = rejectBareText(config.groupingGroup ?? [], 'Grouping.groupingGroup', 'a built GroupingGroup');
+	const _grouping_group = rejectBareText(config.groupingGroup, 'Grouping.groupingGroup', 'a built GroupingGroup');
 	const _elements = rejectBareText(config.elements ?? [], 'Grouping.elements', 'a built ListElement');
 	const handle = currentHandle();
 	const node = {
@@ -749,7 +749,7 @@ export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Con
 		rejectBareText(config.anchor, 'NamedNodeGroupChildren.anchor', 'a boolean')
 	);
 	const _named_node_expressions = rejectBareText(
-		config.namedNodeExpressions ?? [],
+		config.namedNodeExpressions,
 		'NamedNodeGroupChildren.namedNodeExpressions',
 		'a built Definition / NegatedField / NamedNodeExpressionArm'
 	);

@@ -541,7 +541,7 @@ export function buildVariableDeclaration(
 	options?: T.VariableDeclaration.Options
 ): T.VariableDeclaration.Bound {
 	const _declarators = rejectBareText(
-		config.declarators ?? [],
+		config.declarators,
 		'VariableDeclaration.declarators',
 		'a built VariableDeclarator'
 	);
@@ -586,7 +586,7 @@ export function buildLexicalDeclaration(
 		'a kind id'
 	);
 	const _declarators = rejectBareText(
-		config.declarators ?? [],
+		config.declarators,
 		'LexicalDeclaration.declarators',
 		'a built VariableDeclarator'
 	);

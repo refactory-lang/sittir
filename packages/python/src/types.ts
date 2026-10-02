@@ -2358,7 +2358,7 @@ export interface AssertStatement {
 		>;
 	};
 	readonly __slotHints__?: {
-		readonly expressions: SlotHint<T.Expression[], false, true>;
+		readonly expressions: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 	};
 	expressions(): NonEmptyArray<Expression>;
 }
@@ -2810,7 +2810,7 @@ export interface GlobalStatement {
 	readonly $type: TSKindId.GlobalStatement;
 	readonly _names: NonEmptyArray<Identifier>;
 	readonly __slotHints__?: {
-		readonly names: SlotHint<T.Identifier[], false, true>;
+		readonly names: SlotHint<NonEmptyArray<T.Identifier>, false, true>;
 	};
 	names(): NonEmptyArray<Identifier>;
 }
@@ -2819,7 +2819,7 @@ export interface NonlocalStatement {
 	readonly $type: TSKindId.NonlocalStatement;
 	readonly _names: NonEmptyArray<Identifier>;
 	readonly __slotHints__?: {
-		readonly names: SlotHint<T.Identifier[], false, true>;
+		readonly names: SlotHint<NonEmptyArray<T.Identifier>, false, true>;
 	};
 	names(): NonEmptyArray<Identifier>;
 }
@@ -2996,7 +2996,7 @@ export interface DottedName {
 	readonly $type: TSKindId.DottedName;
 	readonly _names: NonEmptyArray<Identifier>;
 	readonly __slotHints__?: {
-		readonly names: SlotHint<T.Identifier[], false, true>;
+		readonly names: SlotHint<NonEmptyArray<T.Identifier>, false, true>;
 	};
 	names(): NonEmptyArray<Identifier>;
 }
@@ -3140,7 +3140,7 @@ export interface UnionPattern {
 	};
 	readonly __slotHints__?: {
 		readonly patterns: SlotHint<
-			(
+			NonEmptyArray<
 				| T.ClassPattern
 				| T.SplatPattern
 				| T.UnionPattern
@@ -3156,7 +3156,7 @@ export interface UnionPattern {
 				| T.ComplexPattern
 				| T.DottedName
 				| TSKindId.WildcardPattern
-			)[],
+			>,
 			false,
 			true,
 			T.SimplePatternNegative.Config
@@ -4367,7 +4367,7 @@ export interface ConcatenatedString {
 	readonly $type: TSKindId.ConcatenatedString;
 	readonly _string: NonEmptyArray<String>;
 	readonly __slotHints__?: {
-		readonly strings: SlotHint<T.String[], false, true>;
+		readonly strings: SlotHint<NonEmptyArray<T.String>, false, true>;
 	};
 	strings(): NonEmptyArray<String>;
 }
@@ -4944,7 +4944,7 @@ export interface ExceptClauseExceptionList {
 		>;
 	};
 	readonly __slotHints__?: {
-		readonly values: SlotHint<T.Expression[], false, true>;
+		readonly values: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 	};
 	values(): NonEmptyArray<Expression>;
 }

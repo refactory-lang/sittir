@@ -11363,7 +11363,7 @@ A slot that can default to its empty form stores `orDefault(<config value>, () =
 
 ### `packages/codegen/src/emitters/factories.ts::defaultedValueExpr`
 
-A slot's value expression with its omission filled: `(<value> ?? [])` for a multiple slot, `orDefault(<value>, () => <default>)` when `emptyDefaultOf` gives the slot a default, and the bare value otherwise. `slotStorageExpr` applies it to a config key; the direct-value surface applies it to `value` when that slot holds fixed text.
+A slot's value expression with its omission filled: `(<value> ?? [])` for a multiple slot (a slot the model marks non-empty is not defaulted: its type requires the value, and an omitted one fails where it is used instead of building an empty required list), `orDefault(<value>, () => <default>)` when `emptyDefaultOf` gives the slot a default, and the bare value otherwise. `slotStorageExpr` applies it to a config key; the direct-value surface applies it to `value` when that slot holds fixed text.
 
 ### `packages/codegen/src/emitters/factories.ts::fieldElementType`
 

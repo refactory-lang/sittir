@@ -12,4 +12,6 @@ export function nonEmptySlotTakesAtLeastOneChild(): void {
 	void ir.parameters.strict(ir.identifier('a'));
 	// @ts-expect-error zero children are refused
 	ir.parameters.strict();
+	// @ts-expect-error the setter of a non-empty slot takes at least one child too
+	ir.parameters.strict(ir.identifier('a')).$with.elements();
 }

@@ -4895,13 +4895,13 @@ export interface FunctionModifiers {
 	};
 	readonly __slotHints__?: {
 		readonly modifiers: SlotHint<
-			(
+			NonEmptyArray<
 				| TSKindId.AsyncKeyword
 				| TSKindId.DefaultKeyword
 				| TSKindId.ConstKeyword
 				| TSKindId.UnsafeKeyword
 				| T.ExternModifier
-			)[],
+			>,
 			false,
 			true
 		>;
@@ -5170,7 +5170,7 @@ export interface TraitBounds {
 	};
 	readonly __slotHints__?: {
 		readonly bounds: SlotHint<
-			((T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types)[],
+			NonEmptyArray<(T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types>,
 			false,
 			true
 		>;

@@ -621,7 +621,7 @@ export interface Alternation {
 	readonly $type: TSKindId.Alternation;
 	readonly _terms: NonEmptyArray<Term | undefined>;
 	readonly __slotHints__?: {
-		readonly terms: SlotHint<T.Term[], false, true>;
+		readonly terms: SlotHint<NonEmptyArray<T.Term>, false, true>;
 	};
 	terms(): NonEmptyArray<Term | undefined>;
 }
@@ -630,7 +630,7 @@ export interface Term {
 	readonly $type: TSKindId.Term;
 	readonly _term_group: NonEmptyArray<TermGroup>;
 	readonly __slotHints__?: {
-		readonly termGroups: SlotHint<T.TermGroup[], false, true>;
+		readonly termGroups: SlotHint<NonEmptyArray<T.TermGroup>, false, true>;
 	};
 	termGroups(): NonEmptyArray<TermGroup>;
 }

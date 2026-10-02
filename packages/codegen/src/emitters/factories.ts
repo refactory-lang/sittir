@@ -656,7 +656,7 @@ function defaultedValueExpr(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
-	if (isMultiple(f)) return `(${valueExpr} ?? [])`;
+	if (isMultiple(f)) return isNonEmpty(f) ? valueExpr : `(${valueExpr} ?? [])`;
 	const emptyDefault = emptyDefaultOf(f, nodeMap, kindEntries);
 	return emptyDefault ? `orDefault(${valueExpr}, () => ${emptyDefault})` : valueExpr;
 }
@@ -750,7 +750,7 @@ function fieldCarryingBuiltTypeSurface(
 		spreadTarget === null ? '' : ` | T.${nodeMap.nodes.get(spreadTarget)!.typeName}.${member}`;
 	let setters: SlotSetter[];
 	if (spreadFacts) {
-		setters = [{ name: spreadFacts.slot.propertyName, input: `${surface.elementType!}[]`, optional: false, rest: true }];
+		setters = [{ name: spreadFacts.slot.propertyName, input: elementsTypeOf(spreadFacts.nonEmpty, surface.elementType!), optional: false, rest: true }];
 	} else if (singleField) {
 		const setterType = setterElemType(singleField, surface.directParamType!, surface.directParamType!, nodeMap, true);
 		setters = [
@@ -1049,24 +1049,16 @@ function resolveConfigFactorySurface(
 		const elementType = constructionChildElementType({ children: [spreadFacts.slot] }, nodeMap, kindEntries);
 		if (spreadFacts.multiple) {
 			const rowLooseElement = [`T.${node.typeName}.Loose`, ...new Set([elementType, coercedChildElementType(spreadFacts.slot, nodeMap)].map(looseValueOf))].join(' | ');
-			const param: FactoryParam = spreadFacts.nonEmpty
-				? {
-						label: 'children',
-						optional: false,
-						rest: true,
-						strictType: elementsTypeOf(true, admitNodes(elementType)),
-						looseType: elementsTypeOf(true, looseValueOf(elementType)),
-						rowLooseType: `(${rowLooseElement})[]`
-					}
-				: {
-						label: 'children',
-						optional: false,
-						rest: true,
-						strictType: `${elementType}[]`,
-						looseType: `${looseValueOf(elementType)}[]`,
-						rowLooseType: `(${rowLooseElement})[]`,
-						admitsNodes: true
-					};
+			const { nonEmpty } = spreadFacts;
+			const param: FactoryParam = {
+				label: 'children',
+				optional: false,
+				rest: true,
+				strictType: elementsTypeOf(nonEmpty, nonEmpty ? admitNodes(elementType) : elementType),
+				looseType: elementsTypeOf(nonEmpty, looseValueOf(elementType)),
+				rowLooseType: `(${rowLooseElement})[]`,
+				...(nonEmpty ? {} : { admitsNodes: true as const })
+			};
 			return {
 				spreadFacts,
 				singleField,

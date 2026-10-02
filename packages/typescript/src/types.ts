@@ -5357,7 +5357,7 @@ export interface SequenceExpression {
 		>;
 	};
 	readonly __slotHints__?: {
-		readonly expressions: SlotHint<T.Expression[], false, true>;
+		readonly expressions: SlotHint<NonEmptyArray<T.Expression>, false, true>;
 	};
 	expressions(): NonEmptyArray<Expression>;
 }
@@ -6908,7 +6908,7 @@ export interface ExtendsClause {
 	readonly $type: TSKindId.ExtendsClause;
 	readonly _extends_clause_single: NonEmptyArray<ExtendsClauseSingle>;
 	readonly __slotHints__?: {
-		readonly extendsClauseSingles: SlotHint<T.ExtendsClauseSingle[], false, true>;
+		readonly extendsClauseSingles: SlotHint<NonEmptyArray<T.ExtendsClauseSingle>, false, true>;
 	};
 	extendsClauseSingles(): NonEmptyArray<ExtendsClauseSingle>;
 }
@@ -6975,7 +6975,7 @@ export interface ImplementsClause {
 		>;
 	};
 	readonly __slotHints__?: {
-		readonly types: SlotHint<(T.Type | T.TypeIdentifier.Types)[], false, true>;
+		readonly types: SlotHint<NonEmptyArray<T.Type | T.TypeIdentifier.Types>, false, true>;
 	};
 	types(): NonEmptyArray<Type>;
 }
@@ -7114,7 +7114,7 @@ export interface ExtendsTypeClause {
 	readonly _type: NonEmptyArray<TypeIdentifier | NestedTypeIdentifier | GenericType>;
 	readonly __slotHints__?: {
 		readonly types: SlotHint<
-			((T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types)[],
+			NonEmptyArray<(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types>,
 			false,
 			true
 		>;

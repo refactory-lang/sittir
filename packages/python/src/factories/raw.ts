@@ -1749,7 +1749,7 @@ function _buildArgumentList(value?: AdmitBound<T.ArgumentListElements, T.Admitte
 }
 
 export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): T.DecoratedDefinition.Bound {
-	const _decorator = rejectBareText(config.decorator ?? [], 'DecoratedDefinition.decorator', 'a built Decorator');
+	const _decorator = rejectBareText(config.decorator, 'DecoratedDefinition.decorator', 'a built Decorator');
 	const _definition = rejectBareText(
 		config.definition,
 		'DecoratedDefinition.definition',
@@ -3007,7 +3007,7 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 		'a built PrimaryExpression'
 	);
 	const _comparators = rejectBareText(
-		config.comparators ?? [],
+		config.comparators,
 		'ComparisonOperator.comparators',
 		'a built ComparisonOperatorComparator'
 	);
@@ -4232,7 +4232,7 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bo
 	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'ForInClause.async', 'a boolean'));
 	const _left = rejectBareText(config.left, 'ForInClause.left', 'a built Pattern / PatternList');
 	const _right = rejectBareText(
-		kindIdStorage<NonNullable<T.ForInClause['_right']>>(config.right ?? []),
+		kindIdStorage<NonNullable<T.ForInClause['_right']>>(config.right),
 		'ForInClause.right',
 		'a built Expression / LambdaWithinForInClause'
 	);
