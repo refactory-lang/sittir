@@ -4095,6 +4095,17 @@ grammar's parser keeps the spelling its upstream wrote:
 	 *  Language-identical to the original (seq nesting is associative). */
 ```
 
+### `packages/codegen/src/dsl/rule-patterns.ts::isInlineSafe`
+
+A seq that is a `terminated` separated list (`separatedListBodyInfo`) is never
+inline-safe. Its last member is an optional ELEMENT, not an optional
+separator, so the separator-flank test (`seqHasGenuineSeparatorVariability`)
+does not see that the list carries per-instance data (whether the last element
+has its separator); asking the form directly does. This is what makes
+`optional(<terminated run>)` hoist as a list kind of its own, the way an
+optional head-form list does. The rest of the predicate is described under its
+earlier home, `dsl/group-classify.ts::isInlineSafe`.
+
 ### `packages/codegen/src/dsl/rule-patterns.ts::terminatedListOf`
 
 The one recognizer of the `terminated` list form, in either spelling

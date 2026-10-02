@@ -63,3 +63,23 @@ describe('a list whose first element carries a required separator, written inlin
 		);
 	});
 });
+
+describe('the same inline run when the owner may be empty', () => {
+	let rules: Record<string, unknown>;
+	beforeAll(() => {
+		rules = enrichedRules({
+			owner: seq(
+				str('('),
+				optional(seq(seq(sym('item'), str(',')), { type: 'REPEAT', content: seq(sym('item'), str(',')) }, optional(sym('item')))),
+				str(')')
+			)
+		});
+	});
+
+	it('hoists the optional run as one list rule, with every element fielded', () => {
+		expect(rules.owner).toMatchObject(seq(str('('), optional(sym('items')), str(')')));
+		expect(stripped(rules.items)).toEqual(
+			seq(seq(fielded, str(',')), { type: 'REPEAT', content: seq(fielded, str(',')) }, optional(fielded))
+		);
+	});
+});

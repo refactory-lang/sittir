@@ -399,6 +399,7 @@ export function isInlineSafe(seqBody: unknown, symbols: SymbolSource): boolean {
 	const members = r.members;
 	if (!Array.isArray(members)) return false;
 
+	if (separatedListBodyInfo(seqBody as Rule, symbols)?.form === 'terminated') return false;
 	if (seqHasTopLevelRepeat(members)) return !seqHasGenuineSeparatorVariability(members, symbols);
 
 	const slots = collectSlots(members, symbols.rules);
