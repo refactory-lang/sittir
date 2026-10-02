@@ -39,10 +39,10 @@ export function fromGreetFunction() {
 		visibilityModifier: 'pub',
 		name: 'greet',
 		parameters: engine.build.parameters(
-			engine.build.parameter({ name: 'name', type: 'String', mutableSpecifier: true }),
+			engine.build.parameter({ name: 'name', type: 'String', mutable: true }),
 		),
 		body: engine.build.block({
-			statements: engine.build.statement.let({ pattern: 'a', mutableSpecifier: true, value: engine.build.integerLiteral('1') }),
+			statements: engine.build.statement.let({ pattern: 'a', mutable: true, value: engine.build.integerLiteral('1') }),
 		}),
 	});
 }

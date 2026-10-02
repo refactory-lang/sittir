@@ -917,9 +917,7 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound
 }
 
 export function buildForStatement(config: T.ForStatement.Config): T.ForStatement.Bound {
-	const _async_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.asyncMarker, 'ForStatement.asyncMarker', 'a boolean')
-	);
+	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'ForStatement.async', 'a boolean'));
 	const _left = rejectBareText(config.left, 'ForStatement.left', 'a built Pattern / PatternList');
 	const _right = rejectBareText(
 		kindIdStorage<NonNullable<T.ForStatement['_right']>>(config.right),
@@ -933,14 +931,14 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 		$type: TSKindId.ForStatement as const,
 		$source: 2 as const,
 		$named: true as const,
-		_async_marker,
+		_async,
 		_left,
 		_right,
 		_body,
 		_alternative,
 		$with: {
-			asyncMarker: (value?: NonNullable<T.ForStatement.Config>['asyncMarker']) =>
-				rebuilt(node, handle, () => buildForStatement({ ...config, asyncMarker: value })),
+			async: (value?: NonNullable<T.ForStatement.Config>['async']) =>
+				rebuilt(node, handle, () => buildForStatement({ ...config, async: value })),
 			left: (value: T.Pattern | T.PatternList) =>
 				rebuilt(node, handle, () => buildForStatement({ ...config, left: value })),
 			right: (value: NonNullable<T.ForStatement.Config>['right']) =>
@@ -949,7 +947,7 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 			alternative: (value?: T.ElseClause) =>
 				rebuilt(node, handle, () => buildForStatement({ ...config, alternative: value }))
 		},
-		asyncMarker: () => _async_marker,
+		async: () => _async,
 		left: () => _left,
 		right: () => _right,
 		body: () => _body,
@@ -1044,9 +1042,7 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 }
 
 export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause.Bound {
-	const _star_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.starMarker, 'ExceptClause.starMarker', 'a boolean')
-	);
+	const _group = coerceBooleanKeywordStorage(rejectBareText(config.group, 'ExceptClause.group', 'a boolean'));
 	const _exception = rejectBareText(config.exception, 'ExceptClause.exception', 'a built ExceptClauseException');
 	const _suite = rejectBareText(config.suite, 'ExceptClause.suite', 'a built Suite');
 	const handle = currentHandle();
@@ -1054,17 +1050,17 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 		$type: TSKindId.ExceptClause as const,
 		$source: 2 as const,
 		$named: true as const,
-		_star_marker,
+		_group,
 		_exception,
 		_suite,
 		$with: {
-			starMarker: (value?: NonNullable<T.ExceptClause.Config>['starMarker']) =>
-				rebuilt(node, handle, () => buildExceptClause({ ...config, starMarker: value })),
+			group: (value?: NonNullable<T.ExceptClause.Config>['group']) =>
+				rebuilt(node, handle, () => buildExceptClause({ ...config, group: value })),
 			exception: (value?: T.ExceptClauseException) =>
 				rebuilt(node, handle, () => buildExceptClause({ ...config, exception: value })),
 			suite: (value: T.Suite) => rebuilt(node, handle, () => buildExceptClause({ ...config, suite: value }))
 		},
-		starMarker: () => _star_marker,
+		group: () => _group,
 		exception: () => _exception,
 		suite: () => _suite,
 		$render: () => renderText(handle, node),
@@ -1100,9 +1096,7 @@ export function buildFinallyClause(value: AdmitBound<T.Suite, T.AdmittedNodes>):
 }
 
 export function buildWithStatement(config: T.WithStatement.Config): T.WithStatement.Bound {
-	const _async_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.asyncMarker, 'WithStatement.asyncMarker', 'a boolean')
-	);
+	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'WithStatement.async', 'a boolean'));
 	const _with_clause = rejectBareText(config.withClause, 'WithStatement.withClause', 'a built WithClause');
 	const _body = rejectBareText(config.body, 'WithStatement.body', 'a built Suite');
 	const handle = currentHandle();
@@ -1110,17 +1104,17 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 		$type: TSKindId.WithStatement as const,
 		$source: 2 as const,
 		$named: true as const,
-		_async_marker,
+		_async,
 		_with_clause,
 		_body,
 		$with: {
-			asyncMarker: (value?: NonNullable<T.WithStatement.Config>['asyncMarker']) =>
-				rebuilt(node, handle, () => buildWithStatement({ ...config, asyncMarker: value })),
+			async: (value?: NonNullable<T.WithStatement.Config>['async']) =>
+				rebuilt(node, handle, () => buildWithStatement({ ...config, async: value })),
 			withClause: (value: T.WithClause) =>
 				rebuilt(node, handle, () => buildWithStatement({ ...config, withClause: value })),
 			body: (value: T.Suite) => rebuilt(node, handle, () => buildWithStatement({ ...config, body: value }))
 		},
-		asyncMarker: () => _async_marker,
+		async: () => _async,
 		withClause: () => _with_clause,
 		body: () => _body,
 		$render: () => renderText(handle, node),
@@ -1160,9 +1154,7 @@ export function buildWithItem(value: AdmitBound<T.Expression, T.AdmittedNodes>):
 }
 
 export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.FunctionDefinition.Bound {
-	const _async_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.asyncMarker, 'FunctionDefinition.asyncMarker', 'a boolean')
-	);
+	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'FunctionDefinition.async', 'a boolean'));
 	const _name = rejectBareText(config.name, 'FunctionDefinition.name', 'buildIdentifier(…)');
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
@@ -1181,15 +1173,15 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 		$type: TSKindId.FunctionDefinition as const,
 		$source: 2 as const,
 		$named: true as const,
-		_async_marker,
+		_async,
 		_name,
 		_type_parameters,
 		_parameters,
 		_return_type,
 		_body,
 		$with: {
-			asyncMarker: (value?: NonNullable<T.FunctionDefinition.Config>['asyncMarker']) =>
-				rebuilt(node, handle, () => buildFunctionDefinition({ ...config, asyncMarker: value })),
+			async: (value?: NonNullable<T.FunctionDefinition.Config>['async']) =>
+				rebuilt(node, handle, () => buildFunctionDefinition({ ...config, async: value })),
 			name: (value: T.Identifier) => rebuilt(node, handle, () => buildFunctionDefinition({ ...config, name: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -1211,7 +1203,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 				rebuilt(node, handle, () => buildFunctionDefinition({ ...config, returnType: value })),
 			body: (value: T.Suite) => rebuilt(node, handle, () => buildFunctionDefinition({ ...config, body: value }))
 		},
-		asyncMarker: () => _async_marker,
+		async: () => _async,
 		name: () => _name,
 		typeParameters: () => _type_parameters,
 		parameters: () => _parameters,
@@ -4237,9 +4229,7 @@ function _buildCollectionElements(
 }
 
 export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bound {
-	const _async_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.asyncMarker, 'ForInClause.asyncMarker', 'a boolean')
-	);
+	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'ForInClause.async', 'a boolean'));
 	const _left = rejectBareText(config.left, 'ForInClause.left', 'a built Pattern / PatternList');
 	const _right = rejectBareText(
 		kindIdStorage<NonNullable<T.ForInClause['_right']>>(config.right ?? []),
@@ -4252,13 +4242,13 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bo
 		$type: TSKindId.ForInClause as const,
 		$source: 2 as const,
 		$named: true as const,
-		_async_marker,
+		_async,
 		_left,
 		_right,
 		_comma,
 		$with: {
-			asyncMarker: (value?: NonNullable<T.ForInClause.Config>['asyncMarker']) =>
-				rebuilt(node, handle, () => buildForInClause({ ...config, asyncMarker: value })),
+			async: (value?: NonNullable<T.ForInClause.Config>['async']) =>
+				rebuilt(node, handle, () => buildForInClause({ ...config, async: value })),
 			left: (value: T.Pattern | T.PatternList) =>
 				rebuilt(node, handle, () => buildForInClause({ ...config, left: value })),
 			rights: (...values: NonEmptyArray<NonNullable<NonNullable<T.ForInClause.Config>['right']>[number]>) =>
@@ -4266,7 +4256,7 @@ export function buildForInClause(config: T.ForInClause.Config): T.ForInClause.Bo
 			comma: (value?: NonNullable<T.ForInClause.Config>['comma']) =>
 				rebuilt(node, handle, () => buildForInClause({ ...config, comma: value }))
 		},
-		asyncMarker: () => _async_marker,
+		async: () => _async,
 		left: () => _left,
 		rights: () => _right,
 		comma: () => _comma,
@@ -4447,9 +4437,7 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 		'Interpolation.expression',
 		'a built Expression / ExpressionList / PatternList / Yield'
 	);
-	const _eq_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.eqMarker, 'Interpolation.eqMarker', 'a boolean')
-	);
+	const _debug = coerceBooleanKeywordStorage(rejectBareText(config.debug, 'Interpolation.debug', 'a boolean'));
 	const _type_conversion = rejectBareText(
 		config.typeConversion,
 		'Interpolation.typeConversion',
@@ -4466,21 +4454,21 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 		$source: 2 as const,
 		$named: true as const,
 		_expression,
-		_eq_marker,
+		_debug,
 		_type_conversion,
 		_format_specifier,
 		$with: {
 			expression: (value: NonNullable<T.Interpolation.Config>['expression']) =>
 				rebuilt(node, handle, () => buildInterpolation({ ...config, expression: value })),
-			eqMarker: (value?: NonNullable<T.Interpolation.Config>['eqMarker']) =>
-				rebuilt(node, handle, () => buildInterpolation({ ...config, eqMarker: value })),
+			debug: (value?: NonNullable<T.Interpolation.Config>['debug']) =>
+				rebuilt(node, handle, () => buildInterpolation({ ...config, debug: value })),
 			typeConversion: (value?: T.TypeConversion) =>
 				rebuilt(node, handle, () => buildInterpolation({ ...config, typeConversion: value })),
 			formatSpecifier: (value?: T.FormatSpecifier) =>
 				rebuilt(node, handle, () => buildInterpolation({ ...config, formatSpecifier: value }))
 		},
 		expression: () => _expression,
-		eqMarker: () => _eq_marker,
+		debug: () => _debug,
 		typeConversion: () => _type_conversion,
 		formatSpecifier: () => _format_specifier,
 		$render: () => renderText(handle, node),

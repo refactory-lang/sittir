@@ -811,9 +811,7 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 }
 
 export function buildForInStatement(config: T.ForInStatement.Config): T.ForInStatement.Bound {
-	const _await_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.awaitMarker, 'ForInStatement.awaitMarker', 'a boolean')
-	);
+	const _await = coerceBooleanKeywordStorage(rejectBareText(config.await, 'ForInStatement.await', 'a boolean'));
 	const _for_header = rejectBareText(config.forHeader, 'ForInStatement.forHeader', 'a built ForHeader');
 	const _body = rejectBareText(
 		kindIdStorage<NonNullable<T.ForInStatement['_body']>>(config.body),
@@ -825,18 +823,18 @@ export function buildForInStatement(config: T.ForInStatement.Config): T.ForInSta
 		$type: TSKindId.ForInStatement as const,
 		$source: 2 as const,
 		$named: true as const,
-		_await_marker,
+		_await,
 		_for_header,
 		_body,
 		$with: {
-			awaitMarker: (value?: NonNullable<T.ForInStatement.Config>['awaitMarker']) =>
-				rebuilt(node, handle, () => buildForInStatement({ ...config, awaitMarker: value })),
+			await: (value?: NonNullable<T.ForInStatement.Config>['await']) =>
+				rebuilt(node, handle, () => buildForInStatement({ ...config, await: value })),
 			forHeader: (value: T.ForHeader) =>
 				rebuilt(node, handle, () => buildForInStatement({ ...config, forHeader: value })),
 			body: (value: NonNullable<T.ForInStatement.Config>['body']) =>
 				rebuilt(node, handle, () => buildForInStatement({ ...config, body: value }))
 		},
-		awaitMarker: () => _await_marker,
+		await: () => _await,
 		forHeader: () => _for_header,
 		body: () => _body,
 		$render: () => renderText(handle, node),
@@ -2146,9 +2144,7 @@ export function buildClassHeritage(
 }
 
 export function buildFunctionExpression(config: Partial<T.FunctionExpression.Config> = {}): T.FunctionExpression.Bound {
-	const _async_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.asyncMarker, 'FunctionExpression.asyncMarker', 'a boolean')
-	);
+	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'FunctionExpression.async', 'a boolean'));
 	const _name = rejectBareText(config.name, 'FunctionExpression.name', 'buildIdentifier(…)');
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
@@ -2175,15 +2171,15 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 		$type: TSKindId.FunctionExpression as const,
 		$source: 2 as const,
 		$named: true as const,
-		_async_marker,
+		_async,
 		_name,
 		_type_parameters,
 		_parameters,
 		_return_type,
 		_body,
 		$with: {
-			asyncMarker: (value?: NonNullable<T.FunctionExpression.Config>['asyncMarker']) =>
-				rebuilt(node, handle, () => buildFunctionExpression({ ...config, asyncMarker: value })),
+			async: (value?: NonNullable<T.FunctionExpression.Config>['async']) =>
+				rebuilt(node, handle, () => buildFunctionExpression({ ...config, async: value })),
 			name: (value?: T.Identifier) => rebuilt(node, handle, () => buildFunctionExpression({ ...config, name: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -2206,7 +2202,7 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 			body: (value: T.StatementBlock) =>
 				rebuilt(node, handle, () => buildFunctionExpression({ ...config, body: value }))
 		},
-		asyncMarker: () => _async_marker,
+		async: () => _async,
 		name: () => _name,
 		typeParameters: () => _type_parameters,
 		parameters: () => _parameters,
@@ -2223,9 +2219,7 @@ export function buildFunctionExpression(config: Partial<T.FunctionExpression.Con
 }
 
 export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): T.FunctionDeclaration.Bound {
-	const _async_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.asyncMarker, 'FunctionDeclaration.asyncMarker', 'a boolean')
-	);
+	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'FunctionDeclaration.async', 'a boolean'));
 	const _name = rejectBareText(config.name, 'FunctionDeclaration.name', 'buildIdentifier(…)');
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
@@ -2255,7 +2249,7 @@ export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): 
 		$type: TSKindId.FunctionDeclaration as const,
 		$source: 2 as const,
 		$named: true as const,
-		_async_marker,
+		_async,
 		_name,
 		_type_parameters,
 		_parameters,
@@ -2263,8 +2257,8 @@ export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): 
 		_body,
 		_automatic_semicolon,
 		$with: {
-			asyncMarker: (value?: NonNullable<T.FunctionDeclaration.Config>['asyncMarker']) =>
-				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, asyncMarker: value })),
+			async: (value?: NonNullable<T.FunctionDeclaration.Config>['async']) =>
+				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, async: value })),
 			name: (value: T.Identifier) => rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, name: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -2289,7 +2283,7 @@ export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): 
 			automaticSemicolon: (value?: NonNullable<T.FunctionDeclaration.Config>['automaticSemicolon']) =>
 				rebuilt(node, handle, () => buildFunctionDeclaration({ ...config, automaticSemicolon: value }))
 		},
-		asyncMarker: () => _async_marker,
+		async: () => _async,
 		name: () => _name,
 		typeParameters: () => _type_parameters,
 		parameters: () => _parameters,
@@ -2307,9 +2301,7 @@ export function buildFunctionDeclaration(config: T.FunctionDeclaration.Config): 
 }
 
 export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Config> = {}): T.GeneratorFunction.Bound {
-	const _async_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.asyncMarker, 'GeneratorFunction.asyncMarker', 'a boolean')
-	);
+	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'GeneratorFunction.async', 'a boolean'));
 	const _name = rejectBareText(config.name, 'GeneratorFunction.name', 'buildIdentifier(…)');
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
@@ -2336,15 +2328,15 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 		$type: TSKindId.GeneratorFunction as const,
 		$source: 2 as const,
 		$named: true as const,
-		_async_marker,
+		_async,
 		_name,
 		_type_parameters,
 		_parameters,
 		_return_type,
 		_body,
 		$with: {
-			asyncMarker: (value?: NonNullable<T.GeneratorFunction.Config>['asyncMarker']) =>
-				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, asyncMarker: value })),
+			async: (value?: NonNullable<T.GeneratorFunction.Config>['async']) =>
+				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, async: value })),
 			name: (value?: T.Identifier) => rebuilt(node, handle, () => buildGeneratorFunction({ ...config, name: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -2366,7 +2358,7 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 				rebuilt(node, handle, () => buildGeneratorFunction({ ...config, returnType: value })),
 			body: (value: T.StatementBlock) => rebuilt(node, handle, () => buildGeneratorFunction({ ...config, body: value }))
 		},
-		asyncMarker: () => _async_marker,
+		async: () => _async,
 		name: () => _name,
 		typeParameters: () => _type_parameters,
 		parameters: () => _parameters,
@@ -2385,8 +2377,8 @@ export function buildGeneratorFunction(config: Partial<T.GeneratorFunction.Confi
 export function buildGeneratorFunctionDeclaration(
 	config: T.GeneratorFunctionDeclaration.Config
 ): T.GeneratorFunctionDeclaration.Bound {
-	const _async_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.asyncMarker, 'GeneratorFunctionDeclaration.asyncMarker', 'a boolean')
+	const _async = coerceBooleanKeywordStorage(
+		rejectBareText(config.async, 'GeneratorFunctionDeclaration.async', 'a boolean')
 	);
 	const _name = rejectBareText(config.name, 'GeneratorFunctionDeclaration.name', 'buildIdentifier(…)');
 	const _type_parameters = rejectBareText(
@@ -2417,7 +2409,7 @@ export function buildGeneratorFunctionDeclaration(
 		$type: TSKindId.GeneratorFunctionDeclaration as const,
 		$source: 2 as const,
 		$named: true as const,
-		_async_marker,
+		_async,
 		_name,
 		_type_parameters,
 		_parameters,
@@ -2425,8 +2417,8 @@ export function buildGeneratorFunctionDeclaration(
 		_body,
 		_automatic_semicolon,
 		$with: {
-			asyncMarker: (value?: NonNullable<T.GeneratorFunctionDeclaration.Config>['asyncMarker']) =>
-				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, asyncMarker: value })),
+			async: (value?: NonNullable<T.GeneratorFunctionDeclaration.Config>['async']) =>
+				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, async: value })),
 			name: (value: T.Identifier) =>
 				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, name: value })),
 			typeParameters: (...args: unknown[]) =>
@@ -2452,7 +2444,7 @@ export function buildGeneratorFunctionDeclaration(
 			automaticSemicolon: (value?: NonNullable<T.GeneratorFunctionDeclaration.Config>['automaticSemicolon']) =>
 				rebuilt(node, handle, () => buildGeneratorFunctionDeclaration({ ...config, automaticSemicolon: value }))
 		},
-		asyncMarker: () => _async_marker,
+		async: () => _async,
 		name: () => _name,
 		typeParameters: () => _type_parameters,
 		parameters: () => _parameters,
@@ -2470,9 +2462,7 @@ export function buildGeneratorFunctionDeclaration(
 }
 
 export function buildArrowFunction(config: T.ArrowFunction.Config): T.ArrowFunction.Bound {
-	const _async_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.asyncMarker, 'ArrowFunction.asyncMarker', 'a boolean')
-	);
+	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'ArrowFunction.async', 'a boolean'));
 	const _content = rejectBareText(
 		config.content,
 		'ArrowFunction.content',
@@ -2488,18 +2478,18 @@ export function buildArrowFunction(config: T.ArrowFunction.Config): T.ArrowFunct
 		$type: TSKindId.ArrowFunction as const,
 		$source: 2 as const,
 		$named: true as const,
-		_async_marker,
+		_async,
 		_content,
 		_body,
 		$with: {
-			asyncMarker: (value?: NonNullable<T.ArrowFunction.Config>['asyncMarker']) =>
-				rebuilt(node, handle, () => buildArrowFunction({ ...config, asyncMarker: value })),
+			async: (value?: NonNullable<T.ArrowFunction.Config>['async']) =>
+				rebuilt(node, handle, () => buildArrowFunction({ ...config, async: value })),
 			content: (value: T.ArrowFunctionParameter | T.CallSignature) =>
 				rebuilt(node, handle, () => buildArrowFunction({ ...config, content: value })),
 			body: (value: NonNullable<T.ArrowFunction.Config>['body']) =>
 				rebuilt(node, handle, () => buildArrowFunction({ ...config, body: value }))
 		},
-		asyncMarker: () => _async_marker,
+		async: () => _async,
 		content: () => _content,
 		body: () => _body,
 		$render: () => renderText(handle, node),
@@ -2800,9 +2790,7 @@ export function buildLhsExpression(
 }
 
 export function buildAssignmentExpression(config: T.AssignmentExpression.Config): T.AssignmentExpression.Bound {
-	const _using_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.usingMarker, 'AssignmentExpression.usingMarker', 'a boolean')
-	);
+	const _using = coerceBooleanKeywordStorage(rejectBareText(config.using, 'AssignmentExpression.using', 'a boolean'));
 	const _left = rejectBareText(
 		config.left,
 		'AssignmentExpression.left',
@@ -2818,18 +2806,18 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 		$type: TSKindId.AssignmentExpression as const,
 		$source: 2 as const,
 		$named: true as const,
-		_using_marker,
+		_using,
 		_left,
 		_right,
 		$with: {
-			usingMarker: (value?: NonNullable<T.AssignmentExpression.Config>['usingMarker']) =>
-				rebuilt(node, handle, () => buildAssignmentExpression({ ...config, usingMarker: value })),
+			using: (value?: NonNullable<T.AssignmentExpression.Config>['using']) =>
+				rebuilt(node, handle, () => buildAssignmentExpression({ ...config, using: value })),
 			left: (value: T.ParenthesizedExpression | T.LhsExpression) =>
 				rebuilt(node, handle, () => buildAssignmentExpression({ ...config, left: value })),
 			right: (value: NonNullable<T.AssignmentExpression.Config>['right']) =>
 				rebuilt(node, handle, () => buildAssignmentExpression({ ...config, right: value }))
 		},
-		usingMarker: () => _using_marker,
+		using: () => _using,
 		left: () => _left,
 		right: () => _right,
 		$render: () => renderText(handle, node),
@@ -3764,18 +3752,14 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 		'MethodDefinition.accessibilityModifier',
 		'a kind id'
 	);
-	const _static_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.staticMarker, 'MethodDefinition.staticMarker', 'a boolean')
+	const _static = coerceBooleanKeywordStorage(rejectBareText(config.static, 'MethodDefinition.static', 'a boolean'));
+	const _override = coerceBooleanKeywordStorage(
+		rejectBareText(config.override, 'MethodDefinition.override', 'a boolean')
 	);
-	const _override_modifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.overrideModifier, 'MethodDefinition.overrideModifier', 'a boolean')
+	const _readonly = coerceBooleanKeywordStorage(
+		rejectBareText(config.readonly, 'MethodDefinition.readonly', 'a boolean')
 	);
-	const _readonly_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.readonlyMarker, 'MethodDefinition.readonlyMarker', 'a boolean')
-	);
-	const _async_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.asyncMarker, 'MethodDefinition.asyncMarker', 'a boolean')
-	);
+	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'MethodDefinition.async', 'a boolean'));
 	const _accessor_kind = rejectBareText(
 		kindIdStorage<NonNullable<T.MethodDefinition['_accessor_kind']>>(config.accessorKind),
 		'MethodDefinition.accessorKind',
@@ -3789,8 +3773,8 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
-	const _optional_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.optionalMarker, 'MethodDefinition.optionalMarker', 'a boolean')
+	const _optional = coerceBooleanKeywordStorage(
+		rejectBareText(config.optional, 'MethodDefinition.optional', 'a boolean')
 	);
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
@@ -3818,13 +3802,13 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 		$source: 2 as const,
 		$named: true as const,
 		_accessibility_modifier,
-		_static_marker,
-		_override_modifier,
-		_readonly_marker,
-		_async_marker,
+		_static,
+		_override,
+		_readonly,
+		_async,
 		_accessor_kind,
 		_name,
-		_optional_marker,
+		_optional,
 		_type_parameters,
 		_parameters,
 		_return_type,
@@ -3832,20 +3816,20 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 		$with: {
 			accessibilityModifier: (value?: NonNullable<T.MethodDefinition.Config>['accessibilityModifier']) =>
 				rebuilt(node, handle, () => buildMethodDefinition({ ...config, accessibilityModifier: value })),
-			staticMarker: (value?: NonNullable<T.MethodDefinition.Config>['staticMarker']) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, staticMarker: value })),
-			overrideModifier: (value?: NonNullable<T.MethodDefinition.Config>['overrideModifier']) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, overrideModifier: value })),
-			readonlyMarker: (value?: NonNullable<T.MethodDefinition.Config>['readonlyMarker']) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, readonlyMarker: value })),
-			asyncMarker: (value?: NonNullable<T.MethodDefinition.Config>['asyncMarker']) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, asyncMarker: value })),
+			static: (value?: NonNullable<T.MethodDefinition.Config>['static']) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, static: value })),
+			override: (value?: NonNullable<T.MethodDefinition.Config>['override']) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, override: value })),
+			readonly: (value?: NonNullable<T.MethodDefinition.Config>['readonly']) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, readonly: value })),
+			async: (value?: NonNullable<T.MethodDefinition.Config>['async']) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, async: value })),
 			accessorKind: (value?: NonNullable<T.MethodDefinition.Config>['accessorKind']) =>
 				rebuilt(node, handle, () => buildMethodDefinition({ ...config, accessorKind: value })),
 			name: (value: NonNullable<T.MethodDefinition.Config>['name']) =>
 				rebuilt(node, handle, () => buildMethodDefinition({ ...config, name: value })),
-			optionalMarker: (value?: NonNullable<T.MethodDefinition.Config>['optionalMarker']) =>
-				rebuilt(node, handle, () => buildMethodDefinition({ ...config, optionalMarker: value })),
+			optional: (value?: NonNullable<T.MethodDefinition.Config>['optional']) =>
+				rebuilt(node, handle, () => buildMethodDefinition({ ...config, optional: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -3867,13 +3851,13 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config): T.Meth
 			body: (value: T.StatementBlock) => rebuilt(node, handle, () => buildMethodDefinition({ ...config, body: value }))
 		},
 		accessibilityModifier: () => _accessibility_modifier,
-		staticMarker: () => _static_marker,
-		overrideModifier: () => _override_modifier,
-		readonlyMarker: () => _readonly_marker,
-		asyncMarker: () => _async_marker,
+		static: () => _static,
+		override: () => _override,
+		readonly: () => _readonly,
+		async: () => _async,
 		accessorKind: () => _accessor_kind,
 		name: () => _name,
-		optionalMarker: () => _optional_marker,
+		optional: () => _optional,
 		typeParameters: () => _type_parameters,
 		parameters: () => _parameters,
 		returnType: () => _return_type,
@@ -3992,28 +3976,28 @@ export function buildComputedPropertyName(
 
 export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Config): T.PublicFieldDefinition.Bound {
 	const _decorator = rejectBareText(config.decorator ?? [], 'PublicFieldDefinition.decorator', 'a built Decorator');
-	const _declare_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.declareMarker, 'PublicFieldDefinition.declareMarker', 'a boolean')
+	const _declare = coerceBooleanKeywordStorage(
+		rejectBareText(config.declare, 'PublicFieldDefinition.declare', 'a boolean')
 	);
 	const _accessibility_modifier = rejectBareText(
 		kindIdStorage<NonNullable<T.PublicFieldDefinition['_accessibility_modifier']>>(config.accessibilityModifier),
 		'PublicFieldDefinition.accessibilityModifier',
 		'a kind id'
 	);
-	const _static_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.staticMarker, 'PublicFieldDefinition.staticMarker', 'a boolean')
+	const _static = coerceBooleanKeywordStorage(
+		rejectBareText(config.static, 'PublicFieldDefinition.static', 'a boolean')
 	);
-	const _readonly_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.readonlyMarker, 'PublicFieldDefinition.readonlyMarker', 'a boolean')
+	const _override = coerceBooleanKeywordStorage(
+		rejectBareText(config.override, 'PublicFieldDefinition.override', 'a boolean')
 	);
-	const _abstract_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.abstractMarker, 'PublicFieldDefinition.abstractMarker', 'a boolean')
+	const _readonly = coerceBooleanKeywordStorage(
+		rejectBareText(config.readonly, 'PublicFieldDefinition.readonly', 'a boolean')
 	);
-	const _accessor_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.accessorMarker, 'PublicFieldDefinition.accessorMarker', 'a boolean')
+	const _abstract = coerceBooleanKeywordStorage(
+		rejectBareText(config.abstract, 'PublicFieldDefinition.abstract', 'a boolean')
 	);
-	const _override_modifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.overrideModifier, 'PublicFieldDefinition.overrideModifier', 'a boolean')
+	const _accessor = coerceBooleanKeywordStorage(
+		rejectBareText(config.accessor, 'PublicFieldDefinition.accessor', 'a boolean')
 	);
 	const _name = admitAliasContent<NonNullable<T.PublicFieldDefinition['_name']>>(
 		rejectBareText(
@@ -4023,9 +4007,9 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
-	const _optionality_marker = rejectBareText(
-		kindIdStorage<NonNullable<T.PublicFieldDefinition['_optionality_marker']>>(config.optionalityMarker),
-		'PublicFieldDefinition.optionalityMarker',
+	const _optionality = rejectBareText(
+		kindIdStorage<NonNullable<T.PublicFieldDefinition['_optionality']>>(config.optionality),
+		'PublicFieldDefinition.optionality',
 		'a kind id'
 	);
 	const _type = rejectBareText(config.type, 'PublicFieldDefinition.type', 'a built TypeAnnotation');
@@ -4040,15 +4024,15 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 		$source: 2 as const,
 		$named: true as const,
 		_decorator,
-		_declare_marker,
+		_declare,
 		_accessibility_modifier,
-		_static_marker,
-		_readonly_marker,
-		_abstract_marker,
-		_accessor_marker,
-		_override_modifier,
+		_static,
+		_override,
+		_readonly,
+		_abstract,
+		_accessor,
 		_name,
-		_optionality_marker,
+		_optionality,
 		_type,
 		_value,
 		$with: {
@@ -4056,39 +4040,39 @@ export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Confi
 				rebuilt(node, handle, () =>
 					buildPublicFieldDefinition({ ...config, decorator: restItems('decorators', values) })
 				),
-			declareMarker: (value?: NonNullable<T.PublicFieldDefinition.Config>['declareMarker']) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, declareMarker: value })),
+			declare: (value?: NonNullable<T.PublicFieldDefinition.Config>['declare']) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, declare: value })),
 			accessibilityModifier: (value?: NonNullable<T.PublicFieldDefinition.Config>['accessibilityModifier']) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, accessibilityModifier: value })),
-			staticMarker: (value?: NonNullable<T.PublicFieldDefinition.Config>['staticMarker']) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, staticMarker: value })),
-			readonlyMarker: (value?: NonNullable<T.PublicFieldDefinition.Config>['readonlyMarker']) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, readonlyMarker: value })),
-			abstractMarker: (value?: NonNullable<T.PublicFieldDefinition.Config>['abstractMarker']) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, abstractMarker: value })),
-			accessorMarker: (value?: NonNullable<T.PublicFieldDefinition.Config>['accessorMarker']) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, accessorMarker: value })),
-			overrideModifier: (value?: NonNullable<T.PublicFieldDefinition.Config>['overrideModifier']) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, overrideModifier: value })),
+			static: (value?: NonNullable<T.PublicFieldDefinition.Config>['static']) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, static: value })),
+			override: (value?: NonNullable<T.PublicFieldDefinition.Config>['override']) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, override: value })),
+			readonly: (value?: NonNullable<T.PublicFieldDefinition.Config>['readonly']) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, readonly: value })),
+			abstract: (value?: NonNullable<T.PublicFieldDefinition.Config>['abstract']) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, abstract: value })),
+			accessor: (value?: NonNullable<T.PublicFieldDefinition.Config>['accessor']) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, accessor: value })),
 			name: (value: NonNullable<T.PublicFieldDefinition.Config>['name']) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, name: value })),
-			optionalityMarker: (value?: NonNullable<T.PublicFieldDefinition.Config>['optionalityMarker']) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, optionalityMarker: value })),
+			optionality: (value?: NonNullable<T.PublicFieldDefinition.Config>['optionality']) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, optionality: value })),
 			type: (value?: T.TypeAnnotation) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, type: value })),
 			value: (value?: NonNullable<T.PublicFieldDefinition.Config>['value']) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinition({ ...config, value: value }))
 		},
 		decorators: () => _decorator,
-		declareMarker: () => _declare_marker,
+		declare: () => _declare,
 		accessibilityModifier: () => _accessibility_modifier,
-		staticMarker: () => _static_marker,
-		readonlyMarker: () => _readonly_marker,
-		abstractMarker: () => _abstract_marker,
-		accessorMarker: () => _accessor_marker,
-		overrideModifier: () => _override_modifier,
+		static: () => _static,
+		override: () => _override,
+		readonly: () => _readonly,
+		abstract: () => _abstract,
+		accessor: () => _accessor,
 		name: () => _name,
-		optionalityMarker: () => _optionality_marker,
+		optionality: () => _optionality,
 		type: () => _type,
 		value: () => _value,
 		$render: () => renderText(handle, node),
@@ -4133,18 +4117,14 @@ export function buildMethodSignature(config: T.MethodSignature.Config): T.Method
 		'MethodSignature.accessibilityModifier',
 		'a kind id'
 	);
-	const _static_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.staticMarker, 'MethodSignature.staticMarker', 'a boolean')
+	const _static = coerceBooleanKeywordStorage(rejectBareText(config.static, 'MethodSignature.static', 'a boolean'));
+	const _override = coerceBooleanKeywordStorage(
+		rejectBareText(config.override, 'MethodSignature.override', 'a boolean')
 	);
-	const _override_modifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.overrideModifier, 'MethodSignature.overrideModifier', 'a boolean')
+	const _readonly = coerceBooleanKeywordStorage(
+		rejectBareText(config.readonly, 'MethodSignature.readonly', 'a boolean')
 	);
-	const _readonly_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.readonlyMarker, 'MethodSignature.readonlyMarker', 'a boolean')
-	);
-	const _async_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.asyncMarker, 'MethodSignature.asyncMarker', 'a boolean')
-	);
+	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'MethodSignature.async', 'a boolean'));
 	const _accessor_kind = rejectBareText(
 		kindIdStorage<NonNullable<T.MethodSignature['_accessor_kind']>>(config.accessorKind),
 		'MethodSignature.accessorKind',
@@ -4158,8 +4138,8 @@ export function buildMethodSignature(config: T.MethodSignature.Config): T.Method
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
-	const _optional_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.optionalMarker, 'MethodSignature.optionalMarker', 'a boolean')
+	const _optional = coerceBooleanKeywordStorage(
+		rejectBareText(config.optional, 'MethodSignature.optional', 'a boolean')
 	);
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
@@ -4182,33 +4162,33 @@ export function buildMethodSignature(config: T.MethodSignature.Config): T.Method
 		$source: 2 as const,
 		$named: true as const,
 		_accessibility_modifier,
-		_static_marker,
-		_override_modifier,
-		_readonly_marker,
-		_async_marker,
+		_static,
+		_override,
+		_readonly,
+		_async,
 		_accessor_kind,
 		_name,
-		_optional_marker,
+		_optional,
 		_type_parameters,
 		_parameters,
 		_return_type,
 		$with: {
 			accessibilityModifier: (value?: NonNullable<T.MethodSignature.Config>['accessibilityModifier']) =>
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, accessibilityModifier: value })),
-			staticMarker: (value?: NonNullable<T.MethodSignature.Config>['staticMarker']) =>
-				rebuilt(node, handle, () => buildMethodSignature({ ...config, staticMarker: value })),
-			overrideModifier: (value?: NonNullable<T.MethodSignature.Config>['overrideModifier']) =>
-				rebuilt(node, handle, () => buildMethodSignature({ ...config, overrideModifier: value })),
-			readonlyMarker: (value?: NonNullable<T.MethodSignature.Config>['readonlyMarker']) =>
-				rebuilt(node, handle, () => buildMethodSignature({ ...config, readonlyMarker: value })),
-			asyncMarker: (value?: NonNullable<T.MethodSignature.Config>['asyncMarker']) =>
-				rebuilt(node, handle, () => buildMethodSignature({ ...config, asyncMarker: value })),
+			static: (value?: NonNullable<T.MethodSignature.Config>['static']) =>
+				rebuilt(node, handle, () => buildMethodSignature({ ...config, static: value })),
+			override: (value?: NonNullable<T.MethodSignature.Config>['override']) =>
+				rebuilt(node, handle, () => buildMethodSignature({ ...config, override: value })),
+			readonly: (value?: NonNullable<T.MethodSignature.Config>['readonly']) =>
+				rebuilt(node, handle, () => buildMethodSignature({ ...config, readonly: value })),
+			async: (value?: NonNullable<T.MethodSignature.Config>['async']) =>
+				rebuilt(node, handle, () => buildMethodSignature({ ...config, async: value })),
 			accessorKind: (value?: NonNullable<T.MethodSignature.Config>['accessorKind']) =>
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, accessorKind: value })),
 			name: (value: NonNullable<T.MethodSignature.Config>['name']) =>
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, name: value })),
-			optionalMarker: (value?: NonNullable<T.MethodSignature.Config>['optionalMarker']) =>
-				rebuilt(node, handle, () => buildMethodSignature({ ...config, optionalMarker: value })),
+			optional: (value?: NonNullable<T.MethodSignature.Config>['optional']) =>
+				rebuilt(node, handle, () => buildMethodSignature({ ...config, optional: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -4229,13 +4209,13 @@ export function buildMethodSignature(config: T.MethodSignature.Config): T.Method
 				rebuilt(node, handle, () => buildMethodSignature({ ...config, returnType: value }))
 		},
 		accessibilityModifier: () => _accessibility_modifier,
-		staticMarker: () => _static_marker,
-		overrideModifier: () => _override_modifier,
-		readonlyMarker: () => _readonly_marker,
-		asyncMarker: () => _async_marker,
+		static: () => _static,
+		override: () => _override,
+		readonly: () => _readonly,
+		async: () => _async,
 		accessorKind: () => _accessor_kind,
 		name: () => _name,
-		optionalMarker: () => _optional_marker,
+		optional: () => _optional,
 		typeParameters: () => _type_parameters,
 		parameters: () => _parameters,
 		returnType: () => _return_type,
@@ -4257,8 +4237,8 @@ export function buildAbstractMethodSignature(
 		'AbstractMethodSignature.accessibilityModifier',
 		'a kind id'
 	);
-	const _override_modifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.overrideModifier, 'AbstractMethodSignature.overrideModifier', 'a boolean')
+	const _override = coerceBooleanKeywordStorage(
+		rejectBareText(config.override, 'AbstractMethodSignature.override', 'a boolean')
 	);
 	const _accessor_kind = rejectBareText(
 		kindIdStorage<NonNullable<T.AbstractMethodSignature['_accessor_kind']>>(config.accessorKind),
@@ -4273,8 +4253,8 @@ export function buildAbstractMethodSignature(
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
-	const _optional_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.optionalMarker, 'AbstractMethodSignature.optionalMarker', 'a boolean')
+	const _optional = coerceBooleanKeywordStorage(
+		rejectBareText(config.optional, 'AbstractMethodSignature.optional', 'a boolean')
 	);
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
@@ -4297,24 +4277,24 @@ export function buildAbstractMethodSignature(
 		$source: 2 as const,
 		$named: true as const,
 		_accessibility_modifier,
-		_override_modifier,
+		_override,
 		_accessor_kind,
 		_name,
-		_optional_marker,
+		_optional,
 		_type_parameters,
 		_parameters,
 		_return_type,
 		$with: {
 			accessibilityModifier: (value?: NonNullable<T.AbstractMethodSignature.Config>['accessibilityModifier']) =>
 				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, accessibilityModifier: value })),
-			overrideModifier: (value?: NonNullable<T.AbstractMethodSignature.Config>['overrideModifier']) =>
-				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, overrideModifier: value })),
+			override: (value?: NonNullable<T.AbstractMethodSignature.Config>['override']) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, override: value })),
 			accessorKind: (value?: NonNullable<T.AbstractMethodSignature.Config>['accessorKind']) =>
 				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, accessorKind: value })),
 			name: (value: NonNullable<T.AbstractMethodSignature.Config>['name']) =>
 				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, name: value })),
-			optionalMarker: (value?: NonNullable<T.AbstractMethodSignature.Config>['optionalMarker']) =>
-				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, optionalMarker: value })),
+			optional: (value?: NonNullable<T.AbstractMethodSignature.Config>['optional']) =>
+				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, optional: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -4335,10 +4315,10 @@ export function buildAbstractMethodSignature(
 				rebuilt(node, handle, () => buildAbstractMethodSignature({ ...config, returnType: value }))
 		},
 		accessibilityModifier: () => _accessibility_modifier,
-		overrideModifier: () => _override_modifier,
+		override: () => _override,
 		accessorKind: () => _accessor_kind,
 		name: () => _name,
-		optionalMarker: () => _optional_marker,
+		optional: () => _optional,
 		typeParameters: () => _type_parameters,
 		parameters: () => _parameters,
 		returnType: () => _return_type,
@@ -4356,9 +4336,7 @@ export function buildFunctionSignature(
 	config: T.FunctionSignature.Config,
 	options?: T.FunctionSignature.Options
 ): T.FunctionSignature.Bound {
-	const _async_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.asyncMarker, 'FunctionSignature.asyncMarker', 'a boolean')
-	);
+	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'FunctionSignature.async', 'a boolean'));
 	const _name = rejectBareText(config.name, 'FunctionSignature.name', 'buildIdentifier(…)');
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
@@ -4385,15 +4363,15 @@ export function buildFunctionSignature(
 		$type: TSKindId.FunctionSignature as const,
 		$source: 2 as const,
 		$named: true as const,
-		_async_marker,
+		_async,
 		_name,
 		_type_parameters,
 		_parameters,
 		_return_type,
 		_terminator,
 		$with: {
-			asyncMarker: (value?: NonNullable<T.FunctionSignature.Config>['asyncMarker']) =>
-				rebuilt(node, handle, () => buildFunctionSignature({ ...config, asyncMarker: value }, options)),
+			async: (value?: NonNullable<T.FunctionSignature.Config>['async']) =>
+				rebuilt(node, handle, () => buildFunctionSignature({ ...config, async: value }, options)),
 			name: (value: T.Identifier) =>
 				rebuilt(node, handle, () => buildFunctionSignature({ ...config, name: value }, options)),
 			typeParameters: (...args: unknown[]) =>
@@ -4418,7 +4396,7 @@ export function buildFunctionSignature(
 				spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.FunctionSignatureAutomaticSemicolon
 			) => rebuilt(node, handle, () => buildFunctionSignature(config, { ...options, terminator: spelling }))
 		},
-		asyncMarker: () => _async_marker,
+		async: () => _async,
 		name: () => _name,
 		typeParameters: () => _type_parameters,
 		parameters: () => _parameters,
@@ -5050,9 +5028,7 @@ export function buildExtendsTypeClause(
 }
 
 export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDeclaration.Bound {
-	const _const_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.constMarker, 'EnumDeclaration.constMarker', 'a boolean')
-	);
+	const _const = coerceBooleanKeywordStorage(rejectBareText(config.const, 'EnumDeclaration.const', 'a boolean'));
 	const _name = rejectBareText(config.name, 'EnumDeclaration.name', 'buildIdentifier(…)');
 	const _body = rejectBareText(
 		orDefault(config.body, () => buildEnumBody()),
@@ -5064,12 +5040,12 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 		$type: TSKindId.EnumDeclaration as const,
 		$source: 2 as const,
 		$named: true as const,
-		_const_marker,
+		_const,
 		_name,
 		_body,
 		$with: {
-			constMarker: (value?: NonNullable<T.EnumDeclaration.Config>['constMarker']) =>
-				rebuilt(node, handle, () => buildEnumDeclaration({ ...config, constMarker: value })),
+			const: (value?: NonNullable<T.EnumDeclaration.Config>['const']) =>
+				rebuilt(node, handle, () => buildEnumDeclaration({ ...config, const: value })),
 			name: (value: T.Identifier) => rebuilt(node, handle, () => buildEnumDeclaration({ ...config, name: value })),
 			body: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -5080,7 +5056,7 @@ export function buildEnumDeclaration(config: T.EnumDeclaration.Config): T.EnumDe
 					)
 				)
 		},
-		constMarker: () => _const_marker,
+		const: () => _const,
 		name: () => _name,
 		body: () => _body,
 		$render: () => renderText(handle, node),
@@ -5274,11 +5250,11 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 		'RequiredParameter.accessibilityModifier',
 		'a kind id'
 	);
-	const _override_modifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.overrideModifier, 'RequiredParameter.overrideModifier', 'a boolean')
+	const _override = coerceBooleanKeywordStorage(
+		rejectBareText(config.override, 'RequiredParameter.override', 'a boolean')
 	);
-	const _readonly_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.readonlyMarker, 'RequiredParameter.readonlyMarker', 'a boolean')
+	const _readonly = coerceBooleanKeywordStorage(
+		rejectBareText(config.readonly, 'RequiredParameter.readonly', 'a boolean')
 	);
 	const _pattern = rejectBareText(
 		kindIdStorage<NonNullable<T.RequiredParameter['_pattern']>>(config.pattern),
@@ -5298,8 +5274,8 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 		$named: true as const,
 		_decorator,
 		_accessibility_modifier,
-		_override_modifier,
-		_readonly_marker,
+		_override,
+		_readonly,
 		_pattern,
 		_type,
 		_value,
@@ -5308,10 +5284,10 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, decorator: restItems('decorators', values) })),
 			accessibilityModifier: (value?: NonNullable<T.RequiredParameter.Config>['accessibilityModifier']) =>
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, accessibilityModifier: value })),
-			overrideModifier: (value?: NonNullable<T.RequiredParameter.Config>['overrideModifier']) =>
-				rebuilt(node, handle, () => buildRequiredParameter({ ...config, overrideModifier: value })),
-			readonlyMarker: (value?: NonNullable<T.RequiredParameter.Config>['readonlyMarker']) =>
-				rebuilt(node, handle, () => buildRequiredParameter({ ...config, readonlyMarker: value })),
+			override: (value?: NonNullable<T.RequiredParameter.Config>['override']) =>
+				rebuilt(node, handle, () => buildRequiredParameter({ ...config, override: value })),
+			readonly: (value?: NonNullable<T.RequiredParameter.Config>['readonly']) =>
+				rebuilt(node, handle, () => buildRequiredParameter({ ...config, readonly: value })),
 			pattern: (value: NonNullable<T.RequiredParameter.Config>['pattern']) =>
 				rebuilt(node, handle, () => buildRequiredParameter({ ...config, pattern: value })),
 			type: (value?: T.TypeAnnotation) =>
@@ -5321,8 +5297,8 @@ export function buildRequiredParameter(config: T.RequiredParameter.Config): T.Re
 		},
 		decorators: () => _decorator,
 		accessibilityModifier: () => _accessibility_modifier,
-		overrideModifier: () => _override_modifier,
-		readonlyMarker: () => _readonly_marker,
+		override: () => _override,
+		readonly: () => _readonly,
 		pattern: () => _pattern,
 		type: () => _type,
 		value: () => _value,
@@ -5343,11 +5319,11 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 		'OptionalParameter.accessibilityModifier',
 		'a kind id'
 	);
-	const _override_modifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.overrideModifier, 'OptionalParameter.overrideModifier', 'a boolean')
+	const _override = coerceBooleanKeywordStorage(
+		rejectBareText(config.override, 'OptionalParameter.override', 'a boolean')
 	);
-	const _readonly_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.readonlyMarker, 'OptionalParameter.readonlyMarker', 'a boolean')
+	const _readonly = coerceBooleanKeywordStorage(
+		rejectBareText(config.readonly, 'OptionalParameter.readonly', 'a boolean')
 	);
 	const _pattern = rejectBareText(
 		kindIdStorage<NonNullable<T.OptionalParameter['_pattern']>>(config.pattern),
@@ -5367,8 +5343,8 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 		$named: true as const,
 		_decorator,
 		_accessibility_modifier,
-		_override_modifier,
-		_readonly_marker,
+		_override,
+		_readonly,
 		_pattern,
 		_type,
 		_value,
@@ -5377,10 +5353,10 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, decorator: restItems('decorators', values) })),
 			accessibilityModifier: (value?: NonNullable<T.OptionalParameter.Config>['accessibilityModifier']) =>
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, accessibilityModifier: value })),
-			overrideModifier: (value?: NonNullable<T.OptionalParameter.Config>['overrideModifier']) =>
-				rebuilt(node, handle, () => buildOptionalParameter({ ...config, overrideModifier: value })),
-			readonlyMarker: (value?: NonNullable<T.OptionalParameter.Config>['readonlyMarker']) =>
-				rebuilt(node, handle, () => buildOptionalParameter({ ...config, readonlyMarker: value })),
+			override: (value?: NonNullable<T.OptionalParameter.Config>['override']) =>
+				rebuilt(node, handle, () => buildOptionalParameter({ ...config, override: value })),
+			readonly: (value?: NonNullable<T.OptionalParameter.Config>['readonly']) =>
+				rebuilt(node, handle, () => buildOptionalParameter({ ...config, readonly: value })),
 			pattern: (value: NonNullable<T.OptionalParameter.Config>['pattern']) =>
 				rebuilt(node, handle, () => buildOptionalParameter({ ...config, pattern: value })),
 			type: (value?: T.TypeAnnotation) =>
@@ -5390,8 +5366,8 @@ export function buildOptionalParameter(config: T.OptionalParameter.Config): T.Op
 		},
 		decorators: () => _decorator,
 		accessibilityModifier: () => _accessibility_modifier,
-		overrideModifier: () => _override_modifier,
-		readonlyMarker: () => _readonly_marker,
+		override: () => _override,
+		readonly: () => _readonly,
 		pattern: () => _pattern,
 		type: () => _type,
 		value: () => _value,
@@ -5793,8 +5769,8 @@ export function buildRestType(value: AdmitBound<T.Type | T.TypeIdentifier.Types,
 }
 
 export function buildConstructorType(config: T.ConstructorType.Config): T.ConstructorType.Bound {
-	const _abstract_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.abstractMarker, 'ConstructorType.abstractMarker', 'a boolean')
+	const _abstract = coerceBooleanKeywordStorage(
+		rejectBareText(config.abstract, 'ConstructorType.abstract', 'a boolean')
 	);
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
@@ -5819,13 +5795,13 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 		$type: TSKindId.ConstructorType as const,
 		$source: 2 as const,
 		$named: true as const,
-		_abstract_marker,
+		_abstract,
 		_type_parameters,
 		_parameters,
 		_type,
 		$with: {
-			abstractMarker: (value?: NonNullable<T.ConstructorType.Config>['abstractMarker']) =>
-				rebuilt(node, handle, () => buildConstructorType({ ...config, abstractMarker: value })),
+			abstract: (value?: NonNullable<T.ConstructorType.Config>['abstract']) =>
+				rebuilt(node, handle, () => buildConstructorType({ ...config, abstract: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -5845,7 +5821,7 @@ export function buildConstructorType(config: T.ConstructorType.Config): T.Constr
 			type: (value: NonNullable<T.ConstructorType.Config>['type']) =>
 				rebuilt(node, handle, () => buildConstructorType({ ...config, type: value }))
 		},
-		abstractMarker: () => _abstract_marker,
+		abstract: () => _abstract,
 		typeParameters: () => _type_parameters,
 		parameters: () => _parameters,
 		type: () => _type,
@@ -6213,8 +6189,8 @@ export function buildTypeQuerySubscriptExpression(
 		TSKindId.Identifier,
 		['this']
 	);
-	const _optional_chain_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.optionalChainMarker, 'TypeQuerySubscriptExpression.optionalChainMarker', 'a boolean')
+	const _optional_chain = coerceBooleanKeywordStorage(
+		rejectBareText(config.optionalChain, 'TypeQuerySubscriptExpression.optionalChain', 'a boolean')
 	);
 	const _index = rejectBareText(
 		kindIdStorage<NonNullable<T.TypeQuerySubscriptExpression['_index']>>(config.index),
@@ -6227,18 +6203,18 @@ export function buildTypeQuerySubscriptExpression(
 		$source: 2 as const,
 		$named: true as const,
 		_object,
-		_optional_chain_marker,
+		_optional_chain,
 		_index,
 		$with: {
 			object: (value: NonNullable<T.TypeQuerySubscriptExpression.Config>['object']) =>
 				rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, object: value })),
-			optionalChainMarker: (value?: NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChainMarker']) =>
-				rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, optionalChainMarker: value })),
+			optionalChain: (value?: NonNullable<T.TypeQuerySubscriptExpression.Config>['optionalChain']) =>
+				rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, optionalChain: value })),
 			index: (value: NonNullable<T.TypeQuerySubscriptExpression.Config>['index']) =>
 				rebuilt(node, handle, () => buildTypeQuerySubscriptExpression({ ...config, index: value }))
 		},
 		object: () => _object,
-		optionalChainMarker: () => _optional_chain_marker,
+		optionalChain: () => _optional_chain,
 		index: () => _index,
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -6860,14 +6836,12 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 		'PropertySignature.accessibilityModifier',
 		'a kind id'
 	);
-	const _static_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.staticMarker, 'PropertySignature.staticMarker', 'a boolean')
+	const _static = coerceBooleanKeywordStorage(rejectBareText(config.static, 'PropertySignature.static', 'a boolean'));
+	const _override = coerceBooleanKeywordStorage(
+		rejectBareText(config.override, 'PropertySignature.override', 'a boolean')
 	);
-	const _override_modifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.overrideModifier, 'PropertySignature.overrideModifier', 'a boolean')
-	);
-	const _readonly_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.readonlyMarker, 'PropertySignature.readonlyMarker', 'a boolean')
+	const _readonly = coerceBooleanKeywordStorage(
+		rejectBareText(config.readonly, 'PropertySignature.readonly', 'a boolean')
 	);
 	const _name = admitAliasContent<NonNullable<T.PropertySignature['_name']>>(
 		rejectBareText(
@@ -6877,8 +6851,8 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 		),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
-	const _optional_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.optionalMarker, 'PropertySignature.optionalMarker', 'a boolean')
+	const _optional = coerceBooleanKeywordStorage(
+		rejectBareText(config.optional, 'PropertySignature.optional', 'a boolean')
 	);
 	const _type = rejectBareText(config.type, 'PropertySignature.type', 'a built TypeAnnotation');
 	const handle = currentHandle();
@@ -6887,34 +6861,34 @@ export function buildPropertySignature(config: T.PropertySignature.Config): T.Pr
 		$source: 2 as const,
 		$named: true as const,
 		_accessibility_modifier,
-		_static_marker,
-		_override_modifier,
-		_readonly_marker,
+		_static,
+		_override,
+		_readonly,
 		_name,
-		_optional_marker,
+		_optional,
 		_type,
 		$with: {
 			accessibilityModifier: (value?: NonNullable<T.PropertySignature.Config>['accessibilityModifier']) =>
 				rebuilt(node, handle, () => buildPropertySignature({ ...config, accessibilityModifier: value })),
-			staticMarker: (value?: NonNullable<T.PropertySignature.Config>['staticMarker']) =>
-				rebuilt(node, handle, () => buildPropertySignature({ ...config, staticMarker: value })),
-			overrideModifier: (value?: NonNullable<T.PropertySignature.Config>['overrideModifier']) =>
-				rebuilt(node, handle, () => buildPropertySignature({ ...config, overrideModifier: value })),
-			readonlyMarker: (value?: NonNullable<T.PropertySignature.Config>['readonlyMarker']) =>
-				rebuilt(node, handle, () => buildPropertySignature({ ...config, readonlyMarker: value })),
+			static: (value?: NonNullable<T.PropertySignature.Config>['static']) =>
+				rebuilt(node, handle, () => buildPropertySignature({ ...config, static: value })),
+			override: (value?: NonNullable<T.PropertySignature.Config>['override']) =>
+				rebuilt(node, handle, () => buildPropertySignature({ ...config, override: value })),
+			readonly: (value?: NonNullable<T.PropertySignature.Config>['readonly']) =>
+				rebuilt(node, handle, () => buildPropertySignature({ ...config, readonly: value })),
 			name: (value: NonNullable<T.PropertySignature.Config>['name']) =>
 				rebuilt(node, handle, () => buildPropertySignature({ ...config, name: value })),
-			optionalMarker: (value?: NonNullable<T.PropertySignature.Config>['optionalMarker']) =>
-				rebuilt(node, handle, () => buildPropertySignature({ ...config, optionalMarker: value })),
+			optional: (value?: NonNullable<T.PropertySignature.Config>['optional']) =>
+				rebuilt(node, handle, () => buildPropertySignature({ ...config, optional: value })),
 			type: (value?: T.TypeAnnotation) =>
 				rebuilt(node, handle, () => buildPropertySignature({ ...config, type: value }))
 		},
 		accessibilityModifier: () => _accessibility_modifier,
-		staticMarker: () => _static_marker,
-		overrideModifier: () => _override_modifier,
-		readonlyMarker: () => _readonly_marker,
+		static: () => _static,
+		override: () => _override,
+		readonly: () => _readonly,
 		name: () => _name,
-		optionalMarker: () => _optional_marker,
+		optional: () => _optional,
 		type: () => _type,
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -6964,7 +6938,7 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 			: listItems(ownerElements(listView.list, 'typeParameters'), {
 					kind: TSKindId.TypeParameter,
 					content: 'name',
-					decorations: ['_const_marker', '_constraint', '_value']
+					decorations: ['_const', '_constraint', '_value']
 				});
 	const handle = currentHandle();
 	const node = {
@@ -7006,9 +6980,7 @@ function _buildTypeParameters(value: AdmitBound<T.TypeParametersElements, T.Admi
 }
 
 export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParameter.Bound {
-	const _const_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.constMarker, 'TypeParameter.constMarker', 'a boolean')
-	);
+	const _const = coerceBooleanKeywordStorage(rejectBareText(config.const, 'TypeParameter.const', 'a boolean'));
 	const _name = admitAliasContent<NonNullable<T.TypeParameter['_name']>>(
 		rejectBareText(config.name, 'TypeParameter.name', 'a built TypeIdentifier'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -7020,20 +6992,20 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 		$type: TSKindId.TypeParameter as const,
 		$source: 2 as const,
 		$named: true as const,
-		_const_marker,
+		_const,
 		_name,
 		_constraint,
 		_value,
 		$with: {
-			constMarker: (value?: NonNullable<T.TypeParameter.Config>['constMarker']) =>
-				rebuilt(node, handle, () => buildTypeParameter({ ...config, constMarker: value })),
+			const: (value?: NonNullable<T.TypeParameter.Config>['const']) =>
+				rebuilt(node, handle, () => buildTypeParameter({ ...config, const: value })),
 			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
 				rebuilt(node, handle, () => buildTypeParameter({ ...config, name: value })),
 			constraint: (value?: T.Constraint) =>
 				rebuilt(node, handle, () => buildTypeParameter({ ...config, constraint: value })),
 			value: (value?: T.DefaultType) => rebuilt(node, handle, () => buildTypeParameter({ ...config, value: value }))
 		},
-		constMarker: () => _const_marker,
+		const: () => _const,
 		name: () => _name,
 		constraint: () => _constraint,
 		value: () => _value,
@@ -7111,8 +7083,8 @@ export function buildConstraint(config: T.Constraint.Config): T.Constraint.Bound
 }
 
 export function buildConstructSignature(config: Partial<T.ConstructSignature.Config> = {}): T.ConstructSignature.Bound {
-	const _abstract_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.abstractMarker, 'ConstructSignature.abstractMarker', 'a boolean')
+	const _abstract = coerceBooleanKeywordStorage(
+		rejectBareText(config.abstract, 'ConstructSignature.abstract', 'a boolean')
 	);
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
@@ -7130,13 +7102,13 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 		$type: TSKindId.ConstructSignature as const,
 		$source: 2 as const,
 		$named: true as const,
-		_abstract_marker,
+		_abstract,
 		_type_parameters,
 		_parameters,
 		_type,
 		$with: {
-			abstractMarker: (value?: NonNullable<T.ConstructSignature.Config>['abstractMarker']) =>
-				rebuilt(node, handle, () => buildConstructSignature({ ...config, abstractMarker: value })),
+			abstract: (value?: NonNullable<T.ConstructSignature.Config>['abstract']) =>
+				rebuilt(node, handle, () => buildConstructSignature({ ...config, abstract: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -7156,7 +7128,7 @@ export function buildConstructSignature(config: Partial<T.ConstructSignature.Con
 			type: (value?: T.TypeAnnotation) =>
 				rebuilt(node, handle, () => buildConstructSignature({ ...config, type: value }))
 		},
-		abstractMarker: () => _abstract_marker,
+		abstract: () => _abstract,
 		typeParameters: () => _type_parameters,
 		parameters: () => _parameters,
 		type: () => _type,
@@ -7938,7 +7910,7 @@ function _buildTypeParametersElements(
 			listItems(listedStored, {
 				kind: TSKindId.TypeParameter,
 				content: 'name',
-				decorations: ['_const_marker', '_constraint', '_value']
+				decorations: ['_const', '_constraint', '_value']
 			}),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
@@ -9117,8 +9089,8 @@ export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): 
 		'IndexSignatureColon.sign',
 		'a kind id'
 	);
-	const _readonly_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.readonlyMarker, 'IndexSignatureColon.readonlyMarker', 'a boolean')
+	const _readonly = coerceBooleanKeywordStorage(
+		rejectBareText(config.readonly, 'IndexSignatureColon.readonly', 'a boolean')
 	);
 	const _name = rejectKeywordText(
 		rejectBareText(
@@ -9172,15 +9144,15 @@ export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): 
 		$source: 2 as const,
 		$named: true as const,
 		_sign,
-		_readonly_marker,
+		_readonly,
 		_name,
 		_index_type,
 		_type,
 		$with: {
 			sign: (value?: NonNullable<T.IndexSignatureColon.Config>['sign']) =>
 				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, sign: value })),
-			readonlyMarker: (value?: NonNullable<T.IndexSignatureColon.Config>['readonlyMarker']) =>
-				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, readonlyMarker: value })),
+			readonly: (value?: NonNullable<T.IndexSignatureColon.Config>['readonly']) =>
+				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, readonly: value })),
 			name: (value: NonNullable<T.IndexSignatureColon.Config>['name']) =>
 				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, name: value })),
 			indexType: (value: NonNullable<T.IndexSignatureColon.Config>['indexType']) =>
@@ -9189,7 +9161,7 @@ export function buildIndexSignatureColon(config: T.IndexSignatureColon.Config): 
 				rebuilt(node, handle, () => buildIndexSignatureColon({ ...config, type: value }))
 		},
 		sign: () => _sign,
-		readonlyMarker: () => _readonly_marker,
+		readonly: () => _readonly,
 		name: () => _name,
 		indexType: () => _index_type,
 		type: () => _type,
@@ -9211,8 +9183,8 @@ export function buildIndexSignatureMappedTypeClause(
 		'IndexSignatureMappedTypeClause.sign',
 		'a kind id'
 	);
-	const _readonly_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.readonlyMarker, 'IndexSignatureMappedTypeClause.readonlyMarker', 'a boolean')
+	const _readonly = coerceBooleanKeywordStorage(
+		rejectBareText(config.readonly, 'IndexSignatureMappedTypeClause.readonly', 'a boolean')
 	);
 	const _mapped_type_clause = rejectBareText(
 		config.mappedTypeClause,
@@ -9230,21 +9202,21 @@ export function buildIndexSignatureMappedTypeClause(
 		$source: 2 as const,
 		$named: true as const,
 		_sign,
-		_readonly_marker,
+		_readonly,
 		_mapped_type_clause,
 		_type,
 		$with: {
 			sign: (value?: NonNullable<T.IndexSignatureMappedTypeClause.Config>['sign']) =>
 				rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, sign: value })),
-			readonlyMarker: (value?: NonNullable<T.IndexSignatureMappedTypeClause.Config>['readonlyMarker']) =>
-				rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, readonlyMarker: value })),
+			readonly: (value?: NonNullable<T.IndexSignatureMappedTypeClause.Config>['readonly']) =>
+				rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, readonly: value })),
 			mappedTypeClause: (value: T.MappedTypeClause) =>
 				rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, mappedTypeClause: value })),
 			type: (value: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) =>
 				rebuilt(node, handle, () => buildIndexSignatureMappedTypeClause({ ...config, type: value }))
 		},
 		sign: () => _sign,
-		readonlyMarker: () => _readonly_marker,
+		readonly: () => _readonly,
 		mappedTypeClause: () => _mapped_type_clause,
 		type: () => _type,
 		$render: () => renderText(handle, node),

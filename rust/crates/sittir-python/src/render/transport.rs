@@ -8509,19 +8509,19 @@ impl ::sittir_core::render::Render for MatchBlockContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ForStatementAsyncMarkerTransportSlot {
+pub enum ForStatementAsyncTransportSlot {
     Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
 }
 
-impl ::sittir_core::prepare::Prepare for ForStatementAsyncMarkerTransportSlot {
+impl ::sittir_core::prepare::Prepare for ForStatementAsyncTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ForStatementAsyncMarkerTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ForStatementAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for ForStatementAsyncMarkerTransportSlot {
+impl ::sittir_core::view::KindOf for ForStatementAsyncTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
@@ -8530,7 +8530,7 @@ impl ::sittir_core::view::KindOf for ForStatementAsyncMarkerTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ForStatementAsyncMarkerTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ForStatementAsyncTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -8540,67 +8540,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementAsyncMarkerTransport
                 match u16::from_napi_value(env, napi_val)? {
                     68 => Ok(Self::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ForStatementAsyncMarkerTransportSlot",
+                        "unknown kind id {other} in ForStatementAsyncTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ForStatementAsyncMarkerTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ForStatementAsyncTransportSlot")
                 )?;
                 match kind_id {
                     68 => Ok(Self::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ForStatementAsyncMarkerTransportSlot",
+                        "unknown kind id {other} in ForStatementAsyncTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ForStatementAsyncMarkerTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ForStatementAsyncTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ForStatementAsyncMarkerTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ForStatementAsyncTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ForStatementAsyncMarkerTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ForStatementAsyncTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ForStatementAsyncMarkerTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ForStatementAsyncTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ForStatementAsyncMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ForStatementAsyncTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ForStatementAsyncMarkerTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ForStatementAsyncTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ForStatementAsyncMarkerTransportSlot::to_napi_value(env, *val)
+        ForStatementAsyncTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn for_statement_async_marker_transport_slot_to_any(t: ForStatementAsyncMarkerTransportSlot) -> AnyTransport {
+fn for_statement_async_transport_slot_to_any(t: ForStatementAsyncTransportSlot) -> AnyTransport {
     match t {
-        ForStatementAsyncMarkerTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
+        ForStatementAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
     }
 }
 
-impl ::sittir_core::render::Render for ForStatementAsyncMarkerTransportSlot {
+impl ::sittir_core::render::Render for ForStatementAsyncTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ForStatementAsyncMarkerTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => w.text("async"),
+            ForStatementAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => w.text("async"),
         }
     }
 }
@@ -9453,19 +9453,19 @@ impl ::sittir_core::render::Render for ForStatementRightTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ExceptClauseStarMarkerTransportSlot {
+pub enum ExceptClauseGroupTransportSlot {
     Literal7_73_74_61_72,
 }
 
-impl ::sittir_core::prepare::Prepare for ExceptClauseStarMarkerTransportSlot {
+impl ::sittir_core::prepare::Prepare for ExceptClauseGroupTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ExceptClauseStarMarkerTransportSlot::Literal7_73_74_61_72 => Ok(()),
+            ExceptClauseGroupTransportSlot::Literal7_73_74_61_72 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for ExceptClauseStarMarkerTransportSlot {
+impl ::sittir_core::view::KindOf for ExceptClauseGroupTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal7_73_74_61_72 => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
@@ -9474,7 +9474,7 @@ impl ::sittir_core::view::KindOf for ExceptClauseStarMarkerTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseStarMarkerTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseGroupTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -9484,85 +9484,85 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseStarMarkerTransportS
                 match u16::from_napi_value(env, napi_val)? {
                     8 => Ok(Self::Literal7_73_74_61_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExceptClauseStarMarkerTransportSlot",
+                        "unknown kind id {other} in ExceptClauseGroupTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ExceptClauseStarMarkerTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ExceptClauseGroupTransportSlot")
                 )?;
                 match kind_id {
                     8 => Ok(Self::Literal7_73_74_61_72),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExceptClauseStarMarkerTransportSlot",
+                        "unknown kind id {other} in ExceptClauseGroupTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ExceptClauseStarMarkerTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ExceptClauseGroupTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExceptClauseStarMarkerTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ExceptClauseGroupTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExceptClauseStarMarkerTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ExceptClauseGroupTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseStarMarkerTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseGroupTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExceptClauseStarMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ExceptClauseGroupTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseStarMarkerTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseGroupTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExceptClauseStarMarkerTransportSlot::to_napi_value(env, *val)
+        ExceptClauseGroupTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn except_clause_star_marker_transport_slot_to_any(t: ExceptClauseStarMarkerTransportSlot) -> AnyTransport {
+fn except_clause_group_transport_slot_to_any(t: ExceptClauseGroupTransportSlot) -> AnyTransport {
     match t {
-        ExceptClauseStarMarkerTransportSlot::Literal7_73_74_61_72 => AnyTransport::Literal7_73_74_61_72,
+        ExceptClauseGroupTransportSlot::Literal7_73_74_61_72 => AnyTransport::Literal7_73_74_61_72,
     }
 }
 
-impl ::sittir_core::render::Render for ExceptClauseStarMarkerTransportSlot {
+impl ::sittir_core::render::Render for ExceptClauseGroupTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ExceptClauseStarMarkerTransportSlot::Literal7_73_74_61_72 => w.text("*"),
+            ExceptClauseGroupTransportSlot::Literal7_73_74_61_72 => w.text("*"),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum WithStatementAsyncMarkerTransportSlot {
+pub enum WithStatementAsyncTransportSlot {
     Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
 }
 
-impl ::sittir_core::prepare::Prepare for WithStatementAsyncMarkerTransportSlot {
+impl ::sittir_core::prepare::Prepare for WithStatementAsyncTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            WithStatementAsyncMarkerTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            WithStatementAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for WithStatementAsyncMarkerTransportSlot {
+impl ::sittir_core::view::KindOf for WithStatementAsyncTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
@@ -9571,7 +9571,7 @@ impl ::sittir_core::view::KindOf for WithStatementAsyncMarkerTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for WithStatementAsyncMarkerTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for WithStatementAsyncTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -9581,85 +9581,85 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithStatementAsyncMarkerTranspor
                 match u16::from_napi_value(env, napi_val)? {
                     68 => Ok(Self::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in WithStatementAsyncMarkerTransportSlot",
+                        "unknown kind id {other} in WithStatementAsyncTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in WithStatementAsyncMarkerTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in WithStatementAsyncTransportSlot")
                 )?;
                 match kind_id {
                     68 => Ok(Self::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in WithStatementAsyncMarkerTransportSlot",
+                        "unknown kind id {other} in WithStatementAsyncTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("WithStatementAsyncMarkerTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("WithStatementAsyncTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for WithStatementAsyncMarkerTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for WithStatementAsyncTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("WithStatementAsyncMarkerTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("WithStatementAsyncTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<WithStatementAsyncMarkerTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<WithStatementAsyncTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        WithStatementAsyncMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        WithStatementAsyncTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<WithStatementAsyncMarkerTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<WithStatementAsyncTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        WithStatementAsyncMarkerTransportSlot::to_napi_value(env, *val)
+        WithStatementAsyncTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn with_statement_async_marker_transport_slot_to_any(t: WithStatementAsyncMarkerTransportSlot) -> AnyTransport {
+fn with_statement_async_transport_slot_to_any(t: WithStatementAsyncTransportSlot) -> AnyTransport {
     match t {
-        WithStatementAsyncMarkerTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
+        WithStatementAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
     }
 }
 
-impl ::sittir_core::render::Render for WithStatementAsyncMarkerTransportSlot {
+impl ::sittir_core::render::Render for WithStatementAsyncTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            WithStatementAsyncMarkerTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => w.text("async"),
+            WithStatementAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => w.text("async"),
         }
     }
 }
 
 #[derive(Debug, Clone)]
-pub enum FunctionDefinitionAsyncMarkerTransportSlot {
+pub enum FunctionDefinitionAsyncTransportSlot {
     Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
 }
 
-impl ::sittir_core::prepare::Prepare for FunctionDefinitionAsyncMarkerTransportSlot {
+impl ::sittir_core::prepare::Prepare for FunctionDefinitionAsyncTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            FunctionDefinitionAsyncMarkerTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            FunctionDefinitionAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for FunctionDefinitionAsyncMarkerTransportSlot {
+impl ::sittir_core::view::KindOf for FunctionDefinitionAsyncTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
@@ -9668,7 +9668,7 @@ impl ::sittir_core::view::KindOf for FunctionDefinitionAsyncMarkerTransportSlot 
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionAsyncMarkerTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionAsyncTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -9678,67 +9678,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionAsyncMarkerTra
                 match u16::from_napi_value(env, napi_val)? {
                     68 => Ok(Self::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FunctionDefinitionAsyncMarkerTransportSlot",
+                        "unknown kind id {other} in FunctionDefinitionAsyncTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in FunctionDefinitionAsyncMarkerTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in FunctionDefinitionAsyncTransportSlot")
                 )?;
                 match kind_id {
                     68 => Ok(Self::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in FunctionDefinitionAsyncMarkerTransportSlot",
+                        "unknown kind id {other} in FunctionDefinitionAsyncTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("FunctionDefinitionAsyncMarkerTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("FunctionDefinitionAsyncTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FunctionDefinitionAsyncMarkerTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for FunctionDefinitionAsyncTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FunctionDefinitionAsyncMarkerTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("FunctionDefinitionAsyncTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionDefinitionAsyncMarkerTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionDefinitionAsyncTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        FunctionDefinitionAsyncMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        FunctionDefinitionAsyncTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionDefinitionAsyncMarkerTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionDefinitionAsyncTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        FunctionDefinitionAsyncMarkerTransportSlot::to_napi_value(env, *val)
+        FunctionDefinitionAsyncTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn function_definition_async_marker_transport_slot_to_any(t: FunctionDefinitionAsyncMarkerTransportSlot) -> AnyTransport {
+fn function_definition_async_transport_slot_to_any(t: FunctionDefinitionAsyncTransportSlot) -> AnyTransport {
     match t {
-        FunctionDefinitionAsyncMarkerTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
+        FunctionDefinitionAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
     }
 }
 
-impl ::sittir_core::render::Render for FunctionDefinitionAsyncMarkerTransportSlot {
+impl ::sittir_core::render::Render for FunctionDefinitionAsyncTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            FunctionDefinitionAsyncMarkerTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => w.text("async"),
+            FunctionDefinitionAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => w.text("async"),
         }
     }
 }
@@ -17849,19 +17849,19 @@ impl ::sittir_core::render::Render for CollectionElementsElementTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ForInClauseAsyncMarkerTransportSlot {
+pub enum ForInClauseAsyncTransportSlot {
     Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
 }
 
-impl ::sittir_core::prepare::Prepare for ForInClauseAsyncMarkerTransportSlot {
+impl ::sittir_core::prepare::Prepare for ForInClauseAsyncTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ForInClauseAsyncMarkerTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
+            ForInClauseAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for ForInClauseAsyncMarkerTransportSlot {
+impl ::sittir_core::view::KindOf for ForInClauseAsyncTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
@@ -17870,7 +17870,7 @@ impl ::sittir_core::view::KindOf for ForInClauseAsyncMarkerTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseAsyncMarkerTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseAsyncTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -17880,67 +17880,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseAsyncMarkerTransportS
                 match u16::from_napi_value(env, napi_val)? {
                     68 => Ok(Self::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ForInClauseAsyncMarkerTransportSlot",
+                        "unknown kind id {other} in ForInClauseAsyncTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ForInClauseAsyncMarkerTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ForInClauseAsyncTransportSlot")
                 )?;
                 match kind_id {
                     68 => Ok(Self::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ForInClauseAsyncMarkerTransportSlot",
+                        "unknown kind id {other} in ForInClauseAsyncTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ForInClauseAsyncMarkerTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("ForInClauseAsyncTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ForInClauseAsyncMarkerTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ForInClauseAsyncTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ForInClauseAsyncMarkerTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ForInClauseAsyncTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ForInClauseAsyncMarkerTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ForInClauseAsyncTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ForInClauseAsyncMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ForInClauseAsyncTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ForInClauseAsyncMarkerTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ForInClauseAsyncTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ForInClauseAsyncMarkerTransportSlot::to_napi_value(env, *val)
+        ForInClauseAsyncTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn for_in_clause_async_marker_transport_slot_to_any(t: ForInClauseAsyncMarkerTransportSlot) -> AnyTransport {
+fn for_in_clause_async_transport_slot_to_any(t: ForInClauseAsyncTransportSlot) -> AnyTransport {
     match t {
-        ForInClauseAsyncMarkerTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
+        ForInClauseAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => AnyTransport::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64,
     }
 }
 
-impl ::sittir_core::render::Render for ForInClauseAsyncMarkerTransportSlot {
+impl ::sittir_core::render::Render for ForInClauseAsyncTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ForInClauseAsyncMarkerTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => w.text("async"),
+            ForInClauseAsyncTransportSlot::Literal3_61_73_79_6e_63_5f_6b_65_79_77_6f_72_64 => w.text("async"),
         }
     }
 }
@@ -19839,19 +19839,19 @@ impl ::sittir_core::render::Render for InterpolationExpressionTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum InterpolationEqMarkerTransportSlot {
+pub enum InterpolationDebugTransportSlot {
     Literal43_65_71,
 }
 
-impl ::sittir_core::prepare::Prepare for InterpolationEqMarkerTransportSlot {
+impl ::sittir_core::prepare::Prepare for InterpolationDebugTransportSlot {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            InterpolationEqMarkerTransportSlot::Literal43_65_71 => Ok(()),
+            InterpolationDebugTransportSlot::Literal43_65_71 => Ok(()),
         }
     }
 }
 
-impl ::sittir_core::view::KindOf for InterpolationEqMarkerTransportSlot {
+impl ::sittir_core::view::KindOf for InterpolationDebugTransportSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Literal43_65_71 => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
@@ -19860,7 +19860,7 @@ impl ::sittir_core::view::KindOf for InterpolationEqMarkerTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for InterpolationEqMarkerTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for InterpolationDebugTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -19870,67 +19870,67 @@ impl ::napi::bindgen_prelude::FromNapiValue for InterpolationEqMarkerTransportSl
                 match u16::from_napi_value(env, napi_val)? {
                     40 => Ok(Self::Literal43_65_71),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in InterpolationEqMarkerTransportSlot",
+                        "unknown kind id {other} in InterpolationDebugTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in InterpolationEqMarkerTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in InterpolationDebugTransportSlot")
                 )?;
                 match kind_id {
                     40 => Ok(Self::Literal43_65_71),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in InterpolationEqMarkerTransportSlot",
+                        "unknown kind id {other} in InterpolationDebugTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("InterpolationEqMarkerTransportSlot: expected u16 kind_id or object with $type")),
+            _ => Err(::napi::Error::from_reason("InterpolationDebugTransportSlot: expected u16 kind_id or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for InterpolationEqMarkerTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for InterpolationDebugTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("InterpolationEqMarkerTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("InterpolationDebugTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<InterpolationEqMarkerTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<InterpolationDebugTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        InterpolationEqMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        InterpolationDebugTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<InterpolationEqMarkerTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<InterpolationDebugTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        InterpolationEqMarkerTransportSlot::to_napi_value(env, *val)
+        InterpolationDebugTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn interpolation_eq_marker_transport_slot_to_any(t: InterpolationEqMarkerTransportSlot) -> AnyTransport {
+fn interpolation_debug_transport_slot_to_any(t: InterpolationDebugTransportSlot) -> AnyTransport {
     match t {
-        InterpolationEqMarkerTransportSlot::Literal43_65_71 => AnyTransport::Literal43_65_71,
+        InterpolationDebugTransportSlot::Literal43_65_71 => AnyTransport::Literal43_65_71,
     }
 }
 
-impl ::sittir_core::render::Render for InterpolationEqMarkerTransportSlot {
+impl ::sittir_core::render::Render for InterpolationDebugTransportSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            InterpolationEqMarkerTransportSlot::Literal43_65_71 => w.text("="),
+            InterpolationDebugTransportSlot::Literal43_65_71 => w.text("="),
         }
     }
 }
@@ -26779,8 +26779,8 @@ pub struct ForStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
+    pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<ForStatementLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -26813,7 +26813,7 @@ impl ::sittir_core::prepare::Prepare for ForStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.async_marker.prepare(ctx)?;
+        self.async_.prepare(ctx)?;
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         self.body.prepare(ctx)?;
@@ -26990,8 +26990,8 @@ pub struct ExceptClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_star_marker"))]
-    pub star_marker: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_group"))]
+    pub group: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_exception"))]
     pub exception: Option<::sittir_core::SlotValue<ExceptClauseExceptionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_suite"))]
@@ -27020,7 +27020,7 @@ impl ::sittir_core::prepare::Prepare for ExceptClauseTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.star_marker.prepare(ctx)?;
+        self.group.prepare(ctx)?;
         self.exception.prepare(ctx)?;
         self.suite.prepare(ctx)?;
         Ok(())
@@ -27112,8 +27112,8 @@ pub struct WithStatementTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
+    pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_clause"))]
     pub with_clause: ::sittir_core::SlotValue<WithClauseTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
@@ -27142,7 +27142,7 @@ impl ::sittir_core::prepare::Prepare for WithStatementTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.async_marker.prepare(ctx)?;
+        self.async_.prepare(ctx)?;
         self.with_clause.prepare(ctx)?;
         self.body.prepare(ctx)?;
         Ok(())
@@ -27233,8 +27233,8 @@ pub struct FunctionDefinitionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
+    pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: ::sittir_core::SlotValue<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
@@ -27269,7 +27269,7 @@ impl ::sittir_core::prepare::Prepare for FunctionDefinitionTransport {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.async_marker.prepare(ctx)?;
+        self.async_.prepare(ctx)?;
         self.name.prepare(ctx)?;
         self.type_parameters.prepare(ctx)?;
         self.parameters.prepare(ctx)?;
@@ -31715,8 +31715,8 @@ pub struct ForInClauseTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$_edges"))]
     pub edges: Option<::sittir_core::options::Edges>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async"))]
+    pub async_: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ::sittir_core::SlotValue<ForInClauseLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -31761,7 +31761,7 @@ impl ::sittir_core::prepare::Prepare for ForInClauseTransport {
         self.right_separator_space_before.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_BEFORE].arm);
         self.right_separator_space_after.get_or_insert(ctx.options.spacing[options::SITE_FOR_IN_CLAUSE_RIGHT_SEPARATOR_SPACE_AFTER].arm);
         ::sittir_core::prepare::fill_seated_gaps(self.right.iter_mut().map(Some), options::SEATS_FOR_IN_CLAUSE_RIGHT, &separated_right, ctx);
-        self.async_marker.prepare(ctx)?;
+        self.async_.prepare(ctx)?;
         self.left.prepare(ctx)?;
         self.right.prepare(ctx)?;
         self.comma.prepare(ctx)?;
@@ -32109,8 +32109,8 @@ pub struct InterpolationTransport {
     pub edges: Option<::sittir_core::options::Edges>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ::sittir_core::SlotValue<InterpolationExpressionTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_eq_marker"))]
-    pub eq_marker: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_debug"))]
+    pub debug: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_conversion"))]
     pub type_conversion: Option<::sittir_core::SlotValue<TypeConversionTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_format_specifier"))]
@@ -32140,7 +32140,7 @@ impl ::sittir_core::prepare::Prepare for InterpolationTransport {
         self.transport_trivia_data.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.expression.prepare(ctx)?;
-        self.eq_marker.prepare(ctx)?;
+        self.debug.prepare(ctx)?;
         self.type_conversion.prepare(ctx)?;
         self.format_specifier.prepare(ctx)?;
         Ok(())
@@ -50049,14 +50049,14 @@ fn render_case_clause(node: &CaseClauseTransport, w: &mut dyn ::sittir_core::ren
 
 fn render_for_statement(node: &ForStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let alternative = View::new(&node.alternative, "{}");
-    let async_marker = View::new(&node.async_marker, "async");
+    let async_ = View::new(&node.async_, "async");
     let body = &node.body;
     let left = &node.left;
     let right = &node.right;
     w.edge(::sittir_core::types::KindId(156), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    if async_marker.is_present() {
-        async_marker.render(w)?;
-        w.site_at(options::SITE_FOR_STATEMENT_ASYNC_MARKER_AFTER);
+    if async_.is_present() {
+        async_.render(w)?;
+        w.site_at(options::SITE_FOR_STATEMENT_ASYNC_AFTER);
     }
     w.site_at(options::SITE_FOR_STATEMENT_FOR_KEYWORD_BEFORE);
     w.text("for")?;
@@ -50123,15 +50123,15 @@ fn render_try_statement(node: &TryStatementTransport, w: &mut dyn ::sittir_core:
 
 fn render_except_clause(node: &ExceptClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let exception = View::new(&node.exception, "{}");
-    let star_marker = View::new(&node.star_marker, "*");
+    let group = View::new(&node.group, "*");
     let suite = &node.suite;
     w.edge(::sittir_core::types::KindId(159), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
     w.text("except")?;
     w.site_at(options::SITE_EXCEPT_CLAUSE_EXCEPT_KEYWORD_AFTER);
-    if star_marker.is_present() {
-        w.site_at(options::SITE_EXCEPT_CLAUSE_STAR_MARKER_BEFORE);
-        star_marker.render(w)?;
-        w.site_at(options::SITE_EXCEPT_CLAUSE_STAR_MARKER_AFTER);
+    if group.is_present() {
+        w.site_at(options::SITE_EXCEPT_CLAUSE_GROUP_BEFORE);
+        group.render(w)?;
+        w.site_at(options::SITE_EXCEPT_CLAUSE_GROUP_AFTER);
     }
     exception.render(w)?;
     w.site_at(options::SITE_EXCEPT_CLAUSE_COLON_BEFORE);
@@ -50156,13 +50156,13 @@ fn render_finally_clause(node: &FinallyClauseTransport, w: &mut dyn ::sittir_cor
 }
 
 fn render_with_statement(node: &WithStatementTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let async_marker = View::new(&node.async_marker, "async");
+    let async_ = View::new(&node.async_, "async");
     let body = &node.body;
     let with_clause = &node.with_clause;
     w.edge(::sittir_core::types::KindId(161), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    if async_marker.is_present() {
-        async_marker.render(w)?;
-        w.site_at(options::SITE_WITH_STATEMENT_ASYNC_MARKER_AFTER);
+    if async_.is_present() {
+        async_.render(w)?;
+        w.site_at(options::SITE_WITH_STATEMENT_ASYNC_AFTER);
     }
     w.site_at(options::SITE_WITH_STATEMENT_WITH_KEYWORD_BEFORE);
     w.text("with")?;
@@ -50183,16 +50183,16 @@ fn render_with_item(node: &WithItemTransport, w: &mut dyn ::sittir_core::render:
 }
 
 fn render_function_definition(node: &FunctionDefinitionTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let async_marker = View::new(&node.async_marker, "async");
+    let async_ = View::new(&node.async_, "async");
     let body = &node.body;
     let name = &node.name;
     let parameters = &node.parameters;
     let return_type = View::new(&node.return_type, "{}");
     let type_parameters = View::new(&node.type_parameters, "{}");
     w.edge(::sittir_core::types::KindId(164), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    if async_marker.is_present() {
-        async_marker.render(w)?;
-        w.site_at(options::SITE_FUNCTION_DEFINITION_ASYNC_MARKER_AFTER);
+    if async_.is_present() {
+        async_.render(w)?;
+        w.site_at(options::SITE_FUNCTION_DEFINITION_ASYNC_AFTER);
     }
     w.site_at(options::SITE_FUNCTION_DEFINITION_DEF_KEYWORD_BEFORE);
     w.text("def")?;
@@ -51160,7 +51160,7 @@ fn render_collection_elements(node: &CollectionElementsTransport, w: &mut dyn ::
 }
 
 fn render_for_in_clause(node: &ForInClauseTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let async_marker = View::new(&node.async_marker, "async");
+    let async_ = View::new(&node.async_, "async");
     let comma = View::new(&node.comma, ",");
     let left = &node.left;
     let right = ListView {
@@ -51175,9 +51175,9 @@ fn render_for_in_clause(node: &ForInClauseTransport, w: &mut dyn ::sittir_core::
         tail: None,
     };
     w.edge(::sittir_core::types::KindId(243), ::sittir_core::options::Side::Before, node.edges.and_then(|e| e.before));
-    if async_marker.is_present() {
-        async_marker.render(w)?;
-        w.site_at(options::SITE_FOR_IN_CLAUSE_ASYNC_MARKER_AFTER);
+    if async_.is_present() {
+        async_.render(w)?;
+        w.site_at(options::SITE_FOR_IN_CLAUSE_ASYNC_AFTER);
     }
     w.site_at(options::SITE_FOR_IN_CLAUSE_FOR_KEYWORD_BEFORE);
     w.text("for")?;
@@ -51280,7 +51280,7 @@ fn render_string_content(node: &StringContentTransport, w: &mut dyn ::sittir_cor
 }
 
 fn render_interpolation(node: &InterpolationTransport, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let eq_marker = View::new(&node.eq_marker, "=");
+    let debug = View::new(&node.debug, "=");
     let expression = &node.expression;
     let format_specifier = View::new(&node.format_specifier, "{}");
     let type_conversion = View::new(&node.type_conversion, "{}");
@@ -51288,10 +51288,10 @@ fn render_interpolation(node: &InterpolationTransport, w: &mut dyn ::sittir_core
     w.text("{")?;
     w.site_at(options::SITE_INTERPOLATION_LBRACE_AFTER);
     expression.render(w)?;
-    if eq_marker.is_present() {
-        w.site_at(options::SITE_INTERPOLATION_EQ_MARKER_BEFORE);
-        eq_marker.render(w)?;
-        w.site_at(options::SITE_INTERPOLATION_EQ_MARKER_AFTER);
+    if debug.is_present() {
+        w.site_at(options::SITE_INTERPOLATION_DEBUG_BEFORE);
+        debug.render(w)?;
+        w.site_at(options::SITE_INTERPOLATION_DEBUG_AFTER);
     }
     type_conversion.render(w)?;
     format_specifier.render(w)?;

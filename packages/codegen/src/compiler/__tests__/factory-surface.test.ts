@@ -76,7 +76,7 @@ describe('child factory surface classification', () => {
 	it('keeps the config surface when markers accompany a sole named user slot', () => {
 		// The factories emitter only emits a direct-value signature when the
 		// sole user slot is also the node's ONLY non-stamped field — a
-		// keyword-presence marker (reference/move_marker/mutable_specifier)
+		// keyword-presence marker (reference/move/mutable_specifier)
 		// is caller-settable surface a direct signature has nowhere to
 		// accept, so these kinds' generated factories take a config object.
 		// The shape metadata must agree, or the validator (and any other
@@ -93,7 +93,7 @@ describe('child factory surface classification', () => {
 	});
 
 	it('has no sole slot when markers sit beside the payload', () => {
-		// A field pattern's named variant carries the whole arm: ref_marker,
+		// A field pattern's named variant carries the whole arm: ref,
 		// mutable_specifier, name and pattern, so the kind is a branch with a
 		// config surface, never a container that positions one child.
 		expect(soleSlotFacts(nodeMap.nodes.get('_field_pattern_named')!, nodeMap)).toBeNull();

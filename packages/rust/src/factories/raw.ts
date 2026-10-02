@@ -1401,12 +1401,8 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 		'StaticItem.visibilityModifier',
 		'a built VisibilityModifier'
 	);
-	const _ref_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.refMarker, 'StaticItem.refMarker', 'a boolean')
-	);
-	const _mutable_specifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.mutableSpecifier, 'StaticItem.mutableSpecifier', 'a boolean')
-	);
+	const _ref = coerceBooleanKeywordStorage(rejectBareText(config.ref, 'StaticItem.ref', 'a boolean'));
+	const _mutable = coerceBooleanKeywordStorage(rejectBareText(config.mutable, 'StaticItem.mutable', 'a boolean'));
 	const _name = rejectBareText(config.name, 'StaticItem.name', 'buildIdentifier(…)');
 	const _type = admitAliasContent<NonNullable<T.StaticItem['_type']>>(
 		rejectBareText(kindIdStorage<NonNullable<T.StaticItem['_type']>>(config.type), 'StaticItem.type', 'a built Type'),
@@ -1423,18 +1419,18 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 		$source: 2 as const,
 		$named: true as const,
 		_visibility_modifier,
-		_ref_marker,
-		_mutable_specifier,
+		_ref,
+		_mutable,
 		_name,
 		_type,
 		_value,
 		$with: {
 			visibilityModifier: (value?: T.VisibilityModifier) =>
 				rebuilt(node, handle, () => buildStaticItem({ ...config, visibilityModifier: value })),
-			refMarker: (value?: NonNullable<T.StaticItem.Config>['refMarker']) =>
-				rebuilt(node, handle, () => buildStaticItem({ ...config, refMarker: value })),
-			mutableSpecifier: (value?: NonNullable<T.StaticItem.Config>['mutableSpecifier']) =>
-				rebuilt(node, handle, () => buildStaticItem({ ...config, mutableSpecifier: value })),
+			ref: (value?: NonNullable<T.StaticItem.Config>['ref']) =>
+				rebuilt(node, handle, () => buildStaticItem({ ...config, ref: value })),
+			mutable: (value?: NonNullable<T.StaticItem.Config>['mutable']) =>
+				rebuilt(node, handle, () => buildStaticItem({ ...config, mutable: value })),
 			name: (value: T.Identifier) => rebuilt(node, handle, () => buildStaticItem({ ...config, name: value })),
 			type: (value: NonNullable<T.StaticItem.Config>['type']) =>
 				rebuilt(node, handle, () => buildStaticItem({ ...config, type: value })),
@@ -1442,8 +1438,8 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 				rebuilt(node, handle, () => buildStaticItem({ ...config, value: value }))
 		},
 		visibilityModifier: () => _visibility_modifier,
-		refMarker: () => _ref_marker,
-		mutableSpecifier: () => _mutable_specifier,
+		ref: () => _ref,
+		mutable: () => _mutable,
 		name: () => _name,
 		type: () => _type,
 		value: () => _value,
@@ -1907,9 +1903,7 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 		'TraitItem.visibilityModifier',
 		'a built VisibilityModifier'
 	);
-	const _unsafe_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.unsafeMarker, 'TraitItem.unsafeMarker', 'a boolean')
-	);
+	const _unsafe = coerceBooleanKeywordStorage(rejectBareText(config.unsafe, 'TraitItem.unsafe', 'a boolean'));
 	const _name = admitAliasContent<NonNullable<T.TraitItem['_name']>>(
 		rejectBareText(config.name, 'TraitItem.name', 'a built TypeIdentifier'),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -1928,7 +1922,7 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 		$source: 2 as const,
 		$named: true as const,
 		_visibility_modifier,
-		_unsafe_marker,
+		_unsafe,
 		_name,
 		_type_parameters,
 		_bounds,
@@ -1937,8 +1931,8 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 		$with: {
 			visibilityModifier: (value?: T.VisibilityModifier) =>
 				rebuilt(node, handle, () => buildTraitItem({ ...config, visibilityModifier: value })),
-			unsafeMarker: (value?: NonNullable<T.TraitItem.Config>['unsafeMarker']) =>
-				rebuilt(node, handle, () => buildTraitItem({ ...config, unsafeMarker: value })),
+			unsafe: (value?: NonNullable<T.TraitItem.Config>['unsafe']) =>
+				rebuilt(node, handle, () => buildTraitItem({ ...config, unsafe: value })),
 			name: (value: T.TypeIdentifier | T.TypeIdentifier.Types) =>
 				rebuilt(node, handle, () => buildTraitItem({ ...config, name: value })),
 			typeParameters: (...args: unknown[]) =>
@@ -1966,7 +1960,7 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 			body: (value: T.DeclarationList) => rebuilt(node, handle, () => buildTraitItem({ ...config, body: value }))
 		},
 		visibilityModifier: () => _visibility_modifier,
-		unsafeMarker: () => _unsafe_marker,
+		unsafe: () => _unsafe,
 		name: () => _name,
 		typeParameters: () => _type_parameters,
 		bounds: () => _bounds,
@@ -2363,9 +2357,7 @@ export function buildLifetimeParameter(config: T.LifetimeParameter.Config): T.Li
 }
 
 export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDeclaration.Bound {
-	const _mutable_specifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.mutableSpecifier, 'LetDeclaration.mutableSpecifier', 'a boolean')
-	);
+	const _mutable = coerceBooleanKeywordStorage(rejectBareText(config.mutable, 'LetDeclaration.mutable', 'a boolean'));
 	const _pattern = rejectBareText(
 		kindIdStorage<NonNullable<T.LetDeclaration['_pattern']>>(config.pattern),
 		'LetDeclaration.pattern',
@@ -2390,14 +2382,14 @@ export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDecla
 		$type: TSKindId.LetDeclaration as const,
 		$source: 2 as const,
 		$named: true as const,
-		_mutable_specifier,
+		_mutable,
 		_pattern,
 		_type,
 		_value,
 		_alternative,
 		$with: {
-			mutableSpecifier: (value?: NonNullable<T.LetDeclaration.Config>['mutableSpecifier']) =>
-				rebuilt(node, handle, () => buildLetDeclaration({ ...config, mutableSpecifier: value })),
+			mutable: (value?: NonNullable<T.LetDeclaration.Config>['mutable']) =>
+				rebuilt(node, handle, () => buildLetDeclaration({ ...config, mutable: value })),
 			pattern: (value: NonNullable<T.LetDeclaration.Config>['pattern']) =>
 				rebuilt(node, handle, () => buildLetDeclaration({ ...config, pattern: value })),
 			type: (value?: NonNullable<T.LetDeclaration.Config>['type']) =>
@@ -2407,7 +2399,7 @@ export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDecla
 			alternative: (value?: T.Block) =>
 				rebuilt(node, handle, () => buildLetDeclaration({ ...config, alternative: value }))
 		},
-		mutableSpecifier: () => _mutable_specifier,
+		mutable: () => _mutable,
 		pattern: () => _pattern,
 		type: () => _type,
 		value: () => _value,
@@ -2929,9 +2921,7 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 		rejectBareText(config.reference, 'SelfParameter.reference', 'a boolean')
 	);
 	const _lifetime = rejectBareText(config.lifetime, 'SelfParameter.lifetime', 'a built Lifetime');
-	const _mutable_specifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.mutableSpecifier, 'SelfParameter.mutableSpecifier', 'a boolean')
-	);
+	const _mutable = coerceBooleanKeywordStorage(rejectBareText(config.mutable, 'SelfParameter.mutable', 'a boolean'));
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.SelfParameter as const,
@@ -2939,17 +2929,17 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 		$named: true as const,
 		_reference,
 		_lifetime,
-		_mutable_specifier,
+		_mutable,
 		$with: {
 			reference: (value?: NonNullable<T.SelfParameter.Config>['reference']) =>
 				rebuilt(node, handle, () => buildSelfParameter({ ...config, reference: value })),
 			lifetime: (value?: T.Lifetime) => rebuilt(node, handle, () => buildSelfParameter({ ...config, lifetime: value })),
-			mutableSpecifier: (value?: NonNullable<T.SelfParameter.Config>['mutableSpecifier']) =>
-				rebuilt(node, handle, () => buildSelfParameter({ ...config, mutableSpecifier: value }))
+			mutable: (value?: NonNullable<T.SelfParameter.Config>['mutable']) =>
+				rebuilt(node, handle, () => buildSelfParameter({ ...config, mutable: value }))
 		},
 		reference: () => _reference,
 		lifetime: () => _lifetime,
-		mutableSpecifier: () => _mutable_specifier,
+		mutable: () => _mutable,
 		$render: () => renderText(handle, node),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2961,8 +2951,8 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 }
 
 export function buildVariadicParameter(config: Partial<T.VariadicParameter.Config> = {}): T.VariadicParameter.Bound {
-	const _mutable_specifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.mutableSpecifier, 'VariadicParameter.mutableSpecifier', 'a boolean')
+	const _mutable = coerceBooleanKeywordStorage(
+		rejectBareText(config.mutable, 'VariadicParameter.mutable', 'a boolean')
 	);
 	const _pattern = rejectBareText(
 		kindIdStorage<NonNullable<T.VariadicParameter['_pattern']>>(config.pattern),
@@ -2974,15 +2964,15 @@ export function buildVariadicParameter(config: Partial<T.VariadicParameter.Confi
 		$type: TSKindId.VariadicParameter as const,
 		$source: 2 as const,
 		$named: true as const,
-		_mutable_specifier,
+		_mutable,
 		_pattern,
 		$with: {
-			mutableSpecifier: (value?: NonNullable<T.VariadicParameter.Config>['mutableSpecifier']) =>
-				rebuilt(node, handle, () => buildVariadicParameter({ ...config, mutableSpecifier: value })),
+			mutable: (value?: NonNullable<T.VariadicParameter.Config>['mutable']) =>
+				rebuilt(node, handle, () => buildVariadicParameter({ ...config, mutable: value })),
 			pattern: (value?: NonNullable<T.VariadicParameter.Config>['pattern']) =>
 				rebuilt(node, handle, () => buildVariadicParameter({ ...config, pattern: value }))
 		},
-		mutableSpecifier: () => _mutable_specifier,
+		mutable: () => _mutable,
 		pattern: () => _pattern,
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -2995,9 +2985,7 @@ export function buildVariadicParameter(config: Partial<T.VariadicParameter.Confi
 }
 
 export function buildParameter(config: T.Parameter.Config): T.Parameter.Bound {
-	const _mutable_specifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.mutableSpecifier, 'Parameter.mutableSpecifier', 'a boolean')
-	);
+	const _mutable = coerceBooleanKeywordStorage(rejectBareText(config.mutable, 'Parameter.mutable', 'a boolean'));
 	const _name = rejectBareText(
 		kindIdStorage<NonNullable<T.Parameter['_name']>>(config.name),
 		'Parameter.name',
@@ -3012,18 +3000,18 @@ export function buildParameter(config: T.Parameter.Config): T.Parameter.Bound {
 		$type: TSKindId.Parameter as const,
 		$source: 2 as const,
 		$named: true as const,
-		_mutable_specifier,
+		_mutable,
 		_name,
 		_type,
 		$with: {
-			mutableSpecifier: (value?: NonNullable<T.Parameter.Config>['mutableSpecifier']) =>
-				rebuilt(node, handle, () => buildParameter({ ...config, mutableSpecifier: value })),
+			mutable: (value?: NonNullable<T.Parameter.Config>['mutable']) =>
+				rebuilt(node, handle, () => buildParameter({ ...config, mutable: value })),
 			name: (value: NonNullable<T.Parameter.Config>['name']) =>
 				rebuilt(node, handle, () => buildParameter({ ...config, name: value })),
 			type: (value: NonNullable<T.Parameter.Config>['type']) =>
 				rebuilt(node, handle, () => buildParameter({ ...config, type: value }))
 		},
-		mutableSpecifier: () => _mutable_specifier,
+		mutable: () => _mutable,
 		name: () => _name,
 		type: () => _type,
 		$render: () => renderText(handle, node),
@@ -3839,9 +3827,7 @@ export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Bo
 
 export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceType.Bound {
 	const _lifetime = rejectBareText(config.lifetime, 'ReferenceType.lifetime', 'a built Lifetime');
-	const _mutable_specifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.mutableSpecifier, 'ReferenceType.mutableSpecifier', 'a boolean')
-	);
+	const _mutable = coerceBooleanKeywordStorage(rejectBareText(config.mutable, 'ReferenceType.mutable', 'a boolean'));
 	const _type = admitAliasContent<NonNullable<T.ReferenceType['_type']>>(
 		rejectBareText(
 			kindIdStorage<NonNullable<T.ReferenceType['_type']>>(config.type),
@@ -3856,17 +3842,17 @@ export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceT
 		$source: 2 as const,
 		$named: true as const,
 		_lifetime,
-		_mutable_specifier,
+		_mutable,
 		_type,
 		$with: {
 			lifetime: (value?: T.Lifetime) => rebuilt(node, handle, () => buildReferenceType({ ...config, lifetime: value })),
-			mutableSpecifier: (value?: NonNullable<T.ReferenceType.Config>['mutableSpecifier']) =>
-				rebuilt(node, handle, () => buildReferenceType({ ...config, mutableSpecifier: value })),
+			mutable: (value?: NonNullable<T.ReferenceType.Config>['mutable']) =>
+				rebuilt(node, handle, () => buildReferenceType({ ...config, mutable: value })),
 			type: (value: NonNullable<T.ReferenceType.Config>['type']) =>
 				rebuilt(node, handle, () => buildReferenceType({ ...config, type: value }))
 		},
 		lifetime: () => _lifetime,
-		mutableSpecifier: () => _mutable_specifier,
+		mutable: () => _mutable,
 		type: () => _type,
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -5737,9 +5723,7 @@ function _buildUnsafeBlock(value: AdmitBound<T.Block, T.AdmittedNodes>): T.Unsaf
 }
 
 export function buildAsyncBlock(config: Partial<T.AsyncBlock.Config> = {}): T.AsyncBlock.Bound {
-	const _move_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.moveMarker, 'AsyncBlock.moveMarker', 'a boolean')
-	);
+	const _move = coerceBooleanKeywordStorage(rejectBareText(config.move, 'AsyncBlock.move', 'a boolean'));
 	const _body = rejectBareText(
 		orDefault(config.body, () => buildBlock()),
 		'AsyncBlock.body',
@@ -5750,14 +5734,14 @@ export function buildAsyncBlock(config: Partial<T.AsyncBlock.Config> = {}): T.As
 		$type: TSKindId.AsyncBlock as const,
 		$source: 2 as const,
 		$named: true as const,
-		_move_marker,
+		_move,
 		_body,
 		$with: {
-			moveMarker: (value?: NonNullable<T.AsyncBlock.Config>['moveMarker']) =>
-				rebuilt(node, handle, () => buildAsyncBlock({ ...config, moveMarker: value })),
+			move: (value?: NonNullable<T.AsyncBlock.Config>['move']) =>
+				rebuilt(node, handle, () => buildAsyncBlock({ ...config, move: value })),
 			body: (value: T.Block) => rebuilt(node, handle, () => buildAsyncBlock({ ...config, body: value }))
 		},
-		moveMarker: () => _move_marker,
+		move: () => _move,
 		body: () => _body,
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -5770,9 +5754,7 @@ export function buildAsyncBlock(config: Partial<T.AsyncBlock.Config> = {}): T.As
 }
 
 export function buildGenBlock(config: Partial<T.GenBlock.Config> = {}): T.GenBlock.Bound {
-	const _move_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.moveMarker, 'GenBlock.moveMarker', 'a boolean')
-	);
+	const _move = coerceBooleanKeywordStorage(rejectBareText(config.move, 'GenBlock.move', 'a boolean'));
 	const _body = rejectBareText(
 		orDefault(config.body, () => buildBlock()),
 		'GenBlock.body',
@@ -5783,14 +5765,14 @@ export function buildGenBlock(config: Partial<T.GenBlock.Config> = {}): T.GenBlo
 		$type: TSKindId.GenBlock as const,
 		$source: 2 as const,
 		$named: true as const,
-		_move_marker,
+		_move,
 		_body,
 		$with: {
-			moveMarker: (value?: NonNullable<T.GenBlock.Config>['moveMarker']) =>
-				rebuilt(node, handle, () => buildGenBlock({ ...config, moveMarker: value })),
+			move: (value?: NonNullable<T.GenBlock.Config>['move']) =>
+				rebuilt(node, handle, () => buildGenBlock({ ...config, move: value })),
 			body: (value: T.Block) => rebuilt(node, handle, () => buildGenBlock({ ...config, body: value }))
 		},
-		moveMarker: () => _move_marker,
+		move: () => _move,
 		body: () => _body,
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -6221,9 +6203,7 @@ export function buildCapturedPattern(config: T.CapturedPattern.Config): T.Captur
 }
 
 export function buildReferencePattern(config: T.ReferencePattern.Config): T.ReferencePattern.Bound {
-	const _mutable_specifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.mutableSpecifier, 'ReferencePattern.mutableSpecifier', 'a boolean')
-	);
+	const _mutable = coerceBooleanKeywordStorage(rejectBareText(config.mutable, 'ReferencePattern.mutable', 'a boolean'));
 	const _pattern = rejectBareText(
 		kindIdStorage<NonNullable<T.ReferencePattern['_pattern']>>(config.pattern),
 		'ReferencePattern.pattern',
@@ -6234,15 +6214,15 @@ export function buildReferencePattern(config: T.ReferencePattern.Config): T.Refe
 		$type: TSKindId.ReferencePattern as const,
 		$source: 2 as const,
 		$named: true as const,
-		_mutable_specifier,
+		_mutable,
 		_pattern,
 		$with: {
-			mutableSpecifier: (value?: NonNullable<T.ReferencePattern.Config>['mutableSpecifier']) =>
-				rebuilt(node, handle, () => buildReferencePattern({ ...config, mutableSpecifier: value })),
+			mutable: (value?: NonNullable<T.ReferencePattern.Config>['mutable']) =>
+				rebuilt(node, handle, () => buildReferencePattern({ ...config, mutable: value })),
 			pattern: (value: NonNullable<T.ReferencePattern.Config>['pattern']) =>
 				rebuilt(node, handle, () => buildReferencePattern({ ...config, pattern: value }))
 		},
-		mutableSpecifier: () => _mutable_specifier,
+		mutable: () => _mutable,
 		pattern: () => _pattern,
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -8927,15 +8907,11 @@ export function buildAttributeInput(config: Partial<T.AttributeInput.Config> = {
 export function buildClosureExpressionBlock(
 	config: Partial<T.ClosureExpressionBlock.Config> = {}
 ): T.ClosureExpressionBlock.Bound {
-	const _static_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.staticMarker, 'ClosureExpressionBlock.staticMarker', 'a boolean')
+	const _static = coerceBooleanKeywordStorage(
+		rejectBareText(config.static, 'ClosureExpressionBlock.static', 'a boolean')
 	);
-	const _async_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.asyncMarker, 'ClosureExpressionBlock.asyncMarker', 'a boolean')
-	);
-	const _move_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.moveMarker, 'ClosureExpressionBlock.moveMarker', 'a boolean')
-	);
+	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'ClosureExpressionBlock.async', 'a boolean'));
+	const _move = coerceBooleanKeywordStorage(rejectBareText(config.move, 'ClosureExpressionBlock.move', 'a boolean'));
 	const _parameters = rejectBareText(
 		orDefault(config.parameters, () => buildClosureParameters()),
 		'ClosureExpressionBlock.parameters',
@@ -8959,28 +8935,28 @@ export function buildClosureExpressionBlock(
 		$type: TSKindId.ClosureExpressionBlock as const,
 		$source: 2 as const,
 		$named: true as const,
-		_static_marker,
-		_async_marker,
-		_move_marker,
+		_static,
+		_async,
+		_move,
 		_parameters,
 		_return_type,
 		_body,
 		$with: {
-			staticMarker: (value?: NonNullable<T.ClosureExpressionBlock.Config>['staticMarker']) =>
-				rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, staticMarker: value })),
-			asyncMarker: (value?: NonNullable<T.ClosureExpressionBlock.Config>['asyncMarker']) =>
-				rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, asyncMarker: value })),
-			moveMarker: (value?: NonNullable<T.ClosureExpressionBlock.Config>['moveMarker']) =>
-				rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, moveMarker: value })),
+			static: (value?: NonNullable<T.ClosureExpressionBlock.Config>['static']) =>
+				rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, static: value })),
+			async: (value?: NonNullable<T.ClosureExpressionBlock.Config>['async']) =>
+				rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, async: value })),
+			move: (value?: NonNullable<T.ClosureExpressionBlock.Config>['move']) =>
+				rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, move: value })),
 			parameters: (value: T.ClosureParameters) =>
 				rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, parameters: value })),
 			returnType: (value?: NonNullable<T.ClosureExpressionBlock.Config>['returnType']) =>
 				rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, returnType: value })),
 			body: (value: T.Block) => rebuilt(node, handle, () => buildClosureExpressionBlock({ ...config, body: value }))
 		},
-		staticMarker: () => _static_marker,
-		asyncMarker: () => _async_marker,
-		moveMarker: () => _move_marker,
+		static: () => _static,
+		async: () => _async,
+		move: () => _move,
 		parameters: () => _parameters,
 		returnType: () => _return_type,
 		body: () => _body,
@@ -8995,15 +8971,11 @@ export function buildClosureExpressionBlock(
 }
 
 export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Config): T.ClosureExpressionExpr.Bound {
-	const _static_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.staticMarker, 'ClosureExpressionExpr.staticMarker', 'a boolean')
+	const _static = coerceBooleanKeywordStorage(
+		rejectBareText(config.static, 'ClosureExpressionExpr.static', 'a boolean')
 	);
-	const _async_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.asyncMarker, 'ClosureExpressionExpr.asyncMarker', 'a boolean')
-	);
-	const _move_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.moveMarker, 'ClosureExpressionExpr.moveMarker', 'a boolean')
-	);
+	const _async = coerceBooleanKeywordStorage(rejectBareText(config.async, 'ClosureExpressionExpr.async', 'a boolean'));
+	const _move = coerceBooleanKeywordStorage(rejectBareText(config.move, 'ClosureExpressionExpr.move', 'a boolean'));
 	const _parameters = rejectBareText(
 		orDefault(config.parameters, () => buildClosureParameters()),
 		'ClosureExpressionExpr.parameters',
@@ -9019,26 +8991,26 @@ export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Confi
 		$type: TSKindId.ClosureExpressionExpr as const,
 		$source: 2 as const,
 		$named: true as const,
-		_static_marker,
-		_async_marker,
-		_move_marker,
+		_static,
+		_async,
+		_move,
 		_parameters,
 		_body,
 		$with: {
-			staticMarker: (value?: NonNullable<T.ClosureExpressionExpr.Config>['staticMarker']) =>
-				rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, staticMarker: value })),
-			asyncMarker: (value?: NonNullable<T.ClosureExpressionExpr.Config>['asyncMarker']) =>
-				rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, asyncMarker: value })),
-			moveMarker: (value?: NonNullable<T.ClosureExpressionExpr.Config>['moveMarker']) =>
-				rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, moveMarker: value })),
+			static: (value?: NonNullable<T.ClosureExpressionExpr.Config>['static']) =>
+				rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, static: value })),
+			async: (value?: NonNullable<T.ClosureExpressionExpr.Config>['async']) =>
+				rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, async: value })),
+			move: (value?: NonNullable<T.ClosureExpressionExpr.Config>['move']) =>
+				rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, move: value })),
 			parameters: (value: T.ClosureParameters) =>
 				rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, parameters: value })),
 			body: (value: NonNullable<T.ClosureExpressionExpr.Config>['body']) =>
 				rebuilt(node, handle, () => buildClosureExpressionExpr({ ...config, body: value }))
 		},
-		staticMarker: () => _static_marker,
-		asyncMarker: () => _async_marker,
-		moveMarker: () => _move_marker,
+		static: () => _static,
+		async: () => _async,
+		move: () => _move,
 		parameters: () => _parameters,
 		body: () => _body,
 		$render: () => renderText(handle, node),
@@ -9234,9 +9206,7 @@ export function buildImplItemNegativeClause(
 }
 
 export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody.Bound {
-	const _unsafe_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.unsafeMarker, 'ImplItemBody.unsafeMarker', 'a boolean')
-	);
+	const _unsafe = coerceBooleanKeywordStorage(rejectBareText(config.unsafe, 'ImplItemBody.unsafe', 'a boolean'));
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
 		'ImplItemBody.typeParameters',
@@ -9266,15 +9236,15 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 		$type: TSKindId.ImplItemBody as const,
 		$source: 2 as const,
 		$named: true as const,
-		_unsafe_marker,
+		_unsafe,
 		_type_parameters,
 		_trait_clause,
 		_type,
 		_where_clause,
 		_declaration_list,
 		$with: {
-			unsafeMarker: (value?: NonNullable<T.ImplItemBody.Config>['unsafeMarker']) =>
-				rebuilt(node, handle, () => buildImplItemBody({ ...config, unsafeMarker: value })),
+			unsafe: (value?: NonNullable<T.ImplItemBody.Config>['unsafe']) =>
+				rebuilt(node, handle, () => buildImplItemBody({ ...config, unsafe: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -9303,7 +9273,7 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 			declarationList: (value: T.DeclarationList) =>
 				rebuilt(node, handle, () => buildImplItemBody({ ...config, declarationList: value }))
 		},
-		unsafeMarker: () => _unsafe_marker,
+		unsafe: () => _unsafe,
 		typeParameters: () => _type_parameters,
 		traitClause: () => _trait_clause,
 		type: () => _type,
@@ -9320,9 +9290,7 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 }
 
 export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi.Bound {
-	const _unsafe_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.unsafeMarker, 'ImplItemSemi.unsafeMarker', 'a boolean')
-	);
+	const _unsafe = coerceBooleanKeywordStorage(rejectBareText(config.unsafe, 'ImplItemSemi.unsafe', 'a boolean'));
 	const _type_parameters = rejectBareText(
 		config.typeParameters,
 		'ImplItemSemi.typeParameters',
@@ -9347,14 +9315,14 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 		$type: TSKindId.ImplItemSemi as const,
 		$source: 2 as const,
 		$named: true as const,
-		_unsafe_marker,
+		_unsafe,
 		_type_parameters,
 		_trait_clause,
 		_type,
 		_where_clause,
 		$with: {
-			unsafeMarker: (value?: NonNullable<T.ImplItemSemi.Config>['unsafeMarker']) =>
-				rebuilt(node, handle, () => buildImplItemSemi({ ...config, unsafeMarker: value })),
+			unsafe: (value?: NonNullable<T.ImplItemSemi.Config>['unsafe']) =>
+				rebuilt(node, handle, () => buildImplItemSemi({ ...config, unsafe: value })),
 			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -9381,7 +9349,7 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 					)
 				)
 		},
-		unsafeMarker: () => _unsafe_marker,
+		unsafe: () => _unsafe,
 		typeParameters: () => _type_parameters,
 		traitClause: () => _trait_clause,
 		type: () => _type,
@@ -10790,11 +10758,9 @@ export function buildDelimTokenTreeBrace(
 }
 
 export function buildFieldPatternShorthand(config: T.FieldPatternShorthand.Config): T.FieldPatternShorthand.Bound {
-	const _ref_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.refMarker, 'FieldPatternShorthand.refMarker', 'a boolean')
-	);
-	const _mutable_specifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.mutableSpecifier, 'FieldPatternShorthand.mutableSpecifier', 'a boolean')
+	const _ref = coerceBooleanKeywordStorage(rejectBareText(config.ref, 'FieldPatternShorthand.ref', 'a boolean'));
+	const _mutable = coerceBooleanKeywordStorage(
+		rejectBareText(config.mutable, 'FieldPatternShorthand.mutable', 'a boolean')
 	);
 	const _name = admitAliasContent<NonNullable<T.FieldPatternShorthand['_name']>>(
 		rejectBareText(config.name, 'FieldPatternShorthand.name', 'a built ShorthandFieldIdentifier'),
@@ -10805,19 +10771,19 @@ export function buildFieldPatternShorthand(config: T.FieldPatternShorthand.Confi
 		$type: TSKindId.FieldPatternShorthand as const,
 		$source: 2 as const,
 		$named: true as const,
-		_ref_marker,
-		_mutable_specifier,
+		_ref,
+		_mutable,
 		_name,
 		$with: {
-			refMarker: (value?: NonNullable<T.FieldPatternShorthand.Config>['refMarker']) =>
-				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, refMarker: value })),
-			mutableSpecifier: (value?: NonNullable<T.FieldPatternShorthand.Config>['mutableSpecifier']) =>
-				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, mutableSpecifier: value })),
+			ref: (value?: NonNullable<T.FieldPatternShorthand.Config>['ref']) =>
+				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, ref: value })),
+			mutable: (value?: NonNullable<T.FieldPatternShorthand.Config>['mutable']) =>
+				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, mutable: value })),
 			name: (value: T.ShorthandFieldIdentifier | T.ShorthandFieldIdentifier.Types) =>
 				rebuilt(node, handle, () => buildFieldPatternShorthand({ ...config, name: value }))
 		},
-		refMarker: () => _ref_marker,
-		mutableSpecifier: () => _mutable_specifier,
+		ref: () => _ref,
+		mutable: () => _mutable,
 		name: () => _name,
 		$render: () => renderText(handle, node),
 		$trivia: {
@@ -10830,11 +10796,9 @@ export function buildFieldPatternShorthand(config: T.FieldPatternShorthand.Confi
 }
 
 export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.FieldPatternNamed.Bound {
-	const _ref_marker = coerceBooleanKeywordStorage(
-		rejectBareText(config.refMarker, 'FieldPatternNamed.refMarker', 'a boolean')
-	);
-	const _mutable_specifier = coerceBooleanKeywordStorage(
-		rejectBareText(config.mutableSpecifier, 'FieldPatternNamed.mutableSpecifier', 'a boolean')
+	const _ref = coerceBooleanKeywordStorage(rejectBareText(config.ref, 'FieldPatternNamed.ref', 'a boolean'));
+	const _mutable = coerceBooleanKeywordStorage(
+		rejectBareText(config.mutable, 'FieldPatternNamed.mutable', 'a boolean')
 	);
 	const _name = admitAliasContent<NonNullable<T.FieldPatternNamed['_name']>>(
 		rejectBareText(config.name, 'FieldPatternNamed.name', 'a built FieldIdentifier'),
@@ -10850,22 +10814,22 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 		$type: TSKindId.FieldPatternNamed as const,
 		$source: 2 as const,
 		$named: true as const,
-		_ref_marker,
-		_mutable_specifier,
+		_ref,
+		_mutable,
 		_name,
 		_pattern,
 		$with: {
-			refMarker: (value?: NonNullable<T.FieldPatternNamed.Config>['refMarker']) =>
-				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, refMarker: value })),
-			mutableSpecifier: (value?: NonNullable<T.FieldPatternNamed.Config>['mutableSpecifier']) =>
-				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, mutableSpecifier: value })),
+			ref: (value?: NonNullable<T.FieldPatternNamed.Config>['ref']) =>
+				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, ref: value })),
+			mutable: (value?: NonNullable<T.FieldPatternNamed.Config>['mutable']) =>
+				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, mutable: value })),
 			name: (value: T.FieldIdentifier | T.FieldIdentifier.Types) =>
 				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, name: value })),
 			pattern: (value: NonNullable<T.FieldPatternNamed.Config>['pattern']) =>
 				rebuilt(node, handle, () => buildFieldPatternNamed({ ...config, pattern: value }))
 		},
-		refMarker: () => _ref_marker,
-		mutableSpecifier: () => _mutable_specifier,
+		ref: () => _ref,
+		mutable: () => _mutable,
 		name: () => _name,
 		pattern: () => _pattern,
 		$render: () => renderText(handle, node),

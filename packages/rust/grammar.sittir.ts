@@ -232,6 +232,7 @@ export default sittirGrammar(base, {
 		},
 
 		parameter: {
+			'0/0': field('mutable'),
 			'1': field('name')
 		},
 
@@ -429,8 +430,14 @@ export default sittirGrammar(base, {
 		],
 
 		self_parameter: {
-			0: field('reference')
+			0: field('reference'),
+			'2/0': field('mutable')
 		},
+		variadic_parameter: { '0/0': field('mutable') },
+		static_item: { '3/0': field('mutable') },
+		let_declaration: { '1/0': field('mutable') },
+		reference_type: { '2/0': field('mutable') },
+		reference_pattern: { '1/0': field('mutable') },
 
 		shorthand_field_initializer: {
 			0: field('attributes'),
@@ -504,7 +511,7 @@ export default sittirGrammar(base, {
 		token_tree: { 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') },
 		delim_token_tree: { 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') },
 
-		field_pattern: { '2/0': variant('shorthand'), '2/1': variant('named') },
+		field_pattern: { '1/0': field('mutable'), '2/0': variant('shorthand'), '2/1': variant('named') },
 
 		macro_definition: { '2/0': variant('paren'), '2/1': variant('bracket'), '2/2': variant('brace') },
 
@@ -671,7 +678,7 @@ export default sittirGrammar(base, {
 		_impl_item_unsafe_marker: vocabulary(($) => 'unsafe'),
 		impl_item: reauthored('ambiguity', ($) =>
 			seq(
-				optional(field('unsafe_marker', $._impl_item_unsafe_marker)),
+				optional(field('unsafe', $._impl_item_unsafe_marker)),
 				'impl',
 				optional(field('type_parameters', $.type_parameters)),
 				optional(

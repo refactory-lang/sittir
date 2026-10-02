@@ -222,7 +222,7 @@ function collect(
 function memberNameOf(renames: ReadonlyMap<string, string>, raw: string): string {
 	const bare = raw.replace(/_$/, '');
 	const renamed = renames.get(bare) ?? renames.get(snake(bare)) ?? [...renames].find(([k]) => snake(k) === bare)?.[1];
-	return camel(renamed ?? bare.replace(/(?:Marker|Modifier)$/, ''));
+	return camel(renamed ?? bare.replace(/Modifier$/, ''));
 }
 
 const KEY_SEPARATOR = '\u0000';

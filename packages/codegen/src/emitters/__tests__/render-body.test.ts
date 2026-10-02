@@ -309,7 +309,7 @@ describe('duplicateSlots', () => {
 	it('reports a slot referenced twice on one path and accepts one referenced in alternative arms', () => {
 		expect(duplicateSlots(concat(slot('a'), gate('b', slot('b')), slot('c')))).toEqual([]);
 		expect(duplicateSlots(branches([{ test: 'a', body: slot('x') }, { test: 'b', body: slot('x') }], slot('x')))).toEqual([]);
-		expect(duplicateSlots(concat(gate('readonly_marker', slot('readonly_marker')), slot('abstract_marker'), gate('readonly_marker', slot('readonly_marker'))))).toEqual(['readonly_marker']);
+		expect(duplicateSlots(concat(gate('readonly', slot('readonly')), slot('abstract'), gate('readonly', slot('readonly'))))).toEqual(['readonly']);
 		expect(duplicateSlots(concat(slot('x'), gate('y', concat(slot('y'), slot('x')))))).toEqual(['x']);
 	});
 });

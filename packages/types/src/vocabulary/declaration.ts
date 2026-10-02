@@ -901,7 +901,7 @@ export namespace Declaration {
 		export interface Variadic<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Parameter<G>>> {
 			// claimed by r
 			readonly kind: 'declaration.parameter.variadic';
-			readonly mutableSpecifier?: boolean;
+			readonly mutable?: boolean;
 			readonly pattern?: V.Unmapped<'rust:pattern'>;
 			// unmapped: <rust:pattern>
 		}
@@ -1052,7 +1052,7 @@ export namespace Declaration {
 		readonly kind: 'declaration.variable';
 		readonly alternative?: V.Statement.Block<G>;
 		// r only
-		readonly mutableSpecifier?: boolean;
+		readonly mutable?: boolean;
 		// r only
 		readonly name?: V.Unmapped<'rust:pattern'> | G['expression'] | G['identifier'] | G['pattern'];
 		// unmapped: <rust:pattern>
@@ -1107,7 +1107,7 @@ export namespace Declaration {
 		export interface Static<G extends GrammarContext> extends Simplify<SubKindOf<V.Declaration.Variable<G>>> {
 			// claimed by r
 			readonly kind: 'declaration.variable.static';
-			readonly mutableSpecifier?: boolean;
+			readonly mutable?: boolean;
 			readonly name: G['identifier'];
 			readonly ref?: boolean;
 			readonly type: V.Clause.Bounds.Removed<G> | V.Expression.Call.Macro<G> | G['identifier'] | G['type'];
