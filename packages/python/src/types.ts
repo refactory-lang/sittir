@@ -14133,10 +14133,8 @@ export namespace SuiteBlock {
 	}
 	export type Loose = LooseFor<TSKindId.SuiteBlock>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SuiteBlock>;
-	export type BuildArgs =
-		| [value: AdmitBound<T.Block, T.AdmittedNodes>]
-		| [...children: AdmitBound<T.Statement[], T.AdmittedNodes>];
-	export type LooseArgs = [value?: T.SuiteBlock.Loose];
+	export type BuildArgs = [value: AdmitBound<T.Block, T.AdmittedNodes>] | T.Block.BuildArgs;
+	export type LooseArgs = [value?: T.SuiteBlock.Loose] | T.Block.LooseArgs;
 	export type Kind = TSKindId.SuiteBlock;
 }
 export namespace SuiteEmpty {

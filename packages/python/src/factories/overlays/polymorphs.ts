@@ -2114,7 +2114,7 @@ export const suite: {
 	readonly empty: { strict: typeof F.buildSuiteEmpty; coerce: typeof C.coerceToSuiteEmpty };
 } = Object.freeze({
 	inline: bundle(F.buildSuiteInline, C.coerceToSuiteInline),
-	block: bundle(F.buildSuiteBlock, C.coerceToSuiteBlock, { key: 'suite.block', max: 1 }),
+	block: bundle(F.buildSuiteBlock, C.coerceToSuiteBlock),
 	empty: bundle(F.buildSuiteEmpty, C.coerceToSuiteEmpty, { key: 'suite.empty', max: 1 })
 });
 

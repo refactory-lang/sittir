@@ -292,6 +292,86 @@ describe('checkRegression', () => {
 		expect(verdict.details.path).toBe('grammars.rust.validators.from.pass');
 	});
 
+	it('coverage and factoryRoundtrip drops explained by hoisted kinds leaving — pass (their cases left with them)', () => {
+		const base = baseline();
+		base.grammars.python!.hoistedKindCount = 40;
+		base.grammars.python!.validators.coverage = vr(147, 147);
+		base.grammars.python!.validators.factoryRoundtrip = rt(1417, 1417, 1417);
+		const head = clone(base);
+		head.grammars.python!.hoistedKindCount = 38;
+		head.grammars.python!.validators.coverage = vr(145, 145);
+		head.grammars.python!.validators.factoryRoundtrip = rt(1402, 1402, 1402);
+		head.totals.pass -= 17;
+		head.totals.total -= 17;
+		expect(checkRegression(base, head).ok).toBe(true);
+	});
+
+	it('from pass drop of one per hoisted kind that left — passes', () => {
+		const base = baseline();
+		base.grammars.python!.hoistedKindCount = 40;
+		base.grammars.python!.validators.from = vr(181, 181);
+		const head = clone(base);
+		head.grammars.python!.hoistedKindCount = 38;
+		head.grammars.python!.validators.from = vr(179, 179);
+		head.totals.pass -= 2;
+		head.totals.total -= 2;
+		expect(checkRegression(base, head).ok).toBe(true);
+	});
+
+	it('from pass drop larger than the hoisted fall — fail', () => {
+		const base = baseline();
+		base.grammars.python!.hoistedKindCount = 40;
+		base.grammars.python!.validators.from = vr(181, 181);
+		const head = clone(base);
+		head.grammars.python!.hoistedKindCount = 38;
+		head.grammars.python!.validators.from = vr(178, 178);
+		head.totals.pass -= 3;
+		head.totals.total -= 3;
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.details.path).toBe('grammars.python.validators.from.pass');
+	});
+
+	it('from pass drop covered by a supertype rise and a hoisted fall together — passes', () => {
+		const base = baseline();
+		base.grammars.rust!.supertypeKindCount = 27;
+		base.grammars.rust!.hoistedKindCount = 80;
+		base.grammars.rust!.validators.from = vr(245, 245);
+		const head = clone(base);
+		head.grammars.rust!.supertypeKindCount = 28;
+		head.grammars.rust!.hoistedKindCount = 79;
+		head.grammars.rust!.validators.from = vr(243, 243);
+		head.totals.pass -= 2;
+		head.totals.total -= 2;
+		expect(checkRegression(base, head).ok).toBe(true);
+	});
+
+	it('hoisted fall alongside a new fail — fail (a kind leaving does not excuse an actual regression)', () => {
+		const base = baseline();
+		base.grammars.python!.hoistedKindCount = 40;
+		base.grammars.python!.validators.coverage = vr(147, 147);
+		const head = clone(base);
+		head.grammars.python!.hoistedKindCount = 38;
+		head.grammars.python!.validators.coverage = vr(144, 147, ['kind_a']);
+		head.totals.pass -= 3;
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.details.path).toBe('grammars.python.validators.coverage.pass');
+	});
+
+	it('a base that never recorded its hoisted kinds explains no drop — fail (a fall cannot be read from one count)', () => {
+		const base = baseline();
+		base.grammars.python!.validators.coverage = vr(147, 147);
+		const head = clone(base);
+		head.grammars.python!.hoistedKindCount = 38;
+		head.grammars.python!.validators.coverage = vr(145, 145);
+		head.totals.pass -= 2;
+		head.totals.total -= 2;
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.details.path).toBe('grammars.python.validators.coverage.pass');
+	});
+
 	it('from pass drop alongside a new supertype and a new fail — fail (a new supertype does not excuse an actual regression)', () => {
 		const base = baseline();
 		base.grammars.typescript!.supertypeKindCount = 5;
@@ -312,6 +392,36 @@ describe('checkRegression', () => {
 		head.totals.total = 149;
 		const verdict = checkRegression(base, head);
 		expect(verdict.ok).toBe(true);
+	});
+
+	it.each([
+		['hoistedKindCount', '40'],
+		['hoistedKindCount', -1],
+		['hoistedKindCount', 1.5],
+		['supertypeKindCount', '5'],
+		['supertypeKindCount', null]
+	] as const)('schema violation detected: a %s of %j is rejected, on either side', (key, value) => {
+		for (const side of ['base', 'head'] as const) {
+			const base = baseline();
+			const head = clone(base);
+			const target = side === 'base' ? base : head;
+			(target.grammars.python as unknown as Record<string, unknown>)[key] = value;
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.reason).toBe('schema-violation');
+			expect(verdict.details.path).toBe(`${side}.grammars.python.${key}`);
+		}
+	});
+
+	it('a malformed hoisted count never excuses a pass drop', () => {
+		const base = baseline();
+		base.grammars.python!.validators.from = vr(181, 181);
+		const head = clone(base);
+		(head.grammars.python as unknown as Record<string, unknown>)['hoistedKindCount'] = 'many';
+		head.grammars.python!.validators.from = vr(100, 100);
+		const verdict = checkRegression(base, head);
+		expectFail(verdict);
+		expect(verdict.reason).toBe('schema-violation');
 	});
 
 	it('schema violation detected — unsorted failingKinds is rejected', () => {

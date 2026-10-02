@@ -7,11 +7,8 @@ export * from './coerce.js';
 
 export const program = bundle(F.buildProgram, C.coerceToProgram);
 export const capture = bundle(F.buildCapture, C.coerceToCapture, { key: 'capture', max: 1 });
-export const string = bundle(F.buildString, C.coerceToString, { key: 'string', max: 1 });
-export const immediateString = bundle(F.buildImmediateString, C.coerceToImmediateString, {
-	key: 'immediateString',
-	max: 1
-});
+export const string = bundle(F.buildString, C.coerceToString);
+export const immediateString = bundle(F.buildImmediateString, C.coerceToImmediateString);
 export const stringContent = bundle(F.buildStringContent, C.coerceToStringContent);
 export const parameters = bundle(F.buildParameters, C.coerceToParameters);
 export const list = bundle(F.buildList, C.coerceToList, { key: 'list', max: 1 });

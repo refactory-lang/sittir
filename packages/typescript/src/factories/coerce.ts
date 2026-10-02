@@ -11090,8 +11090,19 @@ export function resolveParenthesizedExpressionSequence_sequenceExpression(
 }
 
 export function coerceToParenthesizedExpressionSequence(
+	...input: T.SequenceExpression.LooseArgs
+): ReturnType<typeof F.buildParenthesizedExpressionSequence>;
+export function coerceToParenthesizedExpressionSequence(
 	input: T.ParenthesizedExpressionSequence.Loose
+): ReturnType<typeof F.buildParenthesizedExpressionSequence>;
+export function coerceToParenthesizedExpressionSequence(
+	...args: unknown[]
 ): ReturnType<typeof F.buildParenthesizedExpressionSequence> {
+	if (args.length > 1)
+		return F.buildParenthesizedExpressionSequence(
+			coerceToSequenceExpression(...(args as Parameters<typeof coerceToSequenceExpression>))
+		);
+	const input = args[0] as T.ParenthesizedExpressionSequence.Loose;
 	return F.buildParenthesizedExpressionSequence(
 		_requireField(
 			'parenthesized_expression_sequence',

@@ -1199,7 +1199,9 @@ export function listSpreadTarget(
 	if (registeredSlots(node).length > 0) return null;
 	const target = forwardedConstructorTarget(node, nodeMap, kindEntries);
 	if (target === null) return null;
-	return nodeMap.nodes.get(constructorTargetKind(target, nodeMap, kindEntries))?.modelType === 'list' ? target : null;
+	const end = nodeMap.nodes.get(constructorTargetKind(target, nodeMap, kindEntries));
+	const shape = end === undefined ? null : classifyFactoryShape(end, nodeMap);
+	return shape === 'elements' || shape === 'spread' ? target : null;
 }
 
 export function constructorTargetKind(kind: string, nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): string {

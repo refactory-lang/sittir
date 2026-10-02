@@ -23097,10 +23097,8 @@ export namespace ParenthesizedExpressionSequence {
 	}
 	export type Loose = LooseFor<TSKindId.ParenthesizedExpressionSequence>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ParenthesizedExpressionSequence>;
-	export type BuildArgs =
-		| [value: AdmitBound<T.SequenceExpression, T.AdmittedNodes>]
-		| [...children: AdmitBound<T.Expression[], T.AdmittedNodes>];
-	export type LooseArgs = [value: T.ParenthesizedExpressionSequence.Loose];
+	export type BuildArgs = [value: AdmitBound<T.SequenceExpression, T.AdmittedNodes>] | T.SequenceExpression.BuildArgs;
+	export type LooseArgs = [value: T.ParenthesizedExpressionSequence.Loose] | T.SequenceExpression.LooseArgs;
 	export type Kind = TSKindId.ParenthesizedExpressionSequence;
 }
 export namespace CallExpressionCall {
